@@ -1,5 +1,6 @@
 const state = {
   data: null,
+  lang: "es", // Default language
   modeId: "executive",
   selectedNodeId: null,
   selectedScenarioId: "e2e",
@@ -26,6 +27,7 @@ const els = {
   layerList: document.getElementById("layerList"),
   timeline: document.getElementById("timelineTrack"),
   search: document.getElementById("searchInput"),
+  langToggle: document.getElementById("langToggle"),
   play: document.getElementById("playButton"),
   reset: document.getElementById("resetButton"),
   fit: document.getElementById("fitButton"),
@@ -41,36 +43,68 @@ const els = {
   detailExposes: document.getElementById("detailExposes"),
   detailProtocol: document.getElementById("detailProtocol"),
   detailDocs: document.getElementById("detailDocs"),
-  relationSummary: document.getElementById("relationSummary")
+  relationSummary: document.getElementById("relationSummary"),
+  callout: document.getElementById("didacticCallout"),
+  
+  // UI static strings
+  topSubtitle: document.getElementById("topSubtitle"),
+  topTitle: document.getElementById("topTitle"),
+  searchLabel: document.getElementById("searchLabel"),
+  scenarioRailTitle: document.getElementById("scenarioRailTitle"),
+  layersRailTitle: document.getElementById("layersRailTitle"),
+  zoomHint: document.getElementById("zoomHint"),
+  labelAuthority: document.getElementById("labelAuthority"),
+  labelConsumes: document.getElementById("labelConsumes"),
+  labelExposes: document.getElementById("labelExposes"),
+  labelProtocol: document.getElementById("labelProtocol"),
+  labelSources: document.getElementById("labelSources"),
+  relationRailTitle: document.getElementById("relationRailTitle")
 };
 
 const ns = "http://www.w3.org/2000/svg";
 const xlink = "http://www.w3.org/1999/xlink";
 
 const typeColors = {
-  persona: "#dbeafe",
-  agent: "#e0e7ff",
-  view: "#fce7f3",
-  product: "#fbcfe8",
-  data: "#ede9fe",
-  governance: "#fee2e2",
-  phase: "#dcfce7",
-  runtime: "#fed7aa",
-  interface: "#fef3c7",
-  adapter: "#ffedd5",
-  core: "#bae6fd",
-  artifact: "#e0f2fe",
-  satellite: "#ccfbf1",
-  external: "#f1f5f9"
+  persona: "#dbeafe", agent: "#e0e7ff", view: "#fce7f3", product: "#fbcfe8",
+  data: "#ede9fe", governance: "#fee2e2", phase: "#dcfce7", runtime: "#fed7aa",
+  interface: "#fef3c7", adapter: "#ffedd5", core: "#bae6fd", artifact: "#e0f2fe",
+  satellite: "#ccfbf1", external: "#f1f5f9"
 };
 
 const statusLabels = {
-  operational: "Operational",
-  target: "Target",
-  mvp: "MVP",
-  concept: "Concept",
-  adapter: "Adapter"
+  operational: { en: "Operational", es: "Operativo" },
+  target: { en: "Target", es: "Objetivo" },
+  mvp: { en: "MVP", es: "MVP" },
+  concept: { en: "Concept", es: "Concepto" },
+  adapter: { en: "Adapter", es: "Adaptador" }
 };
+
+// Translation helper
+function t(fieldObj) {
+  if (typeof fieldObj === 'object' && fieldObj !== null) {
+    return fieldObj[state.lang] || fieldObj["en"] || "";
+  }
+  return fieldObj || "";
+}
+
+function updateStaticStrings() {
+  els.langToggle.textContent = state.lang === "es" ? "EN" : "ES";
+  els.topTitle.textContent = state.data ? t(state.data.meta.title) : "Evolith Governance Atlas";
+  els.topSubtitle.textContent = state.data ? t(state.data.meta.subtitle) : "";
+  els.searchLabel.textContent = state.lang === "es" ? "Buscar" : "Search";
+  els.scenarioRailTitle.textContent = state.lang === "es" ? "Escenarios" : "Scenarios";
+  els.layersRailTitle.textContent = state.lang === "es" ? "Capas" : "Layers";
+  els.zoomHint.textContent = state.lang === "es" ? "Scroll para zoom, arrastra para mover, click para inspeccionar." : "Scroll to zoom, drag to pan, click to inspect.";
+  els.labelAuthority.textContent = state.lang === "es" ? "Autoridad" : "Authority";
+  els.labelConsumes.textContent = state.lang === "es" ? "Consume" : "Consumes";
+  els.labelExposes.textContent = state.lang === "es" ? "Expone" : "Exposes";
+  els.labelProtocol.textContent = state.lang === "es" ? "Protocolo" : "Protocol";
+  els.labelSources.textContent = state.lang === "es" ? "Fuentes" : "Sources";
+  els.relationRailTitle.textContent = state.lang === "es" ? "Relación" : "Relation";
+  if (!state.selectedNodeId) {
+    updateIntroDetail();
+  }
+}
 
 function svgEl(tag, attrs = {}) {
   const node = document.createElementNS(ns, tag);
@@ -157,7 +191,7 @@ function renderLayers() {
         class: "layer-title",
         x: 42,
         y: layer.y + 30,
-        text: layer.label
+        text: t(layer.label)
       })
     );
     els.layers.appendChild(group);
@@ -194,7 +228,7 @@ function renderEdges() {
         class: `edge-label${muted ? " is-muted" : ""}`,
         x: (sourceNode.x + sourceNode.w / 2 + targetNode.x + targetNode.w / 2) / 2,
         y: (sourceNode.y + sourceNode.h / 2 + targetNode.y + targetNode.h / 2) / 2 - 10,
-        text: edge.protocol
+        text: t(edge.protocol)
       });
       els.edges.appendChild(label);
     }
@@ -223,7 +257,8 @@ function renderNodes() {
       fill
     }));
 
-    const titleLines = wrapLabel(state.compact ? node.shortLabel : node.label, node.w > 210 ? 18 : 15);
+    const textToWrap = state.compact ? t(node.shortLabel) : t(node.label);
+    const titleLines = wrapLabel(textToWrap, node.w > 210 ? 18 : 15);
     titleLines.forEach((line, index) => {
       group.appendChild(svgEl("text", {
         class: "node-title",
@@ -244,7 +279,7 @@ function renderNodes() {
         class: "node-status",
         x: node.w / 2,
         y: node.h - 10,
-        text: statusLabels[node.status] || node.status
+        text: t(statusLabels[node.status] || node.status)
       }));
     }
 
@@ -295,7 +330,7 @@ function renderModeStrip() {
   state.data.modes.forEach((mode) => {
     const button = document.createElement("button");
     button.type = "button";
-    button.textContent = mode.label;
+    button.textContent = t(mode.label);
     button.className = state.modeId === mode.id ? "is-active" : "";
     button.addEventListener("click", () => setMode(mode.id));
     els.modeStrip.appendChild(button);
@@ -308,7 +343,7 @@ function renderScenarios() {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `scenario-button${state.selectedScenarioId === scenario.id ? " is-active" : ""}`;
-    button.innerHTML = `<strong>${scenario.label}</strong><span>${scenario.description}</span>`;
+    button.innerHTML = `<strong>${t(scenario.label)}</strong><span>${t(scenario.description)}</span>`;
     button.addEventListener("click", () => {
       state.selectedScenarioId = scenario.id;
       stopPlayback();
@@ -327,7 +362,9 @@ function renderLayersList() {
     button.type = "button";
     button.className = "layer-button";
     button.setAttribute("aria-pressed", String(!hidden));
-    button.innerHTML = `<strong>${hidden ? "Show" : "Hide"} ${layer.label}</strong><span>${layer.description}</span>`;
+    const showText = state.lang === "es" ? "Mostrar" : "Show";
+    const hideText = state.lang === "es" ? "Ocultar" : "Hide";
+    button.innerHTML = `<strong>${hidden ? showText : hideText} ${t(layer.label)}</strong><span>${t(layer.description)}</span>`;
     button.addEventListener("click", () => {
       if (hidden) state.hiddenLayers.delete(layer.id);
       else state.hiddenLayers.add(layer.id);
@@ -342,7 +379,7 @@ function renderTimeline() {
   state.data.timeline.forEach((step) => {
     const div = document.createElement("div");
     div.className = `timeline-step${state.activeScenarioStep === step.id ? " is-active" : ""}`;
-    div.innerHTML = `${step.label}<span>${step.gate}</span>`;
+    div.innerHTML = `${t(step.label)}<span>${t(step.gate)}</span>`;
     div.addEventListener("click", () => {
       state.activeScenarioStep = step.id;
       selectNode(step.id, { focus: true });
@@ -353,11 +390,12 @@ function renderTimeline() {
 
 function renderActiveMode() {
   const mode = modeById(state.modeId);
-  els.activeModeName.textContent = mode.label;
-  els.activeModeDescription.textContent = mode.description;
+  els.activeModeName.textContent = t(mode.label);
+  els.activeModeDescription.textContent = t(mode.description);
 }
 
 function render() {
+  updateStaticStrings();
   renderLayers();
   renderEdges();
   renderNodes();
@@ -395,13 +433,13 @@ function updateDetail(node) {
   els.detailCard.classList.remove("is-updating");
   void els.detailCard.offsetWidth;
   els.detailCard.classList.add("is-updating");
-  els.detailDomain.textContent = `${node.layer} / ${node.status}`;
-  els.detailTitle.textContent = node.label;
-  els.detailSummary.textContent = node.summary;
-  els.detailAuthority.textContent = node.authority;
-  els.detailConsumes.textContent = node.consumes;
-  els.detailExposes.textContent = node.exposes;
-  els.detailProtocol.textContent = node.protocol;
+  els.detailDomain.textContent = `${t(node.layer)} / ${t(node.status)}`;
+  els.detailTitle.textContent = t(node.label);
+  els.detailSummary.textContent = t(node.summary);
+  els.detailAuthority.textContent = t(node.authority);
+  els.detailConsumes.textContent = t(node.consumes);
+  els.detailExposes.textContent = t(node.exposes);
+  els.detailProtocol.textContent = t(node.protocol);
   els.detailDocs.replaceChildren();
   (node.docs || []).forEach((doc) => {
     const link = document.createElement("a");
@@ -421,7 +459,9 @@ function showRelation(edge) {
   const source = nodeById(edge.source);
   const target = nodeById(edge.target);
   els.relationSummary.className = "relation-highlight";
-  els.relationSummary.innerHTML = `<strong>${source.label} -> ${target.label}</strong><br>${edge.label}<br><br><strong>Protocol:</strong> ${edge.protocol}<br><strong>Ownership:</strong> ${edge.ownership}`;
+  const pL = state.lang === "es" ? "Protocolo" : "Protocol";
+  const oL = state.lang === "es" ? "Dueño" : "Ownership";
+  els.relationSummary.innerHTML = `<strong>${t(source.label)} -> ${t(target.label)}</strong><br>${t(edge.label)}<br><br><strong>${pL}:</strong> ${t(edge.protocol)}<br><strong>${oL}:</strong> ${t(edge.ownership)}`;
 }
 
 function highlightRelationForNode(id) {
@@ -492,6 +532,8 @@ function animateViewBox(target, duration = 520) {
   const start = { ...state.viewBox };
   const startTime = performance.now();
   const ease = (t) => 1 - Math.pow(1 - t, 3);
+  
+  // We attach the update to the tick so callout stays pinned during animation
   function tick(now) {
     const p = Math.min(1, (now - startTime) / duration);
     const k = ease(p);
@@ -501,35 +543,89 @@ function animateViewBox(target, duration = 520) {
       w: start.w + (target.w - start.w) * k,
       h: start.h + (target.h - start.h) * k
     });
+    if (state.playing && state.activeScenarioStep) {
+      updateCalloutPosition(state.activeScenarioStep);
+    }
     if (p < 1) requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
 }
 
-function playScenario() {
+// Show callout tied to node
+function showCallout(nodeId, text) {
+  if (!text) {
+    els.callout.hidden = true;
+    return;
+  }
+  els.callout.textContent = text;
+  els.callout.hidden = false;
+  updateCalloutPosition(nodeId);
+}
+
+function updateCalloutPosition(nodeId) {
+  if (els.callout.hidden) return;
+  const nodeEl = document.querySelector(`[data-node="${nodeId}"]`);
+  if (!nodeEl) return;
+  const rect = nodeEl.getBoundingClientRect();
+  const canvasRect = els.svg.parentElement.getBoundingClientRect();
+  
+  // Align it just to the right of the node
+  const left = (rect.right - canvasRect.left) + 24;
+  const top = (rect.top - canvasRect.top) + (rect.height / 2) - (els.callout.offsetHeight / 2);
+  
+  els.callout.style.left = `${left}px`;
+  els.callout.style.top = `${top}px`;
+}
+
+async function playScenario() {
   stopPlayback(false);
   const scenario = scenarioById(state.selectedScenarioId);
   if (!scenario) return;
   state.playing = true;
-  els.play.textContent = "Stop";
-  scenario.steps.forEach((nodeId, index) => {
-    const timer = setTimeout(() => {
-      state.activeScenarioStep = nodeId;
-      selectNode(nodeId, { focus: true });
-      const next = scenario.steps[index + 1];
-      const edge = state.data.edges.find((item) => item.source === nodeId && item.target === next);
-      if (edge) showRelation(edge);
-      if (index === scenario.steps.length - 1) stopPlayback(false);
-    }, index * 1150);
-    state.timers.push(timer);
-  });
+  els.play.textContent = state.lang === "es" ? "Detener" : "Stop";
+
+  for (let i = 0; i < scenario.steps.length; i++) {
+    if (!state.playing) break;
+
+    const nodeId = scenario.steps[i];
+    state.activeScenarioStep = nodeId;
+    selectNode(nodeId, { focus: true });
+
+    const next = scenario.steps[i + 1];
+    const edge = state.data.edges.find((item) => item.source === nodeId && item.target === next);
+    if (edge) showRelation(edge);
+
+    // Get explanation text
+    const explanation = scenario.explanations && scenario.explanations[i] 
+      ? t(scenario.explanations[i]) 
+      : "";
+      
+    if (explanation) {
+      showCallout(nodeId, explanation);
+    } else {
+      els.callout.hidden = true;
+    }
+
+    // Dynamic wait time based on reading speed (approx 50ms per character, min 2500ms)
+    const waitTime = explanation ? Math.max(2500, explanation.length * 45) : 1200;
+
+    await new Promise(resolve => {
+      const timer = setTimeout(resolve, waitTime);
+      state.timers.push(timer);
+    });
+  }
+  
+  if (state.playing) {
+    stopPlayback(false);
+  }
 }
 
 function stopPlayback(clearStep = true) {
   state.timers.forEach((timer) => clearTimeout(timer));
   state.timers = [];
   state.playing = false;
-  els.play.textContent = "Play E2E";
+  els.play.textContent = state.lang === "es" ? "Reproducir" : "Play";
+  els.callout.hidden = true;
   if (clearStep) state.activeScenarioStep = null;
 }
 
@@ -548,12 +644,20 @@ function reset() {
 }
 
 function updateIntroDetail() {
-  els.detailDomain.textContent = "Atlas";
-  els.detailTitle.textContent = "Evolith Governance Atlas";
-  els.detailSummary.textContent = "Vista dinamica de producto y arquitectura: explora autoridad, interfaces, evidencia, agentes, satelites e integraciones.";
-  els.detailAuthority.textContent = "Core define reglas; Tracker decide estado; proveedores aportan hechos.";
-  els.detailConsumes.textContent = "Vision de producto, C4, flujos, hubs de producto y governance corpus.";
-  els.detailExposes.textContent = "Narrativas dinamicas y rutas de exploracion.";
+  els.detailDomain.textContent = state.lang === "es" ? "Atlas" : "Atlas";
+  els.detailTitle.textContent = state.lang === "es" ? "Atlas de Gobierno Evolith" : "Evolith Governance Atlas";
+  els.detailSummary.textContent = state.lang === "es" 
+    ? "Vista dinamica de producto y arquitectura: explora autoridad, interfaces, evidencia, agentes, satelites e integraciones." 
+    : "Dynamic product and architecture vision: explore authority, interfaces, evidence, agents, satellites, and integrations.";
+  els.detailAuthority.textContent = state.lang === "es" 
+    ? "Core define reglas; Tracker decide estado; proveedores aportan hechos."
+    : "Core defines rules; Tracker decides state; providers supply facts.";
+  els.detailConsumes.textContent = state.lang === "es" 
+    ? "Vision de producto, C4, flujos, hubs de producto y governance corpus."
+    : "Product vision, C4, flows, product hubs, and governance corpus.";
+  els.detailExposes.textContent = state.lang === "es" 
+    ? "Narrativas dinamicas y rutas de exploracion."
+    : "Dynamic narratives and exploration paths.";
   els.detailProtocol.textContent = "CLI, REST, MCP, eventos, Git, policy evaluation.";
   els.detailDocs.replaceChildren();
 }
@@ -588,6 +692,24 @@ function installInteractions() {
     els.compact.setAttribute("aria-pressed", String(state.compact));
     render();
   });
+  
+  els.langToggle.addEventListener("click", () => {
+    state.lang = state.lang === "es" ? "en" : "es";
+    updateStaticStrings();
+    render();
+    if (state.selectedNodeId) {
+      updateDetail(nodeById(state.selectedNodeId));
+      highlightRelationForNode(state.selectedNodeId);
+    }
+    // Update callout if playing
+    if (state.playing && state.activeScenarioStep) {
+      const scenario = scenarioById(state.selectedScenarioId);
+      const index = scenario.steps.indexOf(state.activeScenarioStep);
+      if (index >= 0 && scenario.explanations && scenario.explanations[index]) {
+        els.callout.textContent = t(scenario.explanations[index]);
+      }
+    }
+  });
 
   els.svg.addEventListener("wheel", (event) => {
     event.preventDefault();
@@ -601,6 +723,7 @@ function installInteractions() {
       w: nextW,
       h: nextH
     });
+    if(state.playing) updateCalloutPosition(state.activeScenarioStep);
   }, { passive: false });
 
   els.svg.addEventListener("pointerdown", (event) => {
@@ -623,6 +746,7 @@ function installInteractions() {
       x: state.pan.viewBox.x - dx,
       y: state.pan.viewBox.y - dy
     });
+    if(state.playing) updateCalloutPosition(state.activeScenarioStep);
   });
 
   els.svg.addEventListener("pointerup", (event) => {
@@ -647,6 +771,7 @@ async function init() {
   state.data = await loadData();
   setViewBox(state.initialViewBox);
   installInteractions();
+  updateStaticStrings();
   updateIntroDetail();
   render();
   selectNode("tracker", { focus: false });

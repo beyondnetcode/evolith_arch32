@@ -201,7 +201,14 @@ h2 {
   padding: 14px;
 }
 
-.scenario-list,
+.scenario-list {
+  display: grid;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
 .layer-list {
   display: grid;
   gap: 8px;
@@ -635,4 +642,47 @@ h2 {
     animation-iteration-count: 1 !important;
     transition-duration: .001ms !important;
   }
+}
+
+/* Didactic Callout */
+.didactic-callout {
+  position: absolute;
+  background: var(--surface);
+  border: 1px solid var(--primary-base);
+  border-left: 4px solid var(--primary-base);
+  color: var(--text-base);
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  font-size: 14px;
+  line-height: 1.4;
+  max-width: 320px;
+  z-index: 100;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.didactic-callout[hidden] {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  display: block; /* override default hidden to allow transition */
+}
+
+/* Lang Toggle */
+.lang-toggle {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-base);
+  font-weight: 600;
+  padding: 0 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 36px;
+}
+
+.lang-toggle:hover {
+  background: var(--surface);
+  border-color: var(--primary-base);
 }

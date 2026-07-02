@@ -17,16 +17,17 @@
           <path d="M18 28 32 36l14-8 11 6-25 14L7 34l11-6Z" fill="#eef7f8"/>
         </svg>
         <div>
-          <p class="eyebrow">Dynamic product and architecture vision</p>
-          <h1>Evolith Governance Atlas</h1>
+          <p class="eyebrow" id="topSubtitle">Dynamic product and architecture vision</p>
+          <h1 id="topTitle">Evolith Governance Atlas</h1>
         </div>
       </div>
 
       <div class="top-actions" aria-label="Controles principales">
         <label class="search-box">
-          <span>Buscar</span>
+          <span id="searchLabel">Buscar</span>
           <input id="searchInput" type="search" placeholder="Core API, MCP, evidence...">
         </label>
+        <button id="langToggle" type="button" class="lang-toggle">EN</button>
         <button id="playButton" type="button" class="primary-action">Play E2E</button>
         <button id="resetButton" type="button">Reset</button>
       </div>
@@ -37,12 +38,12 @@
     <main class="workspace">
       <aside class="rail left-rail">
         <section class="rail-card">
-          <h2>Scenario</h2>
+          <h2 id="scenarioRailTitle">Scenario</h2>
           <div id="scenarioList" class="scenario-list"></div>
         </section>
 
         <section class="rail-card">
-          <h2>Layers</h2>
+          <h2 id="layersRailTitle">Layers</h2>
           <div id="layerList" class="layer-list"></div>
         </section>
       </aside>
@@ -60,6 +61,7 @@
         </div>
 
         <div id="atlasCanvas" class="atlas-canvas" tabindex="0" aria-label="Mapa dinamico de arquitectura Evolith">
+          <div id="didacticCallout" class="didactic-callout" aria-live="polite" hidden></div>
           <svg id="atlasSvg" viewBox="0 0 1600 940" role="img" aria-labelledby="atlasTitle atlasDesc">
             <title id="atlasTitle">Evolith Governance Atlas</title>
             <desc id="atlasDesc">Mapa dinamico de vision de producto, interfaces, runtime, gobierno, evidencia e integraciones de Evolith.</desc>
@@ -81,7 +83,7 @@
               <g id="packetsGroup"></g>
             </g>
           </svg>
-          <div class="zoom-hint">Scroll para zoom, arrastra para mover, click para inspeccionar.</div>
+          <div class="zoom-hint" id="zoomHint">Scroll para zoom, arrastra para mover, click para inspeccionar.</div>
         </div>
 
         <footer class="timeline" aria-label="Timeline E2E">
@@ -97,31 +99,31 @@
 
           <div class="detail-grid">
             <div>
-              <strong>Autoridad</strong>
+              <strong id="labelAuthority">Autoridad</strong>
               <span id="detailAuthority">Seleccion dinamica</span>
             </div>
             <div>
-              <strong>Consume</strong>
+              <strong id="labelConsumes">Consume</strong>
               <span id="detailConsumes">Nodos, relaciones y escenarios</span>
             </div>
             <div>
-              <strong>Expone</strong>
+              <strong id="labelExposes">Expone</strong>
               <span id="detailExposes">Contexto de arquitectura</span>
             </div>
             <div>
-              <strong>Protocolo</strong>
+              <strong id="labelProtocol">Protocolo</strong>
               <span id="detailProtocol">CLI, REST, MCP, eventos, Git</span>
             </div>
           </div>
 
           <div class="doc-links">
-            <strong>Fuentes</strong>
+            <strong id="labelSources">Fuentes</strong>
             <div id="detailDocs"></div>
           </div>
         </section>
 
         <section class="rail-card">
-          <h2>Relation</h2>
+          <h2 id="relationRailTitle">Relation</h2>
           <p id="relationSummary">Activa un modo o escenario para ver protocolos, ownership y direccion de flujo.</p>
         </section>
       </aside>

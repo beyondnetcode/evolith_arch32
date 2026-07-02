@@ -1,7 +1,13 @@
 {
   "meta": {
-    "title": "Evolith Governance Atlas",
-    "subtitle": "Dynamic product and architecture vision",
+    "title": {
+      "en": "Evolith Governance Atlas",
+      "es": "Atlas de Gobierno Evolith"
+    },
+    "subtitle": {
+      "en": "Dynamic product and architecture vision",
+      "es": "Visión dinámica de producto y arquitectura"
+    },
     "version": "2.0.0",
     "sourceDocs": [
       "README.md",
@@ -14,40 +20,70 @@
   "layers": [
     {
       "id": "experience",
-      "label": "Experience",
-      "description": "Personas and product-facing orchestration.",
+      "label": {
+        "en": "Experience",
+        "es": "Experiencia"
+      },
+      "description": {
+        "en": "Personas and product-facing orchestration.",
+        "es": "Personas y orquestación orientada al producto."
+      },
       "y": 58,
       "height": 120,
       "color": "#dbeafe"
     },
     {
       "id": "authority",
-      "label": "Authority",
-      "description": "Where canonical decisions and lifecycle state live.",
+      "label": {
+        "en": "Authority",
+        "es": "Autoridad"
+      },
+      "description": {
+        "en": "Where canonical decisions and lifecycle state live.",
+        "es": "Donde residen las decisiones canónicas y el estado del ciclo de vida."
+      },
       "y": 214,
       "height": 155,
       "color": "#fce7f3"
     },
     {
       "id": "execution",
-      "label": "Execution",
-      "description": "Five-phase SDLC and agent-mediated work.",
+      "label": {
+        "en": "Execution",
+        "es": "Ejecución"
+      },
+      "description": {
+        "en": "Five-phase SDLC and agent-mediated work.",
+        "es": "SDLC de cinco fases y trabajo mediado por agentes."
+      },
       "y": 405,
       "height": 190,
       "color": "#dcfce7"
     },
     {
       "id": "interfaces",
-      "label": "Interfaces",
-      "description": "Local, remote, agentic, and typed entry surfaces.",
+      "label": {
+        "en": "Interfaces",
+        "es": "Interfaces"
+      },
+      "description": {
+        "en": "Local, remote, agentic, and typed entry surfaces.",
+        "es": "Superficies de entrada locales, remotas, agénticas y tipadas."
+      },
       "y": 630,
       "height": 120,
       "color": "#fef3c7"
     },
     {
       "id": "constitution",
-      "label": "Constitution",
-      "description": "Persistent governance corpus and reusable standards.",
+      "label": {
+        "en": "Constitution",
+        "es": "Constitución"
+      },
+      "description": {
+        "en": "Persistent governance corpus and reusable standards.",
+        "es": "Corpus de gobierno persistente y estándares reutilizables."
+      },
       "y": 786,
       "height": 116,
       "color": "#e0f2fe"
@@ -56,52 +92,154 @@
   "modes": [
     {
       "id": "executive",
-      "label": "Executive Flow",
-      "description": "Idea to production under governed evidence.",
-      "focusEdges": ["intent-tracker", "tracker-discovery", "discovery-design", "design-build", "build-qa", "qa-release", "release-tracker", "tracker-scorecards"]
+      "label": {
+        "en": "Executive Flow",
+        "es": "Flujo Ejecutivo"
+      },
+      "description": {
+        "en": "Idea to production under governed evidence.",
+        "es": "De la idea a producción bajo evidencia gobernada."
+      },
+      "focusEdges": [
+        "intent-tracker",
+        "tracker-discovery",
+        "discovery-design",
+        "design-build",
+        "build-qa",
+        "qa-release",
+        "release-tracker",
+        "tracker-scorecards"
+      ]
     },
     {
       "id": "authority",
-      "label": "Authority Map",
-      "description": "Who owns state, decisions, rules, evidence, and execution.",
-      "focusEdges": ["core-corpus", "tracker-core-api", "core-api-tracker", "tracker-github", "satellites-core", "satellites-board", "board-core"]
+      "label": {
+        "en": "Authority Map",
+        "es": "Mapa de Autoridad"
+      },
+      "description": {
+        "en": "Who owns state, decisions, rules, evidence, and execution.",
+        "es": "Quién es dueño del estado, decisiones, reglas, evidencia y ejecución."
+      },
+      "focusEdges": [
+        "core-corpus",
+        "tracker-core-api",
+        "core-api-tracker",
+        "tracker-github",
+        "satellites-core",
+        "satellites-board",
+        "board-core"
+      ]
     },
     {
       "id": "interfaces",
-      "label": "Interface Map",
-      "description": "CLI, REST, MCP, SDK, command/event runtime, and protocol boundaries.",
-      "focusEdges": ["cli-core", "sdk-core-api", "mcp-core", "agent-runtime-core", "tracker-core-api", "agents-mcp", "agents-runtime"]
+      "label": {
+        "en": "Interface Map",
+        "es": "Mapa de Interfaces"
+      },
+      "description": {
+        "en": "CLI, REST, MCP, SDK, command/event runtime, and protocol boundaries.",
+        "es": "Fronteras de protocolo, CLI, REST, MCP, SDK y runtime de eventos."
+      },
+      "focusEdges": [
+        "cli-core",
+        "sdk-core-api",
+        "mcp-core",
+        "agent-runtime-core",
+        "tracker-core-api",
+        "agents-mcp",
+        "agents-runtime"
+      ]
     },
     {
       "id": "evidence",
-      "label": "Evidence Graph",
-      "description": "Artifact lineage from business intent to audited gate decisions.",
-      "focusEdges": ["intent-tracker", "tracker-evidence", "evidence-core-api", "core-api-corpus", "core-api-tracker", "tracker-audit"]
+      "label": {
+        "en": "Evidence Graph",
+        "es": "Grafo de Evidencia"
+      },
+      "description": {
+        "en": "Artifact lineage from business intent to audited gate decisions.",
+        "es": "Linaje de artefactos desde la intención de negocio hasta las decisiones auditadas."
+      },
+      "focusEdges": [
+        "intent-tracker",
+        "tracker-evidence",
+        "evidence-core-api",
+        "core-api-corpus",
+        "core-api-tracker",
+        "tracker-audit"
+      ]
     },
     {
       "id": "agentic",
-      "label": "Agentic Mode",
-      "description": "Governed AI execution through MCP, Agent Runtime, policy, memory, and adapters.",
-      "focusEdges": ["agents-mcp", "agents-runtime", "mcp-core", "agent-runtime-core", "runtime-hermes", "runtime-memory", "runtime-tracker"]
+      "label": {
+        "en": "Agentic Mode",
+        "es": "Modo Agéntico"
+      },
+      "description": {
+        "en": "Governed AI execution through MCP, Agent Runtime, policy, memory, and adapters.",
+        "es": "Ejecución de IA gobernada mediante MCP, Agent Runtime, memoria y adaptadores."
+      },
+      "focusEdges": [
+        "agents-mcp",
+        "agents-runtime",
+        "mcp-core",
+        "agent-runtime-core",
+        "runtime-hermes",
+        "runtime-memory",
+        "runtime-tracker"
+      ]
     },
     {
       "id": "satellites",
-      "label": "Satellite Mode",
-      "description": "Hub-and-spoke inheritance and upstream learning from products such as UMS.",
-      "focusEdges": ["core-satellites", "satellites-cli", "satellites-core", "satellites-board", "board-core", "satellites-github"]
+      "label": {
+        "en": "Satellite Mode",
+        "es": "Modo Satélites"
+      },
+      "description": {
+        "en": "Hub-and-spoke inheritance and upstream learning from products such as UMS.",
+        "es": "Herencia hub-and-spoke y aprendizaje upstream desde productos (ej. UMS)."
+      },
+      "focusEdges": [
+        "core-satellites",
+        "satellites-cli",
+        "satellites-core",
+        "satellites-board",
+        "board-core",
+        "satellites-github"
+      ]
     },
     {
       "id": "integration",
-      "label": "Integration Mode",
-      "description": "Provider-neutral composition through ports, adapters, and anti-corruption layers.",
-      "focusEdges": ["tracker-acl", "acl-tools", "runtime-hermes", "runtime-github", "runtime-observability", "tracker-github"]
+      "label": {
+        "en": "Integration Mode",
+        "es": "Modo Integración"
+      },
+      "description": {
+        "en": "Provider-neutral composition through ports, adapters, and anti-corruption layers.",
+        "es": "Composición neutral de proveedores mediante adaptadores y capas anti-corrupción."
+      },
+      "focusEdges": [
+        "tracker-acl",
+        "acl-tools",
+        "runtime-hermes",
+        "runtime-github",
+        "runtime-observability",
+        "tracker-github"
+      ]
     }
   ],
   "nodes": [
     {
       "id": "business-intent",
-      "label": "Business Intent",
-      "shortLabel": "Intent",
+      "label": {
+        "en": "Business Intent",
+        "es": "Intención de Negocio"
+      },
+      "shortLabel": {
+        "en": "Intent",
+        "es": "Intención"
+      },
       "layer": "experience",
       "type": "persona",
       "status": "concept",
@@ -109,17 +247,40 @@
       "y": 96,
       "w": 180,
       "h": 74,
-      "summary": "The product idea, stakeholder need, hypothesis, ROI, and decision trigger that starts governance.",
-      "authority": "Business stakeholders approve intent, but Evolith governs the evidence chain.",
-      "consumes": "Market context, customer hypothesis, business trigger.",
-      "exposes": "Discovery input, assumptions, KPI targets, capability questions.",
-      "protocol": "Human workflow",
-      "docs": ["reference/product-suite/vision/evolith-product-vision-master.md"]
+      "summary": {
+        "en": "The product idea, stakeholder need, hypothesis, ROI, and decision trigger that starts governance.",
+        "es": "Idea de producto, necesidad del stakeholder, ROI y gatillo que inicia el proceso."
+      },
+      "authority": {
+        "en": "Business stakeholders approve intent, but Evolith governs the evidence chain.",
+        "es": "El negocio aprueba la intención, Evolith gobierna la evidencia."
+      },
+      "consumes": {
+        "en": "Market context, customer hypothesis, business trigger.",
+        "es": "Contexto de mercado, hipótesis, disparador de negocio."
+      },
+      "exposes": {
+        "en": "Discovery input, assumptions, KPI targets, capability questions.",
+        "es": "Input de discovery, supuestos, metas KPI, preguntas de capacidades."
+      },
+      "protocol": {
+        "en": "Human workflow",
+        "es": "Flujo humano"
+      },
+      "docs": [
+        "reference/product-suite/vision/evolith-product-vision-master.md"
+      ]
     },
     {
       "id": "humans",
-      "label": "Humans",
-      "shortLabel": "Humans",
+      "label": {
+        "en": "Humans",
+        "es": "Humanos"
+      },
+      "shortLabel": {
+        "en": "Humans",
+        "es": "Humanos"
+      },
       "layer": "experience",
       "type": "persona",
       "status": "operational",
@@ -127,17 +288,41 @@
       "y": 96,
       "w": 155,
       "h": 74,
-      "summary": "Architects, engineers, product roles, and approvers interacting through Tracker, CLI, and reviews.",
-      "authority": "Human accountability remains required for critical decisions, exceptions, and vision changes.",
-      "consumes": "Dashboards, gate verdicts, CLI results, architecture docs.",
-      "exposes": "Approvals, evidence, decisions, PRs, ADR proposals.",
-      "protocol": "Web, CLI, PR review",
-      "docs": ["README.md", "reference/product-suite/vision/evolith-product-vision-master.md"]
+      "summary": {
+        "en": "Architects, engineers, product roles, and approvers interacting through Tracker, CLI, and reviews.",
+        "es": "Arquitectos, ingenieros, roles de producto y aprobadores interactuando mediante Tracker y CLI."
+      },
+      "authority": {
+        "en": "Human accountability remains required for critical decisions, exceptions, and vision changes.",
+        "es": "La responsabilidad humana es requerida para decisiones críticas y excepciones."
+      },
+      "consumes": {
+        "en": "Dashboards, gate verdicts, CLI results, architecture docs.",
+        "es": "Dashboards, veredictos de compuertas, resultados CLI, arquitectura."
+      },
+      "exposes": {
+        "en": "Approvals, evidence, decisions, PRs, ADR proposals.",
+        "es": "Aprobaciones, evidencia, decisiones, PRs, propuestas ADR."
+      },
+      "protocol": {
+        "en": "Web, CLI, PR review",
+        "es": "Web, CLI, Revisión de PR"
+      },
+      "docs": [
+        "README.md",
+        "reference/product-suite/vision/evolith-product-vision-master.md"
+      ]
     },
     {
       "id": "ai-agents",
-      "label": "AI Agents",
-      "shortLabel": "Agents",
+      "label": {
+        "en": "AI Agents",
+        "es": "Agentes de IA"
+      },
+      "shortLabel": {
+        "en": "Agents",
+        "es": "Agentes"
+      },
       "layer": "experience",
       "type": "agent",
       "status": "operational",
@@ -145,17 +330,41 @@
       "y": 96,
       "w": 160,
       "h": 74,
-      "summary": "LLM or autonomous agents that execute bounded activities through MCP or Agent Runtime.",
-      "authority": "Agents execute work but do not approve gates or rewrite governance.",
-      "consumes": "Approved context, tools, prompts, policy boundaries.",
-      "exposes": "Tool calls, artifacts, trace events, candidate evidence.",
-      "protocol": "MCP, HTTP command/event",
-      "docs": ["reference/products/mcp-services/README.md", "reference/architecture/agent-runtime/README.md"]
+      "summary": {
+        "en": "LLM or autonomous agents that execute bounded activities through MCP or Agent Runtime.",
+        "es": "Agentes autónomos o LLM que ejecutan actividades limitadas mediante MCP o Agent Runtime."
+      },
+      "authority": {
+        "en": "Agents execute work but do not approve gates or rewrite governance.",
+        "es": "Los agentes ejecutan el trabajo pero no aprueban compuertas ni reescriben reglas."
+      },
+      "consumes": {
+        "en": "Approved context, tools, prompts, policy boundaries.",
+        "es": "Contexto aprobado, herramientas, prompts, límites de políticas."
+      },
+      "exposes": {
+        "en": "Tool calls, artifacts, trace events, candidate evidence.",
+        "es": "Llamadas a herramientas, artefactos, eventos de traza, evidencia candidata."
+      },
+      "protocol": {
+        "en": "MCP, HTTP command/event",
+        "es": "MCP, Comandos HTTP/eventos"
+      },
+      "docs": [
+        "reference/products/mcp-services/README.md",
+        "reference/architecture/agent-runtime/README.md"
+      ]
     },
     {
       "id": "scorecards",
-      "label": "Executive Scorecards",
-      "shortLabel": "Scorecards",
+      "label": {
+        "en": "Executive Scorecards",
+        "es": "Scorecards Ejecutivos"
+      },
+      "shortLabel": {
+        "en": "Scorecards",
+        "es": "Scorecards"
+      },
       "layer": "experience",
       "type": "view",
       "status": "target",
@@ -163,17 +372,40 @@
       "y": 92,
       "w": 230,
       "h": 82,
-      "summary": "Executive and compliance view of adherence, evidence completeness, drift, exceptions, and delivery readiness.",
-      "authority": "Dashboard rendering is not authority; trusted metrics depend on Evolith governance records.",
-      "consumes": "Tracker state, Core evaluations, metrics definitions, provider facts.",
-      "exposes": "Health scores, adherence, readiness, executive narrative.",
-      "protocol": "Dashboard/read model",
-      "docs": ["reference/product-suite/vision/evolith-product-vision-master.md"]
+      "summary": {
+        "en": "Executive and compliance view of adherence, evidence completeness, drift, exceptions, and delivery readiness.",
+        "es": "Vista ejecutiva y de compliance sobre la adherencia, completitud de evidencia y excepciones."
+      },
+      "authority": {
+        "en": "Dashboard rendering is not authority; trusted metrics depend on Evolith governance records.",
+        "es": "El dashboard no tiene autoridad; las métricas confiables dependen de Evolith."
+      },
+      "consumes": {
+        "en": "Tracker state, Core evaluations, metrics definitions, provider facts.",
+        "es": "Estado del Tracker, evaluaciones Core, métricas, datos de proveedores."
+      },
+      "exposes": {
+        "en": "Health scores, adherence, readiness, executive narrative.",
+        "es": "Puntajes de salud, adherencia, preparación, narrativa ejecutiva."
+      },
+      "protocol": {
+        "en": "Dashboard/read model",
+        "es": "Dashboard/Modelo de lectura"
+      },
+      "docs": [
+        "reference/product-suite/vision/evolith-product-vision-master.md"
+      ]
     },
     {
       "id": "tracker",
-      "label": "Evolith Tracker",
-      "shortLabel": "Tracker",
+      "label": {
+        "en": "Evolith Tracker",
+        "es": "Tracker de Evolith"
+      },
+      "shortLabel": {
+        "en": "Tracker",
+        "es": "Tracker"
+      },
       "layer": "authority",
       "type": "product",
       "status": "target",
@@ -181,17 +413,41 @@
       "y": 246,
       "w": 330,
       "h": 98,
-      "summary": "SaaS SDLC orchestrator and auditor. Owns canonical runtime governance state, approvals, exceptions, and phase decisions.",
-      "authority": "Canonical owner of tenant, product, phase, gate decision, evidence acceptance, approvals, exceptions, and audit state.",
-      "consumes": "Core technical evaluations, provider facts, user approvals, agent trace events.",
-      "exposes": "Gate decisions, phase transitions, evidence graph, audit history, executive views.",
-      "protocol": "Web, REST client, events",
-      "docs": ["reference/products/evolith-tracker/README.md", "reference/product-suite/vision/evolith-product-vision-master.md"]
+      "summary": {
+        "en": "SaaS SDLC orchestrator and auditor. Owns canonical runtime governance state, approvals, exceptions, and phase decisions.",
+        "es": "Orquestador SaaS del SDLC. Dueño del estado canónico de gobierno, aprobaciones y decisiones de fase."
+      },
+      "authority": {
+        "en": "Canonical owner of tenant, product, phase, gate decision, evidence acceptance, approvals, exceptions, and audit state.",
+        "es": "Dueño canónico de fase, decisiones de compuerta, aceptación de evidencia y estado de auditoría."
+      },
+      "consumes": {
+        "en": "Core technical evaluations, provider facts, user approvals, agent trace events.",
+        "es": "Evaluaciones técnicas, datos de proveedores, aprobaciones, eventos de traza de agentes."
+      },
+      "exposes": {
+        "en": "Gate decisions, phase transitions, evidence graph, audit history, executive views.",
+        "es": "Decisiones de compuerta, transiciones de fase, grafo de evidencia, historial."
+      },
+      "protocol": {
+        "en": "Web, REST client, events",
+        "es": "Web, cliente REST, eventos"
+      },
+      "docs": [
+        "reference/products/evolith-tracker/README.md",
+        "reference/product-suite/vision/evolith-product-vision-master.md"
+      ]
     },
     {
       "id": "evidence-graph",
-      "label": "Canonical Evidence Graph",
-      "shortLabel": "Evidence",
+      "label": {
+        "en": "Canonical Evidence Graph",
+        "es": "Grafo de Evidencia Canónico"
+      },
+      "shortLabel": {
+        "en": "Evidence",
+        "es": "Evidencia"
+      },
       "layer": "authority",
       "type": "data",
       "status": "target",
@@ -199,17 +455,41 @@
       "y": 246,
       "w": 275,
       "h": 98,
-      "summary": "Traceable graph from intent to artifacts, criteria, evaluation, decision, source provider, actor, model, commit, and release.",
-      "authority": "Tracker records acceptance and final decisions; Core supplies technical evaluation facts.",
-      "consumes": "Artifacts, provider identifiers, actor context, ruleset versions, evaluation results.",
-      "exposes": "Audit-ready traceability and lineage.",
-      "protocol": "Canonical state/read model",
-      "docs": ["reference/product-suite/vision/evolith-product-vision-master.md", "reference/governance/sdlc/traceability-model.md"]
+      "summary": {
+        "en": "Traceable graph from intent to artifacts, criteria, evaluation, decision, source provider, actor, model, commit, and release.",
+        "es": "Grafo trazable desde la intención hasta el release y los artefactos."
+      },
+      "authority": {
+        "en": "Tracker records acceptance and final decisions; Core supplies technical evaluation facts.",
+        "es": "Tracker registra aceptación; Core provee datos de evaluación técnica."
+      },
+      "consumes": {
+        "en": "Artifacts, provider identifiers, actor context, ruleset versions, evaluation results.",
+        "es": "Artefactos, identificadores, contexto de actores, reglas, resultados de evaluación."
+      },
+      "exposes": {
+        "en": "Audit-ready traceability and lineage.",
+        "es": "Trazabilidad y linaje listos para auditoría."
+      },
+      "protocol": {
+        "en": "Canonical state/read model",
+        "es": "Estado canónico/Modelo de lectura"
+      },
+      "docs": [
+        "reference/product-suite/vision/evolith-product-vision-master.md",
+        "reference/governance/sdlc/traceability-model.md"
+      ]
     },
     {
       "id": "architecture-board",
-      "label": "Architecture Board",
-      "shortLabel": "Board",
+      "label": {
+        "en": "Architecture Board",
+        "es": "Comité de Arquitectura"
+      },
+      "shortLabel": {
+        "en": "Board",
+        "es": "Comité"
+      },
       "layer": "authority",
       "type": "governance",
       "status": "operational",
@@ -217,17 +497,40 @@
       "y": 250,
       "w": 220,
       "h": 90,
-      "summary": "Human governance authority for Core ADRs, upstream promotions, universal standards, and strategic decisions.",
-      "authority": "Approves universal Core evolution and accepted architecture trade-offs.",
-      "consumes": "Product evidence, ADR candidates, maturity signals, exceptions.",
-      "exposes": "Accepted ADRs, rejected proposals, promotion decisions.",
-      "protocol": "ADR review and governance process",
-      "docs": ["reference/governance/standards/communication/visuals/v06-governance-flow.md"]
+      "summary": {
+        "en": "Human governance authority for Core ADRs, upstream promotions, universal standards, and strategic decisions.",
+        "es": "Autoridad de gobierno humano para ADRs del Core, promociones y decisiones estratégicas."
+      },
+      "authority": {
+        "en": "Approves universal Core evolution and accepted architecture trade-offs.",
+        "es": "Aprueba la evolución universal del Core y trade-offs aceptados."
+      },
+      "consumes": {
+        "en": "Product evidence, ADR candidates, maturity signals, exceptions.",
+        "es": "Evidencia de producto, candidatos ADR, señales de madurez."
+      },
+      "exposes": {
+        "en": "Accepted ADRs, rejected proposals, promotion decisions.",
+        "es": "ADRs aceptados, propuestas rechazadas, decisiones de promoción."
+      },
+      "protocol": {
+        "en": "ADR review and governance process",
+        "es": "Revisión de ADRs y proceso de gobierno"
+      },
+      "docs": [
+        "reference/governance/standards/communication/visuals/v06-governance-flow.md"
+      ]
     },
     {
       "id": "discovery",
-      "label": "Discovery",
-      "shortLabel": "Discovery",
+      "label": {
+        "en": "Discovery",
+        "es": "Discovery"
+      },
+      "shortLabel": {
+        "en": "Discovery",
+        "es": "Discovery"
+      },
       "layer": "execution",
       "type": "phase",
       "status": "operational",
@@ -235,17 +538,40 @@
       "y": 454,
       "w": 190,
       "h": 98,
-      "summary": "Product discovery, problem framing, build-versus-compose analysis, and Business Sign-Off.",
-      "authority": "Tracker records the binding gate decision after authorized review.",
-      "consumes": "Discovery canvas, assumptions, ROI, alternatives.",
-      "exposes": "Business Sign-Off evidence and gate outcome.",
-      "protocol": "Phase gate evaluation",
-      "docs": ["reference/product-suite/vision/evolith-product-vision-master.md"]
+      "summary": {
+        "en": "Product discovery, problem framing, build-versus-compose analysis, and Business Sign-Off.",
+        "es": "Descubrimiento de producto, definición de problema y firma de negocio (Business Sign-Off)."
+      },
+      "authority": {
+        "en": "Tracker records the binding gate decision after authorized review.",
+        "es": "Tracker registra la decisión vinculante de la compuerta."
+      },
+      "consumes": {
+        "en": "Discovery canvas, assumptions, ROI, alternatives.",
+        "es": "Canvas de discovery, supuestos, ROI, alternativas."
+      },
+      "exposes": {
+        "en": "Business Sign-Off evidence and gate outcome.",
+        "es": "Evidencia de Business Sign-Off y resultado de compuerta."
+      },
+      "protocol": {
+        "en": "Phase gate evaluation",
+        "es": "Evaluación de compuerta de fase"
+      },
+      "docs": [
+        "reference/product-suite/vision/evolith-product-vision-master.md"
+      ]
     },
     {
       "id": "design",
-      "label": "Spec-Driven Design",
-      "shortLabel": "Design",
+      "label": {
+        "en": "Spec-Driven Design",
+        "es": "Diseño por Especificación"
+      },
+      "shortLabel": {
+        "en": "Design",
+        "es": "Diseño"
+      },
       "layer": "execution",
       "type": "phase",
       "status": "operational",
@@ -253,17 +579,40 @@
       "y": 454,
       "w": 210,
       "h": 98,
-      "summary": "Functional intent, contracts, ADRs, architecture baseline, and Design Baseline gate.",
-      "authority": "Architecture and product governance approve the baseline.",
-      "consumes": "Functional stories, contracts, ADRs, risk analysis.",
-      "exposes": "Design Baseline gate result.",
-      "protocol": "Artifact validation, policy evaluation",
-      "docs": ["reference/product-suite/vision/evolith-product-vision-master.md"]
+      "summary": {
+        "en": "Functional intent, contracts, ADRs, architecture baseline, and Design Baseline gate.",
+        "es": "Intención funcional, contratos, ADRs, línea base de arquitectura y compuerta Design Baseline."
+      },
+      "authority": {
+        "en": "Architecture and product governance approve the baseline.",
+        "es": "Gobierno de arquitectura y producto aprueban la línea base."
+      },
+      "consumes": {
+        "en": "Functional stories, contracts, ADRs, risk analysis.",
+        "es": "Historias funcionales, contratos, ADRs, análisis de riesgos."
+      },
+      "exposes": {
+        "en": "Design Baseline gate result.",
+        "es": "Resultado de la compuerta Design Baseline."
+      },
+      "protocol": {
+        "en": "Artifact validation, policy evaluation",
+        "es": "Validación de artefactos, evaluación de políticas"
+      },
+      "docs": [
+        "reference/product-suite/vision/evolith-product-vision-master.md"
+      ]
     },
     {
       "id": "construction",
-      "label": "Construction",
-      "shortLabel": "Build",
+      "label": {
+        "en": "Construction",
+        "es": "Construcción"
+      },
+      "shortLabel": {
+        "en": "Build",
+        "es": "Construcción"
+      },
       "layer": "execution",
       "type": "phase",
       "status": "operational",
@@ -271,17 +620,40 @@
       "y": 454,
       "w": 205,
       "h": 98,
-      "summary": "Implementation work linked to source, pipeline, specifications, and drift traceability.",
-      "authority": "Construction gate policy and authorized approvers decide readiness.",
-      "consumes": "Source changes, linked work, CI, DoD, drift results.",
-      "exposes": "Successful Build evidence.",
-      "protocol": "Git, CI, CLI validation",
-      "docs": ["reference/product-suite/vision/evolith-product-vision-master.md"]
+      "summary": {
+        "en": "Implementation work linked to source, pipeline, specifications, and drift traceability.",
+        "es": "Trabajo de implementación enlazado al código, pipeline, especificaciones y trazabilidad de drift."
+      },
+      "authority": {
+        "en": "Construction gate policy and authorized approvers decide readiness.",
+        "es": "Políticas de la compuerta de construcción y aprobadores deciden la preparación."
+      },
+      "consumes": {
+        "en": "Source changes, linked work, CI, DoD, drift results.",
+        "es": "Cambios en código, trabajo enlazado, CI, DoD, resultados de drift."
+      },
+      "exposes": {
+        "en": "Successful Build evidence.",
+        "es": "Evidencia de construcción exitosa (Successful Build)."
+      },
+      "protocol": {
+        "en": "Git, CI, CLI validation",
+        "es": "Validación por Git, CI, CLI"
+      },
+      "docs": [
+        "reference/product-suite/vision/evolith-product-vision-master.md"
+      ]
     },
     {
       "id": "qa",
-      "label": "QA and Integration",
-      "shortLabel": "QA",
+      "label": {
+        "en": "QA and Integration",
+        "es": "QA e Integración"
+      },
+      "shortLabel": {
+        "en": "QA",
+        "es": "QA"
+      },
       "layer": "execution",
       "type": "phase",
       "status": "operational",
@@ -289,17 +661,40 @@
       "y": 454,
       "w": 210,
       "h": 98,
-      "summary": "Regression, security, contracts, exceptions, and RC Stamped readiness.",
-      "authority": "Quality governance accepts or blocks release candidate evidence.",
-      "consumes": "Test summary, coverage, security, contract results.",
-      "exposes": "RC Stamped gate outcome.",
-      "protocol": "CI, test runners, policy evaluation",
-      "docs": ["reference/product-suite/vision/evolith-product-vision-master.md"]
+      "summary": {
+        "en": "Regression, security, contracts, exceptions, and RC Stamped readiness.",
+        "es": "Regresión, seguridad, contratos, excepciones y preparación de RC Stamped."
+      },
+      "authority": {
+        "en": "Quality governance accepts or blocks release candidate evidence.",
+        "es": "Gobierno de calidad acepta o bloquea evidencia del release candidate."
+      },
+      "consumes": {
+        "en": "Test summary, coverage, security, contract results.",
+        "es": "Resumen de pruebas, cobertura, seguridad, resultados de contratos."
+      },
+      "exposes": {
+        "en": "RC Stamped gate outcome.",
+        "es": "Resultado de la compuerta RC Stamped."
+      },
+      "protocol": {
+        "en": "CI, test runners, policy evaluation",
+        "es": "CI, ejecutores de pruebas, políticas"
+      },
+      "docs": [
+        "reference/product-suite/vision/evolith-product-vision-master.md"
+      ]
     },
     {
       "id": "release",
-      "label": "Release Planner",
-      "shortLabel": "Release",
+      "label": {
+        "en": "Release Planner",
+        "es": "Planificador de Release"
+      },
+      "shortLabel": {
+        "en": "Release",
+        "es": "Release"
+      },
       "layer": "execution",
       "type": "phase",
       "status": "operational",
@@ -307,17 +702,40 @@
       "y": 454,
       "w": 210,
       "h": 98,
-      "summary": "Rollout, operational readiness, rollback, observability, and Production Live approval.",
-      "authority": "Operations and release governance authorize production.",
-      "consumes": "Release plan, observability, rollback, deployment evidence.",
-      "exposes": "Production Live gate outcome.",
-      "protocol": "Gate evaluation, events, reporting",
-      "docs": ["reference/product-suite/vision/evolith-product-vision-master.md"]
+      "summary": {
+        "en": "Rollout, operational readiness, rollback, observability, and Production Live approval.",
+        "es": "Rollout, preparación operativa, observabilidad y aprobación de Production Live."
+      },
+      "authority": {
+        "en": "Operations and release governance authorize production.",
+        "es": "Operaciones y gobierno de release autorizan paso a producción."
+      },
+      "consumes": {
+        "en": "Release plan, observability, rollback, deployment evidence.",
+        "es": "Plan de release, observabilidad, rollback, evidencia de despliegue."
+      },
+      "exposes": {
+        "en": "Production Live gate outcome.",
+        "es": "Resultado de la compuerta Production Live."
+      },
+      "protocol": {
+        "en": "Gate evaluation, events, reporting",
+        "es": "Evaluación de compuerta, eventos, reportes"
+      },
+      "docs": [
+        "reference/product-suite/vision/evolith-product-vision-master.md"
+      ]
     },
     {
       "id": "agent-runtime",
-      "label": "Agent Runtime",
-      "shortLabel": "Runtime",
+      "label": {
+        "en": "Agent Runtime",
+        "es": "Agent Runtime"
+      },
+      "shortLabel": {
+        "en": "Runtime",
+        "es": "Runtime"
+      },
       "layer": "execution",
       "type": "runtime",
       "status": "mvp",
@@ -325,17 +743,40 @@
       "y": 440,
       "w": 220,
       "h": 120,
-      "summary": "Ports-and-adapters mediation for governed multi-step agent execution.",
-      "authority": "Owns execution trace for agent work; does not approve gates or redefine Core rules.",
-      "consumes": "Commands, approvals, policies, Core evaluations, adapters.",
-      "exposes": "AgentRuntimeResult, SSE events, trace publication.",
-      "protocol": "HTTP command/event, SSE, ports/adapters",
-      "docs": ["reference/architecture/agent-runtime/README.md"]
+      "summary": {
+        "en": "Ports-and-adapters mediation for governed multi-step agent execution.",
+        "es": "Mediación de puertos y adaptadores para la ejecución agéntica multi-paso gobernada."
+      },
+      "authority": {
+        "en": "Owns execution trace for agent work; does not approve gates or redefine Core rules.",
+        "es": "Controla la traza de ejecución del agente; no aprueba compuertas ni redefine reglas del Core."
+      },
+      "consumes": {
+        "en": "Commands, approvals, policies, Core evaluations, adapters.",
+        "es": "Comandos, aprobaciones, políticas, evaluaciones Core, adaptadores."
+      },
+      "exposes": {
+        "en": "AgentRuntimeResult, SSE events, trace publication.",
+        "es": "Resultados, eventos SSE, publicación de trazas."
+      },
+      "protocol": {
+        "en": "HTTP command/event, SSE, ports/adapters",
+        "es": "Comandos HTTP/eventos, SSE, puertos/adaptadores"
+      },
+      "docs": [
+        "reference/architecture/agent-runtime/README.md"
+      ]
     },
     {
       "id": "smart-cli",
-      "label": "Smart CLI",
-      "shortLabel": "CLI",
+      "label": {
+        "en": "Smart CLI",
+        "es": "Smart CLI"
+      },
+      "shortLabel": {
+        "en": "CLI",
+        "es": "CLI"
+      },
       "layer": "interfaces",
       "type": "interface",
       "status": "operational",
@@ -343,17 +784,40 @@
       "y": 656,
       "w": 190,
       "h": 78,
-      "summary": "Local enforcement surface for humans, CI, satellite scaffolding, validation, gates, ADRs, and MCP delegation.",
-      "authority": "Produces local evaluation output and exit codes; final product decisions remain outside CLI.",
-      "consumes": "Workspace files, evolith.yaml, corpus, SDK remote calls.",
-      "exposes": "Console output, JSON envelope, exit code, scaffolded artifacts.",
-      "protocol": "CLI commands, filesystem, optional REST",
-      "docs": ["reference/products/smart-cli/README.md"]
+      "summary": {
+        "en": "Local enforcement surface for humans, CI, satellite scaffolding, validation, gates, ADRs, and MCP delegation.",
+        "es": "Superficie de validación local para scaffolding, compuertas, ADRs y delegación MCP."
+      },
+      "authority": {
+        "en": "Produces local evaluation output and exit codes; final product decisions remain outside CLI.",
+        "es": "Produce resultados locales; las decisiones finales de producto ocurren fuera del CLI."
+      },
+      "consumes": {
+        "en": "Workspace files, evolith.yaml, corpus, SDK remote calls.",
+        "es": "Archivos de workspace, evolith.yaml, corpus, llamadas remotas por SDK."
+      },
+      "exposes": {
+        "en": "Console output, JSON envelope, exit code, scaffolded artifacts.",
+        "es": "Salida de consola, sobre JSON, código de salida, artefactos generados."
+      },
+      "protocol": {
+        "en": "CLI commands, filesystem, optional REST",
+        "es": "Comandos CLI, sistema de archivos, REST opcional"
+      },
+      "docs": [
+        "reference/products/smart-cli/README.md"
+      ]
     },
     {
       "id": "core-api",
-      "label": "Core API",
-      "shortLabel": "Core API",
+      "label": {
+        "en": "Core API",
+        "es": "Core API"
+      },
+      "shortLabel": {
+        "en": "Core API",
+        "es": "Core API"
+      },
       "layer": "interfaces",
       "type": "interface",
       "status": "operational",
@@ -361,17 +825,41 @@
       "y": 656,
       "w": 190,
       "h": 78,
-      "summary": "REST exposure layer for stateless technical governance evaluation.",
-      "authority": "Owns technical evaluation only; Tracker owns binding product decisions.",
-      "consumes": "EvaluationContext, evidence, workspaceRef, corpus, cache.",
-      "exposes": "ADR-0073 envelopes, RFC 9457 problems, reference reads.",
-      "protocol": "REST / HTTP",
-      "docs": ["reference/products/core-api/README.md", "reference/architecture/views/view-by-interface-flow.md"]
+      "summary": {
+        "en": "REST exposure layer for stateless technical governance evaluation.",
+        "es": "Capa de exposición REST para la evaluación técnica de gobierno sin estado."
+      },
+      "authority": {
+        "en": "Owns technical evaluation only; Tracker owns binding product decisions.",
+        "es": "Solo tiene la evaluación técnica; Tracker es dueño de las decisiones vinculantes."
+      },
+      "consumes": {
+        "en": "EvaluationContext, evidence, workspaceRef, corpus, cache.",
+        "es": "Contexto de evaluación, evidencia, corpus, caché."
+      },
+      "exposes": {
+        "en": "ADR-0073 envelopes, RFC 9457 problems, reference reads.",
+        "es": "Sobres ADR-0073, problemas RFC 9457, lectura de referencia."
+      },
+      "protocol": {
+        "en": "REST / HTTP",
+        "es": "REST / HTTP"
+      },
+      "docs": [
+        "reference/products/core-api/README.md",
+        "reference/architecture/views/view-by-interface-flow.md"
+      ]
     },
     {
       "id": "mcp-server",
-      "label": "MCP Server",
-      "shortLabel": "MCP",
+      "label": {
+        "en": "MCP Server",
+        "es": "Servidor MCP"
+      },
+      "shortLabel": {
+        "en": "MCP",
+        "es": "MCP"
+      },
       "layer": "interfaces",
       "type": "interface",
       "status": "operational",
@@ -379,17 +867,41 @@
       "y": 656,
       "w": 190,
       "h": 78,
-      "summary": "Model Context Protocol gateway for governed tools, resources, prompts, ABAC, audit, and metrics.",
-      "authority": "Owns MCP tool execution contract; caller owns conversation state.",
-      "consumes": "Tool inputs, resources, prompts, auth context, corpus.",
-      "exposes": "MCP result envelopes, resources, prompts, audit metrics.",
-      "protocol": "MCP stdio / Streamable HTTP",
-      "docs": ["reference/products/mcp-services/README.md", "reference/architecture/views/view-by-interface-flow.md"]
+      "summary": {
+        "en": "Model Context Protocol gateway for governed tools, resources, prompts, ABAC, audit, and metrics.",
+        "es": "Gateway MCP para herramientas gobernadas, recursos, prompts, ABAC, auditoría y métricas."
+      },
+      "authority": {
+        "en": "Owns MCP tool execution contract; caller owns conversation state.",
+        "es": "Controla el contrato de ejecución MCP; el cliente controla el estado de la conversación."
+      },
+      "consumes": {
+        "en": "Tool inputs, resources, prompts, auth context, corpus.",
+        "es": "Inputs de herramientas, recursos, prompts, contexto de auth."
+      },
+      "exposes": {
+        "en": "MCP result envelopes, resources, prompts, audit metrics.",
+        "es": "Resultados MCP, recursos, prompts, métricas de auditoría."
+      },
+      "protocol": {
+        "en": "MCP stdio / Streamable HTTP",
+        "es": "MCP stdio / HTTP"
+      },
+      "docs": [
+        "reference/products/mcp-services/README.md",
+        "reference/architecture/views/view-by-interface-flow.md"
+      ]
     },
     {
       "id": "sdk",
-      "label": "Evolith SDK",
-      "shortLabel": "SDK",
+      "label": {
+        "en": "Evolith SDK",
+        "es": "SDK Evolith"
+      },
+      "shortLabel": {
+        "en": "SDK",
+        "es": "SDK"
+      },
       "layer": "interfaces",
       "type": "interface",
       "status": "operational",
@@ -397,17 +909,40 @@
       "y": 656,
       "w": 175,
       "h": 78,
-      "summary": "Typed client surface for Core API and runtime integration.",
-      "authority": "Client boundary only; domain decisions remain in Core/Tracker.",
-      "consumes": "Typed requests, configuration, auth.",
-      "exposes": "Typed responses and integration helpers.",
-      "protocol": "REST client",
-      "docs": ["reference/architecture/evolith-sdk/README.md"]
+      "summary": {
+        "en": "Typed client surface for Core API and runtime integration.",
+        "es": "Superficie de cliente tipado para integración con Core API y runtime."
+      },
+      "authority": {
+        "en": "Client boundary only; domain decisions remain in Core/Tracker.",
+        "es": "Solo límite de cliente; las decisiones de dominio permanecen en Core/Tracker."
+      },
+      "consumes": {
+        "en": "Typed requests, configuration, auth.",
+        "es": "Peticiones tipadas, configuración, auth."
+      },
+      "exposes": {
+        "en": "Typed responses and integration helpers.",
+        "es": "Respuestas tipadas y utilidades de integración."
+      },
+      "protocol": {
+        "en": "REST client",
+        "es": "Cliente REST"
+      },
+      "docs": [
+        "reference/architecture/evolith-sdk/README.md"
+      ]
     },
     {
       "id": "acl",
-      "label": "Anti-Corruption Layers",
-      "shortLabel": "ACLs",
+      "label": {
+        "en": "Anti-Corruption Layers",
+        "es": "Capas Anti-Corrupción"
+      },
+      "shortLabel": {
+        "en": "ACLs",
+        "es": "ACLs"
+      },
       "layer": "interfaces",
       "type": "adapter",
       "status": "target",
@@ -415,17 +950,40 @@
       "y": 656,
       "w": 230,
       "h": 78,
-      "summary": "Replaceable adapters that prevent external provider schemas from contaminating the canonical domain model.",
-      "authority": "Translate and validate; do not decide phase authority.",
-      "consumes": "Provider schemas, external identifiers, webhooks.",
-      "exposes": "Canonical artifacts, evidence, provider status.",
-      "protocol": "Adapters, REST, webhooks",
-      "docs": ["reference/product-suite/vision/evolith-product-vision-master.md"]
+      "summary": {
+        "en": "Replaceable adapters that prevent external provider schemas from contaminating the canonical domain model.",
+        "es": "Adaptadores reemplazables que previenen que esquemas externos contaminen el dominio canónico."
+      },
+      "authority": {
+        "en": "Translate and validate; do not decide phase authority.",
+        "es": "Traducen y validan; no deciden la autoridad de fase."
+      },
+      "consumes": {
+        "en": "Provider schemas, external identifiers, webhooks.",
+        "es": "Esquemas de proveedor, webhooks."
+      },
+      "exposes": {
+        "en": "Canonical artifacts, evidence, provider status.",
+        "es": "Artefactos canónicos, evidencia, estado del proveedor."
+      },
+      "protocol": {
+        "en": "Adapters, REST, webhooks",
+        "es": "Adaptadores, REST, webhooks"
+      },
+      "docs": [
+        "reference/product-suite/vision/evolith-product-vision-master.md"
+      ]
     },
     {
       "id": "core-corpus",
-      "label": "Evolith Core Constitution",
-      "shortLabel": "Core",
+      "label": {
+        "en": "Evolith Core Constitution",
+        "es": "Constitución Core de Evolith"
+      },
+      "shortLabel": {
+        "en": "Core",
+        "es": "Core"
+      },
       "layer": "constitution",
       "type": "core",
       "status": "operational",
@@ -433,17 +991,42 @@
       "y": 814,
       "w": 270,
       "h": 70,
-      "summary": "Living reference corpus: ADRs, standards, taxonomies, rulesets, schemas, gates, topologies, contracts, and templates.",
-      "authority": "Canonical source of reusable engineering governance definitions.",
-      "consumes": "Accepted ADRs, upstream lessons, architecture board decisions.",
-      "exposes": "Rules, standards, blueprints, schemas, phase gates.",
-      "protocol": "Git, Markdown, JSON, YAML, Rego",
-      "docs": ["reference/README.md", "reference/core/README.md", "reference/architecture/README.md"]
+      "summary": {
+        "en": "Living reference corpus: ADRs, standards, taxonomies, rulesets, schemas, gates, topologies, contracts, and templates.",
+        "es": "Corpus de referencia vivo: ADRs, estándares, reglas, esquemas, compuertas y plantillas."
+      },
+      "authority": {
+        "en": "Canonical source of reusable engineering governance definitions.",
+        "es": "Fuente canónica de definiciones reutilizables de gobierno de ingeniería."
+      },
+      "consumes": {
+        "en": "Accepted ADRs, upstream lessons, architecture board decisions.",
+        "es": "ADRs aceptados, lecciones upstream, decisiones del comité de arquitectura."
+      },
+      "exposes": {
+        "en": "Rules, standards, blueprints, schemas, phase gates.",
+        "es": "Reglas, estándares, blueprints, esquemas, compuertas de fase."
+      },
+      "protocol": {
+        "en": "Git, Markdown, JSON, YAML, Rego",
+        "es": "Git, Markdown, JSON, YAML, Rego"
+      },
+      "docs": [
+        "reference/README.md",
+        "reference/core/README.md",
+        "reference/architecture/README.md"
+      ]
     },
     {
       "id": "rules-opa",
-      "label": "Rulesets and OPA Policies",
-      "shortLabel": "Rules/OPA",
+      "label": {
+        "en": "Rulesets and OPA Policies",
+        "es": "Reglas y Políticas OPA"
+      },
+      "shortLabel": {
+        "en": "Rules/OPA",
+        "es": "Reglas/OPA"
+      },
       "layer": "constitution",
       "type": "artifact",
       "status": "operational",
@@ -451,17 +1034,41 @@
       "y": 814,
       "w": 250,
       "h": 70,
-      "summary": "Native TypeScript rules and OPA policies used for executable governance evaluation.",
-      "authority": "Machine-readable enforcement truth; must preserve dual-engine parity for architectural rules.",
-      "consumes": "Core rules, schemas, test fixtures.",
-      "exposes": "Policy decisions, violations, remediation signals.",
-      "protocol": "Native TS, OPA/Rego/WASM",
-      "docs": ["rulesets/README.md", "rulesets/opa/README.md"]
+      "summary": {
+        "en": "Native TypeScript rules and OPA policies used for executable governance evaluation.",
+        "es": "Reglas nativas de TS y políticas OPA usadas para la evaluación de gobierno ejecutable."
+      },
+      "authority": {
+        "en": "Machine-readable enforcement truth; must preserve dual-engine parity for architectural rules.",
+        "es": "Verdad de ejecución por máquina; debe preservar la paridad de doble motor."
+      },
+      "consumes": {
+        "en": "Core rules, schemas, test fixtures.",
+        "es": "Reglas del Core, esquemas, pruebas."
+      },
+      "exposes": {
+        "en": "Policy decisions, violations, remediation signals.",
+        "es": "Decisiones de políticas, violaciones, señales de remediación."
+      },
+      "protocol": {
+        "en": "Native TS, OPA/Rego/WASM",
+        "es": "Nativo TS, OPA/Rego/WASM"
+      },
+      "docs": [
+        "rulesets/README.md",
+        "rulesets/opa/README.md"
+      ]
     },
     {
       "id": "artifacts",
-      "label": "Artifacts and Templates",
-      "shortLabel": "Artifacts",
+      "label": {
+        "en": "Artifacts and Templates",
+        "es": "Artefactos y Plantillas"
+      },
+      "shortLabel": {
+        "en": "Artifacts",
+        "es": "Artefactos"
+      },
       "layer": "constitution",
       "type": "artifact",
       "status": "operational",
@@ -469,17 +1076,40 @@
       "y": 814,
       "w": 245,
       "h": 70,
-      "summary": "Discovery canvas, OpenAPI contracts, YAML templates, evidence schemas, release notes, and SDLC records.",
-      "authority": "Structured evidence format; acceptance remains with Tracker/gates.",
-      "consumes": "Phase requirements, schemas, product context.",
-      "exposes": "Reusable templates and validatable evidence artifacts.",
-      "protocol": "Artifact exchange",
-      "docs": ["reference/governance/sdlc/README.md"]
+      "summary": {
+        "en": "Discovery canvas, OpenAPI contracts, YAML templates, evidence schemas, release notes, and SDLC records.",
+        "es": "Canvas de discovery, contratos OpenAPI, plantillas YAML, esquemas de evidencia."
+      },
+      "authority": {
+        "en": "Structured evidence format; acceptance remains with Tracker/gates.",
+        "es": "Formato de evidencia estructurada; la aceptación permanece en Tracker."
+      },
+      "consumes": {
+        "en": "Phase requirements, schemas, product context.",
+        "es": "Requerimientos de fase, esquemas, contexto."
+      },
+      "exposes": {
+        "en": "Reusable templates and validatable evidence artifacts.",
+        "es": "Plantillas reutilizables y artefactos validados."
+      },
+      "protocol": {
+        "en": "Artifact exchange",
+        "es": "Intercambio de artefactos"
+      },
+      "docs": [
+        "reference/governance/sdlc/README.md"
+      ]
     },
     {
       "id": "satellites",
-      "label": "Satellite Products",
-      "shortLabel": "Satellites",
+      "label": {
+        "en": "Satellite Products",
+        "es": "Productos Satélite"
+      },
+      "shortLabel": {
+        "en": "Satellites",
+        "es": "Satélites"
+      },
       "layer": "constitution",
       "type": "satellite",
       "status": "operational",
@@ -487,17 +1117,40 @@
       "y": 814,
       "w": 240,
       "h": 70,
-      "summary": "Products such as UMS and product repositories that inherit, adopt, specialize, and propose upstream improvements.",
-      "authority": "Local product decisions stay local unless promoted by Architecture Board.",
-      "consumes": "Core rules, blueprints, gates, templates.",
-      "exposes": "Implementation evidence, lessons, ADR candidates, conformance signals.",
-      "protocol": "Git, CLI, REST, artifact exchange",
-      "docs": ["reference/products/ums-reference/README.md"]
+      "summary": {
+        "en": "Products such as UMS and product repositories that inherit, adopt, specialize, and propose upstream improvements.",
+        "es": "Productos (como UMS) que heredan, adoptan, especializan y proponen mejoras al Core."
+      },
+      "authority": {
+        "en": "Local product decisions stay local unless promoted by Architecture Board.",
+        "es": "Las decisiones locales siguen siendo locales salvo promoción del comité."
+      },
+      "consumes": {
+        "en": "Core rules, blueprints, gates, templates.",
+        "es": "Reglas del Core, blueprints, compuertas, plantillas."
+      },
+      "exposes": {
+        "en": "Implementation evidence, lessons, ADR candidates, conformance signals.",
+        "es": "Evidencia de implementación, lecciones, candidatos ADR."
+      },
+      "protocol": {
+        "en": "Git, CLI, REST, artifact exchange",
+        "es": "Git, CLI, REST, intercambio"
+      },
+      "docs": [
+        "reference/products/ums-reference/README.md"
+      ]
     },
     {
       "id": "github",
-      "label": "GitHub / CI",
-      "shortLabel": "GitHub",
+      "label": {
+        "en": "GitHub / CI",
+        "es": "GitHub / CI"
+      },
+      "shortLabel": {
+        "en": "GitHub",
+        "es": "GitHub"
+      },
       "layer": "execution",
       "type": "external",
       "status": "operational",
@@ -505,17 +1158,40 @@
       "y": 270,
       "w": 170,
       "h": 80,
-      "summary": "External repository and CI/CD platform that holds source, PRs, commits, and pipeline evidence.",
-      "authority": "Owns source and pipeline facts; Evolith decides whether facts satisfy governance.",
-      "consumes": "Repository changes, workflow configuration.",
-      "exposes": "Commits, PRs, checks, artifacts, webhooks.",
-      "protocol": "Git, API, webhooks",
-      "docs": ["reference/platforms/ci-cd/github-actions-profile.md"]
+      "summary": {
+        "en": "External repository and CI/CD platform that holds source, PRs, commits, and pipeline evidence.",
+        "es": "Repositorio externo y plataforma CI/CD con evidencia de código y pipelines."
+      },
+      "authority": {
+        "en": "Owns source and pipeline facts; Evolith decides whether facts satisfy governance.",
+        "es": "Dueño de los hechos del código; Evolith decide si satisfacen el gobierno."
+      },
+      "consumes": {
+        "en": "Repository changes, workflow configuration.",
+        "es": "Cambios en el repositorio, configuración de flujos."
+      },
+      "exposes": {
+        "en": "Commits, PRs, checks, artifacts, webhooks.",
+        "es": "Commits, PRs, validaciones, webhooks."
+      },
+      "protocol": {
+        "en": "Git, API, webhooks",
+        "es": "Git, API, webhooks"
+      },
+      "docs": [
+        "reference/platforms/ci-cd/github-actions-profile.md"
+      ]
     },
     {
       "id": "external-tools",
-      "label": "External Tools",
-      "shortLabel": "Tools",
+      "label": {
+        "en": "External Tools",
+        "es": "Herramientas Externas"
+      },
+      "shortLabel": {
+        "en": "Tools",
+        "es": "Herramientas"
+      },
       "layer": "execution",
       "type": "external",
       "status": "target",
@@ -523,17 +1199,40 @@
       "y": 258,
       "w": 170,
       "h": 92,
-      "summary": "Jira, Linear, Trello, observability, analytics, CI/CD, deployment, security, and collaboration providers.",
-      "authority": "Produce operational facts and evidence; never approve phase transitions independently.",
-      "consumes": "Commands, exports, integration settings.",
-      "exposes": "Work items, telemetry, analytics, tool events.",
-      "protocol": "Provider APIs, webhooks",
-      "docs": ["reference/product-suite/vision/evolith-product-vision-master.md"]
+      "summary": {
+        "en": "Jira, Linear, Trello, observability, analytics, CI/CD, deployment, security, and collaboration providers.",
+        "es": "Proveedores de Jira, Trello, observabilidad, seguridad, CI/CD, etc."
+      },
+      "authority": {
+        "en": "Produce operational facts and evidence; never approve phase transitions independently.",
+        "es": "Producen hechos operativos; nunca aprueban transiciones de fase solos."
+      },
+      "consumes": {
+        "en": "Commands, exports, integration settings.",
+        "es": "Comandos, exportaciones, configuración."
+      },
+      "exposes": {
+        "en": "Work items, telemetry, analytics, tool events.",
+        "es": "Elementos de trabajo, telemetría, analíticas, eventos."
+      },
+      "protocol": {
+        "en": "Provider APIs, webhooks",
+        "es": "APIs, webhooks"
+      },
+      "docs": [
+        "reference/product-suite/vision/evolith-product-vision-master.md"
+      ]
     },
     {
       "id": "hermes",
-      "label": "Hermes / LLM Engines",
-      "shortLabel": "Hermes",
+      "label": {
+        "en": "Hermes / LLM Engines",
+        "es": "Hermes / Motores LLM"
+      },
+      "shortLabel": {
+        "en": "Hermes",
+        "es": "Hermes"
+      },
       "layer": "execution",
       "type": "external",
       "status": "adapter",
@@ -541,17 +1240,40 @@
       "y": 580,
       "w": 185,
       "h": 72,
-      "summary": "Replaceable agent execution engine behind Agent Runtime ports.",
-      "authority": "Executor only; no governance authority.",
-      "consumes": "Approved context, prompts, tools.",
-      "exposes": "Model/agent responses and tool requests.",
-      "protocol": "Agent engine adapter",
-      "docs": ["reference/architecture/agent-runtime/README.md"]
+      "summary": {
+        "en": "Replaceable agent execution engine behind Agent Runtime ports.",
+        "es": "Motor de ejecución agéntica reemplazable detrás de los puertos de Agent Runtime."
+      },
+      "authority": {
+        "en": "Executor only; no governance authority.",
+        "es": "Solo ejecutor; sin autoridad de gobierno."
+      },
+      "consumes": {
+        "en": "Approved context, prompts, tools.",
+        "es": "Contexto aprobado, prompts, herramientas."
+      },
+      "exposes": {
+        "en": "Model/agent responses and tool requests.",
+        "es": "Respuestas del modelo y solicitudes de herramientas."
+      },
+      "protocol": {
+        "en": "Agent engine adapter",
+        "es": "Adaptador de motor de agente"
+      },
+      "docs": [
+        "reference/architecture/agent-runtime/README.md"
+      ]
     },
     {
       "id": "runtime-memory",
-      "label": "Runtime Memory",
-      "shortLabel": "Memory",
+      "label": {
+        "en": "Runtime Memory",
+        "es": "Memoria de Runtime"
+      },
+      "shortLabel": {
+        "en": "Memory",
+        "es": "Memoria"
+      },
       "layer": "execution",
       "type": "data",
       "status": "mvp",
@@ -559,84 +1281,1172 @@
       "y": 580,
       "w": 160,
       "h": 72,
-      "summary": "Working memory for agent execution. It is not Tracker canonical lifecycle state.",
-      "authority": "Runtime-scoped context only.",
-      "consumes": "Conversation and task context.",
-      "exposes": "Working memory for runtime steps.",
-      "protocol": "Runtime port",
-      "docs": ["reference/architecture/agent-runtime/README.md"]
+      "summary": {
+        "en": "Working memory for agent execution. It is not Tracker canonical lifecycle state.",
+        "es": "Memoria de trabajo para ejecución de agentes. No es estado canónico del Tracker."
+      },
+      "authority": {
+        "en": "Runtime-scoped context only.",
+        "es": "Solo contexto de tiempo de ejecución."
+      },
+      "consumes": {
+        "en": "Conversation and task context.",
+        "es": "Contexto de la conversación y tarea."
+      },
+      "exposes": {
+        "en": "Working memory for runtime steps.",
+        "es": "Memoria de trabajo para pasos de ejecución."
+      },
+      "protocol": {
+        "en": "Runtime port",
+        "es": "Puerto de runtime"
+      },
+      "docs": [
+        "reference/architecture/agent-runtime/README.md"
+      ]
     }
   ],
   "edges": [
-    {"id": "intent-tracker", "source": "business-intent", "target": "tracker", "label": "starts governed process", "protocol": "workflow", "flow": "executive", "ownership": "Tracker records process state"},
-    {"id": "humans-tracker", "source": "humans", "target": "tracker", "label": "approves and reviews", "protocol": "web", "flow": "authority", "ownership": "Humans approve critical decisions"},
-    {"id": "agents-mcp", "source": "ai-agents", "target": "mcp-server", "label": "tools/resources/prompts", "protocol": "MCP", "flow": "agentic", "ownership": "MCP owns tool contract"},
-    {"id": "agents-runtime", "source": "ai-agents", "target": "agent-runtime", "label": "explicit command", "protocol": "HTTP command/event", "flow": "agentic", "ownership": "Runtime owns execution trace"},
-    {"id": "tracker-discovery", "source": "tracker", "target": "discovery", "label": "opens phase", "protocol": "state machine", "flow": "executive", "ownership": "Tracker owns phase state"},
-    {"id": "discovery-design", "source": "discovery", "target": "design", "label": "Business Sign-Off", "protocol": "gate", "flow": "executive", "ownership": "Tracker records binding decision"},
-    {"id": "design-build", "source": "design", "target": "construction", "label": "Design Baseline", "protocol": "gate", "flow": "executive", "ownership": "Tracker records binding decision"},
-    {"id": "build-qa", "source": "construction", "target": "qa", "label": "Successful Build", "protocol": "gate", "flow": "executive", "ownership": "Tracker records binding decision"},
-    {"id": "qa-release", "source": "qa", "target": "release", "label": "RC Stamped", "protocol": "gate", "flow": "executive", "ownership": "Tracker records binding decision"},
-    {"id": "release-tracker", "source": "release", "target": "tracker", "label": "Production Live decision", "protocol": "event", "flow": "executive", "ownership": "Tracker owns canonical decision"},
-    {"id": "tracker-scorecards", "source": "tracker", "target": "scorecards", "label": "health/readiness", "protocol": "read model", "flow": "executive", "ownership": "Tracker owns source state"},
-    {"id": "tracker-evidence", "source": "tracker", "target": "evidence-graph", "label": "records lineage", "protocol": "canonical state", "flow": "evidence", "ownership": "Tracker owns graph state"},
-    {"id": "evidence-core-api", "source": "evidence-graph", "target": "core-api", "label": "evaluation context", "protocol": "REST payload", "flow": "evidence", "ownership": "Core returns technical evaluation"},
-    {"id": "tracker-core-api", "source": "tracker", "target": "core-api", "label": "stateless evaluation", "protocol": "REST / HTTP", "flow": "interfaces", "ownership": "Core owns technical result only"},
-    {"id": "core-api-tracker", "source": "core-api", "target": "tracker", "label": "technical result", "protocol": "ADR-0073 envelope", "flow": "authority", "ownership": "Tracker records binding decision"},
-    {"id": "core-api-corpus", "source": "core-api", "target": "core-corpus", "label": "reads governance", "protocol": "filesystem/cache", "flow": "evidence", "ownership": "Corpus is source of rules"},
-    {"id": "core-corpus", "source": "core-corpus", "target": "rules-opa", "label": "defines executable rules", "protocol": "JSON/Rego", "flow": "authority", "ownership": "Core defines reusable rules"},
-    {"id": "core-artifacts", "source": "core-corpus", "target": "artifacts", "label": "templates and schemas", "protocol": "artifact exchange", "flow": "evidence", "ownership": "Core defines formats"},
-    {"id": "cli-core", "source": "smart-cli", "target": "core-corpus", "label": "local validation", "protocol": "CLI/filesystem", "flow": "interfaces", "ownership": "CLI emits local result"},
-    {"id": "sdk-core-api", "source": "sdk", "target": "core-api", "label": "typed remote call", "protocol": "REST client", "flow": "interfaces", "ownership": "SDK is client boundary"},
-    {"id": "mcp-core", "source": "mcp-server", "target": "core-corpus", "label": "context and tools", "protocol": "MCP resource/tool", "flow": "interfaces", "ownership": "MCP exposes governed context"},
-    {"id": "agent-runtime-core", "source": "agent-runtime", "target": "core-api", "label": "evaluate when required", "protocol": "REST", "flow": "agentic", "ownership": "Core evaluates"},
-    {"id": "runtime-tracker", "source": "agent-runtime", "target": "tracker", "label": "trace events", "protocol": "HTTP event publish", "flow": "agentic", "ownership": "Tracker owns trace timeline"},
-    {"id": "runtime-hermes", "source": "agent-runtime", "target": "hermes", "label": "engine adapter", "protocol": "port/adapter", "flow": "agentic", "ownership": "Hermes executes only"},
-    {"id": "runtime-memory", "source": "agent-runtime", "target": "runtime-memory", "label": "working context", "protocol": "memory port", "flow": "agentic", "ownership": "Runtime-scoped memory"},
-    {"id": "runtime-github", "source": "agent-runtime", "target": "github", "label": "repo adapter", "protocol": "Git/API", "flow": "integration", "ownership": "GitHub owns source facts"},
-    {"id": "runtime-observability", "source": "agent-runtime", "target": "external-tools", "label": "telemetry", "protocol": "OTLP/API", "flow": "integration", "ownership": "Providers store operational facts"},
-    {"id": "tracker-github", "source": "tracker", "target": "github", "label": "repo synchronization", "protocol": "webhooks/API", "flow": "integration", "ownership": "Tracker maps facts to evidence"},
-    {"id": "tracker-acl", "source": "tracker", "target": "acl", "label": "provider contract", "protocol": "port/adapter", "flow": "integration", "ownership": "ACL protects canonical model"},
-    {"id": "acl-tools", "source": "acl", "target": "external-tools", "label": "ingest/export", "protocol": "REST/webhooks", "flow": "integration", "ownership": "External tools remain replaceable"},
-    {"id": "core-satellites", "source": "core-corpus", "target": "satellites", "label": "rule inheritance", "protocol": "Git/artifact exchange", "flow": "satellites", "ownership": "Satellites inherit Core"},
-    {"id": "satellites-cli", "source": "satellites", "target": "smart-cli", "label": "validate and scaffold", "protocol": "CLI", "flow": "satellites", "ownership": "CLI enforces locally"},
-    {"id": "satellites-core", "source": "satellites", "target": "core-api", "label": "remote governance", "protocol": "REST", "flow": "satellites", "ownership": "Core evaluates"},
-    {"id": "satellites-board", "source": "satellites", "target": "architecture-board", "label": "ADR candidates", "protocol": "governance review", "flow": "satellites", "ownership": "Board approves promotion"},
-    {"id": "board-core", "source": "architecture-board", "target": "core-corpus", "label": "accepted promotion", "protocol": "ADR merge", "flow": "satellites", "ownership": "Core evolves after approval"},
-    {"id": "satellites-github", "source": "satellites", "target": "github", "label": "implementation evidence", "protocol": "Git/PRs", "flow": "satellites", "ownership": "Repo owns source facts"},
-    {"id": "tracker-audit", "source": "evidence-graph", "target": "scorecards", "label": "audit narrative", "protocol": "query/read model", "flow": "evidence", "ownership": "Tracker supplies canonical audit"}
+    {
+      "id": "intent-tracker",
+      "source": "business-intent",
+      "target": "tracker",
+      "label": {
+        "en": "starts governed process",
+        "es": "starts governed process"
+      },
+      "protocol": {
+        "en": "workflow",
+        "es": "workflow"
+      },
+      "flow": "executive",
+      "ownership": {
+        "en": "Tracker records process state",
+        "es": "Tracker records process state"
+      }
+    },
+    {
+      "id": "humans-tracker",
+      "source": "humans",
+      "target": "tracker",
+      "label": {
+        "en": "approves and reviews",
+        "es": "approves and reviews"
+      },
+      "protocol": {
+        "en": "web",
+        "es": "web"
+      },
+      "flow": "authority",
+      "ownership": {
+        "en": "Humans approve critical decisions",
+        "es": "Humans approve critical decisions"
+      }
+    },
+    {
+      "id": "agents-mcp",
+      "source": "ai-agents",
+      "target": "mcp-server",
+      "label": {
+        "en": "tools/resources/prompts",
+        "es": "tools/resources/prompts"
+      },
+      "protocol": {
+        "en": "MCP",
+        "es": "MCP"
+      },
+      "flow": "agentic",
+      "ownership": {
+        "en": "MCP owns tool contract",
+        "es": "MCP owns tool contract"
+      }
+    },
+    {
+      "id": "agents-runtime",
+      "source": "ai-agents",
+      "target": "agent-runtime",
+      "label": {
+        "en": "explicit command",
+        "es": "explicit command"
+      },
+      "protocol": {
+        "en": "HTTP command/event",
+        "es": "HTTP command/event"
+      },
+      "flow": "agentic",
+      "ownership": {
+        "en": "Runtime owns execution trace",
+        "es": "Runtime owns execution trace"
+      }
+    },
+    {
+      "id": "tracker-discovery",
+      "source": "tracker",
+      "target": "discovery",
+      "label": {
+        "en": "opens phase",
+        "es": "opens phase"
+      },
+      "protocol": {
+        "en": "state machine",
+        "es": "state machine"
+      },
+      "flow": "executive",
+      "ownership": {
+        "en": "Tracker owns phase state",
+        "es": "Tracker owns phase state"
+      }
+    },
+    {
+      "id": "discovery-design",
+      "source": "discovery",
+      "target": "design",
+      "label": {
+        "en": "Business Sign-Off",
+        "es": "Business Sign-Off"
+      },
+      "protocol": {
+        "en": "gate",
+        "es": "gate"
+      },
+      "flow": "executive",
+      "ownership": {
+        "en": "Tracker records binding decision",
+        "es": "Tracker records binding decision"
+      }
+    },
+    {
+      "id": "design-build",
+      "source": "design",
+      "target": "construction",
+      "label": {
+        "en": "Design Baseline",
+        "es": "Design Baseline"
+      },
+      "protocol": {
+        "en": "gate",
+        "es": "gate"
+      },
+      "flow": "executive",
+      "ownership": {
+        "en": "Tracker records binding decision",
+        "es": "Tracker records binding decision"
+      }
+    },
+    {
+      "id": "build-qa",
+      "source": "construction",
+      "target": "qa",
+      "label": {
+        "en": "Successful Build",
+        "es": "Successful Build"
+      },
+      "protocol": {
+        "en": "gate",
+        "es": "gate"
+      },
+      "flow": "executive",
+      "ownership": {
+        "en": "Tracker records binding decision",
+        "es": "Tracker records binding decision"
+      }
+    },
+    {
+      "id": "qa-release",
+      "source": "qa",
+      "target": "release",
+      "label": {
+        "en": "RC Stamped",
+        "es": "RC Stamped"
+      },
+      "protocol": {
+        "en": "gate",
+        "es": "gate"
+      },
+      "flow": "executive",
+      "ownership": {
+        "en": "Tracker records binding decision",
+        "es": "Tracker records binding decision"
+      }
+    },
+    {
+      "id": "release-tracker",
+      "source": "release",
+      "target": "tracker",
+      "label": {
+        "en": "Production Live decision",
+        "es": "Production Live decision"
+      },
+      "protocol": {
+        "en": "event",
+        "es": "event"
+      },
+      "flow": "executive",
+      "ownership": {
+        "en": "Tracker owns canonical decision",
+        "es": "Tracker owns canonical decision"
+      }
+    },
+    {
+      "id": "tracker-scorecards",
+      "source": "tracker",
+      "target": "scorecards",
+      "label": {
+        "en": "health/readiness",
+        "es": "health/readiness"
+      },
+      "protocol": {
+        "en": "read model",
+        "es": "read model"
+      },
+      "flow": "executive",
+      "ownership": {
+        "en": "Tracker owns source state",
+        "es": "Tracker owns source state"
+      }
+    },
+    {
+      "id": "tracker-evidence",
+      "source": "tracker",
+      "target": "evidence-graph",
+      "label": {
+        "en": "records lineage",
+        "es": "records lineage"
+      },
+      "protocol": {
+        "en": "canonical state",
+        "es": "canonical state"
+      },
+      "flow": "evidence",
+      "ownership": {
+        "en": "Tracker owns graph state",
+        "es": "Tracker owns graph state"
+      }
+    },
+    {
+      "id": "evidence-core-api",
+      "source": "evidence-graph",
+      "target": "core-api",
+      "label": {
+        "en": "evaluation context",
+        "es": "evaluation context"
+      },
+      "protocol": {
+        "en": "REST payload",
+        "es": "REST payload"
+      },
+      "flow": "evidence",
+      "ownership": {
+        "en": "Core returns technical evaluation",
+        "es": "Core returns technical evaluation"
+      }
+    },
+    {
+      "id": "tracker-core-api",
+      "source": "tracker",
+      "target": "core-api",
+      "label": {
+        "en": "stateless evaluation",
+        "es": "stateless evaluation"
+      },
+      "protocol": {
+        "en": "REST / HTTP",
+        "es": "REST / HTTP"
+      },
+      "flow": "interfaces",
+      "ownership": {
+        "en": "Core owns technical result only",
+        "es": "Core owns technical result only"
+      }
+    },
+    {
+      "id": "core-api-tracker",
+      "source": "core-api",
+      "target": "tracker",
+      "label": {
+        "en": "technical result",
+        "es": "technical result"
+      },
+      "protocol": {
+        "en": "ADR-0073 envelope",
+        "es": "ADR-0073 envelope"
+      },
+      "flow": "authority",
+      "ownership": {
+        "en": "Tracker records binding decision",
+        "es": "Tracker records binding decision"
+      }
+    },
+    {
+      "id": "core-api-corpus",
+      "source": "core-api",
+      "target": "core-corpus",
+      "label": {
+        "en": "reads governance",
+        "es": "reads governance"
+      },
+      "protocol": {
+        "en": "filesystem/cache",
+        "es": "filesystem/cache"
+      },
+      "flow": "evidence",
+      "ownership": {
+        "en": "Corpus is source of rules",
+        "es": "Corpus is source of rules"
+      }
+    },
+    {
+      "id": "core-corpus",
+      "source": "core-corpus",
+      "target": "rules-opa",
+      "label": {
+        "en": "defines executable rules",
+        "es": "defines executable rules"
+      },
+      "protocol": {
+        "en": "JSON/Rego",
+        "es": "JSON/Rego"
+      },
+      "flow": "authority",
+      "ownership": {
+        "en": "Core defines reusable rules",
+        "es": "Core defines reusable rules"
+      }
+    },
+    {
+      "id": "core-artifacts",
+      "source": "core-corpus",
+      "target": "artifacts",
+      "label": {
+        "en": "templates and schemas",
+        "es": "templates and schemas"
+      },
+      "protocol": {
+        "en": "artifact exchange",
+        "es": "artifact exchange"
+      },
+      "flow": "evidence",
+      "ownership": {
+        "en": "Core defines formats",
+        "es": "Core defines formats"
+      }
+    },
+    {
+      "id": "cli-core",
+      "source": "smart-cli",
+      "target": "core-corpus",
+      "label": {
+        "en": "local validation",
+        "es": "local validation"
+      },
+      "protocol": {
+        "en": "CLI/filesystem",
+        "es": "CLI/filesystem"
+      },
+      "flow": "interfaces",
+      "ownership": {
+        "en": "CLI emits local result",
+        "es": "CLI emits local result"
+      }
+    },
+    {
+      "id": "sdk-core-api",
+      "source": "sdk",
+      "target": "core-api",
+      "label": {
+        "en": "typed remote call",
+        "es": "typed remote call"
+      },
+      "protocol": {
+        "en": "REST client",
+        "es": "REST client"
+      },
+      "flow": "interfaces",
+      "ownership": {
+        "en": "SDK is client boundary",
+        "es": "SDK is client boundary"
+      }
+    },
+    {
+      "id": "mcp-core",
+      "source": "mcp-server",
+      "target": "core-corpus",
+      "label": {
+        "en": "context and tools",
+        "es": "context and tools"
+      },
+      "protocol": {
+        "en": "MCP resource/tool",
+        "es": "MCP resource/tool"
+      },
+      "flow": "interfaces",
+      "ownership": {
+        "en": "MCP exposes governed context",
+        "es": "MCP exposes governed context"
+      }
+    },
+    {
+      "id": "agent-runtime-core",
+      "source": "agent-runtime",
+      "target": "core-api",
+      "label": {
+        "en": "evaluate when required",
+        "es": "evaluate when required"
+      },
+      "protocol": {
+        "en": "REST",
+        "es": "REST"
+      },
+      "flow": "agentic",
+      "ownership": {
+        "en": "Core evaluates",
+        "es": "Core evaluates"
+      }
+    },
+    {
+      "id": "runtime-tracker",
+      "source": "agent-runtime",
+      "target": "tracker",
+      "label": {
+        "en": "trace events",
+        "es": "trace events"
+      },
+      "protocol": {
+        "en": "HTTP event publish",
+        "es": "HTTP event publish"
+      },
+      "flow": "agentic",
+      "ownership": {
+        "en": "Tracker owns trace timeline",
+        "es": "Tracker owns trace timeline"
+      }
+    },
+    {
+      "id": "runtime-hermes",
+      "source": "agent-runtime",
+      "target": "hermes",
+      "label": {
+        "en": "engine adapter",
+        "es": "engine adapter"
+      },
+      "protocol": {
+        "en": "port/adapter",
+        "es": "port/adapter"
+      },
+      "flow": "agentic",
+      "ownership": {
+        "en": "Hermes executes only",
+        "es": "Hermes executes only"
+      }
+    },
+    {
+      "id": "runtime-memory",
+      "source": "agent-runtime",
+      "target": "runtime-memory",
+      "label": {
+        "en": "working context",
+        "es": "working context"
+      },
+      "protocol": {
+        "en": "memory port",
+        "es": "memory port"
+      },
+      "flow": "agentic",
+      "ownership": {
+        "en": "Runtime-scoped memory",
+        "es": "Runtime-scoped memory"
+      }
+    },
+    {
+      "id": "runtime-github",
+      "source": "agent-runtime",
+      "target": "github",
+      "label": {
+        "en": "repo adapter",
+        "es": "repo adapter"
+      },
+      "protocol": {
+        "en": "Git/API",
+        "es": "Git/API"
+      },
+      "flow": "integration",
+      "ownership": {
+        "en": "GitHub owns source facts",
+        "es": "GitHub owns source facts"
+      }
+    },
+    {
+      "id": "runtime-observability",
+      "source": "agent-runtime",
+      "target": "external-tools",
+      "label": {
+        "en": "telemetry",
+        "es": "telemetry"
+      },
+      "protocol": {
+        "en": "OTLP/API",
+        "es": "OTLP/API"
+      },
+      "flow": "integration",
+      "ownership": {
+        "en": "Providers store operational facts",
+        "es": "Providers store operational facts"
+      }
+    },
+    {
+      "id": "tracker-github",
+      "source": "tracker",
+      "target": "github",
+      "label": {
+        "en": "repo synchronization",
+        "es": "repo synchronization"
+      },
+      "protocol": {
+        "en": "webhooks/API",
+        "es": "webhooks/API"
+      },
+      "flow": "integration",
+      "ownership": {
+        "en": "Tracker maps facts to evidence",
+        "es": "Tracker maps facts to evidence"
+      }
+    },
+    {
+      "id": "tracker-acl",
+      "source": "tracker",
+      "target": "acl",
+      "label": {
+        "en": "provider contract",
+        "es": "provider contract"
+      },
+      "protocol": {
+        "en": "port/adapter",
+        "es": "port/adapter"
+      },
+      "flow": "integration",
+      "ownership": {
+        "en": "ACL protects canonical model",
+        "es": "ACL protects canonical model"
+      }
+    },
+    {
+      "id": "acl-tools",
+      "source": "acl",
+      "target": "external-tools",
+      "label": {
+        "en": "ingest/export",
+        "es": "ingest/export"
+      },
+      "protocol": {
+        "en": "REST/webhooks",
+        "es": "REST/webhooks"
+      },
+      "flow": "integration",
+      "ownership": {
+        "en": "External tools remain replaceable",
+        "es": "External tools remain replaceable"
+      }
+    },
+    {
+      "id": "core-satellites",
+      "source": "core-corpus",
+      "target": "satellites",
+      "label": {
+        "en": "rule inheritance",
+        "es": "rule inheritance"
+      },
+      "protocol": {
+        "en": "Git/artifact exchange",
+        "es": "Git/artifact exchange"
+      },
+      "flow": "satellites",
+      "ownership": {
+        "en": "Satellites inherit Core",
+        "es": "Satellites inherit Core"
+      }
+    },
+    {
+      "id": "satellites-cli",
+      "source": "satellites",
+      "target": "smart-cli",
+      "label": {
+        "en": "validate and scaffold",
+        "es": "validate and scaffold"
+      },
+      "protocol": {
+        "en": "CLI",
+        "es": "CLI"
+      },
+      "flow": "satellites",
+      "ownership": {
+        "en": "CLI enforces locally",
+        "es": "CLI enforces locally"
+      }
+    },
+    {
+      "id": "satellites-core",
+      "source": "satellites",
+      "target": "core-api",
+      "label": {
+        "en": "remote governance",
+        "es": "remote governance"
+      },
+      "protocol": {
+        "en": "REST",
+        "es": "REST"
+      },
+      "flow": "satellites",
+      "ownership": {
+        "en": "Core evaluates",
+        "es": "Core evaluates"
+      }
+    },
+    {
+      "id": "satellites-board",
+      "source": "satellites",
+      "target": "architecture-board",
+      "label": {
+        "en": "ADR candidates",
+        "es": "ADR candidates"
+      },
+      "protocol": {
+        "en": "governance review",
+        "es": "governance review"
+      },
+      "flow": "satellites",
+      "ownership": {
+        "en": "Board approves promotion",
+        "es": "Board approves promotion"
+      }
+    },
+    {
+      "id": "board-core",
+      "source": "architecture-board",
+      "target": "core-corpus",
+      "label": {
+        "en": "accepted promotion",
+        "es": "accepted promotion"
+      },
+      "protocol": {
+        "en": "ADR merge",
+        "es": "ADR merge"
+      },
+      "flow": "satellites",
+      "ownership": {
+        "en": "Core evolves after approval",
+        "es": "Core evolves after approval"
+      }
+    },
+    {
+      "id": "satellites-github",
+      "source": "satellites",
+      "target": "github",
+      "label": {
+        "en": "implementation evidence",
+        "es": "implementation evidence"
+      },
+      "protocol": {
+        "en": "Git/PRs",
+        "es": "Git/PRs"
+      },
+      "flow": "satellites",
+      "ownership": {
+        "en": "Repo owns source facts",
+        "es": "Repo owns source facts"
+      }
+    },
+    {
+      "id": "tracker-audit",
+      "source": "evidence-graph",
+      "target": "scorecards",
+      "label": {
+        "en": "audit narrative",
+        "es": "audit narrative"
+      },
+      "protocol": {
+        "en": "query/read model",
+        "es": "query/read model"
+      },
+      "flow": "evidence",
+      "ownership": {
+        "en": "Tracker supplies canonical audit",
+        "es": "Tracker supplies canonical audit"
+      }
+    },
+    {
+      "id": "humans-cli",
+      "source": "humans",
+      "target": "smart-cli",
+      "label": {
+        "en": "executes commands",
+        "es": "executes commands"
+      },
+      "protocol": {
+        "en": "CLI",
+        "es": "CLI"
+      },
+      "flow": "interfaces",
+      "ownership": {
+        "en": "Humans initiate local tools",
+        "es": "Humans initiate local tools"
+      }
+    },
+    {
+      "id": "cli-core-api",
+      "source": "smart-cli",
+      "target": "core-api",
+      "label": {
+        "en": "remote evaluation",
+        "es": "remote evaluation"
+      },
+      "protocol": {
+        "en": "REST",
+        "es": "REST"
+      },
+      "flow": "interfaces",
+      "ownership": {
+        "en": "Core evaluates remotely",
+        "es": "Core evaluates remotely"
+      }
+    }
   ],
   "scenarios": [
     {
       "id": "e2e",
-      "label": "E2E idea to production",
-      "description": "Business intent becomes a governed production decision.",
-      "steps": ["business-intent", "tracker", "discovery", "design", "construction", "qa", "release", "tracker", "scorecards"]
+      "label": {
+        "en": "E2E idea to production",
+        "es": "De la idea a producción E2E"
+      },
+      "description": {
+        "en": "Business intent becomes a governed production decision.",
+        "es": "La intención de negocio se convierte en una decisión de producción gobernada."
+      },
+      "steps": [
+        "business-intent",
+        "tracker",
+        "discovery",
+        "design",
+        "construction",
+        "qa",
+        "release",
+        "tracker",
+        "scorecards"
+      ],
+      "explanations": [
+        {
+          "en": "A business intent is formulated based on market needs.",
+          "es": "Se formula una intención de negocio basada en las necesidades del mercado."
+        },
+        {
+          "en": "The intent is registered in the Evolith Tracker to start governance.",
+          "es": "La intención se registra en el Tracker de Evolith para iniciar el gobierno."
+        },
+        {
+          "en": "The Discovery phase formalizes the problem and achieves Business Sign-Off.",
+          "es": "La fase de Discovery formaliza el problema y logra el Business Sign-Off."
+        },
+        {
+          "en": "Spec-Driven Design defines contracts and architecture baseline.",
+          "es": "El Diseño por Especificación define los contratos y la arquitectura base."
+        },
+        {
+          "en": "Construction phase develops the implementation linked to requirements.",
+          "es": "La Construcción desarrolla la implementación enlazada a los requisitos."
+        },
+        {
+          "en": "QA validates quality, security, and integration, achieving RC Stamped.",
+          "es": "QA valida la calidad, seguridad e integración, obteniendo RC Stamped."
+        },
+        {
+          "en": "Release orchestrates the deployment to production environments.",
+          "es": "Release orquesta el despliegue hacia los entornos de producción."
+        },
+        {
+          "en": "Tracker records all binding gate decisions and transitions the product state.",
+          "es": "Tracker registra todas las decisiones de compuerta y el estado del producto."
+        },
+        {
+          "en": "Scorecards reflect the complete governance health and readiness.",
+          "es": "Los Scorecards reflejan la salud y preparación completa de gobierno."
+        }
+      ]
     },
     {
       "id": "agent",
-      "label": "Governed agent execution",
-      "description": "An AI agent works through MCP and Agent Runtime without bypassing policy.",
-      "steps": ["ai-agents", "mcp-server", "agent-runtime", "core-api", "core-corpus", "tracker", "evidence-graph"]
+      "label": {
+        "en": "Governed agent execution",
+        "es": "Ejecución de agente gobernada"
+      },
+      "description": {
+        "en": "An AI agent works through MCP and Agent Runtime without bypassing policy.",
+        "es": "Un agente de IA trabaja mediante MCP y Agent Runtime sin saltar políticas."
+      },
+      "steps": [
+        "ai-agents",
+        "mcp-server",
+        "agent-runtime",
+        "core-api",
+        "core-corpus",
+        "tracker",
+        "evidence-graph"
+      ],
+      "explanations": [
+        {
+          "en": "An AI Agent is invoked to perform a task.",
+          "es": "Se invoca a un Agente de IA para realizar una tarea."
+        },
+        {
+          "en": "The Agent requests context and tools securely through the MCP Server.",
+          "es": "El agente solicita contexto y herramientas de forma segura a través del servidor MCP."
+        },
+        {
+          "en": "The execution flow is orchestrated by the Agent Runtime.",
+          "es": "El flujo de ejecución es orquestado por el Agent Runtime."
+        },
+        {
+          "en": "The Runtime requests evaluation of the action against the Core API.",
+          "es": "El Runtime solicita la evaluación de la acción ante la Core API."
+        },
+        {
+          "en": "Core API validates the action using the Core Constitution.",
+          "es": "La Core API valida la acción usando la Constitución del Core."
+        },
+        {
+          "en": "The Tracker approves and records the Agent's event trace.",
+          "es": "El Tracker aprueba y registra la traza de eventos del Agente."
+        },
+        {
+          "en": "The action lineage is permanently added to the Evidence Graph.",
+          "es": "El linaje de la acción se añade permanentemente al Grafo de Evidencia."
+        }
+      ]
     },
     {
       "id": "satellite",
-      "label": "Satellite upstream learning",
-      "description": "A satellite inherits Core rules and proposes evidence-backed improvements upstream.",
-      "steps": ["core-corpus", "satellites", "smart-cli", "github", "architecture-board", "core-corpus"]
+      "label": {
+        "en": "Satellite upstream learning",
+        "es": "Aprendizaje upstream de satélites"
+      },
+      "description": {
+        "en": "A satellite inherits Core rules and proposes evidence-backed improvements upstream.",
+        "es": "Un satélite hereda reglas del Core y propone mejoras basadas en evidencia."
+      },
+      "steps": [
+        "core-corpus",
+        "satellites",
+        "smart-cli",
+        "github",
+        "architecture-board",
+        "core-corpus"
+      ],
+      "explanations": [
+        {
+          "en": "Evolith Core provides the universal rules and standards.",
+          "es": "Evolith Core provee las reglas y estándares universales."
+        },
+        {
+          "en": "A Satellite Product inherits these rules to guide its local SDLC.",
+          "es": "Un Producto Satélite hereda estas reglas para guiar su SDLC local."
+        },
+        {
+          "en": "Developers use the Smart CLI locally to conform to Core rules.",
+          "es": "Los desarrolladores usan la Smart CLI localmente para cumplir con las reglas del Core."
+        },
+        {
+          "en": "Implementation details and code are committed to GitHub.",
+          "es": "Los detalles de implementación y código se envían a GitHub."
+        },
+        {
+          "en": "The Architecture Board reviews deviations or upstream proposals.",
+          "es": "El Comité de Arquitectura revisa las desviaciones o propuestas upstream."
+        },
+        {
+          "en": "Approved patterns are merged back into the Core Constitution for all to use.",
+          "es": "Los patrones aprobados se integran nuevamente a la Constitución del Core para uso general."
+        }
+      ]
     },
     {
       "id": "integration",
-      "label": "Provider composition",
-      "description": "External tools exchange facts through ACLs while Evolith retains governance authority.",
-      "steps": ["external-tools", "acl", "tracker", "evidence-graph", "core-api", "scorecards"]
+      "label": {
+        "en": "Provider composition",
+        "es": "Composición de proveedores"
+      },
+      "description": {
+        "en": "External tools exchange facts through ACLs while Evolith retains governance authority.",
+        "es": "Herramientas externas intercambian hechos mediante ACLs mientras Evolith retiene la autoridad."
+      },
+      "steps": [
+        "external-tools",
+        "acl",
+        "tracker",
+        "evidence-graph",
+        "core-api",
+        "scorecards"
+      ],
+      "explanations": [
+        {
+          "en": "An External Tool (like Jira or DataDog) produces an event.",
+          "es": "Una Herramienta Externa (como Jira o DataDog) produce un evento."
+        },
+        {
+          "en": "The Anti-Corruption Layer translates the provider schema into canonical data.",
+          "es": "La Capa Anti-Corrupción traduce el esquema del proveedor en datos canónicos."
+        },
+        {
+          "en": "Tracker receives the event to update the state machine.",
+          "es": "El Tracker recibe el evento para actualizar la máquina de estados."
+        },
+        {
+          "en": "The fact is stored securely in the Evidence Graph.",
+          "es": "El hecho se almacena de forma segura en el Grafo de Evidencia."
+        },
+        {
+          "en": "Core API reads the graph to determine if technical rules are met.",
+          "es": "La Core API lee el grafo para determinar si se cumplen las reglas técnicas."
+        },
+        {
+          "en": "The resulting adherence is reflected in Executive Scorecards.",
+          "es": "La adherencia resultante se refleja en los Scorecards Ejecutivos."
+        }
+      ]
+    },
+    {
+      "id": "tracker-flow",
+      "label": {
+        "en": "Tracker Governance Flow",
+        "es": "Flujo de Gobierno del Tracker"
+      },
+      "description": {
+        "en": "Humans request phase transitions, Tracker validates via Core API, and records Evidence.",
+        "es": "Humanos solicitan transiciones de fase, Tracker valida vía Core API y registra evidencia."
+      },
+      "steps": [
+        "humans",
+        "tracker",
+        "core-api",
+        "core-corpus",
+        "core-api",
+        "tracker",
+        "evidence-graph"
+      ],
+      "explanations": [
+        {
+          "en": "A human initiates a phase transition request (e.g., approve Design Baseline).",
+          "es": "Un humano inicia una solicitud de transición de fase (ej. aprobar Design Baseline)."
+        },
+        {
+          "en": "Tracker receives the request and orchestrates the transition logic.",
+          "es": "El Tracker recibe la petición y orquesta la lógica de transición."
+        },
+        {
+          "en": "Tracker delegates the technical rule evaluation to the Core API.",
+          "es": "El Tracker delega la evaluación técnica de reglas a la Core API."
+        },
+        {
+          "en": "Core API evaluates the context against the Core Constitution.",
+          "es": "La Core API evalúa el contexto usando la Constitución Core."
+        },
+        {
+          "en": "Core API returns the evaluation result to the Tracker.",
+          "es": "La Core API devuelve el resultado de evaluación al Tracker."
+        },
+        {
+          "en": "Tracker makes the final binding decision based on human approval and Core evaluation.",
+          "es": "El Tracker toma la decisión final vinculante basado en la aprobación humana y evaluación técnica."
+        },
+        {
+          "en": "The decision is appended to the Canonical Evidence Graph.",
+          "es": "La decisión se añade al Grafo Canónico de Evidencia."
+        }
+      ]
+    },
+    {
+      "id": "mcp-flow",
+      "label": {
+        "en": "MCP Tools Flow",
+        "es": "Flujo de Herramientas MCP"
+      },
+      "description": {
+        "en": "AI agents request context, tools, and constraints through the MCP Server.",
+        "es": "Agentes de IA solicitan contexto, herramientas y restricciones mediante el Servidor MCP."
+      },
+      "steps": [
+        "ai-agents",
+        "mcp-server",
+        "core-corpus"
+      ],
+      "explanations": [
+        {
+          "en": "An AI Agent attempts to resolve a user request.",
+          "es": "Un Agente de IA intenta resolver una petición del usuario."
+        },
+        {
+          "en": "The Agent queries the MCP Server for available architectural tools and context.",
+          "es": "El Agente consulta al Servidor MCP por herramientas y contexto arquitectónico."
+        },
+        {
+          "en": "The MCP Server exposes the governed artifacts from the Core Constitution.",
+          "es": "El Servidor MCP expone los artefactos gobernados desde la Constitución del Core."
+        }
+      ]
+    },
+    {
+      "id": "cli-flow",
+      "label": {
+        "en": "Smart CLI Validation Flow",
+        "es": "Flujo de Validación Smart CLI"
+      },
+      "description": {
+        "en": "Developers validate code locally and run remote evaluations against the Core Constitution.",
+        "es": "Los desarrolladores validan código localmente y ejecutan evaluaciones remotas contra la Constitución Core."
+      },
+      "steps": [
+        "humans",
+        "smart-cli",
+        "core-corpus",
+        "smart-cli",
+        "core-api"
+      ],
+      "explanations": [
+        {
+          "en": "A developer runs a Smart CLI command to validate their workspace.",
+          "es": "Un desarrollador ejecuta un comando del Smart CLI para validar su espacio de trabajo."
+        },
+        {
+          "en": "The CLI evaluates files locally against cached rules.",
+          "es": "El CLI evalúa los archivos localmente contra reglas cacheadas."
+        },
+        {
+          "en": "The local validation references the Core Constitution schemas.",
+          "es": "La validación local referencia los esquemas de la Constitución del Core."
+        },
+        {
+          "en": "The CLI prepares the payload to check complex cross-references.",
+          "es": "El CLI prepara el payload para revisar referencias cruzadas complejas."
+        },
+        {
+          "en": "The CLI sends a remote evaluation request to the Core API.",
+          "es": "El CLI envía una petición de evaluación remota a la Core API."
+        }
+      ]
+    },
+    {
+      "id": "external-agents",
+      "label": {
+        "en": "Agent Runtime Execution Flow",
+        "es": "Flujo de Ejecución Agent Runtime"
+      },
+      "description": {
+        "en": "Orchestrated agent execution with memory, external engines, and governance tracking.",
+        "es": "Ejecución de agentes orquestada con memoria, motores externos y rastreo de gobierno."
+      },
+      "steps": [
+        "ai-agents",
+        "agent-runtime",
+        "hermes",
+        "agent-runtime",
+        "runtime-memory",
+        "agent-runtime",
+        "core-api",
+        "agent-runtime",
+        "tracker"
+      ],
+      "explanations": [
+        {
+          "en": "An AI Agent submits an intent to the system.",
+          "es": "Un Agente de IA envía una intención al sistema."
+        },
+        {
+          "en": "Agent Runtime orchestrates the multi-step execution safely.",
+          "es": "Agent Runtime orquesta la ejecución multi-paso de manera segura."
+        },
+        {
+          "en": "The Runtime delegates the reasoning to Hermes (an LLM engine adapter).",
+          "es": "El Runtime delega el razonamiento a Hermes (adaptador de motor LLM)."
+        },
+        {
+          "en": "The Runtime receives the plan and executes tools.",
+          "es": "El Runtime recibe el plan y ejecuta las herramientas."
+        },
+        {
+          "en": "Intermediate state is persisted in Runtime Memory.",
+          "es": "El estado intermedio se persiste en la Memoria del Runtime."
+        },
+        {
+          "en": "Before committing the action, Runtime verifies it.",
+          "es": "Antes de consolidar la acción, Runtime la verifica."
+        },
+        {
+          "en": "Core API validates the intended action against constraints.",
+          "es": "Core API valida la acción intencionada contra las restricciones."
+        },
+        {
+          "en": "The Runtime emits the final execution trace.",
+          "es": "El Runtime emite la traza de ejecución final."
+        },
+        {
+          "en": "Tracker logs the agent execution for auditability.",
+          "es": "El Tracker registra la ejecución del agente para auditoría."
+        }
+      ]
     }
   ],
   "timeline": [
-    {"id": "discovery", "label": "Discovery", "gate": "Business Sign-Off"},
-    {"id": "design", "label": "Design", "gate": "Design Baseline"},
-    {"id": "construction", "label": "Construction", "gate": "Successful Build"},
-    {"id": "qa", "label": "QA", "gate": "RC Stamped"},
-    {"id": "release", "label": "Release", "gate": "Production Live"}
+    {
+      "id": "discovery",
+      "label": {
+        "en": "Discovery",
+        "es": "Discovery"
+      },
+      "gate": {
+        "en": "Business Sign-Off",
+        "es": "Business Sign-Off"
+      }
+    },
+    {
+      "id": "design",
+      "label": {
+        "en": "Design",
+        "es": "Design"
+      },
+      "gate": {
+        "en": "Design Baseline",
+        "es": "Design Baseline"
+      }
+    },
+    {
+      "id": "construction",
+      "label": {
+        "en": "Construction",
+        "es": "Construction"
+      },
+      "gate": {
+        "en": "Successful Build",
+        "es": "Successful Build"
+      }
+    },
+    {
+      "id": "qa",
+      "label": {
+        "en": "QA",
+        "es": "QA"
+      },
+      "gate": {
+        "en": "RC Stamped",
+        "es": "RC Stamped"
+      }
+    },
+    {
+      "id": "release",
+      "label": {
+        "en": "Release",
+        "es": "Release"
+      },
+      "gate": {
+        "en": "Production Live",
+        "es": "Production Live"
+      }
+    }
   ]
 }

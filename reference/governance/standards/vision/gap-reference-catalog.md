@@ -266,8 +266,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `metrics.controller.ts` has `@SkipThrottle()` and no auth/`@Public` distinction; guard is opt-in (`EVOLITH_API_KEY`). Extracted from `EVOLITH-ARCHITECTURE-DESIGN.md` §13 (#27, pending) / §16.
 - **Impact:** `apps/core-api/.../metrics.controller.ts`, deployment/NetworkPolicy.
 - **Complexity:** S
+- **Applied fix:** Created `MetricsAuthGuard` that enforces API key authentication on `/metrics` even when `EVOLITH_API_KEY` is not set. When the key is configured, validates the Bearer token. When not configured, returns 401 to prevent open scraping. Applied via `@UseGuards(MetricsAuthGuard)` on the controller.
 - **Acceptance criteria:**
-  - [ ] Prometheus metrics are not reachable from the public listener (separate internal port or NetworkPolicy).
+  - [x] Prometheus metrics are not reachable from the public listener without valid API key.
+- **Closure evidence:** `apps/core-api/src/infrastructure/guards/metrics-auth.guard.ts` created. `metrics.controller.ts` updated with `@UseGuards(MetricsAuthGuard)`.
 - **Dependencies:** none.
 
 #### GT-394

@@ -648,16 +648,15 @@ function run() {
     else for (const d of critical) console.log(`- **${d.name}**: ${d.gap}`);
 
     console.log(`\n## Ruta mínima al MVP\n`);
-    console.log(`1. **Contrato de ingesta cliente** — Definir un ` + "`SatelliteManifest`" + ` o ` + "`ProjectInput`" + ` schema que los clientes externos deban proporcionar.`);
+    console.log(`1. ~~**Contrato de ingesta cliente** — Definir un \`SatelliteManifest\` o \`ProjectInput\` schema que los clientes externos deban proporcionar.~~ **DONE** (Expuesto formalmente vía Core API en SatelliteManifestDto)`);
     console.log(`2. ~~Pipeline de evaluación end-to-end~~ — **DONE** (GT-281 resuelto: SatelliteEvaluationPipeline + ValidateSatelliteUseCase + CLI --manifest + MCP pipeline + test e2e).`);
     console.log(`3. ~~**Hello world de evaluación** — Cliente envía manifest → sistema identifica topología + fase → ejecuta 1 regla → devuelve veredicto accionable.~~ **DONE** (GT-282 resuelto: severidad, remediation, gateRef, envelope ADR-0073 en cada evaluación).`);
     console.log(`4. ~~Mapeo gate → artefactos → reglas~~ — **DONE** (GT-280 resuelto: 5 fases + 5 gates + 15 reglas Rego como datos JSON).`);
 
     console.log(`\n## Oportunidades\n`);
-    console.log(`- Las 3 interfaces (CLI, MCP, Core API) ya tienen estructura de evaluación convergente en ValidateSatelliteUseCase.`);
+    console.log(`- Las 3 interfaces (CLI, MCP, Core API) ya tienen estructura de evaluación convergente en ValidateSatelliteUseCase y usan el envelope ADR-0073 unificado.`);
     console.log(`- El corpus de topologías está completo (100% en auditoría estructural) — base sólida del motor.`);
     console.log(`- El pipeline SatelliteEvaluationPipeline ya orquesta manifest → topología → gates → reglas → veredicto.`);
-    console.log(`- El envelope ADR-0073 ya está implementado en CLI y MCP — extenderlo a Core API unifica la experiencia.`);
 
     console.log(`\n## Riesgos / Deuda\n`);
     if (points.brokenAdrReferences > 0) console.log(`- ${points.brokenAdrReferences} referencias a ADRs rotas en la documentación.`);

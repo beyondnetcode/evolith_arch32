@@ -47,12 +47,14 @@ export class ArchitectureController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Validate a satellite project against architecture rules' })
   @ApiBody({ type: ValidateSatelliteDto })
-  @ApiEnvelopeResponse(undefined, { description: 'Validation results' })
+  @ApiEnvelopeResponse(undefined, { description: 'Validation results or ADR-0073 envelope if manifest is provided' })
   async validateSatellite(@Body() body: ValidateSatelliteDto) {
-    return this.validateSatelliteUseCase.execute({
+    const response = await this.validateSatelliteUseCase.execute({
       satellitePath: this.workspaceResolver.resolve(body.workspaceRef),
       corePath: this.workspaceResolver.corePath(),
+      manifest: body.manifest,
     });
+    return response.evaluationVerdict?.outputEnvelope ?? response.result;
   }
 
   @Post('detect-drift')

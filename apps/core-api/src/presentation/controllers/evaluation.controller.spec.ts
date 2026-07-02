@@ -190,11 +190,13 @@ describe('EvaluationController (GT-361)', () => {
       orchestrator.evaluate.mockResolvedValue(CANONICAL_RESULT);
       const ctx: EvaluationContextDto = { kinds: ['gate', 'compliance'], workspaceRef: 'ws-3f9a', phaseId: 'design', gateId: 'gate-f2' };
 
-      const response = await controller.evaluate(ctx);
+      const response = await controller.evaluate(ctx) as any;
 
       expect(orchestrator.evaluate).toHaveBeenCalledWith(ctx);
       expect(useCase.execute).not.toHaveBeenCalled();
-      expect(response).toBe(CANONICAL_RESULT);
+      expect(response.success).toBe(true);
+      expect(response.data).toBe(CANONICAL_RESULT);
+      expect(response.meta.command).toBe('evolith evaluate');
     });
 
     it('rejects a body with neither workspaceRef nor satellitePath', async () => {

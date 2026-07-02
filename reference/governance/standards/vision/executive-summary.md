@@ -27,8 +27,8 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---:|---|---|---|
 | 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-377](./gap-reference-catalog.md#gt-377), [GT-375](./gap-reference-catalog.md#gt-375) |
 | 2 | Highest-risk area | `Agent Runtime` has the largest weighted open load. | [GT-384](./gap-reference-catalog.md#gt-384), [GT-399](./gap-reference-catalog.md#gt-399), [GT-403](./gap-reference-catalog.md#gt-403), [GT-406](./gap-reference-catalog.md#gt-406), [GT-407](./gap-reference-catalog.md#gt-407), [GT-408](./gap-reference-catalog.md#gt-408), +7 |
-| 3 | Quick wins | High criticality with XS/S complexity. | [GT-411](./gap-reference-catalog.md#gt-411) |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-411](./gap-reference-catalog.md#gt-411), [GT-324](./gap-reference-catalog.md#gt-324), [GT-384](./gap-reference-catalog.md#gt-384), [GT-396](./gap-reference-catalog.md#gt-396), [GT-399](./gap-reference-catalog.md#gt-399), [GT-400](./gap-reference-catalog.md#gt-400), [GT-403](./gap-reference-catalog.md#gt-403), [GT-406](./gap-reference-catalog.md#gt-406), +3 |
+| 3 | Quick wins | High criticality with XS/S complexity. | - |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-324](./gap-reference-catalog.md#gt-324), [GT-384](./gap-reference-catalog.md#gt-384), [GT-396](./gap-reference-catalog.md#gt-396), [GT-399](./gap-reference-catalog.md#gt-399), [GT-400](./gap-reference-catalog.md#gt-400), [GT-403](./gap-reference-catalog.md#gt-403), [GT-406](./gap-reference-catalog.md#gt-406), [GT-407](./gap-reference-catalog.md#gt-407), +2 |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-388](./gap-reference-catalog.md#gt-388), [GT-389](./gap-reference-catalog.md#gt-389), [GT-391](./gap-reference-catalog.md#gt-391), [GT-393](./gap-reference-catalog.md#gt-393), [GT-397](./gap-reference-catalog.md#gt-397), [GT-381](./gap-reference-catalog.md#gt-381), +7 |
 
 ## Current Blockers
@@ -44,12 +44,12 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-07-02 |
 | Total gaps | 412 |
-| Closed gaps | 386 |
-| Open gaps | 26 |
+| Closed gaps | 387 |
+| Open gaps | 25 |
 | Open P0 | 2 |
-| Open P1 | 11 |
+| Open P1 | 10 |
 | Open P2 | 13 |
-| Total closure | 93.7% |
+| Total closure | 93.9% |
 | Closure evidence records | 364 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
@@ -58,7 +58,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | `Agent Runtime` | 13 | 0 | 7 | [GT-384](./gap-reference-catalog.md#gt-384), [GT-399](./gap-reference-catalog.md#gt-399), [GT-403](./gap-reference-catalog.md#gt-403), [GT-406](./gap-reference-catalog.md#gt-406), +9 |
 | `Core Domain` | 2 | 1 | 1 | [GT-377](./gap-reference-catalog.md#gt-377), [GT-396](./gap-reference-catalog.md#gt-396) |
 | `Cross` | 2 | 1 | 0 | [GT-375](./gap-reference-catalog.md#gt-375), [GT-381](./gap-reference-catalog.md#gt-381) |
-| `Core API` | 4 | 0 | 2 | [GT-411](./gap-reference-catalog.md#gt-411), [GT-400](./gap-reference-catalog.md#gt-400), [GT-393](./gap-reference-catalog.md#gt-393), [GT-394](./gap-reference-catalog.md#gt-394) |
+| `Core API` | 3 | 0 | 1 | [GT-400](./gap-reference-catalog.md#gt-400), [GT-393](./gap-reference-catalog.md#gt-393), [GT-394](./gap-reference-catalog.md#gt-394) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.md#gt-324) |
 
 ## Source and Refresh Rule

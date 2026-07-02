@@ -9,11 +9,11 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 ## Executive Signal
 
-**Current decision:** NO-GO for production expansion or a major release: active P0 blockers remain.
+**Current decision:** Conditional GO: proceed only with P1 hardening and automated evidence.
 
-**Biggest problem now:** `Cross` carries the highest weighted open risk (2 open, 1 P0). Attack that concentration before expanding scope.
+**Biggest problem now:** `Agent Runtime` carries the highest weighted open risk (4 open, 0 P0). Attack that concentration before expanding scope.
 
-**Where to attack first:** [GT-375](./gap-reference-catalog.md#gt-375).
+**Where to attack first:** -.
 
 ## Strategic Diagnosis
 
@@ -25,17 +25,21 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-375](./gap-reference-catalog.md#gt-375) |
-| 2 | Highest-risk area | `Cross` has the largest weighted open load. | [GT-375](./gap-reference-catalog.md#gt-375), [GT-381](./gap-reference-catalog.md#gt-381) |
+| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | - |
+| 2 | Highest-risk area | `Agent Runtime` has the largest weighted open load. | [GT-384](./gap-reference-catalog.md#gt-384), [GT-383](./gap-reference-catalog.md#gt-383), [GT-388](./gap-reference-catalog.md#gt-388), [GT-386](./gap-reference-catalog.md#gt-386) |
 | 3 | Quick wins | High criticality with XS/S complexity. | - |
 | 4 | P1 wave | Next hardening after P0 is cleared. | [GT-324](./gap-reference-catalog.md#gt-324), [GT-384](./gap-reference-catalog.md#gt-384), [GT-383](./gap-reference-catalog.md#gt-383) |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-388](./gap-reference-catalog.md#gt-388), [GT-381](./gap-reference-catalog.md#gt-381), [GT-386](./gap-reference-catalog.md#gt-386) |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-388](./gap-reference-catalog.md#gt-388), [GT-386](./gap-reference-catalog.md#gt-386) |
 
 ## Current Blockers
 
 | ID | Attack | Component | Effort |
 |---|---|---|---|
-| [GT-375](./gap-reference-catalog.md#gt-375) | Core stateless evaluation contracts — formalize EvaluationContext (input) / EvaluationResult (output): consumers (Evolith Tracker) send context, the Core returns structured verdicts/recommendations. Product/tenant/initiative are **opaque context identifiers only**, never Core entities; epics/stories as ExternalReferenceContext. The Core emits non-binding Recommendation/DecisionRecommendation; the Tracker decides, persists and audits. Per ADR-0101 (corrects ADR-0100) / UP-002. **Umbrella epic — decomposed into GT-376…GT-381 (R0–R5).** | `Cross` | P0/XL |
+| [GT-324](./gap-reference-catalog.md#gt-324) | CD: GHCR build+push of core-api & mcp-server (GITHUB_TOKEN) live + push/tag triggers; guarded Coolify deploy job — code complete, deploy pending secrets + CD run | `Infra` | P1/M |
+| [GT-384](./gap-reference-catalog.md#gt-384) | R1 — Real Core-evaluation adapter: replace StubCoreEvaluationAdapter behind ICoreEvaluationPort. In-process variant wraps the Core's EvaluationOrchestrator.evaluate(ctx) (constructed in apps/core-api/src/app.module.ts, exported from @evolith/core-domain/evaluation); REST variant calls the existing /evaluate controller. Contracts already match (EvaluationContext→EvaluationResult), so this is wiring + workspaceRef resolution, not new evaluation logic. Stub↔real parity tests (0 contract drift). **Central blocker for GT-383.** | `Agent Runtime` | P1/M |
+| [GT-383](./gap-reference-catalog.md#gt-383) | EPIC — @evolith/agent-runtime v1.0.0 productionization & publish: graduate the default stub/in-memory adapters to production, freeze the public contract (././ports/./adapters exports), and make the package publish-safe. Central blocker is the Core-evaluation port — today StubCoreEvaluationAdapter fabricates a canonical EvaluationResult from passthrough facts (results:{}, rulesExecuted:[], policiesApplied:[]), so the runtime governs over a simulated Core. Per ADR-0102. **Umbrella — decomposed into GT-384…GT-389.** | `Agent Runtime` | P1/XL |
+| [GT-388](./gap-reference-catalog.md#gt-388) | R5 — Public-contract freeze + SemVer 1.0.0: freeze the ././ports/./adapters export surface and the canonical contract types; define the schemaVersion evolution + deprecation/compat policy; bump 0.1.0→1.0.0 only after GT-384 (no stable contract over a simulated Core). | `Agent Runtime` | P2/S |
+| [GT-386](./gap-reference-catalog.md#gt-386) | R3 — Durable persistence adapters: replace InMemorySchedulerAdapter (no timers; lost on restart) with a durable cron/queue adapter behind ISchedulerPort, and InMemoryMemoryAdapter with a persistent store behind IMemoryPort. In-memory stays the test default. | `Agent Runtime` | P2/M |
 
 ## Metrics
 
@@ -43,18 +47,17 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-07-02 |
 | Total gaps | 412 |
-| Closed gaps | 405 |
-| Open gaps | 7 |
-| Open P0 | 1 |
+| Closed gaps | 407 |
+| Open gaps | 5 |
+| Open P0 | 0 |
 | Open P1 | 3 |
-| Open P2 | 3 |
-| Total closure | 98.3% |
+| Open P2 | 2 |
+| Total closure | 98.8% |
 | Closure evidence records | 364 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Cross` | 2 | 1 | 0 | [GT-375](./gap-reference-catalog.md#gt-375), [GT-381](./gap-reference-catalog.md#gt-381) |
 | `Agent Runtime` | 4 | 0 | 2 | [GT-384](./gap-reference-catalog.md#gt-384), [GT-383](./gap-reference-catalog.md#gt-383), [GT-388](./gap-reference-catalog.md#gt-388), [GT-386](./gap-reference-catalog.md#gt-386) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.md#gt-324) |
 

@@ -9,11 +9,11 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 ## Señal Ejecutiva
 
-**Decisión actual:** NO-GO para expansión productiva o release mayor: existen bloqueadores P0 activos.
+**Decisión actual:** GO condicionado: avanzar solo con hardening P1 y evidencia automatizada.
 
-**Mayor problema ahora:** `Cross` concentra el mayor riesgo abierto ponderado (2 pendientes, 1 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Agent Runtime` concentra el mayor riesgo abierto ponderado (4 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
 
-**Dónde atacar primero:** [GT-375](./gap-reference-catalog.es.md#gt-375).
+**Dónde atacar primero:** -.
 
 ## Diagnóstico Estratégico
 
@@ -25,17 +25,21 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-375](./gap-reference-catalog.es.md#gt-375) |
-| 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-375](./gap-reference-catalog.es.md#gt-375), [GT-381](./gap-reference-catalog.es.md#gt-381) |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | - |
+| 2 | Área de mayor riesgo | `Agent Runtime` tiene la mayor carga ponderada abierta. | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-383](./gap-reference-catalog.es.md#gt-383), [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-386](./gap-reference-catalog.es.md#gt-386) |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-383](./gap-reference-catalog.es.md#gt-383) |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-381](./gap-reference-catalog.es.md#gt-381), [GT-386](./gap-reference-catalog.es.md#gt-386) |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-386](./gap-reference-catalog.es.md#gt-386) |
 
 ## Bloqueadores Actuales
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
-| [GT-375](./gap-reference-catalog.es.md#gt-375) | Contratos de evaluación stateless del Core — formalizar EvaluationContext (entrada) / EvaluationResult (salida): el consumidor (Evolith Tracker) envía contexto y el Core devuelve veredictos/recomendaciones estructurados. Producto/tenant/iniciativa son **solo identificadores de contexto opacos**, nunca entidades del Core; épicas/historias como ExternalReferenceContext. El Core emite Recommendation/DecisionRecommendation no vinculante; el Tracker decide, persiste y audita. Según ADR-0101 (corrige ADR-0100) / UP-002. **Épica paraguas — decompuesta en GT-376…GT-381 (R0–R5).** | `Cross` | P0/XL |
+| [GT-324](./gap-reference-catalog.es.md#gt-324) | CD: build+push a GHCR de core-api y mcp-server (GITHUB_TOKEN) vivo + triggers push/tag; job de deploy Coolify guardado — código completo, deploy pendiente de secrets + run CD | `Infra` | P1/M |
+| [GT-384](./gap-reference-catalog.es.md#gt-384) | R1 — Adaptador real de evaluación del Core: reemplazar StubCoreEvaluationAdapter tras ICoreEvaluationPort. La variante in-process envuelve EvaluationOrchestrator.evaluate(ctx) del Core (construido en apps/core-api/src/app.module.ts, exportado desde @evolith/core-domain/evaluation); la variante REST llama al controlador /evaluate existente. Los contratos ya coinciden (EvaluationContext→EvaluationResult), así que es cableado + resolución de workspaceRef, no nueva lógica de evaluación. Tests de paridad stub↔real (0 drift de contrato). **Bloqueador central de GT-383.** | `Agent Runtime` | P1/M |
+| [GT-383](./gap-reference-catalog.es.md#gt-383) | ÉPICA — productización y publicación de @evolith/agent-runtime v1.0.0: graduar los adaptadores stub/in-memory por defecto a producción, congelar el contrato público (exports ././ports/./adapters) y dejar el paquete publish-safe. El bloqueador central es el puerto de evaluación del Core — hoy StubCoreEvaluationAdapter fabrica un EvaluationResult canónico desde los facts de passthrough (results:{}, rulesExecuted:[], policiesApplied:[]), así que el runtime gobierna sobre un Core simulado. Según ADR-0102. **Épica paraguas — decompuesta en GT-384…GT-389.** | `Agent Runtime` | P1/XL |
+| [GT-388](./gap-reference-catalog.es.md#gt-388) | R5 — Congelar contrato público + SemVer 1.0.0: congelar la superficie de exports ././ports/./adapters y los tipos de contrato canónicos; definir la política de evolución de schemaVersion + deprecación/compatibilidad; subir 0.1.0→1.0.0 solo tras GT-384 (no hay contrato estable sobre un Core simulado). | `Agent Runtime` | P2/S |
+| [GT-386](./gap-reference-catalog.es.md#gt-386) | R3 — Adaptadores de persistencia durable: reemplazar InMemorySchedulerAdapter (sin timers; se pierde al reiniciar) por un adaptador durable cron/cola tras ISchedulerPort, y InMemoryMemoryAdapter por un almacén persistente tras IMemoryPort. El in-memory queda como default de test. | `Agent Runtime` | P2/M |
 
 ## Métricas
 
@@ -43,18 +47,17 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-07-02 |
 | Gaps totales | 412 |
-| Gaps cerrados | 405 |
-| Gaps pendientes | 7 |
-| P0 abiertos | 1 |
+| Gaps cerrados | 407 |
+| Gaps pendientes | 5 |
+| P0 abiertos | 0 |
 | P1 abiertos | 3 |
-| P2 abiertos | 3 |
-| Cierre total | 98.3% |
+| P2 abiertos | 2 |
+| Cierre total | 98.8% |
 | Registros de evidencia de cierre | 364 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Cross` | 2 | 1 | 0 | [GT-375](./gap-reference-catalog.es.md#gt-375), [GT-381](./gap-reference-catalog.es.md#gt-381) |
 | `Agent Runtime` | 4 | 0 | 2 | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-383](./gap-reference-catalog.es.md#gt-383), [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-386](./gap-reference-catalog.es.md#gt-386) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.es.md#gt-324) |
 

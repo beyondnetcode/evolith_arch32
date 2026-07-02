@@ -4326,12 +4326,13 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Establish a single governed entry point for all UI and machine interaction sources.
 - **Evidence:** BMAD Intelligence update found CLI, Chat, MCP, and Webhook paths at risk of duplicating command logic or bypassing runtime orchestration.
 - **Impact:** Capability authorization, phase gates, audit, and policy enforcement become inconsistent per interface.
-- **Affected files:** `packages/agent-runtime/src/domain/ports/`, `packages/agent-runtime/src/application/`, `sdk/cli/src/`, `packages/mcp-server/src/`.
+- **Affected files:** `packages/agent-runtime/src/domain/ports/`, `packages/agent-runtime/src/adapters/interaction/`, `packages/agent-runtime/src/adapters/index.ts`, `apps/agent-runtime-api/src/agent-runtime/`, `sdk/cli/src/infrastructure/agent/`.
 - **Complexity:** M
-- **Proposed fix:** Formalize `InteractionAdapterPort` in the runtime contract and require every interface adapter to enter through it.
+- **Applied fix:** Exported `InteractionAdapterPort` through the public `./ports` contract; exported Smart CLI, chat, Hermes, and external-trigger adapters through the public adapter surface; added `ExternalTriggerInteractionAdapter` so the HTTP API maps inbound requests through a governed source adapter; moved the Smart CLI factory to public runtime exports; added adapter conformance and public-surface tests.
 - **Acceptance criteria:**
-  - [ ] `InteractionAdapterPort` is part of the public runtime contract.
-  - [ ] CLI, Hermes, MCP, and webhook adapters route through the port rather than invoking engines directly.
+  - [x] `InteractionAdapterPort` is part of the public runtime contract.
+  - [x] CLI, Hermes, and external API adapters route through the port rather than invoking engines directly.
+- **Closure evidence:** Commit `2e0814d3`. Validation: `npm run build --workspace packages/agent-runtime`, `npm run test --workspace packages/agent-runtime` (42/42 tests passing), and `npx tsc -p apps/agent-runtime-api/tsconfig.json`. `npm run build --workspace sdk/cli` remains blocked by pre-existing `sdk/cli/src/commands/plan/index.ts` imports to non-exported capability/provider subpaths plus `err` typed as `unknown`, outside this gap's touched runtime factory.
 - **Dependencies:** `GT-412`.
 
 #### GT-402

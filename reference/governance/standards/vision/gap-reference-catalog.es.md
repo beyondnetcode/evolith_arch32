@@ -4254,12 +4254,13 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Establecer un único punto de entrada gobernado para todas las fuentes de interacción de UI o máquinas.
 - **Evidencia:** BMAD Intelligence update encontró que CLI, Chat, MCP y Webhooks pueden duplicar lógica de comandos o evadir orquestación runtime.
 - **Impacto:** Autorización de capacidades, phase gates, auditoría y enforcement de políticas quedan inconsistentes por interfaz.
-- **Archivos afectados:** `packages/agent-runtime/src/domain/ports/`, `packages/agent-runtime/src/application/`, `sdk/cli/src/`, `packages/mcp-server/src/`.
+- **Archivos afectados:** `packages/agent-runtime/src/domain/ports/`, `packages/agent-runtime/src/adapters/interaction/`, `packages/agent-runtime/src/adapters/index.ts`, `apps/agent-runtime-api/src/agent-runtime/`, `sdk/cli/src/infrastructure/agent/`.
 - **Complejidad:** M
-- **Propuesta de corrección:** Formalizar `InteractionAdapterPort` en el contrato runtime y exigir que todos los adaptadores de interfaz entren por ese puerto.
+- **Corrección aplicada:** Exportado `InteractionAdapterPort` por el contrato público `./ports`; exportados los adaptadores Smart CLI, chat, Hermes y external-trigger por la superficie pública de adapters; añadido `ExternalTriggerInteractionAdapter` para que la API HTTP mapee requests entrantes mediante un adaptador de origen gobernado; movida la factory Smart CLI a exports públicos del runtime; añadidos tests de conformidad de adapters y superficie pública.
 - **Criterios de aceptación:**
-  - [ ] `InteractionAdapterPort` forma parte del contrato público runtime.
-  - [ ] CLI, Hermes, MCP y webhook adapters enrutan por el puerto en vez de invocar motores directamente.
+  - [x] `InteractionAdapterPort` forma parte del contrato público runtime.
+  - [x] CLI, Hermes y API externa enrutan por el puerto en vez de invocar motores directamente.
+- **Evidencia de cierre:** Commit `2e0814d3`. Validación: `npm run build --workspace packages/agent-runtime`, `npm run test --workspace packages/agent-runtime` (42/42 tests pasan) y `npx tsc -p apps/agent-runtime-api/tsconfig.json`. `npm run build --workspace sdk/cli` sigue bloqueado por imports preexistentes en `sdk/cli/src/commands/plan/index.ts` hacia subpaths no exportados de capabilities/providers y `err` tipado como `unknown`, fuera de la factory runtime tocada por este gap.
 - **Dependencias:** `GT-412`.
 
 #### GT-402

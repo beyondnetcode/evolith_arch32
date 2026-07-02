@@ -3,6 +3,31 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-401",
+      "closedAt": "2026-07-02",
+      "closureCommit": "2e0814d3",
+      "evidence": [
+        "packages/agent-runtime/src/domain/ports/interaction-adapter.port.ts",
+        "packages/agent-runtime/src/domain/ports/index.ts",
+        "packages/agent-runtime/src/adapters/index.ts",
+        "packages/agent-runtime/src/adapters/interaction/ExternalTriggerInteractionAdapter.ts",
+        "packages/agent-runtime/src/adapters/interaction/SmartCliCommandInteractionAdapter.ts",
+        "packages/agent-runtime/src/adapters/interaction/SmartCliChatInteractionAdapter.ts",
+        "packages/agent-runtime/src/adapters/interaction/HermesChatBoxInteractionAdapter.ts",
+        "packages/agent-runtime/src/__tests__/interaction-adapters.spec.ts",
+        "packages/agent-runtime/src/__tests__/public-surface.spec.ts",
+        "apps/agent-runtime-api/src/agent-runtime/agent-runtime.controller.ts",
+        "sdk/cli/src/infrastructure/agent/agent-runtime.factory.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/agent-runtime",
+        "npm run test --workspace packages/agent-runtime",
+        "npx tsc -p apps/agent-runtime-api/tsconfig.json"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "GT-401 closes the shared public InteractionAdapterPort contract and the existing CLI/Hermes/API adapter path. MCP/webhook-specific rollout remains explicitly tracked by GT-405 and follow-on interface gaps."
+    },
+    {
       "id": "GT-398",
       "closedAt": "2026-07-02",
       "closureCommit": "f826a927",

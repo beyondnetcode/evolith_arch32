@@ -4,7 +4,7 @@
 
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
-**Última Actualización:** 2026-07-02 (Cierre de GT-398 — añadida paridad OPA para `allowedSourceInterfaces`, registrada evidencia de cierre y actualizados los conteos de progreso EN/ES.)
+**Última Actualización:** 2026-07-02 (Cierre de GT-401 — formalizado `InteractionAdapterPort` como contrato público runtime, enrutada la API externa por un adaptador de interacción y actualizados los conteos de progreso EN/ES.)
 **Detalle de Gaps:** [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md)
 
 Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunidades, habilitadores, prioridad y estado. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
@@ -13,7 +13,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-401`](./gap-reference-catalog.es.md#gt-401) | **InteractionAdapterPort formalizado:** Falta integración formal como punto único de entrada gobernado para las interfaces. | `Agent Runtime` | Cross | P0 | M | `PENDIENTE` |
 | [`GT-402`](./gap-reference-catalog.es.md#gt-402) | **Smart CLI adapter:** Formalizar CLI como adaptador de interacción para no evadir la capa runtime. | `Smart CLI` | Cross | P0 | M | `PENDIENTE` |
 | [`GT-412`](./gap-reference-catalog.es.md#gt-412) | **Garantía de Ejecución de Políticas en Runtime:** Las políticas de gobernanza están ausentes en los flujos de ejecución en tiempo de ejecución. | `Agent Runtime` | Cross | P0 | M | `PENDIENTE` |
 | [`GT-377`](./gap-reference-catalog.es.md#gt-377) | R1 — Contratos `EvaluationContext`/`EvaluationResult` + Contract Schema Registry (tipos canónicos reutilizando `Verdict`/`PhaseId`; schemas versionados; envelope ADR-0073; guard ESLint que prohíbe `*Repository` para entidades de negocio) | `Core Domain` | Cross | P0 | L | `EN-PROGRESO` |
@@ -72,6 +71,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`MT-A02`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Congelar la decisión de taxonomía raíz: no `/topologies/` raíz sin ADR reemplazante | `Governance` | Transversal | P0 | S | `COMPLETADO` |
 | [`MT-A03`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Autorizar `reference/architecture/topologies/` como corpus topológico canónico legible por humanos | `Taxonomy` | Transversal | P0 | S | `COMPLETADO` |
 | [`MT-A04`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Autorizar `rulesets/topologies/` como la ubicación canónica de reglas de topología ejecutables | `Rulesets` | Transversal | P0 | S | `COMPLETADO` |
+| [`GT-401`](./gap-reference-catalog.es.md#gt-401) | **InteractionAdapterPort formalizado:** Falta integración formal como punto único de entrada gobernado para las interfaces. | `Agent Runtime` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-02`](./gap-reference-catalog.es.md#gt-02) | `GateEvidence` modelado en la capa de dominio | `Core Domain` | F1 | P0 | M | `COMPLETADO` |
 | [`GT-03`](./gap-reference-catalog.es.md#gt-03) | `EvaluateGateUseCase` y comando `gate evaluate` | `Core Domain` | F1 | P0 | M | `COMPLETADO` |
 | [`GT-06`](./gap-reference-catalog.es.md#gt-06) | Tool MCP `evolith-gate-evaluate` | `CLI` | F2 | P0 | M | `COMPLETADO` |
@@ -427,7 +427,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 379 / 412 completados · 8 en progreso · 25 pendientes · 0 diferidos
+**Progreso:** 380 / 412 completados · 8 en progreso · 24 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Winston III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Winston Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

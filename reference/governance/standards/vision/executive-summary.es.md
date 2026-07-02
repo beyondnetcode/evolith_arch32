@@ -11,7 +11,7 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Decisión actual:** GO condicionado: avanzar solo con hardening P1 y evidencia automatizada.
 
-**Mayor problema ahora:** `Agent Runtime` concentra el mayor riesgo abierto ponderado (4 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Infra` concentra el mayor riesgo abierto ponderado (1 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
 
 **Dónde atacar primero:** -.
 
@@ -26,19 +26,16 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
 | 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | - |
-| 2 | Área de mayor riesgo | `Agent Runtime` tiene la mayor carga ponderada abierta. | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-383](./gap-reference-catalog.es.md#gt-383), [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-386](./gap-reference-catalog.es.md#gt-386) |
+| 2 | Área de mayor riesgo | `Infra` tiene la mayor carga ponderada abierta. | [GT-324](./gap-reference-catalog.es.md#gt-324) |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-383](./gap-reference-catalog.es.md#gt-383) |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-386](./gap-reference-catalog.es.md#gt-386) |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](./gap-reference-catalog.es.md#gt-324) |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-386](./gap-reference-catalog.es.md#gt-386) |
 
 ## Bloqueadores Actuales
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
 | [GT-324](./gap-reference-catalog.es.md#gt-324) | CD: build+push a GHCR de core-api y mcp-server (GITHUB_TOKEN) vivo + triggers push/tag; job de deploy Coolify guardado — código completo, deploy pendiente de secrets + run CD | `Infra` | P1/M |
-| [GT-384](./gap-reference-catalog.es.md#gt-384) | R1 — Adaptador real de evaluación del Core: reemplazar StubCoreEvaluationAdapter tras ICoreEvaluationPort. La variante in-process envuelve EvaluationOrchestrator.evaluate(ctx) del Core (construido en apps/core-api/src/app.module.ts, exportado desde @evolith/core-domain/evaluation); la variante REST llama al controlador /evaluate existente. Los contratos ya coinciden (EvaluationContext→EvaluationResult), así que es cableado + resolución de workspaceRef, no nueva lógica de evaluación. Tests de paridad stub↔real (0 drift de contrato). **Bloqueador central de GT-383.** | `Agent Runtime` | P1/M |
-| [GT-383](./gap-reference-catalog.es.md#gt-383) | ÉPICA — productización y publicación de @evolith/agent-runtime v1.0.0: graduar los adaptadores stub/in-memory por defecto a producción, congelar el contrato público (exports ././ports/./adapters) y dejar el paquete publish-safe. El bloqueador central es el puerto de evaluación del Core — hoy StubCoreEvaluationAdapter fabrica un EvaluationResult canónico desde los facts de passthrough (results:{}, rulesExecuted:[], policiesApplied:[]), así que el runtime gobierna sobre un Core simulado. Según ADR-0102. **Épica paraguas — decompuesta en GT-384…GT-389.** | `Agent Runtime` | P1/XL |
-| [GT-388](./gap-reference-catalog.es.md#gt-388) | R5 — Congelar contrato público + SemVer 1.0.0: congelar la superficie de exports ././ports/./adapters y los tipos de contrato canónicos; definir la política de evolución de schemaVersion + deprecación/compatibilidad; subir 0.1.0→1.0.0 solo tras GT-384 (no hay contrato estable sobre un Core simulado). | `Agent Runtime` | P2/S |
 | [GT-386](./gap-reference-catalog.es.md#gt-386) | R3 — Adaptadores de persistencia durable: reemplazar InMemorySchedulerAdapter (sin timers; se pierde al reiniciar) por un adaptador durable cron/cola tras ISchedulerPort, y InMemoryMemoryAdapter por un almacén persistente tras IMemoryPort. El in-memory queda como default de test. | `Agent Runtime` | P2/M |
 
 ## Métricas
@@ -47,19 +44,19 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-07-02 |
 | Gaps totales | 412 |
-| Gaps cerrados | 407 |
-| Gaps pendientes | 5 |
+| Gaps cerrados | 410 |
+| Gaps pendientes | 2 |
 | P0 abiertos | 0 |
-| P1 abiertos | 3 |
-| P2 abiertos | 2 |
-| Cierre total | 98.8% |
+| P1 abiertos | 1 |
+| P2 abiertos | 1 |
+| Cierre total | 99.5% |
 | Registros de evidencia de cierre | 364 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Agent Runtime` | 4 | 0 | 2 | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-383](./gap-reference-catalog.es.md#gt-383), [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-386](./gap-reference-catalog.es.md#gt-386) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.es.md#gt-324) |
+| `Agent Runtime` | 1 | 0 | 0 | [GT-386](./gap-reference-catalog.es.md#gt-386) |
 
 ## Fuente y Regla de Actualización
 

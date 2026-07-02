@@ -6,6 +6,7 @@
 
 import type { ISkillRegistryPort } from '../../domain/ports/skill-registry.port';
 import type { SkillDescriptor } from '../../domain/contracts/capability';
+import type { AgentSourceInterface } from '../../domain/contracts/agent-runtime-request';
 import { DEFAULT_SKILLS } from './default-skills';
 
 export class LocalSkillRegistryAdapter implements ISkillRegistryPort {
@@ -15,17 +16,32 @@ export class LocalSkillRegistryAdapter implements ISkillRegistryPort {
     for (const skill of seed) this.byId.set(skill.id, skill);
   }
 
-  async list(): Promise<readonly SkillDescriptor[]> {
-    return [...this.byId.values()];
+  private isAllowed(skill: SkillDescriptor, sourceInterface?: AgentSourceInterface): boolean {
+    if (!sourceInterface) return true;
+    if (!skill.allowedSourceInterfaces) return true; // If not defined, assume all allowed
+    return skill.allowedSourceInterfaces.includes(sourceInterface);
   }
 
-  async resolve(intent: string, tool?: string): Promise<SkillDescriptor | undefined> {
+  async list(sourceInterface?: AgentSourceInterface): Promise<readonly SkillDescriptor[]> {
+    return [...this.byId.values()].filter(skill => this.isAllowed(skill, sourceInterface));
+  }
+
+  async resolve(intent: string, tool?: string, sourceInterface?: AgentSourceInterface): Promise<SkillDescriptor | undefined> {
+    let matchedSkill: SkillDescriptor | undefined;
     if (tool) {
-      const direct = this.byId.get(tool);
-      if (direct) return direct;
+      matchedSkill = this.byId.get(tool);
     }
-    const wanted = intent.trim().toLowerCase();
-    return [...this.byId.values()].find((s) => s.intents.some((i) => i.toLowerCase() === wanted));
+    
+    if (!matchedSkill) {
+      const wanted = intent.trim().toLowerCase();
+      matchedSkill = [...this.byId.values()].find((s) => s.intents.some((i) => i.toLowerCase() === wanted));
+    }
+    
+    if (matchedSkill && this.isAllowed(matchedSkill, sourceInterface)) {
+      return matchedSkill;
+    }
+    
+    return undefined;
   }
 
   async register(skill: SkillDescriptor): Promise<void> {

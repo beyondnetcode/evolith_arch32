@@ -141,13 +141,17 @@ export class AgentRuntimeService implements IAgentRuntime {
       if (!skill) {
         steps.push('tool-not-found');
         yield { type: 'capability_not_found', timestamp: this.now() };
+        
+        let msg = `No capability resolves intent '${request.intent}'${request.tool ? ` / tool '${request.tool}'` : ''}.`;
+        if (!this.deps.engine && (request.sourceInterface === 'smart_cli_chat' || request.sourceInterface === 'hermes_agent_chatbox' || request.sourceInterface === 'future_chat_adapter')) {
+           msg += ' (Agent engine is not enabled/installed, so conversational intents cannot be interpreted)';
+        }
+        
         const result = await this.fail(
           request,
           baseTrace(),
           startedAt,
-          `No capability resolves intent '${request.intent}'${
-            request.tool ? ` / tool '${request.tool}'` : ''
-          }.`,
+          msg,
           'tool-not-found',
         );
         yield { type: 'error', timestamp: this.now(), result };
@@ -155,6 +159,20 @@ export class AgentRuntimeService implements IAgentRuntime {
       }
       
       yield { type: 'capability_selected', timestamp: this.now(), capabilityId: skill.id };
+
+      // 2.5 Validate interface permissions
+      if (skill.allowedSourceInterfaces && request.sourceInterface && !skill.allowedSourceInterfaces.includes(request.sourceInterface)) {
+        steps.push('blocked-by-interface');
+        const result = await this.blocked(
+          request,
+          skill,
+          { ...baseTrace(), capability: skill.id },
+          startedAt,
+          `Capability '${skill.id}' is not allowed to be executed from interface '${request.sourceInterface}'.`
+        );
+        yield { type: 'result_assembled', timestamp: this.now(), result };
+        return;
+      }
 
       // 3. Approval (HITL) when the capability requires it.
       let approvedBy: string | undefined;

@@ -1,3 +1,5 @@
+import type { AgentSourceInterface } from './agent-runtime-request';
+
 /**
  * Capability + governance metadata.
  *
@@ -32,6 +34,10 @@ export interface GovernancePosture {
   readonly requiresPolicy: boolean;
   /** Optional explicit policy reference to evaluate against. */
   readonly policyRef?: string;
+  /** List of interface origins that are allowed to trigger this capability. */
+  readonly allowedSourceInterfaces?: readonly AgentSourceInterface[];
+  /** Default dry_run behavior if none is provided. */
+  readonly defaultDryRun?: boolean;
 }
 
 /** A single `.harness` capability as discovered from the manifest. */

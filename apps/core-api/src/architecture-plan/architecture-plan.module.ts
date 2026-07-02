@@ -4,18 +4,16 @@ import { ArchitecturePlanService } from './architecture-plan.service';
 
 import { EvaluationOrchestrator } from '@evolith/core-domain/evaluation';
 
+import { ArchitecturePlanOpaEvaluator } from './ArchitecturePlanOpaEvaluator';
+
 @Module({
   controllers: [ArchitecturePlanController],
   providers: [
     ArchitecturePlanService,
+    ArchitecturePlanOpaEvaluator,
     {
       provide: 'EvaluationPipelinePort',
-      useValue: {
-        evaluate: async (policy: string, input: any) => ({
-          sdlc_mode: 'minimal',
-          required_approvals: []
-        })
-      } // Mocking it for now as the orchestrator is very complex to inject directly in this minimal slice
+      useExisting: ArchitecturePlanOpaEvaluator
     }
   ],
   exports: [ArchitecturePlanService],

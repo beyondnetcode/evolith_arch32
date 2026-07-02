@@ -12,6 +12,8 @@
 /** Execution mode the caller operates under (drives HITL / approval routing). */
 export type RuntimeExecutionMode = 'manual' | 'hybrid' | 'agentic';
 
+import type { AgentSourceInterface } from './agent-runtime-request';
+
 export interface RuntimeContext {
   /** Opaque tenant the request belongs to. */
   readonly tenantId?: string;
@@ -19,6 +21,9 @@ export interface RuntimeContext {
   readonly productId?: string;
   /** Opaque initiative the request belongs to. */
   readonly initiativeId?: string;
+
+  /** Identifies which interface initiated the request (echoed for rule evaluations). */
+  readonly sourceInterface?: AgentSourceInterface;
 
   /** SDLC phase anchoring the request (e.g. 'discovery'). */
   readonly phase?: string;

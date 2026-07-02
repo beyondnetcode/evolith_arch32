@@ -10,12 +10,21 @@
 
 import type { RuntimeContext, RuntimeExecutionMode } from './runtime-context';
 
+export type AgentSourceInterface =
+  | 'smart_cli_command'
+  | 'smart_cli_chat'
+  | 'hermes_agent_chatbox'
+  | 'mcp'
+  | 'external_trigger'
+  | 'future_chat_adapter';
+
 /**
  * Wire shape (snake_case) as sent by Tracker/CLI/chat — matches the JSON
  * contract in the design brief. Use {@link parseAgentRuntimeRequest} to turn it
  * into the internal camelCase {@link AgentRuntimeRequest}.
  */
 export interface AgentRuntimeRequestWire {
+  readonly source_interface?: AgentSourceInterface;
   readonly tenant?: string;
   readonly product?: string;
   readonly initiative?: string;
@@ -48,6 +57,9 @@ export interface AgentRuntimeRequest {
   /** Identifies which runtime served the request (echoed into the trace). */
   readonly runtime?: string;
 
+  /** Identifies which interface initiated the request. */
+  readonly sourceInterface?: AgentSourceInterface;
+
   /** Tenant/product/initiative context — received, never embedded. */
   readonly context: RuntimeContext;
 
@@ -73,6 +85,7 @@ export function parseAgentRuntimeRequest(wire: AgentRuntimeRequestWire): AgentRu
     tenantId: wire.tenant,
     productId: wire.product,
     initiativeId: wire.initiative,
+    sourceInterface: wire.source_interface ?? 'smart_cli_command',
     phase: wire.phase,
     gate: wire.gate,
     requestedBy: wire.requested_by,
@@ -85,6 +98,7 @@ export function parseAgentRuntimeRequest(wire: AgentRuntimeRequestWire): AgentRu
     intent: wire.intent,
     tool: wire.tool,
     runtime: wire.runtime ?? RUNTIME_DEFAULT,
+    sourceInterface: wire.source_interface ?? 'smart_cli_command',
     context,
     parameters: wire.parameters,
     dryRun: wire.dry_run ?? false,

@@ -43,19 +43,19 @@ export interface ArchitecturePlanAuditTrail {
 }
 
 export class ArchitecturePlan {
-  id: string;
-  version: number;
-  status: ArchitecturePlanStatus;
-  tenant_id: string;
-  product_id: string;
-  title: string;
-  prompt_source: string;
-  scope: ArchitecturePlanScope;
-  impact: ArchitecturePlanImpact;
-  risk_assessment: ArchitecturePlanRiskAssessment;
-  governance: ArchitecturePlanGovernance;
-  execution_plan: ArchitecturePlanExecutionPlan;
-  audit_trail: ArchitecturePlanAuditTrail;
+  id!: string;
+  version!: number;
+  status!: ArchitecturePlanStatus;
+  tenant_id!: string;
+  product_id!: string;
+  title!: string;
+  prompt_source!: string;
+  scope!: ArchitecturePlanScope;
+  impact!: ArchitecturePlanImpact;
+  risk_assessment!: ArchitecturePlanRiskAssessment;
+  governance!: ArchitecturePlanGovernance;
+  execution_plan!: ArchitecturePlanExecutionPlan;
+  audit_trail!: ArchitecturePlanAuditTrail;
 
   constructor(partial: Partial<ArchitecturePlan>) {
     Object.assign(this, partial);

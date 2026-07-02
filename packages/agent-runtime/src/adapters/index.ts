@@ -39,6 +39,8 @@ export { SmartCliChatInteractionAdapter } from './interaction/SmartCliChatIntera
 export { HermesChatBoxInteractionAdapter } from './interaction/HermesChatBoxInteractionAdapter';
 export type { HermesChatBoxInput } from './interaction/HermesChatBoxInteractionAdapter';
 export { ExternalTriggerInteractionAdapter } from './interaction/ExternalTriggerInteractionAdapter';
+export { McpInteractionAdapter } from './interaction/McpInteractionAdapter';
+export type { McpToolInput } from './interaction/McpInteractionAdapter';
 
 // Gateway
 export { CliCommunicationGatewayAdapter } from './gateway/cli-communication-gateway.adapter';

@@ -4,10 +4,10 @@
   "asOf": "2026-07-02",
   "gaps": {
     "total": 412,
-    "done": 397,
-    "pending": 7,
+    "done": 400,
+    "pending": 0,
     "inProgress": 8,
-    "deferred": 0
+    "deferred": 4
   },
   "evidence": {
     "closureRecords": 364,

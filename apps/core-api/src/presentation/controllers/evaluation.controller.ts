@@ -5,6 +5,7 @@ import { EvaluationOrchestrator } from '@evolith/core-domain/evaluation';
 import type { EvaluationContext } from '@evolith/core-domain/evaluation';
 import { EvaluationContextDto } from '../dtos/evaluation.dto';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
+import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain';
 
 /**
  * POST /api/v1/evaluate — the stateless Core evaluation entry point (ADR-0101).
@@ -32,8 +33,15 @@ export class EvaluationController {
     // Canonical path: opaque workspaceRef → stateless EvaluationContext → EvaluationResult.
     if (body.workspaceRef) {
       const ctx = body as unknown as EvaluationContext;
-      // The EnvelopeInterceptor wraps this raw result in the ADR-0073 SuccessEnvelope.
-      return this.orchestrator.evaluate(ctx);
+      const result = await this.orchestrator.evaluate(ctx);
+      // GT-411: Return pre-built ADR-0073 envelope with canonical command name.
+      return createSuccessEnvelope(result, {
+        command: 'evolith evaluate',
+        executedAt: new Date().toISOString(),
+        durationMs: 0,
+        correlationId: `api-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+      });
     }
 
     // Legacy path: satellite filesystem path (pre-ADR-0101). Returns the legacy verdict envelope.

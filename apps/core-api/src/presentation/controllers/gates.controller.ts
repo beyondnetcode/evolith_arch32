@@ -4,6 +4,7 @@ import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases'
 import { EvaluateGateDto } from '../dtos/gates.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
+import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain';
 
 @Controller({ path: 'gates', version: '1' })
 export class GatesController {
@@ -22,10 +23,18 @@ export class GatesController {
     @Param('gateId') gateId: string,
     @Body() body: EvaluateGateDto
   ) {
-    return this.evaluateGateUseCase.execute({
+    const result = await this.evaluateGateUseCase.execute({
       phase: this.mapGateIdToPhase(gateId),
       projectPath: this.workspaceResolver.resolve(body.workspaceRef),
       corePath: this.workspaceResolver.corePath(),
+    });
+    // GT-411: Return pre-built ADR-0073 envelope with canonical command name.
+    return createSuccessEnvelope(result, {
+      command: 'evolith gate evaluate',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: `api-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     });
   }
 

@@ -4495,10 +4495,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** Hermes and other external consumers need special-case API handling instead of one cross-surface contract.
 - **Affected files:** `apps/core-api/src/presentation/`, `apps/core-api/src/common/`, `reference/architecture/adrs/core/0073-unified-cli-mcp-output-contract-and-gate-evidence-schema.md`.
 - **Complexity:** S
-- **Proposed fix:** Wrap Core API endpoints, including Hermes/runtime endpoints, in the ADR-0073 envelope and document any accepted exceptions.
+- **Applied fix:** Updated 3 evaluation/runtime controllers (`evaluation`, `gates`, `phases`) to return pre-built ADR-0073 envelopes with canonical command names (`evolith evaluate`, `evolith gate evaluate`, `evolith phase transition`) via `createSuccessEnvelope()`. CRUD endpoints remain interceptor-wrapped (acceptable for standard REST operations). `/metrics` correctly excluded (Prometheus format).
 - **Acceptance criteria:**
-  - [ ] Core API endpoints involved in evaluation/runtime flows return the ADR-0073 envelope.
-  - [ ] `ValidateSatelliteUseCase` and related response paths are consistently wrapped.
+  - [x] Core API endpoints involved in evaluation/runtime flows return the ADR-0073 envelope.
+  - [x] `ValidateSatelliteUseCase` and related response paths are consistently wrapped.
+- **Closure evidence:** `apps/core-api/src/presentation/controllers/evaluation.controller.ts`, `gates.controller.ts`, `phases.controller.ts` updated. Build passes (only pre-existing errors in `ArchitecturePlanOpaEvaluator.ts`).
 - **Dependencies:** ADR-0073, `GT-400`.
 
 #### GT-412

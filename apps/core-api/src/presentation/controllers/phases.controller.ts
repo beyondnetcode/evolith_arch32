@@ -4,6 +4,7 @@ import { PhaseTransitionUseCase } from '@evolith/core-domain/application/use-cas
 import { TransitionPhaseDto } from '../dtos/phases.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
+import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain';
 
 @Controller({ path: 'phases', version: '1' })
 export class PhasesController {
@@ -18,11 +19,19 @@ export class PhasesController {
   @ApiBody({ type: TransitionPhaseDto })
   @ApiEnvelopeResponse(undefined, { description: 'Transition results' })
   async transition(@Body() body: TransitionPhaseDto) {
-    return this.phaseTransitionUseCase.execute(
+    const result = await this.phaseTransitionUseCase.execute(
       body.from,
       body.to,
       body.tools,
       this.workspaceResolver.resolve(body.workspaceRef),
     );
+    // GT-411: Return pre-built ADR-0073 envelope with canonical command name.
+    return createSuccessEnvelope(result, {
+      command: 'evolith phase transition',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: `api-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    });
   }
 }

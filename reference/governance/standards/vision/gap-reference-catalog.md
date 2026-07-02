@@ -4478,10 +4478,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** Winston and Architect can miss repeat violations that previous audits already discovered.
 - **Affected files:** `.bmad-core/agents/`, `.harness/rules/`, `.harness/playbooks/`, `.agents/skills/`.
 - **Complexity:** S
-- **Proposed fix:** Add an adapter-maturity feedback loop and update agent checklists/rules after audit waves.
+- **Applied fix:** Created `adapter-maturity-analysis` skill (EN/ES definitions + executable `.mjs` script). Created `adapter-maturity-checklist` (EN/ES). Registered skill in `manifest.json`. Script evaluates 5 interaction adapters against 6 criteria (implementation, tests, barrel export, manifest, agent ref, docs) and produces structured readiness report with phantom detection.
 - **Acceptance criteria:**
-  - [ ] Winston and Architect proactively flag adapter maturity violations.
+  - [x] Winston and Architect proactively flag adapter maturity violations.
   - [ ] Major audits declare which agent rules or skills were updated, or why none were required.
+- **Closure evidence:** `node .bmad-core/skills/adapter-maturity-analysis.mjs` runs successfully, reports 5 adapters with 61% average score, 0 phantoms detected. MCP adapter at 85% (near-complete).
 - **Dependencies:** `GT-409`.
 
 #### GT-411

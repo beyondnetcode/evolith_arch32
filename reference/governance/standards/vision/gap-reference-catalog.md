@@ -4393,3 +4393,23 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Evidence:** BMAD agents missing adapter-maturity analysis skills.
 **Closure:** Winston and Architect agents proactively flag adapter maturity violations in PRs.
 **References:** Maturity Assessment (Adapter Capability Maturity)
+
+### `GT-411`
+- **Title**: Core API ADR-0073 Envelope Unification
+- **Area**: Core API
+- **Date logged**: 2026-07-02
+- **Priority**: P1
+- **Complexity**: S
+- **Status**: PENDING
+- **Problem Statement**: The Core API currently lacks the standardized ADR-0073 structured envelope response (`{success, data, warnings}`) which is already implemented by the CLI and MCP interfaces. This creates an inconsistent contract for external consumers (like Hermes).
+- **Evidence of closure**: Core API endpoints (including any new Hermes endpoints) return the ADR-0073 envelope, and `ValidateSatelliteUseCase` is consistently wrapped.
+
+### `GT-412`
+- **Title**: Runtime Policy Enforcement Guarantee
+- **Area**: Agent Runtime
+- **Date logged**: 2026-07-02
+- **Priority**: P0
+- **Complexity**: M
+- **Status**: PENDING
+- **Problem Statement**: The SDLC Deep Audit reports Governance rules as "Absent in runtime". While Rego files exist and pass parity checks, they are not systematically enforced at runtime. The `Agent Runtime` lacks the wiring of real adapters (OPA validation) that forces policy on every request.
+- **Evidence of closure**: `OpaCliPolicyValidationAdapter` is injected in the `AgentRuntimeFactory` (resolving GT-399), and Deep Audit reports "Gobernanza Transversal" as SOLID.

@@ -49,6 +49,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-408`](./gap-reference-catalog.md#gt-408) | **Knowledge/RAG adapter:** Missing internal corpus context querying for agents. | `Agent Runtime` | Cross | P1 | L | `PENDING` |
 | [`GT-409`](./gap-reference-catalog.md#gt-409) | **Freshness checks:** Missing CI guards for visual map and adapter capability desynchronization. | `.harness` | Cross | P2 | M | `PENDING` |
 | [`GT-410`](./gap-reference-catalog.md#gt-410) | **BMAD Intelligence feedback:** BMAD agents missing adapter maturity skills and automated feedback loop. | `.bmad-core` | Cross | P1 | S | `PENDING` |
+| [`GT-411`](./gap-reference-catalog.md#gt-411) | **Core API ADR-0073 Envelope Unification:** Missing envelope in Core API responses. | `Core API` | Cross | P1 | S | `PENDING` |
+| [`GT-412`](./gap-reference-catalog.md#gt-412) | **Runtime Policy Enforcement Guarantee:** Governance policies are absent in runtime execution flows. | `Agent Runtime` | Cross | P0 | M | `PENDING` |
 | [`GT-359`](./gap-reference-catalog.md#gt-359) | Define `SatelliteManifest` ingestion contract schema | `Core Domain` | Cross | P0 | M | `DONE` |
 | [`GT-363`](./gap-reference-catalog.md#gt-363) | GitHub API integration client — secure auth + repo operations (create, configure, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `DONE` |
 | [`GT-362`](./gap-reference-catalog.md#gt-362) | Implement runtime enforcement for Rego policies in evaluation engine | `Core Domain` | Cross | P0 | L | `DONE` |

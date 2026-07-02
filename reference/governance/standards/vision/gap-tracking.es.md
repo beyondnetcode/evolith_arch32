@@ -49,6 +49,8 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-408`](./gap-reference-catalog.es.md#gt-408) | **Adaptador Knowledge/RAG:** Falta consulta al contexto del corpus interno para los agentes. | `Agent Runtime` | Cross | P1 | L | `PENDIENTE` |
 | [`GT-409`](./gap-reference-catalog.es.md#gt-409) | **Verificaciones de frescura:** Faltan guards CI para desincronización de mapa visual y capacidades de adaptadores. | `.harness` | Cross | P2 | M | `PENDIENTE` |
 | [`GT-410`](./gap-reference-catalog.es.md#gt-410) | **Feedback de BMAD Intelligence:** Faltan skills de madurez de adaptadores y bucle de retroalimentación en agentes BMAD. | `.bmad-core` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-411`](./gap-reference-catalog.es.md#gt-411) | **Unificación de Envelope ADR-0073 en Core API:** Falta el envelope estructurado en respuestas del Core API. | `Core API` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-412`](./gap-reference-catalog.es.md#gt-412) | **Garantía de Ejecución de Políticas en Runtime:** Las políticas de gobernanza están ausentes en los flujos de ejecución en tiempo de ejecución. | `Agent Runtime` | Cross | P0 | M | `PENDIENTE` |
 | [`GT-359`](./gap-reference-catalog.es.md#gt-359) | Definir esquema de contrato de ingesta `SatelliteManifest` | `Core Domain` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-363`](./gap-reference-catalog.es.md#gt-363) | Cliente de integración con GitHub API — auth seguro + operaciones de repo (crear, configurar, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-362`](./gap-reference-catalog.es.md#gt-362) | Implementar enforcement en runtime para políticas Rego | `Core Domain` | Cross | P0 | L | `COMPLETADO` |

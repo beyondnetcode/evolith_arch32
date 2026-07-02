@@ -4339,3 +4339,23 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Evidencia:** Faltan skills de análisis de madurez en agentes BMAD.
 **Cierre:** Winston y Architect alertan proactivamente de violaciones de madurez en PRs.
 **Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+
+### `GT-411`
+- **Título**: Unificación de Envelope ADR-0073 en Core API
+- **Área**: Core API
+- **Fecha de registro**: 2026-07-02
+- **Prioridad**: P1
+- **Complejidad**: S
+- **Estado**: PENDING
+- **Problema**: El Core API carece actualmente de la respuesta estructurada estándar ADR-0073 (`{success, data, warnings}`) que ya implementan las interfaces CLI y MCP. Esto crea un contrato inconsistente para consumidores externos.
+- **Evidencia de cierre**: Los endpoints del Core API devuelven el envelope ADR-0073, y `ValidateSatelliteUseCase` está empaquetado de manera consistente.
+
+### `GT-412`
+- **Título**: Garantía de Ejecución de Políticas en Runtime
+- **Área**: Agent Runtime
+- **Fecha de registro**: 2026-07-02
+- **Prioridad**: P0
+- **Complejidad**: M
+- **Estado**: PENDING
+- **Problema**: El Deep Audit reporta la Gobernanza Transversal como "Ausente en runtime". Aunque existen archivos Rego con paridad, no se aplican sistemáticamente en tiempo de ejecución. El `Agent Runtime` carece de la inyección de adaptadores reales (OPA) que fuerce la política en cada petición.
+- **Evidencia de cierre**: `OpaCliPolicyValidationAdapter` está inyectado en el `AgentRuntimeFactory` (resolviendo GT-399), y el Deep Audit reporta "Gobernanza Transversal" como SOLID.

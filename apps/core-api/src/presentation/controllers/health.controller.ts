@@ -42,7 +42,7 @@ export class HealthController {
   @ApiEnvelopeResponse(undefined, { description: 'Service is ready to handle traffic' })
   async ready() {
     const corePath = this.config.get('CORE_PATH', { infer: true }) as string;
-    const gatesFile = path.join(corePath, 'rulesets', 'phase-gates', 'phase-gates.rules.json');
+    const gatesFile = path.join(corePath, 'rulesets', 'sdlc', 'phase-gates.rules.json');
 
     const [corpusOk] = await Promise.allSettled([this.fs.exists(gatesFile)]);
 

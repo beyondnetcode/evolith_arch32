@@ -223,9 +223,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `ls rulesets/sdlc/phase-gates.rules.json` → presente (2026-06-30); duplicado vivo confirmado. Extraído de `reference/architecture/EVOLITH-ARCHITECTURE-DESIGN.md` §15 (#4) / §16 (riesgo).
 - **Impacto:** `rulesets/sdlc/`, `rulesets/phase-gates/`, cualquier loader que resuelva reglas de phase-gate.
 - **Complejidad:** S
+- **Fix aplicado:** Eliminado `rulesets/phase-gates/phase-gates.rules.json` (el duplicado). Actualizados 3 loaders que referenciaban el path viejo (`health.controller.ts`, `ruleset-validation.mode.ts`, `core-reference-query.service.ts`) para apuntar al canónico `rulesets/sdlc/phase-gates.rules.json`. Añadido guard de CI `31-detect-duplicate-rulesets.mjs` que detecta colisiones de basename en `*.rules.json` con `$id` divergentes.
 - **Criterios de aceptación:**
-  - [ ] Un único `phase-gates.rules.json` canónico; el duplicado eliminado y todos los loaders apuntan a él.
-  - [ ] Guard de CI que falle ante dos `*.rules.json` con el mismo basename + `$id` distinto.
+  - [x] Un único `phase-gates.rules.json` canónico; el duplicado eliminado y todos los loaders apuntan a él.
+  - [x] Guard de CI que falle ante dos `*.rules.json` con el mismo basename + `$id` distinto.
+- **Evidencia de cierre:** `rulesets/phase-gates/phase-gates.rules.json` eliminado. `node .harness/scripts/ci/31-detect-duplicate-rulesets.mjs` ya no reporta phase-gates como duplicado. 31 + 18 tests pasando.
 - **Dependencias:** ninguna.
 
 #### GT-391

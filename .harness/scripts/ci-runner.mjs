@@ -54,7 +54,8 @@ const MODES = {
       "09-reconcile-maturity.mjs", 
       "10-validate-contract-conformance.mjs", 
       "22-validate-topology-composition.mjs", 
-      "29-validate-opa-sidecar-bundles.mjs"
+      "29-validate-opa-sidecar-bundles.mjs",
+      "31-detect-duplicate-rulesets.mjs"
     ],
   },
   full: {

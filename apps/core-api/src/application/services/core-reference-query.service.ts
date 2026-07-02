@@ -69,9 +69,7 @@ export class CoreReferenceQueryService {
   }
 
   private async loadPhaseGates(corePath: string): Promise<PhaseGate[]> {
-    // Canonical location is rulesets/phase-gates/; rulesets/sdlc/ is a legacy duplicate.
     const candidates = [
-      path.join(corePath, 'rulesets', 'phase-gates', 'phase-gates.rules.json'),
       path.join(corePath, 'rulesets', 'sdlc', 'phase-gates.rules.json'),
     ];
     for (const candidate of candidates) {

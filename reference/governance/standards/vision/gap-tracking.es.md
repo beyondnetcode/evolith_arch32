@@ -4,7 +4,7 @@
 
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
-**Última Actualización:** 2026-07-02 (Cierre de GT-402 — enrutada la ejecución comando/chat de Smart CLI por el gateway del adaptador de interacción runtime, restaurado el build del CLI y actualizados los conteos de progreso EN/ES.)
+**Última Actualización:** 2026-07-02 (Cierre de GT-412 — enforcement de preflight de políticas runtime antes de ejecutar capacidades gobernadas, OPA como default del runtime hospedado con modo stub explícito, y conteos de progreso EN/ES actualizados.)
 **Detalle de Gaps:** [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md)
 
 Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunidades, habilitadores, prioridad y estado. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
@@ -13,7 +13,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-412`](./gap-reference-catalog.es.md#gt-412) | **Garantía de Ejecución de Políticas en Runtime:** Las políticas de gobernanza están ausentes en los flujos de ejecución en tiempo de ejecución. | `Agent Runtime` | Cross | P0 | M | `PENDIENTE` |
 | [`GT-377`](./gap-reference-catalog.es.md#gt-377) | R1 — Contratos `EvaluationContext`/`EvaluationResult` + Contract Schema Registry (tipos canónicos reutilizando `Verdict`/`PhaseId`; schemas versionados; envelope ADR-0073; guard ESLint que prohíbe `*Repository` para entidades de negocio) | `Core Domain` | Cross | P0 | L | `EN-PROGRESO` |
 | [`GT-395`](./gap-reference-catalog.es.md#gt-395) | **WS7 Gobernanza Transversal:** Las reglas de gobernanza agnósticas existen como archivos estáticos pero carecen de aplicación universal en runtime. | `Core Domain` | Cross | P0 | L | `PENDIENTE` |
 | [`GT-375`](./gap-reference-catalog.es.md#gt-375) | Contratos de evaluación stateless del Core — formalizar `EvaluationContext` (entrada) / `EvaluationResult` (salida): el consumidor (Evolith Tracker) envía contexto y el Core devuelve veredictos/recomendaciones estructurados. Producto/tenant/iniciativa son **solo identificadores de contexto opacos**, nunca entidades del Core; épicas/historias como `ExternalReferenceContext`. El Core emite `Recommendation`/`DecisionRecommendation` no vinculante; el Tracker decide, persiste y audita. Según ADR-0101 (corrige ADR-0100) / UP-002. **Épica paraguas — decompuesta en `GT-376`…`GT-381` (R0–R5).** | `Cross` | Cross | P0 | XL | `EN-PROGRESO` |
@@ -72,6 +71,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`MT-A04`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Autorizar `rulesets/topologies/` como la ubicación canónica de reglas de topología ejecutables | `Rulesets` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-401`](./gap-reference-catalog.es.md#gt-401) | **InteractionAdapterPort formalizado:** Falta integración formal como punto único de entrada gobernado para las interfaces. | `Agent Runtime` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-402`](./gap-reference-catalog.es.md#gt-402) | **Smart CLI adapter:** Formalizar CLI como adaptador de interacción para no evadir la capa runtime. | `Smart CLI` | Cross | P0 | M | `COMPLETADO` |
+| [`GT-412`](./gap-reference-catalog.es.md#gt-412) | **Garantía de Ejecución de Políticas en Runtime:** Las políticas de gobernanza están ausentes en los flujos de ejecución en tiempo de ejecución. | `Agent Runtime` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-02`](./gap-reference-catalog.es.md#gt-02) | `GateEvidence` modelado en la capa de dominio | `Core Domain` | F1 | P0 | M | `COMPLETADO` |
 | [`GT-03`](./gap-reference-catalog.es.md#gt-03) | `EvaluateGateUseCase` y comando `gate evaluate` | `Core Domain` | F1 | P0 | M | `COMPLETADO` |
 | [`GT-06`](./gap-reference-catalog.es.md#gt-06) | Tool MCP `evolith-gate-evaluate` | `CLI` | F2 | P0 | M | `COMPLETADO` |
@@ -427,7 +427,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 381 / 412 completados · 8 en progreso · 23 pendientes · 0 diferidos
+**Progreso:** 382 / 412 completados · 8 en progreso · 22 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Winston III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Winston Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

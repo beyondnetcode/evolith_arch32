@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-07-02 (GT-402 closure — routed Smart CLI command/chat execution through the runtime interaction adapter gateway, restored CLI buildability, and updated EN/ES progress counts.)
+**Last Updated:** 2026-07-02 (GT-412 closure — enforced runtime policy preflight before governed capability execution, made OPA the hosted runtime default with explicit stub mode, and updated EN/ES progress counts.)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -13,7 +13,6 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-412`](./gap-reference-catalog.md#gt-412) | **Runtime Policy Enforcement Guarantee:** Governance policies are absent in runtime execution flows. | `Agent Runtime` | Cross | P0 | M | `PENDING` |
 | [`GT-377`](./gap-reference-catalog.md#gt-377) | R1 — `EvaluationContext`/`EvaluationResult` contracts + Contract Schema Registry (canonical types reusing `Verdict`/`PhaseId`; versioned schemas; ADR-0073 envelope; ESLint boundary guard banning `*Repository` for business entities) | `Core Domain` | Cross | P0 | L | `IN-PROGRESS` |
 | [`GT-395`](./gap-reference-catalog.md#gt-395) | **WS7 Gobernanza Transversal:** Las reglas de gobernanza agnósticas existen como archivos estáticos pero carecen de aplicación universal en runtime. | `Core Domain` | Cross | P0 | L | `PENDING` |
 | [`GT-375`](./gap-reference-catalog.md#gt-375) | Core stateless evaluation contracts — formalize `EvaluationContext` (input) / `EvaluationResult` (output): consumers (Evolith Tracker) send context, the Core returns structured verdicts/recommendations. Product/tenant/initiative are **opaque context identifiers only**, never Core entities; epics/stories as `ExternalReferenceContext`. The Core emits non-binding `Recommendation`/`DecisionRecommendation`; the Tracker decides, persists and audits. Per ADR-0101 (corrects ADR-0100) / UP-002. **Umbrella epic — decomposed into `GT-376`…`GT-381` (R0–R5).** | `Cross` | Cross | P0 | XL | `IN-PROGRESS` |
@@ -72,6 +71,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`MT-A04`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `rulesets/topologies/` as the canonical executable topology rules location | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-401`](./gap-reference-catalog.md#gt-401) | **InteractionAdapterPort formalized:** Missing or not fully integrated single governed entry point for interfaces. | `Agent Runtime` | Cross | P0 | M | `DONE` |
 | [`GT-402`](./gap-reference-catalog.md#gt-402) | **Smart CLI adapter:** Formalize CLI as interaction adapter to prevent bypassing runtime layer. | `Smart CLI` | Cross | P0 | M | `DONE` |
+| [`GT-412`](./gap-reference-catalog.md#gt-412) | **Runtime Policy Enforcement Guarantee:** Governance policies are absent in runtime execution flows. | `Agent Runtime` | Cross | P0 | M | `DONE` |
 | [`GT-02`](./gap-reference-catalog.md#gt-02) | `GateEvidence` modeled in the domain layer | `Core Domain` | F1 | P0 | M | `DONE` |
 | [`GT-03`](./gap-reference-catalog.md#gt-03) | `EvaluateGateUseCase` and `gate evaluate` command | `Core Domain` | F1 | P0 | M | `DONE` |
 | [`GT-06`](./gap-reference-catalog.md#gt-06) | MCP tool `evolith-gate-evaluate` | `CLI` | F2 | P0 | M | `DONE` |
@@ -427,7 +427,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 381 / 412 done · 8 in progress · 23 pending · 0 deferred
+**Progress:** 382 / 412 done · 8 in progress · 22 pending · 0 deferred
 
 **Wave 2026-06-23 (Winston deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Winston Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

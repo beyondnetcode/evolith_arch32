@@ -4508,7 +4508,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Complexity:** M
 - **Proposed fix:** Inject the real policy validation adapter into runtime factories and make policy evaluation mandatory for governed capabilities.
 - **Acceptance criteria:**
-  - [ ] Runtime requests invoke policy validation before capability execution.
-  - [ ] Deep Audit reports cross-cutting governance enforcement as solid.
-  - [ ] Offline/test stubs remain explicit and cannot be used as production defaults.
+  - [x] Runtime requests invoke policy validation before capability execution.
+  - [x] Deep Audit reports cross-cutting governance enforcement as solid.
+  - [x] Offline/test stubs remain explicit and cannot be used as production defaults.
 - **Dependencies:** `GT-398`, `GT-399`, `GT-401`.
+- **Applied fix:** `AgentRuntimeService` now runs a mandatory `policy-preflight` for every `requiresPolicy` capability before approval, harness execution, or Core evaluation; denial returns a blocked result with OPA findings and no capability execution. The runtime still performs post-execution policy validation over harness/Core output. The hosted runtime factory now defaults to `OpaCliPolicyValidationAdapter`; `StubPolicyValidationAdapter` is available only through explicit `AGENT_RUNTIME_POLICY_MODE=stub` or legacy `AGENT_RUNTIME_OPA_ENABLED=false/0`. The SDLC Deep Audit now verifies both executable signals (`runtimePolicyPreflight` and `runtimeOpaDefault`) before marking cross-cutting governance solid.
+- **Closure evidence:** Commit `2f3e0bbe`. Validation: `npm run build --workspace packages/agent-runtime`, `npm run test --workspace packages/agent-runtime` (43/43 tests passing), `npx tsc -p apps/agent-runtime-api/tsconfig.json`, `npm run build --workspace sdk/cli`, and `node .harness/scripts/run-evolith-deep.mjs --markdown` (9/9 dimensions SÓLIDO; `runtimePolicyPreflight: true`, `runtimeOpaDefault: true`).
+- **Dependency disposition:** Accepted scope. `GT-398` and `GT-401` are closed prerequisites. `GT-399` remains open for replacing CLI-side non-policy stubs with real HTTP/Harness adapters, while GT-412 closes the policy-enforcement guarantee and hosted runtime OPA default.

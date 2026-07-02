@@ -4436,7 +4436,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** M
 - **Propuesta de corrección:** Inyectar el adaptador real de validación de políticas en factories runtime y hacer obligatoria la evaluación de política para capacidades gobernadas.
 - **Criterios de aceptación:**
-  - [ ] Los requests runtime invocan validación de políticas antes de ejecutar capacidades.
-  - [ ] Deep Audit reporta enforcement de gobernanza transversal como sólido.
-  - [ ] Los stubs offline/test son explícitos y no pueden usarse como defaults productivos.
+  - [x] Los requests runtime invocan validación de políticas antes de ejecutar capacidades.
+  - [x] Deep Audit reporta enforcement de gobernanza transversal como sólido.
+  - [x] Los stubs offline/test son explícitos y no pueden usarse como defaults productivos.
 - **Dependencias:** `GT-398`, `GT-399`, `GT-401`.
+- **Solución aplicada:** `AgentRuntimeService` ahora ejecuta un `policy-preflight` obligatorio para toda capacidad con `requiresPolicy` antes de aprobación, ejecución de harness o evaluación Core; una denegación devuelve resultado bloqueado con findings OPA y sin ejecutar la capacidad. El runtime conserva la validación de política post-ejecución sobre la salida de harness/Core. La factory del runtime hospedado ahora usa `OpaCliPolicyValidationAdapter` por defecto; `StubPolicyValidationAdapter` solo queda disponible mediante `AGENT_RUNTIME_POLICY_MODE=stub` explícito o el legado `AGENT_RUNTIME_OPA_ENABLED=false/0`. El SDLC Deep Audit ahora verifica ambas señales ejecutables (`runtimePolicyPreflight` y `runtimeOpaDefault`) antes de marcar sólida la gobernanza transversal.
+- **Evidencia de cierre:** Commit `2f3e0bbe`. Validación: `npm run build --workspace packages/agent-runtime`, `npm run test --workspace packages/agent-runtime` (43/43 tests pasan), `npx tsc -p apps/agent-runtime-api/tsconfig.json`, `npm run build --workspace sdk/cli` y `node .harness/scripts/run-evolith-deep.mjs --markdown` (9/9 dimensiones SÓLIDO; `runtimePolicyPreflight: true`, `runtimeOpaDefault: true`).
+- **Disposición de dependencias:** Alcance aceptado. `GT-398` y `GT-401` son prerrequisitos cerrados. `GT-399` queda abierto para reemplazar stubs no-política del lado CLI por adaptadores HTTP/Harness reales, mientras GT-412 cierra la garantía de enforcement de políticas y el default OPA del runtime hospedado.

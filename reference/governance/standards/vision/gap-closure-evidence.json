@@ -3,6 +3,26 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-412",
+      "closedAt": "2026-07-02",
+      "closureCommit": "2f3e0bbe",
+      "evidence": [
+        "packages/agent-runtime/src/application/agent-runtime.service.ts",
+        "packages/agent-runtime/src/__tests__/agent-runtime.service.spec.ts",
+        "apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts",
+        ".harness/playbooks/sdlc-deep-audit.mjs"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/agent-runtime",
+        "npm run test --workspace packages/agent-runtime",
+        "npx tsc -p apps/agent-runtime-api/tsconfig.json",
+        "npm run build --workspace sdk/cli",
+        "node .harness/scripts/run-evolith-deep.mjs --markdown"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "GT-412 closes mandatory policy preflight, retained post-execution policy validation, and hosted runtime OPA default. GT-399 remains open for replacing CLI-side non-policy stubs with real HTTP/Harness adapters."
+    },
+    {
       "id": "GT-402",
       "closedAt": "2026-07-02",
       "closureCommit": "9ef081b9",

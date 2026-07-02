@@ -29,7 +29,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | 2 | Highest-risk area | `Agent Runtime` has the largest weighted open load. | [GT-384](./gap-reference-catalog.md#gt-384), [GT-406](./gap-reference-catalog.md#gt-406), [GT-383](./gap-reference-catalog.md#gt-383), [GT-388](./gap-reference-catalog.md#gt-388), [GT-385](./gap-reference-catalog.md#gt-385), [GT-386](./gap-reference-catalog.md#gt-386), +2 |
 | 3 | Quick wins | High criticality with XS/S complexity. | - |
 | 4 | P1 wave | Next hardening after P0 is cleared. | [GT-324](./gap-reference-catalog.md#gt-324), [GT-384](./gap-reference-catalog.md#gt-384), [GT-406](./gap-reference-catalog.md#gt-406), [GT-383](./gap-reference-catalog.md#gt-383) |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-388](./gap-reference-catalog.md#gt-388), [GT-397](./gap-reference-catalog.md#gt-397), [GT-381](./gap-reference-catalog.md#gt-381), [GT-385](./gap-reference-catalog.md#gt-385), [GT-386](./gap-reference-catalog.md#gt-386), [GT-387](./gap-reference-catalog.md#gt-387), +4 |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-388](./gap-reference-catalog.md#gt-388), [GT-381](./gap-reference-catalog.md#gt-381), [GT-385](./gap-reference-catalog.md#gt-385), [GT-386](./gap-reference-catalog.md#gt-386), [GT-387](./gap-reference-catalog.md#gt-387), [GT-392](./gap-reference-catalog.md#gt-392), +3 |
 
 ## Current Blockers
 
@@ -44,12 +44,12 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-07-02 |
 | Total gaps | 412 |
-| Closed gaps | 396 |
-| Open gaps | 16 |
+| Closed gaps | 397 |
+| Open gaps | 15 |
 | Open P0 | 2 |
 | Open P1 | 4 |
-| Open P2 | 10 |
-| Total closure | 96.1% |
+| Open P2 | 9 |
+| Total closure | 96.4% |
 | Closure evidence records | 364 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
@@ -59,7 +59,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | `Cross` | 2 | 1 | 0 | [GT-375](./gap-reference-catalog.md#gt-375), [GT-381](./gap-reference-catalog.md#gt-381) |
 | `Core Domain` | 1 | 1 | 0 | [GT-377](./gap-reference-catalog.md#gt-377) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.md#gt-324) |
-| `.harness` | 2 | 0 | 0 | [GT-397](./gap-reference-catalog.md#gt-397), [GT-409](./gap-reference-catalog.md#gt-409) |
+| `.harness` | 1 | 0 | 0 | [GT-409](./gap-reference-catalog.md#gt-409) |
 
 ## Source and Refresh Rule
 

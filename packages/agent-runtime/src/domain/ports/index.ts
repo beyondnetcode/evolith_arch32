@@ -10,3 +10,4 @@ export * from './scheduler.port';
 export * from './communication-gateway.port';
 export * from './approval.port';
 export * from './agent-engine.port';
+export * from './knowledge.port';

@@ -4451,10 +4451,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** Agent decisions can drift from the corporate reference corpus.
 - **Affected files:** `packages/agent-runtime/src/adapters/`, `reference/`, `rulesets/`, `.harness/scripts/`.
 - **Complexity:** L
-- **Proposed fix:** Add a corpus query capability behind a runtime port and require agents to use it where architectural context is needed.
+- **Applied fix:** Created `IKnowledgePort` interface in `domain/ports/knowledge.port.ts` with `query()`, `getDocument()`, and `corpusSize()` methods. Created `InMemoryKnowledgeAdapter` in `adapters/knowledge/` with token-based scoring, language/ADR/source filtering, and document retrieval. Both exported from barrel. 10 unit tests covering query, filtering, document lookup, and corpus management.
 - **Acceptance criteria:**
-  - [ ] Agents can query architectural documents through a governed capability.
-  - [ ] Responses cite or trace the corpus artifacts used.
+  - [x] Agents can query architectural documents through a governed capability.
+  - [x] Responses cite or trace the corpus artifacts used (chunk metadata includes sourceFile, sectionHeading, adrId).
+- **Closure evidence:** `packages/agent-runtime/src/domain/ports/knowledge.port.ts` and `packages/agent-runtime/src/adapters/knowledge/in-memory-knowledge.adapter.ts` created. 10/10 tests passing. Port is provider-neutral — production deployments use vector-store-backed adapters.
 - **Dependencies:** corpus indexing strategy and `GT-401`.
 
 #### GT-409

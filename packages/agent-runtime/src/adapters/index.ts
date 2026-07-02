@@ -29,6 +29,9 @@ export { InMemoryMemoryAdapter } from './memory/in-memory-memory.adapter';
 export { FileMemoryAdapter } from './memory/file-memory.adapter';
 export type { FileMemoryOptions } from './memory/file-memory.adapter';
 
+// Knowledge / RAG (GT-408)
+export { InMemoryKnowledgeAdapter } from './knowledge/in-memory-knowledge.adapter';
+
 // Skills
 export { LocalSkillRegistryAdapter } from './skills/local-skill-registry.adapter';
 export { DEFAULT_SKILLS } from './skills/default-skills';

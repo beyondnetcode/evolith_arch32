@@ -13,7 +13,7 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Mayor problema ahora:** `Cross` concentra el mayor riesgo abierto ponderado (2 pendientes, 1 P0). Ataca esa concentración antes de ampliar alcance.
 
-**Dónde atacar primero:** [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-375](./gap-reference-catalog.es.md#gt-375).
+**Dónde atacar primero:** [GT-375](./gap-reference-catalog.es.md#gt-375).
 
 ## Diagnóstico Estratégico
 
@@ -25,7 +25,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-375](./gap-reference-catalog.es.md#gt-375) |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-375](./gap-reference-catalog.es.md#gt-375) |
 | 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-375](./gap-reference-catalog.es.md#gt-375), [GT-381](./gap-reference-catalog.es.md#gt-381) |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-383](./gap-reference-catalog.es.md#gt-383) |
@@ -35,7 +35,6 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
-| [GT-377](./gap-reference-catalog.es.md#gt-377) | R1 — Contratos EvaluationContext/EvaluationResult + Contract Schema Registry (tipos canónicos reutilizando Verdict/PhaseId; schemas versionados; envelope ADR-0073; guard ESLint que prohíbe *Repository para entidades de negocio) | `Core Domain` | P0/L |
 | [GT-375](./gap-reference-catalog.es.md#gt-375) | Contratos de evaluación stateless del Core — formalizar EvaluationContext (entrada) / EvaluationResult (salida): el consumidor (Evolith Tracker) envía contexto y el Core devuelve veredictos/recomendaciones estructurados. Producto/tenant/iniciativa son **solo identificadores de contexto opacos**, nunca entidades del Core; épicas/historias como ExternalReferenceContext. El Core emite Recommendation/DecisionRecommendation no vinculante; el Tracker decide, persiste y audita. Según ADR-0101 (corrige ADR-0100) / UP-002. **Épica paraguas — decompuesta en GT-376…GT-381 (R0–R5).** | `Cross` | P0/XL |
 
 ## Métricas
@@ -44,12 +43,12 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-07-02 |
 | Gaps totales | 412 |
-| Gaps cerrados | 404 |
-| Gaps pendientes | 8 |
-| P0 abiertos | 2 |
+| Gaps cerrados | 405 |
+| Gaps pendientes | 7 |
+| P0 abiertos | 1 |
 | P1 abiertos | 3 |
 | P2 abiertos | 3 |
-| Cierre total | 98.1% |
+| Cierre total | 98.3% |
 | Registros de evidencia de cierre | 364 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
@@ -57,7 +56,6 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|---:|---:|---|
 | `Cross` | 2 | 1 | 0 | [GT-375](./gap-reference-catalog.es.md#gt-375), [GT-381](./gap-reference-catalog.es.md#gt-381) |
 | `Agent Runtime` | 4 | 0 | 2 | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-383](./gap-reference-catalog.es.md#gt-383), [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-386](./gap-reference-catalog.es.md#gt-386) |
-| `Core Domain` | 1 | 1 | 0 | [GT-377](./gap-reference-catalog.es.md#gt-377) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.es.md#gt-324) |
 
 ## Fuente y Regla de Actualización

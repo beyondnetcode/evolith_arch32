@@ -20,8 +20,8 @@
     },
     "phase": {
       "type": "string",
-      "description": "Optional SDLC phase. If provided, the pipeline evaluates only the gates for that phase. If omitted, all phases are checked.",
-      "enum": ["f1", "f2", "f3", "f4", "f5"]
+      "description": "Optional SDLC phase. If provided, the pipeline evaluates only the gates for that phase. If omitted, all phases are checked. Accepts canonical names and legacy f1-f5 aliases.",
+      "enum": ["discovery", "design", "construction", "qa", "release", "f1", "f2", "f3", "f4", "f5"]
     },
     "facts": {
       "type": "object",

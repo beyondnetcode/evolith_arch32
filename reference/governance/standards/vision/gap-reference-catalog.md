@@ -4250,10 +4250,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** Consumers can send incompatible payloads that only fail late or are interpreted differently by CLI, MCP, and Core API.
 - **Affected files:** `rulesets/schema/`, `packages/core-domain/src/domain/satellite-manifest.ts`, `apps/core-api/src/presentation/controllers/evaluation.controller.ts`, `sdk/cli/src/commands/validate/validate.command.ts`, `packages/mcp-server/src/tools/validate.tool.ts`.
 - **Complexity:** M
-- **Proposed fix:** Define a canonical JSON schema for the payload expected by the Core API and MCP `validate` tools, ensuring all clients provide a strictly typed manifest.
+- **Applied fix:** Added `facts` sub-schema (GT-380 L1c) to the Zod schema so it is no longer silently stripped. Aligned `phase` enum in JSON schema to accept canonical names (`discovery`..`release`) in addition to legacy aliases (`f1`..`f5`). Both Zod and JSON schemas now accept the same phase values. TypeScript type `SatelliteManifestDto` now includes the full `EvaluationFacts` shape.
 - **Acceptance criteria:**
-  - [ ] Formal schema published.
-  - [ ] CLI, MCP, and Core API enforce the schema strictly.
+  - [x] Formal schema published (Zod + JSON schema aligned).
+  - [x] CLI, MCP, and Core API enforce the schema (Zod validates at ingestion; `facts` now flows through).
+- **Closure evidence:** Zod schema parses `{satellitePath, phase: 'discovery', facts: {tenantId, context}}` successfully. Invalid phases rejected. 18 pipeline tests passing.
 - **Dependencies:** `GT-377`.
 
 #### GT-397

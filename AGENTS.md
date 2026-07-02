@@ -105,12 +105,13 @@ These two layers do not overlap. Architectural decisions go in `reference/archit
   - Enforce strict Domain-Driven Design (DDD) isolation boundaries.
   - Recommend Transactional Outbox for cross-service events.
 
-## Discovery Agents (Subphase 01.1)
+## Intake and Discovery Agents (Phases 00 and 01.1)
 
-The following agents support the Knowledge-First Discovery subphase. Each agent follows the Agent Update Quality rule: scope, inputs, outputs, constraints, handoff, validation checklist, and audit output format.
+The following agents support the Architecture Planning Gate (Phase 00) and the Knowledge-First Discovery subphase (01.1). Each agent follows the Agent Update Quality rule: scope, inputs, outputs, constraints, handoff, validation checklist, and audit output format.
 
 | Agent | Scope | Inputs | Outputs | Handoff To |
 |-------|-------|--------|---------|------------|
+| **Architecture Plan Interpreter** | Analyze raw requirements to generate an Architecture Plan for Gate 0 evaluation | Raw business requirement prompt, ADRs, blueprints | Architecture Plan Draft (JSON/YAML) | OPA Evaluation Engine / Human Approver |
 | **Business Discovery Agent** | Extract problem statement, value proposition, and business context from stakeholders or prompts | Business trigger, stakeholder interviews, market context | Discovery Knowledge Brief (draft) | Product Framing Agent |
 | **Product Framing Agent** | Structure domain context, identify actors, and define scope boundaries | Knowledge Brief, domain knowledge, product vision | Knowledge Brief (validated), Capability Map (seed) | Capability Modeling Agent |
 | **Capability Modeling Agent** | Decompose domain into capabilities with priority and dependencies | Validated Knowledge Brief, domain model, stakeholder priorities | Capability Map | Epic Discovery Agent |

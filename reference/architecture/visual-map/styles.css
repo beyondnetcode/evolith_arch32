@@ -416,7 +416,10 @@ h2 {
   opacity: .16;
 }
 
-.node.is-hidden {
+.node.is-hidden,
+.layer.is-hidden,
+.edge.is-hidden,
+.edge-label.is-hidden {
   display: none;
 }
 

@@ -31,7 +31,7 @@ Este playbook operacionaliza el gate de Knowledge-First Discovery dentro de la F
 
 ## Agentes de Discovery
 
-Cada paso del procedimiento del gate está soportado por un agente IA especializado definido en [`AGENTS.es.md §Agentes de Discovery`](../../../../AGENTS.es.md#agentes-de-discovery-subfase-011). Los agentes se invocan en esta secuencia; la salida de cada agente es la entrada del siguiente:
+Cada paso en el procedimiento del gate es soportado por un agente de IA especializado definido en [`AGENTS.es.md §Agentes de Discovery`](../../../../AGENTS.es.md#agentes-de-intake-y-discovery-fases-00-y-011). Invoque a los agentes en esta secuencia; la salida de cada agente es la entrada del siguiente agente:
 
 | Agente | Artefacto Producido | Nivel |
 |---|---|:---:|

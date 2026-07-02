@@ -19,3 +19,4 @@ export * from './satellite-record';
 export * from './satellite-audit';
 export * from './satellite-manifest';
 export * from './github-api-client.interface';
+export * from './architecture-plan';

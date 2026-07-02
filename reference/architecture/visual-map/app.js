@@ -211,7 +211,7 @@ function renderEdges() {
     const d = edgePath(edge);
     const path = svgEl("path", {
       id: pathId,
-      class: `edge${active ? " is-active" : ""}${related ? " is-related" : ""}${muted ? " is-muted" : ""}`,
+      class: `edge${active ? " is-active" : ""}${related ? " is-related" : ""}${muted ? " is-muted" : ""}${hidden ? " is-hidden" : ""}`,
       d,
       "data-edge": edge.id
     });
@@ -225,7 +225,7 @@ function renderEdges() {
       const sourceNode = nodeById(edge.source);
       const targetNode = nodeById(edge.target);
       const label = svgEl("text", {
-        class: `edge-label${muted ? " is-muted" : ""}`,
+        class: `edge-label${muted ? " is-muted" : ""}${hidden ? " is-hidden" : ""}`,
         x: (sourceNode.x + sourceNode.w / 2 + targetNode.x + targetNode.w / 2) / 2,
         y: (sourceNode.y + sourceNode.h / 2 + targetNode.y + targetNode.h / 2) / 2 - 10,
         text: t(edge.protocol)

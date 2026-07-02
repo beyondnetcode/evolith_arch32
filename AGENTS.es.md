@@ -93,12 +93,13 @@ Estas dos capas no se solapan. Las decisiones arquitectónicas van en `reference
   - Hacer cumplir límites estrictos de aislamiento de Domain-Driven Design (DDD).
   - Recomendar Transactional Outbox para eventos entre servicios.
 
-## Agentes de Discovery (Subfase 01.1)
+## Agentes de Intake y Discovery (Fases 00 y 01.1)
 
-Los siguientes agentes soportan la subfase Knowledge-First Discovery. Cada agente sigue la regla de Calidad de Actualización de Agente: alcance, entradas, salidas, restricciones, handoff, checklist de validación y formato de auditoría.
+Los siguientes agentes soportan el Architecture Planning Gate (Fase 00) y la subfase Knowledge-First Discovery (01.1). Cada agente sigue la regla de Calidad de Actualización de Agente: alcance, entradas, salidas, restricciones, handoff, checklist de validación y formato de auditoría.
 
 | Agente | Alcance | Entradas | Salidas | Handoff A |
 |--------|---------|----------|---------|-----------|
+| **Architecture Plan Interpreter** | Analizar requerimientos crudos para generar un Architecture Plan para evaluación en Gate 0 | Prompt de requerimiento de negocio crudo, ADRs, blueprints | Architecture Plan Draft (JSON/YAML) | OPA Evaluation Engine / Aprobador Humano |
 | **Business Discovery Agent** | Extraer declaración de problema, propuesta de valor y contexto de negocio de stakeholders o prompts | Disparador de negocio, entrevistas con stakeholders, contexto de mercado | Discovery Knowledge Brief (borrador) | Product Framing Agent |
 | **Product Framing Agent** | Estructurar contexto del dominio, identificar actores y definir límites de alcance | Knowledge Brief, conocimiento del dominio, visión del producto | Knowledge Brief (validado), Mapa de Capacidades (semilla) | Capability Modeling Agent |
 | **Capability Modeling Agent** | Descomponer dominio en capacidades con prioridad y dependencias | Knowledge Brief validado, modelo de dominio, prioridades de stakeholders | Mapa de Capacidades | Epic Discovery Agent |

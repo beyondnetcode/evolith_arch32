@@ -31,7 +31,7 @@ This playbook operationalises the Knowledge-First Discovery gate within Phase 01
 
 ## Discovery Agents
 
-Each step in the gate procedure is supported by a specialized AI agent defined in [`AGENTS.md §Discovery Agents`](../../../../AGENTS.md#discovery-agents-subphase-011). Invoke agents in this sequence; each agent's output is the next agent's input:
+Each step in the gate procedure is supported by a specialized AI agent defined in [`AGENTS.md §Discovery Agents`](../../../../AGENTS.md#intake-and-discovery-agents-phases-00-and-011). Invoke agents in this sequence; each agent's output is the next agent's input:
 
 | Agent | Artifact Produced | Level |
 |---|---|:---:|

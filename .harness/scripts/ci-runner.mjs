@@ -56,7 +56,9 @@ const MODES = {
       "22-validate-topology-composition.mjs", 
       "29-validate-opa-sidecar-bundles.mjs",
       "31-detect-duplicate-rulesets.mjs",
-      "32-validate-ruleset-schemas.mjs"
+      "32-validate-ruleset-schemas.mjs",
+      "33-check-adapter-freshness.mjs",
+      "34-boundary-guard-repository.mjs"
     ],
   },
   full: {

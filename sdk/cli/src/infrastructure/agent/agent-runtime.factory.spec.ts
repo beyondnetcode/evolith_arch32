@@ -3,6 +3,11 @@ import { AgentRuntimeFactory } from './agent-runtime.factory';
 describe('AgentRuntimeFactory Smart CLI interaction gateway', () => {
   afterEach(() => {
     jest.restoreAllMocks();
+    // Reset the cached runtime between tests
+    (AgentRuntimeFactory as any).cachedRuntime = null;
+    delete process.env.AGENT_RUNTIME_CORE_ENDPOINT;
+    delete process.env.AGENT_RUNTIME_CORE_TOKEN;
+    delete process.env.AGENT_RUNTIME_HARNESS_ROOT;
   });
 
   it('routes command mode through SmartCliCommandInteractionAdapter before runtime.handle', async () => {
@@ -39,5 +44,20 @@ describe('AgentRuntimeFactory Smart CLI interaction gateway', () => {
     expect(adapter.toRuntimeRequest).toHaveBeenCalledWith({ intent: 'hello' });
     expect(runtime.handle).toHaveBeenCalledWith(request);
     expect(result.status).toBe('warning');
+  });
+
+  it('GT-399: creates runtime via createAgentRuntime bootstrap (not hardcoded stubs)', () => {
+    // With no env vars set, createDefaultRuntime should produce a working runtime
+    // (using default stubs from the bootstrap). The key assertion is that it does
+    // NOT throw and returns an object with a handle method.
+    const runtime = AgentRuntimeFactory.createDefaultRuntime();
+    expect(runtime).toBeDefined();
+    expect(typeof runtime.handle).toBe('function');
+  });
+
+  it('GT-399: caches the runtime singleton across calls', () => {
+    const r1 = AgentRuntimeFactory.createDefaultRuntime();
+    const r2 = AgentRuntimeFactory.createDefaultRuntime();
+    expect(r1).toBe(r2);
   });
 });

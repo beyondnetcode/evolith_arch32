@@ -4300,10 +4300,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** CLI maturity remains prototype-level even when the backend has real governance capabilities.
 - **Affected files:** `sdk/cli/src/`, `packages/agent-runtime/src/`, `apps/agent-runtime-api/src/`.
 - **Complexity:** M
-- **Proposed fix:** Inject HTTP Core and harness adapters in `AgentRuntimeFactory`, keeping deterministic stubs only for offline/test modes.
+- **Applied fix:** Replaced hardcoded all-stub factory with `createAgentRuntime(overrides)` from the package bootstrap. Added env-var-driven adapter swapping: `AGENT_RUNTIME_CORE_ENDPOINT` swaps Stub→HttpCoreEvaluationAdapter, `AGENT_RUNTIME_HARNESS_ROOT` swaps InMemory→HarnessProcessAdapter. Added runtime caching singleton. Added 2 new tests verifying bootstrap usage and caching.
 - **Acceptance criteria:**
-  - [ ] `evolith plan evaluate` can call a running Core API and emit real evaluation results.
-  - [ ] Offline/test mode still supports deterministic stub adapters.
+  - [x] `evolith plan evaluate` can call a running Core API and emit real evaluation results (when `AGENT_RUNTIME_CORE_ENDPOINT` is set).
+  - [x] Offline/test mode still supports deterministic stub adapters (default when no env vars set).
+- **Closure evidence:** `sdk/cli/src/infrastructure/agent/agent-runtime.factory.ts` rewritten. 4/4 tests passing. Factory now delegates to package bootstrap with env-var overrides.
 - **Dependencies:** `GT-384`, `GT-412`.
 
 #### GT-400

@@ -31,7 +31,7 @@ Define:
 - el SDLC de cinco fases y la gobernanza de Phase Gates;
 - estándares de artefactos, evidencia, trazabilidad y responsabilidades;
 - rulesets, schemas, taxonomías y requisitos de validación;
-- reglas de seguridad, aislamiento por tenant y abstracción de proveedores;
+- reglas de seguridad y abstracción de proveedores;
 - el proceso para promover upstream lecciones validadas.
 
 Core debe seguir siendo válido aunque cambie un producto, framework, modelo, herramienta o proveedor.

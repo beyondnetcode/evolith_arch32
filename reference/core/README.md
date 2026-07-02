@@ -31,7 +31,7 @@ It defines:
 - the five-phase SDLC and Phase Gate governance;
 - artifact, evidence, traceability, and responsibility standards;
 - rulesets, schemas, taxonomies, and validation requirements;
-- security, tenant-isolation, and provider-abstraction rules;
+- security and provider-abstraction rules;
 - the process for promoting validated lessons upstream.
 
 Core is intended to remain valid even when a product, framework, model, tool, or vendor changes.

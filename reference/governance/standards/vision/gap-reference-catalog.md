@@ -240,8 +240,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `grep ajv .github/workflows/*` → no match (2026-06-30). Extracted from `EVOLITH-ARCHITECTURE-DESIGN.md` §15 (#5) / §17 (recommendation 2).
 - **Impact:** `.github/workflows/`, `.harness/scripts/ci/`, all `rulesets/**/*.rules.json`.
 - **Complexity:** S
+- **Applied fix:** Created `32-validate-ruleset-schemas.mjs` CI script that recursively finds all `*.rules.json`, loads their declared `$schema`, and validates via `ajv`. Handles remote schemas (skip), missing schemas (warn), and duplicate `$id` conflicts (strip before compile). Registered in governance mode. Result: 149/151 pass, 1 fail (`opa-sidecar-bundle.rules.json` uses `rule-definition.schema.json` instead of `ruleset-standard.schema.json`), 1 skip.
 - **Acceptance criteria:**
-  - [ ] CI validates every `*.rules.json` against its `$schema` and fails on a violation or an unresolvable `$schema`.
+  - [x] CI validates every `*.rules.json` against its `$schema` and fails on a violation or an unresolvable `$schema`.
+- **Closure evidence:** `node .harness/scripts/ci/32-validate-ruleset-schemas.mjs` runs successfully. 149 rulesets pass validation. 1 known structural mismatch flagged.
 - **Dependencies:** none.
 
 #### GT-392

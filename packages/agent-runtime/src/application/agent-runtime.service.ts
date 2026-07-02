@@ -5,6 +5,7 @@
  *   receive AgentRuntimeRequest
  *     → resolve tenant/product/initiative context
  *     → select capability/tool (SkillRegistry; optionally engine-proposed)
+ *     → run policy preflight (OPA) when required
  *     → enforce approval (HITL) when required
  *     → invoke ports (.harness execute → Core evaluate)
  *     → run policy validation (OPA) when required
@@ -20,6 +21,7 @@ import type { ISkillRegistryPort } from '../domain/ports/skill-registry.port';
 import type { IHarnessPort } from '../domain/ports/harness.port';
 import type { ICoreEvaluationPort } from '../domain/ports/core-evaluation.port';
 import type { IPolicyValidationPort } from '../domain/ports/policy-validation.port';
+import type { PolicyValidationResult } from '../domain/ports/policy-validation.port';
 import type { ITrackerTracePort } from '../domain/ports/tracker-trace.port';
 import type { IMemoryPort } from '../domain/ports/memory.port';
 import type { IApprovalPort } from '../domain/ports/approval.port';
@@ -174,7 +176,36 @@ export class AgentRuntimeService implements IAgentRuntime {
         return;
       }
 
-      // 3. Approval (HITL) when the capability requires it.
+      // 3. Policy preflight (OPA) before approval or capability execution.
+      if (skill.requiresPolicy) {
+        steps.push('policy-preflight');
+        yield {
+          type: 'policy_validation_started',
+          timestamp: this.now(),
+          capabilityId: skill.id,
+          payload: { stage: 'pre-execution' },
+        };
+        const policy = await this.validatePolicy(request, skill, { stage: 'pre-execution' });
+        await this.emit(request, skill, 'policy.validated', policy.allowed ? 'passed' : 'blocked', {
+          policyRef: policy.policyRef,
+          violations: policy.violations.length,
+          stage: 'pre-execution',
+        });
+        yield {
+          type: 'policy_validated',
+          timestamp: this.now(),
+          capabilityId: skill.id,
+          payload: { allowed: policy.allowed, violations: policy.violations.length, stage: 'pre-execution' },
+        };
+
+        if (!policy.allowed) {
+          const result = this.policyBlockedResult(request, skill, baseTrace(), startedAt, policy);
+          yield { type: 'result_assembled', timestamp: this.now(), result };
+          return;
+        }
+      }
+
+      // 4. Approval (HITL) when the capability requires it.
       let approvedBy: string | undefined;
       if (skill.requiresApproval) {
         steps.push('approval');
@@ -205,7 +236,7 @@ export class AgentRuntimeService implements IAgentRuntime {
         approvedBy = decision.approver;
       }
 
-      // 4. Invoke ports based on the capability kind.
+      // 5. Invoke ports based on the capability kind.
       let harnessResult: HarnessExecutionResult | undefined;
       let evaluation: EvaluationResult | undefined;
 
@@ -237,27 +268,38 @@ export class AgentRuntimeService implements IAgentRuntime {
         yield { type: 'evaluation_completed', timestamp: this.now(), capabilityId: skill.id, payload: { verdict: String(evaluation.overallVerdict), outcome: evaluation.outcome } };
       }
 
-      // 5. Assemble base parts from whatever ran.
+      // 6. Assemble base parts from whatever ran.
       let parts = this.combine(harnessResult, evaluation);
 
-      // 6. Policy validation (OPA) when required.
+      // 7. Policy validation (OPA) when required, using execution output.
       if (skill.requiresPolicy) {
         steps.push('policy-validate');
-        yield { type: 'policy_validation_started', timestamp: this.now(), capabilityId: skill.id };
-        const policy = await this.deps.policy.validate({
-          policyRef: skill.policyRef,
-          input: buildPolicyInput(request, skill, { harness: harnessResult, evaluation }),
-          context: request.context,
+        yield {
+          type: 'policy_validation_started',
+          timestamp: this.now(),
+          capabilityId: skill.id,
+          payload: { stage: 'post-execution' },
+        };
+        const policy = await this.validatePolicy(request, skill, {
+          stage: 'post-execution',
+          harness: harnessResult,
+          evaluation,
         });
         parts = applyPolicy(parts, policy);
         await this.emit(request, skill, 'policy.validated', policy.allowed ? 'passed' : 'blocked', {
           policyRef: policy.policyRef,
           violations: policy.violations.length,
+          stage: 'post-execution',
         });
-        yield { type: 'policy_validated', timestamp: this.now(), capabilityId: skill.id, payload: { allowed: policy.allowed, violations: policy.violations.length } };
+        yield {
+          type: 'policy_validated',
+          timestamp: this.now(),
+          capabilityId: skill.id,
+          payload: { allowed: policy.allowed, violations: policy.violations.length, stage: 'post-execution' },
+        };
       }
 
-      // 7. Assemble final result + provenance trace.
+      // 8. Assemble final result + provenance trace.
       const finishedAt = this.now();
       const trace: RuntimeTrace = {
         executedBy: RUNTIME_ACTOR,
@@ -288,7 +330,7 @@ export class AgentRuntimeService implements IAgentRuntime {
         },
       });
 
-      // 8. Trazability: completed event + memory.
+      // 9. Trazability: completed event + memory.
       await this.emit(request, skill, 'runtime.completed', result.status, undefined, trace);
       await this.deps.memory.append(this.conversationNs(request), {
         kind: 'result',
@@ -330,6 +372,58 @@ export class AgentRuntimeService implements IAgentRuntime {
       h ??
       e ?? { status: 'passed' as RuntimeStatus, findings: [], recommendations: [], missingArtifacts: [] }
     );
+  }
+
+  private validatePolicy(
+    request: AgentRuntimeRequest,
+    skill: SkillDescriptor,
+    output: {
+      stage: 'pre-execution' | 'post-execution';
+      harness?: HarnessExecutionResult;
+      evaluation?: EvaluationResult;
+    },
+  ): Promise<PolicyValidationResult> {
+    return this.deps.policy.validate({
+      policyRef: skill.policyRef,
+      input: {
+        ...buildPolicyInput(request, skill, { harness: output.harness, evaluation: output.evaluation }),
+        policyStage: output.stage,
+      },
+      context: request.context,
+    });
+  }
+
+  private policyBlockedResult(
+    request: AgentRuntimeRequest,
+    skill: SkillDescriptor,
+    trace: RuntimeTrace,
+    startedAt: string,
+    policy: PolicyValidationResult,
+  ): AgentRuntimeResult {
+    const finishedAt = this.now();
+    const parts = applyPolicy(
+      { status: 'passed' as RuntimeStatus, findings: [], recommendations: [], missingArtifacts: [] },
+      policy,
+    );
+    return assembleResult({
+      parts,
+      trace: {
+        ...trace,
+        capability: skill.id,
+        policyEngine: 'opa',
+        durationMs: this.duration(startedAt, finishedAt),
+        steps: [...(trace.steps ?? []), 'blocked-by-policy-preflight'],
+      },
+      evaluatedAt: finishedAt,
+      summary: `Capability '${skill.id}' blocked by policy preflight.`,
+      raw: {
+        policy: {
+          allowed: policy.allowed,
+          violations: policy.violations.length,
+          stage: 'pre-execution',
+        },
+      },
+    });
   }
 
   private async blocked(

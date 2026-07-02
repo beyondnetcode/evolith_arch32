@@ -95,14 +95,42 @@ describe('AgentRuntimeService', () => {
     expect(result.findings[0].source).toBe('harness');
   });
 
-  it('BLOCKS when policy validation fails even if the capability ran', async () => {
-    const denyAll = new StubPolicyValidationAdapter(() => [
-      { ruleId: 'gate.denied', message: 'Denied by org policy.', severity: 'error' },
-    ]);
-    const { runtime } = createAgentRuntime({ policy: denyAll });
+  it('BLOCKS before capability execution when policy preflight fails', async () => {
+    const mockHarness: IHarnessPort = {
+      discover: async () => [],
+      describe: async () => undefined,
+      execute: jest.fn(async (req): Promise<HarnessExecutionResult> => (
+        { ok: true, capability: req.capability, data: { status: 'passed', missing_artifacts: [] } }
+      )),
+    };
+    const denyPreflight = new StubPolicyValidationAdapter((req) => (
+      req.input.policyStage === 'pre-execution'
+        ? [{ ruleId: 'gate.denied', message: 'Denied by org policy.', severity: 'error' }]
+        : []
+    ));
+    const { runtime } = createAgentRuntime({ harness: mockHarness, policy: denyPreflight });
+    const result = await runtime.handle(discoveryRequest(['prd'])); // would otherwise pass
+
+    expect(mockHarness.execute).not.toHaveBeenCalled();
+    expect(result.status).toBe('blocked');
+    expect(result.trace.steps).toContain('policy-preflight');
+    expect(result.trace.steps).toContain('blocked-by-policy-preflight');
+    expect(result.trace.steps).not.toContain('harness-execute');
+    expect(result.findings.some((f) => f.source === 'opa' && f.id === 'gate.denied')).toBe(true);
+  });
+
+  it('BLOCKS after execution when post-execution policy validation fails', async () => {
+    const denyPostExecution = new StubPolicyValidationAdapter((req) => (
+      req.input.policyStage === 'post-execution'
+        ? [{ ruleId: 'gate.denied', message: 'Denied by org policy.', severity: 'error' }]
+        : []
+    ));
+    const { runtime } = createAgentRuntime({ policy: denyPostExecution });
     const result = await runtime.handle(discoveryRequest(['prd'])); // would otherwise pass
 
     expect(result.status).toBe('blocked');
+    expect(result.trace.steps).toContain('harness-execute');
+    expect(result.trace.steps).toContain('policy-validate');
     expect(result.findings.some((f) => f.source === 'opa' && f.id === 'gate.denied')).toBe(true);
   });
 

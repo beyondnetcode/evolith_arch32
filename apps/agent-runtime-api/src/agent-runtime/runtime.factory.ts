@@ -1,14 +1,14 @@
 /**
- * Builds the Agent Runtime from environment variables, choosing real or stub
- * adapters per deployment. Defaults are safe stubs so the service boots and
- * answers requests out of the box; setting the env vars graduates each port to
- * its real adapter — with no change to the runtime or this service's logic.
+ * Builds the Agent Runtime from environment variables. Policy enforcement is
+ * real OPA by default; stub policy mode must be requested explicitly for local
+ * offline/test deployments.
  */
 
 import {
   createAgentRuntime,
   HarnessProcessAdapter,
   OpaCliPolicyValidationAdapter,
+  StubPolicyValidationAdapter,
   HttpTrackerTraceAdapter,
   HttpCoreEvaluationAdapter,
   FileMemoryAdapter,
@@ -40,8 +40,16 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
     };
   }
 
-  // OPA — shell out to the bundled binary when enabled.
-  if (bool(env.AGENT_RUNTIME_OPA_ENABLED)) {
+  // OPA — shell out to the bundled binary by default. Stubs are explicit only,
+  // so hosted runtime deployments fail closed instead of silently bypassing
+  // runtime policy enforcement (GT-412).
+  const policyMode = env.AGENT_RUNTIME_POLICY_MODE ?? (env.AGENT_RUNTIME_OPA_ENABLED === '0' || env.AGENT_RUNTIME_OPA_ENABLED === 'false' ? 'stub' : 'opa');
+  if (policyMode === 'stub') {
+    overrides = {
+      ...overrides,
+      policy: new StubPolicyValidationAdapter(),
+    };
+  } else {
     overrides = {
       ...overrides,
       policy: new OpaCliPolicyValidationAdapter({

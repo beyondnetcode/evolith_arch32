@@ -379,7 +379,10 @@ function auditActionableReports() {
 
 function auditGovernance() {
   // Bilingual parity hook
-  const hookExists = exists(".husky/pre-commit") && exists(".harness/scripts/ci/04-check-bilingual-parity.mjs");
+  const preCommitHook = read(".husky/pre-commit") || "";
+  const hookExists = exists(".husky/pre-commit")
+    && preCommitHook.includes("ci-runner.mjs")
+    && exists(".harness/scripts/ci/suites/bilingual-suite.mjs");
 
   // Business data violation check
   const topoFiles = walk("reference/architecture/topologies");
@@ -413,12 +416,32 @@ function auditGovernance() {
     }
   }
 
+  // GT-412: runtime policy enforcement must be mandatory before governed
+  // capabilities execute, and hosted defaults must use the real OPA adapter.
+  const runtimeService = read("packages/agent-runtime/src/application/agent-runtime.service.ts") || "";
+  const runtimeFactory = read("apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts") || "";
+  const preflightIdx = runtimeService.indexOf("steps.push('policy-preflight')");
+  const harnessIdx = runtimeService.indexOf("steps.push('harness-execute')");
+  const approvalIdx = runtimeService.indexOf("steps.push('approval')");
+  const runtimePolicyPreflight = preflightIdx >= 0
+    && runtimeService.includes("pre-execution")
+    && (approvalIdx < 0 || preflightIdx < approvalIdx)
+    && (harnessIdx < 0 || preflightIdx < harnessIdx);
+  const runtimeOpaDefault = runtimeFactory.includes("AGENT_RUNTIME_POLICY_MODE")
+    && runtimeFactory.includes("new OpaCliPolicyValidationAdapter")
+    && runtimeFactory.includes("StubPolicyValidationAdapter")
+    && runtimeFactory.includes("policyMode === 'stub'");
+  const runtimePolicyGuarantee = runtimePolicyPreflight && runtimeOpaDefault;
+
   return {
     bilingualParityHook: hookExists,
     businessDataViolations: bizDataViolations,
     runtimeBusinessDataEnforcement: runtimeBizCheck,
-    verdict: hookExists && bizDataViolations === 0 ? "SÓLIDO"
-      : hookExists ? "PARCIAL"
+    runtimePolicyPreflight,
+    runtimeOpaDefault,
+    runtimePolicyGuarantee,
+    verdict: hookExists && bizDataViolations === 0 && runtimePolicyGuarantee ? "SÓLIDO"
+      : hookExists || runtimePolicyGuarantee ? "PARCIAL"
       : "AUSENTE"
   };
 }
@@ -525,6 +548,8 @@ function run() {
       mcpToolFiles: interfaces.mcpToolFiles,
       coreApiControllers: interfaces.coreApiControllers,
       agentRuntimeConnected: agentRuntime.verdict.startsWith("SÓLIDO"),
+      runtimePolicyPreflight: governance.runtimePolicyPreflight,
+      runtimeOpaDefault: governance.runtimeOpaDefault,
     },
     dimensions: [
       {
@@ -573,8 +598,8 @@ function run() {
         id: 7,
         name: "GOBERNANZA TRANSVERSAL",
         verdict: governance.verdict,
-        evidence: `Hook paridad bilingüe: ${governance.bilingualParityHook}. Violaciones datos negocio: ${governance.businessDataViolations}. Enforcement runtime: ${governance.runtimeBusinessDataEnforcement}`,
-        gap: governance.verdict === "SÓLIDO" ? "" : "Las reglas de gobernanza existen como archivos pero no se aplican en runtime"
+        evidence: `Hook paridad bilingüe: ${governance.bilingualParityHook}. Violaciones datos negocio: ${governance.businessDataViolations}. Enforcement runtime: ${governance.runtimeBusinessDataEnforcement}. Policy preflight: ${governance.runtimePolicyPreflight}. OPA default: ${governance.runtimeOpaDefault}`,
+        gap: governance.verdict === "SÓLIDO" ? "" : "Las reglas de gobernanza existen como archivos pero no se aplican de forma obligatoria en runtime"
       },
       {
         id: 8,
@@ -637,7 +662,7 @@ function run() {
     console.log(`\n## Riesgos / Deuda\n`);
     if (points.brokenAdrReferences > 0) console.log(`- ${points.brokenAdrReferences} referencias a ADRs rotas en la documentación.`);
     if (points.potentiallyInventedCommands > 0) console.log(`- ${points.potentiallyInventedCommands} comandos mencionados en docs que no existen en el CLI.`);
-    console.log(`- Las políticas Rego existen como archivos pero no hay garantía de que se ejecuten en runtime.`);
+    if (!governance.runtimePolicyGuarantee) console.log(`- Las políticas Rego existen como archivos pero no hay garantía de que se ejecuten en runtime.`);
     console.log(`- SDLC phases como datos JSON (GT-280 ✓), pipeline de evaluación (GT-281 ✓), y reportes accionables (GT-282 ✓) resueltos.\n`);
 
     console.log(`## Evidencia detallada\n`);

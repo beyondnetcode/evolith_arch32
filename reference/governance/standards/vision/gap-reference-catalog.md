@@ -4273,10 +4273,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** Bilingual drift can pass CI without a dedicated parity gate.
 - **Affected files:** `.harness/scripts/ci/`, `.harness/scripts/ci/suites/bilingual-suite.mjs`, `.github/workflows/`.
 - **Complexity:** S
-- **Proposed fix:** Create the missing script based on existing suite logic and wire it back into the CI pipeline.
+- **Applied fix:** Created `04-check-bilingual-parity.mjs` as a thin wrapper that delegates to the existing `suites/bilingual-suite.mjs`. The parity logic already existed in the suite; the script was missing at the numbered CI path expected by the Intelligent Data Audit. Script executes successfully — bilingual suite passes.
 - **Acceptance criteria:**
-  - [ ] Script created and executing.
-  - [ ] WS9 reaches 100% coverage.
+  - [x] Script created and executing.
+  - [x] WS9 reaches 100% coverage.
+- **Closure evidence:** `node .harness/scripts/ci/04-check-bilingual-parity.mjs` passes. Bilingual suite confirms parity.
 - **Dependencies:** none.
 
 #### GT-398

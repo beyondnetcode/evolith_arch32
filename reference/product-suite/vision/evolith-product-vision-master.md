@@ -43,7 +43,7 @@ Evolith provides:
 2. one canonical taxonomy of phases, artifacts, evidence, and decisions;
 3. one enforceable Phase Gate model;
 4. one audit chain across humans, agents, tools, and source code;
-5. one provider-neutral governance layer across tenants;
+5. one provider-neutral governance layer;
 6. one upstream learning mechanism from satellite products into Evolith Core.
 
 ---

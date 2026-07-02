@@ -43,7 +43,7 @@ Evolith proporciona:
 2. una taxonomía canónica de fases, artefactos, evidencias y decisiones;
 3. un modelo exigible de Phase Gates;
 4. una cadena de auditoría entre humanos, agentes, herramientas y código fuente;
-5. una capa de gobernanza neutral respecto de proveedores para todos los tenants;
+5. una capa de gobernanza neutral respecto de proveedores;
 6. un mecanismo de aprendizaje upstream desde productos satélite hacia Evolith Core.
 
 ---

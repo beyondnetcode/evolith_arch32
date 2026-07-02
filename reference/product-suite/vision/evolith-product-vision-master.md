@@ -107,7 +107,6 @@ Each module supports configurable execution through *Convention over Configurati
 |---|---|---|
 | **Human-Driven** | Engineering and product teams | Humans execute and approve under Evolith rules |
 | **Agent-Driven** | Specialized AI agents | Agents execute bounded activities; humans govern exceptions and critical decisions |
-| **Hybrid** | Humans and agents | Responsibilities are assigned per phase, activity, artifact, or gate criterion |
 
 The chatbox is an intermediary, not the source of authority. Tenant-selected LLMs and agents consume approved context, rulesets, skills, and permissions through Evolith contracts.
 

@@ -107,7 +107,6 @@ Cada módulo soporta ejecución configurable mediante *Convention over Configura
 |---|---|---|
 | **Human-Driven** | Equipos de ingeniería y producto | Los humanos ejecutan y aprueban bajo reglas Evolith |
 | **Agent-Driven** | Agentes especializados de IA | Los agentes ejecutan actividades acotadas; los humanos gobiernan excepciones y decisiones críticas |
-| **Híbrido** | Humanos y agentes | Las responsabilidades se asignan por fase, actividad, artefacto o criterio de gate |
 
 El chatbox es un intermediario, no la fuente de autoridad. Los LLMs y agentes seleccionados por cada tenant consumen contexto, rulesets, skills y permisos aprobados mediante contratos Evolith.
 

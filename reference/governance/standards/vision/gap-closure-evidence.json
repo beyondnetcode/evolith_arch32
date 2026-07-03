@@ -5686,6 +5686,21 @@
         "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-420",
+      "closedAt": "2026-07-03",
+      "closureCommit": "6f09344c",
+      "evidence": [
+        "packages/agent-runtime/src/adapters/tracker/file-tracker-trace.adapter.ts",
+        "packages/agent-runtime/src/adapters/tracker/opentelemetry-tracker-adapter.ts",
+        "packages/agent-runtime/src/adapters/tracker/composite-tracker-adapter.ts",
+        "packages/agent-runtime/src/bootstrap.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/agent-runtime"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

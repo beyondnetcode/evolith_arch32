@@ -15,7 +15,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 |---|---|:---:|:---:|:---:|:---:|:---:|
 
 
-| [`GT-421`](./gap-reference-catalog.es.md#gt-421) | Transicionar playbooks y salidas de agentes hacia JSON Schemas estrictos (`.harness/schemas/`). | `.harness` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-421`](./gap-reference-catalog.es.md#gt-421) | Transicionar playbooks y salidas de agentes hacia JSON Schemas estrictos (`.harness/schemas/`). | `.harness` | Cross | P1 | M | `HECHO` |
 | [`GT-422`](./gap-reference-catalog.es.md#gt-422) | Diseñar e implementar el Harness Orchestrator (Router Agent) como único agente frontal leyendo `manifest.yaml`. | `.harness` | Cross | P2 | L | `PENDIENTE` |
 | [`GT-423`](./gap-reference-catalog.es.md#gt-423) | Implementar y automatizar el `core-health-checklist.md` como un validador (Gate). | `Governance` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-413`](./gap-reference-catalog.es.md#gt-413) | El adaptador OPA real de runtime falla cerrado porque `OpaCliPolicyValidationAdapter` carga `rulesets/opa/` incluyendo los JSON de `schemas/` como datos OPA, generando errores de merge de schemas antes de evaluar cualquier policy. | `Agent Runtime` | Cross | P0 | S | `PENDIENTE` |

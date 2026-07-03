@@ -22,7 +22,7 @@ Actúa como **Winston** (`@winston`), el Arquitecto Principal del proyecto.
 
 **Contexto:** Evolith Core es un "marco de gobernanza arquitectónica ejecutable" que actúa como constitución técnica neutral para productos y repositorios satélite. Se organiza como un corpus de referencia multi-topología que incluye ADRs, políticas OPA, reglas para IA, contratos UMS y artefactos SDLC. El repositorio está dividido en dominios (Core, SDLC, Product Suite) y topologías aisladas (Modular Monolith, Serverless, Event-Driven, Data Mesh, Edge, Agentic/AI-First).
 
-**Objetivo del Análisis:** Realizar una evaluación crítica y orientada a la acción de todos los componentes de Evolith Core. El resultado final **no debe ser un informe narrativo extenso ni un archivo nuevo aislado**, sino la **actualización directa de los registros de control y gaps existentes** (`reference/governance/standards/vision/gap-tracking.md` y `gap-reference-catalog.md`). Esta actualización debe reflejar el estado actual, las brechas, las oportunidades y las acciones de refactoring, categorizado y ordenado rigurosamente por **prioridad (de lo más pendiente/urgente a lo menos)**.
+**Objetivo del Análisis:** Realizar una evaluación crítica y orientada a la acción de todos los componentes de Evolith Core. Para garantizar el agnosticismo de modelos (Model Agnosticism) y un procesamiento determinista, **el resultado final debe ser estrictamente un archivo JSON** que cumpla con el esquema definido en `.harness/schemas/winston-audit-output.schema.json`. Este reporte estructurado será posteriormente procesado por scripts automatizados para actualizar los registros de control y gaps.
 
 ---
 
@@ -80,30 +80,21 @@ Este script elimina automáticamente:
 
 > **BLOQUEANTE:** Si el script elimina un archivo rastreado por Git, la auditoría debe detenerse de inmediato. Restaura los archivos con `git checkout -- <path>` e investiga la causa antes de continuar.
 
----
-
 ## 5. Instrucción OBLIGATORIA de Ejecución y Salida
 
-No generes un nuevo documento suelto. **Debes leer, analizar y modificar directamente los siguientes archivos:**
+**PROHIBIDO EDITAR MARKDOWN DIRECTAMENTE.** Para evitar corrupción de tablas o truncamiento de texto, debes generar tu salida exclusivamente como un archivo JSON estructurado.
 
-1. **`reference/governance/standards/vision/gap-tracking.md` (y su contraparte `.es.md`)**:
-   - Inserta las nuevas brechas (gaps) o tareas de refactoring estructural detectadas en la tabla principal.
-   - Ordena rigurosamente por Prioridad (Crítica > Alta > Media > Baja) y dentro de cada prioridad, por Categoría.
-   - Utiliza IDs consecutivos (ej. si el último es GT-129, continúa con GT-130).
+1. **Genera el reporte JSON:**
+   - Analiza el esquema en `.harness/schemas/winston-audit-output.schema.json` para comprender el contrato exacto de datos.
+   - Crea un archivo llamado `.harness/reports/winston-audit-[fecha-y-hora].json`.
+   - Popula el campo `findings` con cada hallazgo.
+   - Para las oportunidades de refactoring o diseño arquitectónico que deban ser promovidas al backlog de arquitectura, establece `"gap_candidate": true`.
 
-2. **`reference/governance/standards/vision/gap-reference-catalog.md` (y su contraparte `.es.md`)**:
-   - Por cada ítem agregado en la tabla de tracking, debes crear el detalle en el catálogo, especificando:
-     - **Propósito:** El motivo y alcance de la brecha u oportunidad.
-     - **Evidencia actual:** El estado o problema actual.
-     - **Hecho cuando (Done when):** Los criterios de aceptación claros para cerrar el gap.
-     - Para hallazgos de topología, incluye el artefacto Native, OPA, manifiesto/corpus y evidencia de rendimiento o consumo afectados.
-
-3. **Artefacto Resumen Opcional (`winston-audit-summary.md`)**:
-    - Como entregable complementario (no persistido en el repositorio como código final), puedes generar un artefacto para el usuario con:
-      - Resumen Ejecutivo (puntuación de salud y madurez global).
-      - Backlog de refactoring estructural sugerido (Eliminar, Mover, Crear, Fusionar archivos).
-      - Mapa de Calor por Topología.
-      - Plan de Implementación Priorizado (Fases 1, 2 y 3).
+2. **Cierra tu turno de agente:**
+   - Escribe en disco el archivo JSON.
+   - Informa al usuario que el reporte JSON ha sido generado con éxito.
+   - Solicítale al usuario que ejecute el script de sincronización para inyectar los gaps en el tablero:
+     `node .harness/scripts/apply-winston-audit.mjs .harness/reports/winston-audit-[fecha-y-hora].json`
 ```
 
 ---

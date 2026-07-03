@@ -5701,6 +5701,21 @@
         "npm run build --workspace packages/agent-runtime"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "gapId": "GT-421",
+      "closedAt": "2026-07-03",
+      "closureCommit": "PENDING",
+      "evidence": [
+        ".harness/schemas/winston-audit-output.schema.json",
+        ".harness/scripts/apply-winston-audit.mjs",
+        ".harness/playbooks/winston-audit-playbook.md",
+        ".harness/playbooks/winston-audit-playbook.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/run-evolith-audit.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

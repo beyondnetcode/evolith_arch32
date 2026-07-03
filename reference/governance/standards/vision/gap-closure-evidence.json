@@ -5671,6 +5671,21 @@
         "npm run build --workspace @evolith/core-domain"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-419",
+      "closedAt": "2026-07-03",
+      "closureCommit": "4f00d511",
+      "evidence": [
+        "AGENTS.md",
+        "AGENTS.es.md",
+        ".harness/agents/discovery-agents.md",
+        ".harness/agents/discovery-agents.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

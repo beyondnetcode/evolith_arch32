@@ -4555,3 +4555,60 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] La skill self-improving-loop se ejercita en al menos una auditoría documentada con comando reproducible y enlace de evidencia.
   - [ ] Los estimados de tokens/costo se pueblan cuando el proveedor de ejecución los expone.
 - **Dependencias:** `GT-417`, `GT-416`, `GT-414`.
+
+#### GT-419
+
+**Título:** Refactorizar `AGENTS.md` a un Router/Bootstrapper mínimo
+- **Componente:** `.harness` · **Prioridad:** P1 · **Riesgo:** bajo (mejora el caché de prompts y eficiencia de tokens)
+- **Propósito:** Prevenir la saturación de contexto moviendo los agentes de descubrimiento e ingesta a un archivo separado, manteniendo `AGENTS.md` estrictamente para reglas de repositorio de alto nivel y enrutamiento de agentes.
+- **Complejidad:** M
+- **Solución propuesta:** Mover la tabla "Intake and Discovery Agents" a `.harness/agents/discovery-agents.md`. Actualizar enlaces.
+- **Criterios de aceptación:**
+  - [ ] `AGENTS.md` solo contiene reglas globales y punteros.
+  - [ ] La tabla se reubica en `.harness/agents/discovery-agents.md`.
+- **Dependencias:** Ninguna.
+
+#### GT-420
+
+**Título:** Implementar el emisor de `progress-audit.jsonl` en `Agent Runtime`
+- **Componente:** `Agent Runtime` · **Prioridad:** P0 · **Riesgo:** alto (crítico para la observabilidad y auditabilidad del sistema)
+- **Propósito:** Externalizar la memoria del LLM y mantener un registro estricto "append-only" de las decisiones de ejecución del agente sin saturar la ventana de contexto.
+- **Complejidad:** M
+- **Solución propuesta:** Modificar los adaptadores de trazas del tracker para emitir `progress-audit.jsonl` coincidiendo con el esquema definido.
+- **Criterios de aceptación:**
+  - [ ] Cada ejecución gobernada de un agente emite un registro JSONL válido.
+- **Dependencias:** `GT-418`.
+
+#### GT-421
+
+**Título:** Transicionar playbooks a contratos estrictos de JSON Schema
+- **Componente:** `.harness` · **Prioridad:** P1 · **Riesgo:** medio (impacta cómo los agentes emiten datos)
+- **Propósito:** Garantizar el Agnosticismo del Modelo forzando entradas/salidas estructuradas en lugar de depender de capacidades avanzadas de razonamiento en Markdown.
+- **Complejidad:** M
+- **Solución propuesta:** Crear `.harness/schemas/winston-audit-output.schema.json` y exigir su uso en el playbook de Winston.
+- **Criterios de aceptación:**
+  - [ ] Las salidas de Winston se validan contra el JSON Schema.
+- **Dependencias:** Ninguna.
+
+#### GT-422
+
+**Título:** Diseñar e implementar el Harness Orchestrator (Router Agent)
+- **Componente:** `.harness` · **Prioridad:** P2 · **Riesgo:** bajo (mejora arquitectónica)
+- **Propósito:** Crear un único agente frontal que lea `manifest.yaml` y delegue a los especialistas de dominio (`@winston`, `@architect`, etc.) para optimizar el gasto de tokens.
+- **Complejidad:** L
+- **Solución propuesta:** Definir el rol (persona) y el protocolo de enrutamiento del Harness Orchestrator.
+- **Criterios de aceptación:**
+  - [ ] El enrutamiento se maneja dinámicamente guiado por `manifest.yaml`.
+- **Dependencias:** Ninguna.
+
+#### GT-423
+
+**Título:** Implementar y automatizar el `core-health-checklist.md` como un validador (Gate)
+- **Componente:** `Governance` · **Prioridad:** P1 · **Riesgo:** medio
+- **Propósito:** Proveer un checklist automatizado (o evaluado por `@winston`) para verificar el estado stateless, la higiene de límites y la Paridad Dual-Engine.
+- **Complejidad:** S
+- **Solución propuesta:** Crear el checklist e integrarlo en las pruebas CI de `core-api`.
+- **Criterios de aceptación:**
+  - [ ] El checklist evalúa correctamente la naturaleza stateless y la paridad OPA vs Native.
+- **Dependencias:** Ninguna.
+

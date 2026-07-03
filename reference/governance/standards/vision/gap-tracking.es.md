@@ -4,7 +4,7 @@
 
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
-**Última Actualización:** 2026-07-03 (Auditoría UltraCode de productización del harness — añadidos GT-413..GT-418 para ejecución OPA real en runtime, drift de paquetes policyRef, drift de superficie pública/SemVer del Agent Runtime, productización del catálogo de capacidades `.harness`, drift del registro de evidencia de cierre y enforcement del bucle de mejora continua.)
+**Última Actualización:** 2026-07-03 (Agent Harness Excellence Audit — añadidos GT-419..GT-423 para refactor de AGENTS.md, progress-audit JSONL, outputs en JSON Schema, Harness Orchestrator y Core Health Checklist.)
 **Detalle de Gaps:** [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md)
 
 Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunidades, habilitadores, prioridad y estado. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
@@ -13,6 +13,11 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
+| [`GT-419`](./gap-reference-catalog.es.md#gt-419) | Refactorizar `AGENTS.md` a un Router/Bootstrapper mínimo. Extraer la tabla de "Intake and Discovery Agents" a `.harness/agents/discovery-agents.md`. | `.harness` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-420`](./gap-reference-catalog.es.md#gt-420) | Implementar el emisor de `progress-audit.jsonl` en el `Agent Runtime` para persistir la memoria de ejecución sin saturar el contexto del LLM. | `Agent Runtime` | Cross | P0 | M | `PENDIENTE` |
+| [`GT-421`](./gap-reference-catalog.es.md#gt-421) | Transicionar playbooks y salidas de agentes hacia JSON Schemas estrictos (`.harness/schemas/`). | `.harness` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-422`](./gap-reference-catalog.es.md#gt-422) | Diseñar e implementar el Harness Orchestrator (Router Agent) como único agente frontal leyendo `manifest.yaml`. | `.harness` | Cross | P2 | L | `PENDIENTE` |
+| [`GT-423`](./gap-reference-catalog.es.md#gt-423) | Implementar y automatizar el `core-health-checklist.md` como un validador (Gate). | `Governance` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-413`](./gap-reference-catalog.es.md#gt-413) | El adaptador OPA real de runtime falla cerrado porque `OpaCliPolicyValidationAdapter` carga `rulesets/opa/` incluyendo los JSON de `schemas/` como datos OPA, generando errores de merge de schemas antes de evaluar cualquier policy. | `Agent Runtime` | Cross | P0 | S | `PENDIENTE` |
 | [`GT-414`](./gap-reference-catalog.es.md#gt-414) | Las referencias de políticas runtime derivan respecto a los paquetes Rego reales: `.harness/manifest.yaml`, `DEFAULT_SKILLS`, tests y docs de agent-runtime apuntan a `evolith.gates.discovery` / `evolith.architecture.adr`, mientras los paquetes disponibles exponen nombres como `evolith.phase_gates` y `evolith.capability_source_interface`. | `Agent Runtime` | Cross | P0 | S | `PENDIENTE` |
 | [`GT-415`](./gap-reference-catalog.es.md#gt-415) | Drift de superficie pública y autoridad SemVer del Agent Runtime: el guard de freeze está rojo tras exports aditivos de adaptadores, y la nota README pre-1.0 contradice el `package.json` en versión `1.0.0`. | `Agent Runtime` | Cross | P0 | S | `PENDIENTE` |

@@ -4642,3 +4642,60 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] The self-improving-loop skill is exercised in at least one documented audit run with a reproducible command and evidence link.
   - [ ] Token/cost estimates are populated when the execution provider exposes them.
 - **Dependencies:** `GT-417`, `GT-416`, `GT-414`.
+
+#### GT-419
+
+**Title:** Refactor `AGENTS.md` into a minimal Router/Bootstrapper
+- **Component:** `.harness` · **Priority:** P1 · **Risk:** low (improves prompt caching and token efficiency)
+- **Purpose:** Prevent context saturation by moving discovery and intake agents to a separate file, keeping `AGENTS.md` strictly for high-level repository rules and agent routing.
+- **Complexity:** M
+- **Proposed fix:** Move "Intake and Discovery Agents" table to `.harness/agents/discovery-agents.md`. Update links.
+- **Acceptance criteria:**
+  - [ ] `AGENTS.md` only contains global rules and pointers.
+  - [ ] Table is relocated to `.harness/agents/discovery-agents.md`.
+- **Dependencies:** None.
+
+#### GT-420
+
+**Title:** Implement `progress-audit.jsonl` emitter in `Agent Runtime`
+- **Component:** `Agent Runtime` · **Priority:** P0 · **Risk:** high (critical for system observability and auditability)
+- **Purpose:** Externalize LLM memory and maintain a strict append-only log of agent execution decisions without polluting the context window.
+- **Complexity:** M
+- **Proposed fix:** Modify tracker trace adapters to emit `progress-audit.jsonl` matching the defined schema.
+- **Acceptance criteria:**
+  - [ ] Every governed agent run emits a valid JSONL record.
+- **Dependencies:** `GT-418`.
+
+#### GT-421
+
+**Title:** Transition playbooks to strict JSON Schema contracts
+- **Component:** `.harness` · **Priority:** P1 · **Risk:** med (impacts how agents output data)
+- **Purpose:** Guarantee Model Agnosticism by forcing structured I/O rather than relying on advanced Markdown reasoning capabilities.
+- **Complexity:** M
+- **Proposed fix:** Create `.harness/schemas/winston-audit-output.schema.json` and enforce its use in the Winston playbook.
+- **Acceptance criteria:**
+  - [ ] Winston outputs validate against the JSON Schema.
+- **Dependencies:** None.
+
+#### GT-422
+
+**Title:** Formalize the Harness Orchestrator (Router Agent)
+- **Component:** `.harness` · **Priority:** P2 · **Risk:** low (architectural enhancement)
+- **Purpose:** Create a single entrypoint agent that reads `manifest.yaml` and delegates to domain specialists (`@winston`, `@architect`, etc.) to optimize token spend.
+- **Complexity:** L
+- **Proposed fix:** Define the Harness Orchestrator persona and routing protocol.
+- **Acceptance criteria:**
+  - [ ] Routing is dynamically driven by `manifest.yaml`.
+- **Dependencies:** None.
+
+#### GT-423
+
+**Title:** Implement `core-health-checklist.md` as an automated gate
+- **Component:** `Governance` · **Priority:** P1 · **Risk:** med
+- **Purpose:** Provide an automated or `@winston`-evaluated checklist to verify statelessness, boundary hygiene, and Dual-Engine Parity.
+- **Complexity:** S
+- **Proposed fix:** Create the checklist and wire it into the `core-api` CI tests.
+- **Acceptance criteria:**
+  - [ ] Checklist evaluates statelessness and OPA vs Native parity.
+- **Dependencies:** None.
+

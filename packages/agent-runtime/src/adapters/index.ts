@@ -23,6 +23,9 @@ export type { OpaCliOptions } from './policy/opa-cli-policy-validation.adapter';
 export { InMemoryTrackerTraceAdapter } from './tracker/in-memory-tracker-trace.adapter';
 export { HttpTrackerTraceAdapter } from './tracker/http-tracker-trace.adapter';
 export type { HttpTrackerOptions } from './tracker/http-tracker-trace.adapter';
+export { MockTrackerTraceAdapter } from './tracker/mock-tracker-adapter';
+export { FileTrackerTraceAdapter } from './tracker/file-tracker-trace.adapter';
+export type { FileTrackerOptions } from './tracker/file-tracker-trace.adapter';
 
 // Memory
 export { InMemoryMemoryAdapter } from './memory/in-memory-memory.adapter';

@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.beyondnet.io/schemas/winston-audit-output.schema.json",
+  "title": "Winston Audit Output",
+  "description": "Structured output format for architectural audits performed by @winston",
+  "type": "object",
+  "properties": {
+    "audit_id": {
+      "type": "string",
+      "description": "Unique identifier for this audit run"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "target": {
+      "type": "string",
+      "description": "The scope or boundary being audited"
+    },
+    "overall_health_score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+          },
+          "category": {
+            "type": "string",
+            "enum": ["STATELESSNESS", "BOUNDARY", "DUAL_ENGINE", "SCHEMA_DRIFT", "SECURITY", "OTHER"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "affected_files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "gap_candidate": {
+            "type": "boolean",
+            "description": "True if this finding should be promoted to a GT-* gap"
+          }
+        },
+        "required": ["severity", "category", "description", "recommendation"]
+      }
+    }
+  },
+  "required": ["audit_id", "timestamp", "target", "findings"]
+}

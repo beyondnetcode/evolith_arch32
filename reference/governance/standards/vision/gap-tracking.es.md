@@ -66,14 +66,14 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-253`](./gap-reference-catalog.es.md#gt-253) | Fijar trivy-action a tag de versión específico en vez de branch master | `CI/CD` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-268`](./gap-reference-catalog.es.md#gt-268) | Restaurar scripts validadores CI ausentes referenciados por workflows y reglas | `Governance CI` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-274`](./gap-reference-catalog.es.md#gt-274) | Blindar cleanup-temp-files contra eliminación de archivos versionados | `Harness` | Cross | P0 | S | `COMPLETADO` |
-| [`GT-286`](./gap-reference-catalog.es.md#gt-286) | Ruleset compliance-baseline existe — rulesets/compliance-baseline | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
-| [`GT-287`](./gap-reference-catalog.es.md#gt-287) | Ruleset definition-of-done existe — rulesets/definition-of-done | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
-| [`GT-288`](./gap-reference-catalog.es.md#gt-288) | Ruleset engineering-manifesto existe — rulesets/engineering-manifesto | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
-| [`GT-289`](./gap-reference-catalog.es.md#gt-289) | Ruleset repository-taxonomy existe — rulesets/repository-taxonomy | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
+| [`GT-286`](./gap-reference-catalog.es.md#gt-286) | Ruleset compliance-baseline existe — rulesets/cross-cutting/compliance-baseline.rules.json | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
+| [`GT-287`](./gap-reference-catalog.es.md#gt-287) | Ruleset definition-of-done existe — rulesets/cross-cutting/definition-of-done.rules.json | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
+| [`GT-288`](./gap-reference-catalog.es.md#gt-288) | Ruleset engineering-manifesto existe — rulesets/cross-cutting/engineering-manifesto.rules.json | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
+| [`GT-289`](./gap-reference-catalog.es.md#gt-289) | Ruleset repository-taxonomy existe — rulesets/cross-cutting/repository-taxonomy.rules.json | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-290`](./gap-reference-catalog.es.md#gt-290) | Ruleset phase-gates existe — rulesets/phase-gates | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
-| [`GT-291`](./gap-reference-catalog.es.md#gt-291) | Ruleset quality-thresholds existe — rulesets/quality-thresholds | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
-| [`GT-292`](./gap-reference-catalog.es.md#gt-292) | Ruleset satellite-contracts existe — rulesets/satellite-contracts | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
-| [`GT-293`](./gap-reference-catalog.es.md#gt-293) | Ruleset executive-scorecards existe — rulesets/executive-scorecards | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
+| [`GT-291`](./gap-reference-catalog.es.md#gt-291) | Ruleset quality-thresholds existe — rulesets/sdlc/quality-thresholds.rules.json | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
+| [`GT-292`](./gap-reference-catalog.es.md#gt-292) | Ruleset satellite-contracts existe — rulesets/governance/satellite-contracts.rules.json | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
+| [`GT-293`](./gap-reference-catalog.es.md#gt-293) | Ruleset executive-scorecards existe — rulesets/governance/executive-scorecards.rules.json | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-294`](./gap-reference-catalog.es.md#gt-294) | Políticas OPA para arquitectura — rulesets/architecture/opa | `Architecture` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-336`](./gap-reference-catalog.es.md#gt-336) | Cliente REST del SDK sin prefijo /api — todas las llamadas 404 | `SDK` | Cross | P0 | S | `COMPLETADO` |
 | [`MT-A01`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Ratificar el ADR del Corpus de Referencia Multi-Topología | `Governance` | Transversal | P0 | S | `COMPLETADO` |

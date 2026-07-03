@@ -3545,10 +3545,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-286
 
-**Title:** compliance-baseline ruleset exists — rulesets/compliance-baseline
+**Title:** compliance-baseline ruleset exists — rulesets/cross-cutting/compliance-baseline.rules.json
 
 - **Purpose:** Implement compliance-baseline ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
-- **Evidence:** Path `rulesets/compliance-baseline` does not exist.
+- **Evidence:** Canonical ruleset exists at `rulesets/cross-cutting/compliance-baseline.rules.json`; OPA counterpart and tests exist at `rulesets/opa/compliance-baseline.rego` and `rulesets/opa/compliance-baseline.test.rego`.
 - **Complexity:** S
 - **Done when:**
   - [x] The required file or directory exists at the specified path.
@@ -3556,10 +3556,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-287
 
-**Title:** definition-of-done ruleset exists — rulesets/definition-of-done
+**Title:** definition-of-done ruleset exists — rulesets/cross-cutting/definition-of-done.rules.json
 
 - **Purpose:** Implement definition-of-done ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
-- **Evidence:** Path `rulesets/definition-of-done` does not exist.
+- **Evidence:** Canonical ruleset exists at `rulesets/cross-cutting/definition-of-done.rules.json`; OPA counterpart and tests exist at `rulesets/opa/dod.rego` and `rulesets/opa/dod.test.rego`.
 - **Complexity:** S
 - **Done when:**
   - [x] The required file or directory exists at the specified path.
@@ -3567,10 +3567,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-288
 
-**Title:** engineering-manifesto ruleset exists — rulesets/engineering-manifesto
+**Title:** engineering-manifesto ruleset exists — rulesets/cross-cutting/engineering-manifesto.rules.json
 
 - **Purpose:** Implement engineering-manifesto ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
-- **Evidence:** Path `rulesets/engineering-manifesto` does not exist.
+- **Evidence:** Canonical ruleset exists at `rulesets/cross-cutting/engineering-manifesto.rules.json`; OPA counterpart and tests exist at `rulesets/opa/engineering-manifesto.rego` and `rulesets/opa/engineering-manifesto.test.rego`.
 - **Complexity:** S
 - **Done when:**
   - [x] The required file or directory exists at the specified path.
@@ -3578,10 +3578,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-289
 
-**Title:** repository-taxonomy ruleset exists — rulesets/repository-taxonomy
+**Title:** repository-taxonomy ruleset exists — rulesets/cross-cutting/repository-taxonomy.rules.json
 
 - **Purpose:** Implement repository-taxonomy ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
-- **Evidence:** Path `rulesets/repository-taxonomy` does not exist.
+- **Evidence:** Canonical ruleset exists at `rulesets/cross-cutting/repository-taxonomy.rules.json`; OPA counterpart and tests exist at `rulesets/opa/repository-taxonomy.rego` and `rulesets/opa/repository-taxonomy.test.rego`.
 - **Complexity:** S
 - **Done when:**
   - [x] The required file or directory exists at the specified path.
@@ -3589,10 +3589,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-290
 
-**Title:** phase-gates ruleset exists — rulesets/phase-gates
+**Title:** phase-gates ruleset exists — rulesets/sdlc/phase-gates.rules.json
 
 - **Purpose:** Implement phase-gates ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
-- **Evidence:** Path `rulesets/phase-gates` does not exist.
+- **Evidence:** Canonical ruleset exists at `rulesets/sdlc/phase-gates.rules.json`; `rulesets/phase-gates/` remains as a stable WS1 documentation entrypoint.
 - **Complexity:** S
 - **Done when:**
   - [x] The required file or directory exists at the specified path.
@@ -3600,10 +3600,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-291
 
-**Title:** quality-thresholds ruleset exists — rulesets/quality-thresholds
+**Title:** quality-thresholds ruleset exists — rulesets/sdlc/quality-thresholds.rules.json
 
 - **Purpose:** Implement quality-thresholds ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
-- **Evidence:** Path `rulesets/quality-thresholds` does not exist.
+- **Evidence:** Canonical ruleset exists at `rulesets/sdlc/quality-thresholds.rules.json`.
 - **Complexity:** S
 - **Done when:**
   - [x] The required file or directory exists at the specified path.
@@ -3611,10 +3611,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-292
 
-**Title:** satellite-contracts ruleset exists — rulesets/satellite-contracts
+**Title:** satellite-contracts ruleset exists — rulesets/governance/satellite-contracts.rules.json
 
 - **Purpose:** Implement satellite-contracts ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
-- **Evidence:** Path `rulesets/satellite-contracts` does not exist.
+- **Evidence:** Canonical ruleset exists at `rulesets/governance/satellite-contracts.rules.json`; OPA counterpart and tests exist at `rulesets/opa/satellite-contracts.rego` and `rulesets/opa/satellite-contracts.test.rego`.
 - **Complexity:** S
 - **Done when:**
   - [x] The required file or directory exists at the specified path.
@@ -3622,13 +3622,13 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-293
 
-**Title:** executive-scorecards ruleset exists — rulesets/executive-scorecards
+**Title:** executive-scorecards ruleset exists — rulesets/governance/executive-scorecards.rules.json
 
 - **Purpose:** Implement executive-scorecards ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
-- **Evidence:** Path `rulesets/executive-scorecards` does not exist.
+- **Evidence:** Canonical ruleset exists at `rulesets/governance/executive-scorecards.rules.json`; OPA counterpart and tests exist at `rulesets/opa/executive-scorecards.rego` and `rulesets/opa/executive-scorecards.test.rego`.
 - **Complexity:** S
 - **Status:** DONE 2026-06-26
-- **Closed by:** `rulesets/executive-scorecards/executive-scorecards.rules.json` + `executive-scorecards.rules.es.json` (10 rules: DORA-01..04, SPACE-01..05, DRIFT-01). Canonical `$id` updated; `$schema` relative to new directory.
+- **Closed by:** `rulesets/governance/executive-scorecards.rules.json` + `rulesets/opa/executive-scorecards.rego` + `rulesets/opa/executive-scorecards.test.rego` (10 rules: DORA-01..04, SPACE-01..05, DRIFT-01). Canonical `$id` and OPA parity evidence are current.
 - **Done when:**
   - [x] The required file or directory exists at the specified path.
   - [x] Tests verify the implementation.
@@ -4698,4 +4698,3 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Acceptance criteria:**
   - [x] Checklist evaluates statelessness and OPA vs Native parity.
 - **Dependencies:** None.
-

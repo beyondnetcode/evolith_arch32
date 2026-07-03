@@ -14,7 +14,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
 
-| [`GT-420`](./gap-reference-catalog.es.md#gt-420) | Implementar el emisor de `progress-audit.jsonl` en el `Agent Runtime` para persistir la memoria de ejecución sin saturar el contexto del LLM. | `Agent Runtime` | Cross | P0 | M | `PENDIENTE` |
+
 | [`GT-421`](./gap-reference-catalog.es.md#gt-421) | Transicionar playbooks y salidas de agentes hacia JSON Schemas estrictos (`.harness/schemas/`). | `.harness` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-422`](./gap-reference-catalog.es.md#gt-422) | Diseñar e implementar el Harness Orchestrator (Router Agent) como único agente frontal leyendo `manifest.yaml`. | `.harness` | Cross | P2 | L | `PENDIENTE` |
 | [`GT-423`](./gap-reference-catalog.es.md#gt-423) | Implementar y automatizar el `core-health-checklist.md` como un validador (Gate). | `Governance` | Cross | P1 | S | `PENDIENTE` |
@@ -24,6 +24,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-417`](./gap-reference-catalog.es.md#gt-417) | Drift del registro de evidencia de cierre: la validación semántica de tracking aún falla porque gaps marcados `COMPLETADO` carecen de registros de cierre y/o tienen criterios sin marcar en el catálogo EN/ES. | `Governance` | Cross | P0 | M | `PENDIENTE` |
 | [`GT-416`](./gap-reference-catalog.es.md#gt-416) | El catálogo de capacidades `.harness` está sub-productizado: existen 110 archivos script/playbook, pero solo 7 capacidades están declaradas en `.harness/manifest.yaml`, sin contrato gobernado de promoción/deprecación para la mayoría de activos ejecutables del harness. | `.harness` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-418`](./gap-reference-catalog.es.md#gt-418) | El bucle de mejora continua está sembrado pero no completamente enforced: existen playbook, schema, skill y capability en el manifest, pero CI/Agent Runtime aún no exigen JSONL de progress-audit, registro automático de gaps ni promoción de aprendizaje para cada ejecución agentic aprobada. | `.harness` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-420`](./gap-reference-catalog.es.md#gt-420) | Implementar el emisor de `progress-audit.jsonl` en el `Agent Runtime` para persistir la memoria de ejecución sin saturar el contexto del LLM. | `Agent Runtime` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-419`](./gap-reference-catalog.es.md#gt-419) | Refactorizar `AGENTS.md` a un Router/Bootstrapper mínimo. Extraer la tabla de "Intake and Discovery Agents" a `.harness/agents/discovery-agents.md`. | `.harness` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-377`](./gap-reference-catalog.es.md#gt-377) | R1 — Contratos `EvaluationContext`/`EvaluationResult` + Contract Schema Registry (tipos canónicos reutilizando `Verdict`/`PhaseId`; schemas versionados; envelope ADR-0073; guard ESLint que prohíbe `*Repository` para entidades de negocio) | `Core Domain` | Cross | P0 | L | `COMPLETADO` |
 | [`GT-395`](./gap-reference-catalog.es.md#gt-395) | **WS7 Gobernanza Transversal:** Las reglas de gobernanza agnósticas existen como archivos estáticos pero carecen de aplicación universal en runtime. | `Core Domain` | Cross | P0 | L | `COMPLETADO` |

@@ -8,7 +8,7 @@ Rules defining phase gates, quality thresholds, dependency hygiene, and evidence
 | **Quality Thresholds** | [quality-thresholds.rules.json](./quality-thresholds.rules.json) | Canonical metric baselines: coverage >= 80%, complexity <= 15, etc. |
 | **Dependency Pinning** | [dependency-pinning.rules.json](./dependency-pinning.rules.json) | Strict dependency-version pinning requirements (parity with `opa/version-pinning.rego`) |
 
-> The canonical WS1 entrypoints for phase gates and quality thresholds are the sibling [`phase-gates/`](../phase-gates/README.md) and [`quality-thresholds/`](../quality-thresholds/README.md) directories; the files here are the SDLC-category sources retained for backward compatibility.
+> The canonical WS1 entrypoints for phase gates and quality thresholds are the sibling [`phase-gates/`](../phase-gates/README.md) and [`quality-thresholds/`](quality-thresholds.rules.json) directories; the files here are the SDLC-category sources retained for backward compatibility.
 
 ## SDLC phases
 

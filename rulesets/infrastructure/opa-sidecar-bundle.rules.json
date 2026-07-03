@@ -1,5 +1,5 @@
 {
-  "$schema": "../schema/rule-definition.schema.json",
+  "$schema": "../../schema/rule-definition.schema.json",
   "id": "INFRA-OPA-001",
   "category": "infrastructure",
   "name": "OPA Sidecar Bundle Integrity",

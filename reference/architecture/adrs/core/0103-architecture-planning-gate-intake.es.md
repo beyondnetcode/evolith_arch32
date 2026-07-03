@@ -2,6 +2,8 @@
 
 # ADR-0103: Architecture Planning Gate como Intake de Gobernanza (Pre-Discovery)
 
+> **Agent Signature:** Architect Agent (Winston)
+
 > **Firma de Agente:** Architect Agent (Winston)
 
 ## Estado

@@ -8,7 +8,7 @@ Reglas que definen los gates de fase, los umbrales de calidad, la higiene de dep
 | **Umbrales de Calidad** | [quality-thresholds.rules.json](./quality-thresholds.rules.json) | Líneas base canónicas de métricas: cobertura >= 80%, complejidad <= 15, etc. |
 | **Pinning de Dependencias** | [dependency-pinning.rules.json](./dependency-pinning.rules.json) | Requisitos estrictos de pinning de versiones (paridad con `opa/version-pinning.rego`) |
 
-> Los entrypoints WS1 canónicos para gates de fase y umbrales de calidad son las carpetas hermanas [`phase-gates/`](../phase-gates/README.es.md) y [`quality-thresholds/`](../quality-thresholds/README.es.md); los archivos aquí son las fuentes de categoría SDLC retenidas por compatibilidad.
+> Los entrypoints WS1 canónicos para gates de fase y umbrales de calidad son las carpetas hermanas [`phase-gates/`](../phase-gates/README.es.md) y [`quality-thresholds/`](quality-thresholds.rules.json); los archivos aquí son las fuentes de categoría SDLC retenidas por compatibilidad.
 
 ## Fases SDLC
 

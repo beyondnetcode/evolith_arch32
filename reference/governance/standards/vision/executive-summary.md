@@ -9,11 +9,11 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 ## Executive Signal
 
-**Current decision:** NO-GO for production expansion or a major release: active P0 blockers remain.
+**Current decision:** Conditional GO: proceed only with P1 hardening and automated evidence.
 
-**Biggest problem now:** `Agent Runtime` carries the highest weighted open risk (3 open, 3 P0). Attack that concentration before expanding scope.
+**Biggest problem now:** `Infra` carries the highest weighted open risk (1 open, 0 P0). Attack that concentration before expanding scope.
 
-**Where to attack first:** [GT-413](./gap-reference-catalog.md#gt-413), [GT-414](./gap-reference-catalog.md#gt-414), [GT-415](./gap-reference-catalog.md#gt-415), [GT-417](./gap-reference-catalog.md#gt-417).
+**Where to attack first:** -.
 
 ## Strategic Diagnosis
 
@@ -25,41 +25,35 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-413](./gap-reference-catalog.md#gt-413), [GT-414](./gap-reference-catalog.md#gt-414), [GT-415](./gap-reference-catalog.md#gt-415), [GT-417](./gap-reference-catalog.md#gt-417) |
-| 2 | Highest-risk area | `Agent Runtime` has the largest weighted open load. | [GT-413](./gap-reference-catalog.md#gt-413), [GT-414](./gap-reference-catalog.md#gt-414), [GT-415](./gap-reference-catalog.md#gt-415) |
-| 3 | Quick wins | High criticality with XS/S complexity. | [GT-413](./gap-reference-catalog.md#gt-413), [GT-414](./gap-reference-catalog.md#gt-414), [GT-415](./gap-reference-catalog.md#gt-415) |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-324](./gap-reference-catalog.md#gt-324), [GT-416](./gap-reference-catalog.md#gt-416), [GT-418](./gap-reference-catalog.md#gt-418) |
+| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | - |
+| 2 | Highest-risk area | `Infra` has the largest weighted open load. | [GT-324](./gap-reference-catalog.md#gt-324) |
+| 3 | Quick wins | High criticality with XS/S complexity. | - |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-324](./gap-reference-catalog.md#gt-324) |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | - |
 
 ## Current Blockers
 
 | ID | Attack | Component | Effort |
 |---|---|---|---|
-| [GT-413](./gap-reference-catalog.md#gt-413) | Real runtime OPA adapter fails closed because OpaCliPolicyValidationAdapter loads rulesets/opa/ including schemas/ JSON files as OPA data, producing schema merge errors before any policy can evaluate. | `Agent Runtime` | P0/S |
-| [GT-414](./gap-reference-catalog.md#gt-414) | Runtime policy references drift from actual Rego packages: .harness/manifest.yaml, DEFAULT_SKILLS, tests, and agent-runtime docs reference evolith.gates.discovery / evolith.architecture.adr, while the available packages expose names such as evolith.phase_gates and evolith.capability_source_interface. | `Agent Runtime` | P0/S |
-| [GT-415](./gap-reference-catalog.md#gt-415) | Agent Runtime public-surface and SemVer authority drift: the freeze guard is red after additive adapter exports, and README pre-1.0 guidance conflicts with package.json version 1.0.0. | `Agent Runtime` | P0/S |
-| [GT-417](./gap-reference-catalog.md#gt-417) | Closure-evidence registry drift: semantic tracking still fails because recently marked DONE gaps lack registry closure records and/or have unchecked closure criteria in the EN/ES catalog. | `Governance` | P0/M |
+| [GT-324](./gap-reference-catalog.md#gt-324) | CD: GHCR build+push of core-api & mcp-server (GITHUB_TOKEN) live + push/tag triggers; guarded Coolify deploy job — code complete, deploy pending secrets + CD run | `Infra` | P1/M |
 
 ## Metrics
 
 | Indicator | Value |
 |---|---:|
 | Canonical board date | 2026-07-03 |
-| Total gaps | 418 |
-| Closed gaps | 411 |
-| Open gaps | 7 |
-| Open P0 | 4 |
-| Open P1 | 3 |
+| Total gaps | 423 |
+| Closed gaps | 422 |
+| Open gaps | 1 |
+| Open P0 | 0 |
+| Open P1 | 1 |
 | Open P2 | 0 |
-| Total closure | 98.3% |
-| Closure evidence records | 364 |
+| Total closure | 99.8% |
+| Closure evidence records | 404 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Agent Runtime` | 3 | 3 | 0 | [GT-413](./gap-reference-catalog.md#gt-413), [GT-414](./gap-reference-catalog.md#gt-414), [GT-415](./gap-reference-catalog.md#gt-415) |
-| `Governance` | 1 | 1 | 0 | [GT-417](./gap-reference-catalog.md#gt-417) |
-| `.harness` | 2 | 0 | 2 | [GT-416](./gap-reference-catalog.md#gt-416), [GT-418](./gap-reference-catalog.md#gt-418) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.md#gt-324) |
 
 ## Source and Refresh Rule

@@ -59,7 +59,8 @@ const MODES = {
       "32-validate-ruleset-schemas.mjs",
       "33-check-adapter-freshness.mjs",
       "34-boundary-guard-repository.mjs",
-      "35-validate-core-health.mjs"
+      "35-validate-core-health.mjs",
+      "36-validate-agent-memory.mjs"
     ],
   },
   full: {

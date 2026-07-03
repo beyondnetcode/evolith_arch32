@@ -4333,9 +4333,9 @@
       "closedAt": "2026-06-26",
       "closureCommit": "2396bc77",
       "evidence": [
-        "rulesets/compliance-baseline/compliance-baseline.rules.json",
-        "rulesets/compliance-baseline/README.md",
-        "rulesets/compliance-baseline/README.es.md",
+        "rulesets/cross-cutting/compliance-baseline.rules.json",
+        "rulesets/cross-cutting/README.md",
+        "rulesets/cross-cutting/README.es.md",
         ".harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
         "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts",
         "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.spec.ts",
@@ -4354,9 +4354,9 @@
       "closedAt": "2026-06-26",
       "closureCommit": "c001e602",
       "evidence": [
-        "rulesets/definition-of-done/definition-of-done.rules.json",
-        "rulesets/definition-of-done/README.md",
-        "rulesets/definition-of-done/README.es.md",
+        "rulesets/cross-cutting/definition-of-done.rules.json",
+        "rulesets/cross-cutting/README.md",
+        "rulesets/cross-cutting/README.es.md",
         ".harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
         "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts",
         "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.spec.ts",
@@ -4375,9 +4375,9 @@
       "closedAt": "2026-06-26",
       "closureCommit": "fd2ba022",
       "evidence": [
-        "rulesets/engineering-manifesto/engineering-manifesto.rules.json",
-        "rulesets/engineering-manifesto/README.md",
-        "rulesets/engineering-manifesto/README.es.md",
+        "rulesets/cross-cutting/engineering-manifesto.rules.json",
+        "rulesets/cross-cutting/README.md",
+        "rulesets/cross-cutting/README.es.md",
         ".harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
         "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts",
         "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.spec.ts",
@@ -4396,9 +4396,9 @@
       "closedAt": "2026-06-26",
       "closureCommit": "c41e7d77",
       "evidence": [
-        "rulesets/repository-taxonomy/repository-taxonomy.rules.json",
-        "rulesets/repository-taxonomy/README.md",
-        "rulesets/repository-taxonomy/README.es.md",
+        "rulesets/cross-cutting/repository-taxonomy.rules.json",
+        "rulesets/cross-cutting/README.md",
+        "rulesets/cross-cutting/README.es.md",
         ".harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
         "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts",
         "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.spec.ts",
@@ -4438,9 +4438,9 @@
       "closedAt": "2026-06-26",
       "closureCommit": "46beae26",
       "evidence": [
-        "rulesets/quality-thresholds/quality-thresholds.rules.json",
-        "rulesets/quality-thresholds/README.md",
-        "rulesets/quality-thresholds/README.es.md",
+        "rulesets/sdlc/quality-thresholds.rules.json",
+        "rulesets/sdlc/README.md",
+        "rulesets/sdlc/README.es.md",
         ".harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
         "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts",
         "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.spec.ts",
@@ -4538,9 +4538,9 @@
       "closedAt": "2026-06-26",
       "closureCommit": "cd40dd8b",
       "evidence": [
-        "rulesets/satellite-contracts/satellite-contracts.rules.json",
-        "rulesets/satellite-contracts/README.md",
-        "rulesets/satellite-contracts/README.es.md",
+        "rulesets/governance/satellite-contracts.rules.json",
+        "rulesets/governance/README.md",
+        "rulesets/governance/README.es.md",
         "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts",
         "rulesets/README.md",
         "rulesets/README.es.md"
@@ -4592,7 +4592,7 @@
       "closedAt": "2026-06-26",
       "closureCommit": "ad0fe74c",
       "evidence": [
-        "rulesets/executive-scorecards/executive-scorecards.rules.json"
+        "rulesets/governance/executive-scorecards.rules.json"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-rulesets.mjs"
@@ -5703,9 +5703,9 @@
       "dependencyDisposition": "none"
     },
     {
-      "gapId": "GT-421",
+      "id": "GT-421",
       "closedAt": "2026-07-03",
-      "closureCommit": "PENDING",
+      "closureCommit": "030e9dd6",
       "evidence": [
         ".harness/schemas/winston-audit-output.schema.json",
         ".harness/scripts/apply-winston-audit.mjs",
@@ -5718,9 +5718,9 @@
       "dependencyDisposition": "none"
     },
     {
-      "gapId": "GT-423",
+      "id": "GT-423",
       "closedAt": "2026-07-03",
-      "closureCommit": "PENDING",
+      "closureCommit": "030e9dd6",
       "evidence": [
         ".harness/scripts/ci/35-validate-core-health.mjs",
         ".harness/scripts/ci-runner.mjs"
@@ -5731,9 +5731,9 @@
       "dependencyDisposition": "none"
     },
     {
-      "gapId": "GT-422",
+      "id": "GT-422",
       "closedAt": "2026-07-03",
-      "closureCommit": "PENDING",
+      "closureCommit": "030e9dd6",
       "evidence": [
         ".harness/agents/router-agent.md",
         ".harness/agents/router-agent.es.md",
@@ -5747,9 +5747,9 @@
       "dependencyDisposition": "none"
     },
     {
-      "gapId": "GT-413",
+      "id": "GT-413",
       "closedAt": "2026-07-03",
-      "closureCommit": "PENDING",
+      "closureCommit": "030e9dd6",
       "evidence": [
         "packages/agent-runtime/src/adapters/policy/opa-cli-policy-validation.adapter.ts"
       ],
@@ -5759,9 +5759,9 @@
       "dependencyDisposition": "none"
     },
     {
-      "gapId": "GT-414",
+      "id": "GT-414",
       "closedAt": "2026-07-03",
-      "closureCommit": "PENDING",
+      "closureCommit": "030e9dd6",
       "evidence": [
         "packages/agent-runtime/src/adapters/skills/default-skills.ts",
         ".harness/manifest.yaml",
@@ -5773,15 +5773,399 @@
       "dependencyDisposition": "none"
     },
     {
-      "gapId": "GT-415",
+      "id": "GT-415",
       "closedAt": "2026-07-03",
-      "closureCommit": "PENDING",
+      "closureCommit": "030e9dd6",
       "evidence": [
         "packages/agent-runtime/README.md",
         "packages/agent-runtime/README.es.md"
       ],
       "validationCommands": [
         "npm test --workspace packages/agent-runtime"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-377",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-395",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-375",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-390",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-405",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-410",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-411",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-384",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-396",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-399",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-400",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-403",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-406",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-407",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-408",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-383",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-388",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-389",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-391",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-393",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-397",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-381",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-386",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-385",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-387",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-392",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-394",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-404",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-409",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-416",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-417",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-418",
+      "closedAt": "2026-07-03",
+      "closureCommit": "030e9dd6",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
       ],
       "dependencyDisposition": "none"
     }

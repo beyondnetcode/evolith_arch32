@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.beyondnet.io/schemas/router-agent-output.schema.json",
+  "title": "Harness Orchestrator (Router Agent) Output",
+  "description": "Strict JSON contract for the @orchestrator agent when routing a natural language prompt to a declared capability.",
+  "type": "object",
+  "properties": {
+    "selected_capability": {
+      "type": "string",
+      "description": "The exact 'name' of the capability from .harness/manifest.yaml or a known agent id (e.g. '@winston'). If no capability matches, emit 'unknown'."
+    },
+    "inputs": {
+      "type": "object",
+      "description": "The inferred arguments to pass to the capability, mapping to its defined 'inputs' schema.",
+      "additionalProperties": true
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Brief explanation of why this routing was chosen based on the user prompt."
+    },
+    "confidence_score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Confidence score (0-100) indicating certainty of the routing match."
+    }
+  },
+  "required": [
+    "selected_capability",
+    "inputs",
+    "rationale",
+    "confidence_score"
+  ],
+  "additionalProperties": false
+}

@@ -106,6 +106,12 @@ These two layers do not overlap. Architectural decisions go in `reference/archit
   - Enforce strict Domain-Driven Design (DDD) isolation boundaries.
   - Recommend Transactional Outbox for cross-service events.
 
+## Harness Orchestrator (Router Agent)
+
+The primary frontend router for the Evolith BMAD ecosystem. All raw user intents should be directed here to minimize token spend and enforce boundaries.
+
+> **See:** [`.harness/agents/router-agent.md`](./.harness/agents/router-agent.md) for the `@orchestrator` persona, inputs, and strict JSON schema output.
+
 ## Intake and Discovery Agents (Phases 00 and 01.1)
 
 The agents supporting the Architecture Planning Gate (Phase 00) and the Knowledge-First Discovery subphase (01.1) have been extracted to a dedicated file to optimize context loading.

@@ -5729,6 +5729,22 @@
         "node .harness/scripts/ci-runner.mjs governance"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "gapId": "GT-422",
+      "closedAt": "2026-07-03",
+      "closureCommit": "PENDING",
+      "evidence": [
+        ".harness/agents/router-agent.md",
+        ".harness/agents/router-agent.es.md",
+        ".harness/schemas/router-agent-output.schema.json",
+        "AGENTS.md",
+        ".bmad-core/AGENTS.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs fast"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

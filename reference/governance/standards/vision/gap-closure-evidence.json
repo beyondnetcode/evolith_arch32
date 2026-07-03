@@ -4417,7 +4417,7 @@
       "closedAt": "2026-06-26",
       "closureCommit": "fba055ef",
       "evidence": [
-        "rulesets/phase-gates/phase-gates.rules.json",
+        "rulesets/sdlc/phase-gates.rules.json",
         "rulesets/phase-gates/README.md",
         "rulesets/phase-gates/README.es.md",
         ".harness/scripts/run-evolith-intelligent-data-audit.test.mjs",

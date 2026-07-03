@@ -193,3 +193,8 @@ graph LR
     Architect -->|Updates| Gaps
     Rules -->|Enforces| PR
 ```
+
+Operational closure for this loop is defined by the
+[Harness Self Improving Loop](../../../.harness/playbooks/self-improving-loop.md):
+each approved run must emit progress-audit evidence, register unresolved
+findings as gaps, and promote repeated lessons into durable harness assets.

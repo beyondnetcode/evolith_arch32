@@ -109,6 +109,26 @@ capabilities:
     emitsTrace: true
     requiresPolicy: false
 
+  - name: self-improving-loop
+    type: skill
+    description: >-
+      Emit a progress-audit snapshot and route harness findings through the
+      detect-context-execute-validate-register-learn improvement cycle.
+    entry: .harness/scripts/skills/self-improving-loop.mjs
+    runner: node
+    inputs:
+      task: { type: string, description: "Task or audit objective for the loop run" }
+      agent: { type: string, description: "Agent id, for example @winston" }
+      append: { type: string, description: "Optional JSONL path for approved audit records" }
+    outputs:
+      status: { type: string, enum: [completed, blocked, failed, partial] }
+      risks: { type: array, items: { type: string } }
+      next_actions: { type: array, items: { type: string } }
+    permissions: [read:repo, write:report]
+    requiresApproval: false
+    emitsTrace: true
+    requiresPolicy: false
+
   - name: emit-trace
     type: script
     description: >-

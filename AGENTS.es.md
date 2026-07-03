@@ -78,6 +78,7 @@ Estas dos capas no se solapan. Las decisiones arquitectónicas van en `reference
 ## Reglas de Agentes
 - Leer `./.harness/rules/global-rules.md` antes de responder o editar.
 - Usar el playbook relevante de `./.harness/playbooks/` para auditorías, revisiones de arquitectura y tareas de ingeniería repetidas.
+- Para trabajo recurrente de mejora del harness o agentes, usar `./.harness/playbooks/self-improving-loop.es.md` y emitir o referenciar un registro de progress-audit conforme a `./.harness/schemas/progress-audit.schema.json`.
 - Cuando la guía del stack cambie materialmente, actualizar juntos los estándares afectados, `AGENTS.md` y los perfiles autoritativos específicos de runtime.
 - Los estándares de multi-tenancy deben preservar dos capas: filtrado en la capa de aplicación como primario, enforcement nativo de base de datos como failsafe secundario.
 - No convertir un estándar corporativo en un documento específico de producto a menos que el área del repositorio esté explícitamente orientada al producto.

@@ -4447,3 +4447,111 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Solución aplicada:** `AgentRuntimeService` ahora ejecuta un `policy-preflight` obligatorio para toda capacidad con `requiresPolicy` antes de aprobación, ejecución de harness o evaluación Core; una denegación devuelve resultado bloqueado con findings OPA y sin ejecutar la capacidad. El runtime conserva la validación de política post-ejecución sobre la salida de harness/Core. La factory del runtime hospedado ahora usa `OpaCliPolicyValidationAdapter` por defecto; `StubPolicyValidationAdapter` solo queda disponible mediante `AGENT_RUNTIME_POLICY_MODE=stub` explícito o el legado `AGENT_RUNTIME_OPA_ENABLED=false/0`. El SDLC Deep Audit ahora verifica ambas señales ejecutables (`runtimePolicyPreflight` y `runtimeOpaDefault`) antes de marcar sólida la gobernanza transversal.
 - **Evidencia de cierre:** Commit `2f3e0bbe`. Validación: `npm run build --workspace packages/agent-runtime`, `npm run test --workspace packages/agent-runtime` (43/43 tests pasan), `npx tsc -p apps/agent-runtime-api/tsconfig.json`, `npm run build --workspace sdk/cli` y `node .harness/scripts/run-evolith-deep.mjs --markdown` (9/9 dimensiones SÓLIDO; `runtimePolicyPreflight: true`, `runtimeOpaDefault: true`).
 - **Disposición de dependencias:** Alcance aceptado. `GT-398` y `GT-401` son prerrequisitos cerrados. `GT-399` queda abierto para reemplazar stubs no-política del lado CLI por adaptadores HTTP/Harness reales, mientras GT-412 cierra la garantía de enforcement de políticas y el default OPA del runtime hospedado.
+
+#### GT-413
+
+**Título:** El adaptador OPA real de runtime falla cerrado al cargar `rulesets/opa/`
+
+- **Componente:** Agent Runtime · **Prioridad:** P0 · **Riesgo:** alto (la enforcement de políticas runtime está cableada, pero el adaptador real no puede evaluar policies vivas)
+- **Propósito:** Hacer que el `OpaCliPolicyValidationAdapter` hospedado/runtime ejecute policies reales, no solo que sea seleccionado como adaptador default.
+- **Evidencia:** `node .harness/scripts/run-evolith-deep.mjs --markdown` reporta policy preflight runtime y default OPA como sólidos, pero la ejecución directa equivalente al path del adaptador falla: `.harness/bin/opa eval --format json -I -d rulesets/opa 'data.evolith.phase_gates.allow'` devuelve errores de merge de schemas porque los JSON bajo `rulesets/opa/schemas/` se cargan como datos. La misma query funciona si se ignoran schemas: `.harness/bin/opa eval --format json -I -d rulesets/opa --ignore schemas 'data.evolith.phase_gates.allow'`.
+- **Impacto:** Cualquier runtime productivo que use el adaptador OPA CLI real puede fallar cerrado antes de evaluar políticas, dejando capacidades gobernadas inutilizables o empujando a un fallback inseguro a stubs.
+- **Archivos afectados:** `packages/agent-runtime/src/adapters/policy/opa-cli-policy-validation.adapter.ts`, `packages/agent-runtime/src/__tests__/`, `.harness/scripts/run-evolith-deep.mjs`, `rulesets/opa/README.md`.
+- **Complejidad:** S
+- **Propuesta de corrección:** Cambiar `OpaCliPolicyValidationAdapter` para pasar `--ignore schemas` (o cargar solo raíces `.rego`) y añadir un smoke test que ejercite el adaptador real contra `evolith.phase_gates` con input mínimo. Extender el deep audit para fallar si el adaptador real no puede ejecutar al menos una policy conocida.
+- **Criterios de aceptación:**
+  - [ ] `OpaCliPolicyValidationAdapter.validate()` evalúa un paquete existente conocido sin errores de merge de schemas.
+  - [ ] Un test unitario/integración demuestra que el adaptador pasa con `evolith.phase_gates` y falla cerrado solo ante denegación real de política o error de ejecución OPA.
+  - [ ] `run-evolith-deep.mjs --markdown` incluye una señal smoke del adaptador real, no solo presencia estática de código.
+- **Dependencias:** `GT-412`.
+
+#### GT-414
+
+**Título:** Drift del namespace `policyRef` runtime frente a los paquetes Rego reales
+
+- **Componente:** Agent Runtime · **Prioridad:** P0 · **Riesgo:** alto (capacidades gobernadas apuntan a políticas inexistentes)
+- **Propósito:** Hacer que cada `policyRef` de capacidad runtime resuelva a una query/paquete Rego real o a un registro de alias gobernado.
+- **Evidencia:** `.harness/manifest.yaml`, `DEFAULT_SKILLS`, tests unitarios y docs de agent-runtime referencian `evolith.gates.discovery` y `evolith.architecture.adr`. `rg '^package' rulesets/opa` muestra paquetes reales como `evolith.phase_gates`, `evolith.capability_source_interface`, `evolith.governance` y `evolith.acl`; no existe paquete `evolith.gates.discovery` ni `evolith.architecture.adr`. Con schemas ignorados, `.harness/bin/opa eval --format json -I -d rulesets/opa --ignore schemas 'data.evolith.gates.discovery.allow'` devuelve `{}`, mientras `data.evolith.phase_gates.allow` devuelve `true`.
+- **Impacto:** Corregir el path de carga OPA no basta: las capacidades runtime gobernadas seguirían denegadas o indefinidas porque los nombres lógicos de políticas no mapean a paquetes reales.
+- **Archivos afectados:** `.harness/manifest.yaml`, `packages/agent-runtime/src/adapters/skills/default-skills.ts`, `packages/agent-runtime/src/domain/ports/policy-validation.port.ts`, `reference/architecture/agent-runtime/{harness-integration,extending}.md`, `rulesets/opa/`.
+- **Complejidad:** S
+- **Propuesta de corrección:** Introducir un registro de referencias de políticas o mapa de alias (`evolith.gates.discovery` -> `evolith.phase_gates`, validación ADR de arquitectura -> paquete/ruleset correcto), actualizar manifest/default skills/docs/tests y añadir validación CI que exija que todo `policyRef` declarado resuelva a un paquete OPA real o alias explícito.
+- **Criterios de aceptación:**
+  - [ ] Todo `policyRef` en `.harness/manifest.yaml` y `DEFAULT_SKILLS` resuelve a una query de política ejecutable.
+  - [ ] Las docs usan el mismo vocabulario canónico de `policyRef` que el código runtime.
+  - [ ] CI falla cuando se declara un nuevo `policyRef` sin paquete Rego o alias gobernado equivalente.
+- **Dependencias:** `GT-413`, `GT-412`.
+
+#### GT-415
+
+**Título:** Drift de superficie pública y autoridad SemVer del Agent Runtime
+
+- **Componente:** Agent Runtime · **Prioridad:** P0 · **Riesgo:** alto (el paquete declara una superficie estable congelada mientras los tests muestran drift de contrato)
+- **Propósito:** Restaurar la autoridad de release de `@evolith/agent-runtime` antes de tratar v1.0.0 como estable para producción.
+- **Evidencia:** `npm test --workspace @evolith/agent-runtime -- --runInBand` falla en `public-surface.spec.ts` porque `./adapters` ahora exporta `ChatApprovalAdapter`, `OpenCodeInteractionAdapter` y `SlackApprovalAdapter` fuera de la lista congelada. El README aún dice que el paquete se mantiene en `0.x` mientras el adaptador Core default sea stub, pero `packages/agent-runtime/package.json` declara versión `1.0.0`.
+- **Impacto:** Los consumidores no pueden saber si los nuevos exports de adaptadores son cambios aditivos intencionales, cambios breaking o drift no documentado; el board marca productización previa como hecha aunque la suite del paquete está roja.
+- **Archivos afectados:** `packages/agent-runtime/src/__tests__/public-surface.spec.ts`, `packages/agent-runtime/src/adapters/index.ts`, `packages/agent-runtime/README.md`, `packages/agent-runtime/README.es.md`, `packages/agent-runtime/package.json`, `reference/governance/standards/vision/gap-tracking.md`.
+- **Complejidad:** S
+- **Propuesta de corrección:** Decidir si los tres exports son API pública intencional. Si sí, actualizar lista congelada, narrativa SemVer README/ES y notas de release como cambio aditivo de superficie estable. Si no, dejar de exportarlos desde `./adapters` o marcarlos internos. Añadir validación que ejecute el public-surface test antes de cerrar cualquier GT de release/productización.
+- **Criterios de aceptación:**
+  - [ ] `npm test --workspace @evolith/agent-runtime -- --runInBand` pasa.
+  - [ ] README EN/ES y `package.json` cuentan una sola historia SemVer.
+  - [ ] Los exports públicos aditivos están documentados como minor-compatible; eliminaciones/renombres se gatean como major.
+  - [ ] La evidencia de cierre de productización del Agent Runtime referencia el guard de superficie pública en verde.
+- **Dependencias:** `GT-388`, `GT-383`.
+
+#### GT-416
+
+**Título:** Catálogo de capacidades `.harness` sub-productizado frente al corpus de scripts ejecutables
+
+- **Componente:** .harness · **Prioridad:** P1 · **Riesgo:** medio (la mayoría de activos ejecutables del harness no son descubribles mediante el contrato runtime gobernado)
+- **Propósito:** Decidir qué scripts/playbooks del harness son capacidades de producto, detalles internos de CI o utilidades deprecadas, y exponer el subconjunto de producto mediante un contrato de manifest gobernado.
+- **Evidencia:** `find .harness/scripts -maxdepth 2 -type f \( -name '*.mjs' -o -name '*.sh' -o -name '*.py' -o -name '*.md' \) | wc -l` ahora reporta 110 activos ejecutables/script-like, mientras `rg '^\s+- name:' .harness/manifest.yaml` reporta 7 capacidades declaradas tras añadir la capacidad semilla del bucle de mejora continua. Esto es aceptable solo si el manifest es una API pública estrecha intencional; esa decisión no está codificada como política de promoción/deprecación.
+- **Impacto:** Agent Runtime y superficies futuras solo pueden descubrir una porción del harness. Validadores/auditorías útiles quedan invisibles, y cambios en scripts internos pueden verse como drift de producto porque no hay ciclo de vida declarado por capacidad.
+- **Archivos afectados:** `.harness/manifest.yaml`, `.harness/scripts/`, `.harness/playbooks/`, `reference/harness/scripts-taxonomy.md`, `packages/agent-runtime/src/adapters/skills/default-skills.ts`.
+- **Complejidad:** M
+- **Propuesta de corrección:** Añadir una política de cobertura del manifest con tres categorías: `public-capability`, `internal-ci` y `deprecated/utility`. Registrar auditorías/validadores de cara a producto con inputs/outputs/permisos/postura de policy; marcar explícitamente scripts internos fuera de la superficie pública. Añadir un drift checker que compare taxonomía de scripts, manifest y default skills.
+- **Criterios de aceptación:**
+  - [ ] Todo entrypoint user-facing `run-evolith-*` está declarado en `.harness/manifest.yaml` o clasificado explícitamente como interno/no-runtime.
+  - [ ] Las entradas del manifest tienen shape de entrada/salida, permisos, postura de trazabilidad, postura de aprobación y `policyRef`/alias cuando aplica.
+  - [ ] CI reporta drift de cobertura entre taxonomía de scripts, `.harness/manifest.yaml` y `DEFAULT_SKILLS`.
+  - [ ] Las docs runtime explican la superficie pública soportada de capacidades del harness y su política de deprecación.
+- **Dependencias:** `GT-414`, `GT-409`.
+
+#### GT-417
+
+**Título:** Drift del registro de evidencia de cierre para gaps `COMPLETADO`
+
+- **Componente:** Governance · **Prioridad:** P0 · **Riesgo:** alto (el tablero canónico de gaps puede declarar cierre sin evidencia verificable por máquina)
+- **Propósito:** Restaurar el tracking semántico como fuente de verdad ejecutable: un gap marcado `COMPLETADO` debe tener registro de cierre, criterios marcados en secciones EN/ES del catálogo, artefactos de evidencia resolubles y comandos de validación reproducibles.
+- **Evidencia:** Después de normalizar estados españoles del board de `HECHO` a `COMPLETADO` y corregir el puntero obsoleto de evidencia de GT-290, `node .harness/scripts/ci/08-validate-tracking.mjs` sigue fallando solo en semántica de cierre: múltiples gaps `COMPLETADO` como `GT-377`, `GT-395`, `GT-375`, `GT-390`, `GT-405`, `GT-410`, `GT-411` y gaps de la ola Agent Runtime carecen de registros en `gap-closure-evidence.json` y/o aún contienen criterios `- [ ]` sin marcar.
+- **Impacto:** El resumen ejecutivo y la evidencia de madurez pueden sobredeclarar cierre porque estado de tabla, criterios de catálogo y registro de cierre no están reconciliados por completo.
+- **Archivos afectados:** `reference/governance/standards/vision/gap-tracking.md`, `reference/governance/standards/vision/gap-tracking.es.md`, `reference/governance/standards/vision/gap-reference-catalog.md`, `reference/governance/standards/vision/gap-reference-catalog.es.md`, `reference/governance/standards/vision/gap-closure-evidence.json`, `.harness/scripts/ci/08-validate-tracking.mjs`.
+- **Complejidad:** M
+- **Propuesta de corrección:** Para cada gap `COMPLETADO` reportado por el validador, añadir un registro de cierre real con commit existente, evidencia resoluble, comandos de validación y disposición de dependencias; luego marcar los criterios EN/ES correspondientes. Si la evidencia no está completa, reabrir el gap a `PENDIENTE`/`EN-PROGRESO`. Mantener el validador en CI/pre-commit para que nuevas filas `COMPLETADO` no evadan la reconciliación del registro.
+- **Criterios de aceptación:**
+  - [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` pasa.
+  - [ ] Ningún gap `DONE`/`COMPLETADO` carece de registro en `gap-closure-evidence.json`.
+  - [ ] Ninguna sección de catálogo `DONE`/`COMPLETADO` contiene criterios de cierre sin marcar.
+  - [ ] `generate-executive-summary.mjs --check` pasa después de la reconciliación.
+- **Dependencias:** ninguna.
+
+#### GT-418
+
+**Título:** Enforcement del bucle de mejora continua para harness y agentes BMAD
+
+- **Componente:** .harness · **Prioridad:** P1 · **Riesgo:** medio (los insights de mejora pueden quedar como conducta puntual del agente en vez de convertirse en conducta gobernada del sistema)
+- **Propósito:** Hacer ejecutable end-to-end el bucle de mejora continua del harness: cada ejecución agentic aprobada debe dejar un registro de progress-audit, los hallazgos abiertos deben convertirse en gaps canónicos y las lecciones repetidas deben promoverse a reglas, skills, playbooks, schemas o checks CI durables.
+- **Evidencia:** Los artefactos semilla ya existen: `.harness/playbooks/self-improving-loop.md`, `.harness/playbooks/self-improving-loop.es.md`, `.harness/schemas/progress-audit.schema.json`, `.harness/scripts/skills/self-improving-loop.mjs`, `.bmad-core/skills/self-improving-loop.md`, `.bmad-core/skills/self-improving-loop.es.md`, el registro de skills BMAD y `.harness/manifest.yaml`. Sin embargo, CI y Agent Runtime aún no exigen registros JSONL de auditoría, no validan eventos progress-audit, no vinculan hallazgos automáticamente a `GT-*` y no verifican que hallazgos repetidos se promuevan a activos reutilizables del harness.
+- **Impacto:** El repositorio todavía puede depender de la disciplina individual del agente. Una auditoría fuerte puede producir insights, pero el sistema aún no garantiza que esos insights se conviertan en controles repetibles.
+- **Archivos afectados:** `.harness/playbooks/self-improving-loop.md`, `.harness/schemas/progress-audit.schema.json`, `.harness/scripts/skills/self-improving-loop.mjs`, `.harness/manifest.yaml`, `.bmad-core/skills/manifest.json`, `.harness/scripts/ci/`, `packages/agent-runtime/src/`.
+- **Complejidad:** M
+- **Semilla aplicada:** Añadidos el playbook bilingüe self-improving-loop, JSON Schema de progress-audit, docs/registro de skill BMAD, capability en manifest del harness y script MVP de snapshot. El MVP puede emitir un objeto JSON de progress-audit y opcionalmente anexar JSONL a `.harness/reports/progress-audit.jsonl`.
+- **Propuesta de corrección:** Añadir un validador para registros JSONL de progress-audit, cablearlo en CI para ejecuciones agentic aprobadas, extender los adaptadores de trace de Agent Runtime/Tracker para emitir o reenviar registros compatibles y añadir un paso de reconciliación que confirme que cada hallazgo repetido queda vinculado a un `GT-*`, registro de cierre o racional no-op explícito.
+- **Criterios de aceptación:**
+  - [ ] Un validador CI revisa `.harness/reports/progress-audit.jsonl` o el sink de auditoría seleccionado contra `.harness/schemas/progress-audit.schema.json`.
+  - [ ] Agent Runtime puede emitir o reenviar un registro compatible con progress-audit para ejecución de capacidades gobernadas.
+  - [ ] Los hallazgos repetidos se reconcilian contra `GT-*`, evidencia de cierre, actualizaciones de regla/skill/playbook/schema o racional no-op explícito.
+  - [ ] La skill self-improving-loop se ejercita en al menos una auditoría documentada con comando reproducible y enlace de evidencia.
+  - [ ] Los estimados de tokens/costo se pueblan cuando el proveedor de ejecución los expone.
+- **Dependencias:** `GT-417`, `GT-416`, `GT-414`.

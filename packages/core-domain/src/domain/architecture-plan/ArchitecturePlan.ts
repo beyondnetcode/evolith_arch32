@@ -46,8 +46,6 @@ export class ArchitecturePlan {
   id!: string;
   version!: number;
   status!: ArchitecturePlanStatus;
-  tenant_id!: string;
-  product_id!: string;
   title!: string;
   prompt_source!: string;
   scope!: ArchitecturePlanScope;

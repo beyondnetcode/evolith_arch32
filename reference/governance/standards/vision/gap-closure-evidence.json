@@ -5716,6 +5716,19 @@
         "node .harness/scripts/run-evolith-audit.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "gapId": "GT-423",
+      "closedAt": "2026-07-03",
+      "closureCommit": "PENDING",
+      "evidence": [
+        ".harness/scripts/ci/35-validate-core-health.mjs",
+        ".harness/scripts/ci-runner.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs governance"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

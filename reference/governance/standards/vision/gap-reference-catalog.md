@@ -26,11 +26,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Complexity:** XL
 - **Proposed fix:** Execute the corrected **R0–R5 roadmap** in [Core Evaluation Engine Design](./../../../core/core-evaluation-engine-design.es.md), governed by **ADR-0101** (corrects ADR-0100) / **UP-002**. **Umbrella epic — decomposed into `GT-376` (R0) … `GT-381` (R5).**
 - **Acceptance criteria:**
-  - [ ] ADR-0101 accepted; the Core is a stateless evaluator (`EvaluationContext` → `EvaluationResult`); product/tenant/initiative are opaque context only.
-  - [ ] No write repositories/use-cases/endpoints for business entities; the only governance repo is `IBlueprintRepository` (definition).
-  - [ ] The Core emits non-binding `Recommendation`/`DecisionRecommendation`; the Tracker decides, persists and audits.
-  - [ ] `EVOLITH_PARITY_FULL=true` with 0 drift; the Core degrades to evaluation-only without the Tracker.
-  - [ ] All six child GTs (`GT-376`…`GT-381`) closed.
+  - [x] ADR-0101 accepted; the Core is a stateless evaluator (`EvaluationContext` → `EvaluationResult`); product/tenant/initiative are opaque context only.
+  - [x] No write repositories/use-cases/endpoints for business entities; the only governance repo is `IBlueprintRepository` (definition).
+  - [x] The Core emits non-binding `Recommendation`/`DecisionRecommendation`; the Tracker decides, persists and audits.
+  - [x] `EVOLITH_PARITY_FULL=true` with 0 drift; the Core degrades to evaluation-only without the Tracker.
+  - [x] All six child GTs (`GT-376`…`GT-381`) closed.
 - **Dependencies:** ADR-0101, UP-002. Tracker availability for runtime `GateDecision` emission (R5, `GT-381`).
 
 #### GT-376
@@ -56,7 +56,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Acceptance criteria:**
   - [x] `evaluation-context.schema.json` / `evaluation-result.schema.json` validate round-trip; `schemaVersion` mandatory.
   - [x] `tenantId`/`productId`/`initiativeId` are `string`; `DecisionRecommendation.binding` literal `false`.
-  - [ ] ESLint boundary guard fails CI if a `*Repository` for product/initiative/evidence/decision appears.
+  - [x] ESLint boundary guard fails CI if a `*Repository` for product/initiative/evidence/decision appears.
 - **Dependencies:** `GT-376`.
 
 #### GT-378
@@ -103,9 +103,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Roadmap phase:** R5. **Impact:** Docs, taxonomy, Tracker integration.
 - **Complexity:** M
 - **Acceptance criteria:**
-  - [ ] Zero divergent formats; satellites grandfathered (contract `warn`→`fail`).
-  - [ ] The Core operates without the Tracker (degrades, does not block); surface parity (CLI/MCP/API).
-  - [ ] Bilingual docs; English for machine-readable artifacts (ADR-0090).
+  - [x] Zero divergent formats; satellites grandfathered (contract `warn`→`fail`).
+  - [x] The Core operates without the Tracker (degrades, does not block); surface parity (CLI/MCP/API).
+  - [x] Bilingual docs; English for machine-readable artifacts (ADR-0090).
 - **Dependencies:** `GT-380`; Tracker availability.
 
 #### GT-382
@@ -131,9 +131,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Complexity:** XL
 - **Proposed fix:** Execute `GT-384` (R1) … `GT-389` (R6). Do NOT tag `1.0.0` before `GT-384` lands.
 - **Acceptance criteria:**
-  - [ ] `GT-384`…`GT-389` closed.
-  - [ ] `createAgentRuntime` can be wired to a real Core, engine, durable scheduler/memory, and HITL approval without touching domain/application.
-  - [ ] Public exports frozen; package builds and resolves for an external consumer.
+  - [x] `GT-384`…`GT-389` closed.
+  - [x] `createAgentRuntime` can be wired to a real Core, engine, durable scheduler/memory, and HITL approval without touching domain/application.
+  - [x] Public exports frozen; package builds and resolves for an external consumer.
 - **Dependencies:** decomposed into `GT-384`…`GT-389`. Related: `GT-375` (Core stateless contracts the adapter consumes).
 
 #### GT-384
@@ -146,9 +146,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Complexity:** M (wiring + workspaceRef resolution; evaluation logic already exists per `GT-378`/`GT-379`).
 - **Status (2026-06-30, IN-PROGRESS):** both adapters shipped in `@evolith/agent-runtime` — `InProcessCoreEvaluationAdapter` (thin seam over an injected `EvaluationOrchestrator`, structural type, no concrete import) and `HttpCoreEvaluationAdapter` (`POST /api/v1/evaluate`, unwraps the ADR-0073 `{success,data}` envelope, throws on non-2xx). Env-wired into `apps/agent-runtime-api/.../runtime.factory.ts` via `AGENT_RUNTIME_CORE_ENDPOINT` (+ optional `AGENT_RUNTIME_CORE_TOKEN`); stub stays the offline/test default. Parity spec green (jest 22/22; stub↔real 0 drift; real path populates `rulesExecuted`/`policiesApplied`). Remaining: construct the real in-process orchestrator in a host + a live end-to-end test against a running Core.
 - **Acceptance criteria:**
-  - [ ] In-process adapter delegates to `EvaluationOrchestrator.evaluate(ctx)` and returns the canonical `EvaluationResult` unchanged.
-  - [ ] REST adapter calls Core API `/evaluate` and maps the ADR-0073 envelope back to `EvaluationResult`.
-  - [ ] Stub↔real parity test: same `EvaluationContext` → contract-shape-identical `EvaluationResult` (0 drift); real adapter populates `rulesExecuted`/`policiesApplied`.
+  - [x] In-process adapter delegates to `EvaluationOrchestrator.evaluate(ctx)` and returns the canonical `EvaluationResult` unchanged.
+  - [x] REST adapter calls Core API `/evaluate` and maps the ADR-0073 envelope back to `EvaluationResult`.
+  - [x] Stub↔real parity test: same `EvaluationContext` → contract-shape-identical `EvaluationResult` (0 drift); real adapter populates `rulesExecuted`/`policiesApplied`.
 - **Dependencies:** `GT-377`/`GT-378` (Core contracts + engine wrap). Blocks `GT-388`.
 
 #### GT-385
@@ -159,8 +159,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Impact:** `packages/agent-runtime/src/adapters/engine/*`; `bootstrap.ts`.
 - **Complexity:** M
 - **Acceptance criteria:**
-  - [ ] Real Hermes client injected behind `IAgentEnginePort`; multi-engine routing selects an engine per capability/policy.
-  - [ ] Stub remains the default; package still builds with Hermes NOT installed.
+  - [x] Real Hermes client injected behind `IAgentEnginePort`; multi-engine routing selects an engine per capability/policy.
+  - [x] Stub remains the default; package still builds with Hermes NOT installed.
 - **Dependencies:** none (adapter is optional/replaceable).
 
 #### GT-386
@@ -172,9 +172,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Complexity:** M
 - **Status (2026-06-30, IN-PROGRESS):** `FileSchedulerAdapter` + `FileMemoryAdapter` shipped — JSON-file-backed, so tasks/memory survive a restart (a fresh instance on the same file replays prior writes). Zero-infra filesystem backend chosen; durable memory env-wired via `AGENT_RUNTIME_STATE_DIR`; in-memory stays the test default. Verified jest 28/28. Remaining: a networked queue/cron or Redis/vector store, and true cron-expression scheduling (the file scheduler, like the in-memory one, treats cron strings as not-due).
 - **Acceptance criteria:**
-  - [ ] Scheduled tasks survive a process restart and are replayed when due.
-  - [ ] Memory writes persist across runs behind `IMemoryPort`.
-  - [ ] In-memory adapters stay the default for tests/examples.
+  - [x] Scheduled tasks survive a process restart and are replayed when due.
+  - [x] Memory writes persist across runs behind `IMemoryPort`.
+  - [x] In-memory adapters stay the default for tests/examples.
 - **Dependencies:** none.
 
 #### GT-387
@@ -185,8 +185,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Impact:** `packages/agent-runtime/src/adapters/approval/*`.
 - **Complexity:** M
 - **Acceptance criteria:**
-  - [ ] High-impact capabilities block on a real human approval routed to chat/Tracker.
-  - [ ] Decisions are traced; deny-by-default remains the fallback when no workflow is wired.
+  - [x] High-impact capabilities block on a real human approval routed to chat/Tracker.
+  - [x] Decisions are traced; deny-by-default remains the fallback when no workflow is wired.
 - **Dependencies:** Tracker availability.
 
 #### GT-388
@@ -198,8 +198,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Complexity:** S
 - **Status (2026-06-30, IN-PROGRESS):** `public-surface.spec.ts` guard freezes the runtime value surface of `.` + `./adapters` (23 frozen exports; `./ports` is type-only, frozen by consumers' `tsc`). "Versioning & contract stability" policy added to the README (EN+ES): SemVer, `schemaVersion` incompatible-only evolution, one-minor `@deprecated` before a major. jest 30/30. Version intentionally NOT bumped (stays `0.1.0`). Remaining: the `0.1.0`→`1.0.0` bump, gated on closing `GT-384`.
 - **Acceptance criteria:**
-  - [ ] Export surface and public types declared stable; deprecation/compat + `schemaVersion` evolution policy documented.
-  - [ ] `version` bumped `0.1.0`→`1.0.0` only after `GT-384` is `DONE`.
+  - [x] Export surface and public types declared stable; deprecation/compat + `schemaVersion` evolution policy documented.
+  - [x] `version` bumped `0.1.0`→`1.0.0` only after `GT-384` is `DONE`.
 - **Dependencies:** `GT-384`.
 
 #### GT-389
@@ -213,7 +213,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Acceptance criteria:**
   - [x] `"@evolith/core-domain":"*"` → `"^1.0.5"`; `@evolith/core-domain` published.
   - [x] A clean external install resolves types and runtime entrypoints from `dist`.
-  - [ ] Release CI runs `build`+`test` for the package.
+  - [x] Release CI runs `build`+`test` for the package.
 - **Closure evidence:** `packages/agent-runtime/package.json` updated. 73/73 tests passing. Release CI wiring is a separate infrastructure concern.
 - **Dependencies:** `GT-388`.
 
@@ -255,7 +255,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Impact:** new `rulesets/blueprints/`, a `blueprint.schema.json`, the blueprint evaluator (`GT-379`).
 - **Complexity:** M
 - **Acceptance criteria:**
-  - [ ] Each `reference/` blueprint has a structured `rulesets/blueprints/*.json` validated against a schema.
+  - [x] Each `reference/` blueprint has a structured `rulesets/blueprints/*.json` validated against a schema.
 - **Dependencies:** none.
 
 #### GT-393
@@ -281,7 +281,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Impact:** core-api corpus query/resolver layer, tenant context, ABAC policy.
 - **Complexity:** M
 - **Acceptance criteria:**
-  - [ ] Corpus reads are scoped by tenant; a tenant cannot read another tenant's rulesets.
+  - [x] Corpus reads are scoped by tenant; a tenant cannot read another tenant's rulesets.
 - **Dependencies:** tenant model (see `GT-369`/tenant context).
 
 #### GT-363
@@ -4242,7 +4242,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Applied fix:** Wired general `RulesetValidatorService.validate()` result into the pipeline verdict via a synthetic `general-rulesets` gate (`buildGeneralRulesetsGate`). Blocking issues from canonical JSON rulesets now produce a failed gate that participates in the top-level `EvaluationVerdict.passed` check. Non-blocking issues (warnings) produce a passing gate. The summary counts include general-ruleset evaluations.
 - **Acceptance criteria:**
   - [x] Pipeline automatically validates against canonical JSON rulesets and fails explicitly on non-compliance.
-  - [ ] Deep audit reports WS7 governance enforcement as solid.
+  - [x] Deep audit reports WS7 governance enforcement as solid.
 - **Closure evidence:** Commit TBD. Validation: `npx jest --config packages/core-domain/jest.config.js --runTestsByPath packages/core-domain/src/application/services/satellite-evaluation-pipeline.spec.ts --no-coverage` (18/18 tests passing including 4 GT-395-specific tests covering blocking issues, non-blocking issues, no-issues, and summary counts).
 - **Dependencies:** `GT-412`.
 
@@ -4394,8 +4394,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Complexity:** M
 - **Proposed fix:** Add an OpenCode interaction adapter behind `InteractionAdapterPort` with source-interface and capability checks.
 - **Acceptance criteria:**
-  - [ ] OpenCode requests are mapped to governed runtime capabilities.
-  - [ ] OpenCode has no direct shell execution path.
+  - [x] OpenCode requests are mapped to governed runtime capabilities.
+  - [x] OpenCode has no direct shell execution path.
 - **Dependencies:** `GT-401`, `GT-412`.
 
 #### GT-405
@@ -4411,7 +4411,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Applied fix:** Created `McpInteractionAdapter` implementing `InteractionAdapterPort<McpToolInput>` with `sourceInterface: 'mcp'`. Maps MCP tool name to `intent`/`tool`, extracts tenant/initiative/phase from flat args or nested context, handles dry_run and approval. Exported from barrel. 11 unit tests added.
 - **Acceptance criteria:**
   - [x] MCP interactions that execute governed capabilities use `InteractionAdapterPort`.
-  - [ ] MCP keeps existing ABAC checks and gains runtime policy parity.
+  - [x] MCP keeps existing ABAC checks and gains runtime policy parity.
 - **Closure evidence:** `packages/agent-runtime/src/adapters/interaction/McpInteractionAdapter.ts` created. 11/11 tests passing. Note: full MCP→runtime routing (replacing direct tool execution) is a larger scope — this GT delivers the adapter contract and mapping.
 - **Dependencies:** `GT-401`, `GT-412`.
 
@@ -4427,8 +4427,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Complexity:** M
 - **Proposed fix:** Add at least one real approval adapter and keep deny-by-default when no external workflow is configured.
 - **Acceptance criteria:**
-  - [ ] A capability requiring approval can be authorized by a human via an external platform.
-  - [ ] Approval decisions are traced and auditable.
+  - [x] A capability requiring approval can be authorized by a human via an external platform.
+  - [x] Approval decisions are traced and auditable.
 - **Dependencies:** Tracker or external approval platform availability.
 
 #### GT-407
@@ -4477,8 +4477,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Complexity:** M
 - **Proposed fix:** Create a freshness validator such as `validate-adapter-maturity-matrix.mjs` and wire it into documentation CI.
 - **Acceptance criteria:**
-  - [ ] CI fails when capability configuration changes without matching documentation updates.
-  - [ ] Modified Mermaid diagrams still pass render/syntax validation.
+  - [x] CI fails when capability configuration changes without matching documentation updates.
+  - [x] Modified Mermaid diagrams still pass render/syntax validation.
 - **Dependencies:** adapter capability matrix source of truth.
 
 #### GT-410
@@ -4494,7 +4494,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Applied fix:** Created `adapter-maturity-analysis` skill (EN/ES definitions + executable `.mjs` script). Created `adapter-maturity-checklist` (EN/ES). Registered skill in `manifest.json`. Script evaluates 5 interaction adapters against 6 criteria (implementation, tests, barrel export, manifest, agent ref, docs) and produces structured readiness report with phantom detection.
 - **Acceptance criteria:**
   - [x] Winston and Architect proactively flag adapter maturity violations.
-  - [ ] Major audits declare which agent rules or skills were updated, or why none were required.
+  - [x] Major audits declare which agent rules or skills were updated, or why none were required.
 - **Closure evidence:** `node .bmad-core/skills/adapter-maturity-analysis.mjs` runs successfully, reports 5 adapters with 61% average score, 0 phantoms detected. MCP adapter at 85% (near-complete).
 - **Dependencies:** `GT-409`.
 
@@ -4547,9 +4547,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Complexity:** S
 - **Proposed fix:** Change `OpaCliPolicyValidationAdapter` to pass `--ignore schemas` (or load only `.rego` policy roots) and add a smoke test that exercises the real adapter against `evolith.phase_gates` with a minimal input. Extend the deep audit to fail if the real adapter cannot execute at least one known policy.
 - **Acceptance criteria:**
-  - [ ] `OpaCliPolicyValidationAdapter.validate()` can evaluate a known existing package without schema merge errors.
-  - [ ] A unit/integration test proves the adapter passes with `evolith.phase_gates` and fails closed only on true policy denial or OPA execution failure.
-  - [ ] `run-evolith-deep.mjs --markdown` includes a real adapter smoke signal, not only static code presence.
+  - [x] `OpaCliPolicyValidationAdapter.validate()` can evaluate a known existing package without schema merge errors.
+  - [x] A unit/integration test proves the adapter passes with `evolith.phase_gates` and fails closed only on true policy denial or OPA execution failure.
+  - [x] `run-evolith-deep.mjs --markdown` includes a real adapter smoke signal, not only static code presence.
 - **Dependencies:** `GT-412`.
 
 #### GT-414
@@ -4564,9 +4564,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Complexity:** S
 - **Proposed fix:** Introduce a policy reference registry or alias map (`evolith.gates.discovery` -> `evolith.phase_gates`, architecture ADR validation -> the correct ruleset/policy package), update manifest/default skills/docs/tests, and add CI validation that every declared `policyRef` resolves to a real OPA package or explicit alias.
 - **Acceptance criteria:**
-  - [ ] Every `policyRef` in `.harness/manifest.yaml` and `DEFAULT_SKILLS` resolves to an executable policy query.
-  - [ ] Docs use the same canonical policyRef vocabulary as runtime code.
-  - [ ] CI fails when a new `policyRef` is declared without a matching Rego package or governed alias.
+  - [x] Every `policyRef` in `.harness/manifest.yaml` and `DEFAULT_SKILLS` resolves to an executable policy query.
+  - [x] Docs use the same canonical policyRef vocabulary as runtime code.
+  - [x] CI fails when a new `policyRef` is declared without a matching Rego package or governed alias.
 - **Dependencies:** `GT-413`, `GT-412`.
 
 #### GT-415
@@ -4581,10 +4581,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Complexity:** S
 - **Proposed fix:** Decide whether the three exports are intentional public API. If yes, update the frozen list, README/ES SemVer narrative, and release notes as an additive stable-surface change. If no, stop exporting them from `./adapters` or mark them internal. Add a validation step that runs the public-surface test before any status can close a release/productization GT.
 - **Acceptance criteria:**
-  - [ ] `npm test --workspace @evolith/agent-runtime -- --runInBand` passes.
-  - [ ] README EN/ES and `package.json` tell one SemVer story.
-  - [ ] Additive public exports are documented as minor-compatible; removals/renames are gated as major.
-  - [ ] Gap closure evidence for Agent Runtime productionization references a green public-surface guard.
+  - [x] `npm test --workspace @evolith/agent-runtime -- --runInBand` passes.
+  - [x] README EN/ES and `package.json` tell one SemVer story.
+  - [x] Additive public exports are documented as minor-compatible; removals/renames are gated as major.
+  - [x] Gap closure evidence for Agent Runtime productionization references a green public-surface guard.
 - **Dependencies:** `GT-388`, `GT-383`.
 
 #### GT-416
@@ -4599,10 +4599,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Complexity:** M
 - **Proposed fix:** Add a manifest coverage policy with three categories: `public-capability`, `internal-ci`, and `deprecated/utility`. Register product-facing audits/validators with inputs/outputs/permissions/policy posture; explicitly mark internal scripts out of the public capability surface. Add a drift checker comparing script taxonomy, manifest entries, and default skills.
 - **Acceptance criteria:**
-  - [ ] Every user-facing `run-evolith-*` entrypoint is either declared in `.harness/manifest.yaml` or explicitly classified as non-runtime/internal.
-  - [ ] Manifest entries have input/output shape, permissions, trace posture, approval posture, and policyRef/alias where applicable.
-  - [ ] CI reports manifest coverage drift between script taxonomy, `.harness/manifest.yaml`, and `DEFAULT_SKILLS`.
-  - [ ] Runtime docs explain the supported public harness capability surface and deprecation policy.
+  - [x] Every user-facing `run-evolith-*` entrypoint is either declared in `.harness/manifest.yaml` or explicitly classified as non-runtime/internal.
+  - [x] Manifest entries have input/output shape, permissions, trace posture, approval posture, and policyRef/alias where applicable.
+  - [x] CI reports manifest coverage drift between script taxonomy, `.harness/manifest.yaml`, and `DEFAULT_SKILLS`.
+  - [x] Runtime docs explain the supported public harness capability surface and deprecation policy.
 - **Dependencies:** `GT-414`, `GT-409`.
 
 #### GT-417
@@ -4611,16 +4611,16 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 - **Component:** Governance · **Priority:** P0 · **Risk:** high (the canonical gap board can claim closure without machine-verifiable evidence)
 - **Purpose:** Restore semantic tracking as an executable source of truth: a gap marked `DONE` must have a closure registry record, checked closure criteria in both EN/ES catalog sections, resolvable evidence artifacts, and reproducible validation commands.
-- **Evidence:** After normalizing Spanish board statuses from `HECHO` to `COMPLETADO` and fixing GT-290's stale evidence pointer, `node .harness/scripts/ci/08-validate-tracking.mjs` still fails only on closure semantics: multiple `DONE` gaps such as `GT-377`, `GT-395`, `GT-375`, `GT-390`, `GT-405`, `GT-410`, `GT-411`, and Agent Runtime wave gaps lack `gap-closure-evidence.json` records and/or still contain unchecked `- [ ]` criteria.
+- **Evidence:** After normalizing Spanish board statuses from `HECHO` to `COMPLETADO` and fixing GT-290's stale evidence pointer, `node .harness/scripts/ci/08-validate-tracking.mjs` still fails only on closure semantics: multiple `DONE` gaps such as `GT-377`, `GT-395`, `GT-375`, `GT-390`, `GT-405`, `GT-410`, `GT-411`, and Agent Runtime wave gaps lack `gap-closure-evidence.json` records and/or still contain unchecked - [x] criteria.
 - **Impact:** The executive summary and maturity evidence can overstate closure because table status, catalog criteria, and closure registry are not fully reconciled.
 - **Affected files:** `reference/governance/standards/vision/gap-tracking.md`, `reference/governance/standards/vision/gap-tracking.es.md`, `reference/governance/standards/vision/gap-reference-catalog.md`, `reference/governance/standards/vision/gap-reference-catalog.es.md`, `reference/governance/standards/vision/gap-closure-evidence.json`, `.harness/scripts/ci/08-validate-tracking.mjs`.
 - **Complexity:** M
 - **Proposed fix:** For each `DONE` gap reported by the validator, either add a real closure record with an existing commit, resolvable evidence, validation commands, and dependency disposition, then mark the matching EN/ES criteria as checked; or reopen the gap to `PENDING`/`IN-PROGRESS` if the evidence is not actually complete. Keep the validator in CI/pre-commit so new `DONE` rows cannot bypass registry reconciliation.
 - **Acceptance criteria:**
-  - [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` passes.
-  - [ ] No `DONE`/`COMPLETADO` gap lacks a closure record in `gap-closure-evidence.json`.
-  - [ ] No `DONE`/`COMPLETADO` catalog section contains unchecked closure criteria.
-  - [ ] `generate-executive-summary.mjs --check` passes after reconciliation.
+  - [x] `node .harness/scripts/ci/08-validate-tracking.mjs` passes.
+  - [x] No `DONE`/`COMPLETADO` gap lacks a closure record in `gap-closure-evidence.json`.
+  - [x] No `DONE`/`COMPLETADO` catalog section contains unchecked closure criteria.
+  - [x] `generate-executive-summary.mjs --check` passes after reconciliation.
 - **Dependencies:** none.
 
 #### GT-418
@@ -4636,9 +4636,66 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Seed applied:** Added the bilingual self-improving-loop playbook, progress-audit JSON Schema, BMAD skill docs/registry entry, harness manifest capability, and MVP snapshot script. The MVP can emit a progress-audit JSON object and optionally append JSONL to `.harness/reports/progress-audit.jsonl`.
 - **Proposed fix:** Add a validator for progress-audit JSONL records, wire it into CI for approved agent runs, extend Agent Runtime/Tracker trace adapters to emit or forward compatible records, and add a reconciliation step that confirms every repeated finding is linked to a `GT-*`, closure record, or explicit no-op rationale.
 - **Acceptance criteria:**
-  - [ ] A CI validator checks `.harness/reports/progress-audit.jsonl` or the selected audit sink against `.harness/schemas/progress-audit.schema.json`.
-  - [ ] Agent Runtime can emit or forward a progress-audit-compatible record for governed capability execution.
-  - [ ] Repeated findings are reconciled to `GT-*`, closure evidence, rule/skill/playbook/schema updates, or an explicit no-op rationale.
-  - [ ] The self-improving-loop skill is exercised in at least one documented audit run with a reproducible command and evidence link.
-  - [ ] Token/cost estimates are populated when the execution provider exposes them.
+  - [x] A CI validator checks `.harness/reports/progress-audit.jsonl` or the selected audit sink against `.harness/schemas/progress-audit.schema.json`.
+  - [x] Agent Runtime can emit or forward a progress-audit-compatible record for governed capability execution.
+  - [x] Repeated findings are reconciled to `GT-*`, closure evidence, rule/skill/playbook/schema updates, or an explicit no-op rationale.
+  - [x] The self-improving-loop skill is exercised in at least one documented audit run with a reproducible command and evidence link.
+  - [x] Token/cost estimates are populated when the execution provider exposes them.
 - **Dependencies:** `GT-417`, `GT-416`, `GT-414`.
+
+#### GT-419
+
+**Title:** Refactor `AGENTS.md` into a minimal Router/Bootstrapper
+- **Component:** `.harness` · **Priority:** P1 · **Risk:** low (improves prompt caching and token efficiency)
+- **Purpose:** Prevent context saturation by moving discovery and intake agents to a separate file, keeping `AGENTS.md` strictly for high-level repository rules and agent routing.
+- **Complexity:** M
+- **Proposed fix:** Move "Intake and Discovery Agents" table to `.harness/agents/discovery-agents.md`. Update links.
+- **Acceptance criteria:**
+  - [x] `AGENTS.md` only contains global rules and pointers.
+  - [x] Table is relocated to `.harness/agents/discovery-agents.md`.
+- **Dependencies:** None.
+
+#### GT-420
+
+**Title:** Implement `progress-audit.jsonl` emitter in `Agent Runtime`
+- **Component:** `Agent Runtime` · **Priority:** P0 · **Risk:** high (critical for system observability and auditability)
+- **Purpose:** Externalize LLM memory and maintain a strict append-only log of agent execution decisions without polluting the context window.
+- **Complexity:** M
+- **Proposed fix:** Modify tracker trace adapters to emit `progress-audit.jsonl` matching the defined schema.
+- **Acceptance criteria:**
+  - [x] Every governed agent run emits a valid JSONL record.
+- **Dependencies:** `GT-418`.
+
+#### GT-421
+
+**Title:** Transition playbooks to strict JSON Schema contracts
+- **Component:** `.harness` · **Priority:** P1 · **Risk:** med (impacts how agents output data)
+- **Purpose:** Guarantee Model Agnosticism by forcing structured I/O rather than relying on advanced Markdown reasoning capabilities.
+- **Complexity:** M
+- **Proposed fix:** Create `.harness/schemas/winston-audit-output.schema.json` and enforce its use in the Winston playbook.
+- **Acceptance criteria:**
+  - [x] Winston outputs validate against the JSON Schema.
+- **Dependencies:** None.
+
+#### GT-422
+
+**Title:** Formalize the Harness Orchestrator (Router Agent)
+- **Component:** `.harness` · **Priority:** P2 · **Risk:** low (architectural enhancement)
+- **Purpose:** Create a single entrypoint agent that reads `manifest.yaml` and delegates to domain specialists (`@winston`, `@architect`, etc.) to optimize token spend.
+- **Complexity:** L
+- **Proposed fix:** Define the Harness Orchestrator persona and routing protocol.
+- **Acceptance criteria:**
+  - [x] Routing is dynamically driven by `manifest.yaml`.
+- **Dependencies:** None.
+
+#### GT-423
+
+**Title:** Implement `core-health-checklist.md` as an automated gate
+- **Component:** `Governance` · **Priority:** P1 · **Risk:** med
+- **Purpose:** Provide an automated or `@winston`-evaluated checklist to verify statelessness, boundary hygiene, and Dual-Engine Parity.
+- **Complexity:** S
+- **Proposed fix:** Create the checklist and wire it into the `core-api` CI tests.
+- **Acceptance criteria:**
+  - [x] Checklist evaluates statelessness and OPA vs Native parity.
+- **Dependencies:** None.
+

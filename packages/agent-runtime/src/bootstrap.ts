@@ -10,9 +10,12 @@
  * Production wiring example (swap ports, nothing else changes):
  *   createAgentRuntime({
  *     harness:        new HarnessProcessAdapter({ harnessRoot: '.harness' }),
- *     coreEvaluation: new HttpCoreEvaluationAdapter({ endpoint }), // or InProcessCoreEvaluationAdapter(orchestrator)
+ *     coreEvaluation: new HttpCoreEvaluationAdapter({ endpoint }),
  *     policy:         new OpaCliPolicyValidationAdapter(),
- *     tracker:        new HttpTrackerTraceAdapter({ endpoint }),
+ *     tracker:        new CompositeTrackerTraceAdapter([
+ *                       new FileTrackerTraceAdapter({ directory: '.harness/reports' }),
+ *                       new OpenTelemetryTrackerTraceAdapter({ tracer: myOTelTracer })
+ *                     ]),
  *     engine:         new HermesAgentAdapter({ client }),
  *   });
  */

@@ -2,6 +2,8 @@
 
 # ADR-0100: Frontera Gobierno/Ejecución — Producto e Iniciativa como Unidades Primarias, con Capacidad de Asesoría
 
+> **Agent Signature:** Architect Agent (Winston)
+
 > **Firma del agente:** Architect Agent (Winston)
 
 ## Estado

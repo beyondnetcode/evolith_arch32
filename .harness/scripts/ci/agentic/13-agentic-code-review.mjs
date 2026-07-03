@@ -52,7 +52,7 @@ async function main() {
   
   const transport = new StdioClientTransport({
     command: process.execPath, // Using the current node executable
-    args: ["apps/agent-sandbox/index.js"]
+    args: ["packages/mcp-server/dist/main.js"]
   });
 
   const client = new Client(

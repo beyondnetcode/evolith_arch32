@@ -9,10 +9,10 @@ Inventario generado de la superficie instalable de Smart CLI y MCP. No editar a 
 |---|---|
 | Package | `@evolith/smart-cli@1.1.4` |
 | Binary | `smart-cli` |
-| CLI commands | 27 |
-| MCP tools | 32 |
+| CLI commands | 26 |
+| MCP tools | 33 |
 | MCP resources | 9 |
 | MCP prompts | 8 |
 | MCP transports | `stdio (JSON-RPC 2.0)`, `Streamable HTTP (official MCP SDK)` |
-| Phase-gate schemas | 39 |
+| Phase-gate schemas | 40 |
 | Cobertura de statements | pendiente de un run de cobertura |

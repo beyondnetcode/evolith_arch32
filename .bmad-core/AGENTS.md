@@ -96,6 +96,7 @@ Analyst → PM → Architect → SM → Dev → QA → DevOps
 
 | Agent | Participates In | Role |
 |-------|----------------|------|
+| **Orchestrator** | Front door | Harness Orchestrator — routes raw user requests to the appropriate agent or capability via `manifest.yaml` |
 | **Docs** | All stages | Bilingual parity gate, release orchestration |
 | **QA** | executable stage | QA Lead — aggregates the role-specialized QA suite, OPA differential gate |
 | **DevOps** | executable stage | CI pipeline, coverage dashboards |

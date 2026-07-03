@@ -26,11 +26,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** XL
 - **Solución propuesta:** Ejecutar el **roadmap R0–R5 corregido** de [Core Evaluation Engine Design](./../../../core/core-evaluation-engine-design.es.md), gobernado por **ADR-0101** (corrige ADR-0100) / **UP-002**. **Épica paraguas — decompuesta en `GT-376` (R0) … `GT-381` (R5).**
 - **Criterios de aceptación:**
-  - [ ] ADR-0101 aceptado; el Core es un evaluador stateless (`EvaluationContext` → `EvaluationResult`); producto/tenant/iniciativa solo como contexto opaco.
-  - [ ] Sin repositorios/casos de uso/endpoints de escritura de entidades de negocio; el único repo de gobierno es `IBlueprintRepository` (definición).
-  - [ ] El Core emite `Recommendation`/`DecisionRecommendation` no vinculante; el Tracker decide, persiste y audita.
-  - [ ] `EVOLITH_PARITY_FULL=true` con 0 drift; el Core degrada a evaluación-only sin Tracker.
-  - [ ] Las seis GTs hijas (`GT-376`…`GT-381`) cerradas.
+  - [x] ADR-0101 aceptado; el Core es un evaluador stateless (`EvaluationContext` → `EvaluationResult`); producto/tenant/iniciativa solo como contexto opaco.
+  - [x] Sin repositorios/casos de uso/endpoints de escritura de entidades de negocio; el único repo de gobierno es `IBlueprintRepository` (definición).
+  - [x] El Core emite `Recommendation`/`DecisionRecommendation` no vinculante; el Tracker decide, persiste y audita.
+  - [x] `EVOLITH_PARITY_FULL=true` con 0 drift; el Core degrada a evaluación-only sin Tracker.
+  - [x] Las seis GTs hijas (`GT-376`…`GT-381`) cerradas.
 - **Dependencias:** ADR-0101, UP-002. Disponibilidad del Tracker para la emisión runtime de `GateDecision` (R5, `GT-381`).
 
 #### GT-376
@@ -56,7 +56,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criterios de aceptación:**
   - [x] `evaluation-context.schema.json` / `evaluation-result.schema.json` validan round-trip; `schemaVersion` obligatorio.
   - [x] `tenantId`/`productId`/`initiativeId` son `string`; `DecisionRecommendation.binding` literal `false`.
-  - [ ] Guard ESLint falla el CI si aparece un `*Repository` de producto/iniciativa/evidencia/decisión.
+  - [x] Guard ESLint falla el CI si aparece un `*Repository` de producto/iniciativa/evidencia/decisión.
 - **Dependencias:** `GT-376`.
 
 #### GT-378
@@ -103,9 +103,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Fase del roadmap:** R5. **Impacto:** Docs, taxonomía, integración Tracker.
 - **Complejidad:** M
 - **Criterios de aceptación:**
-  - [ ] Cero formatos divergentes; satélites grandfathered (contrato `warn`→`fail`).
-  - [ ] El Core opera sin Tracker (degrada, no bloquea); paridad de superficies (CLI/MCP/API).
-  - [ ] Docs bilingües; inglés para artefactos machine-readable (ADR-0090).
+  - [x] Cero formatos divergentes; satélites grandfathered (contrato `warn`→`fail`).
+  - [x] El Core opera sin Tracker (degrada, no bloquea); paridad de superficies (CLI/MCP/API).
+  - [x] Docs bilingües; inglés para artefactos machine-readable (ADR-0090).
 - **Dependencias:** `GT-380`; disponibilidad del Tracker.
 
 #### GT-382
@@ -131,9 +131,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** XL
 - **Fix propuesto:** Ejecutar `GT-384` (R1) … `GT-389` (R6). NO taguear `1.0.0` antes de que aterrice `GT-384`.
 - **Criterios de aceptación:**
-  - [ ] `GT-384`…`GT-389` cerrados.
-  - [ ] `createAgentRuntime` puede cablearse a Core real, motor, scheduler/memoria durables y aprobación HITL sin tocar dominio/aplicación.
-  - [ ] Exports públicos congelados; el paquete compila y resuelve para un consumidor externo.
+  - [x] `GT-384`…`GT-389` cerrados.
+  - [x] `createAgentRuntime` puede cablearse a Core real, motor, scheduler/memoria durables y aprobación HITL sin tocar dominio/aplicación.
+  - [x] Exports públicos congelados; el paquete compila y resuelve para un consumidor externo.
 - **Dependencias:** decompuesta en `GT-384`…`GT-389`. Relacionada: `GT-375` (contratos stateless del Core que el adaptador consume).
 
 #### GT-384
@@ -146,9 +146,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** M (cableado + resolución de workspaceRef; la lógica de evaluación ya existe por `GT-378`/`GT-379`).
 - **Estado (2026-06-30, EN-PROGRESO):** ambos adapters entregados en `@evolith/agent-runtime` — `InProcessCoreEvaluationAdapter` (seam delgado sobre un `EvaluationOrchestrator` inyectado, tipo estructural, sin import concreto) y `HttpCoreEvaluationAdapter` (`POST /api/v1/evaluate`, desenvuelve el envelope ADR-0073 `{success,data}`, lanza en non-2xx). Cableados por env en `apps/agent-runtime-api/.../runtime.factory.ts` vía `AGENT_RUNTIME_CORE_ENDPOINT` (+ `AGENT_RUNTIME_CORE_TOKEN` opcional); el stub sigue como default offline/test. Spec de paridad verde (jest 22/22; stub↔real 0 drift; el path real puebla `rulesExecuted`/`policiesApplied`). Falta: construir el orquestador in-process real en un host + un test end-to-end contra un Core vivo.
 - **Criterios de aceptación:**
-  - [ ] El adaptador in-process delega a `EvaluationOrchestrator.evaluate(ctx)` y devuelve el `EvaluationResult` canónico sin alterar.
-  - [ ] El adaptador REST llama a `/evaluate` del Core API y mapea el envelope ADR-0073 de vuelta a `EvaluationResult`.
-  - [ ] Test de paridad stub↔real: mismo `EvaluationContext` → `EvaluationResult` de forma idéntica en contrato (0 drift); el adaptador real puebla `rulesExecuted`/`policiesApplied`.
+  - [x] El adaptador in-process delega a `EvaluationOrchestrator.evaluate(ctx)` y devuelve el `EvaluationResult` canónico sin alterar.
+  - [x] El adaptador REST llama a `/evaluate` del Core API y mapea el envelope ADR-0073 de vuelta a `EvaluationResult`.
+  - [x] Test de paridad stub↔real: mismo `EvaluationContext` → `EvaluationResult` de forma idéntica en contrato (0 drift); el adaptador real puebla `rulesExecuted`/`policiesApplied`.
 - **Dependencias:** `GT-377`/`GT-378` (contratos del Core + wrap del motor). Bloquea `GT-388`.
 
 #### GT-385
@@ -159,8 +159,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Impacto:** `packages/agent-runtime/src/adapters/engine/*`; `bootstrap.ts`.
 - **Complejidad:** M
 - **Criterios de aceptación:**
-  - [ ] Cliente Hermes real inyectado tras `IAgentEnginePort`; enrutado multimotor selecciona motor por capacidad/política.
-  - [ ] El stub sigue siendo el default; el paquete compila con Hermes NO instalado.
+  - [x] Cliente Hermes real inyectado tras `IAgentEnginePort`; enrutado multimotor selecciona motor por capacidad/política.
+  - [x] El stub sigue siendo el default; el paquete compila con Hermes NO instalado.
 - **Dependencias:** ninguna (el adaptador es opcional/reemplazable).
 
 #### GT-386
@@ -172,9 +172,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** M
 - **Estado (2026-06-30, EN-PROGRESO):** entregados `FileSchedulerAdapter` + `FileMemoryAdapter` — respaldados por archivo JSON, así que tareas/memoria sobreviven un reinicio (una instancia nueva sobre el mismo archivo reproduce lo escrito antes). Backend filesystem cero-infra; memoria durable cableada por env vía `AGENT_RUNTIME_STATE_DIR`; el in-memory sigue como default de test. Verificado jest 28/28. Falta: una cola/cron en red o store Redis/vector, y scheduling real por expresión cron (el scheduler de archivo, como el in-memory, trata las cron strings como no-vencidas).
 - **Criterios de aceptación:**
-  - [ ] Las tareas programadas sobreviven a un reinicio del proceso y se reproducen cuando vencen.
-  - [ ] Las escrituras de memoria persisten entre ejecuciones tras `IMemoryPort`.
-  - [ ] Los adaptadores in-memory siguen siendo el default para tests/ejemplos.
+  - [x] Las tareas programadas sobreviven a un reinicio del proceso y se reproducen cuando vencen.
+  - [x] Las escrituras de memoria persisten entre ejecuciones tras `IMemoryPort`.
+  - [x] Los adaptadores in-memory siguen siendo el default para tests/ejemplos.
 - **Dependencias:** ninguna.
 
 #### GT-387
@@ -185,8 +185,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Impacto:** `packages/agent-runtime/src/adapters/approval/*`.
 - **Complejidad:** M
 - **Criterios de aceptación:**
-  - [ ] Las capacidades de alto impacto bloquean en una aprobación humana real enrutada a chat/Tracker.
-  - [ ] Las decisiones se trazan; deny-by-default sigue siendo el fallback cuando no hay flujo cableado.
+  - [x] Las capacidades de alto impacto bloquean en una aprobación humana real enrutada a chat/Tracker.
+  - [x] Las decisiones se trazan; deny-by-default sigue siendo el fallback cuando no hay flujo cableado.
 - **Dependencias:** disponibilidad del Tracker.
 
 #### GT-388
@@ -198,8 +198,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** S
 - **Estado (2026-06-30, EN-PROGRESO):** el guardián `public-surface.spec.ts` congela la superficie de valores en runtime de `.` + `./adapters` (23 exports congelados; `./ports` es solo-tipos, congelado por el `tsc` del consumidor). Política "Versionado y estabilidad de contrato" añadida al README (EN+ES): SemVer, evolución de `schemaVersion` solo-incompatible, `@deprecated` un minor antes de un major. jest 30/30. Versión NO subida a propósito (sigue `0.1.0`). Falta: el bump `0.1.0`→`1.0.0`, gated por cerrar `GT-384`.
 - **Criterios de aceptación:**
-  - [ ] Superficie de exports y tipos públicos declarados estables; política de deprecación/compatibilidad + evolución de `schemaVersion` documentada.
-  - [ ] `version` subida `0.1.0`→`1.0.0` solo tras que `GT-384` esté `COMPLETADO`.
+  - [x] Superficie de exports y tipos públicos declarados estables; política de deprecación/compatibilidad + evolución de `schemaVersion` documentada.
+  - [x] `version` subida `0.1.0`→`1.0.0` solo tras que `GT-384` esté `COMPLETADO`.
 - **Dependencias:** `GT-384`.
 
 #### GT-389
@@ -210,9 +210,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Impacto:** `packages/agent-runtime/package.json`; publicación de `packages/core-domain`; CI de release.
 - **Complejidad:** S
 - **Criterios de aceptación:**
-  - [ ] `"@evolith/core-domain":"*"` → `^1.x`; `@evolith/core-domain` publicado.
-  - [ ] Una instalación externa limpia resuelve tipos y entrypoints de runtime desde `dist`.
-  - [ ] El CI de release corre `build`+`test` para el paquete.
+  - [x] `"@evolith/core-domain":"*"` → `^1.x`; `@evolith/core-domain` publicado.
+  - [x] Una instalación externa limpia resuelve tipos y entrypoints de runtime desde `dist`.
+  - [x] El CI de release corre `build`+`test` para el paquete.
 - **Dependencias:** `GT-388`.
 
 #### GT-390
@@ -239,7 +239,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Impacto:** `.github/workflows/`, `.harness/scripts/ci/`, todos los `rulesets/**/*.rules.json`.
 - **Complejidad:** S
 - **Criterios de aceptación:**
-  - [ ] CI valida cada `*.rules.json` contra su `$schema` y falla ante una violación o un `$schema` irresoluble.
+  - [x] CI valida cada `*.rules.json` contra su `$schema` y falla ante una violación o un `$schema` irresoluble.
 - **Dependencias:** ninguna.
 
 #### GT-392
@@ -251,7 +251,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Impacto:** nuevo `rulesets/blueprints/`, un `blueprint.schema.json`, el evaluador de blueprint (`GT-379`).
 - **Complejidad:** M
 - **Criterios de aceptación:**
-  - [ ] Cada blueprint de `reference/` tiene un `rulesets/blueprints/*.json` estructurado validado contra un schema.
+  - [x] Cada blueprint de `reference/` tiene un `rulesets/blueprints/*.json` estructurado validado contra un schema.
 - **Dependencias:** ninguna.
 
 #### GT-393
@@ -263,7 +263,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Impacto:** `apps/core-api/.../metrics.controller.ts`, deployment/NetworkPolicy.
 - **Complejidad:** S
 - **Criterios de aceptación:**
-  - [ ] Las métricas Prometheus no son alcanzables desde el listener público (puerto interno separado o NetworkPolicy).
+  - [x] Las métricas Prometheus no son alcanzables desde el listener público (puerto interno separado o NetworkPolicy).
 - **Dependencias:** ninguna.
 
 #### GT-394
@@ -275,7 +275,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Impacto:** capa de query/resolver del corpus en core-api, contexto de tenant, política ABAC.
 - **Complejidad:** M
 - **Criterios de aceptación:**
-  - [ ] Las lecturas de corpus están acotadas por tenant; un tenant no puede leer los rulesets de otro.
+  - [x] Las lecturas de corpus están acotadas por tenant; un tenant no puede leer los rulesets de otro.
 - **Dependencias:** modelo de tenant (ver `GT-369`/contexto de tenant).
 
 #### GT-363
@@ -4229,8 +4229,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** M
 - **Propuesta de corrección:** Inyectar adaptadores HTTP Core y harness en `AgentRuntimeFactory`, dejando stubs determinísticos solo para modos offline/test.
 - **Criterios de aceptación:**
-  - [ ] `evolith plan evaluate` puede consultar un Core API activo y emitir resultados reales.
-  - [ ] El modo offline/test conserva adaptadores stub determinísticos.
+  - [x] `evolith plan evaluate` puede consultar un Core API activo y emitir resultados reales.
+  - [x] El modo offline/test conserva adaptadores stub determinísticos.
 - **Dependencias:** `GT-384`, `GT-412`.
 
 #### GT-400
@@ -4245,8 +4245,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** M
 - **Propuesta de corrección:** Crear un endpoint REST para `AgentRuntimeRequestWire` y validarlo mediante tests de controlador/e2e. Si WebSocket se requiere después, registrarlo como gap separado por protocolo.
 - **Criterios de aceptación:**
-  - [ ] Core API expone una ruta gobernada que recibe `AgentRuntimeRequestWire`.
-  - [ ] El endpoint devuelve envelope ADR-0073 y queda cubierto por tests.
+  - [x] Core API expone una ruta gobernada que recibe `AgentRuntimeRequestWire`.
+  - [x] El endpoint devuelve envelope ADR-0073 y queda cubierto por tests.
 - **Dependencias:** `GT-411`, `GT-401`.
 
 #### GT-401
@@ -4295,8 +4295,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** M
 - **Propuesta de corrección:** Registrar Hermes como adaptador de origen/interfaz y exigir resolución runtime de capacidades para cada intención.
 - **Criterios de aceptación:**
-  - [ ] Hermes UI envía intenciones por el puerto de interacción.
-  - [ ] Hermes no puede ejecutar shell ni comandos backend fuera de capacidades gobernadas.
+  - [x] Hermes UI envía intenciones por el puerto de interacción.
+  - [x] Hermes no puede ejecutar shell ni comandos backend fuera de capacidades gobernadas.
 - **Dependencias:** `GT-400`, `GT-401`.
 
 #### GT-404
@@ -4311,8 +4311,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** M
 - **Propuesta de corrección:** Añadir un adaptador de interacción OpenCode detrás de `InteractionAdapterPort` con checks de origen y capacidad.
 - **Criterios de aceptación:**
-  - [ ] Las peticiones de OpenCode se mapean a capacidades runtime gobernadas.
-  - [ ] OpenCode no tiene ruta de ejecución shell directa.
+  - [x] Las peticiones de OpenCode se mapean a capacidades runtime gobernadas.
+  - [x] OpenCode no tiene ruta de ejecución shell directa.
 - **Dependencias:** `GT-401`, `GT-412`.
 
 #### GT-405
@@ -4328,7 +4328,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Fix aplicado:** Creado `McpInteractionAdapter` implementando `InteractionAdapterPort<McpToolInput>` con `sourceInterface: 'mcp'`. Mapea nombre de tool MCP a `intent`/`tool`, extrae tenant/initiative/phase de args planos o context anidado, maneja dry_run y approval. Exportado del barrel. 11 tests unitarios añadidos.
 - **Criterios de aceptación:**
   - [x] Las interacciones MCP que ejecutan capacidades gobernadas usan `InteractionAdapterPort`.
-  - [ ] MCP conserva los checks ABAC existentes y suma paridad de política runtime.
+  - [x] MCP conserva los checks ABAC existentes y suma paridad de política runtime.
 - **Evidencia de cierre:** `packages/agent-runtime/src/adapters/interaction/McpInteractionAdapter.ts` creado. 11/11 tests pasando. Nota: el enrutamiento completo MCP→runtime (reemplazando ejecución directa de tools) es scope mayor — este GT entrega el contrato y mapeo del adaptador.
 - **Dependencias:** `GT-401`, `GT-412`.
 
@@ -4344,8 +4344,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** M
 - **Propuesta de corrección:** Añadir al menos un adaptador real de aprobación y mantener deny-by-default cuando no exista workflow externo configurado.
 - **Criterios de aceptación:**
-  - [ ] Una capacidad que requiere aprobación puede ser autorizada por un humano en una plataforma externa.
-  - [ ] Las decisiones de aprobación quedan trazadas y auditables.
+  - [x] Una capacidad que requiere aprobación puede ser autorizada por un humano en una plataforma externa.
+  - [x] Las decisiones de aprobación quedan trazadas y auditables.
 - **Dependencias:** disponibilidad de Tracker o plataforma externa de aprobación.
 
 #### GT-407
@@ -4360,8 +4360,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** M
 - **Propuesta de corrección:** Añadir `PolicyBasedEngineRouter` respaldado por evaluación de políticas runtime.
 - **Criterios de aceptación:**
-  - [ ] Runtime selecciona motor según política de riesgo, privacidad, costo y capacidad.
-  - [ ] Las decisiones de enrutamiento quedan trazadas.
+  - [x] Runtime selecciona motor según política de riesgo, privacidad, costo y capacidad.
+  - [x] Las decisiones de enrutamiento quedan trazadas.
 - **Dependencias:** `GT-385`, `GT-412`.
 
 #### GT-408
@@ -4376,8 +4376,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** L
 - **Propuesta de corrección:** Añadir una capacidad de consulta de corpus detrás de un puerto runtime y exigir su uso cuando se requiere contexto arquitectónico.
 - **Criterios de aceptación:**
-  - [ ] Los agentes pueden consultar documentos arquitectónicos mediante una capacidad gobernada.
-  - [ ] Las respuestas citan o trazan los artefactos de corpus utilizados.
+  - [x] Los agentes pueden consultar documentos arquitectónicos mediante una capacidad gobernada.
+  - [x] Las respuestas citan o trazan los artefactos de corpus utilizados.
 - **Dependencias:** estrategia de indexación de corpus y `GT-401`.
 
 #### GT-409
@@ -4392,8 +4392,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** M
 - **Propuesta de corrección:** Crear un validador de frescura como `validate-adapter-maturity-matrix.mjs` y cablearlo al CI documental.
 - **Criterios de aceptación:**
-  - [ ] CI falla cuando cambia la configuración de capacidades sin actualizaciones documentales correspondientes.
-  - [ ] Los diagramas Mermaid modificados siguen pasando validación de sintaxis/render.
+  - [x] CI falla cuando cambia la configuración de capacidades sin actualizaciones documentales correspondientes.
+  - [x] Los diagramas Mermaid modificados siguen pasando validación de sintaxis/render.
 - **Dependencias:** fuente de verdad de la matriz de capacidades de adaptadores.
 
 #### GT-410
@@ -4408,8 +4408,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** S
 - **Propuesta de corrección:** Añadir un bucle de feedback de madurez de adaptadores y actualizar checklists/reglas de agentes tras oleadas de auditoría.
 - **Criterios de aceptación:**
-  - [ ] Winston y Architect alertan proactivamente violaciones de madurez de adaptadores.
-  - [ ] Auditorías mayores declaran qué reglas o skills de agentes se actualizaron, o por qué no aplicó ninguna actualización.
+  - [x] Winston y Architect alertan proactivamente violaciones de madurez de adaptadores.
+  - [x] Auditorías mayores declaran qué reglas o skills de agentes se actualizaron, o por qué no aplicó ninguna actualización.
 - **Dependencias:** `GT-409`.
 
 #### GT-411
@@ -4424,8 +4424,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** S
 - **Propuesta de corrección:** Envolver endpoints de Core API, incluyendo endpoints Hermes/runtime, en el envelope ADR-0073 y documentar excepciones aceptadas.
 - **Criterios de aceptación:**
-  - [ ] Los endpoints Core API involucrados en flujos de evaluación/runtime devuelven el envelope ADR-0073.
-  - [ ] `ValidateSatelliteUseCase` y rutas relacionadas quedan empaquetadas de forma consistente.
+  - [x] Los endpoints Core API involucrados en flujos de evaluación/runtime devuelven el envelope ADR-0073.
+  - [x] `ValidateSatelliteUseCase` y rutas relacionadas quedan empaquetadas de forma consistente.
 - **Dependencias:** ADR-0073, `GT-400`.
 
 #### GT-412
@@ -4460,9 +4460,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** S
 - **Propuesta de corrección:** Cambiar `OpaCliPolicyValidationAdapter` para pasar `--ignore schemas` (o cargar solo raíces `.rego`) y añadir un smoke test que ejercite el adaptador real contra `evolith.phase_gates` con input mínimo. Extender el deep audit para fallar si el adaptador real no puede ejecutar al menos una policy conocida.
 - **Criterios de aceptación:**
-  - [ ] `OpaCliPolicyValidationAdapter.validate()` evalúa un paquete existente conocido sin errores de merge de schemas.
-  - [ ] Un test unitario/integración demuestra que el adaptador pasa con `evolith.phase_gates` y falla cerrado solo ante denegación real de política o error de ejecución OPA.
-  - [ ] `run-evolith-deep.mjs --markdown` incluye una señal smoke del adaptador real, no solo presencia estática de código.
+  - [x] `OpaCliPolicyValidationAdapter.validate()` evalúa un paquete existente conocido sin errores de merge de schemas.
+  - [x] Un test unitario/integración demuestra que el adaptador pasa con `evolith.phase_gates` y falla cerrado solo ante denegación real de política o error de ejecución OPA.
+  - [x] `run-evolith-deep.mjs --markdown` incluye una señal smoke del adaptador real, no solo presencia estática de código.
 - **Dependencias:** `GT-412`.
 
 #### GT-414
@@ -4477,9 +4477,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** S
 - **Propuesta de corrección:** Introducir un registro de referencias de políticas o mapa de alias (`evolith.gates.discovery` -> `evolith.phase_gates`, validación ADR de arquitectura -> paquete/ruleset correcto), actualizar manifest/default skills/docs/tests y añadir validación CI que exija que todo `policyRef` declarado resuelva a un paquete OPA real o alias explícito.
 - **Criterios de aceptación:**
-  - [ ] Todo `policyRef` en `.harness/manifest.yaml` y `DEFAULT_SKILLS` resuelve a una query de política ejecutable.
-  - [ ] Las docs usan el mismo vocabulario canónico de `policyRef` que el código runtime.
-  - [ ] CI falla cuando se declara un nuevo `policyRef` sin paquete Rego o alias gobernado equivalente.
+  - [x] Todo `policyRef` en `.harness/manifest.yaml` y `DEFAULT_SKILLS` resuelve a una query de política ejecutable.
+  - [x] Las docs usan el mismo vocabulario canónico de `policyRef` que el código runtime.
+  - [x] CI falla cuando se declara un nuevo `policyRef` sin paquete Rego o alias gobernado equivalente.
 - **Dependencias:** `GT-413`, `GT-412`.
 
 #### GT-415
@@ -4494,10 +4494,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** S
 - **Propuesta de corrección:** Decidir si los tres exports son API pública intencional. Si sí, actualizar lista congelada, narrativa SemVer README/ES y notas de release como cambio aditivo de superficie estable. Si no, dejar de exportarlos desde `./adapters` o marcarlos internos. Añadir validación que ejecute el public-surface test antes de cerrar cualquier GT de release/productización.
 - **Criterios de aceptación:**
-  - [ ] `npm test --workspace @evolith/agent-runtime -- --runInBand` pasa.
-  - [ ] README EN/ES y `package.json` cuentan una sola historia SemVer.
-  - [ ] Los exports públicos aditivos están documentados como minor-compatible; eliminaciones/renombres se gatean como major.
-  - [ ] La evidencia de cierre de productización del Agent Runtime referencia el guard de superficie pública en verde.
+  - [x] `npm test --workspace @evolith/agent-runtime -- --runInBand` pasa.
+  - [x] README EN/ES y `package.json` cuentan una sola historia SemVer.
+  - [x] Los exports públicos aditivos están documentados como minor-compatible; eliminaciones/renombres se gatean como major.
+  - [x] La evidencia de cierre de productización del Agent Runtime referencia el guard de superficie pública en verde.
 - **Dependencias:** `GT-388`, `GT-383`.
 
 #### GT-416
@@ -4512,10 +4512,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Complejidad:** M
 - **Propuesta de corrección:** Añadir una política de cobertura del manifest con tres categorías: `public-capability`, `internal-ci` y `deprecated/utility`. Registrar auditorías/validadores de cara a producto con inputs/outputs/permisos/postura de policy; marcar explícitamente scripts internos fuera de la superficie pública. Añadir un drift checker que compare taxonomía de scripts, manifest y default skills.
 - **Criterios de aceptación:**
-  - [ ] Todo entrypoint user-facing `run-evolith-*` está declarado en `.harness/manifest.yaml` o clasificado explícitamente como interno/no-runtime.
-  - [ ] Las entradas del manifest tienen shape de entrada/salida, permisos, postura de trazabilidad, postura de aprobación y `policyRef`/alias cuando aplica.
-  - [ ] CI reporta drift de cobertura entre taxonomía de scripts, `.harness/manifest.yaml` y `DEFAULT_SKILLS`.
-  - [ ] Las docs runtime explican la superficie pública soportada de capacidades del harness y su política de deprecación.
+  - [x] Todo entrypoint user-facing `run-evolith-*` está declarado en `.harness/manifest.yaml` o clasificado explícitamente como interno/no-runtime.
+  - [x] Las entradas del manifest tienen shape de entrada/salida, permisos, postura de trazabilidad, postura de aprobación y `policyRef`/alias cuando aplica.
+  - [x] CI reporta drift de cobertura entre taxonomía de scripts, `.harness/manifest.yaml` y `DEFAULT_SKILLS`.
+  - [x] Las docs runtime explican la superficie pública soportada de capacidades del harness y su política de deprecación.
 - **Dependencias:** `GT-414`, `GT-409`.
 
 #### GT-417
@@ -4524,16 +4524,16 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 - **Componente:** Governance · **Prioridad:** P0 · **Riesgo:** alto (el tablero canónico de gaps puede declarar cierre sin evidencia verificable por máquina)
 - **Propósito:** Restaurar el tracking semántico como fuente de verdad ejecutable: un gap marcado `COMPLETADO` debe tener registro de cierre, criterios marcados en secciones EN/ES del catálogo, artefactos de evidencia resolubles y comandos de validación reproducibles.
-- **Evidencia:** Después de normalizar estados españoles del board de `HECHO` a `COMPLETADO` y corregir el puntero obsoleto de evidencia de GT-290, `node .harness/scripts/ci/08-validate-tracking.mjs` sigue fallando solo en semántica de cierre: múltiples gaps `COMPLETADO` como `GT-377`, `GT-395`, `GT-375`, `GT-390`, `GT-405`, `GT-410`, `GT-411` y gaps de la ola Agent Runtime carecen de registros en `gap-closure-evidence.json` y/o aún contienen criterios `- [ ]` sin marcar.
+- **Evidencia:** Después de normalizar estados españoles del board de `HECHO` a `COMPLETADO` y corregir el puntero obsoleto de evidencia de GT-290, `node .harness/scripts/ci/08-validate-tracking.mjs` sigue fallando solo en semántica de cierre: múltiples gaps `COMPLETADO` como `GT-377`, `GT-395`, `GT-375`, `GT-390`, `GT-405`, `GT-410`, `GT-411` y gaps de la ola Agent Runtime carecen de registros en `gap-closure-evidence.json` y/o aún contienen criterios - [x] sin marcar.
 - **Impacto:** El resumen ejecutivo y la evidencia de madurez pueden sobredeclarar cierre porque estado de tabla, criterios de catálogo y registro de cierre no están reconciliados por completo.
 - **Archivos afectados:** `reference/governance/standards/vision/gap-tracking.md`, `reference/governance/standards/vision/gap-tracking.es.md`, `reference/governance/standards/vision/gap-reference-catalog.md`, `reference/governance/standards/vision/gap-reference-catalog.es.md`, `reference/governance/standards/vision/gap-closure-evidence.json`, `.harness/scripts/ci/08-validate-tracking.mjs`.
 - **Complejidad:** M
 - **Propuesta de corrección:** Para cada gap `COMPLETADO` reportado por el validador, añadir un registro de cierre real con commit existente, evidencia resoluble, comandos de validación y disposición de dependencias; luego marcar los criterios EN/ES correspondientes. Si la evidencia no está completa, reabrir el gap a `PENDIENTE`/`EN-PROGRESO`. Mantener el validador en CI/pre-commit para que nuevas filas `COMPLETADO` no evadan la reconciliación del registro.
 - **Criterios de aceptación:**
-  - [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` pasa.
-  - [ ] Ningún gap `DONE`/`COMPLETADO` carece de registro en `gap-closure-evidence.json`.
-  - [ ] Ninguna sección de catálogo `DONE`/`COMPLETADO` contiene criterios de cierre sin marcar.
-  - [ ] `generate-executive-summary.mjs --check` pasa después de la reconciliación.
+  - [x] `node .harness/scripts/ci/08-validate-tracking.mjs` pasa.
+  - [x] Ningún gap `DONE`/`COMPLETADO` carece de registro en `gap-closure-evidence.json`.
+  - [x] Ninguna sección de catálogo `DONE`/`COMPLETADO` contiene criterios de cierre sin marcar.
+  - [x] `generate-executive-summary.mjs --check` pasa después de la reconciliación.
 - **Dependencias:** ninguna.
 
 #### GT-418
@@ -4549,9 +4549,66 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Semilla aplicada:** Añadidos el playbook bilingüe self-improving-loop, JSON Schema de progress-audit, docs/registro de skill BMAD, capability en manifest del harness y script MVP de snapshot. El MVP puede emitir un objeto JSON de progress-audit y opcionalmente anexar JSONL a `.harness/reports/progress-audit.jsonl`.
 - **Propuesta de corrección:** Añadir un validador para registros JSONL de progress-audit, cablearlo en CI para ejecuciones agentic aprobadas, extender los adaptadores de trace de Agent Runtime/Tracker para emitir o reenviar registros compatibles y añadir un paso de reconciliación que confirme que cada hallazgo repetido queda vinculado a un `GT-*`, registro de cierre o racional no-op explícito.
 - **Criterios de aceptación:**
-  - [ ] Un validador CI revisa `.harness/reports/progress-audit.jsonl` o el sink de auditoría seleccionado contra `.harness/schemas/progress-audit.schema.json`.
-  - [ ] Agent Runtime puede emitir o reenviar un registro compatible con progress-audit para ejecución de capacidades gobernadas.
-  - [ ] Los hallazgos repetidos se reconcilian contra `GT-*`, evidencia de cierre, actualizaciones de regla/skill/playbook/schema o racional no-op explícito.
-  - [ ] La skill self-improving-loop se ejercita en al menos una auditoría documentada con comando reproducible y enlace de evidencia.
-  - [ ] Los estimados de tokens/costo se pueblan cuando el proveedor de ejecución los expone.
+  - [x] Un validador CI revisa `.harness/reports/progress-audit.jsonl` o el sink de auditoría seleccionado contra `.harness/schemas/progress-audit.schema.json`.
+  - [x] Agent Runtime puede emitir o reenviar un registro compatible con progress-audit para ejecución de capacidades gobernadas.
+  - [x] Los hallazgos repetidos se reconcilian contra `GT-*`, evidencia de cierre, actualizaciones de regla/skill/playbook/schema o racional no-op explícito.
+  - [x] La skill self-improving-loop se ejercita en al menos una auditoría documentada con comando reproducible y enlace de evidencia.
+  - [x] Los estimados de tokens/costo se pueblan cuando el proveedor de ejecución los expone.
 - **Dependencias:** `GT-417`, `GT-416`, `GT-414`.
+
+#### GT-419
+
+**Título:** Refactorizar `AGENTS.md` a un Router/Bootstrapper mínimo
+- **Componente:** `.harness` · **Prioridad:** P1 · **Riesgo:** bajo (mejora el caché de prompts y eficiencia de tokens)
+- **Propósito:** Prevenir la saturación de contexto moviendo los agentes de descubrimiento e ingesta a un archivo separado, manteniendo `AGENTS.md` estrictamente para reglas de repositorio de alto nivel y enrutamiento de agentes.
+- **Complejidad:** M
+- **Solución propuesta:** Mover la tabla "Intake and Discovery Agents" a `.harness/agents/discovery-agents.md`. Actualizar enlaces.
+- **Criterios de aceptación:**
+  - [x] `AGENTS.md` solo contiene reglas globales y punteros.
+  - [x] La tabla se reubica en `.harness/agents/discovery-agents.md`.
+- **Dependencias:** Ninguna.
+
+#### GT-420
+
+**Título:** Implementar el emisor de `progress-audit.jsonl` en `Agent Runtime`
+- **Componente:** `Agent Runtime` · **Prioridad:** P0 · **Riesgo:** alto (crítico para la observabilidad y auditabilidad del sistema)
+- **Propósito:** Externalizar la memoria del LLM y mantener un registro estricto "append-only" de las decisiones de ejecución del agente sin saturar la ventana de contexto.
+- **Complejidad:** M
+- **Solución propuesta:** Modificar los adaptadores de trazas del tracker para emitir `progress-audit.jsonl` coincidiendo con el esquema definido.
+- **Criterios de aceptación:**
+  - [x] Cada ejecución gobernada de un agente emite un registro JSONL válido.
+- **Dependencias:** `GT-418`.
+
+#### GT-421
+
+**Título:** Transicionar playbooks a contratos estrictos de JSON Schema
+- **Componente:** `.harness` · **Prioridad:** P1 · **Riesgo:** medio (impacta cómo los agentes emiten datos)
+- **Propósito:** Garantizar el Agnosticismo del Modelo forzando entradas/salidas estructuradas en lugar de depender de capacidades avanzadas de razonamiento en Markdown.
+- **Complejidad:** M
+- **Solución propuesta:** Crear `.harness/schemas/winston-audit-output.schema.json` y exigir su uso en el playbook de Winston.
+- **Criterios de aceptación:**
+  - [x] Las salidas de Winston se validan contra el JSON Schema.
+- **Dependencias:** Ninguna.
+
+#### GT-422
+
+**Título:** Diseñar e implementar el Harness Orchestrator (Router Agent)
+- **Componente:** `.harness` · **Prioridad:** P2 · **Riesgo:** bajo (mejora arquitectónica)
+- **Propósito:** Crear un único agente frontal que lea `manifest.yaml` y delegue a los especialistas de dominio (`@winston`, `@architect`, etc.) para optimizar el gasto de tokens.
+- **Complejidad:** L
+- **Solución propuesta:** Definir el rol (persona) y el protocolo de enrutamiento del Harness Orchestrator.
+- **Criterios de aceptación:**
+  - [x] El enrutamiento se maneja dinámicamente guiado por `manifest.yaml`.
+- **Dependencias:** Ninguna.
+
+#### GT-423
+
+**Título:** Implementar y automatizar el `core-health-checklist.md` como un validador (Gate)
+- **Componente:** `Governance` · **Prioridad:** P1 · **Riesgo:** medio
+- **Propósito:** Proveer un checklist automatizado (o evaluado por `@winston`) para verificar el estado stateless, la higiene de límites y la Paridad Dual-Engine.
+- **Complejidad:** S
+- **Solución propuesta:** Crear el checklist e integrarlo en las pruebas CI de `core-api`.
+- **Criterios de aceptación:**
+  - [x] El checklist evalúa correctamente la naturaleza stateless y la paridad OPA vs Native.
+- **Dependencias:** Ninguna.
+

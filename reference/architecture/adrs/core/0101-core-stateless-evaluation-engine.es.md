@@ -2,6 +2,8 @@
 
 # ADR-0101: Evolith Core como Stateless Evaluation Engine
 
+> **Agent Signature:** Architect Agent (Winston)
+
 > **Firma del agente:** Architect Agent (Winston)
 
 ## Estado

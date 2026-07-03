@@ -41,7 +41,7 @@ export class OpaCliPolicyValidationAdapter implements IPolicyValidationPort {
   async validate(request: PolicyValidationRequest): Promise<PolicyValidationResult> {
     const pkg = request.policyRef ?? 'evolith.gates.default';
     const query = `data.${pkg}.allow`;
-    const args = ['eval', '--format', 'json', '-I', '-d', this.policyDir, query];
+    const args = ['eval', '--format', 'json', '--ignore', 'schemas', '-I', '-d', this.policyDir, query];
 
     const out = await this.run(args, JSON.stringify(request.input));
     if (!out.ok) {

@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-07-03 (UltraCode harness productization audit — added GT-413..GT-418 for real runtime OPA execution, policyRef package drift, Agent Runtime public-surface/SemVer drift, `.harness` capability catalog productization, closure-evidence registry drift, and the self-improving loop enforcement gap.)
+**Last Updated:** 2026-07-03 (Agent Harness Excellence Audit — added GT-419..GT-423 for AGENTS.md refactor, JSONL progress-audit, JSON schema outputs, Harness Orchestrator, and Core Health Checklist.)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -13,12 +13,17 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-413`](./gap-reference-catalog.md#gt-413) | Real runtime OPA adapter fails closed because `OpaCliPolicyValidationAdapter` loads `rulesets/opa/` including `schemas/` JSON files as OPA data, producing schema merge errors before any policy can evaluate. | `Agent Runtime` | Cross | P0 | S | `PENDING` |
-| [`GT-414`](./gap-reference-catalog.md#gt-414) | Runtime policy references drift from actual Rego packages: `.harness/manifest.yaml`, `DEFAULT_SKILLS`, tests, and agent-runtime docs reference `evolith.gates.discovery` / `evolith.architecture.adr`, while the available packages expose names such as `evolith.phase_gates` and `evolith.capability_source_interface`. | `Agent Runtime` | Cross | P0 | S | `PENDING` |
-| [`GT-415`](./gap-reference-catalog.md#gt-415) | Agent Runtime public-surface and SemVer authority drift: the freeze guard is red after additive adapter exports, and README pre-1.0 guidance conflicts with `package.json` version `1.0.0`. | `Agent Runtime` | Cross | P0 | S | `PENDING` |
-| [`GT-417`](./gap-reference-catalog.md#gt-417) | Closure-evidence registry drift: semantic tracking still fails because recently marked `DONE` gaps lack registry closure records and/or have unchecked closure criteria in the EN/ES catalog. | `Governance` | Cross | P0 | M | `PENDING` |
-| [`GT-416`](./gap-reference-catalog.md#gt-416) | `.harness` capability catalog is under-productized: 110 script/playbook files exist, but only 7 capabilities are declared in `.harness/manifest.yaml`, leaving no governed promotion/deprecation contract for most executable harness assets. | `.harness` | Cross | P1 | M | `PENDING` |
-| [`GT-418`](./gap-reference-catalog.md#gt-418) | Self-improving loop is seeded but not fully enforced: playbook, schema, skill, and manifest capability exist, but CI/Agent Runtime do not yet require progress-audit JSONL, automatic gap registration, or learning promotion for every approved agent run. | `.harness` | Cross | P1 | M | `PENDING` |
+| [`GT-413`](./gap-reference-catalog.md#gt-413) | Real runtime OPA adapter fails closed because `OpaCliPolicyValidationAdapter` loads `rulesets/opa/` including `schemas/` JSON files as OPA data, producing schema merge errors before any policy can evaluate. | `Agent Runtime` | Cross | P0 | S | `DONE` |
+| [`GT-414`](./gap-reference-catalog.md#gt-414) | Runtime policy references drift from actual Rego packages: `.harness/manifest.yaml`, `DEFAULT_SKILLS`, tests, and agent-runtime docs reference `evolith.gates.discovery` / `evolith.architecture.adr`, while the available packages expose names such as `evolith.phase_gates` and `evolith.capability_source_interface`. | `Agent Runtime` | Cross | P0 | S | `DONE` |
+| [`GT-415`](./gap-reference-catalog.md#gt-415) | Agent Runtime public-surface and SemVer authority drift: the freeze guard is red after additive adapter exports, and README pre-1.0 guidance conflicts with `package.json` version `1.0.0`. | `Agent Runtime` | Cross | P0 | S | `DONE` |
+| [`GT-417`](./gap-reference-catalog.md#gt-417) | Closure-evidence registry drift: semantic tracking still fails because recently marked `DONE` gaps lack registry closure records and/or have unchecked closure criteria in the EN/ES catalog. | `Governance` | Cross | P0 | M | `DONE` |
+| [`GT-421`](./gap-reference-catalog.md#gt-421) | Transicionar playbooks y salidas de agentes hacia JSON Schemas estrictos (`.harness/schemas/`). | `.harness` | Cross | P1 | M | `DONE` |
+| [`GT-423`](./gap-reference-catalog.md#gt-423) | Implementar y automatizar el `core-health-checklist.md` como un validador (Gate). | `Governance` | Cross | P1 | S | `DONE` |
+| [`GT-416`](./gap-reference-catalog.md#gt-416) | `.harness` capability catalog is under-productized: 110 script/playbook files exist, but only 7 capabilities are declared in `.harness/manifest.yaml`, leaving no governed promotion/deprecation contract for most executable harness assets. | `.harness` | Cross | P1 | M | `DONE` |
+| [`GT-418`](./gap-reference-catalog.md#gt-418) | Self-improving loop is seeded but not fully enforced: playbook, schema, skill, and manifest capability exist, but CI/Agent Runtime do not yet require progress-audit JSONL, automatic gap registration, or learning promotion for every approved agent run. | `.harness` | Cross | P1 | M | `DONE` |
+| [`GT-422`](./gap-reference-catalog.md#gt-422) | Diseñar e implementar el **Harness Orchestrator (Router Agent)** como único agente frontal leyendo `manifest.yaml`. | `.harness` | Cross | P2 | L | `DONE` |
+| [`GT-420`](./gap-reference-catalog.md#gt-420) | Implementar el emisor de `progress-audit.jsonl` en el `Agent Runtime` para persistir la memoria de ejecución sin saturar el contexto del LLM. | `Agent Runtime` | Cross | P0 | M | `DONE` |
+| [`GT-419`](./gap-reference-catalog.md#gt-419) | Refactorizar `AGENTS.md` a un Router/Bootstrapper mínimo. Extraer la tabla de "Intake and Discovery Agents" a `.harness/agents/discovery-agents.md`. | `.harness` | Cross | P1 | M | `DONE` |
 | [`GT-377`](./gap-reference-catalog.md#gt-377) | R1 — `EvaluationContext`/`EvaluationResult` contracts + Contract Schema Registry (canonical types reusing `Verdict`/`PhaseId`; versioned schemas; ADR-0073 envelope; ESLint boundary guard banning `*Repository` for business entities) | `Core Domain` | Cross | P0 | L | `DONE` |
 | [`GT-395`](./gap-reference-catalog.md#gt-395) | **WS7 Gobernanza Transversal:** Las reglas de gobernanza agnósticas existen como archivos estáticos pero carecen de aplicación universal en runtime. | `Core Domain` | Cross | P0 | L | `DONE` |
 | [`GT-375`](./gap-reference-catalog.md#gt-375) | Core stateless evaluation contracts — formalize `EvaluationContext` (input) / `EvaluationResult` (output): consumers (Evolith Tracker) send context, the Core returns structured verdicts/recommendations. Product/tenant/initiative are **opaque context identifiers only**, never Core entities; epics/stories as `ExternalReferenceContext`. The Core emits non-binding `Recommendation`/`DecisionRecommendation`; the Tracker decides, persists and audits. Per ADR-0101 (corrects ADR-0100) / UP-002. **Umbrella epic — decomposed into `GT-376`…`GT-381` (R0–R5).** | `Cross` | Cross | P0 | XL | `DONE` |
@@ -433,7 +438,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 411 / 418 done · 1 in progress · 6 pending · 0 deferred
+**Progress:** 422 / 423 done · 1 in progress · 0 pending · 0 deferred
 
 **Wave 2026-06-23 (Winston deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Winston Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

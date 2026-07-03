@@ -50,7 +50,7 @@ capabilities:
     requiresApproval: false
     emitsTrace: true
     requiresPolicy: true
-    policyRef: evolith.gates.discovery
+    policyRef: evolith.phase_gates
 
   - name: adr-architecture-validator
     type: validator
@@ -66,7 +66,7 @@ capabilities:
     requiresApproval: false
     emitsTrace: true
     requiresPolicy: true
-    policyRef: evolith.architecture.adr
+    policyRef: evolith.capability_source_interface
 
   - name: opa-audit
     type: audit
@@ -137,5 +137,88 @@ capabilities:
     runner: node
     permissions: [write:trace]
     requiresApproval: false
+    emitsTrace: true
+    requiresPolicy: false
+
+  - name: sdlc-deep-audit
+    type: audit
+    description: Run SDLC Deep Audit — 8-dimensional executable SDLC evaluation
+    entry: .harness/playbooks/sdlc-deep-audit.mjs
+    runner: node
+    outputs:
+      status: { type: string }
+      findings: { type: array }
+    permissions: [read:repo, run:audit]
+    requiresApproval: false
+    emitsTrace: true
+    requiresPolicy: false
+
+  - name: agents-governance
+    type: playbook
+    description: Agent Governance Playbook for onboarding and validating new AI agents
+    entry: .harness/playbooks/agents-governance-playbook.md
+    runner: agent
+    permissions: [read:repo]
+    requiresApproval: true
+    emitsTrace: true
+    requiresPolicy: false
+
+  - name: api-governance
+    type: playbook
+    description: API Governance Playbook to ensure REST and MCP API compliance
+    entry: .harness/playbooks/api-governance-playbook.md
+    runner: agent
+    permissions: [read:repo]
+    requiresApproval: true
+    emitsTrace: true
+    requiresPolicy: false
+
+  - name: document-governance
+    type: playbook
+    description: Document Governance Playbook to validate bilingual documentation structures
+    entry: .harness/playbooks/document-governance-playbook.md
+    runner: agent
+    permissions: [read:repo]
+    requiresApproval: true
+    emitsTrace: true
+    requiresPolicy: false
+
+  - name: modular-monolith-evolution
+    type: playbook
+    description: Modular Monolith Evolution Playbook for breaking monoliths into modules
+    entry: .harness/playbooks/modular-monolith-evolution-playbook.md
+    runner: agent
+    permissions: [read:repo]
+    requiresApproval: true
+    emitsTrace: true
+    requiresPolicy: false
+
+  - name: winston-audit
+    type: playbook
+    description: Winston Architecture Audit Playbook
+    entry: .harness/playbooks/winston-audit-playbook.md
+    runner: agent
+    permissions: [read:repo]
+    requiresApproval: true
+    emitsTrace: true
+    requiresPolicy: false
+
+  - name: self-improving-loop-playbook
+    type: playbook
+    description: Playbook for the detect-context-execute-validate-register-learn improvement cycle
+    entry: .harness/playbooks/self-improving-loop.md
+    runner: agent
+    permissions: [read:repo, write:report]
+    requiresApproval: true
+    emitsTrace: true
+    requiresPolicy: false
+
+  - name: topology-compliance-audit-playbook
+    type: playbook
+    description: Playbook to evaluate completeness of each topology Bounded Context against the canonical exemplar
+    entry: .harness/playbooks/topology-compliance-audit.md
+    runner: agent
+    permissions: [read:repo]
+    requiresApproval: true
     emitsTrace: true
     requiresPolicy: false

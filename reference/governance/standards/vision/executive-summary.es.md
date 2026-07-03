@@ -9,11 +9,11 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 ## Señal Ejecutiva
 
-**Decisión actual:** NO-GO para expansión productiva o release mayor: existen bloqueadores P0 activos.
+**Decisión actual:** GO condicionado: avanzar solo con hardening P1 y evidencia automatizada.
 
-**Mayor problema ahora:** `Agent Runtime` concentra el mayor riesgo abierto ponderado (3 pendientes, 3 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Infra` concentra el mayor riesgo abierto ponderado (1 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
 
-**Dónde atacar primero:** [GT-413](./gap-reference-catalog.es.md#gt-413), [GT-414](./gap-reference-catalog.es.md#gt-414), [GT-415](./gap-reference-catalog.es.md#gt-415), [GT-417](./gap-reference-catalog.es.md#gt-417).
+**Dónde atacar primero:** -.
 
 ## Diagnóstico Estratégico
 
@@ -25,41 +25,35 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-413](./gap-reference-catalog.es.md#gt-413), [GT-414](./gap-reference-catalog.es.md#gt-414), [GT-415](./gap-reference-catalog.es.md#gt-415), [GT-417](./gap-reference-catalog.es.md#gt-417) |
-| 2 | Área de mayor riesgo | `Agent Runtime` tiene la mayor carga ponderada abierta. | [GT-413](./gap-reference-catalog.es.md#gt-413), [GT-414](./gap-reference-catalog.es.md#gt-414), [GT-415](./gap-reference-catalog.es.md#gt-415) |
-| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-413](./gap-reference-catalog.es.md#gt-413), [GT-414](./gap-reference-catalog.es.md#gt-414), [GT-415](./gap-reference-catalog.es.md#gt-415) |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-416](./gap-reference-catalog.es.md#gt-416), [GT-418](./gap-reference-catalog.es.md#gt-418) |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | - |
+| 2 | Área de mayor riesgo | `Infra` tiene la mayor carga ponderada abierta. | [GT-324](./gap-reference-catalog.es.md#gt-324) |
+| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](./gap-reference-catalog.es.md#gt-324) |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | - |
 
 ## Bloqueadores Actuales
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
-| [GT-413](./gap-reference-catalog.es.md#gt-413) | El adaptador OPA real de runtime falla cerrado porque OpaCliPolicyValidationAdapter carga rulesets/opa/ incluyendo los JSON de schemas/ como datos OPA, generando errores de merge de schemas antes de evaluar cualquier policy. | `Agent Runtime` | P0/S |
-| [GT-414](./gap-reference-catalog.es.md#gt-414) | Las referencias de políticas runtime derivan respecto a los paquetes Rego reales: .harness/manifest.yaml, DEFAULT_SKILLS, tests y docs de agent-runtime apuntan a evolith.gates.discovery / evolith.architecture.adr, mientras los paquetes disponibles exponen nombres como evolith.phase_gates y evolith.capability_source_interface. | `Agent Runtime` | P0/S |
-| [GT-415](./gap-reference-catalog.es.md#gt-415) | Drift de superficie pública y autoridad SemVer del Agent Runtime: el guard de freeze está rojo tras exports aditivos de adaptadores, y la nota README pre-1.0 contradice el package.json en versión 1.0.0. | `Agent Runtime` | P0/S |
-| [GT-417](./gap-reference-catalog.es.md#gt-417) | Drift del registro de evidencia de cierre: la validación semántica de tracking aún falla porque gaps marcados COMPLETADO carecen de registros de cierre y/o tienen criterios sin marcar en el catálogo EN/ES. | `Governance` | P0/M |
+| [GT-324](./gap-reference-catalog.es.md#gt-324) | CD: build+push a GHCR de core-api y mcp-server (GITHUB_TOKEN) vivo + triggers push/tag; job de deploy Coolify guardado — código completo, deploy pendiente de secrets + run CD | `Infra` | P1/M |
 
 ## Métricas
 
 | Indicador | Valor |
 |---|---:|
 | Fecha canónica del tablero | 2026-07-03 |
-| Gaps totales | 418 |
-| Gaps cerrados | 411 |
-| Gaps pendientes | 7 |
-| P0 abiertos | 4 |
-| P1 abiertos | 3 |
+| Gaps totales | 423 |
+| Gaps cerrados | 422 |
+| Gaps pendientes | 1 |
+| P0 abiertos | 0 |
+| P1 abiertos | 1 |
 | P2 abiertos | 0 |
-| Cierre total | 98.3% |
-| Registros de evidencia de cierre | 364 |
+| Cierre total | 99.8% |
+| Registros de evidencia de cierre | 404 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Agent Runtime` | 3 | 3 | 0 | [GT-413](./gap-reference-catalog.es.md#gt-413), [GT-414](./gap-reference-catalog.es.md#gt-414), [GT-415](./gap-reference-catalog.es.md#gt-415) |
-| `Governance` | 1 | 1 | 0 | [GT-417](./gap-reference-catalog.es.md#gt-417) |
-| `.harness` | 2 | 0 | 2 | [GT-416](./gap-reference-catalog.es.md#gt-416), [GT-418](./gap-reference-catalog.es.md#gt-418) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.es.md#gt-324) |
 
 ## Fuente y Regla de Actualización

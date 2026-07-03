@@ -23,6 +23,12 @@ export type { OpaCliOptions } from './policy/opa-cli-policy-validation.adapter';
 export { InMemoryTrackerTraceAdapter } from './tracker/in-memory-tracker-trace.adapter';
 export { HttpTrackerTraceAdapter } from './tracker/http-tracker-trace.adapter';
 export type { HttpTrackerOptions } from './tracker/http-tracker-trace.adapter';
+export { MockTrackerTraceAdapter } from './tracker/mock-tracker-adapter';
+export { FileTrackerTraceAdapter } from './tracker/file-tracker-trace.adapter';
+export type { FileTrackerOptions } from './tracker/file-tracker-trace.adapter';
+export { CompositeTrackerTraceAdapter } from './tracker/composite-tracker-adapter';
+export { OpenTelemetryTrackerTraceAdapter } from './tracker/opentelemetry-tracker-adapter';
+export type { OpenTelemetryTrackerOptions, OTelTracer, OTelSpan } from './tracker/opentelemetry-tracker-adapter';
 
 // Memory
 export { InMemoryMemoryAdapter } from './memory/in-memory-memory.adapter';

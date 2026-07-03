@@ -77,11 +77,6 @@ un export público es un cambio deliberado y revisado.
   reemplazo) por al menos un minor antes de quitarlo; quitar o renombrar va en un
   **major**, los exports aditivos van en un **minor**.
 
-> **Nota pre-1.0:** el paquete permanece en `0.x` mientras el adaptador de
-> evaluación del Core por defecto sea un stub (ver `GT-384`). No se etiquetará
-> `1.0.0` hasta que el adaptador real del Core y estas garantías estén vigentes
-> sobre un Core no simulado; los minors `0.x` aún pueden ajustar la superficie.
-
 ## Scripts
 
 ```bash

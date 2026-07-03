@@ -10,6 +10,9 @@ import {
   OpaCliPolicyValidationAdapter,
   StubPolicyValidationAdapter,
   HttpTrackerTraceAdapter,
+  CompositeTrackerTraceAdapter,
+  OpenTelemetryTrackerTraceAdapter,
+  FileTrackerTraceAdapter,
   HttpCoreEvaluationAdapter,
   FileMemoryAdapter,
   type AgentRuntimeBundle,
@@ -17,6 +20,7 @@ import {
 } from '@evolith/agent-runtime';
 
 import * as path from 'node:path';
+import { trace } from '@opentelemetry/api';
 
 export const AGENT_RUNTIME_BUNDLE = 'AGENT_RUNTIME_BUNDLE';
 
@@ -75,16 +79,34 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
     };
   }
 
-  // Tracker — publish trazability events to a live Evolith Tracker over HTTP.
+  // Tracker — publish trazability events to multiple destinations (Tracker HTTP, File JSONL, OTel).
+  const trackerAdapters: any[] = [];
+  
   const trackerEndpoint = env.AGENT_RUNTIME_TRACKER_ENDPOINT;
   if (trackerEndpoint) {
     const headers: Record<string, string> = {};
     if (env.AGENT_RUNTIME_TRACKER_TOKEN) {
       headers.authorization = `Bearer ${env.AGENT_RUNTIME_TRACKER_TOKEN}`;
     }
+    trackerAdapters.push(new HttpTrackerTraceAdapter({ endpoint: trackerEndpoint, headers }));
+  }
+
+  // GT-420: Local file tracing (LLM Context)
+  const auditDir = env.AGENT_RUNTIME_AUDIT_DIR;
+  if (auditDir) {
+    trackerAdapters.push(new FileTrackerTraceAdapter({ directory: auditDir }));
+  }
+
+  // GT-420: OpenTelemetry tracing (Grafana)
+  if (bool(env.AGENT_RUNTIME_OTEL_ENABLED)) {
+    const tracer = trace.getTracer('evolith-agent-runtime');
+    trackerAdapters.push(new OpenTelemetryTrackerTraceAdapter({ tracer }));
+  }
+
+  if (trackerAdapters.length > 0) {
     overrides = {
       ...overrides,
-      tracker: new HttpTrackerTraceAdapter({ endpoint: trackerEndpoint, headers }),
+      tracker: new CompositeTrackerTraceAdapter(trackerAdapters),
     };
   }
 

@@ -4,7 +4,7 @@
 
 **Status:** Active Reference Document  
 **Owner:** Evolith Architecture Board  
-**Last Updated:** 2026-06-25
+**Last Updated:** 2026-07-03
 
 ---
 
@@ -40,6 +40,7 @@ User-facing entry points under `.harness/scripts/`. These are the scripts you ru
 | `run-evolith-topology.mjs --markdown` | `executable` | same playbook | Same audit, formatted as human-readable Markdown |
 | `run-evolith-deep.mjs` | `executable` | `.harness/playbooks/sdlc-deep-audit.mjs` | Evaluates Evolith Core against the 8-dimensional executable SDLC vision (JSON) |
 | `run-evolith-deep.mjs --markdown` | `executable` | same playbook | Same 8-dimension audit, formatted as Markdown report |
+| `skills/self-improving-loop.mjs` | `executable` | `.harness/playbooks/self-improving-loop.es.md` | Emite un snapshot de progress-audit para ejecuciones de mejora continua del harness |
 | `run-winston-audit.mjs` | `alias` | delegates to the three above | DEPRECATED — compatibility alias that detects `--topology`, `--deep`, or defaults to `run-evolith-audit.mjs` |
 
 ### Usage examples
@@ -53,6 +54,7 @@ node .harness/scripts/run-evolith-audit.mjs
 node .harness/scripts/run-evolith-audit.mjs --es
 node .harness/scripts/run-evolith-audit.mjs --bmad
 node .harness/scripts/run-evolith-audit.mjs --all
+node .harness/scripts/skills/self-improving-loop.mjs --task "audit harness drift" --dry-run
 ```
 
 ---
@@ -67,6 +69,7 @@ Reusable audit logic under `.harness/playbooks/`. These are called by entry poin
 | `sdlc-deep-audit.mjs` | JSON / Markdown | `run-evolith-deep.mjs` | 8-dimension evaluation of Evolith Core against the executable SDLC vision |
 | `winston-audit-playbook.md` | LLM prompt block | `run-evolith-audit.mjs` | The Winston persona prompt for architectural analysis |
 | `winston-audit-playbook.es.md` | LLM prompt block | `run-evolith-audit.mjs --es` | Spanish version of the Winston architectural analysis prompt |
+| `self-improving-loop.es.md` | Markdown / referencia de schema JSONL | `skills/self-improving-loop.mjs` | Bucle operativo de retroalimentación detectar-contexto-ejecutar-validar-registrar-aprender |
 
 ---
 
@@ -105,6 +108,7 @@ Numbered scripts under `.harness/scripts/ci/` triggered by `ci-runner.mjs`.
 | `generate-executive-summary.mjs` | Generates the bilingual executive governance summary |
 | `generate-es-skeleton.mjs <file.md>` | Creates ES skeleton from EN file (`--dry-run` flag) |
 | `cleanup-markdown-encoding.py` | Sanitizes UTF-8 encoding issues in Markdown files |
+| `skills/self-improving-loop.mjs` | Emite un registro JSON de progress-audit y puede anexar eventos JSONL aprobados |
 
 ---
 

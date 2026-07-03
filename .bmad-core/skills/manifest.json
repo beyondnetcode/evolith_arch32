@@ -89,6 +89,17 @@
       "outputs": ["adapter maturity report (JSON)", "phantom declarations list"],
       "file": ".bmad-core/skills/adapter-maturity-analysis.mjs",
       "tags": ["adapter", "maturity", "interaction-adapter", "runtime", "audit", "phantom-detection"]
+    },
+    {
+      "id": "self-improving-loop",
+      "name": "Self Improving Loop",
+      "version": "1.0.0",
+      "owner": "@winston",
+      "description": "Coordinates detect-context-execute-validate-register-learn cycles and emits progress-audit records for harness improvement runs.",
+      "inputs": ["AGENTS.md", ".harness/rules/global-rules.md", ".harness/playbooks/self-improving-loop.md", "gap-tracking.md", "gap-closure-evidence.json"],
+      "outputs": ["progress audit record (JSON)", "prioritized next actions", "gap or closure update recommendation"],
+      "file": ".harness/scripts/skills/self-improving-loop.mjs",
+      "tags": ["harness", "feedback-loop", "progress-audit", "self-improvement", "governance"]
     }
   ]
 }

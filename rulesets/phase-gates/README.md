@@ -12,8 +12,8 @@ The phase-gates ruleset defines the mandatory evidence, blocking criteria, accou
 
 | Artifact | Path | Purpose |
 |---|---|---|
-| Native ruleset | [phase-gates.rules.json](./phase-gates.rules.json) | Machine-readable SDLC phase-gate contract |
-| SDLC category source | [../sdlc/phase-gates.rules.json](../sdlc/phase-gates.rules.json) | Existing SDLC category contract retained for backward compatibility |
+| Native ruleset | [../sdlc/phase-gates.rules.json](../sdlc/phase-gates.rules.json) | Canonical machine-readable SDLC phase-gate contract |
+| WS1 entrypoint | [README.md](./README.md) | Stable documentation entrypoint retained for the former phase-gates ruleset location |
 | OPA policy | [../opa/cicd-quality-gates.rego](../opa/cicd-quality-gates.rego) | Rego enforcement for CI/CD quality-gate controls |
 | OPA tests | [../opa/cicd-quality-gates.test.rego](../opa/cicd-quality-gates.test.rego) | Reproducible policy tests for quality-gate controls |
 

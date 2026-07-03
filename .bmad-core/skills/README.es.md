@@ -27,7 +27,9 @@ Una **habilidad** es una capacidad autocontenida y componible que un agente pued
 ├── gap-prioritization-engine.md           # Definición de habilidad (EN)
 ├── gap-prioritization-engine.es.md        # Definición de habilidad (ES)
 ├── adr-freshness-monitor.md              # Definición de habilidad (EN)
-└── adr-freshness-monitor.es.md           # Definición de habilidad (ES)
+├── adr-freshness-monitor.es.md           # Definición de habilidad (ES)
+├── self-improving-loop.md                # Definición de habilidad (EN)
+└── self-improving-loop.es.md             # Definición de habilidad (ES)
 ```
 
 Los scripts de implementación viven junto a otros scripts del harness:
@@ -36,7 +38,8 @@ Los scripts de implementación viven junto a otros scripts del harness:
 .harness/scripts/skills/
 ├── requirements-traceability-mapper.mjs
 ├── gap-prioritization-engine.mjs
-└── adr-freshness-monitor.mjs
+├── adr-freshness-monitor.mjs
+└── self-improving-loop.mjs
 ```
 
 ## 3. Cómo Definir una Nueva Habilidad
@@ -152,6 +155,7 @@ node .harness/scripts/skills/gap-prioritization-engine.mjs --threshold 30
 | `requirements-traceability-mapper` | Mapper de Trazabilidad de Requisitos | @analyst | Mapea épicos/historias a ADRs, reglas y pruebas |
 | `gap-prioritization-engine` | Motor de Priorización de Gaps | @po | Calcula prioridad de gaps por impacto × urgencia |
 | `adr-freshness-monitor` | Monitor de Freshness de ADRs | @architect | Escanea ADRs por obsolescencia (>180 días) |
+| `self-improving-loop` | Bucle de Mejora Continua | @winston | Emite registros de progress audit y enruta hallazgos repetidos hacia gaps, reglas, skills, playbooks, schemas o CI |
 
 ## 6. Ciclo de Vida de Habilidades
 

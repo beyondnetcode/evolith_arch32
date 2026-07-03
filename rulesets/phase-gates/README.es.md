@@ -12,8 +12,8 @@ El ruleset de gates de fase define la evidencia obligatoria, criterios bloqueant
 
 | Artefacto | Ruta | Proposito |
 |---|---|---|
-| Ruleset nativo | [phase-gates.rules.json](./phase-gates.rules.json) | Contrato machine-readable de gates de fase SDLC |
-| Fuente de categoria SDLC | [../sdlc/phase-gates.rules.json](../sdlc/phase-gates.rules.json) | Contrato existente de la categoria SDLC conservado por compatibilidad |
+| Ruleset nativo | [../sdlc/phase-gates.rules.json](../sdlc/phase-gates.rules.json) | Contrato canonico machine-readable de gates de fase SDLC |
+| Punto de entrada WS1 | [README.es.md](./README.es.md) | Punto de entrada documental estable conservado para la ubicacion anterior del ruleset de phase gates |
 | Politica OPA | [../opa/cicd-quality-gates.rego](../opa/cicd-quality-gates.rego) | Enforcement Rego para controles de quality gates CI/CD |
 | Pruebas OPA | [../opa/cicd-quality-gates.test.rego](../opa/cicd-quality-gates.test.rego) | Pruebas reproducibles de politica para controles de quality gates |
 

@@ -90,6 +90,7 @@ These two layers do not overlap. Architectural decisions go in `reference/archit
 ## Agent Rules
 - Read `./.harness/rules/global-rules.md` before responding or editing.
 - Use the relevant playbook from `./.harness/playbooks/` for audits, architecture reviews, and repeated engineering tasks.
+- For recurring harness or agent improvement work, use `./.harness/playbooks/self-improving-loop.md` and emit or reference a progress-audit record that follows `./.harness/schemas/progress-audit.schema.json`.
 - When stack guidance changes materially, update the affected standards, `AGENTS.md`, and runtime-specific authoritative profiles together.
 - Multi-tenancy standards must preserve two layers: application-layer filtering as primary, database-native enforcement as secondary failsafe.
 - Do not convert a corporate standard into a product-specific document unless the repository area is explicitly product-scoped.

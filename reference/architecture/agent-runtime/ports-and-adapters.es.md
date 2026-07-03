@@ -196,3 +196,9 @@ graph LR
     Architect -->|Actualiza| Gaps
     Rules -->|Aplica en| PR
 ```
+
+El cierre operativo de este bucle lo define el
+[Bucle de Mejora Continua del Harness](../../../.harness/playbooks/self-improving-loop.es.md):
+cada ejecución aprobada debe emitir evidencia de progress-audit, registrar
+hallazgos abiertos como gaps y promover lecciones repetidas a activos durables
+del harness.

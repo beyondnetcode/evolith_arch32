@@ -1,0 +1,146 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/.harness/schemas/progress-audit.schema.json",
+  "title": "Progress Audit Record",
+  "description": "Append-only JSONL record for Evolith harness and agent self-improvement runs.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "run_id",
+    "timestamp",
+    "agent",
+    "role",
+    "task",
+    "trigger",
+    "context_sources",
+    "files_read",
+    "files_modified",
+    "decisions",
+    "risks",
+    "validations",
+    "status",
+    "evidence",
+    "next_actions"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Unique identifier for this agent or harness execution."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "agent": {
+      "type": "string",
+      "description": "Agent id or persona, for example @winston or @devops."
+    },
+    "role": {
+      "type": "string",
+      "description": "Operational role used during the run."
+    },
+    "model": {
+      "type": "string",
+      "description": "Model identifier when known."
+    },
+    "provider": {
+      "type": "string",
+      "description": "Model or execution provider when known."
+    },
+    "task": {
+      "type": "string"
+    },
+    "trigger": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["manual", "pre_commit", "pre_push", "ci", "scheduled", "webhook", "runtime"]
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "loop_stage": {
+      "type": "string",
+      "enum": ["detect", "plan", "execute", "validate", "register", "learn", "complete"]
+    },
+    "context_sources": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "files_read": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "files_modified": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "decisions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "risks": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "validations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["command", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "command": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["not_run", "passed", "failed", "blocked", "skipped"]
+          },
+          "summary": { "type": "string" }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["completed", "blocked", "failed", "partial"]
+    },
+    "token_estimate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "input": { "type": "integer", "minimum": 0 },
+        "output": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "cost_estimate_usd": {
+      "type": "number",
+      "minimum": 0
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "retries": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

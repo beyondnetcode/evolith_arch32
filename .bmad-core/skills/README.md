@@ -27,7 +27,9 @@ A **skill** is a self-contained, composable capability that an agent can invoke 
 ├── gap-prioritization-engine.md           # Skill definition (EN)
 ├── gap-prioritization-engine.es.md        # Skill definition (ES)
 ├── adr-freshness-monitor.md              # Skill definition (EN)
-└── adr-freshness-monitor.es.md           # Skill definition (ES)
+├── adr-freshness-monitor.es.md           # Skill definition (ES)
+├── self-improving-loop.md                # Skill definition (EN)
+└── self-improving-loop.es.md             # Skill definition (ES)
 ```
 
 Implementation scripts live alongside other harness scripts:
@@ -36,7 +38,8 @@ Implementation scripts live alongside other harness scripts:
 .harness/scripts/skills/
 ├── requirements-traceability-mapper.mjs
 ├── gap-prioritization-engine.mjs
-└── adr-freshness-monitor.mjs
+├── adr-freshness-monitor.mjs
+└── self-improving-loop.mjs
 ```
 
 ## 3. How to Define a New Skill
@@ -152,6 +155,7 @@ node .harness/scripts/skills/gap-prioritization-engine.mjs --threshold 30
 | `requirements-traceability-mapper` | Requirements Traceability Mapper | @analyst | Maps epics/stories to ADRs, rulesets, and tests |
 | `gap-prioritization-engine` | Gap Prioritization Engine | @po | Calculates gap priority by impact × urgency |
 | `adr-freshness-monitor` | ADR Freshness Monitor | @architect | Scans ADRs for staleness (>180 days) |
+| `self-improving-loop` | Self Improving Loop | @winston | Emits progress-audit records and routes repeated findings into gaps, rules, skills, playbooks, schemas, or CI |
 
 ## 6. Skill Lifecycle
 

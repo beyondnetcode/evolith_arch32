@@ -13,6 +13,10 @@ spec:
     metadata:
       labels:
         app: {{ include "evolith-core-api.name" . }}
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "{{ include "evolith-core-api.fullname" . }}"
+        dapr.io/app-port: "{{ .Values.service.targetPort }}"
     spec:
       {{- with .Values.nodeSelector }}
       nodeSelector:

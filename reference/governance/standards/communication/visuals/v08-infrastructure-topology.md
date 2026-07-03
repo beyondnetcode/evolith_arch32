@@ -1,7 +1,7 @@
 # V-08 — Infrastructure Topology Map
 
-> **Audience:** DevOps, SRE, Platform Engineers  
-> **Purpose:** Full deployment topology — local dev through production  
+> **Audience:** DevOps, SRE, Platform Engineers
+> **Purpose:** Full deployment topology — local dev through production
 > **Bilingual:** [Español](./v08-infrastructure-topology.es.md)
 
 ---
@@ -126,7 +126,84 @@ flowchart TB
 
 ---
 
-## Visual 8-C — Multi-Cloud Deployment Options (Phase 3)
+## Visual 8-C — Local Development Stack (Kubernetes on Docker Desktop / Kind)
+
+```mermaid
+flowchart TB
+    classDef dev fill:#14532d,stroke:#22c55e,color:#fff
+    classDef infra fill:#4a3800,stroke:#f59e0b,color:#fff
+    classDef network fill:#4a1a6b,stroke:#9c27b0,color:#fff
+    classDef secret fill:#7f1d1d,stroke:#ef4444,color:#fff
+    classDef obs fill:#1e3a5f,stroke:#3b82f6,color:#fff
+
+    subgraph LOCAL_K8S["️ Local Kubernetes Cluster (Namespace: evolith-local)"]
+        direction TB
+
+        subgraph INGRESS["Network Access"]
+            direction LR
+            PF_CORE["Ingress / Port-Forward\ncore.local (18080)"]:::network
+            PF_MCP["Ingress / Port-Forward\nmcp.local (18081)"]:::network
+            PF_RUNTIME["Ingress / Port-Forward\nruntime.local (18082)"]:::network
+            PF_GRAFANA["Grafana Port-Forward\nlocalhost:3000"]:::network
+        end
+
+        subgraph SECRETS["Kubernetes Secrets (API Keys)"]
+            direction LR
+            SEC_CORE["core-api-auth"]:::secret
+            SEC_MCP["mcp-auth"]:::secret
+            SEC_RUNTIME["agent-runtime-auth"]:::secret
+        end
+
+        subgraph SVC["Kubernetes Services (ClusterIP :80)"]
+            direction LR
+            SVC_CORE["coreapi-evolith-core-api"]:::infra
+            SVC_MCP["mcp-evolith-mcp"]:::infra
+            SVC_RUNTIME["runtime-evolith-agent-runtime"]:::infra
+        end
+
+        subgraph PODS["Deployments (Core Services)"]
+            direction LR
+            POD_CORE["evolith-core-api:local\n(Port 3000)\n+ Dapr Sidecar"]:::dev
+            POD_MCP["evolith-mcp-server:local\n(Port 3000)\n+ Dapr Sidecar"]:::dev
+            POD_RUNTIME["evolith-agent-runtime:local\n(Port 3000)\n+ Dapr Sidecar"]:::dev
+        end
+
+        subgraph INFRA_LOCAL["Infrastructure (Storage & Policy)"]
+            direction LR
+            MINIO["MinIO Pod\n(Port 9000)\nBucket: opa-bundles"]:::infra
+        end
+
+        subgraph OBS_LOCAL["Observability Stack"]
+            direction LR
+            OTEL["OTel Collector\n(DaemonSet :4317)"]:::obs
+            TEMPO["Tempo\n(Port 3200)"]:::obs
+            GRAFANA["Grafana\n(Port 3000)"]:::obs
+        end
+
+        PF_CORE --> SVC_CORE
+        PF_MCP --> SVC_MCP
+        PF_RUNTIME --> SVC_RUNTIME
+        PF_GRAFANA --> GRAFANA
+
+        SVC_CORE --> POD_CORE
+        SVC_MCP --> POD_MCP
+        SVC_RUNTIME --> POD_RUNTIME
+
+        SEC_CORE -.->|"EVOLITH_API_KEY"| POD_CORE
+        SEC_MCP -.->|"EVOLITH_API_KEY"| POD_MCP
+        SEC_RUNTIME -.->|"AGENT_RUNTIME_API_KEY"| POD_RUNTIME
+
+        POD_CORE & POD_MCP & POD_RUNTIME -.->|"Fetch bundle.tar.gz"| MINIO
+        POD_CORE & POD_MCP & POD_RUNTIME -.->|"gRPC Traces"| OTEL
+
+        OTEL --> TEMPO
+        TEMPO --> GRAFANA
+    end
+```
+
+---
+
+## Visual 8-D — Multi-Cloud Deployment Options (Phase 3)
 
 ```mermaid
 flowchart LR
@@ -174,7 +251,7 @@ flowchart LR
 
 ---
 
-## Visual 8-D — Security Perimeter Model (Zero-Trust)
+## Visual 8-E — Security Perimeter Model (Zero-Trust)
 
 ```mermaid
 flowchart TD
@@ -218,7 +295,7 @@ flowchart TD
 
 ---
 
-## Visual 8-E — CI/CD Pipeline Quality Gates (ADR-0005)
+## Visual 8-F — CI/CD Pipeline Quality Gates (ADR-0005)
 
 ```mermaid
 flowchart LR

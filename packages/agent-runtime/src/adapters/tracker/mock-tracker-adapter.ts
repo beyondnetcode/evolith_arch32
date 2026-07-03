@@ -1,4 +1,5 @@
-import type { ITrackerTracePort, TraceEvent } from '../../domain/ports/tracker-trace.port';
+import type { ITrackerTracePort } from '../../domain/ports/tracker-trace.port';
+import type { TraceEvent } from '../../domain/contracts/trace';
 
 /**
  * GT-381: Mock Tracker adapter for development/testing.

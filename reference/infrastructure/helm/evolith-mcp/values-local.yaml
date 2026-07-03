@@ -4,8 +4,8 @@
 #   kubectl -n evolith-local port-forward svc/<release>-evolith-mcp 8081:80
 image:
   repository: evolith-mcp-server
-  tag: local
-  pullPolicy: Never
+  tag: local2
+  pullPolicy: IfNotPresent
 
 replicaCount: 1
 

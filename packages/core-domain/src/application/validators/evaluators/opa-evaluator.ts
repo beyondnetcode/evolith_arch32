@@ -68,31 +68,36 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
     rules: NormalizedRule[],
     ctx: WorkspaceEvaluationContext,
   ): Promise<RuleEvaluationResult[]> {
-    const wasmPath = path.join(ctx.corePath, 'rulesets', 'opa', 'policy.wasm');
-    if (!await this.fs.exists(wasmPath)) {
-      this.logger.error(`OPA WebAssembly policy not found at ${wasmPath}. Compile .rego rules first (run the OPA build step).`);
-      return rules.map(rule => ({
-        rule,
-        result: 'failed' as const,
-        message: `OPA policy not compiled — enforcement blocked. Expected wasm at: ${wasmPath}`,
-      }));
-    }
+    const opaUrl = process.env.OPA_URL;
+    let policyCache: any = null;
 
     try {
-      const wasmBuffer = await this.fs.readFileBuffer(wasmPath);
-      const hash = crypto.createHash('sha256').update(wasmBuffer).digest('hex');
-      
-      if (!globalPolicyCache.has(hash)) {
-        // Keep only the latest to prevent memory leaks if WASM is rebuilt
-        globalPolicyCache.clear(); 
-        const policy = await loadPolicy(wasmBuffer);
-        globalPolicyCache.set(hash, policy);
+      if (!opaUrl) {
+        const wasmPath = path.join(ctx.corePath, 'rulesets', 'opa', 'policy.wasm');
+        if (!await this.fs.exists(wasmPath)) {
+          this.logger.error(`OPA WebAssembly policy not found at ${wasmPath}. Compile .rego rules first (run the OPA build step).`);
+          return rules.map(rule => ({
+            rule,
+            result: 'failed' as const,
+            message: `OPA policy not compiled — enforcement blocked. Expected wasm at: ${wasmPath}`,
+          }));
+        }
+
+        const wasmBuffer = await this.fs.readFileBuffer(wasmPath);
+        const hash = crypto.createHash('sha256').update(wasmBuffer).digest('hex');
+
+        if (!globalPolicyCache.has(hash)) {
+          // Keep only the latest to prevent memory leaks if WASM is rebuilt
+          globalPolicyCache.clear();
+          const policy = await loadPolicy(wasmBuffer);
+          globalPolicyCache.set(hash, policy);
+        }
+        policyCache = globalPolicyCache.get(hash);
       }
-      const policyCache = globalPolicyCache.get(hash);
 
       // Build the input for OPA
       const input = await this.inputBuilder.build(ctx);
-      
+
       // Perform schema validation per unique category
       const categories = Array.from(new Set(rules.map(r => r.category)));
       const categoryErrors = new Map<string, string>();
@@ -121,10 +126,26 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
 
       let opaResults: RuleEvaluationResult[] = [];
       if (passedRules.length > 0) {
-        // Evaluate against the OPA policy
-        const resultSet: any = policyCache.evaluate(input);
-        const violations: Record<string, unknown>[] = (resultSet?.[0]?.result) ? resultSet[0].result as Record<string, unknown>[] : [];
-        
+        let violations: Record<string, unknown>[] = [];
+
+        if (opaUrl) {
+          // Evaluate against the OPA sidecar via HTTP
+          const res = await fetch(`${opaUrl}/evolith`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ input })
+          });
+          if (!res.ok) {
+            throw new Error(`OPA sidecar responded with status: ${res.status}`);
+          }
+          const data = await res.json() as { result?: Record<string, unknown>[] };
+          violations = data.result || [];
+        } else {
+          // Evaluate against the embedded OPA wasm policy
+          const resultSet: any = policyCache.evaluate(input);
+          violations = (resultSet?.[0]?.result) ? resultSet[0].result as Record<string, unknown>[] : [];
+        }
+
         opaResults = passedRules.map(rule => {
           const prefix = CONTEXT_AWARE_VIOLATION_PREFIXES[rule.id];
           const ruleViolations = prefix

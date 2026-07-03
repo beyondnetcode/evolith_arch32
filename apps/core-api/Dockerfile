@@ -16,13 +16,16 @@ COPY package.json package-lock.json tsconfig.base.json tsconfig.json ./
 COPY packages ./packages
 COPY apps ./apps
 COPY sdk ./sdk
+COPY .harness ./.harness
+COPY rulesets ./rulesets
 
 RUN npm ci --legacy-peer-deps
 
 # Build the workspace deps + the app via the composite project graph. (`tsc -p`
 # with the prod tsconfig fails here: composite projects — inherited from
 # tsconfig.base.json — may not disable declaration/incremental emit.)
-RUN npx tsc -b packages/core-domain packages/infra-providers apps/core-api/tsconfig.json
+RUN npm run build:policy && \
+    npx tsc -b packages/core-domain packages/infra-providers apps/core-api/tsconfig.json
 
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
@@ -45,9 +48,10 @@ COPY --from=builder /repo/apps/core-api/package.json ./apps/core-api/package.jso
 # Non-hoisted workspace deps (e.g. @nestjs/cache-manager) live here, not at root.
 COPY --from=builder /repo/apps/core-api/node_modules ./apps/core-api/node_modules
 
-# Corpus (rulesets + human reference) the Core reads at runtime — copied from the
-# build context (the builder stage does not vendor these).
-COPY rulesets /app/corpus/rulesets
+# Corpus (rulesets + generated OPA WASM + human reference) the Core reads at
+# runtime. rulesets comes from the builder stage so policy.wasm is present even
+# though it is a gitignored build artifact.
+COPY --from=builder /repo/rulesets /app/corpus/rulesets
 COPY reference /app/corpus/reference
 
 RUN addgroup -g 1001 -S evolith && \

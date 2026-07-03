@@ -9,10 +9,6 @@ import { ensureOpa } from '../opa-runtime.mjs';
 const ROOT = path.resolve(process.env.EVOLITH_ROOT || '.');
 const CHARTS = [
   {
-    name: 'evolith-bff',
-    chartPath: 'reference/infrastructure/helm/evolith-bff',
-  },
-  {
     name: 'evolith-mcp',
     chartPath: 'reference/infrastructure/helm/evolith-mcp',
   },

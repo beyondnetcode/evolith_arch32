@@ -13,6 +13,10 @@ spec:
     metadata:
       labels:
         app: {{ include "evolith-agent-runtime.name" . }}
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "{{ include "evolith-agent-runtime.fullname" . }}"
+        dapr.io/app-port: "{{ .Values.service.targetPort }}"
     spec:
       {{- with .Values.nodeSelector }}
       nodeSelector:

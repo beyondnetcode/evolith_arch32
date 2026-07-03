@@ -1,4 +1,4 @@
-import type { IApprovalPort, ApprovalRequest, ApprovalResult } from '../../domain/ports/approval.port';
+import type { IApprovalPort, ApprovalRequest, ApprovalDecision } from '../../domain/ports/approval.port';
 
 /**
  * GT-406: Slack approval adapter stub.
@@ -12,14 +12,13 @@ import type { IApprovalPort, ApprovalRequest, ApprovalResult } from '../../domai
 export class SlackApprovalAdapter implements IApprovalPort {
   constructor(private readonly webhookUrl?: string) {}
 
-  async requestApproval(request: ApprovalRequest): Promise<ApprovalResult> {
+  async requireApproval(request: ApprovalRequest): Promise<ApprovalDecision> {
     if (!this.webhookUrl) {
-      console.log(`[GT-406] Slack approval stub: auto-approving '${request.capabilityId}' (no webhook configured)`);
+      console.log(`[GT-406] Slack approval stub: auto-approving '${request.skill.id}' (no webhook configured)`);
       return {
         granted: true,
         approver: 'slack-approval-stub',
         reason: 'Auto-approved: Slack webhook not configured',
-        timestamp: new Date().toISOString(),
       };
     }
 

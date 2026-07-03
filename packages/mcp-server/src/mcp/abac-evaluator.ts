@@ -130,6 +130,7 @@ export class AbacEvaluator {
     try {
       const fs = await import('fs-extra');
       const path = await import('node:path');
+      // @ts-ignore: opa-wasm lacks types
       const { loadPolicy } = await import('@open-policy-agent/opa-wasm');
       
       const wasmPath = path.join(corePath, 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm');

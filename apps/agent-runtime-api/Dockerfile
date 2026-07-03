@@ -18,11 +18,14 @@ COPY package.json package-lock.json tsconfig.base.json tsconfig.json ./
 COPY packages ./packages
 COPY apps ./apps
 COPY sdk ./sdk
+COPY .harness ./.harness
+COPY rulesets ./rulesets
 
 RUN npm ci --legacy-peer-deps
 
 # Build the app and its project references (agent-runtime -> core-domain).
-RUN npx tsc -b apps/agent-runtime-api/tsconfig.json
+RUN npm run build:policy && \
+    npx tsc -b apps/agent-runtime-api/tsconfig.json
 
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
@@ -48,9 +51,10 @@ COPY --from=builder /repo/apps/agent-runtime-api/package.json ./apps/agent-runti
 
 # Optional corpus so the real .harness / OPA adapters can be enabled by env
 # (AGENT_RUNTIME_HARNESS_ROOT / AGENT_RUNTIME_OPA_*) without rebuilding. Copied
-# from the build context (the builder stage does not vendor these).
-COPY .harness ./corpus/.harness
-COPY rulesets ./corpus/rulesets
+# from the builder stage so the bundled OPA binary and policy.wasm match the
+# container platform, not the developer host.
+COPY --from=builder /repo/.harness ./corpus/.harness
+COPY --from=builder /repo/rulesets ./corpus/rulesets
 
 RUN addgroup -g 1001 -S evolith && \
     adduser -S evolith -u 1001 -G evolith && \

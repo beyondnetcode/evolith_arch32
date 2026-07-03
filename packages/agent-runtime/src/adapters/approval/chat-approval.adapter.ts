@@ -1,4 +1,4 @@
-import type { IApprovalPort, ApprovalRequest, ApprovalResult } from '../../domain/ports/approval.port';
+import type { IApprovalPort, ApprovalRequest, ApprovalDecision } from '../../domain/ports/approval.port';
 
 /**
  * GT-387: Chat-based HITL approval adapter.
@@ -11,21 +11,20 @@ import type { IApprovalPort, ApprovalRequest, ApprovalResult } from '../../domai
  * approval system is configured.
  */
 export class ChatApprovalAdapter implements IApprovalPort {
-  async requestApproval(request: ApprovalRequest): Promise<ApprovalResult> {
+  async requireApproval(request: ApprovalRequest): Promise<ApprovalDecision> {
     // In a real implementation, this would:
     // 1. Send approval request to chat/Tracker
     // 2. Wait for human response
     // 3. Return the approval decision
 
-    console.log(`[GT-387] Approval requested for capability '${request.capabilityId}':`);
-    console.log(`  Reason: ${request.reason}`);
+    console.log(`[GT-387] Approval requested for capability '${request.skill.id}':`);
+    console.log(`  Intent: ${request.request.intent}`);
     console.log(`  Auto-approving in dev mode (no external approval system configured).`);
 
     return {
       granted: true,
       approver: 'chat-approval-adapter-dev',
       reason: 'Auto-approved in development mode',
-      timestamp: new Date().toISOString(),
     };
   }
 }

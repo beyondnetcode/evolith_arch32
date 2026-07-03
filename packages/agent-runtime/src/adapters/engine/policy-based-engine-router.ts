@@ -1,6 +1,6 @@
 import type { IAgentEnginePort, AgentEnginePlan } from '../../domain/ports/agent-engine.port';
 import type { AgentRuntimeRequest } from '../../domain/contracts/agent-runtime-request';
-import type { SkillDescriptor } from '../../domain/contracts/skill-descriptor';
+import type { SkillDescriptor } from '../../domain/contracts/capability';
 
 /**
  * Risk assessment signals extracted from the request context.

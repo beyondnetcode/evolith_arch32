@@ -60,9 +60,9 @@
   ],
   "dependencies": {
     "@clack/prompts": "1.5.1",
-    "@evolith/agent-runtime": "^0.1.0",
+    "@evolith/agent-runtime": "*",
     "@evolith/core-domain": "*",
-    "@evolith/sdk": "^0.1.0",
+    "@evolith/sdk": "*",
     "@hono/node-server": "1.19.14",
     "@modelcontextprotocol/sdk": "1.29.0",
     "@nestjs/common": "11.1.27",

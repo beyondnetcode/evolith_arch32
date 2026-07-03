@@ -42,8 +42,9 @@ export class ArchitecturePlanOpaEvaluator {
         required_approvals: data.required_approvals || []
       };
     } catch (err) {
-      this.logger.error(`Error executing OPA eval: ${err.message}`);
-      throw new Error(`Evaluation failed: ${err.message}`);
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      this.logger.error(`Error executing OPA eval: ${errorMsg}`);
+      throw new Error(`Evaluation failed: ${errorMsg}`);
     } finally {
       if (fs.existsSync(tmpFile)) {
         fs.unlinkSync(tmpFile);

@@ -3,8 +3,8 @@
 # Reach the service with: kubectl -n evolith-local port-forward svc/<release>-evolith-core-api 8080:80
 image:
   repository: evolith-core-api
-  tag: local
-  pullPolicy: Never
+  tag: local2
+  pullPolicy: IfNotPresent
 
 replicaCount: 1
 

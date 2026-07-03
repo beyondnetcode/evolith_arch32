@@ -34,7 +34,7 @@ extraEnv:
   PORT: "3000"
   CORE_PATH: /app/corpus
   WORKSPACE_ROOT: /app/corpus
-  # REDIS_URL: redis://redis:6379
+  OTEL_ENABLED: "true"
 
 resources:
   requests:

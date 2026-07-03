@@ -65,7 +65,7 @@ const EvaluationFactsWaiverSchema = z.object({
 });
 
 const EvaluationFactsSchema = z.object({
-  context: z.record(z.unknown()).optional(),
+  context: z.record(z.string(), z.unknown()).optional(),
   gate: EvaluationFactsGateSchema.optional(),
   evidence: z.array(EvaluationFactsEvidenceSchema).optional(),
   waiver: z.array(EvaluationFactsWaiverSchema).optional(),

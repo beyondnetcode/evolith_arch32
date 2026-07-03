@@ -19,7 +19,7 @@ COPY sdk ./sdk
 RUN npm ci --legacy-peer-deps
 
 # Build the workspace deps + the server via the composite project graph.
-RUN npx tsc -b packages/core-domain packages/infra-providers packages/core packages/mcp-server/tsconfig.json
+RUN npx tsc -b packages/sdk-client packages/agent-runtime packages/core-domain packages/infra-providers packages/core packages/mcp-server/tsconfig.json
 
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
@@ -33,6 +33,10 @@ WORKDIR /repo
 
 COPY --from=builder /repo/node_modules ./node_modules
 COPY --from=builder /repo/package.json ./package.json
+COPY --from=builder /repo/packages/sdk-client/dist ./packages/sdk-client/dist
+COPY --from=builder /repo/packages/sdk-client/package.json ./packages/sdk-client/package.json
+COPY --from=builder /repo/packages/agent-runtime/dist ./packages/agent-runtime/dist
+COPY --from=builder /repo/packages/agent-runtime/package.json ./packages/agent-runtime/package.json
 COPY --from=builder /repo/packages/core-domain/dist ./packages/core-domain/dist
 COPY --from=builder /repo/packages/core-domain/package.json ./packages/core-domain/package.json
 COPY --from=builder /repo/packages/infra-providers/dist ./packages/infra-providers/dist

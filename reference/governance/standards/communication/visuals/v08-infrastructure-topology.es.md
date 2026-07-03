@@ -126,7 +126,63 @@ flowchart TB
 
 ---
 
-## Visual 8-C — Opciones de Despliegue Multi-Cloud (Fase 3)
+## Visual 8-C — Stack de Desarrollo Local (Kubernetes en Docker Desktop / Kind)
+
+```mermaid
+flowchart TB
+    classDef dev fill:#14532d,stroke:#22c55e,color:#fff
+    classDef infra fill:#4a3800,stroke:#f59e0b,color:#fff
+    classDef network fill:#4a1a6b,stroke:#9c27b0,color:#fff
+    classDef secret fill:#7f1d1d,stroke:#ef4444,color:#fff
+
+    subgraph LOCAL_K8S["️ Cluster Local Kubernetes (Namespace: evolith-local)"]
+        direction TB
+
+        subgraph INGRESS["Acceso de Red (Port-Forward / Ingress local)"]
+            direction LR
+            PF_CORE["Port 18080"]:::network
+            PF_MCP["Port 18081"]:::network
+            PF_RUNTIME["Port 18082"]:::network
+        end
+
+        subgraph SVC["Kubernetes Services (ClusterIP :80)"]
+            direction LR
+            SVC_CORE["coreapi-evolith-core-api"]:::infra
+            SVC_MCP["mcp-evolith-mcp"]:::infra
+            SVC_RUNTIME["runtime-evolith-agent-runtime"]:::infra
+        end
+
+        subgraph PODS["Deployments (Helm Charts locales)"]
+            direction LR
+            POD_CORE["evolith-core-api:local\n(Puerto 3000)"]:::dev
+            POD_MCP["evolith-mcp-server:local\n(Puerto 3000)"]:::dev
+            POD_RUNTIME["evolith-agent-runtime:local\n(Puerto 3000)"]:::dev
+        end
+
+        subgraph SECRETS["Kubernetes Secrets (API Keys)"]
+            direction LR
+            SEC_CORE["core-api-auth"]:::secret
+            SEC_MCP["mcp-auth"]:::secret
+            SEC_RUNTIME["agent-runtime-auth"]:::secret
+        end
+
+        PF_CORE --> SVC_CORE
+        PF_MCP --> SVC_MCP
+        PF_RUNTIME --> SVC_RUNTIME
+
+        SVC_CORE --> POD_CORE
+        SVC_MCP --> POD_MCP
+        SVC_RUNTIME --> POD_RUNTIME
+
+        SEC_CORE -.->|"EVOLITH_API_KEY"| POD_CORE
+        SEC_MCP -.->|"EVOLITH_API_KEY"| POD_MCP
+        SEC_RUNTIME -.->|"AGENT_RUNTIME_API_KEY"| POD_RUNTIME
+    end
+```
+
+---
+
+## Visual 8-D — Opciones de Despliegue Multi-Cloud (Fase 3)
 
 ```mermaid
 flowchart LR
@@ -174,7 +230,7 @@ flowchart LR
 
 ---
 
-## Visual 8-D — Modelo de Perímetro de Seguridad (Zero-Trust)
+## Visual 8-E — Modelo de Perímetro de Seguridad (Zero-Trust)
 
 ```mermaid
 flowchart TD
@@ -218,7 +274,7 @@ flowchart TD
 
 ---
 
-## Visual 8-E — Gates de Calidad del Pipeline CI/CD (ADR-0005)
+## Visual 8-F — Gates de Calidad del Pipeline CI/CD (ADR-0005)
 
 ```mermaid
 flowchart LR

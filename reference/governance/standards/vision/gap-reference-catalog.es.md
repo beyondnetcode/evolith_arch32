@@ -3537,10 +3537,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-286
 
-**Título:** Ruleset compliance-baseline existe — rulesets/compliance-baseline
+**Título:** Ruleset compliance-baseline existe — rulesets/cross-cutting/compliance-baseline.rules.json
 
 - **Propósito:** Implementar el ruleset compliance-baseline como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
-- **Evidencia:** La ruta `rulesets/compliance-baseline` no existe.
+- **Evidencia:** El ruleset canónico existe en `rulesets/cross-cutting/compliance-baseline.rules.json`; su contraparte OPA y tests existen en `rulesets/opa/compliance-baseline.rego` y `rulesets/opa/compliance-baseline.test.rego`.
 - **Complejidad:** S
 - **Hecho Cuando:**
   - [x] El archivo o directorio requerido existe en la ruta especificada.
@@ -3548,10 +3548,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-287
 
-**Título:** Ruleset definition-of-done existe — rulesets/definition-of-done
+**Título:** Ruleset definition-of-done existe — rulesets/cross-cutting/definition-of-done.rules.json
 
 - **Propósito:** Implementar el ruleset definition-of-done como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
-- **Evidencia:** La ruta `rulesets/definition-of-done` no existe.
+- **Evidencia:** El ruleset canónico existe en `rulesets/cross-cutting/definition-of-done.rules.json`; su contraparte OPA y tests existen en `rulesets/opa/dod.rego` y `rulesets/opa/dod.test.rego`.
 - **Complejidad:** S
 - **Hecho Cuando:**
   - [x] El archivo o directorio requerido existe en la ruta especificada.
@@ -3559,10 +3559,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-288
 
-**Título:** Ruleset engineering-manifesto existe — rulesets/engineering-manifesto
+**Título:** Ruleset engineering-manifesto existe — rulesets/cross-cutting/engineering-manifesto.rules.json
 
 - **Propósito:** Implementar el ruleset engineering-manifesto como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
-- **Evidencia:** La ruta `rulesets/engineering-manifesto` no existe.
+- **Evidencia:** El ruleset canónico existe en `rulesets/cross-cutting/engineering-manifesto.rules.json`; su contraparte OPA y tests existen en `rulesets/opa/engineering-manifesto.rego` y `rulesets/opa/engineering-manifesto.test.rego`.
 - **Complejidad:** S
 - **Hecho Cuando:**
   - [x] El archivo o directorio requerido existe en la ruta especificada.
@@ -3570,10 +3570,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-289
 
-**Título:** Ruleset repository-taxonomy existe — rulesets/repository-taxonomy
+**Título:** Ruleset repository-taxonomy existe — rulesets/cross-cutting/repository-taxonomy.rules.json
 
 - **Propósito:** Implementar el ruleset repository-taxonomy como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
-- **Evidencia:** La ruta `rulesets/repository-taxonomy` no existe.
+- **Evidencia:** El ruleset canónico existe en `rulesets/cross-cutting/repository-taxonomy.rules.json`; su contraparte OPA y tests existen en `rulesets/opa/repository-taxonomy.rego` y `rulesets/opa/repository-taxonomy.test.rego`.
 - **Complejidad:** S
 - **Hecho Cuando:**
   - [x] El archivo o directorio requerido existe en la ruta especificada.
@@ -3581,10 +3581,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-290
 
-**Título:** Ruleset phase-gates existe — rulesets/phase-gates
+**Título:** Ruleset phase-gates existe — rulesets/sdlc/phase-gates.rules.json
 
 - **Propósito:** Implementar el ruleset phase-gates como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
-- **Evidencia:** La ruta `rulesets/phase-gates` no existe.
+- **Evidencia:** El ruleset canónico existe en `rulesets/sdlc/phase-gates.rules.json`; `rulesets/phase-gates/` se conserva como punto de entrada documental estable WS1.
 - **Complejidad:** S
 - **Hecho Cuando:**
   - [x] El archivo o directorio requerido existe en la ruta especificada.
@@ -3592,10 +3592,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-291
 
-**Título:** Ruleset quality-thresholds existe — rulesets/quality-thresholds
+**Título:** Ruleset quality-thresholds existe — rulesets/sdlc/quality-thresholds.rules.json
 
 - **Propósito:** Implementar el ruleset quality-thresholds como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
-- **Evidencia:** La ruta `rulesets/quality-thresholds` no existe.
+- **Evidencia:** El ruleset canónico existe en `rulesets/sdlc/quality-thresholds.rules.json`.
 - **Complejidad:** S
 - **Hecho Cuando:**
   - [x] El archivo o directorio requerido existe en la ruta especificada.
@@ -3603,10 +3603,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-292
 
-**Título:** Ruleset satellite-contracts existe — rulesets/satellite-contracts
+**Título:** Ruleset satellite-contracts existe — rulesets/governance/satellite-contracts.rules.json
 
 - **Propósito:** Implementar el ruleset satellite-contracts como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
-- **Evidencia:** La ruta `rulesets/satellite-contracts` no existe.
+- **Evidencia:** El ruleset canónico existe en `rulesets/governance/satellite-contracts.rules.json`; su contraparte OPA y tests existen en `rulesets/opa/satellite-contracts.rego` y `rulesets/opa/satellite-contracts.test.rego`.
 - **Complejidad:** S
 - **Hecho Cuando:**
   - [x] El archivo o directorio requerido existe en la ruta especificada.
@@ -3614,11 +3614,13 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-293
 
-**Título:** Ruleset executive-scorecards existe — rulesets/executive-scorecards
+**Título:** Ruleset executive-scorecards existe — rulesets/governance/executive-scorecards.rules.json
 
 - **Propósito:** Implementar el ruleset executive-scorecards como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
-- **Evidencia:** La ruta `rulesets/executive-scorecards` no existe.
+- **Evidencia:** El ruleset canónico existe en `rulesets/governance/executive-scorecards.rules.json`; su contraparte OPA y tests existen en `rulesets/opa/executive-scorecards.rego` y `rulesets/opa/executive-scorecards.test.rego`.
 - **Complejidad:** S
+- **Estado:** COMPLETADO 2026-06-26
+- **Cerrado por:** `rulesets/governance/executive-scorecards.rules.json` + `rulesets/opa/executive-scorecards.rego` + `rulesets/opa/executive-scorecards.test.rego` (10 reglas: DORA-01..04, SPACE-01..05, DRIFT-01). El `$id` canónico y la evidencia de paridad OPA están vigentes.
 - **Hecho Cuando:**
   - [x] El archivo o directorio requerido existe en la ruta especificada.
   - [x] Los tests verifican la implementación.
@@ -4611,4 +4613,3 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criterios de aceptación:**
   - [x] El checklist evalúa correctamente la naturaleza stateless y la paridad OPA vs Native.
 - **Dependencias:** Ninguna.
-

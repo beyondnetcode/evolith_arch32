@@ -5,7 +5,8 @@
 # images work with imagePullPolicy: Never — no registry needed).
 #
 # Usage:
-#   bash reference/infrastructure/helm/local-test.sh up      # build + install
+#   bash reference/infrastructure/helm/local-test.sh apps-up # build + install apps only
+#   bash reference/infrastructure/helm/local-test.sh up      # build + install infra + apps
 #   bash reference/infrastructure/helm/local-test.sh smoke   # port-forward + curl
 #   bash reference/infrastructure/helm/local-test.sh down     # uninstall + delete ns
 #
@@ -165,6 +166,7 @@ _pf() {
   sleep 3
   "$@" || true
   kill "$pid" >/dev/null 2>&1 || true
+  wait "$pid" 2>/dev/null || true
 }
 
 smoke() {
@@ -182,21 +184,27 @@ smoke() {
 }
 
 down() {
-  helm -n "$NS" uninstall runtime coreapi mcp 2>/dev/null || true
+  helm -n "$NS" uninstall evolith-runtime evolith-core-api evolith-mcp 2>/dev/null || true
   kubectl delete namespace "$NS" --ignore-not-found
 }
 
 case "${1:-kind-up}" in
   build) build ;;
+  apps-up)
+         build; secrets; install
+         echo "==> Done. Run: bash $0 smoke" ;;
   up)    build; secrets; infra; install
          echo "==> Done. Run: bash $0 smoke" ;;
   kind-up)
          kind_create; build; kind_load; secrets; infra; install
+         echo "==> Done. Run: bash $0 smoke" ;;
+  kind-apps-up)
+         kind_create; build; kind_load; secrets; install
          echo "==> Done. Run: bash $0 smoke" ;;
   smoke) smoke ;;
   down)  down ;;
   kind-down)
          down
          kind delete cluster --name "$CLUSTER" ;;
-  *) echo "usage: $0 {kind-up|up|build|smoke|down|kind-down}"; exit 1 ;;
+  *) echo "usage: $0 {kind-apps-up|kind-up|apps-up|up|build|smoke|down|kind-down}"; exit 1 ;;
 esac

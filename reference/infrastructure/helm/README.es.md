@@ -18,9 +18,33 @@ Este directorio contiene charts Helm para desplegar componentes de la aplicació
 > `ghcr.io/beyondnetcode/*`. Ver [Topología de despliegue](../deployment-topology.es.md)
 > para el mapa canónico de servicios.
 
+## Kubernetes Local
+
+Usa el harness local de smoke test para construir las tres imágenes reales de
+servicio e instalarlas en un namespace local de Kubernetes sin depender de GHCR
+ni Coolify:
+
+```bash
+bash reference/infrastructure/helm/local-test.sh kind-apps-up
+bash reference/infrastructure/helm/local-test.sh smoke
+```
+
+`kind-apps-up` crea o reutiliza un clúster `kind` llamado `evolith`, construye
+`apps/core-api`, `packages/mcp-server` y `apps/agent-runtime-api`, carga esas
+imágenes en el clúster, crea secrets locales de API key e instala solo los
+charts de aplicación. Usa `apps-up` cuando Kubernetes de Docker Desktop ya esté
+activo y comparta el daemon local de imágenes Docker.
+
+Para un entorno local más completo que también instale Dapr, MinIO y componentes
+de observabilidad, usa `kind-up` o `up`. Desmonta el stack local con:
+
+```bash
+bash reference/infrastructure/helm/local-test.sh kind-down
+```
+
 ## Configuración del Sidecar OPA
 
-Ambos charts incluyen un sidecar OPA para evaluación de políticas. El sidecar obtiene bundles de autorización desde un endpoint interno compatible con S3 y con TLS, y verifica la firma del bundle antes de activarlo.
+El chart MCP incluye un sidecar OPA opcional para evaluación de políticas. El sidecar obtiene bundles de autorización desde un endpoint interno compatible con S3 y con TLS, y verifica la firma del bundle antes de activarlo. Los values locales deshabilitan este sidecar para que los smoke tests de aplicación puedan correr sin servidor de bundles.
 
 ### Endpoint del Bundle
 

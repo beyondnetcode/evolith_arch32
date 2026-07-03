@@ -183,10 +183,10 @@ for (const dim of dimensions) {
 // ── Cross-Cutting Ruleset Survey ─────────────────────────────────────
 
 const crossCuttingPaths = [
-  "rulesets/compliance-baseline/compliance-baseline.rules.json",
-  "rulesets/engineering-manifesto/engineering-manifesto.rules.json",
-  "rulesets/definition-of-done/definition-of-done.rules.json",
-  "rulesets/repository-taxonomy/repository-taxonomy.rules.json",
+  "rulesets/cross-cutting/compliance-baseline.rules.json",
+  "rulesets/cross-cutting/engineering-manifesto.rules.json",
+  "rulesets/cross-cutting/definition-of-done.rules.json",
+  "rulesets/cross-cutting/repository-taxonomy.rules.json",
   "rulesets/opa/governance.rego",
   "rulesets/opa/compliance-baseline.rego",
   "rulesets/opa/anti-corruption-layer.rego",

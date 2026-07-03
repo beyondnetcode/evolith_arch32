@@ -18,9 +18,33 @@ This directory contains Helm charts for deploying reference application componen
 > registry. See [Deployment Topology](../deployment-topology.md) for the canonical
 > service map.
 
+## Local Kubernetes
+
+Use the local smoke-test harness to build the three real service images and
+install them into a local Kubernetes namespace without relying on GHCR or
+Coolify:
+
+```bash
+bash reference/infrastructure/helm/local-test.sh kind-apps-up
+bash reference/infrastructure/helm/local-test.sh smoke
+```
+
+`kind-apps-up` creates or reuses a `kind` cluster named `evolith`, builds
+`apps/core-api`, `packages/mcp-server`, and `apps/agent-runtime-api`, loads those
+images into the cluster, creates local API-key secrets, and installs only the
+application charts. Use `apps-up` instead when Docker Desktop Kubernetes is
+already running and shares the local Docker image daemon.
+
+For a fuller local environment that also installs Dapr, MinIO, and observability
+components, use `kind-up` or `up`. Tear the local stack down with:
+
+```bash
+bash reference/infrastructure/helm/local-test.sh kind-down
+```
+
 ## OPA Sidecar Configuration
 
-Both charts include an OPA sidecar container for policy evaluation. The sidecar fetches authorization bundles from a TLS-enabled, S3-compatible in-cluster endpoint and verifies the bundle signature before activation.
+The MCP chart includes an optional OPA sidecar container for policy evaluation. The sidecar fetches authorization bundles from a TLS-enabled, S3-compatible in-cluster endpoint and verifies the bundle signature before activation. The local values disable this sidecar so application smoke tests can run without a bundle server.
 
 ### Bundle Endpoint
 

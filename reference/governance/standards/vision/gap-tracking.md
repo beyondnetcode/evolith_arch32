@@ -66,14 +66,14 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-253`](./gap-reference-catalog.md#gt-253) | Pin trivy-action to specific version tag instead of master branch | `CI/CD` | Cross | P0 | S | `DONE` |
 | [`GT-268`](./gap-reference-catalog.md#gt-268) | Restore missing CI validator scripts referenced by workflows and rules | `Governance CI` | Cross | P0 | S | `DONE` |
 | [`GT-274`](./gap-reference-catalog.md#gt-274) | Harden cleanup-temp-files against tracked-file deletion | `Harness` | Cross | P0 | S | `DONE` |
-| [`GT-286`](./gap-reference-catalog.md#gt-286) | compliance-baseline ruleset exists — rulesets/compliance-baseline | `Rulesets` | Cross | P0 | S | `DONE` |
-| [`GT-287`](./gap-reference-catalog.md#gt-287) | definition-of-done ruleset exists — rulesets/definition-of-done | `Rulesets` | Cross | P0 | S | `DONE` |
-| [`GT-288`](./gap-reference-catalog.md#gt-288) | engineering-manifesto ruleset exists — rulesets/engineering-manifesto | `Rulesets` | Cross | P0 | S | `DONE` |
-| [`GT-289`](./gap-reference-catalog.md#gt-289) | repository-taxonomy ruleset exists — rulesets/repository-taxonomy | `Rulesets` | Cross | P0 | S | `DONE` |
+| [`GT-286`](./gap-reference-catalog.md#gt-286) | compliance-baseline ruleset exists — rulesets/cross-cutting/compliance-baseline.rules.json | `Rulesets` | Cross | P0 | S | `DONE` |
+| [`GT-287`](./gap-reference-catalog.md#gt-287) | definition-of-done ruleset exists — rulesets/cross-cutting/definition-of-done.rules.json | `Rulesets` | Cross | P0 | S | `DONE` |
+| [`GT-288`](./gap-reference-catalog.md#gt-288) | engineering-manifesto ruleset exists — rulesets/cross-cutting/engineering-manifesto.rules.json | `Rulesets` | Cross | P0 | S | `DONE` |
+| [`GT-289`](./gap-reference-catalog.md#gt-289) | repository-taxonomy ruleset exists — rulesets/cross-cutting/repository-taxonomy.rules.json | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-290`](./gap-reference-catalog.md#gt-290) | phase-gates ruleset exists — rulesets/phase-gates | `Rulesets` | Cross | P0 | S | `DONE` |
-| [`GT-291`](./gap-reference-catalog.md#gt-291) | quality-thresholds ruleset exists — rulesets/quality-thresholds | `Rulesets` | Cross | P0 | S | `DONE` |
-| [`GT-292`](./gap-reference-catalog.md#gt-292) | satellite-contracts ruleset exists — rulesets/satellite-contracts | `Rulesets` | Cross | P0 | S | `DONE` |
-| [`GT-293`](./gap-reference-catalog.md#gt-293) | executive-scorecards ruleset exists — rulesets/executive-scorecards | `Rulesets` | Cross | P0 | S | `DONE` |
+| [`GT-291`](./gap-reference-catalog.md#gt-291) | quality-thresholds ruleset exists — rulesets/sdlc/quality-thresholds.rules.json | `Rulesets` | Cross | P0 | S | `DONE` |
+| [`GT-292`](./gap-reference-catalog.md#gt-292) | satellite-contracts ruleset exists — rulesets/governance/satellite-contracts.rules.json | `Rulesets` | Cross | P0 | S | `DONE` |
+| [`GT-293`](./gap-reference-catalog.md#gt-293) | executive-scorecards ruleset exists — rulesets/governance/executive-scorecards.rules.json | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-294`](./gap-reference-catalog.md#gt-294) | OPA policies for architecture — rulesets/architecture/opa | `Architecture` | Cross | P0 | S | `DONE` |
 | [`GT-336`](./gap-reference-catalog.md#gt-336) | SDK REST client missing /api prefix — all calls 404 | `SDK` | Cross | P0 | S | `DONE` |
 | [`MT-A01`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Ratify the Multi-Topology Reference Corpus ADR | `Governance` | Cross | P0 | S | `DONE` |

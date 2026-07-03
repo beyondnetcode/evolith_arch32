@@ -74,10 +74,7 @@ reviewed change.
   replacement) for at least one minor before removal; a removal or rename ships
   in a **major**, additive exports ship in a **minor**.
 
-> **Pre-1.0 note:** the package stays on `0.x` while the default Core-evaluation
-> adapter is a stub (see `GT-384`). It will not be tagged `1.0.0` until the real
-> Core adapter and these guarantees are in force over a non-simulated Core; `0.x`
-> minors may still adjust the surface.
+
 
 ## Scripts
 

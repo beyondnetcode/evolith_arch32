@@ -22,7 +22,7 @@ export const DEFAULT_SKILLS: readonly SkillDescriptor[] = [
     requiresApproval: false,
     emitsTrace: true,
     requiresPolicy: true,
-    policyRef: 'evolith.gates.discovery',
+    policyRef: 'evolith.phase_gates',
   },
   {
     id: 'check-initiative-artifacts',
@@ -46,7 +46,7 @@ export const DEFAULT_SKILLS: readonly SkillDescriptor[] = [
     requiresApproval: false,
     emitsTrace: true,
     requiresPolicy: true,
-    policyRef: 'evolith.architecture.adr',
+    policyRef: 'evolith.capability_source_interface',
   },
   {
     id: 'run-opa-audit',

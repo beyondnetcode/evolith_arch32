@@ -5745,6 +5745,45 @@
         "node .harness/scripts/ci-runner.mjs fast"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "gapId": "GT-413",
+      "closedAt": "2026-07-03",
+      "closureCommit": "PENDING",
+      "evidence": [
+        "packages/agent-runtime/src/adapters/policy/opa-cli-policy-validation.adapter.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace packages/agent-runtime"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "gapId": "GT-414",
+      "closedAt": "2026-07-03",
+      "closureCommit": "PENDING",
+      "evidence": [
+        "packages/agent-runtime/src/adapters/skills/default-skills.ts",
+        ".harness/manifest.yaml",
+        "packages/agent-runtime/src/__tests__/units.spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace packages/agent-runtime"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "gapId": "GT-415",
+      "closedAt": "2026-07-03",
+      "closureCommit": "PENDING",
+      "evidence": [
+        "packages/agent-runtime/README.md",
+        "packages/agent-runtime/README.es.md"
+      ],
+      "validationCommands": [
+        "npm test --workspace packages/agent-runtime"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

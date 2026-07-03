@@ -109,14 +109,14 @@ capabilities:
     requiresApproval: false
     emitsTrace: true
     requiresPolicy: true
-    policyRef: evolith.gates.discovery
+    policyRef: evolith.phase_gates
 `);
     expect(caps).toHaveLength(1);
     expect(caps[0].name).toBe('sdlc-phase-gate-validator');
     expect(caps[0].type).toBe('validator');
     expect(caps[0].runner).toBe('node');
     expect(caps[0].requiresPolicy).toBe(true);
-    expect(caps[0].policyRef).toBe('evolith.gates.discovery');
+    expect(caps[0].policyRef).toBe('evolith.phase_gates');
   });
 });
 

@@ -50,7 +50,7 @@ capabilities:
     requiresApproval: false
     emitsTrace: true
     requiresPolicy: true
-    policyRef: evolith.gates.discovery
+    policyRef: evolith.phase_gates
 
   - name: adr-architecture-validator
     type: validator
@@ -66,7 +66,7 @@ capabilities:
     requiresApproval: false
     emitsTrace: true
     requiresPolicy: true
-    policyRef: evolith.architecture.adr
+    policyRef: evolith.capability_source_interface
 
   - name: opa-audit
     type: audit

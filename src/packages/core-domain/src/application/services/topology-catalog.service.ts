@@ -6,6 +6,22 @@ export type ProgressiveMaturityLevel = 'F1' | 'F2' | 'F3' | 'cross';
 /** @deprecated Use {@link ProgressiveMaturityLevel}. Kept for backward-compatible re-exports. */
 export type ProgressivePhase = ProgressiveMaturityLevel;
 
+/** One design-artifact block a topology expects in Design (ADR-0104 / GT-427). */
+export interface DesignArtifactDescriptor {
+  artifactKind: string;
+  schemaRef?: string;
+  templateRef?: string;
+  criteria?: string;
+  weight?: number;
+  condition?: string;
+}
+
+/** Design-phase artifact profile declared by a topology manifest (spec.designProfile). */
+export interface TopologyDesignProfile {
+  required?: DesignArtifactDescriptor[];
+  conditional?: DesignArtifactDescriptor[];
+}
+
 export interface TopologyManifest {
   apiVersion: 'evolith.dev/topology/v1';
   kind: 'TopologyManifest';
@@ -15,6 +31,7 @@ export interface TopologyManifest {
     topologyType: string;
     compatibility: { progressiveAxis: { maturityLevel: ProgressiveMaturityLevel; profile: string }; composableWith: string[] };
     artifacts: { adrs: string[]; rulesets: string[]; opaPolicies: string[]; aiRulesets: string[]; umsContracts: string[] };
+    designProfile?: TopologyDesignProfile;
     corpus?: {
       guidance: { profile: string; maturityGuide: string };
       configurationContract: string;

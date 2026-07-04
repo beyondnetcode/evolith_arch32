@@ -26,6 +26,7 @@ import { PhaseGateValidatorService } from '../application/validators/phase-gate-
 import { EvaluateGateUseCase } from '../application/use-cases/evaluate-gate.use-case';
 import { ProposePhaseAdvanceUseCase } from '../application/use-cases/propose-phase-advance.use-case';
 import { TopologyCatalogService } from '../application/services/topology-catalog.service';
+import type { TopologyDesignProfile } from '../application/services/topology-catalog.service';
 
 /** Maps a MUST/SHOULD/COULD severity to a canonical RiskLevel. */
 export function severityToRisk(s: string): 'low' | 'medium' | 'high' | 'critical' {
@@ -244,6 +245,138 @@ export function createDeploymentKindEvaluator(): KindEvaluator {
   };
 }
 
+/**
+ * Universal design blocks (ADR-0104 / DS-10). Always scored regardless of
+ * topology; mirrors the `category: "universal"` entries in
+ * `src/rulesets/schema/design-block-registry.json`.
+ */
+export const UNIVERSAL_DESIGN_BLOCKS: readonly string[] = [
+  'architecture-blueprint',
+  'testing-strategy',
+  'adr-registry',
+  'topology-compliance-matrix',
+  'technical-maturity-evaluation',
+];
+
+/**
+ * design kind (GT-429 / ADR-0104) — the ADVISORY design evaluator. Derives the
+ * expected design-artifact blocks as the UNION of the confirmed topology
+ * composition's `designProfile`s (plus the universal blocks), compares them
+ * against the blocks the consumer declares in `ctx.design`, and measures the
+ * design's TECHNICAL MATURITY (per concern + aggregate). It is NON-BINDING: the
+ * verdict is always PASS; missing blocks and deviations become gaps /
+ * recommendations / non-blocking requiredActions. The tenant's gate decides any
+ * blocking (ADR-0101). SKIP when no `ctx.design` is declared.
+ */
+export function createDesignKindEvaluator(
+  getDesignProfile: (corePath: string, topologyRef: string) => Promise<TopologyDesignProfile | undefined>,
+  resolveCorePath: () => string,
+): KindEvaluator {
+  return {
+    kind: 'design',
+    evaluate: async (ctx, ws) => {
+      const design = ctx.design;
+      if (!design) return { verdict: Verdict.SKIP, results: {} };
+      const corePath = ws.corePath ?? resolveCorePath();
+
+      // Confirmed topology composition (mixed) — fall back to the single topologyRef.
+      const confirmed =
+        design.topologyConfirmedRefs && design.topologyConfirmedRefs.length > 0
+          ? [...design.topologyConfirmedRefs]
+          : ctx.topologyRef
+            ? [ctx.topologyRef]
+            : [];
+      const confirmedSet = new Set(confirmed);
+
+      // Pre-resolve every referenced topology's designProfile once (stateless read).
+      const concernTopos = (design.concerns ?? []).flatMap((c) => c.topologies ?? []);
+      const profileByTopo = new Map<string, TopologyDesignProfile | undefined>();
+      for (const topo of new Set([...confirmed, ...concernTopos])) {
+        profileByTopo.set(topo, await getDesignProfile(corePath, topo));
+      }
+      const requiredOf = (topo: string): string[] =>
+        (profileByTopo.get(topo)?.required ?? []).map((d) => d.artifactKind);
+
+      // Required kinds = universal ∪ union(required over the confirmed composition).
+      const requiredKinds = new Set<string>(UNIVERSAL_DESIGN_BLOCKS);
+      for (const topo of confirmed) for (const k of requiredOf(topo)) requiredKinds.add(k);
+
+      // Declared blocks (blueprint-level + per concern).
+      const declared = new Set<string>();
+      for (const b of design.blocks ?? []) declared.add(b.blockKind);
+      for (const c of design.concerns ?? []) for (const b of c.blocks ?? []) declared.add(b.blockKind);
+
+      const artifactStatus = [...requiredKinds].map((artifactKind) => {
+        const present = declared.has(artifactKind);
+        return { artifactKind, required: true, present, verdict: present ? Verdict.PASS : Verdict.SKIP };
+      });
+      const missingArtifacts = [...requiredKinds].filter((k) => !declared.has(k));
+
+      const presentRequired = [...requiredKinds].filter((k) => declared.has(k)).length;
+      const technicalMaturity = Math.round((100 * presentRequired) / Math.max(1, requiredKinds.size));
+
+      // Per-concern maturity: expected = union of the concern's topologies' required kinds.
+      const perConcernMaturity = (design.concerns ?? []).map((c) => {
+        const expected = new Set<string>();
+        for (const topo of c.topologies ?? []) for (const k of requiredOf(topo)) expected.add(k);
+        const declaredHere = new Set((c.blocks ?? []).map((b) => b.blockKind));
+        const present = [...expected].filter((k) => declaredHere.has(k)).length;
+        const maturity = Math.round((100 * present) / Math.max(1, expected.size));
+        const gaps: Gap[] = [...expected]
+          .filter((k) => !declaredHere.has(k))
+          .map((k) => ({ id: `DESIGN-MISSING-${c.concern}-${k}`, requirementRef: k, severity: 'warning', message: `Concern "${c.concern}" is missing the "${k}" block.` }));
+        return { concern: c.concern, maturity, gaps };
+      });
+
+      // Deviations that recommend an ADR: a concern using a topology outside the confirmed set.
+      const deviationsRequiringAdr: string[] = [];
+      for (const c of design.concerns ?? []) {
+        for (const topo of c.topologies ?? []) {
+          if (!confirmedSet.has(topo)) {
+            deviationsRequiringAdr.push(`Concern "${c.concern}" uses topology "${topo}" outside the confirmed composition — document with an ADR.`);
+          }
+        }
+      }
+
+      const gaps: Gap[] = missingArtifacts.map((k) => ({
+        id: `DESIGN-MISSING-${k}`,
+        requirementRef: k,
+        severity: 'warning',
+        message: `Design is missing the "${k}" block (advisory — feeds the maturity score).`,
+      }));
+      const recommendations = [
+        { id: 'design-maturity', kind: 'process' as const, message: `Design technical maturity: ${technicalMaturity}/100 (${presentRequired}/${requiredKinds.size} expected blocks present).` },
+        ...missingArtifacts.map((k) => ({ id: `add-${k}`, kind: 'next-step' as const, message: `Add a "${k}" block to raise design maturity.` })),
+      ];
+      const requiredActions = deviationsRequiringAdr.map((message, i) => ({
+        id: `design-deviation-${i}`,
+        description: message,
+        blocking: false,
+        remediation: 'Record an ADR justifying the deviation.',
+      }));
+
+      return {
+        verdict: Verdict.PASS, // advisory / non-binding — never fails the overall verdict
+        results: {
+          design: {
+            verdict: Verdict.PASS,
+            technicalMaturity,
+            perConcernMaturity,
+            artifactStatus,
+            missingArtifacts,
+            deviationsRequiringAdr,
+            gaps,
+            recommendations,
+          },
+        },
+        gaps,
+        recommendations,
+        requiredActions,
+      };
+    },
+  };
+}
+
 /** Dependencies for the fully-wired default evaluator set. */
 export interface DefaultKindEvaluatorDeps {
   readonly fileSystem: IFileSystem;
@@ -277,11 +410,15 @@ export function createDefaultKindEvaluators(deps: DefaultKindEvaluatorDeps): Kin
     return false;
   };
 
+  const getDesignProfile = async (corePath: string, topologyRef: string) =>
+    (await topologyCatalog.get(corePath, topologyRef))?.spec.designProfile;
+
   return [
     createArchitectureKindEvaluator(driftService),
     createCheckpointKindEvaluator(proposeAdvance),
     createTopologyKindEvaluator(topologyCatalog, resolveCorePath),
     createBlueprintKindEvaluator(blueprintExists, resolveCorePath),
     createDeploymentKindEvaluator(),
+    createDesignKindEvaluator(getDesignProfile, resolveCorePath),
   ];
 }

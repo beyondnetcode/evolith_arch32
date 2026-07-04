@@ -118,12 +118,22 @@ export interface CheckpointContext {
  * own blocks/refs. `concern` is an open string under Convention over
  * Configuration — new concerns are added by convention, not enumerated here.
  */
+/** A composed design block declared for evaluation (mirrors blueprint.schema.json blockList). */
+export interface DesignBlockRef {
+  readonly blockKind: string;
+  readonly ref?: string;
+  readonly scope?: 'core' | 'tenant';
+  readonly status?: string;
+}
+
 export interface DesignConcernContext {
   readonly concern: string;
-  readonly topologyRefs?: readonly string[];
+  readonly topologies?: readonly string[];
+  readonly runtime?: string;
+  readonly architecture?: string;
   readonly blueprintRef?: string;
-  /** Composed block/artifact refs for this concern. */
-  readonly blockRefs?: readonly string[];
+  /** Blocks composed for this concern. */
+  readonly blocks?: readonly DesignBlockRef[];
 }
 
 /**
@@ -138,6 +148,8 @@ export interface DesignContext {
   readonly topologyConfirmedRefs?: readonly string[];
   /** The composed blueprint under evaluation (the development guide). */
   readonly blueprintRef?: string;
+  /** Blueprint-level blocks not scoped to one concern (e.g. universal blocks). */
+  readonly blocks?: readonly DesignBlockRef[];
   /** Per-concern composition (frontend/backend/services/mobile/data/…). */
   readonly concerns?: readonly DesignConcernContext[];
   /** Declared design-artifact block refs (plans, matrices, etc.). */

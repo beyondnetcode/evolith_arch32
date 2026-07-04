@@ -4,6 +4,7 @@ import {
   createTopologyKindEvaluator,
   createBlueprintKindEvaluator,
   createDeploymentKindEvaluator,
+  createDesignKindEvaluator,
   nextPhase,
   severityToRisk,
 } from './kind-evaluators';
@@ -139,6 +140,51 @@ describe('kind-evaluators (GT-379)', () => {
     it('flags an adverse declared deployment status as a risk', async () => {
       const r = await createDeploymentKindEvaluator().evaluate({ ...ctx, deployment: { environment: 'prod', releaseRef: 'v1', status: 'rolled-back' } }, ws);
       expect(r.risks?.[0]).toMatchObject({ id: 'DEPLOY-STATUS-ADVERSE', level: 'high' });
+    });
+  });
+
+  describe('design (GT-429 / ADR-0104)', () => {
+    it('SKIPs when no design context is declared', async () => {
+      const gp = jest.fn();
+      const r = await createDesignKindEvaluator(gp, () => '/core').evaluate({ ...ctx, design: undefined }, ws);
+      expect(r.verdict).toBe(Verdict.SKIP);
+      expect(gp).not.toHaveBeenCalled();
+    });
+
+    it('measures maturity as present/expected over the confirmed composition (advisory PASS)', async () => {
+      const gp = jest.fn(async (_c: string, ref: string) =>
+        ref === 'serverless' ? { required: [{ artifactKind: 'performance-plan' }, { artifactKind: 'infrastructure-plan' }] } : undefined,
+      );
+      const design = {
+        topologyConfirmedRefs: ['serverless'],
+        blocks: [
+          { blockKind: 'architecture-blueprint' },
+          { blockKind: 'testing-strategy' },
+          { blockKind: 'adr-registry' },
+          { blockKind: 'topology-compliance-matrix' },
+          { blockKind: 'technical-maturity-evaluation' },
+          { blockKind: 'performance-plan' },
+        ],
+      };
+      const r = await createDesignKindEvaluator(gp, () => '/core').evaluate({ ...ctx, design }, ws);
+      // advisory: never fails the overall verdict
+      expect(r.verdict).toBe(Verdict.PASS);
+      // required = 5 universal + performance-plan + infrastructure-plan = 7; present = 6 → 86
+      expect(r.results.design?.technicalMaturity).toBe(86);
+      expect(r.results.design?.missingArtifacts).toEqual(['infrastructure-plan']);
+      expect(r.gaps?.every((g) => g.severity === 'warning')).toBe(true);
+    });
+
+    it('records a non-blocking deviation → ADR when a concern uses an off-composition topology', async () => {
+      const gp = jest.fn(async () => ({ required: [] }));
+      const design = {
+        topologyConfirmedRefs: ['serverless'],
+        concerns: [{ concern: 'legacy', topologies: ['microservices'], blocks: [] }],
+      };
+      const r = await createDesignKindEvaluator(gp, () => '/core').evaluate({ ...ctx, design }, ws);
+      expect(r.results.design?.deviationsRequiringAdr).toHaveLength(1);
+      expect(r.requiredActions?.[0]).toMatchObject({ blocking: false });
+      expect(r.results.design?.perConcernMaturity[0]).toMatchObject({ concern: 'legacy' });
     });
   });
 });

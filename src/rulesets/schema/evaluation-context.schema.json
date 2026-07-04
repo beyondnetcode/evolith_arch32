@@ -146,6 +146,7 @@
         "topologyRecommendedRefs": { "type": "array", "items": { "type": "string" } },
         "topologyConfirmedRefs": { "type": "array", "items": { "type": "string" } },
         "blueprintRef": { "type": "string" },
+        "blocks": { "type": "array", "items": { "$ref": "#/definitions/designBlockRef" } },
         "concerns": {
           "type": "array",
           "items": {
@@ -153,9 +154,11 @@
             "required": ["concern"],
             "properties": {
               "concern": { "type": "string" },
-              "topologyRefs": { "type": "array", "items": { "type": "string" } },
+              "topologies": { "type": "array", "items": { "type": "string" } },
+              "runtime": { "type": "string" },
+              "architecture": { "type": "string" },
               "blueprintRef": { "type": "string" },
-              "blockRefs": { "type": "array", "items": { "type": "string" } }
+              "blocks": { "type": "array", "items": { "$ref": "#/definitions/designBlockRef" } }
             }
           }
         },
@@ -185,6 +188,16 @@
     "schemaVersion": { "type": "string" }
   },
   "definitions": {
+    "designBlockRef": {
+      "type": "object",
+      "required": ["blockKind"],
+      "properties": {
+        "blockKind": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "ref": { "type": "string" },
+        "scope": { "type": "string", "enum": ["core", "tenant"] },
+        "status": { "type": "string" }
+      }
+    },
     "externalReference": {
       "type": "object",
       "required": ["system", "kind", "externalId"],

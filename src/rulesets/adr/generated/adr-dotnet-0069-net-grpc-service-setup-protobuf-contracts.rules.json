@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/dotnet/0069-dotnet-grpc-service-setup-protobuf-contracts.md"
+    "reference/core/architecture/adrs/dotnet/0069-dotnet-grpc-service-setup-protobuf-contracts.md"
   ],
   "effectiveDate": "2026-06-06"
 }

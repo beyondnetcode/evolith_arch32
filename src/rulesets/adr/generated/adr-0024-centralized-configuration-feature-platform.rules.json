@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0024-configuration-feature-management-platform.md"
+    "reference/core/architecture/adrs/core/0024-configuration-feature-management-platform.md"
   ],
   "effectiveDate": "2026-05-09"
 }

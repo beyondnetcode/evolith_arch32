@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md"
+    "reference/core/architecture/adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md"
   ],
   "effectiveDate": "2026-05-09"
 }

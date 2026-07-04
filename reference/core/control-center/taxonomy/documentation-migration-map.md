@@ -48,7 +48,7 @@ Platform Guidance
 
 | Legacy Document | Classification | Canonical Target | Current Status |
 |---|---|---|---|
-| `reference/governance/standards/vision/evolith-product-vision-master.md` | Product Suite Vision | `product/suite/vision/evolith-product-vision-master.md` | Indexed |
+| `reference/core/control-center/evolith-product-vision-master.md` | Product Suite Vision | `product/suite/vision/evolith-product-vision-master.md` | Indexed |
 | `.../evolith-product-vision-master.es.md` | Product Suite Vision | `product/suite/vision/evolith-product-vision-master.es.md` | Indexed |
 | `.../evolith-strategic-validation-and-composition-framework.md` | Product Suite Strategy | `product/suite/strategy/strategic-validation-and-composition-framework.md` | Indexed |
 | `.../evolith-strategic-positioning-comparative-landscape.md` | Product Suite Positioning | `product/suite/positioning/strategic-comparative-landscape.md` | Indexed |

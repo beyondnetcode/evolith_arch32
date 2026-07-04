@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/dotnet/0070-enterprise-minimal-apis-adoption.md"
+    "reference/core/architecture/adrs/dotnet/0070-enterprise-minimal-apis-adoption.md"
   ],
   "effectiveDate": "2026-05-13"
 }

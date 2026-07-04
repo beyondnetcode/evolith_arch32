@@ -135,7 +135,7 @@
     "phase-3": {
       "description": "Architecture - ADRs and Bounded Contexts defined",
       "gateChecks": ["ADR exists", "ADR matrix updated", "Bounded context map defined"],
-      "artifacts": ["reference/architecture/adrs/", "bounded-context-map.json"],
+      "artifacts": ["reference/core/architecture/adrs/", "bounded-context-map.json"],
 
       "toolGroups": {
         "contextMapping": {

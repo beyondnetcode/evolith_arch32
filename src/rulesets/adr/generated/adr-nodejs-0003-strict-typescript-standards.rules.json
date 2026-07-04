@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0003-strict-typescript-standards.md"
+    "reference/core/architecture/adrs/nodejs/0003-strict-typescript-standards.md"
   ],
   "effectiveDate": "2026-05-08"
 }

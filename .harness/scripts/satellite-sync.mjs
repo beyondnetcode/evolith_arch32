@@ -50,7 +50,7 @@ if (fs.existsSync(configPath)) {
 function getCorporateArtifacts() {
   const artifacts = [];
 
-  const adrsDir = path.join(root, "reference/architecture/adrs");
+  const adrsDir = path.join(root, "reference/core/architecture/adrs");
   for (const runtime of fs.readdirSync(adrsDir)) {
     const runtimePath = path.join(adrsDir, runtime);
     if (!fs.statSync(runtimePath).isDirectory()) continue;
@@ -60,13 +60,13 @@ function getCorporateArtifacts() {
       artifacts.push({
         type: "adr",
         runtime,
-        file: `reference/architecture/adrs/${runtime}/${file}`,
+        file: `reference/core/architecture/adrs/${runtime}/${file}`,
         number: file.match(/^(\d+)-/)?.[1] || "0000"
       });
     }
   }
 
-  const standardsDir = path.join(root, "reference/governance/standards");
+  const standardsDir = path.join(root, "reference/core/sdlc/standards");
   if (fs.existsSync(standardsDir)) {
     function walkStandards(dir) {
       for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -87,7 +87,7 @@ function getCorporateArtifacts() {
     walkStandards(standardsDir);
   }
 
-  const patternsDir = path.join(root, "reference/architecture/canonical-patterns");
+  const patternsDir = path.join(root, "reference/core/architecture/canonical-patterns");
   if (fs.existsSync(patternsDir)) {
     for (const runtime of fs.readdirSync(patternsDir)) {
       const runtimePath = path.join(patternsDir, runtime);
@@ -97,7 +97,7 @@ function getCorporateArtifacts() {
         artifacts.push({
           type: "pattern",
           runtime,
-          file: `reference/architecture/canonical-patterns/${runtime}/${file}`
+          file: `reference/core/architecture/canonical-patterns/${runtime}/${file}`
         });
       }
     }

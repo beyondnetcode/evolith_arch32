@@ -7,7 +7,7 @@
 
 ## Canonical Backlog (Source of Truth)
 
-**Location:** `reference/governance/standards/vision/backlog-post-gt93.md`
+**Location:** `reference/core/control-center/backlog-post-gt93.md`
 
 ### Items That SHOULD Exist (24 total)
 

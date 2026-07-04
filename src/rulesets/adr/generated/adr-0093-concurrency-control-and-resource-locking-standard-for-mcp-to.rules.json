@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0093-mcp-concurrency-locking.md"
+    "reference/core/architecture/adrs/core/0093-mcp-concurrency-locking.md"
   ],
   "effectiveDate": "2026-06-20"
 }

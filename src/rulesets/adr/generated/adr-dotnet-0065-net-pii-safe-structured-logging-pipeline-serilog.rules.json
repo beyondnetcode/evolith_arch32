@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.md"
+    "reference/core/architecture/adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.md"
   ],
   "effectiveDate": "2026-05-24"
 }

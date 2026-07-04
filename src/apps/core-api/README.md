@@ -922,7 +922,7 @@ Si `CORE_PATH` no apunta al repositorio Evolith Core válido, los endpoints de r
 ```bash
 # Verificar que la ruta contiene los archivos esperados
 ls $CORE_PATH/rulesets/
-ls $CORE_PATH/reference/architecture/
+ls $CORE_PATH/reference/core/architecture/
 ```
 
 ### CORS bloqueando en producción

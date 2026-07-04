@@ -100,7 +100,7 @@ function findAdr(number) {
   const num = number.padStart(4, "0");
 
   const searchDirs = [
-    path.join(root, "reference/architecture/adrs")
+    path.join(root, "reference/core/architecture/adrs")
   ];
 
   for (const dir of searchDirs) {
@@ -152,7 +152,7 @@ if (command === "status") {
     console.log("\n=== ADR Lifecycle Status Report ===\n");
 
     const allAdrs = [];
-    const adrsDir = path.join(root, "reference/architecture/adrs");
+    const adrsDir = path.join(root, "reference/core/architecture/adrs");
 
     for (const runtime of fs.readdirSync(adrsDir)) {
       const runtimePath = path.join(adrsDir, runtime);
@@ -188,7 +188,7 @@ if (command === "status") {
 
 if (command === "--check-only") {
   console.log("\n=== ADR Structure Validation (--check-only) ===\n");
-  const adrsDir = path.join(root, "reference/architecture/adrs");
+  const adrsDir = path.join(root, "reference/core/architecture/adrs");
   let errors = 0;
   let checked = 0;
 

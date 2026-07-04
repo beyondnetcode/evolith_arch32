@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0046-unified-observability-tracecontext.md"
+    "reference/core/architecture/adrs/core/0046-unified-observability-tracecontext.md"
   ],
   "effectiveDate": "2026-05-12"
 }

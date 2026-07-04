@@ -23,6 +23,6 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0055-microfrontends-architecture-strategy.md"
+    "reference/core/architecture/adrs/core/0055-microfrontends-architecture-strategy.md"
   ]
 }

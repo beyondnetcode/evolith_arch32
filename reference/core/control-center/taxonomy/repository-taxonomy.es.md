@@ -53,7 +53,7 @@ El repositorio contiene artefactos arquitectonicos, no una aplicacion local de p
 
 1. `README.es.md` explica la vision y enruta las intenciones comunes.
 2. `reference/getting-started/README.es.md` ofrece rutas cortas por rol; `MASTER_INDEX.es.md` es el mapa de navegacion completo.
-3. `reference/architecture/README.es.md` ordena la lectura de baseline, ADR, patrones canonicos y evidencia UMS.
+3. `reference/core/architecture/README.es.md` ordena la lectura de baseline, ADR, patrones canonicos y evidencia UMS.
 4. `reference/core/sdlc/glossary/glossary.es.md` controla la terminologia, incluyendo referencia de arquitectura progresiva, Evolith, BMAD-METHOD, modelo aplicado UMS, ADR y patron canonico.
 5. `reference/core/architecture/adrs/adr-matrix.es.md` relaciona necesidades con decisiones controladoras.
 6. Los documentos profundos enlazan a un hub propietario o al indice maestro.
@@ -63,7 +63,7 @@ El repositorio contiene artefactos arquitectonicos, no una aplicacion local de p
 | Capa | Proposito | Ubicaciones canonicas | Autoridad |
 |---|---|---|---|
 | Orientacion | Ayudar al lector a navegar el corpus | `README.es.md`, `MASTER_INDEX.es.md`, `reference/getting-started/` | Navegacional |
-| Referencia canonica | Definir politica reutilizable, criterios de decision y trade-offs aceptados | `reference/core/architecture/blueprints/`, `reference/core/architecture/adrs/`, `reference/governance/` | Normativa o decisoria segun estado del documento |
+| Referencia canonica | Definir politica reutilizable, criterios de decision y trade-offs aceptados | `reference/core/architecture/blueprints/`, `reference/core/architecture/adrs/`, `reference/core/sdlc/` | Normativa o decisoria segun estado del documento |
 | Corpus de referencia topologica | Definir perfiles topologicos legibles por humanos, dimensiones, vinculos ADR, restricciones operativas y guia de adopcion para familias topologicas | `reference/core/architecture/topologies/` | Normativa cuando esta respaldada por un ADR o estandar aceptado; draft hasta su ratificacion |
 | Rulesets ejecutables | Codificar politica arquitectonica como reglas legibles por maquina gobernadas por Native y OPA | `rulesets/`, `rulesets/topologies/` | Gobernanza ejecutable |
 | Guia de implementacion por runtime | Materializar decisiones aceptadas para un runtime declarado | `reference/core/architecture/patterns/`, blueprints y ADRs especificos | Reutilizable solo dentro del alcance declarado de runtime y ADR |

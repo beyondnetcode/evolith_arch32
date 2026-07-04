@@ -4,7 +4,7 @@ import { execFileSync } from 'child_process';
 import { fileURLToPath, pathToFileURL } from 'url';
 
 const ROOT = path.resolve(process.env.EVOLITH_MATURITY_ROOT || '.');
-const VISION_DIR = path.join(ROOT, 'reference/governance/standards/vision');
+const VISION_DIR = path.join(ROOT, 'reference/core/sdlc/standards/vision');
 const BOARD = path.join(VISION_DIR, 'gap-tracking.md');
 const REGISTRY = path.join(VISION_DIR, 'gap-closure-evidence.json');
 const CLI_PACKAGE = path.join(ROOT, 'sdk/cli/package.json');
@@ -128,7 +128,7 @@ export function buildSnapshot(root = ROOT) {
     evidence: {
       closureRecords: closures.length,
       cliPackage: `${cliPackage.name}@${cliPackage.version}`,
-      adrCount: countFiles(path.join(root, 'reference/architecture/adrs'), /^\d{4}-.*\.md$/, /\.es\.md$/),
+      adrCount: countFiles(path.join(root, 'reference/core/architecture/adrs'), /^\d{4}-.*\.md$/, /\.es\.md$/),
       rulesetCount: countFiles(path.join(root, 'rulesets'), /\.rules\.json$/),
       schemaCount: countFiles(path.join(root, 'src/rulesets/schema'), /\.schema\.json$/),
     },

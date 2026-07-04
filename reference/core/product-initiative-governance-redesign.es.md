@@ -1154,7 +1154,7 @@ Impacto sobre `ValidateBlueprintUseCase`: el caso de uso actual (`validate-bluep
 | `reference/core/README.md:31-32` | Lista de definiciones del Core no nombra Producto/Iniciativa como unidades de gobierno; usa "artifact, evidence, traceability" en abstracto. | Añadir Producto e Iniciativa como unidades primarias de gobierno. | "- las unidades de gobierno **Producto** e **Iniciativa**, y los estandares de artefacto, evidencia, trazabilidad y responsabilidad que cuelgan de ellas;" |
 | `reference/core/sdlc/sdlc-evolith-artifact-mapping.md:344` | DoD baseline referencia "every iteration, **sprint**, and phase transition" — vocabulario Scrum en artefacto cross-cutting. | Quitar "sprint" del corpus normativo del Core. | "Applies to every iteration and phase transition." (sin "sprint"). |
 
-> **Documentos ya alineados (no requieren cambio):** `reference/core/sdlc/traceability-model.md` ya usa el modelo correcto: "External or Native Work Item" (`:49`), "Work Reference → Connected work-management provider" (`:98`), regla de abstraccion de proveedor (`:129-140`) y anti-patron "Vendor IDs used as canonical identities" (`:217`). `reference/governance/README.md` es un hub de navegacion sin dependencias Scrum. `product/suite/vision/evolith-product-vision-master.md:186` ya declara "generic backlog and task-board mechanics" como capacidad a **componer**, no construir — usar como ancla de autoridad para los cambios anteriores.
+> **Documentos ya alineados (no requieren cambio):** `reference/core/sdlc/traceability-model.md` ya usa el modelo correcto: "External or Native Work Item" (`:49`), "Work Reference → Connected work-management provider" (`:98`), regla de abstraccion de proveedor (`:129-140`) y anti-patron "Vendor IDs used as canonical identities" (`:217`). `reference/core/sdlc/README.md` es un hub de navegacion sin dependencias Scrum. `product/suite/vision/evolith-product-vision-master.md:186` ya declara "generic backlog and task-board mechanics" como capacidad a **componer**, no construir — usar como ancla de autoridad para los cambios anteriores.
 
 ---
 
@@ -1162,7 +1162,7 @@ Impacto sobre `ValidateBlueprintUseCase`: el caso de uso actual (`validate-bluep
 
 **Ubicacion recomendada:** `reference/core/product-initiative-governance-model.md` (+ par bilingue `.es.md`).
 
-**Justificacion de la ubicacion (en `reference/core/`, no en `reference/governance/`):**
+**Justificacion de la ubicacion (en `reference/core/`, no en `reference/core/sdlc/`):**
 
 | Criterio | Razon | Ancla |
 |---|---|---|
@@ -1206,7 +1206,7 @@ Impacto sobre `ValidateBlueprintUseCase`: el caso de uso actual (`validate-bluep
 
 **Preservacion bilingue y vision Evolith:**
 
-- Crear el par `.md` + `.es.md` y registrarlo en `reference/governance/BILINGUAL_INDEX.md` (referenciado desde `reference/governance/README.md:28`), cumpliendo la Invariante 8 del Core ("Core documentation is bilingual when required", `reference/core/README.md:123`).
+- Crear el par `.md` + `.es.md` y registrarlo en `reference/core/sdlc/BILINGUAL_INDEX.md` (referenciado desde `reference/core/sdlc/README.md:28`), cumpliendo la Invariante 8 del Core ("Core documentation is bilingual when required", `reference/core/README.md:123`).
 - Toda modificacion sobre `sdlc-evolith-artifact-mapping.md`, `governance/sdlc/README.md` y `core/README.md` debe replicarse en su espejo `.es.md` ya existente (`sdlc-evolith-artifact-mapping.es.md`, `README.es.md`).
 - Tambien deben reetiquetarse a "plantilla de referencia externa" las seis plantillas operativas bilingues confirmadas en `reference/core/sdlc/04-artifact-templates/`: `evolith-user-story-template.md`/`.es.md`, `agile-backlog-template.md`/`.es.md`, `functional-story-template.md`/`.es.md`, `technical-story-template.md`/`.es.md`, `story-seed-bank-template.md`/`.es.md`, `epic-candidate-matrix-template.md`/`.es.md`.
 - La vision se preserva intacta: el cambio refuerza —no contradice— `evolith-product-vision-master.md:186` ("generic backlog and task-board mechanics" se componen, no se construyen) y `:175` ("Build the irreducible governance kernel. Compose mature commodity capabilities behind replaceable ports").
@@ -1220,7 +1220,7 @@ Impacto sobre `ValidateBlueprintUseCase`: el caso de uso actual (`validate-bluep
 - A modificar: `/Users/beyondnet/Source/evolith/reference/core/README.md` (+ `.es.md`)
 - A crear: `/Users/beyondnet/Source/evolith/reference/core/product-initiative-governance-model.md` (+ `.es.md`)
 - A reetiquetar (plantillas operativas): `/Users/beyondnet/Source/evolith/reference/core/sdlc/04-artifact-templates/{evolith-user-story,agile-backlog,functional-story,technical-story,story-seed-bank,epic-candidate-matrix}-template.md` (+ `.es.md`)
-- Sin cambios (ya alineados): `/Users/beyondnet/Source/evolith/reference/core/sdlc/traceability-model.md`, `/Users/beyondnet/Source/evolith/reference/governance/README.md`
+- Sin cambios (ya alineados): `/Users/beyondnet/Source/evolith/reference/core/sdlc/traceability-model.md`, `/Users/beyondnet/Source/evolith/reference/core/sdlc/README.md`
 
 ---
 
@@ -1777,7 +1777,7 @@ Fases incrementales con compatibilidad hacia atrás obligatoria. Cada fase exige
 **Archivos clave leídos/verificados (rutas absolutas):**
 - `/Users/beyondnet/Source/evolith/reference/core/control-center/opportunities/UP-001-canonical-gap-tracking-standard.md` (patrón de cambio gobernado: ADR+schemas+contratos+OPA+CLI/MCP/API, grandfathering, migración)
 - `/Users/beyondnet/Source/evolith/product/suite/strategy/evolutionary-strategy-roadmap.md` (RTD `:121`, fases evolutivas, triggers diferidos)
-- `/Users/beyondnet/Source/evolith/reference/governance/DECISIONS.md` (UP-001 `PROPOSED`, `:13`)
+- `/Users/beyondnet/Source/evolith/reference/core/sdlc/DECISIONS.md` (UP-001 `PROPOSED`, `:13`)
 - `/Users/beyondnet/Source/evolith/reference/core/control-center/gaps/gap-tracking.md` (formato del board, `GT-374` máximo, P0–P3/XS–XL, footer Waves/Progress) y `maturity-assessment.md` (superficies de seguimiento únicas)
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/satellite-record.ts:13` (`phase: string` único), `gate-evidence.ts:87-90` (`initiative?` opaco), `application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts:55` (precedente `skipped` para datos de runtime)
 
@@ -1785,7 +1785,7 @@ Fases incrementales con compatibilidad hacia atrás obligatoria. Cada fase exige
 
 ## Riesgos y mitigaciones (ítem de análisis 13)
 
-Los riesgos se anclan en evidencia real del repositorio. El precedente operativo es **UP-001** (`reference/core/control-center/opportunities/UP-001-canonical-gap-tracking-standard.md`), que ya demuestra el patrón de cambio gobernado del Core (ADR + schemas + satellite-contracts + OPA + CLI/MCP/API con paridad BR-008, grandfathering y migración). Toda mitigación reutiliza ese patrón. Las únicas superficies de seguimiento son `gap-tracking.md` y `maturity-assessment.md` (`reference/governance/standards/vision/`); ninguna señal de alerta debe inventar una superficie nueva.
+Los riesgos se anclan en evidencia real del repositorio. El precedente operativo es **UP-001** (`reference/core/control-center/opportunities/UP-001-canonical-gap-tracking-standard.md`), que ya demuestra el patrón de cambio gobernado del Core (ADR + schemas + satellite-contracts + OPA + CLI/MCP/API con paridad BR-008, grandfathering y migración). Toda mitigación reutiliza ese patrón. Las únicas superficies de seguimiento son `gap-tracking.md` y `maturity-assessment.md` (`reference/core/control-center/`); ninguna señal de alerta debe inventar una superficie nueva.
 
 | Riesgo | Probabilidad | Impacto | Mitigación | Señal de alerta |
 |---|---|---|---|---|

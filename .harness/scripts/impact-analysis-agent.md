@@ -25,7 +25,7 @@ node .harness/scripts/ci/06-impact-analysis-synchronizer.mjs [options]
 |---|---|---|
 | **ADR** | `/adrs/*/ADR-*.md` | adrs, rulesets, documentation, navigation |
 | **DOCS** | `/reference/**/*.md` | documentation, navigation, bilingual |
-| **RULES** | `/reference/governance/standards/*.md`, `/rulesets/*.rules.json` | rulesets, harness, documentation |
+| **RULES** | `/reference/core/sdlc/standards/*.md`, `/rulesets/*.rules.json` | rulesets, harness, documentation |
 | **ARCH** | `/reference/core/architecture/blueprints/*.md` | adrs, rulesets, documentation |
 | **HARNESS** | `/.harness/**/*.{mjs,md,json}`, `/.husky/*` | harness, rulesets, validators |
 | **SCHEMA** | `/rulesets/schema/*.json`, `/.harness/schemas/*.json` | rulesets, validators, harness |

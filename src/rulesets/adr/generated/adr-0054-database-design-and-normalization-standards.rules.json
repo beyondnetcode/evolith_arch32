@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0054-database-design-normalization-standards.md"
+    "reference/core/architecture/adrs/core/0054-database-design-normalization-standards.md"
   ],
   "effectiveDate": "2026-05-14"
 }

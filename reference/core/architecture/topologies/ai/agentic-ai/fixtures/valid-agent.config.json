@@ -35,7 +35,7 @@
       "maxInFlight": 4,
       "perToolMaxInFlight": 2
     },
-    "runbooksPath": "reference/architecture/topologies/ai/agentic-ai/runbooks.md"
+    "runbooksPath": "reference/core/architecture/topologies/ai/agentic-ai/runbooks.md"
   },
   "credentialLifecycle": {
     "delegationMaxTtlSeconds": 900,

@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0044-frontend-clean-architecture-layer-boundaries.md"
+    "reference/core/architecture/adrs/nodejs/0044-frontend-clean-architecture-layer-boundaries.md"
   ],
   "effectiveDate": "2026-06-07"
 }

@@ -130,8 +130,8 @@ Cada herramienta de IA/IDE obtiene su propia carpeta con punto en la raiz:
 ### 4.2 Documentación de Referencia
 
 Todo material de referencia vive en `reference/`:
-- `reference/architecture/` — ADRs, patrones, topologías
-- `reference/governance/` — Politicas, estandares, SDLC
+- `reference/core/architecture/` — ADRs, patrones, topologías
+- `reference/core/sdlc/` — Politicas, estandares, SDLC
 - `product/research/` — Evidencia, investigación, demos
 - `product/operations/` — Guías operativas
 - `product/infra/` — Configuración de plataforma

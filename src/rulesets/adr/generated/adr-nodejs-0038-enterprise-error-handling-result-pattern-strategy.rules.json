@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0038-error-handling-result-pattern-strategy.md"
+    "reference/core/architecture/adrs/nodejs/0038-error-handling-result-pattern-strategy.md"
   ],
   "effectiveDate": "2026-05-11"
 }

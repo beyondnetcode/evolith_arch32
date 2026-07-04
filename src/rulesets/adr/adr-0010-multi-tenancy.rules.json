@@ -115,8 +115,8 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md",
-    "reference/architecture/adrs/dotnet/0060-dotnet-multi-tenancy-dual-layer-strategy.md"
+    "reference/core/architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md",
+    "reference/core/architecture/adrs/dotnet/0060-dotnet-multi-tenancy-dual-layer-strategy.md"
   ],
   "exitCriteria": {
     "description": "All tenant-scoped queries include tenant_id filter. Database RLS enforced. Tenant context propagated through all layers.",

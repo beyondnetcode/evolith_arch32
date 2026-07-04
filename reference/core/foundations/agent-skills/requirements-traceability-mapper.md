@@ -11,7 +11,7 @@ Maps epics, stories, and requirements to ADRs, governance rulesets, and test art
 | ID | `requirements-traceability-mapper` |
 | Owner | `@analyst` |
 | Version | `1.0.0` |
-| Inputs | Epic/story files, ADR index (`reference/core/architecture/adrs/`), governance rulesets (`reference/governance/standards/`) |
+| Inputs | Epic/story files, ADR index (`reference/core/architecture/adrs/`), governance rulesets (`reference/core/sdlc/standards/`) |
 | Outputs | Traceability matrix (JSON) |
 
 ## Algorithm

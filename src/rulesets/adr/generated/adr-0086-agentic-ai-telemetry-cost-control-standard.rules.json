@@ -22,6 +22,6 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.md"
+    "reference/core/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.md"
   ]
 }

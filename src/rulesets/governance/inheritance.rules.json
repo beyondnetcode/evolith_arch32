@@ -109,7 +109,7 @@
   },
   "reference": {
     "evolithYamlSchema": "../schema/evolith-yaml.schema.json",
-    "childRepoGuide": "reference/governance/standards/onboarding/child-repository-inheritance-guide.md",
-    "repositoryTaxonomy": "reference/governance/standards/repository-taxonomy.md"
+    "childRepoGuide": "reference/core/sdlc/standards/onboarding/child-repository-inheritance-guide.md",
+    "repositoryTaxonomy": "reference/core/control-center/taxonomy/repository-taxonomy.md"
   }
 }

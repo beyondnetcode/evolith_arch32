@@ -1154,7 +1154,7 @@ Impact on `ValidateBlueprintUseCase`: the current use case (`validate-blueprint.
 | `reference/core/README.md:31-32` | The Core's list of definitions does not name Producto/Iniciativa as governance units; it uses "artifact, evidence, traceability" in the abstract. | Add Producto and Iniciativa as primary governance units. | "- the governance units **Producto** and **Iniciativa**, and the artifact, evidence, traceability, and accountability standards that hang off them;" |
 | `reference/core/sdlc/sdlc-evolith-artifact-mapping.md:344` | The DoD baseline references "every iteration, **sprint**, and phase transition" — Scrum vocabulary in a cross-cutting artifact. | Remove "sprint" from the Core's normative corpus. | "Applies to every iteration and phase transition." (without "sprint"). |
 
-> **Documents already aligned (no change required):** `reference/core/sdlc/traceability-model.md` already uses the correct model: "External or Native Work Item" (`:49`), "Work Reference → Connected work-management provider" (`:98`), the provider-abstraction rule (`:129-140`), and the "Vendor IDs used as canonical identities" anti-pattern (`:217`). `reference/governance/README.md` is a navigation hub with no Scrum dependencies. `product/suite/vision/evolith-product-vision-master.md:186` already declares "generic backlog and task-board mechanics" as a capability to **compose**, not build — use it as the authority anchor for the changes above.
+> **Documents already aligned (no change required):** `reference/core/sdlc/traceability-model.md` already uses the correct model: "External or Native Work Item" (`:49`), "Work Reference → Connected work-management provider" (`:98`), the provider-abstraction rule (`:129-140`), and the "Vendor IDs used as canonical identities" anti-pattern (`:217`). `reference/core/sdlc/README.md` is a navigation hub with no Scrum dependencies. `product/suite/vision/evolith-product-vision-master.md:186` already declares "generic backlog and task-board mechanics" as a capability to **compose**, not build — use it as the authority anchor for the changes above.
 
 ---
 
@@ -1162,7 +1162,7 @@ Impact on `ValidateBlueprintUseCase`: the current use case (`validate-blueprint.
 
 **Recommended location:** `reference/core/product-initiative-governance-model.md` (+ bilingual `.es.md` pair).
 
-**Location rationale (in `reference/core/`, not in `reference/governance/`):**
+**Location rationale (in `reference/core/`, not in `reference/core/sdlc/`):**
 
 | Criterion | Reason | Anchor |
 |---|---|---|
@@ -1206,7 +1206,7 @@ Impact on `ValidateBlueprintUseCase`: the current use case (`validate-blueprint.
 
 **Bilingual preservation and Evolith vision:**
 
-- Create the `.md` + `.es.md` pair and register it in `reference/governance/BILINGUAL_INDEX.md` (referenced from `reference/governance/README.md:28`), satisfying Core Invariant 8 ("Core documentation is bilingual when required", `reference/core/README.md:123`).
+- Create the `.md` + `.es.md` pair and register it in `reference/core/sdlc/BILINGUAL_INDEX.md` (referenced from `reference/core/sdlc/README.md:28`), satisfying Core Invariant 8 ("Core documentation is bilingual when required", `reference/core/README.md:123`).
 - Every modification to `sdlc-evolith-artifact-mapping.md`, `governance/sdlc/README.md`, and `core/README.md` must be replicated in its existing `.es.md` mirror (`sdlc-evolith-artifact-mapping.es.md`, `README.es.md`).
 - The six operational bilingual templates confirmed in `reference/core/sdlc/04-artifact-templates/` must also be relabeled as "external reference templates": `evolith-user-story-template.md`/`.es.md`, `agile-backlog-template.md`/`.es.md`, `functional-story-template.md`/`.es.md`, `technical-story-template.md`/`.es.md`, `story-seed-bank-template.md`/`.es.md`, `epic-candidate-matrix-template.md`/`.es.md`.
 - The vision is preserved intact: the change reinforces — does not contradict — `evolith-product-vision-master.md:186` ("generic backlog and task-board mechanics" are composed, not built) and `:175` ("Build the irreducible governance kernel. Compose mature commodity capabilities behind replaceable ports").
@@ -1220,7 +1220,7 @@ Impact on `ValidateBlueprintUseCase`: the current use case (`validate-blueprint.
 - To modify: `/Users/beyondnet/Source/evolith/reference/core/README.md` (+ `.es.md`)
 - To create: `/Users/beyondnet/Source/evolith/reference/core/product-initiative-governance-model.md` (+ `.es.md`)
 - To relabel (operational templates): `/Users/beyondnet/Source/evolith/reference/core/sdlc/04-artifact-templates/{evolith-user-story,agile-backlog,functional-story,technical-story,story-seed-bank,epic-candidate-matrix}-template.md` (+ `.es.md`)
-- No changes (already aligned): `/Users/beyondnet/Source/evolith/reference/core/sdlc/traceability-model.md`, `/Users/beyondnet/Source/evolith/reference/governance/README.md`
+- No changes (already aligned): `/Users/beyondnet/Source/evolith/reference/core/sdlc/traceability-model.md`, `/Users/beyondnet/Source/evolith/reference/core/sdlc/README.md`
 
 # Deliverable 10 — Required changes in Core interfaces
 
@@ -1775,7 +1775,7 @@ Incremental phases with mandatory backward compatibility. Each phase requires a 
 **Key files read/verified (absolute paths):**
 - `/Users/beyondnet/Source/evolith/reference/core/control-center/opportunities/UP-001-canonical-gap-tracking-standard.md` (governed change pattern: ADR+schemas+contracts+OPA+CLI/MCP/API, grandfathering, migration)
 - `/Users/beyondnet/Source/evolith/product/suite/strategy/evolutionary-strategy-roadmap.md` (RTD `:121`, evolutionary phases, deferred triggers)
-- `/Users/beyondnet/Source/evolith/reference/governance/DECISIONS.md` (UP-001 `PROPOSED`, `:13`)
+- `/Users/beyondnet/Source/evolith/reference/core/sdlc/DECISIONS.md` (UP-001 `PROPOSED`, `:13`)
 - `/Users/beyondnet/Source/evolith/reference/core/control-center/gaps/gap-tracking.md` (board format, `GT-374` maximum, P0–P3/XS–XL, Waves/Progress footer) and `maturity-assessment.md` (single tracking surfaces)
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/satellite-record.ts:13` (single `phase: string`), `gate-evidence.ts:87-90` (opaque `initiative?`), `application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts:55` (`skipped` precedent for runtime data)
 
@@ -1783,7 +1783,7 @@ Incremental phases with mandatory backward compatibility. Each phase requires a 
 
 ## Risks and mitigations (analysis item 13)
 
-Risks are anchored in real repository evidence. The operational precedent is **UP-001** (`reference/core/control-center/opportunities/UP-001-canonical-gap-tracking-standard.md`), which already demonstrates the Core's governed-change pattern (ADR + schemas + satellite-contracts + OPA + CLI/MCP/API with BR-008 parity, grandfathering and migration). Every mitigation reuses that pattern. The only tracking surfaces are `gap-tracking.md` and `maturity-assessment.md` (`reference/governance/standards/vision/`); no warning signal should invent a new surface.
+Risks are anchored in real repository evidence. The operational precedent is **UP-001** (`reference/core/control-center/opportunities/UP-001-canonical-gap-tracking-standard.md`), which already demonstrates the Core's governed-change pattern (ADR + schemas + satellite-contracts + OPA + CLI/MCP/API with BR-008 parity, grandfathering and migration). Every mitigation reuses that pattern. The only tracking surfaces are `gap-tracking.md` and `maturity-assessment.md` (`reference/core/control-center/`); no warning signal should invent a new surface.
 
 | Risk | Likelihood | Impact | Mitigation | Warning signal |
 |---|---|---|---|---|

@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0004-frontend-offline-resilience.md"
+    "reference/core/architecture/adrs/nodejs/0004-frontend-offline-resilience.md"
   ],
   "effectiveDate": "2026-05-08"
 }

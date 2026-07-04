@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/dotnet/0061-transactional-event-lifecycle-ef-core.md"
+    "reference/core/architecture/adrs/dotnet/0061-transactional-event-lifecycle-ef-core.md"
   ],
   "effectiveDate": "2026-05-23"
 }

@@ -32,8 +32,8 @@
     },
     "artifacts": {
       "adrs": [
-        "reference/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md",
-        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+        "reference/core/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md",
+        "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
         "rulesets/topologies/event-driven/event-driven.rules.json"
@@ -63,7 +63,7 @@
         "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
         "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
       },
-      "evidence": "reference/governance/standards/vision/maturity-evidence.json"
+      "evidence": "reference/core/control-center/maturity-evidence.json"
     },
     "operationalInterfaces": {
       "cli": {

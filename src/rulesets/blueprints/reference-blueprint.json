@@ -4,7 +4,7 @@
   "title": "Corporate Reference Architecture (Multi-Runtime / arc42)",
   "version": "1.0.0",
   "runtime": "agnostic",
-  "sourceFile": "reference/architecture/blueprints/reference-blueprint.md",
+  "sourceFile": "reference/core/architecture/blueprints/reference-blueprint.md",
   "adrRefs": ["ADR-0002", "ADR-0003", "ADR-0006", "ADR-0008", "ADR-0010"],
   "sections": [
     {

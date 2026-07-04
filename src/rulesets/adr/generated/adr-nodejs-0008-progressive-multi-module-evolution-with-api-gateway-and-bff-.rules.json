@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md"
+    "reference/core/architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md"
   ],
   "effectiveDate": "2026-05-08"
 }

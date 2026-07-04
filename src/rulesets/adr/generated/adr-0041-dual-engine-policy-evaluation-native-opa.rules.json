@@ -23,6 +23,6 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0041-dual-engine-policy-evaluation.md"
+    "reference/core/architecture/adrs/core/0041-dual-engine-policy-evaluation.md"
   ]
 }

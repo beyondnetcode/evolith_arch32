@@ -17,7 +17,7 @@
       "validationQuery": "La implementación de ACL valida los payloads entrantes contra los esquemas JSON del Core (evolith-yaml.schema.json, esquemas de artefactos). Payloads inválidos retornan error y son registrados.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.es.md#32-anticorruption-layers-acls"
+        "reference/core/control-center/evolith-product-vision-master.es.md#32-anticorruption-layers-acls"
       ]
     },
     {
@@ -29,7 +29,7 @@
       "validationQuery": "Los logs de transformación de ACL registran: externalSourceId, externalSystem, transformationType, transformedToEntityId, timestamp. Logs retenidos según política de retención de datos.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.es.md#32-anticorruption-layers-acls"
+        "reference/core/control-center/evolith-product-vision-master.es.md#32-anticorruption-layers-acls"
       ]
     },
     {
@@ -41,7 +41,7 @@
       "validationQuery": "ACL rechaza payloads no conformes con mensaje de error explícito identificando: campo, formato esperado, valor actual, origen del sistema externo. Los eventos de rechazo son contados en métricas de gobernanza.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.es.md#32-anticorruption-layers-acls"
+        "reference/core/control-center/evolith-product-vision-master.es.md#32-anticorruption-layers-acls"
       ]
     },
     {
@@ -53,7 +53,7 @@
       "validationQuery": "La implementación de ACL declara coreCompatibilityVersion en su metadata. El validador verifica que la versión de ACL es compatible con la versión Core pinchada en evolith.yaml.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.es.md#32-anticorruption-layers-acls"
+        "reference/core/control-center/evolith-product-vision-master.es.md#32-anticorruption-layers-acls"
       ]
     },
     {
@@ -65,7 +65,7 @@
       "validationQuery": "La documentación de integración ACL incluye: externalSystem, contractVersion, mappedCoreEntities, transformationMatrix. Contrato revisado por Architecture Board si toca múltiples bounded contexts.",
       "blocking": false,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.es.md#32-anticorruption-layers-acls"
+        "reference/core/control-center/evolith-product-vision-master.es.md#32-anticorruption-layers-acls"
       ]
     },
     {
@@ -78,7 +78,7 @@
       "blocking": true,
       "references": [
         "rulesets/adr/adr-0002-hexagonal-architecture.rules.json",
-        "reference/architecture/adrs/core/0002-hexagonal-architecture.es.md"
+        "reference/core/architecture/adrs/core/0002-hexagonal-architecture.es.md"
       ]
     }
   ],

@@ -7,7 +7,7 @@
 
 ## Backlog Canónico (Fuente de Verdad)
 
-**Ubicación:** `reference/governance/standards/vision/backlog-post-gt93.md`
+**Ubicación:** `reference/core/control-center/backlog-post-gt93.md`
 
 ### Items que DEBEN Existir (24 total)
 

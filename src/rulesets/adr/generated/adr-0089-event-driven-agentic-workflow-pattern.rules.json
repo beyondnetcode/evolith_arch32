@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0089-event-driven-agentic-workflows.md"
+    "reference/core/architecture/adrs/core/0089-event-driven-agentic-workflows.md"
   ],
   "effectiveDate": "2026-06-20"
 }

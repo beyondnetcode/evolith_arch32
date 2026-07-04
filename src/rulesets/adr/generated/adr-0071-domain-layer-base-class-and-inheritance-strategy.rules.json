@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0071-domain-layer-base-class-inheritance-strategy.md"
+    "reference/core/architecture/adrs/core/0071-domain-layer-base-class-inheritance-strategy.md"
   ],
   "effectiveDate": "2026-06-07"
 }

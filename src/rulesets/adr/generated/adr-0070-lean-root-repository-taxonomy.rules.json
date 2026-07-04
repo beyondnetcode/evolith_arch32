@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0070-lean-root-repository-taxonomy.md"
+    "reference/core/architecture/adrs/core/0070-lean-root-repository-taxonomy.md"
   ],
   "effectiveDate": "2026-06-07"
 }

@@ -166,10 +166,10 @@
     "workspaces-pinned"
   ],
   "references": [
-    "reference/architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md",
+    "reference/core/architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md",
     "rulesets/sdlc/quality-thresholds.rules.json",
     "rulesets/definition-of-done/definition-of-done.rules.json",
-    "reference/architecture/adrs/core/0005-ci-cd-quality-codeql.md"
+    "reference/core/architecture/adrs/core/0005-ci-cd-quality-codeql.md"
   ],
   "exitCriteria": {
     "description": "All MUST rules must pass. SHOULD rules are strongly recommended but advisory. A dependency-pinning violation BLOCKS merge to main.",

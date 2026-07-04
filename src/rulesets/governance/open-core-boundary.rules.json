@@ -17,7 +17,7 @@
       "validationQuery": "All rulesets, schemas, and ADRs have no import/reference to enterprise-only packages, license keys, or feature flags. Code analysis shows zero enterprise SDK dependencies in Core artifacts.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.md#5-business-strategy-open-core"
       ]
     },
     {
@@ -29,7 +29,7 @@
       "validationQuery": "Enterprise artifacts include metadata field 'availability: enterprise'. Core artifacts either omit the field or set 'availability: core'. No artifact without this field can be treated as enterprise-only.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.md#5-business-strategy-open-core"
       ]
     },
     {
@@ -41,7 +41,7 @@
       "validationQuery": "ACL implementation code is tagged 'enterprise' in repository. Core rulesets reference ACL requirements but do not include implementation code.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.md#5-business-strategy-open-core"
       ]
     },
     {
@@ -53,7 +53,7 @@
       "validationQuery": "CLI source code is MIT or Apache 2.0 licensed. MCP server implementation has no license check at runtime. All CLI commands work without enterprise credentials.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.md#5-business-strategy-open-core"
       ]
     },
     {
@@ -65,7 +65,7 @@
       "validationQuery": "Core rulesets contain no references to 'tracker', 'saas', 'dashboard', 'multi-tenant-ui', or similar Tracker-specific concepts. Rules namespace is clean.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.md#5-business-strategy-open-core"
       ]
     },
     {
@@ -77,7 +77,7 @@
       "validationQuery": "All reference/ documents are publicly accessible. No document references a 'premium' or 'enterprise' tier within Core.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.md#5-business-strategy-open-core"
       ]
     },
     {
@@ -89,7 +89,7 @@
       "validationQuery": "Enterprise features that address通用 architectural concerns are tracked for promotion via Architecture Board review. Promotion follows standard ADR lifecycle.",
       "blocking": false,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#5-business-strategy-open-core",
+        "reference/core/control-center/evolith-product-vision-master.md#5-business-strategy-open-core",
         "rulesets/governance/inheritance.rules.json"
       ]
     },
@@ -102,7 +102,7 @@
       "validationQuery": "End-to-end test runs Core ruleset against a satellite without enterprise credentials. All Core rules validate successfully without enterprise integration.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.md#5-business-strategy-open-core"
       ]
     }
   ],

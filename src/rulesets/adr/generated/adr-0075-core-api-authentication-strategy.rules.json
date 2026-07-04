@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0075-core-api-auth-strategy.md"
+    "reference/core/architecture/adrs/core/0075-core-api-auth-strategy.md"
   ],
   "effectiveDate": "2026-06-14"
 }

@@ -17,9 +17,9 @@ Options:
   --dry-run Show what would be created without writing files
 
 Examples:
-  node .harness/scripts/generate-es-skeleton.mjs reference/architecture/README.md
-  node .harness/scripts/generate-es-skeleton.mjs reference/governance/*.md
-  node .harness/scripts/generate-es-skeleton.mjs --dry-run reference/architecture/
+  node .harness/scripts/generate-es-skeleton.mjs reference/core/architecture/README.md
+  node .harness/scripts/generate-es-skeleton.mjs reference/core/sdlc/*.md
+  node .harness/scripts/generate-es-skeleton.mjs --dry-run reference/core/architecture/
 `);
   process.exit(0);
 }

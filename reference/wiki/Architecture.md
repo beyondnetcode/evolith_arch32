@@ -48,14 +48,14 @@ ADRs capture significant architectural decisions. Each ADR includes:
 - **Decision**: What was decided
 - **Consequences**: What follows from the decision
 
-Browse all ADRs: [reference/core/architecture/adrs/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/architecture/adrs)
+Browse all ADRs: [reference/core/architecture/adrs/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/core/architecture/adrs)
 
 ---
 
 ## Repository Structure
 
 ```
-reference/architecture/
+reference/core/architecture/
   ├── adrs/                    # Architecture Decision Records
   │   ├── core/                # Core ADRs (ADR-0001 to ADR-0099)
   │   └── ai/                  # AI-specific ADRs

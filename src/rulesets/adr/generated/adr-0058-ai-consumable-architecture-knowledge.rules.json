@@ -22,6 +22,6 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md"
+    "reference/core/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md"
   ]
 }

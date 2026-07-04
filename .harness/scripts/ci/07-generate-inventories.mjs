@@ -6,7 +6,7 @@ const EN_OUT = path.resolve('reference/core/control-center/inventory-summary.md'
 const ES_OUT = path.resolve('reference/core/control-center/inventory-summary.es.md');
 
 // Paths to search
-const ADR_DIR = path.resolve('reference/architecture/adrs');
+const ADR_DIR = path.resolve('reference/core/architecture/adrs');
 const RULESETS_DIR = path.resolve('rulesets');
 const SCHEMA_DIR = path.resolve('src/rulesets/schema');
 
@@ -50,7 +50,7 @@ This is the automated inventory tally of the core reference architecture and gov
 
 | Artifact Type | Count | Location |
 |---|:---:|---|
-| **Architecture Decision Records (ADR)** | ${adrCount} | \`reference/architecture/adrs/\` |
+| **Architecture Decision Records (ADR)** | ${adrCount} | \`reference/core/architecture/adrs/\` |
 | **Machine-Readable Rulesets** | ${rulesetCount} | \`rulesets/\` (across ${categoryCount} categories) |
 | **Phase-Gate Schemas** | ${schemaCount} | \`rulesets/schema/\` |
 
@@ -66,7 +66,7 @@ Este es el conteo automatizado del inventario de la arquitectura de referencia c
 
 | Tipo de Artefacto | Conteo | Ubicación |
 |---|:---:|---|
-| **Architecture Decision Records (ADR)** | ${adrCount} | \`reference/architecture/adrs/\` |
+| **Architecture Decision Records (ADR)** | ${adrCount} | \`reference/core/architecture/adrs/\` |
 | **Rulesets Legibles por Máquina** | ${rulesetCount} | \`rulesets/\` (en ${categoryCount} categorías) |
 | **Schemas de Phase-Gates** | ${schemaCount} | \`rulesets/schema/\` |
 

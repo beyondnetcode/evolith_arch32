@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0084-data-mesh-data-products.md"
+    "reference/core/architecture/adrs/core/0084-data-mesh-data-products.md"
   ],
   "effectiveDate": "2026-06-20"
 }

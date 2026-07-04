@@ -161,7 +161,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0050-gitflow-branching-strategy.md"
+    "reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.md"
   ],
   "exitCriteria": {
     "description": "Branch naming validated in CI. Protected branches enforce PR workflow and promotion sequence. Release tags follow semver.",

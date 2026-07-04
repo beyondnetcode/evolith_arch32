@@ -17,8 +17,8 @@ Se ha decidido adoptar la **Taxonomía Enterprise v4.0 (Minimal Root, Reference 
 Las reglas inmutables son:
 1. **Raíz Minimalista**: La raíz del repositorio debe mantenerse pequeña y navegable. Los puntos de entrada públicos viven en raíz; la documentación profunda vive en `reference/`; la implementación ejecutable vive en `src/`.
 2. **Corpus de Referencia (`reference/`)**: Los dominios documentales transversales deben vivir bajo:
- * `reference/architecture/`: ADRs, blueprints, C4 model y perfiles de stack.
- * `reference/governance/`: Políticas, SDLC, estándares, onboarding y reglas documentales.
+ * `reference/core/architecture/`: ADRs, blueprints, C4 model y perfiles de stack.
+ * `reference/core/sdlc/`: Políticas, SDLC, estándares, onboarding y reglas documentales.
  * `product/research/`: Documentación demo, investigación, POCs y ejemplos.
  * `product/operations/`: Observabilidad, monitoreo y playbooks operacionales.
  * `product/infra/`: Plataforma local, gateway, contenedores y activos de infraestructura.
@@ -37,7 +37,7 @@ Las reglas inmutables son:
 
 ### Negativas/Riesgos:
 * **Refactoring Inicial:** Implicó un cambio mayor a nivel de carpetas que requirió re-escribir hipervínculos internos en toda la documentación.
-* **Curva de Aprendizaje:** Los nuevos desarrolladores deben ser capacitados sobre la política de taxonomía (ubicada en `reference/governance/standards/repository-taxonomy.es.md`) antes de crear nuevas carpetas.
+* **Curva de Aprendizaje:** Los nuevos desarrolladores deben ser capacitados sobre la política de taxonomía (ubicada en `reference/core/control-center/taxonomy/repository-taxonomy.es.md`) antes de crear nuevas carpetas.
 
 
 

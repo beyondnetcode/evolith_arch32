@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0030-two-tier-distributed-gateway-model.md"
+    "reference/core/architecture/adrs/core/0030-two-tier-distributed-gateway-model.md"
   ],
   "effectiveDate": "2026-05-10"
 }

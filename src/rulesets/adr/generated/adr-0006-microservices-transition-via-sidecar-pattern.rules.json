@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0006-microservices-transition-sidecar-pattern.md"
+    "reference/core/architecture/adrs/core/0006-microservices-transition-sidecar-pattern.md"
   ],
   "effectiveDate": "2026-05-08"
 }

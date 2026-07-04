@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0082-agentic-ai-trust-boundary.md"
+    "reference/core/architecture/adrs/core/0082-agentic-ai-trust-boundary.md"
   ],
   "effectiveDate": "2026-06-20"
 }

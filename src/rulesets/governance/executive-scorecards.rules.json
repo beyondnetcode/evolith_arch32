@@ -24,7 +24,7 @@
         "dashboardRequired": true
       },
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+        "reference/core/control-center/evolith-product-vision-master.md#6-executive-vision-scorecards"
       ]
     },
     {
@@ -43,7 +43,7 @@
         "dashboardRequired": true
       },
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+        "reference/core/control-center/evolith-product-vision-master.md#6-executive-vision-scorecards"
       ]
     },
     {
@@ -62,7 +62,7 @@
         "dashboardRequired": true
       },
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+        "reference/core/control-center/evolith-product-vision-master.md#6-executive-vision-scorecards"
       ]
     },
     {
@@ -81,7 +81,7 @@
         "dashboardRequired": true
       },
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+        "reference/core/control-center/evolith-product-vision-master.md#6-executive-vision-scorecards"
       ]
     },
     {
@@ -100,8 +100,8 @@
         "dashboardRequired": true
       },
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards",
-        "reference/architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md"
+        "reference/core/control-center/evolith-product-vision-master.md#6-executive-vision-scorecards",
+        "reference/core/architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md"
       ]
     },
     {
@@ -120,7 +120,7 @@
         "dashboardRequired": false
       },
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+        "reference/core/control-center/evolith-product-vision-master.md#6-executive-vision-scorecards"
       ]
     },
     {
@@ -139,7 +139,7 @@
         "dashboardRequired": true
       },
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+        "reference/core/control-center/evolith-product-vision-master.md#6-executive-vision-scorecards"
       ]
     },
     {
@@ -158,7 +158,7 @@
         "dashboardRequired": true
       },
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+        "reference/core/control-center/evolith-product-vision-master.md#6-executive-vision-scorecards"
       ]
     },
     {
@@ -177,7 +177,7 @@
         "dashboardRequired": false
       },
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+        "reference/core/control-center/evolith-product-vision-master.md#6-executive-vision-scorecards"
       ]
     },
     {
@@ -196,7 +196,7 @@
         "dashboardRequired": true
       },
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+        "reference/core/control-center/evolith-product-vision-master.md#6-executive-vision-scorecards"
       ]
     }
   ],

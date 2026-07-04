@@ -18,7 +18,7 @@ Este estándar separa arquitectura universal, gobernanza SDLC, estrategia de la 
 
 | Dominio | Pregunta que Responde | Ubicación Canónica |
 |---|---|---|
-| **Core Architecture** | ¿Qué principios, patrones, contratos y decisiones aplican universalmente? | `reference/architecture/` |
+| **Core Architecture** | ¿Qué principios, patrones, contratos y decisiones aplican universalmente? | `reference/core/architecture/` |
 | **SDLC Governance** | ¿Cómo se gobiernan fases, gates, artefactos, evidencias, roles, excepciones y métricas? | `reference/core/sdlc/` |
 | **Evolith Product Suite** | ¿Qué productos componen Evolith, por qué existen y cómo se posicionan? | `product/suite/` |
 | **Product-Specific Design** | ¿Cómo implementa un producto sus responsabilidades? | `product/products/<product>/` |

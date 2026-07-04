@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0048-feature-flag-system-scope-criteria-model.md"
+    "reference/core/architecture/adrs/nodejs/0048-feature-flag-system-scope-criteria-model.md"
   ],
   "effectiveDate": "2026-06-07"
 }

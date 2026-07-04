@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md"
+    "reference/core/architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md"
   ],
   "effectiveDate": "2026-05-08"
 }

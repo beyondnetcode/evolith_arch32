@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/dotnet/0066-dotnet-lightweight-http-idempotency.md"
+    "reference/core/architecture/adrs/dotnet/0066-dotnet-lightweight-http-idempotency.md"
   ],
   "effectiveDate": "2026-05-24"
 }

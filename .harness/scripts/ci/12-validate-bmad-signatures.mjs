@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const adrDir = path.join(root, "reference/architecture/adrs/core");
+const adrDir = path.join(root, "reference/core/architecture/adrs/core");
 
 let failures = 0;
 

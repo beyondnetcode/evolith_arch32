@@ -94,7 +94,7 @@ External Client / Tracker / Chat / CLI
 
 **Key endpoints**: `POST /v1/agent/handle` · `GET /v1/agent/skills` · `GET /health`
 
-Docs: [reference/core/architecture/foundations/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/architecture/agent-runtime)
+Docs: [reference/core/architecture/foundations/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/core/architecture/foundations)
 
 ---
 

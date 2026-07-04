@@ -32,11 +32,11 @@
     },
     "artifacts": {
       "adrs": [
-        "reference/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md",
-        "reference/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md",
-        "reference/architecture/adrs/core/0082-agentic-ai-trust-boundary.md",
-        "reference/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md",
-        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+        "reference/core/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md",
+        "reference/core/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md",
+        "reference/core/architecture/adrs/core/0082-agentic-ai-trust-boundary.md",
+        "reference/core/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md",
+        "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
         "rulesets/topologies/agentic-ai/agentic-ai.rules.json"

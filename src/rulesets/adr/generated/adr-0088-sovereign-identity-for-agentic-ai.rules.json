@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0088-sovereign-identity-agentic-ai.md"
+    "reference/core/architecture/adrs/core/0088-sovereign-identity-agentic-ai.md"
   ],
   "effectiveDate": "2026-06-20"
 }

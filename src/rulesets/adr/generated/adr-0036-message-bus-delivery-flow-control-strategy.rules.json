@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.md"
+    "reference/core/architecture/adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.md"
   ],
   "effectiveDate": "2026-05-11"
 }

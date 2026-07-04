@@ -23,6 +23,6 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0067-modular-monolith-schema-per-domain.md"
+    "reference/core/architecture/adrs/core/0067-modular-monolith-schema-per-domain.md"
   ]
 }

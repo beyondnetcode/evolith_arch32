@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/ai-augmented/0003-model-selection-governance.md"
+    "reference/core/architecture/adrs/ai-augmented/0003-model-selection-governance.md"
   ],
   "effectiveDate": "2026-06-23"
 }

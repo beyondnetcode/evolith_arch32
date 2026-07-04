@@ -140,7 +140,7 @@ const DIMENSIONS = [
       { name: 'Tenant CONTEXT passthrough for audit/ABAC exists', type: 'grep', target: 'packages/mcp-server/src/mcp/audit-logger.ts', pattern: 'tenant', severity: 'P1', risk: 'Core cannot attribute actions to a tenant', fix: 'Keep tenant context in audit/ABAC inputs (not config)' },
       { name: 'Workflow-definition seam exists (getWorkflow)', type: 'grep', target: 'packages/core-domain/src', pattern: 'getWorkflow|WorkflowDefinition|IWorkflowDefinitionProvider', exts: ['.ts'], severity: 'P0', risk: 'No seam for Tracker to supply a composed flow', fix: 'Expose an interface to accept + validate an externally-supplied WorkflowDefinition' },
       { name: 'Op to VALIDATE an externally-supplied workflow against Core invariants', type: 'grep', target: 'packages/core-domain/src', pattern: 'validateWorkflow|workflow.*invariant|WorkflowValidator', exts: ['.ts'], severity: 'P0', risk: 'Tracker could compose flows that break governance', fix: 'Add validateWorkflow(definition): checks mandatory gates, OPA, non-omittable artifacts' },
-      { name: 'Composable catalogs exist (topologies/agents)', type: 'path', target: 'reference/architecture/topologies', severity: 'P1', risk: 'Nothing for Tracker to compose from', fix: 'Expose phase/gate/artifact catalogs (not only topologies)' },
+      { name: 'Composable catalogs exist (topologies/agents)', type: 'path', target: 'reference/core/architecture/topologies', severity: 'P1', risk: 'Nothing for Tracker to compose from', fix: 'Expose phase/gate/artifact catalogs (not only topologies)' },
     ],
   },
   {

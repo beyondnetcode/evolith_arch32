@@ -39,8 +39,8 @@ const WIKI_SOURCES = {
   },
   "Architecture.md": {
     files: [
-      "reference/architecture/README.md",
-      "reference/architecture/topologies/README.md",
+      "reference/core/architecture/README.md",
+      "reference/core/architecture/topologies/README.md",
     ],
     transform: transformArchitecture,
   },
@@ -54,7 +54,7 @@ const WIKI_SOURCES = {
   },
   "Governance.md": {
     files: [
-      "reference/governance/standards/README.md",
+      "reference/core/sdlc/standards/README.md",
       "reference/core/sdlc/README.md",
       "reference/core/control-center/gap-tracking.md",
     ],
@@ -343,14 +343,14 @@ ADRs capture significant architectural decisions. Each ADR includes:
 - **Decision**: What was decided
 - **Consequences**: What follows from the decision
 
-Browse all ADRs: [reference/architecture/adrs/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/architecture/adrs)
+Browse all ADRs: [reference/core/architecture/adrs/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/core/architecture/adrs)
 
 ---
 
 ## Repository Structure
 
 \`\`\`
-reference/architecture/
+reference/core/architecture/
   ├── adrs/                    # Architecture Decision Records
   │   ├── core/                # Core ADRs (ADR-0001 to ADR-0099)
   │   └── ai/                  # AI-specific ADRs

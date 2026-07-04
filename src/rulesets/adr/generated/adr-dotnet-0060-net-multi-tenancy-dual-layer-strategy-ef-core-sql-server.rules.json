@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/dotnet/0060-dotnet-multi-tenancy-dual-layer-strategy.md"
+    "reference/core/architecture/adrs/dotnet/0060-dotnet-multi-tenancy-dual-layer-strategy.md"
   ],
   "effectiveDate": "2026-05-23"
 }

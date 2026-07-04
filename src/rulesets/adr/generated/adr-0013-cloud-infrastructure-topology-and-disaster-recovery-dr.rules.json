@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0013-cloud-infrastructure-topology-dr.md"
+    "reference/core/architecture/adrs/core/0013-cloud-infrastructure-topology-dr.md"
   ],
   "effectiveDate": "2026-05-08"
 }

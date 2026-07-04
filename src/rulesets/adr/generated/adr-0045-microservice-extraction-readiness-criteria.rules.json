@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md"
+    "reference/core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md"
   ],
   "effectiveDate": "2026-05-12"
 }

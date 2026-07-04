@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0045-zustand-tanstack-query-state-management.md"
+    "reference/core/architecture/adrs/nodejs/0045-zustand-tanstack-query-state-management.md"
   ],
   "effectiveDate": "2026-06-07"
 }

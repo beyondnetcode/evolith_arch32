@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/ai-augmented/0004-agents-md-mandatory-artifact.md"
+    "reference/core/architecture/adrs/ai-augmented/0004-agents-md-mandatory-artifact.md"
   ],
   "effectiveDate": "2026-06-23"
 }

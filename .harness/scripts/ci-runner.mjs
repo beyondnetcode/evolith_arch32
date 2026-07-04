@@ -80,7 +80,7 @@ function getAutoScripts() {
   const docsChanged = changed.some(f => f.endsWith(".md"));
   const trackingChanged = changed.some(f => f.includes("gap-tracking") || f.includes("gap-reference") || f.includes("gap-closure"));
   const topologyChanged = changed.some(f => f.includes("topologies/"));
-  const governanceChanged = changed.some(f => f.includes("src/rulesets/") || f.includes("reference/governance/"));
+  const governanceChanged = changed.some(f => f.includes("src/rulesets/") || f.includes("reference/core/sdlc/"));
   const codeChanged = changed.some(f => f.endsWith(".ts") || f.endsWith(".js") || f.endsWith(".mjs"));
   const infraChanged = changed.some(f => f.includes("docker-compose") || f.includes("helm/") || f.includes(".github/workflows"));
 

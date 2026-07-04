@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0017-feature-flagging-strategy.md"
+    "reference/core/architecture/adrs/core/0017-feature-flagging-strategy.md"
   ],
   "effectiveDate": "2026-05-09"
 }

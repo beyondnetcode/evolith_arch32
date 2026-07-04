@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0012-advanced-authorization-rbac-abac.md"
+    "reference/core/architecture/adrs/nodejs/0012-advanced-authorization-rbac-abac.md"
   ],
   "effectiveDate": "2026-05-08"
 }

@@ -222,7 +222,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Remove the duplicate `phase-gates.rules.json` (single canonical ruleset location)
 
 - **Purpose:** `rulesets/sdlc/phase-gates.rules.json` duplicates `rulesets/phase-gates/phase-gates.rules.json` under a different `$id`. Two files with the same name and divergent ids can silently drift, and consumers may load the wrong one. Consolidate to one canonical location and guard it in CI.
-- **Evidence:** `ls rulesets/sdlc/phase-gates.rules.json` → present (2026-06-30); confirmed live duplicate. Extracted from `reference/architecture/EVOLITH-ARCHITECTURE-DESIGN.md` §15 (#4) / §16 (risk).
+- **Evidence:** `ls rulesets/sdlc/phase-gates.rules.json` → present (2026-06-30); confirmed live duplicate. Extracted from `reference/core/architecture/EVOLITH-ARCHITECTURE-DESIGN.md` §15 (#4) / §16 (risk).
 - **Impact:** `rulesets/sdlc/`, `rulesets/phase-gates/`, any loader resolving phase-gate rules.
 - **Complexity:** S
 - **Applied fix:** Removed `rulesets/phase-gates/phase-gates.rules.json` (the duplicate). Updated 3 loaders that referenced the old path (`health.controller.ts`, `ruleset-validation.mode.ts`, `core-reference-query.service.ts`) to point at canonical `rulesets/sdlc/phase-gates.rules.json`. Added CI guard `31-detect-duplicate-rulesets.mjs` that detects any `*.rules.json` basename collision with divergent `$id` values.
@@ -991,7 +991,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Complexity:** S
 - **Done when:**
   - [x] Envelope schema declares `meta.schemaVersion` as required and pinned per surface.
-  - [x] A machine-readable compatibility matrix (`reference/governance/standards/vision/surface-compatibility.json` or equivalent) records supported producer/consumer pairs.
+  - [x] A machine-readable compatibility matrix (`reference/core/control-center/surface-compatibility.json` or equivalent) records supported producer/consumer pairs.
   - [x] CI rejects a producer change that would break a supported consumer pair without an explicit migration entry.
 
 
@@ -1718,7 +1718,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Gap:** The Maturity Assessment links to `./evolith-product-vision-master.md`, which is now only a migration stub; the canonical document moved to `product/suite/vision/`. The single maturity surface points to a redirect placeholder.
 - **Purpose:** Keep the canonical maturity and vision surfaces pointing at live content so navigation and validation reflect the real document graph.
 - **Done when:** the maturity assessment (EN/ES) and any other Core references resolve to the canonical vision path, and link validation passes with no redirect stubs in the referenced graph.
-- **Closure evidence:** The migration redirect stubs at `reference/governance/standards/vision/evolith-product-vision-master.md` (+`.es.md`) are deleted, and every Core reference now resolves to the canonical `product/suite/vision/` path: the Maturity Assessment (EN/ES), the vision and product-suite/vision READMEs (the latter previously linked back to the stub), the root README, and `rulesets/acl/README` (EN/ES). Deleting the stubs surfaced these otherwise-hidden migrated links, which `validate-docs.mjs` now confirms resolve. The bilingual index was regenerated.
+- **Closure evidence:** The migration redirect stubs at `reference/core/control-center/evolith-product-vision-master.md` (+`.es.md`) are deleted, and every Core reference now resolves to the canonical `product/suite/vision/` path: the Maturity Assessment (EN/ES), the vision and product-suite/vision READMEs (the latter previously linked back to the stub), the root README, and `rulesets/acl/README` (EN/ES). Deleting the stubs surfaced these otherwise-hidden migrated links, which `validate-docs.mjs` now confirms resolve. The bilingual index was regenerated.
 - **Local verification (2026-06-14):** `validate-docs.mjs` passes for 825 files with no broken links, bilingual parity and orphan checks pass, and no stub references remain outside the historical migration ledger. Status: `DONE`.
 - **References:** [Maturity Assessment](./maturity-assessment.md) · [Canonical Vision Master](../../../product-suite/vision/evolith-product-vision-master.md)
 
@@ -2692,7 +2692,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 **Purpose:** Remove TODO placeholders from governance docs (mcp-security.md rate limiting/sandbox TODOs).
 **Current Evidence:** Governance documentation contains unresolved TODO markers.
-**Done When:** Zero TODO markers remain in governance documentation under `reference/governance/`.
+**Done When:** Zero TODO markers remain in governance documentation under `reference/core/sdlc/`.
 **Closure Evidence:** Removed `TODO` from `mcp-security.md/es` table (Rate Limiting, Sandbox), `senior-architectural-assessment.md/es` (`TODO_PACKAGE` → `EXAMPLE_PACKAGE`), `harness-platform-evaluation.es.md` diagram (`TODO OK` → `CHECK OK`). Docs validation passed. Status: `COMPLETADO`.
 
 #### GT-194
@@ -2791,9 +2791,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-209
 
-**Purpose:** Create `reference/architecture/agnostic-baseline.md` — the agnostic architectural baseline is missing.
-**Current Evidence:** The file `reference/architecture/agnostic-baseline.md` does not exist despite being referenced as a core document.
-**Done When:** `reference/architecture/agnostic-baseline.md` exists with agnostic baseline principles, patterns, and constraints.
+**Purpose:** Create `reference/core/architecture/agnostic-baseline.md` — the agnostic architectural baseline is missing.
+**Current Evidence:** The file `reference/core/architecture/agnostic-baseline.md` does not exist despite being referenced as a core document.
+**Done When:** `reference/core/architecture/agnostic-baseline.md` exists with agnostic baseline principles, patterns, and constraints.
 
 #### GT-210
 
@@ -4473,7 +4473,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Add CI checks that keep architecture maps, Mermaid diagrams, and adapter documentation synchronized with runtime capability configuration.
 - **Evidence:** BMAD Intelligence update found visual maps and diagrams require manual updates.
 - **Impact:** Reviewers and implementers may rely on stale runtime diagrams.
-- **Affected files:** `.harness/scripts/ci/`, `reference/architecture/`, `reference/governance/`, `packages/agent-runtime/src/`.
+- **Affected files:** `.harness/scripts/ci/`, `reference/core/architecture/`, `reference/core/sdlc/`, `packages/agent-runtime/src/`.
 - **Complexity:** M
 - **Proposed fix:** Create a freshness validator such as `validate-adapter-maturity-matrix.mjs` and wire it into documentation CI.
 - **Acceptance criteria:**

@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0096-edge-computing-architecture-governance.md"
+    "reference/core/architecture/adrs/core/0096-edge-computing-architecture-governance.md"
   ],
   "effectiveDate": "2026-06-20"
 }

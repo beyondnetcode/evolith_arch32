@@ -186,7 +186,7 @@ flowchart LR
 |---|---|---|---|---|
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | Clone/setup, tests, convenciones de branch/commit/PR, estándares de autoría de ruleset/OPA/schema | Onboarding de contribuidores | Guía de contribución | Sí |
 | [AGENTS.md](../AGENTS.es.md) | Reglas y convenciones de agentes | Gobernar las contribuciones de agentes | Estándar | Sí |
-| [Taxonomía del Repositorio](../reference/governance/standards/repository-taxonomy.es.md) | Qué va dónde en Evolith | Mantener el repositorio organizado | Estándar de gobernanza | Sí |
+| [Taxonomía del Repositorio](../reference/core/control-center/taxonomy/repository-taxonomy.es.md) | Qué va dónde en Evolith | Mantener el repositorio organizado | Estándar de gobernanza | Sí |
 | [Guía de Herencia de Repositorios Hijos](../reference/core/foundations/inheritance-model/child-repository-inheritance-guide.es.md) | Cómo los productos heredan de Evolith | Estandarizar la herencia | Guía | Sí |
 | [Hub de Navegación](../reference/navigation/README.es.md) | Navegación completa del repositorio | Centralizar la navegación | Hub de navegación | No |
 

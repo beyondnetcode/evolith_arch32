@@ -1290,7 +1290,7 @@ The current schema (`blueprint.schema.json:1-50`) mixes DEFINITION (what the Cor
 
 | Finding | Anchor | D20 change |
 |---|---|---|
-| **Topology catalog path drift**: the service reads from `reference/architecture/topologies` but the use-case validates against `rulesets/topologies/<id>/topology.manifest.json` | `topology-catalog.service.ts:34` vs `validate-blueprint.use-case.ts:132-138` | Unify the source of `TopologyDefinition` in the **Standard Catalog Registry** (engine 13). A single canonical manifest path; the Blueprint Engine and the Topology Engine must query the same registry |
+| **Topology catalog path drift**: the service reads from `reference/core/architecture/topologies` but the use-case validates against `rulesets/topologies/<id>/topology.manifest.json` | `topology-catalog.service.ts:34` vs `validate-blueprint.use-case.ts:132-138` | Unify the source of `TopologyDefinition` in the **Standard Catalog Registry** (engine 13). A single canonical manifest path; the Blueprint Engine and the Topology Engine must query the same registry |
 | `reference-blueprint.md` mixes **normative constraints** (pillars §2, ADR matrix §8, NFR §9) with a **concrete implementation profile** (NestJS/Kong/Postgres) | `reference-blueprint.md:4,529-535` (already marks "reference implementation profile … must not be interpreted as universal product mandates") | Reinforce the separation: the normative part → `BlueprintDefinition`/`ArchitectureDefinition` that the Core evaluates; the concrete profile (stack) → `ArchitectureContext`/`BlueprintContext` that the product **sends** and the Core evaluates, not imposes |
 | `reference/core/architecture/blueprints/` has business topologies (agentic-ai, data-mesh, edge-computing, event-driven, serverless) as subdirs | `ls` confirmed | These are the Core catalog's **`TopologyDefinition`/`BlueprintDefinition`** (correct). Do not change their nature; only ensure they are served via the Standard Catalog Registry and referenced by `topologyRef`/`blueprintRef` |
 | `metadata.dimension` + `spec.topologyType` + `maturityLevel: F1/F2/F3/cross` already exist in the manifests | `agentic-ai/topology.manifest.json` (dimension=ai, topologyType=agentic-ai, maturityLevel=cross) | Map `TopologyManifest` → the contract's `TopologyDefinition`; the `maturityLevel` (progressive axis) is NOT an SDLC `phaseId` — keep the separation (`topology-catalog.service.ts:4-7`) |
@@ -1395,7 +1395,7 @@ export interface TopologyRecommendationResult {
 - `/Users/beyondnet/Source/evolith/rulesets/schema/blueprint.schema.json` — split into `blueprint-definition.schema.json` (+ `blueprint-context.schema.json`); `phase:integer 1–5` → canonical `phaseId`; `topology` enum → `topologyRef`; reconcile with `BlueprintContent`.
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/use-cases/validate-blueprint.use-case.ts` — refactor into a pure engine `(BlueprintContext) → BlueprintEvaluationResult`; remove mutation of `state` (`:90-91,233-256`), `verdictHistory.push` (`:94-99`), and event publication (`:102-118`); resolve definitions via the registry, not by `corePath`/`sdlcPath`.
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/entities/blueprint.ts` — separate `BlueprintDefinition` (immutable, versioned) from `BlueprintContext` (input); remove `state`/`tenantId`/`verdictHistory` from the definition.
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/services/topology-catalog.service.ts` — unify the manifest path with `validate-blueprint.use-case.ts` (drift `reference/architecture/topologies` vs `rulesets/topologies/`); expose it as the Standard Catalog Registry.
+- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/services/topology-catalog.service.ts` — unify the manifest path with `validate-blueprint.use-case.ts` (drift `reference/core/architecture/topologies` vs `rulesets/topologies/`); expose it as the Standard Catalog Registry.
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/ports/blueprint-repository.port.ts` — reframe `IBlueprintRepository` as a catalog of `BlueprintDefinition` (read-only), not product CRUD.
 - `/Users/beyondnet/Source/evolith/reference/core/architecture/blueprints/reference-blueprint.md` — reinforce the separation between normative (the definition that is evaluated) and concrete profile (the context the product sends).
 
@@ -1420,7 +1420,7 @@ Master table of documentation drift. Each row anchors to a real path:line, ident
 |---|---|---|---|
 | D7 | `reference/core/architecture/adrs/core/0100-governance-execution-boundary-product-initiative.md` (+ `.es.md`) | Decision 1: "Product/Initiative as primary units [with Core repos]". | Correct Decision 1 → "Core stateless evaluator; product/tenant/initiative are ONLY context; Tracker owns/persists them". Status remains PROPOSED until Board review. |
 | D8 | `reference/core/control-center/opportunities/UP-002-product-initiative-governance-model.md` (+ `.es.md`) | Deliverable 2: Product/Initiative domain entities + repos. | Rewrite Deliverable 2 → "`EvaluationContext`/`EvaluationResult` contracts + opaque contexts; remove Core entities/repos". |
-| D9 | `reference/governance/DECISIONS.md` (UP-002 index) | Index entry describes UP-002 with the obsolete entity model. | Update the UP-002 entry summary to the corrected scope (context/result contracts). |
+| D9 | `reference/core/sdlc/DECISIONS.md` (UP-002 index) | Index entry describes UP-002 with the obsolete entity model. | Update the UP-002 entry summary to the corrected scope (context/result contracts). |
 | D10 | gap **GT-375** (board + catalog, EN/ES) | Description frames the work as "Product/Initiative domain entities". | Reframe to "Core Evaluation Engine context/result contracts; no entities/persistence". |
 | D11 | `reference/documentation-taxonomy.md:184` ("Tracker Technical Interfaces → Product-Specific Design") | Correct, **but** the taxonomy does not yet contain the rule distinguishing Definition/Context/Result (see §22). | Add the §22 taxonomy entry to this document. |
 
@@ -1483,7 +1483,7 @@ Core Result Model          (returned only; e.g., EvaluationResult, DecisionRecom
 ### Anchor files for this dimension (absolute paths)
 
 - `/Users/beyondnet/Source/evolith/reference/core/README.md` (`:41-52` "Is Not"; `:23-37` "Is"; `:114-124` Invariants; `:47` sole mention of "task-management platform")
-- `/Users/beyondnet/Source/evolith/reference/governance/README.md` (governance hub; no drift of its own — acts as an index)
+- `/Users/beyondnet/Source/evolith/reference/core/sdlc/README.md` (governance hub; no drift of its own — acts as an index)
 - `/Users/beyondnet/Source/evolith/reference/core/sdlc/sdlc-evolith-artifact-mapping.md` (`:35` overview; `:81` "Initiative registration")
 - `/Users/beyondnet/Source/evolith/reference/core/sdlc/traceability-model.md` (`:144-152` §7 evaluation≠decision — most aligned doc; `:213-224` Anti-Patterns)
 - `/Users/beyondnet/Source/evolith/reference/documentation-taxonomy.md` (`:17-28` domains; `:141-152` classification values; `:184` Tracker Interfaces)

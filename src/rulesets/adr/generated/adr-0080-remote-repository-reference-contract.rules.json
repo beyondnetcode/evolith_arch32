@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0080-remote-repository-reference-contract.md"
+    "reference/core/architecture/adrs/core/0080-remote-repository-reference-contract.md"
   ],
   "effectiveDate": "2026-06-19"
 }

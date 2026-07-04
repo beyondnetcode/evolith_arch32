@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/dotnet/0072-dotnet-aop-cross-cutting-concern-strategy.md"
+    "reference/core/architecture/adrs/dotnet/0072-dotnet-aop-cross-cutting-concern-strategy.md"
   ],
   "effectiveDate": "2026-06-07"
 }

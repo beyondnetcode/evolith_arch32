@@ -74,7 +74,7 @@
       "version": "1.0.0",
       "owner": "@architect",
       "description": "Scans ADRs for staleness based on last git modification date. Flags >180 days as stale, >365 days as critical.",
-      "inputs": ["reference/architecture/adrs/ directory"],
+      "inputs": ["reference/core/architecture/adrs/ directory"],
       "outputs": ["freshness report (JSON)"],
       "file": ".harness/scripts/skills/adr-freshness-monitor.mjs",
       "tags": ["adr", "freshness", "staleness", "governance"]

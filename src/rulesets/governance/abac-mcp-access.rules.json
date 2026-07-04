@@ -7,7 +7,7 @@
   "effectiveDate": "2026-06-26",
   "scope": "satellite",
   "category": "security",
-  "adrRef": "reference/architecture/adrs/core/0087-abac-agentic-tool-execution.md",
+  "adrRef": "reference/core/architecture/adrs/core/0087-abac-agentic-tool-execution.md",
   "opaRef": "rulesets/opa/abac-mcp-tool-access.rego",
   "rules": [
     {

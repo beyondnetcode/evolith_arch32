@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0097-knowledge-lifecycle-governance.md"
+    "reference/core/architecture/adrs/core/0097-knowledge-lifecycle-governance.md"
   ],
   "effectiveDate": "2026-06-21"
 }

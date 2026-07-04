@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0056-enterprise-naming-design-conventions.md"
+    "reference/core/architecture/adrs/core/0056-enterprise-naming-design-conventions.md"
   ],
   "effectiveDate": "2026-05-15"
 }

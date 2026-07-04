@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md"
+    "reference/core/architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md"
   ],
   "effectiveDate": "2026-05-08"
 }

@@ -10,8 +10,8 @@
   "scenarios": {
     "compliant-core": {
       "filesystem": {
-        "existing": ["/core/reference", "/core/rulesets", "/core/sdk", "/core/.harness", "/core/reference/architecture/adrs"],
-        "dirs": { "/core/reference/architecture/adrs": ["0002-hexagonal.md", "0002-hexagonal.es.md"] }
+        "existing": ["/core/reference", "/core/rulesets", "/core/sdk", "/core/.harness", "/core/reference/core/architecture/adrs"],
+        "dirs": { "/core/reference/core/architecture/adrs": ["0002-hexagonal.md", "0002-hexagonal.es.md"] }
       },
       "context": { "satellitePath": "/sat", "corePath": "/core" },
       "expectedResults": [
@@ -62,8 +62,8 @@
     },
     "adr-naming-violation": {
       "filesystem": {
-        "existing": ["/core/reference", "/core/rulesets", "/core/sdk", "/core/.harness", "/core/reference/architecture/adrs"],
-        "dirs": { "/core/reference/architecture/adrs": ["01_BadName.md"] }
+        "existing": ["/core/reference", "/core/rulesets", "/core/sdk", "/core/.harness", "/core/reference/core/architecture/adrs"],
+        "dirs": { "/core/reference/core/architecture/adrs": ["01_BadName.md"] }
       },
       "context": { "satellitePath": "/sat", "corePath": "/core" },
       "expectedResults": [

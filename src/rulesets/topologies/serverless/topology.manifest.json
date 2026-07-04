@@ -31,8 +31,8 @@
     },
     "artifacts": {
       "adrs": [
-        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md",
-        "reference/architecture/adrs/core/0095-serverless-architecture-governance.md"
+        "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md",
+        "reference/core/architecture/adrs/core/0095-serverless-architecture-governance.md"
       ],
       "rulesets": [
         "rulesets/topologies/serverless/serverless.rules.json"
@@ -62,7 +62,7 @@
         "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
         "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
       },
-      "evidence": "reference/governance/standards/vision/maturity-evidence.json"
+      "evidence": "reference/core/control-center/maturity-evidence.json"
     },
     "operationalBudgets": {
       "latencyBudgetMs": 1500,

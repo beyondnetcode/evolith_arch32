@@ -31,17 +31,17 @@
     },
     "artifacts": {
       "adrs": [
-        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md",
-        "reference/architecture/adrs/core/0095-serverless-architecture-governance.md"
+        "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md",
+        "reference/core/architecture/adrs/core/0095-serverless-architecture-governance.md"
       ],
       "rulesets": [
-        "reference/architecture/topologies/execution/serverless/serverless.rules.json"
+        "reference/core/architecture/topologies/execution/serverless/serverless.rules.json"
       ],
       "opaPolicies": [
-        "reference/architecture/topologies/execution/serverless/serverless.rego"
+        "reference/core/architecture/topologies/execution/serverless/serverless.rego"
       ],
       "aiRulesets": [
-        "reference/architecture/topologies/execution/serverless/README.md"
+        "reference/core/architecture/topologies/execution/serverless/README.md"
       ],
       "umsContracts": [
         "reference/knowledge/demo/ums-reference-model.md"
@@ -49,20 +49,20 @@
     },
     "corpus": {
       "guidance": {
-        "profile": "reference/architecture/topologies/execution/serverless/README.md",
-        "maturityGuide": "reference/architecture/topologies/execution/serverless/maturity.md"
+        "profile": "reference/core/architecture/topologies/execution/serverless/README.md",
+        "maturityGuide": "reference/core/architecture/topologies/execution/serverless/maturity.md"
       },
-      "configurationContract": "reference/architecture/topologies/execution/serverless/topology.config.schema.json",
+      "configurationContract": "reference/core/architecture/topologies/execution/serverless/topology.config.schema.json",
       "fixtures": {
-        "valid": "reference/architecture/topologies/execution/serverless/fixtures/valid.topology.config.json",
-        "invalid": "reference/architecture/topologies/execution/serverless/fixtures/invalid.topology.config.json"
+        "valid": "reference/core/architecture/topologies/execution/serverless/fixtures/valid.topology.config.json",
+        "invalid": "reference/core/architecture/topologies/execution/serverless/fixtures/invalid.topology.config.json"
       },
       "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
       "tests": {
         "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
         "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
       },
-      "evidence": "reference/governance/standards/vision/maturity-evidence.json"
+      "evidence": "reference/core/control-center/maturity-evidence.json"
     },
     "operationalBudgets": {
       "latencyBudgetMs": 1500,

@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0039-deployment-topology-abstraction-switcher.md"
+    "reference/core/architecture/adrs/core/0039-deployment-topology-abstraction-switcher.md"
   ],
   "effectiveDate": "2026-05-11"
 }

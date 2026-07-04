@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0034-cqrs-pattern-applicability-matrix.md"
+    "reference/core/architecture/adrs/core/0034-cqrs-pattern-applicability-matrix.md"
   ],
   "effectiveDate": "2026-05-11"
 }

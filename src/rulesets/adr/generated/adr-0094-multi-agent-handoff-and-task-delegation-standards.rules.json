@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0094-multi-agent-handoff.md"
+    "reference/core/architecture/adrs/core/0094-multi-agent-handoff.md"
   ],
   "effectiveDate": "2026-06-20"
 }

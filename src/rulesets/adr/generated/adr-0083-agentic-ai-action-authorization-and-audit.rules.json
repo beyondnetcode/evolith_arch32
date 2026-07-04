@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md"
+    "reference/core/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md"
   ],
   "effectiveDate": "2026-06-20"
 }

@@ -78,15 +78,15 @@ const runtime = runtimeMatch ? runtimeMatch[1] : "Agnostic";
 
 let targetDir;
 if (runtime.includes("Node") || runtime.includes("TypeScript")) {
-  targetDir = path.join(root, "reference/architecture/adrs/nodejs");
+  targetDir = path.join(root, "reference/core/architecture/adrs/nodejs");
 } else if (runtime.includes(".NET")) {
-  targetDir = path.join(root, "reference/architecture/adrs/dotnet");
+  targetDir = path.join(root, "reference/core/architecture/adrs/dotnet");
 } else if (runtime.includes("Android")) {
-  targetDir = path.join(root, "reference/architecture/adrs/android");
+  targetDir = path.join(root, "reference/core/architecture/adrs/android");
 } else if (runtime.includes("Agnostic") || runtime.includes("Core")) {
-  targetDir = path.join(root, "reference/architecture/adrs/core");
+  targetDir = path.join(root, "reference/core/architecture/adrs/core");
 } else {
-  targetDir = path.join(root, "reference/architecture/adrs/core");
+  targetDir = path.join(root, "reference/core/architecture/adrs/core");
 }
 
 const targetPath = path.join(targetDir, `ADR-${adrNumber}-${path.basename(adrFile)}`);

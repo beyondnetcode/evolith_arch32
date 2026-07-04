@@ -62,7 +62,7 @@ test('auditSources produces a versioned report with counts', () => {
 
 const ACCEPTED = {
   metadata: { id: 'event-driven', status: 'accepted' },
-  spec: { artifacts: { adrs: ['reference/architecture/adrs/core/0031-x.md'] } },
+  spec: { artifacts: { adrs: ['reference/core/architecture/adrs/core/0031-x.md'] } },
 };
 // GT-329: event-driven moved to canonical rulesets/topologies/
 const dir = 'src/rulesets/topologies/event-driven';
@@ -71,7 +71,7 @@ const fullSet = new Set([
   `${dir}/event-driven.rego`,
   `${dir}/README.md`,
   `${dir}/README.es.md`,
-  'reference/architecture/adrs/core/0031-x.md',
+  'reference/core/architecture/adrs/core/0031-x.md',
 ]);
 
 test('accepted topology with full parity and resolving refs passes', () => {
@@ -88,7 +88,7 @@ test('accepted topology missing the OPA policy is flagged', () => {
 
 test('accepted topology with an orphaned reference warns', () => {
   const noRef = new Set(fullSet);
-  noRef.delete('reference/architecture/adrs/core/0031-x.md');
+  noRef.delete('reference/core/architecture/adrs/core/0031-x.md');
   const findings = auditTopology(ACCEPTED, (p) => noRef.has(p), dir);
   assert.ok(findings.some((f) => f.ruleId === 'TOPO-ORPHAN-REF' && f.severity === 'warning'));
 });

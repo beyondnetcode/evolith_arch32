@@ -23,6 +23,6 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.md"
+    "reference/core/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.md"
   ]
 }

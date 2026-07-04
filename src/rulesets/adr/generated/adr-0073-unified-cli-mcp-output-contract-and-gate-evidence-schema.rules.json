@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0073-unified-cli-output-contract.md"
+    "reference/core/architecture/adrs/core/0073-unified-cli-output-contract.md"
   ],
   "effectiveDate": "2026-06-10"
 }

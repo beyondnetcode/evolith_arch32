@@ -220,7 +220,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Eliminar el duplicado `phase-gates.rules.json` (ubicación canónica única del ruleset)
 
 - **Propósito:** `rulesets/sdlc/phase-gates.rules.json` duplica `rulesets/phase-gates/phase-gates.rules.json` bajo un `$id` distinto. Dos archivos con el mismo nombre e ids divergentes pueden derivar en silencio, y los consumidores pueden cargar el equivocado. Consolidar a una ubicación canónica y protegerlo en CI.
-- **Evidencia:** `ls rulesets/sdlc/phase-gates.rules.json` → presente (2026-06-30); duplicado vivo confirmado. Extraído de `reference/architecture/EVOLITH-ARCHITECTURE-DESIGN.md` §15 (#4) / §16 (riesgo).
+- **Evidencia:** `ls rulesets/sdlc/phase-gates.rules.json` → presente (2026-06-30); duplicado vivo confirmado. Extraído de `reference/core/architecture/EVOLITH-ARCHITECTURE-DESIGN.md` §15 (#4) / §16 (riesgo).
 - **Impacto:** `rulesets/sdlc/`, `rulesets/phase-gates/`, cualquier loader que resuelva reglas de phase-gate.
 - **Complejidad:** S
 - **Fix aplicado:** Eliminado `rulesets/phase-gates/phase-gates.rules.json` (el duplicado). Actualizados 3 loaders que referenciaban el path viejo (`health.controller.ts`, `ruleset-validation.mode.ts`, `core-reference-query.service.ts`) para apuntar al canónico `rulesets/sdlc/phase-gates.rules.json`. Añadido guard de CI `31-detect-duplicate-rulesets.mjs` que detecta colisiones de basename en `*.rules.json` con `$id` divergentes.
@@ -984,7 +984,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** S
 - **Hecho cuando:**
   - [x] El esquema del envelope declara `meta.schemaVersion` como obligatorio y fijado por superficie.
-  - [x] Una matriz de compatibilidad legible por máquina (`reference/governance/standards/vision/surface-compatibility.json` o equivalente) registra pares productor/consumidor soportados.
+  - [x] Una matriz de compatibilidad legible por máquina (`reference/core/control-center/surface-compatibility.json` o equivalente) registra pares productor/consumidor soportados.
   - [x] CI rechaza un cambio de productor que rompa un par consumidor soportado sin una entrada explícita de migración.
 
 
@@ -1711,7 +1711,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Gap:** La Evaluación de Madurez enlaza a `./evolith-product-vision-master.md`, que ahora es solo un stub de migración; el documento canónico se movió a `product/suite/vision/`. La única superficie de madurez apunta a un placeholder de redirección.
 - **Propósito:** Mantener las superficies canónicas de madurez y visión apuntando a contenido vivo, para que la navegación y la validación reflejen el grafo documental real.
 - **Cierre cuando:** la evaluación de madurez (EN/ES) y cualquier otra referencia de Core resuelven a la ruta canónica de la visión, y la validación de enlaces pasa sin stubs de redirección en el grafo referenciado.
-- **Evidencia de cierre:** Los stubs de redirección de migración en `reference/governance/standards/vision/evolith-product-vision-master.md` (+`.es.md`) se eliminan, y toda referencia de Core resuelve ahora a la ruta canónica `product/suite/vision/`: la Evaluación de Madurez (EN/ES), los READMEs de vision y de product-suite/vision (este último enlazaba de vuelta al stub), el README raíz y `rulesets/acl/README` (EN/ES). Borrar los stubs destapó estos enlaces migrados ocultos, que `validate-docs.mjs` ahora confirma que resuelven. El índice bilingüe se regeneró.
+- **Evidencia de cierre:** Los stubs de redirección de migración en `reference/core/control-center/evolith-product-vision-master.md` (+`.es.md`) se eliminan, y toda referencia de Core resuelve ahora a la ruta canónica `product/suite/vision/`: la Evaluación de Madurez (EN/ES), los READMEs de vision y de product-suite/vision (este último enlazaba de vuelta al stub), el README raíz y `rulesets/acl/README` (EN/ES). Borrar los stubs destapó estos enlaces migrados ocultos, que `validate-docs.mjs` ahora confirma que resuelven. El índice bilingüe se regeneró.
 - **Verificación local (2026-06-14):** `validate-docs.mjs` pasa para 825 archivos sin enlaces rotos, la paridad bilingüe y el chequeo de huérfanos pasan, y no queda ninguna referencia al stub fuera del ledger histórico de migración. Estado: `COMPLETADO`.
 - **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Visión Maestra Canónica](../../../product-suite/vision/evolith-product-vision-master.es.md)
 
@@ -2685,7 +2685,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 **Propósito:** Eliminar marcadores TODO de documentos de gobernanza (TODOs de rate limiting/sandbox en mcp-security.md).
 **Evidencia Actual:** Documentación de gobernanza contiene marcadores TODO sin resolver.
-**Hecho Cuando:** Cero marcadores TODO en documentación de gobernanza bajo `reference/governance/`.
+**Hecho Cuando:** Cero marcadores TODO en documentación de gobernanza bajo `reference/core/sdlc/`.
 **Evidencia de Cierre:** Eliminado `TODO` de tabla en `mcp-security.md/es` (Rate Limiting, Sandbox), `senior-architectural-assessment.md/es` (`TODO_PACKAGE` → `EXAMPLE_PACKAGE`), `harness-platform-evaluation.es.md` (`TODO OK` → `CHECK OK`). Documentación validada. Estado: `COMPLETADO`.
 
 #### GT-194
@@ -2784,9 +2784,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-209
 
-**Propósito:** Crear `reference/architecture/agnostic-baseline.md` — el baseline arquitectónico agnóstico está ausente.
-**Evidencia Actual:** El archivo `reference/architecture/agnostic-baseline.md` no existe a pesar de ser referenciado como documento core.
-**Hecho Cuando:** `reference/architecture/agnostic-baseline.md` existe con principios, patrones y restricciones del baseline agnóstico.
+**Propósito:** Crear `reference/core/architecture/agnostic-baseline.md` — el baseline arquitectónico agnóstico está ausente.
+**Evidencia Actual:** El archivo `reference/core/architecture/agnostic-baseline.md` no existe a pesar de ser referenciado como documento core.
+**Hecho Cuando:** `reference/core/architecture/agnostic-baseline.md` existe con principios, patrones y restricciones del baseline agnóstico.
 
 #### GT-210
 
@@ -4390,7 +4390,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Añadir checks CI que mantengan mapas arquitectónicos, diagramas Mermaid y documentación de adaptadores sincronizados con la configuración de capacidades runtime.
 - **Evidencia:** BMAD Intelligence update encontró que mapas visuales y diagramas requieren actualización manual.
 - **Impacto:** Revisores e implementadores pueden depender de diagramas runtime obsoletos.
-- **Archivos afectados:** `.harness/scripts/ci/`, `reference/architecture/`, `reference/governance/`, `packages/agent-runtime/src/`.
+- **Archivos afectados:** `.harness/scripts/ci/`, `reference/core/architecture/`, `reference/core/sdlc/`, `packages/agent-runtime/src/`.
 - **Complejidad:** M
 - **Propuesta de corrección:** Crear un validador de frescura como `validate-adapter-maturity-matrix.mjs` y cablearlo al CI documental.
 - **Criterios de aceptación:**

@@ -87,8 +87,8 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0005-ci-cd-quality-codeql.md",
-    "reference/architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md"
+    "reference/core/architecture/adrs/core/0005-ci-cd-quality-codeql.md",
+    "reference/core/architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md"
   ],
   "exitCriteria": {
     "description": "All CI/CD gates pass. Protected branches enforce all checks. SLA compliance tracked.",

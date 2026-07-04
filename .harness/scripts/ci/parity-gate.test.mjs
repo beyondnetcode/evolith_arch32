@@ -66,7 +66,7 @@ test('a malformed policy bundle fails closed (evaluator-failure fixture)', async
 // GT-329: agentic-ai moved to canonical rulesets/topologies/; progressive-axis stays in reference/
 const TOPOS = [
   { dir: 'src/rulesets/topologies/agentic-ai', id: 'agentic-ai' },
-  { dir: 'reference/architecture/topologies/progressive-axis/microservices', id: 'microservices' },
+  { dir: 'reference/core/architecture/topologies/progressive-axis/microservices', id: 'microservices' },
 ];
 
 test('scopeTopologies returns all on a full/scheduled run or no change signal', () => {

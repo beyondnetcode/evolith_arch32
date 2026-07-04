@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/dotnet/0062-dotnet-immutable-audit-trail.md"
+    "reference/core/architecture/adrs/dotnet/0062-dotnet-immutable-audit-trail.md"
   ],
   "effectiveDate": "2026-05-23"
 }

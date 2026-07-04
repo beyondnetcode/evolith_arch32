@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+    "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
   ],
   "effectiveDate": "2026-06-18"
 }

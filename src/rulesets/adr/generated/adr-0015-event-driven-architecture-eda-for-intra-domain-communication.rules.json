@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md"
+    "reference/core/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md"
   ],
   "effectiveDate": "2026-05-08"
 }

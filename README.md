@@ -145,7 +145,7 @@ Evolith governs **8 topologies** across four axes:
 
 Each topology has its own ADRs, OPA policies, AI rulesets, and UMS contracts. Systems migrate between topologies as the business scales — this is **Progressive Architecture**.
 
-Full reference: [Architecture hub](./reference/architecture/README.md) · [C4 Master Architecture](./reference/architecture/C4-MASTER-ARCHITECTURE.md)
+Full reference: [Architecture hub](./reference/core/architecture/README.md) · [C4 Master Architecture](./reference/core/architecture/demos/C4-MASTER-ARCHITECTURE.md)
 
 ---
 
@@ -156,7 +156,7 @@ evolith/
 ├── src/packages/agent-runtime/  # @evolith/agent-runtime — Ports & Adapters agentic layer
 ├── src/apps/agent-runtime-api/  # NestJS HTTP service wrapping the runtime (POST /v1/agent/handle)
 ├── reference/core/          # Engineering constitution and principles
-├── reference/architecture/  # Topologies, blueprints, ADRs, and agent-runtime docs
+├── reference/core/architecture/  # Topologies, blueprints, ADRs, and agent-runtime docs
 ├── reference/core/sdlc/    # SDLC phases, gates, standards, and glossary
 ├── product/products/      # Smart CLI, Core API, MCP, Tracker, UMS
 └── product/operations/    # SRE, infra, quality gates
@@ -195,7 +195,7 @@ Smart CLI ships **20 commands** and is configured via **`evolith.yaml`**. Full r
 | Area | Link |
 |---|---|
 | Core constitution | [Evolith Core hub](./reference/core/README.md) |
-| Master Architecture | [C4 Master Architecture](./reference/architecture/C4-MASTER-ARCHITECTURE.md) |
+| Master Architecture | [C4 Master Architecture](./reference/core/architecture/demos/C4-MASTER-ARCHITECTURE.md) |
 | SDLC governance | [SDLC Governance Center](./reference/core/sdlc/README.md) |
 | Topologies | [Topologies hub](./reference/core/architecture/topologies/README.md) |
 | Smart CLI | [Smart CLI hub](./product/products/smart-cli/README.md) |

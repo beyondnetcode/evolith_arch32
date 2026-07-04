@@ -17,7 +17,7 @@
       "validationQuery": "Todos los rulesets, schemas y ADRs no tienen import/reference a paquetes enterprise-only, license keys, o feature flags. El análisis de código muestra cero dependencias de enterprise SDKs en artefactos Core.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.es.md#5-business-strategy-open-core"
       ]
     },
     {
@@ -29,7 +29,7 @@
       "validationQuery": "Artefactos Enterprise incluyen campo de metadata 'availability: enterprise'. Artefactos Core omiten el campo o setean 'availability: core'. Ningún artefacto sin este campo puede ser tratado como enterprise-only.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.es.md#5-business-strategy-open-core"
       ]
     },
     {
@@ -41,7 +41,7 @@
       "validationQuery": "El código de implementación de ACL está etiquetado 'enterprise' en el repositorio. Los rulesets Core referencian requisitos ACL pero no incluyen código de implementación.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.es.md#5-business-strategy-open-core"
       ]
     },
     {
@@ -53,7 +53,7 @@
       "validationQuery": "El código fuente de CLI tiene licencia MIT o Apache 2.0. La implementación del servidor MCP no tiene chequeo de licencia en runtime. Todos los comandos CLI funcionan sin credenciales enterprise.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.es.md#5-business-strategy-open-core"
       ]
     },
     {
@@ -65,7 +65,7 @@
       "validationQuery": "Los rulesets Core no contain references a 'tracker', 'saas', 'dashboard', 'multi-tenant-ui', o conceptos similares específicos de Tracker. El namespace de reglas está limpio.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.es.md#5-business-strategy-open-core"
       ]
     },
     {
@@ -77,7 +77,7 @@
       "validationQuery": "Todos los documentos de reference/ son públicamente accesibles. Ningún documento referencia un nivel 'premium' o 'enterprise' dentro de Core.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.es.md#5-business-strategy-open-core"
       ]
     },
     {
@@ -89,7 +89,7 @@
       "validationQuery": "Features enterprise que abordan concerns arquitectónicos generales son rastreadas para promoción via revisión del Architecture Board. La promoción sigue el ciclo de vida estándar de ADR.",
       "blocking": false,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core",
+        "reference/core/control-center/evolith-product-vision-master.es.md#5-business-strategy-open-core",
         "rulesets/governance/inheritance.rules.json"
       ]
     },
@@ -102,7 +102,7 @@
       "validationQuery": "Test end-to-end ejecuta el ruleset Core contra un satélite sin credenciales enterprise. Todas las reglas Core se validan exitosamente sin integración enterprise.",
       "blocking": true,
       "references": [
-        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+        "reference/core/control-center/evolith-product-vision-master.es.md#5-business-strategy-open-core"
       ]
     }
   ],

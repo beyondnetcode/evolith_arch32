@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0037-performance-concurrency-chaos-strategy.md"
+    "reference/core/architecture/adrs/core/0037-performance-concurrency-chaos-strategy.md"
   ],
   "effectiveDate": "2026-05-11"
 }

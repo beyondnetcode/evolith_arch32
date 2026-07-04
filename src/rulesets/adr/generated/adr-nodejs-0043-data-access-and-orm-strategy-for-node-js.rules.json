@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0043-data-access-orm-strategy.md"
+    "reference/core/architecture/adrs/nodejs/0043-data-access-orm-strategy.md"
   ],
   "effectiveDate": "2026-05-12"
 }

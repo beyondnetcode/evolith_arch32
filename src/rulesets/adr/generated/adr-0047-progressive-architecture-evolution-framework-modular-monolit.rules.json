@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md"
+    "reference/core/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md"
   ],
   "effectiveDate": "2026-05-12"
 }

@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/android/0042-canonical-android-mobile-architecture.md"
+    "reference/core/architecture/adrs/android/0042-canonical-android-mobile-architecture.md"
   ],
   "effectiveDate": "2026-05-11"
 }

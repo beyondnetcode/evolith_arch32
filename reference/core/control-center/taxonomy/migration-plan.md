@@ -36,7 +36,7 @@ product/
 | reference/core/foundations/inheritance-model/* | reference/core/foundations/inheritance-model/ | move | Onboarding guides define inheritance |
 | reference/core/sdlc/glossary/glossary* | reference/core/sdlc/glossary/ | move | Glossary belongs to SDLC |
 | reference/core/sdlc/glossary/glossary-ecosystem* | reference/core/sdlc/glossary/ | move | Ecosystem glossary belongs to SDLC |
-| reference/governance/DECISIONS* | reference/core/sdlc/governance/ | move | Decisions belong to SDLC governance |
+| reference/core/sdlc/DECISIONS* | reference/core/sdlc/governance/ | move | Decisions belong to SDLC governance |
 | reference/core/foundations/principles/* | reference/core/foundations/principles/ | move | Principles are foundational |
 | reference/core/foundations/satellite-definitions/* | reference/core/foundations/satellite-definitions/ | move | Bounded contexts define satellite boundaries |
 | reference/core/control-center/taxonomy/* | reference/core/control-center/taxonomy/ | move | Traceability is taxonomy |
@@ -51,7 +51,7 @@ product/
 | reference/core/control-center/gaps/gap-tracking* | reference/core/control-center/gaps/ | move | Gap tracking is control-center |
 | reference/core/control-center/gaps/gap-reference-catalog* | reference/core/control-center/gaps/ | move | Gap catalog is control-center |
 | reference/core/control-center/evidence/gap-closure-evidence* | reference/core/control-center/evidence/ | move | Closure evidence is control-center |
-| reference/governance/standards/vision/maturity-* | reference/core/control-center/maturity-reports/ | move | Maturity reports are control-center |
+| reference/core/control-center/maturity-* | reference/core/control-center/maturity-reports/ | move | Maturity reports are control-center |
 | reference/core/sdlc/governance/* | reference/core/sdlc/governance/ | move | Governance docs belong to SDLC |
 | reference/core/sdlc/governance/* | reference/core/sdlc/governance/ | move | ADR governance rules |
 | reference/core/control-center/opportunities/* | reference/core/control-center/opportunities/ | move | Proposals are opportunities |
@@ -87,8 +87,8 @@ product/
 ### Commit 6: Cleanup old directories
 
 After all moves, remove empty old directories:
-- `reference/governance/` (if empty)
-- `reference/architecture/` (if empty)
+- `reference/core/sdlc/` (if empty)
+- `reference/core/architecture/` (if empty)
 - `product/suite/` (if empty)
 - `product/products/` (if empty)
 - `product/infra/` (if empty)

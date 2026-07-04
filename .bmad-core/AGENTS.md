@@ -12,8 +12,8 @@ Evolith Core is a **corporate progressive-architecture reference**, not a single
 
 | Area | Path | Description |
 |------|------|-------------|
-| Architectural Reference | `reference/architecture/` | Topologies, ADRs, patterns |
-| Governance Standards | `reference/governance/standards/` | Gap tracking, topology maturity, rules |
+| Architectural Reference | `reference/core/architecture/` | Topologies, ADRs, patterns |
+| Governance Standards | `reference/core/sdlc/standards/` | Gap tracking, topology maturity, rules |
 | Validation Harness | `.harness/scripts/` | CI scripts, validators, coverage tools |
 | Agent Core | `.bmad-core/` | BMAD agent definitions, workflows, tooling |
 

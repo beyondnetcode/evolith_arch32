@@ -41,7 +41,7 @@
           "/sat/src",
           "/sat/src/hello-world.ts",
           "/core/reference",
-          "/core/reference/architecture/adrs"
+          "/core/reference/core/architecture/adrs"
         ],
         "dirs": {
           "/sat/.github/workflows": ["ci.yml"],

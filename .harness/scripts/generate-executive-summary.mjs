@@ -7,7 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const VISION_DIR = path.join(ROOT, 'reference/governance/standards/vision');
+const VISION_DIR = path.join(ROOT, 'reference/core/sdlc/standards/vision');
 const BOARD = path.join(VISION_DIR, 'gap-tracking.md');
 const ES_BOARD = path.join(VISION_DIR, 'gap-tracking.es.md');
 const MATURITY = path.join(VISION_DIR, 'maturity-reconciliation.json');

@@ -53,7 +53,7 @@ The repository contains architectural artifacts, not a local product application
 
 1. `README.md` explains the vision and routes common intents.
 2. `reference/getting-started/README.md` offers short paths by role; `MASTER_INDEX.md` is the complete navigation map.
-3. `reference/architecture/README.md` orders the reading of baseline, ADRs, canonical patterns, and UMS evidence.
+3. `reference/core/architecture/README.md` orders the reading of baseline, ADRs, canonical patterns, and UMS evidence.
 4. `reference/core/sdlc/glossary/glossary.md` controls terminology, including reference to progressive architecture, Evolith, BMAD-METHOD, UMS applied model, ADR, and canonical pattern.
 5. `reference/core/architecture/adrs/adr-matrix.md` relates needs with controlling decisions.
 6. Deep documents link to an owner hub or the master index.
@@ -63,7 +63,7 @@ The repository contains architectural artifacts, not a local product application
 | Layer | Purpose | Canonical Locations | Authority |
 |---|---|---|---|
 | Guidance | Help the reader navigate the corpus | `README.md`, `MASTER_INDEX.md`, `reference/getting-started/` | Navigational |
-| Canonical Reference | Define reusable policy, decision criteria, and accepted trade-offs | `reference/core/architecture/blueprints/`, `reference/core/architecture/adrs/`, `reference/governance/` | Normative or decisional depending on document status |
+| Canonical Reference | Define reusable policy, decision criteria, and accepted trade-offs | `reference/core/architecture/blueprints/`, `reference/core/architecture/adrs/`, `reference/core/sdlc/` | Normative or decisional depending on document status |
 | Topology Reference Corpus | Define human-readable topology profiles, dimensions, ADR bindings, operating constraints, and adoption guidance for topology families | `reference/core/architecture/topologies/` | Normative when backed by an accepted ADR or standard; draft until ratified |
 | Executable Rulesets | Encode architecture policy as machine-readable Native and OPA-governed rules | `rulesets/`, `rulesets/topologies/` | Executable governance |
 | Runtime-Specific Implementation Guide | Materialize accepted decisions for a declared runtime | `reference/core/architecture/patterns/`, blueprints, and specific ADRs | Reusable only within the declared runtime scope and ADR |

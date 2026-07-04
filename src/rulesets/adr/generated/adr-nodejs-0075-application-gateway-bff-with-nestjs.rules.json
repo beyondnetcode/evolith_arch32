@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md"
+    "reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md"
   ],
   "effectiveDate": "2026-06-12"
 }

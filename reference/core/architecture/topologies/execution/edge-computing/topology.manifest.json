@@ -30,17 +30,17 @@
     },
     "artifacts": {
       "adrs": [
-        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md",
-        "reference/architecture/adrs/core/0096-edge-computing-architecture-governance.md"
+        "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md",
+        "reference/core/architecture/adrs/core/0096-edge-computing-architecture-governance.md"
       ],
       "rulesets": [
-        "reference/architecture/topologies/execution/edge-computing/edge-computing.rules.json"
+        "reference/core/architecture/topologies/execution/edge-computing/edge-computing.rules.json"
       ],
       "opaPolicies": [
-        "reference/architecture/topologies/execution/edge-computing/edge-computing.rego"
+        "reference/core/architecture/topologies/execution/edge-computing/edge-computing.rego"
       ],
       "aiRulesets": [
-        "reference/architecture/topologies/execution/edge-computing/README.md"
+        "reference/core/architecture/topologies/execution/edge-computing/README.md"
       ],
       "umsContracts": [
         "reference/knowledge/demo/ums-reference-model.md"
@@ -48,20 +48,20 @@
     },
     "corpus": {
       "guidance": {
-        "profile": "reference/architecture/topologies/execution/edge-computing/README.md",
-        "maturityGuide": "reference/architecture/topologies/execution/edge-computing/maturity.md"
+        "profile": "reference/core/architecture/topologies/execution/edge-computing/README.md",
+        "maturityGuide": "reference/core/architecture/topologies/execution/edge-computing/maturity.md"
       },
-      "configurationContract": "reference/architecture/topologies/execution/edge-computing/topology.config.schema.json",
+      "configurationContract": "reference/core/architecture/topologies/execution/edge-computing/topology.config.schema.json",
       "fixtures": {
-        "valid": "reference/architecture/topologies/execution/edge-computing/fixtures/valid.topology.config.json",
-        "invalid": "reference/architecture/topologies/execution/edge-computing/fixtures/invalid.topology.config.json"
+        "valid": "reference/core/architecture/topologies/execution/edge-computing/fixtures/valid.topology.config.json",
+        "invalid": "reference/core/architecture/topologies/execution/edge-computing/fixtures/invalid.topology.config.json"
       },
       "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
       "tests": {
         "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
         "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
       },
-      "evidence": "reference/governance/standards/vision/maturity-evidence.json"
+      "evidence": "reference/core/control-center/maturity-evidence.json"
     },
     "operationalBudgets": {
       "latencyBudgetMs": 200,

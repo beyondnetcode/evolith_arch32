@@ -79,13 +79,13 @@ EVOLITH REPOSITORY                    AI KNOWLEDGE BASE
 reference/core/architecture/adrs/          ┌─────────────────────┐
   *.md files (57+ ADRs)     ──────── │  ADR Vector Store   │
                                        │  (chunked by section│
-reference/architecture/                │   + metadata tags)  │
+reference/core/architecture/                │   + metadata tags)  │
   blueprints/*.md           ──────── │  Blueprint Store    │
                                        └─────────────────────┘
-reference/governance/
+reference/core/sdlc/
   standards/**/*.md         ──────── ┌─────────────────────┐
                                        │  Standards Store    │
-reference/architecture/                │  (enforcement rules │
+reference/core/architecture/                │  (enforcement rules │
   canonical-patterns/*.md   ──────── │   + code examples)  │
                                        └─────────────────────┘
 AGENTS.md / .harness/rules/ ──────── ┌─────────────────────┐

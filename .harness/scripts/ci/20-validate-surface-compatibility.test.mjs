@@ -17,7 +17,7 @@ function runIn(cwd) {
 function setup(matrix, sources) {
   const root = mkdtempSync(join(tmpdir(), 'surface-compat-'));
   mkdirSync(
-    join(root, 'reference/governance/standards/vision'),
+    join(root, 'reference/core/sdlc/standards/vision'),
     { recursive: true },
   );
   writeFileSync(

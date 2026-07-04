@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0029-tactical-ddd-primitives-library.md"
+    "reference/core/architecture/adrs/nodejs/0029-tactical-ddd-primitives-library.md"
   ],
   "effectiveDate": "2026-05-09"
 }

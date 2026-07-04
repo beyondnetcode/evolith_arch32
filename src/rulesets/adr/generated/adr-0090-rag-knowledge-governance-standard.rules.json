@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0090-rag-knowledge-governance.md"
+    "reference/core/architecture/adrs/core/0090-rag-knowledge-governance.md"
   ],
   "effectiveDate": "2026-06-20"
 }

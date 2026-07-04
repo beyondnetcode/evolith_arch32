@@ -46,10 +46,10 @@ Use this map when you need to decide where to read, edit, add, or audit content 
 | `reference/core/` | C1 | Core identity, scope, and boundaries | Use to understand what Evolith Core owns | Put product-specific implementation choices here |
 | `reference/getting-started/` | C2 | Short role-based reading paths | Improve onboarding paths by role | Add normative decisions without linking authority |
 | `reference/navigation/` | C1 | Global master index and navigation assets | Maintain complete repository routing | Diverge from the root navigation model |
-| `reference/architecture/` | C0 | Architecture hub, ADRs, blueprints, canonical patterns, principles, topology corpus | Add architecture authority, accepted decisions, and reusable patterns | Treat UMS-specific choices as universal without ADR/standard authority |
+| `reference/core/architecture/` | C0 | Architecture hub, ADRs, blueprints, canonical patterns, principles, topology corpus | Add architecture authority, accepted decisions, and reusable patterns | Treat UMS-specific choices as universal without ADR/standard authority |
 | `reference/core/architecture/adrs/` | C0 | Accepted, proposed, or superseded architectural decision records | Record durable architectural decisions and update inbound links | Hide decisions in planning or report files |
 | `reference/core/architecture/topologies/` | C1 | Human-readable topology guidance and maturity reports | Maintain topology adoption, operation, evolution, and maturity guidance | Put executable rules here; use `rulesets/topologies/` instead |
-| `reference/governance/` | C0 | SDLC, standards, ADR governance, terminology, and onboarding | Maintain governance rules, lifecycle gates, and standards | Create parallel governance under root `docs/` |
+| `reference/core/sdlc/` | C0 | SDLC, standards, ADR governance, terminology, and onboarding | Maintain governance rules, lifecycle gates, and standards | Create parallel governance under root `docs/` |
 | `product/suite/` | C1 | Portfolio vision, product-suite strategy, positioning, and communications | Align product direction with Core governance | Store product delivery artifacts that belong to a specific product |
 | `product/products/` | C1 | Internal reference docs for Evolith products such as Core API, Tracker, MCP services, Smart CLI, and UMS reference | Keep product documentation aligned with Core standards | Mix executable source code with reference documentation |
 | `product/research/` | C2 | Research, PoCs, applied evidence, UMS demo boundary, and architecture intelligence | Capture learning and promote reusable lessons through ADRs/standards | Promote research directly into mandatory policy |
@@ -127,7 +127,7 @@ Use this map when you need to decide where to read, edit, add, or audit content 
 |---|---|---|
 | A new gap, risk, or opportunity | `gap-tracking.md` and `gap-reference-catalog.md` | Bilingual pair, tracking validator, documentation validator |
 | A maturity or audit navigation surface | `reference/core/control-center/README.md` | Bilingual pair and link validation |
-| A normative architecture standard | `reference/governance/standards/` or accepted architecture area | Bilingual pair, authoritative references, affected rule updates if enforceable |
+| A normative architecture standard | `reference/core/sdlc/standards/` or accepted architecture area | Bilingual pair, authoritative references, affected rule updates if enforceable |
 | An architectural decision | `reference/core/architecture/adrs/` | ADR registry/index updates and inbound link checks |
 | Human-readable topology guidance | `reference/core/architecture/topologies/` | Topology maturity parity and bilingual guidance |
 | Executable topology policy | `rulesets/topologies/` and matching OPA/native evaluator when required | Dual-engine parity and topology rule validation |

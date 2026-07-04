@@ -99,9 +99,9 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.md",
-    "reference/architecture/adrs/core/0005-ci-cd-quality-codeql.md",
-    "reference/governance/sdlc/quality-gates.md"
+    "reference/core/architecture/adrs/core/0018-testing-pyramid-quality-gates.md",
+    "reference/core/architecture/adrs/core/0005-ci-cd-quality-codeql.md",
+    "reference/core/sdlc/sdlc/quality-gates.md"
   ],
   "exitCriteria": {
     "description": "Pyramid distribution validated per release. Coverage thresholds enforced in CI. SLA compliance tracked.",

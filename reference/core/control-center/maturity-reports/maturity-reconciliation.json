@@ -63,10 +63,10 @@
     }
   ],
   "sources": [
-    "reference/governance/standards/vision/gap-tracking.md",
-    "reference/governance/standards/vision/gap-closure-evidence.json",
-    "reference/governance/standards/vision/maturity-evidence.json",
-    "reference/governance/standards/vision/inventory-summary.md",
+    "reference/core/control-center/gap-tracking.md",
+    "reference/core/control-center/gap-closure-evidence.json",
+    "reference/core/control-center/maturity-evidence.json",
+    "reference/core/control-center/inventory-summary.md",
     "sdk/cli/package.json"
   ],
   "validationCommands": [

@@ -89,8 +89,8 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0002-clean-architecture-nestjs.md",
-    "reference/architecture/adrs/nodejs/0003-strict-typescript-standards.md"
+    "reference/core/architecture/adrs/nodejs/0002-clean-architecture-nestjs.md",
+    "reference/core/architecture/adrs/nodejs/0003-strict-typescript-standards.md"
   ],
   "exitCriteria": {
     "description": "All HXA rules are validated in CI via eslint-plugin-boundaries and import analysis.",

@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.md"
+    "reference/core/architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.md"
   ],
   "effectiveDate": "2026-05-08"
 }

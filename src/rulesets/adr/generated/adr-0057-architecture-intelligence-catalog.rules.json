@@ -22,6 +22,6 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0057-architecture-intelligence-catalog.md"
+    "reference/core/architecture/adrs/core/0057-architecture-intelligence-catalog.md"
   ]
 }

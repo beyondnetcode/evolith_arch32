@@ -22,6 +22,6 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/dotnet/0071-dotnet-data-access-orm-strategy.md"
+    "reference/core/architecture/adrs/dotnet/0071-dotnet-data-access-orm-strategy.md"
   ]
 }

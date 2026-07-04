@@ -127,7 +127,7 @@ Inspecciona:
 - `rulesets/` — rulesets y políticas OPA
 - `.harness/scripts/` — scripts CI y validación
 - `reference/core/sdlc/` — estándares SDLC
-- `reference/architecture/` — ADRs y topologías
+- `reference/core/architecture/` — ADRs y topologías
 - `.github/workflows/` — CI/CD pipelines
 
 ## 4. Criterios de Evaluación
@@ -200,7 +200,7 @@ Inspect:
 - `rulesets/` — rulesets and OPA policies
 - `.harness/scripts/` — CI and validation scripts
 - `reference/core/sdlc/` — SDLC standards
-- `reference/architecture/` — ADRs and topologies
+- `reference/core/architecture/` — ADRs and topologies
 - `.github/workflows/` — CI/CD pipelines
 
 ## 4. Evaluation Criteria

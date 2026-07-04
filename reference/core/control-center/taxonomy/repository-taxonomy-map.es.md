@@ -46,10 +46,10 @@ Usa este mapa cuando necesites decidir dónde leer, editar, agregar o auditar co
 | `reference/core/` | C1 | Identidad, alcance y límites de Core | Usar para entender qué posee Evolith Core | Poner aquí elecciones de implementación específicas de producto |
 | `reference/getting-started/` | C2 | Rutas cortas de lectura por rol | Mejorar onboarding por rol | Agregar decisiones normativas sin enlazar autoridad |
 | `reference/navigation/` | C1 | Índice maestro global y activos de navegación | Mantener el ruteo completo del repositorio | Divergir del modelo de navegación raíz |
-| `reference/architecture/` | C0 | Hub de arquitectura, ADRs, blueprints, patrones canónicos, principios y corpus topológico | Agregar autoridad arquitectónica, decisiones aceptadas y patrones reutilizables | Tratar decisiones específicas de UMS como universales sin autoridad de ADR/estándar |
+| `reference/core/architecture/` | C0 | Hub de arquitectura, ADRs, blueprints, patrones canónicos, principios y corpus topológico | Agregar autoridad arquitectónica, decisiones aceptadas y patrones reutilizables | Tratar decisiones específicas de UMS como universales sin autoridad de ADR/estándar |
 | `reference/core/architecture/adrs/` | C0 | Registros de decisión arquitectónica aceptados, propuestos o reemplazados | Registrar decisiones arquitectónicas durables y actualizar enlaces entrantes | Ocultar decisiones en archivos de planeamiento o reportes |
 | `reference/core/architecture/topologies/` | C1 | Guía topológica legible por humanos y reportes de madurez | Mantener guía de adopción, operación, evolución y madurez por topología | Poner reglas ejecutables aquí; usar `rulesets/topologies/` |
-| `reference/governance/` | C0 | SDLC, estándares, gobernanza ADR, terminología y onboarding | Mantener reglas de gobernanza, gates de ciclo de vida y estándares | Crear gobernanza paralela bajo `docs/` raíz |
+| `reference/core/sdlc/` | C0 | SDLC, estándares, gobernanza ADR, terminología y onboarding | Mantener reglas de gobernanza, gates de ciclo de vida y estándares | Crear gobernanza paralela bajo `docs/` raíz |
 | `product/suite/` | C1 | Visión de portafolio, estrategia de suite, posicionamiento y comunicaciones | Alinear dirección de producto con gobernanza Core | Guardar artefactos de delivery que pertenecen a un producto específico |
 | `product/products/` | C1 | Documentos internos de referencia para productos Evolith como Core API, Tracker, servicios MCP, Smart CLI y referencia UMS | Mantener documentación de producto alineada con estándares Core | Mezclar código fuente ejecutable con documentación de referencia |
 | `product/research/` | C2 | Investigación, PoCs, evidencia aplicada, límite demo UMS e inteligencia arquitectónica | Capturar aprendizaje y promover lecciones reutilizables mediante ADRs/estándares | Promover investigación directamente a política obligatoria |
@@ -127,7 +127,7 @@ Usa este mapa cuando necesites decidir dónde leer, editar, agregar o auditar co
 |---|---|---|
 | Un gap, riesgo u oportunidad nueva | `gap-tracking.es.md` y `gap-reference-catalog.es.md` | Par bilingüe, validador de tracking, validador documental |
 | Una superficie de navegación de madurez o auditoría | `reference/core/control-center/README.es.md` | Par bilingüe y validación de enlaces |
-| Un estándar arquitectónico normativo | `reference/governance/standards/` o área arquitectónica aceptada | Par bilingüe, referencias autoritativas y reglas afectadas si es exigible |
+| Un estándar arquitectónico normativo | `reference/core/sdlc/standards/` o área arquitectónica aceptada | Par bilingüe, referencias autoritativas y reglas afectadas si es exigible |
 | Una decisión arquitectónica | `reference/core/architecture/adrs/` | Actualizaciones de registro/índice ADR y enlaces entrantes |
 | Guía topológica legible por humanos | `reference/core/architecture/topologies/` | Paridad de madurez topológica y guía bilingüe |
 | Política topológica ejecutable | `rulesets/topologies/` y evaluador OPA/native correspondiente cuando aplique | Paridad dual-engine y validación de reglas topológicas |

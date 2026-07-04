@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0091-workload-identity-token-rotation.md"
+    "reference/core/architecture/adrs/core/0091-workload-identity-token-rotation.md"
   ],
   "effectiveDate": "2026-06-20"
 }

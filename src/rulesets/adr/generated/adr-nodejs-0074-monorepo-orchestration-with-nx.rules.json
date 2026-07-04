@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0074-monorepo-orchestration-nx.md"
+    "reference/core/architecture/adrs/nodejs/0074-monorepo-orchestration-nx.md"
   ],
   "effectiveDate": "2026-06-12"
 }

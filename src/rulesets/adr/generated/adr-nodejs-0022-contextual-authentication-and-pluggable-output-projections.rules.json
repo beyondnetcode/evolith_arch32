@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0022-contextual-auth-and-pluggable-projections.md"
+    "reference/core/architecture/adrs/nodejs/0022-contextual-auth-and-pluggable-projections.md"
   ],
   "effectiveDate": "2026-05-08"
 }

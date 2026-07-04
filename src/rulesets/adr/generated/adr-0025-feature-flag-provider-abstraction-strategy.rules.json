@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0025-feature-flag-provider-abstraction.md"
+    "reference/core/architecture/adrs/core/0025-feature-flag-provider-abstraction.md"
   ],
   "effectiveDate": "2026-05-09"
 }

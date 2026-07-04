@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md"
+    "reference/core/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md"
   ],
   "effectiveDate": "2026-06-20"
 }

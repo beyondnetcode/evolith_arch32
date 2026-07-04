@@ -38,8 +38,8 @@
     }
   ],
   "references": [
-    "reference/governance/standards/engineering/engineering-manifesto.md",
-    "reference/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md"
+    "reference/core/sdlc/standards/engineering/engineering-manifesto.md",
+    "reference/core/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md"
   ],
   "exitCriteria": {
     "description": "All SOLID violations blocked in CI. DRY violations detected and fixed. Anti-patterns flagged in code review.",

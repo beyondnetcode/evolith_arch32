@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0052-unit-testing-isolation-strategy.md"
+    "reference/core/architecture/adrs/core/0052-unit-testing-isolation-strategy.md"
   ],
   "effectiveDate": "2026-05-14"
 }

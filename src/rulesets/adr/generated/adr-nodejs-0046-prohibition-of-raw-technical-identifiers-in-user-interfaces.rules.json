@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0046-no-raw-identifiers-in-ui.md"
+    "reference/core/architecture/adrs/nodejs/0046-no-raw-identifiers-in-ui.md"
   ],
   "effectiveDate": "2026-06-07"
 }

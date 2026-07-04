@@ -32,17 +32,17 @@
     },
     "artifacts": {
       "adrs": [
-        "reference/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md",
-        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+        "reference/core/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md",
+        "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
-        "reference/architecture/topologies/integration/event-driven/event-driven.rules.json"
+        "reference/core/architecture/topologies/integration/event-driven/event-driven.rules.json"
       ],
       "opaPolicies": [
-        "reference/architecture/topologies/integration/event-driven/event-driven.rego"
+        "reference/core/architecture/topologies/integration/event-driven/event-driven.rego"
       ],
       "aiRulesets": [
-        "reference/architecture/topologies/integration/event-driven/README.md"
+        "reference/core/architecture/topologies/integration/event-driven/README.md"
       ],
       "umsContracts": [
         "reference/knowledge/demo/ums-reference-model.md"
@@ -50,20 +50,20 @@
     },
     "corpus": {
       "guidance": {
-        "profile": "reference/architecture/topologies/integration/event-driven/README.md",
-        "maturityGuide": "reference/architecture/topologies/integration/event-driven/maturity.md"
+        "profile": "reference/core/architecture/topologies/integration/event-driven/README.md",
+        "maturityGuide": "reference/core/architecture/topologies/integration/event-driven/maturity.md"
       },
-      "configurationContract": "reference/architecture/topologies/integration/event-driven/topology.config.schema.json",
+      "configurationContract": "reference/core/architecture/topologies/integration/event-driven/topology.config.schema.json",
       "fixtures": {
-        "valid": "reference/architecture/topologies/integration/event-driven/fixtures/valid.topology.config.json",
-        "invalid": "reference/architecture/topologies/integration/event-driven/fixtures/invalid.topology.config.json"
+        "valid": "reference/core/architecture/topologies/integration/event-driven/fixtures/valid.topology.config.json",
+        "invalid": "reference/core/architecture/topologies/integration/event-driven/fixtures/invalid.topology.config.json"
       },
       "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
       "tests": {
         "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
         "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
       },
-      "evidence": "reference/governance/standards/vision/maturity-evidence.json"
+      "evidence": "reference/core/control-center/maturity-evidence.json"
     },
     "operationalInterfaces": {
       "cli": {

@@ -92,16 +92,16 @@
       "closedAt": "2026-06-22",
       "closureCommit": "fcd5d2af",
       "evidence": [
-        "reference/architecture/topologies/integration/event-driven/event-driven.rules.json",
-        "reference/architecture/topologies/integration/event-driven/event-driven.rego",
-        "reference/architecture/topologies/integration/event-driven/event-driven.test.rego",
-        "reference/architecture/topologies/data/data-mesh/data-mesh.rules.json",
-        "reference/architecture/topologies/data/data-mesh/data-mesh.rego",
-        "reference/architecture/topologies/data/data-mesh/data-mesh.test.rego"
+        "reference/core/architecture/topologies/integration/event-driven/event-driven.rules.json",
+        "reference/core/architecture/topologies/integration/event-driven/event-driven.rego",
+        "reference/core/architecture/topologies/integration/event-driven/event-driven.test.rego",
+        "reference/core/architecture/topologies/data/data-mesh/data-mesh.rules.json",
+        "reference/core/architecture/topologies/data/data-mesh/data-mesh.rego",
+        "reference/core/architecture/topologies/data/data-mesh/data-mesh.test.rego"
       ],
       "validationCommands": [
-        ".harness/bin/opa test reference/architecture/topologies/integration/event-driven/event-driven.rego reference/architecture/topologies/integration/event-driven/event-driven.test.rego -v",
-        ".harness/bin/opa test reference/architecture/topologies/data/data-mesh/data-mesh.rego reference/architecture/topologies/data/data-mesh/data-mesh.test.rego -v"
+        ".harness/bin/opa test reference/core/architecture/topologies/integration/event-driven/event-driven.rego reference/core/architecture/topologies/integration/event-driven/event-driven.test.rego -v",
+        ".harness/bin/opa test reference/core/architecture/topologies/data/data-mesh/data-mesh.rego reference/core/architecture/topologies/data/data-mesh/data-mesh.test.rego -v"
       ],
       "dependencyDisposition": "none"
     },
@@ -223,8 +223,8 @@
       "closureCommit": "4e8fcad3",
       "evidence": [
         "rulesets/schema/output-envelope.schema.json",
-        "reference/governance/standards/vision/surface-compatibility.json",
-        "reference/governance/standards/vision/surface-compatibility.schema.json",
+        "reference/core/control-center/surface-compatibility.json",
+        "reference/core/control-center/surface-compatibility.schema.json",
         ".harness/scripts/ci/20-validate-surface-compatibility.mjs",
         ".harness/scripts/ci/20-validate-surface-compatibility.test.mjs"
       ],
@@ -246,8 +246,8 @@
         "reference/knowledge/demo/examples/cross-topology-composition/README.md",
         "reference/knowledge/demo/examples/cross-topology-composition/README.es.md",
         ".harness/scripts/ci/22-validate-topology-composition.mjs",
-        "reference/architecture/topologies/topology-dimensions.md",
-        "reference/architecture/topologies/topology-dimensions.es.md"
+        "reference/core/architecture/topologies/topology-dimensions.md",
+        "reference/core/architecture/topologies/topology-dimensions.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/22-validate-topology-composition.mjs",
@@ -290,21 +290,21 @@
         "rulesets/schema/integration-evidence.schema.json",
         "rulesets/sdlc/phase-gates.rules.json",
         "rulesets/schema/ruleset-sdlc.schema.json",
-        "reference/governance/sdlc/04-artifact-templates/observability-validation-template.md",
-        "reference/governance/sdlc/04-artifact-templates/observability-validation-template.es.md",
-        "reference/governance/sdlc/04-artifact-templates/security-scan-report-template.md",
-        "reference/governance/sdlc/04-artifact-templates/security-scan-report-template.es.md",
-        "reference/governance/sdlc/04-artifact-templates/integration-evidence-template.md",
-        "reference/governance/sdlc/04-artifact-templates/integration-evidence-template.es.md",
-        "reference/governance/sdlc/04-artifact-templates/test-summary-report-template.md",
-        "reference/governance/sdlc/04-artifact-templates/test-summary-report-template.es.md",
-        "reference/governance/sdlc/01-playbooks/phase-4-rc-stamp.md",
-        "reference/governance/sdlc/01-playbooks/phase-4-rc-stamp.es.md",
-        "reference/governance/sdlc/01-playbooks/zero-downtime-release.md",
-        "reference/governance/sdlc/01-playbooks/zero-downtime-release.es.md",
+        "reference/core/sdlc/04-artifact-templates/observability-validation-template.md",
+        "reference/core/sdlc/04-artifact-templates/observability-validation-template.es.md",
+        "reference/core/sdlc/04-artifact-templates/security-scan-report-template.md",
+        "reference/core/sdlc/04-artifact-templates/security-scan-report-template.es.md",
+        "reference/core/sdlc/04-artifact-templates/integration-evidence-template.md",
+        "reference/core/sdlc/04-artifact-templates/integration-evidence-template.es.md",
+        "reference/core/sdlc/04-artifact-templates/test-summary-report-template.md",
+        "reference/core/sdlc/04-artifact-templates/test-summary-report-template.es.md",
+        "reference/core/sdlc/01-playbooks/phase-4-rc-stamp.md",
+        "reference/core/sdlc/01-playbooks/phase-4-rc-stamp.es.md",
+        "reference/core/sdlc/01-playbooks/zero-downtime-release.md",
+        "reference/core/sdlc/01-playbooks/zero-downtime-release.es.md",
         ".harness/scripts/ci/21-validate-phase-gate-templates.mjs",
-        "reference/governance/sdlc/README.md",
-        "reference/governance/sdlc/README.es.md"
+        "reference/core/sdlc/README.md",
+        "reference/core/sdlc/README.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/21-validate-phase-gate-templates.mjs",
@@ -320,18 +320,18 @@
       "closedAt": "2026-06-21",
       "closureCommit": "bbe5db91",
       "evidence": [
-        "reference/governance/sdlc/01-playbooks/phase-1-business-signoff.md",
-        "reference/governance/sdlc/01-playbooks/phase-1-business-signoff.es.md",
-        "reference/governance/sdlc/01-playbooks/phase-2-design-baseline.md",
-        "reference/governance/sdlc/01-playbooks/phase-2-design-baseline.es.md",
-        "reference/governance/sdlc/01-playbooks/phase-4-rc-stamp.md",
-        "reference/governance/sdlc/01-playbooks/phase-4-rc-stamp.es.md",
+        "reference/core/sdlc/01-playbooks/phase-1-business-signoff.md",
+        "reference/core/sdlc/01-playbooks/phase-1-business-signoff.es.md",
+        "reference/core/sdlc/01-playbooks/phase-2-design-baseline.md",
+        "reference/core/sdlc/01-playbooks/phase-2-design-baseline.es.md",
+        "reference/core/sdlc/01-playbooks/phase-4-rc-stamp.md",
+        "reference/core/sdlc/01-playbooks/phase-4-rc-stamp.es.md",
         "rulesets/sdlc/phase-gates.rules.json",
         "rulesets/schema/ruleset-sdlc.schema.json",
-        "reference/governance/sdlc/quality-gates.md",
-        "reference/governance/sdlc/quality-gates.es.md",
-        "reference/governance/sdlc/README.md",
-        "reference/governance/sdlc/README.es.md"
+        "reference/core/sdlc/quality-gates.md",
+        "reference/core/sdlc/quality-gates.es.md",
+        "reference/core/sdlc/README.md",
+        "reference/core/sdlc/README.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs",
@@ -347,10 +347,10 @@
       "closureCommit": "956bba24",
       "evidence": [
         "rulesets/schema/topology-manifest.schema.json",
-        "reference/architecture/topologies/execution/serverless/topology.manifest.json",
-        "reference/architecture/topologies/execution/edge-computing/topology.manifest.json",
-        "reference/architecture/topologies/execution/operational-budgets-runbook.md",
-        "reference/architecture/topologies/execution/operational-budgets-runbook.es.md",
+        "reference/core/architecture/topologies/execution/serverless/topology.manifest.json",
+        "reference/core/architecture/topologies/execution/edge-computing/topology.manifest.json",
+        "reference/core/architecture/topologies/execution/operational-budgets-runbook.md",
+        "reference/core/architecture/topologies/execution/operational-budgets-runbook.es.md",
         ".harness/scripts/validate-topology-manifests.mjs"
       ],
       "validationCommands": [
@@ -363,8 +363,8 @@
       "closedAt": "2026-06-21",
       "closureCommit": "a9297f4e",
       "evidence": [
-        "reference/architecture/adrs/core/0098-rest-uri-versioning-deprecation-policy.md",
-        "reference/architecture/adrs/core/0098-rest-uri-versioning-deprecation-policy.es.md",
+        "reference/core/architecture/adrs/core/0098-rest-uri-versioning-deprecation-policy.md",
+        "reference/core/architecture/adrs/core/0098-rest-uri-versioning-deprecation-policy.es.md",
         "apps/core-api/src/infrastructure/interceptors/deprecation.interceptor.ts",
         "apps/core-api/src/infrastructure/interceptors/deprecation.interceptor.spec.ts",
         "apps/core-api/src/main.ts",
@@ -410,8 +410,8 @@
         "reference/products/core-api/README.es.md",
         "reference/products/core-api/api-reference.md",
         "reference/products/core-api/api-reference.es.md",
-        "reference/governance/sdlc/01-playbooks/core-api-deployment.md",
-        "reference/governance/sdlc/01-playbooks/core-api-deployment.es.md"
+        "reference/core/sdlc/01-playbooks/core-api-deployment.md",
+        "reference/core/sdlc/01-playbooks/core-api-deployment.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/generate-bilingual-index.mjs",
@@ -439,8 +439,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "fcf22ee27a160d1e5b34acab7210186531495a3d",
       "evidence": [
-        "reference/architecture/topologies/execution/edge-computing/edge-computing.rules.json",
-        "reference/architecture/topologies/execution/edge-computing/edge-computing.rego",
+        "reference/core/architecture/topologies/execution/edge-computing/edge-computing.rules.json",
+        "reference/core/architecture/topologies/execution/edge-computing/edge-computing.rego",
         "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
         "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
@@ -455,9 +455,9 @@
       "closedAt": "2026-06-20",
       "closureCommit": "e72d8c1de0fa10ee0abc853c5c04be36f032830f",
       "evidence": [
-        "reference/architecture/adrs/core/0084-data-mesh-data-products.md",
-        "reference/architecture/topologies/data/data-mesh/data-mesh.rules.json",
-        "reference/architecture/topologies/data/data-mesh/data-mesh.rego",
+        "reference/core/architecture/adrs/core/0084-data-mesh-data-products.md",
+        "reference/core/architecture/topologies/data/data-mesh/data-mesh.rules.json",
+        "reference/core/architecture/topologies/data/data-mesh/data-mesh.rego",
         "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
         "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
@@ -472,10 +472,10 @@
       "closedAt": "2026-06-20",
       "closureCommit": "8566249bbefe547f87116d90ecb8c8a797e5cc2b",
       "evidence": [
-        "reference/architecture/topologies/execution/serverless/serverless.rules.json",
-        "reference/architecture/topologies/execution/serverless/serverless.rego",
+        "reference/core/architecture/topologies/execution/serverless/serverless.rules.json",
+        "reference/core/architecture/topologies/execution/serverless/serverless.rego",
         "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
-        "reference/architecture/topologies/execution/serverless/README.md"
+        "reference/core/architecture/topologies/execution/serverless/README.md"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs",
@@ -488,10 +488,10 @@
       "closedAt": "2026-06-20",
       "closureCommit": "8566249bbefe547f87116d90ecb8c8a797e5cc2b",
       "evidence": [
-        "reference/architecture/topologies/integration/event-driven/event-driven.rules.json",
-        "reference/architecture/topologies/integration/event-driven/event-driven.rego",
+        "reference/core/architecture/topologies/integration/event-driven/event-driven.rules.json",
+        "reference/core/architecture/topologies/integration/event-driven/event-driven.rego",
         "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
-        "reference/architecture/topologies/integration/event-driven/README.md"
+        "reference/core/architecture/topologies/integration/event-driven/README.md"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs",
@@ -504,12 +504,12 @@
       "closedAt": "2026-06-20",
       "closureCommit": "0fc716a48dc24ea2bec348a42b3780661de5a0b4",
       "evidence": [
-        "reference/architecture/topologies/topology-corpus-standard.md",
-        "reference/architecture/topologies/ai/agentic-ai/topology.manifest.json",
-        "reference/architecture/topologies/ai/agentic-ai/adoption.md",
-        "reference/architecture/topologies/ai/agentic-ai/operations.md",
-        "reference/architecture/topologies/ai/agentic-ai/security.md",
-        "reference/architecture/topologies/ai/agentic-ai/agent.config.schema.json",
+        "reference/core/architecture/topologies/topology-corpus-standard.md",
+        "reference/core/architecture/topologies/ai/agentic-ai/topology.manifest.json",
+        "reference/core/architecture/topologies/ai/agentic-ai/adoption.md",
+        "reference/core/architecture/topologies/ai/agentic-ai/operations.md",
+        "reference/core/architecture/topologies/ai/agentic-ai/security.md",
+        "reference/core/architecture/topologies/ai/agentic-ai/agent.config.schema.json",
         ".harness/scripts/validate-topology-manifests.mjs"
       ],
       "validationCommands": [
@@ -581,7 +581,7 @@
       "closedAt": "2026-06-20",
       "closureCommit": "1ee04e6",
       "evidence": [
-        "reference/architecture/adrs/core/0080-remote-repository-reference-contract.md",
+        "reference/core/architecture/adrs/core/0080-remote-repository-reference-contract.md",
         "apps/core-api/src/application/services/workspace-reference-resolver.service.ts",
         "apps/core-api/src/application/services/workspace-reference-resolver.service.spec.ts"
       ],
@@ -596,8 +596,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "1ee04e6",
       "evidence": [
-        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.rules.json",
-        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.rego",
+        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.rules.json",
+        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.rego",
         "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
         "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
@@ -611,8 +611,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "1ee04e6",
       "evidence": [
-        "reference/architecture/topologies/integration/event-driven/event-driven.rules.json",
-        "reference/architecture/topologies/integration/event-driven/event-driven.rego",
+        "reference/core/architecture/topologies/integration/event-driven/event-driven.rules.json",
+        "reference/core/architecture/topologies/integration/event-driven/event-driven.rego",
         "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
         "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
@@ -626,8 +626,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "6049045",
       "evidence": [
-        "reference/architecture/topologies/execution/serverless/serverless.rules.json",
-        "reference/architecture/topologies/execution/serverless/serverless.rego",
+        "reference/core/architecture/topologies/execution/serverless/serverless.rules.json",
+        "reference/core/architecture/topologies/execution/serverless/serverless.rego",
         "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
         "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
@@ -743,7 +743,7 @@
       "closedAt": "2026-06-10",
       "closureCommit": "ae21c92",
       "evidence": [
-        "reference/architecture/adrs/core/0073-unified-cli-output-contract.md",
+        "reference/core/architecture/adrs/core/0073-unified-cli-output-contract.md",
         "reference/products/evolith-tracker/sdlc-tracker-technical-interfaces.md"
       ],
       "validationCommands": [
@@ -927,8 +927,8 @@
       "closedAt": "2026-06-10",
       "closureCommit": "225d3de",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md",
-        "reference/governance/standards/vision/gap-reference-catalog.md"
+        "reference/core/control-center/gap-tracking.md",
+        "reference/core/control-center/gap-reference-catalog.md"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs"
@@ -984,8 +984,8 @@
       "closedAt": "2026-06-12",
       "closureCommit": "617241d",
       "evidence": [
-        "reference/architecture/adrs/core/0001-monorepo-orchestration-principle.md",
-        "reference/architecture/adrs/adr-authoring-standard.md"
+        "reference/core/architecture/adrs/core/0001-monorepo-orchestration-principle.md",
+        "reference/core/architecture/adrs/adr-authoring-standard.md"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs"
@@ -997,8 +997,8 @@
       "closedAt": "2026-06-12",
       "closureCommit": "d424bfd",
       "evidence": [
-        "reference/architecture/adrs/adr-authoring-standard.md",
-        "reference/architecture/adrs/adr-matrix.md"
+        "reference/core/architecture/adrs/adr-authoring-standard.md",
+        "reference/core/architecture/adrs/adr-matrix.md"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs"
@@ -1010,8 +1010,8 @@
       "closedAt": "2026-06-12",
       "closureCommit": "c9137a0",
       "evidence": [
-        "reference/governance/BILINGUAL_INDEX.md",
-        "reference/governance/BILINGUAL_INDEX.es.md"
+        "reference/core/sdlc/BILINGUAL_INDEX.md",
+        "reference/core/sdlc/BILINGUAL_INDEX.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/bilingual-coverage.mjs",
@@ -1054,7 +1054,7 @@
       "closedAt": "2026-06-12",
       "closureCommit": "c315597",
       "evidence": [
-        "reference/governance/sdlc/01-playbooks/zero-downtime-release.md"
+        "reference/core/sdlc/01-playbooks/zero-downtime-release.md"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs"
@@ -1066,8 +1066,8 @@
       "closedAt": "2026-06-11",
       "closureCommit": "4fb2321",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md",
-        "reference/governance/standards/vision/gap-reference-catalog.md"
+        "reference/core/control-center/gap-tracking.md",
+        "reference/core/control-center/gap-reference-catalog.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/08-validate-tracking.mjs"
@@ -1100,7 +1100,7 @@
       "closedAt": "2026-06-11",
       "closureCommit": "769651c",
       "evidence": [
-        "reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego",
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego",
         "sdk/cli/src"
       ],
       "validationCommands": [
@@ -1113,7 +1113,7 @@
       "closedAt": "2026-06-12",
       "closureCommit": "990af1a",
       "evidence": [
-        "reference/governance/standards/vision/maturity-assessment.md"
+        "reference/core/control-center/maturity-assessment.md"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs"
@@ -1139,7 +1139,7 @@
       "evidence": [
         ".harness/scripts/ci/08-validate-tracking.mjs",
         ".harness/scripts/ci/07-generate-inventories.mjs",
-        "reference/governance/standards/vision/inventory-summary.md"
+        "reference/core/control-center/inventory-summary.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/08-validate-tracking.mjs",
@@ -1152,7 +1152,7 @@
       "closedAt": "2026-06-12",
       "closureCommit": "2a831b1",
       "evidence": [
-        "reference/governance/adr/adr-0090-rule-language-policy.md"
+        "reference/core/sdlc/adr/adr-0090-rule-language-policy.md"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs",
@@ -1167,8 +1167,8 @@
       "evidence": [
         ".harness/scripts/ci/08-validate-tracking.mjs",
         ".harness/scripts/validate-tracking.test.mjs",
-        "reference/governance/standards/vision/gap-closure-evidence-standard.md",
-        "reference/governance/standards/vision/gap-closure-evidence.json"
+        "reference/core/control-center/gap-closure-evidence-standard.md",
+        "reference/core/control-center/gap-closure-evidence.json"
       ],
       "validationCommands": [
         "node --test .harness/scripts/validate-tracking.test.mjs",
@@ -1186,8 +1186,8 @@
         ".github/workflows/docs.yml",
         ".harness/scripts/ci/09-reconcile-maturity.mjs",
         ".harness/scripts/reconcile-maturity.test.mjs",
-        "reference/governance/standards/vision/maturity-evidence.json",
-        "reference/governance/standards/vision/maturity-reconciliation.json"
+        "reference/core/control-center/maturity-evidence.json",
+        "reference/core/control-center/maturity-reconciliation.json"
       ],
       "validationCommands": [
         "node --test .harness/scripts/reconcile-maturity.test.mjs",
@@ -1244,7 +1244,7 @@
       "evidence": [
         "sdk/cli/src/app.module.ts",
         "packages/mcp-server/src/main.ts",
-        "reference/governance/standards/vision/gap-reference-catalog.md"
+        "reference/core/control-center/gap-reference-catalog.md"
       ],
       "validationCommands": [
         "npm run build --workspace sdk/cli",
@@ -1276,7 +1276,7 @@
       "closedAt": "2026-06-14",
       "closureCommit": "0da71feda4238fe247a0033145e7e4a1008bad29",
       "evidence": [
-        "reference/governance/standards/vision/maturity-assessment.md",
+        "reference/core/control-center/maturity-assessment.md",
         "reference/product-suite/vision/README.md",
         "rulesets/acl/README.md",
         "README.md"
@@ -1385,7 +1385,7 @@
         ".github/workflows/sdk-cli-ci.yml",
         ".harness/scripts/verify-git-tag.mjs",
         ".harness/scripts/verify-version-log.mjs",
-        "reference/governance/standards/vision/gap-reference-catalog.md"
+        "reference/core/control-center/gap-reference-catalog.md"
       ],
       "validationCommands": [
         "GITHUB_REF_NAME=main GITHUB_EVENT_NAME=push node .harness/scripts/verify-git-tag.mjs",
@@ -1580,7 +1580,7 @@
       "closedAt": "2026-06-13",
       "closureCommit": "ee57f82",
       "evidence": [
-        "reference/architecture/adrs/core/0075-core-api-auth-strategy.md",
+        "reference/core/architecture/adrs/core/0075-core-api-auth-strategy.md",
         "apps/core-api/src/presentation/controllers/health.controller.ts"
       ],
       "validationCommands": [
@@ -1757,15 +1757,15 @@
         "reference/infrastructure/docker-compose.yml",
         "reference/infrastructure/README.md",
         "reference/platforms/validated-tool-catalog.md",
-        "reference/governance/standards/engineering/detailed-stack-audit-2026.md",
-        "reference/architecture/blueprints/authoritative-tech-stack-agnostic.md",
-        "reference/architecture/blueprints/tech-stack-summary.md",
-        "reference/architecture/blueprints/reference-blueprint.md",
-        "reference/architecture/blueprints/multi-cloud-deployment-scenarios.md",
-        "reference/architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md",
-        "reference/architecture/adrs/core/0039-deployment-topology-abstraction-switcher.md",
-        "reference/governance/standards/communication/visuals/v08-infrastructure-topology.md",
-        "reference/governance/standards/engineering/senior-architectural-assessment.md",
+        "reference/core/sdlc/standards/engineering/detailed-stack-audit-2026.md",
+        "reference/core/architecture/blueprints/authoritative-tech-stack-agnostic.md",
+        "reference/core/architecture/blueprints/tech-stack-summary.md",
+        "reference/core/architecture/blueprints/reference-blueprint.md",
+        "reference/core/architecture/blueprints/multi-cloud-deployment-scenarios.md",
+        "reference/core/architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md",
+        "reference/core/architecture/adrs/core/0039-deployment-topology-abstraction-switcher.md",
+        "reference/core/foundations/common-rules/communication/visuals/v08-infrastructure-topology.md",
+        "reference/core/sdlc/standards/engineering/senior-architectural-assessment.md",
         "reference/product-suite/strategy/evolutionary-strategy-roadmap.md",
         "sdk/cli/src/config/tool-catalog.json",
         "sdk/cli/src/config/cli-commands-matrix.json",
@@ -1787,8 +1787,8 @@
       "evidence": [
         ".harness/scripts/adr-lifecycle.mjs",
         ".harness/scripts/bilingual-terminology-lint.mjs",
-        "reference/governance/standards/vision/gap-reference-catalog.md",
-        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+        "reference/core/control-center/gap-reference-catalog.md",
+        "reference/core/control-center/gap-reference-catalog.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/adr-lifecycle.mjs --check-only",
@@ -1837,8 +1837,8 @@
       "closedAt": "2026-06-15",
       "closureCommit": "189b03d",
       "evidence": [
-        "reference/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.md",
-        "reference/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.es.md"
+        "reference/core/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.md",
+        "reference/core/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs"
@@ -2109,7 +2109,7 @@
       "closedAt": "2026-06-19",
       "closureCommit": "e93c68a",
       "evidence": [
-        "reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md",
+        "reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md",
         "reference/product-suite/vision/evolith-product-vision-master.md",
         "packages/mcp-server/README.md",
         "apps/core-api/src/core-domain.module.ts"
@@ -2147,7 +2147,7 @@
       "closedAt": "2026-06-19",
       "closureCommit": "cb05ffa",
       "evidence": [
-        "reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md",
+        "reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md",
         "reference/product-suite/vision/evolith-product-vision-master.md",
         "apps/core-api/README.md"
       ],
@@ -2215,8 +2215,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "dcdad405",
       "evidence": [
-        "reference/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.md",
-        "reference/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.es.md"
+        "reference/core/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.md",
+        "reference/core/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs"
@@ -2228,8 +2228,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "d1811b9b",
       "evidence": [
-        "reference/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.md",
-        "reference/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.es.md"
+        "reference/core/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.md",
+        "reference/core/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs"
@@ -2241,8 +2241,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "92e80b5c",
       "evidence": [
-        "reference/architecture/adrs/core/0087-abac-agentic-tool-execution.md",
-        "reference/architecture/adrs/core/0087-abac-agentic-tool-execution.es.md",
+        "reference/core/architecture/adrs/core/0087-abac-agentic-tool-execution.md",
+        "reference/core/architecture/adrs/core/0087-abac-agentic-tool-execution.es.md",
         "rulesets/opa/abac-mcp-tool-access.rego"
       ],
       "validationCommands": [
@@ -2255,8 +2255,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "1d78117d",
       "evidence": [
-        "reference/architecture/adrs/core/0088-sovereign-identity-agentic-ai.md",
-        "reference/architecture/adrs/core/0088-sovereign-identity-agentic-ai.es.md"
+        "reference/core/architecture/adrs/core/0088-sovereign-identity-agentic-ai.md",
+        "reference/core/architecture/adrs/core/0088-sovereign-identity-agentic-ai.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs"
@@ -2268,8 +2268,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "155ee197",
       "evidence": [
-        "reference/architecture/adrs/core/0089-event-driven-agentic-workflows.md",
-        "reference/architecture/adrs/core/0089-event-driven-agentic-workflows.es.md"
+        "reference/core/architecture/adrs/core/0089-event-driven-agentic-workflows.md",
+        "reference/core/architecture/adrs/core/0089-event-driven-agentic-workflows.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs"
@@ -2281,8 +2281,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "69976156",
       "evidence": [
-        "reference/architecture/adrs/core/0090-rag-knowledge-governance.md",
-        "reference/architecture/adrs/core/0090-rag-knowledge-governance.es.md",
+        "reference/core/architecture/adrs/core/0090-rag-knowledge-governance.md",
+        "reference/core/architecture/adrs/core/0090-rag-knowledge-governance.es.md",
         ".harness/scripts/ci/14-rag-index-sync.mjs"
       ],
       "validationCommands": [
@@ -2295,8 +2295,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "25731436",
       "evidence": [
-        "reference/architecture/adrs/core/0091-workload-identity-token-rotation.md",
-        "reference/architecture/adrs/core/0091-workload-identity-token-rotation.es.md"
+        "reference/core/architecture/adrs/core/0091-workload-identity-token-rotation.md",
+        "reference/core/architecture/adrs/core/0091-workload-identity-token-rotation.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs"
@@ -2320,8 +2320,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "10fa4962",
       "evidence": [
-        "reference/architecture/adrs/core/0092-agent-infinite-loop-prevention.md",
-        "reference/architecture/adrs/core/0092-agent-infinite-loop-prevention.es.md"
+        "reference/core/architecture/adrs/core/0092-agent-infinite-loop-prevention.md",
+        "reference/core/architecture/adrs/core/0092-agent-infinite-loop-prevention.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs"
@@ -2333,8 +2333,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "3310dc11",
       "evidence": [
-        "reference/architecture/adrs/core/0093-mcp-concurrency-locking.md",
-        "reference/architecture/adrs/core/0093-mcp-concurrency-locking.es.md"
+        "reference/core/architecture/adrs/core/0093-mcp-concurrency-locking.md",
+        "reference/core/architecture/adrs/core/0093-mcp-concurrency-locking.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs"
@@ -2346,8 +2346,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "8c238ec7",
       "evidence": [
-        "reference/architecture/adrs/core/0094-multi-agent-handoff.md",
-        "reference/architecture/adrs/core/0094-multi-agent-handoff.es.md"
+        "reference/core/architecture/adrs/core/0094-multi-agent-handoff.md",
+        "reference/core/architecture/adrs/core/0094-multi-agent-handoff.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs"
@@ -2406,50 +2406,50 @@
       "closedAt": "2026-06-20",
       "closureCommit": "0c5c57d52a89db364626725b40062d6d9ce9da03",
       "evidence": [
-        "reference/architecture/topologies/execution/serverless/maturity.md",
-        "reference/architecture/topologies/execution/serverless/maturity.es.md",
-        "reference/architecture/topologies/execution/serverless/topology.config.schema.json",
-        "reference/architecture/topologies/execution/serverless/fixtures/valid.topology.config.json",
-        "reference/architecture/topologies/execution/serverless/fixtures/invalid.topology.config.json",
-        "reference/architecture/topologies/execution/serverless/serverless.test.rego",
-        "reference/architecture/topologies/execution/serverless/topology.manifest.json",
-        "reference/architecture/topologies/execution/serverless/README.md",
-        "reference/architecture/topologies/execution/serverless/README.es.md",
-        "reference/architecture/adrs/core/0095-serverless-architecture-governance.md",
-        "reference/architecture/adrs/core/0095-serverless-architecture-governance.es.md",
-        "reference/architecture/topologies/integration/event-driven/maturity.md",
-        "reference/architecture/topologies/integration/event-driven/maturity.es.md",
-        "reference/architecture/topologies/integration/event-driven/topology.config.schema.json",
-        "reference/architecture/topologies/integration/event-driven/fixtures/valid.topology.config.json",
-        "reference/architecture/topologies/integration/event-driven/fixtures/invalid.topology.config.json",
-        "reference/architecture/topologies/integration/event-driven/event-driven.test.rego",
-        "reference/architecture/topologies/integration/event-driven/topology.manifest.json",
-        "reference/architecture/topologies/integration/event-driven/README.md",
-        "reference/architecture/topologies/integration/event-driven/README.es.md",
-        "reference/architecture/topologies/data/data-mesh/maturity.md",
-        "reference/architecture/topologies/data/data-mesh/maturity.es.md",
-        "reference/architecture/topologies/data/data-mesh/topology.config.schema.json",
-        "reference/architecture/topologies/data/data-mesh/fixtures/valid.topology.config.json",
-        "reference/architecture/topologies/data/data-mesh/fixtures/invalid.topology.config.json",
-        "reference/architecture/topologies/data/data-mesh/data-mesh.test.rego",
-        "reference/architecture/topologies/data/data-mesh/topology.manifest.json",
-        "reference/architecture/topologies/data/data-mesh/README.md",
-        "reference/architecture/topologies/data/data-mesh/README.es.md",
-        "reference/architecture/topologies/execution/edge-computing/maturity.md",
-        "reference/architecture/topologies/execution/edge-computing/maturity.es.md",
-        "reference/architecture/topologies/execution/edge-computing/topology.config.schema.json",
-        "reference/architecture/topologies/execution/edge-computing/fixtures/valid.topology.config.json",
-        "reference/architecture/topologies/execution/edge-computing/fixtures/invalid.topology.config.json",
-        "reference/architecture/topologies/execution/edge-computing/edge-computing.test.rego",
-        "reference/architecture/topologies/execution/edge-computing/topology.manifest.json",
-        "reference/architecture/topologies/execution/edge-computing/README.md",
-        "reference/architecture/topologies/execution/edge-computing/README.es.md",
-        "reference/architecture/adrs/core/0096-edge-computing-architecture-governance.md",
-        "reference/architecture/adrs/core/0096-edge-computing-architecture-governance.es.md",
-        "reference/architecture/topologies/README.md",
-        "reference/architecture/topologies/README.es.md",
-        "reference/governance/standards/vision/gap-tracking.md",
-        "reference/governance/standards/vision/gap-tracking.es.md"
+        "reference/core/architecture/topologies/execution/serverless/maturity.md",
+        "reference/core/architecture/topologies/execution/serverless/maturity.es.md",
+        "reference/core/architecture/topologies/execution/serverless/topology.config.schema.json",
+        "reference/core/architecture/topologies/execution/serverless/fixtures/valid.topology.config.json",
+        "reference/core/architecture/topologies/execution/serverless/fixtures/invalid.topology.config.json",
+        "reference/core/architecture/topologies/execution/serverless/serverless.test.rego",
+        "reference/core/architecture/topologies/execution/serverless/topology.manifest.json",
+        "reference/core/architecture/topologies/execution/serverless/README.md",
+        "reference/core/architecture/topologies/execution/serverless/README.es.md",
+        "reference/core/architecture/adrs/core/0095-serverless-architecture-governance.md",
+        "reference/core/architecture/adrs/core/0095-serverless-architecture-governance.es.md",
+        "reference/core/architecture/topologies/integration/event-driven/maturity.md",
+        "reference/core/architecture/topologies/integration/event-driven/maturity.es.md",
+        "reference/core/architecture/topologies/integration/event-driven/topology.config.schema.json",
+        "reference/core/architecture/topologies/integration/event-driven/fixtures/valid.topology.config.json",
+        "reference/core/architecture/topologies/integration/event-driven/fixtures/invalid.topology.config.json",
+        "reference/core/architecture/topologies/integration/event-driven/event-driven.test.rego",
+        "reference/core/architecture/topologies/integration/event-driven/topology.manifest.json",
+        "reference/core/architecture/topologies/integration/event-driven/README.md",
+        "reference/core/architecture/topologies/integration/event-driven/README.es.md",
+        "reference/core/architecture/topologies/data/data-mesh/maturity.md",
+        "reference/core/architecture/topologies/data/data-mesh/maturity.es.md",
+        "reference/core/architecture/topologies/data/data-mesh/topology.config.schema.json",
+        "reference/core/architecture/topologies/data/data-mesh/fixtures/valid.topology.config.json",
+        "reference/core/architecture/topologies/data/data-mesh/fixtures/invalid.topology.config.json",
+        "reference/core/architecture/topologies/data/data-mesh/data-mesh.test.rego",
+        "reference/core/architecture/topologies/data/data-mesh/topology.manifest.json",
+        "reference/core/architecture/topologies/data/data-mesh/README.md",
+        "reference/core/architecture/topologies/data/data-mesh/README.es.md",
+        "reference/core/architecture/topologies/execution/edge-computing/maturity.md",
+        "reference/core/architecture/topologies/execution/edge-computing/maturity.es.md",
+        "reference/core/architecture/topologies/execution/edge-computing/topology.config.schema.json",
+        "reference/core/architecture/topologies/execution/edge-computing/fixtures/valid.topology.config.json",
+        "reference/core/architecture/topologies/execution/edge-computing/fixtures/invalid.topology.config.json",
+        "reference/core/architecture/topologies/execution/edge-computing/edge-computing.test.rego",
+        "reference/core/architecture/topologies/execution/edge-computing/topology.manifest.json",
+        "reference/core/architecture/topologies/execution/edge-computing/README.md",
+        "reference/core/architecture/topologies/execution/edge-computing/README.es.md",
+        "reference/core/architecture/adrs/core/0096-edge-computing-architecture-governance.md",
+        "reference/core/architecture/adrs/core/0096-edge-computing-architecture-governance.es.md",
+        "reference/core/architecture/topologies/README.md",
+        "reference/core/architecture/topologies/README.es.md",
+        "reference/core/control-center/gap-tracking.md",
+        "reference/core/control-center/gap-tracking.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs"
@@ -2470,30 +2470,30 @@
         "rulesets/opa/mcp.test.rego",
         "rulesets/opa/abac-mcp-tool-access.test.rego",
         "rulesets/opa/main.rego",
-        "reference/architecture/topologies/progressive-axis/modular-monolith/parity-fixtures/compliant.json",
-        "reference/architecture/topologies/progressive-axis/modular-monolith/parity-fixtures/violation.json",
-        "reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.wasm",
-        "reference/architecture/topologies/progressive-axis/distributed-modules/parity-fixtures/compliant.json",
-        "reference/architecture/topologies/progressive-axis/distributed-modules/parity-fixtures/violation.json",
-        "reference/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.wasm",
-        "reference/architecture/topologies/progressive-axis/microservices/parity-fixtures/compliant.json",
-        "reference/architecture/topologies/progressive-axis/microservices/parity-fixtures/violation.json",
-        "reference/architecture/topologies/progressive-axis/microservices/microservices.wasm",
-        "reference/architecture/topologies/execution/serverless/parity-fixtures/compliant.json",
-        "reference/architecture/topologies/execution/serverless/parity-fixtures/violation.json",
-        "reference/architecture/topologies/execution/serverless/serverless.wasm",
-        "reference/architecture/topologies/execution/edge-computing/parity-fixtures/compliant.json",
-        "reference/architecture/topologies/execution/edge-computing/parity-fixtures/violation.json",
-        "reference/architecture/topologies/execution/edge-computing/edge-computing.wasm",
-        "reference/architecture/topologies/integration/event-driven/parity-fixtures/compliant.json",
-        "reference/architecture/topologies/integration/event-driven/parity-fixtures/violation.json",
-        "reference/architecture/topologies/integration/event-driven/event-driven.wasm",
-        "reference/architecture/topologies/data/data-mesh/parity-fixtures/compliant.json",
-        "reference/architecture/topologies/data/data-mesh/parity-fixtures/violation.json",
-        "reference/architecture/topologies/data/data-mesh/data-mesh.wasm",
-        "reference/architecture/topologies/ai/agentic-ai/parity-fixtures/compliant.json",
-        "reference/architecture/topologies/ai/agentic-ai/parity-fixtures/violation.json",
-        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.wasm",
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/parity-fixtures/compliant.json",
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/parity-fixtures/violation.json",
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.wasm",
+        "reference/core/architecture/topologies/progressive-axis/distributed-modules/parity-fixtures/compliant.json",
+        "reference/core/architecture/topologies/progressive-axis/distributed-modules/parity-fixtures/violation.json",
+        "reference/core/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.wasm",
+        "reference/core/architecture/topologies/progressive-axis/microservices/parity-fixtures/compliant.json",
+        "reference/core/architecture/topologies/progressive-axis/microservices/parity-fixtures/violation.json",
+        "reference/core/architecture/topologies/progressive-axis/microservices/microservices.wasm",
+        "reference/core/architecture/topologies/execution/serverless/parity-fixtures/compliant.json",
+        "reference/core/architecture/topologies/execution/serverless/parity-fixtures/violation.json",
+        "reference/core/architecture/topologies/execution/serverless/serverless.wasm",
+        "reference/core/architecture/topologies/execution/edge-computing/parity-fixtures/compliant.json",
+        "reference/core/architecture/topologies/execution/edge-computing/parity-fixtures/violation.json",
+        "reference/core/architecture/topologies/execution/edge-computing/edge-computing.wasm",
+        "reference/core/architecture/topologies/integration/event-driven/parity-fixtures/compliant.json",
+        "reference/core/architecture/topologies/integration/event-driven/parity-fixtures/violation.json",
+        "reference/core/architecture/topologies/integration/event-driven/event-driven.wasm",
+        "reference/core/architecture/topologies/data/data-mesh/parity-fixtures/compliant.json",
+        "reference/core/architecture/topologies/data/data-mesh/parity-fixtures/violation.json",
+        "reference/core/architecture/topologies/data/data-mesh/data-mesh.wasm",
+        "reference/core/architecture/topologies/ai/agentic-ai/parity-fixtures/compliant.json",
+        "reference/core/architecture/topologies/ai/agentic-ai/parity-fixtures/violation.json",
+        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.wasm",
         ".harness/scripts/ci/27-opa-parity-gate.mjs",
         ".harness/scripts/ci/28-test-topology-opa.mjs",
         ".harness/scripts/ci/opa-eval.mjs",
@@ -2513,8 +2513,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "b443dcd2",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md",
-        "reference/governance/standards/vision/gap-tracking.es.md"
+        "reference/core/control-center/gap-tracking.md",
+        "reference/core/control-center/gap-tracking.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/28-test-topology-opa.mjs",
@@ -2538,8 +2538,8 @@
         "rulesets/opa/knowledge-intake.test.rego",
         ".harness/scripts/ci/17-validate-knowledge-intake.mjs",
         ".harness/scripts/ci/17-validate-knowledge-intake.test.mjs",
-        "reference/governance/standards/vision/gap-tracking.md",
-        "reference/governance/standards/vision/gap-tracking.es.md"
+        "reference/core/control-center/gap-tracking.md",
+        "reference/core/control-center/gap-tracking.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/17-validate-knowledge-intake.mjs",
@@ -2555,10 +2555,10 @@
       "closedAt": "2026-06-21",
       "closureCommit": "176d0897",
       "evidence": [
-        "reference/architecture/adrs/core/0097-knowledge-lifecycle-governance.md",
-        "reference/architecture/adrs/core/0097-knowledge-lifecycle-governance.es.md",
-        "reference/architecture/adrs/core/README.md",
-        "reference/architecture/adrs/core/README.es.md",
+        "reference/core/architecture/adrs/core/0097-knowledge-lifecycle-governance.md",
+        "reference/core/architecture/adrs/core/0097-knowledge-lifecycle-governance.es.md",
+        "reference/core/architecture/adrs/core/README.md",
+        "reference/core/architecture/adrs/core/README.es.md",
         "rulesets/schema/knowledge-intake.schema.json",
         "reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml",
         "rulesets/governance/knowledge-intake.rules.json",
@@ -2566,8 +2566,8 @@
         "rulesets/opa/knowledge-intake.test.rego",
         ".harness/scripts/ci/17-validate-knowledge-intake.mjs",
         ".harness/scripts/ci/17-validate-knowledge-intake.test.mjs",
-        "reference/governance/standards/vision/gap-tracking.md",
-        "reference/governance/standards/vision/gap-tracking.es.md"
+        "reference/core/control-center/gap-tracking.md",
+        "reference/core/control-center/gap-tracking.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/17-validate-knowledge-intake.mjs",
@@ -2583,17 +2583,17 @@
       "closedAt": "2026-06-21",
       "closureCommit": "19fb0c41",
       "evidence": [
-        "reference/architecture/topologies/ai/agentic-ai/README.md",
-        "reference/architecture/topologies/ai/agentic-ai/README.es.md",
-        "reference/architecture/topologies/ai/agentic-ai/operations.md",
-        "reference/architecture/topologies/ai/agentic-ai/operations.es.md",
-        "reference/architecture/topologies/ai/agentic-ai/runbooks.md",
-        "reference/architecture/topologies/ai/agentic-ai/runbooks.es.md",
-        "reference/architecture/topologies/ai/agentic-ai/agent.config.schema.json",
-        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.rules.json",
-        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.rego",
-        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.test.rego",
-        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.wasm",
+        "reference/core/architecture/topologies/ai/agentic-ai/README.md",
+        "reference/core/architecture/topologies/ai/agentic-ai/README.es.md",
+        "reference/core/architecture/topologies/ai/agentic-ai/operations.md",
+        "reference/core/architecture/topologies/ai/agentic-ai/operations.es.md",
+        "reference/core/architecture/topologies/ai/agentic-ai/runbooks.md",
+        "reference/core/architecture/topologies/ai/agentic-ai/runbooks.es.md",
+        "reference/core/architecture/topologies/ai/agentic-ai/agent.config.schema.json",
+        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.rules.json",
+        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.rego",
+        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.test.rego",
+        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.wasm",
         "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
         "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
@@ -2620,8 +2620,8 @@
         "reference/knowledge/intake/parity-fixtures/violation.json",
         ".harness/scripts/ci/18-validate-knowledge-parity.mjs",
         ".harness/scripts/ci/17-validate-knowledge-intake.mjs",
-        "reference/governance/standards/vision/gap-tracking.md",
-        "reference/governance/standards/vision/gap-tracking.es.md"
+        "reference/core/control-center/gap-tracking.md",
+        "reference/core/control-center/gap-tracking.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/18-validate-knowledge-parity.mjs",
@@ -2637,8 +2637,8 @@
       "closedAt": "2026-06-22",
       "closureCommit": "804411ca",
       "evidence": [
-        "reference/governance/standards/vision/surface-parity-matrix.json",
-        "reference/governance/standards/vision/surface-parity-matrix.schema.json",
+        "reference/core/control-center/surface-parity-matrix.json",
+        "reference/core/control-center/surface-parity-matrix.schema.json",
         ".harness/scripts/ci/24-check-surface-parity.mjs"
       ],
       "validationCommands": [
@@ -2697,8 +2697,8 @@
       "closedAt": "2026-06-23",
       "closureCommit": "6de4b602",
       "evidence": [
-        "reference/governance/sdlc/05-delivery-and-operations/README.md",
-        "reference/governance/sdlc/05-delivery-and-operations/README.es.md"
+        "reference/core/sdlc/05-delivery-and-operations/README.md",
+        "reference/core/sdlc/05-delivery-and-operations/README.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs",
@@ -2822,7 +2822,7 @@
       "closedAt": "2026-06-22",
       "closureCommit": "a5b6b0a7",
       "evidence": [
-        "reference/architecture/adrs/core/README.md"
+        "reference/core/architecture/adrs/core/README.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs",
@@ -2854,10 +2854,10 @@
       "closedAt": "2026-06-22",
       "closureCommit": "47e670b7",
       "evidence": [
-        "reference/architecture/adrs/core/0099-opa-bundle-s3-distribution.md",
-        "reference/architecture/adrs/core/0099-opa-bundle-s3-distribution.es.md",
-        "reference/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.md",
-        "reference/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.es.md"
+        "reference/core/architecture/adrs/core/0099-opa-bundle-s3-distribution.md",
+        "reference/core/architecture/adrs/core/0099-opa-bundle-s3-distribution.es.md",
+        "reference/core/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.md",
+        "reference/core/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs",
@@ -2871,10 +2871,10 @@
       "closedAt": "2026-06-22",
       "closureCommit": "2e58fd46",
       "evidence": [
-        "reference/architecture/agnostic-baseline.md",
-        "reference/architecture/agnostic-baseline.es.md",
-        "reference/architecture/README.md",
-        "reference/architecture/README.es.md"
+        "reference/core/architecture/agnostic-baseline.md",
+        "reference/core/architecture/agnostic-baseline.es.md",
+        "reference/core/architecture/README.md",
+        "reference/core/architecture/README.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs",
@@ -2906,8 +2906,8 @@
       "closedAt": "2026-06-23",
       "closureCommit": "8eb7ce71",
       "evidence": [
-        "reference/architecture/adrs/adr-matrix.md",
-        "reference/architecture/adrs/adr-matrix.es.md"
+        "reference/core/architecture/adrs/adr-matrix.md",
+        "reference/core/architecture/adrs/adr-matrix.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs"
@@ -2931,11 +2931,11 @@
       "closedAt": "2026-06-23",
       "closureCommit": "8eb7ce71",
       "evidence": [
-        "reference/governance/standards/ai-augmented/02-mcp-integration/mcp-security.md",
-        "reference/governance/standards/ai-augmented/02-mcp-integration/mcp-security.es.md",
-        "reference/governance/standards/engineering/senior-architectural-assessment.md",
-        "reference/governance/standards/engineering/senior-architectural-assessment.es.md",
-        "reference/governance/standards/ai-augmented/08-architecture-ai-assistant/harness-platform-evaluation.es.md"
+        "reference/core/foundations/common-rules/ai-augmented/02-mcp-integration/mcp-security.md",
+        "reference/core/foundations/common-rules/ai-augmented/02-mcp-integration/mcp-security.es.md",
+        "reference/core/sdlc/standards/engineering/senior-architectural-assessment.md",
+        "reference/core/sdlc/standards/engineering/senior-architectural-assessment.es.md",
+        "reference/core/foundations/common-rules/ai-augmented/08-architecture-ai-assistant/harness-platform-evaluation.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs"
@@ -2991,9 +2991,9 @@
       "closedAt": "2026-06-23",
       "closureCommit": "8eb7ce71",
       "evidence": [
-        "reference/architecture/adrs/core/0041-dual-engine-policy-evaluation.md",
-        "reference/architecture/adrs/core/0095-serverless-architecture-governance.md",
-        "reference/architecture/adrs/core/0096-edge-computing-architecture-governance.md"
+        "reference/core/architecture/adrs/core/0041-dual-engine-policy-evaluation.md",
+        "reference/core/architecture/adrs/core/0095-serverless-architecture-governance.md",
+        "reference/core/architecture/adrs/core/0096-edge-computing-architecture-governance.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
@@ -3006,8 +3006,8 @@
       "closedAt": "2026-06-23",
       "closureCommit": "4b54c3c7",
       "evidence": [
-        "reference/governance/standards/vision/gap-reference-catalog.md",
-        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+        "reference/core/control-center/gap-reference-catalog.md",
+        "reference/core/control-center/gap-reference-catalog.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/08-validate-tracking.mjs"
@@ -3033,8 +3033,8 @@
       "closedAt": "2026-06-23",
       "closureCommit": "4b54c3c7",
       "evidence": [
-        "reference/governance/standards/vision/gap-reference-catalog.md",
-        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+        "reference/core/control-center/gap-reference-catalog.md",
+        "reference/core/control-center/gap-reference-catalog.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/08-validate-tracking.mjs"
@@ -3047,8 +3047,8 @@
       "closedAt": "2026-06-23",
       "closureCommit": "4b54c3c7",
       "evidence": [
-        "reference/governance/standards/vision/gap-reference-catalog.md",
-        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+        "reference/core/control-center/gap-reference-catalog.md",
+        "reference/core/control-center/gap-reference-catalog.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/08-validate-tracking.mjs"
@@ -3061,10 +3061,10 @@
       "closedAt": "2026-06-23",
       "closureCommit": "4b54c3c7",
       "evidence": [
-        "reference/governance/adr/README.md",
-        "reference/governance/adr/README.es.md",
-        "reference/governance/adr/BILINGUAL_INDEX.md",
-        "reference/governance/adr/BILINGUAL_INDEX.es.md"
+        "reference/core/sdlc/adr/README.md",
+        "reference/core/sdlc/adr/README.es.md",
+        "reference/core/sdlc/adr/BILINGUAL_INDEX.md",
+        "reference/core/sdlc/adr/BILINGUAL_INDEX.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
@@ -3111,8 +3111,8 @@
       "closedAt": "2026-06-23",
       "closureCommit": "4b54c3c7",
       "evidence": [
-        "reference/governance/sdlc/01-playbooks/README.md",
-        "reference/governance/sdlc/01-playbooks/README.es.md"
+        "reference/core/sdlc/01-playbooks/README.md",
+        "reference/core/sdlc/01-playbooks/README.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
@@ -3125,8 +3125,8 @@
       "closedAt": "2026-06-23",
       "closureCommit": "4b54c3c7",
       "evidence": [
-        "reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.md",
-        "reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md"
+        "reference/core/sdlc/03-documentation/sdlc-documentation-best-practices.md",
+        "reference/core/sdlc/03-documentation/sdlc-documentation-best-practices.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
@@ -3139,7 +3139,7 @@
       "closedAt": "2026-06-23",
       "closureCommit": "4b54c3c7",
       "evidence": [
-        "reference/architecture/adrs/core/"
+        "reference/core/architecture/adrs/core/"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs",
@@ -3152,8 +3152,8 @@
       "closedAt": "2026-06-23",
       "closureCommit": "4b54c3c7",
       "evidence": [
-        "reference/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.md",
-        "reference/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.es.md"
+        "reference/core/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.md",
+        "reference/core/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs",
@@ -3234,8 +3234,8 @@
       "closedAt": "2026-06-23",
       "closureCommit": "a529ad63",
       "evidence": [
-        "reference/governance/standards/vision/gap-reference-catalog.md",
-        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+        "reference/core/control-center/gap-reference-catalog.md",
+        "reference/core/control-center/gap-reference-catalog.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/08-validate-tracking.mjs"
@@ -3248,7 +3248,7 @@
       "closedAt": "2026-06-23",
       "closureCommit": "e4819615",
       "evidence": [
-        "reference/architecture/adrs/core/README.es.md"
+        "reference/core/architecture/adrs/core/README.es.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
@@ -3278,12 +3278,12 @@
       "closedAt": "2026-06-23",
       "closureCommit": "cfb4acb5",
       "evidence": [
-        "reference/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md",
-        "reference/architecture/adrs/core/0056-enterprise-naming-design-conventions.md"
+        "reference/core/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md",
+        "reference/core/architecture/adrs/core/0056-enterprise-naming-design-conventions.md"
       ],
       "validationCommands": [
-        "grep -A1 'Status:' reference/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md",
-        "grep -A1 'Status' reference/architecture/adrs/core/0056-enterprise-naming-design-conventions.md"
+        "grep -A1 'Status:' reference/core/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md",
+        "grep -A1 'Status' reference/core/architecture/adrs/core/0056-enterprise-naming-design-conventions.md"
       ],
       "dependencyDisposition": "none",
       "closureNote": "ADR-0049 status corrected to Accepted. ADR-0056 status corrected to Accepted with 'extends' note (subsumed, not superseded). Cross-references added."
@@ -3295,14 +3295,14 @@
       "evidence": [
         "rulesets/schema/topology-manifest.schema.json",
         ".harness/scripts/validate-topology-manifests.mjs",
-        "reference/architecture/topologies/progressive-axis/modular-monolith/topology.manifest.json",
-        "reference/architecture/topologies/progressive-axis/distributed-modules/topology.manifest.json",
-        "reference/architecture/topologies/progressive-axis/microservices/topology.manifest.json",
-        "reference/architecture/topologies/execution/serverless/topology.manifest.json",
-        "reference/architecture/topologies/execution/edge-computing/topology.manifest.json",
-        "reference/architecture/topologies/integration/event-driven/topology.manifest.json",
-        "reference/architecture/topologies/data/data-mesh/topology.manifest.json",
-        "reference/architecture/topologies/ai/agentic-ai/topology.manifest.json"
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/topology.manifest.json",
+        "reference/core/architecture/topologies/progressive-axis/distributed-modules/topology.manifest.json",
+        "reference/core/architecture/topologies/progressive-axis/microservices/topology.manifest.json",
+        "reference/core/architecture/topologies/execution/serverless/topology.manifest.json",
+        "reference/core/architecture/topologies/execution/edge-computing/topology.manifest.json",
+        "reference/core/architecture/topologies/integration/event-driven/topology.manifest.json",
+        "reference/core/architecture/topologies/data/data-mesh/topology.manifest.json",
+        "reference/core/architecture/topologies/ai/agentic-ai/topology.manifest.json"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-topology-manifests.mjs"
@@ -3365,14 +3365,14 @@
       "closedAt": "2026-06-23",
       "closureCommit": "f1d9814f",
       "evidence": [
-        "reference/architecture/adrs/ai-augmented/0001-harness-engineering.md",
-        "reference/architecture/adrs/ai-augmented/0002-mcp-integration-protocol.md",
-        "reference/architecture/adrs/ai-augmented/0003-model-selection-governance.md",
-        "reference/architecture/adrs/ai-augmented/0004-agents-md-mandatory-artifact.md",
-        "reference/architecture/adrs/ai-augmented/0005-human-in-the-loop-policy.md"
+        "reference/core/architecture/adrs/ai-augmented/0001-harness-engineering.md",
+        "reference/core/architecture/adrs/ai-augmented/0002-mcp-integration-protocol.md",
+        "reference/core/architecture/adrs/ai-augmented/0003-model-selection-governance.md",
+        "reference/core/architecture/adrs/ai-augmented/0004-agents-md-mandatory-artifact.md",
+        "reference/core/architecture/adrs/ai-augmented/0005-human-in-the-loop-policy.md"
       ],
       "validationCommands": [
-        "ls reference/architecture/adrs/ai-augmented/000*.md"
+        "ls reference/core/architecture/adrs/ai-augmented/000*.md"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Created 5 AI-Augmented ADRs with EN/ES versions."
@@ -3600,9 +3600,9 @@
       "closedAt": "2026-06-23",
       "closureCommit": "f1d9814f",
       "evidence": [
-        "reference/architecture/topologies/progressive-axis/modular-monolith/operations.md",
-        "reference/architecture/topologies/data/data-mesh/operations.md",
-        "reference/architecture/topologies/integration/event-driven/operations.md"
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/operations.md",
+        "reference/core/architecture/topologies/data/data-mesh/operations.md",
+        "reference/core/architecture/topologies/integration/event-driven/operations.md"
       ],
       "validationCommands": [
         "echo validated"
@@ -3615,8 +3615,8 @@
       "closedAt": "2026-06-23",
       "closureCommit": "f1d9814f",
       "evidence": [
-        "reference/governance/sdlc/04-artifact-templates/rollback-rehearsal-template.md",
-        "reference/governance/sdlc/04-artifact-templates/on-call-handoff-template.md",
+        "reference/core/sdlc/04-artifact-templates/rollback-rehearsal-template.md",
+        "reference/core/sdlc/04-artifact-templates/on-call-handoff-template.md",
         "rulesets/schema/rollback-rehearsal.schema.json",
         "rulesets/schema/on-call-handoff.schema.json"
       ],
@@ -3631,7 +3631,7 @@
       "closedAt": "2026-06-23",
       "closureCommit": "f1d9814f",
       "evidence": [
-        "reference/architecture/topologies/ai/agentic-ai/topology.manifest.json",
+        "reference/core/architecture/topologies/ai/agentic-ai/topology.manifest.json",
         "rulesets/schema/topology-manifest.schema.json"
       ],
       "validationCommands": [
@@ -3673,9 +3673,9 @@
       "closedAt": "2026-06-23",
       "closureCommit": "f1d9814f",
       "evidence": [
-        "reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.test.rego",
-        "reference/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.test.rego",
-        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.test.rego"
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.test.rego",
+        "reference/core/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.test.rego",
+        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.test.rego"
       ],
       "validationCommands": [
         "echo validated"
@@ -4107,12 +4107,12 @@
       "closureCommit": "bbd2e517",
       "evidence": [
         ".github/workflows/sdk-cli-ci.yml",
-        "reference/governance/standards/vision/gap-reference-catalog.md",
-        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+        "reference/core/control-center/gap-reference-catalog.md",
+        "reference/core/control-center/gap-reference-catalog.es.md"
       ],
       "validationCommands": [
         "rg -n \"dast-scan|zaproxy/action-full-scan|gitleaks\" .github/workflows/sdk-cli-ci.yml",
-        "rg -n \"#### GT-273|long-term DAST plan|plan DAST de largo plazo\" reference/governance/standards/vision/gap-reference-catalog.md reference/governance/standards/vision/gap-reference-catalog.es.md"
+        "rg -n \"#### GT-273|long-term DAST plan|plan DAST de largo plazo\" reference/core/control-center/gap-reference-catalog.md reference/core/control-center/gap-reference-catalog.es.md"
       ],
       "dependencyDisposition": "none",
       "closureNote": "DAST (OWASP ZAP) scan removed from sdk-cli-ci.yml. The step scanned against localhost:8000 without a server running, producing a silent no-op. Replaced by gitleaks secret detection (GT-265) and Trivy container scanning (GT-227) as higher-signal security controls. Long-term DAST plan tracked as GT-273."
@@ -4163,12 +4163,12 @@
       "closedAt": "2026-06-25",
       "closureCommit": "2d510597",
       "evidence": [
-        "reference/architecture/adrs/",
-        "reference/governance/standards/vision/gap-reference-catalog.md",
-        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+        "reference/core/architecture/adrs/",
+        "reference/core/control-center/gap-reference-catalog.md",
+        "reference/core/control-center/gap-reference-catalog.es.md"
       ],
       "validationCommands": [
-        "rg -n \"GT-20\" reference/architecture/adrs"
+        "rg -n \"GT-20\" reference/core/architecture/adrs"
       ],
       "dependencyDisposition": "none",
       "closureNote": "ADR corpus backfill completed; only ADR authoring standard references to GT-20 remain as historical tracking links."
@@ -4233,13 +4233,13 @@
       "closedAt": "2026-06-26",
       "closureCommit": "aa18b8ce",
       "evidence": [
-        "reference/governance/standards/vision/gap-closure-evidence.json",
-        "reference/governance/standards/vision/gap-tracking.md",
-        "reference/governance/standards/vision/gap-tracking.es.md",
-        "reference/governance/standards/vision/gap-reference-catalog.md",
-        "reference/governance/standards/vision/gap-reference-catalog.es.md",
-        "reference/governance/standards/vision/maturity-evidence.json",
-        "reference/governance/standards/vision/maturity-reconciliation.json"
+        "reference/core/control-center/gap-closure-evidence.json",
+        "reference/core/control-center/gap-tracking.md",
+        "reference/core/control-center/gap-tracking.es.md",
+        "reference/core/control-center/gap-reference-catalog.md",
+        "reference/core/control-center/gap-reference-catalog.es.md",
+        "reference/core/control-center/maturity-evidence.json",
+        "reference/core/control-center/maturity-reconciliation.json"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/08-validate-tracking.mjs",
@@ -4267,14 +4267,14 @@
       "closedAt": "2026-06-26",
       "closureCommit": "b7c379c0",
       "evidence": [
-        "reference/architecture/topologies/ai/agentic-ai/openapi/openapi.yaml",
-        "reference/architecture/topologies/data/data-mesh/openapi/openapi.yaml",
-        "reference/architecture/topologies/execution/edge-computing/openapi/openapi.yaml",
-        "reference/architecture/topologies/execution/serverless/openapi/openapi.yaml",
-        "reference/architecture/topologies/integration/event-driven/openapi/openapi.yaml",
-        "reference/architecture/topologies/progressive-axis/modular-monolith/openapi/openapi.yaml",
-        "reference/architecture/topologies/progressive-axis/distributed-modules/openapi/openapi.yaml",
-        "reference/architecture/topologies/progressive-axis/microservices/openapi/openapi.yaml",
+        "reference/core/architecture/topologies/ai/agentic-ai/openapi/openapi.yaml",
+        "reference/core/architecture/topologies/data/data-mesh/openapi/openapi.yaml",
+        "reference/core/architecture/topologies/execution/edge-computing/openapi/openapi.yaml",
+        "reference/core/architecture/topologies/execution/serverless/openapi/openapi.yaml",
+        "reference/core/architecture/topologies/integration/event-driven/openapi/openapi.yaml",
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/openapi/openapi.yaml",
+        "reference/core/architecture/topologies/progressive-axis/distributed-modules/openapi/openapi.yaml",
+        "reference/core/architecture/topologies/progressive-axis/microservices/openapi/openapi.yaml",
         ".harness/playbooks/topology-compliance-audit.mjs"
       ],
       "validationCommands": [
@@ -4287,14 +4287,14 @@
       "closedAt": "2026-06-26",
       "closureCommit": "8f14459b",
       "evidence": [
-        "reference/architecture/topologies/ai/agentic-ai/mcp/mcp-manifest.json",
-        "reference/architecture/topologies/data/data-mesh/mcp/mcp-manifest.json",
-        "reference/architecture/topologies/execution/edge-computing/mcp/mcp-manifest.json",
-        "reference/architecture/topologies/execution/serverless/mcp/mcp-manifest.json",
-        "reference/architecture/topologies/integration/event-driven/mcp/mcp-manifest.json",
-        "reference/architecture/topologies/progressive-axis/modular-monolith/mcp/mcp-manifest.json",
-        "reference/architecture/topologies/progressive-axis/distributed-modules/mcp/mcp-manifest.json",
-        "reference/architecture/topologies/progressive-axis/microservices/mcp/mcp-manifest.json"
+        "reference/core/architecture/topologies/ai/agentic-ai/mcp/mcp-manifest.json",
+        "reference/core/architecture/topologies/data/data-mesh/mcp/mcp-manifest.json",
+        "reference/core/architecture/topologies/execution/edge-computing/mcp/mcp-manifest.json",
+        "reference/core/architecture/topologies/execution/serverless/mcp/mcp-manifest.json",
+        "reference/core/architecture/topologies/integration/event-driven/mcp/mcp-manifest.json",
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/mcp/mcp-manifest.json",
+        "reference/core/architecture/topologies/progressive-axis/distributed-modules/mcp/mcp-manifest.json",
+        "reference/core/architecture/topologies/progressive-axis/microservices/mcp/mcp-manifest.json"
       ],
       "validationCommands": [
         "node .harness/playbooks/topology-compliance-audit.mjs"
@@ -4306,22 +4306,22 @@
       "closedAt": "2026-06-26",
       "closureCommit": "7bed54d0",
       "evidence": [
-        "reference/architecture/topologies/ai/agentic-ai/cli/cli-flows.md",
-        "reference/architecture/topologies/data/data-mesh/cli/cli-flows.md",
-        "reference/architecture/topologies/execution/edge-computing/cli/cli-flows.md",
-        "reference/architecture/topologies/execution/serverless/cli/cli-flows.md",
-        "reference/architecture/topologies/integration/event-driven/cli/cli-flows.md",
-        "reference/architecture/topologies/progressive-axis/modular-monolith/cli/cli-flows.md",
-        "reference/architecture/topologies/progressive-axis/distributed-modules/cli/cli-flows.md",
-        "reference/architecture/topologies/progressive-axis/microservices/cli/cli-flows.md",
-        "reference/architecture/topologies/ai/agentic-ai/cli/cli-flows.es.md",
-        "reference/architecture/topologies/data/data-mesh/cli/cli-flows.es.md",
-        "reference/architecture/topologies/execution/edge-computing/cli/cli-flows.es.md",
-        "reference/architecture/topologies/execution/serverless/cli/cli-flows.es.md",
-        "reference/architecture/topologies/integration/event-driven/cli/cli-flows.es.md",
-        "reference/architecture/topologies/progressive-axis/modular-monolith/cli/cli-flows.es.md",
-        "reference/architecture/topologies/progressive-axis/distributed-modules/cli/cli-flows.es.md",
-        "reference/architecture/topologies/progressive-axis/microservices/cli/cli-flows.es.md"
+        "reference/core/architecture/topologies/ai/agentic-ai/cli/cli-flows.md",
+        "reference/core/architecture/topologies/data/data-mesh/cli/cli-flows.md",
+        "reference/core/architecture/topologies/execution/edge-computing/cli/cli-flows.md",
+        "reference/core/architecture/topologies/execution/serverless/cli/cli-flows.md",
+        "reference/core/architecture/topologies/integration/event-driven/cli/cli-flows.md",
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/cli/cli-flows.md",
+        "reference/core/architecture/topologies/progressive-axis/distributed-modules/cli/cli-flows.md",
+        "reference/core/architecture/topologies/progressive-axis/microservices/cli/cli-flows.md",
+        "reference/core/architecture/topologies/ai/agentic-ai/cli/cli-flows.es.md",
+        "reference/core/architecture/topologies/data/data-mesh/cli/cli-flows.es.md",
+        "reference/core/architecture/topologies/execution/edge-computing/cli/cli-flows.es.md",
+        "reference/core/architecture/topologies/execution/serverless/cli/cli-flows.es.md",
+        "reference/core/architecture/topologies/integration/event-driven/cli/cli-flows.es.md",
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/cli/cli-flows.es.md",
+        "reference/core/architecture/topologies/progressive-axis/distributed-modules/cli/cli-flows.es.md",
+        "reference/core/architecture/topologies/progressive-axis/microservices/cli/cli-flows.es.md"
       ],
       "validationCommands": [
         "node .harness/playbooks/topology-compliance-audit.mjs"
@@ -4459,12 +4459,12 @@
       "closedAt": "2026-06-25",
       "closureCommit": "661a8846",
       "evidence": [
-        "reference/governance/sdlc/phases/phase-f1.json",
-        "reference/governance/sdlc/phases/phase-f5.json",
-        "reference/governance/sdlc/gates/gate-f1.json",
-        "reference/governance/sdlc/gates/gate-f5.json",
-        "reference/governance/sdlc/sdlc-phase.schema.json",
-        "reference/governance/sdlc/sdlc-gate.schema.json",
+        "reference/core/sdlc/phases/phase-f1.json",
+        "reference/core/sdlc/phases/phase-f5.json",
+        "reference/core/sdlc/gates/gate-f1.json",
+        "reference/core/sdlc/gates/gate-f5.json",
+        "reference/core/sdlc/sdlc-phase.schema.json",
+        "reference/core/sdlc/sdlc-gate.schema.json",
         ".harness/playbooks/sdlc-phase-gate-validator.mjs",
         "rulesets/opa/sdlc/coverage.rego",
         "rulesets/opa/sdlc/pyramid-distribution.rego"
@@ -5003,8 +5003,8 @@
       "closedAt": "2026-06-28",
       "closureCommit": "f5261bbf",
       "evidence": [
-        "reference/governance/standards/vision/gap-closure-evidence.json",
-        "reference/governance/standards/vision/maturity-reconciliation.json",
+        "reference/core/control-center/gap-closure-evidence.json",
+        "reference/core/control-center/maturity-reconciliation.json",
         ".harness/scripts/ci/08-validate-tracking.mjs",
         ".harness/scripts/ci/09-reconcile-maturity.mjs"
       ],
@@ -5220,7 +5220,7 @@
       "closedAt": "2026-06-28",
       "closureCommit": "2d7a6edc",
       "evidence": [
-        "reference/governance/sdlc/01-playbooks/e2e-test-playbooks.md",
+        "reference/core/sdlc/01-playbooks/e2e-test-playbooks.md",
         "apps/core-api/test/app.e2e-spec.ts",
         "packages/mcp-server/test/mcp-server.e2e-spec.ts",
         "packages/core-domain/src/__e2e__/governance-flow.e2e.spec.ts"
@@ -5652,7 +5652,7 @@
       "closureCommit": "44dfdb41",
       "evidence": [
         "packages/core-domain/src/evaluation/contracts/evaluation-context.ts",
-        "reference/governance/sdlc/sdlc-evolith-artifact-mapping.md"
+        "reference/core/sdlc/sdlc-evolith-artifact-mapping.md"
       ],
       "validationCommands": [
         "npm test --workspace @evolith/core-domain -- --runInBand"
@@ -5790,7 +5790,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5802,7 +5802,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5814,7 +5814,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5826,7 +5826,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5838,7 +5838,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5850,7 +5850,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5862,7 +5862,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5874,7 +5874,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5886,7 +5886,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5898,7 +5898,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5910,7 +5910,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5922,7 +5922,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5934,7 +5934,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5946,7 +5946,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5958,7 +5958,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5970,7 +5970,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5982,7 +5982,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -5994,7 +5994,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6006,7 +6006,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6018,7 +6018,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6030,7 +6030,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6042,7 +6042,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6054,7 +6054,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6066,7 +6066,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6078,7 +6078,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6090,7 +6090,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6102,7 +6102,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6114,7 +6114,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6126,7 +6126,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6138,7 +6138,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6150,7 +6150,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"
@@ -6162,7 +6162,7 @@
       "closedAt": "2026-07-03",
       "closureCommit": "030e9dd6",
       "evidence": [
-        "reference/governance/standards/vision/gap-tracking.md"
+        "reference/core/control-center/gap-tracking.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs fast"

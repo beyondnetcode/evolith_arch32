@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.md"
+    "reference/core/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.md"
   ],
   "effectiveDate": "2026-06-15"
 }

@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md"
+    "reference/core/architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md"
   ],
   "effectiveDate": "2026-05-08"
 }

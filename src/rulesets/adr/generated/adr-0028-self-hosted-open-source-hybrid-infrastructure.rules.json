@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md"
+    "reference/core/architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md"
   ],
   "effectiveDate": "2026-05-09"
 }

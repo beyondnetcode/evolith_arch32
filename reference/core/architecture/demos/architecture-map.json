@@ -12,9 +12,9 @@
     "sourceDocs": [
       "README.md",
       "reference/product-suite/vision/evolith-product-vision-master.md",
-      "reference/architecture/C4-MASTER-ARCHITECTURE.md",
-      "reference/architecture/views/view-by-interface-flow.md",
-      "reference/architecture/views/view-by-flow.md"
+      "reference/core/architecture/C4-MASTER-ARCHITECTURE.md",
+      "reference/core/architecture/demos/view-by-interface-flow.md",
+      "reference/core/architecture/demos/view-by-flow.md"
     ]
   },
   "layers": [
@@ -352,7 +352,7 @@
       },
       "docs": [
         "reference/products/mcp-services/README.md",
-        "reference/architecture/agent-runtime/README.md"
+        "reference/core/architecture/foundations/README.md"
       ]
     },
     {
@@ -477,7 +477,7 @@
       },
       "docs": [
         "reference/product-suite/vision/evolith-product-vision-master.md",
-        "reference/governance/sdlc/traceability-model.md"
+        "reference/core/sdlc/traceability-model.md"
       ]
     },
     {
@@ -518,7 +518,7 @@
         "es": "Revisión de ADRs y proceso de gobierno"
       },
       "docs": [
-        "reference/governance/standards/communication/visuals/v06-governance-flow.md"
+        "reference/core/foundations/common-rules/communication/visuals/v06-governance-flow.md"
       ]
     },
     {
@@ -764,7 +764,7 @@
         "es": "Comandos HTTP/eventos, SSE, puertos/adaptadores"
       },
       "docs": [
-        "reference/architecture/agent-runtime/README.md"
+        "reference/core/architecture/foundations/README.md"
       ]
     },
     {
@@ -847,7 +847,7 @@
       },
       "docs": [
         "reference/products/core-api/README.md",
-        "reference/architecture/views/view-by-interface-flow.md"
+        "reference/core/architecture/demos/view-by-interface-flow.md"
       ]
     },
     {
@@ -889,7 +889,7 @@
       },
       "docs": [
         "reference/products/mcp-services/README.md",
-        "reference/architecture/views/view-by-interface-flow.md"
+        "reference/core/architecture/demos/view-by-interface-flow.md"
       ]
     },
     {
@@ -930,7 +930,7 @@
         "es": "Cliente REST"
       },
       "docs": [
-        "reference/architecture/evolith-sdk/README.md"
+        "reference/core/architecture/foundations/README.md"
       ]
     },
     {
@@ -1014,7 +1014,7 @@
       "docs": [
         "reference/README.md",
         "reference/core/README.md",
-        "reference/architecture/README.md"
+        "reference/core/architecture/README.md"
       ]
     },
     {
@@ -1097,7 +1097,7 @@
         "es": "Intercambio de artefactos"
       },
       "docs": [
-        "reference/governance/sdlc/README.md"
+        "reference/core/sdlc/README.md"
       ]
     },
     {
@@ -1261,7 +1261,7 @@
         "es": "Adaptador de motor de agente"
       },
       "docs": [
-        "reference/architecture/agent-runtime/README.md"
+        "reference/core/architecture/foundations/README.md"
       ]
     },
     {
@@ -1302,7 +1302,7 @@
         "es": "Puerto de runtime"
       },
       "docs": [
-        "reference/architecture/agent-runtime/README.md"
+        "reference/core/architecture/foundations/README.md"
       ]
     },
     {

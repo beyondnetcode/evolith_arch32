@@ -18,7 +18,7 @@ This standard separates universal architecture, SDLC governance, suite strategy,
 
 | Domain | Question Answered | Canonical Location |
 |---|---|---|
-| **Core Architecture** | What principles, patterns, contracts, and architectural decisions apply universally? | `reference/architecture/` |
+| **Core Architecture** | What principles, patterns, contracts, and architectural decisions apply universally? | `reference/core/architecture/` |
 | **SDLC Governance** | How are phases, gates, artifacts, evidence, roles, exceptions, and metrics governed? | `reference/core/sdlc/` |
 | **Evolith Product Suite** | What products compose Evolith, why do they exist, and how are they positioned? | `product/suite/` |
 | **Product-Specific Design** | How does one product implement its responsibilities? | `product/products/<product>/` |

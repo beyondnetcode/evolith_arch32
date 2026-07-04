@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/ai-augmented/0005-human-in-the-loop-policy.md"
+    "reference/core/architecture/adrs/ai-augmented/0005-human-in-the-loop-policy.md"
   ],
   "effectiveDate": "2026-06-23"
 }

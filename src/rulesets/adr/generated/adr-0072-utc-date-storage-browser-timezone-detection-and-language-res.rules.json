@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0072-utc-dates-timezone-language-resolution.md"
+    "reference/core/architecture/adrs/core/0072-utc-dates-timezone-language-resolution.md"
   ],
   "effectiveDate": "2026-06-07"
 }

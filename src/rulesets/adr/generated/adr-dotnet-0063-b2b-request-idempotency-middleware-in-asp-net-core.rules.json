@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/dotnet/0063-dotnet-b2b-idempotency-middleware.md"
+    "reference/core/architecture/adrs/dotnet/0063-dotnet-b2b-idempotency-middleware.md"
   ],
   "effectiveDate": "2026-05-23"
 }

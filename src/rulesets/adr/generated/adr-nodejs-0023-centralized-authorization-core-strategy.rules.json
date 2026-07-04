@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0023-centralized-ums-vs-decentralized-access.md"
+    "reference/core/architecture/adrs/nodejs/0023-centralized-ums-vs-decentralized-access.md"
   ],
   "effectiveDate": "2026-05-09"
 }

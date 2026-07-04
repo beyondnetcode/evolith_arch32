@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0047-actionable-user-error-contract.md"
+    "reference/core/architecture/adrs/nodejs/0047-actionable-user-error-contract.md"
   ],
   "effectiveDate": "2026-06-07"
 }

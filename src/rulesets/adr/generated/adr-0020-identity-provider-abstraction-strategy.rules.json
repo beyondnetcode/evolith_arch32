@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0020-identity-provider-abstraction-strategy.md"
+    "reference/core/architecture/adrs/core/0020-identity-provider-abstraction-strategy.md"
   ],
   "effectiveDate": "2026-05-09"
 }

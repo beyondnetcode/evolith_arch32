@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0044-configurable-security-persistence-strategy.md"
+    "reference/core/architecture/adrs/core/0044-configurable-security-persistence-strategy.md"
   ],
   "effectiveDate": "2026-05-12"
 }

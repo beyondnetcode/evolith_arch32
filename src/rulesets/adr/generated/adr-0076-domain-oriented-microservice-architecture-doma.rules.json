@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0076-domain-oriented-microservice-architecture.md"
+    "reference/core/architecture/adrs/core/0076-domain-oriented-microservice-architecture.md"
   ],
   "effectiveDate": "2026-06-14"
 }

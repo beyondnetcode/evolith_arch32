@@ -13,7 +13,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const topologiesDir = path.join(root, "reference/architecture/topologies");
+const topologiesDir = path.join(root, "reference/core/architecture/topologies");
 const markdown = process.argv.includes("--markdown");
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -77,7 +77,7 @@ for (const dim of dimensions) {
   for (const sub of subdirs) {
     const rel = `${dim}/${sub}`;
     const files = walk(rel);
-    const allAbs = files.map((f) => `reference/architecture/topologies/${rel}/${f}`);
+    const allAbs = files.map((f) => `reference/core/architecture/topologies/${rel}/${f}`);
 
     const docFiles = files.filter((f) => f.endsWith(".md") && !f.includes("/cli/") && !f.includes("/mcp/") && !f.includes("/openapi/"));
     const enDoc = docFiles.filter((f) => !f.endsWith(".es.md"));
@@ -212,14 +212,14 @@ function scanBusinessData(topologiesList) {
   const violations = [];
   for (const topo of topologiesList) {
     for (const f of topo.evidence.docFiles) {
-      const absPath = path.join(root, "reference/architecture/topologies", f);
+      const absPath = path.join(root, "reference/core/architecture/topologies", f);
       if (!fs.existsSync(absPath)) continue;
       const content = fs.readFileSync(absPath, "utf8");
       for (const pattern of businessPatterns) {
         const match = content.match(pattern);
         if (match) {
           violations.push({
-            file: `reference/architecture/topologies/${f}`,
+            file: `reference/core/architecture/topologies/${f}`,
             topology: topo.name,
             pattern: match[0],
             context: content.substring(Math.max(0, match.index - 40), match.index + 40).replace(/\n/g, " "),
@@ -301,7 +301,7 @@ function generateReport() {
   const report = {
     generatedAt: new Date().toISOString(),
     repository: "evolith_arch32",
-    topologiesDir: "reference/architecture/topologies/",
+    topologiesDir: "reference/core/architecture/topologies/",
     totalTopologies: topologies.length,
     topologies,
     crossCutting,
@@ -351,7 +351,7 @@ if (markdown) {
 ## 1. Topology Tree
 
 \`\`\`
-reference/architecture/topologies/
+reference/core/architecture/topologies/
 `);
   const dims = [...new Set(topologies.map((t) => t.dimension))];
   for (const dim of dims) {

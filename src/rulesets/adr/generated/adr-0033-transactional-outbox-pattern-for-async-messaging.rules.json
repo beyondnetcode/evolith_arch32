@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0033-transactional-outbox-pattern.md"
+    "reference/core/architecture/adrs/core/0033-transactional-outbox-pattern.md"
   ],
   "effectiveDate": "2026-05-11"
 }

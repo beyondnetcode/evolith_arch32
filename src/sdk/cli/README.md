@@ -745,7 +745,7 @@ smart-cli fixtures --type demo
 smart-cli fixtures --type full --dry-run
 
 # Seed ADR fixtures into a specific directory
-smart-cli fixtures --type adr --dir ./reference/architecture/adrs
+smart-cli fixtures --type adr --dir ./reference/core/architecture/adrs
 ```
 
 ---

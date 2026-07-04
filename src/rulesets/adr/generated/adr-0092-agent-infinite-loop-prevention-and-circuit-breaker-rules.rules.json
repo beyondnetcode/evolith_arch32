@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0092-agent-infinite-loop-prevention.md"
+    "reference/core/architecture/adrs/core/0092-agent-infinite-loop-prevention.md"
   ],
   "effectiveDate": "2026-06-20"
 }

@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md"
+    "reference/core/architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md"
   ],
   "effectiveDate": "2026-05-11"
 }

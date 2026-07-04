@@ -11,7 +11,7 @@ Mapea épicos, historias y requisitos a ADRs, reglas de gobernanza y artefactos 
 | ID | `requirements-traceability-mapper` |
 | Propietario | `@analyst` |
 | Versión | `1.0.0` |
-| Entradas | Archivos de épicos/historias, índice de ADRs (`reference/core/architecture/adrs/`), reglas de gobernanza (`reference/governance/standards/`) |
+| Entradas | Archivos de épicos/historias, índice de ADRs (`reference/core/architecture/adrs/`), reglas de gobernanza (`reference/core/sdlc/standards/`) |
 | Salidas | Matriz de trazabilidad (JSON) |
 
 ## Algoritmo

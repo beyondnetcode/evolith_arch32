@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0001-monorepo-orchestration-principle.md"
+    "reference/core/architecture/adrs/core/0001-monorepo-orchestration-principle.md"
   ],
   "effectiveDate": "2026-05-08"
 }

@@ -4,7 +4,7 @@
  *
  * Honest, maintainable ADR -> ruleset generator.
  *
- * - Walks the 5 ADR tracks under reference/architecture/adrs/{core,nodejs,dotnet,ai-augmented,android}.
+ * - Walks the 5 ADR tracks under reference/core/architecture/adrs/{core,nodejs,dotnet,ai-augmented,android}.
  * - Parses each ADR (id, title, status, date, decision summary) from markdown headers,
  *   tolerating the several heading formats present in the repo:
  *     * `# ADR-XXXX: Title`  and  `# [ADR XXXX](file.md): Title`

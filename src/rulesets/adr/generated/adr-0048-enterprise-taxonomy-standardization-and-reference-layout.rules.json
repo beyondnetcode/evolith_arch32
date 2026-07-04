@@ -23,6 +23,6 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0048-enterprise-taxonomy-reference-layout.md"
+    "reference/core/architecture/adrs/core/0048-enterprise-taxonomy-reference-layout.md"
   ]
 }

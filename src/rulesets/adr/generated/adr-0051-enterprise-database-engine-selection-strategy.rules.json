@@ -23,7 +23,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/core/0051-enterprise-database-engine-strategy.md"
+    "reference/core/architecture/adrs/core/0051-enterprise-database-engine-strategy.md"
   ],
   "effectiveDate": "2026-05-14"
 }

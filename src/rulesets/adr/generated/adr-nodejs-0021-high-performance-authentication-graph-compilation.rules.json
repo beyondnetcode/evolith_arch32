@@ -22,7 +22,7 @@
     }
   ],
   "references": [
-    "reference/architecture/adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md"
+    "reference/core/architecture/adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md"
   ],
   "effectiveDate": "2026-05-08"
 }

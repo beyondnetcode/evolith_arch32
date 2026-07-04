@@ -56,11 +56,11 @@ See `.harness/scripts/bilingual-terminology-glossary.md` for standardized EN/ES 
 - Runtime profiles: agnostic baseline plus runtime-specific addenda for Node.js, .NET, Android, and related ecosystems
 - Persistence guidance: runtime-specific; never assume one database engine without reading the proper authoritative profile
 - Key areas:
-  - `reference/architecture/`
-  - `reference/governance/`
+  - `reference/core/architecture/`
+  - `reference/core/sdlc/`
   - `.harness/`
   - `.bmad-core/`
-  - `reference/knowledge/demo/` UMS applied-reference boundary and migration record
+  - `product/research/demo/` UMS applied-reference boundary and migration record
 
 ## Conventions
 - Read the agnostic baseline before applying any runtime-specific guidance.
@@ -85,7 +85,7 @@ This repository has **two distinct documentation layers** by design:
 | Architectural Reference Corpus | `reference/` | Architecture / Governance | Reusable, normative, cross-product baseline |
 | Planning & Implementation Artifacts | `docs/` | BMAD Method / Teams | PRDs, epics, stories, specific product retrospectives |
 
-These two layers do not overlap. Architectural decisions go in `reference/architecture/adrs/`. Product plans go in `docs/planning-artifacts/`. Do not create content in `docs/` that should live in `reference/`, or vice versa.
+These two layers do not overlap. Architectural decisions go in `reference/core/architecture/adrs/`. Product plans go in `docs/planning-artifacts/`. Do not create content in `docs/` that should live in `reference/`, or vice versa.
 
 ## Agent Rules
 - Read `./.harness/rules/global-rules.md` before responding or editing.

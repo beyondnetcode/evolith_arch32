@@ -11,13 +11,13 @@ Maps epics, stories, and requirements to ADRs, governance rulesets, and test art
 | ID | `requirements-traceability-mapper` |
 | Owner | `@analyst` |
 | Version | `1.0.0` |
-| Inputs | Epic/story files, ADR index (`reference/architecture/adrs/`), governance rulesets (`reference/governance/standards/`) |
+| Inputs | Epic/story files, ADR index (`reference/core/architecture/adrs/`), governance rulesets (`reference/governance/standards/`) |
 | Outputs | Traceability matrix (JSON) |
 
 ## Algorithm
 
 1. **Scan epics/stories** — Parse markdown files in `docs/planning-artifacts/` for story IDs, acceptance criteria, and linked references.
-2. **Scan ADRs** — Parse `reference/architecture/adrs/core/` for ADR numbers, titles, and status.
+2. **Scan ADRs** — Parse `reference/core/architecture/adrs/core/` for ADR numbers, titles, and status.
 3. **Scan rulesets** — Parse governance standards for rule IDs and their scope.
 4. **Build mappings** — For each story, detect explicit links to ADRs (`ADR-NNNN`) and rules (`R-NN`).
 5. **Detect orphans** — Flag stories with no ADR link, no rule link, or no test reference.

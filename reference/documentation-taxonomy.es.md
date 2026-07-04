@@ -19,12 +19,12 @@ Este estándar separa arquitectura universal, gobernanza SDLC, estrategia de la 
 | Dominio | Pregunta que Responde | Ubicación Canónica |
 |---|---|---|
 | **Core Architecture** | ¿Qué principios, patrones, contratos y decisiones aplican universalmente? | `reference/architecture/` |
-| **SDLC Governance** | ¿Cómo se gobiernan fases, gates, artefactos, evidencias, roles, excepciones y métricas? | `reference/governance/sdlc/` |
-| **Evolith Product Suite** | ¿Qué productos componen Evolith, por qué existen y cómo se posicionan? | `reference/product-suite/` |
-| **Product-Specific Design** | ¿Cómo implementa un producto sus responsabilidades? | `reference/products/<product>/` |
-| **Platform and Provider Guidance** | ¿Cómo se implementa una capacidad con una tecnología o proveedor específico? | `reference/platforms/<category>/<provider>/` |
-| **Operations and Infrastructure** | ¿Cómo se operan runtime, despliegue, soporte e infraestructura? | `reference/operations/` y `reference/infrastructure/` |
-| **Applied Knowledge** | ¿Qué evidencias y lecciones aportan los productos satélite? | `reference/knowledge/` |
+| **SDLC Governance** | ¿Cómo se gobiernan fases, gates, artefactos, evidencias, roles, excepciones y métricas? | `reference/core/sdlc/` |
+| **Evolith Product Suite** | ¿Qué productos componen Evolith, por qué existen y cómo se posicionan? | `product/suite/` |
+| **Product-Specific Design** | ¿Cómo implementa un producto sus responsabilidades? | `product/products/<product>/` |
+| **Platform and Provider Guidance** | ¿Cómo se implementa una capacidad con una tecnología o proveedor específico? | `product/infra/<category>/<provider>/` |
+| **Operations and Infrastructure** | ¿Cómo se operan runtime, despliegue, soporte e infraestructura? | `product/operations/` y `product/infra/` |
+| **Applied Knowledge** | ¿Qué evidencias y lecciones aportan los productos satélite? | `product/research/` |
 
 ---
 
@@ -141,15 +141,15 @@ No se elimina documentación solo para mejorar la estructura si se rompen enlace
 
 | Documento | Clasificación | Dominio Objetivo |
 |---|---|---|
-| Visión Maestra del Producto | Product Suite Vision | `reference/product-suite/vision/` |
-| Framework de Validación y Composición | Product Suite Strategy | `reference/product-suite/strategy/` |
-| Panorama Comparativo | Product Suite Positioning | `reference/product-suite/positioning/` |
-| Workflow de Validación Asistida | Product Suite Method | `reference/product-suite/methods/` |
+| Visión Maestra del Producto | Product Suite Vision | `product/suite/vision/` |
+| Framework de Validación y Composición | Product Suite Strategy | `product/suite/strategy/` |
+| Panorama Comparativo | Product Suite Positioning | `product/suite/positioning/` |
+| Workflow de Validación Asistida | Product Suite Method | `product/suite/methods/` |
 | Diseño Objetivo de Composición Gobernada | Debe dividirse | Arquitectura de suite + principios Core + diseño Tracker |
-| Modelo de Abstracción y Plugins | Core Architecture Principle | `reference/architecture/principles/` |
-| Interfaces Técnicas de Tracker | Product-Specific Design | `reference/products/evolith-tracker/architecture/` |
-| Trazabilidad y Evidence Graph | SDLC Governance Standard | `reference/governance/sdlc/traceability/` |
-| One-Pager Ejecutivo | Product Suite Communication | `reference/product-suite/communication/` |
+| Modelo de Abstracción y Plugins | Core Architecture Principle | `reference/core/foundations/principles/` |
+| Interfaces Técnicas de Tracker | Product-Specific Design | `product/products/evolith-tracker/architecture/` |
+| Trazabilidad y Evidence Graph | SDLC Governance Standard | `reference/core/sdlc/traceability/` |
+| One-Pager Ejecutivo | Product Suite Communication | `product/suite/communication/` |
 
 ---
 

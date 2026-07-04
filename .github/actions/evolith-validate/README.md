@@ -105,4 +105,4 @@ The action writes a compliance summary to the GitHub Actions job summary on ever
 
 ---
 
-[Back to Evolith Core](../../../reference/governance/standards/vision/README.md)
+[Back to Evolith Core](../../../reference/core/control-center/README.md)

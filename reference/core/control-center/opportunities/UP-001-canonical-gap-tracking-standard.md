@@ -148,10 +148,10 @@ This enables the Tracker to render **a unified ecosystem-wide gap panel**.
 
 | Artifact | Path |
 |---|---|
-| Gap Tracking Board | `reference/governance/standards/vision/gap-tracking.md` |
-| Gap Reference Catalog | `reference/governance/standards/vision/gap-reference-catalog.md` |
-| Closure-Evidence Standard | `reference/governance/standards/vision/gap-closure-evidence-standard.md` |
-| Maturity Reconciliation | `reference/governance/standards/vision/maturity-reconciliation.json` |
+| Gap Tracking Board | `reference/core/control-center/gaps/gap-tracking.md` |
+| Gap Reference Catalog | `reference/core/control-center/gaps/gap-reference-catalog.md` |
+| Closure-Evidence Standard | `reference/core/control-center/evidence/gap-closure-evidence-standard.md` |
+| Maturity Reconciliation | `reference/core/control-center/maturity-reports/maturity-reconciliation.json` |
 | Satellite Contracts Ruleset | `rulesets/satellite-contracts/satellite-contracts.rules.json` |
 | Validate Tracking Harness | `.harness/scripts/ci/08-validate-tracking.mjs` |
 | Reconcile Maturity Harness | `.harness/scripts/reconcile-maturity.mjs` |

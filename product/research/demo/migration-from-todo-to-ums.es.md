@@ -12,9 +12,9 @@ Este registro documenta el retiro de la anterior demo local y la adopción de [U
 |---|---|---|
 | `src/apps/todo-api/`, `src/apps/todo-web/` | Implementación ejecutable To-Do | Eliminada; la referencia ejecutable se mantiene en UMS |
 | `src/libs/aop/` y configuración local del workspace | Código de soporte de la demo local anterior | Eliminados junto con la implementación obsoleta |
-| `reference/knowledge/demo/functional/` | Visión, glosario, casos de uso y alcance To-Do | Eliminados; usar documentación de producto UMS |
-| `reference/knowledge/demo/project/` | PRD y backlog To-Do | Eliminados; usar el índice documental UMS |
-| `reference/knowledge/demo/technical/` | Verificación y mapa de bounded contexts To-Do | Eliminados; usar el portal de arquitectura UMS |
+| `product/research/demo/functional/` | Visión, glosario, casos de uso y alcance To-Do | Eliminados; usar documentación de producto UMS |
+| `product/research/demo/project/` | PRD y backlog To-Do | Eliminados; usar el índice documental UMS |
+| `product/research/demo/technical/` | Verificación y mapa de bounded contexts To-Do | Eliminados; usar el portal de arquitectura UMS |
 | README raíz, índice maestro, getting-started, onboarding, glosario y taxonomía | Enlaces y descripciones de un sandbox local | Actualizados para dirigir a UMS y declarar el límite de autoridad |
 | Ejemplos arquitectónicos y documentación runtime | Menciones que presentaban el sandbox local como evidencia | Actualizados para identificar UMS o patrones específicos de runtime |
 

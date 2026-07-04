@@ -89,14 +89,14 @@ api.yourdomain.com   mcp.yourdomain.com
 
 ## Phase 2 — Add Dockerfiles
 
-The reference Dockerfiles live in [`reference/infrastructure/docker/`](../docker/). Before deploying via Coolify, copy them into the relevant app directories:
+The reference Dockerfiles live in [`product/infra/docker/`](../docker/). Before deploying via Coolify, copy them into the relevant app directories:
 
 ```bash
 # core-api
-cp reference/infrastructure/docker/bff.Dockerfile apps/core-api/Dockerfile
+cp product/infra/docker/bff.Dockerfile apps/core-api/Dockerfile
 
 # mcp-server
-cp reference/infrastructure/docker/mcp.Dockerfile packages/mcp-server/Dockerfile
+cp product/infra/docker/mcp.Dockerfile packages/mcp-server/Dockerfile
 ```
 
 Both use multi-stage Alpine builds and run as non-root user `evolith` (UID 1001).

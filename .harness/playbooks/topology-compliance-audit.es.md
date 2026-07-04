@@ -43,7 +43,7 @@
 
 ## Formato de Salida
 
-1. Árbol de `reference/architecture/topologies/`
+1. Árbol de `reference/core/architecture/topologies/`
 2. Tabla de cumplimiento por topología con rutas de evidencia
 3. Estado del ruleset transversal
 4. Resultados de validación del ejemplar (Agentic/AI-First)

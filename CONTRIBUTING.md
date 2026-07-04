@@ -17,7 +17,7 @@ We use the **BMAD Method** (Specification-driven, AI-Driven Development) for the
 - **DevOps Agent:** Helps orchestrate distributed deployments and GitHub Actions.
 - **Docs Agent:** Manages translation and Markdown validations.
 
-The agent roster, contracts, and handoffs are documented in [AGENTS.md](./AGENTS.md). For detailed orientation, see our [Quick Start Guide](./reference/governance/standards/onboarding/product-quick-start.md).
+The agent roster, contracts, and handoffs are documented in [AGENTS.md](./AGENTS.md). For detailed orientation, see our [Quick Start Guide](./reference/core/foundations/inheritance-model/product-quick-start.md).
 
 ## 2. Prerequisites and Local Setup
 
@@ -27,7 +27,7 @@ Evolith is an **npm workspaces monorepo** (`sdk/*`, `apps/*`, `src/packages/*`).
 
 - **Node.js 20** is what CI runs. The CLI declares `engines.node >= 18.0.0`, but pin to Node 20 locally to match the pipeline.
 - **npm** (workspaces-aware; ships with Node).
-- **Git** with the GitFlow branching model (see [ADR-0050](./reference/architecture/adrs/core/0050-gitflow-branching-strategy.md)).
+- **Git** with the GitFlow branching model (see [ADR-0050](./reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.md)).
 
 ### B. Clone and Install
 
@@ -159,12 +159,12 @@ The Core-API is **REST-only** (no GraphQL, no SSE), served under `/api/v1`. Ever
 
 ### H. Tracker
 
-`gap-tracking.md` and `maturity-assessment.md` (under `reference/governance/standards/vision/`) are the **only** tracking surfaces. Update them through their bilingual pairs and keep closure evidence in sync; the `08-validate-tracking.mjs` and `09-reconcile-maturity.mjs` gates verify them.
+`gap-tracking.md` and `maturity-assessment.md` (under `reference/core/sdlc/standards/vision/`) are the **only** tracking surfaces. Update them through their bilingual pairs and keep closure evidence in sync; the `08-validate-tracking.mjs` and `09-reconcile-maturity.mjs` gates verify them.
 
 ## 6. Pull Request Process
 
-1. **Branching:** Follow [ADR-0050](./reference/architecture/adrs/core/0050-gitflow-branching-strategy.md). Feature work flows into `develop`, and `develop` is promoted to `main`. Prefix your branches correctly (e.g., `feature/`, `docs/`, `fix/`).
-2. **ADR Updates:** If your PR introduces an architectural change or a new tool, it *must* be accompanied by an update to an existing ADR or a new ADR following [ADR-0068](./reference/architecture/adrs/core/0068-documentation-release-gitflow.md).
+1. **Branching:** Follow [ADR-0050](./reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.md). Feature work flows into `develop`, and `develop` is promoted to `main`. Prefix your branches correctly (e.g., `feature/`, `docs/`, `fix/`).
+2. **ADR Updates:** If your PR introduces an architectural change or a new tool, it *must* be accompanied by an update to an existing ADR or a new ADR following [ADR-0068](./reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md).
 3. **Commit Messages:** We use semantic versioning and release-please. Your commit messages must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification, using types such as `feat`, `fix`, `docs`, `ci`, and `chore` (e.g., `feat:`, `docs:`, `fix:`).
 4. **Issues:** Open an issue before large changes so the design can be discussed. Reference the relevant `GT-###` gap identifier when your work closes a tracked gap.
 5. **Code Review:** All PRs require review. Our automated workflows post coverage impact, structural validation, and Winston agentic review results on your PR.

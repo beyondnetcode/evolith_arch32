@@ -33,7 +33,7 @@ This repository ships a **minimal Obsidian vault** as an *internal* lens for aut
 
 - **Do not introduce `[[wikilinks]]` in committed docs.** They break GitHub rendering. Use relative markdown links — Obsidian is configured to do this for you.
 - `alwaysUpdateLinks` is **on**: moving/renaming a file inside Obsidian will rewrite inbound links across the repo. Review the diff before committing.
-- Attachments pasted into notes land in `reference/governance/sdlc/assets/`.
+- Attachments pasted into notes land in `reference/core/sdlc/assets/`.
 
 ## Versioned vs. ignored
 

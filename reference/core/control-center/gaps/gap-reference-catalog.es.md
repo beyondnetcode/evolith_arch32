@@ -19,10 +19,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 > **Corrección (2026-06-28, ADR-0101):** originalmente planteado como "Modelo de gobierno Producto/Iniciativa con entidades propiedad del Core". Corregido: el Core es un **evaluador stateless**; producto/tenant/iniciativa son **solo contexto opaco**, nunca entidades del Core.
 
 - **Propósito:** Resolver la conflación gobierno↔ejecución Y mantener el Core stateless. Formalizar `EvaluationContext` (entrada) y `EvaluationResult` (salida): el consumidor (Evolith Tracker) envía contexto, el Core evalúa contra definiciones/estándares versionados y devuelve veredictos/recomendaciones estructurados. Producto/tenant/iniciativa son identificadores de contexto opacos (`ProductContext`/`InitiativeContext`); épicas/historias/tareas como `ExternalReferenceContext`; el Core emite `Recommendation`/`DecisionRecommendation` no vinculante. El Core nunca posee/persiste producto/tenant/iniciativa/evidencia/decisión (eso es del Tracker). Sin repositorios/casos de uso/endpoints de escritura de entidades de negocio.
-- **Evidencia:** `reference/core/README.md:47` ("a task-management platform" en "What Evolith Core Is Not", encabezado `:41`) contradicho por `reference/governance/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,223` (Stories/Backlog/Technical Stories **Required**) y `:209` ("story readiness" cierra el gate F2). `packages/core-domain/src/domain/entities/` solo tiene `blueprint.ts` (sin Producto/Iniciativa); `gate-evidence.ts:87-89` (`initiative?: string`, "Never persisted or interpreted"). Precedente de frontera ya aplicado: `executive-scorecard-rule.handler.ts:55` ("Sprint throughput requires tracker data").
+- **Evidencia:** `reference/core/README.md:47` ("a task-management platform" en "What Evolith Core Is Not", encabezado `:41`) contradicho por `reference/core/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,223` (Stories/Backlog/Technical Stories **Required**) y `:209` ("story readiness" cierra el gate F2). `packages/core-domain/src/domain/entities/` solo tiene `blueprint.ts` (sin Producto/Iniciativa); `gate-evidence.ts:87-89` (`initiative?: string`, "Never persisted or interpreted"). Precedente de frontera ya aplicado: `executive-scorecard-rule.handler.ts:55` ("Sprint throughput requires tracker data").
 - **Impacto:** Transversal — Core Domain (contratos + engines), Core API (`/evaluate`), Rulesets, OPA, Blueprints, Documentación, integración con Tracker.
 - **Riesgo:** Riesgo central R-01 — que el Core derive a **poseer/persistir entidades operativas** (el diseño previo superseded). Mitigado por el contrato stateless, un guard ESLint que prohíbe `*Repository` para producto/iniciativa/evidencia/decisión, y ADR-0101 como autoridad.
-- **Archivos afectados:** `packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts`, `domain/verdict/verdict.ts`, `domain/sdlc/phase-id.ts`, nuevos `rulesets/schema/evaluation-context.schema.json`/`evaluation-result.schema.json`, `rulesets/opa/{phase-gates,dod,multi-tenancy,abac-mcp-tool-access}.rego`, `reference/governance/sdlc/sdlc-evolith-artifact-mapping.md`, `apps/core-api/src/presentation/controllers/evaluation.controller.ts`.
+- **Archivos afectados:** `packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts`, `domain/verdict/verdict.ts`, `domain/sdlc/phase-id.ts`, nuevos `rulesets/schema/evaluation-context.schema.json`/`evaluation-result.schema.json`, `rulesets/opa/{phase-gates,dod,multi-tenancy,abac-mcp-tool-access}.rego`, `reference/core/sdlc/sdlc-evolith-artifact-mapping.md`, `apps/core-api/src/presentation/controllers/evaluation.controller.ts`.
 - **Complejidad:** XL
 - **Solución propuesta:** Ejecutar el **roadmap R0–R5 corregido** de [Core Evaluation Engine Design](./../../../core/core-evaluation-engine-design.es.md), gobernado por **ADR-0101** (corrige ADR-0100) / **UP-002**. **Épica paraguas — decompuesta en `GT-376` (R0) … `GT-381` (R5).**
 - **Criterios de aceptación:**
@@ -583,7 +583,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Unificar las dos fuentes divergentes de gates y ejecutar las OPA citadas
 
 - **Propósito:** Una única fuente ejecutable de gates para que las reglas citadas realmente corran.
-- **Evidencia:** `reference/governance/sdlc/gates/gate-f*.json` (citan `.rego`) difieren de `rulesets/phase-gates/phase-gates.rules.json` (lo que consume `PhaseGateValidatorService`); los `.rego` citados no se ejecutan.
+- **Evidencia:** `reference/core/sdlc/gates/gate-f*.json` (citan `.rego`) difieren de `rulesets/phase-gates/phase-gates.rules.json` (lo que consume `PhaseGateValidatorService`); los `.rego` citados no se ejecutan.
 - **Complejidad:** M
 - **Hecho cuando:**
   - [x] Una fuente de gates canónica consumida por el motor.
@@ -638,7 +638,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Dockerfiles productivos para core-api y mcp-server
 
 - **Propósito:** Hacer desplegables ambos servicios con Dockerfiles productivos que empaqueten el corpus que leen de disco.
-- **Evidencia:** Solo existe `sdk/cli/Dockerfile`; core-api/mcp-server tienen Dockerfiles de referencia en `reference/infrastructure/docker/` pero ninguno en sus carpetas de app.
+- **Evidencia:** Solo existe `sdk/cli/Dockerfile`; core-api/mcp-server tienen Dockerfiles de referencia en `product/infra/docker/` pero ninguno en sus carpetas de app.
 - **Complejidad:** M
 - **Hecho cuando:**
   - [x] Dockerfiles en `apps/core-api` y `packages/mcp-server`.
@@ -707,7 +707,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Reubicar las 5 topologías avanzadas a rulesets/topologies
 
 - **Propósito:** Unificar la ubicación de topologías para que todas vivan bajo `rulesets/topologies/`.
-- **Evidencia:** Las topologías del eje progresivo viven en `rulesets/topologies/`, pero serverless/edge/event-driven/data-mesh/agentic-ai viven en `reference/architecture/topologies/`.
+- **Evidencia:** Las topologías del eje progresivo viven en `rulesets/topologies/`, pero serverless/edge/event-driven/data-mesh/agentic-ai viven en `reference/core/architecture/topologies/`.
 - **Complejidad:** M
 - **Hecho cuando:**
   - [x] Todas las topologías bajo una única ubicación canónica.
@@ -720,7 +720,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** Reducir el riesgo de continuidad por un único contribuidor humano.
 - **Evidencia (original):** `git shortlog` mostraba un único contribuidor humano para ~1.475 commits (ahora ~1.661).
 - **Complejidad:** M
-- **Fix aplicado:** el riesgo operativo de continuidad se mitiga con un sistema de agentes codificado y ejecutable — la **suite QA por rol** (`.bmad-core/workflows/qa-suite.yaml`) + agentes Winston/BMAD + un **playbook de onboarding de segundo mantenedor** profundo — y, clave, **playbooks de pruebas por flujo** (`reference/governance/sdlc/01-playbooks/e2e-test-playbooks.md`, EN+ES): cada superficie tiene un E2E dedicado documentado y VERDE.
+- **Fix aplicado:** el riesgo operativo de continuidad se mitiga con un sistema de agentes codificado y ejecutable — la **suite QA por rol** (`.bmad-core/workflows/qa-suite.yaml`) + agentes Winston/BMAD + un **playbook de onboarding de segundo mantenedor** profundo — y, clave, **playbooks de pruebas por flujo** (`reference/core/sdlc/01-playbooks/e2e-test-playbooks.md`, EN+ES): cada superficie tiene un E2E dedicado documentado y VERDE.
 - **Rastro de corrección (honestidad):** un primer cierre afirmó erróneamente "E2E verde en todas las superficies" — se había corrido `test`/`test:cov` (unit/integration completos) para core-api/mcp-server, NO su E2E dedicado. Ese cierre fue revertido; el E2E real expuso dos defectos que luego se corrigieron: `app.e2e-spec.ts` de core-api era boilerplate obsoleto de NestJS (`GET /` → 404) → reescrito a rutas reales (health/metrics/v1); mcp-server no tenía config E2E → se añadió uno que levanta el server MCP HTTP vivo. Ambos cableados en CI + el gate qa-e2e.
 - **Evidencia (re-verificada fresca):** los cuatro E2E dedicados verdes — Core governance `test:e2e` 13/13, Core-API `test:e2e` 5/5, MCP server `test:e2e` 3/3, Smart-CLI `test:e2e` 175/175.
 - **Residual (explícito, NO fabricado):** un segundo mantenedor HUMANO no está incorporado aún — decisión de personas/organización fuera de la ingeniería de Core; la mitigación operativa + el E2E cross-superficie probado satisfacen el propósito del gap según el dueño.
@@ -746,12 +746,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Hub de producto, referencia API y runbook de despliegue del Core API
 
 - **Propósito:** Crear un hub de producto de primera clase para el Core API equivalente al de Smart CLI y Tracker, de modo que los consumidores externos (Tracker, satélites) tengan una fuente única de capacidades, referencia de endpoints, registro de esquemas, despliegue y runbooks.
-- **Evidencia:** `reference/products/` tiene hubs para `smart-cli/`, `mcp-services/`, `evolith-tracker/` y `ums-reference/`, pero no hay `core-api/` pese a que ADR-0074/0075 ratifican el Core API como producto canónico. El playbook de zero-downtime de Fase 5 asume servicios tradicionales y no cubre el rollout del Core API NestJS stateless, la separación del gateway MCP ni el versionado URI (vinculado a GT-159).
+- **Evidencia:** `product/products/` tiene hubs para `smart-cli/`, `mcp-services/`, `evolith-tracker/` y `ums-reference/`, pero no hay `core-api/` pese a que ADR-0074/0075 ratifican el Core API como producto canónico. El playbook de zero-downtime de Fase 5 asume servicios tradicionales y no cubre el rollout del Core API NestJS stateless, la separación del gateway MCP ni el versionado URI (vinculado a GT-159).
 - **Complejidad:** L
 - **Hecho cuando:**
-  - [x] `reference/products/core-api/README.md` (+`.es.md`) es el hub canónico del producto con versión, inventario de superficie (controladores, módulos, esquemas) y ejemplos de consumo.
-  - [x] `reference/products/core-api/api-reference.md` (+`.es.md`) documenta cada endpoint público con envelopes de request/response y enlace a OpenAPI.
-  - [x] `reference/governance/sdlc/01-playbooks/core-api-deployment.md` cubre zero-downtime, migración de esquemas y rollback específicos del Core API.
+  - [x] `product/products/core-api/README.md` (+`.es.md`) es el hub canónico del producto con versión, inventario de superficie (controladores, módulos, esquemas) y ejemplos de consumo.
+  - [x] `product/products/core-api/api-reference.md` (+`.es.md`) documenta cada endpoint público con envelopes de request/response y enlace a OpenAPI.
+  - [x] `reference/core/sdlc/01-playbooks/core-api-deployment.md` cubre zero-downtime, migración de esquemas y rollback específicos del Core API.
 
 
 #### GT-157
@@ -850,7 +850,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Riqueza de rulesets event-driven y data-mesh
 
 - **Propósito:** Llevar los rulesets event-driven y data-mesh a la amplitud de las topologías del eje progresivo con reglas explícitas y ejecutables para orden de eventos, contratos de idempotencia, retención y linaje analítico.
-- **Evidencia:** `reference/architecture/topologies/integration/event-driven/event-driven.rules.json` y `data/data-mesh/data-mesh.rules.json` declaran solo tres reglas cada uno — aproximadamente un cuarto de la cobertura de modular-monolith.
+- **Evidencia:** `reference/core/architecture/topologies/integration/event-driven/event-driven.rules.json` y `data/data-mesh/data-mesh.rules.json` declaran solo tres reglas cada uno — aproximadamente un cuarto de la cobertura de modular-monolith.
 - **Complejidad:** M
 - **Hecho cuando:**
   - [x] Las reglas nativas cubren orden de eventos, idempotencia y disciplina de evolución de esquemas (event-driven), y linaje, retención y contratos de consumo de data-products (data-mesh).
@@ -863,7 +863,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** SLOs y presupuestos de costo concretos para topologías serverless y edge
 
 - **Propósito:** Documentar SLOs ejecutables, presupuestos de arranque en frío y techos de costo por ejecución para topologías serverless y edge, para que los adoptantes validen la arquitectura contra restricciones reales de producción.
-- **Evidencia:** `reference/architecture/topologies/execution/serverless/README.md` y `execution/edge-computing/README.md` mencionan "latencia" y "localidad" pero no fijan objetivos cuantitativos, límites de cold-start ni techos de costo.
+- **Evidencia:** `reference/core/architecture/topologies/execution/serverless/README.md` y `execution/edge-computing/README.md` mencionan "latencia" y "localidad" pero no fijan objetivos cuantitativos, límites de cold-start ni techos de costo.
 - **Complejidad:** S
 - **Hecho cuando:**
   - [x] Cada manifest declara campos de SLO/presupuesto (`latencyBudgetMs`, `coldStartCeilingMs`, `costCeilingPerExecutionCents`).
@@ -876,7 +876,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Runbooks SDLC faltantes para Fases 1, 2 y 4
 
 - **Propósito:** Publicar runbooks operativos para las Fases 1 (Concepción), 2 (Diseño) y 4 (Validación) para que cada quality gate tenga una contraparte procedimental, no solo reglas declarativas.
-- **Evidencia:** `reference/governance/sdlc/01-playbooks/` solo contiene actualmente `zero-downtime-release.md` (Fase 5). Los gates de Business Sign-Off, Design Baseline y RC Stamp están definidos en `phase-gates.rules.json` pero carecen de playbook.
+- **Evidencia:** `reference/core/sdlc/01-playbooks/` solo contiene actualmente `zero-downtime-release.md` (Fase 5). Los gates de Business Sign-Off, Design Baseline y RC Stamp están definidos en `phase-gates.rules.json` pero carecen de playbook.
 - **Complejidad:** M
 - **Hecho cuando:**
   - [x] Existen playbooks para Fases 1, 2 y 4 en EN y ES con checklists procedimentales ligados a la evidencia obligatoria de cada gate.
@@ -915,7 +915,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Presupuestos operativos, ciclo de credenciales y runbooks de Agentic AI
 
 - **Propósito:** Completar operativamente la topología Agentic AI definiendo presupuestos concretos de tokens/contexto para prompts, límites de concurrencia de herramientas MCP, rotación/revocación de credenciales de satélites y runbooks de incidentes para modos de falla comunes (agente colgado, desbordamiento de tokens, escape de sandbox).
-- **Evidencia:** `reference/architecture/topologies/ai/agentic-ai/operations.md` menciona "execution timeout and resource budget per capability" sin límites cuantitativos; `README.md` declara `toolPolicy` sin tope de concurrencia ni ciclo de credenciales; no hay runbook para desbordamiento de tokens ni escape de sandbox.
+- **Evidencia:** `reference/core/architecture/topologies/ai/agentic-ai/operations.md` menciona "execution timeout and resource budget per capability" sin límites cuantitativos; `README.md` declara `toolPolicy` sin tope de concurrencia ni ciclo de credenciales; no hay runbook para desbordamiento de tokens ni escape de sandbox.
 - **Complejidad:** L
 - **Hecho cuando:**
   - [x] Los campos del manifest declaran presupuestos de tokens, techos de ventana de contexto, límites de concurrencia de herramientas MCP y cadencia de rotación de credenciales.
@@ -928,10 +928,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Hub de producto de UMS reference
 
 - **Propósito:** Promover los materiales de referencia UMS a un hub de producto de primera clase, para que el caso de referencia tenga la misma estructura de producto que Tracker, Smart CLI, MCP Services y el hub del Core API (GT-156).
-- **Evidencia:** Los materiales UMS viven en ejemplos SDLC y archivos demo (`ums-technical-overview.md`, `ums-reference-model.md`) pero `reference/products/` no tiene un hub dedicado. Los enlaces cruzados a UMS están dispersos.
+- **Evidencia:** Los materiales UMS viven en ejemplos SDLC y archivos demo (`ums-technical-overview.md`, `ums-reference-model.md`) pero `product/products/` no tiene un hub dedicado. Los enlaces cruzados a UMS están dispersos.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [x] `reference/products/ums-reference/` existe con README, overview y modelo de referencia en EN y ES.
+  - [x] `product/products/ums-reference/` existe con README, overview y modelo de referencia en EN y ES.
   - [x] Todas las referencias UMS actuales en SDLC y materiales demo apuntan al hub.
   - [x] El inventario de productos se regenera y valida.
 
@@ -1130,7 +1130,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] El modo live hace upsert de metadatos y vectores deterministas, registra un comprobante machine-readable y falla de forma cerrada ante fallo del adaptador, embedding o persistencia.
   - [x] El ciclo de vida del índice cubre archivos fuente modificados y eliminados sin vectores huérfanos, con suite de pruebas de adaptador falso y límite de prueba de integración.
   - [x] La guía de operaciones documenta credenciales de mínimo privilegio, comportamiento acotado de lotes/reintentos y telemetría de costo/tokens.
-- **Evidencia de cierre:** Commit `d41bc3a3`. Nuevos módulos puros `.harness/scripts/ci/rag-port.mjs` (puerto neutral de embeddings/almacén vectorial; adapter `memory` veraz no durable; fallo cerrado ante adaptador desconocido/incompleto; `registerRagAdapter` para proveedores) y `rag-sync.mjs` (chunking determinista por H2, embed+upsert por lotes, poda de chunks obsoletos y borrado de archivos eliminados sin huérfanos, recibo machine-readable con telemetría de tokens). `14-rag-index-sync.mjs` recableado al puerto (detección changed+deleted, fallo cerrado si una corrida live no tiene adaptador durable). `rag-sync.test.mjs` — 9 casos `node:test`. Runbook de operaciones `reference/operations/agentic-ci-rag-support.md` (+`.es.md`) documenta selección de proveedor, credenciales de mínimo privilegio, lotes/reintentos acotados y telemetría de costo/tokens. El límite de integración es el adaptador durable registrado (vínculo a proveedor diferido a propósito).
+- **Evidencia de cierre:** Commit `d41bc3a3`. Nuevos módulos puros `.harness/scripts/ci/rag-port.mjs` (puerto neutral de embeddings/almacén vectorial; adapter `memory` veraz no durable; fallo cerrado ante adaptador desconocido/incompleto; `registerRagAdapter` para proveedores) y `rag-sync.mjs` (chunking determinista por H2, embed+upsert por lotes, poda de chunks obsoletos y borrado de archivos eliminados sin huérfanos, recibo machine-readable con telemetría de tokens). `14-rag-index-sync.mjs` recableado al puerto (detección changed+deleted, fallo cerrado si una corrida live no tiene adaptador durable). `rag-sync.test.mjs` — 9 casos `node:test`. Runbook de operaciones `product/operations/agentic-ci-rag-support.md` (+`.es.md`) documenta selección de proveedor, credenciales de mínimo privilegio, lotes/reintentos acotados y telemetría de costo/tokens. El límite de integración es el adaptador durable registrado (vínculo a proveedor diferido a propósito).
 
 #### GT-146
 
@@ -1164,7 +1164,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Reparación de Migración de Referencias y Cobertura de Reglas Consciente de Topologías
 
 - **Propósito:** Restaurar un reporte de cobertura confiable y consciente de topologías y eliminar referencias obsoletas de rutas por fase, para que el descubrimiento de reglas, herencia de satélites y reportes de gobernanza usen el corpus topológico canónico.
-- **Evidencia:** Winston V5 ejecutó `.harness/scripts/generate-rule-coverage.mjs`; falla antes de producir una matriz porque lee los archivos eliminados `rulesets/architecture/f1-modular-monolith.rules.json` y `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` aún declara los mismos archivos F1/F2/F3 inexistentes, mientras que los artefactos canónicos viven bajo `reference/architecture/topologies/progressive-axis/`.
+- **Evidencia:** Winston V5 ejecutó `.harness/scripts/generate-rule-coverage.mjs`; falla antes de producir una matriz porque lee los archivos eliminados `rulesets/architecture/f1-modular-monolith.rules.json` y `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` aún declara los mismos archivos F1/F2/F3 inexistentes, mientras que los artefactos canónicos viven bajo `reference/core/architecture/topologies/progressive-axis/`.
 - **Hecho cuando:**
   - [x] El generador de cobertura descubre reglas desde manifiestos topológicos en vez de rutas legacy hard-coded y emite cobertura Native/OPA por topología con ubicaciones fuente.
   - [x] Contratos de satélite, documentación y referencias machine-readable resuelven solo artefactos canónicos; una prueba automática de resolución de referencias evita recurrencia.
@@ -1464,7 +1464,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Ejecutar las migraciones documentales declaradas
 
 - **Meta:** que la ubicación física de cada documento coincida con su clasificación taxonómica declarada — sin más notas de "migración pendiente".
-- **Objetivo:** Ejecutar las migraciones que los hubs ya declaran: (1) mover los documentos de visión/estrategia/posicionamiento de la suite desde la ruta legacy `governance/standards/vision/` a sus áreas de `product-suite/`; (2) migrar la documentación de Smart CLI y MCP Services a `reference/products/`; (3) promover el [Modelo de Abstracción de Proveedores y Plugins](./evolith-provider-abstraction-plugin-model.es.md) a principio de arquitectura Core; (4) mover las [Interfaces Técnicas del Tracker](./sdlc-tracker-technical-interfaces.es.md) al diseño de producto del Tracker. Cada movimiento deja un stub de compatibilidad en la ruta antigua y corrige todos los enlaces entrantes en el mismo cambio.
+- **Objetivo:** Ejecutar las migraciones que los hubs ya declaran: (1) mover los documentos de visión/estrategia/posicionamiento de la suite desde la ruta legacy `governance/standards/vision/` a sus áreas de `product-suite/`; (2) migrar la documentación de Smart CLI y MCP Services a `product/products/`; (3) promover el [Modelo de Abstracción de Proveedores y Plugins](./evolith-provider-abstraction-plugin-model.es.md) a principio de arquitectura Core; (4) mover las [Interfaces Técnicas del Tracker](./sdlc-tracker-technical-interfaces.es.md) al diseño de producto del Tracker. Cada movimiento deja un stub de compatibilidad en la ruta antigua y corrige todos los enlaces entrantes en el mismo cambio.
 - **Cierre cuando:** no queda ningún marcador de "migration pending / migración pendiente" en `reference/` ni `sdk/`; `validate-docs.mjs` pasa.
 - **Referencias:** [Hub de Product Suite](../../../product-suite/README.es.md) · [Hub de Diseños de Producto](../../../products/README.es.md) · [Taxonomía Documental](../../../documentation-taxonomy.es.md)
 
@@ -1708,10 +1708,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Título:** Reparar las referencias migradas a la visión de producto
 
-- **Gap:** La Evaluación de Madurez enlaza a `./evolith-product-vision-master.md`, que ahora es solo un stub de migración; el documento canónico se movió a `reference/product-suite/vision/`. La única superficie de madurez apunta a un placeholder de redirección.
+- **Gap:** La Evaluación de Madurez enlaza a `./evolith-product-vision-master.md`, que ahora es solo un stub de migración; el documento canónico se movió a `product/suite/vision/`. La única superficie de madurez apunta a un placeholder de redirección.
 - **Propósito:** Mantener las superficies canónicas de madurez y visión apuntando a contenido vivo, para que la navegación y la validación reflejen el grafo documental real.
 - **Cierre cuando:** la evaluación de madurez (EN/ES) y cualquier otra referencia de Core resuelven a la ruta canónica de la visión, y la validación de enlaces pasa sin stubs de redirección en el grafo referenciado.
-- **Evidencia de cierre:** Los stubs de redirección de migración en `reference/governance/standards/vision/evolith-product-vision-master.md` (+`.es.md`) se eliminan, y toda referencia de Core resuelve ahora a la ruta canónica `reference/product-suite/vision/`: la Evaluación de Madurez (EN/ES), los READMEs de vision y de product-suite/vision (este último enlazaba de vuelta al stub), el README raíz y `rulesets/acl/README` (EN/ES). Borrar los stubs destapó estos enlaces migrados ocultos, que `validate-docs.mjs` ahora confirma que resuelven. El índice bilingüe se regeneró.
+- **Evidencia de cierre:** Los stubs de redirección de migración en `reference/governance/standards/vision/evolith-product-vision-master.md` (+`.es.md`) se eliminan, y toda referencia de Core resuelve ahora a la ruta canónica `product/suite/vision/`: la Evaluación de Madurez (EN/ES), los READMEs de vision y de product-suite/vision (este último enlazaba de vuelta al stub), el README raíz y `rulesets/acl/README` (EN/ES). Borrar los stubs destapó estos enlaces migrados ocultos, que `validate-docs.mjs` ahora confirma que resuelven. El índice bilingüe se regeneró.
 - **Verificación local (2026-06-14):** `validate-docs.mjs` pasa para 825 archivos sin enlaces rotos, la paridad bilingüe y el chequeo de huérfanos pasan, y no queda ninguna referencia al stub fuera del ledger histórico de migración. Estado: `COMPLETADO`.
 - **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Visión Maestra Canónica](../../../product-suite/vision/evolith-product-vision-master.es.md)
 
@@ -2160,7 +2160,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 ### Componente CLI — Consolidado desde el Backlog del CLI
 
-> Estos ítems se fusionaron desde el backlog del CLI ya superseded (`reference/products/smart-cli/docs/planning/CLI-BACKLOG.md`) en este único centro formal de seguimiento. Solo se traen aquí sus feature gaps abiertos; los `GAP-001..003` cerrados y los `DONE-*` permanecen en ese documento histórico.
+> Estos ítems se fusionaron desde el backlog del CLI ya superseded (`product/products/smart-cli/docs/planning/CLI-BACKLOG.md`) en este único centro formal de seguimiento. Solo se traen aquí sus feature gaps abiertos; los `GAP-001..003` cerrados y los `DONE-*` permanecen en ese documento histórico.
 
 #### GT-97
 
@@ -2170,7 +2170,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Permitir mantener y cambiar entre perfiles con nombre sin re-autenticar ni reescribir configuración.
 - **Criterio de cierre:**
   - [x] se pueden crear, listar y cambiar perfiles con nombre, y los comandos usan el perfil activo
-- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-004`)
+- **Referencias:** Backlog del CLI de Evolith `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-004`)
 
 #### GT-98
 
@@ -2180,7 +2180,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Permitir contribuir comandos como plugins sin forkear el CLI.
 - **Criterio de cierre:**
   - [x] un contrato de plugin permite que paquetes externos registren comandos descubiertos en runtime
-- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-005`)
+- **Referencias:** Backlog del CLI de Evolith `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-005`)
 
 #### GT-100
 
@@ -2191,7 +2191,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criterio de cierre:**
   - [x] un comando lista e inspecciona las operaciones disponibles y sus esquemas
 - **Cerrado por:** `sdk/cli/src/commands/api/api.command.ts`, `sdk/cli/src/commands/api/api.command.spec.ts`, `sdk/cli/test/api.e2e-spec.ts`, `sdk/cli/src/app.module.ts`
-- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-007`)
+- **Referencias:** Backlog del CLI de Evolith `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-007`)
 
 #### GT-101
 
@@ -2202,7 +2202,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criterio de cierre:**
   - [x] el CLI detecta una versión publicada más nueva y puede auto-actualizarse o guiar la actualización
 - **Cerrado por:** `sdk/cli/src/commands/update/update.command.ts`, `sdk/cli/src/app.module.ts`
-- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-008`)
+- **Referencias:** Backlog del CLI de Evolith `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-008`)
 
 #### GT-102
 
@@ -2221,7 +2221,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="progress"` — tests unitarios pasan
     - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="progress"` — tests E2E pasan
   - `dependencyDisposition`: none
-- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-009`)
+- **Referencias:** Backlog del CLI de Evolith `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-009`)
 
 #### GT-103
 
@@ -2231,7 +2231,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Soportar jerarquías de subcomandos más profundas y bien agrupadas.
 - **Criterio de cierre:**
   - [x] se soportan subcomandos anidados con ayuda y enrutamiento consistentes
-- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-010`)
+- **Referencias:** Backlog del CLI de Evolith `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-010`)
 
 #### GT-104
 
@@ -2251,7 +2251,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
     - `pnpm info @evolith/smart-cli` — compatibilidad pnpm verificada
     - `yarn info @evolith/smart-cli` — compatibilidad yarn verificada
   - `dependencyDisposition`: none
-- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-011`)
+- **Referencias:** Backlog del CLI de Evolith `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-011`)
 
 #### GT-105
 
@@ -2261,7 +2261,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Proveer una imagen Docker mantenida para CI y uso en sandbox.
 - **Criterio de cierre:**
   - [x] una imagen oficial del CLI se construye y publica por el pipeline de release
-- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-012`)
+- **Referencias:** Backlog del CLI de Evolith `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-012`)
 
 #### GT-106
 
@@ -2271,7 +2271,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Permitir alias definidos por el usuario para ergonomía.
 - **Criterio de cierre:**
   - [x] los alias se pueden definir, listar y resolver en la invocación
-- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-013`)
+- **Referencias:** Backlog del CLI de Evolith `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-013`)
 
 #### GT-107
 
@@ -2290,7 +2290,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="wizard"` — tests unitarios pasan
     - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="wizard"` — tests E2E pasan
   - `dependencyDisposition`: none
-- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-014`)
+- **Referencias:** Backlog del CLI de Evolith `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-014`)
 
 #### GT-108
 
@@ -2308,7 +2308,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="fixtures"` — 15 unit tests pasan
     - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="fixtures"` — 6 E2E tests pasan
   - `dependencyDisposition`: ninguna
-- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-015`)
+- **Referencias:** Backlog del CLI de Evolith `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-015`)
 
 #### GT-109
 
@@ -2318,11 +2318,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Mejorar la integración de shell para estado, hooks y contexto.
 - **Criterio de cierre:**
   - [x] la integración de shell expone hooks de contexto/estado para los shells soportados
-- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-016`)
+- **Referencias:** Backlog del CLI de Evolith `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-016`)
 
 ### Componente Platform — Consolidado desde el Stack Audit
 
-> Estas alertas abiertas en estado RED se fusionaron desde el audit del stack tecnológico (`reference/governance/standards/engineering/detailed-stack-audit-2026.md`) en este único centro de seguimiento; ese audit sigue siendo la fuente de registro de vigilancia tecnológica.
+> Estas alertas abiertas en estado RED se fusionaron desde el audit del stack tecnológico (`reference/core/foundations/common-rules/detailed-stack-audit-2026.md`) en este único centro de seguimiento; ese audit sigue siendo la fuente de registro de vigilancia tecnológica.
 
 #### GT-110
 
@@ -2332,7 +2332,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Mover el vector de ingress/API-gateway a un componente mantenido antes de que el abandono se vuelva un pasivo de seguridad y supply-chain.
 - **Criterio de cierre:**
   - [x] el ingress se migra a Traefik Proxy 3.7+ o NGINX OSS con paridad de las rutas/políticas actuales
-- **Referencias:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 1)
+- **Referencias:** Stack Audit `reference/core/foundations/common-rules/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 1)
 
 #### GT-111
 
@@ -2342,7 +2342,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Decidir y ejecutar un camino que mantenga la abstracción de mensajería sobre una base OSS sostenible.
 - **Criterio de cierre:**
   - [x] se registra una decisión de quedarse en v8 dentro de soporte o migrar a una alternativa (p.ej. Rebus / driver directo), con un plan fechado
-- **Referencias:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 2)
+- **Referencias:** Stack Audit `reference/core/foundations/common-rules/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 2)
 
 #### GT-112
 
@@ -2352,20 +2352,20 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Adoptar reemplazos OSS para IaC y gestión de secretos para cumplir el veto de licenciamiento.
 - **Criterio de cierre:**
   - [x] IaC y secretos se migran a OpenTofu 1.11+ y OpenBao 2.5+ sin dependencia comercial de HashiCorp
-- **Referencias:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 3)
+- **Referencias:** Stack Audit `reference/core/foundations/common-rules/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 3)
 
 #### GT-117
 
 **Título:** Endpoints de lectura (GET) en el Core API para la composición del BFF del Tracker
 
-- **Gap:** `apps/core-api` solo expone endpoints de comando/evaluación — toda ruta de dominio es `@Post` (`/gates/:gateId/evaluate`, `/projects/initialize`, `/projects/propose-advance`, `/phases/transition`, `/architecture/validate-satellite`, `/architecture/detect-drift`); las únicas rutas `@Get` son `/health` y `/metrics`. No hay endpoints de lectura para listar rulesets, obtener un ruleset o la definición de un gate, ni leer requisitos de fase. El BFF del Tracker ([ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)) necesita estos modelos de lectura para componer sus workspaces web/móvil desde el Core API en lugar de recurrir al servidor MCP.
+- **Gap:** `apps/core-api` solo expone endpoints de comando/evaluación — toda ruta de dominio es `@Post` (`/gates/:gateId/evaluate`, `/projects/initialize`, `/projects/propose-advance`, `/phases/transition`, `/architecture/validate-satellite`, `/architecture/detect-drift`); las únicas rutas `@Get` son `/health` y `/metrics`. No hay endpoints de lectura para listar rulesets, obtener un ruleset o la definición de un gate, ni leer requisitos de fase. El BFF del Tracker ([ADR-0075](../../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)) necesita estos modelos de lectura para componer sus workspaces web/móvil desde el Core API en lugar de recurrir al servidor MCP.
 - **Propósito:** Añadir endpoints de lectura neutrales respecto del producto (p. ej. `GET /rulesets`, `GET /rulesets/:id`, `GET /gates/:gateId`, `GET /phases/:phase/requirements`) para que el BFF componga el estado de UI directamente desde la Capa de Exposición del Core.
 - **Evidencia actual / ejemplo:** `grep -rE "@(Get|Post)\(" apps/core-api/src/presentation/controllers` muestra que todo endpoint de dominio es `@Post`; las únicas rutas `@Get` son `health` y `metrics`.
 - **Criterio de cierre:**
   - [x] endpoints de lectura para rulesets, contenido de ruleset, definiciones de gate y requisitos de fase, expuestos y documentados en OpenAPI
   - [x] endpoints cubiertos por tests unit + e2e
   - [x] al menos un flujo de composición del BFF del Tracker los consume
-- **Referencias:** [apps/core-api/src/presentation/controllers/gates.controller.ts](../../../../apps/core-api/src/presentation/controllers/gates.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)
+- **Referencias:** [apps/core-api/src/presentation/controllers/gates.controller.ts](../../../../apps/core-api/src/presentation/controllers/gates.controller.ts) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [ADR-0075](../../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)
 
 #### GT-118
 
@@ -2378,33 +2378,33 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] un contrato de referencia a repositorio remoto (o equivalente) especificado en un ADR ([ADR-0080](../../../architecture/adrs/core/0080-remote-repository-reference-contract.es.md))
   - [x] el Core API resuelve el contenido del satélite sin una ruta local provista por el caller (`workspaceRef` se resuelve únicamente bajo `WORKSPACE_ROOT` configurado en el servidor)
   - [x] aislamiento de tenant y manejo de credenciales cubiertos por tests
-- **Referencias:** [apps/core-api/src/presentation/controllers/projects.controller.ts](../../../../apps/core-api/src/presentation/controllers/projects.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)
+- **Referencias:** [apps/core-api/src/presentation/controllers/projects.controller.ts](../../../../apps/core-api/src/presentation/controllers/projects.controller.ts) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)
 
 #### GT-119
 
 **Título:** Reconciliar el ADR-0074 §5 (MCP en NestJS) con el paquete standalone `@evolith/mcp-server`
 
-- **Gap:** El [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) (elemento ratificado 5) indica que la lógica del servidor MCP se *"integraría o envolvería dentro de la app NestJS para proveer una unidad de despliegue unificada"* junto a `core-api`. En la práctica el servidor MCP se extrajo a un paquete NestJS **standalone** (`@evolith/mcp-server`) y `smart-cli mcp` ahora delega en él; `core-api` no sirve MCP. La decisión y la documentación divergen.
+- **Gap:** El [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) (elemento ratificado 5) indica que la lógica del servidor MCP se *"integraría o envolvería dentro de la app NestJS para proveer una unidad de despliegue unificada"* junto a `core-api`. En la práctica el servidor MCP se extrajo a un paquete NestJS **standalone** (`@evolith/mcp-server`) y `smart-cli mcp` ahora delega en él; `core-api` no sirve MCP. La decisión y la documentación divergen.
 - **Propósito:** Reconciliar la arquitectura: actualizar/superseder el ADR-0074 §5 para registrar la decisión del paquete standalone, o re-integrar MCP en `core-api` como unidad de despliegue unificada — y alinear la capa de interfaces de la Visión de Producto en consecuencia.
 - **Evidencia actual / ejemplo:** `grep -riE "mcp|modelcontextprotocol" apps/core-api/src` no devuelve wiring MCP; el gateway MCP vive en `packages/mcp-server`.
 - **Criterio de cierre:**
   - [x] el ADR-0074 §5 se actualiza o supersede para coincidir con la topología implementada, o MCP se integra en `core-api`
   - [x] la Visión de Producto §2.5 refleja la decisión reconciliada
 - **Evidencia de cierre:** El commit `e93c68a` enmienda el ADR-0074 para registrar la topología standalone de `@evolith/mcp-server` y aclara que `smart-cli mcp serve` delega al paquete standalone en lugar de `apps/core-api`. La capa técnica de la Visión de Producto §2.5 ya refleja el modelo de exposición de dos capas, con el BFF del Tracker como cliente externo de `apps/core-api` más las superficies `mcp-server` y CLI. `apps/core-api` no contiene wiring MCP, lo que coincide con la decisión reconciliada.
-- **Referencias:** [packages/mcp-server/README.es.md](../../../../packages/mcp-server/README.es.md) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [Producto Vision Master](../../../../reference/product-suite/vision/evolith-product-vision-master.es.md)
+- **Referencias:** [packages/mcp-server/README.es.md](../../../../packages/mcp-server/README.es.md) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [Producto Vision Master](../../../../product/suite/vision/evolith-product-vision-master.es.md)
 
 #### GT-120
 
 **Título:** Exposición GraphQL del Core API (alcance del ADR-0074)
 
-- **Gap:** El [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) originalmente definía el alcance de la Capa de Exposición del Core como *"interfaces estándar REST/GraphQL/MCP"*, pero `apps/core-api` solo expone REST — no hay módulo `@nestjs/graphql` ni schema, y las superficies de producto implementadas ahora usan REST más el gateway MCP independiente en lugar de GraphQL.
+- **Gap:** El [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) originalmente definía el alcance de la Capa de Exposición del Core como *"interfaces estándar REST/GraphQL/MCP"*, pero `apps/core-api` solo expone REST — no hay módulo `@nestjs/graphql` ni schema, y las superficies de producto implementadas ahora usan REST más el gateway MCP independiente en lugar de GraphQL.
 - **Propósito:** Descopar formalmente GraphQL del ADR-0074, alinear la lista de interfaces orientadas al producto con la API Core REST-only implementada y dejar GraphQL como una opción futura solo si una nueva decisión arquitectónica lo reintroduce.
 - **Evidencia actual / ejemplo:** `grep -riE "graphql|@nestjs/graphql" apps/core-api` no devuelve módulo GraphQL; `apps/core-api/package.json` no tiene dependencia GraphQL.
 - **Criterio de cierre:**
   - [x] el ADR-0074 se enmienda para descopar GraphQL con justificación y documentar el alcance REST-only
   - [x] la documentación OpenAPI y la lista de exposición de la Visión de Producto son consistentes con la API Core REST-only implementada
 - **Evidencia de cierre:** El commit `cb05ffa` elimina las referencias residuales a GraphQL del ADR-0074, la Visión de Producto y el README del Core API para que la exposición documentada coincida con la superficie REST-only implementada. El gateway MCP independiente sigue siendo la ruta separada para agentes de IA.
-- **Referencias:** [apps/core-api/README.md](../../../../apps/core-api/README.md) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [Producto Vision Master](../../../../reference/product-suite/vision/evolith-product-vision-master.es.md)
+- **Referencias:** [apps/core-api/README.md](../../../../apps/core-api/README.md) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [Producto Vision Master](../../../../product/suite/vision/evolith-product-vision-master.es.md)
 
 #### GT-121
 
@@ -2418,7 +2418,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - [x] `sdk/cli/src/infrastructure/mcp/` y sus specs eliminados
 - [x] el CLI compila y sus tests pasan; el cambio cae en un bump de versión mayor
 - **Evidencia de cierre:** El commit `c4835e0` elimina el subsistema MCP in-process del Smart CLI, reemplaza el helper de filesystem viejo por un adaptador local basado en `NodeFileSystemProvider` en `agents.command.ts` y mantiene el serving MCP en el paquete standalone `@evolith/mcp-server`. El árbol `sdk/cli/src/infrastructure/mcp/**` y sus e2e asociados ya no existen; `npm run build --workspace sdk/cli` y `npm test --workspace sdk/cli -- --runInBand` pasan sobre el estado resultante.
-- **Referencias:** [sdk/cli/src/commands/agents/agents.command.ts](../../../../sdk/cli/src/commands/agents/agents.command.ts) · [Punto de Entrada del Servidor MCP](../../../../packages/mcp-server/src/main.ts) · [ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)
+- **Referencias:** [sdk/cli/src/commands/agents/agents.command.ts](../../../../sdk/cli/src/commands/agents/agents.command.ts) · [Punto de Entrada del Servidor MCP](../../../../packages/mcp-server/src/main.ts) · [ADR-0075](../../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)
 
 #### GT-122
 
@@ -2452,7 +2452,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 **Título:** Suite e2e del CLI rota — faltan fixtures y naming obsoleto del MCP viejo
 
-- **Gap:** `npm run test:e2e` en `sdk/cli` falla en varias suites por razones de entorno/fixtures ajenas al build: las plantillas de artefactos SDLC se resuelven bajo `sdk/cli/reference/governance/sdlc/04-artifact-templates/*` (viven en la raíz del repo), el comando de completion abre `node_modules/shell/hooks.{bash,zsh,fish}` inexistentes, y un e2e de prompts MCP espera `evolith/architecture-review` mientras el MCP viejo del CLI (GT-121) expone `evolith/review-architecture`. Salió a la luz cuando GT-123 desbloqueó el build y el job e2e pudo correr.
+- **Gap:** `npm run test:e2e` en `sdk/cli` falla en varias suites por razones de entorno/fixtures ajenas al build: las plantillas de artefactos SDLC se resuelven bajo `sdk/cli/reference/core/sdlc/04-artifact-templates/*` (viven en la raíz del repo), el comando de completion abre `node_modules/shell/hooks.{bash,zsh,fish}` inexistentes, y un e2e de prompts MCP espera `evolith/architecture-review` mientras el MCP viejo del CLI (GT-121) expone `evolith/review-architecture`. Salió a la luz cuando GT-123 desbloqueó el build y el job e2e pudo correr.
 - **Propósito:** Dejar la suite e2e de `sdk/cli` en verde para que el job E2E Tests del CI tenga peso probatorio real.
 - **Evidencia actual / ejemplo:** `cd sdk/cli && npm run test:e2e` reporta `Artifact not found: .../sdk/cli/reference/.../prd-template.md`, `ENOENT: .../node_modules/shell/hooks.zsh`, y `expect(promptNames).toContain('evolith/architecture-review')` contra una lista que contiene `evolith/review-architecture`.
 - **Criterio de cierre:**
@@ -2525,7 +2525,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia de cierre:**
   - `closedAt`: 2026-06-20
   - `closureCommit`: 8566249bbefe547f87116d90ecb8c8a797e5cc2b
-  - `evidence`: ["reference/architecture/topologies/data/data-mesh/data-mesh.rules.json", "reference/architecture/topologies/data/data-mesh/data-mesh.rego"]
+  - `evidence`: ["reference/core/architecture/topologies/data/data-mesh/data-mesh.rules.json", "reference/core/architecture/topologies/data/data-mesh/data-mesh.rego"]
   - `validationCommands`: ["node .harness/scripts/ci/08-validate-tracking.mjs", "node .harness/scripts/ci/01-validate-docs.mjs"]
 
 #### GT-129
@@ -2573,7 +2573,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-176
 
-**Propósito:** Eliminar el subdirectorio `reference/knowledge/architecture-intelligence/patterns/es/` (violación de Patrón A/B).
+**Propósito:** Eliminar el subdirectorio `product/research/architecture-intelligence/patterns/es/` (violación de Patrón A/B).
 **Evidencia Actual:** El subdir `patterns/es/` duplicaba cuatro patrones (`modular-monolith-first`, `no-cross-domain-joins`, `contract-first-integration`, `data-ownership-per-bounded-context`) con layout incorrecto idioma-por-carpeta, violando la convención bilingüe Patrón A (`name.md` + `name.es.md` hermanos). Los pares canónicos EN/ES ya existían en el directorio padre `patterns/`.
 **Hecho Cuando:** Subdirectorio eliminado; sin referencias entrantes fuera del BILINGUAL_INDEX auto-generado y documentos históricos de auditoría.
 
@@ -2743,13 +2743,13 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-202
 
 **Propósito:** Agregar README al directorio `governance/adr/`.
-**Evidencia Actual:** README.md y README.es.md existen en `reference/governance/adr/` con índice de directorio. BILINGUAL_INDEX.md/es también agregados.
+**Evidencia Actual:** README.md y README.es.md existen en `reference/core/sdlc/governance/` con índice de directorio. BILINGUAL_INDEX.md/es también agregados.
 **Hecho Cuando:** README.md y README.es.md existen con índice de directorio.
 
 #### GT-203
 
 **Propósito:** Eliminar o poblar directorio vacío `kubernetes/`.
-**Evidencia Actual:** `reference/infrastructure/kubernetes/` ahora tiene README.md, README.es.md y BILINGUAL_INDEX.md/es.
+**Evidencia Actual:** `product/infra/kubernetes/` ahora tiene README.md, README.es.md y BILINGUAL_INDEX.md/es.
 **Hecho Cuando:** El directorio contiene contenido o es eliminado.
 
 #### GT-204
@@ -2761,7 +2761,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-205
 
 **Propósito:** Agregar README al directorio SDLC 01-playbooks/.
-**Evidencia Actual:** `reference/governance/sdlc/01-playbooks/` tiene README.md y README.es.md con listado de directorio y propósito.
+**Evidencia Actual:** `reference/core/sdlc/01-playbooks/` tiene README.md y README.es.md con listado de directorio y propósito.
 **Hecho Cuando:** README.md existe con listado de directorio y propósito.
 
 #### GT-206
@@ -2804,7 +2804,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-212
 
 **Propósito:** Resolver el estado ambiguo de ADR-0049 ("Accepted (Proposed)") y alinearlo con ADR-0056, que se declara superseder del alcance de naming de ADR-0049 pero a su vez sigue marcado como `Proposed`.
-**Evidencia Actual:** `reference/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md:7` muestra `**Status:** Accepted (Proposed)` — estado compuesto inválido. `core/0056-enterprise-naming-design-conventions.md` está marcado `Proposed` y declara que supersede el alcance de naming de ADR-0049, pero ADR-0049 no refleja un marcador `Superseded by`. No existe registro de decisión del Architecture Board ni fecha efectiva para ninguno.
+**Evidencia Actual:** `reference/core/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md:7` muestra `**Status:** Accepted (Proposed)` — estado compuesto inválido. `core/0056-enterprise-naming-design-conventions.md` está marcado `Proposed` y declara que supersede el alcance de naming de ADR-0049, pero ADR-0049 no refleja un marcador `Superseded by`. No existe registro de decisión del Architecture Board ni fecha efectiva para ninguno.
 **Hecho Cuando:**
   - [x] ADR-0049 cambia su estado a `Superseded by ADR-0056 (effective <fecha>)` con referencia inversa y preservando la fecha original de Accepted.
   - [x] ADR-0056 pasa a `Accepted` (o `Rejected`) con la decisión del Architecture Board registrada en la sección Decision.
@@ -2813,7 +2813,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-213
 
 **Propósito:** Añadir campos de metadata de gobernanza (`owner`, `criticality`, `supersedes`, `replaces`) a cada manifest de topología para que la trazabilidad, propiedad y decisiones de ciclo de vida sean legibles por máquina a nivel de topología.
-**Evidencia Actual:** `grep -l '"owner":\|"criticality":\|"replaces":\|"supersedes":' reference/architecture/topologies/*/*/topology.manifest.json` devuelve **0 de 8** manifests. La visión exige trazabilidad de gobernanza por topología; hoy esas decisiones están dispersas en READMEs y ADRs.
+**Evidencia Actual:** `grep -l '"owner":\|"criticality":\|"replaces":\|"supersedes":' reference/core/architecture/topologies/*/*/topology.manifest.json` devuelve **0 de 8** manifests. La visión exige trazabilidad de gobernanza por topología; hoy esas decisiones están dispersas en READMEs y ADRs.
 **Hecho Cuando:**
   - [x] Los 8 manifests incluyen `owner` (unidad org), `criticality` (P0–P2) y arrays opcionales `supersedes`/`replaces` con IDs de ADR.
   - [x] `rulesets/schema/topology-manifest.schema.json` declara esas propiedades (con `required` donde corresponda).
@@ -2858,7 +2858,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-218
 
 **Propósito:** Crear plantillas + schemas dedicados para las dos salidas de Fase 05 que hoy solo existen como "Section in Release Notes" — evidencia de rollback rehearsal y confirmación de on-call handoff — para que el gate Production Live sea reproducible y verificable por máquina.
-**Evidencia Actual:** `reference/governance/sdlc/05-delivery-and-operations/README.md` Outputs table lista "Rollback rehearsal evidence" y "On-call handoff confirmation" con `Section in Release Notes` como única plantilla — sin schema, ejemplo ni punto de entrada de validador. `rulesets/schema/` no tiene `rollback-rehearsal.schema.json` ni `on-call-handoff.schema.json`.
+**Evidencia Actual:** `reference/core/sdlc/05-delivery-and-operations/README.md` Outputs table lista "Rollback rehearsal evidence" y "On-call handoff confirmation" con `Section in Release Notes` como única plantilla — sin schema, ejemplo ni punto de entrada de validador. `rulesets/schema/` no tiene `rollback-rehearsal.schema.json` ni `on-call-handoff.schema.json`.
 **Hecho Cuando:**
   - [x] `04-artifact-templates/rollback-rehearsal-template.md` (+`.es.md`) existe con ejemplos Blue/Green y Canary, rollback budget y sign-off del testigo.
   - [x] `04-artifact-templates/on-call-handoff-template.md` (+`.es.md`) existe con URLs de runbooks, rutas de escalación, propiedad de alertas y aceptación de SLA.
@@ -2867,7 +2867,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-219
 
 **Propósito:** Añadir un bloque `operationalBudgets` al manifest de la topología agentic-ai, siguiendo el precedente fijado por serverless y edge-computing, para que los SLOs de token-budget, sandbox-timeout y rotación de credenciales sean legibles por máquina y exigibles.
-**Evidencia Actual:** `grep -l operationalBudgets reference/architecture/topologies/*/*/topology.manifest.json` lo encuentra en `execution/edge-computing/` y `execution/serverless/` pero no en `ai/agentic-ai/topology.manifest.json`, a pesar de que GT-169 cerró el lado de docs/runbooks de esos presupuestos.
+**Evidencia Actual:** `grep -l operationalBudgets reference/core/architecture/topologies/*/*/topology.manifest.json` lo encuentra en `execution/edge-computing/` y `execution/serverless/` pero no en `ai/agentic-ai/topology.manifest.json`, a pesar de que GT-169 cerró el lado de docs/runbooks de esos presupuestos.
 **Hecho Cuando:**
   - [x] `agentic-ai/topology.manifest.json` declara `operationalBudgets` con al menos `tokenBudgetPerExecution`, `credentialRotationIntervalHours` y `sandboxTimeoutMs`.
   - [x] `topology-manifest.schema.json` deja el bloque opcional con campos tipados; la validación de agentic-ai pasa.
@@ -3029,16 +3029,16 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-237
 
 **Propósito:** Redactar los 5 ADRs AI-Augmented propuestos (ADR-AI-001 through ADR-AI-005) que están listados en referencias de gobernanza pero nunca se escribieron como documentos reales.
-**Evidencia Actual:** `reference/architecture/adrs/ai-augmented/` es referenciado en secciones de gobernanza listando 5 ADRs propuestos pero ninguno existe en el sistema de archivos.
+**Evidencia Actual:** `reference/core/architecture/adrs/ai-augmented/` es referenciado en secciones de gobernanza listando 5 ADRs propuestos pero ninguno existe en el sistema de archivos.
 **Hecho Cuando:**
-  - [x] Los 5 documentos ADR existen en `reference/architecture/adrs/ai-augmented/` con estructura propia (Title, Status, Context, Decision, Consequences).
+  - [x] Los 5 documentos ADR existen en `reference/core/architecture/adrs/ai-augmented/` con estructura propia (Title, Status, Context, Decision, Consequences).
   - [x] Cada ADR tiene versiones EN y ES manteniendo paridad bilingual.
   - [x] El status del ADR se actualiza de "proposed" a "accepted" o "superseded" según corresponda.
 
 #### GT-238
 
 **Propósito:** Añadir Prometheus/Mimir al stack de observabilidad para que las métricas RED/USE sean coleccionables y consultables, cerrando la brecha donde el playbook de observabilidad referencia métricas basadas en Mimir pero el docker-compose solo provee Tempo y Loki.
-**Evidencia Actual:** `reference/infrastructure/docker-compose.yml` incluye servicios para OTel Collector, Tempo, Grafana y Loki. No existe servicio Prometheus ni Mimir.
+**Evidencia Actual:** `product/infra/docker-compose.yml` incluye servicios para OTel Collector, Tempo, Grafana y Loki. No existe servicio Prometheus ni Mimir.
 **Hecho Cuando:**
   - [x] Prometheus se añade a docker-compose con configuración de scrape para métricas del Core API.
   - [x] Mimir se añade para almacenamiento de métricas a largo plazo.
@@ -3047,7 +3047,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-239
 
 **Propósito:** Definir SLOs concretos por servicio e implementar reglas de alerting, cerrando la brecha donde el template de validación observacional referencia baselines de SLO pero no existen documentos SLO ni configuraciones de alerta.
-**Evidencia Actual:** `rulesets/schema/observability-validation.schema.json` define campos para cumplimiento de SLO pero no existen documentos SLO en `reference/operations/`. No existen reglas de alerting de Prometheus ni configuración de notificaciones.
+**Evidencia Actual:** `rulesets/schema/observability-validation.schema.json` define campos para cumplimiento de SLO pero no existen documentos SLO en `product/operations/`. No existen reglas de alerting de Prometheus ni configuración de notificaciones.
 **Hecho Cuando:**
   - [x] Al menos 3 SLOs están definidos (disponibilidad 99.9%, latencia p99 <200ms, tasa de error <0.1%).
   - [x] Existen reglas de alerting de Prometheus para: tasa de error >1%, latencia p99 >500ms, reinicios de pod >3.
@@ -3092,11 +3092,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-244
 
 **Propósito:** Crear playbooks y plantillas de respuesta a incidentes para el producto core, cerrando la brecha donde existen runbooks para agentic AI pero los procedimientos generales de respuesta (caída de servicio, brecha de datos, rollback de producción) están ausentes.
-**Evidencia Actual:** `reference/architecture/topologies/ai/agentic-ai/runbooks.md` cubre incidentes específicos de agentes. No existen playbooks generales de respuesta a incidentes para el producto core.
+**Evidencia Actual:** `reference/core/architecture/topologies/ai/agentic-ai/runbooks.md` cubre incidentes específicos de agentes. No existen playbooks generales de respuesta a incidentes para el producto core.
 **Hecho Cuando:**
   - [x] Existen playbooks para: caída de servicio, brecha de datos, CVE en dependencias, rollback de producción.
   - [x] Cada playbook tiene: clasificación de severidad, plantilla de comunicación, pasos de contención, pasos de recuperación, plantilla de post-mortem.
-  - [x] Los playbooks se almacenan en `reference/operations/` con versiones bilingües.
+  - [x] Los playbooks se almacenan en `product/operations/` con versiones bilingües.
 
 #### GT-245
 
@@ -3119,7 +3119,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-247
 
 **Propósito:** Reemplazar credenciales hardcodeadas en docker-compose con inyección de secrets, cerrando la brecha donde el archivo compose de infraestructura contiene passwords en texto plano para PostgreSQL, Redis, RabbitMQ, MongoDB, MinIO y OpenBao.
-**Evidencia Actual:** `reference/infrastructure/docker-compose.yml` contiene passwords hardcodeadas para 6 servicios. No existe mecanismo de inyección de secrets documentado para producción.
+**Evidencia Actual:** `product/infra/docker-compose.yml` contiene passwords hardcodeadas para 6 servicios. No existe mecanismo de inyección de secrets documentado para producción.
 **Hecho Cuando:**
   - [x] docker-compose usa referencias `${VARIABLE}` para todas las credenciales.
   - [x] Un archivo `.env.example` documenta los secrets requeridos sin valores reales.
@@ -3208,7 +3208,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-256
 
 **Propósito:** Reparar el healthcheck de Traefik en `docker-compose.yml`, que hoy consulta `/ping` mientras Traefik se levanta sin `--ping=true`, garantizando que el contenedor sea marcado unhealthy en cualquier entorno que dependa de este stack.
-**Evidencia Actual:** `reference/infrastructure/docker-compose.yml:164-182` — Traefik arranca solo con `--providers.file.directory=/etc/traefik/dynamic`. El healthcheck en la línea 182 corre `traefik healthcheck --ping`, que llama al endpoint ping interno; sin `--ping=true` (o `--ping.entrypoint=...`) en la línea de arranque, ese endpoint está deshabilitado y el check falla.
+**Evidencia Actual:** `product/infra/docker-compose.yml:164-182` — Traefik arranca solo con `--providers.file.directory=/etc/traefik/dynamic`. El healthcheck en la línea 182 corre `traefik healthcheck --ping`, que llama al endpoint ping interno; sin `--ping=true` (o `--ping.entrypoint=...`) en la línea de arranque, ese endpoint está deshabilitado y el check falla.
 **Hecho Cuando:**
   - [x] La lista de comandos de Traefik incluye `--ping=true` (y un entrypoint explícito si es necesario).
   - [x] `traefik healthcheck --ping` tiene éxito contra un contenedor en ejecución.
@@ -3217,7 +3217,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-257
 
 **Propósito:** Fijar la imagen de MongoDB a una versión menor específica para que el stack de infraestructura sea reproducible y esté protegido frente a upgrades silenciosos que puedan romper compatibilidad o introducir cambios no revisados.
-**Evidencia Actual:** `reference/infrastructure/docker-compose.yml:54` — `image: mongo:latest`. Otros servicios (PostgreSQL, Redis, Traefik) ya están fijados; MongoDB es el caso aislado.
+**Evidencia Actual:** `product/infra/docker-compose.yml:54` — `image: mongo:latest`. Otros servicios (PostgreSQL, Redis, Traefik) ya están fijados; MongoDB es el caso aislado.
 **Hecho Cuando:**
   - [x] `mongo:latest` reemplazado por un tag fijo coincidente con la versión que Evolith soporta (e.g., `mongo:7.0`).
   - [x] Decisión de tag documentada en el README de infraestructura junto con la cadencia de actualización.
@@ -3254,7 +3254,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-261
 
 **Propósito:** Acotar la huella de recursos de cada contenedor del stack de infraestructura para que un servicio descontrolado no pueda asfixiar a sus vecinos en el mismo host, y para que la planificación de capacidad mapee limpiamente al dimensionamiento en producción.
-**Evidencia Actual:** `grep -nE "mem_limit|cpus|deploy:|resources:" reference/infrastructure/docker-compose.yml` devuelve nada — ningún servicio declara `mem_limit`, `cpus` ni un bloque `deploy.resources`.
+**Evidencia Actual:** `grep -nE "mem_limit|cpus|deploy:|resources:" product/infra/docker-compose.yml` devuelve nada — ningún servicio declara `mem_limit`, `cpus` ni un bloque `deploy.resources`.
 **Hecho Cuando:**
   - [x] Cada servicio en `docker-compose.yml` declara límites de memoria y CPU apropiados a su rol (PostgreSQL, MongoDB, Redis, RabbitMQ, MinIO, OpenBao, Traefik, Core API, MCP server).
   - [x] Límites documentados en el README de infraestructura con el razonamiento (carga habitual + headroom).
@@ -3263,11 +3263,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-262
 
 **Propósito:** Codificar procedimientos de backup y disaster-recovery para los data stores stateful (PostgreSQL, MongoDB, MinIO, OpenBao) para que la plataforma pueda recuperarse de pérdida de datos sin arqueología ad-hoc.
-**Evidencia Actual:** Una búsqueda en el repo por scripts de backup (`find . -name "backup*.sh" -o -name "*-backup*"`) y planes de restore estilo Terraform devuelve nada bajo `reference/infrastructure/`, `apps/` ni `.harness/`. No existe runbook de DR.
+**Evidencia Actual:** Una búsqueda en el repo por scripts de backup (`find . -name "backup*.sh" -o -name "*-backup*"`) y planes de restore estilo Terraform devuelve nada bajo `product/infra/`, `apps/` ni `.harness/`. No existe runbook de DR.
 **Hecho Cuando:**
   - [x] Existen scripts de backup (o procedimientos operativos documentados) para cada servicio stateful: PostgreSQL (`pg_dump`/PITR), MongoDB (`mongodump`), MinIO (replicación de objetos o `mc mirror`), OpenBao (snapshot).
   - [x] Cada servicio tiene un objetivo RPO/RTO documentado.
-  - [x] Un runbook de restore guía a través de un ejercicio completo de DR; commiteado en `reference/infrastructure/runbooks/`.
+  - [x] Un runbook de restore guía a través de un ejercicio completo de DR; commiteado en `product/infra/runbooks/`.
   - [x] Lint de CI verifica que el runbook existe; referencia cruzada con SDLC Phase 05 rollback (GT-218).
 
 #### GT-263
@@ -3275,7 +3275,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Añadir alertas Prometheus a nivel de infraestructura para que los problemas de plataforma (servicio caído, presión de disco, pico de error rate) paguen on-call antes de llegar a usuarios, cerrando una brecha dejada abierta por la adopción del stack de observabilidad.
 **Evidencia Actual:** Una búsqueda en el repo por `*.rules.yaml`, `*alerts*` o `prometheus*` devuelve nada. Los ADRs de observabilidad describen lo que debería existir, pero no hay reglas de alerta commiteadas.
 **Hecho Cuando:**
-  - [x] Un archivo de reglas de alerta (e.g., `reference/infrastructure/observability/alerts.rules.yaml`) define como mínimo: service-down, alta tasa de error (5xx), latencia P99 alta, disk-free bajo umbral, profundidad de cola RabbitMQ, fallos de evaluación OPA.
+  - [x] Un archivo de reglas de alerta (e.g., `product/infra/observability/alerts.rules.yaml`) define como mínimo: service-down, alta tasa de error (5xx), latencia P99 alta, disk-free bajo umbral, profundidad de cola RabbitMQ, fallos de evaluación OPA.
   - [x] Alertas cableadas en la configuración Prometheus que viaja con el stack docker-compose.
   - [x] Cada alerta tiene un link a runbook y un label de severidad.
   - [x] Smoke test: disparar una alerta en un entorno dev y verificar que se enciende.
@@ -3348,7 +3348,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 **Título:** Fijar imágenes de infraestructura mutables y deshabilitar defaults dev expuestos
 **Propósito:** Hacer reproducible la infraestructura de referencia y evitar que defaults de desarrollo se copien a despliegues tipo producción. Esto optimiza costo y seguridad reduciendo upgrades no planeados, superficies admin públicas accidentales y fricción de triage de incidentes.
-**Evidencia Actual:** `reference/infrastructure/README.md` declara "sin latest", pero los values de Helm usan `tag: "latest"` para BFF y MCP y `openpolicyagent/opa:latest`; los Dockerfiles usan `node:22-alpine` mutable; Docker Compose usa `mcr.microsoft.com/mssql/server:2022-latest`; Traefik arranca con `--api.insecure=true` y expone dashboard; OpenBao usa `BAO_DEV_ROOT_TOKEN_ID` y escucha en `0.0.0.0:8200`; el socket Docker se monta en Traefik.
+**Evidencia Actual:** `product/infra/README.md` declara "sin latest", pero los values de Helm usan `tag: "latest"` para BFF y MCP y `openpolicyagent/opa:latest`; los Dockerfiles usan `node:22-alpine` mutable; Docker Compose usa `mcr.microsoft.com/mssql/server:2022-latest`; Traefik arranca con `--api.insecure=true` y expone dashboard; OpenBao usa `BAO_DEV_ROOT_TOKEN_ID` y escucha en `0.0.0.0:8200`; el socket Docker se monta en Traefik.
 **Hecho Cuando:**
   - [x] Helm, Compose y Dockerfiles usan tags inmutables revisados o digests para imágenes de aplicación, OPA, Node, SQL Server y gateway.
   - [x] Settings solo-desarrollo (`--api.insecure=true`, token/listen dev de OpenBao, exposición amplia de puertos host) quedan detrás de perfiles locales explícitos y ausentes de ejemplos productivos.
@@ -3359,7 +3359,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 **Título:** Añadir hardening Kubernetes de workloads a Helm charts
 **Propósito:** Elevar los Helm charts al mismo estándar de preparación productiva que las normas arquitectónicas haciendo ejecutables seguridad de pod, probes, recursos y seguridad de rollout en vez de dejarlos implícitos en prosa.
-**Evidencia Actual:** `reference/infrastructure/helm/evolith-bff/templates/deployment.yaml` y `evolith-mcp/templates/deployment.yaml` definen solo contenedores y puertos. Un grep no encuentra `resources`, `securityContext`, `readinessProbe`, `livenessProbe`, `startupProbe`, `runAsNonRoot`, `readOnlyRootFilesystem`, `allowPrivilegeEscalation`, `PodDisruptionBudget`, `HorizontalPodAutoscaler` ni `NetworkPolicy`.
+**Evidencia Actual:** `product/infra/helm/evolith-bff/templates/deployment.yaml` y `evolith-mcp/templates/deployment.yaml` definen solo contenedores y puertos. Un grep no encuentra `resources`, `securityContext`, `readinessProbe`, `livenessProbe`, `startupProbe`, `runAsNonRoot`, `readOnlyRootFilesystem`, `allowPrivilegeEscalation`, `PodDisruptionBudget`, `HorizontalPodAutoscaler` ni `NetworkPolicy`.
 **Hecho Cuando:**
   - [x] Los charts Helm de BFF y MCP definen `resources.requests/limits`, probes de liveness/readiness/startup y defaults seguros de rollout.
   - [x] Los security contexts de pod/contenedor exigen ejecución non-root, capabilities eliminadas, filesystem raíz read-only donde sea factible y `allowPrivilegeEscalation: false`.
@@ -3431,7 +3431,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia Actual:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para OpenAPI en las 8 topologías (`ai/agentic-ai`, `data/data-mesh`, `execution/edge-computing`, `execution/serverless`, `integration/event-driven`, `progressive-axis/modular-monolith`, `progressive-axis/distributed-modules`, `progressive-axis/microservices`).
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [x] Cada topología tiene un archivo `openapi.yaml` en `reference/architecture/topologies/<area>/<topology>/openapi/`.
+  - [x] Cada topología tiene un archivo `openapi.yaml` en `reference/core/architecture/topologies/<area>/<topology>/openapi/`.
   - [x] Cada spec describe al menos los endpoints propios del Bounded Context de la topología.
   - [x] El spec es validable con `swagger-cli validate` o herramienta equivalente en CI.
   - [x] La auditoría de cumplimiento (`topology-compliance-audit.mjs`) reporta `COMPLETO` para OpenAPI en cada topología.
@@ -3445,7 +3445,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia Actual:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para MCP manifests en las 8 topologías.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [x] Cada topología tiene un `mcp-manifest.json` en `reference/architecture/topologies/<area>/<topology>/mcp/`.
+  - [x] Cada topología tiene un `mcp-manifest.json` en `reference/core/architecture/topologies/<area>/<topology>/mcp/`.
   - [x] Cada manifest declara al menos una tool específica del dominio de la topología.
   - [x] El manifest es validable contra el esquema canónico MCP.
   - [x] La auditoría de cumplimiento reporta `COMPLETO` para MCP en cada topología.
@@ -3472,8 +3472,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia Actual:** `node .harness/scripts/run-evolith-deep.mjs` — Dimensión "MODELO SDLC EJECUTABLE": **SÓLIDO**.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [x] Cada fase tiene un archivo `phase-f*.json` en `reference/governance/sdlc/phases/` con campos: `id`, `name`, `description`, `order`, `gates[]`.
-  - [x] Cada gate en `reference/governance/sdlc/gates/` declara `requiredArtifacts[]` y `rules[]` con referencias a archivos `.rego`.
+  - [x] Cada fase tiene un archivo `phase-f*.json` en `reference/core/sdlc/phases/` con campos: `id`, `name`, `description`, `order`, `gates[]`.
+  - [x] Cada gate en `reference/core/sdlc/gates/` declara `requiredArtifacts[]` y `rules[]` con referencias a archivos `.rego`.
   - [x] Existe un validador (`.harness/playbooks/sdlc-phase-gate-validator.mjs`) que verifica reglas Rego y artefactos requeridos.
   - [x] `run-evolith-deep.mjs` reporta `SÓLIDO` para la dimensión "MODELO SDLC EJECUTABLE".
 - **Evidencia de Cierre:** Commit `661a8846` crea 5 phase files, 5 gate files, los schemas SDLC, el validador de phase/gate y reglas Rego SDLC. El audit profundo detecta datos estructurados y reporta `SÓLIDO`.
@@ -4000,7 +4000,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Fix aplicado (etapa 1 — fundación, no rompe nada):** añadido `packages/core-domain/src/domain/sdlc/phase-id.ts` — fuente canónica única. Los ids canónicos son los `GATE_PHASES` existentes (`discovery|design|construction|qa|release`); `normalizePhaseId()` acepta `f1..f5`/`gate-f*`/`phase-*`/`1..5` y devuelve canónico; `toLegacyPhaseId()` mapea de vuelta al `f1..f5` en disco; `phase-0` rechazado correctamente. Exportado desde el barrel de dominio.
 - **Evidencia:** ~897 ocurrencias barridas; core-domain 589/589 verde (6 tests nuevos). La etapa 1 no cambia comportamiento (aditiva).
 - **Fix aplicado (etapa 2 — consumidores en core-domain, retrocompatible):** `evolith-config.service` y `validate-blueprint.use-case` validan vía `normalizePhaseId` (canónico aceptado, `f1..f5` aún válido); `sdlc-validation.mode` y `satellite-evaluation-pipeline` normalizan un `phase` canónico al id legacy para resolver archivos/gates en disco vía `toLegacyPhaseId`. `validate-workflow.use-case` diferido a etapa 2b (acoplado a ids `gate-f*` en disco + mapa NON_OMITTABLE_ARTIFACTS). core-domain 589/589; sin regresión (ampliación aditiva).
-- **Fix aplicado (etapa 4 — desconflación de topología):** renombrado `spec.compatibility.progressiveAxis.phase` → `maturityLevel` en el schema de manifest + los 13 manifests (8 en `reference/architecture/topologies/`, 5 en `rulesets/topologies/`) + el tipo `TopologyManifest` y el lookup `resolveProgressivePhase`. `profile` documentado como el id canónico de topología; el tipo `ProgressivePhase` se mantiene como alias deprecado de `ProgressiveMaturityLevel` para no romper los re-exports de `@evolith/core`. La palabra SDLC "phase" desaparece del contrato de topología. (Los VALORES F1/F2/F3 siguen como nivel de madurez — retirarlos a ids canónicos en `evolith.yaml`/`declaredLevel`/drift es la etapa 4b.)
+- **Fix aplicado (etapa 4 — desconflación de topología):** renombrado `spec.compatibility.progressiveAxis.phase` → `maturityLevel` en el schema de manifest + los 13 manifests (8 en `reference/core/architecture/topologies/`, 5 en `rulesets/topologies/`) + el tipo `TopologyManifest` y el lookup `resolveProgressivePhase`. `profile` documentado como el id canónico de topología; el tipo `ProgressivePhase` se mantiene como alias deprecado de `ProgressiveMaturityLevel` para no romper los re-exports de `@evolith/core`. La palabra SDLC "phase" desaparece del contrato de topología. (Los VALORES F1/F2/F3 siguen como nivel de madurez — retirarlos a ids canónicos en `evolith.yaml`/`declaredLevel`/drift es la etapa 4b.)
 - **Evidencia:** validate-topology-manifests 13/13; composición + cobertura de reglas exit 0; core-domain 589/589; mcp-server + core-api compilan. No queda lector de `progressiveAxis.phase`.
 - **Fix aplicado (etapa 3 — enums SDLC públicos, retrocompatible):** ampliados los enums de fase en las 3 superficies de contrato + 2 schemas de tools MCP para aceptar los ids canónicos primero, con `f1..f5` como alias deprecado (sin eliminación dura → el Tracker externo sigue funcionando): `reference/config/evolith.config.schema.json`, DTO `/validate/composable`, descripción CLI `validate --phase`, y `composable-validate.tool.ts` + `validate.tool.ts`. Validado: core-api 105/105, mcp-server 162/162, CLI compila — ninguna suite rota.
 - **Fix aplicado (etapa 5 — guard anti-colisión):** añadido `.harness/scripts/ci/30-validate-phase-topology-disjoint.mjs`, cableado en `sdk-cli-ci.yml`. Falla CI si algún id de fase SDLC reusa el namespace F#, si colisionan ids de fase y topología, o si algún manifest reintroduce la clave legacy `progressiveAxis.phase`. Verificado: pasa limpio (5 ids SDLC disjuntos de 8 de topología) y detecta regresión (inyectar `phase` → exit 1).
@@ -4139,7 +4139,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Título:** core-api con módulo OpenAPI muerto + api-reference incompleto — `DONE`
 
 - **Componente:** core-api · **Prioridad:** P2 · **Riesgo:** bajo · **Dependencias:** ninguna
-- **Archivos:** `apps/core-api/src/openapi/openapi-config.ts`, `…/main.ts:34`, `reference/products/core-api/api-reference.md`
+- **Archivos:** `apps/core-api/src/openapi/openapi-config.ts`, `…/main.ts:34`, `product/products/core-api/api-reference.md`
 - **Fix propuesto:** borrar el módulo openapi o invocar `setupOpenApi()`; documentar `POST /architecture/cache/invalidate`.
 - **Hecho cuando:** [x] sin DocumentBuilder duplicado; [x] api-reference completa.
 
@@ -4157,7 +4157,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Título:** README de mcp-services con deriva mantenida a mano — `DONE`
 
 - **Componente:** docs · **Prioridad:** P2 · **Riesgo:** bajo · **Dependencias:** GT-341
-- **Archivos:** `reference/products/mcp-services/README.md:17,49`
+- **Archivos:** `product/products/mcp-services/README.md:17,49`
 - **Fix propuesto:** regenerar conteos (27/9/8); corregir comando a `smart-cli mcp serve --transport http --port 3000`; derivar del generador.
 - **Hecho cuando:** [x] README == código; [x] test doc-snippet `--help`.
 
@@ -4166,7 +4166,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Título:** META — el tablero sobre-reporta completitud — `DONE`
 
 - **Componente:** gobernanza · **Prioridad:** P1 · **Riesgo:** alto (falsa confianza) · **Dependencias:** GT-341, GT-347
-- **Archivos:** `reference/governance/standards/vision/gap-tracking.md`, `…/maturity-evidence.json`, `.harness/scripts/ci/09-reconcile-maturity.mjs`
+- **Archivos:** `reference/core/control-center/gaps/gap-tracking.md`, `…/maturity-evidence.json`, `.harness/scripts/ci/09-reconcile-maturity.mjs`
 - **Fix propuesto:** alimentar maturity-evidence con build/test reales por producto; condicionar "DONE" a evidencia validada.
 - **Evidencia:** el tablero marcaba 329/330 con ≥15 GAPS reales (3 críticos); `09-reconcile-maturity.mjs` ya falla `closures 272 vs 323`.
 - **Hecho cuando:** [x] el tablero reconcilia con la evidencia ejecutada.
@@ -4422,7 +4422,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Alinear respuestas de Core API con el envelope estructurado ADR-0073 ya esperado por consumidores CLI y MCP.
 - **Evidencia:** SDLC Deep Audit reportó respuestas de Core API sin el envelope estándar `{success, data, warnings}` en superficies nuevas orientadas a runtime.
 - **Impacto:** Hermes y otros consumidores externos necesitan manejo especial de API en lugar de un contrato transversal.
-- **Archivos afectados:** `apps/core-api/src/presentation/`, `apps/core-api/src/common/`, `reference/architecture/adrs/core/0073-unified-cli-mcp-output-contract-and-gate-evidence-schema.md`.
+- **Archivos afectados:** `apps/core-api/src/presentation/`, `apps/core-api/src/common/`, `reference/core/architecture/adrs/core/0073-unified-cli-mcp-output-contract-and-gate-evidence-schema.md`.
 - **Complejidad:** S
 - **Propuesta de corrección:** Envolver endpoints de Core API, incluyendo endpoints Hermes/runtime, en el envelope ADR-0073 y documentar excepciones aceptadas.
 - **Criterios de aceptación:**
@@ -4475,7 +4475,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Hacer que cada `policyRef` de capacidad runtime resuelva a una query/paquete Rego real o a un registro de alias gobernado.
 - **Evidencia:** `.harness/manifest.yaml`, `DEFAULT_SKILLS`, tests unitarios y docs de agent-runtime referencian `evolith.gates.discovery` y `evolith.architecture.adr`. `rg '^package' rulesets/opa` muestra paquetes reales como `evolith.phase_gates`, `evolith.capability_source_interface`, `evolith.governance` y `evolith.acl`; no existe paquete `evolith.gates.discovery` ni `evolith.architecture.adr`. Con schemas ignorados, `.harness/bin/opa eval --format json -I -d rulesets/opa --ignore schemas 'data.evolith.gates.discovery.allow'` devuelve `{}`, mientras `data.evolith.phase_gates.allow` devuelve `true`.
 - **Impacto:** Corregir el path de carga OPA no basta: las capacidades runtime gobernadas seguirían denegadas o indefinidas porque los nombres lógicos de políticas no mapean a paquetes reales.
-- **Archivos afectados:** `.harness/manifest.yaml`, `packages/agent-runtime/src/adapters/skills/default-skills.ts`, `packages/agent-runtime/src/domain/ports/policy-validation.port.ts`, `reference/architecture/agent-runtime/{harness-integration,extending}.md`, `rulesets/opa/`.
+- **Archivos afectados:** `.harness/manifest.yaml`, `packages/agent-runtime/src/adapters/skills/default-skills.ts`, `packages/agent-runtime/src/domain/ports/policy-validation.port.ts`, `reference/core/architecture/foundations/{harness-integration,extending}.md`, `rulesets/opa/`.
 - **Complejidad:** S
 - **Propuesta de corrección:** Introducir un registro de referencias de políticas o mapa de alias (`evolith.gates.discovery` -> `evolith.phase_gates`, validación ADR de arquitectura -> paquete/ruleset correcto), actualizar manifest/default skills/docs/tests y añadir validación CI que exija que todo `policyRef` declarado resuelva a un paquete OPA real o alias explícito.
 - **Criterios de aceptación:**
@@ -4492,7 +4492,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Restaurar la autoridad de release de `@evolith/agent-runtime` antes de tratar v1.0.0 como estable para producción.
 - **Evidencia:** `npm test --workspace @evolith/agent-runtime -- --runInBand` falla en `public-surface.spec.ts` porque `./adapters` ahora exporta `ChatApprovalAdapter`, `OpenCodeInteractionAdapter` y `SlackApprovalAdapter` fuera de la lista congelada. El README aún dice que el paquete se mantiene en `0.x` mientras el adaptador Core default sea stub, pero `packages/agent-runtime/package.json` declara versión `1.0.0`.
 - **Impacto:** Los consumidores no pueden saber si los nuevos exports de adaptadores son cambios aditivos intencionales, cambios breaking o drift no documentado; el board marca productización previa como hecha aunque la suite del paquete está roja.
-- **Archivos afectados:** `packages/agent-runtime/src/__tests__/public-surface.spec.ts`, `packages/agent-runtime/src/adapters/index.ts`, `packages/agent-runtime/README.md`, `packages/agent-runtime/README.es.md`, `packages/agent-runtime/package.json`, `reference/governance/standards/vision/gap-tracking.md`.
+- **Archivos afectados:** `packages/agent-runtime/src/__tests__/public-surface.spec.ts`, `packages/agent-runtime/src/adapters/index.ts`, `packages/agent-runtime/README.md`, `packages/agent-runtime/README.es.md`, `packages/agent-runtime/package.json`, `reference/core/control-center/gaps/gap-tracking.md`.
 - **Complejidad:** S
 - **Propuesta de corrección:** Decidir si los tres exports son API pública intencional. Si sí, actualizar lista congelada, narrativa SemVer README/ES y notas de release como cambio aditivo de superficie estable. Si no, dejar de exportarlos desde `./adapters` o marcarlos internos. Añadir validación que ejecute el public-surface test antes de cerrar cualquier GT de release/productización.
 - **Criterios de aceptación:**
@@ -4528,7 +4528,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Restaurar el tracking semántico como fuente de verdad ejecutable: un gap marcado `COMPLETADO` debe tener registro de cierre, criterios marcados en secciones EN/ES del catálogo, artefactos de evidencia resolubles y comandos de validación reproducibles.
 - **Evidencia:** Después de normalizar estados españoles del board de `HECHO` a `COMPLETADO` y corregir el puntero obsoleto de evidencia de GT-290, `node .harness/scripts/ci/08-validate-tracking.mjs` sigue fallando solo en semántica de cierre: múltiples gaps `COMPLETADO` como `GT-377`, `GT-395`, `GT-375`, `GT-390`, `GT-405`, `GT-410`, `GT-411` y gaps de la ola Agent Runtime carecen de registros en `gap-closure-evidence.json` y/o aún contienen criterios - [x] sin marcar.
 - **Impacto:** El resumen ejecutivo y la evidencia de madurez pueden sobredeclarar cierre porque estado de tabla, criterios de catálogo y registro de cierre no están reconciliados por completo.
-- **Archivos afectados:** `reference/governance/standards/vision/gap-tracking.md`, `reference/governance/standards/vision/gap-tracking.es.md`, `reference/governance/standards/vision/gap-reference-catalog.md`, `reference/governance/standards/vision/gap-reference-catalog.es.md`, `reference/governance/standards/vision/gap-closure-evidence.json`, `.harness/scripts/ci/08-validate-tracking.mjs`.
+- **Archivos afectados:** `reference/core/control-center/gaps/gap-tracking.md`, `reference/core/control-center/gaps/gap-tracking.es.md`, `reference/core/control-center/gaps/gap-reference-catalog.md`, `reference/core/control-center/gaps/gap-reference-catalog.es.md`, `reference/core/control-center/evidence/gap-closure-evidence.json`, `.harness/scripts/ci/08-validate-tracking.mjs`.
 - **Complejidad:** M
 - **Propuesta de corrección:** Para cada gap `COMPLETADO` reportado por el validador, añadir un registro de cierre real con commit existente, evidencia resoluble, comandos de validación y disposición de dependencias; luego marcar los criterios EN/ES correspondientes. Si la evidencia no está completa, reabrir el gap a `PENDIENTE`/`EN-PROGRESO`. Mantener el validador en CI/pre-commit para que nuevas filas `COMPLETADO` no evadan la reconciliación del registro.
 - **Criterios de aceptación:**

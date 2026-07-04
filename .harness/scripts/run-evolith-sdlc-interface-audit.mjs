@@ -81,17 +81,17 @@ const DIMENSIONS = [
   {
     id: 'D1', name: 'SDLC model defined & engine-backed', owner: CORE,
     checks: [
-      { name: 'Phase definitions exist', type: 'path', target: 'reference/governance/sdlc/phases', severity: 'P0', risk: 'No canonical phases to govern', fix: 'Keep phase-f*.json as the single source' },
-      { name: 'Gate definitions exist', type: 'path', target: 'reference/governance/sdlc/gates', severity: 'P0', risk: 'No gate contracts', fix: 'Maintain gate-f*.json' },
-      { name: 'Gate JSON schema exists', type: 'path', target: 'reference/governance/sdlc/sdlc-gate.schema.json', severity: 'P1', risk: 'Gates unvalidated structurally', fix: 'Keep sdlc-gate.schema.json' },
+      { name: 'Phase definitions exist', type: 'path', target: 'reference/core/sdlc/phases', severity: 'P0', risk: 'No canonical phases to govern', fix: 'Keep phase-f*.json as the single source' },
+      { name: 'Gate definitions exist', type: 'path', target: 'reference/core/sdlc/gates', severity: 'P0', risk: 'No gate contracts', fix: 'Maintain gate-f*.json' },
+      { name: 'Gate JSON schema exists', type: 'path', target: 'reference/core/sdlc/sdlc-gate.schema.json', severity: 'P1', risk: 'Gates unvalidated structurally', fix: 'Keep sdlc-gate.schema.json' },
       { name: 'Executable gate engine rules exist', type: 'path', target: 'src/rulesets/phase-gates/phase-gates.rules.json', severity: 'P0', risk: 'Gates are not executable', fix: 'Keep phase-gates.rules.json wired to the validator' },
-      { name: 'Single gate source (no divergent gate rules in two places)', type: 'grep', target: 'reference/governance/sdlc/gates', pattern: '"rules"\\s*:', want: false, severity: 'P1', risk: 'Two divergent gate sources; cited .rego not executed', fix: 'Unify gates/*.json with phase-gates.rules.json; ensure cited .rego run' },
+      { name: 'Single gate source (no divergent gate rules in two places)', type: 'grep', target: 'reference/core/sdlc/gates', pattern: '"rules"\\s*:', want: false, severity: 'P1', risk: 'Two divergent gate sources; cited .rego not executed', fix: 'Unify gates/*.json with phase-gates.rules.json; ensure cited .rego run' },
     ],
   },
   {
     id: 'D2', name: 'Interfaces exposed (CLI / MCP / REST) + governed parity', owner: CORE,
     checks: [
-      { name: 'Surface parity matrix exists', type: 'path', target: 'reference/governance/standards/vision/surface-parity-matrix.json', severity: 'P0', risk: 'No governed map of operations per interface', fix: 'Keep matrix + CI gate 24' },
+      { name: 'Surface parity matrix exists', type: 'path', target: 'reference/core/control-center/surface-parity-matrix.json', severity: 'P0', risk: 'No governed map of operations per interface', fix: 'Keep matrix + CI gate 24' },
       { name: 'REST controllers exist', type: 'path', target: 'apps/core-api/src/presentation/controllers', severity: 'P0', risk: 'No REST surface for Tracker/external', fix: 'Maintain core-api controllers' },
       { name: 'OpenAPI / Swagger spec exists', type: 'path', target: 'apps/core-api/src/openapi', severity: 'P1', risk: 'No machine contract for REST', fix: 'Keep OpenAPI config' },
       { name: 'MCP tools exist', type: 'path', target: 'packages/mcp-server/src/tools', severity: 'P0', risk: 'No agent surface', fix: 'Maintain MCP tools' },
@@ -101,7 +101,7 @@ const DIMENSIONS = [
   {
     id: 'D3', name: 'Artifact contracts & validation (existence vs semantic)', owner: CORE,
     checks: [
-      { name: 'Artifact templates catalog exists', type: 'path', target: 'reference/governance/sdlc/04-artifact-templates', severity: 'P1', risk: 'No artifact catalog', fix: 'Keep templates' },
+      { name: 'Artifact templates catalog exists', type: 'path', target: 'reference/core/sdlc/04-artifact-templates', severity: 'P1', risk: 'No artifact catalog', fix: 'Keep templates' },
       { name: 'Artifact JSON schemas exist', type: 'path', target: 'src/rulesets/schema', severity: 'P0', risk: 'Artifacts cannot be validated structurally', fix: 'Add schema per artifact' },
       { name: 'Evidence validator exists', type: 'path', target: 'packages/core-domain/src/application/validators/evidence-validator.ts', severity: 'P0', risk: 'No artifact validation', fix: 'Keep evidence validator' },
       { name: 'Semantic blocking-criteria validator exists', type: 'path', target: 'packages/core-domain/src/application/validators/blocking-criteria-validator.ts', severity: 'P1', risk: 'Gates only check existence', fix: 'Keep/extend semantic checks' },

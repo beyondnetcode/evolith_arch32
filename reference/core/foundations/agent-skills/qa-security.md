@@ -118,4 +118,4 @@ File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md sec
 *See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle.*
 *See [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
 *See [Global Rules](../../.harness/rules/global-rules.md) for R-25 Dual-Engine Parity.*
-*See [Gap Tracking Board](../../reference/governance/standards/vision/gap-tracking.md) for gap status.*
+*See [Gap Tracking Board](../../reference/core/control-center/gaps/gap-tracking.md) for gap status.*

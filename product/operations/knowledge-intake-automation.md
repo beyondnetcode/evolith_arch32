@@ -46,7 +46,7 @@ Each transition requires specific fields:
 
 ## CI Workflow
 
-The `.github/workflows/knowledge-intake.yml` workflow triggers on PRs that modify KI or SRC files under `reference/knowledge/intake/`.
+The `.github/workflows/knowledge-intake.yml` workflow triggers on PRs that modify KI or SRC files under `product/research/intake/`.
 
 ### Jobs
 
@@ -59,10 +59,10 @@ The `.github/workflows/knowledge-intake.yml` workflow triggers on PRs that modif
 ### Trigger Conditions
 
 The workflow fires on PRs to `main` or `develop` branches that touch:
-- `reference/knowledge/intake/KI-*.yaml`
-- `reference/knowledge/intake/KI-*.yml`
-- `reference/knowledge/intake/SRC-*.yaml`
-- `reference/knowledge/intake/SRC-*.yml`
+- `product/research/intake/KI-*.yaml`
+- `product/research/intake/KI-*.yml`
+- `product/research/intake/SRC-*.yaml`
+- `product/research/intake/SRC-*.yml`
 
 ## Promotion Script
 
@@ -76,10 +76,10 @@ node .harness/scripts/knowledge-promote.mjs <ki-file> <target-status>
 
 ```bash
 # Promote to evaluated
-node .harness/scripts/knowledge-promote.mjs reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml evaluated
+node .harness/scripts/knowledge-promote.mjs product/research/intake/KI-EVANS-AGGREGATE-001.yaml evaluated
 
 # Promote to accepted (requires ADR reference in the file)
-node .harness/scripts/knowledge-promote.mjs reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml accepted
+node .harness/scripts/knowledge-promote.mjs product/research/intake/KI-EVANS-AGGREGATE-001.yaml accepted
 ```
 
 The script:
@@ -100,7 +100,7 @@ node .harness/scripts/knowledge-winston-review.mjs <ki-file>
 ### Example
 
 ```bash
-node .harness/scripts/knowledge-winston-review.mjs reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml
+node .harness/scripts/knowledge-winston-review.mjs product/research/intake/KI-EVANS-AGGREGATE-001.yaml
 ```
 
 The script:
@@ -113,7 +113,7 @@ The script:
 
 Winston review can also be triggered via PR comment command:
 ```
-/winston-review reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml
+/winston-review product/research/intake/KI-EVANS-AGGREGATE-001.yaml
 ```
 
 ## Auto-Fix Mode
@@ -191,7 +191,7 @@ After fixing, the script re-validates to confirm all issues are resolved.
 
 4. **Promote** once the Winston review approves:
    ```bash
-   node .harness/scripts/knowledge-promote.mjs reference/knowledge/intake/KI-MY-KNOWLEDGE-001.yaml evaluated
+   node .harness/scripts/knowledge-promote.mjs product/research/intake/KI-MY-KNOWLEDGE-001.yaml evaluated
    ```
 
 ## Validation Gates
@@ -226,7 +226,7 @@ When knowledge intake files are promoted or updated, the Redis caching layer may
 
 1. **Promote the KI file** using the standard pipeline:
    ```bash
-   node .harness/scripts/knowledge-promote.mjs reference/knowledge/intake/KI-*.yaml executable
+   node .harness/scripts/knowledge-promote.mjs product/research/intake/KI-*.yaml executable
    ```
 
 2. **Invalidate the topology cache** (if topology manifests changed):

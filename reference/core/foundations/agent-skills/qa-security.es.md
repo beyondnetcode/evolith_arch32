@@ -118,4 +118,4 @@ Registra propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.m
 *Ver [AGENTS.md](../AGENTS.md) para contexto del repositorio y ciclo de vida de gaps.*
 *Ver [AGENTS.md sección 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) para el mandato de auto-mejora.*
 *Ver [Reglas Globales](../../.harness/rules/global-rules.md) para R-25 Paridad de Doble Motor.*
-*Ver [Tablero de Seguimiento de Gaps](../../reference/governance/standards/vision/gap-tracking.md) para el estado de los gaps.*
+*Ver [Tablero de Seguimiento de Gaps](../../reference/core/control-center/gaps/gap-tracking.md) para el estado de los gaps.*

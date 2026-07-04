@@ -33,7 +33,7 @@ Este repositorio incluye un **vault de Obsidian mínimo** como lente *interna* p
 
 - **No introducir `[[wikilinks]]` en docs versionados.** Rompen el render de GitHub. Usa enlaces markdown relativos — Obsidian está configurado para hacerlo por ti.
 - `alwaysUpdateLinks` está **activado**: mover/renombrar un archivo dentro de Obsidian reescribe los enlaces entrantes en todo el repo. Revisa el diff antes de commitear.
-- Los adjuntos pegados en notas van a `reference/governance/sdlc/assets/`.
+- Los adjuntos pegados en notas van a `reference/core/sdlc/assets/`.
 
 ## Versionado vs. ignorado
 

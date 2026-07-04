@@ -30,15 +30,15 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 
 | Artifact | Format | Purpose |
 |---|---|---|
-| **[Evolith: Executive Value Proposition](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_value_proposition_executive.pptx)** | PPTX | Executive briefing on Evolith's strategic value, governance impact, and ROI. |
-| **[Evolith: UMS Case Study](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_ums_practical_case.pptx)** | PPTX | Success story demonstrating the Evolith framework applied to a real-world transformation. |
-| **[Evolith: SDLC Technical Deep-Dive](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx)** | PPTX | Engineering operational guide on phases, Quality Gates, and artifacts. |
+| **[Evolith: Executive Value Proposition](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/core/sdlc/assets/evolith_value_proposition_executive.pptx)** | PPTX | Executive briefing on Evolith's strategic value, governance impact, and ROI. |
+| **[Evolith: UMS Case Study](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/core/sdlc/assets/evolith_ums_practical_case.pptx)** | PPTX | Success story demonstrating the Evolith framework applied to a real-world transformation. |
+| **[Evolith: SDLC Technical Deep-Dive](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/core/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx)** | PPTX | Engineering operational guide on phases, Quality Gates, and artifacts. |
 
 ### ️ Implementation Workbook
 
 | Artifact / Scope | Format | Purpose |
 |---|---|---|
-| **[Evolith SDLC Implementation Workbook F0](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_implementation_workbook_F0.xlsx)** | XLSX | Consolidated integrated workbook for all SDLC phases: conception, design, construction, validation, deployment, and operations. Includes templates, role registries, cross-traceability matrices, and project orchestration dashboards for facilitated working sessions with customer teams. |
+| **[Evolith SDLC Implementation Workbook F0](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/core/sdlc/assets/evolith_sdlc_implementation_workbook_F0.xlsx)** | XLSX | Consolidated integrated workbook for all SDLC phases: conception, design, construction, validation, deployment, and operations. Includes templates, role registries, cross-traceability matrices, and project orchestration dashboards for facilitated working sessions with customer teams. |
 
 ---
 

@@ -132,7 +132,7 @@ Los items están ordenados por:
 
 - **Análisis Completo:** `docs/analysis/deep-analysis-2026-06-16.md`
 - **GitHub Project:** https://github.com/users/beyondnetcode/projects/1
-- **Gap Tracking Original:** `reference/governance/standards/vision/gap-tracking.md`
+- **Gap Tracking Original:** `reference/core/control-center/gaps/gap-tracking.md`
 
 ---
 

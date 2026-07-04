@@ -46,7 +46,7 @@ Cada transicion requiere campos especificos:
 
 ## Workflow CI
 
-El workflow `.github/workflows/knowledge-intake.yml` se activa en PRs que modifican archivos KI o SRC bajo `reference/knowledge/intake/`.
+El workflow `.github/workflows/knowledge-intake.yml` se activa en PRs que modifican archivos KI o SRC bajo `product/research/intake/`.
 
 ### Jobs
 
@@ -59,10 +59,10 @@ El workflow `.github/workflows/knowledge-intake.yml` se activa en PRs que modifi
 ### Condiciones de Activacion
 
 El workflow se activa en PRs hacia ramas `main` o `develop` que modifican:
-- `reference/knowledge/intake/KI-*.yaml`
-- `reference/knowledge/intake/KI-*.yml`
-- `reference/knowledge/intake/SRC-*.yaml`
-- `reference/knowledge/intake/SRC-*.yml`
+- `product/research/intake/KI-*.yaml`
+- `product/research/intake/KI-*.yml`
+- `product/research/intake/SRC-*.yaml`
+- `product/research/intake/SRC-*.yml`
 
 ## Script de Promocion
 
@@ -76,10 +76,10 @@ node .harness/scripts/knowledge-promote.mjs <ki-file> <target-status>
 
 ```bash
 # Promover a evaluated
-node .harness/scripts/knowledge-promote.mjs reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml evaluated
+node .harness/scripts/knowledge-promote.mjs product/research/intake/KI-EVANS-AGGREGATE-001.yaml evaluated
 
 # Promover a accepted (requiere referencia ADR en el archivo)
-node .harness/scripts/knowledge-promote.mjs reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml accepted
+node .harness/scripts/knowledge-promote.mjs product/research/intake/KI-EVANS-AGGREGATE-001.yaml accepted
 ```
 
 El script:
@@ -100,7 +100,7 @@ node .harness/scripts/knowledge-winston-review.mjs <ki-file>
 ### Ejemplo
 
 ```bash
-node .harness/scripts/knowledge-winston-review.mjs reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml
+node .harness/scripts/knowledge-winston-review.mjs product/research/intake/KI-EVANS-AGGREGATE-001.yaml
 ```
 
 El script:
@@ -113,7 +113,7 @@ El script:
 
 La revision Winston tambien se puede activar via comando de comentario en PR:
 ```
-/winston-review reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml
+/winston-review product/research/intake/KI-EVANS-AGGREGATE-001.yaml
 ```
 
 ## Modo Auto-Correccion
@@ -191,7 +191,7 @@ Despues de corregir, el script re-valida para confirmar que todos los problemas 
 
 4. **Promocionar** una vez que la revision Winston apruebe:
    ```bash
-   node .harness/scripts/knowledge-promote.mjs reference/knowledge/intake/KI-MY-KNOWLEDGE-001.yaml evaluated
+   node .harness/scripts/knowledge-promote.mjs product/research/intake/KI-MY-KNOWLEDGE-001.yaml evaluated
    ```
 
 ## Puertas de Validacion
@@ -226,7 +226,7 @@ Cuando los archivos de ingesta de conocimiento se promueven o actualizan, la cap
 
 1. **Promover el archivo KI** usando el pipeline estándar:
    ```bash
-   node .harness/scripts/knowledge-promote.mjs reference/knowledge/intake/KI-*.yaml executable
+   node .harness/scripts/knowledge-promote.mjs product/research/intake/KI-*.yaml executable
    ```
 
 2. **Invalidar la caché de topología** (si los manifiestos de topología cambiaron):

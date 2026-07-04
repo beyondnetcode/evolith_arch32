@@ -11,8 +11,8 @@
 
 <br/>
 
-<a href="./reference/governance/sdlc/assets/master-view.png" title="Evolith E2E Product Vision — click to enlarge">
-  <img src="./reference/governance/sdlc/assets/master-view.png"
+<a href="./reference/core/sdlc/assets/master-view.png" title="Evolith E2E Product Vision — click to enlarge">
+  <img src="./reference/core/sdlc/assets/master-view.png"
        alt="Evolith E2E Product Vision"
        width="780"
        style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
@@ -77,7 +77,7 @@ Evolith makes governance **executable**:
 | **Artifacts** | Structured outputs at each phase: specs, schemas, manifests, contracts |
 | **AI Agents** | Specialized agents (Winston and others) that participate in the SDLC as first-class contributors |
 
-Full details: [Core Concepts](./reference/core/README.md) · [Topologies](./reference/architecture/topologies/README.md)
+Full details: [Core Concepts](./reference/core/README.md) · [Topologies](./reference/core/architecture/topologies/README.md)
 
 ---
 
@@ -88,11 +88,11 @@ Evolith ships as a suite of coordinated products built on a common foundation.
 | Product | Role |
 |---|---|
 | **[Evolith Core](reference/README.md)** | Provider-neutral constitution: principles, ADRs, rulesets, topologies, and contracts |
-| **[Smart CLI](reference/products/smart-cli/README.md)** | Local enforcement — validate code, run gates, manage ADRs, serve MCP |
-| **[Core API](reference/products/core-api/README.md)** | REST service for remote governance queries and evaluation |
-| **[MCP Services](reference/products/mcp-services/README.md)** | Governance as live context for LLMs and AI agents (27 tools, 9 resources, 8 prompts) |
-| **[Agent Runtime](reference/architecture/agent-runtime/README.md)** | Agentic mediation layer — orchestrates Core through Ports & Adapters; Hermes is one replaceable adapter |
-| **[Evolith Tracker](reference/products/evolith-tracker/README.md)** | Business lifecycle governance — phases, owners, funding, and ROI |
+| **[Smart CLI](product/products/smart-cli/README.md)** | Local enforcement — validate code, run gates, manage ADRs, serve MCP |
+| **[Core API](product/products/core-api/README.md)** | REST service for remote governance queries and evaluation |
+| **[MCP Services](product/products/mcp-services/README.md)** | Governance as live context for LLMs and AI agents (27 tools, 9 resources, 8 prompts) |
+| **[Agent Runtime](reference/core/architecture/foundations/README.md)** | Agentic mediation layer — orchestrates Core through Ports & Adapters; Hermes is one replaceable adapter |
+| **[Evolith Tracker](product/products/evolith-tracker/README.md)** | Business lifecycle governance — phases, owners, funding, and ROI |
 | **[Rulesets](src/rulesets/README.md)** | Machine-readable enforcement rules per topology |
 | **[OPA Policies](src/rulesets/opa/README.md)** | Fine-grained policy checks integrated into the pipeline |
 | **[Schemas & Manifests](src/rulesets/schema/README.md)** | Structured contracts for artifacts and topology definitions |
@@ -157,9 +157,9 @@ evolith/
 ├── src/apps/agent-runtime-api/  # NestJS HTTP service wrapping the runtime (POST /v1/agent/handle)
 ├── reference/core/          # Engineering constitution and principles
 ├── reference/architecture/  # Topologies, blueprints, ADRs, and agent-runtime docs
-├── reference/governance/    # SDLC phases, gates, standards, and glossary
-├── reference/products/      # Smart CLI, Core API, MCP, Tracker, UMS
-└── reference/operations/    # SRE, infra, quality gates
+├── reference/core/sdlc/    # SDLC phases, gates, standards, and glossary
+├── product/products/      # Smart CLI, Core API, MCP, Tracker, UMS
+└── product/operations/    # SRE, infra, quality gates
 ```
 
 Entry point for each area: [Global Master Index](./reference/navigation/MASTER_INDEX.md)
@@ -186,7 +186,7 @@ smart-cli adr list
 smart-cli mcp serve
 ```
 
-Smart CLI ships **20 commands** and is configured via **`evolith.yaml`**. Full reference: [Smart CLI hub](./reference/products/smart-cli/README.md)
+Smart CLI ships **20 commands** and is configured via **`evolith.yaml`**. Full reference: [Smart CLI hub](./product/products/smart-cli/README.md)
 
 ---
 
@@ -196,17 +196,17 @@ Smart CLI ships **20 commands** and is configured via **`evolith.yaml`**. Full r
 |---|---|
 | Core constitution | [Evolith Core hub](./reference/core/README.md) |
 | Master Architecture | [C4 Master Architecture](./reference/architecture/C4-MASTER-ARCHITECTURE.md) |
-| SDLC governance | [SDLC Governance Center](./reference/governance/sdlc/README.md) |
-| Topologies | [Topologies hub](./reference/architecture/topologies/README.md) |
-| Smart CLI | [Smart CLI hub](./reference/products/smart-cli/README.md) |
-| Core API | [Core API hub](./reference/products/core-api/README.md) |
-| MCP Services | [MCP Services hub](./reference/products/mcp-services/README.md) |
-| Agent Runtime | [Agent Runtime hub](./reference/architecture/agent-runtime/README.md) |
-| Evolith Tracker | [Tracker hub](./reference/products/evolith-tracker/README.md) |
-| Operations & SRE | [Operations hub](./reference/operations/README.md) |
+| SDLC governance | [SDLC Governance Center](./reference/core/sdlc/README.md) |
+| Topologies | [Topologies hub](./reference/core/architecture/topologies/README.md) |
+| Smart CLI | [Smart CLI hub](./product/products/smart-cli/README.md) |
+| Core API | [Core API hub](./product/products/core-api/README.md) |
+| MCP Services | [MCP Services hub](./product/products/mcp-services/README.md) |
+| Agent Runtime | [Agent Runtime hub](./reference/core/architecture/foundations/README.md) |
+| Evolith Tracker | [Tracker hub](./product/products/evolith-tracker/README.md) |
+| Operations & SRE | [Operations hub](./product/operations/README.md) |
 | Onboarding by role | [Getting Started by Role](./reference/getting-started/README.md) |
-| Ecosystem glossary | [Glossary](./reference/governance/glossary-ecosystem.md) |
-| Gap tracking | [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md) |
+| Ecosystem glossary | [Glossary](./reference/core/sdlc/glossary/glossary-ecosystem.md) |
+| Gap tracking | [Gap Tracking Board](./reference/core/control-center/gaps/gap-tracking.md) |
 | All artifacts | [Global Master Index](./reference/navigation/MASTER_INDEX.md) |
 
 ---
@@ -231,8 +231,8 @@ Start with a modular monolith. Migrate to distributed modules or microservices w
 
 See the active gap tracking board for current priorities and open items:
 
-- [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md)
-- [Maturity & Gaps hub](./reference/governance/standards/vision/README.md)
+- [Gap Tracking Board](./reference/core/control-center/gaps/gap-tracking.md)
+- [Maturity & Gaps hub](./reference/core/control-center/README.md)
 
 ---
 
@@ -243,7 +243,7 @@ Read these before opening a PR:
 - [Contributing Guide](./CONTRIBUTING.md)
 - [Security Policy](./SECURITY.md)
 - [AGENTS.md](./AGENTS.md) — conventions for AI agent contributors
-- [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) — what goes where
+- [Repository Taxonomy](./reference/core/sdlc/standards/repository-taxonomy.md) — what goes where
 
 ---
 

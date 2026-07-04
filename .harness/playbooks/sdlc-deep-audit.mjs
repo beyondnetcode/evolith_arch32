@@ -118,8 +118,8 @@ function auditSdlc() {
   }
 
   // Check for structured phase/gate data (GT-280 resolution)
-  const phaseDataDir = "reference/governance/sdlc/phases";
-  const gateDataDir = "reference/governance/sdlc/gates";
+  const phaseDataDir = "reference/core/sdlc/phases";
+  const gateDataDir = "reference/core/sdlc/gates";
   const phaseJsonFiles2 = exists(phaseDataDir) ? walk(phaseDataDir).filter(f => f.endsWith(".json")) : [];
   const gateJsonFiles = exists(gateDataDir) ? walk(gateDataDir).filter(f => f.endsWith(".json")) : [];
 

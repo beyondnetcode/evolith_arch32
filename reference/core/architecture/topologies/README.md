@@ -34,7 +34,7 @@ Topology guidance is dimensional, manifest-driven, and executable through the sh
 
 - Topology profiles reference universal Core ADRs; they do not duplicate them.
 - Every topology profile must provide a `topology.manifest.json` before it becomes executable.
-- Human-readable topology guidance lives here under `reference/architecture/topologies/`.
+- Human-readable topology guidance lives here under `reference/core/architecture/topologies/`.
 - Executable topology rules live under `rulesets/topologies/`.
 - CLI, MCP, and Service CORE API remain one control plane; topology behavior is resolved through manifests.
 - Core topology artifacts remain technical-only. Evolith Tracker owns business timing, ownership, prioritization, ROI, cost, and Funnel 0.

@@ -41,7 +41,7 @@ Objetivos de nivel de servicio para los servicios de la API principal de Evolith
 
 ## Integración con Alerting
 
-Las alertas se definen en `reference/operations/alerts/prometheus-alerts.yml`. Alertas clave:
+Las alertas se definen en `product/operations/alerts/prometheus-alerts.yml`. Alertas clave:
 
 - `HighErrorRate` — se activa cuando la tasa de error 5xx supera 1% por 5 minutos
 - `HighLatency` — se activa cuando p99 supera 500ms por 5 minutos

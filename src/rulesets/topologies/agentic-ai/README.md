@@ -108,7 +108,7 @@ The sandbox is the only route to tool execution. Prompts provide instructions; i
 
 ## Governing Decisions and Validation
 
-[ADR-0058](../../../reference/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md) governs AI-consumable architecture knowledge. [ADR-0081](../../../reference/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md), [ADR-0082](../../../reference/architecture/adrs/core/0082-agentic-ai-trust-boundary.md), and [ADR-0083](../../../reference/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md) establish the sandbox, trust, and authorization boundaries. [ADR-AI-001](../../../reference/governance/standards/ai-augmented/06-adrs/adr-ai-001-harness-strategy.md) and [ADR-AI-005](../../../reference/governance/standards/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.md) remain supporting proposed decisions.
+[ADR-0058](../../../reference/core/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md) governs AI-consumable architecture knowledge. [ADR-0081](../../../reference/core/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md), [ADR-0082](../../../reference/core/architecture/adrs/core/0082-agentic-ai-trust-boundary.md), and [ADR-0083](../../../reference/core/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md) establish the sandbox, trust, and authorization boundaries. [ADR-AI-001](../../../reference/core/foundations/common-rules/ai-augmented/06-adrs/adr-ai-001-harness-strategy.md) and [ADR-AI-005](../../../reference/core/foundations/common-rules/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.md) remain supporting proposed decisions.
 
 Run the profile through the topology-aware validator:
 
@@ -136,7 +136,7 @@ The Agentic AI corpus is the required implementation baseline for this topology:
 | Evolution | [Evolution guide](./evolution.md) |
 | Summary | [Adoption, operations, and evolution guide](./maturity.md) |
 
-This corpus implements the [Topology Corpus Standard](../../../reference/architecture/topologies/topology-corpus-standard.md) for Agentic AI. A profile is not ready for acceptance until all of these guides, executable controls, contract fixtures, tests, and control-plane interfaces are present and validated.
+This corpus implements the [Topology Corpus Standard](../../../reference/core/architecture/topologies/topology-corpus-standard.md) for Agentic AI. A profile is not ready for acceptance until all of these guides, executable controls, contract fixtures, tests, and control-plane interfaces are present and validated.
 
 ---
 [Back to Topology Hub](../../README.md)

@@ -30,7 +30,7 @@ You are the Requirements & Specification Specialist in the BMAD Method team. You
 
 When a new governance gap is requested:
 
-1. Read `reference/governance/standards/vision/gap-tracking.md` to understand current state.
+1. Read `reference/core/control-center/gaps/gap-tracking.md` to understand current state.
 2. Define the gap scope: purpose, evidence, done-when criteria.
 3. Assess complexity (S/M/L) based on artifact scope and Native/OPA parity requirements.
 4. Write the catalog entry into `gap-reference-catalog.md` (EN) and coordinate with PM for ES counterpart.

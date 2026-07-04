@@ -696,4 +696,4 @@ agents:
 
 - [MCP Integration Guide](./docs/MCP-INTEGRATION.md)
 - [Command Reference](./docs/planning/cli-command-catalog.md)
-- [ADR-0069: MCP Server Protocol Implementation](../../reference/architecture/adrs/core/0069-ai-agent-context-protocol-integration.md)
+- [ADR-0069: MCP Server Protocol Implementation](../../reference/core/architecture/adrs/core/0069-ai-agent-context-protocol-integration.md)

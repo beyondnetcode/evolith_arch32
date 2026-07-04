@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 
 // Output files
-const EN_OUT = path.resolve('reference/governance/standards/vision/inventory-summary.md');
-const ES_OUT = path.resolve('reference/governance/standards/vision/inventory-summary.es.md');
+const EN_OUT = path.resolve('reference/core/control-center/inventory-summary.md');
+const ES_OUT = path.resolve('reference/core/control-center/inventory-summary.es.md');
 
 // Paths to search
 const ADR_DIR = path.resolve('reference/architecture/adrs');

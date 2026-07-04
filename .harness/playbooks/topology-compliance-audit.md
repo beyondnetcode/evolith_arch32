@@ -45,7 +45,7 @@
 
 ## Output Format
 
-1. Tree of `reference/architecture/topologies/`
+1. Tree of `reference/core/architecture/topologies/`
 2. Per-topology compliance table with evidence paths
 3. Cross-cutting ruleset status
 4. Exemplar validation results (Agentic/AI-First)

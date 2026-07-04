@@ -69,7 +69,7 @@ These policies are present in the directory but are **not** imported by `main.re
 | [sdlc/coverage.rego](./sdlc/coverage.rego) | `evolith.sdlc.coverage` | _none_ | SDLC coverage checks. |
 | [sdlc/pyramid-distribution.rego](./sdlc/pyramid-distribution.rego) | `evolith.sdlc.pyramid` | _none_ | SDLC testing-pyramid distribution. |
 
-> **Inventory:** 34 `.rego` files (excluding `*.test.rego` and `main_test.rego`); `main.rego` is the aggregator. There are 26 input schemas under `schemas/`. Policies listed with input schema **_none_** validate their input inline or are not yet schema-pinned — see [Brechas / parity backlog](../../reference/governance/standards/vision/gap-tracking.md).
+> **Inventory:** 34 `.rego` files (excluding `*.test.rego` and `main_test.rego`); `main.rego` is the aggregator. There are 26 input schemas under `schemas/`. Policies listed with input schema **_none_** validate their input inline or are not yet schema-pinned — see [Brechas / parity backlog](../../reference/core/control-center/gaps/gap-tracking.md).
 
 ## Running policy tests
 
@@ -96,7 +96,7 @@ npm run build:policy
 | `opa: command not found` / `.harness/bin/opa` missing | Pinned binary not fetched | Run `npm run build:policy` (downloads OPA `v0.65.0`), or install OPA and use it directly. |
 | `policy.wasm` not picked up by the Smart CLI | Stale or missing bundle | Re-run `npm run build:policy`; the build installs `policy.wasm` to `sdk/cli/rulesets/opa/policy.wasm`. |
 | A new policy is not enforced through `evolith/main/violations` | Not imported/unioned in `main.rego` | Add an `import data.evolith.<pkg>.violations` and a union rule to [`main.rego`](./main.rego); policies in *Standalone policies* are intentionally not aggregated. |
-| OPA and Native engines return different verdicts | Dual-Engine Parity drift | Treat as a parity bug — align the `.rego` to the Native `*.rules.json` semantics (see [parity backlog](../../reference/governance/standards/vision/gap-tracking.md)). |
+| OPA and Native engines return different verdicts | Dual-Engine Parity drift | Treat as a parity bug — align the `.rego` to the Native `*.rules.json` semantics (see [parity backlog](../../reference/core/control-center/gaps/gap-tracking.md)). |
 
 Authoring standards and the contribution workflow for this layer live in the repo-root [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
 

@@ -4,7 +4,7 @@
 
 This area defines the canonical topology-ruleset resolution model for Evolith Core governance.
 
-**GT-329:** The 5 advanced topologies (`serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`) have been relocated here from `reference/architecture/topologies/` as their **canonical executable location**. The `progressive-axis` topologies remain in `reference/architecture/topologies/progressive-axis/` for historical reasons. Human-readable topology guidance lives in `reference/architecture/topologies/`. This folder contains the machine-readable rules that CLI, MCP, Service CORE API, CI, and future topology resolvers consume.
+**GT-329:** The 5 advanced topologies (`serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`) have been relocated here from `reference/core/architecture/topologies/` as their **canonical executable location**. The `progressive-axis` topologies remain in `reference/core/architecture/topologies/progressive-axis/` for historical reasons. Human-readable topology guidance lives in `reference/core/architecture/topologies/`. This folder contains the machine-readable rules that CLI, MCP, Service CORE API, CI, and future topology resolvers consume.
 
 ## Execution Model
 
@@ -13,7 +13,7 @@ This area defines the canonical topology-ruleset resolution model for Evolith Co
 | Manifest schema | `rulesets/schema/topology-manifest.schema.json` | Validate every `topology.manifest.json`. |
 | Native topology rules | Manifest-declared `spec.artifacts.rulesets[]` | Execute topology-specific checks in the Native evaluator. |
 | OPA topology policies | Manifest-declared `spec.artifacts.opaPolicies[]` | Execute equivalent Rego policies for OPA parity. |
-| Human corpus | `reference/architecture/topologies/` | Explain topology intent, constraints, ADRs, and composition rules. |
+| Human corpus | `reference/core/architecture/topologies/` | Explain topology intent, constraints, ADRs, and composition rules. |
 
 ## Governed Dimensions
 
@@ -36,7 +36,7 @@ This area defines the canonical topology-ruleset resolution model for Evolith Co
 
 ## Current Status
 
-The topology ruleset location is authorized. Concrete topology profiles and their Native plus OPA rules are tracked in the [Gap Tracking Board](../../reference/governance/standards/vision/gap-tracking.md).
+The topology ruleset location is authorized. Concrete topology profiles and their Native plus OPA rules are tracked in the [Gap Tracking Board](../../reference/core/control-center/gaps/gap-tracking.md).
 
 ---
 [Back to Rulesets Hub](../README.md)

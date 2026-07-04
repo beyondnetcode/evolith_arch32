@@ -25,8 +25,8 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '../../..');
 
-const MATRIX_PATH = resolve(ROOT, 'reference/governance/standards/vision/surface-parity-matrix.json');
-const SCHEMA_PATH = resolve(ROOT, 'reference/governance/standards/vision/surface-parity-matrix.schema.json');
+const MATRIX_PATH = resolve(ROOT, 'reference/core/control-center/surface-parity-matrix.json');
+const SCHEMA_PATH = resolve(ROOT, 'reference/core/control-center/surface-parity-matrix.schema.json');
 
 let exitCode = 0;
 const errors = [];

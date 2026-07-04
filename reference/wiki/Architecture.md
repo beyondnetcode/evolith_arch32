@@ -48,7 +48,7 @@ ADRs capture significant architectural decisions. Each ADR includes:
 - **Decision**: What was decided
 - **Consequences**: What follows from the decision
 
-Browse all ADRs: [reference/architecture/adrs/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/architecture/adrs)
+Browse all ADRs: [reference/core/architecture/adrs/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/architecture/adrs)
 
 ---
 

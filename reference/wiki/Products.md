@@ -33,7 +33,7 @@ smart-cli mcp serve
 
 **Key commands**: init, validate, adr, standards, docs, mcp serve
 
-Docs: [reference/products/smart-cli/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/products/smart-cli)
+Docs: [product/products/smart-cli/](https://github.com/beyondnetcode/evolith_arch32/tree/main/product/products/smart-cli)
 
 ---
 
@@ -49,7 +49,7 @@ Exposes Evolith governance as real-time context for LLMs and autonomous agents t
 
 **Transports**: stdio (JSON-RPC 2.0), Streamable HTTP
 
-Docs: [reference/products/mcp-services/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/products/mcp-services)
+Docs: [product/products/mcp-services/](https://github.com/beyondnetcode/evolith_arch32/tree/main/product/products/mcp-services)
 
 ---
 
@@ -66,7 +66,7 @@ Central validation, state, and governance engine. NestJS + TypeScript.
 
 **Stack**: NestJS, TypeScript, PostgreSQL, MongoDB, Redis, OPA WASM
 
-Docs: [reference/products/core-api/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/products/core-api)
+Docs: [product/products/core-api/](https://github.com/beyondnetcode/evolith_arch32/tree/main/product/products/core-api)
 
 
 ---
@@ -94,7 +94,7 @@ External Client / Tracker / Chat / CLI
 
 **Key endpoints**: `POST /v1/agent/handle` · `GET /v1/agent/skills` · `GET /health`
 
-Docs: [reference/architecture/agent-runtime/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/architecture/agent-runtime)
+Docs: [reference/core/architecture/foundations/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/architecture/agent-runtime)
 
 ---
 

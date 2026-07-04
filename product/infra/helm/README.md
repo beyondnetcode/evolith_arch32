@@ -25,8 +25,8 @@ install them into a local Kubernetes namespace without relying on GHCR or
 Coolify:
 
 ```bash
-bash reference/infrastructure/helm/local-test.sh kind-apps-up
-bash reference/infrastructure/helm/local-test.sh smoke
+bash product/infra/helm/local-test.sh kind-apps-up
+bash product/infra/helm/local-test.sh smoke
 ```
 
 `kind-apps-up` creates or reuses a `kind` cluster named `evolith`, builds
@@ -39,7 +39,7 @@ For a fuller local environment that also installs Dapr, MinIO, and observability
 components, use `kind-up` or `up`. Tear the local stack down with:
 
 ```bash
-bash reference/infrastructure/helm/local-test.sh kind-down
+bash product/infra/helm/local-test.sh kind-down
 ```
 
 ## OPA Sidecar Configuration

@@ -48,15 +48,15 @@ Ninguna fase del ciclo de vida debe avanzar solo por acuerdo verbal. Cada gate r
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
-| [Evolith: Propuesta de Valor Ejecutiva](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_value_proposition_executive.pptx) | Presentación ejecutiva del valor estratégico, impacto de gobernanza y ROI | Alinear al liderazgo tecnológico | Presentación (PPTX) | No |
-| [Evolith: Caso Práctico UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_ums_practical_case.pptx) | Caso de éxito de una transformación real de monolito modular a microservicios | Demostrar el caso aplicado | Presentación (PPTX) | No |
-| [Evolith: Deep-Dive Técnico SDLC](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx) | Guía operativa de ingeniería sobre fases, Quality Gates y artefactos | Guiar la operación técnica | Presentación (PPTX) | No |
+| [Evolith: Propuesta de Valor Ejecutiva](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/core/sdlc/assets/evolith_value_proposition_executive.pptx) | Presentación ejecutiva del valor estratégico, impacto de gobernanza y ROI | Alinear al liderazgo tecnológico | Presentación (PPTX) | No |
+| [Evolith: Caso Práctico UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/core/sdlc/assets/evolith_ums_practical_case.pptx) | Caso de éxito de una transformación real de monolito modular a microservicios | Demostrar el caso aplicado | Presentación (PPTX) | No |
+| [Evolith: Deep-Dive Técnico SDLC](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/core/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx) | Guía operativa de ingeniería sobre fases, Quality Gates y artefactos | Guiar la operación técnica | Presentación (PPTX) | No |
 
 ### Workbook de Implementación
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
-| [Workbook de Implementación SDLC Evolith F0](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_implementation_workbook_F0.xlsx) | Workbook integrado para todas las fases SDLC: plantillas, registros de roles, matrices de trazabilidad y dashboards de orquestación | Facilitar mesas de trabajo con equipos cliente | Workbook (XLSX) | No |
+| [Workbook de Implementación SDLC Evolith F0](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/core/sdlc/assets/evolith_sdlc_implementation_workbook_F0.xlsx) | Workbook integrado para todas las fases SDLC: plantillas, registros de roles, matrices de trazabilidad y dashboards de orquestación | Facilitar mesas de trabajo con equipos cliente | Workbook (XLSX) | No |
 
 > El workbook está diseñado para mesas de trabajo facilitadas con equipos cliente. Las presentaciones están diseñadas para alineamiento ejecutivo, caso aplicado UMS y guía operativa para líderes técnicos.
 

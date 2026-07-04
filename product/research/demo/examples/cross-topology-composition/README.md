@@ -33,8 +33,8 @@ For this example:
 
 | Check | Result |
 |---|---|
-| `modular-monolith` is accepted | Yes — manifest at `reference/architecture/topologies/progressive-axis/modular-monolith/topology.manifest.json` |
-| `event-driven` is accepted | Yes — manifest at `reference/architecture/topologies/integration/event-driven/topology.manifest.json` |
+| `modular-monolith` is accepted | Yes — manifest at `reference/core/architecture/topologies/progressive-axis/modular-monolith/topology.manifest.json` |
+| `event-driven` is accepted | Yes — manifest at `reference/core/architecture/topologies/integration/event-driven/topology.manifest.json` |
 | Dimensions differ | Yes — `progressive-axis` vs `integration` |
 | `modular-monolith.composableWith` includes `event-driven` | Yes |
 | `event-driven.composableWith` includes `modular-monolith` | Yes |
@@ -69,6 +69,6 @@ If two profiles cannot compose, the validator must reject the example. Add a del
 
 | Document | Purpose |
 |---|---|
-| [Topology Dimensions §3 — Composition Rule](../../../../../reference/architecture/topologies/topology-dimensions.md#3-composition-rule) | Authoritative composition rule. |
+| [Topology Dimensions §3 — Composition Rule](../../../../../reference/core/architecture/topologies/topology-dimensions.md#3-composition-rule) | Authoritative composition rule. |
 | [Topology Manifest Schema](../../../../../rulesets/schema/topology-manifest.schema.json) | Defines `spec.compatibility.composableWith`. |
 | [Topology Composition Schema](../../../../../rulesets/schema/topology-composition.schema.json) | Defines the manifest shape used by this example. |

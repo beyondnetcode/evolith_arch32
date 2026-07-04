@@ -7,7 +7,7 @@ Este repositorio y UMS cumplen propósitos diferentes. Leerlos como un mismo niv
 | Necesidad | Referencia arquitectónica canónica | Modelo aplicado UMS |
 |---|---|---|
 | Propósito | Definir estándares, blueprints, ADRs y criterios reutilizables | Demostrar esas ideas en un contexto de producto empresarial |
-| Ubicación | Este repositorio bajo `reference/architecture/` y `reference/governance/` | [beyondnetcode/ums](https://github.com/beyondnetcode/ums) |
+| Ubicación | Este repositorio bajo `reference/core/architecture/` y `reference/core/sdlc/` | [beyondnetcode/ums](https://github.com/beyondnetcode/ums) |
 | Autoridad | Normativa cuando el artefacto es aceptado u obligatorio | Evidencia y especialización, salvo promoción mediante ADR aquí |
 | Tecnología | Baseline agnóstico y perfiles de runtime explícitos | Su stack elegido y restricciones operativas de producto |
 | Código ejecutable | No se mantiene en este repositorio | Se mantiene en el repositorio UMS |

@@ -19,9 +19,9 @@ Las reglas inmutables son:
 2. **Corpus de Referencia (`reference/`)**: Los dominios documentales transversales deben vivir bajo:
  * `reference/architecture/`: ADRs, blueprints, C4 model y perfiles de stack.
  * `reference/governance/`: Políticas, SDLC, estándares, onboarding y reglas documentales.
- * `reference/knowledge/`: Documentación demo, investigación, POCs y ejemplos.
- * `reference/operations/`: Observabilidad, monitoreo y playbooks operacionales.
- * `reference/infrastructure/`: Plataforma local, gateway, contenedores y activos de infraestructura.
+ * `product/research/`: Documentación demo, investigación, POCs y ejemplos.
+ * `product/operations/`: Observabilidad, monitoreo y playbooks operacionales.
+ * `product/infra/`: Plataforma local, gateway, contenedores y activos de infraestructura.
 3. **Source Root (`src/`)**: Único contenedor de la implementación técnica. No debe contener carpetas redundantes de dominio intermedio.
 4. **Monorepo Standard (Nx)**: Dentro de `src/`, el código se organiza siguiendo las mejores prácticas de Nx:
  * `src/apps/`: Aplicaciones desplegables.

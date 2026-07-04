@@ -17,6 +17,6 @@ This area contains universal, provider-neutral architecture principles that appl
 
 ## Boundary
 
-A Core principle must remain valid if any named product, provider, model, or tool is replaced. Product implementation details belong in `reference/products/`; named technologies belong in `reference/platforms/`.
+A Core principle must remain valid if any named product, provider, model, or tool is replaced. Product implementation details belong in `product/products/`; named technologies belong in `product/infra/`.
 
 [Back to Architecture](../README.md)

@@ -66,10 +66,10 @@ Use this page when you already know the target stack and need the shortest path 
 
 | Concern | Source of truth |
 | :--- | :--- |
-| Universal architecture rules | `reference/architecture/blueprints/authoritative-tech-stack-agnostic.md` |
-| API .NET standard | `reference/governance/standards/engineering/api-dotnet/` |
-| Runtime-specific backend choices | `reference/architecture/blueprints/authoritative-tech-stack-*.md` |
-| React frontend rules | `reference/governance/standards/engineering/web-frontend/react/` |
+| Universal architecture rules | `reference/core/architecture/blueprints/authoritative-tech-stack-agnostic.md` |
+| API .NET standard | `reference/core/foundations/common-rules/api-dotnet/` |
+| Runtime-specific backend choices | `reference/core/architecture/blueprints/authoritative-tech-stack-*.md` |
+| React frontend rules | `reference/core/foundations/common-rules/web-frontend/react/` |
 | Product-specific implementation | Child repository or UMS applied reference |
 | Reusable promoted practice | Evolith ADR, governance standard, or canonical pattern |
 

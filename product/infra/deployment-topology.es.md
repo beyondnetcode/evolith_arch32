@@ -18,14 +18,14 @@ nombre", para que los modelos Coolify (en vivo), docker-compose (local) y Helm
   ([ADR-0074](../architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)) —
   una API REST NestJS. Es el servicio real que consumen los clientes.
 - **`evolith-bff`** (el chart Helm, el servicio `bff` de compose y
-  `reference/infrastructure/docker/bff.Dockerfile`) es una **plantilla genérica
+  `product/infra/docker/bff.Dockerfile`) es una **plantilla genérica
   de referencia del patrón BFF** (nodejs/ADR-0008). NO es la imagen real del
   core-api y no lleva configuración específica de core-api.
 - **"Tracker BFF"** (doc de arquitectura §11) es **externo** — pertenece a
   Evolith Tracker y *consume* core-api; no se despliega desde este repo.
 - Los Dockerfiles reales por servicio son `apps/core-api/Dockerfile`,
   `packages/mcp-server/Dockerfile`, `apps/agent-runtime-api/Dockerfile`. Los
-  archivos bajo `reference/infrastructure/docker/*.Dockerfile` son plantillas
+  archivos bajo `product/infra/docker/*.Dockerfile` son plantillas
   ilustrativas, no el build de producción.
 
 ## Matriz servicio-por-modelo
@@ -49,7 +49,7 @@ nombre", para que los modelos Coolify (en vivo), docker-compose (local) y Helm
    `beyondnetcode/*`; el nuevo workflow `docker-images.yml` publica a
    `ghcr.io/<owner>/*`.
 4. **Dos juegos de Dockerfiles**: reales (`apps/*`, `packages/*`) vs plantilla
-   (`reference/infrastructure/docker/*`). El camino compose/Helm construye
+   (`product/infra/docker/*`). El camino compose/Helm construye
    plantillas, no las imágenes reales.
 
 ## Estado objetivo recomendado
@@ -64,7 +64,7 @@ nombre", para que los modelos Coolify (en vivo), docker-compose (local) y Helm
   (el workflow `docker-images.yml` ya lo usa con el token integrado) — actualizar
   `image.repository` de los tres charts para que coincida.
 - Apuntar los builds de compose/Helm a los **Dockerfiles reales**, o marcar las
-  plantillas `reference/infrastructure/docker/*` como sólo de referencia.
+  plantillas `product/infra/docker/*` como sólo de referencia.
 
 ## Decisiones resueltas (aplicado 2026-06-29)
 
@@ -83,4 +83,4 @@ La reconciliación en el repo ya fue aplicada:
 
 Sigue siendo de la infraestructura (aplicar al migrar): apuntar DNS, crear las
 imágenes en el registry (correr el workflow) y reconciliar las plantillas
-`reference/infrastructure/docker/*` o construir los Dockerfiles reales en compose.
+`product/infra/docker/*` o construir los Dockerfiles reales en compose.

@@ -8,7 +8,7 @@
 **Clasificacion:** Referencia de Arquitectura Core  
 **ADR Gobernante:** [ADR-0079: Corpus de Referencia Multi-Topologia](../adrs/core/0079-multi-topology-reference-corpus.es.md)
 
-Este documento define el modelo dimensional del Corpus de Referencia Multi-Topologia de Evolith Core. Es la capa canonica de interpretacion para perfiles topologicos escritos por humanos bajo `reference/architecture/topologies/` y reglas topologicas ejecutables bajo `rulesets/topologies/`.
+Este documento define el modelo dimensional del Corpus de Referencia Multi-Topologia de Evolith Core. Es la capa canonica de interpretacion para perfiles topologicos escritos por humanos bajo `reference/core/architecture/topologies/` y reglas topologicas ejecutables bajo `rulesets/topologies/`.
 
 ## 1. Proposito
 
@@ -23,11 +23,11 @@ El modelo dimensional previene dos fallas:
 
 | Dimension | Pregunta que Responde | Topologias Canonicas | Ruta Primaria del Corpus |
 |---|---|---|---|
-| `progressive-axis` | Como se descompone y evoluciona el sistema en el tiempo? | `modular-monolith`, `distributed-modules`, `microservices` | `reference/architecture/topologies/progressive-axis/` |
-| `execution` | Donde y como ejecuta el codigo? | `serverless`, `edge-computing` | `reference/architecture/topologies/execution/` |
-| `integration` | Como coordinan y se comunican los componentes? | `event-driven` | `reference/architecture/topologies/integration/` |
-| `data` | Como se distribuye el ownership analitico y de datos de dominio? | `data-mesh` | `reference/architecture/topologies/data/` |
-| `ai` | Como se gobiernan agentes IA, contexto de modelo y workflows autonomos? | `agentic-ai` | `reference/architecture/topologies/ai/` |
+| `progressive-axis` | Como se descompone y evoluciona el sistema en el tiempo? | `modular-monolith`, `distributed-modules`, `microservices` | `reference/core/architecture/topologies/progressive-axis/` |
+| `execution` | Donde y como ejecuta el codigo? | `serverless`, `edge-computing` | `reference/core/architecture/topologies/execution/` |
+| `integration` | Como coordinan y se comunican los componentes? | `event-driven` | `reference/core/architecture/topologies/integration/` |
+| `data` | Como se distribuye el ownership analitico y de datos de dominio? | `data-mesh` | `reference/core/architecture/topologies/data/` |
+| `ai` | Como se gobiernan agentes IA, contexto de modelo y workflows autonomos? | `agentic-ai` | `reference/core/architecture/topologies/ai/` |
 
 ## 3. Regla de Composicion
 

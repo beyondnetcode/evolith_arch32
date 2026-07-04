@@ -41,8 +41,8 @@ Definir el bucle operativo que permite a los agentes Evolith mejorar el harness 
 | [Reglas Globales](../rules/global-rules.md) | Reglas vinculantes de validación y gobernanza. |
 | [Personas de Agentes](../agents/agent-specs.es.md) | Contratos de rol y expectativas de handoff. |
 | [Schema de Progress Audit](../schemas/progress-audit.schema.json) | Contrato de eventos JSONL para evidencia de ejecución. |
-| [Tracking de Gaps](../../reference/governance/standards/vision/gap-tracking.es.md) | Fuente única de verdad para trabajo abierto. |
-| [Evidencia de Cierre de Gaps](../../reference/governance/standards/vision/gap-closure-evidence.json) | Registro de cierre machine-readable. |
+| [Tracking de Gaps](../../reference/core/control-center/gaps/gap-tracking.es.md) | Fuente única de verdad para trabajo abierto. |
+| [Evidencia de Cierre de Gaps](../../reference/core/control-center/evidence/gap-closure-evidence.json) | Registro de cierre machine-readable. |
 | [Manifest del Harness](../manifest.yaml) | Contrato de capacidades descubribles por runtime. |
 
 ## Registro de Progress Audit

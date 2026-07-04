@@ -66,10 +66,10 @@ Usa esta pagina cuando ya sabes el stack objetivo y necesitas el camino mas cort
 
 | Tema | Fuente de verdad |
 | :--- | :--- |
-| Reglas arquitectonicas universales | `reference/architecture/blueprints/authoritative-tech-stack-agnostic.md` |
-| Estandar API .NET | `reference/governance/standards/engineering/api-dotnet/` |
-| Elecciones backend especificas de runtime | `reference/architecture/blueprints/authoritative-tech-stack-*.md` |
-| Reglas frontend React | `reference/governance/standards/engineering/web-frontend/react/` |
+| Reglas arquitectonicas universales | `reference/core/architecture/blueprints/authoritative-tech-stack-agnostic.md` |
+| Estandar API .NET | `reference/core/foundations/common-rules/api-dotnet/` |
+| Elecciones backend especificas de runtime | `reference/core/architecture/blueprints/authoritative-tech-stack-*.md` |
+| Reglas frontend React | `reference/core/foundations/common-rules/web-frontend/react/` |
 | Implementacion especifica de producto | Repositorio hijo o referencia aplicada UMS |
 | Practica reutilizable promovida | ADR, estandar de gobernanza o patron canonico Evolith |
 

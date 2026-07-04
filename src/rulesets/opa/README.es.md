@@ -69,7 +69,7 @@ Estas políticas están presentes en la carpeta pero **no** son importadas por `
 | [sdlc/coverage.rego](./sdlc/coverage.rego) | `evolith.sdlc.coverage` | _ninguno_ | Chequeos de cobertura SDLC. |
 | [sdlc/pyramid-distribution.rego](./sdlc/pyramid-distribution.rego) | `evolith.sdlc.pyramid` | _ninguno_ | Distribución de pirámide de pruebas SDLC. |
 
-> **Inventario:** 34 archivos `.rego` (excluyendo `*.test.rego` y `main_test.rego`); `main.rego` es el agregador. Hay 26 schemas de entrada en `schemas/`. Las políticas con schema **_ninguno_** validan su entrada en línea o aún no están fijadas a schema — ver el [backlog de paridad](../../reference/governance/standards/vision/gap-tracking.md).
+> **Inventario:** 34 archivos `.rego` (excluyendo `*.test.rego` y `main_test.rego`); `main.rego` es el agregador. Hay 26 schemas de entrada en `schemas/`. Las políticas con schema **_ninguno_** validan su entrada en línea o aún no están fijadas a schema — ver el [backlog de paridad](../../reference/core/control-center/gaps/gap-tracking.md).
 
 ## Ejecutar pruebas de políticas
 
@@ -96,7 +96,7 @@ npm run build:policy
 | `opa: command not found` / falta `.harness/bin/opa` | Binario fijado no descargado | Ejecuta `npm run build:policy` (descarga OPA `v0.65.0`), o instala OPA y úsalo directamente. |
 | El Smart CLI no toma `policy.wasm` | Bundle obsoleto o ausente | Re-ejecuta `npm run build:policy`; el build instala `policy.wasm` en `sdk/cli/rulesets/opa/policy.wasm`. |
 | Una política nueva no se aplica vía `evolith/main/violations` | No importada/unida en `main.rego` | Agrega un `import data.evolith.<pkg>.violations` y una regla de unión en [`main.rego`](./main.rego); las políticas en *Políticas standalone* no se agregan intencionalmente. |
-| OPA y Native devuelven veredictos distintos | Drift de Paridad de Doble Motor | Trátalo como bug de paridad — alinea el `.rego` a la semántica del `*.rules.json` Native (ver [backlog de paridad](../../reference/governance/standards/vision/gap-tracking.md)). |
+| OPA y Native devuelven veredictos distintos | Drift de Paridad de Doble Motor | Trátalo como bug de paridad — alinea el `.rego` a la semántica del `*.rules.json` Native (ver [backlog de paridad](../../reference/core/control-center/gaps/gap-tracking.md)). |
 
 Los estándares de autoría y el flujo de contribución de esta capa están en el [`CONTRIBUTING.md`](../../CONTRIBUTING.md) raíz del repositorio.
 

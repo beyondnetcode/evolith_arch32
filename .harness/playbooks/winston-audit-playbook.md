@@ -126,7 +126,7 @@ Inspecciona:
 - `.harness/playbooks/` — playbooks de auditoría y gobernanza
 - `rulesets/` — rulesets y políticas OPA
 - `.harness/scripts/` — scripts CI y validación
-- `reference/governance/` — estándares SDLC
+- `reference/core/sdlc/` — estándares SDLC
 - `reference/architecture/` — ADRs y topologías
 - `.github/workflows/` — CI/CD pipelines
 
@@ -199,7 +199,7 @@ Inspect:
 - `.harness/playbooks/` — audit and governance playbooks
 - `rulesets/` — rulesets and OPA policies
 - `.harness/scripts/` — CI and validation scripts
-- `reference/governance/` — SDLC standards
+- `reference/core/sdlc/` — SDLC standards
 - `reference/architecture/` — ADRs and topologies
 - `.github/workflows/` — CI/CD pipelines
 

@@ -118,7 +118,7 @@ rate(evolith_cache_hits_total[5m]) / (rate(evolith_cache_hits_total[5m]) + rate(
 
 ### Docker Compose
 
-Redis is defined in `reference/infrastructure/docker-compose.yml` as the `redis` service:
+Redis is defined in `product/infra/docker-compose.yml` as the `redis` service:
 
 - Image: `redis:7.2-alpine`
 - Port: `6379`
@@ -130,10 +130,10 @@ Redis is defined in `reference/infrastructure/docker-compose.yml` as the `redis`
 
 ```bash
 # Start only Redis
-docker-compose -f reference/infrastructure/docker-compose.yml up -d redis
+docker-compose -f product/infra/docker-compose.yml up -d redis
 
 # Start Redis with the full infrastructure
-docker-compose -f reference/infrastructure/docker-compose.yml up -d
+docker-compose -f product/infra/docker-compose.yml up -d
 ```
 
 ## Graceful Degradation

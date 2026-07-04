@@ -23,4 +23,4 @@
 ## Referencias
 - GT‑36 – Política de cobertura lingüística para reglas machine‑readable.
 - `.harness/scripts/check-orphan-bilingual.mjs` – actualizado para excluir `*.json`.
-- `reference/governance/standards/vision/gap-tracking.md` – marcado como **DONE**.
+- `reference/core/control-center/gaps/gap-tracking.md` – marcado como **DONE**.

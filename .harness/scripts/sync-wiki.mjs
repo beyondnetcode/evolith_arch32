@@ -55,8 +55,8 @@ const WIKI_SOURCES = {
   "Governance.md": {
     files: [
       "reference/governance/standards/README.md",
-      "reference/governance/sdlc/README.md",
-      "reference/governance/standards/vision/gap-tracking.md",
+      "reference/core/sdlc/README.md",
+      "reference/core/control-center/gap-tracking.md",
     ],
     transform: transformGovernance,
   },
@@ -449,7 +449,7 @@ function transformGovernance(sources) {
 | **In Progress** | 0 |
 | **Deferred** | 0 |
 
-Full board: [gap-tracking.md](https://github.com/beyondnetcode/evolith_arch32/blob/main/reference/governance/standards/vision/gap-tracking.md)
+Full board: [gap-tracking.md](https://github.com/beyondnetcode/evolith_arch32/blob/main/reference/core/control-center/gap-tracking.md)
 
 ---
 
@@ -576,7 +576,7 @@ The pre-commit hook presents 5 CI modes:
 
 function extractStats() {
   const tracking = readFileSafe(
-    "reference/governance/standards/vision/gap-tracking.md"
+    "reference/core/control-center/gap-tracking.md"
   );
   const doneMatch = tracking.match(/(\d+)\s*\/\s*312\s*done/);
   const openMatch = tracking.match(/(\d+)\s*pending/);

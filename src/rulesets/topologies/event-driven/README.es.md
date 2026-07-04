@@ -30,10 +30,10 @@ La integracion event-driven no autoriza esconder workflows de negocio en infraes
 
 | Artefacto | Rol |
 |---|---|
-| [ADR-0015: Arquitectura Event-Driven Intra-Dominio](../../../reference/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md) | Gobierna la coordinacion event-driven dentro de contextos acotados. |
-| [ADR-0079: Corpus de Referencia Multi-Topologia](../../../reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Gobierna los manifiestos de topologia y composicion. |
+| [ADR-0015: Arquitectura Event-Driven Intra-Dominio](../../../reference/core/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md) | Gobierna la coordinacion event-driven dentro de contextos acotados. |
+| [ADR-0079: Corpus de Referencia Multi-Topologia](../../../reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Gobierna los manifiestos de topologia y composicion. |
 | [Reglas de Arquitectura Event-Driven](./event-driven.rules.json) | Reglas de compatibilidad ejecutables existentes. |
-| [Modelo de Dimensiones de Topologia](../../../reference/architecture/topologies/topology-dimensions.md) | Define reglas de composicion y compatibilidad. |
+| [Modelo de Dimensiones de Topologia](../../../reference/core/architecture/topologies/topology-dimensions.md) | Define reglas de composicion y compatibilidad. |
 
 ## Contrato Ejecutable
 

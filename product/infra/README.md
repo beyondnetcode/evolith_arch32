@@ -34,17 +34,17 @@ This directory contains Docker Compose configuration and gateway declarative con
 
 ```bash
 # Start only the Phase 1 minimum
-docker-compose -f reference/infrastructure/docker-compose.yml up -d postgres
+docker-compose -f product/infra/docker-compose.yml up -d postgres
 
 # Optional: add Redis if cache is needed
-docker-compose -f reference/infrastructure/docker-compose.yml up -d postgres redis
+docker-compose -f product/infra/docker-compose.yml up -d postgres redis
 ```
 
 ## Phase 2+ — Full Stack
 
 ```bash
 # Start all services
-docker-compose -f reference/infrastructure/docker-compose.yml up -d
+docker-compose -f product/infra/docker-compose.yml up -d
 ```
 
 ## Verify Running Services

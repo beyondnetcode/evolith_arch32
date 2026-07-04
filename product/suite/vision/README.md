@@ -23,6 +23,6 @@ This area contains the portfolio-level vision of the Evolith Product Suite. It e
 
 ## Boundary
 
-This area may define portfolio structure, Suite-level value, product relationships, adoption stages, and commercial direction. Universal architecture principles belong in Evolith Core. Internal product implementation belongs in `reference/products/`.
+This area may define portfolio structure, Suite-level value, product relationships, adoption stages, and commercial direction. Universal architecture principles belong in Evolith Core. Internal product implementation belongs in `product/products/`.
 
 [Back to Product Suite](../README.md)

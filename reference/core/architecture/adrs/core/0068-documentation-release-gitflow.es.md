@@ -344,7 +344,7 @@ UMS (como repositorio hijo per ADR-0025 y child-repository-inheritance-guide) he
 1. `.github/workflows/docs.yml` — Pipeline CI
 2. `.github/PULL_REQUEST_TEMPLATE/` — Templates de PR
 3. `.harness/scripts/` — Herramientas de validación
-4. Este ADR (como copia local en `reference/architecture/adrs/`)
+4. Este ADR (como copia local en `reference/core/architecture/adrs/`)
 
 ### Sincronización de Versiones
 - Cuando Evolith lanza `docs-v1.3.0`, UMS debe sincronizar dentro de 2 semanas

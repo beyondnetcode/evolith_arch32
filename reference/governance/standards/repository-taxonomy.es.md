@@ -54,8 +54,8 @@ El repositorio contiene artefactos arquitectonicos, no una aplicacion local de p
 1. `README.es.md` explica la vision y enruta las intenciones comunes.
 2. `reference/getting-started/README.es.md` ofrece rutas cortas por rol; `MASTER_INDEX.es.md` es el mapa de navegacion completo.
 3. `reference/architecture/README.es.md` ordena la lectura de baseline, ADR, patrones canonicos y evidencia UMS.
-4. `reference/governance/glossary.es.md` controla la terminologia, incluyendo referencia de arquitectura progresiva, Evolith, BMAD-METHOD, modelo aplicado UMS, ADR y patron canonico.
-5. `reference/architecture/adrs/adr-matrix.es.md` relaciona necesidades con decisiones controladoras.
+4. `reference/core/sdlc/glossary/glossary.es.md` controla la terminologia, incluyendo referencia de arquitectura progresiva, Evolith, BMAD-METHOD, modelo aplicado UMS, ADR y patron canonico.
+5. `reference/core/architecture/adrs/adr-matrix.es.md` relaciona necesidades con decisiones controladoras.
 6. Los documentos profundos enlazan a un hub propietario o al indice maestro.
 
 ## 4. Capas de Autoridad Documental
@@ -63,11 +63,11 @@ El repositorio contiene artefactos arquitectonicos, no una aplicacion local de p
 | Capa | Proposito | Ubicaciones canonicas | Autoridad |
 |---|---|---|---|
 | Orientacion | Ayudar al lector a navegar el corpus | `README.es.md`, `MASTER_INDEX.es.md`, `reference/getting-started/` | Navegacional |
-| Referencia canonica | Definir politica reutilizable, criterios de decision y trade-offs aceptados | `reference/architecture/blueprints/`, `reference/architecture/adrs/`, `reference/governance/` | Normativa o decisoria segun estado del documento |
-| Corpus de referencia topologica | Definir perfiles topologicos legibles por humanos, dimensiones, vinculos ADR, restricciones operativas y guia de adopcion para familias topologicas | `reference/architecture/topologies/` | Normativa cuando esta respaldada por un ADR o estandar aceptado; draft hasta su ratificacion |
+| Referencia canonica | Definir politica reutilizable, criterios de decision y trade-offs aceptados | `reference/core/architecture/blueprints/`, `reference/core/architecture/adrs/`, `reference/governance/` | Normativa o decisoria segun estado del documento |
+| Corpus de referencia topologica | Definir perfiles topologicos legibles por humanos, dimensiones, vinculos ADR, restricciones operativas y guia de adopcion para familias topologicas | `reference/core/architecture/topologies/` | Normativa cuando esta respaldada por un ADR o estandar aceptado; draft hasta su ratificacion |
 | Rulesets ejecutables | Codificar politica arquitectonica como reglas legibles por maquina gobernadas por Native y OPA | `rulesets/`, `rulesets/topologies/` | Gobernanza ejecutable |
-| Guia de implementacion por runtime | Materializar decisiones aceptadas para un runtime declarado | `reference/architecture/canonical-patterns/`, blueprints y ADRs especificos | Reutilizable solo dentro del alcance declarado de runtime y ADR |
-| Evidencia aplicada de producto | Demostrar adopcion y especializacion en un producto empresarial | `reference/knowledge/demo/`, codigo y docs externos de `beyondnetcode/ums` | Ilustrativa hasta su promocion a un artefacto canonico |
+| Guia de implementacion por runtime | Materializar decisiones aceptadas para un runtime declarado | `reference/core/architecture/patterns/`, blueprints y ADRs especificos | Reutilizable solo dentro del alcance declarado de runtime y ADR |
+| Evidencia aplicada de producto | Demostrar adopcion y especializacion en un producto empresarial | `product/research/demo/`, codigo y docs externos de `beyondnetcode/ums` | Ilustrativa hasta su promocion a un artefacto canonico |
 
 Reglas obligatorias de interpretacion:
 
@@ -75,7 +75,7 @@ Reglas obligatorias de interpretacion:
 - UMS es la referencia aplicada ejecutable oficial; este repositorio no duplica su codigo de producto ni sus comandos de setup.
 - Un aprendizaje de UMS solo se convierte en autoridad reutilizable mediante un ADR, estandar, blueprint o patron canonico aceptado.
 - El corpus documental canonico vive en `reference/`; no se debe crear una jerarquia paralela `docs/` en la raiz.
-- La guia multi-topologia escrita para humanos vive en `reference/architecture/topologies/`. Esta ruta es el corpus canonico para perfiles topologicos y guia de dimensiones topologicas; es distinta de las reglas ejecutables, que pertenecen bajo `rulesets/`.
+- La guia multi-topologia escrita para humanos vive en `reference/core/architecture/topologies/`. Esta ruta es el corpus canonico para perfiles topologicos y guia de dimensiones topologicas; es distinta de las reglas ejecutables, que pertenecen bajo `rulesets/`.
 - Las reglas multi-topologia ejecutables viven en `rulesets/topologies/`. Esta ruta es la ubicacion canonica de reglas topologicas legibles por maquina y debe preservar Dual-Engine Parity cuando una regla tenga evaluadores Native TypeScript y OPA/Rego.
 
 ## 5. Separacion entre Producto y Upstream

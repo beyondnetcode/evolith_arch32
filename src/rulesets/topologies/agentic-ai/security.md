@@ -20,7 +20,7 @@ On a policy, provenance, schema, approval, or sandbox-control failure, deny the 
 
 ## Authority
 
-Apply [ADR-0081](../../../reference/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md), [ADR-0082](../../../reference/architecture/adrs/core/0082-agentic-ai-trust-boundary.md), and [ADR-0083](../../../reference/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md) together. The executable controls are AAI-R01 through AAI-R07 in the [ruleset](./agentic-ai.rules.json) and [OPA policy](./agentic-ai.rego).
+Apply [ADR-0081](../../../reference/core/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md), [ADR-0082](../../../reference/core/architecture/adrs/core/0082-agentic-ai-trust-boundary.md), and [ADR-0083](../../../reference/core/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md) together. The executable controls are AAI-R01 through AAI-R07 in the [ruleset](./agentic-ai.rules.json) and [OPA policy](./agentic-ai.rego).
 
 ---
 [Back to Agentic AI Profile](./README.md)

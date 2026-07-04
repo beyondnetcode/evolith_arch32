@@ -20,8 +20,8 @@ Every agent **must** read [AGENTS.md](./AGENTS.md) before operating on this repo
 ## Key References
 
 - [Global Rules](../.harness/rules/global-rules.md)
-- [Gap Tracking Board](../reference/governance/standards/vision/gap-tracking.md)
-- [Gap Reference Catalog](../reference/governance/standards/vision/gap-reference-catalog.md)
+- [Gap Tracking Board](../reference/core/control-center/gaps/gap-tracking.md)
+- [Gap Reference Catalog](../reference/core/control-center/gaps/gap-reference-catalog.md)
 - [Architecture Agents](./AGENTS.md)
 
 ---

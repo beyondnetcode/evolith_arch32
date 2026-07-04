@@ -221,7 +221,7 @@ decision_tree:
   - condition: "tool is not listed and is a runtime dependency"
     action: "block"
     message: "Runtime dependencies require Architecture Board ADR approval.
-              Submit ADR proposal to reference/architecture/adrs/[runtime]/
+              Submit ADR proposal to reference/core/architecture/adrs/[runtime]/
               before proceeding."
 ```
 

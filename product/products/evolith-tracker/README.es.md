@@ -94,7 +94,7 @@ Se espera que las respuestas REST/MCP de Tracker reutilicen el sobre plano de Co
 ## 5. Estructura Canónica Planificada
 
 ```text
-reference/products/evolith-tracker/
+product/products/evolith-tracker/
 ├── README.es.md
 ├── vision/
 ├── functional/

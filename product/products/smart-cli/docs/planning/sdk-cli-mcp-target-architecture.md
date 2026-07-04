@@ -12,8 +12,8 @@
 
 All SDK, CLI, and MCP operations derive from Evolith Core artifacts:
 - Rulesets in `rulesets/`
-- ADRs in `reference/architecture/adrs/`
-- Standards in `reference/governance/standards/`
+- ADRs in `reference/core/architecture/adrs/`
+- Standards in `reference/core/sdlc/standards/`
 - Schemas in `rulesets/schema/`
 - Templates in `.harness/templates/`
 

@@ -28,7 +28,7 @@ Eres el Especialista en Requisitos y Especificaciones del equipo del Método BMA
 
 Cuando se solicite un nuevo gap de gobernanza:
 
-1. Leer `reference/governance/standards/vision/gap-tracking.md` para entender el estado actual.
+1. Leer `reference/core/control-center/gaps/gap-tracking.md` para entender el estado actual.
 2. Definir el alcance del gap: propósito, evidencia, criterios de cierre.
 3. Evaluar complejidad (S/M/L) basado en el alcance de artefactos y requisitos de paridad Native/OPA.
 4. Escribir la entrada del catálogo en `gap-reference-catalog.md` (EN) y coordinar con PM para el ES.

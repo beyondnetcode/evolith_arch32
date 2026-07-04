@@ -20,8 +20,8 @@ Cada agente **debe** leer [AGENTS.es.md](./AGENTS.es.md) antes de operar en este
 ## Referencias Clave
 
 - [Reglas Globales](../.harness/rules/global-rules.md)
-- [Tablero de Seguimiento de Gaps](../reference/governance/standards/vision/gap-tracking.es.md)
-- [Catálogo de Referencia de Gaps](../reference/governance/standards/vision/gap-reference-catalog.es.md)
+- [Tablero de Seguimiento de Gaps](../reference/core/control-center/gaps/gap-tracking.es.md)
+- [Catálogo de Referencia de Gaps](../reference/core/control-center/gaps/gap-reference-catalog.es.md)
 - [Agentes de Arquitectura](./AGENTS.es.md)
 
 ---

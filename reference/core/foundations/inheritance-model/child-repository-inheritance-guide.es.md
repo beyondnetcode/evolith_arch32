@@ -54,7 +54,7 @@ Cuando un repositorio hijo se inicializa desde esta base, el siguiente corpus es
 
 | Capa | Activos Heredados | Mutabilidad |
 | :--- | :--- | :--- |
-| **Decisiones Arquitectónicas** | Todos los ADRs en `reference/architecture/adrs/` | Implícitamente adoptados; sobreescribir o marcar como no-aplicable si no corresponde |
+| **Decisiones Arquitectónicas** | Todos los ADRs en `reference/core/architecture/adrs/` | Implícitamente adoptados; sobreescribir o marcar como no-aplicable si no corresponde |
 | **Leyes Estructurales** | Blueprints, línea base agnóstica, checklist de simplicidad | Obligatorio; la divergencia requiere justificación documentada |
 | **Estándares de Ingeniería** | Manifiesto (SOLID/OWASP), guía de contract testing, playbook de observabilidad | Obligatorio |
 | **Reglas de Gobernanza** | Taxonomía del repositorio, convenciones de nomenclatura, reglas del harness R-01–R-18 | Obligatorio |
@@ -69,7 +69,7 @@ Los siguientes elementos están intencionalmente limitados a este repositorio. T
 | Activo | Razón para No Heredarse |
 | :--- | :--- |
 | `src/apps/ums-api/` y `src/apps/ums-web/` | Implementación satélite de referencia ([UMS](https://github.com/beyondnetcode/ums)) — no es scaffolding de producción |
-| `reference/knowledge/demo/` | Documentación del modelo de referencia UMS — irrelevante para tu producto |
+| `product/research/demo/` | Documentación del modelo de referencia UMS — irrelevante para tu producto |
 | Glosario de negocio, mapas de stakeholders, objetivos de producto | Deben ser autoria del dominio del producto real |
 
 ---
@@ -133,7 +133,7 @@ Los ADRs locales en repositorios hijos siguen el mismo formato que los ADRs base
 
 > **Estado:** Aceptado
 > **Fecha:** 2026-05-22
-> **Extends:** [ADR-0015 — Arquitectura Orientada a Eventos Intra-Dominio](https://github.com/beyondnetcode/evolith_arch32/reference/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md)
+> **Extends:** [ADR-0015 — Arquitectura Orientada a Eventos Intra-Dominio](https://github.com/beyondnetcode/evolith_arch32/reference/core/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md)
 
 ## Contexto
 
@@ -157,7 +157,7 @@ La cola dead-letter `payments.dlq` recibe todos los mensajes no reconocidos desp
 
 > **Estado:** Aceptado
 > **Fecha:** 2026-05-22
-> **Overrides:** [ADR-0030 — API Gateway: Kong vs NestJS](https://github.com/beyondnetcode/evolith_arch32/reference/architecture/adrs/core/0030-two-tier-distributed-gateway-model.md)
+> **Overrides:** [ADR-0030 — API Gateway: Kong vs NestJS](https://github.com/beyondnetcode/evolith_arch32/reference/core/architecture/adrs/core/0030-two-tier-distributed-gateway-model.md)
 
 ## Justificación de Divergencia
 
@@ -202,7 +202,7 @@ Eliminar el contenido que no debe trasladarse sin adaptación deliberada:
 rm -rf src/apps/ums-api
 
 # Eliminar la documentación del modelo de referencia UMS
-rm -rf reference/knowledge/demo
+rm -rf product/research/demo
 ```
 
 ### Paso 3 — Crear los archivos obligatorios
@@ -212,7 +212,7 @@ rm -rf reference/knowledge/demo
 | `README.md` | Reemplazar el README base con el portal ejecutivo del producto. Incluir un enlace `Upstream Base` de vuelta a este repositorio. |
 | `MASTER_INDEX.md` | Reemplazar con navegación por rol para el producto. |
 | `DECISIONS.md` | Crear con la estructura de tabla definida en la Sección 6. Clasificar todos los ADRs base en el primer pase. |
-| `reference/knowledge/domain/` | Crear la documentación de dominio del producto: glosario de negocio, mapa de contextos acotados, mapa de stakeholders, objetivos de producto. |
+| `product/research/domain/` | Crear la documentación de dominio del producto: glosario de negocio, mapa de contextos acotados, mapa de stakeholders, objetivos de producto. |
 
 ### Paso 4 — Configurar el harness
 

@@ -5,7 +5,7 @@
 **Status:** Approved
 **Owner:** Evolith Architecture Board
 **Created:** 2026-06-10
-**Applies to:** every ADR under `reference/architecture/adrs/` (core and platform categories)
+**Applies to:** every ADR under `reference/core/architecture/adrs/` (core and platform categories)
 
 ---
 

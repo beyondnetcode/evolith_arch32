@@ -103,7 +103,7 @@ Estos endpoints proporcionan metadatos sobre rulesets activos, gates y requisito
     "phase": 1,
     "name": "Business Sign-Off",
     "description": "Scope frozen; funding authorized; architectural constraints aligned.",
-    "playbookRef": "../../reference/governance/sdlc/01-playbooks/phase-1-business-signoff.md",
+    "playbookRef": "../../reference/core/sdlc/01-playbooks/phase-1-business-signoff.md",
     "mandatoryEvidence": [
       { "artifact": "PRD", "schemaRef": "../schema/prd.schema.json", "status": "Approved" }
     ],

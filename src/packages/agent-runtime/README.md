@@ -8,8 +8,8 @@ validates and executes Core capabilities through ports. It does **not** replace
 `.harness` (the official governed executor) and does **not** depend on Hermes or
 any LLM framework (those are optional, replaceable adapters).
 
-Architecture docs: [`reference/architecture/agent-runtime`](../../reference/architecture/agent-runtime/README.md)
-· Decision: [core/ADR-0102](../../reference/architecture/adrs/core/0102-evolith-agent-runtime.md).
+Architecture docs: [`reference/architecture/agent-runtime`](../../reference/core/architecture/foundations/README.md)
+· Decision: [core/ADR-0102](../../reference/core/architecture/adrs/core/0102-evolith-agent-runtime.md).
 
 ## Install
 

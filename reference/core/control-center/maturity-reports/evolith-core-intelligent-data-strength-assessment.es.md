@@ -7,7 +7,7 @@
 **Última Actualización:** 2026-06-26
 **Alcance:** Interfaces smart-cli + MCP + core-api al 100% ejecutable
 **Visión Relacionada:** [Marco de Validación Estratégica y Composición de Evolith](./evolith-strategic-validation-and-composition-framework.md)
-**Sustituye:** `reference/products/smart-cli/docs/planning/sdk-cli-mcp-current-state-assessment.md` (SUPERSEDED — solo como contexto)
+**Sustituye:** `product/products/smart-cli/docs/planning/sdk-cli-mcp-current-state-assessment.md` (SUPERSEDED — solo como contexto)
 
 Este documento define los flujos de trabajo de implementación para llevar las interfaces de Evolith (smart-cli, MCP, core-api) al estado 100% ejecutable, validando el core como data inteligente. Es el plan de implementación autoritativo, reconciliado contra los tableros de gobernanza vivos.
 

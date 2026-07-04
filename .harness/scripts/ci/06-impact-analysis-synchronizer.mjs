@@ -186,8 +186,8 @@ const IMPACT_ZONE_FILES = {
     ".harness/**/*.es.md",
   ],
   templates: [
-    "reference/governance/sdlc/04-artifact-templates/*.md",
-    "reference/governance/sdlc/04-artifact-templates/*.es.md",
+    "reference/core/sdlc/04-artifact-templates/*.md",
+    "reference/core/sdlc/04-artifact-templates/*.es.md",
   ],
   validators: [
     ".harness/scripts/validate-docs.mjs",

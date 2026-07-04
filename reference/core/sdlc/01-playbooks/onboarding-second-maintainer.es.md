@@ -22,12 +22,12 @@ Evolith Core es un motor de gobernanza para el cumplimiento del ciclo de vida de
 | API REST Core | `apps/core-api/src/` | Superficie API NestJS |
 | CLI | `sdk/cli/src/` | Comandos Smart CLI |
 | Rulesets | `rulesets/` | Políticas OPA + reglas de topología |
-| Datos SDLC | `reference/governance/sdlc/` | Definiciones JSON de fases/gates |
-| ADRs | `reference/governance/adr/` | Registros de Decisiones de Arquitectura |
+| Datos SDLC | `reference/core/sdlc/` | Definiciones JSON de fases/gates |
+| ADRs | `reference/core/sdlc/governance/` | Registros de Decisiones de Arquitectura |
 
 ### Arquitectura en un párrafo
 
-Los satélites (proyectos externos) envían evidencia a Core vía REST, MCP o CLI. Core carga las definiciones de gates SDLC (`reference/governance/sdlc/gates/gate-f*.json`), resuelve las rutas de artefactos del satélite, ejecuta reglas OPA/nativas y emite un `Verdict` (PASS/FAIL/WAIVE/SKIP). Todas las decisiones se emiten como eventos de dominio, se escriben en el ledger de auditoría y se despachan a suscriptores webhook.
+Los satélites (proyectos externos) envían evidencia a Core vía REST, MCP o CLI. Core carga las definiciones de gates SDLC (`reference/core/sdlc/gates/gate-f*.json`), resuelve las rutas de artefactos del satélite, ejecuta reglas OPA/nativas y emite un `Verdict` (PASS/FAIL/WAIVE/SKIP). Todas las decisiones se emiten como eventos de dominio, se escriben en el ledger de auditoría y se despachan a suscriptores webhook.
 
 ---
 
@@ -35,20 +35,20 @@ Los satélites (proyectos externos) envían evidencia a Core vía REST, MCP o CL
 
 - [ ] Clonar el repositorio y ejecutar `npm install` desde la raíz
 - [ ] Ejecutar `npm test` — todas las suites deben pasar (objetivo: +500 tests en verde)
-- [ ] Leer `reference/governance/adr/core/README.md` — decisiones de arquitectura
+- [ ] Leer `reference/core/sdlc/governance/core/README.md` — decisiones de arquitectura
 - [ ] Leer `CERTIFICACION_MADUREZ.md` — certificación de madurez actual
-- [ ] Leer `reference/governance/standards/vision/gap-tracking.md` — tablero de gaps
+- [ ] Leer `reference/core/control-center/gaps/gap-tracking.md` — tablero de gaps
 - [ ] Ejecutar el servidor MCP localmente: `npm run start --workspace=packages/mcp-server`
 - [ ] Ejecutar el Core API localmente: `npm run start:dev --workspace=apps/core-api`
-- [ ] Leer `reference/governance/sdlc/README.md` — resumen del modelo SDLC
+- [ ] Leer `reference/core/sdlc/README.md` — resumen del modelo SDLC
 
 ---
 
 ## 3. Invariantes Clave a Conocer
 
 1. **Core no almacena configuración de tenant** — toda la composición de tenant fluye a través de `ValidateWorkflowUseCase` con un `WorkflowDefinition` suministrado por el llamador.
-2. **Fuente canónica de gates** — `reference/governance/sdlc/gates/gate-f*.json` (no `rulesets/phase-gates/phase-gates.rules.json`).
-3. **Ubicación canónica de topologías** — `rulesets/topologies/` (las 8 topologías; los directorios de `reference/architecture/topologies/` tienen stubs `RELOCATED.md`).
+2. **Fuente canónica de gates** — `reference/core/sdlc/gates/gate-f*.json` (no `rulesets/phase-gates/phase-gates.rules.json`).
+3. **Ubicación canónica de topologías** — `rulesets/topologies/` (las 8 topologías; los directorios de `reference/core/architecture/topologies/` tienen stubs `RELOCATED.md`).
 4. **Veredicto canónico** — enum `Verdict` (`PASS|FAIL|WAIVE|SKIP`) en `packages/core-domain/src/domain/verdict/verdict.ts`.
 5. **Bus de eventos es aditivo** — `IDomainEventBus` es opcional en todos los casos de uso; su ausencia no rompe flujos existentes.
 6. **Paridad bilingüe** — cada documento en inglés debe tener una contraparte `*.es.md`.
@@ -57,7 +57,7 @@ Los satélites (proyectos externos) envían evidencia a Core vía REST, MCP o CL
 
 ## 4. Realizando tu Primera Contribución
 
-1. Elegir un gap de `reference/governance/standards/vision/gap-tracking.md` marcado como `PENDING`.
+1. Elegir un gap de `reference/core/control-center/gaps/gap-tracking.md` marcado como `PENDING`.
 2. Leer su entrada en `gap-reference-catalog.md` para los criterios de cierre.
 3. Crear una rama: `git checkout -b feat/gt-NNN-descripcion-corta`.
 4. Escribir código + tests; apuntar a ≥80% de cobertura de ramas en archivos tocados.

@@ -94,7 +94,7 @@ Tracker REST/MCP responses are expected to reuse Core's [ADR-0073](../../archite
 ## 5. Planned Canonical Structure
 
 ```text
-reference/products/evolith-tracker/
+product/products/evolith-tracker/
 ├── README.md
 ├── vision/
 ├── functional/

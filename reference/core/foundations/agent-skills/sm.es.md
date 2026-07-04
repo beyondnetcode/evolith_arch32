@@ -186,6 +186,6 @@ Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.e
 
 *Véase [AGENTS.es.md](../AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
 *Véase [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
-*Véase [ADR-0068](../../reference/architecture/adrs/core/0068-documentation-release-gitflow.md) para flujo de release de documentación.*
-*Véase [Tablero de Seguimiento de Gaps](../../reference/governance/standards/vision/gap-tracking.es.md) para estado de gaps.*
-*Véase [Evidencia de Cierre de Gaps](../../reference/governance/standards/vision/gap-closure-evidence.json) para registros de cierre.*
+*Véase [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) para flujo de release de documentación.*
+*Véase [Tablero de Seguimiento de Gaps](../../reference/core/control-center/gaps/gap-tracking.es.md) para estado de gaps.*
+*Véase [Evidencia de Cierre de Gaps](../../reference/core/control-center/evidence/gap-closure-evidence.json) para registros de cierre.*

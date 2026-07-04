@@ -14,7 +14,7 @@ Evolith es un corpus de referencia de arquitectura progresiva. A medida que crec
 Sin un catálogo controlado, las ideas externas se pueden copiar directamente al estándar sin contexto, análisis de compensaciones o validación.
 ## Decision
 Evolith adopta un **Catálogo de Inteligencia de Arquitectura** en:```text
-reference/knowledge/architecture-intelligence/
+product/research/architecture-intelligence/
 ```Este catálogo sirve para:
 
 - curar ideas arquitectónicas

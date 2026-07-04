@@ -18,14 +18,14 @@ models stop diverging.
   ([ADR-0074](../architecture/adrs/core/0074-evolith-core-api-exposure-layer.md)) —
   a NestJS REST API. This is the real service consumers hit.
 - **`evolith-bff`** (the Helm chart, the `bff` compose service, and
-  `reference/infrastructure/docker/bff.Dockerfile`) is a **generic BFF reference
+  `product/infra/docker/bff.Dockerfile`) is a **generic BFF reference
   template** (the BFF pattern of nodejs/ADR-0008). It is NOT the real core-api
   image and carries no core-api-specific configuration.
 - **"Tracker BFF"** (architecture doc §11) is **external** — it belongs to
   Evolith Tracker and *consumes* core-api; it is not deployed from this repo.
 - Real per-service Dockerfiles are `apps/core-api/Dockerfile`,
   `packages/mcp-server/Dockerfile`, `apps/agent-runtime-api/Dockerfile`. The
-  files under `reference/infrastructure/docker/*.Dockerfile` are illustrative
+  files under `product/infra/docker/*.Dockerfile` are illustrative
   templates, not the production build.
 
 ## Service-by-model matrix
@@ -48,7 +48,7 @@ models stop diverging.
 3. **Registry drift**: existing Helm charts reference Docker Hub `beyondnetcode/*`;
    the new `docker-images.yml` workflow pushes to `ghcr.io/<owner>/*`.
 4. **Two Dockerfile sets**: real (`apps/*`, `packages/*`) vs template
-   (`reference/infrastructure/docker/*`). The compose/Helm path builds templates,
+   (`product/infra/docker/*`). The compose/Helm path builds templates,
    not the real images.
 
 ## Recommended target state
@@ -63,7 +63,7 @@ models stop diverging.
   `docker-images.yml` workflow already uses it with the built-in token) — update
   the three charts' `image.repository` to match.
 - Point the compose/Helm builds at the **real Dockerfiles**, or mark the
-  `reference/infrastructure/docker/*` templates as reference-only.
+  `product/infra/docker/*` templates as reference-only.
 
 ## Resolved decisions (applied 2026-06-29)
 
@@ -80,5 +80,5 @@ The in-repo reconciliation has been applied:
    non-existent `/ready`,`/startup` probes were corrected to `3000` + `/health`.
 
 Still infra-owned (apply when migrating): point DNS, create the registry images
-(run the workflow), and reconcile the `reference/infrastructure/docker/*`
+(run the workflow), and reconcile the `product/infra/docker/*`
 templates or build the real Dockerfiles in compose.

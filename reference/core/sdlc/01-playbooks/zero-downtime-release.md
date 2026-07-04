@@ -3,7 +3,7 @@
 > **Bilingual Navigation:** [Versión en Español](./zero-downtime-release.es.md)
 
 **Phase:** [05 — Delivery and Operations](../README.md#phase-05-delivery-and-operations)
-**Phase Exit Gate:** Production Live (see [`gate-f5.json`](../../../../reference/governance/sdlc/gates/gate-f5.json))
+**Phase Exit Gate:** Production Live (see [`gate-f5.json`](../../../../reference/core/sdlc/gates/gate-f5.json))
 **Primary Audience:** DevOps Lead, SRE, Tech Lead
 **Accountable Role:** DevOps Lead
 **Waiver Authority:** Technology Director
@@ -28,10 +28,10 @@ Before opening the Production Live gate:
 
 | # | Mandatory Evidence | File / System | Acceptance Criterion |
 |---|---|---|---|
-| 1 | **Release Notes** | `reference/governance/sdlc/04-artifact-templates/release-notes-template.md` · `release-notes.schema.json` | Release scope, deployment steps, rollback procedure, observability checklist present and complete |
-| 2 | **Observability Validation** | `reference/governance/sdlc/04-artifact-templates/observability-validation-template.md` · `observability-validation.schema.json` | Metrics nominal, logs flowing, traces complete for all production paths |
-| 3 | **Rollback Procedure** | `reference/governance/sdlc/04-artifact-templates/rollback-rehearsal-template.md` · `rollback-rehearsal.schema.json` | Rollback steps documented, rehearsed, and timed. Last good version identified |
-| 4 | **On-Call Handoff** | `reference/governance/sdlc/04-artifact-templates/on-call-handoff-template.md` · `on-call-handoff.schema.json` | On-call team briefed: runbook refs, escalation paths, alert ownership, SLA acknowledgement |
+| 1 | **Release Notes** | `reference/core/sdlc/04-artifact-templates/release-notes-template.md` · `release-notes.schema.json` | Release scope, deployment steps, rollback procedure, observability checklist present and complete |
+| 2 | **Observability Validation** | `reference/core/sdlc/04-artifact-templates/observability-validation-template.md` · `observability-validation.schema.json` | Metrics nominal, logs flowing, traces complete for all production paths |
+| 3 | **Rollback Procedure** | `reference/core/sdlc/04-artifact-templates/rollback-rehearsal-template.md` · `rollback-rehearsal.schema.json` | Rollback steps documented, rehearsed, and timed. Last good version identified |
+| 4 | **On-Call Handoff** | `reference/core/sdlc/04-artifact-templates/on-call-handoff-template.md` · `on-call-handoff.schema.json` | On-call team briefed: runbook refs, escalation paths, alert ownership, SLA acknowledgement |
 | 5 | **Deployment Evidence** | `.evolith/deployment-evidence.json` | Deployment artefacts (images, configs) traceable to stamped RC |
 
 ---

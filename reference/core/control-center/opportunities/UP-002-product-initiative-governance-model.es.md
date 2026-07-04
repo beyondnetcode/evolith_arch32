@@ -19,9 +19,9 @@
 
 ## Contexto
 
-Evolith Core declara que **no** es "a task-management platform" (`reference/core/README.md:47`), pero sus superficies de gobierno exigen artefactos ágiles de ejecución como **evidencia bloqueante de gate** — *Evolith User Story* / *Agile Backlog* **Required** en Fase 2, *Technical Stories* **Required** en Fase 3 (`reference/governance/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,223`); "story readiness" cierra el gate F2 (`:209`). Schemas operativos (`evolith-user-story.schema.json`, `agile-backlog.schema.json`, `functional-story.schema.json`, `ballpark-estimation.schema.json`) viven como contratos canónicos del Core.
+Evolith Core declara que **no** es "a task-management platform" (`reference/core/README.md:47`), pero sus superficies de gobierno exigen artefactos ágiles de ejecución como **evidencia bloqueante de gate** — *Evolith User Story* / *Agile Backlog* **Required** en Fase 2, *Technical Stories* **Required** en Fase 3 (`reference/core/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,223`); "story readiness" cierra el gate F2 (`:209`). Schemas operativos (`evolith-user-story.schema.json`, `agile-backlog.schema.json`, `functional-story.schema.json`, `ballpark-estimation.schema.json`) viven como contratos canónicos del Core.
 
-Mientras tanto **no existe entidad `Producto` ni `Iniciativa`** en el dominio del Core; la iniciativa es un string opaco nunca persistido (`gate-evidence.ts:87-89`). Evolith Tracker ya modela `PRODUCT`/`SDLC_PROCESS` (`reference/products/evolith-tracker/sdlc-tracker-technical-interfaces.md:415-428`) — el Core va por detrás de su propio Tracker. Esta es la **conflación gobierno ↔ ejecución operativa**.
+Mientras tanto **no existe entidad `Producto` ni `Iniciativa`** en el dominio del Core; la iniciativa es un string opaco nunca persistido (`gate-evidence.ts:87-89`). Evolith Tracker ya modela `PRODUCT`/`SDLC_PROCESS` (`product/products/evolith-tracker/sdlc-tracker-technical-interfaces.md:415-428`) — el Core va por detrás de su propio Tracker. Esta es la **conflación gobierno ↔ ejecución operativa**.
 
 ## Principio rector (no negociable)
 
@@ -82,11 +82,11 @@ Promover el **modelo de gobierno Producto/Iniciativa** a estándar canónico del
 | Artefacto | Ruta |
 |---|---|
 | Documento de diseño | `reference/core/product-initiative-governance-redesign.es.md` |
-| ADR | `reference/architecture/adrs/core/0100-governance-execution-boundary-product-initiative.md` |
-| Evidencia de conflación | `reference/governance/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,209,223` |
+| ADR | `reference/core/architecture/adrs/core/0100-governance-execution-boundary-product-initiative.md` |
+| Evidencia de conflación | `reference/core/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,209,223` |
 | Entidades ausentes | `packages/core-domain/src/domain/entities/`, `gate-evidence.ts:87-89` |
 | Precedente de frontera | `packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts:55` |
-| Modelo del Tracker | `reference/products/evolith-tracker/sdlc-tracker-technical-interfaces.md:415-428` |
+| Modelo del Tracker | `product/products/evolith-tracker/sdlc-tracker-technical-interfaces.md:415-428` |
 | Ruleset / Rego de phase-gates | `rulesets/sdlc/phase-gates.rules.json`, `rulesets/opa/phase-gates.rego`, `rulesets/opa/dod.rego` |
 | Contratos de satélite | `rulesets/satellite-contracts/satellite-contracts.rules.json` |
 

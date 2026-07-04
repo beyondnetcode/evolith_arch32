@@ -50,7 +50,7 @@ libs/
 
 ## 3. Lista de Verificación de Preparación para Extracción (Fase 1 → Fase 2)
 
-Según [ADR-0045](../../reference/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md), un módulo es candidato válido para extracción cuando cumple **2 de 4** criterios sostenidos por 15 días:
+Según [ADR-0045](../../reference/core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md), un módulo es candidato válido para extracción cuando cumple **2 de 4** criterios sostenidos por 15 días:
 
 | Criterio | Fuente de Medición | Umbral |
 | :--- | :--- | :--- |
@@ -65,7 +65,7 @@ Antes de presentar al Architecture Board, el Squad Lead DEBE proporcionar una ex
 
 ## 4. Paso a Paso: Primera Extracción de Servicio (Strangler Fig)
 
-Este procedimiento extrae un bounded context del monolito sin una reescritura Big Bang. Referencia: [ADR-0047 §10](../../reference/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md).
+Este procedimiento extrae un bounded context del monolito sin una reescritura Big Bang. Referencia: [ADR-0047 §10](../../reference/core/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md).
 
 ### Paso 1 — Confirmar aislamiento de esquema
 
@@ -123,7 +123,7 @@ services:
         paths: [/v1/auth]
 ```
 
-Despliegue el nuevo servicio, actualice la configuración de Kong y valide mediante el [Modelo de Referencia Aplicado UMS](../../reference/knowledge/demo/README.md). El monolito ya no maneja tráfico de tasks.
+Despliegue el nuevo servicio, actualice la configuración de Kong y valide mediante el [Modelo de Referencia Aplicado UMS](../../product/research/demo/README.md). El monolito ya no maneja tráfico de tasks.
 
 ### Paso 5 — Migrar el Bus de Eventos de In-Memory a RabbitMQ
 
@@ -134,7 +134,7 @@ EVENT_BUS_IMPL=rabbitmq
 RABBITMQ_URL=amqp://localhost:5672
 ```
 
-La implementación de `IEventBusPort` se inyecta al iniciar sin ningún cambio en el código de dominio — según [ADR-0015](../../reference/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md).
+La implementación de `IEventBusPort` se inyecta al iniciar sin ningún cambio en el código de dominio — según [ADR-0015](../../reference/core/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md).
 
 ---
 

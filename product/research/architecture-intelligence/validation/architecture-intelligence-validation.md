@@ -11,7 +11,7 @@ Ensure that curated architecture knowledge remains consistent with Evolith taxon
 Every Architecture Intelligence artifact must verify:
 
 - Uses kebab-case file names.
-- Lives under `reference/knowledge/architecture-intelligence/`.
+- Lives under `product/research/architecture-intelligence/`.
 - Has a clear title and purpose.
 - Defines problem, context, solution, benefits, and tradeoffs.
 - Defines Evolith position and adoption level when it is a pattern.

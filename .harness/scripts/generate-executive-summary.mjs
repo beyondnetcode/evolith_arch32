@@ -97,9 +97,9 @@ function summarizeComponents(openGaps) {
 }
 
 function buildSummary(root = ROOT) {
-  const board = parseBoard(read(path.join(root, 'reference/governance/standards/vision/gap-tracking.md')));
-  const esBoard = parseBoard(read(path.join(root, 'reference/governance/standards/vision/gap-tracking.es.md')));
-  const maturity = JSON.parse(read(path.join(root, 'reference/governance/standards/vision/maturity-reconciliation.json')) || '{}');
+  const board = parseBoard(read(path.join(root, 'reference/core/control-center/gap-tracking.md')));
+  const esBoard = parseBoard(read(path.join(root, 'reference/core/control-center/gap-tracking.es.md')));
+  const maturity = JSON.parse(read(path.join(root, 'reference/core/control-center/maturity-reconciliation.json')) || '{}');
   const rows = board.rows.map((gap) => ({ ...gap, status: canonicalStatus(gap.status) }));
   const open = rows.filter((gap) => OPEN_STATUSES.has(gap.status)).sort(sortByPriority);
   const done = rows.filter((gap) => gap.status === 'DONE');

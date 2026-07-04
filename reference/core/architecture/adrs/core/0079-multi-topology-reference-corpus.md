@@ -41,7 +41,7 @@ Without a controlled topology model, the repository risks duplicating ADRs, crea
 ## Options Considered
 
 1. **Root-level `/topologies/` directory.** Rejected for now. It conflicts with the current lean-root and reference-corpus taxonomy unless a superseding ADR amends root policy.
-2. **Flat topology folders under `reference/architecture/topologies/`.** Rejected. It incorrectly implies serverless, event-driven, data mesh, edge computing, and agentic AI are mutually exclusive alternatives.
+2. **Flat topology folders under `reference/core/architecture/topologies/`.** Rejected. It incorrectly implies serverless, event-driven, data mesh, edge computing, and agentic AI are mutually exclusive alternatives.
 3. **Separate CLI, MCP server, or Core API per topology.** Rejected. It duplicates operational surfaces and violates the unified command-as-a-service model ratified by ADR-0073 and ADR-0074.
 4. **Dimensional topology corpus with manifest-driven resolution.** Selected. It preserves repository taxonomy, models combinable architecture dimensions, and lets one control plane load topology-specific context and rules.
 
@@ -52,7 +52,7 @@ Adopt a **dimensional, manifest-driven Multi-Topology Reference Corpus**.
 The canonical human-readable corpus will live under:
 
 ```text
-reference/architecture/topologies/
+reference/core/architecture/topologies/
   progressive-axis/
   execution/
   integration/
@@ -122,7 +122,7 @@ Evidence used:
 - Dual-Engine Parity increases implementation work for every new topology rule.
 - Existing tools that only know `--arch-level` require a compatibility mapping during migration.
 
-**Accepted trade-off:** the initial implementation will use `reference/architecture/topologies/` and `rulesets/topologies/` instead of root `/topologies/` to preserve current repository taxonomy. A future ADR may revisit root placement only if the governance value outweighs the root-taxonomy cost.
+**Accepted trade-off:** the initial implementation will use `reference/core/architecture/topologies/` and `rulesets/topologies/` instead of root `/topologies/` to preserve current repository taxonomy. A future ADR may revisit root placement only if the governance value outweighs the root-taxonomy cost.
 
 ## References
 

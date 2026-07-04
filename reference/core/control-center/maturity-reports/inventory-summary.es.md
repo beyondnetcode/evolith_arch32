@@ -7,7 +7,7 @@ Este es el conteo automatizado del inventario de la arquitectura de referencia c
 
 | Tipo de Artefacto | Conteo | Ubicación |
 |---|:---:|---|
-| **Architecture Decision Records (ADR)** | 119 | `reference/architecture/adrs/` |
+| **Architecture Decision Records (ADR)** | 119 | `reference/core/architecture/adrs/` |
 | **Rulesets Legibles por Máquina** | 144 | `rulesets/` (en 17 categorías) |
 | **Schemas de Phase-Gates** | 40 | `rulesets/schema/` |
 

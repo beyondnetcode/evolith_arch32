@@ -36,7 +36,7 @@ A route enters the deprecation lifecycle through a `@Deprecated()` route decorat
 Minimum notice between deprecation and sunset is **90 days**. Removal before the sunset date requires an Architecture Board exception recorded in the ADR set.
 
 ### 3. Changelog requirement
-Every URI-versioned route change ships with a changelog entry under `reference/products/core-api/changelog.md` (created by GT-156) noting:
+Every URI-versioned route change ships with a changelog entry under `product/products/core-api/changelog.md` (created by GT-156) noting:
 - The route, HTTP verb, and version.
 - The change class (added · deprecated · removed · breaking-shape).
 - Effective date and sunset date for deprecations.

@@ -276,5 +276,5 @@ File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md sec
 *See [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
 *See [Global Rules](../../.harness/rules/global-rules.md) for R-26 Semantic Gap Closure.*
 *See [.github/workflows/](../../.github/workflows/) for active workflow definitions.*
-*See [ADR-0068](../../reference/architecture/adrs/core/0068-documentation-release-gitflow.md) for release automation policy.*
-*See [Gap Closure Evidence](../../reference/governance/standards/vision/gap-closure-evidence.json) for closure records.*
+*See [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) for release automation policy.*
+*See [Gap Closure Evidence](../../reference/core/control-center/evidence/gap-closure-evidence.json) for closure records.*

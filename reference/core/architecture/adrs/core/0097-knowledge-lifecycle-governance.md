@@ -31,7 +31,7 @@ Each promotion requires an Architecture Board decision recorded in an ADR (for `
 
 | Stage | Entry Gate | Evidence Required | Custodian |
 |---|---|---|---|
-| `candidate` | YAML file in `reference/knowledge/intake/` with valid KI-* schema | GT-152 contract validation passes | CI |
+| `candidate` | YAML file in `product/research/intake/` with valid KI-* schema | GT-152 contract validation passes | CI |
 | `evaluated` | @winston review completed | Dated review log in promotion record; `evaluated` status | @winston |
 | `accepted` | Architecture Board decision | ADR-* reference in promotion record; `accepted` status | Architecture Board |
 | `executable` | Full dual-engine governance artifacts | ADR, Native rule, OPA policy, and passing fixtures | Architecture Board |

@@ -31,7 +31,7 @@ Cada promoción requiere una decisión del Architecture Board registrada en un A
 
 | Etapa | Compuerta de Entrada | Evidencia Requerida | Custodio |
 |---|---|---|---|
-| `candidate` | Archivo YAML en `reference/knowledge/intake/` con esquema KI-* válido | Validación de contrato GT-152 pasa | CI |
+| `candidate` | Archivo YAML en `product/research/intake/` con esquema KI-* válido | Validación de contrato GT-152 pasa | CI |
 | `evaluated` | Revisión completada por @winston | Registro de revisión fechado en el registro de promoción; estado `evaluated` | @winston |
 | `accepted` | Decisión del Architecture Board | Referencia ADR-* en el registro de promoción; estado `accepted` | Architecture Board |
 | `executable` | Artefactos de gobernanza dual-engine completos | ADR, regla Native, política OPA y fixtures pasando | Architecture Board |

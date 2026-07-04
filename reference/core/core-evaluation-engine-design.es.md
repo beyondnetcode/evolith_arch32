@@ -83,7 +83,7 @@ El diseño previo (`reference/core/product-initiative-governance-redesign.md`, c
 
 > **Evolith Core es un Core Evaluation Engine STATELESS: el núcleo normativo, arquitectónico y evaluador que recibe un `EvaluationContext`, lo evalúa contra DEFINICIONES/ESTÁNDARES versionados (fases, gates, artefactos, blueprints, topologías, rulesets, policies OPA) y devuelve un `EvaluationResult` estructurado — sin poseer ni persistir jamás productos, tenants, iniciativas ni datos de ejecución.**
 
-- **Stateless respecto al negocio**: cero persistencia de producto/tenant/iniciativa/evidencia/decisión/estado operativo. La única "persistencia" del Core son **definiciones/estándares versionados** (`rulesets/`, `reference/architecture/blueprints/`, `reference/governance/sdlc/`, `IBlueprintRepository`).
+- **Stateless respecto al negocio**: cero persistencia de producto/tenant/iniciativa/evidencia/decisión/estado operativo. La única "persistencia" del Core son **definiciones/estándares versionados** (`rulesets/`, `reference/core/architecture/blueprints/`, `reference/core/sdlc/`, `IBlueprintRepository`).
 - **Modelo de interacción**: `EvaluationContext` (entrada) → 13 engines/registries → `EvaluationResult` (salida). El Core nunca llama de vuelta para mutar.
 - **Producto/tenant/iniciativa = solo contexto**: `tenant_id`/`product_id`/`initiative_id`/`initiative_group_id`/`phase_id`/`gate_id`/`artifact_id` son **identificadores de contexto opacos**, nunca entidades propias (patrón `workspace-reference-resolver.service.ts:9-11`, `gate-evidence.ts:87-89`).
 - **Evaluación ≠ decisión**: el Core emite verdicts técnicos, `RiskFinding`, `GapFinding`, `RequiredAction` y `DecisionRecommendation` (no vinculante). La **decisión canónica** la toma y persiste el Tracker (`sdlc-tracker-technical-interfaces.md:30` *"Tracker decides and audits"*).
@@ -97,7 +97,7 @@ El diseño previo (`reference/core/product-initiative-governance-redesign.md`, c
 | Responsabilidad | Evolith Core | Evolith Tracker | Sistemas externos (Jira/ADO/GitHub) |
 |---|---|---|---|
 | Definir estándares (fases SDLC, gates, artefactos, evidencias aceptables, blueprints, topologías, rulesets, policies OPA, taxonomías) | **Dueño** (fuente de verdad; versiona definiciones) | Consume snapshot versionado | — |
-| Persistir definiciones/estándares versionados | **Sí** (`rulesets/`, `reference/architecture/blueprints/`, `reference/governance/sdlc/`, `IBlueprintRepository`) | Referencia por `rulesetRef`/`schemaVersion` | — |
+| Persistir definiciones/estándares versionados | **Sí** (`rulesets/`, `reference/core/architecture/blueprints/`, `reference/core/sdlc/`, `IBlueprintRepository`) | Referencia por `rulesetRef`/`schemaVersion` | — |
 | Persistir producto / tenant / iniciativa / agrupación | **No** (solo contexto opaco) | **Dueño** (`TENANT→PRODUCT→SDLC_PROCESS`, `sdlc-tracker-technical-interfaces.md:415-428`) | Espejo operativo parcial |
 | Persistir épicas / historias / tareas / sprints / backlogs / tableros | **No** | Referencia vía `ExternalReference` | **Dueño** (estado operativo nativo) |
 | Persistir evidencia / fases ejecutadas / gates ejecutados | **No** (recibe `EvidenceContext`/`CheckpointContext`) | **Dueño** (Evidence Graph, Phase Execution) | Producen artefactos/commits/pipelines |
@@ -166,7 +166,7 @@ flowchart LR
 | 10 | **Compliance Evaluation Engine** | Agregar todos los sub-resultados en un veredicto de cumplimiento ponderado | todos los sub-resultados | `ComplianceResult` | `summary` de `satellite-evaluation-pipeline.service.ts:69-76` |
 | 11 | **Recommendation Engine** | Derivar recomendaciones y `DecisionRecommendation` no vinculante | findings, gaps, risks | `Recommendation[]`, `DecisionRecommendation` | `remediationFor()` (`pipeline:103-111`); `propose-phase-advance.use-case.ts` |
 | 12 | **Contract Schema Registry** | Servir/validar schemas de contratos de evaluación (versionados) | `schemaRef`, `schemaVersion` | schema resolution / validación | `rulesets/schema/` (`gate-evidence.schema.json`, `output-envelope.schema.json`) |
-| 13 | **Standard Catalog Registry** | Servir definiciones canónicas: fases, gates, blueprints, topologías | `phase_id`, `gate_id`, `blueprintRef`, `topology` | definiciones resueltas (read-only) | `sdlc-data-loader.service.ts` (GT-280); `reference/governance/sdlc/`; `reference/architecture/blueprints/` |
+| 13 | **Standard Catalog Registry** | Servir definiciones canónicas: fases, gates, blueprints, topologías | `phase_id`, `gate_id`, `blueprintRef`, `topology` | definiciones resueltas (read-only) | `sdlc-data-loader.service.ts` (GT-280); `reference/core/sdlc/`; `reference/core/architecture/blueprints/` |
 
 ---
 
@@ -493,7 +493,7 @@ export interface EvaluationResult {
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts` (`:55` precedente "requires tracker data")
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/ports/blueprint-repository.port.ts` (único repo = definición)
 - `/Users/beyondnet/Source/evolith/apps/core-api/src/application/services/workspace-reference-resolver.service.ts` (`:9-11` aislamiento)
-- `/Users/beyondnet/Source/evolith/reference/products/evolith-tracker/sdlc-tracker-technical-interfaces.md` (`:30`, `:340-360`, `:415-428` modelo Tracker)
+- `/Users/beyondnet/Source/evolith/product/products/evolith-tracker/sdlc-tracker-technical-interfaces.md` (`:30`, `:340-360`, `:415-428` modelo Tracker)
 - `/Users/beyondnet/Source/evolith/reference/core/product-initiative-governance-redesign.md` (diseño previo a corregir; violaciones en `:1225-1521`)
 
 
@@ -935,8 +935,8 @@ sequenceDiagram
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/use-cases/validate-blueprint.use-case.ts`, `propose-phase-advance.use-case.ts`
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts` (`:55` "requires tracker data")
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/ports/blueprint-repository.port.ts` (único repo = definición)
-- `/Users/beyondnet/Source/evolith/reference/products/core-api/api-reference.md` (`:189-254` endpoints actuales; `:212` transition legacy)
-- `/Users/beyondnet/Source/evolith/reference/products/evolith-tracker/sdlc-tracker-technical-interfaces.md` (`:30-31` invariantes externos/decisión, `:179-204` GateDecision, `:224-262` secuencia de decisión, `:340-360` `EvaluateCriterionRequest`, `:381` transition provisional)
+- `/Users/beyondnet/Source/evolith/product/products/core-api/api-reference.md` (`:189-254` endpoints actuales; `:212` transition legacy)
+- `/Users/beyondnet/Source/evolith/product/products/evolith-tracker/sdlc-tracker-technical-interfaces.md` (`:30-31` invariantes externos/decisión, `:179-204` GateDecision, `:224-262` secuencia de decisión, `:340-360` `EvaluateCriterionRequest`, `:381` transition provisional)
 
 
 ---
@@ -1290,13 +1290,13 @@ El schema actual (`blueprint.schema.json:1-50`) mezcla DEFINICIÓN (lo que el Co
 
 ---
 
-### 20.3 Cambios a `reference/architecture/blueprints/` y a la resolución del catálogo
+### 20.3 Cambios a `reference/core/architecture/blueprints/` y a la resolución del catálogo
 
 | Hallazgo | Ancla | Cambio D20 |
 |---|---|---|
 | **Deriva de ruta del catálogo de topologías**: el servicio lee de `reference/architecture/topologies` pero el use-case valida contra `rulesets/topologies/<id>/topology.manifest.json` | `topology-catalog.service.ts:34` vs `validate-blueprint.use-case.ts:132-138` | Unificar la fuente de `TopologyDefinition` en el **Standard Catalog Registry** (engine 13). Una sola ruta canónica de manifests; el Blueprint Engine y el Topology Engine deben consultar el mismo registro |
 | `reference-blueprint.md` mezcla **constraints normativos** (pilares §2, ADR matrix §8, NFR §9) con un **perfil de implementación concreto** (NestJS/Kong/Postgres) | `reference-blueprint.md:4,529-535` (ya marca "reference implementation profile … must not be interpreted as universal product mandates") | Reforzar la separación: lo normativo → `BlueprintDefinition`/`ArchitectureDefinition` que el Core evalúa; el perfil concreto (stack) → `ArchitectureContext`/`BlueprintContext` que el producto **envía** y el Core evalúa, no impone |
-| `reference/architecture/blueprints/` tiene topologías de negocio (agentic-ai, data-mesh, edge-computing, event-driven, serverless) como subdirs | `ls` confirmado | Estas son **`TopologyDefinition`/`BlueprintDefinition`** del catálogo del Core (correcto). No tocar su naturaleza; solo asegurar que se sirven vía Standard Catalog Registry y se referencian por `topologyRef`/`blueprintRef` |
+| `reference/core/architecture/blueprints/` tiene topologías de negocio (agentic-ai, data-mesh, edge-computing, event-driven, serverless) como subdirs | `ls` confirmado | Estas son **`TopologyDefinition`/`BlueprintDefinition`** del catálogo del Core (correcto). No tocar su naturaleza; solo asegurar que se sirven vía Standard Catalog Registry y se referencian por `topologyRef`/`blueprintRef` |
 | `metadata.dimension` + `spec.topologyType` + `maturityLevel: F1/F2/F3/cross` ya existen en los manifests | `agentic-ai/topology.manifest.json` (dimension=ai, topologyType=agentic-ai, maturityLevel=cross) | Mapear `TopologyManifest` → `TopologyDefinition` del contrato; el `maturityLevel` (eje progresivo) NO es `phaseId` SDLC — mantener la separación (`topology-catalog.service.ts:4-7`) |
 
 ---
@@ -1401,7 +1401,7 @@ export interface TopologyRecommendationResult {
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/entities/blueprint.ts` — separar `BlueprintDefinition` (inmutable, versionada) del `BlueprintContext` (entrada); remover `state`/`tenantId`/`verdictHistory` de la definición.
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/services/topology-catalog.service.ts` — unificar ruta de manifests con `validate-blueprint.use-case.ts` (deriva `reference/architecture/topologies` vs `rulesets/topologies/`); exponer como Standard Catalog Registry.
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/ports/blueprint-repository.port.ts` — reencuadrar `IBlueprintRepository` como catálogo de `BlueprintDefinition` (read-only), no CRUD de producto.
-- `/Users/beyondnet/Source/evolith/reference/architecture/blueprints/reference-blueprint.md` — reforzar la separación normativo (definición que se evalúa) vs perfil concreto (contexto que el producto envía).
+- `/Users/beyondnet/Source/evolith/reference/core/architecture/blueprints/reference-blueprint.md` — reforzar la separación normativo (definición que se evalúa) vs perfil concreto (contexto que el producto envía).
 
 
 ---
@@ -1418,15 +1418,15 @@ Tabla maestra de drift documental. Cada fila ancla en ruta:linea real, identific
 | D2 | `reference/core/README.md:23-37` ("What Evolith Core Is") | Define el Core por sus dominios de contenido pero **no** por su naturaleza de motor de evaluación stateless con el patrón `EvaluationContext → EvaluationResult`. | **Añadir** un párrafo de cierre en §1: "Operationally, Core behaves as a **stateless Core Evaluation Engine**: a consumer (e.g., Tracker) sends an `EvaluationContext`; Core evaluates it against versioned definitions/standards and returns an `EvaluationResult`. Core's only persistence is **versioned definitions/standards** (rulesets, blueprints, SDLC phases/gates), never business or execution state." |
 | D3 | `reference/core/README.md:120-121` (Invariantes 6-7) | Invariante 6 ("Runtime products preserve evidence and decision lineage") es correcto pero está aislado; falta el invariante simétrico que prohíba al Core persistir. | **Añadir** Invariante 9: "Core is stateless with respect to business and execution: it never persists products, tenants, initiatives, evidence, or decisions — those are context inputs or result outputs, owned and persisted by consuming products." |
 | D4 | `reference/core/product-initiative-governance-redesign.md:144-159` (tabla "Definition of each entity") + `:148-150` ("Owner: Core (state)") + `:1225-1521` (repos, use-cases Register/Open/Record, endpoints POST) | **Núcleo del error.** Declara `Producto`/`Iniciativa`/`Tenant`/`Evidencia`/`DecisionRecord` con `Owner: Core (state)`, repos (`IProductRepository`...), use-cases mutadores y endpoints `POST` de escritura operativa. `:149` "Persists architecture/decisions, not execution"; `:150` "Iniciativa ... currentPhase / status" como atributos del Core. | **Marcar SUPERSEDED en lo de persistencia** (banner de cabecera, no borrar — Regla de migración §7 de la taxonomía): "Status: SUPERSEDED IN PART — la sección de entidades-con-repos y endpoints de escritura (`:144-159`, `:1225-1521`) queda revocada. El Core NO posee ni persiste Producto/Iniciativa/Tenant/Evidencia/Decisión. Sustituido por los contratos de contexto/resultado del Core Evaluation Engine (`ProductContext`, `InitiativeContext`, `EvidenceContext`, `EvaluationResult`, `DecisionRecommendation`). El diagnóstico válido (conflación historia↔evidencia, evaluación≠decisión, externalizar schemas ágiles, dual-engine, multi-tenancy como contexto) se conserva." Cambiar columna `Owner` de toda entidad operativa a **"Tracker (owns + persists) / Core (receives as context only)"**. |
-| D5 | `reference/governance/sdlc/sdlc-evolith-artifact-mapping.md:81` ("Initiative registration") + `:55,73` ("Directives ... PRD" como rol de plataforma) | El texto del Discovery Canvas dice "Initiative registration" sin aclarar **dónde** se registra; sugiere implícitamente que el registro de iniciativa es responsabilidad de la plataforma Core. | **Editar** `:81` a: "Initiative registration **in the Tracker** (Core never registers or persists initiatives); customer pain point and expected value." **Añadir** nota al pie en §1 (tras `:35`): "Evolith Core enters the lifecycle as a **stateless evaluator of definitions/standards**. It never registers, owns, or persists initiatives, products, tenants, or artifacts — those are owned by the Tracker and sent to Core as `EvaluationContext`." |
-| D6 | `reference/governance/sdlc/traceability-model.md:148` (tabla §7) | "Technical Evaluation Result ... Authority: **Stateless evaluator**" — correcto, pero **no nombra** a Core como ese evaluador ni enlaza al contrato `EvaluationResult`. | **Editar** la celda Authority a "Stateless evaluator (**Evolith Core** — emits `EvaluationResult`, never a Gate Decision)". Ya es el doc **más alineado** del corpus (`:152` "A technical evaluation never changes phase state ... Only an authorized Gate Decision may authorize a Phase Transition"); usarlo como **referencia canónica** del límite evaluación≠decisión y enlazarlo desde el README del Core. |
+| D5 | `reference/core/sdlc/sdlc-evolith-artifact-mapping.md:81` ("Initiative registration") + `:55,73` ("Directives ... PRD" como rol de plataforma) | El texto del Discovery Canvas dice "Initiative registration" sin aclarar **dónde** se registra; sugiere implícitamente que el registro de iniciativa es responsabilidad de la plataforma Core. | **Editar** `:81` a: "Initiative registration **in the Tracker** (Core never registers or persists initiatives); customer pain point and expected value." **Añadir** nota al pie en §1 (tras `:35`): "Evolith Core enters the lifecycle as a **stateless evaluator of definitions/standards**. It never registers, owns, or persists initiatives, products, tenants, or artifacts — those are owned by the Tracker and sent to Core as `EvaluationContext`." |
+| D6 | `reference/core/sdlc/traceability-model.md:148` (tabla §7) | "Technical Evaluation Result ... Authority: **Stateless evaluator**" — correcto, pero **no nombra** a Core como ese evaluador ni enlaza al contrato `EvaluationResult`. | **Editar** la celda Authority a "Stateless evaluator (**Evolith Core** — emits `EvaluationResult`, never a Gate Decision)". Ya es el doc **más alineado** del corpus (`:152` "A technical evaluation never changes phase state ... Only an authorized Gate Decision may authorize a Phase Transition"); usarlo como **referencia canónica** del límite evaluación≠decisión y enlazarlo desde el README del Core. |
 
 ### 21.2 Documentos de propagación (prioridad media — ya señalados en el SPINE, listados aquí por completitud documental)
 
 | # | Documento (ruta) | Dependencia incorrecta | Cambio prescrito |
 |---|---|---|---|
-| D7 | `reference/architecture/adrs/core/0100-governance-execution-boundary-product-initiative.md` (+ `.es.md`) | Decisión 1: "Producto/Iniciativa como unidades primarias [con repos del Core]". | Corregir Decisión 1 → "Core stateless evaluator; producto/tenant/iniciativa son SOLO contexto; Tracker los posee/persiste". Estado se mantiene PROPOSED hasta revisión del Board. |
-| D8 | `reference/governance/upstream-proposals/UP-002-product-initiative-governance-model.md` (+ `.es.md`) | Deliverable 2: entidades de dominio Producto/Iniciativa + repos. | Reescribir Deliverable 2 → "Contratos `EvaluationContext`/`EvaluationResult` + contextos opacos; eliminar entidades/repos del Core". |
+| D7 | `reference/core/architecture/adrs/core/0100-governance-execution-boundary-product-initiative.md` (+ `.es.md`) | Decisión 1: "Producto/Iniciativa como unidades primarias [con repos del Core]". | Corregir Decisión 1 → "Core stateless evaluator; producto/tenant/iniciativa son SOLO contexto; Tracker los posee/persiste". Estado se mantiene PROPOSED hasta revisión del Board. |
+| D8 | `reference/core/control-center/opportunities/UP-002-product-initiative-governance-model.md` (+ `.es.md`) | Deliverable 2: entidades de dominio Producto/Iniciativa + repos. | Reescribir Deliverable 2 → "Contratos `EvaluationContext`/`EvaluationResult` + contextos opacos; eliminar entidades/repos del Core". |
 | D9 | `reference/governance/DECISIONS.md` (índice de UP-002) | Entrada de índice describe UP-002 con el modelo de entidades obsoleto. | Actualizar el resumen de la entrada UP-002 al alcance corregido (contratos de contexto/resultado). |
 | D10 | gap **GT-375** (board + catálogo, EN/ES) | Descripción enmarca el trabajo como "entidades de dominio Producto/Iniciativa". | Reencuadrar a "contratos de contexto/resultado del Core Evaluation Engine; sin entidades/persistencia". |
 | D11 | `reference/documentation-taxonomy.md:184` ("Tracker Technical Interfaces → Product-Specific Design") | Correcto, **pero** la taxonomía no contiene aún la regla que distinga Definition/Context/Result (ver §22). | Añadir la entrada taxonómica de §22 a este documento. |
@@ -1441,7 +1441,7 @@ El error de altitud del doc previo fue posible porque **la taxonomía no tenía 
 
 ### 22.1 Nuevo eje taxonómico: Definition vs Context vs Result
 
-Este eje clasifica **modelos/contratos** (no documentos). Vive en `reference/governance/glossary.md` (vocabulario canónico) y se referencia desde `reference/documentation-taxonomy.md` y `reference/core/README.md`.
+Este eje clasifica **modelos/contratos** (no documentos). Vive en `reference/core/sdlc/glossary/glossary.md` (vocabulario canónico) y se referencia desde `reference/documentation-taxonomy.md` y `reference/core/README.md`.
 
 | Clase taxonómica | Quién es dueño | Persiste | Naturaleza | Vocabulario que la nombra | Ejemplos canónicos |
 |---|---|---|---|---|---|
@@ -1455,7 +1455,7 @@ Este eje clasifica **modelos/contratos** (no documentos). Vive en `reference/gov
 
 ### 22.2 Separación de vocabulario Core vs Tracker
 
-Entrada a añadir en `reference/governance/glossary.md` para impedir que el lenguaje operativo del Tracker contamine el Core:
+Entrada a añadir en `reference/core/sdlc/glossary/glossary.md` para impedir que el lenguaje operativo del Tracker contamine el Core:
 
 | Concepto | Léxico del **Core** (normativo/evaluador) | Léxico del **Tracker** (operativo/estado) | Regla de uso |
 |---|---|---|---|
@@ -1470,10 +1470,10 @@ Entrada a añadir en `reference/governance/glossary.md` para impedir que el leng
 | Entrada | Documento destino | Ubicación exacta |
 |---|---|---|
 | Eje **Definition / Context / Result** (tabla 22.1 + regla) | `reference/documentation-taxonomy.md` | Nueva **§2.1 "Model Classes: Definition vs Context vs Result"**, tras la tabla de dominios (`:17-28`); referenciada desde §9 Governance (`:190-192`). |
-| Términos `Definition`, `Context`, `Result`, `Core Evaluation Engine`, `EvaluationContext`, `EvaluationResult`, `DecisionRecommendation` | `reference/governance/glossary.md` | Filas nuevas en la tabla (`:7-19`), con `Usage rule` que cite la prueba decisiva (status/repo/POST = mal clasificado). |
-| Distinción de **vocabulario Core vs Tracker** (tabla 22.2) | `reference/governance/glossary.md` | Subsección "Core vs Tracker lexicon" al final del glosario. |
+| Términos `Definition`, `Context`, `Result`, `Core Evaluation Engine`, `EvaluationContext`, `EvaluationResult`, `DecisionRecommendation` | `reference/core/sdlc/glossary/glossary.md` | Filas nuevas en la tabla (`:7-19`), con `Usage rule` que cite la prueba decisiva (status/repo/POST = mal clasificado). |
+| Distinción de **vocabulario Core vs Tracker** (tabla 22.2) | `reference/core/sdlc/glossary/glossary.md` | Subsección "Core vs Tracker lexicon" al final del glosario. |
 | Refuerzo del límite (Core no posee/persiste) | `reference/core/README.md` | §2 (D1) y nuevo Invariante 9 (D3); enlazar a la taxonomía §2.1. |
-| Anti-patrón "Core persiste entidad de negocio" | `reference/governance/sdlc/traceability-model.md:213-224` (tabla Anti-Patterns) | Fila nueva: "Core persists product/tenant/initiative/decision as own state → Core stops being a stateless evaluator; ownership ambiguity with Tracker." Complementa la fila existente `:219` ("Technical evaluator directly approves a gate"). |
+| Anti-patrón "Core persiste entidad de negocio" | `reference/core/sdlc/traceability-model.md:213-224` (tabla Anti-Patterns) | Fila nueva: "Core persists product/tenant/initiative/decision as own state → Core stops being a stateless evaluator; ownership ambiguity with Tracker." Complementa la fila existente `:219` ("Technical evaluator directly approves a gate"). |
 
 ### 22.4 Recommended classification values — adición
 
@@ -1491,10 +1491,10 @@ Core Result Model          (returned only; e.g., EvaluationResult, DecisionRecom
 
 - `/Users/beyondnet/Source/evolith/reference/core/README.md` (`:41-52` "Is Not"; `:23-37` "Is"; `:114-124` Invariantes; `:47` única mención "task-management platform")
 - `/Users/beyondnet/Source/evolith/reference/governance/README.md` (hub de gobernanza; sin drift propio — actúa como índice)
-- `/Users/beyondnet/Source/evolith/reference/governance/sdlc/sdlc-evolith-artifact-mapping.md` (`:35` overview; `:81` "Initiative registration")
-- `/Users/beyondnet/Source/evolith/reference/governance/sdlc/traceability-model.md` (`:144-152` §7 evaluación≠decisión — doc más alineado; `:213-224` Anti-Patterns)
+- `/Users/beyondnet/Source/evolith/reference/core/sdlc/sdlc-evolith-artifact-mapping.md` (`:35` overview; `:81` "Initiative registration")
+- `/Users/beyondnet/Source/evolith/reference/core/sdlc/traceability-model.md` (`:144-152` §7 evaluación≠decisión — doc más alineado; `:213-224` Anti-Patterns)
 - `/Users/beyondnet/Source/evolith/reference/documentation-taxonomy.md` (`:17-28` dominios; `:141-152` classification values; `:184` Tracker Interfaces)
-- `/Users/beyondnet/Source/evolith/reference/governance/glossary.md` (`:7-19` tabla de términos)
+- `/Users/beyondnet/Source/evolith/reference/core/sdlc/glossary/glossary.md` (`:7-19` tabla de términos)
 - `/Users/beyondnet/Source/evolith/reference/core/product-initiative-governance-redesign.md` (`:144-159` entidades con `Owner: Core (state)`; `:149-150` "Persists ... currentPhase/status"; `:1225-1521` repos/use-cases/endpoints — a marcar SUPERSEDED-in-part)
 
 **Síntesis del cambio:** el corpus no necesita borrados; necesita (1) hacer **explícito** en `core/README.md` lo que estaba implícito (Core no posee/persiste producto·tenant·iniciativa; es evaluador stateless), (2) marcar **SUPERSEDED-in-part** la sección de persistencia del doc previo conservando su diagnóstico válido, (3) corregir el verbo "register/persist" hacia el Tracker en el artifact-mapping, y (4) introducir el **eje taxonómico Definition/Context/Result** + la **separación de vocabulario Core/Tracker** que cierran la puerta a futuros drifts de altitud. El `traceability-model.md` (`:148-152`) ya es la referencia canónica del límite evaluación≠decisión y debe enlazarse desde el README del Core.
@@ -1596,9 +1596,9 @@ Roadmap incremental con **compatibilidad hacia atrás** en cada fase. El backlog
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/sdlc/phase-id.ts` (`PhaseId :14`)
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts` (`:55` "requires tracker data")
 - `/Users/beyondnet/Source/evolith/apps/core-api/src/application/services/workspace-reference-resolver.service.ts` (`:9-11` aislamiento)
-- `/Users/beyondnet/Source/evolith/reference/governance/upstream-proposals/UP-002-product-initiative-governance-model.md` (deliverable 7 `:57-58` con repos a eliminar; AC `:65-74`)
-- `/Users/beyondnet/Source/evolith/reference/governance/standards/vision/gap-reference-catalog.md` (`GT-375 :15-32`, roadmap R0–R5 `:25`)
-- `/Users/beyondnet/Source/evolith/reference/governance/standards/vision/gap-tracking.md` (board; `GT-375` PENDING P0/XL `:16`; máximo actual = GT-375)
+- `/Users/beyondnet/Source/evolith/reference/core/control-center/opportunities/UP-002-product-initiative-governance-model.md` (deliverable 7 `:57-58` con repos a eliminar; AC `:65-74`)
+- `/Users/beyondnet/Source/evolith/reference/core/control-center/gaps/gap-reference-catalog.md` (`GT-375 :15-32`, roadmap R0–R5 `:25`)
+- `/Users/beyondnet/Source/evolith/reference/core/control-center/gaps/gap-tracking.md` (board; `GT-375` PENDING P0/XL `:16`; máximo actual = GT-375)
 - `/Users/beyondnet/Source/evolith/reference/core/product-initiative-governance-redesign.md` (diseño previo; violaciones `:1225-1521` a eliminar)
 
 
@@ -1618,13 +1618,13 @@ Esta sección define EXACTAMENTE qué corregir/superseder en los artefactos ya c
 | idem · **Deliverable 11** `:1322-1380` (integración Tracker) | `:1330` mapea `Producto`↔`PRODUCT` como **entidad espejo del Core**; insertar `INITIATIVE` en el modelo del Core. | Mantener el mapeo conceptual pero invertir la propiedad: el Tracker **posee/persiste** `PRODUCT`/`INITIATIVE`; el Core solo los **recibe como contexto opaco**. Reusar `workspace-reference-resolver.service.ts:9-11`. | **SUPERSEDED parcial** (corregir dirección de propiedad) |
 | idem · **Deliverable 12** `:1398-1551` (contratos/API) | `RegisterProductRequest` `:1410`, `OpenInitiativeRequest` `:1419`, `RecordEvidenceRequest` `:1436`; endpoints `POST /api/v1/products` `:1512`, `/products/:id/initiatives` `:1514`, `/initiatives/:id/external-references` `:1516`, `/initiatives/:id/evidence` `:1517`, `/initiatives/:id/decisions` `:1519`, `/products/:id/advisories` `:1520-1521`; CLI/MCP `product register`/`initiative open`/`evidence record`/`decision record` `:1545-1551`. | **ELIMINAR** todos los endpoints/CLI/MCP de escritura de entidades de negocio. El Core expone únicamente evaluación: `POST /api/v1/evaluate` recibe `EvaluationContext` y devuelve `EvaluationResult` (envelope ADR-0073, REST-only ADR-0074). | **SUPERSEDED** (banner; conservar solo la fila de evaluación stateless `:1518,1523`) |
 | idem · **Deliverable 13** `:1561-1672` (flujos) | Flow 1 "Product creation", Flow 2 "Initiative creation", Flow 5 "Evidence registration" como **operaciones del Core**. | Reescribir como flujos del **Tracker**: el Tracker crea/persiste y luego **envía `EvaluationContext` al Core**; el Core devuelve `EvaluationResult`. El Core nunca crea producto/iniciativa/evidencia. | **SUPERSEDED parcial** (corregir owner de los flujos de escritura) |
-| `reference/architecture/adrs/core/0100-...md` (+`.es.md`) · **Decisión 1** `:27-30` | "Producto and Iniciativa are the primary **governance units**" del Core; "All evidence/validation/decision anchors to `(tenantId → productId → ...)`". | "El Core es un **stateless Evaluation Engine**; producto/tenant/iniciativa son **solo identificadores de contexto opacos**, nunca entidades del Core; el Tracker los **posee y persiste**." | **EDITAR in situ** (ambos PROPOSED) |
+| `reference/core/architecture/adrs/core/0100-...md` (+`.es.md`) · **Decisión 1** `:27-30` | "Producto and Iniciativa are the primary **governance units**" del Core; "All evidence/validation/decision anchors to `(tenantId → productId → ...)`". | "El Core es un **stateless Evaluation Engine**; producto/tenant/iniciativa son **solo identificadores de contexto opacos**, nunca entidades del Core; el Tracker los **posee y persiste**." | **EDITAR in situ** (ambos PROPOSED) |
 | idem · Consecuencia negativa `:61` | "Introduces **nine governance entities** — risk of over-modeling." | Eliminar: no se introducen entidades nuevas; al contrario, se **preserva** la naturaleza stateless y se introducen **contratos** (`EvaluationContext`/`EvaluationResult`), no entidades. | **EDITAR in situ** |
-| `reference/governance/upstream-proposals/UP-002-...md` (+`.es.md`) · **Deliverable 2** `:39-41` | "Introduce `Producto` and `Iniciativa` **entities**; anchor `Evidencia`..."; tres outputs incluyendo `DecisionRecord` (binding). | "Definir **contratos de contexto/resultado** (`EvaluationContext`/`EvaluationResult`); `Producto`/`Iniciativa`/`Evidencia` son `*Context`; el output del Core es `Recommendation`/`DecisionRecommendation` **no vinculante**." | **EDITAR in situ** |
+| `reference/core/control-center/opportunities/UP-002-...md` (+`.es.md`) · **Deliverable 2** `:39-41` | "Introduce `Producto` and `Iniciativa` **entities**; anchor `Evidencia`..."; tres outputs incluyendo `DecisionRecord` (binding). | "Definir **contratos de contexto/resultado** (`EvaluationContext`/`EvaluationResult`); `Producto`/`Iniciativa`/`Evidencia` son `*Context`; el output del Core es `Recommendation`/`DecisionRecommendation` **no vinculante**." | **EDITAR in situ** |
 | idem · **Deliverable 7** `:57-58` | "New ports (`IProductRepository`, `IInitiativeRepository`, `IEvidenceRepository`, `IDecisionRecordRepository`, `IAdvisoryRepository`), use cases (`RegisterProduct`, `OpenInitiative`, `RecordEvidence`, `RecordDecision`, `RequestAdvisory`) ... REST/CLI/MCP surfaces". | **ELIMINAR** ports/use-cases/endpoints de escritura. Único surface: `EvaluationContext`→`/evaluate`→`EvaluationResult`. | **EDITAR in situ** (reescribir deliverable 7) |
 | idem · Acceptance Criteria `:68,74` | "`Producto`/`Iniciativa` **entities** + eight new schemas"; "Tracker consumes `Producto/Iniciativa/Evidencia/ValidationResult` and **emits `DecisionRecord`**". | "Contratos `EvaluationContext`/`EvaluationResult` + schemas de contexto/resultado en `rulesets/schema/`"; "El Core devuelve `DecisionRecommendation` no vinculante; el Tracker decide y persiste." | **EDITAR in situ** |
-| `reference/governance/standards/vision/gap-tracking.md` · **GT-375** `:16,427` (+ `gap-reference-catalog.md`, EN/ES) | "`Producto`/`Iniciativa` as **primary units**; ... advisory capability (`AdvisoryRecord`)." | Nueva descripción (abajo): reencuadre como **contratos de contexto/resultado del Core stateless evaluator**, sin entidades. | **EDITAR descripción** (board + catálogo, EN/ES) |
-| `reference/governance/upstream-proposals/DECISIONS.md` (índice de UP-002) | Indexa UP-002 con el título "Product/Initiative **Governance Model**". | Actualizar el resumen del índice al título corregido (abajo) si se renombra UP-002. | **EDITAR entrada de índice** (alinear con UP-002 corregido) |
+| `reference/core/control-center/gaps/gap-tracking.md` · **GT-375** `:16,427` (+ `gap-reference-catalog.md`, EN/ES) | "`Producto`/`Iniciativa` as **primary units**; ... advisory capability (`AdvisoryRecord`)." | Nueva descripción (abajo): reencuadre como **contratos de contexto/resultado del Core stateless evaluator**, sin entidades. | **EDITAR descripción** (board + catálogo, EN/ES) |
+| `reference/core/control-center/opportunities/DECISIONS.md` (índice de UP-002) | Indexa UP-002 con el título "Product/Initiative **Governance Model**". | Actualizar el resumen del índice al título corregido (abajo) si se renombra UP-002. | **EDITAR entrada de índice** (alinear con UP-002 corregido) |
 
 ---
 
@@ -1684,7 +1684,7 @@ Reemplazar la **Decisión 1** (`:27-30`) por:
   runtime phase state (`sdlc-tracker-technical-interfaces.md:415-428`). It SENDS the
   `EvaluationContext` and CONSUMES the `EvaluationResult`.
 - The Core's only persistence is **versioned definitions/standards** (`rulesets/`,
-  `reference/architecture/blueprints/`, `reference/governance/sdlc/`, `IBlueprintRepository`).
+  `reference/core/architecture/blueprints/`, `reference/core/sdlc/`, `IBlueprintRepository`).
 ```
 
 Corregir además: Decisión 3 `:38` (`DecisionRecord` "binding ... emitted by Tracker") → reformular como "el Core emite `DecisionRecommendation` no vinculante; el `GateDecision` canónico lo decide y persiste el Tracker"; y la consecuencia negativa `:61` (eliminar "nine governance entities — over-modeling").
@@ -1744,11 +1744,11 @@ Mantener invariante: `Cross`/Cross/`P0`/`XL`/`PENDING` (no cambia prioridad/comp
 
 **Archivos a editar (rutas absolutas):**
 - `/Users/beyondnet/Source/evolith/reference/core/product-initiative-governance-redesign.md` (banner + tabla de mapeo; Deliverables 2/4/10/11/12/13) y `.../product-initiative-governance-redesign.es.md`
-- `/Users/beyondnet/Source/evolith/reference/architecture/adrs/core/0100-governance-execution-boundary-product-initiative.md` (Decisión 1, 3; consecuencia `:61`; status) y `.../0100-...es.md`
-- **NUEVO** `/Users/beyondnet/Source/evolith/reference/architecture/adrs/core/0101-core-stateless-evaluation-engine.md` (+`.es.md`)
-- `/Users/beyondnet/Source/evolith/reference/governance/upstream-proposals/UP-002-product-initiative-governance-model.md` (Deliverables 2, 7; AC `:68,74`) y `.../UP-002-...es.md`
-- `/Users/beyondnet/Source/evolith/reference/governance/upstream-proposals/DECISIONS.md` (entrada de índice UP-002)
-- `/Users/beyondnet/Source/evolith/reference/governance/standards/vision/gap-tracking.md` (`:16`, `:427`) y `.es.md`; `.../gap-reference-catalog.md#gt-375` y `.es.md`
+- `/Users/beyondnet/Source/evolith/reference/core/architecture/adrs/core/0100-governance-execution-boundary-product-initiative.md` (Decisión 1, 3; consecuencia `:61`; status) y `.../0100-...es.md`
+- **NUEVO** `/Users/beyondnet/Source/evolith/reference/core/architecture/adrs/core/0101-core-stateless-evaluation-engine.md` (+`.es.md`)
+- `/Users/beyondnet/Source/evolith/reference/core/control-center/opportunities/UP-002-product-initiative-governance-model.md` (Deliverables 2, 7; AC `:68,74`) y `.../UP-002-...es.md`
+- `/Users/beyondnet/Source/evolith/reference/core/control-center/opportunities/DECISIONS.md` (entrada de índice UP-002)
+- `/Users/beyondnet/Source/evolith/reference/core/control-center/gaps/gap-tracking.md` (`:16`, `:427`) y `.es.md`; `.../gap-reference-catalog.md#gt-375` y `.es.md`
 
 
 ---

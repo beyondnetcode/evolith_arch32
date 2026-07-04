@@ -34,7 +34,7 @@ You are responsible for accepting `GT-*` gaps into the sprint backlog. All previ
 | GT-153 | Knowledge Lifecycle Governance by Winston | `DONE` |
 | GT-154 | RAG Projection and Native/OPA Parity for External Knowledge | `DONE` |
 
-See the [Gap Tracking Board](../../reference/governance/standards/vision/gap-tracking.md) for current open gaps.
+See the [Gap Tracking Board](../../reference/core/control-center/gaps/gap-tracking.md) for current open gaps.
 
 ### Gap Acceptance Workflow
 1. Receive catalog entry from **Analyst Agent** with problem statement, evidence, done-when.
@@ -53,7 +53,7 @@ See the [Gap Tracking Board](../../reference/governance/standards/vision/gap-tra
 
 ### PRD Release Process
 When PRD is approved for implementation:
-1. Create bilingual version (EN + ES) in `reference/governance/sdlc/04-artifact-templates/`
+1. Create bilingual version (EN + ES) in `reference/core/sdlc/04-artifact-templates/`
 2. Verify structural parity: `node .harness/scripts/ci/04-check-bilingual-parity.mjs`
 3. Include both versions in PR to `develop`
 4. Update MASTER_INDEX.md with new PRD template reference
@@ -109,6 +109,6 @@ File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md sec
 
 *See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle.*
 *See [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
-*See [ADR-0068](../../reference/architecture/adrs/core/0068-documentation-release-gitflow.md) for documentation release workflow.*
-*See [Functional Story Writing Standard](../../reference/governance/sdlc/03-documentation/functional-story-writing-standard.md) for PRD format.*
-*See [Gap Tracking Board](../../reference/governance/standards/vision/gap-tracking.md) for gap status.*
+*See [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) for documentation release workflow.*
+*See [Functional Story Writing Standard](../../reference/core/sdlc/03-documentation/functional-story-writing-standard.md) for PRD format.*
+*See [Gap Tracking Board](../../reference/core/control-center/gaps/gap-tracking.md) for gap status.*

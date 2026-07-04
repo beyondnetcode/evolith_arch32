@@ -47,22 +47,22 @@ Use this map when you need to decide where to read, edit, add, or audit content 
 | `reference/getting-started/` | C2 | Short role-based reading paths | Improve onboarding paths by role | Add normative decisions without linking authority |
 | `reference/navigation/` | C1 | Global master index and navigation assets | Maintain complete repository routing | Diverge from the root navigation model |
 | `reference/architecture/` | C0 | Architecture hub, ADRs, blueprints, canonical patterns, principles, topology corpus | Add architecture authority, accepted decisions, and reusable patterns | Treat UMS-specific choices as universal without ADR/standard authority |
-| `reference/architecture/adrs/` | C0 | Accepted, proposed, or superseded architectural decision records | Record durable architectural decisions and update inbound links | Hide decisions in planning or report files |
-| `reference/architecture/topologies/` | C1 | Human-readable topology guidance and maturity reports | Maintain topology adoption, operation, evolution, and maturity guidance | Put executable rules here; use `rulesets/topologies/` instead |
+| `reference/core/architecture/adrs/` | C0 | Accepted, proposed, or superseded architectural decision records | Record durable architectural decisions and update inbound links | Hide decisions in planning or report files |
+| `reference/core/architecture/topologies/` | C1 | Human-readable topology guidance and maturity reports | Maintain topology adoption, operation, evolution, and maturity guidance | Put executable rules here; use `rulesets/topologies/` instead |
 | `reference/governance/` | C0 | SDLC, standards, ADR governance, terminology, and onboarding | Maintain governance rules, lifecycle gates, and standards | Create parallel governance under root `docs/` |
-| `reference/product-suite/` | C1 | Portfolio vision, product-suite strategy, positioning, and communications | Align product direction with Core governance | Store product delivery artifacts that belong to a specific product |
-| `reference/products/` | C1 | Internal reference docs for Evolith products such as Core API, Tracker, MCP services, Smart CLI, and UMS reference | Keep product documentation aligned with Core standards | Mix executable source code with reference documentation |
-| `reference/knowledge/` | C2 | Research, PoCs, applied evidence, UMS demo boundary, and architecture intelligence | Capture learning and promote reusable lessons through ADRs/standards | Promote research directly into mandatory policy |
-| `reference/operations/` | C1 | SLOs, runbooks, observability, alerts, load tests, chaos experiments, Grafana, OTel, Tempo | Maintain operational readiness and incident response guidance | Put product-specific runbooks here without reusable scope |
-| `reference/infrastructure/` | C0 | Docker, Helm, Kubernetes, and platform reference assets | Treat as production-risk-bearing infrastructure reference | Leave mutable or dev-only defaults undocumented |
-| `reference/platforms/` | C1 | CI/CD, observability, SCM, and security platform guidance | Keep platform practices consistent across products | Encode executable policy here instead of `rulesets/` or workflows |
+| `product/suite/` | C1 | Portfolio vision, product-suite strategy, positioning, and communications | Align product direction with Core governance | Store product delivery artifacts that belong to a specific product |
+| `product/products/` | C1 | Internal reference docs for Evolith products such as Core API, Tracker, MCP services, Smart CLI, and UMS reference | Keep product documentation aligned with Core standards | Mix executable source code with reference documentation |
+| `product/research/` | C2 | Research, PoCs, applied evidence, UMS demo boundary, and architecture intelligence | Capture learning and promote reusable lessons through ADRs/standards | Promote research directly into mandatory policy |
+| `product/operations/` | C1 | SLOs, runbooks, observability, alerts, load tests, chaos experiments, Grafana, OTel, Tempo | Maintain operational readiness and incident response guidance | Put product-specific runbooks here without reusable scope |
+| `product/infra/` | C0 | Docker, Helm, Kubernetes, and platform reference assets | Treat as production-risk-bearing infrastructure reference | Leave mutable or dev-only defaults undocumented |
+| `product/infra/` | C1 | CI/CD, observability, SCM, and security platform guidance | Keep platform practices consistent across products | Encode executable policy here instead of `rulesets/` or workflows |
 | `reference/quick-access/` | C2 | Shortcut navigation | Link readers to canonical hubs | Duplicate authoritative content |
 
 ## Governance And Reporting Hub
 
 | Path | Criticality | What you find | What to do there | Do not |
 |---|---|---|---|---|
-| `reference/governance/standards/vision/README.md` | C1 | Hub for maturity, gaps, audits, opportunities, evidence, and taxonomy map | Add ordered links to review surfaces | Link reports only from scattered README sections |
+| `reference/core/control-center/README.md` | C1 | Hub for maturity, gaps, audits, opportunities, evidence, and taxonomy map | Add ordered links to review surfaces | Link reports only from scattered README sections |
 | `gap-tracking.md` | C0 | Authoritative ordered backlog of gaps and opportunities | Update priority, status, and ordering only with evidence | Track a gap somewhere else as the source of truth |
 | `gap-reference-catalog.md` | C0 | Detailed problem, evidence, closure criteria, and references per `GT-*` | Add detailed context for new gaps | Put live status here instead of the tracking board |
 | `maturity-assessment.md` | C1 | Consolidated maturity assessment | Update assessment evidence and link deviations to `GT-*` items | Track open gaps directly in the assessment |
@@ -126,13 +126,13 @@ Use this map when you need to decide where to read, edit, add, or audit content 
 | If you are adding... | Put it here | Required checks |
 |---|---|---|
 | A new gap, risk, or opportunity | `gap-tracking.md` and `gap-reference-catalog.md` | Bilingual pair, tracking validator, documentation validator |
-| A maturity or audit navigation surface | `reference/governance/standards/vision/README.md` | Bilingual pair and link validation |
+| A maturity or audit navigation surface | `reference/core/control-center/README.md` | Bilingual pair and link validation |
 | A normative architecture standard | `reference/governance/standards/` or accepted architecture area | Bilingual pair, authoritative references, affected rule updates if enforceable |
-| An architectural decision | `reference/architecture/adrs/` | ADR registry/index updates and inbound link checks |
-| Human-readable topology guidance | `reference/architecture/topologies/` | Topology maturity parity and bilingual guidance |
+| An architectural decision | `reference/core/architecture/adrs/` | ADR registry/index updates and inbound link checks |
+| Human-readable topology guidance | `reference/core/architecture/topologies/` | Topology maturity parity and bilingual guidance |
 | Executable topology policy | `rulesets/topologies/` and matching OPA/native evaluator when required | Dual-engine parity and topology rule validation |
-| Product-specific planning or state | `reference/products/<product>/` | Keep product scope explicit |
-| UMS applied evidence | `reference/knowledge/demo/` | Do not promote as universal without accepted authority |
+| Product-specific planning or state | `product/products/<product>/` | Keep product scope explicit |
+| UMS applied evidence | `product/research/demo/` | Do not promote as universal without accepted authority |
 | Runtime implementation for governance surfaces | `apps/`, `packages/`, `sdk/`, or `tests/` | Build, tests, contracts, and affected docs |
 | Generated or temporary evidence | Existing generated-output location | Reproducible command and no manual edits unless documented |
 

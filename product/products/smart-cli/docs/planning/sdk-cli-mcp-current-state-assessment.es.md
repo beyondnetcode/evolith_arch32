@@ -3,7 +3,7 @@
 > **Estado:** Diagnóstico Histórico Sustituido
 > **Fecha:** 2026-06-06
 > **Referencia:** Evolith Product Vision Master §2.3
-> **Sustituido por:** `reference/governance/standards/vision/gap-tracking.md` (tablero único de seguimiento de gaps)
+> **Sustituido por:** `reference/core/control-center/gaps/gap-tracking.md` (tablero único de seguimiento de gaps)
 > **Excepción Bilingüe:** Las notas de planificación del SDK actualmente no tienen contraparte en ES; el estado bilingüe autoritativo se mantiene en el par de análisis de gaps de visión.
 
 ---
@@ -164,7 +164,7 @@ El `WatcherService` vigila:
 - `evolith.setup.json` — Configuración de Evolith
 
 Detecta cambios en:
-- `reference/architecture/` — Documentos de arquitectura
+- `reference/core/architecture/` — Documentos de arquitectura
 - `docs/` — Documentación
 
 Pero solo registra recomendaciones, no se integra con el protocolo MCP.

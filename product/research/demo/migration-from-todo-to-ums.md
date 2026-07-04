@@ -12,9 +12,9 @@ This record documents the retirement of the former local demo and the adoption o
 |---|---|---|
 | `src/apps/todo-api/`, `src/apps/todo-web/` | Runnable To-Do implementation | Removed; executable reference is maintained in UMS |
 | `src/libs/aop/` and local workspace configuration | Support code for the old local demo | Removed with the obsolete local implementation |
-| `reference/knowledge/demo/functional/` | To-Do vision, glossary, use cases, and domain scope | Removed; use UMS product documentation |
-| `reference/knowledge/demo/project/` | To-Do PRD and backlog | Removed; use the UMS documentation index |
-| `reference/knowledge/demo/technical/` | To-Do verification and bounded-context map | Removed; use UMS architecture portal |
+| `product/research/demo/functional/` | To-Do vision, glossary, use cases, and domain scope | Removed; use UMS product documentation |
+| `product/research/demo/project/` | To-Do PRD and backlog | Removed; use the UMS documentation index |
+| `product/research/demo/technical/` | To-Do verification and bounded-context map | Removed; use UMS architecture portal |
 | Root README, master index, getting-started, onboarding, glossary, and taxonomy | Links and descriptions of a local sandbox | Updated to route to UMS and state the authority boundary |
 | Architecture examples and runtime documentation | Mentions presenting a local sandbox as implementation proof | Updated to identify UMS or runtime-specific patterns appropriately |
 

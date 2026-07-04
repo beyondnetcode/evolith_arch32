@@ -212,14 +212,14 @@ Line 32: `deliverable: "apps/api/src/ and apps/web/src/"`
 
 ## 14. Infrastructure Config
 
-### reference/infrastructure/docker-compose.evolith.yml
+### product/infra/docker-compose.evolith.yml
 - Line 39: `dockerfile: apps/core-api/Dockerfile` -> `src/apps/core-api/Dockerfile`
 - Line 66: `dockerfile: packages/mcp-server/Dockerfile` -> `src/packages/mcp-server/Dockerfile`
 - Line 91: `dockerfile: apps/agent-runtime-api/Dockerfile` -> `src/apps/agent-runtime-api/Dockerfile`
 
 ### Helm values.yaml files
-- reference/infrastructure/helm/evolith-core-api/values.yaml lines 5-6: comment about `apps/core-api/Dockerfile`
-- reference/infrastructure/helm/evolith-mcp/values.yaml line 11: comment about `packages/mcp-server/Dockerfile`
+- product/infra/helm/evolith-core-api/values.yaml lines 5-6: comment about `apps/core-api/Dockerfile`
+- product/infra/helm/evolith-mcp/values.yaml line 11: comment about `packages/mcp-server/Dockerfile`
 
 ---
 
@@ -286,7 +286,7 @@ Approximately 40+ references -- same historical consideration.
 ### gap-closure-evidence.json
 Approximately 300+ references -- machine-generated evidence record, historical.
 
-### reference/infrastructure/helm/README.md and README.es.md
+### product/infra/helm/README.md and README.es.md
 Lines 16, 33, 161: references to apps/core-api, packages/mcp-server, rulesets/
 
 ### AGENTS.md (root)

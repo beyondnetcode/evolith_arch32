@@ -698,8 +698,8 @@ evolith validate --format summary
 ```
 
 **Artefactos de Evidencia:**
-- ADRs en `reference/architecture/adrs/`
-- Estándares en `reference/governance/standards/`
+- ADRs en `reference/core/architecture/adrs/`
+- Estándares en `reference/core/sdlc/standards/`
 - Documento de requisitos
 
 **Requisitos de la Puerta 2:**

@@ -44,11 +44,11 @@ Ver `.harness/scripts/bilingual-terminology-glossary.md` para traducciones EN/ES
 - Perfiles de runtime: línea base agnóstica más addenda específicas de runtime para Node.js, .NET, Android y ecosistemas relacionados
 - Guía de persistencia: específica por runtime; nunca asumir un motor de base de datos sin leer el perfil autoritativo correspondiente
 - Áreas clave:
-  - `reference/architecture/`
-  - `reference/governance/`
+  - `reference/core/architecture/`
+  - `reference/core/sdlc/`
   - `.harness/`
   - `.bmad-core/`
-  - `reference/knowledge/demo/` límite del modelo aplicado UMS y registro de migración
+  - `product/research/demo/` límite del modelo aplicado UMS y registro de migración
 
 ## Convenciones
 - Leer la línea base agnóstica antes de aplicar cualquier guía específica de runtime.
@@ -73,7 +73,7 @@ Este repositorio tiene **dos capas documentales distintas** por diseño:
 | Corpus de Referencia Arquitectónica | `reference/` | Arquitectura / Gobernanza | Línea base normativa, reutilizable y cross-product |
 | Artefactos de Planificación e Implementación | `docs/` | BMAD Method / Equipos | PRDs, épicas, historias, retrospectivas específicas de producto |
 
-Estas dos capas no se solapan. Las decisiones arquitectónicas van en `reference/architecture/adrs/`. Los planes de producto van en `docs/planning-artifacts/`. No crear contenido en `docs/` que deba vivir en `reference/`, ni viceversa.
+Estas dos capas no se solapan. Las decisiones arquitectónicas van en `reference/core/architecture/adrs/`. Los planes de producto van en `docs/planning-artifacts/`. No crear contenido en `docs/` que deba vivir en `reference/`, ni viceversa.
 
 ## Reglas de Agentes
 - Leer `./.harness/rules/global-rules.md` antes de responder o editar.

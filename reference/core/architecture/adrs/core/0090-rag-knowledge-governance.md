@@ -38,7 +38,7 @@ Every embedded chunk MUST carry the following metadata fields. These fields are 
 ```json
 {
   "chunk_id": "sha256-hash-of-source_file+section_heading",
-  "source_file": "reference/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.md",
+  "source_file": "reference/core/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.md",
   "section_heading": "## Decision",
   "adr_id": "0086",
   "gap_ids": ["GT-135"],
@@ -92,7 +92,7 @@ This standard does **not** mandate a specific vector database. All of the follow
 | **Chroma** | Suitable for local development and testing |
 | **Pinecone** | Suitable for managed cloud deployments |
 
-> Implementation teams MUST document their chosen provider in the repository's `reference/knowledge/` profile, not in this ADR.
+> Implementation teams MUST document their chosen provider in the repository's `product/research/` profile, not in this ADR.
 
 ## Consequences
 

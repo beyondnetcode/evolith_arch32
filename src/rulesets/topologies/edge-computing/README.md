@@ -30,10 +30,10 @@ Edge workloads must remain governed by explicit synchronization, security, obser
 
 | Artifact | Role |
 |---|---|
-| [ADR-0079: Multi-Topology Reference Corpus](../../../reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
-| [ADR-0096: Edge Computing Architecture Governance](../../../reference/architecture/adrs/core/0096-edge-computing-architecture-governance.md) | Governs edge-specific architecture constraints. |
+| [ADR-0079: Multi-Topology Reference Corpus](../../../reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
+| [ADR-0096: Edge Computing Architecture Governance](../../../reference/core/architecture/adrs/core/0096-edge-computing-architecture-governance.md) | Governs edge-specific architecture constraints. |
 | [Edge Computing Architecture Rules](./edge-computing.rules.json) | Existing executable compatibility rules. |
-| [Topology Dimensions Model](../../../reference/architecture/topologies/topology-dimensions.md) | Defines composition and compatibility rules. |
+| [Topology Dimensions Model](../../../reference/core/architecture/topologies/topology-dimensions.md) | Defines composition and compatibility rules. |
 
 ## Executable Contract
 
@@ -75,7 +75,7 @@ This profile is technical-only. It does not define ROI, cost model, hardware spe
 
 ## Operational Budgets
 
-This topology declares architectural envelopes for latency, cold-start, and per-execution cost in `spec.operationalBudgets` of [`topology.manifest.json`](./topology.manifest.json). Operators verify satellites against these envelopes following the shared [Operational Budgets Runbook](../../../reference/architecture/topologies/execution/operational-budgets-runbook.md).
+This topology declares architectural envelopes for latency, cold-start, and per-execution cost in `spec.operationalBudgets` of [`topology.manifest.json`](./topology.manifest.json). Operators verify satellites against these envelopes following the shared [Operational Budgets Runbook](../../../reference/core/architecture/topologies/execution/operational-budgets-runbook.md).
 
 ---
 [Back to Topology Hub](../../README.md)

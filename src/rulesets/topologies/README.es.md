@@ -4,7 +4,7 @@
 
 Esta area define el modelo canonico de resolucion de rulesets topologicos para la gobernanza de Evolith Core.
 
-**GT-329:** Las 5 topologias avanzadas (`serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`) han sido reubicadas aqui desde `reference/architecture/topologies/` como su **ubicacion ejecutable canonica**. Las topologias de `progressive-axis` permanecen en `reference/architecture/topologies/progressive-axis/` por razones historicas. La guia topologica legible por humanos vive en `reference/architecture/topologies/`. Esta carpeta contiene las reglas legibles por maquina que consumen CLI, MCP, Service CORE API, CI y futuros resolvers topologicos.
+**GT-329:** Las 5 topologias avanzadas (`serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`) han sido reubicadas aqui desde `reference/core/architecture/topologies/` como su **ubicacion ejecutable canonica**. Las topologias de `progressive-axis` permanecen en `reference/core/architecture/topologies/progressive-axis/` por razones historicas. La guia topologica legible por humanos vive en `reference/core/architecture/topologies/`. Esta carpeta contiene las reglas legibles por maquina que consumen CLI, MCP, Service CORE API, CI y futuros resolvers topologicos.
 
 ## Modelo de Ejecucion
 
@@ -13,7 +13,7 @@ Esta area define el modelo canonico de resolucion de rulesets topologicos para l
 | Schema de manifiesto | `rulesets/schema/topology-manifest.schema.json` | Validar cada `topology.manifest.json`. |
 | Reglas topologicas Native | `spec.artifacts.rulesets[]` declarado por el manifiesto | Ejecutar checks especificos de topologia en el evaluador Native. |
 | Politicas topologicas OPA | `spec.artifacts.opaPolicies[]` declarado por el manifiesto | Ejecutar politicas Rego equivalentes para paridad OPA. |
-| Corpus humano | `reference/architecture/topologies/` | Explicar intencion, restricciones, ADRs y reglas de composicion topologica. |
+| Corpus humano | `reference/core/architecture/topologies/` | Explicar intencion, restricciones, ADRs y reglas de composicion topologica. |
 
 ## Dimensiones Gobernadas
 
@@ -36,7 +36,7 @@ Esta area define el modelo canonico de resolucion de rulesets topologicos para l
 
 ## Estado Actual
 
-La ubicacion de rulesets topologicos esta autorizada. Los perfiles topologicos concretos y sus reglas Native mas OPA se rastrean en el [Tablero de Seguimiento de Gaps](../../reference/governance/standards/vision/gap-tracking.es.md).
+La ubicacion de rulesets topologicos esta autorizada. Los perfiles topologicos concretos y sus reglas Native mas OPA se rastrean en el [Tablero de Seguimiento de Gaps](../../reference/core/control-center/gaps/gap-tracking.es.md).
 
 ---
 [Volver al Hub de Rulesets](../README.es.md)

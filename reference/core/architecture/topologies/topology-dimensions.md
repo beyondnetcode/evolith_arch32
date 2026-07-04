@@ -8,7 +8,7 @@
 **Classification:** Core Architecture Reference  
 **Governing ADR:** [ADR-0079: Multi-Topology Reference Corpus](../adrs/core/0079-multi-topology-reference-corpus.md)
 
-This document defines the dimensional model for the Evolith Core Multi-Topology Reference Corpus. It is the canonical interpretation layer for human-authored topology profiles under `reference/architecture/topologies/` and executable topology rules under `rulesets/topologies/`.
+This document defines the dimensional model for the Evolith Core Multi-Topology Reference Corpus. It is the canonical interpretation layer for human-authored topology profiles under `reference/core/architecture/topologies/` and executable topology rules under `rulesets/topologies/`.
 
 ## 1. Purpose
 
@@ -23,11 +23,11 @@ The dimensional model prevents two failures:
 
 | Dimension | Question Answered | Canonical Topologies | Primary Corpus Path |
 |---|---|---|---|
-| `progressive-axis` | How is the system decomposed and evolved over time? | `modular-monolith`, `distributed-modules`, `microservices` | `reference/architecture/topologies/progressive-axis/` |
-| `execution` | Where and how does code execute? | `serverless`, `edge-computing` | `reference/architecture/topologies/execution/` |
-| `integration` | How do components coordinate and communicate? | `event-driven` | `reference/architecture/topologies/integration/` |
-| `data` | How is analytical and domain data ownership distributed? | `data-mesh` | `reference/architecture/topologies/data/` |
-| `ai` | How are AI agents, model context, and autonomous workflows governed? | `agentic-ai` | `reference/architecture/topologies/ai/` |
+| `progressive-axis` | How is the system decomposed and evolved over time? | `modular-monolith`, `distributed-modules`, `microservices` | `reference/core/architecture/topologies/progressive-axis/` |
+| `execution` | Where and how does code execute? | `serverless`, `edge-computing` | `reference/core/architecture/topologies/execution/` |
+| `integration` | How do components coordinate and communicate? | `event-driven` | `reference/core/architecture/topologies/integration/` |
+| `data` | How is analytical and domain data ownership distributed? | `data-mesh` | `reference/core/architecture/topologies/data/` |
+| `ai` | How are AI agents, model context, and autonomous workflows governed? | `agentic-ai` | `reference/core/architecture/topologies/ai/` |
 
 ## 3. Composition Rule
 

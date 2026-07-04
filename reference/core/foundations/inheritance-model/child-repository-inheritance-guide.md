@@ -54,7 +54,7 @@ When a child repository is initialized from this base, the following corpus is i
 
 | Layer | Inherited Assets | Mutability |
 | :--- | :--- | :--- |
-| **Architecture Decisions** | All ADRs under `reference/architecture/adrs/` | Implicitly adopted; override or mark not-applicable if inapplicable |
+| **Architecture Decisions** | All ADRs under `reference/core/architecture/adrs/` | Implicitly adopted; override or mark not-applicable if inapplicable |
 | **Structural Laws** | Blueprints, agnostic baseline, simplicity checklist | Mandatory; divergence requires documented justification |
 | **Engineering Standards** | Manifesto (SOLID/OWASP), contract testing guide, observability playbook | Mandatory |
 | **Governance Rules** | Repository taxonomy, naming conventions, harness rules R-01–R-18 | Mandatory |
@@ -69,7 +69,7 @@ The following elements are intentionally scoped to this repository. Carry them i
 | Asset | Reason Not Inherited |
 | :--- | :--- |
 | `src/apps/ums-api/` and `src/apps/ums-web/` | Applied reference satellite implementation ([UMS](https://github.com/beyondnetcode/ums)) — not production scaffolding |
-| `reference/knowledge/demo/` | Documentation of the UMS reference model — irrelevant to your product |
+| `product/research/demo/` | Documentation of the UMS reference model — irrelevant to your product |
 | Business glossary, stakeholder maps, product objectives | Must be authored to reflect the actual product domain |
 
 ---
@@ -133,7 +133,7 @@ Local ADRs in child repositories follow the same format as base ADRs, with two a
 
 > **Status:** Accepted
 > **Date:** 2026-05-22
-> **Extends:** [ADR-0015 — Event-Driven Architecture Intra-Domain](https://github.com/beyondnetcode/evolith_arch32/reference/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md)
+> **Extends:** [ADR-0015 — Event-Driven Architecture Intra-Domain](https://github.com/beyondnetcode/evolith_arch32/reference/core/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md)
 
 ## Context
 
@@ -157,7 +157,7 @@ Dead-letter queue `payments.dlq` receives all unacknowledged messages after 3 re
 
 > **Status:** Accepted
 > **Date:** 2026-05-22
-> **Overrides:** [ADR-0030 — API Gateway: Kong vs NestJS](https://github.com/beyondnetcode/evolith_arch32/reference/architecture/adrs/core/0030-two-tier-distributed-gateway-model.md)
+> **Overrides:** [ADR-0030 — API Gateway: Kong vs NestJS](https://github.com/beyondnetcode/evolith_arch32/reference/core/architecture/adrs/core/0030-two-tier-distributed-gateway-model.md)
 
 ## Divergence Justification
 
@@ -201,7 +201,7 @@ Delete content that must not carry over without deliberate adaptation:
 rm -rf src/apps/ums-api
 
 # Remove UMS reference model documentation
-rm -rf reference/knowledge/demo
+rm -rf product/research/demo
 ```
 
 ### Step 3 — Author the mandatory files
@@ -211,7 +211,7 @@ rm -rf reference/knowledge/demo
 | `README.md` | Replace the base README with your product's executive portal. Include a `Upstream Base` link back to this repository. |
 | `MASTER_INDEX.md` | Replace with role-based navigation for your product. |
 | `DECISIONS.md` | Create with the table structure defined in Section 6. Triage every base ADR on the first pass. |
-| `reference/knowledge/domain/` | Author your product's domain documentation: business glossary, bounded context map, stakeholder map, product objectives. |
+| `product/research/domain/` | Author your product's domain documentation: business glossary, bounded context map, stakeholder map, product objectives. |
 
 ### Step 4 — Configure the harness
 

@@ -15,7 +15,7 @@ It has been decided to adopt and enforce the **Enterprise Taxonomy and Repositor
 
 The mandatory key rules are:
 1. **Minimal Root Layout:** The project root must stay small and navigable. Public entry points live at root; deep documentation lives under `reference/`; executable implementation lives under `src/`.
-2. **Reference Corpus:** Architecture, governance, knowledge, operations, and infrastructure artifacts must be grouped under `reference/` using the canonical areas `reference/architecture/`, `reference/governance/`, `reference/knowledge/`, `reference/operations/`, and `reference/infrastructure/`.
+2. **Reference Corpus:** Architecture, governance, knowledge, operations, and infrastructure artifacts must be grouped under `reference/` using the canonical areas `reference/architecture/`, `reference/governance/`, `product/research/`, `product/operations/`, and `product/infra/`.
 3. **Prohibition of Common Folders:** Folders like `utils`, `misc`, or `shared` are not allowed at the global or domain level without a justified business context.
 4. **Source Encapsulation:** Executable applications and libraries must remain under `src/`, keeping build paths independent from the documentation corpus.
 5. **Naming Conventions:** Strict use of `kebab-case` and prefixes to identify artifact types (`app-`, `lib-`).

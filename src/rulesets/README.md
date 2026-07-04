@@ -142,7 +142,7 @@ rulesets/
 
 ---
 
-The canonical topology rule artifact is the file declared by each `topology.manifest.json`. Progressive-axis artifacts are present in **two** locations: the executable copies under [`rulesets/topologies/progressive-axis/`](./topologies/README.md) (`{topology}.rules.json`, plus `.rego`/`.wasm`/`topology.manifest.json` where compiled) and the deep-dive copies under `reference/architecture/topologies/progressive-axis/`. Consumers must resolve the manifest (which names the authoritative file) rather than construct legacy `rulesets/architecture/f*.rules.json` paths.
+The canonical topology rule artifact is the file declared by each `topology.manifest.json`. Progressive-axis artifacts are present in **two** locations: the executable copies under [`rulesets/topologies/progressive-axis/`](./topologies/README.md) (`{topology}.rules.json`, plus `.rego`/`.wasm`/`topology.manifest.json` where compiled) and the deep-dive copies under `reference/core/architecture/topologies/progressive-axis/`. Consumers must resolve the manifest (which names the authoritative file) rather than construct legacy `rulesets/architecture/f*.rules.json` paths.
 
 ## How Rulesets Work
 
@@ -187,7 +187,7 @@ flowchart LR
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | Clone/dev-setup, tests, branch/commit/PR conventions, ruleset/OPA/schema authoring standards | Onboard contributors | Contribution guide | Yes |
 | [AGENTS.md](../AGENTS.md) | Agent rules and conventions | Govern agent contributions | Standard | Yes |
 | [Repository Taxonomy](../reference/governance/standards/repository-taxonomy.md) | What goes where in Evolith | Keep the repository organized | Governance standard | Yes |
-| [Child Repository Inheritance](../reference/governance/standards/onboarding/child-repository-inheritance-guide.md) | How products inherit from Evolith | Standardize inheritance | Guide | Yes |
+| [Child Repository Inheritance](../reference/core/foundations/inheritance-model/child-repository-inheritance-guide.md) | How products inherit from Evolith | Standardize inheritance | Guide | Yes |
 | [Navigation Hub](../reference/navigation/README.md) | Full repository navigation | Centralize navigation | Navigation hub | No |
 
 ---

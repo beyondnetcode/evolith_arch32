@@ -44,7 +44,7 @@ Service Level Objectives for Evolith Core API services. These SLOs define the re
 
 ## Alerting Integration
 
-Alerts are defined in `reference/operations/alerts/prometheus-alerts.yml`. Key alerts:
+Alerts are defined in `product/operations/alerts/prometheus-alerts.yml`. Key alerts:
 
 - `HighErrorRate` — triggers when 5xx rate exceeds 1% for 5 minutes
 - `HighLatency` — triggers when p99 exceeds 500ms for 5 minutes

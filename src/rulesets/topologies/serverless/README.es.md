@@ -30,10 +30,10 @@ Serverless no reemplaza la arquitectura de dominio. Se compone con `modular-mono
 
 | Artefacto | Rol |
 |---|---|
-| [ADR-0079: Corpus de Referencia Multi-Topologia](../../../reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Gobierna los manifiestos de topologia y composicion. |
-| [ADR-0095: Gobernanza de Arquitectura Serverless](../../../reference/architecture/adrs/core/0095-serverless-architecture-governance.md) | Gobierna las restricciones arquitectonicas especificas de serverless. |
+| [ADR-0079: Corpus de Referencia Multi-Topologia](../../../reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Gobierna los manifiestos de topologia y composicion. |
+| [ADR-0095: Gobernanza de Arquitectura Serverless](../../../reference/core/architecture/adrs/core/0095-serverless-architecture-governance.md) | Gobierna las restricciones arquitectonicas especificas de serverless. |
 | [Reglas de Arquitectura Serverless](./serverless.rules.json) | Reglas de compatibilidad ejecutables existentes. |
-| [Modelo de Dimensiones de Topologia](../../../reference/architecture/topologies/topology-dimensions.md) | Define reglas de composicion y compatibilidad. |
+| [Modelo de Dimensiones de Topologia](../../../reference/core/architecture/topologies/topology-dimensions.md) | Define reglas de composicion y compatibilidad. |
 
 ## Contrato Ejecutable
 
@@ -68,7 +68,7 @@ Este perfil es solo tecnico. No define ROI, modelo de costos, gasto cloud, staff
 
 ## Presupuestos Operativos
 
-Esta topología declara envelopes arquitectónicos de latencia, cold-start y costo por ejecución en `spec.operationalBudgets` de [`topology.manifest.json`](./topology.manifest.json). Los operadores verifican los satélites contra estos envelopes siguiendo el [Runbook de Presupuestos Operativos](../../../reference/architecture/topologies/execution/operational-budgets-runbook.es.md) compartido.
+Esta topología declara envelopes arquitectónicos de latencia, cold-start y costo por ejecución en `spec.operationalBudgets` de [`topology.manifest.json`](./topology.manifest.json). Los operadores verifican los satélites contra estos envelopes siguiendo el [Runbook de Presupuestos Operativos](../../../reference/core/architecture/topologies/execution/operational-budgets-runbook.es.md) compartido.
 
 ---
 [Volver al Hub de Topologias](../../README.es.md)

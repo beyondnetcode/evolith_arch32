@@ -90,7 +90,7 @@ La decisión aplica a todos los repositorios de productos .NET en el ecosistema 
 
 ## Referencias
 
-- Stack Audit: `reference/governance/standards/engineering/detailed-stack-audit-2026.es.md` (ALERTA ROJA 2)
+- Stack Audit: `reference/core/foundations/common-rules/detailed-stack-audit-2026.es.md` (ALERTA ROJA 2)
 - Seguimiento de gaps: [GT-111](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-111)
 - ADR-0015: [Arquitectura Orientada a Eventos (Intra-Dominio)](./0015-event-driven-architecture-intra-domain.md)
 - ADR-0036: [Estrategia de Entrega de Mensajes y Cartas Muertas](./0036-message-bus-delivery-strategy-fifo-dlq.md)

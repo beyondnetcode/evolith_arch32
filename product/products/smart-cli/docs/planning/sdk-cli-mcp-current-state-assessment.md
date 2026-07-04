@@ -3,7 +3,7 @@
 > **Status:** Superseded Historical Diagnostic
 > **Date:** 2026-06-06
 > **Reference:** Evolith Product Vision Master §2.3
-> **Superseded By:** `reference/governance/standards/vision/gap-tracking.md` (single gap tracking board)
+> **Superseded By:** `reference/core/control-center/gaps/gap-tracking.md` (single gap tracking board)
 > **Bilingual Exception:** SDK planning notes currently have no ES counterpart; authoritative bilingual status is maintained in the vision gap analysis pair.
 
 ---
@@ -164,7 +164,7 @@ The `WatcherService` watches:
 - `evolith.setup.json` - Evolith setup config
 
 Detects changes in:
-- `reference/architecture/` - Architecture documents
+- `reference/core/architecture/` - Architecture documents
 - `docs/` - Documentation
 
 But only logs recommendations, doesn't integrate with MCP protocol.

@@ -11,13 +11,13 @@ Mapea épicos, historias y requisitos a ADRs, reglas de gobernanza y artefactos 
 | ID | `requirements-traceability-mapper` |
 | Propietario | `@analyst` |
 | Versión | `1.0.0` |
-| Entradas | Archivos de épicos/historias, índice de ADRs (`reference/architecture/adrs/`), reglas de gobernanza (`reference/governance/standards/`) |
+| Entradas | Archivos de épicos/historias, índice de ADRs (`reference/core/architecture/adrs/`), reglas de gobernanza (`reference/governance/standards/`) |
 | Salidas | Matriz de trazabilidad (JSON) |
 
 ## Algoritmo
 
 1. **Escanear épicos/historias** — Parsear archivos markdown en `docs/planning-artifacts/` para IDs de historias, criterios de aceptación y referencias vinculadas.
-2. **Escanear ADRs** — Parsear `reference/architecture/adrs/core/` para números de ADR, títulos y estado.
+2. **Escanear ADRs** — Parsear `reference/core/architecture/adrs/core/` para números de ADR, títulos y estado.
 3. **Escanear reglas** — Parsear estándares de gobernanza para IDs de reglas y su alcance.
 4. **Construir mapeos** — Para cada historia, detectar enlaces explícitos a ADRs (`ADR-NNNN`) y reglas (`R-NN`).
 5. **Detectar huérfanos** — Marcar historias sin enlace ADR, sin enlace de regla o sin referencia de prueba.

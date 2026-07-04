@@ -30,10 +30,10 @@ Serverless does not replace domain architecture. It composes with `modular-monol
 
 | Artifact | Role |
 |---|---|
-| [ADR-0079: Multi-Topology Reference Corpus](../../../reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
-| [ADR-0095: Serverless Architecture Governance](../../../reference/architecture/adrs/core/0095-serverless-architecture-governance.md) | Governs serverless-specific architecture constraints. |
+| [ADR-0079: Multi-Topology Reference Corpus](../../../reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
+| [ADR-0095: Serverless Architecture Governance](../../../reference/core/architecture/adrs/core/0095-serverless-architecture-governance.md) | Governs serverless-specific architecture constraints. |
 | [Serverless Architecture Rules](./serverless.rules.json) | Existing executable compatibility rules. |
-| [Topology Dimensions Model](../../../reference/architecture/topologies/topology-dimensions.md) | Defines composition and compatibility rules. |
+| [Topology Dimensions Model](../../../reference/core/architecture/topologies/topology-dimensions.md) | Defines composition and compatibility rules. |
 
 ## Executable Contract
 
@@ -68,7 +68,7 @@ This profile is technical-only. It does not define ROI, cost model, cloud spend,
 
 ## Operational Budgets
 
-This topology declares architectural envelopes for latency, cold-start, and per-execution cost in `spec.operationalBudgets` of [`topology.manifest.json`](./topology.manifest.json). Operators verify satellites against these envelopes following the shared [Operational Budgets Runbook](../../../reference/architecture/topologies/execution/operational-budgets-runbook.md).
+This topology declares architectural envelopes for latency, cold-start, and per-execution cost in `spec.operationalBudgets` of [`topology.manifest.json`](./topology.manifest.json). Operators verify satellites against these envelopes following the shared [Operational Budgets Runbook](../../../reference/core/architecture/topologies/execution/operational-budgets-runbook.md).
 
 ---
 [Back to Topology Hub](../../README.md)

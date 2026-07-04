@@ -3,11 +3,11 @@ import fs from 'fs';
 import path from 'path';
 
 const ROOT = path.resolve('.');
-const EN_TRACK = path.join(ROOT, 'reference/governance/standards/vision/gap-tracking.md');
-const ES_TRACK = path.join(ROOT, 'reference/governance/standards/vision/gap-tracking.es.md');
-const EN_CATALOG = path.join(ROOT, 'reference/governance/standards/vision/gap-reference-catalog.md');
-const ES_CATALOG = path.join(ROOT, 'reference/governance/standards/vision/gap-reference-catalog.es.md');
-const EVIDENCE = path.join(ROOT, 'reference/governance/standards/vision/gap-closure-evidence.json');
+const EN_TRACK = path.join(ROOT, 'reference/core/control-center/gap-tracking.md');
+const ES_TRACK = path.join(ROOT, 'reference/core/control-center/gap-tracking.es.md');
+const EN_CATALOG = path.join(ROOT, 'reference/core/control-center/gap-reference-catalog.md');
+const ES_CATALOG = path.join(ROOT, 'reference/core/control-center/gap-reference-catalog.es.md');
+const EVIDENCE = path.join(ROOT, 'reference/core/control-center/gap-closure-evidence.json');
 
 function replaceInFile(filePath, search, replace) {
   let content = fs.readFileSync(filePath, 'utf8');

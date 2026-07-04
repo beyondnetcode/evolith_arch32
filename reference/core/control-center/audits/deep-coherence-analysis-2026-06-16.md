@@ -63,7 +63,7 @@
 
 | # | Finding | Files | Impact |
 |---|---------|-------|--------|
-| 23 | **Empty kubernetes/ directory** | `reference/infrastructure/kubernetes/` | Confusion risk |
+| 23 | **Empty kubernetes/ directory** | `product/infra/kubernetes/` | Confusion risk |
 | 24 | **Missing READMEs in infra/** | `docker/`, `helm/`, `kubernetes/` | Documentation gap |
 | 25 | **Missing README in SDLC playbooks** | `01-playbooks/` | Navigation gap |
 | 26 | **Inconsistent BILINGUAL_INDEX nesting** | Deep directories lack indexes | Coverage gap |

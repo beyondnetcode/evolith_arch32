@@ -20,7 +20,7 @@ Ante fallo de politica, procedencia, schema, aprobacion o control de sandbox, de
 
 ## Autoridad
 
-Aplica conjuntamente [ADR-0081](../../../reference/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.es.md), [ADR-0082](../../../reference/architecture/adrs/core/0082-agentic-ai-trust-boundary.es.md) y [ADR-0083](../../../reference/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.es.md). Los controles ejecutables son AAI-R01 a AAI-R07 en el [ruleset](./agentic-ai.rules.json) y la [politica OPA](./agentic-ai.rego).
+Aplica conjuntamente [ADR-0081](../../../reference/core/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.es.md), [ADR-0082](../../../reference/core/architecture/adrs/core/0082-agentic-ai-trust-boundary.es.md) y [ADR-0083](../../../reference/core/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.es.md). Los controles ejecutables son AAI-R01 a AAI-R07 en el [ruleset](./agentic-ai.rules.json) y la [politica OPA](./agentic-ai.rego).
 
 ---
 [Volver al Perfil de IA Agentica](./README.es.md)

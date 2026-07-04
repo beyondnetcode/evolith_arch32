@@ -38,7 +38,7 @@ Cada fragmento embebido DEBE llevar los siguientes campos de metadatos. Estos ca
 ```json
 {
   "chunk_id": "hash-sha256-de-source_file+section_heading",
-  "source_file": "reference/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.md",
+  "source_file": "reference/core/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.md",
   "section_heading": "## Decisión",
   "adr_id": "0086",
   "gap_ids": ["GT-135"],
@@ -92,7 +92,7 @@ Este estándar **no** obliga a una base de datos vectorial específica. Todos lo
 | **Chroma** | Adecuado para desarrollo local y pruebas |
 | **Pinecone** | Adecuado para despliegues en la nube gestionados |
 
-> Los equipos de implementación DEBEN documentar su proveedor elegido en el perfil `reference/knowledge/` del repositorio, no en este ADR.
+> Los equipos de implementación DEBEN documentar su proveedor elegido en el perfil `product/research/` del repositorio, no en este ADR.
 
 ## Consecuencias
 

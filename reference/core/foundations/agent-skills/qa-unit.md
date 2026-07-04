@@ -105,4 +105,4 @@ File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md sec
 *See [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
 *See [Global Rules](../../.harness/rules/global-rules.md) for R-25 Dual-Engine Parity.*
 *See [QA Agent](./qa.md) for the lead E2E / security / OPA parity gate.*
-*See [Gap Tracking Board](../../reference/governance/standards/vision/gap-tracking.md) for gap status.*
+*See [Gap Tracking Board](../../reference/core/control-center/gaps/gap-tracking.md) for gap status.*

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Scans all ADRs in `reference/architecture/adrs/` and reports staleness based on last git modification date. Flags ADRs older than 180 days as `stale` and older than 365 days as `critical`.
+Scans all ADRs in `reference/core/architecture/adrs/` and reports staleness based on last git modification date. Flags ADRs older than 180 days as `stale` and older than 365 days as `critical`.
 
 ## Contract
 
@@ -11,12 +11,12 @@ Scans all ADRs in `reference/architecture/adrs/` and reports staleness based on 
 | ID | `adr-freshness-monitor` |
 | Owner | `@architect` |
 | Version | `1.0.0` |
-| Inputs | `reference/architecture/adrs/` directory |
+| Inputs | `reference/core/architecture/adrs/` directory |
 | Outputs | Freshness report (JSON) |
 
 ## Algorithm
 
-1. **Collect ADR files** — Walk `reference/architecture/adrs/core/` recursively, collecting `NNNN-*.md` files (excluding ES versions, README, and matrix files).
+1. **Collect ADR files** — Walk `reference/core/architecture/adrs/core/` recursively, collecting `NNNN-*.md` files (excluding ES versions, README, and matrix files).
 2. **Get last modified date** — For each ADR, run `git log -1 --format=%ad --date=iso` to get last modification timestamp.
 3. **Classify status** — Apply thresholds:
    - `>365 days` → `critical`
@@ -53,7 +53,7 @@ node .harness/scripts/skills/adr-freshness-monitor.mjs
   },
   "critical": [
     {
-      "file": "reference/architecture/adrs/core/0010-legacy-auth.md",
+      "file": "reference/core/architecture/adrs/core/0010-legacy-auth.md",
       "lastModified": "2025-01-15T10:30:00.000Z",
       "daysSinceModification": 525,
       "status": "critical"

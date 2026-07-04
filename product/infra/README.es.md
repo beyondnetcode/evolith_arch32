@@ -34,17 +34,17 @@ Este directorio contiene la configuración de Docker Compose y la configuración
 
 ```bash
 # Iniciar solo el mínimo de Fase 1
-docker-compose -f reference/infrastructure/docker-compose.yml up -d postgres
+docker-compose -f product/infra/docker-compose.yml up -d postgres
 
 # Opcional: agregar Redis si se necesita caché
-docker-compose -f reference/infrastructure/docker-compose.yml up -d postgres redis
+docker-compose -f product/infra/docker-compose.yml up -d postgres redis
 ```
 
 ## Fase 2+ — Stack Completo
 
 ```bash
 # Iniciar todos los servicios
-docker-compose -f reference/infrastructure/docker-compose.yml up -d
+docker-compose -f product/infra/docker-compose.yml up -d
 ```
 
 ## Verificar Servicios Activos

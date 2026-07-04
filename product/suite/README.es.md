@@ -31,9 +31,9 @@ Las seis áreas, ordenadas de la dirección (visión) al soporte de entrega (com
 
 ## Límites
 
-- Los principios universales pertenecen a [`reference/architecture/`](../architecture/README.es.md).
-- La gobernanza de fases, gates, artefactos, evidencias y roles pertenece a [`reference/governance/sdlc/`](../governance/sdlc/README.es.md).
-- Los diseños internos de productos pertenecen a [`reference/products/`](../products/README.es.md).
-- Las tecnologías y proveedores nombrados pertenecen a [`reference/platforms/`](../platforms/README.es.md).
+- Los principios universales pertenecen a [`reference/core/architecture/`](../architecture/README.es.md).
+- La gobernanza de fases, gates, artefactos, evidencias y roles pertenece a [`reference/core/sdlc/`](../governance/sdlc/README.es.md).
+- Los diseños internos de productos pertenecen a [`product/products/`](../products/README.es.md).
+- Las tecnologías y proveedores nombrados pertenecen a [`product/infra/`](../platforms/README.es.md).
 
 [Volver al Hub de Referencia](../README.es.md)

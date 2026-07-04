@@ -33,7 +33,7 @@ La estrategia de instrumentación completa está definida en el [ADR-0007](../ar
 
 ```bash
 # Desde la raíz del repositorio — inicia OTel, Grafana, Tempo, Loki
-docker-compose -f reference/infrastructure/docker-compose.yml up -d otel-collector grafana tempo loki
+docker-compose -f product/infra/docker-compose.yml up -d otel-collector grafana tempo loki
 
 # Verificar que Grafana es accesible
 open http://localhost:3001   # credenciales por defecto: admin / admin

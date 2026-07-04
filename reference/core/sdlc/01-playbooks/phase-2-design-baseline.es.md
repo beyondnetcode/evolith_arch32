@@ -106,10 +106,10 @@ Los waivers no pueden saltar decisiones sin documentar en subsistemas regulados 
 | `evolith validate --topology distributed-modules` | Validar reglas de topología F2 (DM-R01…DM-R08) |
 | `evolith validate --topology distributed-modules --topology event-driven` | Validar topología compuesta |
 | `evolith drift --level F2` | Detectar deriva de la arquitectura F2 declarada |
-| [distributed-modules.rules.json](../../../../reference/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json) | 8 reglas obligatorias F2 |
-| [ADR-0045](../../../../reference/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.es.md) | Criterios de Extraction Readiness Score |
-| [ADR-0047](../../../../reference/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.es.md) | Framework de progresión F1→F2→F3 |
-| [topology-dimensions.md](../../../../reference/architecture/topologies/topology-dimensions.md) | Dimensiones de topología componibles |
+| [distributed-modules.rules.json](../../../../reference/core/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json) | 8 reglas obligatorias F2 |
+| [ADR-0045](../../../../reference/core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.es.md) | Criterios de Extraction Readiness Score |
+| [ADR-0047](../../../../reference/core/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.es.md) | Framework de progresión F1→F2→F3 |
+| [topology-dimensions.md](../../../../reference/core/architecture/topologies/topology-dimensions.md) | Dimensiones de topología componibles |
 
 ---
 

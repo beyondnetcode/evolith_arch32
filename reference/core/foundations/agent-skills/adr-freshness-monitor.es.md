@@ -2,7 +2,7 @@
 
 ## Propósito
 
-Escanea todos los ADRs en `reference/architecture/adrs/` y reporta obsolescencia basada en la fecha de última modificación git. Marca ADRs con más de 180 días como `stale` y más de 365 días como `critical`.
+Escanea todos los ADRs en `reference/core/architecture/adrs/` y reporta obsolescencia basada en la fecha de última modificación git. Marca ADRs con más de 180 días como `stale` y más de 365 días como `critical`.
 
 ## Contrato
 
@@ -11,12 +11,12 @@ Escanea todos los ADRs en `reference/architecture/adrs/` y reporta obsolescencia
 | ID | `adr-freshness-monitor` |
 | Propietario | `@architect` |
 | Versión | `1.0.0` |
-| Entradas | Directorio `reference/architecture/adrs/` |
+| Entradas | Directorio `reference/core/architecture/adrs/` |
 | Salidas | Reporte de freshness (JSON) |
 
 ## Algoritmo
 
-1. **Collectar archivos ADR** — Recorrer `reference/architecture/adrs/core/` recursivamente, recolectando archivos `NNNN-*.md` (excluyendo versiones ES, README y archivos matrix).
+1. **Collectar archivos ADR** — Recorrer `reference/core/architecture/adrs/core/` recursivamente, recolectando archivos `NNNN-*.md` (excluyendo versiones ES, README y archivos matrix).
 2. **Obtener fecha de última modificación** — Para cada ADR, ejecutar `git log -1 --format=%ad --date=iso` para obtener timestamp de última modificación.
 3. **Clasificar estado** — Aplicar umbrales:
    - `>365 días` → `critical`
@@ -53,7 +53,7 @@ node .harness/scripts/skills/adr-freshness-monitor.mjs
   },
   "critical": [
     {
-      "file": "reference/architecture/adrs/core/0010-legacy-auth.md",
+      "file": "reference/core/architecture/adrs/core/0010-legacy-auth.md",
       "lastModified": "2025-01-15T10:30:00.000Z",
       "daysSinceModification": 525,
       "status": "critical"

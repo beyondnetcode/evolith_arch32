@@ -237,7 +237,7 @@ interface EvolithTool {
 To add a tool to the catalog:
 
 1. Create ADR referencing the tool
-2. Register the gap/feature in `reference/governance/standards/vision/gap-tracking.md` (single tracking board)
+2. Register the gap/feature in `reference/core/control-center/gaps/gap-tracking.md` (single tracking board)
 3. Implement CLI integration if executable
 4. Update this catalog with version constraints
 

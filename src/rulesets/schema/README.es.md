@@ -2,7 +2,7 @@
 
 Definiciones de JSON Schema para validar los artefactos de gobernanza y SDLC de Evolith.
 
-> **Fuente de verdad:** estos schemas son el **contrato autoritativo** de la *estructura* de cada artefacto. Cuando una plantilla Markdown y un schema discrepan sobre campos obligatorios, el schema gana para la validación automática. Las plantillas Markdown bajo `reference/governance/sdlc/04-artifact-templates/` siguen siendo autoritativas para la *guía humana, la intención y la prosa*.
+> **Fuente de verdad:** estos schemas son el **contrato autoritativo** de la *estructura* de cada artefacto. Cuando una plantilla Markdown y un schema discrepan sobre campos obligatorios, el schema gana para la validación automática. Las plantillas Markdown bajo `reference/core/sdlc/04-artifact-templates/` siguen siendo autoritativas para la *guía humana, la intención y la prosa*.
 
 **Conteo:** este directorio contiene **39** archivos `*.schema.json`, agrupados abajo por propósito. Los schemas de *entrada* de las políticas OPA viven aparte en [`../opa/schemas/`](../opa/schemas/) (26 archivos) y se indexan en el [README de OPA](../opa/README.es.md).
 

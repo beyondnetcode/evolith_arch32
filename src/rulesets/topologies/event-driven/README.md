@@ -30,10 +30,10 @@ Event-driven integration is not permission to hide business workflows in infrast
 
 | Artifact | Role |
 |---|---|
-| [ADR-0015: Event-Driven Architecture Intra-Domain](../../../reference/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md) | Governs event-driven coordination within bounded contexts. |
-| [ADR-0079: Multi-Topology Reference Corpus](../../../reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
+| [ADR-0015: Event-Driven Architecture Intra-Domain](../../../reference/core/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md) | Governs event-driven coordination within bounded contexts. |
+| [ADR-0079: Multi-Topology Reference Corpus](../../../reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
 | [Event-Driven Architecture Rules](./event-driven.rules.json) | Existing executable compatibility rules. |
-| [Topology Dimensions Model](../../../reference/architecture/topologies/topology-dimensions.md) | Defines composition and compatibility rules. |
+| [Topology Dimensions Model](../../../reference/core/architecture/topologies/topology-dimensions.md) | Defines composition and compatibility rules. |
 
 ## Executable Contract
 

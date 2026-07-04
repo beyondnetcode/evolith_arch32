@@ -48,15 +48,15 @@ No lifecycle phase should advance based on verbal agreement alone. Each gate req
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
-| [Evolith: Executive Value Proposition](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_value_proposition_executive.pptx) | Executive briefing on strategic value, governance impact, and ROI | Align technology leadership | Presentation (PPTX) | No |
-| [Evolith: UMS Case Study](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_ums_practical_case.pptx) | Success story of a real modular monolith-to-microservices transformation | Demonstrate the applied case | Presentation (PPTX) | No |
-| [Evolith: SDLC Technical Deep-Dive](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx) | Engineering operational guide on phases, Quality Gates, and artifacts | Guide technical operation | Presentation (PPTX) | No |
+| [Evolith: Executive Value Proposition](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/core/sdlc/assets/evolith_value_proposition_executive.pptx) | Executive briefing on strategic value, governance impact, and ROI | Align technology leadership | Presentation (PPTX) | No |
+| [Evolith: UMS Case Study](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/core/sdlc/assets/evolith_ums_practical_case.pptx) | Success story of a real modular monolith-to-microservices transformation | Demonstrate the applied case | Presentation (PPTX) | No |
+| [Evolith: SDLC Technical Deep-Dive](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/core/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx) | Engineering operational guide on phases, Quality Gates, and artifacts | Guide technical operation | Presentation (PPTX) | No |
 
 ### Implementation Workbook
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
-| [Evolith SDLC Implementation Workbook F0](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_implementation_workbook_F0.xlsx) | Integrated workbook for all SDLC phases: templates, role registries, traceability matrices, and orchestration dashboards | Facilitate working sessions with customer teams | Workbook (XLSX) | No |
+| [Evolith SDLC Implementation Workbook F0](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/core/sdlc/assets/evolith_sdlc_implementation_workbook_F0.xlsx) | Integrated workbook for all SDLC phases: templates, role registries, traceability matrices, and orchestration dashboards | Facilitate working sessions with customer teams | Workbook (XLSX) | No |
 
 > The workbook is intended for facilitated working sessions with customer teams. The presentations are intended for executive alignment, the applied UMS case, and technical operating guidance for technology leaders.
 

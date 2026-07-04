@@ -51,7 +51,7 @@ Eres responsable de aceptar gaps `GT-*` en el backlog del sprint. Gaps pendiente
 
 ### Proceso de Liberación del PRD
 Cuando el PRD esté aprobado para implementación:
-1. Crear versión bilingüe (EN + ES) en `reference/governance/sdlc/04-artifact-templates/`
+1. Crear versión bilingüe (EN + ES) en `reference/core/sdlc/04-artifact-templates/`
 2. Verificar paridad estructural: `node .harness/scripts/ci/04-check-bilingual-parity.mjs`
 3. Incluir ambas versiones en el PR a `develop`
 4. Actualizar MASTER_INDEX.md con nueva referencia de plantilla PRD
@@ -109,6 +109,6 @@ Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.e
 
 *Véase [AGENTS.es.md](../AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
 *Véase [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
-*Véase [ADR-0068](../../reference/architecture/adrs/core/0068-documentation-release-gitflow.md) para flujo de liberación de documentación.*
-*Véase [Estándar de Escritura de Historias Funcionales](../../reference/governance/sdlc/03-documentation/functional-story-writing-standard.md) para formato PRD.*
-*Véase [Tablero de Seguimiento de Gaps](../../reference/governance/standards/vision/gap-tracking.es.md) para estado de gaps.*
+*Véase [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) para flujo de liberación de documentación.*
+*Véase [Estándar de Escritura de Historias Funcionales](../../reference/core/sdlc/03-documentation/functional-story-writing-standard.md) para formato PRD.*
+*Véase [Tablero de Seguimiento de Gaps](../../reference/core/control-center/gaps/gap-tracking.es.md) para estado de gaps.*

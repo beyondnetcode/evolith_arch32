@@ -54,8 +54,8 @@ The repository contains architectural artifacts, not a local product application
 1. `README.md` explains the vision and routes common intents.
 2. `reference/getting-started/README.md` offers short paths by role; `MASTER_INDEX.md` is the complete navigation map.
 3. `reference/architecture/README.md` orders the reading of baseline, ADRs, canonical patterns, and UMS evidence.
-4. `reference/governance/glossary.md` controls terminology, including reference to progressive architecture, Evolith, BMAD-METHOD, UMS applied model, ADR, and canonical pattern.
-5. `reference/architecture/adrs/adr-matrix.md` relates needs with controlling decisions.
+4. `reference/core/sdlc/glossary/glossary.md` controls terminology, including reference to progressive architecture, Evolith, BMAD-METHOD, UMS applied model, ADR, and canonical pattern.
+5. `reference/core/architecture/adrs/adr-matrix.md` relates needs with controlling decisions.
 6. Deep documents link to an owner hub or the master index.
 
 ## 4. Documentary Authority Layers
@@ -63,11 +63,11 @@ The repository contains architectural artifacts, not a local product application
 | Layer | Purpose | Canonical Locations | Authority |
 |---|---|---|---|
 | Guidance | Help the reader navigate the corpus | `README.md`, `MASTER_INDEX.md`, `reference/getting-started/` | Navigational |
-| Canonical Reference | Define reusable policy, decision criteria, and accepted trade-offs | `reference/architecture/blueprints/`, `reference/architecture/adrs/`, `reference/governance/` | Normative or decisional depending on document status |
-| Topology Reference Corpus | Define human-readable topology profiles, dimensions, ADR bindings, operating constraints, and adoption guidance for topology families | `reference/architecture/topologies/` | Normative when backed by an accepted ADR or standard; draft until ratified |
+| Canonical Reference | Define reusable policy, decision criteria, and accepted trade-offs | `reference/core/architecture/blueprints/`, `reference/core/architecture/adrs/`, `reference/governance/` | Normative or decisional depending on document status |
+| Topology Reference Corpus | Define human-readable topology profiles, dimensions, ADR bindings, operating constraints, and adoption guidance for topology families | `reference/core/architecture/topologies/` | Normative when backed by an accepted ADR or standard; draft until ratified |
 | Executable Rulesets | Encode architecture policy as machine-readable Native and OPA-governed rules | `rulesets/`, `rulesets/topologies/` | Executable governance |
-| Runtime-Specific Implementation Guide | Materialize accepted decisions for a declared runtime | `reference/architecture/canonical-patterns/`, blueprints, and specific ADRs | Reusable only within the declared runtime scope and ADR |
-| Applied Product Evidence | Demonstrate adoption and specialization in an enterprise product | `reference/knowledge/demo/`, code, and external docs of `beyondnetcode/ums` | Illustrative until promotion to a canonical artifact |
+| Runtime-Specific Implementation Guide | Materialize accepted decisions for a declared runtime | `reference/core/architecture/patterns/`, blueprints, and specific ADRs | Reusable only within the declared runtime scope and ADR |
+| Applied Product Evidence | Demonstrate adoption and specialization in an enterprise product | `product/research/demo/`, code, and external docs of `beyondnetcode/ums` | Illustrative until promotion to a canonical artifact |
 
 Mandatory interpretation rules:
 
@@ -75,7 +75,7 @@ Mandatory interpretation rules:
 - UMS is the official executable applied reference; this repository does not duplicate its product code or setup commands.
 - A UMS learning only becomes reusable authority through an accepted ADR, standard, blueprint, or canonical pattern.
 - The canonical documentary corpus lives in `reference/`; a parallel `docs/` hierarchy should not be created at the root.
-- Human-authored multi-topology guidance lives in `reference/architecture/topologies/`. This path is the canonical corpus for topology profiles and topology-dimension guidance; it is distinct from executable rules, which belong under `rulesets/`.
+- Human-authored multi-topology guidance lives in `reference/core/architecture/topologies/`. This path is the canonical corpus for topology profiles and topology-dimension guidance; it is distinct from executable rules, which belong under `rulesets/`.
 - Executable multi-topology rules live in `rulesets/topologies/`. This path is the canonical location for topology-specific machine-readable rules and must preserve Dual-Engine Parity when a rule has both Native TypeScript and OPA/Rego evaluators.
 
 ## 5. Separation Between Product and Upstream

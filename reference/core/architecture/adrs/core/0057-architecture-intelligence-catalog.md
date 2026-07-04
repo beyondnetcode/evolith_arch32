@@ -17,7 +17,7 @@ Without a controlled catalog, external ideas may be copied directly into the sta
 Evolith adopts an **Architecture Intelligence Catalog** under:
 
 ```text
-reference/knowledge/architecture-intelligence/
+product/research/architecture-intelligence/
 ```
 
 This catalog is used to:

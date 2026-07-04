@@ -600,12 +600,12 @@ This repository is Evolith Core: the authoritative Constitution and Reference Co
 
 | Artifact | Location |
 |---|---|
-| Architectural Directives | `reference/governance/standards/vision/architectural-directives.md` |
-| Strategic Validation and Composition Framework | `reference/governance/standards/vision/evolith-strategic-validation-and-composition-framework.md` |
-| Strategic Comparative Landscape | `reference/governance/standards/vision/evolith-strategic-positioning-comparative-landscape.md` |
-| AI-Assisted Validation Workflow | `reference/governance/standards/vision/evolith-ai-assisted-validation-workflow.md` |
-| Evolutionary Roadmap | `reference/governance/standards/vision/evolutionary-strategy-roadmap.md` |
-| SDLC Artifact Mapping | `reference/governance/sdlc/sdlc-evolith-artifact-mapping.md` |
+| Architectural Directives | `reference/core/sdlc/standards/vision/architectural-directives.md` |
+| Strategic Validation and Composition Framework | `reference/core/sdlc/standards/vision/evolith-strategic-validation-and-composition-framework.md` |
+| Strategic Comparative Landscape | `reference/core/sdlc/standards/vision/evolith-strategic-positioning-comparative-landscape.md` |
+| AI-Assisted Validation Workflow | `reference/core/sdlc/standards/vision/evolith-ai-assisted-validation-workflow.md` |
+| Evolutionary Roadmap | `reference/core/sdlc/standards/vision/evolutionary-strategy-roadmap.md` |
+| SDLC Artifact Mapping | `reference/core/sdlc/sdlc-evolith-artifact-mapping.md` |
 | Rulesets and Schemas | `rulesets/` |
 
 ---

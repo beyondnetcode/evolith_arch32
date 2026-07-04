@@ -46,16 +46,16 @@ Platform Guidance
 
 | Documento Heredado | Clasificación | Destino Canónico | Estado Actual |
 |---|---|---|---|
-| `reference/governance/standards/vision/evolith-product-vision-master.md` | Product Suite Vision | `reference/product-suite/vision/evolith-product-vision-master.md` | Indexed |
-| `.../evolith-product-vision-master.es.md` | Product Suite Vision | `reference/product-suite/vision/evolith-product-vision-master.es.md` | Indexed |
-| `.../evolith-strategic-validation-and-composition-framework.md` | Product Suite Strategy | `reference/product-suite/strategy/strategic-validation-and-composition-framework.md` | Indexed |
-| `.../evolith-strategic-positioning-comparative-landscape.md` | Product Suite Positioning | `reference/product-suite/positioning/strategic-comparative-landscape.md` | Indexed |
-| `.../evolith-ai-assisted-validation-workflow.md` | Product Suite Method | `reference/product-suite/methods/ai-assisted-validation-workflow.md` | Indexed |
+| `reference/governance/standards/vision/evolith-product-vision-master.md` | Product Suite Vision | `product/suite/vision/evolith-product-vision-master.md` | Indexed |
+| `.../evolith-product-vision-master.es.md` | Product Suite Vision | `product/suite/vision/evolith-product-vision-master.es.md` | Indexed |
+| `.../evolith-strategic-validation-and-composition-framework.md` | Product Suite Strategy | `product/suite/strategy/strategic-validation-and-composition-framework.md` | Indexed |
+| `.../evolith-strategic-positioning-comparative-landscape.md` | Product Suite Positioning | `product/suite/positioning/strategic-comparative-landscape.md` | Indexed |
+| `.../evolith-ai-assisted-validation-workflow.md` | Product Suite Method | `product/suite/methods/ai-assisted-validation-workflow.md` | Indexed |
 | `.../evolith-governed-composition-target-design.md` | Mixto; debe dividirse | Arquitectura de Suite + principio Core + diseño Tracker | Classified |
-| `.../evolith-provider-abstraction-plugin-model.md` | Core Architecture Principle | `reference/architecture/principles/provider-abstraction-plugin-model.md` | Indexed |
-| `.../sdlc-tracker-technical-interfaces.md` | Product-Specific Design | `reference/products/evolith-tracker/interfaces/technical-interfaces.md` | Indexed |
-| `reference/governance/sdlc/traceability-model.md` | SDLC Governance Standard | `reference/governance/sdlc/traceability/evidence-graph-model.md` | Classified |
-| `reference/governance/standards/communication/visuals/v01-executive-one-pager.md` | Product Suite Communication | `reference/product-suite/communication/executive-one-pager.md` | Indexed |
+| `.../evolith-provider-abstraction-plugin-model.md` | Core Architecture Principle | `reference/core/foundations/principles/provider-abstraction-plugin-model.md` | Indexed |
+| `.../sdlc-tracker-technical-interfaces.md` | Product-Specific Design | `product/products/evolith-tracker/interfaces/technical-interfaces.md` | Indexed |
+| `reference/core/sdlc/traceability-model.md` | SDLC Governance Standard | `reference/core/sdlc/traceability/evidence-graph-model.md` | Classified |
+| `reference/core/foundations/common-rules/communication/visuals/v01-executive-one-pager.md` | Product Suite Communication | `product/suite/communication/executive-one-pager.md` | Indexed |
 
 El mismo estado aplica a cada par español salvo que se registre explícitamente lo contrario.
 

@@ -34,7 +34,7 @@ La guia topologica es dimensional, orientada por manifiestos y ejecutable median
 
 - Los perfiles topologicos referencian ADRs Core universales; no los duplican.
 - Cada perfil topologico debe proveer un `topology.manifest.json` antes de volverse ejecutable.
-- La guia topologica legible por humanos vive aqui bajo `reference/architecture/topologies/`.
+- La guia topologica legible por humanos vive aqui bajo `reference/core/architecture/topologies/`.
 - Las reglas topologicas ejecutables viven bajo `rulesets/topologies/`.
 - CLI, MCP y Service CORE API permanecen como un solo plano de control; el comportamiento topologico se resuelve mediante manifiestos.
 - Los artefactos topologicos de Core permanecen solo tecnicos. Evolith Tracker posee timing de negocio, ownership, priorizacion, ROI, costo y Funnel 0.

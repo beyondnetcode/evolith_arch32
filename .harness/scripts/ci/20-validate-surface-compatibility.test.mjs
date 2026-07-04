@@ -21,7 +21,7 @@ function setup(matrix, sources) {
     { recursive: true },
   );
   writeFileSync(
-    join(root, 'reference/governance/standards/vision/surface-compatibility.json'),
+    join(root, 'reference/core/control-center/surface-compatibility.json'),
     JSON.stringify(matrix, null, 2),
   );
   for (const [path, content] of Object.entries(sources)) {

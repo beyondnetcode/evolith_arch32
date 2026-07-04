@@ -12,8 +12,8 @@
 
 Todas las operaciones del SDK, CLI y MCP se derivan de los artefactos de Evolith Core:
 - Rulesets en `rulesets/`
-- ADRs en `reference/architecture/adrs/`
-- Estándares en `reference/governance/standards/`
+- ADRs en `reference/core/architecture/adrs/`
+- Estándares en `reference/core/sdlc/standards/`
 - Esquemas en `rulesets/schema/`
 - Plantillas en `.harness/templates/`
 

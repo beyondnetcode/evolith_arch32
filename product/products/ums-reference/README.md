@@ -4,7 +4,7 @@
 
 Welcome to the **User Management System (UMS) Reference** product hub. UMS is the official executable, enterprise-grade applied reference for the Evolith progressive architecture corpus. Unlike Tracker, Smart CLI, MCP Services, and the Core API — which are products *built by* this corpus — UMS is a reference product *consumed by* this corpus: a public, open-source satellite that demonstrates how a satellite project adopts, extends, and specializes Evolith Core rules.
 
-This hub gives UMS the same first-class product structure as the other entries under `reference/products/` so adopters can navigate it without descending into knowledge/demo paths.
+This hub gives UMS the same first-class product structure as the other entries under `product/products/` so adopters can navigate it without descending into knowledge/demo paths.
 
 ---
 

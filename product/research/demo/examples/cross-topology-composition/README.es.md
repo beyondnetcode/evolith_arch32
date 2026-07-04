@@ -33,8 +33,8 @@ Para este ejemplo:
 
 | Verificación | Resultado |
 |---|---|
-| `modular-monolith` está aceptado | Sí — manifiesto en `reference/architecture/topologies/progressive-axis/modular-monolith/topology.manifest.json` |
-| `event-driven` está aceptado | Sí — manifiesto en `reference/architecture/topologies/integration/event-driven/topology.manifest.json` |
+| `modular-monolith` está aceptado | Sí — manifiesto en `reference/core/architecture/topologies/progressive-axis/modular-monolith/topology.manifest.json` |
+| `event-driven` está aceptado | Sí — manifiesto en `reference/core/architecture/topologies/integration/event-driven/topology.manifest.json` |
 | Dimensiones distintas | Sí — `progressive-axis` vs `integration` |
 | `modular-monolith.composableWith` incluye `event-driven` | Sí |
 | `event-driven.composableWith` incluye `modular-monolith` | Sí |
@@ -69,6 +69,6 @@ Si dos perfiles no pueden componer, el validador debe rechazar el ejemplo. Agreg
 
 | Documento | Propósito |
 |---|---|
-| [Topology Dimensions §3 — Regla de Composición](../../../../../reference/architecture/topologies/topology-dimensions.es.md#3-regla-de-composicion) | Regla de composición autoritativa. |
+| [Topology Dimensions §3 — Regla de Composición](../../../../../reference/core/architecture/topologies/topology-dimensions.es.md#3-regla-de-composicion) | Regla de composición autoritativa. |
 | [Esquema de Manifiesto de Topología](../../../../../rulesets/schema/topology-manifest.schema.json) | Define `spec.compatibility.composableWith`. |
 | [Esquema de Composición de Topologías](../../../../../rulesets/schema/topology-composition.schema.json) | Define la forma del manifiesto usado por este ejemplo. |

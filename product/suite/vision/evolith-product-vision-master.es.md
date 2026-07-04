@@ -600,12 +600,12 @@ Este repositorio es Evolith Core: la Constitución autoritativa y Reference Corp
 
 | Artefacto | Ubicación |
 |---|---|
-| Directivas Arquitectónicas | `reference/governance/standards/vision/architectural-directives.es.md` |
-| Framework Estratégico de Validación y Composición | `reference/governance/standards/vision/evolith-strategic-validation-and-composition-framework.es.md` |
-| Panorama Comparativo Estratégico | `reference/governance/standards/vision/evolith-strategic-positioning-comparative-landscape.es.md` |
-| Workflow de Validación Asistida por IA | `reference/governance/standards/vision/evolith-ai-assisted-validation-workflow.es.md` |
-| Roadmap de Estrategia Evolutiva | `reference/governance/standards/vision/evolutionary-strategy-roadmap.es.md` |
-| Mapeo de Artefactos SDLC | `reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md` |
+| Directivas Arquitectónicas | `reference/core/sdlc/standards/vision/architectural-directives.es.md` |
+| Framework Estratégico de Validación y Composición | `reference/core/sdlc/standards/vision/evolith-strategic-validation-and-composition-framework.es.md` |
+| Panorama Comparativo Estratégico | `reference/core/sdlc/standards/vision/evolith-strategic-positioning-comparative-landscape.es.md` |
+| Workflow de Validación Asistida por IA | `reference/core/sdlc/standards/vision/evolith-ai-assisted-validation-workflow.es.md` |
+| Roadmap de Estrategia Evolutiva | `reference/core/sdlc/standards/vision/evolutionary-strategy-roadmap.es.md` |
+| Mapeo de Artefactos SDLC | `reference/core/sdlc/sdlc-evolith-artifact-mapping.es.md` |
 | Rulesets y Schemas | `rulesets/` |
 
 ---

@@ -31,7 +31,7 @@ No adoptes esta topologia para trabajo determinista que un servicio de aplicacio
 
 ## Guia Relacionada
 
-Lee la [guia de seguridad](./security.es.md), [guia de operacion](./operations.es.md) y [guia de evolucion](./evolution.es.md) antes de la adopcion en produccion. [ADR-0081](../../../reference/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.es.md), [ADR-0082](../../../reference/architecture/adrs/core/0082-agentic-ai-trust-boundary.es.md) y [ADR-0083](../../../reference/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.es.md) son autoridad obligatoria.
+Lee la [guia de seguridad](./security.es.md), [guia de operacion](./operations.es.md) y [guia de evolucion](./evolution.es.md) antes de la adopcion en produccion. [ADR-0081](../../../reference/core/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.es.md), [ADR-0082](../../../reference/core/architecture/adrs/core/0082-agentic-ai-trust-boundary.es.md) y [ADR-0083](../../../reference/core/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.es.md) son autoridad obligatoria.
 
 ---
 [Volver al Perfil de IA Agentica](./README.es.md)

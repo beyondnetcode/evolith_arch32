@@ -221,7 +221,7 @@ decision_tree:
   - condition: "la herramienta no está listada y es dependencia de runtime"
     action: "block"
     message: "Las dependencias de runtime requieren aprobación ADR del Architecture Board.
-              Enviar propuesta ADR a reference/architecture/adrs/[runtime]/
+              Enviar propuesta ADR a reference/core/architecture/adrs/[runtime]/
               antes de proceder."
 ```
 

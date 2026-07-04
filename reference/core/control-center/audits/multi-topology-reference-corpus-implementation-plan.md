@@ -21,7 +21,7 @@ The approved direction is:
 1. Keep CLI, MCP, and Service CORE API as a single operational control plane.
 2. Treat each topology as a governed profile declared by a `topology.manifest.json`.
 3. Keep universal ADRs in the existing ADR registry and reference them from topology profiles.
-4. Put human-authored topology documentation under `reference/architecture/topologies/`.
+4. Put human-authored topology documentation under `reference/core/architecture/topologies/`.
 5. Put executable topology rules under `rulesets/topologies/`.
 6. Preserve Dual-Engine Parity: every new topology validation rule requires Native JSON ruleset coverage and matching OPA/Rego coverage.
 7. Do not create a root-level `/topologies/` directory unless a future ADR explicitly changes the root taxonomy.
@@ -62,7 +62,7 @@ Any agent or model working on this change must obey these rules:
 The topology corpus is dimensional. A product can combine profiles from more than one dimension.
 
 ```text
-reference/architecture/topologies/
+reference/core/architecture/topologies/
   README.md
   progressive-axis/
     modular-monolith/
@@ -120,7 +120,7 @@ rulesets/topologies/
 Every topology profile must expose the same artifact families, even if early profiles begin as `Draft` or `Proposed`.
 
 ```text
-reference/architecture/topologies/<dimension>/<topology>/
+reference/core/architecture/topologies/<dimension>/<topology>/
   README.md
   topology.manifest.json
   designs/
@@ -269,7 +269,7 @@ Use this order. Do not skip ahead to implementation before the ADR and schema ex
 1. Write and accept the Multi-Topology ADR.
 2. Update repository taxonomy and taxonomy rules.
 3. Add `topology-manifest.schema.json`.
-4. Create `reference/architecture/topologies/README.md` and `.es.md`.
+4. Create `reference/core/architecture/topologies/README.md` and `.es.md`.
 5. Create `rulesets/topologies/README.md` and `.es.md`.
 6. Create the `progressive-axis` profiles and map F1/F2/F3.
 7. Create draft profiles for serverless, edge, event-driven, data mesh, and agentic AI.
@@ -313,7 +313,7 @@ The Multi-Topology Reference Corpus transition is complete only when:
 
 1. Multi-Topology ADR is accepted.
 2. Topology manifest schema exists and is validated.
-3. `reference/architecture/topologies/` is linked from Architecture Hub and navigation indexes.
+3. `reference/core/architecture/topologies/` is linked from Architecture Hub and navigation indexes.
 4. `rulesets/topologies/` exists and is linked from Rulesets Hub.
 5. Modular monolith is represented as the first topology profile.
 6. F1/F2/F3 compatibility is preserved.

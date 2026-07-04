@@ -19,10 +19,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 > **Correction (2026-06-28, ADR-0101):** originally framed as "Product/Initiative governance model with Core-owned entities". Corrected: the Core is a **stateless evaluator**; product/tenant/initiative are **opaque context only**, never Core entities.
 
 - **Purpose:** Resolve the governance↔execution conflation AND keep the Core stateless. Formalize `EvaluationContext` (input) and `EvaluationResult` (output): consumers (Evolith Tracker) send context, the Core evaluates against versioned definitions/standards and returns structured verdicts/recommendations. Product/tenant/initiative are opaque context identifiers (`ProductContext`/`InitiativeContext`); epics/stories/tasks as `ExternalReferenceContext`; the Core emits non-binding `Recommendation`/`DecisionRecommendation`. The Core never owns/persists product/tenant/initiative/evidence/decision (that is the Tracker's). No write repositories/use-cases/endpoints for business entities.
-- **Evidence:** `reference/core/README.md:47` ("a task-management platform" in "What Evolith Core Is Not", header `:41`) contradicted by `reference/governance/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,223` (Stories/Backlog/Technical Stories **Required**) and `:209` ("story readiness" closes gate F2). `packages/core-domain/src/domain/entities/` has only `blueprint.ts` (no Producto/Iniciativa); `gate-evidence.ts:87-89` (`initiative?: string`, "Never persisted or interpreted"). Boundary precedent already applied: `executive-scorecard-rule.handler.ts:55` ("Sprint throughput requires tracker data").
+- **Evidence:** `reference/core/README.md:47` ("a task-management platform" in "What Evolith Core Is Not", header `:41`) contradicted by `reference/core/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,223` (Stories/Backlog/Technical Stories **Required**) and `:209` ("story readiness" closes gate F2). `packages/core-domain/src/domain/entities/` has only `blueprint.ts` (no Producto/Iniciativa); `gate-evidence.ts:87-89` (`initiative?: string`, "Never persisted or interpreted"). Boundary precedent already applied: `executive-scorecard-rule.handler.ts:55` ("Sprint throughput requires tracker data").
 - **Impact:** Cross-cutting — Core Domain (contracts + engines), Core API (`/evaluate`), Rulesets, OPA, Blueprints, Documentation, Tracker integration.
 - **Risk:** Central risk R-01 — the Core drifting into **owning/persisting operational entities** (the superseded prior design). Mitigated by the stateless contract, an ESLint boundary guard banning `*Repository` for product/initiative/evidence/decision, and ADR-0101 as authority.
-- **Affected files:** `packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts`, `domain/verdict/verdict.ts`, `domain/sdlc/phase-id.ts`, new `rulesets/schema/evaluation-context.schema.json`/`evaluation-result.schema.json`, `rulesets/opa/{phase-gates,dod,multi-tenancy,abac-mcp-tool-access}.rego`, `reference/governance/sdlc/sdlc-evolith-artifact-mapping.md`, `apps/core-api/src/presentation/controllers/evaluation.controller.ts`.
+- **Affected files:** `packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts`, `domain/verdict/verdict.ts`, `domain/sdlc/phase-id.ts`, new `rulesets/schema/evaluation-context.schema.json`/`evaluation-result.schema.json`, `rulesets/opa/{phase-gates,dod,multi-tenancy,abac-mcp-tool-access}.rego`, `reference/core/sdlc/sdlc-evolith-artifact-mapping.md`, `apps/core-api/src/presentation/controllers/evaluation.controller.ts`.
 - **Complexity:** XL
 - **Proposed fix:** Execute the corrected **R0–R5 roadmap** in [Core Evaluation Engine Design](./../../../core/core-evaluation-engine-design.es.md), governed by **ADR-0101** (corrects ADR-0100) / **UP-002**. **Umbrella epic — decomposed into `GT-376` (R0) … `GT-381` (R5).**
 - **Acceptance criteria:**
@@ -590,7 +590,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Unify the two divergent gate sources and execute cited OPA
 
 - **Purpose:** Have a single executable gate source so the rules cited by gates actually run.
-- **Evidence:** `reference/governance/sdlc/gates/gate-f*.json` (cite `.rego`) diverge from `rulesets/phase-gates/phase-gates.rules.json` (what `PhaseGateValidatorService` consumes); cited `.rego` are not executed.
+- **Evidence:** `reference/core/sdlc/gates/gate-f*.json` (cite `.rego`) diverge from `rulesets/phase-gates/phase-gates.rules.json` (what `PhaseGateValidatorService` consumes); cited `.rego` are not executed.
 - **Complexity:** M
 - **Done when:**
   - [x] One canonical gate source consumed by the engine.
@@ -645,7 +645,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Production Dockerfiles for core-api and mcp-server
 
 - **Purpose:** Make the two services deployable by shipping production Dockerfiles that bundle the corpus they read from disk.
-- **Evidence:** Only `sdk/cli/Dockerfile` exists; core-api/mcp-server have reference Dockerfiles under `reference/infrastructure/docker/` but none in their app dirs.
+- **Evidence:** Only `sdk/cli/Dockerfile` exists; core-api/mcp-server have reference Dockerfiles under `product/infra/docker/` but none in their app dirs.
 - **Complexity:** M
 - **Done when:**
   - [x] Dockerfiles in `apps/core-api` and `packages/mcp-server`.
@@ -714,7 +714,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Relocate the 5 advanced topologies to rulesets/topologies
 
 - **Purpose:** Unify topology location so all topologies live under `rulesets/topologies/`.
-- **Evidence:** Progressive-axis topologies live in `rulesets/topologies/`, but serverless/edge/event-driven/data-mesh/agentic-ai live under `reference/architecture/topologies/`.
+- **Evidence:** Progressive-axis topologies live in `rulesets/topologies/`, but serverless/edge/event-driven/data-mesh/agentic-ai live under `reference/core/architecture/topologies/`.
 - **Complexity:** M
 - **Done when:**
   - [x] All topologies under a single canonical location.
@@ -727,7 +727,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Reduce continuity risk from a single human contributor.
 - **Evidence (original):** `git shortlog` showed one human contributor for ~1,475 commits (now ~1,661).
 - **Complexity:** M
-- **Applied fix:** operational continuity risk is mitigated by a codified, runnable agent system — the role-specialized **QA suite** (`.bmad-core/workflows/qa-suite.yaml`) + Winston/BMAD agents + a deep **second-maintainer onboarding playbook** — and, crucially, **per-flow test playbooks** (`reference/governance/sdlc/01-playbooks/e2e-test-playbooks.md`, EN+ES): each surface owns a documented, GREEN dedicated E2E.
+- **Applied fix:** operational continuity risk is mitigated by a codified, runnable agent system — the role-specialized **QA suite** (`.bmad-core/workflows/qa-suite.yaml`) + Winston/BMAD agents + a deep **second-maintainer onboarding playbook** — and, crucially, **per-flow test playbooks** (`reference/core/sdlc/01-playbooks/e2e-test-playbooks.md`, EN+ES): each surface owns a documented, GREEN dedicated E2E.
 - **Correction trail (honesty):** a first closure wrongly claimed "green E2E across all surfaces" — `test`/`test:cov` (full unit/integration) had been run for core-api/mcp-server, NOT their dedicated E2E. That closure was reverted; the real E2E exposed two defects which were then fixed: core-api `app.e2e-spec.ts` was stale NestJS boilerplate (`GET /` → 404) → rewritten to real routes (health/metrics/v1); mcp-server had no E2E config → added one that spawns the live MCP HTTP server. Both wired into CI + the qa-e2e gate.
 - **Evidence (re-verified fresh):** all four dedicated E2E green — Core governance `test:e2e` 13/13, Core-API `test:e2e` 5/5, MCP server `test:e2e` 3/3, Smart-CLI `test:e2e` 175/175.
 - **Residual (explicit, NOT fabricated):** a second HUMAN maintainer is not yet onboarded — an org/people decision outside Core engineering; the operational mitigation + proven cross-surface E2E satisfy the gap's purpose per the owner.
@@ -753,12 +753,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Core API product hub, API reference, and deployment runbook
 
 - **Purpose:** Create a first-class product hub for the Core API parallel to Smart CLI and Tracker so external consumers (Tracker, satellites) have a single source for capabilities, endpoint reference, schema registry, deployment, and runbooks.
-- **Evidence:** `reference/products/` has hubs for `smart-cli/`, `mcp-services/`, `evolith-tracker/`, and `ums-reference/`, but no `core-api/` hub despite ADR-0074/0075 ratifying Core API as a canonical product. Phase 5 zero-downtime playbook assumes traditional services and does not cover stateless NestJS Core API rollout, MCP gateway separation, or API URI versioning rollout (related to GT-159).
+- **Evidence:** `product/products/` has hubs for `smart-cli/`, `mcp-services/`, `evolith-tracker/`, and `ums-reference/`, but no `core-api/` hub despite ADR-0074/0075 ratifying Core API as a canonical product. Phase 5 zero-downtime playbook assumes traditional services and does not cover stateless NestJS Core API rollout, MCP gateway separation, or API URI versioning rollout (related to GT-159).
 - **Complexity:** L
 - **Done when:**
-  - [x] `reference/products/core-api/README.md` (+`.es.md`) is the canonical product hub with version, surface inventory (controllers, modules, schemas), and consumption examples.
-  - [x] `reference/products/core-api/api-reference.md` (+`.es.md`) documents every public endpoint with request/response envelopes and links to OpenAPI.
-  - [x] `reference/governance/sdlc/01-playbooks/core-api-deployment.md` covers zero-downtime, schema migration, and rollback for the Core API specifically.
+  - [x] `product/products/core-api/README.md` (+`.es.md`) is the canonical product hub with version, surface inventory (controllers, modules, schemas), and consumption examples.
+  - [x] `product/products/core-api/api-reference.md` (+`.es.md`) documents every public endpoint with request/response envelopes and links to OpenAPI.
+  - [x] `reference/core/sdlc/01-playbooks/core-api-deployment.md` covers zero-downtime, schema migration, and rollback for the Core API specifically.
 
 
 #### GT-157
@@ -857,7 +857,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Event-driven and data-mesh ruleset richness
 
 - **Purpose:** Bring event-driven and data-mesh rulesets up to the breadth of progressive-axis topologies with explicit, executable rules for event ordering, idempotency contracts, retention, and analytical data lineage.
-- **Evidence:** `reference/architecture/topologies/integration/event-driven/event-driven.rules.json` and `data/data-mesh/data-mesh.rules.json` each declare only three rules — roughly a quarter of the modular-monolith coverage.
+- **Evidence:** `reference/core/architecture/topologies/integration/event-driven/event-driven.rules.json` and `data/data-mesh/data-mesh.rules.json` each declare only three rules — roughly a quarter of the modular-monolith coverage.
 - **Complexity:** M
 - **Done when:**
   - [x] Native rules cover event ordering guarantees, idempotency, schema-evolution discipline (event-driven) and data-product lineage, retention, and consumption contracts (data-mesh).
@@ -870,7 +870,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Concrete SLO and cost budgets for serverless and edge topologies
 
 - **Purpose:** Document executable SLOs, cold-start budgets, and per-execution cost ceilings for serverless and edge topologies so adopters can validate architecture against real production constraints.
-- **Evidence:** `reference/architecture/topologies/execution/serverless/README.md` and `execution/edge-computing/README.md` mention "latency" and "locality" but provide no quantitative targets, cold-start limits, or cost ceilings.
+- **Evidence:** `reference/core/architecture/topologies/execution/serverless/README.md` and `execution/edge-computing/README.md` mention "latency" and "locality" but provide no quantitative targets, cold-start limits, or cost ceilings.
 - **Complexity:** S
 - **Done when:**
   - [x] Each manifest declares SLO/cost budget fields (`latencyBudgetMs`, `coldStartCeilingMs`, `costCeilingPerExecutionCents`).
@@ -883,7 +883,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Missing SDLC phase runbooks for Phases 1, 2, and 4
 
 - **Purpose:** Publish operational runbooks for Phases 1 (Conception), 2 (Design), and 4 (Validation) so every quality gate has a procedural counterpart, not just declarative rules.
-- **Evidence:** `reference/governance/sdlc/01-playbooks/` currently contains only `zero-downtime-release.md` (Phase 5). Gates for Business Sign-Off, Design Baseline, and RC Stamp are defined in `phase-gates.rules.json` but have no playbook.
+- **Evidence:** `reference/core/sdlc/01-playbooks/` currently contains only `zero-downtime-release.md` (Phase 5). Gates for Business Sign-Off, Design Baseline, and RC Stamp are defined in `phase-gates.rules.json` but have no playbook.
 - **Complexity:** M
 - **Done when:**
   - [x] Playbooks for Phases 1, 2, and 4 exist in EN and ES with procedural checklists tied to each gate's mandatory evidence.
@@ -912,7 +912,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `topology-dimensions.md` §3 lists five composition examples but no fixture or sample repository exercises them end-to-end.
 - **Complexity:** L
 - **Done when:**
-  - [x] A reference application (or fixture project) lives under `reference/knowledge/demo/examples/` (or its equivalent) with a composable manifest exercising at least two topologies.
+  - [x] A reference application (or fixture project) lives under `product/research/demo/examples/` (or its equivalent) with a composable manifest exercising at least two topologies.
   - [x] CI runs the topology validator on the example and asserts a passing composition.
   - [x] Documentation walks the reader through the example in EN and ES.
 
@@ -922,7 +922,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Agentic AI operational budgets, credential lifecycle, and runbooks
 
 - **Purpose:** Make the Agentic AI topology operationally complete by defining concrete prompt/context token budgets, MCP tool concurrency limits, satellite credential rotation/revocation, and incident runbooks for common failure modes (agent hang, token overflow, sandbox escape).
-- **Evidence:** `reference/architecture/topologies/ai/agentic-ai/operations.md` mentions "execution timeout and resource budget per capability" without quantitative limits; `README.md` declares `toolPolicy` without concurrency caps or credential lifecycle; no runbook covers token overflow or sandbox escape.
+- **Evidence:** `reference/core/architecture/topologies/ai/agentic-ai/operations.md` mentions "execution timeout and resource budget per capability" without quantitative limits; `README.md` declares `toolPolicy` without concurrency caps or credential lifecycle; no runbook covers token overflow or sandbox escape.
 - **Complexity:** L
 - **Done when:**
   - [x] Manifest fields declare token budgets, context window ceilings, MCP tool concurrency limits, and credential rotation cadence.
@@ -935,10 +935,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** UMS reference product hub
 
 - **Purpose:** Promote the UMS reference materials into a first-class product hub so the reference case has the same product structure as Tracker, Smart CLI, MCP Services, and the Core API hub (GT-156).
-- **Evidence:** UMS materials live across SDLC examples and demo files (`ums-technical-overview.md`, `ums-reference-model.md`) but `reference/products/` has no dedicated hub. Cross-links into UMS are scattered.
+- **Evidence:** UMS materials live across SDLC examples and demo files (`ums-technical-overview.md`, `ums-reference-model.md`) but `product/products/` has no dedicated hub. Cross-links into UMS are scattered.
 - **Complexity:** M
 - **Done when:**
-  - [x] `reference/products/ums-reference/` exists with README, overview, and reference-model in EN and ES.
+  - [x] `product/products/ums-reference/` exists with README, overview, and reference-model in EN and ES.
   - [x] All existing UMS references in SDLC and demo materials point to the hub.
   - [x] Product inventory is regenerated and validated.
 
@@ -1137,7 +1137,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] Live mode upserts deterministic chunk metadata and vectors, records a machine-readable receipt, and fails closed on adapter, embedding, or persistence failure.
   - [x] Index lifecycle covers changed and deleted source files without orphaned vectors, with a fake-adapter test suite and an integration test boundary.
   - [x] Operations guidance documents least-privilege credentials, bounded batch/retry behavior, and cost/token telemetry.
-- **Closure evidence:** Commit `d41bc3a3`. New pure modules `.harness/scripts/ci/rag-port.mjs` (provider-neutral embedding/vector-store port; truthful non-durable `memory` adapter; fail-closed on unknown/incomplete adapter; `registerRagAdapter` for vendors) and `rag-sync.mjs` (deterministic H2 chunking, batched embed+upsert, stale-chunk pruning and deleted-file removal with no orphans, machine-readable receipt with token telemetry). `14-rag-index-sync.mjs` rewired to the port (changed+deleted detection, fail-closed when a live run lacks a durable adapter). `rag-sync.test.mjs` — 9 `node:test` cases. Ops runbook `reference/operations/agentic-ci-rag-support.md` (+`.es.md`) documents provider selection, least-privilege credentials, bounded batch/retry, and cost/token telemetry. The integration boundary is the registered durable adapter (vendor binding intentionally deferred).
+- **Closure evidence:** Commit `d41bc3a3`. New pure modules `.harness/scripts/ci/rag-port.mjs` (provider-neutral embedding/vector-store port; truthful non-durable `memory` adapter; fail-closed on unknown/incomplete adapter; `registerRagAdapter` for vendors) and `rag-sync.mjs` (deterministic H2 chunking, batched embed+upsert, stale-chunk pruning and deleted-file removal with no orphans, machine-readable receipt with token telemetry). `14-rag-index-sync.mjs` rewired to the port (changed+deleted detection, fail-closed when a live run lacks a durable adapter). `rag-sync.test.mjs` — 9 `node:test` cases. Ops runbook `product/operations/agentic-ci-rag-support.md` (+`.es.md`) documents provider selection, least-privilege credentials, bounded batch/retry, and cost/token telemetry. The integration boundary is the registered durable adapter (vendor binding intentionally deferred).
 
 #### GT-146
 
@@ -1171,7 +1171,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Topology-Aware Rule Reference and Coverage Migration Repair
 
 - **Purpose:** Restore a trustworthy, topology-aware coverage report and remove obsolete phase-path references so rule discovery, satellite inheritance, and governance reporting use the canonical topology corpus.
-- **Evidence:** Winston V5 ran the coverage generator; it fails before producing a matrix because it reads the deleted `rulesets/architecture/f1-modular-monolith.rules.json` and `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` still declares the same missing F1/F2/F3 files, while the canonical artifacts live beneath `reference/architecture/topologies/progressive-axis/`.
+- **Evidence:** Winston V5 ran the coverage generator; it fails before producing a matrix because it reads the deleted `rulesets/architecture/f1-modular-monolith.rules.json` and `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` still declares the same missing F1/F2/F3 files, while the canonical artifacts live beneath `reference/core/architecture/topologies/progressive-axis/`.
 - **Done when:**
   - [x] The coverage generator discovers rules from topology manifests rather than hard-coded legacy paths and emits per-topology Native/OPA coverage with source locations.
   - [x] Satellite contracts, documentation, and machine-readable references resolve only to canonical artifacts; an automated reference-resolution test prevents recurrence.
@@ -1471,7 +1471,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Execute declared documentation migrations
 
 - **Goal:** the physical location of every document matches its declared taxonomy classification — no more "migration pending" notes.
-- **Objective:** Execute the migrations the hubs already declare: (1) move suite vision/strategy/positioning documents from the legacy `governance/standards/vision/` path into their `product-suite/` areas; (2) migrate Smart CLI and MCP Services documentation into `reference/products/`; (3) promote [Provider Abstraction and Plugin Model](./evolith-provider-abstraction-plugin-model.md) to a Core architecture principle; (4) move [Tracker Technical Interfaces](./sdlc-tracker-technical-interfaces.md) to the Tracker product design. Each move leaves a compatibility stub at the old path and fixes every inbound link in the same change.
+- **Objective:** Execute the migrations the hubs already declare: (1) move suite vision/strategy/positioning documents from the legacy `governance/standards/vision/` path into their `product-suite/` areas; (2) migrate Smart CLI and MCP Services documentation into `product/products/`; (3) promote [Provider Abstraction and Plugin Model](./evolith-provider-abstraction-plugin-model.md) to a Core architecture principle; (4) move [Tracker Technical Interfaces](./sdlc-tracker-technical-interfaces.md) to the Tracker product design. Each move leaves a compatibility stub at the old path and fixes every inbound link in the same change.
 - **Done when:** no "migration pending / migración pendiente" marker remains in `reference/` or `sdk/`; `validate-docs.mjs` passes.
 - **References:** [Product Suite Hub](../../../product-suite/README.md) · [Product Designs Hub](../../../products/README.md) · [Documentation Taxonomy](../../../documentation-taxonomy.md)
 
@@ -1715,10 +1715,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **Title:** Repair migrated product-vision references
 
-- **Gap:** The Maturity Assessment links to `./evolith-product-vision-master.md`, which is now only a migration stub; the canonical document moved to `reference/product-suite/vision/`. The single maturity surface points to a redirect placeholder.
+- **Gap:** The Maturity Assessment links to `./evolith-product-vision-master.md`, which is now only a migration stub; the canonical document moved to `product/suite/vision/`. The single maturity surface points to a redirect placeholder.
 - **Purpose:** Keep the canonical maturity and vision surfaces pointing at live content so navigation and validation reflect the real document graph.
 - **Done when:** the maturity assessment (EN/ES) and any other Core references resolve to the canonical vision path, and link validation passes with no redirect stubs in the referenced graph.
-- **Closure evidence:** The migration redirect stubs at `reference/governance/standards/vision/evolith-product-vision-master.md` (+`.es.md`) are deleted, and every Core reference now resolves to the canonical `reference/product-suite/vision/` path: the Maturity Assessment (EN/ES), the vision and product-suite/vision READMEs (the latter previously linked back to the stub), the root README, and `rulesets/acl/README` (EN/ES). Deleting the stubs surfaced these otherwise-hidden migrated links, which `validate-docs.mjs` now confirms resolve. The bilingual index was regenerated.
+- **Closure evidence:** The migration redirect stubs at `reference/governance/standards/vision/evolith-product-vision-master.md` (+`.es.md`) are deleted, and every Core reference now resolves to the canonical `product/suite/vision/` path: the Maturity Assessment (EN/ES), the vision and product-suite/vision READMEs (the latter previously linked back to the stub), the root README, and `rulesets/acl/README` (EN/ES). Deleting the stubs surfaced these otherwise-hidden migrated links, which `validate-docs.mjs` now confirms resolve. The bilingual index was regenerated.
 - **Local verification (2026-06-14):** `validate-docs.mjs` passes for 825 files with no broken links, bilingual parity and orphan checks pass, and no stub references remain outside the historical migration ledger. Status: `DONE`.
 - **References:** [Maturity Assessment](./maturity-assessment.md) · [Canonical Vision Master](../../../product-suite/vision/evolith-product-vision-master.md)
 
@@ -2168,7 +2168,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 ### Component CLI — Consolidated from the CLI Backlog
 
-> These items were merged from the superseded CLI backlog (`reference/products/smart-cli/docs/planning/CLI-BACKLOG.md`) into this single formal tracking center. Only its open feature gaps are carried here; the closed `GAP-001..003` and `DONE-*` items remain in that historical document.
+> These items were merged from the superseded CLI backlog (`product/products/smart-cli/docs/planning/CLI-BACKLOG.md`) into this single formal tracking center. Only its open feature gaps are carried here; the closed `GAP-001..003` and `DONE-*` items remain in that historical document.
 
 #### GT-97
 
@@ -2178,7 +2178,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Let an engineer maintain and switch between named profiles without re-authenticating or rewriting config.
 - **Done when:**
   - [x] named profiles can be created, listed, and switched, and commands use the active profile
-- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-004`)
+- **References:** Evolith CLI Backlog `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-004`)
 
 #### GT-98
 
@@ -2188,7 +2188,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Allow commands to be contributed as plugins without forking the CLI.
 - **Done when:**
   - [x] a plugin contract lets external packages register commands discovered at runtime
-- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-005`)
+- **References:** Evolith CLI Backlog `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-005`)
 
 #### GT-100
 
@@ -2199,7 +2199,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Done when:**
   - [x] a command lists and inspects the available operations and their schemas
 - **Closed by:** `sdk/cli/src/commands/api/api.command.ts`, `sdk/cli/src/commands/api/api.command.spec.ts`, `sdk/cli/test/api.e2e-spec.ts`, `sdk/cli/src/app.module.ts`
-- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-007`)
+- **References:** Evolith CLI Backlog `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-007`)
 
 #### GT-101
 
@@ -2210,7 +2210,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Done when:**
   - [x] the CLI detects a newer published version and can self-update or guide the upgrade
 - **Closed by:** `sdk/cli/src/commands/update/update.command.ts`, `sdk/cli/src/app.module.ts`
-- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-008`)
+- **References:** Evolith CLI Backlog `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-008`)
 
 #### GT-102
 
@@ -2229,7 +2229,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="progress"` — unit tests pass
     - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="progress"` — E2E tests pass
   - `dependencyDisposition`: none
-- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-009`)
+- **References:** Evolith CLI Backlog `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-009`)
 
 #### GT-103
 
@@ -2239,7 +2239,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Support deeper, well-grouped subcommand hierarchies.
 - **Done when:**
   - [x] nested subcommands are supported with consistent help and routing
-- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-010`)
+- **References:** Evolith CLI Backlog `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-010`)
 
 #### GT-104
 
@@ -2259,7 +2259,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
     - `pnpm info @evolith/smart-cli` — pnpm compatibility verified
     - `yarn info @evolith/smart-cli` — yarn compatibility verified
   - `dependencyDisposition`: none
-- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-011`)
+- **References:** Evolith CLI Backlog `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-011`)
 
 #### GT-105
 
@@ -2269,7 +2269,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Provide a maintained Docker image for CI and sandboxed use.
 - **Done when:**
   - [x] an official CLI image is built and published by the release pipeline
-- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-012`)
+- **References:** Evolith CLI Backlog `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-012`)
 
 #### GT-106
 
@@ -2279,7 +2279,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Allow user-defined aliases for ergonomics.
 - **Done when:**
   - [x] aliases can be defined, listed, and resolved at invocation
-- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-013`)
+- **References:** Evolith CLI Backlog `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-013`)
 
 #### GT-107
 
@@ -2298,7 +2298,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="wizard"` — unit tests pass
     - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="wizard"` — E2E tests pass
   - `dependencyDisposition`: none
-- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-014`)
+- **References:** Evolith CLI Backlog `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-014`)
 
 #### GT-108
 
@@ -2316,7 +2316,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="fixtures"` — 15 unit tests pass
     - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="fixtures"` — 6 E2E tests pass
   - `dependencyDisposition`: none
-- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-015`)
+- **References:** Evolith CLI Backlog `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-015`)
 
 #### GT-109
 
@@ -2326,11 +2326,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Improve shell integration for status, hooks, and context.
 - **Done when:**
   - [x] shell integration exposes context/status hooks for supported shells
-- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-016`)
+- **References:** Evolith CLI Backlog `product/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-016`)
 
 ### Component Platform — Consolidated from the Stack Audit
 
-> These open RED-status alerts were merged from the technology stack audit (`reference/governance/standards/engineering/detailed-stack-audit-2026.md`) into this single tracking center; that audit remains the technology-vigilance source of record.
+> These open RED-status alerts were merged from the technology stack audit (`reference/core/foundations/common-rules/detailed-stack-audit-2026.md`) into this single tracking center; that audit remains the technology-vigilance source of record.
 
 #### GT-110
 
@@ -2340,7 +2340,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Move the ingress/API-gateway vector to a maintained component before the abandonment becomes a security and supply-chain liability.
 - **Done when:**
   - [x] the ingress is migrated to Traefik Proxy 3.7+ or NGINX OSS with parity for the current routes/policies
-- **References:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 1)
+- **References:** Stack Audit `reference/core/foundations/common-rules/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 1)
 
 #### GT-111
 
@@ -2350,7 +2350,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Decide and execute a path that keeps the messaging abstraction on a sustainable OSS footing.
 - **Done when:**
   - [x] a decision is recorded to remain on v8 within support or migrate to an alternative (e.g. Rebus / direct driver), with a dated plan
-- **References:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 2)
+- **References:** Stack Audit `reference/core/foundations/common-rules/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 2)
 
 #### GT-112
 
@@ -2360,20 +2360,20 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Adopt OSS replacements for IaC and secrets management to comply with the licensing veto.
 - **Done when:**
   - [x] IaC and secrets are migrated to OpenTofu 1.11+ and OpenBao 2.5+ with no HashiCorp commercial dependency
-- **References:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 3)
+- **References:** Stack Audit `reference/core/foundations/common-rules/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 3)
 
 #### GT-117
 
 **Title:** Read/query (GET) endpoints on Core API for Tracker BFF composition
 
-- **Gap:** `apps/core-api` exposes only command/evaluation endpoints — every domain route is `@Post` (`/gates/:gateId/evaluate`, `/projects/initialize`, `/projects/propose-advance`, `/phases/transition`, `/architecture/validate-satellite`, `/architecture/detect-drift`); the only `@Get` routes are `/health` and `/metrics`. There are no read endpoints to list rulesets, fetch a ruleset or gate definition, or read phase requirements. The Tracker BFF ([ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md)) needs these read models to compose its web/mobile workspaces from the Core API alone instead of falling back to the MCP server.
+- **Gap:** `apps/core-api` exposes only command/evaluation endpoints — every domain route is `@Post` (`/gates/:gateId/evaluate`, `/projects/initialize`, `/projects/propose-advance`, `/phases/transition`, `/architecture/validate-satellite`, `/architecture/detect-drift`); the only `@Get` routes are `/health` and `/metrics`. There are no read endpoints to list rulesets, fetch a ruleset or gate definition, or read phase requirements. The Tracker BFF ([ADR-0075](../../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md)) needs these read models to compose its web/mobile workspaces from the Core API alone instead of falling back to the MCP server.
 - **Purpose:** Add product-neutral read endpoints (e.g. `GET /rulesets`, `GET /rulesets/:id`, `GET /gates/:gateId`, `GET /phases/:phase/requirements`) so the BFF can compose UI state directly from the Core API Exposure Layer.
 - **Current evidence / example:** `grep -rE "@(Get|Post)\(" apps/core-api/src/presentation/controllers` shows every domain endpoint is `@Post`; the only `@Get` routes are `health` and `metrics`.
 - **Done when:**
   - [x] read endpoints for rulesets, ruleset content, gate definitions, and phase requirements are exposed and documented in OpenAPI
   - [x] endpoints are covered by unit + e2e tests
   - [x] at least one Tracker BFF composition path consumes them
-- **References:** [apps/core-api/src/presentation/controllers/gates.controller.ts](../../../../apps/core-api/src/presentation/controllers/gates.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) · [ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md)
+- **References:** [apps/core-api/src/presentation/controllers/gates.controller.ts](../../../../apps/core-api/src/presentation/controllers/gates.controller.ts) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) · [ADR-0075](../../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md)
 
 #### GT-118
 
@@ -2386,33 +2386,33 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] a remote repository-reference contract (or equivalent) is specified in an ADR ([ADR-0080](../../../architecture/adrs/core/0080-remote-repository-reference-contract.md))
   - [x] the Core API resolves satellite content without a caller-supplied local path (`workspaceRef` is resolved only beneath the server-configured `WORKSPACE_ROOT`)
   - [x] tenant isolation and credential handling are covered by tests
-- **References:** [apps/core-api/src/presentation/controllers/projects.controller.ts](../../../../apps/core-api/src/presentation/controllers/projects.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md)
+- **References:** [apps/core-api/src/presentation/controllers/projects.controller.ts](../../../../apps/core-api/src/presentation/controllers/projects.controller.ts) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md)
 
 #### GT-119
 
 **Title:** Reconcile ADR-0074 §5 (MCP in NestJS) with the standalone `@evolith/mcp-server`
 
-- **Gap:** [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) (ratified element 5) states the MCP server logic would be *"integrated into or wrapped by the NestJS application to provide a unified deployment unit"* alongside `core-api`. In practice the MCP server was extracted into a **standalone** NestJS package (`@evolith/mcp-server`) and `smart-cli mcp` now delegates to it; `core-api` does not serve MCP. The decision and the documentation diverge.
+- **Gap:** [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) (ratified element 5) states the MCP server logic would be *"integrated into or wrapped by the NestJS application to provide a unified deployment unit"* alongside `core-api`. In practice the MCP server was extracted into a **standalone** NestJS package (`@evolith/mcp-server`) and `smart-cli mcp` now delegates to it; `core-api` does not serve MCP. The decision and the documentation diverge.
 - **Purpose:** Reconcile the architecture: either update/supersede ADR-0074 §5 to record the standalone-package decision, or re-integrate MCP into `core-api` as a unified deployment unit — and align the Product Vision interface layer accordingly.
 - **Current evidence / example:** `grep -riE "mcp|modelcontextprotocol" apps/core-api/src` returns no MCP wiring; the MCP gateway lives in `packages/mcp-server`.
 - **Done when:**
   - [x] ADR-0074 §5 is updated or superseded to match the implemented topology, or MCP is integrated into `core-api`
   - [x] the Product Vision §2.5 interface layer reflects the reconciled decision
 - **Closure evidence:** Commit `e93c68a` amends ADR-0074 to record the standalone `@evolith/mcp-server` topology and clarifies that `smart-cli mcp serve` delegates to the standalone package rather than `apps/core-api`. The Product Vision §2.5 technical interface layer already reflects the two-layer exposure model, with the Tracker BFF as an external client of `apps/core-api` plus the `mcp-server` and CLI surfaces. `apps/core-api` contains no MCP wiring, which matches the reconciled decision.
-- **References:** [packages/mcp-server/README.md](../../../../packages/mcp-server/README.md) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) · [Product Vision Master](../../../../reference/product-suite/vision/evolith-product-vision-master.md)
+- **References:** [packages/mcp-server/README.md](../../../../packages/mcp-server/README.md) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) · [Product Vision Master](../../../../product/suite/vision/evolith-product-vision-master.md)
 
 #### GT-120
 
 - **Title:** GraphQL exposure for the Core API (ADR-0074 scope)
 
-- **Gap:** [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) originally scoped the Core API Exposure Layer as *"standard REST/GraphQL/MCP interfaces"*, but `apps/core-api` exposes REST only — there is no `@nestjs/graphql` module or schema, and the implemented product surfaces now use REST plus the standalone MCP gateway instead of GraphQL.
+- **Gap:** [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) originally scoped the Core API Exposure Layer as *"standard REST/GraphQL/MCP interfaces"*, but `apps/core-api` exposes REST only — there is no `@nestjs/graphql` module or schema, and the implemented product surfaces now use REST plus the standalone MCP gateway instead of GraphQL.
 - **Purpose:** Formally descope GraphQL from ADR-0074, align the product-facing interface list with the implemented REST-only Core API, and leave GraphQL as a future option only if a new architectural decision reintroduces it.
 - **Current evidence / example:** `grep -riE "graphql|@nestjs/graphql" apps/core-api` returns no GraphQL module; `apps/core-api/package.json` has no GraphQL dependency.
 - **Done when:**
   - [x] ADR-0074 is amended to descope GraphQL with rationale and the REST-only scope is documented
   - [x] OpenAPI documentation and the Product Vision exposure list are consistent with the implemented REST-only Core API
 - **Closure evidence:** Commit `cb05ffa` removes the lingering GraphQL references from ADR-0074, the product vision, and the Core API README so the documented exposure matches the implemented REST-only surface. The standalone MCP gateway remains the separate protocol path for AI agents.
-- **References:** [apps/core-api/README.md](../../../../apps/core-api/README.md) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) · [Product Vision Master](../../../../reference/product-suite/vision/evolith-product-vision-master.md)
+- **References:** [apps/core-api/README.md](../../../../apps/core-api/README.md) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) · [Product Vision Master](../../../../product/suite/vision/evolith-product-vision-master.md)
 
 #### GT-121
 
@@ -2426,7 +2426,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - [x] `sdk/cli/src/infrastructure/mcp/` and its specs are removed
 - [x] CLI builds and tests pass; the change lands in a major version bump
 - **Closure evidence:** Commit `c4835e0` removes the in-process MCP subsystem from the Smart CLI, replaces the old filesystem helper with a local `NodeFileSystemProvider`-backed adapter in `agents.command.ts`, and keeps MCP serving in the standalone `@evolith/mcp-server` package. The deleted `sdk/cli/src/infrastructure/mcp/**` tree and its e2e fixtures are no longer present; `npm run build --workspace sdk/cli` and `npm test --workspace sdk/cli -- --runInBand` pass on the resulting state.
-- **References:** [sdk/cli/src/commands/agents/agents.command.ts](../../../../sdk/cli/src/commands/agents/agents.command.ts) · [MCP Server Entry Point](../../../../packages/mcp-server/src/main.ts) · [ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md)
+- **References:** [sdk/cli/src/commands/agents/agents.command.ts](../../../../sdk/cli/src/commands/agents/agents.command.ts) · [MCP Server Entry Point](../../../../packages/mcp-server/src/main.ts) · [ADR-0075](../../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md)
 
 #### GT-122
 
@@ -2460,7 +2460,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 **Title:** CLI e2e suite broken — missing fixtures and stale old-MCP prompt naming
 
-- **Gap:** `npm run test:e2e` in `sdk/cli` fails across several suites for environmental/fixture reasons unrelated to the build: SDLC artifact templates are resolved under `sdk/cli/reference/governance/sdlc/04-artifact-templates/*` (they live at the repo root), the completion command opens missing `node_modules/shell/hooks.{bash,zsh,fish}`, and an MCP prompts e2e expects `evolith/architecture-review` while the (old, GT-121) CLI MCP exposes `evolith/review-architecture`. Surfaced once GT-123 unblocked the build so the e2e job could run.
+- **Gap:** `npm run test:e2e` in `sdk/cli` fails across several suites for environmental/fixture reasons unrelated to the build: SDLC artifact templates are resolved under `sdk/cli/reference/core/sdlc/04-artifact-templates/*` (they live at the repo root), the completion command opens missing `node_modules/shell/hooks.{bash,zsh,fish}`, and an MCP prompts e2e expects `evolith/architecture-review` while the (old, GT-121) CLI MCP exposes `evolith/review-architecture`. Surfaced once GT-123 unblocked the build so the e2e job could run.
 - **Purpose:** Make the `sdk/cli` e2e suite green so the E2E Tests CI job carries real evidentiary weight.
 - **Current evidence / example:** `cd sdk/cli && npm run test:e2e` reports `Artifact not found: .../sdk/cli/reference/.../prd-template.md`, `ENOENT: .../node_modules/shell/hooks.zsh`, and `expect(promptNames).toContain('evolith/architecture-review')` against a list containing `evolith/review-architecture`.
 - **Done when:**
@@ -2533,7 +2533,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Closure evidence:**
   - `closedAt`: 2026-06-20
   - `closureCommit`: 8566249bbefe547f87116d90ecb8c8a797e5cc2b
-  - `evidence`: ["reference/architecture/topologies/data/data-mesh/data-mesh.rules.json", "reference/architecture/topologies/data/data-mesh/data-mesh.rego"]
+  - `evidence`: ["reference/core/architecture/topologies/data/data-mesh/data-mesh.rules.json", "reference/core/architecture/topologies/data/data-mesh/data-mesh.rego"]
   - `validationCommands`: ["node .harness/scripts/ci/08-validate-tracking.mjs", "node .harness/scripts/ci/01-validate-docs.mjs"]
 
 #### GT-129
@@ -2581,7 +2581,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-176
 
-**Purpose:** Remove `reference/knowledge/architecture-intelligence/patterns/es/` subdirectory (Pattern A/B mix violation).
+**Purpose:** Remove `product/research/architecture-intelligence/patterns/es/` subdirectory (Pattern A/B mix violation).
 **Current Evidence:** The `patterns/es/` subdir duplicated four patterns (`modular-monolith-first`, `no-cross-domain-joins`, `contract-first-integration`, `data-ownership-per-bounded-context`) with incorrect language-by-folder layout, violating the Pattern A bilingual naming convention (`name.md` + `name.es.md` siblings). The canonical EN/ES pairs already existed at the parent `patterns/` directory.
 **Done When:** Subdirectory removed; no inbound references outside auto-generated BILINGUAL_INDEX and historical audit docs.
 
@@ -2750,13 +2750,13 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-202
 
 **Purpose:** Add README to `governance/adr/` directory.
-**Current Evidence:** README.md and README.es.md exist in `reference/governance/adr/` with directory index. BILINGUAL_INDEX.md/es also added.
+**Current Evidence:** README.md and README.es.md exist in `reference/core/sdlc/governance/` with directory index. BILINGUAL_INDEX.md/es also added.
 **Done When:** README.md and README.es.md exist with directory index.
 
 #### GT-203
 
 **Purpose:** Remove or populate empty `kubernetes/` directory.
-**Current Evidence:** `reference/infrastructure/kubernetes/` now has README.md, README.es.md, and BILINGUAL_INDEX.md/es.
+**Current Evidence:** `product/infra/kubernetes/` now has README.md, README.es.md, and BILINGUAL_INDEX.md/es.
 **Done When:** Directory either contains content or is removed.
 
 #### GT-204
@@ -2768,7 +2768,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-205
 
 **Purpose:** Add README to SDLC 01-playbooks/ directory.
-**Current Evidence:** `reference/governance/sdlc/01-playbooks/` has README.md and README.es.md with directory listing and purpose.
+**Current Evidence:** `reference/core/sdlc/01-playbooks/` has README.md and README.es.md with directory listing and purpose.
 **Done When:** README.md exists with directory listing and purpose.
 
 #### GT-206
@@ -2811,7 +2811,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-212
 
 **Purpose:** Resolve the ambiguous status of ADR-0049 ("Accepted (Proposed)") and align it with ADR-0056, which declares itself a supersession of the naming scope of ADR-0049 but is itself still marked `Proposed`.
-**Current Evidence:** `reference/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md:7` shows `**Status:** Accepted (Proposed)` — an invalid composite state. `core/0056-enterprise-naming-design-conventions.md` is marked `Proposed` and states it supersedes the naming scope of ADR-0049, yet ADR-0049 does not reflect a `Superseded by` marker. No Architecture Board decision record or effective date exists for either ADR.
+**Current Evidence:** `reference/core/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md:7` shows `**Status:** Accepted (Proposed)` — an invalid composite state. `core/0056-enterprise-naming-design-conventions.md` is marked `Proposed` and states it supersedes the naming scope of ADR-0049, yet ADR-0049 does not reflect a `Superseded by` marker. No Architecture Board decision record or effective date exists for either ADR.
 **Done When:**
   - [x] ADR-0049 status changes to `Superseded by ADR-0056 (effective <date>)` with a back-reference and the original Accepted date preserved.
   - [x] ADR-0056 status moves to `Accepted` (or `Rejected`) with the Architecture Board decision recorded in the ADR's Decision section.
@@ -2820,7 +2820,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-213
 
 **Purpose:** Add governance metadata fields (`owner`, `criticality`, `supersedes`, `replaces`) to every topology manifest so traceability, ownership, and lifecycle decisions are machine-readable at the topology level.
-**Current Evidence:** `grep -l '"owner":\|"criticality":\|"replaces":\|"supersedes":' reference/architecture/topologies/*/*/topology.manifest.json` returns **0 of 8** topology manifests. Vision requires governance traceability per topology; today these decisions are scattered across READMEs and ADRs.
+**Current Evidence:** `grep -l '"owner":\|"criticality":\|"replaces":\|"supersedes":' reference/core/architecture/topologies/*/*/topology.manifest.json` returns **0 of 8** topology manifests. Vision requires governance traceability per topology; today these decisions are scattered across READMEs and ADRs.
 **Done When:**
   - [x] All 8 topology manifests include `owner` (org unit), `criticality` (P0–P2), and optional `supersedes`/`replaces` arrays of ADR IDs.
   - [x] `rulesets/schema/topology-manifest.schema.json` declares these properties (with `required` where appropriate).
@@ -2865,7 +2865,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-218
 
 **Purpose:** Author dedicated templates + schemas for the two Phase 05 outputs that today only exist as "Section in Release Notes" — rollback rehearsal evidence and on-call handoff confirmation — so the Production Live gate is reproducible and machine-checkable.
-**Current Evidence:** `reference/governance/sdlc/05-delivery-and-operations/README.md` Outputs table lists "Rollback rehearsal evidence" and "On-call handoff confirmation" with `Section in Release Notes` as the only template — no schema, no example, no validator entry point. `rulesets/schema/` has no `rollback-rehearsal.schema.json` or `on-call-handoff.schema.json`.
+**Current Evidence:** `reference/core/sdlc/05-delivery-and-operations/README.md` Outputs table lists "Rollback rehearsal evidence" and "On-call handoff confirmation" with `Section in Release Notes` as the only template — no schema, no example, no validator entry point. `rulesets/schema/` has no `rollback-rehearsal.schema.json` or `on-call-handoff.schema.json`.
 **Done When:**
   - [x] `04-artifact-templates/rollback-rehearsal-template.md` (+`.es.md`) exists with Blue/Green and Canary examples, rollback budget, and witness sign-off.
   - [x] `04-artifact-templates/on-call-handoff-template.md` (+`.es.md`) exists with runbook URLs, escalation paths, alert ownership, SLA acknowledgement.
@@ -2874,7 +2874,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-219
 
 **Purpose:** Add an `operationalBudgets` block to the agentic-ai topology manifest, matching the precedent set by serverless and edge-computing, so token-budget, sandbox-timeout, and credential-rotation SLOs are machine-readable and enforceable.
-**Current Evidence:** `grep -l operationalBudgets reference/architecture/topologies/*/*/topology.manifest.json` finds it in `execution/edge-computing/` and `execution/serverless/` but not in `ai/agentic-ai/topology.manifest.json`, despite GT-169 closing the doc/runbook side of those budgets.
+**Current Evidence:** `grep -l operationalBudgets reference/core/architecture/topologies/*/*/topology.manifest.json` finds it in `execution/edge-computing/` and `execution/serverless/` but not in `ai/agentic-ai/topology.manifest.json`, despite GT-169 closing the doc/runbook side of those budgets.
 **Done When:**
   - [x] `agentic-ai/topology.manifest.json` declares `operationalBudgets` with at least `tokenBudgetPerExecution`, `credentialRotationIntervalHours`, and `sandboxTimeoutMs`.
   - [x] `topology-manifest.schema.json` makes the block optional with typed fields; agentic-ai validation passes.
@@ -3000,7 +3000,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-233
 
 **Purpose:** Add rate limiting middleware to the Core API, closing the gap where the MCP Security Guide documents adaptive rate limiting patterns but zero implementations exist in TypeScript code (search for `rate.?limit` returns zero matches).
-**Current Evidence:** `apps/core-api/src/main.ts` applies `helmet()` globally but has no rate limiting middleware. The MCP security guide at `reference/governance/standards/ai-augmented/02-mcp-integration/mcp-security.md` documents rate limiting as required for production.
+**Current Evidence:** `apps/core-api/src/main.ts` applies `helmet()` globally but has no rate limiting middleware. The MCP security guide at `reference/core/foundations/common-rules/ai-augmented/02-mcp-integration/mcp-security.md` documents rate limiting as required for production.
 **Done When:**
   - [x] `@nestjs/throttler` is installed and configured with a global default (e.g., 100 req/min).
   - [x] Per-endpoint overrides exist for sensitive operations (auth, gate-evaluate).
@@ -3036,16 +3036,16 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-237
 
 **Purpose:** Author the 5 proposed AI-Augmented ADRs (ADR-AI-001 through ADR-AI-005) that are listed in governance references but never written as actual documents.
-**Current Evidence:** `reference/architecture/adrs/ai-augmented/` is referenced in governance sections listing 5 proposed ADRs covering harness engineering, MCP integration protocol, model selection governance, AGENTS.md as mandatory artifact, and human-in-the-loop policy. None of these documents exist in the filesystem.
+**Current Evidence:** `reference/core/architecture/adrs/ai-augmented/` is referenced in governance sections listing 5 proposed ADRs covering harness engineering, MCP integration protocol, model selection governance, AGENTS.md as mandatory artifact, and human-in-the-loop policy. None of these documents exist in the filesystem.
 **Done When:**
-  - [x] All 5 ADR documents exist in `reference/architecture/adrs/ai-augmented/` with proper structure (Title, Status, Context, Decision, Consequences).
+  - [x] All 5 ADR documents exist in `reference/core/architecture/adrs/ai-augmented/` with proper structure (Title, Status, Context, Decision, Consequences).
   - [x] Each ADR has EN and ES versions maintaining bilingual parity.
   - [x] ADR status is updated from "proposed" to "accepted" or "superseded" as appropriate.
 
 #### GT-238
 
 **Purpose:** Add Prometheus/Mimir to the observability stack so RED/USE metrics are collectible and queryable, closing the gap where the observability playbook references Mimir-based metrics but the docker-compose only provisions Tempo and Loki.
-**Current Evidence:** `reference/infrastructure/docker-compose.yml` includes services for OTel Collector, Tempo, Grafana, and Loki. No Prometheus or Mimir service exists. The OTel collector config routes traces and logs but has no metrics pipeline.
+**Current Evidence:** `product/infra/docker-compose.yml` includes services for OTel Collector, Tempo, Grafana, and Loki. No Prometheus or Mimir service exists. The OTel collector config routes traces and logs but has no metrics pipeline.
 **Done When:**
   - [x] Prometheus is added to docker-compose with scrape config for Core API metrics.
   - [x] Mimir is added for long-term metrics storage.
@@ -3054,7 +3054,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-239
 
 **Purpose:** Define concrete SLOs per service and implement alerting rules, closing the gap where the observability validation template references SLO baselines but no SLO documents or alert configurations exist.
-**Current Evidence:** `rulesets/schema/observability-validation.schema.json` defines fields for SLO compliance, but no SLO documents exist in `reference/operations/`. No Prometheus alerting rules, Grafana alert provisioning, or notification channel configuration exists.
+**Current Evidence:** `rulesets/schema/observability-validation.schema.json` defines fields for SLO compliance, but no SLO documents exist in `product/operations/`. No Prometheus alerting rules, Grafana alert provisioning, or notification channel configuration exists.
 **Done When:**
   - [x] At least 3 SLOs are defined (availability 99.9%, p99 latency <200ms, error rate <0.1%).
   - [x] Prometheus alerting rules exist for: error rate >1%, p99 latency >500ms, pod restarts >3.
@@ -3099,11 +3099,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-244
 
 **Purpose:** Create incident response playbooks and templates for the core product, closing the gap where agentic AI runbooks exist but general incident response procedures (service outage, data breach, production rollback) are absent.
-**Current Evidence:** `reference/architecture/topologies/ai/agentic-ai/runbooks.md` covers agent-specific incidents (hang, token overflow, unapproved action, sandbox escape). No general incident response playbooks exist for the core product or infrastructure.
+**Current Evidence:** `reference/core/architecture/topologies/ai/agentic-ai/runbooks.md` covers agent-specific incidents (hang, token overflow, unapproved action, sandbox escape). No general incident response playbooks exist for the core product or infrastructure.
 **Done When:**
   - [x] Playbooks exist for: service outage, data breach, dependency CVE, production rollback.
   - [x] Each playbook has: severity classification, communication template, containment steps, recovery steps, post-mortem template.
-  - [x] Playbooks are stored in `reference/operations/` with bilingual versions.
+  - [x] Playbooks are stored in `product/operations/` with bilingual versions.
 
 #### GT-245
 
@@ -3126,7 +3126,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-247
 
 **Purpose:** Replace hardcoded credentials in docker-compose with secrets injection, closing the gap where the infrastructure compose file contains plaintext passwords for PostgreSQL, Redis, RabbitMQ, MongoDB, MinIO, and OpenBao.
-**Current Evidence:** `reference/infrastructure/docker-compose.yml` contains hardcoded passwords for 6 services. While acceptable for local development, there is no documentation or mechanism for secrets injection in production deployments.
+**Current Evidence:** `product/infra/docker-compose.yml` contains hardcoded passwords for 6 services. While acceptable for local development, there is no documentation or mechanism for secrets injection in production deployments.
 **Done When:**
   - [x] docker-compose uses `${VARIABLE}` references for all credentials.
   - [x] A `.env.example` file documents required secrets without real values.
@@ -3215,7 +3215,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-256
 
 **Purpose:** Repair the Traefik healthcheck in `docker-compose.yml`, which today queries `/ping` while Traefik is started without `--ping=true`, guaranteeing the container is marked unhealthy in every environment that relies on this stack.
-**Current Evidence:** `reference/infrastructure/docker-compose.yml:164-182` — Traefik is started with `--providers.file.directory=/etc/traefik/dynamic` only. The healthcheck on line 182 runs `traefik healthcheck --ping`, which calls the internal ping endpoint; without `--ping=true` (or `--ping.entrypoint=...`) in the server startup, that endpoint is disabled and the check fails.
+**Current Evidence:** `product/infra/docker-compose.yml:164-182` — Traefik is started with `--providers.file.directory=/etc/traefik/dynamic` only. The healthcheck on line 182 runs `traefik healthcheck --ping`, which calls the internal ping endpoint; without `--ping=true` (or `--ping.entrypoint=...`) in the server startup, that endpoint is disabled and the check fails.
 **Done When:**
   - [x] Traefik command list includes `--ping=true` (and an explicit entrypoint if required).
   - [x] `traefik healthcheck --ping` succeeds against a running container.
@@ -3224,7 +3224,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-257
 
 **Purpose:** Pin the MongoDB image to a specific minor version so the infrastructure stack is reproducible and protected against silent upgrades that could break compatibility or introduce unreviewed changes.
-**Current Evidence:** `reference/infrastructure/docker-compose.yml:54` — `image: mongo:latest`. Other services (PostgreSQL, Redis, Traefik) are already pinned; MongoDB is the outlier.
+**Current Evidence:** `product/infra/docker-compose.yml:54` — `image: mongo:latest`. Other services (PostgreSQL, Redis, Traefik) are already pinned; MongoDB is the outlier.
 **Done When:**
   - [x] `mongo:latest` replaced with a pinned tag matching the version Evolith targets (e.g., `mongo:7.0`).
   - [x] Tag choice documented in the infrastructure README with the upgrade cadence.
@@ -3261,7 +3261,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-261
 
 **Purpose:** Bound the resource footprint of every container in the infrastructure stack so a runaway service cannot starve its neighbors on the same host, and so capacity planning maps cleanly to production sizing.
-**Current Evidence:** `grep -nE "mem_limit|cpus|deploy:|resources:" reference/infrastructure/docker-compose.yml` returns nothing — none of the services declare `mem_limit`, `cpus`, or a `deploy.resources` block.
+**Current Evidence:** `grep -nE "mem_limit|cpus|deploy:|resources:" product/infra/docker-compose.yml` returns nothing — none of the services declare `mem_limit`, `cpus`, or a `deploy.resources` block.
 **Done When:**
   - [x] Each service in `docker-compose.yml` declares memory and CPU limits appropriate to its role (PostgreSQL, MongoDB, Redis, RabbitMQ, MinIO, OpenBao, Traefik, Core API, MCP server).
   - [x] Limits documented in the infrastructure README with the rationale (typical workload + headroom).
@@ -3270,11 +3270,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-262
 
 **Purpose:** Codify backup and disaster-recovery procedures for the stateful data stores (PostgreSQL, MongoDB, MinIO, OpenBao) so the platform can recover from data loss without ad-hoc archeology.
-**Current Evidence:** A repo-wide search for backup scripts (`find . -name "backup*.sh" -o -name "*-backup*"`) and Terraform-style restore plans returns nothing under `reference/infrastructure/`, `apps/`, or `.harness/`. There is no DR runbook.
+**Current Evidence:** A repo-wide search for backup scripts (`find . -name "backup*.sh" -o -name "*-backup*"`) and Terraform-style restore plans returns nothing under `product/infra/`, `apps/`, or `.harness/`. There is no DR runbook.
 **Done When:**
   - [x] Backup scripts (or documented operator procedures) exist for each stateful service: PostgreSQL (`pg_dump`/PITR), MongoDB (`mongodump`), MinIO (object replication or `mc mirror`), OpenBao (snapshot).
   - [x] Each service has a documented RPO/RTO target.
-  - [x] A restore runbook walks through a full DR exercise; checked into `reference/infrastructure/runbooks/`.
+  - [x] A restore runbook walks through a full DR exercise; checked into `product/infra/runbooks/`.
   - [x] CI lint verifies the runbook exists; cross-references SDLC Phase 05 rollback (GT-218).
 
 #### GT-263
@@ -3282,7 +3282,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Add infrastructure-level Prometheus alerts so platform problems (down service, disk pressure, error-rate spike) page on-call before they reach users, closing a gap left open by the observability stack adoption.
 **Current Evidence:** A repo-wide search for `*.rules.yaml`, `*alerts*`, or `prometheus*` files returns nothing. The observability ADRs describe what should exist, but no alert rules are checked in.
 **Done When:**
-  - [x] An alert-rules file (e.g., `reference/infrastructure/observability/alerts.rules.yaml`) defines at minimum: service-down, high error rate (5xx), high latency P99, disk-free below threshold, RabbitMQ queue depth, OPA evaluation failures.
+  - [x] An alert-rules file (e.g., `product/infra/observability/alerts.rules.yaml`) defines at minimum: service-down, high error rate (5xx), high latency P99, disk-free below threshold, RabbitMQ queue depth, OPA evaluation failures.
   - [x] Alerts wired into the Prometheus configuration shipped with the docker-compose stack.
   - [x] Each alert has a runbook link and severity label.
   - [x] Smoke test: trigger one alert in a dev environment and verify it fires.
@@ -3355,7 +3355,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 **Title:** Pin mutable infrastructure images and disable dev-only exposed defaults
 **Purpose:** Make the reference infrastructure reproducible and prevent development-only defaults from being copied into production-like deployments. This optimizes cost and safety by reducing unplanned upgrades, accidental public admin surfaces, and incident triage churn.
-**Current Evidence:** `reference/infrastructure/README.md` states "no latest", but Helm values use `tag: "latest"` for both BFF and MCP and `openpolicyagent/opa:latest`; Dockerfiles use mutable `node:22-alpine`; Docker Compose uses `mcr.microsoft.com/mssql/server:2022-latest`; Traefik starts with `--api.insecure=true` and exposes the dashboard; OpenBao uses `BAO_DEV_ROOT_TOKEN_ID` and listens on `0.0.0.0:8200`; the Docker socket is mounted into Traefik.
+**Current Evidence:** `product/infra/README.md` states "no latest", but Helm values use `tag: "latest"` for both BFF and MCP and `openpolicyagent/opa:latest`; Dockerfiles use mutable `node:22-alpine`; Docker Compose uses `mcr.microsoft.com/mssql/server:2022-latest`; Traefik starts with `--api.insecure=true` and exposes the dashboard; OpenBao uses `BAO_DEV_ROOT_TOKEN_ID` and listens on `0.0.0.0:8200`; the Docker socket is mounted into Traefik.
 **Done When:**
   - [x] Helm, Compose, and Dockerfiles use reviewed immutable tags or digests for application, OPA, Node, SQL Server, and gateway images.
   - [x] Development-only settings (`--api.insecure=true`, OpenBao dev token/listen mode, broad host port exposure) are gated behind explicit local profiles and absent from production examples.
@@ -3366,7 +3366,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 **Title:** Add Kubernetes workload hardening to Helm charts
 **Purpose:** Bring Helm charts to the same production-readiness bar as the architecture standards by making pod security, probes, resources, and rollout safety executable rather than implied by prose.
-**Current Evidence:** `reference/infrastructure/helm/evolith-bff/templates/deployment.yaml` and `evolith-mcp/templates/deployment.yaml` define containers and ports only. A grep finds no `resources`, `securityContext`, `readinessProbe`, `livenessProbe`, `startupProbe`, `runAsNonRoot`, `readOnlyRootFilesystem`, `allowPrivilegeEscalation`, `PodDisruptionBudget`, `HorizontalPodAutoscaler`, or `NetworkPolicy`.
+**Current Evidence:** `product/infra/helm/evolith-bff/templates/deployment.yaml` and `evolith-mcp/templates/deployment.yaml` define containers and ports only. A grep finds no `resources`, `securityContext`, `readinessProbe`, `livenessProbe`, `startupProbe`, `runAsNonRoot`, `readOnlyRootFilesystem`, `allowPrivilegeEscalation`, `PodDisruptionBudget`, `HorizontalPodAutoscaler`, or `NetworkPolicy`.
 **Done When:**
   - [x] BFF and MCP Helm charts define container `resources.requests/limits`, liveness/readiness/startup probes, and rollout-safe defaults.
   - [x] Pod/container security contexts enforce non-root execution, dropped capabilities, read-only root filesystem where feasible, and `allowPrivilegeEscalation: false`.
@@ -3438,7 +3438,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Current Evidence:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para OpenAPI en las 8 topologías (`ai/agentic-ai`, `data/data-mesh`, `execution/edge-computing`, `execution/serverless`, `integration/event-driven`, `progressive-axis/modular-monolith`, `progressive-axis/distributed-modules`, `progressive-axis/microservices`).
 - **Complexity:** M
 - **Done when:**
-  - [x] Cada topología tiene un archivo `openapi.yaml` en `reference/architecture/topologies/<area>/<topology>/openapi/`.
+  - [x] Cada topología tiene un archivo `openapi.yaml` en `reference/core/architecture/topologies/<area>/<topology>/openapi/`.
   - [x] Cada spec describe al menos los endpoints propios del Bounded Context de la topología (GET /topologies/{id}, GET /topologies/{id}/manifest, POST /topologies/{id}/validate con ejemplos y schemas específicos).
   - [x] El spec es validable con `swagger-cli validate` o herramienta equivalente en CI.
   - [x] La auditoría de cumplimiento (`topology-compliance-audit.mjs`) reporta `COMPLETO` para OpenAPI en cada topología.
@@ -3452,7 +3452,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Current Evidence:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para MCP manifests en las 8 topologías.
 - **Complexity:** M
 - **Done when:**
-  - [x] Cada topología tiene un `mcp-manifest.json` en `reference/architecture/topologies/<area>/<topology>/mcp/`.
+  - [x] Cada topología tiene un `mcp-manifest.json` en `reference/core/architecture/topologies/<area>/<topology>/mcp/`.
   - [x] Cada manifest declara al menos una tool específica del dominio de la topología (agentic-ai: 3 tools; resto: 2 tools cada una).
   - [x] El manifest es validable contra el esquema canónico MCP (`McpToolSchema` de `tool.interface.ts` con `name`, `description`, `inputSchema`).
   - [x] La auditoría de cumplimiento reporta `COMPLETO` para MCP en cada topología.
@@ -3466,7 +3466,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Current Evidence:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para CLI flows en las 8 topologías.
 - **Complexity:** M
 - **Done when:**
-  - [x] Cada topología tiene un archivo `cli-flows.md` (y `cli-flows.es.md` para paridad bilingüe) en `reference/architecture/topologies/<area>/<topology>/cli/`.
+  - [x] Cada topología tiene un archivo `cli-flows.md` (y `cli-flows.es.md` para paridad bilingüe) en `reference/core/architecture/topologies/<area>/<topology>/cli/`.
   - [x] Los flujos documentados usan comandos reales del Smart CLI (`evolith validate --topology`, `evolith drift detect`, `evolith gate evaluate`, `evolith architecture scaffold`, `evolith sdlc handoff`) con argumentos existentes (`--arch-level`, `--format json`, `--dry-run`, `--phase`).
   - [x] La auditoría de cumplimiento reporta `COMPLETO` para CLI en cada topología.
 - **Closure Evidence:** Commit `7bed54d0` (main). 8 archivos `cli/cli-flows.md` + 8 `cli/cli-flows.es.md` creados. La auditoría ahora excluye `cli/`, `mcp/`, `openapi/` del conteo de documentos. Score global: **168/168 (100%)**.
@@ -3479,11 +3479,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Current Evidence:** `node .harness/scripts/run-evolith-deep.mjs` — Dimensión "MODELO SDLC EJECUTABLE": **SÓLIDO**.
 - **Complexity:** M
 - **Done when:**
-  - [x] Cada fase (F0–F4) tiene un archivo `phase-f*.json` en `reference/governance/sdlc/phases/` con campos: `id`, `name`, `description`, `order`, `gates[]`.
-  - [x] Cada gate en `reference/governance/sdlc/gates/` declara `requiredArtifacts[]` y `rules[]` (referencias a archivos `.rego` en `rulesets/`).
+  - [x] Cada fase (F0–F4) tiene un archivo `phase-f*.json` en `reference/core/sdlc/phases/` con campos: `id`, `name`, `description`, `order`, `gates[]`.
+  - [x] Cada gate en `reference/core/sdlc/gates/` declara `requiredArtifacts[]` y `rules[]` (referencias a archivos `.rego` en `rulesets/`).
   - [x] Existe un validador (`.harness/playbooks/sdlc-phase-gate-validator.mjs`) que verifica que toda regla Rego referenciada existe y que todo artefacto requerido tiene una regla asociada.
   - [x] `run-evolith-deep.mjs` reporta `SÓLIDO` para la dimensión "MODELO SDLC EJECUTABLE".
-- **Closure Evidence:** 5 phase files (`phase-f1.json`…`phase-f5.json`) en `reference/governance/sdlc/phases/`. 5 gate files (`gate-f1.json`…`gate-f5.json`) en `reference/governance/sdlc/gates/`. 26 referencias Rego en total, todas existentes. Validador `sdlc-phase-gate-validator.mjs` pasa 0 errores. `sdlc-deep-audit.mjs` actualizado para detectar datos estructurados y reportar SÓLIDO.
+- **Closure Evidence:** 5 phase files (`phase-f1.json`…`phase-f5.json`) en `reference/core/sdlc/phases/`. 5 gate files (`gate-f1.json`…`gate-f5.json`) en `reference/core/sdlc/gates/`. 26 referencias Rego en total, todas existentes. Validador `sdlc-phase-gate-validator.mjs` pasa 0 errores. `sdlc-deep-audit.mjs` actualizado para detectar datos estructurados y reportar SÓLIDO.
 
 #### GT-281
 
@@ -4058,7 +4058,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Applied fix (stage 1 — foundation, non-breaking):** added `packages/core-domain/src/domain/sdlc/phase-id.ts` — the single canonical source. Canonical ids are the existing `GATE_PHASES` (`discovery|design|construction|qa|release`); `normalizePhaseId()` accepts `f1..f5`/`gate-f*`/`phase-*`/`1..5` and returns canonical; `toLegacyPhaseId()` maps back to the on-disk `f1..f5`; `phase-0` correctly rejected (workflow foundation, not an SDLC gate phase). Exported from the domain barrel. Confirmed no `F#` namespace reuse.
 - **Evidence:** ~897 `f1..f5`/`F1..F3` occurrences swept; core-domain 589/589 green (6 new phase-id tests). Stage 1 changes no existing behavior (additive).
 - **Applied fix (stage 2 — core-domain consumers, backward-compatible):** migrated `evolith-config.service` and `validate-blueprint.use-case` to validate via `normalizePhaseId` (canonical accepted, `f1..f5` still valid); `sdlc-validation.mode` and `satellite-evaluation-pipeline` now normalize a canonical `context/manifest.phase` to the legacy id for on-disk file/gate resolution via `toLegacyPhaseId`. `validate-workflow.use-case` deferred to stage 2b (entangled with on-disk `gate-f*` ids + NON_OMITTABLE_ARTIFACTS map). core-domain 589/589 green; no behavior regression (additive widening).
-- **Applied fix (stage 4 — topology de-conflation):** renamed `spec.compatibility.progressiveAxis.phase` → `maturityLevel` across the topology manifest schema + all 13 manifests (8 under `reference/architecture/topologies/`, 5 under `rulesets/topologies/`) + the `TopologyManifest` type and `resolveProgressivePhase` lookup. `profile` documented as the canonical topology id; the `ProgressivePhase` type kept as a deprecated alias of `ProgressiveMaturityLevel` so `@evolith/core` re-exports don't break. The SDLC word "phase" is gone from the topology contract. (F1/F2/F3 remain as the maturity-level VALUES — retiring those to canonical ids across `evolith.yaml`/`declaredLevel`/drift is the follow-on stage 4b.)
+- **Applied fix (stage 4 — topology de-conflation):** renamed `spec.compatibility.progressiveAxis.phase` → `maturityLevel` across the topology manifest schema + all 13 manifests (8 under `reference/core/architecture/topologies/`, 5 under `rulesets/topologies/`) + the `TopologyManifest` type and `resolveProgressivePhase` lookup. `profile` documented as the canonical topology id; the `ProgressivePhase` type kept as a deprecated alias of `ProgressiveMaturityLevel` so `@evolith/core` re-exports don't break. The SDLC word "phase" is gone from the topology contract. (F1/F2/F3 remain as the maturity-level VALUES — retiring those to canonical ids across `evolith.yaml`/`declaredLevel`/drift is the follow-on stage 4b.)
 - **Evidence:** validate-topology-manifests 13/13; topology composition + rule-coverage exit 0; core-domain 589/589; mcp-server + core-api build clean. No reader of `progressiveAxis.phase` remains.
 - **Applied fix (stage 3 — public SDLC enums, backward-compatible):** widened the phase enums on the 3 contract surfaces + 2 MCP tool schemas to accept the canonical ids first, with `f1..f5` kept as deprecated aliases (no hard removal → the external Tracker keeps working): `reference/config/evolith.config.schema.json`, the `/validate/composable` DTO (`composable-validate.controller.ts`), CLI `validate --phase` description, and `composable-validate.tool.ts` + `validate.tool.ts` MCP schemas. Validated: core-api 105/105, mcp-server 162/162, CLI builds — no suite broke.
 - **Applied fix (stage 5 — anti-collision guard):** added `.harness/scripts/ci/30-validate-phase-topology-disjoint.mjs`, wired into `sdk-cli-ci.yml`. Fails CI if any SDLC phase id reuses the F# namespace, if SDLC phase ids and topology ids collide, or if any manifest reintroduces the legacy `progressiveAxis.phase` key. Verified: passes clean (5 SDLC ids disjoint from 8 topology ids) and catches a regression (injecting `phase` → exit 1).
@@ -4197,7 +4197,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Title:** core-api OpenAPI dead code + api-reference gaps — `DONE`
 
 - **Component:** core-api · **Priority:** P2 · **Risk:** low · **Dependencies:** none
-- **Files:** `apps/core-api/src/openapi/openapi-config.ts`, `apps/core-api/src/main.ts:34`, `reference/products/core-api/api-reference.md`
+- **Files:** `apps/core-api/src/openapi/openapi-config.ts`, `apps/core-api/src/main.ts:34`, `product/products/core-api/api-reference.md`
 - **Proposed fix:** delete the unused openapi module OR call `setupOpenApi()` from main; document `POST /architecture/cache/invalidate`.
 - **Done when:** [x] no duplicate DocumentBuilder; [x] api-reference covers all routes.
 
@@ -4215,7 +4215,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Title:** mcp-services README hand-maintained drift — `DONE`
 
 - **Component:** docs · **Priority:** P2 · **Risk:** low · **Dependencies:** GT-341
-- **Files:** `reference/products/mcp-services/README.md:17,49`
+- **Files:** `product/products/mcp-services/README.md:17,49`
 - **Proposed fix:** regenerate counts (27/9/8); fix start command to `smart-cli mcp serve --transport http --port 3000`; derive from generator instead of hand-maintaining.
 - **Done when:** [x] README counts/command match code; [x] `--help` doc-snippet test.
 
@@ -4224,7 +4224,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Title:** META — gap board over-reports completion — `DONE`
 
 - **Component:** governance · **Priority:** P1 · **Risk:** high (false confidence) · **Dependencies:** GT-341, GT-347
-- **Files:** `reference/governance/standards/vision/gap-tracking.md`, `…/maturity-evidence.json`, `.harness/scripts/ci/09-reconcile-maturity.mjs`
+- **Files:** `reference/core/control-center/gaps/gap-tracking.md`, `…/maturity-evidence.json`, `.harness/scripts/ci/09-reconcile-maturity.mjs`
 - **Proposed fix:** feed real per-product `build`/`test` results into maturity-evidence; gate "DONE" on validated evidence; this wave reopens the board.
 - **Evidence:** board read 329/330 DONE while ≥15 real gaps (3 critical) exist; `09-reconcile-maturity.mjs` already fails `closures 272 vs required 323`.
 - **Done when:** [x] board status reconciles with executed build/test evidence.
@@ -4506,7 +4506,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Align Core API responses with the ADR-0073 structured envelope already expected by CLI and MCP consumers.
 - **Evidence:** SDLC Deep Audit reported Core API responses without the standardized `{success, data, warnings}` envelope in the new runtime-facing surfaces.
 - **Impact:** Hermes and other external consumers need special-case API handling instead of one cross-surface contract.
-- **Affected files:** `apps/core-api/src/presentation/`, `apps/core-api/src/common/`, `reference/architecture/adrs/core/0073-unified-cli-mcp-output-contract-and-gate-evidence-schema.md`.
+- **Affected files:** `apps/core-api/src/presentation/`, `apps/core-api/src/common/`, `reference/core/architecture/adrs/core/0073-unified-cli-mcp-output-contract-and-gate-evidence-schema.md`.
 - **Complexity:** S
 - **Applied fix:** Updated 3 evaluation/runtime controllers (`evaluation`, `gates`, `phases`) to return pre-built ADR-0073 envelopes with canonical command names (`evolith evaluate`, `evolith gate evaluate`, `evolith phase transition`) via `createSuccessEnvelope()`. CRUD endpoints remain interceptor-wrapped (acceptable for standard REST operations). `/metrics` correctly excluded (Prometheus format).
 - **Acceptance criteria:**
@@ -4560,7 +4560,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Make every runtime capability `policyRef` resolve to an actual Rego package/query or to a governed alias registry.
 - **Evidence:** `.harness/manifest.yaml`, `DEFAULT_SKILLS`, unit tests, and agent-runtime docs reference `evolith.gates.discovery` and `evolith.architecture.adr`. `rg '^package' rulesets/opa` shows actual packages such as `evolith.phase_gates`, `evolith.capability_source_interface`, `evolith.governance`, and `evolith.acl`; no `evolith.gates.discovery` or `evolith.architecture.adr` package exists. With schemas ignored, `.harness/bin/opa eval --format json -I -d rulesets/opa --ignore schemas 'data.evolith.gates.discovery.allow'` returns `{}`, while `data.evolith.phase_gates.allow` returns `true`.
 - **Impact:** Fixing the OPA load path alone still leaves governed runtime capabilities denied or undefined, because the logical policy names do not map to real packages.
-- **Affected files:** `.harness/manifest.yaml`, `packages/agent-runtime/src/adapters/skills/default-skills.ts`, `packages/agent-runtime/src/domain/ports/policy-validation.port.ts`, `reference/architecture/agent-runtime/{harness-integration,extending}.md`, `rulesets/opa/`.
+- **Affected files:** `.harness/manifest.yaml`, `packages/agent-runtime/src/adapters/skills/default-skills.ts`, `packages/agent-runtime/src/domain/ports/policy-validation.port.ts`, `reference/core/architecture/foundations/{harness-integration,extending}.md`, `rulesets/opa/`.
 - **Complexity:** S
 - **Proposed fix:** Introduce a policy reference registry or alias map (`evolith.gates.discovery` -> `evolith.phase_gates`, architecture ADR validation -> the correct ruleset/policy package), update manifest/default skills/docs/tests, and add CI validation that every declared `policyRef` resolves to a real OPA package or explicit alias.
 - **Acceptance criteria:**
@@ -4577,7 +4577,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Restore release authority for `@evolith/agent-runtime` before treating v1.0.0 as production-stable.
 - **Evidence:** `npm test --workspace @evolith/agent-runtime -- --runInBand` fails in `public-surface.spec.ts` because `./adapters` now exports `ChatApprovalAdapter`, `OpenCodeInteractionAdapter`, and `SlackApprovalAdapter` beyond the frozen list. The README still says the package stays on `0.x` while the default Core adapter is stubbed, but `packages/agent-runtime/package.json` declares version `1.0.0`.
 - **Impact:** Consumers cannot tell whether new adapter exports are intentional additive minor changes, release-breaking changes, or undocumented drift; the board marks prior productionization gaps done while the package test suite is red.
-- **Affected files:** `packages/agent-runtime/src/__tests__/public-surface.spec.ts`, `packages/agent-runtime/src/adapters/index.ts`, `packages/agent-runtime/README.md`, `packages/agent-runtime/README.es.md`, `packages/agent-runtime/package.json`, `reference/governance/standards/vision/gap-tracking.md`.
+- **Affected files:** `packages/agent-runtime/src/__tests__/public-surface.spec.ts`, `packages/agent-runtime/src/adapters/index.ts`, `packages/agent-runtime/README.md`, `packages/agent-runtime/README.es.md`, `packages/agent-runtime/package.json`, `reference/core/control-center/gaps/gap-tracking.md`.
 - **Complexity:** S
 - **Proposed fix:** Decide whether the three exports are intentional public API. If yes, update the frozen list, README/ES SemVer narrative, and release notes as an additive stable-surface change. If no, stop exporting them from `./adapters` or mark them internal. Add a validation step that runs the public-surface test before any status can close a release/productization GT.
 - **Acceptance criteria:**
@@ -4613,7 +4613,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Restore semantic tracking as an executable source of truth: a gap marked `DONE` must have a closure registry record, checked closure criteria in both EN/ES catalog sections, resolvable evidence artifacts, and reproducible validation commands.
 - **Evidence:** After normalizing Spanish board statuses from `HECHO` to `COMPLETADO` and fixing GT-290's stale evidence pointer, `node .harness/scripts/ci/08-validate-tracking.mjs` still fails only on closure semantics: multiple `DONE` gaps such as `GT-377`, `GT-395`, `GT-375`, `GT-390`, `GT-405`, `GT-410`, `GT-411`, and Agent Runtime wave gaps lack `gap-closure-evidence.json` records and/or still contain unchecked - [x] criteria.
 - **Impact:** The executive summary and maturity evidence can overstate closure because table status, catalog criteria, and closure registry are not fully reconciled.
-- **Affected files:** `reference/governance/standards/vision/gap-tracking.md`, `reference/governance/standards/vision/gap-tracking.es.md`, `reference/governance/standards/vision/gap-reference-catalog.md`, `reference/governance/standards/vision/gap-reference-catalog.es.md`, `reference/governance/standards/vision/gap-closure-evidence.json`, `.harness/scripts/ci/08-validate-tracking.mjs`.
+- **Affected files:** `reference/core/control-center/gaps/gap-tracking.md`, `reference/core/control-center/gaps/gap-tracking.es.md`, `reference/core/control-center/gaps/gap-reference-catalog.md`, `reference/core/control-center/gaps/gap-reference-catalog.es.md`, `reference/core/control-center/evidence/gap-closure-evidence.json`, `.harness/scripts/ci/08-validate-tracking.mjs`.
 - **Complexity:** M
 - **Proposed fix:** For each `DONE` gap reported by the validator, either add a real closure record with an existing commit, resolvable evidence, validation commands, and dependency disposition, then mark the matching EN/ES criteria as checked; or reopen the gap to `PENDING`/`IN-PROGRESS` if the evidence is not actually complete. Keep the validator in CI/pre-commit so new `DONE` rows cannot bypass registry reconciliation.
 - **Acceptance criteria:**

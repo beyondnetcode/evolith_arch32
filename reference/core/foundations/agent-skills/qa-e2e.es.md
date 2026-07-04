@@ -92,5 +92,5 @@ Para cada FAIL, reporta el comando que falla, la superficie o fase involucrada, 
 
 *Ver [AGENTS.md](../AGENTS.md) para contexto del repositorio y ciclo de vida de gaps.*
 *Ver [Reglas Globales](../../.harness/rules/global-rules.md) para R-25 Paridad de Doble Motor.*
-*Ver [Tablero de Seguimiento de Gaps](../../reference/governance/standards/vision/gap-tracking.md) para el estado de gaps.*
+*Ver [Tablero de Seguimiento de Gaps](../../reference/core/control-center/gaps/gap-tracking.md) para el estado de gaps.*
 *Ver [surface-parity-matrix.json](../../reference/governance/standards/vision/surface-parity-matrix.json) (GT-171) y [surface-compatibility.json](../../reference/governance/standards/vision/surface-compatibility.json) (GT-174).*

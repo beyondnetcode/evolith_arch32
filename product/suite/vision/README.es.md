@@ -23,6 +23,6 @@ Esta área contiene la visión de portafolio de Evolith Product Suite. Explica q
 
 ## Límite
 
-Esta área puede definir estructura del portafolio, valor de la Suite, relación entre productos, etapas de adopción y dirección comercial. Los principios universales pertenecen a Evolith Core. La implementación interna pertenece a `reference/products/`.
+Esta área puede definir estructura del portafolio, valor de la Suite, relación entre productos, etapas de adopción y dirección comercial. Los principios universales pertenecen a Evolith Core. La implementación interna pertenece a `product/products/`.
 
 [Volver a Product Suite](../README.es.md)

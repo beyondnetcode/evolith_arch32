@@ -89,14 +89,14 @@ api.tudominio.com    mcp.tudominio.com
 
 ## Fase 2 — Agregar Dockerfiles
 
-Los Dockerfiles de referencia se encuentran en [`reference/infrastructure/docker/`](../docker/). Antes de deployar vía Coolify, copiarlos a los directorios de cada app:
+Los Dockerfiles de referencia se encuentran en [`product/infra/docker/`](../docker/). Antes de deployar vía Coolify, copiarlos a los directorios de cada app:
 
 ```bash
 # core-api
-cp reference/infrastructure/docker/bff.Dockerfile apps/core-api/Dockerfile
+cp product/infra/docker/bff.Dockerfile apps/core-api/Dockerfile
 
 # mcp-server
-cp reference/infrastructure/docker/mcp.Dockerfile packages/mcp-server/Dockerfile
+cp product/infra/docker/mcp.Dockerfile packages/mcp-server/Dockerfile
 ```
 
 Ambos usan builds multi-stage en Alpine y corren como usuario no-root `evolith` (UID 1001).

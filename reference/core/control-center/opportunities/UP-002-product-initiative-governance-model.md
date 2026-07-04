@@ -19,9 +19,9 @@
 
 ## Context
 
-Evolith Core declares it is **not** "a task-management platform" (`reference/core/README.md:47`), yet its governance surfaces require agile execution artifacts as **blocking gate evidence** — *Evolith User Story* / *Agile Backlog* **Required** in Phase 2, *Technical Stories* **Required** in Phase 3 (`reference/governance/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,223`); "story readiness" closes gate F2 (`:209`). Operational schemas (`evolith-user-story.schema.json`, `agile-backlog.schema.json`, `functional-story.schema.json`, `ballpark-estimation.schema.json`) live as canonical Core contracts.
+Evolith Core declares it is **not** "a task-management platform" (`reference/core/README.md:47`), yet its governance surfaces require agile execution artifacts as **blocking gate evidence** — *Evolith User Story* / *Agile Backlog* **Required** in Phase 2, *Technical Stories* **Required** in Phase 3 (`reference/core/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,223`); "story readiness" closes gate F2 (`:209`). Operational schemas (`evolith-user-story.schema.json`, `agile-backlog.schema.json`, `functional-story.schema.json`, `ballpark-estimation.schema.json`) live as canonical Core contracts.
 
-Meanwhile **no `Producto` or `Iniciativa` entity exists** in the Core domain; the initiative is an opaque, never-persisted string (`gate-evidence.ts:87-89`). Evolith Tracker already models `PRODUCT`/`SDLC_PROCESS` (`reference/products/evolith-tracker/sdlc-tracker-technical-interfaces.md:415-428`) — the Core trails its own Tracker. This is the **governance ↔ operational-execution conflation**.
+Meanwhile **no `Producto` or `Iniciativa` entity exists** in the Core domain; the initiative is an opaque, never-persisted string (`gate-evidence.ts:87-89`). Evolith Tracker already models `PRODUCT`/`SDLC_PROCESS` (`product/products/evolith-tracker/sdlc-tracker-technical-interfaces.md:415-428`) — the Core trails its own Tracker. This is the **governance ↔ operational-execution conflation**.
 
 ## Guiding Principle (non-negotiable)
 
@@ -82,11 +82,11 @@ Promote the **Product/Initiative governance model** to a canonical ecosystem sta
 | Artifact | Path |
 |---|---|
 | Design Document | `reference/core/product-initiative-governance-redesign.es.md` |
-| ADR | `reference/architecture/adrs/core/0100-governance-execution-boundary-product-initiative.md` |
-| Conflation evidence | `reference/governance/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,209,223` |
+| ADR | `reference/core/architecture/adrs/core/0100-governance-execution-boundary-product-initiative.md` |
+| Conflation evidence | `reference/core/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,209,223` |
 | Missing entities | `packages/core-domain/src/domain/entities/`, `gate-evidence.ts:87-89` |
 | Boundary precedent | `packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts:55` |
-| Tracker model | `reference/products/evolith-tracker/sdlc-tracker-technical-interfaces.md:415-428` |
+| Tracker model | `product/products/evolith-tracker/sdlc-tracker-technical-interfaces.md:415-428` |
 | Phase-gates ruleset / Rego | `rulesets/sdlc/phase-gates.rules.json`, `rulesets/opa/phase-gates.rego`, `rulesets/opa/dod.rego` |
 | Satellite Contracts | `rulesets/satellite-contracts/satellite-contracts.rules.json` |
 

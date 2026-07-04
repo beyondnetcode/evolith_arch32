@@ -103,10 +103,10 @@ Waivers cannot bypass undocumented decisions on regulated subsystems (authentica
 | `evolith validate --topology distributed-modules` | Validate F2 topology rules (DM-R01…DM-R08) |
 | `evolith validate --topology distributed-modules --topology event-driven` | Validate composed topology |
 | `evolith drift --level F2` | Detect drift from declared F2 architecture |
-| [distributed-modules.rules.json](../../../../reference/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json) | 8 mandatory F2 rules |
-| [ADR-0045](../../../../reference/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) | Extraction Readiness Score criteria |
-| [ADR-0047](../../../../reference/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | F1→F2→F3 progression framework |
-| [topology-dimensions.md](../../../../reference/architecture/topologies/topology-dimensions.md) | Composable topology dimensions |
+| [distributed-modules.rules.json](../../../../reference/core/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json) | 8 mandatory F2 rules |
+| [ADR-0045](../../../../reference/core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) | Extraction Readiness Score criteria |
+| [ADR-0047](../../../../reference/core/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | F1→F2→F3 progression framework |
+| [topology-dimensions.md](../../../../reference/core/architecture/topologies/topology-dimensions.md) | Composable topology dimensions |
 
 ---
 

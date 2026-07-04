@@ -698,8 +698,8 @@ evolith validate --format summary
 ```
 
 **Evidence Artifacts:**
-- ADRs in `reference/architecture/adrs/`
-- Standards in `reference/governance/standards/`
+- ADRs in `reference/core/architecture/adrs/`
+- Standards in `reference/core/sdlc/standards/`
 - Requirements document
 
 **Gate 2 Requirements:**

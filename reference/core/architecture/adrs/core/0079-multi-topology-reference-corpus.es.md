@@ -41,7 +41,7 @@ Sin un modelo topológico controlado, el repositorio corre el riesgo de duplicar
 ## Opciones Consideradas
 
 1. **Directorio `/topologies/` en raíz.** Rechazado por ahora. Entra en conflicto con la taxonomía actual de raíz lean y corpus de referencia salvo que un ADR reemplazante modifique esa política.
-2. **Carpetas topológicas planas bajo `reference/architecture/topologies/`.** Rechazado. Implica incorrectamente que serverless, event-driven, data mesh, edge computing y agentic AI son alternativas mutuamente excluyentes.
+2. **Carpetas topológicas planas bajo `reference/core/architecture/topologies/`.** Rechazado. Implica incorrectamente que serverless, event-driven, data mesh, edge computing y agentic AI son alternativas mutuamente excluyentes.
 3. **CLI, servidor MCP o Core API separados por topología.** Rechazado. Duplica superficies operativas y viola el modelo unificado command-as-a-service ratificado por ADR-0073 y ADR-0074.
 4. **Corpus topológico dimensional con resolución por manifiesto.** Seleccionado. Preserva la taxonomía del repositorio, modela dimensiones arquitectónicas combinables y permite que un solo plano de control cargue contexto y reglas por topología.
 
@@ -52,7 +52,7 @@ Adoptar un **Corpus de Referencia Multi-Topología dimensional y orientado por m
 El corpus canónico legible por humanos vivirá bajo:
 
 ```text
-reference/architecture/topologies/
+reference/core/architecture/topologies/
   progressive-axis/
   execution/
   integration/
@@ -122,7 +122,7 @@ Evidencia usada:
 - La Paridad de Dos Motores aumenta el trabajo de implementación para cada nueva regla topológica.
 - Las herramientas existentes que solo conocen `--arch-level` requieren un mapping de compatibilidad durante la migración.
 
-**Trade-off aceptado:** la implementación inicial usará `reference/architecture/topologies/` y `rulesets/topologies/` en lugar de `/topologies/` raíz para preservar la taxonomía actual del repositorio. Un ADR futuro puede reconsiderar la ubicación en raíz solo si el valor de gobernanza supera el costo taxonómico.
+**Trade-off aceptado:** la implementación inicial usará `reference/core/architecture/topologies/` y `rulesets/topologies/` en lugar de `/topologies/` raíz para preservar la taxonomía actual del repositorio. Un ADR futuro puede reconsiderar la ubicación en raíz solo si el valor de gobernanza supera el costo taxonómico.
 
 ## Referencias
 

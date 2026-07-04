@@ -15,7 +15,7 @@ Proposals submitted by satellite repositories requesting Core to standardize, ex
 
 ## Architecture Decision Records
 
-ADRs are maintained in [reference/governance/adr/](./adr/). For AI-augmented engineering ADRs see [standards/ai-augmented/06-adrs/](./standards/ai-augmented/06-adrs/).
+ADRs are maintained in [reference/core/sdlc/governance/](./adr/). For AI-augmented engineering ADRs see [standards/ai-augmented/06-adrs/](./standards/ai-augmented/06-adrs/).
 
 ---
 

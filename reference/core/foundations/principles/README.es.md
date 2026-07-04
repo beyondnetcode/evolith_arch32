@@ -17,6 +17,6 @@ Esta área contiene principios arquitectónicos universales y neutrales respecto
 
 ## Límite
 
-Un principio Core debe seguir siendo válido aunque se reemplace cualquier producto, proveedor, modelo o herramienta nombrada. Los detalles de implementación pertenecen a `reference/products/`; las tecnologías nombradas pertenecen a `reference/platforms/`.
+Un principio Core debe seguir siendo válido aunque se reemplace cualquier producto, proveedor, modelo o herramienta nombrada. Los detalles de implementación pertenecen a `product/products/`; las tecnologías nombradas pertenecen a `product/infra/`.
 
 [Volver a Arquitectura](../README.es.md)

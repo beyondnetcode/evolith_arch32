@@ -136,7 +136,7 @@ corpus/
     topologies/
       */
         *.rules.json                 ← $schema paths corregidos
-  reference/architecture/topologies/ ← topology.manifest.json (consumidos por API)
+  reference/core/architecture/topologies/ ← topology.manifest.json (consumidos por API)
 
 reference/                           ← LECTURA HUMANA ÚNICAMENTE
   governance/sdlc/playbooks/         ← procedimiento humano (no contrato)
@@ -161,9 +161,9 @@ Tier 2 — Derivado automáticamente desde Tier 1
   GET /api/v1/topologies ← lee topology.manifest.json en runtime
 
 Tier 3 — Escrito por humanos, no generado
-  reference/governance/sdlc/playbooks/*.md  ← procedimiento
-  reference/architecture/adrs/*.md          ← decisión narrativa
-  reference/architecture/blueprints/*.md    ← contexto de blueprint
+  reference/core/sdlc/playbooks/*.md  ← procedimiento
+  reference/core/architecture/adrs/*.md          ← decisión narrativa
+  reference/core/architecture/blueprints/*.md    ← contexto de blueprint
 ```
 
 Invariante: si un `.md` de playbook menciona un artefacto obligatorio, ese artefacto debe existir en el `.rules.json` correspondiente. CI debe verificar esta consistencia.

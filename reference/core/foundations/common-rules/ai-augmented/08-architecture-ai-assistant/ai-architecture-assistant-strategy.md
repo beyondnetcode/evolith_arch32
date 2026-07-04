@@ -76,7 +76,7 @@ The AI Architecture Assistant operates as a **Principal Architect** persona with
 EVOLITH REPOSITORY                    AI KNOWLEDGE BASE
 ─────────────────                     ─────────────────
 
-reference/architecture/adrs/          ┌─────────────────────┐
+reference/core/architecture/adrs/          ┌─────────────────────┐
   *.md files (57+ ADRs)     ──────── │  ADR Vector Store   │
                                        │  (chunked by section│
 reference/architecture/                │   + metadata tags)  │
@@ -113,7 +113,7 @@ Each document chunk is stored with a structured metadata envelope:
 ```json
 {
   "chunk_id": "adr-0002-decision",
-  "source": "reference/architecture/adrs/nodejs/0002-clean-architecture-nestjs.md",
+  "source": "reference/core/architecture/adrs/nodejs/0002-clean-architecture-nestjs.md",
   "artifact_type": "ADR",
   "adr_id": "0002",
   "section": "decision",
@@ -204,7 +204,7 @@ New tool/library proposed by AI or developer?
 
 New architectural pattern not in ADR registry?
   → "This pattern is not in the Evolith ADR registry. Create an ADR
-    proposal at reference/architecture/adrs/[runtime]/ following the
+    proposal at reference/core/architecture/adrs/[runtime]/ following the
     template, then request Board review."
 
 Cross-schema SQL join detected?

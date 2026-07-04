@@ -4,13 +4,13 @@ import { execFileSync } from 'child_process';
 import { fileURLToPath, pathToFileURL } from 'url';
 
 const ROOT = path.resolve(process.env.EVOLITH_TRACKING_ROOT || '.');
-const EN_FILE = path.join(ROOT, 'reference/governance/standards/vision/gap-tracking.md');
-const ES_FILE = path.join(ROOT, 'reference/governance/standards/vision/gap-tracking.es.md');
-const EN_CATALOG = path.join(ROOT, 'reference/governance/standards/vision/gap-reference-catalog.md');
-const ES_CATALOG = path.join(ROOT, 'reference/governance/standards/vision/gap-reference-catalog.es.md');
+const EN_FILE = path.join(ROOT, 'reference/core/control-center/gap-tracking.md');
+const ES_FILE = path.join(ROOT, 'reference/core/control-center/gap-tracking.es.md');
+const EN_CATALOG = path.join(ROOT, 'reference/core/control-center/gap-reference-catalog.md');
+const ES_CATALOG = path.join(ROOT, 'reference/core/control-center/gap-reference-catalog.es.md');
 const CLOSURE_REGISTRY = path.join(
   ROOT,
-  'reference/governance/standards/vision/gap-closure-evidence.json',
+  'reference/core/control-center/gap-closure-evidence.json',
 );
 
 const STATUS_MAP = new Map([

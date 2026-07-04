@@ -31,7 +31,7 @@ The prior design proposed *building* persistence that the criterion forbids and 
 ### 1. Stateless evaluation contract (supersedes ADR-0100 Decision 1)
 - The Core **receives an `EvaluationContext`**, evaluates it against versioned **definitions/standards** (phases, gates, artifacts, evidence shapes, blueprints, topologies, rulesets, OPA policies), and **returns an `EvaluationResult`**. It never calls back to mutate.
 - `tenantId`, `productId`, `initiativeId`, `initiativeGroupId`, `phaseId`, `gateId`, `artifactId` are **opaque context identifiers**, never Core entities. The Core does not own, persist, or interpret product/tenant/initiative/evidence/decision.
-- The Core's only persistence is **versioned definitions/standards** (`rulesets/`, `reference/architecture/blueprints/`, `reference/governance/sdlc/`, `IBlueprintRepository`).
+- The Core's only persistence is **versioned definitions/standards** (`rulesets/`, `reference/core/architecture/blueprints/`, `reference/core/sdlc/`, `IBlueprintRepository`).
 
 ### 2. Tracker (or any consumer) owns operational state
 Evolith Tracker registers, persists and audits products, tenants, ideas, initiatives, initiative groups, executed phases/gates, artifacts, evidence, decisions, deployments, states, audit, and external integrations. It **sends** the `EvaluationContext` and **consumes** the `EvaluationResult`. External tools (Jira/Azure DevOps/GitHub Projects) remain the source of truth for delivery execution detail.

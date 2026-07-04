@@ -11,7 +11,7 @@ Lee `gap-tracking.md`, calcula puntuación de prioridad multiplicando impacto ×
 | ID | `gap-prioritization-engine` |
 | Propietario | `@po` |
 | Versión | `1.0.0` |
-| Entradas | `reference/governance/standards/vision/gap-tracking.md`, `gap-closure-evidence.json` |
+| Entradas | `reference/core/control-center/gaps/gap-tracking.md`, `gap-closure-evidence.json` |
 | Salidas | Reporte de gaps priorizados (JSON) |
 
 ## Algoritmo

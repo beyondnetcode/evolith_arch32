@@ -7,7 +7,7 @@ This repository and UMS serve different purposes. Reading them as one authority 
 | Concern | Canonical architecture reference | UMS applied model |
 |---|---|---|
 | Purpose | Define reusable standards, blueprints, ADRs, and selection criteria | Demonstrate those ideas in an enterprise product context |
-| Location | This repository under `reference/architecture/` and `reference/governance/` | [beyondnetcode/ums](https://github.com/beyondnetcode/ums) |
+| Location | This repository under `reference/core/architecture/` and `reference/core/sdlc/` | [beyondnetcode/ums](https://github.com/beyondnetcode/ums) |
 | Authority | Normative where an artifact is accepted or mandatory | Evidence and specialization unless promoted by an ADR here |
 | Technology | Runtime-agnostic baseline plus explicit runtime profiles | Its selected product stack and operational constraints |
 | Executable code | Not maintained in this repository | Maintained in the UMS repository |

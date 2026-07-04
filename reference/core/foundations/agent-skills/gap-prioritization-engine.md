@@ -11,7 +11,7 @@ Reads `gap-tracking.md`, calculates priority score by multiplying impact × urge
 | ID | `gap-prioritization-engine` |
 | Owner | `@po` |
 | Version | `1.0.0` |
-| Inputs | `reference/governance/standards/vision/gap-tracking.md`, `gap-closure-evidence.json` |
+| Inputs | `reference/core/control-center/gaps/gap-tracking.md`, `gap-closure-evidence.json` |
 | Outputs | Prioritized gap report (JSON) |
 
 ## Algorithm

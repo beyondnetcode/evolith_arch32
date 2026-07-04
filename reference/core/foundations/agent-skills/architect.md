@@ -71,8 +71,8 @@ You are the **lead agent** for GT-152 and GT-153. Your role is to:
 
 ### Bilingual ADR Requirement
 Every ADR must have bilingual versions:
-- EN: `reference/architecture/adrs/core/<number>-<slug>.md`
-- ES: `reference/architecture/adrs/core/<number>-<slug>.es.md`
+- EN: `reference/core/architecture/adrs/core/<number>-<slug>.md`
+- ES: `reference/core/architecture/adrs/core/<number>-<slug>.es.md`
 
 Both files must have identical ## and ### header counts (validated via `check-bilingual-parity.mjs`).
 
@@ -142,6 +142,6 @@ File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md sec
 *See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle.*
 *See [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
 *See [Global Rules](../../.harness/rules/global-rules.md) for R-25 Dual-Engine Parity and R-26 Semantic Gap Closure.*
-*See [ADR-0068](../../reference/architecture/adrs/core/0068-documentation-release-gitflow.md) for documentation release policy.*
-*See [ADR-0050](../../reference/architecture/adrs/core/0050-gitflow-branching-strategy.md) for branching strategy.*
-*See [Gap Reference Catalog](../../reference/governance/standards/vision/gap-reference-catalog.md) for gap definitions.*
+*See [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) for documentation release policy.*
+*See [ADR-0050](../../reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.md) for branching strategy.*
+*See [Gap Reference Catalog](../../reference/core/control-center/gaps/gap-reference-catalog.md) for gap definitions.*

@@ -36,7 +36,7 @@ Una ruta entra en el ciclo de deprecación a través del decorador `@Deprecated(
 El aviso mínimo entre deprecación y sunset es de **90 días**. La eliminación antes de la fecha de sunset requiere una excepción del Architecture Board registrada en el set de ADRs.
 
 ### 3. Requisito de changelog
-Todo cambio de ruta versionada por URI lleva una entrada en el changelog bajo `reference/products/core-api/changelog.md` (creado por GT-156) que indica:
+Todo cambio de ruta versionada por URI lleva una entrada en el changelog bajo `product/products/core-api/changelog.md` (creado por GT-156) que indica:
 - La ruta, el verbo HTTP y la versión.
 - La clase de cambio (added · deprecated · removed · breaking-shape).
 - Fecha efectiva y fecha de sunset en deprecaciones.

@@ -19,7 +19,7 @@ SDLC phases, gap tracking, maturity scoring, and compliance.
 | **In Progress** | 0 |
 | **Deferred** | 0 |
 
-Full board: [gap-tracking.md](https://github.com/beyondnetcode/evolith_arch32/blob/main/reference/governance/standards/vision/gap-tracking.md)
+Full board: [gap-tracking.md](https://github.com/beyondnetcode/evolith_arch32/blob/main/reference/core/control-center/gaps/gap-tracking.md)
 
 ---
 

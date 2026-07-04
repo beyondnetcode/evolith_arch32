@@ -17,7 +17,7 @@ En el core utilizamos el **Método BMAD** (Desarrollo impulsado por IA y basado 
 - **Agente DevOps:** Ayuda a orquestar despliegues distribuidos y flujos de GitHub Actions.
 - **Agente Docs:** Gestiona traducciones y validaciones de Markdown.
 
-El catálogo de agentes, contratos y handoffs está documentado en [AGENTS.es.md](./AGENTS.es.md). Para una orientación detallada, revisa nuestra [Guía de Inicio Rápido](./reference/governance/standards/onboarding/product-quick-start.es.md).
+El catálogo de agentes, contratos y handoffs está documentado en [AGENTS.es.md](./AGENTS.es.md). Para una orientación detallada, revisa nuestra [Guía de Inicio Rápido](./reference/core/foundations/inheritance-model/product-quick-start.es.md).
 
 ## 2. Prerrequisitos y Configuración Local
 
@@ -27,7 +27,7 @@ Evolith es un **monorepo de npm workspaces** (`sdk/*`, `apps/*`, `packages/*`). 
 
 - **Node.js 20** es lo que ejecuta CI. El CLI declara `engines.node >= 18.0.0`, pero fija Node 20 localmente para coincidir con el pipeline.
 - **npm** (compatible con workspaces; viene con Node).
-- **Git** con el modelo de ramificación GitFlow (ver [ADR-0050](./reference/architecture/adrs/core/0050-gitflow-branching-strategy.es.md)).
+- **Git** con el modelo de ramificación GitFlow (ver [ADR-0050](./reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.es.md)).
 
 ### B. Clonar e Instalar
 
@@ -159,12 +159,12 @@ La Core-API es **solo REST** (sin GraphQL, sin SSE), servida bajo `/api/v1`. Cad
 
 ### H. Tracker
 
-`gap-tracking.md` y `maturity-assessment.md` (bajo `reference/governance/standards/vision/`) son las **únicas** superficies de seguimiento. Actualízalas a través de sus pares bilingües y mantén la evidencia de cierre sincronizada; los gates `08-validate-tracking.mjs` y `09-reconcile-maturity.mjs` las verifican.
+`gap-tracking.md` y `maturity-assessment.md` (bajo `reference/core/sdlc/standards/vision/`) son las **únicas** superficies de seguimiento. Actualízalas a través de sus pares bilingües y mantén la evidencia de cierre sincronizada; los gates `08-validate-tracking.mjs` y `09-reconcile-maturity.mjs` las verifican.
 
 ## 6. Proceso de Pull Request
 
-1. **Ramificación (Branching):** Sigue el [ADR-0050](./reference/architecture/adrs/core/0050-gitflow-branching-strategy.es.md). El trabajo de features fluye hacia `develop`, y `develop` se promueve a `main`. Prefija tus ramas correctamente (ej. `feature/`, `docs/`, `fix/`).
-2. **Actualización de ADRs:** Si tu PR introduce un cambio arquitectónico o una nueva herramienta, *debe* ir acompañado de una actualización a un ADR existente o un nuevo ADR según el [ADR-0068](./reference/architecture/adrs/core/0068-documentation-release-gitflow.es.md).
+1. **Ramificación (Branching):** Sigue el [ADR-0050](./reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.es.md). El trabajo de features fluye hacia `develop`, y `develop` se promueve a `main`. Prefija tus ramas correctamente (ej. `feature/`, `docs/`, `fix/`).
+2. **Actualización de ADRs:** Si tu PR introduce un cambio arquitectónico o una nueva herramienta, *debe* ir acompañado de una actualización a un ADR existente o un nuevo ADR según el [ADR-0068](./reference/core/architecture/adrs/core/0068-documentation-release-gitflow.es.md).
 3. **Mensajes de Commit:** Usamos versionamiento semántico y release-please. Tus commits deben seguir la especificación [Conventional Commits](https://www.conventionalcommits.org/), usando tipos como `feat`, `fix`, `docs`, `ci` y `chore` (ej. `feat:`, `docs:`, `fix:`).
 4. **Issues:** Abre un issue antes de cambios grandes para que el diseño pueda discutirse. Referencia el identificador de gap `GT-###` correspondiente cuando tu trabajo cierre un gap rastreado.
 5. **Revisión de Código:** Todos los PR requieren revisión. Nuestros flujos automatizados publican en tu PR el impacto de cobertura, la validación estructural y los resultados de la revisión agéntica de Winston.

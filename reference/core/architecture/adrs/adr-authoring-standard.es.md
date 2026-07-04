@@ -5,7 +5,7 @@
 **Estado:** Aprobado
 **Responsable:** Evolith Architecture Board
 **Creado:** 2026-06-10
-**Aplica a:** todo ADR bajo `reference/architecture/adrs/` (categorías core y de plataforma)
+**Aplica a:** todo ADR bajo `reference/core/architecture/adrs/` (categorías core y de plataforma)
 
 ---
 

@@ -30,10 +30,10 @@ Data mesh no debilita el ownership transaccional. Las fronteras de datos de domi
 
 | Artefacto | Rol |
 |---|---|
-| [ADR-0084: Data Mesh y Datos como Producto](../../../reference/architecture/adrs/core/0084-data-mesh-data-products.md) | Gobierna la topologia data mesh y los contratos de productos de datos. |
-| [ADR-0079: Corpus de Referencia Multi-Topologia](../../../reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Gobierna los manifiestos de topologia y composicion. |
+| [ADR-0084: Data Mesh y Datos como Producto](../../../reference/core/architecture/adrs/core/0084-data-mesh-data-products.md) | Gobierna la topologia data mesh y los contratos de productos de datos. |
+| [ADR-0079: Corpus de Referencia Multi-Topologia](../../../reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Gobierna los manifiestos de topologia y composicion. |
 | [Reglas de Arquitectura Data Mesh](./data-mesh.rules.json) | Reglas de compatibilidad ejecutables existentes. |
-| [Modelo de Dimensiones de Topologia](../../../reference/architecture/topologies/topology-dimensions.md) | Define reglas de composicion y compatibilidad. |
+| [Modelo de Dimensiones de Topologia](../../../reference/core/architecture/topologies/topology-dimensions.md) | Define reglas de composicion y compatibilidad. |
 
 ## Contrato Ejecutable
 

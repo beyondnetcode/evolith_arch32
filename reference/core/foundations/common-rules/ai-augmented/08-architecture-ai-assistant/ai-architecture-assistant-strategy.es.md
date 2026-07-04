@@ -77,7 +77,7 @@ El Asistente AI de Arquitectura opera como una persona de **Arquitecto Principal
 REPOSITORIO EVOLITH                   BASE DE CONOCIMIENTO AI
 ───────────────────                   ──────────────────────
 
-reference/architecture/adrs/          ┌─────────────────────┐
+reference/core/architecture/adrs/          ┌─────────────────────┐
   archivos *.md (57+ ADRs)  ──────── │  ADR Vector Store   │
                                        │  (por sección       │
 reference/architecture/                │   + etiquetas meta) │
@@ -115,7 +115,7 @@ Cada chunk de documento se almacena con un sobre de metadata estructurado:
 ```json
 {
   "chunk_id": "adr-0002-decision",
-  "source": "reference/architecture/adrs/nodejs/0002-clean-architecture-nestjs.md",
+  "source": "reference/core/architecture/adrs/nodejs/0002-clean-architecture-nestjs.md",
   "artifact_type": "ADR",
   "adr_id": "0002",
   "section": "decision",
@@ -209,7 +209,7 @@ RESPUESTA AI:
 
 ¿Nuevo patrón arquitectónico no está en el registro ADR?
   → "Este patrón no está en el registro ADR de Evolith. Crea una
-    propuesta ADR en reference/architecture/adrs/[runtime]/ siguiendo
+    propuesta ADR en reference/core/architecture/adrs/[runtime]/ siguiendo
     la plantilla, luego solicita revisión del Board."
 
 ¿Detected cross-schema SQL join?

@@ -76,6 +76,11 @@
 * [0097-knowledge-lifecycle-governance](./0097-knowledge-lifecycle-governance.md) — **Knowledge lifecycle promotion pipeline and Winston custodianship**
 * [0098-rest-uri-versioning-deprecation-policy](./0098-rest-uri-versioning-deprecation-policy.md) — **REST URI versioning and deprecation policy**
 * [0099-opa-bundle-s3-distribution](./0099-opa-bundle-s3-distribution.md) — **OPA bundle distribution via S3 (MinIO) — superseded by ADR-0085**
+* [0100-governance-execution-boundary-product-initiative](./0100-governance-execution-boundary-product-initiative.md) — **Governance/Execution boundary — Producto and Iniciativa as primary units, with advisory capability**
+* [0101-core-stateless-evaluation-engine](./0101-core-stateless-evaluation-engine.md) — **Evolith Core as a stateless Evaluation Engine (supersedes ADR-0100 Decision 1)**
+* [0102-evolith-agent-runtime](./0102-evolith-agent-runtime.md) — **Evolith Agent Runtime as a decoupled agentic layer**
+* [0103-architecture-planning-gate-intake](./0103-architecture-planning-gate-intake.md) — **Architecture Planning Gate as pre-Discovery intake**
+* [0104-topology-driven-advisory-design-governance](./0104-topology-driven-advisory-design-governance.md) — **Topology-driven advisory Design-phase governance; blueprint as composable development guide (extends ADR-0079/0101)**
 
 ---
 [Back to Upper Level](../README.md)

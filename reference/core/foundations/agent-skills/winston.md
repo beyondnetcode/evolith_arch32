@@ -165,6 +165,8 @@ As the Standards Enforcer, you strictly apply the following BMAD Intelligence re
 Durable design context captured from owner-guided product-flow sessions. Load the relevant record before auditing the affected surface:
 
 * [Tracker Intake & Opportunity Flow](./tracker-intake-flow.md) — Tracker entry model (Fase 0). Architecture notes: symmetric origin ACLs → single `IInitiative`; intelligent Gate 0 (Core default + tenant override, Core-set immutable floor) as the product requirement behind **GT-08…GT-11**; re-entrant versioned rejection cycle; canonical entry format/KDD schemas belong in Core corpus.
+* [Tracker Discovery Flow](./tracker-discovery-flow.md) — Discovery (Fase 1). Architecture notes: governed **architecture-advisory** capability (A3) is the first Tracker→Core-architecture bridge — runs over Core's stateless knowledge, evidence persisted in Tracker (ADR-0101); progressive blueprint draft (does not block Gate 1); PRD is the canonical floor with KDD as an optional sub-artifact.
+* [Agent Authority Model](./agent-authority-model.md) — Hermes manages; owner's Core agents govern the Constitution; tenants bring their own models/agents. Boundary enforced via `IAgentEnginePort`.
 
 ---
 

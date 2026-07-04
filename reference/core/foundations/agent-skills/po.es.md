@@ -98,6 +98,7 @@ Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.e
 Contexto de negocio durable capturado en sesiones de flujo de producto guiadas por el dueño. Carga el registro relevante al validar o priorizar el área afectada:
 
 * [Flujo de Ingesta y Oportunidad del Tracker](./tracker-intake-flow.es.md) — Modelo de entrada del Tracker (Fase 0). Notas de negocio: dos orígenes (Oportunidad interna / Intake externo) convergen en una sola Iniciativa; Gate 0 inteligente con criterios de aceptación configurables por tenant sobre un piso fijado por Core; el rechazo es un ciclo de mejora gobernado y versionado (no terminal); `PENDIENTE` desacopla "aprobada" de "activada" (activación agéntica/mixta hacia Discovery).
+* [Flujo de Discovery del Tracker](./tracker-discovery-flow.es.md) — Discovery (Fase 1). Notas de negocio: el PRD es el artefacto obligatorio (no-overrideable), con KDD opcional dentro; los tenants pueden solicitar **asesoría de arquitectura** gobernada como apoyo opt-in para de-risquear el diseño de la feature; el borrador de blueprint es opcional y no bloquea el Business Sign-Off; todo se audita en el Tracker.
 
 ---
 

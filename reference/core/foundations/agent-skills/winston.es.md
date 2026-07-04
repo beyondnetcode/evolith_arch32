@@ -163,6 +163,8 @@ Como Garante de Estándares, aplicas estrictamente los siguientes recursos de In
 Contexto de diseño durable capturado en sesiones de flujo de producto guiadas por el dueño. Carga el registro relevante antes de auditar la superficie afectada:
 
 * [Flujo de Ingesta y Oportunidad del Tracker](./tracker-intake-flow.es.md) — Modelo de entrada del Tracker (Fase 0). Notas de arquitectura: ACLs simétricos por origen → única `IIniciativa`; Gate 0 inteligente (default de Core + override de tenant, piso inmutable fijado por Core) como el requisito de producto detrás de **GT-08…GT-11**; ciclo de rechazo re-entrante y versionado; los schemas canónicos de formato de entrada/KDD pertenecen al corpus de Core.
+* [Flujo de Discovery del Tracker](./tracker-discovery-flow.es.md) — Discovery (Fase 1). Notas de arquitectura: la capability de **asesoría de arquitectura** gobernada (A3) es el primer puente Tracker→Core-arquitectura — corre sobre el conocimiento stateless de Core, evidencia persistida en Tracker (ADR-0101); borrador de blueprint progresivo (no bloquea el Gate 1); el PRD es el piso canónico con KDD como sub-artefacto opcional.
+* [Modelo de Autoridad de Agentes](./agent-authority-model.es.md) — Hermes gestiona; los agentes de Core del dueño gobiernan la Constitución; los tenants traen sus propios modelos/agentes. Frontera aplicada vía `IAgentEnginePort`.
 
 ---
 

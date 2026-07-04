@@ -98,6 +98,7 @@ File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md sec
 Durable business context captured from owner-guided product-flow sessions. Load the relevant record when validating or prioritizing the affected area:
 
 * [Tracker Intake & Opportunity Flow](./tracker-intake-flow.md) — Tracker entry model (Fase 0). Business notes: two origins (Opportunity internal / Intake external) converge on one Initiative; intelligent Gate 0 with tenant-configurable acceptance criteria over a Core-set floor; rejection is a governed, versioned improvement cycle (not terminal); `PENDING` decouples "approved" from "activated" (agentic/mixed activation into Discovery).
+* [Tracker Discovery Flow](./tracker-discovery-flow.md) — Discovery (Fase 1). Business notes: PRD is the mandatory (non-overrideable) artifact, KDD optional inside it; tenants can request governed **architecture advisory** as opt-in support to de-risk feature design; the blueprint draft is optional and does not block Business Sign-Off; everything is audited in the Tracker.
 
 ---
 

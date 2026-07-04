@@ -3,6 +3,36 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-425",
+      "closedAt": "2026-07-04",
+      "closureCommit": "d93bc0f2",
+      "evidence": [
+        "reference/core/architecture/adrs/core/0104-topology-driven-advisory-design-governance.md",
+        "reference/core/architecture/design-phase-governance.md",
+        "src/packages/core-domain/src/evaluation/design-flow.e2e.spec.ts"
+      ],
+      "validationCommands": [
+        "EPIC — all children GT-426..GT-433 DONE; E2E against the real corpus passes; tsc -b clean"
+      ],
+      "dependencyDisposition": "partial",
+      "dependencyRationale": "GT-425 umbrella closed via F0-F8 (GT-426..GT-433). One follow-on remains outside the epic scope: CLI/MCP topology-recommend parity (task_0dfc5f71) mirroring the Core API endpoint for full BR-008 parity on the recommender."
+    },
+    {
+      "id": "GT-433",
+      "closedAt": "2026-07-04",
+      "closureCommit": "d93bc0f2",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/design-flow.e2e.spec.ts",
+        "reference/core/architecture/design-phase-governance.md",
+        "reference/core/architecture/design-phase-governance.es.md"
+      ],
+      "validationCommands": [
+        "npx jest --config src/packages/core-domain/jest.config.js --testPathPatterns evaluation (65 pass, incl. design-flow.e2e against the real corpus)",
+        "bilingual parity 8/8; links resolve"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-432",
       "closedAt": "2026-07-04",
       "closureCommit": "33306d72",

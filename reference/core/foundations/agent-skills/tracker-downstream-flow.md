@@ -44,6 +44,7 @@ PRODUCTION
 | DN-03 | **The blueprint-derived criteria (F7) configure these gates.** | Design de-risks delivery: what was planned becomes what's checked. | `EvaluationResult.results.design.downstreamCriteria` → the Tracker configures the F3/F4/F5 gate criteria. The generative contract realized. |
 | DN-04 | **The Tracker owns all operational execution** — Task Board, Sprints, TestCycle, Defect, ReleasePackage, Calendar, Rollback, DORA/SPACE. Core never manages work items. | Operational reality lives where the work happens (Tracker); Core stays lean. | Core stateless (ADR-0101): receives evidence/context, returns verdicts/recommendations; persists nothing operational. |
 | DN-05 | **Continuous advisory signals per phase:** Construction → architecture-drift (Core's `ArchitectureDriftService`); Quality → coverage/CFR/quality signals; Deployment → release-readiness. All non-binding. | Early warnings improve delivery quality without adding blocking friction. | Reuse existing evaluators (drift/checkpoint/deployment kinds); expose as recommendations/risks in the `EvaluationResult`. Triggering (schedule/watch) is a runtime/Tracker concern, not Core. |
+| DN-06 | **Each downstream phase has its own ARTIFACTS + GATE CRITERIA to fulfill** (owner's conceptual diagram: every phase carries `criterios` and produces `COMPUERTA→checkpoint` + `ARTEFACTOS→evidencias` via the API interface). Analogous to Design's `designProfile`: a **phase artifact profile** (required/conditional) + gate criteria. Minimum evidence (Vision §5.2): **Construction** = source+linked work · CI · DoD · drift result · spec traceability; **Quality** = test summary · coverage · security/contract results · CFR<2% · exception status; **Deployment** = release plan · observability · rollback · operational sign-off · deployment evidence. | Every phase has a clear "what must exist and pass" — not just a checkbox. Auditable evidence at each step. | A per-phase artifact profile (like `spec.designProfile`, GT-427) — partly **derived from the blueprint** (F7 `downstreamCriteria`), partly phase-specific; **topology-derived + tenant-configurable** (L-006). Core evaluates artifact completeness + gate criteria (advisory, non-binding); the Tracker persists the evidence and the checkpoint. External systems notify criteria/artifact state via the API interface. |
 
 ## 4. Cross-Repo & Core Implications
 
@@ -54,8 +55,9 @@ PRODUCTION
 
 ## 5. Open Items
 
+- Define a **per-phase artifact profile** (required/conditional artifacts + gate criteria) for Construction/Quality/Deployment — analogous to `spec.designProfile` (GT-427), topology-derived + tenant-configurable (DN-06). Candidate follow-on epic.
 - Define the concrete downstream signal set each Core evaluator emits per phase (drift categories for Construction; which quality signals for QA; which readiness checks for Deployment).
-- Confirm how `downstreamCriteria` map onto the Tracker's existing gate definitions (Build Pass / Quality Gate / Human Sign-Off).
+- Confirm how the blueprint's `downstreamCriteria` (F7) map onto and seed the Tracker's existing gate definitions (Build Pass / Quality Gate / Human Sign-Off).
 
 ## 6. Provenance
 

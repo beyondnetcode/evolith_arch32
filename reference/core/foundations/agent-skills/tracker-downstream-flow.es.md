@@ -44,6 +44,7 @@ PRODUCCIÓN
 | DN-03 | **Los criterios derivados del blueprint (F7) configuran estos gates.** | Design de-risquea la entrega: lo planeado se vuelve lo verificado. | `EvaluationResult.results.design.downstreamCriteria` → el Tracker configura los criterios de los gates F3/F4/F5. El contrato generativo hecho realidad. |
 | DN-04 | **El Tracker posee toda la ejecución operativa** — Task Board, Sprints, TestCycle, Defect, ReleasePackage, Calendar, Rollback, DORA/SPACE. Core nunca gestiona work items. | La realidad operativa vive donde ocurre el trabajo (Tracker); Core se mantiene liviano. | Core stateless (ADR-0101): recibe evidencia/contexto, devuelve veredictos/recomendaciones; no persiste nada operativo. |
 | DN-05 | **Señales advisory continuas por fase:** Construcción → architecture-drift (el `ArchitectureDriftService` de Core); Calidad → cobertura/CFR/calidad; Despliegue → release-readiness. Todas no vinculantes. | Alertas tempranas mejoran la calidad de entrega sin fricción bloqueante. | Reutilizar evaluadores existentes (kinds drift/checkpoint/deployment); exponer como recomendaciones/risks en el `EvaluationResult`. El disparo (schedule/watch) es del runtime/Tracker, no de Core. |
+| DN-06 | **Cada fase downstream tiene sus propios ARTEFACTOS + CRITERIOS DE GATE que cumplir** (diagrama conceptual del dueño: cada fase lleva `criterios` y produce `COMPUERTA→checkpoint` + `ARTEFACTOS→evidencias` vía la API interface). Análogo al `designProfile` de Design: un **perfil de artefactos de fase** (required/conditional) + criterios de gate. Evidencia mínima (Visión §5.2): **Construcción** = source+linked work · CI · DoD · resultado de drift · trazabilidad de spec; **Calidad** = test summary · coverage · resultados security/contract · CFR<2% · estado de excepciones; **Despliegue** = release plan · observability · rollback · operational sign-off · deployment evidence. | Cada fase tiene un claro "qué debe existir y pasar" — no solo un checkbox. Evidencia auditable en cada paso. | Un perfil de artefactos por fase (como `spec.designProfile`, GT-427) — en parte **derivado del blueprint** (F7 `downstreamCriteria`), en parte propio de la fase; **derivado por topología + configurable por tenant** (L-006). Core evalúa completitud de artefactos + criterios de gate (advisory, no vinculante); el Tracker persiste la evidencia y el checkpoint. Los sistemas externos notifican el estado de criterios/artefactos vía la API interface. |
 
 ## 4. Implicaciones Cross-Repo y de Core
 
@@ -54,8 +55,9 @@ PRODUCCIÓN
 
 ## 5. Ítems Abiertos
 
+- Definir un **perfil de artefactos por fase** (artefactos required/conditional + criterios de gate) para Construcción/Calidad/Despliegue — análogo a `spec.designProfile` (GT-427), derivado por topología + configurable por tenant (DN-06). Candidato a épico follow-on.
 - Definir el set concreto de señales downstream que cada evaluador de Core emite por fase (categorías de drift en Construcción; qué señales de calidad en QA; qué checks de readiness en Despliegue).
-- Confirmar cómo mapean los `downstreamCriteria` sobre las definiciones de gate existentes del Tracker (Build Pass / Quality Gate / Human Sign-Off).
+- Confirmar cómo mapean y siembran los `downstreamCriteria` del blueprint (F7) sobre las definiciones de gate existentes del Tracker (Build Pass / Quality Gate / Human Sign-Off).
 
 ## 6. Procedencia
 

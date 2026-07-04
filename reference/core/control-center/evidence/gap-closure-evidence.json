@@ -3,6 +3,20 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-432",
+      "closedAt": "2026-07-04",
+      "closureCommit": "33306d72",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/kind-evaluators.ts",
+        "src/packages/core-domain/src/evaluation/kind-evaluators.spec.ts"
+      ],
+      "validationCommands": [
+        "npx tsc -b tsconfig.json",
+        "npx jest --config src/packages/core-domain/jest.config.js --testPathPatterns evaluation (64 pass, 1 new downstream-derivation spec)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-431",
       "closedAt": "2026-07-04",
       "closureCommit": "4fcdc2c8",

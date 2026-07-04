@@ -42,6 +42,7 @@ const allowedDirectories = new Set([
   ".obsidian",
   ".vscode",
   "node_modules",
+  "product",
   "reference",
   "src"
 ]);

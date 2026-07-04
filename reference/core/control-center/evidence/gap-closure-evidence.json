@@ -3,6 +3,23 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-430",
+      "closedAt": "2026-07-04",
+      "closureCommit": "0196b158",
+      "evidence": [
+        "src/rulesets/schema/topology-recommendation.schema.json",
+        "src/rulesets/architecture/topology-recommendation.rules.json",
+        "src/packages/core-domain/src/application/services/topology-recommendation.service.ts",
+        "src/packages/core-domain/src/application/services/topology-recommendation.service.spec.ts"
+      ],
+      "validationCommands": [
+        "ajv: topology-recommendation.rules.json valid against its schema",
+        "npx tsc -b tsconfig.json",
+        "npx jest --config src/packages/core-domain/jest.config.js --testPathPatterns topology-recommendation (5 pass)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-429",
       "closedAt": "2026-07-04",
       "closureCommit": "1b4e6f98",

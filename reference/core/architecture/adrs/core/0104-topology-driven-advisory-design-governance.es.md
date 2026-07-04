@@ -70,6 +70,13 @@ Los tenants componen diseños desde bloques y pueden **crear templates tenant-sc
 ### 10. Statelessness preservada (según ADR-0101)
 Core **deriva, recomienda, valida y mide**; **recibe** propuestas de promoción. **Nunca persiste** templates tenant-scope, evidencia ni configuración downstream — eso vive en el Tracker. Las **herramientas de autoring de diseño** viven en el Tracker.
 
+### 11. Colecciones privadas por tenant — inteligencia personalizada
+Aunque Core es stateless y solo mantiene el corpus canónico, **un tenant puede mantener su propia colección privada de ADRs, templates, rulesets, blueprints, patrones y estándares a nivel de Tracker** (tenant-scope, persistida por el Tracker), para que sus agentes e inteligencia de diseño sean **más ricos y personalizados a su realidad**.
+- El **catálogo efectivo** que ven los agentes y evaluaciones del tenant = **corpus canónico de Core ∪ colección privada del tenant**. El tenant puede **extender/añadir** libremente y **override** donde esté permitido — nunca relajando el piso fijado por Core (modelo de gate inteligente).
+- **Core sigue stateless:** el tenant (vía el Tracker) **le pasa sus ADRs/rulesets/blueprints privados como contexto/refs** en el `EvaluationContext` (`rulesetRef`, `policyRefs`, `blueprintRef`, `adrRefs`, `schemaRef`); Core evalúa contra la unión y nunca persiste la colección del tenant.
+- Los **agentes propios del tenant** (según el [Modelo de Autoridad de Agentes](../../../foundations/agent-skills/agent-authority-model.es.md)) usan la colección privada como conocimiento personalizado para propuestas y asesoría — más cerca del dominio del tenant que el Core puro.
+- Lo que el tenant quiera canonizar sube aguas arriba vía UP-NNN (§9).
+
 ## Evidencia y Criterios de Evaluación
 
 - **Consistencia con fronteras ratificadas:** alinea con ADR-0101 (stateless, no vinculante, `initiative`/`initiativeGroup` opacos) y ADR-0079 (corpus multi-topología + composición); resuelve el drift de stories/backlog ya mandatado por ADR-0100/GT-375.

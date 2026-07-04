@@ -70,6 +70,13 @@ Tenants compose designs from blocks and may **create reusable tenant-scope templ
 ### 10. Statelessness preserved (per ADR-0101)
 Core **derives, recommends, validates, and measures**; it **receives** promotion proposals. It **never persists** tenant-scope templates, evidence, or downstream configuration — those live in the Tracker. Design **authoring tools** live in the Tracker.
 
+### 11. Tenant-scoped private collections — personalized intelligence
+Although the Core is stateless and holds only the canonical corpus, **a tenant may maintain its own private collection of ADRs, templates, rulesets, blueprints, patterns, and standards at the Tracker level** (tenant-scope, persisted by the Tracker), so its agents and design intelligence are **richer and personalized to its reality**.
+- The **effective catalog** a tenant's agents and evaluations see = **canonical Core corpus ∪ tenant private collection**. The tenant may **extend/add** freely and **override** where permitted — never relaxing the Core-set floor (intelligent-gate model).
+- **Core stays stateless:** the tenant (via the Tracker) **supplies its private ADRs/rulesets/blueprints as context/refs** in the `EvaluationContext` (`rulesetRef`, `policyRefs`, `blueprintRef`, `adrRefs`, `schemaRef`); Core evaluates against the union and never persists the tenant collection.
+- The tenant's **own agents** (per the [Agent Authority Model](../../../foundations/agent-skills/agent-authority-model.md)) use the private collection as personalized knowledge for proposals and advisory — closer to the tenant's domain than pure Core.
+- Anything the tenant wants to make canonical flows upstream via UP-NNN (§9).
+
 ## Evidence and Evaluation Criteria
 
 - **Consistency with ratified boundaries:** aligns with ADR-0101 (stateless, non-binding, `initiative`/`initiativeGroup` opaque) and ADR-0079 (multi-topology corpus + composition); resolves the story/backlog drift already mandated by ADR-0100/GT-375.

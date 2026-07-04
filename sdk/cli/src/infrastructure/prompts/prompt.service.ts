@@ -2,10 +2,11 @@ import * as p from '@clack/prompts';
 import type { Option } from '@clack/prompts';
 import chalk from 'chalk';
 import { CatalogLoader } from '../catalog/catalog-loader';
-import { InitProjectInput } from '@evolith/core-domain/application/services';
+import { RepoDetectionResult } from '@evolith/core-domain/application/ports/repo-detection.port';
+import { AdoptRepoInput } from '@evolith/core-domain/application/services/satellite-scaffolder.service';
 import { Injectable } from '@nestjs/common';
 import { UserCancelledError } from '@evolith/core-domain/domain/errors';
-import { runInitPromptGroup } from './init-prompt-group';
+import { runAdoptPromptGroup } from './init-prompt-group';
 
 @Injectable()
 export class PromptService {
@@ -101,8 +102,8 @@ export class PromptService {
     return result as T[];
   }
 
-  async askInitOptions(catalog: CatalogLoader): Promise<Partial<InitProjectInput> | null> {
-    return runInitPromptGroup(catalog);
+  async askAdoptOptions(detection: RepoDetectionResult, catalog: CatalogLoader): Promise<AdoptRepoInput | null> {
+    return runAdoptPromptGroup(detection, catalog);
   }
 
   private isCancelled(value: unknown): boolean {

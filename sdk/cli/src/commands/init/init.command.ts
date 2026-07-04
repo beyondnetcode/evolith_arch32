@@ -2,26 +2,25 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
-import { InitializeProjectUseCase, InitProjectInput } from '@evolith/core-domain/application/services';
+import { AdoptRepoUseCase, AdoptRepoResult } from '@evolith/core-domain/application/use-cases/adopt-repo.use-case';
+import { RepoDetectorService } from '@evolith/core-domain/application/services/repo-detector.service';
 import { logger, errorReporter, OperationTimer } from '../../infrastructure/observability';
 import { Injectable } from '@nestjs/common';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
-import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+import { IFileSystem, ICommandExecutor } from '@evolith/core-domain/domain/interfaces';
 
 interface InitCommandOptions {
   dryRun?: boolean;
-  config?: string;
-  runtime?: string;
   monorepo?: string;
-  arch?: string;
-  db?: string;
+  features?: string;
+  agents?: string;
 }
 
 @Injectable()
 @Command({
   name: 'init',
-  description: 'Inicializa un repositorio satélite de Evolith con selección interactiva de herramientas',
+  description: 'Initialize Evolith governance on the current repository (satellite adoption)',
 })
 export class InitCommand extends BaseEvolithCommand {
   private readonly operationTimer = new OperationTimer();
@@ -29,6 +28,7 @@ export class InitCommand extends BaseEvolithCommand {
   constructor(
     private readonly catalogLoader: CatalogLoader,
     @Inject('IFileSystem') private readonly fileSystem: IFileSystem,
+    @Inject('ICommandExecutor') private readonly commandExecutor: ICommandExecutor,
     promptService: PromptService
   ) {
     super('InitCommand', promptService);
@@ -40,116 +40,128 @@ export class InitCommand extends BaseEvolithCommand {
   ): Promise<void> {
     this.operationTimer.start('InitCommand.executeCommand');
 
-    logger.info('Starting project initialization', { options });
+    logger.info('Starting satellite adoption', { options });
 
-    const fs = this.fileSystem;
-    const useCase = new InitializeProjectUseCase(fs, this.catalogLoader);
+    const cwd = process.cwd();
 
-    console.clear();
-    this.promptService.showIntro('Evolith - Project Initialization');
-
-    const inputData = await this.promptService.askInitOptions(this.catalogLoader);
-
-    if (!inputData) {
-      this.promptService.showOutro(chalk.yellow('Inicialización cancelada.'));
+    // Validate we're inside a git repository
+    try {
+      await this.commandExecutor.executeOrThrow('git rev-parse --is-inside-work-tree', cwd);
+    } catch {
+      this.promptService.showError('Not inside a Git repository. Initialize a Git repo first: git init');
       return;
     }
 
-    this.promptService.startSpinner('Aplicando estándares de Evolith...');
+    // Detect repository properties
+    this.promptService.startSpinner('Detecting repository properties...');
+    const detector = new RepoDetectorService(this.fileSystem, this.commandExecutor);
+    const detection = await detector.detect(cwd);
+    this.promptService.stopSpinner();
 
-    const input: InitProjectInput = {
-      ...inputData,
-      name: inputData.name || (inputData as Record<string, string>).projectName,
-    } as InitProjectInput;
+    console.clear();
+    this.promptService.showIntro('Evolith - Satellite Adoption');
 
-    const result = await useCase.execute(input, process.cwd());
+    // Run interactive adopt prompts
+    const inputData = await this.promptService.askAdoptOptions(detection, this.catalogLoader);
+
+    if (!inputData) {
+      this.promptService.showOutro(chalk.yellow('Adoption cancelled.'));
+      return;
+    }
+
+    // Apply CLI overrides
+    if (options?.monorepo) inputData.monorepo = options.monorepo;
+    if (options?.features) inputData.features = options.features.split(',').map(f => f.trim());
+    if (options?.agents) inputData.agents = options.agents.split(',').map(a => a.trim());
+
+    this.promptService.startSpinner('Applying Evolith governance...');
+
+    const useCase = new AdoptRepoUseCase(this.fileSystem);
+    const result = await useCase.execute(inputData, cwd);
 
     this.promptService.stopSpinner();
 
     const durationMs = this.operationTimer.end();
 
     if (result.success) {
-      logger.info('Project initialization completed successfully', {
-        projectName: input.name,
-        artifacts: result.artifacts.length,
+      logger.info('Satellite adoption completed successfully', {
+        projectName: inputData.name,
+        created: result.created.length,
+        merged: result.merged.length,
+        skipped: result.skipped.length,
         durationMs,
       });
 
-      this.promptService.showSuccess(`✓ Proyecto ${input.name} inicializado`);
-      this.promptService.showInfo(`  Artifacts creados: ${result.artifacts.length}`);
-      result.artifacts.forEach(a => this.promptService.showInfo(`    - ${a}`));
+      this.promptService.showSuccess(`Repository adopted as Evolith satellite: ${inputData.name}`);
+
+      if (result.created.length > 0) {
+        this.promptService.showInfo(`  Created: ${result.created.length} files`);
+        result.created.forEach(a => this.promptService.showInfo(`    + ${a}`));
+      }
+
+      if (result.merged.length > 0) {
+        this.promptService.showInfo(`  Merged: ${result.merged.length} files`);
+        result.merged.forEach(a => this.promptService.showInfo(`    ~ ${a}`));
+      }
+
+      if (result.skipped.length > 0) {
+        this.promptService.showInfo(`  Skipped: ${result.skipped.length} files (already exist)`);
+      }
 
       if (result.warnings.length > 0) {
-        logger.warn('Initialization completed with warnings', { warnings: result.warnings });
+        logger.warn('Adoption completed with warnings', { warnings: result.warnings });
         this.promptService.showWarning('Warnings:');
         result.warnings.forEach(w => this.promptService.showWarning(`  - ${w}`));
       }
 
       const nextSteps = `
-Proximos pasos:
-  1. cd ${input.name}
-  2. evolith validate
+Next steps:
+  1. evolith validate
+  2. evolith sdlc status
   3. evolith agents install
   4. evolith sdlc handoff --from phase-0 --to phase-1
 `;
-      // p.note is removed, use showInfo or console.log
-      console.log(chalk.cyan(`\nSiguiente paso:\n${nextSteps}`));
+      console.log(chalk.cyan(`\n${nextSteps}`));
     } else {
-      errorReporter.report(result.errors, { operation: 'InitializeProjectUseCase.execute' });
-      logger.error('Project initialization failed', { errors: result.errors, durationMs });
-      this.promptService.showError('✗ Inicialización fallida');
+      errorReporter.report(result.errors, { operation: 'AdoptRepoUseCase.execute' });
+      logger.error('Satellite adoption failed', { errors: result.errors, durationMs });
+      this.promptService.showError('Adoption failed');
       result.errors.forEach(e => this.promptService.showError(`  - ${e}`));
       errorReporter.printSummary();
     }
 
-    this.promptService.showOutro(result.success ? chalk.green('¡Completado!') : chalk.red('Error'));
+    this.promptService.showOutro(result.success ? chalk.green('Done!') : chalk.red('Error'));
   }
 
   @Option({
     flags: '-d, --dry-run',
-    description: 'Ejecuta en modo simulacro sin alterar archivos',
+    description: 'Dry run mode — detect and show what would be done',
   })
   parseDryRun(): boolean {
     return true;
   }
 
   @Option({
-    flags: '-c, --config [string]',
-    description: 'Ruta al archivo evolith.setup.json para modo batch',
-  })
-  parseConfig(val: string): string {
-    return val;
-  }
-
-  @Option({
-    flags: '-r, --runtime [string]',
-    description: 'Runtime: nodejs, dotnet, python',
-  })
-  parseRuntime(val: string): string {
-    return val;
-  }
-
-  @Option({
     flags: '-m, --monorepo [string]',
-    description: 'Monorepo: none, nx, npm-workspaces, rush',
+    description: 'Monorepo strategy: none, nx, npm-workspaces, pnpm-workspaces, rush, turborepo',
   })
   parseMonorepo(val: string): string {
     return val;
   }
 
   @Option({
-    flags: '-a, --arch [string]',
-    description: 'Arquitectura: clean, hexagonal, ddd',
+    flags: '--features [string]',
+    description: 'Comma-separated features: adr, hooks, bilingual, acl, otel',
   })
-  parseArch(val: string): string {
+  parseFeatures(val: string): string {
     return val;
   }
 
   @Option({
-    flags: '--db [string]',
-    description: 'Base de datos: postgresql, mongodb, sqlserver',
+    flags: '--agents [string]',
+    description: 'Comma-separated agents: bmad, architecture, qa, sdlc',
   })
-  parseDb(val: string): string {
+  parseAgents(val: string): string {
     return val;
   }
 }

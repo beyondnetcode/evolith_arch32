@@ -62,7 +62,7 @@ Todos los scripts de harness DEBEN seguir:
 ## Referencias
 - [ADR-0002: Protocolo de Integracion MCP](./0002-mcp-integration-protocol.es.md)
 - [ADR-0003: Gobernanza de Seleccion de Modelo](./0003-model-selection-governance.es.md)
-- [Gap GT-147: Auditoria de Deriva Operacional](../../../governance/standards/vision/gap-reference-catalog.es.md)
+- [Gap GT-147: Auditoria de Deriva Operacional](../../../sdlc/standards/vision/gap-reference-catalog.es.md)
 - [review-provider.mjs](../../../../.harness/scripts/ci/agentic/review-provider.mjs)
 - [review-input.mjs](../../../../.harness/scripts/ci/agentic/review-input.mjs)
 - [review-result.mjs](../../../../.harness/scripts/ci/agentic/review-result.mjs)

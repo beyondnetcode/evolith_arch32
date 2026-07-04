@@ -17,7 +17,7 @@ a governed capability, invokes the right ports, runs validations, returns an
 **Puertos y Adaptadores** so no runtime/LLM technology becomes a domain
 dependency. 
 
-> **Important:** The runtime capabilities and their implementation maturity (like the `InteractionAdapterPort`) are strictly governed by the [Adapter Capability Maturity Matrix](../../governance/standards/vision/maturity-assessment.md#5-adapter-capability-maturity-agent-runtime).
+> **Important:** The runtime capabilities and their implementation maturity (like the `InteractionAdapterPort`) are strictly governed by the [Adapter Capability Maturity Matrix](../../sdlc/standards/vision/maturity-assessment.md#5-adapter-capability-maturity-agent-runtime).
 
 ## 2. Why a new layer that does not replace .harness
 

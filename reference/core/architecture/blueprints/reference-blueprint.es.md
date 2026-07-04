@@ -49,7 +49,7 @@ La organización promueve una arquitectura políglota deliberada donde los entor
 
 #### Marcos Estratégicos Complementarios
 Para comprender profundamente la postura matemática y de riesgo de esta arquitectura, consulte:
-* -> **[Evaluación de Madurez](../../governance/standards/vision/maturity-assessment.es.md)**
+* -> **[Evaluación de Madurez](../../sdlc/standards/vision/maturity-assessment.es.md)**
 * -> **[Análisis Estratégico del Teorema CAP](./cap-strategic-analysis.es.md)**
 * -> **[Escenarios de Despliegue Multi-Cloud](./multi-cloud-deployment-scenarios.es.md)**
 

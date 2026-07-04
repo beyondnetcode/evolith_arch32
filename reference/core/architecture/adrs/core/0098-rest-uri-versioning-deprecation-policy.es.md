@@ -64,9 +64,9 @@ Todo cambio de ruta versionada por URI lleva una entrada en el changelog bajo `p
 
 ## Referencias
 - [ADR-0073](./0073-unified-cli-output-contract.es.md) — Envelope de salida unificado (consumido por cada ruta versionada).
-- [GT-155](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-155) — Precondición de conformidad del envelope.
-- [GT-159](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-159) — Esta decisión realiza el gap.
-- [GT-174](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-174) — `meta.schemaVersion` y matriz de compatibilidad entre superficies (downstream).
+- [GT-155](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-155) — Precondición de conformidad del envelope.
+- [GT-159](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-159) — Esta decisión realiza el gap.
+- [GT-174](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-174) — `meta.schemaVersion` y matriz de compatibilidad entre superficies (downstream).
 - [RFC 7231 §7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1) — Formato HTTP-date usado en `Sunset`.
 - [RFC 8594](https://datatracker.ietf.org/doc/html/rfc8594) — El header HTTP Sunset.
 - [RFC 9745](https://datatracker.ietf.org/doc/html/rfc9745) — El header HTTP Deprecation.

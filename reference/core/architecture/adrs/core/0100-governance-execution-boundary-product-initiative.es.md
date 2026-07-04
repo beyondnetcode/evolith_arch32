@@ -51,7 +51,7 @@ El Core **define y evalúa**; Evolith Tracker **posee el estado canónico de fas
 ### 6. Desambiguación de `GateDecision`
 El value object del Core `GateDecision` (`packages/core-domain/src/gates/decision/gate-decision.ts:19`, `phase: number`, `violations: string[]`) se renombra a `CoreGateVerdict` y alimenta `DecisionRecord`. El literal legacy `'WAIVED'` migra al canónico `Verdict.WAIVE` (`verdict.ts:20`) vía `fromLegacyGateDecision`. El `GateDecision` rico es del Tracker.
 
-El diseño completo (schemas, contratos, cambios OPA, flujos, roadmap R0–R5 y backlog) está en [Rediseño de Gobierno Producto/Iniciativa](../../../core/product-initiative-governance-redesign.es.md) y se propone para adopción del ecosistema en [UP-002](../../../governance/upstream-proposals/UP-002-product-initiative-governance-model.es.md).
+El diseño completo (schemas, contratos, cambios OPA, flujos, roadmap R0–R5 y backlog) está en [Rediseño de Gobierno Producto/Iniciativa](../../../core/product-initiative-governance-redesign.es.md) y se propone para adopción del ecosistema en [UP-002](../../../sdlc/upstream-proposals/UP-002-product-initiative-governance-model.es.md).
 
 ## Consecuencias
 

@@ -59,8 +59,8 @@ Los agentes de IA deben:
 - La revisión humana sigue siendo obligatoria para las decisiones promovidas.
 ## Related Artifacts
 - [Estrategia de conocimiento de IA](../../../knowledge/architecture-intelligence/ai/ai-knowledge-strategy.md)
-- [Estándares aumentados con IA](../../../governance/standards/ai-augmented/README.md)
-- [Taxonomía del repositorio](../../../governance/standards/repository-taxonomy.md)
+- [Estándares aumentados con IA](../../../sdlc/standards/ai-augmented/README.md)
+- [Taxonomía del repositorio](../../../sdlc/standards/repository-taxonomy.md)
 ## Objetivo y Alcance
 
 Backfill histórico: Abordar la tensión arquitectónica donde context is unavailable, estableciendo un límite estándar.

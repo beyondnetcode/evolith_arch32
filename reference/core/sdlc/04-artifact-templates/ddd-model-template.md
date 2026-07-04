@@ -33,7 +33,7 @@
 
 ## 4. Service Topology — Domain-Oriented Microservice Architecture (DOMA)
 
-> **Applies at Phase 3 (F3 microservices).** Products in F1/F2 remain a modular monolith; this section documents how the model decomposes **when** the extraction-readiness criteria are met. Governed by [ADR-0076](../../../architecture/adrs/core/0076-domain-oriented-microservice-architecture.md).
+> **Applies at Phase 3 (F3 microservices).** Products in F1/F2 remain a modular monolith; this section documents how the model decomposes **when** the extraction-readiness criteria are met. Governed by [ADR-0076](../../../../core/architecture/adrs/core/0076-domain-oriented-microservice-architecture.md).
 
 State, for each bounded context above, how it maps to a service topology under DOMA:
 

@@ -153,7 +153,7 @@ Decisions tied to resilient mobile clients.
 | ADR-AI-004 | AGENTS.md as mandatory artifact (level 1+) | Make agent rules explicit | AI ADR (proposed) | No |
 | ADR-AI-005 | Human-in-the-Loop policy for irreversible operations | Keep humans accountable | AI ADR (proposed) | No |
 
--> [View all AI ADRs](../../governance/standards/ai-augmented/06-adrs/README.md)
+-> [View all AI ADRs](../../sdlc/standards/ai-augmented/06-adrs/README.md)
 
 ---
 

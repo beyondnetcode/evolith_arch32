@@ -42,8 +42,8 @@ The decision is evaluated by whether an attacker can cause untrusted text to alt
 
 ## References
 
-- [MCP Security Guidance](../../../governance/standards/ai-augmented/02-mcp-integration/mcp-security.md)
-- [Tool Design Principles](../../../governance/standards/ai-augmented/03-tools-catalog/tool-design-principles.md)
+- [MCP Security Guidance](../../../sdlc/standards/ai-augmented/02-mcp-integration/mcp-security.md)
+- [Tool Design Principles](../../../sdlc/standards/ai-augmented/03-tools-catalog/tool-design-principles.md)
 
 ## Related Decisions and Standards
 

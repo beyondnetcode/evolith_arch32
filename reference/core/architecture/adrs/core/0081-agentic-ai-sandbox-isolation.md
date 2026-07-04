@@ -42,14 +42,14 @@ The selected option is evaluated by whether it prevents a compromised prompt or 
 
 ## References
 
-- [MCP Security Guidance](../../../governance/standards/ai-augmented/02-mcp-integration/mcp-security.md)
+- [MCP Security Guidance](../../../sdlc/standards/ai-augmented/02-mcp-integration/mcp-security.md)
 - [Agentic AI Topology Profile](../../topologies/ai/agentic-ai/README.md)
 
 ## Related Decisions and Standards
 
 - [ADR-0069: AI Agent Context Protocol Integration](./0069-ai-agent-context-protocol-integration.md)
-- [ADR-AI-001: Harness Engineering](../../../governance/standards/ai-augmented/06-adrs/adr-ai-001-harness-strategy.md)
-- [ADR-AI-005: Human-in-the-Loop Policy](../../../governance/standards/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.md)
+- [ADR-AI-001: Harness Engineering](../../../sdlc/standards/ai-augmented/06-adrs/adr-ai-001-harness-strategy.md)
+- [ADR-AI-005: Human-in-the-Loop Policy](../../../sdlc/standards/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.md)
 
 ---
 [Back to Core ADR Index](./README.md)

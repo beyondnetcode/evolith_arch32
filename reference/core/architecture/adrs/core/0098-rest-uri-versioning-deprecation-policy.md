@@ -64,9 +64,9 @@ Every URI-versioned route change ships with a changelog entry under `product/pro
 
 ## References
 - [ADR-0073](./0073-unified-cli-output-contract.md) — Unified output envelope (consumed by every versioned route).
-- [GT-155](../../../governance/standards/vision/gap-reference-catalog.md#gt-155) — Envelope conformance precondition.
-- [GT-159](../../../governance/standards/vision/gap-reference-catalog.md#gt-159) — This decision realizes the gap.
-- [GT-174](../../../governance/standards/vision/gap-reference-catalog.md#gt-174) — `meta.schemaVersion` and surface compatibility matrix (downstream).
+- [GT-155](../../../sdlc/standards/vision/gap-reference-catalog.md#gt-155) — Envelope conformance precondition.
+- [GT-159](../../../sdlc/standards/vision/gap-reference-catalog.md#gt-159) — This decision realizes the gap.
+- [GT-174](../../../sdlc/standards/vision/gap-reference-catalog.md#gt-174) — `meta.schemaVersion` and surface compatibility matrix (downstream).
 - [RFC 7231 §7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1) — HTTP-date format used in `Sunset`.
 - [RFC 8594](https://datatracker.ietf.org/doc/html/rfc8594) — The Sunset HTTP Header Field.
 - [RFC 9745](https://datatracker.ietf.org/doc/html/rfc9745) — The Deprecation HTTP Header Field.

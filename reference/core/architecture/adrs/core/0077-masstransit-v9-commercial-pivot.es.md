@@ -14,7 +14,7 @@ Aprobado — Comité de Arquitectura Evolith, 2026-06-15.
 
 MassTransit v9 migró a un modelo de licencia puramente comercial. La última versión open-source (v8, Apache 2.0) tiene soporte comunitario solo hasta fin de 2026. Cualquier producto .NET en el ecosistema Evolith que use MassTransit como abstracción de bus de mensajes enfrenta una migración forzosa antes de 2027-01-01 a menos que se tome una decisión y se ejecute.
 
-El Stack Audit ([ALERTA ROJA 2](../../../governance/standards/engineering/detailed-stack-audit-2026.es.md)) marca esto como un elemento crítico, registrado bajo [GT-111](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-111).
+El Stack Audit ([ALERTA ROJA 2](../../../sdlc/standards/engineering/detailed-stack-audit-2026.es.md)) marca esto como un elemento crítico, registrado bajo [GT-111](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-111).
 
 Existen tres caminos viables:
 
@@ -91,7 +91,7 @@ La decisión aplica a todos los repositorios de productos .NET en el ecosistema 
 ## Referencias
 
 - Stack Audit: `reference/core/foundations/common-rules/detailed-stack-audit-2026.es.md` (ALERTA ROJA 2)
-- Seguimiento de gaps: [GT-111](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-111)
+- Seguimiento de gaps: [GT-111](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-111)
 - ADR-0015: [Arquitectura Orientada a Eventos (Intra-Dominio)](./0015-event-driven-architecture-intra-domain.md)
 - ADR-0036: [Estrategia de Entrega de Mensajes y Cartas Muertas](./0036-message-bus-delivery-strategy-fifo-dlq.md)
 - Proyecto OpenTransit: [https://opentransitlab.github.io/OpenTransit/](https://opentransitlab.github.io/OpenTransit/)

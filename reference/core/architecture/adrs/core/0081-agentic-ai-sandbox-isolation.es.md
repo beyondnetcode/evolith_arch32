@@ -42,14 +42,14 @@ La opcion seleccionada se evalua por si evita que un prompt o respuesta de herra
 
 ## Referencias
 
-- [Guia de Seguridad MCP](../../../governance/standards/ai-augmented/02-mcp-integration/mcp-security.es.md)
+- [Guia de Seguridad MCP](../../../sdlc/standards/ai-augmented/02-mcp-integration/mcp-security.es.md)
 - [Perfil de Topologia de IA Agentica](../../topologies/ai/agentic-ai/README.es.md)
 
 ## Decisiones y Estandares Relacionados
 
 - [ADR-0069: Integracion del Protocolo de Contexto de Agente IA](./0069-ai-agent-context-protocol-integration.es.md)
-- [ADR-AI-001: Ingenieria de Harness](../../../governance/standards/ai-augmented/06-adrs/adr-ai-001-harness-strategy.es.md)
-- [ADR-AI-005: Politica Human-in-the-Loop](../../../governance/standards/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.es.md)
+- [ADR-AI-001: Ingenieria de Harness](../../../sdlc/standards/ai-augmented/06-adrs/adr-ai-001-harness-strategy.es.md)
+- [ADR-AI-005: Politica Human-in-the-Loop](../../../sdlc/standards/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.es.md)
 
 ---
 [Volver al Indice de ADRs Core](./README.es.md)

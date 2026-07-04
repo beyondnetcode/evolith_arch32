@@ -42,8 +42,8 @@ La decision se evalua por si un atacante puede lograr que texto no confiable alt
 
 ## Referencias
 
-- [Guia de Seguridad MCP](../../../governance/standards/ai-augmented/02-mcp-integration/mcp-security.es.md)
-- [Principios de Diseno de Herramientas](../../../governance/standards/ai-augmented/03-tools-catalog/tool-design-principles.es.md)
+- [Guia de Seguridad MCP](../../../sdlc/standards/ai-augmented/02-mcp-integration/mcp-security.es.md)
+- [Principios de Diseno de Herramientas](../../../sdlc/standards/ai-augmented/03-tools-catalog/tool-design-principles.es.md)
 
 ## Decisiones y Estandares Relacionados
 

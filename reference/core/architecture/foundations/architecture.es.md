@@ -18,7 +18,7 @@ implementada en
 siguiendo **Puertos y Adaptadores** para que ninguna tecnología de runtime/LLM
 se convierta en dependencia del dominio.
 
-> **Importante:** Las capacidades del runtime y la madurez de su implementación (como el `InteractionAdapterPort`) están estrictamente gobernadas por la [Matriz de Madurez de Capacidades de Adaptadores](../../governance/standards/vision/maturity-assessment.es.md#5-madurez-de-capacidades-de-adaptadores-agent-runtime).
+> **Importante:** Las capacidades del runtime y la madurez de su implementación (como el `InteractionAdapterPort`) están estrictamente gobernadas por la [Matriz de Madurez de Capacidades de Adaptadores](../../sdlc/standards/vision/maturity-assessment.es.md#5-madurez-de-capacidades-de-adaptadores-agent-runtime).
 
 ## 2. Por qué una nueva capa que no reemplaza .harness
 

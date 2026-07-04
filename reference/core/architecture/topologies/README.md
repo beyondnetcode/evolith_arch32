@@ -44,10 +44,10 @@ Topology guidance is dimensional, manifest-driven, and executable through the sh
 | Artifact | Role |
 |---|---|
 | [ADR-0079: Multi-Topology Reference Corpus](../adrs/core/0079-multi-topology-reference-corpus.md) | Governing decision for the corpus model |
-| [Repository Taxonomy](../../governance/standards/repository-taxonomy.md) | Authorizes this path and prohibits root `/topologies/` |
+| [Repository Taxonomy](../../sdlc/standards/repository-taxonomy.md) | Authorizes this path and prohibits root `/topologies/` |
 | [Topology Manifest Schema](../../../rulesets/schema/topology-manifest.schema.json) | Machine-readable manifest contract |
-| [Multi-Topology Implementation Plan](../../governance/standards/vision/multi-topology-reference-corpus-implementation-plan.md) | Supporting execution plan |
-| [Gap Tracking Board](../../governance/standards/vision/gap-tracking.md) | Canonical status tracker |
+| [Multi-Topology Implementation Plan](../../sdlc/standards/vision/multi-topology-reference-corpus-implementation-plan.md) | Supporting execution plan |
+| [Gap Tracking Board](../../sdlc/standards/vision/gap-tracking.md) | Canonical status tracker |
 
 ---
 [Back to Architecture Hub](../README.md)

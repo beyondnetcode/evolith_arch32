@@ -98,4 +98,4 @@ Architecture Plan (Aprobado) ──→ Iniciativa Creada
 ---
 
 ## Referencias
-- [ADR-0103: Architecture Planning Gate como Intake de Gobernanza](../../../architecture/adrs/core/0103-architecture-planning-gate-intake.es.md)
+- [ADR-0103: Architecture Planning Gate como Intake de Gobernanza](../../../../core/architecture/adrs/core/0103-architecture-planning-gate-intake.es.md)

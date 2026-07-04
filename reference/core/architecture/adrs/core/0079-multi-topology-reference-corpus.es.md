@@ -127,9 +127,9 @@ Evidencia usada:
 ## Referencias
 
 - [Especificación Model Context Protocol](https://modelcontextprotocol.io/)
-- [Política de Taxonomía y Estructura del Repositorio](../../../governance/standards/repository-taxonomy.md)
-- [Plan de Implementación del Corpus de Referencia Multi-Topología](../../../governance/standards/vision/multi-topology-reference-corpus-implementation-plan.es.md)
-- [Tablero de Seguimiento de Gaps](../../../governance/standards/vision/gap-tracking.es.md)
+- [Política de Taxonomía y Estructura del Repositorio](../../../sdlc/standards/repository-taxonomy.md)
+- [Plan de Implementación del Corpus de Referencia Multi-Topología](../../../sdlc/standards/vision/multi-topology-reference-corpus-implementation-plan.es.md)
+- [Tablero de Seguimiento de Gaps](../../../sdlc/standards/vision/gap-tracking.es.md)
 
 ## Decisiones y Estándares Relacionados
 

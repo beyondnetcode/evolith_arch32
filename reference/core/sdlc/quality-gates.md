@@ -34,7 +34,7 @@ Manual confidence, verbal approval, or informal agreement cannot override a fail
 | Testing pyramid distribution | 70% unit / 20% integration / 10% E2E target | Design, Validation | Requires explanation when release distribution materially deviates |
 | Documentation delta | Required when behavior, architecture, API, or operations change | Construction, Delivery | Blocks merge or Production Live when missing |
 | Observability evidence | Required for production paths | Delivery | Blocks Production Live when telemetry or logs are not verifiable |
-| Domain-aligned service topology (DOMA) | Each F3 service maps to exactly one bounded context | Design, Construction | Blocks Design Baseline or Successful Build when a service splits or crosses a bounded context — F3 microservices only ([ADR-0076](../../architecture/adrs/core/0076-domain-oriented-microservice-architecture.md)) |
+| Domain-aligned service topology (DOMA) | Each F3 service maps to exactly one bounded context | Design, Construction | Blocks Design Baseline or Successful Build when a service splits or crosses a bounded context — F3 microservices only ([ADR-0076](../../../core/architecture/adrs/core/0076-domain-oriented-microservice-architecture.md)) |
 
 ---
 

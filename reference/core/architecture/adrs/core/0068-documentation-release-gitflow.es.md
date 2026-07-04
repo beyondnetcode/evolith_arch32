@@ -543,8 +543,8 @@ jobs:
 ## Referencias
 
 - [ADR-0050: Estrategia de Branching Gitflow](./0050-gitflow-branching-strategy.es.md)
-- [Mejores Prácticas de Documentación SDLC](../../../governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md)
-- [Guía de Herencia de Repositorios Hijos](../../../governance/standards/onboarding/child-repository-inheritance-guide.es.md)
+- [Mejores Prácticas de Documentación SDLC](../../../sdlc/03-documentation/sdlc-documentation-best-practices.es.md)
+- [Guía de Herencia de Repositorios Hijos](../../../sdlc/standards/onboarding/child-repository-inheritance-guide.es.md)
 - [Glosario de Terminología Bilingüe](../../../../.harness/scripts/bilingual-terminology-glossary.es.md)
 
 ---
@@ -579,8 +579,8 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 ## Decisiones y Estándares Relacionados
 
 - [ADR-0050: Estrategia de Branching Gitflow](./0050-gitflow-branching-strategy.es.md)
-- [Mejores Prácticas de Documentación SDLC](../../../governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md)
-- [Guía de Herencia de Repositorios Hijos](../../../governance/standards/onboarding/child-repository-inheritance-guide.es.md)
+- [Mejores Prácticas de Documentación SDLC](../../../sdlc/03-documentation/sdlc-documentation-best-practices.es.md)
+- [Guía de Herencia de Repositorios Hijos](../../../sdlc/standards/onboarding/child-repository-inheritance-guide.es.md)
 - [Glosario de Terminología Bilingüe](../../../../.harness/scripts/bilingual-terminology-glossary.es.md)
 
 ---

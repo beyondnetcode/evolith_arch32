@@ -44,10 +44,10 @@ La guia topologica es dimensional, orientada por manifiestos y ejecutable median
 | Artefacto | Rol |
 |---|---|
 | [ADR-0079: Corpus de Referencia Multi-Topologia](../adrs/core/0079-multi-topology-reference-corpus.es.md) | Decision gobernante del modelo de corpus |
-| [Taxonomia del Repositorio](../../governance/standards/repository-taxonomy.es.md) | Autoriza esta ruta y prohibe `/topologies/` en raiz |
+| [Taxonomia del Repositorio](../../sdlc/standards/repository-taxonomy.es.md) | Autoriza esta ruta y prohibe `/topologies/` en raiz |
 | [Schema de Manifiesto Topologico](../../../rulesets/schema/topology-manifest.schema.json) | Contrato de manifiesto legible por maquina |
-| [Plan de Implementacion Multi-Topology](../../governance/standards/vision/multi-topology-reference-corpus-implementation-plan.es.md) | Plan de ejecucion de apoyo |
-| [Tablero de Seguimiento de Gaps](../../governance/standards/vision/gap-tracking.es.md) | Tracker canonico de estado |
+| [Plan de Implementacion Multi-Topology](../../sdlc/standards/vision/multi-topology-reference-corpus-implementation-plan.es.md) | Plan de ejecucion de apoyo |
+| [Tablero de Seguimiento de Gaps](../../sdlc/standards/vision/gap-tracking.es.md) | Tracker canonico de estado |
 
 ---
 [Volver al Hub de Arquitectura](../README.es.md)

@@ -69,4 +69,4 @@ Los planes son inmutables una vez aprobados. Las iteraciones durante `under_revi
 - **Mitigación:** Las reglas OPA deben afinarse para asignar automáticamente `sdlc_mode: minimal` y permitir auto-aprobación para cambios de baja complejidad y no críticos para evitar fricción cognitiva.
 
 ## Referencias
-- [00-architecture-planning-gate-intake.es.md](../../../governance/sdlc/01-playbooks/00-architecture-planning-gate-intake.es.md)
+- [00-architecture-planning-gate-intake.es.md](../../../sdlc/01-playbooks/00-architecture-planning-gate-intake.es.md)

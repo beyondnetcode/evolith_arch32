@@ -42,7 +42,7 @@ La decision se evalua por si un auditor puede reconstruir quien solicito y aprob
 
 ## Referencias
 
-- [Patron Human-in-the-Loop](../../../governance/standards/ai-augmented/05-agentic-patterns/human-in-the-loop.es.md)
+- [Patron Human-in-the-Loop](../../../sdlc/standards/ai-augmented/05-agentic-patterns/human-in-the-loop.es.md)
 - [Perfil de Topologia de IA Agentica](../../topologies/ai/agentic-ai/README.es.md)
 
 ## Decisiones y Estandares Relacionados

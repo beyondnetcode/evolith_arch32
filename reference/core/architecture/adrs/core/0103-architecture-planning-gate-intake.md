@@ -67,4 +67,4 @@ Plans are immutable once approved. Iterations during `under_review` create new v
 - **Mitigation:** OPA rules must be tuned to automatically assign `sdlc_mode: minimal` and allow auto-approval for low-complexity, non-critical changes to avoid cognitive friction.
 
 ## References
-- [00-architecture-planning-gate-intake.md](../../../governance/sdlc/01-playbooks/00-architecture-planning-gate-intake.md)
+- [00-architecture-planning-gate-intake.md](../../../sdlc/01-playbooks/00-architecture-planning-gate-intake.md)

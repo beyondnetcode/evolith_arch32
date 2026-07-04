@@ -153,7 +153,7 @@ Decisiones ligadas a clientes móviles resilientes.
 | ADR-AI-004 | AGENTS.md como artefacto obligatorio (nivel 1+) | Hacer explícitas las reglas de agentes | ADR de IA (propuesto) | No |
 | ADR-AI-005 | Política Human-in-the-Loop para operaciones irreversibles | Mantener a los humanos accountable | ADR de IA (propuesto) | No |
 
--> [Ver todos los ADRs de IA](../../governance/standards/ai-augmented/06-adrs/README.es.md)
+-> [Ver todos los ADRs de IA](../../sdlc/standards/ai-augmented/06-adrs/README.es.md)
 
 ---
 

@@ -74,7 +74,7 @@ Options were judged against: coupling (cross-service synchronous calls), indepen
 - [ADR-0047 Architectural Patterns: Monolith, SOA, Microservices](./0047-architectural-patterns-monolith-soa-microservices.md)
 - [ADR-0045 Microservice Extraction Readiness Criteria](./0045-microservice-extraction-readiness-criteria.md)
 - [ADR-0031 Schema per Context and Domain Event Catalog](./0031-schema-per-context-domain-event-catalog.md)
-- [DDD Model Template](../../../governance/sdlc/04-artifact-templates/ddd-model-template.md)
+- [DDD Model Template](../../../sdlc/04-artifact-templates/ddd-model-template.md)
 - [Architecture Intelligence Portal](../../../knowledge/architecture-intelligence/README.md)
 
 ## Related Decisions and Standards
@@ -82,7 +82,7 @@ Options were judged against: coupling (cross-service synchronous calls), indepen
 - [ADR-0006 Microservices Transition via Sidecar Pattern](./0006-microservices-transition-sidecar-pattern.md)
 - [ADR-0015 Event-Driven Architecture (intra-domain)](./0015-event-driven-architecture-intra-domain.md)
 - [ADR-0029 Tactical DDD Primitives Library](../nodejs/0029-tactical-ddd-primitives-library.md)
-- [SDLC Quality Gates](../../../governance/sdlc/quality-gates.md)
+- [SDLC Quality Gates](../../../sdlc/quality-gates.md)
 - [DOMA Pattern — Architecture Intelligence](../../../knowledge/architecture-intelligence/patterns/domain-oriented-microservice-architecture.md)
 
 ---

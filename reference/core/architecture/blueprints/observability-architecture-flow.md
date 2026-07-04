@@ -3,7 +3,7 @@
 This blueprint explains how a modern Evolith-aligned service should propagate request correlation, session correlation, traces, logs, and metrics across middleware, application decorators, runtime instrumentation, and the observability platform.
 
 It is intentionally runtime-oriented and complements:
-- [Observability Playbook](../../governance/standards/engineering/observability-playbook.md)
+- [Observability Playbook](../../sdlc/standards/engineering/observability-playbook.md)
 - [CP-01: Request-Scope Context Propagation](../canonical-patterns/dotnet/cp-01-request-scope-context-propagation.md)
 - [CP-02: PII-Safe Serilog Logging](../canonical-patterns/dotnet/cp-02-pii-safe-serilog-logging.md)
 - [CP-04: AOP Logging Decorator](../canonical-patterns/dotnet/cp-04-aop-logging-decorator.md)

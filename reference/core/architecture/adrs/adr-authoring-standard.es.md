@@ -60,8 +60,8 @@ Los ADRs de plataforma deben definir un **disparador de revisión**: la condici�
 ## 5. Cumplimiento
 
 - ADRs nuevos: el cumplimiento total de este estándar es criterio del gate Design Baseline.
-- ADRs existentes: las secciones estructurales se normalizaron el 2026-06-10; el backfill de contenido de las secciones 2, 3, 5, 8 (y 9–10 para plataforma) se trackea como [GT-20](../../governance/standards/vision/gap-reference-catalog.es.md#gt-20). La revisión de ubicación de ADRs Core centrados en herramientas se trackea como [GT-21](../../governance/standards/vision/gap-reference-catalog.es.md#gt-21).
-- Plantilla canónica: [Plantilla ADR](../../governance/sdlc/04-artifact-templates/adr-template.es.md).
+- ADRs existentes: las secciones estructurales se normalizaron el 2026-06-10; el backfill de contenido de las secciones 2, 3, 5, 8 (y 9–10 para plataforma) se trackea como [GT-20](../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-20). La revisión de ubicación de ADRs Core centrados en herramientas se trackea como [GT-21](../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-21).
+- Plantilla canónica: [Plantilla ADR](../../sdlc/04-artifact-templates/adr-template.es.md).
 
 ---
 [Volver al Registro de ADRs](./README.es.md)

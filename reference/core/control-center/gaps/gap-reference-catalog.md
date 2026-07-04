@@ -12,6 +12,98 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ## 1. Gap Details
 
+#### GT-425
+
+**Title:** EPIC — Design-phase advisory governance (ADR-0104)
+
+**Problem:** The Design phase must let Core recommend, validate, and measure technical maturity over an extensible, Convention-over-Configuration catalog of architectural blocks, with the blueprint as a composable, multi-concern development guide that also derives downstream (Construction/Quality/Deployment) criteria — none of which exists today (topology hardcoded, blueprint under-modeled, no `design` evaluator, story/backlog boundary drift). See the 16 gaps (G1–G16) in the design-phase strengthening plan.
+
+**Decomposition:** F0 = [ADR-0104](../architecture/adrs/core/0104-topology-driven-advisory-design-governance.md) (landed). F1–F8 = `GT-426`…`GT-433`.
+
+**Closure:** all child items DONE; posture and canonical model of ADR-0104 operative across CLI/MCP/API/agents; zero regression on the current F2 gate.
+
+**References:** ADR-0104, ADR-0079, ADR-0101; design-phase strengthening plan.
+
+#### GT-426
+
+**Title:** F1 — Design contracts (`EvaluationContext`/`Result` `design` facet + `evolith.yaml` schema)
+
+**Problem:** The evaluation contracts carry no `design` facet (recommended/confirmed topology composition, artifact refs, per-concern maturity), and `evolith.yaml` has no formal schema nor a persistent `design.topology` declaration.
+
+**Closure:** contracts extended (additive, versioned); `evolith.yaml` schema with `design.topology.recommended|confirmed`; contract tests green; Native/OPA + bilingual parity.
+
+**References:** ADR-0104 §4/§11; ADR-0101.
+
+#### GT-427
+
+**Title:** F2 — `spec.designProfile` in topology manifests
+
+**Problem:** No per-topology declaration of required/conditional design artifacts; the artifact set is fixed, not a function of the confirmed topology.
+
+**Closure:** `spec.designProfile { required[], conditional[] }` added to `topology-manifest.schema.json`; the 8 manifests populated; fixtures + manifest validation green.
+
+**References:** ADR-0104 §6; ADR-0079.
+
+#### GT-428
+
+**Title:** F3 — Blueprint multi-concern composition under Convention over Configuration (central)
+
+**Problem:** `blueprint.schema.json` is topology/runtime-centric; it does not compose by concern (frontend/backend/services/mobile/data) nor support an extensible block-type registry for continuous proposals.
+
+**Closure:** blueprint schema extended to concern-based composition via a block-type registry (CoC); design-artifact block schemas + bilingual templates + fixtures; the 10 plans modeled as `blockKind`s.
+
+**References:** ADR-0104 §1/§3; blueprint definition (glossary).
+
+#### GT-429
+
+**Title:** F4 — `design` `EvaluationKind` evaluator (maturity + derivation)
+
+**Problem:** No design evaluator: no topology-driven artifact derivation, technical-maturity measurement, blueprint/ADR/coding-practice comparison, or deviation→ADR detection. Design gates are existence-only (GT-08…GT-11).
+
+**Closure:** `createDesignKindEvaluator` deriving artifacts as the union over the confirmed topology composition (strictest-wins, incompatibility→ADR), scoring maturity per concern + aggregate, all non-binding; Native/OPA parity; closes GT-08…GT-11.
+
+**References:** ADR-0104 §2/§6/§7; ADR-0101.
+
+#### GT-430
+
+**Title:** F5 — Topology-recommendation engine
+
+**Problem:** No mechanism recommends a topology (or composition) from technical signals, on demand or proactively.
+
+**Closure:** `topology-recommendation.rules.json` + evaluator (signals → recommended topology/composition); on-demand + complete proactive finding set; recommended in Discovery, confirmed in Design.
+
+**References:** ADR-0104 §4.
+
+#### GT-431
+
+**Title:** F6 — Exposure + collaboration surface
+
+**Problem:** Design evaluation/recommendation is not exposed uniformly; there is no design-template model, tenant→Core promotion flow, or proactive agent design proposals.
+
+**Closure:** CLI/MCP/API `design-evaluate` + `topology-recommend` (BR-008 parity); `design-template.schema.json` (scope tenant|core, complexity simple|medium|complex); agent skills `design-template-proposal` + `template-promotion`; UP-NNN promotion flow.
+
+**References:** ADR-0104 §9/§11; agent-authority-model.
+
+#### GT-432
+
+**Title:** F7 — Blueprint→downstream criteria derivation
+
+**Problem:** The blueprint does not feed downstream phases; F3/F4/F5 gates are static, not derived from the design.
+
+**Closure:** the `design` evaluator derives Construction/Quality/Deployment requirements/criteria from the composed blueprint as recommendations the Tracker uses to configure those gates.
+
+**References:** ADR-0104 §8.
+
+#### GT-433
+
+**Title:** F8 — Verification & canonical docs
+
+**Problem:** The epic needs an acceptance checklist, an end-to-end demo, gap reconciliation, and canonical Design-phase documentation.
+
+**Closure:** acceptance checklist satisfied; E2E demo (recommended→confirmed→evaluated via CLI/MCP/API); gaps reconciled; canonical docs published.
+
+**References:** ADR-0104; design-phase strengthening plan.
+
 #### GT-375
 
 **Title:** Core stateless evaluation contracts — `EvaluationContext` / `EvaluationResult` (corrects the entity-ownership framing)
@@ -4698,3 +4790,17 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Acceptance criteria:**
   - [x] Checklist evaluates statelessness and OPA vs Native parity.
 - **Dependencies:** None.
+
+#### GT-424
+
+**Title:** Single source of truth + CI parity guard for the three skill registries
+- **Component:** `.harness` · **Priority:** P2 · **Risk:** med (silent registry divergence undermines governed capability discovery)
+- **Purpose:** Skill descriptors were duplicated across three surfaces with no canonical owner and no guard, so they diverged: (a) `src/packages/agent-runtime/src/adapters/skills/default-skills.ts` (`DEFAULT_SKILLS`) — the runtime **intent→capability** routing catalog; (b) `reference/core/foundations/agent-skills/manifest.json` — the **agent-owned analysis skills** catalog (owner/inputs/outputs metadata); (c) `.harness/manifest.yaml` — the registry of **executable harness capabilities** with governance posture. `gap-prioritization-engine` ran a real `.harness/scripts/skills/` script yet was absent from `manifest.yaml`, so the runtime could not discover/govern it.
+- **Complexity:** S
+- **Proposed fix:** Establish `.harness/manifest.yaml` as the **single source of truth** for executable harness capabilities (it already declares this role). Treat `manifest.json` as an agent-facing metadata *view* whose harness-backed skills must be declared in `manifest.yaml`, and `DEFAULT_SKILLS` as an intentionally separate intent-routing layer whose every `harnessCapability` must resolve to a `manifest.yaml` capability. Reconcile the current drift (declare `gap-prioritization-engine` in `manifest.yaml`) and add CI guard `.harness/scripts/ci/34-check-skill-registry-parity.mjs` that fails on future divergence.
+- **Acceptance criteria:**
+  - [x] `manifest.yaml` documented/treated as canonical; `gap-prioritization-engine` declared there.
+  - [x] Every `manifest.json` skill whose implementation lives under `.harness/scripts/skills/` maps to a `manifest.yaml` capability `entry`.
+  - [x] Every `DEFAULT_SKILLS[].harnessCapability` resolves to a `manifest.yaml` capability `name`.
+  - [x] `34-check-skill-registry-parity.mjs` enforces the above and passes; `default-skills.ts` documents the layering.
+- **Dependencies:** `GT-409` (adapter/skill freshness checks), `GT-416` (harness capability productization).

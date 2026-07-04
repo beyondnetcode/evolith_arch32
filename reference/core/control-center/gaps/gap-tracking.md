@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-07-03 (Agent Harness Excellence Audit — added GT-419..GT-423 for AGENTS.md refactor, JSONL progress-audit, JSON schema outputs, Harness Orchestrator, and Core Health Checklist.)
+**Last Updated:** 2026-07-04 (Design-phase advisory governance epic — added GT-425 (EPIC, ADR-0104 landed as F0) decomposed into GT-426…GT-433 (F1–F8); implementation pending, design flow being finalized first.)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -13,6 +13,16 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|
+| [`GT-425`](./gap-reference-catalog.md#gt-425) | EPIC — Design-phase advisory governance (ADR-0104): Core recommends/validates/measures technical maturity over a Convention-over-Configuration block catalog; blueprint as composable, multi-concern development guide that drives downstream criteria. F0 (ADR-0104) landed. **Umbrella — decomposed into `GT-426`…`GT-433`.** | `Core Domain` | Cross | P1 | XL | `IN-PROGRESS` |
+| [`GT-426`](./gap-reference-catalog.md#gt-426) | F1 — Contracts: extend `EvaluationContext`/`EvaluationResult` with a `design` facet (topology recommended/confirmed, artifact refs, per-concern maturity) + formal `evolith.yaml` schema with `design.topology.recommended\|confirmed` (composition). | `Core Domain` | Cross | P1 | M | `PENDING` |
+| [`GT-427`](./gap-reference-catalog.md#gt-427) | F2 — Add `spec.designProfile { required[], conditional[] }` to `topology-manifest.schema.json` and populate the 8 topology manifests. | `Rulesets` | Cross | P1 | M | `PENDING` |
+| [`GT-428`](./gap-reference-catalog.md#gt-428) | F3 — Blueprint multi-concern composition under Convention over Configuration: extend `blueprint.schema.json` to compose by concern (frontend/backend/services/mobile/data) via a block-type registry; + design-artifact block schemas, bilingual templates, fixtures. **Central piece.** | `Schemas` | Cross | P1 | L | `PENDING` |
+| [`GT-429`](./gap-reference-catalog.md#gt-429) | F4 — `design` `EvaluationKind` evaluator: derive artifacts as the union over the confirmed topology composition (strictest-wins, incompatibility→ADR), validate completeness/traceability vs blueprints/ADRs/coding-practices, emit technical-maturity score; Native/OPA parity. Closes GT-08…GT-11. | `Core Domain` | Cross | P1 | L | `PENDING` |
+| [`GT-430`](./gap-reference-catalog.md#gt-430) | F5 — Topology-recommendation engine: `topology-recommendation.rules.json` + evaluator (technical signals → recommended topology/composition), on-demand and as a complete proactive finding set. | `Rulesets` | Cross | P1 | M | `PENDING` |
+| [`GT-431`](./gap-reference-catalog.md#gt-431) | F6 — Exposure + collaboration: CLI/MCP/API `design-evaluate` + `topology-recommend` (BR-008 parity); `design-template.schema.json` (scope tenant\|core, complexity simple\|medium\|complex); agent skills `design-template-proposal` + `template-promotion`; tenant→Core UP-NNN promotion flow. | `Cross` | Cross | P1 | L | `PENDING` |
+| [`GT-432`](./gap-reference-catalog.md#gt-432) | F7 — Blueprint→downstream derivation: the `design` evaluator derives Construction/Quality/Deployment requirements and criteria from the composed blueprint as recommendations the Tracker uses to configure the F3/F4/F5 gates. | `Core Domain` | Cross | P2 | M | `PENDING` |
+| [`GT-433`](./gap-reference-catalog.md#gt-433) | F8 — Verification: acceptance checklist, E2E demo (recommended→confirmed→evaluated via CLI/MCP/API), gap reconciliation, canonical Design-phase docs. | `Governance` | Cross | P2 | M | `PENDING` |
+| [`GT-424`](./gap-reference-catalog.md#gt-424) | Three skill registries drift with no single source of truth: `DEFAULT_SKILLS` (agent-runtime intent→capability catalog), `reference/core/foundations/agent-skills/manifest.json` (agent-owned analysis skills) and `.harness/manifest.yaml` (canonical harness capabilities) declare skills independently and diverge (e.g. `gap-prioritization-engine` runs a real `.harness` script but is undeclared in `manifest.yaml`), with no CI guard enforcing convergence. | `.harness` | Cross | P2 | S | `DONE` |
 | [`GT-413`](./gap-reference-catalog.md#gt-413) | Real runtime OPA adapter fails closed because `OpaCliPolicyValidationAdapter` loads `rulesets/opa/` including `schemas/` JSON files as OPA data, producing schema merge errors before any policy can evaluate. | `Agent Runtime` | Cross | P0 | S | `DONE` |
 | [`GT-414`](./gap-reference-catalog.md#gt-414) | Runtime policy references drift from actual Rego packages: `.harness/manifest.yaml`, `DEFAULT_SKILLS`, tests, and agent-runtime docs reference `evolith.gates.discovery` / `evolith.architecture.adr`, while the available packages expose names such as `evolith.phase_gates` and `evolith.capability_source_interface`. | `Agent Runtime` | Cross | P0 | S | `DONE` |
 | [`GT-415`](./gap-reference-catalog.md#gt-415) | Agent Runtime public-surface and SemVer authority drift: the freeze guard is red after additive adapter exports, and README pre-1.0 guidance conflicts with `package.json` version `1.0.0`. | `Agent Runtime` | Cross | P0 | S | `DONE` |
@@ -438,7 +448,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 422 / 423 done · 1 in progress · 0 pending · 0 deferred
+**Progress:** 422 / 432 done · 2 in progress · 8 pending · 0 deferred
 
 **Wave 2026-06-23 (Winston deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Winston Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

@@ -60,6 +60,8 @@ Iniciativa (de Discovery: agrupada o sola, topología recomendada, borrador de b
 | DS-06 | **Asesoría de arquitectura gobernada (A3) + propuestas proactivas de agentes** (simple/medio/complejo). | Expertise de arquitectura self-service; los agentes aceleran al tenant. | Corre sobre el conocimiento canónico de Core detrás de `IAgentEnginePort`; evidencia persistida en Tracker; Core stateless. |
 | DS-07 | **La madurez es la salida primaria**, no vinculante; la iteración madura el blueprint (versionado, auditado en Tracker). | El score le dice al tenant qué tan buena guía es y dónde mejorar. | Madurez por concern + agregado; desviación→ADR; el gate del tenant la consume. |
 | DS-08 | **Blueprint = contrato generativo:** deriva criterios de Construcción/Calidad/Despliegue. | Design de-risquea todo el ciclo; menos sorpresas downstream. | Derivación stateless (blueprint→criterios como recomendaciones); el Tracker configura los gates F3/F4/F5. |
+| DS-09 | **El ciclo de iteración reutiliza el patrón de terminación configurable** del ciclo de rechazo de Ingreso (L-004/L-011): el blueprint madura por versiones hasta alcanzar la madurez objetivo o hasta que el tenant acepta el estado actual; la terminación es configurable (default de Core + override de tenant). | La iteración es acotada, no infinita; el tenant fija la política. | Reutilizar una política estilo `rejectionCycle` como `designIteration`; blueprint versionado en el grafo de evidencias del Tracker; evaluación de madurez re-entrante. |
+| DS-10 | **Ponderación de madurez = universal + derivado por topología.** Los bloques universales (blueprint, estrategia de testing, ADRs, cumplimiento de topología, madurez técnica) siempre se puntúan y pesan el agregado; los bloques derivados por topología (infra, devops, unit-test, build, performance) se puntúan cuando la composición confirmada los exige y contribuyen cuando están presentes. | Un pequeño núcleo universal siempre se mide; el resto pesa cuando la topología lo pide. | Agregado = ponderado sobre universal (siempre) + derivado por topología (condicional-presente); pesos configurables (default de Core + override de tenant, según L-006). |
 
 ## 4. Implicaciones Cross-Repo y de Core
 
@@ -68,10 +70,10 @@ Iniciativa (de Discovery: agrupada o sola, topología recomendada, borrador de b
 - **Open-Core:** todo el conocimiento de diseño es extensible por la comunidad bajo gobernanza (tiers official/certified/community; UP-NNN; certificación en CI).
 - **Implementación** rastreada como épico **GT-425** (F1–F8); el código está diferido hasta finalizar el flujo de diseño.
 
-## 5. Ítems Abiertos
+## 5. Resuelto (2026-07-04)
 
-- Detalle del ciclo de iteración: política de versión/expiración de un blueprint que madura (análogo al ciclo de rechazo de Ingreso, L-004/L-011) — confirmar si la iteración de Design reutiliza ese patrón de terminación configurable.
-- Ponderación de madurez por concern (bloques universales vs derivados por topología) — split propuesto pendiente de confirmación final (plan de la fase Design §4.1).
+- ✅ **Ciclo de iteración** → DS-09: reutiliza el patrón de terminación configurable del ciclo de rechazo de Ingreso (L-004/L-011).
+- ✅ **Ponderación de madurez** → DS-10: bloques universales siempre puntuados; bloques derivados por topología puntuados cuando la composición los exige (split confirmado).
 
 ## 6. Procedencia
 

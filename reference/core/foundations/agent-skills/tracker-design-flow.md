@@ -60,6 +60,8 @@ Initiative (from Discovery: grouped or solo, recommended topology, progressive b
 | DS-06 | **Governed architecture advisory (A3) + proactive agent proposals** (simple/medium/complex). | Self-service architecture expertise; agents accelerate the tenant. | Runs over Core canonical knowledge behind `IAgentEnginePort`; evidence persisted in Tracker; Core stateless. |
 | DS-07 | **Maturity is the primary output**, non-binding; iteration matures the blueprint (versioned, audited in Tracker). | The score tells the tenant how good a guide it is and where to improve. | Per-concern + aggregate maturity; deviation→ADR; the tenant's gate consumes it. |
 | DS-08 | **Blueprint = generative contract:** derives Construction/Quality/Deployment criteria. | Design de-risks the whole lifecycle; fewer downstream surprises. | Stateless derivation (blueprint→criteria as recommendations); Tracker configures F3/F4/F5 gates. |
+| DS-09 | **Iteration cycle reuses the configurable-termination pattern** of the Intake rejection cycle (L-004/L-011): the blueprint matures across versions until the target maturity is reached or the tenant accepts the current state; termination is configurable (Core default + tenant override). | Iteration is bounded, not endless; the tenant sets the policy. | Reuse a `rejectionCycle`-style policy as `designIteration`; versioned blueprint in the Tracker evidence graph; re-entrant maturity evaluation. |
+| DS-10 | **Maturity weighting = universal + topology-derived.** Universal blocks (blueprint, testing strategy, ADRs, topology-compliance, technical-maturity) are always scored and weigh the aggregate; topology-derived blocks (infra, devops, unit-test, build, performance) are scored when the confirmed composition requires them and contribute when present. | A small universal core is always measured; the rest weighs in when the topology calls for it. | Aggregate = weighted over universal (always) + topology-derived (conditional-present); weights configurable (Core default + tenant override, per L-006). |
 
 ## 4. Cross-Repo & Core Implications
 
@@ -68,10 +70,10 @@ Initiative (from Discovery: grouped or solo, recommended topology, progressive b
 - **Open-Core:** all design knowledge is community-extensible under governance (tiers official/certified/community; UP-NNN; CI certification).
 - **Implementation** is tracked as epic **GT-425** (F1–F8); code is deferred until the design flow is finalized.
 
-## 5. Open Items
+## 5. Resolved (2026-07-04)
 
-- Iteration cycle detail: version/expiration policy of a maturing blueprint (analogous to the Intake rejection cycle, L-004/L-011) — confirm whether Design iteration reuses that configurable-termination pattern.
-- Per-concern maturity weighting (universal vs topology-derived blocks) — proposed split pending final confirmation (design-phase plan §4.1).
+- ✅ **Iteration cycle** → DS-09: reuses the configurable-termination pattern of the Intake rejection cycle (L-004/L-011).
+- ✅ **Maturity weighting** → DS-10: universal blocks always scored; topology-derived blocks scored when the composition requires them (split confirmed).
 
 ## 6. Provenance
 

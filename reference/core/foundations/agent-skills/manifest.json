@@ -100,6 +100,26 @@
       "outputs": ["progress audit record (JSON)", "prioritized next actions", "gap or closure update recommendation"],
       "file": ".harness/scripts/skills/self-improving-loop.mjs",
       "tags": ["harness", "feedback-loop", "progress-audit", "self-improvement", "governance"]
+    },
+    {
+      "id": "design-template-proposal",
+      "name": "Design Template Proposal",
+      "version": "1.0.0",
+      "owner": "@architect",
+      "description": "Proactively proposes reusable design templates (compositions of blocks) at simple/medium/complex tiers for a given need, conforming to design-template.schema.json (ADR-0104 §9).",
+      "inputs": ["initiative context", "recommended/confirmed topology composition", "src/rulesets/schema/design-block-registry.json", "tenant private collection"],
+      "outputs": ["design-template proposals (simple/medium/complex)"],
+      "tags": ["design", "template", "advisory", "adr-0104", "convention-over-configuration"]
+    },
+    {
+      "id": "template-promotion",
+      "name": "Template Promotion",
+      "version": "1.0.0",
+      "owner": "@winston",
+      "description": "Assists the governed promotion of a tenant-scope design template into the canonical Core corpus via an Upstream Proposal (UP-NNN) and Architecture Board review (ADR-0104 §9).",
+      "inputs": ["tenant-scope design-template", "usage evidence", "target tier"],
+      "outputs": ["upstream proposal (UP-NNN)", "promotion recommendation"],
+      "tags": ["design", "template", "promotion", "upstream", "open-core", "governance"]
     }
   ]
 }

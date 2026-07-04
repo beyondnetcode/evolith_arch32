@@ -4,7 +4,7 @@
 
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
-**Última Actualización:** 2026-07-04 (Épico de Design GT-425 — F1–F4 COMPLETADO: contratos `design` (5ddf4471), `designProfile`s de topología (46791e85), blueprint multi-concern CoC (0392fefe), evaluador `design` advisory (1b4e6f98), motor de recomendación de topología (0196b158). F6/GT-431 COMPLETADO: schema design-template + skills de colaboración + design-evaluate vía evaluate() + Core API POST /architecture/recommend-topology (4fcdc2c8); paridad CLI/MCP del recomendador como follow-on. F7/GT-432 COMPLETADO (33306d72). **F8/GT-433 COMPLETADO + GT-425 EPIC COMPLETO**: verificación E2E contra el corpus real + docs canónicos de la fase Design (d93bc0f2). El motor advisory de diseño funciona end-to-end y está expuesto. Follow-on restante: paridad CLI/MCP topology-recommend (tarea).)
+**Última Actualización:** 2026-07-04 (Épico de Design GT-425 — F1–F4 COMPLETADO: contratos `design` (5ddf4471), `designProfile`s de topología (46791e85), blueprint multi-concern CoC (0392fefe), evaluador `design` advisory (1b4e6f98), motor de recomendación de topología (0196b158). F6/GT-431 COMPLETADO: schema design-template + skills de colaboración + design-evaluate vía evaluate() + Core API POST /architecture/recommend-topology (4fcdc2c8); paridad CLI/MCP del recomendador como follow-on. F7/GT-432 COMPLETADO (33306d72). **F8/GT-433 COMPLETADO + GT-425 EPIC COMPLETO**: verificación E2E contra el corpus real + docs canónicos de la fase Design (d93bc0f2). El motor advisory de diseño funciona end-to-end y está expuesto. Follow-on restante: paridad CLI/MCP topology-recommend (tarea). Iniciado GT-434 (épico de perfiles de artefactos downstream, espeja GT-425): primer incremento `spec.phaseProfiles` en schema + 7 manifests (3fe3be23).)
 **Detalle de Gaps:** [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md)
 
 Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunidades, habilitadores, prioridad y estado. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
@@ -13,6 +13,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
+| [`GT-434`](./gap-reference-catalog.es.md#gt-434) | EPIC — Perfiles de artefactos de fases downstream (Construcción/Calidad/Despliegue): espeja GT-425 para las 3 fases downstream — `spec.phaseProfiles` en los topology manifests (artefactos universal + derivados por topología + criterios de gate, DN-06), evaluadores de fase (extender kinds `checkpoint`/`deployment`), entradas de registry, exposición. Spec conceptual: `downstream-artifact-profiles`. Primer incremento (schema + 7 manifests) aterrizado (3fe3be23). | `Rulesets` | Cross | P2 | L | `EN-PROGRESO` |
 | [`GT-425`](./gap-reference-catalog.es.md#gt-425) | EPIC — Gobernanza advisory de la fase Design (ADR-0104): Core recomienda/valida/mide madurez técnica sobre un catálogo de bloques bajo Convention over Configuration; blueprint como guía de desarrollo componible y multi-concern que dirige los criterios downstream. F0 (ADR-0104) aterrizado. **Umbrella — descompuesto en `GT-426`…`GT-433`.** | `Core Domain` | Cross | P1 | XL | `COMPLETADO` |
 | [`GT-426`](./gap-reference-catalog.es.md#gt-426) | F1 — Contratos: extender `EvaluationContext`/`EvaluationResult` con una faceta `design` (topología recomendada/confirmada, refs de artefactos, madurez por concern) + schema formal de `evolith.yaml` con `design.topology.recommended\|confirmed` (composición). | `Core Domain` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-427`](./gap-reference-catalog.es.md#gt-427) | F2 — Añadir `spec.designProfile { required[], conditional[] }` a `topology-manifest.schema.json` y poblar los 8 topology manifests. | `Rulesets` | Cross | P1 | M | `COMPLETADO` |
@@ -448,7 +449,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 431 / 432 completados · 1 en progreso · 0 pendientes · 0 diferidos
+**Progreso:** 431 / 433 completados · 2 en progreso · 0 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Winston III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Winston Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

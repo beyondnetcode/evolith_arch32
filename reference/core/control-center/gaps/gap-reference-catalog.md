@@ -12,6 +12,18 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ## 1. Gap Details
 
+#### GT-434
+
+**Title:** EPIC — Downstream phase artifact profiles (Construction/Quality/Deployment)
+
+**Problem:** The three downstream SDLC phases each have artifacts to produce and gate criteria to fulfill (DN-06, owner's conceptual diagram), but — unlike Design (GT-425) — they have no per-phase artifact profile in the topology manifests, no phase evaluator, and no gate-criteria model. Core cannot yet advise on downstream artifact completeness or derive/seed the F3/F4/F5 gate criteria beyond the blueprint's `downstreamCriteria` (F7).
+
+**Decomposition (mirrors GT-425):** schema `spec.phaseProfiles` + manifest population (done, 3fe3be23) → block registry entries → phase evaluators (extend `checkpoint`/`deployment` kinds; universal ∪ topology-derived, advisory) → exposure → E2E.
+
+**Closure:** each downstream phase has a topology-derived + tenant-configurable artifact profile evaluated by an advisory, non-binding phase evaluator; universal minimum from Vision §5.2; conceptual spec `reference/core/foundations/agent-skills/downstream-artifact-profiles.md` realized.
+
+**References:** ADR-0104, DN-06 (tracker-downstream-flow), downstream-artifact-profiles, GT-425 (the mirrored epic).
+
 #### GT-425
 
 **Title:** EPIC — Design-phase advisory governance (ADR-0104)

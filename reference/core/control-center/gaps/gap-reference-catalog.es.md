@@ -12,6 +12,18 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ## 1. Detalle de Gaps
 
+#### GT-434
+
+**Título:** EPIC — Perfiles de artefactos de fases downstream (Construcción/Calidad/Despliegue)
+
+**Problema:** Las tres fases downstream tienen artefactos que producir y criterios de gate que cumplir (DN-06, diagrama conceptual del dueño), pero — a diferencia de Design (GT-425) — no tienen perfil de artefactos por fase en los topology manifests, ni evaluador de fase, ni modelo de criterios de gate. Core aún no puede asesorar sobre completitud de artefactos downstream ni derivar/sembrar los criterios de los gates F3/F4/F5 más allá de los `downstreamCriteria` del blueprint (F7).
+
+**Descomposición (espeja GT-425):** schema `spec.phaseProfiles` + población de manifests (hecho, 3fe3be23) → entradas del block registry → evaluadores de fase (extender kinds `checkpoint`/`deployment`; universal ∪ derivado por topología, advisory) → exposición → E2E.
+
+**Cierre:** cada fase downstream tiene un perfil de artefactos derivado por topología + configurable por tenant, evaluado por un evaluador de fase advisory y no vinculante; mínimo universal de la Visión §5.2; spec conceptual `reference/core/foundations/agent-skills/downstream-artifact-profiles.md` realizado.
+
+**Referencias:** ADR-0104, DN-06 (tracker-downstream-flow), downstream-artifact-profiles, GT-425 (el épico espejado).
+
 #### GT-425
 
 **Título:** EPIC — Gobernanza advisory de la fase Design (ADR-0104)

@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const ROOT = path.resolve(process.env.EVOLITH_CONTRACT_ROOT || '.');
-const MANIFEST = path.join(ROOT, 'rulesets/contracts/evolith-machine-contracts.json');
+const MANIFEST = path.join(ROOT, 'src/rulesets/contracts/evolith-machine-contracts.json');
 
 export function sha256(filePath) {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');

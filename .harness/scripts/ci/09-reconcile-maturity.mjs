@@ -130,7 +130,7 @@ export function buildSnapshot(root = ROOT) {
       cliPackage: `${cliPackage.name}@${cliPackage.version}`,
       adrCount: countFiles(path.join(root, 'reference/architecture/adrs'), /^\d{4}-.*\.md$/, /\.es\.md$/),
       rulesetCount: countFiles(path.join(root, 'rulesets'), /\.rules\.json$/),
-      schemaCount: countFiles(path.join(root, 'rulesets/schema'), /\.schema\.json$/),
+      schemaCount: countFiles(path.join(root, 'src/rulesets/schema'), /\.schema\.json$/),
     },
     readiness: runtimeEvidence.checks,
     externalProducts: [

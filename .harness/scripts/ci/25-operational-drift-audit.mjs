@@ -19,7 +19,7 @@ const CI_DIR = '.harness/scripts/ci';
 // GT-329: canonical topology roots — progressive-axis stays in reference/; advanced topologies in rulesets/
 const TOPO_ROOTS = [
   'reference/architecture/topologies',
-  'rulesets/topologies',
+  'src/rulesets/topologies',
 ];
 
 function capabilityScripts() {

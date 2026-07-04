@@ -13,9 +13,9 @@
     "test:contract": "node node_modules/jest/bin/jest.js --config tests/contract/jest.config.js --runInBand --no-bail"
   },
   "workspaces": [
-    "sdk/*",
-    "apps/*",
-    "packages/*"
+    "src/sdk/*",
+    "src/apps/*",
+    "src/packages/*"
   ],
   "devDependencies": {
     "@types/opossum": "8.1.9",

@@ -65,7 +65,7 @@ test('a malformed policy bundle fails closed (evaluator-failure fixture)', async
 
 // GT-329: agentic-ai moved to canonical rulesets/topologies/; progressive-axis stays in reference/
 const TOPOS = [
-  { dir: 'rulesets/topologies/agentic-ai', id: 'agentic-ai' },
+  { dir: 'src/rulesets/topologies/agentic-ai', id: 'agentic-ai' },
   { dir: 'reference/architecture/topologies/progressive-axis/microservices', id: 'microservices' },
 ];
 
@@ -75,7 +75,7 @@ test('scopeTopologies returns all on a full/scheduled run or no change signal', 
 });
 
 test('scopeTopologies limits to topologies with a changed file', () => {
-  const changed = ['rulesets/topologies/agentic-ai/agentic-ai.rego'];
+  const changed = ['src/rulesets/topologies/agentic-ai/agentic-ai.rego'];
   const scoped = scopeTopologies(TOPOS, changed, false);
   assert.equal(scoped.length, 1);
   assert.equal(scoped[0].id, 'agentic-ai');

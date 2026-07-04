@@ -24,7 +24,7 @@ function runReport() {
 test('GT-286 marks compliance-baseline WS1 path as implemented', () => {
   const report = runReport();
   const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
-  const check = ws1?.results.find((item) => item.path === 'rulesets/compliance-baseline');
+  const check = ws1?.results.find((item) => item.path === 'src/rulesets/compliance-baseline');
 
   assert.equal(check?.exists, true);
   assert.equal(check?.status, 'PASS');
@@ -33,7 +33,7 @@ test('GT-286 marks compliance-baseline WS1 path as implemented', () => {
 test('GT-287 marks definition-of-done WS1 path as implemented', () => {
   const report = runReport();
   const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
-  const check = ws1?.results.find((item) => item.path === 'rulesets/definition-of-done');
+  const check = ws1?.results.find((item) => item.path === 'src/rulesets/definition-of-done');
 
   assert.equal(check?.exists, true);
   assert.equal(check?.status, 'PASS');
@@ -42,7 +42,7 @@ test('GT-287 marks definition-of-done WS1 path as implemented', () => {
 test('GT-288 marks engineering-manifesto WS1 path as implemented', () => {
   const report = runReport();
   const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
-  const check = ws1?.results.find((item) => item.path === 'rulesets/engineering-manifesto');
+  const check = ws1?.results.find((item) => item.path === 'src/rulesets/engineering-manifesto');
 
   assert.equal(check?.exists, true);
   assert.equal(check?.status, 'PASS');
@@ -51,7 +51,7 @@ test('GT-288 marks engineering-manifesto WS1 path as implemented', () => {
 test('GT-289 marks repository-taxonomy WS1 path as implemented', () => {
   const report = runReport();
   const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
-  const check = ws1?.results.find((item) => item.path === 'rulesets/repository-taxonomy');
+  const check = ws1?.results.find((item) => item.path === 'src/rulesets/repository-taxonomy');
 
   assert.equal(check?.exists, true);
   assert.equal(check?.status, 'PASS');
@@ -60,7 +60,7 @@ test('GT-289 marks repository-taxonomy WS1 path as implemented', () => {
 test('GT-290 marks phase-gates WS1 path as implemented', () => {
   const report = runReport();
   const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
-  const check = ws1?.results.find((item) => item.path === 'rulesets/phase-gates');
+  const check = ws1?.results.find((item) => item.path === 'src/rulesets/phase-gates');
 
   assert.equal(check?.exists, true);
   assert.equal(check?.status, 'PASS');
@@ -69,7 +69,7 @@ test('GT-290 marks phase-gates WS1 path as implemented', () => {
 test('GT-291 marks quality-thresholds WS1 path as implemented', () => {
   const report = runReport();
   const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
-  const check = ws1?.results.find((item) => item.path === 'rulesets/quality-thresholds');
+  const check = ws1?.results.find((item) => item.path === 'src/rulesets/quality-thresholds');
 
   assert.equal(check?.exists, true);
   assert.equal(check?.status, 'PASS');

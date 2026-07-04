@@ -20,8 +20,8 @@ import { ensureOpa } from '../opa-runtime.mjs';
 
 const ROOT = process.cwd();
 const INTAKE_DIR = 'reference/knowledge/intake';
-const KI_SCHEMA = 'rulesets/schema/knowledge-intake.schema.json';
-const OPA_POLICY = 'rulesets/opa/knowledge-intake.rego';
+const KI_SCHEMA = 'src/rulesets/schema/knowledge-intake.schema.json';
+const OPA_POLICY = 'src/rulesets/opa/knowledge-intake.rego';
 const FIXTURES_DIR = `${INTAKE_DIR}/parity-fixtures`;
 
 /**

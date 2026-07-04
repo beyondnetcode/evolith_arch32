@@ -163,8 +163,8 @@ const IMPACT_ZONE_FILES = {
     "reference/architecture/adrs/adr-matrix.es.md",
   ],
   rulesets: [
-    "rulesets/**/*.md",
-    "rulesets/**/*.json",
+    "src/rulesets/**/*.md",
+    "src/rulesets/**/*.json",
   ],
   documentation: [
     "reference/**/*.md",

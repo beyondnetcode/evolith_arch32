@@ -93,9 +93,9 @@ Evolith ships as a suite of coordinated products built on a common foundation.
 | **[MCP Services](reference/products/mcp-services/README.md)** | Governance as live context for LLMs and AI agents (27 tools, 9 resources, 8 prompts) |
 | **[Agent Runtime](reference/architecture/agent-runtime/README.md)** | Agentic mediation layer — orchestrates Core through Ports & Adapters; Hermes is one replaceable adapter |
 | **[Evolith Tracker](reference/products/evolith-tracker/README.md)** | Business lifecycle governance — phases, owners, funding, and ROI |
-| **[Rulesets](rulesets/README.md)** | Machine-readable enforcement rules per topology |
-| **[OPA Policies](rulesets/opa/README.md)** | Fine-grained policy checks integrated into the pipeline |
-| **[Schemas & Manifests](rulesets/schema/README.md)** | Structured contracts for artifacts and topology definitions |
+| **[Rulesets](src/rulesets/README.md)** | Machine-readable enforcement rules per topology |
+| **[OPA Policies](src/rulesets/opa/README.md)** | Fine-grained policy checks integrated into the pipeline |
+| **[Schemas & Manifests](src/rulesets/schema/README.md)** | Structured contracts for artifacts and topology definitions |
 
 ---
 
@@ -153,8 +153,8 @@ Full reference: [Architecture hub](./reference/architecture/README.md) · [C4 Ma
 
 ```
 evolith/
-├── packages/agent-runtime/  # @evolith/agent-runtime — Ports & Adapters agentic layer
-├── apps/agent-runtime-api/  # NestJS HTTP service wrapping the runtime (POST /v1/agent/handle)
+├── src/packages/agent-runtime/  # @evolith/agent-runtime — Ports & Adapters agentic layer
+├── src/apps/agent-runtime-api/  # NestJS HTTP service wrapping the runtime (POST /v1/agent/handle)
 ├── reference/core/          # Engineering constitution and principles
 ├── reference/architecture/  # Topologies, blueprints, ADRs, and agent-runtime docs
 ├── reference/governance/    # SDLC phases, gates, standards, and glossary

@@ -13,8 +13,8 @@ const CHARTS = [
     chartPath: 'reference/infrastructure/helm/evolith-mcp',
   },
 ];
-const REGO = 'rulesets/infrastructure/opa/opa-sidecar-bundle.rego';
-const REGO_TEST = 'rulesets/infrastructure/opa/opa-sidecar-bundle.test.rego';
+const REGO = 'src/rulesets/infrastructure/opa/opa-sidecar-bundle.rego';
+const REGO_TEST = 'src/rulesets/infrastructure/opa/opa-sidecar-bundle.test.rego';
 const DIGEST_PATTERN = /^sha256:[a-f0-9]{64}$/;
 const VALID_SIGNING_ALGORITHMS = new Set(['RS256', 'ES256', 'HS256']);
 

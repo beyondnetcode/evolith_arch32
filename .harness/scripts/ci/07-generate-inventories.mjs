@@ -8,7 +8,7 @@ const ES_OUT = path.resolve('reference/governance/standards/vision/inventory-sum
 // Paths to search
 const ADR_DIR = path.resolve('reference/architecture/adrs');
 const RULESETS_DIR = path.resolve('rulesets');
-const SCHEMA_DIR = path.resolve('rulesets/schema');
+const SCHEMA_DIR = path.resolve('src/rulesets/schema');
 
 function countFiles(dir, pattern, excludePattern) {
   let count = 0;

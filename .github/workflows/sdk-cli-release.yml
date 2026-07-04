@@ -9,7 +9,7 @@ on:
     branches:
       - main
     paths:
-      - 'sdk/cli/**'
+      - 'src/sdk/cli/**'
       - '.release-please-manifest.json'
       - 'release-please-config.json'
       - '.github/workflows/sdk-cli-release.yml'
@@ -18,7 +18,7 @@ on:
 
 env:
   NODE_VERSION: '20'
-  CLI_DIR: 'sdk/cli'
+  CLI_DIR: 'src/sdk/cli'
 
 jobs:
   # ============================================

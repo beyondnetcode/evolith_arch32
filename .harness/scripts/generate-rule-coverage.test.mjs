@@ -16,7 +16,7 @@ function fixtureRoot() {
   write(root, 'reference/architecture/topologies/progressive-axis/demo/topology.manifest.json', JSON.stringify({ metadata: { id: 'demo', status: 'accepted' }, spec: { artifacts: { rulesets: ['reference/architecture/topologies/progressive-axis/demo/demo.rules.json'], opaPolicies: ['reference/architecture/topologies/progressive-axis/demo/demo.rego'] } } }));
   write(root, 'reference/architecture/topologies/progressive-axis/demo/demo.rules.json', JSON.stringify({ rules: [{ id: 'DEMO-R01' }] }));
   write(root, 'reference/architecture/topologies/progressive-axis/demo/demo.rego', 'package demo\nviolations[{"id": "DEMO-R01"}] { true }\n');
-  write(root, 'rulesets/governance/satellite-contracts.rules.json', JSON.stringify({ reference: { f1Rules: '../../reference/architecture/topologies/progressive-axis/demo/demo.rules.json' } }));
+  write(root, 'src/rulesets/governance/satellite-contracts.rules.json', JSON.stringify({ reference: { f1Rules: '../../reference/architecture/topologies/progressive-axis/demo/demo.rules.json' } }));
   return root;
 }
 
@@ -45,7 +45,7 @@ test('rejects OPA-only rule IDs for an accepted topology', () => {
 
 test('rejects stale satellite rule references', () => {
   const root = fixtureRoot();
-  write(root, 'rulesets/governance/satellite-contracts.rules.json', JSON.stringify({ reference: { f1Rules: '../architecture/f1-modular-monolith.rules.json' } }));
+  write(root, 'src/rulesets/governance/satellite-contracts.rules.json', JSON.stringify({ reference: { f1Rules: '../architecture/f1-modular-monolith.rules.json' } }));
   assert.match(validateTopologyRuleCoverage(root).errors.join('\n'), /reference\.f1Rules does not resolve/);
 });
 

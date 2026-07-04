@@ -71,7 +71,7 @@ evaluate("S1", "No Tenant State in Core", () => {
 // ----------------------------------------------------------------------------
 
 evaluate("D1", "TypeScript / OPA Sync", () => {
-  const opaDir = path.join(root, "rulesets/opa");
+  const opaDir = path.join(root, "src/rulesets/opa");
   const tsRulesDir = path.join(root, "packages/core-domain/src/domain/rules");
   
   const opaFiles = fs.existsSync(opaDir) ? fs.readdirSync(opaDir).filter(f => f.endsWith('.rego')) : [];

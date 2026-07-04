@@ -21,7 +21,7 @@ The agent roster, contracts, and handoffs are documented in [AGENTS.md](./AGENTS
 
 ## 2. Prerequisites and Local Setup
 
-Evolith is an **npm workspaces monorepo** (`sdk/*`, `apps/*`, `packages/*`). The Smart CLI lives in `sdk/cli` (published as `@evolith/smart-cli`), the Core-API in `apps/core-api`, and shared logic in `packages/*` (`core`, `core-domain`, `infra-providers`, `mcp-server`, `mcp-tools`, `sdk-client`).
+Evolith is an **npm workspaces monorepo** (`sdk/*`, `apps/*`, `src/packages/*`). The Smart CLI lives in `src/sdk/cli` (published as `@evolith/smart-cli`), the Core-API in `src/apps/core-api`, and shared logic in `src/packages/*` (`core`, `core-domain`, `infra-providers`, `mcp-server`, `mcp-tools`, `sdk-client`).
 
 ### A. Prerequisites
 
@@ -127,11 +127,11 @@ Keep EN and ES in lockstep (Rule 4.A), no emojis (Rule 4.B), valid links (Rule 4
 
 ### B. Schemas
 
-JSON-Schema contracts live in `rulesets/schema/`. Changes are checked by the contract conformance gate (`10-validate-contract-conformance.mjs`) and the REST envelope/versioning gate (`19-validate-rest-versioning.mjs`). Keep the machine contract in `rulesets/contracts/` in sync.
+JSON-Schema contracts live in `src/rulesets/schema/`. Changes are checked by the contract conformance gate (`10-validate-contract-conformance.mjs`) and the REST envelope/versioning gate (`19-validate-rest-versioning.mjs`). Keep the machine contract in `src/rulesets/contracts/` in sync.
 
 ### C. Rulesets and OPA
 
-Native rules are declared per domain under `rulesets/<domain>/`, and their executable Rego counterparts live in `rulesets/opa/`. **Native and OPA must stay at rule-ID parity:** the parity gates fail closed on any verdict, rule-ID, severity, or evidence drift.
+Native rules are declared per domain under `src/rulesets/<domain>/`, and their executable Rego counterparts live in `src/rulesets/opa/`. **Native and OPA must stay at rule-ID parity:** the parity gates fail closed on any verdict, rule-ID, severity, or evidence drift.
 
 - Native evaluator fixtures: `28-native-evaluator-parity.mjs`.
 - Native/OPA semantic parity: `27-opa-parity-gate.mjs` (scoped per commit; a full scheduled sweep runs daily). Recompile policies with `npm run build:policy` after touching any `.rego` file.

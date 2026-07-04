@@ -43,12 +43,8 @@ const allowedDirectories = new Set([
   ".vscode",
   "node_modules",
   "reference",
-  "rulesets",
-  "sdk",
-  "apps",
-  "packages",
-  "wiki",
-  "tests"
+  "src",
+  "wiki"
 ]);
 
 console.log("🧹 Running repository optimization...");

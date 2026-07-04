@@ -65,7 +65,7 @@ const ACCEPTED = {
   spec: { artifacts: { adrs: ['reference/architecture/adrs/core/0031-x.md'] } },
 };
 // GT-329: event-driven moved to canonical rulesets/topologies/
-const dir = 'rulesets/topologies/event-driven';
+const dir = 'src/rulesets/topologies/event-driven';
 const fullSet = new Set([
   `${dir}/event-driven.rules.json`,
   `${dir}/event-driven.rego`,

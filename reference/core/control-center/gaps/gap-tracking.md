@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-07-04 (Design-phase epic GT-425 — F1–F4 DONE: `design` contracts (5ddf4471), topology `designProfile`s (46791e85), blueprint multi-concern CoC (0392fefe), advisory `design` evaluator (1b4e6f98), topology recommendation engine (0196b158). F6/GT-431 IN-PROGRESS: design-template schema + collaboration agent skills done + design-evaluate exposed via evaluate() + recommender on the public surface; the dedicated topology-recommend CLI/MCP/API command remains. GT-432/GT-433 pending.)
+**Last Updated:** 2026-07-04 (Design-phase epic GT-425 — F1–F4 DONE: `design` contracts (5ddf4471), topology `designProfile`s (46791e85), blueprint multi-concern CoC (0392fefe), advisory `design` evaluator (1b4e6f98), topology recommendation engine (0196b158). F6/GT-431 DONE: design-template schema + collaboration skills + design-evaluate via evaluate() + Core API POST /architecture/recommend-topology (4fcdc2c8); CLI/MCP recommend parity tracked as a follow-on. GT-432/GT-433 pending.)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -19,7 +19,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-428`](./gap-reference-catalog.md#gt-428) | F3 — Blueprint multi-concern composition under Convention over Configuration: extend `blueprint.schema.json` to compose by concern (frontend/backend/services/mobile/data) via a block-type registry; + design-artifact block schemas, bilingual templates, fixtures. **Central piece.** | `Schemas` | Cross | P1 | L | `DONE` |
 | [`GT-429`](./gap-reference-catalog.md#gt-429) | F4 — `design` `EvaluationKind` evaluator: derive artifacts as the union over the confirmed topology composition (strictest-wins, incompatibility→ADR), validate completeness/traceability vs blueprints/ADRs/coding-practices, emit technical-maturity score; Native/OPA parity. Closes GT-08…GT-11. | `Core Domain` | Cross | P1 | L | `DONE` |
 | [`GT-430`](./gap-reference-catalog.md#gt-430) | F5 — Topology-recommendation engine: `topology-recommendation.rules.json` + evaluator (technical signals → recommended topology/composition), on-demand and as a complete proactive finding set. | `Rulesets` | Cross | P1 | M | `DONE` |
-| [`GT-431`](./gap-reference-catalog.md#gt-431) | F6 — Exposure + collaboration: CLI/MCP/API `design-evaluate` + `topology-recommend` (BR-008 parity); `design-template.schema.json` (scope tenant\|core, complexity simple\|medium\|complex); agent skills `design-template-proposal` + `template-promotion`; tenant→Core UP-NNN promotion flow. | `Cross` | Cross | P1 | L | `IN-PROGRESS` |
+| [`GT-431`](./gap-reference-catalog.md#gt-431) | F6 — Exposure + collaboration: CLI/MCP/API `design-evaluate` + `topology-recommend` (BR-008 parity); `design-template.schema.json` (scope tenant\|core, complexity simple\|medium\|complex); agent skills `design-template-proposal` + `template-promotion`; tenant→Core UP-NNN promotion flow. | `Cross` | Cross | P1 | L | `DONE` |
 | [`GT-432`](./gap-reference-catalog.md#gt-432) | F7 — Blueprint→downstream derivation: the `design` evaluator derives Construction/Quality/Deployment requirements and criteria from the composed blueprint as recommendations the Tracker uses to configure the F3/F4/F5 gates. | `Core Domain` | Cross | P2 | M | `PENDING` |
 | [`GT-433`](./gap-reference-catalog.md#gt-433) | F8 — Verification: acceptance checklist, E2E demo (recommended→confirmed→evaluated via CLI/MCP/API), gap reconciliation, canonical Design-phase docs. | `Governance` | Cross | P2 | M | `PENDING` |
 | [`GT-424`](./gap-reference-catalog.md#gt-424) | Three skill registries drift with no single source of truth: `DEFAULT_SKILLS` (agent-runtime intent→capability catalog), `reference/core/foundations/agent-skills/manifest.json` (agent-owned analysis skills) and `.harness/manifest.yaml` (canonical harness capabilities) declare skills independently and diverge (e.g. `gap-prioritization-engine` runs a real `.harness` script but is undeclared in `manifest.yaml`), with no CI guard enforcing convergence. | `.harness` | Cross | P2 | S | `DONE` |
@@ -448,7 +448,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 427 / 432 done · 3 in progress · 2 pending · 0 deferred
+**Progress:** 428 / 432 done · 2 in progress · 2 pending · 0 deferred
 
 **Wave 2026-06-23 (Winston deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Winston Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

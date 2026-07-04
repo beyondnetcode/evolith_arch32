@@ -3,6 +3,25 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-431",
+      "closedAt": "2026-07-04",
+      "closureCommit": "4fcdc2c8",
+      "evidence": [
+        "src/rulesets/schema/design-template.schema.json",
+        "reference/core/foundations/agent-skills/design-template-proposal.md",
+        "reference/core/foundations/agent-skills/template-promotion.md",
+        "src/apps/core-api/src/presentation/controllers/architecture.controller.ts",
+        "src/apps/core-api/src/presentation/controllers/architecture.controller.spec.ts"
+      ],
+      "validationCommands": [
+        "ajv: design-template fixture valid",
+        "npx tsc -b tsconfig.json",
+        "npx jest architecture.controller (9 pass, 2 new recommend-topology specs)"
+      ],
+      "dependencyDisposition": "partial",
+      "dependencyRationale": "design-evaluate exposed on all surfaces via evaluate(); topology-recommend exposed on the Core API (the Tracker's surface). CLI/MCP topology-recommend commands mirror the endpoint and are tracked as a follow-on (task_0dfc5f71) for full BR-008 parity on the recommender."
+    },
+    {
       "id": "GT-430",
       "closedAt": "2026-07-04",
       "closureCommit": "0196b158",

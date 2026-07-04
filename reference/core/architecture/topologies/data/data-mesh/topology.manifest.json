@@ -76,6 +76,24 @@
       ],
       "conditional": []
     },
+    "phaseProfiles": {
+      "quality": {
+        "conditional": [
+          {
+            "artifactKind": "data-product-slo-validation",
+            "criteria": "Data product contracts/SLOs verified."
+          }
+        ]
+      },
+      "deployment": {
+        "conditional": [
+          {
+            "artifactKind": "data-product-publication",
+            "criteria": "Data products published with ownership handoff."
+          }
+        ]
+      }
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

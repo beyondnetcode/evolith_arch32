@@ -84,6 +84,24 @@
         }
       ]
     },
+    "phaseProfiles": {
+      "construction": {
+        "conditional": [
+          {
+            "artifactKind": "event-contract-implementation",
+            "criteria": "Producers/consumers implement the declared event contracts."
+          }
+        ]
+      },
+      "quality": {
+        "conditional": [
+          {
+            "artifactKind": "async-consumer-test",
+            "criteria": "Consumer/idempotency tests for every event."
+          }
+        ]
+      }
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

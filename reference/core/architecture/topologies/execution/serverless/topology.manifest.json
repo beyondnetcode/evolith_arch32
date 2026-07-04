@@ -82,6 +82,24 @@
       ],
       "conditional": []
     },
+    "phaseProfiles": {
+      "quality": {
+        "conditional": [
+          {
+            "artifactKind": "performance-validation",
+            "criteria": "Cold-start/latency/cost within operational budgets."
+          }
+        ]
+      },
+      "deployment": {
+        "conditional": [
+          {
+            "artifactKind": "runtime-budget-validation",
+            "criteria": "Cold-start/cost/latency validated in the target environment."
+          }
+        ]
+      }
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

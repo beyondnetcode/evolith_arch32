@@ -86,6 +86,36 @@
       ],
       "conditional": []
     },
+    "phaseProfiles": {
+      "construction": {
+        "conditional": [
+          {
+            "artifactKind": "per-unit-ci-evidence",
+            "criteria": "Independent CI per service."
+          },
+          {
+            "artifactKind": "doma-implementation-check",
+            "criteria": "One service maps to one bounded context, implemented."
+          }
+        ]
+      },
+      "quality": {
+        "conditional": [
+          {
+            "artifactKind": "cross-service-integration-test",
+            "criteria": "Integration/e2e across services green."
+          }
+        ]
+      },
+      "deployment": {
+        "conditional": [
+          {
+            "artifactKind": "progressive-rollout-plan",
+            "criteria": "Canary/blue-green per service."
+          }
+        ]
+      }
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

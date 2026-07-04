@@ -107,6 +107,32 @@
         }
       ]
     },
+    "phaseProfiles": {
+      "construction": {
+        "conditional": [
+          {
+            "artifactKind": "agent-capability-implementation",
+            "criteria": "Governed agent capabilities implemented behind ports."
+          }
+        ]
+      },
+      "quality": {
+        "conditional": [
+          {
+            "artifactKind": "agent-safety-validation",
+            "criteria": "Token-budget, sandbox isolation, MCP conformance verified."
+          }
+        ]
+      },
+      "deployment": {
+        "conditional": [
+          {
+            "artifactKind": "agent-operational-guardrails",
+            "criteria": "Credential rotation active, sandbox limits enforced, HITL approval wired."
+          }
+        ]
+      }
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

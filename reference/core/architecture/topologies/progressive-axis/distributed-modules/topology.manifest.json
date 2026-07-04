@@ -92,6 +92,16 @@
         }
       ]
     },
+    "phaseProfiles": {
+      "construction": {
+        "conditional": [
+          {
+            "artifactKind": "per-unit-ci-evidence",
+            "criteria": "Independent CI per module."
+          }
+        ]
+      }
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

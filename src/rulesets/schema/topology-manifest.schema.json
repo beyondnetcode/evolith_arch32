@@ -262,6 +262,16 @@
             "conditional": { "type": "array", "items": { "$ref": "#/definitions/designArtifactDescriptor" } }
           }
         },
+        "phaseProfiles": {
+          "type": "object",
+          "description": "Downstream-phase artifact profiles (ADR-0104 / DN-06). Per SDLC phase (construction/quality/deployment), the topology-derived artifacts this topology adds. Universal artifacts are applied by the phase evaluator regardless of topology. Structure mirrors spec.designProfile; unioned over the confirmed composition; advisory/non-binding.",
+          "additionalProperties": false,
+          "properties": {
+            "construction": { "$ref": "#/definitions/phaseArtifactProfile" },
+            "quality": { "$ref": "#/definitions/phaseArtifactProfile" },
+            "deployment": { "$ref": "#/definitions/phaseArtifactProfile" }
+          }
+        },
         "operationalInterfaces": {
           "type": "object",
           "required": ["cli", "mcp", "coreApi"],
@@ -355,6 +365,15 @@
     "kebabIdentifier": {
       "type": "string",
       "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "phaseArtifactProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Required/conditional artifact descriptors for one downstream SDLC phase (DN-06).",
+      "properties": {
+        "required": { "type": "array", "items": { "$ref": "#/definitions/designArtifactDescriptor" } },
+        "conditional": { "type": "array", "items": { "$ref": "#/definitions/designArtifactDescriptor" } }
+      }
     },
     "designArtifactDescriptor": {
       "type": "object",

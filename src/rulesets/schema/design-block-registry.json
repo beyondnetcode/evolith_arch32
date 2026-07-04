@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/schema/design-block-registry.json",
+  "title": "Evolith Design Block Registry",
+  "version": "1.0.0",
+  "description": "Block-type registry (ADR-0104, GT-428). The canonical catalogue of design-block kinds composable into a blueprint. Convention over Configuration: new blocks are ADDED here (community contributions via UP-NNN) WITHOUT changing the engine. `category`=universal blocks are always scored and always contribute to maturity; `topology-derived` blocks are scored when the confirmed topology composition requires them (DS-10). Every block conforms to design-block.schema.json unless it declares its own refining `schemaRef`.",
+  "blocks": [
+    { "blockKind": "architecture-blueprint", "category": "universal", "title": "Architecture Blueprint", "description": "The composed, validated architecture guide traceable to the reference blueprint.", "schemaRef": "src/rulesets/schema/blueprint.schema.json", "tier": "official" },
+    { "blockKind": "testing-strategy", "category": "universal", "title": "Testing Strategy", "description": "Testing pyramid alignment (ADR-0018): unit/integration/e2e distribution and coverage.", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "adr-registry", "category": "universal", "title": "ADR Registry", "description": "The set of ADRs for relevant architectural decisions.", "schemaRef": "src/rulesets/schema/adr.schema.json", "tier": "official" },
+    { "blockKind": "topology-compliance-matrix", "category": "universal", "title": "Topology Compliance Matrix", "description": "Conformance of the design to the confirmed topology composition's rules.", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "technical-maturity-evaluation", "category": "universal", "title": "Technical Maturity Evaluation", "description": "The design's technical-maturity assessment (primary advisory output).", "schemaRef": "src/rulesets/schema/maturity-evidence.schema.json", "tier": "official" },
+
+    { "blockKind": "infrastructure-plan", "category": "topology-derived", "title": "Infrastructure Plan", "description": "Deployment topology, networking, scaling, and environments.", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "devops-cicd-plan", "category": "topology-derived", "title": "DevOps / CI-CD Plan", "description": "CI/CD lifecycle strategy (ADR-0005), independent per module/service when applicable.", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "unit-test-plan", "category": "topology-derived", "title": "Unit Test Plan", "description": "Unit-test approach and isolation strategy (ADR-0052).", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "build-plan", "category": "topology-derived", "title": "Build Plan", "description": "Build/orchestration strategy (ADR-0001).", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "performance-plan", "category": "topology-derived", "title": "Performance Plan", "description": "Performance/latency/cost strategy against operational budgets (ADR-0037).", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+
+    { "blockKind": "event-contract-catalog", "category": "topology-derived", "title": "Event Contract Catalog", "description": "Versioned, schema-validated event contracts (event-driven).", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "async-payload-schema-set", "category": "topology-derived", "title": "Async Payload Schema Set", "description": "Schemas for every async payload (event-driven).", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "transactional-outbox-plan", "category": "topology-derived", "title": "Transactional Outbox Plan", "description": "Atomic state/event consistency at async scale.", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "doma-compliance-matrix", "category": "topology-derived", "title": "DOMA Compliance Matrix", "description": "Each service maps to exactly one bounded context (ADR-0076, microservices).", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "extraction-readiness-assessment", "category": "topology-derived", "title": "Extraction Readiness Assessment", "description": "Extraction-readiness score for F3 progression (ADR-0045).", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "data-product-contract-set", "category": "topology-derived", "title": "Data Product Contract Set", "description": "Contracts for each data product (data-mesh).", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "data-ownership-map", "category": "topology-derived", "title": "Data Ownership Map", "description": "Domain ownership and access boundaries for data products (data-mesh).", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "token-budget-plan", "category": "topology-derived", "title": "Token Budget Plan", "description": "Token budget per execution within operational budgets (agentic-ai).", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "credential-rotation-policy", "category": "topology-derived", "title": "Credential Rotation Policy", "description": "Credential rotation interval (agentic-ai).", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "sandbox-policy", "category": "topology-derived", "title": "Sandbox Policy", "description": "Sandbox timeout and isolation for agent execution (agentic-ai).", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "mcp-protocol-compliance", "category": "topology-derived", "title": "MCP Protocol Compliance", "description": "MCP protocol conformance for governed agent exposure (agentic-ai).", "schemaRef": "src/rulesets/schema/design-block.schema.json", "tier": "official" },
+    { "blockKind": "model-selection-adr", "category": "topology-derived", "title": "Model Selection ADR", "description": "ADR documenting model/provider selection and neutrality (agentic-ai).", "schemaRef": "src/rulesets/schema/adr.schema.json", "tier": "official" }
+  ]
+}

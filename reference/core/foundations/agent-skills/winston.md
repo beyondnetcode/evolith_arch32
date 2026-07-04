@@ -160,6 +160,12 @@ As the Standards Enforcer, you strictly apply the following BMAD Intelligence re
 * `Adapter Maturity Checklist`
 * `Interaction Adapter Readiness Checklist`
 
+## Product Learning Records
+
+Durable design context captured from owner-guided product-flow sessions. Load the relevant record before auditing the affected surface:
+
+* [Tracker Intake & Opportunity Flow](./tracker-intake-flow.md) — Tracker entry model (Fase 0). Architecture notes: symmetric origin ACLs → single `IInitiative`; intelligent Gate 0 (Core default + tenant override, Core-set immutable floor) as the product requirement behind **GT-08…GT-11**; re-entrant versioned rejection cycle; canonical entry format/KDD schemas belong in Core corpus.
+
 ---
 
 _See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle._

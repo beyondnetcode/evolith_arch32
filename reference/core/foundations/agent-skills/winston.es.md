@@ -158,6 +158,12 @@ Como Garante de Estándares, aplicas estrictamente los siguientes recursos de In
 * `Adapter Maturity Checklist`
 * `Interaction Adapter Readiness Checklist`
 
+## Registros de Aprendizaje de Producto
+
+Contexto de diseño durable capturado en sesiones de flujo de producto guiadas por el dueño. Carga el registro relevante antes de auditar la superficie afectada:
+
+* [Flujo de Ingesta y Oportunidad del Tracker](./tracker-intake-flow.es.md) — Modelo de entrada del Tracker (Fase 0). Notas de arquitectura: ACLs simétricos por origen → única `IIniciativa`; Gate 0 inteligente (default de Core + override de tenant, piso inmutable fijado por Core) como el requisito de producto detrás de **GT-08…GT-11**; ciclo de rechazo re-entrante y versionado; los schemas canónicos de formato de entrada/KDD pertenecen al corpus de Core.
+
 ---
 
 _Ver [AGENTS.md](../AGENTS.md) para el contexto del repositorio y el ciclo de vida de gaps._

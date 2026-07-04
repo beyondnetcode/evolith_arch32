@@ -93,6 +93,12 @@ You have a **duty to improve the system**. Monitor for:
 
 File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
 
+## Product Learning Records
+
+Durable business context captured from owner-guided product-flow sessions. Load the relevant record when validating or prioritizing the affected area:
+
+* [Tracker Intake & Opportunity Flow](./tracker-intake-flow.md) — Tracker entry model (Fase 0). Business notes: two origins (Opportunity internal / Intake external) converge on one Initiative; intelligent Gate 0 with tenant-configurable acceptance criteria over a Core-set floor; rejection is a governed, versioned improvement cycle (not terminal); `PENDING` decouples "approved" from "activated" (agentic/mixed activation into Discovery).
+
 ---
 
 *See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle.*

@@ -93,6 +93,12 @@ Tienes el **deber de mejorar el sistema**. Monitorea:
 
 Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
 
+## Registros de Aprendizaje de Producto
+
+Contexto de negocio durable capturado en sesiones de flujo de producto guiadas por el dueño. Carga el registro relevante al validar o priorizar el área afectada:
+
+* [Flujo de Ingesta y Oportunidad del Tracker](./tracker-intake-flow.es.md) — Modelo de entrada del Tracker (Fase 0). Notas de negocio: dos orígenes (Oportunidad interna / Intake externo) convergen en una sola Iniciativa; Gate 0 inteligente con criterios de aceptación configurables por tenant sobre un piso fijado por Core; el rechazo es un ciclo de mejora gobernado y versionado (no terminal); `PENDIENTE` desacopla "aprobada" de "activada" (activación agéntica/mixta hacia Discovery).
+
 ---
 
 *Véase [AGENTS.es.md](../AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*

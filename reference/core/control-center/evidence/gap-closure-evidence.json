@@ -3,6 +3,22 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-429",
+      "closedAt": "2026-07-04",
+      "closureCommit": "1b4e6f98",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/kind-evaluators.ts",
+        "src/packages/core-domain/src/evaluation/kind-evaluators.spec.ts",
+        "src/packages/core-domain/src/application/services/topology-catalog.service.ts"
+      ],
+      "validationCommands": [
+        "npx tsc -b tsconfig.json",
+        "npx jest --config src/packages/core-domain/jest.config.js --testPathPatterns evaluation (63 pass, 3 new design specs)"
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "Advisory maturity evaluator (TS KindEvaluator); no new Native rule → no OPA parity twin required (R-25 N/A). Delivers the content/maturity evaluation capability behind the existence-only gate gaps."
+    },
+    {
       "id": "GT-428",
       "closedAt": "2026-07-04",
       "closureCommit": "0392fefe",

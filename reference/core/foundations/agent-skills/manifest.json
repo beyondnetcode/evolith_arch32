@@ -85,9 +85,9 @@
       "version": "1.0.0",
       "owner": "@winston",
       "description": "Evaluates maturity of all InteractionAdapterPort implementations against the canonical contract. Produces structured readiness report with phantom detection.",
-      "inputs": ["packages/agent-runtime/src/adapters/interaction/", ".bmad-core/agents/*.md", ".bmad-core/skills/manifest.json"],
+      "inputs": ["src/packages/agent-runtime/src/adapters/interaction/", "reference/core/foundations/agent-skills/*.md", "reference/core/foundations/agent-skills/manifest.json"],
       "outputs": ["adapter maturity report (JSON)", "phantom declarations list"],
-      "file": ".bmad-core/skills/adapter-maturity-analysis.mjs",
+      "file": "reference/core/foundations/agent-skills/adapter-maturity-analysis.mjs",
       "tags": ["adapter", "maturity", "interaction-adapter", "runtime", "audit", "phantom-detection"]
     },
     {

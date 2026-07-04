@@ -18,8 +18,8 @@ const issues = [];
 
 // --- Check 1: Agent definitions vs adapter implementations ---
 
-const agentsDir = path.join(root, ".bmad-core/agents");
-const adaptersDir = path.join(root, "packages/agent-runtime/src/adapters/interaction");
+const agentsDir = path.join(root, "reference/core/foundations/agent-skills");
+const adaptersDir = path.join(root, "src/packages/agent-runtime/src/adapters/interaction");
 
 if (fs.existsSync(agentsDir) && fs.existsSync(adaptersDir)) {
   const agentFiles = fs.readdirSync(agentsDir).filter(f => f.endsWith(".md") && !f.endsWith(".es.md"));
@@ -43,7 +43,7 @@ if (fs.existsSync(agentsDir) && fs.existsSync(adaptersDir)) {
 
 // --- Check 2: Skill manifest vs skill implementations ---
 
-const manifestPath = path.join(root, ".bmad-core/skills/manifest.json");
+const manifestPath = path.join(root, "reference/core/foundations/agent-skills/manifest.json");
 if (fs.existsSync(manifestPath)) {
   const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
   for (const skill of manifest.skills || []) {

@@ -3,6 +3,23 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-426",
+      "closedAt": "2026-07-04",
+      "closureCommit": "5ddf4471",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/contracts/evaluation-context.ts",
+        "src/packages/core-domain/src/evaluation/contracts/evaluation-result.ts",
+        "src/rulesets/schema/evaluation-context.schema.json",
+        "src/rulesets/schema/evaluation-result.schema.json",
+        "src/rulesets/schema/evolith-yaml.schema.json"
+      ],
+      "validationCommands": [
+        "npx tsc -b tsconfig.json",
+        "npx jest --config src/packages/core-domain/jest.config.js --testPathPatterns evaluation"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-412",
       "closedAt": "2026-07-02",
       "closureCommit": "2f3e0bbe",

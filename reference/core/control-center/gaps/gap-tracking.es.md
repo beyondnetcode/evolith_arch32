@@ -4,7 +4,7 @@
 
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
-**Última Actualización:** 2026-07-04 (Épico de gobernanza advisory de la fase Design — añadido GT-425 (EPIC, ADR-0104 aterrizado como F0) descompuesto en GT-426…GT-433 (F1–F8); implementación pendiente, se finaliza primero el flujo de diseño.)
+**Última Actualización:** 2026-07-04 (Épico de Design GT-425 — F1/GT-426 COMPLETADO: faceta `design` añadida a los contratos de evaluación + schema de `evolith.yaml` (commit 5ddf4471). GT-427…GT-433 pendientes.)
 **Detalle de Gaps:** [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md)
 
 Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunidades, habilitadores, prioridad y estado. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
@@ -14,7 +14,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-425`](./gap-reference-catalog.es.md#gt-425) | EPIC — Gobernanza advisory de la fase Design (ADR-0104): Core recomienda/valida/mide madurez técnica sobre un catálogo de bloques bajo Convention over Configuration; blueprint como guía de desarrollo componible y multi-concern que dirige los criterios downstream. F0 (ADR-0104) aterrizado. **Umbrella — descompuesto en `GT-426`…`GT-433`.** | `Core Domain` | Cross | P1 | XL | `EN-PROGRESO` |
-| [`GT-426`](./gap-reference-catalog.es.md#gt-426) | F1 — Contratos: extender `EvaluationContext`/`EvaluationResult` con una faceta `design` (topología recomendada/confirmada, refs de artefactos, madurez por concern) + schema formal de `evolith.yaml` con `design.topology.recommended\|confirmed` (composición). | `Core Domain` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-426`](./gap-reference-catalog.es.md#gt-426) | F1 — Contratos: extender `EvaluationContext`/`EvaluationResult` con una faceta `design` (topología recomendada/confirmada, refs de artefactos, madurez por concern) + schema formal de `evolith.yaml` con `design.topology.recommended\|confirmed` (composición). | `Core Domain` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-427`](./gap-reference-catalog.es.md#gt-427) | F2 — Añadir `spec.designProfile { required[], conditional[] }` a `topology-manifest.schema.json` y poblar los 8 topology manifests. | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-428`](./gap-reference-catalog.es.md#gt-428) | F3 — Composición multi-concern del blueprint bajo Convention over Configuration: extender `blueprint.schema.json` para componer por concern (frontend/backend/services/mobile/data) vía un block-type registry; + schemas de bloque de artefactos, plantillas bilingües, fixtures. **Pieza central.** | `Schemas` | Cross | P1 | L | `PENDIENTE` |
 | [`GT-429`](./gap-reference-catalog.es.md#gt-429) | F4 — Evaluador `EvaluationKind` `design`: derivar artefactos como la unión sobre la composición de topologías confirmada (estricto-gana, incompatibilidad→ADR), validar completitud/trazabilidad vs blueprints/ADRs/prácticas-de-código, emitir score de madurez técnica; paridad Native/OPA. Cierra GT-08…GT-11. | `Core Domain` | Cross | P1 | L | `PENDIENTE` |
@@ -448,7 +448,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 422 / 432 completados · 2 en progreso · 8 pendientes · 0 diferidos
+**Progreso:** 423 / 432 completados · 2 en progreso · 7 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Winston III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Winston Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

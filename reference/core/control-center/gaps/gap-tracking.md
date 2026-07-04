@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-07-04 (Design-phase advisory governance epic — added GT-425 (EPIC, ADR-0104 landed as F0) decomposed into GT-426…GT-433 (F1–F8); implementation pending, design flow being finalized first.)
+**Last Updated:** 2026-07-04 (Design-phase epic GT-425 — F1/GT-426 DONE: `design` facet added to the evaluation contracts + `evolith.yaml` schema (commit 5ddf4471). GT-427…GT-433 pending.)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -14,7 +14,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-425`](./gap-reference-catalog.md#gt-425) | EPIC — Design-phase advisory governance (ADR-0104): Core recommends/validates/measures technical maturity over a Convention-over-Configuration block catalog; blueprint as composable, multi-concern development guide that drives downstream criteria. F0 (ADR-0104) landed. **Umbrella — decomposed into `GT-426`…`GT-433`.** | `Core Domain` | Cross | P1 | XL | `IN-PROGRESS` |
-| [`GT-426`](./gap-reference-catalog.md#gt-426) | F1 — Contracts: extend `EvaluationContext`/`EvaluationResult` with a `design` facet (topology recommended/confirmed, artifact refs, per-concern maturity) + formal `evolith.yaml` schema with `design.topology.recommended\|confirmed` (composition). | `Core Domain` | Cross | P1 | M | `PENDING` |
+| [`GT-426`](./gap-reference-catalog.md#gt-426) | F1 — Contracts: extend `EvaluationContext`/`EvaluationResult` with a `design` facet (topology recommended/confirmed, artifact refs, per-concern maturity) + formal `evolith.yaml` schema with `design.topology.recommended\|confirmed` (composition). | `Core Domain` | Cross | P1 | M | `DONE` |
 | [`GT-427`](./gap-reference-catalog.md#gt-427) | F2 — Add `spec.designProfile { required[], conditional[] }` to `topology-manifest.schema.json` and populate the 8 topology manifests. | `Rulesets` | Cross | P1 | M | `PENDING` |
 | [`GT-428`](./gap-reference-catalog.md#gt-428) | F3 — Blueprint multi-concern composition under Convention over Configuration: extend `blueprint.schema.json` to compose by concern (frontend/backend/services/mobile/data) via a block-type registry; + design-artifact block schemas, bilingual templates, fixtures. **Central piece.** | `Schemas` | Cross | P1 | L | `PENDING` |
 | [`GT-429`](./gap-reference-catalog.md#gt-429) | F4 — `design` `EvaluationKind` evaluator: derive artifacts as the union over the confirmed topology composition (strictest-wins, incompatibility→ADR), validate completeness/traceability vs blueprints/ADRs/coding-practices, emit technical-maturity score; Native/OPA parity. Closes GT-08…GT-11. | `Core Domain` | Cross | P1 | L | `PENDING` |
@@ -448,7 +448,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 422 / 432 done · 2 in progress · 8 pending · 0 deferred
+**Progress:** 423 / 432 done · 2 in progress · 7 pending · 0 deferred
 
 **Wave 2026-06-23 (Winston deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Winston Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

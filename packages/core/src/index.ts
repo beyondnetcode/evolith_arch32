@@ -79,7 +79,6 @@ export {
   ProposePhaseAdvanceUseCase,
   PhaseTransitionUseCase,
   InitializeProjectUseCase,
-  AdoptRepoUseCase,
 } from "@evolith/core-domain/application/use-cases";
 
 export type {
@@ -87,7 +86,6 @@ export type {
   ValidateSatelliteInput,
   ValidateSatelliteOutput,
   ProposePhaseAdvanceInput,
-  AdoptRepoResult,
 } from "@evolith/core-domain/application/use-cases";
 
 // Re-export application validators

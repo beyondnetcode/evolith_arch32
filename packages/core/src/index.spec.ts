@@ -59,7 +59,6 @@ const EXPECTED_VALUE_EXPORTS: Record<string, "function" | "object"> = {
   ProposePhaseAdvanceUseCase: "function",
   PhaseTransitionUseCase: "function",
   InitializeProjectUseCase: "function",
-  AdoptRepoUseCase: "function",
 
   // application/validators
   RulesetValidatorService: "function",
@@ -97,7 +96,6 @@ const EXPECTED_CLASS_EXPORTS = [
   "ProposePhaseAdvanceUseCase",
   "PhaseTransitionUseCase",
   "InitializeProjectUseCase",
-  "AdoptRepoUseCase",
   "RulesetValidatorService",
   "PhaseGateValidatorService",
   "ArchitectureDriftService",
@@ -120,8 +118,6 @@ const EXPECTED_TYPE_EXPORTS = [
   "IToolExecutor",
   "IProjectInitializer",
   "ICatalogLoader",
-  // application/use-cases
-  "AdoptRepoResult",
   // domain/gate-evidence
   "GatePhase",
   "GateVerdict",

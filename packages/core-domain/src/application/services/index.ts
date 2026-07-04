@@ -22,7 +22,6 @@ export interface InitProjectResult {
 }
 
 export * from '../use-cases/initialize-project.use-case';
-export * from '../use-cases/adopt-repo.use-case';
 export * from '../use-cases/phase-transition.use-case';
 export * from './topology-catalog.service';
 export * from './sdlc-data-loader.service';
@@ -30,9 +29,6 @@ export * from './satellite-evaluation-pipeline.service';
 export * from './catalog.service';
 export * from './audit.service';
 export * from './gate-registry.service';
-export * from './satellite-scaffolder.service';
-export * from './repo-detector.service';
-export * from '../ports/repo-detection.port';
 
 export interface PhaseTransitionResult {
   success: boolean;

@@ -1,5 +1,4 @@
 import { InitCommand } from './init.command';
-import { AdoptRepoResult } from '@evolith/core-domain/application/use-cases/adopt-repo.use-case';
 
 jest.mock('@clack/prompts', () => ({
   intro: jest.fn(),
@@ -35,25 +34,29 @@ jest.mock('chalk', () => {
 
 jest.mock('../../infrastructure/catalog/catalog-loader', () => ({
   CatalogLoader: jest.fn().mockImplementation(() => ({
-    loadRuntimeCatalog: jest.fn(() => []),
+    loadRuntimeCatalog: jest.fn(() => [
+      { id: 'nodejs', name: 'Node.js', defaultVersion: '20.x', language: 'JavaScript', databases: [{ id: 'postgresql', name: 'PostgreSQL', type: 'relational' }] },
+      { id: 'dotnet', name: '.NET', defaultVersion: '8.0', language: 'C#', databases: [{ id: 'sqlserver', name: 'SQL Server', type: 'relational' }] },
+    ]),
     getMonorepoOptions: jest.fn(() => [
       { id: 'none', name: 'None', description: 'No monorepo' },
+      { id: 'nx', name: 'Nx', description: 'Nx monorepo' },
     ]),
-    getArchitecturePatterns: jest.fn(() => []),
+    getArchitecturePatterns: jest.fn(() => [
+      { id: 'clean', name: 'Clean Architecture', description: 'Clean architecture pattern' },
+      { id: 'hexagonal', name: 'Hexagonal', description: 'Hexagonal architecture' },
+    ]),
     getDefaultDatabase: jest.fn(() => 'postgresql'),
-    getApiProtocols: jest.fn(() => []),
+    getApiProtocols: jest.fn(() => [
+      { id: 'rest', name: 'REST', description: 'RESTful API' },
+      { id: 'graphql', name: 'GraphQL', description: 'GraphQL API' },
+    ]),
   })),
 }));
 
-jest.mock('@evolith/core-domain/application/use-cases/adopt-repo.use-case', () => ({
-  AdoptRepoUseCase: jest.fn().mockImplementation(() => ({
+jest.mock('@evolith/core-domain/application/services', () => ({
+  InitializeProjectUseCase: jest.fn().mockImplementation(() => ({
     execute: jest.fn(),
-  })),
-}));
-
-jest.mock('@evolith/core-domain/application/services/repo-detector.service', () => ({
-  RepoDetectorService: jest.fn().mockImplementation(() => ({
-    detect: jest.fn(),
   })),
 }));
 
@@ -78,20 +81,14 @@ jest.mock('../../infrastructure/observability', () => ({
 }));
 
 import * as p from '@clack/prompts';
-import { AdoptRepoUseCase } from '@evolith/core-domain/application/use-cases/adopt-repo.use-case';
-import { RepoDetectorService } from '@evolith/core-domain/application/services/repo-detector.service';
+import { InitializeProjectUseCase } from '@evolith/core-domain/application/services';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 const mockExecute = jest.fn();
-const mockAskAdoptOptions = jest.fn();
-const mockDetect = jest.fn();
+const mockAskInitOptions = jest.fn();
 
-(AdoptRepoUseCase as jest.Mock).mockImplementation(() => ({
+(InitializeProjectUseCase as jest.Mock).mockImplementation(() => ({
   execute: mockExecute,
-}));
-
-(RepoDetectorService as jest.Mock).mockImplementation(() => ({
-  detect: mockDetect,
 }));
 
 describe('InitCommand', () => {
@@ -99,56 +96,37 @@ describe('InitCommand', () => {
   let logSpy: jest.SpyInstance;
   let exitSpy: jest.SpyInstance;
 
-  const defaultDetection = {
-    repoName: 'my-repo',
-    remoteUrl: 'https://github.com/test/my-repo.git',
-    remoteOwner: 'test',
+  const defaultSelection = {
+    projectName: 'my-project',
     runtime: 'nodejs',
-    packageManager: 'npm',
-    framework: 'nestjs',
-    ciPlatform: 'github',
-    hasDocs: false,
-    hasGovernance: false,
-    hasEvolithYaml: false,
-    hasAgentsMd: false,
-  };
-
-  const defaultAdoptInput = {
-    name: 'my-repo',
     monorepo: 'none',
+    architecture: 'clean',
+    database: 'postgresql',
+    apiProtocol: 'rest',
+    ciCd: 'github',
+    observability: 'otel',
     features: ['adr', 'hooks'],
     agents: ['bmad'],
-    hooks: true,
-    detection: defaultDetection,
   };
 
-  const defaultResult: AdoptRepoResult = {
+  const defaultResult = {
     success: true,
-    created: ['evolith.yaml', 'AGENTS.md', 'README.md'],
-    skipped: [],
-    merged: [],
+    artifacts: ['my-project/evolith.yaml', 'my-project/README.md'],
     warnings: [],
     errors: [],
   };
 
-  const mockCommandExecutor = {
-    execute: jest.fn(),
-    executeOrThrow: jest.fn().mockResolvedValue('true'),
-    checkTool: jest.fn(),
-  };
-
   beforeEach(() => {
-    mockDetect.mockResolvedValue(defaultDetection);
-    jest.spyOn(PromptService.prototype, 'askAdoptOptions').mockImplementation(mockAskAdoptOptions);
+    jest.spyOn(PromptService.prototype, 'askInitOptions').mockImplementation(mockAskInitOptions);
     const { CatalogLoader } = require('../../infrastructure/catalog/catalog-loader');
     const catalogLoader = new CatalogLoader();
-    command = new InitCommand(catalogLoader, {} as never, mockCommandExecutor as never, new PromptService());
+    command = new InitCommand(catalogLoader, {} as never, new PromptService());
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
     jest.clearAllMocks();
     mockExecute.mockReset();
     mockExecute.mockResolvedValue(defaultResult);
-    mockAskAdoptOptions.mockReset();
+    mockAskInitOptions.mockReset();
   });
 
   afterEach(() => {
@@ -157,43 +135,39 @@ describe('InitCommand', () => {
   });
 
   describe('run', () => {
-    it('should detect repository properties before prompting', async () => {
-      mockAskAdoptOptions.mockResolvedValue(defaultAdoptInput);
-
-      await command.run([], {});
-
-      expect(mockDetect).toHaveBeenCalled();
-      expect(mockAskAdoptOptions).toHaveBeenCalledWith(defaultDetection, expect.anything());
-    });
-
-    it('should show intro and prompt for adopt configuration', async () => {
-      mockAskAdoptOptions.mockResolvedValue(defaultAdoptInput);
+    it('should show intro and prompt for project configuration', async () => {
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
 
       await command.run([], {});
 
       expect(p.intro).toHaveBeenCalled();
-      expect(mockAskAdoptOptions).toHaveBeenCalled();
+      expect(mockAskInitOptions).toHaveBeenCalled();
     });
 
-    it('should call AdoptRepoUseCase with correct input', async () => {
-      mockAskAdoptOptions.mockResolvedValue(defaultAdoptInput);
+    it('should call InitializeProjectUseCase with correct input', async () => {
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
 
       await command.run([], {});
 
       expect(mockExecute).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: 'my-repo',
+          name: 'my-project',
+          runtime: 'nodejs',
           monorepo: 'none',
+          architecture: 'clean',
+          database: 'postgresql',
+          apiProtocol: 'rest',
+          ciCd: 'github',
+          observability: 'otel',
           features: ['adr', 'hooks'],
           agents: ['bmad'],
-          hooks: true,
         }),
         expect.any(String)
       );
     });
 
-    it('should show success message when adoption succeeds', async () => {
-      mockAskAdoptOptions.mockResolvedValue(defaultAdoptInput);
+    it('should show success message when initialization succeeds', async () => {
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
 
       await command.run([], {});
 
@@ -201,8 +175,8 @@ describe('InitCommand', () => {
       expect(p.log.info).toHaveBeenCalled();
     });
 
-    it('should show created files in success output', async () => {
-      mockAskAdoptOptions.mockResolvedValue(defaultAdoptInput);
+    it('should show artifacts created in success output', async () => {
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
 
       await command.run([], {});
 
@@ -211,14 +185,12 @@ describe('InitCommand', () => {
       );
     });
 
-    it('should show warnings when adoption has warnings', async () => {
-      mockAskAdoptOptions.mockResolvedValue(defaultAdoptInput);
+    it('should show warnings when initialization has warnings', async () => {
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
       mockExecute.mockResolvedValue({
         success: true,
-        created: ['evolith.yaml'],
-        skipped: [],
-        merged: [],
-        warnings: ['Some warning'],
+        artifacts: ['my-project/evolith.yaml'],
+        warnings: ['Platform nodejs not detected'],
         errors: [],
       });
 
@@ -227,15 +199,13 @@ describe('InitCommand', () => {
       expect(p.log.warn).toHaveBeenCalled();
     });
 
-    it('should show error message when adoption fails', async () => {
-      mockAskAdoptOptions.mockResolvedValue(defaultAdoptInput);
+    it('should show error message when initialization fails', async () => {
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
       mockExecute.mockResolvedValue({
         success: false,
-        created: [],
-        skipped: [],
-        merged: [],
+        artifacts: [],
         warnings: [],
-        errors: ['Something went wrong'],
+        errors: ['Runtime not found'],
       });
 
       await command.run([], {});
@@ -243,8 +213,8 @@ describe('InitCommand', () => {
       expect(p.log.error).toHaveBeenCalled();
     });
 
-    it('should cancel adoption when confirmAdopt is false', async () => {
-      mockAskAdoptOptions.mockResolvedValue(null);
+    it('should cancel initialization when confirmInit is false', async () => {
+      mockAskInitOptions.mockResolvedValue(null);
 
       await command.run([], {});
 
@@ -252,13 +222,12 @@ describe('InitCommand', () => {
       expect(p.outro).toHaveBeenCalled();
     });
 
-    it('should detect git repository before proceeding', async () => {
-      mockCommandExecutor.executeOrThrow.mockRejectedValue(new Error('not a git repo'));
+    it('should log operation start', async () => {
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
 
       await command.run([], {});
 
-      expect(p.log.error).toHaveBeenCalledWith(expect.stringContaining('Not inside a Git repository'));
-      expect(mockAskAdoptOptions).not.toHaveBeenCalled();
+      expect(p.intro).toHaveBeenCalled();
     });
   });
 
@@ -267,16 +236,24 @@ describe('InitCommand', () => {
       expect(command.parseDryRun()).toBe(true);
     });
 
+    it('should parse config option', () => {
+      expect(command.parseConfig('/path/to/config.json')).toBe('/path/to/config.json');
+    });
+
+    it('should parse runtime option', () => {
+      expect(command.parseRuntime('nodejs')).toBe('nodejs');
+    });
+
     it('should parse monorepo option', () => {
       expect(command.parseMonorepo('nx')).toBe('nx');
     });
 
-    it('should parse features option', () => {
-      expect(command.parseFeatures('adr,hooks')).toBe('adr,hooks');
+    it('should parse arch option', () => {
+      expect(command.parseArch('hexagonal')).toBe('hexagonal');
     });
 
-    it('should parse agents option', () => {
-      expect(command.parseAgents('bmad,qa')).toBe('bmad,qa');
+    it('should parse db option', () => {
+      expect(command.parseDb('mongodb')).toBe('mongodb');
     });
   });
 });

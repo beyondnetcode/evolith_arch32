@@ -1,6 +1,5 @@
 export * from './evaluate-gate.use-case';
 export * from './initialize-project.use-case';
-export * from './adopt-repo.use-case';
 export * from './initialize-satellite.use-case';
 export * from './phase-transition.use-case';
 export * from './propose-phase-advance.use-case';

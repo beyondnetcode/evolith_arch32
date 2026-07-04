@@ -1,88 +1,96 @@
 import * as p from '@clack/prompts';
 import { CatalogLoader } from '../catalog/catalog-loader';
-import { RepoDetectionResult } from '@evolith/core-domain/application/ports/repo-detection.port';
-import { AdoptRepoInput } from '@evolith/core-domain/application/services/satellite-scaffolder.service';
+import { InitProjectInput } from '@evolith/core-domain/application/services';
 import { UserCancelledError } from '@evolith/core-domain/domain/errors';
 import {
-  AGENT_OPTIONS, FEATURE_OPTIONS, MONOREPO_OPTIONS,
+  AGENT_OPTIONS, CI_CD_OPTIONS, FEATURE_OPTIONS, OBSERVABILITY_OPTIONS,
+  validateProjectName,
 } from './init-prompt-options';
 
-export async function runAdoptPromptGroup(
-  detection: RepoDetectionResult,
+export async function runInitPromptGroup(
   catalog: CatalogLoader,
-): Promise<AdoptRepoInput | null> {
+): Promise<Partial<InitProjectInput> | null> {
   const selection = await p.group(
     {
-      detectionSummary: async () => {
-        p.log.info('');
-        p.log.info('Detected repository properties:');
-        p.log.info(`  Repository:   ${detection.repoName}`);
-        p.log.info(`  Runtime:      ${detection.runtime}`);
-        p.log.info(`  Pkg Manager:  ${detection.packageManager}`);
-        p.log.info(`  Framework:    ${detection.framework ?? 'none detected'}`);
-        p.log.info(`  CI/CD:        ${detection.ciPlatform}`);
-        p.log.info(`  Remote:       ${detection.remoteUrl ?? 'none'}`);
-        if (detection.hasEvolithYaml) p.log.warn('  evolith.yaml already exists — will be merged');
-        if (detection.hasGovernance) p.log.warn('  Governance dirs already exist — will be enhanced');
-        if (detection.hasAgentsMd) p.log.warn('  AGENTS.md already exists — will be enhanced');
-        p.log.info('');
-        return true;
+      projectName: () => p.text({
+        message: 'Nombre del proyecto:',
+        placeholder: 'my-satellite-repo',
+        validate: validateProjectName,
+      }),
+
+      runtime: () => {
+        const runtimes = catalog.loadRuntimeCatalog();
+        return p.select({
+          message: 'Selecciona el runtime principal:',
+          options: runtimes.map((r) => ({ value: r.id, label: `${r.name} (${r.defaultVersion})`, hint: r.language })),
+          initialValue: 'nodejs',
+        });
       },
 
-      monorepo: () => p.select({
-        message: 'Monorepo strategy:',
-        options: MONOREPO_OPTIONS.map(m => ({
-          value: m.value, label: m.label, hint: m.hint,
-        })),
-        initialValue: 'none',
-      }),
+      monorepo: () => {
+        const monorepos = catalog.getMonorepoOptions();
+        return p.select({
+          message: 'Selecciona la estrategia de monorepo:',
+          options: monorepos.map((m) => ({ value: m.id, label: m.name, hint: m.description })),
+          initialValue: 'none',
+        });
+      },
 
-      features: () => p.multiselect({
-        message: 'Evolith features to enable:',
-        options: FEATURE_OPTIONS,
-        required: false,
-      }),
+      architecture: () => {
+        const architectures = catalog.getArchitecturePatterns();
+        return p.select({
+          message: 'Selecciona el patrón arquitectónico:',
+          options: architectures.map((a) => ({ value: a.id, label: a.name, hint: a.description })),
+          initialValue: 'clean',
+        });
+      },
 
-      agents: () => p.multiselect({
-        message: 'Agents to install:',
-        options: AGENT_OPTIONS,
-        required: false,
-      }),
+      database: ({ results }) => {
+        const runtimes = catalog.loadRuntimeCatalog();
+        const runtime = runtimes.find((r) => r.id === results.runtime);
+        const databases = runtime?.databases || [];
+        return p.select({
+          message: 'Selecciona el tipo de base de datos:',
+          options: databases.map((db) => ({ value: db.id, label: db.name, hint: db.orm || db.type || '' })),
+          initialValue: catalog.getDefaultDatabase(results.runtime ?? ''),
+        });
+      },
 
-      hooks: () => p.confirm({
-        message: 'Install git hooks (pre-commit, pre-push)?',
-        initialValue: true,
-      }),
+      apiProtocol: () => {
+        const protocols = catalog.getApiProtocols();
+        return p.select({
+          message: 'Selecciona el protocolo de API:',
+          options: protocols.map((pr) => ({ value: pr.id, label: pr.name, hint: pr.description })),
+          initialValue: 'rest',
+        });
+      },
 
-      confirmAdopt: () => p.confirm({
-        message: 'Apply Evolith governance to this repository?',
-        initialValue: true,
-      }),
+      ciCd: () => p.select({ message: 'Selecciona la plataforma de CI/CD:', options: CI_CD_OPTIONS, initialValue: 'github' }),
+      observability: () => p.select({ message: 'Selecciona el nivel de observabilidad:', options: OBSERVABILITY_OPTIONS, initialValue: 'otel' }),
+      features: () => p.multiselect({ message: '¿Qué características base quieres incluir?', options: FEATURE_OPTIONS, required: false }),
+      agents: () => p.multiselect({ message: '¿Qué agentes de Evolith deseas configurar?', options: AGENT_OPTIONS, required: false }),
+      confirmInit: () => p.confirm({ message: '¿Comenzar inicialización con las opciones seleccionadas?', initialValue: true }),
     },
     {
       onCancel: () => {
-        p.cancel('Adoption cancelled.');
+        p.cancel('Operación cancelada.');
         throw new UserCancelledError();
       },
     },
   );
 
-  if (!selection.confirmAdopt) return null;
+  if (!selection.confirmInit) return null;
 
   return {
-    name: detection.repoName,
+    name: selection.projectName as string,
+    runtime: selection.runtime as string,
     monorepo: selection.monorepo as string,
+    architecture: selection.architecture as string,
+    database: selection.database as string,
+    apiProtocol: selection.apiProtocol as string,
+    ciCd: selection.ciCd as string,
+    observability: selection.observability as string,
     features: (selection.features as string[]) || [],
     agents: (selection.agents as string[]) || [],
-    hooks: selection.hooks as boolean,
-    detection,
   };
-}
-
-/** @deprecated Use runAdoptPromptGroup instead */
-export async function runInitPromptGroup(
-  catalog: CatalogLoader,
-): Promise<AdoptRepoInput | null> {
-  p.log.warn('Using deprecated prompt flow. Run init inside an existing repository.');
-  return null;
 }

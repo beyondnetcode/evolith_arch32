@@ -3,6 +3,20 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-427",
+      "closedAt": "2026-07-04",
+      "closureCommit": "46791e85",
+      "evidence": [
+        "src/rulesets/schema/topology-manifest.schema.json",
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/topology.manifest.json",
+        "reference/core/architecture/topologies/ai/agentic-ai/topology.manifest.json"
+      ],
+      "validationCommands": [
+        "ajv compile of topology-manifest.schema.json + validate all 8 topology.manifest.json (8 valid, 0 invalid)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-426",
       "closedAt": "2026-07-04",
       "closureCommit": "5ddf4471",

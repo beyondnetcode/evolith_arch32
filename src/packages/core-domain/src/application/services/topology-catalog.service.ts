@@ -32,6 +32,11 @@ export interface TopologyManifest {
     compatibility: { progressiveAxis: { maturityLevel: ProgressiveMaturityLevel; profile: string }; composableWith: string[] };
     artifacts: { adrs: string[]; rulesets: string[]; opaPolicies: string[]; aiRulesets: string[]; umsContracts: string[] };
     designProfile?: TopologyDesignProfile;
+    phaseProfiles?: {
+      construction?: TopologyDesignProfile;
+      quality?: TopologyDesignProfile;
+      deployment?: TopologyDesignProfile;
+    };
     corpus?: {
       guidance: { profile: string; maturityGuide: string };
       configurationContract: string;

@@ -1,6 +1,6 @@
 {
   "name": "@evolith/sdk",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Typed client library for the Evolith Core REST API and MCP tools",
   "author": "",
   "license": "UNLICENSED",

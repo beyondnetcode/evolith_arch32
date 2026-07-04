@@ -1,6 +1,6 @@
 {
   "name": "@evolith/agent-runtime",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Evolith Agent Runtime — decoupled agentic layer that operates Evolith Core through Ports & Adapters (.harness, Core Evaluation, OPA, Tracker, Memory, Scheduler, Hermes). Hexagonal; no runtime/LLM technology is a domain dependency.",
   "license": "MIT",
   "main": "dist/index.js",

@@ -11,7 +11,7 @@
       "minItems": 1,
       "items": {
         "type": "string",
-        "enum": ["gate", "artifact", "evidence", "architecture", "blueprint", "topology", "checkpoint", "deployment", "rule", "compliance"]
+        "enum": ["gate", "artifact", "evidence", "architecture", "blueprint", "topology", "checkpoint", "deployment", "rule", "compliance", "design"]
       }
     },
     "tenant": {
@@ -139,6 +139,32 @@
     "blueprintRef": { "type": "string" },
     "topologyRef": { "type": "string" },
     "schemaRef": { "type": "string" },
+    "design": {
+      "type": "object",
+      "description": "Design facet (ADR-0104). Topology recommended/confirmed as a composition (mixed topologies). Read-only refs; the Core evaluates the union and never persists.",
+      "properties": {
+        "topologyRecommendedRefs": { "type": "array", "items": { "type": "string" } },
+        "topologyConfirmedRefs": { "type": "array", "items": { "type": "string" } },
+        "blueprintRef": { "type": "string" },
+        "concerns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["concern"],
+            "properties": {
+              "concern": { "type": "string" },
+              "topologyRefs": { "type": "array", "items": { "type": "string" } },
+              "blueprintRef": { "type": "string" },
+              "blockRefs": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "artifactRefs": { "type": "array", "items": { "type": "string" } },
+        "adrRefs": { "type": "array", "items": { "type": "string" } },
+        "tenantCollectionRefs": { "type": "array", "items": { "type": "string" } },
+        "iterationVersion": { "type": "integer", "minimum": 1 }
+      }
+    },
     "executionMode": { "type": "string", "enum": ["manual", "hybrid", "agentic"] },
     "decisionHistory": {
       "type": "array",

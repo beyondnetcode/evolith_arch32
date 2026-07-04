@@ -109,6 +109,29 @@
             }
           }
         },
+        "design": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Design-phase declaration (ADR-0104). Technical-only per ADR-0079 businessBoundary. Advisory: F1/F2/F3 are optional, overridable, and extensible; a topology composition (array) supports mixed topologies.",
+          "properties": {
+            "topology": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "recommended": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Topology (or composition) recommended in Discovery. Advisory."
+                },
+                "confirmed": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Topology composition confirmed in Design; drives the designProfile union (ADR-0104)."
+                }
+              }
+            }
+          }
+        },
         "boundedContexts": {
           "type": "array",
           "items": {

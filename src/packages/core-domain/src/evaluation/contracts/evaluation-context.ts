@@ -30,7 +30,8 @@ export type EvaluationKind =
   | 'checkpoint'
   | 'deployment'
   | 'rule'
-  | 'compliance';
+  | 'compliance'
+  | 'design';
 
 /** Execution mode the consumer is operating under (drives HITL routing). */
 export type ExecutionMode = 'manual' | 'hybrid' | 'agentic';
@@ -111,6 +112,47 @@ export interface CheckpointContext {
   readonly metrics?: Readonly<Record<string, number | string>>;
 }
 
+/**
+ * One concern (frontend/backend/services/mobile/data/…) of a composed blueprint
+ * (ADR-0104 §3). The blueprint is the "box of blocks": each concern composes its
+ * own blocks/refs. `concern` is an open string under Convention over
+ * Configuration — new concerns are added by convention, not enumerated here.
+ */
+export interface DesignConcernContext {
+  readonly concern: string;
+  readonly topologyRefs?: readonly string[];
+  readonly blueprintRef?: string;
+  /** Composed block/artifact refs for this concern. */
+  readonly blockRefs?: readonly string[];
+}
+
+/**
+ * Design facet (ADR-0104). Topology recommended in Discovery / confirmed in
+ * Design as a composition (mixed topologies). All refs are read-only pointers;
+ * the Core evaluates the union of the confirmed composition and never persists.
+ */
+export interface DesignContext {
+  /** Topology (or composition) recommended in Discovery. Advisory. */
+  readonly topologyRecommendedRefs?: readonly string[];
+  /** Topology composition confirmed in Design. Drives the designProfile union. */
+  readonly topologyConfirmedRefs?: readonly string[];
+  /** The composed blueprint under evaluation (the development guide). */
+  readonly blueprintRef?: string;
+  /** Per-concern composition (frontend/backend/services/mobile/data/…). */
+  readonly concerns?: readonly DesignConcernContext[];
+  /** Declared design-artifact block refs (plans, matrices, etc.). */
+  readonly artifactRefs?: readonly string[];
+  readonly adrRefs?: readonly string[];
+  /**
+   * Tenant private-collection refs (ADRs/templates/rulesets/blueprints kept at
+   * Tracker scope) — ADR-0104 §11. Merged with the canonical corpus at
+   * evaluation time; never persisted by the Core.
+   */
+  readonly tenantCollectionRefs?: readonly string[];
+  /** Iteration version of the maturing blueprint (DS-09; configurable cycle). */
+  readonly iterationVersion?: number;
+}
+
 /** A required vs presented artifact pairing for a gate/phase. */
 export interface ArtifactContext {
   /** Artifact ids the active SDLC config expects at this phase/gate. */
@@ -159,6 +201,7 @@ export interface EvaluationContext {
   readonly checkpoint?: CheckpointContext;
   readonly deployment?: DeploymentContext;
   readonly architecture?: ArchitectureContext;
+  readonly design?: DesignContext;
   readonly externalReferences?: readonly ExternalReferenceContext[];
 
   // --- Tenant configuration & constraints (sent explicitly; the Core resolves nothing) ---

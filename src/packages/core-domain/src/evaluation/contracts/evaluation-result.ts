@@ -159,6 +159,46 @@ export interface ComplianceResult {
   readonly skippedChecks: number;
 }
 
+/** Maturity of one concern (frontend/backend/…) of the composed blueprint. */
+export interface ConcernMaturity {
+  readonly concern: string;
+  readonly maturity: number; // 0..100
+  readonly gaps: readonly GapFinding[];
+}
+
+/** Presence/quality of one derived design-artifact block. */
+export interface DesignArtifactStatus {
+  readonly artifactKind: string;
+  readonly required: boolean;
+  readonly present: boolean;
+  readonly verdict: Verdict;
+}
+
+/**
+ * Design evaluation sub-result (ADR-0104). ADVISORY and NON-BINDING: the primary
+ * output is the technical MATURITY of the blueprint (how good a development guide
+ * it is). Core measures and recommends; the Tracker's gate decides any blocking.
+ */
+export interface DesignEvaluationResult {
+  readonly verdict: Verdict;
+  /** Primary output: technical maturity of the design (0..100). Non-binding. */
+  readonly technicalMaturity: number;
+  readonly perConcernMaturity: readonly ConcernMaturity[];
+  /** Required/conditional artifacts derived from the confirmed topology union. */
+  readonly artifactStatus: readonly DesignArtifactStatus[];
+  readonly missingArtifacts: readonly string[];
+  /** Deviations from blueprints/ADRs that recommend a new ADR (non-blocking). */
+  readonly deviationsRequiringAdr: readonly string[];
+  readonly gaps: readonly GapFinding[];
+  readonly recommendations: readonly Recommendation[];
+  /**
+   * Criteria derived from the composed blueprint for downstream phases
+   * (Construction/Quality/Deployment) — recommendations the Tracker uses to
+   * configure the F3/F4/F5 gates (ADR-0104 §8).
+   */
+  readonly downstreamCriteria?: readonly Recommendation[];
+}
+
 // ---------------------------------------------------------------------------
 // EvaluationResult — the response payload (wrapped in ADR-0073 envelope)
 // ---------------------------------------------------------------------------
@@ -180,6 +220,7 @@ export interface EvaluationResult {
     readonly checkpoint?: readonly CheckpointEvaluationResult[];
     readonly deployment?: DeploymentEvaluationResult;
     readonly compliance?: ComplianceResult;
+    readonly design?: DesignEvaluationResult;
   };
 
   // --- Execution traceability ---

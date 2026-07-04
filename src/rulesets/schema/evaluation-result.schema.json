@@ -23,7 +23,8 @@
         "topology": { "$ref": "#/definitions/topologyResult" },
         "checkpoint": { "type": "array", "items": { "$ref": "#/definitions/checkpointResult" } },
         "deployment": { "$ref": "#/definitions/deploymentResult" },
-        "compliance": { "$ref": "#/definitions/complianceResult" }
+        "compliance": { "$ref": "#/definitions/complianceResult" },
+        "design": { "$ref": "#/definitions/designResult" }
       }
     },
     "rulesExecuted": { "type": "array", "items": { "$ref": "#/definitions/ruleExecutionRef" } },
@@ -221,6 +222,45 @@
         "passedChecks": { "type": "integer" },
         "failedChecks": { "type": "integer" },
         "skippedChecks": { "type": "integer" }
+      }
+    },
+    "designResult": {
+      "type": "object",
+      "description": "ADR-0104 design evaluation. ADVISORY/NON-BINDING; primary output is technicalMaturity (0..100).",
+      "required": ["verdict", "technicalMaturity", "perConcernMaturity", "artifactStatus", "missingArtifacts", "deviationsRequiringAdr", "gaps", "recommendations"],
+      "properties": {
+        "verdict": { "$ref": "#/definitions/verdict" },
+        "technicalMaturity": { "type": "number", "minimum": 0, "maximum": 100 },
+        "perConcernMaturity": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["concern", "maturity", "gaps"],
+            "properties": {
+              "concern": { "type": "string" },
+              "maturity": { "type": "number", "minimum": 0, "maximum": 100 },
+              "gaps": { "type": "array", "items": { "$ref": "#/definitions/gapFinding" } }
+            }
+          }
+        },
+        "artifactStatus": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["artifactKind", "required", "present", "verdict"],
+            "properties": {
+              "artifactKind": { "type": "string" },
+              "required": { "type": "boolean" },
+              "present": { "type": "boolean" },
+              "verdict": { "$ref": "#/definitions/verdict" }
+            }
+          }
+        },
+        "missingArtifacts": { "type": "array", "items": { "type": "string" } },
+        "deviationsRequiringAdr": { "type": "array", "items": { "type": "string" } },
+        "gaps": { "type": "array", "items": { "$ref": "#/definitions/gapFinding" } },
+        "recommendations": { "type": "array", "items": { "$ref": "#/definitions/recommendation" } },
+        "downstreamCriteria": { "type": "array", "items": { "$ref": "#/definitions/recommendation" } }
       }
     }
   }

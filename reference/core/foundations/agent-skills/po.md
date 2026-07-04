@@ -99,6 +99,7 @@ Durable business context captured from owner-guided product-flow sessions. Load 
 
 * [Tracker Intake & Opportunity Flow](./tracker-intake-flow.md) — Tracker entry model (Fase 0). Business notes: two origins (Opportunity internal / Intake external) converge on one Initiative; intelligent Gate 0 with tenant-configurable acceptance criteria over a Core-set floor; rejection is a governed, versioned improvement cycle (not terminal); `PENDING` decouples "approved" from "activated" (agentic/mixed activation into Discovery).
 * [Tracker Discovery Flow](./tracker-discovery-flow.md) — Discovery (Fase 1). Business notes: PRD is the mandatory (non-overrideable) artifact, KDD optional inside it; tenants can request governed **architecture advisory** as opt-in support to de-risk feature design; the blueprint draft is optional and does not block Business Sign-Off; everything is audited in the Tracker.
+* [Tracker Design Flow](./tracker-design-flow.md) — Design (Fase 2). Business notes: the blueprint is a **development guide** the tenant assembles from a catalog of blocks (Core canonical ∪ tenant's own private collection); Core is advisory — it **measures maturity** and recommends, the tenant's gate decides blocking; agents proactively propose design templates/ideas (simple/medium/complex); tenants can build reusable templates and promote them upstream (UP-NNN). Design authoring tools belong in the Tracker.
 
 ---
 

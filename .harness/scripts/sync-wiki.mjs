@@ -5,7 +5,7 @@
  *
  * Part of the Evolith CI strategy:
  *   - Runs in pre-push hook ONLY when documentation files change
- *   - Generates wiki/*.md from existing repo docs (idempotent)
+ *   - Generates reference/wiki/*.md from existing repo docs (idempotent)
  *   - Does NOT push to GitHub Wiki (handled by GitHub Actions)
  *   - Follows the same mode detection as ci-runner.mjs
  *
@@ -650,8 +650,8 @@ function main() {
   }
 
   saveFingerprint();
-  console.log(`\n📦 Generated ${generated} wiki pages in wiki/`);
-  console.log("   Run 'git add wiki/' to include in commit.");
+  console.log(`\n📦 Generated ${generated} wiki pages in reference/wiki/`);
+  console.log("   Run 'git add reference/wiki/' to include in commit.");
 }
 
 main();

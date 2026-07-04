@@ -43,8 +43,7 @@ const allowedDirectories = new Set([
   ".vscode",
   "node_modules",
   "reference",
-  "src",
-  "wiki"
+  "src"
 ]);
 
 console.log("🧹 Running repository optimization...");

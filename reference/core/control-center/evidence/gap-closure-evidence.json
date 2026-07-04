@@ -3,6 +3,22 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-428",
+      "closedAt": "2026-07-04",
+      "closureCommit": "0392fefe",
+      "evidence": [
+        "src/rulesets/schema/blueprint.schema.json",
+        "src/rulesets/schema/design-block.schema.json",
+        "src/rulesets/schema/design-block-registry.json",
+        "src/rulesets/schema/fixtures/blueprint.multi-concern.valid.json",
+        "reference/core/sdlc/04-artifact-templates/design-block-template.md"
+      ],
+      "validationCommands": [
+        "ajv: multi-concern fixture + legacy blueprint (backward-compat) + design-block sample all valid; registry 22 blocks, 0 unresolved schemaRefs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-427",
       "closedAt": "2026-07-04",
       "closureCommit": "46791e85",

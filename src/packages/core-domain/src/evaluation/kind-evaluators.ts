@@ -259,6 +259,31 @@ export const UNIVERSAL_DESIGN_BLOCKS: readonly string[] = [
 ];
 
 /**
+ * Blueprint → downstream criteria map (GT-432 / ADR-0104 §8). A composed,
+ * validated blueprint is a GENERATIVE contract: each present block derives
+ * requirements/criteria for the downstream SDLC phases (Construction / Quality /
+ * Deployment). The Core emits these as recommendations; the Tracker uses them to
+ * configure the F3/F4/F5 gates. Non-binding.
+ */
+export const DOWNSTREAM_CRITERIA_BY_BLOCK: Readonly<
+  Record<string, readonly { readonly phase: 'construction' | 'quality' | 'deployment'; readonly criterion: string }[]>
+> = {
+  'devops-cicd-plan': [{ phase: 'construction', criterion: 'CI/CD pipeline implemented and green per the DevOps/CI-CD plan.' }],
+  'unit-test-plan': [{ phase: 'construction', criterion: 'Unit tests implemented per the unit-test plan.' }, { phase: 'quality', criterion: 'Unit coverage meets the plan target.' }],
+  'build-plan': [{ phase: 'construction', criterion: 'Reproducible build per the build plan.' }],
+  'testing-strategy': [{ phase: 'quality', criterion: 'Test distribution and coverage meet the testing pyramid.' }],
+  'performance-plan': [{ phase: 'quality', criterion: 'Performance validated within the plan budgets.' }, { phase: 'deployment', criterion: 'Runtime performance stays within operational budgets.' }],
+  'infrastructure-plan': [{ phase: 'deployment', criterion: 'Infrastructure provisioned per the infrastructure plan.' }],
+  'event-contract-catalog': [{ phase: 'quality', criterion: 'Contract tests pass for every declared event contract.' }],
+  'async-payload-schema-set': [{ phase: 'quality', criterion: 'Async payloads validated against their schemas.' }],
+  'doma-compliance-matrix': [{ phase: 'construction', criterion: 'Each service maps to exactly one bounded context.' }],
+  'data-product-contract-set': [{ phase: 'quality', criterion: 'Data product contracts honored (ports/SLOs/schema).' }],
+  'token-budget-plan': [{ phase: 'deployment', criterion: 'Token usage stays within the declared budget.' }],
+  'sandbox-policy': [{ phase: 'deployment', criterion: 'Agent sandbox timeout and isolation enforced.' }],
+  'mcp-protocol-compliance': [{ phase: 'quality', criterion: 'MCP protocol conformance verified.' }],
+};
+
+/**
  * design kind (GT-429 / ADR-0104) — the ADVISORY design evaluator. Derives the
  * expected design-artifact blocks as the UNION of the confirmed topology
  * composition's `designProfile`s (plus the universal blocks), compares them
@@ -355,6 +380,17 @@ export function createDesignKindEvaluator(
         remediation: 'Record an ADR justifying the deviation.',
       }));
 
+      // Blueprint = generative contract: derive downstream (Construction/Quality/
+      // Deployment) criteria from the present blocks (GT-432 / ADR-0104 §8).
+      const downstreamCriteria = [...declared].flatMap((blockKind) =>
+        (DOWNSTREAM_CRITERIA_BY_BLOCK[blockKind] ?? []).map((c) => ({
+          id: `downstream-${c.phase}-${blockKind}`,
+          kind: 'next-step' as const,
+          message: `[${c.phase}] ${c.criterion}`,
+          references: [blockKind],
+        })),
+      );
+
       return {
         verdict: Verdict.PASS, // advisory / non-binding — never fails the overall verdict
         results: {
@@ -367,6 +403,7 @@ export function createDesignKindEvaluator(
             deviationsRequiringAdr,
             gaps,
             recommendations,
+            downstreamCriteria,
           },
         },
         gaps,

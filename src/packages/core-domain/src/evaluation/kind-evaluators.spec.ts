@@ -186,5 +186,19 @@ describe('kind-evaluators (GT-379)', () => {
       expect(r.requiredActions?.[0]).toMatchObject({ blocking: false });
       expect(r.results.design?.perConcernMaturity[0]).toMatchObject({ concern: 'legacy' });
     });
+
+    it('derives downstream criteria from present blocks (generative contract, GT-432)', async () => {
+      const gp = jest.fn(async () => ({ required: [{ artifactKind: 'performance-plan' }] }));
+      const design = {
+        topologyConfirmedRefs: ['serverless'],
+        blocks: [{ blockKind: 'performance-plan' }, { blockKind: 'testing-strategy' }],
+      };
+      const r = await createDesignKindEvaluator(gp, () => '/core').evaluate({ ...ctx, design }, ws);
+      const dc = r.results.design?.downstreamCriteria ?? [];
+      const phases = dc.map((c) => c.message.match(/^\[(\w+)\]/)?.[1]);
+      // performance-plan → quality + deployment; testing-strategy → quality
+      expect(phases).toEqual(expect.arrayContaining(['quality', 'deployment']));
+      expect(dc.some((c) => c.references?.includes('performance-plan'))).toBe(true);
+    });
   });
 });

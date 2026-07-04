@@ -17,7 +17,7 @@ import {
 } from '@evolith/core-domain/application/validators';
 import { IFileSystem, ILogger, IConfigParser, ICatalogLoader } from '@evolith/core-domain/domain/interfaces';
 import { DiskRulesetRepository } from '@evolith/infra-providers';
-import { TopologyCatalogService } from '@evolith/core-domain/application/services';
+import { TopologyCatalogService, TopologyRecommendationService } from '@evolith/core-domain/application/services';
 
 const CoreDomainProviders = [
   {
@@ -86,6 +86,10 @@ const CoreDomainProviders = [
     provide: TopologyCatalogService,
     useFactory: (fs: IFileSystem, logger: ILogger) => new TopologyCatalogService(fs, logger),
     inject: ['IFileSystem', 'ILogger'],
+  },
+  {
+    provide: TopologyRecommendationService,
+    useFactory: () => new TopologyRecommendationService(),
   },
   {
     provide: RulesetValidatorService,

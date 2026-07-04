@@ -4,9 +4,11 @@ import type { Cache } from 'cache-manager';
 import { ApiOperation, ApiBody } from '@nestjs/swagger';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
 import { ArchitectureDriftService } from '@evolith/core-domain/application/validators';
-import { ValidateSatelliteDto, DetectDriftDto } from '../dtos/architecture.dto';
+import { ValidateSatelliteDto, DetectDriftDto, RecommendTopologyDto } from '../dtos/architecture.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
-import { TopologyCatalogService } from '@evolith/core-domain/application/services';
+import { TopologyCatalogService, TopologyRecommendationService } from '@evolith/core-domain/application/services';
+import type { TopologyRecommendationRules } from '@evolith/core-domain/application/services';
+import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 import { CacheKeys, CacheTTL as TTL } from '../../infrastructure/cache/cache-keys';
 
@@ -17,6 +19,8 @@ export class ArchitectureController {
     private readonly validateSatelliteUseCase: ValidateSatelliteUseCase,
     private readonly workspaceResolver: WorkspaceReferenceResolverService,
     private readonly topologyCatalog: TopologyCatalogService,
+    private readonly recommendationService: TopologyRecommendationService,
+    @Inject('IFileSystem') private readonly fileSystem: IFileSystem,
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {}
 
@@ -68,6 +72,18 @@ export class ArchitectureController {
       corePath: this.workspaceResolver.corePath(),
       declaredLevel: body.declaredLevel as any,
     });
+  }
+
+  @Post('recommend-topology')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Recommend a topology composition from technical signals (advisory, ADR-0104 / GT-430)' })
+  @ApiBody({ type: RecommendTopologyDto })
+  @ApiEnvelopeResponse(undefined, { description: 'Recommended topology composition + rationale (non-binding; the tenant confirms)' })
+  async recommendTopology(@Body() body: RecommendTopologyDto) {
+    const corePath = this.workspaceResolver.corePath();
+    const rulesPath = `${corePath}/src/rulesets/architecture/topology-recommendation.rules.json`;
+    const rules = JSON.parse(await this.fileSystem.readFile(rulesPath)) as TopologyRecommendationRules;
+    return this.recommendationService.recommend(rules, body.signals ?? {});
   }
 
   @Post('cache/invalidate')

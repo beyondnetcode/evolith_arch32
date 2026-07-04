@@ -3,7 +3,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { ArchitectureController } from './architecture.controller';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
 import { ArchitectureDriftService } from '@evolith/core-domain/application/validators';
-import { TopologyCatalogService } from '@evolith/core-domain/application/services';
+import { TopologyCatalogService, TopologyRecommendationService } from '@evolith/core-domain/application/services';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 
 describe('ArchitectureController', () => {
@@ -12,12 +12,14 @@ describe('ArchitectureController', () => {
   let driftService: { detectDrift: jest.Mock };
   let workspaceResolver: { resolve: jest.Mock; corePath: jest.Mock };
   let topologyCatalog: { list: jest.Mock; get: jest.Mock };
+  let fileSystem: { readFile: jest.Mock };
 
   beforeEach(async () => {
     validateUseCase = { execute: jest.fn().mockResolvedValue({ valid: true }) };
     driftService = { detectDrift: jest.fn().mockResolvedValue({ driftDetected: false }) };
     workspaceResolver = { resolve: jest.fn().mockReturnValue('/workspaces/op_01'), corePath: jest.fn().mockReturnValue('/core') } as any;
     topologyCatalog = { list: jest.fn().mockResolvedValue([{ metadata: { id: 'test-topology' } }]), get: jest.fn().mockResolvedValue({ metadata: { id: 'test-topology' } }) };
+    fileSystem = { readFile: jest.fn() };
     const module: TestingModule = await Test.createTestingModule({
       imports: [CacheModule.register()],
       controllers: [ArchitectureController],
@@ -26,6 +28,8 @@ describe('ArchitectureController', () => {
         { provide: ArchitectureDriftService, useValue: driftService },
         { provide: WorkspaceReferenceResolverService, useValue: workspaceResolver },
         { provide: TopologyCatalogService, useValue: topologyCatalog },
+        { provide: TopologyRecommendationService, useValue: new TopologyRecommendationService() },
+        { provide: 'IFileSystem', useValue: fileSystem },
       ],
     }).compile();
     controller = module.get<ArchitectureController>(ArchitectureController);
@@ -84,6 +88,29 @@ describe('ArchitectureController', () => {
       await expect(
         controller.detectDrift({ workspaceRef: 'op_bad' })
       ).rejects.toThrow('Analysis failed');
+    });
+  });
+
+  describe('recommendTopology (GT-431)', () => {
+    const rules = {
+      id: 'topology-recommendation',
+      version: '1.0.0',
+      progressive: [{ id: 'MM', when: {}, recommend: 'modular-monolith', rationale: 'default', priority: 1 }],
+      dimensions: [{ id: 'ED', when: { asyncIntegration: true }, recommend: 'event-driven', rationale: 'async' }],
+    };
+
+    it('loads the rules from corePath and recommends a composition from signals', async () => {
+      fileSystem.readFile.mockResolvedValue(JSON.stringify(rules));
+      const r = await controller.recommendTopology({ signals: { asyncIntegration: true } });
+      expect(fileSystem.readFile).toHaveBeenCalledWith('/core/src/rulesets/architecture/topology-recommendation.rules.json');
+      expect(r.recommended).toEqual(['modular-monolith', 'event-driven']);
+      expect(r.composition).toBe('modular-monolith + event-driven');
+    });
+
+    it('defaults to modular-monolith when no signals are provided', async () => {
+      fileSystem.readFile.mockResolvedValue(JSON.stringify(rules));
+      const r = await controller.recommendTopology({});
+      expect(r.recommended).toEqual(['modular-monolith']);
     });
   });
 });

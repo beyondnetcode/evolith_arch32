@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, MinLength } from 'class-validator';
+import { IsString, IsOptional, MinLength, IsObject } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { SatelliteManifestDto } from './satellite-manifest.dto';
@@ -27,4 +27,14 @@ export class DetectDriftDto {
   @IsOptional()
   @IsString()
   declaredLevel?: string;
+}
+
+export class RecommendTopologyDto {
+  @ApiPropertyOptional({
+    description: 'Technical signals used to recommend a topology composition (advisory, ADR-0104). Boolean signals plus an optional teamCount.',
+    example: { deploymentIndependence: true, asyncIntegration: true, teamCount: 4 },
+  })
+  @IsOptional()
+  @IsObject()
+  signals?: Record<string, boolean | number>;
 }

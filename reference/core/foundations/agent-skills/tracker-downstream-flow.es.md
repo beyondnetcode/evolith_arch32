@@ -55,7 +55,7 @@ PRODUCCIÓN
 
 ## 5. Ítems Abiertos
 
-- Definir un **perfil de artefactos por fase** (artefactos required/conditional + criterios de gate) para Construcción/Calidad/Despliegue — análogo a `spec.designProfile` (GT-427), derivado por topología + configurable por tenant (DN-06). Candidato a épico follow-on.
+- ✅ Spec conceptual definido: [Perfiles de Artefactos Downstream](./downstream-artifact-profiles.es.md) — artefactos required/conditional + criterios de gate por fase para Construcción/Calidad/Despliegue, análogo a `spec.designProfile` (GT-427). Implementación diferida (épico follow-on que espeja GT-425) hasta que aterricen las tareas de background.
 - Definir el set concreto de señales downstream que cada evaluador de Core emite por fase (categorías de drift en Construcción; qué señales de calidad en QA; qué checks de readiness en Despliegue).
 - Confirmar cómo mapean y siembran los `downstreamCriteria` del blueprint (F7) sobre las definiciones de gate existentes del Tracker (Build Pass / Quality Gate / Human Sign-Off).
 

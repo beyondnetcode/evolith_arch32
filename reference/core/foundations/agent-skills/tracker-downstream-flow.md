@@ -55,7 +55,7 @@ PRODUCTION
 
 ## 5. Open Items
 
-- Define a **per-phase artifact profile** (required/conditional artifacts + gate criteria) for Construction/Quality/Deployment — analogous to `spec.designProfile` (GT-427), topology-derived + tenant-configurable (DN-06). Candidate follow-on epic.
+- ✅ Conceptual spec defined: [Downstream Artifact Profiles](./downstream-artifact-profiles.md) — per-phase required/conditional artifacts + gate criteria for Construction/Quality/Deployment, analogous to `spec.designProfile` (GT-427). Implementation deferred (follow-on epic mirroring GT-425) until the background tasks land.
 - Define the concrete downstream signal set each Core evaluator emits per phase (drift categories for Construction; which quality signals for QA; which readiness checks for Deployment).
 - Confirm how the blueprint's `downstreamCriteria` (F7) map onto and seed the Tracker's existing gate definitions (Build Pass / Quality Gate / Human Sign-Off).
 

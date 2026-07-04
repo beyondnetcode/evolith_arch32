@@ -63,6 +63,19 @@
       },
       "evidence": "reference/core/control-center/maturity-evidence.json"
     },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "data-product-contract-set",
+          "criteria": "Contracts for each data product (ports, SLOs, schema)."
+        },
+        {
+          "artifactKind": "data-ownership-map",
+          "criteria": "Domain ownership and access boundaries for data products."
+        }
+      ],
+      "conditional": []
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

@@ -64,6 +64,25 @@
         },
         "evidence": "reference/core/control-center/maturity-evidence.json"
     },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "unit-test-plan",
+          "criteria": "Unit-test approach per bounded context, aligned to the testing pyramid."
+        },
+        {
+          "artifactKind": "build-plan",
+          "criteria": "Single-artifact build/orchestration strategy (Nx or equivalent)."
+        }
+      ],
+      "conditional": [
+        {
+          "artifactKind": "event-contract-catalog",
+          "condition": "composed-with:event-driven",
+          "criteria": "Async event contracts when an integration layer is composed in."
+        }
+      ]
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

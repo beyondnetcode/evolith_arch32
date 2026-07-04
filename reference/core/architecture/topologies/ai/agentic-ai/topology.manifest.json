@@ -80,6 +80,33 @@
       "credentialRotationIntervalHours": 24,
       "sandboxTimeoutMs": 30000
     },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "token-budget-plan",
+          "criteria": "Token budget per execution within operationalBudgets."
+        },
+        {
+          "artifactKind": "credential-rotation-policy",
+          "criteria": "Credential rotation interval per operationalBudgets."
+        },
+        {
+          "artifactKind": "sandbox-policy",
+          "criteria": "Sandbox timeout and isolation for agent execution."
+        },
+        {
+          "artifactKind": "mcp-protocol-compliance",
+          "criteria": "MCP protocol conformance for governed agent exposure."
+        }
+      ],
+      "conditional": [
+        {
+          "artifactKind": "model-selection-adr",
+          "condition": "multi-model",
+          "criteria": "ADR documenting model/provider selection and neutrality."
+        }
+      ]
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

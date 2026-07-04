@@ -65,6 +65,27 @@
         },
         "evidence": "reference/core/control-center/maturity-evidence.json"
     },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "devops-cicd-plan",
+          "criteria": "Independent CI/CD per service."
+        },
+        {
+          "artifactKind": "infrastructure-plan",
+          "criteria": "Per-service deployment, scaling, and networking."
+        },
+        {
+          "artifactKind": "performance-plan",
+          "criteria": "Per-service latency budgets and resiliency."
+        },
+        {
+          "artifactKind": "doma-compliance-matrix",
+          "criteria": "Each service maps to exactly one bounded context (ADR-0076)."
+        }
+      ],
+      "conditional": []
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

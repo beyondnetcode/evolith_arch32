@@ -64,6 +64,34 @@
         },
         "evidence": "reference/core/control-center/maturity-evidence.json"
     },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "devops-cicd-plan",
+          "criteria": "Independent CI/CD lifecycle per module (DM-R01)."
+        },
+        {
+          "artifactKind": "infrastructure-plan",
+          "criteria": "Per-module deployment topology and boundaries."
+        },
+        {
+          "artifactKind": "performance-plan",
+          "criteria": "Inter-module latency and resiliency (circuit breakers, DM-R07)."
+        }
+      ],
+      "conditional": [
+        {
+          "artifactKind": "event-contract-catalog",
+          "condition": "composed-with:event-driven",
+          "criteria": "Versioned async event contracts."
+        },
+        {
+          "artifactKind": "extraction-readiness-assessment",
+          "condition": "f3-planned",
+          "criteria": "Extraction-readiness score maintained per ADR-0045."
+        }
+      ]
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

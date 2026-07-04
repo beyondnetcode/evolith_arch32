@@ -253,6 +253,15 @@
             }
           }
         },
+        "designProfile": {
+          "type": "object",
+          "description": "Design-phase artifact profile (ADR-0104, GT-427). Design-artifact blocks this topology REQUIRES / CONDITIONALLY recommends. The design evaluator derives a blueprint's expected artifacts as the UNION of the designProfiles of the confirmed topology composition (universal blocks always included). Advisory — feeds the maturity score; blocking is the tenant's gate decision.",
+          "additionalProperties": false,
+          "properties": {
+            "required": { "type": "array", "items": { "$ref": "#/definitions/designArtifactDescriptor" } },
+            "conditional": { "type": "array", "items": { "$ref": "#/definitions/designArtifactDescriptor" } }
+          }
+        },
         "operationalInterfaces": {
           "type": "object",
           "required": ["cli", "mcp", "coreApi"],
@@ -346,6 +355,20 @@
     "kebabIdentifier": {
       "type": "string",
       "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "designArtifactDescriptor": {
+      "type": "object",
+      "required": ["artifactKind"],
+      "additionalProperties": false,
+      "description": "One design-artifact block a topology expects (ADR-0104). `artifactKind` is open under Convention over Configuration — new block kinds are added without changing this schema.",
+      "properties": {
+        "artifactKind": { "$ref": "#/definitions/kebabIdentifier" },
+        "schemaRef": { "type": "string", "description": "Path to the block's JSON schema (added in GT-428/F3)." },
+        "templateRef": { "type": "string", "description": "Path to the block's authoring template." },
+        "criteria": { "type": "string", "description": "What a mature block demonstrates (human-readable acceptance criterion)." },
+        "weight": { "type": "number", "minimum": 0, "maximum": 1, "description": "Relative weight in this topology's maturity contribution." },
+        "condition": { "type": "string", "description": "For conditional blocks: when it applies, e.g. 'composed-with:event-driven' or 'f3-planned'." }
+      }
     },
     "mcpUri": {
       "type": "string",

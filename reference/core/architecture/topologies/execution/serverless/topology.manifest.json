@@ -69,6 +69,19 @@
       "coldStartCeilingMs": 1000,
       "costCeilingPerExecutionCents": 1
     },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "performance-plan",
+          "criteria": "Cold-start and per-execution cost within operationalBudgets."
+        },
+        {
+          "artifactKind": "infrastructure-plan",
+          "criteria": "Function packaging, triggers, and concurrency limits."
+        }
+      ],
+      "conditional": []
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

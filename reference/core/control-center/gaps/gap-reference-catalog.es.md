@@ -18,7 +18,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Problema:** El primer objetivo del dueño es tener todo el chain conceptual corriendo **en local**: Tracker BFF/API → Evolith Core (CLI, core-api, MCP, agent-runtime), con la UI (tracker-web) conectada a las URLs locales. El refactor de diseño de la UI se difiere explícitamente a Fase 2.
 
-**Alcance (subset M1 de GT-435):** bring-up local de un comando (docker-compose / kind); cableado de adapters reales para que el agent-runtime use el Core real in-process/HTTP (GT-438); integración real Tracker↔Core `evaluate()` + persistencia DB local + un gate E2E (GT-446); tracker-web apuntando a las URLs locales; **publicar paquetes `1.0.0` reales en el npm del dueño (GT-436) — cuando las superficies estén genuinamente listas, no en una fecha fija;** **auth fail-closed + tenant guard (GT-439)** aplicado. **Relajado para local (movido al Objetivo 2):** observabilidad completa (GT-440), HITL real (GT-441), pen-test (GT-444).
+**Alcance (subset M1 de GT-435):** bring-up local de un comando (docker-compose / kind); cableado de adapters reales para que el agent-runtime use el Core real in-process/HTTP (GT-438); integración real Tracker↔Core `evaluate()` + persistencia DB local + un gate E2E (GT-446); tracker-web apuntando a las URLs locales; **publicar paquetes `1.0.0` reales en el npm del dueño (GT-436) — cuando las superficies estén genuinamente listas, no en una fecha fija;** **auth fail-closed + tenant guard (GT-439)** aplicado; **observabilidad completa — traces/métricas/logs (GT-440).** **Relajado para local (movido al Objetivo 2 / el paso a la VPS):** HITL real (GT-441), pen-test (GT-444).
 
 **Cierre:** `docker-compose up` / `kind` levanta el stack completo sano; una evaluación de diseño/gate fluye Tracker BFF → Core `evaluate()` y de vuelta; la UI renderiza contra URLs locales.
 
@@ -30,7 +30,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Problema:** Tras completar y validar el Objetivo 1 (GT-447, UI incluida), promover el stack a producción en la VPS de Hostinger con Coolify + Kubernetes.
 
-**Alcance (subset M2 de GT-435):** GT-324 (CD deploy), GT-437 (CI/CD del agent-runtime), GT-440 (observabilidad completa), GT-441 (HITL real), GT-442 (secrets/DB prod), GT-443 (reliability), GT-444 (pen-test), GT-445 (reconciliación de docs) + el refactor de diseño de UI de Fase 2. **(GT-436 publicación npm `1.0.0` y GT-439 auth fail-closed movidos al Objetivo 1.)**
+**Alcance (subset M2 de GT-435) — los ítems del paso a la VPS:** GT-324 (CD deploy), GT-437 (CI/CD del agent-runtime), GT-441 (HITL real), GT-442 (secrets/DB prod), GT-443 (reliability), GT-444 (pen-test), GT-445 (reconciliación de docs) + el refactor de diseño de UI de Fase 2. **(GT-436 publicación npm `1.0.0`, GT-439 auth fail-closed y GT-440 observabilidad movidos al Objetivo 1.)**
 
 **Cierre:** el stack completo (incl. UI) corre en producción en la VPS con CD, secrets, observabilidad y hardening en su lugar.
 

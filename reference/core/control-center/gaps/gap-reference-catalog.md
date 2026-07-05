@@ -18,7 +18,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **Problem:** The owner's first goal is to have the whole conceptual chain running **locally**: Tracker BFF/API → Evolith Core (CLI, core-api, MCP, agent-runtime), with the UI (tracker-web) connected to the local URLs. The UI design refactor is explicitly deferred to Phase 2.
 
-**Scope (M1 subset of GT-435):** one-command local bring-up (docker-compose / kind); real adapter wiring so the agent-runtime uses the real in-process/HTTP Core (GT-438); real Tracker↔Core `evaluate()` integration + local DB persistence + one gate E2E (GT-446); tracker-web pointed at local service URLs; **publish real `1.0.0` packages to the owner's npm (GT-436) — done when the surfaces are genuinely ready, not on a fixed date;** **fail-closed auth + tenant guard (GT-439)** enforced. **Relaxed for local (moved to Objective 2):** full observability (GT-440), real HITL (GT-441), pen-test (GT-444).
+**Scope (M1 subset of GT-435):** one-command local bring-up (docker-compose / kind); real adapter wiring so the agent-runtime uses the real in-process/HTTP Core (GT-438); real Tracker↔Core `evaluate()` integration + local DB persistence + one gate E2E (GT-446); tracker-web pointed at local service URLs; **publish real `1.0.0` packages to the owner's npm (GT-436) — done when the surfaces are genuinely ready, not on a fixed date;** **fail-closed auth + tenant guard (GT-439)** enforced; **full observability — traces/metrics/logs (GT-440).** **Relaxed for local (moved to Objective 2 / the VPS pass):** real HITL (GT-441), pen-test (GT-444).
 
 **Closure:** `docker-compose up` / `kind` brings the full stack up healthy; a design/gate evaluation flows Tracker BFF → Core `evaluate()` and back; the UI renders against local URLs.
 
@@ -30,7 +30,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **Problem:** After Objective 1 (GT-447) is done and validated (UI included), promote the stack to production on the Hostinger VPS with Coolify + Kubernetes.
 
-**Scope (M2 subset of GT-435):** GT-324 (CD deploy), GT-437 (agent-runtime CI/CD), GT-440 (observability completeness), GT-441 (real HITL), GT-442 (secrets/DB prod), GT-443 (reliability), GT-444 (pen-test), GT-445 (doc reconcile) + the Phase-2 UI design refactor. **(GT-436 npm `1.0.0` publish and GT-439 fail-closed auth moved to Objective 1.)**
+**Scope (M2 subset of GT-435) — the VPS-pass items:** GT-324 (CD deploy), GT-437 (agent-runtime CI/CD), GT-441 (real HITL), GT-442 (secrets/DB prod), GT-443 (reliability), GT-444 (pen-test), GT-445 (doc reconcile) + the Phase-2 UI design refactor. **(GT-436 npm `1.0.0` publish, GT-439 fail-closed auth and GT-440 observability moved to Objective 1.)**
 
 **Closure:** the full stack (incl. UI) runs in production on the VPS with CD, secrets, observability, and hardening in place.
 

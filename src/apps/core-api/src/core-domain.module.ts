@@ -17,7 +17,7 @@ import {
 } from '@evolith/core-domain/application/validators';
 import { IFileSystem, ILogger, IConfigParser, ICatalogLoader } from '@evolith/core-domain/domain/interfaces';
 import { DiskRulesetRepository } from '@evolith/infra-providers';
-import { TopologyCatalogService, TopologyRecommendationService } from '@evolith/core-domain/application/services';
+import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@evolith/core-domain/application/services';
 
 const CoreDomainProviders = [
   {
@@ -90,6 +90,10 @@ const CoreDomainProviders = [
   {
     provide: TopologyRecommendationService,
     useFactory: () => new TopologyRecommendationService(),
+  },
+  {
+    provide: PhaseArtifactProfileService,
+    useFactory: () => new PhaseArtifactProfileService(),
   },
   {
     provide: RulesetValidatorService,

@@ -3,7 +3,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { ArchitectureController } from './architecture.controller';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
 import { ArchitectureDriftService } from '@evolith/core-domain/application/validators';
-import { TopologyCatalogService, TopologyRecommendationService } from '@evolith/core-domain/application/services';
+import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@evolith/core-domain/application/services';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 
 describe('ArchitectureController', () => {
@@ -29,6 +29,7 @@ describe('ArchitectureController', () => {
         { provide: WorkspaceReferenceResolverService, useValue: workspaceResolver },
         { provide: TopologyCatalogService, useValue: topologyCatalog },
         { provide: TopologyRecommendationService, useValue: new TopologyRecommendationService() },
+        { provide: PhaseArtifactProfileService, useValue: new PhaseArtifactProfileService() },
         { provide: 'IFileSystem', useValue: fileSystem },
       ],
     }).compile();
@@ -111,6 +112,25 @@ describe('ArchitectureController', () => {
       fileSystem.readFile.mockResolvedValue(JSON.stringify(rules));
       const r = await controller.recommendTopology({});
       expect(r.recommended).toEqual(['modular-monolith']);
+    });
+  });
+
+  describe('evaluatePhaseArtifacts (GT-434)', () => {
+    it('measures downstream artifact completeness from the topology phaseProfiles', async () => {
+      topologyCatalog.get.mockResolvedValue({
+        metadata: { id: 'serverless' },
+        spec: { phaseProfiles: { quality: { conditional: [{ artifactKind: 'performance-validation' }] } } },
+      });
+      const r = await controller.evaluatePhaseArtifacts({
+        phase: 'quality',
+        topologies: ['serverless'],
+        declaredArtifacts: ['test-summary-report', 'coverage-report', 'performance-validation'],
+      });
+      expect(topologyCatalog.get).toHaveBeenCalledWith('/core', 'serverless');
+      // 7 universal quality + performance-validation = 8 required; 3 present → 38
+      expect(r.requiredArtifacts).toContain('performance-validation');
+      expect(r.presentArtifacts).toEqual(expect.arrayContaining(['test-summary-report', 'coverage-report', 'performance-validation']));
+      expect(r.completeness).toBe(38);
     });
   });
 });

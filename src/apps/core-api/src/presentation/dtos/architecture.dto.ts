@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, MinLength, IsObject } from 'class-validator';
+import { IsString, IsOptional, MinLength, IsObject, IsIn, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { SatelliteManifestDto } from './satellite-manifest.dto';
@@ -37,4 +37,21 @@ export class RecommendTopologyDto {
   @IsOptional()
   @IsObject()
   signals?: Record<string, boolean | number>;
+}
+
+export class EvaluatePhaseArtifactsDto {
+  @ApiProperty({ description: 'Downstream SDLC phase (ADR-0104 / DN-06)', enum: ['construction', 'quality', 'deployment'], example: 'quality' })
+  @IsIn(['construction', 'quality', 'deployment'])
+  phase!: 'construction' | 'quality' | 'deployment';
+
+  @ApiProperty({ description: 'Confirmed topology composition', type: [String], example: ['microservices', 'event-driven'] })
+  @IsArray()
+  @IsString({ each: true })
+  topologies!: string[];
+
+  @ApiPropertyOptional({ description: 'Artifact kinds the consumer declares as present', type: [String], example: ['test-summary-report', 'coverage-report'] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  declaredArtifacts?: string[];
 }

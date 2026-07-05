@@ -4,10 +4,10 @@ import type { Cache } from 'cache-manager';
 import { ApiOperation, ApiBody } from '@nestjs/swagger';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
 import { ArchitectureDriftService } from '@evolith/core-domain/application/validators';
-import { ValidateSatelliteDto, DetectDriftDto, RecommendTopologyDto } from '../dtos/architecture.dto';
+import { ValidateSatelliteDto, DetectDriftDto, RecommendTopologyDto, EvaluatePhaseArtifactsDto } from '../dtos/architecture.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
-import { TopologyCatalogService, TopologyRecommendationService } from '@evolith/core-domain/application/services';
-import type { TopologyRecommendationRules } from '@evolith/core-domain/application/services';
+import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@evolith/core-domain/application/services';
+import type { TopologyRecommendationRules, DownstreamPhase } from '@evolith/core-domain/application/services';
 import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 import { CacheKeys, CacheTTL as TTL } from '../../infrastructure/cache/cache-keys';
@@ -20,6 +20,7 @@ export class ArchitectureController {
     private readonly workspaceResolver: WorkspaceReferenceResolverService,
     private readonly topologyCatalog: TopologyCatalogService,
     private readonly recommendationService: TopologyRecommendationService,
+    private readonly phaseArtifactService: PhaseArtifactProfileService,
     @Inject('IFileSystem') private readonly fileSystem: IFileSystem,
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {}
@@ -84,6 +85,23 @@ export class ArchitectureController {
     const rulesPath = `${corePath}/src/rulesets/architecture/topology-recommendation.rules.json`;
     const rules = JSON.parse(await this.fileSystem.readFile(rulesPath)) as TopologyRecommendationRules;
     return this.recommendationService.recommend(rules, body.signals ?? {});
+  }
+
+  @Post('evaluate-phase-artifacts')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Measure downstream-phase artifact completeness for a topology composition (advisory, ADR-0104 / DN-06 / GT-434)' })
+  @ApiBody({ type: EvaluatePhaseArtifactsDto })
+  @ApiEnvelopeResponse(undefined, { description: 'Required/present/missing artifacts + completeness (advisory, non-binding)' })
+  async evaluatePhaseArtifacts(@Body() body: EvaluatePhaseArtifactsDto) {
+    const corePath = this.workspaceResolver.corePath();
+    const profileByTopo = new Map<string, Record<string, unknown> | undefined>();
+    for (const topo of body.topologies) {
+      const manifest = await this.topologyCatalog.get(corePath, topo);
+      profileByTopo.set(topo, manifest?.spec.phaseProfiles);
+    }
+    const getPhaseProfile = (topo: string, phase: DownstreamPhase) =>
+      (profileByTopo.get(topo) as Record<string, any> | undefined)?.[phase];
+    return this.phaseArtifactService.evaluate(body.phase, body.topologies, body.declaredArtifacts ?? [], getPhaseProfile);
   }
 
   @Post('cache/invalidate')

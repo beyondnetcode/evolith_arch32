@@ -20,6 +20,20 @@ export class HealthController {
     };
   }
 
+  /** Liveness probe — the process is up (always ok while serving). */
+  @Public()
+  @Get('health/live')
+  live() {
+    return { status: 'ok', probe: 'live' };
+  }
+
+  /** Readiness probe — the app is ready to accept traffic. */
+  @Public()
+  @Get('health/ready')
+  ready() {
+    return { status: 'ok', probe: 'ready' };
+  }
+
   @Public()
   @Get()
   root() {

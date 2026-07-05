@@ -13,6 +13,7 @@ import {
   GetPromptRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { context as otelContext, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
+import promClient from 'prom-client';
 import { ToolRegistryService } from './tool-registry.service';
 import { MetricsService } from './metrics.service';
 import { AuditLogger } from './audit-logger';
@@ -27,6 +28,16 @@ import { McpCacheService } from './mcp-cache.service';
 
 export { McpUserContext, mcpContextStorage } from './mcp-user-context';
 export { ToolCallResult } from './mcp-tool-dispatch';
+
+// Prometheus default process/runtime metrics, registered once at module load
+// (calling collectDefaultMetrics twice on the default registry throws).
+let defaultMetricsRegistered = false;
+function ensureDefaultMetrics(): void {
+  if (!defaultMetricsRegistered) {
+    promClient.collectDefaultMetrics({ prefix: 'evolith_mcp_' });
+    defaultMetricsRegistered = true;
+  }
+}
 
 export type McpTransport = 'stdio' | 'http';
 
@@ -195,6 +206,7 @@ export class McpServerService {
   }
 
   private async startHttp(port: number): Promise<void> {
+    ensureDefaultMetrics();
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: () => generateCorrelationId(),
       enableJsonResponse: true,
@@ -210,11 +222,33 @@ export class McpServerService {
 
       const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
 
-      // Health check is public — orchestrators (Coolify/k8s) must reach the
-      // liveness probe without credentials. It exposes no MCP data.
-      if (req.method === 'GET' && url.pathname === '/health') {
+      // Health checks are public — orchestrators (Coolify/k8s) must reach the
+      // liveness/readiness probes without credentials. They expose no MCP data.
+      // /health is kept for back-compat; /health/live (liveness) and /health/ready
+      // (readiness) are the split probes.
+      if (req.method === 'GET' && (url.pathname === '/health' || url.pathname === '/health/live')) {
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ status: 'ok', transport: 'http', protocol: 'mcp' }));
+        res.end(JSON.stringify({ status: 'ok', transport: 'http', protocol: 'mcp', probe: url.pathname === '/health/live' ? 'live' : 'health' }));
+        return;
+      }
+      if (req.method === 'GET' && url.pathname === '/health/ready') {
+        // Ready once the HTTP server is accepting connections and the registry is built.
+        const ready = this.httpServer !== null;
+        res.writeHead(ready ? 200 : 503, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ status: ready ? 'ok' : 'starting', probe: 'ready' }));
+        return;
+      }
+
+      // Prometheus metrics — public scrape endpoint (default process/runtime
+      // metrics under the evolith_mcp_ prefix). No MCP data.
+      if (req.method === 'GET' && url.pathname === '/metrics') {
+        promClient.register.metrics().then((body) => {
+          res.writeHead(200, { 'Content-Type': promClient.register.contentType });
+          res.end(body);
+        }).catch(() => {
+          res.writeHead(500, { 'Content-Type': 'text/plain' });
+          res.end('metrics unavailable');
+        });
         return;
       }
 

@@ -11,8 +11,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const phasesDir = "reference/governance/sdlc/phases";
-const gatesDir = "reference/governance/sdlc/gates";
+const phasesDir = "reference/core/sdlc/phases";
+const gatesDir = "reference/core/sdlc/gates";
 
 let exitCode = 0;
 const errors = [];

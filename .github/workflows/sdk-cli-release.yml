@@ -9,7 +9,7 @@ on:
     branches:
       - main
     paths:
-      - 'sdk/cli/**'
+      - 'src/sdk/cli/**'
       - '.release-please-manifest.json'
       - 'release-please-config.json'
       - '.github/workflows/sdk-cli-release.yml'
@@ -18,7 +18,7 @@ on:
 
 env:
   NODE_VERSION: '20'
-  CLI_DIR: 'sdk/cli'
+  CLI_DIR: 'src/sdk/cli'
 
 jobs:
   # ============================================
@@ -184,7 +184,7 @@ jobs:
 
       - name: Confirm Publication
         run: |
-          echo "✅ Published @evolith/smart-cli@${{ needs.release-please.outputs.version }} to NPM"
+          echo "✅ Published @beyondnet/evolith-cli@${{ needs.release-please.outputs.version }} to NPM"
 
   # ============================================
   # GATE 4: Package Binaries
@@ -318,7 +318,7 @@ jobs:
       - name: Smoke Test - NPM Package
         shell: bash
         run: |
-          npm install -g @evolith/smart-cli@${{ needs.release-please.outputs.version }}
+          npm install -g @beyondnet/evolith-cli@${{ needs.release-please.outputs.version }}
           smart-cli --help || { echo "❌ NPM binary failed to execute"; exit 1; }
           echo "✅ NPM package smoke test completed"
 
@@ -379,7 +379,7 @@ jobs:
 
             ```bash
             # NPM
-            npm install -g @evolith/smart-cli
+            npm install -g @beyondnet/evolith-cli
 
             # Or download binary directly
             ```

@@ -17,11 +17,11 @@ function runIn(cwd) {
 function setup(matrix, sources) {
   const root = mkdtempSync(join(tmpdir(), 'surface-compat-'));
   mkdirSync(
-    join(root, 'reference/governance/standards/vision'),
+    join(root, 'reference/core/sdlc/standards/vision'),
     { recursive: true },
   );
   writeFileSync(
-    join(root, 'reference/governance/standards/vision/surface-compatibility.json'),
+    join(root, 'reference/core/control-center/surface-compatibility.json'),
     JSON.stringify(matrix, null, 2),
   );
   for (const [path, content] of Object.entries(sources)) {

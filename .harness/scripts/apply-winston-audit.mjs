@@ -16,10 +16,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '../../');
 
-const TRACKING_EN = path.join(rootDir, 'reference/governance/standards/vision/gap-tracking.md');
-const TRACKING_ES = path.join(rootDir, 'reference/governance/standards/vision/gap-tracking.es.md');
-const CATALOG_EN = path.join(rootDir, 'reference/governance/standards/vision/gap-reference-catalog.md');
-const CATALOG_ES = path.join(rootDir, 'reference/governance/standards/vision/gap-reference-catalog.es.md');
+const TRACKING_EN = path.join(rootDir, 'reference/core/control-center/gap-tracking.md');
+const TRACKING_ES = path.join(rootDir, 'reference/core/control-center/gap-tracking.es.md');
+const CATALOG_EN = path.join(rootDir, 'reference/core/control-center/gap-reference-catalog.md');
+const CATALOG_ES = path.join(rootDir, 'reference/core/control-center/gap-reference-catalog.es.md');
 
 async function main() {
   const args = process.argv.slice(2);

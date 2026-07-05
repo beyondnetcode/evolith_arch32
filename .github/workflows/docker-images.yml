@@ -30,11 +30,11 @@ jobs:
       matrix:
         include:
           - name: evolith-agent-runtime
-            dockerfile: apps/agent-runtime-api/Dockerfile
+            dockerfile: src/apps/agent-runtime-api/Dockerfile
           - name: evolith-core-api
-            dockerfile: apps/core-api/Dockerfile
+            dockerfile: src/apps/core-api/Dockerfile
           - name: evolith-mcp-server
-            dockerfile: packages/mcp-server/Dockerfile
+            dockerfile: src/packages/mcp-server/Dockerfile
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -31,9 +31,9 @@ node .harness/scripts/generate-executive-summary.mjs
 echo ""
 echo "Syncing Wiki pages (if docs changed)..."
 CHANGED_FILES=$(git diff --cached --name-only 2>/dev/null || git diff --name-only HEAD~1 2>/dev/null || echo "")
-if echo "$CHANGED_FILES" | grep -qE '\.md$|reference/|rulesets/|CONTRIBUTING|AGENTS'; then
+if echo "$CHANGED_FILES" | grep -qE '\.md$|reference/|src/rulesets/|CONTRIBUTING|AGENTS'; then
   node .harness/scripts/sync-wiki.mjs --force
-  git add wiki/
+  git add reference/wiki/
   echo "Wiki pages regenerated."
 else
   echo "No documentation changes — wiki sync skipped."

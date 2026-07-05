@@ -12,8 +12,8 @@ Evolith Core is a **corporate progressive-architecture reference**, not a single
 
 | Area | Path | Description |
 |------|------|-------------|
-| Architectural Reference | `reference/architecture/` | Topologies, ADRs, patterns |
-| Governance Standards | `reference/governance/standards/` | Gap tracking, topology maturity, rules |
+| Architectural Reference | `reference/core/architecture/` | Topologies, ADRs, patterns |
+| Governance Standards | `reference/core/sdlc/standards/` | Gap tracking, topology maturity, rules |
 | Validation Harness | `.harness/scripts/` | CI scripts, validators, coverage tools |
 | Agent Core | `.bmad-core/` | BMAD agent definitions, workflows, tooling |
 
@@ -27,9 +27,9 @@ Gaps are tracked in three canonical files:
 
 | File | Purpose |
 |------|---------|
-| `reference/governance/standards/vision/gap-tracking.md` | Single table — status, criticality, complexity |
-| `reference/governance/standards/vision/gap-reference-catalog.md` | Detailed definitions — purpose, evidence, done-when criteria |
-| `reference/governance/standards/vision/gap-closure-evidence.json` | Machine-readable closure records with commit SHA, dated evidence |
+| `reference/core/control-center/gaps/gap-tracking.md` | Single table — status, criticality, complexity |
+| `reference/core/control-center/gaps/gap-reference-catalog.md` | Detailed definitions — purpose, evidence, done-when criteria |
+| `reference/core/control-center/evidence/gap-closure-evidence.json` | Machine-readable closure records with commit SHA, dated evidence |
 
 ### Governance Gap Lifecycle
 
@@ -139,7 +139,7 @@ Run via the engine: each specialist step carries its `validationScripts`; the
 | GT-153 | Knowledge Lifecycle Governance by Winston | `DONE` |
 | GT-154 | RAG Projection and Native/OPA Parity for External Knowledge | `DONE` |
 
-All three P0 knowledge gaps are closed. See the [Gap Tracking Board](../reference/governance/standards/vision/gap-tracking.md) for current status of all GT-* gaps.
+All three P0 knowledge gaps are closed. See the [Gap Tracking Board](../reference/core/control-center/gaps/gap-tracking.md) for current status of all GT-* gaps.
 
 ---
 
@@ -320,6 +320,6 @@ File the proposal in `.bmad-core/proposals/` (create directory if needed).
 ---
 
 *See [Global Rules](../.harness/rules/global-rules.md) for binding directives.*
-*See [Gap Tracking Board](../reference/governance/standards/vision/gap-tracking.md) for current status.*
-*See [Gap Reference Catalog](../reference/governance/standards/vision/gap-reference-catalog.md) for gap definitions.*
+*See [Gap Tracking Board](../reference/core/control-center/gaps/gap-tracking.md) for current status.*
+*See [Gap Reference Catalog](../reference/core/control-center/gaps/gap-reference-catalog.md) for gap definitions.*
 *See [.harness/scripts/](../.harness/scripts/) for all available scripts.*

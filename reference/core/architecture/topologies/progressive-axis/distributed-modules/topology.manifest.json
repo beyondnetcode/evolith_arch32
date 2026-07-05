@@ -1,0 +1,147 @@
+{
+  "apiVersion": "evolith.dev/topology/v1",
+  "kind": "TopologyManifest",
+  "metadata": {
+    "id": "distributed-modules",
+    "name": "Distributed Modules",
+    "dimension": "progressive-axis",
+    "status": "accepted",
+    "version": "1.0.0",
+    "governance": {
+      "owner": "Architecture Board",
+      "criticality": "P0"
+    }
+  },
+  "spec": {
+    "summary": "Controlled extraction topology for independently deployable or scalable modules with explicit contracts, readiness evidence, and operational visibility.",
+    "topologyType": "distributed-modules",
+    "compatibility": {
+      "progressiveAxis": {
+        "maturityLevel": "F2",
+        "profile": "distributed-modules"
+      },
+      "composableWith": [
+        "event-driven",
+        "data-mesh",
+        "serverless",
+        "edge-computing",
+        "agentic-ai"
+      ]
+    },
+    "artifacts": {
+      "adrs": [
+        "reference/core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md",
+        "reference/core/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md",
+        "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+      ],
+      "rulesets": [
+        "reference/core/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json"
+      ],
+      "opaPolicies": [
+        "reference/core/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.rego"
+      ],
+      "aiRulesets": [
+        "reference/core/architecture/topologies/progressive-axis/distributed-modules/README.md"
+      ],
+      "umsContracts": [
+        "reference/knowledge/demo/ums-reference-model.md"
+      ]
+    },
+    "corpus": {
+        "guidance": {
+          "profile": "reference/core/architecture/topologies/progressive-axis/distributed-modules/README.md",
+          "maturityGuide": "reference/core/architecture/topologies/progressive-axis/distributed-modules/maturity.md"
+        },
+        "configurationContract": "reference/core/architecture/topologies/progressive-axis/distributed-modules/topology.config.schema.json",
+        "fixtures": {
+          "valid": "reference/core/architecture/topologies/progressive-axis/distributed-modules/fixtures/valid.topology.config.json",
+          "invalid": "reference/core/architecture/topologies/progressive-axis/distributed-modules/fixtures/invalid.topology.config.json"
+        },
+        "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+        "tests": {
+          "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
+          "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
+        },
+        "evidence": "reference/core/control-center/maturity-evidence.json"
+    },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "devops-cicd-plan",
+          "criteria": "Independent CI/CD lifecycle per module (DM-R01)."
+        },
+        {
+          "artifactKind": "infrastructure-plan",
+          "criteria": "Per-module deployment topology and boundaries."
+        },
+        {
+          "artifactKind": "performance-plan",
+          "criteria": "Inter-module latency and resiliency (circuit breakers, DM-R07)."
+        }
+      ],
+      "conditional": [
+        {
+          "artifactKind": "event-contract-catalog",
+          "condition": "composed-with:event-driven",
+          "criteria": "Versioned async event contracts."
+        },
+        {
+          "artifactKind": "extraction-readiness-assessment",
+          "condition": "f3-planned",
+          "criteria": "Extraction-readiness score maintained per ADR-0045."
+        }
+      ]
+    },
+    "phaseProfiles": {
+      "construction": {
+        "conditional": [
+          {
+            "artifactKind": "per-unit-ci-evidence",
+            "criteria": "Independent CI per module."
+          }
+        ]
+      }
+    },
+    "operationalInterfaces": {
+      "cli": {
+        "validators": [
+          "validate-architecture",
+          "validate-topology"
+        ]
+      },
+      "mcp": {
+        "resources": [
+          "evolith://topologies/distributed-modules/manifest",
+          "evolith://topologies/distributed-modules/rulesets"
+        ],
+        "tools": [
+          "evolith-topology-inspect",
+          "evolith-topology-validate"
+        ],
+        "prompts": [
+          "topology-aware-implementation",
+          "extraction-readiness-review"
+        ]
+      },
+      "coreApi": {
+        "endpoints": [
+          "GET /topologies/{id}",
+          "GET /topologies/{id}/manifest",
+          "POST /topologies/{id}/validate"
+        ]
+      }
+    }
+  },
+  "businessBoundary": {
+    "technicalOnly": true,
+    "trackerOwns": [
+      "timing",
+      "ownership",
+      "prioritization",
+      "roi",
+      "cost",
+      "budget",
+      "funnel-0"
+    ]
+  }
+}

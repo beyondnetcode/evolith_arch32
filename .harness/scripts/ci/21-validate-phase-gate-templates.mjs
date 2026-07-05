@@ -10,7 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const rulesPath = path.join(root, "rulesets/sdlc/phase-gates.rules.json");
+const rulesPath = path.join(root, "src/rulesets/sdlc/phase-gates.rules.json");
 const rulesetDir = path.dirname(rulesPath);
 
 const failures = [];

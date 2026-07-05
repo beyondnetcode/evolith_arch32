@@ -1,0 +1,134 @@
+{
+  "$schema": "../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/adr/adr-0032-protocol-selection.rules.json",
+  "title": "ADR-0032 — API Protocol Selection Matrix Rules",
+  "description": "Machine-readable rules encoding ADR-0032 Protocol Selection Matrix. Mandatory protocol selection for internal, external, and BFF communication.",
+  "version": "1.0.0",
+  "adrId": "ADR-0032",
+  "adrTitle": "API Protocol Selection Matrix (REST vs gRPC vs GraphQL)",
+  "status": "Approved",
+  "date": "2026-05-11",
+  "effectiveDate": "2026-05-11",
+  "rules": [
+    {
+      "id": "PROT-01",
+      "severity": "MUST",
+      "category": "internal-communication",
+      "title": "Internal service-to-service uses gRPC",
+      "description": "MANDATE: gRPC (Protocol Buffers over HTTP/2) for all internal service-to-service communication between bounded contexts. Scope: synchronous calls where both services are owned by the organization.",
+      "rationale": "ADR-0032 §Decision: High performance, binary serialization, and strict type-safety through unified .proto contracts.",
+      "validationQuery": "Internal service calls use gRPC. No REST calls between internal bounded contexts (telemetry confirms).",
+      "blocking": true,
+      "scenario": "Machine-to-Machine (Internal)"
+    },
+    {
+      "id": "PROT-02",
+      "severity": "MUST",
+      "category": "external-communication",
+      "title": "Public and external APIs use REST",
+      "description": "MANDATE: REST (JSON over HTTPS) for all public third-party and external integration. Scope: external customer integrations, legacy corporate gateway connections, and global developer public APIs.",
+      "rationale": "ADR-0032 §Decision: Industry universality, trivial consumption, easiest debugging/testing, broad interactive documentation.",
+      "validationQuery": "Public API endpoints use REST/JSON. OpenAPI spec available for all public APIs.",
+      "blocking": true,
+      "scenario": "Public Third-Party & External Integration"
+    },
+    {
+      "id": "PROT-03",
+      "severity": "MUST",
+      "category": "bff-communication",
+      "title": "BFF uses REST primary, GraphQL targeted",
+      "description": "Default to REST for standard flows (CRUD commands). Adopt GraphQL strictly at the NestJS BFF level ONLY when a screen requires complex data aggregation (fetching Entities, associated Taxonomies, Audits, and relations simultaneously).",
+      "rationale": "ADR-0032 §Decision: Prevents mobile/web over-fetching and multiple sequential roundtrips for rich read scenarios.",
+      "validationQuery": "BFF uses REST for standard CRUD. GraphQL used only for aggregate read scenarios with documented justification.",
+      "blocking": false,
+      "scenario": "Frontend Portals & Dynamic BFF Orchestration"
+    },
+    {
+      "id": "PROT-04",
+      "severity": "MUST NOT",
+      "category": "graphql-isolation",
+      "title": "GraphQL resolvers never in domain layer",
+      "description": "GraphQL runtime logic MUST exist only within Tier-2 BFF application nodes. Core domain API definitions never natively support GraphQL resolvers. This prevents view-specific constraints from leaking into domain business logic.",
+      "rationale": "ADR-0032 §Architecture Guidelines: GraphQL isolation. Core domain must remain protocol-agnostic.",
+      "validationQuery": "No GraphQL resolvers in Core or Application layers. GraphQL exists only in BFF/Api layer.",
+      "blocking": true,
+      "scenario": "Domain Layer"
+    },
+    {
+      "id": "PROT-05",
+      "severity": "MUST",
+      "category": "protobuf-centralization",
+      "title": "Proto files centralized in Contracts library",
+      "description": "All internal gRPC service schemas (.proto) are hosted and versioned in a unified Contracts library (libs/contracts or similar) to prevent drifted interface models.",
+      "rationale": "ADR-0032 §Architecture Guidelines: Protobuf centralization prevents interface drift between services.",
+      "validationQuery": ".proto files exist in shared Contracts library. No duplicate .proto definitions across services.",
+      "blocking": true
+    },
+    {
+      "id": "PROT-06",
+      "severity": "SHOULD",
+      "category": "streaming",
+      "title": "File uploads/streams prefer gRPC streaming",
+      "description": "File uploads and streaming scenarios SHOULD use gRPC streaming capabilities for native streaming or REST multipart as fallback.",
+      "rationale": "ADR-0032 §Selection Decision Tree: Native streaming capability or simple multipart.",
+      "validationQuery": "Streaming endpoints evaluated for gRPC first, REST multipart as fallback.",
+      "blocking": false
+    },
+    {
+      "id": "PROT-07",
+      "severity": "MUST",
+      "category": "contract-versioning",
+      "title": "Breaking changes require version bump",
+      "description": "Breaking changes to inter-service contracts (gRPC .proto or REST OpenAPI) require a new major version. Consumer-driven contract tests must pass before merge.",
+      "rationale": "ADR-0032 §Decision: Contract versioning ensures backward compatibility during service evolution.",
+      "validationQuery": "Contract tests enforce backward compatibility. Breaking changes blocked by CI.",
+      "blocking": true
+    }
+  ],
+  "protocolMatrix": [
+    {
+      "scenario": "Machine-to-Machine (Internal)",
+      "protocol": "gRPC",
+      "justification": "Low latency, binary compaction, strongly typed"
+    },
+    {
+      "scenario": "File Uploads/Streams",
+      "protocol": "gRPC / REST",
+      "justification": "Native streaming or simple multipart"
+    },
+    {
+      "scenario": "Public Open API / Developer Docs",
+      "protocol": "REST",
+      "justification": "Universal standard, easiest vendor adoption"
+    },
+    {
+      "scenario": "High-Density Aggregate Dashboards",
+      "protocol": "GraphQL",
+      "justification": "Resolves under-fetching / recursive lookups"
+    },
+    {
+      "scenario": "Low-Power Mobile Data Retrieval",
+      "protocol": "GraphQL",
+      "justification": "Client strictly defines data shape"
+    },
+    {
+      "scenario": "Standard CRUD",
+      "protocol": "REST",
+      "justification": "Predictable cacheability, native HTTP semantics"
+    }
+  ],
+  "references": [
+    "reference/core/architecture/adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md",
+    "reference/core/architecture/adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md",
+    "reference/core/architecture/adrs/core/0030-two-tier-distributed-gateway-model.md"
+  ],
+  "exitCriteria": {
+    "description": "All inter-service communication uses correct protocol per matrix. Contracts centralized and versioned.",
+    "validationTools": [
+      "gRPC",
+      "OpenAPI",
+      "Pact",
+      "network traffic analysis"
+    ]
+  }
+}

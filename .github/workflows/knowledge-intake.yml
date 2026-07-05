@@ -111,7 +111,7 @@ jobs:
             import { execFileSync } from 'node:child_process';
             const opa = await ensureOpa(process.cwd());
             try {
-              const out = execFileSync(opa.binary, ['test', '--format=json', 'rulesets/opa/knowledge-intake.rego', 'rulesets/opa/knowledge-intake.test.rego'], { cwd: process.cwd(), encoding: 'utf8' });
+              const out = execFileSync(opa.binary, ['test', '--format=json', 'src/rulesets/opa/knowledge-intake.rego', 'src/rulesets/opa/knowledge-intake.test.rego'], { cwd: process.cwd(), encoding: 'utf8' });
               console.log(out);
               process.exit(0);
             } catch (e) {

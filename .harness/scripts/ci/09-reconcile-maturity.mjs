@@ -4,7 +4,7 @@ import { execFileSync } from 'child_process';
 import { fileURLToPath, pathToFileURL } from 'url';
 
 const ROOT = path.resolve(process.env.EVOLITH_MATURITY_ROOT || '.');
-const VISION_DIR = path.join(ROOT, 'reference/governance/standards/vision');
+const VISION_DIR = path.join(ROOT, 'reference/core/sdlc/standards/vision');
 const BOARD = path.join(VISION_DIR, 'gap-tracking.md');
 const REGISTRY = path.join(VISION_DIR, 'gap-closure-evidence.json');
 const CLI_PACKAGE = path.join(ROOT, 'sdk/cli/package.json');
@@ -103,11 +103,11 @@ export function validateRuntimeEvidence(evidence, board, root = ROOT, now = new 
 }
 
 export function buildSnapshot(root = ROOT) {
-  const boardContent = fs.readFileSync(path.join(root, 'reference/governance/standards/vision/gap-tracking.md'), 'utf8');
+  const boardContent = fs.readFileSync(path.join(root, 'reference/core/control-center/gap-tracking.md'), 'utf8');
   const board = { ...parseBoard(boardContent), content: boardContent };
-  const registry = JSON.parse(fs.readFileSync(path.join(root, 'reference/governance/standards/vision/gap-closure-evidence.json'), 'utf8'));
+  const registry = JSON.parse(fs.readFileSync(path.join(root, 'reference/core/control-center/gap-closure-evidence.json'), 'utf8'));
   const cliPackage = JSON.parse(fs.readFileSync(path.join(root, 'sdk/cli/package.json'), 'utf8'));
-  const runtimeEvidence = JSON.parse(fs.readFileSync(path.join(root, 'reference/governance/standards/vision/maturity-evidence.json'), 'utf8'));
+  const runtimeEvidence = JSON.parse(fs.readFileSync(path.join(root, 'reference/core/control-center/maturity-evidence.json'), 'utf8'));
   const closures = registry.closures || [];
 
   const gtDoneCount = [...board.content.matchAll(/^\| \[`GT-\d+`]\([^)]*\) .*\| `DONE` \|$/gm)].length;
@@ -128,9 +128,9 @@ export function buildSnapshot(root = ROOT) {
     evidence: {
       closureRecords: closures.length,
       cliPackage: `${cliPackage.name}@${cliPackage.version}`,
-      adrCount: countFiles(path.join(root, 'reference/architecture/adrs'), /^\d{4}-.*\.md$/, /\.es\.md$/),
+      adrCount: countFiles(path.join(root, 'reference/core/architecture/adrs'), /^\d{4}-.*\.md$/, /\.es\.md$/),
       rulesetCount: countFiles(path.join(root, 'rulesets'), /\.rules\.json$/),
-      schemaCount: countFiles(path.join(root, 'rulesets/schema'), /\.schema\.json$/),
+      schemaCount: countFiles(path.join(root, 'src/rulesets/schema'), /\.schema\.json$/),
     },
     readiness: runtimeEvidence.checks,
     externalProducts: [
@@ -138,10 +138,10 @@ export function buildSnapshot(root = ROOT) {
       { name: 'Evolith Product Suite', maturityIncluded: false, reason: 'Product strategy scope is not Core implementation evidence' },
     ],
     sources: [
-      'reference/governance/standards/vision/gap-tracking.md',
-      'reference/governance/standards/vision/gap-closure-evidence.json',
-      'reference/governance/standards/vision/maturity-evidence.json',
-      'reference/governance/standards/vision/inventory-summary.md',
+      'reference/core/control-center/gap-tracking.md',
+      'reference/core/control-center/gap-closure-evidence.json',
+      'reference/core/control-center/maturity-evidence.json',
+      'reference/core/control-center/inventory-summary.md',
       'sdk/cli/package.json',
     ],
     validationCommands: [

@@ -38,20 +38,20 @@ jobs:
       # CLI before running the tests.
       - name: Build workspace dependencies + CLI
         run: |
-          npm run build --workspace @evolith/core-domain
-          npm run build --workspace @evolith/agent-runtime
-          npm run build --workspace @evolith/sdk
-          npm run build --workspace @evolith/core
-          npm run build --workspace @evolith/infra-providers
-          npm run build --workspace @evolith/mcp-server
-          npm run build --workspace sdk/cli
+          npm run build --workspace @beyondnet/evolith-core-domain
+          npm run build --workspace @beyondnet/evolith-agent-runtime
+          npm run build --workspace @beyondnet/evolith-sdk
+          npm run build --workspace @beyondnet/evolith-core
+          npm run build --workspace @beyondnet/evolith-infra-providers
+          npm run build --workspace @beyondnet/evolith-mcp
+          npm run build --workspace src/sdk/cli
 
       # CD gate = the smart-cli unit suite (fast, deterministic). The full e2e
       # (env-sensitive: spawns servers, loads rulesets) is covered by the
       # dedicated sdk-cli-ci.yml e2e job + the per-flow E2E playbooks, not here.
       - name: Run unit tests
         run: npm run test:unit
-        working-directory: sdk/cli
+        working-directory: src/sdk/cli
 
   test-core-domain:
     name: Test core-domain
@@ -75,7 +75,7 @@ jobs:
       # entities). Parses the import graph only (no type-aware services / built
       # deps needed).
       - name: Run core-domain architecture boundary guard
-        run: npm run lint:boundaries --workspace @evolith/core-domain
+        run: npm run lint:boundaries --workspace @beyondnet/evolith-core-domain
 
       # GT-382 follow-up: the core-domain OPA integration test loads the real
       # compiled policy.wasm. Build it (pinned opa toolchain) so the test runs
@@ -84,13 +84,13 @@ jobs:
         run: npm run build:policy
 
       - name: Run core-domain tests with coverage
-        run: npm run test:cov --workspace @evolith/core-domain
+        run: npm run test:cov --workspace @beyondnet/evolith-core-domain
 
       # GT-326: end-to-end governance flow (phase → gate → artifact → verdict)
       # against a real tmpdir satellite, exercising Core's Tracker/agent
       # integration contract (events, webhook dispatch, audit) in CI.
       - name: Run core-domain governance E2E (GT-326)
-        run: npm run test:e2e --workspace @evolith/core-domain
+        run: npm run test:e2e --workspace @beyondnet/evolith-core-domain
 
   test-core:
     name: Test core
@@ -109,7 +109,7 @@ jobs:
         run: npm ci
 
       - name: Run core barrel contract tests
-        run: npm test --workspace @evolith/core
+        run: npm test --workspace @beyondnet/evolith-core
 
   test-mcp-server:
     name: Test mcp-server
@@ -131,24 +131,24 @@ jobs:
       # (domain → application → adapters) on VALUE imports. Parses the import
       # graph only (no type-aware services), so it needs no built workspace deps.
       - name: Run mcp-server architecture boundary guard
-        run: npm run lint:boundaries --workspace @evolith/mcp-server
+        run: npm run lint:boundaries --workspace @beyondnet/evolith-mcp
 
       - name: Build workspace dependencies
         run: |
-          npm run build --workspace @evolith/core-domain
-          npm run build --workspace @evolith/agent-runtime
-          npm run build --workspace @evolith/sdk
-          npm run build --workspace @evolith/core
-          npm run build --workspace @evolith/infra-providers
+          npm run build --workspace @beyondnet/evolith-core-domain
+          npm run build --workspace @beyondnet/evolith-agent-runtime
+          npm run build --workspace @beyondnet/evolith-sdk
+          npm run build --workspace @beyondnet/evolith-core
+          npm run build --workspace @beyondnet/evolith-infra-providers
 
       - name: Run mcp-server tests with coverage
-        run: npm run test:cov --workspace @evolith/mcp-server
+        run: npm run test:cov --workspace @beyondnet/evolith-mcp
 
       # GT-330: MCP server dedicated E2E (spawns the live MCP HTTP server)
       - name: Build mcp-server + run E2E
         run: |
-          npm run build --workspace @evolith/mcp-server
-          npm run --workspace packages/mcp-server test:e2e
+          npm run build --workspace @beyondnet/evolith-mcp
+          npm run --workspace src/packages/mcp-server test:e2e
 
   test-core-api:
     name: Test core-api
@@ -175,8 +175,8 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
-          npm run build --workspace @evolith/core-domain
-          npm run build --workspace @evolith/infra-providers
+          npm run build --workspace @beyondnet/evolith-core-domain
+          npm run build --workspace @beyondnet/evolith-infra-providers
 
       - name: Run core-api tests
         run: npm test --workspace core-api
@@ -201,10 +201,10 @@ jobs:
         run: npm ci
       - name: Build workspace dependencies
         run: |
-          npm run build --workspace @evolith/core-domain
-          npm run build --workspace @evolith/agent-runtime
+          npm run build --workspace @beyondnet/evolith-core-domain
+          npm run build --workspace @beyondnet/evolith-agent-runtime
       - name: Run sdk-client tests with coverage
-        run: npm run test:cov --workspace @evolith/sdk
+        run: npm run test:cov --workspace @beyondnet/evolith-sdk
 
   # W-Coverage: the filesystem/logger/config/github adapters ran in NO CI job.
   test-infra-providers:
@@ -220,11 +220,11 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
-      # infra-providers depends on @evolith/core-domain (resolved from dist).
+      # infra-providers depends on @beyondnet/evolith-core-domain (resolved from dist).
       - name: Build workspace dependencies
-        run: npm run build --workspace @evolith/core-domain
+        run: npm run build --workspace @beyondnet/evolith-core-domain
       - name: Run infra-providers tests with coverage
-        run: npm run test:cov --workspace @evolith/infra-providers
+        run: npm run test:cov --workspace @beyondnet/evolith-infra-providers
 
   publish-npm:
     name: Publish npm
@@ -248,7 +248,7 @@ jobs:
         run: |
           npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
           npm publish --access public --tag beta
-        working-directory: sdk/cli
+        working-directory: src/sdk/cli
 
   docker:
     name: Build & Push Docker
@@ -270,8 +270,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./sdk/cli
-          file: ./sdk/cli/Dockerfile
+          context: ./src/sdk/cli
+          file: ./src/sdk/cli/Dockerfile
           push: true
           tags: |
             beyondnetperu/evolith-cli:latest
@@ -294,11 +294,11 @@ jobs:
           # context is the repo root — both Dockerfiles COPY repo-root-relative paths
           - service: core-api
             context: .
-            dockerfile: ./apps/core-api/Dockerfile
+            dockerfile: ./src/apps/core-api/Dockerfile
             image: evolith-core-api
           - service: mcp-server
             context: .
-            dockerfile: ./packages/mcp-server/Dockerfile
+            dockerfile: ./src/packages/mcp-server/Dockerfile
             image: evolith-mcp-server
     steps:
       - uses: actions/checkout@v7

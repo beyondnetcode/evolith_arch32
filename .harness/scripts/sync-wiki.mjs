@@ -5,7 +5,7 @@
  *
  * Part of the Evolith CI strategy:
  *   - Runs in pre-push hook ONLY when documentation files change
- *   - Generates wiki/*.md from existing repo docs (idempotent)
+ *   - Generates reference/wiki/*.md from existing repo docs (idempotent)
  *   - Does NOT push to GitHub Wiki (handled by GitHub Actions)
  *   - Follows the same mode detection as ci-runner.mjs
  *
@@ -39,8 +39,8 @@ const WIKI_SOURCES = {
   },
   "Architecture.md": {
     files: [
-      "reference/architecture/README.md",
-      "reference/architecture/topologies/README.md",
+      "reference/core/architecture/README.md",
+      "reference/core/architecture/topologies/README.md",
     ],
     transform: transformArchitecture,
   },
@@ -54,9 +54,9 @@ const WIKI_SOURCES = {
   },
   "Governance.md": {
     files: [
-      "reference/governance/standards/README.md",
-      "reference/governance/sdlc/README.md",
-      "reference/governance/standards/vision/gap-tracking.md",
+      "reference/core/sdlc/standards/README.md",
+      "reference/core/sdlc/README.md",
+      "reference/core/control-center/gap-tracking.md",
     ],
     transform: transformGovernance,
   },
@@ -171,7 +171,7 @@ Evolith Core exists to become the definitive enterprise-grade operating system f
 
 | Interface | Purpose |
 |-----------|---------|
-| **CLI** (\`@evolith/smart-cli\`) | Validate code locally against rulesets |
+| **CLI** (\`@beyondnet/evolith-cli\`) | Validate code locally against rulesets |
 | **MCP** (Model Context Protocol) | Inject architectural context into AI agents |
 | **Core API** (REST) | Programmatic access for orchestration systems
 
@@ -180,7 +180,7 @@ Evolith Core exists to become the definitive enterprise-grade operating system f
 ## Quick Start
 
 \`\`\`bash
-npm install -g @evolith/smart-cli
+npm install -g @beyondnet/evolith-cli
 smart-cli init
 smart-cli validate
 smart-cli mcp serve
@@ -227,7 +227,7 @@ function transformGettingStarted(sources) {
 ## Installation
 
 \`\`\`bash
-npm install -g @evolith/smart-cli
+npm install -g @beyondnet/evolith-cli
 smart-cli --version
 # smart-cli version 1.1.0
 \`\`\`
@@ -343,14 +343,14 @@ ADRs capture significant architectural decisions. Each ADR includes:
 - **Decision**: What was decided
 - **Consequences**: What follows from the decision
 
-Browse all ADRs: [reference/architecture/adrs/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/architecture/adrs)
+Browse all ADRs: [reference/core/architecture/adrs/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/core/architecture/adrs)
 
 ---
 
 ## Repository Structure
 
 \`\`\`
-reference/architecture/
+reference/core/architecture/
   ├── adrs/                    # Architecture Decision Records
   │   ├── core/                # Core ADRs (ADR-0001 to ADR-0099)
   │   └── ai/                  # AI-specific ADRs
@@ -377,7 +377,7 @@ function transformProducts(sources) {
 
 | Product | Package | Purpose |
 |---------|---------|---------|
-| **Smart CLI** | \`@evolith/smart-cli\` | Developer-facing governance tool |
+| **Smart CLI** | \`@beyondnet/evolith-cli\` | Developer-facing governance tool |
 | **MCP Services** | (bundled in CLI) | AI agent integration via MCP |
 | **Core API** | \`apps/core-api\` | REST API for orchestration systems |
 
@@ -388,7 +388,7 @@ function transformProducts(sources) {
 Command-line interface for governance, validation, and AI integration.
 
 \`\`\`bash
-npm install -g @evolith/smart-cli
+npm install -g @beyondnet/evolith-cli
 smart-cli init
 smart-cli validate
 smart-cli mcp serve
@@ -449,7 +449,7 @@ function transformGovernance(sources) {
 | **In Progress** | 0 |
 | **Deferred** | 0 |
 
-Full board: [gap-tracking.md](https://github.com/beyondnetcode/evolith_arch32/blob/main/reference/governance/standards/vision/gap-tracking.md)
+Full board: [gap-tracking.md](https://github.com/beyondnetcode/evolith_arch32/blob/main/reference/core/control-center/gap-tracking.md)
 
 ---
 
@@ -576,7 +576,7 @@ The pre-commit hook presents 5 CI modes:
 
 function extractStats() {
   const tracking = readFileSafe(
-    "reference/governance/standards/vision/gap-tracking.md"
+    "reference/core/control-center/gap-tracking.md"
   );
   const doneMatch = tracking.match(/(\d+)\s*\/\s*312\s*done/);
   const openMatch = tracking.match(/(\d+)\s*pending/);
@@ -650,8 +650,8 @@ function main() {
   }
 
   saveFingerprint();
-  console.log(`\n📦 Generated ${generated} wiki pages in wiki/`);
-  console.log("   Run 'git add wiki/' to include in commit.");
+  console.log(`\n📦 Generated ${generated} wiki pages in reference/wiki/`);
+  console.log("   Run 'git add reference/wiki/' to include in commit.");
 }
 
 main();

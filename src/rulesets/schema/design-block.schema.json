@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/schema/design-block.schema.json",
+  "title": "Evolith Design Block",
+  "description": "Base contract for a design-artifact block composed into a blueprint (ADR-0104, GT-428). A blueprint is a box of blocks; each block is a building unit (a plan, matrix, catalog, policy, …). Convention over Configuration: a new blockKind conforms to this base WITHOUT engine changes and may add its own fields (additionalProperties true). Specific blockKinds MAY be refined by their own schema referenced from the block-type registry.",
+  "type": "object",
+  "required": ["blockKind", "title"],
+  "additionalProperties": true,
+  "properties": {
+    "blockKind": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Registry blockKind (design-block-registry.json)."
+    },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "version": { "type": "string" },
+    "scope": {
+      "type": "string",
+      "enum": ["core", "tenant"],
+      "description": "core = canonical corpus; tenant = tenant private collection (ADR-0104 §11)."
+    },
+    "concern": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Concern this block belongs to (frontend/backend/services/mobile/data/…), if any."
+    },
+    "status": { "type": "string", "enum": ["draft", "proposed", "accepted", "deprecated"] },
+    "sourceRef": { "type": "string", "description": "Where the block content lives (opaque ref; the Tracker persists, the Core evaluates)." },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "content": { "type": "string" }
+        }
+      }
+    },
+    "adrRefs": { "type": "array", "items": { "type": "string" } },
+    "qualityAttributes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "target"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "target": { "type": "string" },
+          "adrRef": { "type": "string" }
+        }
+      }
+    },
+    "maturitySignals": {
+      "type": "array",
+      "description": "Signals that feed the technical-maturity score (ADR-0104). Advisory.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "value": {},
+          "target": {}
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": { "type": "string", "enum": ["official", "certified", "community"] }
+      }
+    }
+  }
+}

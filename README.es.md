@@ -10,8 +10,8 @@
 
 <br/>
 
-<a href="./reference/governance/sdlc/assets/master-view.png" title="Visión General del Producto Evolith E2E — clic para ampliar">
-  <img src="./reference/governance/sdlc/assets/master-view.png"
+<a href="./reference/core/sdlc/assets/master-view.png" title="Visión General del Producto Evolith E2E — clic para ampliar">
+  <img src="./reference/core/sdlc/assets/master-view.png"
        alt="Visión General del Producto Evolith E2E"
        width="780"
        style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
@@ -76,7 +76,7 @@ Evolith hace que la gobernanza sea **ejecutable**:
 | **Artefactos** | Salidas estructuradas en cada fase: specs, schemas, manifests, contratos |
 | **Agentes de IA** | Agentes especializados (Winston y otros) que participan en el SDLC como colaboradores de primer nivel |
 
-Detalles completos: [Conceptos Core](./reference/core/README.es.md) · [Topologías](./reference/architecture/topologies/README.es.md)
+Detalles completos: [Conceptos Core](./reference/core/README.es.md) · [Topologías](./reference/core/architecture/topologies/README.es.md)
 
 ---
 
@@ -87,11 +87,11 @@ Evolith se distribuye como una suite de productos coordinados sobre una base com
 | Producto                | Rol                                                                                                                          |
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | **[Evolith Core](reference/README.es.md)**        | Constitución neutral al proveedor: principios, ADRs, rulesets, topologías y contratos                                        |
-| **[Smart CLI](reference/products/smart-cli/README.es.md)**           | Aplicación local — valida código, ejecuta compuertas, gestiona ADRs, sirve MCP                                               |
-| **[Core API](reference/products/core-api/README.es.md)**            | Servicio REST para consultas y evaluación de gobernanza de forma remota                                                      |
-| **[MCP Services](reference/products/mcp-services/README.es.md)**        | Gobernanza como contexto en vivo para LLMs y agentes de IA (27 tools, 9 resources, 8 prompts)                                |
-| **[Agent Runtime](reference/architecture/agent-runtime/README.es.md)**       | Capa de mediación agéntica — orquesta el Core mediante Puertos y Adaptadores; Hermes es uno de los adaptadores reemplazables |
-| **[Evolith Tracker](reference/products/evolith-tracker/README.es.md)**     | Gobernanza del ciclo de vida del negocio — fases, propietarios, financiación y ROI                                           |
+| **[Smart CLI](product/products/smart-cli/README.es.md)**           | Aplicación local — valida código, ejecuta compuertas, gestiona ADRs, sirve MCP                                               |
+| **[Core API](product/products/core-api/README.es.md)**            | Servicio REST para consultas y evaluación de gobernanza de forma remota                                                      |
+| **[MCP Services](product/products/mcp-services/README.es.md)**        | Gobernanza como contexto en vivo para LLMs y agentes de IA (27 tools, 9 resources, 8 prompts)                                |
+| **[Agent Runtime](reference/core/architecture/foundations/README.es.md)**       | Capa de mediación agéntica — orquesta el Core mediante Puertos y Adaptadores; Hermes es uno de los adaptadores reemplazables |
+| **[Evolith Tracker](product/products/evolith-tracker/README.es.md)**     | Gobernanza del ciclo de vida del negocio — fases, propietarios, financiación y ROI                                           |
 | **[Rulesets](rulesets/README.es.md)**            | Reglas de aplicación legibles por máquina por topología                                                                      |
 | **[Políticas OPA](rulesets/opa/README.es.md)**       | Controles de política granulares integrados en el pipeline                                                                   |
 | **[Schemas y Manifests](rulesets/schema/README.es.md)** | Contratos estructurados para artefactos y definiciones de topología                                                          |
@@ -144,7 +144,7 @@ Evolith gobierna **8 topologías** en cuatro ejes:
 
 Cada topología tiene sus propios ADRs, políticas OPA, rulesets de IA y contratos UMS. Los sistemas migran entre topologías a medida que el negocio escala — esto es **Arquitectura Progresiva**.
 
-Referencia completa: [Hub de Arquitectura](./reference/architecture/README.es.md) · [Arquitectura Maestra C4](./reference/architecture/C4-MASTER-ARCHITECTURE.es.md)
+Referencia completa: [Hub de Arquitectura](./reference/core/architecture/README.es.md) · [Arquitectura Maestra C4](./reference/core/architecture/C4-MASTER-ARCHITECTURE.es.md)
 
 ---
 
@@ -155,10 +155,10 @@ evolith/
 ├── packages/agent-runtime/  # @evolith/agent-runtime — capa agéntica Puertos y Adaptadores
 ├── apps/agent-runtime-api/  # Servicio HTTP NestJS que envuelve el runtime (POST /v1/agent/handle)
 ├── reference/core/          # Constitución de ingeniería y principios
-├── reference/architecture/  # Topologías, blueprints, ADRs y docs del agent-runtime
-├── reference/governance/    # Fases SDLC, compuertas, estándares y glosario
-├── reference/products/      # Smart CLI, Core API, MCP, Tracker, UMS
-└── reference/operations/    # SRE, infra, compuertas de calidad
+├── reference/core/architecture/  # Topologías, blueprints, ADRs y docs del agent-runtime
+├── reference/core/sdlc/    # Fases SDLC, compuertas, estándares y glosario
+├── product/products/      # Smart CLI, Core API, MCP, Tracker, UMS
+└── product/operations/    # SRE, infra, compuertas de calidad
 ```
 
 Punto de entrada para cada área: [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md)
@@ -185,7 +185,7 @@ smart-cli adr list
 smart-cli mcp serve
 ```
 
-Smart CLI incluye **20 comandos** y se configura mediante **`evolith.yaml`**. Referencia completa: [Hub de Smart CLI](./reference/products/smart-cli/README.es.md)
+Smart CLI incluye **20 comandos** y se configura mediante **`evolith.yaml`**. Referencia completa: [Hub de Smart CLI](./product/products/smart-cli/README.es.md)
 
 ---
 
@@ -194,18 +194,18 @@ Smart CLI incluye **20 comandos** y se configura mediante **`evolith.yaml`**. Re
 | Área | Enlace |
 |---|---|
 | Constitución Core | [Hub de Evolith Core](./reference/core/README.es.md) |
-| Arquitectura Maestra | [Arquitectura Maestra C4](./reference/architecture/C4-MASTER-ARCHITECTURE.es.md) |
-| Gobernanza SDLC | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) |
-| Topologías | [Hub de Topologías](./reference/architecture/topologies/README.es.md) |
-| Smart CLI | [Hub de Smart CLI](./reference/products/smart-cli/README.es.md) |
-| Core API | [Hub de Core API](./reference/products/core-api/README.es.md) |
-| MCP Services | [Hub de MCP Services](./reference/products/mcp-services/README.es.md) |
-| Agent Runtime | [Hub de Agent Runtime](./reference/architecture/agent-runtime/README.es.md) |
-| Evolith Tracker | [Hub de Tracker](./reference/products/evolith-tracker/README.es.md) |
-| Operaciones y SRE | [Hub de Operaciones](./reference/operations/README.es.md) |
+| Arquitectura Maestra | [Arquitectura Maestra C4](./reference/core/architecture/C4-MASTER-ARCHITECTURE.es.md) |
+| Gobernanza SDLC | [Centro de Gobernanza SDLC](./reference/core/sdlc/README.es.md) |
+| Topologías | [Hub de Topologías](./reference/core/architecture/topologies/README.es.md) |
+| Smart CLI | [Hub de Smart CLI](./product/products/smart-cli/README.es.md) |
+| Core API | [Hub de Core API](./product/products/core-api/README.es.md) |
+| MCP Services | [Hub de MCP Services](./product/products/mcp-services/README.es.md) |
+| Agent Runtime | [Hub de Agent Runtime](./reference/core/architecture/foundations/README.es.md) |
+| Evolith Tracker | [Hub de Tracker](./product/products/evolith-tracker/README.es.md) |
+| Operaciones y SRE | [Hub de Operaciones](./product/operations/README.es.md) |
 | Onboarding por rol | [Inicio por Rol](./reference/getting-started/README.es.md) |
-| Glosario del ecosistema | [Glosario](./reference/governance/glossary-ecosystem.es.md) |
-| Seguimiento de gaps | [Tablero de Gaps](./reference/governance/standards/vision/gap-tracking.md) |
+| Glosario del ecosistema | [Glosario](./reference/core/sdlc/glossary/glossary-ecosystem.es.md) |
+| Seguimiento de gaps | [Tablero de Gaps](./reference/core/control-center/gaps/gap-tracking.md) |
 | Todos los artefactos | [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) |
 
 ---
@@ -230,8 +230,8 @@ Empieza con un monolito modular. Migra a módulos distribuidos o microservicios 
 
 Consulta el tablero de seguimiento de gaps para prioridades actuales y elementos abiertos:
 
-- [Tablero de Gaps](./reference/governance/standards/vision/gap-tracking.md)
-- [Hub de Madurez y Gaps](./reference/governance/standards/vision/README.md)
+- [Tablero de Gaps](./reference/core/control-center/gaps/gap-tracking.md)
+- [Hub de Madurez y Gaps](./reference/core/control-center/README.md)
 
 ---
 
@@ -242,7 +242,7 @@ Lee esto antes de abrir un PR:
 - [Guía de Contribución](./CONTRIBUTING.es.md)
 - [Política de Seguridad](./SECURITY.md)
 - [AGENTS.es.md](./AGENTS.es.md) — convenciones para contribuidores agentes de IA
-- [Taxonomía del Repositorio](./reference/governance/standards/repository-taxonomy.md) — qué va dónde
+- [Taxonomía del Repositorio](./reference/core/sdlc/standards/repository-taxonomy.md) — qué va dónde
 
 ---
 

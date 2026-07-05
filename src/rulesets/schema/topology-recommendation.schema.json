@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/schema/topology-recommendation.schema.json",
+  "title": "Topology Recommendation Rules",
+  "description": "ADR-0104 / GT-430. Declarative rules that map technical signals to recommended topologies. ADVISORY: Core recommends (in Discovery), the tenant confirms (in Design). `progressive` rules pick one base axis topology (highest matching priority; modular-monolith is the safe default); `dimensions` rules each add a composable topology when their signals match.",
+  "type": "object",
+  "required": ["id", "version", "progressive", "dimensions"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string" },
+    "version": { "type": "string" },
+    "progressive": { "type": "array", "items": { "$ref": "#/definitions/rule" } },
+    "dimensions": { "type": "array", "items": { "$ref": "#/definitions/rule" } }
+  },
+  "definitions": {
+    "rule": {
+      "type": "object",
+      "required": ["id", "recommend", "rationale"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "when": {
+          "type": "object",
+          "description": "Signal conditions. Boolean keys must equal the signal value; `teamCountMin` requires signals.teamCount >= its value. An empty/absent `when` always matches (default rule).",
+          "additionalProperties": { "type": ["boolean", "integer"] }
+        },
+        "recommend": {
+          "type": "string",
+          "enum": ["modular-monolith", "distributed-modules", "microservices", "serverless", "edge-computing", "event-driven", "data-mesh", "agentic-ai"]
+        },
+        "rationale": { "type": "string" },
+        "priority": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

@@ -25,8 +25,8 @@ import { parityReport, scopeTopologies, contentVersion } from './parity-gate.mjs
 const ROOT = process.cwd();
 // GT-329: canonical topology roots — progressive-axis stays in reference/; advanced topologies in rulesets/
 const TOPO_ROOTS = [
-  'reference/architecture/topologies',
-  'rulesets/topologies',
+  'reference/core/architecture/topologies',
+  'src/rulesets/topologies',
 ];
 // Full/scheduled run evaluates all accepted topologies; otherwise scope to changed.
 const FULL_RUN = process.env.EVOLITH_PARITY_FULL === 'true';

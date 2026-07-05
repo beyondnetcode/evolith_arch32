@@ -1,0 +1,99 @@
+{
+  "$schema": "../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/acl/anti-corruption-layer.rules.json",
+  "title": "Anti-Corruption Layer (ACL) Rules",
+  "description": "Rules governing integration with external systems (Jira, Trello, Linear, GitHub, Confluence). ACLs normalize and validate external data against Core artifacts, preventing external chaos from contaminating Evolith governance.",
+  "version": "1.0.0",
+  "effectiveDate": "2026-06-06",
+  "scope": "all",
+  "category": "anti-corruption",
+  "principles": [
+    {
+      "id": "ACL-01",
+      "principle": "Schema Validation Before Ingestion",
+      "statement": "All external data ingested into a satellite product MUST be validated against Evolith Core schemas before entering the governance model. Unvalidated data MUST be rejected.",
+      "rationale": "Without schema validation, external systems can introduce non-compliant entities that violate Core definitions. ACL acts as the gatekeeper.",
+      "severity": "MUST",
+      "validationQuery": "ACL implementation validates incoming payloads against Core JSON schemas (evolith-yaml.schema.json, artifact schemas). Invalid payloads return error and are logged.",
+      "blocking": true,
+      "references": [
+        "reference/core/control-center/evolith-product-vision-master.md#32-anticorruption-layers-acls"
+      ]
+    },
+    {
+      "id": "ACL-02",
+      "principle": "Transformation Traceability",
+      "statement": "Every transformation applied to external data MUST preserve traceability to the original external source entity. Audit trail MUST be maintained.",
+      "rationale": "When data is normalized, the original source must remain traceable for debugging, compliance, and impact analysis. Transformations without traceability create invisible data mutations.",
+      "severity": "MUST",
+      "validationQuery": "ACL transformation logs record: externalSourceId, externalSystem, transformationType, transformedToEntityId, timestamp. Logs retained per data retention policy.",
+      "blocking": true,
+      "references": [
+        "reference/core/control-center/evolith-product-vision-master.md#32-anticorruption-layers-acls"
+      ]
+    },
+    {
+      "id": "ACL-03",
+      "principle": "Reject Non-Compliant Data",
+      "statement": "Non-compliant data MUST be rejected, not normalized or silently adapted. ACL implementations MUST NOT perform silent data transformation to make external data fit Core schemas.",
+      "rationale": "Silent normalization hides governance gaps and creates technical debt. Rejection forces upstream systems to fix data quality at the source.",
+      "severity": "MUST",
+      "validationQuery": "ACL rejects non-compliant payloads with explicit error message identifying: field, expected format, actual value, external system origin. Rejection events are counted in governance metrics.",
+      "blocking": true,
+      "references": [
+        "reference/core/control-center/evolith-product-vision-master.md#32-anticorruption-layers-acls"
+      ]
+    },
+    {
+      "id": "ACL-04",
+      "principle": "ACL Version Synchronization with Core",
+      "statement": "ACL implementations MUST be versioned alongside Evolith Core evolution. When Core schemas change, all ACL implementations MUST update before or at the same release.",
+      "rationale": "Version drift between ACL and Core creates incompatibility where external data appears valid but fails governance rules. ACL and Core must evolve in lock-step.",
+      "severity": "MUST",
+      "validationQuery": "ACL implementation declares coreCompatibilityVersion in its metadata. Validator checks ACL version is compatible with Core pinned version in evolith.yaml.",
+      "blocking": true,
+      "references": [
+        "reference/core/control-center/evolith-product-vision-master.md#32-anticorruption-layers-acls"
+      ]
+    },
+    {
+      "id": "ACL-05",
+      "principle": "Explicit Contract Required",
+      "statement": "Integration with external systems MUST use explicit contracts (API specs, webhook payloads, export schemas) documented and reviewed against Core definitions before implementation.",
+      "rationale": "Ad-hoc integrations without contracts create implicit dependencies that break silently when external systems change.",
+      "severity": "SHOULD",
+      "validationQuery": "ACL integration documentation includes: externalSystem, contractVersion, mappedCoreEntities, transformationMatrix. Contract reviewed by Architecture Board if touching multiple bounded contexts.",
+      "blocking": false,
+      "references": [
+        "reference/core/control-center/evolith-product-vision-master.md#32-anticorruption-layers-acls"
+      ]
+    },
+    {
+      "id": "ACL-06",
+      "principle": "Isolate External Dependencies",
+      "statement": "ACL implementations MUST be isolated from domain logic. ACL code lives in Infrastructure/Adapters layer, never in Domain entities or application services.",
+      "rationale": "Domain purity requires zero external system references. ACL is the translation layer that keeps the Domain clean.",
+      "severity": "MUST",
+      "validationQuery": "Code analysis shows no imports from Jira, Trello, Linear, or similar external SDKs in Domain layer. ACL implementations are in /adapters or /infrastructure folders only.",
+      "blocking": true,
+      "references": [
+        "rulesets/adr/adr-0002-hexagonal-architecture.rules.json",
+        "reference/core/architecture/adrs/core/0002-hexagonal-architecture.md"
+      ]
+    }
+  ],
+  "governance": {
+    "complianceVerification": "ACL rules verified by impact-analysis-synchronizer.mjs during pre-commit when ACL directory or external integration files change.",
+    "exceptionProcess": "Architecture Board exception required for any ACL that performs silent normalization (violates ACL-03). Exception documents business justification and data quality remediation plan.",
+    "metrics": [
+      "acl.rejected.count — rejected payload count per external system",
+      "acl.transformed.count — successful transformations per entity type",
+      "acl.version.drift — Core vs ACL version delta",
+      "acl.integration.count — number of active external integrations"
+    ]
+  },
+  "bilingual": {
+    "en": "Anti-Corruption Layer (ACL) Rules",
+    "es": "Reglas de Capa Anti-Corrupción (ACL)"
+  }
+}

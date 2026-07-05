@@ -1,0 +1,44 @@
+{
+  "name": "@beyondnet/evolith-infra-providers",
+  "version": "1.0.0",
+  "description": "Shared infrastructure providers for Evolith Core",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:cov": "jest --coverage"
+  },
+  "dependencies": {
+    "@beyondnet/evolith-core-domain": "^1.0.0",
+    "@nestjs/common": "11.1.27",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "fs-extra": "10.1.0",
+    "yaml": "1.10.3"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "11.0.4",
+    "@types/jest": "30.0.0",
+    "@types/node": "26.0.0",
+    "jest": "30.4.2",
+    "ts-jest": "29.4.11",
+    "typescript": "6.0.3"
+  },
+  "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beyondnetcode/evolith_arch32.git",
+    "directory": "src/packages/infra-providers"
+  }
+}

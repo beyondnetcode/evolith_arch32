@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/schema/blueprint.schema.json",
+  "title": "Evolith Blueprint Schema",
+  "description": "Defines a reusable project blueprint — a parametrizable template that combines a topology, SDLC phase profile, and default ruleset configuration.",
+  "type": "object",
+  "required": ["blueprintId", "name", "topology", "phase", "version"],
+  "properties": {
+    "blueprintId": { "type": "string", "description": "Unique blueprint ID, e.g. nestjs-hexagonal-f2" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "version": { "type": "string" },
+    "topology": {
+      "type": "string",
+      "enum": ["modular-monolith", "distributed-modules", "microservices", "serverless", "edge-computing", "event-driven", "data-mesh", "agentic-ai"]
+    },
+    "phase": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "runtime": { "type": "string", "examples": ["nodejs", "dotnet", "java", "python"] },
+    "architecture": { "type": "string", "examples": ["hexagonal", "clean", "layered", "cqrs"] },
+    "rulesets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Ruleset $ids that apply to projects using this blueprint"
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Parametrizable variables for this blueprint (e.g. database, api-protocol)",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type", "description"],
+        "properties": {
+          "type": { "type": "string" },
+          "description": { "type": "string" },
+          "default": {},
+          "enum": { "type": "array" }
+        }
+      }
+    },
+    "adrs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "ADR IDs that this blueprint mandates"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "proposed", "accepted", "deprecated"]
+    },
+    "topologies": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/topologyId" },
+      "description": "Confirmed topology composition (mixed topologies, ADR-0104). When present it supersedes the single `topology` for design-profile derivation."
+    },
+    "concerns": {
+      "type": "array",
+      "description": "Multi-concern composition (ADR-0104 §3): the blueprint is the box of blocks; each concern (frontend/backend/services/mobile/data/…) composes its own blocks. `concern` is open under Convention over Configuration.",
+      "items": {
+        "type": "object",
+        "required": ["concern"],
+        "additionalProperties": false,
+        "properties": {
+          "concern": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "topologies": { "type": "array", "items": { "$ref": "#/definitions/topologyId" } },
+          "runtime": { "type": "string" },
+          "architecture": { "type": "string" },
+          "blocks": { "$ref": "#/definitions/blockList" }
+        }
+      }
+    },
+    "blocks": {
+      "$ref": "#/definitions/blockList",
+      "description": "Blueprint-level blocks not scoped to one concern (e.g. universal blocks: adr-registry, topology-compliance-matrix, technical-maturity-evaluation)."
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "topologyId": {
+      "type": "string",
+      "enum": ["modular-monolith", "distributed-modules", "microservices", "serverless", "edge-computing", "event-driven", "data-mesh", "agentic-ai"]
+    },
+    "blockList": {
+      "type": "array",
+      "description": "Composed design-block references. Each blockKind comes from the block-type registry; new kinds are added by convention (CoC).",
+      "items": {
+        "type": "object",
+        "required": ["blockKind"],
+        "additionalProperties": false,
+        "properties": {
+          "blockKind": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "description": "Design-block kind from design-block-registry.json. Open under Convention over Configuration." },
+          "title": { "type": "string" },
+          "scope": { "type": "string", "enum": ["core", "tenant"], "description": "core = canonical corpus; tenant = tenant private collection (ADR-0104 §11)." },
+          "status": { "type": "string", "enum": ["draft", "proposed", "accepted", "deprecated"] },
+          "ref": { "type": "string", "description": "Reference to the block artifact instance (Core evaluates; Tracker persists)." }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,283 @@
+{
+  "$schema": "../schema/ruleset-sdlc.schema.json",
+  "$id": "https://evolith.dev/rulesets/sdlc/phase-gates.rules.json",
+  "title": "SDLC Phase Gate Rules",
+  "description": "Canonical phase exit gate criteria for the Evolith 5-phase SDLC. Each gate requires objective evidence; manual confidence cannot override a failed gate.",
+  "version": "1.0.0",
+  "effectiveDate": "2026-01-01",
+  "gates": [
+    {
+      "phase": 1,
+      "name": "Business Sign-Off",
+      "description": "Scope frozen; funding authorized; architectural constraints aligned.",
+      "playbookRef": "../../reference/core/sdlc/sdlc/01-playbooks/phase-1-business-signoff.md",
+      "mandatoryEvidence": [
+        {
+          "artifact": "PRD",
+          "schemaRef": "../schema/prd.schema.json",
+          "status": "Approved",
+          "validation": "PRD status = Approved AND approvalEvidence present AND date filled"
+        },
+        {
+          "artifact": "Discovery Canvas",
+          "validation": "Initiative registered with customer pain points and expected value"
+        },
+        {
+          "artifact": "Technical Feasibility Canvas",
+          "schemaRef": "../schema/technical-feasibility.schema.json",
+          "validation": "Technical feasibility and quality attributes documented with NFRs"
+        },
+        {
+          "artifact": "Ballpark Estimation",
+          "validation": "T-Shirt sizing completed with team composition"
+        },
+        {
+          "artifact": "MoSCoW Prioritization Matrix",
+          "validation": "MoSCoW analysis completed for Phase 0 with at least one MUST item and valid priority distribution"
+        },
+        {
+          "artifact": "Build-versus-Compose Analysis",
+          "schemaRef": "../schema/build-vs-compose.schema.json",
+          "validation": "Discovery evaluated open-source/free-tier/commercial alternatives with a governed Adopt/Embed/Integrate/Extend/Build/Reject disposition, three-year cost, licensing, tenant isolation, provider replaceability, and PoC requirements; native development requires explicit justification (Product Vision §5.3)"
+        }
+      ],
+      "blockingCriteria": [
+        {
+          "criterion": "Scope is ambiguous",
+          "action": "BLOCK — return to Phase 1"
+        },
+        {
+          "criterion": "Technical constraints or cloud quotas are unaligned",
+          "action": "BLOCK — return to Phase 1"
+        },
+        {
+          "criterion": "Architecture constraints are ignored",
+          "action": "BLOCK — return to Phase 1"
+        }
+      ],
+      "accountableRole": "Product Owner",
+      "waiverAuthority": "Executive Sponsor",
+      "waiverRequiredFields": [
+        "criterion",
+        "justification",
+        "risk",
+        "owner",
+        "expirationDate",
+        "mitigationPlan"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Design Baseline Approved",
+      "description": "Architecture decisions are documented; bounded contexts defined.",
+      "playbookRef": "../../reference/core/sdlc/sdlc/01-playbooks/phase-2-design-baseline.md",
+      "mandatoryEvidence": [
+        {
+          "artifact": "ADR Registry",
+          "validation": "All architecture decisions have corresponding ADR. No undocumented decisions."
+        },
+        {
+          "artifact": "Reference Blueprint Alignment",
+          "validation": "Product architecture diagrams traceable to Evolith Reference Blueprint"
+        },
+        {
+          "artifact": "Simplicity Checklist Phase 1",
+          "validation": "Passed — no over-engineering detected"
+        },
+        {
+          "artifact": "Bounded Context Map",
+          "validation": "All contexts identified with ownership and persistence strategy"
+        }
+      ],
+      "blockingCriteria": [
+        {
+          "criterion": "Significant architecture decisions are undocumented",
+          "action": "BLOCK — require ADR before design baseline"
+        },
+        {
+          "criterion": "Bounded context boundaries are contradictory",
+          "action": "BLOCK — require context map resolution"
+        }
+      ],
+      "accountableRole": "Software Architect",
+      "waiverAuthority": "Architecture Board",
+      "waiverRequiredFields": [
+        "criterion",
+        "justification",
+        "risk",
+        "owner",
+        "expirationDate",
+        "mitigationPlan"
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Successful Build",
+      "description": "All code merged to main; CI passes; quality gates green; definition of done satisfied.",
+      "mandatoryEvidence": [
+        {
+          "artifact": "CI Pipeline",
+          "validation": "CI run green on main branch. No failing tests, no lint errors, no security scan failures"
+        },
+        {
+          "artifact": "Definition of Done Checklist",
+          "validation": "All Definition of Done items checked."
+        },
+        {
+          "artifact": "Documentation Delta",
+          "validation": "Updated ADRs, inline documentation, README changes included in merge"
+        },
+        {
+          "artifact": "Coverage Report",
+          "validation": "Business logic coverage >= 80% per Quality Thresholds rules"
+        }
+      ],
+      "blockingCriteria": [
+        {
+          "criterion": "CI fails on main branch",
+          "action": "BLOCK merge — fix CI before merge"
+        },
+        {
+          "criterion": "Coverage below threshold (< 80%)",
+          "action": "BLOCK merge — add tests or request waiver"
+        },
+        {
+          "criterion": "High or Critical CVEs detected",
+          "action": "BLOCK merge — remediate CVEs or request security waiver"
+        },
+        {
+          "criterion": "Missing code review approval",
+          "action": "BLOCK merge — require review"
+        }
+      ],
+      "accountableRole": "Tech Lead",
+      "waiverAuthority": "Architecture Board (with exception for CVEs requires Executive Risk Acceptance)",
+      "waiverRequiredFields": [
+        "criterion",
+        "justification",
+        "risk",
+        "owner",
+        "expirationDate",
+        "mitigationPlan",
+        "approvalAuthority"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "RC Stamped",
+      "description": "All quality thresholds verified; security scans clean; UAT passed; release candidate formally approved.",
+      "playbookRef": "../../reference/core/sdlc/sdlc/01-playbooks/phase-4-rc-stamp.md",
+      "mandatoryEvidence": [
+        {
+          "artifact": "Test Summary Report",
+          "schemaRef": "../schema/test-summary-report.schema.json",
+          "templateRef": "../../reference/core/sdlc/sdlc/04-artifact-templates/test-summary-report-template.md",
+          "validation": "All quality gates green or explicitly waived. RC stamped by QA Lead and Tech Lead."
+        },
+        {
+          "artifact": "Acceptance Validation",
+          "validation": "Product Owner signs off on acceptance criteria verification"
+        },
+        {
+          "artifact": "Security Scan Report",
+          "schemaRef": "../schema/security-scan-report.schema.json",
+          "templateRef": "../../reference/core/sdlc/sdlc/04-artifact-templates/security-scan-report-template.md",
+          "validation": "Zero High/Critical CVEs in production-bound artifacts; structure conforms to security-scan-report.schema.json"
+        },
+        {
+          "artifact": "Integration Evidence",
+          "schemaRef": "../schema/integration-evidence.schema.json",
+          "templateRef": "../../reference/core/sdlc/sdlc/04-artifact-templates/integration-evidence-template.md",
+          "validation": "Every declared inter-component contract exercised; no FAIL entries without waiver; structure conforms to integration-evidence.schema.json"
+        },
+        {
+          "artifact": "Pyramid Distribution",
+          "validation": "70% unit / 20% integration / 10% E2E target met or deviation explained"
+        }
+      ],
+      "blockingCriteria": [
+        {
+          "criterion": "Any mandatory quality metric fails",
+          "action": "BLOCK RC stamp — remediate or waiver"
+        },
+        {
+          "criterion": "Acceptance criteria remain unverified",
+          "action": "BLOCK RC stamp — return to validation"
+        },
+        {
+          "criterion": "Technical debt ratio exceeds 5%",
+          "action": "BLOCK RC stamp — remediation plan required"
+        }
+      ],
+      "accountableRole": "QA Lead",
+      "waiverAuthority": "Architecture Board",
+      "waiverRequiredFields": [
+        "criterion",
+        "justification",
+        "risk",
+        "owner",
+        "expirationDate",
+        "mitigationPlan"
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Production Live",
+      "description": "Deployment executed; observability verified nominal; monitoring active; rollback procedure confirmed.",
+      "playbookRef": "../../reference/core/sdlc/sdlc/01-playbooks/zero-downtime-release.md",
+      "mandatoryEvidence": [
+        {
+          "artifact": "Release Notes",
+          "schemaRef": "../schema/release-notes.schema.json",
+          "validation": "Release scope, deployment steps, rollback procedure, observability checklist all present and complete"
+        },
+        {
+          "artifact": "Observability Validation",
+          "schemaRef": "../schema/observability-validation.schema.json",
+          "templateRef": "../../reference/core/sdlc/sdlc/04-artifact-templates/observability-validation-template.md",
+          "validation": "Metrics nominal, logs flowing, traces complete for all production paths; structure conforms to observability-validation.schema.json"
+        },
+        {
+          "artifact": "Rollback Procedure",
+          "schemaRef": "../schema/rollback-rehearsal.schema.json",
+          "templateRef": "../../reference/core/sdlc/sdlc/04-artifact-templates/rollback-rehearsal-template.md",
+          "validation": "Rollback steps documented and tested. Last good version identified. Rehearsal evidence confirms rollback within budget."
+        },
+        {
+          "artifact": "On-Call Handoff",
+          "schemaRef": "../schema/on-call-handoff.schema.json",
+          "templateRef": "../../reference/core/sdlc/sdlc/04-artifact-templates/on-call-handoff-template.md",
+          "validation": "On-call team briefed with runbook references, escalation paths, alert ownership, and SLA acknowledgement confirmed."
+        },
+        {
+          "artifact": "Deployment Evidence",
+          "validation": "Deployment artifacts (images, configs) traceable to RC"
+        }
+      ],
+      "blockingCriteria": [
+        {
+          "criterion": "Monitoring is not nominal",
+          "action": "BLOCK Production Live — investigate before deploy"
+        },
+        {
+          "criterion": "Rollback procedure is undefined",
+          "action": "BLOCK Production Live — document rollback first"
+        },
+        {
+          "criterion": "Release is not traceable to RC",
+          "action": "BLOCK Production Live — ensure RC → Release chain"
+        }
+      ],
+      "accountableRole": "DevOps Lead",
+      "waiverAuthority": "Technology Director",
+      "waiverRequiredFields": [
+        "criterion",
+        "justification",
+        "risk",
+        "owner",
+        "expirationDate",
+        "mitigationPlan"
+      ]
+    }
+  ]
+}

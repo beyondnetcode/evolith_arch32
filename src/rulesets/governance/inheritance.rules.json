@@ -1,0 +1,115 @@
+{
+  "$schema": "../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/governance/inheritance.rules.json",
+  "title": "Evolith Core Inheritance Rules",
+  "description": "Rules governing how satellite repositories inherit governance, architecture, and SDLC rules from Evolith Core. Satellites cannot modify Core rules.",
+  "version": "1.0.0",
+  "effectiveDate": "2026-01-01",
+  "principles": [
+    {
+      "id": "INH-01",
+      "principle": "Core Immutability",
+      "statement": "Evolith Core rulesets are immutable once published. Satellites inherit rules; they do not fork, modify, or override Core rules.",
+      "rationale": "If satellites could modify Core rules, the corporate governance baseline would fragment. Federated governance requires a single source of truth.",
+      "enforcement": "Evolith CLI validates satellite rulesets against Core version. Satellites cannot publish their own rulesets/ directory."
+    },
+    {
+      "id": "INH-02",
+      "principle": "Version Pinning",
+      "statement": "Satellites MUST pin to a specific Core version (coreRef.version) in their evolith.yaml. Unpinned or 'latest' references are prohibited.",
+      "rationale": "Version pinning ensures reproducible governance. 'Latest' creates drift where different satellites run different rule versions.",
+      "enforcement": "evolith-yaml.schema.json requires semver version in coreRef.version. CLI warns on missing pin."
+    },
+    {
+      "id": "INH-03",
+      "principle": "Upgrade Only, Never Downgrade",
+      "statement": "Satellite governance version can only increase. Downgrading to an older version requires Architecture Board exception.",
+      "rationale": "Governance downgrade creates compliance gaps. Exception process ensures downgrade is deliberate and documented.",
+      "enforcement": "CLI tracks governance version history. Downgrade triggers warning and requires --force flag with justification."
+    },
+    {
+      "id": "INH-04",
+      "principle": "Satellite Extension via Local ADRs",
+      "statement": "Satellites can define local ADRs for decisions not yet promoted to Core. These are tracked in evolith.yaml compliance.adrRegistry.",
+      "rationale": "Not every decision needs to be corporate. Satellites have local autonomy for product-specific choices, tracked separately from Core ADRs.",
+      "enforcement": "Local ADRs must haveEvolithSatellite tag in frontmatter. They are not subject to Core immutability rules."
+    },
+    {
+      "id": "INH-05",
+      "principle": "Promotion via Architecture Board",
+      "statement": "Local ADR promotion to Core requires Architecture Board review. Evidence from satellite implementation is required.",
+      "rationale": "Core ADRs must be validated across multiple contexts before being elevated. Single-satellite evidence is insufficient.",
+      "enforcement": "Promotion request includes: original satellite ADR, evidence of adoption, list of other satellites that could benefit."
+    },
+    {
+      "id": "INH-06",
+      "principle": "Mandatory Architecture Tracker",
+      "statement": "Satellite repositories MUST contain a DECISIONS.md file in their root directory to explicitly declare their architecture inheritance contract.",
+      "rationale": "Without DECISIONS.md, architectural divergences and adoption of Core rules remain invisible, creating hidden technical debt.",
+      "enforcement": "CLI validates the presence of DECISIONS.md in the root directory of all satellites."
+    }
+  ],
+  "inheritanceChain": {
+    "description": "Satellites inherit from Core only. Multi-level inheritance (satellite → satellite) is prohibited unless explicitly approved by Architecture Board.",
+    "levels": [
+      {
+        "level": 0,
+        "name": "Evolith Core",
+        "type": "Authority",
+        "description": "Source of truth for all governance, architecture, and SDLC rules. Only place where rulesets/ and schema/ are authoritative."
+      },
+      {
+        "level": 1,
+        "name": "Satellite Repository",
+        "type": "Inheritor",
+        "description": "Inherits Core rules via evolith.yaml. Cannot modify Core. Can define local ADRs and extend within allowed boundaries."
+      }
+    ],
+    "prohibited": [
+      "Satellite → Satellite inheritance (without Architecture Board exception)",
+      "Satellite modifying Core rulesets/ or schema/",
+      "Satellite creating parallel rulesets/ directory",
+      "Core referencing satellite rules as authoritative"
+    ]
+  },
+  "upgradeProcess": {
+    "steps": [
+      {
+        "step": 1,
+        "action": "Evolith CLI notifies satellite of new Core version",
+        "owner": "CLI automation"
+      },
+      {
+        "step": 2,
+        "action": "Satellite owner reviews changelog between current and new version",
+        "owner": "Satellite Architect"
+      },
+      {
+        "step": 3,
+        "action": "Update evolith.yaml coreRef.version to new version",
+        "owner": "Satellite Architect"
+      },
+      {
+        "step": 4,
+        "action": "Run CI validation against new ruleset version",
+        "owner": "CI pipeline"
+      },
+      {
+        "step": 5,
+        "action": "Fix any rule violations introduced by upgrade",
+        "owner": "Satellite team"
+      },
+      {
+        "step": 6,
+        "action": "Architecture Board reviews if breaking changes affected bounded contexts",
+        "owner": "Architecture Board"
+      }
+    ],
+    "breakGlass": "Emergency Core patches (security, legal) can be fast-tracked with Technology Director approval and immediate satellite notification."
+  },
+  "reference": {
+    "evolithYamlSchema": "../schema/evolith-yaml.schema.json",
+    "childRepoGuide": "reference/core/sdlc/standards/onboarding/child-repository-inheritance-guide.md",
+    "repositoryTaxonomy": "reference/core/control-center/taxonomy/repository-taxonomy.md"
+  }
+}

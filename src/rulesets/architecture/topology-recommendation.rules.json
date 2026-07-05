@@ -1,0 +1,60 @@
+{
+  "$schema": "../schema/topology-recommendation.schema.json",
+  "id": "topology-recommendation",
+  "version": "1.0.0",
+  "progressive": [
+    {
+      "id": "REC-MODULAR-MONOLITH",
+      "when": {},
+      "recommend": "modular-monolith",
+      "rationale": "Default starting point: the simplest architecture that works. Choose a heavier axis only when a concrete driver demands it (progressive architecture, ADR-0047).",
+      "priority": 1
+    },
+    {
+      "id": "REC-DISTRIBUTED-MODULES",
+      "when": { "deploymentIndependence": true },
+      "recommend": "distributed-modules",
+      "rationale": "Modules need independent CI/CD lifecycles and explicit versioned contracts (DM rules), without the operational cost of full microservices.",
+      "priority": 2
+    },
+    {
+      "id": "REC-MICROSERVICES",
+      "when": { "deploymentIndependence": true, "highScale": true, "teamCountMin": 3 },
+      "recommend": "microservices",
+      "rationale": "Multiple autonomous teams plus high, independent scaling justify independently deployable services (each mapped to one bounded context, ADR-0076). Confirm extraction readiness (ADR-0045).",
+      "priority": 3
+    }
+  ],
+  "dimensions": [
+    {
+      "id": "REC-EVENT-DRIVEN",
+      "when": { "asyncIntegration": true },
+      "recommend": "event-driven",
+      "rationale": "Asynchronous, decoupled integration across modules/services with versioned event contracts."
+    },
+    {
+      "id": "REC-DATA-MESH",
+      "when": { "dataProductSharing": true },
+      "recommend": "data-mesh",
+      "rationale": "Cross-domain data products with clear ownership and contracts (not F1)."
+    },
+    {
+      "id": "REC-SERVERLESS",
+      "when": { "spikyLoad": true, "latencyTolerant": true },
+      "recommend": "serverless",
+      "rationale": "Bursty, latency-tolerant workloads fit function-per-execution economics within cold-start/cost budgets."
+    },
+    {
+      "id": "REC-EDGE-COMPUTING",
+      "when": { "edgeOrOffline": true },
+      "recommend": "edge-computing",
+      "rationale": "Low-latency or offline-first requirements place execution at the edge with sync strategy."
+    },
+    {
+      "id": "REC-AGENTIC-AI",
+      "when": { "aiAgents": true },
+      "recommend": "agentic-ai",
+      "rationale": "Governed autonomous agents require token/credential/sandbox budgets and MCP conformance."
+    }
+  ]
+}

@@ -41,8 +41,8 @@ Define the operational loop that lets Evolith agents improve the harness without
 | [Global Rules](../rules/global-rules.md) | Binding validation and governance rules. |
 | [Agent Personas](../agents/agent-specs.md) | Role contracts and handoff expectations. |
 | [Progress Audit Schema](../schemas/progress-audit.schema.json) | JSONL event contract for run evidence. |
-| [Gap Tracking](../../reference/governance/standards/vision/gap-tracking.md) | Single source of truth for unresolved work. |
-| [Gap Closure Evidence](../../reference/governance/standards/vision/gap-closure-evidence.json) | Machine-readable closure registry. |
+| [Gap Tracking](../../reference/core/control-center/gaps/gap-tracking.md) | Single source of truth for unresolved work. |
+| [Gap Closure Evidence](../../reference/core/control-center/evidence/gap-closure-evidence.json) | Machine-readable closure registry. |
 | [Harness Manifest](../manifest.yaml) | Runtime-discoverable capability contract. |
 
 ## Progress Audit Record

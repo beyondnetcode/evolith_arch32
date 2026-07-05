@@ -12,8 +12,8 @@ Evolith Core es una **referencia corporativa de arquitectura progresiva**, no un
 
 | Área | Ruta | Descripción |
 |------|------|-------------|
-| Referencia Arquitectónica | `reference/architecture/` | Topologías, ADRs, patrones |
-| Estándares de Gobernanza | `reference/governance/standards/` | Seguimiento de gaps, madurez de topologías, reglas |
+| Referencia Arquitectónica | `reference/core/architecture/` | Topologías, ADRs, patrones |
+| Estándares de Gobernanza | `reference/core/sdlc/standards/` | Seguimiento de gaps, madurez de topologías, reglas |
 | Harness de Validación | `.harness/scripts/` | Scripts CI, validadores, herramientas de cobertura |
 | Núcleo de Agentes | `.bmad-core/` | Definiciones de agentes BMAD, flujos, herramientas |
 
@@ -27,9 +27,9 @@ Los gaps se rastrean en tres archivos canónicos:
 
 | Archivo | Propósito |
 |---------|-----------|
-| `reference/governance/standards/vision/gap-tracking.md` | Tabla única — estado, criticidad, complejidad |
-| `reference/governance/standards/vision/gap-reference-catalog.md` | Definiciones detalladas — propósito, evidencia, criterios de cierre |
-| `reference/governance/standards/vision/gap-closure-evidence.json` | Registros de cierre legibles por máquina con SHA de commit, evidencia fechada |
+| `reference/core/control-center/gaps/gap-tracking.md` | Tabla única — estado, criticidad, complejidad |
+| `reference/core/control-center/gaps/gap-reference-catalog.md` | Definiciones detalladas — propósito, evidencia, criterios de cierre |
+| `reference/core/control-center/evidence/gap-closure-evidence.json` | Registros de cierre legibles por máquina con SHA de commit, evidencia fechada |
 
 ### Ciclo de Vida de Gap de Gobernanza
 
@@ -139,7 +139,7 @@ paso `qa-aggregate` (`agent: qa`) depende de los cinco.
 | GT-153 | Gobierno del Ciclo de Vida del Conocimiento por Winston | `COMPLETADO` |
 | GT-154 | Proyección RAG y Paridad Native/OPA para Conocimiento Externo | `COMPLETADO` |
 
-Los tres gaps P0 de conocimiento están cerrados. Consulte el [Tablero de Seguimiento de Gaps](../reference/governance/standards/vision/gap-tracking.es.md) para el estado actual de todos los gaps GT-*.
+Los tres gaps P0 de conocimiento están cerrados. Consulte el [Tablero de Seguimiento de Gaps](../reference/core/control-center/gaps/gap-tracking.es.md) para el estado actual de todos los gaps GT-*.
 
 ---
 
@@ -320,6 +320,6 @@ Archivar la propuesta en `.bmad-core/proposals/` (crear directorio si es necesar
 ---
 
 *Véase [Reglas Globales](../.harness/rules/global-rules.md) para directivas vinculantes.*
-*Véase [Tablero de Seguimiento de Gaps](../reference/governance/standards/vision/gap-tracking.es.md) para estado actual.*
-*Véase [Catálogo de Referencia de Gaps](../reference/governance/standards/vision/gap-reference-catalog.es.md) para definiciones de gaps.*
+*Véase [Tablero de Seguimiento de Gaps](../reference/core/control-center/gaps/gap-tracking.es.md) para estado actual.*
+*Véase [Catálogo de Referencia de Gaps](../reference/core/control-center/gaps/gap-reference-catalog.es.md) para definiciones de gaps.*
 *Véase [.harness/scripts/](../.harness/scripts/) para todos los scripts disponibles.*

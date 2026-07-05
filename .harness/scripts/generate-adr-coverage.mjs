@@ -30,7 +30,7 @@ const rows = adrs.map((adr) => {
     return {
       adrId: adr.adrId, track: adr.track, title: adr.title, status: adr.status,
       enforcement: 'handcrafted',
-      path: hcPaths.get(adr.key) || 'rulesets/adr/ (handcrafted)',
+      path: hcPaths.get(adr.key) || 'src/rulesets/adr/ (handcrafted)',
     };
   }
   const built = buildRuleset(adr);

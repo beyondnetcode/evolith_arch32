@@ -1,0 +1,138 @@
+{
+  "apiVersion": "evolith.dev/topology/v1",
+  "kind": "TopologyManifest",
+  "metadata": {
+    "id": "data-mesh",
+    "name": "Data Mesh",
+    "dimension": "data",
+    "status": "accepted",
+    "version": "1.0.0",
+    "governance": {
+      "owner": "Data Architecture",
+      "criticality": "P1"
+    }
+  },
+  "spec": {
+    "summary": "Distributed analytical data ownership topology for governed data products, discoverable contracts, quality evidence, and domain-aligned interoperability.",
+    "topologyType": "data-mesh",
+    "compatibility": {
+      "progressiveAxis": {
+        "maturityLevel": "cross",
+        "profile": "cross"
+      },
+      "composableWith": [
+        "distributed-modules",
+        "microservices",
+        "event-driven",
+        "serverless",
+        "agentic-ai"
+      ]
+    },
+    "artifacts": {
+      "adrs": [
+        "reference/core/architecture/adrs/core/0084-data-mesh-data-products.md",
+        "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+      ],
+      "rulesets": [
+        "reference/core/architecture/topologies/data/data-mesh/data-mesh.rules.json"
+      ],
+      "opaPolicies": [
+        "reference/core/architecture/topologies/data/data-mesh/data-mesh.rego"
+      ],
+      "aiRulesets": [
+        "reference/core/architecture/topologies/data/data-mesh/README.md"
+      ],
+      "umsContracts": [
+        "reference/knowledge/demo/ums-reference-model.md"
+      ]
+    },
+    "corpus": {
+      "guidance": {
+        "profile": "reference/core/architecture/topologies/data/data-mesh/README.md",
+        "maturityGuide": "reference/core/architecture/topologies/data/data-mesh/maturity.md"
+      },
+      "configurationContract": "reference/core/architecture/topologies/data/data-mesh/topology.config.schema.json",
+      "fixtures": {
+        "valid": "reference/core/architecture/topologies/data/data-mesh/fixtures/valid.topology.config.json",
+        "invalid": "reference/core/architecture/topologies/data/data-mesh/fixtures/invalid.topology.config.json"
+      },
+      "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+      "tests": {
+        "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
+        "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
+      },
+      "evidence": "reference/core/control-center/maturity-evidence.json"
+    },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "data-product-contract-set",
+          "criteria": "Contracts for each data product (ports, SLOs, schema)."
+        },
+        {
+          "artifactKind": "data-ownership-map",
+          "criteria": "Domain ownership and access boundaries for data products."
+        }
+      ],
+      "conditional": []
+    },
+    "phaseProfiles": {
+      "quality": {
+        "conditional": [
+          {
+            "artifactKind": "data-product-slo-validation",
+            "criteria": "Data product contracts/SLOs verified."
+          }
+        ]
+      },
+      "deployment": {
+        "conditional": [
+          {
+            "artifactKind": "data-product-publication",
+            "criteria": "Data products published with ownership handoff."
+          }
+        ]
+      }
+    },
+    "operationalInterfaces": {
+      "cli": {
+        "validators": [
+          "validate-architecture",
+          "validate-topology"
+        ]
+      },
+      "mcp": {
+        "resources": [
+          "evolith://topologies/data-mesh/manifest",
+          "evolith://topologies/data-mesh/rulesets"
+        ],
+        "tools": [
+          "evolith-topology-inspect",
+          "evolith-topology-validate"
+        ],
+        "prompts": [
+          "topology-aware-implementation"
+        ]
+      },
+      "coreApi": {
+        "endpoints": [
+          "GET /topologies/{id}",
+          "GET /topologies/{id}/manifest",
+          "POST /topologies/{id}/validate"
+        ]
+      }
+    }
+  },
+  "businessBoundary": {
+    "technicalOnly": true,
+    "trackerOwns": [
+      "timing",
+      "ownership",
+      "prioritization",
+      "roi",
+      "cost",
+      "budget",
+      "funnel-0"
+    ]
+  }
+}

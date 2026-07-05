@@ -8,8 +8,8 @@ import fs from 'fs';
 import path from 'path';
 
 const ROOT = path.resolve('.');
-const EN = path.join(ROOT, 'reference/governance/standards/vision/gap-tracking.md');
-const ES = path.join(ROOT, 'reference/governance/standards/vision/gap-tracking.es.md');
+const EN = path.join(ROOT, 'reference/core/control-center/gap-tracking.md');
+const ES = path.join(ROOT, 'reference/core/control-center/gap-tracking.es.md');
 
 const REMOVE_FROM_PENDING = ['GT-260', 'GT-228', 'GT-261', 'GT-263'];
 

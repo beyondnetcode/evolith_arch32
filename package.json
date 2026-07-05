@@ -1,6 +1,6 @@
 {
   "name": "evolith",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "private": true,
   "description": "Evolith Architecture Reference - Monorepo root",
   "license": "MIT",
@@ -10,12 +10,12 @@
     "build:clean": "tsc -b tsconfig.json --clean",
     "build:force": "tsc -b tsconfig.json --force",
     "build:policy": "node ./.harness/scripts/compile-opa-wasm.mjs",
-    "test:contract": "node node_modules/jest/bin/jest.js --config tests/contract/jest.config.js --runInBand --no-bail"
+    "test:contract": "node node_modules/jest/bin/jest.js --config src/tests/contract/jest.config.js --runInBand --no-bail"
   },
   "workspaces": [
-    "sdk/*",
-    "apps/*",
-    "packages/*"
+    "src/sdk/*",
+    "src/apps/*",
+    "src/packages/*"
   ],
   "devDependencies": {
     "@types/opossum": "8.1.9",

@@ -1,0 +1,101 @@
+{
+  "name": "@beyondnet/evolith-core-domain",
+  "version": "1.0.0",
+  "description": "Shared Domain and Application logic for Evolith Core",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./evaluation": {
+      "types": "./dist/evaluation/index.d.ts",
+      "default": "./dist/evaluation/index.js"
+    },
+    "./evaluation/contracts": {
+      "types": "./dist/evaluation/contracts/index.d.ts",
+      "default": "./dist/evaluation/contracts/index.js"
+    },
+    "./application/use-cases": {
+      "types": "./dist/application/use-cases/index.d.ts",
+      "default": "./dist/application/use-cases/index.js"
+    },
+    "./application/services": {
+      "types": "./dist/application/services/index.d.ts",
+      "default": "./dist/application/services/index.js"
+    },
+    "./application/validators": {
+      "types": "./dist/application/validators/index.d.ts",
+      "default": "./dist/application/validators/index.js"
+    },
+    "./application/validators/modes": {
+      "types": "./dist/application/validators/modes/index.d.ts",
+      "default": "./dist/application/validators/modes/index.js"
+    },
+    "./infrastructure/adapters/*": {
+      "types": "./dist/infrastructure/adapters/*.d.ts",
+      "default": "./dist/infrastructure/adapters/*.js"
+    },
+    "./domain/interfaces": {
+      "types": "./dist/domain/interfaces.d.ts",
+      "default": "./dist/domain/interfaces.js"
+    },
+    "./domain/errors": {
+      "types": "./dist/domain/errors/index.d.ts",
+      "default": "./dist/domain/errors/index.js"
+    },
+    "./domain/services": {
+      "types": "./dist/domain/services/index.d.ts",
+      "default": "./dist/domain/services/index.js"
+    },
+    "./schemas": {
+      "types": "./dist/schemas/index.d.ts",
+      "default": "./dist/schemas/index.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint:boundaries": "eslint \"src/**/*.ts\"",
+    "test": "jest --config jest.config.js --runInBand",
+    "test:cov": "jest --config jest.config.js --runInBand --coverage",
+    "test:e2e": "jest --config jest.e2e.config.js --runInBand"
+  },
+  "dependencies": {
+    "@open-policy-agent/opa-wasm": "1.10.0",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "typescript": "6.0.3",
+    "yaml": "1.10.3",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "11.0.4",
+    "@types/jest": "30.0.0",
+    "@types/node": "26.0.0",
+    "@typescript-eslint/parser": "*",
+    "eslint": "*",
+    "eslint-plugin-boundaries": "*",
+    "typescript": "6.0.3"
+  },
+  "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beyondnetcode/evolith_arch32.git",
+    "directory": "src/packages/core-domain"
+  }
+}

@@ -1,0 +1,171 @@
+import * as path from 'node:path';
+import type { IFileSystem } from '@beyondnet/evolith-core';
+import { McpTool } from '../mcp/tool.interface';
+
+interface Violation {
+  ruleId: string;
+  filePath: string;
+  message: string;
+  suggestedFix?: string;
+}
+
+interface FixStrategy {
+  actionName: string;
+  preview: (fs: IFileSystem, filePath: string, violation: Violation) => Promise<{ action: string }>;
+  apply: (fs: IFileSystem, filePath: string, violation: Violation) => Promise<void>;
+}
+
+/** `evolith-auto-fix` — apply automatic fixes to architectural violations. */
+export function createAutoFixTools(fs: IFileSystem): McpTool[] {
+  return [
+    {
+      schema: {
+        name: 'evolith-auto-fix',
+        description: 'Apply automatic fixes to architectural violations reported by Evolith Core rule evaluators',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            rulesetId: { type: 'string', description: 'Ruleset ID to fix (e.g., "domain-purity", "hexagonal-boundaries")' },
+            violations: { type: 'array', items: { type: 'object' }, description: 'Array of violation objects from validator output' },
+            dryRun: { type: 'boolean', description: 'Preview changes without applying them' },
+            dir: { type: 'string', description: 'Target directory (default: cwd)' },
+          },
+          required: ['rulesetId'],
+        },
+      },
+      mutative: true,
+      execute: async (args) => {
+        const rulesetId = args.rulesetId as string;
+        const violations = (args.violations || []) as Violation[];
+        const dryRun = (args.dryRun as boolean) ?? false;
+        const dir = (args.dir as string) || process.cwd();
+
+        const fixes: Array<{ action: string; file: string; status: string }> = [];
+        for (const violation of violations) {
+          fixes.push(await applyFix(fs, violation, dir, dryRun));
+        }
+        return {
+          rulesetId,
+          totalViolations: violations.length,
+          fixesApplied: fixes.filter((f) => f.status === 'applied').length,
+          fixesPreview: dryRun ? fixes : undefined,
+          summary: generateSummary(fixes),
+        };
+      },
+    },
+  ];
+}
+
+async function applyFix(
+  fs: IFileSystem,
+  violation: Violation,
+  dir: string,
+  dryRun: boolean,
+): Promise<{ action: string; file: string; status: string }> {
+  const fullPath = path.isAbsolute(violation.filePath) ? violation.filePath : path.join(dir, violation.filePath);
+  const fixStrategy = getFixStrategy(violation.ruleId);
+  if (!fixStrategy) {
+    return { action: 'no-auto-fix-available', file: violation.filePath, status: 'manual-review-required' };
+  }
+  try {
+    if (dryRun) {
+      const preview = await fixStrategy.preview(fs, fullPath, violation);
+      return { action: preview.action, file: violation.filePath, status: 'preview-ready' };
+    }
+    await fixStrategy.apply(fs, fullPath, violation);
+    return { action: fixStrategy.actionName, file: violation.filePath, status: 'applied' };
+  } catch (error) {
+    return {
+      action: fixStrategy.actionName,
+      file: violation.filePath,
+      status: `failed: ${error instanceof Error ? error.message : String(error)}`,
+    };
+  }
+}
+
+function getFixStrategy(ruleId: string): FixStrategy | null {
+  const strategies: Record<string, FixStrategy> = {
+    'domain-purity': {
+      actionName: 'remove-framework-imports',
+      preview: async (_fs, filePath) => ({ action: `Remove framework imports from ${filePath}, replace with interface references` }),
+      apply: async (fs, filePath) => {
+        const content = await fs.readFile(filePath);
+        const updated = content
+          .split('\n')
+          .map((line) =>
+            line.includes("from '@nestjs") || line.includes('from "@nestjs')
+              ? `// [AUTO-FIXED] ${line} - Framework import removed, use domain interface instead`
+              : line,
+          )
+          .join('\n');
+        await fs.writeFile(filePath, updated);
+      },
+    },
+    'hexagonal-boundaries': {
+      actionName: 'enforce-hexagonal-imports',
+      preview: async (_fs, filePath) => ({ action: `Enforce hexagonal import boundaries in ${filePath}` }),
+      apply: async (fs, filePath) => {
+        const content = await fs.readFile(filePath);
+        await fs.writeFile(
+          filePath,
+          content.replace(
+            /import\s+.*\s+from\s+['"]\.\.\/(core|infrastructure|application)['"]/g,
+            '// [AUTO-FIXED] Cross-layer import removed - inject via constructor instead',
+          ),
+        );
+      },
+    },
+    'missing-domain-interface': {
+      actionName: 'generate-domain-interface',
+      preview: async (_fs, filePath) => ({ action: `Generate missing domain interface stub at ${filePath}` }),
+      apply: async (fs, filePath, violation) => {
+        const interfaceName = violation.suggestedFix?.match(/interface (\w+)/)?.[1] || 'IPort';
+        await fs.writeFile(
+          filePath,
+          `/**\n * Auto-generated by evolith-auto-fix\n * @domain-layer\n * @auto-generated\n */\nexport interface ${interfaceName} {\n  // TODO: Define domain-specific methods\n}\n`,
+        );
+      },
+    },
+    'service-purity': {
+      actionName: 'remove-side-effects',
+      preview: async (_fs, filePath) => ({ action: `Remove side effects from domain service ${filePath}` }),
+      apply: async (fs, filePath) => {
+        const content = await fs.readFile(filePath);
+        await fs.writeFile(
+          filePath,
+          content.replace(/console\.(log|debug|info|warn|error)\([^)]*\)/g, '// [AUTO-FIXED] Console side-effect removed - use logger service instead'),
+        );
+      },
+    },
+    'dependency-injection': {
+      actionName: 'replace-static-with-di',
+      preview: async (_fs, filePath) => ({ action: `Replace static instantiation with dependency injection in ${filePath}` }),
+      apply: async (fs, filePath) => {
+        const content = await fs.readFile(filePath);
+        await fs.writeFile(
+          filePath,
+          content.replace(/const\s+(\w+)\s*=\s*new\s+(\w+)\s*\(\s*\)/g, '// [AUTO-FIXED] Static instantiation replaced\n// Inject $2 via constructor: constructor(private $1: $2)'),
+        );
+      },
+    },
+  };
+
+  for (const [key, strategy] of Object.entries(strategies)) {
+    if (ruleId.toLowerCase().includes(key)) return strategy;
+  }
+  return null;
+}
+
+function generateSummary(fixes: Array<{ action: string; file: string; status: string }>): string {
+  const applied = fixes.filter((f) => f.status === 'applied').length;
+  const preview = fixes.filter((f) => f.status === 'preview-ready').length;
+  const failed = fixes.filter((f) => f.status.startsWith('failed')).length;
+  const manual = fixes.filter((f) => f.status === 'manual-review-required').length;
+  return [
+    `Auto-fix Summary:`,
+    `  DONE Applied: ${applied}`,
+    `  WAIT Preview: ${preview}`,
+    `  FAIL Failed: ${failed}`,
+    `  WARN Manual Review: ${manual}`,
+  ].join('\n');
+}

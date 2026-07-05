@@ -49,7 +49,7 @@ function globFiles(pattern) {
 // ── 1. CORPUS DE REFERENCIA ──────────────────────────────────────────
 
 function auditCorpus() {
-  const topoDir = "reference/architecture/topologies";
+  const topoDir = "reference/core/architecture/topologies";
   const dims = fs.readdirSync(path.join(root, topoDir), { withFileTypes: true })
     .filter(d => d.isDirectory() && !d.name.startsWith("."))
     .map(d => d.name);
@@ -95,7 +95,7 @@ function auditCorpus() {
 // ── 2. MODELO SDLC EJECUTABLE ────────────────────────────────────────
 
 function auditSdlc() {
-  const sdlcDir = "reference/governance/sdlc";
+  const sdlcDir = "reference/core/sdlc/sdlc";
   const files = exists(sdlcDir) ? walk(sdlcDir) : [];
 
   const phaseFiles = files.filter(f => f.match(/phase-0[1-5]/i) || f.match(/fase-0[1-5]/i));
@@ -118,8 +118,8 @@ function auditSdlc() {
   }
 
   // Check for structured phase/gate data (GT-280 resolution)
-  const phaseDataDir = "reference/governance/sdlc/phases";
-  const gateDataDir = "reference/governance/sdlc/gates";
+  const phaseDataDir = "reference/core/sdlc/phases";
+  const gateDataDir = "reference/core/sdlc/gates";
   const phaseJsonFiles2 = exists(phaseDataDir) ? walk(phaseDataDir).filter(f => f.endsWith(".json")) : [];
   const gateJsonFiles = exists(gateDataDir) ? walk(gateDataDir).filter(f => f.endsWith(".json")) : [];
 
@@ -385,12 +385,12 @@ function auditGovernance() {
     && exists(".harness/scripts/ci/suites/bilingual-suite.mjs");
 
   // Business data violation check
-  const topoFiles = walk("reference/architecture/topologies");
+  const topoFiles = walk("reference/core/architecture/topologies");
   let bizDataViolations = 0;
   const bizDataPatterns = ["roi", "budget", "cost", "presupuesto"];
   for (const f of topoFiles) {
     if (!f.endsWith(".md") && !f.endsWith(".json")) continue;
-    const c = read(`reference/architecture/topologies/${f}`) || "";
+    const c = read(`reference/core/architecture/topologies/${f}`) || "";
     for (const pat of bizDataPatterns) {
       // Only flag if found OUTSIDE businessBoundary.trackerOwns section
       const lower = c.toLowerCase();

@@ -157,14 +157,14 @@ const IMPACT_DEPENDENCIES = {
 
 const IMPACT_ZONE_FILES = {
   adrs: [
-    "reference/architecture/adrs/*/README.md",
-    "reference/architecture/adrs/*/README.es.md",
-    "reference/architecture/adrs/adr-matrix.md",
-    "reference/architecture/adrs/adr-matrix.es.md",
+    "reference/core/architecture/adrs/*/README.md",
+    "reference/core/architecture/adrs/*/README.es.md",
+    "reference/core/architecture/adrs/adr-matrix.md",
+    "reference/core/architecture/adrs/adr-matrix.es.md",
   ],
   rulesets: [
-    "rulesets/**/*.md",
-    "rulesets/**/*.json",
+    "src/rulesets/**/*.md",
+    "src/rulesets/**/*.json",
   ],
   documentation: [
     "reference/**/*.md",
@@ -186,8 +186,8 @@ const IMPACT_ZONE_FILES = {
     ".harness/**/*.es.md",
   ],
   templates: [
-    "reference/governance/sdlc/04-artifact-templates/*.md",
-    "reference/governance/sdlc/04-artifact-templates/*.es.md",
+    "reference/core/sdlc/04-artifact-templates/*.md",
+    "reference/core/sdlc/04-artifact-templates/*.es.md",
   ],
   validators: [
     ".harness/scripts/validate-docs.mjs",
@@ -238,7 +238,7 @@ const SYNC_RULES = {
       if (adrMatch && ctx.adrMatrix) {
         syncs.push({
           type: "cross_ref_sync",
-          target: "reference/architecture/adrs/adr-matrix.md",
+          target: "reference/core/architecture/adrs/adr-matrix.md",
           action: "updated",
           changeSource: change.file,
           details: `ADR-${adrMatch[1]} registered in decision matrix`

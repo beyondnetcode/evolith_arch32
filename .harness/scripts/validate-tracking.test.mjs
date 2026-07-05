@@ -16,7 +16,7 @@ function fixture(overrides = {}) {
         id: 'GT-01',
         closedAt: '2026-06-10',
         closureCommit: 'ae21c92',
-        evidence: ['reference/architecture/adrs/core/0073-unified-cli-output-contract.md'],
+        evidence: ['reference/core/architecture/adrs/core/0073-unified-cli-output-contract.md'],
         validationCommands: ['node .harness/scripts/validate-docs.mjs'],
         dependencyDisposition: 'none',
       }],

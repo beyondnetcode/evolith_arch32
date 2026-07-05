@@ -1,0 +1,144 @@
+{
+  "apiVersion": "evolith.dev/topology/v1",
+  "kind": "TopologyManifest",
+  "metadata": {
+    "id": "edge-computing",
+    "name": "Edge Computing",
+    "dimension": "execution",
+    "status": "accepted",
+    "version": "1.0.0",
+    "governance": {
+      "owner": "Platform Engineering",
+      "criticality": "P1"
+    }
+  },
+  "spec": {
+    "summary": "Execution topology for workloads placed near users, devices, regions, or constrained networks while preserving Evolith domain ownership and governance contracts.",
+    "topologyType": "edge-computing",
+    "compatibility": {
+      "progressiveAxis": {
+        "maturityLevel": "cross",
+        "profile": "cross"
+      },
+      "composableWith": [
+        "microservices",
+        "distributed-modules",
+        "event-driven",
+        "serverless",
+        "agentic-ai"
+      ]
+    },
+    "artifacts": {
+      "adrs": [
+        "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md",
+        "reference/core/architecture/adrs/core/0096-edge-computing-architecture-governance.md"
+      ],
+      "rulesets": [
+        "reference/core/architecture/topologies/execution/edge-computing/edge-computing.rules.json"
+      ],
+      "opaPolicies": [
+        "reference/core/architecture/topologies/execution/edge-computing/edge-computing.rego"
+      ],
+      "aiRulesets": [
+        "reference/core/architecture/topologies/execution/edge-computing/README.md"
+      ],
+      "umsContracts": [
+        "reference/knowledge/demo/ums-reference-model.md"
+      ]
+    },
+    "corpus": {
+      "guidance": {
+        "profile": "reference/core/architecture/topologies/execution/edge-computing/README.md",
+        "maturityGuide": "reference/core/architecture/topologies/execution/edge-computing/maturity.md"
+      },
+      "configurationContract": "reference/core/architecture/topologies/execution/edge-computing/topology.config.schema.json",
+      "fixtures": {
+        "valid": "reference/core/architecture/topologies/execution/edge-computing/fixtures/valid.topology.config.json",
+        "invalid": "reference/core/architecture/topologies/execution/edge-computing/fixtures/invalid.topology.config.json"
+      },
+      "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+      "tests": {
+        "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
+        "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
+      },
+      "evidence": "reference/core/control-center/maturity-evidence.json"
+    },
+    "operationalBudgets": {
+      "latencyBudgetMs": 200,
+      "coldStartCeilingMs": 300,
+      "costCeilingPerExecutionCents": 1
+    },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "performance-plan",
+          "criteria": "Edge latency budget and offline-first behavior."
+        },
+        {
+          "artifactKind": "infrastructure-plan",
+          "criteria": "Edge placement, replication, and sync strategy."
+        }
+      ],
+      "conditional": []
+    },
+    "phaseProfiles": {
+      "quality": {
+        "conditional": [
+          {
+            "artifactKind": "performance-validation",
+            "criteria": "Edge latency/offline behavior validated."
+          }
+        ]
+      },
+      "deployment": {
+        "conditional": [
+          {
+            "artifactKind": "runtime-budget-validation",
+            "criteria": "Edge placement/sync validated in the target environment."
+          }
+        ]
+      }
+    },
+    "operationalInterfaces": {
+      "cli": {
+        "validators": [
+          "validate-architecture",
+          "validate-topology"
+        ]
+      },
+      "mcp": {
+        "resources": [
+          "evolith://topologies/edge-computing/manifest",
+          "evolith://topologies/edge-computing/rulesets"
+        ],
+        "tools": [
+          "evolith-topology-inspect",
+          "evolith-topology-validate"
+        ],
+        "prompts": [
+          "topology-aware-implementation",
+          "extraction-readiness-review"
+        ]
+      },
+      "coreApi": {
+        "endpoints": [
+          "GET /topologies/{id}",
+          "GET /topologies/{id}/manifest",
+          "POST /topologies/{id}/validate"
+        ]
+      }
+    }
+  },
+  "businessBoundary": {
+    "technicalOnly": true,
+    "trackerOwns": [
+      "timing",
+      "ownership",
+      "prioritization",
+      "roi",
+      "cost",
+      "budget",
+      "funnel-0"
+    ]
+  }
+}

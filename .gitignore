@@ -146,8 +146,8 @@ vite.config.ts.timestamp-*
 
 # OPA compiled policy bundle — build artifact of `npm run build:policy`
 # (installed to both runtime lookup paths; never commit it).
-rulesets/opa/policy.wasm
-sdk/cli/rulesets/opa/policy.wasm
+src/rulesets/opa/policy.wasm
+src/sdk/cli/rulesets/opa/policy.wasm
 
 # Evolith CI control files
 .git/EVOLITH_CI_MODE

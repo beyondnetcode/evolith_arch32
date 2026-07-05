@@ -28,17 +28,17 @@ const WORKSTREAMS = [
     id: 'WS1',
     name: 'Ruleset Coverage (Core Validation)',
     checks: [
-      { name: 'f1-modular-monolith ruleset exists', path: 'rulesets/topologies/progressive-axis/modular-monolith' },
-      { name: 'f2-distributed-modules ruleset exists', path: 'rulesets/topologies/progressive-axis/distributed-modules' },
-      { name: 'f3-microservices ruleset exists', path: 'rulesets/topologies/progressive-axis/microservices' },
-      { name: 'compliance-baseline ruleset exists', path: 'rulesets/cross-cutting/compliance-baseline.rules.json' },
-      { name: 'definition-of-done ruleset exists', path: 'rulesets/cross-cutting/definition-of-done.rules.json' },
-      { name: 'engineering-manifesto ruleset exists', path: 'rulesets/cross-cutting/engineering-manifesto.rules.json' },
-      { name: 'repository-taxonomy ruleset exists', path: 'rulesets/cross-cutting/repository-taxonomy.rules.json' },
-      { name: 'phase-gates ruleset exists', path: 'rulesets/sdlc/phase-gates.rules.json' },
-      { name: 'quality-thresholds ruleset exists', path: 'rulesets/sdlc/quality-thresholds.rules.json' },
-      { name: 'satellite-contracts ruleset exists', path: 'rulesets/governance/satellite-contracts.rules.json' },
-      { name: 'executive-scorecards ruleset exists', path: 'rulesets/governance/executive-scorecards.rules.json' },
+      { name: 'f1-modular-monolith ruleset exists', path: 'src/rulesets/topologies/progressive-axis/modular-monolith' },
+      { name: 'f2-distributed-modules ruleset exists', path: 'src/rulesets/topologies/progressive-axis/distributed-modules' },
+      { name: 'f3-microservices ruleset exists', path: 'src/rulesets/topologies/progressive-axis/microservices' },
+      { name: 'compliance-baseline ruleset exists', path: 'src/rulesets/cross-cutting/compliance-baseline.rules.json' },
+      { name: 'definition-of-done ruleset exists', path: 'src/rulesets/cross-cutting/definition-of-done.rules.json' },
+      { name: 'engineering-manifesto ruleset exists', path: 'src/rulesets/cross-cutting/engineering-manifesto.rules.json' },
+      { name: 'repository-taxonomy ruleset exists', path: 'src/rulesets/cross-cutting/repository-taxonomy.rules.json' },
+      { name: 'phase-gates ruleset exists', path: 'src/rulesets/sdlc/phase-gates.rules.json' },
+      { name: 'quality-thresholds ruleset exists', path: 'src/rulesets/sdlc/quality-thresholds.rules.json' },
+      { name: 'satellite-contracts ruleset exists', path: 'src/rulesets/governance/satellite-contracts.rules.json' },
+      { name: 'executive-scorecards ruleset exists', path: 'src/rulesets/governance/executive-scorecards.rules.json' },
     ]
   },
   {
@@ -46,8 +46,8 @@ const WORKSTREAMS = [
     name: 'Architecture Validation',
     checks: [
       { name: 'CLI validate command exists', path: 'sdk/cli/src/commands/validate' },
-      { name: 'Architecture rules for F1/F2/F3', path: 'rulesets/architecture' },
-      { name: 'OPA policies for architecture', path: 'rulesets/architecture/opa' },
+      { name: 'Architecture rules for F1/F2/F3', path: 'src/rulesets/architecture' },
+      { name: 'OPA policies for architecture', path: 'src/rulesets/architecture/opa' },
     ]
   },
   {

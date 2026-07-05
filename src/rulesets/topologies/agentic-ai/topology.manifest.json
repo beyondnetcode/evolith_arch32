@@ -1,0 +1,127 @@
+{
+  "apiVersion": "evolith.dev/topology/v1",
+  "kind": "TopologyManifest",
+  "metadata": {
+    "id": "agentic-ai",
+    "name": "Agentic AI",
+    "dimension": "ai",
+    "status": "accepted",
+    "version": "0.1.0",
+    "governance": {
+      "owner": "AI Architecture",
+      "criticality": "P1"
+    }
+  },
+  "spec": {
+    "summary": "AI-first and agentic workflow topology for MCP-enabled context injection, governed tools, auditable actions, and architecture-aware implementation assistance.",
+    "topologyType": "agentic-ai",
+    "compatibility": {
+      "progressiveAxis": {
+        "maturityLevel": "cross",
+        "profile": "cross"
+      },
+      "composableWith": [
+        "modular-monolith",
+        "distributed-modules",
+        "microservices",
+        "serverless",
+        "event-driven",
+        "data-mesh",
+        "edge-computing"
+      ]
+    },
+    "artifacts": {
+      "adrs": [
+        "reference/core/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md",
+        "reference/core/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md",
+        "reference/core/architecture/adrs/core/0082-agentic-ai-trust-boundary.md",
+        "reference/core/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md",
+        "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+      ],
+      "rulesets": [
+        "rulesets/topologies/agentic-ai/agentic-ai.rules.json"
+      ],
+      "opaPolicies": [
+        "rulesets/topologies/agentic-ai/agentic-ai.rego"
+      ],
+      "aiRulesets": [
+        "rulesets/topologies/agentic-ai/README.md",
+        "rulesets/topologies/agentic-ai/maturity.md",
+        "rulesets/topologies/agentic-ai/adoption.md",
+        "rulesets/topologies/agentic-ai/operations.md",
+        "rulesets/topologies/agentic-ai/security.md",
+        "rulesets/topologies/agentic-ai/resilience.md",
+        "rulesets/topologies/agentic-ai/patterns.md",
+        "rulesets/topologies/agentic-ai/evolution.md"
+      ],
+      "umsContracts": [
+        "reference/knowledge/demo/ums-reference-model.md"
+      ]
+    },
+    "corpus": {
+      "guidance": {
+        "profile": "rulesets/topologies/agentic-ai/README.md",
+        "maturityGuide": "rulesets/topologies/agentic-ai/maturity.md"
+      },
+      "configurationContract": "rulesets/topologies/agentic-ai/agent.config.schema.json",
+      "fixtures": {
+        "valid": "rulesets/topologies/agentic-ai/fixtures/valid-agent.config.json",
+        "invalid": "rulesets/topologies/agentic-ai/fixtures/invalid-agent.config.json"
+      },
+      "nativeEvaluator": "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
+      "tests": {
+        "positive": "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts",
+        "negative": "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts"
+      },
+      "evidence": "rulesets/topologies/agentic-ai/evidence.md"
+    },
+    "operationalBudgets": {
+      "tokenBudgetPerExecution": 100000,
+      "credentialRotationIntervalHours": 24,
+      "sandboxTimeoutMs": 30000
+    },
+    "operationalInterfaces": {
+      "cli": {
+        "validators": [
+          "validate-topology"
+        ]
+      },
+      "mcp": {
+        "resources": [
+          "evolith://topologies/agentic-ai/manifest",
+          "evolith://topologies/agentic-ai/rulesets",
+          "evolith://topologies/agentic-ai/mcp"
+        ],
+        "tools": [
+          "evolith-topology-inspect",
+          "evolith-topology-validate",
+          "evolith-ruleset-explain"
+        ],
+        "prompts": [
+          "topology-aware-implementation",
+          "agentic-ai-governance-review",
+          "adr-impact-analysis"
+        ]
+      },
+      "coreApi": {
+        "endpoints": [
+          "GET /topologies/{id}",
+          "GET /topologies/{id}/manifest",
+          "POST /topologies/{id}/validate"
+        ]
+      }
+    }
+  },
+  "businessBoundary": {
+    "technicalOnly": true,
+    "trackerOwns": [
+      "timing",
+      "ownership",
+      "prioritization",
+      "roi",
+      "cost",
+      "budget",
+      "funnel-0"
+    ]
+  }
+}

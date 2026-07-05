@@ -1,0 +1,109 @@
+{
+  "apiVersion": "evolith.dev/topology/v1",
+  "kind": "TopologyManifest",
+  "metadata": {
+    "id": "event-driven",
+    "name": "Event-Driven",
+    "dimension": "integration",
+    "status": "accepted",
+    "version": "1.0.0",
+    "governance": {
+      "owner": "Architecture Board",
+      "criticality": "P0"
+    }
+  },
+  "spec": {
+    "summary": "Asynchronous integration topology for explicit event contracts, reliable publication, idempotent consumers, and observable cross-boundary message flow.",
+    "topologyType": "event-driven",
+    "compatibility": {
+      "progressiveAxis": {
+        "maturityLevel": "cross",
+        "profile": "cross"
+      },
+      "composableWith": [
+        "modular-monolith",
+        "distributed-modules",
+        "microservices",
+        "serverless",
+        "edge-computing",
+        "data-mesh",
+        "agentic-ai"
+      ]
+    },
+    "artifacts": {
+      "adrs": [
+        "reference/core/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md",
+        "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+      ],
+      "rulesets": [
+        "rulesets/topologies/event-driven/event-driven.rules.json"
+      ],
+      "opaPolicies": [
+        "rulesets/topologies/event-driven/event-driven.rego"
+      ],
+      "aiRulesets": [
+        "rulesets/topologies/event-driven/README.md"
+      ],
+      "umsContracts": [
+        "reference/knowledge/demo/ums-reference-model.md"
+      ]
+    },
+    "corpus": {
+      "guidance": {
+        "profile": "rulesets/topologies/event-driven/README.md",
+        "maturityGuide": "rulesets/topologies/event-driven/maturity.md"
+      },
+      "configurationContract": "rulesets/topologies/event-driven/topology.config.schema.json",
+      "fixtures": {
+        "valid": "rulesets/topologies/event-driven/fixtures/valid.topology.config.json",
+        "invalid": "rulesets/topologies/event-driven/fixtures/invalid.topology.config.json"
+      },
+      "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+      "tests": {
+        "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
+        "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
+      },
+      "evidence": "reference/core/control-center/maturity-evidence.json"
+    },
+    "operationalInterfaces": {
+      "cli": {
+        "validators": [
+          "validate-architecture",
+          "validate-topology"
+        ]
+      },
+      "mcp": {
+        "resources": [
+          "evolith://topologies/event-driven/manifest",
+          "evolith://topologies/event-driven/rulesets"
+        ],
+        "tools": [
+          "evolith-topology-inspect",
+          "evolith-topology-validate"
+        ],
+        "prompts": [
+          "topology-aware-implementation"
+        ]
+      },
+      "coreApi": {
+        "endpoints": [
+          "GET /topologies/{id}",
+          "GET /topologies/{id}/manifest",
+          "POST /topologies/{id}/validate"
+        ]
+      }
+    }
+  },
+  "businessBoundary": {
+    "technicalOnly": true,
+    "trackerOwns": [
+      "timing",
+      "ownership",
+      "prioritization",
+      "roi",
+      "cost",
+      "budget",
+      "funnel-0"
+    ]
+  }
+}

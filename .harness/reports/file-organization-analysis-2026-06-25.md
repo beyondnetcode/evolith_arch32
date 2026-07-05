@@ -53,7 +53,7 @@
 
 ## 2. Agrupaciones Propuestas
 
-### 2.1 `examples/` → `reference/knowledge/demo/examples/`
+### 2.1 `examples/` → `product/research/demo/examples/`
 
 **Razón:** Los ejemplos son material de referencia, no código ejecutable. Pertenecen al corpus documental.
 
@@ -61,7 +61,7 @@
 
 **Acción:**
 ```bash
-mv examples/ reference/knowledge/demo/examples/
+mv examples/ product/research/demo/examples/
 ```
 
 ### 2.2 `tests/` → `packages/contract-tests/` o `sdk/cli/test/contract/`
@@ -97,9 +97,9 @@ mv COVERAGE_REPORT.md .harness/reports/
 **Análisis:**
 - `core-api` es el BFF de Evolith Tracker
 - Está en `apps/` que es workspace de npm
-- Podría moverse a `reference/knowledge/demo/core-api/` si solo es evidencia
+- Podría moverse a `product/research/demo/core-api/` si solo es evidencia
 
-**Recomendación:** Dejar en `apps/` por ahora. Si se confirma que es solo evidencia (no ejecutable en Core), mover a `reference/knowledge/demo/`.
+**Recomendación:** Dejar en `apps/` por ahora. Si se confirma que es solo evidencia (no ejecutable en Core), mover a `product/research/demo/`.
 
 ---
 
@@ -107,7 +107,7 @@ mv COVERAGE_REPORT.md .harness/reports/
 
 | Cambio | Riesgo | Espacio | Beneficio |
 |--------|--------|---------|-----------|
-| `examples/` → `reference/knowledge/demo/examples/` | Bajo | - | Mejor taxonomía |
+| `examples/` → `product/research/demo/examples/` | Bajo | - | Mejor taxonomía |
 | `COVERAGE_REPORT.md` → `.harness/reports/` | Bajo | - | Limpieza raíz |
 | `tests/` → dejar en raíz | Ninguno | - | Evitar romper CI |
 | `apps/` → dejar en raíz | Ninguno | - | Mantener workspaces |
@@ -130,11 +130,11 @@ Cada herramienta de IA/IDE obtiene su propia carpeta con punto en la raiz:
 ### 4.2 Documentación de Referencia
 
 Todo material de referencia vive en `reference/`:
-- `reference/architecture/` — ADRs, patrones, topologías
-- `reference/governance/` — Politicas, estandares, SDLC
-- `reference/knowledge/` — Evidencia, investigación, demos
-- `reference/operations/` — Guías operativas
-- `reference/infrastructure/` — Configuración de plataforma
+- `reference/core/architecture/` — ADRs, patrones, topologías
+- `reference/core/sdlc/` — Politicas, estandares, SDLC
+- `product/research/` — Evidencia, investigación, demos
+- `product/operations/` — Guías operativas
+- `product/infra/` — Configuración de plataforma
 
 ### 4.3 Código Ejecutable
 

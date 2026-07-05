@@ -1,0 +1,53 @@
+{
+  "name": "@beyondnet/evolith-agent-runtime",
+  "version": "1.0.0",
+  "description": "Evolith Agent Runtime — decoupled agentic layer that operates Evolith Core through Ports & Adapters (.harness, Core Evaluation, OPA, Tracker, Memory, Scheduler, Hermes). Hexagonal; no runtime/LLM technology is a domain dependency.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./ports": {
+      "types": "./dist/domain/ports/index.d.ts",
+      "default": "./dist/domain/ports/index.js"
+    },
+    "./adapters": {
+      "types": "./dist/adapters/index.d.ts",
+      "default": "./dist/adapters/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "jest --config jest.config.js --runInBand",
+    "example:discovery-gate": "node examples/validate-discovery-gate.mjs"
+  },
+  "dependencies": {
+    "@beyondnet/evolith-core-domain": "^1.0.0",
+    "yaml": "1.10.3"
+  },
+  "devDependencies": {
+    "@types/jest": "30.0.0",
+    "@types/node": "26.0.0",
+    "jest": "30.4.2",
+    "ts-jest": "29.4.11",
+    "typescript": "6.0.3"
+  },
+  "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beyondnetcode/evolith_arch32.git",
+    "directory": "src/packages/agent-runtime"
+  }
+}

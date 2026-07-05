@@ -1,0 +1,128 @@
+{
+  "apiVersion": "evolith.dev/topology/v1",
+  "kind": "TopologyManifest",
+  "metadata": {
+    "id": "modular-monolith",
+    "name": "Modular Monolith",
+    "dimension": "progressive-axis",
+    "status": "accepted",
+    "version": "1.0.0",
+    "governance": {
+      "owner": "Architecture Board",
+      "criticality": "P0"
+    }
+  },
+  "spec": {
+    "summary": "Canonical Evolith starting topology: one deployable system with strict bounded contexts, explicit contracts, persistence isolation, and extraction readiness.",
+    "topologyType": "modular-monolith",
+    "compatibility": {
+      "progressiveAxis": {
+        "maturityLevel": "F1",
+        "profile": "modular-monolith"
+      },
+      "composableWith": [
+        "event-driven",
+        "serverless",
+        "data-mesh",
+        "agentic-ai"
+      ]
+    },
+    "artifacts": {
+      "adrs": [
+        "reference/core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md",
+        "reference/core/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md",
+        "reference/core/architecture/adrs/core/0067-modular-monolith-schema-per-domain.md",
+        "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+      ],
+      "rulesets": [
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json"
+      ],
+      "opaPolicies": [
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego"
+      ],
+      "aiRulesets": [
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/README.md"
+      ],
+      "umsContracts": [
+        "reference/knowledge/demo/ums-reference-model.md"
+      ]
+    },
+    "corpus": {
+        "guidance": {
+          "profile": "reference/core/architecture/topologies/progressive-axis/modular-monolith/README.md",
+          "maturityGuide": "reference/core/architecture/topologies/progressive-axis/modular-monolith/maturity.md"
+        },
+        "configurationContract": "reference/core/architecture/topologies/progressive-axis/modular-monolith/topology.config.schema.json",
+        "fixtures": {
+          "valid": "reference/core/architecture/topologies/progressive-axis/modular-monolith/fixtures/valid.topology.config.json",
+          "invalid": "reference/core/architecture/topologies/progressive-axis/modular-monolith/fixtures/invalid.topology.config.json"
+        },
+        "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+        "tests": {
+          "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
+          "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
+        },
+        "evidence": "reference/core/control-center/maturity-evidence.json"
+    },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "unit-test-plan",
+          "criteria": "Unit-test approach per bounded context, aligned to the testing pyramid."
+        },
+        {
+          "artifactKind": "build-plan",
+          "criteria": "Single-artifact build/orchestration strategy (Nx or equivalent)."
+        }
+      ],
+      "conditional": [
+        {
+          "artifactKind": "event-contract-catalog",
+          "condition": "composed-with:event-driven",
+          "criteria": "Async event contracts when an integration layer is composed in."
+        }
+      ]
+    },
+    "operationalInterfaces": {
+      "cli": {
+        "validators": [
+          "validate-architecture",
+          "validate-topology"
+        ]
+      },
+      "mcp": {
+        "resources": [
+          "evolith://topologies/modular-monolith/manifest",
+          "evolith://topologies/modular-monolith/rulesets"
+        ],
+        "tools": [
+          "evolith-topology-inspect",
+          "evolith-topology-validate"
+        ],
+        "prompts": [
+          "topology-aware-implementation",
+          "extraction-readiness-review"
+        ]
+      },
+      "coreApi": {
+        "endpoints": [
+          "GET /topologies/{id}",
+          "GET /topologies/{id}/manifest",
+          "POST /topologies/{id}/validate"
+        ]
+      }
+    }
+  },
+  "businessBoundary": {
+    "technicalOnly": true,
+    "trackerOwns": [
+      "timing",
+      "ownership",
+      "prioritization",
+      "roi",
+      "cost",
+      "budget",
+      "funnel-0"
+    ]
+  }
+}

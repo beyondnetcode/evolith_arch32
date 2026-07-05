@@ -1,9 +1,0 @@
-{
-  "$schema": "../sdlc-phase.schema.json",
-  "id": "f1",
-  "name": "Conception & Discovery",
-  "shortName": "Discovery",
-  "order": 0,
-  "description": "Scope frozen; funding authorized; architectural constraints aligned.",
-  "gates": ["gate-f1"]
-}

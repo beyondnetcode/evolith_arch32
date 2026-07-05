@@ -1,0 +1,77 @@
+{
+  "domain": "repository-taxonomy",
+  "description": "Repository taxonomy rule evaluator parity — TAX rules (handled subset)",
+  "rules": [
+    { "id": "TAX-05", "severity": "MUST", "category": "directory-structure", "title": "Core structure: reference/, sdk/, rulesets/", "description": "Core must have reference/, sdk/, rulesets/, .harness/ directories", "blocking": true, "sourceFile": "repository-taxonomy.rules.json" },
+    { "id": "TAX-06", "severity": "MUST", "category": "directory-structure", "title": "Satellite structure: src/, tests/, docs/", "description": "Satellite must have src/, tests/, docs/ directories", "blocking": true, "sourceFile": "repository-taxonomy.rules.json" },
+    { "id": "TAX-07", "severity": "MUST", "category": "adr-naming", "title": "ADR files named with zero-padded ID", "description": "ADR files must match pattern NNNN-kebab-case.md", "blocking": true, "sourceFile": "repository-taxonomy.rules.json" },
+    { "id": "TAX-08", "severity": "MUST", "category": "adr-naming", "title": "Bilingual ADR files use .es.md suffix", "description": "Every ADR must have a .es.md bilingual pair", "blocking": true, "sourceFile": "repository-taxonomy.rules.json" }
+  ],
+  "scenarios": {
+    "compliant-core": {
+      "filesystem": {
+        "existing": ["/core/reference", "/core/rulesets", "/core/sdk", "/core/.harness", "/core/reference/core/architecture/adrs"],
+        "dirs": { "/core/reference/core/architecture/adrs": ["0002-hexagonal.md", "0002-hexagonal.es.md"] }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "TAX-05", "result": "passed" },
+        { "ruleId": "TAX-06", "result": "skipped" },
+        { "ruleId": "TAX-07", "result": "passed" },
+        { "ruleId": "TAX-08", "result": "passed" }
+      ]
+    },
+    "missing-core-dirs": {
+      "filesystem": {
+        "existing": ["/core/reference"],
+        "dirs": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "TAX-05", "result": "failed" },
+        { "ruleId": "TAX-06", "result": "skipped" },
+        { "ruleId": "TAX-07", "result": "skipped" },
+        { "ruleId": "TAX-08", "result": "skipped" }
+      ]
+    },
+    "compliant-satellite": {
+      "filesystem": {
+        "existing": ["/sat/src", "/sat/tests", "/sat/docs", "/sat/package.json"],
+        "dirs": { "/sat/src": ["domain"] }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "TAX-05", "result": "failed" },
+        { "ruleId": "TAX-06", "result": "passed" },
+        { "ruleId": "TAX-07", "result": "skipped" },
+        { "ruleId": "TAX-08", "result": "skipped" }
+      ]
+    },
+    "satellite-missing-dirs": {
+      "filesystem": {
+        "existing": ["/sat/package.json", "/sat/src"],
+        "dirs": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "TAX-05", "result": "failed" },
+        { "ruleId": "TAX-06", "result": "failed" },
+        { "ruleId": "TAX-07", "result": "skipped" },
+        { "ruleId": "TAX-08", "result": "skipped" }
+      ]
+    },
+    "adr-naming-violation": {
+      "filesystem": {
+        "existing": ["/core/reference", "/core/rulesets", "/core/sdk", "/core/.harness", "/core/reference/core/architecture/adrs"],
+        "dirs": { "/core/reference/core/architecture/adrs": ["01_BadName.md"] }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "TAX-05", "result": "passed" },
+        { "ruleId": "TAX-06", "result": "skipped" },
+        { "ruleId": "TAX-07", "result": "failed" },
+        { "ruleId": "TAX-08", "result": "failed" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "@beyondnet/evolith-core",
+  "version": "1.0.0",
+  "description": "Shared business logic layer for Evolith — consumed by CLI, MCP Server, and REST API",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "jest --config jest.config.js --runInBand"
+  },
+  "license": "MIT",
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@beyondnet/evolith-core-domain": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "30.0.0",
+    "@types/node": "26.0.0",
+    "jest": "30.4.2",
+    "ts-jest": "29.4.11",
+    "typescript": "6.0.3"
+  },
+  "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beyondnetcode/evolith_arch32.git",
+    "directory": "src/packages/core"
+  }
+}

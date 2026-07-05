@@ -18,11 +18,11 @@ import Ajv from "ajv";
 import addFormats from "ajv-formats";
 
 const root = process.cwd();
-const compositionSchemaPath = path.join(root, "rulesets/schema/topology-composition.schema.json");
+const compositionSchemaPath = path.join(root, "src/rulesets/schema/topology-composition.schema.json");
 // GT-329: canonical topology roots — progressive-axis stays in reference/; advanced topologies in rulesets/
 const topologyManifestRoots = [
-  path.join(root, "reference/architecture/topologies"),
-  path.join(root, "rulesets/topologies"),
+  path.join(root, "reference/core/architecture/topologies"),
+  path.join(root, "src/rulesets/topologies"),
 ];
 const examplesRoot = path.join(root, "reference/knowledge/demo/examples");
 

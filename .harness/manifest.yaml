@@ -109,6 +109,21 @@ capabilities:
     emitsTrace: true
     requiresPolicy: false
 
+  - name: gap-prioritization-engine
+    type: skill
+    description: >-
+      Read gap-tracking.md, score gaps by impact × urgency and flag stagnant
+      gaps with no status change in >30 days. Owned by @po.
+    entry: .harness/scripts/skills/gap-prioritization-engine.mjs
+    runner: node
+    outputs:
+      status: { type: string }
+      findings: { type: array }
+    permissions: [read:repo]
+    requiresApproval: false
+    emitsTrace: true
+    requiresPolicy: false
+
   - name: self-improving-loop
     type: skill
     description: >-

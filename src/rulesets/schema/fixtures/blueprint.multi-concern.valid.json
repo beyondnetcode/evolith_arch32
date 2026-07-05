@@ -1,0 +1,58 @@
+{
+  "blueprintId": "acme-portal-mixed-f2",
+  "name": "Acme Portal — mixed-topology design",
+  "description": "Example multi-concern blueprint (ADR-0104): a distributed-modules backend with an event-driven integration layer, a modular-monolith frontend BFF, and an agentic-ai assistant concern.",
+  "version": "1.0.0",
+  "topology": "distributed-modules",
+  "topologies": ["distributed-modules", "event-driven", "agentic-ai"],
+  "phase": 2,
+  "runtime": "nodejs",
+  "architecture": "hexagonal",
+  "status": "draft",
+  "adrs": ["ADR-0002", "ADR-0104"],
+  "blocks": [
+    { "blockKind": "architecture-blueprint", "title": "Overall architecture", "scope": "core", "status": "draft" },
+    { "blockKind": "testing-strategy", "title": "Testing pyramid", "scope": "core", "status": "draft" },
+    { "blockKind": "adr-registry", "title": "Decisions", "scope": "core", "status": "draft" },
+    { "blockKind": "topology-compliance-matrix", "title": "Topology conformance", "scope": "core", "status": "draft" },
+    { "blockKind": "technical-maturity-evaluation", "title": "Maturity", "scope": "core", "status": "draft" }
+  ],
+  "concerns": [
+    {
+      "concern": "backend",
+      "topologies": ["distributed-modules"],
+      "runtime": "nodejs",
+      "architecture": "hexagonal",
+      "blocks": [
+        { "blockKind": "devops-cicd-plan", "title": "Per-module CI/CD", "scope": "core" },
+        { "blockKind": "infrastructure-plan", "title": "Module deployment", "scope": "core" },
+        { "blockKind": "performance-plan", "title": "Inter-module latency", "scope": "core" }
+      ]
+    },
+    {
+      "concern": "services",
+      "topologies": ["event-driven"],
+      "blocks": [
+        { "blockKind": "event-contract-catalog", "title": "Domain events", "scope": "core" },
+        { "blockKind": "async-payload-schema-set", "title": "Payload schemas", "scope": "core" }
+      ]
+    },
+    {
+      "concern": "frontend",
+      "topologies": ["modular-monolith"],
+      "runtime": "nodejs",
+      "blocks": [
+        { "blockKind": "unit-test-plan", "title": "Component tests", "scope": "core" },
+        { "blockKind": "build-plan", "title": "Frontend build", "scope": "core" }
+      ]
+    },
+    {
+      "concern": "assistant",
+      "topologies": ["agentic-ai"],
+      "blocks": [
+        { "blockKind": "token-budget-plan", "title": "Token budget", "scope": "core" },
+        { "blockKind": "sandbox-policy", "title": "Agent sandbox", "scope": "tenant" }
+      ]
+    }
+  ]
+}

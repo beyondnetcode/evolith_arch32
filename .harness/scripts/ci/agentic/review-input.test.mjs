@@ -61,13 +61,13 @@ test('parseDiffFiles splits per-file sections', () => {
   const files = parseDiffFiles(DIFF);
   assert.deepEqual(
     files.map((f) => f.path),
-    ['src/app.ts', 'package-lock.json', 'assets/logo.png', 'rulesets/data/data-mesh.rego'],
+    ['src/app.ts', 'package-lock.json', 'assets/logo.png', 'src/rulesets/data/data-mesh.rego'],
   );
 });
 
 test('selectRelevantFiles drops lockfiles, binaries; keeps source and rulesets', () => {
   const { included, excluded } = selectRelevantFiles(DIFF);
-  assert.deepEqual(included.map((f) => f.path), ['src/app.ts', 'rulesets/data/data-mesh.rego']);
+  assert.deepEqual(included.map((f) => f.path), ['src/app.ts', 'src/rulesets/data/data-mesh.rego']);
   assert.deepEqual(excluded, ['package-lock.json', 'assets/logo.png']);
 });
 
@@ -97,7 +97,7 @@ test('budgetAndChunk splits multiple files across chunks under budget', () => {
 test('prepareReviewInput redacts, selects and budgets end-to-end', () => {
   const diffWithSecret = `${DIFF}\n+const API_KEY = "ghp_0123456789abcdef0123456789abcdef0123"`;
   const out = prepareReviewInput(diffWithSecret, { maxBytes: 100000, maxTokens: 25000 });
-  assert.deepEqual(out.filesIncluded, ['src/app.ts', 'rulesets/data/data-mesh.rego']);
+  assert.deepEqual(out.filesIncluded, ['src/app.ts', 'src/rulesets/data/data-mesh.rego']);
   assert.ok(out.filesExcluded.includes('package-lock.json'));
   assert.ok(out.redactions >= 1, 'secret in changed source not redacted');
   assert.ok(!out.chunks.join('').includes('ghp_0123456789abcdef'), 'secret leaked into payload');

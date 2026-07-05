@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/schema/design-template.schema.json",
+  "title": "Evolith Design Template",
+  "description": "ADR-0104 §9 / GT-431. A reusable design template — a composition of blocks the tenant or a Core agent proposes. `scope: tenant` templates are persisted in the Tracker (tenant private collection, ADR-0104 §11); `scope: core` templates are canonical (promoted upstream via UP-NNN → Architecture Board). `complexity` lets agents offer simple/medium/complex options for the same need. Convention over Configuration: blocks reference the block-type registry.",
+  "type": "object",
+  "required": ["templateId", "name", "version", "complexity", "scope"],
+  "additionalProperties": false,
+  "properties": {
+    "templateId": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "version": { "type": "string" },
+    "complexity": { "type": "string", "enum": ["simple", "medium", "complex"] },
+    "scope": { "type": "string", "enum": ["tenant", "core"] },
+    "topologies": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["modular-monolith", "distributed-modules", "microservices", "serverless", "edge-computing", "event-driven", "data-mesh", "agentic-ai"] }
+    },
+    "blueprintRef": { "type": "string" },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["blockKind"],
+        "additionalProperties": false,
+        "properties": {
+          "blockKind": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "title": { "type": "string" },
+          "concern": { "type": "string" }
+        }
+      }
+    },
+    "adrs": { "type": "array", "items": { "type": "string" } },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": { "tier": { "type": "string", "enum": ["official", "certified", "community"] } }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "proposedBy": { "type": "string", "enum": ["human", "agent"] },
+        "agentId": { "type": "string" },
+        "promotionRequest": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "upId": { "type": "string", "description": "Upstream Proposal id (UP-NNN) when promotion to Core is requested." },
+            "status": { "type": "string", "enum": ["none", "requested", "under-review", "approved", "rejected"] }
+          }
+        }
+      }
+    },
+    "status": { "type": "string", "enum": ["draft", "proposed", "accepted", "deprecated"] }
+  }
+}

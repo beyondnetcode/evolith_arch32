@@ -53,7 +53,7 @@
 ---
 
 
-> **Autoridad:** ADR-0101 (Tracker stateful / Core evaluador stateless). **Diseño objetivo:** `reference/core/core-evaluation-engine-design.es.md:299-479`. **Premisa transversal confirmada por el dossier:** Tracker es *diseño objetivo sin código* (`reference/products/evolith-tracker/README.md:7,11`); el `EvaluationContext` canónico **no existe implementado en el Core** — el `EvaluationContext` que aparece en código es un **homónimo** de dos campos de filesystem (`evaluator.interface.ts:3-6`, confirmado: `{ satellitePath, corePath }`). Por tanto la brecha es **bilateral y simétrica**: ni el productor (Tracker) ni el consumidor (Core) tienen hoy el contrato.
+> **Autoridad:** ADR-0101 (Tracker stateful / Core evaluador stateless). **Diseño objetivo:** `reference/core/core-evaluation-engine-design.es.md:299-479`. **Premisa transversal confirmada por el dossier:** Tracker es *diseño objetivo sin código* (`product/products/evolith-tracker/README.md:7,11`); el `EvaluationContext` canónico **no existe implementado en el Core** — el `EvaluationContext` que aparece en código es un **homónimo** de dos campos de filesystem (`evaluator.interface.ts:3-6`, confirmado: `{ satellitePath, corePath }`). Por tanto la brecha es **bilateral y simétrica**: ni el productor (Tracker) ni el consumidor (Core) tienen hoy el contrato.
 
 ---
 
@@ -404,7 +404,7 @@ Paridad native+OPA (ADR-0041): introducir `input.context` **rompería ambos moto
 
 ## 12. Mejoras necesarias en Tracker (qué debe construir/enviar)
 
-> Tracker es **diseño objetivo sin código** (`reference/products/evolith-tracker/README.md:7,11`). Lo que sigue es lo que Tracker debe construir/enviar para alimentar el Core stateless. Mapeo a R0-R5 (GT-376..GT-381).
+> Tracker es **diseño objetivo sin código** (`product/products/evolith-tracker/README.md:7,11`). Lo que sigue es lo que Tracker debe construir/enviar para alimentar el Core stateless. Mapeo a R0-R5 (GT-376..GT-381).
 
 | # | Mejora en Tracker | Qué debe construir/enviar | Anclaje / Brecha | GT |
 |---|---|---|---|---|
@@ -475,8 +475,8 @@ Paridad native+OPA (ADR-0041): introducir `input.context` **rompería ambos moto
 - `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts` (builder FS-only, `:8-61`)
 - `/Users/beyondnet/Source/evolith/reference/core/core-evaluation-engine-design.es.md` (contrato canónico `:299-479`; roadmap R0-R5 `:1522-1552`)
 - `/Users/beyondnet/Source/evolith/rulesets/opa/main.rego` (31 imports; sin `phase_gates`, `:1-31`)
-- `/Users/beyondnet/Source/evolith/reference/governance/standards/vision/gap-tracking.md` (GT-375 umbrella + GT-376..GT-381, `:16-22`)
-- `/Users/beyondnet/Source/evolith/reference/governance/standards/vision/gap-reference-catalog.md` (catálogo GT-375..GT-381)
+- `/Users/beyondnet/Source/evolith/reference/core/control-center/gaps/gap-tracking.md` (GT-375 umbrella + GT-376..GT-381, `:16-22`)
+- `/Users/beyondnet/Source/evolith/reference/core/control-center/gaps/gap-reference-catalog.md` (catálogo GT-375..GT-381)
 
 ---
 
@@ -507,7 +507,7 @@ Reportes de los 5 lectores de subsistema que sustentan los entregables anteriore
 
 ## Hallazgos Tracker
 
-> **Premisa de estado.** Tracker es **diseño objetivo sin código**. `reference/products/evolith-tracker/README.md:7` y `:11` lo declaran explícitamente: *"No Evolith Tracker source code or `evolith_tracker` repository exists in this corpus today; this folder holds the target design only."* Por tanto, todo lo que sigue es **contrato de papel** (TypeScript de diseño en los `.md`), no entidades persistidas en una base. Lo que "EXISTE HOY" en código son únicamente las **costuras Core-side** que Tracker consumirá (`README.md:62-71`).
+> **Premisa de estado.** Tracker es **diseño objetivo sin código**. `product/products/evolith-tracker/README.md:7` y `:11` lo declaran explícitamente: *"No Evolith Tracker source code or `evolith_tracker` repository exists in this corpus today; this folder holds the target design only."* Por tanto, todo lo que sigue es **contrato de papel** (TypeScript de diseño en los `.md`), no entidades persistidas en una base. Lo que "EXISTE HOY" en código son únicamente las **costuras Core-side** que Tracker consumirá (`README.md:62-71`).
 
 ### 1. Modelo de entidades que Tracker persistirá
 
@@ -609,7 +609,7 @@ Nota de costura viva: el único punto de mutación de fase real hoy es `POST /ap
 4. **Brecha de resultado:** el `TechnicalEvaluationResult` no expone policies OPA aplicadas, riesgos, nivel de confianza, recomendaciones/decisiones-sugeridas, ni versión de policy/blueprint — todos campos del EvaluationResult objetivo.
 5. **Choque de nombres `GateDecision`** (target Tracker vs `packages/core-domain/src/gates/decision/gate-decision.ts`) a resolver antes de implementar (nota en `:183` y `README.md:68`, GT-316).
 
-Archivos fuente leídos: `/Users/beyondnet/Source/evolith/reference/products/evolith-tracker/sdlc-tracker-technical-interfaces.md`, `/Users/beyondnet/Source/evolith/reference/products/evolith-tracker/README.md`, `/Users/beyondnet/Source/evolith/reference/products/evolith-tracker/architecture/README.md`, `/Users/beyondnet/Source/evolith/reference/product-suite/architecture/evolith-governed-composition-target-design.md`.
+Archivos fuente leídos: `/Users/beyondnet/Source/evolith/product/products/evolith-tracker/sdlc-tracker-technical-interfaces.md`, `/Users/beyondnet/Source/evolith/product/products/evolith-tracker/README.md`, `/Users/beyondnet/Source/evolith/product/products/evolith-tracker/architecture/README.md`, `/Users/beyondnet/Source/evolith/product/suite/architecture/evolith-governed-composition-target-design.md`.
 
 
 ### A.2 — Core API
@@ -681,7 +681,7 @@ Resumen: de los 10 tipos, **0 EXISTE plenamente**, **5 PARCIAL** (fase, gate, ar
 - **Envelope ADR-0073 sí está universalizado** (`ApiEnvelopeResponse` en todos los controllers + `EnvelopeInterceptor`), por lo que el "envoltorio" para `SuccessEnvelope<EvaluationResult>` (design `:483`) ya existe; lo que falta es el **payload `data`** con la forma `EvaluationResult`.
 - **Brecha estructural principal**: no existe un controller que reciba `EvaluationContext` (un único body multi-kind) ni devuelva `EvaluationResult` (sub-resultados por engine + risks/gaps/recommendations/requiredActions/decisionRecommendation/compliance). El más cercano arquitectónicamente es `composable-validate.controller.ts`, pero su DTO usa kinds implícitos por presencia de campo y su salida no está normalizada al contrato canónico.
 
-Archivos ancla leídos: `apps/core-api/src/presentation/controllers/{evaluation,gates,phases,architecture,composable-validate,projects,satellites,reference}.controller.ts`; `apps/core-api/src/presentation/dtos/{evaluation,gates,phases,architecture,projects,satellite}.dto.ts`; `apps/core-api/src/presentation/decorators/swagger-envelope.decorator.ts`; `apps/core-api/src/infrastructure/interceptors/envelope.interceptor.ts`; `apps/core-api/src/application/services/workspace-reference-resolver.service.ts`; `packages/core-domain/src/domain/{gate-evidence.ts,satellite-manifest.ts,verdict/verdict.ts}`; `packages/core-domain/src/application/use-cases/{evaluate-gate,validate-satellite,validate-blueprint}.use-case.ts`; `reference/products/core-api/api-reference.md`; `reference/core/core-evaluation-engine-design.es.md`.
+Archivos ancla leídos: `apps/core-api/src/presentation/controllers/{evaluation,gates,phases,architecture,composable-validate,projects,satellites,reference}.controller.ts`; `apps/core-api/src/presentation/dtos/{evaluation,gates,phases,architecture,projects,satellite}.dto.ts`; `apps/core-api/src/presentation/decorators/swagger-envelope.decorator.ts`; `apps/core-api/src/infrastructure/interceptors/envelope.interceptor.ts`; `apps/core-api/src/application/services/workspace-reference-resolver.service.ts`; `packages/core-domain/src/domain/{gate-evidence.ts,satellite-manifest.ts,verdict/verdict.ts}`; `packages/core-domain/src/application/use-cases/{evaluate-gate,validate-satellite,validate-blueprint}.use-case.ts`; `product/products/core-api/api-reference.md`; `reference/core/core-evaluation-engine-design.es.md`.
 
 
 ### A.3 — CLI

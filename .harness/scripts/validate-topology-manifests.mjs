@@ -154,7 +154,7 @@ function validateCorpusFixtures(manifestPath, corpus) {
 }
 
 if (!fs.existsSync(schemaPath)) {
-  failures.push("rulesets/schema/topology-manifest.schema.json is missing");
+  failures.push("src/rulesets/schema/topology-manifest.schema.json is missing");
 } else {
   for (const manifestRoot of manifestRoots) {
     walk(manifestRoot);
@@ -277,7 +277,7 @@ if (!fs.existsSync(schemaPath)) {
       validateCorpusFixtures(manifestPath, corpus);
 
       if (corpus.evidence && typeof corpus.evidence === "string" && corpus.evidence.endsWith(".json")) {
-        validateJsonSchema(manifestPath, corpus.evidence, "rulesets/schema/maturity-evidence.schema.json");
+        validateJsonSchema(manifestPath, corpus.evidence, "src/rulesets/schema/maturity-evidence.schema.json");
       }
 
       for (const adr of manifest.spec?.artifacts?.adrs ?? []) {

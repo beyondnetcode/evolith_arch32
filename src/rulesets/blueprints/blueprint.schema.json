@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/blueprints/blueprint.schema.json",
+  "title": "Evolith Architecture Blueprint",
+  "description": "Machine-validatable blueprint extracted from reference/core/architecture/blueprints/ markdown. Defines the structural contract for architectural blueprints.",
+  "type": "object",
+  "required": ["id", "title", "version", "runtime", "sections"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Unique blueprint identifier (kebab-case)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable blueprint title"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "SemVer version"
+    },
+    "runtime": {
+      "type": "string",
+      "enum": ["agnostic", "nodejs", "dotnet", "android"],
+      "description": "Runtime scope: agnostic = applies to all, specific = runtime-scoped"
+    },
+    "sourceFile": {
+      "type": "string",
+      "description": "Relative path to the source markdown file"
+    },
+    "adrRefs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "ADR IDs referenced by this blueprint"
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "content": { "type": "string", "description": "Section content (may be truncated)" },
+          "constraints": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Architectural constraints declared in this section"
+          }
+        }
+      }
+    },
+    "qualityAttributes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "target"],
+        "properties": {
+          "name": { "type": "string" },
+          "target": { "type": "string" },
+          "adrRef": { "type": "string" }
+        }
+      }
+    }
+  }
+}

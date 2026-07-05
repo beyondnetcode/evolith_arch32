@@ -28,8 +28,8 @@ if (!RESOLVED_GH_TOKEN) {
 }
 process.env.GH_TOKEN = RESOLVED_GH_TOKEN;
 
-const TRACKING_FILE_ES = './reference/governance/standards/vision/gap-tracking.es.md';
-const TRACKING_FILE_EN = './reference/governance/standards/vision/gap-tracking.md';
+const TRACKING_FILE_ES = './reference/core/control-center/gap-tracking.es.md';
+const TRACKING_FILE_EN = './reference/core/control-center/gap-tracking.md';
 const PROJECT_NUMBER = '1';
 const OWNER = 'beyondnetcode';
 const PROJECT_NODE_ID = 'PVT_kwDOD5Ic284BaueG';

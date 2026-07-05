@@ -12,7 +12,7 @@ if (args.includes("--help") || args.includes("-h")) {
   console.log(`
 ADR Freshness Monitor v${SCRIPT_VERSION}
 
-Scans all ADRs in reference/architecture/adrs/ and reports staleness
+Scans all ADRs in reference/core/architecture/adrs/ and reports staleness
 based on last git modification date.
 
 Usage:

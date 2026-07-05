@@ -12,7 +12,7 @@ let stdout;
 try {
   stdout = execFileSync(
     opa.binary,
-    ['test', 'rulesets/opa/', '--ignore=schemas', '--format=json'],
+    ['test', 'src/rulesets/opa/', '--ignore=schemas', '--format=json'],
     { cwd: root, encoding: 'utf8' },
   );
 } catch (err) {

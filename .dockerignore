@@ -1,0 +1,13 @@
+# Keep host build artifacts and VCS metadata out of the Docker build context.
+# The monorepo Dockerfiles run `npm ci` + `tsc -b` from clean sources, so any
+# pre-built node_modules/dist/.tsbuildinfo on the host (arm64 dev machine) must
+# NOT leak into the linux image.
+**/node_modules
+**/dist
+**/*.tsbuildinfo
+.git
+.github
+**/*.log
+**/.DS_Store
+# Generated OPA policy bundle — rebuilt in-image via `npm run build:policy`.
+**/policy.wasm

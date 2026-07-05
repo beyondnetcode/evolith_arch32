@@ -105,4 +105,4 @@ La accion escribe un resumen de cumplimiento en el job summary de GitHub Actions
 
 ---
 
-[Volver a Evolith Core](../../../reference/governance/standards/vision/README.es.md)
+[Volver a Evolith Core](../../../reference/core/control-center/README.es.md)

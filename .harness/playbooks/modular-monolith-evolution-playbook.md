@@ -50,7 +50,7 @@ libs/
 
 ## 3. Extraction Readiness Checklist (Phase 1 → Phase 2)
 
-Per [ADR-0045](../../reference/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md), a module is a valid extraction candidate when it meets **2 of 4** criteria sustained over 15 days:
+Per [ADR-0045](../../reference/core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md), a module is a valid extraction candidate when it meets **2 of 4** criteria sustained over 15 days:
 
 | Criterion | Measurement Source | Threshold |
 | :--- | :--- | :--- |
@@ -65,7 +65,7 @@ Before presenting to the Architecture Board, the Squad Lead MUST provide a 15-da
 
 ## 4. Step-by-Step: First Service Extraction (Strangler Fig)
 
-This procedure extracts one bounded context from the monolith without a Big Bang rewrite. Reference: [ADR-0047 §10](../../reference/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md).
+This procedure extracts one bounded context from the monolith without a Big Bang rewrite. Reference: [ADR-0047 §10](../../reference/core/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md).
 
 ### Step 1 — Confirm schema isolation
 
@@ -123,7 +123,7 @@ services:
         paths: [/v1/auth]
 ```
 
-Deploy the new service, update the Kong config, and validate via the [UMS Applied Reference Model](../../reference/knowledge/demo/README.md). The monolith no longer handles task traffic.
+Deploy the new service, update the Kong config, and validate via the [UMS Applied Reference Model](../../product/research/demo/README.md). The monolith no longer handles task traffic.
 
 ### Step 5 — Migrate the Event Bus from In-Memory to RabbitMQ
 
@@ -134,7 +134,7 @@ EVENT_BUS_IMPL=rabbitmq
 RABBITMQ_URL=amqp://localhost:5672
 ```
 
-The `IEventBusPort` implementation is injected at startup with no domain code change — per [ADR-0015](../../reference/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md).
+The `IEventBusPort` implementation is injected at startup with no domain code change — per [ADR-0015](../../reference/core/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md).
 
 ---
 

@@ -52,7 +52,7 @@ export function buildInventory(root = ROOT) {
     .filter((name) => name !== 'evolith/unknown');
 
   const commands = walk(path.join(cli, 'src/commands'), (f) => f.endsWith('.command.ts') && !f.includes('.spec.')).length;
-  const schemas = walk(path.join(root, 'rulesets/schema'), (f) => f.endsWith('.schema.json')).length;
+  const schemas = walk(path.join(root, 'src/rulesets/schema'), (f) => f.endsWith('.schema.json')).length;
 
   // Test evidence — read the generated coverage summary when present.
   let coverage = null;
@@ -67,7 +67,7 @@ export function buildInventory(root = ROOT) {
   }
 
   return {
-    package: pkg.name || '@evolith/smart-cli',
+    package: pkg.name || '@beyondnet/evolith-cli',
     version: pkg.version || '0.0.0',
     bin: pkg.bin ? Object.keys(pkg.bin) : [],
     commands,

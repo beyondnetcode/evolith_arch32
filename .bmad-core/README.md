@@ -6,12 +6,14 @@
 
 ## Structure
 
+`.bmad-core/` is the **orchestration** layer — engine, workflows, and runtime state. Agent **definitions** (personas, skills, checklists) are NOT here: they are foundational and live in [`reference/core/foundations/agent-skills/`](../reference/core/foundations/agent-skills/) (see [repository taxonomy](../reference/core/control-center/taxonomy/migration-plan.md), Commit 2). Operational agent contracts live in [`.harness/agents/`](../.harness/agents/).
+
 | Directory | Contents |
 |-----------|----------|
-| `agents/` | 8 agent personas (Analyst, PM, Architect, SM, Dev, QA, DevOps, Docs) — each with EN and ES versions |
-| `workflows/` | Workflow definitions (greenfield development, governance gap closure) |
+| `engine/` | BMAD orchestration engine (workflow parser, step executor, state machine, handoff enforcer) |
+| `workflows/` | Workflow definitions (greenfield development, governance gap closure, QA suite) |
+| `state/` | Runtime workflow and artifact state |
 | `scripts/` | BMAD-specific utility scripts (encoding cleanup) |
-| `tooling/` | Governance tooling (link audit) |
 
 ## First Read
 
@@ -20,8 +22,8 @@ Every agent **must** read [AGENTS.md](./AGENTS.md) before operating on this repo
 ## Key References
 
 - [Global Rules](../.harness/rules/global-rules.md)
-- [Gap Tracking Board](../reference/governance/standards/vision/gap-tracking.md)
-- [Gap Reference Catalog](../reference/governance/standards/vision/gap-reference-catalog.md)
+- [Gap Tracking Board](../reference/core/control-center/gaps/gap-tracking.md)
+- [Gap Reference Catalog](../reference/core/control-center/gaps/gap-reference-catalog.md)
 - [Architecture Agents](./AGENTS.md)
 
 ---

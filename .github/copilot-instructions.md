@@ -17,4 +17,4 @@ Before generating code, documentation, or processing architectural decisions, yo
 5. **Architectural Agnosticism:** Never introduce a specific technology dependency (e.g. AWS, React) into the Core reference unless explicitly backed by an ADR. Keep the architecture topology-agnostic.
 6. **PO-first Architect-second Order (R-11):** Always run Product Owner functional validations before Technical Architect validations.
 
-Refer to `reference/knowledge/rules-summary.md` for an immediate summary table of all governing rules.
+Refer to `product/research/rules-summary.md` for an immediate summary table of all governing rules.

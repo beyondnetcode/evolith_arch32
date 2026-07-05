@@ -17,4 +17,4 @@ Antes de generar código, documentación o procesar decisiones arquitectónicas,
 5. **Agnosticismo Arquitectónico:** Nunca introduzcas una dependencia tecnológica específica (ej. AWS, React) en la referencia Core a menos que esté respaldada explícitamente por un ADR. Mantén la arquitectura agnóstica a la topología.
 6. **Orden PO-primero Arquitecto-segundo (R-11):** Siempre ejecuta validaciones funcionales del Product Owner antes de las validaciones técnicas del Arquitecto.
 
-Consulta `reference/knowledge/rules-summary.md` para una tabla resumen inmediata de todas las reglas gobernantes.
+Consulta `product/research/rules-summary.md` para una tabla resumen inmediata de todas las reglas gobernantes.

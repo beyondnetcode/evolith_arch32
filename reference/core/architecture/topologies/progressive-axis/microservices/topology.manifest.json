@@ -1,0 +1,161 @@
+{
+  "apiVersion": "evolith.dev/topology/v1",
+  "kind": "TopologyManifest",
+  "metadata": {
+    "id": "microservices",
+    "name": "Microservices",
+    "dimension": "progressive-axis",
+    "status": "accepted",
+    "version": "1.0.0",
+    "governance": {
+      "owner": "Architecture Board",
+      "criticality": "P1"
+    }
+  },
+  "spec": {
+    "summary": "Independently deployable service topology for mature bounded domains with explicit contracts, operational ownership, observability, and extraction readiness evidence.",
+    "topologyType": "microservices",
+    "compatibility": {
+      "progressiveAxis": {
+        "maturityLevel": "F3",
+        "profile": "microservices"
+      },
+      "composableWith": [
+        "event-driven",
+        "data-mesh",
+        "edge-computing",
+        "serverless",
+        "agentic-ai"
+      ]
+    },
+    "artifacts": {
+      "adrs": [
+        "reference/core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md",
+        "reference/core/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md",
+        "reference/core/architecture/adrs/core/0076-domain-oriented-microservice-architecture.md",
+        "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+      ],
+      "rulesets": [
+        "reference/core/architecture/topologies/progressive-axis/microservices/microservices.rules.json"
+      ],
+      "opaPolicies": [
+        "reference/core/architecture/topologies/progressive-axis/microservices/microservices.rego"
+      ],
+      "aiRulesets": [
+        "reference/core/architecture/topologies/progressive-axis/microservices/README.md"
+      ],
+      "umsContracts": [
+        "reference/knowledge/demo/ums-reference-model.md"
+      ]
+    },
+    "corpus": {
+        "guidance": {
+          "profile": "reference/core/architecture/topologies/progressive-axis/microservices/README.md",
+          "maturityGuide": "reference/core/architecture/topologies/progressive-axis/microservices/maturity.md"
+        },
+        "configurationContract": "reference/core/architecture/topologies/progressive-axis/microservices/topology.config.schema.json",
+        "fixtures": {
+          "valid": "reference/core/architecture/topologies/progressive-axis/microservices/fixtures/valid.topology.config.json",
+          "invalid": "reference/core/architecture/topologies/progressive-axis/microservices/fixtures/invalid.topology.config.json"
+        },
+        "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+        "tests": {
+          "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
+          "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
+        },
+        "evidence": "reference/core/control-center/maturity-evidence.json"
+    },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "devops-cicd-plan",
+          "criteria": "Independent CI/CD per service."
+        },
+        {
+          "artifactKind": "infrastructure-plan",
+          "criteria": "Per-service deployment, scaling, and networking."
+        },
+        {
+          "artifactKind": "performance-plan",
+          "criteria": "Per-service latency budgets and resiliency."
+        },
+        {
+          "artifactKind": "doma-compliance-matrix",
+          "criteria": "Each service maps to exactly one bounded context (ADR-0076)."
+        }
+      ],
+      "conditional": []
+    },
+    "phaseProfiles": {
+      "construction": {
+        "conditional": [
+          {
+            "artifactKind": "per-unit-ci-evidence",
+            "criteria": "Independent CI per service."
+          },
+          {
+            "artifactKind": "doma-implementation-check",
+            "criteria": "One service maps to one bounded context, implemented."
+          }
+        ]
+      },
+      "quality": {
+        "conditional": [
+          {
+            "artifactKind": "cross-service-integration-test",
+            "criteria": "Integration/e2e across services green."
+          }
+        ]
+      },
+      "deployment": {
+        "conditional": [
+          {
+            "artifactKind": "progressive-rollout-plan",
+            "criteria": "Canary/blue-green per service."
+          }
+        ]
+      }
+    },
+    "operationalInterfaces": {
+      "cli": {
+        "validators": [
+          "validate-architecture",
+          "validate-topology"
+        ]
+      },
+      "mcp": {
+        "resources": [
+          "evolith://topologies/microservices/manifest",
+          "evolith://topologies/microservices/rulesets"
+        ],
+        "tools": [
+          "evolith-topology-inspect",
+          "evolith-topology-validate"
+        ],
+        "prompts": [
+          "topology-aware-implementation",
+          "extraction-readiness-review"
+        ]
+      },
+      "coreApi": {
+        "endpoints": [
+          "GET /topologies/{id}",
+          "GET /topologies/{id}/manifest",
+          "POST /topologies/{id}/validate"
+        ]
+      }
+    }
+  },
+  "businessBoundary": {
+    "technicalOnly": true,
+    "trackerOwns": [
+      "timing",
+      "ownership",
+      "prioritization",
+      "roi",
+      "cost",
+      "budget",
+      "funnel-0"
+    ]
+  }
+}

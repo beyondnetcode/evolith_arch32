@@ -1,0 +1,135 @@
+{
+  "$schema": "../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/cross-cutting/definition-of-done.rules.json",
+  "title": "Definition of Done Rules",
+  "description": "Machine-readable encoding of the Evolith Definition of Done. Mandatory checklist for every Technical Story before it can be marked Done.",
+  "version": "1.0.0",
+  "effectiveDate": "2026-01-01",
+  "rules": [
+    {
+      "id": "DOD-01",
+      "severity": "MUST",
+      "category": "code",
+      "title": "Code implemented and reviewed",
+      "description": "All implementation code is written and at least one peer review approval exists. Self-review does not count.",
+      "validationQuery": "PR has minimum 1 approved review. No direct push to main/develop.",
+      "blocking": true,
+      "checklistItem": "code-implemented"
+    },
+    {
+      "id": "DOD-02",
+      "severity": "MUST",
+      "category": "testing",
+      "title": "Unit tests meet coverage threshold",
+      "description": "Unit test coverage for business logic >= 80%. Layer-specific thresholds apply: Domain >= 95%, Application >= 85%, Infrastructure >= 60%.",
+      "validationQuery": "Coverage report from CI shows >= 80% for business logic. Per-layer thresholds validated.",
+      "blocking": true,
+      "checklistItem": "tests-passing"
+    },
+    {
+      "id": "DOD-03",
+      "severity": "MUST",
+      "category": "testing",
+      "title": "All acceptance criteria verified",
+      "description": "All acceptance criteria from the Functional Story are verified and pass. Manual or automated verification documented.",
+      "validationQuery": "All acceptance criteria marked as verified in story tracker. E2E or integration tests confirm criteria.",
+      "blocking": true,
+      "checklistItem": "acceptance-criteria-verified"
+    },
+    {
+      "id": "DOD-04",
+      "severity": "MUST",
+      "category": "documentation",
+      "title": "Documentation updated",
+      "description": "Documentation delta is produced alongside code changes. This includes: updated ADRs if decisions were made, inline code documentation for complex logic, README updates if public interfaces changed.",
+      "validationQuery": "PR includes documentation changes. Reviewer validates documentation completeness.",
+      "blocking": true,
+      "checklistItem": "documentation-updated"
+    },
+    {
+      "id": "DOD-05",
+      "severity": "MUST",
+      "category": "observability",
+      "title": "Observability instrumentation added",
+      "description": "Production paths have observable telemetry: traces with CorrelationId, structured logs with SessionTrackingId, metrics for key operations.",
+      "validationQuery": "OTel spans present for production API paths. Logs include required context fields.",
+      "blocking": true,
+      "checklistItem": "observability-added"
+    },
+    {
+      "id": "DOD-06",
+      "severity": "MUST",
+      "category": "security",
+      "title": "Security gates passed",
+      "description": "CodeQL scan passed with zero High/Critical findings. No new CVEs introduced. Secret scanning passed.",
+      "validationQuery": "CI security gates all green. CodeQL, dependency scan, secret scan passed.",
+      "blocking": true,
+      "checklistItem": "security-gates-passed"
+    },
+    {
+      "id": "DOD-07",
+      "severity": "MUST",
+      "category": "architecture",
+      "title": "ADR created if architectural decision made",
+      "description": "If the implementation required a new architectural decision (boundary change, technology selection, security model change), an ADR is created and linked to the story.",
+      "validationQuery": "Architectural decisions documented in ADR. Story links to relevant ADR IDs.",
+      "blocking": false,
+      "checklistItem": "adr-created-if-needed"
+    },
+    {
+      "id": "DOD-08",
+      "severity": "MUST",
+      "category": "integration",
+      "title": "Integration tests pass",
+      "description": "Integration tests (adapter tests with testcontainers) pass. Tests cover persistence adapters, gateway adapters, and inter-service contracts.",
+      "validationQuery": "Integration test suite passes. Contract tests for inter-service calls pass.",
+      "blocking": true,
+      "checklistItem": "integration-tests-passing"
+    },
+    {
+      "id": "DOD-09",
+      "severity": "MUST",
+      "category": "lint",
+      "title": "Linting and formatting passed",
+      "description": "All linting rules pass (ESLint, Prettier formatting). No lint errors, no formatting violations.",
+      "validationQuery": "CI lint step green. No ESLint errors, Prettier formatted.",
+      "blocking": true,
+      "checklistItem": "lint-passing"
+    },
+    {
+      "id": "DOD-10",
+      "severity": "MUST",
+      "category": "ci",
+      "title": "CI pipeline green on target branch",
+      "description": "CI pipeline runs successfully on the feature branch with all quality gates passing before merge.",
+      "validationQuery": "All CI checks green. Pipeline completed successfully on feature branch.",
+      "blocking": true,
+      "checklistItem": "ci-green"
+    }
+  ],
+  "summaryChecklist": [
+    "code-implemented",
+    "tests-passing",
+    "acceptance-criteria-verified",
+    "documentation-updated",
+    "observability-added",
+    "security-gates-passed",
+    "adr-created-if-needed",
+    "integration-tests-passing",
+    "lint-passing",
+    "ci-green"
+  ],
+  "references": [
+    "reference/core/sdlc/sdlc/02-engineering/construction-focused-sdlc-framework.md",
+    "reference/core/sdlc/sdlc/quality-gates.md"
+  ],
+  "exitCriteria": {
+    "description": "All MUST items checked. Story cannot be marked Done without all blocking items satisfied.",
+    "validationTools": [
+      "CI pipeline",
+      "coverage reports",
+      "PR review",
+      "story tracker"
+    ]
+  }
+}

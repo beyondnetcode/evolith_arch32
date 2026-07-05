@@ -42,13 +42,9 @@ const allowedDirectories = new Set([
   ".obsidian",
   ".vscode",
   "node_modules",
+  "product",
   "reference",
-  "rulesets",
-  "sdk",
-  "apps",
-  "packages",
-  "wiki",
-  "tests"
+  "src"
 ]);
 
 console.log("🧹 Running repository optimization...");

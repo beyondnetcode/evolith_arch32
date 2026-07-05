@@ -1,0 +1,29 @@
+{
+  "contractVersion": "1.0.0",
+  "compatibilityPolicy": "semver-major",
+  "producer": {
+    "package": "@beyondnet/evolith-cli",
+    "version": "1.1.4"
+  },
+  "schemas": [
+    {
+      "id": "gate-evidence",
+      "version": "1.0.0",
+      "path": "rulesets/schema/gate-evidence.schema.json",
+      "sha256": "9225090e2ee851dbd2d5c22e7a0a6e2d7f97db9835f7f3822ac7d9f861b75754"
+    },
+    {
+      "id": "output-envelope",
+      "version": "1.0.0",
+      "path": "rulesets/schema/output-envelope.schema.json",
+      "sha256": "07eaffaae2c33071ea105fbcbdc497c06d149143f6cc9b94555170740707fd0b"
+    }
+  ],
+  "supportedConsumers": [
+    {
+      "repository": "beyondnetcode/evolith_tracker",
+      "manifestPath": "contracts/evolith-core-contracts.json",
+      "contractVersion": "1.0.0"
+    }
+  ]
+}

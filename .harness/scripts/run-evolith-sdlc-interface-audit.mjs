@@ -81,17 +81,17 @@ const DIMENSIONS = [
   {
     id: 'D1', name: 'SDLC model defined & engine-backed', owner: CORE,
     checks: [
-      { name: 'Phase definitions exist', type: 'path', target: 'reference/governance/sdlc/phases', severity: 'P0', risk: 'No canonical phases to govern', fix: 'Keep phase-f*.json as the single source' },
-      { name: 'Gate definitions exist', type: 'path', target: 'reference/governance/sdlc/gates', severity: 'P0', risk: 'No gate contracts', fix: 'Maintain gate-f*.json' },
-      { name: 'Gate JSON schema exists', type: 'path', target: 'reference/governance/sdlc/sdlc-gate.schema.json', severity: 'P1', risk: 'Gates unvalidated structurally', fix: 'Keep sdlc-gate.schema.json' },
-      { name: 'Executable gate engine rules exist', type: 'path', target: 'rulesets/phase-gates/phase-gates.rules.json', severity: 'P0', risk: 'Gates are not executable', fix: 'Keep phase-gates.rules.json wired to the validator' },
-      { name: 'Single gate source (no divergent gate rules in two places)', type: 'grep', target: 'reference/governance/sdlc/gates', pattern: '"rules"\\s*:', want: false, severity: 'P1', risk: 'Two divergent gate sources; cited .rego not executed', fix: 'Unify gates/*.json with phase-gates.rules.json; ensure cited .rego run' },
+      { name: 'Phase definitions exist', type: 'path', target: 'reference/core/sdlc/phases', severity: 'P0', risk: 'No canonical phases to govern', fix: 'Keep phase-f*.json as the single source' },
+      { name: 'Gate definitions exist', type: 'path', target: 'reference/core/sdlc/gates', severity: 'P0', risk: 'No gate contracts', fix: 'Maintain gate-f*.json' },
+      { name: 'Gate JSON schema exists', type: 'path', target: 'reference/core/sdlc/sdlc-gate.schema.json', severity: 'P1', risk: 'Gates unvalidated structurally', fix: 'Keep sdlc-gate.schema.json' },
+      { name: 'Executable gate engine rules exist', type: 'path', target: 'src/rulesets/phase-gates/phase-gates.rules.json', severity: 'P0', risk: 'Gates are not executable', fix: 'Keep phase-gates.rules.json wired to the validator' },
+      { name: 'Single gate source (no divergent gate rules in two places)', type: 'grep', target: 'reference/core/sdlc/gates', pattern: '"rules"\\s*:', want: false, severity: 'P1', risk: 'Two divergent gate sources; cited .rego not executed', fix: 'Unify gates/*.json with phase-gates.rules.json; ensure cited .rego run' },
     ],
   },
   {
     id: 'D2', name: 'Interfaces exposed (CLI / MCP / REST) + governed parity', owner: CORE,
     checks: [
-      { name: 'Surface parity matrix exists', type: 'path', target: 'reference/governance/standards/vision/surface-parity-matrix.json', severity: 'P0', risk: 'No governed map of operations per interface', fix: 'Keep matrix + CI gate 24' },
+      { name: 'Surface parity matrix exists', type: 'path', target: 'reference/core/control-center/surface-parity-matrix.json', severity: 'P0', risk: 'No governed map of operations per interface', fix: 'Keep matrix + CI gate 24' },
       { name: 'REST controllers exist', type: 'path', target: 'apps/core-api/src/presentation/controllers', severity: 'P0', risk: 'No REST surface for Tracker/external', fix: 'Maintain core-api controllers' },
       { name: 'OpenAPI / Swagger spec exists', type: 'path', target: 'apps/core-api/src/openapi', severity: 'P1', risk: 'No machine contract for REST', fix: 'Keep OpenAPI config' },
       { name: 'MCP tools exist', type: 'path', target: 'packages/mcp-server/src/tools', severity: 'P0', risk: 'No agent surface', fix: 'Maintain MCP tools' },
@@ -101,8 +101,8 @@ const DIMENSIONS = [
   {
     id: 'D3', name: 'Artifact contracts & validation (existence vs semantic)', owner: CORE,
     checks: [
-      { name: 'Artifact templates catalog exists', type: 'path', target: 'reference/governance/sdlc/04-artifact-templates', severity: 'P1', risk: 'No artifact catalog', fix: 'Keep templates' },
-      { name: 'Artifact JSON schemas exist', type: 'path', target: 'rulesets/schema', severity: 'P0', risk: 'Artifacts cannot be validated structurally', fix: 'Add schema per artifact' },
+      { name: 'Artifact templates catalog exists', type: 'path', target: 'reference/core/sdlc/04-artifact-templates', severity: 'P1', risk: 'No artifact catalog', fix: 'Keep templates' },
+      { name: 'Artifact JSON schemas exist', type: 'path', target: 'src/rulesets/schema', severity: 'P0', risk: 'Artifacts cannot be validated structurally', fix: 'Add schema per artifact' },
       { name: 'Evidence validator exists', type: 'path', target: 'packages/core-domain/src/application/validators/evidence-validator.ts', severity: 'P0', risk: 'No artifact validation', fix: 'Keep evidence validator' },
       { name: 'Semantic blocking-criteria validator exists', type: 'path', target: 'packages/core-domain/src/application/validators/blocking-criteria-validator.ts', severity: 'P1', risk: 'Gates only check existence', fix: 'Keep/extend semantic checks' },
       { name: 'Validates real artifact, not the Core template', type: 'grep', target: 'packages/core-domain/src/application/validators/evidence-validator.ts', pattern: 'template', want: false, severity: 'P0', risk: 'AJV inert: validates template path, not the satellite artifact', fix: 'Resolve satellite artifact and run AJV/semantic validation' },
@@ -128,7 +128,7 @@ const DIMENSIONS = [
     id: 'D6', name: 'Authorization (ABAC / OPA / role enforcement)', owner: CORE,
     checks: [
       { name: 'ABAC evaluator (native) exists', type: 'path', target: 'packages/mcp-server/src/mcp/abac-evaluator.ts', severity: 'P0', risk: 'No attribute-based access control', fix: 'Keep ABAC evaluator' },
-      { name: 'ABAC OPA policy exists (TS/OPA parity)', type: 'path', target: 'rulesets/opa/abac-mcp-tool-access.rego', severity: 'P1', risk: 'No policy-as-code for access', fix: 'Keep OPA parity' },
+      { name: 'ABAC OPA policy exists (TS/OPA parity)', type: 'path', target: 'src/rulesets/opa/abac-mcp-tool-access.rego', severity: 'P1', risk: 'No policy-as-code for access', fix: 'Keep OPA parity' },
       { name: 'Formal role model (enum/hierarchy)', type: 'grep', target: 'packages', pattern: 'enum\\s+Role|ROLE_HIERARCHY|RoleEnum', exts: ['.ts'], severity: 'P1', risk: 'Roles are free strings; no governance of who approves', fix: 'Introduce formal role model' },
       { name: 'Gate approver role is enforced (not only declarative)', type: 'grep', target: 'packages', pattern: 'assertApprover|approverHasRole|enforceAccountable|authorizeApprover|assertAccountableRole', exts: ['.ts'], severity: 'P1', risk: 'accountableRole/waiverAuthority declarative only; anyone can approve', fix: 'OPA check: approver/waiver actor holds the required role' },
     ],
@@ -140,7 +140,7 @@ const DIMENSIONS = [
       { name: 'Tenant CONTEXT passthrough for audit/ABAC exists', type: 'grep', target: 'packages/mcp-server/src/mcp/audit-logger.ts', pattern: 'tenant', severity: 'P1', risk: 'Core cannot attribute actions to a tenant', fix: 'Keep tenant context in audit/ABAC inputs (not config)' },
       { name: 'Workflow-definition seam exists (getWorkflow)', type: 'grep', target: 'packages/core-domain/src', pattern: 'getWorkflow|WorkflowDefinition|IWorkflowDefinitionProvider', exts: ['.ts'], severity: 'P0', risk: 'No seam for Tracker to supply a composed flow', fix: 'Expose an interface to accept + validate an externally-supplied WorkflowDefinition' },
       { name: 'Op to VALIDATE an externally-supplied workflow against Core invariants', type: 'grep', target: 'packages/core-domain/src', pattern: 'validateWorkflow|workflow.*invariant|WorkflowValidator', exts: ['.ts'], severity: 'P0', risk: 'Tracker could compose flows that break governance', fix: 'Add validateWorkflow(definition): checks mandatory gates, OPA, non-omittable artifacts' },
-      { name: 'Composable catalogs exist (topologies/agents)', type: 'path', target: 'reference/architecture/topologies', severity: 'P1', risk: 'Nothing for Tracker to compose from', fix: 'Expose phase/gate/artifact catalogs (not only topologies)' },
+      { name: 'Composable catalogs exist (topologies/agents)', type: 'path', target: 'reference/core/architecture/topologies', severity: 'P1', risk: 'Nothing for Tracker to compose from', fix: 'Expose phase/gate/artifact catalogs (not only topologies)' },
     ],
   },
   {
@@ -167,8 +167,8 @@ const DIMENSIONS = [
   {
     id: 'D11', name: 'Contracts & SDK for integrators', owner: CORE,
     checks: [
-      { name: 'Schemas available as contracts', type: 'path', target: 'rulesets/schema', severity: 'P1', risk: 'No data contracts', fix: 'Keep schemas' },
-      { name: 'Typed SDK client for agents/integrators', type: 'grep', target: 'PKG_NAMES', pattern: '@evolith/sdk', severity: 'P1', risk: 'Integrators reimplement clients; untyped', fix: 'Publish @evolith/sdk (typed REST+MCP from OpenAPI/schemas)' },
+      { name: 'Schemas available as contracts', type: 'path', target: 'src/rulesets/schema', severity: 'P1', risk: 'No data contracts', fix: 'Keep schemas' },
+      { name: 'Typed SDK client for agents/integrators', type: 'grep', target: 'PKG_NAMES', pattern: '@beyondnet/evolith-sdk', severity: 'P1', risk: 'Integrators reimplement clients; untyped', fix: 'Publish @beyondnet/evolith-sdk (typed REST+MCP from OpenAPI/schemas)' },
     ],
   },
 ];

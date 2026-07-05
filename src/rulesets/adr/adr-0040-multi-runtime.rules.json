@@ -1,0 +1,131 @@
+{
+  "$schema": "../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/adr/adr-0040-multi-runtime.rules.json",
+  "title": "ADR-0040 — Multi-Runtime Selection Matrix Rules",
+  "description": "Machine-readable rules encoding ADR-0040 Multi-Runtime Selection. Defines runtime selection by workload profile and inter-runtime communication rules.",
+  "version": "1.0.0",
+  "adrId": "ADR-0040",
+  "adrTitle": "Multi-Runtime Selection Matrix & Inter-Runtime Contracts",
+  "status": "Approved",
+  "date": "2026-05-11",
+  "effectiveDate": "2026-05-11",
+  "rules": [
+    {
+      "id": "RUNT-01",
+      "severity": "MUST",
+      "category": "runtime-selection",
+      "title": "Runtime selected by workload profile only",
+      "description": "Teams MUST select the target runtime based exclusively on the specific workload profile. Language selection must not be based on subjective preference.",
+      "rationale": "ADR-0040 §Decision: Optimized cost/performance. Each workload runs on the engine most efficient for its memory/CPU profile.",
+      "validationQuery": "Runtime selection documented in evolith.yaml and justified by workload profile analysis.",
+      "blocking": true
+    },
+    {
+      "id": "RUNT-02",
+      "severity": "MUST",
+      "category": "web-apis",
+      "title": "Web APIs and BFF use Node.js/TypeScript",
+      "description": "MANDATE: Node.js/TypeScript for Web APIs, BFF, and I/O-bound workloads. Rationale: High I/O concurrency, rapid delivery, extensive community ecosystem.",
+      "rationale": "ADR-0040 §Runtime Selection Matrix: Web APIs, BFF, I/O Bound → Node.js/TypeScript.",
+      "validationQuery": "Web API and BFF services run on Node.js. No .NET or other runtimes for these workloads without explicit ADR exception.",
+      "blocking": true,
+      "workload": "Web APIs, BFF, I/O Bound",
+      "runtime": "Node.js/TypeScript"
+    },
+    {
+      "id": "RUNT-03",
+      "severity": "MUST",
+      "category": "compute-workloads",
+      "title": "High compute and batch use .NET (C#)",
+      "description": "MANDATE: .NET (C#) for High Compute, ETL, and Batch workloads. Rationale: Superior multi-threading performance, typed raw compute, heavy math.",
+      "rationale": "ADR-0040 §Runtime Selection Matrix: High Compute, ETL, Batch → .NET (C#).",
+      "validationQuery": "High compute services (ETL, batch processing, mathematical computation) run on .NET. Documented workload classification in evolith.yaml.",
+      "blocking": true,
+      "workload": "High Compute, ETL, Batch",
+      "runtime": ".NET (C#)"
+    },
+    {
+      "id": "RUNT-04",
+      "severity": "MUST",
+      "category": "mobile-workloads",
+      "title": "Mobile with hardware access uses Android/Kotlin",
+      "description": "MANDATE: Android (Kotlin) for Operative Mobility workloads with direct hardware peripheral access (Scanners, GPS, Cameras) and strict offline mode requirements.",
+      "rationale": "ADR-0040 §Runtime Selection Matrix: Operative Mobility → Android (Kotlin).",
+      "validationQuery": "Mobile apps requiring hardware access run on Android/Kotlin. iOS considered only with Architecture Board exception.",
+      "blocking": true,
+      "workload": "Operative Mobility",
+      "runtime": "Android (Kotlin)"
+    },
+    {
+      "id": "RUNT-05",
+      "severity": "MUST NOT",
+      "category": "runtime-coupling",
+      "title": "Direct runtime dependency forbidden",
+      "description": "Direct runtime dependency is forbidden. Communication between disparate runtimes MUST traverse explicitly defined boundaries. No Node.js code directly importing .NET assemblies or vice versa.",
+      "rationale": "ADR-0040 §Decision: Runtime isolation prevents tight coupling that prevents independent evolution.",
+      "validationQuery": "No direct cross-runtime imports. All inter-runtime calls go through protocol boundaries (gRPC/REST).",
+      "blocking": true
+    },
+    {
+      "id": "RUNT-06",
+      "severity": "MUST",
+      "category": "sync-interop",
+      "title": "Synchronous inter-op uses gRPC",
+      "description": "Synchronous Inter-Op between runtimes (Node.js ↔ .NET) MUST mandatorily utilize gRPC (Protocol Buffers) for low-latency type-safe transmission.",
+      "rationale": "ADR-0040 §Inter-Runtime Communications Rule: gRPC for synchronous inter-op.",
+      "validationQuery": "Node.js ↔ .NET synchronous calls use gRPC. Contract tests validate proto compatibility.",
+      "blocking": true,
+      "scenario": "Synchronous Inter-Op"
+    },
+    {
+      "id": "RUNT-07",
+      "severity": "MUST",
+      "category": "async-interop",
+      "title": "Asynchronous inter-op uses message broker",
+      "description": "Asynchronous Inter-Op utilizes RabbitMQ/Kafka with contract validation via JSON-Schema or Protobuf. Contracts must be centrally stored and versioned.",
+      "rationale": "ADR-0040 §Inter-Runtime Communications Rule: RabbitMQ/Kafka for async inter-op with schema validation.",
+      "validationQuery": "Async events validated against schema. Message broker contracts centralized in shared library.",
+      "blocking": false,
+      "scenario": "Asynchronous Inter-Op"
+    },
+    {
+      "id": "RUNT-08",
+      "severity": "MUST",
+      "category": "contract-registry",
+      "title": "Contracts centrally stored and versioned",
+      "description": "All inter-runtime contracts must be centrally stored and versioned using semantic versioning. Changes require Pact JS/Net backward compatibility verification.",
+      "rationale": "ADR-0040 §Contract Registry: Centralized versioning prevents contract drift.",
+      "validationQuery": "Contract registry exists and is referenced by all inter-runtime communicating services.",
+      "blocking": true
+    }
+  ],
+  "runtimeMatrix": [
+    {
+      "workload": "Web APIs, BFF, I/O Bound",
+      "runtime": "Node.js/TypeScript",
+      "rationale": "High I/O concurrency, rapid delivery"
+    },
+    {
+      "workload": "High Compute, ETL, Batch",
+      "runtime": ".NET (C#)",
+      "rationale": "Superior multi-threading, typed compute"
+    },
+    {
+      "workload": "Operative Mobility",
+      "runtime": "Android (Kotlin)",
+      "rationale": "Direct hardware access, strict offline mode"
+    }
+  ],
+  "references": [
+    "reference/core/architecture/adrs/core/0040-multi-runtime-selection-contracts.md",
+    "reference/core/architecture/adrs/dotnet/0041-canonical-dotnet-backend-architecture.md"
+  ],
+  "exitCriteria": {
+    "description": "Runtime selection documented per service. Inter-runtime communication uses gRPC/RabbitMQ. Contracts versioned centrally.",
+    "validationTools": [
+      "evolits.yaml validation",
+      "gRPC",
+      "Pact"
+    ]
+  }
+}

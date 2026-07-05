@@ -28,8 +28,8 @@ import addFormats from 'ajv-formats';
 import { ensureOpa } from './opa-runtime.mjs';
 
 const ROOT = process.cwd();
-const KI_SCHEMA = 'rulesets/schema/knowledge-intake.schema.json';
-const OPA_POLICY = 'rulesets/opa/knowledge-intake.rego';
+const KI_SCHEMA = 'src/rulesets/schema/knowledge-intake.schema.json';
+const OPA_POLICY = 'src/rulesets/opa/knowledge-intake.rego';
 
 const VALID_TRANSITIONS = {
   candidate: ['evaluated', 'retired'],

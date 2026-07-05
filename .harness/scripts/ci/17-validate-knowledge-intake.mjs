@@ -9,12 +9,12 @@ import { ensureOpa } from '../opa-runtime.mjs';
 
 const ROOT = process.cwd();
 const INTAKE_DIR = 'reference/knowledge/intake';
-const KI_SCHEMA = 'rulesets/schema/knowledge-intake.schema.json';
-const SRC_SCHEMA = 'rulesets/schema/source-registry.schema.json';
-const PROJ_SCHEMA = 'rulesets/schema/knowledge-projection.schema.json';
+const KI_SCHEMA = 'src/rulesets/schema/knowledge-intake.schema.json';
+const SRC_SCHEMA = 'src/rulesets/schema/source-registry.schema.json';
+const PROJ_SCHEMA = 'src/rulesets/schema/knowledge-projection.schema.json';
 const MANIFEST_ROOT = path.join('reference', 'architecture', 'topologies');
-const OPA_POLICY = 'rulesets/opa/knowledge-intake.rego';
-const OPA_TEST = 'rulesets/opa/knowledge-intake.test.rego';
+const OPA_POLICY = 'src/rulesets/opa/knowledge-intake.rego';
+const OPA_TEST = 'src/rulesets/opa/knowledge-intake.test.rego';
 
 function walk(directory, predicate) {
   if (!fs.existsSync(directory)) return [];

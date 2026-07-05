@@ -19,7 +19,7 @@ Options:
   --report             Generate full diff report for all paired files
 
 Examples:
-  node .harness/scripts/bilingual-diff.mjs --file reference/architecture/README.md
+  node .harness/scripts/bilingual-diff.mjs --file reference/core/architecture/README.md
   node .harness/scripts/bilingual-diff.mjs --diff main..HEAD
   node .harness/scripts/bilingual-diff.mjs --report
 `);

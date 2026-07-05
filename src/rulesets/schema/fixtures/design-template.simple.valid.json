@@ -1,0 +1,20 @@
+{
+  "templateId": "modular-monolith-starter",
+  "name": "Modular Monolith Starter",
+  "description": "A simple, agent-proposed starting template: modular-monolith with the universal blocks and minimal per-concern plans.",
+  "version": "1.0.0",
+  "complexity": "simple",
+  "scope": "core",
+  "topologies": ["modular-monolith"],
+  "blocks": [
+    { "blockKind": "architecture-blueprint", "title": "Architecture" },
+    { "blockKind": "testing-strategy", "title": "Testing pyramid" },
+    { "blockKind": "adr-registry", "title": "Decisions" },
+    { "blockKind": "unit-test-plan", "title": "Unit tests", "concern": "backend" },
+    { "blockKind": "build-plan", "title": "Build", "concern": "backend" }
+  ],
+  "adrs": ["ADR-0002", "ADR-0018"],
+  "governance": { "tier": "official" },
+  "provenance": { "proposedBy": "agent", "agentId": "architect", "promotionRequest": { "status": "none" } },
+  "status": "accepted"
+}

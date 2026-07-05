@@ -5,6 +5,7 @@ import {
   createBlueprintKindEvaluator,
   createDeploymentKindEvaluator,
   createDesignKindEvaluator,
+  createPhaseArtifactKindEvaluator,
   nextPhase,
   severityToRisk,
 } from './kind-evaluators';
@@ -199,6 +200,61 @@ describe('kind-evaluators (GT-379)', () => {
       // performance-plan → quality + deployment; testing-strategy → quality
       expect(phases).toEqual(expect.arrayContaining(['quality', 'deployment']));
       expect(dc.some((c) => c.references?.includes('performance-plan'))).toBe(true);
+    });
+  });
+
+  describe('phase-artifacts (GT-434 / ADR-0104 · DN-06)', () => {
+    it('SKIPs when phaseId is absent or maps to no downstream phase', async () => {
+      const gp = jest.fn();
+      const noPhase = await createPhaseArtifactKindEvaluator(gp, () => '/core').evaluate({ ...ctx, phaseId: undefined }, ws);
+      expect(noPhase.verdict).toBe(Verdict.SKIP);
+      // 'design' is an SDLC phase but has no downstream artifact profile.
+      const designPhase = await createPhaseArtifactKindEvaluator(gp, () => '/core').evaluate({ ...ctx, phaseId: 'design' }, ws);
+      expect(designPhase.verdict).toBe(Verdict.SKIP);
+      expect(gp).not.toHaveBeenCalled();
+    });
+
+    it('maps qa → quality and measures completeness over the confirmed composition (advisory PASS)', async () => {
+      const gp = jest.fn(async (_c: string, ref: string) =>
+        ref === 'microservices' ? { quality: { required: [{ artifactKind: 'consumer-contract-verification' }] } } : undefined,
+      );
+      const context = {
+        ...ctx,
+        phaseId: 'qa',
+        design: { topologyConfirmedRefs: ['microservices'] },
+        artifacts: {
+          // 6 of the 7 universal quality artifacts present; the topology adds a
+          // distinct required artifact that stays missing → measure a partial.
+          presented: [
+            { artifactId: 'test-summary-report' },
+            { artifactId: 'coverage-report' },
+            { artifactId: 'security-scan-result' },
+            { artifactId: 'contract-test-result' },
+            { artifactId: 'cfr-metric' },
+            { artifactId: 'defect-log' },
+            { artifactId: 'exception-status' },
+          ],
+        },
+      };
+      const r = await createPhaseArtifactKindEvaluator(gp, () => '/core').evaluate(context, ws);
+      expect(gp).toHaveBeenCalledWith('/ws/core', 'microservices');
+      expect(r.verdict).toBe(Verdict.PASS); // advisory
+      expect(r.results.phaseArtifacts?.phase).toBe('quality');
+      // required = 7 universal + consumer-contract-verification = 8; present = 7 → 88
+      expect(r.results.phaseArtifacts?.completeness).toBe(88);
+      expect(r.results.phaseArtifacts?.missingArtifacts).toEqual(['consumer-contract-verification']);
+      expect(r.gaps?.every((g) => g.severity === 'warning')).toBe(true);
+    });
+
+    it('falls back to ctx.topologyRef and release → deployment', async () => {
+      const gp = jest.fn(async () => undefined);
+      const context = { ...ctx, phaseId: 'release', design: undefined, topologyRef: 'serverless', artifacts: { presented: [] } };
+      const r = await createPhaseArtifactKindEvaluator(gp, () => '/core').evaluate(context, ws);
+      expect(gp).toHaveBeenCalledWith('/ws/core', 'serverless');
+      expect(r.results.phaseArtifacts?.phase).toBe('deployment');
+      // no declared artifacts → 0 completeness against the 6 universal deployment artifacts
+      expect(r.results.phaseArtifacts?.completeness).toBe(0);
+      expect(r.results.phaseArtifacts?.missingArtifacts).toContain('release-plan');
     });
   });
 });

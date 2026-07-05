@@ -15,6 +15,9 @@ import { HandoffCommand } from './commands/sdlc/handoff.command';
 import { GenerateDomainCommand } from './commands/sdlc/generate-domain.command';
 import { GateStatusCommand } from './commands/sdlc/gate-status.command';
 import { ScaffoldCommand } from './commands/architecture/scaffold.command';
+import { TopologyCommand } from './commands/topology/topology.command';
+import { RecommendCommand } from './commands/topology/recommend.command';
+import { PhaseArtifactsCommand } from './commands/topology/phase-artifacts.command';
 import { ADRCommand } from './commands/adr/adr.command';
 import { StandardsCommand } from './commands/standards/standards.command';
 import { CompletionCommand } from './commands/completion/completion.command';
@@ -72,6 +75,9 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     GenerateDomainCommand,
     GateStatusCommand,
     ScaffoldCommand,
+    TopologyCommand,
+    RecommendCommand,
+    PhaseArtifactsCommand,
     ADRCommand,
     StandardsCommand,
     CompletionCommand,

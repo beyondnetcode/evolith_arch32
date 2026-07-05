@@ -11,7 +11,7 @@
       "minItems": 1,
       "items": {
         "type": "string",
-        "enum": ["gate", "artifact", "evidence", "architecture", "blueprint", "topology", "checkpoint", "deployment", "rule", "compliance", "design"]
+        "enum": ["gate", "artifact", "evidence", "architecture", "blueprint", "topology", "checkpoint", "deployment", "rule", "compliance", "design", "phase-artifacts"]
       }
     },
     "tenant": {

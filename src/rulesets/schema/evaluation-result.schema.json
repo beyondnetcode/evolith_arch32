@@ -24,7 +24,8 @@
         "checkpoint": { "type": "array", "items": { "$ref": "#/definitions/checkpointResult" } },
         "deployment": { "$ref": "#/definitions/deploymentResult" },
         "compliance": { "$ref": "#/definitions/complianceResult" },
-        "design": { "$ref": "#/definitions/designResult" }
+        "design": { "$ref": "#/definitions/designResult" },
+        "phaseArtifacts": { "$ref": "#/definitions/phaseArtifactResult" }
       }
     },
     "rulesExecuted": { "type": "array", "items": { "$ref": "#/definitions/ruleExecutionRef" } },
@@ -261,6 +262,22 @@
         "gaps": { "type": "array", "items": { "$ref": "#/definitions/gapFinding" } },
         "recommendations": { "type": "array", "items": { "$ref": "#/definitions/recommendation" } },
         "downstreamCriteria": { "type": "array", "items": { "$ref": "#/definitions/recommendation" } }
+      }
+    },
+    "phaseArtifactResult": {
+      "type": "object",
+      "description": "ADR-0104 / DN-06 downstream phase-artifact completeness. ADVISORY/NON-BINDING; primary output is completeness (0..100).",
+      "required": ["verdict", "phase", "completeness", "requiredArtifacts", "presentArtifacts", "missingArtifacts", "conditionalArtifacts", "gaps", "recommendations"],
+      "properties": {
+        "verdict": { "$ref": "#/definitions/verdict" },
+        "phase": { "type": "string", "enum": ["construction", "quality", "deployment"] },
+        "completeness": { "type": "number", "minimum": 0, "maximum": 100 },
+        "requiredArtifacts": { "type": "array", "items": { "type": "string" } },
+        "presentArtifacts": { "type": "array", "items": { "type": "string" } },
+        "missingArtifacts": { "type": "array", "items": { "type": "string" } },
+        "conditionalArtifacts": { "type": "array", "items": { "type": "string" } },
+        "gaps": { "type": "array", "items": { "$ref": "#/definitions/gapFinding" } },
+        "recommendations": { "type": "array", "items": { "$ref": "#/definitions/recommendation" } }
       }
     }
   }

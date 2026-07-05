@@ -97,11 +97,19 @@ export {
 
 export {
   TopologyCatalogService,
+  TopologyRecommendationService,
+  PhaseArtifactProfileService,
 } from "@evolith/core-domain/application/services";
 
 export type {
   TopologyManifest,
   ProgressivePhase,
+  TopologyRecommendationRules,
+  TopologyRecommendationSignals,
+  TopologyRecommendation,
+  TopologyDesignProfile,
+  DownstreamPhase,
+  PhaseArtifactResult,
 } from "@evolith/core-domain/application/services";
 
 export type { ValidationResult } from "@evolith/core-domain/application/validators/ruleset-validator.service";

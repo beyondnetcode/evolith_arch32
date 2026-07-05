@@ -71,6 +71,16 @@ jest.mock('@evolith/core-domain/application/services', () => ({
   InitializeProjectUseCase: jest.fn().mockImplementation(() => ({
     execute: jest.fn(),
   })),
+  TopologyRecommendationService: jest.fn().mockImplementation(() => ({
+    recommend: jest.fn(),
+  })),
+  TopologyCatalogService: jest.fn().mockImplementation(() => ({
+    list: jest.fn(),
+    get: jest.fn(),
+  })),
+  PhaseArtifactProfileService: jest.fn().mockImplementation(() => ({
+    evaluate: jest.fn(),
+  })),
 }));
 
 jest.mock('./infrastructure/observability', () => ({

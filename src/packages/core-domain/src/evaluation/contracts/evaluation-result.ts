@@ -199,6 +199,30 @@ export interface DesignEvaluationResult {
   readonly downstreamCriteria?: readonly Recommendation[];
 }
 
+/**
+ * Downstream phase-artifact completeness sub-result (ADR-0104 · DN-06 / GT-434).
+ * ADVISORY and NON-BINDING (mirrors {@link DesignEvaluationResult}): for a
+ * downstream SDLC phase (construction/quality/deployment) the Core measures the
+ * declared artifacts against the UNION of the universal per-phase artifacts and
+ * the confirmed topology composition's `spec.phaseProfiles`. Primary output is
+ * `completeness` (0..100). The verdict is always PASS; the Tracker's gate decides
+ * any blocking.
+ */
+export interface PhaseArtifactEvaluationResult {
+  readonly verdict: Verdict;
+  /** Downstream phase the artifacts were measured against. */
+  readonly phase: 'construction' | 'quality' | 'deployment';
+  /** Primary output: artifact completeness (0..100). Non-binding. */
+  readonly completeness: number;
+  readonly requiredArtifacts: readonly string[];
+  readonly presentArtifacts: readonly string[];
+  readonly missingArtifacts: readonly string[];
+  /** Truly-conditional artifacts (declare a `condition`); informational. */
+  readonly conditionalArtifacts: readonly string[];
+  readonly gaps: readonly GapFinding[];
+  readonly recommendations: readonly Recommendation[];
+}
+
 // ---------------------------------------------------------------------------
 // EvaluationResult — the response payload (wrapped in ADR-0073 envelope)
 // ---------------------------------------------------------------------------
@@ -221,6 +245,7 @@ export interface EvaluationResult {
     readonly deployment?: DeploymentEvaluationResult;
     readonly compliance?: ComplianceResult;
     readonly design?: DesignEvaluationResult;
+    readonly phaseArtifacts?: PhaseArtifactEvaluationResult;
   };
 
   // --- Execution traceability ---

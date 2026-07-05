@@ -27,6 +27,8 @@ import { EvaluateGateUseCase } from '../application/use-cases/evaluate-gate.use-
 import { ProposePhaseAdvanceUseCase } from '../application/use-cases/propose-phase-advance.use-case';
 import { TopologyCatalogService } from '../application/services/topology-catalog.service';
 import type { TopologyDesignProfile } from '../application/services/topology-catalog.service';
+import { PhaseArtifactProfileService } from '../application/services/phase-artifact-profile.service';
+import type { DownstreamPhase } from '../application/services/phase-artifact-profile.service';
 
 /** Maps a MUST/SHOULD/COULD severity to a canonical RiskLevel. */
 export function severityToRisk(s: string): 'low' | 'medium' | 'high' | 'critical' {
@@ -414,6 +416,108 @@ export function createDesignKindEvaluator(
   };
 }
 
+/**
+ * Canonical SDLC phase → downstream phase-artifact profile (ADR-0104 · DN-06).
+ * The design phase (`design`) produces the blueprint; `discovery` precedes it —
+ * neither has a downstream artifact profile, so the phase-artifacts evaluator
+ * SKIPs for them. The three build-forward phases map onto the three profiles.
+ */
+export const PHASE_ID_TO_DOWNSTREAM: Partial<Record<PhaseId, DownstreamPhase>> = {
+  construction: 'construction',
+  qa: 'quality',
+  release: 'deployment',
+};
+
+/**
+ * phase-artifacts kind (GT-434 / ADR-0104 · DN-06) — the ADVISORY downstream
+ * artifact-completeness evaluator, the build-phase mirror of the design
+ * evaluator. From `ctx.phaseId` it derives the downstream phase
+ * (construction / qa→quality / release→deployment), takes the confirmed topology
+ * composition (`ctx.design.topologyConfirmedRefs`, else `ctx.topologyRef`) and
+ * the declared artifacts (`ctx.artifacts.presented[].artifactId`), then measures
+ * completeness against the UNION of the universal per-phase artifacts and each
+ * confirmed topology's `spec.phaseProfiles` via {@link PhaseArtifactProfileService}.
+ * NON-BINDING: the verdict is always PASS; missing artifacts become advisory
+ * gaps / recommendations. The tenant's gate decides any blocking (ADR-0101).
+ * SKIP when `ctx.phaseId` is absent or maps to no downstream phase.
+ */
+export function createPhaseArtifactKindEvaluator(
+  getPhaseProfiles: (
+    corePath: string,
+    topologyRef: string,
+  ) => Promise<Partial<Record<DownstreamPhase, TopologyDesignProfile>> | undefined>,
+  resolveCorePath: () => string,
+): KindEvaluator {
+  const service = new PhaseArtifactProfileService();
+  return {
+    kind: 'phase-artifacts',
+    evaluate: async (ctx, ws) => {
+      const canonical = ctx.phaseId ? normalizePhaseId(ctx.phaseId) : undefined;
+      const phase = canonical ? PHASE_ID_TO_DOWNSTREAM[canonical] : undefined;
+      if (!phase) return { verdict: Verdict.SKIP, results: {} };
+      const corePath = ws.corePath ?? resolveCorePath();
+
+      // Confirmed topology composition (mixed) — fall back to the single topologyRef.
+      const confirmed =
+        ctx.design?.topologyConfirmedRefs && ctx.design.topologyConfirmedRefs.length > 0
+          ? [...ctx.design.topologyConfirmedRefs]
+          : ctx.topologyRef
+            ? [ctx.topologyRef]
+            : [];
+
+      // Pre-resolve each confirmed topology's phaseProfiles once (stateless read),
+      // then hand the service a synchronous accessor.
+      const profilesByTopo = new Map<string, Partial<Record<DownstreamPhase, TopologyDesignProfile>> | undefined>();
+      for (const topo of new Set(confirmed)) {
+        profilesByTopo.set(topo, await getPhaseProfiles(corePath, topo));
+      }
+      const getPhaseProfile = (topo: string, p: DownstreamPhase): TopologyDesignProfile | undefined =>
+        profilesByTopo.get(topo)?.[p];
+
+      const declared = (ctx.artifacts?.presented ?? []).map((a) => a.artifactId);
+      const r = service.evaluate(phase, confirmed, declared, getPhaseProfile);
+
+      const gaps: Gap[] = r.missingArtifacts.map((k) => ({
+        id: `PHASE-ARTIFACT-MISSING-${k}`,
+        requirementRef: k,
+        severity: 'warning',
+        message: `Phase "${phase}" is missing the "${k}" artifact (advisory — feeds the completeness score).`,
+      }));
+      const recommendations = [
+        {
+          id: 'phase-artifact-completeness',
+          kind: 'process' as const,
+          message: `Phase "${phase}" artifact completeness: ${r.completeness}/100 (${r.presentArtifacts.length}/${r.requiredArtifacts.length} required artifacts present).`,
+        },
+        ...r.missingArtifacts.map((k) => ({
+          id: `add-${k}`,
+          kind: 'next-step' as const,
+          message: `Provide a "${k}" artifact to raise phase completeness.`,
+        })),
+      ];
+
+      return {
+        verdict: Verdict.PASS, // advisory / non-binding — never fails the overall verdict
+        results: {
+          phaseArtifacts: {
+            verdict: Verdict.PASS,
+            phase: r.phase,
+            completeness: r.completeness,
+            requiredArtifacts: r.requiredArtifacts,
+            presentArtifacts: r.presentArtifacts,
+            missingArtifacts: r.missingArtifacts,
+            conditionalArtifacts: r.conditionalArtifacts,
+            gaps,
+            recommendations,
+          },
+        },
+        gaps,
+        recommendations,
+      };
+    },
+  };
+}
+
 /** Dependencies for the fully-wired default evaluator set. */
 export interface DefaultKindEvaluatorDeps {
   readonly fileSystem: IFileSystem;
@@ -450,6 +554,9 @@ export function createDefaultKindEvaluators(deps: DefaultKindEvaluatorDeps): Kin
   const getDesignProfile = async (corePath: string, topologyRef: string) =>
     (await topologyCatalog.get(corePath, topologyRef))?.spec.designProfile;
 
+  const getPhaseProfiles = async (corePath: string, topologyRef: string) =>
+    (await topologyCatalog.get(corePath, topologyRef))?.spec.phaseProfiles;
+
   return [
     createArchitectureKindEvaluator(driftService),
     createCheckpointKindEvaluator(proposeAdvance),
@@ -457,5 +564,6 @@ export function createDefaultKindEvaluators(deps: DefaultKindEvaluatorDeps): Kin
     createBlueprintKindEvaluator(blueprintExists, resolveCorePath),
     createDeploymentKindEvaluator(),
     createDesignKindEvaluator(getDesignProfile, resolveCorePath),
+    createPhaseArtifactKindEvaluator(getPhaseProfiles, resolveCorePath),
   ];
 }

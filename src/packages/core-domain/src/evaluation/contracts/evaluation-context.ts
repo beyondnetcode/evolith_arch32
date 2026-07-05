@@ -31,7 +31,8 @@ export type EvaluationKind =
   | 'deployment'
   | 'rule'
   | 'compliance'
-  | 'design';
+  | 'design'
+  | 'phase-artifacts';
 
 /** Execution mode the consumer is operating under (drives HITL routing). */
 export type ExecutionMode = 'manual' | 'hybrid' | 'agentic';

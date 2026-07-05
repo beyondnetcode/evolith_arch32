@@ -6,8 +6,8 @@
     { "path": "./src/packages/infra-providers" },
     { "path": "./src/packages/core" },
     { "path": "./src/packages/agent-runtime" },
-    { "path": "./src/packages/mcp-server" },
     { "path": "./src/packages/sdk-client" },
+    { "path": "./src/packages/mcp-server" },
     { "path": "./src/apps/core-api" },
     { "path": "./src/apps/agent-runtime-api" },
     { "path": "./src/sdk/cli" }

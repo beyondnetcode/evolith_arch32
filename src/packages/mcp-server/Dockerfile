@@ -17,8 +17,9 @@ COPY src ./src
 
 RUN npm ci --legacy-peer-deps
 
-# Build the workspace deps + the server via the composite project graph.
-RUN npx tsc -b src/packages/sdk-client src/packages/agent-runtime src/packages/core-domain src/packages/infra-providers src/packages/core src/packages/mcp-server/tsconfig.json
+# Build the workspace graph via the root solution file (correct dependency order,
+# same as `npm run build`). Building the whole graph avoids per-image ordering bugs.
+RUN npx tsc -b tsconfig.json
 
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner

@@ -23,7 +23,7 @@ RUN npm ci --legacy-peer-deps
 
 # Build the app and its project references (agent-runtime -> core-domain).
 RUN npm run build:policy && \
-    npx tsc -b src/apps/agent-runtime-api/tsconfig.json
+    npx tsc -b tsconfig.json
 
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner

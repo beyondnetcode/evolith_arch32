@@ -23,7 +23,7 @@ RUN npm ci --legacy-peer-deps
 # with the prod tsconfig fails here: composite projects — inherited from
 # tsconfig.base.json — may not disable declaration/incremental emit.)
 RUN npm run build:policy && \
-    npx tsc -b src/packages/core-domain src/packages/infra-providers src/apps/core-api/tsconfig.json
+    npx tsc -b tsconfig.json
 
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner

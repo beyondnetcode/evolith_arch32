@@ -82,8 +82,24 @@ export class ArchitectureController {
   @ApiEnvelopeResponse(undefined, { description: 'Recommended topology composition + rationale (non-binding; the tenant confirms)' })
   async recommendTopology(@Body() body: RecommendTopologyDto) {
     const corePath = this.workspaceResolver.corePath();
-    const rulesPath = `${corePath}/src/rulesets/architecture/topology-recommendation.rules.json`;
-    const rules = JSON.parse(await this.fileSystem.readFile(rulesPath)) as TopologyRecommendationRules;
+    // The rulesets live under `src/rulesets/` in the source tree but the
+    // container image copies the corpus without the `src/` segment
+    // (`/app/corpus/rulesets/...`). Resolve against both layouts so the
+    // endpoint works from source (dev) and inside the image.
+    const relPath = 'rulesets/architecture/topology-recommendation.rules.json';
+    let rulesRaw: string | undefined;
+    for (const candidate of [`${corePath}/${relPath}`, `${corePath}/src/${relPath}`]) {
+      try {
+        rulesRaw = await this.fileSystem.readFile(candidate);
+        break;
+      } catch {
+        // try the next candidate layout
+      }
+    }
+    if (rulesRaw === undefined) {
+      throw new NotFoundException(`Topology recommendation rules not found under ${corePath} (tried rulesets/ and src/rulesets/).`);
+    }
+    const rules = JSON.parse(rulesRaw) as TopologyRecommendationRules;
     return this.recommendationService.recommend(rules, body.signals ?? {});
   }
 

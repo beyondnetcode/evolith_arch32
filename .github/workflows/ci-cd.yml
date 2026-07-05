@@ -43,7 +43,7 @@ jobs:
           npm run build --workspace @evolith/sdk
           npm run build --workspace @evolith/core
           npm run build --workspace @evolith/infra-providers
-          npm run build --workspace @evolith/mcp-server
+          npm run build --workspace @evolith/mcp
           npm run build --workspace src/sdk/cli
 
       # CD gate = the smart-cli unit suite (fast, deterministic). The full e2e
@@ -131,7 +131,7 @@ jobs:
       # (domain → application → adapters) on VALUE imports. Parses the import
       # graph only (no type-aware services), so it needs no built workspace deps.
       - name: Run mcp-server architecture boundary guard
-        run: npm run lint:boundaries --workspace @evolith/mcp-server
+        run: npm run lint:boundaries --workspace @evolith/mcp
 
       - name: Build workspace dependencies
         run: |
@@ -142,12 +142,12 @@ jobs:
           npm run build --workspace @evolith/infra-providers
 
       - name: Run mcp-server tests with coverage
-        run: npm run test:cov --workspace @evolith/mcp-server
+        run: npm run test:cov --workspace @evolith/mcp
 
       # GT-330: MCP server dedicated E2E (spawns the live MCP HTTP server)
       - name: Build mcp-server + run E2E
         run: |
-          npm run build --workspace @evolith/mcp-server
+          npm run build --workspace @evolith/mcp
           npm run --workspace src/packages/mcp-server test:e2e
 
   test-core-api:

@@ -1,6 +1,6 @@
 {
   "name": "@evolith/infra-providers",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Shared infrastructure providers for Evolith Core",
   "license": "MIT",
   "main": "dist/index.js",

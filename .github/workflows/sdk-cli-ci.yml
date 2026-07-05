@@ -112,7 +112,7 @@ jobs:
           npm run build -w @evolith/sdk
           npm run build -w @evolith/infra-providers
           npm run build -w @evolith/core
-          npm run build -w @evolith/mcp-server
+          npm run build -w @evolith/mcp
 
       - name: Architecture Boundary Lint (eslint-plugin-boundaries)
         working-directory: ${{ env.CLI_DIR }}
@@ -154,7 +154,7 @@ jobs:
           npm run build -w @evolith/sdk
           npm run build -w @evolith/infra-providers
           npm run build -w @evolith/core
-          npm run build -w @evolith/mcp-server
+          npm run build -w @evolith/mcp
 
       - name: Run Unit Tests
         working-directory: ${{ env.CLI_DIR }}
@@ -242,7 +242,7 @@ jobs:
           npm run build -w @evolith/sdk
           npm run build -w @evolith/infra-providers
           npm run build -w @evolith/core
-          npm run build -w @evolith/mcp-server
+          npm run build -w @evolith/mcp
 
       - name: Build Package
         working-directory: ${{ env.CLI_DIR }}
@@ -308,7 +308,7 @@ jobs:
           npm run build -w @evolith/sdk
           npm run build -w @evolith/infra-providers
           npm run build -w @evolith/core
-          npm run build -w @evolith/mcp-server
+          npm run build -w @evolith/mcp
 
       - name: Build
         working-directory: ${{ env.CLI_DIR }}
@@ -460,7 +460,7 @@ jobs:
           npm run build -w @evolith/sdk
           npm run build -w @evolith/infra-providers
           npm run build -w @evolith/core
-          npm run build -w @evolith/mcp-server
+          npm run build -w @evolith/mcp
 
       - name: Build CLI
         working-directory: ${{ env.CLI_DIR }}

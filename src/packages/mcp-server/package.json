@@ -37,9 +37,9 @@
   ],
   "dependencies": {
     "@evolith/agent-runtime": "*",
-    "@evolith/core": "1.0.0",
+    "@evolith/core": "*",
     "@evolith/core-domain": "*",
-    "@evolith/infra-providers": "1.0.2",
+    "@evolith/infra-providers": "*",
     "@evolith/sdk": "*",
     "@modelcontextprotocol/sdk": "1.29.0",
     "@nestjs/cache-manager": "3.1.3",

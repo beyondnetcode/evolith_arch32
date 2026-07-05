@@ -139,8 +139,6 @@ flowchart LR
 | **ADR-0045 — Criterios de Readiness para Extracción** | [ADR-0045](../../../core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.es.md) | Requerido — los satélites que declaran F2 deben documentar su Extraction Readiness Score (≥70%). Enforcido por la regla de contrato satélite SVC-04. |
 | **Historias Funcionales** | [functional-story-template.es.md](./04-artifact-templates/functional-story-template.es.md) | Historias listas para BDD en estado Ready, trazables al PRD. Usar Plantilla de Historia Funcional como formato y Estándar de Escritura como guía. Si existen Story Seeds de Fase 1.1 KDD Nivel 2+, refinarlas en Historias Funcionales aquí. |
 | **Checklist de Simplicidad Fase 1** | [simplicity-checklist-phase-01.md](../../../core/architecture/blueprints/simplicity-checklist-phase-01.md) | A pesar del nombre 'Fase 1', este checklist se ejecuta en Fase 2. Su propósito: verificar que no entre sobre-ingeniería prematura en la baseline de diseño. El identificador del artefacto está registrado en el validador de máquina — no renombrar. |
-| **Historia de Usuario Evolith** | [evolith-user-story-template.es.md](./04-artifact-templates/evolith-user-story-template.es.md) | Definición atómica de historia con criterios BDD. Se produce después de definir las Historias Funcionales. |
-| **Agile Backlog** | [agile-backlog-template.es.md](./04-artifact-templates/agile-backlog-template.es.md) | Backlog refinado producido a partir de Historias Funcionales. |
 | **Análisis de Impacto CLI** | [cli-impact-analysis.es.md](./04-artifact-templates/cli-impact-analysis.es.md) | Capacidades CLI requeridas una vez que el diseño está baselined. |
 
 ### Declaración y Validación de Topología
@@ -212,7 +210,7 @@ La Fase 2 implica una topología progresiva específica. Las siguientes acciones
 | 2 | Evaluar Extraction Readiness (ADR-0045 ≥70%); confirmar progresión ADR-0047 justificada | Score documentado |
 | 3 | Confirmar ADR-0002; ejecutar Checklist de Simplicidad Fase 1 | Baseline de arquitectura |
 | 4 | Producir Mapa de Bounded Contexts (Plantilla DDD); aplicar ADR-0031 + ADR-0032 | Mapa de Bounded Contexts |
-| 5 | Refinar Story Seeds → Historias Funcionales (KDD L2+) o escribir desde cero; descomponer → Historias de Usuario; organizar Agile Backlog | Historias Funcionales, Backlog |
+| 5 | Refinar Story Seeds → Historias Funcionales (KDD L2+) o escribir desde cero | Historias Funcionales |
 | 6 | Documentar decisiones de límites como ADRs; completar Análisis de Impacto CLI; consultar ADR-0018; verificar Alineación con Blueprint | Registro ADR (completo) |
 | 7 | Ejecutar `evolith validate --topology distributed-modules` — las 8 reglas DM deben pasar | Validación de topología |
 | 8 | (Condicional) Validar DOMA si topología F3 en roadmap (ADR-0076) | Cumplimiento DOMA |
@@ -368,8 +366,6 @@ La siguiente matriz ofrece una vista de una página de la densidad de artefactos
 | Ballpark Estimation | **R** | — | — | — | — |
 | Matriz de Priorización MoSCoW | **R** | — | — | — | — |
 | Análisis Build-versus-Compose | **R** | — | — | — | — |
-| Historia de Usuario Evolith | — | **R** | — | — | — |
-| Agile Backlog | — | **R** | — | — | — |
 | Análisis de Impacto CLI | — | **R** | — | — | — |
 | Directivas Arquitectónicas | — | — | — | — | — |
 | Baseline Agnóstica | — | — | — | — | — |

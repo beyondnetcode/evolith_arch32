@@ -73,14 +73,12 @@ rulesets/
 │   ├── schemas/                # Schemas de entrada de políticas OPA (26 schemas)
 │   ├── *.rego                  # Archivos de políticas Rego (34 sin tests; main.rego agrega)
 │   └── README.es.md            # Índice OPA
-├── schema/                     # Definiciones de JSON Schema (36 schemas)
+├── schema/                     # Definiciones de JSON Schema (34 schemas)
 │   ├── adr.schema.json         # Validación de artefacto ADR
 │   ├── prd.schema.json         # Validación de artefacto PRD
 │   ├── discovery-canvas.schema.json     # Fase 1
 │   ├── technical-feasibility.schema.json # Fase 1
 │   ├── ballpark-estimation.schema.json   # Fase 1
-│   ├── evolith-user-story.schema.json    # Fase 1
-│   ├── agile-backlog.schema.json          # Fase 1
 │   ├── cli-impact-analysis.schema.json   # Fase 1-2
 │   ├── functional-story.schema.json      # Fase 2
 │   ├── technical-story.schema.json       # Fase 3

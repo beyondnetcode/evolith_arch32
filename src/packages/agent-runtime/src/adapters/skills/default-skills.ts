@@ -4,6 +4,20 @@
  * single place that wires the practical use-cases from the design brief to
  * `.harness` capabilities and/or Core evaluation kinds.
  *
+ * Registry layering (GT-424 — single source of truth):
+ *   - `.harness/manifest.yaml` is the CANONICAL registry of executable harness
+ *     capabilities (validators/audits/skills/playbooks) and their governance
+ *     posture. It is what the runtime discovers and runs via `IHarnessPort`.
+ *   - `reference/core/foundations/agent-skills/manifest.json` is an agent-facing
+ *     metadata VIEW (owner/inputs/outputs); its harness-backed skills must be
+ *     declared in `manifest.yaml`.
+ *   - `DEFAULT_SKILLS` (this file) is a SEPARATE concern: the INTENT→capability
+ *     routing layer. It is intentionally not generated from either manifest, but
+ *     every `harnessCapability` below MUST resolve to a `manifest.yaml`
+ *     capability `name`.
+ *   These invariants are enforced by
+ *   `.harness/scripts/ci/34-check-skill-registry-parity.mjs`.
+ *
  * Adding a new skill = adding an entry here (or `register()` at runtime) +,
  * for harness-backed skills, a matching entry in `.harness/manifest.yaml`.
  */

@@ -44,7 +44,7 @@ The following elements in this repository originate directly from BMAD-METHOD:
 
 | Element | Location | Notes |
 | :--- | :--- | :--- |
-| Six agent personas | `.bmad-core/agents/` | Scoped to this repo's stack and architecture context |
+| Six agent personas | `reference/core/foundations/agent-skills/` | Scoped to this repo's stack and architecture context (`.bmad-core/` remains orchestration-only) |
 | Sequential delivery workflow | `.bmad-core/workflows/development.yaml` | Adapted deliverable paths for this repo's directory structure |
 | Spec-driven approach | Throughout | The principle of analyst → PRD → TAD → backlog → code → QA |
 

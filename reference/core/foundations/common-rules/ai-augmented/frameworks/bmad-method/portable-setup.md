@@ -14,7 +14,7 @@ This guide describes how to set up the same combination used in this repository:
 
 | Component | Files | Purpose |
 | :--- | :--- | :--- |
-| BMAD Team Agents | `.bmad-core/agents/*.md` | Role-based AI personas for feature delivery |
+| BMAD Team Agents | `reference/core/foundations/agent-skills/*.md` | Role-based AI personas for feature delivery (this repo's taxonomy; the generic BMAD default is `.bmad-core/agents/`) |
 | Harness Governance Agents | `.harness/agents/agent-specs.md` | On-demand document and architecture governance |
 | Harness Rules | `.harness/rules/global-rules.md` | 18 binding directives enforced across all agents |
 | Playbooks | `.harness/playbooks/*.md` | Operational checklists for recurring governance tasks |
@@ -29,7 +29,7 @@ This guide describes how to set up the same combination used in this repository:
 Create the following directories in your repository root:
 
 ```bash
-mkdir -p .bmad-core/agents
+mkdir -p reference/core/foundations/agent-skills
 mkdir -p .bmad-core/workflows
 mkdir -p .harness/agents
 mkdir -p .harness/rules
@@ -42,16 +42,16 @@ mkdir -p .harness/templates
 
 ## Step 2 — Copy the BMAD Team Agent Files
 
-Create one file per agent in `.bmad-core/agents/`. The content for each is the Portable Persona block from the [Agents Catalog](./agents-catalog.md).
+Create one file per agent in `reference/core/foundations/agent-skills/`. The content for each is the Portable Persona block from the [Agents Catalog](./agents-catalog.md).
 
 **File names:**
 ```
-.bmad-core/agents/analyst.md
-.bmad-core/agents/pm.md
-.bmad-core/agents/architect.md
-.bmad-core/agents/sm.md
-.bmad-core/agents/dev.md
-.bmad-core/agents/qa.md
+reference/core/foundations/agent-skills/analyst.md
+reference/core/foundations/agent-skills/pm.md
+reference/core/foundations/agent-skills/architect.md
+reference/core/foundations/agent-skills/sm.md
+reference/core/foundations/agent-skills/dev.md
+reference/core/foundations/agent-skills/qa.md
 ```
 
 **Adaptation required:** In the Developer and Architect agent personas, replace technology names with your actual stack. For example, if your stack is .NET instead of Node.js/NestJS, replace NestJS references with ASP.NET Core, TypeORM with Entity Framework, etc. Keep the structural constraints (hexagonal boundaries, OWASP compliance, Clean Architecture layers) — these are stack-agnostic.
@@ -193,7 +193,7 @@ Invoke by role for spec-driven feature delivery:
 - **dev**: Implementation (backend + frontend)
 - **qa**: Testing, security audit, release verification
 
-Agent personas: `.bmad-core/agents/`
+Agent personas: `reference/core/foundations/agent-skills/`
 
 <!-- ### Harness Governance Agents (On-Demand) -->
 Invoke by tag for document and architecture governance:

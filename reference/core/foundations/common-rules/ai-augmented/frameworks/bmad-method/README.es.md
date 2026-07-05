@@ -44,7 +44,7 @@ Los siguientes elementos de este repositorio provienen directamente de BMAD-METH
 
 | Elemento | Ubicacion | Notas |
 | :--- | :--- | :--- |
-| Seis personas de agente | `.bmad-core/agents/` | Acotadas al stack y contexto arquitectonico del repositorio |
+| Seis personas de agente | `reference/core/foundations/agent-skills/` | Acotadas al stack y contexto arquitectonico del repositorio (`.bmad-core/` queda solo para orquestacion) |
 | Flujo secuencial de entrega | `.bmad-core/workflows/development.yaml` | Adaptado a la estructura de directorios del repositorio |
 | Enfoque orientado a especificaciones | En todo el repositorio | Principio analyst → PRD → TAD → backlog → code → QA |
 

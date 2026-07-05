@@ -6,7 +6,7 @@
 ## What You Are Setting Up
 | Componente | Archivos | Propósito |
 | :--- | :--- | :--- |
-| Agentes del equipo BMAD | `.bmad-core/agents/*.md` | Personas de IA basadas en roles para la entrega de funciones |
+| Agentes del equipo BMAD | `reference/core/foundations/agent-skills/*.md` | Personas de IA basadas en roles para la entrega de funciones (taxonomia de este repo; el valor por defecto generico de BMAD es `.bmad-core/agents/`) |
 | Aprovechar a los agentes de gobernanza | `.harness/agents/agent-specs.md` | Gobernanza de arquitectura y documentos bajo demanda |
 | Reglas del arnés | `.harness/rules/global-rules.md` | 18 directivas vinculantes aplicadas en todos los agentes |
 | Libros de jugadas | `.harness/playbooks/*.md` | Listas de verificación operativas para tareas recurrentes de gobernanza |
@@ -17,7 +17,7 @@
 ---
 ## Step 1 — Directory Structure
 Cree los siguientes directorios en la raíz de su repositorio:```bash
-mkdir -p .bmad-core/agents
+mkdir -p reference/core/foundations/agent-skills
 mkdir -p .bmad-core/workflows
 mkdir -p .harness/agents
 mkdir -p .harness/rules
@@ -29,15 +29,15 @@ mkdir -p .harness/templates
 ---
 
 ## Step 2 — Copy the BMAD Team Agent Files
-Cree un archivo por agente en `.bmad-core/agents/`. El contenido de cada uno es el bloque Persona portátil del [Catálogo de agentes] (./agents-catalog.md).
+Cree un archivo por agente en `reference/core/foundations/agent-skills/`. El contenido de cada uno es el bloque Persona portátil del [Catálogo de agentes] (./agents-catalog.md).
 
 **Nombres de archivos:**```
-.bmad-core/agents/analyst.md
-.bmad-core/agents/pm.md
-.bmad-core/agents/architect.md
-.bmad-core/agents/sm.md
-.bmad-core/agents/dev.md
-.bmad-core/agents/qa.md
+reference/core/foundations/agent-skills/analyst.md
+reference/core/foundations/agent-skills/pm.md
+reference/core/foundations/agent-skills/architect.md
+reference/core/foundations/agent-skills/sm.md
+reference/core/foundations/agent-skills/dev.md
+reference/core/foundations/agent-skills/qa.md
 ```**Se requiere adaptación:** En las personas de los agentes Desarrollador y Arquitecto, reemplace los nombres de las tecnologías con su pila real. Por ejemplo, si su pila es .NET en lugar de Node.js/NestJS, reemplace las referencias de NestJS con ASP.NET Core, TypeORM con Entity Framework, etc. Mantenga las restricciones estructurales (límites hexagonales, cumplimiento de OWASP, capas de arquitectura limpia): estas son independientes de la pila.
 
 ---

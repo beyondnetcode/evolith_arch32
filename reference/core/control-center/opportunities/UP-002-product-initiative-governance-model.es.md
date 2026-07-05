@@ -101,4 +101,4 @@ Promover el **modelo de gobierno Producto/Iniciativa** a estándar canónico del
 
 ---
 
-[Volver al Índice de Upstream Proposals](../DECISIONS.es.md) · [Hub de Gobernanza](../README.md)
+[Volver al Índice de Upstream Proposals](../../sdlc/governance/DECISIONS.es.md) · [Hub de Gobernanza](../../sdlc/governance/README.es.md)

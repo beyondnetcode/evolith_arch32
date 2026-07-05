@@ -170,4 +170,4 @@ Esto habilita que el Tracker renderice **un único panel de gaps de todo el ecos
 
 ---
 
-[Volver al Índice de Propuestas Upstream](../DECISIONS.es.md) · [Hub de Gobernanza](../README.es.md)
+[Volver al Índice de Propuestas Upstream](../../sdlc/governance/DECISIONS.es.md) · [Hub de Gobernanza](../../sdlc/governance/README.es.md)

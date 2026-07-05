@@ -101,4 +101,4 @@ Promote the **Product/Initiative governance model** to a canonical ecosystem sta
 
 ---
 
-[Back to Upstream Proposals Index](../DECISIONS.md) · [Governance Hub](../README.md)
+[Back to Upstream Proposals Index](../../sdlc/governance/DECISIONS.md) · [Governance Hub](../../sdlc/governance/README.md)

@@ -170,4 +170,4 @@ This enables the Tracker to render **a unified ecosystem-wide gap panel**.
 
 ---
 
-[Back to Upstream Proposals Index](../DECISIONS.md) · [Governance Hub](../README.md)
+[Back to Upstream Proposals Index](../../sdlc/governance/DECISIONS.md) · [Governance Hub](../../sdlc/governance/README.md)

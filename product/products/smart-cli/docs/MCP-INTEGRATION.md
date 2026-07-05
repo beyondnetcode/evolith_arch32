@@ -383,7 +383,7 @@ Guides through ADR creation process.
 ### Tool not found
 
 If the AI says "Tool not found", check:
-1. MCP server is running: `smart-cli mcp serve`
+1. MCP server is running: `evolith-mcp serve`
 2. Configuration is correct in mcp.json
 3. Restart the AI application
 

@@ -272,7 +272,7 @@ These endpoints trigger validation, proposed state advances, and phase transitio
     "file": "src/app.module.ts"
   }
   ```
-* **Fields:** `workspaceRef` (**required**, opaque ref); `engine` (`native` | `opa`, default `native`); `topology` activates Architecture mode; `phase` activates SDLC mode (canonical ids `discovery`, `design`, `construction`, `qa`, `release`; legacy `f1`–`f5` accepted as deprecated aliases per GT-343); `ruleset` activates Ruleset mode; `adr` activates ADR mode; `file` activates Ad-hoc mode.
+* **Fields:** `workspaceRef` (**required**, opaque ref); `engine` (`native` | `opa`, default `native`); `topology` activates Architecture mode; `phase` activates SDLC mode (canonical ids `discovery`, `design`, `construction`, `qa`, `release`); `ruleset` activates Ruleset mode; `adr` activates ADR mode; `file` activates Ad-hoc mode.
 * **Recognised topologies:** `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`.
 * **Recognised ADRs:** `adr-0002`, `adr-0005`, `adr-0010`, `adr-0018`, `adr-0032`, `adr-0040`, `adr-0050`.
 * **Validation note:** `engine`, `topology`, and `adr` are declared with `@IsString()` only — the enum lists above are Swagger documentation metadata, not validation constraints. An arbitrary string passes DTO validation; an unrecognised value is rejected (or ignored) downstream by the validation engine, not as a `400` at the DTO layer.

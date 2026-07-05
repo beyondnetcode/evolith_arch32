@@ -383,7 +383,7 @@ Guía a través del proceso de creación de ADR.
 ### Herramienta no encontrada
 
 Si la IA dice "Herramienta no encontrada", verifica:
-1. El servidor MCP está ejecutándose: `smart-cli mcp serve`
+1. El servidor MCP está ejecutándose: `evolith-mcp serve`
 2. La configuración es correcta en mcp.json
 3. Reinicia la aplicación de IA
 

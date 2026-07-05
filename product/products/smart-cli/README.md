@@ -51,8 +51,8 @@ smart-cli docs
 # 4. Validate compliance
 smart-cli validate
 
-# 5. Connect an AI agent
-smart-cli mcp serve
+# 5. Connect an AI agent (standalone MCP server)
+evolith-mcp serve
 ```
 
 ## Command reference
@@ -96,7 +96,7 @@ Validation is composable, not rigid — you can enter from any combination of in
 | Ad-hoc | `smart-cli validate --file src/domain/user.ts` | A single file or component |
 | Composable | `smart-cli validate --topology microservices --ruleset evidence` | Multiple entry points combined |
 
-**SDLC phase keys** (the `--phase` values accepted by the CLI and the `@evolith/sdk-client` API): `discovery`, `design`, `construction`, `qa`, `release`. These map to governance phases f1–f5 — *Conception & Discovery*, *Design & Architecture*, *Construction*, *Validation & QA*, *Delivery & Operations* — see [Phases & gates](#sdlc-phases--gates) below. Legacy `f1`–`f5` are **deprecated** as `--phase` values; use the canonical keys above.
+**SDLC phase keys** (the `--phase` values accepted by the CLI and the `@evolith/sdk-client` API): `discovery`, `design`, `construction`, `qa`, `release` — *Conception & Discovery*, *Design & Architecture*, *Construction*, *Validation & QA*, *Delivery & Operations* — see [Phases & gates](#sdlc-phases--gates) below.
 
 ```bash
 # Basic compliance check
@@ -127,11 +127,11 @@ Any command that accepts `--topology` references the **8 canonical topology ids*
 | `data-mesh` | data |
 | `agentic-ai` | ai |
 
-The **progressive axis** (`modular-monolith → distributed-modules → microservices`) is a linear maturity progression. The remaining dimensions (execution, integration, data, ai) are complementary and chosen per project needs. Legacy `F1/F2/F3` flags map to the progressive axis but are **deprecated** — use the canonical ids.
+The **progressive axis** (`modular-monolith → distributed-modules → microservices`) is a linear maturity progression. The remaining dimensions (execution, integration, data, ai) are complementary and chosen per project needs. Use the canonical topology ids.
 
 ## SDLC phases & gates
 
-F1–F5 are **maturity levels** on the progressive architecture axis, not SDLC phases. The SDLC lifecycle is a separate model:
+**Maturity levels** (the progressive architecture axis: `modular-monolith → distributed-modules → microservices`) are separate from **SDLC phases**. The SDLC lifecycle is its own model:
 
 | Governance phase | Short name | CLI `--phase` key | Gate |
 |---|---|---|---|
@@ -145,7 +145,7 @@ The final SDLC phase is **Delivery & Operations**. Evaluate gates and emit evide
 
 ## MCP server (AI agent integration)
 
-The CLI can launch the MCP server via `smart-cli mcp serve`, which exposes the full Evolith surface to AI agents. Under the hood this command prints a deprecation warning and lazily delegates to the **standalone `@evolith/mcp-server` package** (a dependency of the CLI). `smart-cli mcp` will be removed in a future major version — migrate to `npx @evolith/mcp-server serve` (or the `evolith-mcp serve` binary). See the [MCP Services product](../mcp-services/README.md) for the authoritative surface.
+The MCP server ships as the **standalone `@evolith/mcp-server` package**, which exposes the full Evolith surface to AI agents. Run it with `evolith-mcp serve` (or `npx @evolith/mcp-server serve`). See the [MCP Services product](../mcp-services/README.md) for the authoritative surface.
 
 | Surface | Count |
 |---|---|
@@ -158,10 +158,10 @@ The exact tool/resource/prompt set is enumerated in the generated [Product Surfa
 
 ```bash
 # stdio transport (default — Cursor, Claude Desktop)
-smart-cli mcp serve
+evolith-mcp serve
 
 # HTTP transport with API-key auth (remote / containerized)
-smart-cli mcp serve --transport http --port 3000 --api-key <secret>
+evolith-mcp serve --transport http --port 3000 --api-key <secret>
 ```
 
 **Cursor** (`~/.cursor/mcp.json`) / **Claude Desktop** (`~/Library/Application Support/Claude/claude_desktop_config.json`):

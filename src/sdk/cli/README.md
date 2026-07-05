@@ -32,9 +32,7 @@ Evolith Core defines **8 architecture topologies** across complementary dimensio
 | `data-mesh` | Data Mesh | data |
 | `agentic-ai` | Agentic AI | ai |
 
-The **progressive axis** (`modular-monolith → distributed-modules → microservices`) is a linear maturity progression managed by the `upgrade` command. The other dimensions (execution, integration, data, ai) are complementary and chosen per project needs.
-
-> **Legacy `F1/F2/F3`:** earlier versions used `--arch F1|F2|F3` mapping to the progressive axis (`F1 = modular-monolith`, `F2 = distributed-modules`, `F3 = microservices`). These flags are **deprecated** — use `--topology <id>` with the canonical ids above. (The old "Microfrontend / Distributed Microfrontend" labels are obsolete and no longer reflect the corpus.)
+The **progressive axis** (`modular-monolith → distributed-modules → microservices`) is a linear maturity progression managed by the `upgrade` command. The other dimensions (execution, integration, data, ai) are complementary and chosen per project needs. Use `--topology <id>` with the canonical ids above.
 
 ## Installation
 
@@ -75,13 +73,13 @@ export PATH=$(npm config get prefix)/bin:$PATH
 
 ### Environment variables
 
-The CLI runs with zero configuration. The following variables are optional overrides. Those marked *(MCP)* are read by the bundled `@evolith/mcp-server` only while `smart-cli mcp serve` is running.
+The CLI runs with zero configuration. The following variables are optional overrides. Those marked *(MCP)* are read by the standalone `@evolith/mcp-server` (the `evolith-mcp serve` binary).
 
 | Variable | Read by | Purpose |
 |---|---|---|
 | `EVOLITH_PROFILE` | CLI | Selects the active named profile (per-environment defaults) instead of `default`. |
 | `EVOLITH_API_KEY` | CLI / MCP | API key for the MCP HTTP transport (equivalent to `--api-key`); required in production HTTP mode. |
-| `PORT` | CLI / MCP | Default HTTP port for `mcp serve --transport http` when `--port` is omitted (default `3000`). |
+| `PORT` | CLI / MCP | Default HTTP port for `evolith-mcp serve --transport http` when `--port` is omitted (default `3000`). |
 | `OTEL_ENABLED` | CLI | When `true`, enables OpenTelemetry tracing export from the CLI. |
 | `WORKSPACE_ROOT` | Core | Checkout root for overriding the bundled workflow/rulesets from disk (see above). |
 | `MCP_HTTP_HOST` *(MCP)* | MCP | Bind host for the HTTP transport (default `0.0.0.0`; set `127.0.0.1` for local-only). |
@@ -104,11 +102,11 @@ smart-cli docs
 # 4. Validate compliance
 smart-cli validate
 
-# 5. Scaffold architecture (F1)
+# 5. Scaffold architecture
 smart-cli scaffold --phase 1
 
-# 6. Connect an AI agent
-smart-cli mcp serve
+# 6. Connect an AI agent (standalone MCP server)
+evolith-mcp serve
 ```
 
 ---
@@ -216,9 +214,8 @@ Options:
   -e, --engine <engine>    Validation engine: native (default) or opa
   -t, --topology <id>      Topology to validate by canonical id, e.g. modular-monolith,
                            microservices, serverless, event-driven, agentic-ai (repeatable).
-                           Legacy F1/F2/F3 aliases still map to the progressive axis.
   -m, --manifest <path>    SatelliteManifest JSON for end-to-end evaluation (GT-281 pipeline)
-  -p, --phase <phase>      SDLC phase to evaluate: discovery, design, construction, qa, release (legacy f1..f5 deprecated; activates GT-281 pipeline)
+  -p, --phase <phase>      SDLC phase to evaluate: discovery, design, construction, qa, release (activates GT-281 pipeline)
       --adr <id>           Validate against a specific ADR rule set
       --file <path>        Validate a single file (ad-hoc mode)
       --composable         Use the composable GT-312 engine with intelligent mode resolution
@@ -946,31 +943,27 @@ Pre-built scripts are also included in the package under `shell/`:
 
 ## MCP Server
 
-The Evolith CLI bundles a production-ready MCP server for AI agent integration.
-
-> **Deprecation notice:** `smart-cli mcp` prints a deprecation warning on startup and will be removed in a future major version. The MCP server now ships as a standalone package — migrate to `@evolith/mcp-server` (`npx @evolith/mcp-server serve` or the `evolith-mcp serve` binary). The CLI command continues to work in the meantime by lazily delegating to that package.
+Evolith ships a standalone MCP server, `@evolith/mcp-server`, for AI agent integration. Run it with the `evolith-mcp` binary (or `npx @evolith/mcp-server serve`).
 
 ### Starting the Server
 
-`mcp` takes an optional positional action that defaults to `serve`, so `smart-cli mcp` and `smart-cli mcp serve` are equivalent.
-
 ```bash
 # stdio transport (default — for Cursor, Claude Desktop)
-smart-cli mcp serve
+evolith-mcp serve
 
 # HTTP transport (for remote or containerized deployments)
-smart-cli mcp serve --transport http --port 3000
+evolith-mcp serve --transport http --port 3000
 
 # HTTP with API key authentication
-smart-cli mcp serve --transport http --port 3000 --api-key <secret>
+evolith-mcp serve --transport http --port 3000 --api-key <secret>
 ```
 
 ```bash
-smart-cli mcp [action] [options]
+evolith-mcp [action] [options]
 
 Actions:
   serve       Start the MCP server (default)
-  version     Print a static MCP server version banner (does not read the @evolith/mcp-server package version)
+  version     Print the MCP server version banner
 
 Options:
   -t, --transport <stdio|http>   Transport: stdio (default) or http
@@ -1201,11 +1194,11 @@ smart-cli validate
 
 **MCP server not responding:**
 ```bash
-smart-cli mcp serve --no-confirm
+evolith-mcp serve --no-confirm
 ```
 
 **Unknown topology in scaffold or drift:**
-Ensure your `evolith.yaml` has a valid `product.topology` field using a canonical topology id — `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh` or `agentic-ai` (per `reference/config/evolith.config.schema.json`). Legacy `F1/F2/F3` are accepted only as deprecated CLI flags, not as manifest values.
+Ensure your `evolith.yaml` has a valid `product.topology` field using a canonical topology id — `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh` or `agentic-ai` (per `reference/config/evolith.config.schema.json`).
 
 ---
 

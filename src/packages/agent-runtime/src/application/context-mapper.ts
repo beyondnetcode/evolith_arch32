@@ -16,6 +16,15 @@ import type { HarnessExecutionResult } from '../domain/ports/harness.port';
 /** Canonical phase ids (must mirror core-domain GatePhase). */
 const CANONICAL_PHASES = ['discovery', 'design', 'construction', 'qa', 'release'] as const;
 
+/**
+ * The Core requires a non-empty OPAQUE workspaceRef (single identifier, no
+ * slashes) to evaluate; it resolves it beneath WORKSPACE_ROOT. Conversational
+ * requests (e.g. the assistant) often carry no ref, so fall back to the
+ * canonical corpus ref rather than sending an empty context that the Core
+ * rejects with HTTP 400.
+ */
+const DEFAULT_WORKSPACE_REF = 'rulesets';
+
 type PhaseIdT = NonNullable<EvaluationContext['phaseId']>;
 type EvaluationKindT = EvaluationContext['kinds'][number];
 
@@ -51,7 +60,7 @@ export function buildEvaluationContext(
       : undefined,
     phaseId: toPhaseId(ctx.phase),
     gateId: ctx.gate,
-    workspaceRef: ctx.workspaceRef,
+    workspaceRef: ctx.workspaceRef ?? DEFAULT_WORKSPACE_REF,
     rulesetRef: ctx.rulesetRef,
     rulesetVersion: ctx.rulesetVersion,
     policyRefs: ctx.policyRefs,

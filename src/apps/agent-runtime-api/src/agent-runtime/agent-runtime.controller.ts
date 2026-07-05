@@ -1,10 +1,18 @@
 /**
  * HTTP surface for the Agent Runtime.
  *
- *   POST /v1/agent/handle   — run a request through the governed pipeline
- *   POST /v1/agent/hermes   — GT-400: conversational chatbox entry point
- *   POST /v1/agent/stream   — SSE stream of runtime events
- *   GET  /v1/agent/skills   — list the available capabilities (catalog)
+ *   POST /v1/agent/handle    — run a request through the governed pipeline
+ *   POST /v1/agent/converse  — CANONICAL adapter-neutral conversational entry
+ *   POST /v1/agent/hermes    — DEPRECATED alias of /converse (back-compat only)
+ *   POST /v1/agent/stream    — SSE stream of runtime events
+ *   GET  /v1/agent/skills    — list the available capabilities (catalog)
+ *
+ * The conversational surface is intentionally ADAPTER-NEUTRAL: `/converse` is
+ * the public name, so the engine adapter behind IAgentEnginePort can be swapped
+ * without renaming anything public. `HermesChatBoxInteractionAdapter` remains a
+ * legitimate adapter implementation name, but it is no longer the public
+ * surface name; `/hermes` is kept only as a thin deprecated back-compat alias
+ * that delegates to the exact same handler as `/converse`.
  *
  * The endpoint is thin: it maps the wire payload through the appropriate
  * interaction adapter, delegates to the runtime, and returns the canonical
@@ -21,6 +29,27 @@ import {
   type AgentRuntimeRequestWire,
 } from '@beyondnet/evolith-agent-runtime';
 import { AGENT_RUNTIME_BUNDLE } from './runtime.factory';
+
+/**
+ * Adapter-neutral conversational input shape shared by `/converse` (canonical)
+ * and `/hermes` (deprecated alias). Matches the HermesChatBoxInput contract the
+ * interaction adapter expects, but is named engine-agnostically.
+ */
+interface ConversationalInput {
+  message: string;
+  conversationId?: string;
+  actor?: { id?: string; roles?: string[] };
+  context?: {
+    tenantId?: string;
+    productId?: string;
+    initiativeId?: string;
+    phase?: string;
+    gate?: string;
+    correlationId?: string;
+  };
+  parameters?: Record<string, unknown>;
+  dryRun?: boolean;
+}
 
 @Controller('v1/agent')
 export class AgentRuntimeController {
@@ -41,28 +70,37 @@ export class AgentRuntimeController {
   }
 
   /**
-   * GT-400: Hermes chatbox entry point.
+   * CANONICAL adapter-neutral conversational entry point.
    *
-   * Accepts the HermesChatBoxInput shape (message, conversationId, actor,
+   * Accepts the conversational input shape (message, conversationId, actor,
    * context, parameters, dryRun) and routes it through the governed runtime
-   * pipeline via HermesChatBoxInteractionAdapter.
+   * pipeline. The interaction adapter used underneath is an implementation
+   * detail; the public surface name is intentionally engine-agnostic.
+   */
+  @Post('converse')
+  async converse(@Body() body: ConversationalInput) {
+    return this.handleConversation(body);
+  }
+
+  /**
+   * GT-400: DEPRECATED conversational alias, kept for back-compat only.
+   *
+   * Delegates to the exact same handler as `/converse`. Prefer `/converse`;
+   * this alias may be removed in a future major version.
+   *
+   * @deprecated Use `POST /v1/agent/converse` instead.
    */
   @Post('hermes')
-  async hermes(@Body() body: {
-    message: string;
-    conversationId?: string;
-    actor?: { id?: string; roles?: string[] };
-    context?: {
-      tenantId?: string;
-      productId?: string;
-      initiativeId?: string;
-      phase?: string;
-      gate?: string;
-      correlationId?: string;
-    };
-    parameters?: Record<string, unknown>;
-    dryRun?: boolean;
-  }) {
+  async hermes(@Body() body: ConversationalInput) {
+    return this.handleConversation(body);
+  }
+
+  /**
+   * Shared conversational handler backing both `/converse` (canonical) and
+   * `/hermes` (deprecated alias). Maps the wire payload through the interaction
+   * adapter and delegates to the governed runtime.
+   */
+  private handleConversation(body: ConversationalInput) {
     let request;
     try {
       request = this.hermesAdapter.toRuntimeRequest(body);

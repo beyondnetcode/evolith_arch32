@@ -9,6 +9,7 @@
     "build": "tsc -p tsconfig.prod.json",
     "start": "node dist/main",
     "start:dev": "node --watch dist/main",
+    "test": "jest --config jest.config.js --runInBand",
     "clean": "rm -rf dist"
   },
   "dependencies": {

@@ -30,6 +30,8 @@ export interface AgentRuntimeRequestWire {
   readonly initiative?: string;
   readonly phase?: string;
   readonly gate?: string;
+  /** Opaque workspace reference (ADR-0074) the Core resolves; never a raw path. */
+  readonly workspace_ref?: string;
   readonly requested_by?: string;
   readonly intent: string;
   readonly runtime?: string;
@@ -88,6 +90,7 @@ export function parseAgentRuntimeRequest(wire: AgentRuntimeRequestWire): AgentRu
     sourceInterface: wire.source_interface ?? 'smart_cli_command',
     phase: wire.phase,
     gate: wire.gate,
+    workspaceRef: wire.workspace_ref,
     requestedBy: wire.requested_by,
     executionMode: wire.execution_mode,
     correlationId: wire.correlation_id,

@@ -98,6 +98,101 @@ export class EvaluationContextDto {
   @IsString()
   correlationId?: string;
 
+  // --- Remaining canonical EvaluationContext fields (mirror of the domain
+  //     contract so the full context — as sent by the Tracker/CLI/agent-runtime —
+  //     passes whitelist validation and reaches the orchestrator). ---
+
+  @ApiPropertyOptional({ description: 'Opaque initiative-group context' })
+  @IsOptional()
+  @IsObject()
+  initiativeGroup?: Readonly<Record<string, unknown>>;
+
+  @ApiPropertyOptional({ description: 'Declared artifact facts (not scanned from disk)' })
+  @IsOptional()
+  @IsObject()
+  artifacts?: Readonly<Record<string, unknown>>;
+
+  @ApiPropertyOptional({ description: 'Declared evidence facts' })
+  @IsOptional()
+  @IsArray()
+  evidence?: readonly unknown[];
+
+  @ApiPropertyOptional({ description: 'Declared checkpoint context' })
+  @IsOptional()
+  @IsObject()
+  checkpoint?: Readonly<Record<string, unknown>>;
+
+  @ApiPropertyOptional({ description: 'Declared deployment context' })
+  @IsOptional()
+  @IsObject()
+  deployment?: Readonly<Record<string, unknown>>;
+
+  @ApiPropertyOptional({ description: 'Declared architecture context' })
+  @IsOptional()
+  @IsObject()
+  architecture?: Readonly<Record<string, unknown>>;
+
+  @ApiPropertyOptional({ description: 'Declared design context' })
+  @IsOptional()
+  @IsObject()
+  design?: Readonly<Record<string, unknown>>;
+
+  @ApiPropertyOptional({ description: 'External reference facts' })
+  @IsOptional()
+  @IsArray()
+  externalReferences?: readonly unknown[];
+
+  @ApiPropertyOptional({ description: 'Tenant SDLC configuration (Core resolves nothing)' })
+  @IsOptional()
+  @IsObject()
+  sdlcConfig?: Readonly<Record<string, unknown>>;
+
+  @ApiPropertyOptional({ description: 'Tenant custom constraints' })
+  @IsOptional()
+  @IsObject()
+  customConstraints?: Readonly<Record<string, unknown>>;
+
+  @ApiPropertyOptional({ description: 'Versioned ruleset pointer' })
+  @IsOptional()
+  @IsString()
+  rulesetVersion?: string;
+
+  @ApiPropertyOptional({ description: 'Versioned policy references' })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  policyRefs?: readonly string[];
+
+  @ApiPropertyOptional({ description: 'Blueprint reference' })
+  @IsOptional()
+  @IsString()
+  blueprintRef?: string;
+
+  @ApiPropertyOptional({ description: 'Schema reference' })
+  @IsOptional()
+  @IsString()
+  schemaRef?: string;
+
+  @ApiPropertyOptional({ description: 'Decision history references' })
+  @IsOptional()
+  @IsArray()
+  decisionHistory?: readonly unknown[];
+
+  @ApiPropertyOptional({ description: 'Expected verdict (advisory self-check)' })
+  @IsOptional()
+  @IsString()
+  expectedResult?: string;
+
+  @ApiPropertyOptional({ description: 'Opaque passthrough facts (echoed; the Core evaluates declared facts, never disk)' })
+  @IsOptional()
+  @IsObject()
+  passthrough?: Readonly<Record<string, unknown>>;
+
+  @ApiPropertyOptional({ description: 'Contract schema version the consumer is sending' })
+  @IsOptional()
+  @IsString()
+  schemaVersion?: string;
+
   // --- Legacy backward-compatibility fields (used only when workspaceRef is absent) ---
   @ApiPropertyOptional({ description: 'LEGACY: filesystem path to the satellite repository' })
   @IsOptional()

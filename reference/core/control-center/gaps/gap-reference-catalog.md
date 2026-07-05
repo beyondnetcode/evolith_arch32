@@ -126,6 +126,18 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **References:** ADR-0104, DN-06 (tracker-downstream-flow), downstream-artifact-profiles, GT-425 (the mirrored epic).
 
+#### GT-450
+
+**Title:** Containerization out of sync with the `src/`-nested monorepo layout
+
+**Problem:** The repo nests workspace packages under `src/` (root `tsconfig.json` references `./src/*`), but the 3 service Dockerfiles (`core-api`, `mcp-server`, `agent-runtime`) and `docker-compose.evolith.yml` still assumed a flat root layout (`COPY packages ./packages`, `tsc -b apps/...`, `dockerfile: apps/core-api/Dockerfile`). `docker compose build` failed to even locate the Dockerfiles, and the Coolify config (`apps/core-api/Dockerfile`, base `/`) pointed at a non-existent path — so both local bring-up and the VPS deploy were broken. There was also no `.dockerignore` despite the Dockerfiles assuming one.
+
+**Fix (85400091):** repoint all COPY sources, `tsc -b` targets, runner dist/package copies, `WORKDIR`, and rulesets to `src/*`; compose `dockerfile:` and stale header paths (`reference/infrastructure` → `product/infra`); Coolify path hints; add `.dockerignore` (node_modules/dist/tsbuildinfo/policy.wasm). Also wired agent-runtime → real Core over HTTP for the local stack (GT-438: `AGENT_RUNTIME_CORE_ENDPOINT`/`_CORE_TOKEN`, depends_on core-api healthy).
+
+**Closure:** `docker compose -f product/infra/docker-compose.evolith.yml build` succeeds and the three services come up healthy locally. **Status:** paths fixed + `compose config` validates; a real `docker compose build` on a running daemon is the remaining verification.
+
+**References:** src/apps/core-api/Dockerfile, src/apps/agent-runtime-api/Dockerfile, src/packages/mcp-server/Dockerfile, product/infra/docker-compose.evolith.yml, .dockerignore; GT-447, GT-438.
+
 #### GT-449
 
 **Title:** Canonical-only command surface (drop deprecated legacy aliases)

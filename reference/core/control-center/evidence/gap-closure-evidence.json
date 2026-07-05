@@ -3,6 +3,25 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-434",
+      "closedAt": "2026-07-04",
+      "closureCommit": "6b1c5472",
+      "evidence": [
+        "src/rulesets/schema/topology-manifest.schema.json",
+        "src/packages/core-domain/src/application/services/phase-artifact-profile.service.ts",
+        "src/apps/core-api/src/presentation/controllers/architecture.controller.ts",
+        "src/rulesets/schema/phase-artifact-registry.json",
+        "src/packages/core-domain/src/application/services/phase-artifacts.e2e.spec.ts"
+      ],
+      "validationCommands": [
+        "ajv: 8 manifests valid with spec.phaseProfiles",
+        "npx tsc -b tsconfig.json",
+        "jest phase-artifact (6 pass incl. real-corpus E2E) + architecture.controller (10 pass)"
+      ],
+      "dependencyDisposition": "partial",
+      "dependencyRationale": "Delivered: spec.phaseProfiles in manifests + PhaseArtifactProfileService + Core API endpoint + phase-artifact-registry + E2E. Follow-on (task_1b27a217): unified 'phase-artifacts' EvaluationKind so it auto-exposes on CLI/MCP via evaluate(), for full BR-008 parity — mirrors the design evaluator; the capability is already exposed on the Core API (the Tracker's surface)."
+    },
+    {
       "id": "GT-425",
       "closedAt": "2026-07-04",
       "closureCommit": "d93bc0f2",

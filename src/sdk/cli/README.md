@@ -56,7 +56,7 @@ Or download the binary from [GitHub Releases](https://github.com/beyondnetcode/e
 
 ```bash
 smart-cli --version
-# 1.1.4
+# 0.0.1
 ```
 
 ### Troubleshooting
@@ -1051,8 +1051,8 @@ Add to `~/.cursor/mcp.json`:
 {
   "mcpServers": {
     "evolith": {
-      "command": "smart-cli",
-      "args": ["mcp", "serve"]
+      "command": "evolith-mcp",
+      "args": ["serve"]
     }
   }
 }
@@ -1066,8 +1066,8 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "evolith": {
-      "command": "smart-cli",
-      "args": ["mcp", "serve"]
+      "command": "evolith-mcp",
+      "args": ["serve"]
     }
   }
 }

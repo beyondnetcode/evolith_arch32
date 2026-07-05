@@ -53,10 +53,27 @@ export class TopologyCatalogService {
   constructor(private readonly fs: IFileSystem, private readonly logger: ILogger) {}
 
   async list(corePath: string): Promise<TopologyManifest[]> {
-    const root = path.join(corePath, 'reference', 'architecture', 'topologies');
-    const files = await this.findManifestFiles(root);
+    // Topology manifests are the canonical rulesets under `src/rulesets/topologies`.
+    // Older/reorganized trees kept them under `reference/(core/)?architecture/topologies`.
+    // Resolve against each candidate root so the catalog is robust to the source
+    // tree, the container corpus layout, and the reference taxonomy reorg.
+    const candidateRoots = [
+      path.join(corePath, 'src', 'rulesets', 'topologies'),
+      path.join(corePath, 'rulesets', 'topologies'),
+      path.join(corePath, 'reference', 'core', 'architecture', 'topologies'),
+      path.join(corePath, 'reference', 'architecture', 'topologies'),
+    ];
+    // Manifests can be split across roots (e.g. non-progressive topologies under
+    // src/rulesets/topologies and the progressive axis under
+    // reference/core/architecture/topologies), so AGGREGATE across every root and
+    // dedupe by metadata.id (first occurrence wins).
+    const files = (await Promise.all(candidateRoots.map((root) => this.findManifestFiles(root)))).flat();
     const manifests = await Promise.all(files.map((file) => this.readManifest(file)));
-    return manifests.sort((a, b) => a.metadata.id.localeCompare(b.metadata.id));
+    const byId = new Map<string, TopologyManifest>();
+    for (const manifest of manifests) {
+      if (!byId.has(manifest.metadata.id)) byId.set(manifest.metadata.id, manifest);
+    }
+    return [...byId.values()].sort((a, b) => a.metadata.id.localeCompare(b.metadata.id));
   }
 
   async get(corePath: string, topologyId: string): Promise<TopologyManifest | undefined> {

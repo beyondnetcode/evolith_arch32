@@ -49,7 +49,9 @@ COPY --from=builder /repo/src/apps/core-api/node_modules ./src/apps/core-api/nod
 # Corpus (rulesets + generated OPA WASM + human reference) the Core reads at
 # runtime. rulesets comes from the builder stage so policy.wasm is present even
 # though it is a gitignored build artifact.
-COPY --from=builder /repo/src/rulesets /app/corpus/rulesets
+# Code resolves rulesets at `${CORE_PATH}/src/rulesets/...` (matching the dev
+# source tree), so preserve the `src/` segment inside the corpus.
+COPY --from=builder /repo/src/rulesets /app/corpus/src/rulesets
 COPY reference /app/corpus/reference
 
 RUN addgroup -g 1001 -S evolith && \

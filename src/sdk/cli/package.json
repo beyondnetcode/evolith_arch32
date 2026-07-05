@@ -46,7 +46,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/beyondnetcode/evolith_arch32.git",
-    "directory": "sdk/cli"
+    "directory": "src/sdk/cli"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -104,5 +104,8 @@
     "ts-jest": "29.4.11",
     "typescript": "6.0.3",
     "wrappy": "1.0.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

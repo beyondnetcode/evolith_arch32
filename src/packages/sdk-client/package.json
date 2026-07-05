@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Typed client library for the Evolith Core REST API and MCP tools",
   "author": "",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -45,6 +45,14 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
-  "dependencies": {
+  "dependencies": {},
+  "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beyondnetcode/evolith_arch32.git",
+    "directory": "src/packages/sdk-client"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

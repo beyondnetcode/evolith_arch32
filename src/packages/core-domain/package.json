@@ -91,5 +91,11 @@
     "eslint": "*",
     "eslint-plugin-boundaries": "*",
     "typescript": "6.0.3"
+  },
+  "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beyondnetcode/evolith_arch32.git",
+    "directory": "src/packages/core-domain"
   }
 }

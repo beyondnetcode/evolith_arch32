@@ -617,8 +617,8 @@ This repository is Evolith Core: the authoritative Constitution and Reference Co
 - [AI-Assisted Product Validation Workflow](../methods/evolith-ai-assisted-validation-workflow.md)
 - [Architectural Directives](../architecture/architectural-directives.md)
 - [Evolutionary Strategy Roadmap](../strategy/evolutionary-strategy-roadmap.md)
-- [Maturity Assessment](../../governance/standards/vision/maturity-assessment.md)
-- [SDLC Artifact Mapping](../../governance/sdlc/sdlc-evolith-artifact-mapping.md)
+- [Maturity Assessment](../../../reference/core/control-center/maturity-reports/maturity-assessment.md)
+- [SDLC Artifact Mapping](../../../reference/core/sdlc/sdlc-evolith-artifact-mapping.md)
 - [SDLC Tracker — Technical Interface Design](../../products/evolith-tracker/sdlc-tracker-technical-interfaces.md)
 
 ---

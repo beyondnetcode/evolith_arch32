@@ -6,18 +6,16 @@
 # extends ../../tsconfig.base.json, and (2) core-api imports
 # `@evolith/core-domain/evaluation/*`, a subpath newer than the published npm
 # package. This image builds the workspace packages from source instead.
-#   Coolify: Dockerfile = apps/core-api/Dockerfile, base directory = /
+#   Coolify: Dockerfile = src/apps/core-api/Dockerfile, base directory = /
 # ──────────────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
 
 WORKDIR /repo
 
 COPY package.json package-lock.json tsconfig.base.json tsconfig.json ./
-COPY packages ./packages
-COPY apps ./apps
-COPY sdk ./sdk
+# Workspace packages/apps/sdk/rulesets live under src/; .harness is at the root.
+COPY src ./src
 COPY .harness ./.harness
-COPY rulesets ./rulesets
 
 RUN npm ci --legacy-peer-deps
 
@@ -25,7 +23,7 @@ RUN npm ci --legacy-peer-deps
 # with the prod tsconfig fails here: composite projects — inherited from
 # tsconfig.base.json — may not disable declaration/incremental emit.)
 RUN npm run build:policy && \
-    npx tsc -b packages/core-domain packages/infra-providers apps/core-api/tsconfig.json
+    npx tsc -b src/packages/core-domain src/packages/infra-providers src/apps/core-api/tsconfig.json
 
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
@@ -39,19 +37,19 @@ WORKDIR /repo
 
 COPY --from=builder /repo/node_modules ./node_modules
 COPY --from=builder /repo/package.json ./package.json
-COPY --from=builder /repo/packages/core-domain/dist ./packages/core-domain/dist
-COPY --from=builder /repo/packages/core-domain/package.json ./packages/core-domain/package.json
-COPY --from=builder /repo/packages/infra-providers/dist ./packages/infra-providers/dist
-COPY --from=builder /repo/packages/infra-providers/package.json ./packages/infra-providers/package.json
-COPY --from=builder /repo/apps/core-api/dist ./apps/core-api/dist
-COPY --from=builder /repo/apps/core-api/package.json ./apps/core-api/package.json
+COPY --from=builder /repo/src/packages/core-domain/dist ./src/packages/core-domain/dist
+COPY --from=builder /repo/src/packages/core-domain/package.json ./src/packages/core-domain/package.json
+COPY --from=builder /repo/src/packages/infra-providers/dist ./src/packages/infra-providers/dist
+COPY --from=builder /repo/src/packages/infra-providers/package.json ./src/packages/infra-providers/package.json
+COPY --from=builder /repo/src/apps/core-api/dist ./src/apps/core-api/dist
+COPY --from=builder /repo/src/apps/core-api/package.json ./src/apps/core-api/package.json
 # Non-hoisted workspace deps (e.g. @nestjs/cache-manager) live here, not at root.
-COPY --from=builder /repo/apps/core-api/node_modules ./apps/core-api/node_modules
+COPY --from=builder /repo/src/apps/core-api/node_modules ./src/apps/core-api/node_modules
 
 # Corpus (rulesets + generated OPA WASM + human reference) the Core reads at
 # runtime. rulesets comes from the builder stage so policy.wasm is present even
 # though it is a gitignored build artifact.
-COPY --from=builder /repo/rulesets /app/corpus/rulesets
+COPY --from=builder /repo/src/rulesets /app/corpus/rulesets
 COPY reference /app/corpus/reference
 
 RUN addgroup -g 1001 -S evolith && \
@@ -66,7 +64,7 @@ ENV WORKSPACE_ROOT=/app/corpus
 ENV CORE_PATH=/app/corpus
 ENV EVOLITH_LOG_LEVEL=info
 
-WORKDIR /repo/apps/core-api
+WORKDIR /repo/src/apps/core-api
 
 EXPOSE 3000
 

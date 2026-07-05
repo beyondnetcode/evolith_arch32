@@ -5,7 +5,7 @@
 # depends on the in-repo workspace packages `@evolith/agent-runtime` and
 # `@evolith/core-domain`, which are not published to npm. The image builds them
 # from source. In Coolify set:
-#   Dockerfile location = apps/agent-runtime-api/Dockerfile
+#   Dockerfile location = src/apps/agent-runtime-api/Dockerfile
 #   Build context / base directory = /  (repository root)
 # ──────────────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
@@ -15,17 +15,15 @@ WORKDIR /repo
 # Install the full workspace graph (npm needs every workspace package.json that
 # the lockfile references). .dockerignore keeps node_modules/dist out of context.
 COPY package.json package-lock.json tsconfig.base.json tsconfig.json ./
-COPY packages ./packages
-COPY apps ./apps
-COPY sdk ./sdk
+# Workspace packages/apps/sdk/rulesets live under src/; .harness is at the root.
+COPY src ./src
 COPY .harness ./.harness
-COPY rulesets ./rulesets
 
 RUN npm ci --legacy-peer-deps
 
 # Build the app and its project references (agent-runtime -> core-domain).
 RUN npm run build:policy && \
-    npx tsc -b apps/agent-runtime-api/tsconfig.json
+    npx tsc -b src/apps/agent-runtime-api/tsconfig.json
 
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
@@ -42,19 +40,19 @@ WORKDIR /repo
 # third-party modules.
 COPY --from=builder /repo/node_modules ./node_modules
 COPY --from=builder /repo/package.json ./package.json
-COPY --from=builder /repo/packages/core-domain/dist ./packages/core-domain/dist
-COPY --from=builder /repo/packages/core-domain/package.json ./packages/core-domain/package.json
-COPY --from=builder /repo/packages/agent-runtime/dist ./packages/agent-runtime/dist
-COPY --from=builder /repo/packages/agent-runtime/package.json ./packages/agent-runtime/package.json
-COPY --from=builder /repo/apps/agent-runtime-api/dist ./apps/agent-runtime-api/dist
-COPY --from=builder /repo/apps/agent-runtime-api/package.json ./apps/agent-runtime-api/package.json
+COPY --from=builder /repo/src/packages/core-domain/dist ./src/packages/core-domain/dist
+COPY --from=builder /repo/src/packages/core-domain/package.json ./src/packages/core-domain/package.json
+COPY --from=builder /repo/src/packages/agent-runtime/dist ./src/packages/agent-runtime/dist
+COPY --from=builder /repo/src/packages/agent-runtime/package.json ./src/packages/agent-runtime/package.json
+COPY --from=builder /repo/src/apps/agent-runtime-api/dist ./src/apps/agent-runtime-api/dist
+COPY --from=builder /repo/src/apps/agent-runtime-api/package.json ./src/apps/agent-runtime-api/package.json
 
 # Optional corpus so the real .harness / OPA adapters can be enabled by env
 # (AGENT_RUNTIME_HARNESS_ROOT / AGENT_RUNTIME_OPA_*) without rebuilding. Copied
 # from the builder stage so the bundled OPA binary and policy.wasm match the
 # container platform, not the developer host.
 COPY --from=builder /repo/.harness ./corpus/.harness
-COPY --from=builder /repo/rulesets ./corpus/rulesets
+COPY --from=builder /repo/src/rulesets ./corpus/rulesets
 
 RUN addgroup -g 1001 -S evolith && \
     adduser -S evolith -u 1001 -G evolith && \
@@ -66,7 +64,7 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV AGENT_RUNTIME_WORKSPACE_ROOT=/repo/corpus
 
-WORKDIR /repo/apps/agent-runtime-api
+WORKDIR /repo/src/apps/agent-runtime-api
 
 EXPOSE 3000
 

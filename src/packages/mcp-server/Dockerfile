@@ -5,21 +5,20 @@
 # broke against the current source (tsconfig.base.json + workspace subpaths newer
 # than the published npm packages). This image builds the workspace packages
 # (@evolith/core-domain, @evolith/infra-providers, @evolith/core) from source.
-#   Coolify: Dockerfile = packages/mcp-server/Dockerfile, base directory = /
+#   Coolify: Dockerfile = src/packages/mcp-server/Dockerfile, base directory = /
 # ──────────────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
 
 WORKDIR /repo
 
 COPY package.json package-lock.json tsconfig.base.json tsconfig.json ./
-COPY packages ./packages
-COPY apps ./apps
-COPY sdk ./sdk
+# Workspace packages/apps/sdk/rulesets live under src/.
+COPY src ./src
 
 RUN npm ci --legacy-peer-deps
 
 # Build the workspace deps + the server via the composite project graph.
-RUN npx tsc -b packages/sdk-client packages/agent-runtime packages/core-domain packages/infra-providers packages/core packages/mcp-server/tsconfig.json
+RUN npx tsc -b src/packages/sdk-client src/packages/agent-runtime src/packages/core-domain src/packages/infra-providers src/packages/core src/packages/mcp-server/tsconfig.json
 
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
@@ -33,22 +32,22 @@ WORKDIR /repo
 
 COPY --from=builder /repo/node_modules ./node_modules
 COPY --from=builder /repo/package.json ./package.json
-COPY --from=builder /repo/packages/sdk-client/dist ./packages/sdk-client/dist
-COPY --from=builder /repo/packages/sdk-client/package.json ./packages/sdk-client/package.json
-COPY --from=builder /repo/packages/agent-runtime/dist ./packages/agent-runtime/dist
-COPY --from=builder /repo/packages/agent-runtime/package.json ./packages/agent-runtime/package.json
-COPY --from=builder /repo/packages/core-domain/dist ./packages/core-domain/dist
-COPY --from=builder /repo/packages/core-domain/package.json ./packages/core-domain/package.json
-COPY --from=builder /repo/packages/infra-providers/dist ./packages/infra-providers/dist
-COPY --from=builder /repo/packages/infra-providers/package.json ./packages/infra-providers/package.json
-COPY --from=builder /repo/packages/core/dist ./packages/core/dist
-COPY --from=builder /repo/packages/core/package.json ./packages/core/package.json
-COPY --from=builder /repo/packages/mcp-server/dist ./packages/mcp-server/dist
-COPY --from=builder /repo/packages/mcp-server/package.json ./packages/mcp-server/package.json
+COPY --from=builder /repo/src/packages/sdk-client/dist ./src/packages/sdk-client/dist
+COPY --from=builder /repo/src/packages/sdk-client/package.json ./src/packages/sdk-client/package.json
+COPY --from=builder /repo/src/packages/agent-runtime/dist ./src/packages/agent-runtime/dist
+COPY --from=builder /repo/src/packages/agent-runtime/package.json ./src/packages/agent-runtime/package.json
+COPY --from=builder /repo/src/packages/core-domain/dist ./src/packages/core-domain/dist
+COPY --from=builder /repo/src/packages/core-domain/package.json ./src/packages/core-domain/package.json
+COPY --from=builder /repo/src/packages/infra-providers/dist ./src/packages/infra-providers/dist
+COPY --from=builder /repo/src/packages/infra-providers/package.json ./src/packages/infra-providers/package.json
+COPY --from=builder /repo/src/packages/core/dist ./src/packages/core/dist
+COPY --from=builder /repo/src/packages/core/package.json ./src/packages/core/package.json
+COPY --from=builder /repo/src/packages/mcp-server/dist ./src/packages/mcp-server/dist
+COPY --from=builder /repo/src/packages/mcp-server/package.json ./src/packages/mcp-server/package.json
 # Non-hoisted workspace deps (e.g. @nestjs/cache-manager) live here, not at root.
-COPY --from=builder /repo/packages/mcp-server/node_modules ./packages/mcp-server/node_modules
+COPY --from=builder /repo/src/packages/mcp-server/node_modules ./src/packages/mcp-server/node_modules
 
-COPY rulesets /app/corpus/rulesets
+COPY src/rulesets /app/corpus/rulesets
 
 RUN addgroup -g 1001 -S evolith && \
     adduser -S evolith -u 1001 -G evolith && \
@@ -64,7 +63,7 @@ ENV CORE_PATH=/app/corpus
 ENV EVOLITH_LOG_LEVEL=info
 ENV EVOLITH_MCP_ALLOW_NO_AUTH=false
 
-WORKDIR /repo/packages/mcp-server
+WORKDIR /repo/src/packages/mcp-server
 
 EXPOSE 3000
 

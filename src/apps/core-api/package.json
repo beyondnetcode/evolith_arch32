@@ -42,7 +42,7 @@
     "keyv": "5.6.0",
     "nestjs-pino": "4.6.1",
     "fs-extra": "10.1.0",
-    "opossum": "9.0.0",
+    "opossum": "10.0.0",
     "passport-custom": "1.1.1",
     "pino": "10.3.1",
     "pino-http": "11.0.0",

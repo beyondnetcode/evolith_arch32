@@ -12,6 +12,84 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ## 1. Gap Details
 
+#### GT-435
+
+**Title:** EPIC — Road to Production of the conceptual suite diagram
+
+**Problem:** Get the whole diagram (Core hubs → Hermes/Agent Runtime → Exposure CLI/API/MCP → Tracker → satellites) running in production. Assessment (2026-07-04, 3 read-only maps + Tracker repo review): Core ~95% ready (L4 Managed); packages deprecated at 0.0.1; agent-runtime defaults to stubs; auth/multi-tenancy opt-in; observability partial; Tracker is a real .NET scaffold lagging the current Core design.
+
+**Decomposition:** `GT-324` (CD deploy, already IN-PROGRESS) + `GT-436`…`GT-446`, ordered by production strategy (P0 blockers → P1 enablers → P2 hardening).
+
+**Closure:** the diagram's runtime path is deployed and validated in prod; all child items DONE.
+
+**References:** road-to-production assessment; maturity-assessment; ADR-0101/0104.
+
+#### GT-436
+
+**Title:** Re-version + un-deprecate the npm packages
+
+**Problem:** commit 6c584a91 reset all 7 packages to 0.0.1 and deprecated them, blocking `@evolith/smart-cli` and library distribution. **Closure:** real SemVer restored, deprecation removed, CLI installable via npx again; sdk-cli-release pipeline unblocked. **References:** package.json files; sdk-cli-release.yml.
+
+#### GT-437
+
+**Title:** agent-runtime-api into CI/CD
+
+**Problem:** the app has a Dockerfile but no workflow builds/tests/deploys it (docker-images.yml + ci-cd.yml exclude it). **Closure:** build+push to GHCR + Coolify deploy wired and green. **References:** .github/workflows/; src/apps/agent-runtime-api/Dockerfile.
+
+#### GT-438
+
+**Title:** Production adapter wiring for agent-runtime-api
+
+**Problem:** default bootstrap uses StubCoreEvaluationAdapter + StubAgentEngineAdapter + in-memory state; real adapters exist but are opt-in via env. **Closure:** prod config wires real Core-eval (HTTP), engine (Hermes/routing), durable memory + scheduler. **References:** runtime.factory.ts; bootstrap.ts.
+
+#### GT-439
+
+**Title:** Enforce auth fail-closed + wire TenantCorpusGuard (ABAC)
+
+**Problem:** EVOLITH_API_KEY is opt-in (unset ⇒ open); TenantCorpusGuard is defined but not in APP_GUARD; no JWT tenant-claim extraction, no per-tenant corpus isolation. **Closure:** fail-closed auth + tenant guard wired with JWT claim + isolation. **References:** api-key.guard.ts; tenant-corpus.guard.ts; app.module.ts.
+
+#### GT-440
+
+**Title:** Observability completeness for production
+
+**Problem:** mcp-server + agent-runtime-api lack /metrics; OTEL endpoint defaults to localhost; mcp-server has no liveness/readiness split. **Closure:** Prometheus /metrics on all services; real OTEL collector endpoint; liveness/readiness split. **References:** tracing.ts; health/metrics controllers.
+
+#### GT-441
+
+**Title:** Real HITL approval (extends GT-387)
+
+**Problem:** default AutoApprovalAdapter auto-grants; ChatApprovalAdapter/SlackApprovalAdapter are stubs. **Closure:** real Tracker/chat human-in-the-loop behind IApprovalPort. **References:** approval adapters; GT-387.
+
+#### GT-442
+
+**Title:** Production secrets + DB connectivity strategy
+
+**Problem:** no documented secret store (Coolify vault / K8s secrets) and no DATABASE_URL/connection config in the deploy setup. **Closure:** secret store wired + DB connection config documented and applied. **References:** helm values; docker-compose; vps-coolify.
+
+#### GT-443
+
+**Title:** Reliability validation (circuit breakers, load, DR)
+
+**Problem:** circuit breakers + DR are `Designed` but untested at scale; no chaos drills; RTO/RPO not quantified. **Closure:** breaker integration tests + K6 load/chaos + DR deploy with measured RTO/RPO. **References:** ADR-0011/0013/0037.
+
+#### GT-444
+
+**Title:** External penetration test
+
+**Problem:** SAST/SCA automated (CodeQL/Trivy) but no external pen-test engagement. **Closure:** external pen-test completed, findings remediated. **References:** security pillar (maturity §3.1).
+
+#### GT-445
+
+**Title:** Reconcile stale maturity-reconciliation.json
+
+**Problem:** it states `@evolith/smart-cli@1.1.4` published + 422/423 gaps, contradicting reality (packages 0.0.1 deprecated; board 432/445). **Closure:** regenerate/reconcile the snapshot against the real package + board state. **References:** maturity-reconciliation.json; 09-reconcile-maturity.mjs.
+
+#### GT-446
+
+**Title:** Tracker production pilot (cross-repo, evolith_tracker)
+
+**Problem:** the Tracker .NET backend is a real Clean-Architecture scaffold (Discovery/Governance/Artifacts/Audit contexts, 140 .cs) but lags the current Core design: no Design/Construction/Quality/Deployment contexts, DB migrations absent, CoreEvaluationGateway stubbed, frontend scaffold. **Closure:** DB persistence + real Core `evaluate()` integration + one gate E2E (Discovery), then extend to the phases modeled this session. Detail lives in the Tracker repo; Core provides the stable contract. **References:** evolith_tracker/src/apps/tracker-api; ADR-0101/0104.
+
 #### GT-434
 
 **Title:** EPIC — Downstream phase artifact profiles (Construction/Quality/Deployment)

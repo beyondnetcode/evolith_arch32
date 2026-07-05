@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { NodeFileSystemProvider } from '@evolith/infra-providers';
-import { NestLoggerProvider } from '@evolith/infra-providers';
-import { YamlConfigParserProvider } from '@evolith/infra-providers';
+import { NodeFileSystemProvider } from '@beyondnet/evolith-infra-providers';
+import { NestLoggerProvider } from '@beyondnet/evolith-infra-providers';
+import { YamlConfigParserProvider } from '@beyondnet/evolith-infra-providers';
 
 import {
   EvaluateGateUseCase,
@@ -9,15 +9,15 @@ import {
   ProposePhaseAdvanceUseCase,
   ValidateSatelliteUseCase,
   PhaseTransitionUseCase
-} from '@evolith/core-domain/application/use-cases';
+} from '@beyondnet/evolith-core-domain/application/use-cases';
 import {
   PhaseGateValidatorService,
   RulesetValidatorService,
   ArchitectureDriftService
-} from '@evolith/core-domain/application/validators';
-import { IFileSystem, ILogger, IConfigParser, ICatalogLoader } from '@evolith/core-domain/domain/interfaces';
-import { DiskRulesetRepository } from '@evolith/infra-providers';
-import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@evolith/core-domain/application/services';
+} from '@beyondnet/evolith-core-domain/application/validators';
+import { IFileSystem, ILogger, IConfigParser, ICatalogLoader } from '@beyondnet/evolith-core-domain/domain/interfaces';
+import { DiskRulesetRepository } from '@beyondnet/evolith-infra-providers';
+import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@beyondnet/evolith-core-domain/application/services';
 
 const CoreDomainProviders = [
   {

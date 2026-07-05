@@ -164,7 +164,7 @@ describe('ADR-0073 contract roundtrip: gate evaluate', () => {
     await restApp.init();
 
     // MCP: start standalone server on HTTP
-    const { startMcpServer } = await import('@evolith/mcp');
+    const { startMcpServer } = await import('@beyondnet/evolith-mcp');
     const { app, server } = await startMcpServer({ transport: 'http', port: 0 });
     const boundPort = server.boundPort();
     if (!boundPort) throw new Error('MCP server did not bind to a port');

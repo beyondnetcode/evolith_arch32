@@ -1,6 +1,6 @@
-import { IWebhookNotifier } from '@evolith/core-domain/application/ports/webhook-notifier.port';
-import { GateEvidence } from '@evolith/core-domain/domain/gate-evidence';
-import { requestContextStorage } from '@evolith/core-domain/common/request-context';
+import { IWebhookNotifier } from '@beyondnet/evolith-core-domain/application/ports/webhook-notifier.port';
+import { GateEvidence } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { requestContextStorage } from '@beyondnet/evolith-core-domain/common/request-context';
 
 /** Tunables for {@link WebhookAdapter}. All optional with safe defaults. */
 export interface WebhookAdapterOptions {

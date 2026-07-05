@@ -2,7 +2,7 @@
  * Contract for an MCP tool exposed by the gateway.
  *
  * A tool is a thin adapter: it declares its JSON schema and delegates execution
- * to the shared business logic (`@evolith/core`). Tools never touch the
+ * to the shared business logic (`@beyondnet/evolith-core`). Tools never touch the
  * transport — the {@link McpServerService} wraps their result in an envelope.
  */
 export interface McpToolSchema {

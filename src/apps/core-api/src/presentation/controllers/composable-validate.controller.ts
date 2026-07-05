@@ -58,12 +58,12 @@ export class ComposableValidateController {
     const satellitePath = this.workspaceResolver.resolve(body.workspaceRef);
     const corePath = this.workspaceResolver.corePath();
 
-    const { ComposableValidationEngine } = await import('@evolith/core-domain/application/validators/modes/composable-validation-engine');
-    const { SdlcValidationMode } = await import('@evolith/core-domain/application/validators/modes/sdlc-validation.mode');
-    const { ArchitectureValidationMode } = await import('@evolith/core-domain/application/validators/modes/architecture-validation.mode');
-    const { RulesetValidationMode } = await import('@evolith/core-domain/application/validators/modes/ruleset-validation.mode');
-    const { AdrValidationMode } = await import('@evolith/core-domain/application/validators/modes/adr-validation.mode');
-    const { AdhocValidationMode } = await import('@evolith/core-domain/application/validators/modes/adhoc-validation.mode');
+    const { ComposableValidationEngine } = await import('@beyondnet/evolith-core-domain/application/validators/modes/composable-validation-engine');
+    const { SdlcValidationMode } = await import('@beyondnet/evolith-core-domain/application/validators/modes/sdlc-validation.mode');
+    const { ArchitectureValidationMode } = await import('@beyondnet/evolith-core-domain/application/validators/modes/architecture-validation.mode');
+    const { RulesetValidationMode } = await import('@beyondnet/evolith-core-domain/application/validators/modes/ruleset-validation.mode');
+    const { AdrValidationMode } = await import('@beyondnet/evolith-core-domain/application/validators/modes/adr-validation.mode');
+    const { AdhocValidationMode } = await import('@beyondnet/evolith-core-domain/application/validators/modes/adhoc-validation.mode');
 
     const engine = new ComposableValidationEngine();
     engine.registerMode(new SdlcValidationMode());

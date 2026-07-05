@@ -1,10 +1,10 @@
 import { Controller, Post, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiBody } from '@nestjs/swagger';
-import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases';
+import { EvaluateGateUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 import { EvaluateGateDto } from '../dtos/gates.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
-import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain';
+import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain';
 
 @Controller({ path: 'gates', version: '1' })
 export class GatesController {

@@ -5,7 +5,7 @@ import type {
   BranchProtectionRules,
   GitHubFileParams,
   GitHubTokenInfo,
-} from '@evolith/core-domain';
+} from '@beyondnet/evolith-core-domain';
 
 /** Raw GitHub REST API v3 repo shape (only fields we map) */
 interface GitHubRawRepo {

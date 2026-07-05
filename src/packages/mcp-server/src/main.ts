@@ -101,7 +101,7 @@ async function bootstrap(): Promise<void> {
   const cli = parseArgs(process.argv, process.env);
 
   if (cli.command === 'version') {
-    process.stdout.write(`@evolith/mcp v${VERSION}\n`);
+    process.stdout.write(`@beyondnet/evolith-mcp v${VERSION}\n`);
     return;
   }
 

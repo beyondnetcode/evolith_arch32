@@ -1,8 +1,8 @@
 import * as os from 'node:os';
 import * as path from 'node:path';
 import * as fsExtra from 'fs-extra';
-import { NodeFileSystemProvider, YamlConfigParserProvider } from '@evolith/infra-providers';
-import type { RulesetValidatorService } from '@evolith/core';
+import { NodeFileSystemProvider, YamlConfigParserProvider } from '@beyondnet/evolith-infra-providers';
+import type { RulesetValidatorService } from '@beyondnet/evolith-core';
 import { createArchitectureTools } from './architecture.tools';
 import { McpTool } from '../mcp/tool.interface';
 

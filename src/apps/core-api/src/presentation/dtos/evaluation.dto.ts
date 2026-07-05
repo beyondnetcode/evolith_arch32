@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsOptional, IsArray, IsObject, MinLength } from 'class-validator';
-import type { EvaluationKind } from '@evolith/core-domain/evaluation/contracts';
+import type { EvaluationKind } from '@beyondnet/evolith-core-domain/evaluation/contracts';
 
 /**
  * Legacy satellite-path evaluation request (pre-ADR-0101). Retained for

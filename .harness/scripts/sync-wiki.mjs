@@ -171,7 +171,7 @@ Evolith Core exists to become the definitive enterprise-grade operating system f
 
 | Interface | Purpose |
 |-----------|---------|
-| **CLI** (\`@evolith/smart-cli\`) | Validate code locally against rulesets |
+| **CLI** (\`@beyondnet/evolith-cli\`) | Validate code locally against rulesets |
 | **MCP** (Model Context Protocol) | Inject architectural context into AI agents |
 | **Core API** (REST) | Programmatic access for orchestration systems
 
@@ -180,7 +180,7 @@ Evolith Core exists to become the definitive enterprise-grade operating system f
 ## Quick Start
 
 \`\`\`bash
-npm install -g @evolith/smart-cli
+npm install -g @beyondnet/evolith-cli
 smart-cli init
 smart-cli validate
 smart-cli mcp serve
@@ -227,7 +227,7 @@ function transformGettingStarted(sources) {
 ## Installation
 
 \`\`\`bash
-npm install -g @evolith/smart-cli
+npm install -g @beyondnet/evolith-cli
 smart-cli --version
 # smart-cli version 1.1.0
 \`\`\`
@@ -377,7 +377,7 @@ function transformProducts(sources) {
 
 | Product | Package | Purpose |
 |---------|---------|---------|
-| **Smart CLI** | \`@evolith/smart-cli\` | Developer-facing governance tool |
+| **Smart CLI** | \`@beyondnet/evolith-cli\` | Developer-facing governance tool |
 | **MCP Services** | (bundled in CLI) | AI agent integration via MCP |
 | **Core API** | \`apps/core-api\` | REST API for orchestration systems |
 
@@ -388,7 +388,7 @@ function transformProducts(sources) {
 Command-line interface for governance, validation, and AI integration.
 
 \`\`\`bash
-npm install -g @evolith/smart-cli
+npm install -g @beyondnet/evolith-cli
 smart-cli init
 smart-cli validate
 smart-cli mcp serve

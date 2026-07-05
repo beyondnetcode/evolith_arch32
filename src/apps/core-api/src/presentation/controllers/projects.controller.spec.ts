@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectsController } from './projects.controller';
-import { InitializeProjectUseCase, ProposePhaseAdvanceUseCase } from '@evolith/core-domain/application/use-cases';
+import { InitializeProjectUseCase, ProposePhaseAdvanceUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 
 describe('ProjectsController', () => {

@@ -7,7 +7,7 @@ import { DocsCommand } from './commands/docs/docs.command';
 import { UpgradeCommand } from './commands/upgrade/upgrade.command';
 import { ConfigService } from './infrastructure/config/config.service';
 import { FileManagerService } from './infrastructure/filesystem/file-manager.service';
-import { SyncService } from '@evolith/core-domain/application/sync/sync.service';
+import { SyncService } from '@beyondnet/evolith-core-domain/application/sync/sync.service';
 import { SdlcCommand } from './commands/sdlc/sdlc.command';
 import { HandoffCommand } from './commands/sdlc/handoff.command';
 import { GenerateDomainCommand } from './commands/sdlc/generate-domain.command';
@@ -67,7 +67,7 @@ jest.mock('./infrastructure/catalog/catalog-loader', () => ({
   })),
 }));
 
-jest.mock('@evolith/core-domain/application/services', () => ({
+jest.mock('@beyondnet/evolith-core-domain/application/services', () => ({
   InitializeProjectUseCase: jest.fn().mockImplementation(() => ({
     execute: jest.fn(),
   })),

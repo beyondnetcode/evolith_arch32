@@ -1,8 +1,8 @@
 import * as path from 'node:path';
-import type { IFileSystem } from '@evolith/core';
+import type { IFileSystem } from '@beyondnet/evolith-core';
 import { McpTool } from '../mcp/tool.interface';
-import { EvolithRestClient } from '@evolith/sdk';
-import type { AgentRuntimeRequestWire } from '@evolith/agent-runtime';
+import { EvolithRestClient } from '@beyondnet/evolith-sdk';
+import type { AgentRuntimeRequestWire } from '@beyondnet/evolith-agent-runtime';
 
 interface AgentInfo {
   name: string;

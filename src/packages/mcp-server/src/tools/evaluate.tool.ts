@@ -1,16 +1,16 @@
 import * as path from 'path';
 import { Injectable, Inject } from '@nestjs/common';
-import { RulesetValidatorService } from '@evolith/core';
-import { createSuccessEnvelope } from '@evolith/core-domain';
-import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
-import { NestLoggerProvider } from '@evolith/infra-providers';
+import { RulesetValidatorService } from '@beyondnet/evolith-core';
+import { createSuccessEnvelope } from '@beyondnet/evolith-core-domain';
+import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
+import { NestLoggerProvider } from '@beyondnet/evolith-infra-providers';
 import {
   EvaluationOrchestrator,
   createDefaultKindEvaluators,
   type EvaluationContext,
   type IEvaluationPipeline,
   type IWorkspaceReferenceResolver,
-} from '@evolith/core-domain/evaluation';
+} from '@beyondnet/evolith-core-domain/evaluation';
 import { McpTool, McpToolSchema } from '../mcp/tool.interface';
 import { FILE_SYSTEM } from '../domain/domain.tokens';
 
@@ -74,7 +74,7 @@ export class EvaluateTool implements McpTool {
 
     // Dynamically import the use case to avoid circular DI issues (matches validate.tool).
     const { ValidateSatelliteUseCase } = await import(
-      '@evolith/core-domain/application/use-cases/validate-satellite.use-case'
+      '@beyondnet/evolith-core-domain/application/use-cases/validate-satellite.use-case'
     );
     const useCase = new ValidateSatelliteUseCase(this.validator);
 

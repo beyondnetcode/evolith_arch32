@@ -1,12 +1,12 @@
 import { Injectable, Optional } from '@nestjs/common';
-import { RulesetValidatorService, ValidationResult } from '@evolith/core';
+import { RulesetValidatorService, ValidationResult } from '@beyondnet/evolith-core';
 import { McpTool, McpToolSchema } from '../mcp/tool.interface';
-import { safeParseSatelliteManifest } from '@evolith/core-domain/schemas';
+import { safeParseSatelliteManifest } from '@beyondnet/evolith-core-domain/schemas';
 
 /**
  * `evolith-validate` — validate a satellite repository against Evolith rules.
  *
- * Delegates to the shared {@link RulesetValidatorService} from `@evolith/core`;
+ * Delegates to the shared {@link RulesetValidatorService} from `@beyondnet/evolith-core`;
  * supports `json` (default), `summary`, and `table` output formats, plus loading
  * a single ruleset by id.
  */
@@ -95,7 +95,7 @@ export class ValidateTool implements McpTool {
 
   private async runPipeline(manifest: any): Promise<unknown> {
     // Dynamically import use case to avoid circular DI issues
-    const { ValidateSatelliteUseCase } = await import('@evolith/core-domain/application/use-cases/validate-satellite.use-case');
+    const { ValidateSatelliteUseCase } = await import('@beyondnet/evolith-core-domain/application/use-cases/validate-satellite.use-case');
     const useCase = this.validateUseCase || new ValidateSatelliteUseCase(this.validator);
     const output = await useCase.execute({ satellitePath: manifest.satellitePath, manifest });
 

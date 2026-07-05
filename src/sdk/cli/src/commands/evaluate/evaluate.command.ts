@@ -1,16 +1,16 @@
 import * as path from 'path';
 import { Inject } from '@nestjs/common';
 import { Command, Option } from 'nest-commander';
-import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases/validate-satellite.use-case';
-import { createSuccessEnvelope } from '@evolith/core-domain';
-import type { IFileSystem, ILogger } from '@evolith/core-domain/domain/interfaces';
+import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/validate-satellite.use-case';
+import { createSuccessEnvelope } from '@beyondnet/evolith-core-domain';
+import type { IFileSystem, ILogger } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import {
   EvaluationOrchestrator,
   createDefaultKindEvaluators,
   type EvaluationContext,
   type IEvaluationPipeline,
   type IWorkspaceReferenceResolver,
-} from '@evolith/core-domain/evaluation';
+} from '@beyondnet/evolith-core-domain/evaluation';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';

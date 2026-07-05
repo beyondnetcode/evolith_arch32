@@ -67,7 +67,7 @@ export function buildInventory(root = ROOT) {
   }
 
   return {
-    package: pkg.name || '@evolith/smart-cli',
+    package: pkg.name || '@beyondnet/evolith-cli',
     version: pkg.version || '0.0.0',
     bin: pkg.bin ? Object.keys(pkg.bin) : [],
     commands,

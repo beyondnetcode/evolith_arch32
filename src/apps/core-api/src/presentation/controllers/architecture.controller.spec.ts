@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ArchitectureController } from './architecture.controller';
-import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
-import { ArchitectureDriftService } from '@evolith/core-domain/application/validators';
-import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@evolith/core-domain/application/services';
+import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
+import { ArchitectureDriftService } from '@beyondnet/evolith-core-domain/application/validators';
+import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@beyondnet/evolith-core-domain/application/services';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 
 describe('ArchitectureController', () => {

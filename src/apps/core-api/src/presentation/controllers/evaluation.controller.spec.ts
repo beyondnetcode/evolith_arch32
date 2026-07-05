@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EvaluationController } from './evaluation.controller';
-import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
-import { EvaluationOrchestrator } from '@evolith/core-domain/evaluation';
+import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
+import { EvaluationOrchestrator } from '@beyondnet/evolith-core-domain/evaluation';
 import { EvaluateSatelliteDto, EvaluationContextDto } from '../dtos/evaluation.dto';
 
 const SAMPLE_GATE_EVAL = {

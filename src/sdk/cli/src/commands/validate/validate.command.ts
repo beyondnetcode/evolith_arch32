@@ -1,6 +1,6 @@
 import { Command, Option } from 'nest-commander';
-import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases/validate-satellite.use-case';
-import { ValidationResult, ValidationIssue, RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
+import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/validate-satellite.use-case';
+import { ValidationResult, ValidationIssue, RulesetValidatorService } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service';
 import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
@@ -52,11 +52,11 @@ interface ModeValidationIssue {
 function createComposableEngine() {
   return {
     execute: async (context: any): Promise<ComposableValidationResult> => {
-      const { SdlcValidationMode } = require('@evolith/core-domain/application/validators/modes/sdlc-validation.mode');
-      const { ArchitectureValidationMode } = require('@evolith/core-domain/application/validators/modes/architecture-validation.mode');
-      const { RulesetValidationMode } = require('@evolith/core-domain/application/validators/modes/ruleset-validation.mode');
-      const { AdrValidationMode } = require('@evolith/core-domain/application/validators/modes/adr-validation.mode');
-      const { AdhocValidationMode } = require('@evolith/core-domain/application/validators/modes/adhoc-validation.mode');
+      const { SdlcValidationMode } = require('@beyondnet/evolith-core-domain/application/validators/modes/sdlc-validation.mode');
+      const { ArchitectureValidationMode } = require('@beyondnet/evolith-core-domain/application/validators/modes/architecture-validation.mode');
+      const { RulesetValidationMode } = require('@beyondnet/evolith-core-domain/application/validators/modes/ruleset-validation.mode');
+      const { AdrValidationMode } = require('@beyondnet/evolith-core-domain/application/validators/modes/adr-validation.mode');
+      const { AdhocValidationMode } = require('@beyondnet/evolith-core-domain/application/validators/modes/adhoc-validation.mode');
 
       const modes = [
         new SdlcValidationMode(),

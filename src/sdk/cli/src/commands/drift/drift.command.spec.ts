@@ -26,7 +26,7 @@ jest.mock('chalk', () => {
   return chalkFn;
 });
 
-jest.mock('@evolith/core-domain/application/validators/architecture-drift.service', () => ({
+jest.mock('@beyondnet/evolith-core-domain/application/validators/architecture-drift.service', () => ({
   ArchitectureDriftService: jest.fn().mockImplementation(() => ({
     detectDrift: jest.fn(),
     getDriftHistory: jest.fn(),
@@ -35,7 +35,7 @@ jest.mock('@evolith/core-domain/application/validators/architecture-drift.servic
 }));
 
 import * as p from '@clack/prompts';
-import { ArchitectureDriftService } from '@evolith/core-domain/application/validators/architecture-drift.service';
+import { ArchitectureDriftService } from '@beyondnet/evolith-core-domain/application/validators/architecture-drift.service';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 const mockDetectDrift = jest.fn();

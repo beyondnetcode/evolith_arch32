@@ -6,9 +6,9 @@ import type {
   TopologyRecommendationSignals,
   TopologyDesignProfile,
   DownstreamPhase,
-} from '@evolith/core';
-import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@evolith/core';
-import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain';
+} from '@beyondnet/evolith-core';
+import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@beyondnet/evolith-core';
+import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain';
 import { McpTool } from '../mcp/tool.interface';
 
 const DOWNSTREAM_PHASES: readonly DownstreamPhase[] = ['construction', 'quality', 'deployment'];

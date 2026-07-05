@@ -3,7 +3,7 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
 
 // Mock infra-providers so the command can be instantiated without a real GitHub token
-jest.mock('@evolith/infra-providers', () => ({
+jest.mock('@beyondnet/evolith-infra-providers', () => ({
   GitHubApiAdapter: jest.fn().mockImplementation(() => ({
     createRepository: jest.fn().mockResolvedValue({
       id: 1,

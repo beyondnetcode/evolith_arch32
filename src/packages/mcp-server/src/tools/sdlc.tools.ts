@@ -1,6 +1,6 @@
 import * as path from 'node:path';
-import type { IFileSystem, IConfigParser } from '@evolith/core';
-import { readGitLog, isGitRepo } from '@evolith/core';
+import type { IFileSystem, IConfigParser } from '@beyondnet/evolith-core';
+import { readGitLog, isGitRepo } from '@beyondnet/evolith-core';
 import { McpTool } from '../mcp/tool.interface';
 
 const PHASES = ['phase-0', 'phase-1', 'phase-2', 'phase-3', 'phase-4', 'phase-5'];

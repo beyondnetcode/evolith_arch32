@@ -10,8 +10,8 @@ import { AuditLogger } from './audit-logger';
 import { McpTool } from './tool.interface';
 import { DomainException, ErrorCodes } from '../common/errors';
 import { AbacEvaluator } from './abac-evaluator';
-import { requestContextStorage } from '@evolith/core-domain/common/request-context';
-import { WebhookAdapter } from '@evolith/infra-providers';
+import { requestContextStorage } from '@beyondnet/evolith-core-domain/common/request-context';
+import { WebhookAdapter } from '@beyondnet/evolith-infra-providers';
 
 class MockAbacEvaluator extends AbacEvaluator {
   override evaluateNative() {

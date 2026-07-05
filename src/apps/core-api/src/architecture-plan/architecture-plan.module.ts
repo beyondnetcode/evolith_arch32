@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ArchitecturePlanController } from './architecture-plan.controller';
 import { ArchitecturePlanService } from './architecture-plan.service';
 
-import { EvaluationOrchestrator } from '@evolith/core-domain/evaluation';
+import { EvaluationOrchestrator } from '@beyondnet/evolith-core-domain/evaluation';
 
 import { ArchitecturePlanOpaEvaluator } from './ArchitecturePlanOpaEvaluator';
 

@@ -7,7 +7,7 @@ import {
   FileReadOptions,
   FileWriteOptions,
   DirEntry,
-} from '@evolith/core-domain/domain/interfaces';
+} from '@beyondnet/evolith-core-domain/domain/interfaces';
 
 export class NodeFileSystemProvider implements IFileSystemProvider, IFileSystem {
   createFileSystem(): IFileSystem {

@@ -2,13 +2,13 @@ import { Controller, Post, Get, Param, Body, HttpCode, HttpStatus, NotFoundExcep
 import { CACHE_MANAGER, CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { ApiOperation, ApiBody } from '@nestjs/swagger';
-import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
-import { ArchitectureDriftService } from '@evolith/core-domain/application/validators';
+import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
+import { ArchitectureDriftService } from '@beyondnet/evolith-core-domain/application/validators';
 import { ValidateSatelliteDto, DetectDriftDto, RecommendTopologyDto, EvaluatePhaseArtifactsDto } from '../dtos/architecture.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
-import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@evolith/core-domain/application/services';
-import type { TopologyRecommendationRules, DownstreamPhase } from '@evolith/core-domain/application/services';
-import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@beyondnet/evolith-core-domain/application/services';
+import type { TopologyRecommendationRules, DownstreamPhase } from '@beyondnet/evolith-core-domain/application/services';
+import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 import { CacheKeys, CacheTTL as TTL } from '../../infrastructure/cache/cache-keys';
 

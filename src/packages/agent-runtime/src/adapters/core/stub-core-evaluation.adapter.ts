@@ -13,8 +13,8 @@
 import type {
   EvaluationContext,
   EvaluationResult,
-} from '@evolith/core-domain/evaluation/contracts';
-import { Verdict } from '@evolith/core-domain/domain/verdict/verdict';
+} from '@beyondnet/evolith-core-domain/evaluation/contracts';
+import { Verdict } from '@beyondnet/evolith-core-domain/domain/verdict/verdict';
 import type { ICoreEvaluationPort } from '../../domain/ports/core-evaluation.port';
 
 const SCHEMA_VERSION = '1.0.0';

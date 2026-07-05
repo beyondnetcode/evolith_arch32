@@ -5,7 +5,7 @@ jest.mock('chalk', () => {
 });
 
 const mockExecute = jest.fn();
-jest.mock('@evolith/core-domain/application/services', () => ({
+jest.mock('@beyondnet/evolith-core-domain/application/services', () => ({
   InitializeProjectUseCase: jest.fn().mockImplementation(() => ({ execute: mockExecute })),
 }));
 
@@ -13,7 +13,7 @@ import { InitWizardCommand } from './init.wizard';
 import type { WizardService } from '../../infrastructure/prompts/wizard.service';
 import type { PromptService } from '../../infrastructure/prompts/prompt.service';
 import type { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
-import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 
 function setup(wizardResult: unknown, executeResult: unknown = { success: true, artifacts: [{}, {}, {}] }) {
   mockExecute.mockReset();

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GatesController } from './gates.controller';
-import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases';
+import { EvaluateGateUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 
 describe('GatesController', () => {

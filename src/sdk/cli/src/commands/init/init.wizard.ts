@@ -4,8 +4,8 @@ import { WizardService, WizardStep } from '../../infrastructure/prompts/wizard.s
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
 import { Inject } from '@nestjs/common';
-import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
-import { InitializeProjectUseCase } from '@evolith/core-domain/application/services';
+import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
+import { InitializeProjectUseCase } from '@beyondnet/evolith-core-domain/application/services';
 
 interface WizardInitOptions {
   wizard?: boolean;

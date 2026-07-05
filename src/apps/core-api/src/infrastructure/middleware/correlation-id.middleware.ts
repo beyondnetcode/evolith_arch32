@@ -2,7 +2,7 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { randomUUID } from 'crypto';
 import { AsyncLocalStorage } from 'async_hooks';
-import { requestContextStorage } from '@evolith/core-domain/common/request-context';
+import { requestContextStorage } from '@beyondnet/evolith-core-domain/common/request-context';
 
 export const als = new AsyncLocalStorage<{ correlationId: string }>();
 

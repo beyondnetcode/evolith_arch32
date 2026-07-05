@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PhasesController } from './phases.controller';
-import { PhaseTransitionUseCase } from '@evolith/core-domain/application/use-cases';
+import { PhaseTransitionUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 
 describe('PhasesController', () => {

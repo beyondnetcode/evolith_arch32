@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { RulesetValidatorService } from '@evolith/core';
+import { RulesetValidatorService } from '@beyondnet/evolith-core';
 import {
   NodeFileSystemProvider,
   YamlConfigParserProvider,
@@ -7,12 +7,12 @@ import {
   DiskRulesetRepository,
   WebhookAdapter,
   MoscowPrioritizationService,
-} from '@evolith/infra-providers';
+} from '@beyondnet/evolith-infra-providers';
 import { FILE_SYSTEM, CONFIG_PARSER } from './domain.tokens';
 
 /**
- * Wires the shared business logic (`@evolith/core`) with the shared
- * infrastructure adapters (`@evolith/infra-providers`) and exports the primitives
+ * Wires the shared business logic (`@beyondnet/evolith-core`) with the shared
+ * infrastructure adapters (`@beyondnet/evolith-infra-providers`) and exports the primitives
  * the tools depend on: a filesystem, a config parser, the ruleset validator, the
  * webhook notifier, and the MoSCoW service. This is the only seam where the MCP
  * Gateway touches concrete infrastructure.

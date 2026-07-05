@@ -12,7 +12,7 @@
 import type {
   EvaluationContext,
   EvaluationResult,
-} from '@evolith/core-domain/evaluation/contracts';
+} from '@beyondnet/evolith-core-domain/evaluation/contracts';
 
 export interface ICoreEvaluationPort {
   evaluate(context: EvaluationContext): Promise<EvaluationResult>;

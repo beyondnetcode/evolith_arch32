@@ -1,9 +1,9 @@
 /**
- * @evolith/sdk — Typed client library for the Evolith Core REST API and MCP tools.
+ * @beyondnet/evolith-sdk — Typed client library for the Evolith Core REST API and MCP tools.
  *
  * @example REST
  * ```ts
- * import { EvolithRestClient } from '@evolith/sdk';
+ * import { EvolithRestClient } from '@beyondnet/evolith-sdk';
  *
  * const client = new EvolithRestClient({ baseUrl: 'http://localhost:3000', apiKey: 'token' });
  * const result = await client.evaluatePhaseGate('discovery', { workspaceRef: 'op_abc123' });
@@ -11,7 +11,7 @@
  *
  * @example MCP
  * ```ts
- * import { EvolithMcpClient, createJsonRpcTransport } from '@evolith/sdk';
+ * import { EvolithMcpClient, createJsonRpcTransport } from '@beyondnet/evolith-sdk';
  *
  * const mcp = new EvolithMcpClient({ transport: createJsonRpcTransport(myRpcFn) });
  * const gate = await mcp.evaluateGate({ phase: 'discovery', projectPath: '/repos/my-service' });

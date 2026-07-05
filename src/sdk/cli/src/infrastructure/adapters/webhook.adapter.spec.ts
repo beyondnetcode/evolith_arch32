@@ -1,5 +1,5 @@
-import { WebhookAdapter } from '@evolith/infra-providers';
-import { GateEvidence } from '@evolith/core-domain/domain/gate-evidence';
+import { WebhookAdapter } from '@beyondnet/evolith-infra-providers';
+import { GateEvidence } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 
 describe('WebhookAdapter', () => {
   let adapter: WebhookAdapter;

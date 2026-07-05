@@ -1,5 +1,5 @@
 import { PhaseAdvanceCommand } from './phase-advance.command';
-import type { ProposePhaseAdvanceUseCase } from '@evolith/core-domain/application/use-cases/propose-phase-advance.use-case';
+import type { ProposePhaseAdvanceUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/propose-phase-advance.use-case';
 import type { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 jest.mock('chalk', () => {

@@ -17,7 +17,7 @@ jest.mock("../../infrastructure/catalog/catalog-loader", () => {
     })),
   };
 });
-jest.mock('@evolith/core-domain/application/services', () => {
+jest.mock('@beyondnet/evolith-core-domain/application/services', () => {
   return {
     PhaseTransitionUseCase: jest.fn().mockImplementation(() => ({
       execute: jest.fn().mockResolvedValue({
@@ -92,7 +92,7 @@ const mockExecute = jest.fn().mockResolvedValue({
   errors: [],
 });
 
-const { PhaseTransitionUseCase } = require('@evolith/core-domain/application/services');
+const { PhaseTransitionUseCase } = require('@beyondnet/evolith-core-domain/application/services');
 
 describe("HandoffCommand", () => {
   let command: HandoffCommand;

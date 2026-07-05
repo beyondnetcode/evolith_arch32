@@ -2,12 +2,12 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
-import { InitializeProjectUseCase, InitProjectInput } from '@evolith/core-domain/application/services';
+import { InitializeProjectUseCase, InitProjectInput } from '@beyondnet/evolith-core-domain/application/services';
 import { logger, errorReporter, OperationTimer } from '../../infrastructure/observability';
 import { Injectable } from '@nestjs/common';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
-import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 
 interface InitCommandOptions {
   dryRun?: boolean;

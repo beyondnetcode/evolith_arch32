@@ -168,7 +168,7 @@ const DIMENSIONS = [
     id: 'D11', name: 'Contracts & SDK for integrators', owner: CORE,
     checks: [
       { name: 'Schemas available as contracts', type: 'path', target: 'src/rulesets/schema', severity: 'P1', risk: 'No data contracts', fix: 'Keep schemas' },
-      { name: 'Typed SDK client for agents/integrators', type: 'grep', target: 'PKG_NAMES', pattern: '@evolith/sdk', severity: 'P1', risk: 'Integrators reimplement clients; untyped', fix: 'Publish @evolith/sdk (typed REST+MCP from OpenAPI/schemas)' },
+      { name: 'Typed SDK client for agents/integrators', type: 'grep', target: 'PKG_NAMES', pattern: '@beyondnet/evolith-sdk', severity: 'P1', risk: 'Integrators reimplement clients; untyped', fix: 'Publish @beyondnet/evolith-sdk (typed REST+MCP from OpenAPI/schemas)' },
     ],
   },
 ];

@@ -25,21 +25,21 @@ import { ComposableValidateController } from './presentation/controllers/composa
 import { SatellitesController } from './presentation/controllers/satellites.controller';
 import { WorkspaceReferenceResolverService } from './application/services/workspace-reference-resolver.service';
 import { SatelliteRegistryService } from './application/services/satellite-registry.service';
-import { ValidateSatelliteUseCase, ProposePhaseAdvanceUseCase } from '@evolith/core-domain/application/use-cases';
-import { ArchitectureDriftService } from '@evolith/core-domain/application/validators';
-import { TopologyCatalogService } from '@evolith/core-domain/application/services';
+import { ValidateSatelliteUseCase, ProposePhaseAdvanceUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
+import { ArchitectureDriftService } from '@beyondnet/evolith-core-domain/application/validators';
+import { TopologyCatalogService } from '@beyondnet/evolith-core-domain/application/services';
 import {
   EvaluationOrchestrator,
   type IEvaluationPipeline,
   type IWorkspaceReferenceResolver,
-  // KindEvaluator factories now live in @evolith/core-domain/evaluation (W-Parity)
+  // KindEvaluator factories now live in @beyondnet/evolith-core-domain/evaluation (W-Parity)
   // so core-api, CLI and MCP register the same evaluator set.
   createArchitectureKindEvaluator,
   createCheckpointKindEvaluator,
   createTopologyKindEvaluator,
   createBlueprintKindEvaluator,
   createDeploymentKindEvaluator,
-} from '@evolith/core-domain/evaluation';
+} from '@beyondnet/evolith-core-domain/evaluation';
 import * as fs from 'fs';
 import * as path from 'path';
 

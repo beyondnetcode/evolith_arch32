@@ -1,5 +1,5 @@
 /**
- * @evolith/agent-runtime — Evolith Agent Runtime.
+ * @beyondnet/evolith-agent-runtime — Evolith Agent Runtime.
  *
  * A decoupled agentic layer that operates Evolith Core through Ports & Adapters.
  * It orchestrates, converses, remembers, automates and EXECUTES Core

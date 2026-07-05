@@ -1,5 +1,5 @@
 import { createTopologyTools } from './topology.tools';
-import type { IFileSystem, ILogger } from '@evolith/core';
+import type { IFileSystem, ILogger } from '@beyondnet/evolith-core';
 
 describe('createTopologyTools', () => {
   let fsMock: jest.Mocked<IFileSystem>;

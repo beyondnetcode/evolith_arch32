@@ -1,7 +1,7 @@
 import * as p from '@clack/prompts';
 import { CatalogLoader } from '../catalog/catalog-loader';
-import { InitProjectInput } from '@evolith/core-domain/application/services';
-import { UserCancelledError } from '@evolith/core-domain/domain/errors';
+import { InitProjectInput } from '@beyondnet/evolith-core-domain/application/services';
+import { UserCancelledError } from '@beyondnet/evolith-core-domain/domain/errors';
 import {
   AGENT_OPTIONS, CI_CD_OPTIONS, FEATURE_OPTIONS, OBSERVABILITY_OPTIONS,
   validateProjectName,

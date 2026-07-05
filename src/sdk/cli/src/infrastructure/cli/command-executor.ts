@@ -1,7 +1,7 @@
 import { exec, execFile } from 'child_process';
 import { promisify } from 'util';
-import { ICommandExecutor, PlatformCheck } from '@evolith/core-domain/domain/interfaces';
-import { CommandExecutionError } from '@evolith/core-domain/domain/errors';
+import { ICommandExecutor, PlatformCheck } from '@beyondnet/evolith-core-domain/domain/interfaces';
+import { CommandExecutionError } from '@beyondnet/evolith-core-domain/domain/errors';
 
 const execAsync = promisify(exec);
 const execFileAsync = promisify(execFile);

@@ -2,7 +2,7 @@
  * Gate decision model — updated to use canonical Verdict vocabulary (GT-316).
  *
  * The legacy `GateVerdict = 'PASS' | 'FAIL' | 'WAIVED'` type is replaced by
- * the canonical `Verdict` enum from `@evolith/core-domain/verdict`.
+ * the canonical `Verdict` enum from `@beyondnet/evolith-core-domain/verdict`.
  * `fromLegacyGateDecision` provides backward-compatible migration.
  */
 

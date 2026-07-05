@@ -15,7 +15,7 @@ jest.mock('chalk', () => {
   return chalkFn;
 });
 
-jest.mock('@evolith/core-domain/application/services/services/command-history.service', () => ({
+jest.mock('@beyondnet/evolith-core-domain/application/services/services/command-history.service', () => ({
   CommandHistoryService: jest.fn().mockImplementation(() => ({
     list: jest.fn(),
     get: jest.fn(),
@@ -30,7 +30,7 @@ jest.mock('@clack/prompts', () => ({
   confirm: jest.fn(),
 }));
 
-import { CommandHistoryService } from '@evolith/core-domain/application/services/services/command-history.service';
+import { CommandHistoryService } from '@beyondnet/evolith-core-domain/application/services/services/command-history.service';
 import * as p from '@clack/prompts';
 
 const mockList = jest.fn();

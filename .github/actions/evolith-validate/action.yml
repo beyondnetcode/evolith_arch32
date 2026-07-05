@@ -21,7 +21,7 @@ inputs:
     required: false
     default: '20'
   cli-version:
-    description: 'Version of @evolith/cli to install (default: latest)'
+    description: 'Version of @beyondnet/evolith-cli to install (default: latest)'
     required: false
     default: 'latest'
   fail-on-violation:
@@ -54,9 +54,9 @@ runs:
     # ------------------------------------------------------------------
     # 2. Install Evolith CLI globally
     # ------------------------------------------------------------------
-    - name: Install @evolith/cli@${{ inputs.cli-version }}
+    - name: Install @beyondnet/evolith-cli@${{ inputs.cli-version }}
       shell: bash
-      run: npm install -g @evolith/cli@${{ inputs.cli-version }}
+      run: npm install -g @beyondnet/evolith-cli@${{ inputs.cli-version }}
 
     # ------------------------------------------------------------------
     # 3. Run governance validation

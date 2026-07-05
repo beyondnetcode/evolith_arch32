@@ -54,7 +54,7 @@ jest.mock('../../infrastructure/catalog/catalog-loader', () => ({
   })),
 }));
 
-jest.mock('@evolith/core-domain/application/services', () => ({
+jest.mock('@beyondnet/evolith-core-domain/application/services', () => ({
   InitializeProjectUseCase: jest.fn().mockImplementation(() => ({
     execute: jest.fn(),
   })),
@@ -81,7 +81,7 @@ jest.mock('../../infrastructure/observability', () => ({
 }));
 
 import * as p from '@clack/prompts';
-import { InitializeProjectUseCase } from '@evolith/core-domain/application/services';
+import { InitializeProjectUseCase } from '@beyondnet/evolith-core-domain/application/services';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 const mockExecute = jest.fn();

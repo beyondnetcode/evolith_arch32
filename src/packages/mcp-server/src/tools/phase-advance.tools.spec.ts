@@ -1,5 +1,5 @@
-import type { IFileSystem, ILogger } from '@evolith/core';
-import type { IWebhookNotifier } from '@evolith/core-domain/application/ports/webhook-notifier.port';
+import type { IFileSystem, ILogger } from '@beyondnet/evolith-core';
+import type { IWebhookNotifier } from '@beyondnet/evolith-core-domain/application/ports/webhook-notifier.port';
 import { createPhaseAdvanceTools } from './phase-advance.tools';
 import { DomainException, ErrorCodes } from '../common/errors';
 

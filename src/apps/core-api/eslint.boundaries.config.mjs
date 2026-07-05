@@ -7,7 +7,7 @@
  * legacy `.eslintrc.js` + `--no-eslintrc` invocation, which is incompatible with
  * ESLint 9 (the `--no-eslintrc` flag was removed and the legacy eslintrc loader
  * broke eslint-plugin-boundaries). Mirrors the boundary-only pattern adopted for
- * @evolith/core-domain (GT-377 AC-3) and @evolith/mcp-server.
+ * @beyondnet/evolith-core-domain (GT-377 AC-3) and @beyondnet/evolith-mcp.
  *
  * Why a SEPARATE file (not folded into the existing `eslint.config.mjs`):
  * core-api's `eslint.config.mjs` is a full type-checked config (recommended
@@ -19,7 +19,7 @@
  * rules: fast, deterministic, and green independent of lint debt.
  *
  * core-api is the outermost layer:
- *   - MAY import from @evolith/core-domain and @evolith/mcp-server (external npm)
+ *   - MAY import from @beyondnet/evolith-core-domain and @beyondnet/evolith-mcp (external npm)
  *   - Internal layers may import only from layers below them.
  *
  * Internal layer hierarchy (imports may only flow inward):

@@ -2,9 +2,9 @@ import * as p from '@clack/prompts';
 import type { Option } from '@clack/prompts';
 import chalk from 'chalk';
 import { CatalogLoader } from '../catalog/catalog-loader';
-import { InitProjectInput } from '@evolith/core-domain/application/services';
+import { InitProjectInput } from '@beyondnet/evolith-core-domain/application/services';
 import { Injectable } from '@nestjs/common';
-import { UserCancelledError } from '@evolith/core-domain/domain/errors';
+import { UserCancelledError } from '@beyondnet/evolith-core-domain/domain/errors';
 import { runInitPromptGroup } from './init-prompt-group';
 
 @Injectable()

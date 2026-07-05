@@ -47,7 +47,7 @@ steps:
       the sdk/cli E2E, and cross-surface compatibility. Any failed scenario blocks merge.
     deliverable: ".bmad-core/deliverables/qa-e2e-report.md"
     validationScripts:
-      - npm run test:e2e --workspace @evolith/core-domain
+      - npm run test:e2e --workspace @beyondnet/evolith-core-domain
       - npm run --workspace sdk/cli test:e2e
       - npm run --workspace apps/core-api test:e2e
       - npm run --workspace packages/mcp-server build
@@ -63,7 +63,7 @@ steps:
     deliverable: ".bmad-core/deliverables/qa-unit-report.md"
     validationScripts:
       - npm run --workspace packages/core-domain test:cov
-      - npm test --workspace @evolith/core
+      - npm test --workspace @beyondnet/evolith-core
       - npm run --workspace packages/mcp-server test:cov
       - npm test --workspace core-api
       - npm run --workspace packages/infra-providers test

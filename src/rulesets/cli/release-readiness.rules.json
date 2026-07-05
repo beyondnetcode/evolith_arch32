@@ -40,7 +40,7 @@
       "category": "dependencies",
       "title": "Dependency Graph Must Be Reproducible",
       "description": "The CLI workspace MUST keep a committed package lock and no missing transitive dependencies.",
-      "validationQuery": "Run npm install --workspace @evolith/smart-cli, npm ls, and verify package-lock.json is present.",
+      "validationQuery": "Run npm install --workspace @beyondnet/evolith-cli, npm ls, and verify package-lock.json is present.",
       "evidenceRequired": [
         "package-lock.json",
         "npm ls output"

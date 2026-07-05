@@ -1,7 +1,7 @@
 import * as os from 'node:os';
 import * as path from 'node:path';
 import * as fsExtra from 'fs-extra';
-import { NodeFileSystemProvider, YamlConfigParserProvider } from '@evolith/infra-providers';
+import { NodeFileSystemProvider, YamlConfigParserProvider } from '@beyondnet/evolith-infra-providers';
 import { ResourcesService } from './resources.service';
 
 const fs = new NodeFileSystemProvider().createFileSystem();

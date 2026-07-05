@@ -44,7 +44,7 @@ jest.mock('../../infrastructure/observability', () => ({
   })),
 }));
 
-jest.mock('@evolith/core-domain/domain/services/adr.service', () => ({
+jest.mock('@beyondnet/evolith-core-domain/domain/services/adr.service', () => ({
   ADRService: jest.fn().mockImplementation(() => ({
     create: jest.fn(),
     list: jest.fn(),
@@ -55,7 +55,7 @@ jest.mock('@evolith/core-domain/domain/services/adr.service', () => ({
 }));
 
 import * as p from '@clack/prompts';
-import { ADRService } from '@evolith/core-domain/domain/services/adr.service';
+import { ADRService } from '@beyondnet/evolith-core-domain/domain/services/adr.service';
 
 const mockCreate = jest.fn();
 const mockList = jest.fn();

@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { ArchitecturePlan, ArchitecturePlanStatus } from '@evolith/core-domain';
+import { ArchitecturePlan, ArchitecturePlanStatus } from '@beyondnet/evolith-core-domain';
 
 @Injectable()
 export class ArchitecturePlanService {

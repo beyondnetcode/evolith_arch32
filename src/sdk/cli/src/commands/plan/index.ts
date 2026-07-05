@@ -2,8 +2,8 @@ import { Command } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
 import { CoreApiClient } from '../../CoreApiClient';
-import { ArchitecturePlanInterpreter, GeminiProvider } from '@evolith/agent-runtime';
-import { ArchitecturePlanStatus } from '@evolith/core-domain';
+import { ArchitecturePlanInterpreter, GeminiProvider } from '@beyondnet/evolith-agent-runtime';
+import { ArchitecturePlanStatus } from '@beyondnet/evolith-core-domain';
 import { AgentRuntimeFactory } from '../../infrastructure/agent/agent-runtime.factory';
 
 export function makePlanCommand() {

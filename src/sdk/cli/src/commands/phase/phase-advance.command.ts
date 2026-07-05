@@ -1,7 +1,7 @@
 import { Command, Option } from 'nest-commander';
 import { randomUUID } from 'node:crypto';
 import chalk from 'chalk';
-import { ProposePhaseAdvanceUseCase } from '@evolith/core-domain/application/use-cases/propose-phase-advance.use-case';
+import { ProposePhaseAdvanceUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/propose-phase-advance.use-case';
 import {
   ExecutionContext,
   OutputMeta,
@@ -13,7 +13,7 @@ import {
   ErrorCode,
   PhaseTransitionProposal,
   GatePhase,
-} from '@evolith/core-domain/domain/gate-evidence';
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 

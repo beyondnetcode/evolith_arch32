@@ -1,8 +1,8 @@
 import { Command, Option } from 'nest-commander';
 import { randomUUID } from 'node:crypto';
 import chalk from 'chalk';
-import { ArchitectureDriftService, DriftReport, DriftViolation } from '@evolith/core-domain/application/validators/architecture-drift.service';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain/domain/gate-evidence';
+import { ArchitectureDriftService, DriftReport, DriftViolation } from '@beyondnet/evolith-core-domain/application/validators/architecture-drift.service';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { toLegacyLevel } from '../../infrastructure/architecture/topology-catalog';

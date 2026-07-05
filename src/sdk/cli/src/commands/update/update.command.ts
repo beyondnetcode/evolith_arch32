@@ -83,7 +83,7 @@ export class UpdateCommand extends BaseEvolithCommand {
     if (this.isNewerVersion(latestVersion, currentVersion)) {
       this.promptService.showWarning(`\n⚠ Update available: ${currentVersion} → ${latestVersion}`);
       this.promptService.showInfo(`\nTo install the update, run:`);
-      this.promptService.showInfo(chalk.cyan(`  npm install -g @evolith/cli@${latestVersion}`));
+      this.promptService.showInfo(chalk.cyan(`  npm install -g @beyondnet/evolith-cli@${latestVersion}`));
       this.promptService.showInfo(`\nOr use the built-in installer:`);
       this.promptService.showInfo(chalk.cyan(`  evolith update --install`));
     } else {
@@ -113,9 +113,9 @@ export class UpdateCommand extends BaseEvolithCommand {
 
     try {
       this.promptService.stopSpinner();
-      this.promptService.showInfo(`Installing @evolith/cli@${latestVersion}...`);
+      this.promptService.showInfo(`Installing @beyondnet/evolith-cli@${latestVersion}...`);
 
-      execFileSync('npm', ['install', '-g', `@evolith/cli@${latestVersion}`], {
+      execFileSync('npm', ['install', '-g', `@beyondnet/evolith-cli@${latestVersion}`], {
         stdio: 'inherit',
       });
 
@@ -132,7 +132,7 @@ export class UpdateCommand extends BaseEvolithCommand {
       this.promptService.stopSpinner();
       this.promptService.showError('Update failed');
       this.promptService.showInfo('You can also manually run:');
-      this.promptService.showInfo(chalk.cyan(`  npm install -g @evolith/cli@${latestVersion}`));
+      this.promptService.showInfo(chalk.cyan(`  npm install -g @beyondnet/evolith-cli@${latestVersion}`));
     }
   }
 
@@ -158,7 +158,7 @@ export class UpdateCommand extends BaseEvolithCommand {
 
   private async getLatestVersion(): Promise<string | null> {
     try {
-      const result = execFileSync('npm', ['view', '@evolith/cli', 'version', '--json'], {
+      const result = execFileSync('npm', ['view', '@beyondnet/evolith-cli', 'version', '--json'], {
         encoding: 'utf8',
         timeout: 10000,
       });

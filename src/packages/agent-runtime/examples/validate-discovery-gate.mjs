@@ -3,7 +3,7 @@
  * Agent Runtime using the DEFAULT (stub) adapters. No Hermes, no live Core, no
  * `.harness` checkout required (design rule #5).
  *
- *   npm --workspace @evolith/agent-runtime run build   # produce dist/
+ *   npm --workspace @beyondnet/evolith-agent-runtime run build   # produce dist/
  *   node packages/agent-runtime/examples/validate-discovery-gate.mjs
  *
  * It runs two scenarios (artifacts present → passed, missing → blocked) and a

@@ -3,7 +3,7 @@ import { ApiOperation, ApiBody } from '@nestjs/swagger';
 import {
   InitializeProjectUseCase,
   ProposePhaseAdvanceUseCase
-} from '@evolith/core-domain/application/use-cases';
+} from '@beyondnet/evolith-core-domain/application/use-cases';
 import { InitProjectDto, ProposeAdvanceDto } from '../dtos/projects.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as p from '@clack/prompts';
 import chalk from 'chalk';
-import { UserCancelledError } from '@evolith/core-domain/domain/errors';
+import { UserCancelledError } from '@beyondnet/evolith-core-domain/domain/errors';
 
 export interface WizardStep {
   id: string;

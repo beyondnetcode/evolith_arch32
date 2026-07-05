@@ -1,5 +1,5 @@
-import { DiskRulesetRepository } from '@evolith/infra-providers';
-import { IFileSystem, ILogger } from '@evolith/core-domain/domain/interfaces';
+import { DiskRulesetRepository } from '@beyondnet/evolith-infra-providers';
+import { IFileSystem, ILogger } from '@beyondnet/evolith-core-domain/domain/interfaces';
 
 describe('DiskRulesetRepository', () => {
   let repo: DiskRulesetRepository;

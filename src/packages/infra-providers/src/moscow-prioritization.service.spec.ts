@@ -1,4 +1,4 @@
-import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import {
   MoscowPrioritizationService,
   MoscowAnalysis,

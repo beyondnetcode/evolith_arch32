@@ -2,5 +2,5 @@
 // { phase, passed, score, violations, timestamp }) was orphaned dead code and has
 // been removed (W-Contracts). The canonical gate decision contract lives in
 // `gates/decision` (CoreGateVerdict / GateDecision), and the canonical evaluation
-// result contract is `@evolith/core-domain/evaluation/contracts` (GateEvaluationResult).
+// result contract is `@beyondnet/evolith-core-domain/evaluation/contracts` (GateEvaluationResult).
 export * from './decision';

@@ -1,5 +1,5 @@
 /**
- * @evolith/sdk — unit tests
+ * @beyondnet/evolith-sdk — unit tests
  *
  * Covers (mock transport / mock fetch only — never hits the network):
  *  - EvolithRestClient: per-method URL/verb/body, apiPrefix handling,

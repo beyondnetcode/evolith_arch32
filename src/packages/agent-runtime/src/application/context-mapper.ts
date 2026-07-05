@@ -8,7 +8,7 @@
 import type {
   EvaluationContext,
   EvaluationResult,
-} from '@evolith/core-domain/evaluation/contracts';
+} from '@beyondnet/evolith-core-domain/evaluation/contracts';
 import type { AgentRuntimeRequest } from '../domain/contracts/agent-runtime-request';
 import type { SkillDescriptor } from '../domain/contracts/capability';
 import type { HarnessExecutionResult } from '../domain/ports/harness.port';

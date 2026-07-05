@@ -1,5 +1,5 @@
 import { NxWorkspaceStrategy } from './nx-workspace.strategy';
-import { ICommandExecutor } from '@evolith/core-domain/domain/interfaces';
+import { ICommandExecutor } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { PromptService } from '../prompts/prompt.service';
 
 // ── mocks ──────────────────────────────────────────────────────────────────────

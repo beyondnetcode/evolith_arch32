@@ -54,7 +54,7 @@ describe('UpdateCommand', () => {
 
       expect(execFileSync).toHaveBeenCalledWith(
         'npm',
-        ['view', '@evolith/cli', 'version', '--json'],
+        ['view', '@beyondnet/evolith-cli', 'version', '--json'],
         expect.objectContaining({ timeout: 10000 })
       );
       expect(result).toBe('1.2.0');

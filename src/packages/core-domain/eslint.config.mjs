@@ -1,11 +1,11 @@
 // @ts-check
 /**
- * ESLint flat config for @evolith/core-domain (ESLint 9+).
+ * ESLint flat config for @beyondnet/evolith-core-domain (ESLint 9+).
  *
  * Migrated from the legacy `.eslintrc.js` + `--no-eslintrc -c .eslintrc.js`
  * invocation, which is incompatible with ESLint 9 (the `--no-eslintrc` flag was
  * removed and the legacy eslintrc loader broke eslint-plugin-boundaries). Same
- * boundary-focused flat config adopted for @evolith/mcp-server and core-api.
+ * boundary-focused flat config adopted for @beyondnet/evolith-mcp and core-api.
  *
  * Enforces two architectural guards:
  *

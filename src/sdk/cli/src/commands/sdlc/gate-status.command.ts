@@ -1,10 +1,10 @@
 import { SubCommand, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
-import { PhaseTransitionUseCase } from '@evolith/core-domain/application/services';
-import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
-import { readGitLog, isGitRepo } from '@evolith/core-domain/domain/metrics/git-log-reader';
-import { calculateDora, DoraMetric, DoraRating } from '@evolith/core-domain/domain/metrics/dora-calculator';
+import { PhaseTransitionUseCase } from '@beyondnet/evolith-core-domain/application/services';
+import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
+import { readGitLog, isGitRepo } from '@beyondnet/evolith-core-domain/domain/metrics/git-log-reader';
+import { calculateDora, DoraMetric, DoraRating } from '@beyondnet/evolith-core-domain/domain/metrics/dora-calculator';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 function ratingBadge(rating: DoraRating): string {

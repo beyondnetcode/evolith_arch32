@@ -1,5 +1,5 @@
 import * as yaml from 'yaml';
-import { IConfigParser, IConfigParserProvider } from '@evolith/core-domain/domain/interfaces';
+import { IConfigParser, IConfigParserProvider } from '@beyondnet/evolith-core-domain/domain/interfaces';
 
 export class YamlConfigParserProvider implements IConfigParserProvider {
   createConfigParser(_format: string): IConfigParser {

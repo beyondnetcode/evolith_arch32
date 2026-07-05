@@ -9,7 +9,7 @@ import { DocsCommand } from './commands/docs/docs.command';
 import { UpgradeCommand } from './commands/upgrade/upgrade.command';
 import { ConfigService } from './infrastructure/config/config.service';
 import { FileManagerService } from './infrastructure/filesystem/file-manager.service';
-import { SyncService } from '@evolith/core-domain/application/sync/sync.service';
+import { SyncService } from '@beyondnet/evolith-core-domain/application/sync/sync.service';
 import { SdlcCommand } from './commands/sdlc/sdlc.command';
 import { HandoffCommand } from './commands/sdlc/handoff.command';
 import { GenerateDomainCommand } from './commands/sdlc/generate-domain.command';
@@ -33,12 +33,12 @@ import { SatelliteCreateCommand } from './commands/satellite';
 import { SatelliteAdoptCommand } from './commands/satellite/satellite-adopt.command';
 import { ChatCommand } from './commands/chat/chat.command';
 
-import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases/validate-satellite.use-case';
-import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases/evaluate-gate.use-case';
-import { PhaseGateValidatorService } from '@evolith/core-domain/application/validators/phase-gate-validator.service';
-import { ProposePhaseAdvanceUseCase } from '@evolith/core-domain/application/use-cases/propose-phase-advance.use-case';
-import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
-import type { IFileSystem, ILogger, IConfigParser } from '@evolith/core-domain/domain/interfaces';
+import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/validate-satellite.use-case';
+import { EvaluateGateUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/evaluate-gate.use-case';
+import { PhaseGateValidatorService } from '@beyondnet/evolith-core-domain/application/validators/phase-gate-validator.service';
+import { ProposePhaseAdvanceUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/propose-phase-advance.use-case';
+import { RulesetValidatorService } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service';
+import type { IFileSystem, ILogger, IConfigParser } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { PromptService } from './infrastructure/prompts/prompt.service';
 import { WizardService } from './infrastructure/prompts/wizard.service';
 import { CatalogLoader } from './infrastructure/catalog/catalog-loader';
@@ -49,7 +49,7 @@ import {
   NestLoggerProvider,
   YamlConfigParserProvider,
   WebhookAdapter,
-} from '@evolith/infra-providers';
+} from '@beyondnet/evolith-infra-providers';
 import { PluginModule } from './infrastructure/plugins/plugin.module';
 
 @Module({

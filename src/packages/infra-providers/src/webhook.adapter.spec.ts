@@ -1,5 +1,5 @@
 import { WebhookAdapter } from './webhook.adapter';
-import { GateEvidence } from '@evolith/core-domain/domain/gate-evidence';
+import { GateEvidence } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 
 const evidence = {} as GateEvidence;
 const ok: any = { ok: true, status: 200 };

@@ -1,11 +1,11 @@
 import { Controller, Post, Body, HttpCode, HttpStatus, BadRequestException } from '@nestjs/common';
 import { ApiOperation, ApiBody } from '@nestjs/swagger';
-import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
-import { EvaluationOrchestrator } from '@evolith/core-domain/evaluation';
-import type { EvaluationContext } from '@evolith/core-domain/evaluation';
+import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
+import { EvaluationOrchestrator } from '@beyondnet/evolith-core-domain/evaluation';
+import type { EvaluationContext } from '@beyondnet/evolith-core-domain/evaluation';
 import { EvaluationContextDto } from '../dtos/evaluation.dto';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
-import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain';
+import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain';
 
 /**
  * POST /api/v1/evaluate — the stateless Core evaluation entry point (ADR-0101).

@@ -1,12 +1,12 @@
 import { GateStatusCommand } from './gate-status.command';
-import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
-import { PhaseTransitionUseCase } from '@evolith/core-domain/application/services';
-import * as gitLogReader from '@evolith/core-domain/domain/metrics/git-log-reader';
-import * as doraCalculator from '@evolith/core-domain/domain/metrics/dora-calculator';
+import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
+import { PhaseTransitionUseCase } from '@beyondnet/evolith-core-domain/application/services';
+import * as gitLogReader from '@beyondnet/evolith-core-domain/domain/metrics/git-log-reader';
+import * as doraCalculator from '@beyondnet/evolith-core-domain/domain/metrics/dora-calculator';
 
-jest.mock('@evolith/core-domain/application/services');
-jest.mock('@evolith/core-domain/domain/metrics/git-log-reader');
-jest.mock('@evolith/core-domain/domain/metrics/dora-calculator');
+jest.mock('@beyondnet/evolith-core-domain/application/services');
+jest.mock('@beyondnet/evolith-core-domain/domain/metrics/git-log-reader');
+jest.mock('@beyondnet/evolith-core-domain/domain/metrics/dora-calculator');
 
 function makeFullStatus() {
   return {

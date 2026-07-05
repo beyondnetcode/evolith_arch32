@@ -2,7 +2,7 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import * as fs from 'fs-extra';
 import { ValidateTool } from './validate.tool';
-import type { RulesetValidatorService, ValidationResult } from '@evolith/core';
+import type { RulesetValidatorService, ValidationResult } from '@beyondnet/evolith-core';
 
 function makeResult(over: Partial<ValidationResult> = {}): ValidationResult {
   return {

@@ -7,8 +7,8 @@ import {
   type EvaluatorKind,
   type IFileSystem,
   type ILogger,
-} from '@evolith/core';
-import type { IWebhookNotifier } from '@evolith/core-domain/application/ports/webhook-notifier.port';
+} from '@beyondnet/evolith-core';
+import type { IWebhookNotifier } from '@beyondnet/evolith-core-domain/application/ports/webhook-notifier.port';
 import { DomainException, ErrorCodes } from '../common/errors';
 import { McpTool } from '../mcp/tool.interface';
 

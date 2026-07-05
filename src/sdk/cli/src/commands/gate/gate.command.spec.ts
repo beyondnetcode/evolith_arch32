@@ -1,5 +1,5 @@
 import { GateCommand } from './gate.command';
-import type { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases/evaluate-gate.use-case';
+import type { EvaluateGateUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/evaluate-gate.use-case';
 import type { PromptService } from '../../infrastructure/prompts/prompt.service';
 import type { ConfigService } from '../../infrastructure/config/config.service';
 

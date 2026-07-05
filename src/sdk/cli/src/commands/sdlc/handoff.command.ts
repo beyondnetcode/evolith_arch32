@@ -4,10 +4,10 @@ import { Inject } from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
-import { PhaseService, ToolSelectionService } from '@evolith/core-domain/domain/services';
-import { PhaseTransitionUseCase } from '@evolith/core-domain/application/services';
+import { PhaseService, ToolSelectionService } from '@beyondnet/evolith-core-domain/domain/services';
+import { PhaseTransitionUseCase } from '@beyondnet/evolith-core-domain/application/services';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
-import { IFileSystem, ToolGroup } from '@evolith/core-domain/domain/interfaces';
+import { IFileSystem, ToolGroup } from '@beyondnet/evolith-core-domain/domain/interfaces';
 
 interface HandoffOptions {
   from?: string;

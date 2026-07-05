@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ArchitecturePlanController } from './architecture-plan.controller';
 import { ArchitecturePlanService } from './architecture-plan.service';
 
-import { ArchitecturePlanStatus } from '@evolith/core-domain';
+import { ArchitecturePlanStatus } from '@beyondnet/evolith-core-domain';
 
 describe('ArchitecturePlanController', () => {
   let controller: ArchitecturePlanController;

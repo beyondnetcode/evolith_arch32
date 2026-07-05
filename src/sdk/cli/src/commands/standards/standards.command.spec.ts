@@ -27,7 +27,7 @@ jest.mock('chalk', () => {
   return chalkFn;
 });
 
-jest.mock('@evolith/core-domain/domain/services/standards.service', () => ({
+jest.mock('@beyondnet/evolith-core-domain/domain/services/standards.service', () => ({
   StandardsService: jest.fn().mockImplementation(() => ({
     initialize: jest.fn(),
     list: jest.fn(),
@@ -47,7 +47,7 @@ jest.mock('../../infrastructure/observability', () => ({
 }));
 
 import * as p from '@clack/prompts';
-import { StandardsService } from '@evolith/core-domain/domain/services/standards.service';
+import { StandardsService } from '@beyondnet/evolith-core-domain/domain/services/standards.service';
 
 const mockInitialize = jest.fn();
 const mockList = jest.fn();

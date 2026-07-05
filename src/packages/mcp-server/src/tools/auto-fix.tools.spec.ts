@@ -1,7 +1,7 @@
 import * as os from 'node:os';
 import * as path from 'node:path';
 import * as fsExtra from 'fs-extra';
-import { NodeFileSystemProvider } from '@evolith/infra-providers';
+import { NodeFileSystemProvider } from '@beyondnet/evolith-infra-providers';
 import { createAutoFixTools } from './auto-fix.tools';
 import { McpTool } from '../mcp/tool.interface';
 

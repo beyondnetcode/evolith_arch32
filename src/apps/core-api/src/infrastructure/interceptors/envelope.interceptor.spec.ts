@@ -7,7 +7,7 @@ import {
   RawResponse,
   buildEnvelopeMeta,
 } from './envelope.interceptor';
-import { requestContextStorage } from '@evolith/core-domain/common/request-context';
+import { requestContextStorage } from '@beyondnet/evolith-core-domain/common/request-context';
 
 function makeContext(
   req: Record<string, unknown>,

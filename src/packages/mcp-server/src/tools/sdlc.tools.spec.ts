@@ -1,7 +1,7 @@
 import * as os from 'node:os';
 import * as path from 'node:path';
 import * as fsExtra from 'fs-extra';
-import { NodeFileSystemProvider, YamlConfigParserProvider } from '@evolith/infra-providers';
+import { NodeFileSystemProvider, YamlConfigParserProvider } from '@beyondnet/evolith-infra-providers';
 import { createSdlcTools } from './sdlc.tools';
 import { McpTool } from '../mcp/tool.interface';
 

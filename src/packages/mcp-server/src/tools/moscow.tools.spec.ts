@@ -1,7 +1,7 @@
 import * as os from 'node:os';
 import * as path from 'node:path';
 import * as fsExtra from 'fs-extra';
-import { MoscowPrioritizationService } from '@evolith/infra-providers';
+import { MoscowPrioritizationService } from '@beyondnet/evolith-infra-providers';
 import { createMoscowTools } from './moscow.tools';
 import { McpTool } from '../mcp/tool.interface';
 

@@ -7,7 +7,7 @@ import {
 import { randomUUID } from 'node:crypto';
 import { Observable, map } from 'rxjs';
 import { Request } from 'express';
-import { requestContextStorage } from '@evolith/core-domain/common/request-context';
+import { requestContextStorage } from '@beyondnet/evolith-core-domain/common/request-context';
 
 export interface EnvelopeContext {
   initiative?: string;

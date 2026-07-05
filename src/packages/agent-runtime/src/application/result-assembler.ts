@@ -5,7 +5,7 @@
  * isolation (one of the required test cases).
  */
 
-import type { EvaluationResult } from '@evolith/core-domain/evaluation/contracts';
+import type { EvaluationResult } from '@beyondnet/evolith-core-domain/evaluation/contracts';
 import type {
   AgentRuntimeResult,
   RuntimeFinding,

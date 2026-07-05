@@ -1,7 +1,7 @@
 import {
   MoscowPrioritizationService,
   type MoscowItem,
-} from '@evolith/infra-providers';
+} from '@beyondnet/evolith-infra-providers';
 import { McpTool } from '../mcp/tool.interface';
 
 const pathProp = { path: { type: 'string' } };

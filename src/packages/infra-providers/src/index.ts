@@ -17,4 +17,4 @@ export type {
   BranchProtectionRules,
   GitHubFileParams,
   GitHubTokenInfo,
-} from '@evolith/core-domain';
+} from '@beyondnet/evolith-core-domain';

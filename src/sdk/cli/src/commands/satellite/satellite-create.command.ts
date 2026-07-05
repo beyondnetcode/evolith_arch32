@@ -1,7 +1,7 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import { InitializeSatelliteUseCase } from '@evolith/core-domain/application/use-cases/initialize-satellite.use-case';
-import { GitHubApiAdapter } from '@evolith/infra-providers';
+import { InitializeSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/initialize-satellite.use-case';
+import { GitHubApiAdapter } from '@beyondnet/evolith-infra-providers';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';

@@ -5,7 +5,7 @@ import { HealthService } from '../../application/services/health.service';
 import { MetricsService } from '../../infrastructure/metrics/metrics.service';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 import { ConfigService } from '@nestjs/config';
-import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import * as path from 'path';
 import { EnvConfig } from '../../infrastructure/config/env.validation';
 import { Public } from '../../infrastructure/auth/public.decorator';

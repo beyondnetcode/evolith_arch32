@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CoreDomainModule } from './core-domain.module';
-import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases';
+import { EvaluateGateUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 
 describe('CoreDomainModule', () => {
   let module: TestingModule;

@@ -1,10 +1,10 @@
 import * as path from 'node:path';
-import type { IFileSystem, IConfigParser } from '@evolith/core';
+import type { IFileSystem, IConfigParser } from '@beyondnet/evolith-core';
 import {
   DeepArchitectureAnalyzer,
   ArchitectureDriftService,
   RulesetValidatorService,
-} from '@evolith/core';
+} from '@beyondnet/evolith-core';
 import { McpTool } from '../mcp/tool.interface';
 
 interface ArchIssue {

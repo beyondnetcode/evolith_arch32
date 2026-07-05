@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { McpTool, McpToolSchema } from '../mcp/tool.interface';
 
-// Local type aliases mirroring @evolith/core-domain SatelliteRecord until the
+// Local type aliases mirroring @beyondnet/evolith-core-domain SatelliteRecord until the
 // core-domain dist is rebuilt to include satellite-record exports (GT-368).
 type SatelliteStatus = 'provisioning' | 'active' | 'linked' | 'error' | 'archived';
 type SatelliteMode = 'create' | 'adopt';
@@ -48,7 +48,7 @@ interface GitHubRepoResponse {
  *
  * Uses native Node.js `fetch` (Node 18+) to call the GitHub REST API v3
  * directly, avoiding the dependency on the not-yet-published
- * `GitHubApiAdapter` from `@evolith/infra-providers`.
+ * `GitHubApiAdapter` from `@beyondnet/evolith-infra-providers`.
  */
 @Injectable()
 export class SatelliteCreateTool implements McpTool {

@@ -1,10 +1,10 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiOperation, ApiBody } from '@nestjs/swagger';
-import { PhaseTransitionUseCase } from '@evolith/core-domain/application/use-cases';
+import { PhaseTransitionUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 import { TransitionPhaseDto } from '../dtos/phases.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
-import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain';
+import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain';
 
 @Controller({ path: 'phases', version: '1' })
 export class PhasesController {

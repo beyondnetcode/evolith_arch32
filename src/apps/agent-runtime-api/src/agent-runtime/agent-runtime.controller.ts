@@ -19,7 +19,7 @@ import {
   HermesChatBoxInteractionAdapter,
   type AgentRuntimeBundle,
   type AgentRuntimeRequestWire,
-} from '@evolith/agent-runtime';
+} from '@beyondnet/evolith-agent-runtime';
 import { AGENT_RUNTIME_BUNDLE } from './runtime.factory';
 
 @Controller('v1/agent')

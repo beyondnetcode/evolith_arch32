@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 
 export interface AgentInfo {
   name: string;

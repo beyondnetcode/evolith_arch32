@@ -39,7 +39,7 @@ import type { RuntimeEvent } from '../domain/contracts/runtime-event';
 import type { SkillDescriptor } from '../domain/contracts/capability';
 import type { TraceEvent, TraceEventType } from '../domain/contracts/trace';
 import type { HarnessExecutionResult } from '../domain/ports/harness.port';
-import type { EvaluationResult } from '@evolith/core-domain/evaluation/contracts';
+import type { EvaluationResult } from '@beyondnet/evolith-core-domain/evaluation/contracts';
 
 import { buildEvaluationContext, buildPolicyInput } from './context-mapper';
 import {

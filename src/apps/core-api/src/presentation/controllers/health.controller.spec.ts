@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { HealthController } from './health.controller';
 import { HealthService } from '../../application/services/health.service';
 import { MetricsService } from '../../infrastructure/metrics/metrics.service';
-import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 
 const mockFs: jest.Mocked<IFileSystem> = {
   exists: jest.fn(),

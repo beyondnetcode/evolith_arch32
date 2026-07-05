@@ -1,5 +1,5 @@
 import * as path from 'node:path';
-import type { IFileSystem } from '@evolith/core';
+import type { IFileSystem } from '@beyondnet/evolith-core';
 import { McpTool } from '../mcp/tool.interface';
 
 interface Violation {

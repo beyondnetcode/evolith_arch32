@@ -8,13 +8,13 @@ import {
   type TopologyDesignProfile,
   type DownstreamPhase,
   type PhaseArtifactResult,
-} from '@evolith/core-domain/application/services';
-import type { IFileSystem, ILogger } from '@evolith/core-domain/domain/interfaces';
+} from '@beyondnet/evolith-core-domain/application/services';
+import type { IFileSystem, ILogger } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import {
   createSuccessEnvelope,
   createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
-} from '@evolith/core-domain/domain/gate-evidence';
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 const DOWNSTREAM_PHASES: readonly DownstreamPhase[] = ['construction', 'quality', 'deployment'];

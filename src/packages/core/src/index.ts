@@ -1,7 +1,7 @@
 /**
- * @evolith/core — Shared business logic facade
+ * @beyondnet/evolith-core — Shared business logic facade
  *
- * This package wraps @evolith/core-domain and re-exports key types,
+ * This package wraps @beyondnet/evolith-core-domain and re-exports key types,
  * use-cases, and validators so consumers (CLI, MCP Server, API)
  * import from a single place.
  */
@@ -17,7 +17,7 @@ export type {
   IToolExecutor,
   IProjectInitializer,
   ICatalogLoader,
-} from "@evolith/core-domain/domain/interfaces";
+} from "@beyondnet/evolith-core-domain/domain/interfaces";
 
 // Re-export domain errors
 export {
@@ -32,7 +32,7 @@ export {
   isEvolithError,
   getErrorCode,
   getErrorContext,
-} from "@evolith/core-domain/domain/errors";
+} from "@beyondnet/evolith-core-domain/domain/errors";
 
 // Re-export gate evidence types
 export {
@@ -46,7 +46,7 @@ export {
   VIOLATION_SEVERITIES,
   EVALUATOR_KINDS,
   ERROR_CODES,
-} from "@evolith/core-domain/domain/gate-evidence";
+} from "@beyondnet/evolith-core-domain/domain/gate-evidence";
 
 export type {
   GatePhase,
@@ -63,14 +63,14 @@ export type {
   SuccessEnvelope,
   ErrorEnvelope,
   OutputEnvelope,
-} from "@evolith/core-domain/domain/gate-evidence";
+} from "@beyondnet/evolith-core-domain/domain/gate-evidence";
 
 // Re-export domain services
 export {
   WorkflowEngine,
   ToolSelectionService,
   PhaseService,
-} from "@evolith/core-domain/domain/services";
+} from "@beyondnet/evolith-core-domain/domain/services";
 
 // Re-export use-cases
 export {
@@ -79,27 +79,27 @@ export {
   ProposePhaseAdvanceUseCase,
   PhaseTransitionUseCase,
   InitializeProjectUseCase,
-} from "@evolith/core-domain/application/use-cases";
+} from "@beyondnet/evolith-core-domain/application/use-cases";
 
 export type {
   EvaluateGateInput,
   ValidateSatelliteInput,
   ValidateSatelliteOutput,
   ProposePhaseAdvanceInput,
-} from "@evolith/core-domain/application/use-cases";
+} from "@beyondnet/evolith-core-domain/application/use-cases";
 
 // Re-export application validators
 export {
   RulesetValidatorService,
   PhaseGateValidatorService,
   ArchitectureDriftService,
-} from "@evolith/core-domain/application/validators";
+} from "@beyondnet/evolith-core-domain/application/validators";
 
 export {
   TopologyCatalogService,
   TopologyRecommendationService,
   PhaseArtifactProfileService,
-} from "@evolith/core-domain/application/services";
+} from "@beyondnet/evolith-core-domain/application/services";
 
 export type {
   TopologyManifest,
@@ -110,20 +110,20 @@ export type {
   TopologyDesignProfile,
   DownstreamPhase,
   PhaseArtifactResult,
-} from "@evolith/core-domain/application/services";
+} from "@beyondnet/evolith-core-domain/application/services";
 
-export type { ValidationResult } from "@evolith/core-domain/application/validators/ruleset-validator.service";
+export type { ValidationResult } from "@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service";
 
 // Re-export deep architecture analyzer (used by the architecture MCP tool)
-export { DeepArchitectureAnalyzer } from "@evolith/core-domain/application/validators/deep-architecture-analyzer";
+export { DeepArchitectureAnalyzer } from "@beyondnet/evolith-core-domain/application/validators/deep-architecture-analyzer";
 
 // Re-export Git metrics readers (used by the DORA MCP tool)
 export {
   readGitLog,
   isGitRepo,
-} from "@evolith/core-domain/domain/metrics/git-log-reader";
+} from "@beyondnet/evolith-core-domain/domain/metrics/git-log-reader";
 
 export type {
   GitCommit,
   GitLogOptions,
-} from "@evolith/core-domain/domain/metrics/git-log-reader";
+} from "@beyondnet/evolith-core-domain/domain/metrics/git-log-reader";

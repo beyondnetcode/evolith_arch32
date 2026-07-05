@@ -1,4 +1,4 @@
-import type { AgentRuntimeRequestWire, AgentRuntimeResult } from '@evolith/agent-runtime';
+import type { AgentRuntimeRequestWire, AgentRuntimeResult } from '@beyondnet/evolith-agent-runtime';
 
 export class AgentClient {
   private readonly baseUrl: string;

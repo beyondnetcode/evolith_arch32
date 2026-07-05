@@ -1,15 +1,15 @@
 // @ts-check
 /**
- * ESLint flat config for @evolith/mcp-server (ESLint 9+).
+ * ESLint flat config for @beyondnet/evolith-mcp (ESLint 9+).
  *
  * Migrated from the legacy `.eslintrc.js` + `--no-eslintrc -c .eslintrc.js`
  * invocation, which is incompatible with ESLint 9 (the `--no-eslintrc` flag was
  * removed and the legacy eslintrc loader broke eslint-plugin-boundaries with
  * "Cannot set properties of undefined (setting defaultMeta)"). Mirrors the
- * boundary-focused flat config adopted for @evolith/core-domain (GT-377 AC-3).
+ * boundary-focused flat config adopted for @beyondnet/evolith-core-domain (GT-377 AC-3).
  *
  * Enforces that mcp-server sits between core-domain and apps:
- *   - MAY import from @evolith/core-domain (external npm package — unrestricted)
+ *   - MAY import from @beyondnet/evolith-core-domain (external npm package — unrestricted)
  *   - MUST NOT import from apps/ (core-api)
  *
  * Internal layer hierarchy (imports may only flow inward):

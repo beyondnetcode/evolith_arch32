@@ -1,4 +1,4 @@
-import { IFileSystem, ILogger } from '@evolith/core-domain/domain/interfaces';
+import { IFileSystem, ILogger } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { DiskRulesetRepository } from './disk-ruleset.repository';
 
 interface FakeFsConfig {

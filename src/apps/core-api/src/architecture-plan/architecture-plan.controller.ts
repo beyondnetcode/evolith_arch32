@@ -1,6 +1,6 @@
 import { Controller, Post, Body, HttpCode } from '@nestjs/common';
 import { ArchitecturePlanService } from './architecture-plan.service';
-import { ArchitecturePlan } from '@evolith/core-domain';
+import { ArchitecturePlan } from '@beyondnet/evolith-core-domain';
 
 @Controller('v1/architecture-plans')
 export class ArchitecturePlanController {

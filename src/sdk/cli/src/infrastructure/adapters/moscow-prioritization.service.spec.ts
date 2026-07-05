@@ -1,4 +1,4 @@
-import { MoscowPrioritizationService, MoscowAnalysis } from '@evolith/infra-providers';
+import { MoscowPrioritizationService, MoscowAnalysis } from '@beyondnet/evolith-infra-providers';
 
 function createMockFs() {
   const store = new Map<string, string>();

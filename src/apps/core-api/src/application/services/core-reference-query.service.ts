@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { Injectable, Inject } from '@nestjs/common';
-import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 
 export interface RulesetSummary {
   id: string;

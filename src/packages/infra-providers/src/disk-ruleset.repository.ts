@@ -1,7 +1,7 @@
 import * as path from "path";
-import { IFileSystem, ILogger } from "@evolith/core-domain/domain/interfaces";
-import { NormalizedRule } from "@evolith/core-domain/domain/models/normalized-rule";
-import { IRulesetRepository } from "@evolith/core-domain/domain/ports/ruleset-repository.port";
+import { IFileSystem, ILogger } from "@beyondnet/evolith-core-domain/domain/interfaces";
+import { NormalizedRule } from "@beyondnet/evolith-core-domain/domain/models/normalized-rule";
+import { IRulesetRepository } from "@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import { ValidateFunction } from "ajv";

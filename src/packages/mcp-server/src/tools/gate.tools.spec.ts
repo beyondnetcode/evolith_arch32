@@ -1,5 +1,5 @@
 import * as path from 'node:path';
-import { NodeFileSystemProvider, NoOpLoggerProvider } from '@evolith/infra-providers';
+import { NodeFileSystemProvider, NoOpLoggerProvider } from '@beyondnet/evolith-infra-providers';
 import { createGateTools } from './gate.tools';
 import { createPhaseAdvanceTools } from './phase-advance.tools';
 import { McpTool } from '../mcp/tool.interface';

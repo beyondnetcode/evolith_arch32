@@ -17,7 +17,7 @@ import {
   FileMemoryAdapter,
   type AgentRuntimeBundle,
   type AgentRuntimeOverrides,
-} from '@evolith/agent-runtime';
+} from '@beyondnet/evolith-agent-runtime';
 
 import * as path from 'node:path';
 import { trace } from '@opentelemetry/api';

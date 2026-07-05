@@ -5,7 +5,7 @@ import {
   SmartCliChatInteractionAdapter,
   SmartCliCommandInteractionAdapter,
   createAgentRuntime,
-} from '@evolith/agent-runtime';
+} from '@beyondnet/evolith-agent-runtime';
 
 /**
  * GT-399: CLI AgentRuntimeFactory.
@@ -35,7 +35,7 @@ export class AgentRuntimeFactory {
     // GT-399: Swap Core evaluation adapter when endpoint is configured.
     const coreEndpoint = process.env.AGENT_RUNTIME_CORE_ENDPOINT;
     if (coreEndpoint) {
-      const { HttpCoreEvaluationAdapter } = require('@evolith/agent-runtime');
+      const { HttpCoreEvaluationAdapter } = require('@beyondnet/evolith-agent-runtime');
       const coreToken = process.env.AGENT_RUNTIME_CORE_TOKEN;
       const headers: Record<string, string> = coreToken
         ? { Authorization: `Bearer ${coreToken}` }
@@ -46,7 +46,7 @@ export class AgentRuntimeFactory {
     // GT-399: Swap Harness adapter when harness root is configured.
     const harnessRoot = process.env.AGENT_RUNTIME_HARNESS_ROOT;
     if (harnessRoot) {
-      const { HarnessProcessAdapter } = require('@evolith/agent-runtime');
+      const { HarnessProcessAdapter } = require('@beyondnet/evolith-agent-runtime');
       overrides.harness = new HarnessProcessAdapter({ harnessRoot });
     }
 

@@ -7,13 +7,13 @@ import {
   type TopologyRecommendationRules,
   type TopologyRecommendationSignals,
   type TopologyRecommendation,
-} from '@evolith/core-domain/application/services';
-import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+} from '@beyondnet/evolith-core-domain/application/services';
+import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import {
   createSuccessEnvelope,
   createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
-} from '@evolith/core-domain/domain/gate-evidence';
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface RecommendOptions {

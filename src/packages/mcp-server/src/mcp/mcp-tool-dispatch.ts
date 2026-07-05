@@ -7,7 +7,7 @@ import { MetricsService } from './metrics.service';
 import { AbacEvaluator, AbacInput } from './abac-evaluator';
 import { ErrorCodes } from '../common/errors';
 import { failure, generateCorrelationId, success, toErrorEnvelope } from '../common/envelopes';
-import { runWithContext } from '@evolith/core-domain/common/request-context';
+import { runWithContext } from '@beyondnet/evolith-core-domain/common/request-context';
 import { mcpContextStorage, McpUserContext } from './mcp-user-context';
 
 /** Keys whose values must never reach the log sink in cleartext. */

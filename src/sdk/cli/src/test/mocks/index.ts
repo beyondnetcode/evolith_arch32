@@ -1,4 +1,4 @@
-import { IFileSystem, IConfigParser, ILogger } from '@evolith/core-domain/domain/interfaces';
+import { IFileSystem, IConfigParser, ILogger } from '@beyondnet/evolith-core-domain/domain/interfaces';
 
 export class MockFileSystem implements IFileSystem {
   private files: Map<string, string> = new Map();
@@ -72,7 +72,7 @@ export class MockFileSystem implements IFileSystem {
     this.directories.delete(path);
   }
 
-  async readdir(path: string): Promise<import('@evolith/core-domain/domain/interfaces').DirEntry[]> {
+  async readdir(path: string): Promise<import('@beyondnet/evolith-core-domain/domain/interfaces').DirEntry[]> {
     return [];
   }
 

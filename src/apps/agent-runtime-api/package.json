@@ -12,7 +12,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@evolith/agent-runtime": "*",
+    "@beyondnet/evolith-agent-runtime": "*",
     "@nestjs/common": "11.1.27",
     "@nestjs/config": "4.0.4",
     "@nestjs/core": "11.1.27",

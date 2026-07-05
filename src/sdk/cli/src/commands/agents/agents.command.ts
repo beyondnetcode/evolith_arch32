@@ -2,12 +2,12 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { NodeFileSystemProvider } from '../../infrastructure/providers/node-filesystem.provider';
-import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { AgentRegistryService, AgentInfo } from '../../infrastructure/adapters/agent-registry.service';
-import { buildAgentRuleset } from '@evolith/core-domain/application/agents/agent-ruleset-builder';
+import { buildAgentRuleset } from '@beyondnet/evolith-core-domain/application/agents/agent-ruleset-builder';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
-import { EvolithRestClient } from '@evolith/sdk';
-import type { AgentRuntimeRequestWire } from '@evolith/agent-runtime';
+import { EvolithRestClient } from '@beyondnet/evolith-sdk';
+import type { AgentRuntimeRequestWire } from '@beyondnet/evolith-agent-runtime';
 
 let cachedFileSystem: IFileSystem | null = null;
 

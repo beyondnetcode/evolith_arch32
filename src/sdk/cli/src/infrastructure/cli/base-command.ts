@@ -2,7 +2,7 @@ import { CommandRunner } from 'nest-commander';
 import { Logger } from '@nestjs/common';
 import { PromptService } from '../prompts/prompt.service';
 import { ConfigService, ProfileConfig } from '../config/config.service';
-import { UserCancelledError } from '@evolith/core-domain/domain/errors';
+import { UserCancelledError } from '@beyondnet/evolith-core-domain/domain/errors';
 
 export abstract class BaseEvolithCommand extends CommandRunner {
   protected readonly logger: Logger;

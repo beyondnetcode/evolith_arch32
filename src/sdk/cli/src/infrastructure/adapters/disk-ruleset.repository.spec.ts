@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { DiskRulesetRepository } from '@evolith/infra-providers';
+import { DiskRulesetRepository } from '@beyondnet/evolith-infra-providers';
 
 const CORE = '/core';
 const rulesetsDir = path.join(CORE, 'rulesets');

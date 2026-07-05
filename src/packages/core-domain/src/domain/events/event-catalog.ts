@@ -3,7 +3,7 @@
  * emitted by Evolith Core.
  *
  * Usage:
- *   import { EVENT_CATALOG } from '@evolith/core-domain';
+ *   import { EVENT_CATALOG } from '@beyondnet/evolith-core-domain';
  *   const entry = EVENT_CATALOG['gate.approved'];
  *   console.log(entry.description, entry.version);
  *

@@ -107,12 +107,12 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
-          npm run build -w @evolith/core-domain
-          npm run build -w @evolith/agent-runtime
-          npm run build -w @evolith/sdk
-          npm run build -w @evolith/infra-providers
-          npm run build -w @evolith/core
-          npm run build -w @evolith/mcp
+          npm run build -w @beyondnet/evolith-core-domain
+          npm run build -w @beyondnet/evolith-agent-runtime
+          npm run build -w @beyondnet/evolith-sdk
+          npm run build -w @beyondnet/evolith-infra-providers
+          npm run build -w @beyondnet/evolith-core
+          npm run build -w @beyondnet/evolith-mcp
 
       - name: Architecture Boundary Lint (eslint-plugin-boundaries)
         working-directory: ${{ env.CLI_DIR }}
@@ -149,12 +149,12 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
-          npm run build -w @evolith/core-domain
-          npm run build -w @evolith/agent-runtime
-          npm run build -w @evolith/sdk
-          npm run build -w @evolith/infra-providers
-          npm run build -w @evolith/core
-          npm run build -w @evolith/mcp
+          npm run build -w @beyondnet/evolith-core-domain
+          npm run build -w @beyondnet/evolith-agent-runtime
+          npm run build -w @beyondnet/evolith-sdk
+          npm run build -w @beyondnet/evolith-infra-providers
+          npm run build -w @beyondnet/evolith-core
+          npm run build -w @beyondnet/evolith-mcp
 
       - name: Run Unit Tests
         working-directory: ${{ env.CLI_DIR }}
@@ -237,12 +237,12 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
-          npm run build -w @evolith/core-domain
-          npm run build -w @evolith/agent-runtime
-          npm run build -w @evolith/sdk
-          npm run build -w @evolith/infra-providers
-          npm run build -w @evolith/core
-          npm run build -w @evolith/mcp
+          npm run build -w @beyondnet/evolith-core-domain
+          npm run build -w @beyondnet/evolith-agent-runtime
+          npm run build -w @beyondnet/evolith-sdk
+          npm run build -w @beyondnet/evolith-infra-providers
+          npm run build -w @beyondnet/evolith-core
+          npm run build -w @beyondnet/evolith-mcp
 
       - name: Build Package
         working-directory: ${{ env.CLI_DIR }}
@@ -303,12 +303,12 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
-          npm run build -w @evolith/core-domain
-          npm run build -w @evolith/agent-runtime
-          npm run build -w @evolith/sdk
-          npm run build -w @evolith/infra-providers
-          npm run build -w @evolith/core
-          npm run build -w @evolith/mcp
+          npm run build -w @beyondnet/evolith-core-domain
+          npm run build -w @beyondnet/evolith-agent-runtime
+          npm run build -w @beyondnet/evolith-sdk
+          npm run build -w @beyondnet/evolith-infra-providers
+          npm run build -w @beyondnet/evolith-core
+          npm run build -w @beyondnet/evolith-mcp
 
       - name: Build
         working-directory: ${{ env.CLI_DIR }}
@@ -455,12 +455,12 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
-          npm run build -w @evolith/core-domain
-          npm run build -w @evolith/agent-runtime
-          npm run build -w @evolith/sdk
-          npm run build -w @evolith/infra-providers
-          npm run build -w @evolith/core
-          npm run build -w @evolith/mcp
+          npm run build -w @beyondnet/evolith-core-domain
+          npm run build -w @beyondnet/evolith-agent-runtime
+          npm run build -w @beyondnet/evolith-sdk
+          npm run build -w @beyondnet/evolith-infra-providers
+          npm run build -w @beyondnet/evolith-core
+          npm run build -w @beyondnet/evolith-mcp
 
       - name: Build CLI
         working-directory: ${{ env.CLI_DIR }}

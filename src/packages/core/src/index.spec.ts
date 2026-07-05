@@ -1,8 +1,8 @@
 /**
- * Contract / smoke test for the @evolith/core re-export barrel.
+ * Contract / smoke test for the @beyondnet/evolith-core re-export barrel.
  *
- * GT-355: @evolith/core is a facade that re-exports types, use-cases,
- * services, validators and helpers from @evolith/core-domain so that
+ * GT-355: @beyondnet/evolith-core is a facade that re-exports types, use-cases,
+ * services, validators and helpers from @beyondnet/evolith-core-domain so that
  * consumers (CLI, MCP Server, REST API) import from a single place.
  *
  * If any re-export is renamed, removed, or broken upstream, this suite
@@ -148,7 +148,7 @@ const EXPECTED_TYPE_EXPORTS = [
   "GitLogOptions",
 ] as const;
 
-describe("@evolith/core barrel contract", () => {
+describe("@beyondnet/evolith-core barrel contract", () => {
   it("loads without throwing", () => {
     expect(barrel).toBeDefined();
     expect(typeof barrel).toBe("object");

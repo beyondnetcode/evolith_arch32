@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { McpTool, McpToolSchema } from '../mcp/tool.interface';
 
-// Local type alias mirroring @evolith/core-domain SatelliteRecord until the
+// Local type alias mirroring @beyondnet/evolith-core-domain SatelliteRecord until the
 // core-domain dist is rebuilt to include satellite-record exports (GT-368).
 interface SatelliteRecord {
   id: string;

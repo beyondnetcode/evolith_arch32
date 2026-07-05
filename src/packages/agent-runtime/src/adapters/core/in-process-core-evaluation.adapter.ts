@@ -21,7 +21,7 @@ import type {
 
 /**
  * Structural type of the Core's stateless orchestrator. Matching
- * `EvaluationOrchestrator` from `@evolith/core-domain/evaluation` by shape keeps
+ * `EvaluationOrchestrator` from `@beyondnet/evolith-core-domain/evaluation` by shape keeps
  * this adapter decoupled from the concrete Core wiring (and lets a host inject an
  * in-process orchestrator or any equivalent facade).
  */

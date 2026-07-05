@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { ILogger, ILoggerProvider, LogLevel, LogEntry } from '@evolith/core-domain/domain/interfaces';
+import { ILogger, ILoggerProvider, LogLevel, LogEntry } from '@beyondnet/evolith-core-domain/domain/interfaces';
 
 export class NestLoggerProvider implements ILoggerProvider {
   createLogger(context: string): ILogger {

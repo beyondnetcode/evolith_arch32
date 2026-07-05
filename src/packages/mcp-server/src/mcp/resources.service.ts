@@ -1,8 +1,8 @@
 import * as path from 'node:path';
 import { Inject, Injectable, Optional } from '@nestjs/common';
-import type { IFileSystem, IConfigParser } from '@evolith/core';
+import type { IFileSystem, IConfigParser } from '@beyondnet/evolith-core';
 import { FILE_SYSTEM, CONFIG_PARSER } from '../domain/domain.tokens';
-import { TopologyCatalogService } from '@evolith/core';
+import { TopologyCatalogService } from '@beyondnet/evolith-core';
 import { McpCacheService } from './mcp-cache.service';
 
 interface Resource {

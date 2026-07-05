@@ -1,7 +1,7 @@
 import { Command, Option } from 'nest-commander';
 import { Inject, Injectable } from '@nestjs/common';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
-import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import * as path from 'path';
 

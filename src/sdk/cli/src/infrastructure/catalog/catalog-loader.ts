@@ -9,8 +9,8 @@ import {
   ToolCatalog,
   CommandsMatrix,
   PhaseDefinition,
-} from '@evolith/core-domain/domain/interfaces';
-import { CatalogLoadError } from '@evolith/core-domain/domain/errors';
+} from '@beyondnet/evolith-core-domain/domain/interfaces';
+import { CatalogLoadError } from '@beyondnet/evolith-core-domain/domain/errors';
 
 interface RuntimeCatalog {
   _comment?: string;

@@ -1,10 +1,10 @@
 import { Command, Option } from 'nest-commander';
 import { randomUUID } from 'node:crypto';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
-import { WorkspaceManagerStrategy } from '@evolith/core-domain/application/architecture/workspace-manager.strategy';
+import { WorkspaceManagerStrategy } from '@beyondnet/evolith-core-domain/application/architecture/workspace-manager.strategy';
 import { NxWorkspaceStrategy } from '../../infrastructure/architecture/nx-workspace.strategy';
 import { commandExecutor } from '../../infrastructure/cli/command-executor';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { toProgressivePhase } from '../../infrastructure/architecture/topology-catalog';
 
 @Command({

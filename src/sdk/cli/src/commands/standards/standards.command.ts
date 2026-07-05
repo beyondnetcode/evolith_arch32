@@ -1,8 +1,8 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
-import { StandardsService, StandardCategory } from '@evolith/core-domain/domain/services/standards.service';
-import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+import { StandardsService, StandardCategory } from '@beyondnet/evolith-core-domain/domain/services/standards.service';
+import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { logger } from '../../infrastructure/observability';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 

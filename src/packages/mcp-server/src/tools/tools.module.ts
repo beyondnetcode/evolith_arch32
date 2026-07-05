@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import type { IFileSystem, IConfigParser } from '@evolith/core';
-import { RulesetValidatorService } from '@evolith/core';
-import { WebhookAdapter, MoscowPrioritizationService, NestLoggerProvider } from '@evolith/infra-providers';
+import type { IFileSystem, IConfigParser } from '@beyondnet/evolith-core';
+import { RulesetValidatorService } from '@beyondnet/evolith-core';
+import { WebhookAdapter, MoscowPrioritizationService, NestLoggerProvider } from '@beyondnet/evolith-infra-providers';
 import { DomainModule } from '../domain/domain.module';
 import { FILE_SYSTEM, CONFIG_PARSER } from '../domain/domain.tokens';
 import { ToolRegistryService } from '../mcp/tool-registry.service';

@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import type { IFileSystem } from '@evolith/core';
+import type { IFileSystem } from '@beyondnet/evolith-core';
 import { FILE_SYSTEM } from '../domain/domain.tokens';
 
 export interface CorpusEntry {

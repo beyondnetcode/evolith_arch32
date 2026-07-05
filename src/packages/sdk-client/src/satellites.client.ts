@@ -6,7 +6,7 @@
  * response is { success: true, data: ..., meta: ... }.
  */
 
-// ─── Satellite types (mirror of @evolith/core-domain satellite-record.ts) ─────
+// ─── Satellite types (mirror of @beyondnet/evolith-core-domain satellite-record.ts) ─────
 
 export type SatelliteStatus = 'provisioning' | 'active' | 'linked' | 'error' | 'archived';
 export type SatelliteMode = 'create' | 'adopt';

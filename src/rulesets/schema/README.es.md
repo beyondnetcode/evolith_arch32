@@ -4,7 +4,7 @@ Definiciones de JSON Schema para validar los artefactos de gobernanza y SDLC de 
 
 > **Fuente de verdad:** estos schemas son el **contrato autoritativo** de la *estructura* de cada artefacto. Cuando una plantilla Markdown y un schema discrepan sobre campos obligatorios, el schema gana para la validación automática. Las plantillas Markdown bajo `reference/core/sdlc/04-artifact-templates/` siguen siendo autoritativas para la *guía humana, la intención y la prosa*.
 
-**Conteo:** este directorio contiene **39** archivos `*.schema.json`, agrupados abajo por propósito. Los schemas de *entrada* de las políticas OPA viven aparte en [`../opa/schemas/`](../opa/schemas/) (26 archivos) y se indexan en el [README de OPA](../opa/README.es.md).
+**Conteo:** este directorio contiene **37** archivos `*.schema.json`, agrupados abajo por propósito. Los schemas de *entrada* de las políticas OPA viven aparte en [`../opa/schemas/`](../opa/schemas/) (26 archivos) y se indexan en el [README de OPA](../opa/README.es.md).
 
 > **Nota de ejes:** el eje SDLC (idea → producto, cinco fases) es **independiente** del eje de topologías (agrupadores de arquitectura). La columna "Fase" abajo se refiere solo al eje progresivo del SDLC. Los artefactos de topología (`topology-manifest`, `topology-composition`, `blueprint`) no están atados a una fase del SDLC.
 
@@ -15,8 +15,6 @@ Definiciones de JSON Schema para validar los artefactos de gobernanza y SDLC de 
 | [discovery-canvas.schema.json](./discovery-canvas.schema.json) | Discovery Canvas | 1 — Descubrimiento |
 | [technical-feasibility.schema.json](./technical-feasibility.schema.json) | Factibilidad Técnica (NFR / atributos de calidad) | 1 — Descubrimiento |
 | [ballpark-estimation.schema.json](./ballpark-estimation.schema.json) | Estimación Ballpark (T-shirt) | 1 — Descubrimiento |
-| [evolith-user-story.schema.json](./evolith-user-story.schema.json) | Historia de Usuario Evolith (criterios BDD) | 1 — Descubrimiento |
-| [agile-backlog.schema.json](./agile-backlog.schema.json) | Backlog Ágil | 1 — Descubrimiento |
 | [prd.schema.json](./prd.schema.json) | Documento de Requisitos de Producto | 1 — Descubrimiento |
 | [cli-impact-analysis.schema.json](./cli-impact-analysis.schema.json) | Análisis de Impacto en CLI | 1–2 |
 | [build-vs-compose.schema.json](./build-vs-compose.schema.json) | Análisis Build-versus-Compose | 1–2 |
@@ -81,7 +79,7 @@ Los contratos de entrada/salida del Core de Evaluación stateless (ADR-0101). Re
 
 ---
 
-**Cobertura de Fase 1 (Descubrimiento):** 6 schemas núcleo — Discovery Canvas, Factibilidad Técnica, Estimación Ballpark, Historia de Usuario Evolith, Backlog Ágil, PRD (más CLI Impact Analysis y Build-vs-Compose que abarcan fases 1–2).
+**Cobertura de Fase 1 (Descubrimiento):** 4 schemas núcleo — Discovery Canvas, Factibilidad Técnica, Estimación Ballpark, PRD (más CLI Impact Analysis y Build-vs-Compose que abarcan fases 1–2).
 
 ---
 

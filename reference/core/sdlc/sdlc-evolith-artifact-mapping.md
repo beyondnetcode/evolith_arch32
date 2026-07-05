@@ -139,8 +139,6 @@ flowchart LR
 | **ADR-0045 — Extraction Readiness Criteria** | [ADR-0045](../../../core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) | Required — satellites declaring F2 must document their Extraction Readiness Score (≥70%). Enforced by satellite contract rule SVC-04. |
 | **Functional Stories** | [functional-story-template.md](./04-artifact-templates/functional-story-template.md) | BDD-ready stories in Ready state, traceable to PRD. Use Functional Story Template as authoring format and Functional Story Writing Standard as quality guide. If Story Seeds exist from Phase 1.1 KDD Level 2+, refine them into Functional Stories here. |
 | **Simplicity Checklist Phase 1** | [simplicity-checklist-phase-01.md](../../../core/architecture/blueprints/simplicity-checklist-phase-01.md) | Despite the 'Phase 1' name, this checklist runs during Phase 2. Its purpose: verify no premature over-engineering enters the design baseline. The artifact identifier is registered in the machine validator — do not rename it. |
-| **Evolith User Story** | [evolith-user-story-template.md](./04-artifact-templates/evolith-user-story-template.md) | Atomic story definition with BDD criteria. Produced after Functional Stories are defined. |
-| **Agile Backlog** | [agile-backlog-template.md](./04-artifact-templates/agile-backlog-template.md) | Refined backlog produced from Functional Stories. |
 | **CLI Impact Analysis** | [cli-impact-analysis.md](./04-artifact-templates/cli-impact-analysis.md) | Required CLI capabilities once design is baselined. |
 
 ### Topology Declaration and Validation
@@ -212,7 +210,7 @@ Phase 2 implies a specific progressive topology. The following actions are requi
 | 2 | Assess Extraction Readiness (ADR-0045 ≥70%); confirm ADR-0047 progression justified | Score documented |
 | 3 | Confirm ADR-0002; run Simplicity Checklist Phase 1 | Architecture baseline |
 | 4 | Produce Bounded Context Map (DDD Model Template); apply ADR-0031 + ADR-0032 | Bounded Context Map |
-| 5 | Refine Story Seeds → Functional Stories (KDD L2+) or write from scratch; decompose → User Stories; organize Agile Backlog | Functional Stories, Backlog |
+| 5 | Refine Story Seeds → Functional Stories (KDD L2+) or write from scratch | Functional Stories |
 | 6 | Document boundary decisions as ADRs; complete CLI Impact Analysis; consult ADR-0018; verify Blueprint Alignment | ADR Registry (complete) |
 | 7 | Run `evolith validate --topology distributed-modules` — all 8 DM rules must pass | Topology validation |
 | 8 | (Conditional) Validate DOMA if F3 topology in roadmap (ADR-0076) | DOMA compliance |
@@ -368,8 +366,6 @@ The following matrix provides a one-page view of artifact density per phase. An 
 | Ballpark Estimation | **R** | — | — | — | — |
 | MoSCoW Prioritization Matrix | **R** | — | — | — | — |
 | Build-versus-Compose Analysis | **R** | — | — | — | — |
-| Evolith User Story | — | **R** | — | — | — |
-| Agile Backlog | — | **R** | — | — | — |
 | CLI Impact Analysis | — | **R** | — | — | — |
 | Architectural Directives | — | — | — | — | — |
 | Agnostic Baseline | — | — | — | — | — |

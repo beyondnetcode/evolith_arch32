@@ -62,8 +62,6 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 | **Fase 1 — Concepción** | Ballpark Estimation | [Abrir](./ballpark-estimation-template.es.md) | Incluido | Incluido | Arquitecto, Tech Lead |
 | **Fase 1 — Concepción** | Matriz de Priorización MoSCoW | [Abrir](./ballpark-estimation-template.es.md) | Incluido | — | PM, Product Owner |
 | **Fase 1 — Concepción** | Análisis Build-versus-Compose | [Abrir](./discovery-canvas-template.es.md) | Incluido | — | Arquitecto, Tech Lead |
-| **Fase 2 — Diseño** | Historia de Usuario Evolith | [Abrir](./evolith-user-story-template.es.md) | Incluido | Incluido | Agente AI, PM |
-| **Fase 2 — Diseño** | Agile Backlog | [Abrir](./agile-backlog-template.es.md) | Incluido | Incluido | Product Owner |
 | **Fase 2 — Diseño** | Análisis de Impacto CLI | [Abrir](./cli-impact-analysis.es.md) | Incluido | Incluido | Arquitecto de Plataforma |
 | **Fase 1 — Concepción** | PRD — Documento de Requisitos de Producto | [Abrir](./prd-template.es.md) | [Fuente](./source/prd-template-source.es.md) | [Ejemplo](./examples/prd-example-ums.es.md) | Product Owner, Sponsor Ejecutivo |
 | **Fase 2 — Diseño** | DDD Model (Bounded Context Map) | [Abrir](./ddd-model-template.es.md) | Incluido | N/A | Arquitecto, Tech Lead |

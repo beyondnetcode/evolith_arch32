@@ -4,7 +4,7 @@ JSON Schema definitions for validating Evolith governance and SDLC artifacts.
 
 > **Source of truth:** these schemas are the **authoritative contract** for the *structure* of each artifact. When a Markdown template and a schema disagree about required fields, the schema wins for machine validation. The Markdown templates under `reference/core/sdlc/04-artifact-templates/` remain authoritative for *human guidance, intent, and prose*.
 
-**Count:** this directory contains **39** `*.schema.json` files. They are grouped below by purpose. OPA policy *input* schemas live separately under [`../opa/schemas/`](../opa/schemas/) (26 files) and are indexed in the [OPA README](../opa/README.md).
+**Count:** this directory contains **37** `*.schema.json` files. They are grouped below by purpose. OPA policy *input* schemas live separately under [`../opa/schemas/`](../opa/schemas/) (26 files) and are indexed in the [OPA README](../opa/README.md).
 
 > **Axis note:** the SDLC axis (idea → product, five phases) is **separate** from the topology axis (architecture groupers). The "Phase" column below refers to the SDLC progressive axis only. Topology artifacts (`topology-manifest`, `topology-composition`, `blueprint`) are not tied to an SDLC phase.
 
@@ -15,8 +15,6 @@ JSON Schema definitions for validating Evolith governance and SDLC artifacts.
 | [discovery-canvas.schema.json](./discovery-canvas.schema.json) | Discovery Canvas | 1 — Discovery |
 | [technical-feasibility.schema.json](./technical-feasibility.schema.json) | Technical Feasibility (NFRs / quality attributes) | 1 — Discovery |
 | [ballpark-estimation.schema.json](./ballpark-estimation.schema.json) | Ballpark Estimation (T-shirt sizing) | 1 — Discovery |
-| [evolith-user-story.schema.json](./evolith-user-story.schema.json) | User Story Evolith (BDD criteria) | 1 — Discovery |
-| [agile-backlog.schema.json](./agile-backlog.schema.json) | Agile Backlog | 1 — Discovery |
 | [prd.schema.json](./prd.schema.json) | Product Requirements Document | 1 — Discovery |
 | [cli-impact-analysis.schema.json](./cli-impact-analysis.schema.json) | CLI Impact Analysis | 1–2 |
 | [build-vs-compose.schema.json](./build-vs-compose.schema.json) | Build-versus-Compose Analysis | 1–2 |
@@ -81,7 +79,7 @@ The stateless Core Evaluation Engine's input/output contracts (ADR-0101). Mirror
 
 ---
 
-**SDLC Phase 1 (Discovery) coverage:** 6 core schemas — Discovery Canvas, Technical Feasibility, Ballpark Estimation, Evolith User Story, Agile Backlog, PRD (plus CLI Impact Analysis and Build-vs-Compose spanning phases 1–2).
+**SDLC Phase 1 (Discovery) coverage:** 4 core schemas — Discovery Canvas, Technical Feasibility, Ballpark Estimation, PRD (plus CLI Impact Analysis and Build-vs-Compose spanning phases 1–2).
 
 ---
 

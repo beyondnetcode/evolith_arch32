@@ -126,6 +126,18 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **References:** ADR-0104, DN-06 (tracker-downstream-flow), downstream-artifact-profiles, GT-425 (the mirrored epic).
 
+#### GT-449
+
+**Title:** Canonical-only command surface (drop deprecated legacy aliases)
+
+**Problem:** Because the product was never in production, the codebase and docs still carried deprecated command shims and legacy input aliases (the `smart-cli mcp` command that no longer exists, F1/F2/F3 as topology input, f1–f5 as phase input) with "deprecated" narrative — noise the owner asked to replace outright with the new surface.
+
+**Scope (command surface only):** across CLI/MCP/core-api + the current-facing READMEs — replace `smart-cli mcp serve` with the standalone `evolith-mcp serve`; remove the F1/F2/F3 topology input aliases (`--arch`/`--arch-level` deprecated flags, `normalizeTopology`/`isLegacyLevel`/`LEVEL_TO_TOPOLOGY`, MCP `architecture-validate` legacy acceptance) so only canonical progressive-axis ids are accepted; drop the f1–f5 phase-alias enum entries + "deprecated" wording. **Kept (not a command):** core-domain's internal `f1..f5` phase encoding and the CLI/MCP internal `TOPOLOGY_TO_LEVEL` conversion that drift/validation consume.
+
+**Closure:** DONE — build clean, CLI 918/918 green. **Follow-on:** terminology sweep of `F1/F2/F3` still present in historical planning/roadmap/assessment docs (out of the command-surface scope; can ride with GT-445).
+
+**References:** topology-catalog.ts; validate/drift/scaffold commands; mcp architecture/validate/composable-validate tools; smart-cli & core-api READMEs; ADR-0104.
+
 #### GT-425
 
 **Title:** EPIC — Design-phase advisory governance (ADR-0104)

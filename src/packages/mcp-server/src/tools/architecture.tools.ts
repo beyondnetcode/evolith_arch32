@@ -16,17 +16,15 @@ interface ArchIssue {
 }
 
 /**
- * Maps a progressive-axis topology id (or legacy F1/F2/F3) to the internal
- * maturity level the validators use. The progressive axis is
- * modular-monolith → distributed-modules → microservices.
+ * Maps a canonical progressive-axis topology id to the internal maturity level
+ * the validators use. The progressive axis is
+ * modular-monolith → distributed-modules → microservices. The `F1/F2/F3` values
+ * are the internal encoding, not a user-facing input alias.
  */
 const PROGRESSIVE_LEVEL: Record<string, 'F1' | 'F2' | 'F3'> = {
   'modular-monolith': 'F1',
   'distributed-modules': 'F2',
   microservices: 'F3',
-  F1: 'F1',
-  F2: 'F2',
-  F3: 'F3',
 };
 
 function normalizeLevel(input: string | undefined): 'F1' | 'F2' | 'F3' {
@@ -56,7 +54,7 @@ export function createArchitectureTools(
               type: 'string',
               description:
                 'Progressive-axis topology id (modular-monolith, distributed-modules, microservices). ' +
-                'Legacy F1/F2/F3 accepted. Default: modular-monolith.',
+                'Default: modular-monolith.',
             },
             deep: { type: 'boolean', description: 'Enable deep static analysis', default: false },
           },

@@ -107,7 +107,7 @@ describe('DriftCommand', () => {
     });
 
     it('should use provided level option', async () => {
-      await command.run([], { level: 'F2' });
+      await command.run([], { level: 'distributed-modules' });
 
       expect(mockDetectDrift).toHaveBeenCalledWith(
         expect.objectContaining({

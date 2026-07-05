@@ -30,16 +30,16 @@ export class DriftCommand extends BaseEvolithCommand {
     options?: DriftOptions,
   ): Promise<void> {
     const projectPath = options?.path || process.cwd();
-    // Drift is measured along the progressive maturity axis. Accept canonical
-    // ids (modular-monolith/distributed-modules/microservices) or legacy
-    // F1/F2/F3, and normalize to the level the core-domain service consumes.
+    // Drift is measured along the progressive maturity axis. Accept a canonical
+    // progressive-axis id (modular-monolith/distributed-modules/microservices)
+    // and normalize to the internal level the core-domain service consumes.
     let declaredLevel: 'F1' | 'F2' | 'F3' | undefined;
     if (options?.level) {
       const normalized = toLegacyLevel(options.level);
       if (!normalized) {
         throw new Error(
           `Nivel desconocido: "${options.level}". Use un id del eje progresivo ` +
-          `(modular-monolith, distributed-modules, microservices) o el alias legacy F1/F2/F3.`,
+          `(modular-monolith, distributed-modules, microservices).`,
         );
       }
       declaredLevel = normalized;
@@ -244,7 +244,7 @@ export class DriftCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-l, --level [level]',
-    description: 'Declared progressive-axis topology: modular-monolith, distributed-modules, microservices (F1/F2/F3 accepted as legacy aliases)',
+    description: 'Declared progressive-axis topology: modular-monolith, distributed-modules, microservices',
   })
   parseLevel(val: string): string {
     return val;

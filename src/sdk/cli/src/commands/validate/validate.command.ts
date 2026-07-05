@@ -5,7 +5,6 @@ import { OutputFormatterService, OutputFormat } from '../../infrastructure/forma
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
-import { normalizeTopology, isLegacyLevel } from '../../infrastructure/architecture/topology-catalog';
 
 interface ValidateCommandOptions {
   format?: string;
@@ -14,7 +13,6 @@ interface ValidateCommandOptions {
   core?: string;
   ruleset?: string;
   architecture?: boolean;
-  archLevel?: string;
   topology?: string[];
   engine?: string;
   manifest?: string;
@@ -201,29 +199,10 @@ export class ValidateCommand extends BaseEvolithCommand {
 
         if (options?.architecture || options?.topology?.length) {
           const rawTopologies: string[] = options?.topology || [];
-          const archLevel = options?.archLevel;
 
-          // Map legacy F1/F2/F3 aliases to canonical progressive-axis ids (with a
-          // deprecation warning). Canonical and custom ids pass through unchanged.
-          const topologies: string[] = [];
-          for (const raw of rawTopologies) {
-            if (isLegacyLevel(raw)) {
-              const canonical = normalizeTopology(raw)!;
-              this.promptService.showWarning(`"${raw}" es un alias legacy. Use "${canonical}" en su lugar.`);
-              topologies.push(canonical);
-            } else {
-              topologies.push(raw.trim());
-            }
-          }
-
-          if (archLevel && archLevel.toUpperCase() !== 'ALL') {
-            this.promptService.showWarning(`El parámetro --arch-level está deprecado. Use --topology en su lugar.`);
-            if (isLegacyLevel(archLevel)) {
-              topologies.push(normalizeTopology(archLevel)!);
-            } else {
-              topologies.push(archLevel.trim());
-            }
-          }
+          // Canonical topology ids pass through (trimmed). `--arch` with no
+          // topology validates the full progressive axis (level 'ALL').
+          const topologies: string[] = rawTopologies.map((raw) => raw.trim());
 
           interface ArchResult {
             status: 'passed' | 'failed' | 'warning';
@@ -234,7 +213,7 @@ export class ValidateCommand extends BaseEvolithCommand {
           }
 
           const validatorOptions = {
-            level: archLevel || (topologies.length === 0 ? 'ALL' : undefined),
+            level: topologies.length === 0 ? 'ALL' : undefined,
             topologies
           };
 
@@ -439,26 +418,17 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-a, --arch',
-    description: 'Incluir validación de arquitectura (Deprecated: use --topology)',
+    description: 'Validar arquitectura sobre todo el eje progresivo (equivale a las tres topologías progresivas)',
   })
   parseArchitecture(): boolean {
     return true;
   }
 
   @Option({
-    flags: '-l, --arch-level [level]',
-    description: 'Nivel de arquitectura legacy F1/F2/F3 (Deprecated: use --topology con un id canónico)',
-  })
-  parseArchLevel(val: string): string {
-    return val;
-  }
-
-  @Option({
     flags: '-t, --topology [id]',
     description:
       'Topología canónica a validar (repetible): modular-monolith, distributed-modules, ' +
-      'microservices, serverless, edge-computing, event-driven, data-mesh, agentic-ai. ' +
-      'F1/F2/F3 se aceptan como alias legacy del eje progresivo.',
+      'microservices, serverless, edge-computing, event-driven, data-mesh, agentic-ai.',
   })
   parseTopology(val: string, acc?: string[]): string[] {
     const list = acc || [];
@@ -484,7 +454,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-p, --phase [phase]',
-    description: 'Fase SDLC a evaluar: discovery, design, construction, qa, release (legacy f1..f5 deprecado). Activa pipeline GT-281',
+    description: 'Fase SDLC a evaluar: discovery, design, construction, qa, release. Activa pipeline GT-281',
   })
   parsePhase(val: string): string {
     return val;

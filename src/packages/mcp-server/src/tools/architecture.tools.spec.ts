@@ -32,7 +32,7 @@ describe('architecture tools', () => {
 
   it('flags F3 extraction-readiness issues (no product type, no Dockerfile)', async () => {
     await fsExtra.writeFile(path.join(dir, 'evolith.yaml'), 'product:\n  name: x\n');
-    const result = (await byName(tools, 'evolith-architecture-validate').execute({ path: dir, level: 'F3' })) as {
+    const result = (await byName(tools, 'evolith-architecture-validate').execute({ path: dir, level: 'microservices' })) as {
       level: string;
       issues: Array<{ ruleId: string }>;
     };
@@ -45,7 +45,7 @@ describe('architecture tools', () => {
   it('flags F1/F2 issues and runs deep analysis on a monorepo layout', async () => {
     await fsExtra.writeJson(path.join(dir, 'package.json'), { name: 'demo', workspaces: ['src/*'] });
     await fsExtra.ensureDir(path.join(dir, 'src', 'mod-a'));
-    const result = (await byName(tools, 'evolith-architecture-validate').execute({ path: dir, level: 'F2', deep: true })) as {
+    const result = (await byName(tools, 'evolith-architecture-validate').execute({ path: dir, level: 'distributed-modules', deep: true })) as {
       deepAnalysis: boolean;
       issues: Array<{ ruleId: string }>;
     };

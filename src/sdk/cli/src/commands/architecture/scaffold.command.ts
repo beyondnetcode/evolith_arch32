@@ -53,13 +53,13 @@ export class ScaffoldCommand extends BaseEvolithCommand {
         }
 
         // Accept progressive-axis ids (modular-monolith/distributed-modules/
-        // microservices) and legacy F1/F2/F3 in addition to plain 1/2/3.
+        // microservices) and plain 1/2/3.
         const phase = toProgressivePhase(rawPhase);
         if (!phase) {
           console.log(JSON.stringify(createErrorEnvelope(
             'VALIDATION_FAILED',
-            `Unknown --phase "${rawPhase}". Use 1|2|3, a progressive-axis id ` +
-            `(modular-monolith, distributed-modules, microservices) or legacy F1/F2/F3.`,
+            `Unknown --phase "${rawPhase}". Use 1|2|3 or a progressive-axis id ` +
+            `(modular-monolith, distributed-modules, microservices).`,
             { ...meta, durationMs: Date.now() - startedAt },
           ), null, 2));
           process.exit(1);

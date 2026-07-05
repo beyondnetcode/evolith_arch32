@@ -8,9 +8,10 @@
  *
  * Evolith Core defines 8 topologies across complementary dimensions. Three of
  * them form the **progressive axis** — a linear maturity progression
- * (`modular-monolith → distributed-modules → microservices`). The legacy
- * `F1/F2/F3` labels are aliases for that axis and remain accepted as deprecated
- * input only; new code and docs should use the canonical ids.
+ * (`modular-monolith → distributed-modules → microservices`). The CLI accepts
+ * only the canonical ids as input. The `F1/F2/F3` labels below are the internal
+ * level encoding the core-domain drift/validation services consume — never a
+ * user-facing input alias.
  */
 
 export type TopologyDimension =
@@ -39,64 +40,46 @@ export const CANONICAL_TOPOLOGIES: readonly TopologyDescriptor[] = [
 
 export const TOPOLOGY_IDS: readonly string[] = CANONICAL_TOPOLOGIES.map((t) => t.id);
 
-/**
- * The progressive maturity axis, ordered. Index + 1 maps to the legacy
- * `F1/F2/F3` level (F1 = index 0).
- */
+/** The progressive maturity axis, ordered (index + 1 = progressive level). */
 export const PROGRESSIVE_AXIS: readonly string[] = [
   'modular-monolith',
   'distributed-modules',
   'microservices',
 ];
 
-/** Legacy level (F1/F2/F3) → canonical progressive-axis id. */
-export const LEVEL_TO_TOPOLOGY: Readonly<Record<string, string>> = {
-  F1: 'modular-monolith',
-  F2: 'distributed-modules',
-  F3: 'microservices',
-};
-
-/** Canonical progressive-axis id → legacy level (F1/F2/F3). */
+/**
+ * Canonical progressive-axis id → internal level (`F1/F2/F3`). This is the
+ * encoding the core-domain drift/validation services consume; it is not a
+ * user-facing input alias.
+ */
 export const TOPOLOGY_TO_LEVEL: Readonly<Record<string, 'F1' | 'F2' | 'F3'>> = {
   'modular-monolith': 'F1',
   'distributed-modules': 'F2',
   'microservices': 'F3',
 };
 
-const LEVEL_PATTERN = /^F[1-3]$/i;
-
 /** True when `value` is a canonical topology id. */
 export function isCanonicalTopology(value: string): boolean {
   return TOPOLOGY_IDS.includes(value);
 }
 
-/** True when `value` is a legacy F1/F2/F3 level. */
-export function isLegacyLevel(value: string): boolean {
-  return LEVEL_PATTERN.test(value);
-}
-
 /**
- * Normalize any accepted topology input to a canonical id.
- * Accepts canonical ids (returned as-is) and legacy `F1/F2/F3` aliases.
- * Returns `null` for unknown input so callers can produce a helpful error.
+ * Normalize a topology input to a canonical id. Accepts canonical ids only
+ * (returned trimmed). Returns `null` for unknown input so callers can produce a
+ * helpful error.
  */
 export function normalizeTopology(value: string): string | null {
   const trimmed = value.trim();
-  if (isCanonicalTopology(trimmed)) return trimmed;
-  if (isLegacyLevel(trimmed)) return LEVEL_TO_TOPOLOGY[trimmed.toUpperCase()];
-  return null;
+  return isCanonicalTopology(trimmed) ? trimmed : null;
 }
 
 /**
- * Normalize a progressive-axis input (canonical id or F1/F2/F3) to the legacy
- * level the core-domain drift/validation services consume. Returns `null` when
- * the input is not on the progressive axis (e.g. `serverless`).
+ * Map a canonical progressive-axis id to the internal level the core-domain
+ * drift/validation services consume. Returns `null` when the input is not on
+ * the progressive axis (e.g. `serverless`).
  */
 export function toLegacyLevel(value: string): 'F1' | 'F2' | 'F3' | null {
-  const trimmed = value.trim();
-  if (isLegacyLevel(trimmed)) return trimmed.toUpperCase() as 'F1' | 'F2' | 'F3';
-  if (TOPOLOGY_TO_LEVEL[trimmed]) return TOPOLOGY_TO_LEVEL[trimmed];
-  return null;
+  return TOPOLOGY_TO_LEVEL[value.trim()] ?? null;
 }
 
 /** Human-readable list of valid topology ids for CLI help/errors. */
@@ -105,8 +88,8 @@ export function topologyHelpList(): string {
 }
 
 /**
- * Normalize a progressive-axis input to its phase number ('1' | '2' | '3').
- * Accepts the phase numbers themselves, canonical ids and legacy F1/F2/F3.
+ * Map a progressive-axis input to its phase number ('1' | '2' | '3').
+ * Accepts the phase numbers themselves and canonical progressive-axis ids.
  * Returns `null` for anything off the progressive axis.
  */
 export function toProgressivePhase(value: string): '1' | '2' | '3' | null {

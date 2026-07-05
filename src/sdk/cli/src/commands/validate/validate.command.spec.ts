@@ -146,7 +146,7 @@ describe('ValidateCommand', () => {
       );
     });
 
-    it('should include architecture validation when --arch is passed', async () => {
+    it('should validate the full progressive axis (level ALL) when --arch is passed', async () => {
       mockExecute.mockResolvedValue({ result: defaultResult });
       mockValidateArchitecture.mockResolvedValue({
         status: 'passed',
@@ -158,47 +158,11 @@ describe('ValidateCommand', () => {
 
       await command.run([], { architecture: true });
 
-      expect(mockValidateArchitecture).toHaveBeenCalled();
-    });
-
-    it('should use custom arch level when --arch-level is passed', async () => {
-      mockExecute.mockResolvedValue({ result: defaultResult });
-      mockValidateArchitecture.mockResolvedValue({
-        status: 'passed',
-        levels: ['F1'],
-        rulesChecked: 3,
-        issues: [],
-        timestamp: '2024-01-01T00:00:00.000Z',
-      });
-
-      await command.run([], { architecture: true, archLevel: 'F1' });
-
       expect(mockValidateArchitecture).toHaveBeenCalledWith(
         expect.any(String),
         undefined,
-        { level: 'F1', topologies: ['modular-monolith'] }
+        { level: 'ALL', topologies: [] }
       );
-    });
-
-    it('should map F2 correctly', async () => {
-      mockExecute.mockResolvedValue({ result: defaultResult });
-      mockValidateArchitecture.mockResolvedValue({ status: 'passed', levels: ['F2'], rulesChecked: 0, issues: [], timestamp: '' });
-      await command.run([], { architecture: true, archLevel: 'F2' });
-      expect(mockValidateArchitecture).toHaveBeenCalledWith(expect.any(String), undefined, { level: 'F2', topologies: ['distributed-modules'] });
-    });
-
-    it('should map F3 correctly', async () => {
-      mockExecute.mockResolvedValue({ result: defaultResult });
-      mockValidateArchitecture.mockResolvedValue({ status: 'passed', levels: ['F3'], rulesChecked: 0, issues: [], timestamp: '' });
-      await command.run([], { architecture: true, archLevel: 'F3' });
-      expect(mockValidateArchitecture).toHaveBeenCalledWith(expect.any(String), undefined, { level: 'F3', topologies: ['microservices'] });
-    });
-
-    it('should handle ALL architecture level correctly', async () => {
-      mockExecute.mockResolvedValue({ result: defaultResult });
-      mockValidateArchitecture.mockResolvedValue({ status: 'passed', levels: ['F1', 'F2', 'F3'], rulesChecked: 0, issues: [], timestamp: '' });
-      await command.run([], { architecture: true, archLevel: 'ALL' });
-      expect(mockValidateArchitecture).toHaveBeenCalledWith(expect.any(String), undefined, { level: 'ALL', topologies: [] });
     });
 
     it('should use topologies when --topology is passed', async () => {
@@ -467,12 +431,6 @@ describe('ValidateCommand', () => {
   describe('parseArchitecture', () => {
     it('should return true', () => {
       expect(command.parseArchitecture()).toBe(true);
-    });
-  });
-
-  describe('parseArchLevel', () => {
-    it('should return the value', () => {
-      expect(command.parseArchLevel('F1')).toBe('F1');
     });
   });
 

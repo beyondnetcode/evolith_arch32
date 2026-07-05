@@ -12,6 +12,30 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ## 1. Gap Details
 
+#### GT-447
+
+**Title:** MILESTONE — Objective 1: full stack functional locally (Docker/Kubernetes)
+
+**Problem:** The owner's first goal is to have the whole conceptual chain running **locally**: Tracker BFF/API → Evolith Core (CLI, core-api, MCP, agent-runtime), with the UI (tracker-web) connected to the local URLs. The UI design refactor is explicitly deferred to Phase 2.
+
+**Scope (M1 subset of GT-435):** one-command local bring-up (docker-compose / kind); real adapter wiring so the agent-runtime uses the real in-process/HTTP Core (GT-438); real Tracker↔Core `evaluate()` integration + local DB persistence + one gate E2E (GT-446); tracker-web pointed at local service URLs. **Relaxed for local (moved to Objective 2):** npm package distribution (GT-436), fail-closed auth/ABAC (GT-439), full observability (GT-440), real HITL (GT-441), pen-test (GT-444).
+
+**Closure:** `docker-compose up` / `kind` brings the full stack up healthy; a design/gate evaluation flows Tracker BFF → Core `evaluate()` and back; the UI renders against local URLs.
+
+**References:** product/infra (docker-compose, helm, local-test.sh); evolith_tracker/src/apps; GT-435.
+
+#### GT-448
+
+**Title:** MILESTONE — Objective 2: production on the VPS (Coolify + Kubernetes)
+
+**Problem:** After Objective 1 (GT-447) is done and validated (UI included), promote the stack to production on the Hostinger VPS with Coolify + Kubernetes.
+
+**Scope (M2 subset of GT-435):** GT-324 (CD deploy), GT-436 (package re-version/distribution), GT-437 (agent-runtime CI/CD), GT-439 (auth+ABAC fail-closed), GT-440 (observability completeness), GT-441 (real HITL), GT-442 (secrets/DB prod), GT-443 (reliability), GT-444 (pen-test), GT-445 (doc reconcile) + the Phase-2 UI design refactor.
+
+**Closure:** the full stack (incl. UI) runs in production on the VPS with CD, secrets, observability, and hardening in place.
+
+**References:** product/infra/vps-coolify, helm; GT-324; GT-435.
+
 #### GT-435
 
 **Title:** EPIC — Road to Production of the conceptual suite diagram

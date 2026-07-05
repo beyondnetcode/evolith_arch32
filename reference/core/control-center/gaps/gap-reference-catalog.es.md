@@ -12,6 +12,30 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ## 1. Detalle de Gaps
 
+#### GT-447
+
+**Título:** MILESTONE — Objetivo 1: stack completo funcional en local (Docker/Kubernetes)
+
+**Problema:** El primer objetivo del dueño es tener todo el chain conceptual corriendo **en local**: Tracker BFF/API → Evolith Core (CLI, core-api, MCP, agent-runtime), con la UI (tracker-web) conectada a las URLs locales. El refactor de diseño de la UI se difiere explícitamente a Fase 2.
+
+**Alcance (subset M1 de GT-435):** bring-up local de un comando (docker-compose / kind); cableado de adapters reales para que el agent-runtime use el Core real in-process/HTTP (GT-438); integración real Tracker↔Core `evaluate()` + persistencia DB local + un gate E2E (GT-446); tracker-web apuntando a las URLs locales. **Relajado para local (movido al Objetivo 2):** distribución npm (GT-436), auth/ABAC fail-closed (GT-439), observabilidad completa (GT-440), HITL real (GT-441), pen-test (GT-444).
+
+**Cierre:** `docker-compose up` / `kind` levanta el stack completo sano; una evaluación de diseño/gate fluye Tracker BFF → Core `evaluate()` y de vuelta; la UI renderiza contra URLs locales.
+
+**Referencias:** product/infra (docker-compose, helm, local-test.sh); evolith_tracker/src/apps; GT-435.
+
+#### GT-448
+
+**Título:** MILESTONE — Objetivo 2: producción en la VPS (Coolify + Kubernetes)
+
+**Problema:** Tras completar y validar el Objetivo 1 (GT-447, UI incluida), promover el stack a producción en la VPS de Hostinger con Coolify + Kubernetes.
+
+**Alcance (subset M2 de GT-435):** GT-324 (CD deploy), GT-436 (re-versionado/distribución de paquetes), GT-437 (CI/CD del agent-runtime), GT-439 (auth+ABAC fail-closed), GT-440 (observabilidad completa), GT-441 (HITL real), GT-442 (secrets/DB prod), GT-443 (reliability), GT-444 (pen-test), GT-445 (reconciliación de docs) + el refactor de diseño de UI de Fase 2.
+
+**Cierre:** el stack completo (incl. UI) corre en producción en la VPS con CD, secrets, observabilidad y hardening en su lugar.
+
+**Referencias:** product/infra/vps-coolify, helm; GT-324; GT-435.
+
 #### GT-435
 
 **Título:** EPIC — Camino a Producción del diagrama conceptual de la suite

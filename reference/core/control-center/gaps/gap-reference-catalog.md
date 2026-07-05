@@ -104,9 +104,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 #### GT-445
 
-**Title:** Reconcile stale maturity-reconciliation.json
+**Title:** Regenerate the stale doc-count / version surfaces to the fresh 0.0.1 baseline
 
-**Problem:** it states `@evolith/smart-cli@1.1.4` published + 422/423 gaps, contradicting reality (packages 0.0.1 deprecated; board 432/445). **Closure:** regenerate/reconcile the snapshot against the real package + board state. **References:** maturity-reconciliation.json; 09-reconcile-maturity.mjs.
+**Problem:** several auto/hand-maintained surfaces still assert pre-reset numbers — `maturity-reconciliation.json` (`@evolith/smart-cli@1.1.4` published + 422/423 gaps), `maturity-assessment.md` (`1.1.0`, "32 MCP tools"), `product-inventory.md` (`1.1.4`, 33 tools / 26 commands), and the hand-written `evolith-mcp-tools.md` catalog (obsolete tool names) — contradicting reality (packages 0.0.1 deprecated; board 432/447). **Closure:** after the in-flight topology/phase-artifacts surface edits land, regenerate the inventory/reconciliation snapshots from code (not by hand) and refresh the assessment + tool catalog — resetting versions to the 0.0.1→1.0.0 baseline and deriving tool/command/resource/prompt counts from the real registries. The 2026-07-04 doc-alignment audit fixed the version/link/field drift; the count-sensitive regeneration is gated on the surface edits landing. **References:** maturity-reconciliation.json; maturity-assessment.md; product-inventory.md; evolith-mcp-tools.md; generate-product-inventory.mjs; 09-reconcile-maturity.mjs.
 
 #### GT-446
 

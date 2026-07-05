@@ -104,9 +104,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 #### GT-445
 
-**Título:** Reconciliar el maturity-reconciliation.json desactualizado
+**Título:** Regenerar las superficies de conteos/versiones desactualizadas a la línea base nueva 0.0.1
 
-**Problema:** dice `@evolith/smart-cli@1.1.4` publicado + 422/423 gaps, contradiciendo la realidad (paquetes 0.0.1 deprecados; board 432/445). **Cierre:** regenerar/reconciliar el snapshot contra el estado real de paquetes + board. **Referencias:** maturity-reconciliation.json; 09-reconcile-maturity.mjs.
+**Problema:** varias superficies auto/manuales aún afirman números pre-reset — `maturity-reconciliation.json` (`@evolith/smart-cli@1.1.4` publicado + 422/423 gaps), `maturity-assessment.md` (`1.1.0`, "32 MCP tools"), `product-inventory.md` (`1.1.4`, 33 tools / 26 comandos), y el catálogo escrito a mano `evolith-mcp-tools.md` (nombres de tools obsoletos) — contradiciendo la realidad (paquetes 0.0.1 deprecados; board 432/447). **Cierre:** tras aterrizar los cambios en curso de topology/phase-artifacts, regenerar los snapshots de inventario/reconciliación desde código (no a mano) y refrescar el assessment + el catálogo de tools — reseteando versiones a la línea base 0.0.1→1.0.0 y derivando conteos de tools/comandos/resources/prompts de los registros reales. El audit de alineación del 2026-07-04 corrigió el drift de versión/links/campos; la regeneración sensible a conteos está gated por esos cambios. **Referencias:** maturity-reconciliation.json; maturity-assessment.md; product-inventory.md; evolith-mcp-tools.md; generate-product-inventory.mjs; 09-reconcile-maturity.mjs.
 
 #### GT-446
 

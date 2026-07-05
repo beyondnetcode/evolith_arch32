@@ -2,9 +2,9 @@
 
 > **Bilingual Navigation:** [Versión en Español](./downstream-artifact-profiles.es.md)
 
-**Status:** Conceptual (pre-implementation) · **Owners:** `@winston` · `@po`
+**Status:** Realized (GT-434 DONE) · **Owners:** `@winston` · `@po`
 **Basis:** [Tracker Downstream Flow](./tracker-downstream-flow.md) DN-06 · mirrors Design's `spec.designProfile` (GT-427) · Vision §5.2 gate evidence.
-**Authority:** Learning/knowledge record. When implemented, becomes `spec.constructionProfile` / `qualityProfile` / `deploymentProfile` in topology manifests (like `designProfile`), evaluated by advisory, non-binding evaluators (ADR-0101/0104).
+**Authority:** Learning/knowledge record. Implemented as `spec.phaseProfiles { construction, quality, deployment }` in topology manifests (alongside `designProfile`), evaluated by the advisory, non-binding `phase-artifacts` evaluator (ADR-0101/0104).
 
 ---
 
@@ -82,12 +82,12 @@ Artifact kinds are `kebab-case` blockKinds, extensible under Convention over Con
 ## 4. Core participation (advisory)
 
 - Core evaluates **artifact completeness + gate criteria** per phase (like the `design` evaluator), deriving the required set as universal ∪ topology-composition-derived, and blends in the blueprint's `downstreamCriteria` (F7).
-- Continuous advisory signals (DN-05): drift (Construction), coverage/CFR/quality (Quality), readiness (Deployment) — reusing the existing `architecture` / `checkpoint` / `deployment` KindEvaluators.
+- Continuous advisory signals (DN-05): drift (Construction), coverage/CFR/quality (Quality), readiness (Deployment) — surfaced through the dedicated `phase-artifacts` KindEvaluator (alongside the existing `architecture` / `checkpoint` / `deployment` kinds).
 - **Non-binding, stateless:** the Tracker persists the evidence, the checkpoint, and the decision; external systems notify criteria/artifact state via the API interface.
 
-## 5. Implementation note (follow-on epic)
+## 5. Implementation note (GT-434 — DONE)
 
-Mirrors GT-425: add `spec.constructionProfile` / `qualityProfile` / `deploymentProfile` to the topology manifests + phase evaluators (extend the existing `checkpoint`/`deployment` kinds) + block registry entries + templates + exposure. **Deferred** until the background tasks (CLI/MCP, skill registries) land, to avoid working-tree collisions.
+Delivered (mirrors GT-425): `spec.phaseProfiles { construction, quality, deployment }` in the topology manifests + the dedicated `phase-artifacts` KindEvaluator + `PhaseArtifactProfileService` + `phase-artifact-registry` entries + Core API endpoint + E2E. **Follow-on:** CLI/MCP `phase-artifacts` parity (tracked as a task).
 
 ---
 

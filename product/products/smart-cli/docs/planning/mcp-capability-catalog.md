@@ -404,7 +404,7 @@ server.connect(transport);
 | ADR_NOT_FOUND | ADR not found | Requested ADR doesn't exist |
 | TEMPLATE_NOT_FOUND | Template not found | Artifact template not found |
 | ARTIFACT_NOT_FOUND | Artifact not found | Artifact not found |
-| INVALID_PHASE | Invalid phase | Phase must be F1, F2, or F3 |
+| INVALID_PHASE | Invalid phase | Phase must be discovery, design, construction, qa, or release |
 | INVALID_GATE | Invalid gate | Gate number out of range |
 | VALIDATION_FAILED | Validation failed | One or more rules failed |
 | REPORT_FAILED | Report failed | Error generating report |

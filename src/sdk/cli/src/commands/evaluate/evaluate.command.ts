@@ -2,8 +2,9 @@ import * as path from 'path';
 import { Inject } from '@nestjs/common';
 import { Command, Option } from 'nest-commander';
 import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/validate-satellite.use-case';
+import { RulesetValidatorService } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service';
 import { createSuccessEnvelope } from '@beyondnet/evolith-core-domain';
-import type { IFileSystem, ILogger } from '@beyondnet/evolith-core-domain/domain/interfaces';
+import type { IFileSystem, ILogger, IConfigParser } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import {
   EvaluationOrchestrator,
   createDefaultKindEvaluators,
@@ -14,6 +15,7 @@ import {
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
+import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
 
 const CORE_VERSION = '1.0.5';
 
@@ -43,6 +45,8 @@ export class EvaluateCommand extends BaseEvolithCommand {
     private readonly useCase: ValidateSatelliteUseCase,
     @Inject('IFileSystem') private readonly fileSystem: IFileSystem,
     @Inject('ILogger') private readonly coreLogger: ILogger,
+    @Inject('IConfigParser') private readonly configParser: IConfigParser,
+    private readonly rulesetValidator: RulesetValidatorService,
     promptService: PromptService,
     configService?: ConfigService,
   ) {
@@ -51,6 +55,11 @@ export class EvaluateCommand extends BaseEvolithCommand {
 
   async executeCommand(_passed: string[], options?: EvaluateCommandOptions): Promise<void> {
     const ctx = await this.buildContext(options);
+
+    // Resolve the Core/rulesets root: an explicit --core/profile override, else
+    // the rulesets bundled with the CLI. Never fall back to process.cwd().
+    const coreOverride = options?.core || this.profile.core || undefined;
+    const resolvedCoreRoot = resolveRulesets(coreOverride).coreRoot;
 
     const pipeline: IEvaluationPipeline = {
       evaluate: async (manifest) => {
@@ -70,7 +79,7 @@ export class EvaluateCommand extends BaseEvolithCommand {
     const resolver: IWorkspaceReferenceResolver = {
       resolve: async (ref: string) => ({
         satellitePath: path.resolve(ref),
-        corePath: options?.core || this.profile.core || undefined,
+        corePath: resolvedCoreRoot,
       }),
     };
 
@@ -80,7 +89,9 @@ export class EvaluateCommand extends BaseEvolithCommand {
     const evaluators = createDefaultKindEvaluators({
       fileSystem: this.fileSystem,
       logger: this.coreLogger,
-      resolveCorePath: () => options?.core || this.profile.core || process.cwd(),
+      configParser: this.configParser,
+      rulesetValidator: this.rulesetValidator,
+      resolveCorePath: () => resolvedCoreRoot,
     });
     const orchestrator = new EvaluationOrchestrator(pipeline, resolver, CORE_VERSION, evaluators);
     const result = await orchestrator.evaluate(ctx);

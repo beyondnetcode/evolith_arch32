@@ -46,6 +46,11 @@ export abstract class BaseEvolithCommand extends CommandRunner {
     this.promptService.stopSpinner('Command failed.');
     this.promptService.showError(`Error: ${message}`);
     this.promptService.showOutro('Failed');
+
+    // nest-commander swallows errors thrown from a CommandRunner and still exits
+    // 0, so a re-throw alone leaves CI blind. Set a non-zero exit code so the
+    // failure is observable for BOTH human and --format json modes.
+    process.exitCode = 1;
     throw error instanceof Error ? error : new Error(message);
   }
 }

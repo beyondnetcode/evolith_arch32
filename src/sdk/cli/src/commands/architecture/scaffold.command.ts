@@ -1,3 +1,5 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { Command, Option } from 'nest-commander';
 import { randomUUID } from 'node:crypto';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
@@ -34,6 +36,25 @@ export class ScaffoldCommand extends BaseEvolithCommand {
 
     if (this.strategy.setDryRun) {
       this.strategy.setDryRun(dryRun);
+    }
+
+    // Guard: the Nx strategy runs `npm install` / `nx g` in `<cwd>/src`. If that
+    // workspace does not exist, the spawn fails deep with a raw `spawn ENOENT`.
+    // Fail fast with an actionable message instead. Dry-run doesn't spawn, so skip.
+    if (!dryRun) {
+      const workspaceError = this.checkWorkspace();
+      if (workspaceError) {
+        if (json) {
+          process.exitCode = 1;
+          console.log(JSON.stringify(createErrorEnvelope(
+            'NOT_A_SATELLITE',
+            workspaceError,
+            { ...meta, durationMs: Date.now() - startedAt },
+          ), null, 2));
+          return;
+        }
+        throw new Error(workspaceError);
+      }
     }
 
     if (json) {
@@ -231,6 +252,32 @@ export class ScaffoldCommand extends BaseEvolithCommand {
       this.promptService.showSuccess('Toda la topología Evolith ha sido generada en el directorio ./src.');
     }
     this.promptService.showOutro('Completed');
+  }
+
+  /**
+   * The Nx strategy operates in `<cwd>/src`. Verify that directory exists and is
+   * an Nx workspace before we spawn any `npm`/`nx` process there. Returns an
+   * actionable error message, or `undefined` when the workspace is usable.
+   */
+  private checkWorkspace(): string | undefined {
+    const cwd = process.cwd();
+    const workspaceDir = path.join(cwd, 'src');
+    if (!fs.existsSync(workspaceDir)) {
+      return (
+        `No workspace found at ${workspaceDir}. Run \`smart-cli init\` first to ` +
+        `scaffold a satellite, then re-run \`smart-cli architecture scaffold\`.`
+      );
+    }
+    const isNxWorkspace =
+      fs.existsSync(path.join(workspaceDir, 'nx.json')) ||
+      fs.existsSync(path.join(workspaceDir, 'package.json'));
+    if (!isNxWorkspace) {
+      return (
+        `${workspaceDir} exists but is not an Nx workspace (no nx.json/package.json). ` +
+        `Run \`smart-cli init\` first to scaffold the base workspace.`
+      );
+    }
+    return undefined;
   }
 
   @Option({

@@ -21,7 +21,10 @@ interface DriftOptions {
   description: 'Detect architecture drift along the progressive maturity axis (modular-monolith → distributed-modules → microservices)',
 })
 export class DriftCommand extends BaseEvolithCommand {
-  constructor(promptService: PromptService) {
+  constructor(
+    private readonly driftService: ArchitectureDriftService,
+    promptService: PromptService,
+  ) {
     super('DriftCommand', promptService);
   }
 
@@ -55,7 +58,7 @@ export class DriftCommand extends BaseEvolithCommand {
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
 
-    const service = new ArchitectureDriftService();
+    const service = this.driftService;
 
     if (options?.trend) {
       try {
@@ -68,6 +71,7 @@ export class DriftCommand extends BaseEvolithCommand {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : String(error);
         if (json) {
+          process.exitCode = 1;
           console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         } else {
           throw error;
@@ -87,6 +91,7 @@ export class DriftCommand extends BaseEvolithCommand {
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : String(error);
         if (json) {
+          process.exitCode = 1;
           console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         } else {
           throw error;
@@ -116,6 +121,7 @@ export class DriftCommand extends BaseEvolithCommand {
       this.promptService.stopSpinner();
       if (json) {
         const message = error instanceof Error ? error.message : String(error);
+        process.exitCode = 1;
         console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       } else {
         throw error;

@@ -16,6 +16,7 @@ import {
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
 
 const DOWNSTREAM_PHASES: readonly DownstreamPhase[] = ['construction', 'quality', 'deployment'];
 
@@ -54,7 +55,9 @@ export class PhaseArtifactsCommand extends BaseEvolithCommand {
 
   async executeCommand(_passedParam: string[], options?: PhaseArtifactsOptions): Promise<void> {
     const opts = options ?? {};
-    const corePath = opts.core || this.profile.core || process.cwd();
+    // Resolve the topology catalog root from an explicit --core/profile override,
+    // else the rulesets bundled with the CLI. Never fall back to process.cwd().
+    const coreOverride = opts.core || this.profile.core || undefined;
     const json = opts.format === 'json';
     const startedAt = Date.now();
     const meta = {
@@ -69,6 +72,7 @@ export class PhaseArtifactsCommand extends BaseEvolithCommand {
     if (!phase || !DOWNSTREAM_PHASES.includes(phase)) {
       const message = `--phase must be one of: ${DOWNSTREAM_PHASES.join(', ')}`;
       if (json) {
+        process.exitCode = 1;
         console.log(JSON.stringify(createErrorEnvelope('INVALID_PHASE', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         return;
       }
@@ -78,11 +82,12 @@ export class PhaseArtifactsCommand extends BaseEvolithCommand {
     const declared = opts.declared ?? [];
 
     try {
+      const { coreRoot } = resolveRulesets(coreOverride);
       const catalog = new TopologyCatalogService(this.fileSystem, this.coreLogger);
       // Pre-resolve each topology's phaseProfiles once, then pass a sync accessor.
       const profilesByTopo = new Map<string, Partial<Record<DownstreamPhase, TopologyDesignProfile>> | undefined>();
       for (const topo of new Set(topologies)) {
-        profilesByTopo.set(topo, (await catalog.get(corePath, topo))?.spec.phaseProfiles);
+        profilesByTopo.set(topo, (await catalog.get(coreRoot, topo))?.spec.phaseProfiles);
       }
       const getPhaseProfile = (topo: string, p: DownstreamPhase): TopologyDesignProfile | undefined =>
         profilesByTopo.get(topo)?.[p];
@@ -98,6 +103,7 @@ export class PhaseArtifactsCommand extends BaseEvolithCommand {
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
       if (json) {
+        process.exitCode = 1;
         console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         return;
       }

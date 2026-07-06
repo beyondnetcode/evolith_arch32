@@ -38,6 +38,7 @@ import { EvaluateGateUseCase } from '@beyondnet/evolith-core-domain/application/
 import { PhaseGateValidatorService } from '@beyondnet/evolith-core-domain/application/validators/phase-gate-validator.service';
 import { ProposePhaseAdvanceUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/propose-phase-advance.use-case';
 import { RulesetValidatorService } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service';
+import { ArchitectureDriftService } from '@beyondnet/evolith-core-domain/application/validators/architecture-drift.service';
 import type { IFileSystem, ILogger, IConfigParser } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { PromptService } from './infrastructure/prompts/prompt.service';
 import { WizardService } from './infrastructure/prompts/wizard.service';
@@ -94,7 +95,6 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     AliasCommand,
     SatelliteCreateCommand,
     ChatCommand,
-    ValidateSatelliteUseCase,
     EvaluateGateUseCase,
     ProposePhaseAdvanceUseCase,
     {
@@ -108,6 +108,23 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
         });
       },
       inject: ['IFileSystem', 'ILogger', 'IConfigParser'],
+    },
+    {
+      // ValidateSatelliteUseCase constructs a bare RulesetValidatorService when
+      // given no validator — which throws `IConfigParser is required` at DI time.
+      // Inject the fully-wired validator so `evaluate`/`validate` construct cleanly.
+      provide: ValidateSatelliteUseCase,
+      useFactory: (validator: RulesetValidatorService) => new ValidateSatelliteUseCase(validator),
+      inject: [RulesetValidatorService],
+    },
+    {
+      // ArchitectureDriftService requires fileSystem + logger; the DriftCommand
+      // previously constructed it with `new ArchitectureDriftService()` → throws
+      // `IFileSystem is required`. Wire it here and inject into the command.
+      provide: ArchitectureDriftService,
+      useFactory: (fs: IFileSystem, logger: ILogger, validator: RulesetValidatorService) =>
+        new ArchitectureDriftService(undefined, { fileSystem: fs, logger, validator }),
+      inject: ['IFileSystem', 'ILogger', RulesetValidatorService],
     },
     PromptService,
     WizardService,

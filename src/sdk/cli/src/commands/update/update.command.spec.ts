@@ -8,6 +8,15 @@ describe('UpdateCommand', () => {
   beforeEach(() => {
     command = new UpdateCommand();
     jest.clearAllMocks();
+    // The registry lookup uses execFileSync('npm', ...), which is mocked above so
+    // no real network call is made. Default it to a valid version so executeCommand
+    // paths that fetch the latest version do not emit "Failed to fetch" WARN noise;
+    // individual tests override this as needed.
+    const { execFileSync } = require('child_process');
+    (execFileSync as jest.Mock).mockReturnValue('"1.0.0"');
+    // Silence the Nest logger so update warnings never leak into test output.
+    jest.spyOn((command as any).logger, 'warn').mockImplementation(() => undefined);
+    jest.spyOn((command as any).logger, 'error').mockImplementation(() => undefined);
   });
 
   describe('constructor', () => {

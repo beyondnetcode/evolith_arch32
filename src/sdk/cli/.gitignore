@@ -15,3 +15,8 @@ MASTER_INDEX.md
 
 # Local env overrides
 .env.local
+
+# Bundled canonical rulesets — copied from src/rulesets at build time (copy-rulesets.js).
+# Source of truth is src/rulesets; these are regenerated on prebuild/prepublishOnly.
+rulesets/*
+!rulesets/agents/

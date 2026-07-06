@@ -28,13 +28,13 @@ module.exports = {
     "^@evolith/core/(.*)$":
       "<rootDir>/../../../node_modules/@evolith/core-domain/dist/$1",
     "^@modelcontextprotocol/sdk/types\\.js$":
-      "<rootDir>/../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/types.js",
+      "<rootDir>/../../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/types.js",
     "^@modelcontextprotocol/sdk/server/index\\.js$":
-      "<rootDir>/../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/index.js",
+      "<rootDir>/../../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/index.js",
     "^@modelcontextprotocol/sdk/server/stdio\\.js$":
-      "<rootDir>/../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/stdio.js",
+      "<rootDir>/../../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/stdio.js",
     "^@modelcontextprotocol/sdk/server/streamableHttp\\.js$":
-      "<rootDir>/../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/streamableHttp.js",
+      "<rootDir>/../../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/streamableHttp.js",
     "^@nestjs/cache-manager$":
       "<rootDir>/__mocks__/@nestjs/cache-manager.ts",
     "^cache-manager$":

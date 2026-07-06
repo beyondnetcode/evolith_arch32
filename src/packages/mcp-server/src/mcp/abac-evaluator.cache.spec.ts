@@ -1,13 +1,13 @@
 const loadPolicyMock = jest.fn();
 const readFileMock = jest.fn();
-const pathExistsMock = jest.fn();
 const statMock = jest.fn();
 
 jest.mock('@open-policy-agent/opa-wasm', () => ({
   loadPolicy: (...args: unknown[]) => loadPolicyMock(...args),
 }));
-jest.mock('fs-extra', () => ({
-  pathExists: (...args: unknown[]) => pathExistsMock(...args),
+// AbacEvaluator.evaluateOpa reads the compiled policy via node:fs/promises
+// (fs-extra's members are undefined under the runtime's ESM dynamic import).
+jest.mock('node:fs/promises', () => ({
   readFile: (...args: unknown[]) => readFileMock(...args),
   stat: (...args: unknown[]) => statMock(...args),
 }));
@@ -25,9 +25,7 @@ describe('AbacEvaluator OPA policy cache (GT-348)', () => {
   beforeEach(() => {
     loadPolicyMock.mockReset();
     readFileMock.mockReset();
-    pathExistsMock.mockReset();
     statMock.mockReset();
-    pathExistsMock.mockResolvedValue(true);
     readFileMock.mockResolvedValue(Buffer.from('wasm-bytes'));
     statMock.mockResolvedValue({ mtimeMs: 100 });
     loadPolicyMock.mockResolvedValue({ evaluate: () => [{ result: [] }] });

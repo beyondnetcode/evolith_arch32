@@ -7,12 +7,13 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const VISION_DIR = path.join(ROOT, 'reference/core/sdlc/standards/vision');
-const BOARD = path.join(VISION_DIR, 'gap-tracking.md');
-const ES_BOARD = path.join(VISION_DIR, 'gap-tracking.es.md');
-const MATURITY = path.join(VISION_DIR, 'maturity-reconciliation.json');
-const EN_OUT = path.join(VISION_DIR, 'executive-summary.md');
-const ES_OUT = path.join(VISION_DIR, 'executive-summary.es.md');
+const GAPS_DIR = path.join(ROOT, 'reference/core/control-center/gaps');
+const MATURITY_DIR = path.join(ROOT, 'reference/core/control-center/maturity-reports');
+const BOARD = path.join(GAPS_DIR, 'gap-tracking.md');
+const ES_BOARD = path.join(GAPS_DIR, 'gap-tracking.es.md');
+const MATURITY = path.join(MATURITY_DIR, 'maturity-reconciliation.json');
+const EN_OUT = path.join(MATURITY_DIR, 'executive-summary.md');
+const ES_OUT = path.join(MATURITY_DIR, 'executive-summary.es.md');
 
 const OPEN_STATUSES = new Set(['OPEN', 'PENDING', 'IN-PROGRESS', 'DEFERRED']);
 const CRITICALITY_WEIGHT = { P0: 100, P1: 40, P2: 15, P3: 5 };
@@ -97,9 +98,9 @@ function summarizeComponents(openGaps) {
 }
 
 function buildSummary(root = ROOT) {
-  const board = parseBoard(read(path.join(root, 'reference/core/control-center/gap-tracking.md')));
-  const esBoard = parseBoard(read(path.join(root, 'reference/core/control-center/gap-tracking.es.md')));
-  const maturity = JSON.parse(read(path.join(root, 'reference/core/control-center/maturity-reconciliation.json')) || '{}');
+  const board = parseBoard(read(path.join(root, 'reference/core/control-center/gaps/gap-tracking.md')));
+  const esBoard = parseBoard(read(path.join(root, 'reference/core/control-center/gaps/gap-tracking.es.md')));
+  const maturity = JSON.parse(read(path.join(root, 'reference/core/control-center/maturity-reports/maturity-reconciliation.json')) || '{}');
   const rows = board.rows.map((gap) => ({ ...gap, status: canonicalStatus(gap.status) }));
   const open = rows.filter((gap) => OPEN_STATUSES.has(gap.status)).sort(sortByPriority);
   const done = rows.filter((gap) => gap.status === 'DONE');

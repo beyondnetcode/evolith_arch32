@@ -9,11 +9,11 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 ## Señal Ejecutiva
 
-**Decisión actual:** GO condicionado: avanzar solo con hardening P1 y evidencia automatizada.
+**Decisión actual:** NO-GO para expansión productiva o release mayor: existen bloqueadores P0 activos.
 
-**Mayor problema ahora:** `Infra` concentra el mayor riesgo abierto ponderado (1 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Cross` concentra el mayor riesgo abierto ponderado (3 pendientes, 2 P0). Ataca esa concentración antes de ampliar alcance.
 
-**Dónde atacar primero:** -.
+**Dónde atacar primero:** [GT-447](./gap-reference-catalog.es.md#gt-447), [GT-435](./gap-reference-catalog.es.md#gt-435).
 
 ## Diagnóstico Estratégico
 
@@ -25,36 +25,41 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | - |
-| 2 | Área de mayor riesgo | `Infra` tiene la mayor carga ponderada abierta. | [GT-324](./gap-reference-catalog.es.md#gt-324) |
-| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](./gap-reference-catalog.es.md#gt-324) |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | - |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-447](./gap-reference-catalog.es.md#gt-447), [GT-435](./gap-reference-catalog.es.md#gt-435) |
+| 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-447](./gap-reference-catalog.es.md#gt-447), [GT-435](./gap-reference-catalog.es.md#gt-435), [GT-448](./gap-reference-catalog.es.md#gt-448) |
+| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-442](./gap-reference-catalog.es.md#gt-442) |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-442](./gap-reference-catalog.es.md#gt-442), [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-437](./gap-reference-catalog.es.md#gt-437), [GT-438](./gap-reference-catalog.es.md#gt-438), [GT-439](./gap-reference-catalog.es.md#gt-439), [GT-441](./gap-reference-catalog.es.md#gt-441), [GT-446](./gap-reference-catalog.es.md#gt-446), [GT-448](./gap-reference-catalog.es.md#gt-448) |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-444](./gap-reference-catalog.es.md#gt-444), [GT-445](./gap-reference-catalog.es.md#gt-445), [GT-443](./gap-reference-catalog.es.md#gt-443) |
 
 ## Bloqueadores Actuales
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
-| [GT-324](./gap-reference-catalog.es.md#gt-324) | CD: build+push a GHCR de core-api y mcp-server (GITHUB_TOKEN) vivo + triggers push/tag; job de deploy Coolify guardado — código completo, deploy pendiente de secrets + run CD | `Infra` | P1/M |
+| [GT-447](./gap-reference-catalog.es.md#gt-447) | **MILESTONE — Objetivo 1: stack completo FUNCIONAL EN LOCAL (Docker/Kubernetes).** Levantar el chain completo — Tracker BFF/API → Evolith Core (CLI, core-api, MCP, agent-runtime) — con adapters REALES (no stubs), integración real Tracker↔Core evaluate(), y la UI (tracker-web) conectada a las URLs LOCALES. El refactor de diseño de la UI se difiere a Fase 2. Bring-up de un comando (docker-compose / kind). Reúne el subset M1 de GT-435: GT-438 (adapters reales), GT-446 (integración Tracker + DB local), GT-436 (publicar paquetes 1.0.0 reales en npm — cuando estén genuinamente listos), GT-439 (auth fail-closed + tenant guard), GT-440 (observabilidad), compose/k8s local. Solo HITL real / pen-test relajados para local. | `Cross` | P0/L |
+| [GT-435](./gap-reference-catalog.es.md#gt-435) | EPIC — Camino a Producción del diagrama conceptual de la suite (Core hubs → Hermes/Agent Runtime → Exposición CLI/API/MCP → Tracker → satélites). Evaluación 2026-07-04: Core ~95% listo (L4); el único bloqueante de CD activo es GT-324; la distribución está bloqueada por la deprecación a 0.0.1; el agent-runtime usa stubs por defecto; el Tracker es un scaffold .NET real pero desfasado del diseño actual de Core. **Umbrella — descompuesto en GT-436…GT-446 (+ GT-324), organizado en dos milestones: GT-447 (Objetivo 1 — funcional local) y GT-448 (Objetivo 2 — producción).** | `Cross` | P0/XL |
 
 ## Métricas
 
 | Indicador | Valor |
 |---|---:|
-| Fecha canónica del tablero | 2026-07-03 |
-| Gaps totales | 423 |
-| Gaps cerrados | 422 |
-| Gaps pendientes | 1 |
-| P0 abiertos | 0 |
-| P1 abiertos | 1 |
-| P2 abiertos | 0 |
-| Cierre total | 99.8% |
+| Fecha canónica del tablero | 2026-07-04 |
+| Gaps totales | 448 |
+| Gaps cerrados | 435 |
+| Gaps pendientes | 13 |
+| P0 abiertos | 2 |
+| P1 abiertos | 8 |
+| P2 abiertos | 3 |
+| Cierre total | 97.1% |
 | Registros de evidencia de cierre | 404 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.es.md#gt-324) |
+| `Cross` | 3 | 2 | 1 | [GT-447](./gap-reference-catalog.es.md#gt-447), [GT-435](./gap-reference-catalog.es.md#gt-435), [GT-448](./gap-reference-catalog.es.md#gt-448) |
+| `Infra` | 3 | 0 | 3 | [GT-442](./gap-reference-catalog.es.md#gt-442), [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-437](./gap-reference-catalog.es.md#gt-437) |
+| `Agent Runtime` | 2 | 0 | 2 | [GT-438](./gap-reference-catalog.es.md#gt-438), [GT-441](./gap-reference-catalog.es.md#gt-441) |
+| `Security` | 2 | 0 | 1 | [GT-439](./gap-reference-catalog.es.md#gt-439), [GT-444](./gap-reference-catalog.es.md#gt-444) |
+| `Tracker` | 1 | 0 | 1 | [GT-446](./gap-reference-catalog.es.md#gt-446) |
 
 ## Fuente y Regla de Actualización
 

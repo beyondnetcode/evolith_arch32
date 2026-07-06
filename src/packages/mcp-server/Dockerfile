@@ -15,7 +15,16 @@ COPY package.json package-lock.json tsconfig.base.json tsconfig.json ./
 # Workspace packages/apps/sdk/rulesets live under src/.
 COPY src ./src
 
+# .harness holds the OPA wasm compiler + the OPA binary cache location.
+COPY .harness ./.harness
+
 RUN npm ci --legacy-peer-deps
+
+# Compile the OPA policy bundle to policy.wasm BEFORE the TS build. Without this
+# the ABAC/OPA layer fail-closes in production (NODE_ENV=production) and denies
+# EVERY MCP tool call. build:policy downloads OPA v0.65.0 (needs network) and
+# installs the wasm to src/rulesets/opa/policy.wasm + src/sdk/cli/rulesets/opa/policy.wasm.
+RUN npm run build:policy
 
 # Build the workspace graph via the root solution file (correct dependency order,
 # same as `npm run build`). Building the whole graph avoids per-image ordering bugs.
@@ -48,7 +57,17 @@ COPY --from=builder /repo/src/packages/mcp-server/package.json ./src/packages/mc
 # Non-hoisted workspace deps (e.g. @nestjs/cache-manager) live here, not at root.
 COPY --from=builder /repo/src/packages/mcp-server/node_modules ./src/packages/mcp-server/node_modules
 
-COPY src/rulesets /app/corpus/rulesets
+# Ruleset corpus, copied from the BUILDER stage so the compiled policy.wasm
+# (a gitignored build artifact) is included — the host context does not have it.
+COPY --from=builder /repo/src/rulesets /app/corpus/rulesets
+
+# The MCP ABAC evaluator (abac-evaluator.ts) resolves the wasm at
+# `<corePath>/sdk/cli/rulesets/opa/policy.wasm`, where corePath is derived in
+# mcp-tool-dispatch.ts as process.cwd() climbed up two levels when cwd ends with
+# `packages/mcp-server`. The runtime WORKDIR is /repo/src/packages/mcp-server, so
+# corePath = /repo/src and the reader opens /repo/src/sdk/cli/rulesets/opa/policy.wasm.
+# Without this the OPA layer fail-closes in production and denies every tool call.
+COPY --from=builder /repo/src/sdk/cli/rulesets/opa/policy.wasm ./src/sdk/cli/rulesets/opa/policy.wasm
 
 RUN addgroup -g 1001 -S evolith && \
     adduser -S evolith -u 1001 -G evolith && \

@@ -48,10 +48,14 @@ COPY --from=builder /repo/src/apps/core-api/node_modules ./src/apps/core-api/nod
 
 # Corpus (rulesets + generated OPA WASM + human reference) the Core reads at
 # runtime. rulesets comes from the builder stage so policy.wasm is present even
-# though it is a gitignored build artifact.
-# Code resolves rulesets at `${CORE_PATH}/src/rulesets/...` (matching the dev
-# source tree), so preserve the `src/` segment inside the corpus.
-COPY --from=builder /repo/src/rulesets /app/corpus/src/rulesets
+# though it is a gitignored build artifact (compiled by `build:policy` above into
+# src/rulesets/opa/policy.wasm).
+# The runtime OpaEvaluator resolves the wasm + input schemas at
+# `<corePath>/rulesets/opa/...`, where corePath = CORE_PATH (see
+# WorkspaceReferenceResolverService.corePath()). CORE_PATH=/app/corpus, so the
+# rulesets tree must live at /app/corpus/rulesets (NOT /app/corpus/src/rulesets)
+# or OPA fail-closes on a missing policy.wasm/schema in production.
+COPY --from=builder /repo/src/rulesets /app/corpus/rulesets
 COPY reference /app/corpus/reference
 
 RUN addgroup -g 1001 -S evolith && \

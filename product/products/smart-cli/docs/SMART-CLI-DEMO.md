@@ -1302,7 +1302,7 @@ A: Yes. The CLI works independently. MCP server is optional for AI integration.
 
 ---
 
-*This document is part of the Evolith reference corpus. For the complete vision, see [Evolith Product Vision Master](../../../product-suite/vision/evolith-product-vision-master.md).*
+*This document is part of the Evolith reference corpus. For the complete vision, see [Evolith Product Vision Master](../../../suite/vision/evolith-product-vision-master.md).*
 
 ---
 [Back to CLI Documentation Index](../README.md)

@@ -62,8 +62,8 @@ Modifying an MCP tool's input or output schema constitutes a breaking change. To
 - [ADR-0004: AGENTS.md Mandatory Artifact](./0004-agents-md-mandatory-artifact.md)
 - [ADR-0087: ABAC for Agentic Tool Execution](../core/0087-abac-agentic-tool-execution.md)
 - [ADR-0092: Agent Infinite Loop Prevention](../core/0092-agent-infinite-loop-prevention.md)
-- [mcp-smoke.mjs](../../../../.harness/scripts/mcp-smoke.mjs)
-- [validate-rulesets.mjs](../../../../.harness/scripts/validate-rulesets.mjs)
+- [mcp-smoke.mjs](../../../../../.harness/scripts/mcp-smoke.mjs)
+- [validate-rulesets.mjs](../../../../../.harness/scripts/validate-rulesets.mjs)
 
 ---
 [Back to ADR Index](../README.md)

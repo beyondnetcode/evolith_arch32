@@ -2,11 +2,11 @@
 
 > **Navegación Bilingüe:** [English Version](./repository-taxonomy-map.md)
 
-Este documento mapea la estructura actual del repositorio para lectores que necesitan entender qué contiene cada área, cómo usarla y qué tan crítica es la data allí. Complementa la [Política de Taxonomía y Estructuración del Repositorio](../repository-taxonomy.es.md); no la reemplaza.
+Este documento mapea la estructura actual del repositorio para lectores que necesitan entender qué contiene cada área, cómo usarla y qué tan crítica es la data allí. Complementa la [Política de Taxonomía y Estructuración del Repositorio](./repository-taxonomy.es.md); no la reemplaza.
 
 ## Propósito
 
-Usa este mapa cuando necesites decidir dónde leer, editar, agregar o auditar contenido en Evolith Core. El README raíz envía a los lectores al [Hub de Visión, Madurez y Gaps](./README.es.md); este mapa es la vista operativa de taxonomía dentro del hub.
+Usa este mapa cuando necesites decidir dónde leer, editar, agregar o auditar contenido en Evolith Core. El README raíz envía a los lectores al [Hub de Visión, Madurez y Gaps](../../README.es.md); este mapa es la vista operativa de taxonomía dentro del hub.
 
 ## Modelo de Criticidad
 
@@ -21,7 +21,7 @@ Usa este mapa cuando necesites decidir dónde leer, editar, agregar o auditar co
 
 | Regla | Qué hacer |
 |---|---|
-| Comenzar por el portal | Usar el [README](../../../../README.es.md) raíz y luego el [Índice Maestro Global](../../../navigation/MASTER_INDEX.es.md) cuando ya conozcas la familia del artefacto. |
+| Comenzar por el portal | Usar el [README](../../../../README.es.md) raíz y luego el [Índice Maestro Global](./MASTER_INDEX.es.md) cuando ya conozcas la familia del artefacto. |
 | Mantener estándares en `reference/` | Documentos de arquitectura, gobernanza, SDLC, operaciones y referencia de productos pertenecen bajo `reference/`. |
 | Mantener reglas ejecutables en `rulesets/` | La política arquitectónica legible por máquina pertenece en `rulesets/`; las reglas específicas por topología pertenecen en `rulesets/topologies/`. |
 | Mantener implementación de producto fuera del corpus | `apps/`, `packages/`, `sdk/` y `tests/` locales soportan superficies de gobernanza ejecutable; el código de producto de negocio permanece fuera de este repositorio salvo alcance explícito. |
@@ -150,4 +150,4 @@ git diff --check
 Ejecutar cobertura de reglas topológicas y checks de paridad dual-engine cuando cambios taxonómicos afecten manifiestos de topología, reglas topológicas o políticas arquitectónicas ejecutables.
 
 ---
-[Volver al Hub de Visión, Madurez y Gaps](./README.es.md)
+[Volver al Hub de Visión, Madurez y Gaps](../../README.es.md)

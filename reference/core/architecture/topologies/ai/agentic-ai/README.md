@@ -108,7 +108,7 @@ The sandbox is the only route to tool execution. Prompts provide instructions; i
 
 ## Governing Decisions and Validation
 
-[ADR-0058](../../../adrs/core/0058-ai-consumable-architecture-knowledge.md) governs AI-consumable architecture knowledge. [ADR-0081](../../../adrs/core/0081-agentic-ai-sandbox-isolation.md), [ADR-0082](../../../adrs/core/0082-agentic-ai-trust-boundary.md), and [ADR-0083](../../../adrs/core/0083-agentic-ai-action-authorization-audit.md) establish the sandbox, trust, and authorization boundaries. [ADR-AI-001](../../../../sdlc/standards/ai-augmented/06-adrs/adr-ai-001-harness-strategy.md) and [ADR-AI-005](../../../../sdlc/standards/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.md) remain supporting proposed decisions.
+[ADR-0058](../../../adrs/core/0058-ai-consumable-architecture-knowledge.md) governs AI-consumable architecture knowledge. [ADR-0081](../../../adrs/core/0081-agentic-ai-sandbox-isolation.md), [ADR-0082](../../../adrs/core/0082-agentic-ai-trust-boundary.md), and [ADR-0083](../../../adrs/core/0083-agentic-ai-action-authorization-audit.md) establish the sandbox, trust, and authorization boundaries. [ADR-AI-001](../../../../foundations/common-rules/ai-augmented/06-adrs/adr-ai-001-harness-strategy.md) and [ADR-AI-005](../../../../foundations/common-rules/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.md) remain supporting proposed decisions.
 
 Run the profile through the topology-aware validator:
 

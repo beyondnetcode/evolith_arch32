@@ -72,8 +72,8 @@ Evidence: The current CLI implementation has already demonstrated the viability 
 
 ## References
 
-- [SDLC Tracker — Technical Interface Design](../../../sdlc/standards/vision/sdlc-tracker-technical-interfaces.md)
-- [Maturity Assessment](../../../sdlc/standards/vision/maturity-assessment.md)
+- [SDLC Tracker — Technical Interface Design](../../../sdlc/sdlc-tracker-technical-interfaces.md)
+- [Maturity Assessment](../../../control-center/maturity-reports/maturity-assessment.md)
 
 ## Related Decisions and Standards
 

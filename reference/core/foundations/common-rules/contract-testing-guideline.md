@@ -8,7 +8,7 @@ This document establishes the strategic plan and continuous integration guidelin
 
 In a modular monorepo that is actively evolving toward distributed services, standard Unit Tests are insufficient to verify cross-module integration safety, and End-to-End (E2E) integration tests are slow, flaky, and expensive. 
 
-We solve this using **Consumer-Driven Contract Testing** (leveraging **Pact JS**). Contract tests ensure that changes to an API or Event contract by a provider do not break active downstream consumers, shifting integration safety left into the CI/CD pipeline as specified in **[ADR 0018](../../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md)**.
+We solve this using **Consumer-Driven Contract Testing** (leveraging **Pact JS**). Contract tests ensure that changes to an API or Event contract by a provider do not break active downstream consumers, shifting integration safety left into the CI/CD pipeline as specified in **[ADR 0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md)**.
 
 ---
 

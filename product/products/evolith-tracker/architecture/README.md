@@ -4,7 +4,7 @@
 
 **Classification:** Product-Specific Architecture  
 **Product:** Evolith Tracker  
-**Governing Core:** [Evolith Core](../../../core/README.md)  
+**Governing Core:** [Evolith Core](../../../../reference/core/README.md)  
 **Status:** Conceptual / design-stage — describes the *target* architecture; no Tracker code is implemented yet.
 
 This area defines the intended internal architecture of Evolith Tracker (design target, not shipped code).
@@ -23,8 +23,8 @@ This area defines the intended internal architecture of Evolith Tracker (design 
 
 ## Current Migration Targets
 
-- [Tracker Technical Interface Design](../../../governance/standards/vision/sdlc-tracker-technical-interfaces.md)
-- Tracker-specific sections of the [Governed Composition Target Design](../../../governance/standards/vision/evolith-governed-composition-target-design.md)
+- [Tracker Technical Interface Design](../sdlc-tracker-technical-interfaces.md)
+- Tracker-specific sections of the [Governed Composition Target Design](../../../suite/architecture/evolith-governed-composition-target-design.md)
 
 > **What exists today.** No Tracker architecture is built. The only shipped, Tracker-enabling seams live in Core (`apps/core-api` REST-only under `/api/v1`, `packages/core-domain`); see the [What Exists Today vs. the Target](../README.md#31-what-exists-today-vs-the-target) delta in the product README for the live-seam inventory and its gap-tracking references.
 

@@ -100,6 +100,6 @@ Unknown (historical record; evaluated against general architectural principles o
 None explicitly linked.
 
 ---
-[Back to Index](../../../../MASTER_INDEX.md)
+[Back to Index](../../../control-center/taxonomy/MASTER_INDEX.md)
 
 > **Agent Signature:** Architect Agent

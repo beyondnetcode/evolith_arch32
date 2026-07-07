@@ -6,7 +6,7 @@
 **Owner:** Evolith Architecture Board  
 **Última Actualización:** 2026-06-18  
 **Alcance:** Taxonomía de Evolith Core, rulesets, CLI, MCP y Service CORE API  
-**Visión Relacionada:** [Framework Estratégico de Validación y Composición de Evolith](./evolith-strategic-validation-and-composition-framework.es.md)
+**Visión Relacionada:** [Framework Estratégico de Validación y Composición de Evolith](../../../../product/suite/methods/evolith-strategic-validation-and-composition-framework.es.md)
 
 Este documento es el tracker de implementación para evolucionar Evolith Core desde un corpus de referencia de monolito progresivo hacia un **Corpus de Referencia Multi-Topología** con gobernanza ejecutable. Está escrito para que cualquier modelo de arquitectura o agente de código entienda la corrección esperada, preserve la autoridad existente del repositorio y pueda continuar el trabajo sin volver a debatir la decisión central.
 
@@ -32,15 +32,15 @@ El repositorio ya tiene los bloques principales, pero todavía no se resuelven p
 
 | Área | Ubicación Actual | Estado Actual |
 |---|---|---|
-| Autoridad ADR | [Registro ADR](../../../architecture/adrs/README.es.md) | Los ADRs están agrupados por Core/runtime, no por topología. |
-| Reglas progresivas | [Rulesets de Arquitectura](../../../../rulesets/architecture/README.es.md) | F1/F2/F3 ya codifican reglas de monolito modular, módulos distribuidos y microservicios. |
-| Paridad OPA | [Reglas OPA](../../../architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego) | OPA existe para las reglas de arquitectura actuales, pero no para nuevas familias topológicas. |
-| Validación CLI | [Comando Validate](../../../../sdk/cli/src/commands/validate/validate.command.ts) | Soporta `--arch-level F1/F2/F3`, no `--topology`. |
-| Scaffolding CLI | [Comando Scaffold](../../../../sdk/cli/src/commands/architecture/scaffold.command.ts) | Enfocado en monolito modular y microfrontends. |
-| Recursos MCP | [Resources Service](../../../../packages/mcp-server/src/mcp/resources.service.ts) | Expone recursos globales, no recursos direccionados por topología. |
-| Herramientas MCP | [Architecture Tools](../../../../packages/mcp-server/src/tools/architecture.tools.ts) | Valida niveles F1/F2/F3, no manifiestos topológicos. |
-| Service CORE API | [Architecture Controller](../../../../apps/core-api/src/presentation/controllers/architecture.controller.ts) | Expone validación de arquitectura y detección de drift, no endpoints de catálogo topológico. |
-| Taxonomía del repositorio | [Taxonomía del Repositorio](../repository-taxonomy.md) | Todavía no autoriza directorios topológicos como áreas de primer nivel del corpus de arquitectura. |
+| Autoridad ADR | [Registro ADR](../../architecture/adrs/README.es.md) | Los ADRs están agrupados por Core/runtime, no por topología. |
+| Reglas progresivas | [Rulesets de Arquitectura](../../../../src/rulesets/architecture/README.es.md) | F1/F2/F3 ya codifican reglas de monolito modular, módulos distribuidos y microservicios. |
+| Paridad OPA | [Reglas OPA](../../architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego) | OPA existe para las reglas de arquitectura actuales, pero no para nuevas familias topológicas. |
+| Validación CLI | [Comando Validate](../../../../src/sdk/cli/src/commands/validate/validate.command.ts) | Soporta `--arch-level F1/F2/F3`, no `--topology`. |
+| Scaffolding CLI | [Comando Scaffold](../../../../src/sdk/cli/src/commands/architecture/scaffold.command.ts) | Enfocado en monolito modular y microfrontends. |
+| Recursos MCP | [Resources Service](../../../../src/packages/mcp-server/src/mcp/resources.service.ts) | Expone recursos globales, no recursos direccionados por topología. |
+| Herramientas MCP | [Architecture Tools](../../../../src/packages/mcp-server/src/tools/architecture.tools.ts) | Valida niveles F1/F2/F3, no manifiestos topológicos. |
+| Service CORE API | [Architecture Controller](../../../../src/apps/core-api/src/presentation/controllers/architecture.controller.ts) | Expone validación de arquitectura y detección de drift, no endpoints de catálogo topológico. |
+| Taxonomía del repositorio | [Taxonomía del Repositorio](../taxonomy/repository-taxonomy.md) | Todavía no autoriza directorios topológicos como áreas de primer nivel del corpus de arquitectura. |
 
 ## 3. Guardrails Innegociables
 
@@ -157,13 +157,13 @@ El `topology.manifest.json` es el contrato vinculante. Debe identificar:
 
 ## 6. Autoridad de Tracking
 
-[Tablero de Seguimiento de Gaps](./gap-tracking.es.md) es la fuente única de verdad para deuda, gaps, oportunidades, habilitadores, prioridad y estado de Multi-Topology. Las actividades `MT-A*` viven allí con criticidad, complejidad, estado y orden canónico.
+[Tablero de Seguimiento de Gaps](../gaps/gap-tracking.es.md) es la fuente única de verdad para deuda, gaps, oportunidades, habilitadores, prioridad y estado de Multi-Topology. Las actividades `MT-A*` viven allí con criticidad, complejidad, estado y orden canónico.
 
-Este plan de implementación es un documento de detalle y handoff. Úsalo para entender la arquitectura objetivo, contratos, dependencias y expectativas de validación, pero actualiza el estado de actividades solo en [Tablero de Seguimiento de Gaps](./gap-tracking.es.md).
+Este plan de implementación es un documento de detalle y handoff. Úsalo para entender la arquitectura objetivo, contratos, dependencias y expectativas de validación, pero actualiza el estado de actividades solo en [Tablero de Seguimiento de Gaps](../gaps/gap-tracking.es.md).
 
 ## 7. Fases de Ejecución
 
-El tablero en [Tablero de Seguimiento de Gaps](./gap-tracking.es.md) es autoritativo. Las fases siguientes explican el orden de ejecución de las actividades `MT-A*`.
+El tablero en [Tablero de Seguimiento de Gaps](../gaps/gap-tracking.es.md) es autoritativo. Las fases siguientes explican el orden de ejecución de las actividades `MT-A*`.
 
 | Fase | Actividades | Meta |
 |---|---|---|
@@ -332,12 +332,12 @@ La transición al Corpus de Referencia Multi-Topología está completa solo cuan
 Cuando un agente retome este trabajo:
 
 1. Leer este documento primero.
-2. Leer [Taxonomía del Repositorio](../repository-taxonomy.md), [ADR-0048](../../../architecture/adrs/core/0048-enterprise-taxonomy-reference-layout.md), [ADR-0070](../../../architecture/adrs/core/0070-lean-root-repository-taxonomy.md), [ADR-0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.md), [ADR-0074](../../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) y [ADR-0041](../../../architecture/adrs/core/0041-dual-engine-policy-evaluation.md).
+2. Leer [Taxonomía del Repositorio](../taxonomy/repository-taxonomy.md), [ADR-0048](../../architecture/adrs/core/0048-enterprise-taxonomy-reference-layout.md), [ADR-0070](../../architecture/adrs/core/0070-lean-root-repository-taxonomy.md), [ADR-0073](../../architecture/adrs/core/0073-unified-cli-output-contract.md), [ADR-0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) y [ADR-0041](../../architecture/adrs/core/0041-dual-engine-policy-evaluation.md).
 3. Revisar `git status --short` y preservar cambios no relacionados del usuario.
 4. Implementar solo la siguiente actividad `PENDING`.
 5. Mantener archivos en inglés y español estructuralmente alineados.
 6. Ejecutar los comandos de validación relevantes para los archivos modificados.
-7. Actualizar el estado de actividades solo en [Tablero de Seguimiento de Gaps](./gap-tracking.es.md), y solo cuando exista evidencia.
+7. Actualizar el estado de actividades solo en [Tablero de Seguimiento de Gaps](../gaps/gap-tracking.es.md), y solo cuando exista evidencia.
 
 ---
-[Volver al Índice de Visión](./README.es.md)
+[Volver al Índice de Visión](../../README.es.md)

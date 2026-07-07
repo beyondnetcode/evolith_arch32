@@ -232,7 +232,7 @@ axis. The manifest type and `ProgressivePhase` alias are exported for consumers.
 
 ## Development
 
-Contributions follow the repo-root [CONTRIBUTING.md](../../CONTRIBUTING.md)
+Contributions follow the repo-root [CONTRIBUTING.md](../../../CONTRIBUTING.md)
 (conventional commits, `develop` → `main`, boundary lint, tests).
 
 ## Part of the Evolith suite

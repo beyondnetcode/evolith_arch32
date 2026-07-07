@@ -58,7 +58,7 @@ package only adjusts the import ergonomics and version surface.
 ## Development
 
 Build and test locally with `npm run build` / `npm test`. Contributions follow the
-repo-root [CONTRIBUTING.md](../../CONTRIBUTING.md).
+repo-root [CONTRIBUTING.md](../../../CONTRIBUTING.md).
 
 ## License
 

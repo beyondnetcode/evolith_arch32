@@ -6,11 +6,11 @@ Utiliza este índice para estándares de ingeniería. Si buscas la ruta más rá
 
 | Necesidad | Ir a |
 | :--- | :--- |
-| Estándares Web, React, C#/.NET, Node.js o por runtime | [Acceso Rápido — Estándares de Referencia por Stack](../../../quick-access/README.es.md) |
+| Estándares Web, React, C#/.NET, Node.js o por runtime | Acceso Rápido — Estándares de Referencia por Stack |
 | Estándar de frontend web React | [web-frontend/react](./web-frontend/react/README.es.md) |
 | Estándares de ingeniería C# / .NET | [api-dotnet](./api-dotnet/README.es.md) |
-| Perfil de runtime C# / .NET | [.NET & C# Tech Stack Profile](../../../architecture/blueprints/authoritative-tech-stack-dotnet.es.md) |
-| Línea base agnóstica de runtime | [Agnostic Architecture Baseline](../../../architecture/blueprints/authoritative-tech-stack-agnostic.es.md) |
+| Perfil de runtime C# / .NET | [.NET & C# Tech Stack Profile](../../architecture/blueprints/authoritative-tech-stack-dotnet.es.md) |
+| Línea base agnóstica de runtime | [Agnostic Architecture Baseline](../../architecture/blueprints/authoritative-tech-stack-agnostic.es.md) |
 
 ## Documentos
 
@@ -25,4 +25,4 @@ Utiliza este índice para estándares de ingeniería. Si buscas la ruta más rá
 * [web-frontend/react](./web-frontend/react/README.es.md)
 
 ---
-[Volver al Nivel Superior](../README.es.md)
+[Volver al Nivel Superior](../../architecture/foundations/README.es.md)

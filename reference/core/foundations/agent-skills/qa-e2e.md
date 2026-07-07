@@ -90,7 +90,7 @@ For each FAIL, report the failing command, the surface or phase involved, the of
 
 ---
 
-*See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle.*
-*See [Global Rules](../../.harness/rules/global-rules.md) for R-25 Dual-Engine Parity.*
-*See [Gap Tracking Board](../../reference/core/control-center/gaps/gap-tracking.md) for gap status.*
-*See [surface-parity-matrix.json](../../reference/core/control-center/surface-parity-matrix.json) (GT-171) and [surface-compatibility.json](../../reference/core/control-center/surface-compatibility.json) (GT-174).*
+*See [AGENTS.md](../../../../.bmad-core/AGENTS.md) for repository context and gap lifecycle.*
+*See [Global Rules](../../../../.harness/rules/global-rules.md) for R-25 Dual-Engine Parity.*
+*See [Gap Tracking Board](../../control-center/gaps/gap-tracking.md) for gap status.*
+*See [surface-parity-matrix.json](../../control-center/audits/surface-parity-matrix.json) (GT-171) and [surface-compatibility.json](../../control-center/audits/surface-compatibility.json) (GT-174).*

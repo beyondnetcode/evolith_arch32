@@ -24,7 +24,7 @@ Every gap marked `DONE` must have exactly one entry in the canonical registry wi
 | `dependencyDisposition` | `none`, `satisfied`, `accepted-scope`, or `deferred` |
 | `dependencyRationale` | Required whenever disposition is not `none` |
 
-Machine-readable governance artifacts use English as their canonical language under [ADR-0090](../../adr/adr-0090-rule-language-policy.md).
+Machine-readable governance artifacts use English as their canonical language under [ADR-0090](../../sdlc/governance/adr-0090-rule-language-policy.md).
 
 ## 3. Semantic Enforcement
 
@@ -50,4 +50,4 @@ Pending, in-progress, and deferred gaps must not have active closure records. Hi
 No placeholder commit, speculative evidence, or waived checkbox may be used to satisfy closure.
 
 ---
-[Back to Gap Tracking](./gap-tracking.md)
+[Back to Gap Tracking](../gaps/gap-tracking.md)

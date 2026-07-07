@@ -7,10 +7,10 @@
 
 | Necesidad | Punto de partida |
 |---|---|
-| Definir la arquitectura de un nuevo producto | [Hub de Arquitectura](../../../architecture/README.es.md) y [Guia de Herencia](../../../governance/standards/onboarding/child-repository-inheritance-guide.es.md) |
-| Revisar un ejemplo ejecutable completo | [Modelo Aplicado UMS](../../../knowledge/demo/ums-reference-model.es.md) |
+| Definir la arquitectura de un nuevo producto | [Hub de Arquitectura](../../architecture/README.es.md) y [Guia de Herencia](./child-repository-inheritance-guide.es.md) |
+| Revisar un ejemplo ejecutable completo | [Modelo Aplicado UMS](../../../../product/research/demo/ums-reference-model.es.md) |
 | Ejecutar el ejemplo oficial | [README UMS](https://github.com/beyondnetcode/ums/blob/main/README.md) |
-| Seleccionar un runtime | [Indice del Stack Tecnologico](../../../architecture/blueprints/authoritative-tech-stack.es.md) |
+| Seleccionar un runtime | [Indice del Stack Tecnologico](../../architecture/blueprints/authoritative-tech-stack.es.md) |
 
 **Evolith** es un upstream documental y de decisiones — no una plantilla de inicio. No se clona como starter de aplicación y no contiene un sandbox local de producto.
 
@@ -60,9 +60,9 @@ Evolith Core utiliza el Método BMAD para orquestar agentes de IA especializados
 
 ## 6. Asistencia
 
-- [Registro ADR](../../../architecture/adrs/README.es.md)
-- [Taxonomia del Repositorio](../repository-taxonomy.es.md)
-- [Referencia vs Modelo Aplicado UMS](../../../knowledge/demo/demo-vs-reference.es.md)
+- [Registro ADR](../../architecture/adrs/README.es.md)
+- [Taxonomia del Repositorio](../../control-center/taxonomy/repository-taxonomy.es.md)
+- [Referencia vs Modelo Aplicado UMS](../../../../product/research/demo/demo-vs-reference.es.md)
 
 ---
 [Volver a Onboarding](./README.es.md)

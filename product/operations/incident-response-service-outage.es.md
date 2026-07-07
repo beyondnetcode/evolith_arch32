@@ -65,5 +65,5 @@ cada {intervalo} en nuestra página de estado. Pedimos disculpas por las molesti
 
 ## Referencias
 
-- [ADR-0011 — Patrones de Tolerancia a Fallos y Resiliencia](../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)
-- [ADR-0068 — Flujo de Git para Release de Documentación](../architecture/adrs/core/0068-documentation-release-gitflow.md)
+- [ADR-0011 — Patrones de Tolerancia a Fallos y Resiliencia](../../reference/core/architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)
+- [ADR-0068 — Flujo de Git para Release de Documentación](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md)

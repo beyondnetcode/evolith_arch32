@@ -62,8 +62,8 @@ Modificar el esquema de entrada o salida de una herramienta MCP constituye un ca
 - [ADR-0004: AGENTS.md Artefacto Obligatorio](./0004-agents-md-mandatory-artifact.es.md)
 - [ADR-0087: ABAC para Ejecucion de Herramientas Agentic](../core/0087-abac-agentic-tool-execution.es.md)
 - [ADR-0092: Prevencion de Bucles Infinitos de Agentes](../core/0092-agent-infinite-loop-prevention.es.md)
-- [mcp-smoke.mjs](../../../../.harness/scripts/mcp-smoke.mjs)
-- [validate-rulesets.mjs](../../../../.harness/scripts/validate-rulesets.mjs)
+- [mcp-smoke.mjs](../../../../../.harness/scripts/mcp-smoke.mjs)
+- [validate-rulesets.mjs](../../../../../.harness/scripts/validate-rulesets.mjs)
 
 ---
 [Volver al Indice de ADRs](../README.es.md)

@@ -327,7 +327,7 @@ Este documento define una dirección estratégica, no un ADR de selección de pr
 - [Workflow de Validación de Producto Asistido por IA](./evolith-ai-assisted-validation-workflow.es.md)
 - [Directivas Arquitectónicas](../architecture/architectural-directives.es.md)
 - [Roadmap de Estrategia Evolutiva](../strategy/evolutionary-strategy-roadmap.es.md)
-- [Evaluación de Madurez](../../governance/standards/vision/maturity-assessment.es.md)
+- [Evaluación de Madurez](../../../reference/core/control-center/maturity-reports/maturity-assessment.es.md)
 - [Índice de Visión](./README.es.md)
 
 ---

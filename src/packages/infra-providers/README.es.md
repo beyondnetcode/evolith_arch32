@@ -254,7 +254,7 @@ npm run test:cov   # jest --coverage
 ```
 
 Las contribuciones siguen las guías a nivel de repositorio en el
-[`CONTRIBUTING.md` raíz](../../CONTRIBUTING.md).
+[`CONTRIBUTING.md` raíz](../../../CONTRIBUTING.md).
 
 ## Parte de la suite Evolith
 

@@ -150,7 +150,7 @@ If Redis is unavailable at startup or becomes unreachable:
 
 - [Observability Stack](./README.md)
 - [OTel Collector Configuration](./otel/otel-collector-config.yaml)
-- [ADR-0014: Redis 4-Tier Cache Cluster](../architecture/adrs/core/0046-unified-observability-tracecontext.md)
+- [ADR-0014: Redis 4-Tier Cache Cluster](../../reference/core/architecture/adrs/core/0046-unified-observability-tracecontext.md)
 
 ---
 [Back to Operations](./README.md)

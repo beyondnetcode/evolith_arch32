@@ -75,7 +75,7 @@ Options were judged against: coupling (cross-service synchronous calls), indepen
 - [ADR-0045 Microservice Extraction Readiness Criteria](./0045-microservice-extraction-readiness-criteria.md)
 - [ADR-0031 Schema per Context and Domain Event Catalog](./0031-schema-per-context-domain-event-catalog.md)
 - [DDD Model Template](../../../sdlc/04-artifact-templates/ddd-model-template.md)
-- [Architecture Intelligence Portal](../../../knowledge/architecture-intelligence/README.md)
+- [Architecture Intelligence Portal](../../../../../product/research/architecture-intelligence/README.md)
 
 ## Related Decisions and Standards
 
@@ -83,7 +83,7 @@ Options were judged against: coupling (cross-service synchronous calls), indepen
 - [ADR-0015 Event-Driven Architecture (intra-domain)](./0015-event-driven-architecture-intra-domain.md)
 - [ADR-0029 Tactical DDD Primitives Library](../nodejs/0029-tactical-ddd-primitives-library.md)
 - [SDLC Quality Gates](../../../sdlc/quality-gates.md)
-- [DOMA Pattern — Architecture Intelligence](../../../knowledge/architecture-intelligence/patterns/domain-oriented-microservice-architecture.md)
+- [DOMA Pattern — Architecture Intelligence](../../../../../product/research/architecture-intelligence/patterns/domain-oriented-microservice-architecture.md)
 
 ---
 [Back to ADR Registry](../README.md)

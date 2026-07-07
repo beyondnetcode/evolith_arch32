@@ -67,4 +67,4 @@ If the deployment triggers alerts, errors, or fails health checks:
 
 ---
 
-[Back to Products Index](../../../products/README.md)
+[Back to Products Index](../../../../product/products/README.md)

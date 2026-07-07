@@ -70,4 +70,4 @@ Next, we look inside these specific containers to understand their internal comp
 **[Go to Level 3: Components](./level-3-components/README.md)**
 
 ---
-[Back to Level 1: System Context](./level-1-system-context.md) | [Back to Master Architecture](../C4-MASTER-ARCHITECTURE.md)
+[Back to Level 1: System Context](./level-1-system-context.md) | [Back to Master Architecture](./C4-MASTER-ARCHITECTURE.md)

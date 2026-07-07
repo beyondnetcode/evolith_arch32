@@ -54,4 +54,4 @@ Explore the complete migration record and boundary definitions directly within t
 | [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) | Official documentation of UMS's modular boundaries and architectural decisions. |
 
 ---
-[Back to Reference Hub](../../README.md)
+[Back to Reference Hub](../../../README.md)

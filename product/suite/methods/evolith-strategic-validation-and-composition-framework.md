@@ -327,7 +327,7 @@ This document is a strategic direction, not a vendor-selection ADR.
 - [AI-Assisted Product Validation Workflow](./evolith-ai-assisted-validation-workflow.md)
 - [Architectural Directives](../architecture/architectural-directives.md)
 - [Evolutionary Strategy Roadmap](../strategy/evolutionary-strategy-roadmap.md)
-- [Maturity Assessment](../../governance/standards/vision/maturity-assessment.md)
+- [Maturity Assessment](../../../reference/core/control-center/maturity-reports/maturity-assessment.md)
 - [Index of Vision](./README.md)
 
 ---

@@ -3,7 +3,7 @@
 > **Navegación bilingüe:** [English](./test-summary-report-template.md)
 > **Fase:** 4 — Validación y QA
 > **Puerta de salida:** Release Candidate (RC) Sellado
-> **Esquema:** [`test-summary-report.schema.json`](../../../../rulesets/schema/test-summary-report.schema.json)
+> **Esquema:** [`test-summary-report.schema.json`](../../../../src/rulesets/schema/test-summary-report.schema.json)
 > **Padre:** [Plantillas de Artefactos](./README.es.md)
 
 ---

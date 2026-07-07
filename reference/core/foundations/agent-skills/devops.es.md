@@ -270,13 +270,13 @@ Tienes el **deber de mejorar el sistema**. Monitorea:
 - **Scripts huérfanos** → si existen scripts sin referencias en workflow, conectarlos o consolidarlos
 - **Confiabilidad CI** → si un gate CI es inestable, agregar lógica de reintento o mejorar mensajes de error
 
-Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
+Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
 
 ---
 
-*Véase [AGENTS.es.md](../AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
-*Véase [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
-*Véase [Reglas Globales](../../.harness/rules/global-rules.md) para R-26 Cierre Semántico de Gaps.*
-*Véase [.github/workflows/](../../.github/workflows/) para definiciones activas de flujos de trabajo.*
-*Véase [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) para política de automatización de releases.*
-*Véase [Evidencia de Cierre de Gaps](../../reference/core/control-center/evidence/gap-closure-evidence.json) para registros de cierre.*
+*Véase [AGENTS.es.md](../../../../.bmad-core/AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
+*Véase [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
+*Véase [Reglas Globales](../../../../.harness/rules/global-rules.md) para R-26 Cierre Semántico de Gaps.*
+*Véase [.github/workflows/](../../../../.github/workflows) para definiciones activas de flujos de trabajo.*
+*Véase [ADR-0068](../../architecture/adrs/core/0068-documentation-release-gitflow.md) para política de automatización de releases.*
+*Véase [Evidencia de Cierre de Gaps](../../control-center/evidence/gap-closure-evidence.json) para registros de cierre.*

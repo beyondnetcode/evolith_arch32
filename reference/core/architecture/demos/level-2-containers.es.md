@@ -70,4 +70,4 @@ A continuación, miramos dentro de estos contenedores específicos para comprend
 **[Ir al Nivel 3: Componentes](./level-3-components/README.es.md)**
 
 ---
-[Volver al Nivel 1: System Context](./level-1-system-context.es.md) | [Volver a la Arquitectura Maestra](../C4-MASTER-ARCHITECTURE.es.md)
+[Volver al Nivel 1: System Context](./level-1-system-context.es.md) | [Volver a la Arquitectura Maestra](./C4-MASTER-ARCHITECTURE.es.md)

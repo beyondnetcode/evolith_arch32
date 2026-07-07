@@ -50,8 +50,8 @@ The RAG job divides changed English reference documents at H2/H3 boundaries and 
 
 ## Related Authority
 
-- [ADR-0090 Rule Language Policy](../governance/adr/adr-0090-rule-language-policy.md)
-- [AI Architecture Assistant](../governance/standards/ai-augmented/08-architecture-ai-assistant/README.md)
+- [ADR-0090 Rule Language Policy](../../reference/core/sdlc/governance/adr-0090-rule-language-policy.md)
+- [AI Architecture Assistant](../../reference/core/foundations/common-rules/ai-augmented/08-architecture-ai-assistant/README.md)
 - [Winston Audit Playbook](../../.harness/playbooks/winston-audit-playbook.md)
 
 ---

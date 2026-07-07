@@ -45,9 +45,9 @@ Empresa.
 ## AI Impact
 Alto. Un monolito modular bien estructurado brinda a los agentes de IA suficiente contexto para trabajar localmente dentro de áreas delimitadas sin introducir una complejidad distribuida innecesaria.
 ## Related ADRs
-- [ADR-0045: Criterios de preparación para la extracción de microservicios](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md)
-- [ADR-0047: Microservicios SOA Monolith de patrones arquitectónicos](../../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md)
-- [ADR-0057: Catálogo de inteligencia de arquitectura](../../../architecture/adrs/core/0057-architecture-intelligence-catalog.md)
+- [ADR-0045: Criterios de preparación para la extracción de microservicios](../../../../reference/core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md)
+- [ADR-0047: Microservicios SOA Monolith de patrones arquitectónicos](../../../../reference/core/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md)
+- [ADR-0057: Catálogo de inteligencia de arquitectura](../../../../reference/core/architecture/adrs/core/0057-architecture-intelligence-catalog.md)
 ## Anti-Patterns
 - tratar la separación de carpetas como una verdadera modularidad
 - usar un modelo de dominio compartido en todos los módulos

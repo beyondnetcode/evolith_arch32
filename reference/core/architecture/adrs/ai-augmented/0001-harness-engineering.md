@@ -62,11 +62,11 @@ All harness scripts MUST follow:
 ## References
 - [ADR-0002: MCP Integration Protocol](./0002-mcp-integration-protocol.md)
 - [ADR-0003: Model Selection Governance](./0003-model-selection-governance.md)
-- [Gap GT-147: Operational Drift Audit](../../../sdlc/standards/vision/gap-reference-catalog.md)
-- [review-provider.mjs](../../../../.harness/scripts/ci/agentic/review-provider.mjs)
-- [review-input.mjs](../../../../.harness/scripts/ci/agentic/review-input.mjs)
-- [review-result.mjs](../../../../.harness/scripts/ci/agentic/review-result.mjs)
-- [rag-port.mjs](../../../../.harness/scripts/ci/rag-port.mjs)
+- [Gap GT-147: Operational Drift Audit](../../../control-center/gaps/gap-reference-catalog.md)
+- [review-provider.mjs](../../../../../.harness/scripts/ci/agentic/review-provider.mjs)
+- [review-input.mjs](../../../../../.harness/scripts/ci/agentic/review-input.mjs)
+- [review-result.mjs](../../../../../.harness/scripts/ci/agentic/review-result.mjs)
+- [rag-port.mjs](../../../../../.harness/scripts/ci/rag-port.mjs)
 
 ---
 [Back to ADR Index](../README.md)

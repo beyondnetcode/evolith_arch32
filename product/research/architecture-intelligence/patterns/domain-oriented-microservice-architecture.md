@@ -13,7 +13,7 @@ When a product reaches the F3 microservices stage, decomposition often drifts to
 
 ## Evolith Position
 
-DOMA is the canonical organizing principle for F3 decomposition. It is governed by [ADR-0076](../../../architecture/adrs/core/0076-domain-oriented-microservice-architecture.md) and bound to the domain-model design standard and its review gates.
+DOMA is the canonical organizing principle for F3 decomposition. It is governed by [ADR-0076](../../../../reference/core/architecture/adrs/core/0076-domain-oriented-microservice-architecture.md) and bound to the domain-model design standard and its review gates.
 
 ## Principle
 

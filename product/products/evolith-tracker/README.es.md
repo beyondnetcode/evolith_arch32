@@ -5,8 +5,8 @@
 **Clasificación:** Product-Specific Design  
 **Producto:** Evolith Tracker  
 **Estado:** Conceptual / en fase de diseño — **aún no implementado**. Hoy no existe código fuente de Evolith Tracker ni un repositorio `evolith_tracker` en este corpus; esta carpeta contiene únicamente el diseño objetivo.  
-**Suite Padre:** [Evolith Product Suite](../../product-suite/README.es.md)  
-**Core Gobernante:** [Evolith Core](../../core/README.es.md)
+**Suite Padre:** [Evolith Product Suite](../../suite/README.es.md)  
+**Core Gobernante:** [Evolith Core](../../../reference/core/README.es.md)
 
 > **Estado de implementación.** Todo lo descrito a continuación define el rol y el diseño objetivo *previsto*, no comportamiento entregado. El diseño de interfaces autoritativo ([Diseño de Interfaces Técnicas de Tracker](./sdlc-tracker-technical-interfaces.es.md)) está marcado explícitamente como *Diseño Propuesto — Pendiente de Revisión del Architecture Board* y *no autoriza cambios de código*. Lee cada afirmación en presente como "poseerá / está diseñado para poseer".
 
@@ -27,7 +27,7 @@ Según su diseño, implementará Core y SDLC Governance al poseer:
 
 Por diseño, Tracker no redefine las reglas Core ni la gobernanza SDLC — las ejecuta.
 
-> **Frontera de integración (ADR-0074 + ADR-0075).** Tracker accede al Core estrictamente como **cliente externo** de la **Capa de Exposición del Core** (`apps/core-api`, **solo REST** bajo `/api/v1` — sin GraphQL y sin SSE — más el gateway MCP) definida en el [ADR-0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md). La lógica de composición/adaptación para web y móvil vive en el **BFF / Application Gateway** del Tracker ([ADR-0075](../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md), NestJS). El ADR-0075 motiva ese gateway por la *integración fluida con el ecosistema monorepo Node.js existente*; el futuro código de Tracker (nombre de trabajo `evolith_tracker`) aún no existe en este corpus, por lo que la ubicación de su repositorio es intención de diseño, no un hecho entregado. Ver la [Visión de Producto §2.5](../../product-suite/vision/evolith-product-vision-master.es.md) para el diagrama por capas.
+> **Frontera de integración (ADR-0074 + ADR-0075).** Tracker accede al Core estrictamente como **cliente externo** de la **Capa de Exposición del Core** (`apps/core-api`, **solo REST** bajo `/api/v1` — sin GraphQL y sin SSE — más el gateway MCP) definida en el [ADR-0074](../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md). La lógica de composición/adaptación para web y móvil vive en el **BFF / Application Gateway** del Tracker ([ADR-0075](../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md), NestJS). El ADR-0075 motiva ese gateway por la *integración fluida con el ecosistema monorepo Node.js existente*; el futuro código de Tracker (nombre de trabajo `evolith_tracker`) aún no existe en este corpus, por lo que la ubicación de su repositorio es intención de diseño, no un hecho entregado. Ver la [Visión de Producto §2.5](../../suite/vision/evolith-product-vision-master.es.md) para el diagrama por capas.
 
 ---
 
@@ -48,10 +48,10 @@ Por diseño, Tracker no redefine las reglas Core ni la gobernanza SDLC — las e
 
 ## 3. Baseline Actual de Diseño
 
-- [Diseño de Interfaces Técnicas de Tracker](../../governance/standards/vision/sdlc-tracker-technical-interfaces.es.md)
-- [Diseño Objetivo de Composición Gobernada](../../governance/standards/vision/evolith-governed-composition-target-design.es.md)
-- [Modelo de Abstracción de Proveedores y Plugins](../../governance/standards/vision/evolith-provider-abstraction-plugin-model.es.md)
-- [Trazabilidad SDLC y Evidence Graph](../../governance/sdlc/traceability-model.es.md)
+- [Diseño de Interfaces Técnicas de Tracker](./sdlc-tracker-technical-interfaces.es.md)
+- [Diseño Objetivo de Composición Gobernada](../../suite/architecture/evolith-governed-composition-target-design.es.md)
+- [Modelo de Abstracción de Proveedores y Plugins](../../../reference/core/foundations/principles/evolith-provider-abstraction-plugin-model.es.md)
+- [Trazabilidad SDLC y Evidence Graph](../../../reference/core/sdlc/traceability-model.es.md)
 
 > Durante la migración, estos archivos permanecen en rutas heredadas. Su clasificación ya es explícita: el diseño de Tracker pertenece aquí; los principios universales permanecen en Core; la semántica SDLC permanece en Governance.
 
@@ -59,22 +59,22 @@ Por diseño, Tracker no redefine las reglas Core ni la gobernanza SDLC — las e
 
 ## 3.1 Qué Existe Hoy vs. el Objetivo
 
-No existe ninguna aplicación de Tracker ni un repositorio `evolith_tracker` en este corpus. Los únicos puntos de contacto de código **real y entregado** que preparan a Tracker son costuras (*seams*) del lado de Core, registradas en [gap-tracking](../../governance/standards/vision/gap-tracking.es.md):
+No existe ninguna aplicación de Tracker ni un repositorio `evolith_tracker` en este corpus. Los únicos puntos de contacto de código **real y entregado** que preparan a Tracker son costuras (*seams*) del lado de Core, registradas en [gap-tracking](../../../reference/core/control-center/gaps/gap-tracking.es.md):
 
 | Costura real entregada hoy | Dónde | Seguimiento | Relación con el diseño objetivo |
 |---|---|---|---|
-| `workspaceRef` opaco emitido por el BFF de Tracker (campo DTO + resolver) | `apps/core-api/src/presentation/dtos/*.dto.ts`, `apps/core-api/src/application/services/workspace-reference-resolver.service.ts`, `packages/sdk-client/src/rest/types.ts` | [GT-117](../../governance/standards/vision/gap-tracking.es.md) | Permite que Core-API acepte referencias de workspace provistas por Tracker sin acoplarse a él. |
+| `workspaceRef` opaco emitido por el BFF de Tracker (campo DTO + resolver) | `apps/core-api/src/presentation/dtos/*.dto.ts`, `apps/core-api/src/application/services/workspace-reference-resolver.service.ts`, `packages/sdk-client/src/rest/types.ts` | [GT-117](../../../reference/core/control-center/gaps/gap-tracking.es.md) | Permite que Core-API acepte referencias de workspace provistas por Tracker sin acoplarse a él. |
 | `POST /api/v1/phases/transition` (en vivo, solo REST) | `apps/core-api/src/presentation/controllers/phases.controller.ts` → `PhaseTransitionUseCase` | — | Hoy ejecuta transiciones `from → to`; la propiedad del `PhaseTransition` (§4.4 del diseño de interfaces) es el **objetivo**, aún no aplicado. |
-| Value object `GateDecision` (ya nombrado en Core) | `packages/core-domain/src/gates/decision/gate-decision.ts` | [GT-316](../../governance/standards/vision/gap-tracking.es.md) | Forma distinta al `GateDecision` objetivo (ver nota del diseño de interfaces §4.3) — un nombre ya ocupado en Core. |
-| `validateWorkflow(definition)` — valida flujos provistos por Tracker contra invariantes de Core | `packages/core-domain/src/application/use-cases/validate-workflow.use-case.ts` | [GT-317](../../governance/standards/vision/gap-tracking.es.md) | Costura tenant-agnóstica que Tracker invocará. |
-| Capa de caché Redis para consumo de Core-API / MCP / Tracker | `apps/core-api` | [GT-249](../../governance/standards/vision/gap-tracking.es.md) | Infraestructura compartida preparada para lecturas de Tracker. |
-| Validación de integración extremo a extremo Core + Tracker + agentes | e2e de `packages/core-domain` | [GT-326](../../governance/standards/vision/gap-tracking.es.md) | Costura de integración transversal. |
+| Value object `GateDecision` (ya nombrado en Core) | `packages/core-domain/src/gates/decision/gate-decision.ts` | [GT-316](../../../reference/core/control-center/gaps/gap-tracking.es.md) | Forma distinta al `GateDecision` objetivo (ver nota del diseño de interfaces §4.3) — un nombre ya ocupado en Core. |
+| `validateWorkflow(definition)` — valida flujos provistos por Tracker contra invariantes de Core | `packages/core-domain/src/application/use-cases/validate-workflow.use-case.ts` | [GT-317](../../../reference/core/control-center/gaps/gap-tracking.es.md) | Costura tenant-agnóstica que Tracker invocará. |
+| Capa de caché Redis para consumo de Core-API / MCP / Tracker | `apps/core-api` | [GT-249](../../../reference/core/control-center/gaps/gap-tracking.es.md) | Infraestructura compartida preparada para lecturas de Tracker. |
+| Validación de integración extremo a extremo Core + Tracker + agentes | e2e de `packages/core-domain` | [GT-326](../../../reference/core/control-center/gaps/gap-tracking.es.md) | Costura de integración transversal. |
 
 Todo lo descrito en el [Diseño de Interfaces Técnicas de Tracker](./sdlc-tracker-technical-interfaces.es.md) (endpoints REST bajo `tracker.evolith.io`, las herramientas `evolith criterion evaluate` / `evolith gate assess`, los puertos de proveedores, el Evidence Graph, el Gate Decision Engine) es **diseño objetivo** **sin implementación**.
 
 ### Contrato de salida y de error (objetivo)
 
-Se espera que las respuestas REST/MCP de Tracker reutilicen el sobre plano de Core ([ADR-0073](../../architecture/adrs/core/0073-unified-cli-output-contract.es.md)) — `meta.command`, `meta.executedAt`, `meta.durationMs`, `meta.correlationId`, `meta.context`, `meta.schemaVersion` — y RFC 9457 (`application/problem+json`) para errores, como hace Core-API hoy. El diseño de interfaces (§11) señala que ADR-0073 *sigue siendo válido pero requiere una decisión complementaria* para separar la semántica evaluación-versus-decisión antes de la implementación de Tracker.
+Se espera que las respuestas REST/MCP de Tracker reutilicen el sobre plano de Core ([ADR-0073](../../../reference/core/architecture/adrs/core/0073-unified-cli-output-contract.es.md)) — `meta.command`, `meta.executedAt`, `meta.durationMs`, `meta.correlationId`, `meta.context`, `meta.schemaVersion` — y RFC 9457 (`application/problem+json`) para errores, como hace Core-API hoy. El diseño de interfaces (§11) señala que ADR-0073 *sigue siendo válido pero requiere una decisión complementaria* para separar la semántica evaluación-versus-decisión antes de la implementación de Tracker.
 
 ---
 

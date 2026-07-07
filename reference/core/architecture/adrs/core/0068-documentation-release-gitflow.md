@@ -544,8 +544,8 @@ jobs:
 
 - [ADR-0050: Gitflow Branching Strategy](./0050-gitflow-branching-strategy.md)
 - [SDLC Documentation Best Practices](../../../sdlc/03-documentation/sdlc-documentation-best-practices.md)
-- [Child Repository Inheritance Guide](../../../sdlc/standards/onboarding/child-repository-inheritance-guide.md)
-- [Bilingual Terminology Glossary](../../../../.harness/scripts/bilingual-terminology-glossary.md)
+- [Child Repository Inheritance Guide](../../../foundations/inheritance-model/child-repository-inheritance-guide.md)
+- [Bilingual Terminology Glossary](../../../../../.harness/scripts/bilingual-terminology-glossary.md)
 
 ---
 
@@ -580,8 +580,8 @@ Unknown (historical record; evaluated against general architectural principles o
 
 - [ADR-0050: Gitflow Branching Strategy](./0050-gitflow-branching-strategy.md)
 - [SDLC Documentation Best Practices](../../../sdlc/03-documentation/sdlc-documentation-best-practices.md)
-- [Child Repository Inheritance Guide](../../../sdlc/standards/onboarding/child-repository-inheritance-guide.md)
-- [Bilingual Terminology Glossary](../../../../.harness/scripts/bilingual-terminology-glossary.md)
+- [Child Repository Inheritance Guide](../../../foundations/inheritance-model/child-repository-inheritance-guide.md)
+- [Bilingual Terminology Glossary](../../../../../.harness/scripts/bilingual-terminology-glossary.md)
 
 ---
 [Back to Index](./README.md)

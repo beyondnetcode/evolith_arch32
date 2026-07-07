@@ -14,7 +14,7 @@ This area contains executive, investor, product, and cross-product communication
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
-| [Executive One-Pager](../../governance/standards/communication/visuals/v01-executive-one-pager.md) | Five-minute explanation of Evolith, UMS, and the value proposition | Communicate strategic value quickly | Executive summary | Yes |
+| [Executive One-Pager](../../../reference/core/foundations/common-rules/communication/visuals/v01-executive-one-pager.md) | Five-minute explanation of Evolith, UMS, and the value proposition | Communicate strategic value quickly | Executive summary | Yes |
 
 Communication documents explain the Suite and its value. They are informative and cannot redefine Core Architecture, SDLC Governance, or product implementation contracts.
 

@@ -85,7 +85,7 @@ Whenever a technical decision is made (e.g., writing a new ADR, choosing a libra
 > [!IMPORTANT]
 > **Canon of Progressive Evolution**: Architecture evolves via incremental complexity. Phase 1 is deliberately simple and does not mandate technologies, patterns, or processes that exceed the core needs of a modular monolith. Every additional requirement is introduced precisely at the phase where system architecture objectively warrants it, never before.
 
-Infrastructure burdens should never cripple early development lifecycles. Operational load MUST scale symmetrically with architectural maturity as defined in the [Reference Blueprint](../../../architecture/blueprints/reference-blueprint.md):
+Infrastructure burdens should never cripple early development lifecycles. Operational load MUST scale symmetrically with architectural maturity as defined in the [Reference Blueprint](../../architecture/blueprints/reference-blueprint.md):
 - **Phase 1 (Modular Monolith):** Lightweight deployment as standard containers (OCI) hosted on VMs, App Services, or Docker Compose. Orchestration clusters are not required.
 - **Phase 2 (Extractable Modules):** Instrumentation and readiness for orchestration is established, while retaining simplified production environments.
 - **Phase 3+ (Distributed Services):** Managed or self-hosted **Kubernetes** orchestration becomes mandatory.

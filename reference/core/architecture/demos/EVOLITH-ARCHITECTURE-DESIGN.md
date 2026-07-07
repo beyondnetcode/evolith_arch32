@@ -13,9 +13,9 @@
 > operativos que vivía aquí (antes §2 "Problema Identificado", §13 "Tabla de
 > Correcciones", §14 "Estado de Deployment", §15 "Cambios Pendientes", §16 "Riesgos"):
 > el seguimiento de gaps/deuda es responsabilidad **única** del
-> [Gap Tracking Board](../governance/standards/vision/gap-tracking.md), no de este
+> [Gap Tracking Board](../../control-center/gaps/gap-tracking.md), no de este
 > documento. Los items que seguían abiertos están registrados como
-> [`GT-390`](../governance/standards/vision/gap-reference-catalog.md#gt-390)…[`GT-394`](../governance/standards/vision/gap-reference-catalog.md#gt-394);
+> [`GT-390`](../../control-center/gaps/gap-reference-catalog.md#gt-390)…[`GT-394`](../../control-center/gaps/gap-reference-catalog.md#gt-394);
 > el historial de fixes ya aplicados vive en el historial git. Este documento
 > conserva solo el diseño arquitectónico vigente.
 
@@ -301,7 +301,7 @@ readinessProbe:
 
 - **Separar `/metrics`** detrás de un puerto interno (e.g., 9100) no expuesto en Traefik — ver `GT-393`
 - **Autorización por-tenant** sobre el acceso al corpus: el Core-API es tenant-agnóstico
-  ([ADR-0101](./adrs/core/0101-core-stateless-evaluation-engine.md): nunca recibe ni
+  ([ADR-0101](../adrs/core/0101-core-stateless-evaluation-engine.md): nunca recibe ni
   interpreta un identificador de tenant), por lo que el ABAC por-tenant pertenece al
   cliente (Evolith Tracker), no al Core. En Core-API solo cabe authz a nivel de API key /
   alcance del corpus, no por tenant — ver `GT-394`
@@ -344,14 +344,14 @@ Agent Runtime (evolithruntime.beyondnet.cloud)
 > **Separación de responsabilidades.** El Agent Runtime *decide y orquesta*;
 > `.harness` *ejecuta*; el Core *gobierna* (evaluación determinística); OPA aplica
 > *política*. El runtime no reemplaza `.harness` ni acopla el Core a Hermes
-> (ver [Agent Runtime](./agent-runtime/README.md) y [ADR-0102](./adrs/core/0102-evolith-agent-runtime.md)).
+> (ver [Agent Runtime](../../../../src/packages/agent-runtime/README.md) y [ADR-0102](../adrs/core/0102-evolith-agent-runtime.md)).
 
 ---
 
 ## 11. Modelo de Tenant (Core tenant-agnóstico, ADR-0101)
 
 El Core **no es multi-tenant**: es un motor de evaluación stateless
-([ADR-0101](./adrs/core/0101-core-stateless-evaluation-engine.md), ACCEPTED
+([ADR-0101](../adrs/core/0101-core-stateless-evaluation-engine.md), ACCEPTED
 2026-06-29, que **supersede** la Decisión 1 de ADR-0100). El Core *nunca posee,
 persiste ni interpreta* producto, tenant ni iniciativa.
 
@@ -391,7 +391,7 @@ operativo vigente del Core.
 
 3. **Sin tenant model en el Core (superado por ADR-0101)** — la idea previa de una
    API de tenant discovery en Core-API y de evaluar overrides por tenant en el gate
-   evaluator queda **superada por [ADR-0101](./adrs/core/0101-core-stateless-evaluation-engine.md)**:
+   evaluator queda **superada por [ADR-0101](../adrs/core/0101-core-stateless-evaluation-engine.md)**:
    el Core es stateless y tenant-agnóstico, nunca recibe un identificador de tenant, y
    no existe ni existirá tenant discovery en Core-API ni evaluación de overrides por
    tenant. Esa responsabilidad es de Evolith Tracker. Los schemas/directorio de tenant

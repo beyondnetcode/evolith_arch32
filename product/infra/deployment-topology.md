@@ -15,7 +15,7 @@ models stop diverging.
 ## Canonical truth (ADR-0074)
 
 - The official network exposure layer of Evolith Core is **`apps/core-api`**
-  ([ADR-0074](../architecture/adrs/core/0074-evolith-core-api-exposure-layer.md)) —
+  ([ADR-0074](../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md)) —
   a NestJS REST API. This is the real service consumers hit.
 - **`evolith-bff`** (the Helm chart, the `bff` compose service, and
   `product/infra/docker/bff.Dockerfile`) is a **generic BFF reference

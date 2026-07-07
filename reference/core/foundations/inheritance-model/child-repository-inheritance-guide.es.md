@@ -338,13 +338,13 @@ UMS expone el modelo de gobernanza a sus propios desarrolladores en su Portal de
 
 ## Documentos Relacionados
 
-- [Taxonomía del Repositorio](../../standards/repository-taxonomy.es.md)
-- [Guía de Inicio Rápido para Nuevos Productos](../../standards/onboarding/product-quick-start.es.md)
-- [Registro ADR](../../../architecture/adrs/README.es.md)
-- [Línea Base Arquitectónica Agnóstica](../../../architecture/blueprints/authoritative-tech-stack-agnostic.es.md)
-- [Manifiesto de Ingeniería](../../standards/engineering/engineering-manifesto.es.md)
-- [Frameworks Aumentados por IA](../ai-augmented/frameworks/README.es.md)
+- [Taxonomía del Repositorio](../../control-center/taxonomy/repository-taxonomy.es.md)
+- [Guía de Inicio Rápido para Nuevos Productos](./product-quick-start.es.md)
+- [Registro ADR](../../architecture/adrs/README.es.md)
+- [Línea Base Arquitectónica Agnóstica](../../architecture/blueprints/authoritative-tech-stack-agnostic.es.md)
+- [Manifiesto de Ingeniería](../common-rules/engineering-manifesto.es.md)
+- [Frameworks Aumentados por IA](../common-rules/ai-augmented/frameworks/README.es.md)
 
 ---
 
-[Volver al Índice de Onboarding](../../standards/onboarding/README.es.md)
+Volver al Índice de Onboarding

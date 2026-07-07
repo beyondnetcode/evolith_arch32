@@ -63,9 +63,9 @@ High. A well-structured modular monolith gives AI agents enough context to work 
 
 ## Related ADRs
 
-- [ADR-0045: Microservice Extraction Readiness Criteria](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md)
-- [ADR-0047: Architectural Patterns Monolith SOA Microservices](../../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md)
-- [ADR-0057: Architecture Intelligence Catalog](../../../architecture/adrs/core/0057-architecture-intelligence-catalog.md)
+- [ADR-0045: Microservice Extraction Readiness Criteria](../../../../reference/core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md)
+- [ADR-0047: Architectural Patterns Monolith SOA Microservices](../../../../reference/core/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md)
+- [ADR-0057: Architecture Intelligence Catalog](../../../../reference/core/architecture/adrs/core/0057-architecture-intelligence-catalog.md)
 
 ## Anti-Patterns
 

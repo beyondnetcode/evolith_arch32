@@ -11,14 +11,14 @@
 
 <br/>
 
-<a href="./reference/core/sdlc/assets/master-view.png" title="Evolith E2E Product Vision — click to enlarge">
-  <img src="./reference/core/sdlc/assets/master-view.png"
-       alt="Evolith E2E Product Vision"
-       width="780"
+<a href="./reference/core/sdlc/assets/master-view.svg" title="Evolith E2E Product Vision — click to enlarge">
+  <img src="./reference/core/sdlc/assets/master-view.svg"
+       alt="Evolith E2E Product Vision — Governed Composition, stateless evaluation Core, federated five-phase SDLC"
+       width="880"
        style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
 </a>
 
-<sub>↑ Evolith E2E Product Vision · MD3 — <i>click to enlarge</i></sub>
+<sub>↑ Evolith E2E Product Vision — <i>click to enlarge</i></sub>
 
 </div>
 
@@ -162,7 +162,7 @@ evolith/
 └── product/operations/    # SRE, infra, quality gates
 ```
 
-Entry point for each area: [Global Master Index](./reference/navigation/MASTER_INDEX.md)
+Entry point for each area: [Global Master Index](./reference/core/control-center/taxonomy/MASTER_INDEX.md)
 
 ---
 
@@ -204,10 +204,10 @@ Smart CLI ships **20 commands** and is configured via **`evolith.yaml`**. Full r
 | Agent Runtime | [Agent Runtime hub](./reference/core/architecture/foundations/README.md) |
 | Evolith Tracker | [Tracker hub](./product/products/evolith-tracker/README.md) |
 | Operations & SRE | [Operations hub](./product/operations/README.md) |
-| Onboarding by role | [Getting Started by Role](./reference/getting-started/README.md) |
+| Onboarding by role | Getting Started by Role |
 | Ecosystem glossary | [Glossary](./reference/core/sdlc/glossary/glossary-ecosystem.md) |
 | Gap tracking | [Gap Tracking Board](./reference/core/control-center/gaps/gap-tracking.md) |
-| All artifacts | [Global Master Index](./reference/navigation/MASTER_INDEX.md) |
+| All artifacts | [Global Master Index](./reference/core/control-center/taxonomy/MASTER_INDEX.md) |
 
 ---
 
@@ -243,7 +243,7 @@ Read these before opening a PR:
 - [Contributing Guide](./CONTRIBUTING.md)
 - [Security Policy](./SECURITY.md)
 - [AGENTS.md](./AGENTS.md) — conventions for AI agent contributors
-- [Repository Taxonomy](./reference/core/sdlc/standards/repository-taxonomy.md) — what goes where
+- [Repository Taxonomy](./reference/core/control-center/taxonomy/repository-taxonomy.md) — what goes where
 
 ---
 

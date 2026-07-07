@@ -31,4 +31,4 @@ El estado de emparejamiento EN/ES de cada documento de conocimiento se rastrea e
 
 ---
 
-[Volver al Hub de Referencia](../README.es.md)
+[Volver al Hub de Referencia](../../README.es.md)

@@ -3,7 +3,7 @@
 > **Bilingual Navigation:** [Versión en Español](./e2e-traceability-matrix.es.md)
 
 **Status:** Approved  
-**Parent:** [C4 Master Architecture](../C4-MASTER-ARCHITECTURE.md)
+**Parent:** [C4 Master Architecture](../../architecture/demos/C4-MASTER-ARCHITECTURE.md)
 
 ## 1. Matrix Overview
 
@@ -27,7 +27,7 @@ This matrix maps high-level product interfaces down to their specific container,
 - **Command/Event Runtime (HTTP + optional SSE):** Used for governed multi-step agent execution. Commands are explicit HTTP requests; SSE is only the server-to-client event transport for progress, tool results, violations, and final output.
 - **Interactive Tool Access (MCP):** Standardized protocol for external intelligence to discover and execute tools securely over stdio or Streamable HTTP.
 
-For IN/OUT contracts, resilience behavior, and client guidance by interface, see [Core Interface Flows](../views/view-by-interface-flow.md).
+For IN/OUT contracts, resilience behavior, and client guidance by interface, see [Core Interface Flows](../../architecture/demos/view-by-interface-flow.md).
 
 ---
-[Back to Master Architecture](../C4-MASTER-ARCHITECTURE.md)
+[Back to Master Architecture](../../architecture/demos/C4-MASTER-ARCHITECTURE.md)

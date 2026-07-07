@@ -6,11 +6,11 @@ Use this index for engineering standards. If you are looking for the fastest rou
 
 | Need | Go to |
 | :--- | :--- |
-| Web, React, C#/.NET, Node.js, or runtime standards | [Quick Access — Reference Standards by Stack](../../../quick-access/README.md) |
+| Web, React, C#/.NET, Node.js, or runtime standards | Quick Access — Reference Standards by Stack |
 | React web frontend standard | [web-frontend/react](./web-frontend/react/README.md) |
 | C# / .NET engineering standards | [api-dotnet](./api-dotnet/README.md) |
-| C# / .NET runtime profile | [.NET & C# Tech Stack Profile](../../../architecture/blueprints/authoritative-tech-stack-dotnet.md) |
-| Runtime-agnostic baseline | [Agnostic Architecture Baseline](../../../architecture/blueprints/authoritative-tech-stack-agnostic.md) |
+| C# / .NET runtime profile | [.NET & C# Tech Stack Profile](../../architecture/blueprints/authoritative-tech-stack-dotnet.md) |
+| Runtime-agnostic baseline | [Agnostic Architecture Baseline](../../architecture/blueprints/authoritative-tech-stack-agnostic.md) |
 | Convention, parameterization, and configuration design | [Convention over Configuration](./convention-over-configuration.md) |
 | Technology licensing and zero-cost governance | [Licensing & Open Source Governance](./licensing-and-open-source-governance.md) |
 | Optional content acceleration / Headless CMS | [Content Management Abstraction](./content-management-abstraction.md) |

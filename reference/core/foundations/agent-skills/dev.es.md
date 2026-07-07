@@ -130,12 +130,12 @@ Tienes el **deber de mejorar el sistema**. Monitorea:
 - **Brechas de cobertura de pruebas** → si un script carece de `.test.mjs`, crear uno siguiendo los patrones existentes
 - **Fricción pre-commit** → si los hooks pre-commit son lentos o producen falsos positivos, proponer optimización
 
-Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
+Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
 
 ---
 
-*Véase [AGENTS.es.md](../AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
-*Véase [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
-*Véase [Reglas Globales](../../.harness/rules/global-rules.md) para R-25 Paridad de Motor Dual.*
-*Véase [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) para flujo de release de documentación.*
-*Véase [Tablero de Seguimiento de Gaps](../../reference/core/control-center/gaps/gap-tracking.es.md) para estado de gaps.*
+*Véase [AGENTS.es.md](../../../../.bmad-core/AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
+*Véase [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
+*Véase [Reglas Globales](../../../../.harness/rules/global-rules.md) para R-25 Paridad de Motor Dual.*
+*Véase [ADR-0068](../../architecture/adrs/core/0068-documentation-release-gitflow.md) para flujo de release de documentación.*
+*Véase [Tablero de Seguimiento de Gaps](../../control-center/gaps/gap-tracking.es.md) para estado de gaps.*

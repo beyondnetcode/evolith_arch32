@@ -16,8 +16,8 @@ This area contains the portfolio-level vision of the Evolith Product Suite. It e
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
 | [Evolith Product Vision Master](./evolith-product-vision-master.md) | Strategic direction, roadmap, and maturity model for the Suite | Align teams to long-term goals | Vision and strategy | Yes |
-| [Strategic Validation and Composition Framework](../../governance/standards/vision/evolith-strategic-validation-and-composition-framework.md) | Framework for validating and composing portfolio bets | Validate the portfolio strategically | Framework | No |
-| [Governed Composition Target Design](../../governance/standards/vision/evolith-governed-composition-target-design.md) | Target design for governed product composition | Design the composed target state | Design reference | No |
+| [Strategic Validation and Composition Framework](../methods/evolith-strategic-validation-and-composition-framework.md) | Framework for validating and composing portfolio bets | Validate the portfolio strategically | Framework | No |
+| [Governed Composition Target Design](../architecture/evolith-governed-composition-target-design.md) | Target design for governed product composition | Design the composed target state | Design reference | No |
 
 > The linked files remain in legacy locations during the compatibility migration. Their classification is now Product Suite, not Evolith Core.
 

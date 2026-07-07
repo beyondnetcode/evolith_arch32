@@ -49,9 +49,9 @@ Las ideas externas no son estándares por defecto. Un artículo del catálogo se
 - Puede volverse ruidoso si no se filtran las ideas débiles.
 - Requiere validación de enlaces, taxonomía y referencias ADR.
 ## Related Artifacts
-- [Inteligencia de Arquitectura](../../../knowledge/architecture-intelligence/README.md)
-- [Plantilla de tarjeta de patrón](../../../knowledge/architecture-intelligence/patterns/pattern-card-template.md)
-- [Radar de Arquitectura](../../../knowledge/architecture-intelligence/tradeoffs/architecture-radar.md)
+- [Inteligencia de Arquitectura](../../../../../product/research/architecture-intelligence/README.md)
+- [Plantilla de tarjeta de patrón](../../../../../product/research/architecture-intelligence/patterns/pattern-card-template.md)
+- [Radar de Arquitectura](../../../../../product/research/architecture-intelligence/tradeoffs/architecture-radar.md)
 ## Objetivo y Alcance
 
 Backfill histórico: Abordar la tensión arquitectónica donde context is unavailable, estableciendo un límite estándar.

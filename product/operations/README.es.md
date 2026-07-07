@@ -2,7 +2,7 @@
 
 > **Navegación bilingüe:** [English version](./README.md)
 
-Este directorio contiene la configuración operativa y el stack de observabilidad para la referencia de arquitectura progresiva. Todos los componentes son OSS, auto-hospedados y agnósticos al proveedor según el [ADR-0028](../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md).
+Este directorio contiene la configuración operativa y el stack de observabilidad para la referencia de arquitectura progresiva. Todos los componentes son OSS, auto-hospedados y agnósticos al proveedor según el [ADR-0028](../../reference/core/architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md).
 
 ## Meta y Objetivos
 
@@ -25,7 +25,7 @@ Este directorio contiene la configuración operativa y el stack de observabilida
 | **Tempo** | Backend de trazado distribuido (almacena spans) | `3200` |
 | **Loki** | Backend de agregación de logs | `3100` |
 
-La estrategia de instrumentación completa está definida en el [ADR-0007](../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md).
+La estrategia de instrumentación completa está definida en el [ADR-0007](../../reference/core/architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md).
 
 ---
 
@@ -66,4 +66,4 @@ Para ver trazas distribuidas: abrir Grafana → Explore → seleccionar la fuent
 
 ---
 
-[Volver a la Raíz del Repositorio](../README.es.md)
+[Volver a la Raíz del Repositorio](../../README.es.md)

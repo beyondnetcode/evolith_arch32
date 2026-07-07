@@ -171,12 +171,12 @@ You have a **duty to improve the system**. Monitor for:
 - **Orphan detection** → if `ci/23-check-orphan-bilingual.mjs` reports orphans you manually fix repeatedly, propose `--fix` mode
 - **Automation opportunity** → if you manually review the same validation pattern, propose a new CI gate
 
-File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
+File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
 
 ---
 
-*See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle.*
-*See [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
-*See [Global Rules](../../.harness/rules/global-rules.md) for R-25 Dual-Engine Parity.*
-*See [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) for documentation quality gates.*
-*See [Gap Closure Evidence](../../reference/core/control-center/evidence/gap-closure-evidence.json) for closure records.*
+*See [AGENTS.md](../../../../.bmad-core/AGENTS.md) for repository context and gap lifecycle.*
+*See [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
+*See [Global Rules](../../../../.harness/rules/global-rules.md) for R-25 Dual-Engine Parity.*
+*See [ADR-0068](../../architecture/adrs/core/0068-documentation-release-gitflow.md) for documentation quality gates.*
+*See [Gap Closure Evidence](../../control-center/evidence/gap-closure-evidence.json) for closure records.*

@@ -135,13 +135,13 @@ Tienes el **deber de mejorar el sistema**. Monitorea:
 - **Brechas de reglas arquitectónicas** → si encuentras un patrón que debería ser regla global pero no está documentado, proponerlo en `global-rules.md` con implementación Native + OPA
 - **CUEllo de botella de evaluación** → si la evaluación de gaps es lenta por verificaciones manuales, proponer un script `evaluate-gap.mjs` que valide criterios de cierre automáticamente
 
-Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
+Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
 
 ---
 
-*Véase [AGENTS.es.md](../AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
-*Véase [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
-*Véase [Reglas Globales](../../.harness/rules/global-rules.md) para R-25 Paridad de Motor Dual y R-26 Cierre Semántico de Gaps.*
-*Véase [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) para política de release de documentación.*
-*Véase [ADR-0050](../../reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.md) para estrategia de ramificación.*
-*Véase [Catálogo de Referencia de Gaps](../../reference/core/control-center/gaps/gap-reference-catalog.es.md) para definiciones de gaps.*
+*Véase [AGENTS.es.md](../../../../.bmad-core/AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
+*Véase [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
+*Véase [Reglas Globales](../../../../.harness/rules/global-rules.md) para R-25 Paridad de Motor Dual y R-26 Cierre Semántico de Gaps.*
+*Véase [ADR-0068](../../architecture/adrs/core/0068-documentation-release-gitflow.md) para política de release de documentación.*
+*Véase [ADR-0050](../../architecture/adrs/core/0050-gitflow-branching-strategy.md) para estrategia de ramificación.*
+*Véase [Catálogo de Referencia de Gaps](../../control-center/gaps/gap-reference-catalog.es.md) para definiciones de gaps.*

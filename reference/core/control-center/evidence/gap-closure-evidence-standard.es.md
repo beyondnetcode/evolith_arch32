@@ -24,7 +24,7 @@ Cada gap marcado `COMPLETADO` debe tener exactamente una entrada en el registro 
 | `dependencyDisposition` | `none`, `satisfied`, `accepted-scope` o `deferred` |
 | `dependencyRationale` | Obligatorio cuando la disposición no es `none` |
 
-Los artefactos de gobernanza machine-readable usan inglés como idioma canónico según [ADR-0090](../../adr/adr-0090-rule-language-policy.es.md).
+Los artefactos de gobernanza machine-readable usan inglés como idioma canónico según [ADR-0090](../../sdlc/governance/adr-0090-rule-language-policy.es.md).
 
 ## 3. Enforcement Semántico
 
@@ -50,4 +50,4 @@ Los gaps pendientes, en progreso y diferidos no deben tener registros de cierre 
 No se pueden usar commits placeholder, evidencia especulativa ni checkboxes dispensados para satisfacer el cierre.
 
 ---
-[Volver al Tracking de Gaps](./gap-tracking.es.md)
+[Volver al Tracking de Gaps](../gaps/gap-tracking.es.md)

@@ -236,7 +236,7 @@ El tipo del manifiesto y el alias `ProgressivePhase` se exportan para los consum
 
 ## Desarrollo
 
-Las contribuciones siguen el [CONTRIBUTING.md](../../CONTRIBUTING.md) de la raíz del repo
+Las contribuciones siguen el [CONTRIBUTING.md](../../../CONTRIBUTING.md) de la raíz del repo
 (conventional commits, `develop` → `main`, lint de límites, tests).
 
 ## Parte de la suite Evolith

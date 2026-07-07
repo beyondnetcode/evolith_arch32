@@ -96,15 +96,15 @@ Not every observation becomes a standard. Some remain product-specific. The matr
 | UMS | 5 | 40+ | Source of most core ADRs |
 | (other products) | — | — | Contact Architecture Board to register |
 
-> **Note:** If your product has used Evolith standards and contributed a lesson back, submit a case using the [ADR template](../governance/sdlc/04-artifact-templates/adr-template.md).
+> **Note:** If your product has used Evolith standards and contributed a lesson back, submit a case using the [ADR template](../../reference/core/sdlc/04-artifact-templates/adr-template.md).
 
 ---
 
 ## How to Contribute a Case
 
 1. Identify a pattern in your product that others could reuse
-2. Check if an ADR already covers the concern in the [ADR Matrix](../architecture/adrs/adr-matrix.md)
-3. If no ADR exists, draft one using the [ADR Template](../governance/sdlc/04-artifact-templates/adr-template.md)
+2. Check if an ADR already covers the concern in the [ADR Matrix](../../reference/core/architecture/adrs/adr-matrix.md)
+3. If no ADR exists, draft one using the [ADR Template](../../reference/core/sdlc/04-artifact-templates/adr-template.md)
 4. Submit to the Architecture Board for review
 5. If accepted, your ADR becomes canonical and your product appears in this matrix
 
@@ -118,4 +118,4 @@ Not every observation becomes a standard. Some remain product-specific. The matr
 
 ---
 
-*Part of [UMS Reference Boundary](../knowledge/demo/demo-vs-reference.md)*
+*Part of [UMS Reference Boundary](./demo/demo-vs-reference.md)*

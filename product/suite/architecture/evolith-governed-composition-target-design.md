@@ -430,7 +430,7 @@ The Architecture Board must approve:
 - [Evolith Product Vision Master](../vision/evolith-product-vision-master.md)
 - [Strategic Validation and Composition Framework](../methods/evolith-strategic-validation-and-composition-framework.md)
 - [SDLC Tracker Technical Interface Design](../../products/evolith-tracker/sdlc-tracker-technical-interfaces.md)
-- [SDLC Traceability Model](../../governance/sdlc/traceability-model.md)
+- [SDLC Traceability Model](../../../reference/core/sdlc/traceability-model.md)
 - [AI-Assisted Product Validation Workflow](../methods/evolith-ai-assisted-validation-workflow.md)
 
 ---

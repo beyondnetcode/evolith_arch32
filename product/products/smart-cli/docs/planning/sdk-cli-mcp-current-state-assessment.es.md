@@ -20,7 +20,7 @@ Estado actual verificado:
 - La preparación para el lanzamiento sigue bloqueada por pruebas fallidas/sensibles al sandbox y la falta de evidencia de smoke test de MCP.
 
 Utilice el análisis de gaps actual de Core para la planificación activa:
-[Evolith Core Gap Tracking Board](../../../../governance/standards/vision/gap-tracking.md)
+[Evolith Core Gap Tracking Board](../../../../../reference/core/control-center/gaps/gap-tracking.md)
 
 ## 1. Resumen Ejecutivo
 

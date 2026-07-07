@@ -45,7 +45,7 @@ The Core is composed of 13 sub-engines/registries: Gate · Artifact · Evidence 
 ### 5. What ADR-0100 keeps
 ADR-0100's diagnosis and Decisions 2–6 (externalize epics/stories/tasks to `ExternalReference`; evaluation ≠ decision; `GateDecision`→`CoreGateVerdict`; `'WAIVED'`→`Verdict.WAIVE`; Core does not own runtime process state) **remain valid**. Only the *ownership/persistence altitude* of Decision 1 is corrected here: product/tenant/initiative are **context**, not Core entities.
 
-The full corrected design (EvaluationContext/Result contracts, engines, flows, rulesets/OPA/blueprints changes, roadmap, backlog) is in [Core Evaluation Engine Design](../../../core/core-evaluation-engine-design.es.md). It supersedes Deliverables 2, 4, 10, 11, 12 and the write-flows of 13 of `product-initiative-governance-redesign`.
+The full corrected design (EvaluationContext/Result contracts, engines, flows, rulesets/OPA/blueprints changes, roadmap, backlog) is in [Core Evaluation Engine Design](../../../core-evaluation-engine-design.es.md). It supersedes Deliverables 2, 4, 10, 11, 12 and the write-flows of 13 of `product-initiative-governance-redesign`.
 
 ## Consequences
 

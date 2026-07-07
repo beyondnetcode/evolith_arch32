@@ -135,13 +135,13 @@ You have a **duty to improve the system**. Monitor for:
 - **Architecture rule gaps** → if you find a pattern that should be a global rule but isn't documented, propose it in `global-rules.md` with Native + OPA implementation
 - **Evaluation bottleneck** → if gap evaluation is slow because of manual checks, propose an `evaluate-gap.mjs` script that validates done-when criteria automatically
 
-File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
+File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
 
 ---
 
-*See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle.*
-*See [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
-*See [Global Rules](../../.harness/rules/global-rules.md) for R-25 Dual-Engine Parity and R-26 Semantic Gap Closure.*
-*See [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) for documentation release policy.*
-*See [ADR-0050](../../reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.md) for branching strategy.*
-*See [Gap Reference Catalog](../../reference/core/control-center/gaps/gap-reference-catalog.md) for gap definitions.*
+*See [AGENTS.md](../../../../.bmad-core/AGENTS.md) for repository context and gap lifecycle.*
+*See [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
+*See [Global Rules](../../../../.harness/rules/global-rules.md) for R-25 Dual-Engine Parity and R-26 Semantic Gap Closure.*
+*See [ADR-0068](../../architecture/adrs/core/0068-documentation-release-gitflow.md) for documentation release policy.*
+*See [ADR-0050](../../architecture/adrs/core/0050-gitflow-branching-strategy.md) for branching strategy.*
+*See [Gap Reference Catalog](../../control-center/gaps/gap-reference-catalog.md) for gap definitions.*

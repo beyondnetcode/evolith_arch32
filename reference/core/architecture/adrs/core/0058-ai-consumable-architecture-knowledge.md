@@ -69,9 +69,9 @@ AI agents must:
 
 ## Related Artifacts
 
-- [AI Knowledge Strategy](../../../knowledge/architecture-intelligence/ai/ai-knowledge-strategy.md)
-- [AI-Augmented Standards](../../../sdlc/standards/ai-augmented/README.md)
-- [Repository Taxonomy](../../../sdlc/standards/repository-taxonomy.md)
+- [AI Knowledge Strategy](../../../../../product/research/architecture-intelligence/ai/ai-knowledge-strategy.md)
+- [AI-Augmented Standards](../../../foundations/common-rules/ai-augmented/README.md)
+- [Repository Taxonomy](../../../control-center/taxonomy/repository-taxonomy.md)
 
 
 

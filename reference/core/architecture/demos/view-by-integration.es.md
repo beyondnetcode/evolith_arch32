@@ -3,7 +3,7 @@
 > **Navegación Bilingüe:** [Ver Versión en Inglés](./view-by-integration.md)
 
 **Estado:** Aprobado  
-**Padre:** [C4 Master Architecture](../C4-MASTER-ARCHITECTURE.es.md)
+**Padre:** [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.es.md)
 
 ## 1. Estrategia de Integración
 
@@ -45,4 +45,4 @@ Para integrar una nueva capacidad (por ejemplo, un nuevo proveedor de LLM), el d
 Los rulesets y el modelo de gobernanza del Core **no cambian** cuando un proveedor cambia.
 
 ---
-[Volver a la Arquitectura Maestra](../C4-MASTER-ARCHITECTURE.es.md)
+[Volver a la Arquitectura Maestra](./C4-MASTER-ARCHITECTURE.es.md)

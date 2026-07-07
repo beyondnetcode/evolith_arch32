@@ -3,7 +3,7 @@
 > **Navegación Bilingüe:** [Ver Versión en Inglés](./view-by-interface-flow.md)
 
 **Estado:** Aprobado  
-**Padre:** [C4 Master Architecture](../C4-MASTER-ARCHITECTURE.es.md)  
+**Padre:** [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.es.md)  
 **Última Actualización:** 2026-07-01
 
 ## 1. Propósito y Alcance
@@ -255,13 +255,13 @@ Todo flujo externo debe preservar un correlation id mediante envelope, metadata 
 
 ## 9. Referencias Relacionadas
 
-- [C4 Master Architecture](../C4-MASTER-ARCHITECTURE.es.md)
-- [Nivel 2: Contenedores](../c4-levels/level-2-containers.es.md)
-- [Componentes del Agent Runtime](../c4-levels/level-3-components/agent-runtime-components.es.md)
-- [Componentes del Core API](../c4-levels/level-3-components/core-api-components.es.md)
-- [Componentes del MCP Server](../c4-levels/level-3-components/mcp-server-components.es.md)
-- [Matriz de Trazabilidad E2E](../traceability/e2e-traceability-matrix.es.md)
-- [Mapa de Ecosistema y Comunicación](../../products/ecosystem-and-communication.es.md)
+- [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.es.md)
+- [Nivel 2: Contenedores](./level-2-containers.es.md)
+- [Componentes del Agent Runtime](./level-3-components/agent-runtime-components.es.md)
+- [Componentes del Core API](./level-3-components/core-api-components.es.md)
+- [Componentes del MCP Server](./level-3-components/mcp-server-components.es.md)
+- [Matriz de Trazabilidad E2E](../../control-center/taxonomy/e2e-traceability-matrix.es.md)
+- [Mapa de Ecosistema y Comunicación](../../../../product/products/ecosystem-and-communication.es.md)
 
 ## 10. Ejemplos de Contratos JSON (IN/OUT)
 
@@ -507,4 +507,4 @@ La interfaz de línea de comandos provee ejecución local para pipelines CI/CD y
 </details>
 
 ---
-[Volver a la Arquitectura Maestra](../C4-MASTER-ARCHITECTURE.es.md)
+[Volver a la Arquitectura Maestra](./C4-MASTER-ARCHITECTURE.es.md)

@@ -6,7 +6,7 @@ Evolith MCP Services expose Evolith Core governance as real-time context for LLM
 
 ## Overview
 
-The MCP server turns the Core reference corpus, rulesets, and phase gates into governed **tools**, **resources**, and **prompts** that an agent can call to retrieve context, evaluate criteria, and submit evidence — under the same contracts as the CLI and REST surfaces. The server lives in [`packages/mcp-server`](../../../packages/mcp-server) and is started via the `evolith-mcp` binary; see its [README](../../../packages/mcp-server/README.md) for the full tool/resource/prompt reference, auth model, and deployment guide.
+The MCP server turns the Core reference corpus, rulesets, and phase gates into governed **tools**, **resources**, and **prompts** that an agent can call to retrieve context, evaluate criteria, and submit evidence — under the same contracts as the CLI and REST surfaces. The server lives in [`packages/mcp-server`](../../../src/packages/mcp-server) and is started via the `evolith-mcp` binary; see its [README](../../../src/packages/mcp-server/README.md) for the full tool/resource/prompt reference, auth model, and deployment guide.
 
 ## Surface
 
@@ -83,11 +83,11 @@ CLI flags: `--transport|-t stdio|http`, `--port|-p <n>` (default `3000`), `--api
 | `LOG_LEVEL` | Pino log level (logs are always written to **stderr**) | `info` |
 | `OTEL_ENABLED` | Enables OpenTelemetry tracing | `false` |
 
-Authentication, ABAC roles/codes, the mutative-tool contract, and the full per-tool reference live in the package [README](../../../packages/mcp-server/README.md).
+Authentication, ABAC roles/codes, the mutative-tool contract, and the full per-tool reference live in the package [README](../../../src/packages/mcp-server/README.md).
 
 ## Tool Registry
 
-The lightweight `@evolith/mcp-tools` package has been retired. The canonical registry now lives inside the standalone gateway under [packages/mcp-server/src/tools](../../../packages/mcp-server/src/tools/tools.module.ts), where tool schemas, ABAC checks, audit logging, resources, prompts, and transport behavior are governed together.
+The lightweight `@evolith/mcp-tools` package has been retired. The canonical registry now lives inside the standalone gateway under [packages/mcp-server/src/tools](../../../src/packages/mcp-server/src/tools/tools.module.ts), where tool schemas, ABAC checks, audit logging, resources, prompts, and transport behavior are governed together.
 
 ## Troubleshooting
 
@@ -104,7 +104,7 @@ Initialize, discovery (tools/resources/prompts), metrics, and gate evaluation ar
 
 ## Contributing
 
-For clone/dev-setup, test commands, and branch/commit conventions, see the repo-root [CONTRIBUTING.md](../../../CONTRIBUTING.md). To add a tool, see the extension guide in the package [README](../../../packages/mcp-server/README.md).
+For clone/dev-setup, test commands, and branch/commit conventions, see the repo-root [CONTRIBUTING.md](../../../CONTRIBUTING.md). To add a tool, see the extension guide in the package [README](../../../src/packages/mcp-server/README.md).
 
 ---
 [Back to Products Index](../README.md)

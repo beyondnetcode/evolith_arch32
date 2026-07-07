@@ -4,7 +4,7 @@
 > **Owner:** Evolith Architecture Board  
 > **Estado:** Diseño Propuesto — Pendiente de Revisión del Architecture Board  
 > **Padre:** [Centro de Gobernanza SDLC Corporativa](./README.es.md)  
-> **Diseño Objetivo:** [Diseño Objetivo de Composición Gobernada](../standards/vision/evolith-governed-composition-target-design.es.md)
+> **Diseño Objetivo:** [Diseño Objetivo de Composición Gobernada](../foundations/common-rules/evolith-governed-composition-target-design.es.md)
 
 ---
 
@@ -224,9 +224,9 @@ Los identificadores nativos del proveedor pueden incluirse, pero las referencias
 
 ## 12. Documentos Relacionados
 
-- [Diseño Objetivo de Composición Gobernada](../standards/vision/evolith-governed-composition-target-design.es.md)
-- [Modelo de Abstracción de Proveedores y Plugins](../standards/vision/evolith-provider-abstraction-plugin-model.es.md)
-- [Diseño Técnico del Tracker](../standards/vision/sdlc-tracker-technical-interfaces.es.md)
+- [Diseño Objetivo de Composición Gobernada](../foundations/common-rules/evolith-governed-composition-target-design.es.md)
+- [Modelo de Abstracción de Proveedores y Plugins](../foundations/principles/evolith-provider-abstraction-plugin-model.es.md)
+- [Diseño Técnico del Tracker](./sdlc-tracker-technical-interfaces.es.md)
 - [Hub de Plantillas de Artefactos](./04-artifact-templates/README.es.md)
 - [Matriz de Responsabilidades](./responsibility-matrix.es.md)
 - [Quality Gates](./quality-gates.es.md)

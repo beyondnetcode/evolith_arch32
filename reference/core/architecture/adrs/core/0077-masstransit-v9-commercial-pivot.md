@@ -14,7 +14,7 @@ Approved — Evolith Architecture Board, 2026-06-15.
 
 MassTransit v9 transitioned to a purely commercial license. The last open-source version (v8, Apache 2.0) is community-supported only until end-of-year 2026. Any .NET product in the Evolith ecosystem that relies on MassTransit for message-bus abstraction faces a forced migration by 2027-01-01 unless a decision is made and executed.
 
-The Stack Audit ([RED Alert 2](../../../sdlc/standards/engineering/detailed-stack-audit-2026.md)) flags this as a top-critical item tracked under [GT-111](../../../sdlc/standards/vision/gap-reference-catalog.md#gt-111).
+The Stack Audit ([RED Alert 2](../../../foundations/common-rules/detailed-stack-audit-2026.md)) flags this as a top-critical item tracked under [GT-111](../../../control-center/gaps/gap-reference-catalog.md#gt-111).
 
 Three viable paths exist:
 
@@ -91,7 +91,7 @@ The decision applies to all .NET product repositories in the Evolith ecosystem t
 ## References
 
 - Stack Audit: `reference/core/foundations/common-rules/detailed-stack-audit-2026.md` (RED Alert 2)
-- Gap tracking: [GT-111](../../../sdlc/standards/vision/gap-reference-catalog.md#gt-111)
+- Gap tracking: [GT-111](../../../control-center/gaps/gap-reference-catalog.md#gt-111)
 - ADR-0015: [Event-Driven Architecture (Intra-Domain)](./0015-event-driven-architecture-intra-domain.md)
 - ADR-0036: [Message Delivery and Dead-Letter Strategy](./0036-message-bus-delivery-strategy-fifo-dlq.md)
 - OpenTransit project: [https://opentransitlab.github.io/OpenTransit/](https://opentransitlab.github.io/OpenTransit/)

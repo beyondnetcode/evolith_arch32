@@ -148,12 +148,12 @@ Tienes el **deber de mejorar el sistema**. Monitorea:
 - **Enforcement de complejidad** → si `doc-complexity-score.mjs` muestra archivos que exceden el umbral, proponer gate de enforcement
 - **Formato de tablas** → si `md-table-formatter.mjs` no cubre un estilo de tabla que ves, proponer una extensión
 
-Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
+Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
 
 ---
 
-*Véase [AGENTS.es.md](../AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
-*Véase [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
-*Véase [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) para política completa de release GitFlow de documentación.*
-*Véase [DOCUMENTATION_VERSIONS.md](../../DOCUMENTATION_VERSIONS.md) para historial de versiones.*
-*Véase [Tablero de Seguimiento de Gaps](../../reference/core/control-center/gaps/gap-tracking.es.md) para estado de gaps.*
+*Véase [AGENTS.es.md](../../../../.bmad-core/AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
+*Véase [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
+*Véase [ADR-0068](../../architecture/adrs/core/0068-documentation-release-gitflow.md) para política completa de release GitFlow de documentación.*
+*Véase [DOCUMENTATION_VERSIONS.md](../../control-center/taxonomy/DOCUMENTATION_VERSIONS.md) para historial de versiones.*
+*Véase [Tablero de Seguimiento de Gaps](../../control-center/gaps/gap-tracking.es.md) para estado de gaps.*

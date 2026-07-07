@@ -36,7 +36,7 @@ This area defines the canonical topology-ruleset resolution model for Evolith Co
 
 ## Current Status
 
-The topology ruleset location is authorized. Concrete topology profiles and their Native plus OPA rules are tracked in the [Gap Tracking Board](../../reference/core/control-center/gaps/gap-tracking.md).
+The topology ruleset location is authorized. Concrete topology profiles and their Native plus OPA rules are tracked in the [Gap Tracking Board](../../../reference/core/control-center/gaps/gap-tracking.md).
 
 ---
 [Back to Rulesets Hub](../README.md)

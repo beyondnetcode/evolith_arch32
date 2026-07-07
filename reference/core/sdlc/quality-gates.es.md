@@ -34,7 +34,7 @@ La confianza manual, la aprobación verbal o el acuerdo informal no pueden reemp
 | Distribución de pirámide de testing | Objetivo 70% unitarias / 20% integración / 10% E2E | Diseño, Validación | Requiere explicación cuando la distribución del release se desvía materialmente |
 | Delta documental | Requerido cuando cambia comportamiento, arquitectura, API u operación | Construcción, Entrega | Bloquea merge o Producción Activa cuando falta |
 | Evidencia de observabilidad | Requerida para rutas productivas | Entrega | Bloquea Producción Activa cuando telemetría o logs no son verificables |
-| Topología de servicios alineada al dominio (DOMA) | Cada servicio F3 mapea a exactamente un bounded context | Diseño, Construcción | Bloquea Design Baseline o Successful Build cuando un servicio parte o cruza un bounded context — solo microservicios F3 ([ADR-0076](../../../core/architecture/adrs/core/0076-domain-oriented-microservice-architecture.es.md)) |
+| Topología de servicios alineada al dominio (DOMA) | Cada servicio F3 mapea a exactamente un bounded context | Diseño, Construcción | Bloquea Design Baseline o Successful Build cuando un servicio parte o cruza un bounded context — solo microservicios F3 ([ADR-0076](../architecture/adrs/core/0076-domain-oriented-microservice-architecture.es.md)) |
 
 ---
 
@@ -58,7 +58,7 @@ Evolith usa un único estándar de cobertura bloqueante para release:
 | Fase 4 — Validación y QA | RC Sellado | Test Summary Report, validación de aceptación, métricas de calidad | Cualquier métrica obligatoria falla o quedan criterios de aceptación sin verificar | [Playbook Fase 4](./01-playbooks/phase-4-rc-stamp.es.md) |
 | Fase 5 — Entrega y Operaciones | Producción Activa | Release Notes, plan de rollback, checklist de observabilidad, evidencia de despliegue | Monitoreo no nominal, rollback indefinido, release no trazable al RC | [Playbook de Release Zero-Downtime](./01-playbooks/zero-downtime-release.es.md) |
 
-Autoridad procedimental: cada playbook es la contraparte operativa de la compuerta declarativa de [`phase-gates.rules.json`](../../../rulesets/sdlc/phase-gates.rules.json) (campo `playbookRef`). La compuerta no puede salirse si los checkpoints del playbook no se completaron o no fueron formalmente waivered.
+Autoridad procedimental: cada playbook es la contraparte operativa de la compuerta declarativa de [`phase-gates.rules.json`](../../../src/rulesets/sdlc/phase-gates.rules.json) (campo `playbookRef`). La compuerta no puede salirse si los checkpoints del playbook no se completaron o no fueron formalmente waivered.
 
 ---
 

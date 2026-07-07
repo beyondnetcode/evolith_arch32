@@ -142,7 +142,7 @@ Rules:
 1. Products MUST NOT start with microfrontends unless an explicit ADR deviation is approved.
 2. Module Federation, shell/orchestrator runtime composition, and per-MFE CI/CD pipelines are NOT part of the Phase 1 baseline.
 3. A modular folder structure, lazy-loaded routes, and bounded-context UI ownership SHOULD be used first to delay distribution until it is necessary.
-4. MFE extraction MUST comply with [ADR-0055: Microfrontends Architecture Strategy](../../../../../architecture/adrs/core/0055-microfrontends-architecture-strategy.md).
+4. MFE extraction MUST comply with [ADR-0055: Microfrontends Architecture Strategy](../../../../architecture/adrs/core/0055-microfrontends-architecture-strategy.md).
 5. When MFEs are introduced, design tokens, shared accessibility rules, telemetry, and cross-cutting security behavior remain governed by Evolith standards.
 
 ## 9. Material Design 3 and design tokens

@@ -62,8 +62,8 @@ Cost telemetry aggregates are reviewed weekly. Workflows exceeding their declare
 
 ## References
 - [ADR-0001: Harness Engineering](./0001-harness-engineering.md)
-- [review-provider.mjs](../../../../.harness/scripts/ci/agentic/review-provider.mjs)
-- [rag-port.mjs](../../../../.harness/scripts/ci/rag-port.mjs)
+- [review-provider.mjs](../../../../../.harness/scripts/ci/agentic/review-provider.mjs)
+- [rag-port.mjs](../../../../../.harness/scripts/ci/rag-port.mjs)
 - [ADR-0090: RAG Knowledge Governance](../core/0090-rag-knowledge-governance.md)
 - [ADR-0089: Event-Driven Agentic Workflows](../core/0089-event-driven-agentic-workflows.md)
 

@@ -56,9 +56,9 @@ High. AI agents produce safer recommendations when ownership boundaries are clea
 
 ## Related ADRs
 
-- [ADR-0031: Schema per Context and Domain Event Catalog](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)
-- [ADR-0033: Transactional Outbox Pattern](../../../architecture/adrs/core/0033-transactional-outbox-pattern.md)
-- [ADR-0057: Architecture Intelligence Catalog](../../../architecture/adrs/core/0057-architecture-intelligence-catalog.md)
+- [ADR-0031: Schema per Context and Domain Event Catalog](../../../../reference/core/architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)
+- [ADR-0033: Transactional Outbox Pattern](../../../../reference/core/architecture/adrs/core/0033-transactional-outbox-pattern.md)
+- [ADR-0057: Architecture Intelligence Catalog](../../../../reference/core/architecture/adrs/core/0057-architecture-intelligence-catalog.md)
 
 ---
 

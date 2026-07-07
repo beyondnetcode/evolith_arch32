@@ -31,9 +31,9 @@ The six areas, ordered from direction (vision) to delivery support (communicatio
 
 ## Boundary
 
-- Universal principles belong in [`reference/core/architecture/`](../architecture/README.md).
-- Phase, gate, artifact, evidence, and role governance belongs in [`reference/core/sdlc/`](../governance/sdlc/README.md).
+- Universal principles belong in [`reference/core/architecture/`](./architecture/README.md).
+- Phase, gate, artifact, evidence, and role governance belongs in [`reference/core/sdlc/`](../../reference/core/sdlc/README.md).
 - Product-internal designs belong in [`product/products/`](../products/README.md).
-- Named technologies and vendors belong in [`product/infra/`](../platforms/README.md).
+- Named technologies and vendors belong in `product/infra/`.
 
-[Back to Reference Hub](../README.md)
+[Back to Reference Hub](../../README.md)

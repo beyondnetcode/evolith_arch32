@@ -268,13 +268,13 @@ You have a **duty to improve the system**. Monitor for:
 - **Orphaned scripts** → if scripts exist without workflow references, either wire them or consolidate them
 - **CI reliability** → if a CI gate is flaky, add retry logic or improve error messages
 
-File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
+File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
 
 ---
 
-*See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle.*
-*See [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
-*See [Global Rules](../../.harness/rules/global-rules.md) for R-26 Semantic Gap Closure.*
-*See [.github/workflows/](../../.github/workflows/) for active workflow definitions.*
-*See [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) for release automation policy.*
-*See [Gap Closure Evidence](../../reference/core/control-center/evidence/gap-closure-evidence.json) for closure records.*
+*See [AGENTS.md](../../../../.bmad-core/AGENTS.md) for repository context and gap lifecycle.*
+*See [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
+*See [Global Rules](../../../../.harness/rules/global-rules.md) for R-26 Semantic Gap Closure.*
+*See [.github/workflows/](../../../../.github/workflows) for active workflow definitions.*
+*See [ADR-0068](../../architecture/adrs/core/0068-documentation-release-gitflow.md) for release automation policy.*
+*See [Gap Closure Evidence](../../control-center/evidence/gap-closure-evidence.json) for closure records.*

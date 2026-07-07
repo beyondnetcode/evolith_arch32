@@ -3,7 +3,7 @@
 > **Bilingual Navigation:** [Versión en Español](./view-by-interface-flow.es.md)
 
 **Status:** Approved  
-**Parent:** [C4 Master Architecture](../C4-MASTER-ARCHITECTURE.md)  
+**Parent:** [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.md)  
 **Last Updated:** 2026-07-01
 
 ## 1. Purpose and Scope
@@ -255,13 +255,13 @@ Every external-facing flow should preserve a correlation id through the envelope
 
 ## 9. Related References
 
-- [C4 Master Architecture](../C4-MASTER-ARCHITECTURE.md)
-- [Level 2: Containers](../c4-levels/level-2-containers.md)
-- [Agent Runtime Components](../c4-levels/level-3-components/agent-runtime-components.md)
-- [Core API Components](../c4-levels/level-3-components/core-api-components.md)
-- [MCP Server Components](../c4-levels/level-3-components/mcp-server-components.md)
-- [E2E Traceability Matrix](../traceability/e2e-traceability-matrix.md)
-- [Ecosystem and Communication Map](../../products/ecosystem-and-communication.md)
+- [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.md)
+- [Level 2: Containers](./level-2-containers.md)
+- [Agent Runtime Components](./level-3-components/agent-runtime-components.md)
+- [Core API Components](./level-3-components/core-api-components.md)
+- [MCP Server Components](./level-3-components/mcp-server-components.md)
+- [E2E Traceability Matrix](../../control-center/taxonomy/e2e-traceability-matrix.md)
+- [Ecosystem and Communication Map](../../../../product/products/ecosystem-and-communication.md)
 
 ## 10. JSON Contract Examples (IN/OUT)
 
@@ -507,4 +507,4 @@ The command-line interface provides local execution for CI/CD pipelines and vali
 </details>
 
 ---
-[Back to Master Architecture](../C4-MASTER-ARCHITECTURE.md)
+[Back to Master Architecture](./C4-MASTER-ARCHITECTURE.md)

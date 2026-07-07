@@ -31,4 +31,4 @@ The EN/ES pairing status for every knowledge document is tracked in the [Bilingu
 
 ---
 
-[Back to Reference Hub](../README.md)
+[Back to Reference Hub](../../README.md)

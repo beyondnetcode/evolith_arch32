@@ -47,4 +47,4 @@ Los documentos de producto implementan Evolith Core y SDLC Governance. No pueden
 - selección de proveedores sin alcance explícito del producto;
 - posicionamiento y estrategia comercial de la Suite.
 
-[Volver al Hub de Referencia](../README.es.md)
+[Volver al Hub de Referencia](../../README.es.md)

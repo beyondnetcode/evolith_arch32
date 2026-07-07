@@ -2,7 +2,7 @@
 
 > **Bilingual navigation:** [Versión en Español](./ecosystem-and-communication.es.md)
 
-This document is the cross-product relationship and communication map for the Evolith ecosystem. It shows how the Suite products sit on **Evolith Core**, how they talk to each other and to consumers, how an idea moves through the SDLC, and where the authoritative truth lives. It is a hub-level orientation: the canonical definitions stay in the [Ecosystem Glossary](../governance/glossary-ecosystem.md); the per-product detail stays in each product hub.
+This document is the cross-product relationship and communication map for the Evolith ecosystem. It shows how the Suite products sit on **Evolith Core**, how they talk to each other and to consumers, how an idea moves through the SDLC, and where the authoritative truth lives. It is a hub-level orientation: the canonical definitions stay in the [Ecosystem Glossary](../../reference/core/sdlc/glossary/glossary-ecosystem.md); the per-product detail stays in each product hub.
 
 The dependency direction is one-way and non-negotiable: **products consume Core; they never redefine universal Core rules.**
 
@@ -96,7 +96,7 @@ graph LR
     F5["f5 Delivery & Operations<br/>key: release"] -->|gate-f5<br/>Production Live| PROD(["Product in operation"])
 ```
 
-**Notes.** A phase advances only when its exit gate passes; a failed mandatory gate cannot be overridden by informal approval (only an explicit governance waiver applies). These SDLC phases are distinct from the **maturity levels F1–F5** (positions on the progressive architecture axis: `modular-monolith` → `distributed-modules` → `microservices`) and from the **8 topologies** (`modular-monolith`, `distributed-modules`, `microservices`, `event-driven`, `serverless`, `edge-computing`, `data-mesh`, `agentic-ai`). Phases answer "where in the idea-to-product lifecycle am I?"; maturity and topology answer "how decomposed / what shape is the architecture?" — never conflate them (see [`topology-dimensions.md`](../architecture/topologies/topology-dimensions.md)).
+**Notes.** A phase advances only when its exit gate passes; a failed mandatory gate cannot be overridden by informal approval (only an explicit governance waiver applies). These SDLC phases are distinct from the **maturity levels F1–F5** (positions on the progressive architecture axis: `modular-monolith` → `distributed-modules` → `microservices`) and from the **8 topologies** (`modular-monolith`, `distributed-modules`, `microservices`, `event-driven`, `serverless`, `edge-computing`, `data-mesh`, `agentic-ai`). Phases answer "where in the idea-to-product lifecycle am I?"; maturity and topology answer "how decomposed / what shape is the architecture?" — never conflate them (see [`topology-dimensions.md`](../../reference/core/architecture/topologies/topology-dimensions.md)).
 
 ## 4. Source-of-truth model
 
@@ -130,8 +130,8 @@ graph TD
 
 ## Related references
 
-- [Ecosystem Glossary (canonical)](../governance/glossary-ecosystem.md) — authoritative terminology for every term used above.
-- [Topology dimensions](../architecture/topologies/topology-dimensions.md) — phase vs. maturity vs. topology de-conflation.
+- [Ecosystem Glossary (canonical)](../../reference/core/sdlc/glossary/glossary-ecosystem.md) — authoritative terminology for every term used above.
+- [Topology dimensions](../../reference/core/architecture/topologies/topology-dimensions.md) — phase vs. maturity vs. topology de-conflation.
 - Product hubs: [Tracker](./evolith-tracker/README.md) · [Smart CLI](./smart-cli/README.md) · [Core API](./core-api/README.md) · [MCP Services](./mcp-services/README.md) · [UMS Reference](./ums-reference/README.md).
 
 [Back to Product-Specific Designs](./README.md)

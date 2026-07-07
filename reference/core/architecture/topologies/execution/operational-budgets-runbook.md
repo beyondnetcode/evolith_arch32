@@ -55,7 +55,7 @@ Do not lower an envelope just because one satellite cannot meet it — that sate
 
 ## References
 
-- [`topology-manifest.schema.json`](../../../../rulesets/schema/topology-manifest.schema.json) — schema definition of `operationalBudgets`.
+- [`topology-manifest.schema.json`](../../../../../src/rulesets/schema/topology-manifest.schema.json) — schema definition of `operationalBudgets`.
 - [ADR-0095 — Serverless Architecture Governance](../../adrs/core/0095-serverless-architecture-governance.md).
 - [ADR-0096 — Edge Computing Architecture Governance](../../adrs/core/0096-edge-computing-architecture-governance.md).
-- [GT-165](../../../sdlc/standards/vision/gap-reference-catalog.md#gt-165) — Gap that established this runbook.
+- [GT-165](../../../control-center/gaps/gap-reference-catalog.md#gt-165) — Gap that established this runbook.

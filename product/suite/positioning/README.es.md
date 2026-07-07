@@ -14,7 +14,7 @@ Esta área contiene análisis de mercado, comparaciones competitivas, definició
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
-| [Posicionamiento Estratégico y Panorama Comparativo](../../governance/standards/vision/evolith-strategic-positioning-comparative-landscape.es.md) | Análisis de mercado, definición de categoría y comparación competitiva | Diferenciar la Suite | Análisis de posicionamiento | Sí |
+| [Posicionamiento Estratégico y Panorama Comparativo](./evolith-strategic-positioning-comparative-landscape.es.md) | Análisis de mercado, definición de categoría y comparación competitiva | Diferenciar la Suite | Análisis de posicionamiento | Sí |
 
 Durante la migración, el documento fuente permanece en su ruta heredada, pero queda clasificado como posicionamiento de Product Suite.
 

@@ -3,7 +3,7 @@
 > **Bilingual Navigation:** [Versión en Español](./view-by-integration.es.md)
 
 **Status:** Approved  
-**Parent:** [C4 Master Architecture](../C4-MASTER-ARCHITECTURE.md)
+**Parent:** [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.md)
 
 ## 1. Integration Strategy
 
@@ -45,4 +45,4 @@ To integrate a new capability (e.g., a new LLM provider), the developer implemen
 The Core rulesets and governance model **do not change** when a provider changes.
 
 ---
-[Back to Master Architecture](../C4-MASTER-ARCHITECTURE.md)
+[Back to Master Architecture](./C4-MASTER-ARCHITECTURE.md)

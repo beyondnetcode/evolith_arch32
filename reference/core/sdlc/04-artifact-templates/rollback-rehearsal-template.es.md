@@ -3,7 +3,7 @@
 > **Navegación bilingüe:** [English](./rollback-rehearsal-template.md)
 > **Fase:** 5 — Entrega y Operaciones
 > **Puerta de salida:** Producción Activa (Rollback Validado)
-> **Schema:** [rollback-rehearsal.schema.json](../../../../rulesets/schema/rollback-rehearsal.schema.json)
+> **Schema:** [rollback-rehearsal.schema.json](../../../../src/rulesets/schema/rollback-rehearsal.schema.json)
 > **Padre:** [Plantillas de Artefactos](./README.es.md)
 
 ---
@@ -168,4 +168,4 @@ El Ensayo de Rollback es el registro formal de que se ejecutó un rollback exito
 |---|---|
 | [Playbook de Release Sin Tiempo de Inactividad](../01-playbooks/zero-downtime-release.md) | Gate procedural que consume esta evidencia. |
 | [Plantilla de Release Notes](./release-notes-template.es.md) | Registro de despliegue productivo que referencia readiness de rollback. |
-| [`phase-gates.rules.json`](../../../../rulesets/sdlc/phase-gates.rules.json) | La entrada de evidencia `Rollback Rehearsal` de Fase 5 referencia esta plantilla. |
+| [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json) | La entrada de evidencia `Rollback Rehearsal` de Fase 5 referencia esta plantilla. |

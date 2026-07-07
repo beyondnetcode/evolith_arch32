@@ -18,12 +18,12 @@ Este archivo es el punto de entrada. La profundidad normativa vive en:
 
 | Capa | Documento | Rol |
 |---|---|---|
-| Principios | [Principios de Arquitectura](./principles/README.es.md) | Neutralidad de proveedor, ACL, integridad de evidencia, rendición de cuentas humana, aislamiento de tenant. |
-| Reglas estructurales | [Universal Architecture Standards](./blueprints/authoritative-tech-stack-agnostic.md) | Especificación completa de la baseline agnóstica al runtime (núcleo hexagonal, contratos, persistencia, seguridad, observabilidad, despliegue). |
-| Blueprint de referencia | [Reference Blueprint (arc42)](./blueprints/reference-blueprint.es.md) | Modelo C4, evolución por fase, matriz ADR, atributos de calidad. |
-| Gate de fase | [Simplicity Checklist — Phase 1](./blueprints/simplicity-checklist-phase-01.es.md) | Gate antes de añadir complejidad más allá de la baseline. |
-| Decisiones | [Registro de ADRs](./adrs/README.es.md) · [Matriz ADR](./adrs/adr-matrix.es.md) | Trade-offs aceptados y su alcance. |
-| Composición topológica | [Topology Hub](./topologies/README.es.md) | Multi-Topology Reference Corpus. |
+| Principios | [Principios de Arquitectura](../../foundations/principles/README.es.md) | Neutralidad de proveedor, ACL, integridad de evidencia, rendición de cuentas humana, aislamiento de tenant. |
+| Reglas estructurales | [Universal Architecture Standards](../blueprints/authoritative-tech-stack-agnostic.md) | Especificación completa de la baseline agnóstica al runtime (núcleo hexagonal, contratos, persistencia, seguridad, observabilidad, despliegue). |
+| Blueprint de referencia | [Reference Blueprint (arc42)](../blueprints/reference-blueprint.es.md) | Modelo C4, evolución por fase, matriz ADR, atributos de calidad. |
+| Gate de fase | [Simplicity Checklist — Phase 1](../blueprints/simplicity-checklist-phase-01.es.md) | Gate antes de añadir complejidad más allá de la baseline. |
+| Decisiones | [Registro de ADRs](../adrs/README.es.md) · [Matriz ADR](../adrs/adr-matrix.es.md) | Trade-offs aceptados y su alcance. |
+| Composición topológica | [Topology Hub](../topologies/README.es.md) | Multi-Topology Reference Corpus. |
 
 Un documento forma parte de la baseline agnóstica solo cuando permanece válido bajo la prueba de fuego anterior. Los perfiles de runtime y patrones canónicos son guía condicionada, no política de baseline.
 
@@ -37,7 +37,7 @@ La baseline se apoya en cinco principios, todos neutrales respecto a proveedor y
 4. **Rendición de Cuentas Humana & Fronteras de Agentes.** Las operaciones mutativas tienen dueños humanos. Los agentes pueden proponer; los humanos aprueban. La auditoría registra ambas firmas.
 5. **Aislamiento de Tenant & Neutralidad de Proveedor.** Aislamiento schema-por-contexto, row-level security opcional, protocolos de almacenamiento S3-compatibles, estándares de señal OpenTelemetry. Sin joins entre tenants, sin SDK propietario en el dominio.
 
-El catálogo extendido de principios vive en [`principles/`](./principles/README.es.md).
+El catálogo extendido de principios vive en [`principles/`](../../foundations/principles/README.es.md).
 
 ## 4. Patrones Universales
 
@@ -50,7 +50,7 @@ Patrones estructurales obligatorios, agnósticos al runtime:
 - **Observabilidad OpenTelemetry-Native.** Tracing W3C Trace Context, logs JSON estructurados, OpenTelemetry Collector como punto de entrega neutral.
 - **Despliegue Containerizado y Fasado.** Contenedores OCI con bases distroless. La Fase 1 puede correr en VM, App Service o Docker Compose. Kubernetes es obligatorio desde Fase 3+ con charts Helm v3 agnósticos al sabor.
 
-Cada patrón está plenamente especificado en el [Universal Architecture Standards blueprint](./blueprints/authoritative-tech-stack-agnostic.md).
+Cada patrón está plenamente especificado en el [Universal Architecture Standards blueprint](../blueprints/authoritative-tech-stack-agnostic.md).
 
 ## 5. Restricciones No Negociables
 
@@ -67,7 +67,7 @@ La violación de cualquiera de las siguientes falla automáticamente el Architec
 
 - Los cambios a este documento DEBEN ir acompañados de un ADR Core que documente el trade-off y el alcance de ratificación.
 - Las actualizaciones de perfil de runtime que entren en conflicto con la baseline se rechazan en el Architecture Gate; el conflicto se resuelve enmendando la baseline (vía ADR) o revirtiendo la decisión de runtime.
-- El cierre de cualquier gap que afecte la baseline sigue el [Gap Closure Evidence Standard](../governance/standards/vision/gap-closure-evidence-standard.es.md).
+- El cierre de cualquier gap que afecte la baseline sigue el [Gap Closure Evidence Standard](../../control-center/evidence/gap-closure-evidence-standard.es.md).
 
 ---
 

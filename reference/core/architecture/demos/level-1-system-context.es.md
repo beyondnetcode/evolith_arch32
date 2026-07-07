@@ -4,7 +4,7 @@
 
 **Estado:** Aprobado  
 **Nivel:** 1 - System Context  
-**Padre:** [C4 Master Architecture](../C4-MASTER-ARCHITECTURE.es.md)
+**Padre:** [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.es.md)
 
 ## 1. Visión General del Sistema
 
@@ -59,4 +59,4 @@ A continuación, miramos dentro del sistema **Evolith Core** para ver sus princi
 **[Ir al Nivel 2: Contenedores](./level-2-containers.es.md)**
 
 ---
-[Volver a la Arquitectura Maestra](../C4-MASTER-ARCHITECTURE.es.md)
+[Volver a la Arquitectura Maestra](./C4-MASTER-ARCHITECTURE.es.md)

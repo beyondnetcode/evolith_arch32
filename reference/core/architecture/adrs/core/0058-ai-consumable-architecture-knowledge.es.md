@@ -58,9 +58,9 @@ Los agentes de IA deben:
 - Una indexación deficiente puede amplificar el contenido desactualizado.
 - La revisión humana sigue siendo obligatoria para las decisiones promovidas.
 ## Related Artifacts
-- [Estrategia de conocimiento de IA](../../../knowledge/architecture-intelligence/ai/ai-knowledge-strategy.md)
-- [Estándares aumentados con IA](../../../sdlc/standards/ai-augmented/README.md)
-- [Taxonomía del repositorio](../../../sdlc/standards/repository-taxonomy.md)
+- [Estrategia de conocimiento de IA](../../../../../product/research/architecture-intelligence/ai/ai-knowledge-strategy.md)
+- [Estándares aumentados con IA](../../../foundations/common-rules/ai-augmented/README.md)
+- [Taxonomía del repositorio](../../../control-center/taxonomy/repository-taxonomy.md)
 ## Objetivo y Alcance
 
 Backfill histórico: Abordar la tensión arquitectónica donde context is unavailable, estableciendo un límite estándar.

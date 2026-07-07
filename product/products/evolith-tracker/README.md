@@ -5,8 +5,8 @@
 **Classification:** Product-Specific Design  
 **Product:** Evolith Tracker  
 **Status:** Conceptual / design-stage — **not yet implemented**. No Evolith Tracker source code or `evolith_tracker` repository exists in this corpus today; this folder holds the target design only.  
-**Parent Suite:** [Evolith Product Suite](../../product-suite/README.md)  
-**Governing Core:** [Evolith Core](../../core/README.md)
+**Parent Suite:** [Evolith Product Suite](../../suite/README.md)  
+**Governing Core:** [Evolith Core](../../../reference/core/README.md)
 
 > **Implementation status.** Everything below describes the *intended* product role and design target, not shipped behavior. The authoritative interface design ([Tracker Technical Interface Design](./sdlc-tracker-technical-interfaces.md)) is explicitly marked *Proposed Design — Pending Architecture Board Review* with *no source-code change authorized*. Read every present-tense statement here as "will own / is designed to own".
 
@@ -27,7 +27,7 @@ As designed, it will implement Core and SDLC Governance by owning:
 
 By design, Tracker does not redefine Core rules or SDLC Governance — it executes them.
 
-> **Integration boundary (ADR-0074 + ADR-0075).** Tracker reaches Core strictly as an **external client** of the **Core API Exposure Layer** (`apps/core-api`, **REST-only** under `/api/v1` — no GraphQL and no SSE — plus the MCP gateway) defined in [ADR-0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.md). The composition/adaptation logic for web and mobile lives in Tracker's **BFF / Application Gateway** ([ADR-0075](../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), NestJS). ADR-0075 motivates that gateway by *seamless integration with the existing Node.js monorepo ecosystem*; the future Tracker codebase (working name `evolith_tracker`) does not exist in this corpus yet, so its repository location is design intent, not a shipped fact. See the [Product Vision — Technical Interface Layer](../../product-suite/vision/evolith-product-vision-master.md) for the layered diagram.
+> **Integration boundary (ADR-0074 + ADR-0075).** Tracker reaches Core strictly as an **external client** of the **Core API Exposure Layer** (`apps/core-api`, **REST-only** under `/api/v1` — no GraphQL and no SSE — plus the MCP gateway) defined in [ADR-0074](../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md). The composition/adaptation logic for web and mobile lives in Tracker's **BFF / Application Gateway** ([ADR-0075](../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), NestJS). ADR-0075 motivates that gateway by *seamless integration with the existing Node.js monorepo ecosystem*; the future Tracker codebase (working name `evolith_tracker`) does not exist in this corpus yet, so its repository location is design intent, not a shipped fact. See the [Product Vision — Technical Interface Layer](../../suite/vision/evolith-product-vision-master.md) for the layered diagram.
 
 ---
 
@@ -48,10 +48,10 @@ By design, Tracker does not redefine Core rules or SDLC Governance — it execut
 
 ## 3. Current Design Baseline
 
-- [Tracker Technical Interface Design](../../governance/standards/vision/sdlc-tracker-technical-interfaces.md)
-- [Governed Composition Target Design](../../governance/standards/vision/evolith-governed-composition-target-design.md)
-- [Provider Abstraction and Plugin Model](../../governance/standards/vision/evolith-provider-abstraction-plugin-model.md)
-- [SDLC Traceability and Evidence Graph](../../governance/sdlc/traceability-model.md)
+- [Tracker Technical Interface Design](./sdlc-tracker-technical-interfaces.md)
+- [Governed Composition Target Design](../../suite/architecture/evolith-governed-composition-target-design.md)
+- [Provider Abstraction and Plugin Model](../../../reference/core/foundations/principles/evolith-provider-abstraction-plugin-model.md)
+- [SDLC Traceability and Evidence Graph](../../../reference/core/sdlc/traceability-model.md)
 
 > These files remain in legacy locations during migration. Their classification is now explicit: Tracker-specific design belongs here; universal principles remain in Core; SDLC semantics remain under Governance.
 
@@ -59,22 +59,22 @@ By design, Tracker does not redefine Core rules or SDLC Governance — it execut
 
 ## 3.1 What Exists Today vs. the Target
 
-No Tracker application or `evolith_tracker` repository ships in this corpus. The only **real, shipped** code touchpoints that prepare for Tracker are Core-side enabling seams, tracked in [gap-tracking](../../governance/standards/vision/gap-tracking.md):
+No Tracker application or `evolith_tracker` repository ships in this corpus. The only **real, shipped** code touchpoints that prepare for Tracker are Core-side enabling seams, tracked in [gap-tracking](../../../reference/core/control-center/gaps/gap-tracking.md):
 
 | Real seam shipping today | Where | Tracking | Relation to target design |
 |---|---|---|---|
-| Opaque `workspaceRef` issued by the Tracker BFF (DTO field + resolver) | `apps/core-api/src/presentation/dtos/*.dto.ts`, `apps/core-api/src/application/services/workspace-reference-resolver.service.ts`, `packages/sdk-client/src/rest/types.ts` | [GT-117](../../governance/standards/vision/gap-tracking.md) | Lets Core-API accept Tracker-supplied workspace references without coupling to Tracker. |
+| Opaque `workspaceRef` issued by the Tracker BFF (DTO field + resolver) | `apps/core-api/src/presentation/dtos/*.dto.ts`, `apps/core-api/src/application/services/workspace-reference-resolver.service.ts`, `packages/sdk-client/src/rest/types.ts` | [GT-117](../../../reference/core/control-center/gaps/gap-tracking.md) | Lets Core-API accept Tracker-supplied workspace references without coupling to Tracker. |
 | `POST /api/v1/phases/transition` (live, REST-only) | `apps/core-api/src/presentation/controllers/phases.controller.ts` → `PhaseTransitionUseCase` | — | Executes `from → to` transitions today; the design's `PhaseTransition` ownership (§4.4 of the interface design) is the **target**, not yet enforced. |
-| `GateDecision` value object (already named in Core) | `packages/core-domain/src/gates/decision/gate-decision.ts` | [GT-316](../../governance/standards/vision/gap-tracking.md) | Different shape from the target `GateDecision` (see interface design §4.3 note) — a name already taken in Core. |
-| `validateWorkflow(definition)` — validate Tracker-supplied flows against Core invariants | `packages/core-domain/src/application/use-cases/validate-workflow.use-case.ts` | [GT-317](../../governance/standards/vision/gap-tracking.md) | Tenant-agnostic seam Tracker will call. |
-| Redis caching layer for Core-API / MCP / Tracker consumption | `apps/core-api` | [GT-249](../../governance/standards/vision/gap-tracking.md) | Shared infrastructure prepared for Tracker reads. |
-| End-to-end Core + Tracker + agents integration validation | `packages/core-domain` e2e | [GT-326](../../governance/standards/vision/gap-tracking.md) | Cross-cutting integration seam. |
+| `GateDecision` value object (already named in Core) | `packages/core-domain/src/gates/decision/gate-decision.ts` | [GT-316](../../../reference/core/control-center/gaps/gap-tracking.md) | Different shape from the target `GateDecision` (see interface design §4.3 note) — a name already taken in Core. |
+| `validateWorkflow(definition)` — validate Tracker-supplied flows against Core invariants | `packages/core-domain/src/application/use-cases/validate-workflow.use-case.ts` | [GT-317](../../../reference/core/control-center/gaps/gap-tracking.md) | Tenant-agnostic seam Tracker will call. |
+| Redis caching layer for Core-API / MCP / Tracker consumption | `apps/core-api` | [GT-249](../../../reference/core/control-center/gaps/gap-tracking.md) | Shared infrastructure prepared for Tracker reads. |
+| End-to-end Core + Tracker + agents integration validation | `packages/core-domain` e2e | [GT-326](../../../reference/core/control-center/gaps/gap-tracking.md) | Cross-cutting integration seam. |
 
 Everything in the [Tracker Technical Interface Design](./sdlc-tracker-technical-interfaces.md) (REST endpoints under `tracker.evolith.io`, the `evolith criterion evaluate` / `evolith gate assess` tools, provider ports, Evidence Graph, Gate Decision Engine) is **target design** with **no implementation**.
 
 ### Output and error contract (target)
 
-Tracker REST/MCP responses are expected to reuse Core's [ADR-0073](../../architecture/adrs/core/0073-unified-cli-output-contract.md) flat envelope — `meta.command`, `meta.executedAt`, `meta.durationMs`, `meta.correlationId`, `meta.context`, `meta.schemaVersion` — and RFC 9457 (`application/problem+json`) for errors, as Core-API does today. The interface design (§11) notes ADR-0073 *remains valid but requires a companion decision* to separate evaluation-versus-decision semantics before Tracker implementation.
+Tracker REST/MCP responses are expected to reuse Core's [ADR-0073](../../../reference/core/architecture/adrs/core/0073-unified-cli-output-contract.md) flat envelope — `meta.command`, `meta.executedAt`, `meta.durationMs`, `meta.correlationId`, `meta.context`, `meta.schemaVersion` — and RFC 9457 (`application/problem+json`) for errors, as Core-API does today. The interface design (§11) notes ADR-0073 *remains valid but requires a companion decision* to separate evaluation-versus-decision semantics before Tracker implementation.
 
 ---
 

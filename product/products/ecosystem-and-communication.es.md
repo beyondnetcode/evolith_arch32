@@ -2,7 +2,7 @@
 
 > **Navegación bilingüe:** [English version](./ecosystem-and-communication.md)
 
-Este documento es el mapa de relaciones entre productos y de comunicación del ecosistema Evolith. Muestra cómo los productos de la Suite se apoyan en **Evolith Core**, cómo se comunican entre sí y con los consumidores, cómo una idea recorre el SDLC y dónde vive la verdad autoritativa. Es una orientación a nivel de hub: las definiciones canónicas permanecen en el [Glosario del Ecosistema](../governance/glossary-ecosystem.es.md); el detalle por producto permanece en cada hub de producto.
+Este documento es el mapa de relaciones entre productos y de comunicación del ecosistema Evolith. Muestra cómo los productos de la Suite se apoyan en **Evolith Core**, cómo se comunican entre sí y con los consumidores, cómo una idea recorre el SDLC y dónde vive la verdad autoritativa. Es una orientación a nivel de hub: las definiciones canónicas permanecen en el [Glosario del Ecosistema](../../reference/core/sdlc/glossary/glossary-ecosystem.es.md); el detalle por producto permanece en cada hub de producto.
 
 La dirección de dependencia es unidireccional e innegociable: **los productos consumen Core; nunca redefinen las reglas universales de Core.**
 
@@ -96,7 +96,7 @@ graph LR
     F5["f5 Delivery & Operations<br/>clave: release"] -->|gate-f5<br/>Production Live| PROD(["Producto en operación"])
 ```
 
-**Notas.** Una fase avanza solo cuando pasa su gate de salida; un gate obligatorio fallido no puede anularse con aprobación informal (solo aplica un waiver de gobernanza explícito). Estas fases del SDLC son distintas de los **niveles de madurez F1–F5** (posiciones en el eje progresivo de arquitectura: `modular-monolith` → `distributed-modules` → `microservices`) y de las **8 topologías** (`modular-monolith`, `distributed-modules`, `microservices`, `event-driven`, `serverless`, `edge-computing`, `data-mesh`, `agentic-ai`). Las fases responden "¿en qué punto del ciclo de idea a producto estoy?"; la madurez y la topología responden "¿qué tan descompuesta / qué forma tiene la arquitectura?" — nunca las mezcles (ver [ 11 ](../architecture/topologies/topology-dimensions.md)).
+**Notas.** Una fase avanza solo cuando pasa su gate de salida; un gate obligatorio fallido no puede anularse con aprobación informal (solo aplica un waiver de gobernanza explícito). Estas fases del SDLC son distintas de los **niveles de madurez F1–F5** (posiciones en el eje progresivo de arquitectura: `modular-monolith` → `distributed-modules` → `microservices`) y de las **8 topologías** (`modular-monolith`, `distributed-modules`, `microservices`, `event-driven`, `serverless`, `edge-computing`, `data-mesh`, `agentic-ai`). Las fases responden "¿en qué punto del ciclo de idea a producto estoy?"; la madurez y la topología responden "¿qué tan descompuesta / qué forma tiene la arquitectura?" — nunca las mezcles (ver [ 11 ](../../reference/core/architecture/topologies/topology-dimensions.md)).
 
 ## 4. Modelo de fuente de verdad
 
@@ -130,8 +130,8 @@ graph TD
 
 ## Referencias relacionadas
 
-- [Glosario del Ecosistema (canónico)](../governance/glossary-ecosystem.es.md) — terminología autoritativa para cada término usado arriba.
-- [Dimensiones de topología](../architecture/topologies/topology-dimensions.md) — des-conflación de fase vs. madurez vs. topología.
+- [Glosario del Ecosistema (canónico)](../../reference/core/sdlc/glossary/glossary-ecosystem.es.md) — terminología autoritativa para cada término usado arriba.
+- [Dimensiones de topología](../../reference/core/architecture/topologies/topology-dimensions.md) — des-conflación de fase vs. madurez vs. topología.
 - Hubs de producto: [Tracker](./evolith-tracker/README.es.md) · [Smart CLI](./smart-cli/README.es.md) · [Core API](./core-api/README.es.md) · [MCP Services](./mcp-services/README.es.md) · [UMS Reference](./ums-reference/README.es.md).
 
 [Volver a Diseños Específicos de Productos](./README.es.md)

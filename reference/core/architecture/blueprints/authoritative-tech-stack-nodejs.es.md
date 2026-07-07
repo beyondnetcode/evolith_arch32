@@ -44,7 +44,7 @@ Las soluciones Node.js DEBEN utilizar aislamiento estricto de librerías impuest
 * **Linting:** ESLint v8 modo estricto + configuración de Prettier.
 
 ---
--> Volver al **[índice Maestro Global](../../../MASTER_INDEX.es.md)**
+-> Volver al **[índice Maestro Global](../../control-center/taxonomy/MASTER_INDEX.es.md)**
 
 ---
 [Volver al Índice](./README.es.md)

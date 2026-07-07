@@ -16,9 +16,9 @@ El sandbox legacy de To-Do fue retirado porque no podía demostrar de forma cre�
 - **Master Index:** [UMS Master Index](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md)
 - **Portal de arquitectura:** [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md)
 
-La evidencia de UMS la consume este corpus vía ADRs candidatos, extracción de patrones canónicos y prácticas de trazabilidad — nunca como política autoritativa. La frontera entre reglas del corpus y evidencia del producto es explícita (ver [Modelo de Referencia vs Aplicado](../../knowledge/demo/demo-vs-reference.es.md)).
+La evidencia de UMS la consume este corpus vía ADRs candidatos, extracción de patrones canónicos y prácticas de trazabilidad — nunca como política autoritativa. La frontera entre reglas del corpus y evidencia del producto es explícita (ver [Modelo de Referencia vs Aplicado](../../research/demo/demo-vs-reference.es.md)).
 
-> **Nota de fuente y verificación:** UMS es un repositorio satélite externo, no un submódulo de este corpus. Los datos arquitectónicos de este hub provienen de la [Visión Técnica de UMS](../../knowledge/demo/ums-technical-overview.es.md) canónica, no verificados contra el código fuente vivo de UMS desde este repo. Para install, prerequisitos, entorno y pasos de ejecución, sigue el [repositorio upstream](https://github.com/beyondnetcode/ums) — este hub es un puntero, no un reemplazo de la documentación de setup upstream.
+> **Nota de fuente y verificación:** UMS es un repositorio satélite externo, no un submódulo de este corpus. Los datos arquitectónicos de este hub provienen de la [Visión Técnica de UMS](../../research/demo/ums-technical-overview.es.md) canónica, no verificados contra el código fuente vivo de UMS desde este repo. Para install, prerequisitos, entorno y pasos de ejecución, sigue el [repositorio upstream](https://github.com/beyondnetcode/ums) — este hub es un puntero, no un reemplazo de la documentación de setup upstream.
 
 ---
 
@@ -28,9 +28,9 @@ La evidencia de UMS la consume este corpus vía ADRs candidatos, extracción de 
 |---|---|
 | Visión del producto | [overview.es.md](./overview.es.md) — bounded contexts, stack técnico, tabla de enlaces. |
 | Modelo de referencia | [reference-model.es.md](./reference-model.es.md) — qué se hereda de UMS y cómo. |
-| Visión técnica (completa) | [Visión Técnica de UMS](../../knowledge/demo/ums-technical-overview.es.md) |
-| Referencia vs Aplicado | [demo-vs-reference.es.md](../../knowledge/demo/demo-vs-reference.es.md) |
-| Bitácora de migración (To-Do → UMS) | [migration-from-todo-to-ums.es.md](../../knowledge/demo/migration-from-todo-to-ums.es.md) |
+| Visión técnica (completa) | [Visión Técnica de UMS](../../research/demo/ums-technical-overview.es.md) |
+| Referencia vs Aplicado | [demo-vs-reference.es.md](../../research/demo/demo-vs-reference.es.md) |
+| Bitácora de migración (To-Do → UMS) | [migration-from-todo-to-ums.es.md](../../research/demo/migration-from-todo-to-ums.es.md) |
 | Fuente upstream | [UMS Repository](https://github.com/beyondnetcode/ums) |
 
 ---
@@ -45,7 +45,7 @@ UMS implementa un satélite modular-monolítico que adopta, extiende y especiali
 - Observabilidad productiva con propagación de contexto OpenTelemetry.
 - RLS multi-tenant combinada con auditoría temporal.
 
-Los detalles de adopción de UMS viven en [casos de adopción](../../knowledge/adoption-cases.es.md). Las decisiones promovidas desde UMS hacia el Core de Evolith se registran como ADRs y nunca al revés.
+Los detalles de adopción de UMS viven en [casos de adopción](../../research/adoption-cases.es.md). Las decisiones promovidas desde UMS hacia el Core de Evolith se registran como ADRs y nunca al revés.
 
 ---
 
@@ -63,12 +63,12 @@ UMS es *evidencia*, no política:
 
 Cada plantilla del SDLC publica un ejemplo basado en UMS, para que los adoptantes comparen un recorrido real con la plantilla canónica:
 
-- [Ejemplo de PRD — UMS](../../governance/sdlc/04-artifact-templates/examples/prd-example-ums.es.md)
-- [Ejemplo de ADR — UMS](../../governance/sdlc/04-artifact-templates/examples/adr-example-ums.es.md)
-- [Functional Story — UMS](../../governance/sdlc/04-artifact-templates/examples/functional-story-example-ums.es.md)
-- [Test Summary — UMS](../../governance/sdlc/04-artifact-templates/examples/test-summary-report-example-ums.es.md)
-- [Release Notes — UMS](../../governance/sdlc/04-artifact-templates/examples/release-notes-example-ums.es.md)
-- [Executive Scorecard — UMS](../../governance/sdlc/04-artifact-templates/examples/executive-scorecard-example-ums.es.md)
+- [Ejemplo de PRD — UMS](../../../reference/core/sdlc/04-artifact-templates/examples/prd-example-ums.es.md)
+- [Ejemplo de ADR — UMS](../../../reference/core/sdlc/04-artifact-templates/examples/adr-example-ums.es.md)
+- [Functional Story — UMS](../../../reference/core/sdlc/04-artifact-templates/examples/functional-story-example-ums.es.md)
+- [Test Summary — UMS](../../../reference/core/sdlc/04-artifact-templates/examples/test-summary-report-example-ums.es.md)
+- [Release Notes — UMS](../../../reference/core/sdlc/04-artifact-templates/examples/release-notes-example-ums.es.md)
+- [Executive Scorecard — UMS](../../../reference/core/sdlc/04-artifact-templates/examples/executive-scorecard-example-ums.es.md)
 
 ---
 

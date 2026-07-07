@@ -61,11 +61,11 @@ The selected model is evaluated by: no caller filesystem dependency; immutable a
 - [ADR-0010: Multi-Tenancy Architecture Strategy](./0010-multi-tenancy-architecture-strategy.md)
 - [ADR-0016: Immutable Audit Trail](./0016-immutable-business-audit-trail.md)
 - [ADR-0074: Evolith Core API Native Exposure Layer](./0074-evolith-core-api-exposure-layer.md)
-- [GT-118](../../../sdlc/standards/vision/gap-reference-catalog.md#gt-118)
+- [GT-118](../../../control-center/gaps/gap-reference-catalog.md#gt-118)
 
 ## Related Decisions and Standards
 
-- [API Gateway Guidelines](../../../sdlc/standards/engineering/gateway-guidelines.md)
+- [API Gateway Guidelines](../../../foundations/common-rules/gateway-guidelines.md)
 - [ADR Authoring Standard](../adr-authoring-standard.md)
 
 ---

@@ -50,9 +50,9 @@ Empresa.
 ## AI Impact
 Alto. Los agentes de IA pueden trabajar de forma más segura cuando los límites de los módulos son explícitos y la propiedad de la persistencia no es ambigua.
 ## Related ADRs
-- [ADR-0031: Esquema por contexto y catálogo de eventos de dominio](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)
-- [ADR-0045: Criterios de preparación para la extracción de microservicios](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md)
-- [ADR-0057: Catálogo de inteligencia de arquitectura](../../../architecture/adrs/core/0057-architecture-intelligence-catalog.md)
+- [ADR-0031: Esquema por contexto y catálogo de eventos de dominio](../../../../reference/core/architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)
+- [ADR-0045: Criterios de preparación para la extracción de microservicios](../../../../reference/core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md)
+- [ADR-0057: Catálogo de inteligencia de arquitectura](../../../../reference/core/architecture/adrs/core/0057-architecture-intelligence-catalog.md)
 ## Anti-Patterns
 - un DbContext global para todos los dominios
 - uniones SQL directas a través de contextos limitados

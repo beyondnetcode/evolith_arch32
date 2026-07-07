@@ -1302,7 +1302,7 @@ R: Sí. El CLI funciona de forma independiente. El servidor MCP es opcional para
 
 ---
 
-*Este documento forma parte del corpus de referencia de Evolith. Para la visión completa, consulta [Evolith Product Vision Master](../../../product-suite/vision/evolith-product-vision-master.es.md).*
+*Este documento forma parte del corpus de referencia de Evolith. Para la visión completa, consulta [Evolith Product Vision Master](../../../suite/vision/evolith-product-vision-master.es.md).*
 
 ---
 [Volver al Índice de Documentación CLI](../README.es.md)

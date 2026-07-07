@@ -183,4 +183,4 @@ This analysis identifies **28 new actionable items** for the next sprint. Items 
 
 ---
 
-[Volver al indice](./README.md)
+[Volver al indice](../README.md)

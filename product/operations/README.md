@@ -2,7 +2,7 @@
 
 > **Bilingual Navigation:** [Versión en Español](./README.es.md)
 
-This directory contains the operational configuration and observability stack for the progressive architecture reference. All components are OSS, self-hosted, and vendor-neutral per [ADR-0028](../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md).
+This directory contains the operational configuration and observability stack for the progressive architecture reference. All components are OSS, self-hosted, and vendor-neutral per [ADR-0028](../../reference/core/architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md).
 
 ## Goal and Objectives
 
@@ -25,7 +25,7 @@ This directory contains the operational configuration and observability stack fo
 | **Tempo** | Distributed tracing backend (stores spans) | `3200` |
 | **Loki** | Log aggregation backend | `3100` |
 
-The full instrumentation strategy is defined in [ADR-0007](../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md).
+The full instrumentation strategy is defined in [ADR-0007](../../reference/core/architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md).
 
 ---
 
@@ -66,4 +66,4 @@ To view distributed traces: open Grafana → Explore → select **Tempo** dataso
 
 ---
 
-[Back to Repository Root](../README.md)
+[Back to Repository Root](../../README.md)

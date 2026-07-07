@@ -75,7 +75,7 @@ Las opciones se juzgaron contra: acoplamiento (llamadas síncronas entre servici
 - [ADR-0045 Criterios de Extraction-Readiness de Microservicios](./0045-microservice-extraction-readiness-criteria.es.md)
 - [ADR-0031 Schema por Contexto y Catálogo de Eventos de Dominio](./0031-schema-per-context-domain-event-catalog.es.md)
 - [Template de Modelo DDD](../../../sdlc/04-artifact-templates/ddd-model-template.es.md)
-- [Portal de Architecture Intelligence](../../../knowledge/architecture-intelligence/README.es.md)
+- [Portal de Architecture Intelligence](../../../../../product/research/architecture-intelligence/README.es.md)
 
 ## Decisiones y Estándares Relacionados
 
@@ -83,7 +83,7 @@ Las opciones se juzgaron contra: acoplamiento (llamadas síncronas entre servici
 - [ADR-0015 Arquitectura Orientada a Eventos (intra-dominio)](./0015-event-driven-architecture-intra-domain.es.md)
 - [ADR-0029 Biblioteca de Primitivas DDD Tácticas](../nodejs/0029-tactical-ddd-primitives-library.es.md)
 - [SDLC Quality Gates](../../../sdlc/quality-gates.es.md)
-- [Patrón DOMA — Architecture Intelligence](../../../knowledge/architecture-intelligence/patterns/domain-oriented-microservice-architecture.es.md)
+- [Patrón DOMA — Architecture Intelligence](../../../../../product/research/architecture-intelligence/patterns/domain-oriented-microservice-architecture.es.md)
 
 ---
 [Volver al Registro de ADRs](../README.es.md)

@@ -207,7 +207,7 @@ npm run test:cov   # jest --coverage
 ```
 
 Contributions follow the repo-wide guidelines in the
-[root `CONTRIBUTING.md`](../../CONTRIBUTING.md).
+[root `CONTRIBUTING.md`](../../../CONTRIBUTING.md).
 
 ## How it works internally
 

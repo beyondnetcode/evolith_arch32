@@ -3,7 +3,7 @@
 > **Bilingual Navigation:** [Versión en Español](./agent-runtime-deploy.es.md)
 
 How to deploy the Evolith Agent Runtime HTTP service
-([`apps/agent-runtime-api`](../../../apps/agent-runtime-api/Dockerfile)) to the
+([`apps/agent-runtime-api`](../../../src/apps/agent-runtime-api/Dockerfile)) to the
 Hostinger VPS via Coolify, exposed at **`evolithruntime.beyondnet.cloud`**. It
 follows the same Coolify + Traefik model as `core-api`/`mcp-server` (see the
 [VPS guide](./README.md)).
@@ -62,7 +62,7 @@ In the Coolify panel: **New Resource → Application → from the connected GitH
 ## Step 4 — Set environment variables
 
 Add these in Coolify (mark `AGENT_RUNTIME_API_KEY` as a secret). See
-[`.env.example`](../../../apps/agent-runtime-api/.env.example) for the full list.
+[`.env.example`](../../../src/apps/agent-runtime-api/.env.example) for the full list.
 
 ```text
 NODE_ENV=production

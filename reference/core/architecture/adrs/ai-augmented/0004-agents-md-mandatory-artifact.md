@@ -63,8 +63,8 @@ Every `AGENTS.md` MUST include a `Last validated` date comment at the top. If th
 ## References
 - [ADR-0001: Harness Engineering](./0001-harness-engineering.md)
 - [ADR-0002: MCP Integration Protocol](./0002-mcp-integration-protocol.md)
-- [validate-root-cleanliness.mjs](../../../../.harness/scripts/ci/03-validate-root-cleanliness.mjs)
-- [AGENTS.md](../../../../AGENTS.md)
+- [validate-root-cleanliness.mjs](../../../../../.harness/scripts/ci/03-validate-root-cleanliness.mjs)
+- [AGENTS.md](../../../../../AGENTS.md)
 - [ADR-0012: Conventions Enforcement](../core/0049-naming-semantics-clean-code-policy.md)
 - [ADR-0068: Documentation Release Gitflow](../core/0068-documentation-release-gitflow.md)
 

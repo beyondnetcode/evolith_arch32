@@ -3,7 +3,7 @@
 > **Bilingual navigation:** [Versión en Español](./security-scan-report-template.es.md)
 > **Phase:** 4 — Validation and QA
 > **Exit gate:** RC Stamped
-> **Schema:** [`security-scan-report.schema.json`](../../../../rulesets/schema/security-scan-report.schema.json)
+> **Schema:** [`security-scan-report.schema.json`](../../../../src/rulesets/schema/security-scan-report.schema.json)
 > **Parent:** [Artifact Templates](./README.md)
 
 ---
@@ -77,4 +77,4 @@ The Security Scan Report consolidates SAST, DAST, SCA, secret-scanning, containe
 |---|---|
 | [Phase 4 — RC Stamped Playbook](../01-playbooks/phase-4-rc-stamp.md) | Procedural gate that consumes this evidence. |
 | [SDLC Quality Gates](../quality-gates.md) | Defines the production CVE policy. |
-| [`phase-gates.rules.json`](../../../../rulesets/sdlc/phase-gates.rules.json) | Phase 4 `Security Scan Report` evidence entry references this template's schema. |
+| [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json) | Phase 4 `Security Scan Report` evidence entry references this template's schema. |

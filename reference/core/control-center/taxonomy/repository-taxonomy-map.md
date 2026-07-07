@@ -2,11 +2,11 @@
 
 > **Bilingual Navigation:** [Versión en Español](./repository-taxonomy-map.es.md)
 
-This document maps the current repository layout for readers who need to understand what each area contains, how to use it, and how critical the data is. It complements the normative [Repository Taxonomy and Structuring Policy](../repository-taxonomy.md); it does not replace it.
+This document maps the current repository layout for readers who need to understand what each area contains, how to use it, and how critical the data is. It complements the normative [Repository Taxonomy and Structuring Policy](./repository-taxonomy.md); it does not replace it.
 
 ## Purpose
 
-Use this map when you need to decide where to read, edit, add, or audit content in Evolith Core. The root README sends readers to the [Vision, Maturity, and Gaps Hub](./README.md); this map is the hub's operational taxonomy view.
+Use this map when you need to decide where to read, edit, add, or audit content in Evolith Core. The root README sends readers to the [Vision, Maturity, and Gaps Hub](../README.md); this map is the hub's operational taxonomy view.
 
 ## Criticality Model
 
@@ -21,7 +21,7 @@ Use this map when you need to decide where to read, edit, add, or audit content 
 
 | Rule | What to do |
 |---|---|
-| Start from the portal | Use the root [README](../../../../README.md), then the [Global Master Index](../../../navigation/MASTER_INDEX.md) when you already know the artifact family. |
+| Start from the portal | Use the root [README](../../../../README.md), then the [Global Master Index](./MASTER_INDEX.md) when you already know the artifact family. |
 | Keep standards in `reference/` | Architecture, governance, SDLC, operations, and product-reference documents belong under `reference/`. |
 | Keep executable rules in `rulesets/` | Machine-readable architecture policy belongs in `rulesets/`; topology-specific rules belong in `rulesets/topologies/`. |
 | Keep product implementation outside the corpus | Local `apps/`, `packages/`, `sdk/`, and `tests/` support executable governance surfaces; business product code remains outside this repository unless explicitly scoped. |
@@ -150,4 +150,4 @@ git diff --check
 Run topology rule coverage and dual-engine parity checks when taxonomy changes affect topology manifests, topology rules, or executable architectural policies.
 
 ---
-[Back to Vision, Maturity, and Gaps Hub](./README.md)
+[Back to Vision, Maturity, and Gaps Hub](../README.md)

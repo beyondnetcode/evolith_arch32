@@ -1,6 +1,6 @@
 # Canonical Patterns
 
-> **Bilingual Navigation:** [Versión en Español](../canonical-patterns/README.md)
+> **Bilingual Navigation:** [Versión en Español](./README.es.md)
 
 Canonical Patterns are runtime-specific, copy-paste-ready reference implementations that demonstrate how the Evolith architecture decisions materialize as production code. Each pattern maps to one or more ADRs and can be adopted directly by satellite repositories.
 

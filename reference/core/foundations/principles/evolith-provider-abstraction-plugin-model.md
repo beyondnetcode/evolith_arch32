@@ -4,8 +4,8 @@
 
 **Status:** Proposed Foundational Design Principle  
 **Owner:** Evolith Architecture Board  
-**Parent Vision:** [Evolith Product Vision Master](../../product-suite/vision/evolith-product-vision-master.md)  
-**Companion Design:** [Governed Composition Target Design](../../product-suite/architecture/evolith-governed-composition-target-design.md)  
+**Parent Vision:** [Evolith Product Vision Master](../../../../product/suite/vision/evolith-product-vision-master.md)  
+**Companion Design:** [Governed Composition Target Design](../../../../product/suite/architecture/evolith-governed-composition-target-design.md)  
 **Created:** 2026-06-10  
 **Implementation Status:** Design only — no code changes authorized
 
@@ -432,10 +432,10 @@ This design principle is satisfied when:
 
 ## 15. Relationship and Navigation
 
-- [Evolith Product Vision Master](../../product-suite/vision/evolith-product-vision-master.md)
-- [Governed Composition Target Design](../../product-suite/architecture/evolith-governed-composition-target-design.md)
-- [SDLC Tracker Technical Interface Design](../../products/evolith-tracker/sdlc-tracker-technical-interfaces.md)
-- [Strategic Validation and Composition Framework](../../product-suite/methods/evolith-strategic-validation-and-composition-framework.md)
+- [Evolith Product Vision Master](../../../../product/suite/vision/evolith-product-vision-master.md)
+- [Governed Composition Target Design](../../../../product/suite/architecture/evolith-governed-composition-target-design.md)
+- [SDLC Tracker Technical Interface Design](../../../../product/products/evolith-tracker/sdlc-tracker-technical-interfaces.md)
+- [Strategic Validation and Composition Framework](../../../../product/suite/methods/evolith-strategic-validation-and-composition-framework.md)
 
 ---
 

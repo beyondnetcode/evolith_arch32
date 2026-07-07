@@ -4,7 +4,7 @@
 > **Owner:** Evolith Architecture Board  
 > **Status:** Proposed Design — Pending Architecture Board Review  
 > **Parent:** [Corporate SDLC Governance Center](./README.md)  
-> **Target Design:** [Governed Composition Target Design](../standards/vision/evolith-governed-composition-target-design.md)
+> **Target Design:** [Governed Composition Target Design](../foundations/common-rules/evolith-governed-composition-target-design.md)
 
 ---
 
@@ -226,9 +226,9 @@ Provider-native identifiers may be included, but stable Evolith references are m
 
 ## 12. Related Documents
 
-- [Governed Composition Target Design](../standards/vision/evolith-governed-composition-target-design.md)
-- [Provider Abstraction and Plugin Model](../standards/vision/evolith-provider-abstraction-plugin-model.md)
-- [Tracker Technical Interface Design](../standards/vision/sdlc-tracker-technical-interfaces.md)
+- [Governed Composition Target Design](../foundations/common-rules/evolith-governed-composition-target-design.md)
+- [Provider Abstraction and Plugin Model](../foundations/principles/evolith-provider-abstraction-plugin-model.md)
+- [Tracker Technical Interface Design](./sdlc-tracker-technical-interfaces.md)
 - [Artifact Templates Hub](./04-artifact-templates/README.md)
 - [Responsibility Matrix](./responsibility-matrix.md)
 - [Quality Gates](./quality-gates.md)

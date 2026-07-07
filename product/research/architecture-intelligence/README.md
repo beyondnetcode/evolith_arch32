@@ -10,8 +10,8 @@ This portal is an index and orientation page. It does not replace ADRs, governan
 
 | Need | Go to |
 |---|---|
-| Understand why this catalog exists | [ADR-0057 Architecture Intelligence Catalog](../../architecture/adrs/core/0057-architecture-intelligence-catalog.md) |
-| Understand AI-consumable architecture knowledge | [ADR-0058 AI-Consumable Architecture Knowledge](../../architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md) |
+| Understand why this catalog exists | [ADR-0057 Architecture Intelligence Catalog](../../../reference/core/architecture/adrs/core/0057-architecture-intelligence-catalog.md) |
+| Understand AI-consumable architecture knowledge | [ADR-0058 AI-Consumable Architecture Knowledge](../../../reference/core/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md) |
 | Validate Architecture Intelligence artifacts | [Architecture Intelligence Validation](./validation/architecture-intelligence-validation.md) |
 | Review curated architecture patterns | [Patterns](./patterns/) |
 
@@ -22,7 +22,7 @@ This portal is an index and orientation page. It does not replace ADRs, governan
 | [Bounded Context Isolation](./patterns/bounded-context-isolation.md) | Keep modular boundaries explicit across code and data ownership. |
 | [Data Ownership per Bounded Context](./patterns/data-ownership-per-bounded-context.md) | Clarify ownership rules for data inside bounded contexts. |
 | [No Cross-Domain Joins](./patterns/no-cross-domain-joins.md) | Avoid persistence coupling across modular boundaries. |
-| [Domain-Oriented Microservice Architecture (DOMA)](./patterns/domain-oriented-microservice-architecture.md) | Group F3 microservices around bounded business domains, not technical layers ([ADR-0076](../../architecture/adrs/core/0076-domain-oriented-microservice-architecture.md)). |
+| [Domain-Oriented Microservice Architecture (DOMA)](./patterns/domain-oriented-microservice-architecture.md) | Group F3 microservices around bounded business domains, not technical layers ([ADR-0076](../../../reference/core/architecture/adrs/core/0076-domain-oriented-microservice-architecture.md)). |
 
 ## What belongs here
 

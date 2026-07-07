@@ -60,10 +60,10 @@ Tienes el **deber de mejorar el sistema**. Monitorea:
 - **Brechas de scripts** → si un nuevo tipo de gap necesita entrada en el catálogo, proponer un script de validación
 - **Oportunidades de herramientas** → si `generate-es-skeleton.mjs` no cubre un patrón que necesitas, proponer una extensión
 
-Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
+Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
 
 ---
 
-*Véase [AGENTS.es.md](../AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
-*Véase [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
-*Véase [Reglas Globales](../../.harness/rules/global-rules.md) para directivas vinculantes.*
+*Véase [AGENTS.es.md](../../../../.bmad-core/AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
+*Véase [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
+*Véase [Reglas Globales](../../../../.harness/rules/global-rules.md) para directivas vinculantes.*

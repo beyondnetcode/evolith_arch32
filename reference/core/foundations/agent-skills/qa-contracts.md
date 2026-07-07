@@ -82,7 +82,7 @@ A gap closure is signed off only when all seven gates pass: zero parity drift, z
 
 ---
 
-*See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle.*
-*See [Global Rules](../../.harness/rules/global-rules.md) for R-25 Dual-Engine Parity and R-28 OPA Bundle Integrity.*
+*See [AGENTS.md](../../../../.bmad-core/AGENTS.md) for repository context and gap lifecycle.*
+*See [Global Rules](../../../../.harness/rules/global-rules.md) for R-25 Dual-Engine Parity and R-28 OPA Bundle Integrity.*
 *See [QA Agent](./qa.md) for the lead QA persona this role reports into.*
 *See [Developer Agent](./dev.md) for the artifact-creation counterpart.*

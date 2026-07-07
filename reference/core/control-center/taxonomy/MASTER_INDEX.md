@@ -2,7 +2,7 @@
 
 This repository-level navigation document has moved to the navigation hub:
 
-**[Open the Evolith Global Master Index](./reference/navigation/MASTER_INDEX.md)**
+**[Open the Evolith Global Master Index](../README.md)**
 
 ## Why this file remains here
 
@@ -12,6 +12,6 @@ This lightweight page is kept at the root path to preserve existing links, bookm
 
 | Need | Go to |
 |---|---|
-| Main portal | [README.md](./README.md) |
+| Main portal | [README.md](../README.md) |
 | Spanish master index | [MASTER_INDEX.es.md](./MASTER_INDEX.es.md) |
-| Navigation hub | [reference/navigation](./reference/navigation/README.md) |
+| Navigation hub | [Control Center](../README.md) |

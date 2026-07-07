@@ -82,7 +82,7 @@ Un cierre de gap se aprueba solo cuando los siete gates pasan: cero drift de par
 
 ---
 
-*Ver [AGENTS.md](../AGENTS.md) para el contexto del repositorio y el ciclo de vida de gaps.*
-*Ver [Reglas Globales](../../.harness/rules/global-rules.md) para R-25 Paridad Dual-Engine y R-28 Integridad de Bundles OPA.*
+*Ver [AGENTS.md](../../../../.bmad-core/AGENTS.md) para el contexto del repositorio y el ciclo de vida de gaps.*
+*Ver [Reglas Globales](../../../../.harness/rules/global-rules.md) para R-25 Paridad Dual-Engine y R-28 Integridad de Bundles OPA.*
 *Ver [Agente QA](./qa.es.md) para la persona QA líder a la que reporta este rol.*
 *Ver [Agente Developer](./dev.es.md) para la contraparte de creación de artefactos.*

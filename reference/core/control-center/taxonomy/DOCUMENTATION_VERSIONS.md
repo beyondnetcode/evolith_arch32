@@ -2,7 +2,7 @@
 
 This repository-level documentation release log has moved to the navigation hub:
 
-**[Open the Documentation Version Log](./reference/navigation/DOCUMENTATION_VERSIONS.md)**
+**[Open the Documentation Version Log](../README.md)**
 
 ## Why this file remains here
 
@@ -12,6 +12,6 @@ This lightweight page is kept at the root path to preserve existing links, bookm
 
 | Need | Go to |
 |---|---|
-| Main portal | [README.md](./README.md) |
+| Main portal | [README.md](../README.md) |
 | Spanish version log | [DOCUMENTATION_VERSIONS.es.md](./DOCUMENTATION_VERSIONS.es.md) |
-| Navigation hub | [reference/navigation](./reference/navigation/README.md) |
+| Navigation hub | [reference/navigation](./MASTER_INDEX.md) |

@@ -161,7 +161,7 @@ class CategoryDeletedEvent {
 - [ADR-0006: Future Microservices Transition with Dapr](../../adrs/core/0006-microservices-transition-sidecar-pattern.md)
 - [ADR-0010: Multi-Tenancy Strategy (RLS)](../../adrs/core/0010-multi-tenancy-architecture-strategy.md)
 - [ADR-0015: Event-Driven Architecture (Injectable Bus)](../../adrs/core/0015-event-driven-architecture-intra-domain.md)
-- [UMS Applied Reference Model](../../../knowledge/demo/README.md)
+- [UMS Applied Reference Model](../../../../../product/research/demo/README.md)
 
 
 
@@ -185,7 +185,7 @@ Unknown (historical record; evaluated against general architectural principles o
 - [ADR-0006: Future Microservices Transition with Dapr](../../adrs/core/0006-microservices-transition-sidecar-pattern.md)
 - [ADR-0010: Multi-Tenancy Strategy (RLS)](../../adrs/core/0010-multi-tenancy-architecture-strategy.md)
 - [ADR-0015: Event-Driven Architecture (Injectable Bus)](../../adrs/core/0015-event-driven-architecture-intra-domain.md)
-- [UMS Applied Reference Model](../../../knowledge/demo/README.md)
+- [UMS Applied Reference Model](../../../../../product/research/demo/README.md)
 
 ---
 [Back to Index](./README.md)

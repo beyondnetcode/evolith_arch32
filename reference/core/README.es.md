@@ -59,12 +59,12 @@ Los productos consumen Core. No lo redefinen.
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
-| [Hub de Arquitectura](../architecture/README.es.md) | Principios, patrones, modelos de referencia, contratos y ADRs Core | Guiar el diseño corporativo | Hub de área | Sí |
-| [Centro de Gobernanza SDLC](../governance/sdlc/README.es.md) | Fases, gates, artefactos, evidencias, roles, excepciones, trazabilidad y métricas | Gobernar el ciclo de vida completo | Hub de dominio | Sí |
-| [Centro de Estándares y Gobernanza](../governance/standards/README.es.md) | Estándares reutilizables y reglas de gobernanza | Alinear equipos a políticas unificadas | Hub de área | Sí |
-| [Rulesets Hub](../../rulesets/README.es.md) | Políticas y contratos de validación consumibles por máquinas | Validar cumplimiento automáticamente | Hub de reglas | Sí |
-| [Hub de Gobernanza](../governance/README.es.md) | Terminología, clasificaciones y límites canónicos | Mantener consistentes el lenguaje y los límites | Hub de área | Sí |
-| [Hub de Conocimiento](../knowledge/README.es.md) | Lecciones de satélites pendientes de revisión upstream | Capturar evidencia y aprendizaje | Hub de área | No |
+| [Hub de Arquitectura](./architecture/README.es.md) | Principios, patrones, modelos de referencia, contratos y ADRs Core | Guiar el diseño corporativo | Hub de área | Sí |
+| [Centro de Gobernanza SDLC](./sdlc/README.es.md) | Fases, gates, artefactos, evidencias, roles, excepciones, trazabilidad y métricas | Gobernar el ciclo de vida completo | Hub de dominio | Sí |
+| Centro de Estándares y Gobernanza | Estándares reutilizables y reglas de gobernanza | Alinear equipos a políticas unificadas | Hub de área | Sí |
+| [Rulesets Hub](../../src/rulesets/README.es.md) | Políticas y contratos de validación consumibles por máquinas | Validar cumplimiento automáticamente | Hub de reglas | Sí |
+| [Hub de Gobernanza](./sdlc/governance/README.es.md) | Terminología, clasificaciones y límites canónicos | Mantener consistentes el lenguaje y los límites | Hub de área | Sí |
+| [Hub de Conocimiento](../knowledge/README.md) | Lecciones de satélites pendientes de revisión upstream | Capturar evidencia y aprendizaje | Hub de área | No |
 
 ---
 
@@ -133,7 +133,7 @@ La Product Suite usa Core para entregar capacidades operativas:
 - Plugins y adapters conectan capacidades externas.
 - Productos futuros pueden consumir la misma Constitución.
 
-La visión de la Suite, posicionamiento comercial, roadmaps, UX, APIs de productos y modelos comerciales pertenecen a [Evolith Product Suite](../product-suite/README.es.md), no a Core.
+La visión de la Suite, posicionamiento comercial, roadmaps, UX, APIs de productos y modelos comerciales pertenecen a [Evolith Product Suite](../../product/suite/README.es.md), no a Core.
 
 ---
 
@@ -143,10 +143,10 @@ Documentos fuera de Core que completan el panorama (los dominios propios de Core
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
-| [Taxonomía de Documentación](../documentation-taxonomy.es.md) | Define qué tipo de documento pertenece a cada lugar | Mantener el corpus organizado | Estándar de gobernanza | Sí |
-| [Evolith Product Suite](../product-suite/README.es.md) | Visión del portafolio, estrategia, posicionamiento y comunicación | Dirigir el ecosistema | Hub de dominio | Sí |
-| [Diseños Específicos de Productos](../products/README.es.md) | Diseño funcional y técnico por producto | Contener los internos de producto | Hub de área | Sí |
-| [Guías de Plataformas y Proveedores](../platforms/README.es.md) | Herramientas nombradas, vendors, adapters y perfiles de despliegue | Aislar decisiones de proveedores | Hub de área | Sí |
+| [Taxonomía de Documentación](./control-center/taxonomy/documentation-taxonomy.es.md) | Define qué tipo de documento pertenece a cada lugar | Mantener el corpus organizado | Estándar de gobernanza | Sí |
+| [Evolith Product Suite](../../product/suite/README.es.md) | Visión del portafolio, estrategia, posicionamiento y comunicación | Dirigir el ecosistema | Hub de dominio | Sí |
+| [Diseños Específicos de Productos](../../product/products/README.es.md) | Diseño funcional y técnico por producto | Contener los internos de producto | Hub de área | Sí |
+| Guías de Plataformas y Proveedores | Herramientas nombradas, vendors, adapters y perfiles de despliegue | Aislar decisiones de proveedores | Hub de área | Sí |
 
 ---
 

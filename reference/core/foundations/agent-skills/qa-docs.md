@@ -102,12 +102,12 @@ You have a **duty to improve the system**. Monitor for:
 - **Reconciliation gaps** → if `09-reconcile-maturity.mjs` omits an evidence source, propose adding it
 - **Test coverage** → if a `.harness/scripts/` script lacks `.test.mjs`, create it following existing patterns
 
-File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
+File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
 
 ---
 
-*See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle.*
-*See [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
-*See [Global Rules](../../.harness/rules/global-rules.md) for documentation and parity rules.*
-*See [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) for documentation quality gates.*
-*See [Gap Tracking Board](../../reference/core/control-center/gaps/gap-tracking.md) for gap status.*
+*See [AGENTS.md](../../../../.bmad-core/AGENTS.md) for repository context and gap lifecycle.*
+*See [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
+*See [Global Rules](../../../../.harness/rules/global-rules.md) for documentation and parity rules.*
+*See [ADR-0068](../../architecture/adrs/core/0068-documentation-release-gitflow.md) for documentation quality gates.*
+*See [Gap Tracking Board](../../control-center/gaps/gap-tracking.md) for gap status.*

@@ -47,4 +47,4 @@ Todo documento de adopcion de framework debe cumplir estos gates antes de merge:
 
 ---
 
-[Volver a Arquitectura Aumentada por IA](../../../standards/ai-augmented/README.es.md)
+[Volver a Arquitectura Aumentada por IA](../README.es.md)

@@ -1258,7 +1258,7 @@ sdk/cli/
 
 ## Contribuir
 
-Consulta el [CONTRIBUTING.md](../../CONTRIBUTING.md) en la raíz del repositorio para el flujo completo, las convenciones de ramas/commits y los estándares de autoría.
+Consulta el [CONTRIBUTING.md](../../../CONTRIBUTING.md) en la raíz del repositorio para el flujo completo, las convenciones de ramas/commits y los estándares de autoría.
 
 1. Haz un fork del repositorio
 2. Crea una rama de feature

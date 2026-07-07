@@ -21,10 +21,10 @@ Este directorio contiene la configuración de Docker Compose y la configuración
 | Servicio | Fase Requerida | Rol |
 | :--- | :--- | :--- |
 | **PostgreSQL** | Fase 1 (obligatorio) | Base de datos relacional primaria |
-| **Redis** | Fase 1 (opcional, agregar cuando la latencia lo exija) | Caché distribuida — [ADR-0014](../architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.md) |
-| **RabbitMQ** | Fase 2+ | Bróker de mensajes async — [ADR-0015](../architecture/adrs/core/0015-event-driven-architecture-intra-domain.md) |
-| **Traefik Proxy** | Fase 2+ | Gateway de API perimetral — [ADR-0030](../architecture/adrs/core/0030-two-tier-distributed-gateway-model.md) |
-| **OpenBao** | Fase 2+ | Gestión de secretos (fork de Vault) — [ADR-0028](../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) |
+| **Redis** | Fase 1 (opcional, agregar cuando la latencia lo exija) | Caché distribuida — [ADR-0014](../../reference/core/architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.md) |
+| **RabbitMQ** | Fase 2+ | Bróker de mensajes async — [ADR-0015](../../reference/core/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md) |
+| **Traefik Proxy** | Fase 2+ | Gateway de API perimetral — [ADR-0030](../../reference/core/architecture/adrs/core/0030-two-tier-distributed-gateway-model.md) |
+| **OpenBao** | Fase 2+ | Gestión de secretos (fork de Vault) — [ADR-0028](../../reference/core/architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) |
 
 > **Regla Fase 1:** Comenzar solo con PostgreSQL. Agregar Redis cuando se supere un umbral P95 de latencia específico. Agregar Kong y RabbitMQ solo cuando se necesite un segundo canal de cliente o entrega async entre servicios.
 
@@ -126,4 +126,4 @@ Cada servicio en `docker-compose.yml` declara `deploy.resources.limits` para evi
 
 ---
 
-[Volver a la Raíz del Repositorio](../README.es.md)
+[Volver a la Raíz del Repositorio](../../README.es.md)

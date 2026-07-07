@@ -9,7 +9,7 @@ Core capabilities through ports — without becoming coupled to any specific age
 framework. Hermes Agent, Swarms (OpenAI), another framework, or an in-house engine are all just
 replaceable adapters.
 
-Implementation: [`packages/agent-runtime`](../../../packages/agent-runtime/README.md)
+Implementation: [`packages/agent-runtime`](../../../../src/packages/agent-runtime/README.md)
 · Decision record: [core/ADR-0102](../adrs/core/0102-evolith-agent-runtime.md).
 
 ## What is the Evolith Agent Runtime
@@ -38,7 +38,7 @@ even supporting multi-engine routing based on capabilities.
 | [.harness Integration](./harness-integration.md) | How the runtime discovers and executes `.harness` capabilities |
 | [Practical Cases](./practical-cases.md) | End-to-end examples for every mandatory use case |
 | [Extending](./extending.md) | How to add skills, adapters, use the CLI/chat, and plug Hermes |
-| [Deploy to VPS (Coolify)](../../infrastructure/vps-coolify/agent-runtime-deploy.md) | Deploy the runtime HTTP service at `evolithruntime.beyondnet.cloud` |
+| [Deploy to VPS (Coolify)](../../../../product/infra/vps-coolify/agent-runtime-deploy.md) | Deploy the runtime HTTP service at `evolithruntime.beyondnet.cloud` |
 
 ## Quickstart
 
@@ -64,7 +64,7 @@ const result = await runtime.handle(
 ```
 
 A runnable script lives at
-[`packages/agent-runtime/examples/validate-discovery-gate.mjs`](../../../packages/agent-runtime/examples/validate-discovery-gate.mjs).
+[`packages/agent-runtime/examples/validate-discovery-gate.mjs`](../../../../src/packages/agent-runtime/examples/validate-discovery-gate.mjs).
 
 ## Client interaction pattern
 

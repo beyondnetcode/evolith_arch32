@@ -673,14 +673,14 @@ Los siguientes artefactos visuales se proponen para creación, ordenados por imp
 
 ## Referencias
 
-- [Directivas Arquitectónicas](../vision/architectural-directives.es.md)
-- [Roadmap de Estrategia Evolutiva](../vision/evolutionary-strategy-roadmap.es.md)
-- [Manifiesto de Ingeniería](../engineering/engineering-manifesto.es.md)
+- [Directivas Arquitectónicas](../../../control-center/audits/architectural-directives.es.md)
+- [Roadmap de Estrategia Evolutiva](../../../../../product/suite/strategy/evolutionary-strategy-roadmap.es.md)
+- [Manifiesto de Ingeniería](../engineering-manifesto.es.md)
 - [Blueprint de Referencia](../../../architecture/blueprints/reference-blueprint.es.md)
 - [Registro ADR](../../../architecture/adrs/README.es.md)
-- [Hub de Referencia UMS](../../../knowledge/demo/README.es.md)
-- [Guía de Herencia para Repositorios Hijos](../onboarding/child-repository-inheritance-guide.es.md)
-- [Taxonomía del Repositorio](../repository-taxonomy.es.md)
+- [Hub de Referencia UMS](../../../../../product/research/demo/README.es.md)
+- [Guía de Herencia para Repositorios Hijos](../../inheritance-model/child-repository-inheritance-guide.es.md)
+- [Taxonomía del Repositorio](../../../control-center/taxonomy/repository-taxonomy.es.md)
 
 ---
 

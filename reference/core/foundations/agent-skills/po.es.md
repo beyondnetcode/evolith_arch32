@@ -91,7 +91,7 @@ Tienes el **deber de mejorar el sistema**. Monitorea:
 - **Comunicación con partes interesadas** → si las actualizaciones de estado no son claras, proponer una plantilla de reporte estándar
 - **Higiene del backlog** → si los elementos obsoletos se acumulan, proponer una cadencia regular de limpieza del backlog
 
-Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
+Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
 
 ## Registros de Aprendizaje de Producto
 
@@ -104,6 +104,6 @@ Contexto de negocio durable capturado en sesiones de flujo de producto guiadas p
 
 ---
 
-*Véase [AGENTS.es.md](../AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
-*Véase [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
-*Véase [Reglas Globales](../../.harness/rules/global-rules.es.md) para directivas vinculantes.*
+*Véase [AGENTS.es.md](../../../../.bmad-core/AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
+*Véase [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
+*Véase [Reglas Globales](../../../../.harness/rules/global-rules.es.md) para directivas vinculantes.*

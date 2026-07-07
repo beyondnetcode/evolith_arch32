@@ -10,14 +10,14 @@
 
 <br/>
 
-<a href="./reference/core/sdlc/assets/master-view.png" title="Visión General del Producto Evolith E2E — clic para ampliar">
-  <img src="./reference/core/sdlc/assets/master-view.png"
-       alt="Visión General del Producto Evolith E2E"
-       width="780"
+<a href="./reference/core/sdlc/assets/master-view.svg" title="Visión General del Producto Evolith E2E — clic para ampliar">
+  <img src="./reference/core/sdlc/assets/master-view.svg"
+       alt="Visión General del Producto Evolith E2E — Composición Gobernada, Core de evaluación stateless, SDLC federado de cinco fases"
+       width="880"
        style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
 </a>
 
-<sub>↑ Visión General del Producto Evolith E2E · MD3 — <i>clic para ampliar</i></sub>
+<sub>↑ Visión General del Producto Evolith E2E — <i>clic para ampliar</i></sub>
 
 </div>
 
@@ -144,7 +144,7 @@ Evolith gobierna **8 topologías** en cuatro ejes:
 
 Cada topología tiene sus propios ADRs, políticas OPA, rulesets de IA y contratos UMS. Los sistemas migran entre topologías a medida que el negocio escala — esto es **Arquitectura Progresiva**.
 
-Referencia completa: [Hub de Arquitectura](./reference/core/architecture/README.es.md) · [Arquitectura Maestra C4](./reference/core/architecture/C4-MASTER-ARCHITECTURE.es.md)
+Referencia completa: [Hub de Arquitectura](./reference/core/architecture/README.es.md) · [Arquitectura Maestra C4](./reference/core/architecture/demos/C4-MASTER-ARCHITECTURE.es.md)
 
 ---
 
@@ -161,7 +161,7 @@ evolith/
 └── product/operations/    # SRE, infra, compuertas de calidad
 ```
 
-Punto de entrada para cada área: [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md)
+Punto de entrada para cada área: [Índice Maestro Global](./reference/core/control-center/taxonomy/MASTER_INDEX.es.md)
 
 ---
 
@@ -194,7 +194,7 @@ Smart CLI incluye **20 comandos** y se configura mediante **`evolith.yaml`**. Re
 | Área | Enlace |
 |---|---|
 | Constitución Core | [Hub de Evolith Core](./reference/core/README.es.md) |
-| Arquitectura Maestra | [Arquitectura Maestra C4](./reference/core/architecture/C4-MASTER-ARCHITECTURE.es.md) |
+| Arquitectura Maestra | [Arquitectura Maestra C4](./reference/core/architecture/demos/C4-MASTER-ARCHITECTURE.es.md) |
 | Gobernanza SDLC | [Centro de Gobernanza SDLC](./reference/core/sdlc/README.es.md) |
 | Topologías | [Hub de Topologías](./reference/core/architecture/topologies/README.es.md) |
 | Smart CLI | [Hub de Smart CLI](./product/products/smart-cli/README.es.md) |
@@ -203,10 +203,10 @@ Smart CLI incluye **20 comandos** y se configura mediante **`evolith.yaml`**. Re
 | Agent Runtime | [Hub de Agent Runtime](./reference/core/architecture/foundations/README.es.md) |
 | Evolith Tracker | [Hub de Tracker](./product/products/evolith-tracker/README.es.md) |
 | Operaciones y SRE | [Hub de Operaciones](./product/operations/README.es.md) |
-| Onboarding por rol | [Inicio por Rol](./reference/getting-started/README.es.md) |
+| Onboarding por rol | Inicio por Rol |
 | Glosario del ecosistema | [Glosario](./reference/core/sdlc/glossary/glossary-ecosystem.es.md) |
 | Seguimiento de gaps | [Tablero de Gaps](./reference/core/control-center/gaps/gap-tracking.md) |
-| Todos los artefactos | [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) |
+| Todos los artefactos | [Índice Maestro Global](./reference/core/control-center/taxonomy/MASTER_INDEX.es.md) |
 
 ---
 
@@ -242,7 +242,7 @@ Lee esto antes de abrir un PR:
 - [Guía de Contribución](./CONTRIBUTING.es.md)
 - [Política de Seguridad](./SECURITY.md)
 - [AGENTS.es.md](./AGENTS.es.md) — convenciones para contribuidores agentes de IA
-- [Taxonomía del Repositorio](./reference/core/sdlc/standards/repository-taxonomy.md) — qué va dónde
+- [Taxonomía del Repositorio](./reference/core/control-center/taxonomy/repository-taxonomy.md) — qué va dónde
 
 ---
 

@@ -11,7 +11,7 @@ Los repositorios satelite necesitan un modelo comun de ramas que mantenga establ
 
 Gitflow sigue siendo el estandar, extendido con ramas explicitas de promocion `qa` y `uat`. Estas ramas representan estados desplegables por ambiente, no carriles paralelos de desarrollo. El trabajo de funcionalidades sigue integrandose mediante `develop`; la promocion hacia `qa`, `uat` y `main` queda condicionada por evidencia.
 
-Este ADR se alinea con [ADR-0005 CI/CD Quality CodeQL](./0005-automated-sast-quality-gates.es.md), [ADR-0018 Testing Pyramid Quality Gates](./0018-testing-pyramid-quality-gates.es.md), y el ruleset ejecutable [`rulesets/adr/adr-0050-gitflow-branching.rules.json`](../../../../rulesets/adr/adr-0050-gitflow-branching.rules.json).
+Este ADR se alinea con [ADR-0005 CI/CD Quality CodeQL](./0005-automated-sast-quality-gates.es.md), [ADR-0018 Testing Pyramid Quality Gates](./0018-testing-pyramid-quality-gates.es.md), y el ruleset ejecutable [`rulesets/adr/adr-0050-gitflow-branching.rules.json`](../../../../../src/rulesets/adr/adr-0050-gitflow-branching.rules.json).
 
 ## Decision
 Adoptar Gitflow como la estrategia obligatoria de ramas para los sistemas satelite que usan esta referencia de arquitectura progresiva y el toolset Evolith. Las ramas permanentes requeridas son `main`, `develop`, `qa` y `uat`. Las ramas temporales son `feature/*`, ramas individuales derivadas de una rama de feature, `release/*` y `hotfix/*` cuando correspondan.

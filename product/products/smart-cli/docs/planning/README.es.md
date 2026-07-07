@@ -22,7 +22,7 @@ Este directorio contiene documentos de planificación para los componentes SDK, 
 | [Estrategia de Testing](./testing-strategy.md) | Completo | Enfoque de pruebas unitarias, integración y E2E |
 | [Lista de Verificación de Release](./release-readiness-checklist.md) | Completo | Criterios de release por phase gate |
 | [Protocolo de Handoff SDLC](../HANDOFF-PROTOCOL.md) | Completo | Transferencia de conocimiento, contexto y artefactos entre fases SDLC y agentes |
-| [Backlog CLI Histórico](./CLI-BACKLOG.md) | Reemplazado | Preservado para trazabilidad; seguimiento activo en el [tablero de gaps](../../../../governance/standards/vision/gap-tracking.md) |
+| [Backlog CLI Histórico](./CLI-BACKLOG.md) | Reemplazado | Preservado para trazabilidad; seguimiento activo en el [tablero de gaps](../../../../../reference/core/control-center/gaps/gap-tracking.md) |
 
 ---
 
@@ -72,7 +72,7 @@ Gates universales pre-release, gates específicos de Fase 1-3, suite de pruebas 
 
 ## Documentos Relacionados
 
-- [Visión Maestra de Producto Evolith](../../../../product-suite/vision/evolith-product-vision-master.md)
-- [Ruleset ACL](../../../../../rulesets/acl/anti-corruption-layer.rules.json)
-- [Reglas de Límite Open-Core](../../../../../rulesets/governance/open-core-boundary.rules.json)
-- [Scorecards Ejecutivos](../../../../../rulesets/governance/executive-scorecards.rules.json)
+- [Visión Maestra de Producto Evolith](../../../../suite/vision/evolith-product-vision-master.md)
+- [Ruleset ACL](../../../../../src/rulesets/acl/anti-corruption-layer.rules.json)
+- [Reglas de Límite Open-Core](../../../../../src/rulesets/governance/open-core-boundary.rules.json)
+- [Scorecards Ejecutivos](../../../../../src/rulesets/governance/executive-scorecards.rules.json)

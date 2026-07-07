@@ -3,7 +3,7 @@
 > **Navegación bilingüe:** [English Version](./reference-model.md)
 > **Padre:** [UMS Reference Hub](./README.es.md)
 
-Cómo Evolith trata a UMS como modelo de referencia aplicado oficial, y qué elementos arquitectónicos son elegibles para herencia hacia el Core. Para la narrativa original (historia, deprecación del sandbox To-Do), ver [`ums-reference-model.es.md`](../../knowledge/demo/ums-reference-model.es.md).
+Cómo Evolith trata a UMS como modelo de referencia aplicado oficial, y qué elementos arquitectónicos son elegibles para herencia hacia el Core. Para la narrativa original (historia, deprecación del sandbox To-Do), ver [`ums-reference-model.es.md`](../../research/demo/ums-reference-model.es.md).
 
 ---
 
@@ -51,7 +51,7 @@ Nada fuera de estos cuatro puede entrar al Core solo porque UMS lo use. Las sele
 
 Cuando un patrón de UMS se considera para el Core:
 
-1. **Sponsor** registra un Adoption Case en [adoption-cases.es.md](../../knowledge/adoption-cases.es.md).
+1. **Sponsor** registra un Adoption Case en [adoption-cases.es.md](../../research/adoption-cases.es.md).
 2. **Architecture Board** revisa contra criterios de universalidad y neutralidad de runtime.
 3. Si se acepta → se redacta un ADR Evolith; la fuente se referencia como evidencia, no como autoridad.
 4. Cuando el ADR queda `Accepted`, el patrón entra al Core.

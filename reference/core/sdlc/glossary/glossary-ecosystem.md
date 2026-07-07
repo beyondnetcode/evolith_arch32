@@ -39,11 +39,11 @@ These three concepts are distinct and MUST NOT be conflated:
 - **Maturity Level (F1–F5)** — a position on the progressive architecture axis: F1 `modular-monolith` → F2 `distributed-modules` → F3 `microservices` (F4/F5 extend operational maturity). This answers *"how decomposed/mature is the architecture?"*
 - **Topology** — an architecture profile across dimensions (progressive-axis, execution, integration, data, ai), e.g. `event-driven`, `serverless`, `edge-computing`, `data-mesh`, `agentic-ai`. This answers *"what architecture shape does the system have?"*
 
-The topology contract removed the word "phase" (see [`topology-dimensions.md`](../architecture/topologies/topology-dimensions.md) "Legacy Phase → Canonical Topology"). Legacy `--phase f1..f5` in the CLI is DEPRECATED; the shared resolver maps F1/F2/F3 to `--topology modular-monolith`/`distributed-modules`/`microservices`.
+The topology contract removed the word "phase" (see [`topology-dimensions.md`](../../architecture/topologies/topology-dimensions.md) "Legacy Phase → Canonical Topology"). Legacy `--phase f1..f5` in the CLI is DEPRECATED; the shared resolver maps F1/F2/F3 to `--topology modular-monolith`/`distributed-modules`/`microservices`.
 
 ## Surface consistency
 
 Core-API, SmartCLI, MCP, and Tracker all share this single canonical model. The same SDLC phase model (governance names `f1`..`f5` / Conception & Discovery … Delivery & Operations, surfaced operationally as the `discovery`/`design`/`construction`/`qa`/`release` keys), the same canonical gate IDs (`gate-f1`…`gate-f5`), the same topology profiles, and the same ruleset/OPA parity flow are exposed across every surface — the REST routes under `/api/v1`, the CLI validators, the governed MCP tools, and the Tracker interfaces. Governance must not fragment into per-surface or per-topology variants; all surfaces resolve through the universal output envelope and the same Core contracts.
 
 ---
-[Back to Governance Hub](./README.md)
+[Back to Governance Hub](../README.md)

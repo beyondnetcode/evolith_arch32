@@ -3,7 +3,7 @@
 > **Bilingual navigation:** [Versión en Español](./reference-model.es.md)
 > **Parent:** [UMS Reference Hub](./README.md)
 
-How Evolith treats UMS as the official applied reference model, and which architectural elements are eligible for inheritance into Core. For the source narrative (history, deprecation of the To-Do sandbox), see [`ums-reference-model.md`](../../knowledge/demo/ums-reference-model.md).
+How Evolith treats UMS as the official applied reference model, and which architectural elements are eligible for inheritance into Core. For the source narrative (history, deprecation of the To-Do sandbox), see [`ums-reference-model.md`](../../research/demo/ums-reference-model.md).
 
 ---
 
@@ -51,7 +51,7 @@ Anything outside these four cannot enter Core simply because UMS uses it. Runtim
 
 When a UMS pattern is being considered for Core:
 
-1. **Sponsor** files an Adoption Case at [adoption-cases.md](../../knowledge/adoption-cases.md).
+1. **Sponsor** files an Adoption Case at [adoption-cases.md](../../research/adoption-cases.md).
 2. **Architecture Board** reviews against universality and runtime-neutrality criteria.
 3. If accepted → an Evolith ADR is drafted; the source is referenced as evidence, not authority.
 4. Once the ADR is `Accepted`, the pattern enters Core.

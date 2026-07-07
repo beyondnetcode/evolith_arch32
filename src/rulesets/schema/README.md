@@ -106,7 +106,7 @@ To validate a hand-authored `*.rules.json` entry, point `-s` at `rulesets/schema
 | Validation passes locally but Core rejects the rule | Validated against the wrong schema | Individual entries use `rule-definition.schema.json`; whole category files use `ruleset-sdlc`/`ruleset-standard`. |
 | `$ref` resolution error | Relative `$ref` resolved from the wrong base | Run Ajv from the repo root so sibling schema `$ref`s resolve. |
 
-Authoring standards and the contribution workflow for schemas live in the repo-root [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
+Authoring standards and the contribution workflow for schemas live in the repo-root [`CONTRIBUTING.md`](../../../CONTRIBUTING.md).
 
 ---
 

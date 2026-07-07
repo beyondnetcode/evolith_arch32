@@ -12,4 +12,4 @@
 * **[0066-dotnet-lightweight-http-idempotency](./0066-dotnet-lightweight-http-idempotency.es.md)** — idempotencia IMemoryCache/IDistributedCache (complementa ADR-0063)
 
 ---
-[Volver al Nivel Superior](../README.es.md) | [Patrones Canónicos](../../canonical-patterns/README.es.md)
+[Volver al Nivel Superior](../README.es.md) | [Patrones Canónicos](../../patterns/README.es.md)

@@ -103,10 +103,10 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-293`](./gap-reference-catalog.md#gt-293) | executive-scorecards ruleset exists — rulesets/governance/executive-scorecards.rules.json | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-294`](./gap-reference-catalog.md#gt-294) | OPA policies for architecture — rulesets/architecture/opa | `Architecture` | Cross | P0 | S | `DONE` |
 | [`GT-336`](./gap-reference-catalog.md#gt-336) | SDK REST client missing /api prefix — all calls 404 | `SDK` | Cross | P0 | S | `DONE` |
-| [`MT-A01`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Ratify the Multi-Topology Reference Corpus ADR | `Governance` | Cross | P0 | S | `DONE` |
-| [`MT-A02`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Freeze the root-taxonomy decision: no root `/topologies/` without superseding ADR | `Governance` | Cross | P0 | S | `DONE` |
-| [`MT-A03`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `reference/core/architecture/topologies/` as the canonical human-readable topology corpus | `Taxonomy` | Cross | P0 | S | `DONE` |
-| [`MT-A04`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `rulesets/topologies/` as the canonical executable topology rules location | `Rulesets` | Cross | P0 | S | `DONE` |
+| [`MT-A01`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Ratify the Multi-Topology Reference Corpus ADR | `Governance` | Cross | P0 | S | `DONE` |
+| [`MT-A02`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Freeze the root-taxonomy decision: no root `/topologies/` without superseding ADR | `Governance` | Cross | P0 | S | `DONE` |
+| [`MT-A03`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `reference/core/architecture/topologies/` as the canonical human-readable topology corpus | `Taxonomy` | Cross | P0 | S | `DONE` |
+| [`MT-A04`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `rulesets/topologies/` as the canonical executable topology rules location | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-401`](./gap-reference-catalog.md#gt-401) | **InteractionAdapterPort formalized:** Missing or not fully integrated single governed entry point for interfaces. | `Agent Runtime` | Cross | P0 | M | `DONE` |
 | [`GT-402`](./gap-reference-catalog.md#gt-402) | **Smart CLI adapter:** Formalize CLI as interaction adapter to prevent bypassing runtime layer. | `Smart CLI` | Cross | P0 | M | `DONE` |
 | [`GT-412`](./gap-reference-catalog.md#gt-412) | **Runtime Policy Enforcement Guarantee:** Governance policies are absent in runtime execution flows. | `Agent Runtime` | Cross | P0 | M | `DONE` |
@@ -141,10 +141,10 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-359`](./gap-reference-catalog.md#gt-359) | Define `SatelliteManifest` ingestion contract schema | `Core Domain` | Cross | P0 | M | `DONE` |
 | [`GT-363`](./gap-reference-catalog.md#gt-363) | GitHub API integration client — secure auth + repo operations (create, configure, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `DONE` |
 | [`GT-376`](./gap-reference-catalog.md#gt-376) | R0 — Core stateless evaluator decision + documentation reconciliation (finalize ADR-0101; correct ADR-0100 Decision 1, UP-002 d2/d7; supersede prior design entity/repo sections; `GateDecision`→`CoreGateVerdict`, `'WAIVED'`→`Verdict.WAIVE`) | `Cross` | Cross | P0 | M | `DONE` |
-| [`MT-A05`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create `topology-manifest.schema.json` | `Schema` | Cross | P0 | M | `DONE` |
-| [`MT-A06`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add manifest validation to documentation and ruleset gates | `Harness` | Cross | P0 | M | `DONE` |
-| [`MT-A07`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Define the dimensional topology model | `Architecture` | Cross | P0 | M | `DONE` |
-| [`MT-A08`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Preserve F1/F2/F3 as the `progressive-axis` compatibility model | `Architecture` | Cross | P0 | M | `DONE` |
+| [`MT-A05`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create `topology-manifest.schema.json` | `Schema` | Cross | P0 | M | `DONE` |
+| [`MT-A06`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add manifest validation to documentation and ruleset gates | `Harness` | Cross | P0 | M | `DONE` |
+| [`MT-A07`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Define the dimensional topology model | `Architecture` | Cross | P0 | M | `DONE` |
+| [`MT-A08`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Preserve F1/F2/F3 as the `progressive-axis` compatibility model | `Architecture` | Cross | P0 | M | `DONE` |
 | [`GT-29`](./gap-reference-catalog.md#gt-29) | Native/OPA rule execution parity | `Core Domain` | F1 | P0 | L | `DONE` |
 | [`GT-48`](./gap-reference-catalog.md#gt-48) | Restore the normative CLI coverage threshold | `CLI` | F0 | P0 | L | `DONE` |
 | [`GT-62`](./gap-reference-catalog.md#gt-62) | Autenticación API Key + JWT (OWASP API1/2/5) | `BFF API` | F2 | P0 | L | `DONE` |
@@ -206,8 +206,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-340`](./gap-reference-catalog.md#gt-340) | core-api test harness sets WORKSPACE_ROOT — npm test 105/105 (was 23 failing) | `Core API` | Cross | P1 | S | `DONE` |
 | [`GT-341`](./gap-reference-catalog.md#gt-341) | product-inventory generator repointed to packages/mcp-server (was 0/0/0, now 27/9/8) | `Governance` | Cross | P1 | S | `DONE` |
 | [`GT-361`](./gap-reference-catalog.md#gt-361) | Apply ADR-0073 standard envelope to Core API evaluation responses | `Core API` | Cross | P1 | S | `DONE` |
-| [`MT-A09`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Topology Hub | `Documentation` | Cross | P1 | S | `DONE` |
-| [`MT-A10`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Rulesets Topologies Hub | `Rulesets` | Cross | P1 | S | `DONE` |
+| [`MT-A09`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Topology Hub | `Documentation` | Cross | P1 | S | `DONE` |
+| [`MT-A10`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Rulesets Topologies Hub | `Rulesets` | Cross | P1 | S | `DONE` |
 | [`GT-05`](./gap-reference-catalog.md#gt-05) | MCP SDK Streamable HTTP transport | `CLI` | F2 | P1 | M | `DONE` |
 | [`GT-10`](./gap-reference-catalog.md#gt-10) | Phase 4 security scan content validation | `CLI` | F3 | P1 | M | `DONE` |
 | [`GT-11`](./gap-reference-catalog.md#gt-11) | Phase 5 observability and rollback validation | `CLI` | F3 | P1 | M | `DONE` |
@@ -291,13 +291,13 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-369`](./gap-reference-catalog.md#gt-369) | `SatelliteRecord` entity + persistent registry model in Core Domain | `Core Domain` | Cross | P1 | M | `DONE` |
 | [`GT-380`](./gap-reference-catalog.md#gt-380) | R4 — OPA `input.context` aligned to `EvaluationContext`: `dod.rego` re-anchored off `input.story.*`; story artifacts removed from canonical gates (`gate-f2/f3.json`) + legacy `phase-gates` rulesets + validators/MCP; `EvaluationContext` facts threaded into the OPA input. **AC1 (no Rego reads `input.story`; no Core gate depends on stories) ✓ + AC2 (Native+OPA parity 0 drift; OPA suite green) ✓.** Verdict-consumption of threaded facts split to `GT-382`. | `OPA` | Cross | P1 | M | `DONE` |
 | [`GT-382`](./gap-reference-catalog.md#gt-382) | R4 follow-on — context-aware OPA verdicts were inert (`OpaEvaluator` matched `v.id === rule.id`, discarding threaded `DOD-*`/`CB-*`/`PG-*`). Fixed: prefix-match for the 3 context-aware rule ids (collision-free) + `dod_declared`/`spec_declared` "no-facts→no-opinion" guards so the FS path cannot newly fail; phase-gates already no-ops without `input.gate`. Adversarially reviewed (MERGE, no blockers); opa-parity CI green. Follow-up (non-blocking): wasm install path vs `corePath` resolution — see chip. | `OPA` | Cross | P1 | M | `DONE` |
-| [`MT-A11`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the modular-monolith topology profile | `Architecture` | Cross | P1 | M | `DONE` |
-| [`MT-A12`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the distributed-modules topology profile | `Architecture` | Cross | P1 | M | `DONE` |
-| [`MT-A13`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the microservices topology profile | `Architecture` | Cross | P1 | M | `DONE` |
-| [`MT-A14`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create draft profiles for serverless and edge computing | `Architecture` | Cross | P1 | M | `DONE` |
-| [`MT-A15`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create draft profiles for event-driven and data mesh | `Architecture` | Cross | P1 | M | `DONE` |
-| [`MT-A16`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create draft profile for agentic AI | `Architecture` | Cross | P1 | M | `DONE` |
-| [`MT-A23`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Preserve CLI `--arch-level F1/F2/F3` compatibility | `Smart CLI` | Cross | P1 | M | `DONE` |
+| [`MT-A11`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the modular-monolith topology profile | `Architecture` | Cross | P1 | M | `DONE` |
+| [`MT-A12`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the distributed-modules topology profile | `Architecture` | Cross | P1 | M | `DONE` |
+| [`MT-A13`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the microservices topology profile | `Architecture` | Cross | P1 | M | `DONE` |
+| [`MT-A14`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create draft profiles for serverless and edge computing | `Architecture` | Cross | P1 | M | `DONE` |
+| [`MT-A15`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create draft profiles for event-driven and data mesh | `Architecture` | Cross | P1 | M | `DONE` |
+| [`MT-A16`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create draft profile for agentic AI | `Architecture` | Cross | P1 | M | `DONE` |
+| [`MT-A23`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Preserve CLI `--arch-level F1/F2/F3` compatibility | `Smart CLI` | Cross | P1 | M | `DONE` |
 | [`GT-19`](./gap-reference-catalog.md#gt-19) | Incremental hexagonal migration of `core/` | `CLI` | Cross | P1 | L | `DONE` |
 | [`GT-20`](./gap-reference-catalog.md#gt-20) | ADR content backfill to authoring standard | `Governance` | Cross | P1 | L | `DONE` |
 | [`GT-57`](./gap-reference-catalog.md#gt-57) | Incomplete MCP tooling and validation implementation | `CLI` | F2 | P1 | L | `DONE` |
@@ -325,14 +325,14 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-351`](./gap-reference-catalog.md#gt-351) | infra-providers: WebhookAdapter hardened (timeout+retry+SSRF guard) +5 tests +jest harness; README/coverage/deriveCategory remain | `Infra` | Cross | P1 | L | `DONE` |
 | [`GT-367`](./gap-reference-catalog.md#gt-367) | Core API satellite registry endpoints — CRUD `/api/v1/satellites` (register, list, get, update, deregister, evaluate, sync) | `Core API` | Cross | P1 | L | `DONE` |
 | [`GT-379`](./gap-reference-catalog.md#gt-379) | R3 — Architectural engines (Architecture/Blueprint/Topology/Checkpoint/Recommendation; `DecisionRecommendation` `binding:false`; checkpoint does not mutate state) | `Core Domain` | Cross | P1 | L | `DONE` |
-| [`MT-A17`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Move or mirror current F1/F2/F3 rules into topology-aware ruleset discovery | `Core Domain` | Cross | P1 | L | `DONE` |
-| [`MT-A18`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Native + OPA starter rules for serverless | `Rulesets` | Cross | P1 | L | `DONE` |
-| [`MT-A19`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Native + OPA starter rules for event-driven | `Rulesets` | Cross | P1 | L | `DONE` |
-| [`MT-A20`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Native + OPA starter rules for agentic AI | `Rulesets` | Cross | P1 | L | `DONE` |
-| [`MT-A21`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add shared topology catalog and manifest resolver in Core Domain | `Core Domain` | Cross | P1 | L | `DONE` |
-| [`MT-A22`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add CLI `--topology` support to validation | `Smart CLI` | Cross | P1 | L | `DONE` |
-| [`MT-A24`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add MCP topology resources and tools | `MCP Services` | Cross | P1 | L | `DONE` |
-| [`MT-A25`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Service CORE API topology discovery and validation endpoints | `Core API` | Cross | P1 | L | `DONE` |
+| [`MT-A17`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Move or mirror current F1/F2/F3 rules into topology-aware ruleset discovery | `Core Domain` | Cross | P1 | L | `DONE` |
+| [`MT-A18`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Native + OPA starter rules for serverless | `Rulesets` | Cross | P1 | L | `DONE` |
+| [`MT-A19`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Native + OPA starter rules for event-driven | `Rulesets` | Cross | P1 | L | `DONE` |
+| [`MT-A20`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Native + OPA starter rules for agentic AI | `Rulesets` | Cross | P1 | L | `DONE` |
+| [`MT-A21`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add shared topology catalog and manifest resolver in Core Domain | `Core Domain` | Cross | P1 | L | `DONE` |
+| [`MT-A22`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add CLI `--topology` support to validation | `Smart CLI` | Cross | P1 | L | `DONE` |
+| [`MT-A24`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add MCP topology resources and tools | `MCP Services` | Cross | P1 | L | `DONE` |
+| [`MT-A25`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Service CORE API topology discovery and validation endpoints | `Core API` | Cross | P1 | L | `DONE` |
 | [`GT-228`](./gap-reference-catalog.md#gt-228) | Create agent orchestration engine for BMAD workflows | `Governance` | Cross | P1 | XL | `DONE` |
 | [`GT-229`](./gap-reference-catalog.md#gt-229) | Complete Dual-Engine TypeScript evaluator (R-25 compliance) | `Core Domain` | Cross | P1 | XL | `DONE` |
 | [`GT-331`](./gap-reference-catalog.md#gt-331) | MCP binary version read from package.json (was hardcoded 1.0.0) | `MCP Server` | Cross | P2 | XS | `DONE` |
@@ -429,7 +429,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-370`](./gap-reference-catalog.md#gt-370) | Inheritance propagation mechanism — push Core updates to registered satellites (trigger + dry-run + approval) | `Cross` | Cross | P2 | M | `DONE` |
 | [`GT-372`](./gap-reference-catalog.md#gt-372) | Audit trail per satellite — what was inherited vs customized, by whom, when | `Core Domain` | Cross | P2 | M | `DONE` |
 | [`GT-373`](./gap-reference-catalog.md#gt-373) | Tracker integration — satellite registration, state sync, and satellite management UI | `Cross` | Cross | P2 | M | `DONE` |
-| [`MT-A26`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Update navigation, indexes, validation evidence, and tracker status | `Documentation` | Cross | P2 | M | `DONE` |
+| [`MT-A26`](../audits/multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Update navigation, indexes, validation evidence, and tracker status | `Documentation` | Cross | P2 | M | `DONE` |
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | `Governance` | Cross | P2 | L | `DONE` |
 | [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | `Governance` | Cross | P2 | L | `DONE` |
 | [`GT-36`](./gap-reference-catalog.md#gt-36) | Machine-readable rules language coverage | `Governance` | Cross | P2 | L | `DONE` |
@@ -543,7 +543,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 **Wave 2026-07-03 (UltraCode harness productization audit):** Re-ran the Winston/UltraCode audit path after cleanup. Coverage evidence stayed strong (`run-evolith-deep.mjs --markdown` = 9/9 solid; `run-evolith-topology.mjs --markdown` = 168/168 across all 8 accepted topologies), but real Agent Runtime productization surfaced 6 new open gaps: `GT-413` (real OPA adapter cannot evaluate because schemas are loaded as OPA data), `GT-414` (policyRef namespace drift), `GT-415` (public-surface/SemVer drift; agent-runtime tests red), `GT-416` (`.harness` manifest exposes only 7 governed capabilities out of 110 executable script/playbook assets), `GT-417` (semantic tracking fails because several `DONE` gaps lack closure registry records and checked criteria), and `GT-418` (self-improving loop seeded but not enforced in CI/Agent Runtime). Both rule engines were checked: Native/topology audits pass, while the runtime OPA CLI path fails closed until `GT-413`/`GT-414` are fixed.
 
-**Ordering:** one table, ordered by status (pending then completed), then criticality (`P0` → `P1` → `P2` → `P3`), then complexity (`XS` → `S` → `M` → `L` → `XL`). `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
+**Ordering:** one table, ordered by status (pending then completed), then criticality (`P0` → `P1` → `P2` → `P3`), then complexity (`XS` → `S` → `M` → `L` → `XL`). `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](../audits/multi-topology-reference-corpus-implementation-plan.md).
 
 ---
-[Back to Vision Index](./README.md)
+[Back to Vision Index](../README.md)

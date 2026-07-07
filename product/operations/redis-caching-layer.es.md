@@ -150,7 +150,7 @@ Si Redis no está disponible al inicio o se vuelve inalcanzable:
 
 - [Pila de Observabilidad](./README.md)
 - [Configuración del Collector OTel](./otel/otel-collector-config.yaml)
-- [ADR-0014: Cluster de Caché Redis de 4 Niveles](../architecture/adrs/core/0046-unified-observability-tracecontext.md)
+- [ADR-0014: Cluster de Caché Redis de 4 Niveles](../../reference/core/architecture/adrs/core/0046-unified-observability-tracecontext.md)
 
 ---
 [Volver a Operaciones](./README.md)

@@ -96,15 +96,15 @@ No toda observación se convierte en estándar. Algunas permanecen específicas 
 | UMS | 5 | 40+ | Fuente de la mayoría de ADRs core |
 | (otros productos) | — | — | Contactar al Architecture Board para registrar |
 
-> **Nota:** Si tu producto ha usado estándares de Evolith y contribuido una lección, envía un caso usando la [plantilla ADR](../governance/sdlc/04-artifact-templates/adr-template.es.md).
+> **Nota:** Si tu producto ha usado estándares de Evolith y contribuido una lección, envía un caso usando la [plantilla ADR](../../reference/core/sdlc/04-artifact-templates/adr-template.es.md).
 
 ---
 
 ## Cómo Contribuir un Caso
 
 1. Identifica un patrón en tu producto que otros podrían reutilizar
-2. Verifica si un ADR ya cubre el tema en la [Matriz de ADRs](../architecture/adrs/adr-matrix.es.md)
-3. Si no existe ADR, redacta uno usando la [Plantilla ADR](../governance/sdlc/04-artifact-templates/adr-template.es.md)
+2. Verifica si un ADR ya cubre el tema en la [Matriz de ADRs](../../reference/core/architecture/adrs/adr-matrix.es.md)
+3. Si no existe ADR, redacta uno usando la [Plantilla ADR](../../reference/core/sdlc/04-artifact-templates/adr-template.es.md)
 4. Envía al Architecture Board para revisión
 5. Si es aceptado, tu ADR se vuelve canónico y tu producto aparece en esta matriz
 
@@ -118,4 +118,4 @@ No toda observación se convierte en estándar. Algunas permanecen específicas 
 
 ---
 
-*Parte de [Frontera de Referencia UMS](../knowledge/demo/demo-vs-reference.es.md)*
+*Parte de [Frontera de Referencia UMS](./demo/demo-vs-reference.es.md)*

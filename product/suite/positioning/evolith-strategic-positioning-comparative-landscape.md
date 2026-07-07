@@ -303,7 +303,7 @@ Review requirements:
 - **Parent vision:** [Evolith Product Vision Master](../vision/evolith-product-vision-master.md)
 - **Related governance:** [Architectural Directives](../architecture/architectural-directives.md)
 - **Evolution plan:** [Evolutionary Strategy Roadmap](../strategy/evolutionary-strategy-roadmap.md)
-- **Operational maturity:** [Maturity Assessment](../../governance/standards/vision/maturity-assessment.md)
+- **Operational maturity:** [Maturity Assessment](../../../reference/core/control-center/maturity-reports/maturity-assessment.md)
 - **Vision index:** [Index of Vision](./README.md)
 
 ---

@@ -129,7 +129,7 @@ Ready-to-use code blueprints that implement the ADRs above. Adopt directly in sa
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
-| [Canonical Patterns Index](../canonical-patterns/README.md) | Index of runtime-specific reference implementations | Reuse proven implementations | Pattern index | No |
+| [Canonical Patterns Index](../patterns/README.md) | Index of runtime-specific reference implementations | Reuse proven implementations | Pattern index | No |
 
 ---
 
@@ -153,7 +153,7 @@ Decisions tied to resilient mobile clients.
 | ADR-AI-004 | AGENTS.md as mandatory artifact (level 1+) | Make agent rules explicit | AI ADR (proposed) | No |
 | ADR-AI-005 | Human-in-the-Loop policy for irreversible operations | Keep humans accountable | AI ADR (proposed) | No |
 
--> [View all AI ADRs](../../sdlc/standards/ai-augmented/06-adrs/README.md)
+-> [View all AI ADRs](../../foundations/common-rules/ai-augmented/06-adrs/README.md)
 
 ---
 

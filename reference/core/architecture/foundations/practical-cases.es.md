@@ -3,7 +3,7 @@
 > **Navegación bilingüe:** [English version](./practical-cases.md)
 
 Cada caso siguiente está ejercitado por la suite de pruebas
-([`agent-runtime.service.spec.ts`](../../../packages/agent-runtime/src/__tests__/agent-runtime.service.spec.ts))
+([`agent-runtime.service.spec.ts`](../../../../src/packages/agent-runtime/src/__tests__/agent-runtime.service.spec.ts))
 y/o el ejemplo ejecutable. Todos usan los valores por defecto de
 `createAgentRuntime()` salvo que se indique.
 

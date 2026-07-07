@@ -95,6 +95,6 @@ Backfill histórico: Abordar la tensión arquitectónica donde context is unavai
 Ninguna explícitamente enlazada.
 
 ---
-[Volver al Índice](../../../../MASTER_INDEX.es.md)
+[Volver al Índice](../../../control-center/taxonomy/MASTER_INDEX.es.md)
 
 > **Agent Signature:** Architect Agent

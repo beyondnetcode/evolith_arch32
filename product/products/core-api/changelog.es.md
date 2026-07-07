@@ -1,6 +1,6 @@
 # Evolith Core API — Registro de Cambios
 
-Todos los cambios notables en la API de Evolith Core se documentarán en este archivo. Este proyecto se adhiere a Semantic Versioning y cumple con los plazos de deprecación/sunset definidos en [ADR-0098](../../architecture/adrs/core/0098-rest-uri-versioning-deprecation-policy.es.md).
+Todos los cambios notables en la API de Evolith Core se documentarán en este archivo. Este proyecto se adhiere a Semantic Versioning y cumple con los plazos de deprecación/sunset definidos en [ADR-0098](../../../reference/core/architecture/adrs/core/0098-rest-uri-versioning-deprecation-policy.es.md).
 
 > **Navegación Bilingüe:** [English Version](./changelog.md)
 
@@ -9,7 +9,7 @@ Todos los cambios notables en la API de Evolith Core se documentarán en este ar
 ## [1.1.0] - 2026-06-21
 
 ### Características
-- **Conformidad de Envelope (GT-155):** Todos los controladores REST cumplen con el envelope unificado `{success, data, meta}` definido en [ADR-0073](../../architecture/adrs/core/0073-unified-cli-output-contract.md).
+- **Conformidad de Envelope (GT-155):** Todos los controladores REST cumplen con el envelope unificado `{success, data, meta}` definido en [ADR-0073](../../../reference/core/architecture/adrs/core/0073-unified-cli-output-contract.md).
 - **Versionado de URI (GT-159):** Configuración del versionado de URI de NestJS y decoración explícita de todos los controladores REST para operar bajo las rutas `/api/v1/`.
 - **Ciclo de Deprecación (GT-159):** Se agregó un decorador de ruta `@Deprecated()` global e interceptor que inyecta dinámicamente cabeceras de `Deprecation` y `Sunset` según RFC 8594 y RFC 9745.
 

@@ -1,6 +1,6 @@
 # Arquitectura AI-Augmented
 
-> **Navegación Bilingüe:** [English Version](../../standards/ai-augmented/README.md)
+> **Navegación Bilingüe:** [English Version](./README.md)
 
 ## ¿Qué es esto?
 Esta sección es una extensión opcional de la arquitectura de referencia corporativa para equipos que buscan incorporar agentes de IA. Define estándares para aprovechar agentes autónomos, engineering de harness, Model Context Protocol (MCP), herramientas y flujos de trabajo aumentados por IA.

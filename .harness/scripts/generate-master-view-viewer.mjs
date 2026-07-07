@@ -37,6 +37,8 @@ const html = `<!doctype html>
   .bar button:active { background:rgba(255,255,255,.28); }
   .bar .z { min-width:60px; text-align:center; color:#c7d3df; font-size:13px; font-variant-numeric:tabular-nums; }
   .bar .sep { width:1px; height:24px; background:rgba(255,255,255,.14); margin:0 3px; }
+  .bar button.dl { width:auto; padding:0 11px; font-size:12px; font-weight:700; letter-spacing:.4px; }
+  .bar button.dl:disabled { opacity:.5; cursor:default; }
   .caption { position:fixed; bottom:12px; left:14px; z-index:10; color:#9fb0c0; font-size:12px; }
   .caption b { color:#cfe0ee; font-weight:600; }
   .hint { position:fixed; bottom:12px; right:14px; z-index:10; color:#66788a; font-size:11px; }
@@ -57,9 +59,12 @@ const html = `<!doctype html>
   <span class="sep"></span>
   <button data-a="fit" title="Fit to screen (0)" aria-label="Fit to screen">⤢</button>
   <button data-a="full" title="Fullscreen (F)" aria-label="Fullscreen">⛶</button>
+  <span class="sep"></span>
+  <button data-a="png" class="dl" title="Download PNG (2×)" aria-label="Download PNG">PNG</button>
+  <button data-a="jpg" class="dl" title="Download JPG (2×)" aria-label="Download JPG">JPG</button>
 </div>
 <div class="caption">Evolith · E2E Product Vision — <b>drag</b> to pan · <b>scroll</b> to zoom</div>
-<div class="hint">+ / −  zoom · 0 fit · F fullscreen</div>
+<div class="hint">+ / −  zoom · 0 fit · F fullscreen · PNG / JPG to save</div>
 
 <script>
 (function () {
@@ -98,12 +103,49 @@ const html = `<!doctype html>
   stage.addEventListener('dblclick', function (e) { var r = rect(); zoomAt(e.clientX - r.left, e.clientY - r.top, 1.6); });
 
   function full() { if (!document.fullscreenElement) { (document.documentElement.requestFullscreen || function () {}).call(document.documentElement); } else { document.exitFullscreen(); } }
+
+  function exportRaster(mime, ext, scale) {
+    scale = scale || 2;
+    var btns = document.querySelectorAll('.bar button.dl');
+    function reset() { btns.forEach(function (b) { b.disabled = false; }); }
+    btns.forEach(function (b) { b.disabled = true; });
+    var clone = svg.cloneNode(true);
+    clone.style.width = ''; clone.style.height = '';
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    clone.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    clone.setAttribute('width', W * scale);
+    clone.setAttribute('height', H * scale);
+    var data = new XMLSerializer().serializeToString(clone);
+    var url = URL.createObjectURL(new Blob([data], { type: 'image/svg+xml;charset=utf-8' }));
+    var img = new Image();
+    img.onload = function () {
+      var c = document.createElement('canvas'); c.width = W * scale; c.height = H * scale;
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      c.toBlob(function (blob) {
+        if (!blob) { alert('Export failed.'); reset(); return; }
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'evolith-e2e-product-vision.' + ext;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+        reset();
+      }, mime, mime === 'image/jpeg' ? 0.95 : undefined);
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); alert('Could not render the image for export.'); reset(); };
+    img.src = url;
+  }
+
   document.querySelector('.bar').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return; var a = b.dataset.a, r = rect();
     if (a === 'in') zoomAt(r.width / 2, r.height / 2, 1.25);
     else if (a === 'out') zoomAt(r.width / 2, r.height / 2, 1 / 1.25);
     else if (a === 'fit') fit();
     else if (a === 'full') full();
+    else if (a === 'png') exportRaster('image/png', 'png');
+    else if (a === 'jpg') exportRaster('image/jpeg', 'jpg');
   });
   window.addEventListener('keydown', function (e) {
     var r = rect();

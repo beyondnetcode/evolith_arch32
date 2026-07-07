@@ -242,31 +242,31 @@ El PRD se considera aprobado cuando se cumplan todos los siguientes criterios:
 
 | ID | Criterio | Responsable | Estado |
 | :-- | :------- | :---------- | :----- |
-| CA-01 | Resumen ejecutivo validado por el Aprobador de Negocio | Evolith Product Board | ☑ |
-| CA-02 | Métricas de éxito con valor inicial y meta medibles | Evolith Product Board | ☑ |
-| CA-03 | Alcance (5.1 y 5.2) firmado por Producto | Evolith Product Board | ☑ |
-| CA-04 | Reglas de negocio (RN-01 a RN-14) sin contradicciones y priorizadas | Evolith Product Board | ☑ |
-| CA-05 | Restricciones y supuestos revisados y aprobados | Evolith Product Board | ☑ |
-| CA-06 | Actores y casos de uso validados con stakeholders clave | Evolith Product Board | ☑ |
-| CA-07 | Funcionalidades (F-01 a F-15) con criterios de aceptación individuales | Evolith Product Board | ☑ |
-| CA-08 | Reglas de negocio priorizadas (Must/Should/Could) | Evolith Product Board | ☑ |
-| CA-09 | Glosario completo y consistente con el dominio | Evolith Product Board | ☑ |
+| CA-01 | Resumen ejecutivo validado por el Aprobador de Negocio | Evolith Product Board | [x] |
+| CA-02 | Métricas de éxito con valor inicial y meta medibles | Evolith Product Board | [x] |
+| CA-03 | Alcance (5.1 y 5.2) firmado por Producto | Evolith Product Board | [x] |
+| CA-04 | Reglas de negocio (RN-01 a RN-14) sin contradicciones y priorizadas | Evolith Product Board | [x] |
+| CA-05 | Restricciones y supuestos revisados y aprobados | Evolith Product Board | [x] |
+| CA-06 | Actores y casos de uso validados con stakeholders clave | Evolith Product Board | [x] |
+| CA-07 | Funcionalidades (F-01 a F-15) con criterios de aceptación individuales | Evolith Product Board | [x] |
+| CA-08 | Reglas de negocio priorizadas (Must/Should/Could) | Evolith Product Board | [x] |
+| CA-09 | Glosario completo y consistente con el dominio | Evolith Product Board | [x] |
 
 ### 11.2 Producto
 
 | ID | Criterio | Responsable | Estado |
 | :-- | :------- | :---------- | :----- |
-| CA-10 | Prototipos/wireframes aprobados por UX | UX Designer | ☑ |
-| CA-11 | Plan de datos maestros (mapeo, calidad, limpieza) aprobado | Evolith Product Board | ☑ |
+| CA-10 | Prototipos/wireframes aprobados por UX | UX Designer | [x] |
+| CA-11 | Plan de datos maestros (mapeo, calidad, limpieza) aprobado | Evolith Product Board | [x] |
 
 ### 11.3 Proyecto
 
 | ID | Criterio | Responsable | Estado |
 | :-- | :------- | :---------- | :----- |
-| CA-12 | Cronograma del MVP con hitos y fecha de entrega definidos | PM del proyecto | ☑ |
-| CA-13 | Recursos de desarrollo asignados y disponibles | PM del proyecto | ☑ |
-| CA-14 | Plan de testing (unitario, integración, aceptación) definido | QA Lead | ☑ |
-| CA-15 | Plan de despliegue y capacitación definido | PM del proyecto | ☑ |
+| CA-12 | Cronograma del MVP con hitos y fecha de entrega definidos | PM del proyecto | [x] |
+| CA-13 | Recursos de desarrollo asignados y disponibles | PM del proyecto | [x] |
+| CA-14 | Plan de testing (unitario, integración, aceptación) definido | QA Lead | [x] |
+| CA-15 | Plan de despliegue y capacitación definido | PM del proyecto | [x] |
 
 ## 12. Glosario
 

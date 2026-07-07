@@ -2,7 +2,7 @@
 
 > **Navegación Bilingüe:** [English Version](./phase-4-rc-stamp.md)
 
-**Fase:** [04 — Validación y QA](../README.es.md#fase-04-validación-y-qa)
+**Fase:** [04 — Validación y QA](../README.es.md)
 **Compuerta de Salida:** RC Stamped (ver gate `phase: 4` en [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json))
 **Audiencia Principal:** QA/SDET, Tech Lead, Product Owner, Security Engineer
 **Rol Responsable:** QA Lead
@@ -70,7 +70,7 @@ Los waivers no pueden saltar vulnerabilidades de seguridad High/Critical sin esa
 
 - Test Summary Report firmado.
 - Tag de RC inmutable trazable al commit de build.
-- Autorización para entrar a [Fase 5 — Entrega y Operaciones](../README.es.md#fase-05-entrega-y-operaciones) y ejecutar el [Playbook de Release Zero-Downtime](./zero-downtime-release.es.md).
+- Autorización para entrar a [Fase 5 — Entrega y Operaciones](../README.es.md) y ejecutar el [Playbook de Release Zero-Downtime](./zero-downtime-release.es.md).
 
 ---
 

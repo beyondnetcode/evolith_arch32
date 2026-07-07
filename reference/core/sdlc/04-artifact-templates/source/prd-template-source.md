@@ -177,31 +177,31 @@ The PRD is considered approved when all the following criteria are met:
 
 | ID | Criterion | Owner | Status |
 | :-- | :-------- | :---- | :----- |
-| CA-01 | Executive summary validated by Business Approver | [Name] | ☐ |
-| CA-02 | Success metrics with measurable initial value and target | [Name] | ☐ |
-| CA-03 | Scope (5.1 and 5.2) signed by Product | [Name] | ☐ |
-| CA-04 | Business rules (RN-01 to RN-XX) without contradictions and prioritized | [Name] | ☐ |
-| CA-05 | Constraints and assumptions reviewed and approved | [Name] | ☐ |
-| CA-06 | Actors and use cases validated with key stakeholders | [Name] | ☐ |
-| CA-07 | Functionalities (F-01 to F-XX) with individual acceptance criteria | [Name] | ☐ |
-| CA-08 | Business rules prioritized (Must/Should/Could) | [Name] | ☐ |
-| CA-09 | Glossary complete and consistent with the domain | [Name] | ☐ |
+| CA-01 | Executive summary validated by Business Approver | [Name] | [ ] |
+| CA-02 | Success metrics with measurable initial value and target | [Name] | [ ] |
+| CA-03 | Scope (5.1 and 5.2) signed by Product | [Name] | [ ] |
+| CA-04 | Business rules (RN-01 to RN-XX) without contradictions and prioritized | [Name] | [ ] |
+| CA-05 | Constraints and assumptions reviewed and approved | [Name] | [ ] |
+| CA-06 | Actors and use cases validated with key stakeholders | [Name] | [ ] |
+| CA-07 | Functionalities (F-01 to F-XX) with individual acceptance criteria | [Name] | [ ] |
+| CA-08 | Business rules prioritized (Must/Should/Could) | [Name] | [ ] |
+| CA-09 | Glossary complete and consistent with the domain | [Name] | [ ] |
 
 ### 11.2 Product
 
 | ID | Criterion | Owner | Status |
 | :-- | :-------- | :---- | :----- |
-| CA-10 | Prototypes/wireframes approved by UX | [Name] | ☐ |
-| CA-11 | Master data plan (mapping, quality, cleanup) approved | [Name] | ☐ |
+| CA-10 | Prototypes/wireframes approved by UX | [Name] | [ ] |
+| CA-11 | Master data plan (mapping, quality, cleanup) approved | [Name] | [ ] |
 
 ### 11.3 Project
 
 | ID | Criterion | Owner | Status |
 | :-- | :-------- | :---- | :----- |
-| CA-12 | MVP timeline with milestones and delivery date defined | [Name] | ☐ |
-| CA-13 | Development resources assigned and available | [Name] | ☐ |
-| CA-14 | Testing plan (unit, integration, acceptance) defined | [Name] | ☐ |
-| CA-15 | Deployment and training plan defined | [Name] | ☐ |
+| CA-12 | MVP timeline with milestones and delivery date defined | [Name] | [ ] |
+| CA-13 | Development resources assigned and available | [Name] | [ ] |
+| CA-14 | Testing plan (unit, integration, acceptance) defined | [Name] | [ ] |
+| CA-15 | Deployment and training plan defined | [Name] | [ ] |
 
 ## 12. Glossary
 

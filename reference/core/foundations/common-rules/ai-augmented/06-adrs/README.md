@@ -1,6 +1,6 @@
 # AI-Augmented Architecture ADR Index
 
-> **Bilingual Navigation:** Versión en Español
+> **Bilingual Navigation:** [Versión en Español](./README.es.md)
 
 
 Historical log of binding technical decisions for the optional Agentic AI subsystem.

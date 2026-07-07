@@ -1,6 +1,6 @@
 # AI-Augmented Architecture
 
-> **Bilingual Navigation:** Versión en Español
+> **Bilingual Navigation:** [Versión en Español](./README.es.md)
 
 
 ## What is this?

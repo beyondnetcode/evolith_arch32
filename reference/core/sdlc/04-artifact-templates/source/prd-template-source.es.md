@@ -177,31 +177,31 @@ El PRD se considera aprobado cuando se cumplan todos los siguientes criterios:
 
 | ID | Criterio | Responsable | Estado |
 | :-- | :------- | :---------- | :----- |
-| CA-01 | Resumen ejecutivo validado por el Aprobador de Negocio | [Nombre] | ☐ |
-| CA-02 | Métricas de éxito con valor inicial y meta medibles | [Nombre] | ☐ |
-| CA-03 | Alcance (5.1 y 5.2) firmado por Producto | [Nombre] | ☐ |
-| CA-04 | Reglas de negocio (RN-01 a RN-XX) sin contradicciones y priorizadas | [Nombre] | ☐ |
-| CA-05 | Restricciones y supuestos revisados y aprobados | [Nombre] | ☐ |
-| CA-06 | Actores y casos de uso validados con stakeholders clave | [Nombre] | ☐ |
-| CA-07 | Funcionalidades (F-01 a F-XX) con criterios de aceptación individuales | [Nombre] | ☐ |
-| CA-08 | Reglas de negocio priorizadas (Must/Should/Could) | [Nombre] | ☐ |
-| CA-09 | Glosario completo y consistente con el dominio | [Nombre] | ☐ |
+| CA-01 | Resumen ejecutivo validado por el Aprobador de Negocio | [Nombre] | [ ] |
+| CA-02 | Métricas de éxito con valor inicial y meta medibles | [Nombre] | [ ] |
+| CA-03 | Alcance (5.1 y 5.2) firmado por Producto | [Nombre] | [ ] |
+| CA-04 | Reglas de negocio (RN-01 a RN-XX) sin contradicciones y priorizadas | [Nombre] | [ ] |
+| CA-05 | Restricciones y supuestos revisados y aprobados | [Nombre] | [ ] |
+| CA-06 | Actores y casos de uso validados con stakeholders clave | [Nombre] | [ ] |
+| CA-07 | Funcionalidades (F-01 a F-XX) con criterios de aceptación individuales | [Nombre] | [ ] |
+| CA-08 | Reglas de negocio priorizadas (Must/Should/Could) | [Nombre] | [ ] |
+| CA-09 | Glosario completo y consistente con el dominio | [Nombre] | [ ] |
 
 ### 11.2 Producto
 
 | ID | Criterio | Responsable | Estado |
 | :-- | :------- | :---------- | :----- |
-| CA-10 | Prototipos/wireframes aprobados por UX | [Nombre] | ☐ |
-| CA-11 | Plan de datos maestros (mapeo, calidad, limpieza) aprobado | [Nombre] | ☐ |
+| CA-10 | Prototipos/wireframes aprobados por UX | [Nombre] | [ ] |
+| CA-11 | Plan de datos maestros (mapeo, calidad, limpieza) aprobado | [Nombre] | [ ] |
 
 ### 11.3 Proyecto
 
 | ID | Criterio | Responsable | Estado |
 | :-- | :------- | :---------- | :----- |
-| CA-12 | Cronograma del MVP con hitos y fecha de entrega definidos | [Nombre] | ☐ |
-| CA-13 | Recursos de desarrollo asignados y disponibles | [Nombre] | ☐ |
-| CA-14 | Plan de testing (unitario, integración, aceptación) definido | [Nombre] | ☐ |
-| CA-15 | Plan de despliegue y capacitación definido | [Nombre] | ☐ |
+| CA-12 | Cronograma del MVP con hitos y fecha de entrega definidos | [Nombre] | [ ] |
+| CA-13 | Recursos de desarrollo asignados y disponibles | [Nombre] | [ ] |
+| CA-14 | Plan de testing (unitario, integración, aceptación) definido | [Nombre] | [ ] |
+| CA-15 | Plan de despliegue y capacitación definido | [Nombre] | [ ] |
 
 ## 12. Glosario
 

@@ -101,6 +101,11 @@ function cmdFreshness() {
         const abs = path.join(ROOT, a.file);
         ok = fs.existsSync(abs) && fs.readFileSync(abs, 'utf8').includes(a.target);
         if (!ok) console.log(`FAIL   pack ${pack.metadata.id} ${a.id}: symbol '${a.target}' not in ${a.file}`);
+      } else if (a.kind === 'executable-test') {
+        // Verificación estática: el test citado sigue existiendo. CI corre el suite aparte.
+        const abs = path.join(ROOT, a.file);
+        ok = fs.existsSync(abs) && fs.readFileSync(abs, 'utf8').includes(a.ref);
+        if (!ok) console.log(`FAIL   pack ${pack.metadata.id} ${a.id}: test '${a.ref}' not in ${a.file}`);
       }
       if (!ok && a.onDrift === 'fail') failed++;
     }

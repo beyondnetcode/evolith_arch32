@@ -10,14 +10,14 @@
 
 <br/>
 
-<a href="./reference/core/sdlc/assets/master-view.svg" title="Visión General del Producto Evolith E2E — clic para ampliar">
+<a href="./reference/core/sdlc/assets/master-view.svg" title="Abrir el diagrama vectorial a tamaño completo — zoom para analizar">
   <img src="./reference/core/sdlc/assets/master-view.svg"
        alt="Visión General del Producto Evolith E2E — Composición Gobernada, Core de evaluación stateless, SDLC federado de cinco fases"
        width="880"
        style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
 </a>
 
-<sub>↑ Visión General del Producto Evolith E2E — <i>clic para ampliar</i></sub>
+<sub>↑ Visión General del Producto Evolith E2E — diagrama vectorial · <b><a href="./reference/core/sdlc/assets/master-view.svg">abrir a tamaño completo para zoom</a></b> · tip: <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+clic para abrirlo en una pestaña nueva</sub>
 
 </div>
 

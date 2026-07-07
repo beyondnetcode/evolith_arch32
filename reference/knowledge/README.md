@@ -4,7 +4,7 @@ Conocimiento **del producto**, canónico y versionado, para que cualquier agente
 (Claude / ChatGPT / Gemini / BMAD / Copilot / MCP) "arranque experto" sin depender
 de memoria conversacional. *Memoria para el producto, no para la IA.*
 
-Diseño completo: [`reference/specs/architecture/knowledge-os-proposal.md`](../specs/architecture/knowledge-os-proposal.md) (en el satélite Tracker).
+Diseño completo: `reference/specs/architecture/knowledge-os-proposal.md` (en el satélite Tracker).
 
 ## Zonas
 

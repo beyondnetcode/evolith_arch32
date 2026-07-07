@@ -13,7 +13,7 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Mayor problema ahora:** `Cross` concentra el mayor riesgo abierto ponderado (3 pendientes, 2 P0). Ataca esa concentración antes de ampliar alcance.
 
-**Dónde atacar primero:** [GT-447](./gap-reference-catalog.es.md#gt-447), [GT-435](./gap-reference-catalog.es.md#gt-435).
+**Dónde atacar primero:** [GT-447](../gaps/gap-reference-catalog.es.md#gt-447), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435).
 
 ## Diagnóstico Estratégico
 
@@ -25,18 +25,18 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-447](./gap-reference-catalog.es.md#gt-447), [GT-435](./gap-reference-catalog.es.md#gt-435) |
-| 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-447](./gap-reference-catalog.es.md#gt-447), [GT-435](./gap-reference-catalog.es.md#gt-435), [GT-448](./gap-reference-catalog.es.md#gt-448) |
-| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-442](./gap-reference-catalog.es.md#gt-442) |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-442](./gap-reference-catalog.es.md#gt-442), [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-437](./gap-reference-catalog.es.md#gt-437), [GT-438](./gap-reference-catalog.es.md#gt-438), [GT-439](./gap-reference-catalog.es.md#gt-439), [GT-441](./gap-reference-catalog.es.md#gt-441), [GT-446](./gap-reference-catalog.es.md#gt-446), [GT-448](./gap-reference-catalog.es.md#gt-448) |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-444](./gap-reference-catalog.es.md#gt-444), [GT-445](./gap-reference-catalog.es.md#gt-445), [GT-443](./gap-reference-catalog.es.md#gt-443) |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-447](../gaps/gap-reference-catalog.es.md#gt-447), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) |
+| 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-447](../gaps/gap-reference-catalog.es.md#gt-447), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
+| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-442](../gaps/gap-reference-catalog.es.md#gt-442) |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-442](../gaps/gap-reference-catalog.es.md#gt-442), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-437](../gaps/gap-reference-catalog.es.md#gt-437), [GT-438](../gaps/gap-reference-catalog.es.md#gt-438), [GT-439](../gaps/gap-reference-catalog.es.md#gt-439), [GT-441](../gaps/gap-reference-catalog.es.md#gt-441), [GT-446](../gaps/gap-reference-catalog.es.md#gt-446), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-445](../gaps/gap-reference-catalog.es.md#gt-445), [GT-443](../gaps/gap-reference-catalog.es.md#gt-443) |
 
 ## Bloqueadores Actuales
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
-| [GT-447](./gap-reference-catalog.es.md#gt-447) | **MILESTONE — Objetivo 1: stack completo FUNCIONAL EN LOCAL (Docker/Kubernetes).** Levantar el chain completo — Tracker BFF/API → Evolith Core (CLI, core-api, MCP, agent-runtime) — con adapters REALES (no stubs), integración real Tracker↔Core evaluate(), y la UI (tracker-web) conectada a las URLs LOCALES. El refactor de diseño de la UI se difiere a Fase 2. Bring-up de un comando (docker-compose / kind). Reúne el subset M1 de GT-435: GT-438 (adapters reales), GT-446 (integración Tracker + DB local), GT-436 (publicar paquetes 1.0.0 reales en npm — cuando estén genuinamente listos), GT-439 (auth fail-closed + tenant guard), GT-440 (observabilidad), compose/k8s local. Solo HITL real / pen-test relajados para local. | `Cross` | P0/L |
-| [GT-435](./gap-reference-catalog.es.md#gt-435) | EPIC — Camino a Producción del diagrama conceptual de la suite (Core hubs → Hermes/Agent Runtime → Exposición CLI/API/MCP → Tracker → satélites). Evaluación 2026-07-04: Core ~95% listo (L4); el único bloqueante de CD activo es GT-324; la distribución está bloqueada por la deprecación a 0.0.1; el agent-runtime usa stubs por defecto; el Tracker es un scaffold .NET real pero desfasado del diseño actual de Core. **Umbrella — descompuesto en GT-436…GT-446 (+ GT-324), organizado en dos milestones: GT-447 (Objetivo 1 — funcional local) y GT-448 (Objetivo 2 — producción).** | `Cross` | P0/XL |
+| [GT-447](../gaps/gap-reference-catalog.es.md#gt-447) | **MILESTONE — Objetivo 1: stack completo FUNCIONAL EN LOCAL (Docker/Kubernetes).** Levantar el chain completo — Tracker BFF/API → Evolith Core (CLI, core-api, MCP, agent-runtime) — con adapters REALES (no stubs), integración real Tracker↔Core evaluate(), y la UI (tracker-web) conectada a las URLs LOCALES. El refactor de diseño de la UI se difiere a Fase 2. Bring-up de un comando (docker-compose / kind). Reúne el subset M1 de GT-435: GT-438 (adapters reales), GT-446 (integración Tracker + DB local), GT-436 (publicar paquetes 1.0.0 reales en npm — cuando estén genuinamente listos), GT-439 (auth fail-closed + tenant guard), GT-440 (observabilidad), compose/k8s local. Solo HITL real / pen-test relajados para local. | `Cross` | P0/L |
+| [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) | EPIC — Camino a Producción del diagrama conceptual de la suite (Core hubs → Hermes/Agent Runtime → Exposición CLI/API/MCP → Tracker → satélites). Evaluación 2026-07-04: Core ~95% listo (L4); el único bloqueante de CD activo es GT-324; la distribución está bloqueada por la deprecación a 0.0.1; el agent-runtime usa stubs por defecto; el Tracker es un scaffold .NET real pero desfasado del diseño actual de Core. **Umbrella — descompuesto en GT-436…GT-446 (+ GT-324), organizado en dos milestones: GT-447 (Objetivo 1 — funcional local) y GT-448 (Objetivo 2 — producción).** | `Cross` | P0/XL |
 
 ## Métricas
 
@@ -55,17 +55,17 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Cross` | 3 | 2 | 1 | [GT-447](./gap-reference-catalog.es.md#gt-447), [GT-435](./gap-reference-catalog.es.md#gt-435), [GT-448](./gap-reference-catalog.es.md#gt-448) |
-| `Infra` | 3 | 0 | 3 | [GT-442](./gap-reference-catalog.es.md#gt-442), [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-437](./gap-reference-catalog.es.md#gt-437) |
-| `Agent Runtime` | 2 | 0 | 2 | [GT-438](./gap-reference-catalog.es.md#gt-438), [GT-441](./gap-reference-catalog.es.md#gt-441) |
-| `Security` | 2 | 0 | 1 | [GT-439](./gap-reference-catalog.es.md#gt-439), [GT-444](./gap-reference-catalog.es.md#gt-444) |
-| `Tracker` | 1 | 0 | 1 | [GT-446](./gap-reference-catalog.es.md#gt-446) |
+| `Cross` | 3 | 2 | 1 | [GT-447](../gaps/gap-reference-catalog.es.md#gt-447), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
+| `Infra` | 3 | 0 | 3 | [GT-442](../gaps/gap-reference-catalog.es.md#gt-442), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-437](../gaps/gap-reference-catalog.es.md#gt-437) |
+| `Agent Runtime` | 2 | 0 | 2 | [GT-438](../gaps/gap-reference-catalog.es.md#gt-438), [GT-441](../gaps/gap-reference-catalog.es.md#gt-441) |
+| `Security` | 2 | 0 | 1 | [GT-439](../gaps/gap-reference-catalog.es.md#gt-439), [GT-444](../gaps/gap-reference-catalog.es.md#gt-444) |
+| `Tracker` | 1 | 0 | 1 | [GT-446](../gaps/gap-reference-catalog.es.md#gt-446) |
 
 ## Fuente y Regla de Actualización
 
-Este resumen se genera desde [Tablero de Seguimiento de Gaps](./gap-tracking.es.md) y [Reconciliación de Madurez](./maturity-reconciliation.json). No editar a mano.
+Este resumen se genera desde [Tablero de Seguimiento de Gaps](../gaps/gap-tracking.es.md) y [Reconciliación de Madurez](./maturity-reconciliation.json). No editar a mano.
 
 El hook pre-commit regenera y agrega al commit `executive-summary.md` y `executive-summary.es.md`. El hook pre-push vuelve a generar y bloquea el push si el resumen cambia, para que la mejora estratégica viaje dentro del commit correcto.
 
 ---
-[Volver al Hub de Visión](./README.es.md)
+[Volver al Hub de Visión](../README.md)

@@ -13,7 +13,7 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 **Biggest problem now:** `Cross` carries the highest weighted open risk (3 open, 2 P0). Attack that concentration before expanding scope.
 
-**Where to attack first:** [GT-447](./gap-reference-catalog.md#gt-447), [GT-435](./gap-reference-catalog.md#gt-435).
+**Where to attack first:** [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435).
 
 ## Strategic Diagnosis
 
@@ -25,18 +25,18 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-447](./gap-reference-catalog.md#gt-447), [GT-435](./gap-reference-catalog.md#gt-435) |
-| 2 | Highest-risk area | `Cross` has the largest weighted open load. | [GT-447](./gap-reference-catalog.md#gt-447), [GT-435](./gap-reference-catalog.md#gt-435), [GT-448](./gap-reference-catalog.md#gt-448) |
-| 3 | Quick wins | High criticality with XS/S complexity. | [GT-442](./gap-reference-catalog.md#gt-442) |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-442](./gap-reference-catalog.md#gt-442), [GT-324](./gap-reference-catalog.md#gt-324), [GT-437](./gap-reference-catalog.md#gt-437), [GT-438](./gap-reference-catalog.md#gt-438), [GT-439](./gap-reference-catalog.md#gt-439), [GT-441](./gap-reference-catalog.md#gt-441), [GT-446](./gap-reference-catalog.md#gt-446), [GT-448](./gap-reference-catalog.md#gt-448) |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-444](./gap-reference-catalog.md#gt-444), [GT-445](./gap-reference-catalog.md#gt-445), [GT-443](./gap-reference-catalog.md#gt-443) |
+| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435) |
+| 2 | Highest-risk area | `Cross` has the largest weighted open load. | [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
+| 3 | Quick wins | High criticality with XS/S complexity. | [GT-442](../gaps/gap-reference-catalog.md#gt-442) |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-442](../gaps/gap-reference-catalog.md#gt-442), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-437](../gaps/gap-reference-catalog.md#gt-437), [GT-438](../gaps/gap-reference-catalog.md#gt-438), [GT-439](../gaps/gap-reference-catalog.md#gt-439), [GT-441](../gaps/gap-reference-catalog.md#gt-441), [GT-446](../gaps/gap-reference-catalog.md#gt-446), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-445](../gaps/gap-reference-catalog.md#gt-445), [GT-443](../gaps/gap-reference-catalog.md#gt-443) |
 
 ## Current Blockers
 
 | ID | Attack | Component | Effort |
 |---|---|---|---|
-| [GT-447](./gap-reference-catalog.md#gt-447) | **MILESTONE — Objective 1: full stack FUNCTIONAL LOCALLY (Docker/Kubernetes).** Bring up the whole chain — Tracker BFF/API → Evolith Core (CLI, core-api, MCP, agent-runtime) — with REAL adapters (not stubs), real Tracker↔Core evaluate() integration, and the UI (tracker-web) connected to the LOCAL URLs. UI design refactor is deferred to Phase 2. One-command bring-up (docker-compose / kind). Gathers the M1 subset of GT-435: GT-438 (real adapters), GT-446 (Tracker integration + local DB), GT-436 (publish real 1.0.0 packages to npm — when genuinely ready), GT-439 (fail-closed auth + tenant guard), GT-440 (observability), local compose/k8s. Only real HITL / pen-test relaxed for local. | `Cross` | P0/L |
-| [GT-435](./gap-reference-catalog.md#gt-435) | EPIC — Road to Production of the conceptual suite diagram (Core hubs → Hermes/Agent Runtime → Exposure CLI/API/MCP → Tracker → satellites). Assessment 2026-07-04: Core ~95% ready (L4); the sole active CD blocker is GT-324; distribution blocked by the 0.0.1 package deprecation; agent-runtime defaults to stubs; Tracker is a real .NET scaffold but lagging the current Core design. **Umbrella — decomposed into GT-436…GT-446 (+ GT-324), organized under two milestones: GT-447 (Objective 1 — local functional) and GT-448 (Objective 2 — production).** | `Cross` | P0/XL |
+| [GT-447](../gaps/gap-reference-catalog.md#gt-447) | **MILESTONE — Objective 1: full stack FUNCTIONAL LOCALLY (Docker/Kubernetes).** Bring up the whole chain — Tracker BFF/API → Evolith Core (CLI, core-api, MCP, agent-runtime) — with REAL adapters (not stubs), real Tracker↔Core evaluate() integration, and the UI (tracker-web) connected to the LOCAL URLs. UI design refactor is deferred to Phase 2. One-command bring-up (docker-compose / kind). Gathers the M1 subset of GT-435: GT-438 (real adapters), GT-446 (Tracker integration + local DB), GT-436 (publish real 1.0.0 packages to npm — when genuinely ready), GT-439 (fail-closed auth + tenant guard), GT-440 (observability), local compose/k8s. Only real HITL / pen-test relaxed for local. | `Cross` | P0/L |
+| [GT-435](../gaps/gap-reference-catalog.md#gt-435) | EPIC — Road to Production of the conceptual suite diagram (Core hubs → Hermes/Agent Runtime → Exposure CLI/API/MCP → Tracker → satellites). Assessment 2026-07-04: Core ~95% ready (L4); the sole active CD blocker is GT-324; distribution blocked by the 0.0.1 package deprecation; agent-runtime defaults to stubs; Tracker is a real .NET scaffold but lagging the current Core design. **Umbrella — decomposed into GT-436…GT-446 (+ GT-324), organized under two milestones: GT-447 (Objective 1 — local functional) and GT-448 (Objective 2 — production).** | `Cross` | P0/XL |
 
 ## Metrics
 
@@ -55,17 +55,17 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Cross` | 3 | 2 | 1 | [GT-447](./gap-reference-catalog.md#gt-447), [GT-435](./gap-reference-catalog.md#gt-435), [GT-448](./gap-reference-catalog.md#gt-448) |
-| `Infra` | 3 | 0 | 3 | [GT-442](./gap-reference-catalog.md#gt-442), [GT-324](./gap-reference-catalog.md#gt-324), [GT-437](./gap-reference-catalog.md#gt-437) |
-| `Agent Runtime` | 2 | 0 | 2 | [GT-438](./gap-reference-catalog.md#gt-438), [GT-441](./gap-reference-catalog.md#gt-441) |
-| `Security` | 2 | 0 | 1 | [GT-439](./gap-reference-catalog.md#gt-439), [GT-444](./gap-reference-catalog.md#gt-444) |
-| `Tracker` | 1 | 0 | 1 | [GT-446](./gap-reference-catalog.md#gt-446) |
+| `Cross` | 3 | 2 | 1 | [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
+| `Infra` | 3 | 0 | 3 | [GT-442](../gaps/gap-reference-catalog.md#gt-442), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-437](../gaps/gap-reference-catalog.md#gt-437) |
+| `Agent Runtime` | 2 | 0 | 2 | [GT-438](../gaps/gap-reference-catalog.md#gt-438), [GT-441](../gaps/gap-reference-catalog.md#gt-441) |
+| `Security` | 2 | 0 | 1 | [GT-439](../gaps/gap-reference-catalog.md#gt-439), [GT-444](../gaps/gap-reference-catalog.md#gt-444) |
+| `Tracker` | 1 | 0 | 1 | [GT-446](../gaps/gap-reference-catalog.md#gt-446) |
 
 ## Source and Refresh Rule
 
-This summary is generated from the [Gap Tracking Board](./gap-tracking.md) and [Maturity Reconciliation](./maturity-reconciliation.json). Do not edit it by hand.
+This summary is generated from the [Gap Tracking Board](../gaps/gap-tracking.md) and [Maturity Reconciliation](./maturity-reconciliation.json). Do not edit it by hand.
 
 The pre-commit hook regenerates and stages `executive-summary.md` and `executive-summary.es.md`. The pre-push hook regenerates the same files and blocks the push if they changed, so the strategic improvement travels in the correct commit.
 
 ---
-[Back to Vision Hub](./README.md)
+[Back to Vision Hub](../README.md)

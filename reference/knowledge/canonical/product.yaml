@@ -1,0 +1,26 @@
+# Evolith Core — Product Identity (canonical, M0 seed)
+# Zona canónica: única fuente de verdad, revisable en PR. Cadencia larga, sin oráculo.
+apiVersion: evolith.dev/knowledge/v1
+kind: ProductIdentity
+metadata:
+  id: evolith-core
+  owner: "@winston"
+  reviewBy: "2027-01-06"        # identidad cambia poco → revisión anual
+spec:
+  name: Evolith Core
+  role: root-authority
+  statement: >
+    Evolith Core es el repositorio raíz y la autoridad de reglas/gobernanza.
+    Expone su dominio a través del Core API Exposure Layer (ADR-0074) y nunca
+    es redefinido por sus satélites.
+  responsibilityModel: "Core defines. Providers execute. CLI and MCP evaluate. Tracker decides and audits."
+  exposure:
+    rest: "/api/v1 — REST-only, sin GraphQL/SSE (ADR-0074)"
+    mcp: "gateway MCP separado, @evolith/mcp-server (ADR-0069)"
+    contextEnvelope: "{ repository, revision, workspaceRef, operationId } — stateless (ADR-0080)"
+    determinism: "evaluación pura y determinista (ADR-0101)"
+  stacks: [core, nodejs, dotnet, android]                     # ADRs category-qualified
+  topologyDimensions: [progressive-axis, execution, integration, data, ai]
+  satellites:
+    - id: evolith-tracker
+      role: "SDLC governance control plane (decide + audita; único perímetro de authZ de negocio)"

@@ -2,100 +2,443 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://evolith.dev/schema/prd.schema.json",
   "title": "Product Requirements Document",
-  "description": "JSON Schema for validating Evolith PRD artifacts. Required in Phase 1 before design begins.",
+  "description": "JSON Schema for validating Evolith PRD artifacts. TMS-aligned format with 13 sections, MoSCoW prioritization, and business-only scope.",
   "type": "object",
-  "required": ["title", "productOwner", "date", "scope", "goals", "personas", "constraints", "nonFunctionalRequirements"],
+  "required": ["metadata", "executiveSummary", "contextAndProblem", "objectives", "scope", "actors", "functionalities", "businessRules", "constraintsAndAssumptions", "risks", "acceptanceCriteria", "glossary", "changeHistory"],
   "additionalProperties": false,
   "properties": {
-    "title": {
-      "type": "string",
-      "description": "PRD title clearly identifying the product or initiative."
+    "metadata": {
+      "type": "object",
+      "required": ["identifier", "product", "version", "status", "author"],
+      "additionalProperties": false,
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "PRD identifier, e.g. PRD-UMS-001.",
+          "pattern": "^PRD-[A-Z0-9]+-\\d{3}$"
+        },
+        "product": {
+          "type": "string",
+          "description": "Product or capability name."
+        },
+        "version": {
+          "type": "string",
+          "description": "Semantic version, e.g. 0.1.0-draft.",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-z]+)?$"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Draft", "In Review", "Approved", "Superseded"],
+          "default": "Draft"
+        },
+        "author": {
+          "type": "string",
+          "description": "Name of the Product Manager or author."
+        },
+        "businessApprover": {
+          "type": "string",
+          "description": "Name of the business approver. Leave blank until approval."
+        },
+        "approvalDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when PRD was approved. ISO 8601 format."
+        }
+      }
     },
-    "productOwner": {
-      "type": "string",
-      "description": "Name of the accountable Product Owner."
+    "executiveSummary": {
+      "type": "object",
+      "required": ["problemStatement", "proposedSolution", "mvpScope", "expectedBenefits", "deliveryPhases"],
+      "additionalProperties": false,
+      "properties": {
+        "problemStatement": {
+          "type": "string",
+          "description": "Business problem description focusing on volume, manual processes, waste, errors, and lack of traceability."
+        },
+        "proposedSolution": {
+          "type": "string",
+          "description": "Brief description of what the system does and how it solves the problem."
+        },
+        "mvpScope": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["category", "functionalities"],
+            "additionalProperties": false,
+            "properties": {
+              "category": { "type": "string" },
+              "functionalities": { "type": "string" }
+            }
+          },
+          "minItems": 1,
+          "description": "MVP functionalities organized by category."
+        },
+        "expectedBenefits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["benefit", "expectedValue"],
+            "additionalProperties": false,
+            "properties": {
+              "benefit": { "type": "string" },
+              "expectedValue": { "type": "string" }
+            }
+          },
+          "minItems": 1,
+          "description": "Expected benefits with measurable values."
+        },
+        "deliveryPhases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["phase", "deliverable", "timeline"],
+            "additionalProperties": false,
+            "properties": {
+              "phase": { "type": "string" },
+              "deliverable": { "type": "string" },
+              "timeline": { "type": "string" }
+            }
+          },
+          "minItems": 1,
+          "description": "Delivery phases with deliverables and timelines."
+        }
+      }
     },
-    "date": {
-      "type": "string",
-      "format": "date",
-      "description": "Date when PRD was approved. ISO 8601 format."
+    "contextAndProblem": {
+      "type": "object",
+      "required": ["currentContext", "identifiedProblems", "estimatedImpact", "strategicVision"],
+      "additionalProperties": false,
+      "properties": {
+        "currentContext": {
+          "type": "object",
+          "required": ["description"],
+          "additionalProperties": false,
+          "properties": {
+            "description": { "type": "string" },
+            "averageProcessTime": { "type": "string" },
+            "errorRate": { "type": "string" },
+            "volume": { "type": "string" }
+          }
+        },
+        "identifiedProblems": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["problem", "impact", "consequence"],
+            "additionalProperties": false,
+            "properties": {
+              "problem": { "type": "string" },
+              "impact": { "type": "string" },
+              "consequence": { "type": "string" }
+            }
+          },
+          "minItems": 1
+        },
+        "estimatedImpact": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["metric", "estimatedValue"],
+            "additionalProperties": false,
+            "properties": {
+              "metric": { "type": "string" },
+              "estimatedValue": { "type": "string" },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "strategicVision": {
+          "type": "string",
+          "description": "Why this product is key to business strategy and what it enables."
+        }
+      }
     },
-    "status": {
-      "type": "string",
-      "enum": ["Draft", "Under Review", "Approved", "Superseded"],
-      "default": "Draft"
+    "objectives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["objective", "metric", "initialValue", "target", "timeline"],
+        "additionalProperties": false,
+        "properties": {
+          "objective": { "type": "string" },
+          "metric": { "type": "string" },
+          "initialValue": { "type": "string" },
+          "target": { "type": "string" },
+          "timeline": { "type": "string" }
+        }
+      },
+      "minItems": 1,
+      "description": "Objectives with measurable metrics and targets."
     },
     "scope": {
       "type": "object",
-      "required": ["inScope", "outOfScope"],
+      "required": ["inScope", "outOfScope", "functionalScope"],
       "additionalProperties": false,
       "properties": {
         "inScope": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "object",
+            "required": ["category", "functionalities"],
+            "additionalProperties": false,
+            "properties": {
+              "category": { "type": "string" },
+              "functionalities": { "type": "string" }
+            }
+          },
           "minItems": 1
         },
         "outOfScope": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "object",
+            "required": ["phase", "functionality", "timeline"],
+            "additionalProperties": false,
+            "properties": {
+              "phase": { "type": "string" },
+              "functionality": { "type": "string" },
+              "timeline": { "type": "string" }
+            }
+          }
+        },
+        "functionalScope": {
+          "type": "string",
+          "description": "Description of MVP functional blocks and main actors."
         }
       }
     },
-    "goals": {
+    "actors": {
+      "type": "object",
+      "required": ["descriptions", "useCasesByActor", "interactionMatrix"],
+      "additionalProperties": false,
+      "properties": {
+        "descriptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["actor", "role", "responsibilities"],
+            "additionalProperties": false,
+            "properties": {
+              "actor": { "type": "string" },
+              "role": { "type": "string" },
+              "responsibilities": { "type": "string" }
+            }
+          },
+          "minItems": 1
+        },
+        "useCasesByActor": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["actor", "mvpUseCases", "futureUseCases"],
+            "additionalProperties": false,
+            "properties": {
+              "actor": { "type": "string" },
+              "mvpUseCases": { "type": "string" },
+              "futureUseCases": { "type": "string" }
+            }
+          }
+        },
+        "interactionMatrix": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["actor"],
+            "additionalProperties": false,
+            "properties": {
+              "actor": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "functionalities": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["goal", "metric"],
+        "required": ["id", "name", "description"],
         "additionalProperties": false,
         "properties": {
-          "goal": { "type": "string" },
-          "metric": { "type": "string" },
-          "targetDate": { "type": "string", "format": "date" }
+          "id": {
+            "type": "string",
+            "pattern": "^F-\\d{2}$",
+            "description": "Functionality ID, e.g. F-01."
+          },
+          "name": { "type": "string" },
+          "description": { "type": "string" }
         }
       },
       "minItems": 1,
-      "description": "Business goals with measurable metrics."
+      "description": "Detailed MVP functionalities."
     },
-    "personas": {
+    "businessRules": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "role", "painPoints"],
+        "required": ["id", "rule", "priority"],
         "additionalProperties": false,
         "properties": {
-          "name": { "type": "string" },
-          "role": { "type": "string" },
-          "painPoints": {
-            "type": "array",
-            "items": { "type": "string" },
-            "minItems": 1
+          "id": {
+            "type": "string",
+            "pattern": "^RN-\\d{2}$",
+            "description": "Rule ID, e.g. RN-01."
+          },
+          "rule": { "type": "string" },
+          "priority": {
+            "type": "string",
+            "enum": ["M", "S", "C"],
+            "description": "MoSCoW priority: M=Must, S=Should, C=Could."
           }
         }
       },
       "minItems": 1,
-      "description": "Target user personas for this product."
+      "description": "Business rules with MoSCoW prioritization."
     },
-    "constraints": {
-      "type": "array",
-      "items": { "type": "string" },
-      "description": "Technical, budget, timeline, and regulatory constraints."
+    "constraintsAndAssumptions": {
+      "type": "object",
+      "required": ["constraints", "assumptions"],
+      "additionalProperties": false,
+      "properties": {
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "constraint", "category"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^R-\\d{2}$"
+              },
+              "constraint": { "type": "string" },
+              "category": {
+                "type": "string",
+                "enum": ["Regulatory", "Technical", "Operational", "Dependency", "Scope"]
+              }
+            }
+          }
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "assumption", "riskIfNotMet"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^S-\\d{2}$"
+              },
+              "assumption": { "type": "string" },
+              "riskIfNotMet": { "type": "string" }
+            }
+          }
+        }
+      }
     },
-    "nonFunctionalRequirements": {
+    "risks": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["requirement", "category", "threshold"],
+        "required": ["id", "risk", "probability", "impact", "mitigation"],
         "additionalProperties": false,
         "properties": {
-          "requirement": { "type": "string" },
-          "category": {
+          "id": {
             "type": "string",
-            "enum": ["Performance", "Security", "Scalability", "Availability", "Compliance"]
+            "pattern": "^RS-\\d{2}$"
           },
-          "threshold": { "type": "string" }
+          "risk": { "type": "string" },
+          "probability": {
+            "type": "string",
+            "enum": ["Low", "Medium", "High"]
+          },
+          "impact": {
+            "type": "string",
+            "enum": ["Low", "Medium", "High"]
+          },
+          "mitigation": { "type": "string" }
         }
       },
-      "description": "NFRs with measurable thresholds."
+      "description": "Business risks with probability, impact, and mitigation."
+    },
+    "acceptanceCriteria": {
+      "type": "object",
+      "required": ["prdContent", "product", "project"],
+      "additionalProperties": false,
+      "properties": {
+        "prdContent": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "criterion", "owner", "status"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "pattern": "^CA-\\d{2}$" },
+              "criterion": { "type": "string" },
+              "owner": { "type": "string" },
+              "status": { "type": "string", "enum": ["Pending", "Approved"] }
+            }
+          }
+        },
+        "product": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "criterion", "owner", "status"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "pattern": "^CA-\\d{2}$" },
+              "criterion": { "type": "string" },
+              "owner": { "type": "string" },
+              "status": { "type": "string", "enum": ["Pending", "Approved"] }
+            }
+          }
+        },
+        "project": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "criterion", "owner", "status"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "pattern": "^CA-\\d{2}$" },
+              "criterion": { "type": "string" },
+              "owner": { "type": "string" },
+              "status": { "type": "string", "enum": ["Pending", "Approved"] }
+            }
+          }
+        }
+      },
+      "description": "PRD acceptance criteria organized by Content, Product, and Project."
+    },
+    "glossary": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["term", "definition"],
+        "additionalProperties": false,
+        "properties": {
+          "term": { "type": "string" },
+          "definition": { "type": "string" }
+        }
+      },
+      "description": "Domain glossary for semantic consistency."
+    },
+    "changeHistory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["version", "date", "author", "changes"],
+        "additionalProperties": false,
+        "properties": {
+          "version": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "author": { "type": "string" },
+          "changes": { "type": "string" }
+        }
+      },
+      "minItems": 1,
+      "description": "Change history with version, date, author, and description."
     },
     "relatedADRs": {
       "type": "array",

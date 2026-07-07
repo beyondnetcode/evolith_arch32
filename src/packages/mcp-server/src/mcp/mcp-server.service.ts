@@ -11,6 +11,7 @@ import {
   ReadResourceRequestSchema,
   ListPromptsRequestSchema,
   GetPromptRequestSchema,
+  isInitializeRequest,
 } from '@modelcontextprotocol/sdk/types.js';
 import { context as otelContext, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
 import promClient from 'prom-client';
@@ -68,6 +69,11 @@ export class McpServerService {
   private httpServer: http.Server | null = null;
   private apiKey?: string;
   private allowNoAuth = false;
+  // StreamableHTTP is multi-client: one transport + Server per MCP session.
+  // Keyed by the `mcp-session-id` the transport assigns on initialize. A single
+  // shared transport (the old bug) rejected every second client with HTTP 400
+  // "Server already initialized".
+  private readonly httpSessions = new Map<string, { transport: StreamableHTTPServerTransport; server: Server }>();
 
   constructor(
     private readonly registry: ToolRegistryService,
@@ -130,9 +136,18 @@ export class McpServerService {
   /** Whether mutations are pre-authorized via `mcp.allowMutations` in evolith.yaml. */
   async isMutationAllowed(dir?: string): Promise<boolean> {
     try {
-      const fs = await import('fs-extra');
+      // fs-extra is CommonJS; under the runtime's ESM build its members live on
+      // the `.default` export, so `(await import('fs-extra')).default` is required
+      // (a bare `await import('fs-extra')` would leave fs.pathExists undefined).
+      // Both fs-extra and yaml are CommonJS. Under the runtime's dynamic import
+      // their exports surface on `.default` (a bare namespace access such as
+      // `mod.parse` resolves to undefined for `yaml`), so normalize via `.default`
+      // with a fallback to the namespace for defensiveness across Node versions.
+      const fsMod = await import('fs-extra');
+      const fs = fsMod.default ?? fsMod;
       const path = await import('node:path');
-      const yaml = await import('yaml');
+      const yamlMod = await import('yaml');
+      const yaml = yamlMod.default ?? yamlMod;
       const configPath = path.join(dir || process.cwd(), 'evolith.yaml');
       if (await fs.pathExists(configPath)) {
         const config = yaml.parse(await fs.readFile(configPath, 'utf-8'));
@@ -205,12 +220,52 @@ export class McpServerService {
     }
   }
 
-  private async startHttp(port: number): Promise<void> {
-    ensureDefaultMetrics();
+  /**
+   * Create a fresh Server + StreamableHTTPServerTransport pair for a new MCP
+   * session and wire cleanup so the pair is dropped from {@link httpSessions}
+   * when the transport closes (client DELETE or disconnect). Each session gets
+   * its own Server so per-session request handlers/state never collide.
+   */
+  private createHttpSessionTransport(): StreamableHTTPServerTransport {
+    const server = this.buildServer();
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: () => generateCorrelationId(),
       enableJsonResponse: true,
+      onsessioninitialized: (sessionId: string) => {
+        this.httpSessions.set(sessionId, { transport, server });
+      },
     });
+    transport.onclose = () => {
+      const sid = transport.sessionId;
+      if (sid && this.httpSessions.get(sid)?.transport === transport) {
+        this.httpSessions.delete(sid);
+      }
+    };
+    // Fire-and-forget connect; handleRequest awaits transport readiness itself.
+    void server.connect(transport);
+    return transport;
+  }
+
+  /** Buffer a request body so we can inspect it (e.g. for `initialize`). */
+  private static readBody(req: http.IncomingMessage): Promise<unknown> {
+    return new Promise((resolve) => {
+      const chunks: Buffer[] = [];
+      req.on('data', (c) => chunks.push(Buffer.from(c)));
+      req.on('end', () => {
+        const raw = Buffer.concat(chunks).toString('utf-8');
+        if (!raw) return resolve(undefined);
+        try {
+          resolve(JSON.parse(raw));
+        } catch {
+          resolve(undefined);
+        }
+      });
+      req.on('error', () => resolve(undefined));
+    });
+  }
+
+  private async startHttp(port: number): Promise<void> {
+    ensureDefaultMetrics();
 
     this.httpServer = http.createServer((req, res) => {
       res.setHeader('Content-Security-Policy', "default-src 'none'");
@@ -265,26 +320,76 @@ export class McpServerService {
         },
       });
 
-      mcpContextStorage.run(context as McpUserContext, () => {
-        const otelGetter = {
-          get: (c: Record<string, string>, k: string) => c[k],
-          keys: (c: Record<string, string>) => Object.keys(c),
-        };
-        const extractedCtx = propagation.extract(otelContext.active(), req.headers as Record<string, string>, otelGetter);
-        const spanCtx = trace.setSpan(extractedCtx, span);
+      const dispatch = (
+        transport: StreamableHTTPServerTransport,
+        parsedBody?: unknown,
+      ): void => {
+        mcpContextStorage.run(context as McpUserContext, () => {
+          const otelGetter = {
+            get: (c: Record<string, string>, k: string) => c[k],
+            keys: (c: Record<string, string>) => Object.keys(c),
+          };
+          const extractedCtx = propagation.extract(otelContext.active(), req.headers as Record<string, string>, otelGetter);
+          const spanCtx = trace.setSpan(extractedCtx, span);
 
-        otelContext.with(spanCtx, () => {
-          transport
-            .handleRequest(req as Parameters<typeof transport.handleRequest>[0], res)
-            .catch((err: Error) => {
-              span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
-              this.logger.error(`MCP transport error: ${err.message}`);
-            })
-            .finally(() => {
-              span.end();
-            });
+          otelContext.with(spanCtx, () => {
+            transport
+              .handleRequest(req as Parameters<typeof transport.handleRequest>[0], res, parsedBody)
+              .catch((err: Error) => {
+                span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
+                this.logger.error(`MCP transport error: ${err.message}`);
+              })
+              .finally(() => {
+                span.end();
+              });
+          });
         });
-      });
+      };
+
+      const sendError = (status: number, message: string): void => {
+        span.setStatus({ code: SpanStatusCode.ERROR, message });
+        span.end();
+        if (!res.headersSent) {
+          res.writeHead(status, { 'Content-Type': 'application/json' });
+        }
+        res.end(JSON.stringify({
+          jsonrpc: '2.0',
+          error: { code: -32600, message: `Invalid Request: ${message}` },
+          id: null,
+        }));
+      };
+
+      const sessionId = req.headers['mcp-session-id'] as string | undefined;
+      const existing = sessionId ? this.httpSessions.get(sessionId) : undefined;
+
+      // Route requests that carry a known session id to their own transport.
+      if (existing) {
+        dispatch(existing.transport);
+        return;
+      }
+
+      // A session id was supplied but is unknown/expired → 404 (not 401; auth passed).
+      if (sessionId) {
+        sendError(404, 'Session not found');
+        return;
+      }
+
+      // No session id. A POST may be an `initialize` that mints a new session;
+      // anything else without a session is a protocol error.
+      if (req.method === 'POST') {
+        McpServerService.readBody(req).then((body) => {
+          if (isInitializeRequest(body)) {
+            const transport = this.createHttpSessionTransport();
+            dispatch(transport, body);
+          } else {
+            sendError(400, 'Server not initialized: missing mcp-session-id');
+          }
+        });
+        return;
+      }
+
+      // GET (SSE stream) / DELETE without a session id have nothing to attach to.
+      sendError(400, 'Missing mcp-session-id');
     });
 
     // Bind 0.0.0.0 by default so reverse proxies (Traefik/Coolify/k8s) can route
@@ -297,8 +402,6 @@ export class McpServerService {
       });
       this.httpServer!.on('error', reject);
     });
-
-    await this.server!.connect(transport);
   }
 
   /** The actual bound TCP port for the HTTP transport (useful for tests). */
@@ -309,6 +412,12 @@ export class McpServerService {
 
   async stop(): Promise<void> {
     await this.server?.close();
+    // Tear down every live HTTP session transport/server pair.
+    const sessions = Array.from(this.httpSessions.values());
+    this.httpSessions.clear();
+    await Promise.allSettled(
+      sessions.flatMap(({ transport, server }) => [transport.close(), server.close()]),
+    );
     if (this.httpServer) {
       await new Promise<void>((resolve) => this.httpServer!.close(() => resolve()));
       this.httpServer = null;

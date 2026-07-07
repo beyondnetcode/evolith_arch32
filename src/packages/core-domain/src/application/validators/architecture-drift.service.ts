@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { IFileSystem, ILogger } from '../../domain/interfaces';
+import { IFileSystem, ILogger, IConfigParser } from '../../domain/interfaces';
 import { RulesetValidatorService, ArchitectureValidationResult, ValidationIssue } from './ruleset-validator.service';
 
 export interface DriftReport {
@@ -50,12 +50,19 @@ export class ArchitectureDriftService {
   private readonly logger: ILogger;
   private readonly validator: RulesetValidatorService;
 
-  constructor(corePath?: string, options?: { fileSystem?: IFileSystem; logger?: ILogger; validator?: RulesetValidatorService }) {
+  constructor(corePath?: string, options?: { fileSystem?: IFileSystem; logger?: ILogger; configParser?: IConfigParser; validator?: RulesetValidatorService }) {
     if (!options?.fileSystem) throw new Error('IFileSystem is required');
     if (!options?.logger) throw new Error('ILogger is required');
     this.fs = options.fileSystem;
     this.logger = options.logger;
-    this.validator = options?.validator ?? new RulesetValidatorService({ fileSystem: this.fs, logger: this.logger });
+    // The default RulesetValidatorService requires a configParser; when no
+    // explicit validator is supplied, forward the configParser so the drift
+    // service is usable from the shared evaluator composition root.
+    this.validator = options?.validator ?? new RulesetValidatorService({
+      fileSystem: this.fs,
+      logger: this.logger,
+      configParser: options.configParser,
+    });
   }
 
   async detectDrift(options: DriftDetectionOptions): Promise<DriftReport> {

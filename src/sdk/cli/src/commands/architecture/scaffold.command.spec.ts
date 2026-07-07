@@ -34,6 +34,9 @@ describe('ScaffoldCommand', () => {
     (NxWorkspaceStrategy as jest.Mock).mockImplementation(() => mockStrategy);
     mockSpinner.mockReturnValue(mockSpinnerInstance);
     command = new ScaffoldCommand();
+    // By default assume a valid Nx workspace so the pre-spawn guard passes; the
+    // dedicated guard test below overrides this to exercise the failure path.
+    jest.spyOn(command as any, 'checkWorkspace').mockReturnValue(undefined);
   });
 
   describe('run', () => {
@@ -275,6 +278,23 @@ describe('ScaffoldCommand', () => {
       expect(envelope.success).toBe(false);
       expect(envelope.error.code).toBe('VALIDATION_FAILED');
       expect(envelope.error.message).toContain('--frontend');
+    });
+
+    it('should emit an actionable NOT_A_SATELLITE envelope when no workspace exists', async () => {
+      (command as any).checkWorkspace.mockReturnValue(
+        'No workspace found at /x/src. Run `smart-cli init` first.',
+      );
+
+      await command.run([], { format: 'json', frontend: 'react', orm: 'prisma', phase: '1' });
+
+      const envelope = JSON.parse(logSpy.mock.calls.find((c: any[]) => {
+        try { return JSON.parse(c[0]).success === false; } catch { return false; }
+      })![0]);
+      expect(envelope.success).toBe(false);
+      expect(envelope.error.code).toBe('NOT_A_SATELLITE');
+      expect(envelope.error.message).toContain('smart-cli init');
+      // The guard must short-circuit before any strategy work.
+      expect(mockStrategy.installDependencies).not.toHaveBeenCalled();
     });
 
     it('should emit error envelope on strategy failure', async () => {

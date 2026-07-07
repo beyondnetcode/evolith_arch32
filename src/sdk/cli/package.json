@@ -10,7 +10,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "tsc",
+    "copy-rulesets": "node scripts/copy-rulesets.js",
+    "copy-assets": "node scripts/copy-assets.js",
+    "prebuild": "npm run copy-rulesets",
+    "build": "tsc && npm run copy-assets",
     "start": "node dist/main.js",
     "start:dev": "tsc -w & node dist/main.js",
     "build:policy": "npm run build:policy --prefix ../../",
@@ -23,7 +26,7 @@
     "test:e2e": "NODE_OPTIONS=--max-old-space-size=4096 jest --config ./test/jest-e2e.json --runInBand --no-bail",
     "mcp:smoke": "npm run build && node examples/mcp-test.js",
     "lint": "eslint src --ext .ts",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run copy-rulesets && npm run build && npm run copy-assets"
   },
   "keywords": [
     "evolith",
@@ -53,6 +56,7 @@
   },
   "files": [
     "dist/",
+    "rulesets/",
     "shell/",
     "templates/",
     "README.md",

@@ -19,9 +19,10 @@
 import { Verdict } from '../domain/verdict/verdict';
 import { CANONICAL_PHASE_IDS, normalizePhaseId } from '../domain/sdlc/phase-id';
 import type { PhaseId } from '../domain/sdlc/phase-id';
-import type { IFileSystem, ILogger } from '../domain/interfaces';
+import type { IFileSystem, ILogger, IConfigParser } from '../domain/interfaces';
 import type { KindEvaluator } from './ports/kind-evaluator.port';
 import { ArchitectureDriftService } from '../application/validators/architecture-drift.service';
+import type { RulesetValidatorService } from '../application/validators/ruleset-validator.service';
 import { PhaseGateValidatorService } from '../application/validators/phase-gate-validator.service';
 import { EvaluateGateUseCase } from '../application/use-cases/evaluate-gate.use-case';
 import { ProposePhaseAdvanceUseCase } from '../application/use-cases/propose-phase-advance.use-case';
@@ -522,6 +523,20 @@ export function createPhaseArtifactKindEvaluator(
 export interface DefaultKindEvaluatorDeps {
   readonly fileSystem: IFileSystem;
   readonly logger: ILogger;
+  /**
+   * Config parser used by the architecture evaluator's default RulesetValidator.
+   * Optional for backward compatibility; when omitted the drift service falls back
+   * to its own default (which requires a parser and would otherwise throw). Every
+   * surface should pass its IConfigParser so the architecture kind evaluates.
+   */
+  readonly configParser?: IConfigParser;
+  /**
+   * A fully-wired RulesetValidatorService for the architecture evaluator. Prefer
+   * passing this: the default validator also needs an IRulesetRepository, whose
+   * concrete implementation lives outside core-domain (infra-providers), so a
+   * surface that owns one should inject it here rather than rely on the default.
+   */
+  readonly rulesetValidator?: RulesetValidatorService;
   /** Resolves the Core repository path when a context/workspace omits corePath. */
   readonly resolveCorePath: () => string;
 }
@@ -533,13 +548,18 @@ export interface DefaultKindEvaluatorDeps {
  * the structural guarantee behind BR-008 parity.
  */
 export function createDefaultKindEvaluators(deps: DefaultKindEvaluatorDeps): KindEvaluator[] {
-  const { fileSystem, logger, resolveCorePath } = deps;
+  const { fileSystem, logger, configParser, rulesetValidator, resolveCorePath } = deps;
 
   const validatorFactory = (corePath?: string) =>
     new PhaseGateValidatorService(corePath, { fileSystem, logger });
   const evaluateGate = new EvaluateGateUseCase(validatorFactory);
   const proposeAdvance = new ProposePhaseAdvanceUseCase(evaluateGate);
-  const driftService = new ArchitectureDriftService(undefined, { fileSystem, logger });
+  const driftService = new ArchitectureDriftService(undefined, {
+    fileSystem,
+    logger,
+    configParser,
+    validator: rulesetValidator,
+  });
   const topologyCatalog = new TopologyCatalogService(fileSystem, logger);
 
   const blueprintExists = async (corePath: string, blueprintRef: string): Promise<boolean> => {

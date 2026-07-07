@@ -119,9 +119,16 @@ async function compileWasm() {
   //   - the MCP/SDK bundle reads `<corePath>/sdk/cli/rulesets/opa/policy.wasm`.
   // policy.wasm is a build artifact (gitignored) — wired here, never committed.
   const extracted = join(tmpDir, 'policy.wasm');
+  // Post `src/` taxonomy refactor (98a20dca), the rego sources and the SDK live
+  // under `src/`, and `.gitignore` tracks the artifacts at `src/rulesets/opa/...`
+  // and `src/sdk/cli/rulesets/opa/...`. The runtime readers resolve relative to a
+  // corePath that already includes the `src` segment (MCP ABAC: `<repo>/src`;
+  // core-domain OpaEvaluator: `<corePath>/rulesets/opa/policy.wasm` co-located
+  // with the .rego). Install to the `src/` locations so the wasm lands where both
+  // the readers and the image COPYs (`COPY src/rulesets ...`) expect it.
   const destinations = [
-    join(rootDir, 'rulesets', 'opa', 'policy.wasm'),
-    join(rootDir, 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm'),
+    join(rootDir, 'src', 'rulesets', 'opa', 'policy.wasm'),
+    join(rootDir, 'src', 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm'),
   ];
   for (const dest of destinations) {
     mkdirSync(dirname(dest), { recursive: true });

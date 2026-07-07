@@ -20,7 +20,16 @@ jest.mock('chalk', () => {
   });
 });
 
+import * as os from 'os';
+import * as fs from 'fs';
+import * as path from 'path';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
+
+// The resolver validates that `${--core}/src/rulesets` exists on disk before
+// reading (fail-fast on a bad --core). Provide a real temp Core dir so the
+// override branch resolves; the injected fileSystem.readFile is still mocked.
+let CORE_DIR: string;
+let RULES_PATH: string;
 
 const RULES = {
   id: 'topology-recommendation',
@@ -33,6 +42,18 @@ describe('RecommendCommand (topology recommend, GT-431)', () => {
   let command: RecommendCommand;
   let fileSystem: { readFile: jest.Mock };
   let logSpy: jest.SpyInstance;
+
+  beforeAll(() => {
+    CORE_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'evolith-core-'));
+    const archDir = path.join(CORE_DIR, 'src', 'rulesets', 'architecture');
+    fs.mkdirSync(archDir, { recursive: true });
+    RULES_PATH = path.join(archDir, 'topology-recommendation.rules.json');
+    fs.writeFileSync(RULES_PATH, JSON.stringify(RULES));
+  });
+
+  afterAll(() => {
+    fs.rmSync(CORE_DIR, { recursive: true, force: true });
+  });
 
   beforeEach(() => {
     fileSystem = { readFile: jest.fn().mockResolvedValue(JSON.stringify(RULES)) };
@@ -49,14 +70,14 @@ describe('RecommendCommand (topology recommend, GT-431)', () => {
   });
 
   it('loads the rules from corePath and recommends a composition from signals', async () => {
-    await command.run([], { core: '/core', signals: { asyncIntegration: true } } as any);
+    await command.run([], { core: CORE_DIR, signals: { asyncIntegration: true } } as any);
 
-    expect(fileSystem.readFile).toHaveBeenCalledWith('/core/src/rulesets/architecture/topology-recommendation.rules.json');
+    expect(fileSystem.readFile).toHaveBeenCalledWith(RULES_PATH);
     expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('modular-monolith + event-driven'));
   });
 
   it('defaults to modular-monolith when no signals are provided', async () => {
-    await command.run([], { core: '/core' } as any);
+    await command.run([], { core: CORE_DIR } as any);
 
     const printed = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
     expect(printed).toContain('modular-monolith');
@@ -64,7 +85,7 @@ describe('RecommendCommand (topology recommend, GT-431)', () => {
   });
 
   it('lets individual flags refine the --signals JSON payload', async () => {
-    await command.run([], { core: '/core', signals: {}, asyncIntegration: true } as any);
+    await command.run([], { core: CORE_DIR, signals: {}, asyncIntegration: true } as any);
 
     const printed = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
     expect(printed).toContain('event-driven');
@@ -72,7 +93,7 @@ describe('RecommendCommand (topology recommend, GT-431)', () => {
 
   describe('--format json (ADR-0073 envelope)', () => {
     it('emits a success envelope with the recommendation', async () => {
-      await command.run([], { core: '/core', format: 'json', signals: { asyncIntegration: true } } as any);
+      await command.run([], { core: CORE_DIR, format: 'json', signals: { asyncIntegration: true } } as any);
 
       const envelope = JSON.parse(logSpy.mock.calls.find((c: any[]) => {
         try { return JSON.parse(c[0]).success === true; } catch { return false; }
@@ -87,7 +108,7 @@ describe('RecommendCommand (topology recommend, GT-431)', () => {
     it('emits an error envelope when the rules file cannot be read', async () => {
       fileSystem.readFile.mockRejectedValue(new Error('rules missing'));
 
-      await command.run([], { core: '/core', format: 'json' } as any);
+      await command.run([], { core: CORE_DIR, format: 'json' } as any);
 
       const envelope = JSON.parse(logSpy.mock.calls.find((c: any[]) => {
         try { return JSON.parse(c[0]).success === false; } catch { return false; }
@@ -101,7 +122,7 @@ describe('RecommendCommand (topology recommend, GT-431)', () => {
   it('propagates the error in human mode when the rules file cannot be read', async () => {
     fileSystem.readFile.mockRejectedValue(new Error('rules missing'));
 
-    await expect(command.run([], { core: '/core' } as any)).rejects.toThrow('rules missing');
+    await expect(command.run([], { core: CORE_DIR } as any)).rejects.toThrow('rules missing');
   });
 
   describe('option parsers', () => {

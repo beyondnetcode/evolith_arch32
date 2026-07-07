@@ -69,7 +69,14 @@ describe('DriftCommand', () => {
 
   beforeEach(() => {
     // GT-345: real PromptService so showError routes through the mocked @clack/prompts log.error.
-    command = new DriftCommand(new PromptService());
+    // The drift service is now injected (previously constructed internally); pass a
+    // mock exposing the same three methods the command calls.
+    const driftServiceMock = {
+      detectDrift: mockDetectDrift,
+      getDriftHistory: mockGetDriftHistory,
+      getDriftTrend: mockGetDriftTrend,
+    } as unknown as ArchitectureDriftService;
+    command = new DriftCommand(driftServiceMock, new PromptService());
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
     jest.clearAllMocks();

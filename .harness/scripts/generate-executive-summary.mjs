@@ -7,12 +7,13 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const VISION_DIR = path.join(ROOT, 'reference/core/sdlc/standards/vision');
-const BOARD = path.join(VISION_DIR, 'gap-tracking.md');
-const ES_BOARD = path.join(VISION_DIR, 'gap-tracking.es.md');
-const MATURITY = path.join(VISION_DIR, 'maturity-reconciliation.json');
-const EN_OUT = path.join(VISION_DIR, 'executive-summary.md');
-const ES_OUT = path.join(VISION_DIR, 'executive-summary.es.md');
+const GAPS_DIR = path.join(ROOT, 'reference/core/control-center/gaps');
+const MATURITY_DIR = path.join(ROOT, 'reference/core/control-center/maturity-reports');
+const BOARD = path.join(GAPS_DIR, 'gap-tracking.md');
+const ES_BOARD = path.join(GAPS_DIR, 'gap-tracking.es.md');
+const MATURITY = path.join(MATURITY_DIR, 'maturity-reconciliation.json');
+const EN_OUT = path.join(MATURITY_DIR, 'executive-summary.md');
+const ES_OUT = path.join(MATURITY_DIR, 'executive-summary.es.md');
 
 const OPEN_STATUSES = new Set(['OPEN', 'PENDING', 'IN-PROGRESS', 'DEFERRED']);
 const CRITICALITY_WEIGHT = { P0: 100, P1: 40, P2: 15, P3: 5 };
@@ -97,9 +98,9 @@ function summarizeComponents(openGaps) {
 }
 
 function buildSummary(root = ROOT) {
-  const board = parseBoard(read(path.join(root, 'reference/core/control-center/gap-tracking.md')));
-  const esBoard = parseBoard(read(path.join(root, 'reference/core/control-center/gap-tracking.es.md')));
-  const maturity = JSON.parse(read(path.join(root, 'reference/core/control-center/maturity-reconciliation.json')) || '{}');
+  const board = parseBoard(read(path.join(root, 'reference/core/control-center/gaps/gap-tracking.md')));
+  const esBoard = parseBoard(read(path.join(root, 'reference/core/control-center/gaps/gap-tracking.es.md')));
+  const maturity = JSON.parse(read(path.join(root, 'reference/core/control-center/maturity-reports/maturity-reconciliation.json')) || '{}');
   const rows = board.rows.map((gap) => ({ ...gap, status: canonicalStatus(gap.status) }));
   const open = rows.filter((gap) => OPEN_STATUSES.has(gap.status)).sort(sortByPriority);
   const done = rows.filter((gap) => gap.status === 'DONE');
@@ -147,7 +148,7 @@ function buildSummary(root = ROOT) {
 
 function linkFor(id, es) {
   const suffix = es ? '.es' : '';
-  if (id.startsWith('GT-')) return `./gap-reference-catalog${suffix}.md#${id.toLowerCase()}`;
+  if (id.startsWith('GT-')) return `../gaps/gap-reference-catalog${suffix}.md#${id.toLowerCase()}`;
   return es
     ? './multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking'
     : './multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority';
@@ -295,12 +296,12 @@ ${renderComponentTable(summary, true)}
 
 ## Fuente y Regla de Actualización
 
-Este resumen se genera desde [Tablero de Seguimiento de Gaps](./gap-tracking.es.md) y [Reconciliación de Madurez](./maturity-reconciliation.json). No editar a mano.
+Este resumen se genera desde [Tablero de Seguimiento de Gaps](../gaps/gap-tracking.es.md) y [Reconciliación de Madurez](./maturity-reconciliation.json). No editar a mano.
 
 El hook pre-commit regenera y agrega al commit \`executive-summary.md\` y \`executive-summary.es.md\`. El hook pre-push vuelve a generar y bloquea el push si el resumen cambia, para que la mejora estratégica viaje dentro del commit correcto.
 
 ---
-[Volver al Hub de Visión](./README.es.md)
+[Volver al Hub de Visión](../README.md)
 `;
   }
 
@@ -368,12 +369,12 @@ ${renderComponentTable(summary, false)}
 
 ## Source and Refresh Rule
 
-This summary is generated from the [Gap Tracking Board](./gap-tracking.md) and [Maturity Reconciliation](./maturity-reconciliation.json). Do not edit it by hand.
+This summary is generated from the [Gap Tracking Board](../gaps/gap-tracking.md) and [Maturity Reconciliation](./maturity-reconciliation.json). Do not edit it by hand.
 
 The pre-commit hook regenerates and stages \`executive-summary.md\` and \`executive-summary.es.md\`. The pre-push hook regenerates the same files and blocks the push if they changed, so the strategic improvement travels in the correct commit.
 
 ---
-[Back to Vision Hub](./README.md)
+[Back to Vision Hub](../README.md)
 `;
 }
 

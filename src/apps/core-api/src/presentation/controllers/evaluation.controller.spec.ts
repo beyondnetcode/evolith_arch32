@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EvaluationController } from './evaluation.controller';
 import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 import { EvaluationOrchestrator } from '@beyondnet/evolith-core-domain/evaluation';
+import type { DirEntry, IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { EvaluateSatelliteDto, EvaluationContextDto } from '../dtos/evaluation.dto';
 
 const SAMPLE_GATE_EVAL = {
@@ -204,5 +205,114 @@ describe('EvaluationController (GT-361)', () => {
       expect(orchestrator.evaluate).not.toHaveBeenCalled();
       expect(useCase.execute).not.toHaveBeenCalled();
     });
+  });
+});
+
+/**
+ * Inline evaluation path (additive): `evaluationInput.files` is evaluated in
+ * memory. The Core reads its OWN rulesets from disk (fallback fs), but NEVER
+ * reads the satellite subtree from disk and never writes the incoming content.
+ */
+describe('EvaluationController — inline evaluationInput path', () => {
+  const CORE_PATH = '/core';
+  const SATELLITE_ROOT = '/inmem/satellite';
+
+  const VALID_EVOLITH_YAML = JSON.stringify({
+    coreRef: { version: '1.0.0', path: '../evolith' },
+    governance: { version: '1.0.0' },
+    product: { name: 'inline-project', type: 'enterprise-application' },
+  });
+
+  /**
+   * Fake real-disk fs. The Core corpus (`/core/...`) does not exist here, so
+   * gate loading and rule discovery are skipped — the only rule that fires is
+   * GOV-000 from RulesetValidatorService (evolith.yaml presence). Any read of a
+   * satellite path would mean the overlay leaked to disk, so we record calls.
+   */
+  function makeFallback(): IFileSystem & { satelliteReads: string[]; writes: string[] } {
+    const satelliteReads: string[] = [];
+    const writes: string[] = [];
+    const guardSat = (p: string) => {
+      if (p.startsWith(SATELLITE_ROOT)) satelliteReads.push(p);
+    };
+    return {
+      satelliteReads,
+      writes,
+      async readFile(p: string) { guardSat(p); throw Object.assign(new Error('ENOENT'), { code: 'ENOENT' }); },
+      async readFileBuffer(p: string) { guardSat(p); throw Object.assign(new Error('ENOENT'), { code: 'ENOENT' }); },
+      async writeFile(p: string) { writes.push(p); },
+      async exists(p: string) { guardSat(p); return false; },
+      existsSync(p: string) { guardSat(p); return false; },
+      async readJson<T>(p: string) { guardSat(p); throw Object.assign(new Error('ENOENT'), { code: 'ENOENT' }); },
+      async writeJson(p: string) { writes.push(p); },
+      async mkdir() { /* noop */ },
+      async readdir(p: string): Promise<DirEntry[]> { guardSat(p); return []; },
+      async readdirNames(p: string) { guardSat(p); return []; },
+      async copy() { /* noop */ },
+      async ensureDir() { /* noop */ },
+      async ensureFile() { /* noop */ },
+      async stat(p: string) { guardSat(p); return { isDirectory: () => false, isFile: () => false }; },
+      async remove() { /* noop */ },
+    };
+  }
+
+  // Minimal real collaborators so the pipeline runs against the overlay fs.
+  const logger = { info() {}, warn() {}, error() {}, debug() {} };
+  const configParser = {
+    parse: <T,>(content: string): T => JSON.parse(content) as T,
+    stringify: (data: unknown) => JSON.stringify(data),
+  };
+  const rulesetRepo = { getRuleset: async () => null, listRulesets: async () => [] } as any;
+  const workspaceResolver = { corePath: () => CORE_PATH } as any;
+
+  function buildController(fallback: IFileSystem) {
+    return new EvaluationController(
+      { evaluate: jest.fn() } as any,
+      // real ValidateSatelliteUseCase is created per-request inside the controller,
+      // so the injected one is never used on the inline path:
+      { execute: jest.fn() } as any,
+      fallback,
+      logger as any,
+      configParser as any,
+      rulesetRepo,
+      undefined,
+      workspaceResolver,
+    );
+  }
+
+  it('evaluates inline content; GOV-000 is NOT raised when evolith.yaml is present', async () => {
+    const fallback = makeFallback();
+    const controller = buildController(fallback);
+
+    const body: EvaluationContextDto = {
+      evaluationInput: { files: { 'evolith.yaml': VALID_EVOLITH_YAML, 'docs/prd.md': '# PRD' } },
+    };
+    const res = (await controller.evaluate(body)) as any;
+
+    expect(res.success).toBe(true);
+    const govIssues = res.data.gates
+      .flatMap((g: any) => g.artifactEvaluations)
+      .filter((e: any) => e.ruleId === 'GOV-000');
+    expect(govIssues).toHaveLength(0);
+
+    // Satellite content came from memory — never from disk — and nothing written.
+    expect(fallback.satelliteReads).toHaveLength(0);
+    expect(fallback.writes).toHaveLength(0);
+  });
+
+  it('raises GOV-000 when evolith.yaml is missing from the inline files', async () => {
+    const fallback = makeFallback();
+    const controller = buildController(fallback);
+
+    const body: EvaluationContextDto = {
+      evaluationInput: { files: { 'docs/prd.md': '# PRD' } },
+    };
+    const res = (await controller.evaluate(body)) as any;
+
+    const govIssues = res.data.gates
+      .flatMap((g: any) => g.artifactEvaluations)
+      .filter((e: any) => e.ruleId === 'GOV-000');
+    expect(govIssues.length).toBeGreaterThan(0);
+    expect(fallback.satelliteReads).toHaveLength(0);
   });
 });

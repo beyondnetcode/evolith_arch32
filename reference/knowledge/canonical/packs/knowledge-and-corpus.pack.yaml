@@ -1,0 +1,40 @@
+# Knowledge Pack — "Knowledge & Corpus" bounded context (M0 seed).
+# Manifiesto de COMPOSICIÓN: absorbe por referencia; cuerpo autoral solo donde hay hueco.
+apiVersion: evolith.dev/knowledge/v1
+kind: KnowledgePack
+metadata:
+  id: knowledge-and-corpus
+  version: 0.2.0
+  status: draft                # draft → validated (validated exige oráculo verde)
+  owner: "@winston"
+  reviewBy: "2026-10-06"       # cadencia media
+spec:
+  boundedContext: ctx.knowledge
+  applicability:               # PREDICADOS, no coordenadas de materialización
+    stack: [nodejs, agnostic]
+    topologies: { composableWith: [modular-monolith, agentic-ai] }
+
+  # ── Cuerpo autoral (lo único con prosa propia; el resto es referencia) ──
+  authored:
+    domain: []                 # (pendiente) canonical/domain/knowledge.md
+    glossary: [canonical/glossary/knowledge.md]   # ← capítulo autoral real (M1)
+    prompts: []                # (pendiente — prompt SOLO en pack validado si trae oráculo)
+
+  # ── Absorción por referencia (versión soberana = el Core, no el pack) ──
+  references:
+    adrs: [ADR-0069, ADR-0074, ADR-0080, ADR-0090, ADR-0101]
+    schemas:
+      - src/rulesets/schema/knowledge-intake.schema.json
+      - src/rulesets/schema/knowledge-projection.schema.json
+
+  # ── Oráculo anti-drift: SOLO kind verificable por máquina, NUNCA prosa ──
+  oracle:
+    referenceImpl:
+      - path: src/packages/agent-runtime/src/domain/ports/knowledge.port.ts
+    assertions:
+      - { id: A1, kind: link-check,    target: src/rulesets/schema/knowledge-intake.schema.json, onDrift: fail }
+      - { id: A2, kind: link-check,    target: .harness/scripts/ci/rag-sync.mjs, onDrift: fail }
+      - { id: A3, kind: symbol-exists, target: "IKnowledgePort", file: src/packages/agent-runtime/src/domain/ports/knowledge.port.ts, onDrift: fail }
+      - { id: A4, kind: executable-test, ref: "InMemoryKnowledgeAdapter (GT-408)", file: src/packages/agent-runtime/src/adapters/knowledge/in-memory-knowledge.adapter.spec.ts, onDrift: fail }
+
+  businessBoundary: { technicalOnly: true }

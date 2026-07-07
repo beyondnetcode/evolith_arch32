@@ -1,23 +1,35 @@
-{
-  "coreRef": {
-    "version": "1.0.0",
-    "path": "../evolith"
-  },
-  "governance": {
-    "version": "1.0.0"
-  },
-  "product": {
-    "name": "test-project",
-    "type": "enterprise-application",
-    "phase": "phase-0"
-  },
-  "tools": {
-    "runtime": "nodejs",
-    "monorepo": "none",
-    "architecture": "clean",
-    "database": "postgresql",
-    "api": "rest",
-    "ci": "github",
-    "observability": "otel"
-  }
-}
+# Evolith Satellite Contract — federated governance manifest.
+# Validated by the Core against schema/evolith-yaml.schema.json (apiVersion evolith.dev/v1).
+# CLI test fixture: a governed satellite used by the SDK e2e suite to exercise
+# `evolith validate` against a schema-conformant manifest.
+apiVersion: evolith.dev/v1
+kind: Satellite
+
+metadata:
+  name: test-project
+  # Progressive-axis compatibility phase. A single-service fixture → F1 (modular monolith).
+  phase: F1
+  # The satellite's own architectural semantic version (independent of product version).
+  architectureVersion: 0.1.0
+
+spec:
+  coreRef:
+    version: 1.0.0
+    rulesetVersion: 1.0.0
+
+  runtime:
+    language: TypeScript
+    framework: Express
+    runtimeVersion: "Node 20"
+
+  sdlc:
+    # 1=Conception 2=Design 3=Construction 4=Validation 5=Delivery
+    currentPhase: 1
+    gates: {}
+
+  compliance:
+    # core/ADR-0047 (progressive architecture / modular-monolith) is required for F1 (SVC-03).
+    adrRegistry:
+      - core/ADR-0047
+    localAdrTagEnforcement: documented
+    coverageTarget: 80

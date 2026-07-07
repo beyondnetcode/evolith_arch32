@@ -1,0 +1,40 @@
+# Evolith Core — Knowledge Index (M0 seed / DRAFT)
+# Catálogo maestro del conocimiento del producto. Fase 0 "Coexistencia":
+# CATALOGA lo que ya existe (no mueve archivos). Índice PLANO y estratificado.
+apiVersion: evolith.dev/knowledge/v1
+kind: KnowledgeIndex
+metadata:
+  id: evolith-core
+  version: 0.1.0
+  status: draft
+spec:
+  # Identidad del producto (capa L0: hoja, sin oráculo)
+  product: canonical/product.yaml
+
+  # Punteros a artefactos que YA existen (absorbidos por referencia, NO copiados)
+  references:
+    adrs:              reference/core/architecture/adrs        # ADRs category-qualified (core/nodejs/dotnet/android)
+    topologies:        reference/core/architecture/topologies  # 5 dimensiones componibles
+    topologyRulesets:  src/rulesets/topologies                 # rulesets ejecutables (JSON + OPA/Rego)
+    knowledgeIntake:   product/research/intake                 # KI-*/SRC-* (pipeline de intake externo)
+    intakeSchema:      src/rulesets/schema/knowledge-intake.schema.json
+    ragProjection:     src/rulesets/schema/knowledge-projection.schema.json  # allow-list de KI aprobados para RAG
+    ragSync:           .harness/scripts/ci/rag-sync.mjs        # write-side (embeddings derivados)
+    knowledgePort:     src/packages/agent-runtime/src/domain/ports/knowledge.port.ts  # read-side (IKnowledgePort)
+    mcpCorpusResource: src/packages/mcp-server/src/resources/corpus-resource.handler.ts
+
+  # Packs de conocimiento del producto, por bounded-context. Estratificados en capas.
+  # dependsOn = pin EXACTO (sin ^/~). Una arista que sube de capa falla la validación.
+  #   L0 glossary/product  ·  L1 decisions/patterns  ·  L2 domain (bounded-ctx)  ·  L3 modules/recipes
+  packs:
+    - id: knowledge-and-corpus
+      layer: L2
+      manifest: canonical/packs/knowledge-and-corpus.pack.yaml
+      dependsOn: []
+
+  # Caché derivada (regenerable, NUNCA autoridad, NUNCA editada a mano).
+  derived:
+    dir: derived/            # .gitignore-ado
+    regeneratedBy:
+      - .harness/scripts/ci/rag-sync.mjs
+      - .harness/scripts/ci/14-rag-index-sync.mjs

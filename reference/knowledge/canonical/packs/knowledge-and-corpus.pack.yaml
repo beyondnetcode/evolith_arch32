@@ -4,7 +4,7 @@ apiVersion: evolith.dev/knowledge/v1
 kind: KnowledgePack
 metadata:
   id: knowledge-and-corpus
-  version: 0.1.0
+  version: 0.2.0
   status: draft                # draft → validated (validated exige oráculo verde)
   owner: "@winston"
   reviewBy: "2026-10-06"       # cadencia media
@@ -16,9 +16,9 @@ spec:
 
   # ── Cuerpo autoral (lo único con prosa propia; el resto es referencia) ──
   authored:
-    domain: []                 # (pendiente M1) canonical/domain/knowledge.md
-    glossary: []               # (pendiente M1) canonical/glossary/*.md
-    prompts: []                # (pendiente M1 — prompt SOLO en pack validado si trae oráculo)
+    domain: []                 # (pendiente) canonical/domain/knowledge.md
+    glossary: [canonical/glossary/knowledge.md]   # ← capítulo autoral real (M1)
+    prompts: []                # (pendiente — prompt SOLO en pack validado si trae oráculo)
 
   # ── Absorción por referencia (versión soberana = el Core, no el pack) ──
   references:
@@ -35,5 +35,6 @@ spec:
       - { id: A1, kind: link-check,    target: src/rulesets/schema/knowledge-intake.schema.json, onDrift: fail }
       - { id: A2, kind: link-check,    target: .harness/scripts/ci/rag-sync.mjs, onDrift: fail }
       - { id: A3, kind: symbol-exists, target: "IKnowledgePort", file: src/packages/agent-runtime/src/domain/ports/knowledge.port.ts, onDrift: fail }
+      - { id: A4, kind: executable-test, ref: "InMemoryKnowledgeAdapter (GT-408)", file: src/packages/agent-runtime/src/adapters/knowledge/in-memory-knowledge.adapter.spec.ts, onDrift: fail }
 
   businessBoundary: { technicalOnly: true }

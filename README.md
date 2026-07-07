@@ -11,14 +11,14 @@
 
 <br/>
 
-<a href="./reference/core/sdlc/assets/master-view.svg" title="Evolith E2E Product Vision — click to enlarge">
+<a href="./reference/core/sdlc/assets/master-view.svg" title="Open the full-size vector diagram — zoom to analyze">
   <img src="./reference/core/sdlc/assets/master-view.svg"
        alt="Evolith E2E Product Vision — Governed Composition, stateless evaluation Core, federated five-phase SDLC"
        width="880"
        style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
 </a>
 
-<sub>↑ Evolith E2E Product Vision — <i>click to enlarge</i></sub>
+<sub>↑ Evolith E2E Product Vision — vector diagram · <b><a href="./reference/core/sdlc/assets/master-view.svg">open full-size to zoom</a></b> · tip: <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+click to open it in a new tab</sub>
 
 </div>
 

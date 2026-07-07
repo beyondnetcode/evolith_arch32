@@ -11,7 +11,7 @@
 
 Phase 05 governs the transition from a sealed Release Candidate to a verified production deployment. It covers the controlled rollout, the observability validation that proves the system is live and nominal, and the operating posture inherited by the on-call team once the release is declared Production Live.
 
-This area is the canonical home for the playbooks, templates, and standards that operationalise Phase 5 of the [SDLC operating model](../README.md#sdlc-operating-model). Documents that belong to earlier phases (Conception, Design, Construction, Validation) live in their respective areas; Phase 5 references them when their evidence is an input to a delivery decision but does not own them.
+This area is the canonical home for the playbooks, templates, and standards that operationalise Phase 5 of the [SDLC operating model](../README.md). Documents that belong to earlier phases (Conception, Design, Construction, Validation) live in their respective areas; Phase 5 references them when their evidence is an input to a delivery decision but does not own them.
 
 **Phase exit gate:** Production Live
 **Primary audience:** DevOps / SRE, Tech Lead, Product Owner, Security Engineer (on-call inheritance)

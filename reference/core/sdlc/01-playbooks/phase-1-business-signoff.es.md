@@ -2,7 +2,7 @@
 
 > **Navegación Bilingüe:** [English Version](./phase-1-business-signoff.md)
 
-**Fase:** [01 — Concepción y Descubrimiento](../README.es.md#fase-01-concepción-y-descubrimiento)
+**Fase:** [01 — Concepción y Descubrimiento](../README.es.md)
 **Compuerta de Salida:** Business Sign-Off (ver gate `phase: 1` en [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json))
 **Audiencia Principal:** Product Owner, Patrocinador Ejecutivo, Software Architect
 **Rol Responsable:** Product Owner

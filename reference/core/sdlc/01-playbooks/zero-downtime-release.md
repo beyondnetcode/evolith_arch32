@@ -2,7 +2,7 @@
 
 > **Bilingual Navigation:** [Versión en Español](./zero-downtime-release.es.md)
 
-**Phase:** [05 — Delivery and Operations](../README.md#phase-05-delivery-and-operations)
+**Phase:** [05 — Delivery and Operations](../README.md)
 **Phase Exit Gate:** Production Live (see [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json))
 **Primary Audience:** DevOps Lead, SRE, Tech Lead
 **Accountable Role:** DevOps Lead

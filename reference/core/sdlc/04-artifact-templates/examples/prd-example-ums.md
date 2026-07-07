@@ -242,31 +242,31 @@ The PRD is considered approved when all the following criteria are met:
 
 | ID | Criterion | Owner | Status |
 | :-- | :-------- | :---- | :----- |
-| CA-01 | Executive summary validated by Business Approver | Evolith Product Board | ☑ |
-| CA-02 | Success metrics with measurable initial value and target | Evolith Product Board | ☑ |
-| CA-03 | Scope (5.1 and 5.2) signed by Product | Evolith Product Board | ☑ |
-| CA-04 | Business rules (RN-01 to RN-14) without contradictions and prioritized | Evolith Product Board | ☑ |
-| CA-05 | Constraints and assumptions reviewed and approved | Evolith Product Board | ☑ |
-| CA-06 | Actors and use cases validated with key stakeholders | Evolith Product Board | ☑ |
-| CA-07 | Functionalities (F-01 to F-15) with individual acceptance criteria | Evolith Product Board | ☑ |
-| CA-08 | Business rules prioritized (Must/Should/Could) | Evolith Product Board | ☑ |
-| CA-09 | Glossary complete and consistent with the domain | Evolith Product Board | ☑ |
+| CA-01 | Executive summary validated by Business Approver | Evolith Product Board | [x] |
+| CA-02 | Success metrics with measurable initial value and target | Evolith Product Board | [x] |
+| CA-03 | Scope (5.1 and 5.2) signed by Product | Evolith Product Board | [x] |
+| CA-04 | Business rules (RN-01 to RN-14) without contradictions and prioritized | Evolith Product Board | [x] |
+| CA-05 | Constraints and assumptions reviewed and approved | Evolith Product Board | [x] |
+| CA-06 | Actors and use cases validated with key stakeholders | Evolith Product Board | [x] |
+| CA-07 | Functionalities (F-01 to F-15) with individual acceptance criteria | Evolith Product Board | [x] |
+| CA-08 | Business rules prioritized (Must/Should/Could) | Evolith Product Board | [x] |
+| CA-09 | Glossary complete and consistent with the domain | Evolith Product Board | [x] |
 
 ### 11.2 Product
 
 | ID | Criterion | Owner | Status |
 | :-- | :-------- | :---- | :----- |
-| CA-10 | Prototypes/wireframes approved by UX | UX Designer | ☑ |
-| CA-11 | Master data plan (mapping, quality, cleanup) approved | Evolith Product Board | ☑ |
+| CA-10 | Prototypes/wireframes approved by UX | UX Designer | [x] |
+| CA-11 | Master data plan (mapping, quality, cleanup) approved | Evolith Product Board | [x] |
 
 ### 11.3 Project
 
 | ID | Criterion | Owner | Status |
 | :-- | :-------- | :---- | :----- |
-| CA-12 | MVP timeline with milestones and delivery date defined | Project PM | ☑ |
-| CA-13 | Development resources assigned and available | Project PM | ☑ |
-| CA-14 | Testing plan (unit, integration, acceptance) defined | QA Lead | ☑ |
-| CA-15 | Deployment and training plan defined | Project PM | ☑ |
+| CA-12 | MVP timeline with milestones and delivery date defined | Project PM | [x] |
+| CA-13 | Development resources assigned and available | Project PM | [x] |
+| CA-14 | Testing plan (unit, integration, acceptance) defined | QA Lead | [x] |
+| CA-15 | Deployment and training plan defined | Project PM | [x] |
 
 ## 12. Glossary
 

@@ -11,7 +11,7 @@
 
 La Fase 05 gobierna la transición de un Release Candidate sellado a un despliegue de producción verificado. Cubre el rollout controlado, la validación de observabilidad que demuestra que el sistema está en línea y nominal, y la postura operativa que hereda el equipo de guardia una vez que el release es declarado en Producción.
 
-Esta área es el hogar canónico de los playbooks, plantillas y estándares que operacionalizan la Fase 5 del [modelo operativo SDLC](../README.md#sdlc-operating-model). Los documentos que pertenecen a fases anteriores (Concepción, Diseño, Construcción, Validación) viven en sus áreas respectivas; la Fase 5 los referencia cuando su evidencia es entrada de una decisión de entrega, pero no es dueña de ellos.
+Esta área es el hogar canónico de los playbooks, plantillas y estándares que operacionalizan la Fase 5 del [modelo operativo SDLC](../README.md). Los documentos que pertenecen a fases anteriores (Concepción, Diseño, Construcción, Validación) viven en sus áreas respectivas; la Fase 5 los referencia cuando su evidencia es entrada de una decisión de entrega, pero no es dueña de ellos.
 
 **Compuerta de salida:** Producción Live
 **Audiencia primaria:** DevOps / SRE, Tech Lead, Product Owner, Security Engineer (herencia de guardia)

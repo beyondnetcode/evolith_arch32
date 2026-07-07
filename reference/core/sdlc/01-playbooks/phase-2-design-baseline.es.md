@@ -2,7 +2,7 @@
 
 > **Navegación Bilingüe:** [English Version](./phase-2-design-baseline.md)
 
-**Fase:** [02 — Diseño y Arquitectura](../README.es.md#fase-02-diseño-y-arquitectura)
+**Fase:** [02 — Diseño y Arquitectura](../README.es.md)
 **Compuerta de Salida:** Design Baseline Approved (ver gate `phase: 2` en [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json))
 **Audiencia Principal:** Software Architect, Principal/Staff Engineer, Product Owner, QA/SDET
 **Rol Responsable:** Software Architect

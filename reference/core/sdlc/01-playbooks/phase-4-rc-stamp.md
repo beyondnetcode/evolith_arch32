@@ -2,7 +2,7 @@
 
 > **Bilingual Navigation:** [Versión en Español](./phase-4-rc-stamp.es.md)
 
-**Phase:** [04 — Validation and QA](../README.md#phase-04-validation-and-qa)
+**Phase:** [04 — Validation and QA](../README.md)
 **Phase Exit Gate:** RC Stamped (see [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json) gate `phase: 4`)
 **Primary Audience:** QA/SDET, Tech Lead, Product Owner, Security Engineer
 **Accountable Role:** QA Lead
@@ -70,7 +70,7 @@ Waivers must not be used to bypass unresolved High/Critical security vulnerabili
 
 - Signed Test Summary Report.
 - Immutable RC tag traceable to the build commit.
-- Authorisation to enter [Phase 5 — Delivery and Operations](../README.md#phase-05-delivery-and-operations) and execute the [Zero-Downtime Release Playbook](./zero-downtime-release.md).
+- Authorisation to enter [Phase 5 — Delivery and Operations](../README.md) and execute the [Zero-Downtime Release Playbook](./zero-downtime-release.md).
 
 ---
 

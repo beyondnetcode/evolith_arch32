@@ -39,6 +39,10 @@ const html = `<!doctype html>
   .bar .sep { width:1px; height:24px; background:rgba(255,255,255,.14); margin:0 3px; }
   .bar button.dl { width:auto; padding:0 11px; font-size:12px; font-weight:700; letter-spacing:.4px; }
   .bar button.dl:disabled { opacity:.5; cursor:default; }
+  .bar select.res { height:38px; border:none; border-radius:9px; background:rgba(255,255,255,.07); color:#e8eef5;
+    font-size:12px; font-weight:700; padding:0 8px; cursor:pointer; -webkit-appearance:none; appearance:none; text-align:center; }
+  .bar select.res:hover { background:rgba(255,255,255,.18); }
+  .bar select.res option { color:#14212e; background:#fff; }
   .caption { position:fixed; bottom:12px; left:14px; z-index:10; color:#9fb0c0; font-size:12px; }
   .caption b { color:#cfe0ee; font-weight:600; }
   .hint { position:fixed; bottom:12px; right:14px; z-index:10; color:#66788a; font-size:11px; }
@@ -60,11 +64,17 @@ const html = `<!doctype html>
   <button data-a="fit" title="Fit to screen (0)" aria-label="Fit to screen">⤢</button>
   <button data-a="full" title="Fullscreen (F)" aria-label="Fullscreen">⛶</button>
   <span class="sep"></span>
-  <button data-a="png" class="dl" title="Download PNG (2×)" aria-label="Download PNG">PNG</button>
-  <button data-a="jpg" class="dl" title="Download JPG (2×)" aria-label="Download JPG">JPG</button>
+  <select id="res" class="res" title="Raster export resolution" aria-label="Export resolution">
+    <option value="1">1×</option>
+    <option value="2" selected>2×</option>
+    <option value="4">4×</option>
+  </select>
+  <button data-a="png" class="dl" title="Download PNG" aria-label="Download PNG">PNG</button>
+  <button data-a="jpg" class="dl" title="Download JPG" aria-label="Download JPG">JPG</button>
+  <button data-a="svg" class="dl" title="Download original SVG (vector, editable)" aria-label="Download SVG">SVG</button>
 </div>
 <div class="caption">Evolith · E2E Product Vision — <b>drag</b> to pan · <b>scroll</b> to zoom</div>
-<div class="hint">+ / −  zoom · 0 fit · F fullscreen · PNG / JPG to save</div>
+<div class="hint">+ / −  zoom · 0 fit · F fullscreen · PNG / JPG / SVG to save</div>
 
 <script>
 (function () {
@@ -104,8 +114,24 @@ const html = `<!doctype html>
 
   function full() { if (!document.fullscreenElement) { (document.documentElement.requestFullscreen || function () {}).call(document.documentElement); } else { document.exitFullscreen(); } }
 
+  function currentScale() { var s = document.getElementById('res'); return (s && parseInt(s.value, 10)) || 2; }
+
+  function exportSvg() {
+    var clone = svg.cloneNode(true);
+    clone.style.width = ''; clone.style.height = '';
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    clone.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    clone.setAttribute('width', W); clone.setAttribute('height', H);
+    var data = '<?xml version="1.0" encoding="UTF-8"?>\\n' + new XMLSerializer().serializeToString(clone);
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([data], { type: 'image/svg+xml;charset=utf-8' }));
+    a.download = 'evolith-e2e-product-vision.svg';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  }
+
   function exportRaster(mime, ext, scale) {
-    scale = scale || 2;
+    scale = scale || currentScale();
     var btns = document.querySelectorAll('.bar button.dl');
     function reset() { btns.forEach(function (b) { b.disabled = false; }); }
     btns.forEach(function (b) { b.disabled = true; });
@@ -146,6 +172,7 @@ const html = `<!doctype html>
     else if (a === 'full') full();
     else if (a === 'png') exportRaster('image/png', 'png');
     else if (a === 'jpg') exportRaster('image/jpeg', 'jpg');
+    else if (a === 'svg') exportSvg();
   });
   window.addEventListener('keydown', function (e) {
     var r = rect();

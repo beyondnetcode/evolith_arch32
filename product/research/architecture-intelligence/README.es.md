@@ -10,8 +10,8 @@ Este portal es un indice y una pagina de orientacion. No reemplaza ADRs, estanda
 
 | Necesidad | Ir a |
 |---|---|
-| Entender por que existe este catalogo | [ADR-0057 Catalogo de Inteligencia Arquitectonica](../../architecture/adrs/core/0057-architecture-intelligence-catalog.es.md) |
-| Entender conocimiento arquitectonico consumible por IA | [ADR-0058 Conocimiento Arquitectonico Consumible por IA](../../architecture/adrs/core/0058-ai-consumable-architecture-knowledge.es.md) |
+| Entender por que existe este catalogo | [ADR-0057 Catalogo de Inteligencia Arquitectonica](../../../reference/core/architecture/adrs/core/0057-architecture-intelligence-catalog.es.md) |
+| Entender conocimiento arquitectonico consumible por IA | [ADR-0058 Conocimiento Arquitectonico Consumible por IA](../../../reference/core/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.es.md) |
 | Validar artefactos de Inteligencia Arquitectonica | [Validacion de Inteligencia Arquitectonica](./validation/architecture-intelligence-validation.es.md) |
 | Revisar patrones arquitectonicos curados | [Patrones](./patterns/) |
 
@@ -22,7 +22,7 @@ Este portal es un indice y una pagina de orientacion. No reemplaza ADRs, estanda
 | [Bounded Context Isolation](./patterns/bounded-context-isolation.es.md) | Mantener limites modulares explicitos en codigo y propiedad de datos. |
 | [Data Ownership per Bounded Context](./patterns/data-ownership-per-bounded-context.es.md) | Aclarar reglas de propiedad de datos dentro de bounded contexts. |
 | [No Cross-Domain Joins](./patterns/no-cross-domain-joins.es.md) | Evitar acoplamiento de persistencia entre limites modulares. |
-| [Arquitectura de Microservicios Orientada a Dominios (DOMA)](./patterns/domain-oriented-microservice-architecture.es.md) | Agrupar los microservicios F3 alrededor de dominios de negocio acotados, no de capas técnicas ([ADR-0076](../../architecture/adrs/core/0076-domain-oriented-microservice-architecture.es.md)). |
+| [Arquitectura de Microservicios Orientada a Dominios (DOMA)](./patterns/domain-oriented-microservice-architecture.es.md) | Agrupar los microservicios F3 alrededor de dominios de negocio acotados, no de capas técnicas ([ADR-0076](../../../reference/core/architecture/adrs/core/0076-domain-oriented-microservice-architecture.es.md)). |
 
 ## Que pertenece aqui
 

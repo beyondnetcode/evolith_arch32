@@ -13,7 +13,7 @@ Cuando un producto alcanza la etapa de microservicios F3, la descomposición sue
 
 ## Evolith Position
 
-DOMA es el principio organizador canónico para la descomposición en F3. Está gobernado por [ADR-0076](../../../architecture/adrs/core/0076-domain-oriented-microservice-architecture.es.md) y ligado al estándar de diseño de modelos de dominio y a sus gates de revisión.
+DOMA es el principio organizador canónico para la descomposición en F3. Está gobernado por [ADR-0076](../../../../reference/core/architecture/adrs/core/0076-domain-oriented-microservice-architecture.es.md) y ligado al estándar de diseño de modelos de dominio y a sus gates de revisión.
 
 ## Principle
 

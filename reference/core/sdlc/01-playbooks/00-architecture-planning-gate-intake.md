@@ -98,4 +98,4 @@ Architecture Plan (Approved) ──→ Initiative Created
 ---
 
 ## References
-- [ADR-0103: Architecture Planning Gate as Pre-Discovery Intake](../../../../core/architecture/adrs/core/0103-architecture-planning-gate-intake.md)
+- [ADR-0103: Architecture Planning Gate as Pre-Discovery Intake](../../architecture/adrs/core/0103-architecture-planning-gate-intake.md)

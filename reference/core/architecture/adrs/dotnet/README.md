@@ -14,4 +14,4 @@
 * **[0072-dotnet-aop-cross-cutting-concern-strategy](./0072-dotnet-aop-cross-cutting-concern-strategy.md)** — DispatchProxy attribute-driven aspects for selective, per-method cross-cutting concerns
 
 ---
-[Back to Upper Level](../README.md) | [Canonical Patterns](../../canonical-patterns/README.md)
+[Back to Upper Level](../README.md) | [Canonical Patterns](../../patterns/README.md)

@@ -49,7 +49,7 @@ The Core **defines and evaluates**; Evolith Tracker **owns canonical phase state
 ### 6. `GateDecision` disambiguation
 The Core value object `GateDecision` (`packages/core-domain/src/gates/decision/gate-decision.ts:19`, `phase: number`, `violations: string[]`) is renamed `CoreGateVerdict` and feeds `DecisionRecord`. The legacy verdict literal `'WAIVED'` migrates to the canonical `Verdict.WAIVE` (`verdict.ts:20`) via `fromLegacyGateDecision`. The rich `GateDecision` is the Tracker's.
 
-The full design, schemas, contracts, OPA changes, flows, roadmap (R0–R5), and backlog are specified in [Product/Initiative Governance Redesign](../../../core/product-initiative-governance-redesign.es.md) and proposed for ecosystem adoption in [UP-002](../../../sdlc/upstream-proposals/UP-002-product-initiative-governance-model.md).
+The full design, schemas, contracts, OPA changes, flows, roadmap (R0–R5), and backlog are specified in [Product/Initiative Governance Redesign](../../../product-initiative-governance-redesign.es.md) and proposed for ecosystem adoption in [UP-002](../../../control-center/opportunities/UP-002-product-initiative-governance-model.md).
 
 ## Consequences
 

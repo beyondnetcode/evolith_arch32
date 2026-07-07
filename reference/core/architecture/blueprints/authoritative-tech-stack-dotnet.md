@@ -66,7 +66,7 @@ Automatic `context.Database.Migrate()` executed directly by the Web host during 
 ## 4. Final Integration Warning for Vendors
 
 Failure to satisfy these static tooling definitions will automatically block integration code acceptance. 
--> Back to **[Global Master Index](../../../MASTER_INDEX.md)**
+-> Back to **[Global Master Index](../../control-center/taxonomy/MASTER_INDEX.md)**
 
 ---
 [Back to Index](./README.md)

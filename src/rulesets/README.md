@@ -182,11 +182,11 @@ flowchart LR
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
-| [CONTRIBUTING.md](../CONTRIBUTING.md) | Clone/dev-setup, tests, branch/commit/PR conventions, ruleset/OPA/schema authoring standards | Onboard contributors | Contribution guide | Yes |
-| [AGENTS.md](../AGENTS.md) | Agent rules and conventions | Govern agent contributions | Standard | Yes |
-| [Repository Taxonomy](../reference/core/control-center/taxonomy/repository-taxonomy.md) | What goes where in Evolith | Keep the repository organized | Governance standard | Yes |
-| [Child Repository Inheritance](../reference/core/foundations/inheritance-model/child-repository-inheritance-guide.md) | How products inherit from Evolith | Standardize inheritance | Guide | Yes |
-| [Navigation Hub](../reference/navigation/README.md) | Full repository navigation | Centralize navigation | Navigation hub | No |
+| [CONTRIBUTING.md](../../CONTRIBUTING.md) | Clone/dev-setup, tests, branch/commit/PR conventions, ruleset/OPA/schema authoring standards | Onboard contributors | Contribution guide | Yes |
+| [AGENTS.md](../../AGENTS.md) | Agent rules and conventions | Govern agent contributions | Standard | Yes |
+| [Repository Taxonomy](../../reference/core/control-center/taxonomy/repository-taxonomy.md) | What goes where in Evolith | Keep the repository organized | Governance standard | Yes |
+| [Child Repository Inheritance](../../reference/core/foundations/inheritance-model/child-repository-inheritance-guide.md) | How products inherit from Evolith | Standardize inheritance | Guide | Yes |
+| [Navigation Hub](../../reference/core/control-center/taxonomy/MASTER_INDEX.md) | Full repository navigation | Centralize navigation | Navigation hub | No |
 
 ---
 

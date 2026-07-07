@@ -3,7 +3,7 @@
 > **Navegación bilingüe:** [English](./on-call-handoff-template.md)
 > **Fase:** 5 — Entrega y Operaciones
 > **Puerta de salida:** Producción Activa (On-Call Listo)
-> **Schema:** [on-call-handoff.schema.json](../../../../rulesets/schema/on-call-handoff.schema.json)
+> **Schema:** [on-call-handoff.schema.json](../../../../src/rulesets/schema/on-call-handoff.schema.json)
 > **Padre:** [Plantillas de Artefactos](./README.es.md)
 
 ---
@@ -144,4 +144,4 @@ El Handoff de On-Call es la confirmación formal de que el equipo de guardia ha 
 | [Playbook de Release Sin Tiempo de Inactividad](../01-playbooks/zero-downtime-release.md) | Gate procedural que consume esta evidencia. |
 | [Plantilla de Release Notes](./release-notes-template.es.md) | Registro de despliegue productivo que referencia readiness de on-call. |
 | [Plantilla de Validación de Observabilidad](./observability-validation-template.es.md) | Evidencia complementaria del estado nominal de alertas. |
-| [`phase-gates.rules.json`](../../../../rulesets/sdlc/phase-gates.rules.json) | La entrada de evidencia `On-Call Handoff` de Fase 5 referencia esta plantilla. |
+| [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json) | La entrada de evidencia `On-Call Handoff` de Fase 5 referencia esta plantilla. |

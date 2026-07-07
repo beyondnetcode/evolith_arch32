@@ -337,12 +337,12 @@ UMS exposes the governance model to its own developers in its Architecture Porta
 
 ## Related Documents
 
-- [Repository Taxonomy](../repository-taxonomy.md)
+- [Repository Taxonomy](../../control-center/taxonomy/repository-taxonomy.md)
 - [Quick Start Guide for New Products](./product-quick-start.md)
-- [ADR Registry](../../../architecture/adrs/README.md)
-- [Agnostic Architecture Baseline](../../../architecture/blueprints/authoritative-tech-stack-agnostic.md)
-- [Engineering Manifesto](../engineering/engineering-manifesto.md)
-- [AI-Augmented Frameworks](../ai-augmented/frameworks/README.md)
+- [ADR Registry](../../architecture/adrs/README.md)
+- [Agnostic Architecture Baseline](../../architecture/blueprints/authoritative-tech-stack-agnostic.md)
+- [Engineering Manifesto](../common-rules/engineering-manifesto.md)
+- [AI-Augmented Frameworks](../common-rules/ai-augmented/frameworks/README.md)
 
 ---
 

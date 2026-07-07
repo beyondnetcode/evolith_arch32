@@ -3,7 +3,7 @@
 > **Bilingual Navigation:** [Versión en Español](./phase-2-design-baseline.es.md)
 
 **Phase:** [02 — Design and Architecture](../README.md#phase-02-design-and-architecture)
-**Phase Exit Gate:** Design Baseline Approved (see [`phase-gates.rules.json`](../../../../rulesets/sdlc/phase-gates.rules.json) gate `phase: 2`)
+**Phase Exit Gate:** Design Baseline Approved (see [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json) gate `phase: 2`)
 **Primary Audience:** Software Architect, Principal/Staff Engineer, Product Owner, QA/SDET
 **Accountable Role:** Software Architect
 **Waiver Authority:** Architecture Board
@@ -44,7 +44,7 @@ This playbook operationalises the Design Baseline Approved gate. Every Phase 2 e
 | # | Mandatory Evidence | Template / Schema | Acceptance Criterion |
 |---|---|---|---|
 | 1 | ADR Registry | [`adr-template.md`](../04-artifact-templates/adr-template.md) | Every boundary-crossing decision has a numbered, accepted ADR. No "undocumented" decisions remain. |
-| 2 | Functional Stories | [`functional-story-template.md`](../04-artifact-templates/functional-story-template.md) · [`functional-story.schema.json`](../../../../rulesets/schema/functional-story.schema.json) | All stories in `Ready` state with BDD acceptance criteria; story writing standard satisfied. If Phase 1.1 Story Seeds exist (KDD Level 2+), refine them into Functional Stories at this step. Story Seeds do not replace Functional Stories. |
+| 2 | Functional Stories | [`functional-story-template.md`](../04-artifact-templates/functional-story-template.md) · [`functional-story.schema.json`](../../../../src/rulesets/schema/functional-story.schema.json) | All stories in `Ready` state with BDD acceptance criteria; story writing standard satisfied. If Phase 1.1 Story Seeds exist (KDD Level 2+), refine them into Functional Stories at this step. Story Seeds do not replace Functional Stories. |
 | 3 | Reference Blueprint Alignment | Architecture diagram set | Verification step — not a document you produce. Architecture diagrams are produced here and checked against the Reference Blueprint. |
 | 4 | Simplicity Checklist Phase 1 | Simplicity checklist | Named 'Phase 1' because it guards against Phase 1 over-engineering entering the design baseline. Executed in Phase 2. Do not rename — machine-registered. |
 | 5 | Bounded Context Map | Context map artefact | All contexts named with ownership, persistence strategy, and integration style |

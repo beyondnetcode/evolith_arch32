@@ -76,5 +76,5 @@ Comandante del Incidente: {nombre}
 ## Referencias
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
-- [ADR-0011 — Patrones de Tolerancia a Fallos y Resiliencia](../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)
-- [ADR-0028 — Infraestructura Híbrida Self-Hosted](../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md)
+- [ADR-0011 — Patrones de Tolerancia a Fallos y Resiliencia](../../reference/core/architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)
+- [ADR-0028 — Infraestructura Híbrida Self-Hosted](../../reference/core/architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md)

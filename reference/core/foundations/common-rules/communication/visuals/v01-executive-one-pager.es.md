@@ -157,4 +157,4 @@ UMS continúa siendo una referencia satélite viva que demuestra patrones Evolit
 
 ---
 
-*Parte de la [Estrategia de Comunicación Arquitectónica](../architecture-communication-strategy.es.md). Diseño detallado: [Diseño Objetivo de Composición Gobernada](../../vision/evolith-governed-composition-target-design.es.md).*
+*Parte de la [Estrategia de Comunicación Arquitectónica](../architecture-communication-strategy.es.md). Diseño detallado: [Diseño Objetivo de Composición Gobernada](../../evolith-governed-composition-target-design.es.md).*

@@ -667,14 +667,14 @@ The following visual artifacts are proposed for creation, ordered by impact:
 
 ## References
 
-- [Architectural Directives](../vision/architectural-directives.md)
-- [Evolutionary Strategy Roadmap](../vision/evolutionary-strategy-roadmap.md)
-- [Engineering Manifesto](../engineering/engineering-manifesto.md)
+- [Architectural Directives](../../../control-center/audits/architectural-directives.md)
+- [Evolutionary Strategy Roadmap](../../../../../product/suite/strategy/evolutionary-strategy-roadmap.md)
+- [Engineering Manifesto](../engineering-manifesto.md)
 - [Reference Blueprint](../../../architecture/blueprints/reference-blueprint.md)
 - [ADR Registry](../../../architecture/adrs/README.md)
-- [UMS Reference Hub](../../../knowledge/demo/README.md)
-- [Child Repository Inheritance Guide](../onboarding/child-repository-inheritance-guide.md)
-- [Repository Taxonomy](../repository-taxonomy.md)
+- [UMS Reference Hub](../../../../../product/research/demo/README.md)
+- [Child Repository Inheritance Guide](../../inheritance-model/child-repository-inheritance-guide.md)
+- [Repository Taxonomy](../../../control-center/taxonomy/repository-taxonomy.md)
 
 ---
 

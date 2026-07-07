@@ -49,14 +49,14 @@ El Core API expone una superficie **exclusivamente REST** — no existe interfaz
 
 El Core API expone sus funcionalidades a través de controladores de NestJS:
 
-- [ArchitectureController](../../../apps/core-api/src/presentation/controllers/architecture.controller.ts): Topologías, detección de deriva y verificación de satélites.
-- [ComposableValidateController](../../../apps/core-api/src/presentation/controllers/composable-validate.controller.ts): Motor de validación composable GT-312 con 5 modos (SDLC, Arquitectura, Ruleset, ADR, Ad-hoc).
-- [GatesController](../../../apps/core-api/src/presentation/controllers/gates.controller.ts): Evaluación de gates de fases del SDLC.
-- [PhasesController](../../../apps/core-api/src/presentation/controllers/phases.controller.ts): Avance y transiciones de fases.
-- [ProjectsController](../../../apps/core-api/src/presentation/controllers/projects.controller.ts): Inicialización de proyectos y propuestas de avance de fase.
-- [ReferenceController](../../../apps/core-api/src/presentation/controllers/reference.controller.ts): Endpoints de consulta pública para rulesets activos, gates y requisitos.
-- [HealthController](../../../apps/core-api/src/presentation/controllers/health.controller.ts): Health checks de liveness y readiness (version-neutral).
-- [MetricsController](../../../apps/core-api/src/presentation/controllers/metrics.controller.ts): Exportador de métricas Prometheus (version-neutral).
+- [ArchitectureController](../../../src/apps/core-api/src/presentation/controllers/architecture.controller.ts): Topologías, detección de deriva y verificación de satélites.
+- [ComposableValidateController](../../../src/apps/core-api/src/presentation/controllers/composable-validate.controller.ts): Motor de validación composable GT-312 con 5 modos (SDLC, Arquitectura, Ruleset, ADR, Ad-hoc).
+- [GatesController](../../../src/apps/core-api/src/presentation/controllers/gates.controller.ts): Evaluación de gates de fases del SDLC.
+- [PhasesController](../../../src/apps/core-api/src/presentation/controllers/phases.controller.ts): Avance y transiciones de fases.
+- [ProjectsController](../../../src/apps/core-api/src/presentation/controllers/projects.controller.ts): Inicialización de proyectos y propuestas de avance de fase.
+- [ReferenceController](../../../src/apps/core-api/src/presentation/controllers/reference.controller.ts): Endpoints de consulta pública para rulesets activos, gates y requisitos.
+- [HealthController](../../../src/apps/core-api/src/presentation/controllers/health.controller.ts): Health checks de liveness y readiness (version-neutral).
+- [MetricsController](../../../src/apps/core-api/src/presentation/controllers/metrics.controller.ts): Exportador de métricas Prometheus (version-neutral).
 
 ### Endpoint de Validación Composable GT-312
 
@@ -107,7 +107,7 @@ Los clientes se conectan al Core API a través de endpoints REST estándar versi
 }
 ```
 
-La documentación detallada de los endpoints, payloads de request y envelopes de error se encuentra en la [Referencia de la API](./api-reference.md). Para la referencia operativa completa (instalación, configuración, modelo de seguridad, flujos por tenant y observabilidad), consulta el README de código autoritativo en [`apps/core-api/README.md`](../../../apps/core-api/README.md).
+La documentación detallada de los endpoints, payloads de request y envelopes de error se encuentra en la [Referencia de la API](./api-reference.md). Para la referencia operativa completa (instalación, configuración, modelo de seguridad, flujos por tenant y observabilidad), consulta el README de código autoritativo en [`apps/core-api/README.md`](../../../src/apps/core-api/README.md).
 
 Para contribuir (clonar, construir, ejecutar las suites de tests, convenciones de ramas/commits), consulta la guía raíz [`CONTRIBUTING.md`](../../../CONTRIBUTING.md).
 

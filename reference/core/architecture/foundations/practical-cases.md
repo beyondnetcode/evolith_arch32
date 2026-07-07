@@ -3,7 +3,7 @@
 > **Bilingual Navigation:** [Versión en Español](./practical-cases.es.md)
 
 Each case below is exercised by the test suite
-([`agent-runtime.service.spec.ts`](../../../packages/agent-runtime/src/__tests__/agent-runtime.service.spec.ts))
+([`agent-runtime.service.spec.ts`](../../../../src/packages/agent-runtime/src/__tests__/agent-runtime.service.spec.ts))
 and/or the runnable example. All use `createAgentRuntime()` defaults unless noted.
 
 ## 1. Validate a Discovery gate

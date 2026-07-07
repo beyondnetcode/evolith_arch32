@@ -106,7 +106,7 @@ Para validar una entrada `*.rules.json` escrita a mano, apunta `-s` a `rulesets/
 | Valida localmente pero Core rechaza la regla | Validado contra el schema equivocado | Las entradas individuales usan `rule-definition.schema.json`; los archivos de categoría completos usan `ruleset-sdlc`/`ruleset-standard`. |
 | Error de resolución de `$ref` | `$ref` relativo resuelto desde la base equivocada | Ejecuta Ajv desde la raíz del repo para que los `$ref` a schemas hermanos resuelvan. |
 
-Los estándares de autoría y el flujo de contribución de schemas están en el [`CONTRIBUTING.md`](../../CONTRIBUTING.md) raíz del repositorio.
+Los estándares de autoría y el flujo de contribución de schemas están en el [`CONTRIBUTING.md`](../../../CONTRIBUTING.md) raíz del repositorio.
 
 ---
 

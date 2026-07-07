@@ -6,7 +6,7 @@
 **Owner:** Evolith Architecture Board
 **Last Updated:** 2026-06-26
 **Scope:** smart-cli + MCP + core-api interfaces at 100% executable
-**Related Vision:** [Evolith Strategic Validation and Composition Framework](./evolith-strategic-validation-and-composition-framework.md)
+**Related Vision:** [Evolith Strategic Validation and Composition Framework](../../../../product/suite/methods/evolith-strategic-validation-and-composition-framework.md)
 **Supersedes:** `product/products/smart-cli/docs/planning/sdk-cli-mcp-current-state-assessment.md` (SUPERSEDED — context only)
 
 This document defines the implementation workstreams to bring Evolith's interfaces (smart-cli, MCP, core-api) to 100% executable state, validating the core as intelligent data. It is the authoritative implementation plan, reconciled against live governance boards.
@@ -17,11 +17,11 @@ This document defines the implementation workstreams to bring Evolith's interfac
 
 Before writing code, read and reconcile the real state against these living boards. Treat their status and priority as authoritative:
 
-- [Gap Tracking Board](./gap-tracking.md)
-- [Gap Reference Catalog](./gap-reference-catalog.md)
+- [Gap Tracking Board](../gaps/gap-tracking.md)
+- [Gap Reference Catalog](../gaps/gap-reference-catalog.md)
 - [Executive Governance Summary](./executive-summary.md)
-- [SDK/CLI/MCP Gap Analysis](../../../products/smart-cli/docs/planning/sdk-cli-mcp-gap-analysis.md)
-- [SDK/CLI/MCP Implementation Roadmap](../../../products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md)
+- [SDK/CLI/MCP Gap Analysis](../../../../product/products/smart-cli/docs/planning/sdk-cli-mcp-gap-analysis.md)
+- [SDK/CLI/MCP Implementation Roadmap](../../../../product/products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md)
 
 If an item below is already closed on the board, mark it DONE and do not redo it. If the board has items not listed here, INCLUDE them.
 
@@ -181,13 +181,13 @@ graph TD
 
 ## 9. References
 
-- [Gap Tracking Board](./gap-tracking.md)
-- [Gap Reference Catalog](./gap-reference-catalog.md)
+- [Gap Tracking Board](../gaps/gap-tracking.md)
+- [Gap Reference Catalog](../gaps/gap-reference-catalog.md)
 - [Executive Governance Summary](./executive-summary.md)
-- [Multi-Topology Reference Corpus Implementation Plan](./multi-topology-reference-corpus-implementation-plan.md)
-- [SDK/CLI/MCP Gap Analysis](../../../products/smart-cli/docs/planning/sdk-cli-mcp-gap-analysis.md)
-- [SDK/CLI/MCP Implementation Roadmap](../../../products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md)
-- [ADR-0090 Rule Language Policy](../../adr/adr-0090-rule-language-policy.md)
+- [Multi-Topology Reference Corpus Implementation Plan](../audits/multi-topology-reference-corpus-implementation-plan.md)
+- [SDK/CLI/MCP Gap Analysis](../../../../product/products/smart-cli/docs/planning/sdk-cli-mcp-gap-analysis.md)
+- [SDK/CLI/MCP Implementation Roadmap](../../../../product/products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md)
+- [ADR-0090 Rule Language Policy](../../sdlc/governance/adr-0090-rule-language-policy.md)
 
 ---
-[Back to Vision Hub](./README.md)
+[Back to Vision Hub](../README.md)

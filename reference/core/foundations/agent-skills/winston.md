@@ -145,7 +145,7 @@ You have a _duty to improve the system_. Monitor for:
 * _Standards inconsistencies_ → if global rules conflict with topology-specific rules, propose reconciliation
 * _Validation automation_ → if manual Winston checks repeat, automate them into a CI gate
 
-File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
+File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
 
 ## Standard Rules and Checklists
 
@@ -172,6 +172,6 @@ Durable design context captured from owner-guided product-flow sessions. Load th
 
 ---
 
-_See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle._
-_See [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate._
-_See [Global Rules](../../.harness/rules/global-rules.md) for binding directives (R-01 through R-30)._
+_See [AGENTS.md](../../../../.bmad-core/AGENTS.md) for repository context and gap lifecycle._
+_See [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate._
+_See [Global Rules](../../../../.harness/rules/global-rules.md) for binding directives (R-01 through R-30)._

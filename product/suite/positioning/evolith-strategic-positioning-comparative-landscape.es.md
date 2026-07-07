@@ -303,7 +303,7 @@ Requisitos de revisión:
 - **Visión padre:** [Visión Maestra del Producto Evolith](../vision/evolith-product-vision-master.es.md)
 - **Gobernanza relacionada:** [Directivas Arquitectónicas](../architecture/architectural-directives.es.md)
 - **Plan de evolución:** [Roadmap de Estrategia Evolutiva](../strategy/evolutionary-strategy-roadmap.es.md)
-- **Madurez operacional:** [Evaluación de Madurez](../../governance/standards/vision/maturity-assessment.es.md)
+- **Madurez operacional:** [Evaluación de Madurez](../../../reference/core/control-center/maturity-reports/maturity-assessment.es.md)
 - **Índice de visión:** [Índice de Visión](./README.es.md)
 
 ---

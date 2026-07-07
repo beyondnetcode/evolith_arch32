@@ -157,4 +157,4 @@ UMS remains a living satellite reference that proves Evolith patterns in real so
 
 ---
 
-*Part of the [Architecture Communication Strategy](../architecture-communication-strategy.md). Detailed design: [Governed Composition Target Design](../../vision/evolith-governed-composition-target-design.md).*
+*Part of the [Architecture Communication Strategy](../architecture-communication-strategy.md). Detailed design: [Governed Composition Target Design](../../evolith-governed-composition-target-design.md).*

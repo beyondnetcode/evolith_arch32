@@ -137,4 +137,4 @@ DONE Todo está sincronizado.
 
 ---
 
-[Volver al índice](./README.md)
+[Volver al índice](../README.md)

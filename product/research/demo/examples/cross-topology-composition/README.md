@@ -2,7 +2,7 @@
 
 > **Bilingual navigation:** [Versión en Español](./README.es.md)
 > **Composition:** `modular-monolith + event-driven`
-> **Schema:** [`topology-composition.schema.json`](../../../../../rulesets/schema/topology-composition.schema.json)
+> **Schema:** [`topology-composition.schema.json`](../../../../../src/rulesets/schema/topology-composition.schema.json)
 > **Validator:** `.harness/scripts/ci/22-validate-topology-composition.mjs`
 
 This directory ships the first executable reference for the cross-topology composition rule (`topology-dimensions.md §3`). It demonstrates how an F1 modular monolith exposes async boundaries through an event-driven integration topology — the second row of the composition examples table — and runs end-to-end through the composition validator on every commit.
@@ -70,5 +70,5 @@ If two profiles cannot compose, the validator must reject the example. Add a del
 | Document | Purpose |
 |---|---|
 | [Topology Dimensions §3 — Composition Rule](../../../../../reference/core/architecture/topologies/topology-dimensions.md#3-composition-rule) | Authoritative composition rule. |
-| [Topology Manifest Schema](../../../../../rulesets/schema/topology-manifest.schema.json) | Defines `spec.compatibility.composableWith`. |
-| [Topology Composition Schema](../../../../../rulesets/schema/topology-composition.schema.json) | Defines the manifest shape used by this example. |
+| [Topology Manifest Schema](../../../../../src/rulesets/schema/topology-manifest.schema.json) | Defines `spec.compatibility.composableWith`. |
+| [Topology Composition Schema](../../../../../src/rulesets/schema/topology-composition.schema.json) | Defines the manifest shape used by this example. |

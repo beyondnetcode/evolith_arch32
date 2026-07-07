@@ -62,8 +62,8 @@ Los agregados de telemetria de costos se revisan semanalmente. Los flujos de tra
 
 ## Referencias
 - [ADR-0001: Ingenieria de Harness](./0001-harness-engineering.es.md)
-- [review-provider.mjs](../../../../.harness/scripts/ci/agentic/review-provider.mjs)
-- [rag-port.mjs](../../../../.harness/scripts/ci/rag-port.mjs)
+- [review-provider.mjs](../../../../../.harness/scripts/ci/agentic/review-provider.mjs)
+- [rag-port.mjs](../../../../../.harness/scripts/ci/rag-port.mjs)
 - [ADR-0090: Gobernanza de Conocimiento RAG](../core/0090-rag-knowledge-governance.es.md)
 - [ADR-0089: Flujos de Trabajo Agentic Event-Driven](../core/0089-event-driven-agentic-workflows.es.md)
 

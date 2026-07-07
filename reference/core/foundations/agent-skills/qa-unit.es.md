@@ -97,12 +97,12 @@ Tienes el **deber de mejorar el sistema**. Vigila:
 - **Detección de flakes** → si una spec falla de forma intermitente bajo `--runInBand`, aíslala y propón una corrección de determinismo.
 - **Reuso de fixtures** → si los fixtures unitarios Nativos y los fixtures de paridad OPA divergen, propón una única fuente de fixtures compartida.
 
-Presenta propuestas en `.bmad-core/proposals/` siguiendo el formato de [AGENTS.md sección 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
+Presenta propuestas en `.bmad-core/proposals/` siguiendo el formato de [AGENTS.md sección 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
 
 ---
 
-*Ver [AGENTS.md](../AGENTS.md) para el contexto del repositorio y el ciclo de vida de gaps.*
-*Ver [AGENTS.md sección 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) para el mandato de auto-mejora.*
-*Ver [Reglas Globales](../../.harness/rules/global-rules.md) para R-25 Paridad de Doble Motor.*
+*Ver [AGENTS.md](../../../../.bmad-core/AGENTS.md) para el contexto del repositorio y el ciclo de vida de gaps.*
+*Ver [AGENTS.md sección 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) para el mandato de auto-mejora.*
+*Ver [Reglas Globales](../../../../.harness/rules/global-rules.md) para R-25 Paridad de Doble Motor.*
 *Ver [QA Agent](./qa.es.md) para la puerta líder de E2E / seguridad / paridad OPA.*
-*Ver [Tablero de Seguimiento de Gaps](../../reference/core/control-center/gaps/gap-tracking.md) para el estado de los gaps.*
+*Ver [Tablero de Seguimiento de Gaps](../../control-center/gaps/gap-tracking.md) para el estado de los gaps.*

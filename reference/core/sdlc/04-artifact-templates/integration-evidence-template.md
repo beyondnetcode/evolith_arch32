@@ -3,7 +3,7 @@
 > **Bilingual navigation:** [Versión en Español](./integration-evidence-template.es.md)
 > **Phase:** 4 — Validation and QA
 > **Exit gate:** RC Stamped
-> **Schema:** [`integration-evidence.schema.json`](../../../../rulesets/schema/integration-evidence.schema.json)
+> **Schema:** [`integration-evidence.schema.json`](../../../../src/rulesets/schema/integration-evidence.schema.json)
 > **Parent:** [Artifact Templates](./README.md)
 
 ---
@@ -62,4 +62,4 @@ The Integration Evidence artifact proves that every declared inter-component con
 |---|---|
 | [Phase 4 — RC Stamped Playbook](../01-playbooks/phase-4-rc-stamp.md) | Procedural gate that consumes this evidence. |
 | [SDLC Quality Gates](../quality-gates.md) | Defines integration-related blocking criteria. |
-| [`phase-gates.rules.json`](../../../../rulesets/sdlc/phase-gates.rules.json) | Phase 4 `Integration Evidence` evidence entry references this template's schema. |
+| [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json) | Phase 4 `Integration Evidence` evidence entry references this template's schema. |

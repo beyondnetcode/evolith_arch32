@@ -6,7 +6,7 @@
 **Propietario:** Junta de Arquitectura de Evolith
 **Última Actualización:** 2026-06-26
 **Alcance:** Interfaces smart-cli + MCP + core-api al 100% ejecutable
-**Visión Relacionada:** [Marco de Validación Estratégica y Composición de Evolith](./evolith-strategic-validation-and-composition-framework.md)
+**Visión Relacionada:** [Marco de Validación Estratégica y Composición de Evolith](../../../../product/suite/methods/evolith-strategic-validation-and-composition-framework.md)
 **Sustituye:** `product/products/smart-cli/docs/planning/sdk-cli-mcp-current-state-assessment.md` (SUPERSEDED — solo como contexto)
 
 Este documento define los flujos de trabajo de implementación para llevar las interfaces de Evolith (smart-cli, MCP, core-api) al estado 100% ejecutable, validando el core como data inteligente. Es el plan de implementación autoritativo, reconciliado contra los tableros de gobernanza vivos.
@@ -17,11 +17,11 @@ Este documento define los flujos de trabajo de implementación para llevar las i
 
 Antes de escribir código, lee y reconcilia el estado real contra estos tableros vivos. Trata su estado y prioridad como autoritativos:
 
-- [Tablero de Seguimiento de Gaps](./gap-tracking.md)
-- [Catálogo de Referencia de Gaps](./gap-reference-catalog.md)
+- [Tablero de Seguimiento de Gaps](../gaps/gap-tracking.md)
+- [Catálogo de Referencia de Gaps](../gaps/gap-reference-catalog.md)
 - [Resumen Ejecutivo de Gobernanza](./executive-summary.md)
-- [Análisis de Gaps SDK/CLI/MCP](../../../products/smart-cli/docs/planning/sdk-cli-mcp-gap-analysis.md)
-- [Hoja de Ruta de Implementación SDK/CLI/MCP](../../../products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md)
+- [Análisis de Gaps SDK/CLI/MCP](../../../../product/products/smart-cli/docs/planning/sdk-cli-mcp-gap-analysis.md)
+- [Hoja de Ruta de Implementación SDK/CLI/MCP](../../../../product/products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md)
 
 Si algún ítem de abajo ya está cerrado en el tablero, márcalo DONE y no lo rehagas. Si el tablero tiene ítems no listados aquí, INCLÚYELOS.
 
@@ -180,13 +180,13 @@ graph TD
 
 ## 9. Referencias
 
-- [Tablero de Seguimiento de Gaps](./gap-tracking.md)
-- [Catálogo de Referencia de Gaps](./gap-reference-catalog.md)
+- [Tablero de Seguimiento de Gaps](../gaps/gap-tracking.md)
+- [Catálogo de Referencia de Gaps](../gaps/gap-reference-catalog.md)
 - [Resumen Ejecutivo de Gobernanza](./executive-summary.md)
-- [Plan de Implementación del Corpus de Referencia Multi-Topología](./multi-topology-reference-corpus-implementation-plan.md)
-- [Análisis de Gaps SDK/CLI/MCP](../../../products/smart-cli/docs/planning/sdk-cli-mcp-gap-analysis.md)
-- [Hoja de Ruta de Implementación SDK/CLI/MCP](../../../products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md)
-- [ADR-0090 Política de Lenguaje de Reglas](../../adr/adr-0090-rule-language-policy.md)
+- [Plan de Implementación del Corpus de Referencia Multi-Topología](../audits/multi-topology-reference-corpus-implementation-plan.md)
+- [Análisis de Gaps SDK/CLI/MCP](../../../../product/products/smart-cli/docs/planning/sdk-cli-mcp-gap-analysis.md)
+- [Hoja de Ruta de Implementación SDK/CLI/MCP](../../../../product/products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md)
+- [ADR-0090 Política de Lenguaje de Reglas](../../sdlc/governance/adr-0090-rule-language-policy.md)
 
 ---
-[Volver al Hub de Visión](./README.es.md)
+[Volver al Hub de Visión](../../README.es.md)

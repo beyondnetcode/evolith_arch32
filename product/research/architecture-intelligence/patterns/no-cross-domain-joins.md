@@ -68,9 +68,9 @@ High. AI agents can work more safely when module boundaries are explicit and per
 
 ## Related ADRs
 
-- [ADR-0031: Schema per Context and Domain Event Catalog](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)
-- [ADR-0045: Microservice Extraction Readiness Criteria](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md)
-- [ADR-0057: Architecture Intelligence Catalog](../../../architecture/adrs/core/0057-architecture-intelligence-catalog.md)
+- [ADR-0031: Schema per Context and Domain Event Catalog](../../../../reference/core/architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)
+- [ADR-0045: Microservice Extraction Readiness Criteria](../../../../reference/core/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md)
+- [ADR-0057: Architecture Intelligence Catalog](../../../../reference/core/architecture/adrs/core/0057-architecture-intelligence-catalog.md)
 
 ## Anti-Patterns
 

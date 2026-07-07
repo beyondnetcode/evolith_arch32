@@ -9,7 +9,7 @@ del Core a través de puertos, sin acoplarse a ningún framework de agente
 concreto. Hermes Agent, Swarms (OpenAI), otro framework o una implementación propia son
 simplemente adaptadores reemplazables.
 
-Implementación: [`packages/agent-runtime`](../../../packages/agent-runtime/README.es.md)
+Implementación: [`packages/agent-runtime`](../../../../src/packages/agent-runtime/README.es.md)
 · Registro de decisión: [core/ADR-0102](../adrs/core/0102-evolith-agent-runtime.es.md).
 
 ## Qué es el Evolith Agent Runtime
@@ -38,7 +38,7 @@ permitiendo incluso un enrutado multimotor dinámico.
 | [Integración con .harness](./harness-integration.es.md) | Cómo el runtime descubre y ejecuta capacidades de `.harness` |
 | [Casos prácticos](./practical-cases.es.md) | Ejemplos extremo a extremo de cada caso de uso obligatorio |
 | [Extender](./extending.es.md) | Cómo agregar skills, adaptadores, usar el CLI/chat y enchufar Hermes |
-| [Desplegar en VPS (Coolify)](../../infrastructure/vps-coolify/agent-runtime-deploy.es.md) | Desplegar el servicio HTTP del runtime en `evolithruntime.beyondnet.cloud` |
+| [Desplegar en VPS (Coolify)](../../../../product/infra/vps-coolify/agent-runtime-deploy.es.md) | Desplegar el servicio HTTP del runtime en `evolithruntime.beyondnet.cloud` |
 
 ## Inicio rápido
 
@@ -64,7 +64,7 @@ const result = await runtime.handle(
 ```
 
 Hay un script ejecutable en
-[`packages/agent-runtime/examples/validate-discovery-gate.mjs`](../../../packages/agent-runtime/examples/validate-discovery-gate.mjs).
+[`packages/agent-runtime/examples/validate-discovery-gate.mjs`](../../../../src/packages/agent-runtime/examples/validate-discovery-gate.mjs).
 
 ## Patrón de interacción de clientes
 

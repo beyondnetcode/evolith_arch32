@@ -3,7 +3,7 @@
 > **Navegación Bilingüe:** [Ver Versión en Inglés](./view-by-flow.md)
 
 **Estado:** Aprobado  
-**Padre:** [C4 Master Architecture](../C4-MASTER-ARCHITECTURE.es.md)
+**Padre:** [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.es.md)
 
 ## 1. Visión General de Flujos
 
@@ -83,4 +83,4 @@ sequenceDiagram
 ```
 
 ---
-[Volver a la Arquitectura Maestra](../C4-MASTER-ARCHITECTURE.es.md)
+[Volver a la Arquitectura Maestra](./C4-MASTER-ARCHITECTURE.es.md)

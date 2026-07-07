@@ -105,5 +105,5 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 Ninguna explícitamente enlazada.
 
 ---
-[Back to Index](../../../../MASTER_INDEX.es.md)
+[Back to Index](../../../control-center/taxonomy/MASTER_INDEX.es.md)
 > **Agent Signature:** Architect Agent

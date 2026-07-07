@@ -71,6 +71,6 @@ has been identified at this time.
 
 ## References
 
-- [ADR-0025 — Feature Flag Provider Abstraction](../architecture/adrs/core/0025-feature-flag-provider-abstraction.md)
-- [ADR-0011 — Fault Tolerance & Resiliency Patterns](../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)
+- [ADR-0025 — Feature Flag Provider Abstraction](../../reference/core/architecture/adrs/core/0025-feature-flag-provider-abstraction.md)
+- [ADR-0011 — Fault Tolerance & Resiliency Patterns](../../reference/core/architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)
 - [NIST National Vulnerability Database](https://nvd.nist.gov/)

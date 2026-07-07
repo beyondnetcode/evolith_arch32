@@ -8,10 +8,10 @@
 | **Package** | `@evolith/smart-cli` |
 | **Version** | `1.1.4` |
 | **Binary** | `smart-cli` |
-| **Source of truth** | [`sdk/cli/README.md`](../../../sdk/cli/README.md) (authoritative, 1200+ lines) |
+| **Source of truth** | [`sdk/cli/README.md`](../../../src/sdk/cli/README.md) (authoritative, 1200+ lines) |
 | **Surface inventory** | [`product-inventory.md`](./product-inventory.md) (generated — do not hand-edit) |
 
-This page is a **hub**: it orients you and points to the authoritative deeper docs. For exhaustive per-command options, always defer to the [code README](../../../sdk/cli/README.md) and the generated [Product Surface Inventory](./product-inventory.md).
+This page is a **hub**: it orients you and points to the authoritative deeper docs. For exhaustive per-command options, always defer to the [code README](../../../src/sdk/cli/README.md) and the generated [Product Surface Inventory](./product-inventory.md).
 
 ## What it does
 
@@ -57,7 +57,7 @@ evolith-mcp serve
 
 ## Command reference
 
-The CLI registers **21 top-level commands** (the generated inventory counts individual subcommands separately, hence a higher figure). One concise line each — for full options and examples, follow the link to the [code README](../../../sdk/cli/README.md).
+The CLI registers **21 top-level commands** (the generated inventory counts individual subcommands separately, hence a higher figure). One concise line each — for full options and examples, follow the link to the [code README](../../../src/sdk/cli/README.md).
 
 | Command | Purpose |
 |---|---|
@@ -207,11 +207,11 @@ Smart CLI is part of the **Evolith suite**, built on **Evolith Core** (`packages
 
 ## Documentation
 
-- [Code README](../../../sdk/cli/README.md) — authoritative, full per-command reference and examples.
+- [Code README](../../../src/sdk/cli/README.md) — authoritative, full per-command reference and examples.
 - [Product Surface Inventory](./product-inventory.md) — generated tool/resource/prompt/command counts.
-- [Demo Guide](../../../sdk/cli/docs/SMART-CLI-DEMO.md) — end-to-end walkthrough.
-- [MCP Integration](../../../sdk/cli/docs/MCP-INTEGRATION.md) — MCP protocol details.
-- [Handoff Protocol](../../../sdk/cli/docs/HANDOFF-PROTOCOL.md) — SDLC handoff artifact spec.
+- [Demo Guide](../../../src/sdk/cli/docs/SMART-CLI-DEMO.md) — end-to-end walkthrough.
+- [MCP Integration](../../../src/sdk/cli/docs/MCP-INTEGRATION.md) — MCP protocol details.
+- [Handoff Protocol](../../../src/sdk/cli/docs/HANDOFF-PROTOCOL.md) — SDLC handoff artifact spec.
 
 ## Support
 

@@ -75,6 +75,6 @@ por las molestias.
 
 ## Referencias
 
-- [ADR-0068 — Flujo de Git para Release de Documentación](../architecture/adrs/core/0068-documentation-release-gitflow.md)
-- [ADR-0050 — Estrategia de Branching Gitflow](../architecture/adrs/core/0050-gitflow-branching-strategy.md)
-- [ADR-0025 — Abstracción de Proveedor de Feature Flags](../architecture/adrs/core/0025-feature-flag-provider-abstraction.md)
+- [ADR-0068 — Flujo de Git para Release de Documentación](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md)
+- [ADR-0050 — Estrategia de Branching Gitflow](../../reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.md)
+- [ADR-0025 — Abstracción de Proveedor de Feature Flags](../../reference/core/architecture/adrs/core/0025-feature-flag-provider-abstraction.md)

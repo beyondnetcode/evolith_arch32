@@ -4,7 +4,7 @@
 
 **Responsable:** Evolith Architecture Board
 **Autoridad de Estado:** [Tablero de Seguimiento de Gaps](./gap-tracking.es.md)
-**Autoridad de Cierre:** [Estándar de Evidencia para Cierre de Gaps](./gap-closure-evidence-standard.es.md) · [`gap-closure-evidence.json`](./gap-closure-evidence.json)
+**Autoridad de Cierre:** [Estándar de Evidencia para Cierre de Gaps](../evidence/gap-closure-evidence-standard.es.md) · [`gap-closure-evidence.json`](../evidence/gap-closure-evidence.json)
 
 Este catálogo explica cada gap: problema, propósito, evidencia, criterios de cierre y referencias. No es un tablero de seguimiento; la prioridad y el estado son autoritativos únicamente en el [Tablero de Seguimiento de Gaps](./gap-tracking.es.md).
 
@@ -156,7 +156,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Problema:** La fase Design debe permitir que Core recomiende, valide y mida madurez técnica sobre un catálogo extensible de bloques arquitectónicos bajo Convention over Configuration, con el blueprint como guía de desarrollo componible y multi-concern que además deriva los criterios downstream (Construcción/Calidad/Despliegue) — nada de lo cual existe hoy (topología hardcodeada, blueprint sub-modelado, sin evaluador `design`, drift de frontera stories/backlog). Ver las 16 brechas (G1–G16) del plan de fortalecimiento de la fase Design.
 
-**Descomposición:** F0 = [ADR-0104](../architecture/adrs/core/0104-topology-driven-advisory-design-governance.es.md) (aterrizado). F1–F8 = `GT-426`…`GT-433`.
+**Descomposición:** F0 = [ADR-0104](../../architecture/adrs/core/0104-topology-driven-advisory-design-governance.es.md) (aterrizado). F1–F8 = `GT-426`…`GT-433`.
 
 **Cierre:** todos los hijos COMPLETADO; postura y modelo canónico de ADR-0104 operativos en CLI/MCP/API/agentes; cero regresión en el gate F2 actual.
 
@@ -1435,7 +1435,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** ADR de contrato unificado
 
 - **Objetivo:**
-  - [x] Redactar y aprobar un único ADR en Evolith Core que reconcilie las dos propuestas de contrato divergentes — la estructura [`GateEvidence`](./sdlc-tracker-technical-interfaces.es.md) del lado Core y el envelope de salida del lado Tracker (`{success, data, meta}`, códigos de error, flags globales `--format/--dry-run/--phase`).
+  - [x] Redactar y aprobar un único ADR en Evolith Core que reconcilie las dos propuestas de contrato divergentes — la estructura [`GateEvidence`](../../sdlc/sdlc-tracker-technical-interfaces.es.md) del lado Core y el envelope de salida del lado Tracker (`{success, data, meta}`, códigos de error, flags globales `--format/--dry-run/--phase`).
   - [x] Resolver el naming del binario (`smart-cli` vs alias `evolith`). Verificado 2026-06-10: los 27 rulesets ya tienen campo `version` consumible como `rulesetVersion`.
 - **Cierre cuando:**
   - [x] ADR aprobado por el Architecture Board.
@@ -1627,7 +1627,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="auto-fix"` — tests unitarios pasan
     - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="auto-fix"` — tests E2E pasan
   - `dependencyDisposition`: none
-- **Referencias:** [Módulo de Herramientas MCP](../../../../packages/mcp-server/src/tools/tools.module.ts)
+- **Referencias:** [Módulo de Herramientas MCP](../../../../src/packages/mcp-server/src/tools/tools.module.ts)
 
 #### GT-116
 
@@ -1649,7 +1649,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
     - `npm run build --workspace sdk/cli` — compilación TypeScript pasa
     - `npm run test --workspace sdk/cli` — tests pasan
   - `dependencyDisposition`: none
-- **Referencias:** [Interfaz IFileSystem](../../../../packages/core-domain/src/domain/interfaces.ts)
+- **Referencias:** [Interfaz IFileSystem](../../../../src/packages/core-domain/src/domain/interfaces.ts)
 
 
 #### GT-19
@@ -1664,14 +1664,14 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Título:** Backfill de contenido de ADRs al estándar de autoría
 
-- **Objetivo:** Completar las secciones añadidas como stubs por la estandarización de ADRs del 2026-06-10 (aproximadamente 697 marcadores en 162 archivos): Objetivo y Alcance, Opciones Consideradas, Evidencias y Criterios de Evaluación, Decisiones y Estándares Relacionados — más Vigilancia Tecnológica y Fuentes Actuales para ADRs de plataforma — según el [Estándar de Autoría de ADRs](../../../architecture/adrs/adr-authoring-standard.es.md). El backfill debe reconstruir con honestidad, nunca fabricar historia.
+- **Objetivo:** Completar las secciones añadidas como stubs por la estandarización de ADRs del 2026-06-10 (aproximadamente 697 marcadores en 162 archivos): Objetivo y Alcance, Opciones Consideradas, Evidencias y Criterios de Evaluación, Decisiones y Estándares Relacionados — más Vigilancia Tecnológica y Fuentes Actuales para ADRs de plataforma — según el [Estándar de Autoría de ADRs](../../architecture/adrs/adr-authoring-standard.es.md). El backfill debe reconstruir con honestidad, nunca fabricar historia.
 - **Cierre cuando:** ningún ADR contiene marcador de backfill `GT-20`; spot-check confirma calidad de contenido en los 10 ADRs de mayor tráfico.
 
 #### GT-21
 
 **Título:** Revisión de ubicación de ADRs Core centrados en herramientas
 
-- **Objetivo:** Aplicar la prueba de fuego Core-vs-Plataforma del [Estándar de Autoría de ADRs](../../../architecture/adrs/adr-authoring-standard.es.md) a los ADRs Core centrados en herramientas — candidatos: 0001 (Nx), 0005 (CodeQL), 0006/0046 (Dapr), 0014 (Redis), 0030 (Kong vs NestJS), 0069 (MCP). Para cada uno: mantener en core reescrito como principio agnóstico, reubicar a una categoría de plataforma, o dividir (ADR Core agnóstico + ADR de Plataforma con la elección de herramienta). Toda reubicación debe corregir todos los enlaces entrantes en el mismo cambio.
+- **Objetivo:** Aplicar la prueba de fuego Core-vs-Plataforma del [Estándar de Autoría de ADRs](../../architecture/adrs/adr-authoring-standard.es.md) a los ADRs Core centrados en herramientas — candidatos: 0001 (Nx), 0005 (CodeQL), 0006/0046 (Dapr), 0014 (Redis), 0030 (Kong vs NestJS), 0069 (MCP). Para cada uno: mantener en core reescrito como principio agnóstico, reubicar a una categoría de plataforma, o dividir (ADR Core agnóstico + ADR de Plataforma con la elección de herramienta). Toda reubicación debe corregir todos los enlaces entrantes en el mismo cambio.
 - **Cierre cuando:** todo ADR Core pasa la prueba de fuego; los ADRs reubicados llevan la nota de reubicación; sin enlaces rotos.
 
 #### GT-22
@@ -1688,24 +1688,24 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Objetivo:** todos los documentos bajo `referencia/` y `conjuntos de reglas/` son legibles en español sin marcadores de posición esqueleto declarados.
 - **Objetivo:** Traducir los 76 archivos actualmente marcados como "esqueleto inicial / pendiente de traduccion [completado]", concentrados en `governance/standards/ai-augmented/*`, `knowledge/architecture-intelligence/patterns` y organismos ADR seleccionados. El inglés sigue siendo la fuente decisiva; Estructura de cabecera de espejos españoles. Los esqueletos consumidos por herramientas bajo `.harness/` y `.bmad-core/` permanecen fuera del alcance a menos que se promocionen al corpus de referencia.
 - **Hecho cuando:** `grep -rl "pendiente de traduccion [completado]" reference/rulesets/` devuelve cero archivos y `check-bilingual-parity.mjs` pasa.
-- **Referencias:** [Índice bilingüe](../../../navigation/BILINGUAL_INDEX.md) · [Glosario de terminología](../../../../.harness/scripts/bilingual-terminology-glossary.md)
+- **Referencias:** [Índice bilingüe](../../BILINGUAL_INDEX.md) · [Glosario de terminología](../../../../.harness/scripts/bilingual-terminology-glossary.md)
 #### GT-24
 
 **Título:** Ejecutar las migraciones documentales declaradas
 
 - **Meta:** que la ubicación física de cada documento coincida con su clasificación taxonómica declarada — sin más notas de "migración pendiente".
-- **Objetivo:** Ejecutar las migraciones que los hubs ya declaran: (1) mover los documentos de visión/estrategia/posicionamiento de la suite desde la ruta legacy `governance/standards/vision/` a sus áreas de `product-suite/`; (2) migrar la documentación de Smart CLI y MCP Services a `product/products/`; (3) promover el [Modelo de Abstracción de Proveedores y Plugins](./evolith-provider-abstraction-plugin-model.es.md) a principio de arquitectura Core; (4) mover las [Interfaces Técnicas del Tracker](./sdlc-tracker-technical-interfaces.es.md) al diseño de producto del Tracker. Cada movimiento deja un stub de compatibilidad en la ruta antigua y corrige todos los enlaces entrantes en el mismo cambio.
+- **Objetivo:** Ejecutar las migraciones que los hubs ya declaran: (1) mover los documentos de visión/estrategia/posicionamiento de la suite desde la ruta legacy `governance/standards/vision/` a sus áreas de `product-suite/`; (2) migrar la documentación de Smart CLI y MCP Services a `product/products/`; (3) promover el [Modelo de Abstracción de Proveedores y Plugins](../../foundations/principles/evolith-provider-abstraction-plugin-model.es.md) a principio de arquitectura Core; (4) mover las [Interfaces Técnicas del Tracker](../../sdlc/sdlc-tracker-technical-interfaces.es.md) al diseño de producto del Tracker. Cada movimiento deja un stub de compatibilidad en la ruta antigua y corrige todos los enlaces entrantes en el mismo cambio.
 - **Cierre cuando:** no queda ningún marcador de "migration pending / migración pendiente" en `reference/` ni `sdk/`; `validate-docs.mjs` pasa.
-- **Referencias:** [Hub de Product Suite](../../../product-suite/README.es.md) · [Hub de Diseños de Producto](../../../products/README.es.md) · [Taxonomía Documental](../../../documentation-taxonomy.es.md)
+- **Referencias:** [Hub de Product Suite](../../../../product/suite/README.es.md) · [Hub de Diseños de Producto](../../../../product/products/README.es.md) · [Taxonomía Documental](../taxonomy/documentation-taxonomy.es.md)
 
 #### GT-25
 
 **Título:** Primeros perfiles de proveedor para las categorías de plataforma
 
 - **Meta:** que el dominio de Guías de Plataforma deje de ser una promesa vacía — cada categoría planificada tiene al menos un perfil de proveedor real.
-- **Objetivo:** Redactar perfiles de proveedor siguiendo el checklist de contenido requerido del [Hub de Plataformas](../../../platforms/README.es.md) (capacidades, limitaciones, licencias, aislamiento de tenants, mapeo de adapters, reemplazabilidad, fuentes actuales), empezando por las categorías de las que los productos ya dependen: `scm/` (GitHub), `ci-cd/` (GitHub Actions), `observability/` (stack OTel), `security/` (CodeQL/Trivy).
+- **Objetivo:** Redactar perfiles de proveedor siguiendo el checklist de contenido requerido del Hub de Plataformas (capacidades, limitaciones, licencias, aislamiento de tenants, mapeo de adapters, reemplazabilidad, fuentes actuales), empezando por las categorías de las que los productos ya dependen: `scm/` (GitHub), `ci-cd/` (GitHub Actions), `observability/` (stack OTel), `security/` (CodeQL/Trivy).
 - **Cierre cuando:** cada directorio de categoría existe con ≥1 perfil (EN+ES) enlazado desde la tabla del hub de plataformas.
-- **Referencias:** [Hub de Plataformas](../../../platforms/README.es.md) · [Catálogo de Herramientas Validadas](../../../platforms/validated-tool-catalog.es.md)
+- **Referencias:** Hub de Plataformas · [Catálogo de Herramientas Validadas](../../../../product/infra/validated-tool-catalog.es.md)
 
 #### GT-26
 
@@ -1726,7 +1726,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** Hacer que la priorización, el reporting y las decisiones de inversión dependan de una única superficie confiable de gobernanza de producto.
 - **Evidencia de cierre:** El commit `a6e4915` normalizó IDs únicos, estados activos, orden, metadata EN/ES y totales. La validación documental pasó para 745 archivos Markdown, la paridad estructural bilingüe pasó y una auditoría semántica confirmó 36 filas únicas de dashboard y 36 fichas correspondientes en cada idioma.
 - **Alcance cerrado:** El tablero canónico es internamente consistente y los completados quedan fuera de la cola activa. La prevención de reincidencias, los totales generados y la automatización de inventarios del repositorio pertenecen explícitamente a GT-35.
-- **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Taxonomía Documental](../../../documentation-taxonomy.es.md)
+- **Referencias:** [Evaluación de Madurez](../maturity-reports/maturity-assessment.es.md) · [Taxonomía Documental](../taxonomy/documentation-taxonomy.es.md)
 
 #### GT-35
 
@@ -1736,7 +1736,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** Generar evidencia de decisión desde el repositorio en vez de depender de afirmaciones sincronizadas manualmente.
 - **Evidencia actual / ejemplo:** La validación documental comprueba enlaces, anchors, encoding y diagramas, pero no valida la semántica del tablero ni regenera inventarios de rulesets, ADRs, traducciones e implementación.
 - **Cierre cuando:** un comando de validación falla ante IDs duplicados, fichas faltantes, metadata EN/ES diferente, completados en la cola activa, totales incorrectos o inventarios obsoletos; su resumen generado se referencia desde el reporte de madurez.
-- **Referencias:** [Hub de Rulesets](../../../../rulesets/README.es.md) · [Evaluación de Madurez](./maturity-assessment.es.md) · [Tracking de Gaps](./gap-tracking.es.md)
+- **Referencias:** [Hub de Rulesets](../../../../src/rulesets/README.es.md) · [Evaluación de Madurez](../maturity-reports/maturity-assessment.es.md) · [Tracking de Gaps](./gap-tracking.es.md)
 
 ### Línea Base de Release y Ejecución de Políticas
 
@@ -1751,7 +1751,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Verificación de reapertura (2026-06-13):** Los runs [SDK CLI CI 27467157131](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27467157131) y [CI/CD 27467157129](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27467157129) confirmaron ambos bloqueos antes de ejecutar las suites: la cache no resolvía `sdk/cli/package-lock.json` y el `prepare` raíz fallaba con `husky: not found`.
 - **Cierre cuando:** desde un checkout limpio pasan lint, build, tests unitarios y smoke MCP stdio/HTTP; ninguna ruta crítica de release se satisface solo con tests omitidos.
 - **Evidencia de cierre:** El commit `84ec879` trasladó la instalación del workspace y la cache npm al lockfile raíz canónico, restauró el comando `test:cov` e hizo bloqueante el smoke MCP en CI. Un clon sin hardlinks de ese commit pasó `npm ci` raíz, lint, build, 64 suites unitarias con 1,087 tests, 14 suites E2E con 121 tests y smoke MCP por stdio y Streamable HTTP. La regresión separada del umbral de cobertura del 80%, descubierta al desbloquear la instalación, se registra en GT-48.
-- **Referencias:** [Smart CLI](../../../../sdk/cli/README.es.md) · [ADR-0073 Contrato Unificado de Salida del CLI](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) · [Quality Gates](../../sdlc/quality-gates.es.md)
+- **Referencias:** [Smart CLI](../../../../src/sdk/cli/README.es.md) · [ADR-0073 Contrato Unificado de Salida del CLI](../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) · [Quality Gates](../../sdlc/quality-gates.es.md)
 
 #### GT-29
 
@@ -1761,7 +1761,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** Convertir los rulesets en un contrato de gobernanza real y portable, no en dos implementaciones parcialmente superpuestas.
 - **Evidencia actual / ejemplo:** F1-R09 a F1-R11 tienen implementaciones Rego, mientras la cobertura de dependency injection, static analysis y separation of concerns sigue incompleta entre engines. F1-R10 también declara enforcement basado en AST mientras su ruta Rego actual usa coincidencia textual.
 - **Cierre cuando:** una matriz de cobertura generada mapea cada regla arquitectónica activa a implementaciones Native y OPA; tests de equivalencia comparan findings y severidad para fixtures conformes y no conformes; el engine OPA/WASM empaquetado pasa el mismo gate de release.
-- **Referencias:** [Reglas Globales R-25](../../../../.harness/rules/global-rules.es.md) · [Ruleset F1](../../../architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json) · [Política de Arquitectura OPA](../../../architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego)
+- **Referencias:** [Reglas Globales R-25](../../../../.harness/rules/global-rules.es.md) · [Ruleset F1](../../architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json) · [Política de Arquitectura OPA](../../architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego)
 
 #### GT-36
 
@@ -1771,7 +1771,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** Preservar un único significado autoritativo de las políticas y hacer explícitas y exigibles sus obligaciones lingüísticas.
 - **Evidencia actual / ejemplo:** Los documentos narrativos de referencia exigen paridad bilingüe, pero la localización de rulesets es parcial y su frontera de excepción no está codificada en la validación.
 - **Cierre cuando:** la gobernanza declara paridad JSON bilingüe completa o una exención explícita de canon inglés con descripciones legibles localizadas; la validación exige el modelo seleccionado y reporta artefactos no cubiertos.
-- **Referencias:** [Reglas Globales](../../../../.harness/rules/global-rules.es.md) · [Hub de Rulesets](../../../../rulesets/README.es.md) · [Glosario de Terminología](../../../../.harness/scripts/bilingual-terminology-glossary.es.md)
+- **Referencias:** [Reglas Globales](../../../../.harness/rules/global-rules.es.md) · [Hub de Rulesets](../../../../src/rulesets/README.es.md) · [Glosario de Terminología](../../../../.harness/scripts/bilingual-terminology-glossary.es.md)
 
 ### Prueba de Producto
 
@@ -1783,7 +1783,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** Hacer que el reporte de madurez sirva para decisiones de inversión y release vinculando cada score con evidencia observable.
 - **Evidencia actual / ejemplo:** Tracker tiene documentación extensa de diseño pero ninguna implementación ejecutable, mientras la línea base histórica del CLI reporta gates de release verdes que actualmente fallan bajo GT-28.
 - **Cierre cuando:** cada capacidad puntuada declara un estado como Visionada, Diseñada, Prototipada, Implementada, Validada o Escalada; cada estado no visionario enlaza evidencia calificadora; los scores agregados se recalculan desde esos estados y exponen incertidumbre.
-- **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Métricas y Madurez de Capacidades](../../../product-suite/vision/evolith-product-vision-master.es.md#11-métricas-y-madurez-de-capacidades)
+- **Referencias:** [Evaluación de Madurez](../maturity-reports/maturity-assessment.es.md) · [Métricas y Madurez de Capacidades](../../../../product/suite/vision/evolith-product-vision-master.es.md#11-métricas-y-madurez-de-capacidades)
 
 #### GT-34
 
@@ -1793,7 +1793,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** Secuenciar la inversión alrededor de la tesis central y postergar opcionalidad costosa hasta que la evidencia la justifique.
 - **Evidencia actual / ejemplo:** El próximo horizonte de planificación debe priorizar línea base de release, kernel del Tracker, vertical slice y aprendizaje del piloto; el runtime distribuido y la amplitud de proveedores deben tener disparadores explícitos de evidencia.
 - **Cierre cuando:** el roadmap ordena el trabajo como línea base → kernel de gobernanza → vertical slice → piloto controlado → escala; las tecnologías diferidas nombran disparadores medibles de adopción, carga, compliance o presión de proveedores; las dependencias mapean a este tablero.
-- **Referencias:** [Roadmap de Estrategia Evolutiva](./evolutionary-strategy-roadmap.es.md) · [Producto Mínimo Comprobable](../../../product-suite/vision/evolith-product-vision-master.es.md#10-producto-mínimo-comprobable) · [Framework de Validación Estratégica y Composición](./evolith-strategic-validation-and-composition-framework.es.md)
+- **Referencias:** [Roadmap de Estrategia Evolutiva](../../../../product/suite/strategy/evolutionary-strategy-roadmap.es.md) · [Producto Mínimo Comprobable](../../../../product/suite/vision/evolith-product-vision-master.es.md#10-producto-mínimo-comprobable) · [Framework de Validación Estratégica y Composición](../../../../product/suite/methods/evolith-strategic-validation-and-composition-framework.es.md)
 
 #### GT-37
 
@@ -1804,7 +1804,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia actual / ejemplo:** El validador semántico, el registro canónico de cierres y los tests de regresión están activos. Los criterios de GT-01 y GT-06 fueron resueltos explícitamente, mientras GT-15 volvió a `DIFERIDO` porque su mock en memoria no es evidencia autoritativa de Tracker.
 - **Cierre cuando:** la validación rechaza `COMPLETADO` sin criterios de cierre satisfechos, evidencia fechada, disposición de dependencias, comandos de validación reproducibles y referencia de commit o release; las excepciones documentadas son explícitas, tienen responsable y vencimiento.
 - **Evidencia de cierre:** El commit `f3c8520` incorporó R-26, el estándar bilingüe de cierre, 32 registros históricos, resolución de commits y artefactos, chequeos de disposición de dependencias, rechazo de criterios sin marcar y cuatro tests de regresión. El mismo cambio corrigió el falso positivo de GT-15.
-- **Referencias:** [Estándar de Evidencia para Cierre de Gaps](./gap-closure-evidence-standard.es.md) · [Registro de Cierres](./gap-closure-evidence.json) · [Validador de Tracking](../../../../.harness/scripts/ci/08-validate-tracking.mjs) · [Tracking de Gaps](./gap-tracking.es.md)
+- **Referencias:** [Estándar de Evidencia para Cierre de Gaps](../evidence/gap-closure-evidence-standard.es.md) · [Registro de Cierres](../evidence/gap-closure-evidence.json) · [Validador de Tracking](../../../../.harness/scripts/ci/08-validate-tracking.mjs) · [Tracking de Gaps](./gap-tracking.es.md)
 
 #### GT-41
 
@@ -1819,7 +1819,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia de reapertura (2026-06-13):** El snapshot generado reporta todos los gaps completos mientras cuatro workflows del mismo commit de `main` están rojos. Registra nombres de comandos, no resultados de tests, release, npm, suites omitidas o CI, y la evaluación narrativa conserva estados de capacidad reemplazados.
 - **Verificación de reapertura (2026-06-13):** El run [Documentation Validation 27467157149](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27467157149) validó el corpus y la paridad bilingüe, pero la reconciliación semántica falló porque el checkout superficial no contenía los commits de cierre registrados.
 - **Evidencia final de cierre:** El commit `e4fa0e3` incorporó un registro de evidencia runtime con control de frescura, resultados explícitos `PASS`/`BLOCKED`, trazabilidad a workflow y commit, ownership de bloqueos por gaps activos, tests de regresión y checkout con historia completa. El run [Documentation Validation 27470122212](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27470122212) pasó documentación, paridad bilingüe, tracking semántico, reconciliación de madurez y validación de contratos machine-readable.
-- **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Reconciliación de Madurez](./maturity-reconciliation.json) · [Resumen de Inventario](./inventory-summary.es.md) · [Validador de Reconciliación](../../../../.harness/scripts/ci/09-reconcile-maturity.mjs)
+- **Referencias:** [Evaluación de Madurez](../maturity-reports/maturity-assessment.es.md) · [Reconciliación de Madurez](../maturity-reports/maturity-reconciliation.json) · [Resumen de Inventario](../maturity-reports/inventory-summary.es.md) · [Validador de Reconciliación](../../../../.harness/scripts/ci/09-reconcile-maturity.mjs)
 
 #### GT-42
 
@@ -1830,7 +1830,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia actual / ejemplo:** Existen ADRs contractuales y schemas JSON, pero no una matriz de compatibilidad entre repositorios ni una suite CI que ejecute juntas las versiones soportadas de productores y consumidores.
 - **Cierre cuando:** schemas versionados compartidos o referencias contractuales fijadas definen la política de compatibilidad; contract tests de productor y consumidor se ejecutan entre Core, CLI y Tracker; CI verifica la matriz de últimas versiones soportadas y bloquea cambios incompatibles.
 - **Evidencia de cierre:** El commit Core `154aadf` incorporó el manifiesto versionado, digests inmutables de schemas, fixtures, tests de conformidad y enforcement en CI. El commit Tracker `4256e7b` fijó el contrato soportado y agregó su workflow consumidor contra Core.
-- **Referencias:** [ADR-0073 Contrato Unificado de Salida del CLI](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) · [Manifiesto Contractual](../../../../rulesets/contracts/evolith-machine-contracts.json) · [Política de Conformidad](../../../../rulesets/contracts/README.es.md) · [Validador de Conformidad](../../../../.harness/scripts/ci/10-validate-contract-conformance.mjs)
+- **Referencias:** [ADR-0073 Contrato Unificado de Salida del CLI](../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) · [Manifiesto Contractual](../../../../src/rulesets/contracts/evolith-machine-contracts.json) · [Política de Conformidad](../../../../src/rulesets/contracts/README.es.md) · [Validador de Conformidad](../../../../.harness/scripts/ci/10-validate-contract-conformance.mjs)
 
 #### GT-44
 
@@ -1853,7 +1853,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cierre cuando:** tests obsoletos se eliminan o reescriben; ninguna suite MCP relevante para release está omitida; casos negativos de protocolo corren en CI; tools y schemas runtime coinciden con el inventario generado.
 - **Evidencia de cierre:** El commit `b07460d` eliminó 547 líneas de tests obsoletos del transporte mínimo, activó 47 tests de tools de agentes/arquitectura/SDLC, agregó un gate de conformidad de schemas runtime y ausencia de suites omitidas, corrigió la inyección runtime de filesystem/config parser, y validó 29 casos E2E MCP más smoke stdio/Streamable HTTP para 21 tools, 7 resources y 7 prompts.
 - **Verificación post-push (2026-06-13):** Los workflows rojos del commit de cierre fallan durante checkout, cache o instalación, antes de ejecutar la conformidad MCP. No existe evidencia contradictoria con las suites locales de cierre; los bloqueos de reproducibilidad y release permanecen asignados a GT-28, GT-41 y GT-44. Estado: `COMPLETADO`.
-- **Referencias:** [Punto de Entrada del Servidor MCP](../../../../packages/mcp-server/src/main.ts) · [Smoke Test MCP](../../../../sdk/cli/examples/mcp-test.js) · [Tests E2E del Servidor MCP](../../../../packages/mcp-server/test/mcp-server.e2e-spec.ts)
+- **Referencias:** [Punto de Entrada del Servidor MCP](../../../../src/packages/mcp-server/src/main.ts) · [Smoke Test MCP](../../../../src/sdk/cli/examples/mcp-test.js) · [Tests E2E del Servidor MCP](../../../../src/packages/mcp-server/test/mcp-server.e2e-spec.ts)
 
 #### GT-46
 
@@ -1864,7 +1864,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cierre cuando:** una decisión explícita elimina la API mock o la reemplaza por un contrato documentado, autenticado y stateless de exposición de Core; CORS es configurable y los endpoints retenidos tienen schemas y tests.
 - **Evidencia de cierre:** El commit `b07460d` eliminó el comando `api`, el mock Tracker Assistant, sesiones chat en memoria, controller, módulo, repositorio e interfaces de dominio. El servicio de red retenido es la exposición MCP Streamable HTTP autenticada y cubierta por contract tests de Evolith Core.
 - **Verificación post-push (2026-06-13):** La revisión de los fallos de CI no identifica regresiones ni una reintroducción de superficies Tracker en Core; todos ocurren antes de la validación funcional. El límite de ownership implementado permanece vigente. Estado: `COMPLETADO`.
-- **Referencias:** [Composition Root del CLI](../../../../sdk/cli/src/app.module.ts) · [Punto de Entrada del Gateway MCP](../../../../packages/mcp-server/src/main.ts)
+- **Referencias:** [Composition Root del CLI](../../../../src/sdk/cli/src/app.module.ts) · [Punto de Entrada del Gateway MCP](../../../../src/packages/mcp-server/src/main.ts)
 
 #### GT-47
 
@@ -1873,9 +1873,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Gap:** Las docs de Smart CLI anuncian `0.0.3-beta`, MCP Services es un placeholder y el reporte de madurez dice que trabajo ya completado de transporte, contratos, gates y publicación continúa faltando.
 - **Propósito:** Mantener la narrativa pública sincronizada con las superficies instalables Core/CLI/MCP.
 - **Cierre cuando:** un inventario generado suministra versión del paquete, comandos, tools, resources, prompts, transportes, schemas y evidencia de tests a docs EN/ES y madurez; CI rechaza drift y páginas placeholder.
-- **Evidencia de cierre:** El commit `38dfc98` añade `generate-product-inventory.mjs`, que deriva la superficie instalable (`@evolith/smart-cli@1.1.0`, bin, 18 comandos, 21 tools MCP, 7 resources, 7 prompts, 2 transportes, 17 schemas, cobertura live) desde las fuentes canónicas del CLI hacia un [Inventario de Superficie del Producto](../../../products/smart-cli/product-inventory.es.md) generado EN/ES. El README de Smart CLI (EN/ES) se actualizó de `0.0.3-beta`/88.7% a `1.1.0` con cobertura vigente, y el placeholder de MCP Services (EN/ES) se reemplazó con la superficie real de tools/resources/prompts/transportes. `validate-product-docs.mjs` rechaza páginas placeholder, drift de versión e inventario obsoleto; corre en el pre-commit hook y el workflow de docs en CI.
+- **Evidencia de cierre:** El commit `38dfc98` añade `generate-product-inventory.mjs`, que deriva la superficie instalable (`@evolith/smart-cli@1.1.0`, bin, 18 comandos, 21 tools MCP, 7 resources, 7 prompts, 2 transportes, 17 schemas, cobertura live) desde las fuentes canónicas del CLI hacia un [Inventario de Superficie del Producto](../../../../product/products/smart-cli/product-inventory.es.md) generado EN/ES. El README de Smart CLI (EN/ES) se actualizó de `0.0.3-beta`/88.7% a `1.1.0` con cobertura vigente, y el placeholder de MCP Services (EN/ES) se reemplazó con la superficie real de tools/resources/prompts/transportes. `validate-product-docs.mjs` rechaza páginas placeholder, drift de versión e inventario obsoleto; corre en el pre-commit hook y el workflow de docs en CI.
 - **Verificación local (2026-06-14):** `generate-product-inventory.mjs --check`, `validate-product-docs.mjs`, `validate-docs.mjs` (827 archivos) y la paridad bilingüe pasan. Estado: `COMPLETADO`.
-- **Referencias:** [Producto Smart CLI](../../../products/smart-cli/README.es.md) · [Producto MCP Services](../../../products/mcp-services/README.es.md) · [Inventario de Superficie del Producto](../../../products/smart-cli/product-inventory.es.md)
+- **Referencias:** [Producto Smart CLI](../../../../product/products/smart-cli/README.es.md) · [Producto MCP Services](../../../../product/products/mcp-services/README.es.md) · [Inventario de Superficie del Producto](../../../../product/products/smart-cli/product-inventory.es.md)
 
 #### GT-48
 
@@ -1887,7 +1887,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cierre cuando:** la cobertura de statements alcanza al menos 80% desde un checkout limpio; los nuevos tests priorizan validators críticos de release, handlers de políticas, comandos CLI, rutas runtime MCP y providers de filesystem; CI bloquea regresiones y la evidencia de madurez se regenera desde el reporte vigente.
 - **Evidencia de cierre:** El commit `48e1d90` sube la cobertura de statements de 66.14% a **80.65%** (4.979 / 6.173) con 1.206 tests unitarios verdes, apuntando exactamente a las superficies nombradas. Las dos suites de servicio rotas por la eliminación del service locator en [GT-04](#gt-04) se revivieron con inyección por constructor (MoscowPrioritizationService 2,58% → 98%, ArchitectureDriftService 3,78% → 94%); los siete native rule handlers obtuvieron specs (~93% cada uno); el OPA input builder (28% → 91%), el disk ruleset repository (11% → 90%) y ambos filesystem providers (Mock 0% → 96%, Node 100%) quedan cubiertos. El gate de CI en `sdk-cli-ci.yml` lee `.total.statements.pct` y bloquea por debajo de 80%; la aplicación durable por-run en `jest.config.js` sigue rastreada por [GT-50](#gt-50).
 - **Verificación CI (2026-06-13):** el job Unit Tests del [run 27479301558](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27479301558) está verde, el gate bloqueante de cobertura imprime `Statement coverage: 80.65%` y Package Integrity pasa. El mismo commit corrigió el reporter del gate para que emita el `json-summary` que el chequeo de umbral parsea. Estado: `COMPLETADO`.
-- **Referencias:** [Workflow CI del CLI](../../../../.github/workflows/sdk-cli-ci.yml) · [Configuración Jest](../../../../sdk/cli/jest.config.js) · [Estrategia de Testing](../../../products/smart-cli/docs/planning/testing-strategy.md) · [GT-04](#gt-04) · [GT-50](#gt-50)
+- **Referencias:** [Workflow CI del CLI](../../../../.github/workflows/sdk-cli-ci.yml) · [Configuración Jest](../../../../src/sdk/cli/jest.config.js) · [Estrategia de Testing](../../../../product/products/smart-cli/docs/planning/testing-strategy.md) · [GT-04](#gt-04) · [GT-50](#gt-50)
 
 #### GT-49
 
@@ -1899,7 +1899,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cierre cuando:** el modo estricto está activado (de forma incremental si es necesario), los parámetros `fs: any` están tipados contra `IFileSystem`, los `: any` restantes están tipados o justificados con una supresión en línea, y el build permanece verde bajo la configuración endurecida.
 - **Evidencia de cierre:** El commit `398729d` pone `strictNullChecks`, `noImplicitAny` y `strictBindCallApply` en `true` en `tsconfig.json` — los overrides explícitos en `false` antes neutralizaban incluso una invocación `--strict`. Los 10 errores de tipo resultantes quedan resueltos: los 16 parámetros `fs: any` están tipados contra `IFileSystem` (comandos adr/standards y los use cases de la capa de aplicación), más un `canHandle` con boolean estricto, un `status` opcional en `updateADR`, encoding unificado en `FileReadOptions`/`FileWriteOptions`, null-safety en el filesystem/watcher MCP, un target de decorador acotado y defaults de prompt con coalescencia de null. `@typescript-eslint/no-explicit-any` queda activado como warning para visibilizar nuevos `any`; las ocurrencias restantes están en fronteras genuinamente dinámicas (varargs de logger, payloads OPA/JSON, datos de catálogo).
 - **Verificación local (2026-06-13):** `npx tsc --noEmit` está limpio bajo la configuración endurecida; `npm run build`, 1.206 tests unitarios y 121 E2E pasan; lint reporta 0 errores. Estado: `COMPLETADO`.
-- **Referencias:** [tsconfig del CLI](../../../../sdk/cli/tsconfig.json) · [Configuración ESLint](../../../../sdk/cli/.eslintrc.js) · [ADR-0019 Patrones de Diseño Táctico](../../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md)
+- **Referencias:** [tsconfig del CLI](../../../../src/sdk/cli/tsconfig.json) · [Configuración ESLint](../../../../src/sdk/cli/.eslintrc.js) · [ADR-0019 Patrones de Diseño Táctico](../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md)
 
 #### GT-50
 
@@ -1910,7 +1910,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cierre cuando:** `jest.config.js` declara un `coverageThreshold` alineado con el objetivo normativo (idealmente ratchets por directorio que impidan regresiones silenciosas), el chequeo de CI y la configuración de Jest coinciden en el umbral, y el comando de cobertura local falla ante una regresión. Coordinar el número absoluto con [GT-48](#gt-48).
 - **Evidencia de cierre:** El commit `040ea7f` añade un `coverageThreshold` global a `jest.config.js` — `statements: 80` (idéntico al gate bash de `sdk-cli-ci.yml`), `lines: 80`, `functions: 75`, `branches: 67` — de modo que `npm run test:cov` ahora falla localmente ante una regresión y no solo tras el push. Los umbrales quedan en o justo por debajo de los pisos restaurados por [GT-48](#gt-48) (80,65% statements, 81,47% líneas, 76,36% funciones, 68,87% branches).
 - **Verificación local (2026-06-14):** `npm run test:cov` pasa 1.206 tests y reporta cobertura por encima de cada umbral; Jest sale con 0. Una caída por debajo de cualquier piso ahora falla el comando. Estado: `COMPLETADO`.
-- **Referencias:** [Configuración Jest](../../../../sdk/cli/jest.config.js) · [Workflow CI del CLI](../../../../.github/workflows/sdk-cli-ci.yml) · [GT-48](#gt-48)
+- **Referencias:** [Configuración Jest](../../../../src/sdk/cli/jest.config.js) · [Workflow CI del CLI](../../../../.github/workflows/sdk-cli-ci.yml) · [GT-48](#gt-48)
 
 #### GT-51
 
@@ -1922,7 +1922,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cierre cuando:** existe un esquema de evidencia Build-versus-Compose, el validator de phase-gate verifica su presencia y contenido para el gate de Business Sign-Off, y las superficies CLI/MCP exponen el resultado con el envelope de ADR-0073.
 - **Evidencia de cierre:** El commit `54386a3` añade `rulesets/schema/build-vs-compose.schema.json`, modelando cada campo de §5.3 — alternativas evaluadas, disposición gobernada Adopt/Embed/Integrate/Extend/Build/Reject, costo a tres años, licenciamiento, aislamiento de tenant/propiedad de datos, reemplazabilidad de proveedor, requisitos de PoC y una justificación nativa condicionalmente requerida cuando la disposición es `Build`. El gate de Business Sign-Off (Fase 1) en `phase-gates.rules.json` lo lista ahora como evidencia mandatoria, y el validator de phase-gate lo mapea a `.evolith/build-vs-compose.json` y valida presencia **y** contenido vía Ajv — expuesto a través del envelope de gate-evidence de ADR-0073 en el CLI (`gate evaluate`) y la tool MCP `evolith-gate-evaluate`. El conteo de schemas de phase-gate sube a 18.
 - **Verificación local (2026-06-14):** un nuevo spec verifica aceptación/rechazo del schema (disposición ausente, valor desconocido, Build-sin-justificación, costo/seguridad ausentes) e integración con el validator (válido pasa, inválido falla, ausente falla); el `gate.e2e-spec` sigue devolviendo un envelope fallido schema-válido. 1.215 tests unitarios pasan; la cobertura se mantiene en 80,70%. Estado: `COMPLETADO`.
-- **Referencias:** [Visión de Producto Maestra §5.3](../../../product-suite/vision/evolith-product-vision-master.es.md) · [Schema Build-versus-Compose](../../../../rulesets/schema/build-vs-compose.schema.json) · [Validator de Phase Gate](../../../../packages/core-domain/src/application/validators/phase-gate-validator.service.ts) · [GT-08](#gt-08)
+- **Referencias:** [Visión de Producto Maestra §5.3](../../../../product/suite/vision/evolith-product-vision-master.es.md) · [Schema Build-versus-Compose](../../../../src/rulesets/schema/build-vs-compose.schema.json) · [Validator de Phase Gate](../../../../src/packages/core-domain/src/application/validators/phase-gate-validator.service.ts) · [GT-08](#gt-08)
 
 #### GT-52
 
@@ -1932,7 +1932,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** Eliminar una costura fantasma que tergiversa el modelo de wiring, para que el composition root en `app.module.ts` sea la única fuente de construcción.
 - **Cierre cuando:** los stubs se eliminan (o se reemplazan por una abstracción real y usada), ningún código productivo depende de ellos, y el build y los tests pasan.
 - **Evidencia de cierre:** El commit elimina `sdk/cli/src/infrastructure/di/container.ts` (los stubs no-op `getContainer`/`resetContainer` que quedaron tras [GT-04](#gt-04) y [GT-17](#gt-17)); ningún código productivo los importaba. Los bloques `jest.mock('.../di/container', …)` muertos y los imports sin uso se eliminaron del app-module, los specs de comandos init/adr/standards y el spec de gate-status. El composition root en `app.module.ts` es la única fuente de construcción; el build, 1.206 tests unitarios y 121 E2E pasan con cobertura en 80,70%.
-- **Referencias:** [Composition Root](../../../../sdk/cli/src/app.module.ts) · [GT-17](#gt-17)
+- **Referencias:** [Composition Root](../../../../src/sdk/cli/src/app.module.ts) · [GT-17](#gt-17)
 
 #### GT-53
 
@@ -1943,7 +1943,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cierre cuando:** la evaluación de madurez (EN/ES) y cualquier otra referencia de Core resuelven a la ruta canónica de la visión, y la validación de enlaces pasa sin stubs de redirección en el grafo referenciado.
 - **Evidencia de cierre:** Los stubs de redirección de migración en `reference/core/control-center/evolith-product-vision-master.md` (+`.es.md`) se eliminan, y toda referencia de Core resuelve ahora a la ruta canónica `product/suite/vision/`: la Evaluación de Madurez (EN/ES), los READMEs de vision y de product-suite/vision (este último enlazaba de vuelta al stub), el README raíz y `rulesets/acl/README` (EN/ES). Borrar los stubs destapó estos enlaces migrados ocultos, que `validate-docs.mjs` ahora confirma que resuelven. El índice bilingüe se regeneró.
 - **Verificación local (2026-06-14):** `validate-docs.mjs` pasa para 825 archivos sin enlaces rotos, la paridad bilingüe y el chequeo de huérfanos pasan, y no queda ninguna referencia al stub fuera del ledger histórico de migración. Estado: `COMPLETADO`.
-- **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Visión Maestra Canónica](../../../product-suite/vision/evolith-product-vision-master.es.md)
+- **Referencias:** [Evaluación de Madurez](../maturity-reports/maturity-assessment.es.md) · [Visión Maestra Canónica](../../../../product/suite/vision/evolith-product-vision-master.es.md)
 
 #### GT-54
 
@@ -1952,7 +1952,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Gap:** Quedan dos costuras residuales tras la migración de `core/` ([GT-19](#gt-19)): ESLint todavía permite imports `application → infrastructure` como una "concesión pragmática del CLI" documentada (`.eslintrc.js`), y algunos use cases grandes mantienen responsabilidades mezcladas — `InitializeProjectUseCase` (~280 líneas) en el barrel `services/index.ts` y el `phase-gate-validator.service.ts` de 500 líneas.
 - **Propósito:** Cerrar la última milla hacia fronteras hexagonales estrictas, de modo que la capa de aplicación dependa solo de puertos y los use cases sobredimensionados se descompongan por responsabilidad.
 - **Cierre cuando:** se elimina la concesión `application → infrastructure` (la aplicación depende solo de puertos/dominio), los use cases sobredimensionados se descomponen en unidades enfocadas, y las fronteras de ESLint más la suite completa de tests pasan.
-- **Referencias:** [Configuración ESLint](../../../../sdk/cli/.eslintrc.js) · [Barrel de servicios de aplicación](../../../../packages/core-domain/src/application/services/index.ts) · [GT-19](#gt-19) · [GT-17](#gt-17)
+- **Referencias:** [Configuración ESLint](../../../../src/sdk/cli/.eslintrc.js) · [Barrel de servicios de aplicación](../../../../src/packages/core-domain/src/application/services/index.ts) · [GT-19](#gt-19) · [GT-17](#gt-17)
 
 ---
 
@@ -2026,7 +2026,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Hecho Cuando:** Una aplicación `apps/agent-sandbox` sea creada con un servidor MCP de prueba conectado al Core API.
 
 ---
-[Volver al Tablero de Seguimiento](./gap-tracking.es.md) · [Volver al Índice de Visión](./README.es.md)
+[Volver al Tablero de Seguimiento](./gap-tracking.es.md) · [Volver al Índice de Visión](../../README.es.md)
 
 #### GT-55
 
@@ -2035,7 +2035,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** El workspace `sdk/cli` produce más de 105 advertencias de `@typescript-eslint/no-explicit-any` durante el linting. Estas están predominantemente en clases límite como `prompt.service.ts` y `base-command.ts`.
 - **Propósito:** Imponer type safety en todas las fronteras del sistema para evitar regresiones en tiempo de ejecución y cumplir con las garantías de tipado estático ordenadas por la arquitectura Evolith.
 - **Criterio de cierre:** La regla de linting `@typescript-eslint/no-explicit-any` puede ser elevada de `warn` a `error` y pasa en todos los paquetes sin suprimir errores.
-- **Referencias:** [prompt.service.ts](../../../../sdk/cli/src/infrastructure/prompts/prompt.service.ts)
+- **Referencias:** [prompt.service.ts](../../../../src/sdk/cli/src/infrastructure/prompts/prompt.service.ts)
 
 ---
 
@@ -2046,7 +2046,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** `test/agents.e2e-spec.ts` atrapa excepciones internas de forma silenciosa. Inspeccionando de cerca, la prueba desencadena un error silencioso `TypeError: p.select is not a function` debido a que `@clack/prompts` no está siendo mockeado correctamente a través de `nest-commander-testing`.
 - **Propósito:** Garantizar que todos los flujos de usuario del CLI, específicamente los prompts interactivos, sean probados y verificados adecuadamente en el pipeline CI/CD sin fallos silenciosos.
 - **Criterio de cierre:** `@clack/prompts` es mockeado correctamente en las pruebas E2E y la lógica de `try-catch` en `test/agents.e2e-spec.ts` es reemplazada con aserciones estrictas.
-- **Referencias:** [agents.e2e-spec.ts](../../../../sdk/cli/test/agents.e2e-spec.ts)
+- **Referencias:** [agents.e2e-spec.ts](../../../../src/sdk/cli/test/agents.e2e-spec.ts)
 
 ---
 
@@ -2057,7 +2057,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** Varias características MCP enumeradas en `planning/sdk-cli-mcp-implementation-roadmap.md` permanecen sin implementar como stubs (`TODO`), incluyendo validación F1/F2/F3, recolección de métricas DORA y el recurso `evolith://core/info`.
 - **Propósito:** Entregar el conjunto completo de funciones propuestas del servidor MCP Evolith para apoyar la aumentación de contexto de los LLM.
 - **Criterio de cierre:** Todos los `TODO` en el roadmap de implementación MCP son implementados y sus respectivas herramientas/recursos MCP son probados.
-- **Referencias:** [sdk-cli-mcp-implementation-roadmap.md](../../../products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md)
+- **Referencias:** [sdk-cli-mcp-implementation-roadmap.md](../../../../product/products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md)
 
 ---
 
@@ -2068,7 +2068,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** `hexagonal-scaffolder.ts` inyecta boilerplate conteniendo deuda técnica directamente en los componentes recién creados (e.g. `// TODO: add validation rules`, `// TODO: implement persistence`).
 - **Propósito:** Proporcionar una plantilla completamente limpia y lista para usar en los nuevos bounded contexts en lugar de inyectar deuda técnica preexistente.
 - **Criterio de cierre:** El generador produce implementaciones dummy completas y limpias, o maneja abstracciones sin dejar `TODO`s en línea para el usuario.
-- **Referencias:** [hexagonal-scaffolder.ts](../../../../packages/core-domain/src/application/generators/hexagonal-scaffolder.ts)
+- **Referencias:** [hexagonal-scaffolder.ts](../../../../src/packages/core-domain/src/application/generators/hexagonal-scaffolder.ts)
 
 ---
 
@@ -2085,7 +2085,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] CORS configurado desde la variable de entorno `ALLOWED_ORIGINS`
   - [x] `ThrottlerGuard` registrado como `APP_GUARD` global
   - [x] Test de integración valida headers de seguridad (X-Frame-Options, X-Content-Type-Options, etc.)
-- **Referencias:** [OWASP API4:2023](https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/) · [OWASP API8:2023](https://owasp.org/API-Security/editions/2023/en/0xa8-security-misconfiguration/) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
+- **Referencias:** [OWASP API4:2023](https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/) · [OWASP API8:2023](https://owasp.org/API-Security/editions/2023/en/0xa8-security-misconfiguration/) · [apps/core-api/src/main.ts](../../../../src/apps/core-api/src/main.ts)
 
 #### GT-60
 
@@ -2097,7 +2097,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `ValidationPipe` global habilitado con `whitelist: true, forbidNonWhitelisted: true, transform: true`
   - [x] DTOs creados para cada endpoint con decorators de `class-validator`
   - [x] DTOs de respuesta creados (los tipos de dominio nunca se retornan directamente)
-- **Referencias:** [OWASP API3:2023](https://owasp.org/API-Security/editions/2023/en/0xa3-broken-object-property-level-authorization/) · [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts)
+- **Referencias:** [OWASP API3:2023](https://owasp.org/API-Security/editions/2023/en/0xa3-broken-object-property-level-authorization/) · [apps/core-api/src/app.module.ts](../../../../src/apps/core-api/src/app.module.ts)
 
 #### GT-61
 
@@ -2110,7 +2110,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `Content-Type: application/problem+json` en todas las respuestas de error
   - [x] Stack traces nunca expuestos cuando `NODE_ENV === 'production'`
   - [x] Correlation ID (`x-trace-id`) propagado en respuestas de error
-- **Referencias:** [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
+- **Referencias:** [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) · [apps/core-api/src/main.ts](../../../../src/apps/core-api/src/main.ts)
 
 #### GT-62
 
@@ -2148,7 +2148,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Todos los logs son JSON con campos: `timestamp`, `level`, `context`, `correlationId`
   - [x] `x-correlation-id` extraído del request entrante o generado via UUID
   - [x] Correlation ID propagado en todos los responses y objetos de error
-- **Referencias:** [nestjs-pino](https://github.com/iamolegga/nestjs-pino) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
+- **Referencias:** [nestjs-pino](https://github.com/iamolegga/nestjs-pino) · [apps/core-api/src/main.ts](../../../../src/apps/core-api/src/main.ts)
 
 #### GT-65
 
@@ -2174,7 +2174,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `trace_id` y `span_id` incluidos en todas las entradas de log
   - [x] Spans personalizados en `EvaluateGateUseCase` y `validateArchitecture`
   - [x] Exportación OTLP configurada via variable de entorno
-- **Referencias:** [OpenTelemetry NestJS](https://opentelemetry.io/docs/zero-code/js/nestjs/) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
+- **Referencias:** [OpenTelemetry NestJS](https://opentelemetry.io/docs/zero-code/js/nestjs/) · [apps/core-api/src/main.ts](../../../../src/apps/core-api/src/main.ts)
 
 #### GT-67
 
@@ -2188,7 +2188,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Todos los DTOs anotados con `@ApiProperty`
   - [x] `GET /api/docs` sirve Swagger UI
   - [x] `openapi.json` generado en el build y versionado en el repositorio
-- **Referencias:** [@nestjs/swagger](https://docs.nestjs.com/openapi/introduction) · [apps/core-api](../../../../apps/core-api)
+- **Referencias:** [@nestjs/swagger](https://docs.nestjs.com/openapi/introduction) · [apps/core-api](../../../../src/apps/core-api)
 
 #### GT-68
 
@@ -2200,7 +2200,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Todos los endpoints bajo `/api/v1/`
   - [x] `CHANGELOG.md` documenta cambios de versión
   - [x] Política de deprecación documentada en ADR
-- **Referencias:** [NestJS Versioning](https://docs.nestjs.com/techniques/versioning) · [apps/core-api](../../../../apps/core-api)
+- **Referencias:** [NestJS Versioning](https://docs.nestjs.com/techniques/versioning) · [apps/core-api](../../../../src/apps/core-api)
 
 #### GT-69
 
@@ -2225,7 +2225,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `app.enableShutdownHooks()` habilitado
   - [x] `OnModuleDestroy` implementado en servicios con recursos externos
   - [x] Test de integración verifica que los requests en vuelo se completan antes del shutdown
-- **Referencias:** [NestJS Lifecycle Events](https://docs.nestjs.com/fundamentals/lifecycle-events) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
+- **Referencias:** [NestJS Lifecycle Events](https://docs.nestjs.com/fundamentals/lifecycle-events) · [apps/core-api/src/main.ts](../../../../src/apps/core-api/src/main.ts)
 
 #### GT-71
 
@@ -2237,7 +2237,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Circuit breaker envuelve llamadas a `IFileSystem` en operaciones críticas
   - [x] Fallback retorna respuesta degradada con `503 Service Unavailable`
   - [x] Estado del circuit breaker expuesto en métricas de `/metrics`
-- **Referencias:** [opossum](https://github.com/nodeshift/opossum) · [packages/core-domain/src/domain/interfaces.ts](../../../../packages/core-domain/src/domain/interfaces.ts)
+- **Referencias:** [opossum](https://github.com/nodeshift/opossum) · [packages/core-domain/src/domain/interfaces.ts](../../../../src/packages/core-domain/src/domain/interfaces.ts)
 
 #### GT-72
 
@@ -2249,7 +2249,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Cero archivos con `@ts-nocheck` en `packages/core-domain`
   - [x] `packages/core-domain/tsconfig.json` tiene `strict: true`
   - [x] `noImplicitAny: true` en todos los tsconfigs del workspace
-- **Referencias:** [packages/core-domain/src/application](../../../../packages/core-domain/src/application) · [GT-49](#gt-49)
+- **Referencias:** [packages/core-domain/src/application](../../../../src/packages/core-domain/src/application) · [GT-49](#gt-49)
 
 #### GT-73
 
@@ -2262,7 +2262,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] CI ejecuta pruebas en cada PR
   - [x] Caminos de error (fallo de auth, input inválido, error de dominio) todos cubiertos
   - [x] Al menos 5 flujos E2E probados via supertest
-- **Referencias:** [apps/core-api/src](../../../../apps/core-api/src) · [@nestjs/testing](https://docs.nestjs.com/fundamentals/testing)
+- **Referencias:** [apps/core-api/src](../../../../src/apps/core-api/src) · [@nestjs/testing](https://docs.nestjs.com/fundamentals/testing)
 
 #### GT-74
 
@@ -2275,7 +2275,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El proceso falla con mensaje claro si falta una variable requerida
   - [x] `README.md` documenta todas las variables de entorno
   - [x] `.env.example` con valores seguros por defecto commiteado al repositorio
-- **Referencias:** [@nestjs/config](https://docs.nestjs.com/techniques/configuration) · [apps/core-api](../../../../apps/core-api)
+- **Referencias:** [@nestjs/config](https://docs.nestjs.com/techniques/configuration) · [apps/core-api](../../../../src/apps/core-api)
 
 #### GT-75
 
@@ -2287,7 +2287,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Paquete `packages/infra-providers` creado con su propio `package.json`
   - [x] Providers duplicados eliminados de `apps/core-api` y `sdk/cli`
   - [x] `@evolith/infra-providers` agregado como dependencia en ambos consumidores
-- **Referencias:** [apps/core-api/src/infrastructure/providers](../../../../apps/core-api/src/infrastructure/providers) · [sdk/cli/src/infrastructure/providers](../../../../sdk/cli/src/infrastructure/providers)
+- **Referencias:** [apps/core-api/src/infrastructure/providers](../../../../src/apps/core-api/src/infrastructure/providers) · [sdk/cli/src/infrastructure/providers](../../../../src/sdk/cli/src/infrastructure/providers)
 
 #### GT-76
 
@@ -2300,7 +2300,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `PhaseTransitionUseCase` inyectado via `CoreDomainProviders`
   - [x] `TransitionPhaseDto` con decorators de class-validator
   - [x] Pruebas unitarias para el controller
-- **Referencias:** [packages/core-domain/src/application/use-cases/phase-transition.use-case.ts](../../../../packages/core-domain/src/application/use-cases/phase-transition.use-case.ts) · [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts)
+- **Referencias:** [packages/core-domain/src/application/use-cases/phase-transition.use-case.ts](../../../../src/packages/core-domain/src/application/use-cases/phase-transition.use-case.ts) · [apps/core-api/src/app.module.ts](../../../../src/apps/core-api/src/app.module.ts)
 
 #### GT-77
 
@@ -2312,7 +2312,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `CoreDomainModule` extraído como módulo NestJS independiente
   - [x] `AppModule` importa `CoreDomainModule` en lugar de declarar providers directamente
   - [x] `CoreDomainModule` puede importarse en pruebas de integración de forma aislada
-- **Referencias:** [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts)
+- **Referencias:** [apps/core-api/src/app.module.ts](../../../../src/apps/core-api/src/app.module.ts)
 
 #### GT-78
 
@@ -2350,7 +2350,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] un step de CI type-checkea los tests (`tsc --noEmit -p sdk/cli/tsconfig.test.json`) y bloquea ante fallo
   - [x] los errores `TS1205` de re-export existentes se resuelven (`export type`)
   - [x] el type-check pasa desde un checkout limpio
-- **Referencias:** [tsconfig de tests del CLI](../../../../sdk/cli/tsconfig.test.json) · [Configuración Jest](../../../../sdk/cli/jest.config.js) · [Barrel de observabilidad](../../../../sdk/cli/src/infrastructure/observability/index.ts)
+- **Referencias:** [tsconfig de tests del CLI](../../../../src/sdk/cli/tsconfig.test.json) · [Configuración Jest](../../../../src/sdk/cli/jest.config.js) · [Barrel de observabilidad](../../../../src/sdk/cli/src/infrastructure/observability/index.ts)
 
 #### GT-81
 
@@ -2372,7 +2372,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
     - `npm run test:cov` — umbrales de cobertura exigidos
     - `node .harness/scripts/ci/01-validate-docs.mjs` — estándares de documentación pasan
   - `dependencyDisposition`: none
-- **Referencias:** [Configuración Jest](../../../../sdk/cli/jest.config.js) · [GT-48](#gt-48) · [GT-50](#gt-50)
+- **Referencias:** [Configuración Jest](../../../../src/sdk/cli/jest.config.js) · [GT-48](#gt-48) · [GT-50](#gt-50)
 
 #### GT-82
 
@@ -2385,7 +2385,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] la suite se revive (inyección por constructor, verde) o se elimina
   - [x] no queda ningún `describe.skip` en la suite de tests del CLI, o el skip restante está justificado en el archivo
   - [x] la cobertura refleja la decisión y el gate permanece verde
-- **Referencias:** [GT-48](#gt-48) · [evidencia-de-cierre](./gap-closure-evidence.json)
+- **Referencias:** [GT-48](#gt-48) · [evidencia-de-cierre](../evidence/gap-closure-evidence.json)
 
 
 ### Componente CLI — Consolidado desde el Backlog del CLI
@@ -2595,7 +2595,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] endpoints de lectura para rulesets, contenido de ruleset, definiciones de gate y requisitos de fase, expuestos y documentados en OpenAPI
   - [x] endpoints cubiertos por tests unit + e2e
   - [x] al menos un flujo de composición del BFF del Tracker los consume
-- **Referencias:** [apps/core-api/src/presentation/controllers/gates.controller.ts](../../../../apps/core-api/src/presentation/controllers/gates.controller.ts) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [ADR-0075](../../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)
+- **Referencias:** [apps/core-api/src/presentation/controllers/gates.controller.ts](../../../../src/apps/core-api/src/presentation/controllers/gates.controller.ts) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [ADR-0075](../../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)
 
 #### GT-118
 
@@ -2605,10 +2605,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Definir e implementar un modelo de consumo remoto para que el BFF del Tracker llame a un Core API hosteado sin pasar rutas locales — p. ej. un contrato de referencia a repositorio (URL git + ref + credenciales) con checkout en servidor, o una frontera de upload/streaming, con aislamiento de tenant.
 - **Evidencia actual / ejemplo:** `POST /architecture/validate-satellite`, `POST /gates/:gateId/evaluate` y ambos comandos `/projects` ahora aceptan una `workspaceRef` opaca resuelta bajo `WORKSPACE_ROOT` gestionado por el BFF; `POST /architecture/detect-drift` es el comando restante con ruta local que debe migrarse.
 - **Criterio de cierre:**
-  - [x] un contrato de referencia a repositorio remoto (o equivalente) especificado en un ADR ([ADR-0080](../../../architecture/adrs/core/0080-remote-repository-reference-contract.es.md))
+  - [x] un contrato de referencia a repositorio remoto (o equivalente) especificado en un ADR ([ADR-0080](../../architecture/adrs/core/0080-remote-repository-reference-contract.es.md))
   - [x] el Core API resuelve el contenido del satélite sin una ruta local provista por el caller (`workspaceRef` se resuelve únicamente bajo `WORKSPACE_ROOT` configurado en el servidor)
   - [x] aislamiento de tenant y manejo de credenciales cubiertos por tests
-- **Referencias:** [apps/core-api/src/presentation/controllers/projects.controller.ts](../../../../apps/core-api/src/presentation/controllers/projects.controller.ts) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)
+- **Referencias:** [apps/core-api/src/presentation/controllers/projects.controller.ts](../../../../src/apps/core-api/src/presentation/controllers/projects.controller.ts) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)
 
 #### GT-119
 
@@ -2621,7 +2621,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] el ADR-0074 §5 se actualiza o supersede para coincidir con la topología implementada, o MCP se integra en `core-api`
   - [x] la Visión de Producto §2.5 refleja la decisión reconciliada
 - **Evidencia de cierre:** El commit `e93c68a` enmienda el ADR-0074 para registrar la topología standalone de `@evolith/mcp-server` y aclara que `smart-cli mcp serve` delega al paquete standalone en lugar de `apps/core-api`. La capa técnica de la Visión de Producto §2.5 ya refleja el modelo de exposición de dos capas, con el BFF del Tracker como cliente externo de `apps/core-api` más las superficies `mcp-server` y CLI. `apps/core-api` no contiene wiring MCP, lo que coincide con la decisión reconciliada.
-- **Referencias:** [packages/mcp-server/README.es.md](../../../../packages/mcp-server/README.es.md) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [Producto Vision Master](../../../../product/suite/vision/evolith-product-vision-master.es.md)
+- **Referencias:** [packages/mcp-server/README.es.md](../../../../src/packages/mcp-server/README.es.md) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [Producto Vision Master](../../../../product/suite/vision/evolith-product-vision-master.es.md)
 
 #### GT-120
 
@@ -2634,7 +2634,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] el ADR-0074 se enmienda para descopar GraphQL con justificación y documentar el alcance REST-only
   - [x] la documentación OpenAPI y la lista de exposición de la Visión de Producto son consistentes con la API Core REST-only implementada
 - **Evidencia de cierre:** El commit `cb05ffa` elimina las referencias residuales a GraphQL del ADR-0074, la Visión de Producto y el README del Core API para que la exposición documentada coincida con la superficie REST-only implementada. El gateway MCP independiente sigue siendo la ruta separada para agentes de IA.
-- **Referencias:** [apps/core-api/README.md](../../../../apps/core-api/README.md) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [Producto Vision Master](../../../../product/suite/vision/evolith-product-vision-master.es.md)
+- **Referencias:** [apps/core-api/README.md](../../../../src/apps/core-api/README.md) · [ADR-0074](../../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [Producto Vision Master](../../../../product/suite/vision/evolith-product-vision-master.es.md)
 
 #### GT-121
 
@@ -2648,7 +2648,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - [x] `sdk/cli/src/infrastructure/mcp/` y sus specs eliminados
 - [x] el CLI compila y sus tests pasan; el cambio cae en un bump de versión mayor
 - **Evidencia de cierre:** El commit `c4835e0` elimina el subsistema MCP in-process del Smart CLI, reemplaza el helper de filesystem viejo por un adaptador local basado en `NodeFileSystemProvider` en `agents.command.ts` y mantiene el serving MCP en el paquete standalone `@evolith/mcp-server`. El árbol `sdk/cli/src/infrastructure/mcp/**` y sus e2e asociados ya no existen; `npm run build --workspace sdk/cli` y `npm test --workspace sdk/cli -- --runInBand` pasan sobre el estado resultante.
-- **Referencias:** [sdk/cli/src/commands/agents/agents.command.ts](../../../../sdk/cli/src/commands/agents/agents.command.ts) · [Punto de Entrada del Servidor MCP](../../../../packages/mcp-server/src/main.ts) · [ADR-0075](../../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)
+- **Referencias:** [sdk/cli/src/commands/agents/agents.command.ts](../../../../src/sdk/cli/src/commands/agents/agents.command.ts) · [Punto de Entrada del Servidor MCP](../../../../src/packages/mcp-server/src/main.ts) · [ADR-0075](../../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)
 
 #### GT-122
 
@@ -2662,7 +2662,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] los archivos locales de adapter/provider duplicados eliminados
   - [x] todos los paquetes compilan y sus tests pasan
 - **Evidencia de cierre:** El commit `71263df` mueve los consumidores compartidos en `apps/core-api` y `sdk/cli` a `@evolith/infra-providers`, elimina las implementaciones locales duplicadas `disk-ruleset`, `webhook` y `moscow-prioritization` de `sdk/cli` y el duplicado `disk-ruleset` de `apps/core-api`, y mantiene las specs de consumidores apuntando a las exportaciones del paquete compartido. `packages/infra-providers` compila limpio; `apps/core-api` compila limpio; `sdk/cli` compila limpio; `apps/core-api` pasa tests; y la ejecución unit/e2e de `sdk/cli` usada para validar el refactor pasa desde el estado resultante.
-- **Referencias:** [packages/infra-providers/src/index.ts](../../../../packages/infra-providers/src/index.ts) · [packages/infra-providers/src/disk-ruleset.repository.ts](../../../../packages/infra-providers/src/disk-ruleset.repository.ts) · [packages/infra-providers/src/webhook.adapter.ts](../../../../packages/infra-providers/src/webhook.adapter.ts) · [packages/infra-providers/src/moscow-prioritization.service.ts](../../../../packages/infra-providers/src/moscow-prioritization.service.ts) · [apps/core-api/src/core-domain.module.ts](../../../../apps/core-api/src/core-domain.module.ts) · [sdk/cli/src/app.module.ts](../../../../sdk/cli/src/app.module.ts)
+- **Referencias:** [packages/infra-providers/src/index.ts](../../../../src/packages/infra-providers/src/index.ts) · [packages/infra-providers/src/disk-ruleset.repository.ts](../../../../src/packages/infra-providers/src/disk-ruleset.repository.ts) · [packages/infra-providers/src/webhook.adapter.ts](../../../../src/packages/infra-providers/src/webhook.adapter.ts) · [packages/infra-providers/src/moscow-prioritization.service.ts](../../../../src/packages/infra-providers/src/moscow-prioritization.service.ts) · [apps/core-api/src/core-domain.module.ts](../../../../src/apps/core-api/src/core-domain.module.ts) · [sdk/cli/src/app.module.ts](../../../../src/sdk/cli/src/app.module.ts)
 
 #### GT-123
 
@@ -2676,7 +2676,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `npm run test:cov` pasa (976 unit tests); `sdk-cli-ci.yml` construye primero los workspace deps para que `@evolith/*` resuelvan
   - [x] la rotura del e2e se separó en [GT-124](#gt-124) (entorno/fixtures preexistentes, fuera del alcance del build)
 - **Evidencia de cierre:** El commit `31f8f07` resuelve los 23 errores — colisión campo/método `isTTY` en `progress.service` (neutralizaba el branch no-TTY) y `spinner.message()` llamado como método; `init.wizard` pasa `promptService` al super y arma un `InitProjectInput` completo; `alias.command` protege `e.message`; el `auto-fix.ts` muerto del MCP viejo queda `@ts-nocheck`. `npx tsc` limpio y 976 unit tests pasan. Los fixes de orden-de-build/jest del CI cayeron antes en `591201b`.
-- **Referencias:** [sdk/cli/src/commands/init/init.wizard.ts](../../../../sdk/cli/src/commands/init/init.wizard.ts) · [sdk/cli/src/infrastructure/prompts/progress.service.ts](../../../../sdk/cli/src/infrastructure/prompts/progress.service.ts) · [.github/workflows/sdk-cli-ci.yml](../../../../.github/workflows/sdk-cli-ci.yml)
+- **Referencias:** [sdk/cli/src/commands/init/init.wizard.ts](../../../../src/sdk/cli/src/commands/init/init.wizard.ts) · [sdk/cli/src/infrastructure/prompts/progress.service.ts](../../../../src/sdk/cli/src/infrastructure/prompts/progress.service.ts) · [.github/workflows/sdk-cli-ci.yml](../../../../.github/workflows/sdk-cli-ci.yml)
 
 #### GT-124
 
@@ -2690,7 +2690,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] el desajuste de naming del prompt MCP reconciliado (o absorbido por la remoción del MCP viejo de GT-121)
   - [x] `npm run test:e2e` pasa en CI
 - **Evidencia de cierre:** El commit `e93c68a` corrige las regresiones de ruteo y naming del e2e: `CompletionCommand` ahora resuelve los hooks de shell desde la raíz del paquete en lugar de `process.argv[1]`, `HandoffCommand` sube hasta la raíz del repo antes de validar artefactos SDLC, y el nombre del prompt MCP queda normalizado a `evolith/architecture-review` tanto en el registry del servidor como en la expectativa e2e del CLI. `npm run build --workspace packages/mcp-server`, `npm test --workspace packages/mcp-server -- --runInBand`, `npm run build --workspace sdk/cli`, y `npm test --workspace sdk/cli -- --runInBand` pasan sobre el estado resultante.
-- **Referencias:** [sdk/cli/test](../../../../sdk/cli/test) · [GT-121](#gt-121)
+- **Referencias:** [sdk/cli/test](../../../../src/sdk/cli/test) · [GT-121](#gt-121)
 
 #### GT-125
 
@@ -2707,7 +2707,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia de cierre:**
   - `closedAt`: 2026-06-20
   - `closureCommit`: `0fc716a48dc24ea2bec348a42b3780661de5a0b4`
-  - `evidence`: registrado en el [registro de cierres](./gap-closure-evidence.json)
+  - `evidence`: registrado en el [registro de cierres](../evidence/gap-closure-evidence.json)
   - `validationCommands`: [`node .harness/scripts/validate-topology-manifests.mjs`, `node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid`, `npm run build --workspace @evolith/core-domain`, `node .harness/scripts/ci/08-validate-tracking.mjs`]
 
 #### GT-126

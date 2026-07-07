@@ -50,8 +50,8 @@ El job RAG divide documentos de referencia ingleses modificados en limites H2/H3
 
 ## Autoridad Relacionada
 
-- [Politica de Lenguaje de Reglas ADR-0090](../governance/adr/adr-0090-rule-language-policy.es.md)
-- [Asistente de Arquitectura IA](../governance/standards/ai-augmented/08-architecture-ai-assistant/README.es.md)
+- [Politica de Lenguaje de Reglas ADR-0090](../../reference/core/sdlc/governance/adr-0090-rule-language-policy.es.md)
+- [Asistente de Arquitectura IA](../../reference/core/foundations/common-rules/ai-augmented/08-architecture-ai-assistant/README.es.md)
 - [Playbook de Auditoria Winston](../../.harness/playbooks/winston-audit-playbook.es.md)
 
 ---

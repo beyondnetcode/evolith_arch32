@@ -46,7 +46,7 @@ Per ADR-0041, authorization logic MUST be implemented in **both**:
 1. A native TypeScript evaluator (for inline sandbox enforcement)
 2. A corresponding OPA `.rego` policy (for external policy-as-code governance)
 
-The reference policy is located at [`rulesets/opa/abac-mcp-tool-access.rego`](../../../../rulesets/opa/abac-mcp-tool-access.rego).
+The reference policy is located at [`rulesets/opa/abac-mcp-tool-access.rego`](../../../../../src/rulesets/opa/abac-mcp-tool-access.rego).
 
 ## Consequences
 
@@ -65,7 +65,7 @@ The reference policy is located at [`rulesets/opa/abac-mcp-tool-access.rego`](..
 - [ADR-0082: Agentic AI Trust Boundary](./0082-agentic-ai-trust-boundary.md)
 - [ADR-0083: Agentic AI Action Authorization and Audit](./0083-agentic-ai-action-authorization-audit.md)
 - [ADR-0086: Agentic AI Telemetry & Cost Control](./0086-agentic-ai-telemetry-cost-control.md)
-- [Reference ABAC Policy](../../../../rulesets/opa/abac-mcp-tool-access.rego)
+- [Reference ABAC Policy](../../../../../src/rulesets/opa/abac-mcp-tool-access.rego)
 
 ---
 [Back to Core ADR Index](./README.md)

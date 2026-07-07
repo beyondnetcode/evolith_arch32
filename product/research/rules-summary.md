@@ -22,4 +22,4 @@
 | **R-18** | Hybrid API Governance | `architect`, `dev`, `qa` | Designing APIs with REST and GraphQL coexistence | If REST and GraphQL coexist, commands stay REST-first and query behavior must remain consistent across both surfaces. |
 
 ---
-[Back to Index](.././README.md)
+[Back to Index](../../README.md)

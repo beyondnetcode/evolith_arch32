@@ -20,7 +20,7 @@ Verified current state:
 - Release readiness remains blocked by failing/sandbox-sensitive tests and missing MCP smoke evidence.
 
 Use the current Core gap analysis for active planning:
-[Evolith Core Gap Tracking Board](../../../../governance/standards/vision/gap-tracking.md)
+[Evolith Core Gap Tracking Board](../../../../../reference/core/control-center/gaps/gap-tracking.md)
 
 ## 1. Executive Summary
 

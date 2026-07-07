@@ -4,7 +4,7 @@
 
 ## Estado
 
-Aprobado — Evolith Architecture Board, 2026-06-10. Cierra [GT-01](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-01).
+Aprobado — Evolith Architecture Board, 2026-06-10. Cierra [GT-01](../../../control-center/gaps/gap-reference-catalog.es.md#gt-01).
 
 ## Fecha
 
@@ -14,7 +14,7 @@ Aprobado — Evolith Architecture Board, 2026-06-10. Cierra [GT-01](../../../sdl
 
 Dos documentos de diseño definen cómo la capa CLI/MCP de Evolith debe exponer resultados a consumidores máquina, y divergen:
 
-- El documento del lado Core, [Interfaces Técnicas del SDLC Tracker](../../../sdlc/standards/vision/sdlc-tracker-technical-interfaces.es.md), especifica un payload estructurado `GateEvidence` (veredicto, violaciones, referencia y versión de ruleset) devuelto por la evaluación de gates.
+- El documento del lado Core, [Interfaces Técnicas del SDLC Tracker](../../../sdlc/sdlc-tracker-technical-interfaces.es.md), especifica un payload estructurado `GateEvidence` (veredicto, violaciones, referencia y versión de ruleset) devuelto por la evaluación de gates.
 - El análisis del lado Tracker (repositorio `evolith_tracker`, `tracker-smart-cli-gap-analysis.md`) especifica un envelope genérico de salida `{success, data, meta}` con códigos de error machine-readable, más flags globales (`--format`, `--dry-run`, flags de contexto) y la convención de comandos `evolith <verbo> <sustantivo>`.
 
 Hoy el CLI no implementa ninguno de los dos contratos: `--format json` existe en algunos comandos pero emite JSON con forma de presentación, cada comando da forma a su propia salida, el binario se llama `smart-cli`, y el Tracker no puede construirse hasta que exista un contrato autoritativo. Por el principio de Inmutabilidad Upstream, ese contrato debe ratificarse en Evolith Core — el Tracker lo hereda, nunca lo define.
@@ -23,7 +23,7 @@ Hoy el CLI no implementa ninguno de los dos contratos: `--format json` existe en
 
 **Objetivo:** ratificar un contrato único de salida que toda superficie machine-facing del CLI y servidor MCP de Evolith emita, para que el Tracker, los pipelines de CI y los agentes de IA parseen resultados de manera uniforme.
 
-**En alcance:** el envelope JSON de salida; el schema `GateEvidence` como payload de evaluación de gates; el conjunto de flags globales; el registro de códigos de error; naming del binario y de los tools MCP; el modelo de ejecución command-as-a-service (invocación remota de operaciones registradas vía MCP/REST). **Fuera de alcance:** la implementación de la evaluación de gates ([GT-02](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-02)/[GT-03](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-03)), la selección de transporte ([GT-05](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-05)), la semántica de webhooks/eventos ([GT-14](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-14)), y el renderizado human-facing (table/markdown), que permanece libre.
+**En alcance:** el envelope JSON de salida; el schema `GateEvidence` como payload de evaluación de gates; el conjunto de flags globales; el registro de códigos de error; naming del binario y de los tools MCP; el modelo de ejecución command-as-a-service (invocación remota de operaciones registradas vía MCP/REST). **Fuera de alcance:** la implementación de la evaluación de gates ([GT-02](../../../control-center/gaps/gap-reference-catalog.es.md#gt-02)/[GT-03](../../../control-center/gaps/gap-reference-catalog.es.md#gt-03)), la selección de transporte ([GT-05](../../../control-center/gaps/gap-reference-catalog.es.md#gt-05)), la semántica de webhooks/eventos ([GT-14](../../../control-center/gaps/gap-reference-catalog.es.md#gt-14)), y el renderizado human-facing (table/markdown), que permanece libre.
 
 ## Opciones Consideradas
 
@@ -69,9 +69,9 @@ En fallo, `success: false` y un objeto `error` reemplaza a `data`:
 
 ## Evidencias y Criterios de Evaluación
 
-Criterios usados para juzgar las opciones: (a) el Tracker puede consumir resultados de gates sin parsing a medida; (b) el CLI permanece stateless según los [invariantes de interfaz del Tracker](../../../sdlc/standards/vision/sdlc-tracker-technical-interfaces.es.md); (c) cero breaking change para la salida human-facing actual; (d) implementable incrementalmente por comando.
+Criterios usados para juzgar las opciones: (a) el Tracker puede consumir resultados de gates sin parsing a medida; (b) el CLI permanece stateless según los [invariantes de interfaz del Tracker](../../../sdlc/sdlc-tracker-technical-interfaces.es.md); (c) cero breaking change para la salida human-facing actual; (d) implementable incrementalmente por comando.
 
-Evidencia: ambos documentos de diseño fuente; estado de código verificado el 2026-06-10 — `--format json` es hoy solo-presentación, los 27 rulesets están versionados, `--dry-run` ya existe en 5 de 7 comandos de escritura (gap trazado como [GT-12](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-12)).
+Evidencia: ambos documentos de diseño fuente; estado de código verificado el 2026-06-10 — `--format json` es hoy solo-presentación, los 27 rulesets están versionados, `--dry-run` ya existe en 5 de 7 comandos de escritura (gap trazado como [GT-12](../../../control-center/gaps/gap-reference-catalog.es.md#gt-12)).
 
 ## Consecuencias, Riesgos y Trade-offs
 
@@ -83,7 +83,7 @@ Evidencia: ambos documentos de diseño fuente; estado de código verificado el 2
 
 ## Referencias
 
-- [SDLC Tracker — Diseño Técnico de Interfaces](../../../sdlc/standards/vision/sdlc-tracker-technical-interfaces.es.md)
+- [SDLC Tracker — Diseño Técnico de Interfaces](../../../sdlc/sdlc-tracker-technical-interfaces.es.md)
 - Análisis del lado Tracker: `evolith_tracker/reference/specs/design/tracker-smart-cli-gap-analysis.md`
 - [Especificación JSON Schema](https://json-schema.org/) (formato de schema de payloads)
 - [Especificación MCP](https://modelcontextprotocol.io/) (framing de resultados de tools)
@@ -93,7 +93,7 @@ Evidencia: ambos documentos de diseño fuente; estado de código verificado el 2
 - [ADR 0069: Implementación del Protocolo de Servidor MCP](./0069-ai-agent-context-protocol-integration.es.md) — transporte sobre el que viaja este contrato
 - [ADR 0032: Matriz de Decisión de Protocolos API](./0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md) — principios de selección de protocolo
 - [Estándar de Autoría de ADRs](../adr-authoring-standard.es.md) — estructura de este ADR
-- Ítems de gap: [GT-01](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-01) (esta decisión), GT-02/GT-03/GT-06 (implementación), GT-12 (completar `--dry-run`), GT-18 (publicación npm bajo el alias `evolith`)
+- Ítems de gap: [GT-01](../../../control-center/gaps/gap-reference-catalog.es.md#gt-01) (esta decisión), GT-02/GT-03/GT-06 (implementación), GT-12 (completar `--dry-run`), GT-18 (publicación npm bajo el alias `evolith`)
 - Rulesets: `rulesets/cli/core-parity.rules.json`, futuro `rulesets/schema/gate-evidence.schema.json`
 
 ---

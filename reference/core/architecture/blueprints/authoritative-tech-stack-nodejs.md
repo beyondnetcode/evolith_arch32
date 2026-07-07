@@ -43,7 +43,7 @@ Node.js solutions MUST utilize strict library isolation enforced by **Nx tags**:
 * **Linting:** ESLint v8 strict mode + Prettier configuration.
 
 ---
--> Back to **[Global Master Index](../../../MASTER_INDEX.md)**
+-> Back to **[Global Master Index](../../control-center/taxonomy/MASTER_INDEX.md)**
 
 ---
 [Back to Index](./README.md)

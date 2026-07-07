@@ -2,13 +2,13 @@
 
 This document details the telemetry architecture, trace propagation, logging standards, and cost-effective monitoring stack for the SCM/Reference Template using the **BMAD-METHOD** as a spec-driven AI-DD workflow.
 
-For the cross-component diagrams and runtime signal path, see [Observability Architecture Flow](../../../architecture/blueprints/observability-architecture-flow.md).
+For the cross-component diagrams and runtime signal path, see [Observability Architecture Flow](../../architecture/blueprints/observability-architecture-flow.md).
 
 ---
 
 ## 1. The Three Pillars of Telemetry
 
-To ensure absolute visibility across our modular monolith and prepare for future microservices, we implement three synchronized pillars of observability as specified in **[ADR 0007](../../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md)**:
+To ensure absolute visibility across our modular monolith and prepare for future microservices, we implement three synchronized pillars of observability as specified in **[ADR 0007](../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md)**:
 
 ```mermaid
 graph TD

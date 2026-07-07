@@ -95,6 +95,6 @@ Historical backfill: Address the architectural tension where context is unavaila
 None explicitly linked.
 
 ---
-[Back to Index](../../../../MASTER_INDEX.md)
+[Back to Index](../../../control-center/taxonomy/MASTER_INDEX.md)
 
 > **Agent Signature:** Architect Agent

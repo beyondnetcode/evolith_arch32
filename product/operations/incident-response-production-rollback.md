@@ -74,6 +74,6 @@ full resolution within {ETA}. We apologize for the inconvenience.
 
 ## References
 
-- [ADR-0068 — Documentation Release Gitflow](../architecture/adrs/core/0068-documentation-release-gitflow.md)
-- [ADR-0050 — Gitflow Branching Strategy](../architecture/adrs/core/0050-gitflow-branching-strategy.md)
-- [ADR-0025 — Feature Flag Provider Abstraction](../architecture/adrs/core/0025-feature-flag-provider-abstraction.md)
+- [ADR-0068 — Documentation Release Gitflow](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md)
+- [ADR-0050 — Gitflow Branching Strategy](../../reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.md)
+- [ADR-0025 — Feature Flag Provider Abstraction](../../reference/core/architecture/adrs/core/0025-feature-flag-provider-abstraction.md)

@@ -108,7 +108,7 @@ El sandbox es la unica ruta hacia la ejecucion de herramientas. Los prompts apor
 
 ## Decisiones Rectoras y Validacion
 
-[ADR-0058](../../../adrs/core/0058-ai-consumable-architecture-knowledge.es.md) gobierna el conocimiento de arquitectura consumible por IA. [ADR-0081](../../../adrs/core/0081-agentic-ai-sandbox-isolation.es.md), [ADR-0082](../../../adrs/core/0082-agentic-ai-trust-boundary.es.md) y [ADR-0083](../../../adrs/core/0083-agentic-ai-action-authorization-audit.es.md) establecen los limites de sandbox, confianza y autorizacion. [ADR-AI-001](../../../../sdlc/standards/ai-augmented/06-adrs/adr-ai-001-harness-strategy.es.md) y [ADR-AI-005](../../../../sdlc/standards/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.es.md) siguen siendo decisiones propuestas de apoyo.
+[ADR-0058](../../../adrs/core/0058-ai-consumable-architecture-knowledge.es.md) gobierna el conocimiento de arquitectura consumible por IA. [ADR-0081](../../../adrs/core/0081-agentic-ai-sandbox-isolation.es.md), [ADR-0082](../../../adrs/core/0082-agentic-ai-trust-boundary.es.md) y [ADR-0083](../../../adrs/core/0083-agentic-ai-action-authorization-audit.es.md) establecen los limites de sandbox, confianza y autorizacion. [ADR-AI-001](../../../../foundations/common-rules/ai-augmented/06-adrs/adr-ai-001-harness-strategy.es.md) y [ADR-AI-005](../../../../foundations/common-rules/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.es.md) siguen siendo decisiones propuestas de apoyo.
 
 Ejecuta el perfil mediante el validador consciente de topologias:
 

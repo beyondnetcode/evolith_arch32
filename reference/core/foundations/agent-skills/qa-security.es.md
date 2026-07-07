@@ -111,11 +111,11 @@ Tienes el **deber de endurecer el sistema**. Monitorea:
 - **Brechas de redacción** → si un nuevo formato de credencial (token de proveedor, cadena de conexión) no está cubierto por `redactSecrets`, propón una extensión de patrón.
 - **Brechas diferenciales** → si el gate de paridad Native/OPA omite una dimensión del veredicto (severidad, evidencia), propón una extensión.
 
-Registra propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.md sección 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
+Registra propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.md sección 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
 
 ---
 
-*Ver [AGENTS.md](../AGENTS.md) para contexto del repositorio y ciclo de vida de gaps.*
-*Ver [AGENTS.md sección 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) para el mandato de auto-mejora.*
-*Ver [Reglas Globales](../../.harness/rules/global-rules.md) para R-25 Paridad de Doble Motor.*
-*Ver [Tablero de Seguimiento de Gaps](../../reference/core/control-center/gaps/gap-tracking.md) para el estado de los gaps.*
+*Ver [AGENTS.md](../../../../.bmad-core/AGENTS.md) para contexto del repositorio y ciclo de vida de gaps.*
+*Ver [AGENTS.md sección 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) para el mandato de auto-mejora.*
+*Ver [Reglas Globales](../../../../.harness/rules/global-rules.md) para R-25 Paridad de Doble Motor.*
+*Ver [Tablero de Seguimiento de Gaps](../../control-center/gaps/gap-tracking.md) para el estado de los gaps.*

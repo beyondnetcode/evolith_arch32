@@ -3,7 +3,7 @@
 > **Navegación Bilingüe:** [English Version](./zero-downtime-release.md)
 
 **Fase:** [05 — Delivery and Operations](../README.es.md#fase-05-entrega-y-operaciones)
-**Gate de Salida:** Production Live (ver [`gate-f5.json`](../../../../reference/core/sdlc/gates/gate-f5.json))
+**Gate de Salida:** Production Live (ver [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json))
 **Audiencia Principal:** DevOps Lead, SRE, Tech Lead
 **Rol Responsable:** DevOps Lead
 **Autoridad de Waiver:** Technology Director

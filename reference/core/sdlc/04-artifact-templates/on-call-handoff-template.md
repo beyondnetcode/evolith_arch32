@@ -3,7 +3,7 @@
 > **Bilingual navigation:** [Versión en Español](./on-call-handoff-template.es.md)
 > **Phase:** 5 — Delivery and Operations
 > **Exit gate:** Production Live (On-Call Ready)
-> **Schema:** [on-call-handoff.schema.json](../../../../rulesets/schema/on-call-handoff.schema.json)
+> **Schema:** [on-call-handoff.schema.json](../../../../src/rulesets/schema/on-call-handoff.schema.json)
 > **Parent:** [Artifact Templates](./README.md)
 
 ---
@@ -144,4 +144,4 @@ The On-Call Handoff is the formal confirmation that the on-call team has acknowl
 | [Zero-Downtime Release Playbook](../01-playbooks/zero-downtime-release.md) | Procedural gate that consumes this evidence. |
 | [Release Notes Template](./release-notes-template.md) | Production deployment record referencing on-call readiness. |
 | [Observability Validation Template](./observability-validation-template.md) | Complementary evidence for alerting nominal state. |
-| [`phase-gates.rules.json`](../../../../rulesets/sdlc/phase-gates.rules.json) | Phase 5 `On-Call Handoff` evidence entry references this template. |
+| [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json) | Phase 5 `On-Call Handoff` evidence entry references this template. |

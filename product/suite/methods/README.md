@@ -14,7 +14,7 @@ This area contains portfolio-level discovery, validation, research, experimentat
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
-| [AI-Assisted Product Validation Workflow](../../governance/standards/vision/evolith-ai-assisted-validation-workflow.md) | AI-assisted workflow for discovery and validation before implementation | Accelerate validation with AI | Method | Yes |
+| [AI-Assisted Product Validation Workflow](./evolith-ai-assisted-validation-workflow.md) | AI-assisted workflow for discovery and validation before implementation | Accelerate validation with AI | Method | Yes |
 
 Methods may use named tools as optional execution aids, but they must preserve human accountability and provider neutrality.
 

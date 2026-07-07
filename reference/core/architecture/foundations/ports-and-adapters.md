@@ -5,7 +5,7 @@
 Every external integration is a **port** (an interface in the domain). Concrete
 technology lives only in **adapters**. This is what keeps Hermes, OPA, the
 Tracker, and even `.harness` swappable. Source:
-[`packages/agent-runtime/src/domain/ports`](../../../packages/agent-runtime/src/domain/ports).
+[`packages/agent-runtime/src/domain/ports`](../../../../src/packages/agent-runtime/src/domain/ports).
 
 ## Port catalog
 
@@ -24,7 +24,7 @@ Tracker, and even `.harness` swappable. Source:
 | `IAgentEnginePort` | Reasoning engine abstraction (Router/Hermes/Swarms) | #1/#2 decoupling |
 
 Each port has a DI token in
-[`tokens.ts`](../../../packages/agent-runtime/src/domain/tokens.ts) (framework
+[`tokens.ts`](../../../../src/packages/agent-runtime/src/domain/tokens.ts) (framework
 agnostic `Symbol`s) for optional container wiring.
 
 ## Default (stub/in-memory) adapters
@@ -76,7 +76,7 @@ The application service (`AgentRuntimeService`) folds whatever ran:
   forces `blocked`).
 
 All three are pure functions in
-[`result-assembler.ts`](../../../packages/agent-runtime/src/application/result-assembler.ts),
+[`result-assembler.ts`](../../../../src/packages/agent-runtime/src/application/result-assembler.ts),
 so the status/finding mapping is unit-testable in isolation.
 
 ## Architecture Maps & Maturity Evolution
@@ -195,6 +195,6 @@ graph LR
 ```
 
 Operational closure for this loop is defined by the
-[Harness Self Improving Loop](../../../.harness/playbooks/self-improving-loop.md):
+[Harness Self Improving Loop](../../../../.harness/playbooks/self-improving-loop.md):
 each approved run must emit progress-audit evidence, register unresolved
 findings as gaps, and promote repeated lessons into durable harness assets.

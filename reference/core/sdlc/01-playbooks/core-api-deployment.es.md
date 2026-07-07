@@ -67,4 +67,4 @@ Si el despliegue activa alertas, errores o falla los health checks:
 
 ---
 
-[Volver al Índice de Productos](../../../products/README.es.md)
+[Volver al Índice de Productos](../../../../product/products/README.es.md)

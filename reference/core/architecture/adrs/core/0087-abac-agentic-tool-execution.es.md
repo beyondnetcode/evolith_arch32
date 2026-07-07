@@ -46,7 +46,7 @@ Según el ADR-0041, la lógica de autorización DEBE implementarse en **ambos**:
 1. Un evaluador TypeScript nativo (para cumplimiento en línea dentro del sandbox)
 2. Una política OPA `.rego` correspondiente (para gobernanza de políticas como código)
 
-La política de referencia se encuentra en [`rulesets/opa/abac-mcp-tool-access.rego`](../../../../rulesets/opa/abac-mcp-tool-access.rego).
+La política de referencia se encuentra en [`rulesets/opa/abac-mcp-tool-access.rego`](../../../../../src/rulesets/opa/abac-mcp-tool-access.rego).
 
 ## Consecuencias
 
@@ -65,7 +65,7 @@ La política de referencia se encuentra en [`rulesets/opa/abac-mcp-tool-access.r
 - [ADR-0082: Límite de Confianza de IA Agéntica](./0082-agentic-ai-trust-boundary.md)
 - [ADR-0083: Autorización de Acciones y Auditoría de IA Agéntica](./0083-agentic-ai-action-authorization-audit.md)
 - [ADR-0086: Telemetría y Control de Costos de IA Agéntica](./0086-agentic-ai-telemetry-cost-control.md)
-- [Política ABAC de Referencia](../../../../rulesets/opa/abac-mcp-tool-access.rego)
+- [Política ABAC de Referencia](../../../../../src/rulesets/opa/abac-mcp-tool-access.rego)
 
 ---
 [Volver al Índice de ADRs Core](./README.md)

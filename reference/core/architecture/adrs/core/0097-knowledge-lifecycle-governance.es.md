@@ -113,9 +113,9 @@ La validación CI (`17-validate-knowledge-intake.mjs`) hace cumplir:
 
 ## Referencias
 - [ADR-0090: Estándar de Gobernanza de Conocimiento RAG](./0090-rag-knowledge-governance.es.md)
-- [GT-152: Contrato de Conocimiento Externo y Esquema de Registro Fuente](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-152)
-- [KI-EVANS-AGGREGATE-001](../../../knowledge/intake/KI-EVANS-AGGREGATE-001.yaml)
-- [Esquema de Ingesta de Conocimiento](../../../../rulesets/schema/knowledge-intake.schema.json)
+- [GT-152: Contrato de Conocimiento Externo y Esquema de Registro Fuente](../../../control-center/gaps/gap-reference-catalog.es.md#gt-152)
+- [KI-EVANS-AGGREGATE-001](../../../../../product/research/intake/KI-EVANS-AGGREGATE-001.yaml)
+- [Esquema de Ingesta de Conocimiento](../../../../../src/rulesets/schema/knowledge-intake.schema.json)
 
 ---
 [Volver al Índice de ADRs Core](./README.es.md)

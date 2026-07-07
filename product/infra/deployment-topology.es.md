@@ -15,7 +15,7 @@ nombre", para que los modelos Coolify (en vivo), docker-compose (local) y Helm
 ## Verdad canónica (ADR-0074)
 
 - La capa oficial de exposición de red de Evolith Core es **`apps/core-api`**
-  ([ADR-0074](../architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)) —
+  ([ADR-0074](../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)) —
   una API REST NestJS. Es el servicio real que consumen los clientes.
 - **`evolith-bff`** (el chart Helm, el servicio `bff` de compose y
   `product/infra/docker/bff.Dockerfile`) es una **plantilla genérica

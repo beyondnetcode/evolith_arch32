@@ -19,4 +19,4 @@ Esta área contiene principios arquitectónicos universales y neutrales respecto
 
 Un principio Core debe seguir siendo válido aunque se reemplace cualquier producto, proveedor, modelo o herramienta nombrada. Los detalles de implementación pertenecen a `product/products/`; las tecnologías nombradas pertenecen a `product/infra/`.
 
-[Volver a Arquitectura](../README.es.md)
+[Volver a Arquitectura](../../architecture/foundations/README.es.md)

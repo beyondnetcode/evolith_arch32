@@ -260,8 +260,8 @@ Herramientas explícitamente rechazadas por Evolith Core (requieren ADR para rev
 
 ## Referencias
 
-- [Stack Tecnológico Autoritativo - Agnóstico](../architecture/blueprints/authoritative-tech-stack-agnostic.es.md)
-- [Stack Tecnológico Autoritativo - Node.js](../architecture/blueprints/authoritative-tech-stack-nodejs.es.md)
-- [Stack Tecnológico Autoritativo - .NET](../architecture/blueprints/authoritative-tech-stack-dotnet.es.md)
-- [Ruleset de Phase Gates](../../rulesets/sdlc/phase-gates.rules.json)
-- [Tablero de Gaps](../governance/standards/vision/gap-tracking.es.md)
+- [Stack Tecnológico Autoritativo - Agnóstico](../../reference/core/architecture/blueprints/authoritative-tech-stack-agnostic.es.md)
+- [Stack Tecnológico Autoritativo - Node.js](../../reference/core/architecture/blueprints/authoritative-tech-stack-nodejs.es.md)
+- [Stack Tecnológico Autoritativo - .NET](../../reference/core/architecture/blueprints/authoritative-tech-stack-dotnet.es.md)
+- [Ruleset de Phase Gates](../../src/rulesets/sdlc/phase-gates.rules.json)
+- [Tablero de Gaps](../../reference/core/control-center/gaps/gap-tracking.es.md)

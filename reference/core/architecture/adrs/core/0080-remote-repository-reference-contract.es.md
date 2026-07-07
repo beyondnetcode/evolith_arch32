@@ -61,11 +61,11 @@ El modelo seleccionado se evalúa por: ausencia de dependencia del filesystem de
 - [ADR-0010: Estrategia de Arquitectura Multi-Tenancy](./0010-multi-tenancy-architecture-strategy.es.md)
 - [ADR-0016: Audit Trail Inmutable](./0016-immutable-business-audit-trail.es.md)
 - [ADR-0074: Capa de Exposición Nativa de Evolith Core API](./0074-evolith-core-api-exposure-layer.es.md)
-- [GT-118](../../../sdlc/standards/vision/gap-reference-catalog.es.md#gt-118)
+- [GT-118](../../../control-center/gaps/gap-reference-catalog.es.md#gt-118)
 
 ## Decisiones y Estándares Relacionados
 
-- [Guías de API Gateway](../../../sdlc/standards/engineering/gateway-guidelines.es.md)
+- [Guías de API Gateway](../../../foundations/common-rules/gateway-guidelines.es.md)
 - [Estándar de Autoría ADR](../adr-authoring-standard.es.md)
 
 ---

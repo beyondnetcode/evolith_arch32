@@ -3,7 +3,7 @@
 > **Navegación Bilingüe:** [English Version](./phase-2-design-baseline.md)
 
 **Fase:** [02 — Diseño y Arquitectura](../README.es.md#fase-02-diseño-y-arquitectura)
-**Compuerta de Salida:** Design Baseline Approved (ver gate `phase: 2` en [`phase-gates.rules.json`](../../../../rulesets/sdlc/phase-gates.rules.json))
+**Compuerta de Salida:** Design Baseline Approved (ver gate `phase: 2` en [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json))
 **Audiencia Principal:** Software Architect, Principal/Staff Engineer, Product Owner, QA/SDET
 **Rol Responsable:** Software Architect
 **Autoridad de Waiver:** Architecture Board
@@ -47,7 +47,7 @@ Antes de abrir la compuerta, confirmar:
 | # | Evidencia Obligatoria | Plantilla / Esquema | Criterio de Aceptación |
 |---|---|---|---|
 | 1 | Registro de ADRs | [`adr-template.es.md`](../04-artifact-templates/adr-template.es.md) | Toda decisión que cruza fronteras tiene un ADR numerado y aceptado. No quedan decisiones "no documentadas". |
-| 2 | Functional Stories | [`functional-story-template.es.md`](../04-artifact-templates/functional-story-template.es.md) · [`functional-story.schema.json`](../../../../rulesets/schema/functional-story.schema.json) | Todas las historias en `Ready` con criterios de aceptación BDD; estándar de redacción cumplido. Nota KDD: Si existen Story Seeds de Fase 1.1 KDD Nivel 2+, refinándolas aquí en Historias Funcionales. |
+| 2 | Functional Stories | [`functional-story-template.es.md`](../04-artifact-templates/functional-story-template.es.md) · [`functional-story.schema.json`](../../../../src/rulesets/schema/functional-story.schema.json) | Todas las historias en `Ready` con criterios de aceptación BDD; estándar de redacción cumplido. Nota KDD: Si existen Story Seeds de Fase 1.1 KDD Nivel 2+, refinándolas aquí en Historias Funcionales. |
 | 3 | Alineación con Reference Blueprint | Conjunto de diagramas de arquitectura | Diagramas trazables al Reference Blueprint; las desviaciones llevan ADR. El Blueprint de Referencia es un artefacto de consulta — no lo produces; el Gate F2 verifica trazabilidad. |
 | 4 | Checklist de Simplicidad Fase 1 | Checklist de simplicidad | Aprobado — sin señales de over-engineering (abstracción prematura, capas especulativas, frameworks sin uso). A pesar del nombre 'Fase 1', este checklist se ejecuta en Fase 2. El identificador del artefacto está registrado en el validador de máquina — no renombrar. |
 | 5 | Bounded Context Map | Artefacto de context map | Todos los contextos con propietario, estrategia de persistencia y estilo de integración |

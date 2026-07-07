@@ -3,7 +3,7 @@
 > **Navegación Bilingüe:** [Ver Versión en Inglés](./view-by-deployment.md)
 
 **Estado:** Aprobado  
-**Padre:** [C4 Master Architecture](../C4-MASTER-ARCHITECTURE.es.md)
+**Padre:** [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.es.md)
 
 ## 1. Despliegue Actual (VPS / Coolify)
 
@@ -76,4 +76,4 @@ flowchart TB
 ```
 
 ---
-[Volver a la Arquitectura Maestra](../C4-MASTER-ARCHITECTURE.es.md)
+[Volver a la Arquitectura Maestra](./C4-MASTER-ARCHITECTURE.es.md)

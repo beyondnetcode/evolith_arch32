@@ -14,7 +14,7 @@ Esta área contiene comunicación ejecutiva, para inversores, de producto y tran
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
-| [One-Pager Ejecutivo](../../governance/standards/communication/visuals/v01-executive-one-pager.es.md) | Explicación de cinco minutos sobre Evolith, UMS y la propuesta de valor | Comunicar valor estratégico rápidamente | Resumen ejecutivo | Sí |
+| [One-Pager Ejecutivo](../../../reference/core/foundations/common-rules/communication/visuals/v01-executive-one-pager.es.md) | Explicación de cinco minutos sobre Evolith, UMS y la propuesta de valor | Comunicar valor estratégico rápidamente | Resumen ejecutivo | Sí |
 
 Los documentos de comunicación explican la Suite y su valor. Son informativos y no pueden redefinir Core Architecture, SDLC Governance ni contratos de implementación de productos.
 

@@ -16,7 +16,7 @@ concreto es el único código que sabe cómo lanzar scripts de `.harness`.
 
 ## La convención del manifest
 
-Un archivo nuevo, [`.harness/manifest.yaml`](../../../.harness/manifest.yaml),
+Un archivo nuevo, [`.harness/manifest.yaml`](../../../../.harness/manifest.yaml),
 hace descubrible a `.harness`. Es la declaración única y versionada de cada
 capacidad que el runtime puede invocar:
 
@@ -87,5 +87,5 @@ Un `SkillDescriptor` (en el SkillRegistry) mapea un intent a una capacidad. Para
 una skill respaldada por harness, `harnessCapability` nombra la entrada del
 manifest; para una skill compuesta, `.harness` produce los hechos y el Core los
 evalúa. Consulta el catálogo sembrado en
-[`default-skills.ts`](../../../packages/agent-runtime/src/adapters/skills/default-skills.ts)
+[`default-skills.ts`](../../../../src/packages/agent-runtime/src/adapters/skills/default-skills.ts)
 y [Extender](./extending.es.md) para agregar las tuyas.

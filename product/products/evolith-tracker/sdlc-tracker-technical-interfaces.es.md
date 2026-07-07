@@ -5,7 +5,7 @@
 **Estado:** Diseño Propuesto — Pendiente de Revisión del Architecture Board  
 **Propietario:** Evolith Architecture Board  
 **Última Actualización:** 2026-06-10  
-**Diseño Padre:** [Diseño Objetivo de Composición Gobernada](../../product-suite/architecture/evolith-governed-composition-target-design.es.md)  
+**Diseño Padre:** [Diseño Objetivo de Composición Gobernada](../../suite/architecture/evolith-governed-composition-target-design.es.md)  
 **Estado de Implementación:** Solo documentación — no autoriza cambios de código
 
 ---
@@ -483,11 +483,11 @@ ADR 0073 continúa válido para el envelope unificado, pero requiere una decisi�
 
 ## 13. Documentos Relacionados
 
-- [Diseño Objetivo de Composición Gobernada](../../product-suite/architecture/evolith-governed-composition-target-design.es.md)
-- [Modelo de Abstracción de Proveedores y Plugins](../../architecture/principles/evolith-provider-abstraction-plugin-model.es.md)
-- [Visión Maestra del Producto Evolith](../../product-suite/vision/evolith-product-vision-master.es.md)
-- [Modelo de Trazabilidad SDLC](../../governance/sdlc/traceability-model.es.md)
-- [ADR 0073 — Contrato de Salida CLI/MCP](../../architecture/adrs/core/0073-unified-cli-output-contract.es.md)
+- [Diseño Objetivo de Composición Gobernada](../../suite/architecture/evolith-governed-composition-target-design.es.md)
+- [Modelo de Abstracción de Proveedores y Plugins](../../../reference/core/foundations/principles/evolith-provider-abstraction-plugin-model.es.md)
+- [Visión Maestra del Producto Evolith](../../suite/vision/evolith-product-vision-master.es.md)
+- [Modelo de Trazabilidad SDLC](../../../reference/core/sdlc/traceability-model.es.md)
+- [ADR 0073 — Contrato de Salida CLI/MCP](../../../reference/core/architecture/adrs/core/0073-unified-cli-output-contract.es.md)
 
 ---
 

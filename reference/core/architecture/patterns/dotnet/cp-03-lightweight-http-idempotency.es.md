@@ -39,7 +39,7 @@ POST /resource (paralelo)│ ¿Clave "abc"? Sí (en vuelo)
 
 ## Implementación
 
-Ver código completo en [CP-03 EN](../../canonical-patterns/dotnet/cp-03-lightweight-http-idempotency.md).
+Ver código completo en [CP-03 EN](./cp-03-lightweight-http-idempotency.md).
 
 ---
 

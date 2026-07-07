@@ -91,7 +91,7 @@ The runtime supports Event-Driven Streaming via Server-Sent Events (SSE). Instea
 
 ## Evidence and Evaluation Criteria
 
-The implementation ([`packages/agent-runtime`](../../../../packages/agent-runtime/README.md))
+The implementation ([`packages/agent-runtime`](../../../../../src/packages/agent-runtime/README.md))
 satisfies the acceptance criteria, verified by build + tests:
 
 - The Core is not coupled to Hermes (grep-confirmed: no Hermes import outside the
@@ -114,9 +114,9 @@ explicit.
 
 ## References
 
-- [Agent Runtime architecture docs](../../agent-runtime/README.md)
-- [`.harness/manifest.yaml`](../../../../.harness/manifest.yaml)
-- [`packages/agent-runtime`](../../../../packages/agent-runtime/README.md)
+- [Agent Runtime architecture docs](../../../../../src/packages/agent-runtime/README.md)
+- [`.harness/manifest.yaml`](../../../../../.harness/manifest.yaml)
+- [`packages/agent-runtime`](../../../../../src/packages/agent-runtime/README.md)
 
 ## Related Decisions and Standards
 

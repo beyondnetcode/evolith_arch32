@@ -159,4 +159,4 @@ El Architecture Board es propietario de esta taxonomía. Toda documentación nue
 
 ---
 
-[Volver al Hub de Referencia](./README.es.md)
+[Volver al Hub de Referencia](../../README.es.md)

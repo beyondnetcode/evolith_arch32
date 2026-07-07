@@ -425,7 +425,7 @@ Rulesets, schemas y código quedan fuera de este primer conjunto de cambios de d
 - [Visión Maestra del Producto Evolith](../vision/evolith-product-vision-master.es.md)
 - [Framework Estratégico de Validación y Composición](../methods/evolith-strategic-validation-and-composition-framework.es.md)
 - [Diseño de Interfaces Técnicas del Tracker](../../products/evolith-tracker/sdlc-tracker-technical-interfaces.es.md)
-- [Modelo de Trazabilidad SDLC](../../governance/sdlc/traceability-model.es.md)
+- [Modelo de Trazabilidad SDLC](../../../reference/core/sdlc/traceability-model.es.md)
 - [Workflow de Validación Asistida por IA](../methods/evolith-ai-assisted-validation-workflow.es.md)
 
 ---

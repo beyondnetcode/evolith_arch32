@@ -3,7 +3,7 @@
 > **Navegación bilingüe:** [English Version](./observability-validation-template.md)
 > **Fase:** 5 — Entrega y Operaciones
 > **Compuerta de Salida:** Producción Activa
-> **Esquema:** [`observability-validation.schema.json`](../../../../rulesets/schema/observability-validation.schema.json)
+> **Esquema:** [`observability-validation.schema.json`](../../../../src/rulesets/schema/observability-validation.schema.json)
 > **Padre:** [Plantillas de Artefactos](./README.es.md)
 
 ---
@@ -82,4 +82,4 @@ El artefacto de Validación de Observabilidad registra que métricas, logs, traz
 |---|---|
 | [Playbook de Release Zero-Downtime](../01-playbooks/zero-downtime-release.es.md) | Compuerta procedimental que consume esta evidencia. |
 | [Gates de Calidad SDLC](../quality-gates.es.md) | Autoridad de umbrales. |
-| [`phase-gates.rules.json`](../../../../rulesets/sdlc/phase-gates.rules.json) | La entrada de evidencia `Observability Validation` de la Fase 5 referencia el esquema de esta plantilla. |
+| [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json) | La entrada de evidencia `Observability Validation` de la Fase 5 referencia el esquema de esta plantilla. |

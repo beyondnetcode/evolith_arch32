@@ -4,8 +4,8 @@
 
 **Estado:** Principio Fundacional de Diseño Propuesto  
 **Propietario:** Evolith Architecture Board  
-**Visión Padre:** [Visión Maestra del Producto Evolith](../../product-suite/vision/evolith-product-vision-master.es.md)  
-**Diseño Complementario:** [Diseño Objetivo de Composición Gobernada](../../product-suite/architecture/evolith-governed-composition-target-design.es.md)  
+**Visión Padre:** [Visión Maestra del Producto Evolith](../../../../product/suite/vision/evolith-product-vision-master.es.md)  
+**Diseño Complementario:** [Diseño Objetivo de Composición Gobernada](../../../../product/suite/architecture/evolith-governed-composition-target-design.es.md)  
 **Creado:** 2026-06-10  
 **Estado de Implementación:** Solo diseño — no autoriza cambios de código
 
@@ -407,10 +407,10 @@ Queda prohibido:
 
 ## 15. Relación y Navegación
 
-- [Visión Maestra del Producto Evolith](../../product-suite/vision/evolith-product-vision-master.es.md)
-- [Diseño Objetivo de Composición Gobernada](../../product-suite/architecture/evolith-governed-composition-target-design.es.md)
-- [Diseño de Interfaces Técnicas del Tracker](../../products/evolith-tracker/sdlc-tracker-technical-interfaces.es.md)
-- [Framework Estratégico de Validación y Composición](../../product-suite/methods/evolith-strategic-validation-and-composition-framework.es.md)
+- [Visión Maestra del Producto Evolith](../../../../product/suite/vision/evolith-product-vision-master.es.md)
+- [Diseño Objetivo de Composición Gobernada](../../../../product/suite/architecture/evolith-governed-composition-target-design.es.md)
+- [Diseño de Interfaces Técnicas del Tracker](../../../../product/products/evolith-tracker/sdlc-tracker-technical-interfaces.es.md)
+- [Framework Estratégico de Validación y Composición](../../../../product/suite/methods/evolith-strategic-validation-and-composition-framework.es.md)
 
 ---
 

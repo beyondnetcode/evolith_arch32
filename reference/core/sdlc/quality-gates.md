@@ -34,7 +34,7 @@ Manual confidence, verbal approval, or informal agreement cannot override a fail
 | Testing pyramid distribution | 70% unit / 20% integration / 10% E2E target | Design, Validation | Requires explanation when release distribution materially deviates |
 | Documentation delta | Required when behavior, architecture, API, or operations change | Construction, Delivery | Blocks merge or Production Live when missing |
 | Observability evidence | Required for production paths | Delivery | Blocks Production Live when telemetry or logs are not verifiable |
-| Domain-aligned service topology (DOMA) | Each F3 service maps to exactly one bounded context | Design, Construction | Blocks Design Baseline or Successful Build when a service splits or crosses a bounded context — F3 microservices only ([ADR-0076](../../../core/architecture/adrs/core/0076-domain-oriented-microservice-architecture.md)) |
+| Domain-aligned service topology (DOMA) | Each F3 service maps to exactly one bounded context | Design, Construction | Blocks Design Baseline or Successful Build when a service splits or crosses a bounded context — F3 microservices only ([ADR-0076](../architecture/adrs/core/0076-domain-oriented-microservice-architecture.md)) |
 
 ---
 
@@ -58,7 +58,7 @@ Evolith uses a single release-blocking coverage standard:
 | Phase 4 — Validation and QA | RC Stamped | Test Summary Report, acceptance validation, quality metrics | Any mandatory quality metric fails or acceptance criteria remain unverified | [Phase 4 Playbook](./01-playbooks/phase-4-rc-stamp.md) |
 | Phase 5 — Delivery and Operations | Production Live | Release Notes, rollback plan, observability checklist, deployment evidence | Monitoring is not nominal, rollback is undefined, release is not traceable to RC | [Zero-Downtime Release Playbook](./01-playbooks/zero-downtime-release.md) |
 
-Procedural authority: each playbook is the operational counterpart to the declarative gate defined in [`phase-gates.rules.json`](../../../rulesets/sdlc/phase-gates.rules.json) (`playbookRef` field). The gate cannot be exited unless the playbook's checkpoints are completed or formally waived.
+Procedural authority: each playbook is the operational counterpart to the declarative gate defined in [`phase-gates.rules.json`](../../../src/rulesets/sdlc/phase-gates.rules.json) (`playbookRef` field). The gate cannot be exited unless the playbook's checkpoints are completed or formally waived.
 
 ---
 

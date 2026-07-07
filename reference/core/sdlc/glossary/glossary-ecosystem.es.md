@@ -39,11 +39,11 @@ Estos tres conceptos son distintos y NO DEBEN confundirse:
 - **Maturity Level (F1–F5)** — una posición en el eje de arquitectura progresiva: F1 `modular-monolith` → F2 `distributed-modules` → F3 `microservices` (F4/F5 extienden la madurez operativa). Responde a *"¿qué tan descompuesta/madura está la arquitectura?"*
 - **Topology** — un perfil de arquitectura a través de dimensiones (progressive-axis, execution, integration, data, ai), p. ej. `event-driven`, `serverless`, `edge-computing`, `data-mesh`, `agentic-ai`. Responde a *"¿qué forma de arquitectura tiene el sistema?"*
 
-El contrato de topología eliminó la palabra "phase" (ver [`topology-dimensions.md`](../architecture/topologies/topology-dimensions.md) "Legacy Phase → Canonical Topology"). El legacy `--phase f1..f5` en el CLI está DEPRECADO; el resolver compartido mapea F1/F2/F3 a `--topology modular-monolith`/`distributed-modules`/`microservices`.
+El contrato de topología eliminó la palabra "phase" (ver [`topology-dimensions.md`](../../architecture/topologies/topology-dimensions.md) "Legacy Phase → Canonical Topology"). El legacy `--phase f1..f5` en el CLI está DEPRECADO; el resolver compartido mapea F1/F2/F3 a `--topology modular-monolith`/`distributed-modules`/`microservices`.
 
 ## Surface consistency
 
 Core-API, SmartCLI, MCP y Tracker comparten este único modelo canónico. El mismo modelo de fase SDLC (nombres de gobernanza `f1`..`f5` / Conception & Discovery … Delivery & Operations, expuestos operativamente como las claves `discovery`/`design`/`construction`/`qa`/`release`), los mismos IDs de gate canónicos (`gate-f1`…`gate-f5`), los mismos perfiles de topología y el mismo flujo de paridad ruleset/OPA se exponen en cada superficie — las rutas REST bajo `/api/v1`, los validadores del CLI, las herramientas MCP gobernadas y las interfaces de Tracker. La gobernanza no debe fragmentarse en variantes por superficie o por topología; todas las superficies resuelven a través del envelope de salida universal y los mismos contratos de Core.
 
 ---
-[Volver al Hub de Gobernanza](./README.es.md)
+[Volver al Hub de Gobernanza](../README.es.md)

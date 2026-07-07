@@ -2,13 +2,13 @@
 
 Este documento detalla la arquitectura de telemetría, propagación de trazas, estándares de registro y el stack de monitorización rentable para la Plantilla SCM/Referencia usando **BMAD-METHOD** como flujo spec-driven AI-DD.
 
-Para los diagramas cross-component y la ruta runtime de señales, ver [Flujo de Arquitectura de Observabilidad](../../../architecture/blueprints/observability-architecture-flow.es.md).
+Para los diagramas cross-component y la ruta runtime de señales, ver [Flujo de Arquitectura de Observabilidad](../../architecture/blueprints/observability-architecture-flow.es.md).
 
 ---
 
 ## 1. Los Tres Pilares de la Telemetría
 
-Para asegurar la visibilidad absoluta a través de nuestro monolito modular y prepararnos para futuros microservicios, implementamos tres pilares sincronizados de observabilidad según se especifica en el **[ADR 0007](../../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)**:
+Para asegurar la visibilidad absoluta a través de nuestro monolito modular y prepararnos para futuros microservicios, implementamos tres pilares sincronizados de observabilidad según se especifica en el **[ADR 0007](../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)**:
 
 ```mermaid
 graph TD

@@ -218,9 +218,9 @@ curl https://mcp.tudominio.com/health
 
 - [Raíz de Infraestructura](../README.es.md)
 - [Dockerfiles de Referencia](../docker/README.es.md)
-- [ADR-0028 — Infraestructura Híbrida Autoalojada](../../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.es.md)
-- [ADR-0030 — Gateway Distribuido de Dos Niveles](../../architecture/adrs/core/0030-two-tier-distributed-gateway-model.es.md)
-- [Escenarios de Despliegue Multi-Cloud](../../architecture/blueprints/multi-cloud-deployment-scenarios.es.md)
+- [ADR-0028 — Infraestructura Híbrida Autoalojada](../../../reference/core/architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.es.md)
+- [ADR-0030 — Gateway Distribuido de Dos Niveles](../../../reference/core/architecture/adrs/core/0030-two-tier-distributed-gateway-model.es.md)
+- [Escenarios de Despliegue Multi-Cloud](../../../reference/core/architecture/blueprints/multi-cloud-deployment-scenarios.es.md)
 
 ---
 

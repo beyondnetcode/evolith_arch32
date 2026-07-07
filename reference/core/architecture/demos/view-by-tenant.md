@@ -3,7 +3,7 @@
 > **Bilingual Navigation:** [Versión en Español](./view-by-tenant.es.md)
 
 **Status:** Approved  
-**Parent:** [C4 Master Architecture](../C4-MASTER-ARCHITECTURE.md)
+**Parent:** [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.md)
 
 ## 1. Multi-Tenancy Strategy
 
@@ -45,4 +45,4 @@ sequenceDiagram
 4. **Satellite registry caveat:** `/api/v1/satellites` is currently an in-memory compatibility/reference surface in Core API. It is not the canonical tenant registry and must not be used as the Tracker state store.
 
 ---
-[Back to Master Architecture](../C4-MASTER-ARCHITECTURE.md)
+[Back to Master Architecture](./C4-MASTER-ARCHITECTURE.md)

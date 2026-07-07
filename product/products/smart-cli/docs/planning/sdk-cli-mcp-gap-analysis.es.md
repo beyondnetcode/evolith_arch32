@@ -4,4 +4,4 @@
 >
 > Este análisis histórico (serie G) está archivado en el Legacy Archive del catálogo; el seguimiento activo vive en el tablero de gaps.
 
-El seguimiento activo vive exclusivamente en el [Tablero de Seguimiento de Gaps de Evolith Core](../../../../governance/standards/vision/gap-tracking.es.md).
+El seguimiento activo vive exclusivamente en el [Tablero de Seguimiento de Gaps de Evolith Core](../../../../../reference/core/control-center/gaps/gap-tracking.es.md).

@@ -949,4 +949,4 @@ Asegurarse de que `SWAGGER_ENABLED=true` esté en las variables de entorno de pr
 
 ## Contribución
 
-Para clonar, construir, ejecutar las suites de tests y conocer las convenciones de ramas/commits del monorepo, consulta la guía raíz [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
+Para clonar, construir, ejecutar las suites de tests y conocer las convenciones de ramas/commits del monorepo, consulta la guía raíz [`CONTRIBUTING.md`](../../../CONTRIBUTING.md).

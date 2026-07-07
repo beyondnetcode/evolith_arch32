@@ -5,7 +5,7 @@
 Toda integración externa es un **puerto** (una interfaz en el dominio). La
 tecnología concreta vive solo en **adaptadores**. Esto es lo que mantiene
 intercambiables a Hermes, OPA, el Tracker e incluso `.harness`. Fuente:
-[`packages/agent-runtime/src/domain/ports`](../../../packages/agent-runtime/src/domain/ports).
+[`packages/agent-runtime/src/domain/ports`](../../../../src/packages/agent-runtime/src/domain/ports).
 
 ## Catálogo de puertos
 
@@ -24,7 +24,7 @@ intercambiables a Hermes, OPA, el Tracker e incluso `.harness`. Fuente:
 | `IAgentEnginePort` | Abstracción del motor de razonamiento (Router/Hermes/Swarms) | #1/#2 desacople |
 
 Cada puerto tiene un token de inyección en
-[`tokens.ts`](../../../packages/agent-runtime/src/domain/tokens.ts) (`Symbol`s
+[`tokens.ts`](../../../../src/packages/agent-runtime/src/domain/tokens.ts) (`Symbol`s
 agnósticos de framework) para un cableado opcional con contenedor.
 
 ## Adaptadores por defecto (stub/in-memory)
@@ -79,7 +79,7 @@ ejecutado:
   findings; no permitido fuerza `blocked`).
 
 Las tres son funciones puras en
-[`result-assembler.ts`](../../../packages/agent-runtime/src/application/result-assembler.ts),
+[`result-assembler.ts`](../../../../src/packages/agent-runtime/src/application/result-assembler.ts),
 de modo que el mapeo de estado/findings es testeable de forma aislada.
 
 ## Mapas de Arquitectura y Evolución de Madurez
@@ -198,7 +198,7 @@ graph LR
 ```
 
 El cierre operativo de este bucle lo define el
-[Bucle de Mejora Continua del Harness](../../../.harness/playbooks/self-improving-loop.es.md):
+[Bucle de Mejora Continua del Harness](../../../../.harness/playbooks/self-improving-loop.es.md):
 cada ejecución aprobada debe emitir evidencia de progress-audit, registrar
 hallazgos abiertos como gaps y promover lecciones repetidas a activos durables
 del harness.

@@ -71,6 +71,6 @@ identificado exposición de datos en este momento.
 
 ## Referencias
 
-- [ADR-0025 — Abstracción de Proveedor de Feature Flags](../architecture/adrs/core/0025-feature-flag-provider-abstraction.md)
-- [ADR-0011 — Patrones de Tolerancia a Fallos y Resiliencia](../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)
+- [ADR-0025 — Abstracción de Proveedor de Feature Flags](../../reference/core/architecture/adrs/core/0025-feature-flag-provider-abstraction.md)
+- [ADR-0011 — Patrones de Tolerancia a Fallos y Resiliencia](../../reference/core/architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)
 - [Base de Datos Nacional de Vulnerabilidades NIST](https://nvd.nist.gov/)

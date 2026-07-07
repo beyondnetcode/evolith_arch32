@@ -1251,7 +1251,7 @@ sdk/cli/
 
 ## Contributing
 
-See the repository-root [CONTRIBUTING.md](../../CONTRIBUTING.md) for the full workflow, branch/commit conventions, and authoring standards.
+See the repository-root [CONTRIBUTING.md](../../../CONTRIBUTING.md) for the full workflow, branch/commit conventions, and authoring standards.
 
 1. Fork the repository
 2. Create a feature branch

@@ -8,7 +8,7 @@ superficie CLI/chat y enchufar Hermes, todo sin tocar el núcleo del runtime.
 ## Agregar una nueva skill o tool
 
 Una skill mapea un intent a una capacidad gobernada. Agrega una entrada en
-[`default-skills.ts`](../../../packages/agent-runtime/src/adapters/skills/default-skills.ts)
+[`default-skills.ts`](../../../../src/packages/agent-runtime/src/adapters/skills/default-skills.ts)
 o registra una en tiempo de ejecución:
 
 ```ts
@@ -28,7 +28,7 @@ await deps.skillRegistry.register({
 ```
 
 Si la skill se respalda en harness, declara también su capacidad en
-[`.harness/manifest.yaml`](../../../.harness/manifest.yaml). Las banderas de
+[`.harness/manifest.yaml`](../../../../.harness/manifest.yaml). Las banderas de
 gobernanza (`requiresApproval`, `emitsTrace`, `requiresPolicy`) las aplica el
 runtime de forma uniforme sin importar qué adaptador ejecute.
 
@@ -129,4 +129,4 @@ expect(deps.tracker.events.map(e => e.type)).toContain('runtime.completed');
 ```
 
 Consulta las suites existentes en
-[`packages/agent-runtime/src/__tests__`](../../../packages/agent-runtime/src/__tests__).
+[`packages/agent-runtime/src/__tests__`](../../../../src/packages/agent-runtime/src/__tests__).

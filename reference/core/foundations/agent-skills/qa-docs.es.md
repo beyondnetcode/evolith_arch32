@@ -102,12 +102,12 @@ Tienes el **deber de mejorar el sistema**. Monitorea:
 - **Brechas de reconciliación** → si `09-reconcile-maturity.mjs` omite una fuente de evidencia, proponer añadirla
 - **Cobertura de pruebas** → si un script de `.harness/scripts/` carece de `.test.mjs`, crearlo siguiendo patrones existentes
 
-Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
+Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
 
 ---
 
-*Véase [AGENTS.es.md](../AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
-*Véase [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
-*Véase [Reglas Globales](../../.harness/rules/global-rules.md) para reglas de documentación y paridad.*
-*Véase [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) para gates de calidad de documentación.*
-*Véase [Tablero de Tracking de Gaps](../../reference/core/control-center/gaps/gap-tracking.md) para estado de gaps.*
+*Véase [AGENTS.es.md](../../../../.bmad-core/AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
+*Véase [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
+*Véase [Reglas Globales](../../../../.harness/rules/global-rules.md) para reglas de documentación y paridad.*
+*Véase [ADR-0068](../../architecture/adrs/core/0068-documentation-release-gitflow.md) para gates de calidad de documentación.*
+*Véase [Tablero de Tracking de Gaps](../../control-center/gaps/gap-tracking.md) para estado de gaps.*

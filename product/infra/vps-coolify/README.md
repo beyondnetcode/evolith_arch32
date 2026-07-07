@@ -218,9 +218,9 @@ curl https://mcp.yourdomain.com/health
 
 - [Infrastructure Root](../README.md)
 - [Docker Reference Dockerfiles](../docker/README.md)
-- [ADR-0028 — Self-Hosted Hybrid Infrastructure](../../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md)
-- [ADR-0030 — Two-Tier Distributed Gateway](../../architecture/adrs/core/0030-two-tier-distributed-gateway-model.md)
-- [Multi-Cloud Deployment Scenarios](../../architecture/blueprints/multi-cloud-deployment-scenarios.md)
+- [ADR-0028 — Self-Hosted Hybrid Infrastructure](../../../reference/core/architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md)
+- [ADR-0030 — Two-Tier Distributed Gateway](../../../reference/core/architecture/adrs/core/0030-two-tier-distributed-gateway-model.md)
+- [Multi-Cloud Deployment Scenarios](../../../reference/core/architecture/blueprints/multi-cloud-deployment-scenarios.md)
 
 ---
 

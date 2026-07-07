@@ -47,4 +47,4 @@ Product documents implement Evolith Core and SDLC Governance. They cannot redefi
 - provider-specific selection rationale not scoped to this product;
 - suite-level positioning and commercial strategy.
 
-[Back to Reference Hub](../README.md)
+[Back to Reference Hub](../../README.md)

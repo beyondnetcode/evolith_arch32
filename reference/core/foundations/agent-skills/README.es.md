@@ -172,5 +172,5 @@ draft → proposed → accepted → active
 
 ---
 
-*Véase [README de BMAD Core](../README.es.md) para contexto del repositorio.*
+*Véase [README de BMAD Core](../../architecture/foundations/README.es.md) para contexto del repositorio.*
 *Véase [manifest.json](./manifest.json) para el registro completo de habilidades.*

@@ -14,9 +14,9 @@ This area contains portfolio strategy, business model, Open-Core direction, comp
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
-| [Strategic Validation and Composition Framework](../../governance/standards/vision/evolith-strategic-validation-and-composition-framework.md) | Framework for validating and composing portfolio bets | Validate the portfolio strategically | Framework | Yes |
-| [AI-Assisted Product Validation Workflow](../../governance/standards/vision/evolith-ai-assisted-validation-workflow.md) | AI-assisted workflow for validating product hypotheses | Accelerate validation with AI | Method | No |
-| [Evolutionary Strategy Roadmap](../../governance/standards/vision/evolutionary-strategy-roadmap.md) | Roadmap and investment priorities | Sequence the portfolio bets | Vision and strategy | Yes |
+| [Strategic Validation and Composition Framework](../methods/evolith-strategic-validation-and-composition-framework.md) | Framework for validating and composing portfolio bets | Validate the portfolio strategically | Framework | Yes |
+| [AI-Assisted Product Validation Workflow](../methods/evolith-ai-assisted-validation-workflow.md) | AI-assisted workflow for validating product hypotheses | Accelerate validation with AI | Method | No |
+| [Evolutionary Strategy Roadmap](./evolutionary-strategy-roadmap.md) | Roadmap and investment priorities | Sequence the portfolio bets | Vision and strategy | Yes |
 
 The files remain at legacy locations during migration but are classified as Product Suite strategy.
 

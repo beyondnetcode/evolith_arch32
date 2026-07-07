@@ -65,5 +65,5 @@ status page. We apologize for the inconvenience.
 
 ## References
 
-- [ADR-0011 — Fault Tolerance & Resiliency Patterns](../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)
-- [ADR-0068 — Documentation Release Gitflow](../architecture/adrs/core/0068-documentation-release-gitflow.md)
+- [ADR-0011 — Fault Tolerance & Resiliency Patterns](../../reference/core/architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)
+- [ADR-0068 — Documentation Release Gitflow](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md)

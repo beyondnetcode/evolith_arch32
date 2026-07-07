@@ -3,7 +3,7 @@
 > **Bilingual Navigation:** [Versión en Español](./phase-1-business-signoff.es.md)
 
 **Phase:** [01 — Conception and Discovery](../README.md#phase-01-conception-and-discovery)
-**Phase Exit Gate:** Business Sign-Off (see [`phase-gates.rules.json`](../../../../rulesets/sdlc/phase-gates.rules.json) gate `phase: 1`)
+**Phase Exit Gate:** Business Sign-Off (see [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json) gate `phase: 1`)
 **Primary Audience:** Product Owner, Executive Sponsor, Software Architect
 **Accountable Role:** Product Owner
 **Waiver Authority:** Executive Sponsor
@@ -32,12 +32,12 @@ Each row below maps to a `mandatoryEvidence` entry in the Phase 1 gate. Use the 
 
 | # | Mandatory Evidence | Template / Schema | Acceptance Criterion |
 |---|---|---|---|
-| 1 | PRD — Product Requirements Document | [`prd-template.md`](../04-artifact-templates/prd-template.md) · [`prd.schema.json`](../../../../rulesets/schema/prd.schema.json) | `status = Approved`, `approvalEvidence` populated, `approvalDate` filled |
+| 1 | PRD — Product Requirements Document | [`prd-template.md`](../04-artifact-templates/prd-template.md) · [`prd.schema.json`](../../../../src/rulesets/schema/prd.schema.json) | `status = Approved`, `approvalEvidence` populated, `approvalDate` filled |
 | 2 | Discovery Canvas | Initiative registry entry | Customer pains, expected value, and target persona documented. If Phase 1.1 Level ≥ 1 was applied, this artifact must reflect the Discovery Knowledge Brief. |
-| 3 | Technical Feasibility Canvas | [`technical-feasibility.schema.json`](../../../../rulesets/schema/technical-feasibility.schema.json) | Quality attributes and NFRs recorded with measurable thresholds |
+| 3 | Technical Feasibility Canvas | [`technical-feasibility.schema.json`](../../../../src/rulesets/schema/technical-feasibility.schema.json) | Quality attributes and NFRs recorded with measurable thresholds |
 | 4 | Ballpark Estimation | T-Shirt sizing log | Team composition and sizing assumptions stated. If Phase 1.1 Level ≥ 2 was applied, Story Seed Bank sizing must be incorporated. |
 | 5 | MoSCoW Prioritization Matrix | MoSCoW worksheet | At least one MUST item, valid Must/Should/Could/Won't distribution. If Phase 1.1 Level ≥ 2 was applied, the Epic Candidate Matrix serves as this artifact — no standalone MoSCoW worksheet required. |
-| 6 | Build-versus-Compose Analysis | [`build-vs-compose.schema.json`](../../../../rulesets/schema/build-vs-compose.schema.json) | Adopt / Embed / Integrate / Extend / Build / Reject disposition with three-year cost, licensing, tenant isolation, replaceability, and PoC requirements (Product Vision §5.3) |
+| 6 | Build-versus-Compose Analysis | [`build-vs-compose.schema.json`](../../../../src/rulesets/schema/build-vs-compose.schema.json) | Adopt / Embed / Integrate / Extend / Build / Reject disposition with three-year cost, licensing, tenant isolation, replaceability, and PoC requirements (Product Vision §5.3) |
 
 ---
 

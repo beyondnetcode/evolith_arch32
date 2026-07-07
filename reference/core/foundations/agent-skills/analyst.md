@@ -60,10 +60,10 @@ You have a **duty to improve the system**. Monitor for:
 - **Script gaps** → if a new gap type needs catalog entry, propose a validation script for it
 - **Tooling opportunities** → if `generate-es-skeleton.mjs` doesn't cover a pattern you need, propose an extension
 
-File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
+File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
 
 ---
 
-*See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle.*
-*See [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
-*See [Global Rules](../../.harness/rules/global-rules.md) for binding directives.*
+*See [AGENTS.md](../../../../.bmad-core/AGENTS.md) for repository context and gap lifecycle.*
+*See [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
+*See [Global Rules](../../../../.harness/rules/global-rules.md) for binding directives.*

@@ -16,7 +16,7 @@ the only code that knows how to spawn `.harness` scripts.
 
 ## The manifest convention
 
-A new file, [`.harness/manifest.yaml`](../../../.harness/manifest.yaml), makes
+A new file, [`.harness/manifest.yaml`](../../../../.harness/manifest.yaml), makes
 `.harness` discoverable. It is the single, versioned declaration of every
 capability the runtime may invoke:
 
@@ -87,5 +87,5 @@ A `SkillDescriptor` (in the SkillRegistry) maps an intent to a capability. For a
 harness-backed skill, `harnessCapability` names the manifest entry; for a
 composite skill, `.harness` produces the facts and the Core evaluates them. See
 the seeded catalog in
-[`default-skills.ts`](../../../packages/agent-runtime/src/adapters/skills/default-skills.ts)
+[`default-skills.ts`](../../../../src/packages/agent-runtime/src/adapters/skills/default-skills.ts)
 and [Extending](./extending.md) to add your own.

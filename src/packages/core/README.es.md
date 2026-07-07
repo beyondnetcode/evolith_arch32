@@ -57,7 +57,7 @@ solo ajusta la ergonomía de imports y la superficie de versión.
 ## Desarrollo
 
 Compila y prueba en local con `npm run build` / `npm test`. Las contribuciones siguen
-el [CONTRIBUTING.md](../../CONTRIBUTING.md) de la raíz del repo.
+el [CONTRIBUTING.md](../../../CONTRIBUTING.md) de la raíz del repo.
 
 ## Licencia
 

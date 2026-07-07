@@ -207,8 +207,8 @@ After fixing, the script re-validates to confirm all issues are resolved.
 
 - [Agentic CI and RAG Support](./agentic-ci-rag-support.md)
 - [Winston Audit Playbook](../../.harness/playbooks/winston-audit-playbook.md)
-- [Knowledge Intake Schema](../../rulesets/schema/knowledge-intake.schema.json)
-- [Knowledge Intake OPA Policy](../../rulesets/opa/knowledge-intake.rego)
+- [Knowledge Intake Schema](../../src/rulesets/schema/knowledge-intake.schema.json)
+- [Knowledge Intake OPA Policy](../../src/rulesets/opa/knowledge-intake.rego)
 
 ## Cache Invalidation for Knowledge Intake
 

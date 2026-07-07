@@ -35,7 +35,7 @@ _logger.LogXxx(...)   ──────────►  Destructure.With<PiiMas
 
 ### 1. PiiSanitizerEnricher
 
-Registrado vía `.Enrich.With<PiiSanitizerEnricher>()`. Ver código completo en [CP-02 EN](../../canonical-patterns/dotnet/cp-02-pii-safe-serilog-logging.md).
+Registrado vía `.Enrich.With<PiiSanitizerEnricher>()`. Ver código completo en [CP-02 EN](./cp-02-pii-safe-serilog-logging.md).
 
 Nombres de propiedad enmascarados (insensible a mayúsculas): `email`, `emailaddress`, `mail`, `password`, `passwordhash`, `token`, `accesstoken`, `refreshtoken`, `bearertoken`, `idtoken`, `secret`, `apikey`, `clientsecret`, `ssn`, `nationalid`, `taxid`, `identityreference`.
 

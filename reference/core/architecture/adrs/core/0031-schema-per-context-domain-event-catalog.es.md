@@ -161,7 +161,7 @@ class CategoryDeletedEvent {
 - [ADR-0006: Transición Futura a Microservicios con Dapr](../../adrs/core/0006-microservices-transition-sidecar-pattern.es.md)
 - [ADR-0010: Estrategia Multi-Tenancy (RLS)](../../adrs/core/0010-multi-tenancy-architecture-strategy.es.md)
 - [ADR-0015: Arquitectura Dirigida por Eventos (Bus Inyectable)](../../adrs/core/0015-event-driven-architecture-intra-domain.es.md)
-- [Modelo de Referencia Aplicado UMS](../../../knowledge/demo/README.es.md)
+- [Modelo de Referencia Aplicado UMS](../../../../../product/research/demo/README.es.md)
 
 
 
@@ -185,7 +185,7 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 - [ADR-0006: Transición Futura a Microservicios con Dapr](../../adrs/core/0006-microservices-transition-sidecar-pattern.es.md)
 - [ADR-0010: Estrategia Multi-Tenancy (RLS)](../../adrs/core/0010-multi-tenancy-architecture-strategy.es.md)
 - [ADR-0015: Arquitectura Dirigida por Eventos (Bus Inyectable)](../../adrs/core/0015-event-driven-architecture-intra-domain.es.md)
-- [Modelo de Referencia Aplicado UMS](../../../knowledge/demo/README.es.md)
+- [Modelo de Referencia Aplicado UMS](../../../../../product/research/demo/README.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

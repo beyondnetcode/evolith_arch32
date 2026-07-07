@@ -8,7 +8,7 @@ Este documento establece el plan estratégico y las directrices de integración 
 
 En un monorepo modular que evoluciona activamente hacia servicios distribuidos, las Pruebas Unitarias estándar son insuficientes para verificar la seguridad de la integración entre módulos, y las pruebas de integración de extremo a extremo (E2E) son lentas, frágiles y costosas.
 
-Resolvemos esto utilizando **Pruebas de Contrato Dirigidas por el Consumidor** (aprovechando **Pact JS**). Las pruebas de contrato aseguran que los cambios en una API o contrato de Evento por parte de un proveedor no rompan a los consumidores activos aguas abajo, desplazando a la izquierda la seguridad de la integración hacia la pipeline CI/CD como se especifica en el **[ADR 0018](../../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md)**.
+Resolvemos esto utilizando **Pruebas de Contrato Dirigidas por el Consumidor** (aprovechando **Pact JS**). Las pruebas de contrato aseguran que los cambios en una API o contrato de Evento por parte de un proveedor no rompan a los consumidores activos aguas abajo, desplazando a la izquierda la seguridad de la integración hacia la pipeline CI/CD como se especifica en el **[ADR 0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md)**.
 
 ---
 

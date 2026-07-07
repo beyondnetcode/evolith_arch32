@@ -3,9 +3,9 @@
 > **Bilingual navigation:** [Versión en Español](./overview.es.md)
 > **Parent:** [UMS Reference Hub](./README.md)
 
-A condensed product-hub view of UMS. For the full architectural deep dive (vision diagrams, capability matrices, traceability), open the source document at [`ums-technical-overview.md`](../../knowledge/demo/ums-technical-overview.md).
+A condensed product-hub view of UMS. For the full architectural deep dive (vision diagrams, capability matrices, traceability), open the source document at [`ums-technical-overview.md`](../../research/demo/ums-technical-overview.md).
 
-> **Source note:** UMS is an external satellite repository, not a submodule of this corpus. The stack, protocol, and bounded-context facts below are sourced from the canonical [UMS Technical Overview](../../knowledge/demo/ums-technical-overview.md) and are not verified against live UMS source from inside this repo. For authoritative, current setup and run instructions, always follow the [upstream repository](https://github.com/beyondnetcode/ums).
+> **Source note:** UMS is an external satellite repository, not a submodule of this corpus. The stack, protocol, and bounded-context facts below are sourced from the canonical [UMS Technical Overview](../../research/demo/ums-technical-overview.md) and are not verified against live UMS source from inside this repo. For authoritative, current setup and run instructions, always follow the [upstream repository](https://github.com/beyondnetcode/ums).
 
 ---
 
@@ -27,7 +27,7 @@ UMS is an enterprise-grade open-source User Management System operating as an in
 
 UMS isolates concerns into clearly bounded contexts. Each context owns its schema, repositories, and use cases:
 
-UMS is decomposed into exactly 8 bounded contexts (EP-01..EP-08), as defined by the canonical [UMS Technical Overview](../../knowledge/demo/ums-technical-overview.md#3-the-8-bounded-contexts). Multi-tenancy is not a separate context; it is a cross-cutting concern realised as dual-layer RLS across every context.
+UMS is decomposed into exactly 8 bounded contexts (EP-01..EP-08), as defined by the canonical [UMS Technical Overview](../../research/demo/ums-technical-overview.md#3-the-8-bounded-contexts). Multi-tenancy is not a separate context; it is a cross-cutting concern realised as dual-layer RLS across every context.
 
 | Context | Responsibility |
 |---|---|
@@ -71,10 +71,10 @@ UMS is decomposed into exactly 8 bounded contexts (EP-01..EP-08), as defined by 
 
 | If you are a… | Start with |
 |---|---|
-| Architect onboarding to Evolith | [`ums-reference-model.md`](../../knowledge/demo/ums-reference-model.md) → this overview → upstream [Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
-| Engineer adopting an Evolith pattern | This overview → [`ums-technical-overview.md`](../../knowledge/demo/ums-technical-overview.md) bounded-context section → upstream source |
+| Architect onboarding to Evolith | [`ums-reference-model.md`](../../research/demo/ums-reference-model.md) → this overview → upstream [Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
+| Engineer adopting an Evolith pattern | This overview → [`ums-technical-overview.md`](../../research/demo/ums-technical-overview.md) bounded-context section → upstream source |
 | Product owner comparing capabilities | This overview → [`reference-model.md`](./reference-model.md) for the inheritance map |
-| Auditor verifying boundaries | [`demo-vs-reference.md`](../../knowledge/demo/demo-vs-reference.md) → upstream Architecture Portal |
+| Auditor verifying boundaries | [`demo-vs-reference.md`](../../research/demo/demo-vs-reference.md) → upstream Architecture Portal |
 
 ---
 

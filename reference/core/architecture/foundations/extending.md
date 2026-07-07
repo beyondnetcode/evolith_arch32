@@ -8,7 +8,7 @@ plug in Hermes — all without touching the runtime core.
 ## Add a new skill or tool
 
 A skill maps an intent to a governed capability. Add an entry to
-[`default-skills.ts`](../../../packages/agent-runtime/src/adapters/skills/default-skills.ts)
+[`default-skills.ts`](../../../../src/packages/agent-runtime/src/adapters/skills/default-skills.ts)
 or register one at runtime:
 
 ```ts
@@ -28,7 +28,7 @@ await deps.skillRegistry.register({
 ```
 
 If the skill is harness-backed, also declare its capability in
-[`.harness/manifest.yaml`](../../../.harness/manifest.yaml). The governance flags
+[`.harness/manifest.yaml`](../../../../.harness/manifest.yaml). The governance flags
 (`requiresApproval`, `emitsTrace`, `requiresPolicy`) are enforced uniformly by the
 runtime regardless of which adapter runs.
 
@@ -127,4 +127,4 @@ expect(deps.tracker.events.map(e => e.type)).toContain('runtime.completed');
 ```
 
 See the existing suites under
-[`packages/agent-runtime/src/__tests__`](../../../packages/agent-runtime/src/__tests__).
+[`packages/agent-runtime/src/__tests__`](../../../../src/packages/agent-runtime/src/__tests__).

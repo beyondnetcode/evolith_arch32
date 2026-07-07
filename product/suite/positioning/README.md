@@ -14,7 +14,7 @@ This area contains market analysis, competitive comparisons, category definition
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
-| [Strategic Positioning and Comparative Landscape](../../governance/standards/vision/evolith-strategic-positioning-comparative-landscape.md) | Market analysis, category definition, and competitive comparison | Differentiate the Suite | Positioning analysis | Yes |
+| [Strategic Positioning and Comparative Landscape](./evolith-strategic-positioning-comparative-landscape.md) | Market analysis, category definition, and competitive comparison | Differentiate the Suite | Positioning analysis | Yes |
 
 During migration, the source document remains in its legacy path but is classified as Product Suite positioning.
 

@@ -180,12 +180,12 @@ Tienes el **deber de mejorar el sistema**. Monitorea:
 - **Detección de bloqueadores** → si los gaps están bloqueados por dependencias faltantes, proponer un script `detect-blockers.mjs` que cruce referencias de gap-closure-evidence.json
 - **Oportunidad de normalización** → si el mismo patrón aparece en 3+ listas DoD de agentes, proponer extraer a un archivo compartido
 
-Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
+Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).
 
 ---
 
-*Véase [AGENTS.es.md](../AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
-*Véase [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
-*Véase [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) para flujo de release de documentación.*
-*Véase [Tablero de Seguimiento de Gaps](../../reference/core/control-center/gaps/gap-tracking.es.md) para estado de gaps.*
-*Véase [Evidencia de Cierre de Gaps](../../reference/core/control-center/evidence/gap-closure-evidence.json) para registros de cierre.*
+*Véase [AGENTS.es.md](../../../../.bmad-core/AGENTS.es.md) para contexto del repositorio y ciclo de vida de gaps.*
+*Véase [AGENTS.es.md sección 8](../../../../.bmad-core/AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva) para mandato de auto-mejora.*
+*Véase [ADR-0068](../../architecture/adrs/core/0068-documentation-release-gitflow.md) para flujo de release de documentación.*
+*Véase [Tablero de Seguimiento de Gaps](../../control-center/gaps/gap-tracking.es.md) para estado de gaps.*
+*Véase [Evidencia de Cierre de Gaps](../../control-center/evidence/gap-closure-evidence.json) para registros de cierre.*

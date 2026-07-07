@@ -4,7 +4,7 @@
 
 **Status:** Approved  
 **Level:** 1 - System Context  
-**Parent:** [C4 Master Architecture](../C4-MASTER-ARCHITECTURE.md)
+**Parent:** [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.md)
 
 ## 1. System Overview
 
@@ -59,4 +59,4 @@ Next, we look inside the **Evolith Core** system to see its major containers.
 **[Go to Level 2: Containers](./level-2-containers.md)**
 
 ---
-[Back to Master Architecture](../C4-MASTER-ARCHITECTURE.md)
+[Back to Master Architecture](./C4-MASTER-ARCHITECTURE.md)

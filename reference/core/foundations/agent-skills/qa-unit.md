@@ -97,12 +97,12 @@ You have a **duty to improve the system**. Monitor for:
 - **Flake detection** → if a spec fails intermittently under `--runInBand`, isolate it and propose a determinism fix.
 - **Fixture reuse** → if Native unit fixtures and OPA parity fixtures diverge, propose a single shared fixture source.
 
-File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
+File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
 
 ---
 
-*See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle.*
-*See [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
-*See [Global Rules](../../.harness/rules/global-rules.md) for R-25 Dual-Engine Parity.*
+*See [AGENTS.md](../../../../.bmad-core/AGENTS.md) for repository context and gap lifecycle.*
+*See [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
+*See [Global Rules](../../../../.harness/rules/global-rules.md) for R-25 Dual-Engine Parity.*
 *See [QA Agent](./qa.md) for the lead E2E / security / OPA parity gate.*
-*See [Gap Tracking Board](../../reference/core/control-center/gaps/gap-tracking.md) for gap status.*
+*See [Gap Tracking Board](../../control-center/gaps/gap-tracking.md) for gap status.*

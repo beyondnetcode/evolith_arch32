@@ -3,7 +3,7 @@
 > **Bilingual navigation:** [Versión en Español](./observability-validation-template.es.md)
 > **Phase:** 5 — Delivery and Operations
 > **Exit gate:** Production Live
-> **Schema:** [`observability-validation.schema.json`](../../../../rulesets/schema/observability-validation.schema.json)
+> **Schema:** [`observability-validation.schema.json`](../../../../src/rulesets/schema/observability-validation.schema.json)
 > **Parent:** [Artifact Templates](./README.md)
 
 ---
@@ -82,4 +82,4 @@ The Observability Validation artifact records that metrics, logs, traces, and al
 |---|---|
 | [Zero-Downtime Release Playbook](../01-playbooks/zero-downtime-release.md) | Procedural gate that consumes this evidence. |
 | [SDLC Quality Gates](../quality-gates.md) | Threshold authority. |
-| [`phase-gates.rules.json`](../../../../rulesets/sdlc/phase-gates.rules.json) | Phase 5 `Observability Validation` evidence entry references this template's schema. |
+| [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json) | Phase 5 `Observability Validation` evidence entry references this template's schema. |

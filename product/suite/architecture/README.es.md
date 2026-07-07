@@ -16,9 +16,9 @@ No debe contener principios universales que pertenecen a Evolith Core ni detalle
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
-| [Diseño Objetivo de Composición Gobernada](../../governance/standards/vision/evolith-governed-composition-target-design.es.md) | Diseño objetivo de la composición gobernada de productos | Diseñar el estado objetivo compuesto | Referencia de diseño | Sí |
-| [Modelo de Abstracción de Proveedores y Plugins](../../governance/standards/vision/evolith-provider-abstraction-plugin-model.es.md) | Modelo de abstracción de proveedores y plugins (destino de migración: Core Architecture Principle) | Mantener los proveedores reemplazables | Referencia de diseño | Sí |
-| [Interfaces Técnicas de Tracker](../../governance/standards/vision/sdlc-tracker-technical-interfaces.es.md) | Interfaces técnicas del Tracker (destino de migración: Tracker Product Design) | Especificar las superficies de integración del Tracker | Referencia de diseño | No |
+| [Diseño Objetivo de Composición Gobernada](./evolith-governed-composition-target-design.es.md) | Diseño objetivo de la composición gobernada de productos | Diseñar el estado objetivo compuesto | Referencia de diseño | Sí |
+| [Modelo de Abstracción de Proveedores y Plugins](../../../reference/core/foundations/principles/evolith-provider-abstraction-plugin-model.es.md) | Modelo de abstracción de proveedores y plugins (destino de migración: Core Architecture Principle) | Mantener los proveedores reemplazables | Referencia de diseño | Sí |
+| [Interfaces Técnicas de Tracker](../../products/evolith-tracker/sdlc-tracker-technical-interfaces.es.md) | Interfaces técnicas del Tracker (destino de migración: Tracker Product Design) | Especificar las superficies de integración del Tracker | Referencia de diseño | No |
 
 Durante la migración, este índice separa arquitectura de Suite, principios Core e implementación de productos.
 

@@ -36,7 +36,7 @@ Esta area define el modelo canonico de resolucion de rulesets topologicos para l
 
 ## Estado Actual
 
-La ubicacion de rulesets topologicos esta autorizada. Los perfiles topologicos concretos y sus reglas Native mas OPA se rastrean en el [Tablero de Seguimiento de Gaps](../../reference/core/control-center/gaps/gap-tracking.es.md).
+La ubicacion de rulesets topologicos esta autorizada. Los perfiles topologicos concretos y sus reglas Native mas OPA se rastrean en el [Tablero de Seguimiento de Gaps](../../../reference/core/control-center/gaps/gap-tracking.es.md).
 
 ---
 [Volver al Hub de Rulesets](../README.es.md)

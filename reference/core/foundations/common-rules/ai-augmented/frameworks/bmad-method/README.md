@@ -56,11 +56,11 @@ The following elements are **not part of BMAD-METHOD** — they were built by th
 
 | Element | Location | Purpose |
 | :--- | :--- | :--- |
-| 18 harness rules (R-01–R-18) | [`.harness/rules/global-rules.md`](../../../../../../.harness/rules/global-rules.md) | Document quality, diagram standards, architecture governance |
-| 4 harness governance agents | [`.harness/agents/agent-specs.md`](../../../../../../.harness/agents/agent-specs.md) | On-demand review: @po, @architect, @analyst, @devops |
-| 4 governance playbooks | [`.harness/playbooks/`](../../../../../../.harness/playbooks/README.md) | Recurring operational checklists |
+| 18 harness rules (R-01–R-18) | [`.harness/rules/global-rules.md`](../../../../../../../.harness/rules/global-rules.md) | Document quality, diagram standards, architecture governance |
+| 4 harness governance agents | [`.harness/agents/agent-specs.md`](../../../../../../../.harness/agents/agent-specs.md) | On-demand review: @po, @architect, @analyst, @devops |
+| 4 governance playbooks | [`.harness/playbooks/`](../../../../../../../.harness/playbooks/README.md) | Recurring operational checklists |
 | `validate-docs.mjs` script | `.harness/scripts/` | Automated UTF-8, link, anchor, bilingual, and Mermaid validation |
-| Harness modular layout decision | [`.harness/adr/0001`](../../../../../../.harness/adr/0001-modular-system-architecture.md) | Why the harness uses small, single-responsibility documents |
+| Harness modular layout decision | [`.harness/adr/0001`](../../../../../../../.harness/adr/0001-modular-system-architecture.md) | Why the harness uses small, single-responsibility documents |
 | Architecture-specific constraints | Agent personas | Hexagonal boundaries, RLS, modular extraction, ADR traceability |
 
 ---
@@ -73,7 +73,7 @@ Not all BMAD-METHOD capabilities were adopted. The following were intentionally 
 | :--- | :--- |
 | Frontend-specific agent directives (React, Tailwind) | This repo is architecture-agnostic at the reference level; frontend stack is demo-specific |
 | Backlog tooling integrations | Kept as flat files to remain tool-agnostic |
-| Any BMAD community templates not aligned with ADR taxonomy | This repo uses its own ADR and story formats, defined in [`.harness/templates/`](../../../../../../.harness/templates/blueprints.md) |
+| Any BMAD community templates not aligned with ADR taxonomy | This repo uses its own ADR and story formats, defined in [`.harness/templates/`](../../../../../../../.harness/templates/blueprints.md) |
 
 ---
 

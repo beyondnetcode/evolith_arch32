@@ -14,7 +14,7 @@ Esta área contiene métodos de discovery, validación, investigación, experime
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
-| [Workflow de Validación de Producto Asistido por IA](../../governance/standards/vision/evolith-ai-assisted-validation-workflow.es.md) | Workflow asistido por IA para discovery y validación antes de implementar | Acelerar la validación con IA | Método | Sí |
+| [Workflow de Validación de Producto Asistido por IA](./evolith-ai-assisted-validation-workflow.es.md) | Workflow asistido por IA para discovery y validación antes de implementar | Acelerar la validación con IA | Método | Sí |
 
 Los métodos pueden usar herramientas nombradas como ayudas opcionales, pero deben conservar responsabilidad humana y neutralidad respecto de proveedores.
 

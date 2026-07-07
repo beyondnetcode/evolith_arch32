@@ -34,7 +34,7 @@ You are responsible for accepting `GT-*` gaps into the sprint backlog. All previ
 | GT-153 | Knowledge Lifecycle Governance by Winston | `DONE` |
 | GT-154 | RAG Projection and Native/OPA Parity for External Knowledge | `DONE` |
 
-See the [Gap Tracking Board](../../reference/core/control-center/gaps/gap-tracking.md) for current open gaps.
+See the [Gap Tracking Board](../../control-center/gaps/gap-tracking.md) for current open gaps.
 
 ### Gap Acceptance Workflow
 1. Receive catalog entry from **Analyst Agent** with problem statement, evidence, done-when.
@@ -103,12 +103,12 @@ You have a **duty to improve the system**. Monitor for:
 - **Workflow gaps** → if PM handoffs are not automated, propose a workflow that notifies the next agent automatically
 - **PRD template evolution** → if you see recurring PRD structure changes, propose a PRD generator script
 
-File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
+File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
 
 ---
 
-*See [AGENTS.md](../AGENTS.md) for repository context and gap lifecycle.*
-*See [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
-*See [ADR-0068](../../reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md) for documentation release workflow.*
-*See [Functional Story Writing Standard](../../reference/core/sdlc/03-documentation/functional-story-writing-standard.md) for PRD format.*
-*See [Gap Tracking Board](../../reference/core/control-center/gaps/gap-tracking.md) for gap status.*
+*See [AGENTS.md](../../../../.bmad-core/AGENTS.md) for repository context and gap lifecycle.*
+*See [AGENTS.md section 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) for self-improvement mandate.*
+*See [ADR-0068](../../architecture/adrs/core/0068-documentation-release-gitflow.md) for documentation release workflow.*
+*See [Functional Story Writing Standard](../../sdlc/03-documentation/functional-story-writing-standard.md) for PRD format.*
+*See [Gap Tracking Board](../../control-center/gaps/gap-tracking.md) for gap status.*

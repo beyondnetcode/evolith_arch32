@@ -7,10 +7,10 @@
 
 | Need | Starting point |
 |---|---|
-| Define a new product architecture | [Architecture Hub](../../../architecture/README.md) and [Child Repository Inheritance Guide](./child-repository-inheritance-guide.md) |
-| Review a complete executable example | [UMS Applied Reference Model](../../../knowledge/demo/ums-reference-model.md) |
+| Define a new product architecture | [Architecture Hub](../../architecture/README.md) and [Child Repository Inheritance Guide](./child-repository-inheritance-guide.md) |
+| Review a complete executable example | [UMS Applied Reference Model](../../../../product/research/demo/ums-reference-model.md) |
 | Run the official example | [UMS README](https://github.com/beyondnetcode/ums/blob/main/README.md) |
-| Select a runtime | [Authoritative Tech Stack Index](../../../architecture/blueprints/authoritative-tech-stack.md) |
+| Select a runtime | [Authoritative Tech Stack Index](../../architecture/blueprints/authoritative-tech-stack.md) |
 
 **Evolith** is a documentation and decision upstream — not a starter template. It is not cloned as an application starter and does not contain a local product sandbox.
 
@@ -60,9 +60,9 @@ Evolith Core uses the BMAD Method to orchestrate specialized AI agents. You can 
 
 ## 6. Assistance
 
-- [ADR Registry](../../../architecture/adrs/README.md)
-- [Repository Taxonomy](../repository-taxonomy.md)
-- [Reference vs UMS Applied Model](../../../knowledge/demo/demo-vs-reference.md)
+- [ADR Registry](../../architecture/adrs/README.md)
+- [Repository Taxonomy](../../control-center/taxonomy/repository-taxonomy.md)
+- [Reference vs UMS Applied Model](../../../../product/research/demo/demo-vs-reference.md)
 
 ---
 [Back to Onboarding](./README.md)

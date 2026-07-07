@@ -143,7 +143,7 @@ Tienes el _deber de mejorar el sistema_. Monitoriza:
 * _Inconsistencias de estándares_ → si las reglas globales entran en conflicto con reglas específicas de topología, proponer reconciliación
 * _Automatización de validación_ → si las verificaciones manuales de Winston se repiten, automatizarlas en un gate de CI
 
-Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.md sección 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
+Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.md sección 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).
 
 ## Reglas Estándar y Checklists
 
@@ -170,6 +170,6 @@ Contexto de diseño durable capturado en sesiones de flujo de producto guiadas p
 
 ---
 
-_Ver [AGENTS.md](../AGENTS.md) para el contexto del repositorio y el ciclo de vida de gaps._
-_Ver [AGENTS.md sección 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) para el mandato de auto-mejora._
-_Ver [Reglas Globales](../../.harness/rules/global-rules.md) para directivas vinculantes (R-01 a R-30)._
+_Ver [AGENTS.md](../../../../.bmad-core/AGENTS.md) para el contexto del repositorio y el ciclo de vida de gaps._
+_Ver [AGENTS.md sección 8](../../../../.bmad-core/AGENTS.md#8-self-improvement-and-proactive-optimization-mandate) para el mandato de auto-mejora._
+_Ver [Reglas Globales](../../../../.harness/rules/global-rules.md) para directivas vinculantes (R-01 a R-30)._

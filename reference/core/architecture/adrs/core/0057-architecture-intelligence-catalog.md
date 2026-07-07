@@ -62,9 +62,9 @@ External ideas are not standards by default. A catalog item becomes normative on
 
 ## Related Artifacts
 
-- [Architecture Intelligence](../../../knowledge/architecture-intelligence/README.md)
-- [Pattern Card Template](../../../knowledge/architecture-intelligence/patterns/pattern-card-template.md)
-- [Architecture Radar](../../../knowledge/architecture-intelligence/tradeoffs/architecture-radar.md)
+- [Architecture Intelligence](../../../../../product/research/architecture-intelligence/README.md)
+- [Pattern Card Template](../../../../../product/research/architecture-intelligence/patterns/pattern-card-template.md)
+- [Architecture Radar](../../../../../product/research/architecture-intelligence/tradeoffs/architecture-radar.md)
 
 
 

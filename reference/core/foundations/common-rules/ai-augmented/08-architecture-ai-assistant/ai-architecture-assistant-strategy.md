@@ -621,7 +621,7 @@ Always: Reference existing ADRs before proposing new ones.
 - [ADR-AI-002: MCP as Integration Standard](../06-adrs/adr-ai-002-mcp-as-integration-standard.md)
 - [ADR-AI-005: Human-in-the-Loop Policy](../06-adrs/adr-ai-005-human-in-the-loop-policy.md)
 - [Agentic Patterns](../05-agentic-patterns/patterns-overview.md)
-- [Engineering Manifesto](../../engineering/engineering-manifesto.md)
+- [Engineering Manifesto](../../engineering-manifesto.md)
 
 ---
 

@@ -17,7 +17,7 @@
 | **Async / Streams** | **Kotlin Coroutines + Flow** | Latest | **YES** | RxJava 2/3 |
 
 ---
--> Back to **[Global Master Index](../../../MASTER_INDEX.md)**
+-> Back to **[Global Master Index](../../control-center/taxonomy/MASTER_INDEX.md)**
 
 ---
 [Back to Index](./README.md)

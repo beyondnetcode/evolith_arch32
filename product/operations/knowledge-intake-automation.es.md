@@ -207,8 +207,8 @@ Despues de corregir, el script re-valida para confirmar que todos los problemas 
 
 - [Soporte para CI Agentico y RAG](./agentic-ci-rag-support.es.md)
 - [Playbook de Auditoria Winston](../../.harness/playbooks/winston-audit-playbook.es.md)
-- [Esquema de Ingesta de Conocimiento](../../rulesets/schema/knowledge-intake.schema.json)
-- [Politica OPA de Ingesta de Conocimiento](../../rulesets/opa/knowledge-intake.rego)
+- [Esquema de Ingesta de Conocimiento](../../src/rulesets/schema/knowledge-intake.schema.json)
+- [Politica OPA de Ingesta de Conocimiento](../../src/rulesets/opa/knowledge-intake.rego)
 
 ## Invalidación de Caché para Ingesta de Conocimiento
 

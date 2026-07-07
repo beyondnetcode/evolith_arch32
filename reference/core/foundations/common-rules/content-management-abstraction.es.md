@@ -8,7 +8,7 @@
 >
 > **Estado:** Referencia activa
 >
-> **Padre:** [Centro de Estándares Corporativos](../README.es.md)
+> **Padre:** [Centro de Estándares Corporativos](../../architecture/foundations/README.es.md)
 
 ---
 

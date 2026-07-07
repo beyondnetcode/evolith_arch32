@@ -3,7 +3,7 @@
 > **Bilingual navigation:** [Versión en Español](./rollback-rehearsal-template.es.md)
 > **Phase:** 5 — Delivery and Operations
 > **Exit gate:** Production Live (Rollback Validated)
-> **Schema:** [rollback-rehearsal.schema.json](../../../../rulesets/schema/rollback-rehearsal.schema.json)
+> **Schema:** [rollback-rehearsal.schema.json](../../../../src/rulesets/schema/rollback-rehearsal.schema.json)
 > **Parent:** [Artifact Templates](./README.md)
 
 ---
@@ -168,4 +168,4 @@ The Rollback Rehearsal is the formal record that a rollback was executed success
 |---|---|
 | [Zero-Downtime Release Playbook](../01-playbooks/zero-downtime-release.md) | Procedural gate that consumes this evidence. |
 | [Release Notes Template](./release-notes-template.md) | Production deployment record referencing rollback readiness. |
-| [`phase-gates.rules.json`](../../../../rulesets/sdlc/phase-gates.rules.json) | Phase 5 `Rollback Rehearsal` evidence entry references this template. |
+| [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json) | Phase 5 `Rollback Rehearsal` evidence entry references this template. |

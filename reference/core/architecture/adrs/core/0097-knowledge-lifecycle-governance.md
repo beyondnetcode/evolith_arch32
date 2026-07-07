@@ -113,9 +113,9 @@ The CI validation (`17-validate-knowledge-intake.mjs`) enforces:
 
 ## References
 - [ADR-0090: RAG Knowledge Governance Standard](./0090-rag-knowledge-governance.md)
-- [GT-152: External Knowledge Contract and Source Registry Schema](../../../sdlc/standards/vision/gap-reference-catalog.md#gt-152)
-- [KI-EVANS-AGGREGATE-001](../../../knowledge/intake/KI-EVANS-AGGREGATE-001.yaml)
-- [Knowledge Intake Schema](../../../../rulesets/schema/knowledge-intake.schema.json)
+- [GT-152: External Knowledge Contract and Source Registry Schema](../../../control-center/gaps/gap-reference-catalog.md#gt-152)
+- [KI-EVANS-AGGREGATE-001](../../../../../product/research/intake/KI-EVANS-AGGREGATE-001.yaml)
+- [Knowledge Intake Schema](../../../../../src/rulesets/schema/knowledge-intake.schema.json)
 
 ---
 [Back to Core ADR Index](./README.md)

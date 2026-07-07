@@ -22,7 +22,7 @@ This directory contains planning documents for the SDK, CLI, and MCP components 
 | [Testing Strategy](./testing-strategy.md) | Complete | Unit, integration, E2E testing approach |
 | [Release Readiness Checklist](./release-readiness-checklist.md) | Complete | Phase-gate release criteria |
 | [SDLC Handoff Protocol](../HANDOFF-PROTOCOL.md) | Complete | Knowledge, context, and artifact transfer between SDLC phases and agents |
-| [Historical CLI Backlog](./CLI-BACKLOG.md) | Superseded | Preserved for traceability; active tracking lives in the [gap-tracking board](../../../../governance/standards/vision/gap-tracking.md) |
+| [Historical CLI Backlog](./CLI-BACKLOG.md) | Superseded | Preserved for traceability; active tracking lives in the [gap-tracking board](../../../../../reference/core/control-center/gaps/gap-tracking.md) |
 
 ---
 
@@ -72,7 +72,7 @@ Pre-release universal gates, Phase 1-3 specific gates, regression testing suite,
 
 ## Related Documents
 
-- [Evolith Product Vision Master](../../../../product-suite/vision/evolith-product-vision-master.md)
-- [ACL Ruleset](../../../../../rulesets/acl/anti-corruption-layer.rules.json)
-- [Open-Core Boundary Rules](../../../../../rulesets/governance/open-core-boundary.rules.json)
-- [Executive Scorecards](../../../../../rulesets/governance/executive-scorecards.rules.json)
+- [Evolith Product Vision Master](../../../../suite/vision/evolith-product-vision-master.md)
+- [ACL Ruleset](../../../../../src/rulesets/acl/anti-corruption-layer.rules.json)
+- [Open-Core Boundary Rules](../../../../../src/rulesets/governance/open-core-boundary.rules.json)
+- [Executive Scorecards](../../../../../src/rulesets/governance/executive-scorecards.rules.json)

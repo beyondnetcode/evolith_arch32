@@ -5,7 +5,7 @@
 **Status:** Proposed Design — Pending Architecture Board Review  
 **Owner:** Evolith Architecture Board  
 **Last Updated:** 2026-06-10  
-**Parent Design:** [Governed Composition Target Design](../../product-suite/architecture/evolith-governed-composition-target-design.md)  
+**Parent Design:** [Governed Composition Target Design](../../suite/architecture/evolith-governed-composition-target-design.md)  
 **Implementation Status:** Documentation only — no source-code change authorized
 
 ---
@@ -503,10 +503,10 @@ Existing ADR 0073 remains valid for the unified output envelope but requires a c
 
 ## 13. Related Documents
 
-- [Governed Composition Target Design](../../product-suite/architecture/evolith-governed-composition-target-design.md)
-- [Evolith Product Vision Master](../../product-suite/vision/evolith-product-vision-master.md)
-- [SDLC Traceability Model](../../governance/sdlc/traceability-model.md)
-- [ADR 0073 — Unified CLI/MCP Output Contract](../../architecture/adrs/core/0073-unified-cli-output-contract.md)
+- [Governed Composition Target Design](../../suite/architecture/evolith-governed-composition-target-design.md)
+- [Evolith Product Vision Master](../../suite/vision/evolith-product-vision-master.md)
+- [SDLC Traceability Model](../../../reference/core/sdlc/traceability-model.md)
+- [ADR 0073 — Unified CLI/MCP Output Contract](../../../reference/core/architecture/adrs/core/0073-unified-cli-output-contract.md)
 
 ---
 

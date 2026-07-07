@@ -36,7 +36,7 @@ The `phase-gates`, `sdlc/coverage`, and `sdlc/pyramid` Rego policies exist but a
 
 ## Validating these rulesets
 
-These files are validated against [`rulesets/schema/rule-definition.schema.json`](../schema/README.md) when Core loads them. To check a hand-edited entry ad hoc, see the [schema validation guide](../schema/README.md#validating-an-artifact-against-a-schema). Authoring and contribution standards live in the repo-root [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
+These files are validated against [`rulesets/schema/rule-definition.schema.json`](../schema/README.md) when Core loads them. To check a hand-edited entry ad hoc, see the [schema validation guide](../schema/README.md#validating-an-artifact-against-a-schema). Authoring and contribution standards live in the repo-root [`CONTRIBUTING.md`](../../../CONTRIBUTING.md).
 
 ---
 

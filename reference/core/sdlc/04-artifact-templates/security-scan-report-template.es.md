@@ -3,7 +3,7 @@
 > **Navegación bilingüe:** [English Version](./security-scan-report-template.md)
 > **Fase:** 4 — Validación y QA
 > **Compuerta de Salida:** RC Estampado
-> **Esquema:** [`security-scan-report.schema.json`](../../../../rulesets/schema/security-scan-report.schema.json)
+> **Esquema:** [`security-scan-report.schema.json`](../../../../src/rulesets/schema/security-scan-report.schema.json)
 > **Padre:** [Plantillas de Artefactos](./README.es.md)
 
 ---
@@ -77,4 +77,4 @@ El Reporte de Escaneo de Seguridad consolida hallazgos SAST, DAST, SCA, secret-s
 |---|---|
 | [Playbook de Fase 4 — RC Estampado](../01-playbooks/phase-4-rc-stamp.es.md) | Compuerta procedimental que consume esta evidencia. |
 | [Gates de Calidad SDLC](../quality-gates.es.md) | Define la política productiva de CVEs. |
-| [`phase-gates.rules.json`](../../../../rulesets/sdlc/phase-gates.rules.json) | La entrada de evidencia `Security Scan Report` de la Fase 4 referencia el esquema de esta plantilla. |
+| [`phase-gates.rules.json`](../../../../src/rulesets/sdlc/phase-gates.rules.json) | La entrada de evidencia `Security Scan Report` de la Fase 4 referencia el esquema de esta plantilla. |

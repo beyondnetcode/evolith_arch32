@@ -74,7 +74,7 @@
     "@types/node": "26.0.0",
     "@types/uuid": "10.0.0",
     "@typescript-eslint/parser": "*",
-    "eslint": "*",
+    "eslint": "^10.6.0",
     "eslint-plugin-boundaries": "*",
     "jest": "30.4.2",
     "supertest": "7.2.2",

@@ -88,7 +88,7 @@
     "@types/jest": "30.0.0",
     "@types/node": "26.0.0",
     "@typescript-eslint/parser": "*",
-    "eslint": "*",
+    "eslint": "^10.6.0",
     "eslint-plugin-boundaries": "*",
     "typescript": "6.0.3"
   },

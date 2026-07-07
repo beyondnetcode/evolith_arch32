@@ -11,14 +11,14 @@
 
 <br/>
 
-<a href="./reference/core/sdlc/assets/master-view.svg" title="Open the full-size vector diagram — zoom to analyze">
+<a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Open the interactive diagram — pan & zoom">
   <img src="./reference/core/sdlc/assets/master-view.svg"
        alt="Evolith E2E Product Vision — Governed Composition, stateless evaluation Core, federated five-phase SDLC"
        width="880"
        style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
 </a>
 
-<sub>↑ Evolith E2E Product Vision — vector diagram · <b><a href="./reference/core/sdlc/assets/master-view.svg">open full-size to zoom</a></b> · tip: <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+click to open it in a new tab</sub>
+<sub>↑ Evolith E2E Product Vision · <b><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html">Open interactive viewer</a></b> — drag to pan · scroll to zoom · fullscreen · <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+click for a new tab</sub>
 
 </div>
 

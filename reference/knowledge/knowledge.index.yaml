@@ -32,9 +32,21 @@ spec:
       manifest: canonical/packs/knowledge-and-corpus.pack.yaml
       dependsOn: []
 
-  # Caché derivada (regenerable, NUNCA autoridad, NUNCA editada a mano).
+  # Caché derivada (regenerable, NUNCA autoridad, NUNCA editada a mano, gitignored).
   derived:
     dir: derived/            # .gitignore-ado
     regeneratedBy:
       - .harness/scripts/ci/rag-sync.mjs
       - .harness/scripts/ci/14-rag-index-sync.mjs
+
+  # Proyecciones portables del corpus: PUBLICADAS (commiteadas, legibles al clonar) pero
+  # GENERADAS — nunca autoridad, nunca editadas a mano. Un gate --verify prueba
+  # `publicado == regenerar(canonical)`. El Core es YAML-first; esto es INTERCAMBIO, no autoría.
+  projections:
+    - id: okf
+      spec: OKF v0.1 (Open Knowledge Format)
+      out: okf/                                        # commiteado (no derived/)
+      generatedBy: .harness/scripts/knowledge-okf-project.mjs
+      verifiedBy: .harness/scripts/ci/38-validate-okf-projection.mjs
+      adr: ADR-0105
+      # exclude: []   # hook editorial (YAGNI): packs a NO publicar. Vacío = publicar todos.

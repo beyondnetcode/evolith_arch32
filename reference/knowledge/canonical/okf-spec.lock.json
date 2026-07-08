@@ -1,0 +1,9 @@
+{
+  "spec": "OKF",
+  "version": "0.1",
+  "sourceUrl": "https://raw.githubusercontent.com/GoogleCloudPlatform/knowledge-catalog/main/okf/SPEC.md",
+  "sha256": "b9655e607346dbbdc6de21190e9a953313eda6a7eba68d4d272a65975940ad6e",
+  "checkedAt": "2026-07-08",
+  "reviewedAt": "2026-07-08",
+  "adr": "ADR-0105"
+}

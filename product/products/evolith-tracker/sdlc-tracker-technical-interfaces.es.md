@@ -16,6 +16,10 @@ Este documento define las interfaces técnicas mediante las cuales Evolith Track
 
 > **Core define. Los proveedores ejecutan. CLI y MCP evalúan. Tracker decide y audita.**
 
+El modelo de responsabilidades de tenant es:
+
+> **MMS gobierna la identidad maestra del Tenant. UMS gobierna la identidad y autorización de usuarios dentro del Tenant. Tracker gobierna la operación SDLC del Tenant proyectado.**
+
 Tracker no es una extensión del CLI. Es el sistema canónico de gobernanza en runtime.
 
 ---
@@ -23,14 +27,16 @@ Tracker no es una extensión del CLI. Es el sistema canónico de gobernanza en r
 ## 2. Invariantes Arquitectónicos
 
 1. Tracker posee procesos, fases, gates, decisiones, aprobaciones, excepciones y auditoría.
-2. Evolith Core es read-only en runtime y suministra reglas, schemas, estándares y contratos versionados.
-3. CLI, MCP, CI y evaluadores externos retornan resultados técnicos; nunca mutan el estado canónico.
-4. Los sistemas externos conservan autoridad sobre sus hechos operativos.
-5. Tracker decide si esos hechos satisfacen la gobernanza Core y tenant.
-6. Los agentes ejecutan actividades acotadas y producen evidencia; no aprueban gates.
-7. Todo proveedor se aísla mediante un puerto neutral, plugin/adaptador y ACL.
-8. Toda decisión canónica referencia políticas, evidencias, aprobaciones y excepciones exactas.
-9. Toda herramienta es intercambiable; cualquier default es configurable y reemplazable.
+2. Tracker almacena una proyección de Tenant, no el registro maestro del Tenant. La proyección debe referenciar la clave global del Tenant en MMS.
+3. Tracker delega autenticación y autorización en UMS y consume un grafo de autorización por tenant antes de habilitar acciones gobernadas.
+4. Evolith Core es read-only en runtime y suministra reglas, schemas, estándares y contratos versionados.
+5. CLI, MCP, CI y evaluadores externos retornan resultados técnicos; nunca mutan el estado canónico.
+6. Los sistemas externos conservan autoridad sobre sus hechos operativos.
+7. Tracker decide si esos hechos satisfacen la gobernanza Core y tenant.
+8. Los agentes ejecutan actividades acotadas y producen evidencia; no aprueban gates.
+9. Todo proveedor se aísla mediante un puerto neutral, plugin/adaptador y ACL.
+10. Toda decisión canónica referencia políticas, evidencias, aprobaciones y excepciones exactas.
+11. Toda herramienta es intercambiable; cualquier default es configurable y reemplazable.
 
 ---
 
@@ -45,10 +51,13 @@ flowchart TB
 
     HUMAN["Humanos y Clientes Empresariales"]:::actor
     AGENT["Agentes Autónomos y LLMs"]:::actor
+    MMS["MMS\nDato Maestro de Tenant"]:::provider
+    UMS["UMS\nAuthN/AuthZ"]:::provider
 
     subgraph TRACKER["Evolith Tracker"]
         API["REST API de Gobernanza"]:::tracker
         MCPGW["MCP Gateway"]:::tracker
+        TENANT["Servicio de Proyección de Tenant"]:::tracker
         ORCH["Orquestador de Procesos y Fases"]:::tracker
         DECISION["Motor de Decisiones de Gate"]:::tracker
         EVIDENCE["Servicio Evidence Graph"]:::tracker
@@ -68,8 +77,13 @@ flowchart TB
 
     HUMAN --> API
     AGENT --> MCPGW
+    MMS -->|TenantProjection| TENANT
+    API -->|solicitud delegada de autorizacion| UMS
+    UMS -->|grafo de autorización| API
     API --> ORCH
     MCPGW --> ORCH
+    API --> TENANT
+    TENANT --> ORCH
     ORCH --> POLICY
     ORCH --> EVIDENCE
     ORCH --> DECISION
@@ -91,7 +105,41 @@ flowchart TB
 
 ## 4. Separación de Contratos Canónicos
 
-### 4.1 Evidence Item
+### 4.1 Tenant Projection
+
+Tracker recibe proyecciones de Tenant desde MMS. La proyección es la frontera local de gobernanza y no debe convertirse en un segundo maestro de Tenant.
+
+```typescript
+interface TenantProjection {
+  id: string;
+  globalTenantKey: string;
+  displayName: string;
+  lifecycleStatus: 'active' | 'suspended' | 'closed' | 'pending';
+  governanceProfileRef?: string;
+  dataClassificationProfileRef?: string;
+  projectionVersion: string;
+  projectedAt: string;
+  source: {
+    system: 'mms';
+    masterRecordRef: string;
+  };
+  sync: {
+    status: 'active' | 'stale' | 'rejected';
+    lastVerifiedAt: string;
+    reason?: string;
+  };
+}
+```
+
+Tracker acepta comandos gobernados solo cuando:
+
+- el token de la solicitud es válido según UMS;
+- el grafo de autorización de UMS contiene el mismo `globalTenantKey`;
+- `TenantProjection.lifecycleStatus` local es `active`;
+- `sync.status` de la proyección es `active`;
+- el permiso de acción existe en el grafo de UMS para la capacidad de Tracker solicitada.
+
+### 4.2 Evidence Item
 
 Un proveedor, humano, agente o sistema CI registra una referencia inmutable de evidencia.
 
@@ -148,7 +196,7 @@ interface EvidenceItem {
 }
 ```
 
-### 4.2 Technical Evaluation Result
+### 4.3 Technical Evaluation Result
 
 Lo producen SDK, CLI, MCP, CI o un evaluador especializado. No constituye una decisión canónica.
 
@@ -175,7 +223,7 @@ interface TechnicalEvaluationResult {
 }
 ```
 
-### 4.3 Gate Decision
+### 4.4 Gate Decision
 
 Solo la produce Tracker.
 
@@ -202,7 +250,7 @@ interface GateDecision {
 }
 ```
 
-### 4.4 Phase Transition
+### 4.5 Phase Transition
 
 ```typescript
 interface PhaseTransition {
@@ -220,7 +268,34 @@ interface PhaseTransition {
 
 ---
 
-## 5. Secuencia de Decisión de Gate
+## 5. Resolución de Tenant y Secuencia de Decisión de Gate
+
+### 5.1 Resolución de Tenant
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant C as Cliente / Humano / Agente
+    participant T as API Tracker
+    participant S as Servicio de Proyección de Tenant
+    participant U as UMS
+    participant M as MMS
+
+    M-->>S: Publicar TenantProjection
+    C->>T: Abrir Tracker o solicitar acción gobernada
+    T->>U: Validar token y solicitar grafo de autorización
+    U-->>T: Permisos por Tenant
+    T->>S: Resolver TenantProjection activa
+    S-->>T: Estado de proyección y clave global
+
+    alt tenant y permiso válidos
+        T-->>C: Habilitar acción gobernada
+    else inválido, suspendido, stale o no autorizado
+        T-->>C: Bloquear acción con razón auditable
+    end
+```
+
+### 5.2 Decisión de Gate
 
 ```mermaid
 sequenceDiagram
@@ -265,13 +340,23 @@ sequenceDiagram
 ## 6. API REST del Tracker
 
 **Base URL:** `https://tracker.evolith.io/api/v1`  
-**Autorización:** Bearer token delegado a UMS y grafo del tenant
+**Autorización:** Bearer token delegado a UMS y grafo de autorización por tenant. Cada comando también resuelve una `TenantProjection` activa del Tracker para la misma clave global del Tenant en MMS.
 
-### 6.1 Productos y Procesos
+### 6.1 Ingesta de Proyección de Tenant
+
+```text
+PUT  /tenants/projections/:globalTenantKey
+GET  /tenants/projections/:globalTenantKey
+POST /tenants/projections/:globalTenantKey/verify
+```
+
+La ingesta de proyecciones es system-to-system. Se autoriza solo para credenciales de integración de MMS y no crea usuarios, membresías ni permisos en Tracker.
+
+### 6.2 Productos y Procesos
 
 ```typescript
 interface RegisterProductRequest {
-  tenantId: string;
+  globalTenantKey: string;
   name: string;
   repositoryRef?: string;
   governanceProfileRef: string;
@@ -283,7 +368,7 @@ interface StartProcessRequest {
 }
 ```
 
-### 6.2 Envío de Evidencia
+### 6.3 Envío de Evidencia
 
 ```text
 POST /evidence
@@ -294,7 +379,7 @@ GET  /processes/:id/evidence-graph
 
 Todos los endpoints de evidencia validan la identidad del proveedor, la frontera del tenant, el schema, el linaje y la integridad antes de que un elemento se convierta en evidencia elegible.
 
-### 6.3 Solicitud de Transición
+### 6.4 Solicitud de Transición
 
 ```typescript
 interface RequestTransition {
@@ -319,7 +404,7 @@ GET  /transitions/:id
 GET  /decisions/:id
 ```
 
-### 6.4 Aprobaciones y Excepciones
+### 6.5 Aprobaciones y Excepciones
 
 ```text
 POST /decisions/:id/approvals
@@ -338,7 +423,7 @@ CLI y MCP exponen los mismos casos de uso y envelope unificado, pero su semánti
 ```typescript
 interface EvaluateCriterionRequest {
   processContext: {
-    tenantId: string;
+    globalTenantKey: string;
     productId: string;
     processId: string;
     phase: string;
@@ -373,6 +458,7 @@ evolith-drift-detect
 - comandos CLI/MCP que muten estado canónico de fase;
 - herramientas de agentes que autoaprueben gates;
 - evidencia sin identidad de tenant y fuente;
+- acción gobernada cuyo grafo de autorización de UMS no coincida con una proyección activa del Tenant en Tracker;
 - payloads de proveedores aceptados sin ACL;
 - selección hard-coded de un proveedor por defecto.
 
@@ -412,25 +498,27 @@ Todo puerto admite múltiples plugins y defaults configurables por tenant.
 
 ```mermaid
 erDiagram
-    TENANT ||--o{ PRODUCT : owns
-    PRODUCT ||--o{ SDLC_PROCESS : runs
-    SDLC_PROCESS ||--o{ PHASE_EXECUTION : contains
-    PHASE_EXECUTION ||--o{ PHASE_TRANSITION : requests
-    PHASE_EXECUTION ||--o{ GATE_DECISION : produces
-    GATE_DECISION }o--o{ TECHNICAL_EVALUATION : considers
-    GATE_DECISION }o--o{ APPROVAL : requires
-    GATE_DECISION }o--o{ EXCEPTION : may_include
-    TECHNICAL_EVALUATION }o--o{ EVIDENCE_ITEM : evaluates
-    EVIDENCE_ITEM }o--|| PROVIDER_CONNECTION : originates_from
-    PRODUCT ||--o{ PROVIDER_CONNECTION : configures
-    SDLC_PROCESS ||--o{ AGENT_RUN : records
-    AGENT_RUN }o--o{ EVIDENCE_ITEM : produces
+    TENANT_MASTER ||--o{ TENANT_PROJECTION : proyecta
+    TENANT_PROJECTION ||--o{ PRODUCT : posee
+    PRODUCT ||--o{ SDLC_PROCESS : ejecuta
+    SDLC_PROCESS ||--o{ PHASE_EXECUTION : contiene
+    PHASE_EXECUTION ||--o{ PHASE_TRANSITION : solicita
+    PHASE_EXECUTION ||--o{ GATE_DECISION : produce
+    GATE_DECISION }o--o{ TECHNICAL_EVALUATION : considera
+    GATE_DECISION }o--o{ APPROVAL : requiere
+    GATE_DECISION }o--o{ EXCEPTION : puede_incluir
+    TECHNICAL_EVALUATION }o--o{ EVIDENCE_ITEM : evalua
+    EVIDENCE_ITEM }o--|| PROVIDER_CONNECTION : origina_de
+    PRODUCT ||--o{ PROVIDER_CONNECTION : configura
+    SDLC_PROCESS ||--o{ AGENT_RUN : registra
+    AGENT_RUN }o--o{ EVIDENCE_ITEM : produce
 ```
 
 ### 9.1 Propiedad de Agregados
 
 | Agregado | Responsabilidad |
 |---|---|
+| **Tenant Projection** | Frontera local del Tracker que referencia la identidad maestra del Tenant en MMS |
 | **SDLC Process** | Fase actual y ciclo de vida |
 | **Phase Execution** | Entrada, actividad, finalización e historial |
 | **Evidence Graph** | Identidad, linaje, relaciones e integridad |
@@ -443,7 +531,17 @@ erDiagram
 
 ## 10. Chatbox y Agentes
 
-El chatbox es un intermediario gobernado sobre servicios del Tracker. Cada tool call se autoriza contra el grafo del tenant y se vincula a la evidencia resultante.
+El chatbox es un intermediario gobernado sobre servicios del Tracker. Cada tool call se autoriza contra el grafo de tenant de UMS, se verifica contra la proyección activa del Tenant en Tracker y se vincula a la evidencia resultante.
+
+```typescript
+interface CreateChatSessionRequest {
+  globalTenantKey: string;
+  productId: string;
+  processId: string;
+  phaseExecutionId?: string;
+  modelPolicyRef?: string;
+}
+```
 
 Los agentes reciben contrato de actividad, contexto aprobado, herramientas permitidas, schemas esperados, límites de costo/tiempo, evidencia requerida y condiciones de aprobación humana. Solo retornan outputs y evidencia.
 
@@ -460,6 +558,7 @@ Los agentes reciben contrato de actividad, contexto aprobado, herramientas permi
 | Evidencia embebida en gate | Gate Decision referencia snapshot del Evidence Graph |
 | ACL solo para Jira-like | Provider ports y plugins para toda capacidad externa |
 | Default fijo | Default configurable y reemplazable por scope |
+| Tracker crea Tenant directamente | MMS crea el Tenant maestro; Tracker consume `TenantProjection` |
 
 ADR 0073 continúa válido para el envelope unificado, pero requiere una decisión complementaria sobre semántica de evaluación versus decisión.
 
@@ -473,6 +572,7 @@ ADR 0073 continúa válido para el envelope unificado, pero requiere una decisi�
 - [ ] Taxonomía de provider ports aprobada.
 - [ ] Modelo de plugins y defaults aprobado.
 - [ ] Contratos REST y MCP revisados.
+- [ ] Contrato de proyección de Tenant desde MMS revisado.
 - [ ] Flujo UMS revisado.
 - [ ] Aislamiento y clasificación de datos revisados.
 - [ ] ADRs requeridos identificados.

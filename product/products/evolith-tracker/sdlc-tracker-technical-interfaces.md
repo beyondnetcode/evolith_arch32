@@ -18,6 +18,10 @@ The responsibility model is:
 
 > **Core defines. Providers execute. CLI and MCP evaluate. Tracker decides and audits.**
 
+The tenant responsibility model is:
+
+> **MMS governs the Tenant master identity. UMS governs user identity and authorization inside the Tenant. Tracker governs SDLC operation for the projected Tenant.**
+
 Tracker is not an extension of the CLI. It is the canonical runtime governance system.
 
 ---
@@ -25,13 +29,15 @@ Tracker is not an extension of the CLI. It is the canonical runtime governance s
 ## 2. Architectural Invariants
 
 1. Tracker owns process, phase, gate, decision, approval, exception, and audit state.
-2. Evolith Core is read-only at runtime and supplies versioned rules, schemas, standards, and contracts.
-3. CLI, MCP, CI, and external evaluators return technical results; they never mutate canonical phase state.
-4. External systems remain authoritative for their native operational facts.
-5. Tracker decides whether those facts satisfy Core and tenant governance.
-6. Agents execute bounded activities and produce evidence; they cannot approve gates.
-7. Every provider is isolated behind a provider-neutral port and ACL.
-8. All canonical decisions reference the exact policy, evidence, approvals, and exceptions used.
+2. Tracker stores a Tenant projection, not the Tenant master record. The projection must reference the MMS global Tenant key.
+3. Tracker delegates authentication and authorization to UMS and consumes a tenant-scoped authorization graph before enabling governed actions.
+4. Evolith Core is read-only at runtime and supplies versioned rules, schemas, standards, and contracts.
+5. CLI, MCP, CI, and external evaluators return technical results; they never mutate canonical phase state.
+6. External systems remain authoritative for their native operational facts.
+7. Tracker decides whether those facts satisfy Core and tenant governance.
+8. Agents execute bounded activities and produce evidence; they cannot approve gates.
+9. Every provider is isolated behind a provider-neutral port and ACL.
+10. All canonical decisions reference the exact policy, evidence, approvals, and exceptions used.
 
 ---
 
@@ -46,10 +52,13 @@ flowchart TB
 
     HUMAN["Humans and Enterprise Clients"]:::actor
     AGENT["Autonomous Agents and LLMs"]:::actor
+    MMS["MMS\nTenant Master Data"]:::provider
+    UMS["UMS\nAuthN/AuthZ"]:::provider
 
     subgraph TRACKER["Evolith Tracker"]
         API["Governance REST API"]:::tracker
         MCPGW["MCP Gateway"]:::tracker
+        TENANT["Tenant Projection Service"]:::tracker
         ORCH["Process and Phase Orchestrator"]:::tracker
         DECISION["Gate Decision Engine"]:::tracker
         EVIDENCE["Evidence Graph Service"]:::tracker
@@ -69,8 +78,13 @@ flowchart TB
 
     HUMAN --> API
     AGENT --> MCPGW
+    MMS -->|TenantProjection| TENANT
+    API -->|delegated auth request| UMS
+    UMS -->|authorization graph| API
     API --> ORCH
     MCPGW --> ORCH
+    API --> TENANT
+    TENANT --> ORCH
     ORCH --> POLICY
     ORCH --> EVIDENCE
     ORCH --> DECISION
@@ -92,7 +106,41 @@ flowchart TB
 
 ## 4. Canonical Contract Separation
 
-### 4.1 Evidence Item
+### 4.1 Tenant Projection
+
+Tracker receives Tenant projections from MMS. The projection is the local governance boundary and must not become a second Tenant master.
+
+```typescript
+interface TenantProjection {
+  id: string;
+  globalTenantKey: string;
+  displayName: string;
+  lifecycleStatus: 'active' | 'suspended' | 'closed' | 'pending';
+  governanceProfileRef?: string;
+  dataClassificationProfileRef?: string;
+  projectionVersion: string;
+  projectedAt: string;
+  source: {
+    system: 'mms';
+    masterRecordRef: string;
+  };
+  sync: {
+    status: 'active' | 'stale' | 'rejected';
+    lastVerifiedAt: string;
+    reason?: string;
+  };
+}
+```
+
+Tracker accepts governed commands only when:
+
+- the request token is valid according to UMS;
+- the UMS authorization graph includes the same `globalTenantKey`;
+- the local `TenantProjection.lifecycleStatus` is `active`;
+- the projection `sync.status` is `active`;
+- the action permission exists in the UMS graph for the Tracker capability being requested.
+
+### 4.2 Evidence Item
 
 A provider, human, agent, or CI system submits an immutable evidence reference.
 
@@ -149,7 +197,7 @@ interface EvidenceItem {
 }
 ```
 
-### 4.2 Technical Evaluation Result
+### 4.3 Technical Evaluation Result
 
 Produced by SDK, CLI, MCP, CI, or a specialized evaluator. It is not a canonical gate decision.
 
@@ -176,7 +224,7 @@ interface TechnicalEvaluationResult {
 }
 ```
 
-### 4.3 Gate Decision
+### 4.4 Gate Decision
 
 Produced only by Tracker.
 
@@ -203,7 +251,7 @@ interface GateDecision {
 }
 ```
 
-### 4.4 Phase Transition
+### 4.5 Phase Transition
 
 ```typescript
 interface PhaseTransition {
@@ -221,7 +269,34 @@ interface PhaseTransition {
 
 ---
 
-## 5. Gate Decision Sequence
+## 5. Tenant Resolution and Gate Decision Sequence
+
+### 5.1 Tenant Resolution
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant C as Client / Human / Agent
+    participant T as Tracker API
+    participant S as Tenant Projection Service
+    participant U as UMS
+    participant M as MMS
+
+    M-->>S: Publish TenantProjection
+    C->>T: Open Tracker or request governed action
+    T->>U: Validate token and request authorization graph
+    U-->>T: Tenant-scoped permissions
+    T->>S: Resolve active TenantProjection
+    S-->>T: Projection status and global Tenant key
+
+    alt tenant and permission valid
+        T-->>C: Enable governed action
+    else invalid, suspended, stale or unauthorized
+        T-->>C: Block action with audit reason
+    end
+```
+
+### 5.2 Gate Decision
 
 ```mermaid
 sequenceDiagram
@@ -266,13 +341,23 @@ sequenceDiagram
 ## 6. Tracker REST API
 
 **Base URL:** `https://tracker.evolith.io/api/v1`  
-**Authorization:** UMS-delegated bearer token and tenant graph
+**Authorization:** UMS-delegated bearer token and tenant-scoped authorization graph. Every command also resolves an active Tracker `TenantProjection` for the same MMS global Tenant key.
 
-### 6.1 Products and Processes
+### 6.1 Tenant Projection Intake
+
+```text
+PUT  /tenants/projections/:globalTenantKey
+GET  /tenants/projections/:globalTenantKey
+POST /tenants/projections/:globalTenantKey/verify
+```
+
+Projection intake is system-to-system. It is authorized for MMS integration credentials only and does not create users, memberships, or permissions in Tracker.
+
+### 6.2 Products and Processes
 
 ```typescript
 interface RegisterProductRequest {
-  tenantId: string;
+  globalTenantKey: string;
   name: string;
   repositoryRef?: string;
   governanceProfileRef: string;
@@ -284,7 +369,7 @@ interface StartProcessRequest {
 }
 ```
 
-### 6.2 Evidence Submission
+### 6.3 Evidence Submission
 
 ```text
 POST /evidence
@@ -295,7 +380,7 @@ GET  /processes/:id/evidence-graph
 
 All submission endpoints validate provider identity, tenant boundary, schema, lineage, and integrity before an item becomes eligible evidence.
 
-### 6.3 Transition Request
+### 6.4 Transition Request
 
 ```typescript
 interface RequestTransition {
@@ -320,7 +405,7 @@ GET  /transitions/:id
 GET  /decisions/:id
 ```
 
-### 6.4 Approvals and Exceptions
+### 6.5 Approvals and Exceptions
 
 ```text
 POST /decisions/:id/approvals
@@ -339,7 +424,7 @@ CLI and MCP expose the same application use cases and unified output envelope, b
 ```typescript
 interface EvaluateCriterionRequest {
   processContext: {
-    tenantId: string;
+    globalTenantKey: string;
     productId: string;
     processId: string;
     phase: string;
@@ -376,6 +461,7 @@ The following interfaces are prohibited:
 - CLI or MCP command that mutates canonical Tracker phase state;
 - agent tool that self-approves a gate;
 - evidence submission without tenant and source identity;
+- governed action whose UMS authorization graph does not match an active Tracker Tenant projection;
 - provider payload accepted directly into the canonical domain without ACL mapping.
 
 > **Live-endpoint reconciliation.** Core-API today ships `POST /api/v1/phases/transition` (`apps/core-api/src/presentation/controllers/phases.controller.ts` → `PhaseTransitionUseCase`), which executes `from → to` transitions over REST. That endpoint predates this design; the "must not mutate canonical phase state" invariant above is a **target** to be enforced once Tracker owns phase state, not an invariant the current Core-API already honors. Until Tracker exists, this REST endpoint remains the only transition path.
@@ -412,7 +498,8 @@ interface ProviderPort<TCapability, TRequest, TResult> {
 
 ```mermaid
 erDiagram
-    TENANT ||--o{ PRODUCT : owns
+    TENANT_MASTER ||--o{ TENANT_PROJECTION : projects
+    TENANT_PROJECTION ||--o{ PRODUCT : owns
     PRODUCT ||--o{ SDLC_PROCESS : runs
     SDLC_PROCESS ||--o{ PHASE_EXECUTION : contains
     PHASE_EXECUTION ||--o{ PHASE_TRANSITION : requests
@@ -431,6 +518,7 @@ erDiagram
 
 | Aggregate | Primary Responsibility |
 |---|---|
+| **Tenant Projection** | Local Tracker boundary referencing the MMS Tenant master identity |
 | **SDLC Process** | Current phase and lifecycle |
 | **Phase Execution** | Entry, activity, completion and transition history |
 | **Evidence Graph** | Evidence identity, lineage, relationships and integrity |
@@ -447,7 +535,7 @@ The chatbox is a governed intermediary over Tracker services.
 
 ```typescript
 interface CreateChatSessionRequest {
-  tenantId: string;
+  globalTenantKey: string;
   productId: string;
   processId: string;
   phaseExecutionId?: string;
@@ -455,7 +543,7 @@ interface CreateChatSessionRequest {
 }
 ```
 
-Every tool call is authorized against the tenant graph, logged as an execution reference, and linked to any resulting evidence.
+Every tool call is authorized against the UMS tenant graph, checked against the active Tracker Tenant projection, logged as an execution reference, and linked to any resulting evidence.
 
 Agents receive:
 
@@ -481,6 +569,7 @@ Agents return outputs and execution evidence only.
 | CI receives gate verdict directly from evaluator | CI submits evidence; Tracker returns canonical decision status |
 | One evidence payload embedded in gate record | Evidence Graph snapshot referenced by Gate Decision |
 | ACL only for Jira-style systems | Provider ports and ACLs across all external capabilities |
+| Tracker creates Tenant directly | MMS creates Tenant master; Tracker consumes `TenantProjection` |
 
 Existing ADR 0073 remains valid for the unified output envelope but requires a companion decision clarifying evaluation-versus-decision semantics before implementation.
 
@@ -493,6 +582,7 @@ Existing ADR 0073 remains valid for the unified output envelope but requires a c
 - [ ] Evidence Graph aggregate boundaries approved.
 - [ ] Provider-port taxonomy approved.
 - [ ] REST and MCP contracts reviewed.
+- [ ] MMS Tenant projection contract reviewed.
 - [ ] UMS authorization flow reviewed.
 - [ ] Tenant isolation and data-classification rules reviewed.
 - [ ] Required ADRs identified.

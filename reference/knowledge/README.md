@@ -13,7 +13,13 @@ Diseño completo: `reference/specs/architecture/knowledge-os-proposal.md` (en el
   - `packs/*.pack.yaml` — packs de conocimiento por bounded-context (manifiestos de
     **composición**: absorben por referencia; cuerpo autoral solo donde hay hueco).
 - `knowledge.index.yaml` — índice maestro (plano, estratificado en capas L0..L3).
-- `derived/` — **caché regenerable** (embeddings/índices). `.gitignore`-ado; NUNCA
+- `okf/` — **proyección OKF v0.1 publicada** (Open Knowledge Format): el corpus canónico
+  exportado como bundle markdown+frontmatter portable, **commiteado y legible al clonar**,
+  consumible por cualquier agente externo sin conocer nuestro esquema YAML. Es **generado**
+  (nunca editado a mano, nunca autoridad); un gate `--verify` prueba que
+  `publicado == regenerar(canonical)`. El Core es **YAML-first**; OKF es superficie de
+  **intercambio**, no de autoría. Diseño: [ADR-0105](../core/architecture/adrs/core/0105-okf-knowledge-projection.md).
+- `derived/` — **caché regenerable** (embeddings/índices RAG). `.gitignore`-ado; NUNCA
   autoridad, NUNCA editado a mano. Lo produce `rag-sync.mjs`.
 
 ## Qué REUSA (no duplica)
@@ -35,6 +41,32 @@ node .harness/scripts/knowledge-resolve.mjs --list
 node .harness/scripts/knowledge-resolve.mjs --pack knowledge-and-corpus
 node .harness/scripts/knowledge-resolve.mjs --freshness   # STALE avisa; drift de oráculo bloquea
 ```
+
+### Proyección OKF publicada (bundle → `okf/`)
+
+```bash
+node .harness/scripts/knowledge-okf-project.mjs                 # regenera el bundle publicado
+node .harness/scripts/knowledge-okf-project.mjs --verify        # conformidad + up-to-date (gate CI)
+node .harness/scripts/knowledge-okf-project.mjs --check         # solo conformidad, sin escribir
+node --test .harness/scripts/knowledge-okf-project.test.mjs     # tests unitarios
+```
+
+> Editaste `canonical/`? **Regenera y re-stagea** el bundle: `node .harness/scripts/knowledge-okf-project.mjs && git add reference/knowledge/okf`. El gate `--verify` (y el pre-commit) bloquean si el bundle publicado quedó desincronizado.
+
+Gobernanza de la proyección (habilidad de Winston — ver
+[playbook](../../.harness/playbooks/okf-standard-watch-playbook.md)):
+
+```bash
+node .harness/scripts/knowledge-okf-standard-watch.mjs          # vigía del estándar OKF (red, manual)
+node .harness/scripts/knowledge-okf-standard-watch.mjs --accept # reconoce un cambio upstream revisado
+```
+
+- **Guarda pre-commit** (`.husky/pre-commit`): si stageas cambios del corpus, corre `--verify`
+  y **bloquea** si el bundle publicado quedó desincronizado; avisa STALE si el vigía no corre
+  hace >30 días. Corre en cualquier modo, incluso `skip`; paga costo solo si tocaste el corpus.
+- **Gate up-to-date** (`ci/38-validate-okf-projection.mjs`): bloquea CI si el bundle no conforma
+  o quedó desincronizado del corpus (modos governance/auto/full).
+- **Regla de oro:** drift de conformidad/sincronía **bloquea**; vencimiento del estándar solo **avisa**.
 
 La superficie *hosted* (REST `/api/v1/knowledge` + resource MCP) reusa
 `corpus-resource.handler`; se cablea en M2.

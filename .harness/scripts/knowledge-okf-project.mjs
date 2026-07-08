@@ -1,0 +1,476 @@
+#!/usr/bin/env node
+/**
+ * knowledge-okf-project.mjs — Proyección OKF (Open Knowledge Format v0.1) del Knowledge OS.
+ *
+ * Opción A (ADR-0105): el Core sigue siendo autoral en YAML (canonical/*.yaml + packs).
+ * Este generador NO reemplaza esa autoría: la PROYECTA a un bundle OKF portable
+ * (directorio de markdown + frontmatter con `type`, index.md, log.md, cross-links absolutos)
+ * para que cualquier agente externo consuma el corpus sin acoplarse a nuestro esquema.
+ *
+ *   (sin args)        genera/actualiza el bundle publicado en reference/knowledge/okf/
+ *   --out <dir>       destino alternativo (relativo a la raíz del repo)
+ *   --as-of <date>    fija la fecha de proyección (ISO YYYY-MM-DD) para builds reproducibles
+ *   --check           construye en memoria y valida conformidad OKF v0.1 SIN escribir (CI)
+ *   --verify          conformidad + up-to-date: falla si el bundle publicado quedó
+ *                     desincronizado del corpus canónico (gate anti-drift de CI)
+ *
+ * Invariantes del Knowledge OS (reference/knowledge/README.md):
+ *   - El bundle es PUBLICADO (ADR-0105 opción B): commiteado y legible al clonar, pero
+ *     GENERADO — nunca autoridad, nunca editado a mano; el gate --verify prueba que
+ *     `publicado == regenerar(canonical)`, así no puede driftear ni volverse fuente.
+ *   - `canonical/` es la única fuente de verdad; el cuerpo autoral se rehidrata SIEMPRE
+ *     desde la fuente, nunca desde una copia.
+ *
+ * Contrato OKF v0.1 (GoogleCloudPlatform/knowledge-catalog/okf/SPEC.md):
+ *   - Bundle = árbol de directorios de .md.
+ *   - Reservados: index.md (listado, sin frontmatter), log.md (historial, fechas ISO 8601).
+ *   - Todo otro .md es un "concepto": frontmatter YAML parseable con `type` NO vacío (único obligatorio).
+ *   - Recomendados: title, description, resource, tags, timestamp. Claves extra permitidas.
+ *   - Cross-links: absolutos desde la raíz del bundle (empiezan con '/') por estabilidad.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import yaml from 'js-yaml';
+
+export const OKF_VERSION = '0.1';
+const ROOT = process.cwd();
+const KDIR = 'reference/knowledge';
+const INDEX = path.join(KDIR, 'knowledge.index.yaml');
+// Bundle PUBLICADO (commiteado, legible al clonar) — ADR-0105 opción B.
+// No es caché derivada: viaja en git y un gate up-to-date (--verify) lo mantiene
+// sincronizado con el corpus canónico. Core es open-source, colaborativo y stateless
+// (ADR-0101: sin datos sensibles/tenant), así que se publican todos los packs del índice.
+const DEFAULT_OUT = path.join(KDIR, 'okf');
+
+// Tipo OKF por bucket autoral (spec: "short string identifying the kind of concept").
+const AUTHORED_TYPE = { domain: 'Domain Model', glossary: 'Glossary', prompts: 'Prompt' };
+
+// ── Utilidades puras (exportadas para tests) ──────────────────────────────────
+
+export function slugify(s) {
+  return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+/** Serializa un bloque de frontmatter OKF, omitiendo claves vacías/undefined. */
+export function dumpFrontmatter(obj) {
+  const clean = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === undefined || v === null || v === '') continue;
+    if (Array.isArray(v) && v.length === 0) continue;
+    clean[k] = v;
+  }
+  const body = yaml.dump(clean, { noRefs: true, lineWidth: -1, sortKeys: false });
+  return `---\n${body}---\n`;
+}
+
+/** Separa frontmatter de cuerpo. Devuelve { data, body }; data=null si no hay bloque. */
+export function parseFrontmatter(text) {
+  const m = /^---\n([\s\S]*?)\n---\n?/.exec(text);
+  if (!m) return { data: null, body: text };
+  const data = yaml.load(m[1]) || {};
+  return { data, body: text.slice(m[0].length) };
+}
+
+/** Quita el frontmatter de un archivo autoral, devolviendo su cuerpo markdown. */
+export function stripFrontmatter(text) {
+  return parseFrontmatter(text).body.replace(/^\n+/, '');
+}
+
+/** Título desde el primer H1 del cuerpo, o fallback. */
+export function titleFromBody(body, fallback) {
+  const m = /^#\s+(.+)$/m.exec(body);
+  return m ? m[1].trim() : fallback;
+}
+
+/** Documento de concepto = frontmatter OKF + cuerpo markdown. */
+export function renderConcept(front, body) {
+  return `${dumpFrontmatter(front)}\n${body.replace(/\s*$/, '')}\n`;
+}
+
+/** index.md reservado: listado sin frontmatter (progressive disclosure). */
+export function renderIndex(title, entries) {
+  const lines = entries.map((e) => `- [${e.title}](${e.href})${e.note ? ` — ${e.note}` : ''}`);
+  return `# ${title}\n\n${lines.join('\n')}\n`;
+}
+
+/**
+ * Conformidad OKF v0.1: todo .md no reservado debe tener frontmatter parseable
+ * con `type` no vacío. Devuelve la lista de violaciones (vacía = conforme).
+ */
+export function okfConformance(files) {
+  const violations = [];
+  for (const f of files) {
+    const base = f.path.split('/').pop();
+    if (base === 'index.md' || base === 'log.md') continue; // reservados
+    let data;
+    try {
+      ({ data } = parseFrontmatter(f.content));
+    } catch (e) {
+      violations.push({ path: f.path, error: `frontmatter no parseable: ${e.message}` });
+      continue;
+    }
+    if (!data) violations.push({ path: f.path, error: 'sin bloque de frontmatter' });
+    else if (!data.type || String(data.type).trim() === '')
+      violations.push({ path: f.path, error: 'campo `type` ausente o vacío' });
+  }
+  return violations;
+}
+
+/**
+ * Diff up-to-date: compara el bundle recién construido contra el publicado en disco.
+ * Devuelve la lista de derivas (vacía = el bundle commiteado está al día con el corpus).
+ * @param {Array<{path,content}>} built    archivos recién proyectados
+ * @param {Map<string,string>}    existing  ruta→contenido del bundle en disco
+ */
+export function diffBundle(built, existing) {
+  const drift = [];
+  const builtPaths = new Set(built.map((f) => f.path));
+  for (const f of built) {
+    if (!existing.has(f.path)) drift.push({ path: f.path, kind: 'missing' });
+    else if (existing.get(f.path) !== f.content) drift.push({ path: f.path, kind: 'changed' });
+  }
+  for (const p of existing.keys()) if (!builtPaths.has(p)) drift.push({ path: p, kind: 'orphan' });
+  return drift.sort((a, b) => a.path.localeCompare(b.path));
+}
+
+/** Recupera el as-of del bundle publicado desde su log.md (`## YYYY-MM-DD`). */
+export function readAsOf(logMd) {
+  const m = /^##\s+(\d{4}-\d{2}-\d{2})/m.exec(logMd || '');
+  return m ? m[1] : null;
+}
+
+// ── Construcción del bundle (pura: FS inyectado) ──────────────────────────────
+
+/**
+ * @param {object}  index    knowledge.index.yaml ya parseado
+ * @param {(rel:string)=>object} loadYaml  carga YAML relativo a reference/knowledge/
+ * @param {(rel:string)=>string} readText  lee texto relativo a reference/knowledge/
+ * @param {string}  asOf     fecha ISO de proyección (para timestamp/log)
+ * @returns {Array<{path:string, content:string}>} archivos del bundle (rutas relativas a su raíz)
+ */
+export function buildBundle({ index, loadYaml, readText, asOf }) {
+  const files = [];
+  const resourceOf = (rel) => path.posix.join(KDIR, rel); // ruta repo-relativa estable
+
+  // 1) Producto (raíz semántica del corpus)
+  const product = loadYaml(index.spec.product);
+  const p = product.spec || {};
+  const packEntries = index.spec.packs || [];
+  const productBody = [
+    `# ${p.name || product.metadata?.id || 'Product'}`,
+    '',
+    p.statement ? p.statement.trim() : '',
+    '',
+    '## Responsibility model',
+    '',
+    p.responsibilityModel || '',
+    '',
+    '## Exposure',
+    '',
+    ...Object.entries(p.exposure || {}).map(([k, v]) => `- **${k}**: ${v}`),
+    '',
+    '## Packs',
+    '',
+    ...packEntries.map((e) => `- [${e.id}](/packs/${slugify(e.id)}.md) — layer ${e.layer}`),
+  ].join('\n');
+  files.push({
+    path: 'product.md',
+    content: renderConcept(
+      {
+        type: 'Product',
+        title: p.name || product.metadata?.id,
+        description: p.responsibilityModel,
+        resource: resourceOf(index.spec.product),
+        tags: ['product', p.role].filter(Boolean),
+        timestamp: asOf,
+        owner: product.metadata?.owner,
+        reviewBy: product.metadata?.reviewBy,
+      },
+      productBody,
+    ),
+  });
+
+  // 2) Packs + conceptos autorales + nodos de referencia (grafo)
+  const conceptFiles = new Map(); // dedupe por ruta fuente
+  const refNodes = new Map(); // dedupe por id de referencia
+  const packIndexEntries = [];
+
+  for (const entry of packEntries) {
+    const pack = loadYaml(entry.manifest);
+    const ps = pack.spec || {};
+    const packSlug = slugify(entry.id);
+    const authored = ps.authored || {};
+    const refs = ps.references || {};
+
+    // Conceptos autorales de este pack
+    const conceptLinks = [];
+    for (const bucket of ['domain', 'glossary', 'prompts']) {
+      for (const srcRel of authored[bucket] || []) {
+        const cSlug = slugify(srcRel.replace(/^canonical\//, '').replace(/\.md$/, ''));
+        const href = `/concepts/${cSlug}.md`;
+        conceptLinks.push({ title: bucket, href });
+        if (conceptFiles.has(srcRel)) continue;
+        const raw = readText(srcRel);
+        const src = parseFrontmatter(raw);
+        const body = stripFrontmatter(raw);
+        conceptFiles.set(srcRel, {
+          path: `concepts/${cSlug}.md`,
+          content: renderConcept(
+            {
+              type: AUTHORED_TYPE[bucket] || 'Concept',
+              title: titleFromBody(body, src.data?.id || cSlug),
+              resource: resourceOf(srcRel),
+              tags: [bucket, ps.boundedContext].filter(Boolean),
+              timestamp: asOf,
+              owner: src.data?.owner,
+              reviewBy: src.data?.reviewBy,
+              partOf: `/packs/${packSlug}.md`,
+            },
+            body,
+          ),
+        });
+      }
+    }
+
+    // Nodos de referencia: ADRs (id lógico) y schemas (ruta real). Enriquecen el grafo.
+    const refLinks = [];
+    for (const adr of refs.adrs || []) {
+      const rSlug = slugify(adr);
+      refLinks.push({ title: adr, href: `/refs/${rSlug}.md` });
+      const node = refNodes.get(adr) || {
+        type: 'ADR',
+        title: adr,
+        resource: `evolith://adr/${adr}`,
+        referencedBy: [],
+      };
+      node.referencedBy.push(`/packs/${packSlug}.md`);
+      refNodes.set(adr, node);
+    }
+    for (const sch of refs.schemas || []) {
+      const rSlug = slugify(sch.split('/').pop().replace(/\.json$/, ''));
+      refLinks.push({ title: sch.split('/').pop(), href: `/refs/${rSlug}.md` });
+      const node = refNodes.get(sch) || {
+        type: 'Schema',
+        title: sch.split('/').pop(),
+        resource: sch,
+        referencedBy: [],
+      };
+      node.referencedBy.push(`/packs/${packSlug}.md`);
+      refNodes.set(sch, node);
+    }
+
+    // Documento del pack
+    const applicability = ps.applicability || {};
+    const packBody = [
+      `# ${entry.id}`,
+      '',
+      `Knowledge pack del bounded context \`${ps.boundedContext || 'n/a'}\` (capa ${entry.layer}).`,
+      '',
+      '## Applicability',
+      '',
+      `- **stack**: ${JSON.stringify(applicability.stack || [])}`,
+      `- **topologies**: ${JSON.stringify(applicability.topologies || {})}`,
+      '',
+      '## Authored concepts',
+      '',
+      conceptLinks.length
+        ? conceptLinks.map((c) => `- [${c.title}](${c.href})`).join('\n')
+        : '_(sin cuerpo autoral en esta versión)_',
+      '',
+      '## References',
+      '',
+      refLinks.length ? refLinks.map((r) => `- [${r.title}](${r.href})`).join('\n') : '_(ninguna)_',
+    ].join('\n');
+    files.push({
+      path: `packs/${packSlug}.md`,
+      content: renderConcept(
+        {
+          type: 'Knowledge Pack',
+          title: entry.id,
+          description: `Knowledge pack for bounded context ${ps.boundedContext} (layer ${entry.layer}).`,
+          resource: resourceOf(entry.manifest),
+          tags: [entry.layer, ps.boundedContext, pack.metadata?.status].filter(Boolean),
+          timestamp: asOf,
+          owner: pack.metadata?.owner,
+          reviewBy: pack.metadata?.reviewBy,
+          version: pack.metadata?.version,
+          partOf: '/product.md',
+        },
+        packBody,
+      ),
+    });
+    packIndexEntries.push({ title: entry.id, href: `/packs/${packSlug}.md`, note: `layer ${entry.layer}` });
+  }
+
+  // Materializar conceptos y refs (ordenados para builds reproducibles)
+  const conceptList = [...conceptFiles.values()].sort((a, b) => a.path.localeCompare(b.path));
+  files.push(...conceptList);
+
+  const refList = [...refNodes.values()]
+    .map((n) => {
+      const rSlug = slugify(n.title.replace(/\.json$/, ''));
+      const body = [
+        `# ${n.title}`,
+        '',
+        `Nodo de referencia (${n.type}). Absorbido por referencia: la versión soberana vive en el Core.`,
+        '',
+        '## Referenced by',
+        '',
+        ...[...new Set(n.referencedBy)].sort().map((r) => `- [${r.replace(/^\/packs\//, '').replace(/\.md$/, '')}](${r})`),
+      ].join('\n');
+      return {
+        path: `refs/${rSlug}.md`,
+        content: renderConcept(
+          { type: n.type, title: n.title, resource: n.resource, tags: ['reference'], timestamp: asOf },
+          body,
+        ),
+      };
+    })
+    .sort((a, b) => a.path.localeCompare(b.path));
+  files.push(...refList);
+
+  // 3) index.md reservados (listado por directorio)
+  files.push({
+    path: 'index.md',
+    content: renderIndex(`Evolith Core — OKF bundle (${index.metadata?.id}@${index.metadata?.version})`, [
+      { title: 'Product', href: '/product.md' },
+      { title: 'Packs', href: '/packs/' },
+      { title: 'Concepts', href: '/concepts/' },
+      { title: 'References', href: '/refs/' },
+    ]),
+  });
+  files.push({ path: 'packs/index.md', content: renderIndex('Packs', packIndexEntries) });
+  files.push({
+    path: 'concepts/index.md',
+    content: renderIndex(
+      'Concepts',
+      conceptList.map((c) => ({ title: c.path.replace('concepts/', '').replace('.md', ''), href: `/${c.path}` })),
+    ),
+  });
+  files.push({
+    path: 'refs/index.md',
+    content: renderIndex(
+      'References',
+      refList.map((r) => ({ title: r.path.replace('refs/', '').replace('.md', ''), href: `/${r.path}` })),
+    ),
+  });
+
+  // 4) log.md reservado (historial, encabezados de fecha ISO 8601)
+  files.push({
+    path: 'log.md',
+    content: [
+      '# Update history',
+      '',
+      `## ${asOf}`,
+      '',
+      `- Projected OKF v${OKF_VERSION} bundle from \`${INDEX}\` ` +
+        `(${index.metadata?.id}@${index.metadata?.version}).`,
+      `- ${packEntries.length} pack(s), ${conceptList.length} authored concept(s), ${refList.length} reference node(s).`,
+      '- Projected by `.harness/scripts/knowledge-okf-project.mjs` — generated, do not edit by hand; regenerate to update.',
+      '',
+    ].join('\n'),
+  });
+
+  return files;
+}
+
+// ── Wiring de FS / CLI ────────────────────────────────────────────────────────
+
+function makeLoaders() {
+  const abs = (rel) => path.join(ROOT, KDIR, rel);
+  return {
+    loadYaml: (rel) => yaml.load(fs.readFileSync(abs(rel), 'utf8')),
+    readText: (rel) => fs.readFileSync(abs(rel), 'utf8'),
+  };
+}
+
+function parseArgs(argv) {
+  const opts = { out: DEFAULT_OUT, asOf: new Date().toISOString().slice(0, 10), check: false, verify: false };
+  for (let i = 0; i < argv.length; i++) {
+    if (argv[i] === '--check') opts.check = true;
+    else if (argv[i] === '--verify') opts.verify = true;
+    else if (argv[i] === '--out') opts.out = argv[++i];
+    else if (argv[i] === '--as-of') opts.asOf = argv[++i];
+    else {
+      console.error(`unknown arg: ${argv[i]}`);
+      process.exit(2);
+    }
+  }
+  return opts;
+}
+
+function writeBundle(outDir, files) {
+  // Regeneración limpia: el proyector es la única mano que escribe aquí.
+  const absOut = path.join(ROOT, outDir);
+  fs.rmSync(absOut, { recursive: true, force: true });
+  for (const f of files) {
+    const dest = path.join(absOut, f.path);
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.writeFileSync(dest, f.content);
+  }
+}
+
+/** Lee el bundle publicado en disco como Map ruta→contenido (rutas relativas a outDir). */
+function readBundleDir(absOut) {
+  const existing = new Map();
+  if (!fs.existsSync(absOut)) return existing;
+  const walk = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (entry.name.endsWith('.md'))
+        existing.set(path.relative(absOut, full).split(path.sep).join('/'), fs.readFileSync(full, 'utf8'));
+    }
+  };
+  walk(absOut);
+  return existing;
+}
+
+function main() {
+  const opts = parseArgs(process.argv.slice(2));
+  if (!fs.existsSync(path.join(ROOT, INDEX))) {
+    console.error(`No knowledge index at ${INDEX}. Run from the repo root.`);
+    process.exit(2);
+  }
+  const { loadYaml, readText } = makeLoaders();
+  const index = yaml.load(fs.readFileSync(path.join(ROOT, INDEX), 'utf8'));
+  const absOut = path.join(ROOT, opts.out);
+
+  // Para --verify: reproducir con el as-of del bundle publicado (diff determinista).
+  const existing = opts.verify ? readBundleDir(absOut) : null;
+  const asOf = opts.verify ? readAsOf(existing.get('log.md')) || opts.asOf : opts.asOf;
+  const files = buildBundle({ index, loadYaml, readText, asOf });
+
+  const violations = okfConformance(files);
+  if (violations.length) {
+    console.error(`OKF conformance FAILED (${violations.length}):`);
+    for (const v of violations) console.error(`  - ${v.path}: ${v.error}`);
+    process.exit(1);
+  }
+
+  if (opts.verify) {
+    if (existing.size === 0) {
+      console.error(`OKF verify FAILED: no hay bundle publicado en ${opts.out}/. Genera y commitéalo.`);
+      process.exit(1);
+    }
+    const drift = diffBundle(files, existing);
+    if (drift.length) {
+      console.error(`OKF verify FAILED: el bundle publicado está desincronizado del corpus (${drift.length}):`);
+      for (const d of drift) console.error(`  - ${d.kind}: ${d.path}`);
+      console.error('  Regenera y commitea:  node .harness/scripts/knowledge-okf-project.mjs && git add reference/knowledge/okf');
+      process.exit(1);
+    }
+    console.log(`OKF v${OKF_VERSION} verify OK: conforme y al día (${files.length} archivo(s)).`);
+    return;
+  }
+
+  if (opts.check) {
+    console.log(`OKF v${OKF_VERSION} conforme: ${files.length} archivo(s), 0 violaciones. (no escrito: --check)`);
+    return;
+  }
+  writeBundle(opts.out, files);
+  console.log(`OKF v${OKF_VERSION} bundle escrito en ${opts.out}/ (${files.length} archivo(s), as-of ${asOf}).`);
+}
+
+// Ejecutar solo como CLI (no al importar en tests).
+if (import.meta.url === `file://${process.argv[1]}`) main();

@@ -5,6 +5,13 @@ echo "  Evolith CI Pre-commit Hook"
 echo "======================================================================"
 
 # ---------------------------------------------------------------------------
+# OKF projection guard (always-on, offline, ~ms) — corre en cualquier modo,
+# incluso skip. Bloquea si se stagea el bundle derivado; avisa STALE del vigia
+# del estandar. Ver ADR-0105 y knowledge-okf-precommit-guard.mjs.
+# ---------------------------------------------------------------------------
+node .harness/scripts/knowledge-okf-precommit-guard.mjs
+
+# ---------------------------------------------------------------------------
 # Owner detection
 # ---------------------------------------------------------------------------
 IS_OWNER=false

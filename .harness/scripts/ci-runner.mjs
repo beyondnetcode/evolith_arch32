@@ -60,7 +60,8 @@ const MODES = {
       "33-check-adapter-freshness.mjs",
       "34-boundary-guard-repository.mjs",
       "35-validate-core-health.mjs",
-      "36-validate-agent-memory.mjs"
+      "36-validate-agent-memory.mjs",
+      "38-validate-okf-projection.mjs"
     ],
   },
   full: {
@@ -81,6 +82,7 @@ function getAutoScripts() {
   const trackingChanged = changed.some(f => f.includes("gap-tracking") || f.includes("gap-reference") || f.includes("gap-closure"));
   const topologyChanged = changed.some(f => f.includes("topologies/"));
   const governanceChanged = changed.some(f => f.includes("src/rulesets/") || f.includes("reference/core/sdlc/"));
+  const knowledgeChanged = changed.some(f => f.includes("reference/knowledge/"));
   const codeChanged = changed.some(f => f.endsWith(".ts") || f.endsWith(".js") || f.endsWith(".mjs"));
   const infraChanged = changed.some(f => f.includes("docker-compose") || f.includes("helm/") || f.includes(".github/workflows"));
 
@@ -111,6 +113,9 @@ function getAutoScripts() {
   if (infraChanged) {
     scripts.push("07-generate-inventories.mjs");
     scripts.push("29-validate-opa-sidecar-bundles.mjs");
+  }
+  if (knowledgeChanged) {
+    scripts.push("38-validate-okf-projection.mjs");
   }
 
   return [...new Set(scripts)];

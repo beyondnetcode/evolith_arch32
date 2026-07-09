@@ -18,36 +18,42 @@ describe('ApiKeyGuard', () => {
     reflector = new Reflector();
     delete process.env.EVOLITH_API_KEY;
     delete process.env.CORE_API_AUTH_REQUIRED;
+    // canActivate falls back to a Dapr secret fetch when no env key is set;
+    // simulate no reachable sidecar so the no-key path is hermetic and fast.
+    jest.spyOn(global, 'fetch').mockRejectedValue(new Error('no dapr sidecar'));
+  });
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
   afterAll(() => {
     process.env = original;
   });
 
-  it('allows @Public() routes regardless of key', () => {
+  it('allows @Public() routes regardless of key', async () => {
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(true);
     process.env.EVOLITH_API_KEY = 'secret';
-    expect(new ApiKeyGuard(reflector).canActivate(ctx())).toBe(true);
+    await expect(new ApiKeyGuard(reflector).canActivate(ctx())).resolves.toBe(true);
   });
 
-  it('allows when no key configured (migration-safe)', () => {
+  it('allows when no key configured (migration-safe)', async () => {
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
-    expect(new ApiKeyGuard(reflector).canActivate(ctx())).toBe(true);
+    await expect(new ApiKeyGuard(reflector).canActivate(ctx())).resolves.toBe(true);
   });
 
-  it('denies when CORE_API_AUTH_REQUIRED=true and no key configured', () => {
+  it('denies when CORE_API_AUTH_REQUIRED=true and no key configured', async () => {
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
     process.env.CORE_API_AUTH_REQUIRED = 'true';
-    expect(() => new ApiKeyGuard(reflector).canActivate(ctx())).toThrow(UnauthorizedException);
+    await expect(new ApiKeyGuard(reflector).canActivate(ctx())).rejects.toThrow(UnauthorizedException);
   });
 
-  it('requires a valid key when EVOLITH_API_KEY is set', () => {
+  it('requires a valid key when EVOLITH_API_KEY is set', async () => {
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
     process.env.EVOLITH_API_KEY = 'secret';
     const guard = new ApiKeyGuard(reflector);
 
-    expect(() => guard.canActivate(ctx())).toThrow(UnauthorizedException);
-    expect(() => guard.canActivate(ctx({ 'x-api-key': 'wrong' }))).toThrow(UnauthorizedException);
-    expect(guard.canActivate(ctx({ 'x-api-key': 'secret' }))).toBe(true);
-    expect(guard.canActivate(ctx({ authorization: 'Bearer secret' }))).toBe(true);
+    await expect(guard.canActivate(ctx())).rejects.toThrow(UnauthorizedException);
+    await expect(guard.canActivate(ctx({ 'x-api-key': 'wrong' }))).rejects.toThrow(UnauthorizedException);
+    await expect(guard.canActivate(ctx({ 'x-api-key': 'secret' }))).resolves.toBe(true);
+    await expect(guard.canActivate(ctx({ authorization: 'Bearer secret' }))).resolves.toBe(true);
   });
 });

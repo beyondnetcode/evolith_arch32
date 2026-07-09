@@ -101,9 +101,16 @@ describe('ArchitectureController', () => {
     };
 
     it('loads the rules from corePath and recommends a composition from signals', async () => {
-      fileSystem.readFile.mockResolvedValue(JSON.stringify(rules));
+      // The controller probes `${corePath}/rulesets/…` then falls back to
+      // `${corePath}/src/rulesets/…`. The real tree keeps rulesets under
+      // `src/rulesets/`, so model that: only the src/ path resolves.
+      const srcPath = '/core/src/rulesets/architecture/topology-recommendation.rules.json';
+      fileSystem.readFile.mockImplementation(async (p: string) => {
+        if (p === srcPath) return JSON.stringify(rules);
+        throw new Error('ENOENT');
+      });
       const r = await controller.recommendTopology({ signals: { asyncIntegration: true } });
-      expect(fileSystem.readFile).toHaveBeenCalledWith('/core/src/rulesets/architecture/topology-recommendation.rules.json');
+      expect(fileSystem.readFile).toHaveBeenCalledWith(srcPath);
       expect(r.recommended).toEqual(['modular-monolith', 'event-driven']);
       expect(r.composition).toBe('modular-monolith + event-driven');
     });

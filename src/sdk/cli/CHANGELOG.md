@@ -6,6 +6,18 @@
 
 * **cli:** enforce hexagonal architecture layer boundaries with eslint-plugin-boundaries; adds `npm run lint` script and CI lint gate
 
+### Bug Fixes
+
+* **validate:** never report a green pass with 0 rules resolved — degrade to a warning with `GOV-CORE-UNRESOLVED` (GT-452)
+* **validate:** resolve Core rulesets from any satellite (`--core` → `EVOLITH_CORE_PATH` → profile → bundled); `-r <id>` resolves against bundled and `<core>/src/rulesets`; populate `coreRef.path`; fail actionably on an invalid `--core` (GT-456)
+* **validate:** show per-issue detail (ruleId/title/severity) in `-f table` output (GT-457)
+* **docs:** scaffold `evolith.yaml` at the repo root in the `evolith.dev/v1` schema instead of a legacy `.evolith/evolith.yaml` (GT-454)
+* **templates:** regenerate `evolith.yaml.example` to the `evolith.dev/v1` schema so it validates against `evolith-yaml.schema.json` (GT-453)
+
+### Build
+
+* **release:** add a release-drift guard (`check:release-drift`) to `prepublishOnly` so a stale `dist/` (missing merged fixes) can never be published under an unchanged version (GT-451)
+
 ## [1.1.0](https://github.com/beyondnetcode/evolith_arch32/compare/cli-v1.0.3...cli-v1.1.0) (2026-06-04)
 
 

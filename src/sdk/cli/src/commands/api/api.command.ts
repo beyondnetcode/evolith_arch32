@@ -53,11 +53,11 @@ export class ApiCommand extends BaseEvolithCommand {
 
   private async listCategory(categoryName: string): Promise<void> {
     switch (categoryName) {
-      case 'tools': return this.printEntries('🔧 MCP Tools (15 of 23)', TOOLS, 25, '\n  Use --inspect <tool-name> for detailed schema\n  Run "evolith mcp serve" to start MCP server');
-      case 'schemas': return this.printEntries('📐 Phase-Gate Schemas (8 of 18)', SCHEMAS, 20, '\n  Use --inspect <schema-name> for detailed structure');
-      case 'commands': return this.printEntries('⌨️  CLI Commands (14 of 21)', COMMANDS, 15, '\n  Use --inspect <command-name> for detailed options');
+      case 'tools': return this.printEntries(`🔧 MCP Tools (${TOOLS.length})`, TOOLS, 28, '\n  Use --inspect <tool-name> for detailed schema\n  Run "evolith-mcp serve" to start the MCP server');
+      case 'schemas': return this.printEntries(`📐 Phase-Gate Schemas (${SCHEMAS.length})`, SCHEMAS, 20, '\n  Use --inspect <schema-name> for detailed structure');
+      case 'commands': return this.printEntries(`⌨️  CLI Commands (${COMMANDS.length})`, COMMANDS, 15, '\n  Use --inspect <command-name> for detailed options');
       case 'resources':
-        this.promptService.showInfo(chalk.bold('\n📋 MCP Resources (8)\n'));
+        this.promptService.showInfo(chalk.bold(`\n📋 MCP Resources (${RESOURCES.length})\n`));
         for (const res of RESOURCES) {
           this.promptService.showInfo(`  ${chalk.green('●')} ${chalk.cyan(res.name.padEnd(20))} ${chalk.dim(res.uri)}`);
           this.promptService.showInfo(`    ${res.description}`);

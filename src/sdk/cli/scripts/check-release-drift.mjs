@@ -37,6 +37,11 @@ const CHECKS = [
     gap: 'GT-454 (docs writes root evolith.yaml)',
   },
   {
+    file: 'dist/commands/api/api.catalog.js',
+    mustContain: ['GENERATED_TOOLS'],
+    gap: 'GT-460 (api surface from the live MCP registry)',
+  },
+  {
     file: 'templates/evolith.yaml.example',
     mustContain: ['apiVersion: evolith.dev/v1', 'kind: Satellite'],
     mustNotContain: ['currentPhase: "phase-2"'],

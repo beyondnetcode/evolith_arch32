@@ -27,7 +27,8 @@
     "mcp:smoke": "npm run build && node examples/mcp-test.js",
     "lint": "eslint src --ext .ts",
     "prepublishOnly": "npm run copy-rulesets && npm run build && npm run copy-assets && npm run check:release-drift",
-    "check:release-drift": "node scripts/check-release-drift.mjs"
+    "check:release-drift": "node scripts/check-release-drift.mjs",
+    "gen:api-catalog": "node scripts/gen-api-catalog.mjs"
   },
   "keywords": [
     "evolith",

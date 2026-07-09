@@ -1,3 +1,8 @@
+// GT-460: the MCP tools/resources surface is generated from the live
+// @beyondnet/evolith-mcp server (scripts/gen-api-catalog.mjs) so `api --list`
+// never drifts from reality. Refresh with `npm run gen:api-catalog`.
+import { GENERATED_TOOLS, GENERATED_RESOURCES } from './api.catalog.generated';
+
 export interface ApiCategory {
   name: string;
   label: string;
@@ -31,41 +36,10 @@ export interface CommandSchema {
   options: Array<{ flags: string; description: string }>;
 }
 
-export const CATEGORIES: ApiCategory[] = [
-  { name: 'tools', label: 'MCP Tools', description: '23 available operations' },
-  { name: 'resources', label: 'MCP Resources', description: '8 available resources' },
-  { name: 'schemas', label: 'Phase-Gate Schemas', description: '18 validation schemas' },
-  { name: 'commands', label: 'CLI Commands', description: '21 native commands' },
-];
-
-export const TOOLS: ApiEntry[] = [
-  { name: 'agent-create', description: 'Create a new agent configuration' },
-  { name: 'agent-list', description: 'List all configured agents' },
-  { name: 'agent-validate', description: 'Validate agent configuration' },
-  { name: 'architecture-drift', description: 'Detect architecture pattern drift' },
-  { name: 'architecture-scaffold', description: 'Scaffold architecture patterns' },
-  { name: 'gate-evaluate', description: 'Evaluate phase gate compliance' },
-  { name: 'gate-status', description: 'Get current gate status for project' },
-  { name: 'moscow-analyze', description: 'Run MoSCoW prioritization analysis' },
-  { name: 'moscow-export', description: 'Export MoSCoW analysis results' },
-  { name: 'sdlc-phase', description: 'Get current SDLC phase' },
-  { name: 'sdlc-advance', description: 'Advance to next SDLC phase' },
-  { name: 'validate-artifacts', description: 'Validate project artifacts' },
-  { name: 'validate-structure', description: 'Validate project structure' },
-  { name: 'phase-advance-propose', description: 'Propose phase advancement' },
-  { name: 'phase-advance-execute', description: 'Execute phase advancement' },
-];
-
-export const RESOURCES: ApiResource[] = [
-  { uri: 'evolith://rulesets', name: 'Rulesets', description: 'List of all available rulesets' },
-  { uri: 'evolith://phase-gates', name: 'Phase Gates', description: 'Phase gate definitions' },
-  { uri: 'evolith://agents', name: 'Agents', description: 'List of installed Evolith agents' },
-  { uri: 'evolith://core/info', name: 'Core Info', description: 'General Evolith Core information' },
-  { uri: 'evolith://governance/version', name: 'Governance Version', description: 'Current governance schema version' },
-  { uri: 'evolith://core/version', name: 'Core Version', description: 'Current Core schema version' },
-  { uri: 'evolith://repository/config', name: 'Repository Config', description: 'Repository evolith.yaml content' },
-  { uri: 'evolith://moscow/phase-0', name: 'MoSCoW Phase 0', description: 'MoSCoW prioritization matrix' },
-];
+// Tools and resources come from the live MCP server (GT-460). Counts are
+// derived from the arrays, never hardcoded, so they can never disagree.
+export const TOOLS: ApiEntry[] = GENERATED_TOOLS;
+export const RESOURCES: ApiResource[] = GENERATED_RESOURCES;
 
 export const SCHEMAS: ApiEntry[] = [
   { name: 'gate-evidence', description: 'Schema for gate evaluation evidence' },
@@ -93,6 +67,15 @@ export const COMMANDS: ApiEntry[] = [
   { name: 'profile', description: 'CLI configuration profiles' },
   { name: 'upgrade', description: 'Upgrade Evolith project' },
   { name: 'api', description: 'Browse API surface (this command)' },
+];
+
+// Counts are derived from the arrays above (never hardcoded) so the summary can
+// never disagree with the lists it advertises (GT-460).
+export const CATEGORIES: ApiCategory[] = [
+  { name: 'tools', label: 'MCP Tools', description: `${TOOLS.length} available operations` },
+  { name: 'resources', label: 'MCP Resources', description: `${RESOURCES.length} available resources` },
+  { name: 'schemas', label: 'Phase-Gate Schemas', description: `${SCHEMAS.length} validation schemas` },
+  { name: 'commands', label: 'CLI Commands', description: `${COMMANDS.length} native commands` },
 ];
 
 export const TOOL_SCHEMAS: Record<string, ToolSchema> = {

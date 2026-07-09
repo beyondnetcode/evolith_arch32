@@ -64,10 +64,15 @@ export class DiskRulesetRepository implements IRulesetRepository {
         rules.push(...this.normalizeRuleset(parsed, relative));
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : String(err);
-        this.logger.error(
-          `Malformed ruleset detected at ${filePath}: ${message}`,
+        // GT-456: a single non-standard or malformed `*.rules.json` (e.g. a
+        // recommendation ruleset that doesn't match the standard schema) must
+        // NOT abort the whole load — that would zero out ALL validation and make
+        // `validate` silently check nothing. Skip it with a warning and keep
+        // evaluating the remaining rulesets.
+        this.logger.warn(
+          `Skipping non-standard/malformed ruleset ${filePath}: ${message}`,
         );
-        throw new Error(`Ruleset validation error in ${filePath}: ${message}`);
+        continue;
       }
     }
 

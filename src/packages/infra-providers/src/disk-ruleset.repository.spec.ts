@@ -58,16 +58,20 @@ function makeFs(config: FakeFsConfig): IFileSystem {
   };
 }
 
-function makeLogger(): ILogger & { errors: string[] } {
+function makeLogger(): ILogger & { errors: string[]; warnings: string[] } {
   const errors: string[] = [];
+  const warnings: string[] = [];
   return {
     debug() {},
     info() {},
-    warn() {},
+    warn(msg: string) {
+      warnings.push(msg);
+    },
     error(msg: string) {
       errors.push(msg);
     },
     errors,
+    warnings,
   };
 }
 
@@ -130,18 +134,24 @@ describe('DiskRulesetRepository', () => {
     expect(rules.map((r) => r.id)).toEqual(['GATE-1']);
   });
 
-  it('logs and throws when a ruleset fails schema validation', async () => {
+  it('skips (does not abort on) a ruleset that fails schema validation and still loads the valid ones (GT-456)', async () => {
     const fs = makeFs({
       dirs: new Set(['/core/rulesets', '/core/rulesets/schema']),
       files: {
         '/core/rulesets/schema/ruleset-standard.schema.json': SCHEMA,
         '/core/rulesets/broken.rules.json': JSON.stringify({ notRules: [] }),
+        '/core/rulesets/good.rules.json': JSON.stringify({
+          rules: [{ id: 'OK-1', severity: 'MUST', title: 'Good' }],
+        }),
       },
     });
     const logger = makeLogger();
     const repo = new DiskRulesetRepository(fs, logger);
-    await expect(repo.loadAllRulesets('/core')).rejects.toThrow(/Ruleset validation error/);
-    expect(logger.errors.some((e) => e.includes('Malformed ruleset'))).toBe(true);
+    // A single non-standard/malformed file must NOT throw and zero out ALL
+    // validation — it is skipped with a warning; valid rulesets still load.
+    const rules = await repo.loadAllRulesets('/core');
+    expect(rules.map((r) => r.id)).toEqual(['OK-1']);
+    expect(logger.warnings.some((w) => w.includes('broken.rules.json'))).toBe(true);
   });
 
   it('derives categories from canonical progressive-axis topology id prefixes', async () => {

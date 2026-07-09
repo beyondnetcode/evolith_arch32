@@ -1,0 +1,37 @@
+# Evolith suite — single-cluster namespaces (ADR-0107).
+# One namespace per product + shared platform namespaces (messaging, observability).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: evolith-messaging
+  labels: { evolith.dev/tier: platform }
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: observability
+  labels: { evolith.dev/tier: platform }
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: evolith-core
+  labels: { evolith.dev/tier: core }
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mms
+  labels: { evolith.dev/tier: product, evolith.dev/product: mms }
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ums
+  labels: { evolith.dev/tier: product, evolith.dev/product: ums }
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tracker
+  labels: { evolith.dev/tier: product, evolith.dev/product: tracker }

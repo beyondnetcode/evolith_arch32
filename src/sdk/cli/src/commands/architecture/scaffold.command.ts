@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { WorkspaceManagerStrategy } from '@beyondnet/evolith-core-domain/application/architecture/workspace-manager.strategy';
 import { NxWorkspaceStrategy } from '../../infrastructure/architecture/nx-workspace.strategy';
+import { DotnetWorkspaceStrategy } from '../../infrastructure/architecture/dotnet-workspace.strategy';
 import { commandExecutor } from '../../infrastructure/cli/command-executor';
 import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { toProgressivePhase } from '../../infrastructure/architecture/topology-catalog';
@@ -33,6 +34,13 @@ export class ScaffoldCommand extends BaseEvolithCommand {
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
+
+    // GT-455: .NET target. The suite (UMS/Tracker/MMS) is .NET; scaffold a
+    // clean/hexagonal ASP.NET Core solution instead of the Node/Nx workspace.
+    const runtime = ((options?.runtime as string) || 'nodejs').toLowerCase();
+    if (runtime === 'dotnet' || runtime === 'csharp' || runtime === '.net') {
+      return this.scaffoldDotnet(options, { dryRun, json, meta, startedAt });
+    }
 
     if (this.strategy.setDryRun) {
       this.strategy.setDryRun(dryRun);
@@ -278,6 +286,109 @@ export class ScaffoldCommand extends BaseEvolithCommand {
       );
     }
     return undefined;
+  }
+
+  /**
+   * GT-455: generate a .NET satellite (ASP.NET Core, clean/hexagonal modular
+   * monolith mirroring UMS) under `src/apps/<api-name>`: a solution with
+   * Domain/Application/Infrastructure/Presentation projects + references, plus
+   * one class library per `--domains` bounded context. Honors --dry-run and
+   * the ADR-0073 JSON envelope.
+   */
+  private async scaffoldDotnet(
+    options: Record<string, unknown> | undefined,
+    ctx: {
+      dryRun: boolean;
+      json: boolean;
+      meta: { command: string; executedAt: string; durationMs: number; correlationId: string; schemaVersion: string };
+      startedAt: number;
+    },
+  ): Promise<void> {
+    const { dryRun, json, meta, startedAt } = ctx;
+    const apiName = (options?.apiName as string) || 'satellite-api';
+    const rawPhase = (options?.phase as string) || '1';
+    const phase = toProgressivePhase(rawPhase);
+    const base = this.toPascalBase(apiName);
+    const appDir = path.join(process.cwd(), 'src', 'apps', apiName);
+
+    const domainsOpt = options?.domains;
+    const domains: string[] = Array.isArray(domainsOpt)
+      ? (domainsOpt as string[])
+      : typeof domainsOpt === 'string'
+        ? (domainsOpt as string).split(',').map(d => d.trim()).filter(Boolean)
+        : [];
+
+    const strategy = new DotnetWorkspaceStrategy(commandExecutor, this.promptService);
+    strategy.setDryRun(dryRun);
+
+    try {
+      if (!phase) {
+        throw new Error(
+          `Unknown --phase "${rawPhase}". Use 1|2|3 or a progressive-axis id ` +
+          `(modular-monolith, distributed-modules, microservices).`,
+        );
+      }
+      await strategy.ensureAvailable();
+      if (!dryRun) {
+        fs.mkdirSync(appDir, { recursive: true });
+      }
+      await strategy.generateSolution(base, appDir);
+      for (const context of domains) {
+        await strategy.generateDomainContext(base, this.toPascalBase(context), appDir);
+      }
+
+      const result = {
+        status: dryRun ? 'dry-run' : 'scaffolded',
+        runtime: 'dotnet',
+        apiName,
+        base,
+        phase,
+        path: `src/apps/${apiName}`,
+        projects: ['Domain', 'Application', 'Infrastructure', 'Presentation'],
+        contexts: domains.map(d => `${base}.${this.toPascalBase(d)}`),
+      };
+
+      if (json) {
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        return;
+      }
+      this.promptService.showSuccess(`✓ .NET satellite scaffolded at src/apps/${apiName} (${base}.sln)`);
+      this.promptService.showInfo(`  Projects: ${base}.Domain, ${base}.Application, ${base}.Infrastructure, ${base}.Presentation`);
+      if (result.contexts.length) {
+        this.promptService.showInfo(`  Bounded contexts: ${result.contexts.join(', ')}`);
+      }
+      if (dryRun) {
+        this.promptService.showWarning('DRY-RUN: no files were written.');
+      }
+      this.promptService.showOutro('Completed');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        return;
+      }
+      throw error;
+    }
+  }
+
+  /** Derive a PascalCase namespace root from a satellite/app name (mms-api → Mms). */
+  private toPascalBase(name: string): string {
+    return name
+      .replace(/[-_. ]*(api|web|app|host|service)$/i, '')
+      .split(/[-_. ]+/)
+      .filter(Boolean)
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join('')
+      .replace(/[^A-Za-z0-9]/g, '') || 'Satellite';
+  }
+
+  @Option({
+    flags: '--runtime [runtime]',
+    description: 'Backend runtime: nodejs (default, Nx/React) or dotnet (ASP.NET Core hexagonal, UMS-style)',
+  })
+  parseRuntime(val: string): string {
+    return val;
   }
 
   @Option({

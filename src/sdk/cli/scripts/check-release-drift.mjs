@@ -42,6 +42,11 @@ const CHECKS = [
     gap: 'GT-460 (api surface from the live MCP registry)',
   },
   {
+    file: 'dist/commands/architecture/scaffold.command.js',
+    mustContain: ['scaffoldDotnet'],
+    gap: 'GT-455 (.NET scaffold target)',
+  },
+  {
     file: 'templates/evolith.yaml.example',
     mustContain: ['apiVersion: evolith.dev/v1', 'kind: Satellite'],
     mustNotContain: ['currentPhase: "phase-2"'],

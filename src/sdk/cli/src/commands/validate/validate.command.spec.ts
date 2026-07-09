@@ -14,6 +14,17 @@ jest.mock('@beyondnet/evolith-core-domain/application/validators/ruleset-validat
   })),
 }));
 
+// GT-456: validate resolves the Core rulesets root via resolveRulesets (override →
+// bundled). Mock it deterministically so tests don't touch the filesystem: echo the
+// override as coreRoot, or fall back to a synthetic bundled root.
+jest.mock('../../infrastructure/paths/rulesets-resolver', () => ({
+  resolveRulesets: (override?: string) => ({
+    coreRoot: override ?? '/bundled-core',
+    rulesetsRoot: `${override ?? '/bundled-core'}/rulesets`,
+    source: override ? 'override' : 'bundled',
+  }),
+}));
+
 jest.mock('../../infrastructure/prompts/prompt.service', () => ({
   PromptService: jest.fn().mockImplementation(() => ({
     showIntro: jest.fn(),
@@ -160,7 +171,7 @@ describe('ValidateCommand', () => {
 
       expect(mockValidateArchitecture).toHaveBeenCalledWith(
         expect.any(String),
-        undefined,
+        expect.any(String),
         { level: 'ALL', topologies: [] }
       );
     });
@@ -179,7 +190,7 @@ describe('ValidateCommand', () => {
 
       expect(mockValidateArchitecture).toHaveBeenCalledWith(
         expect.any(String),
-        undefined,
+        expect.any(String),
         { level: undefined, topologies: ['custom-topology'] }
       );
     });

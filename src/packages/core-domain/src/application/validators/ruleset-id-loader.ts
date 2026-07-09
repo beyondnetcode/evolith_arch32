@@ -70,8 +70,22 @@ async function loadRulesetFile(
   corePath: string,
   relativePath: string,
 ): Promise<LoadedRule[] | null> {
-  const fullPath = path.join(corePath, 'rulesets', relativePath);
-  if (!await fs.exists(fullPath)) return null;
+  // GT-456: rulesets may live either directly under `<core>/rulesets` (the
+  // rulesets bundled with the CLI package) or under `<core>/src/rulesets` (the
+  // Evolith Core monorepo layout). Probe both so a `--core <checkout>` override
+  // resolves as well as the bundled default.
+  const candidates = [
+    path.join(corePath, 'rulesets', relativePath),
+    path.join(corePath, 'src', 'rulesets', relativePath),
+  ];
+  let fullPath: string | undefined;
+  for (const candidate of candidates) {
+    if (await fs.exists(candidate)) {
+      fullPath = candidate;
+      break;
+    }
+  }
+  if (!fullPath) return null;
   try {
     const content = await fs.readFile(fullPath);
     const parsed = JSON.parse(content);

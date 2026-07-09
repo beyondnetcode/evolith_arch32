@@ -2,6 +2,7 @@ import { Command, Option } from 'nest-commander';
 import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/validate-satellite.use-case';
 import { ValidationResult, ValidationIssue, RulesetValidatorService } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service';
 import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
+import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
@@ -126,7 +127,21 @@ export class ValidateCommand extends BaseEvolithCommand {
     this.promptService.showIntro('Evolith SDK - Validación de Estándares');
 
     const satellitePath = options?.satellite || this.profile.satellite || process.cwd();
-    const corePath = options?.core || this.profile.core || undefined;
+
+    // GT-456: resolve the Core rulesets root so validation works from ANY satellite,
+    // not just from inside the Core monorepo. Order: --core → EVOLITH_CORE_PATH →
+    // profile.core → the rulesets bundled with the CLI. resolveRulesets() throws an
+    // actionable error when an override has no src/rulesets or no bundled rulesets
+    // can be located — surface it instead of silently checking 0 rules.
+    const coreOverride = options?.core || process.env.EVOLITH_CORE_PATH || this.profile.core;
+    let corePath: string | undefined;
+    try {
+      corePath = resolveRulesets(coreOverride).coreRoot;
+    } catch (err) {
+      this.promptService.showError((err as Error).message);
+      this.promptService.showOutro('Validación abortada.');
+      return;
+    }
 
     this.promptService.startSpinner('Analizando repositorio...');
 
@@ -167,7 +182,7 @@ export class ValidateCommand extends BaseEvolithCommand {
               line: i.line,
             })),
           ),
-          coreRef: { version: null, path: null },
+          coreRef: { version: null, path: corePath ?? null },
           timestamp: new Date().toISOString(),
         };
       } else {
@@ -238,10 +253,23 @@ export class ValidateCommand extends BaseEvolithCommand {
 
     this.promptService.stopSpinner();
 
+    // GT-456: reflect the resolved Core rulesets root in coreRef.path so the report
+    // shows where rules came from (previously always null, even with a valid --core).
+    if (result.coreRef && !result.coreRef.path && corePath) {
+      result = { ...result, coreRef: { ...result.coreRef, path: corePath } };
+    }
+
     // GT-452: never report a green pass when zero Core rulesets were resolved.
     // A satellite with only evolith.yaml must not receive a full-compliance sign-off
     // having executed nothing — degrade to a warning with an actionable message.
-    if (result.rulesChecked === 0 && result.status === 'passed') {
+    // Scope to the DEFAULT full validation: a targeted --ruleset/--adr/--file/
+    // --topology/--phase/--manifest run legitimately reports "0 issues" (no
+    // violations of that specific check) without incrementing rulesChecked.
+    const targetedRun = Boolean(
+      options?.ruleset || options?.adr || options?.file ||
+      options?.topology?.length || options?.phase || options?.manifest,
+    );
+    if (!targetedRun && result.rulesChecked === 0 && result.status === 'passed') {
       const unresolvedIssue: ValidationIssue = {
         ruleId: 'GOV-CORE-UNRESOLVED',
         severity: 'SHOULD',

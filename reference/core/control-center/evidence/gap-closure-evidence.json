@@ -3,6 +3,21 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-463",
+      "closedAt": "2026-07-09",
+      "closureCommit": "ce13b613",
+      "evidence": [
+        "product/operations/alerts/prometheus-alerts.yml",
+        "product/operations/incident-response-poison-message-reprocess.md",
+        "product/operations/incident-response-poison-message-reprocess.es.md"
+      ],
+      "validationCommands": [
+        "ruby -ryaml -e 'YAML.load_file(...)' — 3 groups; messaging-alerts: MassTransitPoisonMessages + TenantProjectionQueueMissing",
+        "grep '_error' product/operations/alerts/prometheus-alerts.yml"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-462",
       "closedAt": "2026-07-09",
       "closureCommit": "e9a4deb5",

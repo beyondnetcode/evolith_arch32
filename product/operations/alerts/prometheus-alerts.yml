@@ -133,3 +133,33 @@ groups:
         annotations:
           summary: "Error budget burning too fast (6h window)"
           description: "6h burn rate {{ $value | humanizePercentage }} exceeds 6x threshold"
+
+  # Master-data projection messaging (ADR-0108 / deployment strategy §5.3, GT-463).
+  # MassTransit moves a message that exhausts its retries into `<queue>_error` — it never
+  # nacks, so the broker DLX never fires. ANY message in an `_error` queue is a poison
+  # message that needs a human: alert on depth > 0 (not a backlog threshold).
+  - name: messaging-alerts
+    rules:
+      - alert: MassTransitPoisonMessages
+        expr: rabbitmq_queue_messages{queue=~".+_error"} > 0
+        for: 2m
+        labels:
+          severity: warning
+          service: messaging
+        annotations:
+          summary: "Poison messages in {{ $labels.queue }}"
+          description: "{{ $labels.queue }} holds {{ $value }} faulted message(s) (MassTransit _error queue). A consumer exhausted its retries; investigate and reprocess via the shovel runbook."
+          runbook_url: "https://github.com/beyondnetcode/evolith/blob/main/product/operations/incident-response-poison-message-reprocess.md"
+
+      # A projection consumer endpoint that never binds its queue means the pod is Ready but
+      # the consumer is dead (the 406 redeclare failure ADR-0108 retired the CRDs to prevent).
+      - alert: TenantProjectionQueueMissing
+        expr: absent(rabbitmq_queue_messages{queue="ums.tenant-projection"}) or absent(rabbitmq_queue_messages{queue="tracker.tenant-projection"})
+        for: 5m
+        labels:
+          severity: critical
+          service: messaging
+        annotations:
+          summary: "A tenant-projection consumer endpoint queue is absent"
+          description: "ums.tenant-projection and/or tracker.tenant-projection is not declared on the broker — a consumer endpoint failed to start (dead consumer behind a Ready pod)."
+          runbook_url: "https://github.com/beyondnetcode/evolith/blob/main/product/operations/incident-response-poison-message-reprocess.md"

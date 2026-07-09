@@ -1,0 +1,242 @@
+# Zero-trust network policies for the Evolith suite (deployment strategy §7, GT-465).
+#
+# REQUIRES a CNI that ENFORCES NetworkPolicy — kindnet does NOT (that is the trap this closes:
+# apply these under kindnet and they are silently a no-op → false parity with prod). Install
+# Cilium first (kind-cluster.yaml sets `disableDefaultCNI: true`; see deploy/kubernetes/README.md).
+#
+# Model: default-deny ingress+egress in every product namespace, then the minimum explicit allows.
+# STRUCTURAL INVARIANT: there is NO rule letting `evolith-core` reach the broker (5672) — "Core is
+# never on the message bus" (ADR-0101/0108) is enforced by the network, not just by convention.
+# Namespaces are selected by the built-in `kubernetes.io/metadata.name` label.
+#
+# Environment note: the ingress controller namespace (Traefik) must carry the label
+# `evolith.dev/role: ingress` for the ingress→product rules below to match.
+
+# ═══════════════════════════ default-deny (mms · ums · tracker) ═══════════════════════════
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: default-deny, namespace: mms }
+spec: { podSelector: {}, policyTypes: [Ingress, Egress] }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: default-deny, namespace: ums }
+spec: { podSelector: {}, policyTypes: [Ingress, Egress] }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: default-deny, namespace: tracker }
+spec: { podSelector: {}, policyTypes: [Ingress, Egress] }
+---
+# ═══════════════════════════ DNS egress (all products → kube-dns) ═══════════════════════════
+# Without this, every other allow is useless — Service name resolution breaks.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-dns-egress, namespace: mms }
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: kube-system } } }]
+      ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-dns-egress, namespace: ums }
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: kube-system } } }]
+      ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-dns-egress, namespace: tracker }
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: kube-system } } }]
+      ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
+---
+# ═══════════════════════════ intra-namespace (product app ↔ its own Postgres) ═══════════════════════════
+# DB-per-product: the DB lives in the product's own namespace. Allow same-namespace traffic on 5432.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-intra-namespace-db, namespace: mms }
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+  ingress: [{ from: [{ podSelector: {} }] }]
+  egress: [{ to: [{ podSelector: {} }] }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-intra-namespace-db, namespace: ums }
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+  ingress: [{ from: [{ podSelector: {} }] }]
+  egress: [{ to: [{ podSelector: {} }] }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-intra-namespace-db, namespace: tracker }
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+  ingress: [{ from: [{ podSelector: {} }] }]
+  egress: [{ to: [{ podSelector: {} }] }]
+---
+# ═══════════════════════════ egress to the broker (mms · ums · tracker → evolith-messaging:5672) ═══════════════════════════
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-egress-broker, namespace: mms }
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: evolith-messaging } } }]
+      ports: [{ protocol: TCP, port: 5672 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-egress-broker, namespace: ums }
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: evolith-messaging } } }]
+      ports: [{ protocol: TCP, port: 5672 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-egress-broker, namespace: tracker }
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: evolith-messaging } } }]
+      ports: [{ protocol: TCP, port: 5672 }]
+---
+# ═══════════════════════════ egress to Core (ums · tracker → evolith-core; NOT mms) ═══════════════════════════
+# UMS/Tracker call core-api over HTTP (evaluate). MMS never calls Core — no rule for it.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-egress-core, namespace: ums }
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: evolith-core } } }]
+      ports: [{ protocol: TCP, port: 8080 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-egress-core, namespace: tracker }
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: evolith-core } } }]
+      ports: [{ protocol: TCP, port: 8080 }]
+---
+# ═══════════════════════════ OTLP egress (all products → observability:4317) ═══════════════════════════
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-egress-otlp, namespace: mms }
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: observability } } }]
+      ports: [{ protocol: TCP, port: 4317 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-egress-otlp, namespace: ums }
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: observability } } }]
+      ports: [{ protocol: TCP, port: 4317 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-egress-otlp, namespace: tracker }
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: observability } } }]
+      ports: [{ protocol: TCP, port: 4317 }]
+---
+# ═══════════════════════════ ingress to product APIs (from the ingress controller + observability scrape) ═══════════════════════════
+# The Traefik/ingress namespace must be labelled `evolith.dev/role: ingress`.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-ingress-app, namespace: mms }
+spec:
+  podSelector: {}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector: { matchLabels: { evolith.dev/role: ingress } }
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: observability } }
+      ports: [{ protocol: TCP, port: 8080 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-ingress-app, namespace: ums }
+spec:
+  podSelector: {}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector: { matchLabels: { evolith.dev/role: ingress } }
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: observability } }
+      ports: [{ protocol: TCP, port: 8080 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-ingress-app, namespace: tracker }
+spec:
+  podSelector: {}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector: { matchLabels: { evolith.dev/role: ingress } }
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: observability } }
+      ports: [{ protocol: TCP, port: 8080 }]
+---
+# ═══════════════════════════ broker ingress (accept AMQP from the three products) ═══════════════════════════
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-ingress-amqp, namespace: evolith-messaging }
+spec:
+  podSelector: {}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: mms } }
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: ums } }
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: tracker } }
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: observability } }
+      ports: [{ protocol: TCP, port: 5672 }, { protocol: TCP, port: 15692 }]
+---
+# ═══════════════════════════ Core ingress (accept HTTP evaluate from ums · tracker only) ═══════════════════════════
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: allow-ingress-evaluate, namespace: evolith-core }
+spec:
+  podSelector: {}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: ums } }
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: tracker } }
+        - namespaceSelector: { matchLabels: { evolith.dev/role: ingress } }
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: observability } }
+      ports: [{ protocol: TCP, port: 8080 }]

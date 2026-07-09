@@ -1,9 +1,16 @@
 # Local single-node kind cluster for the Evolith suite (ADR-0107).
 #   kind create cluster --name evolith --config deploy/kubernetes/kind-cluster.yaml
 # Ingress-ready control-plane; extra port mappings expose the products + RabbitMQ UI locally.
+#
+# NetworkPolicy enforcement (GT-465, deployment strategy §7): kindnet does NOT enforce
+# NetworkPolicy, so `disableDefaultCNI: true` drops kindnet and Cilium must be installed before
+# the cluster goes Ready — giving real default-deny parity with AKS. See deploy/kubernetes/README.md.
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: evolith
+networking:
+  disableDefaultCNI: true       # kindnet off → install Cilium (enforces network-policies.yaml)
+  podSubnet: "10.244.0.0/16"
 nodes:
   - role: control-plane
     kubeadmConfigPatches:

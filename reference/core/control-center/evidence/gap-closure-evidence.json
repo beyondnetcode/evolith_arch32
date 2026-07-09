@@ -3,6 +3,22 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-465",
+      "closedAt": "2026-07-09",
+      "closureCommit": "<pending>",
+      "evidence": [
+        "deploy/kubernetes/kind-cluster.yaml",
+        "deploy/kubernetes/network-policies.yaml",
+        "deploy/kubernetes/README.md"
+      ],
+      "validationCommands": [
+        "ruby -ryaml -e 'YAML.load_stream(...network-policies.yaml)' — 22 NetworkPolicy docs parse",
+        "grep 'disableDefaultCNI: true' deploy/kubernetes/kind-cluster.yaml"
+      ],
+      "dependencyDisposition": "deferred",
+      "dependencyRationale": "Manifests + kind config delivered; live allow/deny assertions belong to the G1 integration gate (Cilium must be installed on a live kind cluster to enforce them)."
+    },
+    {
       "id": "GT-463",
       "closedAt": "2026-07-09",
       "closureCommit": "79d1c403",

@@ -23,8 +23,12 @@ deploy/kubernetes/
 
 ## Local bring-up (one time)
 ```bash
-# 1. Cluster
+# 1. Cluster (kindnet is OFF — the cluster stays NotReady until a CNI is installed)
 kind create cluster --name evolith --config deploy/kubernetes/kind-cluster.yaml
+
+# 1b. Cilium — enforces NetworkPolicy (kindnet does not; GT-465 / §7). Nodes go Ready after this.
+cilium install --set kubeProxyReplacement=false   # or: helm install cilium cilium/cilium -n kube-system
+cilium status --wait
 
 # 2. Operators (RabbitMQ cluster + messaging topology)
 kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
@@ -36,6 +40,11 @@ kubectl apply -f deploy/kubernetes/messaging/rabbitmq-cluster.yaml
 kubectl wait --for=condition=AllReplicasReady rabbitmqcluster/evolith-rabbitmq -n evolith-messaging --timeout=300s
 # Provision per-product broker credential secrets first (mms|ums|tracker-broker-user), then:
 kubectl apply -f deploy/kubernetes/messaging/broker-rbac.yaml
+
+# 3b. Zero-trust network policies (default-deny per product ns + explicit allows; §7 / GT-465).
+#     Label the ingress (Traefik) namespace so ingress→product rules match:
+#     kubectl label ns <traefik-ns> evolith.dev/role=ingress
+kubectl apply -f deploy/kubernetes/network-policies.yaml
 
 # 4. Products (Phase 2 — per-product Helm charts, e.g. ums-helm / mms-helm / tracker-helm)
 #    helm upgrade --install mms   infra/mms-helm     -n mms

@@ -1,45 +1,43 @@
-# Evolith Configuration
-# This file defines the governance and architectural standards for a satellite repository.
+# Evolith Satellite Contract — federated governance manifest.
+# Validated by the Core against schema/evolith-yaml.schema.json (apiVersion evolith.dev/v1).
 # It is the single source of truth for all Evolith enforcement and validation.
-
-coreRef:
-  version: "1.0.0"
-  path: "../evolith"
-
-governance:
-  version: "1.0"
-  adrRegistry:
-    - id: "ADR-0001"
-      status: "accepted"
-      title: "Architecture Decision Record Template"
-    - id: "ADR-0002"
-      status: "accepted"
-      title: "Hexagonal Architecture for Core Services"
-
-product:
-  name: "example-satellite"
-  type: "library"
-  runtime: "typescript"
+apiVersion: evolith.dev/v1
+kind: Satellite
 
 metadata:
-  createdAt: "2024-01-15T10:00:00Z"
-  lastValidated: "2024-01-15T10:00:00Z"
-  sdlc:
-    currentPhase: "phase-2"
-    phaseHistory:
-      - phase: "phase-0"
-        enteredAt: "2024-01-10T09:00:00Z"
-        completedAt: "2024-01-12T17:30:00Z"
-        artifacts:
-          - "requirements.md"
-          - "architecture-draft.md"
-      - phase: "phase-1"
-        enteredAt: "2024-01-12T17:30:00Z"
-        completedAt: "2024-01-14T12:00:00Z"
-        artifacts:
-          - "sdlc-manifest.json"
-          - "tool-handoff.json"
-      - phase: "phase-2"
-        enteredAt: "2024-01-14T12:00:00Z"
+  # Satellite repository name (kebab-case, lowercase).
+  name: example-satellite
+  # Progressive-axis phase: F1=modular-monolith, F2=distributed-modules, F3=microservices.
+  phase: F1
+  # The satellite's own architectural semantic version.
+  architectureVersion: 0.1.0
 
-encoding: "utf-8"
+spec:
+  coreRef:
+    # Evolith Core version and ruleset version this satellite pins to.
+    version: 1.0.0
+    rulesetVersion: 1.0.0
+
+  runtime:
+    # language ∈ TypeScript | CSharp | Kotlin | Go | Python
+    language: TypeScript
+    framework: NestJS
+    runtimeVersion: "Node 20"
+
+  sdlc:
+    # 1=Conception 2=Design 3=Construction 4=Validation 5=Delivery
+    currentPhase: 1
+    gates: {}
+
+  # Optional: bounded contexts and their persistence.
+  boundedContexts:
+    - name: Example
+      phase: F1
+      persistence: PostgreSQL
+
+  compliance:
+    # Local ADRs maintained by this satellite. Each local ADR file carries
+    # `EvolithSatellite` in its frontmatter tags. Core ADRs use the `core/ADR-XXXX` form.
+    adrRegistry: []
+    localAdrTagEnforcement: documented
+    coverageTarget: 80

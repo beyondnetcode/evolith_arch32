@@ -12,6 +12,104 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ## 1. Detalle de Gaps
 
+#### GT-451
+
+**Título:** Umbrella — el CLI publicado en npm está desactualizado vs la fuente (deriva de release bajo el mismo `1.0.0`)
+
+**Problema:** El artefacto `@beyondnet/evolith-cli@1.0.0` que los satélites instalan desde npm es un build más antiguo que `src/sdk/cli/src`, publicado bajo la misma versión `1.0.0` — viola la inmutabilidad SemVer. Fixes ya integrados en la fuente están ausentes del artefacto que consumen los satélites, así que varios "bugs" observados en un satélite real (MMS) en realidad ya están corregidos aguas arriba pero nunca se re-publicaron.
+
+**Evidencia (verificada en el satélite MMS):** el `dist/commands/init/init.command.js` instalado no tiene `resolveBatchInput`/`readSetupFile` mientras que `src/.../init.command.ts` sí (batch `--config`/`--name`/`--yes` + overrides de flags) → **F-001**; el CLI instalado crashea `ENOENT scandir '<core>/reference/governance/sdlc/gates'` en `gate evaluate`/`phase advance`/`sdlc gate-status`, pero ese path no existe en la fuente (GT-318 canonicalizó `reference/core/sdlc/gates`) → **F-007**; el `evaluate` instalado crashea `IConfigParser is required` mientras `src/app.module.ts:112-119` cablea el DI para evitarlo → **F-008**. Por eso GT-12 (`--dry-run`), GT-344 (ENOENT), GT-395 (enforcement de reglas) parecen regresiones solo porque el artefacto es anterior a esos fixes.
+
+**Fix propuesto:** subir el CLI a `1.0.1`, reconstruir desde la fuente actual, republicar a npm; añadir un gate de release que falle cuando `src/sdk/cli/src` cambió sin bump de versión, o que compare el `dist` recién construido contra el tarball publicado. Re-verificar end-to-end desde un satélite externo (MMS).
+
+**Cierre:** un `npx @beyondnet/evolith-cli` fresco en un satélite externo ejecuta init batch, `gate evaluate` y `evaluate` sin crashes ENOENT/DI; versión publicada > `1.0.0`; guard de deriva de release en CI.
+
+**Referencias:** src/sdk/cli/src/commands/init/init.command.ts; src/sdk/cli/src/app.module.ts; GT-12, GT-318, GT-344, GT-395, GT-436.
+
+#### GT-452
+
+**Título:** `validate` reporta `passed` con `rulesChecked: 0` (falso verde)
+
+**Problema:** `smart-cli validate` en un satélite que solo tiene `evolith.yaml` devuelve estado `passed` / "cumple con todos los estándares" con `rulesChecked: 0` — ninguna regla del Core se resolvió ni ejecutó. Una herramienta de gobernanza señala conformidad total sin haber evaluado nada.
+
+**Evidencia:** `validate -f json` (con y sin `--core`) → `{ "status": "passed", "rulesChecked": 0, "issues": [] }`; `src/sdk/cli/src/commands/validate/validate.command.ts:99` computa el estado sin guarda de cero reglas. Verificado en el satélite MMS.
+
+**Fix propuesto:** si `rulesChecked === 0`, forzar estado `warning` (o `error`) con un issue accionable (p.ej. "No se resolvieron rulesets del Core — pase `--core` o defina `EVOLITH_CORE_PATH`"). Nunca emitir `passed` con 0 reglas.
+
+**Cierre:** validate con 0 reglas resueltas devuelve un estado no-passing + mensaje accionable; test unitario cubre la ruta de cero reglas.
+
+**Referencias:** src/sdk/cli/src/commands/validate/validate.command.ts:99; GT-395; GT-456.
+
+#### GT-453
+
+**Título:** La plantilla `evolith.yaml.example` no valida contra el propio schema del CLI
+
+**Problema:** `src/sdk/cli/templates/evolith.yaml.example` está en la forma legacy `coreRef/governance/product/metadata` y no valida contra `evolith-yaml.schema.json` (`apiVersion: evolith.dev/v1`, `kind: Satellite`, `spec`). Un usuario que copie la plantilla produce un manifest inválido.
+
+**Evidencia:** las primeras claves de la plantilla son `coreRef:` / `governance:` / `product:` / `metadata.sdlc.currentPhase: "phase-2"`; el schema exige `apiVersion`/`kind`/`spec` y `currentPhase` como entero `1..5`. El `evolith.yaml` real del Tracker usa la forma v1.
+
+**Fix propuesto:** regenerar la plantilla desde el schema actual (usar `evolith.yaml` de Tracker como referencia); añadir un test CI que valide `templates/evolith.yaml.example` contra `evolith-yaml.schema.json`.
+
+**Cierre:** la plantilla valida contra el schema; guard CI añadido.
+
+**Referencias:** src/sdk/cli/templates/evolith.yaml.example; src/rulesets/schema/evolith-yaml.schema.json; evolith_tracker/evolith.yaml.
+
+#### GT-454
+
+**Título:** `docs` escribe el manifest en `.evolith/evolith.yaml` (legacy) pero `validate`/schema lo esperan en la raíz
+
+**Problema:** `docs.command.ts:82` scaffoldea el manifest del satélite en `.evolith/evolith.yaml` en formato legacy, mientras que `validate` (GOV-000) y `evolith-yaml.schema.json` esperan `evolith.yaml` en la raíz con la forma v1. Seguir `docs` deja el satélite inválido; probable origen de las carpetas `.evolith/` vacías observadas en satélites.
+
+**Evidencia:** `docs --dry-run` planifica crear `.evolith/evolith.yaml`; `validate` en ese estado sigue fallando GOV-000 ("Missing evolith.yaml" en la raíz). Fuente: `src/sdk/cli/src/commands/docs/docs.command.ts:82`.
+
+**Fix propuesto:** escribir `evolith.yaml` en la raíz del repo con el schema v1 (o dejar de generarlo en `docs` y delegar en `init`); alinear el contenido con GT-453.
+
+**Cierre:** la salida de `docs` pasa `validate`; ubicación = raíz del repo; formato = schema v1.
+
+**Referencias:** src/sdk/cli/src/commands/docs/docs.command.ts:82; GT-453.
+
+#### GT-455
+
+**Título:** `scaffold` no tiene target .NET aunque `init -r dotnet` y la suite son .NET
+
+**Problema:** `scaffold` exige `--frontend react|angular` + `--orm prisma|typeorm` (solo Node) y no tiene ruta de generación .NET/ASP.NET Core, pese a que `init` anuncia `-r dotnet` y toda la suite (UMS, Tracker, MMS) es .NET clean/hexagonal. El generador principal no puede scaffoldear el runtime real de la suite.
+
+**Evidencia:** `scaffold --dry-run --phase 1 -f json` → `VALIDATION_FAILED: In --format json mode, --frontend, --orm, and --phase are required`; el grep de `src/sdk/cli/src/commands/architecture/scaffold` no encuentra target dotnet/csproj.
+
+**Fix propuesto:** añadir un target `.NET` a `scaffold` (ASP.NET Core + EF Core, slice hexagonal espejando UMS) o documentar explícitamente `scaffold` como solo-Node y que `init -r dotnet` emita un mensaje claro "aún no soportado". Alinear los runtimes soportados entre `init` y `scaffold`.
+
+**Cierre:** `scaffold` puede producir un esqueleto de satélite .NET que compile, o el soporte de runtime queda documentado y `init -r dotnet` falla limpiamente; paridad documentada.
+
+**Referencias:** src/sdk/cli/src/commands/architecture/scaffold; src/sdk/cli/src/commands/init; /Users/beyondnet/Source/ums (arquitectura de referencia).
+
+#### GT-456
+
+**Título:** El CLI no resuelve los rulesets del Core desde un satélite externo
+
+**Problema:** Ejecutado desde un satélite fuera del monorepo Core, `validate --core <ruta válida>` deja `coreRef.path: null`; los rulesets nombrados en `--help` (`-r inheritance`, `-r adr-0002`) reportan "Ruleset not found"; los rulesets de topología devuelven `ARCH-TOPOLOGY-MISSING`. El CLI no trae rulesets embebidos y no honra `--core`/`EVOLITH_CORE_PATH` de forma consistente, así que la validación de reglas/topología/ADR es inoperante para satélites reales — y combinado con GT-452 devuelve silenciosamente un falso verde.
+
+**Evidencia:** `validate -f json --core /Users/beyondnet/Source/evolith` → `coreRef.path: null`; `-r inheritance` → `MISSING: Ruleset not found: inheritance`; `-t modular-monolith` → `ARCH-TOPOLOGY-MISSING`. `validate.command.ts:113` pasa `options.core` al use case, pero no se propaga a `coreRef` ni se usa para localizar rulesets.
+
+**Fix propuesto:** unificar la resolución de Core (`--core` → `EVOLITH_CORE_PATH` → profile → auto-detect) en validate/gate/phase/evaluate; propagar la ruta resuelta a `coreRef.path`; fallar con mensaje accionable cuando no se encuentren rulesets; considerar pinear rulesets por `coreRef.rulesetVersion` o embarcar un snapshot de rulesets resuelto.
+
+**Cierre:** un satélite con `--core`/`EVOLITH_CORE_PATH` ejecuta rulesets nombrados + de topología y reporta `coreRef.path`; un Core ausente da un error accionable, no un falso passed con 0 reglas.
+
+**Referencias:** src/sdk/cli/src/commands/validate/validate.command.ts:113; GT-314, GT-382, GT-452.
+
+#### GT-457
+
+**Título:** `validate -f table` oculta el detalle del issue
+
+**Problema:** En formato `table` una validación fallida muestra `issues [N items]` sin el ruleId/título/descripción; el detalle accionable solo está en `-f json`. GT-224 añadió salida JSON a drift/scaffold/docs pero no cubrió la paridad table↔json de `validate`.
+
+**Evidencia:** `validate -f table` en un satélite sin `evolith.yaml` muestra `issues [1 items]`; solo `-f json` revela `GOV-000 Missing evolith.yaml`.
+
+**Fix propuesto:** renderizar el ruleId/título/descripción de cada issue en el formateador de tabla y sugerir remediación (p.ej. correr `init`).
+
+**Cierre:** la salida de tabla muestra el detalle por issue al fallar.
+
+**Referencias:** OutputFormatterService (renderer de tabla); GT-224.
+
 #### GT-447
 
 **Título:** MILESTONE — Objetivo 1: stack completo funcional en local (Docker/Kubernetes)

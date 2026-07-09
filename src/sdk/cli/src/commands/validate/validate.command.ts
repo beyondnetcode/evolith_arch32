@@ -238,6 +238,27 @@ export class ValidateCommand extends BaseEvolithCommand {
 
     this.promptService.stopSpinner();
 
+    // GT-452: never report a green pass when zero Core rulesets were resolved.
+    // A satellite with only evolith.yaml must not receive a full-compliance sign-off
+    // having executed nothing — degrade to a warning with an actionable message.
+    if (result.rulesChecked === 0 && result.status === 'passed') {
+      const unresolvedIssue: ValidationIssue = {
+        ruleId: 'GOV-CORE-UNRESOLVED',
+        severity: 'SHOULD',
+        category: 'governance',
+        title: 'No Core rulesets were resolved',
+        description:
+          'validate executed 0 rules — the Evolith Core rulesets could not be resolved. ' +
+          'Pass --core <path> or set EVOLITH_CORE_PATH so governance rules actually run.',
+        blocking: false,
+      };
+      result = {
+        ...result,
+        status: 'warning',
+        issues: [...result.issues, unresolvedIssue],
+      };
+    }
+
     const format = (options?.format as OutputFormat) || 'markdown';
     const formatter = new OutputFormatterService();
 

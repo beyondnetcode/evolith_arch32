@@ -79,16 +79,37 @@ Description of the project for AI agents.
 `,
   },
   {
-    filename: '.evolith/evolith.yaml',
-    description: 'Evolith configuration file',
-    content: `coreRef:
-  version: "1.0.0"
-  path: "../evolith"
-governance:
-  version: "1.0"
-product:
-  name: "project-name"
-  type: "library"
+    filename: 'evolith.yaml',
+    description: 'Evolith satellite contract (validated against evolith-yaml.schema.json)',
+    content: `# Evolith Satellite Contract — federated governance manifest.
+# Validated by the Core against schema/evolith-yaml.schema.json (apiVersion evolith.dev/v1).
+apiVersion: evolith.dev/v1
+kind: Satellite
+
+metadata:
+  name: my-satellite
+  # Progressive-axis phase: F1=modular-monolith, F2=distributed-modules, F3=microservices.
+  phase: F1
+  architectureVersion: 0.1.0
+
+spec:
+  coreRef:
+    version: 1.0.0
+    rulesetVersion: 1.0.0
+
+  runtime:
+    language: TypeScript
+    framework: NestJS
+
+  sdlc:
+    # 1=Conception 2=Design 3=Construction 4=Validation 5=Delivery
+    currentPhase: 1
+    gates: {}
+
+  compliance:
+    adrRegistry: []
+    localAdrTagEnforcement: documented
+    coverageTarget: 80
 `,
   },
 ];

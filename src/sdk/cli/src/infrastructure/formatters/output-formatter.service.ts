@@ -140,10 +140,30 @@ export class OutputFormatterService {
     if (value === null || value === undefined) return chalk.gray('(none)');
     if (typeof value === 'boolean') return value ? chalk.green('✓') : chalk.red('✗');
     if (typeof value === 'object') {
-      if (Array.isArray(value)) return `[${value.length} items]`;
+      if (Array.isArray(value)) {
+        // GT-457: render issue-like arrays (e.g. validate `issues`) with per-item
+        // detail instead of an opaque "[N items]" count, so table output surfaces
+        // the ruleId/title/severity that was previously only visible in JSON.
+        if (value.length > 0 && this.isIssueLike(value[0])) {
+          const lines = value.map((it) => {
+            const i = it as Record<string, unknown>;
+            const ruleId = String(i.ruleId ?? '?');
+            const title = String(i.title ?? i.description ?? '');
+            const sev = i.severity ? ` (${String(i.severity)})` : '';
+            return `    - ${chalk.yellow(ruleId)}: ${title}${sev}`;
+          });
+          return `${value.length} issue(s):\n${lines.join('\n')}`;
+        }
+        return `[${value.length} items]`;
+      }
       return JSON.stringify(value);
     }
     return String(value);
+  }
+
+  private isIssueLike(item: unknown): boolean {
+    if (typeof item !== 'object' || item === null) return false;
+    return 'ruleId' in item || ('title' in item && 'severity' in item);
   }
 
   private tableToMarkdown(data: unknown[]): string {

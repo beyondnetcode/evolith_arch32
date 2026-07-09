@@ -126,9 +126,9 @@
   "rules": [
     {
       "id": "SVC-01",
-      "title": "Satellite must have exactly one evolith.yaml in repository root",
-      "enforcement": "CLI validates single evolith.yaml at repo root. Nested evolith.yaml files are prohibited.",
-      "description": "CLI validates single evolith.yaml at repo root. Nested evolith.yaml files are prohibited."
+      "title": "Each satellite project must have exactly one evolith.yaml at its project root",
+      "enforcement": "CLI validates a single evolith.yaml at each satellite project's root. A manifest nested within another project's tree is prohibited. A satellite workspace (monorepo) declares its project roots in evolith.workspace.yaml; a single-repo satellite is the degenerate one-project workspace (backward compatible). Amended by ADR-0109 from repo-scoped to project-scoped.",
+      "description": "CLI validates a single evolith.yaml at each satellite project's root. A manifest nested within another project's tree is prohibited. A satellite workspace (monorepo) declares its project roots in evolith.workspace.yaml; a single-repo satellite is the degenerate one-project workspace."
     },
     {
       "id": "SVC-02",
@@ -153,6 +153,12 @@
       "title": "Core version referenced must exist in Evolith Core registry",
       "enforcement": "CLI validates coreRef.version against Evolith Core releases. Unknown versions trigger error.",
       "description": "CLI validates coreRef.version against Evolith Core releases. Unknown versions trigger error."
+    },
+    {
+      "id": "SVC-06",
+      "title": "Workspace integrity: declared projects and discovered manifests must correspond one-to-one",
+      "enforcement": "In a satellite workspace, every evolith.yaml discovered under the workspace must correspond to a declared spec.projects[].path in evolith.workspace.yaml, and every declared project path must contain an evolith.yaml. Single-project satellites (no evolith.workspace.yaml) are exempt. Introduced by ADR-0109.",
+      "description": "Every evolith.yaml found in a workspace must correspond to a declared spec.projects[].path, and vice versa — no undeclared (stray/nested) project manifests and no declared project missing its manifest."
     }
   ],
   "migrationRules": [
@@ -175,6 +181,7 @@
   ],
   "reference": {
     "evolithYamlSchema": "../schema/evolith-yaml.schema.json",
+    "evolithWorkspaceSchema": "../schema/evolith-workspace.schema.json",
     "inheritanceRules": "./inheritance.rules.json",
     "f1Rules": "../../reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
     "f2Rules": "../../reference/core/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json",

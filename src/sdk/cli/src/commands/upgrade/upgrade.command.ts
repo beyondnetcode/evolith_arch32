@@ -5,6 +5,7 @@ import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
 import { NodeFileSystemProvider } from '../../infrastructure/providers/node-filesystem.provider';
+import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resolver';
 import { logger } from '../../infrastructure/observability';
 
 interface UpgradeCommandOptions {
@@ -12,6 +13,7 @@ interface UpgradeCommandOptions {
   force?: boolean;
   core?: string;
   report?: boolean;
+  satellite?: string;
 }
 
 @Command({
@@ -27,7 +29,14 @@ export class UpgradeCommand extends BaseEvolithCommand {
   }
 
   async executeCommand(passedParam: string[], options?: UpgradeCommandOptions): Promise<void> {
-    const satellitePath = process.cwd();
+    // ADR-0109: unified satellite resolution replaces the process.cwd() hardcode
+    // so `cd mms && evolith upgrade` and `evolith upgrade --satellite mms` both
+    // target the project root. Order: explicit --satellite → nearest-ancestor
+    // evolith.yaml from cwd → profile.satellite → cwd.
+    const satellitePath = resolveSatellitePath({
+      explicit: options?.satellite,
+      profileSatellite: this.profile.satellite,
+    });
     const corePath = options?.core || this.profile.core || this.findCorePath(satellitePath);
 
     // GT-459: SatelliteUpgradeService needs a filesystem + logger; constructing it
@@ -170,6 +179,14 @@ export class UpgradeCommand extends BaseEvolithCommand {
     description: 'Path to Evolith core repository',
   })
   parseCore(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '-s, --satellite [path]',
+    description: 'Satellite project path (default: nearest-ancestor evolith.yaml from cwd)',
+  })
+  parseSatellite(val: string): string {
     return val;
   }
 

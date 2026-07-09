@@ -7,6 +7,13 @@ export interface SatelliteRecord {
   name: string;
   owner: string;
   repoUrl: string;
+  /**
+   * Workspace-relative path to this satellite project's root within the repo
+   * (the directory holding its evolith.yaml). Absent = repo-root satellite,
+   * preserving pre-ADR-0109 single-project records. Satellite identity is
+   * (repoUrl, subpath): a workspace (monorepo) is N records sharing a repoUrl.
+   */
+  subpath?: string;
   cloneUrl: string;
   sshUrl: string;
   topology: SatelliteTopology | string;
@@ -39,6 +46,8 @@ export interface InitializeSatelliteInput {
   private?: boolean;
   coreVersion?: string;
   existingRepoUrl?: string;
+  /** ADR-0109: project subpath within a workspace repo. Absent = repo-root satellite. */
+  subpath?: string;
 }
 
 export interface InitializeSatelliteOutput {

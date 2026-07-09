@@ -25,6 +25,10 @@
       "format": "uri",
       "description": "HTTPS URL of the satellite repository on GitHub"
     },
+    "subpath": {
+      "type": "string",
+      "description": "ADR-0109: workspace-relative path to this satellite project's root within the repo (the directory holding its evolith.yaml). Absent = repo-root satellite (pre-ADR-0109 single-project record). Satellite identity is (repoUrl, subpath); a workspace/monorepo is N records sharing a repoUrl."
+    },
     "cloneUrl": {
       "type": "string",
       "format": "uri",

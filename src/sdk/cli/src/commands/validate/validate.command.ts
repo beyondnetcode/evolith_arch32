@@ -3,6 +3,7 @@ import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/applica
 import { ValidationResult, ValidationIssue, RulesetValidatorService } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service';
 import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
 import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
+import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resolver';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
@@ -126,7 +127,12 @@ export class ValidateCommand extends BaseEvolithCommand {
   async executeCommand(passedParam: string[], options?: ValidateCommandOptions): Promise<void> {
     this.promptService.showIntro('Evolith SDK - Validación de Estándares');
 
-    const satellitePath = options?.satellite || this.profile.satellite || process.cwd();
+    // ADR-0109: unified satellite resolution — explicit --satellite →
+    // nearest-ancestor evolith.yaml from cwd → profile.satellite → cwd.
+    const satellitePath = resolveSatellitePath({
+      explicit: options?.satellite,
+      profileSatellite: this.profile.satellite,
+    });
 
     // GT-456: resolve the Core rulesets root so validation works from ANY satellite,
     // not just from inside the Core monorepo. Order: --core → EVOLITH_CORE_PATH →

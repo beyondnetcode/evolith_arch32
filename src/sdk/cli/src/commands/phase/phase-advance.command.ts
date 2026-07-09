@@ -16,10 +16,13 @@ import {
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
+import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resolver';
 
 interface PhaseAdvanceCommandOptions {
   from?: string;
   to?: string;
+  satellite?: string;
+  /** @deprecated ADR-0109 — use --satellite. Retained as an alias. */
   project?: string;
   core?: string;
   format?: string;
@@ -99,7 +102,12 @@ export class PhaseAdvanceCommand extends BaseEvolithCommand {
       proposal = await this.useCase.execute({
         fromPhase: fromPhase as GatePhase,
         toPhase: toPhase as GatePhase,
-        projectPath: options?.project ?? process.cwd(),
+        // ADR-0109: --satellite (canonical) → --project (deprecated alias) →
+        // nearest-ancestor evolith.yaml → profile.satellite → cwd.
+        projectPath: resolveSatellitePath({
+          explicit: options?.satellite ?? options?.project,
+          profileSatellite: this.profile.satellite,
+        }),
         corePath: options?.core,
         evaluatedBy,
         webhookUrl: options?.webhookUrl,
@@ -153,7 +161,12 @@ export class PhaseAdvanceCommand extends BaseEvolithCommand {
     return val;
   }
 
-  @Option({ flags: '--project [path]', description: 'Satellite project path (default: cwd)' })
+  @Option({ flags: '-s, --satellite [path]', description: 'Satellite project path (default: nearest-ancestor evolith.yaml from cwd)' })
+  parseSatellite(val: string): string {
+    return val;
+  }
+
+  @Option({ flags: '--project [path]', description: '[deprecated] Alias for --satellite (ADR-0109)' })
   parseProject(val: string): string {
     return val;
   }

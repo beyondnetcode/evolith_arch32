@@ -7,11 +7,15 @@ const SAT = '/sat';
 const CORE = '/core';
 const ctx = { satellitePath: SAT, corePath: CORE };
 
-function fsMock(cfg: { existing?: string[]; files?: Record<string, string> } = {}) {
+function fsMock(cfg: { existing?: string[]; files?: Record<string, string>; dirs?: Record<string, Array<{ name: string; dir?: boolean }>> } = {}) {
   const existing = new Set(cfg.existing ?? []);
   return {
     exists: jest.fn(async (p: string) => existing.has(p)),
     readFile: jest.fn(async (p: string) => cfg.files?.[p] ?? ''),
+    readdir: jest.fn(async (p: string) => {
+      const entries = cfg.dirs?.[p] ?? [];
+      return entries.map(e => ({ name: e.name, isDirectory: () => Boolean(e.dir), isFile: () => !e.dir }));
+    }),
   } as unknown;
 }
 
@@ -68,5 +72,58 @@ describe('SatelliteContractRuleHandler', () => {
   it('SVC-05 always skips (registry check)', async () => {
     const h = new SatelliteContractRuleHandler(fsMock(), yamlParser);
     expect((await h.evaluate(rule('SVC-05'), ctx)).result).toBe('skipped');
+  });
+
+  describe('SVC-06 workspace integrity (ADR-0109)', () => {
+    const workspaceYaml = path.join(SAT, 'evolith.workspace.yaml');
+    const descriptor = (projects: Array<{ name: string; path: string }>) =>
+      `apiVersion: evolith.dev/v1\nkind: SatelliteWorkspace\nmetadata:\n  name: ws\nspec:\n  projects:\n${projects.map(p => `    - name: ${p.name}\n      path: ${p.path}`).join('\n')}\n`;
+
+    it('skips when there is no evolith.workspace.yaml (single-project satellite)', async () => {
+      const h = new SatelliteContractRuleHandler(fsMock({ existing: [yaml] }), yamlParser);
+      expect((await h.evaluate(rule('SVC-06'), ctx)).result).toBe('skipped');
+    });
+
+    it('passes when declared projects and discovered manifests correspond one-to-one', async () => {
+      const h = new SatelliteContractRuleHandler(fsMock({
+        existing: [workspaceYaml, path.join(SAT, 'mms', 'evolith.yaml'), path.join(SAT, 'tracker', 'evolith.yaml')],
+        files: { [workspaceYaml]: descriptor([{ name: 'mms', path: 'mms' }, { name: 'tracker', path: 'tracker' }]) },
+        dirs: {
+          [SAT]: [{ name: 'mms', dir: true }, { name: 'tracker', dir: true }, { name: 'evolith.workspace.yaml' }],
+          [path.join(SAT, 'mms')]: [{ name: 'evolith.yaml' }],
+          [path.join(SAT, 'tracker')]: [{ name: 'evolith.yaml' }],
+        },
+      }), yamlParser);
+      expect((await h.evaluate(rule('SVC-06'), ctx)).result).toBe('passed');
+    });
+
+    it('fails when a declared project is missing its evolith.yaml', async () => {
+      const h = new SatelliteContractRuleHandler(fsMock({
+        existing: [workspaceYaml, path.join(SAT, 'mms', 'evolith.yaml')],
+        files: { [workspaceYaml]: descriptor([{ name: 'mms', path: 'mms' }, { name: 'tracker', path: 'tracker' }]) },
+        dirs: {
+          [SAT]: [{ name: 'mms', dir: true }, { name: 'evolith.workspace.yaml' }],
+          [path.join(SAT, 'mms')]: [{ name: 'evolith.yaml' }],
+        },
+      }), yamlParser);
+      const res = await h.evaluate(rule('SVC-06'), ctx);
+      expect(res.result).toBe('failed');
+      expect(res.message).toContain('tracker');
+    });
+
+    it('fails when an undeclared (stray) evolith.yaml is discovered', async () => {
+      const h = new SatelliteContractRuleHandler(fsMock({
+        existing: [workspaceYaml, path.join(SAT, 'mms', 'evolith.yaml'), path.join(SAT, 'stray', 'evolith.yaml')],
+        files: { [workspaceYaml]: descriptor([{ name: 'mms', path: 'mms' }]) },
+        dirs: {
+          [SAT]: [{ name: 'mms', dir: true }, { name: 'stray', dir: true }, { name: 'evolith.workspace.yaml' }],
+          [path.join(SAT, 'mms')]: [{ name: 'evolith.yaml' }],
+          [path.join(SAT, 'stray')]: [{ name: 'evolith.yaml' }],
+        },
+      }), yamlParser);
+      const res = await h.evaluate(rule('SVC-06'), ctx);
+      expect(res.result).toBe('failed');
+      expect(res.message).toContain('stray');
+    });
   });
 });

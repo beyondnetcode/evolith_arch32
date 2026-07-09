@@ -1,7 +1,12 @@
 package evolith.satellite_contracts
 
-violations[{"id": "SVC-01", "message": "evolith.yaml not found at repository root or multiple evolith.yaml files found"}] {
-    not input.satellite.contracts.hasEvolyamlAtRoot
+violations[{"id": "SVC-01", "message": "evolith.yaml not found at the satellite project root, or multiple evolith.yaml files found at the project root"}] {
+    not input.satellite.contracts.hasEvolyamlAtProjectRoot
+}
+
+violations[{"id": "SVC-06", "message": "Workspace integrity violation — a discovered evolith.yaml is not declared in evolith.workspace.yaml, or a declared project is missing its evolith.yaml"}] {
+    input.satellite.contracts.isWorkspace
+    not input.satellite.contracts.workspaceIntegrityOk
 }
 
 violations[{"id": "SVC-03", "message": "F1 phase satellite must reference core/ADR-0047 in spec.compliance.adrRegistry"}] {

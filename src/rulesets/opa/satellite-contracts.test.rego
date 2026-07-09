@@ -3,7 +3,7 @@ package evolith.satellite_contracts_test
 import data.evolith.satellite_contracts
 
 compliant_f1_input := {"satellite": {"contracts": {
-  "hasEvolyamlAtRoot": true,
+  "hasEvolyamlAtProjectRoot": true,
   "phase": "F1",
   "hasAdr0047": true,
   "hasExtractionReadinessScore": false,
@@ -12,6 +12,8 @@ compliant_f1_input := {"satellite": {"contracts": {
   "isDeprecated": false,
   "deprecatedStatusMarked": false,
   "nameIsUnique": true,
+  "isWorkspace": false,
+  "workspaceIntegrityOk": true,
 }}}
 
 test_compliant_f1_satellite_has_no_violations {
@@ -20,9 +22,25 @@ test_compliant_f1_satellite_has_no_violations {
 }
 
 test_missing_evolyaml_is_rejected {
-  i := json.patch(compliant_f1_input, [{"op": "replace", "path": "/satellite/contracts/hasEvolyamlAtRoot", "value": false}])
+  i := json.patch(compliant_f1_input, [{"op": "replace", "path": "/satellite/contracts/hasEvolyamlAtProjectRoot", "value": false}])
   violations := satellite_contracts.violations with input as i
   violations[_].id == "SVC-01"
+}
+
+test_workspace_integrity_violation_is_rejected {
+  i := json.patch(compliant_f1_input, [
+    {"op": "replace", "path": "/satellite/contracts/isWorkspace", "value": true},
+    {"op": "replace", "path": "/satellite/contracts/workspaceIntegrityOk", "value": false},
+  ])
+  violations := satellite_contracts.violations with input as i
+  violations[_].id == "SVC-06"
+}
+
+test_single_project_satellite_is_exempt_from_workspace_integrity {
+  # isWorkspace=false → SVC-06 must not fire even if workspaceIntegrityOk is absent/false
+  i := json.patch(compliant_f1_input, [{"op": "replace", "path": "/satellite/contracts/workspaceIntegrityOk", "value": false}])
+  violations := satellite_contracts.violations with input as i
+  count([v | v := violations[_]; v.id == "SVC-06"]) == 0
 }
 
 test_f1_missing_adr0047_is_rejected {

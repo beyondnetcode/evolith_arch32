@@ -5,6 +5,7 @@ import type {
   InitializeSatelliteOutput,
   SatelliteRecord,
 } from '../../domain/satellite-record';
+import { enumerateWorkspaceProjects, type WorkspaceProject } from '../../domain/workspace-descriptor';
 
 /**
  * Use case: Initialize or adopt a satellite repository under Evolith governance.
@@ -50,6 +51,7 @@ export class InitializeSatelliteUseCase {
       name: input.name || name,
       owner: input.owner || owner,
       repoUrl: repo.htmlUrl,
+      ...(input.subpath ? { subpath: input.subpath } : {}),
       cloneUrl: repo.cloneUrl,
       sshUrl: repo.sshUrl,
       topology: input.topology,
@@ -64,6 +66,40 @@ export class InitializeSatelliteUseCase {
     };
 
     return this.buildOutput(satellite);
+  }
+
+  /**
+   * ADR-0109: enumerate the satellite projects of a workspace (monorepo) into
+   * one `SatelliteRecord` per declared project, all sharing the workspace's
+   * `repoUrl` and each pinned to its `subpath`. `workspaceDoc` is a parsed
+   * `evolith.workspace.yaml`. A non-workspace document yields [] (the caller
+   * falls back to the single repo-root record). GitHub is not contacted here —
+   * this is a pure expansion of an already-adopted repo.
+   */
+  enumerateWorkspaceRecords(
+    workspaceDoc: unknown,
+    repo: { name: string; owner: string; repoUrl: string; cloneUrl: string; sshUrl: string },
+    defaults: { topology: string; phase: string; coreVersion?: string },
+  ): SatelliteRecord[] {
+    const now = new Date().toISOString();
+    const projects: WorkspaceProject[] = enumerateWorkspaceProjects(workspaceDoc);
+    return projects.map((project) => ({
+      id: randomUUID(),
+      name: project.name,
+      owner: repo.owner,
+      repoUrl: repo.repoUrl,
+      subpath: project.path,
+      cloneUrl: repo.cloneUrl,
+      sshUrl: repo.sshUrl,
+      topology: defaults.topology,
+      phase: defaults.phase,
+      status: 'linked' as const,
+      mode: 'adopt' as const,
+      coreVersion: defaults.coreVersion,
+      linkedAt: now,
+      createdAt: now,
+      updatedAt: now,
+    }));
   }
 
   private async create(
@@ -89,6 +125,7 @@ export class InitializeSatelliteUseCase {
       name: repo.name,
       owner: input.owner,
       repoUrl: repo.htmlUrl,
+      ...(input.subpath ? { subpath: input.subpath } : {}),
       cloneUrl: repo.cloneUrl,
       sshUrl: repo.sshUrl,
       topology: input.topology,

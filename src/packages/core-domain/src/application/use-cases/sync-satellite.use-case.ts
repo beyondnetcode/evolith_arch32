@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { SatelliteRecord } from '../../domain/satellite-record';
 import { IGitHubApiClient } from '../../domain/github-api-client.interface';
 import { ILogger } from '../../domain/interfaces';
+import { enumerateWorkspaceProjects } from '../../domain/workspace-descriptor';
 
 export interface SyncSatelliteInput {
   satellite: SatelliteRecord;
@@ -102,6 +103,32 @@ function walkDir(dir: string): string[] {
   return files;
 }
 
+/**
+ * ADR-0109: destination path for a synced file inside the satellite repo. For a
+ * workspace project record (`subpath` present, not repo-root) the file lands
+ * under the project's subpath so N projects sharing one repo stay isolated;
+ * a repo-root satellite (no subpath) pushes to the repo root unchanged.
+ */
+function destinationPath(satellite: SatelliteRecord, relativePath: string): string {
+  const sub = satellite.subpath;
+  if (!sub || sub === '.' || sub === '') return relativePath;
+  return path.posix.join(sub.replace(/\\/g, '/').replace(/\/+$/, ''), relativePath);
+}
+
+/**
+ * ADR-0109: expand a workspace root record into one record per declared project
+ * (each pinned to its `subpath`), given a parsed `evolith.workspace.yaml`.
+ * Returns [] when the document is not a workspace descriptor, so callers keep
+ * treating the repo as a single repo-root satellite.
+ */
+export function enumerateSyncTargets(rootRecord: SatelliteRecord, workspaceDoc: unknown): SatelliteRecord[] {
+  return enumerateWorkspaceProjects(workspaceDoc).map((project) => ({
+    ...rootRecord,
+    name: project.name,
+    subpath: project.path,
+  }));
+}
+
 function extractOwnerRepo(satellite: SatelliteRecord): { owner: string; repo: string } {
   // Try repoUrl first, fall back to owner field + name
   try {
@@ -163,13 +190,14 @@ export class SyncSatelliteUseCase {
           continue;
         }
 
+        const destPath = destinationPath(satellite, relativePath);
         await this.githubClient.pushFile(owner, repo, {
-          path: relativePath,
+          path: destPath,
           content: base64Content,
           message: 'chore(evolith-sync): propagate standard',
         });
 
-        syncedFiles.push({ path: relativePath, action: 'updated' });
+        syncedFiles.push({ path: destPath, action: 'updated' });
         this.logger?.info('SyncSatelliteUseCase: pushed file', relativePath);
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : String(err);

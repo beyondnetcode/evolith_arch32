@@ -12,7 +12,7 @@
         "contracts": {
           "type": "object",
           "required": [
-            "hasEvolyamlAtRoot",
+            "hasEvolyamlAtProjectRoot",
             "phase",
             "hasAdr0047",
             "hasExtractionReadinessScore",
@@ -22,14 +22,25 @@
             "deprecatedStatusMarked"
           ],
           "properties": {
-            "hasEvolyamlAtRoot": { "type": "boolean" },
+            "hasEvolyamlAtProjectRoot": {
+              "type": "boolean",
+              "description": "Whether the satellite project has exactly one evolith.yaml at its project root (ADR-0109: project-scoped, previously repo-scoped hasEvolyamlAtRoot)."
+            },
             "phase": { "type": "string", "enum": ["F1", "F2", "F3"] },
             "hasAdr0047": { "type": "boolean" },
             "hasExtractionReadinessScore": { "type": "boolean" },
             "coreVersionExists": { "type": "boolean" },
             "phaseTransitionWithoutApproval": { "type": "boolean" },
             "isDeprecated": { "type": "boolean" },
-            "deprecatedStatusMarked": { "type": "boolean" }
+            "deprecatedStatusMarked": { "type": "boolean" },
+            "isWorkspace": {
+              "type": "boolean",
+              "description": "Whether the satellite is a workspace (monorepo) declared by an evolith.workspace.yaml. Absent/false for single-project satellites (ADR-0109)."
+            },
+            "workspaceIntegrityOk": {
+              "type": "boolean",
+              "description": "Whether the workspace passes SVC-06 integrity: every discovered evolith.yaml corresponds to a declared spec.projects[].path and vice versa. Only evaluated when isWorkspace is true (ADR-0109)."
+            }
           }
         }
       }

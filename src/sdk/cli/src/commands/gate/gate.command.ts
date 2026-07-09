@@ -16,9 +16,12 @@ import {
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
+import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resolver';
 
 interface GateCommandOptions {
   phase?: string;
+  satellite?: string;
+  /** @deprecated ADR-0109 — use --satellite. Retained as an alias. */
   project?: string;
   core?: string;
   format?: string;
@@ -94,7 +97,12 @@ export class GateCommand extends BaseEvolithCommand {
     try {
       evidence = await this.useCase.execute({
         phase,
-        projectPath: options?.project ?? process.cwd(),
+        // ADR-0109: --satellite (canonical) → --project (deprecated alias) →
+        // nearest-ancestor evolith.yaml → profile.satellite → cwd.
+        projectPath: resolveSatellitePath({
+          explicit: options?.satellite ?? options?.project,
+          profileSatellite: this.profile.satellite,
+        }),
         corePath: options?.core,
         evaluatedBy,
         webhookUrl: options?.webhookUrl,
@@ -135,7 +143,12 @@ export class GateCommand extends BaseEvolithCommand {
     return val;
   }
 
-  @Option({ flags: '--project [path]', description: 'Satellite project path (default: cwd)' })
+  @Option({ flags: '-s, --satellite [path]', description: 'Satellite project path (default: nearest-ancestor evolith.yaml from cwd)' })
+  parseSatellite(val: string): string {
+    return val;
+  }
+
+  @Option({ flags: '--project [path]', description: '[deprecated] Alias for --satellite (ADR-0109)' })
   parseProject(val: string): string {
     return val;
   }

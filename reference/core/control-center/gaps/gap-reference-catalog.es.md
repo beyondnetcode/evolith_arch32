@@ -238,6 +238,65 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Referencias:** product/suite/architecture/evolith-suite-deployment-strategy.md §4.1/§7; deploy/kubernetes/kind-cluster.yaml; deploy/kubernetes/ (NetworkPolicies); riesgo §15 #13.
 
+#### GT-466
+
+**Título:** SVC-01 de repo-scope → project-scope + nueva SVC-06 de integridad de workspace (ADR-0109 Fase-0)
+
+**Problema:** El modelo de gobernanza de satélites de Core asumía un repositorio por satélite: SVC-01 decía *"El satélite debe tener exactamente un `evolith.yaml` en la raíz del repositorio; los `evolith.yaml` anidados están prohibidos."* Eso bloquea el monorepo de productos MMS+UMS+Tracker — colapsar los tres productos bajo un único manifiesto raíz gobernaría todo el monorepo como **un** satélite y destruiría la madurez por-producto independiente, los pines `coreRef` distintos y los registros de ADR por-producto.
+
+**Fix (HECHO — ADR-0109):** Replanteada **SVC-01** a project-scope: *"cada proyecto satélite debe tener exactamente un `evolith.yaml` en la raíz de su proyecto; un manifiesto anidado en el árbol de otro proyecto está prohibido; un workspace satélite (monorepo) declara sus raíces de proyecto en `evolith.workspace.yaml`."* Añadida **SVC-06 (integridad de workspace):** todo `evolith.yaml` descubierto bajo un workspace debe corresponder a un `spec.projects[].path` declarado, y toda ruta declarada debe contener un `evolith.yaml` (sin manifiestos huérfanos/anidados ni faltantes). Los satélites de un solo proyecto (sin `evolith.workspace.yaml`) son el workspace degenerado de un proyecto y quedan exentos de SVC-06 — totalmente retrocompatible. Implementado en el JSON de contratos, el espejo OPA (hecho `hasEvolyamlAtRoot` → `hasEvolyamlAtProjectRoot`, añadidos `isWorkspace`/`workspaceIntegrityOk` + input schema) y el handler nativo, que ahora descubre manifiestos con un recorrido de árbol acotado (omite `node_modules`/`.git`/`dist`/dirs de build). El evaluador nativo ya corría contra `ctx.satellitePath` (la ruta de *proyecto* resuelta), así que SVC-01 por-proyecto no requirió cambios de motor — solo el texto del contrato, el hecho OPA y el descubrimiento de SVC-06.
+
+**Cierre:**
+- [x] SVC-01 reescrita (repo-scope → project-scope) en `satellite-contracts.rules.json` + OPA `.rego` + input schema.
+- [x] SVC-06 añadida en el JSON de contratos, OPA `.rego` (+ casos `.test.rego`), input schema y handler nativo.
+- [x] Handler nativo workspace-aware (descubrimiento de `evolith.workspace.yaml` + chequeo de integridad); tests unitarios de handler + paridad en verde.
+
+**Referencias:** ADR-0109 (Gobernanza de Satélites Multi-Proyecto); `src/rulesets/governance/satellite-contracts.rules.json`; `src/rulesets/opa/satellite-contracts.rego` (+ `schemas/satellite-contracts.input.schema.json`, `satellite-contracts.test.rego`); `src/packages/core-domain/src/application/validators/evaluators/handlers/satellite-contract-rule.handler.ts`.
+
+#### GT-467
+
+**Título:** Schema `evolith.workspace.yaml` (`kind: SatelliteWorkspace`) (ADR-0109 Fase-0)
+
+**Problema:** Un workspace satélite necesita un descriptor autoritativo y validable por máquina de sus raíces de proyecto para que el descubrimiento quede acotado al conjunto declarado `spec.projects[].path` (SVC-01/SVC-06). No existía schema para este nuevo tipo de recurso.
+
+**Fix (HECHO — ADR-0109):** Añadido `src/rulesets/schema/evolith-workspace.schema.json` (`apiVersion: evolith.dev/v1`, `kind: SatelliteWorkspace`, `metadata.name` kebab-case, `spec.projects[].{name,path}` con `additionalProperties:false` y un guard de ruta relativa que rechaza `/` inicial y cualquier traversal `..`). El `evolith-yaml.schema.json` por-proyecto queda **sin cambios** — no se fuerza ningún campo al manifiesto de proyecto; la identidad del producto sigue siendo su propio `metadata.name` en su `path`. Registrado como `reference.evolithWorkspaceSchema` en el JSON de contratos.
+
+**Cierre:**
+- [x] `evolith-workspace.schema.json` creado (draft-07, `kind: SatelliteWorkspace`).
+- [x] `evolith-yaml.schema.json` intacto; schema de workspace referenciado desde el JSON de contratos (el guard de cobertura de reglas lo resuelve).
+
+**Referencias:** ADR-0109; `src/rulesets/schema/evolith-workspace.schema.json`; `src/rulesets/governance/satellite-contracts.rules.json` (`reference.evolithWorkspaceSchema`).
+
+#### GT-468
+
+**Título:** `SatelliteRecord.subpath` + enumeración de workspace en el registro (ADR-0109 Fase-0)
+
+**Problema:** `SatelliteRecord` anclaba la identidad del satélite en `repoUrl`/`owner`/`name` **sin `subpath`** — un registro por repo, así que un monorepo de N proyectos gobernados no podía representarse en el registro.
+
+**Fix (HECHO — ADR-0109):** Añadido un **`subpath` opcional** a `SatelliteRecord` (+ `satellite-record.schema.json`): ausente = satélite en raíz de repo (registros existentes preservados), presente = la ruta del proyecto dentro del repo. La identidad pasa a ser **(`repoUrl`, `subpath`)**; un workspace son N registros compartiendo `repoUrl`. Introducida una primitiva de dominio compartida `workspace-descriptor` (`isWorkspaceDescriptor`/`enumerateWorkspaceProjects`) que ambos casos de uso consumen: `initialize-satellite` gana `enumerateWorkspaceRecords(...)` (un registro por proyecto declarado, compartiendo el repo), y `sync-satellite` enumera targets y direcciona cada archivo empujado bajo el `subpath` del proyecto (un satélite en raíz de repo empuja sin cambios). Los documentos no-workspace enumeran a `[]`, así que el camino de un solo repo queda intacto.
+
+**Cierre:**
+- [x] `subpath?` en `SatelliteRecord` + `satellite-record.schema.json`.
+- [x] Primitiva `workspace-descriptor`; `initialize-satellite`/`sync-satellite` enumeran proyectos de workspace.
+- [x] Tests unitarios/paridad de dominio en verde.
+
+**Referencias:** ADR-0109; `src/packages/core-domain/src/domain/satellite-record.ts`; `src/packages/core-domain/src/domain/workspace-descriptor.ts`; `src/rulesets/schema/satellite-record.schema.json`; `initialize-satellite.use-case.ts`; `sync-satellite.use-case.ts`.
+
+#### GT-469
+
+**Título:** Unificación de `--satellite` en el CLI + resolución ancestro-más-cercano + fix de cwd en `upgrade` (ADR-0109 Fase-0)
+
+**Problema:** El CLI resolvía "cuál satélite" de forma inconsistente: `validate` aceptaba `--satellite`, `gate`/`phase` aceptaban `--project`, y **`upgrade` estaba atado a `process.cwd()` sin flag alguno**. Con workspaces multi-proyecto esta ambigüedad se vuelve un peligro de corrección (¿qué proyecto se está gobernando?).
+
+**Fix (HECHO — ADR-0109):** Cableado un único **`--satellite <path>`** canónico en `validate`, `gate`, `phase` y `upgrade`, manteniendo `--project` como **alias deprecado** en `gate`/`phase`. Añadido un resolutor compartido (`infrastructure/paths/satellite-resolver.ts`) que implementa el orden del ADR: `--satellite` explícito → **`evolith.yaml` ancestro-más-cercano desde cwd** → `profile.satellite` → cwd. Esto cierra el hardcode `process.cwd()` de `upgrade` para que `cd mms && evolith upgrade` y `evolith upgrade --satellite mms` resuelvan la misma raíz de proyecto. Las cuatro suites de comando pasan (86 tests).
+
+**Cierre:**
+- [x] `--satellite` en `validate`/`gate`/`phase`/`upgrade`; `--project` alias deprecado retenido en `gate`/`phase`.
+- [x] Resolutor de `evolith.yaml` ancestro-más-cercano; hardcode de cwd de `upgrade` eliminado.
+- [x] Tests unitarios del CLI en verde.
+
+**Referencias:** ADR-0109; `src/sdk/cli/src/infrastructure/paths/satellite-resolver.ts`; `src/sdk/cli/src/commands/{validate,gate,phase,upgrade}/`.
+
 #### GT-447
 
 **Título:** MILESTONE — Objetivo 1: stack completo funcional en local (Docker/Kubernetes)

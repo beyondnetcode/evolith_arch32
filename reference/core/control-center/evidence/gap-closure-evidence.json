@@ -5,7 +5,7 @@
     {
       "id": "GT-465",
       "closedAt": "2026-07-09",
-      "closureCommit": "<pending>",
+      "closureCommit": "70d8b8cc",
       "evidence": [
         "deploy/kubernetes/kind-cluster.yaml",
         "deploy/kubernetes/network-policies.yaml",

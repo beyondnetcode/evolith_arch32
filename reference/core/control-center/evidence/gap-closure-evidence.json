@@ -5,7 +5,7 @@
     {
       "id": "GT-463",
       "closedAt": "2026-07-09",
-      "closureCommit": "ce13b613",
+      "closureCommit": "79d1c403",
       "evidence": [
         "product/operations/alerts/prometheus-alerts.yml",
         "product/operations/incident-response-poison-message-reprocess.md",

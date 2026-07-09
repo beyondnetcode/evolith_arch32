@@ -71,6 +71,13 @@ Decisions applicable to any product built on top of the framework, regardless of
 | [ADR 0074: Evolith Core API Native Exposure Layer](./core/0074-evolith-core-api-exposure-layer.md) | Evolith Core API Native Exposure Layer | Official scalable network exposure | Core ADR | Yes |
 | [ADR 0078: Domain Financial Separation Governance](./core/0078-domain-financial-separation-governance.md) | Domain financial separation governance | Enforce DDD boundary between Core and Tracker | Core ADR | Yes |
 | [ADR 0079: Multi-Topology Reference Corpus](./core/0079-multi-topology-reference-corpus.md) | Multi-topology corpus and manifest contract | Govern topology profiles and executable enforcement | Core ADR | Yes |
+| [ADR 0100: Governance/Execution Boundary](./core/0100-governance-execution-boundary-product-initiative.md) | Product/Initiative as Primary Units with Advisory Capability | Establish governance boundary | Core ADR | Yes |
+| [ADR 0101: Stateless Evaluation Engine](./core/0101-core-stateless-evaluation-engine.md) | Evolith Core as a Stateless Evaluation Engine | Decouple evaluation logic from state | Core ADR | Yes |
+| [ADR 0102: Evolith Agent Runtime](./core/0102-evolith-agent-runtime.md) | Evolith Agent Runtime as a Decoupled Agentic Layer | Standardize agentic execution | Core ADR | Yes |
+| [ADR 0103: Architecture Planning Gate](./core/0103-architecture-planning-gate-intake.md) | Architecture Planning Gate as Pre-Discovery Intake | Establish early governance intake | Core ADR | Yes |
+| [ADR 0104: Advisory Design-Phase Governance](./core/0104-topology-driven-advisory-design-governance.md) | Topology-Driven Advisory Design-Phase Governance | Govern composition via blueprints | Core ADR | Yes |
+| [ADR 0105: OKF Knowledge Projection](./core/0105-okf-knowledge-projection.md) | OKF as the Portable Projection of the Knowledge OS | Standardize knowledge interchange | Core ADR | Yes |
+| [ADR 0106: Master Tenant and Context Projections](./core/0106-master-tenant-context-projections.md) | Master Tenant Registry in MMS and Context Projections | Isolate tenant contexts safely | Core ADR | Yes |
 
 ---
 

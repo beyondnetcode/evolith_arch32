@@ -71,6 +71,13 @@ Decisiones aplicables a cualquier producto construido sobre el framework, sin im
 | [ADR 0074: Capa de Exposición Nativa del Evolith Core API](./core/0074-evolith-core-api-exposure-layer.es.md) | Capa de Exposición Nativa del Evolith Core API | Exposición oficial de red scalables | ADR Core | Sí |
 | [ADR 0078: Gobernanza de Separación Financiera de Dominios](./core/0078-domain-financial-separation-governance.es.md) | Gobernanza de separación financiera de dominios | Hacer cumplir la frontera DDD entre Core y Tracker | ADR Core | Sí |
 | [ADR 0079: Corpus de Referencia Multi-Topología](./core/0079-multi-topology-reference-corpus.es.md) | Corpus multi-topología y contrato de manifiesto | Gobernar perfiles topológicos y enforcement ejecutable | ADR Core | Sí |
+| [ADR 0100: Frontera Gobierno/Ejecución](./core/0100-governance-execution-boundary-product-initiative.es.md) | Producto e Iniciativa como unidades primarias con capacidad de asesoría | Establecer frontera de gobernanza | ADR Core | Sí |
+| [ADR 0101: Motor de Evaluación Stateless](./core/0101-core-stateless-evaluation-engine.es.md) | Evolith Core como un motor de evaluación stateless | Desacoplar lógica de evaluación del estado | ADR Core | Sí |
+| [ADR 0102: Evolith Agent Runtime](./core/0102-evolith-agent-runtime.es.md) | Evolith Agent Runtime como capa agéntica desacoplada | Estandarizar ejecución agéntica | ADR Core | Sí |
+| [ADR 0103: Architecture Planning Gate](./core/0103-architecture-planning-gate-intake.es.md) | Architecture Planning Gate como intake de pre-discovery | Establecer la etapa de admisión temprana | ADR Core | Sí |
+| [ADR 0104: Gobernanza Advisory en Fase de Diseño](./core/0104-topology-driven-advisory-design-governance.es.md) | Gobernanza en diseño por topologías y blueprints | Gobernar composición mediante blueprints | ADR Core | Sí |
+| [ADR 0105: Proyección de Conocimiento OKF](./core/0105-okf-knowledge-projection.es.md) | OKF como proyección portable del Knowledge OS | Estandarizar intercambio de conocimiento | ADR Core | Sí |
+| [ADR 0106: Tenant Maestro y Proyecciones por Contexto](./core/0106-master-tenant-context-projections.es.md) | Registro de Tenant maestro en MMS y proyecciones de contexto | Aislar contextos de inquilino de forma segura | ADR Core | Sí |
 
 ---
 

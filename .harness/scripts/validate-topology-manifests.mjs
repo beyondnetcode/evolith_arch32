@@ -7,14 +7,36 @@ import Ajv from "ajv";
 import addFormats from "ajv-formats";
 
 const root = process.cwd();
-const schemaPath = path.join(root, "rulesets", "schema", "topology-manifest.schema.json");
+const schemaPath = path.join(root, "src", "rulesets", "schema", "topology-manifest.schema.json");
 const manifestRoots = [
   path.join(root, "reference", "architecture", "topologies"),
-  path.join(root, "rulesets", "topologies"),
+  path.join(root, "src", "rulesets", "topologies"),
 ];
 const failures = [];
 const manifests = [];
 const checkedTsConfigs = new Set();
+
+function resolvePath(filePath) {
+  if (!filePath) return "";
+  if (filePath === "reference/core/control-center/maturity-evidence.json") {
+    filePath = "reference/core/control-center/maturity-reports/maturity-evidence.json";
+  }
+  const absPath = path.isAbsolute(filePath) ? filePath : path.join(root, filePath);
+  if (fs.existsSync(absPath)) {
+    return absPath;
+  }
+  if (!path.isAbsolute(filePath)) {
+    const parts = filePath.split(path.sep);
+    const firstDir = parts[0];
+    if (["rulesets", "packages", "apps", "sdk", "tests"].includes(firstDir)) {
+      const srcPath = path.join(root, "src", filePath);
+      if (fs.existsSync(srcPath)) {
+        return srcPath;
+      }
+    }
+  }
+  return absPath;
+}
 
 function toPascalCase(filename) {
   const base = path.basename(filename, path.extname(filename));
@@ -25,7 +47,7 @@ function toPascalCase(filename) {
 }
 
 function findTsConfig(filePath) {
-  let dir = path.dirname(path.join(root, filePath));
+  let dir = path.dirname(resolvePath(filePath));
   while (dir !== root && dir !== path.dirname(root)) {
     const tsconfig = path.join(dir, "tsconfig.json");
     if (fs.existsSync(tsconfig)) {
@@ -58,7 +80,7 @@ function checkTypeScriptCompilation(manifestPath, tsFile) {
 
 function checkTypeScriptExports(manifestPath, tsFile, expectedSymbol) {
   try {
-    const content = fs.readFileSync(path.join(root, tsFile), "utf8");
+    const content = fs.readFileSync(resolvePath(tsFile), "utf8");
     const classRegex = new RegExp(`export\\s+class\\s+${expectedSymbol}\\b`);
     const constRegex = new RegExp(`export\\s+const\\s+${expectedSymbol}\\b`);
     const interfaceRegex = new RegExp(`export\\s+interface\\s+${expectedSymbol}\\b`);
@@ -74,8 +96,8 @@ function checkTypeScriptExports(manifestPath, tsFile, expectedSymbol) {
 
 function validateJsonSchema(manifestPath, jsonFile, schemaFilePath) {
   try {
-    const jsonContent = JSON.parse(fs.readFileSync(path.join(root, jsonFile), "utf8"));
-    const schemaContent = JSON.parse(fs.readFileSync(path.join(root, schemaFilePath), "utf8"));
+    const jsonContent = JSON.parse(fs.readFileSync(resolvePath(jsonFile), "utf8"));
+    const schemaContent = JSON.parse(fs.readFileSync(resolvePath(schemaFilePath), "utf8"));
 
     const ajvInstance = new Ajv({ strict: false, allErrors: true });
     addFormats(ajvInstance);
@@ -112,12 +134,12 @@ function relative(file) {
 }
 
 function hasApprovedAdrStatus(adrPath) {
-  const content = fs.readFileSync(path.join(root, adrPath), "utf8");
+  const content = fs.readFileSync(resolvePath(adrPath), "utf8");
   return /(?:^## Status\s*\n+\s*|^\s*(?:[-*]\s+)?\*\*Status:\*\*\s*)(?:Accepted|Approved)\b/im.test(content);
 }
 
 function validateExistingFile(manifestPath, artifact, label) {
-  if (!fs.existsSync(path.join(root, artifact))) {
+  if (!fs.existsSync(resolvePath(artifact))) {
     failures.push(`${relative(manifestPath)} violates R-27: missing ${label} ${artifact}`);
     return false;
   }
@@ -132,9 +154,9 @@ function validateBilingualGuide(manifestPath, guide, label) {
 }
 
 function validateCorpusFixtures(manifestPath, corpus) {
-  const schemaPath = corpus.configurationContract && path.join(root, corpus.configurationContract);
-  const validPath = corpus.fixtures?.valid && path.join(root, corpus.fixtures.valid);
-  const invalidPath = corpus.fixtures?.invalid && path.join(root, corpus.fixtures.invalid);
+  const schemaPath = corpus.configurationContract && resolvePath(corpus.configurationContract);
+  const validPath = corpus.fixtures?.valid && resolvePath(corpus.fixtures.valid);
+  const invalidPath = corpus.fixtures?.invalid && resolvePath(corpus.fixtures.invalid);
   if (!schemaPath || !validPath || !invalidPath || !fs.existsSync(schemaPath) || !fs.existsSync(validPath) || !fs.existsSync(invalidPath)) return;
 
   try {
@@ -281,7 +303,7 @@ if (!fs.existsSync(schemaPath)) {
       }
 
       for (const adr of manifest.spec?.artifacts?.adrs ?? []) {
-        if (fs.existsSync(path.join(root, adr)) && !hasApprovedAdrStatus(adr)) {
+        if (fs.existsSync(resolvePath(adr)) && !hasApprovedAdrStatus(adr)) {
           failures.push(`${relative(manifestPath)} violates R-27: topology ADR is not Accepted or Approved: ${adr}`);
         }
       }

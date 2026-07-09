@@ -110,6 +110,48 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Referencias:** OutputFormatterService (renderer de tabla); GT-224.
 
+#### GT-458
+
+**Título:** `agents` ignora sus flags documentados (enruta solo por acción posicional)
+
+**Problema:** `agents --help` anuncia `--install`, `--remove`, `--list`, `--run`, pero `executeCommand` deriva la acción únicamente de `passedParam[0]` (acción posicional). Así, `agents --list` (y `-l`, `--install`, `--remove`, `--run`) caen al menú interactivo en vez de ejecutar — los flags están muertos. Misma clase que F-001 (flag declarado no honrado → interactividad forzada), lo que rompe el uso no-interactivo/CI.
+
+**Evidencia:** `agents --list` y `agents -l` abren el picker "Select an action"; la fuente `agents.command.ts` computaba `const action = passedParam[0] || 'menu'` y nunca consultaba `options.list/install/remove/run`.
+
+**Fix propuesto:** derivar la acción de los flags cuando no hay acción posicional (la posicional sigue teniendo prioridad). Implementado en la rama `fix/cli-gaps-gt451-457`.
+
+**Cierre:** `agents --list` lista sin interacción; `--install/--remove/--run` enrutan sin menú; test unitario cubre el ruteo por flags.
+
+**Referencias:** src/sdk/cli/src/commands/agents/agents.command.ts; GT-451/F-001.
+
+#### GT-459
+
+**Título:** `upgrade` crashea con un stack trace crudo (SatelliteUpgradeService construido sin filesystem)
+
+**Problema:** `smart-cli upgrade` lanza `TypeError: Cannot read properties of undefined (reading 'exists')` más un error de NestJS de "request scoped provider", volcando un stack trace al usuario. El comando construye `new SatelliteUpgradeService()` sin opciones, así que `this.fs`/`this.logger` del servicio quedan `undefined` y el primer `fs.exists(...)` en `satellite-upgrade-diff` revienta. Bug de DI/wiring de la misma clase que F-008.
+
+**Evidencia:** `upgrade --dry-run --core <core>` y `upgrade` crashean ambos en `getSatelliteVersion` → `fs.exists`; `upgrade.command.ts` tenía `const service = new SatelliteUpgradeService();`.
+
+**Fix propuesto:** inyectar un `IFileSystem` real (NodeFileSystemProvider) + logger en `SatelliteUpgradeService`. Implementado en la rama `fix/cli-gaps-gt451-457`; considerar que el constructor del servicio los exija para que una construcción vacía falle en tiempo de compilación.
+
+**Cierre:** `upgrade`/`upgrade --dry-run` producen un plan de upgrade (o "already up to date") sin crashear; desaparece el stack trace crudo.
+
+**Referencias:** src/sdk/cli/src/commands/upgrade/upgrade.command.ts; src/packages/core-domain/src/application/upgrade/satellite-upgrade.service.ts; GT-408/F-008.
+
+#### GT-460
+
+**Título:** Los conteos de la superficie MCP del comando `api` están hardcodeados y se desincronizan del server real
+
+**Problema:** `smart-cli api --list` presenta la superficie API de Evolith con conteos fijos ("MCP Tools - 23 available operations", "MCP Resources - 8 available resources"), pero el server `@beyondnet/evolith-mcp` real expone un conjunto distinto. Los números son strings hardcodeados en `api.catalog.ts`, así que el CLI reporta mal la superficie a medida que se agregan tools/resources — deriva de exactitud/gobernanza (cf. GT-445 conteos obsoletos).
+
+**Evidencia:** un smoke JSON-RPC stdio de `src/packages/mcp-server/dist/main.js` (initialize → tools/list → resources/list) devuelve **35 tools** y **9 resources**, mientras `api -l` reporta 23 y 8. Fuente: `src/sdk/cli/src/commands/api/api.catalog.ts:35`.
+
+**Fix propuesto:** derivar el catálogo + conteos del registry vivo de tools/resources del MCP (fuente única de verdad) en vez de hardcodearlos, o regenerarlos en CI y añadir un guard que falle cuando el catálogo del CLI y el registry del server divergen.
+
+**Cierre:** los conteos de `api --list` coinciden con `tools/list`/`resources/list` del MCP server; un guard de CI previene la deriva futura.
+
+**Referencias:** src/sdk/cli/src/commands/api/api.catalog.ts; src/packages/mcp-server; GT-445.
+
 #### GT-447
 
 **Título:** MILESTONE — Objetivo 1: stack completo funcional en local (Docker/Kubernetes)

@@ -110,6 +110,48 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **References:** OutputFormatterService (table renderer); GT-224.
 
+#### GT-458
+
+**Title:** `agents` ignores its documented flags (routes only on a positional action)
+
+**Problem:** `agents --help` advertises `--install`, `--remove`, `--list`, `--run`, but `executeCommand` derives the action solely from `passedParam[0]` (a positional action). So `agents --list` (and `-l`, `--install`, `--remove`, `--run`) fall through to the interactive menu instead of executing — the flags are dead. Same class as F-001 (declared flag not honored → forced interactivity), which breaks non-interactive/CI usage.
+
+**Evidence:** `agents --list` and `agents -l` open the "Select an action" picker; source `agents.command.ts` computed `const action = passedParam[0] || 'menu'` and never consulted `options.list/install/remove/run`.
+
+**Proposed fix:** derive the action from the flags when no positional action is given (positional still wins). Implemented in branch `fix/cli-gaps-gt451-457`.
+
+**Closure:** `agents --list` lists non-interactively; `--install/--remove/--run` route without the menu; a unit test covers flag routing.
+
+**References:** src/sdk/cli/src/commands/agents/agents.command.ts; GT-451/F-001.
+
+#### GT-459
+
+**Title:** `upgrade` crashes with a raw stack trace (SatelliteUpgradeService constructed without a filesystem)
+
+**Problem:** `smart-cli upgrade` throws `TypeError: Cannot read properties of undefined (reading 'exists')` plus a NestJS "request scoped provider" error, dumping a stack trace at the user. The command constructs `new SatelliteUpgradeService()` with no options, so the service's `this.fs`/`this.logger` are `undefined` and the first `fs.exists(...)` in `satellite-upgrade-diff` throws. DI/wiring bug of the same class as F-008.
+
+**Evidence:** `upgrade --dry-run --core <core>` and `upgrade` both crash at `getSatelliteVersion` → `fs.exists`; `upgrade.command.ts` had `const service = new SatelliteUpgradeService();`.
+
+**Proposed fix:** inject a real `IFileSystem` (NodeFileSystemProvider) + logger into `SatelliteUpgradeService`. Implemented in branch `fix/cli-gaps-gt451-457`; consider making the service constructor require them so a bare construction fails at compile time.
+
+**Closure:** `upgrade`/`upgrade --dry-run` produce an upgrade plan (or "already up to date") without crashing; the raw stack trace is gone.
+
+**References:** src/sdk/cli/src/commands/upgrade/upgrade.command.ts; src/packages/core-domain/src/application/upgrade/satellite-upgrade.service.ts; GT-408/F-008.
+
+#### GT-460
+
+**Title:** `api` command's MCP-surface counts are hardcoded and drift from the live server
+
+**Problem:** `smart-cli api --list` presents the Evolith API surface with fixed counts ("MCP Tools - 23 available operations", "MCP Resources - 8 available resources"), but the actual `@beyondnet/evolith-mcp` server exposes a different set. The numbers are hardcoded strings in `api.catalog.ts`, so the CLI misreports the surface as tools/resources are added — an accuracy/governance drift (cf. GT-445 stale counts).
+
+**Evidence:** a stdio JSON-RPC smoke of `src/packages/mcp-server/dist/main.js` (initialize → tools/list → resources/list) returns **35 tools** and **9 resources**, while `api -l` reports 23 and 8. Source: `src/sdk/cli/src/commands/api/api.catalog.ts:35`.
+
+**Proposed fix:** derive the catalog + counts from the live MCP tool/resource registry (single source of truth) rather than hardcoding them, or regenerate them in CI and add a guard that fails when the CLI catalog and the server registry diverge.
+
+**Closure:** `api --list` counts match `tools/list`/`resources/list` from the MCP server; a CI guard prevents future drift.
+
+**References:** src/sdk/cli/src/commands/api/api.catalog.ts; src/packages/mcp-server; GT-445.
+
 #### GT-447
 
 **Title:** MILESTONE — Objective 1: full stack functional locally (Docker/Kubernetes)

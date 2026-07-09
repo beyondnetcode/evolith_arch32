@@ -72,7 +72,16 @@ export class AgentsCommand extends BaseEvolithCommand {
   }
 
   async executeCommand(passedParam: string[], options?: AgentsCommandOptions): Promise<void> {
-    const action = passedParam[0] || 'menu';
+    // GT-458: honor the documented flags (--install/--remove/--list/--run), not
+    // just a positional action, so `agents --list` lists instead of opening the
+    // interactive menu. A positional action still wins when both are given.
+    const flagAction =
+      options?.install !== undefined ? 'install' :
+      options?.remove !== undefined ? 'remove' :
+      options?.list ? 'list' :
+      options?.run !== undefined ? 'run' :
+      undefined;
+    const action = passedParam[0] || flagAction || 'menu';
     console.clear();
 
     switch (action) {

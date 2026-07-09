@@ -4,6 +4,8 @@ import { SatelliteUpgradeService, UpgradePlan } from '@beyondnet/evolith-core-do
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
+import { NodeFileSystemProvider } from '../../infrastructure/providers/node-filesystem.provider';
+import { logger } from '../../infrastructure/observability';
 
 interface UpgradeCommandOptions {
   dryRun?: boolean;
@@ -28,7 +30,13 @@ export class UpgradeCommand extends BaseEvolithCommand {
     const satellitePath = process.cwd();
     const corePath = options?.core || this.profile.core || this.findCorePath(satellitePath);
 
-    const service = new SatelliteUpgradeService();
+    // GT-459: SatelliteUpgradeService needs a filesystem + logger; constructing it
+    // bare left `this.fs`/`this.logger` undefined and crashed with a raw
+    // "Cannot read properties of undefined (reading 'exists')" stack trace.
+    const service = new SatelliteUpgradeService({
+      fileSystem: new NodeFileSystemProvider().createFileSystem(),
+      logger,
+    });
 
     this.promptService.showIntro('Evolith SDK - Satélite Upgrade');
     this.promptService.startSpinner('Planning upgrade...');

@@ -81,6 +81,11 @@
 * [0102-evolith-agent-runtime](./0102-evolith-agent-runtime.md) — **Evolith Agent Runtime as a decoupled agentic layer**
 * [0103-architecture-planning-gate-intake](./0103-architecture-planning-gate-intake.md) — **Architecture Planning Gate as pre-Discovery intake**
 * [0104-topology-driven-advisory-design-governance](./0104-topology-driven-advisory-design-governance.md) — **Topology-driven advisory Design-phase governance; blueprint as composable development guide (extends ADR-0079/0101)**
+* [0105-okf-knowledge-projection](./0105-okf-knowledge-projection.md) — **OKF knowledge projection**
+* [0106-master-tenant-context-projections](./0106-master-tenant-context-projections.md) — **Master Tenant context projections (MMS → UMS/Tracker)**
+* [0107-single-cluster-kubernetes-deployment-topology](./0107-single-cluster-kubernetes-deployment-topology.md) — **Single-cluster Kubernetes deployment topology for the Evolith suite**
+* [0108-masstransit-owned-message-topology](./0108-masstransit-owned-message-topology.md) — **MassTransit owns the message topology; broker CRDs are RBAC-only**
+* [0109-multi-project-satellite-governance](./0109-multi-project-satellite-governance.md) — **Multi-project satellite governance (monorepo satellites); Core stays sovereign**
 
 ---
 [Back to Upper Level](../README.md)

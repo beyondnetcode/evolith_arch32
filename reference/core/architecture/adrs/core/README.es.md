@@ -81,6 +81,11 @@
 * [0102-evolith-agent-runtime](./0102-evolith-agent-runtime.es.md) — **Evolith Agent Runtime como capa agéntica desacoplada**
 * [0103-architecture-planning-gate-intake](./0103-architecture-planning-gate-intake.es.md) — **Architecture Planning Gate como intake pre-Discovery**
 * [0104-topology-driven-advisory-design-governance](./0104-topology-driven-advisory-design-governance.es.md) — **Gobernanza advisory de Design dirigida por topología; blueprint como guía de desarrollo componible (extiende ADR-0079/0101)**
+* [0105-okf-knowledge-projection](./0105-okf-knowledge-projection.es.md) — **Proyección de conocimiento OKF**
+* [0106-master-tenant-context-projections](./0106-master-tenant-context-projections.es.md) — **Proyecciones de contexto del Tenant maestro (MMS → UMS/Tracker)**
+* [0107-single-cluster-kubernetes-deployment-topology](./0107-single-cluster-kubernetes-deployment-topology.es.md) — **Topología de despliegue Kubernetes de cluster único para la suite Evolith**
+* [0108-masstransit-owned-message-topology](./0108-masstransit-owned-message-topology.es.md) — **MassTransit es dueño de la topología de mensajes; los CRDs del broker son solo RBAC**
+* [0109-multi-project-satellite-governance](./0109-multi-project-satellite-governance.es.md) — **Gobernanza de satélites multi-proyecto (satélites monorepo); Core permanece soberano**
 
 ---
 [Volver al Nivel Superior](../README.es.md)

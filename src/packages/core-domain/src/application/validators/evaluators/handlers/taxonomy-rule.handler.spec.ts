@@ -50,7 +50,7 @@ describe('TaxonomyRuleHandler', () => {
   });
 
   it('TAX-07 skips without ADR dir and flags bad ADR filenames', async () => {
-    const adrDir = path.join(CORE, 'reference', 'architecture', 'adrs');
+    const adrDir = path.join(CORE, 'reference', 'core', 'architecture', 'adrs');
     const skip = new TaxonomyRuleHandler(fsMock());
     expect((await skip.evaluate(rule({ id: 'TAX-07' }), ctx)).result).toBe('skipped');
 
@@ -61,13 +61,13 @@ describe('TaxonomyRuleHandler', () => {
   });
 
   it('TAX-08 flags ADRs missing a bilingual pair', async () => {
-    const adrDir = path.join(CORE, 'reference', 'architecture', 'adrs');
+    const adrDir = path.join(CORE, 'reference', 'core', 'architecture', 'adrs');
     const h = new TaxonomyRuleHandler(fsMock({ existing: [adrDir], dirs: { [adrDir]: ['0001-foo.md'] } }));
     expect((await h.evaluate(rule({ id: 'TAX-08' }), ctx)).result).toBe('failed');
   });
 
   it('TAX-08 passes when every ADR has its .es.md pair', async () => {
-    const adrDir = path.join(CORE, 'reference', 'architecture', 'adrs');
+    const adrDir = path.join(CORE, 'reference', 'core', 'architecture', 'adrs');
     const h = new TaxonomyRuleHandler(fsMock({ existing: [adrDir], dirs: { [adrDir]: ['0001-foo.md', '0001-foo.es.md'] } }));
     expect((await h.evaluate(rule({ id: 'TAX-08' }), ctx)).result).toBe('passed');
   });

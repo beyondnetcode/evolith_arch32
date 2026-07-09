@@ -297,6 +297,75 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Referencias:** ADR-0109; `src/sdk/cli/src/infrastructure/paths/satellite-resolver.ts`; `src/sdk/cli/src/commands/{validate,gate,phase,upgrade}/`.
 
+#### GT-470
+
+**Título:** `disk-ruleset` `loadAllRulesets` tragaba JSON de ruleset malformado (sobre-ampliación de GT-456)
+
+**Problema:** GT-456 hizo `DiskRulesetRepository.loadAllRulesets` resiliente capturando **todos** los errores para que un `*.rules.json` no estándar dejara de abortar la validación completa. Eso sobre-amplió el `catch` hasta tragar también JSON **sintácticamente malformado** — anulando en silencio la validación sobre un corpus corrupto y rompiendo los specs "throws on malformed JSON" del CLI/core-api (una herramienta de gobernanza debe fallar ruidosamente ante un ruleset roto, nunca darle luz verde).
+
+**Evidencia:** 3 specs de disk-ruleset en rojo en `develop`/`main` (infra-providers 9, CLI 4, core-api 4), todos afirmando un error duro ante un ruleset malformado.
+
+**Fix / Resolución (HECHO — commit de cierre `7e772d1c`):** se separaron las dos rutas en `loadAllRulesets` — los **errores de parseo JSON** fallan duro (`Ruleset validation error` + `logger.error`), mientras que sólo los rulesets **válidos-pero-no-estándar** (mismatch de schema) se omiten con warning (intención de GT-456 preservada). 3 specs en verde; suite unitaria CLI 919/919. **Clasificación: bug real (`catch` demasiado amplio).**
+
+**Cierre:**
+- [x] Los errores de parseo vuelven a ser error duro; sólo se omiten rulesets no-estándar-pero-válidos.
+- [x] Los 3 specs de disk-ruleset en verde.
+
+**Referencias:** commit de cierre `7e772d1c`; `src/packages/infra-providers/src/disk-ruleset.repository.ts`; GT-456.
+
+#### GT-471
+
+**Título:** La suite de contrato ADR-0073 (`roundtrip-gate-evaluate.spec.ts`) no podía ejecutarse — resolución de módulos en cascada + fixtures de superficie obsoletas
+
+**Problema:** La suite de contrato entre superficies (CLI, MCP y REST deben devolver el mismo envelope de evidencia de gate ADR-0073) **nunca se ejecutó** — no compilaba desde su tsconfig/jest aislado en `src/tests/contract`. Una vez arreglada la resolución de módulos, las interacciones REST y MCP resultaron escritas contra **generaciones de API anteriores** (endpoint de gate basado en path y un POST MCP sin sesión), por lo que ninguna aserción entre superficies se había validado nunca.
+
+**Evidencia:** `npm run test:contract` → "Could not locate module `nest-commander-testing`" → TS2307 en subpaths `@beyondnet/evolith-core-domain/*` → `conf` (ESM) irresoluble; tras corregirlos, 34/34 fallaban por REST 404/400, errores de sesión/ABAC del MCP, y un `process.exit(1)` que mataba el worker `--runInBand`.
+
+**Fix / Resolución (HECHO — `npm run test:contract` 34/34 en verde):**
+- **Resolución de módulos (bug de config real).** Se quitó el `moduleNameMapper` de `nest-commander-testing` (se iza al `node_modules` raíz, que el walk-up de `moduleDirectories` ya resuelve); se cambió el `moduleResolution` del tsconfig de contrato `node` → `bundler` (como `sdk/cli`) para que los mapas `exports` resuelvan los subpaths `@beyondnet/evolith-*/…` y `conf` (ESM); se activó `diagnostics.warnOnly` de ts-jest (tres grafos DI bajo un tsconfig aislado — el `npm run build` de cada paquete es la autoridad de tipos); se reutilizaron los mocks ESM del CLI (`conf`, `@clack/prompts`, `chokidar`); se ignoró `dist/` + `__mocks__` de mcp-server; y se añadió `--experimental-vm-modules` al script `test:contract` para que corra el ABAC OPA-wasm de la herramienta MCP.
+- **Fixtures obsoletas.** `REPO_ROOT` resolvía a `…/src` en vez de la raíz del repo (el registro de gates vive en `reference/governance/sdlc/gates` en la raíz); se neutralizó `process.exit` a nivel de suite; se reescribió el helper REST a la API **workspace-ref** vigente (`{workspaceRef}`, `PG{n}` por fase, `200`, `WORKSPACE_ROOT`/`CORE_PATH` server-side); y el helper MCP hace el handshake StreamableHTTP (`initialize` → `mcp-session-id` → `tools/call`) con el argumento `projectPath` correcto.
+- **Fix mínimo de API (elegido por el PO).** `evaluatedBy` opcional en `EvaluateGateDto` (una etiqueta de KIND, no un path/tenant) para que REST honre el campo `evaluatedBy` de ADR-0073 como CLI/MCP; y un gate id desconocido devuelve `400` en vez de mapear en silencio a `discovery`. **Clasificación: mixta — bug de config + fixtures obsoletas + un pequeño fix de API que honra el contrato.**
+
+**Cierre:**
+- [x] `npm run test:contract` corre y está verde (34/34).
+- [x] Helpers REST/MCP reflejan las APIs vigentes; paridad de `evaluatedBy` + `400` de gate desconocido cubiertos por `gates.controller.spec`.
+
+**Referencias:** `src/tests/contract/{jest.config.js,tsconfig.json,roundtrip-gate-evaluate.spec.ts}`; `package.json` (`test:contract`); `src/apps/core-api/src/presentation/{controllers/gates.controller.ts,dtos/gates.dto.ts}`; ADR-0073.
+
+#### GT-472
+
+**Título:** Brecha de paridad del evaluador nativo (GT-229) — reglas de directorio ADR omitidas en silencio por un path obsoleto `reference/architecture/adrs`
+
+**Problema:** Tras la reorganización de la taxonomía de referencia que movió los ADRs a `reference/core/architecture/adrs`, tres sitios del evaluador seguían resolviendo el directorio ADR en el `reference/architecture/adrs` previo: el handler cross-cutting (`DOD-07`), el handler de taxonomía (`TAX-07`/`TAX-08`) y el constructor de input OPA (`listAdrs`). Las reglas de gobernanza ADR devolvían **`skipped`** en vez de pass/fail — tanto en los fixtures de paridad **como, críticamente, contra el repo Core real** (un hueco de gobernanza silencioso donde las reglas de naming/bilingüe de ADR nunca corren). Brecha de paridad GT-229 genuina.
+
+**Evidencia:** `native-opa-parity.spec.ts` en rojo — `cross-cutting/compliant` `DOD-07` (esperado `passed`), `repository-taxonomy/compliant-core` `TAX-07`/`TAX-08` (esperado `passed`), `repository-taxonomy/adr-naming-violation` `TAX-07`/`TAX-08` (esperado `failed`), todos devolviendo `skipped` ("ADR directory not found"). El layout real del repo (`reference/core/architecture/adrs`), los fixtures y las referencias canónicas `reference/core/architecture/adrs/…` del propio `repository-taxonomy.rules.json` coinciden en que los fixtures eran correctos y el código estaba obsoleto.
+
+**Fix / Resolución (HECHO):** se corrigió el path del directorio ADR a `reference/core/architecture/adrs` en `cross-cutting-rule.handler.ts` (`DOD-07`), `taxonomy-rule.handler.ts` (`TAX-07`/`TAX-08`) y `opa-input-builder.ts` (`listAdrs`) — manteniendo la paridad native↔OPA y el corpus real — y se actualizaron los dos specs unitarios que fijaban el path viejo (`taxonomy-rule.handler.spec.ts`, `opa-input-builder.spec.ts`). Suite core-domain en verde (735/735). **Clasificación: bug real (path obsoleto del evaluador); los fixtures eran correctos.**
+
+**Cierre:**
+- [x] Path ADR corregido en ambos handlers nativos + el constructor de input OPA.
+- [x] Specs unitarios obsoletos actualizados; `native-opa-parity` + suite core-domain en verde.
+
+**Referencias:** `src/packages/core-domain/src/application/validators/evaluators/handlers/{cross-cutting-rule.handler.ts,taxonomy-rule.handler.ts}`; `.../evaluators/opa-input-builder.ts`; `.../evaluators/native-opa-parity.spec.ts`; `src/rulesets/cross-cutting/repository-taxonomy.rules.json`; GT-229.
+
+#### GT-473
+
+**Título:** Paths obsoletos en `RULESET_ID_MAP` (bug real) + base del registro de gates en el spec `validate-blueprint` (fixture obsoleta)
+
+**Problema:** Dos fallos independientes causados por la misma confusión de base `src/` vs raíz del repo:
+1. **`RulesetValidationMode.RULESET_ID_MAP` (bug real).** Tras reagrupar el corpus de rulesets (a `rulesets/cross-cutting/`, `rulesets/sdlc/`, `rulesets/governance/`), el mapa id→path seguía apuntando al layout viejo de directorio-por-ruleset para 6 ids (`compliance-baseline`, `definition-of-done`, `engineering-manifesto`, `repository-taxonomy`, `quality-thresholds`, `satellite-contracts`). El `validate -r <id>` del CLI reportaba un **`failed`** falso (`RULESET_FILE_NOT_FOUND`) para esos rulesets con nombre.
+2. **`validate-blueprint.use-case.spec` (fixture obsoleta).** El spec calculaba el registro de gates SDLC desde `…/src` (`path.resolve(__dirname, '../../../../../..')`), por lo que `gate-f1` nunca se encontraba y un blueprint bien formado devolvía **FAIL**. El caso de uso toma `corePath` (`src/`, donde vive `rulesets/`) y `sdlcPath` (raíz `reference/governance/sdlc/gates`) como parámetros **separados** por diseño — la base del dir de gates del spec estaba simplemente mal.
+
+**Evidencia:** `ruleset-validation.mode.spec.ts` — 5 rulesets devolvieron `failed`/`FILE_NOT_FOUND` donde se esperaba `passed` + `rulesChecked` exacto (7/10/10/11/8); los conteos de reglas en los paths nuevos coincidían exactamente con los fixtures. `validate-blueprint.use-case.spec.ts` — 3 casos (`passes for a well-formed blueprint`, DRAFT→VALIDATED, historial de veredicto) devolvían `FAIL`/sin transición porque el dir de gates resolvía bajo `src/`.
+
+**Fix / Resolución (HECHO):** (1) se corrigieron los 6 paths obsoletos de `RULESET_ID_MAP` al layout `cross-cutting/`·`sdlc/`·`governance/` vigente — **bug real**, la ruta validate-por-id del CLI estaba rota para usuarios reales. (2) se corrigió el spec para basar `SRC_ROOT` (corePath) en `src/` y el registro de gates SDLC en la raíz real del repo (`reference/governance/sdlc/gates`) — **fixture obsoleta**, el diseño de dos bases del caso de uso es correcto. Suite core-domain en verde (735/735).
+
+**Cierre:**
+- [x] Paths de `RULESET_ID_MAP` corregidos (6 ids); spec `ruleset-validation.mode` en verde (8/8).
+- [x] Base de gates del spec `validate-blueprint` corregida; spec en verde (17/17).
+
+**Referencias:** `src/packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts`; `.../use-cases/validate-blueprint.use-case.spec.ts`; `.../use-cases/validate-blueprint.use-case.ts`; GT-461 (archivos de datos de gate).
+
 #### GT-447
 
 **Título:** MILESTONE — Objetivo 1: stack completo funcional en local (Docker/Kubernetes)

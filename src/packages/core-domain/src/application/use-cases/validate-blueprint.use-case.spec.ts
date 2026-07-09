@@ -15,17 +15,26 @@ import type { DomainEvent } from '../../domain/events/domain-event';
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Repository root — used for resolving real rulesets paths in integration checks. */
-const REPO_ROOT = path.resolve(__dirname, '..', '..', '..', '..', '..');
+/**
+ * `src/` root — the corePath base where the rulesets tree lives
+ * (`src/rulesets/topologies`, `src/rulesets/opa`, …).
+ */
+const SRC_ROOT = path.resolve(__dirname, '..', '..', '..', '..', '..');
 
-/** Real SDLC gate directory. */
+/** True repository root (one level above `src/`). */
+const REPO_ROOT = path.resolve(SRC_ROOT, '..');
+
+/**
+ * Real SDLC gate registry — the `gate-f*.json` data files live at the repo-root
+ * `reference/governance/sdlc/gates/` (authored under GT-461), NOT under `src/`.
+ */
 const SDLC_GATE_DIR = path.join(REPO_ROOT, 'reference', 'governance', 'sdlc', 'gates');
 
 function makeContext(overrides: Partial<BlueprintValidationContext> = {}): BlueprintValidationContext {
   return {
     tenantId: 'tenant-test',
     actorRoles: [Role.ARCHITECT],
-    corePath: REPO_ROOT,
+    corePath: SRC_ROOT,
     sdlcPath: SDLC_GATE_DIR,
     ...overrides,
   };

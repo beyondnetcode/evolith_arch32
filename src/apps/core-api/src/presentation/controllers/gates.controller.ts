@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Param, HttpCode, HttpStatus, BadRequestException } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiBody } from '@nestjs/swagger';
 import { EvaluateGateUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 import { EvaluateGateDto } from '../dtos/gates.dto';
@@ -27,6 +27,7 @@ export class GatesController {
       phase: this.mapGateIdToPhase(gateId),
       projectPath: this.workspaceResolver.resolve(body.workspaceRef),
       corePath: this.workspaceResolver.corePath(),
+      evaluatedBy: body.evaluatedBy,
     });
     // GT-411: Return pre-built ADR-0073 envelope with canonical command name.
     return createSuccessEnvelope(result, {
@@ -46,7 +47,9 @@ export class GatesController {
       case '3': return 'construction';
       case '4': return 'qa';
       case '5': return 'release';
-      default: return 'discovery';
+      // An unknown gate id must be rejected, not silently evaluated as discovery
+      // — otherwise the caller gets a valid-looking verdict for the wrong gate.
+      default: throw new BadRequestException(`Unknown gate id "${gateId}" — expected one of PG1..PG5`);
     }
   }
 }

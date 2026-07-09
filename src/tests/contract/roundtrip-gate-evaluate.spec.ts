@@ -1,13 +1,29 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommandTestFactory } from 'nest-commander-testing';
 import request from 'supertest';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
 import * as http from 'node:http';
 import * as fs from 'fs-extra';
 import * as path from 'node:path';
 import * as os from 'node:os';
+import { EnvelopeInterceptor } from '../../apps/core-api/src/infrastructure/interceptors/envelope.interceptor';
+import { HttpExceptionFilter } from '../../apps/core-api/src/infrastructure/filters/http-exception.filter';
 
-const REPO_ROOT = path.resolve(__dirname, '../..');
+// jest-runner wraps process.exit so that any exit prints a warning AND calls the
+// REAL exit — which, under --runInBand, kills the whole worker. The CLI gate
+// command legitimately exits non-zero on a failed verdict; this suite only reads
+// the ADR-0073 envelope it prints to stdout, never the exit code. Neutralise the
+// wrapper at module load (after jest-runner has installed it, before any test
+// runs) so a failed verdict can't tear the suite down. A jest.spyOn in a hook is
+// unreliable here because the exit fires inside a concurrent Promise.all stage.
+const originalProcessExit = process.exit;
+process.exit = ((..._args: unknown[]) => undefined) as typeof process.exit;
+
+// True repository root. __dirname is <repo>/src/tests/contract, so three levels
+// up — NOT two (which lands on <repo>/src). `--core` must point at the repo root
+// because the canonical gate registry lives at reference/governance/sdlc/gates/
+// (repo root), loaded by PhaseGateValidatorService via GateRegistryService.
+const REPO_ROOT = path.resolve(__dirname, '../../..');
 
 // ---------------------------------------------------------------------------
 // Surface helpers
@@ -18,7 +34,10 @@ async function runCliGate(
   phase: string,
   projectPath: string,
 ): Promise<Record<string, unknown>> {
-  const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+  // process.exit is neutralised suite-wide (see the describe-level guard): the
+  // gate command exits non-zero on a failed verdict, but here we only need the
+  // ADR-0073 envelope it prints to stdout. A per-call spy would race with the
+  // concurrent surfaces under Promise.all and let a real exit kill the runner.
   const logSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
   try {
     await CommandTestFactory.run(instance, [
@@ -32,9 +51,53 @@ async function runCliGate(
     const payload = logSpy.mock.calls.map(c => String(c[0])).join('\n');
     return JSON.parse(payload) as Record<string, unknown>;
   } finally {
-    exitSpy.mockRestore();
     logSpy.mockRestore();
   }
+}
+
+/** A single JSON-RPC POST to the MCP StreamableHTTP endpoint. */
+async function mcpPost(
+  port: number,
+  payload: Record<string, unknown>,
+  sessionId?: string,
+): Promise<{ headers: http.IncomingHttpHeaders; body: string }> {
+  const body = JSON.stringify(payload);
+  const headers: Record<string, string | number> = {
+    'Content-Type': 'application/json',
+    // StreamableHTTP requires the client to accept both JSON and the SSE stream.
+    'Accept': 'application/json, text/event-stream',
+    'Content-Length': Buffer.byteLength(body),
+  };
+  if (sessionId) headers['mcp-session-id'] = sessionId;
+
+  return new Promise((resolve, reject) => {
+    const req = http.request(
+      { hostname: '127.0.0.1', port, path: '/mcp', method: 'POST', headers },
+      (res) => {
+        let data = '';
+        res.on('data', (chunk: string) => { data += chunk; });
+        res.on('end', () => resolve({ headers: res.headers, body: data }));
+      },
+    );
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
+
+/** Extract the JSON-RPC payload from either a JSON or an SSE (`data:`) response. */
+function parseMcpBody(raw: string): {
+  result?: { content?: Array<{ text: string }> };
+  error?: { message: string };
+} {
+  const trimmed = raw.trim();
+  if (trimmed.startsWith('{')) return JSON.parse(trimmed);
+  const json = trimmed
+    .split('\n')
+    .filter(l => l.startsWith('data:'))
+    .map(l => l.slice('data:'.length).trim())
+    .join('');
+  return JSON.parse(json);
 }
 
 async function callMcpGate(
@@ -42,7 +105,24 @@ async function callMcpGate(
   phase: string,
   projectPath: string,
 ): Promise<Record<string, unknown>> {
-  const body = JSON.stringify({
+  // StreamableHTTP is session-based: initialize → notifications/initialized →
+  // tools/call, each carrying the minted mcp-session-id.
+  const init = await mcpPost(port, {
+    jsonrpc: '2.0',
+    id: 0,
+    method: 'initialize',
+    params: {
+      protocolVersion: '2024-11-05',
+      capabilities: {},
+      clientInfo: { name: 'contract-test', version: '1.0.0' },
+    },
+  });
+  const sessionId = init.headers['mcp-session-id'] as string | undefined;
+  if (!sessionId) throw new Error('MCP did not mint a session id on initialize');
+
+  await mcpPost(port, { jsonrpc: '2.0', method: 'notifications/initialized' }, sessionId);
+
+  const call = await mcpPost(port, {
     jsonrpc: '2.0',
     id: 1,
     method: 'tools/call',
@@ -50,37 +130,14 @@ async function callMcpGate(
       name: 'evolith-gate-evaluate',
       arguments: {
         phase,
-        path: projectPath,
+        projectPath,
         corePath: REPO_ROOT,
         evaluatedBy: 'ci',
-        format: 'json',
       },
     },
-  });
+  }, sessionId);
 
-  const options = {
-    hostname: '127.0.0.1',
-    port,
-    path: '/mcp',
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Content-Length': body.length },
-  };
-
-  const response = await new Promise<string>((resolve, reject) => {
-    const req = http.request(options, (res) => {
-      let data = '';
-      res.on('data', (chunk: string) => { data += chunk; });
-      res.on('end', () => resolve(data));
-    });
-    req.on('error', reject);
-    req.write(body);
-    req.end();
-  });
-
-  const parsed = JSON.parse(response) as {
-    result?: { content?: Array<{ text: string }> };
-    error?: { message: string };
-  };
+  const parsed = parseMcpBody(call.body);
 
   if (parsed.error) throw new Error(`MCP error: ${parsed.error.message}`);
   const text = parsed.result?.content?.[0]?.text;
@@ -89,15 +146,28 @@ async function callMcpGate(
   return JSON.parse(text) as Record<string, unknown>;
 }
 
+/** Phase → canonical gate id, mirroring GatesController.mapGateIdToPhase. */
+const PHASE_TO_GATE: Record<string, string> = {
+  discovery: 'PG1',
+  design: 'PG2',
+  construction: 'PG3',
+  qa: 'PG4',
+  release: 'PG5',
+};
+
 async function callRestGate(
   app: INestApplication,
   phase: string,
-  projectPath: string,
+  workspaceRef: string,
 ): Promise<Record<string, unknown>> {
+  // The REST surface is workspace-ref based (Core never receives a user path):
+  // the phase is derived from the gate id, projectPath/corePath are resolved
+  // server-side from WORKSPACE_ROOT/CORE_PATH. It returns 200 (HttpCode.OK).
+  const gateId = PHASE_TO_GATE[phase] ?? phase;
   const res = await request(app.getHttpServer())
-    .post('/api/v1/gates/PG1/evaluate')
-    .send({ phase, projectPath, corePath: REPO_ROOT, evaluatedBy: 'ci' })
-    .expect(201);
+    .post(`/api/v1/gates/${gateId}/evaluate`)
+    .send({ workspaceRef, evaluatedBy: 'ci' })
+    .expect(200);
 
   return res.body as Record<string, unknown>;
 }
@@ -131,9 +201,16 @@ describe('ADR-0073 contract roundtrip: gate evaluate', () => {
   let restApp: INestApplication;
   let mcpServer: { app: { close: () => Promise<void> }; boundPort: number };
   let projectPath: string;
+  let workspaceRef: string;
 
   beforeAll(async () => {
     projectPath = path.join(os.tmpdir(), `evolith-contract-${process.pid}`);
+    workspaceRef = path.basename(projectPath);
+    // The REST surface resolves projectPath/corePath server-side from these env
+    // vars (WorkspaceReferenceResolverService). Set them BEFORE the core-api
+    // AppModule is imported/compiled so ConfigModule reads them at init.
+    process.env.WORKSPACE_ROOT = path.dirname(projectPath);
+    process.env.CORE_PATH = REPO_ROOT;
     await fs.ensureDir(projectPath);
 
     // CLI: bootstrap via CommandTestFactory
@@ -161,11 +238,20 @@ describe('ADR-0073 contract roundtrip: gate evaluate', () => {
       imports: [CoreApiAppModule],
     }).compile();
     restApp = moduleFixture.createNestApplication();
+    // Mirror main.ts bootstrap so the REST surface exposes the same URI-versioned
+    // routes (/api/v1/…) and the ADR-0073 response envelope that the CLI and MCP
+    // surfaces emit natively — createNestApplication() alone applies none of this.
+    restApp.enableVersioning({ type: VersioningType.URI, prefix: 'api/v', defaultVersion: '1' });
+    restApp.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+    restApp.useGlobalFilters(new HttpExceptionFilter());
+    restApp.useGlobalInterceptors(new EnvelopeInterceptor());
     await restApp.init();
 
     // MCP: start standalone server on HTTP
     const { startMcpServer } = await import('@beyondnet/evolith-mcp');
-    const { app, server } = await startMcpServer({ transport: 'http', port: 0 });
+    // No API key configured for this in-process test server; allow unauthenticated
+    // calls (dev-mode only path) so the contract can exercise the MCP surface.
+    const { app, server } = await startMcpServer({ transport: 'http', port: 0, allowNoAuth: true });
     const boundPort = server.boundPort();
     if (!boundPort) throw new Error('MCP server did not bind to a port');
     mcpServer = { app, boundPort };
@@ -175,6 +261,7 @@ describe('ADR-0073 contract roundtrip: gate evaluate', () => {
     await mcpServer?.app.close();
     await restApp?.close();
     await fs.remove(projectPath);
+    process.exit = originalProcessExit;
   });
 
   // -----------------------------------------------------------------------
@@ -192,7 +279,7 @@ describe('ADR-0073 contract roundtrip: gate evaluate', () => {
       beforeAll(async () => {
         const [cliRaw, restRaw] = await Promise.all([
           runCliGate(cliModule, phase, projectPath),
-          callRestGate(restApp, phase, projectPath),
+          callRestGate(restApp, phase, workspaceRef),
         ]);
         cliEnvelope = extractEnvelopeShape(cliRaw);
         restEnvelope = extractEnvelopeShape(restRaw);
@@ -277,10 +364,11 @@ describe('ADR-0073 contract roundtrip: gate evaluate', () => {
         mcpErr = { success: false, error: { code: 'TRANSPORT_ERROR', message: msg } };
       }
 
-      // REST
+      // REST: the phase is derived from the gate id, so the analogue of an
+      // invalid phase is an unknown gate id — the controller rejects it with 400.
       const res = await request(restApp.getHttpServer())
-        .post('/api/v1/gates/PG1/evaluate')
-        .send({ phase: 'phase-9', projectPath })
+        .post('/api/v1/gates/PG9/evaluate')
+        .send({ workspaceRef })
         .expect(400);
       restErr = extractEnvelopeShape(res.body as Record<string, unknown>);
     });

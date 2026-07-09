@@ -22,11 +22,12 @@ describe('GatesController', () => {
   });
 
   it('should evaluate a gate with required params', async () => {
-    await controller.evaluateGate('PG0-01', { workspaceRef: 'op_01' });
+    await controller.evaluateGate('PG1-01', { workspaceRef: 'op_01' });
     expect(useCase.execute).toHaveBeenCalledWith({
       phase: 'discovery',
       projectPath: '/workspaces/op_01',
       corePath: '/core',
+      evaluatedBy: undefined,
     });
   });
 
@@ -36,13 +37,31 @@ describe('GatesController', () => {
       phase: 'discovery',
       projectPath: '/workspaces/op_01',
       corePath: '/core',
+      evaluatedBy: undefined,
     });
+  });
+
+  it('should forward an explicit evaluatedBy to the use case', async () => {
+    await controller.evaluateGate('PG2-01', { workspaceRef: 'op_01', evaluatedBy: 'ci' });
+    expect(useCase.execute).toHaveBeenCalledWith({
+      phase: 'design',
+      projectPath: '/workspaces/op_01',
+      corePath: '/core',
+      evaluatedBy: 'ci',
+    });
+  });
+
+  it('should reject an unknown gate id with a 400', async () => {
+    await expect(
+      controller.evaluateGate('PG0-01', { workspaceRef: 'op_01' })
+    ).rejects.toThrow(/Unknown gate id/);
+    expect(useCase.execute).not.toHaveBeenCalled();
   });
 
   it('should propagate use case errors', async () => {
     useCase.execute.mockRejectedValue(new Error('Gate validation failed'));
     await expect(
-      controller.evaluateGate('PG0-01', { workspaceRef: 'op_01' })
+      controller.evaluateGate('PG1-01', { workspaceRef: 'op_01' })
     ).rejects.toThrow('Gate validation failed');
   });
 });

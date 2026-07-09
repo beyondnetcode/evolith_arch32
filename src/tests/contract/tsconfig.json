@@ -2,7 +2,11 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES2021",
-    "moduleResolution": "node",
+    // `bundler` (matching sdk/cli's tsconfig) honors package `exports` maps, so
+    // the CLI DI graph compiled here resolves both the workspace packages'
+    // subpath exports (`@beyondnet/evolith-*/…` → `dist/…`) and ESM-only deps
+    // like `conf`. Classic `node` resolution ignores `exports` → TS2307.
+    "moduleResolution": "bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
@@ -15,7 +19,13 @@
     "types": ["jest", "node"],
     "baseUrl": "../..",
     "paths": {
-      "nest-commander-testing": ["sdk/cli/node_modules/nest-commander-testing"]
+      // The CLI's app.module.ts (compiled here as part of the DI graph) imports
+      // deep subpaths of these workspace packages. They ship an `exports` map
+      // (`./*` → `dist/*`), which classic `node` moduleResolution ignores — so
+      // subpaths resolve to the package's source root and TS2307s. Map the
+      // subpaths at their built `dist/` output explicitly (baseUrl = src/).
+      "@beyondnet/evolith-core-domain/*": ["packages/core-domain/dist/*"],
+      "@beyondnet/evolith-infra-providers/*": ["packages/infra-providers/dist/*"]
     }
   },
   "include": ["./**/*.spec.ts"]

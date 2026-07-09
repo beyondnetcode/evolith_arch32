@@ -54,7 +54,7 @@ export class TaxonomyRuleHandler implements INativeRuleHandler {
   }
 
   private async evalAdrNaming(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
-    const adrDir = path.join(ctx.corePath, 'reference', 'architecture', 'adrs');
+    const adrDir = path.join(ctx.corePath, 'reference', 'core', 'architecture', 'adrs');
     if (!await this.fs.exists(adrDir)) {
       return { rule, result: 'skipped', message: 'ADR directory not found' };
     }

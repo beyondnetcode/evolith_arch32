@@ -234,7 +234,7 @@ export class OpaInputBuilder {
   }
 
   private async listAdrs(root: string): Promise<string[]> {
-    const adrDir = path.join(root, 'reference', 'architecture', 'adrs');
+    const adrDir = path.join(root, 'reference', 'core', 'architecture', 'adrs');
     if (!await this.fs.exists(adrDir)) return [];
     return this.listFilesRecursive(adrDir);
   }

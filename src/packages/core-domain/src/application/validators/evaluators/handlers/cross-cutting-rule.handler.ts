@@ -40,7 +40,7 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
         return this.checkForCiWorkflow(rule, ctx, 'security');
       case 'DOD-07':
         return this.checkForEvidence(rule, ctx, 'ADR directory', [
-          path.join('reference', 'architecture', 'adrs'),
+          path.join('reference', 'core', 'architecture', 'adrs'),
         ]);
       case 'DOD-08':
         return this.checkForEvidence(rule, ctx, 'integration tests', ['tests/integration', 'test/integration']);

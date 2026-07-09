@@ -80,7 +80,7 @@ describe('OpaInputBuilder', () => {
 
     const coreEvDir = path.join(CORE, '.harness', 'evidence');
     const coreEvFile = path.join(coreEvDir, 'gate.json');
-    const adrDir = path.join(CORE, 'reference', 'architecture', 'adrs');
+    const adrDir = path.join(CORE, 'reference', 'core', 'architecture', 'adrs');
     const adrFile = path.join(adrDir, '0001-foo.md');
     const mcpServer = path.join(CORE, 'sdk', 'cli', 'src', 'core', 'mcp', 'server.ts');
     const distDir = path.join(CORE, 'sdk', 'cli', 'dist');

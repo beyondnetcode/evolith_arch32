@@ -1,0 +1,58 @@
+{
+  "$schema": "https://evolith.dev/sdlc/sdlc-gate.schema.json",
+  "id": "gate-f1",
+  "name": "Business Sign-Off",
+  "phase": "f1",
+  "description": "Phase 1 — Conception and Discovery. Business scope, value, personas and constraints are agreed before design begins.",
+  "playbookRef": "reference/core/sdlc/01-playbooks/phase-1-business-signoff.md",
+  "accountableRole": "Product Owner",
+  "waiverAuthority": "Executive Sponsor",
+  "requiredArtifacts": [
+    {
+      "artifact": "PRD",
+      "validation": "PRD status = Approved AND approvalEvidence present AND date filled",
+      "rules": [
+        "EV-F1-prd"
+      ],
+      "schemaRef": "../schema/prd.schema.json"
+    },
+    {
+      "artifact": "Discovery Canvas",
+      "validation": "Initiative registered with customer pain points and expected value",
+      "rules": [
+        "EV-F1-discovery-canvas"
+      ]
+    },
+    {
+      "artifact": "Technical Feasibility Canvas",
+      "validation": "Technical feasibility and quality attributes documented with NFRs",
+      "rules": [
+        "EV-F1-technical-feasibility-canvas"
+      ],
+      "schemaRef": "../schema/technical-feasibility.schema.json"
+    },
+    {
+      "artifact": "Ballpark Estimation",
+      "validation": "T-Shirt sizing completed with team composition",
+      "rules": [
+        "EV-F1-ballpark-estimation"
+      ]
+    },
+    {
+      "artifact": "MoSCoW Prioritization Matrix",
+      "validation": "MoSCoW analysis completed for Phase 0 with at least one MUST item and valid priority distribution",
+      "rules": [
+        "EV-F1-moscow-prioritization-matrix"
+      ]
+    },
+    {
+      "artifact": "Build-versus-Compose Analysis",
+      "validation": "Discovery evaluated open-source/free-tier/commercial alternatives with a governed Adopt/Embed/Integrate/Extend/Build/Reject disposition, three-year cost, licensing, tenant isolation, provider replaceability, and PoC requirements; native development requires explicit justification (Product Vision §5.3)",
+      "rules": [
+        "EV-F1-build-versus-compose-analysis"
+      ],
+      "schemaRef": "../schema/build-vs-compose.schema.json"
+    }
+  ],
+  "blockingCriteria": []
+}

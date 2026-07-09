@@ -1,0 +1,41 @@
+{
+  "$schema": "https://evolith.dev/sdlc/sdlc-gate.schema.json",
+  "id": "gate-f2",
+  "name": "Design Baseline Approved",
+  "phase": "f2",
+  "description": "Phase 2 — Design and Architecture. Significant architecture decisions are documented and coherent before construction.",
+  "playbookRef": "reference/core/sdlc/01-playbooks/phase-2-design-baseline.md",
+  "accountableRole": "Architect",
+  "waiverAuthority": "Architecture Board",
+  "requiredArtifacts": [
+    {
+      "artifact": "ADR Registry",
+      "validation": "All architecture decisions have corresponding ADR. No undocumented decisions.",
+      "rules": [
+        "EV-F2-adr-registry"
+      ]
+    },
+    {
+      "artifact": "Reference Blueprint Alignment",
+      "validation": "Product architecture diagrams traceable to Evolith Reference Blueprint",
+      "rules": [
+        "EV-F2-reference-blueprint-alignment"
+      ]
+    },
+    {
+      "artifact": "Simplicity Checklist Phase 1",
+      "validation": "Passed — no over-engineering detected",
+      "rules": [
+        "EV-F2-simplicity-checklist-phase-1"
+      ]
+    },
+    {
+      "artifact": "Bounded Context Map",
+      "validation": "All contexts identified with ownership and persistence strategy",
+      "rules": [
+        "EV-F2-bounded-context-map"
+      ]
+    }
+  ],
+  "blockingCriteria": []
+}

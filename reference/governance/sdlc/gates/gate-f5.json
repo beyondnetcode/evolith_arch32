@@ -1,0 +1,52 @@
+{
+  "$schema": "https://evolith.dev/sdlc/sdlc-gate.schema.json",
+  "id": "gate-f5",
+  "name": "Production Live",
+  "phase": "f5",
+  "description": "Phase 5 — Delivery and Operations. The release is traceable, observable and reversible before it goes live.",
+  "playbookRef": "reference/core/sdlc/01-playbooks/zero-downtime-release.md",
+  "accountableRole": "Release Manager",
+  "waiverAuthority": "Executive Sponsor",
+  "requiredArtifacts": [
+    {
+      "artifact": "Release Notes",
+      "validation": "Release scope, deployment steps, rollback procedure, observability checklist all present and complete",
+      "rules": [
+        "EV-F5-release-notes"
+      ],
+      "schemaRef": "../schema/release-notes.schema.json"
+    },
+    {
+      "artifact": "Observability Validation",
+      "validation": "Metrics nominal, logs flowing, traces complete for all production paths; structure conforms to observability-validation.schema.json",
+      "rules": [
+        "EV-F5-observability-validation"
+      ],
+      "schemaRef": "../schema/observability-validation.schema.json"
+    },
+    {
+      "artifact": "Rollback Procedure",
+      "validation": "Rollback steps documented and tested. Last good version identified. Rehearsal evidence confirms rollback within budget.",
+      "rules": [
+        "EV-F5-rollback-procedure"
+      ],
+      "schemaRef": "../schema/rollback-rehearsal.schema.json"
+    },
+    {
+      "artifact": "On-Call Handoff",
+      "validation": "On-call team briefed with runbook references, escalation paths, alert ownership, and SLA acknowledgement confirmed.",
+      "rules": [
+        "EV-F5-on-call-handoff"
+      ],
+      "schemaRef": "../schema/on-call-handoff.schema.json"
+    },
+    {
+      "artifact": "Deployment Evidence",
+      "validation": "Deployment artifacts (images, configs) traceable to RC",
+      "rules": [
+        "EV-F5-deployment-evidence"
+      ]
+    }
+  ],
+  "blockingCriteria": []
+}

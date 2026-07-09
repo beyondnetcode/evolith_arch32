@@ -152,6 +152,25 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **References:** src/sdk/cli/src/commands/api/api.catalog.ts; src/packages/mcp-server; GT-445.
 
+#### GT-461
+
+**Title:** SDLC gate machinery inoperative — the gate data files were never created in Core
+
+**Problem:** `gate evaluate`, `phase advance`, and `sdlc gate-status` crash with `ENOENT scandir '<core>/reference/governance/sdlc/gates'`. The code (`phase-gate-validator.service.ts`, `gate-registry.service.ts`, `sdlc-validation.mode.ts`) reads gate/phase DATA files at `reference/governance/sdlc/{gates,phases}/*.json`, but that directory — and the `gate-f*.json` / `phase-*.json` files — never existed in Core. Only the schema (`reference/core/sdlc/sdlc-gate.schema.json`) and prose (`quality-gates.md`) were present. The `gate-registry.service.ts` header comment itself states the richer `gate-f*.json` files "were never consumed" (the two gate sources diverged, cf. GT-318/GT-449). This left the entire SDLC governance loop — the mechanism a satellite uses to gate its phase transitions — non-functional.
+
+**Evidence:** on the MMS satellite, `gate evaluate -p discovery --core <core>` and `phase advance --from discovery --to design --core <core>` both threw ENOENT; `find` over Core returned no `gate-f*.json`/`phase-*.json` data files.
+
+**Fix (branch):** authored the 5 `reference/governance/sdlc/gates/gate-f{1-5}.json` as faithful twins of the `phase-gates.rules.json` `mandatoryEvidence` (generated from it, so they stay in sync), conforming to `sdlc-gate.schema.json`. `gate evaluate -p discovery --core` now emits real ADR-0073 GateEvidence (verdict `failed` with 6 discovery-artifact violations resolving to real paths), and `phase advance` correctly blocks the discovery→design transition on the failed gate.
+
+**Sub-findings (follow-on):**
+- `sdlc gate-status` exposes no `--core` option and resolves the gates dir from the satellite cwd (`<satellite>/reference/governance/sdlc/gates`) → ENOENT; unify Core resolution with `gate`/`phase` (cf. GT-456).
+- The evaluator treats free-text `blockingCriteria` as always-triggered (a gate could never PASS); the gate files keep `blockingCriteria: []` so gates are artifact-driven and reachable. The evaluator should evaluate criteria conditionally or treat them as advisory.
+- Consider aligning the canonical path with the actual Core layout (`reference/core/sdlc/...`) or generating the gate files there.
+
+**Closure:** `gate evaluate`/`phase advance`/`sdlc gate-status` run against Core for all 5 phases without ENOENT; a satellite with complete evidence reaches a PASS verdict; the gate files are generated/validated in CI.
+
+**References:** src/packages/core-domain/src/application/services/gate-registry.service.ts; src/packages/core-domain/src/application/validators/phase-gate-validator.service.ts; reference/core/sdlc/sdlc-gate.schema.json; reference/core/sdlc/quality-gates.md; GT-318, GT-451, GT-456.
+
 #### GT-447
 
 **Title:** MILESTONE — Objective 1: full stack functional locally (Docker/Kubernetes)

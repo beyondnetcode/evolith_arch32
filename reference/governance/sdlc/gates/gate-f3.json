@@ -1,0 +1,40 @@
+{
+  "$schema": "https://evolith.dev/sdlc/sdlc-gate.schema.json",
+  "id": "gate-f3",
+  "name": "Successful Build",
+  "phase": "f3",
+  "description": "Phase 3 — Construction. The build is green, quality thresholds are met and the Definition of Done is satisfied.",
+  "accountableRole": "Engineering Lead",
+  "waiverAuthority": "Architecture Board",
+  "requiredArtifacts": [
+    {
+      "artifact": "CI Pipeline",
+      "validation": "CI run green on main branch. No failing tests, no lint errors, no security scan failures",
+      "rules": [
+        "EV-F3-ci-pipeline"
+      ]
+    },
+    {
+      "artifact": "Definition of Done Checklist",
+      "validation": "All Definition of Done items checked.",
+      "rules": [
+        "EV-F3-definition-of-done-checklist"
+      ]
+    },
+    {
+      "artifact": "Documentation Delta",
+      "validation": "Updated ADRs, inline documentation, README changes included in merge",
+      "rules": [
+        "EV-F3-documentation-delta"
+      ]
+    },
+    {
+      "artifact": "Coverage Report",
+      "validation": "Business logic coverage >= 80% per Quality Thresholds rules",
+      "rules": [
+        "EV-F3-coverage-report"
+      ]
+    }
+  ],
+  "blockingCriteria": []
+}

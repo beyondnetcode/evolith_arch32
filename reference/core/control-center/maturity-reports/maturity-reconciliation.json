@@ -1,14 +1,22 @@
 {
   "schemaVersion": "1.0.0",
   "scope": "evolith-core",
-  "asOf": "2026-07-06",
+  "asOf": "2026-07-09",
   "gaps": {
-    "total": 448,
+    "total": 452,
     "done": 435,
-    "pending": 11,
+    "pending": 14,
     "inProgress": 2,
-    "deferred": 0
+    "deferred": 1
   },
+  "waves": [
+    {
+      "id": "deployment-strategy-hardening",
+      "date": "2026-07-09",
+      "gaps": ["GT-462", "GT-463", "GT-464", "GT-465"],
+      "summary": "Deployment-strategy risk register (§15) infra/messaging items owned by Core: retire queue CRDs, poison-queue alerts, shared broker dependency, kind CNI NetworkPolicy enforcement."
+    }
+  ],
   "evidence": {
     "closureRecords": 404,
     "cliPackage": "@evolith/smart-cli@1.1.4",

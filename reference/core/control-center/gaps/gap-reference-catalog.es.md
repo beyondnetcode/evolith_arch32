@@ -171,6 +171,71 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Referencias:** src/packages/core-domain/src/application/services/gate-registry.service.ts; src/packages/core-domain/src/application/validators/phase-gate-validator.service.ts; reference/core/sdlc/sdlc-gate.schema.json; reference/core/sdlc/quality-gates.md; GT-318, GT-451, GT-456.
 
+#### GT-462
+
+**Título:** Conflicto CRD/código en la topología de mensajes → 406 PRECONDITION_FAILED → consumidor muerto con el pod Ready
+
+**Problema:** Las CRDs `Exchange`/`Queue`/`Binding` declaradas para la ruta de mensajes de tenant no coinciden con cómo MassTransit declara realmente la topología. MassTransit auto-declara un **type-exchange** fanout (`Evolith.Contracts.MasterData:TenantEvent`) y liga el exchange/queue de cada endpoint consumidor a él — esa es la topología por la que fluyó el E2E validado. El exchange del CRD es peso muerto, y las colas pre-creadas por CRD con argumentos DLX hacen fallar la re-declaración de MassTransit con `406 PRECONDITION_FAILED`: el endpoint queda en falla para siempre mientras el pod sigue `Ready` — el clásico fallo silencioso de las 3 a.m. (un consumidor roto que nunca aparece en `kubectl get pods`).
+
+**Evidencia:** estrategia de despliegue §5.1/§5.2. `deploy/kubernetes/messaging/tenant-topology.yaml` declara CRDs `Exchange`/`Queue`/`Binding`; el E2E validado fluyó por la topología fanout propiedad de MassTransit, no por la del CRD, así que las CRDs son a la vez inusadas y activamente peligrosas (conflicto de re-declaración de cola).
+
+**Fix:** retirar las CRDs `Exchange`/`Queue`/`Binding` de la ruta de mensajes; mantener las CRDs del Topology-Operator solo para lo que MassTransit no puede declarar — `User`/`Permission` por producto (y `Policy` opcional). Los nombres de endpoint consumidor quedan fijados en código (`ums.tenant-projection`, `tracker.tenant-projection`). El gate G1 debe verificar que el endpoint consumidor realmente **arrancó**, no solo que el pod está `Ready`.
+
+**Cierre:**
+- [ ] CRDs `Exchange`/`Queue`/`Binding` retiradas de la ruta de mensajes.
+- [ ] Solo quedan CRDs `User`/`Permission` por producto.
+- [ ] G1 verifica que el endpoint consumidor arrancó (no solo pod `Ready`).
+
+**Referencias:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.1–§5.2; deploy/kubernetes/messaging/tenant-topology.yaml; riesgo §15 #3.
+
+#### GT-463
+
+**Título:** Alertas de mensajes veneno mirando la cola equivocada (DLX en vez de `<queue>_error`)
+
+**Problema:** Tras agotar los reintentos, MassTransit **mueve** el mensaje fallido a `<queue>_error` — nunca hace nack, así que el `x-dead-letter-exchange` del broker jamás dispara. Cualquier alerta o CRD DLX/DLQ montada sobre un dead-letter exchange vigila entonces una cola que nunca recibe nada, y los mensajes veneno se acumulan en `_error` sin ser advertidos.
+
+**Evidencia:** estrategia de despliegue §5.3.
+
+**Fix:** adoptar la convención de MassTransit — alertar sobre profundidad > 0 de `ums.tenant-projection_error` y `tracker.tenant-projection_error`; añadir un runbook de reproceso que haga shovel de los mensajes de `_error` de vuelta a la cola principal; retirar las CRDs DLX/DLQ junto con las CRDs de la ruta de mensajes (§5.2 / GT-462).
+
+**Cierre:**
+- [ ] Las alertas disparan sobre la profundidad de la cola `_error`.
+- [ ] Existe un runbook de reproceso (shovel).
+
+**Referencias:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.3; product/operations/alerts/*; deploy/kubernetes/messaging/tenant-topology.yaml; riesgo §15 #9; GT-462.
+
+#### GT-464
+
+**Título:** El broker RabbitMQ es una dependencia crítica compartida
+
+**Problema:** Los tres productos (MMS/UMS/Tracker) comparten el broker RabbitMQ para la proyección de master-data de tenant, así que una caída del broker es un blast radius compartido.
+
+**Evidencia / mitigación:** estrategia de despliegue §5.4/§5.6/§15. Mitigado: el outbox transaccional de MMS (validado en vivo) hace las caídas del broker **sin pérdida** — el productor commitea y los eventos drenan al reconectar; los consumidores esperan y se ponen al día. La readiness nunca depende del broker (§5.4), así que una caída degrada **solo frescura, nunca correctitud**. Es un ítem de endurecimiento operativo permanente, no un bloqueante de build — por eso `DIFERIDO`.
+
+**Acción permanente:** mantener el outbox probado + correr un broker con quorum de ≥3 nodos donde sea posible + alertas `bus disconnected` / `projection lag`.
+
+**Cierre:**
+- [ ] Alertas `bus disconnected` / `projection lag` en su lugar.
+- [ ] Broker con quorum de 3 nodos en AKS.
+
+**Referencias:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.4/§5.6/§15; riesgo §15 #10 (mitigado → DIFERIDO).
+
+#### GT-465
+
+**Título:** El CNI de kind (kindnet) no aplica NetworkPolicy — el modelo default-deny queda silenciosamente sin efecto
+
+**Problema:** El diseño de red es **default-deny ingress+egress por namespace de producto** con allows explícitos (§7), incluida la regla estructural de que `evolith-core` no tiene ningún path al broker. El CNI por defecto de kind (kindnet) no implementa NetworkPolicy, así que en un cluster kind local cada NetworkPolicy es un no-op silencioso — paridad falsa con AKS/k3s donde los mismos manifests sí se aplican. Los desarrolladores validan el aislamiento contra un cluster que no lo aplica de verdad.
+
+**Evidencia:** estrategia de despliegue §4.1/§7 ("Local kind must run Cilium or the whole model is silently unenforced").
+
+**Fix:** instalar Cilium en kind (`disableDefaultCNI: true` en `deploy/kubernetes/kind-cluster.yaml` + instalación de Cilium) y añadir aserciones allow/deny al gate G1 — un path que debe permitirse y uno que debe denegarse.
+
+**Cierre:**
+- [ ] Cilium instalado en kind.
+- [ ] Un path allow y un path deny verificados en G1.
+
+**Referencias:** product/suite/architecture/evolith-suite-deployment-strategy.md §4.1/§7; deploy/kubernetes/kind-cluster.yaml; deploy/kubernetes/ (NetworkPolicies); riesgo §15 #13.
+
 #### GT-447
 
 **Título:** MILESTONE — Objetivo 1: stack completo funcional en local (Docker/Kubernetes)

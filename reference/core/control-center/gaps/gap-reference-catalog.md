@@ -171,6 +171,71 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **References:** src/packages/core-domain/src/application/services/gate-registry.service.ts; src/packages/core-domain/src/application/validators/phase-gate-validator.service.ts; reference/core/sdlc/sdlc-gate.schema.json; reference/core/sdlc/quality-gates.md; GT-318, GT-451, GT-456.
 
+#### GT-462
+
+**Title:** CRD/code conflict in the message topology → 406 PRECONDITION_FAILED → dead consumer with a Ready pod
+
+**Problem:** The declared `Exchange`/`Queue`/`Binding` CRDs for the tenant message path don't match how MassTransit actually declares topology. MassTransit auto-declares a fanout **type-exchange** (`Evolith.Contracts.MasterData:TenantEvent`) and binds each consumer endpoint's exchange/queue to it — that is the topology the validated E2E flowed through. The CRD exchange is dead weight, and CRD-pre-created queues carrying DLX arguments make MassTransit's re-declare fail with `406 PRECONDITION_FAILED`: the endpoint faults forever while the pod stays `Ready` — the classic silent 3 a.m. failure (a broken consumer that never shows up in `kubectl get pods`).
+
+**Evidence:** deployment-strategy §5.1/§5.2. `deploy/kubernetes/messaging/tenant-topology.yaml` declares `Exchange`/`Queue`/`Binding` CRDs; the validated E2E flowed through the MassTransit-owned fanout topology, not the CRD topology, so the CRDs are both unused and actively hazardous (queue re-declare conflict).
+
+**Fix:** retire the `Exchange`/`Queue`/`Binding` CRDs from the message path; keep Topology-Operator CRDs only for what MassTransit cannot declare — per-product `User`/`Permission` (and optional `Policy`) CRDs. Consumer endpoint names stay pinned in code (`ums.tenant-projection`, `tracker.tenant-projection`). The G1 gate must assert the consumer endpoint actually **started**, not just that the pod is `Ready`.
+
+**Closure:**
+- [ ] `Exchange`/`Queue`/`Binding` CRDs retired from the message path.
+- [ ] Only `User`/`Permission` CRDs per product remain.
+- [ ] G1 verifies the consumer endpoint started (not just pod `Ready`).
+
+**References:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.1–§5.2; deploy/kubernetes/messaging/tenant-topology.yaml; risk §15 #3.
+
+#### GT-463
+
+**Title:** Poison-message alerts watching the wrong queue (DLX instead of `<queue>_error`)
+
+**Problem:** After exhausting retries, MassTransit **moves** the faulted message to `<queue>_error` — it never nacks, so the broker's `x-dead-letter-exchange` never fires. Any alert or DLX/DLQ CRD built around a dead-letter exchange therefore watches a queue that never receives anything, and poison messages accumulate in `_error` unnoticed.
+
+**Evidence:** deployment-strategy §5.3.
+
+**Fix:** adopt the MassTransit convention — alert on depth > 0 of `ums.tenant-projection_error` and `tracker.tenant-projection_error`; add a reprocess runbook that shovels messages from `_error` back to the main queue; retire the DLX/DLQ CRDs together with the message-path CRDs (§5.2 / GT-462).
+
+**Closure:**
+- [ ] Alerts fire on `_error`-queue depth.
+- [ ] A reprocess (shovel) runbook exists.
+
+**References:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.3; product/operations/alerts/*; deploy/kubernetes/messaging/tenant-topology.yaml; risk §15 #9; GT-462.
+
+#### GT-464
+
+**Title:** RabbitMQ broker is a shared critical dependency
+
+**Problem:** All three products (MMS/UMS/Tracker) share the RabbitMQ broker for tenant master-data projection, so a broker outage is a shared blast radius.
+
+**Evidence / mitigation:** deployment-strategy §5.4/§5.6/§15. Mitigated: MMS's transactional outbox (validated live) makes broker outages **lossless** — the producer commits and events drain on reconnect; consumers idle and catch up. Readiness never gates on the broker (§5.4), so an outage degrades **freshness only, never correctness**. This is a standing operational hardening item, not a build blocker — hence `DEFERRED`.
+
+**Standing action:** keep the proven outbox + run a quorum broker with ≥3 nodes where available + `bus disconnected` / `projection lag` alerts.
+
+**Closure:**
+- [ ] `bus disconnected` / `projection lag` alerts in place.
+- [ ] Quorum broker with 3 nodes on AKS.
+
+**References:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.4/§5.6/§15; risk §15 #10 (mitigated → DEFERRED).
+
+#### GT-465
+
+**Title:** kind's CNI (kindnet) does not enforce NetworkPolicy — the default-deny model is silently ineffective
+
+**Problem:** The networking design is **default-deny ingress+egress per product namespace** with explicit allows (§7), including the structural rule that `evolith-core` gets no path to the broker. kind's default CNI (kindnet) does not implement NetworkPolicy, so on a local kind cluster every NetworkPolicy is silently a no-op — a false parity with AKS/k3s where the same manifests are enforced. Developers validate isolation against a cluster that does not actually enforce it.
+
+**Evidence:** deployment-strategy §4.1/§7 ("Local kind must run Cilium or the whole model is silently unenforced").
+
+**Fix:** install Cilium on kind (`disableDefaultCNI: true` in `deploy/kubernetes/kind-cluster.yaml` + Cilium install) and add allow/deny assertions to the G1 gate — one path that must be allowed and one that must be denied.
+
+**Closure:**
+- [ ] Cilium installed on kind.
+- [ ] One allow path and one deny path verified in G1.
+
+**References:** product/suite/architecture/evolith-suite-deployment-strategy.md §4.1/§7; deploy/kubernetes/kind-cluster.yaml; deploy/kubernetes/ (NetworkPolicies); risk §15 #13.
+
 #### GT-447
 
 **Title:** MILESTONE — Objective 1: full stack functional locally (Docker/Kubernetes)

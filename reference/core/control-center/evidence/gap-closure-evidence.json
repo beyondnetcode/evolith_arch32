@@ -5,7 +5,7 @@
     {
       "id": "GT-462",
       "closedAt": "2026-07-09",
-      "closureCommit": "85e93df2",
+      "closureCommit": "e9a4deb5",
       "evidence": [
         "reference/core/architecture/adrs/core/0108-masstransit-owned-message-topology.md",
         "reference/core/architecture/adrs/core/0108-masstransit-owned-message-topology.es.md",

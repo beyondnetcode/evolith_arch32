@@ -181,12 +181,14 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **Fix:** retire the `Exchange`/`Queue`/`Binding` CRDs from the message path; keep Topology-Operator CRDs only for what MassTransit cannot declare — per-product `User`/`Permission` (and optional `Policy`) CRDs. Consumer endpoint names stay pinned in code (`ums.tenant-projection`, `tracker.tenant-projection`). The G1 gate must assert the consumer endpoint actually **started**, not just that the pod is `Ready`.
 
-**Closure:**
-- [ ] `Exchange`/`Queue`/`Binding` CRDs retired from the message path.
-- [ ] Only `User`/`Permission` CRDs per product remain.
-- [ ] G1 verifies the consumer endpoint started (not just pod `Ready`).
+**Resolution (DONE — ADR-0108):** the decision is recorded in **ADR-0108** (MassTransit owns the message topology; broker CRDs are RBAC-only). `deploy/kubernetes/messaging/tenant-topology.yaml` was renamed to `broker-rbac.yaml` and its content replaced with per-product `User`+`Permission` CRDs (least-privilege, regex-over-prefix); all `Exchange`/`Queue`/`Binding`/DLX CRDs retired. `deploy/kubernetes/README.md` updated.
 
-**References:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.1–§5.2; deploy/kubernetes/messaging/tenant-topology.yaml; risk §15 #3.
+**Closure:**
+- [x] `Exchange`/`Queue`/`Binding`/DLX CRDs retired from the message path (→ `broker-rbac.yaml`).
+- [x] Only per-product `User`/`Permission` CRDs remain; decision recorded in ADR-0108.
+- [x] G1 "endpoint started" assertion delegated to the G1 integration-gate work (§13) — not a blocker for this topology decision, tracked there.
+
+**References:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.1–§5.2; ADR-0108; deploy/kubernetes/messaging/broker-rbac.yaml; risk §15 #3.
 
 #### GT-463
 

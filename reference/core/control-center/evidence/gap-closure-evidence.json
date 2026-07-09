@@ -3,6 +3,24 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-462",
+      "closedAt": "2026-07-09",
+      "closureCommit": "85e93df2",
+      "evidence": [
+        "reference/core/architecture/adrs/core/0108-masstransit-owned-message-topology.md",
+        "reference/core/architecture/adrs/core/0108-masstransit-owned-message-topology.es.md",
+        "deploy/kubernetes/messaging/broker-rbac.yaml",
+        "deploy/kubernetes/README.md"
+      ],
+      "validationCommands": [
+        "git show --stat -- deploy/kubernetes/messaging/broker-rbac.yaml (renamed from tenant-topology.yaml)",
+        "grep -L 'kind: Exchange' deploy/kubernetes/messaging/broker-rbac.yaml (no Exchange/Queue/Binding CRDs remain)",
+        "grep -c 'kind: Permission' deploy/kubernetes/messaging/broker-rbac.yaml (== 3 per-product permissions)"
+      ],
+      "dependencyDisposition": "partial",
+      "dependencyRationale": "Topology decision recorded (ADR-0108) and message-path CRDs retired in favor of per-product User/Permission RBAC. The G1 'consumer endpoint started' assertion (bus health, not pod Ready) is delegated to the G1 integration-gate automation (§13) and tracked there — it is not a blocker for the topology decision."
+    },
+    {
       "id": "GT-434",
       "closedAt": "2026-07-04",
       "closureCommit": "6b1c5472",

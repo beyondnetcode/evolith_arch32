@@ -12,6 +12,174 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ## 1. Detalle de Gaps
 
+> **GT-475…GT-484** fueron detectados por el diseño del agente de pruebas exploratorias (2026-07-10) que inventarió las superficies CLI / MCP / Core-API y verificó adversarialmente cada candidato contra este board. Ver el análisis de superficies CLI/MCP/Core-API y los activos de paridad cross-surface (`reference/core/control-center/audits/surface-parity-matrix.json`, `src/tests/contract/roundtrip-gate-evaluate.spec.ts`).
+
+#### GT-475
+
+**Título:** Herramientas MCP de clase `write` recientes evaden el gate de aprobación HITL de GT-158
+
+**Problema:** GT-158 cableó un control human-in-the-loop en el dispatcher MCP: una tool que declara `mutative: true` requiere un `apply: true` + `approvalToken` fuera de banda antes de ejecutar, y la llamada se audita (`mcp-tool-dispatch.ts:136-146`). El gate depende del flag `mutative`, NO del verbo ABAC. Las tools añadidas tras GT-158 se clasificaron ABAC `write` pero nunca recibieron `mutative: true`, por lo que ejecutan mutaciones reales, algunas irreversibles, sin token de aprobación.
+
+**Evidencia:** `abac-evaluator.ts:65-101` clasifica `evolith-satellite-create`/`-adopt`, `evolith-moscow-create`/`-update`/`-remove`, `evolith-phase-advance` como `write`; el grep de `src/packages/mcp-server/src/tools/` muestra `mutative: true` solo en config/agent/sdlc/auto-fix. `satellite-create.tool.ts:219` provisiona un repo GitHub real + escribe el registro local; `satellite-adopt.tool.ts:188` reescribe el registro.
+
+**Fix propuesto:** Poner `mutative: true` en los esquemas de las tools `write`, extender la policy OPA `abac-mcp-tool-access`, y añadir un test de paridad que exija que toda tool ABAC `write` declare `mutative`. Nota: `evolith-phase-advance` es una propuesta read-only no vinculante según GT-379 y podría reclasificarse a `read`.
+
+**Cierre:**
+- [ ] `mutative: true` en satellite-create/adopt + moscow-create/update/remove
+- [ ] test de paridad: toda tool ABAC `write` es `mutative` (o read justificado)
+- [ ] clase ABAC de `evolith-phase-advance` decidida (write+mutative vs read)
+
+**Referencias:** `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts:136-146`; `src/packages/mcp-server/src/abac/abac-evaluator.ts:65-101`; GT-158, GT-368, GT-379
+
+#### GT-476
+
+**Título:** El guard de consistencia y sus helpers apuntan a rutas previas al refactor, dejando el guard semántico inerte
+
+**Problema:** El guard de CI `.harness/scripts/ci/08-validate-tracking.mjs` fija rutas de artefactos de tracking previas al commit `e16120e9` (que movió el board a los subdirectorios `gaps/` y `evidence/`). Marca las cinco rutas obsoletas como requeridas y hace `process.exit(1)` con "Missing tracking artifacts" antes de ejecutar cualquier validación semántica. El test unitario importa `validateTrackingState` directamente, evitando la resolución de rutas, por lo que tanto la suite como el CI normal quedan verdes mientras el guard no ofrece protección real sobre el board que es única fuente de verdad.
+
+**Evidencia:** `08-validate-tracking.mjs:7-14` → `reference/core/control-center/gap-tracking.md` etc. (viejo); archivos reales en `reference/core/control-center/gaps/…` y `…/evidence/gap-closure-evidence.json`. Mismas constantes obsoletas en `sync-tracking-order.mjs:6-7`, `sync-tables.mjs:6-7`, `fix-tracking-parity.mjs:11-12`, `fix-tracking-structural.mjs:6-7`, `sync-project-board.mjs:31-32`. Correr el guard reproduce el aborto. Su único caller de CI (`docs.yml:42`) es solo `workflow_dispatch`.
+
+**Fix propuesto:** Añadir los segmentos `gaps/` + `evidence/` en los seis scripts y re-armar el guard en push/PR. **Restricción:** `.harness` es propiedad del plugin; las ediciones locales están bloqueadas por la regla de gobernanza **S-16**, así que el fix debe proponerse upstream en `unimar_arch` (no editarse desde este satélite).
+
+**Cierre:**
+- [ ] rutas corregidas en los seis scripts (vía propuesta upstream a `unimar_arch`)
+- [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` ejecuta la validación semántica (sin "Missing tracking artifacts")
+- [ ] guard armado en push/PR (no solo `workflow_dispatch`)
+
+**Referencias:** `.harness/scripts/ci/08-validate-tracking.mjs:7-14,262-267`; `.harness/scripts/sync-*.mjs`, `fix-tracking-*.mjs`; commit `e16120e9`; GT-477, GT-480
+
+#### GT-477
+
+**Título:** Los contadores Progress/Progreso de gap-tracking derivan del board sin enforcement vivo
+
+**Problema:** Las líneas de auto-conteo del board canónico estaban desactualizadas — afirmaban `438 / 450 done · 2 in progress · 10 pending · 0 deferred` mientras la tabla tenía 474 filas con 450 done / 7 en-progreso / 16 pendientes / 1 diferido. Como el board es la única fuente de verdad, el resumen ejecutivo y la reconciliación de madurez leen totales erróneos. La deriva pasó desapercibida porque el guard de reconciliación escanea una ruta muerta (GT-476), por lo que sus aserciones de progreso nunca corren.
+
+**Evidencia:** `gap-tracking.md:492` / `gap-tracking.es.md:492` (pre-fix) vs un conteo por fila de 474 filas (448 GT + 26 MT-A). Causa raíz: `08-validate-tracking.mjs` nunca llega a `parseProgress()` (GT-476).
+
+**Fix propuesto:** Los contadores se corrigieron a `450 / 484 · 7 · 26 · 1` durante el registro de GT-475…GT-484; el fix sistémico es re-apuntar + re-armar `08-validate-tracking.mjs` (GT-476) en push/PR para que no vuelvan a derivar silenciosamente.
+
+**Cierre:**
+- [ ] líneas Progress/Progreso coinciden con un conteo por fila scripteado
+- [ ] el guard reconcilia los contadores en push/PR (depende de GT-476)
+
+**Referencias:** `reference/core/control-center/gaps/gap-tracking.md:492`; GT-476, GT-417
+
+#### GT-478
+
+**Título:** El controlador architecture-plans genera ruta doble `/api/v1/v1` y carece de validación DTO + OpenAPI
+
+**Problema:** `ArchitecturePlanController` declara su path con el literal string `@Controller('v1/architecture-plans')`, pero el versionado URI global (`prefix: 'api/v'`, `defaultVersion: '1'`) ya inyecta el segmento `api/v1`, así que la ruta resuelve a `/api/v1/v1/architecture-plans/evaluate` — inconsistente con cada controlador hermano que usa la forma objeto `@Controller({ path, version: '1' })`. El handler además enlaza el body a un `Partial<ArchitecturePlan>` pelado (sin DTO class-validator → el ValidationPipe global no tiene metadata que aplicar), y no lleva decoradores `@nestjs/swagger`, por lo que el endpoint queda fuera del contrato OpenAPI generado.
+
+**Evidencia:** `src/apps/core-api/src/architecture-plan/architecture-plan.controller.ts:5,9`; `src/apps/core-api/src/main.ts:21-25` (versionado); contrastar `projects.controller.ts:11`, `evaluation.controller.ts:51`.
+
+**Fix propuesto:** Cambiar a `@Controller({ path: 'architecture-plans', version: '1' })`, introducir una clase DTO validada, y añadir decoradores `@ApiTags`/`@ApiResponse`.
+
+**Cierre:**
+- [ ] la ruta resuelve a `/api/v1/architecture-plans/evaluate` (un solo `v1`)
+- [ ] body validado vía DTO class-validator bajo el ValidationPipe global
+- [ ] endpoint presente en `/api/docs-json`
+
+**Referencias:** `src/apps/core-api/src/architecture-plan/architecture-plan.controller.ts`; `src/apps/core-api/src/main.ts:21-35`
+
+#### GT-479
+
+**Título:** E2E de paridad cross-surface en falso verde (campo envCommand muerto + aserciones condicionales vacías)
+
+**Problema:** `surface-parity.e2e-spec.ts` se titula "Cross-Surface Parity E2E" y cada `OperationFixture` declara un campo `envCommand` que implica una comprobación de paridad CLI-vs-env/MCP — pero el campo nunca se lee (el loop solo hace spawn del binario CLI vía `runCli`), así que ninguna segunda superficie se ejecuta. Además, las aserciones de forma de envelope están envueltas en `if (envelope && envelope.success === …)` sin else, por lo que pasan de forma vacía: si el CLI deja de emitir un envelope ADR-0073 parseable (la clase exacta de regresión GT-452/GT-474), las aserciones nunca corren y la suite queda verde.
+
+**Evidencia:** `src/sdk/cli/test/e2e/surface-parity.e2e-spec.ts` — interface `envCommand` (línea 72), asignaciones (82,101,120,139,160), cero lecturas; aserciones condicionales en ~214, 244-247, 270-273, 296-299. La red tri-superficie real es `src/tests/contract/roundtrip-gate-evaluate.spec.ts`.
+
+**Fix propuesto:** O cablear `envCommand` a una invocación real de segunda superficie con aserción de equivalencia, o eliminar el campo muerto, renombrar el bloque a un smoke de envelope del CLI, y hacer las aserciones de envelope incondicionales (fallar cuando no se produce envelope parseable). También reconciliar el checkbox DONE de GT-223 sobre un `surface-parity-fixture.ts` (no existe tal fixture).
+
+**Cierre:**
+- [ ] `envCommand` ejercido como paridad real o eliminado
+- [ ] aserciones de envelope incondicionales (fallan ante salida no parseable)
+- [ ] reclamo DONE de GT-223 reconciliado
+
+**Referencias:** `src/sdk/cli/test/e2e/surface-parity.e2e-spec.ts`; `src/tests/contract/roundtrip-gate-evaluate.spec.ts`; GT-223
+
+#### GT-480
+
+**Título:** Filas ES del board GT-462..474 usan el token de estado no canónico `HECHO`
+
+**Problema:** El board en español marca 13 filas cerradas recientemente con `HECHO`, pero el `STATUS_MAP` del validador solo mapea `COMPLETADO → done`. GT-417 ya había normalizado los estados ES de done de `HECHO` a `COMPLETADO` (estableciendo `COMPLETADO` como canónico); los cierres recientes reintrodujeron el token purgado. Una vez arreglada la ruta del guard (GT-476), `canonicalStatus('HECHO')` es undefined → "unsupported ES status" más desajustes EN(DONE)/ES(HECHO) para cada fila afectada.
+
+**Evidencia:** `gap-tracking.es.md` usa 13 tokens `HECHO` (GT-462, GT-466..474 et al.) vs 437 `COMPLETADO`; `08-validate-tracking.mjs:16-30` no tiene entrada `HECHO`; `gap-reference-catalog.md` (GT-417) registra la normalización previa HECHO→COMPLETADO.
+
+**Fix propuesto:** Normalizar las 13 filas `HECHO` de vuelta a `COMPLETADO` (preferido, preserva la convención de GT-417), o añadir un alias `HECHO → done` al `STATUS_MAP` (la edición de `.harness` está bloqueada por S-16 — ver GT-476).
+
+**Cierre:**
+- [ ] no quedan tokens de estado `HECHO` en `gap-tracking.es.md`
+- [ ] el guard acepta todo estado ES de done (tras GT-476)
+
+**Referencias:** `reference/core/control-center/gaps/gap-tracking.es.md`; `.harness/scripts/ci/08-validate-tracking.mjs:16-30`; GT-417, GT-476
+
+#### GT-481
+
+**Título:** Tests e2e muertos del CLI aún invocan el subcomando `mcp` eliminado por GT-449
+
+**Problema:** GT-449 eliminó la superficie de comando deprecada `smart-cli mcp`, pero dos archivos de test e2e aún la ejercen y nunca se limpiaron, por lo que sus aserciones fallan cuando corre la suite e2e (el comando ya no existe y el `--help` raíz ya no lo lista).
+
+**Evidencia:** `src/sdk/cli/test/mcp-serve.e2e-spec.ts:26-34` despacha `['mcp','stop'|'start'|'--help']`; `src/sdk/cli/test/e2e/cli-e2e.test.ts:75` verifica que el `--help` raíz `toContain('mcp')` y `:79-82` hace spawn de `['mcp','version']` esperando exit 0 + stdout "Evolith MCP Server". Ambos coinciden con el `testMatch` e2e (`test/jest-e2e.json:5`).
+
+**Fix propuesto:** Eliminar `mcp-serve.e2e-spec.ts` y quitar las dos referencias a `mcp` en `cli-e2e.test.ts` (quitar la aserción de help; reemplazar el test de version con la superficie standalone `evolith-mcp serve` o un comando válido).
+
+**Cierre:**
+- [ ] `mcp-serve.e2e-spec.ts` eliminado
+- [ ] no quedan invocaciones `['mcp', …]` en la suite e2e del CLI
+- [ ] suite e2e del CLI en verde
+
+**Referencias:** `src/sdk/cli/test/mcp-serve.e2e-spec.ts`; `src/sdk/cli/test/e2e/cli-e2e.test.ts:75,79-82`; GT-449
+
+#### GT-482
+
+**Título:** El guard de registro de tools MCP está desactualizado (28 de 35) y no es exhaustivo
+
+**Problema:** El test de registro con DI completo pretendía afirmar "toda tool portada está registrada", pero su lista `expected` enumera solo 28 de las 35 tools que registra el provider `MCP_TOOLS`, y afirma con `expect(names).toContain(name)` — que es ciego a tools registradas extra y nunca compara actual contra expected. Un desarrollador puede añadir una tool nueva o eliminar cualquiera de las 7 no listadas y el guard queda verde.
+
+**Evidencia:** `src/packages/mcp-server/src/tools/tools-registration.spec.ts:21-55` — `expected` de 28 nombres (22-49) omite `evolith-evaluate`, `-composable-validate`, `-agent-run`, `-topology-list/-get/-recommend`, `-phase-artifacts-evaluate`; `toContain` en línea 53; chequeo de duplicados en 55 pero sin igualdad de conjuntos. `tools.module.ts` registra 35.
+
+**Fix propuesto:** Regenerar `expected` desde el código y afirmar igualdad de conjuntos (`expect(new Set(names)).toEqual(new Set(expected))`) para que tanto adiciones como eliminaciones fallen.
+
+**Cierre:**
+- [ ] `expected` refleja el conjunto completo de 35 tools
+- [ ] la aserción es igualdad de conjuntos (detecta add + remove)
+
+**Referencias:** `src/packages/mcp-server/src/tools/tools-registration.spec.ts:21-55`; `src/packages/mcp-server/src/tools/tools.module.ts`
+
+#### GT-483
+
+**Título:** El motor del QA-suite y los playbooks E2E apuntan a la ruta eliminada `.bmad-core/agents/`
+
+**Problema:** El workflow QA-suite despacha sus especialistas de rol a través de `step-executor.mjs`, cuyos `AGENT_PROMPTS` le dicen a cada agente que está definido en `.bmad-core/agents/<role>.md`. Ese directorio fue eliminado por el commit `e16120e9`, que migró las personas BMAD a `reference/core/foundations/agent-skills/`. La misma ruta obsoleta aparece en los playbooks E2E. El impacto es bajo (la ruta es texto informativo del prompt; los `validationScripts` siguen corriendo), pero las referencias quedan colgando.
+
+**Evidencia:** `.bmad-core/engine/step-executor.mjs` `AGENT_PROMPTS` líneas 67/76/85/94/103 (qa-contracts/qa-security/qa-e2e/qa-unit/qa-docs); `git ls-files '.bmad-core/agents/*'` vacío; archivo real `reference/core/foundations/agent-skills/qa-e2e.md`; `reference/core/sdlc/01-playbooks/e2e-test-playbooks.md:7` (+ `.es.md`).
+
+**Fix propuesto:** Re-apuntar las cinco rutas de plantilla de `step-executor.mjs` y las dos líneas de los playbooks a `reference/core/foundations/agent-skills/`.
+
+**Cierre:**
+- [ ] rutas de plantilla de `step-executor.mjs` actualizadas
+- [ ] ruta de `e2e-test-playbooks.md` (+ `.es.md`) actualizada
+- [ ] no quedan referencias colgantes a `.bmad-core/agents/`
+
+**Referencias:** `.bmad-core/engine/step-executor.mjs:67,76,85,94,103`; `reference/core/sdlc/01-playbooks/e2e-test-playbooks.md:7`; commit `e16120e9`
+
+#### GT-484
+
+**Título:** El conteo de tools del README del paquete mcp-server está desactualizado (27 vs 35 reales)
+
+**Problema:** El README del paquete standalone `mcp-server` afirma "27" tools en varios lugares mientras el registro MCP vivo expone 35. Esto es distinto de GT-460 (conteos hardcodeados del comando `api` del smart-cli) y GT-445 (docs de governance/product); ninguno cubre este archivo.
+
+**Evidencia:** `src/packages/mcp-server/README.md:17,184,598` y `README.es.md:17,184,434,582` ("Herramientas disponibles (27)", "27 tools completas"); los 35 reales triangulados desde `api.catalog.generated.ts` (auto-generado desde `tools/list`) y las fuentes `*.tool.ts`. El 27 es previo a las 8 tools de archivo único (validate/evaluate/metrics/composable-validate/satellite-*).
+
+**Fix propuesto:** Regenerar el conteo a 35 en `README.md` y `README.es.md` (resources 9 / prompts 8 siguen correctos); idealmente derivar el conteo de `api.catalog.generated.ts` para que no pueda derivar.
+
+**Cierre:**
+- [ ] `README.md` + `README.es.md` indican 35 tools
+- [ ] conteo derivado/verificado contra el registro vivo
+
+**Referencias:** `src/packages/mcp-server/README.md:17,184,598`; `src/packages/mcp-server/README.es.md`; GT-460, GT-445
+
 #### GT-451
 
 **Título:** Umbrella — el CLI publicado en npm está desactualizado vs la fuente (deriva de release bajo el mismo `1.0.0`)

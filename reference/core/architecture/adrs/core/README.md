@@ -86,6 +86,7 @@
 * [0107-single-cluster-kubernetes-deployment-topology](./0107-single-cluster-kubernetes-deployment-topology.md) — **Single-cluster Kubernetes deployment topology for the Evolith suite**
 * [0108-masstransit-owned-message-topology](./0108-masstransit-owned-message-topology.md) — **MassTransit owns the message topology; broker CRDs are RBAC-only**
 * [0109-multi-project-satellite-governance](./0109-multi-project-satellite-governance.md) — **Multi-project satellite governance (monorepo satellites); Core stays sovereign**
+* [0110-masstransit-v8-apache-license-pin](./0110-masstransit-v8-apache-license-pin.md) — **Stay on MassTransit v8 (Apache-2.0); v9 is commercial and non-sublicensable**
 
 ---
 [Back to Upper Level](../README.md)

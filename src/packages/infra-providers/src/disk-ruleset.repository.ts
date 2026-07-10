@@ -1,15 +1,20 @@
 import * as path from "path";
 import { IFileSystem, ILogger } from "@beyondnet/evolith-core-domain/domain/interfaces";
 import { NormalizedRule } from "@beyondnet/evolith-core-domain/domain/models/normalized-rule";
-import { IRulesetRepository } from "@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port";
+import {
+  IRulesetRepository,
+  RulesetsNotFoundError,
+} from "@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import { ValidateFunction } from "ajv";
 
+export { RulesetsNotFoundError };
+
 /**
  * Disk-backed implementation of {@link IRulesetRepository}.
  *
- * Reads `*.rules.json` files under `<corePath>/rulesets`, validates each one
+ * Reads `*.rules.json` files under the Core rulesets root, validates each one
  * against the standard ruleset JSON schema, and normalizes them into
  * {@link NormalizedRule} entries consumed by the validators.
  *
@@ -29,9 +34,34 @@ export class DiskRulesetRepository implements IRulesetRepository {
     addFormats(this.ajv);
   }
 
+  /**
+   * GT-474: rulesets live either directly under `<corePath>/rulesets` (the
+   * rulesets bundled with the CLI package) or under `<corePath>/src/rulesets`
+   * (the Evolith Core monorepo layout, post apps/→src/ migration). Probe both,
+   * mirroring `ruleset-id-loader`'s candidate list — resolving only the first
+   * made `--core <checkout>` load zero rules and validate nothing.
+   */
+  private async resolveRulesetsDir(corePath: string): Promise<string> {
+    const candidates = [
+      path.join(corePath, "rulesets"),
+      path.join(corePath, "src", "rulesets"),
+    ];
+    for (const candidate of candidates) {
+      if (await this.fs.exists(candidate)) return candidate;
+    }
+    throw new RulesetsNotFoundError(
+      `No rulesets found at ${candidates.map((c) => `"${c}"`).join(" or ")}. ` +
+        `Point --core (or \`evolith profile\`) at a valid Evolith Core checkout, ` +
+        `or omit --core to use the rulesets bundled with the CLI.`,
+    );
+  }
+
   async loadAllRulesets(corePath: string): Promise<NormalizedRule[]> {
-    const rulesetsDir = path.join(corePath, "rulesets");
-    if (!(await this.fs.exists(rulesetsDir))) return [];
+    // GT-474: a missing rulesets root is a HARD error. Returning [] here made
+    // `validate` check zero rules and still report a (non-blocking) `warning` —
+    // a governance tool that silently validates nothing is worse than one that
+    // crashes, because the operator reads "warning" as "checked, mostly passed".
+    const rulesetsDir = await this.resolveRulesetsDir(corePath);
 
     const files = await this.findRulesetFiles(rulesetsDir);
     const rules: NormalizedRule[] = [];
@@ -87,6 +117,16 @@ export class DiskRulesetRepository implements IRulesetRepository {
         );
         continue;
       }
+    }
+
+    // GT-474: the rulesets root exists but yielded nothing — an empty corpus, a
+    // wrong `--core`, or every ruleset skipped as non-standard. Whatever the
+    // cause, zero rules must never flow downstream as a passable result.
+    if (rules.length === 0) {
+      throw new RulesetsNotFoundError(
+        `No rulesets loaded from "${rulesetsDir}" (${files.length} ruleset file(s) found, 0 rules normalized). ` +
+          `Refusing to validate against an empty ruleset corpus.`,
+      );
     }
 
     return rules;

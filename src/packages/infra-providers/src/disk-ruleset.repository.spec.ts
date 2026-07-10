@@ -1,5 +1,5 @@
 import { IFileSystem, ILogger } from '@beyondnet/evolith-core-domain/domain/interfaces';
-import { DiskRulesetRepository } from './disk-ruleset.repository';
+import { DiskRulesetRepository, RulesetsNotFoundError } from './disk-ruleset.repository';
 
 interface FakeFsConfig {
   files: Record<string, string>;
@@ -82,10 +82,44 @@ const SCHEMA = JSON.stringify({
 });
 
 describe('DiskRulesetRepository', () => {
-  it('returns [] when the rulesets directory is absent', async () => {
+  // GT-474: zero rulesets must ABORT, never resolve to [] — a governance run
+  // that silently checks nothing is worse than one that crashes.
+  it('throws when no rulesets directory exists, naming both probed paths', async () => {
     const fs = makeFs({ files: {} });
     const repo = new DiskRulesetRepository(fs, makeLogger());
-    expect(await repo.loadAllRulesets('/core')).toEqual([]);
+    await expect(repo.loadAllRulesets('/core')).rejects.toThrow(
+      RulesetsNotFoundError,
+    );
+    await expect(repo.loadAllRulesets('/core')).rejects.toThrow(
+      /"\/core\/rulesets" or "\/core\/src\/rulesets"/,
+    );
+  });
+
+  // GT-474 regression: the Evolith Core monorepo keeps rulesets at
+  // `<core>/src/rulesets` (post apps/→src/ migration). Joining only
+  // `<core>/rulesets` made `validate --core <checkout>` load 0 rules.
+  it('resolves rulesets under <core>/src/rulesets (Core monorepo layout)', async () => {
+    const fs = makeFs({
+      dirs: new Set(['/core/src/rulesets', '/core/src/rulesets/schema']),
+      files: {
+        '/core/src/rulesets/schema/ruleset-standard.schema.json': SCHEMA,
+        '/core/src/rulesets/governance.rules.json': JSON.stringify({
+          rules: [{ id: 'GOV-1', severity: 'MUST', title: 'T', description: 'D' }],
+        }),
+      },
+    });
+    const repo = new DiskRulesetRepository(fs, makeLogger());
+    const rules = await repo.loadAllRulesets('/core');
+    expect(rules).toHaveLength(1);
+    expect(rules[0].id).toBe('GOV-1');
+  });
+
+  it('throws when the rulesets directory exists but yields zero rules', async () => {
+    const fs = makeFs({ dirs: new Set(['/core/rulesets']), files: {} });
+    const repo = new DiskRulesetRepository(fs, makeLogger());
+    await expect(repo.loadAllRulesets('/core')).rejects.toThrow(
+      /0 rules normalized/,
+    );
   });
 
   it('loads, validates and normalizes a ruleset file', async () => {

@@ -34,18 +34,17 @@ describe('DiskRulesetRepository', () => {
   });
 
   describe('loadAllRulesets', () => {
-    it('should return empty array when rulesets dir does not exist', async () => {
+    // GT-474: zero rulesets is a hard error — never an empty, passable result.
+    it('should throw when rulesets dir does not exist', async () => {
       mockFs.exists.mockResolvedValue(false);
-      const result = await repo.loadAllRulesets('/test');
-      expect(result).toEqual([]);
+      await expect(repo.loadAllRulesets('/test')).rejects.toThrow('No rulesets found');
     });
 
-    it('should return empty array when no ruleset files found', async () => {
+    it('should throw when no ruleset files found', async () => {
       mockFs.exists.mockResolvedValue(true);
       mockFs.readdirNames.mockResolvedValue(['other.txt']);
-      mockFs.stat.mockResolvedValue({ isDirectory: () => false, isFile: () => true });
-      const result = await repo.loadAllRulesets('/test');
-      expect(result).toEqual([]);
+      mockFs.stat.mockResolvedValue({ isDirectory: () => false, isFile: () => true } as any);
+      await expect(repo.loadAllRulesets('/test')).rejects.toThrow('0 rules normalized');
     });
 
     it('should log error on malformed ruleset', async () => {

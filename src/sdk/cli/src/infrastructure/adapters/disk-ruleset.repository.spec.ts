@@ -25,10 +25,12 @@ function fsMock(cfg: { existing?: string[]; dirs?: Record<string, string[]>; dir
 const logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() } as any;
 
 describe('DiskRulesetRepository', () => {
-  it('returns [] when the rulesets directory is absent', async () => {
+  // GT-474: an unresolvable ruleset corpus aborts the run instead of silently
+  // validating nothing.
+  it('throws when the rulesets directory is absent', async () => {
     const fs = { exists: jest.fn(async () => false) } as any;
     const repo = new DiskRulesetRepository(fs, logger);
-    expect(await repo.loadAllRulesets(CORE)).toEqual([]);
+    await expect(repo.loadAllRulesets(CORE)).rejects.toThrow('No rulesets found');
   });
 
   it('loads and normalizes rules, deriving category and severity', async () => {

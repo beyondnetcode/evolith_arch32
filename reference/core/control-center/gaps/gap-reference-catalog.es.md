@@ -36,9 +36,14 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Fix propuesto:** si `rulesChecked === 0`, forzar estado `warning` (o `error`) con un issue accionable (p.ej. "No se resolvieron rulesets del Core — pase `--core` o defina `EVOLITH_CORE_PATH`"). Nunca emitir `passed` con 0 reglas.
 
-**Cierre:** validate con 0 reglas resueltas devuelve un estado no-passing + mensaje accionable; test unitario cubre la ruta de cero reglas.
+**Fix / Resolución (HECHO — sustituido por [GT-474](#gt-474)):** la mitigación interina añadió la guarda `GOV-CORE-UNRESOLVED` pero degradaba la corrida de cero reglas a un **`warning` no bloqueante** — que un operador lee como "verificó y en su mayoría pasó", así que el falso verde sólo cambió de color. GT-474 cerró el gap de raíz: se corrigió la discrepancia entre resolutores que producía `rulesChecked: 0`, un corpus de rulesets irresoluble o vacío lanza ahora un `RulesetsNotFoundError` fatal (relanzado, no tragado), una corrida completa de cero reglas es un **`failed` bloqueante**, y toda ruta de aborto sale distinto de cero. **Bug real.**
 
-**Referencias:** src/sdk/cli/src/commands/validate/validate.command.ts:99; GT-395; GT-456.
+**Cierre:**
+- [x] validate con 0 reglas resueltas devuelve un estado no-passing + mensaje accionable.
+- [x] Tests unitarios cubren la ruta de cero reglas (`validate.command.spec`: corrida completa ⇒ `failed` bloqueante + `exit 1`; corrida dirigida ⇒ exenta).
+- [x] Causa raíz (discrepancia entre resolutores) eliminada — ver GT-474.
+
+**Referencias:** src/sdk/cli/src/commands/validate/validate.command.ts; GT-395; GT-456; **GT-474 (lo sustituye)**.
 
 #### GT-453
 
@@ -365,6 +370,51 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - [x] Base de gates del spec `validate-blueprint` corregida; spec en verde (17/17).
 
 **Referencias:** `src/packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts`; `.../use-cases/validate-blueprint.use-case.spec.ts`; `.../use-cases/validate-blueprint.use-case.ts`; GT-461 (archivos de datos de gate).
+
+#### GT-474
+
+**Título:** `validate --core <checkout>` no validaba **nada** y reportaba `warning` — dos resolutores de rulesets discrepaban sobre dónde guarda el Core sus rulesets
+
+**Problema:** Pasar `--core <raíz-del-repo-core>` a `evolith validate` producía `status: "warning"` con `rulesChecked: 0`. Nunca se verificó nada, y el reporte no lo decía — un operador lee razonablemente `warning` como *"verificó y en su mayoría pasó"*. Es el modo de fallo más peligroso de una herramienta de gobernanza: un **veredicto falso y tranquilizador**. Se combinaron tres defectos:
+
+1. **Discrepancia entre resolutores (causa raíz).** `resolveRulesets()` (`src/sdk/cli/src/infrastructure/paths/rulesets-resolver.ts`) sabía que los rulesets viven en `<core>/src/rulesets`, pero devuelve `coreRoot` (la raíz del Core), y `DiskRulesetRepository.loadAllRulesets(corePath)` volvía a unir `path.join(corePath, "rulesets")` → `<core>/rulesets`, que **no existe** (el Core mantiene su corpus en `src/rulesets` tras la migración `apps/`→`src/`). El repositorio devolvía `[]`. Un tercer resolutor, `ruleset-id-loader`, ya sondeaba *ambos* candidatos — el código sostenía dos convenciones discrepantes y una correcta.
+2. **Cero rulesets devolvía `[]` en vez de lanzar.** `loadAllRulesets` trataba una raíz de rulesets ausente como un corpus vacío-pero-válido.
+3. **El corpus vacío se blanqueaba en un `warning`.** `RulesetValidatorService` envolvía `discoverAndEvaluate` en un `catch` genérico que degradaba *cualquier* error del motor a `logger.warn('Rule engine error: …')` y continuaba con `rulesChecked = 0`; la guarda de GT-452 en `validate.command.ts` degradaba entonces la corrida de cero reglas a un **`warning` no bloqueante** en lugar de fallar. Peor: la ruta de aborto preexistente de `resolveRulesets` hacía `return` con **exit 0**, así que una validación que no resolvió ningún ruleset era un *gate verde en CI*.
+
+**Evidencia (pre-fix, `develop`):**
+```
+$ node src/sdk/cli/dist/main.js validate --satellite <mms> --core <evolith> --format json
+  "status": "warning",  "rulesChecked": 0     # 1 issue: GOV-CORE-UNRESOLVED (blocking: false)
+$ node src/sdk/cli/dist/main.js validate --satellite <mms> --format json   # rulesets embebidos
+  "status": "failed",   "rulesChecked": 103   # funciona
+$ ls <evolith>/rulesets → ausente;  ls <evolith>/src/rulesets → 145 *.rules.json
+$ evolith validate --core <evolith> ; echo $?  → 0    # corrida abortada aún sale 0
+```
+Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monorepo previsto.
+
+**Fix / Resolución (HECHO):**
+- **Una lista de candidatos, tres consumidores.** `DiskRulesetRepository` incorpora `resolveRulesetsDir()`, que sondea `<core>/rulesets` y luego `<core>/src/rulesets` — el mismo orden que `ruleset-id-loader`. El override `--core` de `resolveRulesets()` sondea ahora la lista idéntica en vez de fijar `src/rulesets`, de modo que los dos resolutores ya no pueden discrepar.
+- **Cero rulesets es fatal.** Nuevo error de dominio `RulesetsNotFoundError` (`core-domain/domain/ports/ruleset-repository.port.ts`, re-exportado desde `infra-providers`). `loadAllRulesets` lo lanza cuando (a) no existe ninguno de los directorios candidatos — nombrando *ambas* rutas sondeadas — o (b) el directorio existe pero normaliza **0 reglas**. `RulesetValidatorService` lo relanza en lugar de tragárselo como warning.
+- **Nunca un estado tranquilizador, nunca una salida verde.** `validate.command.ts` reporta el error fatal con un mensaje accionable y `process.exit(1)`; la guarda residual de cero reglas (GT-452) se endureció de `warning` no bloqueante a **`failed` bloqueante** (defensa en profundidad para cualquier otra ruta de cero reglas); y la ruta de aborto de `resolveRulesets` sale ahora con **1** en vez de 0. Las corridas dirigidas (`--ruleset`/`--adr`/`--file`/`--topology`/`--phase`/`--manifest`) reportan legítimamente `rulesChecked: 0` y quedan exentas. **Clasificación: bug real (validación silenciosa de cero reglas).** Sustituye y cierra **GT-452**, cuya mitigación `warning` es precisamente la conducta que este gap corrige.
+
+**Verificación (post-fix):**
+| Invocación | Antes | Después |
+|---|---|---|
+| `--core <raíz-repo-core>` | `warning`, 0 reglas, exit 0 | `failed`, **105 reglas**, exit 1 |
+| `--core <core>/src` | error duro (`…/src/src/rulesets`) | `failed`, 99 reglas, exit 1 |
+| sin `--core` (embebidos) | `failed`, 103 reglas | `failed`, 103 reglas (sin cambio) |
+| `--core <ruta sin rulesets>` | `warning`, 0 reglas, exit 0 | **aborta**, sin veredicto, exit 1 |
+| `--core /inexistente` | aborta, exit **0** | aborta, exit **1** |
+
+**Cierre:**
+- [x] `resolveRulesets` y `DiskRulesetRepository` sondean una única lista de candidatos compartida.
+- [x] `RulesetsNotFoundError` se lanza ante raíz ausente **y** ante corpus de 0 reglas; `RulesetValidatorService` lo relanza (no lo traga).
+- [x] Cero reglas nunca puede aflorar como `passed`/`warning`; toda ruta de aborto sale distinto de cero.
+- [x] Tests de regresión: 3 en `infra-providers` (raíz ausente nombra ambas rutas · resuelve `<core>/src/rulesets` · lanza ante corpus de 0 reglas), 2 en `validate.command.spec` (corrida completa con 0 reglas ⇒ `failed` bloqueante + `exit 1`; corrida dirigida con 0 reglas ⇒ inalterada), más los specs de CLI/core-api actualizados.
+- [x] `npm run build` limpio; infra-providers 59/59, core-domain 735/735, CLI unit 921/921, core-api disk-ruleset 4/4.
+- [x] Repro en vivo re-ejecutado: `--core <core>` verifica ahora **105 reglas** (antes 0).
+
+**Referencias:** `src/packages/infra-providers/src/disk-ruleset.repository.ts`; `src/packages/core-domain/src/domain/ports/ruleset-repository.port.ts`; `src/packages/core-domain/src/application/validators/ruleset-validator.service.ts`; `src/sdk/cli/src/infrastructure/paths/rulesets-resolver.ts`; `src/sdk/cli/src/commands/validate/validate.command.ts`; GT-452 (sustituido), GT-456, GT-470; spike Fase-0b de ADR-0109.
 
 #### GT-447
 

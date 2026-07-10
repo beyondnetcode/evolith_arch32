@@ -53,21 +53,31 @@ function findBundledRulesets(startDir: string): string | undefined {
  * Resolve the canonical rulesets root for the running CLI.
  *
  * Resolution order (never falls back to `process.cwd()`):
- *   1. An explicit `--core` / `profile.core` override → `${core}/src/rulesets`.
+ *   1. An explicit `--core` / `profile.core` override → `${core}/rulesets` or
+ *      `${core}/src/rulesets`, whichever exists.
  *   2. The rulesets bundled inside this CLI package (relative to `__dirname`),
  *      which works both in dev (running from `dist/`) and when installed.
  *
+ * GT-474: the override probes the SAME candidate list as `DiskRulesetRepository`
+ * and `ruleset-id-loader`. When this resolver knew only `src/rulesets` and the
+ * repository knew only `rulesets`, `--core <checkout>` resolved a path the
+ * repository then failed to read — validating zero rules without saying so.
+ *
  * @param coreOverride explicit Core checkout path (`--core` or `profile.core`).
- * @throws when an override is given but has no `src/rulesets`, or when no
- *         bundled rulesets can be located — with an actionable message.
+ * @throws when an override is given but holds no rulesets at either candidate,
+ *         or when no bundled rulesets can be located — with an actionable message.
  */
 export function resolveRulesets(coreOverride?: string): ResolvedRulesets {
   if (coreOverride && coreOverride.trim().length > 0) {
     const coreRoot = path.resolve(coreOverride);
-    const rulesetsRoot = path.join(coreRoot, 'src', 'rulesets');
-    if (!fs.existsSync(rulesetsRoot)) {
+    const candidates = [
+      path.join(coreRoot, 'rulesets'),
+      path.join(coreRoot, 'src', 'rulesets'),
+    ];
+    const rulesetsRoot = candidates.find((c) => fs.existsSync(c));
+    if (!rulesetsRoot) {
       throw new Error(
-        `Core path has no rulesets at "${rulesetsRoot}". ` +
+        `Core path has no rulesets at ${candidates.map((c) => `"${c}"`).join(' or ')}. ` +
           `Point --core (or \`smart-cli profile\`) at a valid Evolith Core checkout, ` +
           `or omit --core to use the rulesets bundled with the CLI.`,
       );

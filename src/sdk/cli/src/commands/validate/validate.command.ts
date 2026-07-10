@@ -1,6 +1,7 @@
 import { Command, Option } from 'nest-commander';
 import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/validate-satellite.use-case';
 import { ValidationResult, ValidationIssue, RulesetValidatorService } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service';
+import { RulesetsNotFoundError } from '@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port';
 import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
 import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
 import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resolver';
@@ -146,7 +147,9 @@ export class ValidateCommand extends BaseEvolithCommand {
     } catch (err) {
       this.promptService.showError((err as Error).message);
       this.promptService.showOutro('Validación abortada.');
-      return;
+      // GT-474: an aborted validation must exit non-zero. Returning silently
+      // exited 0, so CI read "resolved no rulesets" as a passing gate.
+      process.exit(1);
     }
 
     this.promptService.startSpinner('Analizando repositorio...');
@@ -254,6 +257,14 @@ export class ValidateCommand extends BaseEvolithCommand {
       }
     } catch (error) {
       this.promptService.stopSpinner();
+      // GT-474: an unresolvable/empty ruleset corpus is fatal, not a warning.
+      // Surface the actionable message and exit non-zero instead of letting a
+      // zero-rule run be mistaken for a validation verdict.
+      if (error instanceof RulesetsNotFoundError) {
+        this.promptService.showError((error as Error).message);
+        this.promptService.showOutro('❌ Validación abortada: no se resolvió ningún ruleset del Core.');
+        process.exit(1);
+      }
       throw error;
     }
 
@@ -265,9 +276,12 @@ export class ValidateCommand extends BaseEvolithCommand {
       result = { ...result, coreRef: { ...result.coreRef, path: corePath } };
     }
 
-    // GT-452: never report a green pass when zero Core rulesets were resolved.
-    // A satellite with only evolith.yaml must not receive a full-compliance sign-off
-    // having executed nothing — degrade to a warning with an actionable message.
+    // GT-452/GT-474: never sign off when zero Core rulesets were resolved. A
+    // satellite must not receive a compliance verdict having executed nothing.
+    // GT-452 first degraded this to `warning`, but an operator reads "warning" as
+    // "it checked and mostly passed" — so a zero-rule run is a BLOCKING failure.
+    // DiskRulesetRepository now throws before we get here; this stays as
+    // defense-in-depth for any other path that yields an empty rule set.
     // Scope to the DEFAULT full validation: a targeted --ruleset/--adr/--file/
     // --topology/--phase/--manifest run legitimately reports "0 issues" (no
     // violations of that specific check) without incrementing rulesChecked.
@@ -275,20 +289,20 @@ export class ValidateCommand extends BaseEvolithCommand {
       options?.ruleset || options?.adr || options?.file ||
       options?.topology?.length || options?.phase || options?.manifest,
     );
-    if (!targetedRun && result.rulesChecked === 0 && result.status === 'passed') {
+    if (!targetedRun && result.rulesChecked === 0) {
       const unresolvedIssue: ValidationIssue = {
         ruleId: 'GOV-CORE-UNRESOLVED',
-        severity: 'SHOULD',
+        severity: 'MUST',
         category: 'governance',
         title: 'No Core rulesets were resolved',
         description:
           'validate executed 0 rules — the Evolith Core rulesets could not be resolved. ' +
           'Pass --core <path> or set EVOLITH_CORE_PATH so governance rules actually run.',
-        blocking: false,
+        blocking: true,
       };
       result = {
         ...result,
-        status: 'warning',
+        status: 'failed',
         issues: [...result.issues, unresolvedIssue],
       };
     }

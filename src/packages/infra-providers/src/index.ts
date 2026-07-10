@@ -1,7 +1,7 @@
 export { NodeFileSystemProvider } from './node-filesystem.provider';
 export { NestLoggerProvider, ConsoleLoggerProvider, NoOpLoggerProvider } from './logger.provider';
 export { YamlConfigParserProvider, JsonConfigParserProvider } from './config-parser.provider';
-export { DiskRulesetRepository } from './disk-ruleset.repository';
+export { DiskRulesetRepository, RulesetsNotFoundError } from './disk-ruleset.repository';
 export { WebhookAdapter } from './webhook.adapter';
 export {
   MoscowPrioritizationService,

@@ -2,6 +2,7 @@ import { Injectable, Optional, Inject } from '@nestjs/common';
 import * as path from 'path';
 import { ILogger, IFileSystem, IConfigParser } from '../../domain/interfaces';
 import { RuleEvaluationEngine } from './rule-evaluation-engine';
+import { RulesetsNotFoundError } from '../../domain/ports/ruleset-repository.port';
 import { NativeEvaluator } from './evaluators/native-evaluator';
 import { OpaEvaluator } from './evaluators/opa-evaluator';
 import { TopologyCatalogService } from '../services/topology-catalog.service';
@@ -80,6 +81,10 @@ export class RulesetValidatorService {
       rulesChecked += evaluated.length;
       issues.push(...this.engine.toValidationIssues(engineResults));
     } catch (err: unknown) {
+      // GT-474: an unresolvable/empty ruleset corpus must never be downgraded to
+      // a warning here — that is exactly how `validate` came to report
+      // `rulesChecked: 0` with a reassuring status. Let it abort the run.
+      if (err instanceof RulesetsNotFoundError) throw err;
       this.logger.warn(`Rule engine error: ${err instanceof Error ? err.message : String(err)}`);
     }
 

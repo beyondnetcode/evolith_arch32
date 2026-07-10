@@ -284,6 +284,42 @@ describe('ValidateCommand', () => {
       );
     });
 
+    // GT-474: a full validation that resolved 0 Core rulesets must FAIL loudly.
+    // It previously reported `warning` with a non-blocking issue, which reads as
+    // "checked and mostly passed" — the worst possible governance outcome.
+    it('fails (never warns) when a full validation checked zero rules', async () => {
+      mockExecute.mockResolvedValue({
+        result: { ...defaultResult, status: 'passed' as const, rulesChecked: 0 },
+      });
+
+      // `format: 'unknown'` routes through printHumanReport so the blocking
+      // issue is visible in the assertions.
+      await command.run([], { format: 'unknown' });
+
+      expect(exitSpy).toHaveBeenCalledWith(1);
+      expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
+        expect.stringContaining('fallado'),
+      );
+      expect(promptServiceMock.showError).toHaveBeenCalledWith(
+        expect.stringContaining('GOV-CORE-UNRESOLVED'),
+      );
+    });
+
+    // A targeted run (e.g. `--ruleset acl`) legitimately reports 0 rulesChecked
+    // without violations — it must NOT be forced to `failed`.
+    it('does not force failure for a targeted run that checked zero rules', async () => {
+      mockExecute.mockResolvedValue({
+        result: { ...defaultResult, status: 'passed' as const, rulesChecked: 0 },
+      });
+
+      await command.run([], { ruleset: 'acl' });
+
+      expect(exitSpy).not.toHaveBeenCalled();
+      expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
+        expect.stringContaining('cumple'),
+      );
+    });
+
     it('should show warning outro when status is warning', async () => {
       mockExecute.mockResolvedValue({
         result: {

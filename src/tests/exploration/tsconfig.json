@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2021",
+    // `bundler` (matching sdk/cli's tsconfig) honors package `exports` maps, so the
+    // CLI/core-api/mcp DI graphs compiled here resolve the workspace packages'
+    // subpath exports (`@beyondnet/evolith-*/…` → `dist/…`) and ESM-only deps like
+    // `conf`. Classic `node` resolution ignores `exports` → TS2307. Same rationale
+    // as src/tests/contract/tsconfig.json (the proven cross-surface harness).
+    "moduleResolution": "bundler",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "forceConsistentCasingInFileNames": false,
+    "types": ["jest", "node"],
+    "baseUrl": "../..",
+    "paths": {
+      "@beyondnet/evolith-core-domain/*": ["packages/core-domain/dist/*"],
+      "@beyondnet/evolith-infra-providers/*": ["packages/infra-providers/dist/*"]
+    }
+  },
+  "include": ["./**/*.ts"]
+}

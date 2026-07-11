@@ -130,7 +130,7 @@ export const BINDINGS: Record<string, Binding> = {
 
   'sdlc-generate': {
     verified: false,
-    cli: (c) => ['sdlc', 'generate', '--format', 'json'],
+    cli: (c) => ['sdlc', 'generate', 'domain', '--from', 'package.json', '--format', 'json'],
   },
 
   'dora-metrics': {
@@ -300,12 +300,12 @@ export const BINDINGS: Record<string, Binding> = {
 
   'adr-crud': {
     verified: false,
-    cli: (c) => ['adr', 'list', '--format', 'json'],
+    cli: (c) => ['adr', '--list', '--format', 'json'],
   },
 
   'standards-crud': {
     verified: false,
-    cli: (c) => ['standards', '--format', 'json'],
+    cli: (c) => ['standards', '--list', '--format', 'json'],
   },
 
   'docs-scaffold': {
@@ -347,7 +347,7 @@ export const BINDINGS: Record<string, Binding> = {
 
   'completion': {
     verified: false,
-    cli: (c) => ['completion', '--shell', 'bash'],
+    // completion emits shell scripts, not JSON envelopes — CLI-only, non-JSON
   },
 
   'profile': {

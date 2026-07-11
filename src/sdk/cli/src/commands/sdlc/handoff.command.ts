@@ -9,6 +9,7 @@ import { PhaseService, ToolSelectionService } from '@beyondnet/evolith-core-doma
 import { PhaseTransitionUseCase } from '@beyondnet/evolith-core-domain/application/services';
 import {
   createSuccessEnvelope,
+  createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
@@ -58,19 +59,32 @@ export class HandoffCommand extends BaseEvolithCommand {
 
     if (options?.from && options?.to) {
       const useCase = new PhaseTransitionUseCase(fsService);
-      const result = await useCase.execute(options.from, options.to, [], projectRoot);
+      try {
+        const result = await useCase.execute(options.from, options.to, [], projectRoot);
 
-      if (json) {
-        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        if (json) {
+          if (result.success) {
+            console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          } else {
+            console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', result.errors.join(', '), { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          }
+          return;
+        }
+
+        if (result.success) {
+          this.promptService.showSuccess(`✓ Transitioned from ${options.from} to ${options.to}`);
+        } else {
+          throw new Error(`Transition failed: ${result.errors.join(', ')}`);
+        }
         return;
+      } catch (error: unknown) {
+        if (json) {
+          const msg = error instanceof Error ? error.message : String(error);
+          console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', msg, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          return;
+        }
+        throw error;
       }
-
-      if (result.success) {
-        this.promptService.showSuccess(`✓ Transitioned from ${options.from} to ${options.to}`);
-      } else {
-        throw new Error(`Transition failed: ${result.errors.join(', ')}`);
-      }
-      return;
     }
 
     if (!json) {
@@ -276,7 +290,7 @@ export class HandoffCommand extends BaseEvolithCommand {
   }
 
   @Option({
-    flags: '-f, --format <string>',
+    flags: '--format <string>',
     description: 'Output format: json (ADR-0073 envelope) or human (default)',
   })
   parseFormat(val: string): string {

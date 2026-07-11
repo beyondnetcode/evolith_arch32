@@ -8,6 +8,7 @@ import { readGitLog, isGitRepo } from '@beyondnet/evolith-core-domain/domain/met
 import { calculateDora, DoraMetric, DoraRating } from '@beyondnet/evolith-core-domain/domain/metrics/dora-calculator';
 import {
   createSuccessEnvelope,
+  createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
@@ -63,6 +64,11 @@ export class GateStatusCommand extends BaseEvolithCommand {
     } catch (error: unknown) {
       if (!json) {
         this.promptService.stopSpinner();
+      }
+      if (json) {
+        const msg = error instanceof Error ? error.message : String(error);
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', msg, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        return;
       }
       throw error; // Let BaseEvolithCommand handle it
     }

@@ -24,6 +24,12 @@ import { createAutoFixTools } from './auto-fix.tools';
 import { createConfigTools } from './config.tools';
 import { createMetricsTools } from './metrics.tool';
 import { createTopologyTools } from './topology.tools';
+import { createInitTools } from './init.tools';
+import { createAdrTools } from './adr.tools';
+import { DocsScaffoldTool } from './docs-scaffold.tool';
+import { SdlcGenerateTool } from './sdlc-generate.tool';
+import { createUpgradeTools } from './upgrade.tools';
+import { createFixturesTools } from './fixtures.tools';
 
 /**
  * Aggregates every MCP tool and feeds the full list to the
@@ -42,6 +48,8 @@ import { createTopologyTools } from './topology.tools';
     SatelliteAdoptTool,
     SatelliteListTool,
     SatelliteStatusTool,
+    DocsScaffoldTool,
+    SdlcGenerateTool,
     MetricsService,
     {
       provide: MCP_TOOLS,
@@ -59,6 +67,8 @@ import { createTopologyTools } from './topology.tools';
         webhook: WebhookAdapter,
         moscow: MoscowPrioritizationService,
         metrics: MetricsService,
+        docsScaffold: DocsScaffoldTool,
+        sdlcGenerate: SdlcGenerateTool,
       ): McpTool[] => [
         validate,
         evaluate,
@@ -77,6 +87,12 @@ import { createTopologyTools } from './topology.tools';
         ...createConfigTools(),
         ...createMetricsTools(metrics),
         ...createTopologyTools(fs, new NestLoggerProvider().createLogger('TopologyTool')),
+        ...createInitTools(fs),
+        ...createAdrTools(fs),
+        docsScaffold,
+        sdlcGenerate,
+        ...createUpgradeTools(fs, new NestLoggerProvider().createLogger('UpgradeTool')),
+        ...createFixturesTools(fs),
       ],
       inject: [
         ValidateTool,
@@ -92,6 +108,8 @@ import { createTopologyTools } from './topology.tools';
         WebhookAdapter,
         MoscowPrioritizationService,
         MetricsService,
+        DocsScaffoldTool,
+        SdlcGenerateTool,
       ],
     },
     ToolRegistryService,

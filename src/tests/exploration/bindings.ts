@@ -22,6 +22,10 @@ export interface Binding {
 }
 
 export const BINDINGS: Record<string, Binding> = {
+  // =========================================================================
+  // Gate & Phase Operations
+  // =========================================================================
+
   'gate-evaluate': {
     verified: true,
     cli: (c) => [
@@ -43,28 +47,6 @@ export const BINDINGS: Record<string, Binding> = {
     }),
   },
 
-  'detect-drift': {
-    verified: false,
-    cli: (c) => ['drift', '--path', c.projectPath, '--format', 'json'],
-    mcp: (c) => ({ tool: 'evolith-drift-detect', args: { path: c.projectPath, corePath: c.corePath } }),
-    rest: (c) => ({
-      method: 'POST',
-      path: '/api/v1/architecture/detect-drift',
-      body: { workspaceRef: c.workspaceRef },
-    }),
-  },
-
-  'validate-satellite': {
-    verified: false,
-    cli: (c) => ['validate', '--satellite', c.projectPath, '--core', c.corePath, '--format', 'json'],
-    mcp: (c) => ({ tool: 'evolith-validate', args: { path: c.projectPath, corePath: c.corePath } }),
-    rest: (c) => ({
-      method: 'POST',
-      path: '/api/v1/architecture/validate-satellite',
-      body: { workspaceRef: c.workspaceRef },
-    }),
-  },
-
   'phase-advance': {
     verified: false,
     cli: (c) => [
@@ -82,5 +64,329 @@ export const BINDINGS: Record<string, Binding> = {
       path: '/api/v1/phases/transition',
       body: { from: 'discovery', to: 'design', tools: [], workspaceRef: c.workspaceRef },
     }),
+  },
+
+  'propose-advance': {
+    verified: false,
+    rest: (c) => ({
+      method: 'POST',
+      path: '/api/v1/projects/propose-advance',
+      body: { workspaceRef: c.workspaceRef },
+    }),
+  },
+
+  'sdlc-status': {
+    verified: false,
+    cli: (c) => ['sdlc', 'gate-status', '--path', c.projectPath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-sdlc-status', args: { path: c.projectPath } }),
+  },
+
+  'sdlc-handoff': {
+    verified: false,
+    cli: (c) => ['sdlc', 'handoff', '--phase', 'design', '--path', c.projectPath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-sdlc-handoff', args: { phase: 'design', path: c.projectPath } }),
+  },
+
+  // =========================================================================
+  // Validation Operations
+  // =========================================================================
+
+  'validate-satellite': {
+    verified: false,
+    cli: (c) => ['validate', '--satellite', c.projectPath, '--core', c.corePath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-validate', args: { path: c.projectPath, corePath: c.corePath } }),
+    rest: (c) => ({
+      method: 'POST',
+      path: '/api/v1/architecture/validate-satellite',
+      body: { workspaceRef: c.workspaceRef },
+    }),
+  },
+
+  'architecture-validate': {
+    verified: false,
+    cli: (c) => ['validate', '--arch', '--satellite', c.projectPath, '--core', c.corePath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-architecture-validate', args: { path: c.projectPath, corePath: c.corePath, architecture: true } }),
+    rest: (c) => ({
+      method: 'POST',
+      path: '/api/v1/architecture/validate-satellite',
+      body: { workspaceRef: c.workspaceRef, architecture: true },
+    }),
+  },
+
+  'detect-drift': {
+    verified: false,
+    cli: (c) => ['drift', '--path', c.projectPath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-drift-detect', args: { path: c.projectPath, corePath: c.corePath } }),
+    rest: (c) => ({
+      method: 'POST',
+      path: '/api/v1/architecture/detect-drift',
+      body: { workspaceRef: c.workspaceRef },
+    }),
+  },
+
+  // =========================================================================
+  // SDLC & Code Generation Operations
+  // =========================================================================
+
+  'sdlc-generate': {
+    verified: false,
+    cli: (c) => ['sdlc', 'generate', '--ddd-model', 'DDD.md', '--path', c.projectPath, '--format', 'json'],
+  },
+
+  'dora-metrics': {
+    verified: false,
+    cli: (c) => ['sdlc', 'gate-status', '--dora', '--path', c.projectPath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-dora-metrics', args: { path: c.projectPath } }),
+  },
+
+  // =========================================================================
+  // Topology Operations
+  // =========================================================================
+
+  'topology-list': {
+    verified: false,
+    mcp: (c) => ({ tool: 'evolith-topology-list', args: {} }),
+    rest: (c) => ({
+      method: 'GET',
+      path: '/api/v1/architecture/topologies',
+    }),
+  },
+
+  'topology-get': {
+    verified: false,
+    mcp: (c) => ({ tool: 'evolith-topology-get', args: { id: 'monolithic-layered' } }),
+    rest: (c) => ({
+      method: 'GET',
+      path: '/api/v1/architecture/topologies/monolithic-layered',
+    }),
+  },
+
+  // =========================================================================
+  // Ruleset Operations
+  // =========================================================================
+
+  'rulesets-list': {
+    verified: false,
+    rest: (c) => ({
+      method: 'GET',
+      path: '/api/v1/rulesets',
+    }),
+  },
+
+  'rulesets-get': {
+    verified: false,
+    rest: (c) => ({
+      method: 'GET',
+      path: '/api/v1/rulesets/core-patterns',
+    }),
+  },
+
+  // =========================================================================
+  // Metadata Operations
+  // =========================================================================
+
+  'gate-definition': {
+    verified: false,
+    rest: (c) => ({
+      method: 'GET',
+      path: '/api/v1/gates/PG1',
+    }),
+  },
+
+  'phase-requirements': {
+    verified: false,
+    rest: (c) => ({
+      method: 'GET',
+      path: '/api/v1/phases/design/requirements',
+    }),
+  },
+
+  // =========================================================================
+  // Health & Metrics Operations
+  // =========================================================================
+
+  'health-check': {
+    verified: false,
+    rest: (c) => ({
+      method: 'GET',
+      path: '/health',
+    }),
+  },
+
+  'metrics-prometheus': {
+    verified: false,
+    mcp: (c) => ({ tool: 'evolith-metrics', args: {} }),
+    rest: (c) => ({
+      method: 'GET',
+      path: '/metrics',
+    }),
+  },
+
+  'mcp-metrics': {
+    verified: false,
+    mcp: (c) => ({ tool: 'evolith-metrics', args: { scope: 'mcp' } }),
+  },
+
+  // =========================================================================
+  // Agent Operations
+  // =========================================================================
+
+  'agents-install': {
+    verified: false,
+    cli: (c) => ['agents', 'install', '--name', 'gap-analyzer', '--path', c.projectPath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-agent-install', args: { name: 'gap-analyzer', path: c.projectPath } }),
+  },
+
+  'agents-list': {
+    verified: false,
+    cli: (c) => ['agents', 'list', '--path', c.projectPath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-agent-list', args: { path: c.projectPath } }),
+  },
+
+  'agents-validate': {
+    verified: false,
+    cli: (c) => ['agents', 'validate', '--name', 'gap-analyzer', '--path', c.projectPath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-agent-validate', args: { name: 'gap-analyzer', path: c.projectPath } }),
+  },
+
+  'agents-upgrade': {
+    verified: false,
+    cli: (c) => ['agents', 'upgrade', '--name', 'gap-analyzer', '--path', c.projectPath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-agent-upgrade', args: { name: 'gap-analyzer', path: c.projectPath } }),
+  },
+
+  'agents-remove': {
+    verified: false,
+    cli: (c) => ['agents', 'remove', '--name', 'gap-analyzer', '--path', c.projectPath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-agent-remove', args: { name: 'gap-analyzer', path: c.projectPath } }),
+  },
+
+  // =========================================================================
+  // MoSCoW Analysis Operations (read-only; mutatives excluded)
+  // =========================================================================
+
+  'moscow-load': {
+    verified: false,
+    mcp: (c) => ({ tool: 'evolith-moscow-load', args: { phase: 'design' } }),
+  },
+
+  'moscow-list': {
+    verified: false,
+    mcp: (c) => ({ tool: 'evolith-moscow-list', args: { path: c.projectPath } }),
+  },
+
+  'moscow-validate': {
+    verified: false,
+    mcp: (c) => ({ tool: 'evolith-moscow-validate', args: { phase: 'design' } }),
+  },
+
+  'moscow-report': {
+    verified: false,
+    mcp: (c) => ({ tool: 'evolith-moscow-report', args: { phase: 'design' } }),
+  },
+
+  // =========================================================================
+  // Configuration Operations (read-only; config-set excluded)
+  // =========================================================================
+
+  'config-get': {
+    verified: false,
+    mcp: (c) => ({ tool: 'evolith-config-get', args: { key: 'name' } }),
+  },
+
+  // =========================================================================
+  // Documentation Operations
+  // =========================================================================
+
+  'adr-crud': {
+    verified: false,
+    cli: (c) => ['adr', 'list', '--path', c.projectPath, '--format', 'json'],
+  },
+
+  'standards-crud': {
+    verified: false,
+    cli: (c) => ['standards', '--list', '--path', c.projectPath, '--format', 'json'],
+  },
+
+  'docs-scaffold': {
+    verified: false,
+    cli: (c) => ['docs', '--init', '--path', c.projectPath, '--format', 'json'],
+  },
+
+  // =========================================================================
+  // Architecture Scaffolding Operations
+  // =========================================================================
+
+  'scaffold-architecture': {
+    verified: false,
+    cli: (c) => ['scaffold', '--topology', 'monolithic-layered', '--path', c.projectPath, '--format', 'json'],
+  },
+
+  // =========================================================================
+  // Project Initialization Operations
+  // =========================================================================
+
+  'init-project': {
+    verified: false,
+    cli: (c) => ['init', '--path', c.projectPath, '--format', 'json'],
+    rest: (c) => ({
+      method: 'POST',
+      path: '/api/v1/projects/initialize',
+      body: { path: c.projectPath },
+    }),
+  },
+
+  // =========================================================================
+  // CLI-Local Operations
+  // =========================================================================
+
+  'history': {
+    verified: false,
+    cli: (c) => ['history', '--format', 'json'],
+  },
+
+  'completion': {
+    verified: false,
+    cli: (c) => ['completion', '--shell', 'bash'],
+  },
+
+  'profile': {
+    verified: false,
+    cli: (c) => ['profile', 'list', '--format', 'json'],
+  },
+
+  'mcp-serve': {
+    verified: false,
+    cli: (c) => ['mcp', 'serve'],
+  },
+
+  'alias': {
+    verified: false,
+    cli: (c) => ['alias', 'list', '--format', 'json'],
+  },
+
+  'fixtures': {
+    verified: false,
+    cli: (c) => ['fixtures', 'seed', '--path', c.projectPath, '--format', 'json'],
+  },
+
+  'api-browser': {
+    verified: false,
+    cli: (c) => ['api', '--format', 'json'],
+  },
+
+  'update-cli': {
+    verified: false,
+    cli: (c) => ['update', '--check', '--format', 'json'],
+  },
+
+  'init-wizard': {
+    verified: false,
+    cli: (c) => ['init-wizard'],
+  },
+
+  'upgrade-satellite': {
+    verified: false,
+    cli: (c) => ['upgrade', '--path', c.projectPath, '--format', 'json'],
   },
 };

@@ -19,7 +19,7 @@ Operations in this phase: `gate-evaluate`, `sdlc-status`, `moscow-report`, `topo
 > `gate-evaluate` — Evaluate a specific SDLC phase gate (discovery/design/construction/qa/release) and emit GateEvidence
 
 #### CLI
-Command: `evolith gate evaluate`
+Command: `evolith-cli gate evaluate`
 
 | Flag | Description |
 | --- | --- |
@@ -35,7 +35,7 @@ Command: `evolith gate evaluate`
 
 Example:
 ```bash
-evolith gate evaluate --phase discovery --project /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
+evolith-cli gate evaluate --phase discovery --project /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
 ```
 Response (captured live):
 ```json
@@ -211,7 +211,7 @@ Response (captured live):
 > `sdlc-status` — Get current SDLC phase status showing which artifacts are present per phase
 
 #### CLI
-Command: `evolith sdlc gate-status`
+Command: `evolith-cli sdlc gate-status`
 
 | Flag | Description |
 | --- | --- |
@@ -220,7 +220,7 @@ Command: `evolith sdlc gate-status`
 
 Example:
 ```bash
-evolith sdlc gate-status --format json
+evolith-cli sdlc gate-status --format json
 ```
 Response (captured live):
 ```json

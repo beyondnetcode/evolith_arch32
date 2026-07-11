@@ -169,24 +169,25 @@ Entry point for each area: [Global Master Index](./reference/core/control-center
 ## Quick Start
 
 ```bash
-# Install Smart CLI
-npx @evolith/smart-cli@1.1.4 init
+# Install Smart CLI (npm package @beyondnet/evolith-cli; command: evolith-cli)
+npx @beyondnet/evolith-cli init
 
 # Validate your code against your topology's rulesets
-smart-cli validate
+evolith-cli validate
 
 # Validate a specific SDLC phase
-smart-cli validate --phase qa
+evolith-cli validate --phase qa
 
 # Manage Architecture Decision Records
-smart-cli adr create
-smart-cli adr list
+evolith-cli adr create
+evolith-cli adr list
 
-# Serve governance as live context for AI agents
-smart-cli mcp serve
+# Serve governance as live context for AI agents — the MCP server ships as a
+# separate package (@beyondnet/evolith-mcp); start it with its own bin:
+evolith-mcp
 ```
 
-Smart CLI ships **20 commands** and is configured via **`evolith.yaml`**. Full reference: [Smart CLI hub](./product/products/smart-cli/README.md)
+Smart CLI ships **25 commands** and is configured via **`evolith.yaml`**. Full reference: [Smart CLI hub](./product/products/smart-cli/README.md)
 
 ---
 

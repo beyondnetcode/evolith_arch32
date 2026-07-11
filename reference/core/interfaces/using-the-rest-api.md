@@ -138,7 +138,7 @@ Content-Type: application/json
 
 ### 3.3. `POST /validate/composable` — validación multi-modo
 
-**Qué hace.** Corre el motor "composable", que detecta automáticamente qué modos de validación aplican al contexto (SDLC, arquitectura, ruleset, ADR y ad-hoc) y los ejecuta todos, en vez de que elijas uno a mano. Es el equivalente REST de `evolith validate --composable`.
+**Qué hace.** Corre el motor "composable", que detecta automáticamente qué modos de validación aplican al contexto (SDLC, arquitectura, ruleset, ADR y ad-hoc) y los ejecuta todos, en vez de que elijas uno a mano. Es el equivalente REST de `evolith-cli validate --composable`.
 
 **Body** (`ComposableValidateDto`):
 
@@ -197,7 +197,7 @@ Content-Type: application/json
 
 ### 3.5. `POST /architecture/detect-drift` — detectar deriva arquitectónica
 
-**Qué hace.** Compara el nivel de madurez **declarado** del satélite contra el **detectado** en el código y reporta la deriva (violaciones nuevas, persistentes o resueltas). Es el equivalente REST de `evolith drift`.
+**Qué hace.** Compara el nivel de madurez **declarado** del satélite contra el **detectado** en el código y reporta la deriva (violaciones nuevas, persistentes o resueltas). Es el equivalente REST de `evolith-cli drift`.
 
 **Body** (`DetectDriftDto`):
 
@@ -327,7 +327,7 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** El envelope de éxito con `data` = el resultado de la transición (bajo el nombre de comando canónico `evolith phase transition`).
+**Qué esperar.** El envelope de éxito con `data` = el resultado de la transición (bajo el nombre de comando canónico `evolith-cli phase transition`).
 
 ### 3.11. `POST /architecture-plans/evaluate` — evaluar un plan de arquitectura
 

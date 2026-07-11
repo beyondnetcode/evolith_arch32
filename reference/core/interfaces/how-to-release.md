@@ -19,7 +19,7 @@ Operations in this phase: `gate-evaluate`, `phase-advance`, `dora-metrics`, `det
 > `gate-evaluate` — Evaluate a specific SDLC phase gate (discovery/design/construction/qa/release) and emit GateEvidence
 
 #### CLI
-Command: `evolith gate evaluate`
+Command: `evolith-cli gate evaluate`
 
 | Flag | Description |
 | --- | --- |
@@ -35,7 +35,7 @@ Command: `evolith gate evaluate`
 
 Example:
 ```bash
-evolith gate evaluate --phase discovery --project /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
+evolith-cli gate evaluate --phase discovery --project /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
 ```
 Response (captured live):
 ```json
@@ -211,11 +211,11 @@ Response (captured live):
 > `phase-advance` — Propose an SDLC phase transition by evaluating exit criteria
 
 #### CLI
-Command: `evolith phase advance`
+Command: `evolith-cli phase advance`
 
 Example:
 ```bash
-evolith phase advance --from discovery --to design --satellite /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
+evolith-cli phase advance --from discovery --to design --satellite /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
 ```
 Response (captured live):
 ```json
@@ -378,7 +378,7 @@ Response (captured live):
 > `dora-metrics` — Calculate DORA metrics (deployment frequency, lead time for changes) from Git history
 
 #### CLI
-Command: `evolith sdlc gate-status`
+Command: `evolith-cli sdlc gate-status`
 
 | Flag | Description |
 | --- | --- |
@@ -387,7 +387,7 @@ Command: `evolith sdlc gate-status`
 
 Example:
 ```bash
-evolith sdlc gate-status --since 90 --format json
+evolith-cli sdlc gate-status --since 90 --format json
 ```
 Response (captured live):
 ```json
@@ -485,7 +485,7 @@ _Not on REST — low-value via REST; needs git access on server side._
 > `detect-drift` — Detect architecture drift between declared level and actual codebase
 
 #### CLI
-Command: `evolith drift`
+Command: `evolith-cli drift`
 
 | Flag | Description |
 | --- | --- |
@@ -498,7 +498,7 @@ Command: `evolith drift`
 
 Example:
 ```bash
-evolith drift --path /abs/path/to/your-satellite --format json
+evolith-cli drift --path /abs/path/to/your-satellite --format json
 ```
 Response (captured live):
 ```json

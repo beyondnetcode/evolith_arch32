@@ -19,7 +19,7 @@ Operations in this phase: `recommend-topology`, `topology-get`, `gate-evaluate`,
 > `recommend-topology` — Recommend a topology composition from technical signals (advisory, non-binding; ADR-0104 / GT-430)
 
 #### CLI
-Command: `evolith topology recommend`
+Command: `evolith-cli topology recommend`
 
 | Flag | Description |
 | --- | --- |
@@ -38,7 +38,7 @@ Command: `evolith topology recommend`
 
 Example:
 ```bash
-evolith topology recommend --signals {"teamCount":4,"deploymentIndependence":true,"asyncIntegration":true} --core /abs/path/to/evolith-core --format json
+evolith-cli topology recommend --signals {"teamCount":4,"deploymentIndependence":true,"asyncIntegration":true} --core /abs/path/to/evolith-core --format json
 ```
 Response (captured live):
 ```json
@@ -252,7 +252,7 @@ Endpoint: `GET /api/v1/architecture/topologies/:id`
 > `gate-evaluate` — Evaluate a specific SDLC phase gate (discovery/design/construction/qa/release) and emit GateEvidence
 
 #### CLI
-Command: `evolith gate evaluate`
+Command: `evolith-cli gate evaluate`
 
 | Flag | Description |
 | --- | --- |
@@ -268,7 +268,7 @@ Command: `evolith gate evaluate`
 
 Example:
 ```bash
-evolith gate evaluate --phase discovery --project /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
+evolith-cli gate evaluate --phase discovery --project /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
 ```
 Response (captured live):
 ```json
@@ -444,11 +444,11 @@ Response (captured live):
 > `adr-crud` — Create, list, get, update, and matrix view for Architecture Decision Records
 
 #### CLI
-Command: `evolith adr`
+Command: `evolith-cli adr`
 
 Example:
 ```bash
-evolith adr --list --format json
+evolith-cli adr --list --format json
 ```
 Response (captured live):
 ```json
@@ -483,11 +483,11 @@ _Not on REST — low priority; not requested by any consumer._
 > `phase-advance` — Propose an SDLC phase transition by evaluating exit criteria
 
 #### CLI
-Command: `evolith phase advance`
+Command: `evolith-cli phase advance`
 
 Example:
 ```bash
-evolith phase advance --from discovery --to design --satellite /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
+evolith-cli phase advance --from discovery --to design --satellite /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
 ```
 Response (captured live):
 ```json
@@ -650,11 +650,11 @@ Response (captured live):
 > `sdlc-handoff` — Perform a phase gate handoff with artifact generation
 
 #### CLI
-Command: `evolith sdlc handoff`
+Command: `evolith-cli sdlc handoff`
 
 Example:
 ```bash
-evolith sdlc handoff --from discovery --to design --format json
+evolith-cli sdlc handoff --from discovery --to design --format json
 ```
 Response (captured live):
 ```json

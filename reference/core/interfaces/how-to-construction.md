@@ -19,7 +19,7 @@ Operations in this phase: `scaffold-architecture`, `sdlc-generate`, `validate-sa
 > `scaffold-architecture` — Scaffold monolithic modular and microfrontend architecture in workspace
 
 #### CLI
-Command: `evolith scaffold`
+Command: `evolith-cli scaffold`
 
 > ⚠ Exposed on CLI but not yet in the conformance bindings — no worked example derived.
 
@@ -38,7 +38,7 @@ _Not on REST — filesystem-scaffolding only; filesystem operation._
 > `sdlc-generate` — Generate hexagonal architecture scaffold from Mermaid classDiagram in DDD model file
 
 #### CLI
-Command: `evolith sdlc generate`
+Command: `evolith-cli sdlc generate`
 
 | Flag | Description |
 | --- | --- |
@@ -49,7 +49,7 @@ Command: `evolith sdlc generate`
 
 Example:
 ```bash
-evolith sdlc generate domain --from package.json --format json
+evolith-cli sdlc generate domain --from package.json --format json
 ```
 Response (captured live):
 ```json
@@ -84,7 +84,7 @@ _Not on REST — filesystem-scaffolding only; filesystem operation._
 > `validate-satellite` — Validate a satellite repository against Evolith governance standards
 
 #### CLI
-Command: `evolith validate`
+Command: `evolith-cli validate`
 
 | Flag | Description |
 | --- | --- |
@@ -104,7 +104,7 @@ Command: `evolith validate`
 
 Example:
 ```bash
-evolith validate --satellite /abs/path/to/your-satellite --core /abs/path/to/evolith-core --format json
+evolith-cli validate --satellite /abs/path/to/your-satellite --core /abs/path/to/evolith-core --format json
 ```
 Response (captured live):
 ```json
@@ -219,7 +219,7 @@ Response (captured live):
 > `composable-validate` — Composable validation across SDLC, Architecture, Ruleset, ADR and ad-hoc concerns (GT-312)
 
 #### CLI
-Command: `evolith validate --composable`
+Command: `evolith-cli validate --composable`
 
 | Flag | Description |
 | --- | --- |
@@ -239,7 +239,7 @@ Command: `evolith validate --composable`
 
 Example:
 ```bash
-evolith validate --composable --satellite /abs/path/to/your-satellite --core /abs/path/to/evolith-core --format json
+evolith-cli validate --composable --satellite /abs/path/to/your-satellite --core /abs/path/to/evolith-core --format json
 ```
 Response (captured live):
 ```json
@@ -426,7 +426,7 @@ Response (captured live):
 > `detect-drift` — Detect architecture drift between declared level and actual codebase
 
 #### CLI
-Command: `evolith drift`
+Command: `evolith-cli drift`
 
 | Flag | Description |
 | --- | --- |
@@ -439,7 +439,7 @@ Command: `evolith drift`
 
 Example:
 ```bash
-evolith drift --path /abs/path/to/your-satellite --format json
+evolith-cli drift --path /abs/path/to/your-satellite --format json
 ```
 Response (captured live):
 ```json
@@ -581,7 +581,7 @@ Response (captured live):
 > `evaluate` — Evaluate an EvaluationContext (gates, artifacts, rules, compliance) and return an EvaluationResult (ADR-0101 stateless Core entry point)
 
 #### CLI
-Command: `evolith evaluate`
+Command: `evolith-cli evaluate`
 
 | Flag | Description |
 | --- | --- |
@@ -594,7 +594,7 @@ Command: `evolith evaluate`
 
 Example:
 ```bash
-evolith evaluate --workspace /abs/path/to/your-satellite --core /abs/path/to/evolith-core --format json
+evolith-cli evaluate --workspace /abs/path/to/your-satellite --core /abs/path/to/evolith-core --format json
 ```
 Response (captured live):
 ```json
@@ -754,7 +754,7 @@ Response (captured live):
 > `gate-evaluate` — Evaluate a specific SDLC phase gate (discovery/design/construction/qa/release) and emit GateEvidence
 
 #### CLI
-Command: `evolith gate evaluate`
+Command: `evolith-cli gate evaluate`
 
 | Flag | Description |
 | --- | --- |
@@ -770,7 +770,7 @@ Command: `evolith gate evaluate`
 
 Example:
 ```bash
-evolith gate evaluate --phase discovery --project /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
+evolith-cli gate evaluate --phase discovery --project /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
 ```
 Response (captured live):
 ```json
@@ -946,7 +946,7 @@ Response (captured live):
 > `phase-artifacts-evaluate` — Measure downstream-phase artifact completeness for a topology composition (advisory, non-binding; ADR-0104 / DN-06 / GT-434)
 
 #### CLI
-Command: `evolith topology phase-artifacts`
+Command: `evolith-cli topology phase-artifacts`
 
 | Flag | Description |
 | --- | --- |
@@ -958,7 +958,7 @@ Command: `evolith topology phase-artifacts`
 
 Example:
 ```bash
-evolith topology phase-artifacts --phase construction --topologies modular-monolith --core /abs/path/to/evolith-core --format json
+evolith-cli topology phase-artifacts --phase construction --topologies modular-monolith --core /abs/path/to/evolith-core --format json
 ```
 Response (captured live):
 ```json

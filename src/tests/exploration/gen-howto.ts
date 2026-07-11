@@ -158,15 +158,15 @@ function renderOp(op: MatrixOp, cap: Capture): string {
   L.push('#### CLI');
   if (!op.cli.exposed) L.push(`_Not on CLI — ${op.cli.exempt ?? 'exempt'}._`);
   else if (b?.cli) {
-    L.push(`Command: \`evolith ${op.cli.command}\`\n`);
+    L.push(`Command: \`evolith-cli ${op.cli.command}\`\n`);
     const opts = extractCliOptions(CLI_SOURCES[op.id] ?? '');
     if (opts.length) {
       L.push('| Flag | Description |', '| --- | --- |');
       for (const o of opts) L.push(`| \`${o.flags}\` | ${o.description || '—'} |`);
       L.push('');
     }
-    L.push('Example:', fence('bash', `evolith ${b.cli(CTX).join(' ')}`), responseBlock(resp.cli));
-  } else { L.push(`Command: \`evolith ${op.cli.command}\`\n\n> ⚠ Exposed on CLI but not yet in the conformance bindings — no worked example derived.`); }
+    L.push('Example:', fence('bash', `evolith-cli ${b.cli(CTX).join(' ')}`), responseBlock(resp.cli));
+  } else { L.push(`Command: \`evolith-cli ${op.cli.command}\`\n\n> ⚠ Exposed on CLI but not yet in the conformance bindings — no worked example derived.`); }
 
   // MCP
   L.push('\n#### MCP');

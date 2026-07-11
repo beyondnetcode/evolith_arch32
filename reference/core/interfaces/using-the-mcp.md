@@ -93,7 +93,7 @@ Todas reciben una ruta a tu satélite (y, casi siempre, una ruta opcional al che
 
 ### 3.1. `evolith-evaluate` — el motor de evaluación canónico
 
-**Qué hace.** Es la superficie MCP del motor de evaluación stateless del Core (ADR-0101). Recibe un `EvaluationContext` canónico (gates, cumplimiento, artefactos, reglas) y devuelve un `EvaluationResult` completo. Es la tool con mayor paridad respecto a `POST /api/v1/evaluate` y al comando `evolith evaluate` de la CLI: úsala cuando quieras una evaluación rica y multi-dimensional en una sola llamada. `tenant`, `product` e `initiative` son solo contexto opaco (nunca entidades que el Core persista).
+**Qué hace.** Es la superficie MCP del motor de evaluación stateless del Core (ADR-0101). Recibe un `EvaluationContext` canónico (gates, cumplimiento, artefactos, reglas) y devuelve un `EvaluationResult` completo. Es la tool con mayor paridad respecto a `POST /api/v1/evaluate` y al comando `evolith-cli evaluate` de la CLI: úsala cuando quieras una evaluación rica y multi-dimensional en una sola llamada. `tenant`, `product` e `initiative` son solo contexto opaco (nunca entidades que el Core persista).
 
 **Argumentos**
 
@@ -279,7 +279,7 @@ Todas reciben una ruta a tu satélite (y, casi siempre, una ruta opcional al che
 
 ### 3.7. `evolith-phase-artifacts-evaluate` — completitud de artefactos de fase (advisory)
 
-**Qué hace.** Mide, de forma asesora y no vinculante (ADR-0104), qué tan completos están los artefactos de una fase downstream para una composición de topologías ya confirmada. Compara los artefactos que declaras como presentes contra la UNIÓN de los artefactos universales de esa fase y los perfiles de fase (`phaseProfiles`) de cada topología. Es stateless: te dice qué falta, pero no bloquea nada. Produce el mismo resultado que `POST /api/v1/architecture/evaluate-phase-artifacts` y `evolith topology phase-artifacts`.
+**Qué hace.** Mide, de forma asesora y no vinculante (ADR-0104), qué tan completos están los artefactos de una fase downstream para una composición de topologías ya confirmada. Compara los artefactos que declaras como presentes contra la UNIÓN de los artefactos universales de esa fase y los perfiles de fase (`phaseProfiles`) de cada topología. Es stateless: te dice qué falta, pero no bloquea nada. Produce el mismo resultado que `POST /api/v1/architecture/evaluate-phase-artifacts` y `evolith-cli topology phase-artifacts`.
 
 **Argumentos**
 
@@ -385,7 +385,7 @@ completa), más `timestamp`. Si el id no existe, devuelve `{ error: true, messag
 recomienda una composición de topología y explica el porqué. Es **advisory** y
 sin estado (ADR-0104): el Core *recomienda* en Discovery, pero es el tenant quien
 *confirma* en Design; nada queda vinculado. Produce el mismo resultado que
-`POST /api/v1/architecture/recommend-topology` y que `evolith topology recommend`.
+`POST /api/v1/architecture/recommend-topology` y que `evolith-cli topology recommend`.
 
 **Argumentos**
 
@@ -507,7 +507,7 @@ el eje de madurez progresiva: **fase 1** (`modular-monolith`) genera una SPA
 estándar; **fases 2–3** (`distributed-modules` / `microservices`) generan un host
 de Module Federation con sus remotes. En todos los casos añade la Service API de
 NestJS, los shells transversales y las librerías de bounded-context DDD. Conduce
-la misma estrategia que la CLI (`evolith scaffold`). **Es mutativa**: escribe el
+la misma estrategia que la CLI (`evolith-cli scaffold`). **Es mutativa**: escribe el
 workspace bajo `<path>/src`.
 
 **Argumentos**
@@ -866,7 +866,7 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 
 ### 5.11. `evolith-init-batch` — inicializar un satélite en modo batch · **mutativa**
 
-**Qué hace.** Inicialización **no interactiva** (batch/CI) de un satélite: genera `evolith.yaml`, la estructura de carpetas y los artefactos base bajo `<path>/<name>/`, según el runtime, monorepo, arquitectura y base de datos elegidos. Es la paridad MCP del `evolith init --config … / --name … --yes` de la CLI, **sin prompts**: cada campo viene de los argumentos o de un valor por defecto. Delega el andamiaje en el mismo caso de uso del core (`InitializeProjectUseCase`) que corre la CLI.
+**Qué hace.** Inicialización **no interactiva** (batch/CI) de un satélite: genera `evolith.yaml`, la estructura de carpetas y los artefactos base bajo `<path>/<name>/`, según el runtime, monorepo, arquitectura y base de datos elegidos. Es la paridad MCP del `evolith-cli init --config … / --name … --yes` de la CLI, **sin prompts**: cada campo viene de los argumentos o de un valor por defecto. Delega el andamiaje en el mismo caso de uso del core (`InitializeProjectUseCase`) que corre la CLI.
 
 **Argumentos:**
 
@@ -949,7 +949,7 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 
 ### 5.14. `evolith-fixtures` — sembrar datos de ejemplo · **mutativa**
 
-**Qué hace.** Genera fixtures reproducibles (datos de ejemplo) para demos y pruebas: un `evolith.yaml`, ADRs de muestra, rulesets, o el conjunto completo, según el `type`. Usa las mismas plantillas deterministas que el comando `evolith fixtures` de la CLI. Trae un `dryRun` para revisar qué escribiría antes de tocar el disco.
+**Qué hace.** Genera fixtures reproducibles (datos de ejemplo) para demos y pruebas: un `evolith.yaml`, ADRs de muestra, rulesets, o el conjunto completo, según el `type`. Usa las mismas plantillas deterministas que el comando `evolith-cli fixtures` de la CLI. Trae un `dryRun` para revisar qué escribiría antes de tocar el disco.
 
 **Argumentos:**
 

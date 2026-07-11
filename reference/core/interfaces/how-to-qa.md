@@ -19,7 +19,7 @@ Operations in this phase: `validate-satellite`, `composable-validate`, `phase-ar
 > `validate-satellite` — Validate a satellite repository against Evolith governance standards
 
 #### CLI
-Command: `evolith validate`
+Command: `evolith-cli validate`
 
 | Flag | Description |
 | --- | --- |
@@ -39,7 +39,7 @@ Command: `evolith validate`
 
 Example:
 ```bash
-evolith validate --satellite /abs/path/to/your-satellite --core /abs/path/to/evolith-core --format json
+evolith-cli validate --satellite /abs/path/to/your-satellite --core /abs/path/to/evolith-core --format json
 ```
 Response (captured live):
 ```json
@@ -154,7 +154,7 @@ Response (captured live):
 > `composable-validate` — Composable validation across SDLC, Architecture, Ruleset, ADR and ad-hoc concerns (GT-312)
 
 #### CLI
-Command: `evolith validate --composable`
+Command: `evolith-cli validate --composable`
 
 | Flag | Description |
 | --- | --- |
@@ -174,7 +174,7 @@ Command: `evolith validate --composable`
 
 Example:
 ```bash
-evolith validate --composable --satellite /abs/path/to/your-satellite --core /abs/path/to/evolith-core --format json
+evolith-cli validate --composable --satellite /abs/path/to/your-satellite --core /abs/path/to/evolith-core --format json
 ```
 Response (captured live):
 ```json
@@ -361,7 +361,7 @@ Response (captured live):
 > `phase-artifacts-evaluate` — Measure downstream-phase artifact completeness for a topology composition (advisory, non-binding; ADR-0104 / DN-06 / GT-434)
 
 #### CLI
-Command: `evolith topology phase-artifacts`
+Command: `evolith-cli topology phase-artifacts`
 
 | Flag | Description |
 | --- | --- |
@@ -373,7 +373,7 @@ Command: `evolith topology phase-artifacts`
 
 Example:
 ```bash
-evolith topology phase-artifacts --phase construction --topologies modular-monolith --core /abs/path/to/evolith-core --format json
+evolith-cli topology phase-artifacts --phase construction --topologies modular-monolith --core /abs/path/to/evolith-core --format json
 ```
 Response (captured live):
 ```json
@@ -546,7 +546,7 @@ Response (captured live):
 > `gate-evaluate` — Evaluate a specific SDLC phase gate (discovery/design/construction/qa/release) and emit GateEvidence
 
 #### CLI
-Command: `evolith gate evaluate`
+Command: `evolith-cli gate evaluate`
 
 | Flag | Description |
 | --- | --- |
@@ -562,7 +562,7 @@ Command: `evolith gate evaluate`
 
 Example:
 ```bash
-evolith gate evaluate --phase discovery --project /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
+evolith-cli gate evaluate --phase discovery --project /abs/path/to/your-satellite --core /abs/path/to/evolith-core --evaluated-by ci --format json
 ```
 Response (captured live):
 ```json
@@ -738,7 +738,7 @@ Response (captured live):
 > `dora-metrics` — Calculate DORA metrics (deployment frequency, lead time for changes) from Git history
 
 #### CLI
-Command: `evolith sdlc gate-status`
+Command: `evolith-cli sdlc gate-status`
 
 | Flag | Description |
 | --- | --- |
@@ -747,7 +747,7 @@ Command: `evolith sdlc gate-status`
 
 Example:
 ```bash
-evolith sdlc gate-status --since 90 --format json
+evolith-cli sdlc gate-status --since 90 --format json
 ```
 Response (captured live):
 ```json

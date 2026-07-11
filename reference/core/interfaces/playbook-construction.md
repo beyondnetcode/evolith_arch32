@@ -16,7 +16,7 @@ the exact request/response for each operation is in the
 Materialise the Nx workspace for your maturity phase (1 modular-monolith → 2
 distributed-modules → 3 microservices).
 
-- CLI: `evolith scaffold --frontend react --orm prisma --phase 1`
+- CLI: `evolith-cli scaffold --frontend react --orm prisma --phase 1`
 - MCP: `evolith-scaffold` (mutative — pass `apply` + `approvalToken`; `dryRun:true` to preview)
 
 Start with `--dry-run` / `dryRun:true` to see the exact `nx`/`npm` commands before
@@ -27,7 +27,7 @@ writing anything. See [`scaffold-architecture`](how-to-construction.md#scaffold-
 If your design carries a DDD Mermaid `classDiagram`, generate the hexagonal
 scaffold instead of hand-writing boilerplate.
 
-- CLI: `evolith sdlc generate domain --from ddd-model.md`
+- CLI: `evolith-cli sdlc generate domain --from ddd-model.md`
 - MCP: `evolith-sdlc-generate`
 
 See [`sdlc-generate`](how-to-construction.md#generate-code-from-ddd-models).
@@ -42,7 +42,7 @@ Two complementary checks — run both:
 | **Composable validation** | Intelligent multi-mode resolution (SDLC + architecture + ADR + ad-hoc) | [`composable-validate`](how-to-construction.md#composable-validation) |
 | **Architecture drift** | Declared vs detected maturity level | [`detect-drift`](how-to-construction.md#detect-architecture-drift) |
 
-- CLI: `evolith validate --satellite . --core <core>` · `evolith validate --composable` · `evolith drift --path .`
+- CLI: `evolith-cli validate --satellite . --core <core>` · `evolith-cli validate --composable` · `evolith-cli drift --path .`
 - A failing verdict exits **non-zero** — CI can gate on it directly.
 - If the Core rulesets can't be resolved you get `RULESET_NOT_FOUND` (the same
   code on all three surfaces) — point `--core` / `corePath` at your Core checkout.
@@ -52,7 +52,7 @@ Two complementary checks — run both:
 Run the full stateless evaluation (gates + compliance + architecture) over your
 context.
 
-- CLI: `evolith evaluate --workspace . --core <core> --phase construction`
+- CLI: `evolith-cli evaluate --workspace . --core <core> --phase construction`
 - MCP: `evolith-evaluate` · REST: `POST /api/v1/evaluate`
 
 The envelope's `success` means *the evaluation ran*; the **verdict lives in
@@ -62,7 +62,7 @@ The envelope's `success` means *the evaluation ran*; the **verdict lives in
 
 The decision point: evaluate the construction phase gate and read its evidence.
 
-- CLI: `evolith gate evaluate --phase construction --satellite . --core <core>`
+- CLI: `evolith-cli gate evaluate --phase construction --satellite . --core <core>`
 - MCP: `evolith-gate-evaluate` · REST: `POST /api/v1/gates/:gateId/evaluate`
 
 A `verdict: "failed"` with per-artifact `violations` tells you exactly which

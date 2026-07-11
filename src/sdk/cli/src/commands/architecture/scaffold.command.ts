@@ -4,7 +4,7 @@ import { Command, Option } from 'nest-commander';
 import { randomUUID } from 'node:crypto';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { WorkspaceManagerStrategy } from '@beyondnet/evolith-core-domain/application/architecture/workspace-manager.strategy';
-import { NxWorkspaceStrategy } from '../../infrastructure/architecture/nx-workspace.strategy';
+import { NxWorkspaceStrategy } from '@beyondnet/evolith-infra-providers';
 import { DotnetWorkspaceStrategy } from '../../infrastructure/architecture/dotnet-workspace.strategy';
 import { commandExecutor } from '../../infrastructure/cli/command-executor';
 import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
@@ -16,15 +16,23 @@ import { toProgressivePhase } from '../../infrastructure/architecture/topology-c
 })
 export class ScaffoldCommand extends BaseEvolithCommand {
   private strategy: WorkspaceManagerStrategy;
+  /** When true (--format json), progress goes to stderr so stdout stays a clean envelope. */
+  private jsonMode = false;
 
   constructor() {
     super('ScaffoldCommand');
-    this.strategy = new NxWorkspaceStrategy(commandExecutor, this.promptService);
+    this.strategy = new NxWorkspaceStrategy(commandExecutor, {
+      // Route step progress to stderr in json mode; stdout is reserved for the
+      // single ADR-0073 envelope (matches the CLI's --format json contract).
+      progress: (message) =>
+        this.jsonMode ? process.stderr.write(`${message}\n`) : this.promptService.showInfo(message),
+    });
   }
 
   async executeCommand(passedParam: string[], options?: Record<string, unknown>): Promise<void> {
     const dryRun = Boolean(options?.dryRun);
     const json = options?.format === 'json';
+    this.jsonMode = json;
     const commandId = 'evolith architecture scaffold';
     const startedAt = Date.now();
     const meta = {

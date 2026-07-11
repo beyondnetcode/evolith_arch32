@@ -99,6 +99,20 @@ const TOOL_CLASSIFICATION: Record<string, ToolClass> = {
   'evolith-satellite-status': 'read',
   'evolith-satellite-create': 'write',
   'evolith-satellite-adopt': 'write',
+
+  // MCP<->CLI parity tools (3-surface conformance audit, Waves 4/6).
+  'evolith-adr-list': 'read',
+  'evolith-adr-get': 'read',
+  'evolith-adr-matrix': 'read',
+  'evolith-adr-create': 'write',
+  'evolith-adr-update': 'write',
+  'evolith-docs-scaffold': 'write',
+  'evolith-init-batch': 'write',
+  'evolith-sdlc-generate': 'write',
+  'evolith-upgrade-plan': 'read',
+  'evolith-upgrade-apply': 'write',
+  'evolith-fixtures': 'write',
+  'evolith-scaffold': 'write',
 };
 
 const READ_TOOLS = new Set([

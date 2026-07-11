@@ -30,6 +30,7 @@ import { DocsScaffoldTool } from './docs-scaffold.tool';
 import { SdlcGenerateTool } from './sdlc-generate.tool';
 import { createUpgradeTools } from './upgrade.tools';
 import { createFixturesTools } from './fixtures.tools';
+import { createScaffoldTools } from './scaffold.tool';
 
 /**
  * Aggregates every MCP tool and feeds the full list to the
@@ -93,6 +94,7 @@ import { createFixturesTools } from './fixtures.tools';
         sdlcGenerate,
         ...createUpgradeTools(fs, new NestLoggerProvider().createLogger('UpgradeTool')),
         ...createFixturesTools(fs),
+        ...createScaffoldTools(),
       ],
       inject: [
         ValidateTool,

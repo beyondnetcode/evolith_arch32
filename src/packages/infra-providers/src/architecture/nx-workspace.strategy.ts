@@ -1,9 +1,6 @@
 import { WorkspaceManagerStrategy } from '@beyondnet/evolith-core-domain/application/architecture/workspace-manager.strategy';
 import { ICommandExecutor } from '@beyondnet/evolith-core-domain/domain/interfaces';
-import { PromptService } from '../prompts/prompt.service';
-import chalk from 'chalk';
 import * as path from 'path';
-import * as process from 'process';
 
 /**
  * Frameworks that have native Nx Module Federation (host/remote) support.
@@ -13,45 +10,67 @@ import * as process from 'process';
  */
 const MFE_CAPABLE_FRAMEWORKS = new Set(['react', 'angular']);
 
+export interface NxWorkspaceStrategyOptions {
+  /** Progress sink for human-facing step messages. Defaults to a no-op. */
+  progress?: (message: string) => void;
+  /**
+   * Workspace root under which the `src` Nx workspace is generated. The Nx and
+   * npm commands run in `<baseDir>/src`. Defaults to `process.cwd()`, matching
+   * the CLI. MCP callers pass the satellite path so an agent can scaffold a
+   * repo other than the server's working directory.
+   */
+  baseDir?: string;
+}
+
+/**
+ * Nx-backed {@link WorkspaceManagerStrategy}. Relocated from the CLI to
+ * `@beyondnet/evolith-infra-providers` so both the CLI (`scaffold`) and the MCP
+ * gateway (`evolith-scaffold`) drive the SAME generation logic. It is decoupled
+ * from any surface: progress is a plain callback (the CLI wraps it in its
+ * PromptService; MCP routes it to stderr) and the target directory is injected
+ * rather than read from the process cwd.
+ */
 export class NxWorkspaceStrategy implements WorkspaceManagerStrategy {
   /** Tracks the active frontend framework after installDependencies is called. */
   private frontendFramework = 'react';
   private dryRun = false;
+  private readonly progress: (message: string) => void;
+  private readonly baseDir: string;
 
   constructor(
     private readonly commandExecutor: ICommandExecutor,
-    private readonly promptService: PromptService
-  ) {}
+    options: NxWorkspaceStrategyOptions = {},
+  ) {
+    this.progress = options.progress ?? (() => undefined);
+    this.baseDir = options.baseDir ?? process.cwd();
+  }
 
   setDryRun(dryRun: boolean): void {
     this.dryRun = dryRun;
   }
 
   private getTargetDir(): string {
-    const currentDir = process.cwd();
-    return path.join(currentDir, 'src');
+    return path.join(this.baseDir, 'src');
   }
 
   private async runNx(command: string): Promise<void> {
     const targetDir = this.getTargetDir();
     if (this.dryRun) {
-      this.promptService.showInfo(chalk.yellow(`[DRY-RUN] Would execute in ${targetDir}: npx nx ${command}`));
+      this.progress(`[DRY-RUN] Would execute in ${targetDir}: npx nx ${command}`);
       return;
     }
-    this.promptService.showInfo(chalk.gray(`> Executing in ${targetDir}: npx nx ${command}`));
-    
-    // We use executeOrThrow so we get standard error throwing
+    this.progress(`> Executing in ${targetDir}: npx nx ${command}`);
+    // executeOrThrow surfaces a standard error on non-zero exit.
     await this.commandExecutor.executeOrThrow(`npx nx ${command} --no-interactive`, targetDir);
   }
 
   private async runNpm(command: string): Promise<void> {
     const targetDir = this.getTargetDir();
     if (this.dryRun) {
-      this.promptService.showInfo(chalk.yellow(`[DRY-RUN] Would execute in ${targetDir}: npm ${command}`));
+      this.progress(`[DRY-RUN] Would execute in ${targetDir}: npm ${command}`);
       return;
     }
-    this.promptService.showInfo(chalk.gray(`> Executing in ${targetDir}: npm ${command}`));
-    
+    this.progress(`> Executing in ${targetDir}: npm ${command}`);
     await this.commandExecutor.executeOrThrow(`npm ${command} --legacy-peer-deps`, targetDir);
   }
 
@@ -59,7 +78,7 @@ export class NxWorkspaceStrategy implements WorkspaceManagerStrategy {
     const fw = frontendFramework.toLowerCase();
     this.frontendFramework = fw;
 
-    this.promptService.showInfo(chalk.cyan(`\n📦 Installing Nx Plugins for ${fw.toUpperCase()} and NestJS...`));
+    this.progress(`Installing Nx Plugins for ${fw.toUpperCase()} and NestJS...`);
     await this.runNpm(`install -D @nx/nest @nx/${fw} @nx/webpack`);
 
     if (orm.toLowerCase() === 'prisma') {
@@ -72,21 +91,21 @@ export class NxWorkspaceStrategy implements WorkspaceManagerStrategy {
   async generateStandardWebApp(name: string, framework: string): Promise<void> {
     const fw = framework.toLowerCase();
     this.frontendFramework = fw;
-    this.promptService.showInfo(chalk.cyan(`\n🏗️  Generating Standard Web App (Phase 1) [${name}] (${fw.toUpperCase()})...`));
+    this.progress(`Generating Standard Web App (Phase 1) [${name}] (${fw.toUpperCase()})...`);
     await this.runNx(`g @nx/${fw}:app --name=${name} --directory=apps/${name}`);
   }
 
   async generateHostApp(name: string, remotes: string[], framework: string): Promise<void> {
     const fw = framework.toLowerCase();
     this.frontendFramework = fw;
-    this.promptService.showInfo(chalk.cyan(`\n🏗️  Generating MFE Host App [${name}] with Remotes [${remotes.join(', ')}] (${fw.toUpperCase()})...`));
+    this.progress(`Generating MFE Host App [${name}] with Remotes [${remotes.join(', ')}] (${fw.toUpperCase()})...`);
 
     if (!MFE_CAPABLE_FRAMEWORKS.has(fw)) {
-      this.promptService.showInfo(chalk.yellow(
-        `⚠  @nx/${fw} does not provide a native Module Federation :host generator.\n` +
-        `   Generating a standard ${fw.toUpperCase()} app instead. Configure MFE manually\n` +
-        `   (e.g. @originjs/vite-plugin-federation for Vue).`
-      ));
+      this.progress(
+        `@nx/${fw} does not provide a native Module Federation :host generator. ` +
+        `Generating a standard ${fw.toUpperCase()} app instead; configure MFE manually ` +
+        `(e.g. @originjs/vite-plugin-federation for Vue).`,
+      );
       await this.runNx(`g @nx/${fw}:app --name=${name} --directory=apps/${name}`);
       return;
     }
@@ -96,18 +115,18 @@ export class NxWorkspaceStrategy implements WorkspaceManagerStrategy {
   }
 
   async generateApiApp(name: string): Promise<void> {
-    this.promptService.showInfo(chalk.cyan(`\n⚙️  Generating NestJS API App [${name}]...`));
+    this.progress(`Generating NestJS API App [${name}]...`);
     await this.runNx(`g @nx/nest:app --name=${name} --directory=apps/${name}`);
   }
 
   async generateLibrary(name: string, type: 'domain' | 'shell' | 'shared'): Promise<void> {
-    this.promptService.showInfo(chalk.cyan(`\n📚 Generating Library [${type}/${name}]...`));
+    this.progress(`Generating Library [${type}/${name}]...`);
 
     if (type === 'shared' && name.includes('ui')) {
       // UI libraries use the active frontend framework — e.g. @nx/react:library,
       // @nx/angular:library, @nx/vue:library.
       const fw = this.frontendFramework;
-      this.promptService.showInfo(chalk.gray(`   Using @nx/${fw}:library for shared UI library.`));
+      this.progress(`Using @nx/${fw}:library for shared UI library.`);
       await this.runNx(`g @nx/${fw}:library --name=${name} --directory=libs/${type}/${name}`);
     } else {
       // Domain, shell and non-UI shared libs always use NestJS (backend) generator.

@@ -120,6 +120,70 @@ export const BINDINGS: Record<string, Binding> = {
     }),
   },
 
+  // Full-triangle read-only ops — bound so their CLI/MCP/REST parity is actually
+  // exercised (previously reported as uncoveredTriangleOps). Hypothesis mode:
+  // divergences are low-confidence until the equivalence is contracted.
+  'evaluate': {
+    verified: false,
+    cli: (c) => ['evaluate', '--workspace', c.projectPath, '--core', c.corePath, '--format', 'json'],
+    mcp: (c) => ({
+      tool: 'evolith-evaluate',
+      args: { kinds: ['gate', 'compliance'], workspaceRef: c.workspaceRef, corePath: c.corePath },
+    }),
+    rest: (c) => ({
+      method: 'POST',
+      path: '/api/v1/evaluate',
+      body: { kinds: ['gate', 'compliance'], workspaceRef: c.workspaceRef },
+    }),
+  },
+
+  'composable-validate': {
+    verified: false,
+    cli: (c) => ['validate', '--composable', '--satellite', c.projectPath, '--core', c.corePath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-composable-validate', args: { path: c.projectPath, corePath: c.corePath } }),
+    rest: (c) => ({
+      method: 'POST',
+      path: '/api/v1/validate/composable',
+      body: { workspaceRef: c.workspaceRef },
+    }),
+  },
+
+  'recommend-topology': {
+    verified: false,
+    cli: (c) => [
+      'topology', 'recommend',
+      '--signals', JSON.stringify({ teamCount: 4, deploymentIndependence: true, asyncIntegration: true }),
+      '--core', c.corePath, '--format', 'json',
+    ],
+    mcp: (c) => ({
+      tool: 'evolith-topology-recommend',
+      args: { signals: { teamCount: 4, deploymentIndependence: true, asyncIntegration: true }, corePath: c.corePath },
+    }),
+    rest: (c) => ({
+      method: 'POST',
+      path: '/api/v1/architecture/recommend-topology',
+      body: { signals: { teamCount: 4, deploymentIndependence: true, asyncIntegration: true } },
+    }),
+  },
+
+  'phase-artifacts-evaluate': {
+    verified: false,
+    cli: (c) => [
+      'topology', 'phase-artifacts',
+      '--phase', 'construction', '--topologies', 'modular-monolith',
+      '--core', c.corePath, '--format', 'json',
+    ],
+    mcp: (c) => ({
+      tool: 'evolith-phase-artifacts-evaluate',
+      args: { phase: 'construction', topologies: ['modular-monolith'], corePath: c.corePath },
+    }),
+    rest: (c) => ({
+      method: 'POST',
+      path: '/api/v1/architecture/evaluate-phase-artifacts',
+      body: { phase: 'construction', topologies: ['modular-monolith'] },
+    }),
+  },
+
   // =========================================================================
   // SDLC & Code Generation Operations
   // =========================================================================

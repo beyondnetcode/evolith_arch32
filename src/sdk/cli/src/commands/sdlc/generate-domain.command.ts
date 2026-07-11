@@ -49,7 +49,12 @@ export class GenerateDomainCommand extends BaseEvolithCommand {
       }
       this.promptService.showError('Both a generation target and a source file must be specified.');
       this.promptService.showInfo(chalk.yellow('Example: evolith sdlc generate domain --from ddd-model.md'));
-      throw new Error('Both a generation target and a source file must be specified.');
+      // A missing required arg is a user-input error, not an exceptional
+      // condition: render the guidance, mark the run failed, and return
+      // gracefully. Throwing here would re-render the error and emit a stack
+      // trace via BaseEvolithCommand.handleError, and reject command.run().
+      process.exitCode = 1;
+      return;
     }
 
     if (!json) {

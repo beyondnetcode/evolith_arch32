@@ -350,15 +350,8 @@ export class ValidateCommand extends BaseEvolithCommand {
 
     if (json) {
       const output = JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2);
-      console.log(output);
-      // A negative governance verdict must exit non-zero so CI can gate on it,
-      // mirroring `gate`/`phase` (envelope success=command-ran, exit=verdict).
-      if (result.status === 'failed') process.exit(1);
-      return;
-    }
-
-    if (format === 'json') {
-      const output = JSON.stringify(result, null, 2);
+      // --output routes the ADR-0073 envelope to a file instead of stdout so
+      // machine consumers can capture the report; stdout stays the default sink.
       if (options?.output) {
         const fs = await import('fs-extra');
         const path = await import('path');
@@ -368,7 +361,13 @@ export class ValidateCommand extends BaseEvolithCommand {
       } else {
         console.log(output);
       }
-    } else if (format === 'table' || format === 'yaml' || format === 'markdown') {
+      // A negative governance verdict must exit non-zero so CI can gate on it,
+      // mirroring `gate`/`phase` (envelope success=command-ran, exit=verdict).
+      if (result.status === 'failed') process.exit(1);
+      return;
+    }
+
+    if (format === 'table' || format === 'yaml' || format === 'markdown') {
       const tableData = {
         status: result.status,
         rulesChecked: result.rulesChecked,

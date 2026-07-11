@@ -9,6 +9,10 @@ jest.mock('chalk', () => {
   return { __esModule: true, default: proxy, green: id, red: id, yellow: id, blue: id, bold: id, cyan: id, gray: id, magenta: id, white: id, blueBright: id, redBright: id, dim: id };
 });
 
+jest.mock('../../infrastructure/paths/satellite-resolver', () => ({
+  resolveSatellitePath: jest.fn(() => '/resolved/satellite'),
+}));
+
 function makeEvidence(verdict: 'passed' | 'failed' | 'skipped' = 'passed') {
   return {
     gateId: 'g1',
@@ -131,10 +135,10 @@ describe('GateCommand', () => {
     expect(body.meta.context).toMatchObject({ initiative: 'INIT-1', tenant: 'TEN-1', phase: 'design' });
   });
 
-  it('uses cwd as project path by default and passes corePath through', async () => {
+  it('delegates default projectPath to the satellite-resolver and passes corePath through', async () => {
     const { command, execute } = setup('passed');
     await command.executeCommand(['evaluate'], { format: 'json', phase: 'design', core: '/c' });
-    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ projectPath: process.cwd(), corePath: '/c' }));
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ projectPath: '/resolved/satellite', corePath: '/c' }));
   });
 
   describe('option parsers', () => {

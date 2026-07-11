@@ -8,6 +8,10 @@ jest.mock('chalk', () => {
   return { __esModule: true, default: proxy, green: id, red: id, yellow: id, blue: id, bold: id, cyan: id, gray: id, magenta: id, white: id, blueBright: id, redBright: id, dim: id };
 });
 
+jest.mock('../../infrastructure/paths/satellite-resolver', () => ({
+  resolveSatellitePath: jest.fn(() => '/resolved/satellite'),
+}));
+
 function makeProposal(isRecommended = true) {
   return {
     fromPhase: 'discovery',
@@ -123,10 +127,10 @@ describe('PhaseAdvanceCommand', () => {
     expect(JSON.parse(log.mock.calls[0][0] as string).meta.context).toMatchObject({ initiative: 'I', tenant: 'T' });
   });
 
-  it('falls back to cwd for projectPath when --project is absent', async () => {
+  it('delegates default projectPath to the satellite-resolver when --satellite/--project is absent', async () => {
     const { command, execute } = setup(true);
     await command.executeCommand(['advance'], { format: 'json', from: 'discovery', to: 'design', core: '/c' });
-    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ projectPath: process.cwd(), corePath: '/c' }));
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ projectPath: '/resolved/satellite', corePath: '/c' }));
   });
 
   describe('option parsers', () => {

@@ -8,6 +8,7 @@ import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { logger, OperationTimer } from '../../infrastructure/observability';
 import {
   createSuccessEnvelope,
+  createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
@@ -202,7 +203,7 @@ export class ADRCommand extends BaseEvolithCommand {
       if (json) {
         process.exitCode = 1;
         const message = error instanceof Error ? error.message : String(error);
-        console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       } else {
         this.promptService.showError('✗ Error creando ADR');
       }
@@ -256,7 +257,7 @@ export class ADRCommand extends BaseEvolithCommand {
     if (!adr) {
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createSuccessEnvelope({ error: `ADR ${id} no encontrado` }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', `ADR ${id} no encontrado`, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       } else {
         this.promptService.showError(`ADR ${id} no encontrado`);
       }

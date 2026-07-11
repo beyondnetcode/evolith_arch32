@@ -7,6 +7,7 @@ import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { logger } from '../../infrastructure/observability';
 import {
   createSuccessEnvelope,
+  createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
@@ -139,7 +140,7 @@ export class StandardsCommand extends BaseEvolithCommand {
       if (json) {
         process.exitCode = 1;
         const message = error instanceof Error ? error.message : String(error);
-        console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       } else {
         this.promptService.showError('✗ Error inicializando standards');
       }
@@ -197,7 +198,7 @@ export class StandardsCommand extends BaseEvolithCommand {
     if (!standard) {
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createSuccessEnvelope({ error: `Standard ${id} no encontrado` }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', `Standard ${id} no encontrado`, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       } else {
         this.promptService.showError(`Standard ${id} no encontrado`);
       }

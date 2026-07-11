@@ -114,6 +114,12 @@ export class EvaluateCommand extends BaseEvolithCommand {
       }
       console.log(JSON.stringify(envelope, null, 2));
     }
+
+    // A negative evaluation verdict must exit non-zero so CI can gate on it,
+    // mirroring `gate`/`phase` (envelope success=command-ran, exit=verdict).
+    if (result.overallVerdict === 'FAIL' || result.outcome === 'rejected') {
+      process.exit(1);
+    }
   }
 
   private async buildContext(options?: EvaluateCommandOptions): Promise<EvaluationContext> {

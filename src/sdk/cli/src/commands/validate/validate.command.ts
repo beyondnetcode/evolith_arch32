@@ -351,6 +351,9 @@ export class ValidateCommand extends BaseEvolithCommand {
     if (json) {
       const output = JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2);
       console.log(output);
+      // A negative governance verdict must exit non-zero so CI can gate on it,
+      // mirroring `gate`/`phase` (envelope success=command-ran, exit=verdict).
+      if (result.status === 'failed') process.exit(1);
       return;
     }
 

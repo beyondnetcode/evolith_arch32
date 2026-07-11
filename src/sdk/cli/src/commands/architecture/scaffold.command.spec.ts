@@ -1,9 +1,13 @@
 import { ScaffoldCommand } from './scaffold.command';
 import * as p from '@clack/prompts';
-import { NxWorkspaceStrategy } from '../../infrastructure/architecture/nx-workspace.strategy';
+import { NxWorkspaceStrategy } from '@beyondnet/evolith-infra-providers';
 
 jest.mock('@clack/prompts');
-jest.mock('../../infrastructure/architecture/nx-workspace.strategy');
+// NxWorkspaceStrategy was relocated to @beyondnet/evolith-infra-providers; the
+// scaffold command imports only that symbol from the package, so a factory mock
+// providing just NxWorkspaceStrategy is sufficient and avoids auto-mocking the
+// whole package.
+jest.mock('@beyondnet/evolith-infra-providers', () => ({ NxWorkspaceStrategy: jest.fn() }));
 
 const mockStrategy = {
   installDependencies: jest.fn().mockResolvedValue(undefined),

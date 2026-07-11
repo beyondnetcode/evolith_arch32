@@ -2,55 +2,48 @@ import { StructuredLogger, LogLevel } from './structured-logger';
 
 describe('StructuredLogger', () => {
   let logger: StructuredLogger;
-  let infoSpy: jest.SpyInstance;
-  let errorSpy: jest.SpyInstance;
-  let warnSpy: jest.SpyInstance;
-  let debugSpy: jest.SpyInstance;
+  let stderrSpy: jest.SpyInstance;
+
+  // Diagnostic logs are written to STDERR exclusively — stdout is reserved for
+  // the ADR-0073 JSON envelope in `--format json` mode. The level is carried in
+  // the line content as a padded tag: `[DEBUG]`, `[INFO ]`, `[WARN ]`,
+  // `[ERROR]`, `[FATAL]` (levelName.padEnd(5)).
+  const wrote = (tag: string): boolean =>
+    stderrSpy.mock.calls.some((c) => String(c[0]).includes(tag));
 
   beforeEach(() => {
     logger = new StructuredLogger({ level: LogLevel.DEBUG });
-    infoSpy = jest.spyOn(console, 'info').mockImplementation(() => {});
-    errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    debugSpy = jest.spyOn(console, 'debug').mockImplementation(() => {});
+    stderrSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => true);
   });
 
   afterEach(() => {
-    infoSpy.mockRestore();
-    errorSpy.mockRestore();
-    warnSpy.mockRestore();
-    debugSpy.mockRestore();
+    stderrSpy.mockRestore();
   });
 
   describe('log levels', () => {
     it('should log debug messages', () => {
       logger.debug('debug message');
-
-      expect(debugSpy).toHaveBeenCalled();
+      expect(wrote('[DEBUG]')).toBe(true);
     });
 
     it('should log info messages', () => {
       logger.info('info message');
-
-      expect(infoSpy).toHaveBeenCalled();
+      expect(wrote('[INFO ]')).toBe(true);
     });
 
     it('should log warn messages', () => {
       logger.warn('warn message');
-
-      expect(warnSpy).toHaveBeenCalled();
+      expect(wrote('[WARN ]')).toBe(true);
     });
 
     it('should log error messages', () => {
       logger.error('error message');
-
-      expect(errorSpy).toHaveBeenCalled();
+      expect(wrote('[ERROR]')).toBe(true);
     });
 
     it('should log fatal messages', () => {
       logger.fatal('fatal message');
-
-      expect(errorSpy).toHaveBeenCalled();
+      expect(wrote('[FATAL]')).toBe(true);
     });
 
     it('should respect log level filter', () => {
@@ -59,8 +52,8 @@ describe('StructuredLogger', () => {
       warnLogger.debug('should not appear');
       warnLogger.info('should not appear');
 
-      expect(debugSpy).not.toHaveBeenCalled();
-      expect(infoSpy).not.toHaveBeenCalled();
+      expect(wrote('[DEBUG]')).toBe(false);
+      expect(wrote('[INFO ]')).toBe(false);
     });
   });
 
@@ -68,7 +61,7 @@ describe('StructuredLogger', () => {
     it('should include timestamp in log output', () => {
       logger.info('timestamp test');
 
-      expect(infoSpy).toHaveBeenCalledWith(
+      expect(stderrSpy).toHaveBeenCalledWith(
         expect.stringMatching(/\[\d{4}-\d{2}-\d{2}T/)
       );
     });
@@ -76,7 +69,7 @@ describe('StructuredLogger', () => {
     it('should include level name in log output', () => {
       logger.info('level test');
 
-      expect(infoSpy).toHaveBeenCalledWith(
+      expect(stderrSpy).toHaveBeenCalledWith(
         expect.stringContaining('[INFO ]')
       );
     });
@@ -84,7 +77,7 @@ describe('StructuredLogger', () => {
     it('should include operation name when set', () => {
       logger.startOperation('test-op');
 
-      expect(infoSpy).toHaveBeenCalledWith(
+      expect(stderrSpy).toHaveBeenCalledWith(
         expect.stringContaining('{test-op}')
       );
     });
@@ -92,7 +85,7 @@ describe('StructuredLogger', () => {
     it('should format context as JSON when enabled', () => {
       logger.info('context test', { key: 'value' });
 
-      expect(infoSpy).toHaveBeenCalledWith(
+      expect(stderrSpy).toHaveBeenCalledWith(
         expect.stringContaining('{"key":"value"}')
       );
     });
@@ -102,7 +95,7 @@ describe('StructuredLogger', () => {
 
       noContextLogger.info('no context', { key: 'value' });
 
-      expect(infoSpy).not.toHaveBeenCalledWith(
+      expect(stderrSpy).not.toHaveBeenCalledWith(
         expect.stringContaining('{"key":"value"}')
       );
     });
@@ -112,7 +105,7 @@ describe('StructuredLogger', () => {
     it('should start operation', () => {
       logger.startOperation('my-operation');
 
-      expect(infoSpy).toHaveBeenCalledWith(
+      expect(stderrSpy).toHaveBeenCalledWith(
         expect.stringContaining('Started: my-operation')
       );
     });
@@ -121,7 +114,7 @@ describe('StructuredLogger', () => {
       logger.startOperation('timed-op');
       logger.endOperation('timed-op', 100);
 
-      expect(infoSpy).toHaveBeenCalledWith(
+      expect(stderrSpy).toHaveBeenCalledWith(
         expect.stringContaining('Completed: timed-op')
       );
     });
@@ -131,8 +124,8 @@ describe('StructuredLogger', () => {
       logger.startOperation('inner');
       logger.info('nested test');
 
-      const calls = infoSpy.mock.calls;
-      const lastCall = calls[calls.length - 1][0];
+      const calls = stderrSpy.mock.calls;
+      const lastCall = String(calls[calls.length - 1][0]);
       expect(lastCall).toContain('{inner}');
     });
 
@@ -142,8 +135,8 @@ describe('StructuredLogger', () => {
       logger.endOperation('inner', 50);
       logger.info('after inner');
 
-      const calls = infoSpy.mock.calls;
-      const lastCall = calls[calls.length - 1][0];
+      const calls = stderrSpy.mock.calls;
+      const lastCall = String(calls[calls.length - 1][0]);
       expect(lastCall).toContain('{outer}');
     });
 
@@ -151,7 +144,7 @@ describe('StructuredLogger', () => {
       logger.startOperation('expected-op');
       logger.endOperation('different-op', 50);
 
-      expect(warnSpy).toHaveBeenCalledWith(
+      expect(stderrSpy).toHaveBeenCalledWith(
         expect.stringContaining('Operation mismatch')
       );
     });
@@ -196,9 +189,9 @@ describe('StructuredLogger', () => {
       logger.info('should not appear');
       logger.error('should appear');
 
-      expect(debugSpy).not.toHaveBeenCalled();
-      expect(infoSpy).not.toHaveBeenCalled();
-      expect(errorSpy).toHaveBeenCalled();
+      expect(wrote('[DEBUG]')).toBe(false);
+      expect(wrote('[INFO ]')).toBe(false);
+      expect(wrote('[ERROR]')).toBe(true);
     });
   });
 
@@ -258,7 +251,7 @@ describe('StructuredLogger', () => {
 
       customLogger.error('should not appear');
 
-      expect(errorSpy).not.toHaveBeenCalled();
+      expect(wrote('[ERROR]')).toBe(false);
     });
 
     it('should disable timestamp when configured', () => {
@@ -266,7 +259,7 @@ describe('StructuredLogger', () => {
 
       noTimeLogger.info('no time test');
 
-      const call = infoSpy.mock.calls[0][0];
+      const call = String(stderrSpy.mock.calls[0][0]);
       expect(call).not.toMatch(/^\[\d{4}-/);
     });
 
@@ -275,7 +268,7 @@ describe('StructuredLogger', () => {
 
       defaultLogger.info('default test');
 
-      expect(infoSpy).toHaveBeenCalled();
+      expect(wrote('[INFO ]')).toBe(true);
     });
   });
 });

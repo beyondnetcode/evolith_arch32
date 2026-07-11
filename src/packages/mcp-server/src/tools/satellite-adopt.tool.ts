@@ -53,6 +53,11 @@ interface GitHubRepoResponse {
  */
 @Injectable()
 export class SatelliteAdoptTool implements McpTool {
+  // Links an existing GitHub repo and writes the local registry — mutative, so
+  // the dispatch requires { apply:true, approvalToken }.
+  readonly mutative = true;
+  readonly scope = 'write' as const;
+
   readonly schema: McpToolSchema = {
     name: 'evolith-satellite-adopt',
     description: 'Adopt an existing GitHub repository as an Evolith satellite. Returns an ADR-0073 output envelope.',
@@ -128,15 +133,9 @@ export class SatelliteAdoptTool implements McpTool {
 
     await persistSatelliteRecord(satellite, satellitePath);
 
-    return {
-      success: true,
-      data: { satellite },
-      meta: {
-        requestId: randomUUID(),
-        timestamp: now,
-        version: '1.0.0',
-      },
-    };
+    // Return the raw payload only — the dispatch wraps it in the canonical MCP
+    // ADR-0073 envelope (returning a pre-built envelope double-wrapped it).
+    return { satellite };
   }
 }
 

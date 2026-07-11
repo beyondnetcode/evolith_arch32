@@ -52,6 +52,11 @@ interface GitHubRepoResponse {
  */
 @Injectable()
 export class SatelliteCreateTool implements McpTool {
+  // Provisions a real GitHub repository and writes the local registry — a
+  // mutative operation, so the dispatch requires { apply:true, approvalToken }.
+  readonly mutative = true;
+  readonly scope = 'write' as const;
+
   readonly schema: McpToolSchema = {
     name: 'evolith-satellite-create',
     description: 'Create a new satellite repository on GitHub and register it with Evolith. Returns an ADR-0073 output envelope.',
@@ -136,15 +141,10 @@ export class SatelliteCreateTool implements McpTool {
 
     await persistSatelliteRecord(satellite, satellitePath);
 
-    return {
-      success: true,
-      data: { satellite },
-      meta: {
-        requestId: randomUUID(),
-        timestamp: now,
-        version: '1.0.0',
-      },
-    };
+    // Return the raw payload only — the dispatch wraps it in the canonical MCP
+    // ADR-0073 envelope. Returning a pre-built envelope here double-wrapped the
+    // result and leaked a non-ADR-0073 meta ({requestId,timestamp,version}).
+    return { satellite };
   }
 }
 

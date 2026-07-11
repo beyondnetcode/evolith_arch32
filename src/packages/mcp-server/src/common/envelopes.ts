@@ -19,8 +19,14 @@ export const MCP_ENVELOPE_SCHEMA_VERSION = '1.0.0';
 
 export interface EnvelopeMeta {
   correlationId: string;
+  /** ADR-0073 canonical name for the invoked operation (mirrors `tool`). */
+  command: string;
+  /** MCP-native alias for `command`; retained for backward compatibility. */
   tool: string;
   durationMs: number;
+  /** ADR-0073 canonical timestamp (mirrors `timestamp`). */
+  executedAt: string;
+  /** MCP-native alias for `executedAt`; retained for backward compatibility. */
   timestamp: string;
   context?: {
     initiative?: string;
@@ -68,11 +74,16 @@ export interface MetaInput {
 }
 
 function buildMeta(meta: MetaInput): EnvelopeMeta {
+  const timestamp = meta.timestamp ?? new Date().toISOString();
   return {
     correlationId: meta.correlationId,
+    // ADR-0073 canonical keys (command/executedAt) plus their MCP-native
+    // aliases (tool/timestamp) so consumers of either shape keep working.
+    command: meta.tool,
     tool: meta.tool,
     durationMs: meta.durationMs,
-    timestamp: meta.timestamp ?? new Date().toISOString(),
+    executedAt: timestamp,
+    timestamp,
     context: meta.context,
     schemaVersion: MCP_ENVELOPE_SCHEMA_VERSION,
   };

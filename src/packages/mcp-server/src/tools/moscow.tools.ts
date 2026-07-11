@@ -13,6 +13,8 @@ export function createMoscowTools(service: MoscowPrioritizationService): McpTool
 
   return [
     {
+      mutative: true,
+      scope: 'write' as const,
       schema: {
         name: 'evolith-moscow-create',
         description: 'Create a new MoSCoW prioritization analysis',
@@ -62,6 +64,8 @@ export function createMoscowTools(service: MoscowPrioritizationService): McpTool
       },
     },
     {
+      mutative: true,
+      scope: 'write' as const,
       schema: {
         name: 'evolith-moscow-update',
         description: 'Update a specific item in a MoSCoW analysis',
@@ -82,6 +86,8 @@ export function createMoscowTools(service: MoscowPrioritizationService): McpTool
       },
     },
     {
+      mutative: true,
+      scope: 'write' as const,
       schema: {
         name: 'evolith-moscow-remove',
         description: 'Remove a specific item from a MoSCoW analysis',

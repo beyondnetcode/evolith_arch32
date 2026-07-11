@@ -74,14 +74,17 @@ export class AgentRegistryService {
     await this.fs.writeJson(rulesetPath, rulesetContent);
 
     const registry = await this.loadOrCreateRegistry(agentsPath);
+    const before = JSON.stringify(registry.agents);
     const existingIdx = registry.agents.findIndex(a => a.name === agentInfo.name);
     if (existingIdx >= 0) {
       registry.agents[existingIdx] = agentInfo;
     } else {
       registry.agents.push(agentInfo);
     }
-    registry.lastUpdated = new Date().toISOString();
-    await this.fs.writeJson(path.join(agentsPath, this.registryFileName), registry);
+    if (JSON.stringify(registry.agents) !== before) {
+      registry.lastUpdated = new Date().toISOString();
+      await this.fs.writeJson(path.join(agentsPath, this.registryFileName), registry);
+    }
   }
 
   async unregister(repoPath: string, agentName: string): Promise<boolean> {
@@ -131,7 +134,7 @@ export class AgentRegistryService {
     if (await this.fs.exists(registryPath)) {
       const registry = await this.fs.readJson(registryPath) as AgentRegistry;
       const idx = registry.agents.findIndex(a => a.name === agentName);
-      if (idx >= 0) {
+      if (idx >= 0 && JSON.stringify(registry.agents[idx]) !== JSON.stringify(config)) {
         registry.agents[idx] = config;
         registry.lastUpdated = new Date().toISOString();
         await this.fs.writeJson(registryPath, registry);

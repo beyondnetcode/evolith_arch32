@@ -1,7 +1,24 @@
 # Evolith Core — Interface How-To
 
 How to drive Evolith Core across its three surfaces — **CLI** (`evolith …`), **MCP**
-(`evolith-*` tools), and **REST** (`/api/v1/…`) — organized by SDLC phase.
+(`evolith-*` tools), and **REST** (`/api/v1/…`).
+
+## Start here — readable guides (by interface)
+
+Written for a person learning to use Evolith Core: each command/tool/endpoint
+explained in prose, with its options, examples from simple to advanced, and
+common combinations.
+
+- **[Usando la CLI](using-the-cli.md)** — the 25 CLI commands and subcommands.
+- **Usando MCP** (`using-the-mcp.md`) — for agents (in preparation).
+- **Usando la API REST** (`using-the-rest-api.md`) — for integrators / the Tracker (in preparation).
+
+## Reference catalog (by phase, generated)
+
+A machine-derived cross-reference — the same operation on all three surfaces,
+with its real captured response — organized by SDLC phase. Kept drift-proof by a
+CI check (see below). Use it to look up an operation's exact request/response
+across surfaces; use the readable guides above to *learn*.
 
 ## Two layers
 

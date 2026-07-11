@@ -6,7 +6,9 @@ export class CoreApiClient {
   }
 
   async evaluateArchitecturePlan(plan: any): Promise<any> {
-    const url = `${this.baseUrl}/v1/architecture-plans/evaluate`;
+    // #20: the controller serves under the URI-versioning prefix (api/v1); the
+    // old `/v1/...` path matched neither the broken nor the corrected route.
+    const url = `${this.baseUrl}/api/v1/architecture-plans/evaluate`;
     const response = await fetch(url, {
       method: 'POST',
       headers: {

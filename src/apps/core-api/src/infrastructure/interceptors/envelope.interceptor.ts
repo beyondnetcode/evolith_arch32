@@ -44,18 +44,6 @@ export type Envelope<T = unknown> = SuccessEnvelope<T> | ErrorEnvelope;
 
 export const ENVELOPE_SCHEMA_VERSION = '1.0.0';
 
-const RAW_RESPONSE = Symbol.for('evolith.envelope.raw');
-
-/**
- * Routes that opt out of envelope wrapping by setting the `raw` metadata flag
- * (e.g. Prometheus `/metrics` text exposition or static binary downloads).
- * Mark a controller method with `Reflect.defineMetadata(RAW_RESPONSE, true, target)`
- * or annotate it with `@RawResponse()` (re-exported from this module).
- */
-export const RawResponse = (): MethodDecorator => (target, key, descriptor) => {
-  Reflect.defineMetadata(RAW_RESPONSE, true, descriptor.value as object);
-};
-
 function deriveCommand(req: Request): string {
   const route = (req.route?.path as string | undefined) ?? req.url;
   return `http ${req.method} ${route}`;
@@ -117,14 +105,10 @@ export class EnvelopeInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const httpCtx = context.switchToHttp();
     const req = httpCtx.getRequest<Request>();
-    const handler = context.getHandler();
     const startedAt = Date.now();
-
-    const isRaw = Reflect.getMetadata(RAW_RESPONSE, handler) === true;
 
     return next.handle().pipe(
       map((data: unknown) => {
-        if (isRaw) return data;
         if (data && typeof data === 'object' && 'success' in (data as object)) {
           return data;
         }

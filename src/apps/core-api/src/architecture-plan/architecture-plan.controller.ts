@@ -2,7 +2,7 @@ import { Controller, Post, Body, HttpCode } from '@nestjs/common';
 import { ArchitecturePlanService } from './architecture-plan.service';
 import { ArchitecturePlan } from '@beyondnet/evolith-core-domain';
 
-@Controller('v1/architecture-plans')
+@Controller({ path: 'architecture-plans', version: '1' })
 export class ArchitecturePlanController {
   constructor(private readonly service: ArchitecturePlanService) {}
 

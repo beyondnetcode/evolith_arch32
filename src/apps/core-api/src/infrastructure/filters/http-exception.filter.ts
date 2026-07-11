@@ -30,6 +30,7 @@ const STATUS_TO_CODE: Record<number, string> = {
   [HttpStatus.CONFLICT]: 'CONFLICT',
   [HttpStatus.UNPROCESSABLE_ENTITY]: 'UNPROCESSABLE_ENTITY',
   [HttpStatus.TOO_MANY_REQUESTS]: 'TOO_MANY_REQUESTS',
+  [HttpStatus.SERVICE_UNAVAILABLE]: 'SERVICE_UNAVAILABLE',
   [HttpStatus.INTERNAL_SERVER_ERROR]: 'INTERNAL_ERROR',
 };
 
@@ -70,6 +71,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         case HttpStatus.NOT_FOUND: title = 'Not Found'; break;
         case HttpStatus.UNPROCESSABLE_ENTITY: title = 'Unprocessable Entity'; break;
         case HttpStatus.TOO_MANY_REQUESTS: title = 'Too Many Requests'; break;
+        case HttpStatus.SERVICE_UNAVAILABLE: title = 'Service Unavailable'; break;
         default: title = exception.message || title;
       }
     } else if (exception instanceof Error) {

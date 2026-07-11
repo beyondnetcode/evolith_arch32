@@ -4,7 +4,6 @@ import {
   ENVELOPE_SCHEMA_VERSION,
   Envelope,
   EnvelopeInterceptor,
-  RawResponse,
   buildEnvelopeMeta,
 } from './envelope.interceptor';
 import { requestContextStorage } from '@beyondnet/evolith-core-domain/common/request-context';
@@ -66,21 +65,6 @@ describe('EnvelopeInterceptor', () => {
       interceptor.intercept(ctx, makeHandler(preEnveloped)),
     );
     expect(result).toBe(preEnveloped);
-  });
-
-  it('skips wrapping for handlers decorated as raw', async () => {
-    class Ctrl {
-      @RawResponse()
-      metrics() {
-        return '# HELP foo bar';
-      }
-    }
-    const handler = Reflect.get(Ctrl.prototype, 'metrics') as object;
-    const ctx = makeContext(baseReq, handler);
-    const result = await lastValueFrom(
-      interceptor.intercept(ctx, makeHandler('# HELP foo bar')),
-    );
-    expect(result).toBe('# HELP foo bar');
   });
 
   it('echoes caller-supplied correlationId from header', async () => {

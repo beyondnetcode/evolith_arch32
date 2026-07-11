@@ -51,7 +51,7 @@ Some workspaces depend on each other, so build the shared packages first, then t
 npm run build -w @beyondnet/evolith-core-domain
 npm run build -w @beyondnet/evolith-infra-providers
 npm run build -w @beyondnet/evolith-core
-npm run build -w @beyondnet/evolith-mcp-server
+npm run build -w @beyondnet/evolith-mcp
 
 # Build the Evolith CLI
 npm run build -w @beyondnet/evolith-cli

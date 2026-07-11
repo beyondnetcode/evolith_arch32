@@ -75,7 +75,7 @@ export PATH=$(npm config get prefix)/bin:$PATH
 
 ### Variables de entorno
 
-La CLI funciona sin configuración. Las siguientes variables son overrides opcionales. Las marcadas *(MCP)* las lee únicamente el paquete incluido `@beyondnet/evolith-mcp-server` mientras `evolith-mcp` está en ejecución.
+La CLI funciona sin configuración. Las siguientes variables son overrides opcionales. Las marcadas *(MCP)* las lee únicamente el paquete incluido `@beyondnet/evolith-mcp` mientras `evolith-mcp` está en ejecución.
 
 | Variable | Leída por | Propósito |
 |---|---|---|
@@ -948,7 +948,7 @@ Los scripts pre-construidos también vienen incluidos en el paquete bajo `shell/
 
 La CLI de Evolith incluye un servidor MCP listo para producción para la integración con agentes IA.
 
-> **Aviso de deprecación:** `evolith-cli mcp` imprime una advertencia de deprecación al arrancar y será removido en una futura versión mayor. El servidor MCP ahora se distribuye como paquete independiente — migra a `@beyondnet/evolith-mcp-server` (`npx @beyondnet/evolith-mcp-server serve` o el binario `evolith-mcp serve`). El comando CLI sigue funcionando mientras tanto delegando de forma perezosa (lazy) en ese paquete.
+> **Aviso de deprecación:** `evolith-cli mcp` imprime una advertencia de deprecación al arrancar y será removido en una futura versión mayor. El servidor MCP ahora se distribuye como paquete independiente — migra a `@beyondnet/evolith-mcp` (`npx @beyondnet/evolith-mcp serve` o el binario `evolith-mcp serve`). El comando CLI sigue funcionando mientras tanto delegando de forma perezosa (lazy) en ese paquete.
 
 ### Iniciar el Servidor
 
@@ -970,7 +970,7 @@ evolith-cli mcp [acción] [opciones]
 
 Acciones:
   serve       Iniciar el servidor MCP (por defecto)
-  version     Imprime un banner de versión estático del servidor MCP (no lee la versión del paquete @beyondnet/evolith-mcp-server)
+  version     Imprime un banner de versión estático del servidor MCP (no lee la versión del paquete @beyondnet/evolith-mcp)
 
 Opciones:
   -t, --transport <stdio|http>   Transporte: stdio (por defecto) o http
@@ -989,7 +989,7 @@ Verifica `initialize`, `tools/list`, `resources/list`, `prompts/list` y un `tool
 
 ### Herramientas MCP Disponibles
 
-El servidor incluido registra **27 herramientas**. El conjunto vigente y autoritativo siempre se puede explorar con `evolith-cli api --list --category tools`; la tabla siguiente refleja el registro actual de `@beyondnet/evolith-mcp-server`.
+El servidor incluido registra **27 herramientas**. El conjunto vigente y autoritativo siempre se puede explorar con `evolith-cli api --list --category tools`; la tabla siguiente refleja el registro actual de `@beyondnet/evolith-mcp`.
 
 **Validación y arquitectura**
 

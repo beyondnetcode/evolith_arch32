@@ -1,5 +1,5 @@
 /**
- * ESLint configuration for Evolith Smart CLI.
+ * ESLint configuration for Evolith CLI.
  *
  * Enforces Hexagonal Architecture layer boundaries as mandated by
  * ADR-0002 (Clean Architecture) and architectural-directives.md §3.

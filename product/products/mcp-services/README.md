@@ -2,7 +2,7 @@
 
 > **Bilingual navigation:** [Versión en Español](./README.es.md)
 
-Evolith MCP Services expose Evolith Core governance as real-time context for LLMs and autonomous agents through the [Model Context Protocol](https://modelcontextprotocol.io). They ship as the standalone **`@beyondnet/evolith-mcp-server`** package (binary `evolith-mcp`), which can also be launched programmatically by other surfaces.
+Evolith MCP Services expose Evolith Core governance as real-time context for LLMs and autonomous agents through the [Model Context Protocol](https://modelcontextprotocol.io). They ship as the standalone **`@beyondnet/evolith-mcp`** package (binary `evolith-mcp`), which can also be launched programmatically by other surfaces.
 
 ## Overview
 
@@ -50,10 +50,10 @@ The system is **intelligent and flexible** — users can combine any entry point
 
 ```bash
 # From the monorepo
-npm install @beyondnet/evolith-mcp-server
+npm install @beyondnet/evolith-mcp
 
 # Or globally (exposes the evolith-mcp binary)
-npm install -g @beyondnet/evolith-mcp-server
+npm install -g @beyondnet/evolith-mcp
 ```
 
 The binary is `evolith-mcp` (`package.json` `bin`); the only subcommands are `serve` and `version`.

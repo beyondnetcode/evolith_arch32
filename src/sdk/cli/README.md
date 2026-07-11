@@ -73,7 +73,7 @@ export PATH=$(npm config get prefix)/bin:$PATH
 
 ### Environment variables
 
-The CLI runs with zero configuration. The following variables are optional overrides. Those marked *(MCP)* are read by the standalone `@beyondnet/evolith-mcp-server` (the `evolith-mcp serve` binary).
+The CLI runs with zero configuration. The following variables are optional overrides. Those marked *(MCP)* are read by the standalone `@beyondnet/evolith-mcp` (the `evolith-mcp serve` binary).
 
 | Variable | Read by | Purpose |
 |---|---|---|
@@ -943,7 +943,7 @@ Pre-built scripts are also included in the package under `shell/`:
 
 ## MCP Server
 
-Evolith ships a standalone MCP server, `@beyondnet/evolith-mcp-server`, for AI agent integration. Run it with the `evolith-mcp` binary (or `npx @beyondnet/evolith-mcp-server serve`).
+Evolith ships a standalone MCP server, `@beyondnet/evolith-mcp`, for AI agent integration. Run it with the `evolith-mcp` binary (or `npx @beyondnet/evolith-mcp serve`).
 
 ### Starting the Server
 
@@ -982,7 +982,7 @@ Verifies `initialize`, `tools/list`, `resources/list`, `prompts/list`, and a rea
 
 ### Available MCP Tools
 
-The bundled server registers **47 tools**. The live, authoritative set is always browsable with `evolith-cli api --list --category tools`; the table below mirrors the current `@beyondnet/evolith-mcp-server` registry.
+The bundled server registers **47 tools**. The live, authoritative set is always browsable with `evolith-cli api --list --category tools`; the table below mirrors the current `@beyondnet/evolith-mcp` registry.
 
 **Validation & architecture**
 

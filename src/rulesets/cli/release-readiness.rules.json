@@ -2,7 +2,7 @@
   "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/cli/release-readiness.rules.json",
   "title": "CLI Release Readiness Rules",
-  "description": "Minimum release gates for Evolith Smart CLI, SDK, and MCP exposure.",
+  "description": "Minimum release gates for Evolith CLI, SDK, and MCP exposure.",
   "version": "1.0.0",
   "effectiveDate": "2026-06-08",
   "scope": "core-cli",
@@ -53,7 +53,7 @@
       "category": "mcp",
       "title": "MCP Smoke Test Must Pass",
       "description": "The MCP server MUST respond to initialize and tools/list over the supported release transport.",
-      "validationQuery": "Start smart-cli mcp serve and execute initialize plus tools/list JSON-RPC smoke requests.",
+      "validationQuery": "Start evolith-mcp and execute initialize plus tools/list JSON-RPC smoke requests.",
       "evidenceRequired": [
         "initialize response",
         "tools/list response"

@@ -145,7 +145,7 @@ The final SDLC phase is **Delivery & Operations**. Evaluate gates and emit evide
 
 ## MCP server (AI agent integration)
 
-The MCP server ships as the **standalone `@beyondnet/evolith-mcp-server` package**, which exposes the full Evolith surface to AI agents. Run it with `evolith-mcp serve` (or `npx @beyondnet/evolith-mcp-server serve`). See the [MCP Services product](../mcp-services/README.md) for the authoritative surface.
+The MCP server ships as the **standalone `@beyondnet/evolith-mcp` package**, which exposes the full Evolith surface to AI agents. Run it with `evolith-mcp serve` (or `npx @beyondnet/evolith-mcp serve`). See the [MCP Services product](../mcp-services/README.md) for the authoritative surface.
 
 | Surface | Count |
 |---|---|

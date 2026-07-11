@@ -1,6 +1,6 @@
 name: Evolith Governance Validation
 description: >
-  Validates repository compliance against Evolith Core standards using smart-cli validate.
+  Validates repository compliance against Evolith Core standards using evolith-cli validate.
   Designed to run as a PR gate in satellite repositories.
 
 inputs:
@@ -61,7 +61,7 @@ runs:
     # ------------------------------------------------------------------
     # 3. Run governance validation
     # ------------------------------------------------------------------
-    - name: Run smart-cli validate
+    - name: Run evolith-cli validate
       id: validate
       shell: bash
       run: |
@@ -83,11 +83,11 @@ runs:
         echo "report-path=${REPORT_PATH}" >> "${GITHUB_OUTPUT}"
 
         echo "::group::Evolith governance validation"
-        echo "Command: smart-cli validate ${ARGS} --format json --output ${REPORT_PATH}"
+        echo "Command: evolith-cli validate ${ARGS} --format json --output ${REPORT_PATH}"
         echo ""
 
         set +e
-        smart-cli validate ${ARGS} --format json --output "${REPORT_PATH}"
+        evolith-cli validate ${ARGS} --format json --output "${REPORT_PATH}"
         EXIT_CODE=$?
         set -e
 

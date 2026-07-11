@@ -2,8 +2,8 @@
 # Evolith Agent Runtime API — monorepo Docker build.
 #
 # BUILD CONTEXT: the repository ROOT (not this folder), because the service
-# depends on the in-repo workspace packages `@evolith/agent-runtime` and
-# `@evolith/core-domain`, which are not published to npm. The image builds them
+# depends on the in-repo workspace packages `@beyondnet/evolith-agent-runtime` and
+# `@beyondnet/evolith-core-domain`, which are not published to npm. The image builds them
 # from source. In Coolify set:
 #   Dockerfile location = src/apps/agent-runtime-api/Dockerfile
 #   Build context / base directory = /  (repository root)
@@ -35,7 +35,7 @@ RUN apk add --no-cache curl
 
 WORKDIR /repo
 
-# Workspace symlinks in node_modules/@evolith/* point at packages/*, so we ship
+# Workspace symlinks in node_modules/@beyondnet/evolith-* point at packages/*, so we ship
 # the compiled dist + package.json of each needed workspace plus the hoisted
 # third-party modules.
 COPY --from=builder /repo/node_modules ./node_modules

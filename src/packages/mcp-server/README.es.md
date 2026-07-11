@@ -1,4 +1,4 @@
-# @beyondnet/evolith-mcp-server
+# @beyondnet/evolith-mcp
 
 ## Evolith MCP Gateway — Servidor de Protocolo de Contexto de Modelo de Primera Clase
 
@@ -34,7 +34,7 @@ Desacopla el servidor MCP del CLI. Es un producto de primera clase que expone la
 ```mermaid
 sequenceDiagram
     participant Agent as "Agente IA<br/>(Cursor, Claude Desktop, Custom)"
-    participant Gateway as "MCP Gateway<br/>@beyondnet/evolith-mcp-server"
+    participant Gateway as "MCP Gateway<br/>@beyondnet/evolith-mcp"
     participant Core as "Lógica de Negocio<br/>@beyondnet/evolith-core"
     participant FS as "Sistema de Archivos"
     participant Git as "Git"
@@ -87,10 +87,10 @@ sequenceDiagram
 
 ```bash
 # Desde el monorepo
-npm install @beyondnet/evolith-mcp-server
+npm install @beyondnet/evolith-mcp
 
 # O globalmente
-npm install -g @beyondnet/evolith-mcp-server
+npm install -g @beyondnet/evolith-mcp
 ```
 
 ### Uso
@@ -408,7 +408,7 @@ Las tools marcadas como mutativas (`mutative: true`) requieren **aprobación exp
 El Gateway es una aplicación **NestJS** (módulos + inyección de dependencias).
 
 ```
-@beyondnet/evolith-mcp-server/
+@beyondnet/evolith-mcp/
 ├── src/
 │   ├── main.ts                         ← Bootstrap, parseArgs, arranque stdio/HTTP
 │   ├── app.module.ts                   ← Módulo raíz

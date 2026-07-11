@@ -27,7 +27,7 @@ async function main() {
   try {
     const content = await fs.readFile(playbookPath, 'utf8');
 
-    const architecturalMatch = content.match(/## The Audit Prompt\n\nTo execute an audit with Winston, provide the following prompt to your active LLM context \(e\.g\. MCP, IDE, or Smart CLI\):\n\n```markdown\n([\s\S]*?)```/);
+    const architecturalMatch = content.match(/## The Audit Prompt\n\nTo execute an audit with Winston, provide the following prompt to your active LLM context \(e\.g\. MCP, IDE, or Evolith CLI\):\n\n```markdown\n([\s\S]*?)```/);
     const bmadMatch = content.match(/## The BMAD Agent Evolution Prompt\n\nTo execute a BMAD agent evolution analysis, provide the following prompt to your active LLM context:\n\n```markdown\n([\s\S]*?)```/);
 
     const prompts = [];
@@ -48,7 +48,7 @@ async function main() {
       console.log(`🤖 WINSTON — ${label}`);
       console.log('========================================================================\n');
       console.log('Instructions: Copy the prompt below and paste it into your active LLM context');
-      console.log('(e.g., Cursor, GitHub Copilot, Evolith Smart CLI, or MCP interface) to start');
+      console.log('(e.g., Cursor, GitHub Copilot, Evolith CLI, or MCP interface) to start');
       console.log('the analysis.\n');
       console.log('Usage:');
       console.log('  node .harness/scripts/run-evolith-audit.mjs                  # Architectural audit (EN)');

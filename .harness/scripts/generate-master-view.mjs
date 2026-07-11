@@ -128,7 +128,7 @@ bandTitle(56, 686, '4', 'CORE API EXPOSURE LAYER · product-neutral (ADR-0074)',
 const expo = [
   ['apps/core-api', 'REST · 8 controllers'],
   ['mcp-server', 'MCP · 26 tools · 9 resources'],
-  ['smart-cli', 'CLI · 20 commands'],
+  ['evolith-cli', 'CLI · 20 commands'],
 ];
 expo.forEach((e, i) => { const x = 72 + i * 372, w = 356; rect(x, 698, w, 40, { rx: 9, fill: '#fff', stroke: '#a9caea', sw: 1.2 }); text(x + w / 2, 715, e[0], { size: 13, fill: C.exp, weight: 800, anchor: 'middle' }); text(x + w / 2, 730, e[1], { size: 11, fill: C.muted, anchor: 'middle' }); });
 text(56, 752, 'Tracker BFF consumes this surface as an external client — ADR-0074 explicitly rejected placing the BFF inside Core.', { size: 11, fill: C.muted, italic: true });
@@ -145,7 +145,7 @@ bandTitle(56, 798, '5', 'EVOLITH CORE · repo evolith_arch32 — the Constitutio
 
 // E1 Agent Runtime
 rect(56, 808, 1104, 92, { rx: 11, fill: '#efe9f6', stroke: '#c3b0dd', sw: 1.3 });
-text(72, 830, 'AGENT RUNTIME · @evolith/agent-runtime (ADR-0102)', { size: 13.5, fill: '#5a3d86', weight: 800 });
+text(72, 830, 'AGENT RUNTIME · @beyondnet/evolith-agent-runtime (ADR-0102)', { size: 13.5, fill: '#5a3d86', weight: 800 });
 text(72, 852, 'AgentRuntimeService — 12 hexagonal ports · 30 adapters', { size: 12, fill: C.ink });
 text(72, 872, 'InteractionAdapters:', { size: 12, fill: C.ink, weight: 700 });
 ['CLI', 'Chat', 'Hermes', 'MCP', 'External'].forEach((s, i) => chip(196 + i * 92, 861, 84, s, { fill: '#fff', stroke: '#d3c4e6', tf: '#5a3d86' }));
@@ -155,7 +155,7 @@ text(972, 866, 'executors, not authorities.', { size: 10.5, fill: C.muted, itali
 
 // E2 Domain — stateless evaluation engine
 rect(56, 910, 1104, 134, { rx: 11, fill: 'url(#domg)', stroke: '#0e2a44', sw: 1.3 });
-text(72, 934, 'DOMAIN · @evolith/core-domain — STATELESS EVALUATION ENGINE (ADR-0101)', { size: 13.5, fill: '#eaf3ff', weight: 800 });
+text(72, 934, 'DOMAIN · @beyondnet/evolith-core-domain — STATELESS EVALUATION ENGINE (ADR-0101)', { size: 13.5, fill: '#eaf3ff', weight: 800 });
 text(72, 956, 'EvaluationOrchestrator · 5 KindEvaluators · OPA dual-engine parity (Native TS + OPA/WASM)', { size: 12, fill: '#c7dcf2' });
 text(72, 980, 'Kinds', { size: 11, fill: '#9fc2e6', weight: 700 });
 const kinds1 = ['gate', 'artifact', 'evidence', 'architecture', 'blueprint'];

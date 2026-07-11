@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Rejects product-documentation drift and placeholder pages (GT-47):
 //  - no placeholder markers in shipped product READMEs;
-//  - the Smart CLI advertised version matches sdk/cli/package.json;
+//  - the Evolith CLI advertised version matches sdk/cli/package.json;
 //  - the generated product inventory is not stale.
 
 import fs from 'fs';
@@ -13,7 +13,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.
 const PRODUCTS = path.join(ROOT, 'reference/products');
 
 // Product domains whose READMEs are public, shipped surfaces (must be drift-free).
-const SHIPPED = ['smart-cli', 'mcp-services'];
+const SHIPPED = ['evolith-cli', 'mcp-services'];
 
 const PLACEHOLDER_PATTERNS = [
   /content pending/i,
@@ -47,10 +47,10 @@ function run() {
     }
   }
 
-  // Advertised Smart CLI version must match the package manifest.
+  // Advertised Evolith CLI version must match the package manifest.
   const pkg = JSON.parse(read(path.join(ROOT, 'sdk/cli/package.json')) || '{}');
   for (const name of ['README.md', 'README.es.md']) {
-    const content = read(path.join(PRODUCTS, 'smart-cli', name));
+    const content = read(path.join(PRODUCTS, 'evolith-cli', name));
     const advertised = content.match(/smart-cli version (\d+\.\d+\.\d+)/);
     if (advertised && advertised[1] !== pkg.version) {
       errors.push(`products/smart-cli/${name} advertises version ${advertised[1]} but the package is ${pkg.version}`);
@@ -73,7 +73,7 @@ function run() {
     process.exit(1);
   }
 
-  console.log(`✅ Product documentation is synchronized (Smart CLI ${pkg.version}, no placeholders).`);
+  console.log(`✅ Product documentation is synchronized (Evolith CLI ${pkg.version}, no placeholders).`);
 }
 
 run();

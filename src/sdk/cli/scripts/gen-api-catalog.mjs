@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * GT-460: regenerate the api command's MCP-surface catalog from the LIVE
- * @beyondnet/evolith-mcp server, so `smart-cli api --list` reflects reality
+ * @beyondnet/evolith-mcp server, so `evolith-cli api --list` reflects reality
  * instead of hardcoded counts that drift as tools/resources are added.
  *
  * Usage: node scripts/gen-api-catalog.mjs

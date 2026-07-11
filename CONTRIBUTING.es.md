@@ -51,7 +51,7 @@ Algunos workspaces dependen entre sí, así que construye primero los paquetes c
 npm run build -w @beyondnet/evolith-core-domain
 npm run build -w @beyondnet/evolith-infra-providers
 npm run build -w @beyondnet/evolith-core
-npm run build -w @beyondnet/evolith-mcp-server
+npm run build -w @beyondnet/evolith-mcp
 
 # Construye el Evolith CLI
 npm run build -w @beyondnet/evolith-cli

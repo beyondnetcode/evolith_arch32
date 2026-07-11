@@ -1,7 +1,7 @@
 #!/bin/zsh
 # Evolith CLI Zsh Completion
 # Install: source this file or add to ~/.zshrc
-# Also: smart-cli completion --install to auto-install
+# Also: evolith-cli completion --install to auto-install
 
 _smart_cli() {
     local -a commands
@@ -80,4 +80,4 @@ _smart_cli() {
     return 0
 }
 
-compdef _smart_cli smart-cli
+compdef _smart_cli evolith-cli

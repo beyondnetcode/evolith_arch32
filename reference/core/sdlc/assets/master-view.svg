@@ -142,7 +142,7 @@
 <text x="66" y="797" font-size="12.5" fill="#fff" font-weight="700" text-anchor="middle">5</text>
 <text x="84" y="798" font-size="14.5" fill="#16334f" font-weight="700" text-anchor="start" letter-spacing="0.6">EVOLITH CORE · repo evolith_arch32 — the Constitution &amp; stateless engine</text>
 <rect x="56" y="808" width="1104" height="92" rx="11" fill="#efe9f6" stroke="#c3b0dd" stroke-width="1.3"/>
-<text x="72" y="830" font-size="13.5" fill="#5a3d86" font-weight="800" text-anchor="start">AGENT RUNTIME · @evolith/agent-runtime (ADR-0102)</text>
+<text x="72" y="830" font-size="13.5" fill="#5a3d86" font-weight="800" text-anchor="start">AGENT RUNTIME · @beyondnet/evolith-agent-runtime (ADR-0102)</text>
 <text x="72" y="852" font-size="12" fill="#14212e" font-weight="400" text-anchor="start">AgentRuntimeService — 12 hexagonal ports · 30 adapters</text>
 <text x="72" y="872" font-size="12" fill="#14212e" font-weight="700" text-anchor="start">InteractionAdapters:</text>
 <rect x="196" y="861" width="84" height="22" rx="6" fill="#fff" stroke="#d3c4e6" stroke-width="1"/>
@@ -160,7 +160,7 @@
 <text x="972" y="852" font-size="10.5" fill="#55677a" font-weight="400" text-anchor="start" font-style="italic">Agents are replaceable</text>
 <text x="972" y="866" font-size="10.5" fill="#55677a" font-weight="400" text-anchor="start" font-style="italic">executors, not authorities.</text>
 <rect x="56" y="910" width="1104" height="134" rx="11" fill="url(#domg)" stroke="#0e2a44" stroke-width="1.3"/>
-<text x="72" y="934" font-size="13.5" fill="#eaf3ff" font-weight="800" text-anchor="start">DOMAIN · @evolith/core-domain — STATELESS EVALUATION ENGINE (ADR-0101)</text>
+<text x="72" y="934" font-size="13.5" fill="#eaf3ff" font-weight="800" text-anchor="start">DOMAIN · @beyondnet/evolith-core-domain — STATELESS EVALUATION ENGINE (ADR-0101)</text>
 <text x="72" y="956" font-size="12" fill="#c7dcf2" font-weight="400" text-anchor="start">EvaluationOrchestrator · 5 KindEvaluators · OPA dual-engine parity (Native TS + OPA/WASM)</text>
 <text x="72" y="980" font-size="11" fill="#9fc2e6" font-weight="700" text-anchor="start">Kinds</text>
 <rect x="120" y="970" width="118" height="22" rx="6" fill="#1e4a73" stroke="#3a6a97" stroke-width="1"/>

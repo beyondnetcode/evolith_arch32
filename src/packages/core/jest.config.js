@@ -1,7 +1,7 @@
 /**
- * Jest configuration for @evolith/core contract/smoke tests.
+ * Jest configuration for @beyondnet/evolith-core contract/smoke tests.
  *
- * The barrel (src/index.ts) re-exports symbols from @evolith/core-domain
+ * The barrel (src/index.ts) re-exports symbols from @beyondnet/evolith-core-domain
  * subpaths. Those subpaths resolve through package.json `exports` to the
  * compiled `dist/` of core-domain, which is not guaranteed to exist when the
  * test runs standalone. To keep this suite dependency-light and runnable
@@ -27,7 +27,7 @@ module.exports = {
     // Map specific core-domain subpaths to TS source (resolved by ts-jest),
     // so the contract test exercises the real re-export graph without needing
     // core-domain to be pre-built.
-    '^@evolith/core-domain/(.*)$': `${coreDomainSrc}/$1`,
-    '^@evolith/core-domain$': `${coreDomainSrc}/index`,
+    '^@beyondnet/evolith-core-domain/(.*)$': `${coreDomainSrc}/$1`,
+    '^@beyondnet/evolith-core-domain$': `${coreDomainSrc}/index`,
   },
 };

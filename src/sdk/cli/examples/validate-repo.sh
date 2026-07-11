@@ -20,7 +20,7 @@ echo "=============================================="
 # Check if evolith CLI is available
 if ! command -v evolith &> /dev/null; then
     echo "Installing Evolith CLI..."
-    npm install -g @evolith/cli
+    npm install -g @beyondnet/evolith-cli
 fi
 
 # Run validation

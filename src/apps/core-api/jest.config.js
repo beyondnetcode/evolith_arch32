@@ -5,7 +5,7 @@ module.exports = {
   testRegex: '.*\\.spec\\.ts$',
   transform: {
     [String.raw`^.+\.ts$`]: ['ts-jest', {
-      // Transpile-only: workspace subpath imports (@evolith/core-domain/*) are
+      // Transpile-only: workspace subpath imports (@beyondnet/evolith-core-domain/*) are
       // resolved at runtime via the package "exports" map, which classic TS
       // "node" moduleResolution does not understand at type-check time.
       diagnostics: false,

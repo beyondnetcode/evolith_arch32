@@ -4,7 +4,7 @@
 # BUILD CONTEXT: the repository ROOT. The previous standalone build (copy only
 # apps/core-api + npm ci from the registry) broke because (1) the app tsconfig
 # extends ../../tsconfig.base.json, and (2) core-api imports
-# `@evolith/core-domain/evaluation/*`, a subpath newer than the published npm
+# `@beyondnet/evolith-core-domain/evaluation/*`, a subpath newer than the published npm
 # package. This image builds the workspace packages from source instead.
 #   Coolify: Dockerfile = src/apps/core-api/Dockerfile, base directory = /
 # ──────────────────────────────────────────────────────────────────────────

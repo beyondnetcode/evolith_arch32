@@ -22,7 +22,7 @@ Core defines. Providers execute. CLI and MCP evaluate. Tracker decides and audit
 ## Exposure
 
 - **rest**: /api/v1 — REST-only, sin GraphQL/SSE (ADR-0074)
-- **mcp**: gateway MCP separado, @beyondnet/evolith-mcp-server (ADR-0069)
+- **mcp**: gateway MCP separado, @beyondnet/evolith-mcp (ADR-0069)
 - **contextEnvelope**: { repository, revision, workspaceRef, operationId } — stateless (ADR-0080)
 - **determinism**: evaluación pura y determinista (ADR-0101)
 

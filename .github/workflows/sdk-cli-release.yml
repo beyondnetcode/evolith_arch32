@@ -319,7 +319,7 @@ jobs:
         shell: bash
         run: |
           npm install -g @beyondnet/evolith-cli@${{ needs.release-please.outputs.version }}
-          smart-cli --help || { echo "❌ NPM binary failed to execute"; exit 1; }
+          evolith-cli --help || { echo "❌ NPM binary failed to execute"; exit 1; }
           echo "✅ NPM package smoke test completed"
 
   # ============================================

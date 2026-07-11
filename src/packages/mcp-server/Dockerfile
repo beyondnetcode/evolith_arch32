@@ -4,7 +4,7 @@
 # BUILD CONTEXT: the repository ROOT. Like core-api, the old standalone build
 # broke against the current source (tsconfig.base.json + workspace subpaths newer
 # than the published npm packages). This image builds the workspace packages
-# (@evolith/core-domain, @evolith/infra-providers, @evolith/core) from source.
+# (@beyondnet/evolith-core-domain, @beyondnet/evolith-infra-providers, @beyondnet/evolith-core) from source.
 #   Coolify: Dockerfile = src/packages/mcp-server/Dockerfile, base directory = /
 # ──────────────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder

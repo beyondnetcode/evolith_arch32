@@ -1,6 +1,6 @@
 # @beyondnet/evolith-core-api — Evolith Core API Exposure Layer
 
-> **Contexto arquitectural (ADR-0074).** Esta aplicación NestJS es la **capa de exposición REST** del dominio Core de Evolith. Es el boundary de red oficial que expone `@beyondnet/evolith-core-domain` sobre HTTP, y convive con `@beyondnet/evolith-mcp-server` (protocolo MCP para agentes) y `evolith-cli` (CLI). Los consumidores externos —incluyendo el **Evolith Tracker**— la consumen como cliente HTTP.
+> **Contexto arquitectural (ADR-0074).** Esta aplicación NestJS es la **capa de exposición REST** del dominio Core de Evolith. Es el boundary de red oficial que expone `@beyondnet/evolith-core-domain` sobre HTTP, y convive con `@beyondnet/evolith-mcp` (protocolo MCP para agentes) y `evolith-cli` (CLI). Los consumidores externos —incluyendo el **Evolith Tracker**— la consumen como cliente HTTP.
 >
 > **Lo que NO es.** No es el BFF del Tracker. El BFF / Application Gateway del Tracker (ADR-0075) vive en el repositorio `evolith_tracker` y consume esta API como cliente externo.
 

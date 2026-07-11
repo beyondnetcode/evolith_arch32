@@ -23,10 +23,9 @@ module.exports = {
   },
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
-    "^@evolith/core-domain/(.*)$":
-      "<rootDir>/../../../node_modules/@evolith/core-domain/dist/$1",
-    "^@evolith/core/(.*)$":
-      "<rootDir>/../../../node_modules/@evolith/core-domain/dist/$1",
+    // @beyondnet/evolith-core-domain subpaths resolve via the node_modules
+    // workspace symlink + the package "exports" field (dist). No explicit
+    // mapper: a hard dist/$1 rewrite bypasses "exports" and breaks subpath loads.
     "^@modelcontextprotocol/sdk/types\\.js$":
       "<rootDir>/../../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/types.js",
     "^@modelcontextprotocol/sdk/server/index\\.js$":

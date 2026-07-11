@@ -181,9 +181,9 @@ Evolith Core exists to become the definitive enterprise-grade operating system f
 
 \`\`\`bash
 npm install -g @beyondnet/evolith-cli
-smart-cli init
-smart-cli validate
-smart-cli mcp serve
+evolith-cli init
+evolith-cli validate
+evolith-mcp
 \`\`\`
 
 ---
@@ -228,8 +228,8 @@ function transformGettingStarted(sources) {
 
 \`\`\`bash
 npm install -g @beyondnet/evolith-cli
-smart-cli --version
-# smart-cli version 1.1.0
+evolith-cli --version
+# evolith-cli version 1.1.0
 \`\`\`
 
 ---
@@ -240,7 +240,7 @@ smart-cli --version
 
 \`\`\`bash
 cd your-project
-smart-cli init
+evolith-cli init
 \`\`\`
 
 Creates \`evolith.yaml\` with default F1 (Modular Monolith) configuration.
@@ -248,13 +248,13 @@ Creates \`evolith.yaml\` with default F1 (Modular Monolith) configuration.
 ### 2. Run Validation
 
 \`\`\`bash
-smart-cli validate
+evolith-cli validate
 \`\`\`
 
 ### 3. Start MCP Server for AI Agents
 
 \`\`\`bash
-smart-cli mcp serve
+evolith-mcp
 \`\`\`
 
 ---
@@ -263,13 +263,13 @@ smart-cli mcp serve
 
 | Command | Description |
 |---------|-------------|
-| \`smart-cli init\` | Initialize satellite repository |
-| \`smart-cli validate\` | Validate against Evolith standards |
-| \`smart-cli validate --topology <name>\` | Validate against specific topology |
-| \`smart-cli adr create\` | Create Architecture Decision Record |
-| \`smart-cli adr list\` | List all ADRs |
-| \`smart-cli mcp serve\` | Start MCP server (stdio) |
-| \`smart-cli mcp serve --http\` | Start MCP server (HTTP) |
+| \`evolith-cli init\` | Initialize satellite repository |
+| \`evolith-cli validate\` | Validate against Evolith standards |
+| \`evolith-cli validate --topology <name>\` | Validate against specific topology |
+| \`evolith-cli adr create\` | Create Architecture Decision Record |
+| \`evolith-cli adr list\` | List all ADRs |
+| \`evolith-mcp\` | Start MCP server (stdio) |
+| \`evolith-mcp --http\` | Start MCP server (HTTP) |
 
 ---
 
@@ -281,7 +281,7 @@ smart-cli mcp serve
 {
   "mcpServers": {
     "evolith": {
-      "command": "smart-cli",
+      "command": "evolith-cli",
       "args": ["mcp", "serve"]
     }
   }
@@ -377,21 +377,21 @@ function transformProducts(sources) {
 
 | Product | Package | Purpose |
 |---------|---------|---------|
-| **Smart CLI** | \`@beyondnet/evolith-cli\` | Developer-facing governance tool |
+| **Evolith CLI** | \`@beyondnet/evolith-cli\` | Developer-facing governance tool |
 | **MCP Services** | (bundled in CLI) | AI agent integration via MCP |
 | **Core API** | \`apps/core-api\` | REST API for orchestration systems |
 
 ---
 
-## Smart CLI
+## Evolith CLI
 
 Command-line interface for governance, validation, and AI integration.
 
 \`\`\`bash
 npm install -g @beyondnet/evolith-cli
-smart-cli init
-smart-cli validate
-smart-cli mcp serve
+evolith-cli init
+evolith-cli validate
+evolith-mcp
 \`\`\`
 
 **Key commands**: init, validate, adr, standards, docs, mcp serve

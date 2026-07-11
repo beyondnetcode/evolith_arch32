@@ -3,7 +3,8 @@ import { Inject } from '@nestjs/common';
 import { Command, Option } from 'nest-commander';
 import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/validate-satellite.use-case';
 import { RulesetValidatorService } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service';
-import { createSuccessEnvelope } from '@beyondnet/evolith-core-domain';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain';
+import { randomUUID } from 'node:crypto';
 import type { IFileSystem, ILogger, IConfigParser } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import {
   EvaluationOrchestrator,
@@ -18,6 +19,9 @@ import { ConfigService } from '../../infrastructure/config/config.service';
 import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
 
 const CORE_VERSION = '1.0.5';
+
+/** A user-input error (bad --context path or malformed JSON), distinct from an internal failure. */
+class EvaluateInputError extends Error {}
 
 interface EvaluateCommandOptions {
   context?: string;
@@ -54,7 +58,26 @@ export class EvaluateCommand extends BaseEvolithCommand {
   }
 
   async executeCommand(_passed: string[], options?: EvaluateCommandOptions): Promise<void> {
-    const ctx = await this.buildContext(options);
+    let ctx: EvaluationContext;
+    try {
+      ctx = await this.buildContext(options);
+    } catch (err) {
+      // A bad --context path or malformed JSON is a user-input error, not an
+      // internal failure — emit a VALIDATION_FAILED envelope (not INTERNAL_ERROR
+      // with a raw stack) so callers can distinguish their mistake from a bug.
+      if (err instanceof EvaluateInputError) {
+        const meta = {
+          command: 'evolith evaluate',
+          executedAt: new Date().toISOString(),
+          durationMs: 0,
+          correlationId: randomUUID(),
+          schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+        };
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', err.message, meta), null, 2));
+        process.exit(1);
+      }
+      throw err;
+    }
 
     // Resolve the Core/rulesets root: an explicit --core/profile override, else
     // the rulesets bundled with the CLI. Never fall back to process.cwd().
@@ -126,8 +149,18 @@ export class EvaluateCommand extends BaseEvolithCommand {
     if (options?.context) {
       const fs = await import('fs-extra');
       const resolved = path.resolve(options.context);
-      const raw = await fs.readFile(resolved, 'utf-8');
-      const parsed = JSON.parse(raw) as EvaluationContext;
+      let raw: string;
+      try {
+        raw = await fs.readFile(resolved, 'utf-8');
+      } catch {
+        throw new EvaluateInputError(`Context file not found or unreadable: ${resolved}`);
+      }
+      let parsed: EvaluationContext;
+      try {
+        parsed = JSON.parse(raw) as EvaluationContext;
+      } catch {
+        throw new EvaluateInputError(`Context file is not valid JSON: ${resolved}`);
+      }
       // Default workspaceRef to the satellite profile/cwd if the file omits it.
       if (!parsed.workspaceRef) {
         return { ...parsed, workspaceRef: this.profile.satellite || process.cwd() };

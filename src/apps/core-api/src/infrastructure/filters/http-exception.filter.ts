@@ -48,6 +48,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     let title = 'Internal Server Error';
     let detail = 'An unexpected error occurred';
     let errors: unknown[] | undefined;
+    // Domain-code override for known non-HTTP domain errors, so the Tracker and
+    // the exploration tester see the SAME ADR-0073 code the CLI/MCP emit (e.g.
+    // RULESET_NOT_FOUND) instead of a generic INTERNAL_ERROR derived from status.
+    let domainCode: string | undefined;
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
@@ -77,7 +81,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
     } else if (exception instanceof Error) {
       detail = exception.message;
 
-      if (detail.includes('not found') || detail.includes('does not exist')) {
+      if (exception.name === 'RulesetsNotFoundError') {
+        status = HttpStatus.UNPROCESSABLE_ENTITY;
+        title = 'Ruleset Not Found';
+        domainCode = 'RULESET_NOT_FOUND';
+      } else if (detail.includes('not found') || detail.includes('does not exist')) {
         status = HttpStatus.NOT_FOUND;
         title = 'Not Found';
       } else if (detail.includes('validation') || detail.includes('invalid') || detail.includes('required')) {
@@ -110,7 +118,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const envelope: ErrorEnvelope = {
       success: false,
       error: {
-        code: STATUS_TO_CODE[status] ?? 'INTERNAL_ERROR',
+        code: domainCode ?? STATUS_TO_CODE[status] ?? 'INTERNAL_ERROR',
         message: problem.detail,
         details: problem as unknown as Record<string, unknown>,
       },

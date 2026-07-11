@@ -104,8 +104,11 @@ export function checkConsistency(
   // failure semantics that a success-only comparison masks (e.g. one surface
   // RULESET_NOT_FOUND vs another INTERNAL_ERROR). Only meaningful when ALL
   // enveloped surfaces failed — a success/failure split is already reported above.
+  // FORBIDDEN is excluded: it is the MCP mutative-approval / ABAC gate (an
+  // access-control outcome), orthogonal to WHY the operation would fail, so
+  // comparing it to a domain error code is apples-to-oranges.
   const allFailed = canon.every((c) => c.v.success === false);
-  const errorCodes = canon.filter((c) => c.v.errorCode != null);
+  const errorCodes = canon.filter((c) => c.v.errorCode != null && c.v.errorCode !== 'FORBIDDEN');
   const distinctErrorCodes = new Set(errorCodes.map((c) => c.v.errorCode));
   if (allFailed && errorCodes.length >= 2 && distinctErrorCodes.size > 1) {
     findings.push(finding(operationId, 'consistency', verified ? 'P1' : 'P2', confidence, surfaces,

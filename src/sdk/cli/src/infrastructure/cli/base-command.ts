@@ -54,7 +54,13 @@ export abstract class BaseEvolithCommand extends CommandRunner {
         correlationId: randomUUID(),
         schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
       };
-      console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, meta), null, 2));
+      // Classify a missing ruleset corpus consistently across every command
+      // (and with MCP/REST) instead of collapsing it to INTERNAL_ERROR. Matched
+      // by name to avoid importing the infra error type into this base class.
+      const code = error instanceof Error && error.name === 'RulesetsNotFoundError'
+        ? 'RULESET_NOT_FOUND'
+        : 'INTERNAL_ERROR';
+      console.log(JSON.stringify(createErrorEnvelope(code, message, meta), null, 2));
       // In JSON mode, emit envelope and set exit code; don't re-throw
       process.exitCode = 1;
       return undefined as never;

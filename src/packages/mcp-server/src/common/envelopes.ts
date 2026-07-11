@@ -115,5 +115,12 @@ export function toErrorEnvelope(err: unknown, meta: MetaInput): ErrorEnvelope {
     return failure(err.code, err.message, meta, err.details);
   }
   const message = err instanceof Error ? err.message : String(err);
+  // Cross-surface parity: RulesetsNotFoundError is a plain Error (not a
+  // DomainException), so it collapsed to INTERNAL_ERROR while the CLI classifies
+  // it as RULESET_NOT_FOUND. Recognise it by name (avoids a cross-package
+  // instanceof) so MCP and CLI agree on the error code.
+  if (err instanceof Error && err.name === 'RulesetsNotFoundError') {
+    return failure(ErrorCodes.RULESET_NOT_FOUND, message, meta);
+  }
   return failure(ErrorCodes.INTERNAL_ERROR, message, meta);
 }

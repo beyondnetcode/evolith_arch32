@@ -12,7 +12,23 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ## 1. Detalle de Gaps
 
-> **GT-475…GT-484** fueron detectados por el diseño del agente de pruebas exploratorias (2026-07-10) que inventarió las superficies CLI / MCP / Core-API y verificó adversarialmente cada candidato contra este board. Ver el análisis de superficies CLI/MCP/Core-API y los activos de paridad cross-surface (`reference/core/control-center/audits/surface-parity-matrix.json`, `src/tests/contract/roundtrip-gate-evaluate.spec.ts`).
+> **GT-475…GT-484** fueron detectados por el diseño del agente de pruebas exploratorias (2026-07-10) que inventarió las superficies CLI / MCP / Core-API y verificó adversarialmente cada candidato contra este board. **GT-485** fue auto-detectado por el agente de exploración *en ejecución* (`src/tests/exploration`, `npm run test:exploration`). Ver los activos de paridad cross-surface (`reference/core/control-center/audits/surface-parity-matrix.json`, `src/tests/contract/roundtrip-gate-evaluate.spec.ts`).
+
+#### GT-485
+
+**Título:** El CLI `validate --format json` no emite el envelope ADR-0073 (divergencia cross-surface)
+
+**Problema:** El comando `validate` imprime su objeto de resultado crudo sin un `success` booleano de nivel superior, mientras la tool MCP `evolith-validate` y el endpoint REST `POST /api/v1/architecture/validate-satellite` devuelven el envelope canónico ADR-0073 `{success, data, meta}`. Cualquier cliente de automatización que parsee el envelope (como el que producen `gate`/`drift`/`phase`) se rompe con `validate`. Es el **primer defecto detectado por el agente de exploración en ejecución** (no por el pase de diseño) — el oráculo de envelope marcó el `success` ausente, y el de consistencia marcó la divergencia cross-surface resultante.
+
+**Evidencia:** `npm run test:exploration`, operación `validate-satellite`, superficie `cli`. stdout del CLI = `{"status":"failed","rulesChecked":97,"issues":[…],"coreRef":{"version":null,"path":"…"}}` — sin clave `success`; MCP + REST devuelven `success:true`. Finding crudo `EXPLORE-001` (tipo `contract`) en `src/tests/exploration/.out/findings.jsonl`; el oráculo de consistencia además reportó divergencia de `success` (cli=null vs mcp=true vs rest=true). Reproducido en dos corridas (estable, no flaky).
+
+**Fix propuesto:** Envolver la salida de `validate --format json` en el `createSuccessEnvelope`/`createErrorEnvelope` compartido (`@beyondnet/evolith-core`, `gate-evidence.ts`) exactamente como ya hacen `gate evaluate` / `drift` / `phase advance`; luego promover el binding `validate-satellite` de la suite de exploración a `verified`.
+
+**Cierre:**
+- [ ] `validate --format json` emite `{ success, data, meta }`
+- [ ] binding `validate-satellite` de exploración promovido a `verified` y en verde
+
+**Referencias:** src/sdk/cli/src/commands/validate/validate.command.ts; src/tests/exploration/.out/findings.jsonl; GT-479, GT-411
 
 #### GT-475
 

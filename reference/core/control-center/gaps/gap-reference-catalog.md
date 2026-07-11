@@ -12,7 +12,23 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ## 1. Gap Details
 
-> **GT-475…GT-484** were surfaced by the exploratory test-agent design pass (2026-07-10) that inventoried the CLI / MCP / Core-API surfaces and adversarially verified each candidate against this board. See the CLI/MCP/Core-API surface analysis and the cross-surface parity assets (`reference/core/control-center/audits/surface-parity-matrix.json`, `src/tests/contract/roundtrip-gate-evaluate.spec.ts`).
+> **GT-475…GT-484** were surfaced by the exploratory test-agent design pass (2026-07-10) that inventoried the CLI / MCP / Core-API surfaces and adversarially verified each candidate against this board. **GT-485** was auto-detected by the *running* exploration agent (`src/tests/exploration`, `npm run test:exploration`). See the cross-surface parity assets (`reference/core/control-center/audits/surface-parity-matrix.json`, `src/tests/contract/roundtrip-gate-evaluate.spec.ts`).
+
+#### GT-485
+
+**Title:** CLI `validate --format json` does not emit the ADR-0073 envelope (cross-surface divergence)
+
+**Problem:** The `validate` command prints its raw result object with no top-level boolean `success`, while the MCP tool `evolith-validate` and the REST endpoint `POST /api/v1/architecture/validate-satellite` both return the canonical ADR-0073 envelope `{success, data, meta}`. Any automation client that parses the envelope (as `gate`/`drift`/`phase` produce) breaks on `validate`. This is the **first defect surfaced by the running exploration agent** (not the design pass) — the tester's envelope oracle flagged the missing `success`, and its consistency oracle flagged the resulting cross-surface divergence.
+
+**Evidence:** `npm run test:exploration`, operation `validate-satellite`, surface `cli`. CLI stdout = `{"status":"failed","rulesChecked":97,"issues":[…],"coreRef":{"version":null,"path":"…"}}` — no `success` key; MCP + REST return `success:true`. Raw finding `EXPLORE-001` (type `contract`) in `src/tests/exploration/.out/findings.jsonl`; the consistency oracle additionally reported `success` divergence (cli=null vs mcp=true vs rest=true). Reproduced across two runs (stable, not flaky).
+
+**Proposed fix:** Wrap the CLI `validate --format json` output in the shared `createSuccessEnvelope`/`createErrorEnvelope` (`@beyondnet/evolith-core`, `gate-evidence.ts`) exactly as `gate evaluate` / `drift` / `phase advance` already do; then promote the `validate-satellite` binding in the exploration suite to `verified`.
+
+**Closure:**
+- [ ] `validate --format json` emits `{ success, data, meta }`
+- [ ] exploration `validate-satellite` binding promoted to `verified` and green
+
+**References:** src/sdk/cli/src/commands/validate/validate.command.ts; src/tests/exploration/.out/findings.jsonl; GT-479, GT-411
 
 #### GT-475
 

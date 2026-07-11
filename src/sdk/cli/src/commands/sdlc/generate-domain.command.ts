@@ -7,6 +7,7 @@ import { parseDddModel } from '@beyondnet/evolith-core-domain/application/genera
 import { scaffoldHexagonal } from '@beyondnet/evolith-core-domain/application/generators/hexagonal-scaffolder';
 import {
   createSuccessEnvelope,
+  createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
@@ -37,10 +38,17 @@ export class GenerateDomainCommand extends BaseEvolithCommand {
     };
 
     if (!target || !fromFile) {
-      if (!json) {
-        this.promptService.showError('Both a generation target and a source file must be specified.');
-        this.promptService.showInfo(chalk.yellow('Example: evolith sdlc generate domain --from ddd-model.md'));
+      if (json) {
+        const msg = 'Both a generation target and a source file must be specified.';
+        console.log(JSON.stringify(
+          createErrorEnvelope('INVALID_ARGUMENT', msg, { ...meta, durationMs: Date.now() - startedAt }),
+          null,
+          2,
+        ));
+        return;
       }
+      this.promptService.showError('Both a generation target and a source file must be specified.');
+      this.promptService.showInfo(chalk.yellow('Example: evolith sdlc generate domain --from ddd-model.md'));
       throw new Error('Both a generation target and a source file must be specified.');
     }
 

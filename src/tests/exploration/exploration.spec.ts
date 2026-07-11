@@ -112,8 +112,8 @@ describe('Cross-surface exploration agent (F1)', () => {
     process.exit = originalProcessExit;
   });
 
-  it('discovers the full 49-operation surface-parity catalog', () => {
-    expect(run.coverage.totalOperations).toBe(49);
+  it('discovers the full 61-operation surface-parity catalog', () => {
+    expect(run.coverage.totalOperations).toBe(61);
     expect(run.coverage.fullTriangle).toBeGreaterThanOrEqual(5);
   });
 

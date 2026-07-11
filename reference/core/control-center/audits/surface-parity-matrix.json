@@ -836,6 +836,210 @@
         "exposed": false,
         "exempt": "low priority; complex filesystem operation"
       }
+    },
+    {
+      "id": "evaluate",
+      "name": "Evaluate EvaluationContext",
+      "description": "Evaluate an EvaluationContext (gates, artifacts, rules, compliance) and return an EvaluationResult (ADR-0101 stateless Core entry point)",
+      "cli": {
+        "exposed": true,
+        "command": "evaluate"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-evaluate"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "POST /api/v1/evaluate"
+      }
+    },
+    {
+      "id": "composable-validate",
+      "name": "Composable validation",
+      "description": "Composable validation across SDLC, Architecture, Ruleset, ADR and ad-hoc concerns (GT-312)",
+      "cli": {
+        "exposed": true,
+        "command": "validate --composable"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-composable-validate"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "POST /api/v1/validate/composable"
+      }
+    },
+    {
+      "id": "recommend-topology",
+      "name": "Recommend topology composition",
+      "description": "Recommend a topology composition from technical signals (advisory, non-binding; ADR-0104 / GT-430)",
+      "cli": {
+        "exposed": true,
+        "command": "topology recommend"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-topology-recommend"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "POST /api/v1/architecture/recommend-topology"
+      }
+    },
+    {
+      "id": "phase-artifacts-evaluate",
+      "name": "Measure downstream-phase artifact completeness",
+      "description": "Measure downstream-phase artifact completeness for a topology composition (advisory, non-binding; ADR-0104 / DN-06 / GT-434)",
+      "cli": {
+        "exposed": true,
+        "command": "topology phase-artifacts"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-phase-artifacts-evaluate"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "POST /api/v1/architecture/evaluate-phase-artifacts"
+      }
+    },
+    {
+      "id": "topology-cache-invalidate",
+      "name": "Invalidate topology cache",
+      "description": "Invalidate the server-side topology catalog cache",
+      "cli": {
+        "exposed": false,
+        "exempt": "infra/ops-only; server-side cache management, no CLI equivalent"
+      },
+      "mcp": {
+        "exposed": false,
+        "exempt": "infra/ops-only; server-side cache management, not applicable to MCP"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "POST /api/v1/architecture/cache/invalidate"
+      }
+    },
+    {
+      "id": "satellite-create",
+      "name": "Create satellite",
+      "description": "Create a new GitHub satellite repository and register it with Evolith",
+      "cli": {
+        "exposed": true,
+        "command": "satellite:create"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-satellite-create"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "POST /api/v1/satellites"
+      }
+    },
+    {
+      "id": "satellite-adopt",
+      "name": "Adopt satellite",
+      "description": "Adopt an existing GitHub repository as an Evolith satellite",
+      "cli": {
+        "exposed": true,
+        "command": "satellite:adopt"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-satellite-adopt"
+      },
+      "rest": {
+        "exposed": false,
+        "exempt": "adoption drives GitHub + local scaffolding; no dedicated REST endpoint (registry uses POST /api/v1/satellites)"
+      }
+    },
+    {
+      "id": "satellite-list",
+      "name": "List satellites",
+      "description": "List all registered satellites in the satellite registry (GT-367)",
+      "cli": {
+        "exposed": false,
+        "exempt": "CLI operates on a single local satellite; registry listing is a server/agent concern"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-satellite-list"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "GET /api/v1/satellites"
+      }
+    },
+    {
+      "id": "satellite-get",
+      "name": "Get satellite status",
+      "description": "Get a registered satellite record / status by ID (GT-367)",
+      "cli": {
+        "exposed": false,
+        "exempt": "CLI operates on a single local satellite; registry lookup is a server/agent concern"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-satellite-status"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "GET /api/v1/satellites/:id"
+      }
+    },
+    {
+      "id": "satellite-update",
+      "name": "Update satellite record",
+      "description": "Update a registered satellite record (GT-367)",
+      "cli": {
+        "exposed": false,
+        "exempt": "registry mutation is a server/agent concern; no CLI equivalent"
+      },
+      "mcp": {
+        "exposed": false,
+        "exempt": "registry mutation not exposed as an MCP tool; use REST registry"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "PATCH /api/v1/satellites/:id"
+      }
+    },
+    {
+      "id": "satellite-link",
+      "name": "Link satellite",
+      "description": "Link a satellite to a parent core satellite (GT-371)",
+      "cli": {
+        "exposed": false,
+        "exempt": "satellite-to-satellite linking is a registry/server concern; no CLI equivalent"
+      },
+      "mcp": {
+        "exposed": false,
+        "exempt": "satellite-to-satellite linking not exposed as an MCP tool; use REST registry"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "POST /api/v1/satellites/:id/link"
+      }
+    },
+    {
+      "id": "chat",
+      "name": "Agent Runtime chat",
+      "description": "Conversational interaction with the Evolith Agent Runtime (Smart CLI Chat)",
+      "cli": {
+        "exposed": true,
+        "command": "chat"
+      },
+      "mcp": {
+        "exposed": false,
+        "exempt": "the MCP server itself is the agent tool surface; the conversational loop is CLI/host-driven"
+      },
+      "rest": {
+        "exposed": false,
+        "exempt": "interactive conversational loop; not applicable to stateless REST"
+      }
     }
   ]
 }

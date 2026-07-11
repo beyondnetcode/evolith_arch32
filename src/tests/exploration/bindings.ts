@@ -223,7 +223,8 @@ export const BINDINGS: Record<string, Binding> = {
 
   'agents-install': {
     verified: false,
-    cli: (c) => ['agents', 'install', '--name', 'gap-analyzer', '--format', 'json'],
+    // CLI: install is interactive (prompts for name/template/rulesets) — there is
+    // no non-interactive envelope path, so it is exempt from the runner.
     // MCP: mutative operation, requires approval — exempt from test
   },
 
@@ -235,19 +236,19 @@ export const BINDINGS: Record<string, Binding> = {
 
   'agents-validate': {
     verified: false,
-    cli: (c) => ['agents', 'validate', '--name', 'gap-analyzer', '--format', 'json'],
+    cli: (c) => ['agents', 'validate', '--format', 'json'],
     mcp: (c) => ({ tool: 'evolith-agent-validate', args: { name: 'gap-analyzer' } }),
   },
 
   'agents-upgrade': {
     verified: false,
-    cli: (c) => ['agents', 'upgrade', '--name', 'gap-analyzer', '--format', 'json'],
+    cli: (c) => ['agents', 'upgrade', '--format', 'json'],
     // MCP: mutative operation, requires approval — exempt from test
   },
 
   'agents-remove': {
     verified: false,
-    cli: (c) => ['agents', 'remove', '--name', 'gap-analyzer', '--format', 'json'],
+    cli: (c) => ['agents', 'remove', '--format', 'json'],
     // MCP: mutative operation, requires approval — exempt from test
   },
 

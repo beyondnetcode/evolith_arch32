@@ -41,7 +41,7 @@ export class GenerateDomainCommand extends BaseEvolithCommand {
       if (json) {
         const msg = 'Both a generation target and a source file must be specified.';
         console.log(JSON.stringify(
-          createErrorEnvelope('INVALID_ARGUMENT', msg, { ...meta, durationMs: Date.now() - startedAt }),
+          createErrorEnvelope('VALIDATION_FAILED', msg, { ...meta, durationMs: Date.now() - startedAt }),
           null,
           2,
         ));

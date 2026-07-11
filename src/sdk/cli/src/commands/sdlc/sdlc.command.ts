@@ -1,4 +1,4 @@
-import { Command, Option } from 'nest-commander';
+import { Command } from 'nest-commander';
 import chalk from 'chalk';
 import { randomUUID } from 'node:crypto';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
@@ -11,10 +11,18 @@ import { HandoffCommand } from './handoff.command';
 import { GenerateDomainCommand } from './generate-domain.command';
 import { GateStatusCommand } from './gate-status.command';
 
+// This grouping command deliberately does NOT declare a `--format` @Option.
+// A commander option on the parent shadows the identically-named option on its
+// subcommands: with `-f, --format` here, `sdlc gate-status --format json` binds
+// `--format` to the parent and the subcommand's parser never fires, so the
+// subcommand silently falls back to human output (breaking ADR-0073 envelope
+// parity). Instead we read `--format json` for the bare `sdlc` listing straight
+// from the pass-through args, leaving the flag free for the subcommands.
 @Command({
   name: 'sdlc',
   description: 'Orchestrates the generation of artifacts and transitions (Handoffs) between the lifecycle phases (Discovery, Design, Construction)',
   subCommands: [HandoffCommand, GenerateDomainCommand, GateStatusCommand],
+  allowUnknownOptions: true,
 })
 export class SdlcCommand extends BaseEvolithCommand {
   constructor() {
@@ -23,9 +31,9 @@ export class SdlcCommand extends BaseEvolithCommand {
 
   async executeCommand(
     passedParam: string[],
-    options?: Record<string, unknown>,
+    _options?: Record<string, unknown>,
   ): Promise<void> {
-    const json = (options?.format as string | undefined) === 'json';
+    const json = this.wantsJson(passedParam);
     const startedAt = Date.now();
     const meta = {
       command: 'evolith sdlc',
@@ -65,11 +73,14 @@ export class SdlcCommand extends BaseEvolithCommand {
     }
   }
 
-  @Option({
-    flags: '-f, --format <string>',
-    description: 'Output format: json (ADR-0073 envelope) or human (default)',
-  })
-  parseFormat(val: string): string {
-    return val;
+  /**
+   * Detect `--format json` for the bare `sdlc` listing from the pass-through
+   * args. The flag is intentionally not a commander @Option (see class note),
+   * so it arrives here among the unparsed arguments instead of in `options`.
+   */
+  private wantsJson(args: string[]): boolean {
+    const i = args.findIndex((a) => a === '--format' || a === '-f');
+    if (i >= 0 && args[i + 1] === 'json') return true;
+    return args.includes('--format=json') || args.includes('-f=json');
   }
 }

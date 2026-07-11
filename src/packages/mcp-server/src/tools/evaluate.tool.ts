@@ -104,6 +104,12 @@ export class EvaluateTool implements McpTool {
       fileSystem: this.fs,
       logger: new NestLoggerProvider().createLogger('McpEvaluate'),
       resolveCorePath: () => corePath ?? process.cwd(),
+      // Pass the already-wired validator (from DomainModule, which has its
+      // IConfigParser). Without it the architecture evaluator built a bare
+      // RulesetValidatorService and threw "IConfigParser is required", so
+      // evolith-evaluate failed on every call (MCP<->CLI parity gap: the CLI
+      // evaluate command passes rulesetValidator + configParser here).
+      rulesetValidator: this.validator,
     });
     const orchestrator = new EvaluationOrchestrator(pipeline, resolver, CORE_VERSION, evaluators);
     const result = await orchestrator.evaluate(ctx);

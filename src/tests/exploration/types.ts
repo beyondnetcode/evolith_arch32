@@ -52,6 +52,10 @@ export interface CanonicalVerdict {
   verdict: string | null;
   phase: string | null;
   evaluatedBy: string | null;
+  /** ADR-0073 error.code when success=false — compared so divergent failure
+   *  semantics (e.g. one surface RULESET_NOT_FOUND, another INTERNAL_ERROR) are
+   *  not masked by both merely agreeing on success=false. */
+  errorCode: string | null;
 }
 
 export type Severity = 'P0' | 'P1' | 'P2' | 'P3' | 'P4';

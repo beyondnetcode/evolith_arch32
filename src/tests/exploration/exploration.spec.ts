@@ -138,6 +138,14 @@ describe('Cross-surface exploration agent (F1)', () => {
     expect(withEnvelope.length).toBe(3);
   });
 
+  it('has NO confirmed cross-surface findings (verified bindings must agree)', () => {
+    // A confirmed finding comes from a `verified: true` binding — a proven
+    // equivalence — so any divergence there is a real cross-surface bug and must
+    // fail the build. Hypothesis findings (unverified bindings) stay informational.
+    const confirmed = run.findings.filter((f) => f.confidence === 'confirmed');
+    expect(confirmed).toEqual([]);
+  });
+
   it('emits a coverage + findings summary', () => {
     // Surfaced for the console log — this is the tester's report, not an assertion.
     // eslint-disable-next-line no-console

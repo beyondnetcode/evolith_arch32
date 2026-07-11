@@ -50,11 +50,13 @@ export function checkEnvelope(r: RawResult): Finding | null {
 
 export function toCanonical(env: EnvelopeShape | null): CanonicalVerdict {
   const data = (env?.data ?? {}) as Record<string, unknown>;
+  const error = (env?.error ?? {}) as Record<string, unknown>;
   return {
     success: typeof env?.success === 'boolean' ? env.success : null,
     verdict: pickString(data.verdict ?? data.status),
     phase: pickString(data.phase),
     evaluatedBy: pickString(data.evaluatedBy),
+    errorCode: pickString(error.code),
   };
 }
 
@@ -94,6 +96,21 @@ export function checkConsistency(
     findings.push(finding(operationId, 'consistency', verified ? 'P1' : 'P2', confidence, surfaces,
       `Cross-surface verdict divergence on ${operationId}`,
       `Surfaces returned different verdicts: ${verdicts.map((c) => `${c.surface}=${c.v.verdict}`).join(', ')}.`,
+      { perSurface: canon }));
+  }
+
+  // error-code agreement — when surfaces AGREE on failure (success=false) they
+  // should fail for the same reason. Different error.codes mean divergent
+  // failure semantics that a success-only comparison masks (e.g. one surface
+  // RULESET_NOT_FOUND vs another INTERNAL_ERROR). Only meaningful when ALL
+  // enveloped surfaces failed — a success/failure split is already reported above.
+  const allFailed = canon.every((c) => c.v.success === false);
+  const errorCodes = canon.filter((c) => c.v.errorCode != null);
+  const distinctErrorCodes = new Set(errorCodes.map((c) => c.v.errorCode));
+  if (allFailed && errorCodes.length >= 2 && distinctErrorCodes.size > 1) {
+    findings.push(finding(operationId, 'consistency', verified ? 'P1' : 'P2', confidence, surfaces,
+      `Cross-surface error-code divergence on ${operationId}`,
+      `All surfaces failed but with different error codes: ${errorCodes.map((c) => `${c.surface}=${c.v.errorCode}`).join(', ')}.`,
       { perSurface: canon }));
   }
 

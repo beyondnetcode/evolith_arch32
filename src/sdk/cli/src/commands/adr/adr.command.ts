@@ -1,10 +1,15 @@
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
+import { randomUUID } from 'node:crypto';
 import { Inject } from '@nestjs/common';
 import { ADRService, CreateADRInput } from '@beyondnet/evolith-core-domain/domain/services/adr.service';
 import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { logger, OperationTimer } from '../../infrastructure/observability';
+import {
+  createSuccessEnvelope,
+  OUTPUT_ENVELOPE_SCHEMA_VERSION,
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface ADRCommandOptions {
@@ -16,6 +21,7 @@ interface ADRCommandOptions {
   status?: string;
   reason?: string;
   dryRun?: boolean;
+  format?: string;
 }
 
 @Command({
@@ -38,27 +44,38 @@ export class ADRCommand extends BaseEvolithCommand {
   ): Promise<void> {
     this.timer.start('ADRCommand.executeCommand');
     const fs = this.fileSystem;
+    const json = (options?.format as string | undefined) === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith adr',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    };
 
     if (options?.create) {
-      await this.createADR(fs, options.dryRun);
+      await this.createADR(fs, options.dryRun, json, meta, startedAt);
     } else if (options?.list) {
-      await this.listADRs(fs);
+      await this.listADRs(fs, json, meta, startedAt);
     } else if (options?.get) {
-      await this.getADR(fs, options.get);
+      await this.getADR(fs, options.get, json, meta, startedAt);
     } else if (options?.update) {
-      await this.updateADR(fs, options.update, options.status, options.reason, options.dryRun);
+      await this.updateADR(fs, options.update, options.status, options.reason, options.dryRun, json, meta, startedAt);
     } else if (options?.matrix) {
-      await this.showMatrix(fs);
+      await this.showMatrix(fs, json, meta, startedAt);
     } else {
-      await this.interactiveMode(fs, options?.dryRun);
+      await this.interactiveMode(fs, options?.dryRun, json, meta, startedAt);
     }
 
     this.timer.end();
   }
 
-  private async interactiveMode(fs: IFileSystem, dryRun = false): Promise<void> {
-    console.clear();
-    this.promptService.showIntro('Evolith ADR - Architecture Decision Records');
+  private async interactiveMode(fs: IFileSystem, dryRun = false, json = false, meta?: any, startedAt?: number): Promise<void> {
+    if (!json) {
+      console.clear();
+      this.promptService.showIntro('Evolith ADR - Architecture Decision Records');
+    }
 
     const action = await this.promptService.select({
       message: '¿Qué acción deseas realizar?',
@@ -73,17 +90,17 @@ export class ADRCommand extends BaseEvolithCommand {
 
     switch (action) {
       case 'create':
-        await this.createADR(fs, dryRun);
+        await this.createADR(fs, dryRun, json, meta, startedAt);
         break;
       case 'list':
-        await this.listADRs(fs);
+        await this.listADRs(fs, json, meta, startedAt);
         break;
       case 'matrix':
-        await this.showMatrix(fs);
+        await this.showMatrix(fs, json, meta, startedAt);
         break;
       case 'get':
         const id = await this.promptService.text({ message: 'ID del ADR (ej: ADR-0001):' });
-        await this.getADR(fs, id as string);
+        await this.getADR(fs, id as string, json, meta, startedAt);
         break;
       case 'update':
         const updateId = await this.promptService.text({ message: 'ID del ADR:' });
@@ -97,12 +114,12 @@ export class ADRCommand extends BaseEvolithCommand {
           ],
         });
         const reason = await this.promptService.text({ message: 'Razón del cambio:' });
-        await this.updateADR(fs, updateId as string, newStatus as string, reason as string, dryRun);
+        await this.updateADR(fs, updateId as string, newStatus as string, reason as string, dryRun, json, meta, startedAt);
         break;
     }
   }
 
-  private async createADR(fs: IFileSystem, dryRun = false): Promise<void> {
+  private async createADR(fs: IFileSystem, dryRun = false, json = false, meta?: any, startedAt?: number): Promise<void> {
     logger.info('Creating new ADR', { dryRun });
 
     const title = await this.promptService.text({
@@ -142,7 +159,9 @@ export class ADRCommand extends BaseEvolithCommand {
 
     const service = new ADRService(fs, process.cwd());
 
-    this.promptService.startSpinner('Creando ADR...');
+    if (!json) {
+      this.promptService.startSpinner('Creando ADR...');
+    }
 
     try {
       const input: CreateADRInput = {
@@ -154,28 +173,62 @@ export class ADRCommand extends BaseEvolithCommand {
       };
 
       const adr = await service.create(input, dryRun);
-      this.promptService.stopSpinner();
-
-      if (dryRun) {
-        this.promptService.showWarning(`[DRY-RUN] ADR ${adr.id} simulated creation`);
-      } else {
-        this.promptService.showSuccess(`✓ ADR ${adr.id} creado exitosamente`);
+      if (!json) {
+        this.promptService.stopSpinner();
       }
-      this.promptService.showInfo(`  Título: ${adr.title}`);
-      this.promptService.showInfo(`  Estado: ${adr.status}`);
-      this.promptService.showInfo(`  Archivo: reference/architecture/adrs/${adr.id}.md`);
+
+      const result = {
+        success: true,
+        adr: { id: adr.id, title: adr.title, status: adr.status },
+      };
+
+      if (json) {
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      } else {
+        if (dryRun) {
+          this.promptService.showWarning(`[DRY-RUN] ADR ${adr.id} simulated creation`);
+        } else {
+          this.promptService.showSuccess(`✓ ADR ${adr.id} creado exitosamente`);
+        }
+        this.promptService.showInfo(`  Título: ${adr.title}`);
+        this.promptService.showInfo(`  Estado: ${adr.status}`);
+        this.promptService.showInfo(`  Archivo: reference/architecture/adrs/${adr.id}.md`);
+      }
     } catch (error) {
-      this.promptService.stopSpinner();
+      if (!json) {
+        this.promptService.stopSpinner();
+      }
       logger.error('Failed to create ADR', { error });
-      this.promptService.showError('✗ Error creando ADR');
+      if (json) {
+        process.exitCode = 1;
+        const message = error instanceof Error ? error.message : String(error);
+        console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      } else {
+        this.promptService.showError('✗ Error creando ADR');
+      }
     }
   }
 
-  private async listADRs(fs: IFileSystem): Promise<void> {
+  private async listADRs(fs: IFileSystem, json = false, meta?: any, startedAt?: number): Promise<void> {
     logger.info('Listing ADRs');
 
     const service = new ADRService(fs, process.cwd());
     const adrs = await service.list();
+
+    const result = {
+      count: adrs.length,
+      adrs: adrs.map(adr => ({
+        id: adr.id,
+        title: adr.title,
+        status: adr.status,
+        date: adr.date,
+      })),
+    };
+
+    if (json) {
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      return;
+    }
 
     if (adrs.length === 0) {
       this.promptService.showWarning('No hay ADRs registrados. Usa "evolith adr --create" para crear el primero.');
@@ -194,14 +247,24 @@ export class ADRCommand extends BaseEvolithCommand {
     console.table(table);
   }
 
-  private async getADR(fs: IFileSystem, id: string): Promise<void> {
+  private async getADR(fs: IFileSystem, id: string, json = false, meta?: any, startedAt?: number): Promise<void> {
     logger.info('Getting ADR', { id });
 
     const service = new ADRService(fs, process.cwd());
     const adr = await service.get(id);
 
     if (!adr) {
-      this.promptService.showError(`ADR ${id} no encontrado`);
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createSuccessEnvelope({ error: `ADR ${id} no encontrado` }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      } else {
+        this.promptService.showError(`ADR ${id} no encontrado`);
+      }
+      return;
+    }
+
+    if (json) {
+      console.log(JSON.stringify(createSuccessEnvelope(adr, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       return;
     }
 
@@ -219,42 +282,82 @@ export class ADRCommand extends BaseEvolithCommand {
     }
   }
 
-  private async updateADR(fs: IFileSystem, id: string, status?: string, reason?: string, dryRun = false): Promise<void> {
+  private async updateADR(fs: IFileSystem, id: string, status?: string, reason?: string, dryRun = false, json = false, meta?: any, startedAt?: number): Promise<void> {
     logger.info('Updating ADR status', { id, status, dryRun });
 
     if (!status) {
-      this.promptService.showError('Estado requerido. Usa --status <Accepted|Deprecated|Superseded|Amended>');
+      const message = 'Estado requerido. Usa --status <Accepted|Deprecated|Superseded|Amended>';
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createSuccessEnvelope({ error: message }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      } else {
+        this.promptService.showError(message);
+      }
       return;
     }
 
     const service = new ADRService(fs, process.cwd());
-    this.promptService.startSpinner(`Actualizando ADR ${id}...`);
+    if (!json) {
+      this.promptService.startSpinner(`Actualizando ADR ${id}...`);
+    }
 
     try {
       const updated = await service.updateStatus(id, status as 'Accepted' | 'Deprecated' | 'Superseded' | 'Amended', reason, dryRun);
-      this.promptService.stopSpinner();
+      if (!json) {
+        this.promptService.stopSpinner();
+      }
 
       if (updated) {
-        if (dryRun) {
-          this.promptService.showWarning(`[DRY-RUN] ADR ${id} update simulated to ${status}`);
+        const result = {
+          success: true,
+          id,
+          newStatus: status,
+          dryRun,
+        };
+
+        if (json) {
+          console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
         } else {
-          this.promptService.showSuccess(`✓ ADR ${id} actualizado a ${status}`);
+          if (dryRun) {
+            this.promptService.showWarning(`[DRY-RUN] ADR ${id} update simulated to ${status}`);
+          } else {
+            this.promptService.showSuccess(`✓ ADR ${id} actualizado a ${status}`);
+          }
         }
       } else {
-        this.promptService.showError(`ADR ${id} no encontrado`);
+        const message = `ADR ${id} no encontrado`;
+        if (json) {
+          process.exitCode = 1;
+          console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+        } else {
+          this.promptService.showError(message);
+        }
       }
     } catch (error) {
-      this.promptService.stopSpinner();
+      if (!json) {
+        this.promptService.stopSpinner();
+      }
       logger.error('Failed to update ADR', { error });
-      this.promptService.showError('✗ Error actualizando ADR');
+      if (json) {
+        process.exitCode = 1;
+        const message = error instanceof Error ? error.message : String(error);
+        console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      } else {
+        this.promptService.showError('✗ Error actualizando ADR');
+      }
     }
   }
 
-  private async showMatrix(fs: IFileSystem): Promise<void> {
+  private async showMatrix(fs: IFileSystem, json = false, meta?: any, startedAt?: number): Promise<void> {
     logger.info('Showing ADR Matrix');
 
     const service = new ADRService(fs, process.cwd());
     const matrix = await service.getMatrix();
+
+    if (json) {
+      console.log(JSON.stringify(createSuccessEnvelope(matrix, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      return;
+    }
 
     console.log(chalk.bold('\n╔══════════════════════════════════════════════╗'));
     console.log(chalk.bold('║            ADR MATRIX SUMMARY               ║'));
@@ -339,5 +442,13 @@ export class ADRCommand extends BaseEvolithCommand {
   })
   parseDryRun(): boolean {
     return true;
+  }
+
+  @Option({
+    flags: '-f, --format <string>',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
+    return val;
   }
 }

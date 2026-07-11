@@ -1,4 +1,5 @@
 import { Command, Option } from 'nest-commander';
+import { randomUUID } from 'node:crypto';
 import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/validate-satellite.use-case';
 import { ValidationResult, ValidationIssue, RulesetValidatorService } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service';
 import { RulesetsNotFoundError } from '@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port';
@@ -8,6 +9,10 @@ import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resol
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
+import {
+  createSuccessEnvelope,
+  OUTPUT_ENVELOPE_SCHEMA_VERSION,
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 
 interface ValidateCommandOptions {
   format?: string;
@@ -126,7 +131,19 @@ export class ValidateCommand extends BaseEvolithCommand {
   }
 
   async executeCommand(passedParam: string[], options?: ValidateCommandOptions): Promise<void> {
-    this.promptService.showIntro('Evolith SDK - Validación de Estándares');
+    const json = (options?.format as string | undefined) === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith validate',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    };
+
+    if (!json) {
+      this.promptService.showIntro('Evolith SDK - Validación de Estándares');
+    }
 
     // ADR-0109: unified satellite resolution — explicit --satellite →
     // nearest-ancestor evolith.yaml from cwd → profile.satellite → cwd.
@@ -152,7 +169,9 @@ export class ValidateCommand extends BaseEvolithCommand {
       process.exit(1);
     }
 
-    this.promptService.startSpinner('Analizando repositorio...');
+    if (!json) {
+      this.promptService.startSpinner('Analizando repositorio...');
+    }
 
     let result: ValidationResult;
     let evaluationVerdict: any;
@@ -256,19 +275,25 @@ export class ValidateCommand extends BaseEvolithCommand {
         }
       }
     } catch (error) {
-      this.promptService.stopSpinner();
+      if (!json) {
+        this.promptService.stopSpinner();
+      }
       // GT-474: an unresolvable/empty ruleset corpus is fatal, not a warning.
       // Surface the actionable message and exit non-zero instead of letting a
       // zero-rule run be mistaken for a validation verdict.
       if (error instanceof RulesetsNotFoundError) {
-        this.promptService.showError((error as Error).message);
-        this.promptService.showOutro('❌ Validación abortada: no se resolvió ningún ruleset del Core.');
+        if (!json) {
+          this.promptService.showError((error as Error).message);
+          this.promptService.showOutro('❌ Validación abortada: no se resolvió ningún ruleset del Core.');
+        }
         process.exit(1);
       }
       throw error;
     }
 
-    this.promptService.stopSpinner();
+    if (!json) {
+      this.promptService.stopSpinner();
+    }
 
     // GT-456: reflect the resolved Core rulesets root in coreRef.path so the report
     // shows where rules came from (previously always null, even with a valid --core).
@@ -309,6 +334,12 @@ export class ValidateCommand extends BaseEvolithCommand {
 
     const format = (options?.format as OutputFormat) || 'markdown';
     const formatter = new OutputFormatterService();
+
+    if (json) {
+      const output = JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2);
+      console.log(output);
+      return;
+    }
 
     if (format === 'json') {
       const output = JSON.stringify(result, null, 2);

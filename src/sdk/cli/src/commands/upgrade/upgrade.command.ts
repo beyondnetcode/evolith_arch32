@@ -1,4 +1,5 @@
 import { Command, Option } from 'nest-commander';
+import { randomUUID } from 'node:crypto';
 import chalk from 'chalk';
 import { SatelliteUpgradeService, UpgradePlan } from '@beyondnet/evolith-core-domain/application/upgrade/satellite-upgrade.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
@@ -7,6 +8,10 @@ import { ConfigService } from '../../infrastructure/config/config.service';
 import { NodeFileSystemProvider } from '../../infrastructure/providers/node-filesystem.provider';
 import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resolver';
 import { logger } from '../../infrastructure/observability';
+import {
+  createSuccessEnvelope,
+  OUTPUT_ENVELOPE_SCHEMA_VERSION,
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 
 interface UpgradeCommandOptions {
   dryRun?: boolean;
@@ -14,6 +19,7 @@ interface UpgradeCommandOptions {
   core?: string;
   report?: boolean;
   satellite?: string;
+  format?: string;
 }
 
 @Command({
@@ -29,6 +35,16 @@ export class UpgradeCommand extends BaseEvolithCommand {
   }
 
   async executeCommand(passedParam: string[], options?: UpgradeCommandOptions): Promise<void> {
+    const json = (options?.format as string | undefined) === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith upgrade',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    };
+
     // ADR-0109: unified satellite resolution replaces the process.cwd() hardcode
     // so `cd mms && evolith upgrade` and `evolith upgrade --satellite mms` both
     // target the project root. Order: explicit --satellite → nearest-ancestor
@@ -47,20 +63,31 @@ export class UpgradeCommand extends BaseEvolithCommand {
       logger,
     });
 
-    this.promptService.showIntro('Evolith SDK - Satélite Upgrade');
-    this.promptService.startSpinner('Planning upgrade...');
+    if (!json) {
+      this.promptService.showIntro('Evolith SDK - Satélite Upgrade');
+      this.promptService.startSpinner('Planning upgrade...');
+    }
 
     try {
       const plan = await service.planUpgrade({ satellitePath, corePath });
-      this.promptService.stopSpinner();
+      if (!json) {
+        this.promptService.stopSpinner();
+      }
 
       if (plan.changes.length === 0) {
+        const result = { success: true, message: 'Satellite is already up to date' };
+        if (json) {
+          console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          return;
+        }
         this.promptService.showSuccess('Satellite is already up to date');
         this.promptService.showOutro('No upgrade needed.');
         return;
       }
 
-      this.printUpgradePlan(plan);
+      if (!json) {
+        this.printUpgradePlan(plan);
+      }
 
       if (options?.dryRun) {
         const _result = await service.executeUpgrade({
@@ -69,26 +96,34 @@ export class UpgradeCommand extends BaseEvolithCommand {
           dryRun: true,
         });
 
+        if (json) {
+          const result = { success: true, message: 'Dry run complete - no changes applied', dryRun: true };
+          console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          return;
+        }
         this.promptService.showInfo('Dry run complete - no changes applied');
         this.promptService.showOutro('Dry run finished.');
         return;
       }
 
       if (plan.breakingChanges.length > 0 && !options?.force) {
-        this.promptService.showWarning(`⚠ ${plan.breakingChanges.length} breaking change(s) detected`);
-        this.promptService.showInfo('Use --force to proceed with breaking changes');
-        this.promptService.showOutro('Upgrade cancelled.');
+        if (!json) {
+          this.promptService.showWarning(`⚠ ${plan.breakingChanges.length} breaking change(s) detected`);
+          this.promptService.showInfo('Use --force to proceed with breaking changes');
+          this.promptService.showOutro('Upgrade cancelled.');
+        }
         return;
       }
 
-      const confirm = await this.promptService.confirm(`Apply ${plan.changes.length} change(s)?`, true);
+      if (!json) {
+        const confirm = await this.promptService.confirm(`Apply ${plan.changes.length} change(s)?`, true);
+        if (!confirm) {
+          this.promptService.showOutro('Upgrade cancelled.');
+          return;
+        }
 
-      if (!confirm) {
-        this.promptService.showOutro('Upgrade cancelled.');
-        return;
+        this.promptService.startSpinner('Applying upgrade...');
       }
-
-      this.promptService.startSpinner('Applying upgrade...');
 
       const result = await service.executeUpgrade({
         satellitePath,
@@ -96,20 +131,26 @@ export class UpgradeCommand extends BaseEvolithCommand {
         force: options?.force,
       });
 
-      this.promptService.stopSpinner();
+      if (!json) {
+        this.promptService.stopSpinner();
 
-      const report = await service.getUpgradeReport(result);
-      console.log(`\n${chalk.bgCyan.black(' Upgrade Report ')}\n${report}\n`);
+        const report = await service.getUpgradeReport(result);
+        console.log(`\n${chalk.bgCyan.black(' Upgrade Report ')}\n${report}\n`);
 
-      if (result.success) {
-        this.promptService.showSuccess(`Upgrade complete: ${result.changesApplied} change(s) applied`);
+        if (result.success) {
+          this.promptService.showSuccess(`Upgrade complete: ${result.changesApplied} change(s) applied`);
+        } else {
+          this.promptService.showError(`Upgrade completed with errors: ${result.errors.length}`);
+        }
+
+        this.promptService.showOutro(result.success ? 'Upgrade finished.' : 'Upgrade finished with errors.');
       } else {
-        this.promptService.showError(`Upgrade completed with errors: ${result.errors.length}`);
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       }
-
-      this.promptService.showOutro(result.success ? 'Upgrade finished.' : 'Upgrade finished with errors.');
     } catch (error: unknown) {
-      this.promptService.stopSpinner();
+      if (!json) {
+        this.promptService.stopSpinner();
+      }
       throw error;
     }
   }
@@ -196,5 +237,13 @@ export class UpgradeCommand extends BaseEvolithCommand {
   })
   parseReport(): boolean {
     return true;
+  }
+
+  @Option({
+    flags: '-f, --format <string>',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
+    return val;
   }
 }

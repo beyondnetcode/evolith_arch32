@@ -1,15 +1,18 @@
 import { Command, Option } from 'nest-commander';
+import { randomUUID } from 'node:crypto';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { WizardService, WizardStep } from '../../infrastructure/prompts/wizard.service';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
 import { Inject } from '@nestjs/common';
 import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { InitializeProjectUseCase } from '@beyondnet/evolith-core-domain/application/services';
 
 interface WizardInitOptions {
   wizard?: boolean;
   noInteractive?: boolean;
+  format?: string;
 }
 
 @Command({
@@ -32,9 +35,25 @@ export class InitWizardCommand extends BaseEvolithCommand {
   ): Promise<void> {
     const useWizard = options?.wizard ?? true;
     const noInteractive = options?.noInteractive ?? false;
+    const json = options?.format === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith init-wizard',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+      startedAt,
+    };
 
     if (!useWizard) {
-      this.logger.log('Use "evolith init" for standard initialization');
+      const message = 'Use "evolith init" for standard initialization';
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      } else {
+        this.logger.log(message);
+      }
       return;
     }
 
@@ -118,8 +137,10 @@ export class InitWizardCommand extends BaseEvolithCommand {
       });
 
       if (result && result.projectName) {
-        this.promptService.startSpinner('Creating project structure...');
-        
+        if (!json) {
+          this.promptService.startSpinner('Creating project structure...');
+        }
+
         const initResult = await useCase.execute({
           name: result.projectName as string,
           runtime: result.runtime as string,
@@ -133,21 +154,49 @@ export class InitWizardCommand extends BaseEvolithCommand {
           agents: [],
         }, process.cwd());
 
-        this.promptService.stopSpinner();
+        if (!json) {
+          this.promptService.stopSpinner();
+        }
 
         if (initResult.success) {
-          this.promptService.showSuccess(`Project ${result.projectName} created successfully!`);
-          this.promptService.showInfo(`Artifacts: ${initResult.artifacts.length}`);
+          if (json) {
+            const response = {
+              projectName: result.projectName,
+              artifacts: initResult.artifacts,
+            };
+            console.log(JSON.stringify(createSuccessEnvelope(response, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          } else {
+            this.promptService.showSuccess(`Project ${result.projectName} created successfully!`);
+            this.promptService.showInfo(`Artifacts: ${initResult.artifacts.length}`);
+          }
         } else {
-          this.promptService.showError('Failed to create project');
+          const message = 'Failed to create project';
+          if (json) {
+            process.exitCode = 1;
+            console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }, { errors: initResult.errors }), null, 2));
+          } else {
+            this.promptService.showError(message);
+          }
         }
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'UserCancelledError') {
-        this.promptService.showInfo('Initialization cancelled');
+        const message = 'Initialization cancelled';
+        if (json) {
+          process.exitCode = 1;
+          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        } else {
+          this.promptService.showInfo(message);
+        }
         return;
       }
-      throw error;
+      const message = error instanceof Error ? error.message : String(error);
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      } else {
+        throw error;
+      }
     }
   }
 
@@ -165,5 +214,13 @@ export class InitWizardCommand extends BaseEvolithCommand {
   })
   parseNoInteractive(): boolean {
     return true;
+  }
+
+  @Option({
+    flags: '-f, --format [string]',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
+    return val;
   }
 }

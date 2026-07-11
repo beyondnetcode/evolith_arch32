@@ -1,8 +1,13 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
+import { randomUUID } from 'node:crypto';
 import { InitializeSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/initialize-satellite.use-case';
 import { GitHubApiAdapter } from '@beyondnet/evolith-infra-providers';
 import type { SatelliteTopology } from '@beyondnet/evolith-core-domain/domain/satellite-record';
+import {
+  createSuccessEnvelope,
+  OUTPUT_ENVELOPE_SCHEMA_VERSION,
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
@@ -13,6 +18,7 @@ interface SatelliteAdoptCommandOptions {
   phase?: string;
   token?: string;
   owner?: string;
+  format?: string;
 }
 
 /**
@@ -35,13 +41,25 @@ export class SatelliteAdoptCommand extends BaseEvolithCommand {
     _passedParam: string[],
     options?: SatelliteAdoptCommandOptions,
   ): Promise<void> {
-    this.promptService.showIntro('Evolith — Adopt Satellite Repository');
+    const json = (options?.format as string | undefined) === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith satellite adopt',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    };
+
+    if (!json) {
+      this.promptService.showIntro('Evolith — Adopt Satellite Repository');
+    }
 
     // -------------------------------------------------------------------------
     // 1. Resolve repo URL
     // -------------------------------------------------------------------------
     let repoUrl = options?.repo ?? '';
-    if (!repoUrl) {
+    if (!repoUrl && !json) {
       repoUrl = await this.promptService.text({
         message: 'GitHub repository URL (https://github.com/owner/repo)',
         placeholder: 'https://github.com/myorg/myrepo',
@@ -66,7 +84,7 @@ export class SatelliteAdoptCommand extends BaseEvolithCommand {
     // 3. Resolve owner (explicit flag overrides parsed value)
     // -------------------------------------------------------------------------
     let owner = options?.owner ?? parsed.owner;
-    if (!owner) {
+    if (!owner && !json) {
       owner = await this.promptService.text({
         message: 'GitHub owner (user or organization)',
         placeholder: parsed.owner || 'myorg',
@@ -86,17 +104,19 @@ export class SatelliteAdoptCommand extends BaseEvolithCommand {
 
     const topology: SatelliteTopology = options?.topology
       ? (options.topology as SatelliteTopology)
-      : await this.promptService.select<SatelliteTopology>({
-          message: 'Architecture topology',
-          options: topologyChoices,
-          initialValue: 'monolith',
-        });
+      : !json
+        ? await this.promptService.select<SatelliteTopology>({
+            message: 'Architecture topology',
+            options: topologyChoices,
+            initialValue: 'monolith',
+          })
+        : 'monolith';
 
     // -------------------------------------------------------------------------
     // 5. Resolve phase
     // -------------------------------------------------------------------------
     let phase = options?.phase ?? '';
-    if (!phase) {
+    if (!phase && !json) {
       phase = await this.promptService.select<string>({
         message: 'SDLC phase',
         options: [
@@ -107,13 +127,15 @@ export class SatelliteAdoptCommand extends BaseEvolithCommand {
         ],
         initialValue: 'alpha',
       });
+    } else if (!phase && json) {
+      phase = 'alpha';
     }
 
     // -------------------------------------------------------------------------
     // 6. Resolve GitHub token
     // -------------------------------------------------------------------------
     const token = options?.token ?? process.env['GITHUB_TOKEN'] ?? '';
-    if (!token) {
+    if (!token && !json) {
       this.promptService.showWarning(
         'No GitHub token found. Set --token or GITHUB_TOKEN env var. ' +
           'The adopt operation will likely fail without a valid token.',
@@ -123,7 +145,9 @@ export class SatelliteAdoptCommand extends BaseEvolithCommand {
     // -------------------------------------------------------------------------
     // 7. Execute use case
     // -------------------------------------------------------------------------
-    this.promptService.startSpinner(`Adopting ${repoUrl} into Evolith governance...`);
+    if (!json) {
+      this.promptService.startSpinner(`Adopting ${repoUrl} into Evolith governance...`);
+    }
 
     try {
       const useCase = new InitializeSatelliteUseCase(new GitHubApiAdapter(token));
@@ -137,25 +161,39 @@ export class SatelliteAdoptCommand extends BaseEvolithCommand {
         existingRepoUrl: repoUrl,
       });
 
-      this.promptService.stopSpinner();
+      if (!json) {
+        this.promptService.stopSpinner();
+      }
 
       const { satellite } = result;
 
-      console.log('');
-      console.log(chalk.bold('Satellite adopted successfully'));
-      console.log(`  ${chalk.cyan('ID:')}       ${satellite.id}`);
-      console.log(`  ${chalk.cyan('Name:')}     ${satellite.name}`);
-      console.log(`  ${chalk.cyan('Owner:')}    ${satellite.owner}`);
-      console.log(`  ${chalk.cyan('Repo:')}     ${satellite.repoUrl}`);
-      console.log(`  ${chalk.cyan('Topology:')} ${satellite.topology}`);
-      console.log(`  ${chalk.cyan('Phase:')}    ${satellite.phase}`);
-      console.log(`  ${chalk.cyan('Status:')}   ${chalk.green(satellite.status)}`);
-      console.log('');
+      if (json) {
+        console.log(
+          JSON.stringify(
+            createSuccessEnvelope({ satellite }, { ...meta, durationMs: Date.now() - startedAt }),
+            null,
+            2,
+          ),
+        );
+      } else {
+        console.log('');
+        console.log(chalk.bold('Satellite adopted successfully'));
+        console.log(`  ${chalk.cyan('ID:')}       ${satellite.id}`);
+        console.log(`  ${chalk.cyan('Name:')}     ${satellite.name}`);
+        console.log(`  ${chalk.cyan('Owner:')}    ${satellite.owner}`);
+        console.log(`  ${chalk.cyan('Repo:')}     ${satellite.repoUrl}`);
+        console.log(`  ${chalk.cyan('Topology:')} ${satellite.topology}`);
+        console.log(`  ${chalk.cyan('Phase:')}    ${satellite.phase}`);
+        console.log(`  ${chalk.cyan('Status:')}   ${chalk.green(satellite.status)}`);
+        console.log('');
 
-      this.promptService.showSuccess(`Satellite ${satellite.name} linked (${satellite.status})`);
-      this.promptService.showOutro('Done.');
+        this.promptService.showSuccess(`Satellite ${satellite.name} linked (${satellite.status})`);
+        this.promptService.showOutro('Done.');
+      }
     } catch (error: unknown) {
-      this.promptService.stopSpinner();
+      if (!json) {
+        this.promptService.stopSpinner();
+      }
       throw error;
     }
   }
@@ -201,6 +239,14 @@ export class SatelliteAdoptCommand extends BaseEvolithCommand {
     description: 'GitHub owner (user or organization); defaults to the owner parsed from --repo',
   })
   parseOwner(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '-f, --format <string>',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
     return val;
   }
 

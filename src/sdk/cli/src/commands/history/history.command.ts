@@ -1,6 +1,8 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
+import { randomUUID } from 'node:crypto';
 import { CommandHistoryService } from '@beyondnet/evolith-core-domain/application/services/services/command-history.service';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface HistoryCommandOptions {
@@ -11,6 +13,7 @@ interface HistoryCommandOptions {
   clear?: boolean;
   limit?: number;
   replay?: string;
+  format?: string;
 }
 
 @Command({
@@ -26,25 +29,51 @@ export class HistoryCommand extends BaseEvolithCommand {
   }
 
   async executeCommand(passedParam: string[], options?: HistoryCommandOptions): Promise<void> {
-    if (options?.stats) {
-      await this.showStats();
-    } else if (options?.get) {
-      await this.showEntry(options.get);
-    } else if (options?.search) {
-      await this.searchEntries(options.search);
-    } else if (options?.clear) {
-      await this.clearHistory();
-    } else if (options?.replay) {
-      await this.replayCommand(options.replay);
-    } else {
-      await this.listHistory(options?.limit);
+    const json = options?.format === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith history',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+      startedAt,
+    };
+
+    try {
+      if (options?.stats) {
+        await this.showStats(json, meta);
+      } else if (options?.get) {
+        await this.showEntry(options.get, json, meta);
+      } else if (options?.search) {
+        await this.searchEntries(options.search, json, meta);
+      } else if (options?.clear) {
+        await this.clearHistory(json, meta);
+      } else if (options?.replay) {
+        await this.replayCommand(options.replay, json, meta);
+      } else {
+        await this.listHistory(options?.limit, json, meta);
+      }
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      } else {
+        throw error;
+      }
     }
   }
 
-  private async listHistory(limit = 20): Promise<void> {
-    this.promptService.showIntro('Evolith CLI - Command History');
-
+  private async listHistory(limit = 20, json = false, meta?: any): Promise<void> {
     const entries = await this.historyService.list(limit);
+
+    if (json) {
+      console.log(JSON.stringify(createSuccessEnvelope(entries, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      return;
+    }
+
+    this.promptService.showIntro('Evolith CLI - Command History');
 
     if (entries.length === 0) {
       this.promptService.showWarning('No commands in history');
@@ -84,11 +113,21 @@ export class HistoryCommand extends BaseEvolithCommand {
     this.promptService.showInfo(chalk.dim('Use: evolith history --stats to see statistics'));
   }
 
-  private async showEntry(id: string): Promise<void> {
+  private async showEntry(id: string, json = false, meta?: any): Promise<void> {
     const entry = await this.historyService.get(id);
 
     if (!entry) {
-      this.promptService.showError(`Entry not found: ${id}`);
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', `Entry not found: ${id}`, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.showError(`Entry not found: ${id}`);
+      }
+      return;
+    }
+
+    if (json) {
+      console.log(JSON.stringify(createSuccessEnvelope(entry, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
       return;
     }
 
@@ -106,10 +145,15 @@ export class HistoryCommand extends BaseEvolithCommand {
     console.log('');
   }
 
-  private async searchEntries(query: string): Promise<void> {
-    this.promptService.showIntro(`Searching: "${query}"`);
-
+  private async searchEntries(query: string, json = false, meta?: any): Promise<void> {
     const entries = await this.historyService.search(query);
+
+    if (json) {
+      console.log(JSON.stringify(createSuccessEnvelope(entries, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      return;
+    }
+
+    this.promptService.showIntro(`Searching: "${query}"`);
 
     if (entries.length === 0) {
       this.promptService.showWarning(`No matches found for: ${query}`);
@@ -129,8 +173,13 @@ export class HistoryCommand extends BaseEvolithCommand {
     console.log('');
   }
 
-  private async showStats(): Promise<void> {
+  private async showStats(json = false, meta?: any): Promise<void> {
     const stats = await this.historyService.stats();
+
+    if (json) {
+      console.log(JSON.stringify(createSuccessEnvelope(stats, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      return;
+    }
 
     this.promptService.showIntro('Command History Statistics');
 
@@ -147,7 +196,13 @@ export class HistoryCommand extends BaseEvolithCommand {
     console.log('');
   }
 
-  private async clearHistory(): Promise<void> {
+  private async clearHistory(json = false, meta?: any): Promise<void> {
+    if (json) {
+      await this.historyService.clear();
+      console.log(JSON.stringify(createSuccessEnvelope({ cleared: true }, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      return;
+    }
+
     this.promptService.showIntro('Clear History');
     this.promptService.showInfo('This will permanently delete all command history.\n');
 
@@ -161,11 +216,21 @@ export class HistoryCommand extends BaseEvolithCommand {
     }
   }
 
-  private async replayCommand(id: string): Promise<void> {
+  private async replayCommand(id: string, json = false, meta?: any): Promise<void> {
     const replay = await this.historyService.replay(id);
 
     if (!replay) {
-      console.log(chalk.red(`\nEntry not found: ${id}\n`));
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', `Entry not found: ${id}`, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        console.log(chalk.red(`\nEntry not found: ${id}\n`));
+      }
+      return;
+    }
+
+    if (json) {
+      console.log(JSON.stringify(createSuccessEnvelope(replay, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
       return;
     }
 
@@ -227,6 +292,14 @@ export class HistoryCommand extends BaseEvolithCommand {
     description: 'Show command to replay',
   })
   parseReplay(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '-f, --format [string]',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
     return val;
   }
 }

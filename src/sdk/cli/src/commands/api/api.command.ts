@@ -1,8 +1,10 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
+import { randomUUID } from 'node:crypto';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import {
   CATEGORIES, TOOLS, RESOURCES, SCHEMAS, COMMANDS,
   TOOL_SCHEMAS, RESOURCE_SCHEMAS, COMMAND_SCHEMAS,
@@ -12,6 +14,7 @@ interface ApiCommandOptions {
   list?: boolean;
   inspect?: string;
   category?: string;
+  format?: string;
 }
 
 @Command({
@@ -24,12 +27,49 @@ export class ApiCommand extends BaseEvolithCommand {
   }
 
   async executeCommand(passedParam: string[], options?: ApiCommandOptions): Promise<void> {
-    if (options?.inspect) return this.inspectOperation(options.inspect);
-    if (options?.list) return this.listOperations(options.category);
-    return this.showHelp();
+    const json = options?.format === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith api',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+      startedAt,
+    };
+
+    try {
+      if (options?.inspect) return this.inspectOperation(options.inspect, json, meta);
+      if (options?.list) return this.listOperations(options.category, json, meta);
+      return this.showHelp(json, meta);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      } else {
+        throw error;
+      }
+    }
   }
 
-  private async listOperations(category?: string): Promise<void> {
+  private async listOperations(category?: string, json = false, meta?: any): Promise<void> {
+    if (json) {
+      if (category) {
+        const cat = CATEGORIES.find(c => c.name === category);
+        if (!cat) {
+          process.exitCode = 1;
+          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', `Unknown category: ${category}`, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+          return;
+        }
+        const result = this.getCategoryData(cat.name);
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        console.log(JSON.stringify(createSuccessEnvelope({ categories: CATEGORIES }, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      }
+      return;
+    }
+
     this.promptService.showIntro('Evolith API Surface');
 
     if (category) {
@@ -77,45 +117,89 @@ export class ApiCommand extends BaseEvolithCommand {
     this.promptService.showInfo(chalk.dim(footer));
   }
 
-  private async inspectOperation(operationName: string): Promise<void> {
-    this.promptService.showIntro(`Inspecting: ${operationName}`);
-
+  private async inspectOperation(operationName: string, json = false, meta?: any): Promise<void> {
     if (TOOL_SCHEMAS[operationName]) {
       const schema = TOOL_SCHEMAS[operationName];
-      this.promptService.showInfo(chalk.bold('\n🔧 MCP Tool Schema\n'));
-      this.promptService.showInfo(`  Description: ${schema.description}`);
-      this.promptService.showInfo(chalk.bold('\n📥 Input Schema:'));
-      this.promptService.showInfo(JSON.stringify(schema.inputSchema, null, 2));
-      this.promptService.showInfo(chalk.bold('\n📤 Output Schema:'));
-      this.promptService.showInfo(JSON.stringify(schema.outputSchema, null, 2));
+      if (json) {
+        const result = {
+          type: 'tool',
+          name: operationName,
+          description: schema.description,
+          inputSchema: schema.inputSchema,
+          outputSchema: schema.outputSchema,
+        };
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.showIntro(`Inspecting: ${operationName}`);
+        this.promptService.showInfo(chalk.bold('\n🔧 MCP Tool Schema\n'));
+        this.promptService.showInfo(`  Description: ${schema.description}`);
+        this.promptService.showInfo(chalk.bold('\n📥 Input Schema:'));
+        this.promptService.showInfo(JSON.stringify(schema.inputSchema, null, 2));
+        this.promptService.showInfo(chalk.bold('\n📤 Output Schema:'));
+        this.promptService.showInfo(JSON.stringify(schema.outputSchema, null, 2));
+      }
       return;
     }
     if (RESOURCE_SCHEMAS[operationName]) {
       const schema = RESOURCE_SCHEMAS[operationName];
-      this.promptService.showInfo(chalk.bold('\n📋 MCP Resource Schema\n'));
-      this.promptService.showInfo(`  Description: ${schema.description}`);
-      this.promptService.showInfo(`  MIME Type: ${schema.mimeType}`);
+      if (json) {
+        const result = {
+          type: 'resource',
+          name: operationName,
+          description: schema.description,
+          mimeType: schema.mimeType,
+        };
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.showIntro(`Inspecting: ${operationName}`);
+        this.promptService.showInfo(chalk.bold('\n📋 MCP Resource Schema\n'));
+        this.promptService.showInfo(`  Description: ${schema.description}`);
+        this.promptService.showInfo(`  MIME Type: ${schema.mimeType}`);
+      }
       return;
     }
     if (COMMAND_SCHEMAS[operationName]) {
       const schema = COMMAND_SCHEMAS[operationName];
-      this.promptService.showInfo(chalk.bold('\n⌨️ CLI Command Schema\n'));
-      this.promptService.showInfo(`  Description: ${schema.description}`);
-      this.promptService.showInfo(chalk.bold('\n⚙️ Options:'));
-      for (const opt of schema.options) {
-        this.promptService.showInfo(`  ${chalk.cyan(opt.flags.padEnd(25))} ${opt.description}`);
+      if (json) {
+        const result = {
+          type: 'command',
+          name: operationName,
+          description: schema.description,
+          options: schema.options,
+        };
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.showIntro(`Inspecting: ${operationName}`);
+        this.promptService.showInfo(chalk.bold('\n⌨️ CLI Command Schema\n'));
+        this.promptService.showInfo(`  Description: ${schema.description}`);
+        this.promptService.showInfo(chalk.bold('\n⚙️ Options:'));
+        for (const opt of schema.options) {
+          this.promptService.showInfo(`  ${chalk.cyan(opt.flags.padEnd(25))} ${opt.description}`);
+        }
       }
       return;
     }
 
-    this.promptService.showError(`Unknown operation: ${operationName}`);
-    this.promptService.showInfo('Try one of:');
-    this.promptService.showInfo('  Tools: gate-evaluate, validate-artifacts, agent-create');
-    this.promptService.showInfo('  Resources: evolith://rulesets, evolith://phase-gates, evolith://core/info');
-    this.promptService.showInfo('  Commands: init, validate, gate');
+    const message = `Unknown operation: ${operationName}`;
+    if (json) {
+      process.exitCode = 1;
+      console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+    } else {
+      this.promptService.showError(message);
+      this.promptService.showInfo('Try one of:');
+      this.promptService.showInfo('  Tools: gate-evaluate, validate-artifacts, agent-create');
+      this.promptService.showInfo('  Resources: evolith://rulesets, evolith://phase-gates, evolith://core/info');
+      this.promptService.showInfo('  Commands: init, validate, gate');
+    }
   }
 
-  private async showHelp(): Promise<void> {
+  private async showHelp(json = false, meta?: any): Promise<void> {
+    if (json) {
+      const result = { categories: CATEGORIES };
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      return;
+    }
+
     this.promptService.showIntro('Evolith API Browser');
     this.promptService.showInfo('Browse and inspect the Evolith API surface.\n');
     this.promptService.showInfo(chalk.bold('Usage:'));
@@ -136,6 +220,21 @@ export class ApiCommand extends BaseEvolithCommand {
     this.promptService.showInfo('  evolith api --inspect init');
   }
 
+  private getCategoryData(categoryName: string): any {
+    switch (categoryName) {
+      case 'tools':
+        return { category: 'tools', items: TOOLS, count: TOOLS.length };
+      case 'resources':
+        return { category: 'resources', items: RESOURCES, count: RESOURCES.length };
+      case 'schemas':
+        return { category: 'schemas', items: SCHEMAS, count: SCHEMAS.length };
+      case 'commands':
+        return { category: 'commands', items: COMMANDS, count: COMMANDS.length };
+      default:
+        return { category: categoryName, items: [], count: 0 };
+    }
+  }
+
   @Option({ flags: '-l, --list', description: 'List available API operations' })
   parseList(): boolean { return true; }
 
@@ -144,4 +243,10 @@ export class ApiCommand extends BaseEvolithCommand {
 
   @Option({ flags: '-c, --category <category>', description: 'Filter by category (tools, resources, schemas, commands)' })
   parseCategory(val: string): string { return val; }
+
+  @Option({
+    flags: '-f, --format [string]',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string { return val; }
 }

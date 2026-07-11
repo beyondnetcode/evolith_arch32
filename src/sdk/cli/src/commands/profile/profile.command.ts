@@ -1,12 +1,15 @@
 import { Command, Option } from 'nest-commander';
 import * as p from '@clack/prompts';
 import chalk from 'chalk';
+import { randomUUID } from 'node:crypto';
 import { ConfigService, ProfileConfig } from '../../infrastructure/config/config.service';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 interface ProfileCommandOptions {
   name?: string;
+  format?: string;
 }
 
 @Command({
@@ -24,25 +27,52 @@ export class ProfileCommand extends BaseEvolithCommand {
 
   async executeCommand(inputs: string[], options?: ProfileCommandOptions): Promise<void> {
     const action = inputs[0] || 'current';
+    const json = options?.format === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith profile',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+      startedAt,
+    };
 
-    switch (action) {
-      case 'list':
-        return this.listProfiles();
-      case 'create':
-        return this.createProfile(options?.name);
-      case 'switch':
-        return this.switchProfile(options?.name);
-      case 'delete':
-        return this.deleteProfile(options?.name);
-      case 'current':
-      default:
-        return this.showCurrent();
+    try {
+      switch (action) {
+        case 'list':
+          return this.listProfiles(json, meta);
+        case 'create':
+          return this.createProfile(options?.name, json, meta);
+        case 'switch':
+          return this.switchProfile(options?.name, json, meta);
+        case 'delete':
+          return this.deleteProfile(options?.name, json, meta);
+        case 'current':
+        default:
+          return this.showCurrent(json, meta);
+      }
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      } else {
+        throw error;
+      }
     }
   }
 
-  private showCurrent(): void {
+  private showCurrent(json = false, meta?: any): void {
     const active = this.configService.activeProfile();
     const cfg = this.configService.getProfile();
+
+    if (json) {
+      const result = { name: active, ...cfg };
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      return;
+    }
+
     this.promptService.showIntro('Active Profile');
     console.log(`  Name:      ${chalk.cyan(active)}`);
     if (cfg.core) console.log(`  Core:      ${cfg.core}`);
@@ -52,9 +82,16 @@ export class ProfileCommand extends BaseEvolithCommand {
     this.promptService.showOutro('');
   }
 
-  private listProfiles(): void {
+  private listProfiles(json = false, meta?: any): void {
     const profiles = this.configService.listProfiles();
     const active = this.configService.activeProfile();
+
+    if (json) {
+      const result = { profiles, active };
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      return;
+    }
+
     this.promptService.showIntro('CLI Profiles');
     for (const name of profiles) {
       const marker = name === active ? chalk.green('*') : ' ';
@@ -63,7 +100,7 @@ export class ProfileCommand extends BaseEvolithCommand {
     this.promptService.showOutro(`${profiles.length} profile(s)`);
   }
 
-  private async createProfile(name?: string): Promise<void> {
+  private async createProfile(name?: string, json = false, meta?: any): Promise<void> {
     let profileName = name;
     if (!profileName) {
       profileName = (await p.text({
@@ -75,13 +112,24 @@ export class ProfileCommand extends BaseEvolithCommand {
         },
       })) as string;
       if (p.isCancel(profileName)) {
-        this.promptService.showOutro('Cancelled');
+        if (json) {
+          process.exitCode = 1;
+          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', 'Profile creation cancelled', { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        } else {
+          this.promptService.showOutro('Cancelled');
+        }
         return;
       }
     }
 
     if (this.configService.profileExists(profileName)) {
-      this.promptService.showError(`Profile "${profileName}" already exists`);
+      const message = `Profile "${profileName}" already exists`;
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.showError(message);
+      }
       return;
     }
 
@@ -110,32 +158,70 @@ export class ProfileCommand extends BaseEvolithCommand {
     if (!p.isCancel(initiative) && initiative.trim()) profile.initiative = initiative.trim();
 
     this.configService.createProfile(profileName, profile);
-    this.promptService.showSuccess(`Profile "${profileName}" created`);
+
+    if (json) {
+      const result = { name: profileName, ...profile };
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+    } else {
+      this.promptService.showSuccess(`Profile "${profileName}" created`);
+    }
   }
 
-  private switchProfile(name?: string): void {
+  private switchProfile(name?: string, json = false, meta?: any): void {
     if (!name) {
-      this.promptService.showError('Usage: evolith profile switch <name>');
+      const message = 'Usage: evolith profile switch <name>';
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.showError(message);
+      }
       return;
     }
     try {
       this.configService.switchProfile(name);
-      this.promptService.showSuccess(`Switched to profile "${name}"`);
+      if (json) {
+        console.log(JSON.stringify(createSuccessEnvelope({ switched: name }, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.showSuccess(`Switched to profile "${name}"`);
+      }
     } catch (e) {
-      this.promptService.showError((e as Error).message);
+      const message = (e as Error).message;
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.showError(message);
+      }
     }
   }
 
-  private deleteProfile(name?: string): void {
+  private deleteProfile(name?: string, json = false, meta?: any): void {
     if (!name) {
-      this.promptService.showError('Usage: evolith profile delete <name>');
+      const message = 'Usage: evolith profile delete <name>';
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.showError(message);
+      }
       return;
     }
     try {
       this.configService.deleteProfile(name);
-      this.promptService.showSuccess(`Profile "${name}" deleted`);
+      if (json) {
+        console.log(JSON.stringify(createSuccessEnvelope({ deleted: name }, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.showSuccess(`Profile "${name}" deleted`);
+      }
     } catch (e) {
-      this.promptService.showError((e as Error).message);
+      const message = (e as Error).message;
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.showError(message);
+      }
     }
   }
 
@@ -144,6 +230,14 @@ export class ProfileCommand extends BaseEvolithCommand {
     description: 'Profile name',
   })
   parseName(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '-f, --format [string]',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
     return val;
   }
 }

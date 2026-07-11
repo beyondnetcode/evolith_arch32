@@ -1,7 +1,12 @@
 import { Command, Option } from 'nest-commander';
+import { randomUUID } from 'node:crypto';
 import chalk from 'chalk';
 import { InitializeSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/initialize-satellite.use-case';
 import { GitHubApiAdapter } from '@beyondnet/evolith-infra-providers';
+import {
+  createSuccessEnvelope,
+  OUTPUT_ENVELOPE_SCHEMA_VERSION,
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
@@ -17,6 +22,7 @@ interface SatelliteCreateCommandOptions {
   private?: boolean;
   description?: string;
   token?: string;
+  format?: string;
 }
 
 @Command({
@@ -32,7 +38,19 @@ export class SatelliteCreateCommand extends BaseEvolithCommand {
   }
 
   async executeCommand(_passedParam: string[], options?: SatelliteCreateCommandOptions): Promise<void> {
-    this.promptService.showIntro('Evolith SDK - Satellite Create');
+    const json = (options?.format as string | undefined) === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith satellite:create',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    };
+
+    if (!json) {
+      this.promptService.showIntro('Evolith SDK - Satellite Create');
+    }
 
     const name = options?.name ?? await this.promptService.text({
       message: 'Repository name:',
@@ -72,14 +90,28 @@ export class SatelliteCreateCommand extends BaseEvolithCommand {
     const token = options?.token ?? process.env['GITHUB_TOKEN'] ?? '';
 
     if (!token) {
-      this.promptService.showError(
-        'GitHub token not found. Pass --token or set the GITHUB_TOKEN environment variable.',
-      );
+      const error = 'GitHub token not found. Pass --token or set the GITHUB_TOKEN environment variable.';
+      if (json) {
+        console.log(
+          JSON.stringify(
+            createSuccessEnvelope(
+              { success: false, error },
+              { ...meta, durationMs: Date.now() - startedAt },
+            ),
+            null,
+            2,
+          ),
+        );
+        return;
+      }
+      this.promptService.showError(error);
       this.promptService.showOutro('Satellite creation cancelled.');
       return;
     }
 
-    this.promptService.startSpinner(`Creating repository ${owner}/${name} on GitHub...`);
+    if (!json) {
+      this.promptService.startSpinner(`Creating repository ${owner}/${name} on GitHub...`);
+    }
 
     try {
       const githubClient = new GitHubApiAdapter(token);
@@ -95,24 +127,38 @@ export class SatelliteCreateCommand extends BaseEvolithCommand {
         private: options?.private ?? false,
       });
 
-      this.promptService.stopSpinner('Repository created.');
+      if (!json) {
+        this.promptService.stopSpinner('Repository created.');
+      }
 
       const { satellite } = result;
 
-      console.log(`\n${chalk.bgGreen.black(' Satellite Registered ')}\n`);
-      console.log(`${chalk.bold('ID:')}       ${chalk.cyan(satellite.id)}`);
-      console.log(`${chalk.bold('Name:')}     ${chalk.cyan(satellite.name)}`);
-      console.log(`${chalk.bold('Owner:')}    ${chalk.cyan(satellite.owner)}`);
-      console.log(`${chalk.bold('Repo URL:')} ${chalk.underline(satellite.repoUrl)}`);
-      console.log(`${chalk.bold('Topology:')} ${satellite.topology}`);
-      console.log(`${chalk.bold('Phase:')}    ${satellite.phase}`);
-      console.log(`${chalk.bold('Status:')}   ${chalk.green(satellite.status)}`);
-      console.log('');
+      if (json) {
+        console.log(
+          JSON.stringify(
+            createSuccessEnvelope({ satellite }, { ...meta, durationMs: Date.now() - startedAt }),
+            null,
+            2,
+          ),
+        );
+      } else {
+        console.log(`\n${chalk.bgGreen.black(' Satellite Registered ')}\n`);
+        console.log(`${chalk.bold('ID:')}       ${chalk.cyan(satellite.id)}`);
+        console.log(`${chalk.bold('Name:')}     ${chalk.cyan(satellite.name)}`);
+        console.log(`${chalk.bold('Owner:')}    ${chalk.cyan(satellite.owner)}`);
+        console.log(`${chalk.bold('Repo URL:')} ${chalk.underline(satellite.repoUrl)}`);
+        console.log(`${chalk.bold('Topology:')} ${satellite.topology}`);
+        console.log(`${chalk.bold('Phase:')}    ${satellite.phase}`);
+        console.log(`${chalk.bold('Status:')}   ${chalk.green(satellite.status)}`);
+        console.log('');
 
-      this.promptService.showSuccess(`Satellite "${satellite.name}" successfully created and registered.`);
-      this.promptService.showOutro('Done. Run `evolith satellite adopt` to link an existing repo.');
+        this.promptService.showSuccess(`Satellite "${satellite.name}" successfully created and registered.`);
+        this.promptService.showOutro('Done. Run `evolith satellite adopt` to link an existing repo.');
+      }
     } catch (error: unknown) {
-      this.promptService.stopSpinner('Failed.');
+      if (!json) {
+        this.promptService.stopSpinner('Failed.');
+      }
       throw error;
     }
   }
@@ -170,6 +216,14 @@ export class SatelliteCreateCommand extends BaseEvolithCommand {
     description: 'GitHub personal access token (falls back to GITHUB_TOKEN env var)',
   })
   parseToken(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '-f, --format <string>',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
     return val;
   }
 }

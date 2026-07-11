@@ -2,12 +2,17 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import { InitializeProjectUseCase, InitProjectInput } from '@beyondnet/evolith-core-domain/application/services';
 import { logger, errorReporter, OperationTimer } from '../../infrastructure/observability';
 import { Injectable } from '@nestjs/common';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
 import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
+import {
+  createSuccessEnvelope,
+  OUTPUT_ENVELOPE_SCHEMA_VERSION,
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 
 interface InitCommandOptions {
   dryRun?: boolean;
@@ -18,6 +23,7 @@ interface InitCommandOptions {
   arch?: string;
   db?: string;
   yes?: boolean;
+  format?: string;
 }
 
 @Injectable()
@@ -43,9 +49,21 @@ export class InitCommand extends BaseEvolithCommand {
     passedParam: string[],
     options?: InitCommandOptions,
   ): Promise<void> {
+    const json = (options?.format as string | undefined) === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith init',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    };
+
     this.operationTimer.start('InitCommand.executeCommand');
 
-    logger.info('Starting project initialization', { options });
+    if (!json) {
+      logger.info('Starting project initialization', { options });
+    }
 
     const fs = this.fileSystem;
     const useCase = new InitializeProjectUseCase(fs, this.catalogLoader);
@@ -58,17 +76,23 @@ export class InitCommand extends BaseEvolithCommand {
     if (batchInput) {
       inputData = batchInput;
     } else {
-      console.clear();
-      this.promptService.showIntro('Evolith - Project Initialization');
+      if (!json) {
+        console.clear();
+        this.promptService.showIntro('Evolith - Project Initialization');
+      }
       inputData = await this.promptService.askInitOptions(this.catalogLoader);
     }
 
     if (!inputData) {
-      this.promptService.showOutro(chalk.yellow('Inicialización cancelada.'));
+      if (!json) {
+        this.promptService.showOutro(chalk.yellow('Inicialización cancelada.'));
+      }
       return;
     }
 
-    this.promptService.startSpinner('Aplicando estándares de Evolith...');
+    if (!json) {
+      this.promptService.startSpinner('Aplicando estándares de Evolith...');
+    }
 
     const input: InitProjectInput = {
       ...inputData,
@@ -77,9 +101,16 @@ export class InitCommand extends BaseEvolithCommand {
 
     const result = await useCase.execute(input, process.cwd());
 
-    this.promptService.stopSpinner();
+    if (!json) {
+      this.promptService.stopSpinner();
+    }
 
     const durationMs = this.operationTimer.end();
+
+    if (json) {
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs }), null, 2));
+      return;
+    }
 
     if (result.success) {
       logger.info('Project initialization completed successfully', {
@@ -250,6 +281,14 @@ Proximos pasos:
     description: 'Base de datos: postgresql, mongodb, sqlserver',
   })
   parseDb(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '-f, --format <string>',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
     return val;
   }
 }

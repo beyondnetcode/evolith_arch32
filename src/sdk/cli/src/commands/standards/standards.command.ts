@@ -1,9 +1,14 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
+import { randomUUID } from 'node:crypto';
 import { Inject } from '@nestjs/common';
 import { StandardsService, StandardCategory } from '@beyondnet/evolith-core-domain/domain/services/standards.service';
 import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { logger } from '../../infrastructure/observability';
+import {
+  createSuccessEnvelope,
+  OUTPUT_ENVELOPE_SCHEMA_VERSION,
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface StandardsCommandOptions {
@@ -30,25 +35,36 @@ export class StandardsCommand extends BaseEvolithCommand {
     options?: StandardsCommandOptions,
   ): Promise<void> {
     const fs = this.fileSystem;
+    const json = (options?.format as string | undefined) === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith standards',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    };
 
     if (options?.init) {
-      await this.initializeStandards(fs);
+      await this.initializeStandards(fs, json, meta, startedAt);
     } else if (options?.list) {
-      await this.listStandards(fs, options.category);
+      await this.listStandards(fs, options.category, json, meta, startedAt);
     } else if (options?.get) {
-      await this.getStandard(fs, options.get);
+      await this.getStandard(fs, options.get, json, meta, startedAt);
     } else if (options?.validate) {
-      await this.validateStandards(fs, options.validate);
+      await this.validateStandards(fs, options.validate, json, meta, startedAt);
     } else if (options?.export) {
-      await this.exportStandard(fs, options.export, options.format);
+      await this.exportStandard(fs, options.export, options.format, json, meta, startedAt);
     } else {
-      await this.interactiveMode(fs);
+      await this.interactiveMode(fs, json, meta, startedAt);
     }
   }
 
-  private async interactiveMode(fs: IFileSystem): Promise<void> {
-    console.clear();
-    this.promptService.showIntro('Evolith Standards - Corporate Standards Management');
+  private async interactiveMode(fs: IFileSystem, json = false, meta?: any, startedAt?: number): Promise<void> {
+    if (!json) {
+      console.clear();
+      this.promptService.showIntro('Evolith Standards - Corporate Standards Management');
+    }
 
     const action = await this.promptService.select({
       message: '¿Qué acción deseas realizar?',
@@ -63,18 +79,18 @@ export class StandardsCommand extends BaseEvolithCommand {
 
     switch (action) {
       case 'init':
-        await this.initializeStandards(fs);
+        await this.initializeStandards(fs, json, meta, startedAt);
         break;
       case 'list':
-        await this.listStandards(fs);
+        await this.listStandards(fs, undefined, json, meta, startedAt);
         break;
       case 'get':
         const id = await this.promptService.text({ message: 'ID del Standard:' });
-        await this.getStandard(fs, id as string);
+        await this.getStandard(fs, id as string, json, meta, startedAt);
         break;
       case 'validate':
         const code = await this.promptService.text({ message: 'Código a validar:' });
-        await this.validateStandards(fs, code as string);
+        await this.validateStandards(fs, code as string, json, meta, startedAt);
         break;
       case 'export':
         const exportId = await this.promptService.text({ message: 'ID del Standard:' });
@@ -85,37 +101,73 @@ export class StandardsCommand extends BaseEvolithCommand {
             { value: 'json', label: 'JSON' },
           ],
         });
-        await this.exportStandard(fs, exportId as string, format as string);
+        await this.exportStandard(fs, exportId as string, format as string, json, meta, startedAt);
         break;
     }
   }
 
-  private async initializeStandards(fs: IFileSystem): Promise<void> {
+  private async initializeStandards(fs: IFileSystem, json = false, meta?: any, startedAt?: number): Promise<void> {
     logger.info('Initializing standards directory structure');
 
     const service = new StandardsService(fs, process.cwd());
-    this.promptService.startSpinner('Inicializando...');
+    if (!json) {
+      this.promptService.startSpinner('Inicializando...');
+    }
 
     try {
       await service.initialize();
-      this.promptService.stopSpinner();
-      this.promptService.showSuccess('✓ Estructura de standards creada');
-      this.promptService.showInfo('  Ubicación: reference/standards/');
-      this.promptService.showInfo('  Subcarpetas: rulesets/, templates/');
-      this.promptService.showInfo('\nPara ver los standards disponibles, usa: evolith standards --list');
+      const result = {
+        success: true,
+        location: 'reference/standards/',
+        subFolders: ['rulesets/', 'templates/'],
+      };
+
+      if (json) {
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      } else {
+        this.promptService.stopSpinner();
+        this.promptService.showSuccess('✓ Estructura de standards creada');
+        this.promptService.showInfo('  Ubicación: reference/standards/');
+        this.promptService.showInfo('  Subcarpetas: rulesets/, templates/');
+        this.promptService.showInfo('\nPara ver los standards disponibles, usa: evolith standards --list');
+      }
     } catch (error) {
-      this.promptService.stopSpinner();
+      if (!json) {
+        this.promptService.stopSpinner();
+      }
       logger.error('Failed to initialize standards', { error });
-      this.promptService.showError('✗ Error inicializando standards');
+      if (json) {
+        process.exitCode = 1;
+        const message = error instanceof Error ? error.message : String(error);
+        console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      } else {
+        this.promptService.showError('✗ Error inicializando standards');
+      }
     }
   }
 
-  private async listStandards(fs: IFileSystem, category?: string): Promise<void> {
+  private async listStandards(fs: IFileSystem, category?: string, json = false, meta?: any, startedAt?: number): Promise<void> {
     logger.info('Listing standards', { category });
 
     const service = new StandardsService(fs, process.cwd());
     const cat = category as StandardCategory | undefined;
     const standards = await service.list(cat);
+
+    const result = {
+      count: standards.length,
+      standards: standards.map(s => ({
+        id: s.id,
+        name: s.name,
+        version: s.version,
+        category: s.category,
+        rulesCount: s.rules.length,
+      })),
+    };
+
+    if (json) {
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      return;
+    }
 
     if (standards.length === 0) {
       this.promptService.showWarning('No hay standards registrados.');
@@ -136,14 +188,24 @@ export class StandardsCommand extends BaseEvolithCommand {
     console.table(table);
   }
 
-  private async getStandard(fs: IFileSystem, id: string): Promise<void> {
+  private async getStandard(fs: IFileSystem, id: string, json = false, meta?: any, startedAt?: number): Promise<void> {
     logger.info('Getting standard', { id });
 
     const service = new StandardsService(fs, process.cwd());
     const standard = await service.get(id);
 
     if (!standard) {
-      this.promptService.showError(`Standard ${id} no encontrado`);
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createSuccessEnvelope({ error: `Standard ${id} no encontrado` }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      } else {
+        this.promptService.showError(`Standard ${id} no encontrado`);
+      }
+      return;
+    }
+
+    if (json) {
+      console.log(JSON.stringify(createSuccessEnvelope(standard, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       return;
     }
 
@@ -164,9 +226,15 @@ export class StandardsCommand extends BaseEvolithCommand {
     }
   }
 
-  private async validateStandards(fs: IFileSystem, code: string): Promise<void> {
+  private async validateStandards(fs: IFileSystem, code: string, json = false, meta?: any, startedAt?: number): Promise<void> {
     if (!code) {
-      this.promptService.showError('Código requerido para validación');
+      const message = 'Código requerido para validación';
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createSuccessEnvelope({ error: message }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      } else {
+        this.promptService.showError(message);
+      }
       return;
     }
 
@@ -174,6 +242,11 @@ export class StandardsCommand extends BaseEvolithCommand {
 
     const service = new StandardsService(fs, process.cwd());
     const result = await service.validate(code);
+
+    if (json) {
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      return;
+    }
 
     this.promptService.showInfo(chalk.bold('\nValidation Results'));
     this.promptService.showInfo(`Total Rules: ${result.totalRules}`);
@@ -192,7 +265,7 @@ export class StandardsCommand extends BaseEvolithCommand {
     }
   }
 
-  private async exportStandard(fs: IFileSystem, id: string, format?: string): Promise<void> {
+  private async exportStandard(fs: IFileSystem, id: string, format?: string, json = false, meta?: any, startedAt?: number): Promise<void> {
     logger.info('Exporting standard', { id, format });
 
     const service = new StandardsService(fs, process.cwd());
@@ -200,10 +273,25 @@ export class StandardsCommand extends BaseEvolithCommand {
 
     try {
       const output = await service.export(id, fmt);
-      this.promptService.showInfo(`\n${output}\n`);
+      if (json) {
+        const result = {
+          id,
+          format: fmt,
+          output,
+        };
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      } else {
+        this.promptService.showInfo(`\n${output}\n`);
+      }
     } catch (error) {
       logger.error('Failed to export standard', { error });
-      this.promptService.showError(`Error exportando standard: ${error}`);
+      if (json) {
+        process.exitCode = 1;
+        const message = error instanceof Error ? error.message : String(error);
+        console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+      } else {
+        this.promptService.showError(`Error exportando standard: ${error}`);
+      }
     }
   }
 

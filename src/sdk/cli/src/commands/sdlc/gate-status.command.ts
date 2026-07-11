@@ -1,10 +1,15 @@
 import { SubCommand, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import { PhaseTransitionUseCase } from '@beyondnet/evolith-core-domain/application/services';
 import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { readGitLog, isGitRepo } from '@beyondnet/evolith-core-domain/domain/metrics/git-log-reader';
 import { calculateDora, DoraMetric, DoraRating } from '@beyondnet/evolith-core-domain/domain/metrics/dora-calculator';
+import {
+  createSuccessEnvelope,
+  OUTPUT_ENVELOPE_SCHEMA_VERSION,
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 function ratingBadge(rating: DoraRating): string {
@@ -34,37 +39,71 @@ export class GateStatusCommand extends BaseEvolithCommand {
     const useCase = new PhaseTransitionUseCase(fs);
     const cwd = process.cwd();
     const sinceDays: number = (options?.since as number | undefined) ?? 90;
+    const json = (options?.format as string | undefined) === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith sdlc gate-status',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    };
 
-    this.promptService.startSpinner('Validating phase gates…');
+    if (!json) {
+      this.promptService.startSpinner('Validating phase gates…');
+    }
 
+    let status: any;
     try {
-      const status = await useCase.getGateStatus(cwd);
-      this.promptService.stopSpinner();
-      this.printGateStatus(status);
+      status = await useCase.getGateStatus(cwd);
+      if (!json) {
+        this.promptService.stopSpinner();
+        this.printGateStatus(status);
+      }
     } catch (error: unknown) {
-      this.promptService.stopSpinner();
+      if (!json) {
+        this.promptService.stopSpinner();
+      }
       throw error; // Let BaseEvolithCommand handle it
     }
 
     // ── DORA metrics ────────────────────────────────────────────────────────
-    this.promptService.startSpinner('Reading git history for DORA metrics…');
+    let dora: any = null;
+    if (!json) {
+      this.promptService.startSpinner('Reading git history for DORA metrics…');
+    }
     try {
       const hasGit = await isGitRepo(cwd);
       if (!hasGit) {
-        this.promptService.stopSpinner('');
-        this.promptService.showWarning('DORA metrics skipped — not a git repository.');
-        return;
+        if (!json) {
+          this.promptService.stopSpinner('');
+          this.promptService.showWarning('DORA metrics skipped — not a git repository.');
+        }
+      } else {
+        const commits = await readGitLog({ cwd, sinceDays });
+        if (!json) {
+          this.promptService.stopSpinner(`Analysed ${commits.length} commits (last ${sinceDays} days)`);
+        }
+
+        dora = calculateDora(commits, sinceDays);
+        if (!json) {
+          this.printDora(dora);
+        }
       }
-
-      const commits = await readGitLog({ cwd, sinceDays });
-      this.promptService.stopSpinner(`Analysed ${commits.length} commits (last ${sinceDays} days)`);
-
-      const dora = calculateDora(commits, sinceDays);
-      this.printDora(dora);
     } catch (err: unknown) {
-      this.promptService.stopSpinner('');
-      const msg = err instanceof Error ? err.message : String(err);
-      this.promptService.showWarning(`DORA metrics unavailable: ${msg}`);
+      if (!json) {
+        this.promptService.stopSpinner('');
+        const msg = err instanceof Error ? err.message : String(err);
+        this.promptService.showWarning(`DORA metrics unavailable: ${msg}`);
+      }
+    }
+
+    if (json) {
+      const result = {
+        gateStatus: status,
+        doraMetrics: dora,
+      };
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
     }
   }
 
@@ -75,6 +114,14 @@ export class GateStatusCommand extends BaseEvolithCommand {
   parseSince(val: string): number {
     const n = parseInt(val, 10);
     return isNaN(n) || n < 1 ? 90 : n;
+  }
+
+  @Option({
+    flags: '-f, --format <string>',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
+    return val;
   }
 
   private printGateStatus(status: {

@@ -1,7 +1,9 @@
 import { Command, Option } from 'nest-commander';
 import { Inject, Injectable } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import * as path from 'path';
 
@@ -9,6 +11,7 @@ interface FixturesCommandOptions {
   dir?: string;
   dryRun?: boolean;
   type?: string;
+  format?: string;
 }
 
 type FixtureType = 'demo' | 'adr' | 'ruleset' | 'evolith' | 'full';
@@ -36,39 +39,75 @@ export class FixturesCommand extends BaseEvolithCommand {
     passedParam: string[],
     options?: FixturesCommandOptions,
   ): Promise<void> {
+    const json = options?.format === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith fixtures',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+      startedAt,
+    };
+
     const fixtureType = (passedParam?.[0] || options?.type || 'demo') as FixtureType;
     const targetDir = options?.dir || process.cwd();
     const dryRun = !!options?.dryRun;
 
     if (!['demo', 'adr', 'ruleset', 'evolith', 'full'].includes(fixtureType)) {
-      this.promptService.showError(`Invalid fixture type: ${fixtureType}. Valid types: demo, adr, ruleset, evolith, full`);
+      const message = `Invalid fixture type: ${fixtureType}. Valid types: demo, adr, ruleset, evolith, full`;
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      } else {
+        this.promptService.showError(message);
+      }
       return;
     }
 
-    this.promptService.showIntro(`Evolith Fixtures — ${fixtureType}`);
+    if (!json) {
+      this.promptService.showIntro(`Evolith Fixtures — ${fixtureType}`);
 
-    if (dryRun) {
-      this.promptService.showInfo('[DRY RUN] Files will not be written');
+      if (dryRun) {
+        this.promptService.showInfo('[DRY RUN] Files will not be written');
+      }
     }
 
     const files = this.generateFixtures(fixtureType);
 
-    this.promptService.showInfo(`Fixture type: ${fixtureType}`);
-    this.promptService.showInfo(`Target directory: ${targetDir}`);
-    this.promptService.showInfo(`Files to create: ${files.length}`);
+    if (!json) {
+      this.promptService.showInfo(`Fixture type: ${fixtureType}`);
+      this.promptService.showInfo(`Target directory: ${targetDir}`);
+      this.promptService.showInfo(`Files to create: ${files.length}`);
+
+      if (dryRun) {
+        for (const file of files) {
+          this.promptService.showInfo(`  [dry-run] ${file.relativePath}`);
+        }
+        this.promptService.showOutro('DRY RUN — no files written');
+        return;
+      }
+    }
 
     if (dryRun) {
-      for (const file of files) {
-        this.promptService.showInfo(`  [dry-run] ${file.relativePath}`);
+      const result = {
+        type: fixtureType,
+        targetDir,
+        dryRun: true,
+        created: files.map(f => f.relativePath),
+      };
+      if (json) {
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       }
-      this.promptService.showOutro('DRY RUN — no files written');
       return;
     }
 
-    this.promptService.startSpinner('Writing fixture files...');
+    if (!json) {
+      this.promptService.startSpinner('Writing fixture files...');
+    }
 
     const created: string[] = [];
-    const errors: string[] = [];
+    const errors: Array<{ file: string; message: string }> = [];
 
     for (const file of files) {
       try {
@@ -77,25 +116,43 @@ export class FixturesCommand extends BaseEvolithCommand {
         await this.fileSystem.writeFile(fullPath, file.content);
         created.push(file.relativePath);
       } catch (err) {
-        errors.push(`${file.relativePath}: ${err instanceof Error ? err.message : String(err)}`);
+        const message = err instanceof Error ? err.message : String(err);
+        errors.push({ file: file.relativePath, message });
       }
     }
 
-    this.promptService.stopSpinner();
+    if (!json) {
+      this.promptService.stopSpinner();
+    }
 
-    if (errors.length === 0) {
-      this.promptService.showSuccess(`✓ ${created.length} fixture files created`);
-      for (const file of created) {
-        this.promptService.showInfo(`  - ${file}`);
+    if (json) {
+      const result = {
+        type: fixtureType,
+        targetDir,
+        created,
+        errors: errors.length > 0 ? errors : undefined,
+      };
+      if (errors.length > 0) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', `${errors.length} errors`, { ...meta, durationMs: Date.now() - startedAt }, result), null, 2));
+      } else {
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       }
     } else {
-      this.promptService.showError(`✗ ${errors.length} errors`);
-      for (const err of errors) {
-        this.promptService.showError(`  - ${err}`);
+      if (errors.length === 0) {
+        this.promptService.showSuccess(`✓ ${created.length} fixture files created`);
+        for (const file of created) {
+          this.promptService.showInfo(`  - ${file}`);
+        }
+      } else {
+        this.promptService.showError(`✗ ${errors.length} errors`);
+        for (const err of errors) {
+          this.promptService.showError(`  - ${err.file}: ${err.message}`);
+        }
       }
-    }
 
-    this.promptService.showOutro(errors.length === 0 ? 'Fixtures ready' : 'Completed with errors');
+      this.promptService.showOutro(errors.length === 0 ? 'Fixtures ready' : 'Completed with errors');
+    }
   }
 
   private generateFixtures(type: FixtureType): FixtureFile[] {
@@ -274,6 +331,14 @@ export class FixturesCommand extends BaseEvolithCommand {
     description: 'Fixture type: demo, adr, ruleset, evolith, full',
   })
   parseType(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '-f, --format [string]',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
     return val;
   }
 }

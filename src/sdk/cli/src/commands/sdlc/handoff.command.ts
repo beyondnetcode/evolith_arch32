@@ -1,11 +1,16 @@
 import { SubCommand, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import * as path from 'path';
 import * as fs from 'fs';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
 import { PhaseService, ToolSelectionService } from '@beyondnet/evolith-core-domain/domain/services';
 import { PhaseTransitionUseCase } from '@beyondnet/evolith-core-domain/application/services';
+import {
+  createSuccessEnvelope,
+  OUTPUT_ENVELOPE_SCHEMA_VERSION,
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { IFileSystem, ToolGroup } from '@beyondnet/evolith-core-domain/domain/interfaces';
 
@@ -15,6 +20,7 @@ interface HandoffOptions {
   artifacts?: boolean;
   validate?: boolean;
   force?: boolean;
+  format?: string;
 }
 
 @SubCommand({
@@ -38,12 +44,26 @@ export class HandoffCommand extends BaseEvolithCommand {
     passedParam: string[],
     options?: HandoffOptions,
   ): Promise<void> {
-    const fs = this.fileSystem;
+    const fsService = this.fileSystem;
     const projectRoot = this.findProjectRoot(process.cwd());
+    const json = (options?.format as string | undefined) === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith sdlc handoff',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    };
 
     if (options?.from && options?.to) {
-      const useCase = new PhaseTransitionUseCase(fs);
+      const useCase = new PhaseTransitionUseCase(fsService);
       const result = await useCase.execute(options.from, options.to, [], projectRoot);
+
+      if (json) {
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        return;
+      }
 
       if (result.success) {
         this.promptService.showSuccess(`✓ Transitioned from ${options.from} to ${options.to}`);
@@ -53,8 +73,10 @@ export class HandoffCommand extends BaseEvolithCommand {
       return;
     }
 
-    console.clear();
-    this.promptService.showIntro('Evolith SDLC - Phase Handoff');
+    if (!json) {
+      console.clear();
+      this.promptService.showIntro('Evolith SDLC - Phase Handoff');
+    }
 
     const phases = this.phaseService.getAllPhases();
 
@@ -121,9 +143,11 @@ export class HandoffCommand extends BaseEvolithCommand {
 
     await this.promptService.confirm('Force handoff even if some checks fail? (Requires waiver)', false);
 
-    this.promptService.startSpinner(`Processing handoff from ${fromPhase} to ${toPhase}...`);
+    if (!json) {
+      this.promptService.startSpinner(`Processing handoff from ${fromPhase} to ${toPhase}...`);
+    }
 
-    const useCase = new PhaseTransitionUseCase(fs);
+    const useCase = new PhaseTransitionUseCase(fsService);
     const result = await useCase.execute(
       fromPhase,
       toPhase,
@@ -131,7 +155,14 @@ export class HandoffCommand extends BaseEvolithCommand {
       projectRoot
     );
 
-    this.promptService.stopSpinner();
+    if (!json) {
+      this.promptService.stopSpinner();
+    }
+
+    if (json) {
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      return;
+    }
 
     if (result.success) {
       this.promptService.showSuccess(`✓ Handoff ${fromPhase} → ${toPhase} completed`);
@@ -242,5 +273,13 @@ export class HandoffCommand extends BaseEvolithCommand {
   })
   parseForce(): boolean {
     return true;
+  }
+
+  @Option({
+    flags: '-f, --format <string>',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
+    return val;
   }
 }

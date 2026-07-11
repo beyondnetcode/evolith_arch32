@@ -1,7 +1,9 @@
 import { execFileSync } from 'child_process';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
+import { randomUUID } from 'node:crypto';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import packageJson from '../../../package.json';
 
 const SEMVER_REGEX = /^\d+\.\d+\.\d+(-[\w.]+)?(\+[\w.]+)?$/;
@@ -10,6 +12,7 @@ interface UpdateCommandOptions {
   check?: boolean;
   install?: boolean;
   current?: boolean;
+  format?: string;
 }
 
 @Command({
@@ -22,29 +25,60 @@ export class UpdateCommand extends BaseEvolithCommand {
   }
 
   async executeCommand(passedParam: string[], options?: UpdateCommandOptions): Promise<void> {
-    if (options?.current) {
-      await this.showCurrentVersion();
-      return;
-    }
+    const json = options?.format === 'json';
+    const startedAt = Date.now();
+    const meta = {
+      command: 'evolith update',
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+      startedAt,
+    };
 
-    if (options?.check) {
-      await this.checkForUpdates();
-      return;
-    }
+    try {
+      if (options?.current) {
+        await this.showCurrentVersion(json, meta);
+        return;
+      }
 
-    if (options?.install) {
-      await this.installUpdate();
-      return;
-    }
+      if (options?.check) {
+        await this.checkForUpdates(json, meta);
+        return;
+      }
 
-    await this.showUpdateHelp();
+      if (options?.install) {
+        await this.installUpdate(json, meta);
+        return;
+      }
+
+      await this.showUpdateHelp(json, meta);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      } else {
+        throw error;
+      }
+    }
   }
 
-  private async showCurrentVersion(): Promise<void> {
-    this.promptService.showIntro('Evolith CLI Version');
-
+  private async showCurrentVersion(json = false, meta?: any): Promise<void> {
     const currentVersion = this.getCurrentVersion();
     const latestVersion = await this.getLatestVersion();
+
+    if (json) {
+      const result = {
+        current: currentVersion,
+        latest: latestVersion,
+        updateAvailable: latestVersion ? this.isNewerVersion(latestVersion, currentVersion) : false,
+      };
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      return;
+    }
+
+    this.promptService.showIntro('Evolith CLI Version');
 
     this.promptService.showInfo(`Current Version: ${chalk.cyan(currentVersion)}`);
 
@@ -62,81 +96,136 @@ export class UpdateCommand extends BaseEvolithCommand {
     }
   }
 
-  private async checkForUpdates(): Promise<void> {
-    this.promptService.showIntro('Checking for CLI Updates');
-    this.promptService.startSpinner('Checking npm registry...');
+  private async checkForUpdates(json = false, meta?: any): Promise<void> {
+    if (!json) {
+      this.promptService.showIntro('Checking for CLI Updates');
+      this.promptService.startSpinner('Checking npm registry...');
+    }
 
     const currentVersion = this.getCurrentVersion();
     const latestVersion = await this.getLatestVersion();
 
-    this.promptService.stopSpinner();
+    if (!json) {
+      this.promptService.stopSpinner();
+    }
 
     if (!latestVersion) {
-      this.promptService.showError('Could not reach npm registry');
-      this.promptService.showInfo('Check your internet connection and try again');
+      const message = 'Could not reach npm registry';
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.showError(message);
+        this.promptService.showInfo('Check your internet connection and try again');
+      }
       return;
     }
 
-    this.promptService.showInfo(`Current: ${chalk.cyan(currentVersion)}`);
-    this.promptService.showInfo(`Latest:  ${chalk.cyan(latestVersion)}`);
-
-    if (this.isNewerVersion(latestVersion, currentVersion)) {
-      this.promptService.showWarning(`\n⚠ Update available: ${currentVersion} → ${latestVersion}`);
-      this.promptService.showInfo(`\nTo install the update, run:`);
-      this.promptService.showInfo(chalk.cyan(`  npm install -g @beyondnet/evolith-cli@${latestVersion}`));
-      this.promptService.showInfo(`\nOr use the built-in installer:`);
-      this.promptService.showInfo(chalk.cyan(`  evolith update --install`));
+    if (json) {
+      const result = {
+        current: currentVersion,
+        latest: latestVersion,
+        updateAvailable: this.isNewerVersion(latestVersion, currentVersion),
+      };
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
     } else {
-      this.promptService.showSuccess(`\n✓ You are running the latest version (${currentVersion})`);
+      this.promptService.showInfo(`Current: ${chalk.cyan(currentVersion)}`);
+      this.promptService.showInfo(`Latest:  ${chalk.cyan(latestVersion)}`);
+
+      if (this.isNewerVersion(latestVersion, currentVersion)) {
+        this.promptService.showWarning(`\n⚠ Update available: ${currentVersion} → ${latestVersion}`);
+        this.promptService.showInfo(`\nTo install the update, run:`);
+        this.promptService.showInfo(chalk.cyan(`  npm install -g @beyondnet/evolith-cli@${latestVersion}`));
+        this.promptService.showInfo(`\nOr use the built-in installer:`);
+        this.promptService.showInfo(chalk.cyan(`  evolith update --install`));
+      } else {
+        this.promptService.showSuccess(`\n✓ You are running the latest version (${currentVersion})`);
+      }
     }
   }
 
-  private async installUpdate(): Promise<void> {
-    this.promptService.showIntro('Installing CLI Update');
-    this.promptService.startSpinner('Installing latest version...');
+  private async installUpdate(json = false, meta?: any): Promise<void> {
+    if (!json) {
+      this.promptService.showIntro('Installing CLI Update');
+      this.promptService.startSpinner('Installing latest version...');
+    }
 
     const latestVersion = await this.getLatestVersion();
 
     if (!latestVersion) {
-      this.promptService.stopSpinner();
-      this.promptService.showError('Could not fetch latest version');
+      const message = 'Could not fetch latest version';
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.stopSpinner();
+        this.promptService.showError(message);
+      }
       return;
     }
 
     const currentVersion = this.getCurrentVersion();
 
     if (!this.isNewerVersion(latestVersion, currentVersion)) {
-      this.promptService.stopSpinner();
-      this.promptService.showSuccess(`You are already on the latest version (${currentVersion})`);
+      if (json) {
+        const result = { current: currentVersion, latest: latestVersion, installed: false };
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.stopSpinner();
+        this.promptService.showSuccess(`You are already on the latest version (${currentVersion})`);
+      }
       return;
     }
 
     try {
-      this.promptService.stopSpinner();
-      this.promptService.showInfo(`Installing @beyondnet/evolith-cli@${latestVersion}...`);
+      if (!json) {
+        this.promptService.stopSpinner();
+        this.promptService.showInfo(`Installing @beyondnet/evolith-cli@${latestVersion}...`);
+      }
 
       execFileSync('npm', ['install', '-g', `@beyondnet/evolith-cli@${latestVersion}`], {
-        stdio: 'inherit',
+        stdio: json ? 'pipe' : 'inherit',
       });
 
-      this.promptService.showSuccess(`\n✓ Update installed successfully`);
-      this.promptService.showInfo(`Run ${chalk.cyan('evolith --version')} to verify`);
-
       const newVersion = this.getCurrentVersion();
-      if (newVersion === latestVersion) {
-        this.promptService.showSuccess(`Now running ${chalk.cyan(newVersion)}`);
+      if (json) {
+        const result = {
+          previous: currentVersion,
+          current: newVersion,
+          installed: true,
+        };
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
       } else {
-        this.promptService.showWarning(`Installed version differs. You may need to restart your terminal.`);
+        this.promptService.showSuccess(`\n✓ Update installed successfully`);
+        this.promptService.showInfo(`Run ${chalk.cyan('evolith --version')} to verify`);
+
+        if (newVersion === latestVersion) {
+          this.promptService.showSuccess(`Now running ${chalk.cyan(newVersion)}`);
+        } else {
+          this.promptService.showWarning(`Installed version differs. You may need to restart your terminal.`);
+        }
       }
     } catch (error) {
-      this.promptService.stopSpinner();
-      this.promptService.showError('Update failed');
-      this.promptService.showInfo('You can also manually run:');
-      this.promptService.showInfo(chalk.cyan(`  npm install -g @beyondnet/evolith-cli@${latestVersion}`));
+      const message = error instanceof Error ? error.message : String(error);
+      if (json) {
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      } else {
+        this.promptService.stopSpinner();
+        this.promptService.showError('Update failed');
+        this.promptService.showInfo('You can also manually run:');
+        this.promptService.showInfo(chalk.cyan(`  npm install -g @beyondnet/evolith-cli@${latestVersion}`));
+      }
     }
   }
 
-  private async showUpdateHelp(): Promise<void> {
+  private async showUpdateHelp(json = false, meta?: any): Promise<void> {
+    if (json) {
+      const result = { usage: 'Use --current, --check, or --install flags' };
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      return;
+    }
+
     this.promptService.showIntro('Evolith CLI Update');
     this.promptService.showInfo('Check for and apply CLI updates.\n');
 
@@ -209,5 +298,13 @@ export class UpdateCommand extends BaseEvolithCommand {
   })
   parseInstall(): boolean {
     return true;
+  }
+
+  @Option({
+    flags: '-f, --format [string]',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
+    return val;
   }
 }

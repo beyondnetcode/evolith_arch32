@@ -114,21 +114,10 @@ export class StructuredLogger {
 
     const output = parts.join(' ');
 
-    switch (entry.level) {
-      case LogLevel.DEBUG:
-        console.debug(output);
-        break;
-      case LogLevel.INFO:
-        console.info(output);
-        break;
-      case LogLevel.WARN:
-        console.warn(output);
-        break;
-      case LogLevel.ERROR:
-      case LogLevel.FATAL:
-        console.error(output);
-        break;
-    }
+    // Diagnostic logs go to STDERR exclusively. stdout is reserved for the
+    // ADR-0073 JSON envelope in `--format json` mode; console.info/debug write
+    // to stdout and would corrupt a machine read, so every level uses stderr.
+    process.stderr.write(`${output}\n`);
   }
 
   startOperation(name: string): void {

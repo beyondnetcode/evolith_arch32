@@ -100,7 +100,9 @@ export class DriftCommand extends BaseEvolithCommand {
       return;
     }
 
-    this.promptService.startSpinner('Detecting architecture drift...');
+    // The clack spinner writes cursor/escape bytes to stdout; suppress it in
+    // --format json mode so stdout stays a single parseable ADR-0073 envelope.
+    if (!json) this.promptService.startSpinner('Detecting architecture drift...');
 
     try {
       const report = await service.detectDrift({
@@ -109,7 +111,7 @@ export class DriftCommand extends BaseEvolithCommand {
         storeHistory: true,
       });
 
-      this.promptService.stopSpinner();
+      if (!json) this.promptService.stopSpinner();
 
       if (json) {
         console.log(JSON.stringify(createSuccessEnvelope(report, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
@@ -118,7 +120,7 @@ export class DriftCommand extends BaseEvolithCommand {
 
       this.printDriftReport(report);
     } catch (error: unknown) {
-      this.promptService.stopSpinner();
+      if (!json) this.promptService.stopSpinner();
       if (json) {
         const message = error instanceof Error ? error.message : String(error);
         process.exitCode = 1;

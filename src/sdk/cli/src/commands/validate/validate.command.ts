@@ -11,6 +11,7 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
 import {
   createSuccessEnvelope,
+  createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 
@@ -162,7 +163,15 @@ export class ValidateCommand extends BaseEvolithCommand {
     try {
       corePath = resolveRulesets(coreOverride).coreRoot;
     } catch (err) {
-      this.promptService.showError((err as Error).message);
+      const message = (err as Error).message;
+      // GT-485: in --format json mode an aborted validation must still emit an
+      // ADR-0073 error envelope to stdout — previously it printed human text and
+      // exited 1 with an empty stdout, breaking machine consumers.
+      if (json) {
+        console.log(JSON.stringify(createErrorEnvelope('RULESET_NOT_FOUND', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        process.exit(1);
+      }
+      this.promptService.showError(message);
       this.promptService.showOutro('Validación abortada.');
       // GT-474: an aborted validation must exit non-zero. Returning silently
       // exited 0, so CI read "resolved no rulesets" as a passing gate.
@@ -282,7 +291,11 @@ export class ValidateCommand extends BaseEvolithCommand {
       // Surface the actionable message and exit non-zero instead of letting a
       // zero-rule run be mistaken for a validation verdict.
       if (error instanceof RulesetsNotFoundError) {
-        if (!json) {
+        // GT-485: emit an ADR-0073 error envelope in json mode instead of an
+        // empty stdout + exit 1.
+        if (json) {
+          console.log(JSON.stringify(createErrorEnvelope('RULESET_NOT_FOUND', error.message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        } else {
           this.promptService.showError((error as Error).message);
           this.promptService.showOutro('❌ Validación abortada: no se resolvió ningún ruleset del Core.');
         }

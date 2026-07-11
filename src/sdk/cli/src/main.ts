@@ -5,6 +5,7 @@ import { initCliOtel, shutdownCliOtel } from './infrastructure/observability/ote
 import { CommandFactory } from 'nest-commander';
 import { AppModule } from './app.module';
 import { AliasService } from './config/alias.service';
+import { StderrLogger } from './infrastructure/observability/stderr-logger';
 
 /** GT-345: read the CLI version from the package manifest so `--version` works and never drifts. */
 const CLI_VERSION: string = (() => {
@@ -32,7 +33,9 @@ async function bootstrap() {
       process.argv = [process.argv[0], process.argv[1], ...args];
     }
   }
-  await CommandFactory.run(AppModule, { logger: ['warn', 'error'], version: CLI_VERSION });
+  // stdout is reserved for the ADR-0073 JSON envelope in `--format json` mode;
+  // route all Nest diagnostics to stderr so they never corrupt a machine read.
+  await CommandFactory.run(AppModule, { logger: new StderrLogger(), version: CLI_VERSION });
 }
 
 bootstrap()

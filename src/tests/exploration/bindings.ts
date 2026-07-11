@@ -77,14 +77,14 @@ export const BINDINGS: Record<string, Binding> = {
 
   'sdlc-status': {
     verified: false,
-    cli: (c) => ['sdlc', 'gate-status', '--path', c.projectPath, '--format', 'json'],
-    mcp: (c) => ({ tool: 'evolith-sdlc-status', args: { path: c.projectPath } }),
+    cli: (c) => ['sdlc', 'gate-status', '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-sdlc-status', args: {} }),
   },
 
   'sdlc-handoff': {
     verified: false,
-    cli: (c) => ['sdlc', 'handoff', '--phase', 'design', '--path', c.projectPath, '--format', 'json'],
-    mcp: (c) => ({ tool: 'evolith-sdlc-handoff', args: { phase: 'design', path: c.projectPath } }),
+    cli: (c) => ['sdlc', 'handoff', '--from', 'discovery', '--to', 'design', '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-sdlc-handoff', args: { from: 'discovery', to: 'design' } }),
   },
 
   // =========================================================================
@@ -130,13 +130,13 @@ export const BINDINGS: Record<string, Binding> = {
 
   'sdlc-generate': {
     verified: false,
-    cli: (c) => ['sdlc', 'generate', '--ddd-model', 'DDD.md', '--path', c.projectPath, '--format', 'json'],
+    cli: (c) => ['sdlc', 'generate', '--format', 'json'],
   },
 
   'dora-metrics': {
     verified: false,
-    cli: (c) => ['sdlc', 'gate-status', '--dora', '--path', c.projectPath, '--format', 'json'],
-    mcp: (c) => ({ tool: 'evolith-dora-metrics', args: { path: c.projectPath } }),
+    cli: (c) => ['sdlc', 'gate-status', '--since', '90', '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-dora-metrics', args: { since: 90 } }),
   },
 
   // =========================================================================
@@ -233,32 +233,32 @@ export const BINDINGS: Record<string, Binding> = {
 
   'agents-install': {
     verified: false,
-    cli: (c) => ['agents', 'install', '--name', 'gap-analyzer', '--path', c.projectPath, '--format', 'json'],
-    mcp: (c) => ({ tool: 'evolith-agent-install', args: { name: 'gap-analyzer', path: c.projectPath } }),
+    cli: (c) => ['agents', 'install', '--name', 'gap-analyzer', '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-agent-install', args: { name: 'gap-analyzer' } }),
   },
 
   'agents-list': {
     verified: false,
-    cli: (c) => ['agents', 'list', '--path', c.projectPath, '--format', 'json'],
-    mcp: (c) => ({ tool: 'evolith-agent-list', args: { path: c.projectPath } }),
+    cli: (c) => ['agents', 'list', '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-agent-list', args: {} }),
   },
 
   'agents-validate': {
     verified: false,
-    cli: (c) => ['agents', 'validate', '--name', 'gap-analyzer', '--path', c.projectPath, '--format', 'json'],
-    mcp: (c) => ({ tool: 'evolith-agent-validate', args: { name: 'gap-analyzer', path: c.projectPath } }),
+    cli: (c) => ['agents', 'validate', '--name', 'gap-analyzer', '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-agent-validate', args: { name: 'gap-analyzer' } }),
   },
 
   'agents-upgrade': {
     verified: false,
-    cli: (c) => ['agents', 'upgrade', '--name', 'gap-analyzer', '--path', c.projectPath, '--format', 'json'],
-    mcp: (c) => ({ tool: 'evolith-agent-upgrade', args: { name: 'gap-analyzer', path: c.projectPath } }),
+    cli: (c) => ['agents', 'upgrade', '--name', 'gap-analyzer', '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-agent-upgrade', args: { name: 'gap-analyzer' } }),
   },
 
   'agents-remove': {
     verified: false,
-    cli: (c) => ['agents', 'remove', '--name', 'gap-analyzer', '--path', c.projectPath, '--format', 'json'],
-    mcp: (c) => ({ tool: 'evolith-agent-remove', args: { name: 'gap-analyzer', path: c.projectPath } }),
+    cli: (c) => ['agents', 'remove', '--name', 'gap-analyzer', '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-agent-remove', args: { name: 'gap-analyzer' } }),
   },
 
   // =========================================================================
@@ -300,17 +300,17 @@ export const BINDINGS: Record<string, Binding> = {
 
   'adr-crud': {
     verified: false,
-    cli: (c) => ['adr', 'list', '--path', c.projectPath, '--format', 'json'],
+    cli: (c) => ['adr', 'list', '--format', 'json'],
   },
 
   'standards-crud': {
     verified: false,
-    cli: (c) => ['standards', '--list', '--path', c.projectPath, '--format', 'json'],
+    cli: (c) => ['standards', '--format', 'json'],
   },
 
   'docs-scaffold': {
     verified: false,
-    cli: (c) => ['docs', '--init', '--path', c.projectPath, '--format', 'json'],
+    cli: (c) => ['docs', '--format', 'json'],
   },
 
   // =========================================================================
@@ -319,7 +319,7 @@ export const BINDINGS: Record<string, Binding> = {
 
   'scaffold-architecture': {
     verified: false,
-    cli: (c) => ['scaffold', '--topology', 'monolithic-layered', '--path', c.projectPath, '--format', 'json'],
+    // scaffold command is not directly invoked via CLI; architectural scaffolding is handled via topology command
   },
 
   // =========================================================================
@@ -328,11 +328,11 @@ export const BINDINGS: Record<string, Binding> = {
 
   'init-project': {
     verified: false,
-    cli: (c) => ['init', '--path', c.projectPath, '--format', 'json'],
+    cli: (c) => ['init', '--format', 'json'],
     rest: (c) => ({
       method: 'POST',
       path: '/api/v1/projects/initialize',
-      body: { path: c.projectPath },
+      body: { workspaceRef: c.workspaceRef },
     }),
   },
 
@@ -357,7 +357,7 @@ export const BINDINGS: Record<string, Binding> = {
 
   'mcp-serve': {
     verified: false,
-    cli: (c) => ['mcp', 'serve'],
+    // mcp serve is a standalone process, not invoked via CLI args
   },
 
   'alias': {
@@ -367,7 +367,7 @@ export const BINDINGS: Record<string, Binding> = {
 
   'fixtures': {
     verified: false,
-    cli: (c) => ['fixtures', 'seed', '--path', c.projectPath, '--format', 'json'],
+    cli: (c) => ['fixtures', 'seed', '--format', 'json'],
   },
 
   'api-browser': {
@@ -382,11 +382,11 @@ export const BINDINGS: Record<string, Binding> = {
 
   'init-wizard': {
     verified: false,
-    cli: (c) => ['init-wizard'],
+    cli: (c) => ['init'],
   },
 
   'upgrade-satellite': {
     verified: false,
-    cli: (c) => ['upgrade', '--path', c.projectPath, '--format', 'json'],
+    cli: (c) => ['upgrade', '--format', 'json'],
   },
 };

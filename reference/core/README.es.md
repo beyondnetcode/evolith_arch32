@@ -62,6 +62,7 @@ Los productos consumen Core. No lo redefinen.
 | [Hub de Arquitectura](./architecture/README.es.md) | Principios, patrones, modelos de referencia, contratos y ADRs Core | Guiar el diseño corporativo | Hub de área | Sí |
 | [Centro de Gobernanza SDLC](./sdlc/README.es.md) | Fases, gates, artefactos, evidencias, roles, excepciones, trazabilidad y métricas | Gobernar el ciclo de vida completo | Hub de dominio | Sí |
 | Centro de Estándares y Gobernanza | Estándares reutilizables y reglas de gobernanza | Alinear equipos a políticas unificadas | Hub de área | Sí |
+| [Guías de Interfaces](./interfaces/README.md) | Guías legibles para operar el Core por CLI, MCP y REST — cada comando/tool/endpoint con sus opciones y ejemplos | Aprender y consultar las interfaces | Hub de área | Sí |
 | [Rulesets Hub](../../src/rulesets/README.es.md) | Políticas y contratos de validación consumibles por máquinas | Validar cumplimiento automáticamente | Hub de reglas | Sí |
 | [Hub de Gobernanza](./sdlc/governance/README.es.md) | Terminología, clasificaciones y límites canónicos | Mantener consistentes el lenguaje y los límites | Hub de área | Sí |
 | [Hub de Conocimiento](../knowledge/README.md) | Lecciones de satélites pendientes de revisión upstream | Capturar evidencia y aprendizaje | Hub de área | No |

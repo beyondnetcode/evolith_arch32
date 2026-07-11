@@ -68,8 +68,12 @@ npx ts-node --transpile-only \
 
 ## Phases
 
-- [Discovery](how-to-discovery.md) · [playbook](playbook-discovery.md)
-- [Design](how-to-design.md) · [playbook](playbook-design.md)
+- [Discovery](how-to-discovery.md) · _playbook: pending_
+- [Design](how-to-design.md) · _playbook: pending_
 - [Construction](how-to-construction.md) · [playbook](playbook-construction.md)
-- [QA](how-to-qa.md) · [playbook](playbook-qa.md)
-- [Release](how-to-release.md) · [playbook](playbook-release.md)
+- [QA](how-to-qa.md) · _playbook: pending_
+- [Release](how-to-release.md) · _playbook: pending_
+
+---
+
+[Back to Evolith Core hub](../README.md)

@@ -9,6 +9,7 @@ import type {
 } from '@beyondnet/evolith-core';
 import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@beyondnet/evolith-core';
 import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain';
+import { resolveRulesetFilePath } from '@beyondnet/evolith-infra-providers';
 import { McpTool } from '../mcp/tool.interface';
 
 const DOWNSTREAM_PHASES: readonly DownstreamPhase[] = ['construction', 'quality', 'deployment'];
@@ -117,7 +118,9 @@ export function createTopologyTools(
       execute: async (args) => {
         const corePath = (args.corePath as string) || path.join(process.cwd(), '..', 'evolith');
         const signals = (args.signals as TopologyRecommendationSignals) || {};
-        const rulesPath = path.join(corePath, 'src', 'rulesets', 'architecture', 'topology-recommendation.rules.json');
+        // Shared dual-probe resolver (src/rulesets | rulesets) — same resolution
+        // the CLI uses, so both surfaces locate the same rules file.
+        const rulesPath = resolveRulesetFilePath(corePath, path.join('architecture', 'topology-recommendation.rules.json'));
         try {
           const rules = JSON.parse(await fs.readFile(rulesPath)) as TopologyRecommendationRules;
           const result = recommendation.recommend(rules, signals);

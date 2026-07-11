@@ -20,3 +20,4 @@ export type {
 } from '@beyondnet/evolith-core-domain';
 export { NxWorkspaceStrategy } from './architecture/nx-workspace.strategy';
 export type { NxWorkspaceStrategyOptions } from './architecture/nx-workspace.strategy';
+export { resolveRulesetFilePath } from './architecture/ruleset-file-resolver';

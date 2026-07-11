@@ -17,6 +17,7 @@ import {
 import * as path from 'node:path';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
+import { resolveRulesetFilePath } from '@beyondnet/evolith-infra-providers';
 
 interface RecommendOptions {
   core?: string;
@@ -83,8 +84,10 @@ export class RecommendCommand extends BaseEvolithCommand {
     const signals: TopologyRecommendationSignals = { ...(opts.signals ?? {}), ...flagSignals };
 
     try {
-      const { rulesetsRoot } = resolveRulesets(coreOverride);
-      const rulesPath = path.join(rulesetsRoot, 'architecture', 'topology-recommendation.rules.json');
+      // Use the shared dual-probe resolver (src/rulesets | rulesets) so the CLI
+      // and the MCP tool locate the same rules file (cross-surface parity).
+      const { coreRoot } = resolveRulesets(coreOverride);
+      const rulesPath = resolveRulesetFilePath(coreRoot, path.join('architecture', 'topology-recommendation.rules.json'));
       const rules = JSON.parse(await this.fileSystem.readFile(rulesPath)) as TopologyRecommendationRules;
       const result = new TopologyRecommendationService().recommend(rules, signals);
 

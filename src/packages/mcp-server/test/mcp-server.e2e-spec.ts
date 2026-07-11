@@ -81,7 +81,7 @@ describe('mcp-server (e2e) — MCP HTTP surface', () => {
     }));
     expect(r.status).toBe(200);
     const body = JSON.parse(r.body);
-    expect(body.result.serverInfo.name).toBe('evolith-mcp-server');
+    expect(body.result.serverInfo.name).toBe('evolith-mcp');
     expect(r.headers['mcp-session-id']).toBeTruthy();
   });
 });

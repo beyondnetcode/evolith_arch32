@@ -14,7 +14,7 @@ const EN_OUT = path.join(ROOT, 'reference/products/smart-cli/product-inventory.m
 const ES_OUT = path.join(ROOT, 'reference/products/smart-cli/product-inventory.es.md');
 
 // A tool that only launches the MCP server is infrastructure, not a governance tool.
-const META_TOOLS = new Set(['evolith-mcp-server']);
+const META_TOOLS = new Set(['evolith-mcp']);
 
 function read(file) {
   return fs.existsSync(file) ? fs.readFileSync(file, 'utf-8') : '';

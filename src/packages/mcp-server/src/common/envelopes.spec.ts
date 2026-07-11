@@ -23,7 +23,14 @@ describe('envelopes', () => {
       const env = success({ ok: 1 }, META);
       expect(env.success).toBe(true);
       expect(env.data).toEqual({ ok: 1 });
-      expect(env.meta).toEqual({ ...META, schemaVersion: expect.any(String) });
+      // buildMeta emits the ADR-0073 canonical keys (command/executedAt) alongside
+      // their MCP-native aliases (tool/timestamp), plus the pinned schemaVersion.
+      expect(env.meta).toEqual({
+        ...META,
+        command: META.tool,
+        executedAt: META.timestamp,
+        schemaVersion: expect.any(String),
+      });
     });
 
     it('defaults the timestamp when not supplied', () => {

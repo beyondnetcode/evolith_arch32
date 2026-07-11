@@ -155,7 +155,7 @@ flowchart TB
         subgraph PODS["Deployments (Helm Charts locales)"]
             direction LR
             POD_CORE["evolith-core-api:local\n(Puerto 3000)"]:::dev
-            POD_MCP["evolith-mcp-server:local\n(Puerto 3000)"]:::dev
+            POD_MCP["evolith-mcp:local\n(Puerto 3000)"]:::dev
             POD_RUNTIME["evolith-agent-runtime:local\n(Puerto 3000)"]:::dev
         end
 

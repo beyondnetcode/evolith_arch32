@@ -117,7 +117,7 @@ evolith-mcp serve --transport http --port 49100
 | `LOG_LEVEL` | `info` | Nivel de log Pino: `trace`, `debug`, `info`, `warn`, `error` |
 | `REDIS_URL` | — | URL de Redis para caché de resources (ej: `redis://localhost:6379`). La caché es opcional. |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | — | Endpoint OpenTelemetry para tracing |
-| `OTEL_SERVICE_NAME` | `evolith-mcp-server` | Nombre del servicio en los traces |
+| `OTEL_SERVICE_NAME` | `evolith-mcp` | Nombre del servicio en los traces |
 
 > El binario también acepta los flags `--transport`/`-t`, `--port`/`-p`, `--api-key` y `--allow-no-auth`, además del subcomando `evolith-mcp version`.
 
@@ -644,7 +644,7 @@ tail -f /tmp/mcp.log | jq .
 
 ```bash
 OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318 \
-OTEL_SERVICE_NAME=evolith-mcp-server \
+OTEL_SERVICE_NAME=evolith-mcp \
 evolith-mcp serve
 ```
 

@@ -3,7 +3,7 @@
 # MinIO that does not exist on Docker Desktop). Reach the service with:
 #   kubectl -n evolith-local port-forward svc/<release>-evolith-mcp 8081:80
 image:
-  repository: evolith-mcp-server
+  repository: evolith-mcp
   tag: local2
   pullPolicy: IfNotPresent
 

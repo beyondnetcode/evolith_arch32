@@ -299,7 +299,7 @@ jobs:
           - service: mcp-server
             context: .
             dockerfile: ./src/packages/mcp-server/Dockerfile
-            image: evolith-mcp-server
+            image: evolith-mcp
     steps:
       - uses: actions/checkout@v7
 

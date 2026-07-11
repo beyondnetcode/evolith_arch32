@@ -40,7 +40,7 @@ reproducible. Un run verde de los cuatro playbooks es el gate E2E cross-superfic
 - **Superficie:** superficie de protocolo MCP HTTP de `mcp-server`.
 - **Comando:** `npm run --workspace packages/mcp-server build && npm run --workspace packages/mcp-server test:e2e`
 - **Suite:** `packages/mcp-server/test/mcp-server.e2e-spec.ts` (levanta `node dist/main serve --transport http`).
-- **Escenarios:** `/health` público → 200; `POST /` sin key → 401 (auth fail-closed); `initialize` con key → 200 + `serverInfo.name = evolith-mcp-server` + `mcp-session-id`.
+- **Escenarios:** `/health` público → 200; `POST /` sin key → 401 (auth fail-closed); `initialize` con key → 200 + `serverInfo.name = evolith-mcp` + `mcp-session-id`.
 - **Esperado:** 3/3 verde. Requiere build previo (`dist/main`).
 
 ## Correr Todos los Flujos

@@ -25,7 +25,7 @@ ROOT="$(git rev-parse --show-toplevel)"
 HELM="$ROOT/reference/infrastructure/helm"
 CLUSTER="${KIND_CLUSTER:-evolith}"   # dedicated kind cluster name (kind-<name> context)
 
-IMAGES=(evolith-core-api:"$IMAGE_TAG" evolith-mcp-server:"$IMAGE_TAG" evolith-agent-runtime:"$IMAGE_TAG")
+IMAGES=(evolith-core-api:"$IMAGE_TAG" evolith-mcp:"$IMAGE_TAG" evolith-agent-runtime:"$IMAGE_TAG")
 
 kind_create() {
   if kind get clusters 2>/dev/null | grep -qx "$CLUSTER"; then
@@ -47,7 +47,7 @@ kind_load() {
 build() {
   echo "==> Building images (context = repo root, tag = $IMAGE_TAG)"
   docker build -f "$ROOT/apps/core-api/Dockerfile"          -t evolith-core-api:"$IMAGE_TAG"     "$ROOT"
-  docker build -f "$ROOT/packages/mcp-server/Dockerfile"    -t evolith-mcp-server:"$IMAGE_TAG"   "$ROOT"
+  docker build -f "$ROOT/packages/mcp-server/Dockerfile"    -t evolith-mcp:"$IMAGE_TAG"   "$ROOT"
   docker build -f "$ROOT/apps/agent-runtime-api/Dockerfile" -t evolith-agent-runtime:"$IMAGE_TAG" "$ROOT"
 }
 

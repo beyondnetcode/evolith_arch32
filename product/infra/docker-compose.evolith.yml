@@ -65,7 +65,7 @@ services:
     build:
       context: ../..
       dockerfile: src/packages/mcp-server/Dockerfile
-    image: evolith-mcp-server:local
+    image: evolith-mcp:local
     container_name: evolith-mcp
     restart: unless-stopped
     environment:

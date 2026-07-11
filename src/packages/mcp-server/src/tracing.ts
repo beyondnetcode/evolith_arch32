@@ -13,7 +13,7 @@ if (!g.__otelInitialized && process.env.OTEL_ENABLED === 'true') {
         '@opentelemetry/instrumentation-http': { enabled: true },
       }),
     ],
-    serviceName: 'evolith-mcp-server',
+    serviceName: 'evolith-mcp',
   });
 
   sdk.start();

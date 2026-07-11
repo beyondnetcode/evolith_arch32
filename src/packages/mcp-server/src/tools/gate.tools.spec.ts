@@ -7,7 +7,11 @@ import { McpTool } from '../mcp/tool.interface';
 const noopWebhook = { notify: async () => undefined };
 const fs = new NodeFileSystemProvider().createFileSystem();
 const logger = new NoOpLoggerProvider().createLogger('test');
-const REPO_ROOT = path.resolve(__dirname, '../../../..');
+// tools → src → mcp-server → packages → src → repo root (5 levels up).
+// The `src/` monorepo cutover added one directory; the old 4-level path
+// resolved to `<repo>/src` and the gate evaluator could not find
+// `reference/governance/sdlc/gates`.
+const REPO_ROOT = path.resolve(__dirname, '../../../../..');
 
 function tool(tools: McpTool[]): McpTool {
   return tools[0];

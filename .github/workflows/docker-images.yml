@@ -33,7 +33,7 @@ jobs:
             dockerfile: src/apps/agent-runtime-api/Dockerfile
           - name: evolith-core-api
             dockerfile: src/apps/core-api/Dockerfile
-          - name: evolith-mcp-server
+          - name: evolith-mcp
             dockerfile: src/packages/mcp-server/Dockerfile
     steps:
       - name: Checkout

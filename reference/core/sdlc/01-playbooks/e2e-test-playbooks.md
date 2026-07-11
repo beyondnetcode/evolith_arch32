@@ -40,7 +40,7 @@ A green run of all four playbooks is the cross-surface E2E gate.
 - **Surface:** `mcp-server` MCP HTTP protocol surface.
 - **Command:** `npm run --workspace packages/mcp-server build && npm run --workspace packages/mcp-server test:e2e`
 - **Suite:** `packages/mcp-server/test/mcp-server.e2e-spec.ts` (spawns `node dist/main serve --transport http`).
-- **Scenarios:** public `/health` → 200; `POST /` without key → 401 (fail-closed auth); `initialize` with key → 200 + `serverInfo.name = evolith-mcp-server` + `mcp-session-id`.
+- **Scenarios:** public `/health` → 200; `POST /` without key → 401 (fail-closed auth); `initialize` with key → 200 + `serverInfo.name = evolith-mcp` + `mcp-session-id`.
 - **Expected:** 3/3 green. Requires a prior build (`dist/main`).
 
 ## Running All Flows

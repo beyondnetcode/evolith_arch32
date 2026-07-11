@@ -164,7 +164,7 @@ flowchart TB
         subgraph PODS["Deployments (Core Services)"]
             direction LR
             POD_CORE["evolith-core-api:local\n(Port 3000)\n+ Dapr Sidecar"]:::dev
-            POD_MCP["evolith-mcp-server:local\n(Port 3000)\n+ Dapr Sidecar"]:::dev
+            POD_MCP["evolith-mcp:local\n(Port 3000)\n+ Dapr Sidecar"]:::dev
             POD_RUNTIME["evolith-agent-runtime:local\n(Port 3000)\n+ Dapr Sidecar"]:::dev
         end
 

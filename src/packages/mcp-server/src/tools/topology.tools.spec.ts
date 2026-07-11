@@ -1,5 +1,13 @@
+import * as path from 'node:path';
 import { createTopologyTools } from './topology.tools';
+import { resolveRulesetFilePath } from '@beyondnet/evolith-infra-providers';
 import type { IFileSystem, ILogger } from '@beyondnet/evolith-core';
+
+// The recommend tool resolves the ruleset file via the shared dual-probe
+// resolver (real fs: `<core>/src/rulesets` | `<core>/rulesets`) before reading
+// it through the injected fs, so the tests need a real corePath that actually
+// contains the rules. tools → src → mcp-server → packages → src → repo root.
+const REPO_ROOT = path.resolve(__dirname, '../../../../..');
 
 describe('createTopologyTools', () => {
   let fsMock: jest.Mocked<IFileSystem>;
@@ -131,8 +139,10 @@ describe('createTopologyTools', () => {
     it('loads the rules from corePath and recommends a composition from signals', async () => {
       fsMock.readFile.mockResolvedValue(JSON.stringify(rules));
       const [, , recommendTool] = createTopologyTools(fsMock, loggerMock);
-      const result = await recommendTool.execute({ corePath: '/core', signals: { asyncIntegration: true } });
-      expect(fsMock.readFile).toHaveBeenCalledWith('/core/src/rulesets/architecture/topology-recommendation.rules.json');
+      const result = await recommendTool.execute({ corePath: REPO_ROOT, signals: { asyncIntegration: true } });
+      expect(fsMock.readFile).toHaveBeenCalledWith(
+        resolveRulesetFilePath(REPO_ROOT, path.join('architecture', 'topology-recommendation.rules.json')),
+      );
       expect(result).toMatchObject({
         success: true,
         data: {
@@ -146,14 +156,14 @@ describe('createTopologyTools', () => {
     it('defaults to modular-monolith when no signals are provided', async () => {
       fsMock.readFile.mockResolvedValue(JSON.stringify(rules));
       const [, , recommendTool] = createTopologyTools(fsMock, loggerMock);
-      const result = await recommendTool.execute({ corePath: '/core' });
+      const result = await recommendTool.execute({ corePath: REPO_ROOT });
       expect(result).toMatchObject({ success: true, data: { recommended: ['modular-monolith'] } });
     });
 
     it('wraps rule-loading failures into the error envelope', async () => {
       fsMock.readFile.mockRejectedValue(new Error('rules missing'));
       const [, , recommendTool] = createTopologyTools(fsMock, loggerMock);
-      const result = await recommendTool.execute({ corePath: '/core' });
+      const result = await recommendTool.execute({ corePath: REPO_ROOT });
       expect(result).toMatchObject({ error: true, message: expect.stringContaining('rules missing') });
     });
   });

@@ -51,7 +51,7 @@ export interface McpStartOptions {
   stdout?: Writable;
 }
 
-const SERVER_NAME = 'evolith-mcp-server';
+const SERVER_NAME = 'evolith-mcp';
 const SERVER_VERSION = '1.0.0';
 const tracer = trace.getTracer(SERVER_NAME);
 

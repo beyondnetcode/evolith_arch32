@@ -1,0 +1,58 @@
+# Evolith Core — Interface How-To
+
+How to drive Evolith Core across its three surfaces — **CLI** (`evolith …`), **MCP**
+(`evolith-*` tools), and **REST** (`/api/v1/…`) — organized by SDLC phase.
+
+## Two layers
+
+| Layer | File pattern | Nature | Answers |
+| --- | --- | --- | --- |
+| **Reference catalog** | `how-to-<phase>.md` | **Generated** | "What is operation X, on each surface — its options, a worked request, and the real response?" |
+| **Phase playbook** | `playbook-<phase>.md` | **Curated** | "How do I work this phase — what do I run, in what order, and what do I expect?" |
+
+The playbook is the narrative journey; it links into the catalog for the exact
+command/options/examples. The catalog is the dictionary.
+
+## Why the catalog cannot drift
+
+The catalog is **derived from the certified source of truth**, never hand-written:
+
+1. `reference/core/control-center/audits/surface-parity-matrix.json` — which
+   operations exist and on which surfaces.
+2. `src/tests/exploration/bindings.ts` — the **exact CLI/MCP/REST request** the
+   conformance tester executes for each operation.
+3. `src/tests/exploration/.out/howto-capture.json` — each MCP tool's live
+   `inputSchema` **and the real ADR-0073 response envelope** every surface
+   returned (emitted by the exploration test run).
+4. The `@Option` (CLI) and `@ApiProperty` (REST) decorators — the flag/field tables.
+
+A conformance test (`exploration.spec.ts` → *"the generated interface how-to docs
+are up to date"*) regenerates the docs and **fails CI if the committed files
+diverge** from the source of truth. So a documented invocation is, by
+construction, one that actually runs and returns what it says.
+
+## Target architecture the how-to reflects
+
+- **CLI** — the reference surface; every command emits an ADR-0073 envelope with
+  `--format json` and exits non-zero on a failing verdict.
+- **MCP** — full parity with the CLI for agent-invokable actions (filesystem/
+  scaffolding included); mutative tools require `{ apply, approvalToken }`.
+- **REST** — the middleware the Evolith Tracker consumes; exposes the Core's
+  stateless evaluation commands + data behind a global envelope.
+
+## Regenerating
+
+```bash
+npm run test:exploration        # boots the 3 surfaces, captures schemas + responses
+npx ts-node --transpile-only \
+  --project src/tests/exploration/tsconfig.json \
+  src/tests/exploration/gen-howto.ts all
+```
+
+## Phases
+
+- [Discovery](how-to-discovery.md) · [playbook](playbook-discovery.md)
+- [Design](how-to-design.md) · [playbook](playbook-design.md)
+- [Construction](how-to-construction.md) · [playbook](playbook-construction.md)
+- [QA](how-to-qa.md) · [playbook](playbook-qa.md)
+- [Release](how-to-release.md) · [playbook](playbook-release.md)

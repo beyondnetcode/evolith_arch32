@@ -103,6 +103,32 @@ describe('Cross-surface exploration agent (F1)', () => {
     };
 
     run = await runExploration(harness, OUT_DIR);
+
+    // Capture for the derived interface how-to (gen-howto.ts): the MCP tool
+    // inputSchemas + the REAL response envelope each surface returned, so the
+    // generated docs show requests AND responses that actually ran.
+    const responses: Record<string, Record<string, unknown>> = {};
+    for (const [opId, results] of Object.entries(run.byOperation)) {
+      const perSurface: Record<string, unknown> = {};
+      for (const r of results) perSurface[r.surface] = r.envelope;
+      responses[opId] = perSurface;
+    }
+    // Sanitise run-specific data so the generated docs are DETERMINISTIC (the
+    // howto-conformance check diffs them byte-for-byte). Value-aware so it
+    // catches volatiles by shape regardless of key: any ISO timestamp, any *Ms
+    // timing, uuids, and the ephemeral fixture path / workspace name.
+    const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+    const capObj = { mcpTools: await harness.mcp.listTools(), responses };
+    let capture = JSON.stringify(capObj, (k, v) => {
+      if (k.endsWith('Ms') && typeof v === 'number') return 0;
+      if (k === 'correlationId' || k === 'traceId') return '<uuid>';
+      if (typeof v === 'string' && ISO.test(v)) return '<timestamp>';
+      return v;
+    }, 2);
+    const wsRef = projectPath.split('/').pop();
+    capture = capture.split(projectPath).join('/abs/path/to/your-satellite');
+    if (wsRef) capture = capture.split(wsRef).join('your-satellite');
+    fs.writeFileSync(path.join(OUT_DIR, 'howto-capture.json'), capture);
   }, 180000);
 
   afterAll(async () => {
@@ -144,6 +170,23 @@ describe('Cross-surface exploration agent (F1)', () => {
     // fail the build. Hypothesis findings (unverified bindings) stay informational.
     const confirmed = run.findings.filter((f) => f.confidence === 'confirmed');
     expect(confirmed).toEqual([]);
+  });
+
+  it('the generated interface how-to docs are up to date (no drift)', async () => {
+    const { PHASES, renderPhase, loadMatrix, loadCapture } = await import('./gen-howto');
+    const matrix = loadMatrix();
+    const cap = loadCapture(); // .out/howto-capture.json, written in beforeAll
+    const stale: string[] = [];
+    for (const phaseKey of Object.keys(PHASES)) {
+      const docPath = path.join(REPO_ROOT, `reference/core/interfaces/how-to-${phaseKey}.md`);
+      const committed = fs.existsSync(docPath) ? fs.readFileSync(docPath, 'utf-8') : '';
+      if (committed !== renderPhase(phaseKey, matrix, cap)) stale.push(phaseKey);
+    }
+    // If this fails, the source of truth (matrix / bindings / options) changed
+    // but the docs weren't regenerated. Run:
+    //   npx ts-node --transpile-only --project src/tests/exploration/tsconfig.json \
+    //     src/tests/exploration/gen-howto.ts all   (after `npm run test:exploration`)
+    expect(stale).toEqual([]);
   });
 
   it('emits a coverage + findings summary', () => {

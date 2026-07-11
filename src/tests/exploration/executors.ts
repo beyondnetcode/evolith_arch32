@@ -169,6 +169,21 @@ export class McpExecutor {
     return JSON.parse(json) as McpParsed;
   }
 
+  /** List every registered tool with its inputSchema (for the how-to generator). */
+  async listTools(): Promise<Record<string, unknown>> {
+    const init = await this.post({
+      jsonrpc: '2.0', id: 0, method: 'initialize',
+      params: { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'howto', version: '1.0.0' } },
+    });
+    const sessionId = init.headers['mcp-session-id'] as string | undefined;
+    if (!sessionId) return {};
+    await this.post({ jsonrpc: '2.0', method: 'notifications/initialized' }, sessionId);
+    const res = await this.post({ jsonrpc: '2.0', id: 1, method: 'tools/list', params: {} }, sessionId);
+    const parsed = McpExecutor.parseBody(res.body) as { result?: { tools?: Array<{ name: string; inputSchema: unknown }> } };
+    const tools = parsed.result?.tools ?? [];
+    return Object.fromEntries(tools.map((t) => [t.name, t.inputSchema]));
+  }
+
   async run(
     operationId: string,
     tool: string,

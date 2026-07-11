@@ -64,14 +64,14 @@ Ningún componente crea su propia verdad. Cada regla, artefacto y estándar debe
 ### 2.1 Estructura de Paquetes
 
 ```
-@evolith/sdk (futuro)
-├── @evolith/sdk-core        # Carga de Core, resolución de reglas, validación
-├── @evolith/sdk-artifacts   # Generación y validación de artefactos
-├── @evolith/sdk-sdlc        # Puertas de fase, recolección de evidencia
-└── @evolith/sdk-mcp         # Adaptadores de protocolo MCP
+@beyondnet/evolith-sdk (futuro)
+├── @beyondnet/evolith-sdk-core        # Carga de Core, resolución de reglas, validación
+├── @beyondnet/evolith-sdk-artifacts   # Generación y validación de artefactos
+├── @beyondnet/evolith-sdk-sdlc        # Puertas de fase, recolección de evidencia
+└── @beyondnet/evolith-sdk-mcp         # Adaptadores de protocolo MCP
 
-@evolith/smart-cli (actual)
-└── Implementa comandos CLI usando @evolith/sdk-core
+@beyondnet/evolith-cli (actual)
+└── Implementa comandos CLI usando @beyondnet/evolith-sdk-core
 ```
 
 **Nota:** Actualmente, el SDK y el CLI están combinados en `sdk/cli/`. Una refactorización futura debería extraer el SDK en paquetes separados.
@@ -176,7 +176,7 @@ interface SDLCService {
 ### 3.1 Estructura de Comandos
 
 ```
-smart-cli <dominio> <acción> [opciones]
+evolith-cli <dominio> <acción> [opciones]
 
 Dominios:
   core        - Información y gestión de Core
@@ -517,8 +517,8 @@ Los satélites pueden definir rulesets locales que extienden Core:
 ## 10. Estrategia de Migración
 
 ### Fase 1: Extracción del SDK
-1. Extraer la lógica de Core en `@evolith/sdk-core`
-2. Mantener el CLI en `@evolith/smart-cli` usando el SDK
+1. Extraer la lógica de Core en `@beyondnet/evolith-sdk-core`
+2. Mantener el CLI en `@beyondnet/evolith-cli` usando el SDK
 3. Mantener la compatibilidad hacia atrás
 
 ### Fase 2: Finalización del MCP
@@ -527,7 +527,7 @@ Los satélites pueden definir rulesets locales que extienden Core:
 3. MCP para agentes de IA e IDEs
 
 ### Fase 3: División de Paquetes
-1. Dividir el SDK en `@evolith/sdk-core`, `@evolith/sdk-artifacts`, `@evolith/sdk-sdlc`
+1. Dividir el SDK en `@beyondnet/evolith-sdk-core`, `@beyondnet/evolith-sdk-artifacts`, `@beyondnet/evolith-sdk-sdlc`
 2. Publicar en npm
 3. El CLI depende de los paquetes del SDK
 

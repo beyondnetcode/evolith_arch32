@@ -1,5 +1,5 @@
 /**
- * Canonical topology catalog for the Evolith Smart CLI.
+ * Canonical topology catalog for the Evolith CLI.
  *
  * This is the single source of truth the CLI uses to validate and normalize
  * `--topology`, `--level` and `--phase` inputs. It mirrors the topology

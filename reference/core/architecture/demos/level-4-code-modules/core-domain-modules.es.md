@@ -8,7 +8,7 @@
 
 ## 1. Contexto del Módulo de Dominio
 
-El Evolith Core Domain es donde residen los contratos ejecutables de gobernanza y la lógica stateless de evaluación arquitectónica. Consiste en módulos TypeScript de dominio/aplicación/evaluación (`@evolith/core-domain`), rulesets JSON que declaran la intención arquitectónica, esquemas JSON que validan payloads y artefactos de política OPA Rego/WASM.
+El Evolith Core Domain es donde residen los contratos ejecutables de gobernanza y la lógica stateless de evaluación arquitectónica. Consiste en módulos TypeScript de dominio/aplicación/evaluación (`@beyondnet/evolith-core-domain`), rulesets JSON que declaran la intención arquitectónica, esquemas JSON que validan payloads y artefactos de política OPA Rego/WASM.
 
 ## 2. Mapa de Organización de Código
 

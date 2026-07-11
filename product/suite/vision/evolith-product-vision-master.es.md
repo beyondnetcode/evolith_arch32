@@ -116,7 +116,7 @@ El chatbox es un intermediario, no la fuente de autoridad. Los LLMs y agentes se
 
 ### 2.5 Capa de Interfaces Técnicas
 
-> **Exposición en dos capas (ADRs [0074](../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) + [0075](../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)).** Evolith Core **expone** su capacidad a través de una **Capa de Exposición del Core** neutral respecto del producto — `apps/core-api` (REST) más el `mcp-server` (MCP) y el `smart-cli` (CLI). El Evolith Tracker es un **cliente externo**: su **BFF / Application Gateway** (NestJS, ADR-0075, en el repositorio `evolith_tracker`) consume esa exposición y adapta payloads por dispositivo, recorta PII y gestiona sesión/cookies para la PWA. El BFF del Tracker **no** vive en Core — el [ADR-0074](../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) **rechazó** explícitamente esa opción.
+> **Exposición en dos capas (ADRs [0074](../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) + [0075](../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)).** Evolith Core **expone** su capacidad a través de una **Capa de Exposición del Core** neutral respecto del producto — `apps/core-api` (REST) más el `mcp-server` (MCP) y el `evolith-cli` (CLI). El Evolith Tracker es un **cliente externo**: su **BFF / Application Gateway** (NestJS, ADR-0075, en el repositorio `evolith_tracker`) consume esa exposición y adapta payloads por dispositivo, recorta PII y gestiona sesión/cookies para la PWA. El BFF del Tracker **no** vive en Core — el [ADR-0074](../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) **rechazó** explícitamente esa opción.
 
 ```mermaid
 flowchart TB
@@ -126,14 +126,14 @@ flowchart TB
   subgraph CORE["repo · evolith_arch32 (Evolith Core · Constitución)"]
     subgraph EXP["Capa de Exposición del Core · ADR-0074"]
       API["apps/core-api<br/>REST · 8 controllers"]
-      MCP["mcp-server<br/>MCP · 26 tools · 9 resources"]
-      CLI["smart-cli<br/>CLI · 20 commands"]
+      MCP["mcp-server<br/>MCP · 47 tools · 9 resources"]
+      CLI["evolith-cli<br/>CLI · 20 commands"]
     end
-    subgraph RT["Agent Runtime · @evolith/agent-runtime"]
+    subgraph RT["Agent Runtime · @beyondnet/evolith-agent-runtime"]
       ARS["AgentRuntimeService<br/>12 puertos · 30 adaptadores"]
       IA["InteractionAdapters<br/>CLI · Chat · Hermes · MCP · External"]
     end
-    DOM["@evolith/core-domain<br/>EvaluationOrchestrator · 10 Kinds<br/>rulesets JSON · OPA/WASM · schemas"]
+    DOM["@beyondnet/evolith-core-domain<br/>EvaluationOrchestrator · 10 Kinds<br/>rulesets JSON · OPA/WASM · schemas"]
     API --> DOM
     MCP --> DOM
     CLI --> DOM
@@ -168,7 +168,7 @@ flowchart TB
 | Interfaz | Consumidor | Propósito |
 |---|---|---|
 | **API REST** | UI del Tracker, CI/CD e integraciones empresariales | 8 controllers, ~20 endpoints: evaluación, gates, fases, arquitectura, proyectos,.satélites, caché, salud |
-| **MCP HTTP/SSE** | LLMs y agentes autónomos | 26 tools, 9 resources, 8 prompts: evaluación, validación, agentes, ADRs, MoSCoW, drift, configuración |
+| **MCP HTTP/SSE** | LLMs y agentes autónomos | 47 tools, 9 resources, 8 prompts: evaluación, validación, agentes, ADRs, MoSCoW, drift, configuración |
 | **CLI** | Roles de ingeniería y producto | 20 comandos: validate, evaluate, gate, drift, scaffold, ADR lifecycle, agents, chat, satellite, sdlc |
 | **Agent Runtime** | Agentes IA, chatboxes, triggers externos | 12 puertos hexagonales, 5 interaction adapters (CLI, Chat, Hermes, MCP, External), orquestación gobernada con OPA + HITL |
 | **Webhook / Bus de Eventos** | Sistemas internos y externos | Propagar comandos, evidencias, cambios de estado y resultados de gates |

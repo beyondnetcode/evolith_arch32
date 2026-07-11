@@ -43,7 +43,7 @@ Core debe seguir siendo válido aunque cambie un producto, framework, modelo, he
 Evolith Core no es:
 
 - Evolith Tracker;
-- Smart CLI, un chatbox o un producto MCP;
+- Evolith CLI, un chatbox o un producto MCP;
 - una plataforma de gestión de tareas;
 - un LLM o agente autónomo;
 - una implementación de dashboards o BI;
@@ -76,7 +76,7 @@ Evolith Core
     ↓ gobierna
 Evolith Product Suite
     ↓ contiene
-Tracker · Smart CLI · Servicios MCP · Plugins · Productos Futuros
+Tracker · Evolith CLI · Servicios MCP · Plugins · Productos Futuros
     ↓ integra mediante abstracciones
 Herramientas y Proveedores Nombrados
 ```
@@ -130,7 +130,7 @@ Puede seleccionar o evaluar una tecnología, proveedor, perfil de despliegue, li
 La Product Suite usa Core para entregar capacidades operativas:
 
 - Tracker ejecuta estado de gobernanza y auditoría.
-- Smart CLI y MCP exponen interacciones y evaluaciones gobernadas.
+- Evolith CLI y MCP exponen interacciones y evaluaciones gobernadas.
 - Plugins y adapters conectan capacidades externas.
 - Productos futuros pueden consumir la misma Constitución.
 

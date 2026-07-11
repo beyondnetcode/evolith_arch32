@@ -1,4 +1,4 @@
-# @evolith/sdk
+# @beyondnet/evolith-sdk
 
 Librería cliente tipada en TypeScript para la **API REST** de Evolith Core y sus
 **herramientas MCP**. Es un envoltorio fino e inyectable por transporte: sin estado
@@ -61,7 +61,7 @@ Opciones del constructor: `baseUrl` (requerido), `apiKey` (token Bearer opcional
 aplicado vía `AbortController`) y `apiPrefix` (por defecto `/api`).
 
 ```ts
-import { EvolithRestClient } from '@evolith/sdk';
+import { EvolithRestClient } from '@beyondnet/evolith-sdk';
 
 const client = new EvolithRestClient({ baseUrl: 'http://localhost:3000', apiKey: 'token' });
 const result = await client.evaluatePhaseGate('discovery', { workspaceRef: 'op_abc123' });
@@ -87,7 +87,7 @@ La fábrica `createJsonRpcTransport(sendRequest)` adapta cualquier emisor JSON-R
 forma de transporte requerida.
 
 ```ts
-import { EvolithMcpClient, createJsonRpcTransport } from '@evolith/sdk';
+import { EvolithMcpClient, createJsonRpcTransport } from '@beyondnet/evolith-sdk';
 
 const mcp = new EvolithMcpClient({ transport: createJsonRpcTransport(myRpcFn) });
 const gate = await mcp.evaluateGate({ phase: 'discovery', projectPath: '/repos/my-service' });

@@ -102,12 +102,12 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 
 ### Dimension 4: CLI Developer Experience — **Level 4 (Managed)**
 * **State:** `Validated`
-* **Evidence:** the `@evolith/smart-cli@1.1.0` package installs from the canonical workspace lockfile; lint, build, E2E, and MCP smoke pass from a clean checkout; shell completion and bilingual documentation are available. Public product documentation and release facts are synchronized from a generated [Product Surface Inventory](../../../../product/products/smart-cli/product-inventory.md), with CI rejecting drift and placeholder pages ([GT-47](../gaps/gap-reference-catalog.md#gt-47)).
+* **Evidence:** the `@beyondnet/evolith-cli@1.1.0` package installs from the canonical workspace lockfile; lint, build, E2E, and MCP smoke pass from a clean checkout; shell completion and bilingual documentation are available. Public product documentation and release facts are synchronized from a generated [Product Surface Inventory](../../../../product/products/smart-cli/product-inventory.md), with CI rejecting drift and placeholder pages ([GT-47](../gaps/gap-reference-catalog.md#gt-47)).
 * **Path to Level 5:** publish the inventory as a discoverable capability manifest consumed by satellite repositories.
 
 ### Dimension 5: Federated Governance Runtime Enforcement — **Level 3 (Defined)**
 * **State:** `Designed` (Rules exist, content validation missing)
-* **Evidence:** inheritance model, satellite contracts, and Open-Core boundary rules defined; `smart-cli validate` executable by any satellite; CI composite action `evolith-validate` available for satellite PR gates.
+* **Evidence:** inheritance model, satellite contracts, and Open-Core boundary rules defined; `evolith-cli validate` executable by any satellite; CI composite action `evolith-validate` available for satellite PR gates.
 * **Path to Level 4:** phase-gate evidence deepened from existence-only checks to content/threshold validation ([GT-08](../gaps/gap-reference-catalog.md#gt-08)–[GT-11](../gaps/gap-reference-catalog.md#gt-11)); ACL runtime adapters (Tracker scope).
 
 ---
@@ -138,7 +138,7 @@ This dimension measures the maturity of the interaction surfaces and internal or
 | **Scheduler** | Schedule or defer runtime executions. | `InMemorySchedulerAdapter`, `FileSchedulerAdapter` | `Implemented` | `CronSchedulerAdapter`, `TemporalAdapter`, `BullMQSchedulerAdapter`, `KubernetesCronJobAdapter` | Allows recurrent audits, durable jobs, and scheduled re-validations. | Low |
 | **Approval / HITL** | Manage human-in-the-loop approval or default blocking. | `AutoApprovalAdapter`, `DenyByDefaultApprovalAdapter` | `Partial` | `TrackerApprovalAdapter`, `GitHubApprovalAdapter`, `SlackApprovalAdapter`, `TeamsApprovalAdapter`, `EmailApprovalAdapter` | Enables real human approval for sensitive actions. | High |
 | **MCP Interaction** | Expose Evolith to external agents via MCP. | MCP exists as ecosystem component, but lacks formal runtime adapter. | `Partial` | `McpInteractionAdapter`, `McpToolRegistryAdapter`, `McpPolicyGuardAdapter` | External agents consume Evolith capabilities with governance. | High |
-| **Smart CLI Interaction** | Keep Smart CLI as official console and governed entry. | Smart CLI exists, but not formalized as a common interaction adapter. | `Partial` | `SmartCliCommandInteractionAdapter`, `SmartCliChatInteractionAdapter`, `CommandCapabilityAdapter` | CLI command and CLI chat use the same runtime/capability layer. | Critical |
+| **Evolith CLI Interaction** | Keep Evolith CLI as official console and governed entry. | Evolith CLI exists, but not formalized as a common interaction adapter. | `Partial` | `SmartCliCommandInteractionAdapter`, `SmartCliChatInteractionAdapter`, `CommandCapabilityAdapter` | CLI command and CLI chat use the same runtime/capability layer. | Critical |
 | **Hermes Chat Box Interaction** | Use Hermes Chat Box as optional conversational UI. | `HermesAgentAdapter` exists as engine, but Chat Box not formalized as source/interface adapter. | `Partial` | `HermesChatBoxInteractionAdapter` | Expose Hermes Chat Box without it executing commands directly. | High |
 | **OpenCode Interaction** | Use OpenCode as external chat/agent UI. | Not implemented. | `Not implemented` | `OpenCodeInteractionAdapter`, `OpenCodeMcpAdapter`, `OpenCodeCliBridgeAdapter` | Use OpenCode as external chat box without free shell access. | Medium |
 | **GitHub Automation** | Create satellite repos, issues, PRs, CI from governed flows. | Not implemented as direct runtime adapter. | `Not implemented` | `GitHubRepositoryAdapter`, `GitHubIssueAdapter`, `GitHubPullRequestAdapter`, `GitHubActionsAdapter` | Governed SDLC automation over GitHub. | Medium |

@@ -52,7 +52,7 @@
 </details>
 
 <details>
-<summary><strong>smart-cli</strong></summary>
+<summary><strong>evolith-cli</strong></summary>
 
 | EN | ES | Status |
 |----|----|--------|

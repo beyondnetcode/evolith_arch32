@@ -18,7 +18,7 @@ La dirección de dependencia es unidireccional e innegociable: **los productos c
 
 ## 1. Ecosistema: la fundación Core y la Product Suite
 
-Evolith Core (`packages/core`, `core-domain`, `infra-providers`, `sdk-client`, `mcp-tools`) es la fundación de la plataforma: las reglas universales más el motor de gobernanza del SDLC. Cada producto de la Suite consume Core y expone una porción de él a través de una superficie específica. **Core API** (`apps/core-api`) es la capa de exposición REST del dominio; **Smart CLI** (`sdk/cli`) es la superficie de terminal y además incluye los **MCP Services** (`packages/mcp-server`); **Tracker** es el producto de gobernanza en runtime, en etapa de diseño, que consume Core estrictamente como cliente externo; **UMS Reference** es un satélite open-source que *adopta* Core en lugar de implementar la plataforma.
+Evolith Core (`packages/core`, `core-domain`, `infra-providers`, `sdk-client`, `mcp-tools`) es la fundación de la plataforma: las reglas universales más el motor de gobernanza del SDLC. Cada producto de la Suite consume Core y expone una porción de él a través de una superficie específica. **Core API** (`apps/core-api`) es la capa de exposición REST del dominio; **Evolith CLI** (`sdk/cli`) es la superficie de terminal y además incluye los **MCP Services** (`packages/mcp-server`); **Tracker** es el producto de gobernanza en runtime, en etapa de diseño, que consume Core estrictamente como cliente externo; **UMS Reference** es un satélite open-source que *adopta* Core en lugar de implementar la plataforma.
 
 ```mermaid
 graph TD
@@ -28,7 +28,7 @@ graph TD
 
     subgraph Suite["Evolith Product Suite (consume Core)"]
         API["Core API<br/>apps/core-api · REST /api/v1"]
-        CLI["Smart CLI<br/>sdk/cli · @evolith/smart-cli"]
+        CLI["Evolith CLI<br/>sdk/cli · @beyondnet/evolith-cli"]
         MCP["MCP Services<br/>packages/mcp-server · stdio + HTTP"]
         TRK["Evolith Tracker<br/>gobernanza runtime (en diseño)"]
     end
@@ -47,14 +47,14 @@ graph TD
     CORE -.->|la evidencia de UMS informa ADRs| UMS
 ```
 
-**Notas.** Core es la fuente autoritativa de decisiones, estándares y patrones; los productos de la Suite lo implementan y no pueden redefinirlo. Core API, Smart CLI y MCP Services se enlazan directamente con el dominio Core. Los MCP Services se incluyen **dentro** de `@evolith/smart-cli` (sin instalación aparte) y además corren como servicio HTTP fail-closed. Tracker está documentado como **en etapa de diseño**: alcanza Core solo como cliente HTTP externo de la capa de exposición Core API (ADR-0074 / ADR-0075), nunca redefiniendo Core. UMS es *evidencia, no política* — adopta rulesets y ADRs de Core, y su evidencia puede informar nuevos ADRs de Core, pero nunca se vuelve autoritativa.
+**Notas.** Core es la fuente autoritativa de decisiones, estándares y patrones; los productos de la Suite lo implementan y no pueden redefinirlo. Core API, Evolith CLI y MCP Services se enlazan directamente con el dominio Core. Los MCP Services se incluyen **dentro** de `@beyondnet/evolith-cli` (sin instalación aparte) y además corren como servicio HTTP fail-closed. Tracker está documentado como **en etapa de diseño**: alcanza Core solo como cliente HTTP externo de la capa de exposición Core API (ADR-0074 / ADR-0075), nunca redefiniendo Core. UMS es *evidencia, no política* — adopta rulesets y ADRs de Core, y su evidencia puede informar nuevos ADRs de Core, pero nunca se vuelve autoritativa.
 
 ## 2. Cómo se comunican los productos
 
 Existen cuatro superficies de comunicación reales, todas resolviendo a través de los mismos contratos Core y el envelope de salida compartido ADR-0073:
 
 - **REST `/api/v1`** — Core API es REST-only (sin GraphQL, sin SSE), versionada por URI bajo `/api/v1`, con un envelope plano ADR-0073 (`success`, `data`, `meta` con `command` / `executedAt` / `durationMs` / `correlationId` / `context` / `schemaVersion`) y problem details RFC 9457 para errores. `/health` y `/metrics` son neutrales de versión.
-- **CLI** — `smart-cli` ejecuta comandos de gobernanza, validación y SDLC desde la terminal contra un repositorio satélite.
+- **CLI** — `evolith-cli` ejecuta comandos de gobernanza, validación y SDLC desde la terminal contra un repositorio satélite.
 - **MCP** — acceso gobernado a herramientas de IA sobre `stdio` (JSON-RPC 2.0) y Streamable HTTP (fail-closed, API-key).
 - **Archivos estructurados** — schemas, manifiestos (`evolith.yaml`), rulesets y OPA `.rego`/`policy.wasm` son los contratos validables por máquina que cada superficie resuelve.
 
@@ -64,7 +64,7 @@ graph LR
     CI["CI / Pipeline"]
     AGENT["Agente IA<br/>Cursor · Claude Desktop"]
 
-    DEV -->|terminal| CLI["Smart CLI"]
+    DEV -->|terminal| CLI["Evolith CLI"]
     CI -->|terminal / REST| CLI
     DEV -->|HTTP| API["Core API<br/>REST /api/v1"]
     CI -->|HTTP| API
@@ -132,6 +132,6 @@ graph TD
 
 - [Glosario del Ecosistema (canónico)](../../reference/core/sdlc/glossary/glossary-ecosystem.es.md) — terminología autoritativa para cada término usado arriba.
 - [Dimensiones de topología](../../reference/core/architecture/topologies/topology-dimensions.md) — des-conflación de fase vs. madurez vs. topología.
-- Hubs de producto: [Tracker](./evolith-tracker/README.es.md) · [Smart CLI](./smart-cli/README.es.md) · [Core API](./core-api/README.es.md) · [MCP Services](./mcp-services/README.es.md) · [UMS Reference](./ums-reference/README.es.md).
+- Hubs de producto: [Tracker](./evolith-tracker/README.es.md) · [Evolith CLI](./smart-cli/README.es.md) · [Core API](./core-api/README.es.md) · [MCP Services](./mcp-services/README.es.md) · [UMS Reference](./ums-reference/README.es.md).
 
 [Volver a Diseños Específicos de Productos](./README.es.md)

@@ -200,14 +200,14 @@ interface SDLCStatus {
 
 | Servicio | Comandos |
 |----------|----------|
-| CoreService | `smart-cli core info`, `smart-cli core validate`, `smart-cli core update`, `smart-cli core search` |
-| RulesetService | `smart-cli ruleset list`, `smart-cli ruleset show`, `smart-cli ruleset validate`, `smart-cli ruleset explain` |
-| ValidationService | `smart-cli validate project`, `smart-cli validate architecture`, `smart-cli validate sdlc` |
-| ArtifactService | `smart-cli artifact list`, `smart-cli artifact generate`, `smart-cli artifact validate` |
-| SDLCService | `smart-cli sdlc status`, `smart-cli gate list`, `smart-cli gate validate` |
-| ADRService | `smart-cli adr list`, `smart-cli adr show`, `smart-cli adr create` |
-| EvidenceService | `smart-cli evidence collect`, `smart-cli evidence export` |
-| DriftDetectionService | `smart-cli architecture drift`, `smart-cli drift report` |
+| CoreService | `evolith-cli core info`, `evolith-cli core validate`, `evolith-cli core update`, `evolith-cli core search` |
+| RulesetService | `evolith-cli ruleset list`, `evolith-cli ruleset show`, `evolith-cli ruleset validate`, `evolith-cli ruleset explain` |
+| ValidationService | `evolith-cli validate project`, `evolith-cli validate architecture`, `evolith-cli validate sdlc` |
+| ArtifactService | `evolith-cli artifact list`, `evolith-cli artifact generate`, `evolith-cli artifact validate` |
+| SDLCService | `evolith-cli sdlc status`, `evolith-cli gate list`, `evolith-cli gate validate` |
+| ADRService | `evolith-cli adr list`, `evolith-cli adr show`, `evolith-cli adr create` |
+| EvidenceService | `evolith-cli evidence collect`, `evolith-cli evidence export` |
+| DriftDetectionService | `evolith-cli architecture drift`, `evolith-cli drift report` |
 
 ---
 

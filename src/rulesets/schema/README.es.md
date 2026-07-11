@@ -85,9 +85,9 @@ Los contratos de entrada/salida del Core de Evaluación stateless (ADR-0101). Re
 
 ## Validar un artefacto contra un schema
 
-Todos los schemas son JSON Schema estándar (draft 2020-12 / draft-07) validados con [Ajv](https://ajv.js.org/) (`ajv@8`, ya dependencia de `@evolith/core-domain`). Dos caminos:
+Todos los schemas son JSON Schema estándar (draft 2020-12 / draft-07) validados con [Ajv](https://ajv.js.org/) (`ajv@8`, ya dependencia de `@beyondnet/evolith-core-domain`). Dos caminos:
 
-- **A través de Evolith** — el `RulesetValidatorService` / `ruleset-loader` en `@evolith/core-domain` carga cada `*.rules.json` y valida cada entrada contra [`rule-definition.schema.json`](./rule-definition.schema.json) antes de evaluar; los rulesets de categoría se chequean contra [`ruleset-sdlc.schema.json`](./ruleset-sdlc.schema.json) o [`ruleset-standard.schema.json`](./ruleset-standard.schema.json). Esto se ejecuta automáticamente cuando el CLI/Core cargan un ruleset, así una regla mal formada falla rápido.
+- **A través de Evolith** — el `RulesetValidatorService` / `ruleset-loader` en `@beyondnet/evolith-core-domain` carga cada `*.rules.json` y valida cada entrada contra [`rule-definition.schema.json`](./rule-definition.schema.json) antes de evaluar; los rulesets de categoría se chequean contra [`ruleset-sdlc.schema.json`](./ruleset-sdlc.schema.json) o [`ruleset-standard.schema.json`](./ruleset-standard.schema.json). Esto se ejecuta automáticamente cuando el CLI/Core cargan un ruleset, así una regla mal formada falla rápido.
 - **Ad hoc** — valida cualquier artefacto directamente con Ajv. Ejemplo, validando un documento ADR contra el schema ADR:
 
 ```bash

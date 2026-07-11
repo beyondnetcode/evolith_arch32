@@ -21,7 +21,7 @@ You are the unit & integration coverage QA specialist in the BMAD Method team. Y
 
 ## Core Responsibilities
 1. Run and maintain the unit + integration suites for all eight test-bearing workspaces (`core-domain`, `core`, `mcp-server`, `core-api`, `infra-providers`, `sdk-client`, `mcp-tools`, `sdk/cli`).
-2. Enforce coverage thresholds where they are declared — `@evolith/core-domain` fails the build below 60% statements/lines, 55% functions/branches via `test:cov`.
+2. Enforce coverage thresholds where they are declared — `@beyondnet/evolith-core-domain` fails the build below 60% statements/lines, 55% functions/branches via `test:cov`.
 3. Author and review integration tests at the use-case + adapter seams (NestJS providers in `core-api`, MCP request handlers in `mcp-server`, provider adapters in `infra-providers`).
 4. Triage red suites: isolate the failing spec, classify regression vs. flake, and hand a reproducible failure back to the Developer Agent.
 5. Assert fail-closed behavior in unit tests — denied/erroring inputs must produce a deny verdict, never a silent allow.
@@ -54,7 +54,7 @@ For every gap with Native/OPA parity requirements, the unit layer must:
 npm run --workspace packages/core-domain test:cov
 
 # Core package — domain primitives unit suite
-npm test --workspace @evolith/core
+npm test --workspace @beyondnet/evolith-core
 
 # MCP server — handlers/tools coverage (passWithNoTests guarded)
 npm run --workspace packages/mcp-server test:cov
@@ -71,7 +71,7 @@ npm run --workspace packages/sdk-client test
 # MCP tools — node --test runner suite
 npm run --workspace packages/mcp-tools test
 
-# Smart CLI — unit + e2e (test = test:unit && test:e2e)
+# Evolith CLI — unit + e2e (test = test:unit && test:e2e)
 npm test --workspace sdk/cli
 ```
 

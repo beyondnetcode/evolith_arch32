@@ -35,7 +35,7 @@ nombre", para que los modelos Coolify (en vivo), docker-compose (local) y Helm
 | **CORE-API** | `apps/core-api/Dockerfile` | `evolith-core-api` · `evolith.beyondnet.cloud` | `bff` (plantilla) | `evolith-core-api` · `evolith.beyondnet.cloud` |
 | **MCP Server** | `packages/mcp-server/Dockerfile` | `evolith-mcp-server` · `mcpevolith.beyondnet.cloud` | `mcp` (plantilla) | `evolith-mcp` · `mcpevolith.beyondnet.cloud` |
 | **Agent Runtime** | `apps/agent-runtime-api/Dockerfile` | preparado · `evolithruntime.beyondnet.cloud` | (ninguno) | `evolith-agent-runtime` · `evolithruntime.beyondnet.cloud` |
-| **SMART-CLI** | `sdk/cli` | npm `@evolith/smart-cli` | n/a | n/a |
+| **SMART-CLI** | `sdk/cli` | npm `@beyondnet/evolith-cli` | n/a | n/a |
 | **Tracker BFF** | externo (Tracker) | n/a | n/a | n/a |
 
 ## Drift detectado

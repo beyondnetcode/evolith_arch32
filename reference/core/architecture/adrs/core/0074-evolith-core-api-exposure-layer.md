@@ -12,7 +12,7 @@ Approved — Evolith Architecture Board, 2026-06-13.
 
 ## Context and Problem
 
-Evolith Core has been historically distributed primarily as a CLI (`@evolith/smart-cli`). Recent architectural decisions incorporated a Model Context Protocol (MCP) server exposed through the CLI (`evolith mcp start`) to serve governance as real-time context to AI Agents and external orchestrators like the Evolith Tracker.
+Evolith Core has been historically distributed primarily as a CLI (`@beyondnet/evolith-cli`). Recent architectural decisions incorporated a Model Context Protocol (MCP) server exposed through the CLI (`evolith mcp start`) to serve governance as real-time context to AI Agents and external orchestrators like the Evolith Tracker.
 
 However, as the Evolith Tracker transitions into an independent SaaS SDLC Orchestrator, depending solely on a CLI-spawned MCP server or embedding the core libraries limits scalability, restricts protocol choices, and misplaces the network boundary. Evolith Tracker needs a robust, scalable, and secure API to query architectural evaluation results, without duplicating the domain logic.
 
@@ -34,7 +34,7 @@ If we force the Tracker to host the domain logic, we violate the fundamental rul
 ## Options Considered
 
 1. **Tracker BFF (Backend-For-Frontend) inside Evolith Core:** Build the Tracker's backend in this repository. Rejected: Violates the repository boundary. Evolith Core is an architectural reference, not a product codebase for the Tracker UI.
-2. **Expose Core Domain via npm only:** Force the Tracker to import `@evolith/smart-cli` as a library and build its own API. Rejected: Tracker becomes tightly coupled to Core's execution environment; any API logic wouldn't be reusable for other clients (like executive dashboards).
+2. **Expose Core Domain via npm only:** Force the Tracker to import `@beyondnet/evolith-cli` as a library and build its own API. Rejected: Tracker becomes tightly coupled to Core's execution environment; any API logic wouldn't be reusable for other clients (like executive dashboards).
 3. **Evolith Core API using NestJS (chosen):** Build a dedicated API gateway (`apps/core-api`) inside the `evolith_arch32` monorepo using NestJS. This API wraps the Core Domain and exposes standard network interfaces. The Tracker remains an external consumer.
 
 ## Decision and Rationale
@@ -45,10 +45,10 @@ Adopt **option 3**. We will construct the **Evolith Core API** as a NestJS appli
 1. **Network Sovereignty:** Evolith Core is the sole owner of its domain, rulesets, and evaluation logic. It exposes this capability natively via `apps/core-api`.
 2. **Client Agnosticism:** The Evolith Tracker acts strictly as a client to the Core API. Tracker will consume REST interfaces to display phase gates, validation statuses, and manage the SDLC.
 3. **Monorepo Structure:** The root `package.json` will be updated to support npm workspaces targeting `apps/*` and `sdk/*`.
-4. **Technology Stack:** NestJS is selected for the `core-api` to maintain strong typing, enforce hexagonal architecture natively, and seamlessly integrate the existing TypeScript domain logic from the `smart-cli`.
+4. **Technology Stack:** NestJS is selected for the `core-api` to maintain strong typing, enforce hexagonal architecture natively, and seamlessly integrate the existing TypeScript domain logic from the `evolith-cli`.
 5. **MCP Exposure (amended 2026-06-19 — see Amendment):** The existing MCP server logic is exposed as a dedicated NestJS interface that serves AI Agents over MCP alongside the REST consumers, sharing the same application-layer use cases as `apps/core-api` and the CLI.
 
-> **Amendment (2026-06-19, GT-119):** Ratified element 5 originally specified the MCP logic as *"integrated into or wrapped by the NestJS application to provide a unified deployment unit."* As implemented under [ADR-0075](../../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), the MCP gateway was extracted into a **standalone NestJS package** (`@evolith/mcp-server`) rather than fused into `apps/core-api`. `smart-cli mcp serve` delegates to that package, and `apps/core-api` does **not** serve MCP. This preserves the single-domain-logic principle (all surfaces call the same application use cases) while keeping MCP, REST, and CLI as **independent deployment units**, which improves protocol isolation and lets the MCP transport scale separately. The Product Vision §2.5 Technical Interface Layer already reflects this two-layer exposure.
+> **Amendment (2026-06-19, GT-119):** Ratified element 5 originally specified the MCP logic as *"integrated into or wrapped by the NestJS application to provide a unified deployment unit."* As implemented under [ADR-0075](../../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), the MCP gateway was extracted into a **standalone NestJS package** (`@beyondnet/evolith-mcp-server`) rather than fused into `apps/core-api`. `evolith-mcp` delegates to that package, and `apps/core-api` does **not** serve MCP. This preserves the single-domain-logic principle (all surfaces call the same application use cases) while keeping MCP, REST, and CLI as **independent deployment units**, which improves protocol isolation and lets the MCP transport scale separately. The Product Vision §2.5 Technical Interface Layer already reflects this two-layer exposure.
 
 **Rationale:** This decision preserves the domain sovereignty of Evolith Core while providing a mature, scalable interface for the Evolith Tracker SaaS. NestJS aligns perfectly with our existing TypeScript ecosystem and strictly enforces the dependency injection and hexagonal boundaries we have standardized.
 

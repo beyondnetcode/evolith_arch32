@@ -195,7 +195,7 @@ Estos endpoints desencadenan validaciones, propuestas de avance de fase y transi
     "workspaceRef": "satellite-name-or-path"
   }
   ```
-* **Payload `data`:** El controlador devuelve el payload `GateEvidence` producido por `EvaluateGateUseCase.execute(...)` tal cual. Esta forma pertenece a `@evolith/core-domain` (`domain/gate-evidence.ts`). `phase` es el id canónico de fase SDLC resuelto desde `gateId`, y `evaluatedBy` toma el valor `human` por defecto cuando el llamante no lo suministra.
+* **Payload `data`:** El controlador devuelve el payload `GateEvidence` producido por `EvaluateGateUseCase.execute(...)` tal cual. Esta forma pertenece a `@beyondnet/evolith-core-domain` (`domain/gate-evidence.ts`). `phase` es el id canónico de fase SDLC resuelto desde `gateId`, y `evaluatedBy` toma el valor `human` por defecto cuando el llamante no lo suministra.
   ```json
   {
     "gateId": "discovery-baseline-gate",

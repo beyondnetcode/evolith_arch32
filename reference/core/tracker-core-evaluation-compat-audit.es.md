@@ -265,7 +265,7 @@ export interface EvaluationResult {
 
 ## Conclusión accionable (orden de implementación sugerido)
 
-1. **Definir el contrato canónico en `@evolith/core-domain`** (`EvaluationContext`/`EvaluationResult` §8/§9) y **renombrar el homónimo** FS (`evaluator.interface.ts:3-6` → `RuleEvaluationFsContext`) para eliminar la colisión. Resolver también el choque de nombres `GateDecision` (target Tracker vs `packages/core-domain/src/gates/decision/gate-decision.ts`, GT-316).
+1. **Definir el contrato canónico en `@beyondnet/evolith-core-domain`** (`EvaluationContext`/`EvaluationResult` §8/§9) y **renombrar el homónimo** FS (`evaluator.interface.ts:3-6` → `RuleEvaluationFsContext`) para eliminar la colisión. Resolver también el choque de nombres `GateDecision` (target Tracker vs `packages/core-domain/src/gates/decision/gate-decision.ts`, GT-316).
 2. **Crear la capa de mapeo única** `EvaluationContext → input` que alimente *a la vez* al `OpaInputBuilder` y a los 12 handlers nativos (hoy dos rutas FS paralelas → drift estructural, B5). Wirear `phase-gates.rego` en `main.rego`, crear su `input.schema.json` y su shape en el builder (B3).
 3. **Refactorizar `POST /api/v1/evaluate`** sobre `composable-validate` (multi-kind), reemplazando `EvaluateSatelliteDto` por `EvaluationContextDto` con `workspaceRef` (mata la violación ADR-0074) y normalizando la salida a `EvaluationResult` con `Verdict` enum.
 4. **Exponer engines faltantes** (blueprint, deployment, checkpoint, evidence declarada, compliance ponderada) como `kinds` del `/evaluate`.
@@ -744,7 +744,7 @@ Archivos relevantes (rutas absolutas):
 
 ### Catálogo de herramientas y qué evalúan
 
-Anclado en `packages/mcp-server/src/tools/tools.module.ts:59-76` (registro real). Cada herramienta es un adaptador delgado que delega en `@evolith/core` y devuelve un payload crudo que el dispatcher envuelve en el envelope ADR-0073 (`mcp-tool-dispatch.ts:194-195`).
+Anclado en `packages/mcp-server/src/tools/tools.module.ts:59-76` (registro real). Cada herramienta es un adaptador delgado que delega en `@beyondnet/evolith-core` y devuelve un payload crudo que el dispatcher envuelve en el envelope ADR-0073 (`mcp-tool-dispatch.ts:194-195`).
 
 | Herramienta MCP | Qué evalúa | Input schema (campos clave) | Output | ¿Acepta EvaluationContext? | Brecha |
 |---|---|---|---|---|---|

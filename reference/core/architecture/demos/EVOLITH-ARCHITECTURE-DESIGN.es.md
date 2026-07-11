@@ -125,7 +125,7 @@ documento histórico.
 
 ## 10. Modelo de Integración entre Componentes
 
-El modelo vigente integra Core API, MCP Server, Agent Runtime, Smart CLI, paquetes de
+El modelo vigente integra Core API, MCP Server, Agent Runtime, Evolith CLI, paquetes de
 dominio/evaluación y corpus de rulesets/schemas.
 
 ## 11. Modelo de Tenant (Core tenant-agnóstico, ADR-0101)

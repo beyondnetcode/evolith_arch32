@@ -21,7 +21,7 @@ The problem: How do we introduce a preliminary evaluation phase that translates 
 Define and incorporate the **Architecture Planning Gate** (also known as the Evolith Architecture Plan) into the core ecosystem. 
 In scope: 
 - Establishing Gate 0 (Pre-Discovery) as the formal intake point.
-- The separation of responsibilities: Hermes (generation), Core API & OPA (evaluation/governance), Smart CLI & Tracker (Human-in-the-loop interaction).
+- The separation of responsibilities: Hermes (generation), Core API & OPA (evaluation/governance), Evolith CLI & Tracker (Human-in-the-loop interaction).
 - The state machine for the Architecture Plan (`draft` -> `under_review` -> `approved` -> `executed`).
 
 Out of scope: 
@@ -49,7 +49,7 @@ The Architecture Planning Gate will reside *before* the Knowledge-First Discover
 ### 2. Decoupled Evaluation Strategy
 - **Generation:** Agent Runtime (Hermes) interprets the prompt and generates the draft plan (identifying components, risks, and interfaces).
 - **Governance:** Core API invokes OPA policies against the generated JSON plan to enforce the required `sdlc_mode`.
-- **Approval:** A Human-in-the-loop (Architecture Lead / Security Officer) must approve the plan via Smart CLI or Evolith Tracker. Agents cannot execute approval on governed plans without explicit clearance.
+- **Approval:** A Human-in-the-loop (Architecture Lead / Security Officer) must approve the plan via Evolith CLI or Evolith Tracker. Agents cannot execute approval on governed plans without explicit clearance.
 
 ### 3. Traceability and Versioning
 Plans are immutable once approved. Iterations during `under_review` create new versions (`v1`, `v2`). The final execution trace links the `Architecture Plan ID` to the resulting `Initiative ID` and required `ADRs`.

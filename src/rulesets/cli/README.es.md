@@ -2,7 +2,7 @@
 
 > **Navegación bilingüe:** [English version](./README.md)
 
-Reglas legibles por máquina para preparación de release del Evolith Smart CLI y paridad con Evolith Core.
+Reglas legibles por máquina para preparación de release del Evolith Evolith CLI y paridad con Evolith Core.
 
 ## Rulesets
 

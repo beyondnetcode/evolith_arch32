@@ -1,4 +1,4 @@
-# @evolith/agent-runtime
+# @beyondnet/evolith-agent-runtime
 
 > **Navegación bilingüe:** [English version](./README.md)
 
@@ -17,14 +17,14 @@ Este paquete forma parte de los workspaces del monorepo Evolith. Constrúyelo co
 el resto del grafo (`npm run build` en la raíz) o de forma aislada:
 
 ```bash
-npm --workspace @evolith/agent-runtime run build
-npm --workspace @evolith/agent-runtime test
+npm --workspace @beyondnet/evolith-agent-runtime run build
+npm --workspace @beyondnet/evolith-agent-runtime test
 ```
 
 ## Inicio rápido
 
 ```ts
-import { createAgentRuntime, parseAgentRuntimeRequest } from '@evolith/agent-runtime';
+import { createAgentRuntime, parseAgentRuntimeRequest } from '@beyondnet/evolith-agent-runtime';
 
 const { runtime, deps } = createAgentRuntime(); // adaptadores stub/in-memory seguros
 const result = await runtime.handle(parseAgentRuntimeRequest({

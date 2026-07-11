@@ -5,11 +5,11 @@
 **Estado:** Seguimiento Activo
 **Propietario:** Junta de Arquitectura de Evolith
 **Última Actualización:** 2026-06-26
-**Alcance:** Interfaces smart-cli + MCP + core-api al 100% ejecutable
+**Alcance:** Interfaces evolith-cli + MCP + core-api al 100% ejecutable
 **Visión Relacionada:** [Marco de Validación Estratégica y Composición de Evolith](../../../../product/suite/methods/evolith-strategic-validation-and-composition-framework.md)
 **Sustituye:** `product/products/smart-cli/docs/planning/sdk-cli-mcp-current-state-assessment.md` (SUPERSEDED — solo como contexto)
 
-Este documento define los flujos de trabajo de implementación para llevar las interfaces de Evolith (smart-cli, MCP, core-api) al estado 100% ejecutable, validando el core como data inteligente. Es el plan de implementación autoritativo, reconciliado contra los tableros de gobernanza vivos.
+Este documento define los flujos de trabajo de implementación para llevar las interfaces de Evolith (evolith-cli, MCP, core-api) al estado 100% ejecutable, validando el core como data inteligente. Es el plan de implementación autoritativo, reconciliado contra los tableros de gobernanza vivos.
 
 ---
 
@@ -29,7 +29,7 @@ Si algún ítem de abajo ya está cerrado en el tablero, márcalo DONE y no lo r
 
 ## 1. Principio de Producto (La Vara)
 
-smart-cli, MCP y core-api son INTERFACES INTELIGENTES, no tubos pasivos. Cada una debe:
+evolith-cli, MCP y core-api son INTERFACES INTELIGENTES, no tubos pasivos. Cada una debe:
 
 - **Orquestar**, **consultar** y **VALIDAR** cada etapa SDLC y cada arquitectura
 - Ejecutar la lógica ella misma (invocar OPA, resolver el gate, emitir veredicto)
@@ -69,7 +69,7 @@ El freno "no implementar hasta aprobación del Architecture Board" aplica al NUE
 
 ### WS2 — Validación de Arquitectura (Hoy Ausente)
 
-`smart-cli validate` debe verificar:
+`evolith-cli validate` debe verificar:
 
 - Reglas F1/F2/F3 por topología (las 8 topologías de los ejes del repo: progressive-axis, integration, execution, data, ai).
 - Límites hexagonales, aislamiento de capa de dominio, multi-tenancy.

@@ -1,16 +1,16 @@
-# @evolith/core
+# @beyondnet/evolith-core
 
 Shared business-logic **facade** for the Evolith platform. It is a thin
-re-export barrel over [`@evolith/core-domain`](../core-domain), giving the Smart
+re-export barrel over [`@beyondnet/evolith-core-domain`](../core-domain), giving the Smart
 CLI, MCP Server and Core API a single, stable import surface.
 
 ## Installation
 
 ```bash
-npm install @evolith/core
+npm install @beyondnet/evolith-core
 ```
 
-Requires **Node.js 20+**. The only runtime dependency is `@evolith/core-domain`,
+Requires **Node.js 20+**. The only runtime dependency is `@beyondnet/evolith-core-domain`,
 which is the authoritative source for every re-exported symbol.
 
 ## Supported import surface
@@ -25,10 +25,10 @@ import {
   RulesetValidatorService,
   TopologyCatalogService,
   readGitLog,
-} from '@evolith/core';
+} from '@beyondnet/evolith-core';
 ```
 
-> Deep imports such as `@evolith/core/domain/interfaces` are **not** supported.
+> Deep imports such as `@beyondnet/evolith-core/domain/interfaces` are **not** supported.
 > The package builds to a single `dist/index.js`; use the root barrel and import
 > the named symbol you need.
 
@@ -45,15 +45,15 @@ import {
 | Architecture | `TopologyCatalogService`, `TopologyManifest` |
 | Metrics | `readGitLog`, `isGitRepo` |
 
-The authoritative source for each symbol lives in `@evolith/core-domain`; this
+The authoritative source for each symbol lives in `@beyondnet/evolith-core-domain`; this
 package only adjusts the import ergonomics and version surface.
 
 ## Runtime notes
 
-- The single runtime dependency is `@evolith/core-domain`.
+- The single runtime dependency is `@beyondnet/evolith-core-domain`.
 - Some re-exported services (e.g. `TopologyCatalogService`, the ruleset
   validators) read governance assets from a workspace root; consult the
-  `@evolith/core-domain` README for the `WORKSPACE_ROOT` requirement.
+  `@beyondnet/evolith-core-domain` README for the `WORKSPACE_ROOT` requirement.
 
 ## Development
 

@@ -22,7 +22,7 @@ The four primary domains, ordered from the most generic (the constitution) to th
 |---|---|---|---|---|
 | [Evolith Core](./core/README.md) | Authoritative, provider-neutral architecture, SDLC governance, standards, rulesets, schemas, and Core ADRs | Anchor the constitution every product inherits | Domain hub | Yes |
 | [Evolith Product Suite](../product/suite/README.md) | Product portfolio vision, strategy, positioning, suite architecture, roadmap, and communication | Direct the ecosystem | Domain hub | Yes |
-| [Product-Specific Designs](../product/products/README.md) | Functional and technical design for Tracker, Smart CLI, MCP services, and future products | Contain product internals | Area hub | Yes |
+| [Product-Specific Designs](../product/products/README.md) | Functional and technical design for Tracker, Evolith CLI, MCP services, and future products | Contain product internals | Area hub | Yes |
 | Platform and Provider Guidance | Named tools, vendors, adapters, licensing, deployment profiles, and platform-specific ADRs | Isolate provider decisions | Area hub | Yes |
 
 ## Supporting Reference Areas

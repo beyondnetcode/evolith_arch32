@@ -38,7 +38,7 @@ Extraer y formalizar la lógica compartida en servicios del SDK que consumirán 
 | Add unit tests for all services (>80%) | L | Services | TODO |
 
 ### Entregables
-- Paquete `@evolith/sdk-core` estructurado
+- Paquete `@beyondnet/evolith-sdk-core` estructurado
 - Todos los servicios del SDK con interfaces
 - >80% de cobertura de pruebas unitarias
 
@@ -72,7 +72,7 @@ Completar las implementaciones de comandos del CLI, reemplazando stubs con lógi
 - Pruebas E2E reales con aserciones
 
 ### Quality Gate
-- `smart-cli validate --all` pasa en Core
+- `evolith-cli validate --all` pasa en Core
 - Pruebas E2E para todos los comandos
 
 ---

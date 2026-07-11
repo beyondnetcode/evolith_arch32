@@ -42,7 +42,7 @@ Evolith Core exists to become the definitive enterprise-grade operating system f
 
 | Interface | Purpose |
 |-----------|---------|
-| **CLI** (`@evolith/smart-cli`) | Validate code locally against rulesets |
+| **CLI** (`@beyondnet/evolith-cli`) | Validate code locally against rulesets |
 | **MCP** (Model Context Protocol) | Inject architectural context into AI agents |
 | **Core API** (REST) | Programmatic access for orchestration systems |
 | **Agent Runtime** (REST + Agentic) | Orchestrate Core via Ports & Adapters; Hermes is one pluggable adapter |
@@ -52,10 +52,10 @@ Evolith Core exists to become the definitive enterprise-grade operating system f
 ## Quick Start
 
 ```bash
-npm install -g @evolith/smart-cli
-smart-cli init
-smart-cli validate
-smart-cli mcp serve
+npm install -g @beyondnet/evolith-cli
+evolith-cli init
+evolith-cli validate
+evolith-mcp
 ```
 
 ---

@@ -102,12 +102,12 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
 
 ### Dimensión 4: Experiencia de Desarrollador CLI — **Nivel 4 (Gestionado)**
 * **Estado:** `Validado`
-* **Evidencia:** el paquete `@evolith/smart-cli@1.1.0` se instala desde el lockfile canónico del workspace; lint, build, E2E y smoke MCP pasan desde un checkout limpio; shell completion y documentación bilingüe están disponibles. La documentación pública de producto y los hechos de release se sincronizan desde un [Inventario de Superficie del Producto](../../../../product/products/smart-cli/product-inventory.es.md) generado, con CI que rechaza drift y páginas placeholder ([GT-47](../gaps/gap-reference-catalog.es.md#gt-47)).
+* **Evidencia:** el paquete `@beyondnet/evolith-cli@1.1.0` se instala desde el lockfile canónico del workspace; lint, build, E2E y smoke MCP pasan desde un checkout limpio; shell completion y documentación bilingüe están disponibles. La documentación pública de producto y los hechos de release se sincronizan desde un [Inventario de Superficie del Producto](../../../../product/products/smart-cli/product-inventory.es.md) generado, con CI que rechaza drift y páginas placeholder ([GT-47](../gaps/gap-reference-catalog.es.md#gt-47)).
 * **Camino al Nivel 5:** publicar el inventario como un manifiesto de capacidades descubrible consumido por repositorios satélite.
 
 ### Dimensión 5: Enforcement Runtime de Gobernanza Federada — **Nivel 3 (Definido)**
 * **Estado:** `Diseñado` (Existen reglas, falta validación de contenido)
-* **Evidencia:** modelo de herencia, contratos de satélites y reglas de boundary Open-Core definidos; `smart-cli validate` ejecutable por cualquier satélite; composite action de CI `evolith-validate` disponible para gates de PR en satélites.
+* **Evidencia:** modelo de herencia, contratos de satélites y reglas de boundary Open-Core definidos; `evolith-cli validate` ejecutable por cualquier satélite; composite action de CI `evolith-validate` disponible para gates de PR en satélites.
 * **Camino al Nivel 4:** evidencia de phase gates profundizada de chequeos de solo-existencia a validación de contenido/umbral ([GT-08](../gaps/gap-reference-catalog.es.md#gt-08)–[GT-11](../gaps/gap-reference-catalog.es.md#gt-11)); adapters ACL runtime (alcance Tracker).
 
 ---
@@ -138,7 +138,7 @@ Esta dimensión mide la madurez de las superficies de interacción y los puertos
 | **Scheduler** | Programar o diferir ejecuciones. | `InMemorySchedulerAdapter`, `FileSchedulerAdapter` | `Implementado` | `CronSchedulerAdapter`, `TemporalAdapter`, `BullMQSchedulerAdapter`, `KubernetesCronJobAdapter` | Auditorías recurrentes, jobs durables y re-validaciones. | Baja |
 | **Approval / HITL** | Flujo de aprobación humana en el loop. | `AutoApprovalAdapter`, `DenyByDefaultApprovalAdapter` | `Parcial` | `TrackerApprovalAdapter`, `GitHubApprovalAdapter`, `SlackApprovalAdapter`, `TeamsApprovalAdapter`, `EmailApprovalAdapter` | Aprobación humana real para acciones de alto impacto. | Alta |
 | **MCP Interaction** | Exponer a agentes externos vía MCP. | MCP existe, falta adaptador formal runtime. | `Parcial` | `McpInteractionAdapter`, `McpToolRegistryAdapter`, `McpPolicyGuardAdapter` | Agentes externos consumen capacidades bajo gobernanza. | Alta |
-| **Smart CLI Interaction** | Mantener Smart CLI como entrada gobernada. | Smart CLI existe, falta formalizar adaptador común. | `Parcial` | `SmartCliCommandInteractionAdapter`, `SmartCliChatInteractionAdapter`, `CommandCapabilityAdapter` | CLI en modo chat y comando usan la misma capa runtime. | Crítica |
+| **Evolith CLI Interaction** | Mantener Evolith CLI como entrada gobernada. | Evolith CLI existe, falta formalizar adaptador común. | `Parcial` | `SmartCliCommandInteractionAdapter`, `SmartCliChatInteractionAdapter`, `CommandCapabilityAdapter` | CLI en modo chat y comando usan la misma capa runtime. | Crítica |
 | **Hermes Chat Box Interaction** | Interfaz conversacional (UI) opcional de Hermes. | `HermesAgentAdapter` existe (engine), falta adaptador source/interface. | `Parcial` | `HermesChatBoxInteractionAdapter` | Exponer Hermes Chat Box sin ejecución directa de shell. | Alta |
 | **OpenCode Interaction** | UI de chat/agente externa de OpenCode. | No implementado. | `No implementado` | `OpenCodeInteractionAdapter`, `OpenCodeMcpAdapter`, `OpenCodeCliBridgeAdapter` | Uso de OpenCode como caja de chat sin permisos libres. | Media |
 | **GitHub Automation** | Crear repos, PRs y CI desde flujos gobernados. | No implementado como adaptador directo. | `No implementado` | `GitHubRepositoryAdapter`, `GitHubIssueAdapter`, `GitHubPullRequestAdapter`, `GitHubActionsAdapter` | Automatización de SDLC gobernada en GitHub. | Media |

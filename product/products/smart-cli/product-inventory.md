@@ -3,12 +3,12 @@
 
 # Product Surface Inventory
 
-Generated inventory of the installable Smart CLI and MCP surface. Do not edit by hand.
+Generated inventory of the installable Evolith CLI and MCP surface. Do not edit by hand.
 
 | Field | Value |
 |---|---|
-| Package | `@evolith/smart-cli@1.1.4` |
-| Binary | `smart-cli` |
+| Package | `@beyondnet/evolith-cli@1.1.4` |
+| Binary | `evolith-cli` |
 | CLI commands | 26 |
 | MCP tools | 33 |
 | MCP resources | 9 |

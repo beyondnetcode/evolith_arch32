@@ -41,7 +41,7 @@ If you are onboarding a new satellite repository, read the categories in this or
 | [Cross-Cutting Rules](./cross-cutting/README.md) | Compliance baseline, Definition of Done, manifesto, and taxonomy rules | Enforce cross-cutting compliance | Ruleset category | Yes |
 | [SDLC Rules](./sdlc/README.md) | Quality gates and threshold definitions | Enforce lifecycle quality | Ruleset category | Yes |
 | [Anti-Corruption Layer Rules](./acl/README.md) | External system integration governance | Protect domain boundaries | Ruleset category | Yes |
-| [CLI Rules](./cli/README.md) | Smart CLI release readiness and Core parity | Gate CLI releases | Ruleset category | Yes |
+| [CLI Rules](./cli/README.md) | Evolith CLI release readiness and Core parity | Gate CLI releases | Ruleset category | Yes |
 | [Evidence Rules](./evidence/README.md) | Auditable evidence manifests | Standardize evidence | Ruleset category | Yes |
 | [MCP Rules](./mcp/README.md) | MCP protocol compliance | Validate MCP exposure | Ruleset category | Yes |
 | [Observability Rules](./observability/README.md) | Telemetry evidence for operations | Verify telemetry evidence | Ruleset category | Yes |
@@ -117,7 +117,7 @@ rulesets/
 │   ├── phase-gates.rules.json
 │   ├── quality-thresholds.rules.json
 │   └── dependency-pinning.rules.json
-├── cli/                        # Smart CLI release and parity rules
+├── cli/                        # Evolith CLI release and parity rules
 │   ├── release-readiness.rules.json
 │   └── core-parity.rules.json
 ├── evidence/                   # Auditable evidence contract

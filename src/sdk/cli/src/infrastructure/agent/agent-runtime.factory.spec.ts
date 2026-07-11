@@ -1,6 +1,6 @@
 import { AgentRuntimeFactory } from './agent-runtime.factory';
 
-describe('AgentRuntimeFactory Smart CLI interaction gateway', () => {
+describe('AgentRuntimeFactory Evolith CLI interaction gateway', () => {
   afterEach(() => {
     jest.restoreAllMocks();
     // Reset the cached runtime between tests

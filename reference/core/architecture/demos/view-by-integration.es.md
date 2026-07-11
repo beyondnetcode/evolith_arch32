@@ -40,7 +40,7 @@ mindmap
 
 ## 3. Modelo de Puertos y Adaptadores
 
-Para integrar una nueva capacidad (por ejemplo, un nuevo proveedor de LLM), el desarrollador implementa la interfaz apropiada (por ejemplo, `IAgentEnginePort`) en la capa `@evolith/agent-runtime` o un nuevo adaptador en Evolith Tracker.
+Para integrar una nueva capacidad (por ejemplo, un nuevo proveedor de LLM), el desarrollador implementa la interfaz apropiada (por ejemplo, `IAgentEnginePort`) en la capa `@beyondnet/evolith-agent-runtime` o un nuevo adaptador en Evolith Tracker.
 
 Los rulesets y el modelo de gobernanza del Core **no cambian** cuando un proveedor cambia.
 

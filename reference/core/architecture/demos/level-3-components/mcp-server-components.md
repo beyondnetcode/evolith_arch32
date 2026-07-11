@@ -8,7 +8,7 @@
 
 ## 1. Container Context
 
-The **Standalone MCP Server** exposes Evolith governance capabilities to external AI agents using the standard Model Context Protocol. It is fully decoupled from the Smart CLI as a runtime, but it shares domain packages and the same canonical evaluation contracts.
+The **Standalone MCP Server** exposes Evolith governance capabilities to external AI agents using the standard Model Context Protocol. It is fully decoupled from the Evolith CLI as a runtime, but it shares domain packages and the same canonical evaluation contracts.
 
 ## 2. Component Diagram
 
@@ -30,7 +30,7 @@ C4Component
         
         Component(resource_corpus, "Resources and Prompts", "Resource/Prompt Handlers", "MCP resources and prompts expose corpus, rulesets and reusable guidance as readable context.")
         
-        Component(runtime, "Agent Runtime Bridge", "@evolith/agent-runtime / SDK", "Runs agent intents or calls Agent Runtime API when requested by MCP tools.")
+        Component(runtime, "Agent Runtime Bridge", "@beyondnet/evolith-agent-runtime / SDK", "Runs agent intents or calls Agent Runtime API when requested by MCP tools.")
 
         Rel(transport, server, "Routes requests to")
         Rel(server, registry, "Lists and dispatches tools via")
@@ -50,7 +50,7 @@ C4Component
 |-----------|----------------|
 | **Transport Layer** | Standard MCP SDK managing stdio and Streamable HTTP connection lifecycles. HTTP mode is fail-closed in production without an API key. |
 | **EvolithMcpServer** | Application entry point wiring MCP request handlers to the registry, resources, prompts, metrics, ABAC and audit services. |
-| **Tool Registry** | Module-composed registry fed by `packages/mcp-server/src/tools/tools.module.ts`; it is the canonical replacement for the retired lightweight `@evolith/mcp-tools` package. |
+| **Tool Registry** | Module-composed registry fed by `packages/mcp-server/src/tools/tools.module.ts`; it is the canonical replacement for the retired lightweight `@beyondnet/evolith-mcp-tools` package. |
 | **Tool Handlers** | Governed actions including `evolith-validate`, `evolith-evaluate`, satellite tools, agent tools, architecture tools, gate/phase tools, SDLC tools, topology tools, config tools, metrics and auto-fix tools. |
 | **Resources and Prompts** | Read-only context and reusable prompt payloads exposed through MCP resource and prompt handlers. |
 | **Auth / ABAC / Audit** | API key/JWT authentication, ABAC checks, mutative-tool gating, tool-call audit logs, and metrics. |

@@ -13,22 +13,22 @@ CLI, MCP Services, Core API, Agent Runtime — the four operational interfaces.
 
 | Product | Package | Purpose |
 |---------|---------|---------|
-| **Smart CLI** | `@evolith/smart-cli` | Developer-facing governance tool |
+| **Evolith CLI** | `@beyondnet/evolith-cli` | Developer-facing governance tool |
 | **MCP Services** | (bundled in CLI) | AI agent integration via MCP |
 | **Core API** | `apps/core-api` | REST API for orchestration systems |
 | **Agent Runtime** | `packages/agent-runtime` + `apps/agent-runtime-api` | Agentic mediation layer over Core |
 
 ---
 
-## Smart CLI
+## Evolith CLI
 
 Command-line interface for governance, validation, and AI integration.
 
 ```bash
-npm install -g @evolith/smart-cli
-smart-cli init
-smart-cli validate
-smart-cli mcp serve
+npm install -g @beyondnet/evolith-cli
+evolith-cli init
+evolith-cli validate
+evolith-mcp
 ```
 
 **Key commands**: init, validate, adr, standards, docs, mcp serve
@@ -90,7 +90,7 @@ External Client / Tracker / Chat / CLI
 | **Tracing** | HTTP Tracker adapter emits structured traces for every handled request |
 | **Auth** | API key guard (Bearer / x-api-key), fail-closed in production |
 
-**Package**: `@evolith/agent-runtime` · **Service**: `apps/agent-runtime-api` · **Deploy**: `evolithruntime.beyondnet.cloud`
+**Package**: `@beyondnet/evolith-agent-runtime` · **Service**: `apps/agent-runtime-api` · **Deploy**: `evolithruntime.beyondnet.cloud`
 
 **Key endpoints**: `POST /v1/agent/handle` · `GET /v1/agent/skills` · `GET /health`
 

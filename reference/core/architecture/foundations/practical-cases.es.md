@@ -94,10 +94,10 @@ console.log(await gw.present(result)); // renderizado amigable para terminal
 ## 8. Usar Hermes como adaptador opcional
 
 ```ts
-import { HermesAgentAdapter } from '@evolith/agent-runtime';
+import { HermesAgentAdapter } from '@beyondnet/evolith-agent-runtime';
 
 // Inyecta un cliente Hermes real (adaptado al puerto HermesClient), o deja que
-// cargue de forma perezosa '@evolith/hermes-agent'. Sin motor instalado, conserva el stub.
+// cargue de forma perezosa '@beyondnet/evolith-hermes-agent'. Sin motor instalado, conserva el stub.
 const { runtime } = createAgentRuntime({ engine: new HermesAgentAdapter({ client }) });
 await runtime.handle(parseAgentRuntimeRequest({ intent: 'help me validate discovery' }));
 // Hermes propone un tool; el runtime sigue aplicando aprobación + política + traza

@@ -1,7 +1,7 @@
-# Smart CLI Data Models
+# Evolith CLI Data Models
 
 > **Audience:** Developers, Architects  
-> **Purpose:** Document all data models, interfaces, and schemas for the Smart CLI  
+> **Purpose:** Document all data models, interfaces, and schemas for the Evolith CLI  
 > **Bilingual:** [Español](./data-models.es.md)
 
 ---
@@ -348,7 +348,7 @@ interface SDLCHandOffInput {
       "category": "discovery",
       "phase": "phase-0",
       "isRuntimeAware": false,
-      "commands": ["smart-cli sdlc init discovery"],
+      "commands": ["evolith-cli sdlc init discovery"],
       "dependencies": [],
       "platformCheck": null
     },
@@ -358,7 +358,7 @@ interface SDLCHandOffInput {
       "category": "architecture",
       "phase": "phase-1",
       "isRuntimeAware": true,
-      "commands": ["smart-cli sdlc init ddd-model"],
+      "commands": ["evolith-cli sdlc init ddd-model"],
       "runtimes": ["nodejs", "dotnet"],
       "dependencies": ["mermaid"],
       "platformCheck": null

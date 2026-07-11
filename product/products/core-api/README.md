@@ -4,7 +4,7 @@
 
 Welcome to the **Evolith Core API** Product Hub. The Core API is the central validation, state, and governance engine of the Evolith ecosystem, exposing execution-gated verification capabilities to developers, CI pipelines, and autonomous AI agents.
 
-The Core API is the official REST exposure layer of the Evolith Core domain (`@evolith/core-domain`). It is the network boundary that serves the domain over HTTP, alongside `@evolith/mcp-server` (MCP protocol for agents) and the Smart CLI. External consumers — including the **Evolith Tracker** — connect to it as an HTTP client. It is **not** the Tracker BFF: the Tracker's Application Gateway (ADR-0075) lives in the `evolith_tracker` repository and consumes this API as an external client.
+The Core API is the official REST exposure layer of the Evolith Core domain (`@beyondnet/evolith-core-domain`). It is the network boundary that serves the domain over HTTP, alongside `@beyondnet/evolith-mcp-server` (MCP protocol for agents) and the Evolith CLI. External consumers — including the **Evolith Tracker** — connect to it as an HTTP client. It is **not** the Tracker BFF: the Tracker's Application Gateway (ADR-0075) lives in the `evolith_tracker` repository and consumes this API as an external client.
 
 ---
 
@@ -15,7 +15,7 @@ The Core API serves as the run-time implementation of the Evolith governance rul
 ```mermaid
 graph TD
     T[Evolith Tracker] -->|REST / api/v1| API[Core API]
-    C[Smart CLI] -->|REST / Local| API
+    C[Evolith CLI] -->|REST / Local| API
     A[Autonomous Agents] -->|REST| API
     API -->|Validation| NE[Native Engine]
     API -->|Validation| OPA[OPA Engine]

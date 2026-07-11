@@ -5,11 +5,11 @@
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
 **Last Updated:** 2026-06-26
-**Scope:** smart-cli + MCP + core-api interfaces at 100% executable
+**Scope:** evolith-cli + MCP + core-api interfaces at 100% executable
 **Related Vision:** [Evolith Strategic Validation and Composition Framework](../../../../product/suite/methods/evolith-strategic-validation-and-composition-framework.md)
 **Supersedes:** `product/products/smart-cli/docs/planning/sdk-cli-mcp-current-state-assessment.md` (SUPERSEDED — context only)
 
-This document defines the implementation workstreams to bring Evolith's interfaces (smart-cli, MCP, core-api) to 100% executable state, validating the core as intelligent data. It is the authoritative implementation plan, reconciled against live governance boards.
+This document defines the implementation workstreams to bring Evolith's interfaces (evolith-cli, MCP, core-api) to 100% executable state, validating the core as intelligent data. It is the authoritative implementation plan, reconciled against live governance boards.
 
 ---
 
@@ -29,7 +29,7 @@ If an item below is already closed on the board, mark it DONE and do not redo it
 
 ## 1. Product Principle (The Standard)
 
-smart-cli, MCP, and core-api are INTELLIGENT INTERFACES, not passive pipes. Each must:
+evolith-cli, MCP, and core-api are INTELLIGENT INTERFACES, not passive pipes. Each must:
 
 - **Orchestrate**, **query**, and **VALIDATE** each SDLC stage and architecture
 - Run the logic itself (invoke OPA, resolve the gate, emit verdict)
@@ -69,7 +69,7 @@ The "do not implement until Architecture Board approval" brake applies to the NE
 
 ### WS2 — Architecture Validation (Currently Absent)
 
-`smart-cli validate` must verify:
+`evolith-cli validate` must verify:
 
 - F1/F2/F3 rules by topology (the 8 repo topologies: progressive-axis, integration, execution, data, ai).
 - Hexagonal limits, domain layer isolation, multi-tenancy.

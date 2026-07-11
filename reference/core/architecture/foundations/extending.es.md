@@ -38,7 +38,7 @@ Implementa el puerto correspondiente e inyéctalo. Ejemplo: una memoria respalda
 en Redis.
 
 ```ts
-import type { IMemoryPort, MemoryEntry } from '@evolith/agent-runtime';
+import type { IMemoryPort, MemoryEntry } from '@beyondnet/evolith-agent-runtime';
 
 export class RedisMemoryAdapter implements IMemoryPort {
   async remember(key: string, value: unknown, ns?: string) { /* ... */ }
@@ -75,7 +75,7 @@ dentro de `HermesAgentAdapter`, y aun ahí de forma perezosa (import dinámico),
 para que el paquete compile sin Hermes instalado.
 
 ```ts
-import { HermesAgentAdapter, type HermesClient } from '@evolith/agent-runtime';
+import { HermesAgentAdapter, type HermesClient } from '@beyondnet/evolith-agent-runtime';
 
 // Opción A: inyecta un cliente adaptado al puerto HermesClient.
 const client: HermesClient = {
@@ -86,8 +86,8 @@ const client: HermesClient = {
 };
 const { runtime } = createAgentRuntime({ engine: new HermesAgentAdapter({ client }) });
 
-// Opción B: carga perezosa de un módulo (por defecto '@evolith/hermes-agent').
-createAgentRuntime({ engine: new HermesAgentAdapter({ moduleName: '@evolith/hermes-agent' }) });
+// Opción B: carga perezosa de un módulo (por defecto '@beyondnet/evolith-hermes-agent').
+createAgentRuntime({ engine: new HermesAgentAdapter({ moduleName: '@beyondnet/evolith-hermes-agent' }) });
 ```
 
 
@@ -96,7 +96,7 @@ createAgentRuntime({ engine: new HermesAgentAdapter({ moduleName: '@evolith/herm
 También puedes usar el `RoutingAgentAdapter` para enrutar dinámicamente peticiones a distintos motores (como Swarms o Hermes) según la intención:
 
 ```ts
-import { createAgentRuntime, type EngineRouterConfig } from '@evolith/agent-runtime';
+import { createAgentRuntime, type EngineRouterConfig } from '@beyondnet/evolith-agent-runtime';
 
 const engineRouterConfig: EngineRouterConfig = {
   defaultEngine: 'hermes',

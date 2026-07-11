@@ -2,7 +2,7 @@
 
 > **Bilingual Navigation:** [English Version](./README.md)
 
-Composite action reutilizable que ejecuta `smart-cli validate` como gate de PR en cualquier repositorio satélite que herede de Evolith Core.
+Composite action reutilizable que ejecuta `evolith-cli validate` como gate de PR en cualquier repositorio satélite que herede de Evolith Core.
 
 ---
 
@@ -68,7 +68,7 @@ jobs:
 | `core-path` | Ruta a Evolith Core (uso en monorepo) | No | `''` |
 | `ruleset` | Ruleset a validar: `acl`, `open-core`, `inheritance`, o vacío para todos | No | `''` |
 | `node-version` | Version de Node.js | No | `20` |
-| `cli-version` | Version de `@evolith/smart-cli` a instalar | No | `latest` |
+| `cli-version` | Version de `@beyondnet/evolith-cli` a instalar | No | `latest` |
 | `fail-on-violation` | Fallar el job cuando se encuentran violaciones | No | `true` |
 
 ## Outputs
@@ -101,7 +101,7 @@ La accion escribe un resumen de cumplimiento en el job summary de GitHub Actions
 ## Requisitos
 
 - El repositorio satélite debe tener un `evolith.yaml` en su raiz (o en `satellite-path`).
-- El comando `smart-cli validate` resuelve las reglas del Core via el campo `coreRef` en `evolith.yaml`.
+- El comando `evolith-cli validate` resuelve las reglas del Core via el campo `coreRef` en `evolith.yaml`.
 
 ---
 

@@ -37,7 +37,7 @@ export interface SwarmsClient {
 export interface SwarmsAdapterOptions {
   /** Inject a ready Swarms client (preferred for tests + DI). */
   readonly client?: SwarmsClient;
-  /** Module to lazy-load when no client is injected (default '@evolith/swarms-agent'). */
+  /** Module to lazy-load when no client is injected (default '@beyondnet/evolith-swarms-agent'). */
   readonly moduleName?: string;
   /** Factory export name on that module (default 'createSwarmsClient'). */
   readonly factoryExport?: string;
@@ -54,7 +54,7 @@ export class SwarmsAgentAdapter implements IAgentEnginePort {
   private async resolveClient(): Promise<SwarmsClient> {
     if (this.client) return this.client;
 
-    const moduleName = this.options.moduleName ?? '@evolith/swarms-agent';
+    const moduleName = this.options.moduleName ?? '@beyondnet/evolith-swarms-agent';
     const factoryExport = this.options.factoryExport ?? 'createSwarmsClient';
     try {
       // Dynamic import keeps Swarms OUT of the build graph and OPTIONAL.

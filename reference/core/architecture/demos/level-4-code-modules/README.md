@@ -14,7 +14,7 @@ Because the codebase evolves rapidly, this view focuses on stable domain boundar
 
 ## 2. Navigable Code Modules
 
-- **[Core Domain Modules](./core-domain-modules.md):** Maps the pure domain logic in `@evolith/core-domain`, the JSON schemas, and OPA Rego rulesets.
+- **[Core Domain Modules](./core-domain-modules.md):** Maps the pure domain logic in `@beyondnet/evolith-core-domain`, the JSON schemas, and OPA Rego rulesets.
 
 ---
 [Back to Level 3: Components Hub](../level-3-components/README.md)

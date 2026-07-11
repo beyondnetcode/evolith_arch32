@@ -90,7 +90,7 @@ All external surfaces must route through the single `InteractionAdapterPort` to 
 ```mermaid
 graph TD
     subgraph Interfaces
-        CLI[Smart CLI]
+        CLI[Evolith CLI]
         Chat[Hermes Chat Box]
         MCP[MCP Server]
         OpenCode[OpenCode UI]
@@ -126,13 +126,13 @@ The current fragmented state allows certain interfaces (like Chat or MCP) to occ
 ```mermaid
 graph TD
     subgraph Current State (Fragmented)
-        CLI_C[Smart CLI] --> Runtime_C[Runtime Orchestrator]
+        CLI_C[Evolith CLI] --> Runtime_C[Runtime Orchestrator]
         Chat_C[Hermes Chat Box] -.->|Bypasses Governance| Engine_C[Hermes Engine]
         MCP_C[MCP Server] -.->|Direct| Core_C[Core API]
     end
 
     subgraph Target State (Governed)
-        CLI_T[Smart CLI] --> IAP_T(InteractionAdapterPort)
+        CLI_T[Evolith CLI] --> IAP_T(InteractionAdapterPort)
         Chat_T[Hermes Chat Box] --> IAP_T
         MCP_T[MCP Server] --> IAP_T
         IAP_T --> Runtime_T[Runtime Orchestrator]

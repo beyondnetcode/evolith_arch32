@@ -7,7 +7,7 @@ import {
 import type { InteractionAdapterPort } from '../domain/ports';
 
 describe('InteractionAdapterPort implementations', () => {
-  it('formalizes Smart CLI command input as smart_cli_command', () => {
+  it('formalizes Evolith CLI command input as smart_cli_command', () => {
     const adapter: InteractionAdapterPort = new SmartCliCommandInteractionAdapter();
     const request = adapter.toRuntimeRequest({ intent: 'validate_gate', source_interface: 'mcp' });
 
@@ -17,7 +17,7 @@ describe('InteractionAdapterPort implementations', () => {
     expect(request.dryRun).toBe(false);
   });
 
-  it('formalizes Smart CLI chat input as smart_cli_chat with dry-run default', () => {
+  it('formalizes Evolith CLI chat input as smart_cli_chat with dry-run default', () => {
     const adapter: InteractionAdapterPort = new SmartCliChatInteractionAdapter();
     const request = adapter.toRuntimeRequest({ intent: 'validate_gate' });
 

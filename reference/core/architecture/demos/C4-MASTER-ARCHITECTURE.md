@@ -21,7 +21,7 @@ Choose a level of abstraction to explore the architecture:
 | Level | Scope | Description | Link |
 |-------|-------|-------------|------|
 | **Level 1** | System Context | The bird's-eye view of Evolith: ecosystem, Tracker SaaS, Core Governance, and external providers. | [Level 1: Context](./level-1-system-context.md) |
-| **Level 2** | Containers | The implemented logical runtimes: Core API, MCP Server, Agent Runtime API/Engine, Smart CLI, Redis cache, and reference corpus. Tracker remains external to this repository. | [Level 2: Containers](./level-2-containers.md) |
+| **Level 2** | Containers | The implemented logical runtimes: Core API, MCP Server, Agent Runtime API/Engine, Evolith CLI, Redis cache, and reference corpus. Tracker remains external to this repository. | [Level 2: Containers](./level-2-containers.md) |
 | **Level 3** | Components | The internal building blocks of each container: controllers, commands, tool registries, use cases, adapters, evaluators, and domain services. | [Level 3: Components](./level-3-components/README.md) |
 | **Level 4** | Code/Modules | The lowest level mapping: files, schemas, OPA rulesets, and specific classes. | [Level 4: Code & Modules](./level-4-code-modules/README.md) |
 

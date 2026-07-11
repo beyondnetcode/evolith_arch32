@@ -1027,7 +1027,7 @@
     {
       "id": "chat",
       "name": "Agent Runtime chat",
-      "description": "Conversational interaction with the Evolith Agent Runtime (Smart CLI Chat)",
+      "description": "Conversational interaction with the Evolith Agent Runtime (Evolith CLI Chat)",
       "cli": {
         "exposed": true,
         "command": "chat"

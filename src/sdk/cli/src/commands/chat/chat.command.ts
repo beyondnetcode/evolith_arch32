@@ -10,7 +10,7 @@ import {
 
 @Command({
   name: 'chat',
-  description: 'Conversational interaction with the Evolith Agent Runtime (Smart CLI Chat)',
+  description: 'Conversational interaction with the Evolith Agent Runtime (Evolith CLI Chat)',
 })
 export class ChatCommand extends BaseEvolithCommand {
   constructor(promptService: PromptService) {
@@ -29,7 +29,7 @@ export class ChatCommand extends BaseEvolithCommand {
     };
 
     if (!json) {
-      this.promptService.showInfo('Starting Smart CLI Chat Interface...');
+      this.promptService.showInfo('Starting Evolith CLI Chat Interface...');
     }
 
     const message = passed.join(' ');

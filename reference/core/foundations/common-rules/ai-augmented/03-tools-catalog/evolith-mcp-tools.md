@@ -297,7 +297,7 @@ Tools are accessed via the Evolith MCP server:
 
 ```bash
 # Start MCP server
-evolith mcp serve
+evolith-mcp
 
 # Call a tool
 evolith mcp call <tool-name> --<option> <value>

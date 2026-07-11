@@ -19,7 +19,7 @@ Selecciona un contenedor para explorar sus componentes internos:
 - **[Componentes del Core API](./core-api-components.es.md):** Explorando el motor de evaluación stateless, la resolución de workspaces, acceso a caché/referencia y la superficie transitoria de registro de satélites.
 - **[Componentes del Agent Runtime](./agent-runtime-components.es.md):** Explorando la capa de orquestación (ports and adapters), incluyendo la API de comandos/eventos, resolución de skills, aprobación, memoria, validación de políticas y publicación de trazas.
 - **[Componentes del MCP Server](./mcp-server-components.es.md):** Explorando el gateway MCP standalone, registro de tools, resources, prompts, ABAC, auditoría, métricas y puente hacia Agent Runtime.
-- **[Componentes de Smart CLI](./smart-cli-components.es.md):** Explorando comandos Nest Commander, evaluación local, validación, perfiles, plugins, flujos de satélites e integración SDK.
+- **[Componentes de Evolith CLI](./smart-cli-components.es.md):** Explorando comandos Nest Commander, evaluación local, validación, perfiles, plugins, flujos de satélites e integración SDK.
 
 ---
 [Volver al Nivel 2: Contenedores](../level-2-containers.es.md)

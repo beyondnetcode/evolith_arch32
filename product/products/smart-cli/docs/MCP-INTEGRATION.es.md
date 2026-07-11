@@ -20,7 +20,7 @@ El Protocolo de Contexto de Modelo es un estándar para que los agentes de IA ut
 ### 1. Instalar Evolith CLI
 
 ```bash
-npm install -g @evolith/smart-cli
+npm install -g @beyondnet/evolith-cli
 ```
 
 ### 2. Configurar el Servidor MCP
@@ -31,7 +31,7 @@ Crea o edita `~/.cursor/mcp.json`:
 {
   "mcpServers": {
     "evolith": {
-      "command": "smart-cli",
+      "command": "evolith-cli",
       "args": ["mcp", "serve"],
       "env": {
         "EVOLITH_CORE_PATH": "/path/to/evolith"
@@ -70,7 +70,7 @@ Usuario: Instala un agente estándar
 ### 1. Instalar Evolith CLI
 
 ```bash
-npm install -g @evolith/smart-cli
+npm install -g @beyondnet/evolith-cli
 ```
 
 ### 2. Configurar el Servidor MCP
@@ -81,7 +81,7 @@ Edita `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "evolith": {
-      "command": "smart-cli",
+      "command": "evolith-cli",
       "args": ["mcp", "serve"],
       "env": {
         "EVOLITH_CORE_PATH": "/path/to/evolith"
@@ -399,7 +399,7 @@ Para operaciones largas, aumenta el timeout en la configuración MCP:
 {
   "mcpServers": {
     "evolith": {
-      "command": "smart-cli",
+      "command": "evolith-cli",
       "args": ["mcp", "serve"],
       "timeout": 30000
     }

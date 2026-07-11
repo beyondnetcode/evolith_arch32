@@ -1345,7 +1345,7 @@ evolith-cli update --install
 
 ### 8.8. `evolith-cli chat` — interacción conversacional con el Agent Runtime
 
-**Qué hace.** Envía una intención en lenguaje natural al Agent Runtime de Evolith, que la interpreta y ejecuta a través de la capa agéntica. Es la puerta conversacional ("Smart CLI Chat") para pedir acciones sin recordar comandos exactos. Corre en **dry-run por defecto** (planifica sin aplicar), salvo que lo desactives.
+**Qué hace.** Envía una intención en lenguaje natural al Agent Runtime de Evolith, que la interpreta y ejecuta a través de la capa agéntica. Es la puerta conversacional ("Evolith CLI Chat") para pedir acciones sin recordar comandos exactos. Corre en **dry-run por defecto** (planifica sin aplicar), salvo que lo desactives.
 
 **Uso básico:**
 

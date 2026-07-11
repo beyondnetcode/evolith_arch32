@@ -47,7 +47,7 @@ To help us triage quickly, please provide:
 
 **In scope:** the Evolith source code in this repository — `sdk/`, `apps/`,
 `packages/`, the OPA policies and rulesets under `rulesets/`, the CI/CD harness
-(`.harness/`, `.github/workflows/`), and the published `@evolith/*` packages.
+(`.harness/`, `.github/workflows/`), and the published `@beyondnet/evolith-*` packages.
 
 **Out of scope:** third-party dependencies (report those upstream; we track them
 via Dependabot and `npm audit`), issues requiring a compromised developer

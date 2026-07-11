@@ -14,14 +14,14 @@ reproducible. Un run verde de los cuatro playbooks es el gate E2E cross-superfic
 ## Flujo: Core Governance
 
 - **Superficie:** dominio de governance SDLC (fase → gate → artefacto → verdict).
-- **Comando:** `npm run test:e2e --workspace @evolith/core-domain`
+- **Comando:** `npm run test:e2e --workspace @beyondnet/evolith-core-domain`
 - **Suite:** `packages/core-domain/src/__e2e__/governance-flow.e2e.spec.ts` (13 tests).
 - **Escenarios:** aprobación de gate por ARCHITECT (verdict PASS + `GateApprovedEvent` + auditoría + transiciones de fase); artefacto faltante → FAIL + `GateRejectedEvent`; denegación RBAC (`GateAuthorizationError`); entrega de webhook de `gate.approved`; validación de workflow de 5 fases + Blueprint.
 - **Esperado:** 13/13 verde contra un satélite real en tmpdir.
 
-## Flujo: Smart CLI
+## Flujo: Evolith CLI
 
-- **Superficie:** `smart-cli` y sus comandos (incl. MCP HTTP vivo vía `mcp serve`).
+- **Superficie:** `evolith-cli` y sus comandos (incl. MCP HTTP vivo vía `mcp serve`).
 - **Comando:** `npm run --workspace sdk/cli test:e2e`
 - **Suite:** config e2e de `sdk/cli/test/**` (20 suites).
 - **Escenarios:** flujos `validate`/`gate`/`init`/`wizard`, comandos de gate SDLC, y `mcp-e2e` que levanta el server MCP HTTP (`/health` público, `POST /` fail-closed, `initialize`/`tools/list`/recursos/prompts).
@@ -46,7 +46,7 @@ reproducible. Un run verde de los cuatro playbooks es el gate E2E cross-superfic
 ## Correr Todos los Flujos
 
 ```bash
-npm run test:e2e --workspace @evolith/core-domain
+npm run test:e2e --workspace @beyondnet/evolith-core-domain
 npm run --workspace sdk/cli test:e2e
 npm run --workspace apps/core-api test:e2e
 npm run --workspace packages/mcp-server build && npm run --workspace packages/mcp-server test:e2e

@@ -62,7 +62,7 @@ These gates apply to every release regardless of phase.
 
 ### 3.3 SDK Package
 
-- [ ] `package.json` has proper `name`: `@evolith/sdk`
+- [ ] `package.json` has proper `name`: `@beyondnet/evolith-sdk`
 - [ ] `exports` field correctly maps all service entry points
 - [ ] `types` field points to correct declaration file
 - [ ] SDK can be imported in external TypeScript project
@@ -74,25 +74,25 @@ These gates apply to every release regardless of phase.
 
 ### 4.1 Agent Management Commands
 
-- [ ] `smart-cli agent install` creates valid ruleset structure
-- [ ] `smart-cli agent list` shows installed agents
-- [ ] `smart-cli agent validate` validates agent ruleset
-- [ ] `smart-cli agent upgrade` handles version upgrades
-- [ ] `smart-cli agent remove` cleanly removes agent
+- [ ] `evolith-cli agent install` creates valid ruleset structure
+- [ ] `evolith-cli agent list` shows installed agents
+- [ ] `evolith-cli agent validate` validates agent ruleset
+- [ ] `evolith-cli agent upgrade` handles version upgrades
+- [ ] `evolith-cli agent remove` cleanly removes agent
 
 ### 4.2 Architecture Validation
 
-- [ ] `smart-cli architecture validate` checks F1 modular independence
-- [ ] `smart-cli architecture validate` checks F2 contract boundaries
-- [ ] `smart-cli architecture validate` checks F3 extraction readiness
+- [ ] `evolith-cli architecture validate` checks F1 modular independence
+- [ ] `evolith-cli architecture validate` checks F2 contract boundaries
+- [ ] `evolith-cli architecture validate` checks F3 extraction readiness
 - [ ] Validation output includes specific rule violations with codes
 
 ### 4.3 SDLC Operations
 
-- [ ] `smart-cli sdlc handoff` generates artifact manifest
-- [ ] `smart-cli sdlc handoff` validates phase gate requirements
-- [ ] `smart-cli sdlc status` shows current phase gate status
-- [ ] `smart-cli sdlc advance` triggers phase transition (if authorized)
+- [ ] `evolith-cli sdlc handoff` generates artifact manifest
+- [ ] `evolith-cli sdlc handoff` validates phase gate requirements
+- [ ] `evolith-cli sdlc status` shows current phase gate status
+- [ ] `evolith-cli sdlc advance` triggers phase transition (if authorized)
 
 ---
 
@@ -100,7 +100,7 @@ These gates apply to every release regardless of phase.
 
 ### 5.1 MCP Server Core
 
-- [ ] MCP server starts via `smart-cli mcp` command
+- [ ] MCP server starts via `evolith-cli mcp` command
 - [ ] JSON-RPC 2.0 compliance verified
 - [ ] StdioServerTransport implemented correctly
 - [ ] Server responds to `initialize` request

@@ -1,9 +1,9 @@
-# Evolith Smart CLI — Complete Demo & Guide
+# Evolith Evolith CLI — Complete Demo & Guide
 
 > **Bilingual Navigation:** [Versión en Español](./SMART-CLI-DEMO.es.md)
 
 **Version:** 0.0.3-beta
-**Package:** `@evolith/smart-cli`
+**Package:** `@beyondnet/evolith-cli`
 **Repository:** [evolith_arch32](https://github.com/beyondnetcode/evolith_arch32)
 
 ---
@@ -26,9 +26,9 @@
 
 ## 1. Introduction
 
-### What is Evolith Smart CLI?
+### What is Evolith Evolith CLI?
 
-Evolith Smart CLI is the command-line interface for the Evolith architecture governance system. It enables teams to:
+Evolith Evolith CLI is the command-line interface for the Evolith architecture governance system. It enables teams to:
 
 - **Initialize** satellite repositories with guided interactive wizards
 - **Validate** repositories against machine-readable governance rulesets
@@ -42,7 +42,7 @@ Evolith Smart CLI is the command-line interface for the Evolith architecture gov
 |------|----------|---------|
 | **Interactive** | Developer workstation, guided setup | `evolith init` |
 | **Batch (CI/CD)** | Automated pipelines, JSON output | `evolith validate --format json` |
-| **MCP (AI)** | AI agent integration, real-time context | `evolith mcp serve` |
+| **MCP (AI)** | AI agent integration, real-time context | `evolith-mcp` |
 
 ### Architecture Overview
 
@@ -55,7 +55,7 @@ Evolith Smart CLI is the command-line interface for the Evolith architecture gov
                        │ pinned version
                        ▼
 ┌─────────────────────────────────────────────────────────┐
-│                 Evolith Smart CLI                       │
+│                 Evolith Evolith CLI                       │
 │  ┌─────────┐ ┌──────────┐ ┌──────────┐ ┌────────────┐  │
 │  │  Init   │ │ Validate │ │  SDLC    │ │   Drift    │  │
 │  │ Command │ │ Command  │ │ Commands │ │  Command   │  │
@@ -82,7 +82,7 @@ Evolith Smart CLI is the command-line interface for the Evolith architecture gov
 
 ```bash
 # Step 1: Install the CLI
-npm install -g @evolith/smart-cli@beta
+npm install -g @beyondnet/evolith-cli@beta
 
 # Step 2: Initialize a new satellite repository
 mkdir my-project && cd my-project
@@ -118,7 +118,7 @@ evolith sdlc gate-status
 ### Via npm (Recommended)
 
 ```bash
-npm install -g @evolith/smart-cli@beta
+npm install -g @beyondnet/evolith-cli@beta
 ```
 
 ### Verify Installation
@@ -567,7 +567,7 @@ evolith docs --force
 
 **Usage:**
 ```bash
-evolith mcp serve [options]
+evolith-mcp [options]
 evolith mcp version
 ```
 
@@ -581,13 +581,13 @@ evolith mcp version
 **Examples:**
 ```bash
 # Start MCP server over stdio (for Cursor, Claude Desktop)
-evolith mcp serve
+evolith-mcp
 
 # Start MCP server over HTTP
-evolith mcp serve --transport http --port 3000
+evolith-mcp --transport http --port 3000
 
 # Start with API key authentication
-evolith mcp serve --transport http --port 3000 --api-key my-secret-key
+evolith-mcp --transport http --port 3000 --api-key my-secret-key
 
 # Check version
 evolith mcp version
@@ -1006,13 +1006,13 @@ evolith drift --level F3 --trend
 
 ```bash
 # stdio mode (for Cursor, Claude Desktop)
-evolith mcp serve
+evolith-mcp
 
 # HTTP mode (for web-based integrations)
-evolith mcp serve --transport http --port 3000
+evolith-mcp --transport http --port 3000
 
 # With API key authentication
-evolith mcp serve --transport http --port 3000 --api-key my-secret-key
+evolith-mcp --transport http --port 3000 --api-key my-secret-key
 ```
 
 ### Cursor AI Configuration
@@ -1212,7 +1212,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm install -g @evolith/smart-cli@beta
+      - run: npm install -g @beyondnet/evolith-cli@beta
       - name: Validate governance
         run: evolith validate --format json --output report.json
       - name: Check architecture

@@ -36,7 +36,7 @@ sequenceDiagram
     participant LocalSearchProvider
     participant FileSystem
 
-    Usuario->>ArchitectureCommand: smart-cli architecture ask "¿Cuál es el patrón de auth?"
+    Usuario->>ArchitectureCommand: evolith-cli architecture ask "¿Cuál es el patrón de auth?"
     ArchitectureCommand->>SearchEngineProvider: search("¿Cuál es el patrón de auth?")
     Note over SearchEngineProvider,LocalSearchProvider: Resuelto vía DI de NestJS
     SearchEngineProvider->>LocalSearchProvider: executeQuery()
@@ -56,7 +56,7 @@ sequenceDiagram
     participant WatcherService
     participant McpServerService
 
-    Agente->>McpServeCommand: spawn("smart-cli mcp serve")
+    Agente->>McpServeCommand: spawn("evolith-mcp")
     McpServeCommand->>WatcherService: startWatching()
     McpServeCommand->>McpServerService: OnModuleInit (Auto-arranque)
     McpServerService->>Agente: Enviar Handshake JSON-RPC (stdio)

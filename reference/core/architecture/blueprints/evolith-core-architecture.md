@@ -18,7 +18,7 @@ flowchart TB
 
     %% Interfaces
     subgraph Interfaces ["Interface Layer"]
-        CLI["💻 Smart CLI\n(Developer Interface)"]
+        CLI["💻 Evolith CLI\n(Developer Interface)"]
         API["🔌 API Gateway / BFF\n(Application Interface)"]
     end
 
@@ -91,11 +91,11 @@ Decomposes the "Evolith Core" system into its major executing containers.
 C4Container
     title Container Diagram for Evolith Core
 
-    Person(developer, "Developer", "Engineer using the Smart CLI.")
+    Person(developer, "Developer", "Engineer using the Evolith CLI.")
     Person(clientApp, "Client Application", "Web or Mobile app consuming data.")
 
     System_Boundary(evolith, "Evolith Core System") {
-        Container(cli, "Smart CLI", "Node.js / TS", "Interactive terminal application orchestrating local AI agents and workflows.")
+        Container(cli, "Evolith CLI", "Node.js / TS", "Interactive terminal application orchestrating local AI agents and workflows.")
         Container(mcp, "MCP Server", "Node.js / SSE", "Model Context Protocol server providing tool execution to AI models.")
         Container(gateway, "API Gateway", "Traefik", "Ingress controller routing traffic and handling TLS termination.")
         Container(bff, "BFF Layer", "NestJS", "Backend-For-Frontend aggregating domain services for specific client profiles.")
@@ -154,14 +154,14 @@ C4Component
 
 Sequence diagrams illustrating key operational scenarios within the platform.
 
-### Case 1: Developer Using Smart CLI
+### Case 1: Developer Using Evolith CLI
 
 Demonstrates the AI-native workflow where a developer asks the CLI to perform a task, which is delegated to an LLM that uses MCP tools.
 
 ```mermaid
 sequenceDiagram
     actor Dev as Developer
-    participant CLI as Smart CLI
+    participant CLI as Evolith CLI
     participant LLM as AI Provider
     participant MCP as MCP Server
     participant Core as Core Services
@@ -213,7 +213,7 @@ sequenceDiagram
 
 | Component | Purpose & Responsibility | Key Dependencies | Input / Output | Future Evolution |
 | :--- | :--- | :--- | :--- | :--- |
-| **Smart CLI** | Developer interface for managing architecture, generating code, and executing AI-assisted workflows. | Node.js, LLM APIs, Local File System | **In:** User commands/prompts.<br>**Out:** Code changes, terminal output. | Transition to a fully autonomous background agent daemon. |
+| **Evolith CLI** | Developer interface for managing architecture, generating code, and executing AI-assisted workflows. | Node.js, LLM APIs, Local File System | **In:** User commands/prompts.<br>**Out:** Code changes, terminal output. | Transition to a fully autonomous background agent daemon. |
 | **MCP Server** | Exposes repository and architectural capabilities as standardized tools for any MCP-compliant AI client. | SSE Transport, Evolith SDK | **In:** Tool execution requests.<br>**Out:** Tool results (JSON). | Expand toolset to include dynamic cloud infrastructure provisioning. |
 | **BFF Layer** | Aggregates and tailors backend data for specific frontend profiles (Web, Mobile, B2B). | Traefik, Domain Services, OPA | **In:** Client HTTP requests.<br>**Out:** Tailored JSON payloads. | GraphQL Federation adoption for highly dynamic client queries. |
 | **Domain Services** | The core business capabilities (Identity, Audit, etc.) implemented as independent modules. | Persistence, Event Bus | **In:** BFF or MCP requests.<br>**Out:** Domain responses / Events. | Scale out from Modular Monolith to distributed Microservices based on load. |

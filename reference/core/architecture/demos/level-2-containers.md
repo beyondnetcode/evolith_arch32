@@ -18,7 +18,7 @@ This view zooms into the **Evolith Core Ecosystem** to reveal its major executin
 C4Container
     title Container Diagram for Evolith Core Ecosystem
 
-    Person(dev, "Engineer", "Uses Smart CLI")
+    Person(dev, "Engineer", "Uses Evolith CLI")
     Person(agent, "AI Agent", "Autonomous LLM Executor")
     System_Ext(tracker, "Evolith Tracker", "Stateful SaaS Orchestrator")
 
@@ -27,7 +27,7 @@ C4Container
         
         Container(api, "Core API", "NestJS / REST", "Stateless evaluation surface. Serves rulesets, evaluates contexts, gates and topology checks, and hosts transitional satellite registry endpoints.")
         Container(mcp, "Standalone MCP Server", "NestJS / MCP stdio + Streamable HTTP", "Model Context Protocol gateway. Provides governed tools, resources, prompts, ABAC, audit and metrics.")
-        Container(cli, "Smart CLI", "Nest Commander / TypeScript", "Terminal application for local validation, evaluation, scaffolding, profiles, plugins and satellite workflows.")
+        Container(cli, "Evolith CLI", "Nest Commander / TypeScript", "Terminal application for local validation, evaluation, scaffolding, profiles, plugins and satellite workflows.")
         Container(agentApi, "Agent Runtime Command/Event API", "NestJS / HTTP + optional SSE", "Command requests plus optional event stream for governed agent executions.")
         Container(runtime, "Agent Runtime Engine", "TypeScript Package", "Governed orchestration layer enforcing boundaries, ports, and execution.")
         
@@ -60,8 +60,8 @@ C4Container
 | **Core API (REST)** | NestJS | Stateless evaluation engine. Exposes `/api/v1/evaluate`, ruleset/reference endpoints, gate/phase endpoints, architecture checks, and a transitional in-memory satellite registry. It returns technical evaluation results, not binding Tracker decisions. |
 | **Agent Runtime Command/Event API** | NestJS / RxJS | Exposes `POST /v1/agent/handle` for request/response execution, `POST /v1/agent/stream` for command submission plus event delivery, and `GET /v1/agent/skills` for discovery. SSE is an event transport, not the command channel. |
 | **Standalone MCP Server** | NestJS / Node.js | Exposes Evolith tools, resources, prompts, ABAC, audit, metrics, and stdio/Streamable HTTP transports through the Model Context Protocol. It is decoupled from the CLI but shares domain packages. |
-| **Smart CLI** | Nest Commander / TypeScript | Human-friendly interface for local validation, canonical evaluation, scaffolding, profiles, plugins, satellites, and API inspection. |
-| **Agent Runtime Engine** | TypeScript (`@evolith/agent-runtime`) | The ports-and-adapters orchestration layer. Decides *how* an agent task is executed without coupling to `.harness` or Hermes directly. |
+| **Evolith CLI** | Nest Commander / TypeScript | Human-friendly interface for local validation, canonical evaluation, scaffolding, profiles, plugins, satellites, and API inspection. |
+| **Agent Runtime Engine** | TypeScript (`@beyondnet/evolith-agent-runtime`) | The ports-and-adapters orchestration layer. Decides *how* an agent task is executed without coupling to `.harness` or Hermes directly. |
 | **Redis Cache** | Redis / cache-manager | Optional high-availability cache for topology/reference reads and service performance. Core still falls back safely when Redis is unavailable. |
 
 ## 4. Zoom In

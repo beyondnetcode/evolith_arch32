@@ -40,7 +40,7 @@ mindmap
 
 ## 3. The Port and Adapter Model
 
-To integrate a new capability (e.g., a new LLM provider), the developer implements the appropriate interface (e.g., `IAgentEnginePort`) in the `@evolith/agent-runtime` layer or a new adapter in Evolith Tracker. 
+To integrate a new capability (e.g., a new LLM provider), the developer implements the appropriate interface (e.g., `IAgentEnginePort`) in the `@beyondnet/evolith-agent-runtime` layer or a new adapter in Evolith Tracker. 
 
 The Core rulesets and governance model **do not change** when a provider changes.
 

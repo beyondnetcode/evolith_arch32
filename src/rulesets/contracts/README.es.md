@@ -2,7 +2,7 @@
 
 > **Navegación Bilingüe:** [English Version](./README.md)
 
-El manifiesto de este directorio es el límite canónico de compatibilidad entre Evolith Core, el productor Smart CLI y consumidores independientes como Evolith Tracker.
+El manifiesto de este directorio es el límite canónico de compatibilidad entre Evolith Core, el productor Evolith CLI y consumidores independientes como Evolith Tracker.
 
 - Las versiones del contrato y los schemas siguen versionado semántico.
 - Los cambios aditivos compatibles incrementan la versión minor.

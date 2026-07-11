@@ -32,7 +32,7 @@ interface InitCommandOptions {
   description:
     'Inicializa un repositorio satélite de Evolith. Interactivo por defecto; ' +
     'modo batch/CI con `--config <evolith.setup.json>` o `--name <proyecto> --yes` ' +
-    '(sin prompts). Ejemplo: `smart-cli init --name my-sat --runtime nodejs --arch clean --yes`.',
+    '(sin prompts). Ejemplo: `evolith-cli init --name my-sat --runtime nodejs --arch clean --yes`.',
 })
 export class InitCommand extends BaseEvolithCommand {
   private readonly operationTimer = new OperationTimer();

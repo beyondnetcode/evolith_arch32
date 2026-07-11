@@ -1,7 +1,7 @@
-# Smart CLI Architecture
+# Evolith CLI Architecture
 
 > **Audience:** Developers, Architects, DevOps Engineers  
-> **Purpose:** Document the system architecture, components, data models, and flows for the Evolith Smart CLI  
+> **Purpose:** Document the system architecture, components, data models, and flows for the Evolith Evolith CLI  
 > **Bilingual:** [Español](./ARCHITECTURE.es.md)
 
 ---
@@ -25,7 +25,7 @@
 
 ```mermaid
 graph TB
-    subgraph CLI["Smart CLI Interface"]
+    subgraph CLI["Evolith CLI Interface"]
         CLI_User(["👤 User"])
         CLI_Shell["Shell Completion"]
         CLI_History["Command History"]
@@ -204,14 +204,14 @@ graph TB
 ```mermaid
 sequenceDiagram
     participant User
-    participant CLI as Smart CLI
+    participant CLI as Evolith CLI
     participant Parser as Command Parser
     participant Registry as Command Registry
     participant UseCase as Use Case
     participant Domain as Domain Services
     participant Infra as Infrastructure
 
-    User->>CLI: smart-cli validate --satellite /repo
+    User->>CLI: evolith-cli validate --satellite /repo
     CLI->>Parser: parse(args)
     Parser->>Registry: resolve('validate')
     Registry-->>Parser: ValidateCommand
@@ -231,7 +231,7 @@ sequenceDiagram
 
 ```mermaid
 flowchart TB
-    A["smart-cli init"] --> B{"Interactive\nor Batch?"}
+    A["evolith-cli init"] --> B{"Interactive\nor Batch?"}
     B -->|"Interactive"| C["Prompt for:\n- Project name\n- Runtime (NodeJS/.NET/Android)\n- Architecture pattern\n- Monorepo option\n- Agents to install"]
     B -->|"Batch"| D["Read from\nconfig file"]
     C --> E["Create evolith.yaml"]
@@ -413,12 +413,12 @@ erDiagram
 stateDiagram-v2
     [*] --> Phase0: init
 
-    Phase0 --> Phase1: smart-cli sdlc handoff --to phase-1
-    Phase1 --> Phase2: smart-cli sdlc handoff --to phase-2
-    Phase2 --> Phase3: smart-cli sdlc handoff --to phase-3
-    Phase3 --> Phase4: smart-cli sdlc handoff --to phase-4
-    Phase4 --> Phase5: smart-cli sdlc handoff --to phase-5
-    Phase5 --> [*]: smart-cli sdlc handoff --to production
+    Phase0 --> Phase1: evolith-cli sdlc handoff --to phase-1
+    Phase1 --> Phase2: evolith-cli sdlc handoff --to phase-2
+    Phase2 --> Phase3: evolith-cli sdlc handoff --to phase-3
+    Phase3 --> Phase4: evolith-cli sdlc handoff --to phase-4
+    Phase4 --> Phase5: evolith-cli sdlc handoff --to phase-5
+    Phase5 --> [*]: evolith-cli sdlc handoff --to production
 
     note right of Phase0
         Discovery & Business Case
@@ -500,12 +500,12 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant User
-    participant CLI as Smart CLI
+    participant CLI as Evolith CLI
     participant UseCase as AgentManagementUseCase
     participant Domain as AgentRegistryService
     participant Infra as FileManager
 
-    User->>CLI: smart-cli agents install --name @architect
+    User->>CLI: evolith-cli agents install --name @architect
     CLI->>UseCase: execute({name: '@architect'})
     UseCase->>Domain: resolveAgent('@architect')
     Domain-->>UseCase: agentTemplate
@@ -528,12 +528,12 @@ sequenceDiagram
 graph TB
     subgraph Development["Development Environment"]
         DEV_User["Developer"]
-        DEV_CLI["smart-cli local"]
+        DEV_CLI["evolith-cli local"]
     end
 
     subgraph Installation["Installation Methods"]
-        NPM["npm install -g\n@evolith/smart-cli"]
-        NPX["npx @evolith/smart-cli"]
+        NPM["npm install -g\n@beyondnet/evolith-cli"]
+        NPX["npx @beyondnet/evolith-cli"]
         Binary["Download from\nGitHub Releases"]
         Docker["Docker Image\nevolith/smart-cli"]
     end

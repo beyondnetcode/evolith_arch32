@@ -43,7 +43,7 @@ permitiendo incluso un enrutado multimotor dinámico.
 ## Inicio rápido
 
 ```ts
-import { createAgentRuntime, parseAgentRuntimeRequest } from '@evolith/agent-runtime';
+import { createAgentRuntime, parseAgentRuntimeRequest } from '@beyondnet/evolith-agent-runtime';
 
 const { runtime } = createAgentRuntime(); // adaptadores in-memory/stub seguros
 

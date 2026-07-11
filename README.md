@@ -88,9 +88,9 @@ Evolith ships as a suite of coordinated products built on a common foundation.
 | Product | Role |
 |---|---|
 | **[Evolith Core](reference/README.md)** | Provider-neutral constitution: principles, ADRs, rulesets, topologies, and contracts |
-| **[Smart CLI](product/products/smart-cli/README.md)** | Local enforcement — validate code, run gates, manage ADRs, serve MCP |
+| **[Evolith CLI](product/products/smart-cli/README.md)** | Local enforcement — validate code, run gates, manage ADRs, serve MCP |
 | **[Core API](product/products/core-api/README.md)** | REST service for remote governance queries and evaluation |
-| **[MCP Services](product/products/mcp-services/README.md)** | Governance as live context for LLMs and AI agents (27 tools, 9 resources, 8 prompts) |
+| **[MCP Services](product/products/mcp-services/README.md)** | Governance as live context for LLMs and AI agents (47 tools, 9 resources, 8 prompts) |
 | **[Agent Runtime](reference/core/architecture/foundations/README.md)** | Agentic mediation layer — orchestrates Core through Ports & Adapters; Hermes is one replaceable adapter |
 | **[Evolith Tracker](product/products/evolith-tracker/README.md)** | Business lifecycle governance — phases, owners, funding, and ROI |
 | **[Rulesets](src/rulesets/README.md)** | Machine-readable enforcement rules per topology |
@@ -105,7 +105,7 @@ Evolith ships as a suite of coordinated products built on a common foundation.
 Developer / AI Agent / External Trigger
         │
         ▼
-  Smart CLI  ──────────────────────────────► MCP Server
+  Evolith CLI  ──────────────────────────────► MCP Server
   (local enforcement)                        (AI agent context)
         │
         ▼
@@ -121,7 +121,7 @@ Developer / AI Agent / External Trigger
   (the shared governance artifacts)
 ```
 
-1. **Smart CLI** validates code locally against rulesets and runs phase gates.
+1. **Evolith CLI** validates code locally against rulesets and runs phase gates.
 2. **Core API** exposes the same governance remotely for CI pipelines and orchestrators.
 3. **MCP Server** feeds governance context to LLMs and AI agents in real time.
 4. **Agent Runtime** orchestrates Core capabilities through a Ports & Adapters model — Hermes is one replaceable adapter.
@@ -153,12 +153,12 @@ Full reference: [Architecture hub](./reference/core/architecture/README.md) · [
 
 ```
 evolith/
-├── src/packages/agent-runtime/  # @evolith/agent-runtime — Ports & Adapters agentic layer
+├── src/packages/agent-runtime/  # @beyondnet/evolith-agent-runtime — Ports & Adapters agentic layer
 ├── src/apps/agent-runtime-api/  # NestJS HTTP service wrapping the runtime (POST /v1/agent/handle)
 ├── reference/core/          # Engineering constitution and principles
 ├── reference/core/architecture/  # Topologies, blueprints, ADRs, and agent-runtime docs
 ├── reference/core/sdlc/    # SDLC phases, gates, standards, and glossary
-├── product/products/      # Smart CLI, Core API, MCP, Tracker, UMS
+├── product/products/      # Evolith CLI, Core API, MCP, Tracker, UMS
 └── product/operations/    # SRE, infra, quality gates
 ```
 
@@ -169,7 +169,7 @@ Entry point for each area: [Global Master Index](./reference/core/control-center
 ## Quick Start
 
 ```bash
-# Install Smart CLI (npm package @beyondnet/evolith-cli; command: evolith-cli)
+# Install Evolith CLI (npm package @beyondnet/evolith-cli; command: evolith-cli)
 npx @beyondnet/evolith-cli init
 
 # Validate your code against your topology's rulesets
@@ -187,7 +187,7 @@ evolith-cli adr list
 evolith-mcp
 ```
 
-Smart CLI ships **25 commands** and is configured via **`evolith.yaml`**. Full reference: [Smart CLI hub](./product/products/smart-cli/README.md)
+Evolith CLI ships **25 commands** and is configured via **`evolith.yaml`**. Full reference: [Evolith CLI hub](./product/products/smart-cli/README.md)
 
 ---
 
@@ -200,7 +200,7 @@ Smart CLI ships **25 commands** and is configured via **`evolith.yaml`**. Full r
 | Master Architecture | [C4 Master Architecture](./reference/core/architecture/demos/C4-MASTER-ARCHITECTURE.md) |
 | SDLC governance | [SDLC Governance Center](./reference/core/sdlc/README.md) |
 | Topologies | [Topologies hub](./reference/core/architecture/topologies/README.md) |
-| Smart CLI | [Smart CLI hub](./product/products/smart-cli/README.md) |
+| Evolith CLI | [Evolith CLI hub](./product/products/smart-cli/README.md) |
 | Core API | [Core API hub](./product/products/core-api/README.md) |
 | MCP Services | [MCP Services hub](./product/products/mcp-services/README.md) |
 | Agent Runtime | [Agent Runtime hub](./reference/core/architecture/foundations/README.md) |

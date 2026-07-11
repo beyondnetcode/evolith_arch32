@@ -20,7 +20,7 @@ The Model Context Protocol is a standard for AI agents to use tools. When you co
 ### 1. Install Evolith CLI
 
 ```bash
-npm install -g @evolith/smart-cli
+npm install -g @beyondnet/evolith-cli
 ```
 
 ### 2. Configure MCP Server
@@ -31,7 +31,7 @@ Create or edit `~/.cursor/mcp.json`:
 {
   "mcpServers": {
     "evolith": {
-      "command": "smart-cli",
+      "command": "evolith-cli",
       "args": ["mcp", "serve"],
       "env": {
         "EVOLITH_CORE_PATH": "/path/to/evolith"
@@ -70,7 +70,7 @@ User: Install a standard agent
 ### 1. Install Evolith CLI
 
 ```bash
-npm install -g @evolith/smart-cli
+npm install -g @beyondnet/evolith-cli
 ```
 
 ### 2. Configure MCP Server
@@ -81,7 +81,7 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "evolith": {
-      "command": "smart-cli",
+      "command": "evolith-cli",
       "args": ["mcp", "serve"],
       "env": {
         "EVOLITH_CORE_PATH": "/path/to/evolith"
@@ -399,7 +399,7 @@ For long operations, increase timeout in MCP config:
 {
   "mcpServers": {
     "evolith": {
-      "command": "smart-cli",
+      "command": "evolith-cli",
       "args": ["mcp", "serve"],
       "timeout": 30000
     }

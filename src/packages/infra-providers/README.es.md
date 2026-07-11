@@ -1,20 +1,20 @@
-# @evolith/infra-providers
+# @beyondnet/evolith-infra-providers
 
 > Adaptadores de infraestructura para el framework de gobernanza Evolith.
 
-[![npm version](https://img.shields.io/npm/v/@evolith/infra-providers)](https://www.npmjs.com/package/@evolith/infra-providers)
-[![license](https://img.shields.io/npm/l/@evolith/infra-providers)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/@beyondnet/evolith-infra-providers)](https://www.npmjs.com/package/@beyondnet/evolith-infra-providers)
+[![license](https://img.shields.io/npm/l/@beyondnet/evolith-infra-providers)](./LICENSE)
 
 ## Resumen
 
-`@evolith/infra-providers` aporta los **adaptadores concretos de infraestructura** que implementan los ports definidos en `@evolith/core-domain`. Se encarga de la E/S de filesystem, el logging, el parseo de configuración YAML/JSON, la carga de rulesets desde disco y la entrega de webhooks.
+`@beyondnet/evolith-infra-providers` aporta los **adaptadores concretos de infraestructura** que implementan los ports definidos en `@beyondnet/evolith-core-domain`. Se encarga de la E/S de filesystem, el logging, el parseo de configuración YAML/JSON, la carga de rulesets desde disco y la entrega de webhooks.
 
 Estos adaptadores se inyectan en el dominio en tiempo de ejecución — el dominio en sí no tiene dependencias de infraestructura.
 
 ## Instalación
 
 ```bash
-npm install @evolith/infra-providers
+npm install @beyondnet/evolith-infra-providers
 ```
 
 ## Providers
@@ -66,7 +66,7 @@ import {
   YamlConfigParserProvider,
   ConsoleLoggerProvider,
   DiskRulesetRepository,
-} from '@evolith/infra-providers';
+} from '@beyondnet/evolith-infra-providers';
 
 // IFileSystem — adaptador concreto de Node.js
 const fs = new NodeFileSystemProvider().createFileSystem();
@@ -94,12 +94,12 @@ dependencias se resuelvan — esto refleja cómo los registran `apps/core-api` y
 
 ```ts
 import { Module } from '@nestjs/common';
-import type { IFileSystem, ILogger } from '@evolith/core-domain/domain/interfaces';
+import type { IFileSystem, ILogger } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import {
   NodeFileSystemProvider,
   NestLoggerProvider,
   DiskRulesetRepository,
-} from '@evolith/infra-providers';
+} from '@beyondnet/evolith-infra-providers';
 
 @Module({
   providers: [
@@ -125,7 +125,7 @@ export class InfraModule {}
 ### Entrega de webhooks
 
 ```ts
-import { WebhookAdapter } from '@evolith/infra-providers';
+import { WebhookAdapter } from '@beyondnet/evolith-infra-providers';
 
 // Todas las opciones son opcionales; se muestran los valores por defecto.
 const notifier = new WebhookAdapter({
@@ -150,7 +150,7 @@ reintento), o tras agotar todos los intentos en errores 5xx/de red.
 ### Priorización MoSCoW
 
 ```ts
-import { MoscowPrioritizationService } from '@evolith/infra-providers';
+import { MoscowPrioritizationService } from '@beyondnet/evolith-infra-providers';
 
 // Por defecto usa NodeFileSystemProvider; inyecta { fileSystem, logger } en tests.
 const moscow = new MoscowPrioritizationService();
@@ -231,7 +231,7 @@ phase }`; `MoscowAnalysis` lleva `{ repository, phase, items[], summary
   NestJS.
 - `DiskRulesetRepository` espera un directorio `<corePath>/rulesets` con el
   layout de la convención `ruleset-standard.schema.json` (provisto por
-  `@evolith/core`).
+  `@beyondnet/evolith-core`).
 
 ## Resolución de problemas
 
@@ -260,10 +260,10 @@ Las contribuciones siguen las guías a nivel de repositorio en el
 
 | Package | Rol |
 |---------|------|
-| [`@evolith/core-domain`](https://www.npmjs.com/package/@evolith/core-domain) | Lógica de dominio y motor de reglas (define los ports que este paquete implementa) |
-| **`@evolith/infra-providers`** | Adaptadores de infraestructura ← estás aquí |
-| [`@evolith/core`](../core) | Barrel fachada sobre `core-domain` |
-| [`@evolith/sdk`](../sdk-client) | Cliente tipado HTTP/MCP |
+| [`@beyondnet/evolith-core-domain`](https://www.npmjs.com/package/@beyondnet/evolith-core-domain) | Lógica de dominio y motor de reglas (define los ports que este paquete implementa) |
+| **`@beyondnet/evolith-infra-providers`** | Adaptadores de infraestructura ← estás aquí |
+| [`@beyondnet/evolith-core`](../core) | Barrel fachada sobre `core-domain` |
+| [`@beyondnet/evolith-sdk`](../sdk-client) | Cliente tipado HTTP/MCP |
 
 Consumido por **`apps/core-api`** y **`packages/mcp-server`**, que cablean estos
 adaptadores en los ports de `core-domain` en tiempo de ejecución.

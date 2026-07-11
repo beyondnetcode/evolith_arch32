@@ -1,16 +1,16 @@
-# @evolith/core
+# @beyondnet/evolith-core
 
 **Fachada** de lógica de negocio compartida para la plataforma Evolith. Es un barrel
-fino de re-exportación sobre [`@evolith/core-domain`](../core-domain), que da al Smart
+fino de re-exportación sobre [`@beyondnet/evolith-core-domain`](../core-domain), que da al Smart
 CLI, al MCP Server y al Core API una única superficie de imports estable.
 
 ## Instalación
 
 ```bash
-npm install @evolith/core
+npm install @beyondnet/evolith-core
 ```
 
-Requiere **Node.js 20+**. La única dependencia de runtime es `@evolith/core-domain`,
+Requiere **Node.js 20+**. La única dependencia de runtime es `@beyondnet/evolith-core-domain`,
 que es la fuente autoritativa de cada símbolo re-exportado.
 
 ## Superficie de imports soportada
@@ -24,10 +24,10 @@ import {
   RulesetValidatorService,
   TopologyCatalogService,
   readGitLog,
-} from '@evolith/core';
+} from '@beyondnet/evolith-core';
 ```
 
-> Los deep imports como `@evolith/core/domain/interfaces` **no** están soportados.
+> Los deep imports como `@beyondnet/evolith-core/domain/interfaces` **no** están soportados.
 > El paquete compila a un único `dist/index.js`; usa el barrel raíz e importa el
 > símbolo nombrado que necesites.
 
@@ -44,15 +44,15 @@ import {
 | Arquitectura | `TopologyCatalogService`, `TopologyManifest` |
 | Métricas | `readGitLog`, `isGitRepo` |
 
-La fuente autoritativa de cada símbolo vive en `@evolith/core-domain`; este paquete
+La fuente autoritativa de cada símbolo vive en `@beyondnet/evolith-core-domain`; este paquete
 solo ajusta la ergonomía de imports y la superficie de versión.
 
 ## Notas de runtime
 
-- La única dependencia de runtime es `@evolith/core-domain`.
+- La única dependencia de runtime es `@beyondnet/evolith-core-domain`.
 - Algunos servicios re-exportados (p. ej. `TopologyCatalogService`, los validadores
   de ruleset) leen activos de gobernanza desde una raíz de workspace; consulta el
-  README de `@evolith/core-domain` para el requisito de `WORKSPACE_ROOT`.
+  README de `@beyondnet/evolith-core-domain` para el requisito de `WORKSPACE_ROOT`.
 
 ## Desarrollo
 

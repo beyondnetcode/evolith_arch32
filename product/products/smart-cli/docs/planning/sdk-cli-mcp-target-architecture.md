@@ -64,14 +64,14 @@ No component creates its own truth. Every rule, artifact, and standard must be t
 ### 2.1 Package Structure
 
 ```
-@evolith/sdk (future)
-├── @evolith/sdk-core        # Core loading, rule resolution, validation
-├── @evolith/sdk-artifacts   # Artifact generation and validation
-├── @evolith/sdk-sdlc        # Phase gates, evidence collection
-└── @evolith/sdk-mcp         # MCP protocol adapters
+@beyondnet/evolith-sdk (future)
+├── @beyondnet/evolith-sdk-core        # Core loading, rule resolution, validation
+├── @beyondnet/evolith-sdk-artifacts   # Artifact generation and validation
+├── @beyondnet/evolith-sdk-sdlc        # Phase gates, evidence collection
+└── @beyondnet/evolith-sdk-mcp         # MCP protocol adapters
 
-@evolith/smart-cli (current)
-└── Implements CLI commands using @evolith/sdk-core
+@beyondnet/evolith-cli (current)
+└── Implements CLI commands using @beyondnet/evolith-sdk-core
 ```
 
 **Note:** Currently, SDK and CLI are combined in `sdk/cli/`. Future refactoring should extract SDK into separate packages.
@@ -176,7 +176,7 @@ interface SDLCService {
 ### 3.1 Command Structure
 
 ```
-smart-cli <domain> <action> [options]
+evolith-cli <domain> <action> [options]
 
 Domains:
   core        - Core information and management
@@ -517,8 +517,8 @@ Satellites can define local rulesets that extend Core:
 ## 10. Migration Strategy
 
 ### Phase 1: SDK Extraction
-1. Extract Core logic into `@evolith/sdk-core`
-2. Keep CLI in `@evolith/smart-cli` using SDK
+1. Extract Core logic into `@beyondnet/evolith-sdk-core`
+2. Keep CLI in `@beyondnet/evolith-cli` using SDK
 3. Maintain backward compatibility
 
 ### Phase 2: MCP Completion
@@ -527,7 +527,7 @@ Satellites can define local rulesets that extend Core:
 3. MCP for AI agents and IDEs
 
 ### Phase 3: Package Split
-1. Split SDK into `@evolith/sdk-core`, `@evolith/sdk-artifacts`, `@evolith/sdk-sdlc`
+1. Split SDK into `@beyondnet/evolith-sdk-core`, `@beyondnet/evolith-sdk-artifacts`, `@beyondnet/evolith-sdk-sdlc`
 2. Publish to npm
 3. CLI depends on SDK packages
 

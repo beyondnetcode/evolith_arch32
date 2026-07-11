@@ -62,7 +62,7 @@ Estos gates aplican a cada release independientemente de la fase.
 
 ### 3.3 Paquete SDK
 
-- [ ] `package.json` tiene `name` correcto: `@evolith/sdk`
+- [ ] `package.json` tiene `name` correcto: `@beyondnet/evolith-sdk`
 - [ ] Campo `exports` mapea correctamente todos los puntos de entrada del servicio
 - [ ] Campo `types` apunta al archivo de declaración correcto
 - [ ] SDK puede importarse en proyecto TypeScript externo
@@ -74,25 +74,25 @@ Estos gates aplican a cada release independientemente de la fase.
 
 ### 4.1 Comandos de Gestión de Agentes
 
-- [ ] `smart-cli agent install` crea estructura de ruleset válida
-- [ ] `smart-cli agent list` muestra agentes instalados
-- [ ] `smart-cli agent validate` valida ruleset del agente
-- [ ] `smart-cli agent upgrade` maneja actualizaciones de versión
-- [ ] `smart-cli agent remove` elimina agente limpiamente
+- [ ] `evolith-cli agent install` crea estructura de ruleset válida
+- [ ] `evolith-cli agent list` muestra agentes instalados
+- [ ] `evolith-cli agent validate` valida ruleset del agente
+- [ ] `evolith-cli agent upgrade` maneja actualizaciones de versión
+- [ ] `evolith-cli agent remove` elimina agente limpiamente
 
 ### 4.2 Validación de Arquitectura
 
-- [ ] `smart-cli architecture validate` verifica independencia modular F1
-- [ ] `smart-cli architecture validate` verifica límites de contratos F2
-- [ ] `smart-cli architecture validate` verifica preparación para extracción F3
+- [ ] `evolith-cli architecture validate` verifica independencia modular F1
+- [ ] `evolith-cli architecture validate` verifica límites de contratos F2
+- [ ] `evolith-cli architecture validate` verifica preparación para extracción F3
 - [ ] Salida de validación incluye violaciones de reglas específicas con códigos
 
 ### 4.3 Operaciones SDLC
 
-- [ ] `smart-cli sdlc handoff` genera manifiesto de artefactos
-- [ ] `smart-cli sdlc handoff` valida requisitos de phase gate
-- [ ] `smart-cli sdlc status` muestra estado actual del phase gate
-- [ ] `smart-cli sdlc advance` dispara transición de fase (si autorizado)
+- [ ] `evolith-cli sdlc handoff` genera manifiesto de artefactos
+- [ ] `evolith-cli sdlc handoff` valida requisitos de phase gate
+- [ ] `evolith-cli sdlc status` muestra estado actual del phase gate
+- [ ] `evolith-cli sdlc advance` dispara transición de fase (si autorizado)
 
 ---
 
@@ -100,7 +100,7 @@ Estos gates aplican a cada release independientemente de la fase.
 
 ### 5.1 Core del Servidor MCP
 
-- [ ] Servidor MCP inicia vía comando `smart-cli mcp`
+- [ ] Servidor MCP inicia vía comando `evolith-cli mcp`
 - [ ] Cumplimiento JSON-RPC 2.0 verificado
 - [ ] StdioServerTransport implementado correctamente
 - [ ] Servidor responde a solicitud `initialize`

@@ -122,25 +122,25 @@ sdk/cli/
 
 | Command | Status | Notes |
 |---------|--------|-------|
-| `smart-cli validate` | IMPLEMENTED | Full validation with --satellite, --core, --ruleset, --format, --output |
-| `smart-cli init` | PARTIALLY_IMPLEMENTED | Interactive wizard works; batch mode stub; file creation mocked |
-| `smart-cli mcp serve` | PARTIALLY_IMPLEMENTED | Watcher starts but MCP server is stub |
+| `evolith-cli validate` | IMPLEMENTED | Full validation with --satellite, --core, --ruleset, --format, --output |
+| `evolith-cli init` | PARTIALLY_IMPLEMENTED | Interactive wizard works; batch mode stub; file creation mocked |
+| `evolith-mcp` | PARTIALLY_IMPLEMENTED | Watcher starts but MCP server is stub |
 
 ### 3.2 Stub Commands
 
 | Command | Status | Evidence |
 |---------|--------|----------|
-| `smart-cli agents` | STUB | `// TODO: Logic for agent installation` (agents.command.ts:14) |
-| `smart-cli upgrade` | STUB | `// TODO: logic for upgrading satellite structures safely` (upgrade.command.ts:14) |
-| `smart-cli docs` | STUB | `// TODO: logic for scaffolding docs` (docs.command.ts:14) |
+| `evolith-cli agents` | STUB | `// TODO: Logic for agent installation` (agents.command.ts:14) |
+| `evolith-cli upgrade` | STUB | `// TODO: logic for upgrading satellite structures safely` (upgrade.command.ts:14) |
+| `evolith-cli docs` | STUB | `// TODO: logic for scaffolding docs` (docs.command.ts:14) |
 
 ### 3.3 POC Commands
 
 | Command | Status | Evidence |
 |---------|--------|----------|
-| `smart-cli sdlc handoff` | MOCK/POC | `[MOCK] Starting handoff process...` (handoff.command.ts:14) |
-| `smart-cli sdlc generate` | MOCK/POC | `[MOCK] Generating domain...` (generate-domain.command.ts:15) |
-| `smart-cli scaffold` | PARTIALLY_IMPLEMENTED | Prompts work; exec mocked via setTimeout |
+| `evolith-cli sdlc handoff` | MOCK/POC | `[MOCK] Starting handoff process...` (handoff.command.ts:14) |
+| `evolith-cli sdlc generate` | MOCK/POC | `[MOCK] Generating domain...` (generate-domain.command.ts:15) |
+| `evolith-cli scaffold` | PARTIALLY_IMPLEMENTED | Prompts work; exec mocked via setTimeout |
 
 ---
 
@@ -246,7 +246,7 @@ The `McpServerService.onModuleInit()` should use `@modelcontextprotocol/sdk` or 
 
 ### 7.2 CLI Has No Architecture Validation
 
-`smart-cli validate` doesn't check:
+`evolith-cli validate` doesn't check:
 - F1/F2/F3 architecture rules
 - Hexagonal architecture boundaries
 - Domain layer isolation

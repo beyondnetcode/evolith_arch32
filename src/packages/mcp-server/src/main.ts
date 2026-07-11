@@ -74,7 +74,7 @@ export interface StartMcpServerOptions {
 
 /**
  * Programmatic entry point. Boots the NestJS application context and starts the
- * MCP server on the requested transport. Consumers (e.g. the Smart CLI) call
+ * MCP server on the requested transport. Consumers (e.g. the Evolith CLI) call
  * this to delegate to the standalone gateway instead of running their own.
  */
 export async function startMcpServer(options: StartMcpServerOptions = {}): Promise<{

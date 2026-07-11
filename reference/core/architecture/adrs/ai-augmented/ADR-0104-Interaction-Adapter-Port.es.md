@@ -2,10 +2,10 @@
 
 **Date:** 2026-07-02
 **Status:** Accepted
-**Context:** AI-Augmented / Smart CLI / Agent Runtime
+**Context:** AI-Augmented / Evolith CLI / Agent Runtime
 
 ## Context and Problem Statement
-El Evolith Agent Runtime necesita soportar múltiples interfaces de usuario sin problemas, específicamente Smart CLI (modo comando), Smart CLI (modo chat), Hermes Agent Chat Box y potencialmente Model Context Protocol (MCP). Cada interfaz tiene diferentes contextos de seguridad, comportamientos de ejecución por defecto (por ejemplo, el chat interactivo por defecto es `dry_run = true`), y requerimientos de interpretación de intenciones. El runtime debe aplicar las reglas de Gobernanza Core de forma segura a través de todas estas interfaces sin acoplar la lógica de orquestación a los detalles de la interfaz de usuario.
+El Evolith Agent Runtime necesita soportar múltiples interfaces de usuario sin problemas, específicamente Evolith CLI (modo comando), Evolith CLI (modo chat), Hermes Agent Chat Box y potencialmente Model Context Protocol (MCP). Cada interfaz tiene diferentes contextos de seguridad, comportamientos de ejecución por defecto (por ejemplo, el chat interactivo por defecto es `dry_run = true`), y requerimientos de interpretación de intenciones. El runtime debe aplicar las reglas de Gobernanza Core de forma segura a través de todas estas interfaces sin acoplar la lógica de orquestación a los detalles de la interfaz de usuario.
 
 ## Decision
 Introducimos el `InteractionAdapterPort` como el punto de entrada unificado para todas las interacciones de las interfaces con el `AgentRuntimeService`.

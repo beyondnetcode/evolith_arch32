@@ -64,7 +64,7 @@ All commands run from the repository root.
 
 ```bash
 # 1. Core-domain governance-flow E2E (parity fixtures, end-to-end verdicts)
-npm run test:e2e --workspace @evolith/core-domain
+npm run test:e2e --workspace @beyondnet/evolith-core-domain
 
 # 2. CLI governance-flow E2E (gate, validate, agents, adr, mcp serve, ...)
 npm run --workspace sdk/cli test:e2e

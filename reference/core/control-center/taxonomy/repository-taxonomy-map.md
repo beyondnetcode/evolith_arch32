@@ -51,7 +51,7 @@ Use this map when you need to decide where to read, edit, add, or audit content 
 | `reference/core/architecture/topologies/` | C1 | Human-readable topology guidance and maturity reports | Maintain topology adoption, operation, evolution, and maturity guidance | Put executable rules here; use `rulesets/topologies/` instead |
 | `reference/core/sdlc/` | C0 | SDLC, standards, ADR governance, terminology, and onboarding | Maintain governance rules, lifecycle gates, and standards | Create parallel governance under root `docs/` |
 | `product/suite/` | C1 | Portfolio vision, product-suite strategy, positioning, and communications | Align product direction with Core governance | Store product delivery artifacts that belong to a specific product |
-| `product/products/` | C1 | Internal reference docs for Evolith products such as Core API, Tracker, MCP services, Smart CLI, and UMS reference | Keep product documentation aligned with Core standards | Mix executable source code with reference documentation |
+| `product/products/` | C1 | Internal reference docs for Evolith products such as Core API, Tracker, MCP services, Evolith CLI, and UMS reference | Keep product documentation aligned with Core standards | Mix executable source code with reference documentation |
 | `product/research/` | C2 | Research, PoCs, applied evidence, UMS demo boundary, and architecture intelligence | Capture learning and promote reusable lessons through ADRs/standards | Promote research directly into mandatory policy |
 | `product/operations/` | C1 | SLOs, runbooks, observability, alerts, load tests, chaos experiments, Grafana, OTel, Tempo | Maintain operational readiness and incident response guidance | Put product-specific runbooks here without reusable scope |
 | `product/infra/` | C0 | Docker, Helm, Kubernetes, and platform reference assets | Treat as production-risk-bearing infrastructure reference | Leave mutable or dev-only defaults undocumented |
@@ -93,7 +93,7 @@ Use this map when you need to decide where to read, edit, add, or audit content 
 | `packages/infra-providers/` | C1 | Infrastructure provider adapters | Encapsulate platform/provider integration logic | Leak provider assumptions into domain code |
 | `packages/mcp-server/` | C0 | MCP server implementation | Keep MCP tools, auth, contracts, and transport behavior aligned with ADRs | Duplicate CLI-only behavior without contract parity |
 | `packages/mcp-tools/` | C1 | MCP tool package surface | Keep tools discoverable and contract-aligned | Mix unrelated product workflows |
-| `sdk/cli/` | C0 | Smart CLI workspace and distribution surface | Maintain CLI, templates, shell integration, local validation, and contract parity | Use generated `dist/` as source of truth |
+| `sdk/cli/` | C0 | Evolith CLI workspace and distribution surface | Maintain CLI, templates, shell integration, local validation, and contract parity | Use generated `dist/` as source of truth |
 | `tests/contract/` | C0 | Cross-surface contract tests | Validate CLI/MCP/API roundtrip contracts | Disable failing contract coverage without a tracked gap |
 
 ## Automation And Tooling

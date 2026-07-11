@@ -20,7 +20,7 @@ Evolith Product Suite
   = visión de portafolio + estrategia + mapa de productos + posicionamiento
 
 Product-Specific Design
-  = diseño interno de Tracker, Smart CLI, servicios MCP y productos futuros
+  = diseño interno de Tracker, Evolith CLI, servicios MCP y productos futuros
 
 Platform Guidance
   = vendors, herramientas, adapters, licencias y perfiles de despliegue

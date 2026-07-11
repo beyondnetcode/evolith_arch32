@@ -52,7 +52,7 @@ or running with no engine installed.
 
 ### Option C: Ports & Adapters agentic layer (chosen)
 
-A new hexagonal package (`@evolith/agent-runtime`) that depends only on ports.
+A new hexagonal package (`@beyondnet/evolith-agent-runtime`) that depends only on ports.
 `.harness`, the Core, OPA, Tracker and any engine are adapters. Chosen because it
 satisfies every design rule and keeps the Core and `.harness` untouched.
 

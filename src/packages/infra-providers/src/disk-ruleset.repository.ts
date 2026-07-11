@@ -18,7 +18,7 @@ export { RulesetsNotFoundError };
  * against the standard ruleset JSON schema, and normalizes them into
  * {@link NormalizedRule} entries consumed by the validators.
  *
- * Lives in the shared infrastructure layer so any consumer (Smart CLI, MCP
+ * Lives in the shared infrastructure layer so any consumer (Evolith CLI, MCP
  * Gateway, REST API) can build a ruleset repository without depending on the
  * CLI package.
  */

@@ -18,7 +18,7 @@ flowchart TB
 
     %% Interfaces
     subgraph Interfaces ["Capa de Interfaces"]
-        CLI["💻 Smart CLI\n(Interfaz de Desarrollo)"]
+        CLI["💻 Evolith CLI\n(Interfaz de Desarrollo)"]
         API["🔌 API Gateway / BFF\n(Interfaz de Aplicación)"]
     end
 
@@ -91,11 +91,11 @@ Descompone el sistema "Evolith Core" en sus contenedores principales de ejecuci�
 C4Container
     title Diagrama de Contenedores para Evolith Core
 
-    Person(developer, "Desarrollador", "Ingeniero usando el Smart CLI.")
+    Person(developer, "Desarrollador", "Ingeniero usando el Evolith CLI.")
     Person(clientApp, "Aplicación Cliente", "App Web o Mobile consumiendo datos.")
 
     System_Boundary(evolith, "Sistema Evolith Core") {
-        Container(cli, "Smart CLI", "Node.js / TS", "Aplicación de terminal interactiva que orquesta flujos y agentes AI locales.")
+        Container(cli, "Evolith CLI", "Node.js / TS", "Aplicación de terminal interactiva que orquesta flujos y agentes AI locales.")
         Container(mcp, "Servidor MCP", "Node.js / SSE", "Servidor Model Context Protocol que expone herramientas a los modelos AI.")
         Container(gateway, "API Gateway", "Traefik", "Ingress controller que enruta tráfico y maneja la terminación TLS.")
         Container(bff, "Capa BFF", "NestJS", "Backend-For-Frontend que agrega servicios de dominio para perfiles específicos.")
@@ -154,14 +154,14 @@ C4Component
 
 Diagramas de secuencia ilustrando escenarios operativos clave dentro de la plataforma.
 
-### Caso 1: Desarrollador usando Smart CLI
+### Caso 1: Desarrollador usando Evolith CLI
 
 Demuestra el flujo AI-native donde un desarrollador pide al CLI realizar una tarea, la cual es delegada a un LLM que usa herramientas MCP.
 
 ```mermaid
 sequenceDiagram
     actor Dev as Desarrollador
-    participant CLI as Smart CLI
+    participant CLI as Evolith CLI
     participant LLM as Proveedor de IA
     participant MCP as Servidor MCP
     participant Core as Servicios Core
@@ -213,7 +213,7 @@ sequenceDiagram
 
 | Componente | Propósito y Responsabilidad | Dependencias Clave | Entrada / Salida | Evolución Futura |
 | :--- | :--- | :--- | :--- | :--- |
-| **Smart CLI** | Interfaz de desarrollador para gestionar la arquitectura, generar código y ejecutar flujos asistidos por IA. | Node.js, APIs LLM, Sistema de Archivos | **In:** Comandos/prompts.<br>**Out:** Cambios en código, salida en consola. | Transición a un daemon/agente autónomo en segundo plano. |
+| **Evolith CLI** | Interfaz de desarrollador para gestionar la arquitectura, generar código y ejecutar flujos asistidos por IA. | Node.js, APIs LLM, Sistema de Archivos | **In:** Comandos/prompts.<br>**Out:** Cambios en código, salida en consola. | Transición a un daemon/agente autónomo en segundo plano. |
 | **Servidor MCP** | Expone capacidades del repositorio y la arquitectura como herramientas estandarizadas para cualquier cliente MCP. | Transporte SSE, Evolith SDK | **In:** Peticiones de ejecución de tools.<br>**Out:** Resultados (JSON). | Expandir el set de herramientas para incluir aprovisionamiento dinámico cloud. |
 | **Capa BFF** | Agrega y adapta datos del backend para perfiles específicos de frontend (Web, Mobile, B2B). | Traefik, Servicios de Dominio, OPA | **In:** Peticiones HTTP del cliente.<br>**Out:** Payloads JSON a medida. | Adopción de GraphQL Federation para consultas dinámicas complejas. |
 | **Servicios de Dominio** | Las capacidades core de negocio (Identidad, Auditoría) implementadas como módulos independientes. | Persistencia, Bus de Eventos | **In:** Peticiones BFF o MCP.<br>**Out:** Respuestas / Eventos de dominio. | Escalamiento de Monolito Modular a Microservicios distribuidos según la carga. |

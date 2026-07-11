@@ -22,7 +22,7 @@ Los cuatro dominios primarios, ordenados de lo más genérico (la constitución)
 |---|---|---|---|---|
 | [Evolith Core](./core/README.es.md) | Arquitectura, gobernanza SDLC, estándares, rulesets, schemas y ADRs Core autoritativos y neutrales respecto de proveedores | Anclar la constitución que todo producto hereda | Hub de dominio | Sí |
 | [Evolith Product Suite](../product/suite/README.es.md) | Visión del portafolio, estrategia, posicionamiento, arquitectura de suite, roadmap y comunicación | Dirigir el ecosistema | Hub de dominio | Sí |
-| [Diseños Específicos de Productos](../product/products/README.es.md) | Diseño funcional y técnico de Tracker, Smart CLI, servicios MCP y productos futuros | Contener los internos de producto | Hub de área | Sí |
+| [Diseños Específicos de Productos](../product/products/README.es.md) | Diseño funcional y técnico de Tracker, Evolith CLI, servicios MCP y productos futuros | Contener los internos de producto | Hub de área | Sí |
 | Guías de Plataformas y Proveedores | Herramientas y vendors nombrados, adapters, licencias, perfiles de despliegue y ADRs específicos | Aislar decisiones de proveedores | Hub de área | Sí |
 
 ## Áreas de Referencia de Soporte

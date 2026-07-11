@@ -45,7 +45,7 @@ const SEVERITY_TO_CRITICALITY: Record<string, string> = {
 };
 
 function componentFor(f: Finding): string {
-  if (f.surfaces.includes('cli') && f.surfaces.length === 1) return 'Smart CLI';
+  if (f.surfaces.includes('cli') && f.surfaces.length === 1) return 'Evolith CLI';
   if (f.surfaces.includes('mcp') && f.surfaces.length === 1) return 'MCP Server';
   if (f.surfaces.includes('rest') && f.surfaces.length === 1) return 'Core API';
   return 'Cross';

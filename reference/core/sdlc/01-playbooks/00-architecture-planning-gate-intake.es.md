@@ -43,7 +43,7 @@ El proceso de intake es asistido por el Agent Runtime (Hermes), que actúa como 
 ## Procedimiento del Gate
 
 ### Paso 1: Ingesta
-Un usuario o sistema envía un requerimiento en lenguaje natural ("prompt") a través de Smart CLI o Evolith Tracker.
+Un usuario o sistema envía un requerimiento en lenguaje natural ("prompt") a través de Evolith CLI o Evolith Tracker.
 `evolith plan create --from-prompt "..."`
 
 ### Paso 2: Interpretación y Generación

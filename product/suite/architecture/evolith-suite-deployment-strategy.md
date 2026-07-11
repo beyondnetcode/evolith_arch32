@@ -26,7 +26,7 @@
 | Deployment strategy | **RollingUpdate everywhere** (`maxSurge:1, maxUnavailable:0` + PDB); no blue-green/canary until real traffic + SLO dashboards exist | §10 |
 | Contract | Shared **`Evolith.Messaging.Contracts`** NuGet (package id), C# namespace stays **`Evolith.Contracts.MasterData`** (MassTransit routes by namespace+type); expand-contract; **one schema major per consumer** | §11 |
 | Ownership migration | Five gated phases **M0–M4** (plumb → backfill → freeze writers → switch reads → contract) | §12 |
-| Promotion gates | **G0–G4 ladder**; G3 = the existing Evolith gate machinery (`smart-cli gate evaluate -p qa`, gate-F4 "RC Stamped") | §13 |
+| Promotion gates | **G0–G4 ladder**; G3 = the existing Evolith gate machinery (`evolith-cli gate evaluate -p qa`, gate-F4 "RC Stamped") | §13 |
 | Probes | **Readiness NEVER gates on AMQP** — broker outage degrades freshness, it must not drain the HTTP fleet | §5.4 |
 
 ### Coverage matrix (user request → section)
@@ -227,7 +227,7 @@ Producer: the MMS transactional outbox (validated live) makes broker outages **l
 ```
 PR ──G0──▶ develop ──▶ GHCR (sha + develop-sha-ts) ──▶ Flux bumps staging (auto)
    nightly G1 (ephemeral kind: matrix F1–F7) ── staging soak G2 (R/P/S rows, 24h zero-drift)
-   ──▶ smart-cli gate evaluate -p qa ──G3 F4 stamp──▶ tag vX.Y.Z ──▶ PR to clusters/prod-* ──▶ Flux ──G4──▶ healthy | git-revert
+   ──▶ evolith-cli gate evaluate -p qa ──G3 F4 stamp──▶ tag vX.Y.Z ──▶ PR to clusters/prod-* ──▶ Flux ──G4──▶ healthy | git-revert
 ```
 
 ## 10. Deployment strategy & rollback
@@ -272,7 +272,7 @@ Interim rule: between M0 and M2, local tenant creation is dev/demo-only by polic
 | G0 — CI | every PR per repo | merge | build, unit, **contract tests**, Trivy, CodeQL. *(UMS/Tracker partially EXISTS; MMS BUILD)* |
 | G1 — Integration | nightly, ephemeral kind (substrate + umbrella) | staging | **matrix F1–F7 automated** + assertions the critics demanded: consumer endpoint *started* (bus health, not just pod Ready), InboxState row written on consume, an allowed AND a denied NetworkPolicy path |
 | G2 — Staging soak | ≥24 h per RC | RC candidacy | R1–R6 resilience (broker kill → outbox drains; consumer kill → catch-up; poison → `_error` → reprocess), P1–P3 perf budgets, 24 h zero-drift reconciliation, dashboards+alerts live |
-| G3 — RC Stamped | `smart-cli gate evaluate -p qa` (gate-F4) | prod PR | Test Summary, Acceptance, Security scan, Integration evidence, Pyramid — the F4 stamp is a required check on the prod fleet-repo PR |
+| G3 — RC Stamped | `evolith-cli gate evaluate -p qa` (gate-F4) | prod PR | Test Summary, Acceptance, Security scan, Integration evidence, Pyramid — the F4 stamp is a required check on the prod fleet-repo PR |
 | G4 — Post-deploy | prod, after Flux reconcile | marks healthy / triggers rollback | smoke: health all pods; synthetic tenant create → projection visible in UMS+Tracker within lag SLO → deactivate; `_error` depth unchanged; 30-min error-rate window |
 
 Hard rules: contract migrations never ship with features · consumer-first ordering for additive changes · no prod promotion of tenant-projection features until the ownership migration (M-phases) is scheduled.

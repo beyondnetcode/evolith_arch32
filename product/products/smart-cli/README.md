@@ -1,13 +1,13 @@
-# Smart CLI
+# Evolith CLI
 
-> Product hub for **`@evolith/smart-cli`** — the command-line entry point to the Evolith ecosystem: governance, standards validation, architecture scaffolding, SDLC lifecycle management, and AI agent integration (MCP).
+> Product hub for **`@beyondnet/evolith-cli`** — the command-line entry point to the Evolith ecosystem: governance, standards validation, architecture scaffolding, SDLC lifecycle management, and AI agent integration (MCP).
 
 | | |
 |---|---|
 | **Status** | Active |
-| **Package** | `@evolith/smart-cli` |
+| **Package** | `@beyondnet/evolith-cli` |
 | **Version** | `1.1.4` |
-| **Binary** | `smart-cli` |
+| **Binary** | `evolith-cli` |
 | **Source of truth** | [`sdk/cli/README.md`](../../../src/sdk/cli/README.md) (authoritative, 1200+ lines) |
 | **Surface inventory** | [`product-inventory.md`](./product-inventory.md) (generated — do not hand-edit) |
 
@@ -24,32 +24,32 @@ This page is a **hub**: it orients you and points to the authoritative deeper do
 ## Installation
 
 ```bash
-npm install -g @evolith/smart-cli
-# or: pnpm add -g @evolith/smart-cli
-# or: yarn global add @evolith/smart-cli
+npm install -g @beyondnet/evolith-cli
+# or: pnpm add -g @beyondnet/evolith-cli
+# or: yarn global add @beyondnet/evolith-cli
 ```
 
 Or download a binary from [GitHub Releases](https://github.com/beyondnetcode/evolith_arch32/releases) and add it to your PATH.
 
 ```bash
-smart-cli --version
-# smart-cli version 1.1.4
+evolith-cli --version
+# evolith-cli version 1.1.4
 ```
 
 ## Quickstart
 
 ```bash
 # 1. Seed a demo project to explore the CLI
-smart-cli fixtures --type demo
+evolith-cli fixtures --type demo
 
 # 2. Initialize a real repository (creates evolith.yaml)
-smart-cli init
+evolith-cli init
 
 # 3. Scaffold base documentation
-smart-cli docs
+evolith-cli docs
 
 # 4. Validate compliance
-smart-cli validate
+evolith-cli validate
 
 # 5. Connect an AI agent (standalone MCP server)
 evolith-mcp serve
@@ -89,27 +89,27 @@ Validation is composable, not rigid — you can enter from any combination of in
 
 | Mode | Example | Validates |
 |---|---|---|
-| SDLC | `smart-cli validate --phase discovery` | Phase → gate → artifacts → schemas → rulesets → ADRs → blocking criteria |
-| Architecture | `smart-cli validate --topology modular-monolith` | Topology rules, hexagonal limits, domain isolation, multi-tenancy |
-| Ruleset | `smart-cli validate --ruleset evidence` | A specific ruleset (native or OPA engine) |
-| ADR | `smart-cli validate --adr adr-0002` | ADR-specific architectural rules |
-| Ad-hoc | `smart-cli validate --file src/domain/user.ts` | A single file or component |
-| Composable | `smart-cli validate --topology microservices --ruleset evidence` | Multiple entry points combined |
+| SDLC | `evolith-cli validate --phase discovery` | Phase → gate → artifacts → schemas → rulesets → ADRs → blocking criteria |
+| Architecture | `evolith-cli validate --topology modular-monolith` | Topology rules, hexagonal limits, domain isolation, multi-tenancy |
+| Ruleset | `evolith-cli validate --ruleset evidence` | A specific ruleset (native or OPA engine) |
+| ADR | `evolith-cli validate --adr adr-0002` | ADR-specific architectural rules |
+| Ad-hoc | `evolith-cli validate --file src/domain/user.ts` | A single file or component |
+| Composable | `evolith-cli validate --topology microservices --ruleset evidence` | Multiple entry points combined |
 
-**SDLC phase keys** (the `--phase` values accepted by the CLI and the `@evolith/sdk-client` API): `discovery`, `design`, `construction`, `qa`, `release` — *Conception & Discovery*, *Design & Architecture*, *Construction*, *Validation & QA*, *Delivery & Operations* — see [Phases & gates](#sdlc-phases--gates) below.
+**SDLC phase keys** (the `--phase` values accepted by the CLI and the `@beyondnet/evolith-sdk-client` API): `discovery`, `design`, `construction`, `qa`, `release` — *Conception & Discovery*, *Design & Architecture*, *Construction*, *Validation & QA*, *Delivery & Operations* — see [Phases & gates](#sdlc-phases--gates) below.
 
 ```bash
 # Basic compliance check
-smart-cli validate
+evolith-cli validate
 
 # JSON output for CI (ADR-0073 envelope)
-smart-cli validate --format json --output report.json
+evolith-cli validate --format json --output report.json
 
 # SDLC phase evaluation (GT-281 pipeline)
-smart-cli validate --phase discovery
+evolith-cli validate --phase discovery
 
 # OPA engine against a specific ruleset
-smart-cli validate --engine opa --ruleset acl
+evolith-cli validate --engine opa --ruleset acl
 ```
 
 ## Supported topologies
@@ -141,11 +141,11 @@ The **progressive axis** (`modular-monolith → distributed-modules → microser
 | Validation & QA | Validation | `qa` | RC Stamped |
 | Delivery & Operations | Delivery | `release` | Production Live |
 
-The final SDLC phase is **Delivery & Operations**. Evaluate gates and emit evidence with `smart-cli gate evaluate --phase <key>`; propose transitions with `smart-cli phase advance`.
+The final SDLC phase is **Delivery & Operations**. Evaluate gates and emit evidence with `evolith-cli gate evaluate --phase <key>`; propose transitions with `evolith-cli phase advance`.
 
 ## MCP server (AI agent integration)
 
-The MCP server ships as the **standalone `@evolith/mcp-server` package**, which exposes the full Evolith surface to AI agents. Run it with `evolith-mcp serve` (or `npx @evolith/mcp-server serve`). See the [MCP Services product](../mcp-services/README.md) for the authoritative surface.
+The MCP server ships as the **standalone `@beyondnet/evolith-mcp-server` package**, which exposes the full Evolith surface to AI agents. Run it with `evolith-mcp serve` (or `npx @beyondnet/evolith-mcp-server serve`). See the [MCP Services product](../mcp-services/README.md) for the authoritative surface.
 
 | Surface | Count |
 |---|---|
@@ -154,7 +154,7 @@ The MCP server ships as the **standalone `@evolith/mcp-server` package**, which 
 | Prompts | 8 |
 | Transports | `stdio` (JSON-RPC 2.0) · Streamable HTTP (API-key, fail-closed) |
 
-The exact tool/resource/prompt set is enumerated in the generated [Product Surface Inventory](./product-inventory.md) and is browsable live with `smart-cli api --list --category tools`. Treat those as the authority rather than any hand-maintained list.
+The exact tool/resource/prompt set is enumerated in the generated [Product Surface Inventory](./product-inventory.md) and is browsable live with `evolith-cli api --list --category tools`. Treat those as the authority rather than any hand-maintained list.
 
 ```bash
 # stdio transport (default — Cursor, Claude Desktop)
@@ -170,7 +170,7 @@ evolith-mcp serve --transport http --port 3000 --api-key <secret>
 {
   "mcpServers": {
     "evolith": {
-      "command": "smart-cli",
+      "command": "evolith-cli",
       "args": ["mcp", "serve"]
     }
   }
@@ -199,11 +199,11 @@ product:
   topology: "modular-monolith"
 ```
 
-Optional defaults consumed by `validate` (topology, phase, rulesets, engine) also live in `evolith.yaml` — `smart-cli validate` with no flags reads them. Use a canonical phase key (`discovery`…`release`) and a canonical topology id.
+Optional defaults consumed by `validate` (topology, phase, rulesets, engine) also live in `evolith.yaml` — `evolith-cli validate` with no flags reads them. Use a canonical phase key (`discovery`…`release`) and a canonical topology id.
 
 ## Where this sits in Evolith
 
-Smart CLI is part of the **Evolith suite**, built on **Evolith Core** (`packages/core`, `core-domain`, `infra-providers`, `sdk-client`, `mcp-tools`). Sibling products: **Evolith Tracker**, **Core API** (`apps/core-api`), **Evolith MCP Services**, and the **UMS Reference** model.
+Evolith CLI is part of the **Evolith suite**, built on **Evolith Core** (`packages/core`, `core-domain`, `infra-providers`, `sdk-client`, `mcp-tools`). Sibling products: **Evolith Tracker**, **Core API** (`apps/core-api`), **Evolith MCP Services**, and the **UMS Reference** model.
 
 ## Documentation
 

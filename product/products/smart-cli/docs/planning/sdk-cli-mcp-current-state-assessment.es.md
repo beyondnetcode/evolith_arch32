@@ -122,25 +122,25 @@ sdk/cli/
 
 | Comando | Estado | Notas |
 |---------|--------|-------|
-| `smart-cli validate` | IMPLEMENTADO | Validación completa con --satellite, --core, --ruleset, --format, --output |
-| `smart-cli init` | PARCIALMENTE_IMPLEMENTADO | Wizard interactivo funciona; modo batch stub; creación de archivos mockeada |
-| `smart-cli mcp serve` | PARCIALMENTE_IMPLEMENTADO | Watcher inicia pero el servidor MCP es stub |
+| `evolith-cli validate` | IMPLEMENTADO | Validación completa con --satellite, --core, --ruleset, --format, --output |
+| `evolith-cli init` | PARCIALMENTE_IMPLEMENTADO | Wizard interactivo funciona; modo batch stub; creación de archivos mockeada |
+| `evolith-mcp` | PARCIALMENTE_IMPLEMENTADO | Watcher inicia pero el servidor MCP es stub |
 
 ### 3.2 Comandos Stub
 
 | Comando | Estado | Evidencia |
 |---------|--------|-----------|
-| `smart-cli agents` | STUB | `// TODO: Logic for agent installation` (agents.command.ts:14) |
-| `smart-cli upgrade` | STUB | `// TODO: logic for upgrading satellite structures safely` (upgrade.command.ts:14) |
-| `smart-cli docs` | STUB | `// TODO: logic for scaffolding docs` (docs.command.ts:14) |
+| `evolith-cli agents` | STUB | `// TODO: Logic for agent installation` (agents.command.ts:14) |
+| `evolith-cli upgrade` | STUB | `// TODO: logic for upgrading satellite structures safely` (upgrade.command.ts:14) |
+| `evolith-cli docs` | STUB | `// TODO: logic for scaffolding docs` (docs.command.ts:14) |
 
 ### 3.3 Comandos POC
 
 | Comando | Estado | Evidencia |
 |---------|--------|-----------|
-| `smart-cli sdlc handoff` | MOCK/POC | `[MOCK] Starting handoff process...` (handoff.command.ts:14) |
-| `smart-cli sdlc generate` | MOCK/POC | `[MOCK] Generating domain...` (generate-domain.command.ts:15) |
-| `smart-cli scaffold` | PARCIALMENTE_IMPLEMENTADO | Prompts funcionan; exec mockeado via setTimeout |
+| `evolith-cli sdlc handoff` | MOCK/POC | `[MOCK] Starting handoff process...` (handoff.command.ts:14) |
+| `evolith-cli sdlc generate` | MOCK/POC | `[MOCK] Generating domain...` (generate-domain.command.ts:15) |
+| `evolith-cli scaffold` | PARCIALMENTE_IMPLEMENTADO | Prompts funcionan; exec mockeado via setTimeout |
 
 ---
 
@@ -246,7 +246,7 @@ Las 6 pruebas E2E son stubs mínimos que solo ejecutan el comando sin verificar 
 
 ### 7.2 CLI No Tiene Validación de Arquitectura
 
-`smart-cli validate` no verifica:
+`evolith-cli validate` no verifica:
 - Reglas de arquitectura F1/F2/F3
 - Límites de arquitectura hexagonal
 - Aislamiento de capa de dominio

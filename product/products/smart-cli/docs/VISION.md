@@ -1,4 +1,4 @@
-# Smart CLI — Product Vision
+# Evolith CLI — Product Vision
 
 > **Bilingual Navigation:** [Versión en Español](./VISION.es.md)
 > **Status:** Draft
@@ -9,7 +9,7 @@
 
 ## 1. Vision Statement
 
-**Smart CLI** is the intelligent command-line interface that makes Evolith governance accessible to every developer. It transforms complex architecture decisions into guided, conversational experiences — enabling teams to build compliant software without becoming governance experts.
+**Evolith CLI** is the intelligent command-line interface that makes Evolith governance accessible to every developer. It transforms complex architecture decisions into guided, conversational experiences — enabling teams to build compliant software without becoming governance experts.
 
 > *"From complex governance to simple commands."*
 
@@ -17,7 +17,7 @@
 
 ## 2. Conceptual Image
 
-### 2-1 The Smart CLI as an AI Companion
+### 2-1 The Evolith CLI as an AI Companion
 
 ```mermaid
 graph TB
@@ -27,7 +27,7 @@ graph TB
         CONV["Conversational Flow"]
     end
 
-    subgraph CLI["Smart CLI Engine"]
+    subgraph CLI["Evolith CLI Engine"]
         PARSE["Intent Parser"]
         CONTEXT["Context Engine\n(Evolith Core)"]
         GUIDANCE["Guided Wizard"]
@@ -65,7 +65,7 @@ graph TB
         CORE_TAX["Taxonomy"]
     end
 
-    subgraph SmartCLI["Smart CLI\n(Interoperability Layer)"]
+    subgraph SmartCLI["Evolith CLI\n(Interoperability Layer)"]
         CLI_CMD["Commands\ninit, validate, adr, agents, sdlc"]
         CLI_MCP["MCP Server\nTools + Resources"]
         CLI_INT["Intelligent Context"]
@@ -97,24 +97,24 @@ graph TB
 
 ### 3-1 For Individual Developers
 
-| Before (Without Smart CLI) | After (With Smart CLI) |
+| Before (Without Evolith CLI) | After (With Evolith CLI) |
 |---------------------------|------------------------|
-| Read 50 pages of ADRs | Ask: `smart-cli adr suggest --context authentication` |
-| Manually validate 20 rules | Run: `smart-cli validate --ruleset acl` |
-| Guess architecture patterns | Get guided: `smart-cli init --wizard` |
-| Search docs for hours | `smart-cli architecture ask "What's the auth pattern?"` |
+| Read 50 pages of ADRs | Ask: `evolith-cli adr suggest --context authentication` |
+| Manually validate 20 rules | Run: `evolith-cli validate --ruleset acl` |
+| Guess architecture patterns | Get guided: `evolith-cli init --wizard` |
+| Search docs for hours | `evolith-cli architecture ask "What's the auth pattern?"` |
 
 ### 3-2 For Teams
 
 ```mermaid
 graph LR
-    subgraph Before["Without Smart CLI"]
+    subgraph Before["Without Evolith CLI"]
         A1["Inconsistent\nChoices"]
         A2["Governance\nDebt"]
         A3["Knowledge\nSilos"]
     end
 
-    subgraph After["With Smart CLI"]
+    subgraph After["With Evolith CLI"]
         B1["Guided\nDecisions"]
         B2["Automatic\nCompliance"]
         B3["Shared\nKnowledge"]
@@ -138,7 +138,7 @@ Guided wizards with rich UI:
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  🚀 Smart CLI Init Wizard                       │
+│  🚀 Evolith CLI Init Wizard                       │
 ├─────────────────────────────────────────────────┤
 │                                                 │
 │  Let's set up your satellite repository.        │
@@ -173,7 +173,7 @@ Guided wizards with rich UI:
 Silent execution with JSON output:
 
 ```bash
-smart-cli init --config project.yaml --output json | tee setup-report.json
+evolith-cli init --config project.yaml --output json | tee setup-report.json
 ```
 
 ### 4-3 MCP Mode (AI Integration)
@@ -221,7 +221,7 @@ graph TB
 │                    cognitive load curve                      │
 │                                                             │
 │   ▲                                                         │
-│   │         Without CLI        │    With Smart CLI          │
+│   │         Without CLI        │    With Evolith CLI          │
 │   │                            │                            │
 │ 4 │    ┌───────────────────    │    ┌─                     │
 │   │    │ Complex decisions     │    │  Guided defaults     │
@@ -247,11 +247,11 @@ graph TB
 ```mermaid
 sequenceDiagram
     participant Dev as Developer
-    participant CLI as Smart CLI
+    participant CLI as Evolith CLI
     participant Core as Evolith Core
     participant Repo as New Repo
 
-    Dev->>CLI: smart-cli init
+    Dev->>CLI: evolith-cli init
     CLI->>CLI: Show wizard
     Dev->>CLI: Enter: name=my-app, runtime=nodejs
     CLI->>Core: Load defaults for nodejs
@@ -262,7 +262,7 @@ sequenceDiagram
     CLI->>Repo: Install @architect agent
     CLI->>Core: Register satellite
     Core-->>Repo: Confirmed + coreRef
-    CLI-->>Dev: ✓ Ready! Run: smart-cli validate
+    CLI-->>Dev: ✓ Ready! Run: evolith-cli validate
 
     Note over Dev,Repo: 5 minutes to production-ready satellite
 ```
@@ -272,18 +272,18 @@ sequenceDiagram
 ```mermaid
 graph TB
     subgraph Morning["Morning Context Check"]
-        M1["smart-cli sdlc status"] --> M2["Phase gate health"]
+        M1["evolith-cli sdlc status"] --> M2["Phase gate health"]
         M2 --> M3["Gates: 3/5 passed ✓"]
     end
 
     subgraph Task["Development Task"]
-        T1["smart-cli validate"] --> T2["Rule checks: 15 passed"]
+        T1["evolith-cli validate"] --> T2["Rule checks: 15 passed"]
         T2 --> T3["Warnings: 2 (non-blocking)"]
-        T3 --> T4["Fix suggestion: Run smart-cli docs --fix"]
+        T3 --> T4["Fix suggestion: Run evolith-cli docs --fix"]
     end
 
     subgraph Review["Code Review"]
-        R1["smart-cli adr list"] --> R2["Show: 5 ADRs active"]
+        R1["evolith-cli adr list"] --> R2["Show: 5 ADRs active"]
         R2 --> R3["Check: ADR-0023 still valid?"]
         R3 --> R4["Decision: still applies ✓"]
     end
@@ -310,7 +310,7 @@ graph TB
 ║     ╚═╝     ╚══════╝╚═╝  ╚═══╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝     ║
 ║                                                                ║
 ║              ╔═══════════════════════════════╗                ║
-║              ║    smart-cli — evolve smart    ║                ║
+║              ║    evolith-cli — evolve smart    ║                ║
 ║              ╚═══════════════════════════════╝                ║
 ║                                                                ║
 ║     Colors:                                                    ║
@@ -328,7 +328,7 @@ graph TB
 graph TB
     subgraph LogoConcept["Logo: The Smart Pointer"]
         ICON["▶"]
-        TEXT["smart-cli"]
+        TEXT["evolith-cli"]
         CONTEXT["evolve → smart"]
     end
 
@@ -381,7 +381,7 @@ graph TB
 
 ---
 
-*Smart CLI — Making Evolith governance accessible, one command at a time.*
+*Evolith CLI — Making Evolith governance accessible, one command at a time.*
 
 ---
 

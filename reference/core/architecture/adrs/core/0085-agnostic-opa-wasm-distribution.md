@@ -28,7 +28,7 @@ Instead of coupling to proprietary cloud APIs, all deployment topologies MUST su
    Since OPA natively supports downloading bundles from OCI (Open Container Initiative) compliant registries, policies may be packaged as OCI artifacts and distributed via standard registries (e.g., Docker Hub, Harbor, GHCR).
 
 4. **NPM Registry (Node.js ecosystems)**:
-   For Node.js specific targets (like our internal MCP tools), the `.wasm` file can be distributed as an internal NPM package (e.g., `@evolith/policy-bundle`) via Verdaccio or GitHub Packages.
+   For Node.js specific targets (like our internal MCP tools), the `.wasm` file can be distributed as an internal NPM package (e.g., `@beyondnet/evolith-policy-bundle`) via Verdaccio or GitHub Packages.
 
 ## Consequences
 ### Positive

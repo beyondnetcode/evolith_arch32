@@ -36,7 +36,7 @@ export interface HermesClient {
 export interface HermesAdapterOptions {
   /** Inject a ready Hermes client (preferred for tests + DI). */
   readonly client?: HermesClient;
-  /** Module to lazy-load when no client is injected (default '@evolith/hermes-agent'). */
+  /** Module to lazy-load when no client is injected (default '@beyondnet/evolith-hermes-agent'). */
   readonly moduleName?: string;
   /** Factory export name on that module (default 'createHermesClient'). */
   readonly factoryExport?: string;
@@ -53,7 +53,7 @@ export class HermesAgentAdapter implements IAgentEnginePort {
   private async resolveClient(): Promise<HermesClient> {
     if (this.client) return this.client;
 
-    const moduleName = this.options.moduleName ?? '@evolith/hermes-agent';
+    const moduleName = this.options.moduleName ?? '@beyondnet/evolith-hermes-agent';
     const factoryExport = this.options.factoryExport ?? 'createHermesClient';
     try {
       // Dynamic import keeps Hermes OUT of the build graph and OPTIONAL.

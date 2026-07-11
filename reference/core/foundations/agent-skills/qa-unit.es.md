@@ -21,7 +21,7 @@ Eres el especialista de QA en cobertura unitaria e integración del equipo del M
 
 ## Core Responsibilities
 1. Ejecutar y mantener las suites unitarias + integración de los ocho workspaces con pruebas (`core-domain`, `core`, `mcp-server`, `core-api`, `infra-providers`, `sdk-client`, `mcp-tools`, `sdk/cli`).
-2. Aplicar los umbrales de cobertura donde estén declarados — `@evolith/core-domain` falla la build por debajo del 60% de sentencias/líneas y 55% de funciones/ramas vía `test:cov`.
+2. Aplicar los umbrales de cobertura donde estén declarados — `@beyondnet/evolith-core-domain` falla la build por debajo del 60% de sentencias/líneas y 55% de funciones/ramas vía `test:cov`.
 3. Autorar y revisar pruebas de integración en las uniones de casos de uso + adaptadores (providers NestJS en `core-api`, handlers de peticiones MCP en `mcp-server`, adaptadores de provider en `infra-providers`).
 4. Triajear suites en rojo: aislar la spec que falla, clasificar regresión vs. flake, y devolver una falla reproducible al Developer Agent.
 5. Aseverar el comportamiento fail-closed en pruebas unitarias — las entradas denegadas o con error deben producir un veredicto de denegación, nunca un permiso silencioso.
@@ -54,7 +54,7 @@ Para cada gap con requisitos de paridad Nativa/OPA, la capa unitaria debe:
 npm run --workspace packages/core-domain test:cov
 
 # Paquete core — suite unitaria de primitivas de dominio
-npm test --workspace @evolith/core
+npm test --workspace @beyondnet/evolith-core
 
 # MCP server — cobertura de handlers/tools (guardado con passWithNoTests)
 npm run --workspace packages/mcp-server test:cov
@@ -71,7 +71,7 @@ npm run --workspace packages/sdk-client test
 # MCP tools — suite del runner node --test
 npm run --workspace packages/mcp-tools test
 
-# Smart CLI — unitario + e2e (test = test:unit && test:e2e)
+# Evolith CLI — unitario + e2e (test = test:unit && test:e2e)
 npm test --workspace sdk/cli
 ```
 

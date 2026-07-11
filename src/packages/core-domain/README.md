@@ -1,13 +1,13 @@
-# @evolith/core-domain
+# @beyondnet/evolith-core-domain
 
 > Domain and application logic for the Evolith governance framework.
 
-[![npm version](https://img.shields.io/npm/v/@evolith/core-domain)](https://www.npmjs.com/package/@evolith/core-domain)
-[![license](https://img.shields.io/npm/l/@evolith/core-domain)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/@beyondnet/evolith-core-domain)](https://www.npmjs.com/package/@beyondnet/evolith-core-domain)
+[![license](https://img.shields.io/npm/l/@beyondnet/evolith-core-domain)](./LICENSE)
 
 ## Overview
 
-`@evolith/core-domain` is the heart of the Evolith architecture governance framework. It provides the **domain model, application use-cases, and rule evaluation engine** used by all Evolith surfaces (Core API, MCP Server, CLI).
+`@beyondnet/evolith-core-domain` is the heart of the Evolith architecture governance framework. It provides the **domain model, application use-cases, and rule evaluation engine** used by all Evolith surfaces (Core API, MCP Server, CLI).
 
 Built on **Domain-Driven Design** principles with hexagonal architecture — all dependencies point inward; infrastructure is injected via ports.
 
@@ -23,7 +23,7 @@ Built on **Domain-Driven Design** principles with hexagonal architecture — all
 ## Installation
 
 ```bash
-npm install @evolith/core-domain
+npm install @beyondnet/evolith-core-domain
 ```
 
 ### Local monorepo build and test
@@ -51,8 +51,8 @@ factory (plus optional webhook notifier and event bus), and `execute()` receives
 `{ phase, projectPath, corePath? }`, returning an ADR-0073 `GateEvidence` payload.
 
 ```ts
-import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases';
-import { PhaseService } from '@evolith/core-domain/domain/services';
+import { EvaluateGateUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
+import { PhaseService } from '@beyondnet/evolith-core-domain/domain/services';
 
 // The bundled maturity workflow is exposed as a ready-to-use service (no-arg ctor).
 // Note: this is the 6-step phase-0..phase-5 maturity workflow
@@ -94,32 +94,32 @@ must not be reused for SDLC phases.
 
 ```ts
 // Domain entities (re-exported by the root barrel)
-import { Phase, Project, Tool, TransitionResult } from '@evolith/core-domain';
-import { Verdict } from '@evolith/core-domain';            // domain/verdict, re-exported at root
+import { Phase, Project, Tool, TransitionResult } from '@beyondnet/evolith-core-domain';
+import { Verdict } from '@beyondnet/evolith-core-domain';            // domain/verdict, re-exported at root
 
 // Use cases (also re-exported at the root barrel; the stable subpath is recommended)
-import { EvaluateGateUseCase }      from '@evolith/core-domain/application/use-cases';
-import { ValidateBlueprintUseCase } from '@evolith/core-domain/application/use-cases';
-import { ValidateWorkflowUseCase }  from '@evolith/core-domain/application/use-cases';
-import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
+import { EvaluateGateUseCase }      from '@beyondnet/evolith-core-domain/application/use-cases';
+import { ValidateBlueprintUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
+import { ValidateWorkflowUseCase }  from '@beyondnet/evolith-core-domain/application/use-cases';
+import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 
 // Validators (incl. composable engine + per-mode validators)
-import { PhaseGateValidatorService } from '@evolith/core-domain/application/validators';
-import { RulesetValidatorService }   from '@evolith/core-domain/application/validators';
-import { ArchitectureDriftService }  from '@evolith/core-domain/application/validators';
-import { ComposableValidationEngine } from '@evolith/core-domain/application/validators/modes';
+import { PhaseGateValidatorService } from '@beyondnet/evolith-core-domain/application/validators';
+import { RulesetValidatorService }   from '@beyondnet/evolith-core-domain/application/validators';
+import { ArchitectureDriftService }  from '@beyondnet/evolith-core-domain/application/validators';
+import { ComposableValidationEngine } from '@beyondnet/evolith-core-domain/application/validators/modes';
 
 // Application services
-import { TopologyCatalogService }       from '@evolith/core-domain/application/services';
-import { SatelliteEvaluationPipeline }  from '@evolith/core-domain/application/services';
+import { TopologyCatalogService }       from '@beyondnet/evolith-core-domain/application/services';
+import { SatelliteEvaluationPipeline }  from '@beyondnet/evolith-core-domain/application/services';
 
 // Domain services
 import { WorkflowEngine, ToolSelectionService, PhaseService }
-  from '@evolith/core-domain/domain/services';
+  from '@beyondnet/evolith-core-domain/domain/services';
 
 // Ports (interfaces for your adapters)
-import type { IFileSystem, ILogger } from '@evolith/core-domain/domain/interfaces';
-import type { IRulesetRepository }   from '@evolith/core-domain/domain/ports/ruleset-repository.port';
+import type { IFileSystem, ILogger } from '@beyondnet/evolith-core-domain/domain/interfaces';
+import type { IRulesetRepository }   from '@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port';
 ```
 
 > **Import-surface notes:** the authoritative contract is the `exports` map in
@@ -199,7 +199,7 @@ axis. The manifest type and `ProgressivePhase` alias are exported for consumers.
 ## Architecture
 
 ```
-@evolith/core-domain
+@beyondnet/evolith-core-domain
 ├── domain/            # Entities, value objects, ports (no external deps)
 │   ├── entities/      # Phase, Project, Tool, TransitionResult, Blueprint...
 │   ├── ports/         # IRulesetRepository, IWorkflowDefinition...
@@ -239,12 +239,12 @@ Contributions follow the repo-root [CONTRIBUTING.md](../../../CONTRIBUTING.md)
 
 | Package | Role |
 |---------|------|
-| **`@evolith/core-domain`** | Domain logic and rule engine ← you are here |
-| [`@evolith/infra-providers`](https://www.npmjs.com/package/@evolith/infra-providers) | Concrete adapters that implement the ports (filesystem, logger, config, disk ruleset, webhook) |
-| [`@evolith/core`](../core) | Thin facade barrel re-exporting a curated slice of this package from a single root specifier |
-| [`@evolith/sdk`](../sdk-client) | Typed HTTP/MCP client for consumers talking to a hosted Evolith Core |
+| **`@beyondnet/evolith-core-domain`** | Domain logic and rule engine ← you are here |
+| [`@beyondnet/evolith-infra-providers`](https://www.npmjs.com/package/@beyondnet/evolith-infra-providers) | Concrete adapters that implement the ports (filesystem, logger, config, disk ruleset, webhook) |
+| [`@beyondnet/evolith-core`](../core) | Thin facade barrel re-exporting a curated slice of this package from a single root specifier |
+| [`@beyondnet/evolith-sdk`](../sdk-client) | Typed HTTP/MCP client for consumers talking to a hosted Evolith Core |
 
-Consumed by: **`apps/core-api`** (core-domain + infra-providers), **`packages/mcp-server`** (core + core-domain + infra-providers), and **smart-cli** (via `@evolith/core`).
+Consumed by: **`apps/core-api`** (core-domain + infra-providers), **`packages/mcp-server`** (core + core-domain + infra-providers), and **evolith-cli** (via `@beyondnet/evolith-core`).
 
 ## License
 

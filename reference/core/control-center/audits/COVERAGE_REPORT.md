@@ -217,7 +217,7 @@
 | ecosystem-and-communication.md | 1 | 1 | 1 | 100% | [OK] |
 | evolith-tracker | 3 | 3 | 3 | 100% | [OK] |
 | mcp-services | 1 | 1 | 1 | 100% | [OK] |
-| smart-cli | 19 | 19 | 19 | 100% | [OK] |
+| evolith-cli | 19 | 19 | 19 | 100% | [OK] |
 | ums-reference | 3 | 3 | 3 | 100% | [OK] |
 
 ### quick-access

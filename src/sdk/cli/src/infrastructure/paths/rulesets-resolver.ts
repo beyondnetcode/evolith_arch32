@@ -78,7 +78,7 @@ export function resolveRulesets(coreOverride?: string): ResolvedRulesets {
     if (!rulesetsRoot) {
       throw new Error(
         `Core path has no rulesets at ${candidates.map((c) => `"${c}"`).join(' or ')}. ` +
-          `Point --core (or \`smart-cli profile\`) at a valid Evolith Core checkout, ` +
+          `Point --core (or \`evolith-cli profile\`) at a valid Evolith Core checkout, ` +
           `or omit --core to use the rulesets bundled with the CLI.`,
       );
     }

@@ -17,9 +17,9 @@ This matrix maps high-level product interfaces down to their specific container,
 | **Specific Gate Evaluation Request** | Core API | `EvaluateGateUseCase` -> `PhaseGateValidatorService` | NestJS, TypeScript, Native/OPA validators | REST (`POST /api/v1/gates/:gateId/evaluate`), JSON payload |
 | **Agent Task Execution** | Agent Runtime API / Engine | `AgentRuntimeController` -> `AgentRuntimeService` -> Ports | NestJS, RxJS, TypeScript | Command/Event HTTP (`POST /v1/agent/handle` for one result, `POST /v1/agent/stream` for command plus event stream) |
 | **LLM Tool Call** | MCP Server | `EvolithMcpServer` -> `ToolRegistryService` -> `ToolHandler` | NestJS, @modelcontextprotocol/sdk | MCP Protocol (stdio or Streamable HTTP) |
-| **Local Artifact Validation** | Smart CLI | `ValidateCommand` / `EvaluateCommand` -> `@evolith/core-domain` | Nest Commander, TypeScript | Local File System I/O |
+| **Local Artifact Validation** | Evolith CLI | `ValidateCommand` / `EvaluateCommand` -> `@beyondnet/evolith-core-domain` | Nest Commander, TypeScript | Local File System I/O |
 | **Ruleset Read** | Core API | `ReferenceController` / `CoreReferenceQueryService` | NestJS, cache-manager, Node.js `fs` | REST (`GET /api/v1/rulesets`) |
-| **Remote CLI Check** | Smart CLI | `@evolith/sdk` -> REST clients | Node.js Fetch | REST over HTTPS |
+| **Remote CLI Check** | Evolith CLI | `@beyondnet/evolith-sdk` -> REST clients | Node.js Fetch | REST over HTTPS |
 
 ## 3. Communication Patterns
 

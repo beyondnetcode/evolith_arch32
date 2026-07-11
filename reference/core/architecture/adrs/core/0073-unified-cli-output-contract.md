@@ -17,7 +17,7 @@ Two design documents define how the Evolith CLI/MCP layer must expose results to
 - The Core-side [SDLC Tracker Technical Interfaces](../../../sdlc/sdlc-tracker-technical-interfaces.md) specifies a structured `GateEvidence` payload (verdict, violations, ruleset reference and version) returned by gate evaluation.
 - The Tracker-side gap analysis (`evolith_tracker` repository, `tracker-smart-cli-gap-analysis.md`) specifies a generic output envelope `{success, data, meta}` with machine-readable error codes, plus global flags (`--format`, `--dry-run`, context flags) and an `evolith <verb> <noun>` command naming convention.
 
-Today the CLI implements neither contract: `--format json` exists on some commands but emits presentation-shaped JSON, each command shapes its own output, the binary is named `smart-cli`, and the Tracker cannot be built until one authoritative contract exists. Per the Upstream Immutability principle, that contract must be ratified in Evolith Core — the Tracker inherits it, never defines it.
+Today the CLI implements neither contract: `--format json` exists on some commands but emits presentation-shaped JSON, each command shapes its own output, the binary is named `evolith-cli`, and the Tracker cannot be built until one authoritative contract exists. Per the Upstream Immutability principle, that contract must be ratified in Evolith Core — the Tracker inherits it, never defines it.
 
 ## Objective and Scope
 
@@ -62,10 +62,10 @@ On failure, `success: false` and an `error` object replaces `data`:
 2. **`GateEvidence`** is the `data` payload of gate evaluation: `{ gateId, phase, verdict: passed|failed|skipped, rulesetRef, rulesetVersion, violations: [{ ruleId, severity: error|warning, location, message }], evaluatedAt, evaluatedBy: human|agent|ci }`. Published as `rulesets/schema/gate-evidence.schema.json` (deliverable of GT-02). All 27 rulesets already carry the `version` field `rulesetVersion` requires (verified 2026-06-10).
 3. **Global flags:** `--format <json|table|yaml|markdown>` on every command; `--dry-run` on every write command; `--phase <discovery|design|construction|qa|release>` on gate-scoped commands. Context flags `--initiative` / `--tenant` are accepted and echoed, never persisted.
 4. **Initial error-code registry:** `GATE_BLOCKED`, `VALIDATION_FAILED`, `RULESET_NOT_FOUND`, `SCHEMA_INVALID`, `INVALID_PHASE`, `NOT_A_SATELLITE`, `IO_ERROR`, `INTERNAL_ERROR`. Codes are append-only; renaming or reusing a code is a breaking change requiring a superseding ADR.
-5. **Naming:** the package adds an `evolith` bin alias alongside `smart-cli` (which remains for compatibility); documentation and new examples use `evolith <verb> <noun>`. MCP tool names mirror CLI commands with dash-joining (`evolith-gate-evaluate` ↔ `evolith gate evaluate`).
+5. **Naming:** the package adds an `evolith` bin alias alongside `evolith-cli` (which remains for compatibility); documentation and new examples use `evolith <verb> <noun>`. MCP tool names mirror CLI commands with dash-joining (`evolith-gate-evaluate` ↔ `evolith gate evaluate`).
 6. **Command-as-a-Service execution model:** every governed operation is implemented once as an application-layer use case and exposed through three thin adapters — the CLI command (terminal), an MCP tool (AI agents and the Tracker over stdio/HTTP), and, where the Tracker requires it, a REST endpoint. An external consumer sends the command through any surface, Evolith executes the same use case behind it, and returns the same envelope. Two constraints: (a) **no arbitrary command execution** — only explicitly registered operations are remotely invocable (the registry is the MCP tool list; a generic "run any shell/CLI string" endpoint is prohibited as an injection surface); (b) **surface parity** — a remotely invocable operation must accept the same parameters and return the same envelope as its CLI form, so behavior is testable once.
 
-**Rationale:** the envelope gives the Tracker, CI, and agents one parser; schema-typed payloads keep the boundary strict (ACL rule: reject, don't normalize); statelessness is preserved by treating context as echo-only; naming converges on the product brand without breaking existing `smart-cli` consumers.
+**Rationale:** the envelope gives the Tracker, CI, and agents one parser; schema-typed payloads keep the boundary strict (ACL rule: reject, don't normalize); statelessness is preserved by treating context as echo-only; naming converges on the product brand without breaking existing `evolith-cli` consumers.
 
 ## Evidence and Evaluation Criteria
 
@@ -77,7 +77,7 @@ Evidence: both source design documents; verified code state of 2026-06-10 — `-
 
 **Positive:** unblocks Tracker development (GT-02/03/06 implement against a ratified contract); one conformance test suite covers all commands; error codes make agent retry/branch logic deterministic.
 
-**Negative / risks:** dual bin names (`smart-cli` + `evolith`) until a major version retires one; envelope adds nesting that existing ad-hoc JSON consumers (if any) must adapt to — mitigated by versioning the contract in `meta` if evolution demands it; `meta.durationMs` and `correlationId` add minor instrumentation cost per command.
+**Negative / risks:** dual bin names (`evolith-cli` + `evolith`) until a major version retires one; envelope adds nesting that existing ad-hoc JSON consumers (if any) must adapt to — mitigated by versioning the contract in `meta` if evolution demands it; `meta.durationMs` and `correlationId` add minor instrumentation cost per command.
 
 **Trade-off accepted:** context flags as opaque echo (instead of validated tenant scoping) keeps the CLI stateless but defers tenant validation entirely to the Tracker.
 

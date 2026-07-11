@@ -1,20 +1,20 @@
-# @evolith/infra-providers
+# @beyondnet/evolith-infra-providers
 
 > Infrastructure adapters for the Evolith governance framework.
 
-[![npm version](https://img.shields.io/npm/v/@evolith/infra-providers)](https://www.npmjs.com/package/@evolith/infra-providers)
-[![license](https://img.shields.io/npm/l/@evolith/infra-providers)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/@beyondnet/evolith-infra-providers)](https://www.npmjs.com/package/@beyondnet/evolith-infra-providers)
+[![license](https://img.shields.io/npm/l/@beyondnet/evolith-infra-providers)](./LICENSE)
 
 ## Overview
 
-`@evolith/infra-providers` supplies the **concrete infrastructure adapters** that implement the ports defined in `@evolith/core-domain`. It handles filesystem I/O, logging, YAML/JSON config parsing, ruleset loading from disk, and webhook delivery.
+`@beyondnet/evolith-infra-providers` supplies the **concrete infrastructure adapters** that implement the ports defined in `@beyondnet/evolith-core-domain`. It handles filesystem I/O, logging, YAML/JSON config parsing, ruleset loading from disk, and webhook delivery.
 
 These adapters are injected into the domain at runtime — the domain itself has zero infrastructure dependencies.
 
 ## Installation
 
 ```bash
-npm install @evolith/infra-providers
+npm install @beyondnet/evolith-infra-providers
 ```
 
 ## Providers
@@ -64,7 +64,7 @@ import {
   YamlConfigParserProvider,
   ConsoleLoggerProvider,
   DiskRulesetRepository,
-} from '@evolith/infra-providers';
+} from '@beyondnet/evolith-infra-providers';
 
 // IFileSystem — concrete Node.js adapter
 const fs = new NodeFileSystemProvider().createFileSystem();
@@ -92,12 +92,12 @@ register them:
 
 ```ts
 import { Module } from '@nestjs/common';
-import type { IFileSystem, ILogger } from '@evolith/core-domain/domain/interfaces';
+import type { IFileSystem, ILogger } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import {
   NodeFileSystemProvider,
   NestLoggerProvider,
   DiskRulesetRepository,
-} from '@evolith/infra-providers';
+} from '@beyondnet/evolith-infra-providers';
 
 @Module({
   providers: [
@@ -123,7 +123,7 @@ export class InfraModule {}
 ### Webhook delivery
 
 ```ts
-import { WebhookAdapter } from '@evolith/infra-providers';
+import { WebhookAdapter } from '@beyondnet/evolith-infra-providers';
 
 // All options are optional; defaults shown.
 const notifier = new WebhookAdapter({
@@ -147,7 +147,7 @@ When a core-domain request context is active (`AsyncLocalStorage`), it also emit
 ### MoSCoW prioritization
 
 ```ts
-import { MoscowPrioritizationService } from '@evolith/infra-providers';
+import { MoscowPrioritizationService } from '@beyondnet/evolith-infra-providers';
 
 // Defaults to NodeFileSystemProvider; inject { fileSystem, logger } in tests.
 const moscow = new MoscowPrioritizationService();
@@ -184,7 +184,7 @@ phase }`; `MoscowAnalysis` carries `{ repository, phase, items[], summary
 - `@nestjs/common` is a runtime dependency (pulled in transitively); the
   `NestLoggerProvider` and NestJS wiring examples assume a NestJS host app.
 - `DiskRulesetRepository` expects a `<corePath>/rulesets` directory laid out per
-  the `ruleset-standard.schema.json` convention (provided by `@evolith/core`).
+  the `ruleset-standard.schema.json` convention (provided by `@beyondnet/evolith-core`).
 
 ## Troubleshooting
 
@@ -250,10 +250,10 @@ Contributions follow the repo-wide guidelines in the
 
 | Package | Role |
 |---------|------|
-| [`@evolith/core-domain`](https://www.npmjs.com/package/@evolith/core-domain) | Domain logic and rule engine (defines the ports this package implements) |
-| **`@evolith/infra-providers`** | Infrastructure adapters ← you are here |
-| [`@evolith/core`](../core) | Facade barrel over `core-domain` |
-| [`@evolith/sdk`](../sdk-client) | Typed HTTP/MCP client |
+| [`@beyondnet/evolith-core-domain`](https://www.npmjs.com/package/@beyondnet/evolith-core-domain) | Domain logic and rule engine (defines the ports this package implements) |
+| **`@beyondnet/evolith-infra-providers`** | Infrastructure adapters ← you are here |
+| [`@beyondnet/evolith-core`](../core) | Facade barrel over `core-domain` |
+| [`@beyondnet/evolith-sdk`](../sdk-client) | Typed HTTP/MCP client |
 
 Consumed by **`apps/core-api`** and **`packages/mcp-server`**, which wire these
 adapters into the `core-domain` ports at runtime.

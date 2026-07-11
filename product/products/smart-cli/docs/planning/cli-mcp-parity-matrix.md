@@ -16,74 +16,74 @@ This matrix ensures CLI and MCP provide consistent functionality through the sha
 
 ## 2. Core Operations
 
-| `smart-cli core info` | `CoreService.info()` | `core info` | - | `evolith://core/info` | OUT_OF_SCOPE | PROPOSED |
-| `smart-cli core validate` | `CoreService.validate()` | `core validate` | - | - | OUT_OF_SCOPE | PROPOSED |
-| `smart-cli core update` | `CoreService.update()` | `core update` | - | - | OUT_OF_SCOPE | PROPOSED |
-| `smart-cli core search` | `CoreService.search()` | `core search` | `search_core` | - | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli core info` | `CoreService.info()` | `core info` | - | `evolith://core/info` | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli core validate` | `CoreService.validate()` | `core validate` | - | - | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli core update` | `CoreService.update()` | `core update` | - | - | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli core search` | `CoreService.search()` | `core search` | `search_core` | - | OUT_OF_SCOPE | PROPOSED |
 
 ---
 
 ## 3. Ruleset Operations
 
-| `smart-cli ruleset list` | `RulesetService.list()` | `ruleset list` | - | `evolith://rulesets` | OUT_OF_SCOPE | PROPOSED |
-| `smart-cli ruleset show` | `RulesetService.get()` | `ruleset show` | `get_ruleset` | `evolith://rulesets/{id}` | OUT_OF_SCOPE | PROPOSED |
-| `smart-cli ruleset validate` | `RulesetService.validate()` | `ruleset validate` | `validate_ruleset` | - | OUT_OF_SCOPE | IMPLEMENTED |
-| `smart-cli ruleset explain` | `RulesetService.explain()` | `ruleset explain` | `explain_rule` | - | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli ruleset list` | `RulesetService.list()` | `ruleset list` | - | `evolith://rulesets` | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli ruleset show` | `RulesetService.get()` | `ruleset show` | `get_ruleset` | `evolith://rulesets/{id}` | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli ruleset validate` | `RulesetService.validate()` | `ruleset validate` | `validate_ruleset` | - | OUT_OF_SCOPE | IMPLEMENTED |
+| `evolith-cli ruleset explain` | `RulesetService.explain()` | `ruleset explain` | `explain_rule` | - | OUT_OF_SCOPE | PROPOSED |
 
 ---
 
 ## 4. Project Validation
 
-| `smart-cli validate project` | `ValidationService.project()` | `validate project` | `validate_project` | - | OUT_OF_SCOPE | IMPLEMENTED |
-| `smart-cli validate architecture` | `ValidationService.architecture()` | `validate architecture` | `validate_architecture` | - | OUT_OF_SCOPE | PROPOSED |
-| `smart-cli validate sdlc` | `ValidationService.sdlc()` | `validate sdlc` | `validate_sdlc` | - | OUT_OF_SCOPE | PROPOSED |
-| `smart-cli validate all` | `ValidationService.all()` | `validate all` | - | - | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli validate project` | `ValidationService.project()` | `validate project` | `validate_project` | - | OUT_OF_SCOPE | IMPLEMENTED |
+| `evolith-cli validate architecture` | `ValidationService.architecture()` | `validate architecture` | `validate_architecture` | - | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli validate sdlc` | `ValidationService.sdlc()` | `validate sdlc` | `validate_sdlc` | - | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli validate all` | `ValidationService.all()` | `validate all` | - | - | OUT_OF_SCOPE | PROPOSED |
 
 ---
 
 ## 5. SDLC Operations
 
-| `smart-cli sdlc status` | `SDLCService.status()` | `sdlc status` | `get_sdlc_status` | `evolith://sdlc/status` | PARTIAL | PROPOSED |
-| `smart-cli sdlc next` | `SDLCService.nextGate()` | `sdlc next` | `get_next_gate` | - | PARTIAL | PROPOSED |
-| `smart-cli gate validate` | `SDLCService.validateGate()` | `gate validate` | `validate_phase_gate` | - | PARTIAL | PROPOSED |
+| `evolith-cli sdlc status` | `SDLCService.status()` | `sdlc status` | `get_sdlc_status` | `evolith://sdlc/status` | PARTIAL | PROPOSED |
+| `evolith-cli sdlc next` | `SDLCService.nextGate()` | `sdlc next` | `get_next_gate` | - | PARTIAL | PROPOSED |
+| `evolith-cli gate validate` | `SDLCService.validateGate()` | `gate validate` | `validate_phase_gate` | - | PARTIAL | PROPOSED |
 
 ---
 
 ## 6. Artifact Operations
 
-| `smart-cli artifact list` | `ArtifactService.list()` | `artifact list` | - | `evolith://artifacts/templates` | OUT_OF_SCOPE | PROPOSED |
-| `smart-cli artifact generate` | `ArtifactService.generate()` | `artifact generate` | `generate_artifact` | - | OUT_OF_SCOPE | PROPOSED |
-| `smart-cli artifact validate` | `ArtifactService.validate()` | `artifact validate` | `validate_artifact` | - | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli artifact list` | `ArtifactService.list()` | `artifact list` | - | `evolith://artifacts/templates` | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli artifact generate` | `ArtifactService.generate()` | `artifact generate` | `generate_artifact` | - | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli artifact validate` | `ArtifactService.validate()` | `artifact validate` | `validate_artifact` | - | OUT_OF_SCOPE | PROPOSED |
 
 ---
 
 ## 7. Architecture Operations
 
-| `smart-cli architecture initialize` | `ArchitectureService.initialize()` | `architecture initialize` | `initialize_architecture` | - | PARTIAL | PROPOSED |
-| `smart-cli architecture validate` | `ArchitectureService.validate()` | `architecture validate` | `validate_architecture` | - | PARTIAL | PROPOSED |
-| `smart-cli architecture drift` | `DriftDetectionService.detect()` | `architecture drift` | `detect_architecture_drift` | - | PARTIAL | PROPOSED |
+| `evolith-cli architecture initialize` | `ArchitectureService.initialize()` | `architecture initialize` | `initialize_architecture` | - | PARTIAL | PROPOSED |
+| `evolith-cli architecture validate` | `ArchitectureService.validate()` | `architecture validate` | `validate_architecture` | - | PARTIAL | PROPOSED |
+| `evolith-cli architecture drift` | `DriftDetectionService.detect()` | `architecture drift` | `detect_architecture_drift` | - | PARTIAL | PROPOSED |
 
 ---
 
 ## 8. ADR Operations
 
-| `smart-cli adr list` | `ADRService.list()` | `adr list` | `list_adrs` | `evolith://adrs` | OUT_OF_SCOPE | PROPOSED |
-| `smart-cli adr show` | `ADRService.get()` | `adr show` | `get_adr` | `evolith://adrs/{id}` | OUT_OF_SCOPE | PROPOSED |
-| `smart-cli adr create` | `ADRService.create()` | `adr create` | `create_adr` | - | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli adr list` | `ADRService.list()` | `adr list` | `list_adrs` | `evolith://adrs` | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli adr show` | `ADRService.get()` | `adr show` | `get_adr` | `evolith://adrs/{id}` | OUT_OF_SCOPE | PROPOSED |
+| `evolith-cli adr create` | `ADRService.create()` | `adr create` | `create_adr` | - | OUT_OF_SCOPE | PROPOSED |
 
 ---
 
 ## 9. Evidence Operations
 
-| `smart-cli evidence collect` | `EvidenceService.collect()` | `evidence collect` | `collect_evidence` | - | PARTIAL | PROPOSED |
-| `smart-cli evidence export` | `EvidenceService.export()` | `evidence export` | `export_evidence` | - | PARTIAL | PROPOSED |
+| `evolith-cli evidence collect` | `EvidenceService.collect()` | `evidence collect` | `collect_evidence` | - | PARTIAL | PROPOSED |
+| `evolith-cli evidence export` | `EvidenceService.export()` | `evidence export` | `export_evidence` | - | PARTIAL | PROPOSED |
 
 ---
 
 ## 10. Report Operations
 
-| `smart-cli report compliance` | `ReportService.compliance()` | `report compliance` | `generate_compliance_report` | - | PARTIAL | PROPOSED |
-| `smart-cli report executive` | `ReportService.executive()` | `report executive` | `generate_executive_report` | - | PARTIAL | PROPOSED |
+| `evolith-cli report compliance` | `ReportService.compliance()` | `report compliance` | `generate_compliance_report` | - | PARTIAL | PROPOSED |
+| `evolith-cli report executive` | `ReportService.executive()` | `report executive` | `generate_executive_report` | - | PARTIAL | PROPOSED |
 
 ---
 

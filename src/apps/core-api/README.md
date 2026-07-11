@@ -1,6 +1,6 @@
-# @evolith/core-api — Evolith Core API Exposure Layer
+# @beyondnet/evolith-core-api — Evolith Core API Exposure Layer
 
-> **Contexto arquitectural (ADR-0074).** Esta aplicación NestJS es la **capa de exposición REST** del dominio Core de Evolith. Es el boundary de red oficial que expone `@evolith/core-domain` sobre HTTP, y convive con `@evolith/mcp-server` (protocolo MCP para agentes) y `smart-cli` (CLI). Los consumidores externos —incluyendo el **Evolith Tracker**— la consumen como cliente HTTP.
+> **Contexto arquitectural (ADR-0074).** Esta aplicación NestJS es la **capa de exposición REST** del dominio Core de Evolith. Es el boundary de red oficial que expone `@beyondnet/evolith-core-domain` sobre HTTP, y convive con `@beyondnet/evolith-mcp-server` (protocolo MCP para agentes) y `evolith-cli` (CLI). Los consumidores externos —incluyendo el **Evolith Tracker**— la consumen como cliente HTTP.
 >
 > **Lo que NO es.** No es el BFF del Tracker. El BFF / Application Gateway del Tracker (ADR-0075) vive en el repositorio `evolith_tracker` y consume esta API como cliente externo.
 
@@ -72,12 +72,12 @@ Todos los responses siguen el **Envelope Pattern**: `{ success, data, meta }`.
 └────────────────────────┬────────────────────────────────────┘
                          │ usa
                 ┌────────▼────────┐
-                │ @evolith/core-  │
+                │ @beyondnet/evolith-core-  │
                 │ domain          │
                 └────────┬────────┘
                          │ usa
                 ┌────────▼────────┐
-                │ @evolith/infra- │
+                │ @beyondnet/evolith-infra- │
                 │ providers       │
                 └─────────────────┘
 ```
@@ -435,7 +435,7 @@ Evalúa un gate de fase SDLC específico.
 }
 ```
 
-**Response `200`:** El controlador devuelve el payload `GateEvidence` de `EvaluateGateUseCase.execute(...)` tal cual; esta forma pertenece a `@evolith/core-domain` (`domain/gate-evidence.ts`). `phase` es el id canónico de fase SDLC resuelto desde `gateId` y `evaluatedBy` toma `human` por defecto.
+**Response `200`:** El controlador devuelve el payload `GateEvidence` de `EvaluateGateUseCase.execute(...)` tal cual; esta forma pertenece a `@beyondnet/evolith-core-domain` (`domain/gate-evidence.ts`). `phase` es el id canónico de fase SDLC resuelto desde `gateId` y `evaluatedBy` toma `human` por defecto.
 
 ```json
 {

@@ -16,74 +16,74 @@ Esta matriz asegura que CLI y MCP provean funcionalidad consistente a través de
 
 ## 2. Operaciones Core
 
-| `smart-cli core info` | `CoreService.info()` | `core info` | - | `evolith://core/info` | FUERA_DE_ALCANCE | PROPUESTO |
-| `smart-cli core validate` | `CoreService.validate()` | `core validate` | - | - | FUERA_DE_ALCANCE | PROPUESTO |
-| `smart-cli core update` | `CoreService.update()` | `core update` | - | - | FUERA_DE_ALCANCE | PROPUESTO |
-| `smart-cli core search` | `CoreService.search()` | `core search` | `search_core` | - | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli core info` | `CoreService.info()` | `core info` | - | `evolith://core/info` | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli core validate` | `CoreService.validate()` | `core validate` | - | - | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli core update` | `CoreService.update()` | `core update` | - | - | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli core search` | `CoreService.search()` | `core search` | `search_core` | - | FUERA_DE_ALCANCE | PROPUESTO |
 
 ---
 
 ## 3. Operaciones de Rulesets
 
-| `smart-cli ruleset list` | `RulesetService.list()` | `ruleset list` | - | `evolith://rulesets` | FUERA_DE_ALCANCE | PROPUESTO |
-| `smart-cli ruleset show` | `RulesetService.get()` | `ruleset show` | `get_ruleset` | `evolith://rulesets/{id}` | FUERA_DE_ALCANCE | PROPUESTO |
-| `smart-cli ruleset validate` | `RulesetService.validate()` | `ruleset validate` | `validate_ruleset` | - | FUERA_DE_ALCANCE | IMPLEMENTADO |
-| `smart-cli ruleset explain` | `RulesetService.explain()` | `ruleset explain` | `explain_rule` | - | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli ruleset list` | `RulesetService.list()` | `ruleset list` | - | `evolith://rulesets` | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli ruleset show` | `RulesetService.get()` | `ruleset show` | `get_ruleset` | `evolith://rulesets/{id}` | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli ruleset validate` | `RulesetService.validate()` | `ruleset validate` | `validate_ruleset` | - | FUERA_DE_ALCANCE | IMPLEMENTADO |
+| `evolith-cli ruleset explain` | `RulesetService.explain()` | `ruleset explain` | `explain_rule` | - | FUERA_DE_ALCANCE | PROPUESTO |
 
 ---
 
 ## 4. Validación de Proyecto
 
-| `smart-cli validate project` | `ValidationService.project()` | `validate project` | `validate_project` | - | FUERA_DE_ALCANCE | IMPLEMENTADO |
-| `smart-cli validate architecture` | `ValidationService.architecture()` | `validate architecture` | `validate_architecture` | - | FUERA_DE_ALCANCE | PROPUESTO |
-| `smart-cli validate sdlc` | `ValidationService.sdlc()` | `validate sdlc` | `validate_sdlc` | - | FUERA_DE_ALCANCE | PROPUESTO |
-| `smart-cli validate all` | `ValidationService.all()` | `validate all` | - | - | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli validate project` | `ValidationService.project()` | `validate project` | `validate_project` | - | FUERA_DE_ALCANCE | IMPLEMENTADO |
+| `evolith-cli validate architecture` | `ValidationService.architecture()` | `validate architecture` | `validate_architecture` | - | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli validate sdlc` | `ValidationService.sdlc()` | `validate sdlc` | `validate_sdlc` | - | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli validate all` | `ValidationService.all()` | `validate all` | - | - | FUERA_DE_ALCANCE | PROPUESTO |
 
 ---
 
 ## 5. Operaciones SDLC
 
-| `smart-cli sdlc status` | `SDLCService.status()` | `sdlc status` | `get_sdlc_status` | `evolith://sdlc/status` | PARCIAL | PROPUESTO |
-| `smart-cli sdlc next` | `SDLCService.nextGate()` | `sdlc next` | `get_next_gate` | - | PARCIAL | PROPUESTO |
-| `smart-cli gate validate` | `SDLCService.validateGate()` | `gate validate` | `validate_phase_gate` | - | PARCIAL | PROPUESTO |
+| `evolith-cli sdlc status` | `SDLCService.status()` | `sdlc status` | `get_sdlc_status` | `evolith://sdlc/status` | PARCIAL | PROPUESTO |
+| `evolith-cli sdlc next` | `SDLCService.nextGate()` | `sdlc next` | `get_next_gate` | - | PARCIAL | PROPUESTO |
+| `evolith-cli gate validate` | `SDLCService.validateGate()` | `gate validate` | `validate_phase_gate` | - | PARCIAL | PROPUESTO |
 
 ---
 
 ## 6. Operaciones de Artefactos
 
-| `smart-cli artifact list` | `ArtifactService.list()` | `artifact list` | - | `evolith://artifacts/templates` | FUERA_DE_ALCANCE | PROPUESTO |
-| `smart-cli artifact generate` | `ArtifactService.generate()` | `artifact generate` | `generate_artifact` | - | FUERA_DE_ALCANCE | PROPUESTO |
-| `smart-cli artifact validate` | `ArtifactService.validate()` | `artifact validate` | `validate_artifact` | - | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli artifact list` | `ArtifactService.list()` | `artifact list` | - | `evolith://artifacts/templates` | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli artifact generate` | `ArtifactService.generate()` | `artifact generate` | `generate_artifact` | - | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli artifact validate` | `ArtifactService.validate()` | `artifact validate` | `validate_artifact` | - | FUERA_DE_ALCANCE | PROPUESTO |
 
 ---
 
 ## 7. Operaciones de Arquitectura
 
-| `smart-cli architecture initialize` | `ArchitectureService.initialize()` | `architecture initialize` | `initialize_architecture` | - | PARCIAL | PROPUESTO |
-| `smart-cli architecture validate` | `ArchitectureService.validate()` | `architecture validate` | `validate_architecture` | - | PARCIAL | PROPUESTO |
-| `smart-cli architecture drift` | `DriftDetectionService.detect()` | `architecture drift` | `detect_architecture_drift` | - | PARCIAL | PROPUESTO |
+| `evolith-cli architecture initialize` | `ArchitectureService.initialize()` | `architecture initialize` | `initialize_architecture` | - | PARCIAL | PROPUESTO |
+| `evolith-cli architecture validate` | `ArchitectureService.validate()` | `architecture validate` | `validate_architecture` | - | PARCIAL | PROPUESTO |
+| `evolith-cli architecture drift` | `DriftDetectionService.detect()` | `architecture drift` | `detect_architecture_drift` | - | PARCIAL | PROPUESTO |
 
 ---
 
 ## 8. Operaciones ADR
 
-| `smart-cli adr list` | `ADRService.list()` | `adr list` | `list_adrs` | `evolith://adrs` | FUERA_DE_ALCANCE | PROPUESTO |
-| `smart-cli adr show` | `ADRService.get()` | `adr show` | `get_adr` | `evolith://adrs/{id}` | FUERA_DE_ALCANCE | PROPUESTO |
-| `smart-cli adr create` | `ADRService.create()` | `adr create` | `create_adr` | - | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli adr list` | `ADRService.list()` | `adr list` | `list_adrs` | `evolith://adrs` | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli adr show` | `ADRService.get()` | `adr show` | `get_adr` | `evolith://adrs/{id}` | FUERA_DE_ALCANCE | PROPUESTO |
+| `evolith-cli adr create` | `ADRService.create()` | `adr create` | `create_adr` | - | FUERA_DE_ALCANCE | PROPUESTO |
 
 ---
 
 ## 9. Operaciones de Evidence
 
-| `smart-cli evidence collect` | `EvidenceService.collect()` | `evidence collect` | `collect_evidence` | - | PARCIAL | PROPUESTO |
-| `smart-cli evidence export` | `EvidenceService.export()` | `evidence export` | `export_evidence` | - | PARCIAL | PROPUESTO |
+| `evolith-cli evidence collect` | `EvidenceService.collect()` | `evidence collect` | `collect_evidence` | - | PARCIAL | PROPUESTO |
+| `evolith-cli evidence export` | `EvidenceService.export()` | `evidence export` | `export_evidence` | - | PARCIAL | PROPUESTO |
 
 ---
 
 ## 10. Operaciones de Reportes
 
-| `smart-cli report compliance` | `ReportService.compliance()` | `report compliance` | `generate_compliance_report` | - | PARCIAL | PROPUESTO |
-| `smart-cli report executive` | `ReportService.executive()` | `report executive` | `generate_executive_report` | - | PARCIAL | PROPUESTO |
+| `evolith-cli report compliance` | `ReportService.compliance()` | `report compliance` | `generate_compliance_report` | - | PARCIAL | PROPUESTO |
+| `evolith-cli report executive` | `ReportService.executive()` | `report executive` | `generate_executive_report` | - | PARCIAL | PROPUESTO |
 
 ---
 

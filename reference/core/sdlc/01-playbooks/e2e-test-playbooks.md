@@ -14,14 +14,14 @@ A green run of all four playbooks is the cross-surface E2E gate.
 ## Flow: Core Governance
 
 - **Surface:** SDLC governance domain (phase → gate → artifact → verdict).
-- **Command:** `npm run test:e2e --workspace @evolith/core-domain`
+- **Command:** `npm run test:e2e --workspace @beyondnet/evolith-core-domain`
 - **Suite:** `packages/core-domain/src/__e2e__/governance-flow.e2e.spec.ts` (13 tests).
 - **Scenarios:** ARCHITECT gate approval (PASS verdict + `GateApprovedEvent` + audit + phase transitions); missing artifact → FAIL + `GateRejectedEvent`; RBAC denial (`GateAuthorizationError`); webhook delivery of `gate.approved`; 5-phase workflow + Blueprint validation.
 - **Expected:** 13/13 green against a real tmpdir satellite.
 
-## Flow: Smart CLI
+## Flow: Evolith CLI
 
-- **Surface:** `smart-cli` and its commands (incl. live MCP HTTP via `mcp serve`).
+- **Surface:** `evolith-cli` and its commands (incl. live MCP HTTP via `mcp serve`).
 - **Command:** `npm run --workspace sdk/cli test:e2e`
 - **Suite:** `sdk/cli/test/**` e2e config (20 suites).
 - **Scenarios:** `validate`/`gate`/`init`/`wizard` flows, SDLC gate commands, and `mcp-e2e` which spawns the MCP HTTP server (public `/health`, fail-closed `POST /`, `initialize`/`tools/list`/resources/prompts).
@@ -46,7 +46,7 @@ A green run of all four playbooks is the cross-surface E2E gate.
 ## Running All Flows
 
 ```bash
-npm run test:e2e --workspace @evolith/core-domain
+npm run test:e2e --workspace @beyondnet/evolith-core-domain
 npm run --workspace sdk/cli test:e2e
 npm run --workspace apps/core-api test:e2e
 npm run --workspace packages/mcp-server build && npm run --workspace packages/mcp-server test:e2e

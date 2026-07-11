@@ -75,7 +75,7 @@ Examples:
 
 - Tracker Gate Decision Engine;
 - Tracker REST and MCP APIs;
-- Smart CLI application architecture;
+- Evolith CLI application architecture;
 - product-local ADRs and data models.
 
 ### Platform or Provider Specific

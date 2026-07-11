@@ -38,7 +38,7 @@ Extract and formalize shared logic into SDK services that CLI and MCP will consu
 | Add unit tests for all services (>80%) | L | Services | TODO |
 
 ### Deliverables
-- `@evolith/sdk-core` package structure
+- `@beyondnet/evolith-sdk-core` package structure
 - All SDK services with interfaces
 - >80% unit test coverage
 
@@ -72,7 +72,7 @@ Complete CLI command implementations, replacing stubs with real logic.
 - Real E2E tests with assertions
 
 ### Quality Gate
-- `smart-cli validate --all` passes on Core
+- `evolith-cli validate --all` passes on Core
 - E2E tests for all commands
 
 ---

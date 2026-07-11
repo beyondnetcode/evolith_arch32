@@ -20,9 +20,9 @@ Install, configure, and validate your first satellite repository.
 ## Installation
 
 ```bash
-npm install -g @evolith/smart-cli
-smart-cli --version
-# smart-cli version 1.1.0
+npm install -g @beyondnet/evolith-cli
+evolith-cli --version
+# evolith-cli version 1.1.0
 ```
 
 ---
@@ -33,7 +33,7 @@ smart-cli --version
 
 ```bash
 cd your-project
-smart-cli init
+evolith-cli init
 ```
 
 Creates `evolith.yaml` with default F1 (Modular Monolith) configuration.
@@ -41,13 +41,13 @@ Creates `evolith.yaml` with default F1 (Modular Monolith) configuration.
 ### 2. Run Validation
 
 ```bash
-smart-cli validate
+evolith-cli validate
 ```
 
 ### 3. Start MCP Server for AI Agents
 
 ```bash
-smart-cli mcp serve
+evolith-mcp
 ```
 
 ---
@@ -56,13 +56,13 @@ smart-cli mcp serve
 
 | Command | Description |
 |---------|-------------|
-| `smart-cli init` | Initialize satellite repository |
-| `smart-cli validate` | Validate against Evolith standards |
-| `smart-cli validate --topology <name>` | Validate against specific topology |
-| `smart-cli adr create` | Create Architecture Decision Record |
-| `smart-cli adr list` | List all ADRs |
-| `smart-cli mcp serve` | Start MCP server (stdio) |
-| `smart-cli mcp serve --http` | Start MCP server (HTTP) |
+| `evolith-cli init` | Initialize satellite repository |
+| `evolith-cli validate` | Validate against Evolith standards |
+| `evolith-cli validate --topology <name>` | Validate against specific topology |
+| `evolith-cli adr create` | Create Architecture Decision Record |
+| `evolith-cli adr list` | List all ADRs |
+| `evolith-mcp` | Start MCP server (stdio) |
+| `evolith-mcp --http` | Start MCP server (HTTP) |
 
 ---
 
@@ -74,7 +74,7 @@ smart-cli mcp serve
 {
   "mcpServers": {
     "evolith": {
-      "command": "smart-cli",
+      "command": "evolith-cli",
       "args": ["mcp", "serve"]
     }
   }

@@ -2,7 +2,7 @@
 
 > **Bilingual navigation:** [Versión en Español](./README.es.md)
 
-Machine-readable rules for Evolith Smart CLI release readiness and parity with Evolith Core.
+Machine-readable rules for Evolith Evolith CLI release readiness and parity with Evolith Core.
 
 ## Rulesets
 

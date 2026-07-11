@@ -43,7 +43,7 @@ The intake process is assisted by the Agent Runtime (Hermes), which acts as the 
 ## Gate Procedure
 
 ### Step 1: Ingestion
-A user or system submits a natural language requirement ("prompt") via the Smart CLI or Evolith Tracker.
+A user or system submits a natural language requirement ("prompt") via the Evolith CLI or Evolith Tracker.
 `evolith plan create --from-prompt "..."`
 
 ### Step 2: Interpretation and Generation

@@ -3,12 +3,12 @@
 
 # Inventario de Superficie del Producto
 
-Inventario generado de la superficie instalable de Smart CLI y MCP. No editar a mano.
+Inventario generado de la superficie instalable de Evolith CLI y MCP. No editar a mano.
 
 | Campo | Valor |
 |---|---|
-| Package | `@evolith/smart-cli@1.1.4` |
-| Binary | `smart-cli` |
+| Package | `@beyondnet/evolith-cli@1.1.4` |
+| Binary | `evolith-cli` |
 | CLI commands | 26 |
 | MCP tools | 33 |
 | MCP resources | 9 |

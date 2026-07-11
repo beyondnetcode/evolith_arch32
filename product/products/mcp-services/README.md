@@ -2,7 +2,7 @@
 
 > **Bilingual navigation:** [Versión en Español](./README.es.md)
 
-Evolith MCP Services expose Evolith Core governance as real-time context for LLMs and autonomous agents through the [Model Context Protocol](https://modelcontextprotocol.io). They ship as the standalone **`@evolith/mcp-server`** package (binary `evolith-mcp`), which can also be launched programmatically by other surfaces.
+Evolith MCP Services expose Evolith Core governance as real-time context for LLMs and autonomous agents through the [Model Context Protocol](https://modelcontextprotocol.io). They ship as the standalone **`@beyondnet/evolith-mcp-server`** package (binary `evolith-mcp`), which can also be launched programmatically by other surfaces.
 
 ## Overview
 
@@ -50,10 +50,10 @@ The system is **intelligent and flexible** — users can combine any entry point
 
 ```bash
 # From the monorepo
-npm install @evolith/mcp-server
+npm install @beyondnet/evolith-mcp-server
 
 # Or globally (exposes the evolith-mcp binary)
-npm install -g @evolith/mcp-server
+npm install -g @beyondnet/evolith-mcp-server
 ```
 
 The binary is `evolith-mcp` (`package.json` `bin`); the only subcommands are `serve` and `version`.
@@ -87,7 +87,7 @@ Authentication, ABAC roles/codes, the mutative-tool contract, and the full per-t
 
 ## Tool Registry
 
-The lightweight `@evolith/mcp-tools` package has been retired. The canonical registry now lives inside the standalone gateway under [packages/mcp-server/src/tools](../../../src/packages/mcp-server/src/tools/tools.module.ts), where tool schemas, ABAC checks, audit logging, resources, prompts, and transport behavior are governed together.
+The lightweight `@beyondnet/evolith-mcp-tools` package has been retired. The canonical registry now lives inside the standalone gateway under [packages/mcp-server/src/tools](../../../src/packages/mcp-server/src/tools/tools.module.ts), where tool schemas, ABAC checks, audit logging, resources, prompts, and transport behavior are governed together.
 
 ## Troubleshooting
 

@@ -14,7 +14,7 @@ Debido a que la base de código evoluciona rápidamente, esta vista se enfoca en
 
 ## 2. Módulos de Código Navegables
 
-- **[Módulos de Core Domain](./core-domain-modules.es.md):** Mapea la lógica de dominio puro en `@evolith/core-domain`, los esquemas JSON y los rulesets OPA Rego.
+- **[Módulos de Core Domain](./core-domain-modules.es.md):** Mapea la lógica de dominio puro en `@beyondnet/evolith-core-domain`, los esquemas JSON y los rulesets OPA Rego.
 
 ---
 [Volver al Nivel 3: Hub de Componentes](../level-3-components/README.es.md)

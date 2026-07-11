@@ -280,8 +280,8 @@ export class ScaffoldCommand extends BaseEvolithCommand {
     const workspaceDir = path.join(cwd, 'src');
     if (!fs.existsSync(workspaceDir)) {
       return (
-        `No workspace found at ${workspaceDir}. Run \`smart-cli init\` first to ` +
-        `scaffold a satellite, then re-run \`smart-cli architecture scaffold\`.`
+        `No workspace found at ${workspaceDir}. Run \`evolith-cli init\` first to ` +
+        `scaffold a satellite, then re-run \`evolith-cli architecture scaffold\`.`
       );
     }
     const isNxWorkspace =
@@ -290,7 +290,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
     if (!isNxWorkspace) {
       return (
         `${workspaceDir} exists but is not an Nx workspace (no nx.json/package.json). ` +
-        `Run \`smart-cli init\` first to scaffold the base workspace.`
+        `Run \`evolith-cli init\` first to scaffold the base workspace.`
       );
     }
     return undefined;

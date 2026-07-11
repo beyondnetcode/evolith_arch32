@@ -21,7 +21,7 @@ The agent roster, contracts, and handoffs are documented in [AGENTS.md](./AGENTS
 
 ## 2. Prerequisites and Local Setup
 
-Evolith is an **npm workspaces monorepo** (`sdk/*`, `apps/*`, `src/packages/*`). The Smart CLI lives in `src/sdk/cli` (published as `@evolith/smart-cli`), the Core-API in `src/apps/core-api`, and shared logic in `src/packages/*` (`core`, `core-domain`, `infra-providers`, `mcp-server`, `mcp-tools`, `sdk-client`).
+Evolith is an **npm workspaces monorepo** (`sdk/*`, `apps/*`, `src/packages/*`). The Evolith CLI lives in `src/sdk/cli` (published as `@beyondnet/evolith-cli`), the Core-API in `src/apps/core-api`, and shared logic in `src/packages/*` (`core`, `core-domain`, `infra-providers`, `mcp-server`, `mcp-tools`, `sdk-client`).
 
 ### A. Prerequisites
 
@@ -48,36 +48,36 @@ Some workspaces depend on each other, so build the shared packages first, then t
 
 ```bash
 # Build shared workspaces (order matters)
-npm run build -w @evolith/core-domain
-npm run build -w @evolith/infra-providers
-npm run build -w @evolith/core
-npm run build -w @evolith/mcp-server
+npm run build -w @beyondnet/evolith-core-domain
+npm run build -w @beyondnet/evolith-infra-providers
+npm run build -w @beyondnet/evolith-core
+npm run build -w @beyondnet/evolith-mcp-server
 
-# Build the Smart CLI
-npm run build -w @evolith/smart-cli
+# Build the Evolith CLI
+npm run build -w @beyondnet/evolith-cli
 ```
 
 To compile the OPA policies to WASM (required for the OPA parity gate), run `npm run build:policy` from the root.
 
 ## 3. Running Tests
 
-Tests run per workspace. The Smart CLI carries the primary suites:
+Tests run per workspace. The Evolith CLI carries the primary suites:
 
 ```bash
-# Unit tests (Smart CLI)
-npm run test:unit -w @evolith/smart-cli
+# Unit tests (Evolith CLI)
+npm run test:unit -w @beyondnet/evolith-cli
 
-# End-to-end tests (Smart CLI)
-npm run test:e2e -w @evolith/smart-cli
+# End-to-end tests (Evolith CLI)
+npm run test:e2e -w @beyondnet/evolith-cli
 
 # Unit + e2e together
-npm test -w @evolith/smart-cli
+npm test -w @beyondnet/evolith-cli
 
 # Coverage (CI enforces an 80% statement threshold)
-npm run test:cov -w @evolith/smart-cli
+npm run test:cov -w @beyondnet/evolith-cli
 
 # MCP stdio + HTTP smoke test
-npm run mcp:smoke -w @evolith/smart-cli
+npm run mcp:smoke -w @beyondnet/evolith-cli
 
 # Contract conformance suite (from root)
 npm run test:contract
@@ -142,16 +142,16 @@ The SDLC phases are `f1` Conception and Discovery through `f5` Delivery and Oper
 
 ### E. CLI
 
-The Smart CLI (`@evolith/smart-cli`, currently v1.1.4) uses key families discovery / design / construction / qa / release, configured via `evolith.yaml`. Run the architecture boundary lint (`eslint-plugin-boundaries`) and type check before pushing:
+The Evolith CLI (`@beyondnet/evolith-cli`, currently v1.1.4) uses key families discovery / design / construction / qa / release, configured via `evolith.yaml`. Run the architecture boundary lint (`eslint-plugin-boundaries`) and type check before pushing:
 
 ```bash
-npm run lint -w @evolith/smart-cli
-npm run build -w @evolith/smart-cli
+npm run lint -w @beyondnet/evolith-cli
+npm run build -w @beyondnet/evolith-cli
 ```
 
 ### F. MCP
 
-The MCP server ships inside `@evolith/smart-cli` and supports stdio and Streamable HTTP transports. Validate with `npm run mcp:smoke -w @evolith/smart-cli`. Surface and compatibility parity are enforced by `20-validate-surface-compatibility.mjs` and `24-check-surface-parity.mjs`.
+The MCP server ships inside `@beyondnet/evolith-cli` and supports stdio and Streamable HTTP transports. Validate with `npm run mcp:smoke -w @beyondnet/evolith-cli`. Surface and compatibility parity are enforced by `20-validate-surface-compatibility.mjs` and `24-check-surface-parity.mjs`.
 
 ### G. Core-API
 

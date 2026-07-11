@@ -67,11 +67,11 @@ flowchart TB
     devs["Devs / CI/CD"]
     agents["Agentes / LLMs"]
   end
-  cli["SMART-CLI (@evolith/smart-cli)"]
+  cli["SMART-CLI (@beyondnet/evolith-cli)"]
   api["CORE-API (evolith.beyondnet.cloud)"]
   mcp["MCP Server (mcpevolith.beyondnet.cloud)"]
   runtime["Agent Runtime (evolithruntime.beyondnet.cloud)"]
-  core["Core stateless evaluation (@evolith/core-domain, ADR-0101)"]
+  core["Core stateless evaluation (@beyondnet/evolith-core-domain, ADR-0101)"]
   gov["rulesets / OPA / contracts (tenants/ = legacy, no interpretado · ADR-0101)"]
   harness[".harness (ejecutor oficial)"]
 

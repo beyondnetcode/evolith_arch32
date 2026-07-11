@@ -35,7 +35,7 @@ models stop diverging.
 | **CORE-API** | `apps/core-api/Dockerfile` | `evolith-core-api` · `evolith.beyondnet.cloud` | `bff` (template) | `evolith-core-api` · `evolith.beyondnet.cloud` |
 | **MCP Server** | `packages/mcp-server/Dockerfile` | `evolith-mcp-server` · `mcpevolith.beyondnet.cloud` | `mcp` (template) | `evolith-mcp` · `mcpevolith.beyondnet.cloud` |
 | **Agent Runtime** | `apps/agent-runtime-api/Dockerfile` | prepared · `evolithruntime.beyondnet.cloud` | (none) | `evolith-agent-runtime` · `evolithruntime.beyondnet.cloud` |
-| **SMART-CLI** | `sdk/cli` | npm `@evolith/smart-cli` | n/a | n/a |
+| **SMART-CLI** | `sdk/cli` | npm `@beyondnet/evolith-cli` | n/a | n/a |
 | **Tracker BFF** | external (Tracker) | n/a | n/a | n/a |
 
 ## Drift detected

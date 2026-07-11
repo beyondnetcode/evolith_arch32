@@ -37,7 +37,7 @@ runtime regardless of which adapter runs.
 Implement the relevant port and inject it. Example: a Redis-backed memory.
 
 ```ts
-import type { IMemoryPort, MemoryEntry } from '@evolith/agent-runtime';
+import type { IMemoryPort, MemoryEntry } from '@beyondnet/evolith-agent-runtime';
 
 export class RedisMemoryAdapter implements IMemoryPort {
   async remember(key: string, value: unknown, ns?: string) { /* ... */ }
@@ -74,7 +74,7 @@ inside `HermesAgentAdapter`, and even there lazily (dynamic import), so the
 package builds with Hermes not installed.
 
 ```ts
-import { HermesAgentAdapter, type HermesClient } from '@evolith/agent-runtime';
+import { HermesAgentAdapter, type HermesClient } from '@beyondnet/evolith-agent-runtime';
 
 // Option A: inject a client adapted to the HermesClient port.
 const client: HermesClient = {
@@ -85,8 +85,8 @@ const client: HermesClient = {
 };
 const { runtime } = createAgentRuntime({ engine: new HermesAgentAdapter({ client }) });
 
-// Option B: lazy-load a module (default '@evolith/hermes-agent').
-createAgentRuntime({ engine: new HermesAgentAdapter({ moduleName: '@evolith/hermes-agent' }) });
+// Option B: lazy-load a module (default '@beyondnet/evolith-hermes-agent').
+createAgentRuntime({ engine: new HermesAgentAdapter({ moduleName: '@beyondnet/evolith-hermes-agent' }) });
 ```
 
 ### Multi-Engine Routing (Hermes + Swarms)
@@ -94,7 +94,7 @@ createAgentRuntime({ engine: new HermesAgentAdapter({ moduleName: '@evolith/herm
 You can also use the `RoutingAgentAdapter` to route requests dynamically to different engines (like Swarms or Hermes) based on the intent:
 
 ```ts
-import { createAgentRuntime, type EngineRouterConfig } from '@evolith/agent-runtime';
+import { createAgentRuntime, type EngineRouterConfig } from '@beyondnet/evolith-agent-runtime';
 
 const engineRouterConfig: EngineRouterConfig = {
   defaultEngine: 'hermes',

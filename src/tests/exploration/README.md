@@ -1,7 +1,7 @@
 # Exploratory Cross-Surface Test Agent (F1)
 
 An automated tester that exercises Evolith Core's three interfaces — **CLI**
-(`smart-cli`), **MCP** (`evolith-mcp`), and **Core API** (`core-api`) — and
+(`evolith-cli`), **MCP** (`evolith-mcp`), and **Core API** (`core-api`) — and
 detects behavioural divergences, contract violations, and coverage gaps between
 them. It is the industrialisation of the one-operation cross-surface roundtrip in
 `src/tests/contract/`, generalised to the whole operation catalog.

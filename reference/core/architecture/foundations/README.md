@@ -43,7 +43,7 @@ even supporting multi-engine routing based on capabilities.
 ## Quickstart
 
 ```ts
-import { createAgentRuntime, parseAgentRuntimeRequest } from '@evolith/agent-runtime';
+import { createAgentRuntime, parseAgentRuntimeRequest } from '@beyondnet/evolith-agent-runtime';
 
 const { runtime } = createAgentRuntime(); // safe in-memory/stub adapters
 

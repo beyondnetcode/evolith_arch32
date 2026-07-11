@@ -2,7 +2,7 @@
 
 > **Bilingual Navigation:** [Versión en Español](./README.es.md)
 
-The manifest in this directory is the canonical compatibility boundary between Evolith Core, the Smart CLI producer, and independent consumers such as Evolith Tracker.
+The manifest in this directory is the canonical compatibility boundary between Evolith Core, the Evolith CLI producer, and independent consumers such as Evolith Tracker.
 
 - Contract and schema versions follow semantic versioning.
 - Additive compatible changes increment a minor version.

@@ -195,7 +195,7 @@ These endpoints trigger validation, proposed state advances, and phase transitio
     "workspaceRef": "satellite-name-or-path"
   }
   ```
-* **Response `data`:** The controller returns the `GateEvidence` payload produced by `EvaluateGateUseCase.execute(...)` verbatim. This shape is owned by `@evolith/core-domain` (`domain/gate-evidence.ts`). `phase` is the canonical SDLC phase id resolved from `gateId`, and `evaluatedBy` defaults to `human` when the caller does not supply it.
+* **Response `data`:** The controller returns the `GateEvidence` payload produced by `EvaluateGateUseCase.execute(...)` verbatim. This shape is owned by `@beyondnet/evolith-core-domain` (`domain/gate-evidence.ts`). `phase` is the canonical SDLC phase id resolved from `gateId`, and `evaluatedBy` defaults to `human` when the caller does not supply it.
   ```json
   {
     "gateId": "discovery-baseline-gate",

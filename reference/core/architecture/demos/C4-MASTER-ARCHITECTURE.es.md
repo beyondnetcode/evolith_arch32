@@ -21,7 +21,7 @@ Elige un nivel de abstracción para explorar la arquitectura:
 | Nivel | Alcance | Descripción | Enlace |
 |-------|---------|-------------|--------|
 | **Nivel 1** | System Context | La visión panorámica de Evolith: ecosistema, Tracker SaaS, Core Governance y proveedores externos. | [Nivel 1: Context](./level-1-system-context.es.md) |
-| **Nivel 2** | Containers | Los runtimes lógicos implementados: Core API, MCP Server, Agent Runtime API/Engine, Smart CLI, caché Redis y corpus de referencia. Tracker permanece externo a este repositorio. | [Nivel 2: Containers](./level-2-containers.es.md) |
+| **Nivel 2** | Containers | Los runtimes lógicos implementados: Core API, MCP Server, Agent Runtime API/Engine, Evolith CLI, caché Redis y corpus de referencia. Tracker permanece externo a este repositorio. | [Nivel 2: Containers](./level-2-containers.es.md) |
 | **Nivel 3** | Components | Los bloques internos de cada contenedor: controladores, comandos, registros de tools, casos de uso, adaptadores, evaluadores y servicios de dominio. | [Nivel 3: Components](./level-3-components/README.es.md) |
 | **Nivel 4** | Code/Modules | El mapeo de más bajo nivel: archivos, esquemas, reglas OPA y clases específicas. | [Nivel 4: Code & Modules](./level-4-code-modules/README.es.md) |
 

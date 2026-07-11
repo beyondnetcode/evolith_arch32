@@ -10,7 +10,7 @@
 
 This view documents how communication flows through Evolith Core interfaces. C4 shows the structural shape of the system; this view complements it by making every interface operationally explicit: who calls it, what comes in, what goes out, which layer handles it, and how the system degrades or fails.
 
-Scope includes the implemented Core surfaces in this repository: Core API REST, MCP Server, Agent Runtime Command/Event API, Smart CLI, SDK-mediated remote calls, health/metrics endpoints, structured corpus reads, Tracker integration boundaries, and the transitional satellite registry.
+Scope includes the implemented Core surfaces in this repository: Core API REST, MCP Server, Agent Runtime Command/Event API, Evolith CLI, SDK-mediated remote calls, health/metrics endpoints, structured corpus reads, Tracker integration boundaries, and the transitional satellite registry.
 
 Out of scope: Tracker UI/BFF internals, UMS internals, vendor-specific LLM behavior, and product-specific tenant authorization. Those belong to their product repositories or runtime-specific profiles.
 
@@ -18,10 +18,10 @@ Out of scope: Tracker UI/BFF internals, UMS internals, vendor-specific LLM behav
 
 | Interface Type | Primary Caller | Contract Style | State Ownership | Main Output |
 |---|---|---|---|---|
-| Core API REST | Tracker, CI, SDK clients, Smart CLI remote mode | Synchronous HTTP request/response | Core owns technical evaluation only; Tracker owns product state | ADR-0073 envelope or RFC 9457 problem |
+| Core API REST | Tracker, CI, SDK clients, Evolith CLI remote mode | Synchronous HTTP request/response | Core owns technical evaluation only; Tracker owns product state | ADR-0073 envelope or RFC 9457 problem |
 | MCP Server | AI agents, editor assistants, local agent hosts | MCP stdio or Streamable HTTP tool/resource/prompt call | Core owns tool execution contract; caller owns conversation state | MCP result envelope, resource, prompt, audit/metrics |
 | Agent Runtime Command/Event API | Tracker, chat, CLI, MCP bridge, external clients | Explicit command plus optional server-to-client event stream | Runtime owns execution trace; Tracker owns binding workflow state | `AgentRuntimeResult` or event stream |
-| Smart CLI | Developer, CI, local agent process | Terminal command over local filesystem and optional SDK HTTP | Local workspace owns files; Core rules own validation semantics | Console output, JSON envelope, exit code |
+| Evolith CLI | Developer, CI, local agent process | Terminal command over local filesystem and optional SDK HTTP | Local workspace owns files; Core rules own validation semantics | Console output, JSON envelope, exit code |
 | Structured Corpus | Core API, MCP, CLI, Agent Runtime adapters | Filesystem read of schemas, rulesets, OPA, manifests | Repository corpus is source of executable governance truth | Parsed rules, schemas, policies, requirements |
 | Health and Metrics | Orchestrator, load balancer, operator | Version-neutral HTTP | Runtime process owns liveness/readiness; metrics are operational evidence | Health JSON or Prometheus text |
 | Tracker Trace Boundary | Agent Runtime, Core-facing adapters | HTTP trace/event publish adapter | Tracker owns canonical trace timeline when configured | Accepted trace event or controlled adapter failure |
@@ -66,7 +66,7 @@ Core may receive tenant/product/initiative identifiers as opaque context and may
 | MCP resource/prompt read | Resource URI or prompt name | MCP transport -> resources/prompts service -> corpus/service lookup | Resource or prompt payload | Missing resource/prompt returns protocol error; logs stay on stderr for stdio |
 | Agent Runtime `POST /v1/agent/handle` | `AgentRuntimeRequest` command | Controller -> runtime service -> skills -> policy/approval -> ports/adapters | One `AgentRuntimeResult` | Policy or approval denial returns governed result; adapter failures are captured in trace |
 | Agent Runtime `POST /v1/agent/stream` | `AgentRuntimeRequest` command | Same runtime path, with server-to-client event stream | Progress/tool/violation/final events | SSE is event transport only; client actions remain explicit HTTP/MCP commands |
-| Smart CLI local command | CLI args, cwd, local files | Nest Commander -> command -> local providers/core-domain | Human output, JSON envelope, exit code | Offline-friendly; invalid args fail before effects; filesystem errors surface as command errors |
+| Evolith CLI local command | CLI args, cwd, local files | Nest Commander -> command -> local providers/core-domain | Human output, JSON envelope, exit code | Offline-friendly; invalid args fail before effects; filesystem errors surface as command errors |
 | SDK remote call | Typed client request | SDK client -> REST endpoint -> Core/Runtime | Typed response | Network errors stay at SDK boundary; caller decides retry/circuit behavior |
 | `/health`, `/metrics` | Probe/read request | Public controller -> service/registry | Health JSON or Prometheus exposition | Public probes bypass API key; metrics errors must not break domain evaluation |
 | Satellite registry | Satellite create/list/link payload | `SatellitesController` -> in-memory compatibility service | Registry response | Transitional only; never canonical tenant/product state |
@@ -176,7 +176,7 @@ The command/event API separates client intent from server events:
 
 **Resilience:** policy and approval checks happen before effects complete; adapter failures are captured in the runtime result and trace; stream interruption does not authorize hidden work.
 
-### 5.6 Smart CLI Local and Remote Flows
+### 5.6 Evolith CLI Local and Remote Flows
 
 The CLI is both a local governance interface and a remote client when configured to call Core API or Agent Runtime through the SDK.
 
@@ -248,7 +248,7 @@ Every external-facing flow should preserve a correlation id through the envelope
 - Use Core API REST for deterministic evaluation and reference reads.
 - Use MCP when an agent needs tool/resource/prompt discovery under ABAC and audit.
 - Use Agent Runtime when the client needs governed multi-step agent execution, policy boundaries, approvals, memory, or trace publishing.
-- Use Smart CLI for local/offline governance and CI-friendly command execution.
+- Use Evolith CLI for local/offline governance and CI-friendly command execution.
 - Do not use SSE as a command channel. It is an event delivery transport after an explicit command.
 - Do not connect agents directly to Tracker for governed context or tools. Use MCP or Agent Runtime.
 - Do not treat `/api/v1/satellites` as durable tenant or product ownership.
@@ -482,7 +482,7 @@ The MCP server exposes capabilities as Tools, allowing native integration with L
 </details>
 
 <details>
-<summary><b>10.4 Smart CLI</b></summary>
+<summary><b>10.4 Evolith CLI</b></summary>
 
 The command-line interface provides local execution for CI/CD pipelines and validation on developer workstations.
 

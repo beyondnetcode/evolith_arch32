@@ -8,7 +8,7 @@
 
 ## 1. Contexto del Contenedor
 
-El **Standalone MCP Server** expone las capacidades de gobernanza de Evolith hacia agentes IA externos utilizando el Model Context Protocol estándar. Está desacoplado del Smart CLI como runtime, pero comparte paquetes de dominio y los mismos contratos canónicos de evaluación.
+El **Standalone MCP Server** expone las capacidades de gobernanza de Evolith hacia agentes IA externos utilizando el Model Context Protocol estándar. Está desacoplado del Evolith CLI como runtime, pero comparte paquetes de dominio y los mismos contratos canónicos de evaluación.
 
 ## 2. Diagrama de Componentes
 
@@ -30,7 +30,7 @@ C4Component
         
         Component(resource_corpus, "Resources y Prompts", "Manejadores de Resource/Prompt", "Resources y prompts MCP exponen corpus, rulesets y guía reutilizable como contexto legible.")
         
-        Component(runtime, "Puente Agent Runtime", "@evolith/agent-runtime / SDK", "Ejecuta intents de agente o llama al Agent Runtime API cuando lo solicitan las tools MCP.")
+        Component(runtime, "Puente Agent Runtime", "@beyondnet/evolith-agent-runtime / SDK", "Ejecuta intents de agente o llama al Agent Runtime API cuando lo solicitan las tools MCP.")
 
         Rel(transport, server, "Enruta peticiones a")
         Rel(server, registry, "Lista y despacha tools vía")
@@ -50,7 +50,7 @@ C4Component
 |------------|-----------------|
 | **Capa de Transporte** | SDK estándar de MCP que maneja ciclos de vida stdio y Streamable HTTP. En HTTP producción falla cerrado si no hay API key. |
 | **EvolithMcpServer** | Punto de entrada que conecta handlers MCP con registro, resources, prompts, métricas, ABAC y auditoría. |
-| **Registro de Tools** | Registro compuesto por módulo desde `packages/mcp-server/src/tools/tools.module.ts`; reemplaza canónicamente al paquete ligero retirado `@evolith/mcp-tools`. |
+| **Registro de Tools** | Registro compuesto por módulo desde `packages/mcp-server/src/tools/tools.module.ts`; reemplaza canónicamente al paquete ligero retirado `@beyondnet/evolith-mcp-tools`. |
 | **Manejadores de Herramientas** | Acciones gobernadas incluyendo `evolith-validate`, `evolith-evaluate`, tools de satélites, agentes, arquitectura, gates/fases, SDLC, topología, configuración, métricas y auto-fix. |
 | **Resources y Prompts** | Contexto de solo lectura y payloads de prompt reutilizables expuestos mediante handlers MCP de resource y prompt. |
 | **Auth / ABAC / Auditoría** | Autenticación por API key/JWT, chequeos ABAC, gating de tools mutativas, auditoría de llamadas de tools y métricas. |

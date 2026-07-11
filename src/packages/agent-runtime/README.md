@@ -1,4 +1,4 @@
-# @evolith/agent-runtime
+# @beyondnet/evolith-agent-runtime
 
 > **Bilingual Navigation:** [Versión en Español](./README.es.md)
 
@@ -17,14 +17,14 @@ This package is part of the Evolith monorepo workspaces. Build it with the rest
 of the graph (`npm run build` at the root) or standalone:
 
 ```bash
-npm --workspace @evolith/agent-runtime run build
-npm --workspace @evolith/agent-runtime test
+npm --workspace @beyondnet/evolith-agent-runtime run build
+npm --workspace @beyondnet/evolith-agent-runtime test
 ```
 
 ## Quickstart
 
 ```ts
-import { createAgentRuntime, parseAgentRuntimeRequest } from '@evolith/agent-runtime';
+import { createAgentRuntime, parseAgentRuntimeRequest } from '@beyondnet/evolith-agent-runtime';
 
 const { runtime, deps } = createAgentRuntime(); // safe stub/in-memory adapters
 const result = await runtime.handle(parseAgentRuntimeRequest({

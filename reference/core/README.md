@@ -43,7 +43,7 @@ Core must remain valid even if a product, framework, model, tool, or provider ch
 Evolith Core is not:
 
 - Evolith Tracker;
-- Smart CLI, a chatbox, or an MCP product;
+- Evolith CLI, a chatbox, or an MCP product;
 - a task management platform;
 - an LLM or autonomous agent;
 - a dashboard or BI implementation;
@@ -76,7 +76,7 @@ Evolith Core
     ↓ governs
 Evolith Product Suite
     ↓ contains
-Tracker · Smart CLI · MCP Services · Plugins · Future Products
+Tracker · Evolith CLI · MCP Services · Plugins · Future Products
     ↓ integrates via abstractions
 Tools and Named Providers
 ```
@@ -130,7 +130,7 @@ Can select or evaluate a technology, provider, deployment profile, license, or a
 The Product Suite uses Core to deliver operational capabilities:
 
 - Tracker executes governance state and auditing.
-- Smart CLI and MCP expose governed interactions and evaluations.
+- Evolith CLI and MCP expose governed interactions and evaluations.
 - Plugins and adapters connect external capabilities.
 - Future products can consume the same Constitution.
 

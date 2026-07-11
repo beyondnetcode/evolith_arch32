@@ -1,4 +1,4 @@
-# C4 Nivel 3: Componentes de Smart CLI
+# C4 Nivel 3: Componentes de Evolith CLI
 
 > **Navegación Bilingüe:** [Ver Versión en Inglés](./smart-cli-components.md)
 
@@ -8,22 +8,22 @@
 
 ## 1. Contexto del Contenedor
 
-La **Smart CLI** es la interfaz interactiva local para ingenieros que trabajan con Evolith y repositorios satélite. Usa comandos Nest Commander, casos de uso compartidos de `@evolith/core-domain`, providers locales de filesystem y clientes `@evolith/sdk` para soportar gobernanza local/offline y llamadas remotas a Core/Agent Runtime.
+La **Evolith CLI** es la interfaz interactiva local para ingenieros que trabajan con Evolith y repositorios satélite. Usa comandos Nest Commander, casos de uso compartidos de `@beyondnet/evolith-core-domain`, providers locales de filesystem y clientes `@beyondnet/evolith-sdk` para soportar gobernanza local/offline y llamadas remotas a Core/Agent Runtime.
 
 ## 2. Diagrama de Componentes
 
 ```mermaid
 C4Component
-    title Diagrama de Componentes para Smart CLI
+    title Diagrama de Componentes para Evolith CLI
 
-    Container_Boundary(cli, "Contenedor Smart CLI") {
+    Container_Boundary(cli, "Contenedor Evolith CLI") {
         
         Component(commands, "Comandos CLI", "Nest Commander", "Parsea comandos como validate, evaluate, gate, phase, sdlc, agents, satellites, init, upgrade, docs, drift y api.")
         
         Component(prompts, "Prompts Interactivos", "@clack/prompts", "Provee menús interactivos, wizards, formateo de salida y feedback de progreso.")
         
-        Component(localEval, "Pipeline de Evaluación Local", "@evolith/core-domain", "Ejecuta ValidateSatelliteUseCase, EvaluationOrchestrator y evaluadores kind default localmente.")
-        Component(sdk, "SDK Client (@evolith/sdk)", "Node.js Library", "Cliente tipado para Core API, Agent Runtime y endpoints de satélites.")
+        Component(localEval, "Pipeline de Evaluación Local", "@beyondnet/evolith-core-domain", "Ejecuta ValidateSatelliteUseCase, EvaluationOrchestrator y evaluadores kind default localmente.")
+        Component(sdk, "SDK Client (@beyondnet/evolith-sdk)", "Node.js Library", "Cliente tipado para Core API, Agent Runtime y endpoints de satélites.")
         Component(config, "Perfiles / Plugins / Config", "Infraestructura CLI", "Gestiona perfiles, aliases, plugins, telemetría, historial de comandos y config local.")
         
         Component(localLoader, "Local File Loader", "Patrón Strategy", "SDK Strategy: Lee rulesets directamente desde el disco (usado para CI local o dev offline).")

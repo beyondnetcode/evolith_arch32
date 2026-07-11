@@ -15,7 +15,7 @@ In short: Markdown explains, Native `*.rules.json` defines, and OPA + the Native
 - Script: [`.harness/scripts/compile-opa-wasm.mjs`](../../../.harness/scripts/compile-opa-wasm.mjs), invoked via `npm run build:policy`.
 - It downloads OPA `v0.65.0`, then runs `opa build -t wasm` over `rulesets/opa/` with `--ignore=schemas`.
 - **Wasm entrypoints:** `evolith/main/violations` and `evolith/abac/violations`.
-- The extracted `policy.wasm` is installed to `sdk/cli/rulesets/opa/policy.wasm` for the Smart CLI evaluator.
+- The extracted `policy.wasm` is installed to `sdk/cli/rulesets/opa/policy.wasm` for the Evolith CLI evaluator.
 - `evolith.main` ([main.rego](./main.rego)) aggregates the `violations` sets of the individual policies. `evolith.abac` ([abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego)) is **dual-published**: it is imported and unioned into `evolith/main/violations` (`main.rego` line 10 imports `data.evolith.abac.violations` and line 62 unions it), *and* it is also exposed as the dedicated `evolith/abac/violations` entrypoint for runtime MCP tool-access decisions.
 
 ## Aggregated enforcement policies
@@ -27,7 +27,7 @@ These policies are imported and unioned by [`main.rego`](./main.rego) into the `
 | [abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego) | `evolith.abac` | yes | ABAC for agentic MCP tool execution. **Also published as the separate `evolith/abac/violations` entrypoint** (see below). |
 | [version-pinning.rego](./version-pinning.rego) | `evolith.version_pinning` | yes | Strict dependency pinning. |
 | [taxonomy.rego](./taxonomy.rego) | `evolith.taxonomy` | yes | Directory taxonomy, ADR file naming, bilingual pairs. |
-| [cli-readiness.rego](./cli-readiness.rego) | `evolith.cli_readiness` | yes | Smart CLI compile/doc/lock-file readiness. |
+| [cli-readiness.rego](./cli-readiness.rego) | `evolith.cli_readiness` | yes | Evolith CLI compile/doc/lock-file readiness. |
 | [evidence.rego](./evidence.rego) | `evolith.evidence` | yes | Schema, retention and ownership of gate evidence. |
 | [mcp.rego](./mcp.rego) | `evolith.mcp` | yes | MCP protocol compliance and smoke evidence. |
 | [ci-cd.rego](./ci-cd.rego) | `evolith.ci_cd` | yes | Dependency scanning, workflow scripts, dependency updates. |
@@ -94,7 +94,7 @@ npm run build:policy
 | Symptom | Likely cause | Resolution |
 |---|---|---|
 | `opa: command not found` / `.harness/bin/opa` missing | Pinned binary not fetched | Run `npm run build:policy` (downloads OPA `v0.65.0`), or install OPA and use it directly. |
-| `policy.wasm` not picked up by the Smart CLI | Stale or missing bundle | Re-run `npm run build:policy`; the build installs `policy.wasm` to `sdk/cli/rulesets/opa/policy.wasm`. |
+| `policy.wasm` not picked up by the Evolith CLI | Stale or missing bundle | Re-run `npm run build:policy`; the build installs `policy.wasm` to `sdk/cli/rulesets/opa/policy.wasm`. |
 | A new policy is not enforced through `evolith/main/violations` | Not imported/unioned in `main.rego` | Add an `import data.evolith.<pkg>.violations` and a union rule to [`main.rego`](./main.rego); policies in *Standalone policies* are intentionally not aggregated. |
 | OPA and Native engines return different verdicts | Dual-Engine Parity drift | Treat as a parity bug — align the `.rego` to the Native `*.rules.json` semantics (see [parity backlog](../../../reference/core/control-center/gaps/gap-tracking.md)). |
 

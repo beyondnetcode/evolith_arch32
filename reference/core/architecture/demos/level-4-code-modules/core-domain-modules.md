@@ -8,7 +8,7 @@
 
 ## 1. Domain Module Context
 
-The Evolith Core Domain is where the executable governance contracts and stateless architectural evaluation logic live. It consists of TypeScript domain/application/evaluation modules (`@evolith/core-domain`), JSON rulesets declaring architectural intent, JSON schemas validating payloads, and OPA Rego/WASM policy artifacts.
+The Evolith Core Domain is where the executable governance contracts and stateless architectural evaluation logic live. It consists of TypeScript domain/application/evaluation modules (`@beyondnet/evolith-core-domain`), JSON rulesets declaring architectural intent, JSON schemas validating payloads, and OPA Rego/WASM policy artifacts.
 
 ## 2. Code Organization Map
 

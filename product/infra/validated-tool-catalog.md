@@ -27,9 +27,9 @@ Tools NOT in this catalog require Architecture Board approval and ADR before use
 
 | Tool | Version | Category | CLI Action | Notes |
 |------|---------|----------|------------|-------|
-| **Nx** | 18.x+ | Monorepo | `smart-cli init --monorepo=nx` | NestJS native, strict library tags |
-| **NPM Workspaces** | 10.x+ | Monorepo | `smart-cli init --monorepo=npm` | Simpler, no strict boundaries |
-| **Both (Nx + NPM)** | 18.x+ / 10.x+ | Monorepo | `smart-cli init --monorepo=both` | Nx for CI, NPM for local dev |
+| **Nx** | 18.x+ | Monorepo | `evolith-cli init --monorepo=nx` | NestJS native, strict library tags |
+| **NPM Workspaces** | 10.x+ | Monorepo | `evolith-cli init --monorepo=npm` | Simpler, no strict boundaries |
+| **Both (Nx + NPM)** | 18.x+ / 10.x+ | Monorepo | `evolith-cli init --monorepo=both` | Nx for CI, NPM for local dev |
 
 **Selection Prompt:**
 ```
@@ -43,12 +43,12 @@ Which monorepo orchestrator?
 
 | Pattern | Tools | CLI Action | Notes |
 |---------|-------|------------|-------|
-| **Clean Architecture** | NestJS + Layers | `smart-cli init --arch=clean` | Controller → Service → Repository |
-| **Hexagonal (Ports & Adapters)** | NestJS + Ports | `smart-cli init --arch=hexagonal` | Domain ports, Infrastructure adapters |
-| **DDD (Domain-Driven Design)** | NestJS + DDD patterns | `smart-cli init --arch=ddd` | Aggregates, Value Objects, Domain Events |
-| **Clean + Hexagonal** | Combined | `smart-cli init --arch=clean-hex` | Clean structure + explicit ports |
-| **Hexagonal + DDD** | Combined | `smart-cli init --arch=hex-ddd` | Ports + rich domain model |
-| **Clean + Hex + DDD** | Full Stack | `smart-cli init --arch=full` | All patterns combined |
+| **Clean Architecture** | NestJS + Layers | `evolith-cli init --arch=clean` | Controller → Service → Repository |
+| **Hexagonal (Ports & Adapters)** | NestJS + Ports | `evolith-cli init --arch=hexagonal` | Domain ports, Infrastructure adapters |
+| **DDD (Domain-Driven Design)** | NestJS + DDD patterns | `evolith-cli init --arch=ddd` | Aggregates, Value Objects, Domain Events |
+| **Clean + Hexagonal** | Combined | `evolith-cli init --arch=clean-hex` | Clean structure + explicit ports |
+| **Hexagonal + DDD** | Combined | `evolith-cli init --arch=hex-ddd` | Ports + rich domain model |
+| **Clean + Hex + DDD** | Full Stack | `evolith-cli init --arch=full` | All patterns combined |
 
 **Selection Prompt:**
 ```
@@ -65,9 +65,9 @@ Select architecture pattern:
 
 | Runtime | Version | CLI Flag | Notes |
 |---------|---------|----------|-------|
-| **Node.js / TypeScript** | 20.x LTS | `smart-cli init --runtime=nodejs` | NestJS, TypeORM, Jest |
-| **.NET / C#** | .NET 8+ | `smart-cli init --runtime=dotnet` | EF Core, xUnit, MediatR |
-| **Android / Kotlin** | Latest | `smart-cli init --runtime=android` | Jetpack Compose, Hilt |
+| **Node.js / TypeScript** | 20.x LTS | `evolith-cli init --runtime=nodejs` | NestJS, TypeORM, Jest |
+| **.NET / C#** | .NET 8+ | `evolith-cli init --runtime=dotnet` | EF Core, xUnit, MediatR |
+| **Android / Kotlin** | Latest | `evolith-cli init --runtime=android` | Jetpack Compose, Hilt |
 
 ---
 
@@ -77,7 +77,7 @@ Select architecture pattern:
 
 | Tool | Purpose | CLI Action |
 |------|---------|------------|
-| **ACL Schema Validator** | Validate external data against Core schemas | `smart-cli validate --ruleset=acl` |
+| **ACL Schema Validator** | Validate external data against Core schemas | `evolith-cli validate --ruleset=acl` |
 | **Transformation Logger** | Track all external data transformations | Auto-instrumented |
 | **External System Adapters** | Jira, Linear, GitHub, Confluence connectors | Per integration |
 
@@ -85,9 +85,9 @@ Select architecture pattern:
 
 | Tool | Purpose | CLI Action |
 |------|---------|------------|
-| **Bilingual Docs** | EN + ES documentation | `smart-cli docs --bilingual` |
-| **ADR Registry** | Architecture Decision Records | `smart-cli docs --adr` |
-| **Harness Scripts** | Pre-commit validation hooks | `smart-cli init --hooks` |
+| **Bilingual Docs** | EN + ES documentation | `evolith-cli docs --bilingual` |
+| **ADR Registry** | Architecture Decision Records | `evolith-cli docs --adr` |
+| **Harness Scripts** | Pre-commit validation hooks | `evolith-cli init --hooks` |
 
 ---
 
@@ -97,17 +97,17 @@ Select architecture pattern:
 
 | Tool | Purpose | CLI Action |
 |------|---------|------------|
-| **Context Mapper** | Define bounded contexts | `smart-cli sdlc handoff --phase=3 --context-map` |
+| **Context Mapper** | Define bounded contexts | `evolith-cli sdlc handoff --phase=3 --context-map` |
 | **Contract Registry** | Document inter-context contracts | Auto-generated |
-| **Event Schema Registry** | Domain event definitions | `smart-cli docs --events` |
+| **Event Schema Registry** | Domain event definitions | `evolith-cli docs --events` |
 
 ### 4.2 API Protocol
 
 | Protocol | Use Case | CLI Action |
 |----------|----------|------------|
-| **REST (OpenAPI v3)** | External APIs | `smart-cli init --api=rest` |
-| **gRPC (Protobuf)** | Internal services | `smart-cli init --api=grpc` |
-| **Both** | REST external, gRPC internal | `smart-cli init --api=hybrid` |
+| **REST (OpenAPI v3)** | External APIs | `evolith-cli init --api=rest` |
+| **gRPC (Protobuf)** | Internal services | `evolith-cli init --api=grpc` |
+| **Both** | REST external, gRPC internal | `evolith-cli init --api=hybrid` |
 
 ---
 
@@ -117,35 +117,35 @@ Select architecture pattern:
 
 | Tool | Version | CLI Action |
 |------|---------|------------|
-| **GitHub Actions** | Primary CI | `smart-cli init --ci=github` |
-| **GitLab CI** | Alternative CI | `smart-cli init --ci=gitlab` |
-| **Azure DevOps** | Enterprise CI | `smart-cli init --ci=azure` |
+| **GitHub Actions** | Primary CI | `evolith-cli init --ci=github` |
+| **GitLab CI** | Alternative CI | `evolith-cli init --ci=gitlab` |
+| **Azure DevOps** | Enterprise CI | `evolith-cli init --ci=azure` |
 
 ### 5.2 Container & Orchestration
 
 | Tool | Version | CLI Action |
 |------|---------|------------|
-| **Docker** | Containerization | `smart-cli init --container=docker` |
+| **Docker** | Containerization | `evolith-cli init --container=docker` |
 | **Docker Compose** | Local orchestration (Phase 1-2) | Default |
-| **Kubernetes (K8s)** | Production orchestration (Phase 3+) | `smart-cli init --k8s` |
-| **Helm** | Chart management | `smart-cli init --helm` |
+| **Kubernetes (K8s)** | Production orchestration (Phase 3+) | `evolith-cli init --k8s` |
+| **Helm** | Chart management | `evolith-cli init --helm` |
 
 ### 5.3 Observability
 
 | Tool | Purpose | CLI Action |
 |------|---------|------------|
-| **OpenTelemetry** | Tracing/Metrics | `smart-cli init --otel` |
+| **OpenTelemetry** | Tracing/Metrics | `evolith-cli init --otel` |
 | **Prometheus** | Metrics collection | Auto-configured |
-| **Jaeger/Tempo** | Distributed tracing | `smart-cli init --tracing=jaeger` |
-| **Loki** | Log aggregation | `smart-cli init --logging=loki` |
+| **Jaeger/Tempo** | Distributed tracing | `evolith-cli init --tracing=jaeger` |
+| **Loki** | Log aggregation | `evolith-cli init --logging=loki` |
 
 ### 5.4 Security
 
 | Tool | Purpose | CLI Action |
 |------|---------|------------|
-| **OpenBao** | Secrets management (Vault fork) | `smart-cli init --secrets=openbao` |
-| **Trivy** | Vulnerability scanning | `smart-cli init --security=trivy` |
-| **Snyk** | Dependency scanning | `smart-cli init --security=snyk` |
+| **OpenBao** | Secrets management (Vault fork) | `evolith-cli init --secrets=openbao` |
+| **Trivy** | Vulnerability scanning | `evolith-cli init --security=trivy` |
+| **Snyk** | Dependency scanning | `evolith-cli init --security=snyk` |
 
 ---
 
@@ -186,7 +186,7 @@ Select architecture pattern:
 
 ## 7. Tool Selection Flow
 
-When running `smart-cli init` or `smart-cli sdlc handoff`, the CLI presents tool selection based on current phase:
+When running `evolith-cli init` or `evolith-cli sdlc handoff`, the CLI presents tool selection based on current phase:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐

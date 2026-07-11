@@ -20,7 +20,7 @@ Evolith Core is a governance engine for software development lifecycle (SDLC) en
 | Infrastructure | `packages/core-domain/src/infrastructure/` | Event bus, audit, webhook, adapters |
 | MCP server | `packages/mcp-server/src/` | MCP tool definitions and transport |
 | Core REST API | `apps/core-api/src/` | NestJS API surface |
-| CLI | `sdk/cli/src/` | Smart CLI commands |
+| CLI | `sdk/cli/src/` | Evolith CLI commands |
 | Rulesets | `rulesets/` | OPA policies + topology rules |
 | SDLC data | `reference/core/sdlc/` | Phase/gate JSON definitions |
 | ADRs | `reference/core/sdlc/governance/` | Architecture Decision Records |

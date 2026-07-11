@@ -123,7 +123,7 @@ Cuando dos agentes de IA necesitan compartir contexto:
 
 **Cursor AI (completando Fase 1):**
 ```
-> smart-cli sdlc handoff --from phase-1 --to phase-2
+> evolith-cli sdlc handoff --from phase-1 --to phase-2
 ✓ Manifiesto handoff creado: .evolith/phase-1/handoff.json
 ✓ Artefactos de contexto: 3 archivos
 ✓ ADRs validados: 2
@@ -132,7 +132,7 @@ Cuando dos agentes de IA necesitan compartir contexto:
 
 **Claude Desktop (iniciando Fase 2):**
 ```
-> smart-cli sdlc receive --from phase-1
+> evolith-cli sdlc receive --from phase-1
 ✓ Contexto recibido de phase-1
 ✓ Cargados 3 artefactos
 ✓ 2 ADRs aplicados a decisiones de diseño

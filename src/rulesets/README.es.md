@@ -41,7 +41,7 @@ Si estás integrando un nuevo repositorio satélite, lee las categorías en este
 | [Reglas Transversales](./cross-cutting/README.es.md) | Baseline de cumplimiento, Definition of Done, manifiesto y taxonomía | Hacer cumplir las reglas transversales | Categoría de reglas | Sí |
 | [Reglas SDLC](./sdlc/README.es.md) | Definiciones de quality gates y thresholds | Hacer cumplir la calidad del ciclo de vida | Categoría de reglas | Sí |
 | [Reglas Anti-Corrupción](./acl/README.es.md) | Gobernanza de integración con sistemas externos | Proteger los límites del dominio | Categoría de reglas | Sí |
-| [Reglas del CLI](./cli/README.es.md) | Preparación de release del Smart CLI y paridad con Core | Custodiar los releases del CLI | Categoría de reglas | Sí |
+| [Reglas del CLI](./cli/README.es.md) | Preparación de release del Evolith CLI y paridad con Core | Custodiar los releases del CLI | Categoría de reglas | Sí |
 | [Reglas de Evidencia](./evidence/README.es.md) | Manifests de evidencia auditable | Estandarizar la evidencia | Categoría de reglas | Sí |
 | [Reglas MCP](./mcp/README.es.md) | Cumplimiento del protocolo MCP | Validar la exposición MCP | Categoría de reglas | Sí |
 | [Reglas de Observabilidad](./observability/README.es.md) | Evidencia de telemetría para operación | Verificar la evidencia de telemetría | Categoría de reglas | Sí |
@@ -117,7 +117,7 @@ rulesets/
 │   ├── phase-gates.rules.json
 │   ├── quality-thresholds.rules.json
 │   └── dependency-pinning.rules.json
-├── cli/                        # Reglas de release y paridad del Smart CLI
+├── cli/                        # Reglas de release y paridad del Evolith CLI
 │   ├── release-readiness.rules.json
 │   └── core-parity.rules.json
 ├── evidence/                   # Contrato de evidencia auditable

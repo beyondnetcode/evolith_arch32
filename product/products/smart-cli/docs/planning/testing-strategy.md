@@ -148,14 +148,14 @@ Location: `sdk/cli/test/e2e/cli-smoke.test.ts`
 
 ```typescript
 describe('CLI E2E Smoke Tests', () => {
-  it('smart-cli validate --help shows all flags', async () => {
+  it('evolith-cli validate --help shows all flags', async () => {
     const result = await execAsync('node dist/cli.js validate --help');
     expect(result.stdout).toContain('--satellite');
     expect(result.stdout).toContain('--core');
     expect(result.stdout).toContain('--ruleset');
   });
 
-  it('smart-cli agent install creates ruleset', async () => {
+  it('evolith-cli agent install creates ruleset', async () => {
     const tempDir = await mkdtemp();
     const result = await execAsync(
       `node dist/cli.js agent install --name=e2e-agent --dir=${tempDir}`,

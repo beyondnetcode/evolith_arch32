@@ -11,7 +11,7 @@
 
 ## El Prompt de Auditoría
 
-Para ejecutar una auditoría con Winston, proporciona el siguiente prompt a tu contexto activo de LLM (ej. MCP, IDE o Smart CLI):
+Para ejecutar una auditoría con Winston, proporciona el siguiente prompt a tu contexto activo de LLM (ej. MCP, IDE o Evolith CLI):
 
 ```markdown
 # PROMPT: ANÁLISIS PROFUNDO DE EVOLITH CORE Y ACTUALIZACIÓN DE CONTROL, TRACKING Y GAPS
@@ -35,7 +35,7 @@ El análisis debe cubrir **todos** los artefactos y superficies del repositorio,
 - **C. Ciclo de Vida SDLC:** Fases 01 a 05 (Concepción, Diseño, Construcción, Validación, Delivery) y artefactos transversales.
 - **D. Topologías Específicas:** Modular Monolith, Serverless, Event-Driven, Data Mesh, Edge, Agentic/AI-First (evaluar ADRs, políticas y reglas propias de cada una).
 - **E. Interfaces Operacionales:** CLI, MCP (Model Context Protocol), Service CORE API.
-- **F. Productos y Evidencia Aplicada:** Evolith Tracker, Smart CLI, UMS (Referencia Aplicada).
+- **F. Productos y Evidencia Aplicada:** Evolith Tracker, Evolith CLI, UMS (Referencia Aplicada).
 
 ---
 

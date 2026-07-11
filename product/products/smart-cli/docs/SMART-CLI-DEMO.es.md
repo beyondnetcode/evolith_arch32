@@ -1,9 +1,9 @@
-# Evolith Smart CLI — Demo y Guía Completa
+# Evolith Evolith CLI — Demo y Guía Completa
 
 > **Navegación Bilingüe:** [English Version](./SMART-CLI-DEMO.md)
 
 **Versión:** 0.0.3-beta
-**Paquete:** `@evolith/smart-cli`
+**Paquete:** `@beyondnet/evolith-cli`
 **Repositorio:** [evolith_arch32](https://github.com/beyondnetcode/evolith_arch32)
 
 ---
@@ -26,9 +26,9 @@
 
 ## 1. Introducción
 
-### ¿Qué es Evolith Smart CLI?
+### ¿Qué es Evolith Evolith CLI?
 
-Evolith Smart CLI es la interfaz de línea de comandos para el sistema de gobernanza de arquitectura Evolith. Permite a los equipos:
+Evolith Evolith CLI es la interfaz de línea de comandos para el sistema de gobernanza de arquitectura Evolith. Permite a los equipos:
 
 - **Inicializar** repositorios satélite con asistentes interactivos guiados
 - **Validar** repositorios contra conjuntos de reglas de gobernanza legibles por máquina
@@ -42,7 +42,7 @@ Evolith Smart CLI es la interfaz de línea de comandos para el sistema de gobern
 |------|-------------|---------|
 | **Interactivo** | Estación de trabajo del desarrollador, configuración guiada | `evolith init` |
 | **Batch (CI/CD)** | Pipelines automatizados, salida JSON | `evolith validate --format json` |
-| **MCP (IA)** | Integración con agentes IA, contexto en tiempo real | `evolith mcp serve` |
+| **MCP (IA)** | Integración con agentes IA, contexto en tiempo real | `evolith-mcp` |
 
 ### Descripción General de la Arquitectura
 
@@ -55,7 +55,7 @@ Evolith Smart CLI es la interfaz de línea de comandos para el sistema de gobern
                        │ pinned version
                        ▼
 ┌─────────────────────────────────────────────────────────┐
-│                 Evolith Smart CLI                       │
+│                 Evolith Evolith CLI                       │
 │  ┌─────────┐ ┌──────────┐ ┌──────────┐ ┌────────────┐  │
 │  │  Init   │ │ Validate │ │  SDLC    │ │   Drift    │  │
 │  │ Command │ │ Command  │ │ Commands │ │  Command   │  │
@@ -82,7 +82,7 @@ Evolith Smart CLI es la interfaz de línea de comandos para el sistema de gobern
 
 ```bash
 # Step 1: Install the CLI
-npm install -g @evolith/smart-cli@beta
+npm install -g @beyondnet/evolith-cli@beta
 
 # Step 2: Initialize a new satellite repository
 mkdir my-project && cd my-project
@@ -118,7 +118,7 @@ evolith sdlc gate-status
 ### Vía npm (Recomendado)
 
 ```bash
-npm install -g @evolith/smart-cli@beta
+npm install -g @beyondnet/evolith-cli@beta
 ```
 
 ### Verificar Instalación
@@ -567,7 +567,7 @@ evolith docs --force
 
 **Uso:**
 ```bash
-evolith mcp serve [options]
+evolith-mcp [options]
 evolith mcp version
 ```
 
@@ -581,13 +581,13 @@ evolith mcp version
 **Ejemplos:**
 ```bash
 # Start MCP server over stdio (for Cursor, Claude Desktop)
-evolith mcp serve
+evolith-mcp
 
 # Start MCP server over HTTP
-evolith mcp serve --transport http --port 3000
+evolith-mcp --transport http --port 3000
 
 # Start with API key authentication
-evolith mcp serve --transport http --port 3000 --api-key my-secret-key
+evolith-mcp --transport http --port 3000 --api-key my-secret-key
 
 # Check version
 evolith mcp version
@@ -1006,13 +1006,13 @@ evolith drift --level F3 --trend
 
 ```bash
 # stdio mode (for Cursor, Claude Desktop)
-evolith mcp serve
+evolith-mcp
 
 # HTTP mode (for web-based integrations)
-evolith mcp serve --transport http --port 3000
+evolith-mcp --transport http --port 3000
 
 # With API key authentication
-evolith mcp serve --transport http --port 3000 --api-key my-secret-key
+evolith-mcp --transport http --port 3000 --api-key my-secret-key
 ```
 
 ### Configuración de Cursor AI
@@ -1212,7 +1212,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm install -g @evolith/smart-cli@beta
+      - run: npm install -g @beyondnet/evolith-cli@beta
       - name: Validate governance
         run: evolith validate --format json --output report.json
       - name: Check architecture

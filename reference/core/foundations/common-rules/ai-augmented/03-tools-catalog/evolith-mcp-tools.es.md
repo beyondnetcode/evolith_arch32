@@ -295,7 +295,7 @@ Las herramientas se acceden vía el servidor MCP de Evolith:
 
 ```bash
 # Iniciar servidor MCP
-evolith mcp serve
+evolith-mcp
 
 # Llamar una herramienta
 evolith mcp call <nombre-herramienta> --<opcion> <valor>

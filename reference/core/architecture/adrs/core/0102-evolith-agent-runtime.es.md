@@ -53,7 +53,7 @@ intercambiar motores o ejecutar sin motor instalado.
 
 ### Option C: capa agéntica de Puertos y Adaptadores (elegida)
 
-Un nuevo paquete hexagonal (`@evolith/agent-runtime`) que depende solo de
+Un nuevo paquete hexagonal (`@beyondnet/evolith-agent-runtime`) que depende solo de
 puertos. `.harness`, el Core, OPA, Tracker y cualquier motor son adaptadores.
 Elegida porque satisface todas las reglas de diseño y deja intactos el Core y
 `.harness`.

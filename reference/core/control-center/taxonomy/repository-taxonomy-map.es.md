@@ -51,7 +51,7 @@ Usa este mapa cuando necesites decidir dónde leer, editar, agregar o auditar co
 | `reference/core/architecture/topologies/` | C1 | Guía topológica legible por humanos y reportes de madurez | Mantener guía de adopción, operación, evolución y madurez por topología | Poner reglas ejecutables aquí; usar `rulesets/topologies/` |
 | `reference/core/sdlc/` | C0 | SDLC, estándares, gobernanza ADR, terminología y onboarding | Mantener reglas de gobernanza, gates de ciclo de vida y estándares | Crear gobernanza paralela bajo `docs/` raíz |
 | `product/suite/` | C1 | Visión de portafolio, estrategia de suite, posicionamiento y comunicaciones | Alinear dirección de producto con gobernanza Core | Guardar artefactos de delivery que pertenecen a un producto específico |
-| `product/products/` | C1 | Documentos internos de referencia para productos Evolith como Core API, Tracker, servicios MCP, Smart CLI y referencia UMS | Mantener documentación de producto alineada con estándares Core | Mezclar código fuente ejecutable con documentación de referencia |
+| `product/products/` | C1 | Documentos internos de referencia para productos Evolith como Core API, Tracker, servicios MCP, Evolith CLI y referencia UMS | Mantener documentación de producto alineada con estándares Core | Mezclar código fuente ejecutable con documentación de referencia |
 | `product/research/` | C2 | Investigación, PoCs, evidencia aplicada, límite demo UMS e inteligencia arquitectónica | Capturar aprendizaje y promover lecciones reutilizables mediante ADRs/estándares | Promover investigación directamente a política obligatoria |
 | `product/operations/` | C1 | SLOs, runbooks, observabilidad, alertas, pruebas de carga, experimentos de caos, Grafana, OTel y Tempo | Mantener readiness operativo y guía de respuesta a incidentes | Poner runbooks específicos de producto sin alcance reutilizable |
 | `product/infra/` | C0 | Activos de referencia Docker, Helm, Kubernetes y plataforma | Tratar como referencia de infraestructura con riesgo productivo | Dejar defaults mutables o solo-dev sin documentar |
@@ -93,7 +93,7 @@ Usa este mapa cuando necesites decidir dónde leer, editar, agregar o auditar co
 | `packages/infra-providers/` | C1 | Adaptadores de proveedores de infraestructura | Encapsular lógica de integración con plataforma/proveedor | Filtrar supuestos de proveedor hacia código de dominio |
 | `packages/mcp-server/` | C0 | Implementación del servidor MCP | Mantener herramientas MCP, auth, contratos y transporte alineados con ADRs | Duplicar comportamiento solo-CLI sin paridad contractual |
 | `packages/mcp-tools/` | C1 | Superficie del paquete de herramientas MCP | Mantener herramientas descubribles y alineadas a contratos | Mezclar workflows de producto no relacionados |
-| `sdk/cli/` | C0 | Workspace y superficie de distribución de Smart CLI | Mantener CLI, plantillas, integración shell, validación local y paridad contractual | Usar `dist/` generado como fuente de verdad |
+| `sdk/cli/` | C0 | Workspace y superficie de distribución de Evolith CLI | Mantener CLI, plantillas, integración shell, validación local y paridad contractual | Usar `dist/` generado como fuente de verdad |
 | `tests/contract/` | C0 | Tests contractuales entre superficies | Validar contratos roundtrip CLI/MCP/API | Deshabilitar cobertura contractual fallida sin gap registrado |
 
 ## Automatización y Tooling

@@ -10,7 +10,7 @@
 
 Evolith is designed to act as the authoritative governance engine for the SDLC reference corpus and its executable governance surfaces. At the highest level, it interacts with humans, AI agents, CI/CD, and external SaaS platforms.
 
-The system is fundamentally composed of **Evolith Tracker** (the external stateful SaaS product that owns tenants, product state, approvals, and UI) and **Evolith Core** (the implementation in this repository: Core API, MCP Server, Agent Runtime, Smart CLI, rulesets, schemas, and packages).
+The system is fundamentally composed of **Evolith Tracker** (the external stateful SaaS product that owns tenants, product state, approvals, and UI) and **Evolith Core** (the implementation in this repository: Core API, MCP Server, Agent Runtime, Evolith CLI, rulesets, schemas, and packages).
 
 Evolith Core is stateless for canonical product decisions: it may receive tenant/product/initiative identifiers as opaque evaluation context, but it does not authorize end users, persist tenant ownership, or issue binding gate decisions. The current Core API includes a small in-memory satellite registry surface for reference and compatibility workflows; it is not the long-term tenant or product state authority.
 

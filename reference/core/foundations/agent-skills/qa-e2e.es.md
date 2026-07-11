@@ -64,7 +64,7 @@ Todos los comandos se ejecutan desde la raíz del repositorio.
 
 ```bash
 # 1. E2E de flujo de gobernanza en core-domain (fixtures de paridad, veredictos end-to-end)
-npm run test:e2e --workspace @evolith/core-domain
+npm run test:e2e --workspace @beyondnet/evolith-core-domain
 
 # 2. E2E de flujo de gobernanza en la CLI (gate, validate, agents, adr, mcp serve, ...)
 npm run --workspace sdk/cli test:e2e

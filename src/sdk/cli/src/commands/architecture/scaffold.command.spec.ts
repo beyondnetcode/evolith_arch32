@@ -286,7 +286,7 @@ describe('ScaffoldCommand', () => {
 
     it('should emit an actionable NOT_A_SATELLITE envelope when no workspace exists', async () => {
       (command as any).checkWorkspace.mockReturnValue(
-        'No workspace found at /x/src. Run `smart-cli init` first.',
+        'No workspace found at /x/src. Run `evolith-cli init` first.',
       );
 
       await command.run([], { format: 'json', frontend: 'react', orm: 'prisma', phase: '1' });
@@ -296,7 +296,7 @@ describe('ScaffoldCommand', () => {
       })![0]);
       expect(envelope.success).toBe(false);
       expect(envelope.error.code).toBe('NOT_A_SATELLITE');
-      expect(envelope.error.message).toContain('smart-cli init');
+      expect(envelope.error.message).toContain('evolith-cli init');
       // The guard must short-circuit before any strategy work.
       expect(mockStrategy.installDependencies).not.toHaveBeenCalled();
     });

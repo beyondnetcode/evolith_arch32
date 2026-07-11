@@ -2,7 +2,7 @@
 
 > **Navegación bilingüe:** [English Version](./README.md)
 
-Evolith MCP Services expone la gobernanza de Evolith Core como contexto en tiempo real para LLMs y agentes autónomos a través del [Model Context Protocol](https://modelcontextprotocol.io). Se distribuye como el paquete independiente **`@evolith/mcp-server`** (binario `evolith-mcp`), que también puede arrancarse de forma programática desde otras superficies.
+Evolith MCP Services expone la gobernanza de Evolith Core como contexto en tiempo real para LLMs y agentes autónomos a través del [Model Context Protocol](https://modelcontextprotocol.io). Se distribuye como el paquete independiente **`@beyondnet/evolith-mcp-server`** (binario `evolith-mcp`), que también puede arrancarse de forma programática desde otras superficies.
 
 ## Resumen
 
@@ -50,10 +50,10 @@ El sistema es **inteligente y flexible** — los usuarios pueden combinar cualqu
 
 ```bash
 # Desde el monorepo
-npm install @evolith/mcp-server
+npm install @beyondnet/evolith-mcp-server
 
 # O globalmente (expone el binario evolith-mcp)
-npm install -g @evolith/mcp-server
+npm install -g @beyondnet/evolith-mcp-server
 ```
 
 El binario es `evolith-mcp` (`bin` de `package.json`); los únicos subcomandos son `serve` y `version`.
@@ -87,7 +87,7 @@ La autenticación, los roles/códigos ABAC, el contrato de tools mutativas y la 
 
 ## Registro de tools
 
-El paquete ligero `@evolith/mcp-tools` fue retirado. El registro canónico vive ahora dentro del gateway standalone en [packages/mcp-server/src/tools](../../../src/packages/mcp-server/src/tools/tools.module.ts), donde los schemas de tools, chequeos ABAC, auditoría, resources, prompts y comportamiento de transporte se gobiernan juntos.
+El paquete ligero `@beyondnet/evolith-mcp-tools` fue retirado. El registro canónico vive ahora dentro del gateway standalone en [packages/mcp-server/src/tools](../../../src/packages/mcp-server/src/tools/tools.module.ts), donde los schemas de tools, chequeos ABAC, auditoría, resources, prompts y comportamiento de transporte se gobiernan juntos.
 
 ## Troubleshooting
 

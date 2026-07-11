@@ -1,10 +1,10 @@
-# @evolith/mcp-server
+# @beyondnet/evolith-mcp-server
 
 ## Evolith MCP Gateway — First-Class Model Context Protocol Server
 
 > **Bilingual navigation:** [Versión en Español](./README.es.md)
 
-Desacopla el servidor MCP del CLI. Es un producto de primera clase que expone las herramientas MCP como un **Gateway** que se comunica con `@evolith/core` (capa de lógica de negocio reutilizable), en lugar de ejecutar subprocesos del CLI.
+Desacopla el servidor MCP del CLI. Es un producto de primera clase que expone las herramientas MCP como un **Gateway** que se comunica con `@beyondnet/evolith-core` (capa de lógica de negocio reutilizable), en lugar de ejecutar subprocesos del CLI.
 
 ---
 
@@ -14,7 +14,7 @@ Desacopla el servidor MCP del CLI. Es un producto de primera clase que expone la
 2. [Transportes](#transportes)
 3. [Instalación y configuración](#instalación-y-configuración)
 4. [Autenticación](#autenticación)
-5. [Herramientas disponibles (27)](#herramientas-disponibles-27)
+5. [Herramientas disponibles (47)](#herramientas-disponibles-27)
 6. [Resources disponibles (9 + dinámicos)](#resources-disponibles-9--dinámicos)
 7. [Prompts disponibles (8)](#prompts-disponibles-8)
 8. [Operaciones mutativas](#operaciones-mutativas)
@@ -34,8 +34,8 @@ Desacopla el servidor MCP del CLI. Es un producto de primera clase que expone la
 ```mermaid
 sequenceDiagram
     participant Agent as "AI Agent<br/>(Cursor, Claude Desktop, Custom)"
-    participant Gateway as "MCP Gateway<br/>@evolith/mcp-server"
-    participant Core as "Business Logic<br/>@evolith/core"
+    participant Gateway as "MCP Gateway<br/>@beyondnet/evolith-mcp-server"
+    participant Core as "Business Logic<br/>@beyondnet/evolith-core"
     participant FS as "File System"
     participant Git as "Git"
 
@@ -87,10 +87,10 @@ sequenceDiagram
 
 ```bash
 # Desde el monorepo
-npm install @evolith/mcp-server
+npm install @beyondnet/evolith-mcp-server
 
 # O globalmente
-npm install -g @evolith/mcp-server
+npm install -g @beyondnet/evolith-mcp-server
 ```
 
 ### Uso
@@ -181,7 +181,7 @@ El `AbacEvaluator` controla qué tools puede invocar cada usuario según sus rol
 
 ---
 
-## Herramientas disponibles (27)
+## Herramientas disponibles (47)
 
 Las tools se obtienen en runtime via `tools/list`. Todas retornan datos crudos que el Gateway envuelve en `SuccessEnvelope` o `ErrorEnvelope`.
 
@@ -408,7 +408,7 @@ Las tools marcadas como mutativas (`mutative: true`) requieren **aprobación exp
 El Gateway es una aplicación **NestJS** (módulos + inyección de dependencias).
 
 ```
-@evolith/mcp-server/
+@beyondnet/evolith-mcp-server/
 ├── src/
 │   ├── main.ts                         ← Bootstrap, parseArgs, arranque stdio/HTTP
 │   ├── app.module.ts                   ← Módulo raíz
@@ -449,10 +449,10 @@ El Gateway es una aplicación **NestJS** (módulos + inyección de dependencias)
 │   ├── watcher/
 │   │   └── watcher.service.ts          ← observa cambios en archivos del workspace
 │   └── domain/
-│       └── domain.module.ts            ← cablea @evolith/core con @evolith/infra-providers
+│       └── domain.module.ts            ← cablea @beyondnet/evolith-core con @beyondnet/evolith-infra-providers
 
-@evolith/core               ← lógica de negocio (use-cases, validators, tipos)
-@evolith/infra-providers    ← adapters (NodeFileSystem, YamlConfigParser, DiskRulesetRepository)
+@beyondnet/evolith-core               ← lógica de negocio (use-cases, validators, tipos)
+@beyondnet/evolith-infra-providers    ← adapters (NodeFileSystem, YamlConfigParser, DiskRulesetRepository)
 ```
 
 ### WatcherService
@@ -579,23 +579,23 @@ curl -X POST http://localhost:49100/mcp \
 
 ## Integración con SmartCLI
 
-### Plan de migración desde `smart-cli mcp`
+### Plan de migración desde `evolith-cli mcp`
 
-**Fase 1 — Coexistencia (actual):** `smart-cli mcp` sigue funcionando. `evolith-mcp serve` es el nuevo punto de entrada.
+**Fase 1 — Coexistencia (actual):** `evolith-cli mcp` sigue funcionando. `evolith-mcp serve` es el nuevo punto de entrada.
 
-**Fase 2 — Deprecación:** `smart-cli mcp` mostrará `console.warn`. Migrar configuraciones de Cursor/Claude Desktop a `evolith-mcp`.
+**Fase 2 — Deprecación:** `evolith-cli mcp` mostrará `console.warn`. Migrar configuraciones de Cursor/Claude Desktop a `evolith-mcp`.
 
-**Fase 3 — Remoción:** Eliminar código MCP de `@evolith/smart-cli` en major version bump. El CLI conserva sus comandos de validación.
+**Fase 3 — Remoción:** Eliminar código MCP de `@beyondnet/evolith-cli` en major version bump. El CLI conserva sus comandos de validación.
 
 ### Diferencias de comportamiento
 
-| Aspecto | `smart-cli mcp` (legacy) | `evolith-mcp` (nuevo) |
+| Aspecto | `evolith-cli mcp` (legacy) | `evolith-mcp` (nuevo) |
 |---|---|---|
 | Transporte | Solo stdio | stdio + Streamable HTTP |
 | Auth | Sin auth | ABAC + API keys en HTTP |
 | Caché | Sin caché | Redis opcional |
 | Observabilidad | Logs básicos | Pino + OTEL + audit logger |
-| Tools | Subconjunto | 27 tools completas |
+| Tools | Subconjunto | 47 tools completas |
 
 ---
 
@@ -604,7 +604,7 @@ curl -X POST http://localhost:49100/mcp \
 Para añadir una nueva herramienta:
 
 1. Crear `src/tools/mi-herramienta.tool.ts` implementando `McpTool` (`schema`, `execute`; añadir `readonly mutative = true` si modifica estado).
-2. Inyectar el servicio de dominio que necesite (desde `@evolith/core`).
+2. Inyectar el servicio de dominio que necesite (desde `@beyondnet/evolith-core`).
 3. Devolver datos crudos — `McpServerService` los envuelve automáticamente en `SuccessEnvelope` y captura errores en `ErrorEnvelope`.
 4. Registrar la tool en `tools.module.ts`: añadir el provider y sumarlo al factory de `MCP_TOOLS`.
 

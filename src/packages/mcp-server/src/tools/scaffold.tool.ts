@@ -52,8 +52,9 @@ const PROGRESSIVE_PHASE: Record<string, '1' | '2' | '3'> = {
   '3': '3',
 };
 
-function toProgressivePhase(value: string): '1' | '2' | '3' | null {
-  return PROGRESSIVE_PHASE[value.trim()] ?? null;
+function toProgressivePhase(value: unknown): '1' | '2' | '3' | null {
+  if (value === null || value === undefined) return null;
+  return PROGRESSIVE_PHASE[String(value).trim()] ?? null;
 }
 
 function parseList(input: unknown): string[] {

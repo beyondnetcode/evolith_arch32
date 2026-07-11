@@ -415,6 +415,20 @@ describe('ABAC dual-engine evaluation', () => {
     // Previously this returned success because evaluateOpa failed OPEN (missing
     // policy.wasm -> allowed:true). It now fails CLOSED in production: with no
     // compiled policy the OPA layer denies, so even a read tool is forbidden.
+    //
+    // Determinism (GT-349): policy.wasm is a gitignored build artifact, so whether
+    // it exists in the working tree is nondeterministic (absent on a fresh checkout,
+    // present after an OPA compile). Force the fail-closed (missing-policy) OPA
+    // decision here so this test asserts the SERVICE's handling of it regardless of
+    // tree state. The evaluator's own ENOENT fail-closed logic is covered
+    // deterministically in abac-evaluator.spec.ts (uses a nonexistent core path).
+    jest.spyOn(realEvaluator, 'evaluateOpa').mockResolvedValue({
+      allowed: false,
+      violations: [{
+        id: 'ABAC_POLICY_MISSING',
+        message: 'ABAC policy not found; denying in production (fail-closed).',
+      }],
+    });
     await mcpContextStorage.run({
       id: 'dev-1',
       role: 'developer',

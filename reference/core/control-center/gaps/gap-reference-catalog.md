@@ -181,7 +181,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Acceptance criteria:**
   - [ ] Parity tests are green across CLI/MCP/REST for the enforcer path.
   - [ ] Tool versions are pinned and reproducible; CI images are per-runtime and vuln-scanned.
-  - [ ] Enforcer runs emit OTel metrics (duration, failure rate, timeouts, violation counts).
+  - [x] Enforcer runs emit OTel metrics (duration, failure rate, timeouts, violation counts).
 - **Dependencies:** GT-514.
 - **Status:** `PENDING`
 
@@ -199,8 +199,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Proposed fix:** Add Streamable HTTP + OAuth bearer in `mcp-server/main.ts`; add per-consumer ABAC in `tool-registry` (`abac-mcp-tool-access.rego`) and audit every `tools/call`; expose resources `evolith://capabilities` and `evolith://contracts`.
 - **Acceptance criteria:**
   - [ ] Remote MCP requires OAuth (Streamable HTTP bearer).
-  - [ ] Every `tools/call` is ABAC-checked per identity and audited.
-  - [ ] `evolith://capabilities` and `evolith://contracts` resources are served.
+  - [x] Every `tools/call` is ABAC-checked per identity and audited.
+  - [x] `evolith://capabilities` and `evolith://contracts` resources are served.
 - **Dependencies:** GT-513, and the identity decision (tracked as EAG-01 in the Tracker board).
 - **Status:** `PENDING`
 
@@ -274,8 +274,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the CLI `validate --format json` output in the shared `createSuccessEnvelope`/`createErrorEnvelope` (`@beyondnet/evolith-core`, `gate-evidence.ts`) exactly as `gate evaluate` / `drift` / `phase advance` already do; then promote the `validate-satellite` binding in the exploration suite to `verified`.
 
 **Closure:**
-- [ ] `validate --format json` emits `{ success, data, meta }`
-- [ ] exploration `validate-satellite` binding promoted to `verified` and green
+- [x] `validate --format json` emits `{ success, data, meta }`
+- [x] exploration `validate-satellite` binding promoted to `verified` and green
 
 **References:** src/sdk/cli/src/commands/validate/validate.command.ts; src/tests/exploration/.out/findings.jsonl; GT-479, GT-411
 
@@ -290,8 +290,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `sdlc-status` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `sdlc-status` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `sdlc-status` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `sdlc-status` binding promoted to `verified`
+- [x] `sdlc-status` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `sdlc-status` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -306,8 +306,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `sdlc-handoff` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `sdlc-handoff` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `sdlc-handoff` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `sdlc-handoff` binding promoted to `verified`
+- [x] `sdlc-handoff` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `sdlc-handoff` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -322,8 +322,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `sdlc-generate` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `sdlc-generate` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `sdlc-generate` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `sdlc-generate` binding promoted to `verified`
+- [x] `sdlc-generate` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `sdlc-generate` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -338,8 +338,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `dora-metrics` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `dora-metrics` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `dora-metrics` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `dora-metrics` binding promoted to `verified`
+- [x] `dora-metrics` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `dora-metrics` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -354,8 +354,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `agents-install` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `agents-install` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `agents-install` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `agents-install` binding promoted to `verified`
+- [x] `agents-install` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `agents-install` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -370,8 +370,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `agents-list` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `agents-list` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `agents-list` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `agents-list` binding promoted to `verified`
+- [x] `agents-list` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `agents-list` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -386,8 +386,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `agents-validate` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `agents-validate` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `agents-validate` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `agents-validate` binding promoted to `verified`
+- [x] `agents-validate` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `agents-validate` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -402,8 +402,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `agents-upgrade` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `agents-upgrade` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `agents-upgrade` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `agents-upgrade` binding promoted to `verified`
+- [x] `agents-upgrade` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `agents-upgrade` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -418,8 +418,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `agents-remove` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `agents-remove` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `agents-remove` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `agents-remove` binding promoted to `verified`
+- [x] `agents-remove` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `agents-remove` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -434,8 +434,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `adr-crud` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `adr-crud` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `adr-crud` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `adr-crud` binding promoted to `verified`
+- [x] `adr-crud` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `adr-crud` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -450,8 +450,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `standards-crud` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `standards-crud` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `standards-crud` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `standards-crud` binding promoted to `verified`
+- [x] `standards-crud` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `standards-crud` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -466,8 +466,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `init-project` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `init-project` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `init-project` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `init-project` binding promoted to `verified`
+- [x] `init-project` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `init-project` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -482,8 +482,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `history` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `history` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `history` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `history` binding promoted to `verified`
+- [x] `history` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `history` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -498,8 +498,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `completion` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `completion` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `completion` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `completion` binding promoted to `verified`
+- [x] `completion` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `completion` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -514,8 +514,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `profile` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `profile` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `profile` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `profile` binding promoted to `verified`
+- [x] `profile` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `profile` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -530,8 +530,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `mcp-serve` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `mcp-serve` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `mcp-serve` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `mcp-serve` binding promoted to `verified`
+- [x] `mcp-serve` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `mcp-serve` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -546,8 +546,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `alias` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `alias` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `alias` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `alias` binding promoted to `verified`
+- [x] `alias` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `alias` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -562,8 +562,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `fixtures` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `fixtures` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `fixtures` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `fixtures` binding promoted to `verified`
+- [x] `fixtures` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `fixtures` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -578,8 +578,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `api-browser` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `api-browser` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `api-browser` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `api-browser` binding promoted to `verified`
+- [x] `api-browser` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `api-browser` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -594,8 +594,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `update-cli` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `update-cli` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `update-cli` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `update-cli` binding promoted to `verified`
+- [x] `update-cli` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `update-cli` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -610,8 +610,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `init-wizard` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `init-wizard` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `init-wizard` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `init-wizard` binding promoted to `verified`
+- [x] `init-wizard` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `init-wizard` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -626,8 +626,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `upgrade-satellite` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `upgrade-satellite` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `upgrade-satellite` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `upgrade-satellite` binding promoted to `verified`
+- [x] `upgrade-satellite` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `upgrade-satellite` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -642,8 +642,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `validate-satellite` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `validate-satellite` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `validate-satellite` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `validate-satellite` binding promoted to `verified`
+- [x] `validate-satellite` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `validate-satellite` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -658,8 +658,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `architecture-validate` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `architecture-validate` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `architecture-validate` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `architecture-validate` binding promoted to `verified`
+- [x] `architecture-validate` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `architecture-validate` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -741,9 +741,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Either wire `envCommand` into an actual second-surface invocation with an equivalence assertion, or delete the dead field, rename the block to a CLI-envelope smoke test, and make the envelope assertions unconditional (fail when no parseable envelope is produced). Also reconcile GT-223's DONE claim of a `surface-parity-fixture.ts` (no such fixture exists).
 
 **Closure:**
-- [ ] `envCommand` either exercised as a real parity check or removed
-- [ ] envelope assertions unconditional (fail on unparseable output)
-- [ ] GT-223 DONE claim reconciled
+- [x] `envCommand` either exercised as a real parity check or removed
+- [x] envelope assertions unconditional (fail on unparseable output)
+- [x] GT-223 DONE claim reconciled
 
 **References:** `src/sdk/cli/test/e2e/surface-parity.e2e-spec.ts`; `src/tests/contract/roundtrip-gate-evaluate.spec.ts`; GT-223
 

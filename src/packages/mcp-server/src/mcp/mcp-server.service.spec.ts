@@ -745,4 +745,70 @@ describe('McpServerService — Audit integration', () => {
     const env = parseEnvelope(result);
     expect(env.success).toBe(true);
   });
+
+  // GT-520 · EAG-15 / AC2 — per-identity ABAC on EVERY tools/call + audit.
+  // ABAC verdict is scoped to the calling identity: the same tool must be
+  // rejected for a denied identity and pass for an allowed one, and BOTH
+  // outcomes must be audited with the identity and the correct verdict.
+  it('rejects a denied identity, allows another, and audits both with the identity + verdict', async () => {
+    // ABAC evaluator whose decision depends on the calling identity (input.user.id),
+    // proving the check is per-consumer rather than a global on/off switch.
+    class IdentityAbac extends AbacEvaluator {
+      override evaluateNative(input: { user: { id: string } }) {
+        if (input.user.id === 'denied-user') {
+          return { allowed: false, violations: [{ id: 'ABAC-01', message: 'denied by policy for this identity' }] };
+        }
+        return { allowed: true, violations: [] };
+      }
+      override async evaluateOpa() {
+        return { allowed: true, violations: [] };
+      }
+    }
+
+    const metrics = new MetricsService();
+    const registry = new ToolRegistryService([
+      tool('evolith-ping', async () => ({ status: 'pong' })),
+    ]);
+    const auditLogger = new AuditLogger();
+    const service = new McpServerService(registry, metrics, new IdentityAbac(), auditLogger);
+
+    // Denied identity → FORBIDDEN, tool never executes.
+    await mcpContextStorage.run(
+      { id: 'denied-user', role: 'reader', roles: ['reader'], tenant: 'acme', environment: 'development', scopes: ['read'] },
+      async () => {
+        const result = await service.handleCallTool('evolith-ping', { correlationId: 'deny-1' });
+        const env = parseEnvelope(result);
+        expect(result.isError).toBe(true);
+        expect(env.error.code).toBe(ErrorCodes.FORBIDDEN);
+        expect(env.error.message).toContain('ABAC check failed');
+      },
+    );
+
+    // Allowed identity → proceeds.
+    await mcpContextStorage.run(
+      { id: 'allowed-user', role: 'operator', roles: ['operator'], tenant: 'acme', environment: 'development', scopes: ['read'] },
+      async () => {
+        const result = await service.handleCallTool('evolith-ping', { correlationId: 'allow-1' });
+        expect(parseEnvelope(result).success).toBe(true);
+      },
+    );
+
+    const events = auditLogger.getRecentEvents();
+    const denyEvent = events.find((e) => e.correlationId === 'deny-1');
+    const allowEvent = events.find((e) => e.correlationId === 'allow-1');
+
+    // Denied call: audited as 'denied' with the calling identity captured.
+    expect(denyEvent).toBeDefined();
+    expect(denyEvent!.status).toBe('denied');
+    expect(denyEvent!.tool).toBe('evolith-ping');
+    expect(denyEvent!.context.userId).toBe('denied-user');
+    expect(denyEvent!.context.role).toBe('reader');
+
+    // Allowed call: audited as 'success' with its own identity.
+    expect(allowEvent).toBeDefined();
+    expect(allowEvent!.status).toBe('success');
+    expect(allowEvent!.tool).toBe('evolith-ping');
+    expect(allowEvent!.context.userId).toBe('allowed-user');
+    expect(allowEvent!.context.role).toBe('operator');
+  });
 });

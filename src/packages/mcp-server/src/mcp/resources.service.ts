@@ -3,6 +3,7 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { IFileSystem, IConfigParser } from '@beyondnet/evolith-core';
 import { FILE_SYSTEM, CONFIG_PARSER } from '../domain/domain.tokens';
 import { TopologyCatalogService } from '@beyondnet/evolith-core';
+import { buildCapabilityManifest } from '@beyondnet/evolith-core-domain/capabilities/capabilities-manifest';
 import { McpCacheService } from './mcp-cache.service';
 
 interface Resource {
@@ -38,6 +39,12 @@ const RESOURCES: Resource[] = [
   { uri: 'evolith://repository/config', name: 'Repository Config', description: 'Repository evolith.yaml content' },
   { uri: 'evolith://moscow/phase-0', name: 'MoSCoW Phase 0', description: 'MoSCoW prioritization matrix for discovery phase' },
   { uri: 'evolith://architecture/topologies', name: 'Architecture Topologies', description: 'List of all available architecture topologies' },
+  // GT-520 · EAG-15 — machine-discoverable governance surface. `capabilities`
+  // serves the versioned capability manifest (GT-513) so a consumer can discover
+  // WHAT the Core evaluates; `contracts` serves the published machine-contracts /
+  // schema set consumers pin against.
+  { uri: 'evolith://capabilities', name: 'Capability Manifest', description: 'Versioned capability manifest of the Evolith Core evaluation engine (evaluationKinds, engines, surfaces, supportedConsumers)' },
+  { uri: 'evolith://contracts', name: 'Machine Contracts', description: 'Machine-readable schema/contract set the Core publishes for external consumers' },
 ];
 
 /**
@@ -72,6 +79,8 @@ export class ResourcesService {
     if (uri === 'evolith://rulesets') return this.getRulesetsList();
     if (uri === 'evolith://phase-gates') return getPhaseGates();
     if (uri === 'evolith://agents') return this.getAgentsList();
+    if (uri === 'evolith://capabilities') return buildCapabilityManifest();
+    if (uri === 'evolith://contracts') return this.getMachineContracts();
     if (uri === 'evolith://governance/version') return { version: '1.0.0', schema: 'governance' };
     if (uri === 'evolith://core/version') return { version: '1.0.0', schema: 'core' };
     if (uri === 'evolith://core/info') return this.getCoreInfo();
@@ -159,6 +168,12 @@ export class ResourcesService {
     const configPath = path.join(process.cwd(), 'evolith.yaml');
     if (await this.fs.exists(configPath)) return this.configParser.parse(await this.fs.readFile(configPath));
     return { error: 'evolith.yaml not found' };
+  }
+
+  private async getMachineContracts() {
+    const contractsPath = path.join(this.findCorePath(), 'rulesets', 'contracts', 'evolith-machine-contracts.json');
+    if (await this.fs.exists(contractsPath)) return this.fs.readJson(contractsPath);
+    return { error: 'Machine contracts not found', path: 'rulesets/contracts/evolith-machine-contracts.json' };
   }
 
   private async getOpenCoreArtifacts() {

@@ -73,6 +73,46 @@ describe('ResourcesService', () => {
     expect(await service.read('evolith://acl/rules')).toBeDefined();
   });
 
+  // GT-520 · EAG-15 / AC3 — capability manifest + machine contracts resources.
+  it('lists and serves the capability manifest and machine contracts resources', async () => {
+    // `capabilities` is pure (built from core-domain); `contracts` is read from
+    // the discovered core path.
+    await fsExtra.ensureDir(path.join(root, 'rulesets', 'contracts'));
+    await fsExtra.writeJson(path.join(root, 'rulesets', 'contracts', 'evolith-machine-contracts.json'), {
+      contractVersion: '1.0.0',
+      compatibilityPolicy: 'semver-major',
+      schemas: [{ id: 'gate-evidence', version: '1.0.0' }],
+    });
+
+    const uris = (await service.list()).resources.map((r) => r.uri);
+    expect(uris).toContain('evolith://capabilities');
+    expect(uris).toContain('evolith://contracts');
+
+    const manifest = (await service.read('evolith://capabilities')) as {
+      name: string;
+      version: string;
+      evaluationKinds: string[];
+      surfaces: string[];
+      sha256: string;
+    };
+    expect(manifest.name).toBe('evolith-core');
+    expect(manifest.evaluationKinds.length).toBeGreaterThan(0);
+    expect(manifest.surfaces).toContain('mcp');
+    expect(manifest.sha256).toMatch(/^[a-f0-9]{64}$/);
+
+    const contracts = (await service.read('evolith://contracts')) as {
+      contractVersion: string;
+      schemas: unknown[];
+    };
+    expect(contracts.contractVersion).toBe('1.0.0');
+    expect(Array.isArray(contracts.schemas)).toBe(true);
+  });
+
+  it('reports a not-found payload when machine contracts are absent', async () => {
+    const contracts = (await service.read('evolith://contracts')) as { error?: string };
+    expect(contracts.error).toBe('Machine contracts not found');
+  });
+
   it('throws for an unknown URI', async () => {
     await expect(service.read('evolith://unknown')).rejects.toThrow('Unknown resource URI');
   });

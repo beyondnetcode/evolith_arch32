@@ -21,6 +21,7 @@ import { AuditLogger } from './audit-logger';
 import { ResourcesService } from './resources.service';
 import { PromptsService } from './prompts.service';
 import { generateCorrelationId } from '../common/envelopes';
+import { ErrorCodes } from '../common/errors';
 import { AbacEvaluator } from './abac-evaluator';
 import { mcpContextStorage, McpUserContext } from './mcp-user-context';
 import { validateAuth } from './mcp-server-auth';
@@ -112,7 +113,26 @@ export class McpServerService {
     if (this.auditLogger) {
       const durationMs = Date.now() - startTime;
       const context = mcpContextStorage.getStore();
-      const status = result.isError ? 'error' : 'success';
+      // Verdict resolution (GT-520 · EAG-15). EVERY tools/call is audited with an
+      // explicit verdict AND the calling identity (userId/role/tenant). Because
+      // dispatch runs the per-identity ABAC check (native + OPA), scope gate and
+      // mutative-approval gate BEFORE the tool executes, an authorization refusal
+      // surfaces as a FORBIDDEN envelope. Those are recorded as 'denied' — kept
+      // distinct from downstream execution 'error's — so an auditor can query who
+      // was refused which tool separately from tools that ran but then failed.
+      let status: 'success' | 'error' | 'denied' = 'success';
+      let errorMessage: string | undefined;
+      if (result.isError) {
+        let code: string | undefined;
+        try {
+          const env = JSON.parse(result.content[0].text);
+          code = env?.error?.code;
+          errorMessage = env?.error?.message;
+        } catch {
+          // Non-envelope error text: fall through as a generic execution error.
+        }
+        status = code === ErrorCodes.FORBIDDEN ? 'denied' : 'error';
+      }
       this.auditLogger.logToolCall({
         tool: name,
         args,
@@ -126,7 +146,7 @@ export class McpServerService {
         durationMs,
         status,
         correlationId,
-        errorMessage: result.isError ? JSON.parse(result.content[0].text).error?.message : undefined,
+        errorMessage,
       });
     }
 

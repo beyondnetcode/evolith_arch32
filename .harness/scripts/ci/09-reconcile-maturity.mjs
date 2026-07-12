@@ -7,9 +7,9 @@ const ROOT = path.resolve(process.env.EVOLITH_MATURITY_ROOT || '.');
 const VISION_DIR = path.join(ROOT, 'reference/core/sdlc/standards/vision');
 const BOARD = path.join(VISION_DIR, 'gap-tracking.md');
 const REGISTRY = path.join(VISION_DIR, 'gap-closure-evidence.json');
-const CLI_PACKAGE = path.join(ROOT, 'sdk/cli/package.json');
+const CLI_PACKAGE = path.join(ROOT, 'src/sdk/cli/package.json');
 const RUNTIME_EVIDENCE = path.join(VISION_DIR, 'maturity-evidence.json');
-const OUTPUT = path.join(VISION_DIR, 'maturity-reconciliation.json');
+const OUTPUT = path.join(ROOT, 'reference/core/control-center/maturity-reports/maturity-reconciliation.json');
 // PASS: green observed run. BLOCKED: failing/unmet, must map to an active gap.
 // RESOLVED: the blocking gap is closed in code (cites its closure commit) and the
 // only residual is a runtime re-run; it maps to a closed gap and does not require a
@@ -103,11 +103,11 @@ export function validateRuntimeEvidence(evidence, board, root = ROOT, now = new 
 }
 
 export function buildSnapshot(root = ROOT) {
-  const boardContent = fs.readFileSync(path.join(root, 'reference/core/control-center/gap-tracking.md'), 'utf8');
+  const boardContent = fs.readFileSync(path.join(root, 'reference/core/control-center/gaps/gap-tracking.md'), 'utf8');
   const board = { ...parseBoard(boardContent), content: boardContent };
-  const registry = JSON.parse(fs.readFileSync(path.join(root, 'reference/core/control-center/gap-closure-evidence.json'), 'utf8'));
-  const cliPackage = JSON.parse(fs.readFileSync(path.join(root, 'sdk/cli/package.json'), 'utf8'));
-  const runtimeEvidence = JSON.parse(fs.readFileSync(path.join(root, 'reference/core/control-center/maturity-evidence.json'), 'utf8'));
+  const registry = JSON.parse(fs.readFileSync(path.join(root, 'reference/core/control-center/evidence/gap-closure-evidence.json'), 'utf8'));
+  const cliPackage = JSON.parse(fs.readFileSync(path.join(root, 'src/sdk/cli/package.json'), 'utf8'));
+  const runtimeEvidence = JSON.parse(fs.readFileSync(path.join(root, 'reference/core/control-center/maturity-reports/maturity-evidence.json'), 'utf8'));
   const closures = registry.closures || [];
 
   const gtDoneCount = [...board.content.matchAll(/^\| \[`GT-\d+`]\([^)]*\) .*\| `DONE` \|$/gm)].length;
@@ -138,16 +138,16 @@ export function buildSnapshot(root = ROOT) {
       { name: 'Evolith Product Suite', maturityIncluded: false, reason: 'Product strategy scope is not Core implementation evidence' },
     ],
     sources: [
-      'reference/core/control-center/gap-tracking.md',
-      'reference/core/control-center/gap-closure-evidence.json',
-      'reference/core/control-center/maturity-evidence.json',
-      'reference/core/control-center/inventory-summary.md',
-      'sdk/cli/package.json',
+      'reference/core/control-center/gaps/gap-tracking.md',
+      'reference/core/control-center/evidence/gap-closure-evidence.json',
+      'reference/core/control-center/maturity-reports/maturity-evidence.json',
+      'reference/core/control-center/maturity-reports/inventory-summary.md',
+      'src/sdk/cli/package.json',
     ],
     validationCommands: [
-      'node .harness/scripts/reconcile-maturity.mjs --check',
-      'node .harness/scripts/validate-tracking.mjs',
-      'npm test --workspace sdk/cli -- --runInBand',
+      'node .harness/scripts/ci/09-reconcile-maturity.mjs --check',
+      'node .harness/scripts/ci/08-validate-tracking.mjs',
+      'npm test --workspace src/sdk/cli -- --runInBand',
     ],
   };
 }
@@ -160,7 +160,7 @@ function run() {
   const expected = serialize(buildSnapshot());
   if (process.argv.includes('--check')) {
     if (!fs.existsSync(OUTPUT) || fs.readFileSync(OUTPUT, 'utf8') !== expected) {
-      console.error('❌ Maturity reconciliation is stale. Run: node .harness/scripts/reconcile-maturity.mjs');
+      console.error('❌ Maturity reconciliation is stale. Run: node .harness/scripts/ci/09-reconcile-maturity.mjs');
       process.exit(1);
     }
     console.log('✅ Maturity reconciliation matches the canonical Core evidence.');

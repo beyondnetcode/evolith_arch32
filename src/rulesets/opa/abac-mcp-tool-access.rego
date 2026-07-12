@@ -58,6 +58,10 @@ read_tools := {
   "evolith-moscow-report",
   # sdlc status
   "evolith-sdlc-status",
+  # phase advance — GT-379: NON-BINDING read-only proposal (evaluates exit
+  # criteria without mutating canonical state), so it is `read`, not `write`
+  # (GT-475 dual-engine parity with TOOL_CLASSIFICATION).
+  "evolith-phase-advance",
   # metrics
   "evolith-dora-metrics",
   "evolith-metrics",
@@ -84,9 +88,8 @@ write_tools := {
   "evolith-sdlc-handoff",
   # config set
   "evolith-config-set",
-  # auto-fix / phase advance
+  # auto-fix
   "evolith-auto-fix",
-  "evolith-phase-advance",
   # agents (mutations)
   "evolith-agent-install",
   "evolith-agent-upgrade",

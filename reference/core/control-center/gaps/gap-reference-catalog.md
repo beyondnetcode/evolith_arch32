@@ -12,16 +12,16 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ## Executable Architecture Governance Integration — Core-side (A+B)
 
-> **GT-510…GT-521** are the Core-landing half of the unified "Executable Architecture Governance Integration (A+B)" initiative — the OSS-enforcers-by-CLI architecture-governance engine plus its stable consumption surface. Each entry carries an **EAG-NN** label that maps it into the unified A/B integration map; the Tracker-landing half (identity, run orchestration, UI, storage) lives in the Tracker gap board. Execution order is GT-510 → GT-521. GT-520/GT-521 are `DEFERRED`.
+> **GT-511…GT-522** are the Core-landing half of the unified "Executable Architecture Governance Integration (A+B)" initiative — the OSS-enforcers-by-CLI architecture-governance engine plus its stable consumption surface. Each entry carries an **EAG-NN** label that maps it into the unified A/B integration map; the Tracker-landing half (identity, run orchestration, UI, storage) lives in the Tracker gap board. Execution order is GT-511 → GT-522. GT-521/GT-522 are `DEFERRED`.
 
-#### GT-510
+#### GT-511
 
 **Title:** Single normalized evidence/Violation model
 
 - **Purpose:** (EAG-02 · A/B integration) Establish one canonical `Violation` model — `ruleId, tool, file, line?, column?, severity, message, adrRef, owner?, fingerprint, frozen` — plus an evidence contract validated against `src/rulesets/evidence/evidence-manifest.rules.json` (EVD-01..04). This unifies the OSS normalizer (track A) and the `EvidenceNormalizer` (track B) into a single evidence shape that every downstream surface consumes.
 - **Evidence:** Today the only evaluation engine is OPA-WASM plus 12 native handlers (`native-evaluator.ts`); there is no OSS-ingestion adapter, and `RuleExecutionRef.engine` is a strict Ajv enum with no room for enforcer-sourced findings.
-- **Impact:** Cross-cutting — core-domain contracts, evidence rulesets, every enforcer adapter (GT-513/GT-514/GT-520), and the CI/PR gate (GT-517) all consume this model.
-- **Risk:** Two parallel evidence shapes (OSS vs native) drifting apart; a fingerprint that includes `message` would churn on cosmetic wording changes and defeat freezing (GT-516).
+- **Impact:** Cross-cutting — core-domain contracts, evidence rulesets, every enforcer adapter (GT-514/GT-515/GT-521), and the CI/PR gate (GT-518) all consume this model.
+- **Risk:** Two parallel evidence shapes (OSS vs native) drifting apart; a fingerprint that includes `message` would churn on cosmetic wording changes and defeat freezing (GT-517).
 - **Affected files:** new `violation.ts` in core-domain, new `violation.schema.json` + `enforcer-evidence.schema.json`, `RuleExecutionRef` engine enum, `EvidenceNormalizer`.
 - **Component:** `core-domain` · **Dimension:** Architecture · **Type:** backend
 - **Criticality:** P0 · **Complexity:** M
@@ -33,13 +33,13 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Dependencies:** none.
 - **Status:** `PENDING`
 
-#### GT-511
+#### GT-512
 
 **Title:** Evaluation-environment provisioning (restore / scoping / cache / sandbox)
 
 - **Purpose:** (EAG-04 · A/B integration) Make source-analyzers actually runnable and safe against a fetched checkout. Architecture enforcers need resolvable dependencies, project-scoped inputs, caching, and a hardened execution sandbox.
 - **Evidence:** `GitHubRepositorySourceReader` delivers a TEXT tarball with **no** installed dependencies → dependency-cruiser/import-linter report false negatives ("not resolvable"). Core and the satellites are Nx monorepos, so a whole-repo analysis is both wrong-scoped and slow.
-- **Impact:** Prerequisite for every real source-analyzer adapter (GT-513/GT-514/GT-520); without it their output is untrustworthy.
+- **Impact:** Prerequisite for every real source-analyzer adapter (GT-514/GT-515/GT-521); without it their output is untrustworthy.
 - **Risk:** Running untrusted repo tooling with egress/secrets is an RCE/exfiltration surface; unscoped analysis produces false results that would erode trust in the gate.
 - **Affected files:** `GitHubRepositorySourceReader`, a new provisioning/sandbox service, `evolith.yaml` toolchain manifest handling.
 - **Component:** `Evolith Core` · **Dimension:** Reliability · **Type:** infra
@@ -49,16 +49,16 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [ ] Analyzers run against a **restored**, project-scoped checkout inside the sandbox.
   - [ ] Sandbox denies egress + secret access and enforces ulimits/cgroups + a binary allowlist.
   - [ ] Re-evaluating an unchanged commit hits the cache (SHA + changed-files scope).
-- **Dependencies:** GT-510.
+- **Dependencies:** GT-511.
 - **Status:** `PENDING`
 
-#### GT-512
+#### GT-513
 
 **Title:** Stable API + capabilities manifest
 
 - **Purpose:** (EAG-06 · A/B integration) Provide the stable front door for external consumers: a versioned contract package and a `/capabilities` endpoint that advertises what the Core can evaluate.
 - **Evidence:** `evolith-machine-contracts.json` lists only `evolith_tracker` in `supportedConsumers`; there is no `/capabilities` endpoint, so an external consumer cannot discover surface/version at runtime.
-- **Impact:** Unblocks external/agent consumption (GT-519) and any non-Tracker consumer; the contract package becomes the SemVer boundary.
+- **Impact:** Unblocks external/agent consumption (GT-520) and any non-Tracker consumer; the contract package becomes the SemVer boundary.
 - **Risk:** Ad-hoc coupling to internal shapes without a versioned contract → silent breakage on Core changes.
 - **Affected files:** new `@beyondnet/evolith-contracts` package, `ReferenceController` neighborhood (`GET /api/v1/capabilities`), contract-parity tests.
 - **Component:** `Core API` · **Dimension:** Integration · **Type:** backend
@@ -68,16 +68,16 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [ ] `GET /api/v1/capabilities` returns the versioned capability manifest.
   - [ ] `@beyondnet/evolith-contracts` is versioned (SemVer + sha256) and consumable by an external consumer.
   - [ ] Contract-parity tests fail on drift between the package and the endpoints.
-- **Dependencies:** GT-510.
+- **Dependencies:** GT-511.
 - **Status:** `PENDING`
 
-#### GT-513
+#### GT-514
 
 **Title:** `IEnforcerAdapter` + `EnforcerEvaluator` + Composite + catalog
 
 - **Purpose:** (EAG-08 · A/B integration) Introduce the enforcer orchestration seam that lets external analyzers plug into evaluation without displacing the native engine.
 - **Evidence:** `rule-evaluation-engine.ts` / `RulesetValidatorService` use a single `this.strategy` (Native) with no way to route a rule to an external tool.
-- **Impact:** The seam every adapter (GT-514/GT-520) and the compile pipeline (GT-515) depend on.
+- **Impact:** The seam every adapter (GT-515/GT-521) and the compile pipeline (GT-516) depend on.
 - **Risk:** Bolting adapters directly onto the native engine would fork evaluation; the Composite must preserve the Native default so existing rules are untouched.
 - **Affected files:** new `IEnforcerAdapter`, `EnforcerEvaluator`, `CompositeRuleEvaluator`, `ShellEnforcerAdapter` + `IProcessRunner`, `enforcer-catalog.json`.
 - **Component:** `core-domain` · **Dimension:** Architecture-Enforcement · **Type:** backend
@@ -85,18 +85,18 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Proposed fix:** Define `IEnforcerAdapter.analyze(ctx) → Violation[]` with a `runtime` union; add `EnforcerEvaluator` (an `IRuleEvaluatorStrategy`) that filters `enforce.engine === 'enforcer'`; add `CompositeRuleEvaluator` preserving the Native default; add `ShellEnforcerAdapter` + `IProcessRunner`; author `enforcer-catalog.json` aligned with `product/infra/validated-tool-catalog.md`.
 - **Acceptance criteria:**
   - [ ] The Composite routes enforcer rules to adapters and leaves native rules on the Native default.
-  - [ ] `IEnforcerAdapter` returns `Violation[]` (GT-510 model) via `IProcessRunner`.
+  - [ ] `IEnforcerAdapter` returns `Violation[]` (GT-511 model) via `IProcessRunner`.
   - [ ] `enforcer-catalog.json` matches `validated-tool-catalog.md`.
-- **Dependencies:** GT-510, GT-511.
+- **Dependencies:** GT-511, GT-512.
 - **Status:** `PENDING`
 
-#### GT-514
+#### GT-515
 
 **Title:** dependency-cruiser adapter + SARIF ingester
 
 - **Purpose:** (EAG-09 · A/B integration) Ship the first concrete source-analyzer adapter, targeting Node/TS — the runtime the Core itself is written in — plus a reusable SARIF ingester for future tools.
-- **Evidence:** dependency-cruiser has no native SARIF output at/below v16, and tsconfig resolution can yield false "not resolvable" without a restored environment (GT-511).
-- **Impact:** Proves the enforcer seam end-to-end on real Core code; the SARIF ingester is reused by security tools in GT-520.
+- **Evidence:** dependency-cruiser has no native SARIF output at/below v16, and tsconfig resolution can yield false "not resolvable" without a restored environment (GT-512).
+- **Impact:** Proves the enforcer seam end-to-end on real Core code; the SARIF ingester is reused by security tools in GT-521.
 - **Risk:** False positives before freezing would block legitimate merges and erode trust — hence the zero-FP gate.
 - **Affected files:** new `DependencyCruiserAdapter`, new generic SARIF 2.1.0 ingester.
 - **Component:** `Evolith Core` · **Dimension:** Architecture-Enforcement · **Type:** backend
@@ -106,16 +106,16 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [ ] TS violations normalize to `Violation` with file:line.
   - [ ] The SARIF 2.1.0 ingester is generic and reused (not depcruise-specific).
   - [ ] 0 false positives on a real corpus before any blocking is enabled.
-- **Dependencies:** GT-513, GT-511.
+- **Dependencies:** GT-514, GT-512.
 - **Status:** `PENDING`
 
-#### GT-515
+#### GT-516
 
 **Title:** `enforce:` block + PolicyCompiler + `evolith enforce compile` + ADR-0002 pilot
 
 - **Purpose:** (EAG-10 · A/B integration) Compile a single declarative policy into native tool checks, piloting on ADR-0002 (hexagonal architecture).
 - **Evidence:** HXA-01..07 in `adr-0002-hexagonal-architecture.rules.json` exist only as prose in `validationQuery` — they are not machine-enforced.
-- **Impact:** Turns written ADR rules into executable checks; the compile output feeds the gate (GT-517).
+- **Impact:** Turns written ADR rules into executable checks; the compile output feeds the gate (GT-518).
 - **Risk:** Some rules are not compilable on every runtime (NetArchTest no-cycles only; Deptrac PHP-only; Conftest IaC-only) — a per-rule fallback is required so the pipeline degrades gracefully rather than failing wholesale.
 - **Affected files:** `ruleset-standard.schema.json` (`enforce:`), new PolicyCompiler, new `src/sdk/cli/src/commands/enforce/`, `adr-0002-hexagonal-architecture.rules.json`.
 - **Component:** `Evolith CLI` · **Dimension:** Rulesets · **Type:** backend
@@ -125,16 +125,16 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [ ] ADR-0002 rules compile, run, and normalize to `Violation`.
   - [ ] Uncompilable rules take a documented per-rule fallback (no wholesale failure).
   - [ ] Round-trip test passes with 0 false positives.
-- **Dependencies:** GT-513.
+- **Dependencies:** GT-514.
 - **Status:** `PENDING`
 
-#### GT-516
+#### GT-517
 
 **Title:** Freezing/baseline + ratchet + warn→block + enforce versioning
 
 - **Purpose:** (EAG-12 · A/B integration) Enable incremental adoption: freeze existing violations, block only new ones, and ratchet the baseline down over time — without breaking current builds.
 - **Evidence:** With no baseline, turning enforcers on would flag the entire pre-existing debt at once and block every build.
-- **Impact:** The adoption mechanism that makes GT-517's gate safe to enable on real repos.
+- **Impact:** The adoption mechanism that makes GT-518's gate safe to enable on real repos.
 - **Risk:** Two parallel baselines (native vs enforcer) would diverge; a baseline that doesn't survive a tool upgrade would re-flag frozen debt.
 - **Affected files:** new `PolicyBaselineStore`, ratchet + `--enforce-mode` handling, `evolith enforce freeze`, `enforce`-block versioning.
 - **Component:** `Evolith Core` · **Dimension:** Adoption · **Type:** backend
@@ -144,16 +144,16 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [ ] Existing violations are frozen; only NEW violations block.
   - [ ] The baseline survives tool upgrades (fingerprint-stable rebase).
   - [ ] A single authoritative baseline (no parallel native/enforcer stores) with a ratchet that fails on growth.
-- **Dependencies:** GT-510.
+- **Dependencies:** GT-511.
 - **Status:** `PENDING`
 
-#### GT-517
+#### GT-518
 
 **Title:** PR/CI drift gate + SARIF exporter + evidence manifest + waivers
 
 - **Purpose:** (EAG-13 · A/B integration) Provide a deterministic merge gate: export findings as SARIF, gate PRs on drift, emit an evidence manifest, and support waivers.
 - **Evidence:** There is no PR-level gate that blocks an ADR violation and cites the ADR + owner; findings are not exported as SARIF for the Checks API.
-- **Impact:** The user-facing enforcement point; consumes the compile output (GT-515) and the enforcer seam (GT-513).
+- **Impact:** The user-facing enforcement point; consumes the compile output (GT-516) and the enforcer seam (GT-514).
 - **Risk:** A private-repo Checks API needs a GitHub App with `checks:write` + GHAS; without it the gate must degrade to a PR comment + exit code rather than silently no-op.
 - **Affected files:** SARIF exporter for `EvaluationResult`, CI drift-gate integration, enforcer-evidence manifest emission, waiver flow, CODEOWNERS enrichment.
 - **Component:** `Evolith CLI` · **Dimension:** CI · **Type:** backend
@@ -163,10 +163,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [ ] A PR that violates an ADR is blocked with a comment citing the ADR + owner.
   - [ ] `evolith evaluate --format sarif` emits valid SARIF; the evidence manifest carries EVD-01..03.
   - [ ] A waiver path (request/approve/version/expire) exists for `waiverRef`.
-- **Dependencies:** GT-513, GT-515.
+- **Dependencies:** GT-514, GT-516.
 - **Status:** `PENDING`
 
-#### GT-518
+#### GT-519
 
 **Title:** CLI/MCP/REST parity (BR-008) + reproducible toolchain + enforcer observability
 
@@ -182,10 +182,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [ ] Parity tests are green across CLI/MCP/REST for the enforcer path.
   - [ ] Tool versions are pinned and reproducible; CI images are per-runtime and vuln-scanned.
   - [ ] Enforcer runs emit OTel metrics (duration, failure rate, timeouts, violation counts).
-- **Dependencies:** GT-513.
+- **Dependencies:** GT-514.
 - **Status:** `PENDING`
 
-#### GT-519
+#### GT-520
 
 **Title:** Hardened MCP (Streamable HTTP + OAuth + per-identity ABAC)
 
@@ -201,10 +201,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [ ] Remote MCP requires OAuth (Streamable HTTP bearer).
   - [ ] Every `tools/call` is ABAC-checked per identity and audited.
   - [ ] `evolith://capabilities` and `evolith://contracts` resources are served.
-- **Dependencies:** GT-512, and the identity decision (tracked as EAG-01 in the Tracker board).
+- **Dependencies:** GT-513, and the identity decision (tracked as EAG-01 in the Tracker board).
 - **Status:** `PENDING`
 
-#### GT-520
+#### GT-521
 
 **Title:** Deferred enforcers (Deptrac / import-linter / Conftest / Checkov / Trivy + ArchUnit JVM / jQAssistant)
 
@@ -215,14 +215,14 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Affected files:** future `DeptracAdapter`, `ImportLinterAdapter`, Conftest/Checkov/Trivy adapters, ArchUnit JVM + `FreezingArchRule`, jQAssistant.
 - **Component:** `Evolith Core` · **Dimension:** Architecture-Enforcement · **Type:** backend
 - **Criticality:** P3 · **Complexity:** L
-- **Proposed fix:** When a real repo of that runtime exists, add `DeptracAdapter`, `ImportLinterAdapter` (`line=null`), Conftest/Checkov/Trivy (`category='security'`, SARIF via the GT-514 ingester), ArchUnit JVM + `FreezingArchRule`, and jQAssistant (Cypher/Neo4j).
+- **Proposed fix:** When a real repo of that runtime exists, add `DeptracAdapter`, `ImportLinterAdapter` (`line=null`), Conftest/Checkov/Trivy (`category='security'`, SARIF via the GT-515 ingester), ArchUnit JVM + `FreezingArchRule`, and jQAssistant (Cypher/Neo4j).
 - **Acceptance criteria:**
   - [ ] Each adapter lands only when a real repo of that runtime exists and can be exercised against a real corpus.
   - [ ] Security-tool findings carry `category='security'` and flow through the shared SARIF ingester.
-- **Dependencies:** GT-513, GT-514.
+- **Dependencies:** GT-514, GT-515.
 - **Status:** `DEFERRED`
 
-#### GT-521
+#### GT-522
 
 **Title:** Read-only GraphQL facade (optional)
 
@@ -237,7 +237,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Acceptance criteria:**
   - [ ] Only pursued if a concrete consumer requires GraphQL.
   - [ ] If built: read-only, feature-flagged, depth/complexity-limited, no decision mutations.
-- **Dependencies:** GT-512.
+- **Dependencies:** GT-513.
 - **Status:** `DEFERRED`
 
 ---
@@ -423,8 +423,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Regenerate the count to 35 in both `README.md` and `README.es.md` (resources 9 / prompts 8 remain correct); ideally derive the count from `api.catalog.generated.ts` so it can't drift.
 
 **Closure:**
-- [ ] `README.md` + `README.es.md` state 35 tools
-- [ ] count sourced/checked against the live registry
+- [x] `README.md` + `README.es.md` state 47 tools
+- [x] count sourced/checked against the live registry (47 `evolith-*` tools registered in `tools.module.ts`; the 35 predated the +11 parity tools + `evolith-scaffold`)
 
 **References:** `src/packages/mcp-server/README.md:17,184,598`; `src/packages/mcp-server/README.es.md`; GT-460, GT-445
 

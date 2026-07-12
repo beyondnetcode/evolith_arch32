@@ -27,9 +27,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P0 · **Complexity:** M
 - **Proposed fix:** Add `violation.ts` in core-domain with the fingerprint normalized **without** `message` and against a normalized path; map `Violation` to `GapFinding`/`RiskFinding`; author `violation.schema.json` + `enforcer-evidence.schema.json`; add engine `'enforcer'` to the enum with a version/tolerance strategy so the schema evolves without hard-breaking consumers.
 - **Acceptance criteria:**
-  - [ ] `Violation` model + `violation.schema.json` + `enforcer-evidence.schema.json` land with a severity map.
-  - [ ] Fingerprint is stable across `message` edits (normalized path, message excluded).
-  - [ ] Round-trip Violation ⇄ GapFinding/RiskFinding with zero orphan rules against `evidence-manifest.rules.json` (EVD-01..04).
+  - [x] `Violation` model + `violation.schema.json` + `enforcer-evidence.schema.json` land with a severity map.
+  - [x] Fingerprint is stable across `message` edits (normalized path, message excluded).
+  - [x] Round-trip Violation ⇄ GapFinding/RiskFinding with zero orphan rules against `evidence-manifest.rules.json` (EVD-01..04).
 - **Dependencies:** none.
 - **Status:** `PENDING`
 

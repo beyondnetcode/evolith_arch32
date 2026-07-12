@@ -6593,6 +6593,24 @@
         "grep -n \"disponibles (47)\" src/packages/mcp-server/README.md src/packages/mcp-server/README.es.md"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-511",
+      "closedAt": "2026-07-12",
+      "closureCommit": "d769c97b",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/violation.ts",
+        "src/packages/core-domain/src/evaluation/violation.spec.ts",
+        "src/rulesets/schema/violation.schema.json",
+        "src/rulesets/schema/enforcer-evidence.schema.json",
+        "src/packages/core-domain/src/evaluation/contracts/evaluation-result.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand violation.spec (17/17)",
+        "cd src/packages/core-domain && npx tsc -b tsconfig.json (clean)",
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand (752/752 core-domain)"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

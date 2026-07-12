@@ -27,9 +27,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P0 · **Complexity:** M
 - **Proposed fix:** Agregar `violation.ts` en core-domain con el fingerprint normalizado **sin** `message` y contra un path normalizado; mapear `Violation` a `GapFinding`/`RiskFinding`; redactar `violation.schema.json` + `enforcer-evidence.schema.json`; agregar el engine `'enforcer'` al enum con una estrategia de versión/tolerancia para que el schema evolucione sin romper duro a los consumidores.
 - **Acceptance criteria:**
-  - [ ] Aterrizan el modelo `Violation` + `violation.schema.json` + `enforcer-evidence.schema.json` con un mapa de severidad.
-  - [ ] El fingerprint es estable ante ediciones de `message` (path normalizado, message excluido).
-  - [ ] Round-trip Violation ⇄ GapFinding/RiskFinding con cero reglas huérfanas contra `evidence-manifest.rules.json` (EVD-01..04).
+  - [x] Aterrizan el modelo `Violation` + `violation.schema.json` + `enforcer-evidence.schema.json` con un mapa de severidad.
+  - [x] El fingerprint es estable ante ediciones de `message` (path normalizado, message excluido).
+  - [x] Round-trip Violation ⇄ GapFinding/RiskFinding con cero reglas huérfanas contra `evidence-manifest.rules.json` (EVD-01..04).
 - **Dependencies:** none.
 - **Status:** `PENDING`
 

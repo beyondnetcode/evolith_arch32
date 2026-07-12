@@ -109,6 +109,18 @@ Select architecture pattern:
 | **gRPC (Protobuf)** | Servicios internos | `evolith-cli init --api=grpc` |
 | **Ambos** | REST externo, gRPC interno | `evolith-cli init --api=hybrid` |
 
+### 4.3 Enforcement de Arquitectura (Analizadores de Frontera)
+
+Analizadores estáticos que aplican fronteras de módulo/capa y ciclos por runtime. El Core enruta las reglas con `enforce.engine === 'enforcer'` hacia estos vía el `EnforcerEvaluator` (GT-514); el espejo legible por máquina es `src/rulesets/enforcement/enforcer-catalog.json`. El pinning exacto de versiones se rastrea en GT-519.
+
+| Herramienta | Versión | Runtime | Propósito | ADR |
+|------|---------|---------|---------|-----|
+| **dependency-cruiser** | 16.x | node | Análisis de fronteras de módulo/capa + ciclos (TS/JS) | ADR-0002 |
+| **NetArchTest** | 1.3.x | dotnet | Reglas de capa y dirección de dependencias (.NET) | ADR-0002 |
+| **Deptrac** | 2.x | php | Enforcement de fronteras de capa (PHP) | ADR-0002 |
+| **import-linter** | 2.x | python | Contratos de import, basado en grimp (Python) | ADR-0002 |
+| **Conftest** | 0.56.x | iac | Chequeos de política OPA/Rego para manifests IaC/config | ADR-0002 |
+
 ---
 
 ## 5. Fase 4 — Herramientas de Producción

@@ -4,7 +4,7 @@
 
 **Status:** Approved  
 **Owner:** Evolith Architecture Board  
-**Last Updated:** 2026-07-02
+**Last Updated:** 2026-07-11
 
 ---
 
@@ -45,6 +45,42 @@ Evolith provides:
 4. one audit chain across humans, agents, tools, and source code;
 5. one provider-neutral governance layer;
 6. one upstream learning mechanism from satellite products into Evolith Core.
+
+### 1.5 Essence and Spearhead (Wedge)
+
+The category statement (§1.2) is the **umbrella** narrative (platform). The product's essence, in plain language, is:
+
+> **Evolith makes architecture decisions actually hold — automatically, even when the one writing the code is an AI.**
+
+The core principle is **READ vs CONTROL**. The entire market (developer portals, architecture suites) does *READ*: it exposes its catalog *to* AI agents in read-only mode and trusts them to behave. Nobody does *CONTROL*: deterministically constraining what the agent *produces*. Evolith occupies that front — it compiles decisions (ADRs, C4, Phase Gates) into executable guardrails, imposes them on the agent before it generates, and blocks the merge if they are violated.
+
+> **You don't give the agent context. You impose a contract on it.**
+
+This essence is the **go-to-market spearhead** (the wedge): executable architecture governance, which corresponds to **Phase Gate 3 (Architecture Drift)**. You land through that front —where there is no incumbent today— and expand toward the complete SDLC governance plane described in the umbrella statement. The competitive analysis of this second axis is detailed in the [Strategic Positioning and Comparative Landscape](../positioning/evolith-strategic-positioning-comparative-landscape.md) (§§13-15).
+
+### 1.6 In plain terms: the construction-site analogy
+
+Building software is like constructing a building: it runs from "we want a building here" (the idea) to handing over the keys (production).
+
+Today most projects are **a construction site with no inspector**: the blueprints (the architecture decisions) sit in a drawer nobody opens, everyone builds their own way, and now **robot bricklayers** (AI) arrive and raise walls incredibly fast — without ever looking at the blueprints. Everything seems fine until, months later, the building has cracks, nobody knows who laid what, and fixing it costs a fortune.
+
+Evolith is **the site manager and the inspector, in one**. It does three things:
+
+1. **It puts a checkpoint at every stage (the 5 Phase Gates).** A stage cannot start until the previous one is approved — just as you don't pour concrete without approved plans, nor raise walls until the foundation passes inspection.
+2. **It keeps a logbook that cannot be erased (the evidence).** Who approved what, when, and with what proof. When an audit comes, the answer is already there.
+3. **It applies the same rules to everyone — people and robots.** Nobody skips the inspection just to go faster.
+
+| Stage | On the site | Phase Gate |
+|---|---|---|
+| Idea | Is it worth building? | 1 · Discovery |
+| Blueprints | Project and plans approved | 2 · Design |
+| Construction | Build according to the plans | 3 · Construction (Architecture Drift) |
+| Review | Quality and security testing | 4 · QA & Integration |
+| Handover | Final inspection before the keys | 5 · Release |
+
+What Evolith **does not** do matters as much as what it does: the site manager is not the electrician or the plumber — it coordinates and certifies them. Evolith does not replace your tools (Jira organizes the work, the AI builds, Langfuse watches); it lets them do their job but retains the authority to say which stage is approved.
+
+> **Evolith turns software construction from an uncontrolled site —where everyone, AI included, does whatever they want and the cracks show up late— into a governed site: inspections at every stage, a logbook that cannot be erased, and the same rules for humans and robots, from the idea to the keys.**
 
 ---
 

@@ -207,6 +207,16 @@ export const GENERATED_RESOURCES: ApiResource[] = [
     "description": "List of all available architecture topologies"
   },
   {
+    "uri": "evolith://capabilities",
+    "name": "Capability Manifest",
+    "description": "Versioned capability manifest of the Evolith Core evaluation engine (evaluationKinds, engines, surfaces, supportedConsumers)"
+  },
+  {
+    "uri": "evolith://contracts",
+    "name": "Machine Contracts",
+    "description": "Machine-readable schema/contract set the Core publishes for external consumers"
+  },
+  {
     "uri": "evolith://core/info",
     "name": "Core Info",
     "description": "General information about the Evolith Core"

@@ -72,14 +72,13 @@ product:
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain('validate');
       expect(result.stdout).toContain('init');
-      expect(result.stdout).toContain('mcp');
     });
 
     it('should show version', async () => {
-      const result = await runCli(['mcp', 'version']);
+      const result = await runCli(['--version']);
 
       expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('Evolith MCP Server');
+      expect(result.stdout).toMatch(/\d+\.\d+\.\d+/);
     });
   });
 

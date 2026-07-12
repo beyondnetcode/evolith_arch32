@@ -300,7 +300,21 @@ GET /api/v1/architecture/topologies/microservices
 
 **Qué esperar.** El envelope con el manifiesto de esa topología. Si el id no existe, responde `404`.
 
-### 3.10. `POST /phases/transition` — ejecutar una transición de fase
+### 3.10. `POST /architecture/cache/invalidate` — invalidar el cache de topologías
+
+**Qué hace.** Invalida el cache del lado del servidor del catálogo de topologías (el que sirve `GET /architecture/topologies` y consumen `recommend-topology` y `validate/composable`). Úsalo tras publicar cambios en los manifiestos de topología del Core para que la próxima lectura los recoja sin esperar a que expire el cache. Es una operación **infra/ops-only**: no tiene equivalente en CLI ni MCP (exenta a propósito en esas superficies), solo se expone por REST.
+
+**Argumentos.** Ninguno; no lleva body.
+
+**Ejemplo:**
+
+```
+POST /api/v1/architecture/cache/invalidate
+```
+
+**Qué esperar.** El envelope de éxito confirmando que el cache se invalidó; la siguiente consulta de topologías se resuelve de nuevo desde el corpus del Core.
+
+### 3.11. `POST /phases/transition` — ejecutar una transición de fase
 
 **Qué hace.** Ejecuta el traspaso de una fase a otra: transiciona los artefactos ejecutando las herramientas que indiques y deja el proyecto posicionado en la fase destino. A diferencia de la propuesta de transición del CLI (`phase advance`), aquí se **ejecuta** la transición. Nota de nomenclatura: usa el esquema numerado `phase-0`, `phase-1`, … (no las fases SDLC canónicas).
 
@@ -329,7 +343,7 @@ Content-Type: application/json
 
 **Qué esperar.** El envelope de éxito con `data` = el resultado de la transición (bajo el nombre de comando canónico `evolith-cli phase transition`).
 
-### 3.11. `POST /architecture-plans/evaluate` — evaluar un plan de arquitectura
+### 3.12. `POST /architecture-plans/evaluate` — evaluar un plan de arquitectura
 
 **Qué hace.** Recibe el borrador de un **plan de arquitectura** (Design-phase Advisory Governance, ADR-0104), lo pasa por el motor OPA y devuelve el plan **evaluado**: sugiere el modo SDLC (`full`/`tailored`/`minimal`/`rejected`) y los aprobadores requeridos. El Core es stateless: sugiere la transición pero **no la persiste** (deja el plan en estado `under_review`).
 

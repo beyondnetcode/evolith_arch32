@@ -7,6 +7,7 @@
 
 export * from './contracts';
 export * from './violation';
+export * from './sarif-exporter';
 export * from './ports/evaluation-pipeline.port';
 export * from './ports/workspace-reference-resolver.port';
 export * from './ports/kind-evaluator.port';

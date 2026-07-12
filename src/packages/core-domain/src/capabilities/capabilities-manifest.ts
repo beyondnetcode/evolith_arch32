@@ -24,6 +24,7 @@ import { createHash } from 'node:crypto';
 
 import {
   EVALUATION_RESULT_SCHEMA_VERSION,
+  KNOWN_RULE_ENGINES,
   type EvaluationResult,
   type RuleExecutionRef,
 } from '../evaluation/contracts/evaluation-result';
@@ -69,7 +70,7 @@ export const EVALUATION_KINDS = [
 ] as const satisfies readonly (keyof EvaluationResult['results'])[];
 
 /** Rule engines the Core can execute (mirrors `RuleExecutionRef['engine']`). */
-export const RULE_ENGINES = ['native', 'opa'] as const satisfies readonly RuleExecutionRef['engine'][];
+export const RULE_ENGINES = KNOWN_RULE_ENGINES satisfies readonly RuleExecutionRef['engine'][];
 
 // Compile-time drift guards: if a new key is added to EvaluationResult.results
 // (or a new engine literal) without updating the arrays above, these error.

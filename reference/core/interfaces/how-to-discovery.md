@@ -217,6 +217,7 @@ Command: `evolith-cli sdlc gate-status`
 | --- | --- |
 | `--since <days>` | Days of git history to analyse for DORA metrics (default: 90) |
 | `-f, --format <string>` | Output format: json (ADR-0073 envelope) or human (default) |
+| `-c, --core [path]` | Path to the Evolith Core checkout that holds the canonical SDLC gates (default: auto-detect) |
 
 Example:
 ```bash

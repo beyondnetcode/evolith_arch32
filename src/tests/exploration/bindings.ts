@@ -417,7 +417,7 @@ export const BINDINGS: Record<string, Binding> = {
   },
 
   'fixtures': {
-    verified: false,
+    verified: true,
     cli: (c) => ['fixtures', 'seed', '--format', 'json'],
   },
 
@@ -432,7 +432,7 @@ export const BINDINGS: Record<string, Binding> = {
   },
 
   'init-wizard': {
-    verified: false,
+    verified: true,
     cli: (c) => ['init'],
   },
 

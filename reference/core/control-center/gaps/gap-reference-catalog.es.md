@@ -6078,3 +6078,23 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Todo `DEFAULT_SKILLS[].harnessCapability` resuelve a un `name` de capacidad en `manifest.yaml`.
   - [x] `34-check-skill-registry-parity.mjs` aplica lo anterior y pasa; `default-skills.ts` documenta el layering.
 - **Dependencias:** `GT-409` (freshness checks de adaptadores/skills), `GT-416` (productización de capacidades del harness).
+
+
+#### GT-523
+
+**Título:** La reactivación del guard de tracking destapó deriva sistémica de board/registro más allá de los 16 registros de cierre
+
+**Problema:** `08-validate-tracking.mjs` estaba dormido porque apuntaba a rutas planas pre-refactor (GT-476). Re-apuntado a `reference/core/control-center/gaps/`+`evidence/`, corre completo y reporta ~653 errores independientes de los 16 registros de cierre añadidos en `d11c6e52`. Este gap rastrea la reconciliación residual para que no se confunda con el trabajo de registros de cierre.
+
+**Evidencia (salida del guard, ~653 errores):**
+- Desync EN/ES del board — EN 521 filas vs ES 497 → cascada de `Row N ID mismatch` + `status mismatch` (p. ej. `GT-484` EN=`DONE` / ES=`DIFERIDO`).
+- `GT-486…509` y `GT-511…522` sin sección `#### GT-nnn` en ningún catálogo.
+- 13 filas ES del board usan el token no canónico `HECHO` (ver GT-480).
+- 10 registros de cierre legacy inválidos: `dependencyDisposition` no soportado (GT-425/431/434/462), `DONE` con criterios sin marcar (GT-463/465), registro de cierre cuyo estado de board parsea malformado/undefined (GT-426/431).
+- Deriva del contador de Progreso: la línea dice `450/485` mientras el guard cuenta ~521 filas (ver GT-477).
+
+**Ya corregido en `d11c6e52`:** las 945 entradas de rutas de evidencia en los 417 registros pre-existentes invalidadas por la migración de código a `src/` (98a20dca) y la migración de taxonomía (e16120e9/f0d01911) fueron re-apuntadas a sus ubicaciones actuales (0 sin resolver); se añadieron los 16 registros de cierre faltantes (GT-424/436/440/449/450/452/466-474/484) con commits de cierre reales + evidencia en disco; se corrigió el conteo obsoleto del catálogo de GT-484 de 35→47.
+
+**Fix propuesto:** una pasada bilingüe coordinada — resincronizar los boards EN/ES fila por fila, redactar las secciones de catálogo faltantes de `GT-486…509` + `GT-511…522`, normalizar los 13 `HECHO`→`COMPLETADO` (GT-480), reparar los 10 registros legacy, y re-derivar los contadores Progress/Progreso (GT-477). El arreglo de rutas del guard es `.harness` y debe aterrizar upstream en `unimar_arch` (GT-476); re-armar 08/09 en push/PR una vez en verde.
+
+**Referencias:** `.harness/scripts/ci/08-validate-tracking.mjs`; `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/evidence/gap-closure-evidence.json` (`d11c6e52`); GT-476, GT-477, GT-480.

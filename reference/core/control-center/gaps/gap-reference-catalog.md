@@ -6163,3 +6163,23 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] Every `DEFAULT_SKILLS[].harnessCapability` resolves to a `manifest.yaml` capability `name`.
   - [x] `34-check-skill-registry-parity.mjs` enforces the above and passes; `default-skills.ts` documents the layering.
 - **Dependencies:** `GT-409` (adapter/skill freshness checks), `GT-416` (harness capability productization).
+
+
+#### GT-523
+
+**Title:** Tracking-guard reactivation surfaced systemic board/registry drift beyond the 16 closure records
+
+**Problem:** `08-validate-tracking.mjs` was dormant because it pointed at pre-refactor flat paths (GT-476). Re-pointed at `reference/core/control-center/gaps/`+`evidence/`, it runs to completion and reports ~653 errors that are independent of the 16 closure records added in `d11c6e52`. This gap tracks the residual reconciliation so it is not mistaken for closure-record work.
+
+**Evidence (guard output, ~653 errors):**
+- EN/ES board desync — EN 521 rows vs ES 497 → a cascade of `Row N ID mismatch` + `status mismatch` (e.g. `GT-484` EN=`DONE` / ES=`DIFERIDO`).
+- `GT-486…509` and `GT-511…522` have no `#### GT-nnn` section in either catalog.
+- 13 ES board rows use the non-canonical `HECHO` token (see GT-480).
+- 10 legacy invalid closure records: unsupported `dependencyDisposition` (GT-425/431/434/462), `DONE` with unchecked criteria (GT-463/465), closure record whose board status parses malformed/undefined (GT-426/431).
+- Progress-counter drift: line says `450/485` while the guard counts ~521 rows (see GT-477).
+
+**Already fixed in `d11c6e52`:** the 945 evidence-path entries across the pre-existing 417 records invalidated by the `src/` code migration (98a20dca) and taxonomy migration (e16120e9/f0d01911) were repointed to current locations (0 unresolved); the 16 missing closure records (GT-424/436/440/449/450/452/466-474/484) were added with real closure commits + on-disk evidence; GT-484's stale catalog count was corrected 35→47.
+
+**Proposed fix:** one coordinated bilingual pass — resync the EN/ES boards row-for-row, author the missing catalog sections for `GT-486…509` + `GT-511…522`, normalize the 13 `HECHO`→`COMPLETADO` (GT-480), repair the 10 legacy records, and re-derive the Progress/Progreso counters (GT-477). The guard path-fix itself is `.harness`-owned and must land upstream in `unimar_arch` (GT-476); re-arm 08/09 on push/PR once green.
+
+**References:** `.harness/scripts/ci/08-validate-tracking.mjs`; `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/evidence/gap-closure-evidence.json` (`d11c6e52`); GT-476, GT-477, GT-480.

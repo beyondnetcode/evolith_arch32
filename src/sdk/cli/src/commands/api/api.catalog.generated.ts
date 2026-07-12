@@ -2,9 +2,29 @@
 // server (tools/list + resources/list). Do NOT edit by hand — run
 // `npm run gen:api-catalog` to refresh. Source of truth: the MCP server (GT-460).
 
-import { ApiEntry, ApiResource } from './api.catalog';
+import type { ApiEntry, ApiResource } from './api.catalog';
 
 export const GENERATED_TOOLS: ApiEntry[] = [
+  {
+    "name": "evolith-adr-create",
+    "description": "Create a new Architecture Decision Record. Writes reference/architecture/adrs/<id>.md and updates the matrix."
+  },
+  {
+    "name": "evolith-adr-get",
+    "description": "Get the full details of a single ADR by id (e.g. ADR-0001) or number."
+  },
+  {
+    "name": "evolith-adr-list",
+    "description": "List all Architecture Decision Records (id, title, status, date)."
+  },
+  {
+    "name": "evolith-adr-matrix",
+    "description": "Get the ADR matrix summary (totals by status + recent ADRs)."
+  },
+  {
+    "name": "evolith-adr-update",
+    "description": "Update the status of an existing ADR (Proposed | Accepted | Deprecated | Superseded | Amended)."
+  },
   {
     "name": "evolith-agent-install",
     "description": "Install a new Evolith agent"
@@ -50,6 +70,10 @@ export const GENERATED_TOOLS: ApiEntry[] = [
     "description": "Set Evolith configuration value"
   },
   {
+    "name": "evolith-docs-scaffold",
+    "description": "Scaffold the base documentation required by Evolith (README.md, AGENTS.md, MASTER_INDEX.md, evolith.yaml) into a target directory. Mirrors the CLI `docs` command. Mutative: writes files unless dryRun is set."
+  },
+  {
     "name": "evolith-dora-metrics",
     "description": "Calculate DORA metrics approximations using Git log history"
   },
@@ -62,8 +86,16 @@ export const GENERATED_TOOLS: ApiEntry[] = [
     "description": "Evaluate a canonical EvaluationContext (gates, artifacts, rules, compliance) and return an EvaluationResult (ADR-0073 envelope). Stateless: product/tenant/initiative are opaque context only."
   },
   {
+    "name": "evolith-fixtures",
+    "description": "Seed reproducible fixtures and sample data (evolith.yaml, ADRs, rulesets) for demos and tests. Mirrors the \"evolith fixtures\" CLI command."
+  },
+  {
     "name": "evolith-gate-evaluate",
     "description": "Evaluate a specific SDLC phase gate"
+  },
+  {
+    "name": "evolith-init-batch",
+    "description": "Non-interactive (batch/CI) initialization of an Evolith satellite. Parity with the CLI `init --config <json>` / `init --name … --yes` path, without prompts. Delegates scaffolding to the core-domain InitializeProjectUseCase. Returns an ADR-0073 output envelope with the initialization result (created artifacts, warnings, errors)."
   },
   {
     "name": "evolith-metrics",
@@ -122,6 +154,14 @@ export const GENERATED_TOOLS: ApiEntry[] = [
     "description": "Get the status and details of a registered Evolith satellite by its ID."
   },
   {
+    "name": "evolith-scaffold",
+    "description": "Scaffold an Evolith satellite along the progressive maturity axis (phase 1 modular-monolith → 2 distributed-modules → 3 microservices). Phase 1 generates a standard SPA; phases 2–3 a Module Federation host + remotes, plus the NestJS Service API, transversal shells and DDD bounded-context libraries. Mutative: writes the Nx workspace under <path>/src. MCP parity with `evolith scaffold`."
+  },
+  {
+    "name": "evolith-sdlc-generate",
+    "description": "Generate a Hexagonal Architecture scaffold from a Mermaid classDiagram in a Markdown DDD model (parity with the CLI `sdlc generate`). Supply the model inline via `model` or as a file via `from`. Writes files unless `dryRun` is true."
+  },
+  {
     "name": "evolith-sdlc-handoff",
     "description": "Perform a phase gate handoff (e.g. phase-0 to phase-1)"
   },
@@ -140,6 +180,14 @@ export const GENERATED_TOOLS: ApiEntry[] = [
   {
     "name": "evolith-topology-recommend",
     "description": "Recommend a topology composition from technical signals (advisory, ADR-0104 / GT-430). Stateless and non-binding: the Core RECOMMENDS (Discovery), the tenant CONFIRMS (Design). Returns the recommended composition + rationale in the ADR-0073 success envelope. Produces the same result as POST /api/v1/architecture/recommend-topology and `evolith topology recommend`."
+  },
+  {
+    "name": "evolith-upgrade-apply",
+    "description": "Apply a satellite upgrade from the upstream Evolith core. Writes files into the satellite. Set force=true to proceed when breaking changes are detected."
+  },
+  {
+    "name": "evolith-upgrade-plan",
+    "description": "Plan a satellite upgrade against the upstream Evolith core (read-only / dry-run). Computes the change plan, breaking changes and estimated risk without writing any files."
   },
   {
     "name": "evolith-validate",

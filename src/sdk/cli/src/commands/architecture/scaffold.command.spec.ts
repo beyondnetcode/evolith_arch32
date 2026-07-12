@@ -1,6 +1,7 @@
 import { ScaffoldCommand } from './scaffold.command';
 import * as p from '@clack/prompts';
 import { NxWorkspaceStrategy } from '@beyondnet/evolith-infra-providers';
+import { commandExecutor } from '../../infrastructure/cli/command-executor';
 
 jest.mock('@clack/prompts');
 // NxWorkspaceStrategy was relocated to @beyondnet/evolith-infra-providers; the
@@ -317,6 +318,96 @@ describe('ScaffoldCommand', () => {
       expect(envelope.success).toBe(false);
       expect(envelope.error.code).toBe('INTERNAL_ERROR');
       expect(envelope.error.message).toBe('npm failed');
+    });
+  });
+
+  // GT-455: the .NET runtime path is Node-independent (no Nx strategy). These
+  // tests exercise the generation logic in --dry-run so they never require the
+  // .NET SDK on PATH — dry-run short-circuits `ensureAvailable()` and every
+  // `dotnet` shell-out, and skips the `mkdirSync`.
+  describe('--runtime dotnet (GT-455)', () => {
+    let logSpy: jest.SpyInstance;
+    let execSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+      execSpy = jest.spyOn(commandExecutor, 'executeOrThrow').mockResolvedValue('');
+    });
+
+    afterEach(() => {
+      logSpy.mockRestore();
+      execSpy.mockRestore();
+    });
+
+    const findEnvelope = (predicate: (e: any) => boolean) =>
+      JSON.parse(
+        logSpy.mock.calls.find((c: any[]) => {
+          try { return predicate(JSON.parse(c[0])); } catch { return false; }
+        })![0],
+      );
+
+    it('parseRuntime returns the provided value', () => {
+      expect(command.parseRuntime('dotnet')).toBe('dotnet');
+      expect(command.parseRuntime('nodejs')).toBe('nodejs');
+    });
+
+    it('emits a .NET success envelope with the hexagonal projects and bounded contexts', async () => {
+      await command.run([], {
+        runtime: 'dotnet',
+        dryRun: true,
+        format: 'json',
+        apiName: 'mms-api',
+        phase: '1',
+        domains: 'billing,catalog',
+      });
+
+      const envelope = findEnvelope((e) => e.success === true);
+      expect(envelope.success).toBe(true);
+      expect(envelope.data).toEqual(
+        expect.objectContaining({
+          status: 'dry-run',
+          runtime: 'dotnet',
+          apiName: 'mms-api',
+          base: 'Mms',
+          phase: '1',
+          path: 'src/apps/mms-api',
+          projects: ['Domain', 'Application', 'Infrastructure', 'Presentation'],
+          contexts: ['Mms.Billing', 'Mms.Catalog'],
+        }),
+      );
+      expect(envelope.meta.command).toBe('evolith architecture scaffold');
+
+      // Dry-run must not shell out to `dotnet` (so it needs no .NET SDK).
+      expect(execSpy).not.toHaveBeenCalled();
+    });
+
+    it('accepts the progressive-axis id alias for --phase', async () => {
+      await command.run([], {
+        runtime: 'dotnet',
+        dryRun: true,
+        format: 'json',
+        apiName: 'tracker-api',
+        phase: 'microservices',
+      });
+
+      const envelope = findEnvelope((e) => e.success === true);
+      expect(envelope.data.phase).toBe('3');
+      expect(envelope.data.contexts).toEqual([]);
+    });
+
+    it('emits an error envelope for an unknown --phase', async () => {
+      await command.run([], {
+        runtime: 'dotnet',
+        dryRun: true,
+        format: 'json',
+        apiName: 'mms-api',
+        phase: 'bogus',
+      });
+
+      const envelope = findEnvelope((e) => e.success === false);
+      expect(envelope.success).toBe(false);
+      expect(envelope.error.code).toBe('INTERNAL_ERROR');
+      expect(envelope.error.message).toContain('Unknown --phase');
     });
   });
 });

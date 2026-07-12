@@ -16,6 +16,16 @@ export const EVALUATION_RESULT_SCHEMA_VERSION = '1.0.0';
 export type FindingSeverity = 'error' | 'warning' | 'info';
 export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
 
+/**
+ * Evaluation engines that can produce a {@link RuleExecutionRef} (GT-511 · EAG-02).
+ * OPEN vocabulary: `enforcer` covers OSS source-analyzers (dependency-cruiser,
+ * Deptrac, …) normalized into the canonical `Violation` model. Consumers MUST
+ * tolerate an unknown engine string rather than hard-fail — the enum grows without
+ * an incompatible schema bump (see `isKnownEngine`/`normalizeEngine` in `violation.ts`).
+ */
+export const KNOWN_RULE_ENGINES = ['native', 'opa', 'enforcer'] as const;
+export type RuleEngine = (typeof KNOWN_RULE_ENGINES)[number];
+
 /** Governance outcome derived from the verdict + policy (consumer-facing). */
 export type EvaluationOutcome =
   | 'approved'
@@ -78,7 +88,7 @@ export interface DecisionRecommendation {
 export interface RuleExecutionRef {
   readonly ruleId: string;
   readonly rulesetRef?: string;
-  readonly engine: 'native' | 'opa';
+  readonly engine: RuleEngine;
   readonly verdict: Verdict;
 }
 

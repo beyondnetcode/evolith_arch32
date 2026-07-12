@@ -121,7 +121,11 @@
       "properties": {
         "ruleId": { "type": "string" },
         "rulesetRef": { "type": "string" },
-        "engine": { "type": "string", "enum": ["native", "opa"] },
+        "engine": {
+          "type": "string",
+          "enum": ["native", "opa", "enforcer"],
+          "$comment": "GT-511: open vocabulary — 'enforcer' covers OSS source-analyzers normalized to the Violation model. Consumers MUST tolerate unknown engine values instead of hard-failing."
+        },
         "verdict": { "$ref": "#/definitions/verdict" }
       }
     },

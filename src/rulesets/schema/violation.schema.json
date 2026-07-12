@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/violation.schema.json",
+  "title": "Violation",
+  "description": "GT-511 / EAG-02. One canonical normalized violation every enforcer adapter (dependency-cruiser, Deptrac, import-linter, …) and the OSS/native normalizers map into. `fingerprint` is computed WITHOUT `message` and over a normalized path so cosmetic wording never churns it and defeats freezing (GT-517). Mirrors packages/core-domain/src/evaluation/violation.ts.",
+  "type": "object",
+  "required": ["ruleId", "tool", "file", "severity", "message", "fingerprint", "frozen"],
+  "additionalProperties": false,
+  "properties": {
+    "ruleId": { "type": "string", "minLength": 1, "description": "Rule that was violated (e.g. HXA-01, no-circular)." },
+    "tool": { "type": "string", "minLength": 1, "description": "Enforcer tool that produced it (e.g. dependency-cruiser, deptrac)." },
+    "file": { "type": "string", "minLength": 1, "description": "Repo-relative path of the offending file." },
+    "line": { "type": "integer", "minimum": 1, "description": "1-based line, when reported." },
+    "column": { "type": "integer", "minimum": 1, "description": "1-based column, when reported." },
+    "severity": { "type": "string", "enum": ["error", "warning", "info"] },
+    "message": { "type": "string", "description": "Human-readable message. NOT part of the fingerprint." },
+    "adrRef": { "type": "string", "description": "ADR this rule traces to (e.g. ADR-0002)." },
+    "owner": { "type": "string", "description": "Accountable owner (e.g. a CODEOWNERS entry)." },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{16}$",
+      "description": "Stable identity — normalized path + rule + tool + coords, message EXCLUDED (16-hex-char digest)."
+    },
+    "frozen": { "type": "boolean", "description": "A frozen (baselined/waived) violation does not block (GT-517)." }
+  }
+}

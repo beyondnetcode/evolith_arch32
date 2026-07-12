@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/enforcer-evidence.schema.json",
+  "title": "Enforcer Evidence Manifest",
+  "description": "GT-511 / EAG-02. Auditable evidence emitted for one enforcer run. Its field set discharges every rule in rulesets/evidence/evidence-manifest.rules.json: EVD-01 identity (id, source, generatedAt, producer, relatedRuleIds|relatedGateId), EVD-02 traceability (sourceRef), EVD-03 integrity (status, evaluatedRules, blockingFailures, waiverRef), EVD-04 retention (retentionPeriod, owner). Mirrors packages/core-domain/src/evaluation/violation.ts.",
+  "type": "object",
+  "required": [
+    "id", "source", "sourceRef", "generatedAt", "producer",
+    "engine", "relatedRuleIds", "status", "evaluatedRules", "blockingFailures", "violations"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "minLength": 1, "description": "EVD-01 stable identity." },
+    "source": { "type": "string", "minLength": 1, "description": "EVD-01 producing surface (cli|ci|mcp|tracker)." },
+    "sourceRef": { "type": "string", "minLength": 1, "description": "EVD-02 resolvable ref to the command / CI run / artifact that produced it." },
+    "generatedAt": { "type": "string", "format": "date-time", "description": "EVD-01 ISO-8601 UTC." },
+    "producer": { "type": "string", "minLength": 1, "description": "EVD-01 tool + version (e.g. dependency-cruiser@16.3.0)." },
+    "engine": {
+      "type": "string",
+      "enum": ["native", "opa", "enforcer"],
+      "$comment": "GT-511 open vocabulary; enforcer evidence uses 'enforcer'."
+    },
+    "relatedRuleIds": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "EVD-01 union of the ruleIds evaluated/violated (alternative to relatedGateId)."
+    },
+    "relatedGateId": { "type": "string", "description": "EVD-01 gate this evidence supports (alternative to relatedRuleIds)." },
+    "status": { "type": "string", "enum": ["pass", "fail", "warn"], "description": "EVD-03 validation outcome." },
+    "evaluatedRules": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "EVD-03 rules that were evaluated in this run."
+    },
+    "blockingFailures": { "type": "integer", "minimum": 0, "description": "EVD-03 count of non-frozen error violations." },
+    "waiverRef": { "type": "string", "description": "EVD-03 waiver reference when a failure is waived." },
+    "retentionPeriod": { "type": "string", "description": "EVD-04 ISO-8601 duration (e.g. P90D)." },
+    "owner": { "type": "string", "description": "EVD-04 accountable owner for audit follow-up." },
+    "violations": {
+      "type": "array",
+      "items": { "$ref": "https://evolith.dev/schema/violation.schema.json" },
+      "description": "The normalized violations captured by this run."
+    }
+  },
+  "anyOf": [
+    { "required": ["relatedRuleIds"] },
+    { "required": ["relatedGateId"] }
+  ]
+}

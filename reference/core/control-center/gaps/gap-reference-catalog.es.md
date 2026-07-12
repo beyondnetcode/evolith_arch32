@@ -14,6 +14,23 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 > **GT-475…GT-484** fueron detectados por el diseño del agente de pruebas exploratorias (2026-07-10) que inventarió las superficies CLI / MCP / Core-API y verificó adversarialmente cada candidato contra este board. **GT-485** fue auto-detectado por el agente de exploración *en ejecución* (`src/tests/exploration`, `npm run test:exploration`). Ver los activos de paridad cross-surface (`reference/core/control-center/audits/surface-parity-matrix.json`, `src/tests/contract/roundtrip-gate-evaluate.spec.ts`).
 
+#### GT-510
+
+**Título:** 16 gaps DONE sin registro de cierre (los guards de tracking/madurez fallan)
+
+**Problema:** `gap-closure-evidence.json` tiene 417 registros de cierre, pero el tablero requiere 433 (425 filas `GT-*` en `DONE` + 8 cierres `MT-*`). Dieciséis gaps están marcados `DONE` en el tablero canónico sin un registro de cierre correspondiente, así que `08-validate-tracking.mjs` reporta `<id> is DONE without a closure evidence record` y `09-reconcile-maturity.mjs --check` aborta por el desajuste de conteo. La deriva estuvo oculta hasta que [GT-476](#gt-476) re-apuntó esos guards a las rutas post-reestructure; con las rutas muertas los guards nunca validaban el registro de cierres.
+
+**Evidencia:** `node .harness/scripts/ci/08-validate-tracking.mjs` → 16 errores `is DONE without a closure evidence record`; `node .harness/scripts/ci/09-reconcile-maturity.mjs --check` → `Closure evidence count (417) differs from required closures (433)`. Registros faltantes: GT-424, GT-436, GT-440, GT-449, GT-450, GT-452, GT-466, GT-467, GT-468, GT-469, GT-470, GT-471, GT-472, GT-473, GT-474, GT-484.
+
+**Fix propuesto:** Por cada uno de los 16, verificar que esté realmente `DONE` y añadir un registro de cierre real (commit de cierre real + verificación) a `gap-closure-evidence.json`; si un gap no está realmente cerrado, revertir su estado en el tablero. No fabricar commits/fechas. Luego re-ejecutar 08 + `09 --check` (ambos deben pasar). Follow-on: re-armar 08/09 en push/PR — hoy corren solo vía `workflow_dispatch` (ver [GT-476](#gt-476)).
+
+**Cierre:**
+- [ ] registros de cierre añadidos (o estados corregidos) para los 16 gaps
+- [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` pasa
+- [ ] `node .harness/scripts/ci/09-reconcile-maturity.mjs --check` pasa
+
+**Referencias:** `.harness/scripts/ci/08-validate-tracking.mjs`; `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/evidence/gap-closure-evidence.json`; GT-476, GT-477
+
 #### GT-485
 
 **Título:** El CLI `validate --format json` no emite el envelope ADR-0073 (divergencia cross-surface)

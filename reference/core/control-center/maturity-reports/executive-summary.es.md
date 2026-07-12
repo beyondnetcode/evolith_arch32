@@ -29,7 +29,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | 2 | Área de mayor riesgo | `Evolith CLI` tiene la mayor carga ponderada abierta. | [GT-451](../gaps/gap-reference-catalog.es.md#gt-451), [GT-453](../gaps/gap-reference-catalog.es.md#gt-453), [GT-454](../gaps/gap-reference-catalog.es.md#gt-454), [GT-458](../gaps/gap-reference-catalog.es.md#gt-458), [GT-459](../gaps/gap-reference-catalog.es.md#gt-459), [GT-456](../gaps/gap-reference-catalog.es.md#gt-456), +31 |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-453](../gaps/gap-reference-catalog.es.md#gt-453), [GT-442](../gaps/gap-reference-catalog.es.md#gt-442), [GT-454](../gaps/gap-reference-catalog.es.md#gt-454), [GT-458](../gaps/gap-reference-catalog.es.md#gt-458), [GT-459](../gaps/gap-reference-catalog.es.md#gt-459), [GT-475](../gaps/gap-reference-catalog.es.md#gt-475) |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-453](../gaps/gap-reference-catalog.es.md#gt-453), [GT-442](../gaps/gap-reference-catalog.es.md#gt-442), [GT-454](../gaps/gap-reference-catalog.es.md#gt-454), [GT-458](../gaps/gap-reference-catalog.es.md#gt-458), [GT-459](../gaps/gap-reference-catalog.es.md#gt-459), [GT-475](../gaps/gap-reference-catalog.es.md#gt-475), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-437](../gaps/gap-reference-catalog.es.md#gt-437), +8 |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-457](../gaps/gap-reference-catalog.es.md#gt-457), [GT-480](../gaps/gap-reference-catalog.es.md#gt-480), [GT-481](../gaps/gap-reference-catalog.es.md#gt-481), [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-445](../gaps/gap-reference-catalog.es.md#gt-445), [GT-460](../gaps/gap-reference-catalog.es.md#gt-460), +29 |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-457](../gaps/gap-reference-catalog.es.md#gt-457), [GT-480](../gaps/gap-reference-catalog.es.md#gt-480), [GT-481](../gaps/gap-reference-catalog.es.md#gt-481), [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-445](../gaps/gap-reference-catalog.es.md#gt-445), [GT-460](../gaps/gap-reference-catalog.es.md#gt-460), +30 |
 
 ## Bloqueadores Actuales
 
@@ -44,14 +44,14 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Indicador | Valor |
 |---|---:|
 | Fecha canónica del tablero | 2026-07-09 |
-| Gaps totales | 509 |
+| Gaps totales | 510 |
 | Gaps cerrados | 451 |
-| Gaps pendientes | 58 |
+| Gaps pendientes | 59 |
 | P0 abiertos | 3 |
 | P1 abiertos | 16 |
-| P2 abiertos | 35 |
-| Cierre total | 88.6% |
-| Registros de evidencia de cierre | 404 |
+| P2 abiertos | 36 |
+| Cierre total | 88.4% |
+| Registros de evidencia de cierre | 417 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
@@ -60,7 +60,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | `Cross` | 3 | 2 | 1 | [GT-447](../gaps/gap-reference-catalog.es.md#gt-447), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
 | `Infra` | 4 | 0 | 3 | [GT-442](../gaps/gap-reference-catalog.es.md#gt-442), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-437](../gaps/gap-reference-catalog.es.md#gt-437), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464) |
 | `Agent Runtime` | 2 | 0 | 2 | [GT-438](../gaps/gap-reference-catalog.es.md#gt-438), [GT-441](../gaps/gap-reference-catalog.es.md#gt-441) |
-| `Security` | 2 | 0 | 1 | [GT-439](../gaps/gap-reference-catalog.es.md#gt-439), [GT-444](../gaps/gap-reference-catalog.es.md#gt-444) |
+| `Governance` | 4 | 0 | 0 | [GT-480](../gaps/gap-reference-catalog.es.md#gt-480), [GT-445](../gaps/gap-reference-catalog.es.md#gt-445), [GT-477](../gaps/gap-reference-catalog.es.md#gt-477), [GT-510](../gaps/gap-reference-catalog.es.md#gt-510) |
 
 ## Fuente y Regla de Actualización
 

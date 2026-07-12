@@ -5,9 +5,14 @@ import * as path from 'node:path';
 const CLI_BIN = path.resolve(__dirname, '../../dist/main.js');
 const CLI_BUILT = fs.existsSync(CLI_BIN);
 
+// These tests spawn a real `node dist/main.js` subprocess. Under the full suite
+// (64 suites in parallel) cold Node startup can exceed a tight timeout, so give
+// the subprocess and the jest test generous headroom to avoid false-red flakiness.
+jest.setTimeout(90_000);
+
 function runCli(args: string): { stdout: string; stderr: string; exitCode: number } {
   try {
-    const stdout = execSync(`node "${CLI_BIN}" ${args}`, { encoding: 'utf8', timeout: 15000 });
+    const stdout = execSync(`node "${CLI_BIN}" ${args}`, { encoding: 'utf8', timeout: 60_000 });
     return { stdout, stderr: '', exitCode: 0 };
   } catch (err: unknown) {
     const e = err as { stdout?: string; stderr?: string; status?: number };

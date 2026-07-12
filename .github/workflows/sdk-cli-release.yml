@@ -234,14 +234,14 @@ jobs:
             echo "❌ pkg produced no binary for target ${{ matrix.target }}"
             exit 1
           fi
-          mv "$produced" "smart-cli-${{ matrix.target }}${{ matrix.ext }}"
+          mv "$produced" "evolith-cli-${{ matrix.target }}${{ matrix.ext }}"
           ls -la
 
       - name: Upload Binary Artifact
         uses: actions/upload-artifact@v7
         with:
           name: binaries-${{ matrix.target }}
-          path: ${{ env.CLI_DIR }}/binaries/smart-cli-${{ matrix.target }}${{ matrix.ext }}
+          path: ${{ env.CLI_DIR }}/binaries/evolith-cli-${{ matrix.target }}${{ matrix.ext }}
           if-no-files-found: error
           retention-days: 7
 
@@ -256,13 +256,13 @@ jobs:
         include:
           - os: ubuntu-latest
             target: node20-linux-x64
-            bin: smart-cli-node20-linux-x64
+            bin: evolith-cli-node20-linux-x64
           - os: macos-latest
             target: node20-macos-x64
-            bin: smart-cli-node20-macos-x64
+            bin: evolith-cli-node20-macos-x64
           - os: windows-latest
             target: node20-win-x64
-            bin: smart-cli-node20-win-x64.exe
+            bin: evolith-cli-node20-win-x64.exe
     runs-on: ${{ matrix.os }}
     steps:
       - name: Download Binary
@@ -303,14 +303,14 @@ jobs:
 
       - name: Setup Binary
         shell: bash
-        run: chmod +x ./binaries/smart-cli-node20-linux-x64
+        run: chmod +x ./binaries/evolith-cli-node20-linux-x64
 
       - name: Smoke Test - Init Command
         shell: bash
         run: |
           mkdir -p /tmp/evolith-test
           cd /tmp/evolith-test
-          echo "test-project" | "$GITHUB_WORKSPACE/binaries/smart-cli-node20-linux-x64" init --runtime nodejs --monorepo none --arch clean \
+          echo "test-project" | "$GITHUB_WORKSPACE/binaries/evolith-cli-node20-linux-x64" init --runtime nodejs --monorepo none --arch clean \
             || { echo "❌ Init command smoke test failed"; exit 1; }
           ls -la
           echo "✅ Init command smoke test completed"
@@ -371,9 +371,9 @@ jobs:
             ### 📦 Assets
             | Platform | Architecture | Download |
             |----------|--------------|----------|
-            | Linux | x64 | `smart-cli-node20-linux-x64` |
-            | macOS | x64 | `smart-cli-node20-macos-x64` |
-            | Windows | x64 | `smart-cli-node20-win-x64.exe` |
+            | Linux | x64 | `evolith-cli-node20-linux-x64` |
+            | macOS | x64 | `evolith-cli-node20-macos-x64` |
+            | Windows | x64 | `evolith-cli-node20-win-x64.exe` |
 
             ### 🚀 Installation
 

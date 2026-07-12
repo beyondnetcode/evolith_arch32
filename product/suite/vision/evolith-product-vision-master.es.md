@@ -4,7 +4,7 @@
 
 **Estado:** Aprobado  
 **Propietario:** Evolith Architecture Board  
-**Última Actualización:** 2026-07-02
+**Última Actualización:** 2026-07-11
 
 ---
 
@@ -45,6 +45,42 @@ Evolith proporciona:
 4. una cadena de auditoría entre humanos, agentes, herramientas y código fuente;
 5. una capa de gobernanza neutral respecto de proveedores;
 6. un mecanismo de aprendizaje upstream desde productos satélite hacia Evolith Core.
+
+### 1.5 Esencia y Punta de Lanza (Wedge)
+
+La declaración de categoría (§1.2) es la narrativa **umbrella** (plataforma). La esencia del producto, en lenguaje simple, es:
+
+> **Evolith hace que las decisiones de arquitectura se cumplan de verdad — automáticamente, incluso cuando quien programa es una IA.**
+
+El principio nuclear es **READ vs CONTROL**. Todo el mercado (developer portals, suites de arquitectura) hace *READ*: expone su catálogo *a* los agentes de IA en modo lectura y confía en que se porten bien. Nadie hace *CONTROL*: restringir de forma determinista lo que el agente *produce*. Evolith ocupa ese frente — compila las decisiones (ADR, C4, Phase Gates) en guardrails ejecutables, se los impone al agente antes de generar, y bloquea el merge si se violan.
+
+> **No le das contexto al agente. Le impones un contrato.**
+
+Esta esencia es la **punta de lanza de entrada al mercado** (el wedge): la gobernanza de arquitectura ejecutable, que corresponde al **Phase Gate 3 (Architecture Drift)**. Se aterriza por ese frente —donde hoy no hay incumbente— y se expande hacia el plano de gobernanza completo del SDLC descrito en la declaración umbrella. El análisis competitivo de este segundo eje se detalla en el [Posicionamiento Estratégico y Panorama Comparativo](../positioning/evolith-strategic-positioning-comparative-landscape.es.md) (§§13-15).
+
+### 1.6 En simple: la analogía de la obra
+
+Construir software es como construir un edificio: va desde "queremos un edificio aquí" (la idea) hasta entregar las llaves (producción).
+
+Hoy la mayoría de los proyectos son **una obra sin inspector**: los planos (las decisiones de arquitectura) están en un cajón que nadie abre, cada quien construye a su manera, y ahora llegan **albañiles-robot** (la IA) que levantan paredes rapidísimo sin mirar los planos. Todo parece ir bien hasta que, meses después, el edificio tiene grietas, nadie sabe quién puso qué, y arreglarlo cuesta una fortuna.
+
+Evolith es **el jefe de obra y el inspector, en uno**. Hace tres cosas:
+
+1. **Pone un control en cada etapa (los 5 Phase Gates).** No empieza una etapa hasta que la anterior está aprobada — como no se vierte el cemento sin planos aprobados, ni se levantan paredes sin que la base pase la inspección.
+2. **Lleva un acta que no se puede borrar (la evidencia).** Quién aprobó qué, cuándo y con qué prueba. Ante una auditoría, la respuesta ya está lista.
+3. **Aplica las mismas reglas a todos — personas y robots.** Nadie se salta la inspección por ir rápido.
+
+| Etapa | En la obra | Phase Gate |
+|---|---|---|
+| Idea | ¿Vale la pena construir? | 1 · Discovery |
+| Planos | Proyecto y planos aprobados | 2 · Diseño |
+| Construcción | Que se construya según los planos | 3 · Construcción (Architecture Drift) |
+| Revisión | Pruebas de calidad y seguridad | 4 · QA e Integración |
+| Entrega | Inspección final antes de las llaves | 5 · Release |
+
+Lo que Evolith **no** hace es tan importante como lo que hace: el jefe de obra no es el electricista ni el plomero — los coordina y certifica. Evolith no reemplaza tus herramientas (Jira organiza el trabajo, la IA construye, Langfuse vigila); las deja hacer su trabajo pero conserva la autoridad de decir qué etapa está aprobada.
+
+> **Evolith convierte la construcción de software de una obra sin control —donde todos, incluida la IA, hacen lo que quieren y las grietas aparecen tarde— en una obra gobernada: con inspecciones en cada etapa, un acta que no se puede borrar, y las mismas reglas para humanos y robots, desde la idea hasta las llaves.**
 
 ---
 

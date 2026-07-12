@@ -7178,6 +7178,20 @@
         "gate evaluate -p discovery --core emits ADR-0073 GateEvidence (verdict failed); phase advance blocks; sdlc gate-status --core unified"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-460",
+      "closedAt": "2026-07-12",
+      "closureCommit": "a15c5b76",
+      "evidence": [
+        "src/sdk/cli/scripts/gen-api-catalog.mjs",
+        "src/sdk/cli/src/commands/api/api.catalog.generated.ts",
+        "src/packages/mcp-server/src/tools/api-catalog-parity.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/mcp-server && npx jest api-catalog-parity (3/3) — CLI catalog == live MCP registry (47 tools / 11 resources incl. GT-520 capabilities+contracts)"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

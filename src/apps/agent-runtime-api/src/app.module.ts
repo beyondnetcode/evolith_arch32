@@ -5,6 +5,7 @@ import { AgentRuntimeModule } from './agent-runtime/agent-runtime.module';
 import { HealthController } from './health/health.controller';
 import { MetricsController } from './health/metrics.controller';
 import { ApiKeyGuard } from './auth/api-key.guard';
+import { TenantCorpusGuard } from './auth/tenant-corpus.guard';
 
 @Module({
   imports: [
@@ -13,8 +14,12 @@ import { ApiKeyGuard } from './auth/api-key.guard';
   ],
   controllers: [HealthController, MetricsController],
   providers: [
-    // Global API-key guard; @Public() routes (health, root) bypass it.
+    // Global guards run in registration order (GT-439):
+    //   1. ApiKeyGuard      — authenticate (API key or tenant JWT), attach principal.
+    //   2. TenantCorpusGuard — authorize per-tenant corpus isolation.
+    // @Public() routes (health, root, metrics) bypass both.
     { provide: APP_GUARD, useClass: ApiKeyGuard },
+    { provide: APP_GUARD, useClass: TenantCorpusGuard },
   ],
 })
 export class AppModule {}

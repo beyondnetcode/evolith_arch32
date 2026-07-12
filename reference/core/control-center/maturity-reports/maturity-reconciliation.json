@@ -18,7 +18,7 @@
     }
   ],
   "evidence": {
-    "closureRecords": 404,
+    "closureRecords": 417,
     "cliPackage": "@evolith/smart-cli@1.1.4",
     "adrCount": 119,
     "rulesetCount": 144,

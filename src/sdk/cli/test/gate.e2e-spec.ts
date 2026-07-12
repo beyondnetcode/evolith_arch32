@@ -23,14 +23,18 @@ async function runCommand(instance: TestingModule, args: string[]): Promise<void
   }
 }
 
-const REPO_ROOT = path.resolve(__dirname, '../../..');
+// Repo root = .../evolith. The taxonomy refactor (98a20dca) moved rulesets/
+// under src/ but left reference/ at the repo root, so the two now live in
+// different roots: `gate evaluate --core` needs <root>/reference/governance/
+// sdlc/gates, while the ADR-0073 schemas live under <root>/src/rulesets/schema.
+const REPO_ROOT = path.resolve(__dirname, '../../../..');
 const PHASES = ['discovery', 'design', 'construction', 'qa', 'release'] as const;
 
 function loadValidator(schemaFile: string) {
   const ajv = new Ajv({ allErrors: true, strict: false });
   addFormats(ajv);
   const schema = JSON.parse(
-    fs.readFileSync(path.join(REPO_ROOT, 'rulesets', 'schema', schemaFile), 'utf-8'),
+    fs.readFileSync(path.join(REPO_ROOT, 'src', 'rulesets', 'schema', schemaFile), 'utf-8'),
   );
   return ajv.compile(schema);
 }

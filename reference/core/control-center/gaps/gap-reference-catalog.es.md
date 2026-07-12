@@ -776,9 +776,15 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Cierre:**
 - [x] `mcp-serve.e2e-spec.ts` eliminado
 - [x] no quedan invocaciones `['mcp', …]` en la suite e2e del CLI
-- [ ] suite e2e del CLI en verde _(refs mcp eliminadas + help/version verdes; los ~12 fallos restantes de la suite son deuda de fixtures legacy NO relacionada — spawneada como tarea aparte)_
+- [x] suite e2e del CLI en verde — **18 suites / 132 tests pasan** (`npx jest --config test/jest-e2e.json`), solo-tests, sin cambio de código de producto
 
-**Referencias:** `src/sdk/cli/test/mcp-serve.e2e-spec.ts`; `src/sdk/cli/test/e2e/cli-e2e.test.ts:75,79-82`; GT-449
+**Registro de cierre (2026-07-12):** Los ~12 fallos restantes NO eran (solo) deuda de fixtures legacy como se asumió primero — modernizar los fixtures no puso en verde ningún test. Causas raíz reales y fixes solo-tests:
+1. **Higiene de fixtures** — los 3 manifiestos `beforeAll` de `cli-e2e.test.ts` (`test-repo`/`sdlc-repo`/`arch-repo`) tenían forma legacy `coreRef/governance/product`; reescritos a manifiestos Satellite `evolith.dev/v1` válidos que reflejan `src/sdk/cli/templates/evolith.yaml.example` (helper `V1_MANIFEST` compartido). Base correcta, pero por sí solo no pone ningún test en verde.
+2. **`gate.e2e-spec.ts` (6 tests)** — `REPO_ROOT` resolvía a `.../evolith/src`, pero `gate evaluate --core` necesita `<core>/reference/governance/sdlc/gates`, que el refactor de taxonomía `98a20dca` dejó en la raíz del repo (movió `rulesets/`→`src/` pero no `reference/`). Corregido `REPO_ROOT`→ raíz real del repo y carga de esquemas ADR-0073 desde `src/rulesets/schema/`.
+3. **5 tests `validate`/arch en `cli-e2e.test.ts`** — `validate` corre el corpus completo de 94 reglas contra un fixture vacío; las MUST bloqueantes (CLI-RR, EVD, DEP, MM-hexagonal, cada topología) fallan sin importar la forma del yaml, así que `passed|warning`/exit 0 es inalcanzable. Reescritos para verificar el contrato ADR-0073 real: el comando emite un envelope success bien formado y su exit code refleja el veredicto (`failed`→1, si no 0).
+4. **`sdlc gate-status` (1 test)** — misma rotura de `reference/` no co-ubicado (rastreada como defecto de producto bajo **GT-451 F-007**: CLI instalado `ENOENT scandir reference/governance/sdlc/gates`). Solo-tests: el describe `sdlc` ahora levanta un Core mock autocontenido (marcador `rulesets/` + `gate-f*.json` canónicos copiados en runtime) y corre el satélite dentro de él, para resolución determinista. El fix de fondo del CLI standalone queda con GT-451.
+
+**Referencias:** `src/sdk/cli/test/mcp-serve.e2e-spec.ts`; `src/sdk/cli/test/e2e/cli-e2e.test.ts`; `src/sdk/cli/test/gate.e2e-spec.ts`; `src/sdk/cli/templates/evolith.yaml.example`; commit `98a20dca`; GT-449, GT-451 (F-007)
 
 #### GT-482
 

@@ -4,7 +4,7 @@ Each runnable flow (surface) owns its **test playbook**: the surface under test,
 the command that runs its dedicated end-to-end suite, the scenarios it drives,
 and the expected verdict. This keeps E2E coverage explicit and per-flow rather
 than implicit or conflated with unit/integration suites. The `qa-e2e` agent
-(`.bmad-core/agents/qa-e2e.md`) executes these playbooks; the QA Lead aggregates.
+(`reference/core/foundations/agent-skills/qa-e2e.md`) executes these playbooks; the QA Lead aggregates.
 
 ## Purpose
 

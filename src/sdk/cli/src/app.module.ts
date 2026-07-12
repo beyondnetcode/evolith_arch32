@@ -32,6 +32,7 @@ import { UpdateCommand } from './commands/update/update.command';
 import { SatelliteCreateCommand } from './commands/satellite';
 import { SatelliteAdoptCommand } from './commands/satellite/satellite-adopt.command';
 import { ChatCommand } from './commands/chat/chat.command';
+import { EnforceCommand } from './commands/enforce/enforce.command';
 
 import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/validate-satellite.use-case';
 import { EvaluateGateUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/evaluate-gate.use-case';
@@ -95,6 +96,7 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     AliasCommand,
     SatelliteCreateCommand,
     ChatCommand,
+    EnforceCommand,
     EvaluateGateUseCase,
     ProposePhaseAdvanceUseCase,
     {

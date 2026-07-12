@@ -19,7 +19,18 @@
       "rationale": "ADR-0002 §Decision: Core is pure TypeScript. Framework coupling prevents domain extraction and pure testing.",
       "validationQuery": "Static analysis: Core layer files import no framework packages (nestjs, typeorm, express, mongoose).",
       "blocking": true,
-      "layer": "Core"
+      "layer": "Core",
+      "enforce": {
+        "engine": "enforcer",
+        "tool": "dependency-cruiser",
+        "toolRuleId": "hxa-01-core-no-framework",
+        "runtime": "node",
+        "mode": "block",
+        "config": {
+          "from": { "path": "^src/(domain|core)/" },
+          "to": { "path": "node_modules/(@nestjs|typeorm|express|mongoose)/" }
+        }
+      }
     },
     {
       "id": "HXA-02",
@@ -30,7 +41,18 @@
       "rationale": "ADR-0002 §Decision: Application orchestrates Core logic. Infrastructure belongs in adapters.",
       "validationQuery": "Application layer files import only Core layer and @nestjs/common decorators.",
       "blocking": true,
-      "layer": "Application"
+      "layer": "Application",
+      "enforce": {
+        "engine": "enforcer",
+        "tool": "dependency-cruiser",
+        "toolRuleId": "hxa-02-application-no-infrastructure",
+        "runtime": "node",
+        "mode": "block",
+        "config": {
+          "from": { "path": "^src/application/" },
+          "to": { "path": "^src/infrastructure/" }
+        }
+      }
     },
     {
       "id": "HXA-03",
@@ -52,7 +74,19 @@
       "rationale": "ADR-0002 §Decision: Dependency inversion is the core principle of hexagonal architecture.",
       "validationQuery": "eslint-plugin-boundaries or equivalent static analysis enforces no backward imports.",
       "blocking": true,
-      "layer": "All"
+      "layer": "All",
+      "enforce": {
+        "engine": "enforcer",
+        "tool": "dependency-cruiser",
+        "toolRuleId": "hxa-04-no-backward-imports",
+        "runtime": "node",
+        "mode": "block",
+        "config": {
+          "comment": "Core must not import Application or Infrastructure (dependency inversion).",
+          "from": { "path": "^src/(domain|core)/" },
+          "to": { "path": "^src/(application|infrastructure)/" }
+        }
+      }
     },
     {
       "id": "HXA-05",
@@ -63,7 +97,19 @@
       "rationale": "ADR-0002 §4: AOP isolation rule. Framework decorators in domain pollute the domain with infrastructure concerns.",
       "validationQuery": "Core/Application classes have no imports from Sentry, OpenTelemetry SDK, caching libraries, or transaction managers.",
       "blocking": true,
-      "layer": "Core, Application"
+      "layer": "Core, Application",
+      "enforce": {
+        "engine": "enforcer",
+        "tool": "dependency-cruiser",
+        "toolRuleId": "hxa-05-no-aop-sdk-in-core",
+        "runtime": "node",
+        "mode": "block",
+        "config": {
+          "comment": "Core/Application must not import observability, caching or transaction SDKs.",
+          "from": { "path": "^src/(domain|core|application)/" },
+          "to": { "path": "node_modules/(@sentry|@opentelemetry|cache-manager|typeorm-transactional)/" }
+        }
+      }
     },
     {
       "id": "HXA-06",

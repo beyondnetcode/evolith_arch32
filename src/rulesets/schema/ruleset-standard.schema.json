@@ -39,6 +39,50 @@
     { "required": ["principles"] }
   ],
   "definitions": {
+    "enforce": {
+      "type": "object",
+      "description": "How a rule is enforced by an external static analyzer (GT-516 · EAG-10). Additive and optional: a rule with no enforce block is evaluated by the native engine. When engine='enforcer', the PolicyCompiler lowers this block into the tool's native check configuration.",
+      "properties": {
+        "engine": {
+          "type": "string",
+          "enum": ["native", "opa", "enforcer"],
+          "description": "'enforcer' routes to an adapter; 'native'/'opa' stay on their own engine."
+        },
+        "tool": {
+          "type": "string",
+          "description": "Enforcer tool that owns this rule (matches an enforcer-catalog.json entry)."
+        },
+        "toolRuleId": {
+          "type": "string",
+          "description": "The tool's own rule id, when it differs from the Evolith rule id."
+        },
+        "runtime": {
+          "type": "string",
+          "enum": ["node", "dotnet", "php", "python", "iac", "shell"],
+          "description": "Runtime ecosystem the analyzer needs (selects the adapter / gates fallback)."
+        },
+        "config": {
+          "type": "object",
+          "description": "Tool-native config fragment, inlined (e.g. a dependency-cruiser from/to clause)."
+        },
+        "configRef": {
+          "type": "string",
+          "description": "Reference to an external tool config, when it is not inlined."
+        },
+        "severityMap": {
+          "type": "object",
+          "additionalProperties": { "type": "string", "enum": ["error", "warning", "info"] },
+          "description": "Maps the tool's own severity vocabulary onto canonical violation severities."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["warn", "block"],
+          "description": "Enforcement strength. Defaults from the rule's blocking flag when omitted."
+        }
+      },
+      "required": ["engine", "tool"],
+      "additionalProperties": false
+    },
     "rule": {
       "type": "object",
       "properties": {
@@ -53,6 +97,7 @@
         "validationQuery": { "type": "string" },
         "blocking": { "type": "boolean" },
         "enforcement": { "type": "string" },
+        "enforce": { "$ref": "#/definitions/enforce" },
         "layer": { "type": "string" },
         "examples": {
           "type": "array",

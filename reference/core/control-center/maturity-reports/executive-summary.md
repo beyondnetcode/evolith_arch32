@@ -29,7 +29,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | 2 | Highest-risk area | `Evolith CLI` has the largest weighted open load. | [GT-451](../gaps/gap-reference-catalog.md#gt-451), [GT-453](../gaps/gap-reference-catalog.md#gt-453), [GT-454](../gaps/gap-reference-catalog.md#gt-454), [GT-458](../gaps/gap-reference-catalog.md#gt-458), [GT-459](../gaps/gap-reference-catalog.md#gt-459), [GT-456](../gaps/gap-reference-catalog.md#gt-456), +31 |
 | 3 | Quick wins | High criticality with XS/S complexity. | [GT-453](../gaps/gap-reference-catalog.md#gt-453), [GT-442](../gaps/gap-reference-catalog.md#gt-442), [GT-454](../gaps/gap-reference-catalog.md#gt-454), [GT-458](../gaps/gap-reference-catalog.md#gt-458), [GT-459](../gaps/gap-reference-catalog.md#gt-459), [GT-475](../gaps/gap-reference-catalog.md#gt-475) |
 | 4 | P1 wave | Next hardening after P0 is cleared. | [GT-453](../gaps/gap-reference-catalog.md#gt-453), [GT-442](../gaps/gap-reference-catalog.md#gt-442), [GT-454](../gaps/gap-reference-catalog.md#gt-454), [GT-458](../gaps/gap-reference-catalog.md#gt-458), [GT-459](../gaps/gap-reference-catalog.md#gt-459), [GT-475](../gaps/gap-reference-catalog.md#gt-475), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-437](../gaps/gap-reference-catalog.md#gt-437), +8 |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-457](../gaps/gap-reference-catalog.md#gt-457), [GT-480](../gaps/gap-reference-catalog.md#gt-480), [GT-481](../gaps/gap-reference-catalog.md#gt-481), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-445](../gaps/gap-reference-catalog.md#gt-445), [GT-460](../gaps/gap-reference-catalog.md#gt-460), +29 |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-457](../gaps/gap-reference-catalog.md#gt-457), [GT-480](../gaps/gap-reference-catalog.md#gt-480), [GT-481](../gaps/gap-reference-catalog.md#gt-481), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-445](../gaps/gap-reference-catalog.md#gt-445), [GT-460](../gaps/gap-reference-catalog.md#gt-460), +30 |
 
 ## Current Blockers
 
@@ -44,13 +44,13 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Indicator | Value |
 |---|---:|
 | Canonical board date | 2026-07-09 |
-| Total gaps | 509 |
+| Total gaps | 510 |
 | Closed gaps | 451 |
-| Open gaps | 58 |
+| Open gaps | 59 |
 | Open P0 | 3 |
 | Open P1 | 16 |
-| Open P2 | 35 |
-| Total closure | 88.6% |
+| Open P2 | 36 |
+| Total closure | 88.4% |
 | Closure evidence records | 404 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
@@ -60,7 +60,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | `Cross` | 3 | 2 | 1 | [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
 | `Infra` | 4 | 0 | 3 | [GT-442](../gaps/gap-reference-catalog.md#gt-442), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-437](../gaps/gap-reference-catalog.md#gt-437), [GT-464](../gaps/gap-reference-catalog.md#gt-464) |
 | `Agent Runtime` | 2 | 0 | 2 | [GT-438](../gaps/gap-reference-catalog.md#gt-438), [GT-441](../gaps/gap-reference-catalog.md#gt-441) |
-| `Security` | 2 | 0 | 1 | [GT-439](../gaps/gap-reference-catalog.md#gt-439), [GT-444](../gaps/gap-reference-catalog.md#gt-444) |
+| `Governance` | 4 | 0 | 0 | [GT-480](../gaps/gap-reference-catalog.md#gt-480), [GT-445](../gaps/gap-reference-catalog.md#gt-445), [GT-477](../gaps/gap-reference-catalog.md#gt-477), [GT-510](../gaps/gap-reference-catalog.md#gt-510) |
 
 ## Source and Refresh Rule
 

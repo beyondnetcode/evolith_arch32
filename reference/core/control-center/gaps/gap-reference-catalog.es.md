@@ -674,9 +674,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Fix propuesto:** Poner `mutative: true` en los esquemas de las tools `write`, extender la policy OPA `abac-mcp-tool-access`, y añadir un test de paridad que exija que toda tool ABAC `write` declare `mutative`. Nota: `evolith-phase-advance` es una propuesta read-only no vinculante según GT-379 y podría reclasificarse a `read`.
 
 **Cierre:**
-- [ ] `mutative: true` en satellite-create/adopt + moscow-create/update/remove
-- [ ] test de paridad: toda tool ABAC `write` es `mutative` (o read justificado)
-- [ ] clase ABAC de `evolith-phase-advance` decidida (write+mutative vs read)
+- [x] `mutative: true` en satellite-create/adopt + moscow-create/update/remove
+- [x] test de paridad: toda tool ABAC `write` es `mutative` (o read justificado)
+- [x] clase ABAC de `evolith-phase-advance` decidida (write+mutative vs read)
 
 **Referencias:** `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts:136-146`; `src/packages/mcp-server/src/abac/abac-evaluator.ts:65-101`; GT-158, GT-368, GT-379
 
@@ -774,9 +774,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Fix propuesto:** Eliminar `mcp-serve.e2e-spec.ts` y quitar las dos referencias a `mcp` en `cli-e2e.test.ts` (quitar la aserción de help; reemplazar el test de version con la superficie standalone `evolith-mcp serve` o un comando válido).
 
 **Cierre:**
-- [ ] `mcp-serve.e2e-spec.ts` eliminado
-- [ ] no quedan invocaciones `['mcp', …]` en la suite e2e del CLI
-- [ ] suite e2e del CLI en verde
+- [x] `mcp-serve.e2e-spec.ts` eliminado
+- [x] no quedan invocaciones `['mcp', …]` en la suite e2e del CLI
+- [ ] suite e2e del CLI en verde _(refs mcp eliminadas + help/version verdes; los ~12 fallos restantes de la suite son deuda de fixtures legacy NO relacionada — spawneada como tarea aparte)_
 
 **Referencias:** `src/sdk/cli/test/mcp-serve.e2e-spec.ts`; `src/sdk/cli/test/e2e/cli-e2e.test.ts:75,79-82`; GT-449
 

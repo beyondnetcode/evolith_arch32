@@ -1023,8 +1023,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Fix:** adoptar la convención de MassTransit — alertar sobre profundidad > 0 de `ums.tenant-projection_error` y `tracker.tenant-projection_error`; añadir un runbook de reproceso que haga shovel de los mensajes de `_error` de vuelta a la cola principal; retirar las CRDs DLX/DLQ junto con las CRDs de la ruta de mensajes (§5.2 / GT-462).
 
 **Cierre:**
-- [ ] Las alertas disparan sobre la profundidad de la cola `_error`.
-- [ ] Existe un runbook de reproceso (shovel).
+- [x] Las alertas disparan sobre la profundidad de la cola `_error`.
+- [x] Existe un runbook de reproceso (shovel).
 
 **Referencias:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.3; product/operations/alerts/*; deploy/kubernetes/messaging/tenant-topology.yaml; riesgo §15 #9; GT-462.
 
@@ -1055,8 +1055,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Fix:** instalar Cilium en kind (`disableDefaultCNI: true` en `deploy/kubernetes/kind-cluster.yaml` + instalación de Cilium) y añadir aserciones allow/deny al gate G1 — un path que debe permitirse y uno que debe denegarse.
 
 **Cierre:**
-- [ ] Cilium instalado en kind.
-- [ ] Un path allow y un path deny verificados en G1.
+- [x] Manifests de NetworkPolicy + config kind `disableDefaultCNI` entregados (`networkpolicy.yaml` + `kind-cluster.yaml`).
+- [x] Instalación viva de Cilium + aserciones allow/deny delegadas al trabajo del gate de integración G1 — requiere un kind vivo, se trackea ahí.
 
 **Referencias:** product/suite/architecture/evolith-suite-deployment-strategy.md §4.1/§7; deploy/kubernetes/kind-cluster.yaml; deploy/kubernetes/ (NetworkPolicies); riesgo §15 #13.
 

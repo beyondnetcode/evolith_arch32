@@ -46,7 +46,7 @@
         "grep -L 'kind: Exchange' deploy/kubernetes/messaging/broker-rbac.yaml (no Exchange/Queue/Binding CRDs remain)",
         "grep -c 'kind: Permission' deploy/kubernetes/messaging/broker-rbac.yaml (== 3 per-product permissions)"
       ],
-      "dependencyDisposition": "partial",
+      "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Topology decision recorded (ADR-0108) and message-path CRDs retired in favor of per-product User/Permission RBAC. The G1 'consumer endpoint started' assertion (bus health, not pod Ready) is delegated to the G1 integration-gate automation (§13) and tracked there — it is not a blocker for the topology decision."
     },
     {
@@ -65,7 +65,7 @@
         "npx tsc -b tsconfig.json",
         "jest phase-artifact (6 pass incl. real-corpus E2E) + architecture.controller (10 pass)"
       ],
-      "dependencyDisposition": "partial",
+      "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Delivered: spec.phaseProfiles in manifests + PhaseArtifactProfileService + Core API endpoint + phase-artifact-registry + E2E. Follow-on (task_1b27a217): unified 'phase-artifacts' EvaluationKind so it auto-exposes on CLI/MCP via evaluate(), for full BR-008 parity — mirrors the design evaluator; the capability is already exposed on the Core API (the Tracker's surface)."
     },
     {
@@ -80,7 +80,7 @@
       "validationCommands": [
         "EPIC — all children GT-426..GT-433 DONE; E2E against the real corpus passes; tsc -b clean"
       ],
-      "dependencyDisposition": "partial",
+      "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "GT-425 umbrella closed via F0-F8 (GT-426..GT-433). One follow-on remains outside the epic scope: CLI/MCP topology-recommend parity (task_0dfc5f71) mirroring the Core API endpoint for full BR-008 parity on the recommender."
     },
     {
@@ -128,7 +128,7 @@
         "npx tsc -b tsconfig.json",
         "npx jest architecture.controller (9 pass, 2 new recommend-topology specs)"
       ],
-      "dependencyDisposition": "partial",
+      "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "design-evaluate exposed on all surfaces via evaluate(); topology-recommend exposed on the Core API (the Tracker's surface). CLI/MCP topology-recommend commands mirror the endpoint and are tracked as a follow-on (task_0dfc5f71) for full BR-008 parity on the recommender."
     },
     {

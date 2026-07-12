@@ -55,10 +55,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **Evidence:** `08-validate-tracking.mjs:7-14` → `reference/core/control-center/gap-tracking.md` etc. (old); real files at `reference/core/control-center/gaps/…` and `…/evidence/gap-closure-evidence.json`. Same stale constants in `sync-tracking-order.mjs:6-7`, `sync-tables.mjs:6-7`, `fix-tracking-parity.mjs:11-12`, `fix-tracking-structural.mjs:6-7`, `sync-project-board.mjs:31-32`. Running the guard locally reproduces the abort. Its only CI caller (`docs.yml:42`) is `workflow_dispatch`-only.
 
-**Proposed fix:** Add the `gaps/` + `evidence/` path segments across the six scripts and re-arm the guard on push/PR. **Constraint:** `.harness` is plugin-owned; local edits are blocked by governance rule **S-16**, so the fix must be proposed upstream in `unimar_arch` (not edited from this satellite).
+**Proposed fix:** Add the `gaps/` + `evidence/` path segments across the six scripts and re-arm the guard on push/PR. The `.harness/` scripts are owned by this repository and are fixed directly here (cf. GT-475: the `03-validate-root-cleanliness.mjs` allowlist was corrected in-repo the same way).
 
 **Closure:**
-- [ ] paths corrected in all six scripts (via upstream `unimar_arch` proposal)
+- [ ] paths corrected in all six scripts
 - [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` runs the semantic validation (no "Missing tracking artifacts")
 - [ ] guard armed on push/PR (not only `workflow_dispatch`)
 
@@ -122,7 +122,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **Evidence:** `gap-tracking.es.md` uses 13 `HECHO` tokens (GT-462, GT-466..474 et al.) vs 437 `COMPLETADO`; `08-validate-tracking.mjs:16-30` has no `HECHO` entry; `gap-reference-catalog.md` (GT-417) records the prior HECHO→COMPLETADO normalization.
 
-**Proposed fix:** Normalize the 13 `HECHO` rows back to `COMPLETADO` (preferred, preserves the GT-417 convention), or add a `HECHO → done` alias to `STATUS_MAP` (the `.harness` edit is S-16-blocked — see GT-476).
+**Proposed fix:** Normalize the 13 `HECHO` rows back to `COMPLETADO` (preferred, preserves the GT-417 convention), or add a `HECHO → done` alias to `STATUS_MAP` (a `.harness` edit, done directly in this repo — see GT-476).
 
 **Closure:**
 - [ ] no `HECHO` status tokens remain in `gap-tracking.es.md`

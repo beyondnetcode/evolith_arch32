@@ -34,7 +34,9 @@ const allowedFiles = new Set([
   "package-lock.json",
   "tsconfig.json",
   "tsconfig.base.json",
-  ".env"
+  ".env",
+  // Root satellite contract manifest (evolith.dev/v1) — the repo's own governance manifest.
+  "evolith.yaml"
 ]);
 
 // Explicit whitelist of allowed directories in the root directory.
@@ -51,11 +53,14 @@ const allowedDirectories = new Set([
   "node_modules",
   "reference",
   "rulesets",
-  "sdk",
-  "apps",
+  // Source workspaces live under src/ (npm workspaces: src/sdk/*, src/apps/*,
+  // src/packages/*, src/tests). The old flat root layout (apps/, packages/,
+  // sdk/, tests/) was relocated here, so those are no longer permitted at root.
+  "src",
+  // Product documentation corpus and a sample satellite fixture project.
+  "product",
+  "test-project",
   "examples",
-  "packages",
-  "tests",
   "wiki"
 ]);
 

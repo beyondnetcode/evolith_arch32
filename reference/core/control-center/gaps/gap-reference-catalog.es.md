@@ -55,10 +55,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Evidencia:** `08-validate-tracking.mjs:7-14` → `reference/core/control-center/gap-tracking.md` etc. (viejo); archivos reales en `reference/core/control-center/gaps/…` y `…/evidence/gap-closure-evidence.json`. Mismas constantes obsoletas en `sync-tracking-order.mjs:6-7`, `sync-tables.mjs:6-7`, `fix-tracking-parity.mjs:11-12`, `fix-tracking-structural.mjs:6-7`, `sync-project-board.mjs:31-32`. Correr el guard reproduce el aborto. Su único caller de CI (`docs.yml:42`) es solo `workflow_dispatch`.
 
-**Fix propuesto:** Añadir los segmentos `gaps/` + `evidence/` en los seis scripts y re-armar el guard en push/PR. **Restricción:** `.harness` es propiedad del plugin; las ediciones locales están bloqueadas por la regla de gobernanza **S-16**, así que el fix debe proponerse upstream en `unimar_arch` (no editarse desde este satélite).
+**Fix propuesto:** Añadir los segmentos `gaps/` + `evidence/` en los seis scripts y re-armar el guard en push/PR. Los scripts de `.harness/` son propiedad de este repositorio y se arreglan directamente aquí (cf. GT-475: el allowlist de `03-validate-root-cleanliness.mjs` se corrigió en el repo de la misma forma).
 
 **Cierre:**
-- [ ] rutas corregidas en los seis scripts (vía propuesta upstream a `unimar_arch`)
+- [ ] rutas corregidas en los seis scripts
 - [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` ejecuta la validación semántica (sin "Missing tracking artifacts")
 - [ ] guard armado en push/PR (no solo `workflow_dispatch`)
 
@@ -122,7 +122,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Evidencia:** `gap-tracking.es.md` usa 13 tokens `HECHO` (GT-462, GT-466..474 et al.) vs 437 `COMPLETADO`; `08-validate-tracking.mjs:16-30` no tiene entrada `HECHO`; `gap-reference-catalog.md` (GT-417) registra la normalización previa HECHO→COMPLETADO.
 
-**Fix propuesto:** Normalizar las 13 filas `HECHO` de vuelta a `COMPLETADO` (preferido, preserva la convención de GT-417), o añadir un alias `HECHO → done` al `STATUS_MAP` (la edición de `.harness` está bloqueada por S-16 — ver GT-476).
+**Fix propuesto:** Normalizar las 13 filas `HECHO` de vuelta a `COMPLETADO` (preferido, preserva la convención de GT-417), o añadir un alias `HECHO → done` al `STATUS_MAP` (una edición de `.harness`, hecha directamente en este repo — ver GT-476).
 
 **Cierre:**
 - [ ] no quedan tokens de estado `HECHO` en `gap-tracking.es.md`

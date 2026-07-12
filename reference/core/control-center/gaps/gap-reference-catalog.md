@@ -257,9 +257,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** For each of the 16, verify it is genuinely `DONE` and add a real closure-evidence record (actual closure commit + verification) to `gap-closure-evidence.json`; if a gap is not actually closed, revert its board status. Do not fabricate commits/dates. Then re-run 08 + `09 --check` (both must pass). Follow-on: re-arm 08/09 on push/PR — they currently run only via `workflow_dispatch` (see [GT-476](#gt-476)).
 
 **Closure:**
-- [ ] closure-evidence records added (or statuses corrected) for the 16 gaps
-- [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` passes
-- [ ] `node .harness/scripts/ci/09-reconcile-maturity.mjs --check` passes
+- [x] closure-evidence records added (or statuses corrected) for the 16 gaps
+- [x] `node .harness/scripts/ci/08-validate-tracking.mjs` passes
+- [x] `node .harness/scripts/ci/09-reconcile-maturity.mjs --check` passes
 
 **References:** `.harness/scripts/ci/08-validate-tracking.mjs`; `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/evidence/gap-closure-evidence.json`; GT-476, GT-477
 

@@ -6692,6 +6692,20 @@
         "5 reference/core/foundations/agent-skills/qa-*.md targets confirmed present"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-510",
+      "closedAt": "2026-07-12",
+      "closureCommit": "0d45a08e",
+      "evidence": [
+        ".harness/scripts/ci/08-validate-tracking.mjs",
+        ".harness/scripts/ci/09-reconcile-maturity.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs -> 'Validated 523 gaps and 439 closure records. passed'",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check -> 'Maturity reconciliation matches' (asOf sync 0d45a08e)"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

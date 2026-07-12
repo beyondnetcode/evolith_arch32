@@ -257,9 +257,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Fix propuesto:** Por cada uno de los 16, verificar que esté realmente `DONE` y añadir un registro de cierre real (commit de cierre real + verificación) a `gap-closure-evidence.json`; si un gap no está realmente cerrado, revertir su estado en el tablero. No fabricar commits/fechas. Luego re-ejecutar 08 + `09 --check` (ambos deben pasar). Follow-on: re-armar 08/09 en push/PR — hoy corren solo vía `workflow_dispatch` (ver [GT-476](#gt-476)).
 
 **Cierre:**
-- [ ] registros de cierre añadidos (o estados corregidos) para los 16 gaps
-- [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` pasa
-- [ ] `node .harness/scripts/ci/09-reconcile-maturity.mjs --check` pasa
+- [x] registros de cierre añadidos (o estados corregidos) para los 16 gaps
+- [x] `node .harness/scripts/ci/08-validate-tracking.mjs` pasa
+- [x] `node .harness/scripts/ci/09-reconcile-maturity.mjs --check` pasa
 
 **Referencias:** `.harness/scripts/ci/08-validate-tracking.mjs`; `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/evidence/gap-closure-evidence.json`; GT-476, GT-477
 

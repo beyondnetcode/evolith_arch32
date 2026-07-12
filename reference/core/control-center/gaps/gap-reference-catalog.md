@@ -123,7 +123,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Proposed fix:** Add `enforce:` to `ruleset-standard.schema.json` (`engine, tool, toolRuleId, config|configRef, severityMap, runtime, mode`); implement PolicyCompiler + `evolith enforce compile` (nest-commander, `src/sdk/cli/src/commands/enforce/`) with a per-rule fallback for uncompilable rules; populate the `enforce` block in ADR-0002; add a round-trip test with 0 FP.
 - **Acceptance criteria:**
   - [ ] ADR-0002 rules compile, run, and normalize to `Violation`.
-  - [ ] Uncompilable rules take a documented per-rule fallback (no wholesale failure).
+  - [x] Uncompilable rules take a documented per-rule fallback (no wholesale failure).
   - [ ] Round-trip test passes with 0 false positives.
 - **Dependencies:** GT-514.
 - **Status:** `PENDING`

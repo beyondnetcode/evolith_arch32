@@ -24,7 +24,7 @@ function read(file) {
 }
 
 function stripCell(value) {
-  return value.replace(/`/g, '').replace(/\s+/g, ' ').trim();
+  return value.replace(/\\\|/g, '|').replace(/`/g, '').replace(/\s+/g, ' ').trim();
 }
 
 function parseBoard(content) {
@@ -33,7 +33,7 @@ function parseBoard(content) {
 
   for (const line of content.split('\n')) {
     if (!line.startsWith('| [`')) continue;
-    const cells = line.slice(1, -1).split('|').map((cell) => cell.trim());
+    const cells = line.slice(1, -1).split(/(?<!\\)\|/).map((cell) => cell.trim());
     if (cells.length < 7) continue;
 
     const id = cells[0].match(/(GT-\d+|MT-A\d+)/)?.[1];

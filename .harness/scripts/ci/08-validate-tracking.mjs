@@ -4,13 +4,13 @@ import { execFileSync } from 'child_process';
 import { fileURLToPath, pathToFileURL } from 'url';
 
 const ROOT = path.resolve(process.env.EVOLITH_TRACKING_ROOT || '.');
-const EN_FILE = path.join(ROOT, 'reference/core/control-center/gap-tracking.md');
-const ES_FILE = path.join(ROOT, 'reference/core/control-center/gap-tracking.es.md');
-const EN_CATALOG = path.join(ROOT, 'reference/core/control-center/gap-reference-catalog.md');
-const ES_CATALOG = path.join(ROOT, 'reference/core/control-center/gap-reference-catalog.es.md');
+const EN_FILE = path.join(ROOT, 'reference/core/control-center/gaps/gap-tracking.md');
+const ES_FILE = path.join(ROOT, 'reference/core/control-center/gaps/gap-tracking.es.md');
+const EN_CATALOG = path.join(ROOT, 'reference/core/control-center/gaps/gap-reference-catalog.md');
+const ES_CATALOG = path.join(ROOT, 'reference/core/control-center/gaps/gap-reference-catalog.es.md');
 const CLOSURE_REGISTRY = path.join(
   ROOT,
-  'reference/core/control-center/gap-closure-evidence.json',
+  'reference/core/control-center/evidence/gap-closure-evidence.json',
 );
 
 const STATUS_MAP = new Map([
@@ -46,7 +46,7 @@ function parseTableRows(filePath) {
   for (const line of content.split('\n')) {
     if (line.startsWith('| ID |')) {
       inTable = true;
-      const headers = line.split('|').map((col) => col.trim()).filter(Boolean);
+      const headers = line.split(/(?<!\\)\|/).map((col) => col.trim()).filter(Boolean);
       statusColIndex = headers.findIndex((header) => localePatterns.some((pattern) => header.includes(pattern)));
       if (statusColIndex === -1) statusColIndex = headers.length - 1;
       continue;
@@ -58,7 +58,7 @@ function parseTableRows(filePath) {
     // but must not stop parsing — a later "| ID |" header re-opens parsing.
     if (!line.trim().startsWith('|')) { inTable = false; continue; }
 
-    const cols = line.split('|').map((column) => column.trim()).filter(Boolean);
+    const cols = line.split(/(?<!\\)\|/).map((column) => column.trim()).filter(Boolean);
     const idMatch = cols[0]?.match(/`(GT-\d+|MT-A\d+)`/);
     if (idMatch && statusColIndex !== -1 && cols.length > statusColIndex) {
       rows.push({

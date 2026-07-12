@@ -6,8 +6,10 @@
 **Owner:** Evolith Architecture Board  
 **Parent:** [Evolith Product Vision Master](../vision/evolith-product-vision-master.md)  
 **Created:** 2026-06-10  
-**Last Updated:** 2026-06-10  
+**Last Updated:** 2026-07-11  
 **Review Trigger:** Material capability, licensing, deployment, or product-positioning changes in Evolith or any evaluated platform
+
+> **Update 2026-07-11 — Two competitive axes model.** This document is expanded to recognize that Evolith positions itself across **two complementary competitive axes**: (1) the *umbrella/surround* axis — work, execution, and observability (Langfuse, Claude Cowork, Atlassian), which Evolith **integrates** — covered in §§2-12; and (2) the *architecture governance layer* axis — the layer Evolith **contests and wants to own** (Port, Cortex, OpsLevel, Sonargraph, Lattix, OPA, Checkov, Structurizr, Backstage) — added in §§13-15. The first axis states *where Evolith sits*; the second, *why it wins and against whom*. The scope of this analysis is **Evolith Core / suite**, not the Tracker in isolation.
 
 ---
 
@@ -18,6 +20,8 @@ This document positions Evolith against three relevant market references: Langfu
 It is a **child of the Product Vision Master** and an evidence-based strategic reference. It is not an ADR, does not select a vendor, and does not convert product-specific capabilities into Core architectural rules. Any binding architectural decision derived from this analysis requires its own evidence-backed ADR.
 
 The Evolith column represents the approved product vision and target operating model. It must not be interpreted as an independent maturity certification of every capability.
+
+**Two competitive axes.** The original analysis (§§2-12) compares Evolith against the *surround* it must integrate: work systems (Atlassian), agentic execution (Claude Cowork), and AI observability (Langfuse). Starting at §13 the second axis, absent from the first version, is incorporated: the **executable architecture governance layer** against the products that compete for that job (developer portals, architectural analysis, policy-as-code, and arch-as-code). The second axis is the **market-entry beachhead**; the first is the **platform** into which that beachhead expands.
 
 ---
 
@@ -35,6 +39,12 @@ The strongest concise positioning is:
 > **Jira manages the work. Claude executes work. Langfuse observes the AI. Evolith governs the complete engineering process.**
 
 Evolith's closest functional overlap is with the complete Atlassian ecosystem, not with Langfuse or Claude Cowork. Its defensible differentiation depends on proving that architecture, governance, evidence, human decisions, and agent execution form one enforceable and auditable chain from idea to production.
+
+### 2.1 Two-layer positioning: umbrella + wedge
+
+The conclusion above is the **umbrella** (platform) narrative and remains valid. But anchoring the category in the fight against Atlassian exposes the risk this very document declares in §10 — *"being perceived as another Jira-style tracker with AI"* — a front with 60-70% overlap against a mature incumbent with an installed base.
+
+Market entry must be made through a sharper wedge with no incumbent: **executable architecture governance in the era of AI agents**. While the entire market exposes its catalog *to* agents in read mode (**READ**), no one deterministically restricts what the agent *produces* (**CONTROL**). That is the terrain where Evolith wins without fighting Jira, and where its open-source hook (Core: rulesets, ADRs, CLI, MCP exposure, Architecture Drift) becomes a weapon. The wedge is the umbrella's **Phase Gate 3 (Architecture Drift)**: you land there and expand to the full SDLC governance plane (see §§13-15).
 
 ---
 
@@ -241,6 +251,8 @@ Evolith must therefore demonstrate a simpler and stronger governance narrative:
 
 Without these capabilities operating together, Evolith risks being perceived as another Jira-style tracker with AI features.
 
+**Expanded threat radar (2026-07-11).** The first version placed the risk almost exclusively on Atlassian (umbrella axis). On the architecture governance axis the incumbents with channel and capital are different ones, and they are moving fast: **Sonar** (owner of Structure101 and of the most widely adopted CI quality gate), **Qodo** ("governance infrastructure", already cross-repo), and **Port/Cortex** adding AI agents on top of their knowledge graph. The wedge's defensible window is **12-18 months** before one of these consolidates the *architecture governance for agents* category. The wedge in §14 is precisely the escape route from the "another Jira" risk: it opens a front where today no incumbent is doing CONTROL.
+
 ---
 
 ## 11. Investor Positioning
@@ -259,6 +271,14 @@ Message to avoid:
 
 That description erases Evolith's architecture-governance, evidence, inheritance, Phase Gate, provider-neutrality, and audit differentiation.
 
+### 11.1 Wedge category statement (GTM spearhead)
+
+Under the umbrella statement, the commercial and open-source spearhead is narrower and more urgent:
+
+> **Evolith is the Architecture Control Plane for the era of AI agents: it turns architecture decisions (ADRs, layers, bounded contexts, tech-radar, Phase Gates) into executable guardrails that AI agents must satisfy BEFORE the PR — imposing a contract on them via MCP, not giving them context — and that CI blocks deterministically when violated, with live traceability decision→rule→violation→owner→compliance.**
+
+Use the **umbrella** statement (§11) for the platform and investor vision; use the **wedge** statement for market entry, the demo, and the open-source community.
+
 ---
 
 ## 12. Roadmap Implications
@@ -272,12 +292,84 @@ That description erases Evolith's architecture-governance, evidence, inheritance
 | **P1** | Claude execution adapter for bounded activities with permissions, plans, approvals, and evidence capture | Demonstrates governed autonomous work |
 | **P1** | Jira Enterprise integration reference using ACL mappings for ideas, epics, stories, approvals, and releases | Demonstrates coexistence with the strongest work-management competitor |
 | **P2** | Executive portfolio views, marketplace-style adapters, and tenant-configurable governance packs | Improves enterprise adoption and ecosystem scale |
+| **P0 (wedge)** | Open **executable ADR** format (`enforce:` over MADR front-matter) that compiles to fitness functions and fails the PR | Gives Core an active OSS hook and sets a standard ahead of third parties (e.g., Mneme) |
+| **P0 (wedge)** | **Drift gate in PR/CI** over the GitHub/GitLab Checks API, orchestrating OSS enforcers (ArchUnit/ArchUnitNET/Deptrac/dependency-cruiser/import-linter) — without building a proprietary extractor | Deterministic, cross-language enforcement, with no equivalent incumbent |
+| **P0 (wedge)** | **Governed MCP** that imposes the architecture contract on the agent before it generates (the inverse of the read-only MCP of Port/Cortex/OpsLevel) | Captures the READ→CONTROL front with cross-agent neutrality |
+| **P1 (wedge)** | Mapping of each violation to **owner + compliance control** (SOC2 / ISO 27001 / EU AI Act high-risk) | Higher-ACV wedge for the CISO/compliance buyer |
 
 Every integration must be justified by an Evolith capability gap or adoption requirement. Vendor popularity alone is not sufficient architectural evidence.
 
 ---
 
-## 13. Evidence and Review Policy
+## 13. Second Competitive Axis: The Architecture Governance Layer
+
+§§3-12 compare Evolith against the *surround* it integrates. This section opens the second axis: the products that compete for the specific job of **governing architecture** within the SDLC. The competitive universe splits into two clean relationships:
+
+| Relationship | Products | Evolith's Posture |
+|---|---|---|
+| **Integrate / coexist (surround)** | Atlassian/Jira (work), Claude Cowork (execution), Langfuse (observability) | Consume via Ports & ACL; never surrender governance authority |
+| **Compete / differentiate (governance layer)** | Port, Cortex, OpsLevel (IDP/portals) · Sonargraph, Lattix (architectural analysis) · OPA, Checkov, Conftest (policy-as-code) · Structurizr/C4, ADR tools (arch-as-code) · Backstage (OSS portal) | Own the **executable architecture governance** layer; orchestrate —not reinvent— its OSS pieces |
+
+### 13.1 Governance-layer matrix
+
+| Dimension | Portals/IDP (Port, Cortex, OpsLevel, Backstage) | Architectural analysis (Sonargraph, Lattix) | Policy-as-code (OPA, Checkov, Conftest) | Arch-as-code/ADR (Structurizr, MADR) | **Evolith** |
+|---|---|---|---|---|---|
+| What it governs | Catalog/services | Code structure | Declarative resources/config | Intent (model/decision) | **Application architecture as a contract** |
+| Enforcement | Retrospective scorecard | Snapshot/report (or per-language test) | Gate over JSON snapshot | None (prose) | **Deterministic blocking gate in PR/CI** |
+| Blocks the merge | No | Rarely (ArchUnit, single-language) | Yes (infra/security) | No | **Yes (architecture)** |
+| Cross-language | N/A | Paid suites only (snapshot) | Yes (not of code) | N/A | **Yes, orchestrating OSS** |
+| Traceability to ADR | No | No | No | Prose, not executable | **Yes: decision↔rule↔violation↔owner↔compliance** |
+| Governs AI agents | Read-only (MCP context) | No | No | Read (MCP validation) | **CONTROL: contract via MCP pre-generation** |
+| Model | Closed / heavy DIY OSS | Paid proprietary | OSS | OSS / open-core with paywall | **Open-core, PR-native, drop-in** |
+
+### 13.2 Differentiation per competitor
+
+- **Port / Cortex / OpsLevel** — they measure (retrospective scorecards) and expose the catalog to agents in READ. Evolith **blocks** and imposes a contract; their blueprints are ingested as a source of ownership (connectors without lock-in).
+- **Sonargraph / Lattix** — powerful but proprietary, desktop/snapshot, with no agents and no bridge to ADRs. Evolith is PR-native, open-core, intercepts the agent pre-PR, and ties each rule to its ADR.
+- **OPA / Checkov / Conftest** — they govern infra/security, not application architecture. Evolith **consumes** them as a backend/gate for that class; OPA is a pluggable backend, never the core.
+- **Structurizr / C4 / ADR tools** — they describe intent but do not verify it against the real code; ADRs are prose. Evolith ingests their DSL and turns the ADR into **executable** (`enforce:`).
+- **Backstage** — a DIY framework with no architecture invariants and no blocking gate. Evolith is distributed as a **plugin**, ingests `catalog-info.yaml`, and supplies the executable layer it lacks — without inheriting its DIY burden.
+
+---
+
+## 14. The Wedge: Architecture Control Plane for AI Agents (READ vs CONTROL)
+
+The first axis frames "AI" as governed *execution* agents (Loop Engineer, Cowork) and LLM observability (Langfuse). The most urgent and defensible front is missing: the **agents that write application code** (Copilot, Cursor, Claude Code, Devin) and produce **architectural drift at industrial scale**.
+
+The evidence is quantitative: DORA 2025 reports PRs 154% larger and +91% review time under high AI adoption; Carnegie Mellon, +41% complexity by month 3; Gartner projects that 40% of agentic projects will be canceled before 2027 for lack of governance.
+
+**The core principle — READ vs CONTROL:** the entire market does READ (it exposes its catalog to agents in read mode via MCP: Spotify's AiKA, Cortex-MCP, OpsLevel-MCP). No one does CONTROL (deterministically restricting what the agent produces). The asymmetry is structural: agent vendors treat rules as *advisory* (`AGENTS.md`, `CLAUDE.md`, `.cursorrules` do not block) and have no incentive to be cross-agent neutral. A neutral, cross-agent, deterministic layer is exactly what the architecture office needs and what no agent vendor will build.
+
+> **You don't give the agent context. You impose a contract on it.**
+
+### 14.1 The three enforcement surfaces
+
+```text
+(a) PRE-GENERATION → MCP server: the agent queries the contract and self-verifies before writing
+(b) EDIT-TIME      → cross-agent hook: blocks the offending change on the fly
+(c) PR / CI        → deterministic GitHub/GitLab check: BLOCKS the merge (Phase Gate 3 / Architecture Drift)
+```
+
+### 14.2 The honest moat
+
+The moat is not the rule engine (commodity) nor a proprietary cross-language fact extractor (expensive, fragile, and nonexistent in code today). The buildable moat is: **live traceability (ADR↔code↔owner↔compliance) + cross-agent neutrality + accumulated audit-graph** that an incumbent with a channel cannot replicate by cloning a gate. Product rule: **normalize the output of OSS enforcers**, do not re-parse code.
+
+---
+
+## 15. The Bridge: Umbrella + Wedge and the Core / Tracker Relationship
+
+The two axes are a single strategy at two altitudes:
+
+- **Wedge (entry):** executable architecture governance = the **Phase Gate 3 (Architecture Drift)**. No incumbent in CONTROL; a sharp open-source hook.
+- **Umbrella (expansion):** from that gate it expands upstream and downstream to the full SDLC governance plane (Discovery→Release) described in §§2-12.
+
+**Core / Tracker — no scope conflict.** The executable-architecture capability is an **Evolith Core** capability: `rulesets/`, ADR registry, CLI, MCP exposure, and Architecture Drift already exist as Core assets. The wedge **sharpens Core's open-source hook** — from *"taxonomies + templates + CLI validator"* (passive) to *"architecture guardrails that govern your agents at the PR"* (active, urgent, with no incumbent). The **Tracker** remains the enterprise operational plane (multi-tenant, Evidence Graph, dashboards, auditable Phase Gates) that **monetizes** governance. Core = wedge + community; Tracker = enterprise value capture.
+
+> **Scope correction (2026-07-11):** this positioning is at the **Evolith Core / suite** level, not an analysis of the Tracker in isolation. The Tracker is an operational instantiation of the governance plane that Core defines.
+
+---
+
+## 16. Evidence and Review Policy
 
 This analysis uses official product sources retrieved on 2026-06-10:
 
@@ -287,6 +379,8 @@ This analysis uses official product sources retrieved on 2026-06-10:
 - [Rovo](https://www.atlassian.com/software/rovo)
 - [Jira Align](https://www.atlassian.com/software/jira-align)
 - [Compass](https://www.atlassian.com/software/compass)
+
+The second competitive axis (§§13-15, added 2026-07-11) rests on a directional analysis of the developer-portal, architectural-analysis, policy-as-code, and arch-as-code landscape (Port, Cortex, OpsLevel, Sonargraph, Lattix, OPA, Checkov, Conftest, Structurizr, ArchUnit/ArchUnitNET/Deptrac, Backstage). The cited figures (DORA 2025, Carnegie Mellon, Gartner) and market movements (Sonar/Structure101, Qodo, the Styra/OPA vacuum) must be revalidated against official sources before being used in an investment or roadmap decision.
 
 Review requirements:
 
@@ -298,7 +392,7 @@ Review requirements:
 
 ---
 
-## 14. Relationship and Navigation
+## 17. Relationship and Navigation
 
 - **Parent vision:** [Evolith Product Vision Master](../vision/evolith-product-vision-master.md)
 - **Related governance:** [Architectural Directives](../architecture/architectural-directives.md)

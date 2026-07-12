@@ -9,13 +9,22 @@
 
 This matrix ensures CLI and MCP provide consistent functionality through the shared SDK layer.
 
-| Capability | SDK | CLI | MCP Tool | MCP Resource | Tracker | Status |
-|-----------|-----|-----|----------|--------------|---------|--------|
+Each capability table below uses the same columns:
+
+- **Capability** — end-user capability (shown as an example CLI invocation)
+- **SDK** — underlying SDK method that implements the logic
+- **CLI** — CLI command that exposes it
+- **MCP Tool** — MCP tool name (`-` if none)
+- **MCP Resource** — MCP resource URI (`-` if none)
+- **Tracker** — scope in Evolith Tracker (`OUT_OF_SCOPE`, `PARTIAL`, …)
+- **Status** — implementation status (`PROPOSED`, `IMPLEMENTED`, …)
 
 ---
 
 ## 2. Core Operations
 
+| Capability | SDK | CLI | MCP Tool | MCP Resource | Tracker | Status |
+|-----------|-----|-----|----------|--------------|---------|--------|
 | `evolith-cli core info` | `CoreService.info()` | `core info` | - | `evolith://core/info` | OUT_OF_SCOPE | PROPOSED |
 | `evolith-cli core validate` | `CoreService.validate()` | `core validate` | - | - | OUT_OF_SCOPE | PROPOSED |
 | `evolith-cli core update` | `CoreService.update()` | `core update` | - | - | OUT_OF_SCOPE | PROPOSED |
@@ -25,6 +34,8 @@ This matrix ensures CLI and MCP provide consistent functionality through the sha
 
 ## 3. Ruleset Operations
 
+| Capability | SDK | CLI | MCP Tool | MCP Resource | Tracker | Status |
+|-----------|-----|-----|----------|--------------|---------|--------|
 | `evolith-cli ruleset list` | `RulesetService.list()` | `ruleset list` | - | `evolith://rulesets` | OUT_OF_SCOPE | PROPOSED |
 | `evolith-cli ruleset show` | `RulesetService.get()` | `ruleset show` | `get_ruleset` | `evolith://rulesets/{id}` | OUT_OF_SCOPE | PROPOSED |
 | `evolith-cli ruleset validate` | `RulesetService.validate()` | `ruleset validate` | `validate_ruleset` | - | OUT_OF_SCOPE | IMPLEMENTED |
@@ -34,6 +45,8 @@ This matrix ensures CLI and MCP provide consistent functionality through the sha
 
 ## 4. Project Validation
 
+| Capability | SDK | CLI | MCP Tool | MCP Resource | Tracker | Status |
+|-----------|-----|-----|----------|--------------|---------|--------|
 | `evolith-cli validate project` | `ValidationService.project()` | `validate project` | `validate_project` | - | OUT_OF_SCOPE | IMPLEMENTED |
 | `evolith-cli validate architecture` | `ValidationService.architecture()` | `validate architecture` | `validate_architecture` | - | OUT_OF_SCOPE | PROPOSED |
 | `evolith-cli validate sdlc` | `ValidationService.sdlc()` | `validate sdlc` | `validate_sdlc` | - | OUT_OF_SCOPE | PROPOSED |
@@ -43,6 +56,8 @@ This matrix ensures CLI and MCP provide consistent functionality through the sha
 
 ## 5. SDLC Operations
 
+| Capability | SDK | CLI | MCP Tool | MCP Resource | Tracker | Status |
+|-----------|-----|-----|----------|--------------|---------|--------|
 | `evolith-cli sdlc status` | `SDLCService.status()` | `sdlc status` | `get_sdlc_status` | `evolith://sdlc/status` | PARTIAL | PROPOSED |
 | `evolith-cli sdlc next` | `SDLCService.nextGate()` | `sdlc next` | `get_next_gate` | - | PARTIAL | PROPOSED |
 | `evolith-cli gate validate` | `SDLCService.validateGate()` | `gate validate` | `validate_phase_gate` | - | PARTIAL | PROPOSED |
@@ -51,6 +66,8 @@ This matrix ensures CLI and MCP provide consistent functionality through the sha
 
 ## 6. Artifact Operations
 
+| Capability | SDK | CLI | MCP Tool | MCP Resource | Tracker | Status |
+|-----------|-----|-----|----------|--------------|---------|--------|
 | `evolith-cli artifact list` | `ArtifactService.list()` | `artifact list` | - | `evolith://artifacts/templates` | OUT_OF_SCOPE | PROPOSED |
 | `evolith-cli artifact generate` | `ArtifactService.generate()` | `artifact generate` | `generate_artifact` | - | OUT_OF_SCOPE | PROPOSED |
 | `evolith-cli artifact validate` | `ArtifactService.validate()` | `artifact validate` | `validate_artifact` | - | OUT_OF_SCOPE | PROPOSED |
@@ -59,6 +76,8 @@ This matrix ensures CLI and MCP provide consistent functionality through the sha
 
 ## 7. Architecture Operations
 
+| Capability | SDK | CLI | MCP Tool | MCP Resource | Tracker | Status |
+|-----------|-----|-----|----------|--------------|---------|--------|
 | `evolith-cli architecture initialize` | `ArchitectureService.initialize()` | `architecture initialize` | `initialize_architecture` | - | PARTIAL | PROPOSED |
 | `evolith-cli architecture validate` | `ArchitectureService.validate()` | `architecture validate` | `validate_architecture` | - | PARTIAL | PROPOSED |
 | `evolith-cli architecture drift` | `DriftDetectionService.detect()` | `architecture drift` | `detect_architecture_drift` | - | PARTIAL | PROPOSED |
@@ -67,6 +86,8 @@ This matrix ensures CLI and MCP provide consistent functionality through the sha
 
 ## 8. ADR Operations
 
+| Capability | SDK | CLI | MCP Tool | MCP Resource | Tracker | Status |
+|-----------|-----|-----|----------|--------------|---------|--------|
 | `evolith-cli adr list` | `ADRService.list()` | `adr list` | `list_adrs` | `evolith://adrs` | OUT_OF_SCOPE | PROPOSED |
 | `evolith-cli adr show` | `ADRService.get()` | `adr show` | `get_adr` | `evolith://adrs/{id}` | OUT_OF_SCOPE | PROPOSED |
 | `evolith-cli adr create` | `ADRService.create()` | `adr create` | `create_adr` | - | OUT_OF_SCOPE | PROPOSED |
@@ -75,6 +96,8 @@ This matrix ensures CLI and MCP provide consistent functionality through the sha
 
 ## 9. Evidence Operations
 
+| Capability | SDK | CLI | MCP Tool | MCP Resource | Tracker | Status |
+|-----------|-----|-----|----------|--------------|---------|--------|
 | `evolith-cli evidence collect` | `EvidenceService.collect()` | `evidence collect` | `collect_evidence` | - | PARTIAL | PROPOSED |
 | `evolith-cli evidence export` | `EvidenceService.export()` | `evidence export` | `export_evidence` | - | PARTIAL | PROPOSED |
 
@@ -82,6 +105,8 @@ This matrix ensures CLI and MCP provide consistent functionality through the sha
 
 ## 10. Report Operations
 
+| Capability | SDK | CLI | MCP Tool | MCP Resource | Tracker | Status |
+|-----------|-----|-----|----------|--------------|---------|--------|
 | `evolith-cli report compliance` | `ReportService.compliance()` | `report compliance` | `generate_compliance_report` | - | PARTIAL | PROPOSED |
 | `evolith-cli report executive` | `ReportService.executive()` | `report executive` | `generate_executive_report` | - | PARTIAL | PROPOSED |
 

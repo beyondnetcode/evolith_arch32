@@ -17,6 +17,7 @@ import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
 import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
+import { resolveCoreOverride } from '../../infrastructure/paths/core-resolver';
 
 const CORE_VERSION = '1.0.5';
 
@@ -79,9 +80,10 @@ export class EvaluateCommand extends BaseEvolithCommand {
       throw err;
     }
 
-    // Resolve the Core/rulesets root: an explicit --core/profile override, else
-    // the rulesets bundled with the CLI. Never fall back to process.cwd().
-    const coreOverride = options?.core || this.profile.core || undefined;
+    // GT-456: Resolve the Core/rulesets root through the unified override chain
+    // (--core → EVOLITH_CORE_PATH → profile.core), else the rulesets bundled with
+    // the CLI. Never fall back to process.cwd().
+    const coreOverride = resolveCoreOverride({ explicit: options?.core, profileCore: this.profile.core });
     const resolvedCoreRoot = resolveRulesets(coreOverride).coreRoot;
 
     const pipeline: IEvaluationPipeline = {

@@ -12,6 +12,7 @@ import {
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+import { resolveCoreOverride } from '../../infrastructure/paths/core-resolver';
 
 function ratingBadge(rating: DoraRating): string {
   switch (rating) {
@@ -37,7 +38,15 @@ export class GateStatusCommand extends BaseEvolithCommand {
     options?: Record<string, unknown>,
   ): Promise<void> {
     const fs = this.fileSystem;
-    const useCase = new PhaseTransitionUseCase(fs);
+    // GT-461 sub-finding: unify Core resolution with GT-456 so gate-status can
+    // read the canonical gate-f*.json from an EXTERNAL Core checkout (via --core
+    // → EVOLITH_CORE_PATH → profile.core). Without an override the validator
+    // auto-detects the Core root by walking up from the project directory.
+    const corePath = resolveCoreOverride({
+      explicit: options?.core as string | undefined,
+      profileCore: this.profile.core,
+    });
+    const useCase = new PhaseTransitionUseCase(fs, corePath);
     const cwd = process.cwd();
     const sinceDays: number = (options?.since as number | undefined) ?? 90;
     const json = (options?.format as string | undefined) === 'json';
@@ -127,6 +136,14 @@ export class GateStatusCommand extends BaseEvolithCommand {
     description: 'Output format: json (ADR-0073 envelope) or human (default)',
   })
   parseFormat(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '-c, --core [path]',
+    description: 'Path to the Evolith Core checkout that holds the canonical SDLC gates (default: auto-detect)',
+  })
+  parseCore(val: string): string {
     return val;
   }
 

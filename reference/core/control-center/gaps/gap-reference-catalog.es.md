@@ -141,9 +141,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Agregar `PolicyBaselineStore` como el único store autoritativo de fingerprints (mapear los baselines nativos hacia él — no dos baselines paralelos); agregar un ratchet (falla si el baseline crece); warn|block por regla + `--enforce-mode`; `evolith enforce freeze`; un presupuesto de deuda con expiración; versionado del bloque `enforce` + rebase del baseline cuando una regla cambia.
 - **Acceptance criteria:**
-  - [ ] Las violaciones existentes quedan congeladas; solo las NUEVAS violaciones bloquean.
-  - [ ] El baseline sobrevive upgrades de herramientas (rebase fingerprint-estable).
-  - [ ] Un único baseline autoritativo (sin stores nativo/enforcer paralelos) con un ratchet que falla ante crecimiento.
+  - [x] Las violaciones existentes quedan congeladas; solo las NUEVAS violaciones bloquean.
+  - [x] El baseline sobrevive upgrades de herramientas (rebase fingerprint-estable).
+  - [x] Un único baseline autoritativo (sin stores nativo/enforcer paralelos) con un ratchet que falla ante crecimiento.
 - **Dependencies:** GT-511.
 - **Status:** `PENDING`
 

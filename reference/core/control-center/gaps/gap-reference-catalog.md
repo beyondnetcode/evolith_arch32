@@ -141,9 +141,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Add `PolicyBaselineStore` as the single authoritative fingerprint store (map native baselines toward it — not two parallel baselines); add a ratchet (fail if the baseline grows); per-rule warn|block + `--enforce-mode`; `evolith enforce freeze`; a debt budget with expiry; `enforce`-block versioning + baseline rebase when a rule changes.
 - **Acceptance criteria:**
-  - [ ] Existing violations are frozen; only NEW violations block.
-  - [ ] The baseline survives tool upgrades (fingerprint-stable rebase).
-  - [ ] A single authoritative baseline (no parallel native/enforcer stores) with a ratchet that fails on growth.
+  - [x] Existing violations are frozen; only NEW violations block.
+  - [x] The baseline survives tool upgrades (fingerprint-stable rebase).
+  - [x] A single authoritative baseline (no parallel native/enforcer stores) with a ratchet that fails on growth.
 - **Dependencies:** GT-511.
 - **Status:** `PENDING`
 

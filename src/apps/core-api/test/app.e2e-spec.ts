@@ -36,8 +36,12 @@ describe('core-api (e2e) — Core HTTP surface', () => {
     return request(app.getHttpServer()).get('/health').expect(200);
   });
 
-  it('GET /metrics → 200 (metrics surface, version-neutral)', () => {
-    return request(app.getHttpServer()).get('/metrics').expect(200);
+  // GT-393: /metrics is fronted by MetricsAuthGuard, which fails closed. With no
+  // EVOLITH_API_KEY provisioned in this E2E run, open scraping is denied (401) —
+  // asserting 200 here was stale (it predates the guard). The authenticated 200
+  // path is covered by the MetricsAuthGuard unit spec.
+  it('GET /metrics → 401 (guarded surface, no API key configured)', () => {
+    return request(app.getHttpServer()).get('/metrics').expect(401);
   });
 
   it('GET /api/v1/rulesets → 200 (versioned reference surface)', () => {

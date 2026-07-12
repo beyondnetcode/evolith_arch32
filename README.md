@@ -209,6 +209,7 @@ Evolith CLI ships **25 commands** and is configured via **`evolith.yaml`**. Full
 | Onboarding by role | Getting Started by Role |
 | Ecosystem glossary | [Glossary](./reference/core/sdlc/glossary/glossary-ecosystem.md) |
 | Gap tracking | [Gap Tracking Board](./reference/core/control-center/gaps/gap-tracking.md) |
+| Opportunities | [Opportunities Board](./reference/core/control-center/opportunities/README.md) |
 | All artifacts | [Global Master Index](./reference/core/control-center/taxonomy/MASTER_INDEX.md) |
 
 ---
@@ -234,6 +235,7 @@ Start with a modular monolith. Migrate to distributed modules or microservices w
 See the active gap tracking board for current priorities and open items:
 
 - [Gap Tracking Board](./reference/core/control-center/gaps/gap-tracking.md)
+- [Opportunities Board](./reference/core/control-center/opportunities/README.md)
 - [Maturity & Gaps hub](./reference/core/control-center/README.md)
 
 ---

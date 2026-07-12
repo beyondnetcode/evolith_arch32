@@ -206,6 +206,7 @@ Evolith CLI incluye **20 comandos** y se configura mediante **`evolith.yaml`**. 
 | Onboarding por rol | Inicio por Rol |
 | Glosario del ecosistema | [Glosario](./reference/core/sdlc/glossary/glossary-ecosystem.es.md) |
 | Seguimiento de gaps | [Tablero de Gaps](./reference/core/control-center/gaps/gap-tracking.md) |
+| Oportunidades | [Tablero de Oportunidades](./reference/core/control-center/opportunities/README.es.md) |
 | Todos los artefactos | [Índice Maestro Global](./reference/core/control-center/taxonomy/MASTER_INDEX.es.md) |
 
 ---
@@ -231,6 +232,7 @@ Empieza con un monolito modular. Migra a módulos distribuidos o microservicios 
 Consulta el tablero de seguimiento de gaps para prioridades actuales y elementos abiertos:
 
 - [Tablero de Gaps](./reference/core/control-center/gaps/gap-tracking.md)
+- [Tablero de Oportunidades](./reference/core/control-center/opportunities/README.es.md)
 - [Hub de Madurez y Gaps](./reference/core/control-center/README.md)
 
 ---

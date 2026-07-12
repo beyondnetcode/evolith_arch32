@@ -4,7 +4,7 @@
 
 **Status:** Approved  
 **Owner:** Evolith Architecture Board  
-**Last Updated:** 2026-07-02
+**Last Updated:** 2026-07-11
 
 ---
 
@@ -45,6 +45,18 @@ Evolith provides:
 4. one audit chain across humans, agents, tools, and source code;
 5. one provider-neutral governance layer;
 6. one upstream learning mechanism from satellite products into Evolith Core.
+
+### 1.5 Essence and Spearhead (Wedge)
+
+The category statement (§1.2) is the **umbrella** narrative (platform). The product's essence, in plain language, is:
+
+> **Evolith makes architecture decisions actually hold — automatically, even when the one writing the code is an AI.**
+
+The core principle is **READ vs CONTROL**. The entire market (developer portals, architecture suites) does *READ*: it exposes its catalog *to* AI agents in read-only mode and trusts them to behave. Nobody does *CONTROL*: deterministically constraining what the agent *produces*. Evolith occupies that front — it compiles decisions (ADRs, C4, Phase Gates) into executable guardrails, imposes them on the agent before it generates, and blocks the merge if they are violated.
+
+> **You don't give the agent context. You impose a contract on it.**
+
+This essence is the **go-to-market spearhead** (the wedge): executable architecture governance, which corresponds to **Phase Gate 3 (Architecture Drift)**. You land through that front —where there is no incumbent today— and expand toward the complete SDLC governance plane described in the umbrella statement. The competitive analysis of this second axis is detailed in the [Strategic Positioning and Comparative Landscape](../positioning/evolith-strategic-positioning-comparative-landscape.md) (§§13-15).
 
 ---
 

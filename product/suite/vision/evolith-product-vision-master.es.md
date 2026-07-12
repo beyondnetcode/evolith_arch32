@@ -4,7 +4,7 @@
 
 **Estado:** Aprobado  
 **Propietario:** Evolith Architecture Board  
-**Última Actualización:** 2026-07-02
+**Última Actualización:** 2026-07-11
 
 ---
 
@@ -45,6 +45,18 @@ Evolith proporciona:
 4. una cadena de auditoría entre humanos, agentes, herramientas y código fuente;
 5. una capa de gobernanza neutral respecto de proveedores;
 6. un mecanismo de aprendizaje upstream desde productos satélite hacia Evolith Core.
+
+### 1.5 Esencia y Punta de Lanza (Wedge)
+
+La declaración de categoría (§1.2) es la narrativa **umbrella** (plataforma). La esencia del producto, en lenguaje simple, es:
+
+> **Evolith hace que las decisiones de arquitectura se cumplan de verdad — automáticamente, incluso cuando quien programa es una IA.**
+
+El principio nuclear es **READ vs CONTROL**. Todo el mercado (developer portals, suites de arquitectura) hace *READ*: expone su catálogo *a* los agentes de IA en modo lectura y confía en que se porten bien. Nadie hace *CONTROL*: restringir de forma determinista lo que el agente *produce*. Evolith ocupa ese frente — compila las decisiones (ADR, C4, Phase Gates) en guardrails ejecutables, se los impone al agente antes de generar, y bloquea el merge si se violan.
+
+> **No le das contexto al agente. Le impones un contrato.**
+
+Esta esencia es la **punta de lanza de entrada al mercado** (el wedge): la gobernanza de arquitectura ejecutable, que corresponde al **Phase Gate 3 (Architecture Drift)**. Se aterriza por ese frente —donde hoy no hay incumbente— y se expande hacia el plano de gobernanza completo del SDLC descrito en la declaración umbrella. El análisis competitivo de este segundo eje se detalla en el [Posicionamiento Estratégico y Panorama Comparativo](../positioning/evolith-strategic-positioning-comparative-landscape.es.md) (§§13-15).
 
 ---
 

@@ -207,5 +207,55 @@ describe('OutputFormatterService', () => {
 
       expect(result).toContain('[3 items]');
     });
+
+    // GT-457: `validate -f table` used to collapse a failed run's issues into an
+    // opaque "[N items]" count, hiding the ruleId/title/description/remediation
+    // that only `-f json` surfaced. The formatter must now render per-issue detail.
+    describe('GT-457 issue-detail rendering', () => {
+      it('renders ruleId, title, description, severity and remediation per issue', () => {
+        const data = {
+          status: 'failed',
+          issues: [
+            {
+              ruleId: 'ACL-01',
+              title: 'Anti-corruption layer missing',
+              description: 'Domain imports an external DTO directly',
+              severity: 'MUST',
+              remediation: 'Introduce an ACL adapter for the external contract',
+            },
+          ],
+        };
+
+        const result = formatter.formatTable(data, { format: 'table' });
+
+        // The opaque count is gone; each field is now visible in table output.
+        expect(result).not.toContain('[1 items]');
+        expect(result).toContain('1 issue(s):');
+        expect(result).toContain('ACL-01');
+        expect(result).toContain('Anti-corruption layer missing');
+        expect(result).toContain('Domain imports an external DTO directly');
+        expect(result).toContain('MUST');
+        expect(result).toContain('Introduce an ACL adapter for the external contract');
+      });
+
+      it('does not duplicate description when it equals the title', () => {
+        const data = {
+          issues: [{ ruleId: 'GOV-1', title: 'same text', description: 'same text', severity: 'SHOULD' }],
+        };
+
+        const result = formatter.formatTable(data, { format: 'table' });
+        const occurrences = result.split('same text').length - 1;
+
+        expect(occurrences).toBe(1);
+        expect(result).toContain('GOV-1');
+      });
+
+      it('still renders opaque count for non-issue arrays', () => {
+        const data = { tags: ['a', 'b'] };
+        const result = formatter.formatTable(data, { format: 'table' });
+
+        expect(result).toContain('[2 items]');
+      });
+    });
   });
 });

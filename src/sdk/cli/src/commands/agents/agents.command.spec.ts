@@ -29,6 +29,15 @@ jest.mock('../../infrastructure/providers/node-filesystem.provider', () => ({
   })),
 }));
 
+// Keep the `--run` routing path offline: stub the runtime client so exercising
+// the flag never opens a socket.
+const mockAgentHandle = jest.fn().mockResolvedValue({ ok: true });
+jest.mock('@beyondnet/evolith-sdk', () => ({
+  EvolithRestClient: jest.fn().mockImplementation(() => ({
+    agent: { handle: mockAgentHandle },
+  })),
+}));
+
 import { AgentsCommand } from './agents.command';
 import type { PromptService } from '../../infrastructure/prompts/prompt.service';
 
@@ -104,6 +113,63 @@ describe('AgentsCommand — dispatch', () => {
       }
     },
   );
+});
+
+// GT-458: `agents --list/--install/--remove/--run` advertised in --help must
+// route to their action non-interactively. Before the fix the action derived
+// only from passedParam[0], so every flag fell through to the interactive menu
+// (dead flags that broke CI). The interactive menu is `showIntro('...Agent
+// Management')` + a `select`; asserting neither fires proves flags are honored.
+describe('AgentsCommand — GT-458 flag routing', () => {
+  const MENU_INTRO = 'Evolith SDK - Agent Management';
+
+  it('routes --list to the list action without the interactive menu', async () => {
+    mockDiscover.mockResolvedValue([]);
+    const prompt = makePrompt();
+    const cmd = new AgentsCommand(prompt);
+    await cmd.executeCommand([], { list: true });
+    expect(mockDiscover).toHaveBeenCalled();
+    expect(prompt.showIntro).not.toHaveBeenCalledWith(MENU_INTRO);
+    expect(prompt.select).not.toHaveBeenCalled();
+  });
+
+  it('routes --install to the install action without the interactive menu', async () => {
+    const prompt = makePrompt({ confirm: jest.fn().mockResolvedValue(false) });
+    const cmd = new AgentsCommand(prompt);
+    await cmd.executeCommand([], { install: 'my-agent' });
+    expect(prompt.text).toHaveBeenCalled();
+    expect(prompt.showIntro).not.toHaveBeenCalledWith(MENU_INTRO);
+    expect(mockInstall).not.toHaveBeenCalled(); // confirm=false → cancelled, still non-interactive
+  });
+
+  it('routes --remove to the remove action without the interactive menu', async () => {
+    mockDiscover.mockResolvedValue([]);
+    const prompt = makePrompt();
+    const cmd = new AgentsCommand(prompt);
+    await cmd.executeCommand([], { remove: 'a1' });
+    expect(mockDiscover).toHaveBeenCalled();
+    expect(prompt.showIntro).not.toHaveBeenCalledWith(MENU_INTRO);
+  });
+
+  it('routes --run to the runtime action using the supplied intent', async () => {
+    const prompt = makePrompt();
+    const cmd = new AgentsCommand(prompt);
+    await cmd.executeCommand([], { run: 'generate plan' });
+    expect(mockAgentHandle).toHaveBeenCalledWith(
+      expect.objectContaining({ intent: 'generate plan' }),
+    );
+    expect(prompt.showIntro).not.toHaveBeenCalledWith(MENU_INTRO);
+    expect(prompt.select).not.toHaveBeenCalled();
+  });
+
+  it('lets a positional action win over a conflicting flag', async () => {
+    mockDiscover.mockResolvedValue([]);
+    const prompt = makePrompt();
+    const cmd = new AgentsCommand(prompt);
+    await cmd.executeCommand(['list'], { install: 'x' });
+    expect(mockDiscover).toHaveBeenCalled(); // list ran
+    expect(prompt.text).not.toHaveBeenCalled(); // install did not
+  });
 });
 
 describe('AgentsCommand — install', () => {

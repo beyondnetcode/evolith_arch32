@@ -90,6 +90,29 @@ describe('UpgradeCommand', () => {
       expect(promptServiceMock.showOutro).toHaveBeenCalled();
     });
 
+    // GT-459: the command used to do `new SatelliteUpgradeService()` with no
+    // args, leaving `this.fs`/`this.logger` undefined so the first `fs.exists`
+    // threw a raw stack trace. The service must be built with an injected
+    // filesystem + logger, and the command must reach a plan without crashing.
+    it('GT-459: constructs the upgrade service with an injected filesystem and logger', async () => {
+      mockPlanUpgrade.mockResolvedValue({
+        changes: [],
+        breakingChanges: [],
+        currentVersion: '1.0.0',
+        targetVersion: '1.0.0',
+        estimatedRisk: 'low',
+      });
+
+      await expect(command.run([], { dryRun: true })).resolves.not.toThrow();
+
+      expect(SatelliteUpgradeService).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fileSystem: expect.anything(),
+          logger: expect.anything(),
+        }),
+      );
+    });
+
     it('should run dry run when dryRun option is set', async () => {
       mockPlanUpgrade.mockResolvedValue({
         changes: [{ type: 'add', sourcePath: '/s', targetPath: '/t', description: 'test', breaking: false }],

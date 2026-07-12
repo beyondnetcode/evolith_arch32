@@ -10,3 +10,6 @@ export * from './sarif-ingester';
 
 /** Freezing / baseline / ratchet (GT-517 · EAG-12). */
 export * from './policy-baseline';
+
+/** Evaluation-environment provisioning — restore/scoping/cache/sandbox (GT-512 · EAG-04). */
+export * from './provisioning';

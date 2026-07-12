@@ -84,9 +84,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Define `IEnforcerAdapter.analyze(ctx) → Violation[]` with a `runtime` union; add `EnforcerEvaluator` (an `IRuleEvaluatorStrategy`) that filters `enforce.engine === 'enforcer'`; add `CompositeRuleEvaluator` preserving the Native default; add `ShellEnforcerAdapter` + `IProcessRunner`; author `enforcer-catalog.json` aligned with `product/infra/validated-tool-catalog.md`.
 - **Acceptance criteria:**
-  - [ ] The Composite routes enforcer rules to adapters and leaves native rules on the Native default.
-  - [ ] `IEnforcerAdapter` returns `Violation[]` (GT-511 model) via `IProcessRunner`.
-  - [ ] `enforcer-catalog.json` matches `validated-tool-catalog.md`.
+  - [x] The Composite routes enforcer rules to adapters and leaves native rules on the Native default.
+  - [x] `IEnforcerAdapter` returns `Violation[]` (GT-511 model) via `IProcessRunner`.
+  - [x] `enforcer-catalog.json` matches `validated-tool-catalog.md`.
 - **Dependencies:** GT-511, GT-512.
 - **Status:** `PENDING`
 

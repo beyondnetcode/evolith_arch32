@@ -6611,6 +6611,27 @@
         "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand (752/752 core-domain)"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-514",
+      "closedAt": "2026-07-12",
+      "closureCommit": "30aee332",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/enforcement/enforcer.types.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/shell-enforcer-adapter.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/enforcer-evaluator.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/composite-rule-evaluator.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/enforcer.spec.ts",
+        "src/rulesets/enforcement/enforcer-catalog.json",
+        "product/infra/validated-tool-catalog.md"
+      ],
+      "validationCommands": [
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand enforcer.spec (+10)",
+        "cd src/packages/core-domain && npx tsc -b tsconfig.json (clean)",
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand (762/762 core-domain)"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "GT-511 (Violation model) is satisfied. GT-512 (evaluation-environment provisioning/sandbox) is still open, but GT-514's scope is the SEAM: IEnforcerAdapter, EnforcerEvaluator, CompositeRuleEvaluator, ShellEnforcerAdapter and the IProcessRunner PORT all land and are stub-tested. The production sandboxed IProcessRunner is GT-512's deliverable (a sibling adapter behind the same port); Core intentionally ships no unsandboxed default runner. Real enforcer adapters (dependency-cruiser) land in GT-515."
     }
   ]
 }

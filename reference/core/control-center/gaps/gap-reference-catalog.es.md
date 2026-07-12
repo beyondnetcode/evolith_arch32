@@ -724,9 +724,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Fix propuesto:** Cambiar a `@Controller({ path: 'architecture-plans', version: '1' })`, introducir una clase DTO validada, y añadir decoradores `@ApiTags`/`@ApiResponse`.
 
 **Cierre:**
-- [ ] la ruta resuelve a `/api/v1/architecture-plans/evaluate` (un solo `v1`)
-- [ ] body validado vía DTO class-validator bajo el ValidationPipe global
-- [ ] endpoint presente en `/api/docs-json`
+- [x] la ruta resuelve a `/api/v1/architecture-plans/evaluate` (un solo `v1`)
+- [x] body validado vía DTO class-validator bajo el ValidationPipe global
+- [x] endpoint presente en `/api/docs-json`
 
 **Referencias:** `src/apps/core-api/src/architecture-plan/architecture-plan.controller.ts`; `src/apps/core-api/src/main.ts:21-35`
 
@@ -791,8 +791,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Fix propuesto:** Regenerar `expected` desde el código y afirmar igualdad de conjuntos (`expect(new Set(names)).toEqual(new Set(expected))`) para que tanto adiciones como eliminaciones fallen.
 
 **Cierre:**
-- [ ] `expected` refleja el conjunto completo de 35 tools
-- [ ] la aserción es igualdad de conjuntos (detecta add + remove)
+- [x] `expected` refleja el conjunto completo de 47 tools
+- [x] la aserción es igualdad de conjuntos (detecta add + remove)
 
 **Referencias:** `src/packages/mcp-server/src/tools/tools-registration.spec.ts:21-55`; `src/packages/mcp-server/src/tools/tools.module.ts`
 
@@ -807,9 +807,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Fix propuesto:** Re-apuntar las cinco rutas de plantilla de `step-executor.mjs` y las dos líneas de los playbooks a `reference/core/foundations/agent-skills/`.
 
 **Cierre:**
-- [ ] rutas de plantilla de `step-executor.mjs` actualizadas
-- [ ] ruta de `e2e-test-playbooks.md` (+ `.es.md`) actualizada
-- [ ] no quedan referencias colgantes a `.bmad-core/agents/`
+- [x] rutas de plantilla de `step-executor.mjs` actualizadas
+- [x] ruta de `e2e-test-playbooks.md` (+ `.es.md`) actualizada
+- [x] no quedan referencias colgantes a `.bmad-core/agents/`
 
 **Referencias:** `.bmad-core/engine/step-executor.mjs:67,76,85,94,103`; `reference/core/sdlc/01-playbooks/e2e-test-playbooks.md:7`; commit `e16120e9`
 

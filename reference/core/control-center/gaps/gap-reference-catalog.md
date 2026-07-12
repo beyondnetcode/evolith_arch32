@@ -724,9 +724,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Switch to `@Controller({ path: 'architecture-plans', version: '1' })`, introduce a validated DTO class, and add `@ApiTags`/`@ApiResponse` decorators.
 
 **Closure:**
-- [ ] route resolves to `/api/v1/architecture-plans/evaluate` (single `v1`)
-- [ ] body validated via a class-validator DTO under the global ValidationPipe
-- [ ] endpoint present in `/api/docs-json`
+- [x] route resolves to `/api/v1/architecture-plans/evaluate` (single `v1`)
+- [x] body validated via a class-validator DTO under the global ValidationPipe
+- [x] endpoint present in `/api/docs-json`
 
 **References:** `src/apps/core-api/src/architecture-plan/architecture-plan.controller.ts`; `src/apps/core-api/src/main.ts:21-35`
 
@@ -791,8 +791,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Regenerate `expected` from code and assert set equality (`expect(new Set(names)).toEqual(new Set(expected))`) so both additions and removals fail.
 
 **Closure:**
-- [ ] `expected` reflects the full 35-tool set
-- [ ] assertion is set-equality (catches add + remove)
+- [x] `expected` reflects the full 47-tool set
+- [x] assertion is set-equality (catches add + remove)
 
 **References:** `src/packages/mcp-server/src/tools/tools-registration.spec.ts:21-55`; `src/packages/mcp-server/src/tools/tools.module.ts`
 
@@ -807,9 +807,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Repoint the five `step-executor.mjs` template paths and the two playbook lines to `reference/core/foundations/agent-skills/`.
 
 **Closure:**
-- [ ] `step-executor.mjs` template paths updated
-- [ ] `e2e-test-playbooks.md` (+ `.es.md`) path updated
-- [ ] no dangling `.bmad-core/agents/` references remain
+- [x] `step-executor.mjs` template paths updated
+- [x] `e2e-test-playbooks.md` (+ `.es.md`) path updated
+- [x] no dangling `.bmad-core/agents/` references remain
 
 **References:** `.bmad-core/engine/step-executor.mjs:67,76,85,94,103`; `reference/core/sdlc/01-playbooks/e2e-test-playbooks.md:7`; commit `e16120e9`
 

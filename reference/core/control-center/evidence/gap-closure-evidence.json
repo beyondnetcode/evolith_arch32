@@ -6647,6 +6647,51 @@
         "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand (822/822 core-domain, combined wave)"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-478",
+      "closedAt": "2026-07-12",
+      "closureCommit": "4baec214",
+      "evidence": [
+        "src/apps/core-api/src/architecture-plan/architecture-plan.controller.ts",
+        "src/apps/core-api/src/architecture-plan/architecture-plan.dto.ts",
+        "src/apps/core-api/src/architecture-plan/architecture-plan.controller.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/apps/core-api && npx jest --runInBand architecture-plan (6/6)",
+        "cd src/apps/core-api && npx tsc -b tsconfig.json (clean); full core-api 143/143",
+        "OpenAPI exposes /api/v1/architecture-plans/evaluate (single v1), DTO schemas registered"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-482",
+      "closedAt": "2026-07-12",
+      "closureCommit": "05baab8f",
+      "evidence": [
+        "src/packages/mcp-server/src/tools/tools-registration.spec.ts",
+        "src/packages/mcp-server/src/tools/tools.module.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/mcp-server && npx jest --runInBand tools-registration (2/2)",
+        "set-equality vs the real 47 registered tools; negative check (fake tool -> fail) confirmed"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-483",
+      "closedAt": "2026-07-12",
+      "closureCommit": "597d3581",
+      "evidence": [
+        ".bmad-core/engine/step-executor.mjs",
+        "reference/core/sdlc/01-playbooks/e2e-test-playbooks.md",
+        "reference/core/sdlc/01-playbooks/e2e-test-playbooks.es.md"
+      ],
+      "validationCommands": [
+        "grep '.bmad-core/agents/' over the 3 fixed files -> 0 dangling refs",
+        "5 reference/core/foundations/agent-skills/qa-*.md targets confirmed present"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -8,6 +8,8 @@ Evolith MCP Services expone la gobernanza de Evolith Core como contexto en tiemp
 
 El servidor MCP convierte el corpus de referencia de Core, los rulesets y los phase gates en **tools**, **resources** y **prompts** gobernados que un agente puede invocar para recuperar contexto, evaluar criterios y enviar evidencia — bajo los mismos contratos que las superficies CLI y REST. El servidor vive en [`packages/mcp-server`](../../../src/packages/mcp-server) y se arranca con el binario `evolith-mcp`; ver su [README](../../../src/packages/mcp-server/README.es.md) para la referencia completa de tools/resources/prompts, el modelo de auth y la guía de despliegue.
 
+> 📖 **Manual de uso — [Usando MCP](../../../reference/core/interfaces/using-the-mcp.md).** Guía legible y orientada a tareas de cada una de las 47 tools `evolith-*` — entradas, la compuerta de aprobación mutativa y ejemplos reales de llamada/respuesta. Parte del [hub de How-To de interfaces](../../../reference/core/interfaces/README.md) (CLI · MCP · REST) con catálogos por fase SDLC y playbooks.
+
 ## Superficie
 
 La superficie instalable exacta se genera desde las fuentes del CLI y no debe mantenerse a mano — ver el [Inventario de Superficie del Producto](../smart-cli/product-inventory.es.md). En el release actual:

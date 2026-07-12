@@ -13,6 +13,8 @@
 
 This page is a **hub**: it orients you and points to the authoritative deeper docs. For exhaustive per-command options, always defer to the [code README](../../../src/sdk/cli/README.md) and the generated [Product Surface Inventory](./product-inventory.md).
 
+> 📖 **User manual — [Using the CLI](../../../reference/core/interfaces/using-the-cli.md).** A readable, task-oriented guide to every command, subcommand, option, and combination, with worked examples. Part of the [Interface How-To hub](../../../reference/core/interfaces/README.md) (CLI · MCP · REST) with per-SDLC-phase catalogs and playbooks.
+
 ## What it does
 
 - **Governance** — ADR management, standards tracking, BMAD agent installation.

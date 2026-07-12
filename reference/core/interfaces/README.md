@@ -11,7 +11,7 @@ common combinations.
 
 - **[Usando la CLI](using-the-cli.md)** — the 25 CLI commands and subcommands.
 - **[Usando MCP](using-the-mcp.md)** — the 47 `evolith-*` tools, for agents.
-- **[Usando la API REST](using-the-rest-api.md)** — the 26 endpoints, for integrators / the Tracker.
+- **[Usando la API REST](using-the-rest-api.md)** — the 27 endpoints, for integrators / the Tracker.
 
 ## Reference catalog (by phase, generated)
 

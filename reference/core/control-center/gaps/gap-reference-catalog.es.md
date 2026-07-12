@@ -47,6 +47,390 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Referencias:** src/sdk/cli/src/commands/validate/validate.command.ts; src/tests/exploration/.out/findings.jsonl; GT-479, GT-411
 
+#### GT-486
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `sdlc-status`
+
+**Problema:** La operación `sdlc-status` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `sdlc-status`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `sdlc-status` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `sdlc-status` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `sdlc-status` emite `{ success, data, meta }`
+- [ ] binding de exploración `sdlc-status` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-487
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `sdlc-handoff`
+
+**Problema:** La operación `sdlc-handoff` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `sdlc-handoff`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `sdlc-handoff` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `sdlc-handoff` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `sdlc-handoff` emite `{ success, data, meta }`
+- [ ] binding de exploración `sdlc-handoff` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-490
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `sdlc-generate`
+
+**Problema:** La operación `sdlc-generate` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `sdlc-generate`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `sdlc-generate` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `sdlc-generate` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `sdlc-generate` emite `{ success, data, meta }`
+- [ ] binding de exploración `sdlc-generate` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-491
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `dora-metrics`
+
+**Problema:** La operación `dora-metrics` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `dora-metrics`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `dora-metrics` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `dora-metrics` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `dora-metrics` emite `{ success, data, meta }`
+- [ ] binding de exploración `dora-metrics` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-492
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `agents-install`
+
+**Problema:** La operación `agents-install` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `agents-install`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `agents-install` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `agents-install` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `agents-install` emite `{ success, data, meta }`
+- [ ] binding de exploración `agents-install` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-493
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `agents-list`
+
+**Problema:** La operación `agents-list` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `agents-list`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `agents-list` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `agents-list` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `agents-list` emite `{ success, data, meta }`
+- [ ] binding de exploración `agents-list` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-494
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `agents-validate`
+
+**Problema:** La operación `agents-validate` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `agents-validate`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `agents-validate` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `agents-validate` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `agents-validate` emite `{ success, data, meta }`
+- [ ] binding de exploración `agents-validate` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-495
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `agents-upgrade`
+
+**Problema:** La operación `agents-upgrade` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `agents-upgrade`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `agents-upgrade` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `agents-upgrade` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `agents-upgrade` emite `{ success, data, meta }`
+- [ ] binding de exploración `agents-upgrade` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-496
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `agents-remove`
+
+**Problema:** La operación `agents-remove` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `agents-remove`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `agents-remove` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `agents-remove` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `agents-remove` emite `{ success, data, meta }`
+- [ ] binding de exploración `agents-remove` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-497
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `adr-crud`
+
+**Problema:** La operación `adr-crud` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `adr-crud`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `adr-crud` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `adr-crud` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `adr-crud` emite `{ success, data, meta }`
+- [ ] binding de exploración `adr-crud` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-498
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `standards-crud`
+
+**Problema:** La operación `standards-crud` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `standards-crud`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `standards-crud` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `standards-crud` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `standards-crud` emite `{ success, data, meta }`
+- [ ] binding de exploración `standards-crud` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-499
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `init-project`
+
+**Problema:** La operación `init-project` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `init-project`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `init-project` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `init-project` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `init-project` emite `{ success, data, meta }`
+- [ ] binding de exploración `init-project` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-500
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `history`
+
+**Problema:** La operación `history` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `history`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `history` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `history` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `history` emite `{ success, data, meta }`
+- [ ] binding de exploración `history` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-501
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `completion`
+
+**Problema:** La operación `completion` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `completion`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `completion` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `completion` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `completion` emite `{ success, data, meta }`
+- [ ] binding de exploración `completion` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-502
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `profile`
+
+**Problema:** La operación `profile` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `profile`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `profile` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `profile` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `profile` emite `{ success, data, meta }`
+- [ ] binding de exploración `profile` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-503
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `mcp-serve`
+
+**Problema:** La operación `mcp-serve` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `mcp-serve`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `mcp-serve` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `mcp-serve` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `mcp-serve` emite `{ success, data, meta }`
+- [ ] binding de exploración `mcp-serve` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-504
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `alias`
+
+**Problema:** La operación `alias` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `alias`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `alias` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `alias` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `alias` emite `{ success, data, meta }`
+- [ ] binding de exploración `alias` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-505
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `fixtures`
+
+**Problema:** La operación `fixtures` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `fixtures`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `fixtures` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `fixtures` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `fixtures` emite `{ success, data, meta }`
+- [ ] binding de exploración `fixtures` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-506
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `api-browser`
+
+**Problema:** La operación `api-browser` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `api-browser`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `api-browser` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `api-browser` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `api-browser` emite `{ success, data, meta }`
+- [ ] binding de exploración `api-browser` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-507
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `update-cli`
+
+**Problema:** La operación `update-cli` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `update-cli`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `update-cli` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `update-cli` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `update-cli` emite `{ success, data, meta }`
+- [ ] binding de exploración `update-cli` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-508
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `init-wizard`
+
+**Problema:** La operación `init-wizard` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `init-wizard`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `init-wizard` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `init-wizard` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `init-wizard` emite `{ success, data, meta }`
+- [ ] binding de exploración `init-wizard` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-509
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `upgrade-satellite`
+
+**Problema:** La operación `upgrade-satellite` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `upgrade-satellite`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `upgrade-satellite` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `upgrade-satellite` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `upgrade-satellite` emite `{ success, data, meta }`
+- [ ] binding de exploración `upgrade-satellite` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-488
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `validate-satellite`
+
+**Problema:** La operación `validate-satellite` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `validate-satellite`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `validate-satellite` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `validate-satellite` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `validate-satellite` emite `{ success, data, meta }`
+- [ ] binding de exploración `validate-satellite` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
+#### GT-489
+
+**Título:** El CLI no emite un envelope ADR-0073 parseable para `architecture-validate`
+
+**Problema:** La operación `architecture-validate` del CLI no emite salida parseable en el envelope canónico ADR-0073 `{ success, data|error, meta }`, a diferencia de las superficies MCP y REST. Auto-detectado por el oráculo de envelope del agente de exploración. Es una de las instancias por-operación de la divergencia de envelope del CLI capturada primero por [GT-485](#gt-485).
+
+**Evidencia:** `npm run test:exploration`, operación `architecture-validate`, superficie `cli` — la salida no pudo parsearse en un envelope `{ success, data|error, meta }`.
+
+**Fix propuesto:** Envolver la salida JSON de `architecture-validate` del CLI en el `createSuccessEnvelope` / `createErrorEnvelope` compartido (como ya hacen `gate` / `drift` / `phase`), luego promover el binding de exploración `architecture-validate` a `verified`. Trazar junto a [GT-485](#gt-485).
+
+**Cierre:**
+- [ ] el JSON del CLI de `architecture-validate` emite `{ success, data, meta }`
+- [ ] binding de exploración `architecture-validate` promovido a `verified`
+
+**Referencias:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
+
 #### GT-475
 
 **Título:** Herramientas MCP de clase `write` recientes evaden el gate de aprobación HITL de GT-158

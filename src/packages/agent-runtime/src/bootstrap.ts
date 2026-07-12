@@ -29,7 +29,7 @@ import { StubPolicyValidationAdapter } from './adapters/policy/stub-policy-valid
 import { InMemoryTrackerTraceAdapter } from './adapters/tracker/in-memory-tracker-trace.adapter';
 import { InMemoryMemoryAdapter } from './adapters/memory/in-memory-memory.adapter';
 import { LocalSkillRegistryAdapter } from './adapters/skills/local-skill-registry.adapter';
-import { AutoApprovalAdapter } from './adapters/approval/policy-approval.adapter';
+import { PendingApprovalAdapter } from './adapters/approval/pending-approval.adapter';
 import { StubAgentEngineAdapter } from './adapters/engine/stub-agent-engine.adapter';
 import { HermesAgentAdapter } from './adapters/engine/hermes-agent.adapter';
 import { SwarmsAgentAdapter } from './adapters/engine/swarms-agent.adapter';
@@ -68,7 +68,9 @@ export function createAgentRuntime(overrides: AgentRuntimeOverrides = {}): Agent
     policy: overrides.policy ?? new StubPolicyValidationAdapter(),
     tracker: overrides.tracker ?? new InMemoryTrackerTraceAdapter(),
     memory: overrides.memory ?? new InMemoryMemoryAdapter(),
-    approval: overrides.approval ?? new AutoApprovalAdapter(),
+    // Fail-closed real HITL gate by default (GT-441): nothing is silently
+    // auto-granted. Opt into AutoApprovalAdapter explicitly for dev/tests.
+    approval: overrides.approval ?? new PendingApprovalAdapter(),
     engine,
     now: overrides.now,
     id: overrides.id,

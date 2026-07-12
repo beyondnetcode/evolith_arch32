@@ -18,6 +18,7 @@ const keys = (m: object): string[] => Object.keys(m).sort();
 
 /** The exact runtime value surface of the `./adapters` subpath export. */
 const ADAPTERS_SURFACE = [
+  'ApprovalResolutionError',
   'AutoApprovalAdapter',
   'ChatApprovalAdapter',
   'CliCommunicationGatewayAdapter',
@@ -33,6 +34,7 @@ const ADAPTERS_SURFACE = [
   'HermesChatBoxInteractionAdapter',
   'HttpCoreEvaluationAdapter',
   'HttpTrackerTraceAdapter',
+  'InMemoryApprovalStore',
   'InMemoryHarnessAdapter',
   'InMemoryKnowledgeAdapter',
   'InMemoryMemoryAdapter',
@@ -42,9 +44,11 @@ const ADAPTERS_SURFACE = [
   'LocalSkillRegistryAdapter',
   'McpInteractionAdapter',
   'MockTrackerTraceAdapter',
+  'NoopApprovalTransport',
   'OpaCliPolicyValidationAdapter',
   'OpenCodeInteractionAdapter',
   'OpenTelemetryTrackerTraceAdapter',
+  'PendingApprovalAdapter',
   'PolicyBasedEngineRouter',
   'RoutingAgentAdapter',
   'SlackApprovalAdapter',

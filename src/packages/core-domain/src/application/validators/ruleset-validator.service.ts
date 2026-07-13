@@ -5,6 +5,7 @@ import { RuleEvaluationEngine } from './rule-evaluation-engine';
 import { RulesetsNotFoundError } from '../../domain/ports/ruleset-repository.port';
 import { NativeEvaluator } from './evaluators/native-evaluator';
 import { OpaEvaluator } from './evaluators/opa-evaluator';
+import { createCompositeEnforcerStrategy } from './enforcement/enforcer-subsystem';
 import { TopologyCatalogService } from '../services/topology-catalog.service';
 import {
   ArchitectureValidationResult, EvolithYaml, RULESET_VALIDATOR_OPTIONS,
@@ -37,9 +38,16 @@ export class RulesetValidatorService {
     this.configParser = options.configParser;
     this.topologyCatalog = options.topologyCatalog;
 
-    const strategy = options.engineType === 'opa'
+    const baseStrategy = options.engineType === 'opa'
       ? new OpaEvaluator(this.fs, this.logger)
       : new NativeEvaluator(this.fs, this.logger, this.configParser);
+
+    // GT-524 wiring: when a host injects a process runner, route `enforce:` rules through
+    // the enforcer subsystem (sandbox-wrapped adapters). Non-forking — without enforcer
+    // rules the composite delegates everything to the base strategy.
+    const strategy = options.processRunner
+      ? createCompositeEnforcerStrategy(baseStrategy, options.processRunner)
+      : baseStrategy;
 
     this.engine = new RuleEvaluationEngine({
       fileSystem: this.fs,

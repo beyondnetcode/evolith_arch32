@@ -36,7 +36,7 @@ export interface Violation {
   readonly ruleId: string;
   /** Enforcer tool that produced it (e.g. `dependency-cruiser`, `deptrac`). */
   readonly tool: string;
-  /** Repo-relative path of the offending file. */
+  /** Repo-relative path of the offending file; `''` for a project-level/locationless finding. */
   readonly file: string;
   /** 1-based line, when the tool reports one. */
   readonly line?: number;
@@ -90,7 +90,10 @@ export function normalizeViolationPath(file: string): string {
     .replace(/\\/g, '/')
     .replace(/^\.\//, '')
     .replace(/\/{2,}/g, '/')
-    .replace(/\/+$/, '')
+    // Runs of slashes were already collapsed above, so at most ONE trailing slash can
+    // remain — a single-char `\/$` (not `\/+$`) drops it without the polynomial
+    // backtracking a `+` quantifier would incur on adversarial `/`-heavy tool paths.
+    .replace(/\/$/, '')
     .trim();
 }
 

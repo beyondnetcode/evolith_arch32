@@ -6,6 +6,7 @@ import {
   IsEnum,
   IsIn,
   IsArray,
+  IsDefined,
   MinLength,
   ValidateNested,
 } from 'class-validator';
@@ -166,6 +167,9 @@ export class EvaluateArchitecturePlanDto {
   prompt_source?: string;
 
   @ApiProperty({ description: 'Functional/technical scope', type: ArchitecturePlanScopeDto })
+  // `@ValidateNested()` alone does NOT reject an absent value — without `@IsDefined()`
+  // a payload omitting `scope` passes the global ValidationPipe despite `scope!`.
+  @IsDefined()
   @ValidateNested()
   @Type(() => ArchitecturePlanScopeDto)
   scope!: ArchitecturePlanScopeDto;

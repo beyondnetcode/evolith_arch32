@@ -25,6 +25,16 @@ export interface ShellEnforcerConfig {
   buildSpec(ctx: EnforcerAnalysisContext): ProcessSpec;
   /** Map the raw process result into canonical violations. */
   parse(result: ProcessResult, ctx: EnforcerAnalysisContext): Violation[];
+  /**
+   * Distinguish a genuine tool FAILURE (missing binary, bad config, crash) from a clean
+   * run that simply found no violations. Report-emitting tools (`depcruise -T json`, a
+   * SARIF analyzer) always write their report on success, so an empty stdout means the
+   * tool never ran to completion. When this returns `true`, {@link ShellEnforcerAdapter.analyze}
+   * THROWS so the {@link EnforcerEvaluator} SKIPS the rule — a crashed tool must never be
+   * mistaken for "0 violations → passed" (a false pass). Override per-tool when a tool can
+   * legitimately emit empty output on success. Default: empty stdout ⇒ failure.
+   */
+  isToolFailure?(result: ProcessResult, ctx: EnforcerAnalysisContext): boolean;
 }
 
 export class ShellEnforcerAdapter implements IEnforcerAdapter {
@@ -44,6 +54,17 @@ export class ShellEnforcerAdapter implements IEnforcerAdapter {
   async analyze(ctx: EnforcerAnalysisContext): Promise<Violation[]> {
     const spec = this.config.buildSpec(ctx);
     const result = await this.runner.run(spec);
+    const failed = this.config.isToolFailure
+      ? this.config.isToolFailure(result, ctx)
+      : result.stdout.trim() === '';
+    if (failed) {
+      // Throw (not `return []`) so the EnforcerEvaluator records a SKIP rather than a
+      // false pass: a tool that produced no parseable report never certified anything.
+      throw new Error(
+        `${this.config.tool} produced no parseable report (exit ${result.exitCode})` +
+          `${result.stderr ? `: ${result.stderr.trim().slice(0, 200)}` : ''}`,
+      );
+    }
     return this.config.parse(result, ctx);
   }
 }

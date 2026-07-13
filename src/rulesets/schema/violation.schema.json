@@ -9,7 +9,7 @@
   "properties": {
     "ruleId": { "type": "string", "minLength": 1, "description": "Rule that was violated (e.g. HXA-01, no-circular)." },
     "tool": { "type": "string", "minLength": 1, "description": "Enforcer tool that produced it (e.g. dependency-cruiser, deptrac)." },
-    "file": { "type": "string", "minLength": 1, "description": "Repo-relative path of the offending file." },
+    "file": { "type": "string", "description": "Repo-relative path of the offending file; empty string for a project-level/locationless finding (a GapFinding with no `location`)." },
     "line": { "type": "integer", "minimum": 1, "description": "1-based line, when reported." },
     "column": { "type": "integer", "minimum": 1, "description": "1-based column, when reported." },
     "severity": { "type": "string", "enum": ["error", "warning", "info"] },

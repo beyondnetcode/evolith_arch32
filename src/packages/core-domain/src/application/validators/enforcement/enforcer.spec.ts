@@ -129,9 +129,18 @@ describe('EnforcerEvaluator (pass / fail / frozen / skip)', () => {
   it('skips when the adapter throws (a tool crash never becomes a false pass)', async () => {
     const throwing = new ShellEnforcerAdapter(
       { tool: 'dependency-cruiser', runtime: 'node', buildSpec: () => ({ command: 'x', args: [] }), parse: () => { throw new Error('bad json'); } },
-      new StubProcessRunner(),
+      new StubProcessRunner({ exitCode: 1, stdout: '{"summary":{"garbage":true}}', stderr: '' }),
     );
     const [res] = await new EnforcerEvaluator([throwing]).evaluateAll([rule('HXA-01', enforce)], ctx);
+    expect(res.result).toBe('skipped');
+    expect(res.message).toMatch(/failed to run/);
+  });
+
+  it('skips (never false-passes) when the tool emits no report — missing binary/crash', async () => {
+    // exit!=0 + empty stdout = the tool never produced a report; the adapter must SKIP,
+    // not treat the absence of parseable violations as "0 violations → passed".
+    const runner = new StubProcessRunner({ exitCode: 127, stdout: '', stderr: 'depcruise: command not found' });
+    const [res] = await new EnforcerEvaluator([depCruiserAdapter(runner)]).evaluateAll([rule('HXA-01', enforce)], ctx);
     expect(res.result).toBe('skipped');
     expect(res.message).toMatch(/failed to run/);
   });

@@ -30,3 +30,19 @@ export { LangfuseEvidenceAdapter } from './langfuse-evidence.adapter';
 export type { LangfuseHttpClient } from './langfuse-evidence.adapter';
 export { fetchBlueprintOwnership } from './idp-blueprint.adapter';
 export type { BlueprintHttpClient } from './idp-blueprint.adapter';
+export {
+  LighthouseEvidenceProvider,
+  createHeadlessChromeRunner,
+  severityForScore,
+  LIGHTHOUSE_PROVIDER_ID,
+  LIGHTHOUSE_ADAPTER_VERSION,
+} from './lighthouse-evidence.provider';
+export type {
+  IQualitySignalProvider,
+  CollectionContext,
+  CollectionTarget,
+  LighthouseRunner,
+  LighthouseRunResult,
+  LighthouseCategoryResult,
+  LighthouseEvidenceProviderOptions,
+} from './lighthouse-evidence.provider';

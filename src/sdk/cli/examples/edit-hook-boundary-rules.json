@@ -1,0 +1,20 @@
+{
+  "boundaryRules": [
+    {
+      "ruleId": "HXA-01",
+      "adrRef": "ADR-0002",
+      "appliesTo": "src/domain/",
+      "forbiddenImports": ["../infrastructure", "src/infrastructure", "MyApp.Infrastructure"],
+      "severity": "error",
+      "message": "Domain must not depend on Infrastructure (ADR-0002 — Hexagonal Architecture)."
+    },
+    {
+      "ruleId": "HXA-02",
+      "adrRef": "ADR-0002",
+      "appliesTo": "src/application/",
+      "forbiddenImports": ["../infrastructure", "src/infrastructure"],
+      "severity": "error",
+      "message": "Application may depend on Domain and ports only, never on Infrastructure (ADR-0002)."
+    }
+  ]
+}

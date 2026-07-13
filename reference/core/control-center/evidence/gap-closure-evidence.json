@@ -7325,6 +7325,35 @@
         "cd src/apps/agent-runtime-api && npx jest (33/33) — fail-closed auth (unset-key⇒denied, dev-bypass⇒allowed), JWT tenant-claim extraction, TenantCorpusGuard cross-tenant denial; both guards in APP_GUARD"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-534",
+      "closedAt": "2026-07-13",
+      "closureCommit": "af97a14c",
+      "evidence": [
+        "src/packages/infra-providers/src/lighthouse-evidence.provider.ts",
+        "src/packages/infra-providers/src/lighthouse-evidence.provider.spec.ts",
+        "reference/core/architecture/adrs/core/0113-nodejs-lighthouse-evidence-adapter.md"
+      ],
+      "validationCommands": [
+        "cd src/packages/infra-providers && npx tsc && npx jest (13 suites, 105/105) — LighthouseEvidenceProvider emits deterministic canonical Evidence with full provenance; categories→EvidenceFinding severity; stubbed LHR (no Chrome)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-526",
+      "closedAt": "2026-07-13",
+      "closureCommit": "8fd95eb3",
+      "evidence": [
+        "src/sdk/cli/src/commands/enforce/enforce.command.ts",
+        "src/sdk/cli/src/infrastructure/agent/edit-hook/edit-hook.service.ts",
+        "src/sdk/cli/src/infrastructure/agent/edit-hook/hook-payload.ts",
+        "src/sdk/cli/docs/edit-time-enforcement.md"
+      ],
+      "validationCommands": [
+        "cd src/sdk/cli && npm run build && npx jest (71 suites, 967/967; edit-hook+enforce 45/45) — `evolith enforce edit` blocks a boundary-violating edit (exit 2) with canonical Violation; conforming edit exit 0; cross-agent VendorHookAdapter registry"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

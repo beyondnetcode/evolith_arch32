@@ -292,10 +292,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Cross-agent hook (Claude Code/Cursor/Copilot) that queries the compiled architecture contract and deterministically rejects/warns the non-conforming edit.
 - **Acceptance criteria:**
-  - [ ] An edit that violates an `enforce:` rule is blocked/flagged at edit time in at least one agent. _(core done: `evaluateEdit` decides allow/block on a real edit with canonical `Violation`s; the per-agent adapter —Claude Code/Cursor PreToolUse hook— that enforces it is pending)_
-  - [x] The mechanism is cross-agent neutral (not tied to a single vendor). _(`evaluateEdit`/`EditBoundaryRule` is a pure, vendor-agnostic function)_
+  - [x] An edit that violates an `enforce:` rule is blocked/flagged at edit time in at least one agent. _(CLI `evolith enforce edit` reads a hook payload from stdin, runs the compiled boundary contract through `evaluateEdit`, and returns exit 0 = allow / exit 2 = block — the Claude Code veto code — with canonical `Violation`s on stderr; real-binary e2e verified)_
+  - [x] The mechanism is cross-agent neutral (not tied to a single vendor). _(`VendorHookAdapter` registry: `claude-code` parses PreToolUse Write/Edit/MultiEdit; `generic` accepts a canonical `{filePath,content}` so Cursor/Copilot plug in with zero code; `evaluateEdit`/`EditBoundaryRule` stays a pure vendor-agnostic function)_
 - **Dependencies:** GT-516, GT-520.
-- **Status:** `IN-PROGRESS`
+- **Closure (2026-07-13, Wave 2, commit `8fd95eb3`):** Delivered the per-agent adapter in `src/sdk/cli` (`enforce edit` action + `edit-hook` service, payload normalizer, boundary-rules loader), with docs (`.claude/settings.json` snippet, matcher `Write|Edit|MultiEdit`), a ready wrapper `examples/claude-code-pretooluse-hook.sh`, and a sample compiled contract. Non-writing/unrecognized tool calls are allowed (the gate never blocks what it cannot evaluate). 45 focused tests + full CLI suite 967/967 green. Completes the three READ→CONTROL surfaces (pre-gen MCP + PR/CI + edit-time). _Op note:_ the Claude Code hook is a shell wrapper the user registers in their settings.
+- **Status:** `DONE`
 
 #### GT-527
 
@@ -439,10 +440,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Adapter implementing `IQualitySignalProvider` over the Lighthouse Node module, emitting normalized deterministic `Evidence`.
 - **Acceptance criteria:**
-  - [ ] Adapter emits normalized `Evidence` with `determinism: 'deterministic'` and full provenance.
-  - [ ] Companion Node.js Platform ADR records the vendor/runtime choice.
+  - [x] Adapter emits normalized `Evidence` with `determinism: 'deterministic'` and full provenance. _(`LighthouseEvidenceProvider` in infra-providers; provenance `collectedBy:'lighthouse'` + adapterVersion + SHA-256 artifactHash; categories → `EvidenceFinding` with score-derived severity)_
+  - [x] Companion Node.js Platform ADR records the vendor/runtime choice. _(ADR-0113, bilingual, indexed — renumbered from 0112 to avoid collision with the concurrent ADR-0112 RAG)_
 - **Dependencies:** GT-533.
-- **Status:** `PENDING`
+- **Closure (2026-07-13, Wave 2, commit `af97a14c`):** First concrete provider behind the GT-533 Quality Signal seam. Headless-Chrome run sits behind an injected `LighthouseRunner` port (lighthouse/chrome-launcher dynamically imported, not a build dep — ADR-0111 §5); 27 unit tests drive a stubbed LHR (no Chrome/network). Port implemented as a structural mirror in-package to avoid an infra→orchestration dependency inversion. infra-providers 105/105 green. _Runtime note:_ a live end-to-end run needs headless Chrome + a deployed URL; registering the provider into `TenantQualitySignalRegistry` is part of the GT-533 pipeline-wiring follow-on.
+- **Status:** `DONE`
 
 #### GT-535
 
@@ -1622,6 +1624,8 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 **Title:** Production adapter wiring for agent-runtime-api
 
 **Problem:** default bootstrap uses StubCoreEvaluationAdapter + StubAgentEngineAdapter + in-memory state; real adapters exist but are opt-in via env. **Closure:** prod config wires real Core-eval (HTTP), engine (Hermes/routing), durable memory + scheduler. **References:** runtime.factory.ts; bootstrap.ts.
+
+**Progress:** (2026-07-13, Wave 2, commit `7fe2c717`) A single `AGENT_RUNTIME_PROFILE=production|dev` switch now governs adapter selection in `runtime.factory.ts` (26 tests). **Wired + fail-loud under production:** Core-eval → `HttpCoreEvaluationAdapter` (endpoint AND token mandatory, throws instead of falling back to the stub); durable state → `FileMemoryAdapter` (requires `AGENT_RUNTIME_STATE_DIR`); real OPA enforced (stub refused). Engine wired by config via `AGENT_RUNTIME_ENGINE` (hermes/swarms/cowork/routing). Stubs + in-memory remain the explicit dev/test default; all new env documented in `.env.example`. **Remaining (kept IN-PROGRESS):** (1) the real reasoning-engine default is **GT-385-gated** — an unset `AGENT_RUNTIME_ENGINE` keeps the deterministic stub in every profile; (2) `FileSchedulerAdapter` is not yet driven by a host scheduling loop in this app (`AGENT_RUNTIME_STATE_DIR` documented as its backing).
 
 #### GT-439
 

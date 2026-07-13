@@ -310,10 +310,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** L
 - **Proposed fix:** Read-only connectors via ACL (Port/Cortex/OpsLevel API + Backstage `catalog-info.yaml`) normalizing to a canonical ownership model consumed by evidence enrichment.
 - **Acceptance criteria:**
-  - [ ] At least one connector (e.g. Backstage) resolves owner and feeds violation enrichment. _(core done: `parseBackstageCatalog` + `resolveOwner` + `enrichViolationsWithOwner`; reading the repo's `catalog-info.yaml` via the config-parser port is the remaining connector/infra step)_
+  - [x] At least one connector (e.g. Backstage) resolves owner and feeds violation enrichment. _(Backstage `loadBackstageOwnership` + `fetchBlueprintOwnership` Port/Cortex over the pure parsers; injected client)_
   - [x] Connectors are read-only and introduce no vendor lock-in. _(the parsers only read and normalize; nothing writes or couples to a vendor)_
 - **Dependencies:** GT-511.
-- **Status:** `IN-PROGRESS`
+- **Status:** `COMPLETED`
 
 #### GT-528
 
@@ -350,7 +350,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] Jira items map to Evolith artifacts preserving origin/identity/timestamps/lineage. _(`parseJiraIssue`→`CanonicalWorkItem` with `WorkItemProvenance`; rejects a missing id)_
   - [x] Completing a Jira workflow does not by itself authorize a phase transition. _(`authorizesPhaseTransition:false` by contract + `externalWorkAuthorizesTransition`⇒false)_
 - **Dependencies:** none.
-- **Status:** `IN-PROGRESS`
+- **Status:** `COMPLETED`
 
 #### GT-530
 
@@ -368,7 +368,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] A Langfuse trace/evaluation maps to canonical evidence consumable by a gate. _(`mapLangfuseTrace`→`ObservabilityEvidence` with cost/latency/tokens/prompt/tool-calls/scores)_
   - [x] The adapter is isolated behind a port (replaceable observability provider). _(`IObservabilityEvidenceSource`; the shape is provider-neutral)_
 - **Dependencies:** GT-511.
-- **Status:** `IN-PROGRESS`
+- **Status:** `COMPLETED`
 
 #### GT-531
 
@@ -873,9 +873,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **Proposed fix:** Counters were corrected to `450 / 484 · 7 · 26 · 1` during the GT-475…GT-484 registration; the systemic fix is to re-point + re-arm `08-validate-tracking.mjs` (GT-476) on push/PR so the counters cannot silently drift again.
 
-**Closure:**
-- [ ] Progress/Progreso lines match a scripted per-row tally
-- [ ] guard reconciles the counters on push/PR (depends on GT-476)
+**Closure:** DONE
+- [x] Progress/Progreso lines match a scripted per-row tally
+- [x] guard reconciles the counters on push/PR (depends on GT-476)
 
 **References:** `reference/core/control-center/gaps/gap-tracking.md:492`; GT-476, GT-417
 
@@ -923,9 +923,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **Proposed fix:** Normalize the 13 `HECHO` rows back to `COMPLETADO` (preferred, preserves the GT-417 convention), or add a `HECHO → done` alias to `STATUS_MAP` (a `.harness` edit, done directly in this repo — see GT-476).
 
-**Closure:**
-- [ ] no `HECHO` status tokens remain in `gap-tracking.es.md`
-- [ ] guard accepts every ES done-status (after GT-476)
+**Closure:** DONE
+- [x] no `HECHO` status tokens remain in `gap-tracking.es.md`
+- [x] guard accepts every ES done-status (after GT-476)
 
 **References:** `reference/core/control-center/gaps/gap-tracking.es.md`; `.harness/scripts/ci/08-validate-tracking.mjs:16-30`; GT-417, GT-476
 

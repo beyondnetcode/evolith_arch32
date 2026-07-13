@@ -6595,6 +6595,46 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-529",
+      "closedAt": "2026-07-13",
+      "closureCommit": "856d2b56",
+      "evidence": ["src/packages/infra-providers/src/jira-work-system.adapter.ts", "src/packages/core-domain/src/domain/external-work-acl.ts"],
+      "validationCommands": ["cd src/packages/infra-providers && npx jest --runInBand jira-work-system (green)", "infra-providers 78/78"],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-530",
+      "closedAt": "2026-07-13",
+      "closureCommit": "959538d6",
+      "evidence": ["src/packages/infra-providers/src/langfuse-evidence.adapter.ts", "src/packages/core-domain/src/domain/observability-evidence.ts"],
+      "validationCommands": ["cd src/packages/infra-providers && npx jest --runInBand langfuse-evidence (green)", "infra-providers 78/78"],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-527",
+      "closedAt": "2026-07-13",
+      "closureCommit": "702915bb",
+      "evidence": ["src/packages/infra-providers/src/idp-blueprint.adapter.ts", "src/packages/infra-providers/src/backstage-catalog.loader.ts", "src/packages/core-domain/src/domain/ownership.ts"],
+      "validationCommands": ["cd src/packages/infra-providers && npx jest --runInBand idp-blueprint (green)", "infra-providers 78/78"],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-477",
+      "closedAt": "2026-07-13",
+      "closureCommit": "56968194",
+      "evidence": [".github/workflows/docs.yml", ".harness/scripts/ci/08-validate-tracking.mjs"],
+      "validationCommands": ["guard validates parseProgress on PR/push (GT-476)"],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-480",
+      "closedAt": "2026-07-13",
+      "closureCommit": "85595fd6",
+      "evidence": ["reference/core/control-center/gaps/gap-tracking.es.md"],
+      "validationCommands": ["0 HECHO tokens; guard STATUS_MAP green"],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-476",
       "closedAt": "2026-07-12",
       "closureCommit": "56968194",

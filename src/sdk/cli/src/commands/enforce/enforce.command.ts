@@ -21,6 +21,14 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
 import { resolveCoreOverride } from '../../infrastructure/paths/core-resolver';
 import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
+import { loadBoundaryRules } from '../../infrastructure/agent/edit-hook/boundary-rules';
+import {
+  enforceEditPayload,
+  renderEditVerdict,
+  readStdin,
+  EDIT_HOOK_BLOCK_EXIT_CODE,
+} from '../../infrastructure/agent/edit-hook/edit-hook.service';
+import type { RawHookPayload } from '../../infrastructure/agent/edit-hook/hook-payload';
 
 interface EnforceCommandOptions {
   format?: string;
@@ -28,6 +36,9 @@ interface EnforceCommandOptions {
   ruleset?: string;
   core?: string;
   output?: string;
+  rules?: string;
+  payload?: string;
+  vendor?: string;
 }
 
 /** Known ruleset ids the compiler can resolve against the Core rulesets root. */
@@ -64,7 +75,8 @@ interface CompiledPolicyReport {
 @Command({
   name: 'enforce',
   arguments: '<action>',
-  description: 'Enforcement operations (action: compile) — compile enforce: blocks into tool config',
+  description:
+    'Enforcement operations — compile: lower enforce: blocks into tool config; edit: edit-time cross-agent gate (PreToolUse hook)',
 })
 export class EnforceCommand extends BaseEvolithCommand {
   constructor(promptService: PromptService, configService?: ConfigService) {
@@ -93,8 +105,11 @@ export class EnforceCommand extends BaseEvolithCommand {
     };
 
     const action = inputs[0];
+    if (action === 'edit') {
+      return this.executeEditGate(options);
+    }
     if (action !== 'compile') {
-      return fail('VALIDATION_FAILED', `Unknown enforce action '${action ?? ''}'. Supported: compile`);
+      return fail('VALIDATION_FAILED', `Unknown enforce action '${action ?? ''}'. Supported: compile, edit`);
     }
 
     if (!options?.file && !options?.ruleset) {
@@ -154,6 +169,85 @@ export class EnforceCommand extends BaseEvolithCommand {
     } else {
       this.printHuman(report);
     }
+  }
+
+  /**
+   * `enforce edit` (GT-526 · axis 2) — the edit-time cross-agent gate. Reads an edit intent from
+   * an agent hook payload (Claude Code `PreToolUse` on stdin, or `--payload`; Cursor/Copilot via
+   * the generic normalized shape), evaluates the edited file's imports against the compiled
+   * boundary contract (`--rules`), and returns a DETERMINISTIC allow/block. On block it prints the
+   * canonical Violations to stderr and exits `2` — the code an agent runtime honors to reject the
+   * pending write in-flight, before the PR. PR/CI (GT-518) stays the authoritative gate.
+   */
+  private async executeEditGate(options?: EnforceCommandOptions): Promise<void> {
+    const startedAt = Date.now();
+    const json = options?.format === 'json';
+    const commandId = 'evolith enforce edit';
+    const meta = (): OutputMeta => ({
+      command: commandId,
+      executedAt: new Date().toISOString(),
+      durationMs: Date.now() - startedAt,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    });
+    const fail = (code: ErrorCode, message: string): void => {
+      if (json) {
+        console.log(JSON.stringify(createErrorEnvelope(code, message, meta()), null, 2));
+      } else {
+        this.promptService.showError(message);
+      }
+      process.exit(1);
+    };
+
+    if (!options?.rules) {
+      return fail('VALIDATION_FAILED', 'Provide the compiled boundary contract via --rules <path>');
+    }
+
+    let rules;
+    try {
+      rules = await loadBoundaryRules(path.resolve(options.rules));
+    } catch (err) {
+      const code = err instanceof Error && err.name === 'BoundaryRulesError' ? 'VALIDATION_FAILED' : 'IO_ERROR';
+      return fail(code, `Failed to load boundary rules '${options.rules}': ${err instanceof Error ? err.message : String(err)}`);
+    }
+
+    let rawJson: string;
+    try {
+      rawJson = options.payload ?? (await readStdin());
+    } catch (err) {
+      return fail('IO_ERROR', `Failed to read hook payload from stdin: ${err instanceof Error ? err.message : String(err)}`);
+    }
+    if (!rawJson || rawJson.trim().length === 0) {
+      return fail('VALIDATION_FAILED', 'Empty hook payload — pass JSON on stdin or via --payload <json>');
+    }
+
+    let payload: RawHookPayload;
+    try {
+      payload = JSON.parse(rawJson);
+    } catch (err) {
+      return fail('VALIDATION_FAILED', `Hook payload is not valid JSON: ${err instanceof Error ? err.message : String(err)}`);
+    }
+
+    const result = enforceEditPayload(payload, rules, options.vendor);
+
+    if (json) {
+      const data = {
+        action: 'edit' as const,
+        vendor: result.vendor,
+        file: result.filePath,
+        allow: result.decision.allow,
+        blocked: result.blocked,
+        violations: result.decision.violations,
+      };
+      console.log(JSON.stringify(createSuccessEnvelope(data, meta()), null, 2));
+    } else {
+      const verdict = renderEditVerdict(result);
+      // Route to stderr so an agent runtime surfaces it back to the model on block.
+      if (result.blocked) console.error(verdict);
+      else this.promptService.showInfo(verdict);
+    }
+
+    if (result.blocked) process.exit(EDIT_HOOK_BLOCK_EXIT_CODE);
   }
 
   /** Resolve the ruleset JSON path from `--file` (verbatim) or `--ruleset <id>`. */
@@ -228,6 +322,30 @@ export class EnforceCommand extends BaseEvolithCommand {
 
   @Option({ flags: '-o, --output [path]', description: 'Write the compiled-policy envelope to a file instead of stdout' })
   parseOutput(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--rules [path]',
+    description: 'edit: path to the compiled boundary contract (EditBoundaryRule[] JSON)',
+  })
+  parseRules(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--payload [json]',
+    description: 'edit: inline hook payload JSON (default: read from stdin)',
+  })
+  parsePayload(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--vendor [name]',
+    description: 'edit: force a payload adapter (claude-code | generic); default: auto-detect',
+  })
+  parseVendor(val: string): string {
     return val;
   }
 }

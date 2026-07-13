@@ -7,6 +7,14 @@ image:
 
 replicaCount: 1
 
+# GT-438 (local kind): govern over the REAL stateless Core in the cluster (not the stub).
+# The agent-runtime calls core-api POST /api/v1/evaluate over the in-cluster service, with
+# the shared local API key. AGENT_RUNTIME_CORE_ENDPOINT must be the FULL evaluate URL.
+extraEnv:
+  AGENT_RUNTIME_CORE_ENDPOINT: "http://evolith-core-api-evolith-core-api/api/v1/evaluate"
+  AGENT_RUNTIME_CORE_TOKEN: "local-dev-key"
+  AGENT_RUNTIME_AUDIT_DIR: "/tmp/audit"
+
 ingressRoute:
   enabled: false
 

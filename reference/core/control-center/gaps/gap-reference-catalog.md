@@ -419,11 +419,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** L
 - **Proposed fix:** Driven port owned by orchestration; Core imports only `Evidence` (inline, like `OverlayFileSystem`, ADR-0080); Core never executes providers; declarative opt-in registry per tenant; mandatory `provenance` + `determinism`.
 - **Acceptance criteria:**
-  - [ ] `core-domain` imports only `Evidence` (grep-clean of provider/adapter imports).
-  - [ ] Providers run in orchestration; Core evaluates received `Evidence[]`; missing evidence ⇒ `no-evidence`, not a failure.
-  - [ ] Per-tenant registry enables/disables providers declaratively.
+  - [x] `core-domain` imports only `Evidence` (grep-clean of provider/adapter imports). _(canonical `quality-evidence.ts` — zero imports; consumed inline via `EvaluationContext.qualitySignals?`)_
+  - [~] Providers run in orchestration; Core evaluates received `Evidence[]`; missing evidence ⇒ `no-evidence`, not a failure. _(the Core-side rule `resolveEvidenceSignals` + `no-evidence` semantics exist and are tested, but are **not yet wired into the evaluation pipeline** — follow-on below)_
+  - [x] Per-tenant registry enables/disables providers declaratively. _(`TenantQualitySignalRegistry` in agent-runtime; fault-isolated, re-normalized through the canonical ACL)_
 - **Dependencies:** ADR-0111; composes with GT-530.
-- **Status:** `PENDING`
+- **Progress (2026-07-13, Wave 1, commit `d56ba32c`):** Seam foundation landed — canonical `Evidence`/`Provenance`/`EvidenceFinding` + `Determinism` in `core-domain` (mandatory provenance enforced by `normalizeEvidence`), driven `IQualitySignalProvider` port owned by the orchestration layer (Core never executes providers), and the per-tenant registry. Grep-clean of Core→provider coupling; core-domain 960/960 + agent-runtime 98/98 green. **Follow-on to close (→ DONE):** (1) invoke `resolveEvidenceSignals` inside the evaluation pipeline so received `Evidence[]` actually influences signals/verdict; (2) a runtime adapter that runs `TenantQualitySignalRegistry.collect()` and populates `EvaluationContext.qualitySignals` inline — only then is the ADR-0104 conformance loop closed end-to-end. GT-534 (Lighthouse) is the first concrete provider behind this port.
+- **Status:** `IN-PROGRESS`
 
 #### GT-534
 
@@ -496,6 +497,78 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [ ] Produces a score + severity plan consistent with the scorecard model.
 - **Dependencies:** GT-533.
 - **Status:** `DEFERRED`
+
+#### GT-538
+
+**Title:** Durable vector-store adapter (pgvector) behind `rag-port.mjs`
+
+- **Purpose:** Make the RAG write-side operational — register a real `durable: true` adapter so `14-rag-index-sync.mjs` persists embeddings instead of failing closed.
+- **Evidence:** `.harness/scripts/ci/rag-port.mjs` ships only the non-durable `memory` adapter; `registerRagAdapter()` is defined but never called with a real vendor, so a live sync fails closed by design (GT-145) and nothing reaches a durable store. ADR-0090 §5 names pgvector the preferred self-hosted target; Postgres already runs on :5432.
+- **Impact:** Turns the well-tested chunk→embed→upsert pipeline into a real, queryable index — the precondition for GT-540 retrieval.
+- **Risk:** Vector-index tuning (dimension, ANN index) and migration ownership on the shared Postgres.
+- **Affected files:** a new `pgvector` adapter registered via `registerRagAdapter` in the CI layer; a Postgres migration for the vector table + the ADR-0090 §2 metadata columns.
+- **Component:** `Operations` · **Dimension:** Knowledge · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Implement `embed`/`upsert`/`delete` over pgvector with metadata filtering on the ADR-0090 §2 fields; select it via `EVOLITH_RAG_PROVIDER=pgvector`; keep `memory` as the dry-run/test default.
+- **Acceptance criteria:**
+  - [ ] `registerRagAdapter('pgvector', …)` provides a `durable: true` adapter; a live `14-rag-index-sync.mjs` run upserts real chunks and emits a truthful receipt.
+  - [ ] Metadata columns support filtering on `source_file`, `adr_id`, `language`, `corpus_version`.
+- **Dependencies:** ADR-0090; ADR-0112 (platform: pgvector on existing Postgres, `vector(1024)`, HNSW); composes with GT-145.
+- **Status:** `PENDING`
+
+#### GT-539
+
+**Title:** Real embedding model behind the RAG port `embed()`
+
+- **Purpose:** Replace the deterministic pseudo-embedding with a real semantic embedding model so retrieval is actually semantic.
+- **Evidence:** `rag-port.mjs` `hashEmbed()` is a sha256 stand-in (stable but non-semantic); no `text-embedding-*` model is wired. ADR-0090 §3 requires declaring the model name in `corpus_version`; ADR-0003 governs model selection.
+- **Impact:** Semantic recall over the corpus (the whole point of RAG); enables meaningful cosine ranking in GT-540.
+- **Risk:** Inference-sidecar hosting/latency (GPU optional for the 0.6B default) and dimension consistency between embed and store. No external egress — self-hosted OSS model.
+- **Affected files:** the `embed()` implementation in the durable adapter (GT-538) or a dedicated embedding sub-adapter; `corpus_version` metadata to carry the model name.
+- **Component:** `Operations` · **Dimension:** Knowledge · **Type:** backend
+- **Criticality:** P1 · **Complexity:** S
+- **Proposed fix:** Behind the model-agnostic port, call the model fixed by ADR-0112 — **Qwen3-Embedding (Apache-2.0)**, default `0.6B`, dim 1024, via a local inference sidecar; record the model id in `corpus_version` for cache invalidation; keep `memory`/`hashEmbed` as the offline/test default.
+- **Acceptance criteria:**
+  - [ ] Live embeddings come from the declared OSS model (Qwen3-Embedding); the model id appears in chunk `corpus_version` metadata.
+  - [ ] No corpus egress — embeddings computed on-perimeter by the sidecar.
+- **Dependencies:** ADR-0090 §3; ADR-0003; ADR-0112 (platform: Qwen3-Embedding); composes with GT-538.
+- **Status:** `PENDING`
+
+#### GT-540
+
+**Title:** Production `IKnowledgePort` retrieval adapter (vector-store, semantic)
+
+- **Purpose:** Make the read-side real — semantic retrieval over the corpus so agents can ground recommendations, replacing the token-overlap stub.
+- **Evidence:** `src/packages/agent-runtime/src/adapters/knowledge/in-memory-knowledge.adapter.ts` scores by substring/heading overlap with "No vector embeddings" stated in its own docstring; `maturity-assessment.md:147` records "Knowledge / RAG — Not implemented as consolidated adapter" at HIGH priority; no agent currently calls `IKnowledgePort` at runtime.
+- **Impact:** Grounded, cited agent recommendations over the full ADR/ruleset corpus without context-window exhaustion (the ADR-0090 motivation).
+- **Risk:** Retrieval quality (chunking/recall) and keeping the read model in sync with the write-side schema.
+- **Affected files:** a new production `IKnowledgePort` adapter in `agent-runtime` querying the GT-538 store; `runtime.factory.ts` wiring to select it over the in-memory default.
+- **Component:** `agent-runtime` · **Dimension:** Knowledge · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Implement `IKnowledgePort.query` via cosine similarity over the pgvector store (GT-538) using the GT-539 embedding for the query text; return ranked `KnowledgeChunk[]` with citation metadata; keep `InMemoryKnowledgeAdapter` as the offline/test default.
+- **Acceptance criteria:**
+  - [ ] `query()` returns chunks ranked by real vector similarity with `score` and citation metadata.
+  - [ ] The `maturity-assessment.md` Knowledge/RAG row is updated from "Not implemented" to the delivered adapter.
+- **Dependencies:** GT-538; GT-539; ADR-0090; ADR-0112 (platform: same model+dim as write-side).
+- **Status:** `PENDING`
+
+#### GT-541
+
+**Title:** Delta-sync workflow trigger + agent grounding (close the RAG loop)
+
+- **Purpose:** Close the loop end-to-end — keep the index one commit behind the markdown and have agents actually consult it.
+- **Evidence:** No workflow invokes `14-rag-index-sync.mjs` with `EVOLITH_RAG_SYNC=true` + a real `EVOLITH_RAG_PROVIDER`; the sync fails closed today (GT-145) and no agent reads `IKnowledgePort`.
+- **Impact:** Operational RAG: `reference/` commits delta-re-embed automatically (ADR-0090 §4) and Winston grounds recommendations in the live corpus.
+- **Risk:** CI secret handling and run-cost; ordering vs. the durable provider being available.
+- **Affected files:** a CI/GitHub workflow step wiring the sync flags + provider secret; agent-runtime call sites where Winston consults `IKnowledgePort` before recommending.
+- **Component:** `Operations` · **Dimension:** Knowledge · **Type:** backend
+- **Criticality:** P2 · **Complexity:** M
+- **Proposed fix:** Add a `reference/`-scoped workflow running the delta sync with masked provider credentials; add an agent grounding step that queries `IKnowledgePort` and cites the chunks used.
+- **Acceptance criteria:**
+  - [ ] A `reference/` commit triggers a delta re-embed that upserts only changed chunks and records a receipt.
+  - [ ] At least one agent (Winston) queries `IKnowledgePort` before recommending and cites `corpus_version`.
+- **Dependencies:** GT-538; GT-539; GT-540; ADR-0090 §4.
+- **Status:** `PENDING`
 
 ---
 
@@ -1556,6 +1629,8 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 
 **Problem:** EVOLITH_API_KEY is opt-in (unset ⇒ open); TenantCorpusGuard is defined but not in APP_GUARD; no JWT tenant-claim extraction, no per-tenant corpus isolation. **Closure:** fail-closed auth + tenant guard wired with JWT claim + isolation. **References:** api-key.guard.ts; tenant-corpus.guard.ts; app.module.ts.
 
+**Status:** `DONE` (2026-07-13, Wave 1 — verified, commit `efd05f67`). `ApiKeyGuard` denies in production when neither `AGENT_RUNTIME_API_KEY` nor `AGENT_RUNTIME_JWT_SECRET` is set, opening only via explicit `AGENT_RUNTIME_ALLOW_NO_AUTH=true` (never silently open); JWT tenant-claim extraction via `jwt.util` attached to the principal; `TenantCorpusGuard` enforces per-tenant corpus isolation (denies cross-tenant). Both registered as `APP_GUARD`. Tests green (unset-key⇒denied, valid-key⇒allowed, dev-bypass⇒allowed, tenant-mismatch⇒denied, tenant-match⇒allowed).
+
 #### GT-440
 
 **Title:** Observability completeness for production
@@ -1567,6 +1642,8 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 **Title:** Real HITL approval (extends GT-387)
 
 **Problem:** default AutoApprovalAdapter auto-grants; ChatApprovalAdapter/SlackApprovalAdapter are stubs. **Closure:** real Tracker/chat human-in-the-loop behind IApprovalPort. **References:** approval adapters; GT-387.
+
+**Progress:** (2026-07-13, Wave 1 — verified, commit `50b77f5c`) The deterministic, ungated core is DONE: `PendingApprovalAdapter` behind `IApprovalPort` models pending → approved/rejected/expired (never self-grants); fail-closed (pending/expired/rejected/unknown all read `granted:false`; only an explicit un-expired human `approve` grants); TTL timeout ⇒ denied; full audit trail. 10/10 unit tests. **Remaining (gated):** the human-notification CHANNEL wiring (Tracker/Hermes/chat) is a design decision — kept `IN-PROGRESS` until the channel is decided and wired.
 
 #### GT-442
 

@@ -26,12 +26,15 @@ export interface CodeownersRule {
 
 /** Normalize a repo-relative path for matching: posix separators, strip `./` and leading/trailing `/`. */
 function normalizePath(p: string): string {
-  return p
-    .replace(/\\/g, '/')
-    .replace(/^\.\//, '')
-    .replace(/^\/+/, '')
-    .replace(/\/+$/, '')
-    .trim();
+  // Char-based trimming (no `^\/+` / `\/+$` regexes) to avoid polynomial
+  // backtracking (ReDoS) on inputs with many leading/trailing slashes.
+  let s = p.replace(/\\/g, '/').trim();
+  if (s.startsWith('./')) s = s.slice(2);
+  let start = 0;
+  let end = s.length;
+  while (start < end && s.charCodeAt(start) === 47 /* '/' */) start += 1;
+  while (end > start && s.charCodeAt(end - 1) === 47) end -= 1;
+  return s.slice(start, end);
 }
 
 /**
@@ -43,7 +46,9 @@ export function parseCodeowners(content: string): CodeownersRule[] {
   const rules: CodeownersRule[] = [];
   const lines = content.split(/\r?\n/);
   for (const raw of lines) {
-    const line = raw.replace(/#.*$/, '').trim();
+    // Strip trailing `#` comment via indexOf (no `#.*$` regex — avoids ReDoS).
+    const hashIdx = raw.indexOf('#');
+    const line = (hashIdx === -1 ? raw : raw.slice(0, hashIdx)).trim();
     if (line.length === 0) continue;
     const [pattern, ...owners] = line.split(/\s+/);
     if (!pattern || owners.length === 0) continue;

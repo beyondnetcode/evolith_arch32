@@ -519,10 +519,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Implement `embed`/`upsert`/`delete` over pgvector with metadata filtering on the ADR-0090 §2 fields; select it via `EVOLITH_RAG_PROVIDER=pgvector`; keep `memory` as the dry-run/test default.
 - **Acceptance criteria:**
-  - [ ] `registerRagAdapter('pgvector', …)` provides a `durable: true` adapter; a live `14-rag-index-sync.mjs` run upserts real chunks and emits a truthful receipt.
-  - [ ] Metadata columns support filtering on `source_file`, `adr_id`, `language`, `corpus_version`.
+  - [~] `registerRagAdapter('pgvector', …)` provides a `durable: true` adapter; a live `14-rag-index-sync.mjs` run upserts real chunks and emits a truthful receipt. _(Wave 5 `cace6118`: `rag-pgvector.mjs` registers a `durable:true` pgvector adapter at the `rag-port.mjs` seam — `14-rag-index-sync.mjs` no longer fails closed and drives embed→upsert→delete; parameterized `INSERT … ON CONFLICT` + `DELETE … = ANY($1)`, `pg` kept out of the build via an injected client seam + lazy import. **The live-Postgres persistence run is deploy-gated**)_
+  - [x] Metadata columns support filtering on `source_file`, `adr_id`, `language`, `corpus_version`. _(first-class columns + btree indexes in `rag-pgvector.schema.sql`; upsert persists all four, asserted against a stub client)_
 - **Dependencies:** ADR-0090; ADR-0112 (platform: pgvector on existing Postgres, `vector(1024)`, HNSW); composes with GT-145.
-- **Status:** `PENDING`
+- **Progress (2026-07-13, Wave 5, commit `cace6118`):** Durable adapter delivered at the correct CI seam (`.harness/scripts/ci/rag-pgvector.{mjs,schema.sql,test.mjs}`) — `vector(1024)` + HNSW `vector_cosine_ops` per ADR-0112, embed placeholder `hashEmbed@1024` (real Qwen3 = GT-539). 10 node:test + 9 regression green; `createRagAdapter({provider:'pgvector'})` ⇒ `durable:true`. Unblocks GT-539/GT-540. Kept `IN-PROGRESS`: the live sync against a real Postgres+pgvector is deploy-gated.
+- **Status:** `IN-PROGRESS`
 
 #### GT-539
 

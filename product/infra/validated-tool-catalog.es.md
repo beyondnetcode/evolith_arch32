@@ -111,15 +111,15 @@ Select architecture pattern:
 
 ### 4.3 Enforcement de Arquitectura (Analizadores de Frontera)
 
-Analizadores estáticos que aplican fronteras de módulo/capa y ciclos por runtime. El Core enruta las reglas con `enforce.engine === 'enforcer'` hacia estos vía el `EnforcerEvaluator` (GT-514); el espejo legible por máquina es `src/rulesets/enforcement/enforcer-catalog.json`. El pinning exacto de versiones se rastrea en GT-519.
+Analizadores estáticos que aplican fronteras de módulo/capa y ciclos por runtime. El Core enruta las reglas con `enforce.engine === 'enforcer'` hacia estos vía el `EnforcerEvaluator` (GT-514); el espejo legible por máquina es `src/rulesets/enforcement/enforcer-catalog.json`. El pinning exacto de versiones se rastrea en GT-519. La columna **Adaptador** refleja el estado del adaptador Core de cada herramienta (`src/packages/core-domain/.../enforcement/adapters/`); una entrada del catálogo puede existir antes que su adaptador.
 
-| Herramienta | Versión | Runtime | Propósito | ADR |
-|------|---------|---------|---------|-----|
-| **dependency-cruiser** | 16.x | node | Análisis de fronteras de módulo/capa + ciclos (TS/JS) | ADR-0002 |
-| **NetArchTest** | 1.3.x | dotnet | Reglas de capa y dirección de dependencias (.NET) | ADR-0002 |
-| **Deptrac** | 2.x | php | Enforcement de fronteras de capa (PHP) | ADR-0002 |
-| **import-linter** | 2.x | python | Contratos de import, basado en grimp (Python) | ADR-0002 |
-| **Conftest** | 0.56.x | iac | Chequeos de política OPA/Rego para manifests IaC/config | ADR-0002 |
+| Herramienta | Versión | Runtime | Propósito | Adaptador | ADR |
+|------|---------|---------|---------|---------|-----|
+| **dependency-cruiser** | 16.x | node | Análisis de fronteras de módulo/capa + ciclos (TS/JS) | Implementado (GT-515, en progreso) | ADR-0002 |
+| **NetArchTest** | 1.3.x | dotnet | Reglas de capa y dirección de dependencias (.NET) | Implementado (GT-524, en progreso; ejecución real bloqueada por GT-512) | ADR-0002 |
+| **Deptrac** | 2.x | php | Enforcement de fronteras de capa (PHP) | Catalogado, adaptador pendiente (GT-521) | ADR-0002 |
+| **import-linter** | 2.x | python | Contratos de import, basado en grimp (Python) | Catalogado, adaptador pendiente (GT-521) | ADR-0002 |
+| **Conftest** | 0.56.x | iac | Chequeos de política OPA/Rego para manifests IaC/config | Catalogado, adaptador pendiente (GT-521) | ADR-0002 |
 
 ---
 

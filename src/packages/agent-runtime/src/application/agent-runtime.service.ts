@@ -26,6 +26,7 @@ import type { ITrackerTracePort } from '../domain/ports/tracker-trace.port';
 import type { IMemoryPort } from '../domain/ports/memory.port';
 import type { IApprovalPort } from '../domain/ports/approval.port';
 import type { IAgentEnginePort } from '../domain/ports/agent-engine.port';
+import type { IKnowledgePort } from '../domain/ports/knowledge.port';
 
 import type { AgentRuntimeRequest } from '../domain/contracts/agent-runtime-request';
 import type {
@@ -61,6 +62,12 @@ export interface AgentRuntimeDeps {
   readonly approval: IApprovalPort;
   /** Optional reasoning engine (Hermes adapter, stub, or none). */
   readonly engine?: IAgentEnginePort;
+  /**
+   * Optional read-side knowledge/RAG port (GT-408 in-memory default, GT-540
+   * pgvector in production). Carried on the bundle so grounded retrieval is
+   * reachable; the base flow itself does not depend on it.
+   */
+  readonly knowledge?: IKnowledgePort;
   /** Injected clock for deterministic tests. */
   readonly now?: () => string;
   /** Injected id generator for deterministic tests. */

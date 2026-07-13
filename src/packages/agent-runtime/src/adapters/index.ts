@@ -37,6 +37,17 @@ export type { FileMemoryOptions } from './memory/file-memory.adapter';
 
 // Knowledge / RAG (GT-408)
 export { InMemoryKnowledgeAdapter } from './knowledge/in-memory-knowledge.adapter';
+// Knowledge / RAG production read-side (GT-540 · ADR-0090 / ADR-0112)
+export {
+  PgVectorKnowledgeAdapter,
+  EXPECTED_DIM as PGVECTOR_KNOWLEDGE_DIM,
+  RAG_CHUNKS_TABLE,
+} from './knowledge/pgvector-knowledge.adapter';
+export type {
+  EmbedQuery,
+  PgClientLike,
+  PgVectorKnowledgeConfig,
+} from './knowledge/pgvector-knowledge.adapter';
 
 // Skills
 export { LocalSkillRegistryAdapter } from './skills/local-skill-registry.adapter';

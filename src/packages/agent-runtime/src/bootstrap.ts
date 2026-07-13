@@ -31,6 +31,7 @@ import { InMemoryMemoryAdapter } from './adapters/memory/in-memory-memory.adapte
 import { LocalSkillRegistryAdapter } from './adapters/skills/local-skill-registry.adapter';
 import { PendingApprovalAdapter } from './adapters/approval/pending-approval.adapter';
 import { StubAgentEngineAdapter } from './adapters/engine/stub-agent-engine.adapter';
+import { InMemoryKnowledgeAdapter } from './adapters/knowledge/in-memory-knowledge.adapter';
 import { HermesAgentAdapter } from './adapters/engine/hermes-agent.adapter';
 import { SwarmsAgentAdapter } from './adapters/engine/swarms-agent.adapter';
 import { RoutingAgentAdapter, type EngineRouterConfig } from './adapters/engine/routing-agent.adapter';
@@ -71,6 +72,9 @@ export function createAgentRuntime(overrides: AgentRuntimeOverrides = {}): Agent
     // Fail-closed real HITL gate by default (GT-441): nothing is silently
     // auto-granted. Opt into AutoApprovalAdapter explicitly for dev/tests.
     approval: overrides.approval ?? new PendingApprovalAdapter(),
+    // Read-side knowledge/RAG port: token-overlap in-memory default (GT-408),
+    // overridable to the pgvector production adapter (GT-540).
+    knowledge: overrides.knowledge ?? new InMemoryKnowledgeAdapter(),
     engine,
     now: overrides.now,
     id: overrides.id,

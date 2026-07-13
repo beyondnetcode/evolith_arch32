@@ -5,10 +5,10 @@
 # images work with imagePullPolicy: Never — no registry needed).
 #
 # Usage:
-#   bash reference/infrastructure/helm/local-test.sh apps-up # build + install apps only
-#   bash reference/infrastructure/helm/local-test.sh up      # build + install infra + apps
-#   bash reference/infrastructure/helm/local-test.sh smoke   # port-forward + curl
-#   bash reference/infrastructure/helm/local-test.sh down     # uninstall + delete ns
+#   bash product/infra/helm/local-test.sh kind-apps-up # kind + build + load + install apps
+#   bash product/infra/helm/local-test.sh kind-up      # kind + build + load + infra + apps
+#   bash product/infra/helm/local-test.sh smoke        # port-forward + curl
+#   bash product/infra/helm/local-test.sh kind-down    # uninstall + delete kind cluster
 #
 # Env:
 #   EVOLITH_API_KEY   API key used for all three services (default: local-dev-key)
@@ -22,7 +22,7 @@ NS=evolith-local
 API_KEY="${EVOLITH_API_KEY:-local-dev-key}"
 IMAGE_TAG="${EVOLITH_IMAGE_TAG:-local-$(date +%s)}"
 ROOT="$(git rev-parse --show-toplevel)"
-HELM="$ROOT/reference/infrastructure/helm"
+HELM="$ROOT/product/infra/helm"
 CLUSTER="${KIND_CLUSTER:-evolith}"   # dedicated kind cluster name (kind-<name> context)
 
 IMAGES=(evolith-core-api:"$IMAGE_TAG" evolith-mcp:"$IMAGE_TAG" evolith-agent-runtime:"$IMAGE_TAG")
@@ -46,9 +46,9 @@ kind_load() {
 
 build() {
   echo "==> Building images (context = repo root, tag = $IMAGE_TAG)"
-  docker build -f "$ROOT/apps/core-api/Dockerfile"          -t evolith-core-api:"$IMAGE_TAG"     "$ROOT"
-  docker build -f "$ROOT/packages/mcp-server/Dockerfile"    -t evolith-mcp:"$IMAGE_TAG"   "$ROOT"
-  docker build -f "$ROOT/apps/agent-runtime-api/Dockerfile" -t evolith-agent-runtime:"$IMAGE_TAG" "$ROOT"
+  docker build -f "$ROOT/src/apps/core-api/Dockerfile"          -t evolith-core-api:"$IMAGE_TAG"     "$ROOT"
+  docker build -f "$ROOT/src/packages/mcp-server/Dockerfile"    -t evolith-mcp:"$IMAGE_TAG"   "$ROOT"
+  docker build -f "$ROOT/src/apps/agent-runtime-api/Dockerfile" -t evolith-agent-runtime:"$IMAGE_TAG" "$ROOT"
 }
 
 secrets() {

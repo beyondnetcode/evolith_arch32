@@ -190,6 +190,20 @@ describe('emitEvaluationEvidence (GT-518 · EAG-13 — AC2 evidence EVD-01..03)'
     expect(manifest.relatedRuleIds).toContain('ADR-0002');
   });
 
+  it('attributes an ADR-0002 gap to its compliance controls in the manifest (GT-525)', () => {
+    const manifest = emitEvaluationEvidence(
+      makeResult({ gaps: [gap({ requirementRef: 'ADR-0002', severity: 'error' })] }),
+      'gate-drift',
+    );
+    expect(manifest.complianceControls).toEqual(['ISO27001-A.14.2.5', 'SOC2-CC8.1']);
+    expect(manifest.violations[0].complianceControls).toEqual(['ISO27001-A.14.2.5', 'SOC2-CC8.1']);
+  });
+
+  it('omits compliance controls when no gap maps to one', () => {
+    const manifest = emitEvaluationEvidence(makeResult({ gaps: [gap({ requirementRef: 'RANDOM-1' })] }), 's');
+    expect(manifest.complianceControls).toBeUndefined();
+  });
+
   it('derives status=fail and blockingFailures from error gaps (non-frozen errors block)', () => {
     const manifest = emitEvaluationEvidence(
       makeResult({ gaps: [gap({ id: 'a', requirementRef: 'RA', severity: 'error' }), gap({ id: 'b', requirementRef: 'RB', severity: 'warning' })] }),

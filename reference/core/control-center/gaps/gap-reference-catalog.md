@@ -419,11 +419,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** L
 - **Proposed fix:** Driven port owned by orchestration; Core imports only `Evidence` (inline, like `OverlayFileSystem`, ADR-0080); Core never executes providers; declarative opt-in registry per tenant; mandatory `provenance` + `determinism`.
 - **Acceptance criteria:**
-  - [ ] `core-domain` imports only `Evidence` (grep-clean of provider/adapter imports).
-  - [ ] Providers run in orchestration; Core evaluates received `Evidence[]`; missing evidence ⇒ `no-evidence`, not a failure.
-  - [ ] Per-tenant registry enables/disables providers declaratively.
+  - [x] `core-domain` imports only `Evidence` (grep-clean of provider/adapter imports). _(canonical `quality-evidence.ts` — zero imports; consumed inline via `EvaluationContext.qualitySignals?`)_
+  - [~] Providers run in orchestration; Core evaluates received `Evidence[]`; missing evidence ⇒ `no-evidence`, not a failure. _(the Core-side rule `resolveEvidenceSignals` + `no-evidence` semantics exist and are tested, but are **not yet wired into the evaluation pipeline** — follow-on below)_
+  - [x] Per-tenant registry enables/disables providers declaratively. _(`TenantQualitySignalRegistry` in agent-runtime; fault-isolated, re-normalized through the canonical ACL)_
 - **Dependencies:** ADR-0111; composes with GT-530.
-- **Status:** `PENDING`
+- **Progress (2026-07-13, Wave 1, commit `d56ba32c`):** Seam foundation landed — canonical `Evidence`/`Provenance`/`EvidenceFinding` + `Determinism` in `core-domain` (mandatory provenance enforced by `normalizeEvidence`), driven `IQualitySignalProvider` port owned by the orchestration layer (Core never executes providers), and the per-tenant registry. Grep-clean of Core→provider coupling; core-domain 960/960 + agent-runtime 98/98 green. **Follow-on to close (→ DONE):** (1) invoke `resolveEvidenceSignals` inside the evaluation pipeline so received `Evidence[]` actually influences signals/verdict; (2) a runtime adapter that runs `TenantQualitySignalRegistry.collect()` and populates `EvaluationContext.qualitySignals` inline — only then is the ADR-0104 conformance loop closed end-to-end. GT-534 (Lighthouse) is the first concrete provider behind this port.
+- **Status:** `IN-PROGRESS`
 
 #### GT-534
 
@@ -1556,6 +1557,8 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 
 **Problem:** EVOLITH_API_KEY is opt-in (unset ⇒ open); TenantCorpusGuard is defined but not in APP_GUARD; no JWT tenant-claim extraction, no per-tenant corpus isolation. **Closure:** fail-closed auth + tenant guard wired with JWT claim + isolation. **References:** api-key.guard.ts; tenant-corpus.guard.ts; app.module.ts.
 
+**Status:** `DONE` (2026-07-13, Wave 1 — verified, commit `efd05f67`). `ApiKeyGuard` denies in production when neither `AGENT_RUNTIME_API_KEY` nor `AGENT_RUNTIME_JWT_SECRET` is set, opening only via explicit `AGENT_RUNTIME_ALLOW_NO_AUTH=true` (never silently open); JWT tenant-claim extraction via `jwt.util` attached to the principal; `TenantCorpusGuard` enforces per-tenant corpus isolation (denies cross-tenant). Both registered as `APP_GUARD`. Tests green (unset-key⇒denied, valid-key⇒allowed, dev-bypass⇒allowed, tenant-mismatch⇒denied, tenant-match⇒allowed).
+
 #### GT-440
 
 **Title:** Observability completeness for production
@@ -1567,6 +1570,8 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 **Title:** Real HITL approval (extends GT-387)
 
 **Problem:** default AutoApprovalAdapter auto-grants; ChatApprovalAdapter/SlackApprovalAdapter are stubs. **Closure:** real Tracker/chat human-in-the-loop behind IApprovalPort. **References:** approval adapters; GT-387.
+
+**Progress:** (2026-07-13, Wave 1 — verified, commit `50b77f5c`) The deterministic, ungated core is DONE: `PendingApprovalAdapter` behind `IApprovalPort` models pending → approved/rejected/expired (never self-grants); fail-closed (pending/expired/rejected/unknown all read `granted:false`; only an explicit un-expired human `approve` grants); TTL timeout ⇒ denied; full audit trail. 10/10 unit tests. **Remaining (gated):** the human-notification CHANNEL wiring (Tracker/Hermes/chat) is a design decision — kept `IN-PROGRESS` until the channel is decided and wired.
 
 #### GT-442
 

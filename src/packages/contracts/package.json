@@ -1,0 +1,55 @@
+{
+  "name": "@beyondnet/evolith-contracts",
+  "version": "1.0.0",
+  "description": "Versioned SemVer boundary for the Evolith Core public contract: machine-contract/schema set (sha256) and the capability manifest served by GET /api/v1/capabilities",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./schemas": {
+      "types": "./dist/schemas/machine-contract-set.d.ts",
+      "default": "./dist/schemas/machine-contract-set.js"
+    },
+    "./capabilities": {
+      "types": "./dist/capabilities/capability-contract.d.ts",
+      "default": "./dist/capabilities/capability-contract.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "jest --config jest.config.js --runInBand",
+    "test:cov": "jest --config jest.config.js --runInBand --coverage"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@beyondnet/evolith-core-domain": "^1.0.0",
+    "@types/jest": "30.0.0",
+    "@types/node": "26.0.0",
+    "jest": "30.4.2",
+    "ts-jest": "29.4.11",
+    "typescript": "6.0.3"
+  },
+  "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beyondnetcode/evolith_arch32.git",
+    "directory": "src/packages/contracts"
+  }
+}

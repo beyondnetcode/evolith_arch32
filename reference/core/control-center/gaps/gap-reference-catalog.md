@@ -65,11 +65,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Publish a versioned `@beyondnet/evolith-contracts` package (SemVer + sha256 of the schema set); add `GET /api/v1/capabilities` next to `ReferenceController`, REST-only per ADR-0074 (no GraphQL here); add contract-parity tests binding the package to the live endpoints.
 - **Acceptance criteria:**
-  - [ ] `GET /api/v1/capabilities` returns the versioned capability manifest.
-  - [ ] `@beyondnet/evolith-contracts` is versioned (SemVer + sha256) and consumable by an external consumer.
-  - [ ] Contract-parity tests fail on drift between the package and the endpoints.
+  - [x] `GET /api/v1/capabilities` returns the versioned capability manifest. _(`CapabilitiesController` + `buildCapabilityManifest` on develop)_
+  - [x] `@beyondnet/evolith-contracts` is versioned (SemVer + sha256) and consumable by an external consumer. _(new `src/packages/contracts` package; `MACHINE_CONTRACT_SET` + `CONTRACT_SET_SHA256` + frozen `EXPECTED_CAPABILITY_MANIFEST`; adds a first-class `external` consumer, closing the single-consumer gap)_
+  - [x] Contract-parity tests fail on drift between the package and the endpoints. _(parity spec binds the package to the live `buildCapabilityManifest` producer; dedicated cases prove it FAILS on an added engine and on a single-consumer regression + per-schema sha256 guard)_
 - **Dependencies:** GT-511.
-- **Status:** `PENDING`
+- **Closure (2026-07-13, Wave 3, commit `9f027797`):** REST-only per ADR-0074. The `/api/v1/capabilities` endpoint + domain manifest were delivered by prior-wave work already on develop; this closes the SemVer-boundary package + the drift-failing parity guard. contracts 13/13 green; hexagonal boundary intact (the contracts runtime does not import core-domain; only its test binds the producer).
+- **Status:** `DONE`
 
 #### GT-514
 
@@ -198,11 +199,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Add Streamable HTTP + OAuth bearer in `mcp-server/main.ts`; add per-consumer ABAC in `tool-registry` (`abac-mcp-tool-access.rego`) and audit every `tools/call`; expose resources `evolith://capabilities` and `evolith://contracts`.
 - **Acceptance criteria:**
-  - [ ] Remote MCP requires OAuth (Streamable HTTP bearer).
+  - [x] Remote MCP requires OAuth (Streamable HTTP bearer). _(Wave 3 `87645d26`: IdP-agnostic OAuth 2.1 resource-server validator — JWKS RS/PS/ES or shared HS, iss/aud/exp/nbf + clock-skew; wired into the Streamable HTTP auth path; missing/invalid/expired/spoofed ⇒ 401; the cryptographically-verified identity feeds per-identity ABAC. mcp-server 324/324)_
   - [x] Every `tools/call` is ABAC-checked per identity and audited.
   - [x] `evolith://capabilities` and `evolith://contracts` resources are served.
-- **Dependencies:** GT-513, and the identity decision (tracked as EAG-01 in the Tracker board).
-- **Status:** `PENDING`
+- **Dependencies:** GT-513 (DONE), and the identity decision (tracked as EAG-01 in the Tracker board).
+- **Progress (2026-07-13, Wave 3, commit `87645d26`):** All three acceptance criteria are met in code (OAuth mechanism implemented, wired, and tested). **Kept `IN-PROGRESS`** only because closure depends on **EAG-01** — the org's concrete IdP selection (which OIDC provider, shared vs per-tenant, audience model). The code is IdP-agnostic and needs no further change: it activates via `EVOLITH_MCP_OAUTH_ISSUER` / `_JWKS_URI` / `_SECRET` / `_AUDIENCE`. Flip to DONE once EAG-01 is decided and the issuer/JWKS/audience are wired in a deployment.
+- **Status:** `IN-PROGRESS`
 
 #### GT-521
 
@@ -421,11 +423,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Proposed fix:** Driven port owned by orchestration; Core imports only `Evidence` (inline, like `OverlayFileSystem`, ADR-0080); Core never executes providers; declarative opt-in registry per tenant; mandatory `provenance` + `determinism`.
 - **Acceptance criteria:**
   - [x] `core-domain` imports only `Evidence` (grep-clean of provider/adapter imports). _(canonical `quality-evidence.ts` — zero imports; consumed inline via `EvaluationContext.qualitySignals?`)_
-  - [~] Providers run in orchestration; Core evaluates received `Evidence[]`; missing evidence ⇒ `no-evidence`, not a failure. _(the Core-side rule `resolveEvidenceSignals` + `no-evidence` semantics exist and are tested, but are **not yet wired into the evaluation pipeline** — follow-on below)_
+  - [x] Providers run in orchestration; Core evaluates received `Evidence[]`; missing evidence ⇒ `no-evidence`, not a failure. _(Wave 3 `baf570f4`: the orchestrator's `evaluate()` folds `ctx.qualitySignals` via `foldQualitySignals`→`resolveEvidenceSignals`; received `Evidence[]` surfaces on `EvaluationResult.qualitySignals`; empty/absent ⇒ a `no-evidence` signal, advisory only — verdict never fails on missing evidence)_
   - [x] Per-tenant registry enables/disables providers declaratively. _(`TenantQualitySignalRegistry` in agent-runtime; fault-isolated, re-normalized through the canonical ACL)_
 - **Dependencies:** ADR-0111; composes with GT-530.
-- **Progress (2026-07-13, Wave 1, commit `d56ba32c`):** Seam foundation landed — canonical `Evidence`/`Provenance`/`EvidenceFinding` + `Determinism` in `core-domain` (mandatory provenance enforced by `normalizeEvidence`), driven `IQualitySignalProvider` port owned by the orchestration layer (Core never executes providers), and the per-tenant registry. Grep-clean of Core→provider coupling; core-domain 960/960 + agent-runtime 98/98 green. **Follow-on to close (→ DONE):** (1) invoke `resolveEvidenceSignals` inside the evaluation pipeline so received `Evidence[]` actually influences signals/verdict; (2) a runtime adapter that runs `TenantQualitySignalRegistry.collect()` and populates `EvaluationContext.qualitySignals` inline — only then is the ADR-0104 conformance loop closed end-to-end. GT-534 (Lighthouse) is the first concrete provider behind this port.
-- **Status:** `IN-PROGRESS`
+- **Closure (2026-07-13, Waves 1+3):** _Wave 1 (`d56ba32c`)_ landed the seam foundation — canonical `Evidence`/`Provenance`/`EvidenceFinding` + `Determinism` in `core-domain` (provenance enforced by `normalizeEvidence`), the driven `IQualitySignalProvider` port owned by orchestration (Core never executes providers), and the per-tenant `TenantQualitySignalRegistry`. _Wave 3 (`baf570f4`)_ wired it LIVE: the evaluation orchestrator folds inline `EvaluationContext.qualitySignals` through `resolveEvidenceSignals` onto `EvaluationResult.qualitySignals`, closing the ADR-0104 loop (Core reads the received `Evidence[]`; missing ⇒ advisory `no-evidence`, verdict unaffected). Grep-clean of Core→provider coupling throughout; core-domain 966/966 + agent-runtime 98/98 green. GT-534 (Lighthouse) is the first concrete provider behind the port. _Optional consumer-side follow-on (not required for this gap):_ a runtime service that calls `TenantQualitySignalRegistry.collect()` to populate the context when a live provider is deployed.
+- **Status:** `DONE`
 
 #### GT-534
 

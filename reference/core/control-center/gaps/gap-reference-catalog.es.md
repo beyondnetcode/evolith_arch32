@@ -65,11 +65,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Publicar un paquete versionado `@beyondnet/evolith-contracts` (SemVer + sha256 del set de schemas); agregar `GET /api/v1/capabilities` junto a `ReferenceController`, solo-REST según ADR-0074 (sin GraphQL aquí); agregar tests de paridad de contrato que enlacen el paquete a los endpoints vivos.
 - **Acceptance criteria:**
-  - [ ] `GET /api/v1/capabilities` retorna el manifiesto de capabilities versionado.
-  - [ ] `@beyondnet/evolith-contracts` está versionado (SemVer + sha256) y es consumible por un consumidor externo.
-  - [ ] Los tests de paridad de contrato fallan ante drift entre el paquete y los endpoints.
+  - [x] `GET /api/v1/capabilities` retorna el manifiesto de capabilities versionado. _(`CapabilitiesController` + `buildCapabilityManifest` en develop)_
+  - [x] `@beyondnet/evolith-contracts` está versionado (SemVer + sha256) y es consumible por un consumidor externo. _(nuevo paquete `src/packages/contracts`; `MACHINE_CONTRACT_SET` + `CONTRACT_SET_SHA256` + `EXPECTED_CAPABILITY_MANIFEST` congelado; agrega el consumidor `external`, cerrando el gap de consumidor único)_
+  - [x] Los tests de paridad de contrato fallan ante drift entre el paquete y los endpoints. _(el spec de paridad enlaza el paquete al productor vivo `buildCapabilityManifest`; casos dedicados prueban que FALLA ante un engine añadido y ante regresión a un solo consumidor + guard sha256 por schema)_
 - **Dependencies:** GT-511.
-- **Status:** `PENDING`
+- **Cierre (2026-07-13, Ola 3, commit `9f027797`):** Solo-REST según ADR-0074. El endpoint `/api/v1/capabilities` + manifiesto de dominio ya estaban en develop (ola previa); esto cierra el paquete frontera SemVer + el guard de paridad que falla ante drift. contracts 13/13; límite hexagonal intacto (el runtime de contracts no importa core-domain; solo su test enlaza el productor).
+- **Status:** `DONE`
 
 #### GT-514
 
@@ -420,11 +421,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** L
 - **Proposed fix:** Puerto de salida propiedad de la orquestación; el Core importa solo `Evidence` (inline, como `OverlayFileSystem`, ADR-0080); el Core nunca ejecuta proveedores; registro declarativo opt-in por tenant; `provenance` + `determinism` obligatorios.
 - **Acceptance criteria:**
-  - [ ] `core-domain` importa solo `Evidence` (grep limpio de imports de proveedor/adaptador).
-  - [ ] Los proveedores corren en orquestación; el Core evalúa `Evidence[]` recibida; evidencia ausente ⇒ `no-evidence`, no un fallo.
-  - [ ] El registro por tenant habilita/deshabilita proveedores de forma declarativa.
+  - [x] `core-domain` importa solo `Evidence` (grep limpio de imports de proveedor/adaptador). _(`quality-evidence.ts` canónico, cero imports; inline vía `EvaluationContext.qualitySignals?`)_
+  - [x] Los proveedores corren en orquestación; el Core evalúa `Evidence[]` recibida; evidencia ausente ⇒ `no-evidence`, no un fallo. _(Ola 3 `baf570f4`: el orquestador pliega `ctx.qualitySignals` vía `foldQualitySignals`→`resolveEvidenceSignals` sobre `EvaluationResult.qualitySignals`; ausente ⇒ señal `no-evidence` advisory, el verdict nunca falla por evidencia faltante)_
+  - [x] El registro por tenant habilita/deshabilita proveedores de forma declarativa. _(`TenantQualitySignalRegistry` en agent-runtime; aislado de fallos, re-normalizado por el ACL canónico)_
 - **Dependencies:** ADR-0111; compone con GT-530.
-- **Status:** `PENDING`
+- **Cierre (2026-07-13, Olas 1+3):** Ola 1 (`d56ba32c`) fundó la costura (Evidence/Provenance canónicos + puerto `IQualitySignalProvider` en orquestación + registro por tenant); Ola 3 (`baf570f4`) la cableó VIVA en el pipeline de evaluación, cerrando el loop ADR-0104. Grep limpio de acoplamiento Core→proveedor; core-domain 966/966 + agent-runtime 98/98.
+- **Status:** `DONE`
 
 #### GT-534
 

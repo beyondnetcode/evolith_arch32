@@ -7354,6 +7354,36 @@
         "cd src/sdk/cli && npm run build && npx jest (71 suites, 967/967; edit-hook+enforce 45/45) — `evolith enforce edit` blocks a boundary-violating edit (exit 2) with canonical Violation; conforming edit exit 0; cross-agent VendorHookAdapter registry"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-533",
+      "closedAt": "2026-07-13",
+      "closureCommit": "baf570f4",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/evaluation-orchestrator.service.ts",
+        "src/packages/core-domain/src/evaluation/contracts/quality-evidence.ts",
+        "src/packages/core-domain/src/evaluation/contracts/evaluation-result.ts",
+        "src/packages/core-domain/src/evaluation/evaluation-orchestrator.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/core-domain && npx tsc && npx jest (95 suites, 966/966) — evaluate() folds ctx.qualitySignals via resolveEvidenceSignals onto EvaluationResult.qualitySignals; WITH evidence ⇒ present signal surfaced, verdict PASS; WITHOUT ⇒ no-evidence signal, evaluation still succeeds. Core stays provider-free (grep-clean)."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-513",
+      "closedAt": "2026-07-13",
+      "closureCommit": "9f027797",
+      "evidence": [
+        "src/packages/contracts/src/index.ts",
+        "src/packages/contracts/src/schemas/machine-contract-set.ts",
+        "src/packages/contracts/src/capabilities/capability-contract.parity.spec.ts",
+        "src/apps/core-api/src/presentation/controllers/capabilities.controller.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/contracts && npx tsc -p tsconfig.json && npx jest (2 suites, 13/13) — @beyondnet/evolith-contracts SemVer + CONTRACT_SET_SHA256; parity spec binds package to live buildCapabilityManifest and FAILS on added-engine / single-consumer drift. GET /api/v1/capabilities served by CapabilitiesController (on develop)."
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -558,10 +558,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Implement `IKnowledgePort.query` via cosine similarity over the pgvector store (GT-538) using the GT-539 embedding for the query text; return ranked `KnowledgeChunk[]` with citation metadata; keep `InMemoryKnowledgeAdapter` as the offline/test default.
 - **Acceptance criteria:**
-  - [ ] `query()` returns chunks ranked by real vector similarity with `score` and citation metadata.
-  - [ ] The `maturity-assessment.md` Knowledge/RAG row is updated from "Not implemented" to the delivered adapter.
+  - [x] `query()` returns chunks ranked by real vector similarity with `score` and citation metadata. _(Wave 6 `40464149`: `PgVectorKnowledgeAdapter` embeds the query via an injected `EmbedQuery` seam (dim==1024, fail-closed), runs cosine top-k over the GT-538 `rag_chunks` table with `<=>` (`score = 1 - distance`), maps rows → ranked `KnowledgeChunk` with citation metadata; metadata filters compiled to parameterized WHERE)_
+  - [x] The `maturity-assessment.md` Knowledge/RAG row is updated from "Not implemented" to the delivered adapter.
 - **Dependencies:** GT-538; GT-539; ADR-0090; ADR-0112 (platform: same model+dim as write-side).
-- **Status:** `PENDING`
+- **Closure (2026-07-13, Wave 6, commit `40464149`):** The RAG read-side is real — a production `IKnowledgePort` adapter that grounds agent recommendations by cosine-ranking the GT-538 corpus through the GT-539 embedder, fully hexagonal (both the pg client and the embedder are injected seams; no compile-time `pg`; model choice at the wiring edge). `runtime.factory.ts` selects it via `AGENT_RUNTIME_KNOWLEDGE_MODE=pgvector` / `EVOLITH_RAG_PG_URL` (fails loud on misconfig; `InMemoryKnowledgeAdapter` stays the explicit default). agent-runtime 118/118 + agent-runtime-api 67/67 green. _Deploy-gated:_ the live retrieval run against a running Postgres + Qwen3 sidecar (not an acceptance criterion).
+- **Status:** `DONE`
 
 #### GT-541
 

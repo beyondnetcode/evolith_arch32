@@ -7399,6 +7399,21 @@
         "cd src/packages/agent-runtime && npx tsc && npx jest (16 suites, 110/110) — rubric ranked by severity; StructuralReviewProvider emits probabilistic Evidence + provenance and registers in the GT-533 registry; evaluateStructuralGate blocks high/critical; GT-424 skill-registry parity green"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-540",
+      "closedAt": "2026-07-13",
+      "closureCommit": "40464149",
+      "evidence": [
+        "src/packages/agent-runtime/src/adapters/knowledge/pgvector-knowledge.adapter.ts",
+        "src/packages/agent-runtime/src/adapters/knowledge/pgvector-knowledge.adapter.spec.ts",
+        "src/apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts",
+        "reference/core/control-center/maturity-reports/maturity-assessment.md"
+      ],
+      "validationCommands": [
+        "cd src/packages/agent-runtime && npx tsc && npx jest (17 suites, 118/118) + cd src/apps/agent-runtime-api && npx nest build && npx jest (5 suites, 67/67) — PgVectorKnowledgeAdapter cosine top-k over rag_chunks with injected embedder+pg seams, ranked KnowledgeChunk + citation; runtime.factory selects pgvector via env, in-memory default preserved"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

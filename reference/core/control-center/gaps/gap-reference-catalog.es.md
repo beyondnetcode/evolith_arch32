@@ -554,10 +554,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Implementar `IKnowledgePort.query` por similitud coseno sobre el store pgvector (GT-538) usando el embedding de GT-539 para el texto de consulta; devolver `KnowledgeChunk[]` rankeado con metadata de citación; conservar `InMemoryKnowledgeAdapter` como default offline/test.
 - **Acceptance criteria:**
-  - [ ] `query()` devuelve chunks rankeados por similitud vectorial real con `score` y metadata de citación.
-  - [ ] La fila Knowledge/RAG de `maturity-assessment.md` se actualiza de "Not implemented" al adaptador entregado.
+  - [x] `query()` devuelve chunks rankeados por similitud vectorial real con `score` y metadata de citación. _(Ola 6 `40464149`: `PgVectorKnowledgeAdapter` embebe la query vía seam `EmbedQuery` inyectado (dim==1024, fail-closed), corre cosine top-k sobre la tabla `rag_chunks` (GT-538) con `<=>` (`score = 1 - distance`), mapea filas → `KnowledgeChunk` rankeado con citación; filtros de metadata en WHERE parametrizado)_
+  - [x] La fila Knowledge/RAG de `maturity-assessment.md` se actualiza de "Not implemented" al adaptador entregado.
 - **Dependencies:** GT-538; GT-539; ADR-0090; ADR-0112 (plataforma: mismo modelo+dim que el write-side).
-- **Status:** `PENDING`
+- **Cierre (2026-07-13, Ola 6, commit `40464149`):** El read-side RAG es real — adaptador `IKnowledgePort` de producción que fundamenta las recomendaciones cosine-rankeando el corpus GT-538 vía el embedder GT-539, totalmente hexagonal (cliente pg y embedder inyectados; sin `pg` en build; elección de modelo en el borde de wiring). `runtime.factory.ts` lo selecciona vía `AGENT_RUNTIME_KNOWLEDGE_MODE=pgvector` / `EVOLITH_RAG_PG_URL` (falla-fuerte ante misconfig; `InMemoryKnowledgeAdapter` sigue siendo el default). agent-runtime 118/118 + agent-runtime-api 67/67. _Deploy-gated:_ la corrida live contra Postgres + sidecar Qwen3 (no es criterio de aceptación).
+- **Status:** `DONE`
 
 #### GT-541
 

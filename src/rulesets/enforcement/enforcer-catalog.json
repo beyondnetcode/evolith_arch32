@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "version": "1.0.0",
-  "description": "GT-514 / EAG-08. Validated architecture-enforcement analyzers. This is the machine-readable mirror of the 'Architecture Enforcement (Boundary Analyzers)' section (§4.3) of product/infra/validated-tool-catalog.md. Every entry's tool + version MUST appear in that doc. Exact version pinning is tracked in GT-519.",
+  "description": "GT-514 / EAG-08. Validated architecture-enforcement analyzers. This is the machine-readable mirror of the 'Architecture Enforcement (Boundary Analyzers)' section (§4.3) of product/infra/validated-tool-catalog.md. Every entry's tool + version MUST appear in that doc. GT-519: versions are pinned EXACT (x.y.z, no ranges/wildcards) so per-runtime CI images are reproducible; the enforcer-catalog ↔ doc parity test (enforcer-catalog-doc-parity.spec.ts) fails on any drift. Currency is maintained by Renovate against these pins (deploy-gated).",
   "source": "product/infra/validated-tool-catalog.md#43-architecture-enforcement-boundary-analyzers",
   "enforcers": [
     {
       "tool": "dependency-cruiser",
       "runtime": "node",
-      "version": "16.x",
+      "version": "16.10.4",
       "purpose": "Module/layer boundary + cycle analysis (TS/JS)",
       "outputFormat": "json",
       "adr": "ADR-0002"
@@ -15,7 +15,7 @@
     {
       "tool": "NetArchTest",
       "runtime": "dotnet",
-      "version": "1.3.x",
+      "version": "1.3.2",
       "purpose": "Layer & dependency-direction rules (.NET)",
       "outputFormat": "exit-code",
       "adr": "ADR-0002"
@@ -23,7 +23,7 @@
     {
       "tool": "Deptrac",
       "runtime": "php",
-      "version": "2.x",
+      "version": "2.0.4",
       "purpose": "Layer boundary enforcement (PHP)",
       "outputFormat": "json",
       "adr": "ADR-0002"
@@ -31,7 +31,7 @@
     {
       "tool": "import-linter",
       "runtime": "python",
-      "version": "2.x",
+      "version": "2.1.0",
       "purpose": "Import contracts, grimp-backed (Python)",
       "outputFormat": "text",
       "adr": "ADR-0002"
@@ -39,7 +39,7 @@
     {
       "tool": "Conftest",
       "runtime": "iac",
-      "version": "0.56.x",
+      "version": "0.56.0",
       "purpose": "OPA/Rego policy checks for IaC/config manifests",
       "outputFormat": "json",
       "adr": "ADR-0002"

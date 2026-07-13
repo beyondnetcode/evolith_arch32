@@ -111,15 +111,15 @@ Select architecture pattern:
 
 ### 4.3 Architecture Enforcement (Boundary Analyzers)
 
-Static analyzers that enforce module/layer boundaries and cycles per runtime. Core routes `enforce.engine === 'enforcer'` rules to these via the `EnforcerEvaluator` (GT-514); the machine-readable mirror is `src/rulesets/enforcement/enforcer-catalog.json`. Exact version pinning is tracked in GT-519. The **Adapter** column reflects the state of each tool's Core adapter (`src/packages/core-domain/.../enforcement/adapters/`); a catalog entry can exist ahead of its adapter.
+Static analyzers that enforce module/layer boundaries and cycles per runtime. Core routes `enforce.engine === 'enforcer'` rules to these via the `EnforcerEvaluator` (GT-514); the machine-readable mirror is `src/rulesets/enforcement/enforcer-catalog.json`. **GT-519:** versions below are pinned EXACT (`x.y.z`, no ranges/wildcards) so per-runtime CI images are reproducible; `enforcer-catalog-doc-parity.spec.ts` fails on any drift between this table and `enforcer-catalog.json`. Renovate keeps the pins current (deploy-gated). The **Adapter** column reflects the state of each tool's Core adapter (`src/packages/core-domain/.../enforcement/adapters/`); a catalog entry can exist ahead of its adapter.
 
 | Tool | Version | Runtime | Purpose | Adapter | ADR |
 |------|---------|---------|---------|---------|-----|
-| **dependency-cruiser** | 16.x | node | Module/layer boundary + cycle analysis (TS/JS) | Implemented (GT-515, in progress) | ADR-0002 |
-| **NetArchTest** | 1.3.x | dotnet | Layer & dependency-direction rules (.NET) | Implemented (GT-524, in progress; real execution blocked by GT-512) | ADR-0002 |
-| **Deptrac** | 2.x | php | Layer boundary enforcement (PHP) | Catalogued, adapter pending (GT-521) | ADR-0002 |
-| **import-linter** | 2.x | python | Import contracts, grimp-backed (Python) | Catalogued, adapter pending (GT-521) | ADR-0002 |
-| **Conftest** | 0.56.x | iac | OPA/Rego policy checks for IaC/config manifests | Catalogued, adapter pending (GT-521) | ADR-0002 |
+| **dependency-cruiser** | 16.10.4 | node | Module/layer boundary + cycle analysis (TS/JS) | Implemented (GT-515, in progress) | ADR-0002 |
+| **NetArchTest** | 1.3.2 | dotnet | Layer & dependency-direction rules (.NET) | Implemented (GT-524, in progress; real execution blocked by GT-512) | ADR-0002 |
+| **Deptrac** | 2.0.4 | php | Layer boundary enforcement (PHP) | Catalogued, adapter pending (GT-521) | ADR-0002 |
+| **import-linter** | 2.1.0 | python | Import contracts, grimp-backed (Python) | Catalogued, adapter pending (GT-521) | ADR-0002 |
+| **Conftest** | 0.56.0 | iac | OPA/Rego policy checks for IaC/config manifests | Catalogued, adapter pending (GT-521) | ADR-0002 |
 
 ---
 

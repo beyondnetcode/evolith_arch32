@@ -51,6 +51,7 @@ import {
   NestLoggerProvider,
   YamlConfigParserProvider,
   WebhookAdapter,
+  NodeProcessRunner,
 } from '@beyondnet/evolith-infra-providers';
 import { PluginModule } from './infrastructure/plugins/plugin.module';
 
@@ -102,11 +103,15 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     {
       provide: RulesetValidatorService,
       useFactory: (fs: IFileSystem, logger: ILogger, configParser: IConfigParser) => {
+        // GT-519 parity: register the enforcer subsystem on the CLI surface identically to
+        // REST/MCP by injecting the real process runner. Non-forking — the composite delegates
+        // to the native strategy unless a ruleset authors an `enforce:` block.
         return new RulesetValidatorService({
           fileSystem: fs,
           logger,
           configParser,
           rulesetRepo: new DiskRulesetRepository(fs, logger),
+          processRunner: new NodeProcessRunner(),
         });
       },
       inject: ['IFileSystem', 'ILogger', 'IConfigParser'],

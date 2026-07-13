@@ -15,6 +15,7 @@
 
 import type { PhaseId } from '../../domain/sdlc/phase-id';
 import type { Verdict } from '../../domain/verdict/verdict';
+import type { Evidence } from './quality-evidence';
 
 /** Schema version of this contract (bumped only on incompatible changes). */
 export const EVALUATION_CONTEXT_SCHEMA_VERSION = '1.0.0';
@@ -211,6 +212,15 @@ export interface EvaluationContext {
   // --- Declared facts to evaluate (not scanned from disk) ---
   readonly artifacts?: ArtifactContext;
   readonly evidence?: readonly EvidenceContext[];
+  /**
+   * Canonical quality-signal evidence (ADR-0111 / GT-533). Collected by external
+   * tools behind the orchestration-owned `IQualitySignalProvider` port and passed
+   * INLINE here — the identical shape to `OverlayFileSystem` source-file ingestion
+   * (ADR-0080). The Core evaluates the received `Evidence[]` and NEVER executes a
+   * provider; a dimension with no evidence yields a `no-evidence` signal, not a
+   * failure. See {@link resolveEvidenceSignals}.
+   */
+  readonly qualitySignals?: readonly Evidence[];
   readonly checkpoint?: CheckpointContext;
   readonly deployment?: DeploymentContext;
   readonly architecture?: ArchitectureContext;

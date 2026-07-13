@@ -9,6 +9,7 @@ import type { IFileSystem, ILogger, IConfigParser } from '@beyondnet/evolith-cor
 import {
   EvaluationOrchestrator,
   createDefaultKindEvaluators,
+  exportEvaluationResultToSarif,
   type EvaluationContext,
   type IEvaluationPipeline,
   type IWorkspaceReferenceResolver,
@@ -130,7 +131,11 @@ export class EvaluateCommand extends BaseEvolithCommand {
     });
 
     const format = options?.format || 'json';
-    if (format === 'json') {
+    if (format === 'sarif') {
+      // GT-518: emit a SARIF 2.1.0 log (gaps/risks as `result`s) for the CI/PR
+      // drift gate and any SARIF-consuming code scanner (GitHub code scanning).
+      console.log(JSON.stringify(exportEvaluationResultToSarif(result)));
+    } else if (format === 'json') {
       console.log(JSON.stringify(envelope, null, 2));
     } else {
       this.promptService.showInfo(`Verdict: ${result.overallVerdict} (${result.outcome}) — confidence ${result.confidence.toFixed(2)}`);
@@ -204,7 +209,7 @@ export class EvaluateCommand extends BaseEvolithCommand {
     return val;
   }
 
-  @Option({ flags: '-f, --format [string]', description: 'Output format (json | text). Default: json' })
+  @Option({ flags: '-f, --format [string]', description: 'Output format (json | text | sarif). Default: json' })
   parseFormat(val: string): string {
     return val;
   }

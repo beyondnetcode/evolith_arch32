@@ -6595,6 +6595,38 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-476",
+      "closedAt": "2026-07-12",
+      "closureCommit": "56968194",
+      "evidence": [
+        ".github/workflows/docs.yml",
+        ".harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs (Validated 532 gaps and 478 closure records, green)",
+        "grep -L 'control-center/gap-tracking' .harness/scripts/sync-*.mjs .harness/scripts/fix-tracking-*.mjs (all 5 re-pointed to gaps/+evidence/)",
+        "node --check on each edited script + docs.yml parses (jobs tracking-guard + validate; guard armed on pull_request/push)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-528",
+      "closedAt": "2026-07-12",
+      "closureCommit": "5c66dd69",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/enforcement/structurizr-parser.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/structurizr-parser.spec.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/c4-compiler.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/core-domain && npx tsc -b tsconfig.json (clean)",
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand structurizr-parser (5/5)",
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand (950/950 core-domain)"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "GT-528 required an executable C4 model: compileC4ToBoundaryRules (prior) + parseStructurizrDsl (this) close the intent→executable path end-to-end. GT-516 (enforce: compiler) is a sibling engine, satisfied."
+    },
+    {
       "id": "GT-525",
       "closedAt": "2026-07-12",
       "closureCommit": "57b2cc09",

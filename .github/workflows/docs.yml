@@ -6,6 +6,9 @@ concurrency:
 
 on:
   workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main, develop]
 
 permissions:
   contents: read
@@ -13,8 +16,32 @@ permissions:
   id-token: write
 
 jobs:
+  # GT-476: the semantic tracking guard runs on every PR and on push to
+  # main/develop so the gap board can't silently drift. Kept as a focused,
+  # dependency-free job (git history only) so it stays fast and does not drag
+  # the full doc-publish pipeline below into every pull request.
+  tracking-guard:
+    name: Validate semantic tracking (guard)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Validate semantic tracking
+        run: node .harness/scripts/ci/08-validate-tracking.mjs
+
   validate:
     name: Validate documentation
+    # The full documentation-publish pipeline stays manual (workflow_dispatch);
+    # only the tracking-guard job above is armed for PRs/pushes (GT-476).
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -23,3 +23,4 @@ export type {
 export { NxWorkspaceStrategy } from './architecture/nx-workspace.strategy';
 export type { NxWorkspaceStrategyOptions } from './architecture/nx-workspace.strategy';
 export { resolveRulesetFilePath } from './architecture/ruleset-file-resolver';
+export { loadBackstageOwnership } from './backstage-catalog.loader';

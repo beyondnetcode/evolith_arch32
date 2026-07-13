@@ -330,8 +330,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Acceptance criteria:**
   - [x] Un modelo Structurizr/C4 de ejemplo produce al menos una regla verificable contra el código. _(`compileC4ToBoundaryRules` → `EditBoundaryRule` de GT-526; probado end-to-end: bloquea un edit domain→infra)_
   - [x] Cada regla generada traza al elemento de modelo/ADR de origen. _(`ruleId` `C4-<id>` + `adrRef` del elemento)_
+  - [x] Ingesta del `.dsl` crudo → `C4Model`. _(`parseStructurizrDsl`; core-domain 950/950; `5c66dd69`)_
 - **Dependencies:** GT-516.
-- **Status:** `IN-PROGRESS`
+- **Status:** `COMPLETED`
 
 #### GT-529
 
@@ -855,10 +856,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Fix propuesto:** Añadir los segmentos `gaps/` + `evidence/` en los seis scripts y re-armar el guard en push/PR. Los scripts de `.harness/` son propiedad de este repositorio y se arreglan directamente aquí (cf. GT-475: el allowlist de `03-validate-root-cleanliness.mjs` se corrigió en el repo de la misma forma).
 
-**Cierre:**
-- [ ] rutas corregidas en los seis scripts
-- [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` ejecuta la validación semántica (sin "Missing tracking artifacts")
-- [ ] guard armado en push/PR (no solo `workflow_dispatch`)
+**Cierre:** COMPLETADO (`56968194`)
+- [x] rutas corregidas en los seis scripts _(ya estaban re-apuntadas en base; verificado por grep)_
+- [x] `node .harness/scripts/ci/08-validate-tracking.mjs` ejecuta la validación semántica (sin "Missing tracking artifacts") _(verde: 532/478)_
+- [x] guard armado en push/PR (no solo `workflow_dispatch`) _(job `tracking-guard` en `docs.yml` sobre pull_request + push a main/develop)_
 
 **Referencias:** `.harness/scripts/ci/08-validate-tracking.mjs:7-14,262-267`; `.harness/scripts/sync-*.mjs`, `fix-tracking-*.mjs`; commit `e16120e9`; GT-477, GT-480
 

@@ -310,10 +310,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** L
 - **Proposed fix:** Read-only connectors via ACL (Port/Cortex/OpsLevel API + Backstage `catalog-info.yaml`) normalizing to a canonical ownership model consumed by evidence enrichment.
 - **Acceptance criteria:**
-  - [ ] At least one connector (e.g. Backstage) resolves owner and feeds violation enrichment.
-  - [ ] Connectors are read-only and introduce no vendor lock-in.
+  - [ ] At least one connector (e.g. Backstage) resolves owner and feeds violation enrichment. _(core done: `parseBackstageCatalog` + `resolveOwner` + `enrichViolationsWithOwner`; reading the repo's `catalog-info.yaml` via the config-parser port is the remaining connector/infra step)_
+  - [x] Connectors are read-only and introduce no vendor lock-in. _(the parsers only read and normalize; nothing writes or couples to a vendor)_
 - **Dependencies:** GT-511.
-- **Status:** `PENDING`
+- **Status:** `IN-PROGRESS`
 
 #### GT-528
 

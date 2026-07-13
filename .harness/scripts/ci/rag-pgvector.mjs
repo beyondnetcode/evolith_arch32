@@ -14,19 +14,28 @@
  *    the adapter fails closed.
  *  - Dimension is fixed at 1024 and distance is cosine (ADR-0112 §2/§3); the DDL
  *    lives in `rag-pgvector.schema.sql` and is re-exported here as PGVECTOR_DDL.
- *  - `embed()` is a PLACEHOLDER delegating to `hashEmbed(t, 1024)`. The real
- *    Qwen3-Embedding model is GT-539's job and MUST NOT be hard-coded here.
+ *  - `embed()` uses the REAL Qwen3-Embedding model (via the on-perimeter
+ *    inference sidecar) WHEN configured (GT-539 · `rag-embed-qwen3.mjs`), and
+ *    falls back to the deterministic `hashEmbed(t, 1024)` offline default when
+ *    no sidecar is configured (dry-run / tests). The port stays model-agnostic:
+ *    the concrete model is never hard-coded, only defaulted (ADR-0090 §3). The
+ *    effective model id is exposed as `embeddingModelId` so the sync can fold it
+ *    into `corpus_version` for cache invalidation (ADR-0090 §3 / ADR-0112 §1).
  */
 
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { registerRagAdapter, hashEmbed, RagPortError } from './rag-port.mjs';
+import { makeQwen3Embedder, isQwen3Configured } from './rag-embed-qwen3.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /** ADR-0112 §2 — Qwen3 Matryoshka maximum; the pgvector column is vector(1024). */
 export const RAG_EMBEDDING_DIM = 1024;
+
+/** Offline/test default model id — deterministic sha256 pseudo-embedding at the store dim. */
+export const HASH_EMBED_MODEL_ID = `hash-sha256@${RAG_EMBEDDING_DIM}`;
 
 /** Chunk table name (matches the DDL). */
 export const RAG_PGVECTOR_TABLE = 'rag_chunks';
@@ -64,29 +73,32 @@ function toVectorLiteral(vec) {
 }
 
 /**
- * Resolve a DB client. Prefers the injected `config.client` seam. Only when
- * none is injected does it lazy-import `pg` and build a Pool — so module load
- * never requires the package. Fails closed if neither is available.
+ * Resolve the embedding function behind the port. When an on-perimeter inference
+ * sidecar is configured (GT-539) — or an explicit `config.embedder` is injected —
+ * use the REAL model; otherwise fall back to the deterministic offline default.
+ * Asserts the model's output dimension equals the store dimension (fail closed:
+ * a mismatched dimension is not cosine-comparable — ADR-0112 §2/§5).
  */
-async function resolveClient(config) {
-  if (config.client && typeof config.client.query === 'function') return config.client;
-
-  const connectionString =
-    config.connectionString || process.env.EVOLITH_RAG_PG_URL || process.env.DATABASE_URL;
-
-  let pg;
-  try {
-    pg = await import('pg');
-  } catch {
-    throw new RagPortError(
-      'pgvector adapter requires an injected client (config.client) or the optional "pg" package at run time',
-    );
+function resolveEmbedder(config) {
+  if (config.embedder || isQwen3Configured(config)) {
+    const embedder = config.embedder || makeQwen3Embedder({ ...config, dim: RAG_EMBEDDING_DIM });
+    if (embedder.dim !== RAG_EMBEDDING_DIM) {
+      throw new RagPortError(
+        `configured embedding model dim ${embedder.dim} != store dim ${RAG_EMBEDDING_DIM} ` +
+          `(ADR-0112 §2 — fail closed)`,
+      );
+    }
+    return embedder;
   }
-  const Pool = pg.default?.Pool || pg.Pool;
-  if (typeof Pool !== 'function') {
-    throw new RagPortError('pgvector adapter could not resolve a pg Pool constructor');
-  }
-  return new Pool(connectionString ? { connectionString } : {});
+  // Offline default: deterministic hashEmbed at the store dimension. Non-semantic
+  // but stable — used for dry-run and tests when no sidecar is on-perimeter.
+  return {
+    modelId: HASH_EMBED_MODEL_ID,
+    dim: RAG_EMBEDDING_DIM,
+    async embed(texts) {
+      return texts.map((t) => hashEmbed(t, RAG_EMBEDDING_DIM));
+    },
+  };
 }
 
 /** Factory: `config -> durable pgvector adapter`. */
@@ -96,18 +108,30 @@ export function pgvectorAdapter(config = {}) {
     if (!clientPromise) clientPromise = resolveClient(config);
     return clientPromise;
   };
+  const embedder = resolveEmbedder(config);
 
   return {
     name: 'pgvector',
     durable: true,
     dim: RAG_EMBEDDING_DIM,
     ddl: PGVECTOR_DDL,
+    // Effective embedding model id — the sync folds this into corpus_version so
+    // a model swap invalidates the cache (ADR-0090 §3 / ADR-0112 §1).
+    embeddingModelId: embedder.modelId,
 
     async embed(texts) {
-      // PLACEHOLDER embedding — deterministic hashEmbed at the ADR-0112 dimension.
-      // The real Qwen3-Embedding model / inference sidecar is GT-539's job and
-      // must NOT be hard-coded here; the port stays model-agnostic.
-      return texts.map((t) => hashEmbed(t, RAG_EMBEDDING_DIM));
+      const vectors = await embedder.embed(texts);
+      // Defense in depth: the store column is vector(1024) — refuse anything else,
+      // even from an injected embedder (fail closed on dimension drift).
+      for (const v of vectors) {
+        if (!Array.isArray(v) || v.length !== RAG_EMBEDDING_DIM) {
+          throw new RagPortError(
+            `embedding dimension ${Array.isArray(v) ? v.length : typeof v} != ` +
+              `store dim ${RAG_EMBEDDING_DIM} (ADR-0112 §2 — fail closed)`,
+          );
+        }
+      }
+      return vectors;
     },
 
     async upsert(records) {
@@ -149,6 +173,32 @@ export function pgvectorAdapter(config = {}) {
       return { deleted: typeof res?.rowCount === 'number' ? res.rowCount : ids.length };
     },
   };
+}
+
+/**
+ * Resolve a DB client. Prefers the injected `config.client` seam. Only when
+ * none is injected does it lazy-import `pg` and build a Pool — so module load
+ * never requires the package. Fails closed if neither is available.
+ */
+async function resolveClient(config) {
+  if (config.client && typeof config.client.query === 'function') return config.client;
+
+  const connectionString =
+    config.connectionString || process.env.EVOLITH_RAG_PG_URL || process.env.DATABASE_URL;
+
+  let pg;
+  try {
+    pg = await import('pg');
+  } catch {
+    throw new RagPortError(
+      'pgvector adapter requires an injected client (config.client) or the optional "pg" package at run time',
+    );
+  }
+  const Pool = pg.default?.Pool || pg.Pool;
+  if (typeof Pool !== 'function') {
+    throw new RagPortError('pgvector adapter could not resolve a pg Pool constructor');
+  }
+  return new Pool(connectionString ? { connectionString } : {});
 }
 
 // Register on import so `createRagAdapter({ provider: 'pgvector' })` resolves it.

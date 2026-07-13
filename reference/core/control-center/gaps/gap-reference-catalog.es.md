@@ -328,10 +328,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Parser del subconjunto enforce-able del DSL Structurizr/C4 + mapeo a reglas `enforce:` compiladas por GT-516, con trazabilidad al elemento de modelo de origen.
 - **Acceptance criteria:**
-  - [ ] Un modelo Structurizr/C4 de ejemplo produce al menos una regla `enforce:` verificable contra el código.
-  - [ ] Cada regla generada traza al elemento de modelo/ADR de origen.
+  - [x] Un modelo Structurizr/C4 de ejemplo produce al menos una regla verificable contra el código. _(`compileC4ToBoundaryRules` → `EditBoundaryRule` de GT-526; probado end-to-end: bloquea un edit domain→infra)_
+  - [x] Cada regla generada traza al elemento de modelo/ADR de origen. _(`ruleId` `C4-<id>` + `adrRef` del elemento)_
 - **Dependencies:** GT-516.
-- **Status:** `PENDING`
+- **Status:** `IN-PROGRESS`
 
 #### GT-529
 

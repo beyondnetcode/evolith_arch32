@@ -382,10 +382,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Adapter that defines activity+expected artifact, applies tenant rulesets/skills, resolves authorization, invokes Cowork/Claude and captures execution evidence for the gate — over the GT-383…394 ports.
 - **Acceptance criteria:**
-  - [ ] A bounded activity runs via the adapter with permissions/plan/approval and evidence capture.
-  - [ ] The executor is replaceable (satisfies the agent-runtime execution contract).
+  - [ ] A bounded activity runs via the adapter with permissions/plan/approval and evidence capture. _(the adapter is bounded —rejects out-of-catalog tools— and the runtime envelope (approval/policy/trace) governs it; live execution against Claude/Cowork needs the real `CoworkClient` —connector/infra)_
+  - [x] The executor is replaceable (satisfies the agent-runtime execution contract). _(`CoworkAgentEngineAdapter implements IAgentEnginePort`, drop-in like stub/hermes/swarms)_
 - **Dependencies:** GT-387, GT-441.
-- **Status:** `PENDING`
+- **Status:** `IN-PROGRESS`
 
 #### GT-532
 

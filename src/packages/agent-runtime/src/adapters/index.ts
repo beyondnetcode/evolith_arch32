@@ -76,6 +76,8 @@ export { HermesAgentAdapter } from './engine/hermes-agent.adapter';
 export type { HermesClient, HermesAdapterOptions } from './engine/hermes-agent.adapter';
 export { SwarmsAgentAdapter } from './engine/swarms-agent.adapter';
 export type { SwarmsClient, SwarmsAdapterOptions } from './engine/swarms-agent.adapter';
+export { CoworkAgentEngineAdapter, COWORK_ENGINE } from './engine/cowork-agent.adapter';
+export type { CoworkClient, CoworkProposal, CoworkAdapterOptions } from './engine/cowork-agent.adapter';
 export { RoutingAgentAdapter } from './engine/routing-agent.adapter';
 export type { EngineRouterConfig } from './engine/routing-agent.adapter';
 export { PolicyBasedEngineRouter } from './engine/policy-based-engine-router';

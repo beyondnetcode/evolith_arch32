@@ -382,10 +382,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Adaptador que define actividad+artefacto esperado, aplica rulesets/skills del tenant, resuelve autorización, invoca Cowork/Claude y captura la evidencia de ejecución para el gate — sobre los puertos de GT-383…394.
 - **Acceptance criteria:**
-  - [ ] Una actividad acotada se ejecuta vía el adaptador con permisos/plan/aprobación y captura de evidencia.
-  - [ ] El ejecutor es reemplazable (cumple el contrato de ejecución del agent-runtime).
+  - [ ] Una actividad acotada se ejecuta vía el adaptador con permisos/plan/aprobación y captura de evidencia. _(el adaptador es acotado —rechaza tools fuera del catálogo— y el envelope del runtime (approval/policy/trace) lo gobierna; la ejecución viva contra Claude/Cowork requiere el `CoworkClient` real —conector/infra)_
+  - [x] El ejecutor es reemplazable (cumple el contrato de ejecución del agent-runtime). _(`CoworkAgentEngineAdapter implements IAgentEnginePort`, drop-in como stub/hermes/swarms)_
 - **Dependencies:** GT-387, GT-441.
-- **Status:** `PENDING`
+- **Status:** `IN-PROGRESS`
 
 #### GT-532
 

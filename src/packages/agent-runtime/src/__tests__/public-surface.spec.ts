@@ -22,6 +22,8 @@ const ADAPTERS_SURFACE = [
   'AutoApprovalAdapter',
   'ChatApprovalAdapter',
   'CliCommunicationGatewayAdapter',
+  'COWORK_ENGINE',
+  'CoworkAgentEngineAdapter',
   'CompositeTrackerTraceAdapter',
   'DEFAULT_SKILLS',
   'DenyByDefaultApprovalAdapter',

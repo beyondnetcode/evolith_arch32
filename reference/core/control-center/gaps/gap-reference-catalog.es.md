@@ -292,10 +292,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Hook cross-agente (Claude Code/Cursor/Copilot) que consulta el contrato de arquitectura compilado y rechaza/advierte el edit no conforme de forma determinista.
 - **Acceptance criteria:**
-  - [ ] Un edit que viola una regla `enforce:` es bloqueado/marcado en tiempo de edición en al menos un agente. _(núcleo hecho: `evaluateEdit` decide allow/block sobre un edit real con `Violation` canónicas; falta el adapter por-agente —hook PreToolUse de Claude Code/Cursor— que lo aplique)_
-  - [x] El mecanismo es neutral cross-agente (no atado a un único proveedor). _(`evaluateEdit`/`EditBoundaryRule` es una función pura sin acoplamiento a proveedor)_
+  - [x] Un edit que viola una regla `enforce:` es bloqueado/marcado en tiempo de edición en al menos un agente. _(el CLI `evolith enforce edit` lee un payload de hook por stdin, corre el contrato de límites compilado a través de `evaluateEdit` y devuelve exit 0 = allow / exit 2 = block —el código de veto de Claude Code— con `Violation` canónicas en stderr; e2e verificado con binario real)_
+  - [x] El mecanismo es neutral cross-agente (no atado a un único proveedor). _(registro `VendorHookAdapter`: `claude-code` parsea PreToolUse Write/Edit/MultiEdit; `generic` acepta un `{filePath,content}` canónico para que Cursor/Copilot se enchufen sin código; `evaluateEdit`/`EditBoundaryRule` sigue siendo función pura neutral)_
 - **Dependencies:** GT-516, GT-520.
-- **Status:** `IN-PROGRESS`
+- **Cierre (2026-07-13, Ola 2, commit `8fd95eb3`):** Se entregó el adapter por-agente en `src/sdk/cli` (acción `enforce edit` + servicio `edit-hook`, normalizador de payload, loader de reglas de límite), con docs (snippet `.claude/settings.json`, matcher `Write|Edit|MultiEdit`), wrapper listo `examples/claude-code-pretooluse-hook.sh` y un contrato compilado de ejemplo. Las tool-calls que no escriben/no reconocidas se permiten (el gate nunca bloquea lo que no puede evaluar). 45 tests focalizados + suite CLI completa 967/967. Completa las tres superficies READ→CONTROL (pre-gen MCP + PR/CI + edit-time). _Nota op:_ el hook de Claude Code es un wrapper de shell que el usuario registra en su settings.
+- **Status:** `DONE`
 
 #### GT-527
 
@@ -438,10 +439,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Adaptador que implementa `IQualitySignalProvider` sobre el Node module de Lighthouse, emitiendo `Evidence` determinista normalizada.
 - **Acceptance criteria:**
-  - [ ] El adaptador emite `Evidence` normalizada con `determinism: 'deterministic'` y provenance completa.
-  - [ ] El ADR de Plataforma Node.js acompañante registra la elección de proveedor/runtime.
+  - [x] El adaptador emite `Evidence` normalizada con `determinism: 'deterministic'` y provenance completa. _(`LighthouseEvidenceProvider` en infra-providers; provenance `collectedBy:'lighthouse'` + adapterVersion + artifactHash SHA-256; categorías → `EvidenceFinding` con severidad)_
+  - [x] El ADR de Plataforma Node.js acompañante registra la elección de proveedor/runtime. _(ADR-0113 bilingüe e indexado — renumerado desde 0112 para evitar colisión con el ADR-0112 RAG concurrente)_
 - **Dependencies:** GT-533.
-- **Status:** `PENDING`
+- **Cierre (2026-07-13, Ola 2, commit `af97a14c`):** Primer proveedor concreto detrás de la costura GT-533. El run de Chrome headless queda tras un puerto `LighthouseRunner` inyectado (lighthouse/chrome-launcher importados dinámicamente, no son dep de build — ADR-0111 §5); 27 tests con LHR stub (sin Chrome). infra-providers 105/105. _Nota runtime:_ un run real end-to-end requiere Chrome headless + URL desplegada; registrar el proveedor en `TenantQualitySignalRegistry` es parte del follow-on de cableado de GT-533.
+- **Status:** `DONE`
 
 #### GT-535
 

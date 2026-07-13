@@ -406,6 +406,97 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Dependencies:** none.
 - **Status:** `PENDING`
 
+#### GT-533
+
+**Title:** Quality Signal Provider port + canonical `Evidence` model + per-tenant registry (ADR-0111)
+
+- **Purpose:** Define the single seam through which any external quality/evidence tool enriches Core evaluation without becoming a dependency of the Core.
+- **Evidence:** ADR-0111; the GT-530 `ObservabilityEvidence` adapter is a concrete instance of the same idea, but there is no generalized, tenant-selectable evidence seam.
+- **Impact:** Turns Evolith into the governance control plane that normalizes any auditor's output; closes the design→runtime conformance loop (ADR-0104) with real evidence.
+- **Risk:** Coupling the deterministic Core to volatile tools, or N×M bespoke integrations, if the port is not honored.
+- **Affected files:** orchestration-layer `IQualitySignalProvider` port; `core-domain` `Evidence`/`Provenance` types consumed inline in `EvaluationContext`; per-tenant provider registry config.
+- **Component:** `Evolith Core` · **Dimension:** Architecture · **Type:** backend
+- **Criticality:** P1 · **Complexity:** L
+- **Proposed fix:** Driven port owned by orchestration; Core imports only `Evidence` (inline, like `OverlayFileSystem`, ADR-0080); Core never executes providers; declarative opt-in registry per tenant; mandatory `provenance` + `determinism`.
+- **Acceptance criteria:**
+  - [ ] `core-domain` imports only `Evidence` (grep-clean of provider/adapter imports).
+  - [ ] Providers run in orchestration; Core evaluates received `Evidence[]`; missing evidence ⇒ `no-evidence`, not a failure.
+  - [ ] Per-tenant registry enables/disables providers declaratively.
+- **Dependencies:** ADR-0111; composes with GT-530.
+- **Status:** `PENDING`
+
+#### GT-534
+
+**Title:** Lighthouse reference adapter (Apache-2.0)
+
+- **Purpose:** Prototype-first proof of the Quality Signal Provider port: runtime performance/a11y/SEO evidence behind `IQualitySignalProvider`.
+- **Evidence:** Lighthouse is OSS (Apache-2.0), mature, with an embeddable Node module and JSON output — the lowest-risk deterministic evidence source.
+- **Impact:** First real evidence dimension in a scorecard/gate; validates the seam end-to-end.
+- **Risk:** Requires headless Chrome + a deployed URL (runtime, not design-time).
+- **Affected files:** `infra-providers` Lighthouse adapter; companion Node.js Platform ADR.
+- **Component:** `infra-providers` · **Dimension:** Quality · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Adapter implementing `IQualitySignalProvider` over the Lighthouse Node module, emitting normalized deterministic `Evidence`.
+- **Acceptance criteria:**
+  - [ ] Adapter emits normalized `Evidence` with `determinism: 'deterministic'` and full provenance.
+  - [ ] Companion Node.js Platform ADR records the vendor/runtime choice.
+- **Dependencies:** GT-533.
+- **Status:** `PENDING`
+
+#### GT-535
+
+**Title:** Thermo-nuclear structural-review rubric → code-quality agent + Quality Gate
+
+- **Purpose:** Adopt a strict structural code-review methodology as a skill for the code-quality-review agent and as the structural-regression criteria of the Quality Gate.
+- **Evidence:** The Cursor "thermo-nuclear" review rubric (code-judo, file-size discipline, spaghetti/abstraction/layering checks, severity hierarchy) is a proven methodology; Evolith has no explicit structural-review rubric.
+- **Impact:** Gives the code-quality agent and the gate an explicit, auditable structural standard.
+- **Risk:** LLM-dependent (probabilistic evidence); license/attribution of the source rubric.
+- **Affected files:** agent-runtime code-quality-review skill; Quality Gate rubric.
+- **Component:** `agent-runtime` · **Dimension:** Quality · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Encode the seven standards + severity hierarchy as a skill and gate rubric; emit `Evidence` with `determinism: 'probabilistic'`.
+- **Acceptance criteria:**
+  - [ ] The agent produces structural findings ranked by the rubric's severity hierarchy.
+  - [ ] The gate can treat structural regressions as blocking; attribution respected.
+- **Dependencies:** GT-533.
+- **Status:** `PENDING`
+
+#### GT-536
+
+**Title:** TestSprite test-evidence adapter — opt-in, default OFF
+
+- **Purpose:** Optional testing-dimension evidence behind the port, without any hard dependency on a proprietary cloud.
+- **Evidence:** TestSprite's CLI/MCP are OSS but the engine is a credit-based proprietary cloud (code egress); useful as an optional signal and as pipeline inspiration (discover→plan→generate→execute→heal).
+- **Impact:** Adds a testing dimension to scorecards for tenants who opt in.
+- **Risk:** Lock-in, per-credit cost, code leaving the perimeter — mitigated by adapter-boundary isolation and default-off.
+- **Affected files:** `infra-providers` TestSprite adapter (disabled by default in the registry).
+- **Component:** `infra-providers` · **Dimension:** Testing · **Type:** backend
+- **Criticality:** P2 · **Complexity:** M
+- **Proposed fix:** Opt-in adapter behind `IQualitySignalProvider`; egress isolated at the boundary; never a suite dependency.
+- **Acceptance criteria:**
+  - [ ] Adapter is disabled by default and only activates on explicit per-tenant opt-in.
+  - [ ] No code path makes the suite build/run depend on TestSprite.
+- **Dependencies:** GT-533.
+- **Status:** `DEFERRED`
+
+#### GT-537
+
+**Title:** GEO / AI-discoverability Scorecards pack (Claude SEO pattern)
+
+- **Purpose:** Optional Scorecards pack inspired by the Claude SEO multi-agent audit (score + severity plan).
+- **Evidence:** Claude SEO (MIT) proves the multi-agent→scorecard pattern scales; SEO/GEO is adjacent to the architecture-governance core, so it belongs in a product pack, not the Core.
+- **Impact:** Optional value-add dimension in the Portal/Scorecards plane; validates the pattern Evolith already uses.
+- **Risk:** Scope creep into the Core if not kept as an optional pack.
+- **Affected files:** Portal/Scorecards pack (out of `core-domain`).
+- **Component:** `Tracker` · **Dimension:** Adoption · **Type:** backend
+- **Criticality:** P3 · **Complexity:** L
+- **Proposed fix:** GEO/AI-discoverability dimension as an optional Scorecards pack, emitting `Evidence` via the port; not a Core capability.
+- **Acceptance criteria:**
+  - [ ] The pack is optional and adds no Core dependency.
+  - [ ] Produces a score + severity plan consistent with the scorecard model.
+- **Dependencies:** GT-533.
+- **Status:** `DEFERRED`
+
 ---
 
 ## 1. Gap Details

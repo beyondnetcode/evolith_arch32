@@ -87,6 +87,7 @@
 * [0108-masstransit-owned-message-topology](./0108-masstransit-owned-message-topology.es.md) — **MassTransit es dueño de la topología de mensajes; los CRDs del broker son solo RBAC**
 * [0109-multi-project-satellite-governance](./0109-multi-project-satellite-governance.es.md) — **Gobernanza de satélites multi-proyecto (satélites monorepo); Core permanece soberano**
 * [0110-masstransit-v8-apache-license-pin](./0110-masstransit-v8-apache-license-pin.es.md) — **Permanecer en MassTransit v8 (Apache-2.0); v9 es comercial y no sublicenciable**
+* [0111-quality-signal-provider-port](./0111-quality-signal-provider-port.es.md) — **Puerto de Proveedores de Señales de Calidad — la evidencia externa (Lighthouse, TestSprite, …) entra vía adaptadores y `Evidence` canónica; el Core nunca depende de ninguna herramienta**
 
 ---
 [Volver al Nivel Superior](../README.es.md)

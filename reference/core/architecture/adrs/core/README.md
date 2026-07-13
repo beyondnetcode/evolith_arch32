@@ -87,6 +87,7 @@
 * [0108-masstransit-owned-message-topology](./0108-masstransit-owned-message-topology.md) — **MassTransit owns the message topology; broker CRDs are RBAC-only**
 * [0109-multi-project-satellite-governance](./0109-multi-project-satellite-governance.md) — **Multi-project satellite governance (monorepo satellites); Core stays sovereign**
 * [0110-masstransit-v8-apache-license-pin](./0110-masstransit-v8-apache-license-pin.md) — **Stay on MassTransit v8 (Apache-2.0); v9 is commercial and non-sublicensable**
+* [0111-quality-signal-provider-port](./0111-quality-signal-provider-port.md) — **Quality Signal Provider port — external evidence (Lighthouse, TestSprite, …) enters via adapters and canonical `Evidence`; Core never depends on any tool**
 
 ---
 [Back to Upper Level](../README.md)

@@ -406,6 +406,97 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Dependencies:** none.
 - **Status:** `PENDING`
 
+#### GT-533
+
+**Title:** Puerto de Proveedores de Señales de Calidad + modelo canónico `Evidence` + registro por tenant (ADR-0111)
+
+- **Purpose:** Definir la única costura por la que cualquier herramienta externa de calidad/evidencia enriquece la evaluación del Core sin volverse dependencia del Core.
+- **Evidence:** ADR-0111; el adaptador `ObservabilityEvidence` de GT-530 es una instancia concreta de la misma idea, pero no existe una costura de evidencia generalizada y seleccionable por tenant.
+- **Impact:** Convierte a Evolith en el plano de control de gobernanza que normaliza la salida de cualquier auditor; cierra el lazo de conformidad diseño→runtime (ADR-0104) con evidencia real.
+- **Risk:** Acoplar el Core determinista a herramientas volátiles, o integraciones a medida N×M, si no se respeta el puerto.
+- **Affected files:** puerto `IQualitySignalProvider` en la capa de orquestación; tipos `Evidence`/`Provenance` en `core-domain` consumidos inline en `EvaluationContext`; config del registro de proveedores por tenant.
+- **Component:** `Evolith Core` · **Dimension:** Architecture · **Type:** backend
+- **Criticality:** P1 · **Complexity:** L
+- **Proposed fix:** Puerto de salida propiedad de la orquestación; el Core importa solo `Evidence` (inline, como `OverlayFileSystem`, ADR-0080); el Core nunca ejecuta proveedores; registro declarativo opt-in por tenant; `provenance` + `determinism` obligatorios.
+- **Acceptance criteria:**
+  - [ ] `core-domain` importa solo `Evidence` (grep limpio de imports de proveedor/adaptador).
+  - [ ] Los proveedores corren en orquestación; el Core evalúa `Evidence[]` recibida; evidencia ausente ⇒ `no-evidence`, no un fallo.
+  - [ ] El registro por tenant habilita/deshabilita proveedores de forma declarativa.
+- **Dependencies:** ADR-0111; compone con GT-530.
+- **Status:** `PENDING`
+
+#### GT-534
+
+**Title:** Adaptador de referencia Lighthouse (Apache-2.0)
+
+- **Purpose:** Prueba prototype-first del puerto de Proveedores de Señales de Calidad: evidencia de runtime performance/a11y/SEO detrás de `IQualitySignalProvider`.
+- **Evidence:** Lighthouse es OSS (Apache-2.0), maduro, con Node module embebible y salida JSON — la fuente de evidencia determinista de menor riesgo.
+- **Impact:** Primera dimensión de evidencia real en un scorecard/gate; valida la costura end-to-end.
+- **Risk:** Requiere Chrome headless + una URL desplegada (runtime, no design-time).
+- **Affected files:** adaptador Lighthouse en `infra-providers`; ADR de Plataforma Node.js acompañante.
+- **Component:** `infra-providers` · **Dimension:** Quality · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Adaptador que implementa `IQualitySignalProvider` sobre el Node module de Lighthouse, emitiendo `Evidence` determinista normalizada.
+- **Acceptance criteria:**
+  - [ ] El adaptador emite `Evidence` normalizada con `determinism: 'deterministic'` y provenance completa.
+  - [ ] El ADR de Plataforma Node.js acompañante registra la elección de proveedor/runtime.
+- **Dependencies:** GT-533.
+- **Status:** `PENDING`
+
+#### GT-535
+
+**Title:** Rúbrica de revisión estructural thermo-nuclear → agente de calidad de código + Quality Gate
+
+- **Purpose:** Adoptar una metodología estricta de revisión estructural como skill del agente code-quality-review y como criterio de regresión estructural del Quality Gate.
+- **Evidence:** La rúbrica "thermo-nuclear" de Cursor (code-judo, disciplina de tamaño de archivo, chequeos de spaghetti/abstracción/capas, jerarquía de severidad) es una metodología probada; Evolith no tiene una rúbrica de revisión estructural explícita.
+- **Impact:** Da al agente de calidad y al gate un estándar estructural explícito y auditable.
+- **Risk:** Dependiente de LLM (evidencia probabilística); licencia/atribución de la rúbrica fuente.
+- **Affected files:** skill code-quality-review de agent-runtime; rúbrica del Quality Gate.
+- **Component:** `agent-runtime` · **Dimension:** Quality · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Codificar los siete estándares + jerarquía de severidad como skill y rúbrica de gate; emitir `Evidence` con `determinism: 'probabilistic'`.
+- **Acceptance criteria:**
+  - [ ] El agente produce hallazgos estructurales ordenados por la jerarquía de severidad de la rúbrica.
+  - [ ] El gate puede tratar las regresiones estructurales como bloqueantes; atribución respetada.
+- **Dependencies:** GT-533.
+- **Status:** `PENDING`
+
+#### GT-536
+
+**Title:** Adaptador de test-evidence TestSprite — opt-in, OFF por defecto
+
+- **Purpose:** Evidencia opcional de la dimensión testing detrás del puerto, sin ninguna dependencia dura de una nube propietaria.
+- **Evidence:** El CLI/MCP de TestSprite son OSS pero el motor es una nube propietaria por créditos (egress de código); útil como señal opcional y como inspiración de pipeline (discover→plan→generate→execute→heal).
+- **Impact:** Añade una dimensión de testing a los scorecards para tenants que hagan opt-in.
+- **Risk:** Lock-in, coste por crédito, código saliendo del perímetro — mitigado por aislamiento en la frontera del adaptador y off por defecto.
+- **Affected files:** adaptador TestSprite en `infra-providers` (deshabilitado por defecto en el registro).
+- **Component:** `infra-providers` · **Dimension:** Testing · **Type:** backend
+- **Criticality:** P2 · **Complexity:** M
+- **Proposed fix:** Adaptador opt-in detrás de `IQualitySignalProvider`; egress aislado en la frontera; nunca dependencia de la suite.
+- **Acceptance criteria:**
+  - [ ] El adaptador está deshabilitado por defecto y solo se activa con opt-in explícito por tenant.
+  - [ ] Ninguna ruta hace que el build/run de la suite dependa de TestSprite.
+- **Dependencies:** GT-533.
+- **Status:** `DEFERRED`
+
+#### GT-537
+
+**Title:** Pack de Scorecards GEO / AI-discoverability (patrón Claude SEO)
+
+- **Purpose:** Pack opcional de Scorecards inspirado en la auditoría multi-agente de Claude SEO (score + plan por severidad).
+- **Evidence:** Claude SEO (MIT) prueba que el patrón multi-agente→scorecard escala; SEO/GEO es adyacente al núcleo de gobernanza de arquitectura, así que pertenece a un pack de producto, no al Core.
+- **Impact:** Dimensión opcional de valor en el plano Portal/Scorecards; valida el patrón que Evolith ya usa.
+- **Risk:** Scope creep hacia el Core si no se mantiene como pack opcional.
+- **Affected files:** pack Portal/Scorecards (fuera de `core-domain`).
+- **Component:** `Tracker` · **Dimension:** Adoption · **Type:** backend
+- **Criticality:** P3 · **Complexity:** L
+- **Proposed fix:** Dimensión GEO/AI-discoverability como pack opcional de Scorecards, emitiendo `Evidence` vía el puerto; no es capacidad del Core.
+- **Acceptance criteria:**
+  - [ ] El pack es opcional y no añade dependencia al Core.
+  - [ ] Produce un score + plan por severidad consistente con el modelo de scorecard.
+- **Dependencies:** GT-533.
+- **Status:** `DEFERRED`
+
 ---
 
 ## 1. Detalle de Gaps

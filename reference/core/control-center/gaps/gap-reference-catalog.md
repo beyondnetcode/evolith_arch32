@@ -513,7 +513,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Acceptance criteria:**
   - [ ] `registerRagAdapter('pgvector', …)` provides a `durable: true` adapter; a live `14-rag-index-sync.mjs` run upserts real chunks and emits a truthful receipt.
   - [ ] Metadata columns support filtering on `source_file`, `adr_id`, `language`, `corpus_version`.
-- **Dependencies:** ADR-0090; composes with GT-145.
+- **Dependencies:** ADR-0090; ADR-0112 (platform: pgvector on existing Postgres, `vector(1024)`, HNSW); composes with GT-145.
 - **Status:** `PENDING`
 
 #### GT-539
@@ -523,15 +523,15 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Replace the deterministic pseudo-embedding with a real semantic embedding model so retrieval is actually semantic.
 - **Evidence:** `rag-port.mjs` `hashEmbed()` is a sha256 stand-in (stable but non-semantic); no `text-embedding-*` model is wired. ADR-0090 §3 requires declaring the model name in `corpus_version`; ADR-0003 governs model selection.
 - **Impact:** Semantic recall over the corpus (the whole point of RAG); enables meaningful cosine ranking in GT-540.
-- **Risk:** Provider cost/latency, API-key handling (least-privilege CI secret per the ops runbook), and dimension consistency between embed and store.
+- **Risk:** Inference-sidecar hosting/latency (GPU optional for the 0.6B default) and dimension consistency between embed and store. No external egress — self-hosted OSS model.
 - **Affected files:** the `embed()` implementation in the durable adapter (GT-538) or a dedicated embedding sub-adapter; `corpus_version` metadata to carry the model name.
 - **Component:** `Operations` · **Dimension:** Knowledge · **Type:** backend
 - **Criticality:** P1 · **Complexity:** S
-- **Proposed fix:** Behind the model-agnostic port, call a real embedding model; record the model id in `corpus_version` for cache invalidation; keep `memory`/`hashEmbed` as the offline/test default.
+- **Proposed fix:** Behind the model-agnostic port, call the model fixed by ADR-0112 — **Qwen3-Embedding (Apache-2.0)**, default `0.6B`, dim 1024, via a local inference sidecar; record the model id in `corpus_version` for cache invalidation; keep `memory`/`hashEmbed` as the offline/test default.
 - **Acceptance criteria:**
-  - [ ] Live embeddings come from a declared real model; the model id appears in chunk `corpus_version` metadata.
-  - [ ] Credentials are masked CI secrets; no key in diff or logs.
-- **Dependencies:** ADR-0090 §3; ADR-0003; composes with GT-538.
+  - [ ] Live embeddings come from the declared OSS model (Qwen3-Embedding); the model id appears in chunk `corpus_version` metadata.
+  - [ ] No corpus egress — embeddings computed on-perimeter by the sidecar.
+- **Dependencies:** ADR-0090 §3; ADR-0003; ADR-0112 (platform: Qwen3-Embedding); composes with GT-538.
 - **Status:** `PENDING`
 
 #### GT-540
@@ -549,7 +549,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Acceptance criteria:**
   - [ ] `query()` returns chunks ranked by real vector similarity with `score` and citation metadata.
   - [ ] The `maturity-assessment.md` Knowledge/RAG row is updated from "Not implemented" to the delivered adapter.
-- **Dependencies:** GT-538; GT-539; ADR-0090.
+- **Dependencies:** GT-538; GT-539; ADR-0090; ADR-0112 (platform: same model+dim as write-side).
 - **Status:** `PENDING`
 
 #### GT-541

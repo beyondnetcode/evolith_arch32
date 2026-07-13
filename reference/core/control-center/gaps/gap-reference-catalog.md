@@ -328,10 +328,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Parser for the enforceable subset of the Structurizr/C4 DSL + mapping to `enforce:` rules compiled by GT-516, with traceability to the source model element.
 - **Acceptance criteria:**
-  - [ ] A sample Structurizr/C4 model yields at least one `enforce:` rule verifiable against code.
-  - [ ] Each generated rule traces to its source model element/ADR.
+  - [x] A sample Structurizr/C4 model yields at least one rule verifiable against code. _(`compileC4ToBoundaryRules` → GT-526 `EditBoundaryRule`; verified end-to-end: blocks a domain→infra edit)_
+  - [x] Each generated rule traces to its source model element/ADR. _(`ruleId` `C4-<id>` + the element's `adrRef`)_
 - **Dependencies:** GT-516.
-- **Status:** `PENDING`
+- **Status:** `IN-PROGRESS`
 
 #### GT-529
 

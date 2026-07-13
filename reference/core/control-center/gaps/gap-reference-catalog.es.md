@@ -460,10 +460,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Codificar los siete estándares + jerarquía de severidad como skill y rúbrica de gate; emitir `Evidence` con `determinism: 'probabilistic'`.
 - **Acceptance criteria:**
-  - [ ] El agente produce hallazgos estructurales ordenados por la jerarquía de severidad de la rúbrica.
-  - [ ] El gate puede tratar las regresiones estructurales como bloqueantes; atribución respetada.
+  - [x] El agente produce hallazgos estructurales ordenados por la jerarquía de severidad de la rúbrica. _(`StructuralReviewProvider` corre el puerto probabilístico `IStructuralReviewer`, `rankStructuralFindings` ordena por severidad, emite una `Evidence` canónica con `determinism:'probabilistic'` + provenance)_
+  - [x] El gate puede tratar las regresiones estructurales como bloqueantes; atribución respetada. _(`evaluateStructuralGate` — mapeo determinista severidad→decisión; `DEFAULT_STRUCTURAL_GATE_POLICY` bloquea high/critical; `RUBRIC_ATTRIBUTION` acredita la metodología comunitaria, reexpresada en nuestras palabras)_
 - **Dependencies:** GT-533.
-- **Status:** `PENDING`
+- **Cierre (2026-07-13, Ola 4, commit `d450d969`):** Rúbrica como datos de dominio puros (siete estándares sobre una jerarquía `info<low<medium<high<critical`); SkillDescriptor `code-quality-structural-review` en DEFAULT_SKILLS (guard de paridad de registro GT-424 verde); `StructuralReviewProvider` implementa `IQualitySignalProvider` y se registra en el `TenantQualitySignalRegistry` (GT-533); el borde LLM/agente queda tras `IStructuralReviewer`. agent-runtime 110/110.
+- **Status:** `DONE`
 
 #### GT-536
 

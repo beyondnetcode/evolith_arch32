@@ -46,11 +46,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P0 · **Complexity:** L
 - **Proposed fix:** PA-01 restore (`npm ci` / `dotnet restore+build` / `pip install`+grimp / `composer install`); PA-02 per-project Nx scoping; PA-03 EvaluationResult cache keyed by commit-SHA + changed-files-only; PA-04 shell-out sandbox (no egress, no secrets, ulimits/cgroups, binary allowlist); PA-05 toolchain resolved from the `evolith.yaml` manifest.
 - **Acceptance criteria:**
-  - [ ] Analyzers run against a **restored**, project-scoped checkout inside the sandbox. _(PA-06 done: `executeRestorePlan` runs the plan fail-fast + `provisionEvaluationEnvironment` composes scope→cache→restore, and the real `NodeProcessRunner` (infra-providers) executes it; only the real repo fetch/checkout integration remains)_
-  - [ ] Sandbox denies egress + secret access and enforces ulimits/cgroups + a binary allowlist. _(done: allowlist + secret denial + fail-closed wrapper (policy) and now the `NodeProcessRunner` does NOT inherit parent-env secrets —curated passthrough— at runtime; OS-level egress/cgroup/namespace enforcement is deploy-gated in a locked-down container)_
+  - [~] Analyzers run against a **restored**, project-scoped checkout inside the sandbox. _(Wave 4 `20f704b6` PA-07: `materializeAndProvisionEnvironment` composes fetch→resolve-toolchain-from-evolith.yaml→materialize-to-workdir→`executeRestorePlan` (npm ci / dotnet restore+build / pip install) via the sandbox-wrapped `NodeProcessRunner`→exposes Nx-project-scoped `analysisPaths`; ports `IRepositorySourceReader` + `IWorkspaceMaterializer` with `NodeWorkspaceMaterializer`; unit-tested with stubs. **Deploy-gated:** the real GitHubRepositorySourceReader network fetch needs `tar` + network in the runtime image)_
+  - [~] Sandbox denies egress + secret access and enforces ulimits/cgroups + a binary allowlist. _(app-level DONE: allowlist + secret denial + fail-closed `SandboxPolicy`/`enforceSandboxPolicy`/`SandboxedProcessRunner`, curated env passthrough. **Deploy-gated:** OS-level egress/cgroup/namespace/seccomp isolation needs a locked-down container)_
   - [x] Re-evaluating an unchanged commit hits the cache (SHA + changed-files scope).
 - **Dependencies:** GT-511.
-- **Status:** `PENDING`
+- **Progress (2026-07-13, Wave 4, commit `20f704b6`):** The full domain-wiring seam (PA-03/05/06/07) is now in place — fetch→materialize→restore→scoped-analysis, cache-keyed by SHA+changed-files, toolchain resolved from `evolith.yaml`. Unblocks GT-515/GT-524 at the **code** level (their 0-FP gates still need a real toolchain execution). core-domain 986/986 + infra-providers 109/109 green. Remaining is uniformly **deploy-gated** (real network fetch adapter + OS-level sandbox container) — kept `IN-PROGRESS`.
+- **Status:** `IN-PROGRESS`
 
 #### GT-513
 
@@ -180,11 +181,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Register the Composite in `evaluate` / the MCP `architecture` tool / `POST /api/v1/evaluate`; pin exact tool versions (`validated-tool-catalog.md` ↔ `enforcer-catalog.json`); build per-runtime composable CI images (not one monolith) with vuln scan + Renovate; emit enforcer OTel metrics (duration, failure rate, timeouts, violation counts).
 - **Acceptance criteria:**
-  - [ ] Parity tests are green across CLI/MCP/REST for the enforcer path.
-  - [ ] Tool versions are pinned and reproducible; CI images are per-runtime and vuln-scanned.
+  - [x] Parity tests are green across CLI/MCP/REST for the enforcer path. _(Wave 4 `f8310fac`: **latent bug fixed** — no surface DI factory injected a `processRunner`, so `RulesetValidatorService` never wrapped its strategy with the Composite and the enforcer path was unreachable on all three surfaces. `NodeProcessRunner` is now injected in core-api `core-domain.module.ts`, cli `app.module.ts`, mcp-server `domain.module.ts`; `enforcer-surface-parity.spec.ts` asserts byte-identical results + a divergence guard + a source-level anti-drift guard)_
+  - [~] Tool versions are pinned and reproducible; CI images are per-runtime and vuln-scanned. _(code part DONE: exact x.y.z pins in `enforcer-catalog.json` ↔ `validated-tool-catalog.md` §4.3 + `enforcer-catalog-doc-parity.spec.ts` fails on any drift/non-exact pin. **Deploy-gated:** per-runtime composable CI images + vuln-scan + Renovate are ops/pipeline concerns)_
   - [x] Enforcer runs emit OTel metrics (duration, failure rate, timeouts, violation counts).
 - **Dependencies:** GT-514.
-- **Status:** `PENDING`
+- **Progress (2026-07-13, Wave 4, commit `f8310fac`):** Criteria 1 & 3 met; criterion 2 code-complete, CI-image build deploy-gated. Kept `IN-PROGRESS` until the per-runtime vuln-scanned CI images + Renovate pin-maintenance land (ops). core-domain enforcement 144/144 + mcp-server 324/324 green.
+- **Status:** `IN-PROGRESS`
 
 #### GT-520
 
@@ -461,10 +463,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Encode the seven standards + severity hierarchy as a skill and gate rubric; emit `Evidence` with `determinism: 'probabilistic'`.
 - **Acceptance criteria:**
-  - [ ] The agent produces structural findings ranked by the rubric's severity hierarchy.
-  - [ ] The gate can treat structural regressions as blocking; attribution respected.
+  - [x] The agent produces structural findings ranked by the rubric's severity hierarchy. _(`StructuralReviewProvider` runs the probabilistic `IStructuralReviewer` port, `rankStructuralFindings` orders by the severity hierarchy, emits one canonical Evidence with `determinism:'probabilistic'` + provenance)_
+  - [x] The gate can treat structural regressions as blocking; attribution respected. _(`evaluateStructuralGate` — deterministic severity→decision; `DEFAULT_STRUCTURAL_GATE_POLICY` blocks high/critical; `RUBRIC_ATTRIBUTION` credits the community structural-review methodology, re-expressed in our own words)_
 - **Dependencies:** GT-533.
-- **Status:** `PENDING`
+- **Closure (2026-07-13, Wave 4, commit `d450d969`):** Rubric encoded as PURE domain data (seven structural standards over one `info<low<medium<high<critical` hierarchy reusing the canonical `EvidenceFindingSeverity`); added a `code-quality-structural-review` SkillDescriptor to DEFAULT_SKILLS (GT-424 skill-registry parity guard green). `StructuralReviewProvider` structurally implements `IQualitySignalProvider` so it registers in the GT-533 `TenantQualitySignalRegistry`; the probabilistic LLM/agent edge stays behind `IStructuralReviewer`. agent-runtime 110/110. _Follow-on (not required):_ a concrete `IStructuralReviewer` adapter bound to a real LLM/agent.
+- **Status:** `DONE`
 
 #### GT-536
 

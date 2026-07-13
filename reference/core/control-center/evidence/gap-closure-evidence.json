@@ -7384,6 +7384,21 @@
         "cd src/packages/contracts && npx tsc -p tsconfig.json && npx jest (2 suites, 13/13) — @beyondnet/evolith-contracts SemVer + CONTRACT_SET_SHA256; parity spec binds package to live buildCapabilityManifest and FAILS on added-engine / single-consumer drift. GET /api/v1/capabilities served by CapabilitiesController (on develop)."
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-535",
+      "closedAt": "2026-07-13",
+      "closureCommit": "d450d969",
+      "evidence": [
+        "src/packages/agent-runtime/src/domain/rubrics/structural-review-rubric.ts",
+        "src/packages/agent-runtime/src/application/structural-review-provider.ts",
+        "src/packages/agent-runtime/src/application/structural-quality-gate.ts",
+        "src/packages/agent-runtime/src/adapters/skills/default-skills.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/agent-runtime && npx tsc && npx jest (16 suites, 110/110) — rubric ranked by severity; StructuralReviewProvider emits probabilistic Evidence + provenance and registers in the GT-533 registry; evaluateStructuralGate blocks high/critical; GT-424 skill-registry parity green"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -364,10 +364,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** L
 - **Proposed fix:** `LangfuseEvidenceAdapter` tras un puerto de observabilidad que normaliza traces/evaluaciones/costo/latencia/versión-de-prompt/tool-calls al modelo de evidencia de Evolith.
 - **Acceptance criteria:**
-  - [ ] Un trace/evaluación de Langfuse se mapea a evidencia canónica consumible por un gate.
-  - [ ] El adaptador está aislado tras un puerto (proveedor de observabilidad reemplazable).
+  - [x] Un trace/evaluación de Langfuse se mapea a evidencia canónica consumible por un gate. _(`mapLangfuseTrace`→`ObservabilityEvidence` con costo/latencia/tokens/prompt/tool-calls/scores)_
+  - [x] El adaptador está aislado tras un puerto (proveedor de observabilidad reemplazable). _(`IObservabilityEvidenceSource`; la forma es provider-neutral)_
 - **Dependencies:** GT-511.
-- **Status:** `PENDING`
+- **Status:** `IN-PROGRESS`
 
 #### GT-531
 

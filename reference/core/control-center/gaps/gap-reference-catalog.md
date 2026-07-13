@@ -364,10 +364,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** L
 - **Proposed fix:** `LangfuseEvidenceAdapter` behind an observability port that normalizes traces/evaluations/cost/latency/prompt-version/tool-calls to Evolith's evidence model.
 - **Acceptance criteria:**
-  - [ ] A Langfuse trace/evaluation maps to canonical evidence consumable by a gate.
-  - [ ] The adapter is isolated behind a port (replaceable observability provider).
+  - [x] A Langfuse trace/evaluation maps to canonical evidence consumable by a gate. _(`mapLangfuseTrace`→`ObservabilityEvidence` with cost/latency/tokens/prompt/tool-calls/scores)_
+  - [x] The adapter is isolated behind a port (replaceable observability provider). _(`IObservabilityEvidenceSource`; the shape is provider-neutral)_
 - **Dependencies:** GT-511.
-- **Status:** `PENDING`
+- **Status:** `IN-PROGRESS`
 
 #### GT-531
 

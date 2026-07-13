@@ -310,10 +310,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** L
 - **Proposed fix:** Conectores read-only vía ACL (Port/Cortex/OpsLevel API + `catalog-info.yaml` de Backstage) que normalizan a un modelo canónico de ownership consumido por el enriquecimiento de evidencia.
 - **Acceptance criteria:**
-  - [ ] Al menos un conector (p. ej. Backstage) resuelve owner y lo enchufa al enriquecimiento de violaciones.
-  - [ ] Los conectores son read-only y no introducen lock-in de proveedor.
+  - [ ] Al menos un conector (p. ej. Backstage) resuelve owner y lo enchufa al enriquecimiento de violaciones. _(núcleo hecho: `parseBackstageCatalog` + `resolveOwner` + `enrichViolationsWithOwner`; falta leer el `catalog-info.yaml` del repo vía el port de config-parser —conector/infra)_
+  - [x] Los conectores son read-only y no introducen lock-in de proveedor. _(los parsers solo leen y normalizan; nada escribe ni acopla al proveedor)_
 - **Dependencies:** GT-511.
-- **Status:** `PENDING`
+- **Status:** `IN-PROGRESS`
 
 #### GT-528
 

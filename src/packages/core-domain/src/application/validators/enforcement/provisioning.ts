@@ -229,3 +229,102 @@ export function resolveRuntimeFromManifest(manifest: ToolchainManifest | undefin
   const declared = manifest?.toolchain?.runtime ?? manifest?.runtime;
   return declared && (RUNTIMES as readonly string[]).includes(declared) ? (declared as EnforcerRuntime) : undefined;
 }
+
+// ---------------------------------------------------------------------------
+// PA-06 Restore EXECUTION + provisioning orchestration
+// ---------------------------------------------------------------------------
+
+export interface RestoreStepResult {
+  readonly command: string;
+  readonly args: readonly string[];
+  readonly exitCode: number;
+  readonly ok: boolean;
+}
+
+export interface RestoreResult {
+  readonly ok: boolean;
+  readonly steps: readonly RestoreStepResult[];
+  /** Index of the first failed step, or `-1` when all succeeded (or none ran). */
+  readonly failedStep: number;
+}
+
+/**
+ * Run a restore plan through an {@link IProcessRunner}, in order, FAIL-FAST at the first
+ * non-zero exit — analysis on half-installed dependencies is worse than no analysis. Each
+ * step runs in `cwd` (the restored checkout). A tool's non-zero exit is DATA (returned in
+ * the result), not an exception; only a runner error (e.g. a sandbox rejection) propagates.
+ * The runner SHOULD be a {@link SandboxedProcessRunner} so a plan command outside the
+ * allowlist is rejected before it runs.
+ */
+export async function executeRestorePlan(
+  plan: readonly ProcessSpec[],
+  runner: IProcessRunner,
+  cwd?: string,
+): Promise<RestoreResult> {
+  const steps: RestoreStepResult[] = [];
+  for (let i = 0; i < plan.length; i++) {
+    const spec: ProcessSpec = cwd ? { ...plan[i], cwd } : plan[i];
+    const res = await runner.run(spec);
+    const ok = res.exitCode === 0;
+    steps.push({ command: spec.command, args: spec.args, exitCode: res.exitCode, ok });
+    if (!ok) return { ok: false, steps, failedStep: i };
+  }
+  return { ok: true, steps, failedStep: -1 };
+}
+
+export interface ProvisionRequest {
+  readonly runtime: EnforcerRuntime;
+  /** Path to the fetched checkout the analyzers will run against. */
+  readonly checkoutPath: string;
+  readonly commitSha: string;
+  readonly changedFiles?: readonly string[];
+  readonly projectRoots?: readonly string[];
+  /** Extra cache discriminators (e.g. ruleset version) so a ruleset bump misses. */
+  readonly cacheDiscriminators?: readonly string[];
+}
+
+export interface ProvisionedEnvironment {
+  readonly runtime: EnforcerRuntime;
+  readonly checkoutPath: string;
+  readonly scope: ProjectScope;
+  readonly cacheKey: string;
+  readonly cached: boolean;
+  /** The restore outcome; `undefined` when nothing needed restoring. */
+  readonly restore?: RestoreResult;
+  /** True when the checkout is analyzable (restore succeeded or was unnecessary). */
+  readonly ready: boolean;
+}
+
+/**
+ * Compose PA-01..05 into ONE provisioning step (PA-06): resolve project scope, compute the
+ * SHA-keyed cache key and — on a cache MISS — run the runtime's restore plan through the
+ * (sandbox-wrapped) runner. Returns the descriptor the enforcer adapters consume. A failed
+ * restore yields `ready:false` and is NOT cached (so a fixed commit re-provisions cleanly).
+ * The passed `runner` SHOULD already be a {@link SandboxedProcessRunner}.
+ */
+export async function provisionEvaluationEnvironment(
+  req: ProvisionRequest,
+  runner: IProcessRunner,
+  cache: IEvaluationCache<ProvisionedEnvironment> = new InMemoryEvaluationCache<ProvisionedEnvironment>(),
+): Promise<ProvisionedEnvironment> {
+  const cacheKey = computeEvaluationCacheKey(req.commitSha, req.changedFiles ?? [], req.cacheDiscriminators ?? []);
+  const hit = cache.get(cacheKey);
+  if (hit) return { ...hit, cached: true };
+
+  const scope = resolveProjectScope(req.changedFiles ?? [], req.projectRoots ?? []);
+  const plan = buildRestorePlan(req.runtime);
+  const restore = plan.length ? await executeRestorePlan(plan, runner, req.checkoutPath) : undefined;
+  const ready = restore ? restore.ok : true;
+
+  const env: ProvisionedEnvironment = {
+    runtime: req.runtime,
+    checkoutPath: req.checkoutPath,
+    scope,
+    cacheKey,
+    cached: false,
+    restore,
+    ready,
+  };
+  if (ready) cache.set(cacheKey, env);
+  return env;
+}

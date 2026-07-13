@@ -1,14 +1,29 @@
-import { StubProcessRunner, type ProcessSpec } from './enforcer.types';
+import { StubProcessRunner, type IProcessRunner, type ProcessResult, type ProcessSpec } from './enforcer.types';
 import {
   buildRestorePlan,
   computeEvaluationCacheKey,
   DEFAULT_SANDBOX_POLICY,
   enforceSandboxPolicy,
+  executeRestorePlan,
   InMemoryEvaluationCache,
+  provisionEvaluationEnvironment,
+  type ProvisionedEnvironment,
   resolveProjectScope,
   resolveRuntimeFromManifest,
   SandboxedProcessRunner,
 } from './provisioning';
+
+/** A runner that returns queued results in call order (StubProcessRunner keys by command). */
+class SequenceRunner implements IProcessRunner {
+  readonly calls: ProcessSpec[] = [];
+  constructor(private readonly results: ProcessResult[]) {}
+  async run(spec: ProcessSpec): Promise<ProcessResult> {
+    this.calls.push(spec);
+    return this.results[this.calls.length - 1] ?? { exitCode: 0, stdout: '', stderr: '' };
+  }
+}
+const ok = (): ProcessResult => ({ exitCode: 0, stdout: '', stderr: '' });
+const fail = (): ProcessResult => ({ exitCode: 1, stdout: '', stderr: 'boom' });
 
 describe('buildRestorePlan (GT-512 PA-01)', () => {
   it('produces runtime-correct restore commands', () => {
@@ -122,5 +137,72 @@ describe('resolveRuntimeFromManifest (GT-512 PA-05)', () => {
   it('returns undefined for a missing or unknown runtime (no guessing)', () => {
     expect(resolveRuntimeFromManifest(undefined)).toBeUndefined();
     expect(resolveRuntimeFromManifest({ runtime: 'cobol' })).toBeUndefined();
+  });
+});
+
+describe('executeRestorePlan (GT-512 PA-06 — runs the restore plan, fail-fast)', () => {
+  it('runs every step in order in the checkout cwd and reports ok when all succeed', async () => {
+    const runner = new SequenceRunner([ok(), ok()]);
+    const result = await executeRestorePlan(buildRestorePlan('dotnet'), runner, '/checkout');
+    expect(result.ok).toBe(true);
+    expect(result.failedStep).toBe(-1);
+    expect(result.steps.map((s) => s.command)).toEqual(['dotnet', 'dotnet']);
+    expect(runner.calls.every((c) => c.cwd === '/checkout')).toBe(true);
+  });
+
+  it('stops at the first non-zero exit (never analyzes half-installed deps)', async () => {
+    const runner = new SequenceRunner([fail(), ok()]);
+    const result = await executeRestorePlan(buildRestorePlan('python'), runner, '/checkout');
+    expect(result.ok).toBe(false);
+    expect(result.failedStep).toBe(0);
+    expect(result.steps).toHaveLength(1); // the 2nd step never ran
+    expect(runner.calls).toHaveLength(1);
+  });
+
+  it('is a no-op for a runtime with nothing to restore', async () => {
+    const runner = new SequenceRunner([]);
+    const result = await executeRestorePlan(buildRestorePlan('iac'), runner);
+    expect(result).toEqual({ ok: true, steps: [], failedStep: -1 });
+    expect(runner.calls).toHaveLength(0);
+  });
+
+  it('propagates a runner rejection (e.g. a sandbox denial), not swallowing it', async () => {
+    const denying = new SandboxedProcessRunner(new StubProcessRunner(ok()), {
+      ...DEFAULT_SANDBOX_POLICY,
+      binaryAllowlist: [], // npm not allowed → fail-closed
+    });
+    await expect(executeRestorePlan(buildRestorePlan('node'), denying, '/c')).rejects.toThrow(/Sandbox policy denied/);
+  });
+});
+
+describe('provisionEvaluationEnvironment (GT-512 PA-06 — compose scope + cache + restore)', () => {
+  const base = { runtime: 'node' as const, checkoutPath: '/c', commitSha: 'abc', changedFiles: ['apps/a/x.ts'], projectRoots: ['apps/a', 'apps/b'] };
+
+  it('resolves scope, runs restore on a cache miss, and marks ready', async () => {
+    const env = await provisionEvaluationEnvironment(base, new SequenceRunner([ok()]));
+    expect(env.cached).toBe(false);
+    expect(env.ready).toBe(true);
+    expect(env.scope.projects).toEqual(['apps/a']);
+    expect(env.restore?.ok).toBe(true);
+    expect(env.cacheKey).toMatch(/^[0-9a-f]{32}$/);
+  });
+
+  it('serves a cache hit without re-running restore', async () => {
+    const cache = new InMemoryEvaluationCache<ProvisionedEnvironment>();
+    const runner = new SequenceRunner([ok(), ok()]);
+    await provisionEvaluationEnvironment(base, runner, cache);
+    const second = await provisionEvaluationEnvironment(base, runner, cache);
+    expect(second.cached).toBe(true);
+    expect(runner.calls).toHaveLength(1); // restore ran once, not twice
+  });
+
+  it('a failed restore is not ready and is NOT cached (a fixed commit re-provisions)', async () => {
+    const cache = new InMemoryEvaluationCache<ProvisionedEnvironment>();
+    const first = await provisionEvaluationEnvironment(base, new SequenceRunner([fail()]), cache);
+    expect(first.ready).toBe(false);
+    expect(cache.has(first.cacheKey)).toBe(false);
+    const retry = await provisionEvaluationEnvironment(base, new SequenceRunner([ok()]), cache);
+    expect(retry.cached).toBe(false);
+    expect(retry.ready).toBe(true);
   });
 });

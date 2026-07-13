@@ -46,8 +46,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P0 · **Complexity:** L
 - **Proposed fix:** PA-01 restore (`npm ci` / `dotnet restore+build` / `pip install`+grimp / `composer install`); PA-02 scoping por proyecto en Nx; PA-03 cache de EvaluationResult indexado por commit-SHA + solo-archivos-cambiados; PA-04 sandbox de shell-out (sin egress, sin secretos, ulimits/cgroups, allowlist de binarios); PA-05 toolchain resuelto desde el manifiesto `evolith.yaml`.
 - **Acceptance criteria:**
-  - [ ] Los analizadores corren contra un checkout **restaurado**, scopeado por proyecto, dentro del sandbox. _(builders hechos: `buildRestorePlan`/`resolveProjectScope`/`SandboxedProcessRunner`; la ejecución real del restore contra un checkout traído es el adaptador de infra bloqueado)_
-  - [ ] El sandbox deniega egress + acceso a secretos y aplica ulimits/cgroups + una allowlist de binarios. _(capa de política hecha: allowlist de binarios + denegación de secretos + wrapper fail-closed; el enforcement OS-level de egress/cgroups es el runner de infra bloqueado)_
+  - [ ] Los analizadores corren contra un checkout **restaurado**, scopeado por proyecto, dentro del sandbox. _(PA-06 hecho: `executeRestorePlan` ejecuta el plan fail-fast + `provisionEvaluationEnvironment` compone scope→cache→restore, y el `NodeProcessRunner` real (infra-providers) lo corre; solo falta la integración de traer el checkout real del repo)_
+  - [ ] El sandbox deniega egress + acceso a secretos y aplica ulimits/cgroups + una allowlist de binarios. _(hecho: allowlist + denegación de secretos + wrapper fail-closed (política) y ahora el `NodeProcessRunner` NO hereda secretos del entorno padre —passthrough curado— en runtime; el enforcement OS-level de egress/cgroups/namespaces queda deploy-gated en un contenedor aislado)_
   - [x] Re-evaluar un commit sin cambios pega al cache (scope SHA + archivos-cambiados).
 - **Dependencies:** GT-511.
 - **Status:** `PENDING`

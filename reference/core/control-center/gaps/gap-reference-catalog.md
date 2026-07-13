@@ -46,8 +46,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P0 · **Complexity:** L
 - **Proposed fix:** PA-01 restore (`npm ci` / `dotnet restore+build` / `pip install`+grimp / `composer install`); PA-02 per-project Nx scoping; PA-03 EvaluationResult cache keyed by commit-SHA + changed-files-only; PA-04 shell-out sandbox (no egress, no secrets, ulimits/cgroups, binary allowlist); PA-05 toolchain resolved from the `evolith.yaml` manifest.
 - **Acceptance criteria:**
-  - [ ] Analyzers run against a **restored**, project-scoped checkout inside the sandbox. _(builders done: `buildRestorePlan`/`resolveProjectScope`/`SandboxedProcessRunner`; the real restore execution against a fetched checkout is the gated infra adapter)_
-  - [ ] Sandbox denies egress + secret access and enforces ulimits/cgroups + a binary allowlist. _(policy layer done: binary allowlist + secret denial + fail-closed wrapper; OS-level egress/cgroup enforcement is the gated infra runner)_
+  - [ ] Analyzers run against a **restored**, project-scoped checkout inside the sandbox. _(PA-06 done: `executeRestorePlan` runs the plan fail-fast + `provisionEvaluationEnvironment` composes scope→cache→restore, and the real `NodeProcessRunner` (infra-providers) executes it; only the real repo fetch/checkout integration remains)_
+  - [ ] Sandbox denies egress + secret access and enforces ulimits/cgroups + a binary allowlist. _(done: allowlist + secret denial + fail-closed wrapper (policy) and now the `NodeProcessRunner` does NOT inherit parent-env secrets —curated passthrough— at runtime; OS-level egress/cgroup/namespace enforcement is deploy-gated in a locked-down container)_
   - [x] Re-evaluating an unchanged commit hits the cache (SHA + changed-files scope).
 - **Dependencies:** GT-511.
 - **Status:** `PENDING`

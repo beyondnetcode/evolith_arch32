@@ -6599,8 +6599,8 @@
       "closedAt": "2026-07-12",
       "closureCommit": "d769c97b",
       "evidence": [
-        "src/packages/core-domain/src/evaluation/violation.ts",
-        "src/packages/core-domain/src/evaluation/violation.spec.ts",
+        "src/packages/core-domain/src/domain/violation.ts",
+        "src/packages/core-domain/src/domain/violation.spec.ts",
         "src/rulesets/schema/violation.schema.json",
         "src/rulesets/schema/enforcer-evidence.schema.json",
         "src/packages/core-domain/src/evaluation/contracts/evaluation-result.ts"

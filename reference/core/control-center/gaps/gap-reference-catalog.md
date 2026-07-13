@@ -220,7 +220,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [ ] Each adapter lands only when a real repo of that runtime exists and can be exercised against a real corpus.
   - [ ] Security-tool findings carry `category='security'` and flow through the shared SARIF ingester.
 - **Dependencies:** GT-514, GT-515.
-- **Status:** `DEFERRED`
+- **Note (2026-07-12):** promoted `DEFERRED`→`PENDING` as part of the common multi-language base (alongside GT-524 .NET). Pending before the JVM adapter: catalog ArchUnit/jQAssistant in §4.3 of `validated-tool-catalog.md` (absent today).
+- **Status:** `PENDING`
 
 #### GT-522
 
@@ -239,6 +240,170 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [ ] If built: read-only, feature-flagged, depth/complexity-limited, no decision mutations.
 - **Dependencies:** GT-513.
 - **Status:** `DEFERRED`
+
+> **GT-524…GT-532** are the **Core power reinforcement** derived from the positioning analysis (`product/suite/positioning/evolith-strategic-positioning-comparative-landscape.md`, axes 1 and 2). They are ordered by priority with the **common architectural bases first**: multi-language base (GT-524) → cross-cutting compliance (GT-525) → edit-time control surface (GT-526) → wedge connectors (GT-527/528, axis 2) → surround integrations (GT-529…532, axis 1). They complement GT-511…GT-522 (the enforcement engine) without duplicating them.
+
+#### GT-524
+
+**Title:** .NET / NetArchTest adapter — the suite's primary runtime has no enforcer
+
+- **Purpose:** (axis 2 · §13.2) Extend executable architecture control to .NET, the ecosystem's most-used language (UMS/Tracker/MMS are .NET clean/hexagonal). Completes the common multi-language base alongside GT-515 (Node/TS) and GT-521 (PHP/Python/JVM).
+- **Evidence:** `product/infra/validated-tool-catalog.md` §4.3 and `enforcer-catalog.json` list `NetArchTest` (1.3.x, `dotnet` runtime, ADR-0002), but no adapter exists — only `DependencyCruiserAdapter` (Node/TS) is under `enforcement/adapters/`.
+- **Impact:** Without it, boundary/layer enforcement does not cover the suite's primary runtime; the "we govern your architecture" story is incomplete for the real buyer.
+- **Risk:** False positives from project/assembly resolution if run outside a restored environment (mitigated by GT-512); NetArchTest emits via exit-code, not native SARIF.
+- **Affected files:** new `enforcement/adapters/netarchtest-adapter.ts`, `EnforcerEvaluator` wiring, `enforcer-catalog.json` entry.
+- **Component:** `core-domain` · **Dimension:** Architecture-Enforcement · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** `NetArchTestAdapter` over the GT-514 `ShellEnforcerAdapter`/`IProcessRunner` seam (runs the arch-test runner, parses result→`Violation` with `file:line` where present), 0-FP gate against a real .NET corpus before enabling blocking.
+- **Acceptance criteria:**
+  - [ ] `NetArchTestAdapter` produces `Violation[]` from a real run against a restored .NET project.
+  - [ ] 0 false positives on a real .NET corpus before any merge blocking.
+- **Dependencies:** GT-514, GT-512.
+- **Status:** `PENDING`
+
+#### GT-525
+
+**Title:** violation→owner→compliance-control mapping (SOC2 / ISO 27001 / EU AI Act)
+
+- **Purpose:** (axis 2 · §12 P1 wedge) Tie every architecture violation to a named compliance control — the highest-ACV wedge for the CISO/compliance buyer. Cross-cutting: applies to every violation in any language.
+- **Evidence:** GT-518 enriches `owner` via CODEOWNERS, but the `Violation`/evidence model has no compliance-control field or framework catalog.
+- **Impact:** Turns technical findings into sellable audit evidence; without it the gate is only an architecture lint.
+- **Risk:** A wrong rule→control mapping gives false compliance confidence; requires control-catalog versioning.
+- **Affected files:** `violation.ts`/evidence in core-domain (`complianceControl?` field), new control catalog, `EvidenceNormalizer`.
+- **Component:** `Evolith Core` · **Dimension:** Compliance · **Type:** backend
+- **Criticality:** P1 · **Complexity:** S
+- **Proposed fix:** Versioned control catalog (SOC2/ISO 27001/EU AI Act high-risk) + declarative rule/ADR→control mapping + control emission in the evidence manifest alongside owner.
+- **Acceptance criteria:**
+  - [ ] Each violation can carry resolved `owner` + `complianceControl` emitted in evidence.
+  - [ ] The control catalog is versioned and decoupled from rule code.
+- **Dependencies:** GT-518, GT-511.
+- **Status:** `PENDING`
+
+#### GT-526
+
+**Title:** Edit-time enforcement surface — cross-agent hook
+
+- **Purpose:** (axis 2 · §14.1) Complete the three READ→CONTROL surfaces with the only missing one: block the offending change in-flight as the AI agent writes, before the PR.
+- **Evidence:** Pre-generation (MCP, partial GT-520) and PR/CI (GT-518) exist; there is no edit-time hook. §14.1 lists it as surface (b). No agent vendor does it in a blocking, cross-agent way.
+- **Impact:** Closes the control model and is the most defensible frontier (no incumbent); reduces architecture drift at the source.
+- **Risk:** Latency in the edit loop; coupling to each agent if not designed cross-agent/neutral.
+- **Affected files:** new editor-agent integration hook package, reuse of the GT-516 contract compiler.
+- **Component:** `Evolith CLI` · **Dimension:** Architecture-Enforcement · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Cross-agent hook (Claude Code/Cursor/Copilot) that queries the compiled architecture contract and deterministically rejects/warns the non-conforming edit.
+- **Acceptance criteria:**
+  - [ ] An edit that violates an `enforce:` rule is blocked/flagged at edit time in at least one agent.
+  - [ ] The mechanism is cross-agent neutral (not tied to a single vendor).
+- **Dependencies:** GT-516, GT-520.
+- **Status:** `PENDING`
+
+#### GT-527
+
+**Title:** Lock-in-free ownership ingestion connectors (Port / Cortex / OpsLevel + Backstage)
+
+- **Purpose:** (axis 2 · §13.2) Ingest IDP blueprints and `catalog-info.yaml` as an ownership/service source to enrich violations and ADRs, without ceding authority or vendor lock-in.
+- **Evidence:** Port/Cortex/OpsLevel/Backstage expose rich ownership catalogs; Evolith consumes none today. §13.2 frames them as "integrate/coexist".
+- **Impact:** Each violation's owner resolved from the source the company already maintains; avoids re-capturing ownership.
+- **Risk:** Schema drift across vendors; lock-in if the connector is not read-only via ACL.
+- **Affected files:** new ingestion connectors + ACL, mapping to canonical ownership shape.
+- **Component:** `Evolith Core` · **Dimension:** Integration · **Type:** backend
+- **Criticality:** P2 · **Complexity:** L
+- **Proposed fix:** Read-only connectors via ACL (Port/Cortex/OpsLevel API + Backstage `catalog-info.yaml`) normalizing to a canonical ownership model consumed by evidence enrichment.
+- **Acceptance criteria:**
+  - [ ] At least one connector (e.g. Backstage) resolves owner and feeds violation enrichment.
+  - [ ] Connectors are read-only and introduce no vendor lock-in.
+- **Dependencies:** GT-511.
+- **Status:** `PENDING`
+
+#### GT-528
+
+**Title:** Structurizr / C4 DSL ingestion → executable ADR
+
+- **Purpose:** (axis 2 · §13.2) Turn Structurizr/C4 models (architecture intent, today prose/diagram) into `enforce:` rules verifiable against real code.
+- **Evidence:** Structurizr/C4 describe intent but do not verify it; §13.2 proposes ingesting their DSL and making the ADR executable. GT-516 provides the `enforce:` block/PolicyCompiler.
+- **Impact:** Closes the intent↔code gap: the diagram stops being dead documentation and becomes an enforceable contract.
+- **Risk:** Incomplete DSL→rule mapping; the Structurizr DSL is expressive and not all is enforceable.
+- **Affected files:** new Structurizr/C4 DSL parser, mapping to `NormalizedRule.enforce`.
+- **Component:** `Evolith Core` · **Dimension:** Architecture · **Type:** backend
+- **Criticality:** P2 · **Complexity:** M
+- **Proposed fix:** Parser for the enforceable subset of the Structurizr/C4 DSL + mapping to `enforce:` rules compiled by GT-516, with traceability to the source model element.
+- **Acceptance criteria:**
+  - [ ] A sample Structurizr/C4 model yields at least one `enforce:` rule verifiable against code.
+  - [ ] Each generated rule traces to its source model element/ADR.
+- **Dependencies:** GT-516.
+- **Status:** `PENDING`
+
+#### GT-529
+
+**Title:** ACL contract + Jira Enterprise integration reference
+
+- **Purpose:** (axis 1 · §8.3 / §12) Integrate Jira as a work system without ceding governance authority: map ideas/epics/stories/approvals/releases to Evolith artifacts with lineage and transition safeguards.
+- **Evidence:** §8.3 defines an Anti-Corruption Layer; §9-6 requires that completing an external workflow does not authorize a phase transition. No such ACL exists today.
+- **Impact:** Enables coexistence with the strongest work competitor (Atlassian) without becoming "a Jira with AI".
+- **Risk:** Jira silently becoming the governance source of truth if the ACL does not preserve origin/identity/timestamps.
+- **Affected files:** new external work-system ACL, per-item-type mappers, integration guide.
+- **Component:** `Evolith Core` · **Dimension:** Integration · **Type:** backend
+- **Criticality:** P1 · **Complexity:** L
+- **Proposed fix:** ACL contract with lineage to origin + transition safeguards (Jira evidence feeds but does not authorize gates) + a documented integration reference.
+- **Acceptance criteria:**
+  - [ ] Jira items map to Evolith artifacts preserving origin/identity/timestamps/lineage.
+  - [ ] Completing a Jira workflow does not by itself authorize a phase transition.
+- **Dependencies:** none.
+- **Status:** `PENDING`
+
+#### GT-530
+
+**Title:** Langfuse adapter → canonical evidence
+
+- **Purpose:** (axis 1 · §8.1 / §12) Map Langfuse LLM/agent telemetry to Evolith's evidence model, to avoid rebuilding a specialized observability platform.
+- **Evidence:** §8.1 proposes Langfuse as an observability adapter; §9-5 requires portable evidence (trace/eval/cost/latency/prompt-version/tool-calls). The adapter does not exist.
+- **Impact:** Brings AI execution evidence to the gates without building in-house telemetry.
+- **Risk:** Coupling to Langfuse's schema if not isolated behind an observability port.
+- **Affected files:** new `LangfuseEvidenceAdapter`, observability port, mapping to canonical evidence.
+- **Component:** `Evolith Core` · **Dimension:** Observability · **Type:** backend
+- **Criticality:** P2 · **Complexity:** L
+- **Proposed fix:** `LangfuseEvidenceAdapter` behind an observability port that normalizes traces/evaluations/cost/latency/prompt-version/tool-calls to Evolith's evidence model.
+- **Acceptance criteria:**
+  - [ ] A Langfuse trace/evaluation maps to canonical evidence consumable by a gate.
+  - [ ] The adapter is isolated behind a port (replaceable observability provider).
+- **Dependencies:** GT-511.
+- **Status:** `PENDING`
+
+#### GT-531
+
+**Title:** Cowork/Claude adapter as a bounded governed executor
+
+- **Purpose:** (axis 1 · §8.2 / §9) Treat Claude Cowork as one of several replaceable executors: run bounded activities with permissions, plans, approvals and evidence capture.
+- **Evidence:** §8.2 defines the governed executor; the agent-runtime epic GT-383…394 provides the port and HITL (GT-441) and adapters (GT-438), but there is no specific bounded Cowork adapter.
+- **Impact:** Demonstrates governed autonomous work with evidence, without coupling to a single LLM provider.
+- **Risk:** Duplicating the agent-runtime epic if not built as an extension of its existing ports.
+- **Affected files:** new Cowork/Claude execution adapter under the agent-runtime port, execution-evidence capture.
+- **Component:** `agent-runtime` · **Dimension:** Integration · **Type:** backend
+- **Criticality:** P2 · **Complexity:** M
+- **Proposed fix:** Adapter that defines activity+expected artifact, applies tenant rulesets/skills, resolves authorization, invokes Cowork/Claude and captures execution evidence for the gate — over the GT-383…394 ports.
+- **Acceptance criteria:**
+  - [ ] A bounded activity runs via the adapter with permissions/plan/approval and evidence capture.
+  - [ ] The executor is replaceable (satisfies the agent-runtime execution contract).
+- **Dependencies:** GT-387, GT-441.
+- **Status:** `PENDING`
+
+#### GT-532
+
+**Title:** Executive portfolio views + marketplace adapters + per-tenant governance packages
+
+- **Purpose:** (axis 1 · §12 P2) Improve enterprise adoption and ecosystem scale with portfolio views, marketplace-style adapters and per-tenant configurable governance packages.
+- **Evidence:** §12 lists it as P2 expansion; it is mostly Tracker (enterprise value-capture plane), not Core.
+- **Impact:** Adoption and scale; adds no new control power to Core (hence the lowest priority in the batch).
+- **Risk:** Effort dispersion before the wedge is consolidated; it belongs to the Tracker, not Core.
+- **Affected files:** Tracker surfaces (portfolio/marketplace/per-tenant packages).
+- **Component:** `Tracker` · **Dimension:** Adoption · **Type:** backend
+- **Criticality:** P3 · **Complexity:** XL
+- **Proposed fix:** Executive portfolio views + a marketplace adapter model + per-tenant governance packages, in the Tracker, after consolidating the wedge.
+- **Acceptance criteria:**
+  - [ ] Portfolio views and per-tenant packages available in the Tracker.
+  - [ ] Introduces no inverse Core→Tracker dependency.
+- **Dependencies:** none.
+- **Status:** `PENDING`
 
 ---
 

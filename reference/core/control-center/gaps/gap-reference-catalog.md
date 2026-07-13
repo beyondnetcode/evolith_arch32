@@ -346,10 +346,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** L
 - **Proposed fix:** ACL contract with lineage to origin + transition safeguards (Jira evidence feeds but does not authorize gates) + a documented integration reference.
 - **Acceptance criteria:**
-  - [ ] Jira items map to Evolith artifacts preserving origin/identity/timestamps/lineage.
-  - [ ] Completing a Jira workflow does not by itself authorize a phase transition.
+  - [x] Jira items map to Evolith artifacts preserving origin/identity/timestamps/lineage. _(`parseJiraIssue`→`CanonicalWorkItem` with `WorkItemProvenance`; rejects a missing id)_
+  - [x] Completing a Jira workflow does not by itself authorize a phase transition. _(`authorizesPhaseTransition:false` by contract + `externalWorkAuthorizesTransition`⇒false)_
 - **Dependencies:** none.
-- **Status:** `PENDING`
+- **Status:** `IN-PROGRESS`
 
 #### GT-530
 

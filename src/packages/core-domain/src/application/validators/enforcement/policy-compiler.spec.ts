@@ -170,18 +170,26 @@ describe('PolicyCompiler — compileRuleset partitions and never wholesale-fails
 });
 
 describe('PolicyCompiler ⇄ ADR-0002 pilot (GT-516 AC1: HXA rules compile/fallback)', () => {
-  it('compiles every enforce-carrying HXA rule to a dependency-cruiser check', () => {
+  it('routes every HXA-01..07 rule through the enforcer and partitions compile vs per-rule fallback', () => {
     const ruleset = JSON.parse(readFileSync(findUp('src/rulesets/adr/adr-0002-hexagonal-architecture.rules.json'), 'utf8'));
     const rules: CompilableRule[] = ruleset.rules;
     const enforced = rules.filter((r) => r.enforce?.engine === 'enforcer');
 
-    // The pilot populates enforce on the dependency-cruiser-expressible HXA rules.
-    expect(enforced.length).toBeGreaterThanOrEqual(3);
+    // The pilot populates an enforce block on all seven HXA rules.
+    expect(enforced.map((r) => r.id).sort()).toEqual(['HXA-01', 'HXA-02', 'HXA-03', 'HXA-04', 'HXA-05', 'HXA-06', 'HXA-07']);
 
     const { compiled, fallbacks } = compileRuleset(rules);
-    // Every enforce-carrying pilot rule compiles cleanly (they all supply a config/cycle clause).
-    expect(compiled.map((c) => c.ruleId).sort()).toEqual(enforced.map((r) => r.id).sort());
-    expect(fallbacks).toHaveLength(0);
+
+    // The five import-graph-expressible rules lower to a dependency-cruiser check.
+    expect(compiled.map((c) => c.ruleId).sort()).toEqual(['HXA-01', 'HXA-02', 'HXA-04', 'HXA-05', 'HXA-07']);
+    // The two structural/positive rules (implements-ports, AOP-in-infra-only) are not
+    // import-graph-expressible → they take the documented per-rule NATIVE fallback rather
+    // than emitting an all-matching (false-positive-prone) rule, and never fail the run.
+    expect(fallbacks.map((f) => f.ruleId).sort()).toEqual(['HXA-03', 'HXA-06']);
+    for (const f of fallbacks) {
+      expect(f.fallback).toBe('native');
+      expect(f.tool).toBe('dependency-cruiser');
+    }
     for (const c of compiled) {
       expect(c.tool).toBe('dependency-cruiser');
       expect(c.runtime).toBe('node');

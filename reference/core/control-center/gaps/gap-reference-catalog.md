@@ -584,6 +584,208 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ---
 
+> **GT-542…GT-551** are the **Observability operationalization** wave (Prometheus/Grafana, ADR-0007/ADR-0028), scoped to **Evolith Core (Node-side) only**. The decision is already an approved ADR and the producers already exist; this wave closes the gap between built producers and a wired, visualized, alerting backend. Tracker/UMS/MMS/.NET observability (RabbitMQ/MassTransit poison-queue + tenant-projection alerts) belongs to those repositories' own boards.
+
+#### GT-542
+
+**Title:** Flagship gate metric declared but never emitted
+
+- **Purpose:** Make governance operable — expose gate pass/fail rate, per-gate volume, and evaluation latency as time series.
+- **Evidence:** `evolith_gate_evaluations_total{status,gateId}` and `evolith_gate_evaluation_duration_seconds{gateId}` are constructed in `src/apps/core-api/src/infrastructure/metrics/metrics.service.ts` (lines 7-28) but a tree-wide search finds **no `.inc()`/`.observe()`** on either — only `recordHttpRequest` (HTTP) and `cache-metrics.service.ts` emit. The counters are dead.
+- **Impact:** The single most product-differentiating metric of a governance engine (did gates run, how often, with what verdict, how slow) cannot be charted or alerted; every governance dashboard/scorecard fed by metrics is empty.
+- **Risk:** Instrumenting the domain path could leak into `core-domain` (must stay in infra/adapters per ADR-0102); label cardinality if `gateId` is unbounded.
+- **Affected files:** `src/apps/core-api/src/infrastructure/metrics/metrics.service.ts`; the gate/evaluation flow (`presentation/controllers/gates.controller.ts`, `evaluation.controller.ts`) or a dedicated metrics interceptor.
+- **Component:** `Core API` · **Dimension:** Observability · **Type:** backend
+- **Criticality:** P1 · **Complexity:** S
+- **Proposed fix:** Record `gateEvaluationsTotal.inc({verdict,gateId})` and `gateEvaluationDuration.observe(...)` from the gate/evaluation path (infra layer only), labelled by `verdict`/`gateId`/`phase`.
+- **Acceptance criteria:**
+  - [ ] A gate evaluation increments `evolith_gate_evaluations_total` with a `verdict`/`gateId` label and observes the duration histogram.
+  - [ ] `GET /metrics` shows non-zero gate series after an evaluation; a test asserts the increment.
+- **Dependencies:** none (infra already present).
+- **Status:** `PENDING`
+
+---
+
+#### GT-543
+
+**Title:** SLO/alert PromQL references metrics the code does not emit
+
+- **Purpose:** Make the reliability alerts actually fire against the real services.
+- **Evidence:** `product/operations/alerts/prometheus-alerts.yml` (core-api group) and `product/operations/slo/core-api-slo.md` query `http_requests_total` and `http_request_duration_seconds_bucket`; the code emits `evolith_http_requests_total` and defines **no HTTP-latency histogram** (only `evolith_gate_evaluation_duration_seconds`).
+- **Impact:** `HighErrorRate`, `HighLatency`, and both error-budget burn-rate alerts are inert — they can never match a series, giving a false sense of coverage.
+- **Risk:** Renaming a metric is a breaking change for any existing scrape/consumer; must land the histogram and the rename together.
+- **Affected files:** `src/apps/core-api/src/infrastructure/metrics/metrics.service.ts`; `product/operations/alerts/prometheus-alerts.yml`; `product/operations/slo/core-api-slo.md`.
+- **Component:** `Core API` · **Dimension:** Observability · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Add an `evolith_http_request_duration_seconds` histogram (method/route/status), then reconcile the alert/SLO PromQL to the emitted names (or expose compatibility aliases) so every rule references a real series.
+- **Acceptance criteria:**
+  - [ ] Every metric name in `prometheus-alerts.yml` and `core-api-slo.md` maps to a series emitted by a service.
+  - [ ] The HTTP-latency histogram appears in `/metrics` and `histogram_quantile(...)` returns data.
+- **Dependencies:** relates to GT-550 (guard); GT-542.
+- **Status:** `PENDING`
+
+---
+
+#### GT-544
+
+**Title:** Grafana has no Prometheus datasource and zero dashboards
+
+- **Purpose:** Make metrics visible — datasources plus provisioned dashboards.
+- **Evidence:** `product/operations/grafana/provisioning/datasources/datasources.yml` provisions only Loki and Tempo; there is no Prometheus datasource and **no dashboard JSON** anywhere under `product/operations/grafana/` (only READMEs + `datasources.yml`).
+- **Impact:** Even once scraping works, nothing renders; SRE and governance stakeholders have no view.
+- **Risk:** Dashboard drift if not versioned; keep JSON in-repo and provisioned.
+- **Affected files:** `product/operations/grafana/provisioning/datasources/datasources.yml`; new `product/operations/grafana/provisioning/dashboards/*` (provider + JSON).
+- **Component:** `Operations` · **Dimension:** Observability · **Type:** infra
+- **Criticality:** P2 · **Complexity:** M
+- **Proposed fix:** Add the Prometheus datasource and versioned, provisioned dashboards: Platform SRE (RED), Governance Health (gate pass·fail·drift·waivers), Agent Runtime, Trace Explorer (Tempo).
+- **Acceptance criteria:**
+  - [ ] Grafana provisions a Prometheus datasource on boot.
+  - [ ] At least the SRE and Governance Health dashboards are committed as JSON and load without manual setup.
+- **Dependencies:** GT-542; GT-543; GT-545.
+- **Status:** `PENDING`
+
+---
+
+#### GT-545
+
+**Title:** Prometheus scrape config covers only core-api, at a wrong target
+
+- **Purpose:** Scrape every producing service.
+- **Evidence:** `product/operations/otel/prometheus-config.yml` has a single job `core-api` targeting `bff:8000` (a UMS-template host/port, not the real core-api `:3000`); mcp-server (`evolith_mcp_`) and agent-runtime-api (`evolith_agent_runtime_`) `/metrics` are not scraped.
+- **Impact:** Two of three services are invisible; the one configured target does not resolve to the actual service.
+- **Risk:** Auth — core-api `/metrics` is guarded (GT-393/GT-549), so the scrape job needs credentials/bearer config.
+- **Affected files:** `product/operations/otel/prometheus-config.yml`; optionally k8s `ServiceMonitor` in `product/infra/helm/*`.
+- **Component:** `Operations` · **Dimension:** Observability · **Type:** infra
+- **Criticality:** P2 · **Complexity:** S
+- **Proposed fix:** Fix the core-api target and add scrape jobs for mcp-server and agent-runtime-api (with the metrics credential where guarded); or ship `ServiceMonitor`s in the Helm charts.
+- **Acceptance criteria:**
+  - [ ] Prometheus shows all three services `up==1`.
+  - [ ] The core-api job authenticates against the guarded `/metrics`.
+- **Dependencies:** GT-547; GT-549.
+- **Status:** `PENDING`
+
+---
+
+#### GT-546
+
+**Title:** Agent Runtime exposes only default Node metrics — the AI-era signal is absent
+
+- **Purpose:** Capture the agent-execution signal that differentiates Evolith.
+- **Evidence:** `src/apps/agent-runtime-api/src/health/metrics.controller.ts` serves `/metrics` with `collectDefaultMetrics({ prefix: 'evolith_agent_runtime_' })` and nothing else; no custom `Counter`/`Histogram` exists in the app. `core-domain` already carries a noop metrics port (GT-519).
+- **Impact:** No visibility into agent runs, skill usage, HITL approvals, or Core calls — the "did governance actually run the agent, and with what outcome" signal is missing from the metrics plane.
+- **Risk:** Instrument at the adapter boundary, not the domain; bound `skill`/`engine` label cardinality.
+- **Affected files:** `src/apps/agent-runtime-api/src/health/metrics.controller.ts`; `src/apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts`; the noop metrics port in `agent-runtime`.
+- **Component:** `agent-runtime` · **Dimension:** Observability · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Emit `evolith_agent_runs_total{engine,verdict}`, `evolith_agent_run_duration_seconds`, `evolith_skill_invocations_total{skill}`, Core-call totals/errors, and `evolith_hitl_approvals_total` via the metrics port.
+- **Acceptance criteria:**
+  - [ ] An agent run increments run/skill counters and observes the run-duration histogram.
+  - [ ] `/metrics` shows the business series alongside the default Node metrics.
+- **Dependencies:** GT-519 (metrics port).
+- **Status:** `PENDING`
+
+---
+
+#### GT-547
+
+**Title:** Observability backend runs only in the UMS template compose, not for the Node core
+
+- **Purpose:** Give the Evolith Core services a running metrics/trace/log backend.
+- **Evidence:** The full stack (Prometheus/Grafana/Tempo/Loki/Mimir/OTel-collector) is defined in `product/infra/docker-compose.yml` (the `ums-*` template); the runnable Node compose `product/infra/docker-compose.evolith.yml` brings only Redis. So the Node services are scraped/visualized by nothing today.
+- **Impact:** Producers emit into the void locally and (unless Coolify/Helm wires it) in deployment; the whole wave has no home to run in.
+- **Risk:** Resource footprint of the full stack on small VPS/kind; make it an opt-in profile.
+- **Affected files:** `product/infra/docker-compose.evolith.yml`; `product/infra/helm/*`; `product/infra/vps-coolify/*`.
+- **Component:** `Operations` · **Dimension:** Observability · **Type:** infra
+- **Criticality:** P2 · **Complexity:** M
+- **Proposed fix:** Add an `observability` profile (compose profile / Helm values flag / Coolify service) that stands OTel-collector + Prometheus + Grafana (+ Tempo/Loki) next to core-api/mcp/agent-runtime.
+- **Acceptance criteria:**
+  - [ ] One command brings up the Node services with a scraping Prometheus + provisioned Grafana.
+  - [ ] The profile is opt-in and documented.
+- **Dependencies:** GT-544; GT-545.
+- **Status:** `PENDING`
+
+---
+
+#### GT-548
+
+**Title:** Business metrics carry no tenant dimension
+
+- **Purpose:** Enable per-tenant governance scorecards and compliance evidence from the metrics plane.
+- **Evidence:** `metrics.service.ts` sets only `setDefaultLabels({ app: 'evolith-core-api' })`; no `tenantId` label on gate/evaluation/agent metrics.
+- **Impact:** Per-tenant scorecards/compliance can't be derived from metrics; SaaS tenant isolation can't be reflected in dashboards.
+- **Risk:** **High-cardinality explosion** if `tenant` is a raw unbounded label; must be bounded (allowlist/hash) or aggregated in Core.
+- **Affected files:** `src/apps/core-api/src/infrastructure/metrics/metrics.service.ts`; agent-runtime metrics (GT-546); dashboards (GT-544).
+- **Component:** `Evolith Core` · **Dimension:** Observability · **Type:** backend
+- **Criticality:** P2 · **Complexity:** M
+- **Proposed fix:** Add a bounded `tenant` label (allowlist or stable hash) with a documented cardinality budget; prefer per-tenant aggregation in Core for high-volume series.
+- **Acceptance criteria:**
+  - [ ] Gate/agent metrics carry a bounded `tenant` label with a documented cardinality cap.
+  - [ ] A per-tenant panel filters correctly without unbounded series growth.
+- **Dependencies:** GT-542; GT-546.
+- **Status:** `PENDING`
+
+---
+
+#### GT-549
+
+**Title:** `/metrics` is guarded on core-api but public on agent-runtime and mcp
+
+- **Purpose:** Consistent, safe exposure of the metrics surface.
+- **Evidence:** core-api guards `/metrics` with `MetricsAuthGuard` (fail-closed, GT-393); `src/apps/agent-runtime-api/src/health/metrics.controller.ts` is public and mcp-server serves `/metrics` from its raw HTTP server (`mcp-server.service.ts`) with no guard.
+- **Impact:** Unauthenticated callers can read operational shape (routes, volumes, error counts) from two of three services.
+- **Risk:** Over-restricting could break in-cluster scraping; pair auth with a `NetworkPolicy` allowance for the scraper.
+- **Affected files:** `src/apps/agent-runtime-api/src/health/metrics.controller.ts`; `src/packages/mcp-server/src/mcp/mcp-server.service.ts`; `product/infra/helm/*/templates/networkpolicy.yaml`.
+- **Component:** `Evolith Core` · **Dimension:** Security · **Type:** backend
+- **Criticality:** P2 · **Complexity:** S
+- **Proposed fix:** Apply guard parity (reuse the core-api metrics-auth approach) and/or restrict `/metrics` to the scraper via `NetworkPolicy` on all three services.
+- **Acceptance criteria:**
+  - [ ] Unauthenticated `/metrics` on agent-runtime and mcp is rejected or network-restricted.
+  - [ ] The Prometheus scraper still succeeds with credentials/allowed source.
+- **Dependencies:** GT-545.
+- **Status:** `PENDING`
+
+---
+
+#### GT-550
+
+**Title:** No anti-drift guard that metrics cited in alerts/SLO exist in code
+
+- **Purpose:** Prevent the GT-543/GT-545 class of drift from recurring.
+- **Evidence:** Alert/SLO PromQL (`prometheus-alerts.yml`, `core-api-slo.md`) drifted from emitted metric names with no CI check catching it.
+- **Impact:** Silent, recurring "alerts that never fire" as metric names evolve; false confidence in coverage.
+- **Risk:** Static extraction of metric names from PromQL is imperfect (functions, labels); keep the matcher conservative to avoid false reds.
+- **Affected files:** a new guard under `.harness/scripts/ci/*` (or the repo's guard location); `prometheus-alerts.yml`; `core-api-slo.md`.
+- **Component:** `Operations` · **Dimension:** Governance · **Type:** tooling
+- **Criticality:** P2 · **Complexity:** S
+- **Proposed fix:** A CI guard that extracts metric names from the alert/SLO PromQL and asserts each is emitted by a service (registry introspection at build, or an allowlist generated from the metrics definitions), reddening the PR on drift.
+- **Acceptance criteria:**
+  - [ ] The guard fails when an alert references a metric no service emits.
+  - [ ] It runs in CI on changes to alerts/SLO/metrics definitions.
+- **Dependencies:** GT-543.
+- **Status:** `PENDING`
+
+---
+
+#### GT-551
+
+**Title:** OPA sidecar metrics expected by the alerts are not exposed/scraped
+
+- **Purpose:** Observe Governance-Engine (OPA) evaluation reliability.
+- **Evidence:** `prometheus-alerts.yml` has an `OpaEvaluationFailure` rule on `opa_evaluation_errors_total`, but the OPA sidecar's native Prometheus endpoint is not enabled/scraped (OPA runs as a sidecar per `opa-configmap.yaml` in the MCP Helm chart).
+- **Impact:** Policy-evaluation errors/latency are unobservable; a core governance dependency has no health signal despite the alert existing.
+- **Risk:** None significant — OPA exposes Prometheus natively; mainly config + a scrape job.
+- **Affected files:** OPA sidecar config (`product/infra/helm/evolith-mcp/templates/opa-configmap.yaml` / runtime flags); `product/operations/otel/prometheus-config.yml`.
+- **Component:** `Governance` · **Dimension:** Observability · **Type:** infra
+- **Criticality:** P2 · **Complexity:** S
+- **Proposed fix:** Enable OPA's `/metrics` (decision + error counters, eval latency), add a scrape job, and surface it on the Governance Health dashboard (GT-544).
+- **Acceptance criteria:**
+  - [ ] `opa_evaluation_errors_total` (and decision/latency metrics) are scraped and visible.
+  - [ ] The `OpaEvaluationFailure` alert evaluates against a real series.
+- **Dependencies:** GT-544; GT-545.
+- **Status:** `PENDING`
+
+---
+
 ## 1. Gap Details
 
 > **GT-475…GT-484** were surfaced by the exploratory test-agent design pass (2026-07-10) that inventoried the CLI / MCP / Core-API surfaces and adversarially verified each candidate against this board. **GT-485** was auto-detected by the *running* exploration agent (`src/tests/exploration`, `npm run test:exploration`). See the cross-surface parity assets (`reference/core/control-center/audits/surface-parity-matrix.json`, `src/tests/contract/roundtrip-gate-evaluate.spec.ts`).

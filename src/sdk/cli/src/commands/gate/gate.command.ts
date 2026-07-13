@@ -17,6 +17,7 @@ import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
 import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resolver';
+import { resolveCoreOverride } from '../../infrastructure/paths/core-resolver';
 
 interface GateCommandOptions {
   phase?: string;
@@ -103,7 +104,9 @@ export class GateCommand extends BaseEvolithCommand {
           explicit: options?.satellite ?? options?.project,
           profileSatellite: this.profile.satellite,
         }),
-        corePath: options?.core,
+        // GT-456: unified Core resolution — --core → EVOLITH_CORE_PATH →
+        // profile.core; undefined lets the validator auto-detect the Core root.
+        corePath: resolveCoreOverride({ explicit: options?.core, profileCore: this.profile.core }),
         evaluatedBy,
         webhookUrl: options?.webhookUrl,
       });

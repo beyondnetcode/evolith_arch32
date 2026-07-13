@@ -17,6 +17,7 @@ import {
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resolver';
+import { resolveCoreOverride } from '../../infrastructure/paths/core-resolver';
 
 interface PhaseAdvanceCommandOptions {
   from?: string;
@@ -108,7 +109,9 @@ export class PhaseAdvanceCommand extends BaseEvolithCommand {
           explicit: options?.satellite ?? options?.project,
           profileSatellite: this.profile.satellite,
         }),
-        corePath: options?.core,
+        // GT-456: unified Core resolution — --core → EVOLITH_CORE_PATH →
+        // profile.core; undefined lets the validator auto-detect the Core root.
+        corePath: resolveCoreOverride({ explicit: options?.core, profileCore: this.profile.core }),
         evaluatedBy,
         webhookUrl: options?.webhookUrl,
       });

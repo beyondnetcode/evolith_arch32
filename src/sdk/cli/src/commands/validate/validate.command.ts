@@ -5,6 +5,7 @@ import { ValidationResult, ValidationIssue, RulesetValidatorService } from '@bey
 import { RulesetsNotFoundError } from '@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port';
 import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
 import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
+import { resolveCoreOverride } from '../../infrastructure/paths/core-resolver';
 import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resolver';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
@@ -158,7 +159,7 @@ export class ValidateCommand extends BaseEvolithCommand {
     // profile.core → the rulesets bundled with the CLI. resolveRulesets() throws an
     // actionable error when an override has no src/rulesets or no bundled rulesets
     // can be located — surface it instead of silently checking 0 rules.
-    const coreOverride = options?.core || process.env.EVOLITH_CORE_PATH || this.profile.core;
+    const coreOverride = resolveCoreOverride({ explicit: options?.core, profileCore: this.profile.core });
     let corePath: string | undefined;
     try {
       corePath = resolveRulesets(coreOverride).coreRoot;

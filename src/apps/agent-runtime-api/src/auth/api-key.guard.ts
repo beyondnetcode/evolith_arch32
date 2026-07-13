@@ -1,15 +1,28 @@
 /**
- * API-key guard for the Agent Runtime service.
+ * Authentication guard for the Agent Runtime service (GT-439).
  *
- * The runtime executes governed capabilities, so the public endpoint is
- * protected by default. The key is read from the `AGENT_RUNTIME_API_KEY` env var
- * (encrypted in Coolify) and supplied by callers as either:
- *   - `Authorization: Bearer <key>`, or
- *   - `x-api-key: <key>`.
+ * The runtime executes governed capabilities, so every non-public route is
+ * authenticated. Two credential types are accepted:
  *
- * Fail-closed: in production, a missing `AGENT_RUNTIME_API_KEY` denies every
- * non-public route unless `AGENT_RUNTIME_ALLOW_NO_AUTH=true` is set explicitly.
- * Routes marked `@Public()` (health, root) are always allowed.
+ *   - Shared API key (service credential): `x-api-key: <key>` or
+ *     `Authorization: Bearer <key>`. Matched against `AGENT_RUNTIME_API_KEY`.
+ *     A valid key yields a service-level, tenant-UNSCOPED principal (it may act
+ *     across tenants).
+ *   - Tenant JWT: `Authorization: Bearer <jwt>`, HS256-verified against
+ *     `AGENT_RUNTIME_JWT_SECRET`. The verified `tenant` claim scopes the
+ *     principal; {@link TenantCorpusGuard} then enforces corpus isolation.
+ *
+ * Fail-closed posture:
+ *   - When NEITHER credential is configured, a production posture DENIES every
+ *     non-public route (refuses to serve without auth). Dev still runs, and prod
+ *     can opt out only via an explicit `AGENT_RUNTIME_ALLOW_NO_AUTH=true`.
+ *   - A JWT-shaped bearer with no `AGENT_RUNTIME_JWT_SECRET` configured is
+ *     denied (cannot verify → refuse). A verified JWT with a missing/invalid
+ *     tenant claim is denied.
+ *
+ * On success the authenticated principal is attached to the request for
+ * downstream guards. Routes marked `@Public()` (health, root, metrics) bypass
+ * authentication entirely.
  */
 
 import {
@@ -20,6 +33,13 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from './public.decorator';
+import {
+  AuthenticatedPrincipal,
+  PRINCIPAL_KEY,
+  RequestWithPrincipal,
+  WILDCARD_TENANT,
+} from './principal';
+import { extractTenantClaim, looksLikeJwt, verifyHs256 } from './jwt.util';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
@@ -32,35 +52,99 @@ export class ApiKeyGuard implements CanActivate {
     ]);
     if (isPublic) return true;
 
-    const configured = process.env.AGENT_RUNTIME_API_KEY;
+    const req = context.switchToHttp().getRequest<RequestWithPrincipal>();
+
+    const apiKey = process.env.AGENT_RUNTIME_API_KEY;
+    const jwtSecret = process.env.AGENT_RUNTIME_JWT_SECRET;
     const allowNoAuth = process.env.AGENT_RUNTIME_ALLOW_NO_AUTH === 'true';
     const isProd = process.env.NODE_ENV === 'production';
 
-    if (!configured) {
-      // No key configured: allow in dev or when explicitly opted in; deny in prod.
-      if (!isProd || allowNoAuth) return true;
+    // Fail-closed: no credential material configured at all.
+    if (!apiKey && !jwtSecret) {
+      if (!isProd || allowNoAuth) {
+        this.attach(req, { authMethod: 'none', tenantId: WILDCARD_TENANT });
+        return true;
+      }
       throw new UnauthorizedException(
-        'AGENT_RUNTIME_API_KEY is not configured; refusing requests (set AGENT_RUNTIME_ALLOW_NO_AUTH=true to override).',
+        'No auth is configured (set AGENT_RUNTIME_API_KEY and/or AGENT_RUNTIME_JWT_SECRET); ' +
+          'refusing requests. Set AGENT_RUNTIME_ALLOW_NO_AUTH=true to override in a trusted network.',
       );
     }
 
-    const presented = this.extractKey(context);
-    if (!presented || !this.safeEqual(presented, configured)) {
-      throw new UnauthorizedException('Missing or invalid API key.');
+    const xApiKey = this.headerString(req, 'x-api-key');
+    const bearer = this.extractBearer(req);
+
+    // 1. Explicit API-key header.
+    if (xApiKey !== undefined) {
+      if (apiKey && this.safeEqual(xApiKey, apiKey)) {
+        this.attach(req, { authMethod: 'api-key', tenantId: WILDCARD_TENANT });
+        return true;
+      }
+      throw new UnauthorizedException('Invalid API key.');
     }
+
+    // 2. Bearer token: either a JWT (tenant-scoped) or the shared API key.
+    if (bearer !== undefined) {
+      if (looksLikeJwt(bearer)) {
+        return this.authenticateJwt(req, bearer, jwtSecret);
+      }
+      if (apiKey && this.safeEqual(bearer, apiKey)) {
+        this.attach(req, { authMethod: 'api-key', tenantId: WILDCARD_TENANT });
+        return true;
+      }
+      throw new UnauthorizedException('Invalid API key.');
+    }
+
+    // 3. No credential presented on a protected route.
+    throw new UnauthorizedException('Missing credentials (x-api-key or Authorization: Bearer).');
+  }
+
+  private authenticateJwt(
+    req: RequestWithPrincipal,
+    token: string,
+    jwtSecret: string | undefined,
+  ): boolean {
+    if (!jwtSecret) {
+      // JWT presented but no verification material — cannot verify → refuse.
+      throw new UnauthorizedException(
+        'Bearer JWT presented but AGENT_RUNTIME_JWT_SECRET is not configured; cannot verify token.',
+      );
+    }
+    const result = verifyHs256(token, jwtSecret);
+    if (!result.ok || !result.payload) {
+      throw new UnauthorizedException(`Invalid bearer token (${result.reason ?? 'unverified'}).`);
+    }
+    const tenantId = extractTenantClaim(result.payload);
+    if (!tenantId) {
+      throw new UnauthorizedException('Bearer token is missing a valid tenant claim.');
+    }
+    const roles = Array.isArray(result.payload.roles)
+      ? (result.payload.roles.filter((r) => typeof r === 'string') as string[])
+      : undefined;
+    this.attach(req, {
+      authMethod: 'jwt',
+      tenantId,
+      subject: typeof result.payload.sub === 'string' ? result.payload.sub : undefined,
+      roles,
+    });
     return true;
   }
 
-  private extractKey(context: ExecutionContext): string | undefined {
-    const req = context.switchToHttp().getRequest<{
-      headers: Record<string, string | string[] | undefined>;
-    }>();
-    const headerKey = req.headers['x-api-key'];
-    if (typeof headerKey === 'string' && headerKey.length > 0) return headerKey;
+  private attach(req: RequestWithPrincipal, principal: AuthenticatedPrincipal): void {
+    req[PRINCIPAL_KEY] = principal;
+  }
 
+  private headerString(req: RequestWithPrincipal, name: string): string | undefined {
+    const value = req.headers[name];
+    if (typeof value === 'string' && value.length > 0) return value;
+    return undefined;
+  }
+
+  private extractBearer(req: RequestWithPrincipal): string | undefined {
     const auth = req.headers['authorization'];
     if (typeof auth === 'string' && auth.toLowerCase().startsWith('bearer ')) {
-      return auth.slice(7).trim();
+      const token = auth.slice(7).trim();
+      return token.length > 0 ? token : undefined;
     }
     return undefined;
   }

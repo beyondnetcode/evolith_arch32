@@ -46,7 +46,7 @@
         "grep -L 'kind: Exchange' deploy/kubernetes/messaging/broker-rbac.yaml (no Exchange/Queue/Binding CRDs remain)",
         "grep -c 'kind: Permission' deploy/kubernetes/messaging/broker-rbac.yaml (== 3 per-product permissions)"
       ],
-      "dependencyDisposition": "partial",
+      "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Topology decision recorded (ADR-0108) and message-path CRDs retired in favor of per-product User/Permission RBAC. The G1 'consumer endpoint started' assertion (bus health, not pod Ready) is delegated to the G1 integration-gate automation (§13) and tracked there — it is not a blocker for the topology decision."
     },
     {
@@ -65,7 +65,7 @@
         "npx tsc -b tsconfig.json",
         "jest phase-artifact (6 pass incl. real-corpus E2E) + architecture.controller (10 pass)"
       ],
-      "dependencyDisposition": "partial",
+      "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Delivered: spec.phaseProfiles in manifests + PhaseArtifactProfileService + Core API endpoint + phase-artifact-registry + E2E. Follow-on (task_1b27a217): unified 'phase-artifacts' EvaluationKind so it auto-exposes on CLI/MCP via evaluate(), for full BR-008 parity — mirrors the design evaluator; the capability is already exposed on the Core API (the Tracker's surface)."
     },
     {
@@ -80,7 +80,7 @@
       "validationCommands": [
         "EPIC — all children GT-426..GT-433 DONE; E2E against the real corpus passes; tsc -b clean"
       ],
-      "dependencyDisposition": "partial",
+      "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "GT-425 umbrella closed via F0-F8 (GT-426..GT-433). One follow-on remains outside the epic scope: CLI/MCP topology-recommend parity (task_0dfc5f71) mirroring the Core API endpoint for full BR-008 parity on the recommender."
     },
     {
@@ -128,7 +128,7 @@
         "npx tsc -b tsconfig.json",
         "npx jest architecture.controller (9 pass, 2 new recommend-topology specs)"
       ],
-      "dependencyDisposition": "partial",
+      "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "design-evaluate exposed on all surfaces via evaluate(); topology-recommend exposed on the Core API (the Tracker's surface). CLI/MCP topology-recommend commands mirror the endpoint and are tracked as a follow-on (task_0dfc5f71) for full BR-008 parity on the recommender."
     },
     {
@@ -1436,7 +1436,7 @@
         "src/packages/mcp-server/src/tools/gate.tools.spec.ts",
         "src/packages/mcp-server/src/tools/architecture.tools.spec.ts",
         "src/packages/mcp-server/src/tools/sdlc.tools.spec.ts",
-        "src/sdk/cli/test/mcp-serve.e2e-spec.ts"
+        "src/sdk/cli/test/e2e/cli-e2e.test.ts"
       ],
       "validationCommands": [
         "npm run lint --workspace sdk/cli",
@@ -2158,7 +2158,7 @@
       "evidence": [
         "src/packages/mcp-server/src/tools/auto-fix.tools.ts",
         "src/packages/mcp-server/src/tools/tools.module.ts",
-        "src/sdk/cli/test/mcp-serve.e2e-spec.ts",
+        "src/sdk/cli/test/e2e/cli-e2e.test.ts",
         "src/sdk/cli/src/commands/agents/agents.command.ts",
         "src/packages/mcp-server/src/main.ts"
       ],
@@ -2282,7 +2282,7 @@
       "closureCommit": "c4835e0db3006d7cc6cb88205537a8086e302066",
       "evidence": [
         "src/sdk/cli/src/commands/agents/agents.command.ts",
-        "src/sdk/cli/test/mcp-serve.e2e-spec.ts",
+        "src/sdk/cli/test/e2e/cli-e2e.test.ts",
         "src/sdk/cli/src/infrastructure/providers/node-filesystem.provider.ts",
         "src/packages/mcp-server/src/main.ts"
       ],
@@ -2300,7 +2300,7 @@
         "src/sdk/cli/src/commands/completion/completion.command.ts",
         "src/sdk/cli/src/commands/sdlc/handoff.command.ts",
         "src/packages/mcp-server/src/mcp/prompts.service.ts",
-        "src/sdk/cli/test/mcp-serve.e2e-spec.ts"
+        "src/sdk/cli/test/e2e/cli-e2e.test.ts"
       ],
       "validationCommands": [
         "npm run build --workspace packages/mcp-server",
@@ -3156,7 +3156,7 @@
       "closedAt": "2026-06-23",
       "closureCommit": "31e4e079",
       "evidence": [
-        "src/sdk/cli/test/mcp-serve.e2e-spec.ts"
+        "src/sdk/cli/test/e2e/cli-e2e.test.ts"
       ],
       "validationCommands": [
         "NODE_OPTIONS=--max-old-space-size=4096 npx jest --config sdk/cli/test/jest-e2e.json --runInBand --no-bail --testPathPatterns='mcp-e2e'"
@@ -4278,7 +4278,7 @@
         "src/packages/mcp-server/src/mcp/mcp-cache.service.ts",
         "src/packages/mcp-server/src/mcp/mcp-server.service.ts",
         "src/packages/mcp-server/tsconfig.json",
-        "src/sdk/cli/test/mcp-serve.e2e-spec.ts",
+        "src/sdk/cli/test/e2e/cli-e2e.test.ts",
         "src/sdk/cli/src/types/mcp-sdk.d.ts",
         "package-lock.json"
       ],
@@ -5264,7 +5264,7 @@
       "closedAt": "2026-06-28",
       "closureCommit": "92750656",
       "evidence": [
-        "src/sdk/cli/test/mcp-serve.e2e-spec.ts",
+        "src/sdk/cli/test/e2e/cli-e2e.test.ts",
         "src/sdk/cli/src/commands/validate/validate.command.ts",
         "src/sdk/cli/src/main.ts"
       ],
@@ -6591,6 +6591,605 @@
       "validationCommands": [
         "grep -rhoE \"name: 'evolith-[a-z0-9-]+'\" src/packages/mcp-server/src/tools | sort -u | wc -l",
         "grep -n \"disponibles (47)\" src/packages/mcp-server/README.md src/packages/mcp-server/README.es.md"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-511",
+      "closedAt": "2026-07-12",
+      "closureCommit": "d769c97b",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/violation.ts",
+        "src/packages/core-domain/src/evaluation/violation.spec.ts",
+        "src/rulesets/schema/violation.schema.json",
+        "src/rulesets/schema/enforcer-evidence.schema.json",
+        "src/packages/core-domain/src/evaluation/contracts/evaluation-result.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand violation.spec (17/17)",
+        "cd src/packages/core-domain && npx tsc -b tsconfig.json (clean)",
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand (752/752 core-domain)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-514",
+      "closedAt": "2026-07-12",
+      "closureCommit": "30aee332",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/enforcement/enforcer.types.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/shell-enforcer-adapter.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/enforcer-evaluator.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/composite-rule-evaluator.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/enforcer.spec.ts",
+        "src/rulesets/enforcement/enforcer-catalog.json",
+        "product/infra/validated-tool-catalog.md"
+      ],
+      "validationCommands": [
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand enforcer.spec (+10)",
+        "cd src/packages/core-domain && npx tsc -b tsconfig.json (clean)",
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand (762/762 core-domain)"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "GT-511 (Violation model) is satisfied. GT-512 (evaluation-environment provisioning/sandbox) is still open, but GT-514's scope is the SEAM: IEnforcerAdapter, EnforcerEvaluator, CompositeRuleEvaluator, ShellEnforcerAdapter and the IProcessRunner PORT all land and are stub-tested. The production sandboxed IProcessRunner is GT-512's deliverable (a sibling adapter behind the same port); Core intentionally ships no unsandboxed default runner. Real enforcer adapters (dependency-cruiser) land in GT-515."
+    },
+    {
+      "id": "GT-517",
+      "closedAt": "2026-07-12",
+      "closureCommit": "e0e2b72c",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/enforcement/policy-baseline.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/policy-baseline.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand policy-baseline.spec (+17)",
+        "cd src/packages/core-domain && npx tsc -b tsconfig.json (clean)",
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand (822/822 core-domain, combined wave)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-478",
+      "closedAt": "2026-07-12",
+      "closureCommit": "4baec214",
+      "evidence": [
+        "src/apps/core-api/src/architecture-plan/architecture-plan.controller.ts",
+        "src/apps/core-api/src/architecture-plan/architecture-plan.dto.ts",
+        "src/apps/core-api/src/architecture-plan/architecture-plan.controller.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/apps/core-api && npx jest --runInBand architecture-plan (6/6)",
+        "cd src/apps/core-api && npx tsc -b tsconfig.json (clean); full core-api 143/143",
+        "OpenAPI exposes /api/v1/architecture-plans/evaluate (single v1), DTO schemas registered"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-482",
+      "closedAt": "2026-07-12",
+      "closureCommit": "05baab8f",
+      "evidence": [
+        "src/packages/mcp-server/src/tools/tools-registration.spec.ts",
+        "src/packages/mcp-server/src/tools/tools.module.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/mcp-server && npx jest --runInBand tools-registration (2/2)",
+        "set-equality vs the real 47 registered tools; negative check (fake tool -> fail) confirmed"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-483",
+      "closedAt": "2026-07-12",
+      "closureCommit": "597d3581",
+      "evidence": [
+        ".bmad-core/engine/step-executor.mjs",
+        "reference/core/sdlc/01-playbooks/e2e-test-playbooks.md",
+        "reference/core/sdlc/01-playbooks/e2e-test-playbooks.es.md"
+      ],
+      "validationCommands": [
+        "grep '.bmad-core/agents/' over the 3 fixed files -> 0 dangling refs",
+        "5 reference/core/foundations/agent-skills/qa-*.md targets confirmed present"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-510",
+      "closedAt": "2026-07-12",
+      "closureCommit": "0d45a08e",
+      "evidence": [
+        ".harness/scripts/ci/08-validate-tracking.mjs",
+        ".harness/scripts/ci/09-reconcile-maturity.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs -> 'Validated 523 gaps and 439 closure records. passed'",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check -> 'Maturity reconciliation matches' (asOf sync 0d45a08e)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-475",
+      "closedAt": "2026-07-12",
+      "closureCommit": "095bb5b4",
+      "evidence": [
+        "src/packages/mcp-server/src/mcp/abac-evaluator.ts",
+        "src/packages/mcp-server/src/mcp/mutative-hitl-parity.spec.ts",
+        "src/rulesets/opa/abac-mcp-tool-access.rego"
+      ],
+      "validationCommands": [
+        "cd src/packages/mcp-server && npx jest --runInBand (294/294; mutative-hitl-parity 4/4)",
+        "OPA check clean; negative-check bites (phase-advance reclassified write->read per GT-379)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-453",
+      "closedAt": "2026-07-12",
+      "closureCommit": "fc28a318",
+      "evidence": [
+        "src/sdk/cli/templates/evolith.yaml.example",
+        "src/sdk/cli/src/commands/docs/evolith-yaml-template.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/sdk/cli && npx jest --runInBand evolith-yaml-template (ajv: template validates vs evolith-yaml.schema.json)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-454",
+      "closedAt": "2026-07-12",
+      "closureCommit": "fc28a318",
+      "evidence": [
+        "src/sdk/cli/src/commands/docs/docs.command.ts",
+        "src/sdk/cli/src/commands/docs/docs.command.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/sdk/cli && npx jest --runInBand docs.command (writes evolith.yaml at repo ROOT in v1 shape; not .evolith/)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-457",
+      "closedAt": "2026-07-12",
+      "closureCommit": "d3524852",
+      "evidence": [
+        "src/sdk/cli/src/infrastructure/formatters/output-formatter.service.ts",
+        "src/sdk/cli/src/infrastructure/formatters/output-formatter.service.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/sdk/cli && npx jest --runInBand output-formatter (table renders ruleId+title+description+remediation; opaque count gone)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-458",
+      "closedAt": "2026-07-12",
+      "closureCommit": "d3524852",
+      "evidence": [
+        "src/sdk/cli/src/commands/agents/agents.command.ts",
+        "src/sdk/cli/src/commands/agents/agents.command.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/sdk/cli && npx jest --runInBand agents.command (--list/-install/-remove/-run route non-interactively; positional wins)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-459",
+      "closedAt": "2026-07-12",
+      "closureCommit": "d3524852",
+      "evidence": [
+        "src/sdk/cli/src/commands/upgrade/upgrade.command.ts",
+        "src/sdk/cli/src/commands/upgrade/upgrade.command.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/sdk/cli && npx jest --runInBand upgrade.command (SatelliteUpgradeService built with fileSystem+logger; dry-run no crash)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-481",
+      "closedAt": "2026-07-12",
+      "closureCommit": "83545d36",
+      "evidence": [
+        "src/sdk/cli/test/e2e/cli-e2e.test.ts",
+        "src/sdk/cli/test/gate.e2e-spec.ts",
+        "src/sdk/cli/templates/evolith.yaml.example"
+      ],
+      "validationCommands": [
+        "npx jest --config test/jest-e2e.json --runInBand --no-bail (workspace src/sdk/cli) — 18 suites / 132 tests pass"
+      ],
+      "closureNote": "mcp refs removed (fc28a318). Residual e2e reds were NOT fixture debt: the 98a20dca taxonomy split (reference/@root vs rulesets/@src) broke gate.e2e REPO_ROOT + gate-status reference resolution, and 5 validate/arch tests asserted an unattainable passed|warning against a bare fixture (94-rule corpus fails blocking MUSTs regardless of yaml). Test-only fixes: v1 fixtures (V1_MANIFEST), REPO_ROOT->repo root + schemas from src/rulesets/schema, validate/arch rewritten to the real ADR-0073 contract (envelope well-formed; exit reflects verdict), gate-status self-contained mock Core. No product-code change.",
+      "dependencyDisposition": "deferred",
+      "dependencyRationale": "Underlying standalone-CLI reference-path defect (ENOENT scandir reference/governance/sdlc/gates on gate/gate-status/phase after the taxonomy refactor) is tracked by GT-451 (F-007); the e2e suite is greened test-only via a mock Core rather than by shipping the fix here."
+    },
+    {
+      "id": "GT-485",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-486",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-487",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-488",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-489",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-490",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-491",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-492",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-493",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-494",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-495",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-496",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-497",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-498",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-499",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-500",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-501",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-502",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-503",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-504",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-505",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-506",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-507",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-508",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-509",
+      "closedAt": "2026-07-12",
+      "closureCommit": "f42c0efa",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "src/tests/exploration/oracles.ts"
+      ],
+      "validationCommands": [
+        "npm run test:exploration -> findings=0, 6/6 green; binding verified:true + cross-surface consistent (envelope emitted per ADR-0073)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-479",
+      "closedAt": "2026-07-12",
+      "closureCommit": "e6567eb7",
+      "evidence": [
+        "src/sdk/cli/test/e2e/surface-parity.e2e-spec.ts"
+      ],
+      "validationCommands": [
+        "envCommand dead field removed; envelope assertions made unconditional (fail on unparseable); GT-223 surface-parity-fixture claim reconciled as inaccurate"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-455",
+      "closedAt": "2026-07-12",
+      "closureCommit": "74e87dee",
+      "evidence": [
+        "src/sdk/cli/src/commands/architecture/scaffold.command.ts",
+        "src/sdk/cli/src/commands/architecture/scaffold.command.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/sdk/cli && npx jest scaffold (dotnet dry-run); real `dotnet build` (SDK 10.0.201) 0 errors; init/scaffold dotnet parity"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-456",
+      "closedAt": "2026-07-12",
+      "closureCommit": "377e9af7",
+      "evidence": [
+        "src/sdk/cli/src/infrastructure/paths/core-resolver.ts",
+        "src/sdk/cli/src/commands/validate/validate.command.ts"
+      ],
+      "validationCommands": [
+        "resolveCoreOverride unified across validate/gate/phase/evaluate; --core resolves 129 topology rules + coreRef.path; missing Core -> actionable error"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-461",
+      "closedAt": "2026-07-12",
+      "closureCommit": "377e9af7",
+      "evidence": [
+        "reference/governance/sdlc/gates/gate-f1.json",
+        "src/sdk/cli/src/commands/sdlc/gate-status.command.ts"
+      ],
+      "validationCommands": [
+        "gate evaluate -p discovery --core emits ADR-0073 GateEvidence (verdict failed); phase advance blocks; sdlc gate-status --core unified"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-460",
+      "closedAt": "2026-07-12",
+      "closureCommit": "a15c5b76",
+      "evidence": [
+        "src/sdk/cli/scripts/gen-api-catalog.mjs",
+        "src/sdk/cli/src/commands/api/api.catalog.generated.ts",
+        "src/packages/mcp-server/src/tools/api-catalog-parity.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/mcp-server && npx jest api-catalog-parity (3/3) — CLI catalog == live MCP registry (47 tools / 11 resources incl. GT-520 capabilities+contracts)"
       ],
       "dependencyDisposition": "none"
     }

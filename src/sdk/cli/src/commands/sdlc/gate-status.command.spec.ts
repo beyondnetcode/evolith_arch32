@@ -245,6 +245,24 @@ describe('GateStatusCommand', () => {
     });
   });
 
+  describe('--core resolution (GT-461 sub-finding / GT-456 unification)', () => {
+    it('passes an explicit --core through to PhaseTransitionUseCase so external Core gates are read', async () => {
+      const mockUseCase = { getGateStatus: jest.fn().mockResolvedValue(makeFullStatus()) };
+      (PhaseTransitionUseCase as jest.Mock).mockImplementation(() => mockUseCase);
+      (gitLogReader.isGitRepo as jest.Mock).mockResolvedValue(false);
+
+      await command.executeCommand([], { core: '/ext/core' });
+
+      // An explicit --core wins over EVOLITH_CORE_PATH / profile.core and reaches
+      // the validator as the Core root that holds reference/governance/sdlc/gates.
+      expect(PhaseTransitionUseCase).toHaveBeenCalledWith(mockFileSystem, '/ext/core');
+    });
+
+    it('parseCore returns its input verbatim', () => {
+      expect(command.parseCore('/ext/core')).toBe('/ext/core');
+    });
+  });
+
   describe('parseSince', () => {
     it('should parse valid number', () => {
       expect(command.parseSince('30')).toBe(30);

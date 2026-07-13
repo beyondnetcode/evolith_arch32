@@ -1,28 +1,20 @@
 {
   "schemaVersion": "1.0.0",
   "scope": "evolith-core",
-  "asOf": "2026-07-09",
+  "asOf": "2026-07-11",
   "gaps": {
-    "total": 510,
-    "done": 451,
-    "pending": 51,
-    "inProgress": 7,
-    "deferred": 1
+    "total": 523,
+    "done": 495,
+    "pending": 12,
+    "inProgress": 13,
+    "deferred": 3
   },
-  "waves": [
-    {
-      "id": "deployment-strategy-hardening",
-      "date": "2026-07-09",
-      "gaps": ["GT-462", "GT-463", "GT-464", "GT-465"],
-      "summary": "Deployment-strategy risk register (§15) infra/messaging items owned by Core: retire queue CRDs, poison-queue alerts, shared broker dependency, kind CNI NetworkPolicy enforcement."
-    }
-  ],
   "evidence": {
-    "closureRecords": 417,
-    "cliPackage": "@evolith/smart-cli@1.1.4",
-    "adrCount": 119,
-    "rulesetCount": 144,
-    "schemaCount": 40
+    "closureRecords": 477,
+    "cliPackage": "@beyondnet/evolith-cli@1.0.1",
+    "adrCount": 126,
+    "rulesetCount": 0,
+    "schemaCount": 44
   },
   "readiness": [
     {
@@ -71,15 +63,15 @@
     }
   ],
   "sources": [
-    "reference/core/control-center/gap-tracking.md",
-    "reference/core/control-center/gap-closure-evidence.json",
-    "reference/core/control-center/maturity-evidence.json",
-    "reference/core/control-center/inventory-summary.md",
-    "sdk/cli/package.json"
+    "reference/core/control-center/gaps/gap-tracking.md",
+    "reference/core/control-center/evidence/gap-closure-evidence.json",
+    "reference/core/control-center/maturity-reports/maturity-evidence.json",
+    "reference/core/control-center/maturity-reports/inventory-summary.md",
+    "src/sdk/cli/package.json"
   ],
   "validationCommands": [
-    "node .harness/scripts/reconcile-maturity.mjs --check",
-    "node .harness/scripts/validate-tracking.mjs",
-    "npm test --workspace sdk/cli -- --runInBand"
+    "node .harness/scripts/ci/09-reconcile-maturity.mjs --check",
+    "node .harness/scripts/ci/08-validate-tracking.mjs",
+    "npm test --workspace src/sdk/cli -- --runInBand"
   ]
 }

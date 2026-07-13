@@ -18,6 +18,13 @@ const cliRoot = resolve(here, '..');
 const mcpMain = resolve(cliRoot, '../../packages/mcp-server/dist/main.js');
 const outFile = resolve(cliRoot, 'src/commands/api/api.catalog.generated.ts');
 
+// Hard cap for a cold boot. A fresh `nest build` dist takes ~0.5–1.5s to
+// bootstrap Nest before it answers; give generous headroom so a slow boot never
+// yields an empty catalog ("No tools returned"). We resolve the instant BOTH
+// list responses arrive (usually well under 1s), so this ceiling is only a
+// backstop, not the common-case wait.
+const BOOT_TIMEOUT_MS = 15000;
+
 function collect() {
   return new Promise((resolvePromise, reject) => {
     const child = spawn('node', [mcpMain], {
@@ -25,20 +32,43 @@ function collect() {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
     let out = '';
-    child.stdout.on('data', (d) => (out += d.toString()));
-    child.on('error', reject);
+    let settled = false;
     const send = (m) => child.stdin.write(JSON.stringify(m) + '\n');
-    setTimeout(() => send({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'gen', version: '0' } } }), 300);
-    setTimeout(() => { send({ jsonrpc: '2.0', method: 'notifications/initialized' }); send({ jsonrpc: '2.0', id: 2, method: 'tools/list' }); }, 900);
-    setTimeout(() => send({ jsonrpc: '2.0', id: 3, method: 'resources/list' }), 1300);
-    setTimeout(() => {
+    const parse = () =>
+      out.split('\n').filter((l) => l.trim().startsWith('{')).map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+
+    const finish = (err) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(cap);
       child.kill();
-      const msgs = out.split('\n').filter((l) => l.trim().startsWith('{')).map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+      if (err) return reject(err);
+      const msgs = parse();
       const tools = msgs.find((m) => m.id === 2)?.result?.tools ?? [];
       const resources = msgs.find((m) => m.id === 3)?.result?.resources ?? [];
       if (!tools.length) return reject(new Error('No tools returned from MCP server'));
       resolvePromise({ tools, resources });
-    }, 2600);
+    };
+
+    // The stdio transport buffers requests sent during Nest bootstrap and answers
+    // them all once it is ready, so the handshake only needs correct ordering, not
+    // careful timing — fire it immediately and let the server drain it when up.
+    child.on('error', (e) => finish(e));
+    child.stdout.on('data', (d) => {
+      out += d.toString();
+      if (settled) return;
+      const msgs = parse();
+      // Resolve as soon as both list responses have arrived (event-driven, so a
+      // fast boot returns fast and a slow boot still succeeds up to the cap).
+      if (msgs.some((m) => m.id === 2) && msgs.some((m) => m.id === 3)) finish();
+    });
+
+    send({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'gen', version: '0' } } });
+    send({ jsonrpc: '2.0', method: 'notifications/initialized' });
+    send({ jsonrpc: '2.0', id: 2, method: 'tools/list' });
+    send({ jsonrpc: '2.0', id: 3, method: 'resources/list' });
+
+    const cap = setTimeout(() => finish(), BOOT_TIMEOUT_MS);
   });
 }
 

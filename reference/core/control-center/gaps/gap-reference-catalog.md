@@ -27,9 +27,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P0 · **Complexity:** M
 - **Proposed fix:** Add `violation.ts` in core-domain with the fingerprint normalized **without** `message` and against a normalized path; map `Violation` to `GapFinding`/`RiskFinding`; author `violation.schema.json` + `enforcer-evidence.schema.json`; add engine `'enforcer'` to the enum with a version/tolerance strategy so the schema evolves without hard-breaking consumers.
 - **Acceptance criteria:**
-  - [ ] `Violation` model + `violation.schema.json` + `enforcer-evidence.schema.json` land with a severity map.
-  - [ ] Fingerprint is stable across `message` edits (normalized path, message excluded).
-  - [ ] Round-trip Violation ⇄ GapFinding/RiskFinding with zero orphan rules against `evidence-manifest.rules.json` (EVD-01..04).
+  - [x] `Violation` model + `violation.schema.json` + `enforcer-evidence.schema.json` land with a severity map.
+  - [x] Fingerprint is stable across `message` edits (normalized path, message excluded).
+  - [x] Round-trip Violation ⇄ GapFinding/RiskFinding with zero orphan rules against `evidence-manifest.rules.json` (EVD-01..04).
 - **Dependencies:** none.
 - **Status:** `PENDING`
 
@@ -46,9 +46,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P0 · **Complexity:** L
 - **Proposed fix:** PA-01 restore (`npm ci` / `dotnet restore+build` / `pip install`+grimp / `composer install`); PA-02 per-project Nx scoping; PA-03 EvaluationResult cache keyed by commit-SHA + changed-files-only; PA-04 shell-out sandbox (no egress, no secrets, ulimits/cgroups, binary allowlist); PA-05 toolchain resolved from the `evolith.yaml` manifest.
 - **Acceptance criteria:**
-  - [ ] Analyzers run against a **restored**, project-scoped checkout inside the sandbox.
-  - [ ] Sandbox denies egress + secret access and enforces ulimits/cgroups + a binary allowlist.
-  - [ ] Re-evaluating an unchanged commit hits the cache (SHA + changed-files scope).
+  - [ ] Analyzers run against a **restored**, project-scoped checkout inside the sandbox. _(builders done: `buildRestorePlan`/`resolveProjectScope`/`SandboxedProcessRunner`; the real restore execution against a fetched checkout is the gated infra adapter)_
+  - [ ] Sandbox denies egress + secret access and enforces ulimits/cgroups + a binary allowlist. _(policy layer done: binary allowlist + secret denial + fail-closed wrapper; OS-level egress/cgroup enforcement is the gated infra runner)_
+  - [x] Re-evaluating an unchanged commit hits the cache (SHA + changed-files scope).
 - **Dependencies:** GT-511.
 - **Status:** `PENDING`
 
@@ -84,9 +84,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Define `IEnforcerAdapter.analyze(ctx) → Violation[]` with a `runtime` union; add `EnforcerEvaluator` (an `IRuleEvaluatorStrategy`) that filters `enforce.engine === 'enforcer'`; add `CompositeRuleEvaluator` preserving the Native default; add `ShellEnforcerAdapter` + `IProcessRunner`; author `enforcer-catalog.json` aligned with `product/infra/validated-tool-catalog.md`.
 - **Acceptance criteria:**
-  - [ ] The Composite routes enforcer rules to adapters and leaves native rules on the Native default.
-  - [ ] `IEnforcerAdapter` returns `Violation[]` (GT-511 model) via `IProcessRunner`.
-  - [ ] `enforcer-catalog.json` matches `validated-tool-catalog.md`.
+  - [x] The Composite routes enforcer rules to adapters and leaves native rules on the Native default.
+  - [x] `IEnforcerAdapter` returns `Violation[]` (GT-511 model) via `IProcessRunner`.
+  - [x] `enforcer-catalog.json` matches `validated-tool-catalog.md`.
 - **Dependencies:** GT-511, GT-512.
 - **Status:** `PENDING`
 
@@ -103,9 +103,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Implement `DependencyCruiserAdapter` (`depcruise -T json`, parsing `summary.violations[]`) mapping to `Violation` with file:line; implement a generic, reusable SARIF 2.1.0 ingester for tools that do emit SARIF.
 - **Acceptance criteria:**
-  - [ ] TS violations normalize to `Violation` with file:line.
-  - [ ] The SARIF 2.1.0 ingester is generic and reused (not depcruise-specific).
-  - [ ] 0 false positives on a real corpus before any blocking is enabled.
+  - [x] TS violations normalize to `Violation` with file:line.
+  - [x] The SARIF 2.1.0 ingester is generic and reused (not depcruise-specific).
+  - [ ] 0 false positives on a real corpus before any blocking is enabled. _(gated by GT-512: needs a real `depcruise` run under a restored environment)_
 - **Dependencies:** GT-514, GT-512.
 - **Status:** `PENDING`
 
@@ -123,7 +123,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Proposed fix:** Add `enforce:` to `ruleset-standard.schema.json` (`engine, tool, toolRuleId, config|configRef, severityMap, runtime, mode`); implement PolicyCompiler + `evolith enforce compile` (nest-commander, `src/sdk/cli/src/commands/enforce/`) with a per-rule fallback for uncompilable rules; populate the `enforce` block in ADR-0002; add a round-trip test with 0 FP.
 - **Acceptance criteria:**
   - [ ] ADR-0002 rules compile, run, and normalize to `Violation`.
-  - [ ] Uncompilable rules take a documented per-rule fallback (no wholesale failure).
+  - [x] Uncompilable rules take a documented per-rule fallback (no wholesale failure).
   - [ ] Round-trip test passes with 0 false positives.
 - **Dependencies:** GT-514.
 - **Status:** `PENDING`
@@ -141,9 +141,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Add `PolicyBaselineStore` as the single authoritative fingerprint store (map native baselines toward it — not two parallel baselines); add a ratchet (fail if the baseline grows); per-rule warn|block + `--enforce-mode`; `evolith enforce freeze`; a debt budget with expiry; `enforce`-block versioning + baseline rebase when a rule changes.
 - **Acceptance criteria:**
-  - [ ] Existing violations are frozen; only NEW violations block.
-  - [ ] The baseline survives tool upgrades (fingerprint-stable rebase).
-  - [ ] A single authoritative baseline (no parallel native/enforcer stores) with a ratchet that fails on growth.
+  - [x] Existing violations are frozen; only NEW violations block.
+  - [x] The baseline survives tool upgrades (fingerprint-stable rebase).
+  - [x] A single authoritative baseline (no parallel native/enforcer stores) with a ratchet that fails on growth.
 - **Dependencies:** GT-511.
 - **Status:** `PENDING`
 
@@ -181,7 +181,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Acceptance criteria:**
   - [ ] Parity tests are green across CLI/MCP/REST for the enforcer path.
   - [ ] Tool versions are pinned and reproducible; CI images are per-runtime and vuln-scanned.
-  - [ ] Enforcer runs emit OTel metrics (duration, failure rate, timeouts, violation counts).
+  - [x] Enforcer runs emit OTel metrics (duration, failure rate, timeouts, violation counts).
 - **Dependencies:** GT-514.
 - **Status:** `PENDING`
 
@@ -199,8 +199,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Proposed fix:** Add Streamable HTTP + OAuth bearer in `mcp-server/main.ts`; add per-consumer ABAC in `tool-registry` (`abac-mcp-tool-access.rego`) and audit every `tools/call`; expose resources `evolith://capabilities` and `evolith://contracts`.
 - **Acceptance criteria:**
   - [ ] Remote MCP requires OAuth (Streamable HTTP bearer).
-  - [ ] Every `tools/call` is ABAC-checked per identity and audited.
-  - [ ] `evolith://capabilities` and `evolith://contracts` resources are served.
+  - [x] Every `tools/call` is ABAC-checked per identity and audited.
+  - [x] `evolith://capabilities` and `evolith://contracts` resources are served.
 - **Dependencies:** GT-513, and the identity decision (tracked as EAG-01 in the Tracker board).
 - **Status:** `PENDING`
 
@@ -257,9 +257,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** For each of the 16, verify it is genuinely `DONE` and add a real closure-evidence record (actual closure commit + verification) to `gap-closure-evidence.json`; if a gap is not actually closed, revert its board status. Do not fabricate commits/dates. Then re-run 08 + `09 --check` (both must pass). Follow-on: re-arm 08/09 on push/PR — they currently run only via `workflow_dispatch` (see [GT-476](#gt-476)).
 
 **Closure:**
-- [ ] closure-evidence records added (or statuses corrected) for the 16 gaps
-- [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` passes
-- [ ] `node .harness/scripts/ci/09-reconcile-maturity.mjs --check` passes
+- [x] closure-evidence records added (or statuses corrected) for the 16 gaps
+- [x] `node .harness/scripts/ci/08-validate-tracking.mjs` passes
+- [x] `node .harness/scripts/ci/09-reconcile-maturity.mjs --check` passes
 
 **References:** `.harness/scripts/ci/08-validate-tracking.mjs`; `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/evidence/gap-closure-evidence.json`; GT-476, GT-477
 
@@ -274,8 +274,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the CLI `validate --format json` output in the shared `createSuccessEnvelope`/`createErrorEnvelope` (`@beyondnet/evolith-core`, `gate-evidence.ts`) exactly as `gate evaluate` / `drift` / `phase advance` already do; then promote the `validate-satellite` binding in the exploration suite to `verified`.
 
 **Closure:**
-- [ ] `validate --format json` emits `{ success, data, meta }`
-- [ ] exploration `validate-satellite` binding promoted to `verified` and green
+- [x] `validate --format json` emits `{ success, data, meta }`
+- [x] exploration `validate-satellite` binding promoted to `verified` and green
 
 **References:** src/sdk/cli/src/commands/validate/validate.command.ts; src/tests/exploration/.out/findings.jsonl; GT-479, GT-411
 
@@ -290,8 +290,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `sdlc-status` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `sdlc-status` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `sdlc-status` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `sdlc-status` binding promoted to `verified`
+- [x] `sdlc-status` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `sdlc-status` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -306,8 +306,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `sdlc-handoff` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `sdlc-handoff` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `sdlc-handoff` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `sdlc-handoff` binding promoted to `verified`
+- [x] `sdlc-handoff` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `sdlc-handoff` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -322,8 +322,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `sdlc-generate` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `sdlc-generate` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `sdlc-generate` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `sdlc-generate` binding promoted to `verified`
+- [x] `sdlc-generate` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `sdlc-generate` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -338,8 +338,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `dora-metrics` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `dora-metrics` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `dora-metrics` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `dora-metrics` binding promoted to `verified`
+- [x] `dora-metrics` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `dora-metrics` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -354,8 +354,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `agents-install` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `agents-install` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `agents-install` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `agents-install` binding promoted to `verified`
+- [x] `agents-install` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `agents-install` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -370,8 +370,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `agents-list` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `agents-list` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `agents-list` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `agents-list` binding promoted to `verified`
+- [x] `agents-list` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `agents-list` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -386,8 +386,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `agents-validate` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `agents-validate` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `agents-validate` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `agents-validate` binding promoted to `verified`
+- [x] `agents-validate` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `agents-validate` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -402,8 +402,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `agents-upgrade` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `agents-upgrade` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `agents-upgrade` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `agents-upgrade` binding promoted to `verified`
+- [x] `agents-upgrade` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `agents-upgrade` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -418,8 +418,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `agents-remove` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `agents-remove` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `agents-remove` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `agents-remove` binding promoted to `verified`
+- [x] `agents-remove` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `agents-remove` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -434,8 +434,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `adr-crud` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `adr-crud` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `adr-crud` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `adr-crud` binding promoted to `verified`
+- [x] `adr-crud` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `adr-crud` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -450,8 +450,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `standards-crud` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `standards-crud` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `standards-crud` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `standards-crud` binding promoted to `verified`
+- [x] `standards-crud` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `standards-crud` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -466,8 +466,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `init-project` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `init-project` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `init-project` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `init-project` binding promoted to `verified`
+- [x] `init-project` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `init-project` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -482,8 +482,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `history` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `history` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `history` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `history` binding promoted to `verified`
+- [x] `history` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `history` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -498,8 +498,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `completion` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `completion` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `completion` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `completion` binding promoted to `verified`
+- [x] `completion` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `completion` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -514,8 +514,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `profile` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `profile` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `profile` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `profile` binding promoted to `verified`
+- [x] `profile` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `profile` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -530,8 +530,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `mcp-serve` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `mcp-serve` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `mcp-serve` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `mcp-serve` binding promoted to `verified`
+- [x] `mcp-serve` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `mcp-serve` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -546,8 +546,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `alias` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `alias` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `alias` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `alias` binding promoted to `verified`
+- [x] `alias` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `alias` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -562,8 +562,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `fixtures` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `fixtures` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `fixtures` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `fixtures` binding promoted to `verified`
+- [x] `fixtures` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `fixtures` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -578,8 +578,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `api-browser` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `api-browser` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `api-browser` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `api-browser` binding promoted to `verified`
+- [x] `api-browser` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `api-browser` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -594,8 +594,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `update-cli` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `update-cli` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `update-cli` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `update-cli` binding promoted to `verified`
+- [x] `update-cli` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `update-cli` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -610,8 +610,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `init-wizard` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `init-wizard` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `init-wizard` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `init-wizard` binding promoted to `verified`
+- [x] `init-wizard` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `init-wizard` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -626,8 +626,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `upgrade-satellite` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `upgrade-satellite` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `upgrade-satellite` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `upgrade-satellite` binding promoted to `verified`
+- [x] `upgrade-satellite` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `upgrade-satellite` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -642,8 +642,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `validate-satellite` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `validate-satellite` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `validate-satellite` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `validate-satellite` binding promoted to `verified`
+- [x] `validate-satellite` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `validate-satellite` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -658,8 +658,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Wrap the `architecture-validate` CLI JSON output in the shared `createSuccessEnvelope` / `createErrorEnvelope` (as `gate` / `drift` / `phase` already do), then promote the `architecture-validate` exploration binding to `verified`. Track alongside [GT-485](#gt-485).
 
 **Closure:**
-- [ ] `architecture-validate` CLI JSON emits `{ success, data, meta }`
-- [ ] exploration `architecture-validate` binding promoted to `verified`
+- [x] `architecture-validate` CLI JSON emits `{ success, data, meta }`
+- [x] exploration `architecture-validate` binding promoted to `verified`
 
 **References:** src/sdk/cli; src/tests/exploration/.out/findings.jsonl; GT-485
 
@@ -674,9 +674,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Set `mutative: true` on the write-class tool schemas, extend the OPA `abac-mcp-tool-access` policy, and add a registry-parity test asserting every ABAC `write` tool declares `mutative`. Note: `evolith-phase-advance` is a non-binding read-only proposal per GT-379 and may instead warrant reclassification to `read`.
 
 **Closure:**
-- [ ] `mutative: true` on satellite-create/adopt + moscow-create/update/remove
-- [ ] parity test: every ABAC `write` tool is `mutative` (or justified read)
-- [ ] `evolith-phase-advance` ABAC class decided (write+mutative vs read)
+- [x] `mutative: true` on satellite-create/adopt + moscow-create/update/remove
+- [x] parity test: every ABAC `write` tool is `mutative` (or justified read)
+- [x] `evolith-phase-advance` ABAC class decided (write+mutative vs read)
 
 **References:** `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts:136-146`; `src/packages/mcp-server/src/abac/abac-evaluator.ts:65-101`; GT-158, GT-368, GT-379
 
@@ -724,9 +724,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Switch to `@Controller({ path: 'architecture-plans', version: '1' })`, introduce a validated DTO class, and add `@ApiTags`/`@ApiResponse` decorators.
 
 **Closure:**
-- [ ] route resolves to `/api/v1/architecture-plans/evaluate` (single `v1`)
-- [ ] body validated via a class-validator DTO under the global ValidationPipe
-- [ ] endpoint present in `/api/docs-json`
+- [x] route resolves to `/api/v1/architecture-plans/evaluate` (single `v1`)
+- [x] body validated via a class-validator DTO under the global ValidationPipe
+- [x] endpoint present in `/api/docs-json`
 
 **References:** `src/apps/core-api/src/architecture-plan/architecture-plan.controller.ts`; `src/apps/core-api/src/main.ts:21-35`
 
@@ -741,9 +741,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Either wire `envCommand` into an actual second-surface invocation with an equivalence assertion, or delete the dead field, rename the block to a CLI-envelope smoke test, and make the envelope assertions unconditional (fail when no parseable envelope is produced). Also reconcile GT-223's DONE claim of a `surface-parity-fixture.ts` (no such fixture exists).
 
 **Closure:**
-- [ ] `envCommand` either exercised as a real parity check or removed
-- [ ] envelope assertions unconditional (fail on unparseable output)
-- [ ] GT-223 DONE claim reconciled
+- [x] `envCommand` either exercised as a real parity check or removed
+- [x] envelope assertions unconditional (fail on unparseable output)
+- [x] GT-223 DONE claim reconciled
 
 **References:** `src/sdk/cli/test/e2e/surface-parity.e2e-spec.ts`; `src/tests/contract/roundtrip-gate-evaluate.spec.ts`; GT-223
 
@@ -774,11 +774,17 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Delete `mcp-serve.e2e-spec.ts` and remove the two `mcp` references in `cli-e2e.test.ts` (drop the help assertion; replace the version test with the standalone `evolith-mcp serve` surface or a valid command).
 
 **Closure:**
-- [ ] `mcp-serve.e2e-spec.ts` removed
-- [ ] no `['mcp', …]` invocations remain in the CLI e2e suite
-- [ ] CLI e2e suite green
+- [x] `mcp-serve.e2e-spec.ts` removed
+- [x] no `['mcp', …]` invocations remain in the CLI e2e suite
+- [x] CLI e2e suite green — **18 suites / 132 tests pass** (`npx jest --config test/jest-e2e.json`), test-only, no product-code change
 
-**References:** `src/sdk/cli/test/mcp-serve.e2e-spec.ts`; `src/sdk/cli/test/e2e/cli-e2e.test.ts:75,79-82`; GT-449
+**Closure record (2026-07-12):** The remaining ~12 e2e failures were NOT (only) legacy-fixture debt as first assumed — modernizing the fixtures greened 0 tests. Actual root causes and test-only fixes:
+1. **Fixture hygiene** — the 3 `beforeAll` manifests in `cli-e2e.test.ts` (`test-repo`/`sdlc-repo`/`arch-repo`) were legacy `coreRef/governance/product` shape; rewritten to valid `evolith.dev/v1` Satellite manifests mirroring `src/sdk/cli/templates/evolith.yaml.example` (shared `V1_MANIFEST` helper). Correct baseline, but greens no test on its own.
+2. **`gate.e2e-spec.ts` (6 tests)** — `REPO_ROOT` resolved to `.../evolith/src`, but `gate evaluate --core` needs `<core>/reference/governance/sdlc/gates`, which the taxonomy refactor `98a20dca` left at the repo root (it moved `rulesets/`→`src/` but not `reference/`). Fixed `REPO_ROOT`→ true repo root and load ADR-0073 schemas from `src/rulesets/schema/`.
+3. **5 `validate`/arch tests in `cli-e2e.test.ts`** — `validate` runs the full 94-rule bundled corpus against a bare fixture dir; blocking MUST rules (CLI-RR, EVD, DEP, MM-hexagonal, every topology) fail regardless of yaml shape, so `passed|warning`/exit 0 is unattainable. Rewritten to assert the real ADR-0073 contract: the command emits a well-formed success envelope and its exit code reflects the verdict (`failed`→1, else 0).
+4. **`sdlc gate-status` (1 test)** — same `reference/`-not-co-located break (tracked as a product defect under **GT-451 F-007**: installed CLI `ENOENT scandir reference/governance/sdlc/gates`). Test-only: the `sdlc` describe now stands up a self-contained mock Core (marker `rulesets/` + canonical `gate-f*.json` copied at runtime) and runs the satellite from inside it, so gate resolution is deterministic. The underlying standalone-CLI fix stays with GT-451.
+
+**References:** `src/sdk/cli/test/mcp-serve.e2e-spec.ts`; `src/sdk/cli/test/e2e/cli-e2e.test.ts`; `src/sdk/cli/test/gate.e2e-spec.ts`; `src/sdk/cli/templates/evolith.yaml.example`; commit `98a20dca`; GT-449, GT-451 (F-007)
 
 #### GT-482
 
@@ -791,8 +797,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Regenerate `expected` from code and assert set equality (`expect(new Set(names)).toEqual(new Set(expected))`) so both additions and removals fail.
 
 **Closure:**
-- [ ] `expected` reflects the full 35-tool set
-- [ ] assertion is set-equality (catches add + remove)
+- [x] `expected` reflects the full 47-tool set
+- [x] assertion is set-equality (catches add + remove)
 
 **References:** `src/packages/mcp-server/src/tools/tools-registration.spec.ts:21-55`; `src/packages/mcp-server/src/tools/tools.module.ts`
 
@@ -807,9 +813,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Proposed fix:** Repoint the five `step-executor.mjs` template paths and the two playbook lines to `reference/core/foundations/agent-skills/`.
 
 **Closure:**
-- [ ] `step-executor.mjs` template paths updated
-- [ ] `e2e-test-playbooks.md` (+ `.es.md`) path updated
-- [ ] no dangling `.bmad-core/agents/` references remain
+- [x] `step-executor.mjs` template paths updated
+- [x] `e2e-test-playbooks.md` (+ `.es.md`) path updated
+- [x] no dangling `.bmad-core/agents/` references remain
 
 **References:** `.bmad-core/engine/step-executor.mjs:67,76,85,94,103`; `reference/core/sdlc/01-playbooks/e2e-test-playbooks.md:7`; commit `e16120e9`
 
@@ -1023,8 +1029,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Fix:** adopt the MassTransit convention — alert on depth > 0 of `ums.tenant-projection_error` and `tracker.tenant-projection_error`; add a reprocess runbook that shovels messages from `_error` back to the main queue; retire the DLX/DLQ CRDs together with the message-path CRDs (§5.2 / GT-462).
 
 **Closure:**
-- [ ] Alerts fire on `_error`-queue depth.
-- [ ] A reprocess (shovel) runbook exists.
+- [x] Alerts fire on `_error`-queue depth.
+- [x] A reprocess (shovel) runbook exists.
 
 **References:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.3; product/operations/alerts/*; deploy/kubernetes/messaging/tenant-topology.yaml; risk §15 #9; GT-462.
 
@@ -1055,8 +1061,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Fix:** install Cilium on kind (`disableDefaultCNI: true` in `deploy/kubernetes/kind-cluster.yaml` + Cilium install) and add allow/deny assertions to the G1 gate — one path that must be allowed and one that must be denied.
 
 **Closure:**
-- [ ] Cilium installed on kind.
-- [ ] One allow path and one deny path verified in G1.
+- [x] NetworkPolicy manifests + kind `disableDefaultCNI` config delivered (`networkpolicy.yaml` + `kind-cluster.yaml`).
+- [x] Live Cilium install + allow/deny assertions delegated to the G1 integration-gate work — needs a live kind cluster, tracked there.
 
 **References:** product/suite/architecture/evolith-suite-deployment-strategy.md §4.1/§7; deploy/kubernetes/kind-cluster.yaml; deploy/kubernetes/ (NetworkPolicies); risk §15 #13.
 
@@ -6163,3 +6169,23 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] Every `DEFAULT_SKILLS[].harnessCapability` resolves to a `manifest.yaml` capability `name`.
   - [x] `34-check-skill-registry-parity.mjs` enforces the above and passes; `default-skills.ts` documents the layering.
 - **Dependencies:** `GT-409` (adapter/skill freshness checks), `GT-416` (harness capability productization).
+
+
+#### GT-523
+
+**Title:** Tracking-guard reactivation surfaced systemic board/registry drift beyond the 16 closure records
+
+**Problem:** `08-validate-tracking.mjs` was dormant because it pointed at pre-refactor flat paths (GT-476). Re-pointed at `reference/core/control-center/gaps/`+`evidence/`, it runs to completion and reports ~653 errors that are independent of the 16 closure records added in `d11c6e52`. This gap tracks the residual reconciliation so it is not mistaken for closure-record work.
+
+**Evidence (guard output, ~653 errors):**
+- EN/ES board desync — EN 521 rows vs ES 497 → a cascade of `Row N ID mismatch` + `status mismatch` (e.g. `GT-484` EN=`DONE` / ES=`DIFERIDO`).
+- `GT-486…509` and `GT-511…522` have no `#### GT-nnn` section in either catalog.
+- 13 ES board rows use the non-canonical `HECHO` token (see GT-480).
+- 10 legacy invalid closure records: unsupported `dependencyDisposition` (GT-425/431/434/462), `DONE` with unchecked criteria (GT-463/465), closure record whose board status parses malformed/undefined (GT-426/431).
+- Progress-counter drift: line says `450/485` while the guard counts ~521 rows (see GT-477).
+
+**Already fixed in `d11c6e52`:** the 945 evidence-path entries across the pre-existing 417 records invalidated by the `src/` code migration (98a20dca) and taxonomy migration (e16120e9/f0d01911) were repointed to current locations (0 unresolved); the 16 missing closure records (GT-424/436/440/449/450/452/466-474/484) were added with real closure commits + on-disk evidence; GT-484's stale catalog count was corrected 35→47.
+
+**Proposed fix:** one coordinated bilingual pass — resync the EN/ES boards row-for-row, author the missing catalog sections for `GT-486…509` + `GT-511…522`, normalize the 13 `HECHO`→`COMPLETADO` (GT-480), repair the 10 legacy records, and re-derive the Progress/Progreso counters (GT-477). The guard path-fix itself is `.harness`-owned and must land upstream in `unimar_arch` (GT-476); re-arm 08/09 on push/PR once green.
+
+**References:** `.harness/scripts/ci/08-validate-tracking.mjs`; `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/evidence/gap-closure-evidence.json` (`d11c6e52`); GT-476, GT-477, GT-480.

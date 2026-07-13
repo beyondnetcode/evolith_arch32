@@ -82,9 +82,17 @@ const TOOL_CLASSIFICATION: Record<string, ToolClass> = {
   'evolith-config-get': 'read',
   'evolith-config-set': 'write',
 
-  // Auto-fix / phase advance (mutating)
+  // Auto-fix (mutating)
   'evolith-auto-fix': 'write',
-  'evolith-phase-advance': 'write',
+
+  // Phase advance — GT-379: a NON-BINDING, read-only proposal. The handler
+  // (ProposePhaseAdvanceUseCase) evaluates the current phase's exit criteria and
+  // returns a recommendation WITHOUT mutating canonical state; it never advances
+  // the phase. Classifying it `read` keeps ABAC consistent with the HITL gate
+  // (GT-475): the dispatch requires { apply, approvalToken } for `mutative` tools,
+  // and every ABAC-`write` tool MUST declare `mutative:true` — a read-only
+  // proposal must be neither, so it is `read` (and carries no `mutative` flag).
+  'evolith-phase-advance': 'read',
 
   // Agents (list/validate read; install/upgrade/remove/run mutate)
   'evolith-agent-list': 'read',

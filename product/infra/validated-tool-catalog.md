@@ -109,6 +109,18 @@ Select architecture pattern:
 | **gRPC (Protobuf)** | Internal services | `evolith-cli init --api=grpc` |
 | **Both** | REST external, gRPC internal | `evolith-cli init --api=hybrid` |
 
+### 4.3 Architecture Enforcement (Boundary Analyzers)
+
+Static analyzers that enforce module/layer boundaries and cycles per runtime. Core routes `enforce.engine === 'enforcer'` rules to these via the `EnforcerEvaluator` (GT-514); the machine-readable mirror is `src/rulesets/enforcement/enforcer-catalog.json`. Exact version pinning is tracked in GT-519.
+
+| Tool | Version | Runtime | Purpose | ADR |
+|------|---------|---------|---------|-----|
+| **dependency-cruiser** | 16.x | node | Module/layer boundary + cycle analysis (TS/JS) | ADR-0002 |
+| **NetArchTest** | 1.3.x | dotnet | Layer & dependency-direction rules (.NET) | ADR-0002 |
+| **Deptrac** | 2.x | php | Layer boundary enforcement (PHP) | ADR-0002 |
+| **import-linter** | 2.x | python | Import contracts, grimp-backed (Python) | ADR-0002 |
+| **Conftest** | 0.56.x | iac | OPA/Rego policy checks for IaC/config manifests | ADR-0002 |
+
 ---
 
 ## 5. Phase 4 — Production Tools

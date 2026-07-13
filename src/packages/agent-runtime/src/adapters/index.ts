@@ -65,6 +65,10 @@ export type { FileSchedulerOptions } from './scheduler/file-scheduler.adapter';
 export { AutoApprovalAdapter, DenyByDefaultApprovalAdapter } from './approval/policy-approval.adapter';
 export { ChatApprovalAdapter } from './approval/chat-approval.adapter';
 export { SlackApprovalAdapter } from './approval/slack-approval.adapter';
+// GT-441: real fail-closed HITL gate (pending/approve/reject/expire)
+export { PendingApprovalAdapter, NoopApprovalTransport, ApprovalResolutionError } from './approval/pending-approval.adapter';
+export type { PendingApprovalOptions } from './approval/pending-approval.adapter';
+export { InMemoryApprovalStore } from './approval/in-memory-approval-store';
 
 // Engine (Hermes is OPTIONAL and lives only here, never in the domain)
 export { StubAgentEngineAdapter } from './engine/stub-agent-engine.adapter';

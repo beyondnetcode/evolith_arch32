@@ -64,7 +64,7 @@ ${validationScripts?.length ? `Scripts to run: ${validationScripts.join(', ')}` 
 `,
 
   'qa-contracts': (action, validationScripts) => `
-You are the QA-Contracts specialist (.bmad-core/agents/qa-contracts.md) — Native↔OPA parity & contract conformance.
+You are the QA-Contracts specialist (reference/core/foundations/agent-skills/qa-contracts.md) — Native↔OPA parity & contract conformance.
 
 ${action}
 
@@ -73,7 +73,7 @@ ${validationScripts?.length ? `Scripts to run: ${validationScripts.join(', ')}` 
 `,
 
   'qa-security': (action, validationScripts) => `
-You are the QA-Security specialist (.bmad-core/agents/qa-security.md) — OWASP, ABAC fail-closed, shell-injection, SSRF, agent sandbox.
+You are the QA-Security specialist (reference/core/foundations/agent-skills/qa-security.md) — OWASP, ABAC fail-closed, shell-injection, SSRF, agent sandbox.
 
 ${action}
 
@@ -82,7 +82,7 @@ ${validationScripts?.length ? `Scripts to run: ${validationScripts.join(', ')}` 
 `,
 
   'qa-e2e': (action, validationScripts) => `
-You are the QA-E2E specialist (.bmad-core/agents/qa-e2e.md) — governance-flow E2E + cross-surface compatibility.
+You are the QA-E2E specialist (reference/core/foundations/agent-skills/qa-e2e.md) — governance-flow E2E + cross-surface compatibility.
 
 ${action}
 
@@ -91,7 +91,7 @@ ${validationScripts?.length ? `Scripts to run: ${validationScripts.join(', ')}` 
 `,
 
   'qa-unit': (action, validationScripts) => `
-You are the QA-Unit specialist (.bmad-core/agents/qa-unit.md) — unit + integration coverage across all workspaces.
+You are the QA-Unit specialist (reference/core/foundations/agent-skills/qa-unit.md) — unit + integration coverage across all workspaces.
 
 ${action}
 
@@ -100,7 +100,7 @@ ${validationScripts?.length ? `Scripts to run: ${validationScripts.join(', ')}` 
 `,
 
   'qa-docs': (action, validationScripts) => `
-You are the QA-Docs specialist (.bmad-core/agents/qa-docs.md) — bilingual parity + doc/governance integrity.
+You are the QA-Docs specialist (reference/core/foundations/agent-skills/qa-docs.md) — bilingual parity + doc/governance integrity.
 
 ${action}
 

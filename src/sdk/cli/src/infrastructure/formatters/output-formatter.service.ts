@@ -143,14 +143,29 @@ export class OutputFormatterService {
       if (Array.isArray(value)) {
         // GT-457: render issue-like arrays (e.g. validate `issues`) with per-item
         // detail instead of an opaque "[N items]" count, so table output surfaces
-        // the ruleId/title/severity that was previously only visible in JSON.
+        // the ruleId + title + description + remediation hint that were previously
+        // only visible in `-f json`.
         if (value.length > 0 && this.isIssueLike(value[0])) {
-          const lines = value.map((it) => {
+          const lines = value.flatMap((it) => {
             const i = it as Record<string, unknown>;
             const ruleId = String(i.ruleId ?? '?');
-            const title = String(i.title ?? i.description ?? '');
+            const title = i.title != null ? String(i.title) : '';
+            const description = i.description != null ? String(i.description) : '';
+            const primary = title || description;
             const sev = i.severity ? ` (${String(i.severity)})` : '';
-            return `    - ${chalk.yellow(ruleId)}: ${title}${sev}`;
+            const rows = [`    - ${chalk.yellow(ruleId)}: ${primary}${sev}`];
+            // Show the description on its own line when it adds detail beyond the
+            // headline title (validate maps both, and they can differ).
+            if (description && description !== primary) {
+              rows.push(`        ${chalk.gray(description)}`);
+            }
+            // A remediation hint (remediation/fix/hint) tells the operator how to
+            // clear the violation without switching to json output.
+            const remediation = i.remediation ?? i.fix ?? i.hint;
+            if (remediation != null && String(remediation).length > 0) {
+              rows.push(`        ${chalk.cyan('↳ fix:')} ${String(remediation)}`);
+            }
+            return rows;
           });
           return `${value.length} issue(s):\n${lines.join('\n')}`;
         }

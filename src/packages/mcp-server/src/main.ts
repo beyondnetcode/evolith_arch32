@@ -72,6 +72,30 @@ export interface StartMcpServerOptions {
   allowNoAuth?: boolean;
 }
 
+// ---------------------------------------------------------------------------
+// GT-520 · EAG-15 / AC1 — OAuth 2.1 bearer over Streamable HTTP: GATED (seam).
+//
+// The Streamable HTTP transport already ships (see McpServerService.startHttp),
+// and HTTP requests are authenticated today via a shared API key or an
+// HS256 JWT signed with a locally-held JWT_SECRET (mcp-server-auth.ts). Full
+// OAuth 2.1 — validating a bearer access token issued by an EXTERNAL identity
+// provider (JWKS/introspection, audience + issuer checks, resource-server
+// metadata) — is intentionally NOT implemented here. It is blocked on the
+// EAG-01 identity decision (which IdP, one shared IdP vs per-tenant, token
+// audience model). Implementing a "fake" OAuth validator now would give a false
+// sense of federated auth, so the seam is left explicit:
+//
+//   TODO(GT-520/EAG-01, GATED): plug an OAuth 2.1 resource-server validator into
+//   validateAuth() (mcp-server-auth.ts) — verify bearer against the chosen IdP's
+//   JWKS, enforce iss/aud/exp, and map verified claims → McpUserContext. Wire an
+//   `oauth` auth mode through startMcpServer/parseArgs once the IdP is selected.
+//
+// Everything downstream of identity is already hardened per-identity: the
+// dispatcher runs ABAC (native + OPA) on EVERY tools/call and audits the verdict
+// (see McpServerService.handleCallTool), so it is agnostic to how the identity
+// was established (API key, JWT, or a future OAuth token).
+// ---------------------------------------------------------------------------
+
 /**
  * Programmatic entry point. Boots the NestJS application context and starts the
  * MCP server on the requested transport. Consumers (e.g. the Evolith CLI) call

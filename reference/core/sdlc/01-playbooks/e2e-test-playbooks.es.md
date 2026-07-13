@@ -4,7 +4,7 @@ Cada flujo ejecutable (superficie) tiene su **playbook de pruebas**: la superfic
 bajo prueba, el comando que corre su suite end-to-end dedicada, los escenarios que
 ejerce y el veredicto esperado. Esto mantiene la cobertura E2E explícita y por
 flujo, en vez de implícita o confundida con las suites unit/integration. El agente
-`qa-e2e` (`.bmad-core/agents/qa-e2e.md`) ejecuta estos playbooks; el QA Líder agrega.
+`qa-e2e` (`reference/core/foundations/agent-skills/qa-e2e.md`) ejecuta estos playbooks; el QA Líder agrega.
 
 ## Propósito
 

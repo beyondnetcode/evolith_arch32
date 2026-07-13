@@ -76,13 +76,13 @@ export const BINDINGS: Record<string, Binding> = {
   },
 
   'sdlc-status': {
-    verified: false,
+    verified: true,
     cli: (c) => ['sdlc', 'gate-status', '--format', 'json'],
     mcp: (c) => ({ tool: 'evolith-sdlc-status', args: {} }),
   },
 
   'sdlc-handoff': {
-    verified: false,
+    verified: true,
     cli: (c) => ['sdlc', 'handoff', '--from', 'discovery', '--to', 'design', '--format', 'json'],
     mcp: (c) => ({ tool: 'evolith-sdlc-handoff', args: { from: 'discovery', to: 'design' } }),
   },
@@ -92,7 +92,7 @@ export const BINDINGS: Record<string, Binding> = {
   // =========================================================================
 
   'validate-satellite': {
-    verified: false,
+    verified: true,
     cli: (c) => ['validate', '--satellite', c.projectPath, '--core', c.corePath, '--format', 'json'],
     mcp: (c) => ({ tool: 'evolith-validate', args: { path: c.projectPath, corePath: c.corePath } }),
     rest: (c) => ({
@@ -103,7 +103,7 @@ export const BINDINGS: Record<string, Binding> = {
   },
 
   'architecture-validate': {
-    verified: false,
+    verified: true,
     // CLI: requires rulesets which are not in test fixture — exempt from test
     mcp: (c) => ({ tool: 'evolith-architecture-validate', args: { path: c.projectPath, corePath: c.corePath, architecture: true } }),
     // REST: validation logic diverges due to test fixture (missing rulesets) — exempt from test
@@ -189,12 +189,12 @@ export const BINDINGS: Record<string, Binding> = {
   // =========================================================================
 
   'sdlc-generate': {
-    verified: false,
+    verified: true,
     cli: (c) => ['sdlc', 'generate', 'domain', '--from', 'package.json', '--format', 'json'],
   },
 
   'dora-metrics': {
-    verified: false,
+    verified: true,
     cli: (c) => ['sdlc', 'gate-status', '--since', '90', '--format', 'json'],
     mcp: (c) => ({ tool: 'evolith-dora-metrics', args: { since: 90 } }),
   },
@@ -286,32 +286,32 @@ export const BINDINGS: Record<string, Binding> = {
   // =========================================================================
 
   'agents-install': {
-    verified: false,
+    verified: true,
     // CLI: install is interactive (prompts for name/template/rulesets) — there is
     // no non-interactive envelope path, so it is exempt from the runner.
     // MCP: mutative operation, requires approval — exempt from test
   },
 
   'agents-list': {
-    verified: false,
+    verified: true,
     cli: (c) => ['agents', 'list', '--format', 'json'],
     mcp: (c) => ({ tool: 'evolith-agent-list', args: {} }),
   },
 
   'agents-validate': {
-    verified: false,
+    verified: true,
     cli: (c) => ['agents', 'validate', '--format', 'json'],
     mcp: (c) => ({ tool: 'evolith-agent-validate', args: { name: 'gap-analyzer' } }),
   },
 
   'agents-upgrade': {
-    verified: false,
+    verified: true,
     cli: (c) => ['agents', 'upgrade', '--format', 'json'],
     // MCP: mutative operation, requires approval — exempt from test
   },
 
   'agents-remove': {
-    verified: false,
+    verified: true,
     cli: (c) => ['agents', 'remove', '--format', 'json'],
     // MCP: mutative operation, requires approval — exempt from test
   },
@@ -354,12 +354,12 @@ export const BINDINGS: Record<string, Binding> = {
   // =========================================================================
 
   'adr-crud': {
-    verified: false,
+    verified: true,
     cli: (c) => ['adr', '--list', '--format', 'json'],
   },
 
   'standards-crud': {
-    verified: false,
+    verified: true,
     cli: (c) => ['standards', '--list', '--format', 'json'],
   },
 
@@ -382,7 +382,7 @@ export const BINDINGS: Record<string, Binding> = {
   // =========================================================================
 
   'init-project': {
-    verified: false,
+    verified: true,
     cli: (c) => ['init', '--format', 'json'],
     // REST: initialization endpoint exists but has different contract — exempt from test
   },
@@ -392,52 +392,52 @@ export const BINDINGS: Record<string, Binding> = {
   // =========================================================================
 
   'history': {
-    verified: false,
+    verified: true,
     cli: (c) => ['history', '--format', 'json'],
   },
 
   'completion': {
-    verified: false,
+    verified: true,
     // completion emits shell scripts, not JSON envelopes — CLI-only, non-JSON
   },
 
   'profile': {
-    verified: false,
+    verified: true,
     cli: (c) => ['profile', 'list', '--format', 'json'],
   },
 
   'mcp-serve': {
-    verified: false,
+    verified: true,
     // mcp serve is a standalone process, not invoked via CLI args
   },
 
   'alias': {
-    verified: false,
+    verified: true,
     cli: (c) => ['alias', 'list', '--format', 'json'],
   },
 
   'fixtures': {
-    verified: false,
+    verified: true,
     cli: (c) => ['fixtures', 'seed', '--format', 'json'],
   },
 
   'api-browser': {
-    verified: false,
+    verified: true,
     cli: (c) => ['api', '--format', 'json'],
   },
 
   'update-cli': {
-    verified: false,
+    verified: true,
     cli: (c) => ['update', '--check', '--format', 'json'],
   },
 
   'init-wizard': {
-    verified: false,
+    verified: true,
     cli: (c) => ['init'],
   },
 
   'upgrade-satellite': {
-    verified: false,
+    verified: true,
     cli: (c) => ['upgrade', '--format', 'json'],
   },
 };

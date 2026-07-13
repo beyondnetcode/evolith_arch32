@@ -151,7 +151,7 @@ export function pgvectorAdapter(config = {}) {
         const m = r.metadata || {};
         await client.query(UPSERT_SQL, [
           r.id,
-          m.text_preview ?? null,
+          m.text ?? m.text_preview ?? null, // full chunk body for retrieval (fallback to preview)
           m.section_heading ?? null,
           m.char_start ?? null,
           m.char_end ?? null,

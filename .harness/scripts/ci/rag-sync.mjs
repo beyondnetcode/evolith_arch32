@@ -83,8 +83,10 @@ export function chunkIds(content, sourceFile, corpusVersion) {
 }
 
 function metadataOf(chunk) {
-  const { text, ...meta } = chunk; // store metadata + preview, not the full text body
-  return meta;
+  // Keep the full `text` so DURABLE stores (pgvector) persist the retrievable
+  // chunk body — retrieval that returns only a 120-char preview cannot ground
+  // an agent. The non-durable `memory` adapter simply ignores unused fields.
+  return { ...chunk };
 }
 
 /**

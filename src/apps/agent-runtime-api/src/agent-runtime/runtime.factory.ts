@@ -133,7 +133,10 @@ export function makeSidecarEmbedder(url: string, model?: string): EmbedQuery {
  * conventions (`EVOLITH_RAG_PG_URL`, `EVOLITH_RAG_EMBED_URL`).
  */
 export function resolveKnowledgeAdapter(env: NodeJS.ProcessEnv = process.env): IKnowledgePort {
-  const pgUrl = env.AGENT_RUNTIME_KNOWLEDGE_PG_URL ?? env.EVOLITH_RAG_PG_URL ?? env.DATABASE_URL;
+  // Only an EXPLICIT RAG store URL enables pgvector — never the generic
+  // DATABASE_URL, which commonly points at an unrelated app DB and would
+  // silently (and wrongly) mis-target grounded retrieval / fail loud.
+  const pgUrl = env.AGENT_RUNTIME_KNOWLEDGE_PG_URL ?? env.EVOLITH_RAG_PG_URL;
   const rawMode = (env.AGENT_RUNTIME_KNOWLEDGE_MODE ?? '').trim().toLowerCase();
 
   let mode: 'pgvector' | 'in-memory';

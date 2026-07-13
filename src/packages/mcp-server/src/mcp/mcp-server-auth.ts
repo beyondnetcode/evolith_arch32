@@ -3,6 +3,7 @@ import * as crypto from 'node:crypto';
 import { ErrorCodes } from '../common/errors';
 import { failure, generateCorrelationId } from '../common/envelopes';
 import type { McpUserContext } from './mcp-user-context';
+import { verifyOAuthToken, type OAuthConfig, type JwksKeyResolver } from './oauth-resource-server';
 
 /**
  * Constant-time API-key comparison (GAP MCP-TIMING). Guards against the timing
@@ -24,6 +25,60 @@ const ADMIN_CONTEXT: McpUserContext = Object.freeze({
   environment: process.env.NODE_ENV || 'development',
   scopes: ['read', 'write', 'admin'],
 }) as McpUserContext;
+
+function writeUnauthorized(res: http.ServerResponse, message: string): null {
+  const correlationId = generateCorrelationId();
+  const err = failure(ErrorCodes.UNAUTHORIZED, message, { correlationId, tool: 'auth', durationMs: 0 });
+  res.writeHead(401, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(err));
+  return null;
+}
+
+/**
+ * GT-520 · EAG-15 / AC1 — remote Streamable HTTP authentication entry point.
+ *
+ * Order of precedence:
+ *  1. When OAuth is configured ({@link OAuthConfig}) and the request carries a
+ *     `Bearer` token that is NOT the shared API key, the token is validated as an
+ *     OAuth 2.1 access token (signature + iss/aud/exp). A valid token yields a
+ *     {@link McpUserContext} built from its VERIFIED claims — this is the identity
+ *     that flows into per-identity ABAC, never a raw request header.
+ *  2. Otherwise the existing local path ({@link validateAuth}: shared API key,
+ *     local HS256 JWT, or the dev `allowNoAuth` bypass) applies — preserving the
+ *     stdio/local developer experience unchanged.
+ *
+ * A remote request with no accepted credential is rejected with 401. When OAuth
+ * is configured, an unauthenticated request whose only credential is an
+ * invalid/expired bearer falls through to {@link validateAuth}, which 401s it
+ * (unless a shared API key or dev bypass independently authorizes it).
+ */
+export async function authenticateHttpRequest(
+  req: http.IncomingMessage,
+  res: http.ServerResponse,
+  apiKey: string | undefined,
+  allowNoAuth = false,
+  oauthConfig?: OAuthConfig | null,
+  keyResolver?: JwksKeyResolver,
+): Promise<McpUserContext | null> {
+  const authHeader = req.headers.authorization || '';
+  const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+
+  if (oauthConfig && bearerToken && !safeKeyEqual(bearerToken, apiKey)) {
+    const payload = await verifyOAuthToken(bearerToken, oauthConfig, keyResolver);
+    if (payload) return getContextFromPayload(payload);
+    // A bearer was presented but is not a valid OAuth token. It may still be a
+    // local HS256 JWT (validateAuth handles that); if not, validateAuth 401s.
+    // But if OAuth is the ONLY configured credential source (no shared API key,
+    // no local JWT secret, not a dev bypass), reject here so an invalid/expired
+    // OAuth bearer never silently degrades to an unauthenticated path.
+    const hasLocalCredential = !!apiKey || !!process.env.JWT_SECRET || allowNoAuth;
+    if (!hasLocalCredential) {
+      return writeUnauthorized(res, 'Invalid or expired OAuth bearer token');
+    }
+  }
+
+  return validateAuth(req, res, apiKey, allowNoAuth);
+}
 
 export function validateAuth(
   req: http.IncomingMessage,

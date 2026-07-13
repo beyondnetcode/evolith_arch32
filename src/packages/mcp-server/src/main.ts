@@ -73,27 +73,36 @@ export interface StartMcpServerOptions {
 }
 
 // ---------------------------------------------------------------------------
-// GT-520 · EAG-15 / AC1 — OAuth 2.1 bearer over Streamable HTTP: GATED (seam).
+// GT-520 · EAG-15 / AC1 — OAuth 2.1 bearer over Streamable HTTP: IMPLEMENTED
+// (IdP-agnostic); the concrete IdP choice remains gated on EAG-01.
 //
-// The Streamable HTTP transport already ships (see McpServerService.startHttp),
-// and HTTP requests are authenticated today via a shared API key or an
-// HS256 JWT signed with a locally-held JWT_SECRET (mcp-server-auth.ts). Full
-// OAuth 2.1 — validating a bearer access token issued by an EXTERNAL identity
-// provider (JWKS/introspection, audience + issuer checks, resource-server
-// metadata) — is intentionally NOT implemented here. It is blocked on the
-// EAG-01 identity decision (which IdP, one shared IdP vs per-tenant, token
-// audience model). Implementing a "fake" OAuth validator now would give a false
-// sense of federated auth, so the seam is left explicit:
+// The Streamable HTTP transport ships (see McpServerService.startHttp). Remote
+// requests are now authenticated by a GENERIC OAuth 2.1 resource-server
+// validator (oauth-resource-server.ts): when the OAuth env is set, a
+// `Authorization: Bearer <jwt>` is verified against the configured issuer's
+// JWKS (RS/PS/ES families) or a shared HS secret, with iss/aud/exp/nbf enforced,
+// and the VERIFIED claims map to McpUserContext — the identity that flows into
+// per-identity ABAC. An unauthenticated remote request (no/invalid/expired
+// bearer, no other credential) is rejected with 401 (mcp-server-auth.ts →
+// authenticateHttpRequest). Configure via env (no code change per IdP):
 //
-//   TODO(GT-520/EAG-01, GATED): plug an OAuth 2.1 resource-server validator into
-//   validateAuth() (mcp-server-auth.ts) — verify bearer against the chosen IdP's
-//   JWKS, enforce iss/aud/exp, and map verified claims → McpUserContext. Wire an
-//   `oauth` auth mode through startMcpServer/parseArgs once the IdP is selected.
+//   EVOLITH_MCP_OAUTH_ISSUER   — expected `iss` (required to enable OAuth)
+//   EVOLITH_MCP_OAUTH_JWKS_URI — issuer JWKS endpoint (asymmetric tokens)
+//   EVOLITH_MCP_OAUTH_SECRET   — shared secret (symmetric HS* tokens)
+//   EVOLITH_MCP_OAUTH_AUDIENCE — expected `aud` (optional but recommended)
 //
-// Everything downstream of identity is already hardened per-identity: the
-// dispatcher runs ABAC (native + OPA) on EVERY tools/call and audits the verdict
-// (see McpServerService.handleCallTool), so it is agnostic to how the identity
-// was established (API key, JWT, or a future OAuth token).
+// GATED (EAG-01): the SELECTION of the concrete IdP — which provider, one shared
+// IdP vs per-tenant, and the token audience model — is an org decision tracked
+// in the Tracker. The validator is deliberately not wired to any single vendor;
+// it works against any standards-compliant OAuth 2.1 / OIDC issuer once EAG-01
+// picks one and its issuer/JWKS/audience are supplied via the env above.
+//
+// The stdio/local path is unchanged: OAuth applies only to the remote HTTP
+// surface, and the shared API key / local HS256 JWT / dev `--allow-no-auth`
+// paths still work for local development. Everything downstream of identity is
+// already hardened per-identity: the dispatcher runs ABAC (native + OPA) on
+// EVERY tools/call and audits the verdict (see McpServerService.handleCallTool),
+// so it is agnostic to how the identity was established.
 // ---------------------------------------------------------------------------
 
 /**

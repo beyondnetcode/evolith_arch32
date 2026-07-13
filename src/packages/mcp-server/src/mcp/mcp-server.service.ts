@@ -24,7 +24,8 @@ import { generateCorrelationId } from '../common/envelopes';
 import { ErrorCodes } from '../common/errors';
 import { AbacEvaluator } from './abac-evaluator';
 import { mcpContextStorage, McpUserContext } from './mcp-user-context';
-import { validateAuth } from './mcp-server-auth';
+import { authenticateHttpRequest } from './mcp-server-auth';
+import { loadOAuthConfig, createJwksResolver, type OAuthConfig, type JwksKeyResolver } from './oauth-resource-server';
 import { handleCallTool, handleListTools, ToolCallResult } from './mcp-tool-dispatch';
 import { McpCacheService } from './mcp-cache.service';
 
@@ -70,6 +71,13 @@ export class McpServerService {
   private httpServer: http.Server | null = null;
   private apiKey?: string;
   private allowNoAuth = false;
+  // GT-520 · EAG-15 / AC1 — OAuth 2.1 resource-server config, derived from env at
+  // start(). When present, remote Streamable HTTP requests are authenticated
+  // against the configured issuer's JWKS/secret before ABAC. `null` = OAuth off
+  // (the API-key / local-JWT / dev path applies). The resolver is a field so
+  // tests can inject a pre-warmed JWKS key without a network round-trip.
+  private oauthConfig: OAuthConfig | null = null;
+  private oauthKeyResolver?: JwksKeyResolver;
   // StreamableHTTP is multi-client: one transport + Server per MCP session.
   // Keyed by the `mcp-session-id` the transport assigns on initialize. A single
   // shared transport (the old bug) rejected every second client with HTTP 400
@@ -219,11 +227,22 @@ export class McpServerService {
     const transport = options.transport ?? 'stdio';
     this.apiKey = options.apiKey;
     this.allowNoAuth = options.allowNoAuth ?? false;
+    // Derive the OAuth resource-server config from env once at startup. When the
+    // IdP-agnostic OAuth env is set (issuer + JWKS/secret), remote HTTP requests
+    // are validated as OAuth 2.1 access tokens; otherwise this stays null and the
+    // existing API-key/local-JWT/dev path is used unchanged.
+    this.oauthConfig = loadOAuthConfig(process.env);
+    if (this.oauthConfig && !this.oauthKeyResolver && this.oauthConfig.jwksUri) {
+      this.oauthKeyResolver = createJwksResolver(this.oauthConfig.jwksUri);
+    }
     this.server = this.buildServer();
 
     if (transport === 'http') {
       const isProduction = (process.env.NODE_ENV || 'development') === 'production';
-      if (!this.apiKey) {
+      if (this.oauthConfig) {
+        this.logger.log(`MCP HTTP OAuth resource-server enabled (issuer=${this.oauthConfig.issuer}${this.oauthConfig.jwksUri ? ', JWKS' : ', HS-secret'}). Remote requests require a valid Bearer access token.`);
+      }
+      if (!this.apiKey && !this.oauthConfig) {
         if (isProduction) {
           // validateAuth() ignores allowNoAuth in production for safety: every
           // request is rejected with 401 until EVOLITH_API_KEY / --api-key is set.
@@ -288,6 +307,34 @@ export class McpServerService {
     ensureDefaultMetrics();
 
     this.httpServer = http.createServer((req, res) => {
+      // Auth (below) may be async (OAuth JWKS lookup), so run the request handler
+      // in an async IIFE. authenticateHttpRequest / verifyOAuthToken never throw,
+      // but guard defensively so a rejection can't take down the HTTP server.
+      void this.handleHttpRequest(req, res, port).catch((err: unknown) => {
+        this.logger.error(`MCP HTTP handler error: ${err instanceof Error ? err.message : String(err)}`);
+        if (!res.headersSent) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ jsonrpc: '2.0', error: { code: -32603, message: 'Internal error' }, id: null }));
+        } else if (!res.writableEnded) {
+          res.end();
+        }
+      });
+    });
+
+    // Bind 0.0.0.0 by default so reverse proxies (Traefik/Coolify/k8s) can route
+    // to the container. Override with MCP_HTTP_HOST=127.0.0.1 for local-only use.
+    const host = process.env.MCP_HTTP_HOST ?? '0.0.0.0';
+    await new Promise<void>((resolve, reject) => {
+      this.httpServer!.listen(port, host, () => {
+        this.logger.log(`Evolith MCP HTTP server listening on http://${host}:${port}`);
+        resolve();
+      });
+      this.httpServer!.on('error', reject);
+    });
+  }
+
+  /** Per-request handler for the Streamable HTTP transport. */
+  private async handleHttpRequest(req: http.IncomingMessage, res: http.ServerResponse, port: number): Promise<void> {
       res.setHeader('Content-Security-Policy', "default-src 'none'");
       res.setHeader('X-Content-Type-Options', 'nosniff');
       res.setHeader('X-Frame-Options', 'DENY');
@@ -327,7 +374,14 @@ export class McpServerService {
         return;
       }
 
-      const context = validateAuth(req, res, this.apiKey, this.allowNoAuth);
+      const context = await authenticateHttpRequest(
+        req,
+        res,
+        this.apiKey,
+        this.allowNoAuth,
+        this.oauthConfig,
+        this.oauthKeyResolver,
+      );
       if (!context) return;
 
       const headerCorrelationId = (req.headers['x-correlation-id'] as string) || generateCorrelationId();
@@ -410,18 +464,6 @@ export class McpServerService {
 
       // GET (SSE stream) / DELETE without a session id have nothing to attach to.
       sendError(400, 'Missing mcp-session-id');
-    });
-
-    // Bind 0.0.0.0 by default so reverse proxies (Traefik/Coolify/k8s) can route
-    // to the container. Override with MCP_HTTP_HOST=127.0.0.1 for local-only use.
-    const host = process.env.MCP_HTTP_HOST ?? '0.0.0.0';
-    await new Promise<void>((resolve, reject) => {
-      this.httpServer!.listen(port, host, () => {
-        this.logger.log(`Evolith MCP HTTP server listening on http://${host}:${port}`);
-        resolve();
-      });
-      this.httpServer!.on('error', reject);
-    });
   }
 
   /** The actual bound TCP port for the HTTP transport (useful for tests). */

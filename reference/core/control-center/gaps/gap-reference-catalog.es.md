@@ -274,10 +274,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** S
 - **Proposed fix:** Catálogo versionado de controles (SOC2/ISO 27001/EU AI Act high-risk) + mapeo declarativo regla/ADR→control + emisión del control en el manifiesto de evidencia junto al owner.
 - **Acceptance criteria:**
-  - [ ] Cada violación puede portar `owner` + `complianceControl` resueltos y emitidos en la evidencia.
-  - [ ] El catálogo de controles está versionado y desacoplado del código de reglas.
+  - [x] Cada violación puede portar `owner` + `complianceControl` resueltos y emitidos en la evidencia. _(`Violation.complianceControls` + `enrichViolationsWithCompliance`, agregado en `buildEnforcerEvidence` y cableado en `emitEvaluationEvidence`)_
+  - [x] El catálogo de controles está versionado y desacoplado del código de reglas. _(`ComplianceControlCatalog`/`ComplianceMapping` con `version`, data-driven; `57b2cc09`)_
 - **Dependencies:** GT-518, GT-511.
-- **Status:** `PENDING`
+- **Status:** `COMPLETED`
 
 #### GT-526
 

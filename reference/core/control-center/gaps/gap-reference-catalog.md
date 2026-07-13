@@ -292,10 +292,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Cross-agent hook (Claude Code/Cursor/Copilot) that queries the compiled architecture contract and deterministically rejects/warns the non-conforming edit.
 - **Acceptance criteria:**
-  - [ ] An edit that violates an `enforce:` rule is blocked/flagged at edit time in at least one agent.
-  - [ ] The mechanism is cross-agent neutral (not tied to a single vendor).
+  - [ ] An edit that violates an `enforce:` rule is blocked/flagged at edit time in at least one agent. _(core done: `evaluateEdit` decides allow/block on a real edit with canonical `Violation`s; the per-agent adapter —Claude Code/Cursor PreToolUse hook— that enforces it is pending)_
+  - [x] The mechanism is cross-agent neutral (not tied to a single vendor). _(`evaluateEdit`/`EditBoundaryRule` is a pure, vendor-agnostic function)_
 - **Dependencies:** GT-516, GT-520.
-- **Status:** `PENDING`
+- **Status:** `IN-PROGRESS`
 
 #### GT-527
 

@@ -292,10 +292,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Hook cross-agente (Claude Code/Cursor/Copilot) que consulta el contrato de arquitectura compilado y rechaza/advierte el edit no conforme de forma determinista.
 - **Acceptance criteria:**
-  - [ ] Un edit que viola una regla `enforce:` es bloqueado/marcado en tiempo de edición en al menos un agente.
-  - [ ] El mecanismo es neutral cross-agente (no atado a un único proveedor).
+  - [ ] Un edit que viola una regla `enforce:` es bloqueado/marcado en tiempo de edición en al menos un agente. _(núcleo hecho: `evaluateEdit` decide allow/block sobre un edit real con `Violation` canónicas; falta el adapter por-agente —hook PreToolUse de Claude Code/Cursor— que lo aplique)_
+  - [x] El mecanismo es neutral cross-agente (no atado a un único proveedor). _(`evaluateEdit`/`EditBoundaryRule` es una función pura sin acoplamiento a proveedor)_
 - **Dependencies:** GT-516, GT-520.
-- **Status:** `PENDING`
+- **Status:** `IN-PROGRESS`
 
 #### GT-527
 

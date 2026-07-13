@@ -274,10 +274,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** S
 - **Proposed fix:** Versioned control catalog (SOC2/ISO 27001/EU AI Act high-risk) + declarative rule/ADR→control mapping + control emission in the evidence manifest alongside owner.
 - **Acceptance criteria:**
-  - [ ] Each violation can carry resolved `owner` + `complianceControl` emitted in evidence.
-  - [ ] The control catalog is versioned and decoupled from rule code.
+  - [x] Each violation can carry resolved `owner` + `complianceControl` emitted in evidence. _(`Violation.complianceControls` + `enrichViolationsWithCompliance`, aggregated in `buildEnforcerEvidence` and wired into `emitEvaluationEvidence`)_
+  - [x] The control catalog is versioned and decoupled from rule code. _(`ComplianceControlCatalog`/`ComplianceMapping` with `version`, data-driven; `57b2cc09`)_
 - **Dependencies:** GT-518, GT-511.
-- **Status:** `PENDING`
+- **Status:** `COMPLETED`
 
 #### GT-526
 

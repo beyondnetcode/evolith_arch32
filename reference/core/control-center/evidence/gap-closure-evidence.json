@@ -6595,6 +6595,24 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-525",
+      "closedAt": "2026-07-12",
+      "closureCommit": "57b2cc09",
+      "evidence": [
+        "src/packages/core-domain/src/domain/compliance.ts",
+        "src/packages/core-domain/src/domain/compliance.spec.ts",
+        "src/packages/core-domain/src/domain/violation.ts",
+        "src/packages/core-domain/src/evaluation/sarif-exporter.ts",
+        "src/packages/core-domain/src/evaluation/sarif-exporter.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand 'compliance|sarif-exporter' (27/27)",
+        "cd src/packages/core-domain && npx tsc -b tsconfig.json (clean)",
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand (910/910 core-domain)"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-511",
       "closedAt": "2026-07-12",
       "closureCommit": "d769c97b",

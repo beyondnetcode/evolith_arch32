@@ -29,6 +29,7 @@ import {
   makeViolation,
   type EnforcerEvidenceManifest,
 } from '../domain/violation';
+import { enrichViolationsWithCompliance } from '../domain/compliance';
 
 /** SARIF `result.level` vocabulary this exporter emits (a subset of the spec). */
 export type SarifLevel = 'error' | 'warning' | 'note';
@@ -222,10 +223,15 @@ export function exportEvaluationResultToSarif(
  * (pure — no clock). `source` labels the evidence origin (e.g. a ruleset/gate ref).
  */
 export function emitEvaluationEvidence(result: EvaluationResult, source: string): EnforcerEvidenceManifest {
-  const violations = result.gaps.map((gap) => {
+  const rawViolations = result.gaps.map((gap) => {
     const parsed = parseFindingLocation(gap.location);
+    // `requirementRef` is the rule id OR an ADR ref (violationToGapFinding uses `adrRef ?? ruleId`);
+    // keep the ADR shape so the compliance mapping (byAdr) resolves (GT-525).
+    const ref = gap.requirementRef || gap.id;
+    const adrRef = /^ADR-/i.test(gap.requirementRef ?? '') ? gap.requirementRef : undefined;
     return makeViolation({
-      ruleId: gap.requirementRef || gap.id,
+      ruleId: ref,
+      adrRef,
       tool: source,
       file: parsed?.uri ?? '',
       line: parsed?.startLine,
@@ -234,6 +240,8 @@ export function emitEvaluationEvidence(result: EvaluationResult, source: string)
       message: gap.message,
     });
   });
+  // GT-525: attribute each violation to its compliance control(s) before emitting evidence.
+  const violations = enrichViolationsWithCompliance(rawViolations);
 
   const evaluatedRules = [...new Set(result.rulesExecuted.map((r) => r.ruleId))].sort();
   const sourceRef =

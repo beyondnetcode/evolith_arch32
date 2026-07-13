@@ -49,6 +49,8 @@ export interface Violation {
   readonly adrRef?: string;
   /** Accountable owner (e.g. a CODEOWNERS entry), when enriched. */
   readonly owner?: string;
+  /** Compliance control ids this violation discharges (GT-525), when enriched. Not identity. */
+  readonly complianceControls?: readonly string[];
   /** Stable identity — normalized path + rule + tool + coords, message EXCLUDED. */
   readonly fingerprint: string;
   /** Baseline/waiver flag: a frozen violation does not block (GT-517). */
@@ -201,6 +203,8 @@ export interface EnforcerEvidenceManifest {
   readonly waiverRef?: string;
   readonly retentionPeriod?: string;
   readonly owner?: string;
+  /** Distinct compliance control ids the run's violations discharge (GT-525), when enriched. */
+  readonly complianceControls?: readonly string[];
   readonly violations: readonly Violation[];
 }
 
@@ -237,6 +241,8 @@ export function buildEnforcerEvidence(input: BuildEnforcerEvidenceInput): Enforc
   const blockingFailures = input.violations.filter((v) => v.severity === 'error' && !v.frozen).length;
   const hasWarn = input.violations.some((v) => v.severity === 'warning' && !v.frozen);
   const status: EnforcerEvidenceManifest['status'] = blockingFailures > 0 ? 'fail' : hasWarn ? 'warn' : 'pass';
+  // Aggregate the compliance controls carried by (already-enriched) violations (GT-525).
+  const complianceControls = [...new Set(input.violations.flatMap((v) => v.complianceControls ?? []))].sort();
 
   return {
     id: input.id,
@@ -253,6 +259,7 @@ export function buildEnforcerEvidence(input: BuildEnforcerEvidenceInput): Enforc
     waiverRef: input.waiverRef,
     retentionPeriod: input.retentionPeriod,
     owner: input.owner,
+    ...(complianceControls.length > 0 ? { complianceControls } : {}),
     violations: input.violations,
   };
 }

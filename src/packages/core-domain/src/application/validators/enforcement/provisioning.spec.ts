@@ -6,9 +6,16 @@ import {
   enforceSandboxPolicy,
   executeRestorePlan,
   InMemoryEvaluationCache,
+  materializeAndProvisionEnvironment,
   provisionEvaluationEnvironment,
+  type IRepositorySourceReader,
+  type IWorkspaceMaterializer,
+  type MaterializedEnvironment,
   type ProvisionedEnvironment,
+  type RepositorySourceRef,
+  type RepositorySources,
   resolveProjectScope,
+  resolveRestorePlanFromManifest,
   resolveRuntimeFromManifest,
   SandboxedProcessRunner,
 } from './provisioning';
@@ -204,5 +211,152 @@ describe('provisionEvaluationEnvironment (GT-512 PA-06 — compose scope + cache
     const retry = await provisionEvaluationEnvironment(base, new SequenceRunner([ok()]), cache);
     expect(retry.cached).toBe(false);
     expect(retry.ready).toBe(true);
+  });
+
+  it('honours an explicit restorePlan override (PA-05: manifest-resolved commands)', async () => {
+    const runner = new SequenceRunner([ok()]);
+    const env = await provisionEvaluationEnvironment(
+      { ...base, restorePlan: [{ command: 'pnpm', args: ['install', '--frozen-lockfile'] }] },
+      runner,
+    );
+    expect(env.ready).toBe(true);
+    expect(runner.calls).toHaveLength(1);
+    expect(runner.calls[0]).toMatchObject({ command: 'pnpm', args: ['install', '--frozen-lockfile'], cwd: '/c' });
+  });
+});
+
+describe('resolveRestorePlanFromManifest (GT-512 PA-05 — toolchain from evolith.yaml)', () => {
+  it('prefers explicit toolchain.restore commands over the runtime default', () => {
+    const plan = resolveRestorePlanFromManifest({
+      toolchain: { runtime: 'node', restore: [{ command: 'yarn', args: ['install', '--immutable'] }] },
+    });
+    expect(plan).toEqual([{ command: 'yarn', args: ['install', '--immutable'] }]);
+  });
+
+  it('falls back to the runtime default when no explicit commands are declared', () => {
+    expect(resolveRestorePlanFromManifest({ toolchain: { runtime: 'dotnet' } })).toEqual(buildRestorePlan('dotnet'));
+  });
+
+  it('drops malformed command entries and defaults args to []', () => {
+    const plan = resolveRestorePlanFromManifest({
+      toolchain: { runtime: 'node', restore: [{ args: ['x'] } as never, { command: 'make' }] },
+    });
+    expect(plan).toEqual([{ command: 'make', args: [] }]);
+  });
+
+  it('returns undefined when the manifest declares neither a usable runtime nor commands', () => {
+    expect(resolveRestorePlanFromManifest({ toolchain: { runtime: 'ruby' } })).toBeUndefined();
+    expect(resolveRestorePlanFromManifest(undefined)).toBeUndefined();
+  });
+});
+
+describe('materializeAndProvisionEnvironment (GT-512 PA-07 — fetch → materialize → restore → scope)', () => {
+  /** Stub reader delivering a TEXT tarball (no installed deps) + a resolved SHA. */
+  class StubReader implements IRepositorySourceReader {
+    readonly calls: RepositorySourceRef[] = [];
+    constructor(private readonly sources: RepositorySources) {}
+    async fetchSources(ref: RepositorySourceRef): Promise<RepositorySources> {
+      this.calls.push(ref);
+      return this.sources;
+    }
+  }
+  /** Stub materializer recording what it wrote and returning a fake checkout path. */
+  class StubMaterializer implements IWorkspaceMaterializer {
+    readonly written: Array<Readonly<Record<string, string>>> = [];
+    constructor(private readonly path = '/work/checkout') {}
+    async materialize(files: Readonly<Record<string, string>>): Promise<string> {
+      this.written.push(files);
+      return this.path;
+    }
+  }
+  const parseYaml: (t: string) => unknown = (t) => JSON.parse(t); // deterministic stub parser
+
+  const source: RepositorySourceRef = { owner: 'acme', repo: 'sat', ref: 'main' };
+  const files = {
+    'evolith.yaml': JSON.stringify({ toolchain: { runtime: 'node' } }),
+    'apps/a/src/index.ts': 'export const x = 1;',
+  };
+  const sources: RepositorySources = { commitSha: 'deadbeef', files };
+
+  it('fetches, materializes, restores, and exposes Nx-project-scoped analysis paths', async () => {
+    const reader = new StubReader(sources);
+    const materializer = new StubMaterializer('/work/checkout');
+    const runner = new SequenceRunner([ok()]);
+    const env = await materializeAndProvisionEnvironment(
+      { source, changedFiles: ['apps/a/src/index.ts'], projectRoots: ['apps/a', 'apps/b'] },
+      { reader, materializer, runner, parseManifest: parseYaml },
+    );
+
+    expect(reader.calls).toEqual([source]);
+    expect(materializer.written).toHaveLength(1);
+    expect(env.commitSha).toBe('deadbeef');
+    expect(env.checkoutPath).toBe('/work/checkout');
+    expect(env.runtime).toBe('node');
+    // restore ran the manifest-resolved node plan (npm ci) in the materialized checkout
+    expect(runner.calls).toHaveLength(1);
+    expect(runner.calls[0]).toMatchObject({ command: 'npm', args: ['ci'], cwd: '/work/checkout' });
+    // Nx scoping: only the affected project, joined under the restored checkout
+    expect(env.scope.projects).toEqual(['apps/a']);
+    expect(env.analysisPaths).toEqual(['/work/checkout/apps/a']);
+    expect(env.ready).toBe(true);
+  });
+
+  it('resolves the runtime + restore plan from the fetched manifest (PA-05), not hard-coded', async () => {
+    const dotnetFiles = { 'evolith.yaml': JSON.stringify({ toolchain: { runtime: 'dotnet' } }) };
+    const reader = new StubReader({ commitSha: 'c1', files: dotnetFiles });
+    const runner = new SequenceRunner([ok(), ok()]);
+    const env = await materializeAndProvisionEnvironment(
+      { source },
+      { reader, materializer: new StubMaterializer(), runner, parseManifest: parseYaml },
+    );
+    expect(env.runtime).toBe('dotnet');
+    expect(runner.calls.map((c) => c.command)).toEqual(['dotnet', 'dotnet']); // restore + build
+  });
+
+  it('serves a PA-03 cache hit WITHOUT re-fetching or re-materializing', async () => {
+    const reader = new StubReader(sources);
+    const materializer = new StubMaterializer();
+    const runner = new SequenceRunner([ok(), ok()]);
+    const cache = new InMemoryEvaluationCache<MaterializedEnvironment>();
+    const deps = { reader, materializer, runner, cache, parseManifest: parseYaml };
+    await materializeAndProvisionEnvironment({ source, changedFiles: ['apps/a/src/index.ts'] }, deps);
+    const second = await materializeAndProvisionEnvironment({ source, changedFiles: ['apps/a/src/index.ts'] }, deps);
+    expect(second.cached).toBe(true);
+    expect(reader.calls).toHaveLength(2); // reader IS consulted to resolve the SHA...
+    expect(materializer.written).toHaveLength(1); // ...but materialize/restore are skipped
+    expect(runner.calls).toHaveLength(1);
+  });
+
+  it('unscoped changes expose the whole restored checkout as the analysis path', async () => {
+    const reader = new StubReader(sources);
+    const env = await materializeAndProvisionEnvironment(
+      { source, changedFiles: ['unmapped/file.ts'], projectRoots: ['apps/a'] },
+      { reader, materializer: new StubMaterializer('/work/checkout'), runner: new SequenceRunner([ok()]), parseManifest: parseYaml },
+    );
+    expect(env.scope.unscoped).toBe(true);
+    expect(env.analysisPaths).toEqual(['/work/checkout']);
+  });
+
+  it('a manifest with no resolvable runtime skips restore rather than guessing a toolchain', async () => {
+    const reader = new StubReader({ commitSha: 'c2', files: { 'README.md': '# no manifest' } });
+    const runner = new SequenceRunner([ok()]);
+    const env = await materializeAndProvisionEnvironment(
+      { source },
+      { reader, materializer: new StubMaterializer(), runner, parseManifest: parseYaml },
+    );
+    expect(env.runtime).toBe('shell');
+    expect(runner.calls).toHaveLength(0); // nothing restored
+    expect(env.ready).toBe(true);
+  });
+
+  it('a failed restore yields ready:false and is NOT cached', async () => {
+    const reader = new StubReader(sources);
+    const cache = new InMemoryEvaluationCache<MaterializedEnvironment>();
+    const env = await materializeAndProvisionEnvironment(
+      { source },
+      { reader, materializer: new StubMaterializer(), runner: new SequenceRunner([fail()]), cache, parseManifest: parseYaml },
+    );
+    expect(env.ready).toBe(false);
+    expect(cache.has(env.cacheKey)).toBe(false);
   });
 });

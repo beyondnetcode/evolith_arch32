@@ -14,6 +14,7 @@
  */
 
 import { createHash } from 'node:crypto';
+import { posix as posixPath } from 'node:path';
 
 import type { EnforcerRuntime, IProcessRunner, ProcessResult, ProcessSpec } from './enforcer.types';
 
@@ -213,8 +214,20 @@ export class SandboxedProcessRunner implements IProcessRunner {
 // PA-05 Toolchain resolution from the evolith.yaml manifest
 // ---------------------------------------------------------------------------
 
+/** One restore/toolchain command as declared in the manifest. */
+interface ManifestCommand {
+  readonly command?: string;
+  readonly args?: readonly string[];
+}
+
+interface ToolchainSection {
+  readonly runtime?: string;
+  /** Explicit, ordered restore commands overriding the runtime default (PA-05). */
+  readonly restore?: readonly ManifestCommand[];
+}
+
 interface ToolchainManifest {
-  readonly toolchain?: { readonly runtime?: string };
+  readonly toolchain?: ToolchainSection;
   readonly runtime?: string;
 }
 
@@ -228,6 +241,26 @@ const RUNTIMES: readonly EnforcerRuntime[] = ['node', 'dotnet', 'php', 'python',
 export function resolveRuntimeFromManifest(manifest: ToolchainManifest | undefined): EnforcerRuntime | undefined {
   const declared = manifest?.toolchain?.runtime ?? manifest?.runtime;
   return declared && (RUNTIMES as readonly string[]).includes(declared) ? (declared as EnforcerRuntime) : undefined;
+}
+
+/**
+ * Resolve the ordered restore plan from the `evolith.yaml` manifest (PA-05) — the
+ * commands are read from the manifest, NOT hard-coded at the call site. Precedence:
+ *  1. explicit `toolchain.restore[]` in the manifest (any tenant-declared toolchain), else
+ *  2. the runtime default from {@link buildRestorePlan} for the manifest-declared runtime.
+ * Returns `undefined` when the manifest declares neither a usable runtime nor commands —
+ * the caller then skips restore rather than guessing a toolchain.
+ */
+export function resolveRestorePlanFromManifest(manifest: ToolchainManifest | undefined): ProcessSpec[] | undefined {
+  const explicit = manifest?.toolchain?.restore;
+  if (explicit && explicit.length) {
+    const specs = explicit
+      .filter((c): c is ManifestCommand & { command: string } => typeof c?.command === 'string' && c.command.length > 0)
+      .map<ProcessSpec>((c) => ({ command: c.command, args: c.args ? [...c.args] : [] }));
+    if (specs.length) return specs;
+  }
+  const runtime = resolveRuntimeFromManifest(manifest);
+  return runtime ? buildRestorePlan(runtime) : undefined;
 }
 
 // ---------------------------------------------------------------------------
@@ -281,6 +314,12 @@ export interface ProvisionRequest {
   readonly projectRoots?: readonly string[];
   /** Extra cache discriminators (e.g. ruleset version) so a ruleset bump misses. */
   readonly cacheDiscriminators?: readonly string[];
+  /**
+   * Explicit restore plan (PA-05: resolved from the `evolith.yaml` manifest rather than
+   * hard-coded). When set it overrides the runtime default; when omitted the runtime's
+   * {@link buildRestorePlan} default is used.
+   */
+  readonly restorePlan?: readonly ProcessSpec[];
 }
 
 export interface ProvisionedEnvironment {
@@ -312,7 +351,7 @@ export async function provisionEvaluationEnvironment(
   if (hit) return { ...hit, cached: true };
 
   const scope = resolveProjectScope(req.changedFiles ?? [], req.projectRoots ?? []);
-  const plan = buildRestorePlan(req.runtime);
+  const plan = req.restorePlan ?? buildRestorePlan(req.runtime);
   const restore = plan.length ? await executeRestorePlan(plan, runner, req.checkoutPath) : undefined;
   const ready = restore ? restore.ok : true;
 
@@ -326,5 +365,183 @@ export async function provisionEvaluationEnvironment(
     ready,
   };
   if (ready) cache.set(cacheKey, env);
+  return env;
+}
+
+// ---------------------------------------------------------------------------
+// PA-07 Fetch → materialize → provision integration (repo checkout seam)
+// ---------------------------------------------------------------------------
+
+/**
+ * An opaque locator for a satellite repository revision to analyze. The Core never
+ * receives raw disk paths (ADR-0074); it receives this reference and the reader resolves
+ * the bytes. Fields are all optional so the same shape covers GitHub coordinates, an
+ * evaluation `workspaceRef`, or an already-inlined payload.
+ */
+export interface RepositorySourceRef {
+  readonly owner?: string;
+  readonly repo?: string;
+  /** Branch, tag, or commit SHA to fetch. */
+  readonly ref?: string;
+  /** Opaque workspace reference (ADR-0074) when coordinates are not used. */
+  readonly workspaceRef?: string;
+}
+
+/**
+ * The result of a fetch: a "TEXT tarball" — a map of RELATIVE posix path → text content
+ * with NO installed dependencies (the identical shape `OverlayFileSystem` ingests). The
+ * `GitHubRepositorySourceReader` delivers exactly this; provisioning then materializes it
+ * to disk and runs the restore plan so an analyzer sees a RESTORED checkout.
+ */
+export interface RepositorySources {
+  /** Resolved commit SHA the sources correspond to (drives the PA-03 cache key). */
+  readonly commitSha: string;
+  /** RELATIVE posix path → text content. Deps are NOT included (restore installs them). */
+  readonly files: Readonly<Record<string, string>>;
+}
+
+/**
+ * Fetches repository sources as a TEXT tarball (no installed deps). The production adapter
+ * (`GitHubRepositorySourceReader`, infra) hits the GitHub API; tests inject a stub so the
+ * integration seam is exercised WITHOUT the network. Core depends only on this port.
+ */
+export interface IRepositorySourceReader {
+  fetchSources(ref: RepositorySourceRef): Promise<RepositorySources>;
+}
+
+/**
+ * Writes an in-memory files map to a real working directory and returns the ABSOLUTE
+ * checkout path the restore plan and analyzers run against. Implemented by an infra
+ * adapter over `IFileSystem` (`NodeWorkspaceMaterializer`); the Core stays stateless and
+ * path-agnostic behind this port. Tests inject a stub that records what was materialized.
+ */
+export interface IWorkspaceMaterializer {
+  materialize(files: Readonly<Record<string, string>>): Promise<string>;
+}
+
+/** Manifest file names probed (in order) inside the fetched sources for PA-05 resolution. */
+const MANIFEST_FILENAMES: readonly string[] = ['evolith.yaml', 'evolith.yml'];
+
+/** Parses `evolith.yaml` text into a manifest object (inject the infra YAML parser). */
+export type ManifestParser = (text: string) => unknown;
+
+export interface MaterializeProvisionRequest {
+  readonly source: RepositorySourceRef;
+  readonly changedFiles?: readonly string[];
+  readonly projectRoots?: readonly string[];
+  readonly cacheDiscriminators?: readonly string[];
+  /**
+   * Explicit runtime override. When omitted, the runtime AND restore plan are resolved
+   * from the fetched `evolith.yaml` manifest (PA-05) using {@link ManifestParser}.
+   */
+  readonly runtime?: EnforcerRuntime;
+}
+
+export interface MaterializedEnvironment extends ProvisionedEnvironment {
+  /** The revision reference that produced this checkout. */
+  readonly source: RepositorySourceRef;
+  /** Resolved commit SHA (from the reader). */
+  readonly commitSha: string;
+  /**
+   * Absolute, Nx-project-scoped paths exposed to the analyzers. One entry per affected
+   * project root (joined under the restored checkout); `[checkoutPath]` when unscoped.
+   */
+  readonly analysisPaths: readonly string[];
+}
+
+/** Locate + parse the `evolith.yaml` manifest inside a fetched files map (PA-05). */
+function readManifest(
+  files: Readonly<Record<string, string>>,
+  parse: ManifestParser | undefined,
+): ToolchainManifest | undefined {
+  if (!parse) return undefined;
+  const key = MANIFEST_FILENAMES.find((name) => typeof files[name] === 'string');
+  if (!key) return undefined;
+  try {
+    const parsed = parse(files[key]);
+    return parsed && typeof parsed === 'object' ? (parsed as ToolchainManifest) : undefined;
+  } catch {
+    return undefined; // a malformed manifest must not crash provisioning; treat as absent
+  }
+}
+
+/** Join the restored checkout with each scoped project root → absolute analyzer paths. */
+function resolveAnalysisPaths(checkoutPath: string, scope: ProjectScope): string[] {
+  if (scope.unscoped || scope.projects.length === 0) return [checkoutPath];
+  return scope.projects.map((project) => posixPath.join(checkoutPath, project));
+}
+
+/**
+ * Wire the real repo fetch/checkout into provisioning (GT-512 PA-07). Composes the whole
+ * chain an analyzer needs to run against a RESTORED, project-scoped checkout:
+ *
+ *  1. FETCH  — `reader.fetchSources(source)` returns the TEXT tarball (no installed deps)
+ *              and the resolved commit SHA (drives the PA-03 cache key).
+ *  2. MANIFEST (PA-05) — resolve the runtime + restore plan from the fetched `evolith.yaml`
+ *              rather than hard-coding; an explicit `req.runtime` wins.
+ *  3. MATERIALIZE — write the in-memory sources to a working dir (`materializer`).
+ *  4. RESTORE + SCOPE + CACHE — delegate to {@link provisionEvaluationEnvironment}, which
+ *              runs the restore plan through the (sandbox-wrapped) `runner`, computes the
+ *              Nx-affected scope, and caches by SHA + changed-files.
+ *  5. EXPOSE — return the restored checkout path plus the project-scoped `analysisPaths`.
+ *
+ * On a PA-03 cache HIT the fetch/materialize/restore are all skipped — the cache is keyed
+ * BEFORE any I/O so a re-evaluation of the same commit + scope never re-fetches. The
+ * `runner` SHOULD be a {@link SandboxedProcessRunner}. The `reader`/`materializer` are
+ * ports: tests inject stubs (no network, no real `npm ci`); production uses the GitHub
+ * reader + Node materializer. A checkout whose runtime cannot be resolved skips restore
+ * (`ready:true`, nothing to install) rather than guessing a toolchain.
+ */
+export async function materializeAndProvisionEnvironment(
+  req: MaterializeProvisionRequest,
+  deps: {
+    readonly reader: IRepositorySourceReader;
+    readonly materializer: IWorkspaceMaterializer;
+    readonly runner: IProcessRunner;
+    readonly cache?: IEvaluationCache<MaterializedEnvironment>;
+    readonly parseManifest?: ManifestParser;
+  },
+): Promise<MaterializedEnvironment> {
+  const cache = deps.cache ?? new InMemoryEvaluationCache<MaterializedEnvironment>();
+
+  const sources = await deps.reader.fetchSources(req.source);
+
+  const cacheKey = computeEvaluationCacheKey(
+    sources.commitSha,
+    req.changedFiles ?? [],
+    req.cacheDiscriminators ?? [],
+  );
+  const hit = cache.get(cacheKey);
+  if (hit) return { ...hit, cached: true };
+
+  const manifest = readManifest(sources.files, deps.parseManifest);
+  const runtime = req.runtime ?? resolveRuntimeFromManifest(manifest) ?? 'shell';
+  const restorePlan = req.runtime ? buildRestorePlan(req.runtime) : resolveRestorePlanFromManifest(manifest) ?? [];
+
+  const checkoutPath = await deps.materializer.materialize(sources.files);
+
+  const provisioned = await provisionEvaluationEnvironment(
+    {
+      runtime,
+      checkoutPath,
+      commitSha: sources.commitSha,
+      changedFiles: req.changedFiles,
+      projectRoots: req.projectRoots,
+      cacheDiscriminators: req.cacheDiscriminators,
+      restorePlan,
+    },
+    deps.runner,
+    // Inner cache disabled: this orchestrator owns caching of the richer MaterializedEnvironment.
+    new InMemoryEvaluationCache<ProvisionedEnvironment>(),
+  );
+
+  const env: MaterializedEnvironment = {
+    ...provisioned,
+    cacheKey,
+    source: req.source,
+    commitSha: sources.commitSha,
+    analysisPaths: resolveAnalysisPaths(checkoutPath, provisioned.scope),
+  };
+  if (env.ready) cache.set(cacheKey, env);
   return env;
 }

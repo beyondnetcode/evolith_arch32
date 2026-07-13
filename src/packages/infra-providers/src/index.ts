@@ -1,6 +1,8 @@
 export { NodeFileSystemProvider } from './node-filesystem.provider';
 export { NodeProcessRunner } from './node-process-runner.provider';
 export type { NodeProcessRunnerOptions } from './node-process-runner.provider';
+export { NodeWorkspaceMaterializer } from './workspace-materializer.provider';
+export type { NodeWorkspaceMaterializerOptions } from './workspace-materializer.provider';
 export { NestLoggerProvider, ConsoleLoggerProvider, NoOpLoggerProvider } from './logger.provider';
 export { YamlConfigParserProvider, JsonConfigParserProvider } from './config-parser.provider';
 export { DiskRulesetRepository, RulesetsNotFoundError } from './disk-ruleset.repository';

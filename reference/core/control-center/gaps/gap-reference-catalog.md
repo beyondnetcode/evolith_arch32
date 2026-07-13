@@ -498,6 +498,78 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Dependencies:** GT-533.
 - **Status:** `DEFERRED`
 
+#### GT-538
+
+**Title:** Durable vector-store adapter (pgvector) behind `rag-port.mjs`
+
+- **Purpose:** Make the RAG write-side operational — register a real `durable: true` adapter so `14-rag-index-sync.mjs` persists embeddings instead of failing closed.
+- **Evidence:** `.harness/scripts/ci/rag-port.mjs` ships only the non-durable `memory` adapter; `registerRagAdapter()` is defined but never called with a real vendor, so a live sync fails closed by design (GT-145) and nothing reaches a durable store. ADR-0090 §5 names pgvector the preferred self-hosted target; Postgres already runs on :5432.
+- **Impact:** Turns the well-tested chunk→embed→upsert pipeline into a real, queryable index — the precondition for GT-540 retrieval.
+- **Risk:** Vector-index tuning (dimension, ANN index) and migration ownership on the shared Postgres.
+- **Affected files:** a new `pgvector` adapter registered via `registerRagAdapter` in the CI layer; a Postgres migration for the vector table + the ADR-0090 §2 metadata columns.
+- **Component:** `Operations` · **Dimension:** Knowledge · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Implement `embed`/`upsert`/`delete` over pgvector with metadata filtering on the ADR-0090 §2 fields; select it via `EVOLITH_RAG_PROVIDER=pgvector`; keep `memory` as the dry-run/test default.
+- **Acceptance criteria:**
+  - [ ] `registerRagAdapter('pgvector', …)` provides a `durable: true` adapter; a live `14-rag-index-sync.mjs` run upserts real chunks and emits a truthful receipt.
+  - [ ] Metadata columns support filtering on `source_file`, `adr_id`, `language`, `corpus_version`.
+- **Dependencies:** ADR-0090; composes with GT-145.
+- **Status:** `PENDING`
+
+#### GT-539
+
+**Title:** Real embedding model behind the RAG port `embed()`
+
+- **Purpose:** Replace the deterministic pseudo-embedding with a real semantic embedding model so retrieval is actually semantic.
+- **Evidence:** `rag-port.mjs` `hashEmbed()` is a sha256 stand-in (stable but non-semantic); no `text-embedding-*` model is wired. ADR-0090 §3 requires declaring the model name in `corpus_version`; ADR-0003 governs model selection.
+- **Impact:** Semantic recall over the corpus (the whole point of RAG); enables meaningful cosine ranking in GT-540.
+- **Risk:** Provider cost/latency, API-key handling (least-privilege CI secret per the ops runbook), and dimension consistency between embed and store.
+- **Affected files:** the `embed()` implementation in the durable adapter (GT-538) or a dedicated embedding sub-adapter; `corpus_version` metadata to carry the model name.
+- **Component:** `Operations` · **Dimension:** Knowledge · **Type:** backend
+- **Criticality:** P1 · **Complexity:** S
+- **Proposed fix:** Behind the model-agnostic port, call a real embedding model; record the model id in `corpus_version` for cache invalidation; keep `memory`/`hashEmbed` as the offline/test default.
+- **Acceptance criteria:**
+  - [ ] Live embeddings come from a declared real model; the model id appears in chunk `corpus_version` metadata.
+  - [ ] Credentials are masked CI secrets; no key in diff or logs.
+- **Dependencies:** ADR-0090 §3; ADR-0003; composes with GT-538.
+- **Status:** `PENDING`
+
+#### GT-540
+
+**Title:** Production `IKnowledgePort` retrieval adapter (vector-store, semantic)
+
+- **Purpose:** Make the read-side real — semantic retrieval over the corpus so agents can ground recommendations, replacing the token-overlap stub.
+- **Evidence:** `src/packages/agent-runtime/src/adapters/knowledge/in-memory-knowledge.adapter.ts` scores by substring/heading overlap with "No vector embeddings" stated in its own docstring; `maturity-assessment.md:147` records "Knowledge / RAG — Not implemented as consolidated adapter" at HIGH priority; no agent currently calls `IKnowledgePort` at runtime.
+- **Impact:** Grounded, cited agent recommendations over the full ADR/ruleset corpus without context-window exhaustion (the ADR-0090 motivation).
+- **Risk:** Retrieval quality (chunking/recall) and keeping the read model in sync with the write-side schema.
+- **Affected files:** a new production `IKnowledgePort` adapter in `agent-runtime` querying the GT-538 store; `runtime.factory.ts` wiring to select it over the in-memory default.
+- **Component:** `agent-runtime` · **Dimension:** Knowledge · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Implement `IKnowledgePort.query` via cosine similarity over the pgvector store (GT-538) using the GT-539 embedding for the query text; return ranked `KnowledgeChunk[]` with citation metadata; keep `InMemoryKnowledgeAdapter` as the offline/test default.
+- **Acceptance criteria:**
+  - [ ] `query()` returns chunks ranked by real vector similarity with `score` and citation metadata.
+  - [ ] The `maturity-assessment.md` Knowledge/RAG row is updated from "Not implemented" to the delivered adapter.
+- **Dependencies:** GT-538; GT-539; ADR-0090.
+- **Status:** `PENDING`
+
+#### GT-541
+
+**Title:** Delta-sync workflow trigger + agent grounding (close the RAG loop)
+
+- **Purpose:** Close the loop end-to-end — keep the index one commit behind the markdown and have agents actually consult it.
+- **Evidence:** No workflow invokes `14-rag-index-sync.mjs` with `EVOLITH_RAG_SYNC=true` + a real `EVOLITH_RAG_PROVIDER`; the sync fails closed today (GT-145) and no agent reads `IKnowledgePort`.
+- **Impact:** Operational RAG: `reference/` commits delta-re-embed automatically (ADR-0090 §4) and Winston grounds recommendations in the live corpus.
+- **Risk:** CI secret handling and run-cost; ordering vs. the durable provider being available.
+- **Affected files:** a CI/GitHub workflow step wiring the sync flags + provider secret; agent-runtime call sites where Winston consults `IKnowledgePort` before recommending.
+- **Component:** `Operations` · **Dimension:** Knowledge · **Type:** backend
+- **Criticality:** P2 · **Complexity:** M
+- **Proposed fix:** Add a `reference/`-scoped workflow running the delta sync with masked provider credentials; add an agent grounding step that queries `IKnowledgePort` and cites the chunks used.
+- **Acceptance criteria:**
+  - [ ] A `reference/` commit triggers a delta re-embed that upserts only changed chunks and records a receipt.
+  - [ ] At least one agent (Winston) queries `IKnowledgePort` before recommending and cites `corpus_version`.
+- **Dependencies:** GT-538; GT-539; GT-540; ADR-0090 §4.
+- **Status:** `PENDING`
+
 ---
 
 ## 1. Gap Details

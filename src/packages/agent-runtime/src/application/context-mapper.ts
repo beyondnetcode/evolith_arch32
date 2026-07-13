@@ -35,9 +35,18 @@ export function toPhaseId(phase?: string): PhaseIdT | undefined {
   return (CANONICAL_PHASES as readonly string[]).includes(v) ? (v as PhaseIdT) : undefined;
 }
 
+/**
+ * Allowlist of canonical evaluation kinds a skill may forward to the Core. It MUST
+ * mirror the core-domain `EvaluationKind` union (evaluation-context.ts) — a skill
+ * that declares a kind absent from this list is silently dropped to the 'gate'
+ * fallback (that is the bug GT-535 hit: 'code-quality' is a quality-signal
+ * DIMENSION, not a kind). Kept as a literal (not imported) because this file is a
+ * type-only consumer of core-domain — the hexagon carries no runtime dependency.
+ */
 const KNOWN_KINDS: readonly string[] = [
   'gate', 'artifact', 'evidence', 'architecture', 'blueprint',
   'topology', 'checkpoint', 'deployment', 'rule', 'compliance',
+  'design', 'phase-artifacts',
 ];
 
 /** Build a canonical EvaluationContext from a runtime request + resolved skill. */

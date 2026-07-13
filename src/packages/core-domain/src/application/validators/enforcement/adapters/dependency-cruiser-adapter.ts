@@ -9,7 +9,7 @@
  * {@link IProcessRunner} (hardened by GT-512).
  */
 
-import { makeViolation, type Violation, type ViolationSeverity } from '../../../../evaluation/violation';
+import { makeViolation, type Violation, type ViolationSeverity } from '../../../../domain/violation';
 import { ShellEnforcerAdapter, type ShellEnforcerConfig } from '../shell-enforcer-adapter';
 import type { EnforcerAnalysisContext, IProcessRunner, ProcessResult } from '../enforcer.types';
 

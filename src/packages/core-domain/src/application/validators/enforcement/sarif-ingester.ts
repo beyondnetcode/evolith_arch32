@@ -8,7 +8,7 @@
  * security tools in GT-521.
  */
 
-import { makeViolation, type Violation, type ViolationSeverity } from '../../../evaluation/violation';
+import { makeViolation, type Violation, type ViolationSeverity } from '../../../domain/violation';
 
 /** SARIF result levels → canonical severity (SARIF default when omitted is `warning`). */
 const SARIF_LEVEL: Readonly<Record<string, ViolationSeverity>> = {

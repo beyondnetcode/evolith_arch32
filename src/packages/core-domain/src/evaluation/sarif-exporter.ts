@@ -28,7 +28,7 @@ import {
   FINDING_SEVERITY_TO_VIOLATION,
   makeViolation,
   type EnforcerEvidenceManifest,
-} from './violation';
+} from '../domain/violation';
 
 /** SARIF `result.level` vocabulary this exporter emits (a subset of the spec). */
 export type SarifLevel = 'error' | 'warning' | 'note';

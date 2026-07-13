@@ -8,7 +8,7 @@
  */
 
 import type { EnforceDescriptor, NormalizedRule } from '../../../domain/models/normalized-rule';
-import { makeViolation, type Violation } from '../../../evaluation/violation';
+import { makeViolation, type Violation } from '../../../domain/violation';
 import type { WorkspaceEvaluationContext } from '../evaluators/evaluator.interface';
 import { EnforcerEvaluator } from './enforcer-evaluator';
 import type { EnforcerRuntime, IEnforcerAdapter } from './enforcer.types';

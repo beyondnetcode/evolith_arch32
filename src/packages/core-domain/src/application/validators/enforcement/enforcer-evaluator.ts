@@ -14,7 +14,7 @@
  */
 
 import type { NormalizedRule } from '../../../domain/models/normalized-rule';
-import type { Violation } from '../../../evaluation/violation';
+import type { Violation } from '../../../domain/violation';
 import type { IRuleEvaluatorStrategy, RuleEvaluationResult, WorkspaceEvaluationContext } from '../evaluators/evaluator.interface';
 import type { IEnforcerAdapter } from './enforcer.types';
 import { isTimeoutError, monotonicNow, NoopEnforcerMetrics, type IEnforcerMetrics } from './enforcer-metrics';

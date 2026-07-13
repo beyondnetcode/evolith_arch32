@@ -22,7 +22,7 @@
  * supplied). Named exports + readonly interfaces, matching `violation.ts`.
  */
 
-import type { Violation } from '../../../evaluation/violation';
+import type { Violation } from '../../../domain/violation';
 
 /** Current schema version of a persisted {@link PolicyBaseline}. */
 export const POLICY_BASELINE_VERSION = '1';

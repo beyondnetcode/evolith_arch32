@@ -6,7 +6,7 @@ import type {
 } from './contracts/evaluation-result';
 import { EVALUATION_RESULT_SCHEMA_VERSION } from './contracts/evaluation-result';
 import { Verdict } from '../domain/verdict/verdict';
-import { ENFORCER_EVIDENCE_EVD_COVERAGE } from './violation';
+import { ENFORCER_EVIDENCE_EVD_COVERAGE } from '../domain/violation';
 import { ingestSarif, type SarifLog as IngesterSarifLog } from '../application/validators/enforcement/sarif-ingester';
 import {
   emitEvaluationEvidence,

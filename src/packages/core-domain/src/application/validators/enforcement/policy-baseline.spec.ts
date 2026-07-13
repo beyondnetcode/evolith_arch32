@@ -7,7 +7,7 @@
  *  - AC3: ratchet fails on growth, passes on subset; rebase shrinks on disappearance.
  */
 
-import { makeViolation, type Violation, type ViolationSeverity } from '../../../evaluation/violation';
+import { makeViolation, type Violation, type ViolationSeverity } from '../../../domain/violation';
 import {
   applyBaseline,
   decide,

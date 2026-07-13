@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
-import { KNOWN_RULE_ENGINES } from './contracts/evaluation-result';
+import { KNOWN_RULE_ENGINES } from '../evaluation/contracts/evaluation-result';
 import {
   buildEnforcerEvidence,
   ENFORCER_EVIDENCE_EVD_COVERAGE,

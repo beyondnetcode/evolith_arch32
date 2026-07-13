@@ -9,7 +9,7 @@
  */
 
 import type { NormalizedRule } from '../../../domain/models/normalized-rule';
-import type { Violation } from '../../../evaluation/violation';
+import type { Violation } from '../../../domain/violation';
 
 /** Runtime ecosystem an enforcer needs. Selects which adapter handles a rule. */
 export type EnforcerRuntime = 'node' | 'dotnet' | 'php' | 'python' | 'iac' | 'shell';

@@ -20,7 +20,7 @@
 
 import { createHash } from 'node:crypto';
 
-import type { FindingSeverity, GapFinding, RiskFinding, RiskLevel, RuleEngine } from './contracts/evaluation-result';
+import type { FindingSeverity, GapFinding, RiskFinding, RiskLevel, RuleEngine } from '../evaluation/contracts/evaluation-result';
 
 /** Severity vocabulary a source-analyzer reports. Maps to findings via the maps below. */
 export type ViolationSeverity = 'error' | 'warning' | 'info';

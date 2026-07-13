@@ -8,7 +8,7 @@
  * `buildSpec`/`parse`. It never spawns a process itself — that is the injected runner.
  */
 
-import type { Violation } from '../../../evaluation/violation';
+import type { Violation } from '../../../domain/violation';
 import type {
   EnforcerAnalysisContext,
   EnforcerRuntime,

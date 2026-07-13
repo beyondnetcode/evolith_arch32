@@ -23,7 +23,7 @@
  * will consume, but does not spawn a process.
  */
 
-import type { ViolationSeverity } from '../../../evaluation/violation';
+import type { ViolationSeverity } from '../../../domain/violation';
 import type { EnforcerRuntime } from './enforcer.types';
 import { DEPENDENCY_CRUISER_TOOL } from './adapters/dependency-cruiser-adapter';
 

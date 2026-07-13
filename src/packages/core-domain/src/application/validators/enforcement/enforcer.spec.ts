@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
 import type { NormalizedRule, EnforceDescriptor } from '../../../domain/models/normalized-rule';
-import { makeViolation } from '../../../evaluation/violation';
+import { makeViolation } from '../../../domain/violation';
 import type { IRuleEvaluatorStrategy, RuleEvaluationResult, WorkspaceEvaluationContext } from '../evaluators/evaluator.interface';
 import { CompositeRuleEvaluator } from './composite-rule-evaluator';
 import { EnforcerEvaluator } from './enforcer-evaluator';

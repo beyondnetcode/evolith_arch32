@@ -19,9 +19,9 @@
 
 import type { C4Element, C4Model, C4Relationship } from './c4-compiler';
 
-/** `ident = keyword "Name"` with an optional inline block on the same line. */
-const ELEMENT_RE =
-  /^([A-Za-z_][\w-]*)\s*=\s*[A-Za-z_]\w*\s+"([^"]*)"\s*(?:\{(.*)\})?\s*$/;
+/** `ident = keyword "Name"` capturing whatever follows the name (`{`, an inline block, or nothing). */
+const ELEMENT_OPEN_RE =
+  /^([A-Za-z_][\w-]*)\s*=\s*[A-Za-z_]\w*\s+"([^"]*)"\s*(.*)$/;
 /** `source -> destination` with an optional quoted description (and trailing tokens). */
 const RELATIONSHIP_RE = /^([A-Za-z_][\w-]*)\s*->\s*([A-Za-z_][\w-]*)\b/;
 /** A quoted tags/properties string inside an element block: `tags "k=v,k=v"` or bare `"k=v,…"`. */
@@ -61,9 +61,10 @@ function stripComment(line: string): string {
 export function parseStructurizrDsl(dsl: string): C4Model {
   const elements: C4Element[] = [];
   const relationships: C4Relationship[] = [];
+  const lines = dsl.split(/\r?\n/).map((l) => stripComment(l).trim());
 
-  for (const rawLine of dsl.split(/\r?\n/)) {
-    const line = stripComment(rawLine).trim();
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     if (!line) continue;
 
     // Relationships take precedence: `a -> b` is never a valid element definition.
@@ -73,11 +74,23 @@ export function parseStructurizrDsl(dsl: string): C4Model {
       continue;
     }
 
-    const el = ELEMENT_RE.exec(line);
+    const el = ELEMENT_OPEN_RE.exec(line);
     if (el) {
-      const [, id, name, block] = el;
+      const [, id, name, rest] = el;
       const element: { -readonly [K in keyof C4Element]: C4Element[K] } = { id, name };
-      if (block) {
+
+      // Collect the element's `{ … }` block whether inline or spread across lines. Real .dsl
+      // wraps the block: `domain = container "Domain" {` / `tags "…"` / `}`. Without joining,
+      // the tags line would be dropped and the element silently lost (no boundary rules).
+      if (rest.includes('{')) {
+        let block = rest.slice(rest.indexOf('{') + 1);
+        while (!block.includes('}') && i + 1 < lines.length) {
+          i += 1;
+          block += ` ${lines[i]}`;
+        }
+        const close = block.indexOf('}');
+        if (close !== -1) block = block.slice(0, close);
+
         const tagsMatch = TAGS_RE.exec(block);
         if (tagsMatch) {
           const mapping = parseTags(tagsMatch[1]);
@@ -86,6 +99,7 @@ export function parseStructurizrDsl(dsl: string): C4Model {
           if (mapping.adrRef !== undefined) element.adrRef = mapping.adrRef;
         }
       }
+
       elements.push(element);
       continue;
     }

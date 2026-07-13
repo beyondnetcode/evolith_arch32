@@ -55,6 +55,27 @@ describe('parseStructurizrDsl (GT-528 — Structurizr .dsl → C4Model)', () => 
     expect(model.relationships).toEqual([]);
   });
 
+  it('parses a MULTI-LINE element block (the common real-.dsl form) — tags not dropped', () => {
+    const model = parseStructurizrDsl(
+      [
+        'domain = container "Domain" {',
+        '  tags "path=src/domain,import=src/domain,adr=ADR-0002"',
+        '}',
+        'infra = container "Infrastructure" {',
+        '  tags "path=src/infrastructure,import=src/infrastructure"',
+        '}',
+        'infra -> domain "reads"',
+      ].join('\n'),
+    );
+    expect(model.elements).toEqual([
+      { id: 'domain', name: 'Domain', path: 'src/domain', importPrefix: 'src/domain', adrRef: 'ADR-0002' },
+      { id: 'infra', name: 'Infrastructure', path: 'src/infrastructure', importPrefix: 'src/infrastructure' },
+    ]);
+    // The multi-line elements are NOT lost, so the compiler emits a real rule (domain ↛ infra).
+    const rules = compileC4ToBoundaryRules(model);
+    expect(rules.find((r) => r.appliesTo === 'src/domain')?.forbiddenImports).toEqual(['src/infrastructure']);
+  });
+
   it('feeds compileC4ToBoundaryRules end-to-end: a parsed model yields boundary rules', () => {
     const model = parseStructurizrDsl(DSL);
     const rules = compileC4ToBoundaryRules(model);

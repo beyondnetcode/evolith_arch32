@@ -12,3 +12,4 @@ export * from './approval.port';
 export * from './agent-engine.port';
 export * from './knowledge.port';
 export * from './quality-signal-provider.port';
+export * from './structural-reviewer.port';

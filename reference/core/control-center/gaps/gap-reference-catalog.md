@@ -163,11 +163,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Add a SARIF exporter of `EvaluationResult` (`evolith evaluate --format sarif`); add a CI drift-gate on the GitHub/GitLab Checks API (GitHub App with `checks:write` + GHAS in private repos; fallback = PR comment + exit code); emit the enforcer-evidence manifest (EVD-01..03 via the unified `EvidenceNormalizer`); add a waiver flow (request/approve/version/expire) for `waiverRef`; enrich owner via CODEOWNERS.
 - **Acceptance criteria:**
-  - [ ] A PR that violates an ADR is blocked with a comment citing the ADR + owner.
-  - [ ] `evolith evaluate --format sarif` emits valid SARIF; the evidence manifest carries EVD-01..03.
-  - [ ] A waiver path (request/approve/version/expire) exists for `waiverRef`.
+  - [~] A PR that violates an ADR is blocked with a comment citing the ADR + owner. _(Wave 6 `41135566`: `evaluateDriftGate` blocks on retained error violations, cites the ADR id + owner resolved from CODEOWNERS (`domain/codeowners.ts`), renders a PR-comment body + non-zero exit code via `evolith evaluate --format drift`. **The live GitHub/GitLab Checks-API publish (GitHub App + `checks:write`/GHAS) is deploy-gated** behind `IChecksPublisher`; the mandated `PrCommentFallbackPublisher` is wired)_
+  - [x] `evolith evaluate --format sarif` emits valid SARIF; the evidence manifest carries EVD-01..03. _(reuses the existing core-domain `sarif-exporter` via a shared `evaluationResultToViolations`; `evolith evaluate --evidence <path>` emits the enforcer-evidence manifest via `buildEnforcerEvidence`)_
+  - [~] A waiver path (request/approve/version/expire) exists for `waiverRef`. _(deterministic `domain/waiver.ts` state machine + `applyWaivers` suppression with audit trail — valid approved waiver suppresses a finding until expiry, expired does not; `IWaiverStore` seam. **Remaining:** durable (fs/db) store + dedicated CLI `waiver` subcommand)_
 - **Dependencies:** GT-514, GT-516.
-- **Status:** `PENDING`
+- **Progress (2026-07-13, Wave 6, commit `41135566`):** Landed at the core-domain seam (reuses `sarif-exporter`/`EvidenceNormalizer`, Core stays pure — live Checks API behind a port). core-domain 1018/1018 + CLI evaluate 6/6 green. Kept `IN-PROGRESS`: the live Checks-API publish, a durable waiver store, and the CLI waiver subcommand are the deploy/polish remainders.
+- **Status:** `IN-PROGRESS`
 
 #### GT-519
 
@@ -538,10 +539,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** S
 - **Proposed fix:** Behind the model-agnostic port, call the model fixed by ADR-0112 — **Qwen3-Embedding (Apache-2.0)**, default `0.6B`, dim 1024, via a local inference sidecar; record the model id in `corpus_version` for cache invalidation; keep `memory`/`hashEmbed` as the offline/test default.
 - **Acceptance criteria:**
-  - [ ] Live embeddings come from the declared OSS model (Qwen3-Embedding); the model id appears in chunk `corpus_version` metadata.
-  - [ ] No corpus egress — embeddings computed on-perimeter by the sidecar.
+  - [~] Live embeddings come from the declared OSS model (Qwen3-Embedding); the model id appears in chunk `corpus_version` metadata. _(Wave 6 `c4e612b7`: `rag-embed-qwen3.mjs` `makeQwen3Embedder()` POSTs to a local sidecar (`EVOLITH_RAG_EMBED_URL`/`_MODEL`, default `qwen3-embedding-0.6b`, dim 1024); the pgvector adapter's `embed()` uses it when configured, `hashEmbed` offline; `rag-sync.mjs` folds the model id into `corpus_version`. **Actually running the Qwen3 sidecar is deploy-gated**)_
+  - [x] No corpus egress — embeddings computed on-perimeter by the sidecar. _(injected `fetch` seam, no network lib imported at load; the sidecar is on-perimeter by construction; fail-closed on transport error / wrong dimension)_
 - **Dependencies:** ADR-0090 §3; ADR-0003; ADR-0112 (platform: Qwen3-Embedding); composes with GT-538.
-- **Status:** `PENDING`
+- **Progress (2026-07-13, Wave 6, commit `c4e612b7`):** Real model-agnostic embedder wired at the correct `.harness` rag-port seam (reusing the GT-538 durable adapter, not a parallel abstraction); dimension consistency asserted (model dim == store 1024, fail-closed). rag node:tests 38/38 green (qwen3 12 · integration 7 · pgvector 10 · sync 9). Kept `IN-PROGRESS`: the running sidecar + a `model-registry.json` ADR-0003 entry (`qwen3-embedding-0.6b`, capability `embedding`) are the deploy/governance remainders.
+- **Status:** `IN-PROGRESS`
 
 #### GT-540
 

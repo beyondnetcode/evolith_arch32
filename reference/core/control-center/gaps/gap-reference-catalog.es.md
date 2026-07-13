@@ -161,11 +161,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Agregar un exportador SARIF de `EvaluationResult` (`evolith evaluate --format sarif`); agregar un gate de drift en CI sobre la Checks API de GitHub/GitLab (GitHub App con `checks:write` + GHAS en repos privados; fallback = comentario de PR + exit code); emitir el manifiesto de enforcer-evidence (EVD-01..03 vía el `EvidenceNormalizer` unificado); agregar un flujo de waiver (request/approve/version/expire) para `waiverRef`; enriquecer owner vía CODEOWNERS.
 - **Acceptance criteria:**
-  - [ ] Un PR que viola un ADR es bloqueado con un comentario que cita el ADR + owner.
-  - [ ] `evolith evaluate --format sarif` emite SARIF válido; el manifiesto de evidencia lleva EVD-01..03.
-  - [ ] Existe una ruta de waiver (request/approve/version/expire) para `waiverRef`.
+  - [~] Un PR que viola un ADR es bloqueado con un comentario que cita el ADR + owner. _(Ola 6 `41135566`: `evaluateDriftGate` bloquea por violaciones error, cita ADR id + owner desde CODEOWNERS, arma cuerpo de PR-comment + exit code vía `evolith evaluate --format drift`. **El publish live a la Checks API (GitHub App + `checks:write`/GHAS) es deploy-gated** tras `IChecksPublisher`; el `PrCommentFallbackPublisher` mandatorio está cableado)_
+  - [x] `evolith evaluate --format sarif` emite SARIF válido; el manifiesto de evidencia lleva EVD-01..03. _(reusa el `sarif-exporter` existente; `evolith evaluate --evidence <path>` emite el manifiesto vía `buildEnforcerEvidence`)_
+  - [~] Existe una ruta de waiver (request/approve/version/expire) para `waiverRef`. _(máquina de estados determinista `domain/waiver.ts` + `applyWaivers` con auditoría; **falta:** store durable + subcomando CLI `waiver`)_
 - **Dependencies:** GT-514, GT-516.
-- **Status:** `PENDING`
+- **Progreso (2026-07-13, Ola 6, commit `41135566`):** En el seam de core-domain (reusa `sarif-exporter`/`EvidenceNormalizer`, el Core queda puro). core-domain 1018/1018 + CLI evaluate 6/6. Queda `IN-PROGRESS`: publish live Checks API + store durable de waivers + subcomando CLI.
+- **Status:** `IN-PROGRESS`
 
 #### GT-519
 
@@ -534,10 +535,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** S
 - **Proposed fix:** Detrás del puerto model-agnostic, llamar al modelo fijado por el ADR-0112 — **Qwen3-Embedding (Apache-2.0)**, default `0.6B`, dim 1024, vía un sidecar de inferencia local; registrar el id del modelo en `corpus_version` para invalidación de caché; conservar `memory`/`hashEmbed` como default offline/test.
 - **Acceptance criteria:**
-  - [ ] Los embeddings live provienen de un modelo real declarado; el id del modelo aparece en la metadata `corpus_version` de los chunks.
-  - [ ] Las credenciales son secretos CI enmascarados; ninguna key en el diff ni en los logs.
+  - [~] Los embeddings live provienen de un modelo real declarado; el id del modelo aparece en la metadata `corpus_version` de los chunks. _(Ola 6 `c4e612b7`: `rag-embed-qwen3.mjs` POST a sidecar local (`EVOLITH_RAG_EMBED_URL`/`_MODEL`, default `qwen3-embedding-0.6b`, dim 1024); el adapter pgvector usa el modelo cuando está configurado, `hashEmbed` offline; `rag-sync.mjs` pliega el model id en `corpus_version`. **Correr el sidecar Qwen3 es deploy-gated**)_
+  - [x] Las credenciales son secretos CI enmascarados; ninguna key en el diff ni en los logs. _(config por env; seam `fetch` inyectado, sin lib de red importada en load; sidecar on-perimeter, fail-closed ante error de transporte / dimensión incorrecta)_
 - **Dependencies:** ADR-0090 §3; ADR-0003; ADR-0112 (plataforma: Qwen3-Embedding); compone con GT-538.
-- **Status:** `PENDING`
+- **Progreso (2026-07-13, Ola 6, commit `c4e612b7`):** Embedder model-agnostic cableado en el seam rag-port `.harness` correcto (reusa el adapter durable GT-538); consistencia de dimensión asertada (modelo == store 1024, fail-closed). rag node:tests 38/38. Queda `IN-PROGRESS`: sidecar corriendo + entrada `model-registry.json` (ADR-0003) para `qwen3-embedding-0.6b`.
+- **Status:** `IN-PROGRESS`
 
 #### GT-540
 

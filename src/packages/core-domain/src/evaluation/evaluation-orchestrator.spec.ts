@@ -2,6 +2,7 @@ import { EvaluationOrchestrator } from './evaluation-orchestrator.service';
 import type { IEvaluationPipeline } from './ports/evaluation-pipeline.port';
 import type { IWorkspaceReferenceResolver } from './ports/workspace-reference-resolver.port';
 import type { EvaluationContext } from './contracts';
+import { normalizeEvidence } from './contracts';
 import type { EvaluationVerdict } from '../domain/satellite-manifest';
 import { Verdict } from '../domain/verdict/verdict';
 
@@ -129,6 +130,53 @@ describe('EvaluationOrchestrator (GT-378)', () => {
       expect(r.overallVerdict).toBe(Verdict.PASS);
       expect(r.results.blueprint).toBeUndefined();
       expect(r.results.gate).toHaveLength(2);
+    });
+  });
+
+  describe('quality-signal seam wiring (GT-533 · ADR-0111)', () => {
+    const perf = normalizeEvidence({
+      source: 'lighthouse',
+      dimension: 'performance',
+      determinism: 'deterministic',
+      metrics: { score: 0.42 },
+      findings: [{ code: 'lcp', severity: 'high', message: 'slow LCP' }],
+      provenance: { collectedBy: 'lighthouse', adapterVersion: '11.0.0', artifactHash: 'sha256:abc' },
+    });
+
+    it('surfaces the evidence-derived signal on the result when the context carries qualitySignals', async () => {
+      const pipeline: IEvaluationPipeline = { evaluate: async () => makeVerdict(true) };
+      const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5');
+      const r = await orch.evaluate({ ...ctx, qualitySignals: [perf] });
+
+      expect(r.qualitySignals).toEqual([
+        { dimension: 'performance', status: 'present', evidence: [perf] },
+      ]);
+      // Received Evidence[] actually influenced the result's signals.
+      expect(r.qualitySignals?.[0].evidence[0].findings[0].code).toBe('lcp');
+      // Advisory only: the verdict is untouched by the presence of evidence.
+      expect(r.overallVerdict).toBe(Verdict.PASS);
+    });
+
+    it('surfaces a no-evidence signal and still succeeds when the context carries NO qualitySignals', async () => {
+      const pipeline: IEvaluationPipeline = { evaluate: async () => makeVerdict(true) };
+      const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5');
+      const r = await orch.evaluate(ctx); // no qualitySignals
+
+      expect(r.qualitySignals).toEqual([
+        { dimension: 'quality', status: 'no-evidence', evidence: [] },
+      ]);
+      // Absence of evidence is advisory — it never fails the evaluation.
+      expect(r.overallVerdict).toBe(Verdict.PASS);
+      expect(r.outcome).toBe('approved');
+    });
+
+    it('does not fail a passing evaluation merely because evidence is absent (empty array)', async () => {
+      const pipeline: IEvaluationPipeline = { evaluate: async () => makeVerdict(true) };
+      const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5');
+      const r = await orch.evaluate({ ...ctx, qualitySignals: [] });
+
+      expect(r.qualitySignals?.[0].status).toBe('no-evidence');
+      expect(r.overallVerdict).toBe(Verdict.PASS);
     });
   });
 });

@@ -9,6 +9,7 @@
 
 import type { PhaseId } from '../../domain/sdlc/phase-id';
 import type { Verdict, VerdictReason } from '../../domain/verdict/verdict';
+import type { EvidenceSignal } from './quality-evidence';
 
 /** Schema version of this contract (bumped only on incompatible changes). */
 export const EVALUATION_RESULT_SCHEMA_VERSION = '1.0.0';
@@ -270,6 +271,14 @@ export interface EvaluationResult {
   readonly recommendations: readonly Recommendation[];
   readonly requiredActions: readonly RequiredAction[];
   readonly decisionRecommendation?: DecisionRecommendation;
+  /**
+   * Per-dimension signals derived from the inline quality {@link EvidenceSignal}
+   * evidence received on the context (ADR-0111 / GT-533). The Core READS the
+   * received `Evidence[]` and folds a signal per observed dimension; a context
+   * with no evidence surfaces a single `no-evidence` signal — advisory, never a
+   * failure. See {@link foldQualitySignals}.
+   */
+  readonly qualitySignals?: readonly EvidenceSignal[];
 
   // --- Confidence & rationale ---
   readonly confidence: number; // 0..1

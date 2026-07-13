@@ -13,7 +13,7 @@
 
 import { Verdict } from '../domain/verdict/verdict';
 import type { EvaluationContext } from './contracts';
-import { EvaluationResult, DecisionRecommendation } from './contracts';
+import { EvaluationResult, DecisionRecommendation, foldQualitySignals } from './contracts';
 import type { IEvaluationPipeline } from './ports/evaluation-pipeline.port';
 import type { IWorkspaceReferenceResolver, ResolvedWorkspace } from './ports/workspace-reference-resolver.port';
 import type { KindEvaluator, KindEvaluation } from './ports/kind-evaluator.port';
@@ -53,9 +53,14 @@ export class EvaluationOrchestrator {
       result = this.merge(result, ke);
     }
 
+    // Fold the inline quality Evidence[] carried on the context into per-dimension
+    // signals (ADR-0111 / GT-533). The Core only READS the received evidence — it
+    // never executes a provider; a context with no evidence yields a single
+    // `no-evidence` signal (advisory), so the verdict is never affected by absence.
     // Recompute the non-binding decision recommendation from the final verdict.
     return {
       ...result,
+      qualitySignals: foldQualitySignals(ctx.qualitySignals),
       decisionRecommendation: this.buildDecisionRecommendation(ctx, result.overallVerdict),
     };
   }

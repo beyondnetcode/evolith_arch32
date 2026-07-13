@@ -10,6 +10,12 @@ import {
   EvaluationOrchestrator,
   createDefaultKindEvaluators,
   exportEvaluationResultToSarif,
+  emitEvaluationEvidence,
+  evaluateDriftGate,
+  PrCommentFallbackPublisher,
+  parseCodeowners,
+  DRIFT_GATE_SOURCE,
+  type CodeownersRule,
   type EvaluationContext,
   type IEvaluationPipeline,
   type IWorkspaceReferenceResolver,
@@ -32,6 +38,7 @@ interface EvaluateCommandOptions {
   phase?: string;
   topology?: string;
   format?: string;
+  evidence?: string;
 }
 
 /**
@@ -130,11 +137,31 @@ export class EvaluateCommand extends BaseEvolithCommand {
       schemaVersion: result.schemaVersion,
     });
 
+    // GT-518: emit the enforcer-evidence manifest (EVD-01..03 via the unified evidence
+    // normalizer) as a side output when requested — independent of the stdout format so
+    // SARIF stays a pure SARIF log. Carries the same evidence shape every surface produces.
+    if (options?.evidence) {
+      const fs = await import('fs-extra');
+      const manifest = emitEvaluationEvidence(result, DRIFT_GATE_SOURCE);
+      await fs.writeFile(path.resolve(options.evidence), JSON.stringify(manifest, null, 2), 'utf-8');
+    }
+
     const format = options?.format || 'json';
     if (format === 'sarif') {
       // GT-518: emit a SARIF 2.1.0 log (gaps/risks as `result`s) for the CI/PR
       // drift gate and any SARIF-consuming code scanner (GitHub code scanning).
       console.log(JSON.stringify(exportEvaluationResultToSarif(result)));
+    } else if (format === 'drift') {
+      // GT-518: the PR/CI drift gate. Cite the violated ADR + accountable owner
+      // (resolved from CODEOWNERS), print the PR-comment body and exit non-zero on
+      // block. The live Checks-API publish is deploy-gated behind IChecksPublisher;
+      // this is the mandated deploy-gate-free fallback (never a silent no-op).
+      const codeowners = await this.loadCodeowners(ctx.workspaceRef ?? process.cwd());
+      const decision = evaluateDriftGate({ result, codeowners });
+      const published = await new PrCommentFallbackPublisher().publish(decision);
+      console.log(published.body);
+      if (published.exitCode !== 0) process.exit(published.exitCode);
+      return;
     } else if (format === 'json') {
       console.log(JSON.stringify(envelope, null, 2));
     } else {
@@ -150,6 +177,28 @@ export class EvaluateCommand extends BaseEvolithCommand {
     if (result.overallVerdict === 'FAIL' || result.outcome === 'rejected') {
       process.exit(1);
     }
+  }
+
+  /**
+   * Load and parse the repo's CODEOWNERS (for drift-gate owner enrichment) from the
+   * conventional locations under the workspace. Returns `[]` when none exists — owner
+   * resolution degrades to "unassigned" rather than failing the gate.
+   */
+  private async loadCodeowners(workspaceRef: string): Promise<readonly CodeownersRule[]> {
+    const fs = await import('fs-extra');
+    const root = path.resolve(workspaceRef);
+    const candidates = ['.github/CODEOWNERS', 'CODEOWNERS', 'docs/CODEOWNERS'];
+    for (const rel of candidates) {
+      const full = path.join(root, rel);
+      try {
+        if (await fs.pathExists(full)) {
+          return parseCodeowners(await fs.readFile(full, 'utf-8'));
+        }
+      } catch {
+        // Unreadable CODEOWNERS is non-fatal — the gate still blocks, owner is just unassigned.
+      }
+    }
+    return [];
   }
 
   private async buildContext(options?: EvaluateCommandOptions): Promise<EvaluationContext> {
@@ -209,8 +258,16 @@ export class EvaluateCommand extends BaseEvolithCommand {
     return val;
   }
 
-  @Option({ flags: '-f, --format [string]', description: 'Output format (json | text | sarif). Default: json' })
+  @Option({ flags: '-f, --format [string]', description: 'Output format (json | text | sarif | drift). Default: json' })
   parseFormat(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--evidence [path]',
+    description: 'Write the enforcer-evidence manifest (EVD-01..03) to a file (GT-518)',
+  })
+  parseEvidence(val: string): string {
     return val;
   }
 }

@@ -28,6 +28,7 @@ import {
   FINDING_SEVERITY_TO_VIOLATION,
   makeViolation,
   type EnforcerEvidenceManifest,
+  type Violation,
 } from '../domain/violation';
 import { enrichViolationsWithCompliance } from '../domain/compliance';
 
@@ -216,14 +217,13 @@ export function exportEvaluationResultToSarif(
 }
 
 /**
- * Emit the auditable evidence manifest (EVD-01..04) for an evaluation result. Each
- * {@link GapFinding} is converted to a canonical {@link Violation} (rule id =
- * `requirementRef`), then {@link buildEnforcerEvidence} derives the integrity fields
- * (EVD-03: status, blockingFailures). `generatedAt` is taken from `result.evaluatedAt`
- * (pure — no clock). `source` labels the evidence origin (e.g. a ruleset/gate ref).
+ * Convert an {@link EvaluationResult}'s gaps into canonical {@link Violation}s (rule id =
+ * `requirementRef`, ADR ref preserved when the requirement is an `ADR-*` ref). `source` labels
+ * the producing tool/gate. Shared by {@link emitEvaluationEvidence} and the drift gate so a
+ * single mapping produces the evidence manifest regardless of which surface asked for it.
  */
-export function emitEvaluationEvidence(result: EvaluationResult, source: string): EnforcerEvidenceManifest {
-  const rawViolations = result.gaps.map((gap) => {
+export function evaluationResultToViolations(result: EvaluationResult, source: string): Violation[] {
+  return result.gaps.map((gap) => {
     const parsed = parseFindingLocation(gap.location);
     // `requirementRef` is the rule id OR an ADR ref (violationToGapFinding uses `adrRef ?? ruleId`);
     // keep the ADR shape so the compliance mapping (byAdr) resolves (GT-525).
@@ -240,8 +240,18 @@ export function emitEvaluationEvidence(result: EvaluationResult, source: string)
       message: gap.message,
     });
   });
+}
+
+/**
+ * Emit the auditable evidence manifest (EVD-01..04) for an evaluation result. Each
+ * {@link GapFinding} is converted to a canonical {@link Violation} (rule id =
+ * `requirementRef`), then {@link buildEnforcerEvidence} derives the integrity fields
+ * (EVD-03: status, blockingFailures). `generatedAt` is taken from `result.evaluatedAt`
+ * (pure — no clock). `source` labels the evidence origin (e.g. a ruleset/gate ref).
+ */
+export function emitEvaluationEvidence(result: EvaluationResult, source: string): EnforcerEvidenceManifest {
   // GT-525: attribute each violation to its compliance control(s) before emitting evidence.
-  const violations = enrichViolationsWithCompliance(rawViolations);
+  const violations = enrichViolationsWithCompliance(evaluationResultToViolations(result, source));
 
   const evaluatedRules = [...new Set(result.rulesExecuted.map((r) => r.ruleId))].sort();
   const sourceRef =

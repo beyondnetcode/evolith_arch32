@@ -310,10 +310,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** L
 - **Proposed fix:** Conectores read-only vía ACL (Port/Cortex/OpsLevel API + `catalog-info.yaml` de Backstage) que normalizan a un modelo canónico de ownership consumido por el enriquecimiento de evidencia.
 - **Acceptance criteria:**
-  - [ ] Al menos un conector (p. ej. Backstage) resuelve owner y lo enchufa al enriquecimiento de violaciones. _(núcleo hecho: `parseBackstageCatalog` + `resolveOwner` + `enrichViolationsWithOwner`; falta leer el `catalog-info.yaml` del repo vía el port de config-parser —conector/infra)_
+  - [x] Al menos un conector (p. ej. Backstage) resuelve owner y lo enchufa al enriquecimiento de violaciones. _(loader Backstage `loadBackstageOwnership` + `fetchBlueprintOwnership` Port/Cortex sobre los parsers puros; cliente inyectable)_
   - [x] Los conectores son read-only y no introducen lock-in de proveedor. _(los parsers solo leen y normalizan; nada escribe ni acopla al proveedor)_
 - **Dependencies:** GT-511.
-- **Status:** `IN-PROGRESS`
+- **Status:** `COMPLETED`
 
 #### GT-528
 
@@ -350,7 +350,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Elementos de Jira se mapean a artefactos Evolith preservando origen/identidad/timestamps/linaje. _(`parseJiraIssue`→`CanonicalWorkItem` con `WorkItemProvenance`; rechaza sin id)_
   - [x] Completar un workflow de Jira no autoriza por sí solo una transición de fase. _(`authorizesPhaseTransition:false` por contrato + `externalWorkAuthorizesTransition`⇒false)_
 - **Dependencies:** none.
-- **Status:** `IN-PROGRESS`
+- **Status:** `COMPLETED`
 
 #### GT-530
 
@@ -368,7 +368,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Un trace/evaluación de Langfuse se mapea a evidencia canónica consumible por un gate. _(`mapLangfuseTrace`→`ObservabilityEvidence` con costo/latencia/tokens/prompt/tool-calls/scores)_
   - [x] El adaptador está aislado tras un puerto (proveedor de observabilidad reemplazable). _(`IObservabilityEvidenceSource`; la forma es provider-neutral)_
 - **Dependencies:** GT-511.
-- **Status:** `IN-PROGRESS`
+- **Status:** `COMPLETED`
 
 #### GT-531
 
@@ -873,9 +873,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Fix propuesto:** Los contadores se corrigieron a `450 / 484 · 7 · 26 · 1` durante el registro de GT-475…GT-484; el fix sistémico es re-apuntar + re-armar `08-validate-tracking.mjs` (GT-476) en push/PR para que no vuelvan a derivar silenciosamente.
 
-**Cierre:**
-- [ ] líneas Progress/Progreso coinciden con un conteo por fila scripteado
-- [ ] el guard reconcilia los contadores en push/PR (depende de GT-476)
+**Cierre:** COMPLETADO
+- [x] líneas Progress/Progreso coinciden con un conteo por fila scripteado
+- [x] el guard reconcilia los contadores en push/PR (depende de GT-476)
 
 **Referencias:** `reference/core/control-center/gaps/gap-tracking.md:492`; GT-476, GT-417
 
@@ -923,9 +923,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Fix propuesto:** Normalizar las 13 filas `HECHO` de vuelta a `COMPLETADO` (preferido, preserva la convención de GT-417), o añadir un alias `HECHO → done` al `STATUS_MAP` (una edición de `.harness`, hecha directamente en este repo — ver GT-476).
 
-**Cierre:**
-- [ ] no quedan tokens de estado `HECHO` en `gap-tracking.es.md`
-- [ ] el guard acepta todo estado ES de done (tras GT-476)
+**Cierre:** COMPLETADO
+- [x] no quedan tokens de estado `HECHO` en `gap-tracking.es.md`
+- [x] el guard acepta todo estado ES de done (tras GT-476)
 
 **Referencias:** `reference/core/control-center/gaps/gap-tracking.es.md`; `.harness/scripts/ci/08-validate-tracking.mjs:16-30`; GT-417, GT-476
 

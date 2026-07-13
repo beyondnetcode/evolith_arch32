@@ -3,6 +3,7 @@ export * from './enforcer.types';
 export * from './shell-enforcer-adapter';
 export * from './enforcer-evaluator';
 export * from './composite-rule-evaluator';
+export * from './enforcer-subsystem';
 
 /** Concrete adapters + ingesters (GT-515 · EAG-09; GT-524 .NET/NetArchTest). */
 export * from './adapters/dependency-cruiser-adapter';

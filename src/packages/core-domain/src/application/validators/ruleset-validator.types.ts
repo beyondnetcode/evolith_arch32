@@ -1,6 +1,7 @@
 import { ILogger, IFileSystem, IConfigParser } from '../../domain/interfaces';
 import { IRulesetRepository } from '../../domain/ports/ruleset-repository.port';
 import { TopologyCatalogService } from '../services/topology-catalog.service';
+import type { IProcessRunner } from './enforcement/enforcer.types';
 
 export interface ValidationResult {
   status: 'passed' | 'failed' | 'warning';
@@ -55,6 +56,12 @@ export interface RulesetValidatorOptions {
   engineType?: 'native' | 'opa';
   rulesetRepo?: IRulesetRepository;
   topologyCatalog?: TopologyCatalogService;
+  /**
+   * Optional process runner (e.g. the real `NodeProcessRunner`). When provided, the
+   * validator wraps its strategy with the enforcer subsystem so `enforce:`-routed rules
+   * run their external analyzers (GT-524 wiring). Absent ⇒ native/opa strategy only.
+   */
+  processRunner?: IProcessRunner;
 }
 
 export const RULESET_VALIDATOR_OPTIONS = 'RULESET_VALIDATOR_OPTIONS';

@@ -46,23 +46,48 @@ export interface ImportRef {
   readonly line: number;
 }
 
-const FROM_RE = /\b(?:import|export)\b[^'"]*?\bfrom\s*['"]([^'"]+)['"]/;
+const FROM_RE = /\b(?:import|export)\b[\s\S]*?\bfrom\s*['"]([^'"]+)['"]/;
 const BARE_IMPORT_RE = /\bimport\s*['"]([^'"]+)['"]/;
+const DYNAMIC_IMPORT_RE = /\bimport\(\s*['"]([^'"]+)['"]\s*\)/;
 const REQUIRE_RE = /\brequire\(\s*['"]([^'"]+)['"]\s*\)/;
 const USING_RE = /^\s*using\s+(?:static\s+)?([A-Za-z_][\w.]*)\s*;/;
+/** A statement that OPENS an import/export whose specifier may be on a later line. */
+const IMPORT_OPENER_RE = /^\s*(?:import|export)\b/;
+/** The statement is complete on this (possibly joined) buffer — has a spec or terminates. */
+const IMPORT_CLOSED_RE = /\bfrom\s*['"][^'"]+['"]|\bimport\s*['"][^'"]+['"]|;\s*$/;
+const MAX_JOIN_LINES = 20;
 
 /**
  * Extract import specifiers (with 1-based line numbers) from TS/JS (`import`/`export … from`,
- * bare `import`, `require`) and C# (`using Namespace;`) source. A fast line scan — not a full
- * parser; the authoritative analysis is the PR/CI enforcer run.
+ * bare `import`, dynamic `import(…)`, `require`) and C# (`using Namespace;`) source. A fast
+ * scan — not a full parser; the authoritative analysis is the PR/CI enforcer run.
+ *
+ * Multi-line imports (prettier wraps long specifier lists across lines) are handled by joining
+ * an opener line to its continuations until the statement closes — so an infrastructure import
+ * split across lines is NOT missed. The `import`/`export` anchor is preserved, so a `from '…'`
+ * inside a string literal does not false-positive.
  */
 export function extractImports(content: string): ImportRef[] {
   const out: ImportRef[] = [];
   const lines = (content || '').split(/\r?\n/);
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const m = FROM_RE.exec(line) ?? BARE_IMPORT_RE.exec(line) ?? REQUIRE_RE.exec(line) ?? USING_RE.exec(line);
-    if (m) out.push({ spec: m[1], line: i + 1 });
+    const startLine = i + 1;
+    let buf = lines[i];
+    if (IMPORT_OPENER_RE.test(buf)) {
+      let j = i;
+      while (!IMPORT_CLOSED_RE.test(buf) && j + 1 < lines.length && j - i < MAX_JOIN_LINES) {
+        j++;
+        buf += ` ${lines[j]}`;
+      }
+      i = j; // consume the joined continuation lines
+    }
+    const m =
+      FROM_RE.exec(buf) ??
+      BARE_IMPORT_RE.exec(buf) ??
+      DYNAMIC_IMPORT_RE.exec(buf) ??
+      REQUIRE_RE.exec(buf) ??
+      USING_RE.exec(buf);
+    if (m) out.push({ spec: m[1], line: startLine });
   }
   return out;
 }

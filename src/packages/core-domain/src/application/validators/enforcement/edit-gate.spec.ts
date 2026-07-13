@@ -30,6 +30,37 @@ describe('extractImports (GT-526 — fast import scan)', () => {
   it('captures C# using directives', () => {
     expect(extractImports('using MyApp.Infrastructure.Db;')).toEqual([{ spec: 'MyApp.Infrastructure.Db', line: 1 }]);
   });
+
+  it('detects a MULTI-LINE import (prettier-wrapped) at its opener line', () => {
+    const refs = extractImports(
+      ['import {', '  Db,', '  Repo,', "} from '../infrastructure/db';"].join('\n'),
+    );
+    expect(refs).toEqual([{ spec: '../infrastructure/db', line: 1 }]);
+  });
+
+  it('detects a dynamic import()', () => {
+    expect(extractImports("const m = await import('../infrastructure/db');")).toEqual([
+      { spec: '../infrastructure/db', line: 1 },
+    ]);
+  });
+});
+
+describe('evaluateEdit — multi-line imports are not a blind spot', () => {
+  it('BLOCKS a domain file whose infrastructure import is wrapped across lines', () => {
+    const decision = evaluateEdit(
+      { filePath: 'src/domain/order.ts', content: ['import {', '  Db,', "} from '../infrastructure/db';"].join('\n') },
+      [
+        {
+          ruleId: 'HXA-01',
+          appliesTo: 'src/domain/',
+          forbiddenImports: ['../infrastructure'],
+          severity: 'error',
+        },
+      ],
+    );
+    expect(decision.allow).toBe(false);
+    expect(decision.violations[0].line).toBe(1);
+  });
 });
 
 describe('evaluateEdit (GT-526 — block an offending edit in-flight)', () => {

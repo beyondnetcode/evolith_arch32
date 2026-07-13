@@ -122,3 +122,38 @@ describe('EvaluateCommand --format sarif (GT-518)', () => {
     expect(command.parseFormat('sarif')).toBe('sarif');
   });
 });
+
+describe('EvaluateCommand --format drift (GT-518 — PR/CI drift gate fallback)', () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  it('prints a PR-comment body citing the ADR and exits non-zero on a blocking finding', async () => {
+    const { command, log, exit } = setup();
+    await command.executeCommand([], { format: 'drift' });
+    const body = log.mock.calls[log.mock.calls.length - 1][0] as string;
+    expect(body).toContain('drift gate');
+    expect(body).toContain('ADR-0002');
+    expect(body).toContain('Blocked');
+    // Fallback = non-zero exit code, never a silent no-op.
+    expect(exit).toHaveBeenCalledWith(1);
+  });
+});
+
+describe('EvaluateCommand --evidence (GT-518 — evidence manifest EVD-01..03)', () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  it('writes the enforcer-evidence manifest to the given path', async () => {
+    const os = require('node:os');
+    const nodePath = require('node:path');
+    const fs = require('fs-extra');
+    const out = nodePath.join(os.tmpdir(), `evolith-evidence-${Date.now()}.json`);
+    const { command } = setup();
+    await command.executeCommand([], { format: 'json', evidence: out });
+    const manifest = JSON.parse(await fs.readFile(out, 'utf-8'));
+    expect(manifest.source).toBe('drift-gate');
+    expect(manifest.producer).toBe('evolith-core');
+    expect(manifest.status).toBe('fail'); // the error gap is a blocking failure
+    expect(manifest.blockingFailures).toBe(1);
+    expect(manifest.relatedRuleIds).toContain('ADR-0002');
+    await fs.remove(out);
+  });
+});

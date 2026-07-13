@@ -1,6 +1,8 @@
 import {
   normalizeEvidence,
   resolveEvidenceSignals,
+  foldQualitySignals,
+  DEFAULT_QUALITY_DIMENSION,
   type Evidence,
   type RawEvidence,
 } from './quality-evidence';
@@ -111,6 +113,44 @@ describe('quality-evidence (GT-533 · ADR-0111)', () => {
     it('treats a completely empty evidence set as all no-evidence', () => {
       const signals = resolveEvidenceSignals(['performance', 'a11y']);
       expect(signals.every((s) => s.status === 'no-evidence')).toBe(true);
+    });
+  });
+
+  describe('foldQualitySignals (pipeline-side fold of inline evidence)', () => {
+    const perf: Evidence = normalizeEvidence(
+      { source: 'lighthouse', dimension: 'performance', determinism: 'deterministic', provenance: { collectedBy: 'lighthouse' } },
+      { now: fixedNow },
+    );
+    const a11y: Evidence = normalizeEvidence(
+      { source: 'lighthouse', dimension: 'a11y', determinism: 'deterministic', provenance: { collectedBy: 'lighthouse' } },
+      { now: fixedNow },
+    );
+
+    it('surfaces a present signal per observed dimension when evidence is supplied', () => {
+      const signals = foldQualitySignals([perf, a11y]);
+      expect(signals).toHaveLength(2);
+      expect(signals.every((s) => s.status === 'present')).toBe(true);
+      expect(signals.map((s) => s.dimension).sort()).toEqual(['a11y', 'performance']);
+    });
+
+    it('deduplicates repeated dimensions and attaches all matching evidence', () => {
+      const perf2: Evidence = normalizeEvidence(
+        { source: 'webpagetest', dimension: 'performance', determinism: 'deterministic', provenance: { collectedBy: 'wpt' } },
+        { now: fixedNow },
+      );
+      const signals = foldQualitySignals([perf, perf2]);
+      expect(signals).toHaveLength(1);
+      expect(signals[0].dimension).toBe('performance');
+      expect(signals[0].evidence).toHaveLength(2);
+    });
+
+    it('surfaces a single no-evidence signal for the default dimension when no evidence is supplied', () => {
+      expect(foldQualitySignals([])).toEqual([
+        { dimension: DEFAULT_QUALITY_DIMENSION, status: 'no-evidence', evidence: [] },
+      ]);
+      expect(foldQualitySignals()).toEqual([
+        { dimension: DEFAULT_QUALITY_DIMENSION, status: 'no-evidence', evidence: [] },
+      ]);
     });
   });
 });

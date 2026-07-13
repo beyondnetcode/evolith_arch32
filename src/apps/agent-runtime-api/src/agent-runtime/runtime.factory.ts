@@ -41,9 +41,14 @@ import {
   HermesAgentAdapter,
   SwarmsAgentAdapter,
   CoworkAgentEngineAdapter,
+  InMemoryKnowledgeAdapter,
+  PgVectorKnowledgeAdapter,
+  PGVECTOR_KNOWLEDGE_DIM,
+  type EmbedQuery,
   type AgentRuntimeBundle,
   type AgentRuntimeOverrides,
   type EngineRouterConfig,
+  type IKnowledgePort,
 } from '@beyondnet/evolith-agent-runtime';
 
 import * as path from 'node:path';
@@ -79,6 +84,113 @@ export function resolveProfile(env: NodeJS.ProcessEnv = process.env): RuntimePro
         `[agent-runtime] unknown AGENT_RUNTIME_PROFILE '${env.AGENT_RUNTIME_PROFILE}'. Use 'production' or 'dev'.`,
       );
   }
+}
+
+/**
+ * Build an `EmbedQuery` seam that calls the GT-539 on-perimeter Qwen3 inference
+ * sidecar over HTTP. Model-agnostic: the endpoint and model id are env-driven so
+ * a model swap is config, not code (ADR-0090 §3 / ADR-0112 §1,§4). Accepts the
+ * OpenAI-style `{data:[{embedding}]}`, TEI-style `[[...]]`, or `{embeddings}`
+ * response shapes — the same shapes the write-side embedder tolerates.
+ */
+export function makeSidecarEmbedder(url: string, model?: string): EmbedQuery {
+  return async (text: string): Promise<number[]> => {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ input: [text], model }),
+    });
+    if (!res.ok) {
+      throw new Error(
+        `[agent-runtime] RAG embed sidecar ${url} returned ${res.status} ${res.statusText}`,
+      );
+    }
+    const body: any = await res.json();
+    const pick = (e: any) => (Array.isArray(e) ? e : e && e.embedding);
+    let vec: unknown;
+    if (Array.isArray(body)) vec = pick(body[0]);
+    else if (Array.isArray(body?.data)) vec = pick(body.data[0]);
+    else if (Array.isArray(body?.embeddings)) vec = pick(body.embeddings[0]);
+    if (!Array.isArray(vec)) {
+      throw new Error(
+        `[agent-runtime] RAG embed sidecar ${url} returned an unparseable embedding body`,
+      );
+    }
+    return vec as number[];
+  };
+}
+
+/**
+ * Select the read-side knowledge/RAG adapter (GT-540).
+ *
+ * The token-overlap `InMemoryKnowledgeAdapter` (GT-408) is the explicit default
+ * in EVERY profile. The production pgvector adapter is selected when
+ * `AGENT_RUNTIME_KNOWLEDGE_MODE=pgvector` — or implicitly when a store URL
+ * (`EVOLITH_RAG_PG_URL` / `AGENT_RUNTIME_KNOWLEDGE_PG_URL`) is configured. When
+ * pgvector is selected, the store connection AND the embedder sidecar are
+ * MANDATORY: the factory FAILS LOUD rather than silently degrading grounded
+ * retrieval to token-overlap. Mirrors the read-side of the GT-538 store env
+ * conventions (`EVOLITH_RAG_PG_URL`, `EVOLITH_RAG_EMBED_URL`).
+ */
+export function resolveKnowledgeAdapter(env: NodeJS.ProcessEnv = process.env): IKnowledgePort {
+  // Only an EXPLICIT RAG store URL enables pgvector — never the generic
+  // DATABASE_URL, which commonly points at an unrelated app DB and would
+  // silently (and wrongly) mis-target grounded retrieval / fail loud.
+  const pgUrl = env.AGENT_RUNTIME_KNOWLEDGE_PG_URL ?? env.EVOLITH_RAG_PG_URL;
+  const rawMode = (env.AGENT_RUNTIME_KNOWLEDGE_MODE ?? '').trim().toLowerCase();
+
+  let mode: 'pgvector' | 'in-memory';
+  switch (rawMode) {
+    case 'pgvector':
+      mode = 'pgvector';
+      break;
+    case 'in-memory':
+    case 'inmemory':
+    case 'memory':
+      mode = 'in-memory';
+      break;
+    case '':
+      // Auto: graduate to pgvector only when a store URL is actually configured.
+      mode = pgUrl ? 'pgvector' : 'in-memory';
+      break;
+    default:
+      throw new Error(
+        `[agent-runtime] unknown AGENT_RUNTIME_KNOWLEDGE_MODE '${env.AGENT_RUNTIME_KNOWLEDGE_MODE}'. ` +
+          "Use 'pgvector' or 'in-memory'.",
+      );
+  }
+
+  if (mode === 'in-memory') {
+    return new InMemoryKnowledgeAdapter();
+  }
+
+  // pgvector selected — connection + embedder are mandatory, fail loud.
+  if (!pgUrl) {
+    throw new Error(
+      '[agent-runtime] AGENT_RUNTIME_KNOWLEDGE_MODE=pgvector requires a store connection ' +
+        '(AGENT_RUNTIME_KNOWLEDGE_PG_URL or EVOLITH_RAG_PG_URL — the GT-538 pgvector store).',
+    );
+  }
+  const embedUrl = env.AGENT_RUNTIME_KNOWLEDGE_EMBED_URL ?? env.EVOLITH_RAG_EMBED_URL;
+  if (!embedUrl) {
+    throw new Error(
+      '[agent-runtime] AGENT_RUNTIME_KNOWLEDGE_MODE=pgvector requires an embedder sidecar ' +
+        '(AGENT_RUNTIME_KNOWLEDGE_EMBED_URL or EVOLITH_RAG_EMBED_URL — the GT-539 Qwen3 sidecar). ' +
+        'Refusing to run semantic retrieval without a query embedder.',
+    );
+  }
+  const embedModel = env.AGENT_RUNTIME_KNOWLEDGE_EMBED_MODEL ?? env.EVOLITH_RAG_EMBED_MODEL;
+  const corpusVersion = env.AGENT_RUNTIME_KNOWLEDGE_CORPUS_VERSION ?? env.EVOLITH_RAG_CORPUS_VERSION;
+
+  // Dimension is fixed by ADR-0112 §2 (vector(1024)); the adapter asserts it per
+  // query and fails closed on any mismatch. Referenced here for provenance.
+  void PGVECTOR_KNOWLEDGE_DIM;
+
+  return new PgVectorKnowledgeAdapter({
+    embed: makeSidecarEmbedder(embedUrl, embedModel),
+    connectionString: pgUrl,
+    corpusVersion: corpusVersion || undefined,
+  });
 }
 
 /** Read process.env and assemble the runtime bundle. */
@@ -249,6 +361,15 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
         '(durable memory + scheduler state on a mounted volume). Refusing to run production on volatile in-memory state.',
     );
   }
+
+  // Knowledge / RAG read-side (GT-540) — token-overlap in-memory by default in
+  // every profile; the pgvector production adapter is selected via
+  // AGENT_RUNTIME_KNOWLEDGE_MODE / a configured store URL. Selecting pgvector
+  // without a store connection + embedder sidecar fails loud (see selector).
+  overrides = {
+    ...overrides,
+    knowledge: resolveKnowledgeAdapter(env),
+  };
 
   return createAgentRuntime(overrides);
 }

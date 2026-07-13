@@ -10,8 +10,10 @@ import {
   FileMemoryAdapter,
   StubPolicyValidationAdapter,
   OpaCliPolicyValidationAdapter,
+  InMemoryKnowledgeAdapter,
+  PgVectorKnowledgeAdapter,
 } from '@beyondnet/evolith-agent-runtime';
-import { createRuntimeFromEnv, resolveProfile } from './runtime.factory';
+import { createRuntimeFromEnv, resolveProfile, resolveKnowledgeAdapter } from './runtime.factory';
 
 /**
  * GT-438 — the factory's profile selection matrix. A single switch
@@ -164,6 +166,59 @@ describe('createRuntimeFromEnv — profile selection matrix (GT-438)', () => {
     it("treats 'stub' as the deterministic default", () => {
       const { deps } = createRuntimeFromEnv({ AGENT_RUNTIME_ENGINE: 'stub' });
       expect(deps.engine).toBeInstanceOf(StubAgentEngineAdapter);
+    });
+  });
+
+  /**
+   * GT-540 — read-side knowledge/RAG adapter selection. Token-overlap in-memory
+   * is the explicit default in EVERY profile; the pgvector production adapter is
+   * selected explicitly or when a store URL is configured, and fails loud when
+   * selected without its store connection + embedder sidecar.
+   */
+  describe('knowledge/RAG adapter selection (GT-540)', () => {
+    const PG = { EVOLITH_RAG_PG_URL: 'postgres://db/evolith', EVOLITH_RAG_EMBED_URL: 'http://sidecar:8080/embed' } as const;
+
+    it('defaults to the in-memory token adapter when nothing is configured', () => {
+      expect(resolveKnowledgeAdapter({})).toBeInstanceOf(InMemoryKnowledgeAdapter);
+    });
+
+    it('auto-selects pgvector when a store URL is configured with an embedder sidecar', () => {
+      expect(resolveKnowledgeAdapter({ ...PG })).toBeInstanceOf(PgVectorKnowledgeAdapter);
+    });
+
+    it('selects pgvector explicitly via AGENT_RUNTIME_KNOWLEDGE_MODE=pgvector', () => {
+      expect(
+        resolveKnowledgeAdapter({ AGENT_RUNTIME_KNOWLEDGE_MODE: 'pgvector', ...PG }),
+      ).toBeInstanceOf(PgVectorKnowledgeAdapter);
+    });
+
+    it('keeps in-memory explicitly even when a store URL is present', () => {
+      expect(
+        resolveKnowledgeAdapter({ AGENT_RUNTIME_KNOWLEDGE_MODE: 'in-memory', ...PG }),
+      ).toBeInstanceOf(InMemoryKnowledgeAdapter);
+    });
+
+    it('fails loud when pgvector is selected without a store connection', () => {
+      expect(() =>
+        resolveKnowledgeAdapter({ AGENT_RUNTIME_KNOWLEDGE_MODE: 'pgvector', EVOLITH_RAG_EMBED_URL: 'http://sidecar/embed' }),
+      ).toThrow(/requires a store connection/);
+    });
+
+    it('fails loud when pgvector is selected without an embedder sidecar', () => {
+      expect(() =>
+        resolveKnowledgeAdapter({ AGENT_RUNTIME_KNOWLEDGE_MODE: 'pgvector', EVOLITH_RAG_PG_URL: 'postgres://db/evolith' }),
+      ).toThrow(/requires an embedder sidecar/);
+    });
+
+    it('throws on an unknown knowledge mode', () => {
+      expect(() => resolveKnowledgeAdapter({ AGENT_RUNTIME_KNOWLEDGE_MODE: 'faiss' })).toThrow(
+        /unknown AGENT_RUNTIME_KNOWLEDGE_MODE/,
+      );
+    });
+
+    it('is wired onto the bundle by createRuntimeFromEnv (in-memory by default)', () => {
+      const { deps } = createRuntimeFromEnv({});
+      expect(deps.knowledge).toBeInstanceOf(InMemoryKnowledgeAdapter);
     });
   });
 });

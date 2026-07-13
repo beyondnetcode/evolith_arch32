@@ -21,6 +21,10 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createRagAdapter } from './rag-port.mjs';
 import { syncIndex, chunkIds } from './rag-sync.mjs';
+// Side-effect import: registers the durable `pgvector` adapter (GT-538 / ADR-0112)
+// so EVOLITH_RAG_PROVIDER=pgvector resolves instead of failing closed. The port
+// itself stays vendor-neutral; the vendor is wired only here, at the CI seam.
+import './rag-pgvector.mjs';
 
 const RAG_SYNC_ENABLED = process.env.EVOLITH_RAG_SYNC === 'true';
 

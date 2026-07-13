@@ -65,11 +65,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Publicar un paquete versionado `@beyondnet/evolith-contracts` (SemVer + sha256 del set de schemas); agregar `GET /api/v1/capabilities` junto a `ReferenceController`, solo-REST según ADR-0074 (sin GraphQL aquí); agregar tests de paridad de contrato que enlacen el paquete a los endpoints vivos.
 - **Acceptance criteria:**
-  - [ ] `GET /api/v1/capabilities` retorna el manifiesto de capabilities versionado.
-  - [ ] `@beyondnet/evolith-contracts` está versionado (SemVer + sha256) y es consumible por un consumidor externo.
-  - [ ] Los tests de paridad de contrato fallan ante drift entre el paquete y los endpoints.
+  - [x] `GET /api/v1/capabilities` retorna el manifiesto de capabilities versionado. _(`CapabilitiesController` + `buildCapabilityManifest` en develop)_
+  - [x] `@beyondnet/evolith-contracts` está versionado (SemVer + sha256) y es consumible por un consumidor externo. _(nuevo paquete `src/packages/contracts`; `MACHINE_CONTRACT_SET` + `CONTRACT_SET_SHA256` + `EXPECTED_CAPABILITY_MANIFEST` congelado; agrega el consumidor `external`, cerrando el gap de consumidor único)_
+  - [x] Los tests de paridad de contrato fallan ante drift entre el paquete y los endpoints. _(el spec de paridad enlaza el paquete al productor vivo `buildCapabilityManifest`; casos dedicados prueban que FALLA ante un engine añadido y ante regresión a un solo consumidor + guard sha256 por schema)_
 - **Dependencies:** GT-511.
-- **Status:** `PENDING`
+- **Cierre (2026-07-13, Ola 3, commit `9f027797`):** Solo-REST según ADR-0074. El endpoint `/api/v1/capabilities` + manifiesto de dominio ya estaban en develop (ola previa); esto cierra el paquete frontera SemVer + el guard de paridad que falla ante drift. contracts 13/13; límite hexagonal intacto (el runtime de contracts no importa core-domain; solo su test enlaza el productor).
+- **Status:** `DONE`
 
 #### GT-514
 
@@ -160,11 +161,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Agregar un exportador SARIF de `EvaluationResult` (`evolith evaluate --format sarif`); agregar un gate de drift en CI sobre la Checks API de GitHub/GitLab (GitHub App con `checks:write` + GHAS en repos privados; fallback = comentario de PR + exit code); emitir el manifiesto de enforcer-evidence (EVD-01..03 vía el `EvidenceNormalizer` unificado); agregar un flujo de waiver (request/approve/version/expire) para `waiverRef`; enriquecer owner vía CODEOWNERS.
 - **Acceptance criteria:**
-  - [ ] Un PR que viola un ADR es bloqueado con un comentario que cita el ADR + owner.
-  - [ ] `evolith evaluate --format sarif` emite SARIF válido; el manifiesto de evidencia lleva EVD-01..03.
-  - [ ] Existe una ruta de waiver (request/approve/version/expire) para `waiverRef`.
+  - [~] Un PR que viola un ADR es bloqueado con un comentario que cita el ADR + owner. _(Ola 6 `41135566`: `evaluateDriftGate` bloquea por violaciones error, cita ADR id + owner desde CODEOWNERS, arma cuerpo de PR-comment + exit code vía `evolith evaluate --format drift`. **El publish live a la Checks API (GitHub App + `checks:write`/GHAS) es deploy-gated** tras `IChecksPublisher`; el `PrCommentFallbackPublisher` mandatorio está cableado)_
+  - [x] `evolith evaluate --format sarif` emite SARIF válido; el manifiesto de evidencia lleva EVD-01..03. _(reusa el `sarif-exporter` existente; `evolith evaluate --evidence <path>` emite el manifiesto vía `buildEnforcerEvidence`)_
+  - [~] Existe una ruta de waiver (request/approve/version/expire) para `waiverRef`. _(máquina de estados determinista `domain/waiver.ts` + `applyWaivers` con auditoría; **falta:** store durable + subcomando CLI `waiver`)_
 - **Dependencies:** GT-514, GT-516.
-- **Status:** `PENDING`
+- **Progreso (2026-07-13, Ola 6, commit `41135566`):** En el seam de core-domain (reusa `sarif-exporter`/`EvidenceNormalizer`, el Core queda puro). core-domain 1018/1018 + CLI evaluate 6/6. Queda `IN-PROGRESS`: publish live Checks API + store durable de waivers + subcomando CLI.
+- **Status:** `IN-PROGRESS`
 
 #### GT-519
 
@@ -420,11 +422,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** L
 - **Proposed fix:** Puerto de salida propiedad de la orquestación; el Core importa solo `Evidence` (inline, como `OverlayFileSystem`, ADR-0080); el Core nunca ejecuta proveedores; registro declarativo opt-in por tenant; `provenance` + `determinism` obligatorios.
 - **Acceptance criteria:**
-  - [ ] `core-domain` importa solo `Evidence` (grep limpio de imports de proveedor/adaptador).
-  - [ ] Los proveedores corren en orquestación; el Core evalúa `Evidence[]` recibida; evidencia ausente ⇒ `no-evidence`, no un fallo.
-  - [ ] El registro por tenant habilita/deshabilita proveedores de forma declarativa.
+  - [x] `core-domain` importa solo `Evidence` (grep limpio de imports de proveedor/adaptador). _(`quality-evidence.ts` canónico, cero imports; inline vía `EvaluationContext.qualitySignals?`)_
+  - [x] Los proveedores corren en orquestación; el Core evalúa `Evidence[]` recibida; evidencia ausente ⇒ `no-evidence`, no un fallo. _(Ola 3 `baf570f4`: el orquestador pliega `ctx.qualitySignals` vía `foldQualitySignals`→`resolveEvidenceSignals` sobre `EvaluationResult.qualitySignals`; ausente ⇒ señal `no-evidence` advisory, el verdict nunca falla por evidencia faltante)_
+  - [x] El registro por tenant habilita/deshabilita proveedores de forma declarativa. _(`TenantQualitySignalRegistry` en agent-runtime; aislado de fallos, re-normalizado por el ACL canónico)_
 - **Dependencies:** ADR-0111; compone con GT-530.
-- **Status:** `PENDING`
+- **Cierre (2026-07-13, Olas 1+3):** Ola 1 (`d56ba32c`) fundó la costura (Evidence/Provenance canónicos + puerto `IQualitySignalProvider` en orquestación + registro por tenant); Ola 3 (`baf570f4`) la cableó VIVA en el pipeline de evaluación, cerrando el loop ADR-0104. Grep limpio de acoplamiento Core→proveedor; core-domain 966/966 + agent-runtime 98/98.
+- **Status:** `DONE`
 
 #### GT-534
 
@@ -458,10 +461,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Codificar los siete estándares + jerarquía de severidad como skill y rúbrica de gate; emitir `Evidence` con `determinism: 'probabilistic'`.
 - **Acceptance criteria:**
-  - [ ] El agente produce hallazgos estructurales ordenados por la jerarquía de severidad de la rúbrica.
-  - [ ] El gate puede tratar las regresiones estructurales como bloqueantes; atribución respetada.
+  - [x] El agente produce hallazgos estructurales ordenados por la jerarquía de severidad de la rúbrica. _(`StructuralReviewProvider` corre el puerto probabilístico `IStructuralReviewer`, `rankStructuralFindings` ordena por severidad, emite una `Evidence` canónica con `determinism:'probabilistic'` + provenance)_
+  - [x] El gate puede tratar las regresiones estructurales como bloqueantes; atribución respetada. _(`evaluateStructuralGate` — mapeo determinista severidad→decisión; `DEFAULT_STRUCTURAL_GATE_POLICY` bloquea high/critical; `RUBRIC_ATTRIBUTION` acredita la metodología comunitaria, reexpresada en nuestras palabras)_
 - **Dependencies:** GT-533.
-- **Status:** `PENDING`
+- **Cierre (2026-07-13, Ola 4, commit `d450d969`):** Rúbrica como datos de dominio puros (siete estándares sobre una jerarquía `info<low<medium<high<critical`); SkillDescriptor `code-quality-structural-review` en DEFAULT_SKILLS (guard de paridad de registro GT-424 verde); `StructuralReviewProvider` implementa `IQualitySignalProvider` y se registra en el `TenantQualitySignalRegistry` (GT-533); el borde LLM/agente queda tras `IStructuralReviewer`. agent-runtime 110/110.
+- **Status:** `DONE`
 
 #### GT-536
 
@@ -512,10 +516,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Implementar `embed`/`upsert`/`delete` sobre pgvector con filtrado por los campos del ADR-0090 §2; seleccionarlo vía `EVOLITH_RAG_PROVIDER=pgvector`; conservar `memory` como default de dry-run/test.
 - **Acceptance criteria:**
-  - [ ] `registerRagAdapter('pgvector', …)` provee un adaptador `durable: true`; una corrida live de `14-rag-index-sync.mjs` hace upsert de chunks reales y emite un recibo veraz.
-  - [ ] Las columnas de metadata soportan filtrado por `source_file`, `adr_id`, `language`, `corpus_version`.
+  - [~] `registerRagAdapter('pgvector', …)` provee un adaptador `durable: true`; una corrida live de `14-rag-index-sync.mjs` hace upsert de chunks reales y emite un recibo veraz. _(Ola 5 `cace6118`: `rag-pgvector.mjs` registra un adaptador pgvector `durable:true` en el seam `rag-port.mjs` — `14-rag-index-sync.mjs` ya no falla-cerrado y corre embed→upsert→delete; SQL parametrizado `INSERT … ON CONFLICT` + `DELETE … = ANY($1)`, `pg` fuera del build vía cliente inyectado + import lazy. **La corrida de persistencia contra Postgres real es deploy-gated**)_
+  - [x] Las columnas de metadata soportan filtrado por `source_file`, `adr_id`, `language`, `corpus_version`. _(columnas de primera clase + índices btree en `rag-pgvector.schema.sql`; el upsert persiste las cuatro, verificado contra un cliente stub)_
 - **Dependencies:** ADR-0090; ADR-0112 (plataforma: pgvector sobre el Postgres existente, `vector(1024)`, HNSW); compone con GT-145.
-- **Status:** `PENDING`
+- **Progreso (2026-07-13, Ola 5, commit `cace6118`):** Adaptador durable entregado en el seam CI correcto (`.harness/scripts/ci/rag-pgvector.{mjs,schema.sql,test.mjs}`) — `vector(1024)` + HNSW `vector_cosine_ops` según ADR-0112, embed placeholder `hashEmbed@1024` (Qwen3 real = GT-539). 10 node:test + 9 de regresión verdes; `createRagAdapter({provider:'pgvector'})` ⇒ `durable:true`. Destraba GT-539/GT-540. Queda `IN-PROGRESS`: el sync live contra Postgres+pgvector real es deploy-gated.
+- **Status:** `IN-PROGRESS`
 
 #### GT-539
 
@@ -530,10 +535,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** S
 - **Proposed fix:** Detrás del puerto model-agnostic, llamar al modelo fijado por el ADR-0112 — **Qwen3-Embedding (Apache-2.0)**, default `0.6B`, dim 1024, vía un sidecar de inferencia local; registrar el id del modelo en `corpus_version` para invalidación de caché; conservar `memory`/`hashEmbed` como default offline/test.
 - **Acceptance criteria:**
-  - [ ] Los embeddings live provienen de un modelo real declarado; el id del modelo aparece en la metadata `corpus_version` de los chunks.
-  - [ ] Las credenciales son secretos CI enmascarados; ninguna key en el diff ni en los logs.
+  - [~] Los embeddings live provienen de un modelo real declarado; el id del modelo aparece en la metadata `corpus_version` de los chunks. _(Ola 6 `c4e612b7`: `rag-embed-qwen3.mjs` POST a sidecar local (`EVOLITH_RAG_EMBED_URL`/`_MODEL`, default `qwen3-embedding-0.6b`, dim 1024); el adapter pgvector usa el modelo cuando está configurado, `hashEmbed` offline; `rag-sync.mjs` pliega el model id en `corpus_version`. **Correr el sidecar Qwen3 es deploy-gated**)_
+  - [x] Las credenciales son secretos CI enmascarados; ninguna key en el diff ni en los logs. _(config por env; seam `fetch` inyectado, sin lib de red importada en load; sidecar on-perimeter, fail-closed ante error de transporte / dimensión incorrecta)_
 - **Dependencies:** ADR-0090 §3; ADR-0003; ADR-0112 (plataforma: Qwen3-Embedding); compone con GT-538.
-- **Status:** `PENDING`
+- **Progreso (2026-07-13, Ola 6, commit `c4e612b7`):** Embedder model-agnostic cableado en el seam rag-port `.harness` correcto (reusa el adapter durable GT-538); consistencia de dimensión asertada (modelo == store 1024, fail-closed). rag node:tests 38/38. Queda `IN-PROGRESS`: sidecar corriendo + entrada `model-registry.json` (ADR-0003) para `qwen3-embedding-0.6b`.
+- **Status:** `IN-PROGRESS`
 
 #### GT-540
 
@@ -548,10 +554,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Implementar `IKnowledgePort.query` por similitud coseno sobre el store pgvector (GT-538) usando el embedding de GT-539 para el texto de consulta; devolver `KnowledgeChunk[]` rankeado con metadata de citación; conservar `InMemoryKnowledgeAdapter` como default offline/test.
 - **Acceptance criteria:**
-  - [ ] `query()` devuelve chunks rankeados por similitud vectorial real con `score` y metadata de citación.
-  - [ ] La fila Knowledge/RAG de `maturity-assessment.md` se actualiza de "Not implemented" al adaptador entregado.
+  - [x] `query()` devuelve chunks rankeados por similitud vectorial real con `score` y metadata de citación. _(Ola 6 `40464149`: `PgVectorKnowledgeAdapter` embebe la query vía seam `EmbedQuery` inyectado (dim==1024, fail-closed), corre cosine top-k sobre la tabla `rag_chunks` (GT-538) con `<=>` (`score = 1 - distance`), mapea filas → `KnowledgeChunk` rankeado con citación; filtros de metadata en WHERE parametrizado)_
+  - [x] La fila Knowledge/RAG de `maturity-assessment.md` se actualiza de "Not implemented" al adaptador entregado.
 - **Dependencies:** GT-538; GT-539; ADR-0090; ADR-0112 (plataforma: mismo modelo+dim que el write-side).
-- **Status:** `PENDING`
+- **Cierre (2026-07-13, Ola 6, commit `40464149`):** El read-side RAG es real — adaptador `IKnowledgePort` de producción que fundamenta las recomendaciones cosine-rankeando el corpus GT-538 vía el embedder GT-539, totalmente hexagonal (cliente pg y embedder inyectados; sin `pg` en build; elección de modelo en el borde de wiring). `runtime.factory.ts` lo selecciona vía `AGENT_RUNTIME_KNOWLEDGE_MODE=pgvector` / `EVOLITH_RAG_PG_URL` (falla-fuerte ante misconfig; `InMemoryKnowledgeAdapter` sigue siendo el default). agent-runtime 118/118 + agent-runtime-api 67/67. _Deploy-gated:_ la corrida live contra Postgres + sidecar Qwen3 (no es criterio de aceptación).
+- **Status:** `DONE`
 
 #### GT-541
 

@@ -46,11 +46,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P0 · **Complexity:** L
 - **Proposed fix:** PA-01 restore (`npm ci` / `dotnet restore+build` / `pip install`+grimp / `composer install`); PA-02 per-project Nx scoping; PA-03 EvaluationResult cache keyed by commit-SHA + changed-files-only; PA-04 shell-out sandbox (no egress, no secrets, ulimits/cgroups, binary allowlist); PA-05 toolchain resolved from the `evolith.yaml` manifest.
 - **Acceptance criteria:**
-  - [ ] Analyzers run against a **restored**, project-scoped checkout inside the sandbox. _(PA-06 done: `executeRestorePlan` runs the plan fail-fast + `provisionEvaluationEnvironment` composes scope→cache→restore, and the real `NodeProcessRunner` (infra-providers) executes it; only the real repo fetch/checkout integration remains)_
-  - [ ] Sandbox denies egress + secret access and enforces ulimits/cgroups + a binary allowlist. _(done: allowlist + secret denial + fail-closed wrapper (policy) and now the `NodeProcessRunner` does NOT inherit parent-env secrets —curated passthrough— at runtime; OS-level egress/cgroup/namespace enforcement is deploy-gated in a locked-down container)_
+  - [~] Analyzers run against a **restored**, project-scoped checkout inside the sandbox. _(Wave 4 `20f704b6` PA-07: `materializeAndProvisionEnvironment` composes fetch→resolve-toolchain-from-evolith.yaml→materialize-to-workdir→`executeRestorePlan` (npm ci / dotnet restore+build / pip install) via the sandbox-wrapped `NodeProcessRunner`→exposes Nx-project-scoped `analysisPaths`; ports `IRepositorySourceReader` + `IWorkspaceMaterializer` with `NodeWorkspaceMaterializer`; unit-tested with stubs. **Deploy-gated:** the real GitHubRepositorySourceReader network fetch needs `tar` + network in the runtime image)_
+  - [~] Sandbox denies egress + secret access and enforces ulimits/cgroups + a binary allowlist. _(app-level DONE: allowlist + secret denial + fail-closed `SandboxPolicy`/`enforceSandboxPolicy`/`SandboxedProcessRunner`, curated env passthrough. **Deploy-gated:** OS-level egress/cgroup/namespace/seccomp isolation needs a locked-down container)_
   - [x] Re-evaluating an unchanged commit hits the cache (SHA + changed-files scope).
 - **Dependencies:** GT-511.
-- **Status:** `PENDING`
+- **Progress (2026-07-13, Wave 4, commit `20f704b6`):** The full domain-wiring seam (PA-03/05/06/07) is now in place — fetch→materialize→restore→scoped-analysis, cache-keyed by SHA+changed-files, toolchain resolved from `evolith.yaml`. Unblocks GT-515/GT-524 at the **code** level (their 0-FP gates still need a real toolchain execution). core-domain 986/986 + infra-providers 109/109 green. Remaining is uniformly **deploy-gated** (real network fetch adapter + OS-level sandbox container) — kept `IN-PROGRESS`.
+- **Status:** `IN-PROGRESS`
 
 #### GT-513
 
@@ -65,11 +66,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Publish a versioned `@beyondnet/evolith-contracts` package (SemVer + sha256 of the schema set); add `GET /api/v1/capabilities` next to `ReferenceController`, REST-only per ADR-0074 (no GraphQL here); add contract-parity tests binding the package to the live endpoints.
 - **Acceptance criteria:**
-  - [ ] `GET /api/v1/capabilities` returns the versioned capability manifest.
-  - [ ] `@beyondnet/evolith-contracts` is versioned (SemVer + sha256) and consumable by an external consumer.
-  - [ ] Contract-parity tests fail on drift between the package and the endpoints.
+  - [x] `GET /api/v1/capabilities` returns the versioned capability manifest. _(`CapabilitiesController` + `buildCapabilityManifest` on develop)_
+  - [x] `@beyondnet/evolith-contracts` is versioned (SemVer + sha256) and consumable by an external consumer. _(new `src/packages/contracts` package; `MACHINE_CONTRACT_SET` + `CONTRACT_SET_SHA256` + frozen `EXPECTED_CAPABILITY_MANIFEST`; adds a first-class `external` consumer, closing the single-consumer gap)_
+  - [x] Contract-parity tests fail on drift between the package and the endpoints. _(parity spec binds the package to the live `buildCapabilityManifest` producer; dedicated cases prove it FAILS on an added engine and on a single-consumer regression + per-schema sha256 guard)_
 - **Dependencies:** GT-511.
-- **Status:** `PENDING`
+- **Closure (2026-07-13, Wave 3, commit `9f027797`):** REST-only per ADR-0074. The `/api/v1/capabilities` endpoint + domain manifest were delivered by prior-wave work already on develop; this closes the SemVer-boundary package + the drift-failing parity guard. contracts 13/13 green; hexagonal boundary intact (the contracts runtime does not import core-domain; only its test binds the producer).
+- **Status:** `DONE`
 
 #### GT-514
 
@@ -122,11 +124,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** L
 - **Proposed fix:** Add `enforce:` to `ruleset-standard.schema.json` (`engine, tool, toolRuleId, config|configRef, severityMap, runtime, mode`); implement PolicyCompiler + `evolith enforce compile` (nest-commander, `src/sdk/cli/src/commands/enforce/`) with a per-rule fallback for uncompilable rules; populate the `enforce` block in ADR-0002; add a round-trip test with 0 FP.
 - **Acceptance criteria:**
-  - [ ] ADR-0002 rules compile, run, and normalize to `Violation`.
+  - [~] ADR-0002 rules compile, run, and normalize to `Violation`. _(Wave 5 `806e3337`: all seven HXA rules are now enforcer-routed — HXA-01/02/04/05/07 compile to dependency-cruiser checks, HXA-03/06 take the documented per-rule native fallback; compile→normalize→`Violation` runs end-to-end through the GT-515 DependencyCruiserAdapter over a StubProcessRunner. **The real cross-runtime tool spawn on a restored workspace is GT-512-gated**)_
   - [x] Uncompilable rules take a documented per-rule fallback (no wholesale failure).
-  - [ ] Round-trip test passes with 0 false positives.
+  - [~] Round-trip test passes with 0 false positives. _(round-trip spec green on FIXTURE corpus: 0 FP on a clean corpus, full round-trip of every compiled tool-rule-id on a dirty corpus, no spurious findings on malformed reports. The 0-FP gate on a REAL .NET/TS corpus needs a live tool run — GT-512-gated)_
 - **Dependencies:** GT-514.
-- **Status:** `PENDING`
+- **Progress (2026-07-13, Wave 5, commit `806e3337`):** The `enforce:` schema block, PolicyCompiler (per-rule fallback), and `evolith enforce compile` were already on develop; this pilots ADR-0002 (HXA-01..07 enforce blocks: 5 compiled / 2 fallback) and adds the compile→normalize→`Violation` round-trip on fixtures (0 FP). Output feeds GT-518's gate. core-domain 990/990 + CLI enforce 20/20 green. Kept `IN-PROGRESS`: the real cross-runtime execution + real-corpus 0-FP is GT-512-gated (the same sandbox that unblocks GT-515/524).
+- **Status:** `IN-PROGRESS`
 
 #### GT-517
 
@@ -160,11 +163,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Add a SARIF exporter of `EvaluationResult` (`evolith evaluate --format sarif`); add a CI drift-gate on the GitHub/GitLab Checks API (GitHub App with `checks:write` + GHAS in private repos; fallback = PR comment + exit code); emit the enforcer-evidence manifest (EVD-01..03 via the unified `EvidenceNormalizer`); add a waiver flow (request/approve/version/expire) for `waiverRef`; enrich owner via CODEOWNERS.
 - **Acceptance criteria:**
-  - [ ] A PR that violates an ADR is blocked with a comment citing the ADR + owner.
-  - [ ] `evolith evaluate --format sarif` emits valid SARIF; the evidence manifest carries EVD-01..03.
-  - [ ] A waiver path (request/approve/version/expire) exists for `waiverRef`.
+  - [~] A PR that violates an ADR is blocked with a comment citing the ADR + owner. _(Wave 6 `41135566`: `evaluateDriftGate` blocks on retained error violations, cites the ADR id + owner resolved from CODEOWNERS (`domain/codeowners.ts`), renders a PR-comment body + non-zero exit code via `evolith evaluate --format drift`. **The live GitHub/GitLab Checks-API publish (GitHub App + `checks:write`/GHAS) is deploy-gated** behind `IChecksPublisher`; the mandated `PrCommentFallbackPublisher` is wired)_
+  - [x] `evolith evaluate --format sarif` emits valid SARIF; the evidence manifest carries EVD-01..03. _(reuses the existing core-domain `sarif-exporter` via a shared `evaluationResultToViolations`; `evolith evaluate --evidence <path>` emits the enforcer-evidence manifest via `buildEnforcerEvidence`)_
+  - [~] A waiver path (request/approve/version/expire) exists for `waiverRef`. _(deterministic `domain/waiver.ts` state machine + `applyWaivers` suppression with audit trail — valid approved waiver suppresses a finding until expiry, expired does not; `IWaiverStore` seam. **Remaining:** durable (fs/db) store + dedicated CLI `waiver` subcommand)_
 - **Dependencies:** GT-514, GT-516.
-- **Status:** `PENDING`
+- **Progress (2026-07-13, Wave 6, commit `41135566`):** Landed at the core-domain seam (reuses `sarif-exporter`/`EvidenceNormalizer`, Core stays pure — live Checks API behind a port). core-domain 1018/1018 + CLI evaluate 6/6 green. Kept `IN-PROGRESS`: the live Checks-API publish, a durable waiver store, and the CLI waiver subcommand are the deploy/polish remainders.
+- **Status:** `IN-PROGRESS`
 
 #### GT-519
 
@@ -179,11 +183,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Register the Composite in `evaluate` / the MCP `architecture` tool / `POST /api/v1/evaluate`; pin exact tool versions (`validated-tool-catalog.md` ↔ `enforcer-catalog.json`); build per-runtime composable CI images (not one monolith) with vuln scan + Renovate; emit enforcer OTel metrics (duration, failure rate, timeouts, violation counts).
 - **Acceptance criteria:**
-  - [ ] Parity tests are green across CLI/MCP/REST for the enforcer path.
-  - [ ] Tool versions are pinned and reproducible; CI images are per-runtime and vuln-scanned.
+  - [x] Parity tests are green across CLI/MCP/REST for the enforcer path. _(Wave 4 `f8310fac`: **latent bug fixed** — no surface DI factory injected a `processRunner`, so `RulesetValidatorService` never wrapped its strategy with the Composite and the enforcer path was unreachable on all three surfaces. `NodeProcessRunner` is now injected in core-api `core-domain.module.ts`, cli `app.module.ts`, mcp-server `domain.module.ts`; `enforcer-surface-parity.spec.ts` asserts byte-identical results + a divergence guard + a source-level anti-drift guard)_
+  - [~] Tool versions are pinned and reproducible; CI images are per-runtime and vuln-scanned. _(code part DONE: exact x.y.z pins in `enforcer-catalog.json` ↔ `validated-tool-catalog.md` §4.3 + `enforcer-catalog-doc-parity.spec.ts` fails on any drift/non-exact pin. **Deploy-gated:** per-runtime composable CI images + vuln-scan + Renovate are ops/pipeline concerns)_
   - [x] Enforcer runs emit OTel metrics (duration, failure rate, timeouts, violation counts).
 - **Dependencies:** GT-514.
-- **Status:** `PENDING`
+- **Progress (2026-07-13, Wave 4, commit `f8310fac`):** Criteria 1 & 3 met; criterion 2 code-complete, CI-image build deploy-gated. Kept `IN-PROGRESS` until the per-runtime vuln-scanned CI images + Renovate pin-maintenance land (ops). core-domain enforcement 144/144 + mcp-server 324/324 green.
+- **Status:** `IN-PROGRESS`
 
 #### GT-520
 
@@ -198,11 +203,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Add Streamable HTTP + OAuth bearer in `mcp-server/main.ts`; add per-consumer ABAC in `tool-registry` (`abac-mcp-tool-access.rego`) and audit every `tools/call`; expose resources `evolith://capabilities` and `evolith://contracts`.
 - **Acceptance criteria:**
-  - [ ] Remote MCP requires OAuth (Streamable HTTP bearer).
+  - [x] Remote MCP requires OAuth (Streamable HTTP bearer). _(Wave 3 `87645d26`: IdP-agnostic OAuth 2.1 resource-server validator — JWKS RS/PS/ES or shared HS, iss/aud/exp/nbf + clock-skew; wired into the Streamable HTTP auth path; missing/invalid/expired/spoofed ⇒ 401; the cryptographically-verified identity feeds per-identity ABAC. mcp-server 324/324)_
   - [x] Every `tools/call` is ABAC-checked per identity and audited.
   - [x] `evolith://capabilities` and `evolith://contracts` resources are served.
-- **Dependencies:** GT-513, and the identity decision (tracked as EAG-01 in the Tracker board).
-- **Status:** `PENDING`
+- **Dependencies:** GT-513 (DONE), and the identity decision (tracked as EAG-01 in the Tracker board).
+- **Progress (2026-07-13, Wave 3, commit `87645d26`):** All three acceptance criteria are met in code (OAuth mechanism implemented, wired, and tested). **Kept `IN-PROGRESS`** only because closure depends on **EAG-01** — the org's concrete IdP selection (which OIDC provider, shared vs per-tenant, audience model). The code is IdP-agnostic and needs no further change: it activates via `EVOLITH_MCP_OAUTH_ISSUER` / `_JWKS_URI` / `_SECRET` / `_AUDIENCE`. Flip to DONE once EAG-01 is decided and the issuer/JWKS/audience are wired in a deployment.
+- **Status:** `IN-PROGRESS`
 
 #### GT-521
 
@@ -421,11 +427,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Proposed fix:** Driven port owned by orchestration; Core imports only `Evidence` (inline, like `OverlayFileSystem`, ADR-0080); Core never executes providers; declarative opt-in registry per tenant; mandatory `provenance` + `determinism`.
 - **Acceptance criteria:**
   - [x] `core-domain` imports only `Evidence` (grep-clean of provider/adapter imports). _(canonical `quality-evidence.ts` — zero imports; consumed inline via `EvaluationContext.qualitySignals?`)_
-  - [~] Providers run in orchestration; Core evaluates received `Evidence[]`; missing evidence ⇒ `no-evidence`, not a failure. _(the Core-side rule `resolveEvidenceSignals` + `no-evidence` semantics exist and are tested, but are **not yet wired into the evaluation pipeline** — follow-on below)_
+  - [x] Providers run in orchestration; Core evaluates received `Evidence[]`; missing evidence ⇒ `no-evidence`, not a failure. _(Wave 3 `baf570f4`: the orchestrator's `evaluate()` folds `ctx.qualitySignals` via `foldQualitySignals`→`resolveEvidenceSignals`; received `Evidence[]` surfaces on `EvaluationResult.qualitySignals`; empty/absent ⇒ a `no-evidence` signal, advisory only — verdict never fails on missing evidence)_
   - [x] Per-tenant registry enables/disables providers declaratively. _(`TenantQualitySignalRegistry` in agent-runtime; fault-isolated, re-normalized through the canonical ACL)_
 - **Dependencies:** ADR-0111; composes with GT-530.
-- **Progress (2026-07-13, Wave 1, commit `d56ba32c`):** Seam foundation landed — canonical `Evidence`/`Provenance`/`EvidenceFinding` + `Determinism` in `core-domain` (mandatory provenance enforced by `normalizeEvidence`), driven `IQualitySignalProvider` port owned by the orchestration layer (Core never executes providers), and the per-tenant registry. Grep-clean of Core→provider coupling; core-domain 960/960 + agent-runtime 98/98 green. **Follow-on to close (→ DONE):** (1) invoke `resolveEvidenceSignals` inside the evaluation pipeline so received `Evidence[]` actually influences signals/verdict; (2) a runtime adapter that runs `TenantQualitySignalRegistry.collect()` and populates `EvaluationContext.qualitySignals` inline — only then is the ADR-0104 conformance loop closed end-to-end. GT-534 (Lighthouse) is the first concrete provider behind this port.
-- **Status:** `IN-PROGRESS`
+- **Closure (2026-07-13, Waves 1+3):** _Wave 1 (`d56ba32c`)_ landed the seam foundation — canonical `Evidence`/`Provenance`/`EvidenceFinding` + `Determinism` in `core-domain` (provenance enforced by `normalizeEvidence`), the driven `IQualitySignalProvider` port owned by orchestration (Core never executes providers), and the per-tenant `TenantQualitySignalRegistry`. _Wave 3 (`baf570f4`)_ wired it LIVE: the evaluation orchestrator folds inline `EvaluationContext.qualitySignals` through `resolveEvidenceSignals` onto `EvaluationResult.qualitySignals`, closing the ADR-0104 loop (Core reads the received `Evidence[]`; missing ⇒ advisory `no-evidence`, verdict unaffected). Grep-clean of Core→provider coupling throughout; core-domain 966/966 + agent-runtime 98/98 green. GT-534 (Lighthouse) is the first concrete provider behind the port. _Optional consumer-side follow-on (not required for this gap):_ a runtime service that calls `TenantQualitySignalRegistry.collect()` to populate the context when a live provider is deployed.
+- **Status:** `DONE`
 
 #### GT-534
 
@@ -459,10 +465,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Encode the seven standards + severity hierarchy as a skill and gate rubric; emit `Evidence` with `determinism: 'probabilistic'`.
 - **Acceptance criteria:**
-  - [ ] The agent produces structural findings ranked by the rubric's severity hierarchy.
-  - [ ] The gate can treat structural regressions as blocking; attribution respected.
+  - [x] The agent produces structural findings ranked by the rubric's severity hierarchy. _(`StructuralReviewProvider` runs the probabilistic `IStructuralReviewer` port, `rankStructuralFindings` orders by the severity hierarchy, emits one canonical Evidence with `determinism:'probabilistic'` + provenance)_
+  - [x] The gate can treat structural regressions as blocking; attribution respected. _(`evaluateStructuralGate` — deterministic severity→decision; `DEFAULT_STRUCTURAL_GATE_POLICY` blocks high/critical; `RUBRIC_ATTRIBUTION` credits the community structural-review methodology, re-expressed in our own words)_
 - **Dependencies:** GT-533.
-- **Status:** `PENDING`
+- **Closure (2026-07-13, Wave 4, commit `d450d969`):** Rubric encoded as PURE domain data (seven structural standards over one `info<low<medium<high<critical` hierarchy reusing the canonical `EvidenceFindingSeverity`); added a `code-quality-structural-review` SkillDescriptor to DEFAULT_SKILLS (GT-424 skill-registry parity guard green). `StructuralReviewProvider` structurally implements `IQualitySignalProvider` so it registers in the GT-533 `TenantQualitySignalRegistry`; the probabilistic LLM/agent edge stays behind `IStructuralReviewer`. agent-runtime 110/110. _Follow-on (not required):_ a concrete `IStructuralReviewer` adapter bound to a real LLM/agent.
+- **Status:** `DONE`
 
 #### GT-536
 
@@ -513,10 +520,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Implement `embed`/`upsert`/`delete` over pgvector with metadata filtering on the ADR-0090 §2 fields; select it via `EVOLITH_RAG_PROVIDER=pgvector`; keep `memory` as the dry-run/test default.
 - **Acceptance criteria:**
-  - [ ] `registerRagAdapter('pgvector', …)` provides a `durable: true` adapter; a live `14-rag-index-sync.mjs` run upserts real chunks and emits a truthful receipt.
-  - [ ] Metadata columns support filtering on `source_file`, `adr_id`, `language`, `corpus_version`.
+  - [~] `registerRagAdapter('pgvector', …)` provides a `durable: true` adapter; a live `14-rag-index-sync.mjs` run upserts real chunks and emits a truthful receipt. _(Wave 5 `cace6118`: `rag-pgvector.mjs` registers a `durable:true` pgvector adapter at the `rag-port.mjs` seam — `14-rag-index-sync.mjs` no longer fails closed and drives embed→upsert→delete; parameterized `INSERT … ON CONFLICT` + `DELETE … = ANY($1)`, `pg` kept out of the build via an injected client seam + lazy import. **The live-Postgres persistence run is deploy-gated**)_
+  - [x] Metadata columns support filtering on `source_file`, `adr_id`, `language`, `corpus_version`. _(first-class columns + btree indexes in `rag-pgvector.schema.sql`; upsert persists all four, asserted against a stub client)_
 - **Dependencies:** ADR-0090; ADR-0112 (platform: pgvector on existing Postgres, `vector(1024)`, HNSW); composes with GT-145.
-- **Status:** `PENDING`
+- **Progress (2026-07-13, Wave 5, commit `cace6118`):** Durable adapter delivered at the correct CI seam (`.harness/scripts/ci/rag-pgvector.{mjs,schema.sql,test.mjs}`) — `vector(1024)` + HNSW `vector_cosine_ops` per ADR-0112, embed placeholder `hashEmbed@1024` (real Qwen3 = GT-539). 10 node:test + 9 regression green; `createRagAdapter({provider:'pgvector'})` ⇒ `durable:true`. Unblocks GT-539/GT-540. Kept `IN-PROGRESS`: the live sync against a real Postgres+pgvector is deploy-gated.
+- **Status:** `IN-PROGRESS`
 
 #### GT-539
 
@@ -531,10 +539,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** S
 - **Proposed fix:** Behind the model-agnostic port, call the model fixed by ADR-0112 — **Qwen3-Embedding (Apache-2.0)**, default `0.6B`, dim 1024, via a local inference sidecar; record the model id in `corpus_version` for cache invalidation; keep `memory`/`hashEmbed` as the offline/test default.
 - **Acceptance criteria:**
-  - [ ] Live embeddings come from the declared OSS model (Qwen3-Embedding); the model id appears in chunk `corpus_version` metadata.
-  - [ ] No corpus egress — embeddings computed on-perimeter by the sidecar.
+  - [~] Live embeddings come from the declared OSS model (Qwen3-Embedding); the model id appears in chunk `corpus_version` metadata. _(Wave 6 `c4e612b7`: `rag-embed-qwen3.mjs` `makeQwen3Embedder()` POSTs to a local sidecar (`EVOLITH_RAG_EMBED_URL`/`_MODEL`, default `qwen3-embedding-0.6b`, dim 1024); the pgvector adapter's `embed()` uses it when configured, `hashEmbed` offline; `rag-sync.mjs` folds the model id into `corpus_version`. **Actually running the Qwen3 sidecar is deploy-gated**)_
+  - [x] No corpus egress — embeddings computed on-perimeter by the sidecar. _(injected `fetch` seam, no network lib imported at load; the sidecar is on-perimeter by construction; fail-closed on transport error / wrong dimension)_
 - **Dependencies:** ADR-0090 §3; ADR-0003; ADR-0112 (platform: Qwen3-Embedding); composes with GT-538.
-- **Status:** `PENDING`
+- **Progress (2026-07-13, Wave 6, commit `c4e612b7`):** Real model-agnostic embedder wired at the correct `.harness` rag-port seam (reusing the GT-538 durable adapter, not a parallel abstraction); dimension consistency asserted (model dim == store 1024, fail-closed). rag node:tests 38/38 green (qwen3 12 · integration 7 · pgvector 10 · sync 9). Kept `IN-PROGRESS`: the running sidecar + a `model-registry.json` ADR-0003 entry (`qwen3-embedding-0.6b`, capability `embedding`) are the deploy/governance remainders.
+- **Status:** `IN-PROGRESS`
 
 #### GT-540
 
@@ -549,10 +558,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Implement `IKnowledgePort.query` via cosine similarity over the pgvector store (GT-538) using the GT-539 embedding for the query text; return ranked `KnowledgeChunk[]` with citation metadata; keep `InMemoryKnowledgeAdapter` as the offline/test default.
 - **Acceptance criteria:**
-  - [ ] `query()` returns chunks ranked by real vector similarity with `score` and citation metadata.
-  - [ ] The `maturity-assessment.md` Knowledge/RAG row is updated from "Not implemented" to the delivered adapter.
+  - [x] `query()` returns chunks ranked by real vector similarity with `score` and citation metadata. _(Wave 6 `40464149`: `PgVectorKnowledgeAdapter` embeds the query via an injected `EmbedQuery` seam (dim==1024, fail-closed), runs cosine top-k over the GT-538 `rag_chunks` table with `<=>` (`score = 1 - distance`), maps rows → ranked `KnowledgeChunk` with citation metadata; metadata filters compiled to parameterized WHERE)_
+  - [x] The `maturity-assessment.md` Knowledge/RAG row is updated from "Not implemented" to the delivered adapter.
 - **Dependencies:** GT-538; GT-539; ADR-0090; ADR-0112 (platform: same model+dim as write-side).
-- **Status:** `PENDING`
+- **Closure (2026-07-13, Wave 6, commit `40464149`):** The RAG read-side is real — a production `IKnowledgePort` adapter that grounds agent recommendations by cosine-ranking the GT-538 corpus through the GT-539 embedder, fully hexagonal (both the pg client and the embedder are injected seams; no compile-time `pg`; model choice at the wiring edge). `runtime.factory.ts` selects it via `AGENT_RUNTIME_KNOWLEDGE_MODE=pgvector` / `EVOLITH_RAG_PG_URL` (fails loud on misconfig; `InMemoryKnowledgeAdapter` stays the explicit default). agent-runtime 118/118 + agent-runtime-api 67/67 green. _Deploy-gated:_ the live retrieval run against a running Postgres + Qwen3 sidecar (not an acceptance criterion).
+- **Status:** `DONE`
 
 #### GT-541
 

@@ -85,6 +85,24 @@ export const DEFAULT_SKILLS: readonly SkillDescriptor[] = [
     requiresPolicy: false,
   },
   {
+    id: 'code-quality-structural-review',
+    description:
+      'Review code against the structural-review rubric (code-judo, file-size, ' +
+      'spaghetti/abstraction/layering, dead-code) and emit findings ranked by the ' +
+      'rubric severity hierarchy as probabilistic Evidence for the Quality Gate.',
+    intents: ['structural_review', 'code_quality_review', 'review_structure'],
+    // Orchestration runs the probabilistic reviewer behind IStructuralReviewer and
+    // hands the normalized Evidence to the Core as a code-quality signal (GT-535).
+    kind: 'evaluation',
+    evaluationKinds: ['code-quality'],
+    permissions: ['read:repo'],
+    requiresApproval: false,
+    emitsTrace: true,
+    // The structural regression gate mapping is deterministic policy (severity→decision).
+    requiresPolicy: true,
+    policyRef: 'evolith.structural_review',
+  },
+  {
     id: 'publish-trace-event',
     description: 'Publish a trazability event to Evolith Tracker.',
     intents: ['publish_trace', 'emit_trace'],

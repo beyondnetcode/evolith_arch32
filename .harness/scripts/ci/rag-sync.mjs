@@ -83,8 +83,10 @@ export function chunkIds(content, sourceFile, corpusVersion) {
 }
 
 function metadataOf(chunk) {
-  const { text, ...meta } = chunk; // store metadata + preview, not the full text body
-  return meta;
+  // Keep the full `text` so DURABLE stores (pgvector) persist the retrievable
+  // chunk body — retrieval that returns only a 120-char preview cannot ground
+  // an agent. The non-durable `memory` adapter simply ignores unused fields.
+  return { ...chunk };
 }
 
 /**
@@ -102,9 +104,16 @@ export async function syncIndex({ adapter, changed = [], deleted = [], corpusVer
   if (!adapter || typeof adapter.embed !== 'function') {
     throw new Error('syncIndex requires a valid RAG adapter');
   }
+  // ADR-0090 §3 / ADR-0112 §1 — the embedding model id is part of corpus
+  // identity so cache invalidation tracks a model swap (a re-embed). Adapters
+  // that expose their effective model id fold it into corpus_version; adapters
+  // that do not (e.g. the memory stand-in) leave it unchanged.
+  const effectiveCorpusVersion = adapter.embeddingModelId
+    ? `${corpusVersion}+${adapter.embeddingModelId}`
+    : corpusVersion;
   const receipt = {
     schemaVersion: RECEIPT_SCHEMA_VERSION,
-    corpusVersion,
+    corpusVersion: effectiveCorpusVersion,
     provider: adapter.name,
     durable: !!adapter.durable,
     upserted: [],
@@ -114,7 +123,7 @@ export async function syncIndex({ adapter, changed = [], deleted = [], corpusVer
   };
 
   for (const file of changed) {
-    const chunks = chunkMarkdown(file.content, file.sourceFile, corpusVersion);
+    const chunks = chunkMarkdown(file.content, file.sourceFile, effectiveCorpusVersion);
     const liveIds = new Set(chunks.map((c) => c.chunk_id));
 
     // Prune stale chunks that no longer exist in the re-indexed file (no orphans).

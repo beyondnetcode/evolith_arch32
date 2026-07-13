@@ -7,6 +7,7 @@ import {
   DiskRulesetRepository,
   WebhookAdapter,
   MoscowPrioritizationService,
+  NodeProcessRunner,
 } from '@beyondnet/evolith-infra-providers';
 import { FILE_SYSTEM, CONFIG_PARSER } from './domain.tokens';
 
@@ -34,7 +35,13 @@ import { FILE_SYSTEM, CONFIG_PARSER } from './domain.tokens';
         const configParser = new YamlConfigParserProvider().createConfigParser('yaml');
         const logger = new NestLoggerProvider().createLogger('RulesetValidator');
         const rulesetRepo = new DiskRulesetRepository(fileSystem, logger);
-        return new RulesetValidatorService({ fileSystem, configParser, logger, rulesetRepo });
+        // GT-519 parity: register the enforcer subsystem on the MCP surface identically to
+        // CLI/REST by injecting the real process runner. Non-forking — the composite delegates
+        // to the native strategy unless a ruleset authors an `enforce:` block.
+        return new RulesetValidatorService({
+          fileSystem, configParser, logger, rulesetRepo,
+          processRunner: new NodeProcessRunner(),
+        });
       },
     },
     { provide: WebhookAdapter, useFactory: () => new WebhookAdapter() },

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { NodeFileSystemProvider } from '@beyondnet/evolith-infra-providers';
 import { NestLoggerProvider } from '@beyondnet/evolith-infra-providers';
 import { YamlConfigParserProvider } from '@beyondnet/evolith-infra-providers';
+import { NodeProcessRunner } from '@beyondnet/evolith-infra-providers';
 
 import {
   EvaluateGateUseCase,
@@ -98,7 +99,14 @@ const CoreDomainProviders = [
   {
     provide: RulesetValidatorService,
     useFactory: (fs: IFileSystem, logger: ILogger, configParser: IConfigParser, rulesetRepo: any, topologyCatalog: TopologyCatalogService) => {
-      return new RulesetValidatorService({ fileSystem: fs, logger, configParser, rulesetRepo, topologyCatalog });
+      // GT-519 parity: register the enforcer subsystem on the REST surface identically to
+      // CLI/MCP by injecting the real process runner, so `enforce:`-routed rules run their
+      // external analyzers. Non-forking — without enforcer rules the composite delegates to
+      // the native/opa strategy, so existing behaviour is preserved.
+      return new RulesetValidatorService({
+        fileSystem: fs, logger, configParser, rulesetRepo, topologyCatalog,
+        processRunner: new NodeProcessRunner(),
+      });
     },
     inject: ['IFileSystem', 'ILogger', 'IConfigParser', 'IRulesetRepository', TopologyCatalogService],
   },

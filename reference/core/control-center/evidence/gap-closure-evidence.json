@@ -7354,6 +7354,66 @@
         "cd src/sdk/cli && npm run build && npx jest (71 suites, 967/967; edit-hook+enforce 45/45) — `evolith enforce edit` blocks a boundary-violating edit (exit 2) with canonical Violation; conforming edit exit 0; cross-agent VendorHookAdapter registry"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-533",
+      "closedAt": "2026-07-13",
+      "closureCommit": "baf570f4",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/evaluation-orchestrator.service.ts",
+        "src/packages/core-domain/src/evaluation/contracts/quality-evidence.ts",
+        "src/packages/core-domain/src/evaluation/contracts/evaluation-result.ts",
+        "src/packages/core-domain/src/evaluation/evaluation-orchestrator.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/core-domain && npx tsc && npx jest (95 suites, 966/966) — evaluate() folds ctx.qualitySignals via resolveEvidenceSignals onto EvaluationResult.qualitySignals; WITH evidence ⇒ present signal surfaced, verdict PASS; WITHOUT ⇒ no-evidence signal, evaluation still succeeds. Core stays provider-free (grep-clean)."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-513",
+      "closedAt": "2026-07-13",
+      "closureCommit": "9f027797",
+      "evidence": [
+        "src/packages/contracts/src/index.ts",
+        "src/packages/contracts/src/schemas/machine-contract-set.ts",
+        "src/packages/contracts/src/capabilities/capability-contract.parity.spec.ts",
+        "src/apps/core-api/src/presentation/controllers/capabilities.controller.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/contracts && npx tsc -p tsconfig.json && npx jest (2 suites, 13/13) — @beyondnet/evolith-contracts SemVer + CONTRACT_SET_SHA256; parity spec binds package to live buildCapabilityManifest and FAILS on added-engine / single-consumer drift. GET /api/v1/capabilities served by CapabilitiesController (on develop)."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-535",
+      "closedAt": "2026-07-13",
+      "closureCommit": "d450d969",
+      "evidence": [
+        "src/packages/agent-runtime/src/domain/rubrics/structural-review-rubric.ts",
+        "src/packages/agent-runtime/src/application/structural-review-provider.ts",
+        "src/packages/agent-runtime/src/application/structural-quality-gate.ts",
+        "src/packages/agent-runtime/src/adapters/skills/default-skills.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/agent-runtime && npx tsc && npx jest (16 suites, 110/110) — rubric ranked by severity; StructuralReviewProvider emits probabilistic Evidence + provenance and registers in the GT-533 registry; evaluateStructuralGate blocks high/critical; GT-424 skill-registry parity green"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-540",
+      "closedAt": "2026-07-13",
+      "closureCommit": "40464149",
+      "evidence": [
+        "src/packages/agent-runtime/src/adapters/knowledge/pgvector-knowledge.adapter.ts",
+        "src/packages/agent-runtime/src/adapters/knowledge/pgvector-knowledge.adapter.spec.ts",
+        "src/apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts",
+        "reference/core/control-center/maturity-reports/maturity-assessment.md"
+      ],
+      "validationCommands": [
+        "cd src/packages/agent-runtime && npx tsc && npx jest (17 suites, 118/118) + cd src/apps/agent-runtime-api && npx nest build && npx jest (5 suites, 67/67) — PgVectorKnowledgeAdapter cosine top-k over rag_chunks with injected embedder+pg seams, ranked KnowledgeChunk + citation; runtime.factory selects pgvector via env, in-memory default preserved"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

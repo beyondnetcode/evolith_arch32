@@ -18,8 +18,10 @@ export {
   DEFAULT_SANDBOX_POLICY,
   SandboxedProcessRunner,
   resolveRuntimeFromManifest,
+  resolveRestorePlanFromManifest,
   executeRestorePlan,
   provisionEvaluationEnvironment,
+  materializeAndProvisionEnvironment,
 } from './application/validators/enforcement/provisioning';
 export type {
   ProjectScope,
@@ -30,6 +32,13 @@ export type {
   RestoreResult,
   ProvisionRequest,
   ProvisionedEnvironment,
+  RepositorySourceRef,
+  RepositorySources,
+  IRepositorySourceReader,
+  IWorkspaceMaterializer,
+  ManifestParser,
+  MaterializeProvisionRequest,
+  MaterializedEnvironment,
 } from './application/validators/enforcement/provisioning';
 // Canonical Core Evaluation Engine contracts (GT-377 / ADR-0101) are exposed via
 // the dedicated subpath '@beyondnet/evolith-core-domain/evaluation/contracts'. The former

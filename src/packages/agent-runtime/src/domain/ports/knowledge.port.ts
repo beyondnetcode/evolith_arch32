@@ -32,6 +32,14 @@ export interface KnowledgeChunk {
   readonly text: string;
   /** Similarity score (0-1) if returned from a semantic search. */
   readonly score?: number;
+  /**
+   * Start character offset of the chunk within its source file, when the
+   * write-side store records it (GT-538 `rag_chunks.char_start`). Optional so
+   * offline/token adapters that don't track offsets stay contract-compliant.
+   */
+  readonly charStart?: number;
+  /** End character offset within the source file (GT-538 `rag_chunks.char_end`). */
+  readonly charEnd?: number;
 }
 
 /**

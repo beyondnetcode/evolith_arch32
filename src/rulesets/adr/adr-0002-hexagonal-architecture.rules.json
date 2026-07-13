@@ -63,7 +63,13 @@
       "rationale": "ADR-0002 §Decision: Infrastructure is the adapter layer. It implements the ports defined by Core.",
       "validationQuery": "Infrastructure files implement interfaces defined in Core layer. No domain logic lives here.",
       "blocking": true,
-      "layer": "Infrastructure"
+      "layer": "Infrastructure",
+      "enforce": {
+        "engine": "enforcer",
+        "tool": "dependency-cruiser",
+        "toolRuleId": "hxa-03-infra-implements-ports",
+        "runtime": "node"
+      }
     },
     {
       "id": "HXA-04",
@@ -120,7 +126,14 @@
       "rationale": "ADR-0002 §4: AOP in adapters preserves domain purity while enabling observability.",
       "validationQuery": "AOP implementations (interceptors, middleware, decorators) exist only in Infrastructure layer.",
       "blocking": false,
-      "layer": "Infrastructure"
+      "layer": "Infrastructure",
+      "enforce": {
+        "engine": "enforcer",
+        "tool": "dependency-cruiser",
+        "toolRuleId": "hxa-06-aop-in-infrastructure-only",
+        "runtime": "node",
+        "mode": "warn"
+      }
     },
     {
       "id": "HXA-07",
@@ -131,7 +144,19 @@
       "rationale": "ADR-0002 §Consequences: Pure domain tests are fast and framework-independent.",
       "validationQuery": "Domain unit tests execute without TestBed or testcontainer initialization. Average execution time < 50ms per test file.",
       "blocking": false,
-      "layer": "Core"
+      "layer": "Core",
+      "enforce": {
+        "engine": "enforcer",
+        "tool": "dependency-cruiser",
+        "toolRuleId": "hxa-07-domain-tests-no-framework-bootstrap",
+        "runtime": "node",
+        "mode": "warn",
+        "config": {
+          "comment": "Domain/Core test files must not import a framework test harness or testcontainers.",
+          "from": { "path": "^src/(domain|core)/.+\\.(spec|test)\\.ts$" },
+          "to": { "path": "node_modules/(@nestjs/testing|testcontainers|@testcontainers)/" }
+        }
+      }
     }
   ],
   "references": [

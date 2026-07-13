@@ -3,6 +3,7 @@
   "files": [],
   "references": [
     { "path": "./src/packages/core-domain" },
+    { "path": "./src/packages/contracts" },
     { "path": "./src/packages/infra-providers" },
     { "path": "./src/packages/core" },
     { "path": "./src/packages/agent-runtime" },

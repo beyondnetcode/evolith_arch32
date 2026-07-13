@@ -155,3 +155,27 @@ export function resolveEvidenceSignals(
     };
   });
 }
+
+/**
+ * Canonical dimension used to surface a single `no-evidence` signal when the
+ * context carries NO quality evidence at all — so absence is reported explicitly
+ * and advisory, never as a failure (ADR-0111 §3).
+ */
+export const DEFAULT_QUALITY_DIMENSION = 'quality';
+
+/**
+ * Fold the inline `Evidence[]` received on an {@link EvaluationContext} into the
+ * per-dimension {@link EvidenceSignal}s the Core surfaces on its result. This is
+ * the pipeline-side entry point for {@link resolveEvidenceSignals}: it resolves a
+ * signal for every dimension OBSERVED in the received evidence (each `present`),
+ * and — when no evidence was supplied — surfaces a single `no-evidence` signal for
+ * the {@link DEFAULT_QUALITY_DIMENSION}. The Core only READS the inline evidence;
+ * it never executes a provider (ADR-0111 §2). Missing/empty evidence is advisory,
+ * NEVER a failure the Core caused (ADR-0111 §3).
+ */
+export function foldQualitySignals(evidence: readonly Evidence[] = []): EvidenceSignal[] {
+  const observedDimensions = [...new Set(evidence.map((e) => e.dimension))];
+  const requestedDimensions =
+    observedDimensions.length > 0 ? observedDimensions : [DEFAULT_QUALITY_DIMENSION];
+  return resolveEvidenceSignals(requestedDimensions, evidence);
+}

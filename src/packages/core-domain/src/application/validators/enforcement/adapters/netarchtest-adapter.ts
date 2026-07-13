@@ -24,8 +24,12 @@ import type { EnforcerAnalysisContext, IProcessRunner, ProcessResult } from '../
 
 export const NETARCHTEST_TOOL = 'NetArchTest';
 
-/** A `dotnet test` per-test failure line: `  Failed <FullTestName> [<n> ms]` (also `X <name> [..]`). */
-const FAILED_TEST_RE = /^\s*(?:X\s+|Failed\s+)(.+?)\s+\[[\d.,]+\s*m?s\]\s*$/;
+/**
+ * A `dotnet test` per-test failure line: `  Failed <FullTestName> [<n> ms]` (also `X <name> [..]`).
+ * The duration bracket tolerates the sub-millisecond form dotnet emits (`[< 1 ms]`) and
+ * second units (`[1 s]`) — otherwise a very fast failed test would be silently missed.
+ */
+const FAILED_TEST_RE = /^\s*(?:X\s+|Failed\s+)(.+?)\s+\[\s*(?:<\s*)?[\d.,]+\s*m?s\s*\]\s*$/;
 /** Boundaries that end an `Error Message:` block. */
 const MESSAGE_BOUNDARY_RE = /^\s*(?:Stack Trace:|Standard Output|Standard Error|X\s|Failed\s|Passed\s)/;
 /** Markers proving a test run actually completed (vs a build/restore break). */

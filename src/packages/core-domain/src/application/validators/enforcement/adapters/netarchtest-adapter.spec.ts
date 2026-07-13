@@ -63,6 +63,21 @@ describe('parseNetArchTestReport (GT-524 AC1 — .NET arch failures → Violatio
     expect(out.map((v) => v.ruleId)).not.toContain('Failed!');
   });
 
+  it('matches sub-millisecond and second durations ([< 1 ms], [1 s]) — no missed violations', () => {
+    const out = parseNetArchTestReport(
+      [
+        '  Failed MyApp.Arch.Tests.Fast_rule [< 1 ms]',
+        '  Error Message:',
+        '   NetArchTest: fast failing type MyApp.X',
+        '  Failed MyApp.Arch.Tests.Slow_rule [1 s]',
+      ].join('\n'),
+    );
+    expect(out.map((v) => v.ruleId)).toEqual([
+      'MyApp.Arch.Tests.Fast_rule',
+      'MyApp.Arch.Tests.Slow_rule',
+    ]);
+  });
+
   it('returns [] for a clean run or malformed/empty input (zero false positives — AC2 parser side)', () => {
     expect(parseNetArchTestReport(CLEAN_RUN)).toEqual([]);
     expect(parseNetArchTestReport('')).toEqual([]);

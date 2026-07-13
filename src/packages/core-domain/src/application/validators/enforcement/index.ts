@@ -4,8 +4,9 @@ export * from './shell-enforcer-adapter';
 export * from './enforcer-evaluator';
 export * from './composite-rule-evaluator';
 
-/** Concrete adapters + ingesters (GT-515 · EAG-09). */
+/** Concrete adapters + ingesters (GT-515 · EAG-09; GT-524 .NET/NetArchTest). */
 export * from './adapters/dependency-cruiser-adapter';
+export * from './adapters/netarchtest-adapter';
 export * from './sarif-ingester';
 
 /** Freezing / baseline / ratchet (GT-517 · EAG-12). */

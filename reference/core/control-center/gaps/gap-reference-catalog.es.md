@@ -346,10 +346,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** L
 - **Proposed fix:** Contrato ACL con linaje al origen + salvaguardas de transición (la evidencia de Jira alimenta pero no autoriza gates) + una referencia de integración documentada.
 - **Acceptance criteria:**
-  - [ ] Elementos de Jira se mapean a artefactos Evolith preservando origen/identidad/timestamps/linaje.
-  - [ ] Completar un workflow de Jira no autoriza por sí solo una transición de fase.
+  - [x] Elementos de Jira se mapean a artefactos Evolith preservando origen/identidad/timestamps/linaje. _(`parseJiraIssue`→`CanonicalWorkItem` con `WorkItemProvenance`; rechaza sin id)_
+  - [x] Completar un workflow de Jira no autoriza por sí solo una transición de fase. _(`authorizesPhaseTransition:false` por contrato + `externalWorkAuthorizesTransition`⇒false)_
 - **Dependencies:** none.
-- **Status:** `PENDING`
+- **Status:** `IN-PROGRESS`
 
 #### GT-530
 

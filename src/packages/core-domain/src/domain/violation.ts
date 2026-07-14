@@ -49,6 +49,12 @@ export interface Violation {
   readonly adrRef?: string;
   /** Accountable owner (e.g. a CODEOWNERS entry), when enriched. */
   readonly owner?: string;
+  /**
+   * Finding category (GT-521). Architecture analyzers leave it unset (defaults to
+   * architecture downstream); SECURITY tools (Conftest/Checkov/Trivy) set `security` so
+   * their findings route to the security dimension, not the architecture one.
+   */
+  readonly category?: string;
   /** Compliance control ids this violation discharges (GT-525), when enriched. Not identity. */
   readonly complianceControls?: readonly string[];
   /** Stable identity — normalized path + rule + tool + coords, message EXCLUDED. */

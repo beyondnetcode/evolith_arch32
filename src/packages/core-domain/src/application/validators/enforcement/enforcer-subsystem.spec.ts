@@ -43,10 +43,12 @@ const DOTNET_FAILURE = [
 ].join('\n');
 
 describe('createEnforcerAdapters — one adapter per validated runtime', () => {
-  it('registers dependency-cruiser (node) and NetArchTest (dotnet)', () => {
+  it('registers one adapter per validated runtime (node/dotnet/python/iac — GT-515/524/521)', () => {
     const adapters = createEnforcerAdapters(new StubProcessRunner());
-    expect(adapters.map((a) => a.tool).sort()).toEqual(['NetArchTest', 'dependency-cruiser']);
-    expect(adapters.map((a) => a.runtime).sort()).toEqual(['dotnet', 'node']);
+    expect(adapters.map((a) => a.tool).sort()).toEqual(
+      ['Checkov', 'NetArchTest', 'Trivy', 'dependency-cruiser', 'import-linter'],
+    );
+    expect(adapters.map((a) => a.runtime).sort()).toEqual(['dotnet', 'iac', 'iac', 'node', 'python']);
   });
 });
 

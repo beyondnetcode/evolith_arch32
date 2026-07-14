@@ -117,9 +117,11 @@ Static analyzers that enforce module/layer boundaries and cycles per runtime. Co
 |------|---------|---------|---------|---------|-----|
 | **dependency-cruiser** | 16.10.4 | node | Module/layer boundary + cycle analysis (TS/JS) | Implemented (GT-515, in progress) | ADR-0002 |
 | **NetArchTest** | 1.3.2 | dotnet | Layer & dependency-direction rules (.NET) | Implemented (GT-524, in progress; real execution blocked by GT-512) | ADR-0002 |
-| **Deptrac** | 2.0.4 | php | Layer boundary enforcement (PHP) | Catalogued, adapter pending (GT-521) | ADR-0002 |
-| **import-linter** | 2.1.0 | python | Import contracts, grimp-backed (Python) | Catalogued, adapter pending (GT-521) | ADR-0002 |
-| **Conftest** | 0.56.0 | iac | OPA/Rego policy checks for IaC/config manifests | Catalogued, adapter pending (GT-521) | ADR-0002 |
+| **Deptrac** | 2.0.4 | php | Layer boundary enforcement (PHP) | Catalogued; adapter awaits a real PHP repo (GT-521 criterion #1) | ADR-0002 |
+| **import-linter** | 2.1.0 | python | Import contracts, grimp-backed (Python) | Implemented (GT-521, live-verified against a real Python corpus) | ADR-0002 |
+| **Conftest** | 0.56.0 | iac | OPA/Rego policy checks for IaC/config manifests | Catalogued; SARIF path covered by the shared security adapter (GT-521) | ADR-0002 |
+| **Checkov** | 3.3.8 | iac | IaC misconfiguration scanning (SARIF, `category=security`) | Implemented (GT-521, live-verified on a real Terraform corpus) | ADR-0002 |
+| **Trivy** | 0.56.2 | iac | Vulnerability + IaC misconfiguration scanning (SARIF, `category=security`) | Implemented (GT-521, shared SARIF security adapter) | ADR-0002 |
 
 ---
 

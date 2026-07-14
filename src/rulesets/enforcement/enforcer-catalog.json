@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "version": "1.0.0",
-  "description": "GT-514 / EAG-08. Validated architecture-enforcement analyzers. This is the machine-readable mirror of the 'Architecture Enforcement (Boundary Analyzers)' section (§4.3) of product/infra/validated-tool-catalog.md. Every entry's tool + version MUST appear in that doc. GT-519: versions are pinned EXACT (x.y.z, no ranges/wildcards) so per-runtime CI images are reproducible; the enforcer-catalog ↔ doc parity test (enforcer-catalog-doc-parity.spec.ts) fails on any drift. Currency is maintained by Renovate against these pins (deploy-gated).",
+  "description": "GT-514 / EAG-08. Validated architecture-enforcement analyzers. This is the machine-readable mirror of the 'Architecture Enforcement (Boundary Analyzers)' section (\u00a74.3) of product/infra/validated-tool-catalog.md. Every entry's tool + version MUST appear in that doc. GT-519: versions are pinned EXACT (x.y.z, no ranges/wildcards) so per-runtime CI images are reproducible; the enforcer-catalog \u2194 doc parity test (enforcer-catalog-doc-parity.spec.ts) fails on any drift. Currency is maintained by Renovate against these pins (deploy-gated).",
   "source": "product/infra/validated-tool-catalog.md#43-architecture-enforcement-boundary-analyzers",
   "enforcers": [
     {
@@ -42,6 +42,22 @@
       "version": "0.56.0",
       "purpose": "OPA/Rego policy checks for IaC/config manifests",
       "outputFormat": "json",
+      "adr": "ADR-0002"
+    },
+    {
+      "tool": "Checkov",
+      "runtime": "iac",
+      "version": "3.3.8",
+      "purpose": "IaC misconfiguration scanning (SARIF); category=security",
+      "outputFormat": "sarif",
+      "adr": "ADR-0002"
+    },
+    {
+      "tool": "Trivy",
+      "runtime": "iac",
+      "version": "0.56.2",
+      "purpose": "Vulnerability + IaC misconfiguration scanning (SARIF); category=security",
+      "outputFormat": "sarif",
       "adr": "ADR-0002"
     }
   ]

@@ -7698,6 +7698,25 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-538 (durable pgvector store) + GT-539 (real embedder) + GT-540 (read adapter) all DONE — the workflow drives the durable delta sync and the runtime grounds against the read adapter, citing the corpus_version those produce."
+    },
+    {
+      "id": "GT-521",
+      "closedAt": "2026-07-14",
+      "closureCommit": "e322bd7b",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/enforcement/adapters/import-linter-adapter.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/adapters/sarif-security-adapter.ts",
+        "src/packages/core-domain/src/domain/violation.ts",
+        "src/rulesets/enforcement/enforcer-catalog.json",
+        "product/infra/validated-tool-catalog.md"
+      ],
+      "validationCommands": [
+        "core-domain 1024/1024 (incl. import-linter-adapter.spec + sarif-security-adapter.spec + updated enforcer-catalog-parity/enforcer-subsystem anti-drift specs); core-api tsc --noEmit clean (Violation.category propagates).",
+        "import-linter (Python) LIVE-verified against a real corpus: a package whose domain imports infrastructure yields exactly 1 Violation carrying the broken import chain; a clean package yields 0 (0 FP).",
+        "Security-SARIF (Checkov/Trivy) LIVE-verified: a real Checkov SARIF over a Terraform corpus (8 findings) parses via the shared GT-515 ingestSarif to 8 Violations, ALL category='security'; a clean scan yields 0."
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-514 (ShellEnforcerAdapter/IProcessRunner seam) + GT-515 (SARIF 2.1.0 ingester, reused wholesale by the security adapters) both DONE. Criterion #1's own gate held: import-linter (Python) + Checkov/Trivy (IaC/security) landed and were exercised against real corpora; Deptrac (PHP) / ArchUnit (JVM) / jQAssistant (Neo4j) correctly stay adapter-pending — no real repo of those runtimes exists to exercise them, so building them would be speculative and untestable per the gap's Risk/Evidence."
     }
   ]
 }

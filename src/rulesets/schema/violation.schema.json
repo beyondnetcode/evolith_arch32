@@ -16,6 +16,8 @@
     "message": { "type": "string", "description": "Human-readable message. NOT part of the fingerprint." },
     "adrRef": { "type": "string", "description": "ADR this rule traces to (e.g. ADR-0002)." },
     "owner": { "type": "string", "description": "Accountable owner (e.g. a CODEOWNERS entry)." },
+    "category": { "type": "string", "description": "Finding category (GT-521); security tools set 'security' to route to the security dimension." },
+    "complianceControls": { "type": "array", "items": { "type": "string" }, "description": "Compliance control ids this violation discharges (GT-525)." },
     "fingerprint": {
       "type": "string",
       "pattern": "^[0-9a-f]{16}$",

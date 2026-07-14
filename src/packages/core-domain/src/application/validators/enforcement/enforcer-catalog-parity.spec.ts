@@ -29,6 +29,8 @@ import { resolve } from 'path';
 import { StubProcessRunner, type EnforcerRuntime } from './enforcer.types';
 import { createDependencyCruiserAdapter, DEPENDENCY_CRUISER_TOOL } from './adapters/dependency-cruiser-adapter';
 import { createNetArchTestAdapter, NETARCHTEST_TOOL } from './adapters/netarchtest-adapter';
+import { createImportLinterAdapter, IMPORT_LINTER_TOOL } from './adapters/import-linter-adapter';
+import { createCheckovAdapter, createTrivyAdapter, CHECKOV_TOOL, TRIVY_TOOL } from './adapters/sarif-security-adapter';
 
 interface CatalogEntry {
   readonly tool: string;
@@ -52,8 +54,8 @@ const VALID_RUNTIMES: Record<EnforcerRuntime, true> = {
 const isValidRuntime = (r: string): r is EnforcerRuntime =>
   Object.prototype.hasOwnProperty.call(VALID_RUNTIMES, r);
 
-/** Tools catalogued for future runtimes but with no adapter yet (GT-521). */
-const PLANNED_WITHOUT_ADAPTER = ['Deptrac', 'import-linter', 'Conftest'] as const;
+/** Tools catalogued for runtimes whose adapter awaits a real repo (GT-521 criterion #1). */
+const PLANNED_WITHOUT_ADAPTER = ['Deptrac', 'Conftest'] as const;
 
 /** Load the catalog straight from the repository (not a copy) so the test tracks the real file. */
 function loadCatalog(): { enforcers: CatalogEntry[] } {
@@ -68,7 +70,13 @@ function loadCatalog(): { enforcers: CatalogEntry[] } {
 /** The concrete adapters that exist today, with tool/runtime DERIVED from each instance. */
 function implementedAdapters() {
   const runner = new StubProcessRunner();
-  return [createDependencyCruiserAdapter(runner), createNetArchTestAdapter(runner)].map((a) => ({
+  return [
+    createDependencyCruiserAdapter(runner),
+    createNetArchTestAdapter(runner),
+    createImportLinterAdapter(runner),
+    createCheckovAdapter(runner),
+    createTrivyAdapter(runner),
+  ].map((a) => ({
     tool: a.tool,
     runtime: a.runtime,
   }));
@@ -81,7 +89,7 @@ describe('enforcer-catalog ↔ adapters parity (GT-524 / GT-514 anti-drift)', ()
   const catalogByTool = new Map(enforcers.map((e) => [e.tool, e]));
 
   it('exposes the implemented adapters via their exported tool constants (no loose literals)', () => {
-    expect(implemented.map((i) => i.tool)).toEqual([DEPENDENCY_CRUISER_TOOL, NETARCHTEST_TOOL]);
+    expect(implemented.map((i) => i.tool)).toEqual([DEPENDENCY_CRUISER_TOOL, NETARCHTEST_TOOL, IMPORT_LINTER_TOOL, CHECKOV_TOOL, TRIVY_TOOL]);
     // The .NET adapter's runtime is what makes GT-524 the ".NET" enforcer.
     expect(implemented.find((i) => i.tool === NETARCHTEST_TOOL)?.runtime).toBe('dotnet');
     expect(implemented.find((i) => i.tool === DEPENDENCY_CRUISER_TOOL)?.runtime).toBe('node');

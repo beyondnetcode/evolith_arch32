@@ -16,6 +16,8 @@
 import type { IRuleEvaluatorStrategy } from '../evaluators/evaluator.interface';
 import { createDependencyCruiserAdapter } from './adapters/dependency-cruiser-adapter';
 import { createNetArchTestAdapter } from './adapters/netarchtest-adapter';
+import { createImportLinterAdapter } from './adapters/import-linter-adapter';
+import { createCheckovAdapter, createTrivyAdapter } from './adapters/sarif-security-adapter';
 import { CompositeRuleEvaluator } from './composite-rule-evaluator';
 import { EnforcerEvaluator } from './enforcer-evaluator';
 import type { IEnforcerMetrics } from './enforcer-metrics';
@@ -35,7 +37,13 @@ export interface EnforcerSubsystemOptions {
  * guarantees that.
  */
 export function createEnforcerAdapters(runner: IProcessRunner): IEnforcerAdapter[] {
-  return [createDependencyCruiserAdapter(runner), createNetArchTestAdapter(runner)];
+  return [
+    createDependencyCruiserAdapter(runner), // node/TS (GT-515)
+    createNetArchTestAdapter(runner), // .NET (GT-524)
+    createImportLinterAdapter(runner), // Python (GT-521)
+    createCheckovAdapter(runner), // IaC/security → category=security (GT-521)
+    createTrivyAdapter(runner), // vuln/IaC security → category=security (GT-521)
+  ];
 }
 
 /**

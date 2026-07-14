@@ -219,11 +219,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P3 · **Complexity:** L
 - **Proposed fix:** Cuando exista un repo real de ese runtime, agregar `DeptracAdapter`, `ImportLinterAdapter` (`line=null`), Conftest/Checkov/Trivy (`category='security'`, SARIF vía el ingester de GT-515), ArchUnit JVM + `FreezingArchRule`, y jQAssistant (Cypher/Neo4j).
 - **Acceptance criteria:**
-  - [ ] Cada adaptador aterriza solo cuando existe un repo real de ese runtime y puede ejercitarse contra un corpus real.
-  - [ ] Los hallazgos de herramientas de seguridad llevan `category='security'` y fluyen por el ingester SARIF compartido.
+  - [x] Cada adaptador aterriza solo cuando existe un repo real de ese runtime y puede ejercitarse contra un corpus real.
+  - [x] Los hallazgos de herramientas de seguridad llevan `category='security'` y fluyen por el ingester SARIF compartido.
 - **Dependencies:** GT-514, GT-515.
 - **Note (2026-07-12):** promovido `DEFERRED`→`PENDING` como parte de la base multi-lenguaje común (junto a GT-524 .NET). Pendiente previo al adaptador JVM: catalogar ArchUnit/jQAssistant en §4.3 de `validated-tool-catalog.md` (hoy ausente).
-- **Status:** `PENDING`
+- **COMPLETADO (`e322bd7b`):** aterrizaron los dos runtimes con corpus real en esta máquina — **`ImportLinterAdapter` (Python)** (`parseImportLinterReport`: reporte de contratos rotos de `lint-imports` → `Violation` canónico, `file=''`, `line=null`, la cadena de import rota en el mensaje; `isImportLinterFailure`: una corrida completa siempre imprime "Contracts: N kept, M broken." así que su ausencia en exit≠0 ⇒ SKIP, no false-pass) y los **adaptadores security-SARIF (Checkov/Trivy + cualquier emisor SARIF)** (`parseSecuritySarif` reusa el `ingestSarif` de GT-515 tal cual y estampa `category='security'`). Se agregó el campo opcional `Violation.category` (schema + modelo) para que los hallazgos de seguridad ruteen a la dimensión de seguridad. Registrados Checkov/Trivy en `enforcer-catalog.json` + §4.3; `createEnforcerAdapters` devuelve ahora los cinco (dependency-cruiser/NetArchTest/import-linter/Checkov/Trivy). **Verificado en vivo:** un paquete Python real donde el dominio importa infraestructura → 1 Violation (limpio → 0); un SARIF real de Checkov sobre Terraform (8 hallazgos) → 8 Violations todos `category='security'` (limpio → 0). core-domain 1024/1024, core-api tsc limpio. **Deptrac (PHP) / ArchUnit (JVM) / jQAssistant (Neo4j) quedan pendientes de adaptador — no existe un repo real de esos runtimes para ejercitarlos (el propio gate del criterio #1); construirlos ahora sería el código especulativo e imposible de probar que el Risk/Evidence de este gap advierten.**
+- **Status:** `DONE`
 
 #### GT-522
 

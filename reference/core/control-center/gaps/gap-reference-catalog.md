@@ -223,11 +223,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P3 · **Complexity:** L
 - **Proposed fix:** When a real repo of that runtime exists, add `DeptracAdapter`, `ImportLinterAdapter` (`line=null`), Conftest/Checkov/Trivy (`category='security'`, SARIF via the GT-515 ingester), ArchUnit JVM + `FreezingArchRule`, and jQAssistant (Cypher/Neo4j).
 - **Acceptance criteria:**
-  - [ ] Each adapter lands only when a real repo of that runtime exists and can be exercised against a real corpus.
-  - [ ] Security-tool findings carry `category='security'` and flow through the shared SARIF ingester.
+  - [x] Each adapter lands only when a real repo of that runtime exists and can be exercised against a real corpus.
+  - [x] Security-tool findings carry `category='security'` and flow through the shared SARIF ingester.
 - **Dependencies:** GT-514, GT-515.
 - **Note (2026-07-12):** promoted `DEFERRED`→`PENDING` as part of the common multi-language base (alongside GT-524 .NET). Pending before the JVM adapter: catalog ArchUnit/jQAssistant in §4.3 of `validated-tool-catalog.md` (absent today).
-- **Status:** `PENDING`
+- **DONE (`e322bd7b`):** landed the two runtimes with a real corpus on this machine — **`ImportLinterAdapter` (Python)** (`parseImportLinterReport`: `lint-imports` broken-contract report → canonical `Violation`, `file=''`, `line=null`, the broken import chain in the message; `isImportLinterFailure`: a completed run always prints "Contracts: N kept, M broken." so its absence on a non-zero exit ⇒ SKIP not false-pass) and the **security-SARIF adapters (Checkov/Trivy + any SARIF emitter)** (`parseSecuritySarif` reuses the GT-515 `ingestSarif` wholesale and stamps `category='security'`). Added the optional `Violation.category` field (schema + model) so security findings route to the security dimension. Registered Checkov/Trivy in `enforcer-catalog.json` + §4.3; `createEnforcerAdapters` now returns all five (dependency-cruiser/NetArchTest/import-linter/Checkov/Trivy). **Live-verified:** a real Python package where domain imports infrastructure → 1 Violation (clean → 0); a real Checkov SARIF over Terraform (8 findings) → 8 Violations all `category='security'` (clean → 0). core-domain 1024/1024, core-api tsc clean. **Deptrac (PHP) / ArchUnit (JVM) / jQAssistant (Neo4j) stay adapter-pending — no real repo of those runtimes exists to exercise them (criterion #1's own gate); building them now would be the speculative, untestable code this gap's Risk/Evidence warn against.**
+- **Status:** `DONE`
 
 #### GT-522
 

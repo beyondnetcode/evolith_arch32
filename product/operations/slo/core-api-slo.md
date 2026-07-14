@@ -15,23 +15,23 @@ Service Level Objectives for Evolith Core API services. These SLOs define the re
 
 | Metric | Target | Window | Measurement |
 |--------|--------|--------|-------------|
-| Availability | 99.9% | Rolling 30 days | `sum(http_requests_total{status!~"5.."}[30d]) / sum(http_requests_total[30d])` |
+| Availability | 99.9% | Rolling 30 days | `sum(evolith_http_requests_total{status!~"5.."}[30d]) / sum(evolith_http_requests_total[30d])` |
 | Error Budget | 0.1% (43.8 min/month) | Rolling 30 days | Derived from availability |
 
 ### Latency SLO
 
 | Metric | Target | Window | Measurement |
 |--------|--------|--------|-------------|
-| p99 Latency | < 200ms | Rolling 30 days | `histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))` |
-| p95 Latency | < 100ms | Rolling 30 days | `histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))` |
-| p50 Latency | < 50ms | Rolling 30 days | `histogram_quantile(0.50, rate(http_request_duration_seconds_bucket[5m]))` |
+| p99 Latency | < 200ms | Rolling 30 days | `histogram_quantile(0.99, rate(evolith_http_request_duration_seconds_bucket[5m]))` |
+| p95 Latency | < 100ms | Rolling 30 days | `histogram_quantile(0.95, rate(evolith_http_request_duration_seconds_bucket[5m]))` |
+| p50 Latency | < 50ms | Rolling 30 days | `histogram_quantile(0.50, rate(evolith_http_request_duration_seconds_bucket[5m]))` |
 
 ### Error Rate SLO
 
 | Metric | Target | Window | Measurement |
 |--------|--------|--------|-------------|
-| 5xx Error Rate | < 0.1% | Rolling 30 days | `rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])` |
-| 4xx Error Rate | < 5% | Rolling 30 days | `rate(http_requests_total{status=~"4.."}[5m]) / rate(http_requests_total[5m])` |
+| 5xx Error Rate | < 0.1% | Rolling 30 days | `rate(evolith_http_requests_total{status=~"5.."}[5m]) / rate(evolith_http_requests_total[5m])` |
+| 4xx Error Rate | < 5% | Rolling 30 days | `rate(evolith_http_requests_total{status=~"4.."}[5m]) / rate(evolith_http_requests_total[5m])` |
 
 ## Error Budget Policy
 

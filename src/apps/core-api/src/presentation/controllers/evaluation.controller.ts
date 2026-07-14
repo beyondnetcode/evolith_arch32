@@ -23,6 +23,7 @@ import type {
 import type { IRulesetRepository } from '@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port';
 import { EvaluationContextDto } from '../dtos/evaluation.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
+import { MetricsService } from '../../infrastructure/metrics/metrics.service';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 import {
   createSuccessEnvelope,
@@ -66,6 +67,7 @@ export class EvaluationController {
     @Optional() private readonly topologyCatalog?: TopologyCatalogService,
     @Optional()
     private readonly workspaceResolver?: WorkspaceReferenceResolverService,
+    @Optional() private readonly metrics?: MetricsService,
   ) {}
 
   @Post()
@@ -80,17 +82,23 @@ export class EvaluationController {
       'EvaluationResult (canonical) or legacy verdict, in the ADR-0073 envelope',
   })
   async evaluate(@Body() body: EvaluationContextDto) {
+    const start = Date.now();
+    // GT-542: the phase label for the emitted gate/evaluation metric.
+    const phase = String(body.phase ?? body.phaseId ?? 'unknown');
+
     // Inline path (additive, highest priority): evaluate in-memory satellite
     // content. Stateless — the incoming files are never written to disk and no
     // network is used for them; only the Core's own rulesets are read from disk.
     if (body.evaluationInput?.files) {
-      return this.evaluateInline(body);
+      return this.evaluateInline(body, start, phase);
     }
 
     // Canonical path: opaque workspaceRef → stateless EvaluationContext → EvaluationResult.
     if (body.workspaceRef) {
       const ctx = body as unknown as EvaluationContext;
       const result = await this.orchestrator.evaluate(ctx);
+      // GT-542: emit the evaluation verdict + latency signal.
+      this.metrics?.recordGateEvaluation('evaluate', String(result.overallVerdict), phase, (Date.now() - start) / 1000);
       // GT-411: Return pre-built ADR-0073 envelope with canonical command name.
       return createSuccessEnvelope(result, {
         command: 'evolith evaluate',
@@ -115,6 +123,8 @@ export class EvaluationController {
           },
         },
       );
+      // GT-542: legacy path exposes a boolean pass/fail → map to the canonical verdict label.
+      this.metrics?.recordGateEvaluation('evaluate', evaluationVerdict?.passed ? 'PASS' : 'FAIL', phase, (Date.now() - start) / 1000);
       return evaluationVerdict!.outputEnvelope;
     }
 
@@ -128,7 +138,7 @@ export class EvaluationController {
    * synthetic satellite root served from the in-memory `files` map. The Core's
    * own rulesets are still read from real disk via the fallback IFileSystem.
    */
-  private async evaluateInline(body: EvaluationContextDto) {
+  private async evaluateInline(body: EvaluationContextDto, start: number, phase: string) {
     if (!this.fs || !this.logger || !this.configParser || !this.rulesetRepo) {
       throw new BadRequestException(
         'Inline evaluation is not configured on this Core instance',
@@ -171,6 +181,8 @@ export class EvaluationController {
         phase: body.phase ?? body.phaseId,
       },
     });
+    // GT-542: emit the inline evaluation verdict + latency signal.
+    this.metrics?.recordGateEvaluation('evaluate', evaluationVerdict?.passed ? 'PASS' : 'FAIL', phase, (Date.now() - start) / 1000);
     return evaluationVerdict!.outputEnvelope;
   }
 }

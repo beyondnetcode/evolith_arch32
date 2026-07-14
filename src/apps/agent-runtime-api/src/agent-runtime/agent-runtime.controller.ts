@@ -20,15 +20,18 @@
  * inside the runtime.
  */
 
-import { BadRequestException, Body, Controller, Get, Inject, Post, Sse, MessageEvent } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Inject, Optional, Post, Sse, MessageEvent } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
   ExternalTriggerInteractionAdapter,
   HermesChatBoxInteractionAdapter,
   type AgentRuntimeBundle,
+  type AgentRuntimeRequest,
   type AgentRuntimeRequestWire,
+  type AgentRuntimeResult,
 } from '@beyondnet/evolith-agent-runtime';
 import { AGENT_RUNTIME_BUNDLE } from './runtime.factory';
+import { AgentMetricsService } from '../health/agent-metrics.service';
 
 /**
  * Adapter-neutral conversational input shape shared by `/converse` (canonical)
@@ -56,7 +59,11 @@ export class AgentRuntimeController {
   private readonly externalAdapter = new ExternalTriggerInteractionAdapter();
   private readonly hermesAdapter = new HermesChatBoxInteractionAdapter();
 
-  constructor(@Inject(AGENT_RUNTIME_BUNDLE) private readonly bundle: AgentRuntimeBundle) {}
+  constructor(
+    @Inject(AGENT_RUNTIME_BUNDLE) private readonly bundle: AgentRuntimeBundle,
+    // Optional so unit tests that don't assert metrics need not provide it.
+    @Optional() private readonly metrics?: AgentMetricsService,
+  ) {}
 
   @Post('handle')
   async handle(@Body() body: AgentRuntimeRequestWire) {
@@ -66,7 +73,19 @@ export class AgentRuntimeController {
     } catch (err) {
       throw new BadRequestException(err instanceof Error ? err.message : 'Invalid request payload.');
     }
-    return this.bundle.runtime.handle(request);
+    return this.runInstrumented(request);
+  }
+
+  /**
+   * Run the governed pipeline and record the GT-546 agent-execution metrics
+   * (run volume/verdict, latency, skill, Core call, HITL) from the result. The
+   * metrics are a side-observation — the returned result is unchanged.
+   */
+  private async runInstrumented(request: AgentRuntimeRequest): Promise<AgentRuntimeResult> {
+    const start = Date.now();
+    const result = await this.bundle.runtime.handle(request);
+    this.metrics?.recordRun(result, (Date.now() - start) / 1000);
+    return result;
   }
 
   /**
@@ -107,7 +126,7 @@ export class AgentRuntimeController {
     } catch (err) {
       throw new BadRequestException(err instanceof Error ? err.message : 'Invalid request payload.');
     }
-    return this.bundle.runtime.handle(request);
+    return this.runInstrumented(request);
   }
 
   @Post('stream')

@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
-import { createHash, timingSafeEqual } from 'node:crypto';
+import { timingSafeEqual } from 'node:crypto';
 
 /**
  * GT-549 — dedicated fail-closed guard for `/metrics`.
@@ -39,10 +39,17 @@ export class MetricsAuthGuard implements CanActivate {
     throw new UnauthorizedException('Missing or invalid metrics credential.');
   }
 
-  /** Constant-time comparison over fixed-length digests (no length side-channel). */
+  /**
+   * Constant-time comparison of two secrets. A length mismatch is a fast reject
+   * (an unequal-length credential is trivially wrong; the real key's length is not
+   * sensitive), and equal-length inputs are compared with `timingSafeEqual` so no
+   * per-byte timing leaks. No hashing — this is a shared-secret equality check, not
+   * password storage.
+   */
   private safeEqual(a: string, b: string): boolean {
-    const ha = createHash('sha256').update(a).digest();
-    const hb = createHash('sha256').update(b).digest();
-    return timingSafeEqual(ha, hb);
+    const ab = Buffer.from(a, 'utf8');
+    const bb = Buffer.from(b, 'utf8');
+    if (ab.length !== bb.length) return false;
+    return timingSafeEqual(ab, bb);
   }
 }

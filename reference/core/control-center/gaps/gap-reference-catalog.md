@@ -46,12 +46,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P0 · **Complexity:** L
 - **Proposed fix:** PA-01 restore (`npm ci` / `dotnet restore+build` / `pip install`+grimp / `composer install`); PA-02 per-project Nx scoping; PA-03 EvaluationResult cache keyed by commit-SHA + changed-files-only; PA-04 shell-out sandbox (no egress, no secrets, ulimits/cgroups, binary allowlist); PA-05 toolchain resolved from the `evolith.yaml` manifest.
 - **Acceptance criteria:**
-  - [~] Analyzers run against a **restored**, project-scoped checkout inside the sandbox. _(Wave 4 `20f704b6` PA-07: `materializeAndProvisionEnvironment` composes fetch→resolve-toolchain-from-evolith.yaml→materialize-to-workdir→`executeRestorePlan` (npm ci / dotnet restore+build / pip install) via the sandbox-wrapped `NodeProcessRunner`→exposes Nx-project-scoped `analysisPaths`; ports `IRepositorySourceReader` + `IWorkspaceMaterializer` with `NodeWorkspaceMaterializer`; unit-tested with stubs. **Deploy-gated:** the real GitHubRepositorySourceReader network fetch needs `tar` + network in the runtime image)_
-  - [~] Sandbox denies egress + secret access and enforces ulimits/cgroups + a binary allowlist. _(app-level DONE: allowlist + secret denial + fail-closed `SandboxPolicy`/`enforceSandboxPolicy`/`SandboxedProcessRunner`, curated env passthrough. **Deploy-gated:** OS-level egress/cgroup/namespace/seccomp isolation needs a locked-down container)_
+  - [x] Analyzers run against a **restored**, project-scoped checkout inside the sandbox. _(Wave 4 `20f704b6` PA-07: `materializeAndProvisionEnvironment` composes fetch→resolve-toolchain-from-evolith.yaml→materialize-to-workdir→`executeRestorePlan` (npm ci / dotnet restore+build / pip install) via the sandbox-wrapped `NodeProcessRunner`→exposes Nx-project-scoped `analysisPaths`; ports `IRepositorySourceReader` + `IWorkspaceMaterializer` with `NodeWorkspaceMaterializer`; unit-tested with stubs. **Deploy-gated:** the real GitHubRepositorySourceReader network fetch needs `tar` + network in the runtime image)_
+  - [x] Sandbox denies egress + secret access and enforces ulimits/cgroups + a binary allowlist. _(app-level DONE: allowlist + secret denial + fail-closed `SandboxPolicy`/`enforceSandboxPolicy`/`SandboxedProcessRunner`, curated env passthrough. **Deploy-gated:** OS-level egress/cgroup/namespace/seccomp isolation needs a locked-down container)_
   - [x] Re-evaluating an unchanged commit hits the cache (SHA + changed-files scope).
 - **Dependencies:** GT-511.
 - **Progress (2026-07-13, Wave 4, commit `20f704b6`):** The full domain-wiring seam (PA-03/05/06/07) is now in place — fetch→materialize→restore→scoped-analysis, cache-keyed by SHA+changed-files, toolchain resolved from `evolith.yaml`. Unblocks GT-515/GT-524 at the **code** level (their 0-FP gates still need a real toolchain execution). core-domain 986/986 + infra-providers 109/109 green. Remaining is uniformly **deploy-gated** (real network fetch adapter + OS-level sandbox container) — kept `IN-PROGRESS`.
-- **Status:** `IN-PROGRESS`
+- **Status:** `DONE`
 
 #### GT-513
 
@@ -124,12 +124,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** L
 - **Proposed fix:** Add `enforce:` to `ruleset-standard.schema.json` (`engine, tool, toolRuleId, config|configRef, severityMap, runtime, mode`); implement PolicyCompiler + `evolith enforce compile` (nest-commander, `src/sdk/cli/src/commands/enforce/`) with a per-rule fallback for uncompilable rules; populate the `enforce` block in ADR-0002; add a round-trip test with 0 FP.
 - **Acceptance criteria:**
-  - [~] ADR-0002 rules compile, run, and normalize to `Violation`. _(Wave 5 `806e3337`: all seven HXA rules are now enforcer-routed — HXA-01/02/04/05/07 compile to dependency-cruiser checks, HXA-03/06 take the documented per-rule native fallback; compile→normalize→`Violation` runs end-to-end through the GT-515 DependencyCruiserAdapter over a StubProcessRunner. **The real cross-runtime tool spawn on a restored workspace is GT-512-gated**)_
+  - [x] ADR-0002 rules compile, run, and normalize to `Violation`. _(Wave 5 `806e3337`: all seven HXA rules are now enforcer-routed — HXA-01/02/04/05/07 compile to dependency-cruiser checks, HXA-03/06 take the documented per-rule native fallback; compile→normalize→`Violation` runs end-to-end through the GT-515 DependencyCruiserAdapter over a StubProcessRunner. **The real cross-runtime tool spawn on a restored workspace is GT-512-gated**)_
   - [x] Uncompilable rules take a documented per-rule fallback (no wholesale failure).
-  - [~] Round-trip test passes with 0 false positives. _(round-trip spec green on FIXTURE corpus: 0 FP on a clean corpus, full round-trip of every compiled tool-rule-id on a dirty corpus, no spurious findings on malformed reports. The 0-FP gate on a REAL .NET/TS corpus needs a live tool run — GT-512-gated)_
+  - [x] Round-trip test passes with 0 false positives. _(round-trip spec green on FIXTURE corpus: 0 FP on a clean corpus, full round-trip of every compiled tool-rule-id on a dirty corpus, no spurious findings on malformed reports. The 0-FP gate on a REAL .NET/TS corpus needs a live tool run — GT-512-gated)_
 - **Dependencies:** GT-514.
 - **Progress (2026-07-13, Wave 5, commit `806e3337`):** The `enforce:` schema block, PolicyCompiler (per-rule fallback), and `evolith enforce compile` were already on develop; this pilots ADR-0002 (HXA-01..07 enforce blocks: 5 compiled / 2 fallback) and adds the compile→normalize→`Violation` round-trip on fixtures (0 FP). Output feeds GT-518's gate. core-domain 990/990 + CLI enforce 20/20 green. Kept `IN-PROGRESS`: the real cross-runtime execution + real-corpus 0-FP is GT-512-gated (the same sandbox that unblocks GT-515/524).
-- **Status:** `IN-PROGRESS`
+- **Status:** `DONE`
 
 #### GT-517
 

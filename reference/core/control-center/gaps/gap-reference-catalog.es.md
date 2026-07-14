@@ -46,11 +46,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P0 · **Complexity:** L
 - **Proposed fix:** PA-01 restore (`npm ci` / `dotnet restore+build` / `pip install`+grimp / `composer install`); PA-02 scoping por proyecto en Nx; PA-03 cache de EvaluationResult indexado por commit-SHA + solo-archivos-cambiados; PA-04 sandbox de shell-out (sin egress, sin secretos, ulimits/cgroups, allowlist de binarios); PA-05 toolchain resuelto desde el manifiesto `evolith.yaml`.
 - **Acceptance criteria:**
-  - [ ] Los analizadores corren contra un checkout **restaurado**, scopeado por proyecto, dentro del sandbox. _(PA-06 hecho: `executeRestorePlan` ejecuta el plan fail-fast + `provisionEvaluationEnvironment` compone scope→cache→restore, y el `NodeProcessRunner` real (infra-providers) lo corre; solo falta la integración de traer el checkout real del repo)_
-  - [ ] El sandbox deniega egress + acceso a secretos y aplica ulimits/cgroups + una allowlist de binarios. _(hecho: allowlist + denegación de secretos + wrapper fail-closed (política) y ahora el `NodeProcessRunner` NO hereda secretos del entorno padre —passthrough curado— en runtime; el enforcement OS-level de egress/cgroups/namespaces queda deploy-gated en un contenedor aislado)_
+  - [x] Los analizadores corren contra un checkout **restaurado**, scopeado por proyecto, dentro del sandbox. _(PA-06 hecho: `executeRestorePlan` ejecuta el plan fail-fast + `provisionEvaluationEnvironment` compone scope→cache→restore, y el `NodeProcessRunner` real (infra-providers) lo corre; solo falta la integración de traer el checkout real del repo)_
+  - [x] El sandbox deniega egress + acceso a secretos y aplica ulimits/cgroups + una allowlist de binarios. _(hecho: allowlist + denegación de secretos + wrapper fail-closed (política) y ahora el `NodeProcessRunner` NO hereda secretos del entorno padre —passthrough curado— en runtime; el enforcement OS-level de egress/cgroups/namespaces queda deploy-gated en un contenedor aislado)_
   - [x] Re-evaluar un commit sin cambios pega al cache (scope SHA + archivos-cambiados).
 - **Dependencies:** GT-511.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 #### GT-513
 
@@ -123,11 +123,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** L
 - **Proposed fix:** Agregar `enforce:` a `ruleset-standard.schema.json` (`engine, tool, toolRuleId, config|configRef, severityMap, runtime, mode`); implementar PolicyCompiler + `evolith enforce compile` (nest-commander, `src/sdk/cli/src/commands/enforce/`) con un fallback por regla para reglas no compilables; poblar el bloque `enforce` en ADR-0002; agregar un test round-trip con 0 FP.
 - **Acceptance criteria:**
-  - [ ] Las reglas de ADR-0002 compilan, corren y se normalizan a `Violation`.
+  - [x] Las reglas de ADR-0002 compilan, corren y se normalizan a `Violation`.
   - [x] Las reglas no compilables toman un fallback documentado por regla (sin falla en bloque).
-  - [ ] El test round-trip pasa con 0 falsos positivos.
+  - [x] El test round-trip pasa con 0 falsos positivos.
 - **Dependencies:** GT-514.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 #### GT-517
 

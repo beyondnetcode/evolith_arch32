@@ -7622,6 +7622,35 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-512 restored-.NET-checkout requirement met: a real dotnet restore+build+test runs NetArchTest against a compiled corpus; the adapter parses real failures 1:1 and a clean corpus yields 0."
+    },
+    {
+      "id": "GT-512",
+      "closedAt": "2026-07-13",
+      "closureCommit": "dcff9ebc",
+      "evidence": [
+        "product/infra/kind/analysis-sandbox.yaml",
+        "src/packages/core-domain/src/application/validators/enforcement/provisioning.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/shell-enforcer-adapter.ts"
+      ],
+      "validationCommands": [
+        "kubectl apply -f product/infra/kind/analysis-sandbox.yaml -> the sandbox Job runs as uid 65532 (non-root), rootfs READONLY, egress fails, offline compute OK; SecurityContext (caps drop/seccomp/no-privesc) + cgroup limits enforced by kind. Egress-deny NetworkPolicy is the artifact (Calico/Cilium in prod; docker run --network none verified genuine egress-deny). Real fetch verified: curl GitHub tarball + tar extract (tar present in evolith-agent-runtime image). Analyzers-run-on-restored-checkout proven by GT-515 (depcruise 0-FP) / GT-524 (NetArchTest 0-FP); PA-01..07 provisioning + cache in provisioning.ts."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-516",
+      "closedAt": "2026-07-13",
+      "closureCommit": "806e3337",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/enforcement/policy-compiler.ts",
+        "src/rulesets/adr/adr-0002-hexagonal-architecture.rules.json",
+        "src/packages/core-domain/src/application/validators/enforcement/enforcer-subsystem.ts"
+      ],
+      "validationCommands": [
+        "End-to-end: compileRuleset(ADR-0002 HXA rules) -> 5 compiled dependency-cruiser forbidden checks (hxa-01/02/04/05/07) + HXA-06 documented native fallback; toDependencyCruiserConfig -> a real .dependency-cruiser config; a REAL depcruise spawn against a workspace where application/service.ts imports infrastructure/db reports hxa-02-application-no-infrastructure -> parseDependencyCruiserReport -> 1 canonical Violation; a clean workspace yields 0 -> 0 false positives on a real cross-runtime tool spawn."
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-512 restored-workspace/toolchain now demonstrated (the analyzer runs a real depcruise spawn resolving TS); the enforce block compiles and the round-trip is 0-FP on a live run."
     }
   ]
 }

@@ -1,0 +1,43 @@
+# Local-kind deploy for the cross-repo Tracker web UI (GT-446 / GT-447 Objective-1 UI verification).
+#
+# The Tracker (evolith_tracker) is a separate repo; the Core provides the stable contract.
+# This manifest deploys the locally-built `evolith-tracker-web:local` image (the React SPA
+# served by nginx, proxying /api to the in-cluster tracker-api → real Core) into the
+# `evolith-tracker-local` namespace of the `evolith-tracker` kind cluster, so the Objective-1
+# chain (tracker-web → tracker-api → core-api) can be verified in a browser end-to-end.
+#
+#   kind load docker-image evolith-tracker-web:local --name evolith-tracker
+#   kubectl apply -f product/infra/kind/tracker-web.local.yaml
+#   kubectl -n evolith-tracker-local port-forward svc/tracker-web 8088:80
+#   open http://localhost:8088   # Evolith Tracker Control Tower (dev-auth)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracker-web
+  namespace: evolith-tracker-local
+  labels: { app: tracker-web }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: tracker-web } }
+  template:
+    metadata:
+      labels: { app: tracker-web }
+    spec:
+      containers:
+        - name: tracker-web
+          image: evolith-tracker-web:local
+          imagePullPolicy: IfNotPresent
+          ports: [{ containerPort: 8080 }]
+          env:
+            # Point the nginx SPA proxy at the real in-cluster tracker-api service.
+            - name: TRACKER_API_UPSTREAM
+              value: "http://tracker-api-evolith-tracker-api:80"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tracker-web
+  namespace: evolith-tracker-local
+spec:
+  selector: { app: tracker-web }
+  ports: [{ port: 80, targetPort: 8080 }]

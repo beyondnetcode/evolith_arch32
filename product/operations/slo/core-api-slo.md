@@ -22,16 +22,16 @@ Service Level Objectives for Evolith Core API services. These SLOs define the re
 
 | Metric | Target | Window | Measurement |
 |--------|--------|--------|-------------|
-| p99 Latency | < 200ms | Rolling 30 days | `histogram_quantile(0.99, rate(evolith_http_request_duration_seconds_bucket[5m]))` |
-| p95 Latency | < 100ms | Rolling 30 days | `histogram_quantile(0.95, rate(evolith_http_request_duration_seconds_bucket[5m]))` |
-| p50 Latency | < 50ms | Rolling 30 days | `histogram_quantile(0.50, rate(evolith_http_request_duration_seconds_bucket[5m]))` |
+| p99 Latency | < 200ms | Rolling 30 days | `histogram_quantile(0.99, sum by (le) (rate(evolith_http_request_duration_seconds_bucket[5m])))` |
+| p95 Latency | < 100ms | Rolling 30 days | `histogram_quantile(0.95, sum by (le) (rate(evolith_http_request_duration_seconds_bucket[5m])))` |
+| p50 Latency | < 50ms | Rolling 30 days | `histogram_quantile(0.50, sum by (le) (rate(evolith_http_request_duration_seconds_bucket[5m])))` |
 
 ### Error Rate SLO
 
 | Metric | Target | Window | Measurement |
 |--------|--------|--------|-------------|
-| 5xx Error Rate | < 0.1% | Rolling 30 days | `rate(evolith_http_requests_total{status=~"5.."}[5m]) / rate(evolith_http_requests_total[5m])` |
-| 4xx Error Rate | < 5% | Rolling 30 days | `rate(evolith_http_requests_total{status=~"4.."}[5m]) / rate(evolith_http_requests_total[5m])` |
+| 5xx Error Rate | < 0.1% | Rolling 30 days | `sum(rate(evolith_http_requests_total{status=~"5.."}[5m])) / sum(rate(evolith_http_requests_total[5m]))` |
+| 4xx Error Rate | < 5% | Rolling 30 days | `sum(rate(evolith_http_requests_total{status=~"4.."}[5m])) / sum(rate(evolith_http_requests_total[5m]))` |
 
 ## Error Budget Policy
 

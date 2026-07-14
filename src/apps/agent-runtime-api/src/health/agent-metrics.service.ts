@@ -83,11 +83,11 @@ export class AgentMetricsService {
       this.coreCalls.inc({ outcome: coreErrored ? 'error' : 'ok' });
     }
 
-    // HITL: an approver attests approval; a `blocked` status is an approval/policy block.
+    // HITL: count ONLY an approval the trace actually attests (`approvedBy`). A `blocked`
+    // status is deliberately NOT counted — a block can come from policy/a gate, not a human
+    // approver, and conflating the two would misreport the HITL signal.
     if (result.trace.approvedBy) {
       this.hitlApprovals.inc({ decision: 'approved' });
-    } else if (result.status === 'blocked') {
-      this.hitlApprovals.inc({ decision: 'blocked' });
     }
   }
 

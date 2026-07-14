@@ -78,10 +78,12 @@ describe('AgentMetricsService (GT-546 — agent-execution metrics)', () => {
     expect(await value('evolith_agent_core_calls_total', { outcome: 'error' })).toBe(1);
   });
 
-  it('counts a blocked run as a blocked HITL decision, and does not fabricate a skill/core call', async () => {
+  it('does NOT count a plain blocked run as HITL, nor fabricate a skill/core call', async () => {
     const svc = new AgentMetricsService();
     svc.recordRun(result({ status: 'blocked' }), 0.05);
-    expect(await value('evolith_hitl_approvals_total', { decision: 'blocked' })).toBe(1);
+    // A block can be policy/gate-driven, not a human approval — no HITL series.
+    expect(await value('evolith_hitl_approvals_total', { decision: 'blocked' })).toBeUndefined();
+    expect(await value('evolith_hitl_approvals_total', { decision: 'approved' })).toBeUndefined();
     // No capability resolved and no Core governance → those counters stay untouched.
     expect(await value('evolith_skill_invocations_total', { skill: '' })).toBeUndefined();
     expect(await value('evolith_agent_core_calls_total', { outcome: 'ok' })).toBeUndefined();

@@ -141,10 +141,15 @@ export class AgentRuntimeController {
 
     // Convert AsyncGenerator to Observable
     const asyncGenerator = this.bundle.runtime.handleStream(request);
+    const metrics = this.metrics;
     return new Observable<MessageEvent>((subscriber) => {
       (async () => {
+        const start = Date.now();
         try {
           for await (const event of asyncGenerator) {
+            // GT-546: the terminal event carries the assembled result — record the run
+            // metrics for streamed executions too, at parity with handle()/converse().
+            if (event.result) metrics?.recordRun(event.result, (Date.now() - start) / 1000);
             subscriber.next({
               data: event,
               id: Date.now().toString(),

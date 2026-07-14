@@ -635,10 +635,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Añadir el datasource Prometheus y dashboards provisionados y versionados: Platform SRE (RED), Governance Health (gate pass·fail·drift·waivers), Agent Runtime, Trace Explorer (Tempo).
 - **Acceptance criteria:**
-  - [ ] Grafana provisiona un datasource Prometheus al arrancar.
-  - [ ] Al menos los dashboards SRE y Governance Health se commitean como JSON y cargan sin setup manual.
+  - [x] Grafana provisiona un datasource Prometheus al arrancar.
+  - [x] Al menos los dashboards SRE y Governance Health se commitean como JSON y cargan sin setup manual.
 - **Dependencies:** GT-542; GT-543; GT-545.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 
@@ -655,10 +655,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Corregir el target de core-api y añadir jobs para mcp-server y agent-runtime-api (con la credencial de métricas donde esté protegido); o entregar `ServiceMonitor`s en los charts Helm.
 - **Acceptance criteria:**
-  - [ ] Prometheus muestra los tres servicios `up==1`.
-  - [ ] El job de core-api se autentica contra el `/metrics` protegido.
+  - [x] Prometheus muestra los tres servicios `up==1`.
+  - [x] El job de core-api se autentica contra el `/metrics` protegido.
 - **Dependencies:** GT-547; GT-549.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 
@@ -695,10 +695,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Añadir un perfil `observability` (compose profile / flag de Helm values / servicio Coolify) que levante OTel-collector + Prometheus + Grafana (+ Tempo/Loki) junto a core-api/mcp/agent-runtime.
 - **Acceptance criteria:**
-  - [ ] Un comando levanta los servicios Node con un Prometheus scrapeando + Grafana provisionado.
-  - [ ] El perfil es opt-in y está documentado.
+  - [x] Un comando levanta los servicios Node con un Prometheus scrapeando + Grafana provisionado.
+  - [x] El perfil es opt-in y está documentado.
 - **Dependencies:** GT-544; GT-545.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 

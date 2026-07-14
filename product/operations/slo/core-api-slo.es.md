@@ -12,23 +12,23 @@ Objetivos de nivel de servicio para los servicios de la API principal de Evolith
 
 | Métrica | Objetivo | Ventana | Medición |
 |---------|----------|---------|----------|
-| Disponibilidad | 99.9% | 30 días móviles | `sum(http_requests_total{status!~"5.."}[30d]) / sum(http_requests_total[30d])` |
+| Disponibilidad | 99.9% | 30 días móviles | `sum(evolith_http_requests_total{status!~"5.."}[30d]) / sum(evolith_http_requests_total[30d])` |
 | Presupuesto de error | 0.1% (43,8 min/mes) | 30 días móviles | Derivado de disponibilidad |
 
 ### SLO de Latencia
 
 | Métrica | Objetivo | Ventana | Medición |
 |---------|----------|---------|----------|
-| p99 Latencia | < 200ms | 30 días móviles | `histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))` |
-| p95 Latencia | < 100ms | 30 días móviles | `histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))` |
-| p50 Latencia | < 50ms | 30 días móviles | `histogram_quantile(0.50, rate(http_request_duration_seconds_bucket[5m]))` |
+| p99 Latencia | < 200ms | 30 días móviles | `histogram_quantile(0.99, sum by (le) (rate(evolith_http_request_duration_seconds_bucket[5m])))` |
+| p95 Latencia | < 100ms | 30 días móviles | `histogram_quantile(0.95, sum by (le) (rate(evolith_http_request_duration_seconds_bucket[5m])))` |
+| p50 Latencia | < 50ms | 30 días móviles | `histogram_quantile(0.50, sum by (le) (rate(evolith_http_request_duration_seconds_bucket[5m])))` |
 
 ### SLO de Tasa de Error
 
 | Métrica | Objetivo | Ventana | Medición |
 |---------|----------|---------|----------|
-| Tasa de error 5xx | < 0.1% | 30 días móviles | `rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])` |
-| Tasa de error 4xx | < 5% | 30 días móviles | `rate(http_requests_total{status=~"4.."}[5m]) / rate(http_requests_total[5m])` |
+| Tasa de error 5xx | < 0.1% | 30 días móviles | `sum(rate(evolith_http_requests_total{status=~"5.."}[5m])) / sum(rate(evolith_http_requests_total[5m]))` |
+| Tasa de error 4xx | < 5% | 30 días móviles | `sum(rate(evolith_http_requests_total{status=~"4.."}[5m])) / sum(rate(evolith_http_requests_total[5m]))` |
 
 ## Política de Presupuesto de Error
 

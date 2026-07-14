@@ -1,8 +1,9 @@
-import { Controller, Post, Body, Param, HttpCode, HttpStatus, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Param, HttpCode, HttpStatus, BadRequestException, Optional } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiBody } from '@nestjs/swagger';
 import { EvaluateGateUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 import { EvaluateGateDto } from '../dtos/gates.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
+import { MetricsService } from '../../infrastructure/metrics/metrics.service';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain';
 
@@ -11,6 +12,8 @@ export class GatesController {
   constructor(
     private readonly evaluateGateUseCase: EvaluateGateUseCase,
     private readonly workspaceResolver: WorkspaceReferenceResolverService,
+    // Optional so unit tests that don't assert metrics need not provide it.
+    @Optional() private readonly metrics?: MetricsService,
   ) {}
 
   @Post(':gateId/evaluate')
@@ -23,12 +26,16 @@ export class GatesController {
     @Param('gateId') gateId: string,
     @Body() body: EvaluateGateDto
   ) {
+    const phase = this.mapGateIdToPhase(gateId);
+    const start = Date.now();
     const result = await this.evaluateGateUseCase.execute({
-      phase: this.mapGateIdToPhase(gateId),
+      phase,
       projectPath: this.workspaceResolver.resolve(body.workspaceRef),
       corePath: this.workspaceResolver.corePath(),
       evaluatedBy: body.evaluatedBy,
     });
+    // GT-542: emit the flagship gate pass/fail + latency signal.
+    this.metrics?.recordGateEvaluation(result.gateId ?? gateId, String(result.verdict), String(phase), (Date.now() - start) / 1000);
     // GT-411: Return pre-built ADR-0073 envelope with canonical command name.
     return createSuccessEnvelope(result, {
       command: 'evolith gate evaluate',

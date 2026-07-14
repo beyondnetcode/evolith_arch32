@@ -26,6 +26,7 @@
     "test:e2e": "NODE_OPTIONS=--max-old-space-size=4096 jest --config ./test/jest-e2e.json --runInBand --no-bail",
     "mcp:smoke": "npm run build && node examples/mcp-test.js",
     "lint": "eslint src --ext .ts",
+    "prepack": "node -e \"require('fs').rmSync('dist/.tsbuildinfo',{force:true})\"",
     "prepublishOnly": "npm run copy-rulesets && npm run build && npm run copy-assets && npm run check:release-drift",
     "check:release-drift": "node scripts/check-release-drift.mjs",
     "gen:api-catalog": "node scripts/gen-api-catalog.mjs"

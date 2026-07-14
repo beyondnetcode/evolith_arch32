@@ -7414,6 +7414,85 @@
         "cd src/packages/agent-runtime && npx tsc && npx jest (17 suites, 118/118) + cd src/apps/agent-runtime-api && npx nest build && npx jest (5 suites, 67/67) — PgVectorKnowledgeAdapter cosine top-k over rag_chunks with injected embedder+pg seams, ranked KnowledgeChunk + citation; runtime.factory selects pgvector via env, in-memory default preserved"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-542",
+      "closedAt": "2026-07-13",
+      "closureCommit": "56028e52",
+      "evidence": [
+        "src/apps/core-api/src/infrastructure/metrics/metrics.service.ts",
+        "src/apps/core-api/src/infrastructure/metrics/metrics.service.spec.ts",
+        "src/apps/core-api/src/presentation/controllers/evaluation.controller.ts",
+        "src/apps/core-api/src/presentation/controllers/gates.controller.ts"
+      ],
+      "validationCommands": [
+        "cd src/apps/core-api && npx tsc -p tsconfig.json --noEmit && npx jest metrics (3 suites, 10/10) + full 150/150 — recordGateEvaluation emits evolith_gate_evaluations_total{status,gateId,phase} + evolith_gate_evaluation_duration_seconds, wired into EvaluationController (inline/canonical/legacy) and GatesController; spec asserts the increment + duration bucket appear in /metrics output"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-543",
+      "closedAt": "2026-07-13",
+      "closureCommit": "56028e52",
+      "evidence": [
+        "src/apps/core-api/src/infrastructure/metrics/metrics.service.ts",
+        "src/apps/core-api/src/infrastructure/interceptors/security-audit.interceptor.ts",
+        "product/operations/alerts/prometheus-alerts.yml",
+        "product/operations/slo/core-api-slo.md",
+        "src/apps/core-api/src/infrastructure/metrics/metric-drift.spec.ts"
+      ],
+      "validationCommands": [
+        "cd src/apps/core-api && npx jest metrics metric-drift (10/10) — added evolith_http_request_duration_seconds histogram (recorded from the SecurityAudit interceptor) and reconciled prometheus-alerts.yml + core-api-slo.md/.es.md from bare http_requests_total / http_request_duration_seconds_bucket to the evolith_-prefixed emitted names; the GT-550 drift guard asserts every referenced metric is emitted"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-542 (gate metric emitted) and GT-550 (drift guard) both landed in the same commit; the histogram + name reconciliation are verified by the guard."
+    },
+    {
+      "id": "GT-546",
+      "closedAt": "2026-07-13",
+      "closureCommit": "56028e52",
+      "evidence": [
+        "src/apps/agent-runtime-api/src/health/agent-metrics.service.ts",
+        "src/apps/agent-runtime-api/src/health/agent-metrics.service.spec.ts",
+        "src/apps/agent-runtime-api/src/agent-runtime/agent-runtime.controller.ts",
+        "src/apps/agent-runtime-api/src/agent-runtime/agent-runtime.module.ts"
+      ],
+      "validationCommands": [
+        "cd src/apps/agent-runtime-api && npx tsc -p tsconfig.json --noEmit && npx jest (6 suites, 72/72) — AgentMetricsService emits evolith_agent_runs_total{engine,verdict}, evolith_agent_run_duration_seconds, evolith_skill_invocations_total{skill}, evolith_agent_core_calls_total{outcome}, evolith_hitl_approvals_total{decision} on the default registry (so the existing /metrics exposes them); recorded from the AgentRuntimeResult via the controller; spec asserts each series"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The catalog named a GT-519 noop metrics port to hang these on, but no such port exists in the agent-runtime package. Instrumented at the API/adapter boundary instead (per ADR-0102, metrics stay out of the domain), which satisfies both acceptance criteria without GT-519."
+    },
+    {
+      "id": "GT-550",
+      "closedAt": "2026-07-13",
+      "closureCommit": "56028e52",
+      "evidence": [
+        "src/apps/core-api/src/infrastructure/metrics/metric-drift.spec.ts",
+        "product/operations/alerts/prometheus-alerts.yml",
+        "product/operations/slo/core-api-slo.md"
+      ],
+      "validationCommands": [
+        "cd src/apps/core-api && npx jest metric-drift (2/2) — the guard extracts PromQL metric names from prometheus-alerts.yml + core-api-slo.md/.es.md and fails when a non-external (not node/kube/rabbitmq/opa/up) metric is emitted by no Core service; runs in the Test core-api CI job on every PR touching those files"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-543 reconciled the metric names in the same commit, so the guard is green while enforcing no future drift."
+    },
+    {
+      "id": "GT-549",
+      "closedAt": "2026-07-13",
+      "closureCommit": "e99064eb",
+      "evidence": [
+        "src/apps/agent-runtime-api/src/auth/metrics-auth.guard.ts",
+        "src/apps/agent-runtime-api/src/auth/metrics-auth.guard.spec.ts",
+        "src/apps/agent-runtime-api/src/health/metrics.controller.ts",
+        "src/packages/mcp-server/src/mcp/mcp-server.service.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/mcp-server && npx tsc && npx jest (44 suites, 326/326 — +2 HTTP tests: anon GET /metrics→401, x-api-key→200) + cd src/apps/agent-runtime-api && npx tsc && npx jest (7 suites, 77/77 — +5 MetricsAuthGuard tests) — /metrics now fail-closed on both services with a trusted-network opt-out, matching core-api MetricsAuthGuard (GT-393)"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Catalog lists GT-545 (scrape config) as a dependency; the acceptance criterion \"scraper still succeeds with credentials\" is proven at the code/test level (the guard accepts the credential and rejects anonymous callers). Wiring the actual Prometheus scrape job with the credential is GT-545 (infra)."
     }
   ]
 }

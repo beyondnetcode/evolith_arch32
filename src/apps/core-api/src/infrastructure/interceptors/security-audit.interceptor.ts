@@ -33,18 +33,19 @@ export class SecurityAuditInterceptor implements NestInterceptor {
       tap({
         next: () => {
           const response = context.switchToHttp().getResponse<Response>();
-          this.metrics?.recordHttpRequest(request.method, request.route?.path ?? request.url, response.statusCode);
+          const durationMs = Date.now() - start;
+          this.metrics?.recordHttpRequest(request.method, request.route?.path ?? request.url, response.statusCode, durationMs / 1000);
           this.logger.log(JSON.stringify({
             ...auditEntry,
             statusCode: response.statusCode,
             outcome: 'ALLOW',
-            durationMs: Date.now() - start,
+            durationMs,
           }));
         },
         error: (error: Error) => {
           const response = context.switchToHttp().getResponse<Response>();
           const status = response.statusCode || 500;
-          this.metrics?.recordHttpRequest(request.method, request.route?.path ?? request.url, status);
+          this.metrics?.recordHttpRequest(request.method, request.route?.path ?? request.url, status, (Date.now() - start) / 1000);
           this.logger.warn(JSON.stringify({
             ...auditEntry,
             statusCode: status,

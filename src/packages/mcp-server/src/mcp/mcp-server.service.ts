@@ -361,9 +361,21 @@ export class McpServerService {
         return;
       }
 
-      // Prometheus metrics — public scrape endpoint (default process/runtime
-      // metrics under the evolith_mcp_ prefix). No MCP data.
+      // Prometheus metrics (default process/runtime metrics under the evolith_mcp_
+      // prefix). GT-549: authenticated for parity with core-api's guarded /metrics —
+      // `/metrics` leaks operational shape (routes, volumes) and must not be readable
+      // by anonymous callers. Uses the SAME credential path as MCP requests (shared
+      // API key / OAuth / local JWT), so the dev `allowNoAuth` bypass still applies.
       if (req.method === 'GET' && url.pathname === '/metrics') {
+        const metricsCtx = await authenticateHttpRequest(
+          req,
+          res,
+          this.apiKey,
+          this.allowNoAuth,
+          this.oauthConfig,
+          this.oauthKeyResolver,
+        );
+        if (!metricsCtx) return; // authenticateHttpRequest already wrote 401
         promClient.register.metrics().then((body) => {
           res.writeHead(200, { 'Content-Type': promClient.register.contentType });
           res.end(body);

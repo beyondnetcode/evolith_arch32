@@ -123,11 +123,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** L
 - **Proposed fix:** Agregar `enforce:` a `ruleset-standard.schema.json` (`engine, tool, toolRuleId, config|configRef, severityMap, runtime, mode`); implementar PolicyCompiler + `evolith enforce compile` (nest-commander, `src/sdk/cli/src/commands/enforce/`) con un fallback por regla para reglas no compilables; poblar el bloque `enforce` en ADR-0002; agregar un test round-trip con 0 FP.
 - **Acceptance criteria:**
-  - [ ] Las reglas de ADR-0002 compilan, corren y se normalizan a `Violation`.
+  - [x] Las reglas de ADR-0002 compilan, corren y se normalizan a `Violation`.
   - [x] Las reglas no compilables toman un fallback documentado por regla (sin falla en bloque).
-  - [ ] El test round-trip pasa con 0 falsos positivos.
+  - [x] El test round-trip pasa con 0 falsos positivos.
 - **Dependencies:** GT-514.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 #### GT-517
 

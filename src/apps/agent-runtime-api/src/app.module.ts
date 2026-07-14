@@ -6,6 +6,7 @@ import { HealthController } from './health/health.controller';
 import { MetricsController } from './health/metrics.controller';
 import { ApiKeyGuard } from './auth/api-key.guard';
 import { TenantCorpusGuard } from './auth/tenant-corpus.guard';
+import { MetricsAuthGuard } from './auth/metrics-auth.guard';
 
 @Module({
   imports: [
@@ -20,6 +21,9 @@ import { TenantCorpusGuard } from './auth/tenant-corpus.guard';
     // @Public() routes (health, root, metrics) bypass both.
     { provide: APP_GUARD, useClass: ApiKeyGuard },
     { provide: APP_GUARD, useClass: TenantCorpusGuard },
+    // GT-549: route-level guard for /metrics (see MetricsController). Not an APP_GUARD —
+    // it applies only where @UseGuards(MetricsAuthGuard) is declared.
+    MetricsAuthGuard,
   ],
 })
 export class AppModule {}

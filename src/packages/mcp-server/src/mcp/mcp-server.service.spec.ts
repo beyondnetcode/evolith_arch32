@@ -219,6 +219,38 @@ describe('McpServerService — HTTP transport', () => {
     }
   });
 
+  it('GT-549: guards /metrics with the API key (previously public), still reachable with credentials', async () => {
+    const service = new McpServerService(new ToolRegistryService([]), new MetricsService(), new MockAbacEvaluator());
+    await service.start({ transport: 'http', port: 0, apiKey: 'secret' });
+    const port = service.boundPort()!;
+
+    try {
+      // Anonymous scrape is now rejected — /metrics leaks operational shape.
+      const anon = await httpGet(port, '/metrics');
+      expect(anon.status).toBe(401);
+      // The Prometheus scraper still succeeds with the credential.
+      const ok = await httpGet(port, '/metrics', { 'x-api-key': 'secret' });
+      expect(ok.status).toBe(200);
+      expect(ok.body).toContain('evolith_mcp_');
+    } finally {
+      await service.stop();
+    }
+  });
+
+  it('GT-549: /metrics stays reachable without auth under the trusted-network opt-out', async () => {
+    const service = new McpServerService(new ToolRegistryService([]), new MetricsService(), new MockAbacEvaluator());
+    await service.start({ transport: 'http', port: 0, allowNoAuth: true });
+    const port = service.boundPort()!;
+
+    try {
+      const ok = await httpGet(port, '/metrics');
+      expect(ok.status).toBe(200);
+      expect(ok.body).toContain('evolith_mcp_');
+    } finally {
+      await service.stop();
+    }
+  });
+
   it('allows /health without auth when --allow-no-auth is set', async () => {
     const service = new McpServerService(new ToolRegistryService([]), new MetricsService(), new MockAbacEvaluator());
     await service.start({ transport: 'http', port: 0, allowNoAuth: true });

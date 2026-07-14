@@ -7553,6 +7553,34 @@
         "cd src/packages/mcp-server && npx jest oauth abac mcp-server-auth (5 suites, 35/35) + full 326/326 — all three ACs met: OAuth 2.1 resource-server validator (JWKS RS/PS/ES + shared HS, iss/aud/exp/nbf) wired into the Streamable HTTP bearer path (401 on missing/invalid/expired/spoofed); every tools/call ABAC-checked per verified identity + audited; evolith://capabilities and evolith://contracts resources served (resources.service.ts)"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-538",
+      "closedAt": "2026-07-13",
+      "closureCommit": "cace6118",
+      "evidence": [
+        ".harness/scripts/ci/rag-pgvector.mjs",
+        ".harness/scripts/ci/rag-pgvector.schema.sql",
+        ".harness/scripts/ci/14-rag-index-sync.mjs"
+      ],
+      "validationCommands": [
+        "docker run pgvector/pgvector:pg17 + psql < rag-pgvector.schema.sql (CREATE EXTENSION vector + rag_chunks) + npm i pg; then EVOLITH_RAG_SYNC=true EVOLITH_RAG_PROVIDER=pgvector EVOLITH_RAG_PG_URL=... node 14-rag-index-sync.mjs -> LIVE receipt {provider:pgvector, durable:true, 399 chunks upserted}; verified 399 real rows in rag_chunks (2 source_files: catalog 303 + tracking 96, corpus_version b499115830db, embedding vector(1024)), metadata filtering by source_file/language/corpus_version works"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-446",
+      "closedAt": "2026-07-13",
+      "closureCommit": "2c67a1aa",
+      "evidence": [
+        "product/infra/kind/tracker-web.local.yaml",
+        "product/infra/docker-compose.evolith.yml"
+      ],
+      "validationCommands": [
+        "kind load docker-image evolith-tracker-web:local --name evolith-tracker; kubectl apply -f product/infra/kind/tracker-web.local.yaml (rollout 1/1) + port-forward svc/tracker-web 8088:80 -> the Evolith Tracker React SPA loads (HTTP 200, dev-auth as user AN / tenant root), the Control Tower renders governance KPIs from the live backend, and the nginx /api proxy reaches tracker-api -> real Core (/api/health 200). Objective-1 UI chain (tracker-web -> tracker-api -> core-api) verified in a browser"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Cross-repo (evolith_tracker): the M1 pilot closure — DB persistence + real Core evaluate() + Discovery gate E2E — was already met in the Tracker repo; this closes the last tail (verify the React UI in a browser) against the local Core chain. Broader per-phase UI coverage is follow-on. Core provides the stable contract (ADR-0101/0104)."
     }
   ]
 }

@@ -170,22 +170,26 @@ describe('PolicyCompiler — compileRuleset partitions and never wholesale-fails
 });
 
 describe('PolicyCompiler ⇄ ADR-0002 pilot (GT-516 AC1: HXA rules compile/fallback)', () => {
-  it('routes every HXA-01..07 rule through the enforcer and partitions compile vs per-rule fallback', () => {
+  it('routes the import-graph-expressible HXA rules through the enforcer and partitions compile vs per-rule fallback', () => {
     const ruleset = JSON.parse(readFileSync(findUp('src/rulesets/adr/adr-0002-hexagonal-architecture.rules.json'), 'utf8'));
     const rules: CompilableRule[] = ruleset.rules;
     const enforced = rules.filter((r) => r.enforce?.engine === 'enforcer');
 
-    // The pilot populates an enforce block on all seven HXA rules.
-    expect(enforced.map((r) => r.id).sort()).toEqual(['HXA-01', 'HXA-02', 'HXA-03', 'HXA-04', 'HXA-05', 'HXA-06', 'HXA-07']);
+    // HXA-03 ("Infrastructure IMPLEMENTS Core ports") is a POSITIVE/structural assertion.
+    // dependency-cruiser is a forbidden-dependency tool and cannot express "X implements Y",
+    // so HXA-03 carries NO enforce block and is left on the native engine — routing it through
+    // the enforcer would only ever degrade to a native fallback (or, with a config, false-positive).
+    // The remaining six HXA rules are enforcer-routed.
+    expect(enforced.map((r) => r.id).sort()).toEqual(['HXA-01', 'HXA-02', 'HXA-04', 'HXA-05', 'HXA-06', 'HXA-07']);
 
     const { compiled, fallbacks } = compileRuleset(rules);
 
     // The five import-graph-expressible rules lower to a dependency-cruiser check.
     expect(compiled.map((c) => c.ruleId).sort()).toEqual(['HXA-01', 'HXA-02', 'HXA-04', 'HXA-05', 'HXA-07']);
-    // The two structural/positive rules (implements-ports, AOP-in-infra-only) are not
-    // import-graph-expressible → they take the documented per-rule NATIVE fallback rather
-    // than emitting an all-matching (false-positive-prone) rule, and never fail the run.
-    expect(fallbacks.map((f) => f.ruleId).sort()).toEqual(['HXA-03', 'HXA-06']);
+    // HXA-06 (AOP-in-infra-only) is enforcer-routed but not import-graph-expressible → it takes the
+    // documented per-rule NATIVE fallback rather than emitting an all-matching (false-positive-prone)
+    // rule, and never fails the run. (HXA-03 is native-only and never enters the enforcer partition.)
+    expect(fallbacks.map((f) => f.ruleId).sort()).toEqual(['HXA-06']);
     for (const f of fallbacks) {
       expect(f.fallback).toBe('native');
       expect(f.tool).toBe('dependency-cruiser');

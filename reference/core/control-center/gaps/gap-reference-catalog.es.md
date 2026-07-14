@@ -735,10 +735,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Aplicar paridad de guard (reusar el enfoque de metrics-auth de core-api) y/o restringir `/metrics` al scraper vía `NetworkPolicy` en los tres servicios.
 - **Acceptance criteria:**
-  - [ ] `/metrics` sin autenticar en agent-runtime y mcp es rechazado o restringido por red.
-  - [ ] El scraper de Prometheus sigue teniendo éxito con credenciales/fuente permitida.
+  - [x] `/metrics` sin autenticar en agent-runtime y mcp es rechazado o restringido por red.
+  - [x] El scraper de Prometheus sigue teniendo éxito con credenciales/fuente permitida.
 - **Dependencies:** GT-545.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 

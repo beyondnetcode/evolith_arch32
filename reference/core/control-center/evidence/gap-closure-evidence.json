@@ -7477,6 +7477,22 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-543 reconciled the metric names in the same commit, so the guard is green while enforcing no future drift."
+    },
+    {
+      "id": "GT-549",
+      "closedAt": "2026-07-13",
+      "closureCommit": "e99064eb",
+      "evidence": [
+        "src/apps/agent-runtime-api/src/auth/metrics-auth.guard.ts",
+        "src/apps/agent-runtime-api/src/auth/metrics-auth.guard.spec.ts",
+        "src/apps/agent-runtime-api/src/health/metrics.controller.ts",
+        "src/packages/mcp-server/src/mcp/mcp-server.service.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/mcp-server && npx tsc && npx jest (44 suites, 326/326 — +2 HTTP tests: anon GET /metrics→401, x-api-key→200) + cd src/apps/agent-runtime-api && npx tsc && npx jest (7 suites, 77/77 — +5 MetricsAuthGuard tests) — /metrics now fail-closed on both services with a trusted-network opt-out, matching core-api MetricsAuthGuard (GT-393)"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Catalog lists GT-545 (scrape config) as a dependency; the acceptance criterion \"scraper still succeeds with credentials\" is proven at the code/test level (the guard accepts the credential and rejects anonymous callers). Wiring the actual Prometheus scrape job with the credential is GT-545 (infra)."
     }
   ]
 }

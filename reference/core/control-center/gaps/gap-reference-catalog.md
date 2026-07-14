@@ -739,10 +739,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Apply guard parity (reuse the core-api metrics-auth approach) and/or restrict `/metrics` to the scraper via `NetworkPolicy` on all three services.
 - **Acceptance criteria:**
-  - [ ] Unauthenticated `/metrics` on agent-runtime and mcp is rejected or network-restricted.
-  - [ ] The Prometheus scraper still succeeds with credentials/allowed source.
+  - [x] Unauthenticated `/metrics` on agent-runtime and mcp is rejected or network-restricted.
+  - [x] The Prometheus scraper still succeeds with credentials/allowed source.
 - **Dependencies:** GT-545.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 

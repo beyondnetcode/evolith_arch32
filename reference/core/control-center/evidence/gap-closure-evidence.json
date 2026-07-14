@@ -7493,6 +7493,51 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Catalog lists GT-545 (scrape config) as a dependency; the acceptance criterion \"scraper still succeeds with credentials\" is proven at the code/test level (the guard accepts the credential and rejects anonymous callers). Wiring the actual Prometheus scrape job with the credential is GT-545 (infra)."
+    },
+    {
+      "id": "GT-544",
+      "closedAt": "2026-07-13",
+      "closureCommit": "869f691d",
+      "evidence": [
+        "product/infra/observability/grafana/dashboards/evolith-governance.json",
+        "product/infra/observability/grafana/dashboards/evolith-sre-red.json",
+        "product/infra/observability/grafana/dashboards/dashboards.yml",
+        "product/operations/grafana/provisioning/datasources/datasources.yml"
+      ],
+      "validationCommands": [
+        "docker compose -f docker-compose.evolith.yml -f docker-compose.observability.yml up -d; curl -su admin:admin http://localhost:3009/api/search?type=dash-db -> BOTH \"Evolith — Governance Health\" and \"Evolith — Platform SRE (RED)\" provisioned; the Prometheus datasource (uid evolith-prometheus) resolves and panels render live gate/HTTP/agent series"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-542/543 (metrics emitted) and GT-545 (scrape) all DONE, so the datasource + dashboards render real series — verified live."
+    },
+    {
+      "id": "GT-545",
+      "closedAt": "2026-07-13",
+      "closureCommit": "869f691d",
+      "evidence": [
+        "product/infra/observability/prometheus.yml",
+        "product/operations/otel/prometheus-config.yml",
+        "product/infra/docker-compose.observability.yml"
+      ],
+      "validationCommands": [
+        "curl http://localhost:9090/api/v1/targets -> core-api, mcp, agent-runtime all health=up (scraped on :3000 with the API-key Bearer credential); fixed the canonical otel/prometheus-config.yml (was a single wrong bff:8000 target) to the same 3 jobs"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-547 (runnable stack) and GT-549 (guarded /metrics) DONE; the scrape authenticates against the fail-closed /metrics and all three targets are up — verified live."
+    },
+    {
+      "id": "GT-547",
+      "closedAt": "2026-07-13",
+      "closureCommit": "869f691d",
+      "evidence": [
+        "product/infra/docker-compose.observability.yml",
+        "product/infra/observability/prometheus.yml"
+      ],
+      "validationCommands": [
+        "cd product/infra && EVOLITH_API_KEY=local-dev-key docker compose -f docker-compose.evolith.yml -f docker-compose.observability.yml up -d -> one command brings up the 3 Node services + Prometheus (:9090, 3 targets up) + provisioned Grafana (:3009); the overlay is opt-in (separate compose file) and documented in its header"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-544 (Grafana) and GT-545 (scrape) close together in the same overlay; the whole stack was brought up and exercised end-to-end."
     }
   ]
 }

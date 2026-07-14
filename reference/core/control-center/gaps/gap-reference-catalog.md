@@ -639,10 +639,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Add the Prometheus datasource and versioned, provisioned dashboards: Platform SRE (RED), Governance Health (gate pass·fail·drift·waivers), Agent Runtime, Trace Explorer (Tempo).
 - **Acceptance criteria:**
-  - [ ] Grafana provisions a Prometheus datasource on boot.
-  - [ ] At least the SRE and Governance Health dashboards are committed as JSON and load without manual setup.
+  - [x] Grafana provisions a Prometheus datasource on boot.
+  - [x] At least the SRE and Governance Health dashboards are committed as JSON and load without manual setup.
 - **Dependencies:** GT-542; GT-543; GT-545.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 
@@ -659,10 +659,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Fix the core-api target and add scrape jobs for mcp-server and agent-runtime-api (with the metrics credential where guarded); or ship `ServiceMonitor`s in the Helm charts.
 - **Acceptance criteria:**
-  - [ ] Prometheus shows all three services `up==1`.
-  - [ ] The core-api job authenticates against the guarded `/metrics`.
+  - [x] Prometheus shows all three services `up==1`.
+  - [x] The core-api job authenticates against the guarded `/metrics`.
 - **Dependencies:** GT-547; GT-549.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 
@@ -699,10 +699,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Add an `observability` profile (compose profile / Helm values flag / Coolify service) that stands OTel-collector + Prometheus + Grafana (+ Tempo/Loki) next to core-api/mcp/agent-runtime.
 - **Acceptance criteria:**
-  - [ ] One command brings up the Node services with a scraping Prometheus + provisioned Grafana.
-  - [ ] The profile is opt-in and documented.
+  - [x] One command brings up the Node services with a scraping Prometheus + provisioned Grafana.
+  - [x] The profile is opt-in and documented.
 - **Dependencies:** GT-544; GT-545.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 

@@ -6,13 +6,33 @@ rule_files:
   - /etc/prometheus/alerts/*.yml
 
 scrape_configs:
+  # GT-545: scrape the THREE real Evolith services on :3000 (was a single wrong `bff:8000`
+  # target). /metrics is fail-closed on all three (core-api GT-393, mcp + agent-runtime
+  # GT-549), so each job sends the shared API key as a Bearer credential. In k8s prefer a
+  # ServiceMonitor with the credential from a secret; the token below is the local dev key.
   - job_name: 'core-api'
     metrics_path: '/metrics'
+    authorization:
+      credentials: local-dev-key
     static_configs:
-      - targets: ['bff:8000']
-        labels:
-          service: 'core-api'
-          environment: 'development'
+      - targets: ['core-api:3000']
+        labels: { service: 'core-api', environment: 'development' }
+
+  - job_name: 'mcp'
+    metrics_path: '/metrics'
+    authorization:
+      credentials: local-dev-key
+    static_configs:
+      - targets: ['mcp:3000']
+        labels: { service: 'mcp', environment: 'development' }
+
+  - job_name: 'agent-runtime'
+    metrics_path: '/metrics'
+    authorization:
+      credentials: local-dev-key
+    static_configs:
+      - targets: ['agent-runtime:3000']
+        labels: { service: 'agent-runtime', environment: 'development' }
 
   - job_name: 'otel-collector'
     static_configs:

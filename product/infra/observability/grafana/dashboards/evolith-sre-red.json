@@ -1,0 +1,66 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "graphTooltip": 1,
+  "time": { "from": "now-15m", "to": "now" },
+  "refresh": "10s",
+  "title": "Evolith — Platform SRE (RED)",
+  "uid": "evolith-sre-red",
+  "tags": ["evolith", "sre", "red", "observability"],
+  "schemaVersion": 39,
+  "templating": { "list": [] },
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Rate — HTTP requests /s by service",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 10 } }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "sum by (service) (rate(evolith_http_requests_total[1m]))", "legendFormat": "{{service}}", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Errors — 5xx /s by service",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 20 }, "color": { "mode": "fixed", "fixedColor": "red" } }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "sum by (service) (rate(evolith_http_requests_total{status=~\"5..\"}[5m]))", "legendFormat": "{{service}} 5xx", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Duration — core-api latency quantiles (s)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 0 } }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "histogram_quantile(0.50, sum by (le) (rate(evolith_http_request_duration_seconds_bucket[5m])))", "legendFormat": "p50", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } },
+        { "refId": "B", "expr": "histogram_quantile(0.95, sum by (le) (rate(evolith_http_request_duration_seconds_bucket[5m])))", "legendFormat": "p95", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } },
+        { "refId": "C", "expr": "histogram_quantile(0.99, sum by (le) (rate(evolith_http_request_duration_seconds_bucket[5m])))", "legendFormat": "p99", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Targets up (core-api, mcp, agent-runtime)",
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "short", "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "yellow", "value": 2 }, { "color": "green", "value": 3 } ] } }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "count(up{service=~\"core-api|mcp|agent-runtime\"} == 1)", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "5xx error ratio (SLO < 0.1%)",
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "percentunit", "decimals": 4, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 0.001 } ] } }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "sum(rate(evolith_http_requests_total{status=~\"5..\"}[5m])) / clamp_min(sum(rate(evolith_http_requests_total[5m])), 1)", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    }
+  ]
+}

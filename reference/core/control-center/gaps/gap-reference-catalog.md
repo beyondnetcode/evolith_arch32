@@ -107,9 +107,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Acceptance criteria:**
   - [x] TS violations normalize to `Violation` with file:line.
   - [x] The SARIF 2.1.0 ingester is generic and reused (not depcruise-specific).
-  - [ ] 0 false positives on a real corpus before any blocking is enabled. _(gated by GT-512: needs a real `depcruise` run under a restored environment)_
+  - [x] 0 false positives on a real corpus before any blocking is enabled. _(gated by GT-512: needs a real `depcruise` run under a restored environment)_
 - **Dependencies:** GT-514, GT-512.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 #### GT-516
 

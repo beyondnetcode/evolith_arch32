@@ -7581,6 +7581,20 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Cross-repo (evolith_tracker): the M1 pilot closure — DB persistence + real Core evaluate() + Discovery gate E2E — was already met in the Tracker repo; this closes the last tail (verify the React UI in a browser) against the local Core chain. Broader per-phase UI coverage is follow-on. Core provides the stable contract (ADR-0101/0104)."
+    },
+    {
+      "id": "GT-515",
+      "closedAt": "2026-07-13",
+      "closureCommit": "6ca47e4d",
+      "evidence": [
+        "src/rulesets/enforcement/dependency-cruiser.cjs",
+        "src/packages/core-domain/src/application/validators/enforcement/adapters/dependency-cruiser-adapter.ts"
+      ],
+      "validationCommands": [
+        "dependency-cruise --config src/rulesets/enforcement/dependency-cruiser.cjs (enhancedResolveOptions+tsConfig) over the deps-installed core-domain from 4 entry points -> 144 modules cruised, 0 couldNotResolve (the FP class), 9 REAL violations (no-circular/no-orphans); parseDependencyCruiserReport parsed all 9 1:1 -> 0 false positives on the real corpus"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-512 restored-environment requirement met for the Node/TS runtime: the committed depcruise config + deps-installed checkout resolve every import (0 couldNotResolve), so the adapter runs against a real corpus with 0 FP."
     }
   ]
 }

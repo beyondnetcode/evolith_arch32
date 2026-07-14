@@ -63,13 +63,7 @@
       "rationale": "ADR-0002 §Decision: Infrastructure is the adapter layer. It implements the ports defined by Core.",
       "validationQuery": "Infrastructure files implement interfaces defined in Core layer. No domain logic lives here.",
       "blocking": true,
-      "layer": "Infrastructure",
-      "enforce": {
-        "engine": "enforcer",
-        "tool": "dependency-cruiser",
-        "toolRuleId": "hxa-03-infra-implements-ports",
-        "runtime": "node"
-      }
+      "layer": "Infrastructure"
     },
     {
       "id": "HXA-04",

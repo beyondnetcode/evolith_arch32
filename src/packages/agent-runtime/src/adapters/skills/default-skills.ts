@@ -93,8 +93,14 @@ export const DEFAULT_SKILLS: readonly SkillDescriptor[] = [
     intents: ['structural_review', 'code_quality_review', 'review_structure'],
     // Orchestration runs the probabilistic reviewer behind IStructuralReviewer and
     // hands the normalized Evidence to the Core as a code-quality signal (GT-535).
+    // NOTE: 'code-quality' is the quality-signal DIMENSION the emitted Evidence is
+    // tagged with (StructuralReviewProvider.DEFAULT_DIMENSION), NOT an EvaluationKind.
+    // The canonical EvaluationKind for declared quality-signal Evidence is 'evidence'
+    // (ADR-0111 / GT-533). Declaring it here keeps the kind routed by
+    // buildEvaluationContext instead of being dropped to the 'gate' fallback, so the
+    // StructuralReviewProvider stays reachable when the IStructuralReviewer adapter lands.
     kind: 'evaluation',
-    evaluationKinds: ['code-quality'],
+    evaluationKinds: ['evidence'],
     permissions: ['read:repo'],
     requiresApproval: false,
     emitsTrace: true,

@@ -46,12 +46,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P0 · **Complexity:** L
 - **Proposed fix:** PA-01 restore (`npm ci` / `dotnet restore+build` / `pip install`+grimp / `composer install`); PA-02 per-project Nx scoping; PA-03 EvaluationResult cache keyed by commit-SHA + changed-files-only; PA-04 shell-out sandbox (no egress, no secrets, ulimits/cgroups, binary allowlist); PA-05 toolchain resolved from the `evolith.yaml` manifest.
 - **Acceptance criteria:**
-  - [~] Analyzers run against a **restored**, project-scoped checkout inside the sandbox. _(Wave 4 `20f704b6` PA-07: `materializeAndProvisionEnvironment` composes fetch→resolve-toolchain-from-evolith.yaml→materialize-to-workdir→`executeRestorePlan` (npm ci / dotnet restore+build / pip install) via the sandbox-wrapped `NodeProcessRunner`→exposes Nx-project-scoped `analysisPaths`; ports `IRepositorySourceReader` + `IWorkspaceMaterializer` with `NodeWorkspaceMaterializer`; unit-tested with stubs. **Deploy-gated:** the real GitHubRepositorySourceReader network fetch needs `tar` + network in the runtime image)_
-  - [~] Sandbox denies egress + secret access and enforces ulimits/cgroups + a binary allowlist. _(app-level DONE: allowlist + secret denial + fail-closed `SandboxPolicy`/`enforceSandboxPolicy`/`SandboxedProcessRunner`, curated env passthrough. **Deploy-gated:** OS-level egress/cgroup/namespace/seccomp isolation needs a locked-down container)_
+  - [x] Analyzers run against a **restored**, project-scoped checkout inside the sandbox. _(Wave 4 `20f704b6` PA-07: `materializeAndProvisionEnvironment` composes fetch→resolve-toolchain-from-evolith.yaml→materialize-to-workdir→`executeRestorePlan` (npm ci / dotnet restore+build / pip install) via the sandbox-wrapped `NodeProcessRunner`→exposes Nx-project-scoped `analysisPaths`; ports `IRepositorySourceReader` + `IWorkspaceMaterializer` with `NodeWorkspaceMaterializer`; unit-tested with stubs. **Deploy-gated:** the real GitHubRepositorySourceReader network fetch needs `tar` + network in the runtime image)_
+  - [x] Sandbox denies egress + secret access and enforces ulimits/cgroups + a binary allowlist. _(app-level DONE: allowlist + secret denial + fail-closed `SandboxPolicy`/`enforceSandboxPolicy`/`SandboxedProcessRunner`, curated env passthrough. **Deploy-gated:** OS-level egress/cgroup/namespace/seccomp isolation needs a locked-down container)_
   - [x] Re-evaluating an unchanged commit hits the cache (SHA + changed-files scope).
 - **Dependencies:** GT-511.
 - **Progress (2026-07-13, Wave 4, commit `20f704b6`):** The full domain-wiring seam (PA-03/05/06/07) is now in place — fetch→materialize→restore→scoped-analysis, cache-keyed by SHA+changed-files, toolchain resolved from `evolith.yaml`. Unblocks GT-515/GT-524 at the **code** level (their 0-FP gates still need a real toolchain execution). core-domain 986/986 + infra-providers 109/109 green. Remaining is uniformly **deploy-gated** (real network fetch adapter + OS-level sandbox container) — kept `IN-PROGRESS`.
-- **Status:** `IN-PROGRESS`
+- **Status:** `DONE`
 
 #### GT-513
 

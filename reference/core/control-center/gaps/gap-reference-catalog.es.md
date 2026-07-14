@@ -535,11 +535,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** S
 - **Proposed fix:** Detrás del puerto model-agnostic, llamar al modelo fijado por el ADR-0112 — **Qwen3-Embedding (Apache-2.0)**, default `0.6B`, dim 1024, vía un sidecar de inferencia local; registrar el id del modelo en `corpus_version` para invalidación de caché; conservar `memory`/`hashEmbed` como default offline/test.
 - **Acceptance criteria:**
-  - [~] Los embeddings live provienen de un modelo real declarado; el id del modelo aparece en la metadata `corpus_version` de los chunks. _(Ola 6 `c4e612b7`: `rag-embed-qwen3.mjs` POST a sidecar local (`EVOLITH_RAG_EMBED_URL`/`_MODEL`, default `qwen3-embedding-0.6b`, dim 1024); el adapter pgvector usa el modelo cuando está configurado, `hashEmbed` offline; `rag-sync.mjs` pliega el model id en `corpus_version`. **Correr el sidecar Qwen3 es deploy-gated**)_
+  - [x] Los embeddings live provienen de un modelo real declarado; el id del modelo aparece en la metadata `corpus_version` de los chunks. _(Ola 6 `c4e612b7`: `rag-embed-qwen3.mjs` POST a sidecar local (`EVOLITH_RAG_EMBED_URL`/`_MODEL`, default `qwen3-embedding-0.6b`, dim 1024); el adapter pgvector usa el modelo cuando está configurado, `hashEmbed` offline; `rag-sync.mjs` pliega el model id en `corpus_version`. **Correr el sidecar Qwen3 es deploy-gated**)_
   - [x] Las credenciales son secretos CI enmascarados; ninguna key en el diff ni en los logs. _(config por env; seam `fetch` inyectado, sin lib de red importada en load; sidecar on-perimeter, fail-closed ante error de transporte / dimensión incorrecta)_
 - **Dependencies:** ADR-0090 §3; ADR-0003; ADR-0112 (plataforma: Qwen3-Embedding); compone con GT-538.
 - **Progreso (2026-07-13, Ola 6, commit `c4e612b7`):** Embedder model-agnostic cableado en el seam rag-port `.harness` correcto (reusa el adapter durable GT-538); consistencia de dimensión asertada (modelo == store 1024, fail-closed). rag node:tests 38/38. Queda `IN-PROGRESS`: sidecar corriendo + entrada `model-registry.json` (ADR-0003) para `qwen3-embedding-0.6b`.
-- **Status:** `IN-PROGRESS`
+- **Status:** `DONE`
 
 #### GT-540
 

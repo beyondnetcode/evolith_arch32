@@ -7595,6 +7595,19 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-512 restored-environment requirement met for the Node/TS runtime: the committed depcruise config + deps-installed checkout resolve every import (0 couldNotResolve), so the adapter runs against a real corpus with 0 FP."
+    },
+    {
+      "id": "GT-539",
+      "closedAt": "2026-07-13",
+      "closureCommit": "c4e612b7",
+      "evidence": [
+        ".harness/scripts/ci/rag-embed-qwen3.mjs",
+        ".harness/scripts/ci/rag-pgvector.mjs"
+      ],
+      "validationCommands": [
+        "Built + ran a local Qwen3 sidecar (python + sentence-transformers, Qwen/Qwen3-Embedding-0.6B, /health dim=1024); makeQwen3Embedder against it returns REAL 1024-dim semantic vectors (cosine(arch,cat)=0.23, not hash); pgvectorAdapter.embed via EVOLITH_RAG_EMBED_URL persists real Qwen3 vectors to rag_chunks with corpus_version=HEADsha@qwen3-embedding-0.6b (model id folded in). On-perimeter sidecar = no corpus egress."
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

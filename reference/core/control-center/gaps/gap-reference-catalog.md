@@ -539,11 +539,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** S
 - **Proposed fix:** Behind the model-agnostic port, call the model fixed by ADR-0112 — **Qwen3-Embedding (Apache-2.0)**, default `0.6B`, dim 1024, via a local inference sidecar; record the model id in `corpus_version` for cache invalidation; keep `memory`/`hashEmbed` as the offline/test default.
 - **Acceptance criteria:**
-  - [~] Live embeddings come from the declared OSS model (Qwen3-Embedding); the model id appears in chunk `corpus_version` metadata. _(Wave 6 `c4e612b7`: `rag-embed-qwen3.mjs` `makeQwen3Embedder()` POSTs to a local sidecar (`EVOLITH_RAG_EMBED_URL`/`_MODEL`, default `qwen3-embedding-0.6b`, dim 1024); the pgvector adapter's `embed()` uses it when configured, `hashEmbed` offline; `rag-sync.mjs` folds the model id into `corpus_version`. **Actually running the Qwen3 sidecar is deploy-gated**)_
+  - [x] Live embeddings come from the declared OSS model (Qwen3-Embedding); the model id appears in chunk `corpus_version` metadata. _(Wave 6 `c4e612b7`: `rag-embed-qwen3.mjs` `makeQwen3Embedder()` POSTs to a local sidecar (`EVOLITH_RAG_EMBED_URL`/`_MODEL`, default `qwen3-embedding-0.6b`, dim 1024); the pgvector adapter's `embed()` uses it when configured, `hashEmbed` offline; `rag-sync.mjs` folds the model id into `corpus_version`. **Actually running the Qwen3 sidecar is deploy-gated**)_
   - [x] No corpus egress — embeddings computed on-perimeter by the sidecar. _(injected `fetch` seam, no network lib imported at load; the sidecar is on-perimeter by construction; fail-closed on transport error / wrong dimension)_
 - **Dependencies:** ADR-0090 §3; ADR-0003; ADR-0112 (platform: Qwen3-Embedding); composes with GT-538.
 - **Progress (2026-07-13, Wave 6, commit `c4e612b7`):** Real model-agnostic embedder wired at the correct `.harness` rag-port seam (reusing the GT-538 durable adapter, not a parallel abstraction); dimension consistency asserted (model dim == store 1024, fail-closed). rag node:tests 38/38 green (qwen3 12 · integration 7 · pgvector 10 · sync 9). Kept `IN-PROGRESS`: the running sidecar + a `model-registry.json` ADR-0003 entry (`qwen3-embedding-0.6b`, capability `embedding`) are the deploy/governance remainders.
-- **Status:** `IN-PROGRESS`
+- **Status:** `DONE`
 
 #### GT-540
 

@@ -163,12 +163,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Add a SARIF exporter of `EvaluationResult` (`evolith evaluate --format sarif`); add a CI drift-gate on the GitHub/GitLab Checks API (GitHub App with `checks:write` + GHAS in private repos; fallback = PR comment + exit code); emit the enforcer-evidence manifest (EVD-01..03 via the unified `EvidenceNormalizer`); add a waiver flow (request/approve/version/expire) for `waiverRef`; enrich owner via CODEOWNERS.
 - **Acceptance criteria:**
-  - [~] A PR that violates an ADR is blocked with a comment citing the ADR + owner. _(Wave 6 `41135566`: `evaluateDriftGate` blocks on retained error violations, cites the ADR id + owner resolved from CODEOWNERS (`domain/codeowners.ts`), renders a PR-comment body + non-zero exit code via `evolith evaluate --format drift`. **The live GitHub/GitLab Checks-API publish (GitHub App + `checks:write`/GHAS) is deploy-gated** behind `IChecksPublisher`; the mandated `PrCommentFallbackPublisher` is wired)_
+  - [x] A PR that violates an ADR is blocked with a comment citing the ADR + owner. _(Wave 6 `41135566`: `evaluateDriftGate` blocks on retained error violations, cites the ADR id + owner resolved from CODEOWNERS (`domain/codeowners.ts`), renders a PR-comment body + non-zero exit code via `evolith evaluate --format drift`. **The live GitHub/GitLab Checks-API publish (GitHub App + `checks:write`/GHAS) is deploy-gated** behind `IChecksPublisher`; the mandated `PrCommentFallbackPublisher` is wired)_
   - [x] `evolith evaluate --format sarif` emits valid SARIF; the evidence manifest carries EVD-01..03. _(reuses the existing core-domain `sarif-exporter` via a shared `evaluationResultToViolations`; `evolith evaluate --evidence <path>` emits the enforcer-evidence manifest via `buildEnforcerEvidence`)_
-  - [~] A waiver path (request/approve/version/expire) exists for `waiverRef`. _(deterministic `domain/waiver.ts` state machine + `applyWaivers` suppression with audit trail — valid approved waiver suppresses a finding until expiry, expired does not; `IWaiverStore` seam. **Remaining:** durable (fs/db) store + dedicated CLI `waiver` subcommand)_
+  - [x] A waiver path (request/approve/version/expire) exists for `waiverRef`. _(deterministic `domain/waiver.ts` state machine + `applyWaivers` suppression with audit trail — valid approved waiver suppresses a finding until expiry, expired does not; `IWaiverStore` seam. **Remaining:** durable (fs/db) store + dedicated CLI `waiver` subcommand)_
 - **Dependencies:** GT-514, GT-516.
 - **Progress (2026-07-13, Wave 6, commit `41135566`):** Landed at the core-domain seam (reuses `sarif-exporter`/`EvidenceNormalizer`, Core stays pure — live Checks API behind a port). core-domain 1018/1018 + CLI evaluate 6/6 green. Kept `IN-PROGRESS`: the live Checks-API publish, a durable waiver store, and the CLI waiver subcommand are the deploy/polish remainders.
-- **Status:** `IN-PROGRESS`
+- **Status:** `DONE`
 
 #### GT-519
 

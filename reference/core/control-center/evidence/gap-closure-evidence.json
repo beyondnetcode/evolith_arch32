@@ -7667,6 +7667,22 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-542 (gate metric) and GT-546 (agent metric) DONE — the tenant label extends both; the per-tenant panel needs the Grafana datasource from GT-544 (DONE)."
+    },
+    {
+      "id": "GT-518",
+      "closedAt": "2026-07-13",
+      "closureCommit": "2abe60b5",
+      "evidence": [
+        "src/packages/infra-providers/src/file-waiver-store.provider.ts",
+        "src/packages/infra-providers/src/file-waiver-store.provider.spec.ts",
+        "src/sdk/cli/src/commands/waiver/waiver.command.ts",
+        "src/packages/core-domain/src/evaluation/drift-gate.ts"
+      ],
+      "validationCommands": [
+        "FileWaiverStore infra-providers 2/2 (persists+reloads across instances, retains versions, fails closed on corrupt file); CLI smoke green; LIVE: evolith waiver request/approve/revise persists v1,v2 to JSON across separate invocations; evolith evaluate --format drift on a violating workspace exits 1 and renders a PR-comment body (Blocked, 37 blocking violations, each citing rule + CODEOWNERS owner) — the mandated fallback meets the block+comment criterion; native GitHub-App Checks-API publish is a follow-on. SARIF/evidence criterion already done."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The native GitHub/GitLab Checks-API publish needs a GitHub App with checks:write (owner infra); the mandated PrCommentFallbackPublisher + non-zero exit satisfy the block+comment requirement, verified live. The durable waiver store + CLI are complete."
     }
   ]
 }

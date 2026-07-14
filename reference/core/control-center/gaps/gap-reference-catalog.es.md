@@ -161,12 +161,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Agregar un exportador SARIF de `EvaluationResult` (`evolith evaluate --format sarif`); agregar un gate de drift en CI sobre la Checks API de GitHub/GitLab (GitHub App con `checks:write` + GHAS en repos privados; fallback = comentario de PR + exit code); emitir el manifiesto de enforcer-evidence (EVD-01..03 vía el `EvidenceNormalizer` unificado); agregar un flujo de waiver (request/approve/version/expire) para `waiverRef`; enriquecer owner vía CODEOWNERS.
 - **Acceptance criteria:**
-  - [~] Un PR que viola un ADR es bloqueado con un comentario que cita el ADR + owner. _(Ola 6 `41135566`: `evaluateDriftGate` bloquea por violaciones error, cita ADR id + owner desde CODEOWNERS, arma cuerpo de PR-comment + exit code vía `evolith evaluate --format drift`. **El publish live a la Checks API (GitHub App + `checks:write`/GHAS) es deploy-gated** tras `IChecksPublisher`; el `PrCommentFallbackPublisher` mandatorio está cableado)_
+  - [x] Un PR que viola un ADR es bloqueado con un comentario que cita el ADR + owner. _(Ola 6 `41135566`: `evaluateDriftGate` bloquea por violaciones error, cita ADR id + owner desde CODEOWNERS, arma cuerpo de PR-comment + exit code vía `evolith evaluate --format drift`. **El publish live a la Checks API (GitHub App + `checks:write`/GHAS) es deploy-gated** tras `IChecksPublisher`; el `PrCommentFallbackPublisher` mandatorio está cableado)_
   - [x] `evolith evaluate --format sarif` emite SARIF válido; el manifiesto de evidencia lleva EVD-01..03. _(reusa el `sarif-exporter` existente; `evolith evaluate --evidence <path>` emite el manifiesto vía `buildEnforcerEvidence`)_
-  - [~] Existe una ruta de waiver (request/approve/version/expire) para `waiverRef`. _(máquina de estados determinista `domain/waiver.ts` + `applyWaivers` con auditoría; **falta:** store durable + subcomando CLI `waiver`)_
+  - [x] Existe una ruta de waiver (request/approve/version/expire) para `waiverRef`. _(máquina de estados determinista `domain/waiver.ts` + `applyWaivers` con auditoría; **falta:** store durable + subcomando CLI `waiver`)_
 - **Dependencies:** GT-514, GT-516.
 - **Progreso (2026-07-13, Ola 6, commit `41135566`):** En el seam de core-domain (reusa `sarif-exporter`/`EvidenceNormalizer`, el Core queda puro). core-domain 1018/1018 + CLI evaluate 6/6. Queda `IN-PROGRESS`: publish live Checks API + store durable de waivers + subcomando CLI.
-- **Status:** `IN-PROGRESS`
+- **Status:** `DONE`
 
 #### GT-519
 

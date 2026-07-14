@@ -32,6 +32,10 @@ import {
   compareSeverity,
 } from '../domain/rubrics/structural-review-rubric';
 import type { CollectionContext, CollectionTarget } from '../domain/ports/quality-signal-provider.port';
+import { DEFAULT_SKILLS } from '../adapters/skills/default-skills';
+import { buildEvaluationContext } from '../application/context-mapper';
+import { parseAgentRuntimeRequest } from '../domain/contracts/agent-runtime-request';
+import type { SkillDescriptor } from '../domain/contracts/capability';
 
 /** A deterministic stub reviewer standing in for the probabilistic LLM/agent. */
 function stubReviewer(findings: readonly RawStructuralFinding[]): IStructuralReviewer {
@@ -206,5 +210,40 @@ describe('Structural Quality Gate (deterministic severity → decision)', () => 
     expect(decideForSeverity('info', strict)).toBe('pass');
     // Default policy is more lenient than the strict one for 'medium'.
     expect(decideForSeverity('medium', DEFAULT_STRUCTURAL_GATE_POLICY)).toBe('warn');
+  });
+});
+
+/**
+ * Kind routing (GT-535) — the structural-review skill must forward a canonical
+ * EvaluationKind through buildEvaluationContext, NOT be dropped to the 'gate'
+ * fallback. Regression guard: 'code-quality' is a quality-signal DIMENSION, not a
+ * kind; the skill declares the canonical 'evidence' kind so the provider stays
+ * reachable when the IStructuralReviewer adapter lands.
+ */
+describe('structural-review skill kind routing (GT-535)', () => {
+  const skill = DEFAULT_SKILLS.find((s) => s.id === 'code-quality-structural-review');
+  const req = parseAgentRuntimeRequest({ tenant: 't-1', intent: 'structural_review' });
+
+  it('declares a canonical evaluation kind (not the code-quality dimension)', () => {
+    expect(skill).toBeDefined();
+    expect(skill?.evaluationKinds).toEqual(['evidence']);
+    // 'code-quality' is the Evidence DIMENSION, never an EvaluationKind.
+    expect(skill?.evaluationKinds).not.toContain('code-quality');
+  });
+
+  it('forwards the declared kind through buildEvaluationContext (not the gate fallback)', () => {
+    const ctx = buildEvaluationContext(req, skill as SkillDescriptor);
+    expect(ctx.kinds).toEqual(['evidence']);
+    // Guard the regression: an unknown/dimension-shaped kind would collapse to ['gate'].
+    expect(ctx.kinds).not.toEqual(['gate']);
+  });
+
+  it('drops a non-canonical kind to the gate fallback (documents the filter)', () => {
+    const bogus: SkillDescriptor = {
+      ...(skill as SkillDescriptor),
+      evaluationKinds: ['code-quality'],
+    };
+    const ctx = buildEvaluationContext(req, bogus);
+    expect(ctx.kinds).toEqual(['gate']);
   });
 });

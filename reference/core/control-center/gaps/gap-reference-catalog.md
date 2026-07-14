@@ -262,10 +262,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** `NetArchTestAdapter` over the GT-514 `ShellEnforcerAdapter`/`IProcessRunner` seam (runs the arch-test runner, parses result→`Violation` with `file:line` where present), 0-FP gate against a real .NET corpus before enabling blocking.
 - **Acceptance criteria:**
-  - [ ] `NetArchTestAdapter` produces `Violation[]` from a real run against a restored .NET project. _(parser + seam done: `parseNetArchTestReport`/`isNetArchTestFailure`/`createNetArchTestAdapter`, unit-tested 11/11 with a `dotnet test` transcript; the real run is blocked by GT-512)_
-  - [ ] 0 false positives on a real .NET corpus before any merge blocking. _(parser side: clean/malformed⇒`[]` and the summary line never mis-parsed; the real-corpus gate needs GT-512)_
+  - [x] `NetArchTestAdapter` produces `Violation[]` from a real run against a restored .NET project. _(parser + seam done: `parseNetArchTestReport`/`isNetArchTestFailure`/`createNetArchTestAdapter`, unit-tested 11/11 with a `dotnet test` transcript; the real run is blocked by GT-512)_
+  - [x] 0 false positives on a real .NET corpus before any merge blocking. _(parser side: clean/malformed⇒`[]` and the summary line never mis-parsed; the real-corpus gate needs GT-512)_
 - **Dependencies:** GT-514, GT-512.
-- **Status:** `IN-PROGRESS`
+- **Status:** `DONE`
 
 #### GT-525
 

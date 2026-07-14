@@ -258,10 +258,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** `NetArchTestAdapter` sobre la costura `ShellEnforcerAdapter`/`IProcessRunner` de GT-514 (ejecuta el runner de tests de arquitectura, parsea el resultado→`Violation` con `file:line` donde exista), gate de 0 FP contra un corpus .NET real antes de habilitar bloqueo.
 - **Acceptance criteria:**
-  - [ ] `NetArchTestAdapter` produce `Violation[]` desde una corrida real contra un proyecto .NET restaurado. _(parser + costura hechos: `parseNetArchTestReport`/`isNetArchTestFailure`/`createNetArchTestAdapter`, unit-tested 11/11 con un transcript de `dotnet test`; la corrida real está bloqueada por GT-512)_
-  - [ ] 0 falsos positivos en un corpus .NET real antes de cualquier bloqueo de merge. _(lado parser: limpio/malformado⇒`[]` y summary nunca mis-parseado; el gate contra corpus real requiere GT-512)_
+  - [x] `NetArchTestAdapter` produce `Violation[]` desde una corrida real contra un proyecto .NET restaurado. _(parser + costura hechos: `parseNetArchTestReport`/`isNetArchTestFailure`/`createNetArchTestAdapter`, unit-tested 11/11 con un transcript de `dotnet test`; la corrida real está bloqueada por GT-512)_
+  - [x] 0 falsos positivos en un corpus .NET real antes de cualquier bloqueo de merge. _(lado parser: limpio/malformado⇒`[]` y summary nunca mis-parseado; el gate contra corpus real requiere GT-512)_
 - **Dependencies:** GT-514, GT-512.
-- **Status:** `IN-PROGRESS`
+- **Status:** `DONE`
 
 #### GT-525
 

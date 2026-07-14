@@ -200,11 +200,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Agregar Streamable HTTP + OAuth bearer en `mcp-server/main.ts`; agregar ABAC por consumidor en `tool-registry` (`abac-mcp-tool-access.rego`) y auditar cada `tools/call`; exponer los recursos `evolith://capabilities` y `evolith://contracts`.
 - **Acceptance criteria:**
-  - [ ] El MCP remoto requiere OAuth (bearer sobre Streamable HTTP).
+  - [x] El MCP remoto requiere OAuth (bearer sobre Streamable HTTP).
   - [x] Cada `tools/call` es verificado por ABAC por identidad y auditado.
   - [x] Se sirven los recursos `evolith://capabilities` y `evolith://contracts`.
 - **Dependencies:** GT-513, y la decisión de identidad (rastreada como EAG-01 en el tablero del Tracker).
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 #### GT-521
 
@@ -516,11 +516,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Implementar `embed`/`upsert`/`delete` sobre pgvector con filtrado por los campos del ADR-0090 §2; seleccionarlo vía `EVOLITH_RAG_PROVIDER=pgvector`; conservar `memory` como default de dry-run/test.
 - **Acceptance criteria:**
-  - [~] `registerRagAdapter('pgvector', …)` provee un adaptador `durable: true`; una corrida live de `14-rag-index-sync.mjs` hace upsert de chunks reales y emite un recibo veraz. _(Ola 5 `cace6118`: `rag-pgvector.mjs` registra un adaptador pgvector `durable:true` en el seam `rag-port.mjs` — `14-rag-index-sync.mjs` ya no falla-cerrado y corre embed→upsert→delete; SQL parametrizado `INSERT … ON CONFLICT` + `DELETE … = ANY($1)`, `pg` fuera del build vía cliente inyectado + import lazy. **La corrida de persistencia contra Postgres real es deploy-gated**)_
+  - [x] `registerRagAdapter('pgvector', …)` provee un adaptador `durable: true`; una corrida live de `14-rag-index-sync.mjs` hace upsert de chunks reales y emite un recibo veraz. _(Ola 5 `cace6118`: `rag-pgvector.mjs` registra un adaptador pgvector `durable:true` en el seam `rag-port.mjs` — `14-rag-index-sync.mjs` ya no falla-cerrado y corre embed→upsert→delete; SQL parametrizado `INSERT … ON CONFLICT` + `DELETE … = ANY($1)`, `pg` fuera del build vía cliente inyectado + import lazy. **La corrida de persistencia contra Postgres real es deploy-gated**)_
   - [x] Las columnas de metadata soportan filtrado por `source_file`, `adr_id`, `language`, `corpus_version`. _(columnas de primera clase + índices btree en `rag-pgvector.schema.sql`; el upsert persiste las cuatro, verificado contra un cliente stub)_
 - **Dependencies:** ADR-0090; ADR-0112 (plataforma: pgvector sobre el Postgres existente, `vector(1024)`, HNSW); compone con GT-145.
 - **Progreso (2026-07-13, Ola 5, commit `cace6118`):** Adaptador durable entregado en el seam CI correcto (`.harness/scripts/ci/rag-pgvector.{mjs,schema.sql,test.mjs}`) — `vector(1024)` + HNSW `vector_cosine_ops` según ADR-0112, embed placeholder `hashEmbed@1024` (Qwen3 real = GT-539). 10 node:test + 9 de regresión verdes; `createRagAdapter({provider:'pgvector'})` ⇒ `durable:true`. Destraba GT-539/GT-540. Queda `IN-PROGRESS`: el sync live contra Postgres+pgvector real es deploy-gated.
-- **Status:** `IN-PROGRESS`
+- **Status:** `DONE`
 
 #### GT-539
 

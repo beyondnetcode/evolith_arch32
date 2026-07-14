@@ -40,6 +40,12 @@ export interface KnowledgeChunk {
   readonly charStart?: number;
   /** End character offset within the source file (GT-538 `rag_chunks.char_end`). */
   readonly charEnd?: number;
+  /**
+   * Corpus release the chunk was embedded under (GT-541 · `rag_chunks.corpus_version`).
+   * Agents cite it so a recommendation is traceable to the exact indexed corpus. Optional
+   * so offline/token adapters that don't track a release stay contract-compliant.
+   */
+  readonly corpusVersion?: string;
 }
 
 /**

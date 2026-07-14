@@ -132,6 +132,23 @@ export class AgentRuntimeService implements IAgentRuntime {
       });
       yield { type: 'context_resolved', timestamp: this.now() };
 
+      // 1b. Ground: query the knowledge corpus BEFORE recommending (GT-541 / ADR-0090).
+      //     Best-effort — a retrieval error NEVER fails the governed run; it just leaves
+      //     the recommendation ungrounded. Records the cited chunks + the corpus_version
+      //     they came from so the recommendation is traceable to the exact indexed corpus.
+      let grounding: { corpusVersion?: string; citations: string[] } | undefined;
+      if (this.deps.knowledge) {
+        steps.push('ground');
+        try {
+          const kr = await this.deps.knowledge.query({ query: request.intent, maxResults: 5 });
+          const citations = kr.chunks.map((c) => (c.sectionHeading ? `${c.sourceFile}#${c.sectionHeading}` : c.sourceFile));
+          const corpusVersion = kr.chunks.find((c) => c.corpusVersion)?.corpusVersion;
+          grounding = { corpusVersion, citations };
+        } catch {
+          // grounding is advisory; never block the run on a corpus outage.
+        }
+      }
+
       // 2. Select capability/tool. If unknown and an engine is available, let
       //    the engine PROPOSE a tool (still governed afterwards).
       steps.push('select-capability');
@@ -321,6 +338,7 @@ export class AgentRuntimeService implements IAgentRuntime {
         approvedBy,
         durationMs: this.duration(startedAt, finishedAt),
         steps: [...steps, 'completed'],
+        groundedBy: grounding,
       };
 
       const recommendations: RuntimeRecommendation[] = enginePlanRationale

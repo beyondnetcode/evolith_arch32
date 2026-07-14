@@ -7683,6 +7683,21 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The native GitHub/GitLab Checks-API publish needs a GitHub App with checks:write (owner infra); the mandated PrCommentFallbackPublisher + non-zero exit satisfy the block+comment requirement, verified live. The durable waiver store + CLI are complete."
+    },
+    {
+      "id": "GT-541",
+      "closedAt": "2026-07-13",
+      "closureCommit": "24c26af1",
+      "evidence": [
+        ".github/workflows/rag-index-sync.yml",
+        "src/packages/agent-runtime/src/application/agent-runtime.service.ts",
+        "src/packages/agent-runtime/src/domain/ports/knowledge.port.ts"
+      ],
+      "validationCommands": [
+        "agent-runtime 123/123 (+2 grounding tests): a run with a seeded corpus records trace.groundedBy.corpusVersion + citations (queried BEFORE recommending), and an empty corpus grounds to empty without blocking. A reference/**/*.md commit runs 14-rag-index-sync.mjs (rag-index-sync.yml) which detects the 2 changed files and emits a delta receipt (verified). pgvector adapter now returns rag_chunks.corpus_version on the chunk."
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-538 (durable pgvector store) + GT-539 (real embedder) + GT-540 (read adapter) all DONE — the workflow drives the durable delta sync and the runtime grounds against the read adapter, citing the corpus_version those produce."
     }
   ]
 }

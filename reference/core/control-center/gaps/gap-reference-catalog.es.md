@@ -573,10 +573,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Añadir un workflow scoped a `reference/` que corre el delta sync con credenciales de proveedor enmascaradas; añadir un paso de grounding de agente que consulta `IKnowledgePort` y cita los chunks usados.
 - **Acceptance criteria:**
-  - [ ] Un commit a `reference/` dispara un re-embed delta que hace upsert solo de los chunks cambiados y registra un recibo.
-  - [ ] Al menos un agente (Winston) consulta `IKnowledgePort` antes de recomendar y cita `corpus_version`.
+  - [x] Un commit a `reference/` dispara un re-embed delta que hace upsert solo de los chunks cambiados y registra un recibo.
+  - [x] Al menos un agente (Winston) consulta `IKnowledgePort` antes de recomendar y cita `corpus_version`.
 - **Dependencies:** GT-538; GT-539; GT-540; ADR-0090 §4.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 

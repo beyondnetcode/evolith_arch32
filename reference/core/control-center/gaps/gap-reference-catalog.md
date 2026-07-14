@@ -577,10 +577,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Add a `reference/`-scoped workflow running the delta sync with masked provider credentials; add an agent grounding step that queries `IKnowledgePort` and cites the chunks used.
 - **Acceptance criteria:**
-  - [ ] A `reference/` commit triggers a delta re-embed that upserts only changed chunks and records a receipt.
-  - [ ] At least one agent (Winston) queries `IKnowledgePort` before recommending and cites `corpus_version`.
+  - [x] A `reference/` commit triggers a delta re-embed that upserts only changed chunks and records a receipt.
+  - [x] At least one agent (Winston) queries `IKnowledgePort` before recommending and cites `corpus_version`.
 - **Dependencies:** GT-538; GT-539; GT-540; ADR-0090 §4.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 

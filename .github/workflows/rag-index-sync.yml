@@ -1,0 +1,55 @@
+# GT-541 · ADR-0090 §4 — RAG knowledge-index delta sync.
+#
+# A commit touching the EN reference corpus (reference/**/*.md) triggers a delta re-embed:
+# 14-rag-index-sync.mjs diffs HEAD~1..HEAD, chunks changed files at H2 boundaries, upserts
+# ONLY the changed chunks and prunes stale/deleted ones, then emits a machine-readable
+# receipt. Provider credentials are masked repo secrets; with EVOLITH_RAG_SYNC unset the run
+# is a truthful dry-run (in-memory, non-durable) that still records a receipt — durable
+# persistence engages only when a durable provider + store are configured.
+name: RAG Index Sync
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'reference/**/*.md'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rag-index-sync-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Delta re-embed changed reference/ chunks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # HEAD~1..HEAD delta
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: RAG delta sync (dry-run unless a durable provider is configured)
+        run: node .harness/scripts/ci/14-rag-index-sync.mjs
+        env:
+          EVOLITH_RAG_RECEIPT_PATH: rag-sync-receipt.json
+          # Masked provider credentials — the sync fails CLOSED if EVOLITH_RAG_SYNC=true
+          # is set without a durable provider, so it never silently pretends to persist.
+          EVOLITH_RAG_SYNC: ${{ vars.EVOLITH_RAG_SYNC }}
+          EVOLITH_RAG_PROVIDER: ${{ vars.EVOLITH_RAG_PROVIDER }}
+          EVOLITH_RAG_PG_URL: ${{ secrets.EVOLITH_RAG_PG_URL }}
+          EVOLITH_RAG_EMBED_URL: ${{ secrets.EVOLITH_RAG_EMBED_URL }}
+          EVOLITH_RAG_EMBED_MODEL: ${{ vars.EVOLITH_RAG_EMBED_MODEL }}
+
+      - name: Upload sync receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rag-sync-receipt
+          path: rag-sync-receipt.json
+          if-no-files-found: ignore

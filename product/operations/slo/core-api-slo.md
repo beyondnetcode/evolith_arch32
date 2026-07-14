@@ -42,6 +42,17 @@ Service Level Objectives for Evolith Core API services. These SLOs define the re
 | < 10% | Freeze on non-critical changes, incident review mandatory |
 | 0% | Hard freeze, all effort toward reliability improvement |
 
+
+## Tenant dimension (GT-548)
+
+Governance metrics (`evolith_gate_evaluations_total`, `evolith_agent_runs_total`) carry a
+**bounded** `tenant` label. Only tenants listed in `EVOLITH_METRICS_TENANT_ALLOWLIST`
+(comma-separated, hard-capped at 100) get their own series; every other tenant — and any
+unset one — collapses to `tenant="other"`. Cardinality is therefore bounded to
+`|allowlist| + 1`, so per-tenant scorecards are derivable without unbounded TSDB growth.
+The "Gate evaluations /s by tenant" panel (Governance Health dashboard) filters on the
+`$tenant` template variable.
+
 ## Alerting Integration
 
 Alerts are defined in `product/operations/alerts/prometheus-alerts.yml`. Key alerts:

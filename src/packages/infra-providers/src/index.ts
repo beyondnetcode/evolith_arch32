@@ -7,6 +7,7 @@ export { NestLoggerProvider, ConsoleLoggerProvider, NoOpLoggerProvider } from '.
 export { YamlConfigParserProvider, JsonConfigParserProvider } from './config-parser.provider';
 export { DiskRulesetRepository, RulesetsNotFoundError } from './disk-ruleset.repository';
 export { WebhookAdapter } from './webhook.adapter';
+export { FileWaiverStore } from './file-waiver-store.provider';
 export {
   MoscowPrioritizationService,
   MoscowItem,

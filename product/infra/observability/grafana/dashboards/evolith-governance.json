@@ -8,8 +8,32 @@
   "uid": "evolith-governance",
   "tags": ["evolith", "governance", "observability"],
   "schemaVersion": 39,
-  "templating": { "list": [] },
+  "templating": {
+    "list": [
+      {
+        "name": "tenant",
+        "label": "Tenant",
+        "type": "query",
+        "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+        "query": { "query": "label_values(evolith_gate_evaluations_total, tenant)", "refId": "tenant" },
+        "includeAll": true,
+        "multi": true,
+        "refresh": 2,
+        "sort": 1
+      }
+    ]
+  },
   "panels": [
+    {
+      "type": "timeseries",
+      "title": "Gate evaluations /s by tenant (GT-548)",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 24 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 12, "stacking": { "mode": "normal" } } }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "sum by (tenant) (rate(evolith_gate_evaluations_total{tenant=~\"$tenant\"}[1m]))", "legendFormat": "{{tenant}}", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    },
     {
       "type": "timeseries",
       "title": "Gate evaluations /s by verdict (GT-542)",

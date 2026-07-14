@@ -35,7 +35,8 @@ export class GatesController {
       evaluatedBy: body.evaluatedBy,
     });
     // GT-542: emit the flagship gate pass/fail + latency signal.
-    this.metrics?.recordGateEvaluation(result.gateId ?? gateId, String(result.verdict), String(phase), (Date.now() - start) / 1000);
+    // Gate evaluate has no tenant in its DTO → the bounded label collapses to `other`.
+    this.metrics?.recordGateEvaluation(result.gateId ?? gateId, String(result.verdict), String(phase), undefined, (Date.now() - start) / 1000);
     // GT-411: Return pre-built ADR-0073 envelope with canonical command name.
     return createSuccessEnvelope(result, {
       command: 'evolith gate evaluate',

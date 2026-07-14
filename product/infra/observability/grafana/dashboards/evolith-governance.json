@@ -1,0 +1,95 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "graphTooltip": 0,
+  "time": { "from": "now-15m", "to": "now" },
+  "refresh": "10s",
+  "title": "Evolith — Governance Health",
+  "uid": "evolith-governance",
+  "tags": ["evolith", "governance", "observability"],
+  "schemaVersion": 39,
+  "templating": { "list": [] },
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Gate evaluations /s by verdict (GT-542)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 15, "stacking": { "mode": "normal" } } }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "sum by (status) (rate(evolith_gate_evaluations_total[1m]))", "legendFormat": "{{status}}", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Gate eval p95 latency (s)",
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s", "decimals": 3 }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "histogram_quantile(0.95, sum by (le) (rate(evolith_gate_evaluation_duration_seconds_bucket[5m])))", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "5xx error ratio (GT-543)",
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "percentunit", "decimals": 3, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 0.01 } ] } }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "sum(rate(evolith_http_requests_total{status=~\"5..\"}[5m])) / clamp_min(sum(rate(evolith_http_requests_total[5m])), 1)", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP requests /s by service (GT-543)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 10 } }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "sum by (service) (rate(evolith_http_requests_total[1m]))", "legendFormat": "{{service}}", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "HTTP p99 latency (s)",
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s", "decimals": 3 }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "histogram_quantile(0.99, sum by (le) (rate(evolith_http_request_duration_seconds_bucket[5m])))", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Targets up",
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "unit": "short", "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null }, { "color": "green", "value": 3 } ] } }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "count(up{service=~\"core-api|mcp|agent-runtime\"} == 1)", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Agent runs /s by verdict (GT-546)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 15, "stacking": { "mode": "normal" } } }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "sum by (verdict) (rate(evolith_agent_runs_total[1m]))", "legendFormat": "{{verdict}}", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Skill invocations & Core calls /s (GT-546)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "evolith-prometheus" },
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 10 } }, "overrides": [] },
+      "targets": [
+        { "refId": "A", "expr": "sum by (skill) (rate(evolith_skill_invocations_total[5m]))", "legendFormat": "skill {{skill}}", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } },
+        { "refId": "B", "expr": "sum by (outcome) (rate(evolith_agent_core_calls_total[5m]))", "legendFormat": "core {{outcome}}", "datasource": { "type": "prometheus", "uid": "evolith-prometheus" } }
+      ]
+    }
+  ]
+}

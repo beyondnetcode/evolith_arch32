@@ -1,0 +1,47 @@
+# ──────────────────────────────────────────────────────────────────────────
+# Observability overlay for the runnable Node stack (GT-544/545/547).
+#
+# Adds Prometheus (scrapes the 3 real services with the API-key Bearer credential)
+# and Grafana (Prometheus datasource + provisioned Governance Health dashboard) to
+# the `evolith` compose project, so the metrics emitted by GT-542/543/546 are
+# scraped and visualized end-to-end. Run it alongside the base compose:
+#
+#   cd product/infra
+#   EVOLITH_API_KEY=local-dev-key docker compose \
+#     -f docker-compose.evolith.yml -f docker-compose.observability.yml up -d --build
+#   open http://localhost:9090        # Prometheus (Status > Targets: 3 up)
+#   open http://localhost:3009        # Grafana (anonymous admin) > Evolith > Governance Health
+# ──────────────────────────────────────────────────────────────────────────
+services:
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: evolith-prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=6h
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../operations/alerts:/etc/prometheus/alerts:ro
+    ports:
+      - "9090:9090"
+    networks: [evolith]
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: evolith-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_USERS_DEFAULT_THEME: dark
+    volumes:
+      - ./observability/grafana/datasources/prometheus.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
+      - ./observability/grafana/dashboards/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
+      - ./observability/grafana/dashboards/evolith-governance.json:/var/lib/grafana/dashboards/evolith-governance.json:ro
+      - ./observability/grafana/dashboards/evolith-sre-red.json:/var/lib/grafana/dashboards/evolith-sre-red.json:ro
+    ports:
+      - "3009:3000"
+    depends_on: [prometheus]
+    networks: [evolith]

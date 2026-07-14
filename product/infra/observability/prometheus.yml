@@ -1,0 +1,45 @@
+# Local Prometheus scrape config for the runnable Node stack (docker-compose.evolith.yml).
+# Scrapes the THREE real Evolith services by their in-network service name on :3000,
+# sending the shared API key as a Bearer credential — /metrics is fail-closed on all three
+# (core-api GT-393, agent-runtime + mcp GT-549). Loads the repo's alert rules so the
+# HighErrorRate / HighLatency / burn-rate / gate alerts evaluate against real series.
+#
+# NOTE: Prometheus does not expand ${ENV} in its config, so the credential is the compose
+# default dev key `local-dev-key`. If you start the stack with a different EVOLITH_API_KEY,
+# update the three `credentials:` values below to match.
+global:
+  scrape_interval: 10s
+  evaluation_interval: 10s
+
+rule_files:
+  - /etc/prometheus/alerts/*.yml
+
+scrape_configs:
+  - job_name: core-api
+    metrics_path: /metrics
+    authorization:
+      credentials: local-dev-key
+    static_configs:
+      - targets: ['core-api:3000']
+        labels: { service: core-api, environment: local }
+
+  - job_name: mcp
+    metrics_path: /metrics
+    authorization:
+      credentials: local-dev-key
+    static_configs:
+      - targets: ['mcp:3000']
+        labels: { service: mcp, environment: local }
+
+  - job_name: agent-runtime
+    metrics_path: /metrics
+    authorization:
+      credentials: local-dev-key
+    static_configs:
+      - targets: ['agent-runtime:3000']
+        labels: { service: agent-runtime, environment: local }
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+        labels: { service: prometheus }

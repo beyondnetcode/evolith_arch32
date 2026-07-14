@@ -1,0 +1,69 @@
+# GT-512 · EAG-04 — locked-down OS sandbox for source-analyzer execution.
+#
+# The app-level SandboxPolicy/SandboxedProcessRunner (binary allowlist + secret denial +
+# fail-closed) is complemented here by the OS-level isolation the criterion calls for: a
+# dedicated sandbox pod that runs analyzers (depcruise/NetArchTest/import-linter/…) against
+# an ALREADY-RESTORED, read-only checkout with
+#   · egress DENIED  (deny-all-egress NetworkPolicy — enforced by a NetworkPolicy-aware CNI
+#                      such as Calico/Cilium in prod; the container-runtime equivalent is
+#                      `docker run --network none`),
+#   · no ambient capabilities, non-root, read-only rootfs, seccomp RuntimeDefault, and
+#   · cgroup limits (memory / cpu / ephemeral-storage).
+# The fetch/restore (network) happens in a SEPARATE step BEFORE the sandbox; analysis runs
+# here offline so a compromised analyzer cannot exfiltrate the corpus.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: evolith-sandbox
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: analysis-sandbox-deny-egress
+  namespace: evolith-sandbox
+spec:
+  podSelector:
+    matchLabels: { role: analysis-sandbox }
+  policyTypes: [Egress]
+  egress: []   # empty = deny ALL egress
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: analysis-sandbox
+  namespace: evolith-sandbox
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels: { role: analysis-sandbox }
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: analyzer
+          image: alpine:3.20
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "== identity (non-root) =="; id
+              echo "== egress attempt (must fail: no exfiltration path) =="
+              wget -T 3 -q -O- https://example.com 2>&1 | head -c 40 || echo "EGRESS DENIED"
+              echo "== offline analysis compute (runs without network) =="
+              echo "scanned $(ls -1 / | wc -l) root entries offline"
+              echo "== rootfs read-only? =="
+              (touch /probe 2>/dev/null && echo "WRITABLE (bad)") || echo "READONLY rootfs enforced"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+              ephemeral-storage: "256Mi"

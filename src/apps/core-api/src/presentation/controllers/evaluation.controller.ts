@@ -98,7 +98,7 @@ export class EvaluationController {
       const ctx = body as unknown as EvaluationContext;
       const result = await this.orchestrator.evaluate(ctx);
       // GT-542: emit the evaluation verdict + latency signal.
-      this.metrics?.recordGateEvaluation('evaluate', String(result.overallVerdict), phase, (Date.now() - start) / 1000);
+      this.metrics?.recordGateEvaluation('evaluate', String(result.overallVerdict), phase, body.tenant?.tenantId, (Date.now() - start) / 1000);
       // GT-411: Return pre-built ADR-0073 envelope with canonical command name.
       return createSuccessEnvelope(result, {
         command: 'evolith evaluate',
@@ -124,7 +124,7 @@ export class EvaluationController {
         },
       );
       // GT-542: legacy path exposes a boolean pass/fail → map to the canonical verdict label.
-      this.metrics?.recordGateEvaluation('evaluate', evaluationVerdict?.passed ? 'PASS' : 'FAIL', phase, (Date.now() - start) / 1000);
+      this.metrics?.recordGateEvaluation('evaluate', evaluationVerdict?.passed ? 'PASS' : 'FAIL', phase, body.tenant?.tenantId, (Date.now() - start) / 1000);
       return evaluationVerdict!.outputEnvelope;
     }
 
@@ -182,7 +182,7 @@ export class EvaluationController {
       },
     });
     // GT-542: emit the inline evaluation verdict + latency signal.
-    this.metrics?.recordGateEvaluation('evaluate', evaluationVerdict?.passed ? 'PASS' : 'FAIL', phase, (Date.now() - start) / 1000);
+    this.metrics?.recordGateEvaluation('evaluate', evaluationVerdict?.passed ? 'PASS' : 'FAIL', phase, body.tenant?.tenantId, (Date.now() - start) / 1000);
     return evaluationVerdict!.outputEnvelope;
   }
 }

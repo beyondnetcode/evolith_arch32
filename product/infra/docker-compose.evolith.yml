@@ -48,6 +48,8 @@ services:
       CORE_PATH: /app/corpus
       WORKSPACE_ROOT: /app/corpus
       REDIS_URL: redis://redis:6379
+      # GT-548: bounded tenant metric label (comma-separated allowlist; others → "other").
+      EVOLITH_METRICS_TENANT_ALLOWLIST: ${EVOLITH_METRICS_TENANT_ALLOWLIST:-}
     ports:
       - "3001:3000"
     depends_on:

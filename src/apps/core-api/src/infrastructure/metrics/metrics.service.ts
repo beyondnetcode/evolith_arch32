@@ -1,9 +1,21 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { Counter, CounterConfiguration, Histogram, HistogramConfiguration, Registry } from 'prom-client';
 
+/**
+ * GT-548: cardinality cap for the `tenant` metric label. Only tenants in the
+ * allowlist (`EVOLITH_METRICS_TENANT_ALLOWLIST`, comma-separated) label their own
+ * series; everything else collapses to `other`. Series growth is therefore bounded
+ * to |allowlist ∩ cap| + 1 regardless of how many tenants exist — a raw tenant id
+ * would be unbounded and blow up the TSDB. The allowlist itself is hard-capped so a
+ * mis-set env var can never uncork cardinality.
+ */
+const TENANT_ALLOWLIST_CAP = 100;
+const OTHER_TENANT = 'other';
+
 @Injectable()
 export class MetricsService implements OnModuleDestroy {
   private readonly registry: Registry;
+  private readonly tenantAllowlist: ReadonlySet<string>;
   readonly gateEvaluationsTotal: Counter;
   readonly gateEvaluationDuration: Histogram;
   readonly httpRequestsTotal: Counter;
@@ -12,18 +24,25 @@ export class MetricsService implements OnModuleDestroy {
   constructor() {
     this.registry = new Registry();
     this.registry.setDefaultLabels({ app: 'evolith-core-api' });
+    this.tenantAllowlist = new Set(
+      (process.env.EVOLITH_METRICS_TENANT_ALLOWLIST ?? '')
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean)
+        .slice(0, TENANT_ALLOWLIST_CAP),
+    );
 
     this.gateEvaluationsTotal = new Counter({
       name: 'evolith_gate_evaluations_total',
-      help: 'Total governance gate/architecture evaluations, by verdict (status), gate and phase',
-      labelNames: ['status', 'gateId', 'phase'],
+      help: 'Total governance gate/architecture evaluations, by verdict (status), gate, phase and (bounded) tenant',
+      labelNames: ['status', 'gateId', 'phase', 'tenant'],
       registers: [this.registry],
     });
 
     this.gateEvaluationDuration = new Histogram({
       name: 'evolith_gate_evaluation_duration_seconds',
-      help: 'Duration of gate/architecture evaluations in seconds, by gate and phase',
-      labelNames: ['gateId', 'phase'],
+      help: 'Duration of gate/architecture evaluations in seconds, by gate, phase and (bounded) tenant',
+      labelNames: ['gateId', 'phase', 'tenant'],
       buckets: [0.1, 0.5, 1, 2, 5, 10],
       registers: [this.registry],
     });
@@ -63,11 +82,21 @@ export class MetricsService implements OnModuleDestroy {
    * never emitted — nothing could chart gate outcomes until this is called from the
    * evaluate/gate paths. `status` carries the canonical Verdict (PASS/FAIL/…).
    */
-  recordGateEvaluation(gateId: string, status: string, phase: string, durationSeconds?: number): void {
-    this.gateEvaluationsTotal.inc({ status, gateId, phase });
+  recordGateEvaluation(gateId: string, status: string, phase: string, tenant?: string, durationSeconds?: number): void {
+    const t = this.boundedTenant(tenant);
+    this.gateEvaluationsTotal.inc({ status, gateId, phase, tenant: t });
     if (durationSeconds !== undefined) {
-      this.gateEvaluationDuration.observe({ gateId, phase }, durationSeconds);
+      this.gateEvaluationDuration.observe({ gateId, phase, tenant: t }, durationSeconds);
     }
+  }
+
+  /**
+   * GT-548: collapse an unbounded tenant id to a bounded label value. A tenant in the
+   * allowlist keeps its own series; anything else (and any unset tenant) becomes `other`,
+   * so per-tenant scorecards stay derivable without unbounded TSDB series growth.
+   */
+  boundedTenant(tenantId?: string): string {
+    return tenantId && this.tenantAllowlist.has(tenantId) ? tenantId : OTHER_TENANT;
   }
 
   createCounter(config: CounterConfiguration<string>): Counter {

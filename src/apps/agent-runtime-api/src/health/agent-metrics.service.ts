@@ -25,14 +25,23 @@ export class AgentMetricsService {
 
   /** Configured reasoning engine (label), captured once from the environment. */
   private readonly engine: string;
+  /** GT-548: cardinality-bounded tenant allowlist (see {@link boundedTenant}). */
+  private readonly tenantAllowlist: ReadonlySet<string>;
 
   constructor() {
     this.engine = (process.env.AGENT_RUNTIME_ENGINE ?? 'stub').trim().toLowerCase() || 'stub';
+    this.tenantAllowlist = new Set(
+      (process.env.EVOLITH_METRICS_TENANT_ALLOWLIST ?? '')
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean)
+        .slice(0, 100),
+    );
 
     this.runsTotal = this.counter({
       name: 'evolith_agent_runs_total',
-      help: 'Total agent-runtime executions, by engine and verdict (run status)',
-      labelNames: ['engine', 'verdict'],
+      help: 'Total agent-runtime executions, by engine, verdict (run status) and (bounded) tenant',
+      labelNames: ['engine', 'verdict', 'tenant'],
     });
     this.runDuration = this.histogram({
       name: 'evolith_agent_run_duration_seconds',
@@ -68,7 +77,7 @@ export class AgentMetricsService {
    *   · hitl_approvals_total{decision}  — approved (trace.approvedBy) or blocked (status).
    */
   recordRun(result: AgentRuntimeResult, measuredSeconds: number): void {
-    this.runsTotal.inc({ engine: this.engine, verdict: result.status });
+    this.runsTotal.inc({ engine: this.engine, verdict: result.status, tenant: this.boundedTenant(result.trace.tenantId) });
 
     const durationSeconds =
       typeof result.trace.durationMs === 'number' ? result.trace.durationMs / 1000 : measuredSeconds;
@@ -89,6 +98,14 @@ export class AgentMetricsService {
     if (result.trace.approvedBy) {
       this.hitlApprovals.inc({ decision: 'approved' });
     }
+  }
+
+  /**
+   * GT-548: collapse an unbounded tenant id to a bounded label value — a tenant in the
+   * allowlist keeps its own series, everything else (and any unset tenant) is `other`.
+   */
+  boundedTenant(tenantId?: string): string {
+    return tenantId && this.tenantAllowlist.has(tenantId) ? tenantId : 'other';
   }
 
   private counter(cfg: CounterConfiguration<string>): Counter<string> {

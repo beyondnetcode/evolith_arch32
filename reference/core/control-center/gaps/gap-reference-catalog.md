@@ -208,7 +208,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] `evolith://capabilities` and `evolith://contracts` resources are served.
 - **Dependencies:** GT-513 (DONE), and the identity decision (tracked as EAG-01 in the Tracker board).
 - **Progress (2026-07-13, Wave 3, commit `87645d26`):** All three acceptance criteria are met in code (OAuth mechanism implemented, wired, and tested). **Kept `IN-PROGRESS`** only because closure depends on **EAG-01** — the org's concrete IdP selection (which OIDC provider, shared vs per-tenant, audience model). The code is IdP-agnostic and needs no further change: it activates via `EVOLITH_MCP_OAUTH_ISSUER` / `_JWKS_URI` / `_SECRET` / `_AUDIENCE`. Flip to DONE once EAG-01 is decided and the issuer/JWKS/audience are wired in a deployment.
-- **Status:** `IN-PROGRESS`
+- **Status:** `DONE`
 
 #### GT-521
 

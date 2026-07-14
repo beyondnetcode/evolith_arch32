@@ -7538,6 +7538,21 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-544 (Grafana) and GT-545 (scrape) close together in the same overlay; the whole stack was brought up and exercised end-to-end."
+    },
+    {
+      "id": "GT-520",
+      "closedAt": "2026-07-13",
+      "closureCommit": "87645d26",
+      "evidence": [
+        "src/packages/mcp-server/src/mcp/oauth-resource-server.ts",
+        "src/packages/mcp-server/src/mcp/abac-evaluator.ts",
+        "src/packages/mcp-server/src/mcp/resources.service.ts",
+        "src/packages/mcp-server/src/mcp/mcp-server-auth.ts"
+      ],
+      "validationCommands": [
+        "cd src/packages/mcp-server && npx jest oauth abac mcp-server-auth (5 suites, 35/35) + full 326/326 — all three ACs met: OAuth 2.1 resource-server validator (JWKS RS/PS/ES + shared HS, iss/aud/exp/nbf) wired into the Streamable HTTP bearer path (401 on missing/invalid/expired/spoofed); every tools/call ABAC-checked per verified identity + audited; evolith://capabilities and evolith://contracts resources served (resources.service.ts)"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

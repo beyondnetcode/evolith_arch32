@@ -200,11 +200,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Agregar Streamable HTTP + OAuth bearer en `mcp-server/main.ts`; agregar ABAC por consumidor en `tool-registry` (`abac-mcp-tool-access.rego`) y auditar cada `tools/call`; exponer los recursos `evolith://capabilities` y `evolith://contracts`.
 - **Acceptance criteria:**
-  - [ ] El MCP remoto requiere OAuth (bearer sobre Streamable HTTP).
+  - [x] El MCP remoto requiere OAuth (bearer sobre Streamable HTTP).
   - [x] Cada `tools/call` es verificado por ABAC por identidad y auditado.
   - [x] Se sirven los recursos `evolith://capabilities` y `evolith://contracts`.
 - **Dependencies:** GT-513, y la decisión de identidad (rastreada como EAG-01 en el tablero del Tracker).
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 #### GT-521
 

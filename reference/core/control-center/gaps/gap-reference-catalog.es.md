@@ -595,10 +595,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** S
 - **Proposed fix:** Registrar `gateEvaluationsTotal.inc({verdict,gateId})` y `gateEvaluationDuration.observe(...)` desde la ruta de gate/evaluación (solo capa infra), etiquetadas por `verdict`/`gateId`/`phase`.
 - **Acceptance criteria:**
-  - [ ] Una evaluación de gate incrementa `evolith_gate_evaluations_total` con label `verdict`/`gateId` y observa el histograma de duración.
-  - [ ] `GET /metrics` muestra series de gate no-cero tras una evaluación; un test afirma el incremento.
+  - [x] Una evaluación de gate incrementa `evolith_gate_evaluations_total` con label `verdict`/`gateId` y observa el histograma de duración.
+  - [x] `GET /metrics` muestra series de gate no-cero tras una evaluación; un test afirma el incremento.
 - **Dependencies:** ninguna (infra ya presente).
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 
@@ -615,10 +615,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Añadir un histograma `evolith_http_request_duration_seconds` (method/route/status), luego reconciliar el PromQL de alertas/SLO con los nombres emitidos (o exponer aliases de compatibilidad) para que cada regla referencie una serie real.
 - **Acceptance criteria:**
-  - [ ] Cada nombre de métrica en `prometheus-alerts.yml` y `core-api-slo.md` mapea a una serie emitida por un servicio.
-  - [ ] El histograma de latencia HTTP aparece en `/metrics` y `histogram_quantile(...)` devuelve datos.
+  - [x] Cada nombre de métrica en `prometheus-alerts.yml` y `core-api-slo.md` mapea a una serie emitida por un servicio.
+  - [x] El histograma de latencia HTTP aparece en `/metrics` y `histogram_quantile(...)` devuelve datos.
 - **Dependencies:** relacionado con GT-550 (guard); GT-542.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 
@@ -675,10 +675,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Emitir `evolith_agent_runs_total{engine,verdict}`, `evolith_agent_run_duration_seconds`, `evolith_skill_invocations_total{skill}`, totales/errores de llamadas a Core y `evolith_hitl_approvals_total` vía el puerto de métricas.
 - **Acceptance criteria:**
-  - [ ] Una corrida de agente incrementa contadores de run/skill y observa el histograma de duración.
-  - [ ] `/metrics` muestra las series de negocio junto a las métricas default de Node.
+  - [x] Una corrida de agente incrementa contadores de run/skill y observa el histograma de duración.
+  - [x] `/metrics` muestra las series de negocio junto a las métricas default de Node.
 - **Dependencies:** GT-519 (puerto de métricas).
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 
@@ -755,10 +755,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Un guard CI que extrae nombres de métricas del PromQL de alertas/SLO y afirma que cada uno lo emite un servicio (introspección del registry en build, o un allowlist generado de las definiciones de métricas), poniendo el PR en rojo ante deriva.
 - **Acceptance criteria:**
-  - [ ] El guard falla cuando una alerta referencia una métrica que ningún servicio emite.
-  - [ ] Corre en CI ante cambios en alertas/SLO/definiciones de métricas.
+  - [x] El guard falla cuando una alerta referencia una métrica que ningún servicio emite.
+  - [x] Corre en CI ante cambios en alertas/SLO/definiciones de métricas.
 - **Dependencies:** GT-543.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 

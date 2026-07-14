@@ -599,10 +599,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** S
 - **Proposed fix:** Record `gateEvaluationsTotal.inc({verdict,gateId})` and `gateEvaluationDuration.observe(...)` from the gate/evaluation path (infra layer only), labelled by `verdict`/`gateId`/`phase`.
 - **Acceptance criteria:**
-  - [ ] A gate evaluation increments `evolith_gate_evaluations_total` with a `verdict`/`gateId` label and observes the duration histogram.
-  - [ ] `GET /metrics` shows non-zero gate series after an evaluation; a test asserts the increment.
+  - [x] A gate evaluation increments `evolith_gate_evaluations_total` with a `verdict`/`gateId` label and observes the duration histogram.
+  - [x] `GET /metrics` shows non-zero gate series after an evaluation; a test asserts the increment.
 - **Dependencies:** none (infra already present).
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 
@@ -619,10 +619,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Add an `evolith_http_request_duration_seconds` histogram (method/route/status), then reconcile the alert/SLO PromQL to the emitted names (or expose compatibility aliases) so every rule references a real series.
 - **Acceptance criteria:**
-  - [ ] Every metric name in `prometheus-alerts.yml` and `core-api-slo.md` maps to a series emitted by a service.
-  - [ ] The HTTP-latency histogram appears in `/metrics` and `histogram_quantile(...)` returns data.
+  - [x] Every metric name in `prometheus-alerts.yml` and `core-api-slo.md` maps to a series emitted by a service.
+  - [x] The HTTP-latency histogram appears in `/metrics` and `histogram_quantile(...)` returns data.
 - **Dependencies:** relates to GT-550 (guard); GT-542.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 
@@ -679,10 +679,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Emit `evolith_agent_runs_total{engine,verdict}`, `evolith_agent_run_duration_seconds`, `evolith_skill_invocations_total{skill}`, Core-call totals/errors, and `evolith_hitl_approvals_total` via the metrics port.
 - **Acceptance criteria:**
-  - [ ] An agent run increments run/skill counters and observes the run-duration histogram.
-  - [ ] `/metrics` shows the business series alongside the default Node metrics.
+  - [x] An agent run increments run/skill counters and observes the run-duration histogram.
+  - [x] `/metrics` shows the business series alongside the default Node metrics.
 - **Dependencies:** GT-519 (metrics port).
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 
@@ -759,10 +759,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** A CI guard that extracts metric names from the alert/SLO PromQL and asserts each is emitted by a service (registry introspection at build, or an allowlist generated from the metrics definitions), reddening the PR on drift.
 - **Acceptance criteria:**
-  - [ ] The guard fails when an alert references a metric no service emits.
-  - [ ] It runs in CI on changes to alerts/SLO/metrics definitions.
+  - [x] The guard fails when an alert references a metric no service emits.
+  - [x] It runs in CI on changes to alerts/SLO/metrics definitions.
 - **Dependencies:** GT-543.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 

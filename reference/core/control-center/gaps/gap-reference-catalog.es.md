@@ -715,10 +715,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Añadir una label `tenant` acotada (allowlist o hash estable) con presupuesto de cardinalidad documentado; preferir agregación por tenant en Core para series de alto volumen.
 - **Acceptance criteria:**
-  - [ ] Las métricas de gate/agente llevan una label `tenant` acotada con tope de cardinalidad documentado.
-  - [ ] Un panel por tenant filtra correctamente sin crecimiento ilimitado de series.
+  - [x] Las métricas de gate/agente llevan una label `tenant` acotada con tope de cardinalidad documentado.
+  - [x] Un panel por tenant filtra correctamente sin crecimiento ilimitado de series.
 - **Dependencies:** GT-542; GT-546.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 

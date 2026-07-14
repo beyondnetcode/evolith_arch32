@@ -7651,6 +7651,22 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-512 restored-workspace/toolchain now demonstrated (the analyzer runs a real depcruise spawn resolving TS); the enforce block compiles and the round-trip is 0-FP on a live run."
+    },
+    {
+      "id": "GT-548",
+      "closedAt": "2026-07-13",
+      "closureCommit": "85ff0bc7",
+      "evidence": [
+        "src/apps/core-api/src/infrastructure/metrics/metrics.service.ts",
+        "src/apps/agent-runtime-api/src/health/agent-metrics.service.ts",
+        "product/infra/observability/grafana/dashboards/evolith-governance.json",
+        "product/operations/slo/core-api-slo.md"
+      ],
+      "validationCommands": [
+        "core-api 152/152 (+2 bounded-tenant tests) + agent-runtime 77/77; LIVE against the local stack rebuilt with EVOLITH_METRICS_TENANT_ALLOWLIST=t-acme,local: evolith_gate_evaluations_total carries tenant=t-acme/local for allowlisted tenants and tenant=other for the rest (3 t-secret requests collapsed to other, the raw id never leaked); Governance Health dashboard has a $tenant template variable + a per-tenant panel; cap (|allowlist|+1, hard-capped 100) documented in code + SLO doc."
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-542 (gate metric) and GT-546 (agent metric) DONE — the tenant label extends both; the per-tenant panel needs the Grafana datasource from GT-544 (DONE)."
     }
   ]
 }

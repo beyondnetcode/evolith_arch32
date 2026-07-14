@@ -719,10 +719,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Add a bounded `tenant` label (allowlist or stable hash) with a documented cardinality budget; prefer per-tenant aggregation in Core for high-volume series.
 - **Acceptance criteria:**
-  - [ ] Gate/agent metrics carry a bounded `tenant` label with a documented cardinality cap.
-  - [ ] A per-tenant panel filters correctly without unbounded series growth.
+  - [x] Gate/agent metrics carry a bounded `tenant` label with a documented cardinality cap.
+  - [x] A per-tenant panel filters correctly without unbounded series growth.
 - **Dependencies:** GT-542; GT-546.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 

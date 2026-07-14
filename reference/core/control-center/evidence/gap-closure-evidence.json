@@ -7581,6 +7581,47 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Cross-repo (evolith_tracker): the M1 pilot closure — DB persistence + real Core evaluate() + Discovery gate E2E — was already met in the Tracker repo; this closes the last tail (verify the React UI in a browser) against the local Core chain. Broader per-phase UI coverage is follow-on. Core provides the stable contract (ADR-0101/0104)."
+    },
+    {
+      "id": "GT-515",
+      "closedAt": "2026-07-13",
+      "closureCommit": "6ca47e4d",
+      "evidence": [
+        "src/rulesets/enforcement/dependency-cruiser.cjs",
+        "src/packages/core-domain/src/application/validators/enforcement/adapters/dependency-cruiser-adapter.ts"
+      ],
+      "validationCommands": [
+        "dependency-cruise --config src/rulesets/enforcement/dependency-cruiser.cjs (enhancedResolveOptions+tsConfig) over the deps-installed core-domain from 4 entry points -> 144 modules cruised, 0 couldNotResolve (the FP class), 9 REAL violations (no-circular/no-orphans); parseDependencyCruiserReport parsed all 9 1:1 -> 0 false positives on the real corpus"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-512 restored-environment requirement met for the Node/TS runtime: the committed depcruise config + deps-installed checkout resolve every import (0 couldNotResolve), so the adapter runs against a real corpus with 0 FP."
+    },
+    {
+      "id": "GT-539",
+      "closedAt": "2026-07-13",
+      "closureCommit": "c4e612b7",
+      "evidence": [
+        ".harness/scripts/ci/rag-embed-qwen3.mjs",
+        ".harness/scripts/ci/rag-pgvector.mjs"
+      ],
+      "validationCommands": [
+        "Built + ran a local Qwen3 sidecar (python + sentence-transformers, Qwen/Qwen3-Embedding-0.6B, /health dim=1024); makeQwen3Embedder against it returns REAL 1024-dim semantic vectors (cosine(arch,cat)=0.23, not hash); pgvectorAdapter.embed via EVOLITH_RAG_EMBED_URL persists real Qwen3 vectors to rag_chunks with corpus_version=HEADsha@qwen3-embedding-0.6b (model id folded in). On-perimeter sidecar = no corpus egress."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-524",
+      "closedAt": "2026-07-13",
+      "closureCommit": "9eebcbdb",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/enforcement/adapters/netarchtest-adapter.ts",
+        "src/rulesets/enforcement/enforcer-catalog.json"
+      ],
+      "validationCommands": [
+        "dotnet 10: scaffolded a real .NET corpus (Domain/Infrastructure/ArchTests) with NetArchTest.Rules 1.3.2; DOTNET_CLI_UI_LANGUAGE=en dotnet test — a Domain->Infrastructure violation FAILS the arch test and parseNetArchTestReport parses it into 1 canonical Violation (tool=NetArchTest, error, locationless); the CLEAN corpus (no violation) PASSES and parses to 0 violations. 0 false positives on a real .NET corpus."
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-512 restored-.NET-checkout requirement met: a real dotnet restore+build+test runs NetArchTest against a compiled corpus; the adapter parses real failures 1:1 and a clean corpus yields 0."
     }
   ]
 }

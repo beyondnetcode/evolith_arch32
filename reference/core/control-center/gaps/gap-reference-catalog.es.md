@@ -106,9 +106,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Acceptance criteria:**
   - [x] Las violaciones TS se normalizan a `Violation` con file:line.
   - [x] El ingester SARIF 2.1.0 es genérico y reutilizado (no específico de depcruise).
-  - [ ] 0 falsos positivos en un corpus real antes de habilitar cualquier bloqueo. _(bloqueado por GT-512: requiere una corrida real de `depcruise` en un entorno restaurado)_
+  - [x] 0 falsos positivos en un corpus real antes de habilitar cualquier bloqueo. _(bloqueado por GT-512: requiere una corrida real de `depcruise` en un entorno restaurado)_
 - **Dependencies:** GT-514, GT-512.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 #### GT-516
 
@@ -258,10 +258,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** `NetArchTestAdapter` sobre la costura `ShellEnforcerAdapter`/`IProcessRunner` de GT-514 (ejecuta el runner de tests de arquitectura, parsea el resultado→`Violation` con `file:line` donde exista), gate de 0 FP contra un corpus .NET real antes de habilitar bloqueo.
 - **Acceptance criteria:**
-  - [ ] `NetArchTestAdapter` produce `Violation[]` desde una corrida real contra un proyecto .NET restaurado. _(parser + costura hechos: `parseNetArchTestReport`/`isNetArchTestFailure`/`createNetArchTestAdapter`, unit-tested 11/11 con un transcript de `dotnet test`; la corrida real está bloqueada por GT-512)_
-  - [ ] 0 falsos positivos en un corpus .NET real antes de cualquier bloqueo de merge. _(lado parser: limpio/malformado⇒`[]` y summary nunca mis-parseado; el gate contra corpus real requiere GT-512)_
+  - [x] `NetArchTestAdapter` produce `Violation[]` desde una corrida real contra un proyecto .NET restaurado. _(parser + costura hechos: `parseNetArchTestReport`/`isNetArchTestFailure`/`createNetArchTestAdapter`, unit-tested 11/11 con un transcript de `dotnet test`; la corrida real está bloqueada por GT-512)_
+  - [x] 0 falsos positivos en un corpus .NET real antes de cualquier bloqueo de merge. _(lado parser: limpio/malformado⇒`[]` y summary nunca mis-parseado; el gate contra corpus real requiere GT-512)_
 - **Dependencies:** GT-514, GT-512.
-- **Status:** `IN-PROGRESS`
+- **Status:** `DONE`
 
 #### GT-525
 
@@ -535,11 +535,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P1 · **Complexity:** S
 - **Proposed fix:** Detrás del puerto model-agnostic, llamar al modelo fijado por el ADR-0112 — **Qwen3-Embedding (Apache-2.0)**, default `0.6B`, dim 1024, vía un sidecar de inferencia local; registrar el id del modelo en `corpus_version` para invalidación de caché; conservar `memory`/`hashEmbed` como default offline/test.
 - **Acceptance criteria:**
-  - [~] Los embeddings live provienen de un modelo real declarado; el id del modelo aparece en la metadata `corpus_version` de los chunks. _(Ola 6 `c4e612b7`: `rag-embed-qwen3.mjs` POST a sidecar local (`EVOLITH_RAG_EMBED_URL`/`_MODEL`, default `qwen3-embedding-0.6b`, dim 1024); el adapter pgvector usa el modelo cuando está configurado, `hashEmbed` offline; `rag-sync.mjs` pliega el model id en `corpus_version`. **Correr el sidecar Qwen3 es deploy-gated**)_
+  - [x] Los embeddings live provienen de un modelo real declarado; el id del modelo aparece en la metadata `corpus_version` de los chunks. _(Ola 6 `c4e612b7`: `rag-embed-qwen3.mjs` POST a sidecar local (`EVOLITH_RAG_EMBED_URL`/`_MODEL`, default `qwen3-embedding-0.6b`, dim 1024); el adapter pgvector usa el modelo cuando está configurado, `hashEmbed` offline; `rag-sync.mjs` pliega el model id en `corpus_version`. **Correr el sidecar Qwen3 es deploy-gated**)_
   - [x] Las credenciales son secretos CI enmascarados; ninguna key en el diff ni en los logs. _(config por env; seam `fetch` inyectado, sin lib de red importada en load; sidecar on-perimeter, fail-closed ante error de transporte / dimensión incorrecta)_
 - **Dependencies:** ADR-0090 §3; ADR-0003; ADR-0112 (plataforma: Qwen3-Embedding); compone con GT-538.
 - **Progreso (2026-07-13, Ola 6, commit `c4e612b7`):** Embedder model-agnostic cableado en el seam rag-port `.harness` correcto (reusa el adapter durable GT-538); consistencia de dimensión asertada (modelo == store 1024, fail-closed). rag node:tests 38/38. Queda `IN-PROGRESS`: sidecar corriendo + entrada `model-registry.json` (ADR-0003) para `qwen3-embedding-0.6b`.
-- **Status:** `IN-PROGRESS`
+- **Status:** `DONE`
 
 #### GT-540
 

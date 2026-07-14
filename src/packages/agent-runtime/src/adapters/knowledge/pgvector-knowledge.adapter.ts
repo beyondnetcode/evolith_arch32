@@ -119,6 +119,7 @@ function rowToChunk(row: PgChunkRow): KnowledgeChunk {
     score,
     charStart: row.char_start ?? undefined,
     charEnd: row.char_end ?? undefined,
+    corpusVersion: row.corpus_version, // GT-541: cite the exact indexed corpus release
   };
 }
 

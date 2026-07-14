@@ -9,6 +9,7 @@ import { createAgentRuntime } from '../bootstrap';
 import { parseAgentRuntimeRequest } from '../domain/contracts/agent-runtime-request';
 import { StubPolicyValidationAdapter } from '../adapters/policy/stub-policy-validation.adapter';
 import { LocalSkillRegistryAdapter } from '../adapters/skills/local-skill-registry.adapter';
+import { InMemoryKnowledgeAdapter } from '../adapters/knowledge/in-memory-knowledge.adapter';
 import type { IHarnessPort, HarnessExecutionResult } from '../domain/ports/harness.port';
 import type { InMemoryTrackerTraceAdapter } from '../adapters/tracker/in-memory-tracker-trace.adapter';
 import type { SkillDescriptor } from '../domain/contracts/capability';
@@ -43,6 +44,41 @@ describe('AgentRuntimeService', () => {
     expect(result.trace.capability).toBe('validate-discovery-gate');
     expect(result.evaluatedAt).toBe(FIXED_NOW);
     expect(result.missingArtifacts).toHaveLength(0);
+  });
+
+  it('grounds a run in the knowledge corpus and cites corpus_version (GT-541)', async () => {
+    const knowledge = new InMemoryKnowledgeAdapter();
+    knowledge.seed([
+      {
+        chunkId: 'c1',
+        sourceFile: 'reference/core/architecture/adrs/core/0002-hexagonal.md',
+        sectionHeading: 'Rules',
+        adrId: 'ADR-0002',
+        language: 'en',
+        tokenEstimate: 12,
+        // contains the request intent so the token-overlap query retrieves it
+        textPreview: 'the validate_discovery_gate rule requires a prd',
+        text: 'The validate_discovery_gate rule requires a PRD before the gate passes.',
+        corpusVersion: 'abc123def456',
+      },
+    ]);
+    const { runtime } = createAgentRuntime({ now: () => FIXED_NOW, knowledge });
+    const result = await runtime.handle(discoveryRequest(['prd']));
+
+    expect(result.trace.steps).toContain('ground'); // queried the corpus BEFORE recommending
+    expect(result.trace.groundedBy?.corpusVersion).toBe('abc123def456'); // cites the exact release
+    expect(result.trace.groundedBy?.citations[0]).toContain('0002-hexagonal.md#Rules');
+  });
+
+  it('grounds against the default corpus with empty citations when nothing matches (GT-541)', async () => {
+    // The default bundle wires an empty in-memory corpus: grounding still runs (best-effort)
+    // but cites nothing, and NEVER blocks the governed run.
+    const { runtime } = createAgentRuntime({ now: () => FIXED_NOW });
+    const result = await runtime.handle(discoveryRequest(['prd']));
+    expect(result.status).toBe('passed');
+    expect(result.trace.steps).toContain('ground');
+    expect(result.trace.groundedBy?.citations).toEqual([]);
+    expect(result.trace.groundedBy?.corpusVersion).toBeUndefined();
   });
 
   it('returns ERROR for an unknown tool/intent (tool-not-found)', async () => {

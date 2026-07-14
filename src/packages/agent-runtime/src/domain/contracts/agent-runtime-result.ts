@@ -51,6 +51,15 @@ export interface RuntimeTrace {
   readonly approvedBy?: string;
   readonly durationMs?: number;
   readonly steps?: readonly string[]; // ordered pipeline steps actually run
+  /**
+   * GT-541: RAG grounding provenance. When a knowledge port is wired, the runtime queries
+   * the corpus BEFORE recommending and records the cited chunks + the `corpusVersion` they
+   * came from, so a recommendation is traceable to the exact indexed corpus release.
+   */
+  readonly groundedBy?: {
+    readonly corpusVersion?: string;
+    readonly citations: readonly string[];
+  };
 }
 
 export interface AgentRuntimeResult {

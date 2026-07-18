@@ -120,8 +120,8 @@
     "ci-green"
   ],
   "references": [
-    "reference/core/sdlc/sdlc/02-engineering/construction-focused-sdlc-framework.md",
-    "reference/core/sdlc/sdlc/quality-gates.md"
+    "reference/core/sdlc/02-engineering/construction-focused-sdlc-framework.md",
+    "reference/core/sdlc/quality-gates.md"
   ],
   "exitCriteria": {
     "description": "All MUST items checked. Story cannot be marked Done without all blocking items satisfied.",

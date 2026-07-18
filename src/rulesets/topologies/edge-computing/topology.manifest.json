@@ -51,7 +51,7 @@
         "profile": "rulesets/topologies/edge-computing/README.md",
         "maturityGuide": "rulesets/topologies/edge-computing/maturity.md"
       },
-      "configurationContract": "rulesets/topologies/edge-computing/topology.config.schema.json",
+      "configurationContract": "src/rulesets/topologies/edge-computing/topology.config.schema.json",
       "fixtures": {
         "valid": "rulesets/topologies/edge-computing/fixtures/valid.topology.config.json",
         "invalid": "rulesets/topologies/edge-computing/fixtures/invalid.topology.config.json"

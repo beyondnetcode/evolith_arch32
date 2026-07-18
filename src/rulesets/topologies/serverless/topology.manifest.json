@@ -52,7 +52,7 @@
         "profile": "rulesets/topologies/serverless/README.md",
         "maturityGuide": "rulesets/topologies/serverless/maturity.md"
       },
-      "configurationContract": "rulesets/topologies/serverless/topology.config.schema.json",
+      "configurationContract": "src/rulesets/topologies/serverless/topology.config.schema.json",
       "fixtures": {
         "valid": "rulesets/topologies/serverless/fixtures/valid.topology.config.json",
         "invalid": "rulesets/topologies/serverless/fixtures/invalid.topology.config.json"

@@ -24,7 +24,7 @@ Whoever pushes the ledger bump first owns the number. No `--force`, ever.
 | Allocator | Next free | Last claimed | By |
 |-----------|-----------|--------------|-----|
 | ADR number (`reference/core/architecture/adrs/core/NNNN-*`) | **0118** | 0117 — Bilingual parity applies to authored sources, not generated projections | harness-normalisation lane (0114 still earmarked by UP-003) |
-| GT-ID (`gap-tracking.md` rows) | **GT-560** | GT-559 — advisory-authority single source (P0 wave) | harness-normalisation lane |
+| GT-ID (`gap-tracking.md` rows) | **GT-564** | GT-563 — 174 doc-validation errors (unregistered until now) | harness-normalisation lane |
 
 > The board **`**Progress:**`** counter is NOT block-reserved — see its protocol below.
 > `gap-closure-evidence.json` is append-only (low collision); still push promptly.

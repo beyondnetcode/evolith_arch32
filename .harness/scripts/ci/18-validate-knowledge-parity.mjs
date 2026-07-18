@@ -5,7 +5,7 @@
  *   run through both Native (JSON Schema) and OPA (Rego) engines; fails on
  *   verdict, rule-ID, severity, or evidence drift (GT-154).
  *
- * Fixture shape (in reference/knowledge/intake/parity-fixtures/):
+ * Fixture shape (in product/research/intake/parity-fixtures/):
  *   { "input": {…candidate fields…}, "expectedNative": [ { ruleId, severity, message } ] }
  */
 
@@ -19,7 +19,8 @@ import { parityReport, contentVersion } from './parity-gate.mjs';
 import { ensureOpa } from '../opa-runtime.mjs';
 
 const ROOT = process.cwd();
-const INTAKE_DIR = 'reference/knowledge/intake';
+// GT-KB Fase 0: sovereign location per ADR-0097 / knowledge.index.yaml.
+const INTAKE_DIR = 'product/research/intake';
 const KI_SCHEMA = 'src/rulesets/schema/knowledge-intake.schema.json';
 const OPA_POLICY = 'src/rulesets/opa/knowledge-intake.rego';
 const FIXTURES_DIR = `${INTAKE_DIR}/parity-fixtures`;

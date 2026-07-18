@@ -8,10 +8,14 @@ on:
   pull_request:
     branches: [main, develop]
     paths:
-      - 'reference/knowledge/intake/KI-*.yaml'
-      - 'reference/knowledge/intake/KI-*.yml'
-      - 'reference/knowledge/intake/SRC-*.yaml'
-      - 'reference/knowledge/intake/SRC-*.yml'
+      # GT-KB Fase 0: repointed from reference/knowledge/intake (never existed)
+      # to the sovereign location named by ADR-0097 and knowledge.index.yaml.
+      - 'product/research/intake/KI-*.yaml'
+      - 'product/research/intake/KI-*.yml'
+      - 'product/research/intake/SRC-*.yaml'
+      - 'product/research/intake/SRC-*.yml'
+      - 'src/rulesets/schema/knowledge-intake.schema.json'
+      - 'src/rulesets/opa/knowledge-intake.rego'
 
 permissions:
   contents: read

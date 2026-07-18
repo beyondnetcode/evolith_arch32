@@ -22,7 +22,7 @@ for (const id of SDLC_PHASE_IDS) {
 
 // Collect topology ids + check manifests for the legacy key.
 const manifestRoots = [
-  path.join(root, 'reference', 'architecture', 'topologies'),
+  path.join(root, 'reference', 'core', 'architecture', 'topologies'),
   path.join(root, 'rulesets', 'topologies'),
 ];
 const topologyIds = new Set();

@@ -8,11 +8,15 @@ import { fileURLToPath } from 'node:url';
 import { ensureOpa } from '../opa-runtime.mjs';
 
 const ROOT = process.cwd();
-const INTAKE_DIR = 'reference/knowledge/intake';
+// GT-KB Fase 0: the sovereign location per ADR-0097 ("candidate entry gate is a
+// YAML file in product/research/intake/") and knowledge.index.yaml
+// spec.references.knowledgeIntake. The old constant pointed at a directory that
+// does not exist, so this gate never saw the real KI/SRC records.
+const INTAKE_DIR = 'product/research/intake';
 const KI_SCHEMA = 'src/rulesets/schema/knowledge-intake.schema.json';
 const SRC_SCHEMA = 'src/rulesets/schema/source-registry.schema.json';
 const PROJ_SCHEMA = 'src/rulesets/schema/knowledge-projection.schema.json';
-const MANIFEST_ROOT = path.join('reference', 'architecture', 'topologies');
+const MANIFEST_ROOT = path.join('reference', 'core', 'architecture', 'topologies');
 const OPA_POLICY = 'src/rulesets/opa/knowledge-intake.rego';
 const OPA_TEST = 'src/rulesets/opa/knowledge-intake.test.rego';
 
@@ -61,16 +65,17 @@ function fixKiFile(filePath, root = ROOT) {
     changed = true;
   }
 
-  if (content.promotion?.status && content.promotion.status !== 'candidate') {
-    if (!content.promotion.promoted_at) {
-      content.promotion.promoted_at = now;
-      changed = true;
-    }
-    if (!content.promotion.promoted_by) {
-      content.promotion.promoted_by = '17-validate-knowledge-intake.mjs';
-      changed = true;
-    }
-  }
+  // GT-KB Fase 0 — REMOVED: this block used to auto-fill promoted_at/promoted_by
+  // (writing '17-validate-knowledge-intake.mjs' as the promoter) for any
+  // non-candidate status. That was a governance defect on three counts:
+  //   1. It defeated this script's OWN check (a non-candidate status requires
+  //      promoted_at/promoted_by) — the auto-fill ran first, so it never fired.
+  //   2. It recorded a CI script as the promotion authority, contradicting
+  //      ADR-0097, which reserves 'evaluated' to @winston and 'accepted'/
+  //      'executable' to the Architecture Board.
+  //   3. It broke dual-engine parity: the Native side silently satisfied what
+  //      OPA rule KI-R06 exists to flag.
+  // Promotion metadata is now authored by a human and validated, never invented.
 
   if (changed) {
     const updated = yaml.dump(content, { lineWidth: -1, quotingType: '"' });

@@ -278,7 +278,7 @@ modo de simulacro (`--dry-run`) que conviene correr primero.
 
 **Qué hace.** Genera el andamiaje completo de un satélite Evolith a lo largo del
 eje progresivo de madurez: fase 1 = *modular-monolith* (una SPA estándar), fase 2
-= *distributed-modules* y fase 3 = *microservices* (un host de Module Federation
+= `distributed-modules` y fase 3 = `microservices` (un host de Module Federation
 con sus remotos). Levanta la API backend, el frontend, los shells transversales
 (workflow-engine, integration-fabric, tenant-config), un dominio por cada
 bounded context que pidas y las librerías compartidas. Es un comando
@@ -441,7 +441,7 @@ equivalentes.
 ### 4.4. `evolith-cli sdlc generate domain` — scaffold hexagonal desde un classDiagram DDD
 
 **Qué hace.** Lee un archivo Markdown que contiene un `classDiagram` de Mermaid
-con tu modelo DDD (entidades, agregados, value objects…) y genera el andamiaje de
+con tu modelo DDD (entidades, agregados, objetos de valor…) y genera el andamiaje de
 Arquitectura Hexagonal correspondiente. Detecta las clases por su estereotipo y
 crea los archivos que faltan sin pisar los existentes. Como escribe en disco,
 trae `--dry-run` para ver primero qué generaría.

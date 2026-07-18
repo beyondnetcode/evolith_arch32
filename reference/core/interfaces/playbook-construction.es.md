@@ -16,7 +16,7 @@ el request/response exacto de cada operación está en el
 ## 1 — Scaffold del workspace
 
 Materializa el workspace Nx para tu fase de madurez (1 modular-monolith → 2
-distributed-modules → 3 microservices).
+`distributed-modules` → 3 `microservices`).
 
 - CLI: `evolith-cli scaffold --frontend react --orm prisma --phase 1`
 - MCP: `evolith-scaffold` (mutativa — pasa `apply` + `approvalToken`; `dryRun:true` para previsualizar)

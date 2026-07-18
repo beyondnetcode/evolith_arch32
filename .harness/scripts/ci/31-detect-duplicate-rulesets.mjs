@@ -11,13 +11,15 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const root = process.cwd();
-const rulesetsDir = path.join(root, "rulesets");
+// GT-556/557: this scanned `rulesets/` (no `src/` prefix). That directory EXISTS but
+// contains only `agents/` — zero `.rules.json`. So the duplicate detector has been
+// reporting "no duplicates found" while inspecting an empty corpus, and the existsSync
+// guard above passed happily because the wrong directory was a real directory.
+// The real corpus is `src/rulesets` (145 rulesets).
+import { resolve as resolveKey, relativeToRoot } from '../lib/paths.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
 
-if (!fs.existsSync(rulesetsDir)) {
-  console.error("GT-390: rulesets/ directory not found");
-  process.exit(1);
-}
+const rulesetsDir = resolveKey("rulesets");
 
 /** Recursively find all *.rules.json files */
 function findRulesets(dir, baseDir = "") {
@@ -36,6 +38,7 @@ function findRulesets(dir, baseDir = "") {
 }
 
 const rulesets = findRulesets(rulesetsDir);
+assertScanned(rulesets.length, { what: "rulesets (*.rules.json)", where: relativeToRoot(rulesetsDir) });
 
 // Group by basename
 const byBasename = new Map();

@@ -22,10 +22,14 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const root = process.cwd();
+// GT-556: root came from process.cwd(); from src/ the canonical registry resolved to
+// src/.harness/manifest.yaml and the parity gate aborted.
+import { REPO_ROOT, resolve as resolveKey } from '../lib/paths.mjs';
+
+const root = REPO_ROOT;
 const issues = [];
 
-const manifestYamlPath = path.join(root, ".harness/manifest.yaml");
+const manifestYamlPath = resolveKey("harnessManifest");
 const manifestJsonPath = path.join(
   root,
   "reference/core/foundations/agent-skills/manifest.json",

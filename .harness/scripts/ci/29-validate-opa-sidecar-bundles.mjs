@@ -6,11 +6,17 @@ import { pathToFileURL } from 'node:url';
 import yaml from 'js-yaml';
 import { ensureOpa } from '../opa-runtime.mjs';
 
-const ROOT = path.resolve(process.env.EVOLITH_ROOT || '.');
+// GT-556: ROOT defaulted to '.', i.e. process.cwd(), and the chart path
+// `reference/infrastructure/helm` had moved to `product/infra/helm`. The combination
+// made this script crash outright — which is the least-bad failure mode of the six, but
+// still not a check. Both are now resolved fail-closed from the repo root.
+import { REPO_ROOT, resolve as resolveKey, relativeToRoot } from '../lib/paths.mjs';
+
+const ROOT = REPO_ROOT;
 const CHARTS = [
   {
     name: 'evolith-mcp',
-    chartPath: 'reference/infrastructure/helm/evolith-mcp',
+    chartPath: relativeToRoot(resolveKey('helmCharts', 'evolith-mcp')),
   },
 ];
 const REGO = 'src/rulesets/infrastructure/opa/opa-sidecar-bundle.rego';

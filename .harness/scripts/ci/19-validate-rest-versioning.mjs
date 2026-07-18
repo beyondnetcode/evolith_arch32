@@ -6,15 +6,20 @@
 // `VERSION_NEUTRAL`. VERSION_NEUTRAL controllers must carry a comment with
 // the token `version-neutral-justification` above the decorator.
 
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { resolve, join } from 'node:path';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import process from 'node:process';
 
-const ROOT = resolve(process.cwd());
-const CONTROLLERS_DIR = join(
-  ROOT,
-  'apps/core-api/src/presentation/controllers',
-);
+// GT-556/557: ROOT came from process.cwd() and BOTH literals here were dead —
+// `apps/core-api/...` was missing the `src/` prefix (so the controllers directory never
+// resolved outside the repo root) and `reference/products/core-api/changelog.md` had
+// moved to `product/products/`. The changelog miss was the more dangerous of the two:
+// it turned every @Deprecated controller into a spurious failure rather than a check.
+import { REPO_ROOT, resolve as resolveKey, optional, relativeToRoot } from '../lib/paths.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
+
+const ROOT = REPO_ROOT;
+const CONTROLLERS_DIR = resolveKey('coreApiControllers');
 
 function listControllerFiles(dir) {
   const entries = readdirSync(dir);
@@ -73,17 +78,15 @@ function check(file) {
 
   // Deprecation check (GT-159)
   if (/@Deprecated\s*\(/.test(content)) {
-    const changelogPath = resolve(ROOT, 'reference/products/core-api/changelog.md');
-    let changelogContent = '';
-    try {
-      changelogContent = readFileSync(changelogPath, 'utf8');
-    } catch {
+    const changelogPath = optional('coreApiChangelog');
+    if (!changelogPath) {
       return {
         file,
         ok: false,
-        reason: 'Changelog file reference/products/core-api/changelog.md not found but @Deprecated decorator is used',
+        reason: 'Changelog file product/products/core-api/changelog.md not found but @Deprecated decorator is used',
       };
     }
+    const changelogContent = readFileSync(changelogPath, 'utf8');
 
     const basename = file.split('/').pop().replace('.controller.ts', '');
     const hasReference = changelogContent.toLowerCase().includes(basename.toLowerCase()) || 
@@ -92,7 +95,7 @@ function check(file) {
       return {
         file,
         ok: false,
-        reason: `@Deprecated decorator is used but no corresponding entry is found in reference/products/core-api/changelog.md`,
+        reason: `@Deprecated decorator is used but no corresponding entry is found in product/products/core-api/changelog.md`,
       };
     }
   }
@@ -101,14 +104,13 @@ function check(file) {
 }
 
 function main() {
-  let files;
-  try {
-    statSync(CONTROLLERS_DIR);
-    files = listControllerFiles(CONTROLLERS_DIR);
-  } catch {
-    console.error(`Controllers directory not found: ${CONTROLLERS_DIR}`);
-    process.exit(2);
-  }
+  // resolveKey() already failed closed if the directory is gone, so a zero here means
+  // the directory exists but holds no controllers — equally a check that did not run.
+  const files = listControllerFiles(CONTROLLERS_DIR);
+  assertScanned(files.length, {
+    what: 'REST controllers',
+    where: relativeToRoot(CONTROLLERS_DIR),
+  });
 
   const results = files.map(check);
   const failures = results.filter((r) => !r.ok);

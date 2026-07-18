@@ -17,23 +17,31 @@
  */
 
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { execSync } from 'node:child_process';
 import { evaluateWasm, normalizeOpaDecisions } from './opa-eval.mjs';
 import { parityReport, scopeTopologies, contentVersion } from './parity-gate.mjs';
 
-const ROOT = process.cwd();
+// GT-556/557: ROOT came from process.cwd() and the TOPO_ROOTS loop skipped any root
+// that did not exist, so a moved root silently shrank the scanned corpus while the gate
+// still reported "deferred, exit 0". Roots are now fail-closed and the manifest corpus
+// size is asserted before any scoping is applied.
+import { REPO_ROOT, collectFiles, relativeToRoot } from '../lib/paths.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
+
+const ROOT = REPO_ROOT;
 // GT-329: canonical topology roots — progressive-axis stays in reference/; advanced topologies in rulesets/
-const TOPO_ROOTS = [
-  'reference/core/architecture/topologies',
-  'src/rulesets/topologies',
-];
+const TOPO_ROOT_KEYS = ['topologiesReference', 'topologiesRulesets'];
 // Full/scheduled run evaluates all accepted topologies; otherwise scope to changed.
 const FULL_RUN = process.env.EVOLITH_PARITY_FULL === 'true';
 
 function changedPaths() {
   try {
-    return execSync('git diff --name-only HEAD~1 HEAD', { encoding: 'utf8' }).split('\n').filter(Boolean);
+    // GT-556: pin git to the repo root. Inherited-cwd `git diff` made the SCOPE
+    // cwd-dependent too: invoked outside the repo it threw, fell into the `catch`, and
+    // silently promoted the run to FULL — the gate evaluated 26 fixtures from /tmp and
+    // 0 from the repo root, both exiting 0.
+    return execSync('git diff --name-only HEAD~1 HEAD', { encoding: 'utf8', cwd: ROOT }).split('\n').filter(Boolean);
   } catch {
     return null; // no diff context — treat as full
   }
@@ -45,25 +53,22 @@ function readIfExists(rel) {
 }
 
 function acceptedTopologies() {
+  const files = collectFiles(TOPO_ROOT_KEYS, 'topology.manifest.json');
+
+  // The corpus — not the accepted subset — is what proves the gate looked in the right
+  // place. Zero accepted topologies can be a real state; zero manifests cannot.
+  assertScanned(files.length, { what: 'topology manifests', where: TOPO_ROOT_KEYS });
+
   const out = [];
-  const walk = (dir) => {
-    for (const e of readdirSync(resolve(ROOT, dir), { withFileTypes: true })) {
-      const rel = `${dir}/${e.name}`;
-      if (e.isDirectory()) walk(rel);
-      else if (e.name === 'topology.manifest.json') {
-        try {
-          const m = JSON.parse(readFileSync(resolve(ROOT, rel), 'utf8'));
-          if (m?.metadata?.status === 'accepted') {
-            out.push({ dir, id: m.metadata.id, version: m.metadata.version });
-          }
-        } catch {
-          /* manifest parse issues are covered by the drift audit (GT-147) */
-        }
+  for (const full of files) {
+    try {
+      const m = JSON.parse(readFileSync(full, 'utf8'));
+      if (m?.metadata?.status === 'accepted') {
+        out.push({ dir: relativeToRoot(dirname(full)), id: m.metadata.id, version: m.metadata.version });
       }
+    } catch {
+      /* manifest parse issues are covered by the drift audit (GT-147) */
     }
-  };
-  for (const root of TOPO_ROOTS) {
-    if (existsSync(resolve(ROOT, root))) walk(root);
   }
   return out;
 }

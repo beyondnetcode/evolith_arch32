@@ -17,52 +17,31 @@ import path from "node:path";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 
-const root = process.cwd();
-const compositionSchemaPath = path.join(root, "src/rulesets/schema/topology-composition.schema.json");
+// GT-556/557: paths came from process.cwd(), and `reference/knowledge/demo/examples`
+// had moved to `product/research/demo/examples`. From the repo root the walker found
+// zero compositions; the resulting "no compositions found" message was the check
+// reporting its own blindness. Both are now fail-closed.
+import { REPO_ROOT, collectFiles, resolve as resolveKey, relativeToRoot } from '../lib/paths.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
+
+const root = REPO_ROOT;
+const compositionSchemaPath = resolveKey("topologyCompositionSchema");
 // GT-329: canonical topology roots — progressive-axis stays in reference/; advanced topologies in rulesets/
-const topologyManifestRoots = [
-  path.join(root, "reference/core/architecture/topologies"),
-  path.join(root, "src/rulesets/topologies"),
-];
-const examplesRoot = path.join(root, "reference/knowledge/demo/examples");
+const TOPOLOGY_ROOT_KEYS = ["topologiesReference", "topologiesRulesets"];
+const EXAMPLES_KEY = "demoExamples";
 
 const failures = [];
 
 function relative(file) {
-  return path.relative(root, file);
+  return relativeToRoot(file);
 }
 
-function walkForCompositions(directory) {
-  const out = [];
-  if (!fs.existsSync(directory)) return out;
-  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-    const full = path.join(directory, entry.name);
-    if (entry.isDirectory()) {
-      out.push(...walkForCompositions(full));
-    } else if (entry.isFile() && entry.name === "topology.composition.json") {
-      out.push(full);
-    }
-  }
-  return out;
-}
-
-function walkForManifests(directory) {
-  const out = [];
-  if (!fs.existsSync(directory)) return out;
-  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-    const full = path.join(directory, entry.name);
-    if (entry.isDirectory()) {
-      out.push(...walkForManifests(full));
-    } else if (entry.isFile() && entry.name === "topology.manifest.json") {
-      out.push(full);
-    }
-  }
-  return out;
-}
 
 function loadManifestIndex() {
   const index = new Map();
-  for (const manifestPath of topologyManifestRoots.flatMap(walkForManifests)) {
+  const manifestPaths = collectFiles(TOPOLOGY_ROOT_KEYS, "topology.manifest.json");
+  assertScanned(manifestPaths.length, { what: "topology manifests", where: TOPOLOGY_ROOT_KEYS });
+  for (const manifestPath of manifestPaths) {
     try {
       const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
       const profile = manifest.spec?.topologyType;
@@ -76,18 +55,16 @@ function loadManifestIndex() {
   return index;
 }
 
-if (!fs.existsSync(compositionSchemaPath)) {
-  console.error("❌ rulesets/schema/topology-composition.schema.json is missing");
-  process.exit(1);
-}
-
 const compositionSchema = JSON.parse(fs.readFileSync(compositionSchemaPath, "utf8"));
 const ajv = new Ajv({ strict: false, allErrors: true });
 addFormats(ajv);
 const validateComposition = ajv.compile(compositionSchema);
 
 const manifestIndex = loadManifestIndex();
-const compositions = walkForCompositions(examplesRoot);
+const compositions = collectFiles([EXAMPLES_KEY], "topology.composition.json");
+// GT-168 requires at least one reference composition; zero here means the examples
+// root moved, not that the requirement was met.
+assertScanned(compositions.length, { what: "topology compositions", where: EXAMPLES_KEY });
 
 for (const compositionPath of compositions) {
   let composition;
@@ -166,11 +143,6 @@ if (failures.length > 0) {
   for (const failure of failures) {
     console.error(`  - ${failure}`);
   }
-  process.exit(1);
-}
-
-if (compositions.length === 0) {
-  console.error("❌ No topology.composition.json files found under examples/. GT-168 requires at least one reference composition.");
   process.exit(1);
 }
 

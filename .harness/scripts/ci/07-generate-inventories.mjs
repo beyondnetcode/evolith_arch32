@@ -1,48 +1,119 @@
-import fs from 'fs';
-import path from 'path';
+#!/usr/bin/env node
+/**
+ * @file 07-generate-inventories.mjs
+ * @description Regenerates the bilingual Reference Corpus Inventory (GT-556 / GT-557 family).
+ *
+ * ## What was wrong here
+ *
+ *   1. **Dead scan root.** `path.resolve('rulesets')` pointed at a directory that exists but
+ *      holds only `agents/`, so the generator reported `Rulesets: 0` while the real corpus of
+ *      145 `.rules.json` files sat in `src/rulesets/`. The GT-557 zero-corpus bug, live.
+ *   2. **Orphaned output.** It wrote `reference/core/control-center/inventory-summary.md`, a
+ *      path nothing reads. The file that IS read — declared as a source by
+ *      `09-reconcile-maturity.mjs` and linked from `maturity-assessment.md` — lives under
+ *      `maturity-reports/`, so it was frozen at 144 rulesets / 40 schemas.
+ *   3. **`--check` mutated.** The flag was never parsed; passing it still wrote both files. A
+ *      dry-run flag that writes is worse than no flag: CI cannot use it to detect drift, and a
+ *      caller who believes they are inspecting gets a mutation.
+ *   4. **cwd-dependent resolution.** Every path came off `process.cwd()`.
+ *
+ * Fixed by moving onto the house convention: `paths.mjs` (fail-closed, marker-based root
+ * ascent) and `coverage.mjs` (`assertScanned` — a scan yielding zero must fail, not pass).
+ *
+ * ## The date stamp
+ *
+ * The rendered document carries a `Last Updated` date. Restamping it on every run would make
+ * the output non-idempotent — `--check` would fail every midnight on an unchanged corpus, and
+ * plain runs would emit a diff daily. So the date is treated as volatile: comparisons ignore
+ * it, and a write preserves the on-disk date when the substantive body is unchanged.
+ *
+ * Usage:
+ *   node .harness/scripts/ci/07-generate-inventories.mjs            # regenerate
+ *   node .harness/scripts/ci/07-generate-inventories.mjs --check    # verify, write nothing
+ */
 
-// Output files
-const EN_OUT = path.resolve('reference/core/control-center/inventory-summary.md');
-const ES_OUT = path.resolve('reference/core/control-center/inventory-summary.es.md');
+import fs from 'node:fs';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
-// Paths to search
-const ADR_DIR = path.resolve('reference/core/architecture/adrs');
-const RULESETS_DIR = path.resolve('rulesets');
-const SCHEMA_DIR = path.resolve('src/rulesets/schema');
+import { REPO_ROOT, relativeToRoot, resolve } from '../lib/paths.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
 
+/**
+ * Canonical output location.
+ *
+ * `maturity-reports/` — not `control-center/` — is what consumers point at:
+ *   - `09-reconcile-maturity.mjs` lists it in `sources`
+ *   - `maturity-assessment.md` / `.es.md` link to `./inventory-summary.md`
+ *   - `maturity-reconciliation.json` and `gap-closure-evidence.json` record it
+ *   - `repository-taxonomy-map.md` classifies it as C2 generated evidence
+ * The former `control-center/inventory-summary.md` had exactly one mention in the repo: the
+ * line in this script that wrote it. It was never tracked in git and has no consumer.
+ */
+const OUT_DIR = resolve('maturityReports');
+const EN_OUT = path.join(OUT_DIR, 'inventory-summary.md');
+const ES_OUT = path.join(OUT_DIR, 'inventory-summary.es.md');
+
+const DATE_LINE = /^\*(?:Last Updated|Última Actualización): \d{4}-\d{2}-\d{2}\*$/m;
+
+/** Recursively count files under `dir` matching `pattern` and not `excludePattern`. */
 function countFiles(dir, pattern, excludePattern) {
   let count = 0;
-  if (!fs.existsSync(dir)) return count;
-  
-  const files = fs.readdirSync(dir, { withFileTypes: true });
-  for (const file of files) {
-    if (file.isDirectory()) {
-      count += countFiles(path.join(dir, file.name), pattern, excludePattern);
-    } else {
-      if (pattern.test(file.name) && (!excludePattern || !excludePattern.test(file.name))) {
-        count++;
-      }
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      count += countFiles(path.join(dir, entry.name), pattern, excludePattern);
+    } else if (pattern.test(entry.name) && (!excludePattern || !excludePattern.test(entry.name))) {
+      count++;
     }
   }
   return count;
 }
 
+/** Count ruleset category directories (every immediate subdirectory except `schema`). */
 function countCategories(dir) {
-  if (!fs.existsSync(dir)) return 0;
-  const files = fs.readdirSync(dir, { withFileTypes: true });
-  return files.filter(f => f.isDirectory() && f.name !== 'schema').length;
+  return fs.readdirSync(dir, { withFileTypes: true }).filter((e) => e.isDirectory() && e.name !== 'schema').length;
 }
 
-function generate() {
-  console.log('Generating inventory summaries...');
-  
-  const adrCount = countFiles(ADR_DIR, /^\d{4}-.*\.md$/, /\.es\.md$/);
-  const rulesetCount = countFiles(RULESETS_DIR, /\.rules\.json$/);
-  const schemaCount = countFiles(SCHEMA_DIR, /\.schema\.json$/);
-  const categoryCount = countCategories(RULESETS_DIR);
+/**
+ * Measure the corpus. Each tally is guarded: a zero here means the location moved, not that
+ * the corpus emptied, and must fail loudly rather than render a plausible-looking table.
+ */
+export function measure() {
+  const adrDir = resolve('adrs');
+  const rulesetsDir = resolve('rulesets');
+  const schemaDir = resolve('rulesetSchemas');
 
-  const enContent = `<!-- GENERATED FILE - DO NOT EDIT MANUALLY -->
-<!-- Regenerated by .harness/scripts/generate-inventories.mjs -->
+  const adrCount = assertScanned(countFiles(adrDir, /^\d{4}-.*\.md$/, /\.es\.md$/), {
+    what: 'ADRs',
+    where: relativeToRoot(adrDir),
+  });
+  const rulesetCount = assertScanned(countFiles(rulesetsDir, /\.rules\.json$/), {
+    what: 'machine-readable rulesets',
+    where: relativeToRoot(rulesetsDir),
+  });
+  const schemaCount = assertScanned(countFiles(schemaDir, /\.schema\.json$/), {
+    what: 'phase-gate schemas',
+    where: relativeToRoot(schemaDir),
+  });
+  const categoryCount = assertScanned(countCategories(rulesetsDir), {
+    what: 'ruleset categories',
+    where: relativeToRoot(rulesetsDir),
+  });
+
+  return {
+    adrCount,
+    rulesetCount,
+    schemaCount,
+    categoryCount,
+    rulesetsPath: relativeToRoot(rulesetsDir),
+    schemaPath: relativeToRoot(schemaDir),
+    adrPath: relativeToRoot(adrDir),
+  };
+}
+
+export function renderEn(m, date) {
+  return `<!-- GENERATED FILE - DO NOT EDIT MANUALLY -->
+<!-- Regenerated by .harness/scripts/ci/07-generate-inventories.mjs -->
 
 # Reference Corpus Inventory
 
@@ -50,15 +121,17 @@ This is the automated inventory tally of the core reference architecture and gov
 
 | Artifact Type | Count | Location |
 |---|:---:|---|
-| **Architecture Decision Records (ADR)** | ${adrCount} | \`reference/core/architecture/adrs/\` |
-| **Machine-Readable Rulesets** | ${rulesetCount} | \`rulesets/\` (across ${categoryCount} categories) |
-| **Phase-Gate Schemas** | ${schemaCount} | \`rulesets/schema/\` |
+| **Architecture Decision Records (ADR)** | ${m.adrCount} | \`${m.adrPath}/\` |
+| **Machine-Readable Rulesets** | ${m.rulesetCount} | \`${m.rulesetsPath}/\` (across ${m.categoryCount} categories) |
+| **Phase-Gate Schemas** | ${m.schemaCount} | \`${m.schemaPath}/\` |
 
-*Last Updated: ${new Date().toISOString().split('T')[0]}*
+*Last Updated: ${date}*
 `;
+}
 
-  const esContent = `<!-- GENERATED FILE - DO NOT EDIT MANUALLY -->
-<!-- Regenerated by .harness/scripts/generate-inventories.mjs -->
+export function renderEs(m, date) {
+  return `<!-- GENERATED FILE - DO NOT EDIT MANUALLY -->
+<!-- Regenerated by .harness/scripts/ci/07-generate-inventories.mjs -->
 
 # Inventario del Corpus de Referencia
 
@@ -66,20 +139,82 @@ Este es el conteo automatizado del inventario de la arquitectura de referencia c
 
 | Tipo de Artefacto | Conteo | Ubicación |
 |---|:---:|---|
-| **Architecture Decision Records (ADR)** | ${adrCount} | \`reference/core/architecture/adrs/\` |
-| **Rulesets Legibles por Máquina** | ${rulesetCount} | \`rulesets/\` (en ${categoryCount} categorías) |
-| **Schemas de Phase-Gates** | ${schemaCount} | \`rulesets/schema/\` |
+| **Architecture Decision Records (ADR)** | ${m.adrCount} | \`${m.adrPath}/\` |
+| **Rulesets Legibles por Máquina** | ${m.rulesetCount} | \`${m.rulesetsPath}/\` (en ${m.categoryCount} categorías) |
+| **Schemas de Phase-Gates** | ${m.schemaCount} | \`${m.schemaPath}/\` |
 
-*Última Actualización: ${new Date().toISOString().split('T')[0]}*
+*Última Actualización: ${date}*
 `;
-
-  fs.writeFileSync(EN_OUT, enContent, 'utf-8');
-  fs.writeFileSync(ES_OUT, esContent, 'utf-8');
-
-  console.log(`✅ Inventories generated.
-- ADRs: ${adrCount}
-- Rulesets: ${rulesetCount} (in ${categoryCount} categories)
-- Schemas: ${schemaCount}`);
 }
 
-generate();
+/** Content with the volatile date line removed, for substantive comparison. */
+function withoutDate(content) {
+  return content.replace(DATE_LINE, '');
+}
+
+/** The date already recorded in `content`, or null when absent/unreadable. */
+function existingDate(content) {
+  const match = content && content.match(/(\d{4}-\d{2}-\d{2})/);
+  return match ? match[1] : null;
+}
+
+/**
+ * Build both documents against the current corpus.
+ *
+ * @param {string} today ISO date used when a file is new or its body changed
+ * @returns {{ file: string, expected: string, actual: string|null, drifted: boolean }[]}
+ */
+export function plan(today = new Date().toISOString().split('T')[0]) {
+  const m = measure();
+
+  return [
+    { file: EN_OUT, render: renderEn },
+    { file: ES_OUT, render: renderEs },
+  ].map(({ file, render }) => {
+    const actual = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null;
+    const fresh = render(m, today);
+
+    // Preserve the on-disk date when only the date would change — keeps generation idempotent.
+    const bodyUnchanged = actual !== null && withoutDate(actual) === withoutDate(fresh);
+    const date = bodyUnchanged ? (existingDate(actual) ?? today) : today;
+    const expected = render(m, date);
+
+    return { file, expected, actual, drifted: actual !== expected };
+  });
+}
+
+function run(argv = process.argv.slice(2)) {
+  const check = argv.includes('--check');
+  const results = plan();
+  const drifted = results.filter((r) => r.drifted);
+
+  if (check) {
+    // Non-mutating by construction: this branch never touches the filesystem for writing.
+    if (drifted.length > 0) {
+      console.error('❌ Inventory summaries are stale:');
+      for (const r of drifted) {
+        console.error(`   - ${relativeToRoot(r.file)}${r.actual === null ? ' (missing)' : ''}`);
+      }
+      console.error('   Run: node .harness/scripts/ci/07-generate-inventories.mjs');
+      process.exitCode = 1;
+      return 1;
+    }
+    console.log('✅ Inventory summaries match the measured corpus.');
+    return 0;
+  }
+
+  for (const r of results) {
+    if (r.drifted) fs.writeFileSync(r.file, r.expected, 'utf8');
+  }
+
+  const m = measure();
+  console.log(`✅ Inventories generated in ${relativeToRoot(OUT_DIR)}/
+- ADRs: ${m.adrCount}
+- Rulesets: ${m.rulesetCount} (in ${m.categoryCount} categories)
+- Schemas: ${m.schemaCount}`);
+  return 0;
+}
+
+export { EN_OUT, ES_OUT, OUT_DIR, REPO_ROOT, run };
+
+if (import.meta.url === pathToFileURL(process.argv[1]).href) run();

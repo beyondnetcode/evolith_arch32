@@ -11,7 +11,7 @@ import { ingestSarif, type SarifLog as IngesterSarifLog } from '../application/v
 import {
   emitEvaluationEvidence,
   exportEvaluationResultToSarif,
-  parseFindingLocation,
+  parseSarifLocation,
   SARIF_SCHEMA_URI,
   type SarifResult,
 } from './sarif-exporter';
@@ -158,14 +158,14 @@ describe('exportEvaluationResultToSarif (GT-518 · EAG-13 — AC2 valid SARIF 2.
   });
 });
 
-describe('parseFindingLocation', () => {
+describe('parseSarifLocation', () => {
   it('parses file, line and column variants and keeps non-numeric colons in the uri', () => {
-    expect(parseFindingLocation('src/a.ts:12:3')).toEqual({ uri: 'src/a.ts', startLine: 12, startColumn: 3 });
-    expect(parseFindingLocation('src/a.ts:12')).toEqual({ uri: 'src/a.ts', startLine: 12, startColumn: undefined });
-    expect(parseFindingLocation('src/a.ts')).toEqual({ uri: 'src/a.ts', startLine: undefined, startColumn: undefined });
-    expect(parseFindingLocation('a:b.ts')).toEqual({ uri: 'a:b.ts', startLine: undefined, startColumn: undefined });
-    expect(parseFindingLocation(undefined)).toBeUndefined();
-    expect(parseFindingLocation('')).toBeUndefined();
+    expect(parseSarifLocation('src/a.ts:12:3')).toEqual({ uri: 'src/a.ts', startLine: 12, startColumn: 3 });
+    expect(parseSarifLocation('src/a.ts:12')).toEqual({ uri: 'src/a.ts', startLine: 12, startColumn: undefined });
+    expect(parseSarifLocation('src/a.ts')).toEqual({ uri: 'src/a.ts', startLine: undefined, startColumn: undefined });
+    expect(parseSarifLocation('a:b.ts')).toEqual({ uri: 'a:b.ts', startLine: undefined, startColumn: undefined });
+    expect(parseSarifLocation(undefined)).toBeUndefined();
+    expect(parseSarifLocation('')).toBeUndefined();
   });
 });
 

@@ -329,8 +329,20 @@ export class ArchitectureDriftService {
     }
 
     const historyDir = path.dirname(historyFile);
-    await this.fs.ensureDir(historyDir);
-    await this.fs.writeJson(historyFile, history);
+
+    // Best-effort persistence, mirroring loadHistory's existing tolerance.
+    // Drift history is AUXILIARY telemetry — it never contributes to the verdict —
+    // so a non-writable workspace must not fail the evaluation. Before this guard,
+    // an unwritable path propagated (e.g. `ENOENT: mkdir '/app/corpus/rulesets/.evolith'`
+    // in the containerised Core) and the whole `architecture` evaluation kind
+    // returned HTTP 500, breaking the agent-runtime governed chain end-to-end.
+    // It also kept a stateless Core (ADR-0101) from evaluating a read-only corpus.
+    try {
+      await this.fs.ensureDir(historyDir);
+      await this.fs.writeJson(historyFile, history);
+    } catch {
+      // Swallow: the report is already complete and returned to the caller.
+    }
   }
 
   private getProjectId(projectPath: string): string {

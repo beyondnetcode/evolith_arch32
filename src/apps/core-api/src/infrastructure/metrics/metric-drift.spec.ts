@@ -46,7 +46,25 @@ const OPS_FILES = [
 // broker, the OPA sidecar, prom-client defaults. The guard does not require Core code
 // to emit these; it only holds every Core-owned metric referenced in an alert/SLO to
 // actually existing in the source.
-const EXTERNAL = [/^up$/, /^node_/, /^nodejs_/, /^process_/, /^rabbitmq_/, /^kube_/, /^opa_/];
+//
+// GT-551: the OPA entry used to be a blanket `/^opa_/`, which is exactly why this guard
+// failed to catch the `opa_evaluation_errors_total` alert — a metric OPA does NOT emit.
+// Verified empirically against the pinned binary: `opa run --server` + GET /metrics
+// exposes ONLY go_*, process_* and `http_request_duration_seconds{code,handler,method}`
+// — zero `opa_*` series. The blanket pattern is therefore replaced by OPA's REAL metric
+// family, which both narrows the allowlist and re-arms the guard: a future alert citing
+// any `opa_*` metric now fails here instead of silently never firing in production.
+// (Safe by construction: `emitted` only ever collects `evolith_*` tokens, so a Core
+// service can never own an unprefixed name like this one.)
+const EXTERNAL = [
+  /^up$/,
+  /^node_/,
+  /^nodejs_/,
+  /^process_/,
+  /^rabbitmq_/,
+  /^kube_/,
+  /^http_request_duration_seconds(_bucket|_count|_sum)?$/, // OPA sidecar (see above)
+];
 
 /**
  * Extract PromQL metric names — a name sits IMMEDIATELY before a `{` selector or `[`

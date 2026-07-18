@@ -6885,6 +6885,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `SDK CLI` · **Dimensión:** Reliability · **Tipo:** testing
 - **Criticidad:** P2 · **Complejidad:** M
 - **Fix propuesto:** Añadir cobertura de ramas donde se perdió hasta que la suite supere el 75 por ciento. El gate se deja deliberadamente intacto.
+- **Decision del propietario (2026-07-18):** Registrado como DEUDA en vez de pagarse ahora. La cobertura paso de 62.85% a 69.38% (+168 ramas) cubriendo aquellas cuyo fallo si haria dano -- `handleError`, las rutas de aprobacion/expiracion del comando waiver, la validacion contra cero reglas, la resolucion del corpus empaquetado que toma todo usuario instalado, y el orden de precedencia de satelites de ADR-0109. Los 5.6 puntos restantes cuestan unas 100-140 pruebas sobre el gating de asistentes interactivos (`init`, `update`, `scaffold`, `profile`, `satellite-adopt`) y el formateador YAML/tabla -- pruebas que comprueban que se pregunto algo a un mock. EL UMBRAL SE QUEDA EN 75 Y LA PUERTA SIGUE EN ROJO: esto es una regresion a pagar, no un liston que bajar. Otras ~100 ramas en `adr`/`standards`/`agents` quedan excluidas a proposito porque estan dominadas por el defecto del sobre de exito hallado junto a este trabajo; cubrirlas antes de arreglarlo bendeciria el bug.
 - **Criterios de aceptación:**
   - [ ] La cobertura de ramas está en o por encima del umbral global existente del 75 por ciento.
   - [ ] El umbral en sí queda sin cambios.

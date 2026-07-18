@@ -6980,6 +6980,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `SDK CLI` · **Dimension:** Reliability · **Type:** testing
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Add branch coverage where it was lost until the suite clears 75 percent. The gate is deliberately left untouched.
+- **Owner decision (2026-07-18):** Recorded as DEBT rather than paid now. Coverage moved 62.85% -> 69.38% (+168 branches) by covering the branches whose failure would actually hurt -- `handleError`, the waiver command's approve/expire paths, validate-against-zero-rules, the bundled-ruleset resolution every installed user takes, and the ADR-0109 satellite precedence order. The remaining 5.6 points cost roughly 100-140 tests over interactive wizard gating (`init`, `update`, `scaffold`, `profile`, `satellite-adopt`) and the YAML/table pretty-printer -- tests that assert a mock was asked a question. THE THRESHOLD STAYS AT 75 AND THE GATE STAYS RED: this is a regression to repay, not a bar to lower. A further ~100 branches in `adr`/`standards`/`agents` are excluded on purpose because they are dominated by the success-envelope defect found alongside this work; covering them before that is fixed would bless the bug.
 - **Acceptance criteria:**
   - [ ] Branch coverage is at or above the existing 75 percent global threshold.
   - [ ] The threshold itself is unchanged.

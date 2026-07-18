@@ -1,0 +1,35 @@
+{
+  // GT-565 — strict type-check project for `sdk-type-contract.types.ts`.
+  //
+  // The contract jest project runs ts-jest with `diagnostics: { warnOnly: true }`
+  // (see jest.config.js), which demotes every type error to a console warning.
+  // A compile-time contract checked under those settings could never fail a
+  // build, so `sdk-wire-contract.spec.ts` shells out to `tsc --noEmit -p` on
+  // THIS project instead, where diagnostics are real errors.
+  //
+  // `strictNullChecks` is the load-bearing flag: without it `string` and
+  // `string | undefined` are the same type, and every optionality drift
+  // (the SDK's optional `evaluatedBy`/`evaluatedAt` vs the wire's required
+  // ones) would pass silently.
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2021",
+    // `bundler` resolves the SDK's `./rest/types.js` specifiers back to their
+    // `.ts` sources and honours workspace `exports` maps. Classic `node`
+    // resolution would TS2307 on both.
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "exactOptionalPropertyTypes": false,
+    // Third-party .d.ts noise is irrelevant to this contract; the spec filters
+    // diagnostics down to this project's own file anyway.
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": false,
+    "types": ["node"]
+  },
+  "include": ["./sdk-type-contract.types.ts"]
+}

@@ -300,6 +300,12 @@ jobs:
             context: .
             dockerfile: ./src/packages/mcp-server/Dockerfile
             image: evolith-mcp
+          # GT-437: agent-runtime-api had a Dockerfile but was never built/pushed
+          # on main by this workflow (only by docker-images.yml on tags/dispatch).
+          - service: agent-runtime
+            context: .
+            dockerfile: ./src/apps/agent-runtime-api/Dockerfile
+            image: evolith-agent-runtime
     steps:
       - uses: actions/checkout@v7
 
@@ -356,3 +362,17 @@ jobs:
           fi
           curl --fail --silent --show-error -X GET "$HOOK" -H "Authorization: Bearer $TOKEN"
           echo "mcp-server deploy triggered"
+
+      # GT-437: agent-runtime-api joins the deployable services. Same fail-soft
+      # contract as the other two — an unset hook warns and skips, never fails CD.
+      - name: Trigger Coolify deploy (agent-runtime)
+        env:
+          HOOK: ${{ secrets.COOLIFY_AGENTRUNTIME_DEPLOY_HOOK }}
+          TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+        run: |
+          if [ -z "$HOOK" ] || [ -z "$TOKEN" ]; then
+            echo "::warning::COOLIFY_AGENTRUNTIME_DEPLOY_HOOK / COOLIFY_API_TOKEN not set — skipping agent-runtime deploy. Set them to enable CD (GT-437)."
+            exit 0
+          fi
+          curl --fail --silent --show-error -X GET "$HOOK" -H "Authorization: Bearer $TOKEN"
+          echo "agent-runtime deploy triggered"

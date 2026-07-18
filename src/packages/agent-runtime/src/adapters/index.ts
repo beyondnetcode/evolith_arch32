@@ -90,6 +90,19 @@ export { FileApprovalStore } from './approval/file-approval-store';
 export type { FileApprovalStoreOptions, ApprovalStoreFsLike } from './approval/file-approval-store';
 export { HttpSlackClient } from './approval/http-slack-client';
 export type { HttpSlackClientOptions } from './approval/http-slack-client';
+// GT-441: Tracker-routed HITL — the Tracker decides (per-tenant approvers), the Core obeys and fails closed
+export {
+  TrackerApprovalAdapter,
+  TRACKER_DECISION_PREFIX,
+  TRACKER_UNAVAILABLE_PREFIX,
+  isTrackerUnavailable,
+} from './approval/tracker-approval.adapter';
+export type {
+  TrackerApprovalOptions,
+  TrackerApprovalClient,
+  TrackerApprovalSubmission,
+  TrackerApprovalResponse,
+} from './approval/tracker-approval.adapter';
 
 // Engine (Hermes is OPTIONAL and lives only here, never in the domain)
 export { StubAgentEngineAdapter } from './engine/stub-agent-engine.adapter';

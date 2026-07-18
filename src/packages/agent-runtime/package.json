@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@beyondnet/evolith-core-domain": "^1.1.0",
-    "yaml": "1.10.3"
+    "yaml": "2.9.0"
   },
   "devDependencies": {
     "@types/jest": "30.0.0",

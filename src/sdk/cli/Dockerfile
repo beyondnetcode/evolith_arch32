@@ -58,6 +58,6 @@ EXPOSE 3000
 CMD ["node", "dist/main.js", "mcp", "serve", "--transport", "http"]
 
 # Alternative commands for different modes:
-# stdio mode (default): node dist/main.js mcp serve
-# HTTP mode: node dist/main.js mcp serve --transport http --port 3000
+# stdio mode (default): evolith-mcp serve
+# HTTP mode: evolith-mcp serve --transport http --port 3000
 # CLI mode: node dist/main.js validate

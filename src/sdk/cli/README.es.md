@@ -81,7 +81,7 @@ La CLI funciona sin configuración. Las siguientes variables son overrides opcio
 |---|---|---|
 | `EVOLITH_PROFILE` | CLI | Selecciona el perfil con nombre activo (valores por defecto por entorno) en lugar de `default`. |
 | `EVOLITH_API_KEY` | CLI / MCP | API key para el transporte HTTP del MCP (equivalente a `--api-key`); requerida en modo HTTP de producción. |
-| `PORT` | CLI / MCP | Puerto HTTP por defecto para `mcp serve --transport http` cuando se omite `--port` (por defecto `3000`). |
+| `PORT` | CLI / MCP | Puerto HTTP por defecto para `evolith-mcp serve --transport http` cuando se omite `--port` (por defecto `3000`). |
 | `OTEL_ENABLED` | CLI | Cuando es `true`, habilita la exportación de trazas OpenTelemetry desde la CLI. |
 | `WORKSPACE_ROOT` | Core | Raíz del checkout para sobreescribir el workflow/rulesets incluidos desde disco (ver arriba). |
 | `MCP_HTTP_HOST` *(MCP)* | MCP | Host de enlace para el transporte HTTP (por defecto `0.0.0.0`; usa `127.0.0.1` para acceso local). |
@@ -946,31 +946,27 @@ Los scripts pre-construidos también vienen incluidos en el paquete bajo `shell/
 
 ## Servidor MCP
 
-La CLI de Evolith incluye un servidor MCP listo para producción para la integración con agentes IA.
-
-> **Aviso de deprecación:** `evolith-cli mcp` imprime una advertencia de deprecación al arrancar y será removido en una futura versión mayor. El servidor MCP ahora se distribuye como paquete independiente — migra a `@beyondnet/evolith-mcp` (`npx @beyondnet/evolith-mcp serve` o el binario `evolith-mcp serve`). El comando CLI sigue funcionando mientras tanto delegando de forma perezosa (lazy) en ese paquete.
+Evolith distribuye un servidor MCP independiente, `@beyondnet/evolith-mcp`, para la integración con agentes IA. Ejecútalo con el binario `evolith-mcp` (o `npx @beyondnet/evolith-mcp serve`).
 
 ### Iniciar el Servidor
 
-`mcp` acepta una acción posicional opcional que por defecto es `serve`, por lo que `evolith-cli mcp` y `evolith-mcp` son equivalentes.
-
 ```bash
 # Transporte stdio (por defecto — para Cursor, Claude Desktop)
-evolith-mcp
+evolith-mcp serve
 
 # Transporte HTTP (para despliegues remotos o en contenedor)
-evolith-mcp --transport http --port 3000
+evolith-mcp serve --transport http --port 3000
 
 # HTTP con autenticación por API key
-evolith-mcp --transport http --port 3000 --api-key <secret>
+evolith-mcp serve --transport http --port 3000 --api-key <secret>
 ```
 
 ```bash
-evolith-cli mcp [acción] [opciones]
+evolith-mcp [acción] [opciones]
 
 Acciones:
   serve       Iniciar el servidor MCP (por defecto)
-  version     Imprime un banner de versión estático del servidor MCP (no lee la versión del paquete @beyondnet/evolith-mcp)
+  version     Imprime el banner de versión del servidor MCP
 
 Opciones:
   -t, --transport <stdio|http>   Transporte: stdio (por defecto) o http

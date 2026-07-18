@@ -16,7 +16,8 @@
 
 ---
 ## Step 1 — Directory Structure
-Cree los siguientes directorios en la raíz de su repositorio:```bash
+Cree los siguientes directorios en la raíz de su repositorio:
+```bash
 mkdir -p reference/core/foundations/agent-skills
 mkdir -p .bmad-core/workflows
 mkdir -p .harness/agents
@@ -31,7 +32,8 @@ mkdir -p .harness/templates
 ## Step 2 — Copy the BMAD Team Agent Files
 Cree un archivo por agente en `reference/core/foundations/agent-skills/`. El contenido de cada uno es el bloque Persona portátil del [Catálogo de agentes] (./agents-catalog.md).
 
-**Nombres de archivos:**```
+**Nombres de archivos:**
+```
 reference/core/foundations/agent-skills/analyst.md
 reference/core/foundations/agent-skills/pm.md
 reference/core/foundations/agent-skills/architect.md
@@ -42,7 +44,32 @@ reference/core/foundations/agent-skills/qa.md
 
 ---
 ## Step 3 — Copy the Harness Governance Agents
-Cree `.harness/agents/agent-specs.md` con el siguiente contenido. Adapte las descripciones del alcance a las preocupaciones específicas de su proyecto:```markdown```
+Cree `.harness/agents/agent-specs.md` con el siguiente contenido. Adapte las descripciones del alcance a las preocupaciones específicas de su proyecto:
+
+```markdown
+# Agent Personas Specification
+
+<!-- ## @po (Product Owner) -->
+- **Scope**: Business logic, functional stories, OKRs, readability.
+- **Directives**: No implementation jargon. Prioritize user experience and business outcome.
+
+<!-- ## @architect (Software Architect) -->
+- **Scope**: Tech stack, system design, diagrams (C4, ERD, sequence), ADRs.
+- **Directives**: Enforce hexagonal boundaries, RLS enforcement, port portability, stack coherence.
+
+<!-- ## @analyst (Business Analyst) -->
+- **Scope**: Document sync, backlog hygiene, use case taxonomies.
+- **Directives**: Ensure 100% bilingual equivalence and precise cross-references.
+
+<!-- ## @devops (DevSecOps Engineer) -->
+- **Scope**: Docker configs, CI/CD pipelines, security scanning, harness governance.
+- **Directives**: Enforce security standards, UTF-8 sanitization, and token economy.
+```
+
+**Se requiere adaptación:** Reemplace la directiva bilingüe de `@analyst` por la preocupación de consistencia documental que aplique a su equipo. Si su equipo es monolingüe, reutilice `@analyst` para la sincronización de versiones de documentación, el mantenimiento del changelog o la integridad de las referencias cruzadas.
+
+---
+
 ## Step 4 — Copy the Rules File
 Cree `.harness/rules/global-rules.md` con la tabla de reglas de la [Referencia de reglas] (./rules-reference.md#portable-rules-block). Esta es la única fuente de verdad para todas las directivas vinculantes.
 
@@ -66,9 +93,12 @@ Copie `.harness/scripts/ci/01-validate-docs.mjs` de este repositorio a su direct
 - Los enlaces relativos se resuelven en archivos existentes.
 - Los bloques de código de sirena tienen marcadores de sintaxis válidos.
 
-Ejecútelo localmente para verificar su documentación:```bash
+Ejecútelo localmente para verificar su documentación:
+```bash
 node .harness/scripts/ci/01-validate-docs.mjs
-```**Se requiere adaptación:** El script escanea `**/*.md` desde la raíz del repositorio de forma predeterminada. Si su documentación se encuentra en una estructura de directorio diferente, ajuste el patrón global en la sección de configuración del script.
+```
+
+**Se requiere adaptación:** El script escanea `**/*.md` desde la raíz del repositorio de forma predeterminada. Si su documentación se encuentra en una estructura de directorio diferente, ajuste el patrón global en la sección de configuración del script.
 
 ---
 ## Step 7 — Create AGENTS.md
@@ -80,7 +110,8 @@ Agregue la validación de la documentación como paso de bloqueo de CI:
 
 **Acciones de GitHub:**```yaml```
 ## Step 9 — Workflow File
-Cree `.bmad-core/workflows/development.yaml` para definir el flujo de trabajo de desarrollo canónico greenfield. Adapte las rutas de entrega a la estructura de su repositorio:```yaml
+Cree `.bmad-core/workflows/development.yaml` para definir el flujo de trabajo de desarrollo canónico greenfield. Adapte las rutas de entrega a la estructura de su repositorio:
+```yaml
 name: Greenfield Development Workflow
 description: End-to-end spec-driven development loop for new features.
 version: 1.0.0

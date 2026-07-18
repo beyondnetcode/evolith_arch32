@@ -1,12 +1,12 @@
 # Master Index
 
 ## Architecture
-- [Architecture Overview](./reference/architecture/README.md)
-- [ADR Registry](./reference/architecture/adrs/README.md)
+- [Architecture Overview](./reference/core/architecture/README.md)
+- [ADR Registry](./reference/core/architecture/adrs/README.md)
 
 ## Governance
-- [Standards](./reference/governance/standards/README.md)
-- [Rulesets](./reference/governance/rulesets/README.md)
+- [Standards](./reference/core/foundations/README.md)
+- [Rulesets](./src/rulesets/README.md)
 
 ## Knowledge
-- [Demo References](./reference/knowledge/demo/README.md)
+- [Demo References](./product/research/demo/README.md)

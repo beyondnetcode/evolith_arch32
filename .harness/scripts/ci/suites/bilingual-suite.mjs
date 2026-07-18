@@ -24,9 +24,21 @@ const PARITY_EXEMPT_BASENAMES = new Set([
   "EVOLITH-ARCHITECTURE-DESIGN.md"
 ]);
 
+// GT-563 follow-on: this counter used to run over the RAW file, so a `## ...` line
+// inside a fenced code block counted as a real header. That is not a header, and it let
+// structural mismatches pass here while 01-validate-docs.mjs (which does strip fences)
+// failed on the same files -- parity is meant to be the authority, so it has to see the
+// same headers. Fence stripping is kept byte-for-byte in sync with the matcher in
+// .harness/scripts/ci/01-validate-docs.mjs.
+function stripCodeBlocks(content) {
+  return content
+    .replace(/^ {0,3}```[^\n]*\n[\s\S]*?^ {0,3}```[^\n]*$/gm, (match) => match.replace(/[^\r\n]/g, " "))
+    .replace(/`[^`\r\n]+`/g, (match) => match.replace(/[^\r\n]/g, " "));
+}
+
 function countHeaders(content) {
   const headingPattern = /^#{2,3}\s+.+$/gm;
-  const matches = [...content.matchAll(headingPattern)];
+  const matches = [...stripCodeBlocks(content).matchAll(headingPattern)];
   return matches.length;
 }
 

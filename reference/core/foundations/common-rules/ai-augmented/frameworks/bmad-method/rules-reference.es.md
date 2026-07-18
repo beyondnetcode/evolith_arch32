@@ -154,7 +154,22 @@ VIOLATION: @architect recommends Kafka for a Phase 1 implementation without an
 
 **Condición de activación:** Cualquier historia de usuario, especificación funcional o creación o revisión de una sección PRD.
 
-**Estructura:**```markdown```
+**Estructura:**
+
+```markdown
+# STORY-001: User Login
+
+<!-- ## Business Narrative -->
+As a [user], I want to [action] so that [business value].
+
+<!-- ### Acceptance Criteria -->
+- Scenario 1: [Given/When/Then in business terms]
+
+<!-- ## Technical Requirements -->
+- Auth method: JWT RS256, 15-minute expiry
+- Storage: HttpOnly cookie, Secure flag, SameSite=Strict
+- Schema: auth.users table, bcrypt hash comparison
+```
 ### R-07 — Traceability
 **Restricción:** Cuando un caso de uso cambia, actualice todos los diagramas relevantes y registre el cambio con: Documento, Tipo, Descripción del cambio, ID del caso de uso.
 

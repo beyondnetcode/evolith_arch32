@@ -86,7 +86,54 @@ Cree un archivo por libro de jugadas en `.harness/playbooks/`. Adapte las condic
 
 **Libros de jugadas mínimos recomendados:**
 
-**`.harness/playbooks/document-governance-playbook.md`**```markdown```
+**`.harness/playbooks/document-governance-playbook.md`**
+
+```markdown
+# Document Governance Playbook
+
+<!-- ## Use When -->
+- reviewing requirements
+- updating functional stories
+- editing ADRs or blueprints
+- validating documentation sync
+
+<!-- ## Mandatory Checks -->
+1. Functional content is readable to Product Owners and Business Analysts.
+2. Technical detail is isolated in a dedicated Technical Requirements section.
+3. Document language variants stay synchronized.
+4. Diagram labels match document language.
+5. Runtime-specific claims point to the correct authoritative profile.
+
+<!-- ## Audit Output Format -->
+- artifact
+- location
+- issue type
+- severity
+- recommended correction
+```
+
+**`.harness/playbooks/api-governance-playbook.md`**
+
+```markdown
+# API Governance Playbook
+
+<!-- ## Use When -->
+- reviewing backend contracts
+- designing REST endpoints
+- validating query handlers or repositories
+
+<!-- ## Mandatory Checks -->
+1. Command and query responsibilities are explicit.
+2. Pagination, filtering, sorting are centralized.
+3. Error mapping stays structured and predictable.
+4. Multi-tenancy keeps primary application-layer filtering.
+
+<!-- ## Architectural Goal -->
+The API remains maintainable as a modular monolith today and extractable tomorrow.
+```
+
+---
+
 ## Step 6 — Copy the Validation Script
 Copie `.harness/scripts/ci/01-validate-docs.mjs` de este repositorio a su directorio `.harness/scripts/`. El script valida:
 - Codificación UTF-8 (sin artefactos de codificación en el rango U+2600–U+27BF)
@@ -104,11 +151,95 @@ node .harness/scripts/ci/01-validate-docs.mjs
 ## Step 7 — Create AGENTS.md
 `AGENTS.md` es el archivo de nivel superior que activa el marco para las herramientas de IA (Claude Code, Cursor, GitHub Copilot, etc.). Le dice a la herramienta de IA qué agentes existen, qué reglas se aplican y cómo comportarse en este repositorio.
 
-Cree `AGENTS.md` en la raíz de su repositorio con la siguiente estructura:```markdown```
+Cree `AGENTS.md` en la raíz de su repositorio con la siguiente estructura:
+
+```markdown
+# AGENTS.md — [Your Repository Name]
+
+<!-- ## Project Overview -->
+[Brief description of what this repository is and does]
+
+<!-- ## Build and Run -->
+[Commands to install dependencies, start the project, run tests]
+
+<!-- ## Agent Team -->
+
+<!-- ### BMAD Team Agents (Sequential Workflow) -->
+Invoke by role for spec-driven feature delivery:
+- **analyst**: Requirements analysis and functional specification
+- **pm**: PRD creation and backlog management
+- **architect**: Technical architecture and ADR authoring
+- **sm**: Task breakdown and sprint planning
+- **dev**: Implementation (backend + frontend)
+- **qa**: Testing, security audit, release verification
+
+Agent personas: `reference/core/foundations/agent-skills/`
+
+<!-- ### Harness Governance Agents (On-Demand) -->
+Invoke by tag for document and architecture governance:
+- **@po**: Functional story readability and business narrative
+- **@architect**: ADR review, diagram audit, stack validation
+- **@analyst**: Document sync and cross-reference integrity
+- **@devops**: Infrastructure, CI/CD, harness health
+
+Agent specs: `.harness/agents/agent-specs.md`
+
+<!-- ## Binding Rules -->
+All agents operate under 18 binding rules. Full reference: `.harness/rules/global-rules.md`
+
+Key rules always active:
+- R-01: Document variants stay synchronized
+- R-03: Pure UTF-8 output only
+- R-04: Diagram labels match document language (code identifiers exempt)
+- R-10: Audit output format: [Document, Location, Issue Type, Severity, Fix]
+
+<!-- ## Conventions -->
+[Your naming conventions, ADR format, directory taxonomy]
+
+<!-- ## Out of Bounds -->
+- Never commit secrets, tokens, or credentials
+- Never modify files outside the scope of the current task
+- Never skip the validation script before committing documentation changes
+```
+
+---
+
 ## Step 8 — CI Integration
 Agregue la validación de la documentación como paso de bloqueo de CI:
 
-**Acciones de GitHub:**```yaml```
+**Acciones de GitHub:**
+
+```yaml
+# .github/workflows/docs-validation.yml
+name: Documentation Validation
+on: [push, pull_request]
+
+jobs:
+  validate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate documentation
+        run: node .harness/scripts/ci/01-validate-docs.mjs
+```
+
+**GitLab CI:**
+
+```yaml
+validate-docs:
+  stage: validate
+  image: node:20
+  script:
+    - node .harness/scripts/ci/01-validate-docs.mjs
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+```
+
+---
+
 ## Step 9 — Workflow File
 Cree `.bmad-core/workflows/development.yaml` para definir el flujo de trabajo de desarrollo canónico greenfield. Adapte las rutas de entrega a la estructura de su repositorio:
 ```yaml

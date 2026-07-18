@@ -21,14 +21,20 @@
 // REST surface
 export { EvolithRestClient, EvolithApiError } from './rest/evolith-rest-client.js';
 export type { EvolithRestClientOptions } from './rest/evolith-rest-client.js';
+export { AgentClient } from './rest/agent.client.js';
 export type {
   ApiEnvelope,
+  SuccessEnvelope,
+  ErrorEnvelope,
+  EnvelopeMeta,
   GatePhase as RestGatePhase,
   EvaluateGateRequest,
   EvaluateGateResponse,
   GateEvidence,
+  GateVerdict,
   GateViolation as RestGateViolation,
   ViolationSeverity,
+  EvaluatorKind as RestEvaluatorKind,
   TransitionPhaseRequest,
   TransitionPhaseResponse,
   PhaseTransitionResult,
@@ -45,6 +51,10 @@ export type {
   ProposeAdvanceRequest,
   ProposeAdvanceResponse,
 } from './rest/types.js';
+
+// Agent Runtime surface — the wire types of `EvolithRestClient#agent`, so the
+// public property is nameable by consumers (GT-564).
+export type { AgentRuntimeRequestWire, AgentRuntimeResult } from '@beyondnet/evolith-agent-runtime';
 
 // Satellites surface
 export { SatellitesClient } from './satellites.client.js';

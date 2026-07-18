@@ -17,10 +17,17 @@ Evolith Core exposes two surfaces:
   `api/v` prefix, so live routes are `/api/v1/<resource>`);
 - a set of **MCP tools** served by `packages/mcp-server` over JSON-RPC `tools/call`.
 
-This SDK mirrors the controller DTOs (`apps/core-api/src/presentation/dtos`) and the
-MCP tool input/output schemas (`packages/mcp-server/src/tools/*.tools.ts`) as
-hand-authored TypeScript types, and provides one client class per surface. It is the
-single typed integration point so consumers do not duplicate request shapes.
+This SDK provides one client class per surface and is the single typed integration
+point so consumers do not duplicate request shapes.
+
+Since **2.0.0** the response payload types are not hand-authored here: both surfaces
+call the same use cases and return the domain objects verbatim, so the SDK re-exports
+the canonical contracts from `@beyondnet/evolith-core-domain` (`GateEvidence`,
+`GateViolation`, `GatePhase`, `GateVerdict`, `ViolationSeverity`, `EvaluatorKind`,
+`ValidationResult`, `ValidationIssue`). What the SDK still owns is genuinely
+transport-layer: the response envelope (`ApiEnvelope` / `SuccessEnvelope`, mirroring
+`envelope.interceptor.ts`), the request DTOs, and the MCP tool *input* schemas
+(`packages/mcp-server/src/tools/*.tools.ts`).
 
 ## Intended consumer
 
@@ -61,7 +68,11 @@ import { EvolithRestClient } from '@beyondnet/evolith-sdk';
 
 const client = new EvolithRestClient({ baseUrl: 'http://localhost:3000', apiKey: 'token' });
 const result = await client.evaluatePhaseGate('discovery', { workspaceRef: 'op_abc123' });
-console.log(result.data.passed);
+// `verdict` is 'passed' | 'failed' | 'skipped' — there is no boolean `passed` on the wire.
+console.log(result.data.verdict, result.data.gateId, result.data.rulesetVersion);
+for (const v of result.data.violations) {
+  console.log(`${v.severity} ${v.ruleId} at ${v.location}: ${v.message}`);
+}
 ```
 
 ## MCP client

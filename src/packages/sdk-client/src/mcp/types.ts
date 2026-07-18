@@ -1,14 +1,42 @@
 /**
  * MCP tool type definitions for the Evolith MCP server.
  *
- * These types mirror the inputSchema and return shapes defined in
- * packages/mcp-server/src/tools/*.tools.ts
+ * Tool *inputs* mirror the inputSchema declared in
+ * packages/mcp-server/src/tools/*.tools.ts and are owned here.
+ *
+ * Tool *outputs* are NOT redeclared: `evolith-gate-evaluate` returns the domain
+ * `GateEvidence` produced by EvaluateGateUseCase verbatim, and
+ * `evolith-validate` (json format) returns the domain `ValidationResult`
+ * verbatim. Both are re-exported from `@beyondnet/evolith-core-domain`
+ * (GT-564).
  */
+
+import type {
+  GatePhase,
+  GateVerdict,
+  GateViolation,
+  GateEvidence,
+  ViolationSeverity,
+  EvaluatorKind,
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import type {
+  ValidationResult,
+  ValidationIssue,
+} from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.types';
 
 // ─── Common ───────────────────────────────────────────────────────────────────
 
-export type GatePhase = 'discovery' | 'design' | 'construction' | 'qa' | 'release';
-export type EvaluatorKind = 'human' | 'agent' | 'ci';
+export type {
+  GatePhase,
+  GateVerdict,
+  GateViolation,
+  GateEvidence,
+  ViolationSeverity,
+  EvaluatorKind,
+  ValidationResult,
+  ValidationIssue,
+};
+
 export type EvidenceMode = 'full' | 'summary';
 export type ValidateFormat = 'json' | 'summary' | 'table';
 
@@ -35,22 +63,14 @@ export interface GateEvaluateInput {
   webhookUrl?: string;
 }
 
-export interface GateViolation {
-  ruleId: string;
-  severity: 'error' | 'warning' | 'info';
-  message: string;
-  artifact?: string;
-  remediation?: string;
-}
-
-export interface GateEvaluateOutput {
-  phase: GatePhase;
-  passed: boolean;
-  violations: GateViolation[];
-  evaluatedBy?: EvaluatorKind;
-  evaluatedAt?: string;
-  summary?: { errors: number; warnings: number };
-}
+/**
+ * The tool returns `GateEvidence` verbatim. With `evidenceMode: 'summary'` it
+ * additionally empties `violations` and attaches a per-severity roll-up
+ * (gate.tools.ts) — the only field the MCP surface adds to the domain object.
+ */
+export type GateEvaluateOutput = GateEvidence & {
+  readonly summary?: { errors: number; warnings: number };
+};
 
 // ─── evolith-validate ────────────────────────────────────────────────────────
 
@@ -71,19 +91,12 @@ export interface ValidateInput {
   manifest?: string;
 }
 
-export interface ValidationIssue {
-  ruleId: string;
-  severity: string;
-  title: string;
-  blocking: boolean;
-  category?: string;
-}
-
-export interface ValidateJsonOutput {
-  status: 'passed' | 'failed';
-  rulesChecked: number;
-  issues: ValidationIssue[];
-}
+/**
+ * `format: 'json'` (the default) returns the domain `ValidationResult`
+ * verbatim — including `status: 'passed' | 'failed' | 'warning'`, `coreRef`
+ * and `timestamp`.
+ */
+export type ValidateJsonOutput = ValidationResult;
 
 export type ValidateOutput = ValidateJsonOutput | string;
 

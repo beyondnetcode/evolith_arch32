@@ -1,6 +1,6 @@
 {
   "name": "@beyondnet/evolith-sdk",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Typed client library for the Evolith Core REST API and MCP tools",
   "author": "",
   "license": "MIT",
@@ -12,13 +12,12 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "build:watch": "tsc -p tsconfig.json --watch",
-    "generate": "echo 'No OpenAPI spec file present — types are hand-authored from the NestJS controller DTOs'",
+    "generate": "echo 'No codegen: payload types are re-exported from @beyondnet/evolith-core-domain; only envelopes and request DTOs are authored here'",
     "test": "jest",
     "test:cov": "jest --coverage",
     "lint": "eslint \"src/**/*.ts\" --fix"
   },
   "devDependencies": {
-    "@beyondnet/evolith-agent-runtime": "^1.1.0",
     "@types/jest": "30.0.0",
     "@types/node": "26.0.0",
     "jest": "30.4.2",
@@ -45,7 +44,10 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@beyondnet/evolith-agent-runtime": "^1.1.0",
+    "@beyondnet/evolith-core-domain": "^1.1.0"
+  },
   "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
   "repository": {
     "type": "git",

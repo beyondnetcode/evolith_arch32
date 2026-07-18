@@ -141,4 +141,41 @@ describe('CircuitBreakerService — resilience state machine (GT-443)', () => {
     await breaker.fire().catch(() => undefined);
     expect(breaker.opened).toBe(true);
   });
+
+  it('counts a downstream slower than the configured timeout as a failure', async () => {
+    jest.useFakeTimers();
+    // Never settles: the only thing that can reject this call is the
+    // service-configured `timeout: 10000`.
+    const breaker = service.createBreaker('slow', () => new Promise<string>(() => undefined));
+
+    const inFlight = breaker.fire();
+    const assertion = expect(inFlight).rejects.toThrow(/Timed out/i);
+
+    jest.advanceTimersByTime(10000);
+    await assertion;
+
+    expect(service.getStats().find((s) => s.name === 'slow')?.failures).toBeGreaterThan(0);
+  });
+
+  it('serves the fallback instead of rejecting while OPEN — degrades, not fails', async () => {
+    let invocations = 0;
+    const breaker = service.createBreaker(
+      'degrade',
+      async () => {
+        invocations += 1;
+        throw new Error('downstream unavailable');
+      },
+      async () => 'degraded-response',
+    );
+
+    await tripOpen(breaker);
+    expect(breaker.opened).toBe(true);
+
+    const invocationsWhenOpen = invocations;
+    // OPEN + fallback configured: the caller still gets a usable answer, and
+    // the dead downstream is not touched to produce it.
+    await expect(breaker.fire()).resolves.toBe('degraded-response');
+    expect(invocations).toBe(invocationsWhenOpen);
+    expect(service.getStats().find((s) => s.name === 'degrade')?.fallbacks).toBeGreaterThan(0);
+  });
 });

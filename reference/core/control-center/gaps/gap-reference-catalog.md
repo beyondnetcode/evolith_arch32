@@ -6822,3 +6822,88 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] `FUNDING.yml` renders on the repository page.
 - **Dependencies:** Feeds the GitHub bridge deliverable of [UP-003](../opportunities/UP-003-user-contribution-intake-mechanism.md).
 - **Status:** `PENDING`
+
+#### GT-556
+
+**Title:** Harness guards resolved paths from `process.cwd()`, so a guard's answer depended on where it was invoked
+
+- **Purpose:** Make a guard produce the same verdict regardless of the directory it is run from, and make a dead path fail loudly instead of silently reading nothing.
+- **Evidence:** `30-validate-phase-topology-disjoint` reported **8 topology ids from the repo root and 5 from `src/`**, exiting 0 both times — the same guard, the same commit, two different answers and no failure either way. Six path literals in the harness pointed at directories that no longer exist: `rulesets/topologies` (real: `src/rulesets/topologies`), `reference/products` (real: `product/products`), `reference/knowledge/demo/examples` (real: `product/research/demo/examples`), `reference/infrastructure/helm` (real: `product/infra/helm`), `reference/navigation` (real: root `MASTER_INDEX.md` / `control-center/taxonomy`) and `reference/core/sdlc/standards/vision` (real: split across `control-center/{gaps,evidence,maturity-reports}`).
+- **Impact:** Every guard that reads the repository becomes trustworthy only if invoked from one specific directory, which is not a property CI, a pre-commit hook and a developer shell share.
+- **Risk:** A guard whose scope silently shrinks with the working directory is worse than no guard: it produces a green result that a reviewer reasonably treats as coverage.
+- **Affected files:** `.harness/scripts/lib/paths.mjs`; the 15 migrated guards under `.harness/scripts/ci/`.
+- **Component:** `Harness` · **Dimension:** Reliability · **Type:** tooling
+- **Criticality:** P0 · **Complexity:** M
+- **Proposed fix:** Derive the repository root by marker ascent rather than from `process.cwd()`, make path resolution fail closed when the target does not exist, and migrate every guard onto the shared resolver.
+- **Acceptance criteria:**
+  - [x] The repository root is derived by marker ascent — `package.json`, `.harness` and `evolith.yaml` present **together** — so it does not depend on the invocation directory. _(commit `83539a29`)_
+  - [x] `resolve()` throws when a path does not exist, with `optional()` as the explicit escape hatch for genuinely optional targets; `PATH_KEYS` exports the ~45 named locations so a dead literal cannot be reintroduced by hand. _(commit `83539a29`)_
+  - [x] The six dead path literals are repaired and a shared `collectFiles()` replaces the five hand-rolled directory walkers. _(commit `83539a29`)_
+  - [x] The 15 migrated scripts — 06, 09, 11, 12, 19, 21, 22, 25, 27, 29, 30, 31, 32, 33 and `34-check-skill-registry-parity` — each produce identical output from the repo root, from `src/` and from `/tmp`. _(script 30 now reports "5 SDLC phase ids disjoint from 8 topology ids" from all three)_
+- **Dependencies:** none.
+- **Closure (2026-07-18, commit `83539a29`):** Path resolution in the harness is now fail-closed and cwd-independent. The 8-vs-5 divergence in script 30 is gone: the same three invocation directories now yield the same corpus, and a path literal that no longer resolves raises instead of reading an empty set.
+- **Status:** `DONE`
+
+#### GT-557
+
+**Title:** A check that scanned zero items reported success
+
+- **Purpose:** Make "found no problems" distinguishable from "looked at nothing", so an empty scan cannot pass as coverage.
+- **Evidence:** **Seven confirmed false greens.** The decisive pair is `31-detect-duplicate-rulesets` and `32-validate-ruleset-schemas`, which scanned `rulesets/` — a directory that **exists** but contains only `agents/`, so zero `.rules.json` files matched while the real corpus of **145 rulesets** sits in `src/rulesets`. `existsSync` passed, the path was live, and the answer was still fabricated; this is why the guardrail must assert on items scanned rather than on path validity. The other instances: `12-validate-bmad-signatures` printed its success line because `if (existsSync(adrDir))` skipped the whole loop; `11-validate-product-docs` read the wrong `package.json`, so `pkg.version` was always `undefined` and its version-drift assertion could never fire (its SHIPPED list also named `evolith-cli` where the real directory is `smart-cli`); `33-check-adapter-freshness`'s barrel check never fired; and `27-opa-parity-gate` evaluated 26 fixtures from `/tmp` and 0 from the repo root, exit 0 both times, because `git diff` inherited the cwd and the `catch` silently promoted the run to FULL scope.
+- **Impact:** Seven guards that a reviewer counted as coverage were asserting nothing, across rulesets, ADR signatures, product docs, adapter freshness and OPA parity.
+- **Risk:** A false green is more damaging than a missing check, because it is actively cited as evidence that the property holds.
+- **Affected files:** `.harness/scripts/lib/coverage.mjs`; `.harness/scripts/lib/coverage.test.mjs`, `.harness/scripts/lib/paths.test.mjs`.
+- **Component:** `Harness` · **Dimension:** Reliability · **Type:** tooling
+- **Criticality:** P0 · **Complexity:** M
+- **Proposed fix:** Introduce a shared coverage assertion that fails when a scan touched zero items, refuses to let a live source mask a dead one, and requires a written justification wherever emptiness is genuinely legitimate.
+- **Acceptance criteria:**
+  - [x] `assertScanned` throws when a scan produced zero items, so an empty corpus can no longer report success. _(commit `83539a29`)_
+  - [x] `assertScannedPerSource` prevents a live root from masking a dead one in a multi-source scan. _(commit `83539a29`)_
+  - [x] `allowEmpty` requires a written `reason` at the call site and is deliberately **not** settable from an environment variable or a configuration file, so the exemption cannot be granted remotely. _(commit `83539a29`)_
+  - [x] The regression is pinned by tests: 28 tests in `.harness/scripts/lib/*.test.mjs`, including three cwd-independence proofs — chdir invariance, a real subprocess launched from three directories, and a corpus-size test pinning the 8-vs-5 regression. _(`node --test .harness/scripts/lib/paths.test.mjs .harness/scripts/lib/coverage.test.mjs` — 28 passing)_
+- **Dependencies:** none.
+- **Closure (2026-07-18, commit `83539a29`):** The guardrail asserts on what was scanned, not on whether a path happens to exist — which is precisely the distinction the `rulesets/` case defeated. Measured against the corpus: `find src/rulesets -name "*.rules.json" | wc -l` returns 145 where the scanned `rulesets/` returned 0.
+- **Status:** `DONE`
+
+#### GT-558
+
+**Title:** Six finding models coexisted, whose true intersection was only `message` plus some notion of severity
+
+- **Purpose:** Give a finding one shape it can keep as it crosses from a review to a scorecard to the knowledge base, and make its origin impossible to omit.
+- **Evidence:** Six models coexisted — `EvidenceFinding`, `RiskFinding`, `GapFinding`, `GateViolation`, `ValidationIssue` and `Violation`. Their true intersection is `message` plus some notion of severity; **five carry no provenance and none carries determinism**. `GateViolation` and `ValidationIssue` had additionally **forked** into `src/packages/sdk-client/src/mcp/types.ts`: the SDK `GateViolation` widened severity and replaced the REQUIRED `location` with an optional `artifact?`, and the SDK `ValidationIssue` degraded to `severity: string`, losing the `MUST|SHOULD|COULD` constraint. Neither fork is assignable to its domain counterpart in either direction.
+- **Impact:** A finding that moves between surfaces loses provenance and severity meaning at each hop, and the type system cannot detect the loss.
+- **Risk:** Severity reconciliation is an interpretive projection and is therefore not reversible; collapsing it without retaining the producer's own token destroys information silently.
+- **Affected files:** `src/packages/core-domain/src/evaluation/contracts/finding.ts`; `src/packages/core-domain/src/evaluation/sarif-exporter.ts`.
+- **Component:** `Core Domain` · **Dimension:** Governance · **Type:** backend
+- **Criticality:** P0 · **Complexity:** M
+- **Proposed fix:** Add a canonical `Finding` with pure mappers from all six shapes, strictly additive, with origin as a required argument and the producer's verbatim severity token retained.
+- **Acceptance criteria:**
+  - [x] A canonical `Finding` exists with pure mappers from all six shapes, and the change is **strictly additive** — no existing interface or call site was modified. _(commit `30013b07`)_
+  - [x] `FindingOrigin` is a required second argument on every mapper, so an unattributed finding is a compile error. _(commit `30013b07`)_
+  - [x] Severity reconciles to `info|low|medium|high|critical`, with `error` mapping to `high` and deliberately **not** to `critical`, and the producer's verbatim token retained in `sourceSeverity` because the projection is not reversible; `advisory: true` is a literal type. _(commit `30013b07`)_
+  - [x] The seventh duplication surfaced by the compiler when wiring the barrel is resolved: `sarif-exporter.ts` had its own `parseFindingLocation`, and because the two are **not** equivalent — SARIF treats any string as a file uri, while the canonical one distinguishes a parseable `path` from an opaque `ref` and excludes URLs — the SARIF-internal one was renamed `parseSarifLocation` rather than merged. _(commit `30013b07`)_
+  - [x] 38 new tests cover the contract and the mappers. _(`npx jest` in core-domain: 106 suites / 1145 tests passing)_
+- **Dependencies:** Recorded in [ADR-0116](../../architecture/adrs/core/0116-canonical-finding-and-authority-boundary.md).
+- **Closure (2026-07-18, commit `30013b07`):** The canonical contract and its six mappers are in place and recorded in ADR-0116, additive by construction so nothing had to be migrated to land it. _Follow-up noted:_ the two `sdk-client` forks are **unretired** — removing them is a breaking change and needs a semver decision.
+- **Status:** `DONE`
+
+#### GT-559
+
+**Title:** The advisory-authority boundary was prose re-encoded across 60 files
+
+- **Purpose:** Turn the advisory-authority boundary into something a reviewer can cite and a machine can check.
+- **Evidence:** The boundary was restated as prose across **60 files** — "binding: false", "advisory", "non-binding", "recommends but does not decide" — so there was nothing to cite in a review and nothing that could detect a violation.
+- **Impact:** The single most load-bearing constraint of an advisory engine could only be enforced by a reader who happened to remember it.
+- **Risk:** A rule that exists only as prose drifts between its restatements, and the drift is invisible.
+- **Affected files:** `src/packages/core-domain/src/domain/authority-policy.ts`.
+- **Component:** `Core Domain` · **Dimension:** Governance · **Type:** backend
+- **Criticality:** P0 · **Complexity:** M
+- **Proposed fix:** Encode the boundary as a typed decision function with stable rule ids and ADR clause references, and encode the ADR-0097 promotion lifecycle as data rather than describing it again.
+- **Acceptance criteria:**
+  - [x] `evaluateAuthority()` returns a typed decision carrying a quotable reason, a stable rule id (`AP-R01`..`AP-R06`) and the ADR clause it derives from. _(commit `e1f4901a`)_
+  - [x] `ActorKind` (`agent|engine|ci|human|custodian|board`) separates assertive actions — `observe`, `recommend`, `attach-evidence`, `draft-candidate` — from authoritative ones — `accept`, `promote`, `ratify`, `waive`, `enforce`. _(commit `e1f4901a`)_
+  - [x] The ADR-0097 lifecycle is encoded as data (`PROMOTION_SEQUENCE`, `PROMOTION_AUTHORITY`, `isValidPromotion`), and promotion is checked as two separate questions — is the move legal (AP-R04) and is this the actor who may make it (AP-R05) — so a reviewer can tell "wrong stage" from "wrong person"; AP-R03 (self-authorization) is ordered ahead of AP-R02 (actor is not human) deliberately. _(commit `e1f4901a`)_
+  - [x] 34 new tests cover the rules and their ordering. _(`npx jest` in core-domain: 106 suites / 1145 tests passing)_
+- **Dependencies:** Recorded in [ADR-0116](../../architecture/adrs/core/0116-canonical-finding-and-authority-boundary.md); ADR-0097 supplies the promotion lifecycle encoded here.
+- **Closure (2026-07-18, commit `e1f4901a`):** The boundary is executable and recorded in ADR-0116. _Deliberately not encoded:_ human self-review (no ADR bars it); which office may ratify, waive or enforce (deferred to `domain/rbac`); and KI-R03's evidence gate (stays in `knowledge-intake.rego`). _Follow-up noted:_ `PromotionStatus` is now declared both here and in `agent-runtime/src/application/automation-candidate.ts:25`.
+- **Status:** `DONE`

@@ -7825,6 +7825,85 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Both halves of the original framing were misaligned with the codebase. The secret store was substantially already wired (K8s Secrets by name via secretKeyRef across all three charts); what was genuinely missing was documentation, now consolidated bilingually. The DB half is NOT APPLICABLE to the Core: ADR-0101 makes it a stateless evaluation engine (EvaluationContext -> EvaluationResult, no persisted entities), so there is no DATABASE_URL to configure and adding one would contradict the ADR — persistence lives in the Tracker (own Postgres, tracker_governance), a separate repository whose board owns any DB-connectivity work. Remaining is owner-gated and not code: provisioning the real secret VALUES on the VPS/cluster, the same blocker already tracked by GT-324 and GT-437."
+    },
+    {
+      "id": "GT-556",
+      "closedAt": "2026-07-18",
+      "closureCommit": "83539a29",
+      "evidence": [
+        ".harness/scripts/lib/paths.mjs",
+        ".harness/scripts/lib/paths.test.mjs",
+        ".harness/scripts/ci/30-validate-phase-topology-disjoint.mjs",
+        ".harness/scripts/ci/34-check-skill-registry-parity.mjs"
+      ],
+      "validationCommands": [
+        "Measured divergence before the fix: `30-validate-phase-topology-disjoint` reported 8 topology ids from the repo root and 5 from `src/`, exiting 0 both times -- the same guard and commit giving two different answers with no failure either way.",
+        "Root derivation no longer depends on the invocation directory: `.harness/scripts/lib/paths.mjs` ascends until `package.json`, `.harness` and `evolith.yaml` are present TOGETHER, rather than starting from `process.cwd()`.",
+        "Fail-closed resolution: `resolve()` throws when the target does not exist, with `optional()` as the explicit escape hatch; `PATH_KEYS` exports the ~45 named locations, and a shared `collectFiles()` replaces five hand-rolled directory walkers.",
+        "Six dead path literals repaired: rulesets/topologies -> src/rulesets/topologies; reference/products -> product/products; reference/knowledge/demo/examples -> product/research/demo/examples; reference/infrastructure/helm -> product/infra/helm; reference/navigation -> root MASTER_INDEX.md / control-center/taxonomy; reference/core/sdlc/standards/vision -> split across control-center/{gaps,evidence,maturity-reports}.",
+        "15 scripts migrated (06, 09, 11, 12, 19, 21, 22, 25, 27, 29, 30, 31, 32, 33, 34-check-skill-registry-parity), each verified to produce identical output from the repo root, from `src/` and from `/tmp`; script 30 now reports \"5 SDLC phase ids disjoint from 8 topology ids\" from all three.",
+        "node --test .harness/scripts/lib/paths.test.mjs .harness/scripts/lib/coverage.test.mjs -- 28 passing."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "The gap has no dependencies. The defect and its fix are contained in the harness: path resolution moved off `process.cwd()` onto marker ascent and became fail-closed, and the 15 dependent guards were migrated in the same commit, so no other gap had to land first and none is left waiting."
+    },
+    {
+      "id": "GT-557",
+      "closedAt": "2026-07-18",
+      "closureCommit": "83539a29",
+      "evidence": [
+        ".harness/scripts/lib/coverage.mjs",
+        ".harness/scripts/lib/coverage.test.mjs",
+        ".harness/scripts/ci/31-detect-duplicate-rulesets.mjs",
+        ".harness/scripts/ci/32-validate-ruleset-schemas.mjs"
+      ],
+      "validationCommands": [
+        "Seven false greens confirmed. The decisive pair: `31-detect-duplicate-rulesets` and `32-validate-ruleset-schemas` scanned `rulesets/`, a directory that EXISTS but contains only `agents/`, so zero `.rules.json` matched while the real corpus of 145 rulesets sits in `src/rulesets`. `existsSync` passed, the path was live, and the answer was still fabricated -- which is why the guardrail asserts on items scanned rather than on path validity.",
+        "Corpus measurement: `find src/rulesets -name \"*.rules.json\" | wc -l` -> 145; the same command against `rulesets/` -> 0.",
+        "Other instances: `12-validate-bmad-signatures` printed its success line because `if (existsSync(adrDir))` skipped the whole loop; `11-validate-product-docs` read the wrong package.json so `pkg.version` was always undefined and its version-drift assertion could never fire (its SHIPPED list also named `evolith-cli` where the real directory is `smart-cli`); `33-check-adapter-freshness`'s barrel check never fired; `27-opa-parity-gate` evaluated 26 fixtures from /tmp and 0 from the repo root, exit 0 both times, because `git diff` inherited the cwd and the `catch` silently promoted the run to FULL scope.",
+        "Fix verified in `.harness/scripts/lib/coverage.mjs`: `assertScanned` throws on zero items; `assertScannedPerSource` stops a live root masking a dead one; `allowEmpty` requires a written `reason` at the call site and is deliberately NOT settable from an environment variable or a configuration file.",
+        "node --test .harness/scripts/lib/paths.test.mjs .harness/scripts/lib/coverage.test.mjs -- 28 passing, including three cwd-independence proofs: chdir invariance, a real subprocess launched from three directories, and a corpus-size test pinning the 8-vs-5 regression."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "The gap has no dependencies. The guardrail is a self-contained library plus its call sites, landed in the same commit as the path work it pairs with (GT-556); nothing external had to be provisioned or decided for the assertion to become effective."
+    },
+    {
+      "id": "GT-558",
+      "closedAt": "2026-07-18",
+      "closureCommit": "30013b07",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/contracts/finding.ts",
+        "src/packages/core-domain/src/evaluation/sarif-exporter.ts",
+        "reference/core/architecture/adrs/core/0116-canonical-finding-and-authority-boundary.md",
+        "reference/core/architecture/adrs/core/0116-canonical-finding-and-authority-boundary.es.md"
+      ],
+      "validationCommands": [
+        "Duplication measured before the fix: six coexisting models -- EvidenceFinding, RiskFinding, GapFinding, GateViolation, ValidationIssue, Violation -- whose true intersection is `message` plus some notion of severity. Five carry no provenance; none carries determinism.",
+        "Fork confirmed in `src/packages/sdk-client/src/mcp/types.ts`: the SDK `GateViolation` widened severity and replaced the REQUIRED `location` with an optional `artifact?`; the SDK `ValidationIssue` degraded to `severity: string`, losing the MUST|SHOULD|COULD constraint. Neither is assignable to its domain counterpart in either direction.",
+        "The change is strictly additive: `src/packages/core-domain/src/evaluation/contracts/finding.ts` adds the canonical `Finding` plus pure mappers from all six shapes without modifying any existing interface or call site. `FindingOrigin` is a required second argument on every mapper, so an unattributed finding is a compile error. Severity reconciles to info|low|medium|high|critical, with `error` mapping to `high` and deliberately NOT to `critical`; the producer's verbatim token is retained in `sourceSeverity` because interpretive projections are non-reversible. `advisory: true` is a literal type.",
+        "A seventh duplication was surfaced by the compiler when wiring the barrel: `sarif-exporter.ts` carried its own `parseFindingLocation`. The two are NOT equivalent -- SARIF treats any string as a file uri, while the canonical one distinguishes a parseable `path` from an opaque `ref` and excludes URLs -- so the SARIF-internal one was renamed `parseSarifLocation` instead of being merged. Recorded in ADR-0116.",
+        "npx tsc --noEmit clean in core-domain; npx jest -- 106 suites / 1145 tests passing, including 38 new tests for the contract and its mappers."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "The gap has no dependencies: the contract is strictly additive, so it needed no migration to land and blocked nothing. One follow-up is recorded rather than resolved here -- the two sdk-client forks are unretired, because removing them is a breaking change on a published surface and needs a semver decision, which is out of scope for an additive contract."
+    },
+    {
+      "id": "GT-559",
+      "closedAt": "2026-07-18",
+      "closureCommit": "e1f4901a",
+      "evidence": [
+        "src/packages/core-domain/src/domain/authority-policy.ts",
+        "reference/core/architecture/adrs/core/0116-canonical-finding-and-authority-boundary.md",
+        "reference/core/architecture/adrs/core/0116-canonical-finding-and-authority-boundary.es.md"
+      ],
+      "validationCommands": [
+        "Problem measured before the fix: the advisory-authority boundary was prose re-encoded across 60 files (\"binding: false\", \"advisory\", \"non-binding\", \"recommends but does not decide\"), so there was nothing to cite in review and nothing that could detect a violation.",
+        "`evaluateAuthority()` in src/packages/core-domain/src/domain/authority-policy.ts returns a typed decision carrying a quotable reason, a stable rule id (AP-R01..AP-R06) and the ADR clause it derives from. `ActorKind` = agent|engine|ci|human|custodian|board, separating assertive actions (observe, recommend, attach-evidence, draft-candidate) from authoritative ones (accept, promote, ratify, waive, enforce).",
+        "The ADR-0097 lifecycle is encoded as data (PROMOTION_SEQUENCE, PROMOTION_AUTHORITY, isValidPromotion), and promotion is checked as two separate questions -- is the move legal (AP-R04), is this the actor who may make it (AP-R05) -- so a reviewer can tell \"wrong stage\" from \"wrong person\". AP-R03 (self-authorization) is ordered ahead of AP-R02 (actor is not human) deliberately.",
+        "npx tsc --noEmit clean in core-domain; npx jest -- 106 suites / 1145 tests passing, including 34 new tests covering the rules and their ordering."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "The gap has no dependencies. Three areas are deliberately NOT encoded and are recorded as scope boundaries rather than blockers: human self-review (no ADR bars it, so there is no rule to encode), which office may ratify/waive/enforce (deferred to domain/rbac), and KI-R03's evidence gate (stays in knowledge-intake.rego). One follow-up is noted: PromotionStatus is now declared both here and in agent-runtime/src/application/automation-candidate.ts:25."
     }
   ]
 }

@@ -777,8 +777,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Habilitar el `/metrics` de OPA (contadores de decisión + error, latencia de eval), añadir un job de scrape y exponerlo en el dashboard Governance Health (GT-544).
 - **Acceptance criteria:**
-  - [ ] `opa_evaluation_errors_total` (y métricas de decisión/latencia) se scrapean y son visibles.
-  - [ ] La alerta `OpaEvaluationFailure` evalúa contra una serie real.
+  - [~] Las métricas reales de OPA están expuestas y hay un job de scrape configurado. _(**La premisa del enunciado original era falsa**: `opa_evaluation_errors_total` no existe — verificado empíricamente contra el binario pinneado, OPA emite SOLO `go_*`, `process_*` y `http_request_duration_seconds{code,handler,method}`, cero series `opa_*`. Entregado: el Service de `evolith-mcp` publica el 8181 del sidecar como `opa-metrics` (antes pod-local/inalcanzable) y existe un job `opa`. **La visibilidad viva en cluster es deploy-gated** — requiere un cluster corriendo.)_
+  - [x] La alerta `OpaEvaluationFailure` evalúa contra una serie real. _(Reapuntada a `rate(http_request_duration_seconds_count{job="opa",handler=~"v1/data.*",code=~"5.."}[5m]) > 0` — 5xx en el handler de decisión de OPA — scopeada a `job="opa"` para que jamás matchee nuestras `evolith_http_*`. Selector verificado contra series vivas: `handler="v1/data"` se emite y `code` sigue el status HTTP (200/400 observados), así que `code=~"5.."` matchea fallos reales.)_
 - **Dependencies:** GT-544; GT-545.
 - **Status:** `PENDING`
 

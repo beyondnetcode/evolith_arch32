@@ -92,6 +92,7 @@
 * [0113-nodejs-lighthouse-evidence-adapter](./0113-nodejs-lighthouse-evidence-adapter.es.md) — **Plataforma Node.js — Lighthouse (Apache-2.0) como adaptador de evidencia de referencia detrás del puerto de Proveedores de Señales de Calidad; opcional, importado dinámicamente, determinista**
 * [0115-emergent-knowledge-axis](./0115-emergent-knowledge-axis.es.md) — **Eje de conocimiento emergente: conocimiento originado al APLICAR el estándar (`KO-*`), distinto de la captación externa (`KI-*`); los agentes solo pueden redactar en `candidate`**
 * [0116-canonical-finding-and-authority-boundary](./0116-canonical-finding-and-authority-boundary.es.md) — **Contrato canónico `Finding` (procedencia/determinismo obligatorios, `advisory: true`) y una frontera de autoridad consultiva ejecutable (`evaluateAuthority`, AP-R01..R06)**
+* [0117-bilingual-parity-scope-authored-sources](./0117-bilingual-parity-scope-authored-sources.es.md) — **La paridad bilingüe aplica a fuentes AUTORADAS, nunca a proyecciones generadas; los árboles generados heredan la paridad de sus fuentes, exclusiones declaradas en código con generador + razón**
 
 ---
 [Volver al Nivel Superior](../README.es.md)

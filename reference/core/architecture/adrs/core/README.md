@@ -92,6 +92,7 @@
 * [0113-nodejs-lighthouse-evidence-adapter](./0113-nodejs-lighthouse-evidence-adapter.md) — **Node.js Platform — Lighthouse (Apache-2.0) as the reference evidence adapter behind the Quality Signal Provider port; optional, dynamically imported, deterministic**
 * [0115-emergent-knowledge-axis](./0115-emergent-knowledge-axis.md) — **Emergent knowledge axis: knowledge originated by APPLYING the standard (`KO-*`), distinct from external intake (`KI-*`); agents may draft at `candidate` only**
 * [0116-canonical-finding-and-authority-boundary](./0116-canonical-finding-and-authority-boundary.md) — **Canonical `Finding` contract (mandatory provenance/determinism, `advisory: true`) and an executable advisory-authority boundary (`evaluateAuthority`, AP-R01..R06)**
+* [0117-bilingual-parity-scope-authored-sources](./0117-bilingual-parity-scope-authored-sources.md) — **Bilingual parity applies to AUTHORED sources, never to generated projections; generated trees inherit their sources' parity, exclusions declared in source with generator + reason**
 
 ---
 [Back to Upper Level](../README.md)

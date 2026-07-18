@@ -26,8 +26,12 @@ function getOpaUrl() {
     throw new Error(`Unsupported platform: ${osPlatform}`);
   }
 
+  // Always the STATIC build. The service Dockerfiles are node:20-alpine (musl), and a
+  // glibc-linked OPA there fails as `/bin/sh: .../opa: not found` — which is exactly why
+  // every docker-services build broke once the tests stopped short-circuiting them.
+  // arm64 already used _static; x64 was left dynamic. Static works on glibc AND musl.
   if (osArch === 'x64') {
-    opaArch = 'amd64';
+    opaArch = 'amd64_static';
   } else if (osArch === 'arm64') {
     opaArch = 'arm64_static';
   } else {

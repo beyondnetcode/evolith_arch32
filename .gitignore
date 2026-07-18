@@ -175,3 +175,7 @@ reference/knowledge/derived/
 # Evolith CLI runtime state — must never be tracked (GT audit hygiene #25/#30)
 .evolith/
 /src/sdk/cli/evolith.yaml
+
+# RAG index receipts — build artifacts emitted by the sync/backfill scripts
+rag-sync-receipt.json
+rag-backfill-receipt.json

@@ -12,7 +12,7 @@ function walk(directory) {
     else if (entry.name === 'topology.manifest.json') manifests.push(target);
   }
 }
-walk(path.join(root, 'reference', 'architecture', 'topologies'));
+walk(path.join(root, 'reference', 'core', 'architecture', 'topologies'));
 const opa = await ensureOpa(root);
 const results = [];
 for (const manifestPath of manifests.sort()) {

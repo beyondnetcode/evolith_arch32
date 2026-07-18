@@ -20,6 +20,7 @@ Formal proposals raised to the Evolith Core Architecture Board — typically ori
 |---|---|:---:|:---:|:---:|:---:|
 | [`UP-001`](./UP-001-canonical-gap-tracking-standard.md) | **Canonical Gap-Tracking Standard for All Satellites.** One model, schema, vocabulary, and closure flow for the gaps of any Evolith repository (Core or satellite), operable through all three Core surfaces (CLI, MCP, Core-API). | `Governance` | P0 | XL | `PROPOSED` |
 | [`UP-002`](./UP-002-product-initiative-governance-model.md) | **Product/Initiative Governance Model.** Separate SDLC governance from operational execution; product/tenant/initiative become `EvaluationContext` only (ADR-0100 · ADR-0101), the Core stays a stateless evaluator. | `Governance` | P0 | XL | `PROPOSED` |
+| [`UP-003`](./UP-003-user-contribution-intake-mechanism.md) | **User Contribution Intake.** A traceable path from any Evolith interface (CLI/MCP/REST) to the release that ships the change. No interface exposes feedback/proposal capability today; the traceability chain stops at the commit SHA, recording neither the originator, the issue, the pull request nor the release. Fuses the existing `Waiver` lifecycle with the `UP-NNN` governance metadata into a `Proposal` aggregate; Winston classifies advisory-only, humans decide. | `Governance` | P1 | L | `PROPOSED` |
 
 ---
 

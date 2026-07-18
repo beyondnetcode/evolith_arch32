@@ -12,6 +12,7 @@ Proposals submitted by satellite repositories requesting Core to standardize, ex
 |---|---|---|---|---|
 | [UP-001](../../control-center/opportunities/UP-001-canonical-gap-tracking-standard.md) | Canonical Gap-Tracking Standard for All Satellites | Evolith Tracker | `PROPOSED` | 2026-06-28 |
 | [UP-002](../../control-center/opportunities/UP-002-product-initiative-governance-model.md) | Product/Initiative Governance Model — Separating SDLC Governance from Operational Execution | Architecture Board (Core redesign) | `PROPOSED` | 2026-06-28 |
+| [UP-003](../../control-center/opportunities/UP-003-user-contribution-intake-mechanism.md) | User Contribution Intake: from Interface to Release | Evolith Architecture Board | `PROPOSED` | 2026-07-18 |
 
 ## Architecture Decision Records
 

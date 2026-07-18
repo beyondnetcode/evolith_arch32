@@ -21,7 +21,8 @@
   "devDependencies": {
     "@types/opossum": "8.1.9",
     "husky": "9.1.7",
-    "jest": "30.4.2"
+    "jest": "30.4.2",
+    "pg": "8.16.3"
   },
   "overrides": {
     "multer": "2.2.0",

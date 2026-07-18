@@ -6,15 +6,22 @@ concurrency:
 
 on:
   push:
+    # Branch pushes run validation only. A release is driven by an annotated
+    # v* tag (or workflow_dispatch below) — see the release-gate job.
     branches:
       - main
     paths:
       - 'src/sdk/cli/**'
-      - '.release-please-manifest.json'
-      - 'release-please-config.json'
       - '.github/workflows/sdk-cli-release.yml'
       - '.harness/**'
+    tags:
+      - 'v*'
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Tag to release, e.g. v1.1.0. Leave empty to run validation only.'
+        required: false
+        default: ''
 
 env:
   NODE_VERSION: '20'
@@ -60,46 +67,48 @@ jobs:
   # ============================================
   # GATE 1: Release Please
   # ============================================
-  release-please:
+  # GT-552: this job used to run release-please against release-please-config.json
+  # and .release-please-manifest.json — both DELETED in aed33ba9 ("versioning
+  # managed manually"). release_created could therefore never be true, so every
+  # job below was unreachable and the failure-notification issue was dead code.
+  # Versioning is manual in this repo (the 1.1.0 set was published by hand), so
+  # the gate now derives the release from an explicit v* tag or a dispatch input.
+  release-gate:
     needs: core-validation
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     outputs:
-      release_created: ${{ steps.release.outputs.cli_release_created }}
-      tag_name: ${{ steps.release.outputs.cli_tag_name }}
-      version: ${{ steps.release.outputs.cli_version }}
+      release_created: ${{ steps.gate.outputs.release_created }}
+      tag_name: ${{ steps.gate.outputs.tag_name }}
+      version: ${{ steps.gate.outputs.version }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Run Release Please
-        id: release
-        uses: googleapis/release-please-action@v4
-        with:
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-          release-type: node
-          config-file: release-please-config.json
-          manifest-file: .release-please-manifest.json
-
-      - name: Log Release Decision
-        if: ${{ steps.release.outputs.cli_release_created }}
+      - name: Resolve release intent
+        id: gate
+        env:
+          DISPATCH_TAG: ${{ github.event.inputs.release_tag }}
         run: |
-          echo "Release created: ${{ steps.release.outputs.cli_tag_name }}"
-          echo "Version: ${{ steps.release.outputs.cli_version }}"
+          TAG=""
+          if [ -n "$DISPATCH_TAG" ]; then
+            TAG="$DISPATCH_TAG"
+          elif case "$GITHUB_REF" in refs/tags/v*) true ;; *) false ;; esac; then
+            TAG="${GITHUB_REF#refs/tags/}"
+          fi
 
-      - name: No Release Needed
-        if: ${{ !steps.release.outputs.cli_release_created }}
-        run: |
-          echo "ℹ️ No release needed (no changes detected)"
+          if [ -n "$TAG" ]; then
+            echo "release_created=true" >> "$GITHUB_OUTPUT"
+            echo "tag_name=$TAG" >> "$GITHUB_OUTPUT"
+            echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+            echo "Release requested: $TAG (version ${TAG#v})"
+          else
+            echo "release_created=" >> "$GITHUB_OUTPUT"
+            echo "No release requested for $GITHUB_REF — validation only."
+          fi
 
   # ============================================
   # GATE 2: Build and Test
   # ============================================
   build-and-test:
-    needs: release-please
-    if: ${{ needs.release-please.outputs.release_created }}
+    needs: release-gate
+    if: ${{ needs.release-gate.outputs.release_created }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -184,7 +193,7 @@ jobs:
 
       - name: Confirm Publication
         run: |
-          echo "✅ Published @beyondnet/evolith-cli@${{ needs.release-please.outputs.version }} to NPM"
+          echo "✅ Published @beyondnet/evolith-cli@${{ needs.release-gate.outputs.version }} to NPM"
 
   # ============================================
   # GATE 4: Package Binaries
@@ -249,7 +258,7 @@ jobs:
   # GATE 5: Binary Smoke Test
   # ============================================
   smoke-test:
-    needs: [package-binaries, release-please]
+    needs: [package-binaries, release-gate]
     strategy:
       fail-fast: true
       matrix:
@@ -292,7 +301,7 @@ jobs:
   # GATE 5b: Functional + NPM Smoke (Linux)
   # ============================================
   smoke-test-functional:
-    needs: [package-binaries, release-please]
+    needs: [package-binaries, release-gate]
     runs-on: ubuntu-latest
     steps:
       - name: Download Binary
@@ -318,7 +327,7 @@ jobs:
       - name: Smoke Test - NPM Package
         shell: bash
         run: |
-          npm install -g @beyondnet/evolith-cli@${{ needs.release-please.outputs.version }}
+          npm install -g @beyondnet/evolith-cli@${{ needs.release-gate.outputs.version }}
           evolith-cli --help || { echo "❌ NPM binary failed to execute"; exit 1; }
           echo "✅ NPM package smoke test completed"
 
@@ -352,12 +361,12 @@ jobs:
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ needs.release-please.outputs.tag_name }}
-          name: Release ${{ needs.release-please.outputs.tag_name }}
+          tag_name: ${{ needs.release-gate.outputs.tag_name }}
+          name: Release ${{ needs.release-gate.outputs.tag_name }}
           body: |
             ## Release Summary
 
-            **Version:** `${{ needs.release-please.outputs.version }}`
+            **Version:** `${{ needs.release-gate.outputs.version }}`
 
             ### ✅ Quality Gates Passed
             - [x] Core Validation (docs, bilingual, cleanliness)
@@ -390,13 +399,13 @@ jobs:
 
       - name: Confirm Release
         run: |
-          echo "✅ Release ${{ needs.release-please.outputs.tag_name }} published with all assets"
+          echo "✅ Release ${{ needs.release-gate.outputs.tag_name }} published with all assets"
 
   # ============================================
   # Cleanup on Failure
   # ============================================
   failure-notification:
-    needs: [release-please, publish-npm, package-binaries, smoke-test, smoke-test-functional, upload-assets]
+    needs: [release-gate, publish-npm, package-binaries, smoke-test, smoke-test-functional, upload-assets]
     if: failure()
     runs-on: ubuntu-latest
     permissions:
@@ -412,7 +421,7 @@ jobs:
       # Only file a tracking issue when a real release was attempted and failed —
       # not on routine pushes where no release was created (avoids issue spam).
       - name: Create Issue on Failure
-        if: ${{ github.event_name == 'push' && needs.release-please.outputs.release_created == 'true' }}
+        if: ${{ github.event_name == 'push' && needs.release-gate.outputs.release_created == 'true' }}
         uses: actions/github-script@v9
         with:
           script: |
@@ -421,7 +430,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: '❌ Release Pipeline Failed',
-                body: `Release pipeline failed for tag ${{ needs.release-please.outputs.tag_name || 'unknown' }}
+                body: `Release pipeline failed for tag ${{ needs.release-gate.outputs.tag_name || 'unknown' }}
 
                 Please check the workflow logs and fix the issue.
 

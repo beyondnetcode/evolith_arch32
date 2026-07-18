@@ -126,6 +126,48 @@ test('a hand-authored unpaired document under a non-excluded reference/ path FAI
   }
 });
 
+// The OKF bundle used to be count-pinned: its projector stamped nothing, so the only
+// available proof was "the inventory is exactly 15 files" — which a hand-written file can
+// satisfy just by displacing a generated one. The projector now stamps every document, so
+// the entry is marker-verified like the others. These two tests are what keep it that way.
+
+test('the OKF bundle exclusion is marker-verified, not count-pinned', () => {
+  const okf = GENERATED_DOC_EXCLUSIONS.find((e) => e.id === 'knowledge-okf-bundle');
+  assert.ok(okf, 'the knowledge-okf-bundle entry must exist');
+  assert.equal(typeof okf.marker, 'string', 'membership must be proven per file, not by inventory count');
+  assert.equal(okf.expectedFiles, undefined, 'a marker-verified entry must not also pin a count');
+
+  const dir = path.join(REPO_ROOT, 'reference/knowledge/okf');
+  const walk = (d) =>
+    fs.readdirSync(d, { withFileTypes: true }).flatMap((e) =>
+      e.isDirectory() ? walk(path.join(d, e.name)) : e.name.endsWith('.md') ? [path.join(d, e.name)] : [],
+    );
+  const files = walk(dir);
+  assert.ok(files.length > 0, 'the published bundle must be on disk');
+  for (const f of files) {
+    assert.ok(
+      fs.readFileSync(f, 'utf8').includes(okf.marker),
+      `${path.relative(REPO_ROOT, f)} lacks the projector's provenance banner — regenerate the bundle`,
+    );
+  }
+});
+
+test('an unstamped file dropped into the OKF bundle FAILS the guard instead of inheriting its exemption', () => {
+  const probe = path.join(REPO_ROOT, 'reference/knowledge/okf', `zz-parity-probe-${process.pid}.md`);
+  // Deliberately OKF-shaped: valid frontmatter, plausible location. Only the banner is missing.
+  fs.writeFileSync(probe, '---\ntype: Concept\ntitle: Sneaked in\n---\n\n# Sneaked in\n\nHand-authored.\n');
+  try {
+    const { code, out } = runGuard();
+    assert.equal(code, 1, 'a file without the projector banner must not be exempt');
+    assert.match(out, new RegExp(path.basename(probe)), 'the guard must NAME the offending file');
+    assert.match(out, /\[knowledge-okf-bundle\][\s\S]*do NOT carry the marker/);
+    // And the real bundle keeps its exemption — one intruder must not nuke the whole entry.
+    assert.match(out, /knowledge-okf-bundle: \d+ file\(s\)/);
+  } finally {
+    fs.rmSync(probe, { force: true });
+  }
+});
+
 test('an unstamped file dropped into a generated tree FAILS the guard rather than inheriting its exemption', () => {
   const probe = path.join(REPO_ROOT, 'reference/wiki', `zz-parity-probe-${process.pid}.md`);
   fs.writeFileSync(probe, '# Sneaked in\n\nNo generator banner. Must not be exempt.\n');

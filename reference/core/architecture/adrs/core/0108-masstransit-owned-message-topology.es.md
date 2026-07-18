@@ -86,7 +86,7 @@ el Topology Operator se usa **solo** para el RBAC del broker que MassTransit no 
 ## Referencias
 - ADR-0106 (proyecciones de contexto tenant maestro) · ADR-0107 (topología de cluster único) ·
   ADR-0033 (outbox transaccional) · ADR-0050 (naming de mensajería).
-- Estrategia de despliegue [§5](../../../../product/suite/architecture/evolith-suite-deployment-strategy.es.md) (correcciones de mensajería verificadas).
+- Estrategia de despliegue [§5](../../../../../product/suite/architecture/evolith-suite-deployment-strategy.es.md) (correcciones de mensajería verificadas).
 - Flujo canónico: `mms/docs/architecture/tenant-master-data-projection.md`.
 - Gap: board de Core **GT-462**; registro de riesgos §15 #2/#3.
 - Manifiesto: `deploy/kubernetes/messaging/broker-rbac.yaml`.

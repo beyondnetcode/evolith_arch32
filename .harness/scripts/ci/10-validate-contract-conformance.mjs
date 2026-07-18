@@ -26,9 +26,13 @@ export function validateManifest(manifest, root = ROOT) {
     if (!/^\d+\.\d+\.\d+$/.test(schema.version || '')) errors.push(`Invalid schema version: ${schema.id}`);
   }
 
-  const cliPackage = JSON.parse(fs.readFileSync(path.join(root, 'sdk/cli/package.json'), 'utf8'));
+  // GT-563: this path missed the `src/` prefix in the src/ refactor (MANIFEST above was
+  // migrated, this one was not), so readFileSync threw ENOENT and the script crashed before
+  // reporting anything. Because the calling job was gated to workflow_dispatch and skipped,
+  // that crash was never surfaced: this check has not actually validated since the refactor.
+  const cliPackage = JSON.parse(fs.readFileSync(path.join(root, 'src/sdk/cli/package.json'), 'utf8'));
   if (manifest.producer?.package !== cliPackage.name || manifest.producer?.version !== cliPackage.version) {
-    errors.push('Producer declaration does not match sdk/cli/package.json');
+    errors.push('Producer declaration does not match src/sdk/cli/package.json');
   }
   return errors;
 }

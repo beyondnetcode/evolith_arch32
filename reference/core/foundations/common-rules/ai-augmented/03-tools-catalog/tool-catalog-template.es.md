@@ -30,5 +30,7 @@ Explique brevemente **por qué** existe esta herramienta y en qué escenario deb
  "reason": "CUSTOMER_REQUEST"
  }
 }
-```---
+```
+
+---
 [Volver al índice](./README.md)

@@ -18,11 +18,36 @@ const ignoredDirectories = new Set([
 ]);
 
 // Paths (relative to root) whose markdown files are excluded from link validation.
-// packages/core-domain/rulesets is a bundled copy of rulesets/ for npm packaging;
-// its READMEs contain monorepo-relative links that are intentionally broken in that location.
-const ignoredPaths = new Set([
-  path.join(root, "packages", "core-domain", "rulesets"),
-]);
+//
+// GT-563: this used to be a hand-maintained list naming `packages/core-domain/rulesets`
+// -- a bundled copy of rulesets/ for npm packaging, whose READMEs carry monorepo-relative
+// links that are intentionally broken once copied to a deeper directory. That path has
+// not existed since the `src/` refactor (the bundling moved to src/sdk/cli/rulesets via
+// copy-rulesets.js), so the exemption silently stopped applying and the validator began
+// reporting ~97 "broken links" against generated build output.
+//
+// The exemption is now derived from git rather than hardcoded, so it tracks build output
+// by construction and cannot go stale on the next move. This narrows the validator to
+// AUTHORED sources -- the same source-not-projection principle as ADR-0117. It cannot mask
+// a real defect: anything git tracks is still validated.
+function listGitIgnoredFiles() {
+  const result = spawnSync(
+    "git",
+    ["ls-files", "--others", "--ignored", "--exclude-standard", "-z"],
+    { cwd: root, encoding: "buffer", maxBuffer: 64 * 1024 * 1024 },
+  );
+  if (result.status !== 0 || !result.stdout) return new Set();
+  return new Set(
+    result.stdout
+      .toString("utf8")
+      .split("\0")
+      .filter(Boolean)
+      .map((relative) => path.join(root, relative)),
+  );
+}
+
+const gitIgnoredFiles = listGitIgnoredFiles();
+const ignoredPaths = new Set();
 
 const markdownFiles = [];
 const mermaidBlocks = [];
@@ -40,7 +65,10 @@ function walk(directory) {
     }
 
     if (entry.isFile() && entry.name.endsWith(".md")) {
-      markdownFiles.push(path.join(directory, entry.name));
+      const filePath = path.join(directory, entry.name);
+      // Generated/bundled output is not an authored source (see note above).
+      if (gitIgnoredFiles.has(filePath)) continue;
+      markdownFiles.push(filePath);
     }
   }
 }
@@ -65,8 +93,18 @@ function stripCodeBlocks(content) {
   // Blank out fenced code blocks AND inline code spans (preserving line/column
   // positions) so prose-corruption checks (??, mojibake, emoji) do not flag
   // legitimate code — e.g. JS nullish-coalescing `a ?? b` inside backticks.
+  // GT-563: the fence pattern used to be /```[\s\S]*?```/g, unanchored, so a triple
+  // backtick written INLINE as prose (e.g. the cell "el bloque ` ```mermaid ` con la
+  // directiva classDiagram" in reference/core/interfaces/using-the-cli.md:457) counted
+  // as a real delimiter. That shifts fence pairing by one for the rest of the file, and
+  // from there the matcher blanks the PROSE BETWEEN blocks instead of the blocks --
+  // silently exempting it from the emoji/mojibake/?? checks. Real emoji violations were
+  // hidden this way (that same file carries coloured severity circles at line 764).
+  //
+  // Fences are now anchored to line starts (with the m flag), which is where Markdown
+  // requires them, so inline backticks can no longer desynchronize the pairing.
   return content
-    .replace(/```[\s\S]*?```/g, (match) => match.replace(/[^\r\n]/g, " "))
+    .replace(/^ {0,3}```[^\n]*\n[\s\S]*?^ {0,3}```[^\n]*$/gm, (match) => match.replace(/[^\r\n]/g, " "))
     .replace(/`[^`\r\n]+`/g, (match) => match.replace(/[^\r\n]/g, " "));
 }
 
@@ -123,7 +161,12 @@ function validateCharacters(file, content) {
     { pattern: /[\u{1F000}-\u{1FAFF}]/gu, message: "contains emoji or pictographic symbol", source: emojiScan },
     { pattern: /[\u2600-\u27BF]/gu, message: "contains emoji-like symbol", source: emojiScan },
     { pattern: /¡/g, message: "contains inverted exclamation marker; avoid decorative punctuation in standard Markdown" },
-    { pattern: /(?:ínico|ínica|íNICAMENTE|NINGíN|ípica|ípicas|íltima|íltimo|ípoca|írbol|ínfasis|ítil)/g, message: "contains corrupted Spanish mojibake word" },
+    // GT-563: this family detects a word-INITIAL accented vowel corrupted into "í"
+    // (única -> ínica, época -> ípoca, épica -> ípica, útil -> ítil, árbol -> írbol).
+    // Without a boundary it also matches these fragments INSIDE correctly-spelled words:
+    // "típicas"/"típicamente" contain "ípica(s)", and "clínica"/"clínico" contain "ínica"/"ínico".
+    // The lookbehind requires the "í" to start the word, so correct Spanish is no longer flagged.
+    { pattern: /(?<![A-Za-zÀ-ÖØ-öø-ÿ])(?:ínico|ínica|íNICAMENTE|NINGíN|ípica|ípicas|íltima|íltimo|ípoca|írbol|ínfasis|ítil)/g, message: "contains corrupted Spanish mojibake word" },
     { pattern: /TíCNICA/g, message: "contains corrupted uppercase accented text" },
     { pattern: /¡\s*(Proposed|Propuesto)/g, message: "contains corrupted status marker" },
     { pattern: /(?:â|ð|Ã|Â)/g, message: "contains likely mojibake character" },

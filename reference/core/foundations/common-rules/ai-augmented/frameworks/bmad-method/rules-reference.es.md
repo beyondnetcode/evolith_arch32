@@ -52,7 +52,9 @@ CORRECT: Modifying reference-blueprint.md → also modify reference-blueprint.es
          in the same PR with equivalent content changes.
 
 VIOLATION: Merging an EN ADR update without updating the ES counterpart.
-```**Notas de adaptación:** Si su equipo es monolingüe, el alcance de R-01 puede ser "las variantes de la documentación deben permanecer sincronizadas" (por ejemplo, resumen frente a versión completa, interna frente a externa). El principio subyacente (ninguna variante se vuelve obsoleta) sigue siendo válido.
+```
+
+**Notas de adaptación:** Si su equipo es monolingüe, el alcance de R-01 puede ser "las variantes de la documentación deben permanecer sincronizadas" (por ejemplo, resumen frente a versión completa, interna frente a externa). El principio subyacente (ninguna variante se vuelve obsoleta) sigue siendo válido.
 
 ---
 ### R-02 — Context Authority
@@ -70,7 +72,9 @@ CORRECT: @architect checks ADR-0030 (Kong gateway decision) before recommending
 
 VIOLATION: @architect recommends AWS API Gateway without checking whether
            ADR-0030 exists and is still active.
-```**Notas de adaptación:** Defina qué significa "contexto autorizado" en su repositorio. Podría ser: registro ADR, `DECISIONS.md`, documento de pila tecnológica aprobado o una combinación.
+```
+
+**Notas de adaptación:** Defina qué significa "contexto autorizado" en su repositorio. Podría ser: registro ADR, `DECISIONS.md`, documento de pila tecnológica aprobado o una combinación.
 
 ---
 ### R-03 — UTF-8 Clean
@@ -87,7 +91,9 @@ VIOLATION: @architect recommends AWS API Gateway without checking whether
 **Ejemplo de cumplimiento:**```
 VIOLATION: Using checkmark (U+2713) or cross-mark (U+274C) symbols in code examples.
 CORRECT:   Using text equivalents: // CORRECT, // WRONG, OK:, ERROR:
-```**Notas de adaptación:** Si su equipo utiliza una herramienta de validación de documentación diferente, asigne esta regla a cualquier verificación de codificación que realice su CI. La restricción clave es: los agentes de IA no deben introducir caracteres que no sean UTF-8 que rompan las herramientas posteriores.
+```
+
+**Notas de adaptación:** Si su equipo utiliza una herramienta de validación de documentación diferente, asigne esta regla a cualquier verificación de codificación que realice su CI. La restricción clave es: los agentes de IA no deben introducir caracteres que no sean UTF-8 que rompan las herramientas posteriores.
 
 ---
 ### R-04 — Label Language
@@ -200,7 +206,9 @@ VIOLATION: Auth diagram only shows the OAuth2 path, leaving internal
 | Document | Location | Issue Type | Severity | Recommended Fix |
 |---|---|---|---|---|
 | reference-blueprint.md | Section 5, Risk Table | Formatting — broken table | Medium | Collapse extra pipe into Description column |
-```**Niveles de gravedad:** Crítico, Alto, Medio, Bajo, Información
+```
+
+**Niveles de gravedad:** Crítico, Alto, Medio, Bajo, Información
 
 ---
 ### R-11 — Execution Order
@@ -354,6 +362,8 @@ La siguiente es una versión condensada de las 18 reglas adecuadas para pegar di
 | R-16 | Catalog Contract | Parametric entities: code + value + description minimum |
 | R-17 | Modular Extraction | Module boundaries must preserve future extraction readiness |
 | R-18 | Hybrid API | REST commands-first; query behavior consistent across REST+GraphQL |
-```---
+```
+
+---
 
 [Volver a la descripción general del MÉTODO BMAD](./README.md)

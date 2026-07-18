@@ -8,7 +8,8 @@ Se debe crear un servidor MCP corporativo cuando las capacidades comerciales esp
 
 ---
 ## Base Structure in Node.js (TypeScript)
-Usando el SDK oficial `@modelcontextprotocol/sdk`:```typescript
+Usando el SDK oficial `@modelcontextprotocol/sdk`:
+```typescript
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
@@ -65,7 +66,8 @@ await server.connect(transport);
 ---
 
 ## Equivalent Structure in .NET (C#)
-Emplear soporte MCP integrado en Semantic Kernel o el SDK oficial de .NET:```csharp
+Emplear soporte MCP integrado en Semantic Kernel o el SDK oficial de .NET:
+```csharp
 using Microsoft.ModelContextProtocol;
 
 var builder = WebApplication.CreateBuilder(args);

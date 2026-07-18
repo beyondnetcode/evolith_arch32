@@ -18,7 +18,8 @@ Si un agente comete un error sintáctico en el paso 1 y el arnés no advierte ha
 ## Technical Hook Examples
 
 ### Node.js / TypeScript (Husky + lint-staged)
-En entornos de Nodo, el arnés local debe configurarse para activar el autocorrector después de las ediciones:```json
+En entornos de Nodo, el arnés local debe configurarse para activar el autocorrector después de las ediciones:
+```json
 // .lintstagedrc
 {
  "*.ts": [
@@ -30,7 +31,8 @@ En entornos de Nodo, el arnés local debe configurarse para activar el autocorre
 ```
 
 ### Programmatic Hook (Agent SDK)
-Si está creando un agente personalizado, el patrón de validación se ve así:```typescript
+Si está creando un agente personalizado, el patrón de validación se ve así:
+```typescript
 async function onAfterFileEdit(filePath: string) {
  const { execSync } = require('child_process');
  try {

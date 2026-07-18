@@ -8,7 +8,7 @@ Evolith MCP Services expose Evolith Core governance as real-time context for LLM
 
 The MCP server turns the Core reference corpus, rulesets, and phase gates into governed **tools**, **resources**, and **prompts** that an agent can call to retrieve context, evaluate criteria, and submit evidence — under the same contracts as the CLI and REST surfaces. The server lives in [`packages/mcp-server`](../../../src/packages/mcp-server) and is started via the `evolith-mcp` binary; see its [README](../../../src/packages/mcp-server/README.md) for the full tool/resource/prompt reference, auth model, and deployment guide.
 
-> 📖 **User manual — [Using MCP](../../../reference/core/interfaces/using-the-mcp.md).** A readable, task-oriented guide to every one of the 47 `evolith-*` tools — inputs, the mutative-approval gate, and worked call/response examples. Part of the [Interface How-To hub](../../../reference/core/interfaces/README.md) (CLI · MCP · REST) with per-SDLC-phase catalogs and playbooks.
+> **User manual — [Using MCP](../../../reference/core/interfaces/using-the-mcp.md).** A readable, task-oriented guide to every one of the 47 `evolith-*` tools — inputs, the mutative-approval gate, and worked call/response examples. Part of the [Interface How-To hub](../../../reference/core/interfaces/README.md) (CLI · MCP · REST) with per-SDLC-phase catalogs and playbooks.
 
 ## Surface
 

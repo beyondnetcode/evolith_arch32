@@ -39,6 +39,16 @@ Objetivos de nivel de servicio para los servicios de la API principal de Evolith
 | < 10% | Congelación de cambios no críticos, revisión de incidentes obligatoria |
 | 0% | Congelación total, todo esfuerzo hacia mejora de confiabilidad |
 
+## Dimensión de tenant (GT-548)
+
+Las métricas de gobernanza (`evolith_gate_evaluations_total`, `evolith_agent_runs_total`)
+llevan una etiqueta `tenant` **acotada**. Solo los tenants listados en
+`EVOLITH_METRICS_TENANT_ALLOWLIST` (separados por comas, con tope duro de 100) obtienen su
+propia serie; cualquier otro tenant — y cualquiera sin definir — colapsa a `tenant="other"`.
+La cardinalidad queda por tanto acotada a `|allowlist| + 1`, de modo que los scorecards por
+tenant son derivables sin crecimiento ilimitado del TSDB. El panel "Gate evaluations /s by
+tenant" (dashboard Governance Health) filtra por la variable de plantilla `$tenant`.
+
 ## Integración con Alerting
 
 Las alertas se definen en `product/operations/alerts/prometheus-alerts.yml`. Alertas clave:

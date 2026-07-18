@@ -6,7 +6,7 @@ Bienvenido al Hub del Producto **Evolith Core API**. El Core API es el motor cen
 
 El Core API es la capa oficial de exposición REST del dominio Core de Evolith (`@beyondnet/evolith-core-domain`). Es el boundary de red que sirve el dominio sobre HTTP, junto a `@beyondnet/evolith-mcp` (protocolo MCP para agentes) y la Evolith CLI. Los consumidores externos —incluido el **Evolith Tracker**— se conectan a ella como cliente HTTP. **No** es el BFF del Tracker: el Application Gateway del Tracker (ADR-0075) vive en el repositorio `evolith_tracker` y consume esta API como cliente externo.
 
-> 📖 **Manual de uso — [Usando la API REST](../../../reference/core/interfaces/using-the-rest-api.md).** Guía legible y orientada a tareas de cada endpoint — ruta, body/params y ejemplos reales de request/response. Parte del [hub de How-To de interfaces](../../../reference/core/interfaces/README.md) (CLI · MCP · REST) con catálogos por fase SDLC y playbooks.
+> **Manual de uso — [Usando la API REST](../../../reference/core/interfaces/using-the-rest-api.md).** Guía legible y orientada a tareas de cada endpoint — ruta, body/params y ejemplos reales de request/response. Parte del [hub de How-To de interfaces](../../../reference/core/interfaces/README.md) (CLI · MCP · REST) con catálogos por fase SDLC y playbooks.
 
 ---
 

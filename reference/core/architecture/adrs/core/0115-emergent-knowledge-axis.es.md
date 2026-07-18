@@ -2,6 +2,8 @@
 
 > Navegación bilingüe: [English](./0115-emergent-knowledge-axis.md)
 
+> **Firma del Agente:** Agente Arquitecto (Winston)
+
 ## Estado
 
 Proposed

@@ -2,6 +2,8 @@
 
 > Bilingual navigation: [Español](./0115-emergent-knowledge-axis.es.md)
 
+> **Agent Signature:** Architect Agent (Winston)
+
 ## Status
 
 Proposed

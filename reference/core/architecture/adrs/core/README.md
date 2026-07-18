@@ -90,6 +90,7 @@
 * [0111-quality-signal-provider-port](./0111-quality-signal-provider-port.md) — **Quality Signal Provider port — external evidence (Lighthouse, TestSprite, …) enters via adapters and canonical `Evidence`; Core never depends on any tool**
 * [0112-rag-embedding-and-vector-store-platform](./0112-rag-embedding-and-vector-store-platform.md) — **RAG embedding & vector-store platform — fully OSS/self-hosted Qwen3-Embedding (Apache-2.0) on pgvector; realizes ADR-0090's model-agnostic contract, zero corpus egress**
 * [0113-nodejs-lighthouse-evidence-adapter](./0113-nodejs-lighthouse-evidence-adapter.md) — **Node.js Platform — Lighthouse (Apache-2.0) as the reference evidence adapter behind the Quality Signal Provider port; optional, dynamically imported, deterministic**
+* [0115-emergent-knowledge-axis](./0115-emergent-knowledge-axis.md) — **Emergent knowledge axis: knowledge originated by APPLYING the standard (`KO-*`), distinct from external intake (`KI-*`); agents may draft at `candidate` only**
 * [0116-canonical-finding-and-authority-boundary](./0116-canonical-finding-and-authority-boundary.md) — **Canonical `Finding` contract (mandatory provenance/determinism, `advisory: true`) and an executable advisory-authority boundary (`evaluateAuthority`, AP-R01..R06)**
 
 ---

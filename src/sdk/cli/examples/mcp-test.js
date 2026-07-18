@@ -3,20 +3,34 @@
  * MCP smoke test.
  * Verifies the stdio AND HTTP/SSE JSON-RPC surfaces exposed by the built Evolith CLI.
  *
- * Transport 1 — stdio: spawns `node dist/main.js mcp serve` and communicates
+ * Transport 1 — stdio: spawns `node dist/main.js serve` and communicates
  *   directly over stdin/stdout with JSON-RPC 2.0.
  *
- * Transport 2 — HTTP/SSE: spawns `node dist/main.js mcp serve --transport http`
- *   on a fixed port, then sends JSON-RPC via POST /message and reads responses
- *   from the GET /sse stream.
+ * Transport 2 — HTTP/SSE: spawns `node dist/main.js serve --transport http`
+ *   on a fixed port, then speaks JSON-RPC over Streamable HTTP.
+ *
+ * NOTE: the server under test is the STANDALONE @beyondnet/evolith-mcp gateway.
+ * The CLI hosted it behind `evolith-cli mcp serve` until dc0b9667 (2026-06-30)
+ * decoupled the two; this smoke must spawn the gateway's own binary.
  */
 
 const { spawn } = require('node:child_process');
+const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
 
 const cliRoot = path.resolve(__dirname, '..');
-const repoRoot = path.resolve(cliRoot, '..', '..');
+const repoRoot = path.resolve(cliRoot, '..', '..', '..');
+const mcpServerRoot = path.join(repoRoot, 'src', 'packages', 'mcp-server');
+const mcpServerEntry = path.join(mcpServerRoot, 'dist', 'main.js');
+
+if (!fs.existsSync(mcpServerEntry)) {
+  console.error(
+    `MCP smoke test FAILED: the gateway is not built — ${mcpServerEntry} does not exist.\n` +
+    `Build it first: npm run build -w @beyondnet/evolith-mcp`,
+  );
+  process.exit(1);
+}
 
 // ---------------------------------------------------------------------------
 // Shared helpers
@@ -87,8 +101,8 @@ function waitForHealth(port, timeoutMs = 8000) {
 async function runStdioSmoke() {
   console.log('--- Transport 1: stdio ---');
 
-  const server = spawn('node', ['dist/main.js', 'mcp', 'serve'], {
-    cwd: cliRoot,
+  const server = spawn('node', [mcpServerEntry, 'serve'], {
+    cwd: mcpServerRoot,
     env: { ...process.env, EVOLITH_CORE_PATH: repoRoot },
     stdio: ['pipe', 'pipe', 'pipe'],
   });
@@ -97,6 +111,7 @@ async function runStdioSmoke() {
   const pending = new Map();
   let stdoutBuffer = '';
   let failure;
+  let stopping = false;
 
   function settle(id, response) {
     responses.set(id, response);
@@ -118,7 +133,30 @@ async function runStdioSmoke() {
     }
   });
 
+  // Capture stderr and early exit so a server that never starts reports WHY
+  // instead of surfacing only as an opaque "Timed out waiting for initialize".
+  let stderrBuf = '';
+  server.stderr.on('data', (d) => { stderrBuf += d.toString(); });
+
+  let exited;
+  server.on('exit', (code, signal) => {
+    if (stopping) return;
+    exited = `server exited early (code=${code}, signal=${signal})`;
+    // Fail fast instead of letting every in-flight request burn its full timeout.
+    for (const [id, resolver] of pending) {
+      pending.delete(id);
+      resolver({ jsonrpc: '2.0', id, error: { message: describeFailure('server exited') } });
+    }
+  });
+
   server.on('error', (error) => { failure = error; });
+
+  function describeFailure(base) {
+    const parts = [base];
+    if (exited) parts.push(exited);
+    if (stderrBuf.trim()) parts.push(`server stderr:\n${stderrBuf.trim()}`);
+    return parts.join(' — ');
+  }
 
   function request(id, method, params) {
     if (failure) throw failure;
@@ -127,7 +165,7 @@ async function runStdioSmoke() {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         pending.delete(id);
-        reject(new Error(`Timed out waiting for ${method} (id ${id})`));
+        reject(new Error(describeFailure(`Timed out waiting for ${method} (id ${id})`)));
       }, 5000);
       pending.set(id, (response) => { clearTimeout(timeout); resolve(response); });
     });
@@ -181,7 +219,11 @@ async function runStdioSmoke() {
     console.log('  tools/call         OK  (evolith-gate-evaluate stdio)');
 
     console.log('Transport 1 PASSED\n');
+  } catch (err) {
+    if (stderrBuf.trim()) console.error('  Server stderr:', stderrBuf.trim());
+    throw err;
   } finally {
+    stopping = true;
     for (const resolver of pending.values()) {
       resolver({ jsonrpc: '2.0', id: null, error: { message: 'Server stopped' } });
     }
@@ -204,9 +246,9 @@ async function runHttpSmoke() {
 
   const server = spawn(
     'node',
-    ['dist/main.js', 'mcp', 'serve', '--transport', 'http', '--port', String(port), '--api-key', apiKey],
+    [mcpServerEntry, 'serve', '--transport', 'http', '--port', String(port), '--api-key', apiKey],
     {
-      cwd: cliRoot,
+      cwd: mcpServerRoot,
       env: { ...process.env, EVOLITH_CORE_PATH: repoRoot },
       stdio: ['ignore', 'pipe', 'pipe'],
     },

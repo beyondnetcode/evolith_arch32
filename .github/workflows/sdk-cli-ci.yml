@@ -467,9 +467,9 @@ jobs:
         run: npm run build
 
       - name: Start MCP Server
-        working-directory: ${{ env.CLI_DIR }}
+        working-directory: src/packages/mcp-server
         run: |
-          node dist/main.js mcp serve --transport http --port 3001 &
+          node dist/main.js serve --transport http --port 3001 --allow-no-auth &
           MCP_PID=$!
           echo "MCP_PID=$MCP_PID" >> $GITHUB_ENV
           echo "Started MCP server (pid=$MCP_PID)"

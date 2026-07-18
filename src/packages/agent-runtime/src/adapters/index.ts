@@ -85,6 +85,11 @@ export type { SlackApprovalOptions, SlackClient } from './approval/slack-approva
 export { PendingApprovalAdapter, NoopApprovalTransport, ApprovalResolutionError } from './approval/pending-approval.adapter';
 export type { PendingApprovalOptions } from './approval/pending-approval.adapter';
 export { InMemoryApprovalStore } from './approval/in-memory-approval-store';
+// GT-441: durable file-backed approval store + real Slack incoming-webhook client
+export { FileApprovalStore } from './approval/file-approval-store';
+export type { FileApprovalStoreOptions, ApprovalStoreFsLike } from './approval/file-approval-store';
+export { HttpSlackClient } from './approval/http-slack-client';
+export type { HttpSlackClientOptions } from './approval/http-slack-client';
 
 // Engine (Hermes is OPTIONAL and lives only here, never in the domain)
 export { StubAgentEngineAdapter } from './engine/stub-agent-engine.adapter';

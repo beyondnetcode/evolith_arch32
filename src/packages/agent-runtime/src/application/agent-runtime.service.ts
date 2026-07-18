@@ -27,6 +27,7 @@ import type { IMemoryPort } from '../domain/ports/memory.port';
 import type { IApprovalPort } from '../domain/ports/approval.port';
 import type { IAgentEnginePort } from '../domain/ports/agent-engine.port';
 import type { IKnowledgePort } from '../domain/ports/knowledge.port';
+import type { IWorkspaceContextPort } from '../domain/ports/workspace-context.port';
 
 import type { AgentRuntimeRequest } from '../domain/contracts/agent-runtime-request';
 import type {
@@ -68,6 +69,13 @@ export interface AgentRuntimeDeps {
    * reachable; the base flow itself does not depend on it.
    */
   readonly knowledge?: IKnowledgePort;
+  /**
+   * Optional workspace-context assembler (GT-438). When present, the runtime
+   * gathers the real workspace files and passes them INLINE to the stateless
+   * Core `evaluate()` (via `evaluationInput.files`), so the Core governs actual
+   * content instead of an empty context. Absent ⇒ prior workspaceRef-only flow.
+   */
+  readonly workspaceContext?: IWorkspaceContextPort;
   /** Injected clock for deterministic tests. */
   readonly now?: () => string;
   /** Injected id generator for deterministic tests. */
@@ -281,13 +289,36 @@ export class AgentRuntimeService implements IAgentRuntime {
       }
 
       if (skill.kind === 'evaluation' || skill.kind === 'composite') {
+        // GT-438: assemble the REAL workspace so the stateless Core evaluates
+        // actual content INLINE instead of an empty context (empty ⇒ GOV-000
+        // "nothing to evaluate"). Best-effort — a workspace outage must not fail
+        // the governed run; it just leaves the evaluation ungrounded (prior flow).
+        let workspaceFiles: Readonly<Record<string, string>> | undefined;
+        if (this.deps.workspaceContext) {
+          steps.push('assemble-workspace');
+          try {
+            const assembled = await this.deps.workspaceContext.assemble({
+              workspaceRef: request.context.workspaceRef,
+              phase: request.context.phase,
+              correlationId: request.context.correlationId,
+              passthrough: request.context.passthrough,
+            });
+            if (assembled.files && Object.keys(assembled.files).length > 0) {
+              workspaceFiles = assembled.files;
+            }
+          } catch {
+            // Assembly is advisory; never block the run on a workspace read error.
+          }
+        }
+
         steps.push('core-evaluate');
         yield { type: 'evaluation_started', timestamp: this.now(), capabilityId: skill.id };
-        const evalCtx = buildEvaluationContext(request, skill, harnessResult?.data);
+        const evalCtx = buildEvaluationContext(request, skill, harnessResult?.data, workspaceFiles);
         evaluation = await this.deps.coreEvaluation.evaluate(evalCtx);
         await this.emit(request, skill, 'core.evaluated', undefined, {
           verdict: String(evaluation.overallVerdict),
           outcome: evaluation.outcome,
+          workspaceFiles: workspaceFiles ? Object.keys(workspaceFiles).length : 0,
         });
         yield { type: 'evaluation_completed', timestamp: this.now(), capabilityId: skill.id, payload: { verdict: String(evaluation.overallVerdict), outcome: evaluation.outcome } };
       }

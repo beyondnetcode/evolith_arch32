@@ -37,6 +37,7 @@ import {
   OpenTelemetryTrackerTraceAdapter,
   FileTrackerTraceAdapter,
   HttpCoreEvaluationAdapter,
+  FsWorkspaceContextAdapter,
   FileMemoryAdapter,
   HermesAgentAdapter,
   SwarmsAgentAdapter,
@@ -265,6 +266,22 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
       '[agent-runtime] AGENT_RUNTIME_PROFILE=production requires AGENT_RUNTIME_CORE_ENDPOINT ' +
         '(the real Core API /api/v1/evaluate). Refusing to fall back to StubCoreEvaluationAdapter in production.',
     );
+  }
+
+  // Workspace context (GT-438) — assemble the REAL workspace so the stateless
+  // Core evaluates actual content INLINE (`evaluationInput.files`) instead of an
+  // empty context (which yields GOV-000 "nothing to evaluate"). Opt-in via a
+  // dedicated corpus root; falls back to AGENT_RUNTIME_WORKSPACE_ROOT (the same
+  // mounted corpus the .harness/OPA seams use) when only that is set. Unset in
+  // both ⇒ the prior workspaceRef-only flow is preserved.
+  const trimmed = (v: string | undefined): string | undefined => (v && v.trim() ? v.trim() : undefined);
+  const workspaceContextRoot =
+    trimmed(env.AGENT_RUNTIME_WORKSPACE_CONTEXT_ROOT) ?? trimmed(env.AGENT_RUNTIME_WORKSPACE_ROOT);
+  if (workspaceContextRoot) {
+    overrides = {
+      ...overrides,
+      workspaceContext: new FsWorkspaceContextAdapter({ root: workspaceContextRoot }),
+    };
   }
 
   // Reasoning engine — Hermes/Swarms/Cowork/routing behind IAgentEnginePort,

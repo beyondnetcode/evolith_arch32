@@ -75,6 +75,10 @@ export function createAgentRuntime(overrides: AgentRuntimeOverrides = {}): Agent
     // Read-side knowledge/RAG port: token-overlap in-memory default (GT-408),
     // overridable to the pgvector production adapter (GT-540).
     knowledge: overrides.knowledge ?? new InMemoryKnowledgeAdapter(),
+    // Optional workspace-context assembler (GT-438): unset by default so the
+    // runtime keeps the workspaceRef-only flow; wire a real assembler (e.g. the
+    // FsWorkspaceContextAdapter) to evaluate actual content inline.
+    workspaceContext: overrides.workspaceContext,
     engine,
     now: overrides.now,
     id: overrides.id,

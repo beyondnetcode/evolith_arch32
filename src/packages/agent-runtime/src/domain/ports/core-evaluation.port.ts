@@ -14,8 +14,29 @@ import type {
   EvaluationResult,
 } from '@beyondnet/evolith-core-domain/evaluation/contracts';
 
+/**
+ * Inline satellite content the stateless Core evaluates in memory (GT-438 /
+ * ADR-0101). `files` is a map of RELATIVE posix path -> content — the exact
+ * `evaluationInput.files` shape the Core API accepts and mounts on its
+ * `OverlayFileSystem`. Must include `evolith.yaml` at the satellite root for a
+ * substantive (non GOV-000) evaluation.
+ */
+export interface InlineEvaluationInput {
+  readonly files: Readonly<Record<string, string>>;
+}
+
+/**
+ * The canonical {@link EvaluationContext} plus the OPTIONAL inline workspace
+ * content. Additive and backward compatible: a plain `EvaluationContext` (no
+ * `evaluationInput`) is still assignable, so callers/adapters that never assemble
+ * a workspace keep their prior behaviour.
+ */
+export interface RuntimeEvaluationContext extends EvaluationContext {
+  readonly evaluationInput?: InlineEvaluationInput;
+}
+
 export interface ICoreEvaluationPort {
-  evaluate(context: EvaluationContext): Promise<EvaluationResult>;
+  evaluate(context: RuntimeEvaluationContext): Promise<EvaluationResult>;
 }
 
 export type { EvaluationContext, EvaluationResult };

@@ -31,6 +31,7 @@ const ADAPTERS_SURFACE = [
   'FileMemoryAdapter',
   'FileSchedulerAdapter',
   'FileTrackerTraceAdapter',
+  'FsWorkspaceContextAdapter',
   'HarnessProcessAdapter',
   'HermesAgentAdapter',
   'HermesChatBoxInteractionAdapter',

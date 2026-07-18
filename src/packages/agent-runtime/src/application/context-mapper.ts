@@ -9,6 +9,7 @@ import type {
   EvaluationContext,
   EvaluationResult,
 } from '@beyondnet/evolith-core-domain/evaluation/contracts';
+import type { RuntimeEvaluationContext } from '../domain/ports/core-evaluation.port';
 import type { AgentRuntimeRequest } from '../domain/contracts/agent-runtime-request';
 import type { SkillDescriptor } from '../domain/contracts/capability';
 import type { HarnessExecutionResult } from '../domain/ports/harness.port';
@@ -49,18 +50,27 @@ const KNOWN_KINDS: readonly string[] = [
   'design', 'phase-artifacts',
 ];
 
-/** Build a canonical EvaluationContext from a runtime request + resolved skill. */
+/**
+ * Build a canonical EvaluationContext from a runtime request + resolved skill.
+ *
+ * When `workspaceFiles` are assembled (GT-438), they travel INLINE as
+ * `evaluationInput.files` so the stateless Core evaluates the REAL workspace
+ * content instead of an empty context (which yields GOV-000-style "nothing to
+ * evaluate" findings). Absent/empty files preserve the prior workspaceRef-only
+ * behaviour.
+ */
 export function buildEvaluationContext(
   request: AgentRuntimeRequest,
   skill: SkillDescriptor,
   harnessData?: Readonly<Record<string, unknown>>,
-): EvaluationContext {
+  workspaceFiles?: Readonly<Record<string, string>>,
+): RuntimeEvaluationContext {
   const ctx = request.context;
   const kinds = (skill.evaluationKinds ?? ['gate'])
     .filter((k) => KNOWN_KINDS.includes(k))
     .map((k) => k as EvaluationKindT);
 
-  return {
+  const base: RuntimeEvaluationContext = {
     kinds: kinds.length > 0 ? kinds : (['gate'] as readonly EvaluationKindT[]),
     tenant: ctx.tenantId ? { tenantId: ctx.tenantId } : undefined,
     product: ctx.productId ? { productId: ctx.productId, tenantId: ctx.tenantId } : undefined,
@@ -79,6 +89,13 @@ export function buildEvaluationContext(
     // never scans disk — it evaluates the declared facts it is given.
     passthrough: { ...(ctx.passthrough ?? {}), ...(request.parameters ?? {}), ...(harnessData ?? {}) },
   };
+
+  // Attach the assembled workspace INLINE (only when we actually have content;
+  // an empty map would make the Core reject/evaluate nothing).
+  if (workspaceFiles && Object.keys(workspaceFiles).length > 0) {
+    return { ...base, evaluationInput: { files: workspaceFiles } };
+  }
+  return base;
 }
 
 /** Build the OPA policy input document from whatever the capability produced. */

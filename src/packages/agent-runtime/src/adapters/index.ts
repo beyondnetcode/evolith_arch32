@@ -12,6 +12,9 @@ export { InProcessCoreEvaluationAdapter } from './core/in-process-core-evaluatio
 export type { CoreEvaluationOrchestrator } from './core/in-process-core-evaluation.adapter';
 export { HttpCoreEvaluationAdapter } from './core/http-core-evaluation.adapter';
 export type { HttpCoreOptions } from './core/http-core-evaluation.adapter';
+// Workspace-context assembler — real inline workspace for the Core (GT-438)
+export { FsWorkspaceContextAdapter } from './core/fs-workspace-context.adapter';
+export type { FsWorkspaceContextOptions, WorkspaceFsLike } from './core/fs-workspace-context.adapter';
 
 // Policy / OPA
 export { StubPolicyValidationAdapter, denyOnFailedEvaluation } from './policy/stub-policy-validation.adapter';

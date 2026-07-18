@@ -23,8 +23,8 @@ Whoever pushes the ledger bump first owns the number. No `--force`, ever.
 
 | Allocator | Next free | Last claimed | By |
 |-----------|-----------|--------------|-----|
-| ADR number (`reference/core/architecture/adrs/core/NNNN-*`) | **0114** | 0113 — Lighthouse evidence adapter | enforcers/evidence lane |
-| GT-ID (`gap-tracking.md` rows) | **GT-542** | GT-541 — RAG operationalization | RAG/maturity lane |
+| ADR number (`reference/core/architecture/adrs/core/NNNN-*`) | **0114** | 0113 — Lighthouse evidence adapter | enforcers/evidence lane (0114 earmarked by UP-003) |
+| GT-ID (`gap-tracking.md` rows) | **GT-556** | GT-555 — GitHub collaboration surface (UP-003 wave) | contribution-mechanism lane |
 
 > The board **`**Progress:**`** counter is NOT block-reserved — see its protocol below.
 > `gap-closure-evidence.json` is append-only (low collision); still push promptly.

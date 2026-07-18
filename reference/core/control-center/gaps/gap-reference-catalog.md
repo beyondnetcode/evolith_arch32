@@ -6748,3 +6748,77 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Proposed fix:** one coordinated bilingual pass — resync the EN/ES boards row-for-row, author the missing catalog sections for `GT-486…509` + `GT-511…522`, normalize the 13 `HECHO`→`COMPLETADO` (GT-480), repair the 10 legacy records, and re-derive the Progress/Progreso counters (GT-477). The guard path-fix itself is `.harness`-owned and must land upstream in `unimar_arch` (GT-476); re-arm 08/09 on push/PR once green.
 
 **References:** `.harness/scripts/ci/08-validate-tracking.mjs`; `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/evidence/gap-closure-evidence.json` (`d11c6e52`); GT-476, GT-477, GT-480.
+
+#### GT-552
+
+**Title:** `release-please` is wired to configuration files that no longer exist
+
+- **Purpose:** Restore the ability to cut a version, and with it the only automated issue-creation path in the repository.
+- **Evidence:** `.github/workflows/sdk-cli-release.yml` passes `config-file: release-please-config.json` and `manifest-file: .release-please-manifest.json` to `googleapis/release-please-action@v4`. Neither file exists: both were deleted in commit `aed33ba9` ("chore: remove release-please config — versioning managed manually"), which is contained in `main` and `develop`. Neither path is gitignored. The workflow was last modified on 2026-07-11 (`2c8c7588`) and still references them.
+- **Impact:** `release_created` can never evaluate to `true`, so the downstream `publish-npm`, `package-binaries`, `smoke-test` and `upload-assets` jobs are unreachable. The `failure-notification` job — the repository's ONLY workflow step that creates a GitHub Issue automatically — is gated on that same output and is therefore dead code. No merged pull request can be mapped to a released version.
+- **Risk:** Leaving it wired to phantom files makes the release pipeline fail permanently, which normalises a red CI signal and hides genuine regressions.
+- **Affected files:** `.github/workflows/sdk-cli-release.yml`; the absent `release-please-config.json` and `.release-please-manifest.json`.
+- **Component:** `Infra` · **Dimension:** Delivery · **Type:** ci
+- **Criticality:** P1 · **Complexity:** S
+- **Proposed fix:** Decide between the two coherent end states — restore the release-please configuration, or migrate the workflow to the manual-versioning model the deleting commit declared — and align the failure-notification gate accordingly.
+- **Acceptance criteria:**
+  - [ ] The release workflow no longer references files that do not exist.
+  - [ ] A version can be cut end to end, or the workflow no longer claims it can.
+  - [ ] The automated failure-notification issue is reachable, or removed as dead code.
+- **Dependencies:** None.
+- **Status:** `PENDING`
+
+#### GT-553
+
+**Title:** `09-reconcile-maturity.mjs` carries dead path constants and miscounts rulesets
+
+- **Purpose:** Remove inert code and fix a metric the maturity snapshot reports as zero.
+- **Evidence:** In `.harness/scripts/ci/09-reconcile-maturity.mjs`, `VISION_DIR`, `BOARD` and `REGISTRY` (lines 7-9) point at `reference/core/sdlc/standards/vision/`, a directory deleted when tracking moved to `control-center/`. Each constant is referenced exactly once — its own declaration — so all three are inert. Separately, `rulesetCount` scans `rulesets/` rather than `src/rulesets/`, which is why the committed `maturity-reports/maturity-reconciliation.json` reports `"rulesetCount": 0`.
+- **Impact:** A governance guard carries misleading dead constants, and a maturity metric is silently and permanently zero.
+- **Risk:** Dead constants invite a future edit that "fixes" them by repointing real logic at a dead path.
+- **Affected files:** `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/maturity-reports/maturity-reconciliation.json`.
+- **Component:** `Governance` · **Dimension:** Reliability · **Type:** tooling
+- **Criticality:** P2 · **Complexity:** S
+- **Proposed fix:** Delete the three dead constants and repoint the ruleset scan at `src/rulesets/`; regenerate the snapshot.
+- **Acceptance criteria:**
+  - [ ] No constant in the guard references the deleted `vision/` path.
+  - [ ] `rulesetCount` reports the real number of rulesets under `src/rulesets/`.
+- **Dependencies:** Regeneration is gated on the maturity evidence refresh tracked by [`GT-523`](#gt-523).
+- **Status:** `PENDING`
+
+#### GT-554
+
+**Title:** `CONTRIBUTING.md` cites a dead tracking path and documents no gap-filing procedure
+
+- **Purpose:** Make the contribution document describe the process that actually exists.
+- **Evidence:** `CONTRIBUTING.md` section 5.H states that `gap-tracking.md` and `maturity-assessment.md` live under `reference/core/sdlc/standards/vision/`; that directory does not exist — both moved to `reference/core/control-center/`. Section 6.4 asks contributors to "reference the relevant `GT-###`", but nothing in the document explains how a finding becomes a gap: the catalog entry schema, the closure-evidence contract (`../evidence/gap-closure-evidence-standard.md`) and the identifier ledger (`../COORDINATION.md`) are never mentioned, and no gap template or generator script exists in the repository.
+- **Impact:** A contributor who follows CONTRIBUTING literally cannot find the tracking surfaces, and cannot file a gap correctly without reading the guard source.
+- **Risk:** Undocumented governance is governance that only its authors can satisfy, which concentrates the process in a few people.
+- **Affected files:** `CONTRIBUTING.md`, `CONTRIBUTING.es.md`.
+- **Component:** `Documentation` · **Dimension:** Governance · **Type:** docs
+- **Criticality:** P2 · **Complexity:** S
+- **Proposed fix:** Repoint section 5.H to `control-center/`, and document the gap intake procedure end to end, including identifier allocation.
+- **Acceptance criteria:**
+  - [ ] Every path cited in CONTRIBUTING resolves.
+  - [ ] The document explains how to file a gap: entry schema, identifier allocation and closure evidence.
+- **Dependencies:** Overlaps the intake mechanism proposed in [UP-003](../opportunities/UP-003-user-contribution-intake-mechanism.md).
+- **Status:** `PENDING`
+
+#### GT-555
+
+**Title:** The GitHub collaboration surface is incomplete for non-core contributors
+
+- **Purpose:** Give anyone outside the core team a usable way to report a defect or request a capability.
+- **Evidence:** The repository has no `CODEOWNERS` file anywhere (the only match, `src/packages/core-domain/src/domain/codeowners.ts`, is unrelated application code), so no review routing exists. There is no `.github/ISSUE_TEMPLATE/config.yml`, so blank issues are permitted, no contact links are offered, and GitHub Discussions is unreachable from the issue chooser despite being linked in two READMEs. The only two templates, `adr-proposal.yml` and `docs-gap.yml`, both require insider vocabulary (target topology and ADR framing; bilingual parity and standards gaps) — there is **no bug-report and no feature-request template**. `FUNDING.yml` sits in `src/sdk/cli/` rather than `.github/`, so GitHub does not render it.
+- **Impact:** A user of the product who finds a defect has no route other than a blank issue; pull requests have no automatic reviewer assignment.
+- **Risk:** Contributions are silently lost, or arrive shaped so they cannot be triaged.
+- **Affected files:** `.github/ISSUE_TEMPLATE/`, absent `.github/CODEOWNERS`, `src/sdk/cli/FUNDING.yml`.
+- **Component:** `Governance` · **Dimension:** Governance · **Type:** ci
+- **Criticality:** P2 · **Complexity:** S
+- **Proposed fix:** Add `CODEOWNERS`, an issue-template `config.yml` linking Discussions and security reporting, bug-report and feature-request templates, and relocate `FUNDING.yml` to `.github/`.
+- **Acceptance criteria:**
+  - [ ] `CODEOWNERS` exists and routes review for the main areas.
+  - [ ] A bug report and a feature request can be filed from the issue chooser.
+  - [ ] `FUNDING.yml` renders on the repository page.
+- **Dependencies:** Feeds the GitHub bridge deliverable of [UP-003](../opportunities/UP-003-user-contribution-intake-mechanism.md).
+- **Status:** `PENDING`

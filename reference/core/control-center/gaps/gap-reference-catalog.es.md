@@ -6653,3 +6653,77 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Fix propuesto:** una pasada bilingüe coordinada — resincronizar los boards EN/ES fila por fila, redactar las secciones de catálogo faltantes de `GT-486…509` + `GT-511…522`, normalizar los 13 `HECHO`→`COMPLETADO` (GT-480), reparar los 10 registros legacy, y re-derivar los contadores Progress/Progreso (GT-477). El arreglo de rutas del guard es `.harness` y debe aterrizar upstream en `unimar_arch` (GT-476); re-armar 08/09 en push/PR una vez en verde.
 
 **Referencias:** `.harness/scripts/ci/08-validate-tracking.mjs`; `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/evidence/gap-closure-evidence.json` (`d11c6e52`); GT-476, GT-477, GT-480.
+
+#### GT-552
+
+**Título:** `release-please` apunta a archivos de configuración que ya no existen
+
+- **Propósito:** Restaurar la capacidad de cortar una versión y, con ella, la única vía automatizada de creación de issues del repositorio.
+- **Evidencia:** `.github/workflows/sdk-cli-release.yml` pasa `config-file: release-please-config.json` y `manifest-file: .release-please-manifest.json` a `googleapis/release-please-action@v4`. Ninguno de los dos existe: ambos fueron borrados en el commit `aed33ba9` ("chore: remove release-please config — versioning managed manually"), contenido en `main` y en `develop`. Ninguna ruta está gitignorada. El workflow se modificó por última vez el 2026-07-11 (`2c8c7588`) y sigue referenciándolos.
+- **Impacto:** `release_created` nunca puede evaluarse a `true`, así que los jobs posteriores `publish-npm`, `package-binaries`, `smoke-test` y `upload-assets` son inalcanzables. El job `failure-notification` — el ÚNICO paso de workflow del repositorio que crea un Issue de GitHub automáticamente — está condicionado a esa misma salida y por tanto es código muerto. Ningún pull request mergeado puede mapearse a una versión publicada.
+- **Riesgo:** Dejarlo apuntando a archivos fantasma hace que el pipeline de release falle permanentemente, lo que normaliza una señal roja de CI y oculta regresiones genuinas.
+- **Archivos afectados:** `.github/workflows/sdk-cli-release.yml`; los ausentes `release-please-config.json` y `.release-please-manifest.json`.
+- **Componente:** `Infra` · **Dimensión:** Delivery · **Tipo:** ci
+- **Criticidad:** P1 · **Complejidad:** S
+- **Fix propuesto:** Decidir entre los dos estados finales coherentes — restaurar la configuración de release-please, o migrar el workflow al modelo de versionado manual que declaró el commit que la borró — y alinear el gate de failure-notification en consecuencia.
+- **Criterios de aceptación:**
+  - [ ] El workflow de release ya no referencia archivos inexistentes.
+  - [ ] Se puede cortar una versión end-to-end, o el workflow ya no afirma que puede.
+  - [ ] El issue automático de failure-notification es alcanzable, o se elimina como código muerto.
+- **Dependencias:** Ninguna.
+- **Estado:** `PENDIENTE`
+
+#### GT-553
+
+**Título:** `09-reconcile-maturity.mjs` arrastra constantes de ruta muertas y cuenta mal los rulesets
+
+- **Propósito:** Eliminar código inerte y arreglar una métrica que el snapshot de madurez reporta como cero.
+- **Evidencia:** En `.harness/scripts/ci/09-reconcile-maturity.mjs`, `VISION_DIR`, `BOARD` y `REGISTRY` (líneas 7-9) apuntan a `reference/core/sdlc/standards/vision/`, un directorio borrado cuando el tracking se movió a `control-center/`. Cada constante se referencia exactamente una vez — su propia declaración — así que las tres son inertes. Aparte, `rulesetCount` escanea `rulesets/` en vez de `src/rulesets/`, y por eso el `maturity-reports/maturity-reconciliation.json` commiteado reporta `"rulesetCount": 0`.
+- **Impacto:** Un guard de gobernanza arrastra constantes muertas engañosas, y una métrica de madurez queda silenciosa y permanentemente en cero.
+- **Riesgo:** Las constantes muertas invitan a una edición futura que las "arregle" reapuntando lógica real a una ruta muerta.
+- **Archivos afectados:** `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/maturity-reports/maturity-reconciliation.json`.
+- **Componente:** `Governance` · **Dimensión:** Reliability · **Tipo:** tooling
+- **Criticidad:** P2 · **Complejidad:** S
+- **Fix propuesto:** Borrar las tres constantes muertas y reapuntar el escaneo de rulesets a `src/rulesets/`; regenerar el snapshot.
+- **Criterios de aceptación:**
+  - [ ] Ninguna constante del guard referencia la ruta `vision/` borrada.
+  - [ ] `rulesetCount` reporta el número real de rulesets bajo `src/rulesets/`.
+- **Dependencias:** La regeneración está gated por el refresh de evidencia de madurez rastreado en [`GT-523`](#gt-523).
+- **Estado:** `PENDIENTE`
+
+#### GT-554
+
+**Título:** `CONTRIBUTING.md` cita una ruta de tracking muerta y no documenta procedimiento para registrar gaps
+
+- **Propósito:** Hacer que el documento de contribución describa el proceso que realmente existe.
+- **Evidencia:** La sección 5.H de `CONTRIBUTING.md` afirma que `gap-tracking.md` y `maturity-assessment.md` viven bajo `reference/core/sdlc/standards/vision/`; ese directorio no existe — ambos se movieron a `reference/core/control-center/`. La sección 6.4 pide a los contribuidores "referenciar el `GT-###` relevante", pero nada en el documento explica cómo un hallazgo se convierte en gap: el esquema de la entrada de catálogo, el contrato de evidencia de cierre (`../evidence/gap-closure-evidence-standard.md`) y el ledger de identificadores (`../COORDINATION.md`) nunca se mencionan, y no existe plantilla ni script generador de gaps en el repositorio.
+- **Impacto:** Un contribuidor que siga CONTRIBUTING al pie de la letra no encuentra las superficies de tracking, y no puede registrar un gap correctamente sin leer el código del guard.
+- **Riesgo:** Una gobernanza no documentada es una gobernanza que solo sus autores pueden satisfacer, lo que concentra el proceso en pocas personas.
+- **Archivos afectados:** `CONTRIBUTING.md`, `CONTRIBUTING.es.md`.
+- **Componente:** `Documentation` · **Dimensión:** Governance · **Tipo:** docs
+- **Criticidad:** P2 · **Complejidad:** S
+- **Fix propuesto:** Reapuntar la sección 5.H a `control-center/`, y documentar el procedimiento de intake de gaps de principio a fin, incluyendo la asignación de identificadores.
+- **Criterios de aceptación:**
+  - [ ] Toda ruta citada en CONTRIBUTING resuelve.
+  - [ ] El documento explica cómo registrar un gap: esquema de entrada, asignación de identificador y evidencia de cierre.
+- **Dependencias:** Se solapa con el mecanismo de intake propuesto en [UP-003](../opportunities/UP-003-user-contribution-intake-mechanism.es.md).
+- **Estado:** `PENDIENTE`
+
+#### GT-555
+
+**Título:** La superficie de colaboración de GitHub está incompleta para contribuidores externos
+
+- **Propósito:** Dar a cualquiera fuera del equipo core una vía usable para reportar un defecto o solicitar una capacidad.
+- **Evidencia:** El repositorio no tiene archivo `CODEOWNERS` en ningún sitio (la única coincidencia, `src/packages/core-domain/src/domain/codeowners.ts`, es código de aplicación no relacionado), así que no existe enrutado de revisión. No hay `.github/ISSUE_TEMPLATE/config.yml`, por lo que se permiten issues en blanco, no se ofrecen enlaces de contacto, y GitHub Discussions queda inalcanzable desde el selector de issues pese a estar enlazado en dos READMEs. Las dos únicas plantillas, `adr-proposal.yml` y `docs-gap.yml`, exigen vocabulario interno (topología objetivo y encuadre de ADR; paridad bilingüe y brechas de estándares) — **no hay plantilla de reporte de bug ni de solicitud de funcionalidad**. `FUNDING.yml` está en `src/sdk/cli/` en vez de `.github/`, así que GitHub no lo renderiza.
+- **Impacto:** Un usuario del producto que encuentra un defecto no tiene más ruta que un issue en blanco; los pull requests no tienen asignación automática de revisor.
+- **Riesgo:** Las contribuciones se pierden en silencio, o llegan con una forma que impide triarlas.
+- **Archivos afectados:** `.github/ISSUE_TEMPLATE/`, el ausente `.github/CODEOWNERS`, `src/sdk/cli/FUNDING.yml`.
+- **Componente:** `Governance` · **Dimensión:** Governance · **Tipo:** ci
+- **Criticidad:** P2 · **Complejidad:** S
+- **Fix propuesto:** Añadir `CODEOWNERS`, un `config.yml` de plantillas que enlace Discussions y el reporte de seguridad, plantillas de bug y de funcionalidad, y reubicar `FUNDING.yml` a `.github/`.
+- **Criterios de aceptación:**
+  - [ ] Existe `CODEOWNERS` y enruta la revisión de las áreas principales.
+  - [ ] Se puede registrar un bug y una solicitud de funcionalidad desde el selector de issues.
+  - [ ] `FUNDING.yml` se renderiza en la página del repositorio.
+- **Dependencias:** Alimenta el entregable de puente a GitHub de [UP-003](../opportunities/UP-003-user-contribution-intake-mechanism.es.md).
+- **Estado:** `PENDIENTE`

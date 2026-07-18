@@ -1,5 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import {
+  describeRulesetsResolutionFailure,
+  entriesLookLikeCorpus,
+  probeRulesetsLocationSync,
+} from '@beyondnet/evolith-core-domain/application/paths/rulesets-location';
 
 /**
  * Resolved rulesets location.
@@ -17,13 +22,23 @@ export interface ResolvedRulesets {
   source: 'override' | 'bundled';
 }
 
-/** A directory qualifies as a rulesets root when it holds a canonical family. */
+/**
+ * A directory qualifies as a rulesets root when it holds a canonical family.
+ *
+ * GT-566: the family list is now the shared one in core-domain, so this
+ * resolver, `DiskRulesetRepository` and the validators agree on what a corpus
+ * IS. Previously this predicate existed but was applied only to the bundled
+ * walk — the `--core` override branch below qualified candidates by mere
+ * directory existence, which is how `--core <core checkout>` selected the
+ * satellite-side `rulesets/agents` tree instead of `src/rulesets`.
+ */
 function looksLikeRulesetsRoot(dir: string): boolean {
-  if (!dir) return false;
-  return (
-    fs.existsSync(path.join(dir, 'architecture')) ||
-    fs.existsSync(path.join(dir, 'topologies'))
-  );
+  if (!dir || !fs.existsSync(dir)) return false;
+  try {
+    return entriesLookLikeCorpus(fs.readdirSync(dir));
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -70,17 +85,20 @@ function findBundledRulesets(startDir: string): string | undefined {
 export function resolveRulesets(coreOverride?: string): ResolvedRulesets {
   if (coreOverride && coreOverride.trim().length > 0) {
     const coreRoot = path.resolve(coreOverride);
-    const candidates = [
-      path.join(coreRoot, 'rulesets'),
-      path.join(coreRoot, 'src', 'rulesets'),
-    ];
-    const rulesetsRoot = candidates.find((c) => fs.existsSync(c));
+    // GT-566: content-qualified probe, shared with DiskRulesetRepository — a
+    // directory that merely exists at `<core>/rulesets` no longer shadows a real
+    // corpus at `<core>/src/rulesets`, and a total miss reports every path
+    // tried plus what was found there.
+    const { rulesetsRoot, probes } = probeRulesetsLocationSync(
+      coreRoot,
+      {
+        existsSync: (p) => fs.existsSync(p),
+        readdirNamesSync: (p) => fs.readdirSync(p),
+      },
+      path.sep,
+    );
     if (!rulesetsRoot) {
-      throw new Error(
-        `Core path has no rulesets at ${candidates.map((c) => `"${c}"`).join(' or ')}. ` +
-          `Point --core (or \`evolith-cli profile\`) at a valid Evolith Core checkout, ` +
-          `or omit --core to use the rulesets bundled with the CLI.`,
-      );
+      throw new Error(describeRulesetsResolutionFailure(coreRoot, probes));
     }
     return { coreRoot, rulesetsRoot, source: 'override' };
   }

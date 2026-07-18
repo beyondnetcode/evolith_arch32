@@ -7,6 +7,7 @@ import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 import { ConfigService } from '@nestjs/config';
 import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import * as path from 'path';
+import { probeRulesetsLocation } from '@beyondnet/evolith-core-domain/application/paths/rulesets-location';
 import { EnvConfig } from '../../infrastructure/config/env.validation';
 import { Public } from '../../infrastructure/auth/public.decorator';
 
@@ -42,9 +43,27 @@ export class HealthController {
   @ApiEnvelopeResponse(undefined, { description: 'Service is ready to handle traffic' })
   async ready() {
     const corePath = this.config.get('CORE_PATH', { infer: true }) as string;
-    const gatesFile = path.join(corePath, 'rulesets', 'sdlc', 'phase-gates.rules.json');
 
-    const [corpusOk] = await Promise.allSettled([this.fs.exists(gatesFile)]);
+    // GT-566: resolve the corpus root the same way the ruleset repository does
+    // instead of hardcoding `<core>/rulesets`. Hardcoding one candidate made
+    // readiness report DOWN whenever CORE_PATH pointed at a Core monorepo
+    // checkout (corpus at `src/rulesets`) — and, worse, report UP off a
+    // `rulesets/` tree that holds no corpus at all. Readiness must answer the
+    // question the validators will actually ask.
+    const [corpusOk] = await Promise.allSettled([
+      (async () => {
+        const { rulesetsRoot } = await probeRulesetsLocation(
+          corePath,
+          {
+            exists: (p) => this.fs.exists(p),
+            readdirNames: (p) => this.fs.readdirNames(p),
+          },
+          path.sep,
+        );
+        if (!rulesetsRoot) return false;
+        return this.fs.exists(path.join(rulesetsRoot, 'sdlc', 'phase-gates.rules.json'));
+      })(),
+    ]);
 
     const checks: Record<string, 'UP' | 'DOWN'> = {
       corpus: corpusOk.status === 'fulfilled' && corpusOk.value ? 'UP' : 'DOWN',

@@ -30,7 +30,11 @@ describe('DiskRulesetRepository', () => {
   it('throws when the rulesets directory is absent', async () => {
     const fs = { exists: jest.fn(async () => false) } as any;
     const repo = new DiskRulesetRepository(fs, logger);
-    await expect(repo.loadAllRulesets(CORE)).rejects.toThrow('No rulesets found');
+    // GT-566 reworded this into a per-candidate probe trail naming every path
+    // tried; the invariant is unchanged.
+    await expect(repo.loadAllRulesets(CORE)).rejects.toThrow(
+      'Could not locate the Evolith ruleset corpus',
+    );
   });
 
   it('loads and normalizes rules, deriving category and severity', async () => {

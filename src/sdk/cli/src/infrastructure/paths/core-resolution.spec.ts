@@ -89,7 +89,26 @@ describe('GT-456 unified Core resolution', () => {
 
     it('raises an actionable error when --core points at a Core with no rulesets', () => {
       const missing = path.join(__dirname, '__no_such_core__');
-      expect(() => resolveRulesets(missing)).toThrow(/no rulesets|valid Evolith Core checkout/i);
+      // GT-566: the message now names each candidate and whether it existed,
+      // rather than a single "no rulesets at X or Y" line. Assert the intent —
+      // it says what could not be found and where to point --core.
+      expect(() => resolveRulesets(missing)).toThrow(/could not locate the evolith ruleset corpus/i);
+      expect(() => resolveRulesets(missing)).toThrow(/__no_such_core__[/\\]src[/\\]rulesets/);
+    });
+
+    // GT-566: `--core <Core monorepo checkout>` must reach the real corpus at
+    // `src/rulesets` and NOT stop at the repo-root `rulesets/` tree, which holds
+    // only the satellite-side `agents/` directory. Qualifying candidates by mere
+    // directory existence made this override resolve the agents tree, which then
+    // loaded zero rules.
+    it('skips the repo-root rulesets/agents tree and resolves src/rulesets', () => {
+      const repoRoot = path.resolve(__dirname, '..', '..', '..', '..', '..', '..');
+      // Guard the fixture: if the decoy is gone the regression cannot reproduce.
+      expect(fs.existsSync(path.join(repoRoot, 'rulesets', 'agents'))).toBe(true);
+
+      const resolved = resolveRulesets(repoRoot);
+      expect(resolved.rulesetsRoot).toBe(path.join(repoRoot, 'src', 'rulesets'));
+      expect(fs.existsSync(path.join(resolved.rulesetsRoot, 'topologies'))).toBe(true);
     });
   });
 });

@@ -3,13 +3,18 @@ import { IFileSystem, ILogger } from "@beyondnet/evolith-core-domain/domain/inte
 import { NormalizedRule } from "@beyondnet/evolith-core-domain/domain/models/normalized-rule";
 import {
   IRulesetRepository,
+  RulesetCorpusNotResolvedError,
   RulesetsNotFoundError,
 } from "@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port";
+import {
+  describeRulesetsResolutionFailure,
+  probeRulesetsLocation,
+} from "@beyondnet/evolith-core-domain/application/paths/rulesets-location";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import { ValidateFunction } from "ajv";
 
-export { RulesetsNotFoundError };
+export { RulesetCorpusNotResolvedError, RulesetsNotFoundError };
 
 /**
  * Disk-backed implementation of {@link IRulesetRepository}.
@@ -37,23 +42,38 @@ export class DiskRulesetRepository implements IRulesetRepository {
   /**
    * GT-474: rulesets live either directly under `<corePath>/rulesets` (the
    * rulesets bundled with the CLI package) or under `<corePath>/src/rulesets`
-   * (the Evolith Core monorepo layout, post apps/→src/ migration). Probe both,
-   * mirroring `ruleset-id-loader`'s candidate list — resolving only the first
-   * made `--core <checkout>` load zero rules and validate nothing.
+   * (the Evolith Core monorepo layout, post apps/→src/ migration). Probe both.
+   *
+   * GT-566: probe by CONTENT, not existence. Both paths exist in the Core
+   * monorepo — `<repo>/rulesets` is the satellite-side agents directory
+   * (`rulesets/agents`, read by AgentRegistryService), not a corpus. An
+   * existence check latched onto it and never saw the 145-file corpus at
+   * `<repo>/src/rulesets`, so `CORE_PATH=<repo root>` 422'd with
+   * `RULESET_NOT_FOUND` — a message about a missing ruleset for what was
+   * actually a resolution that stopped at the wrong tree. The shared decision
+   * (and its actionable failure message) lives in core-domain so this
+   * repository, the CLI resolver and the validators cannot drift apart again.
    */
   private async resolveRulesetsDir(corePath: string): Promise<string> {
-    const candidates = [
-      path.join(corePath, "rulesets"),
-      path.join(corePath, "src", "rulesets"),
-    ];
-    for (const candidate of candidates) {
-      if (await this.fs.exists(candidate)) return candidate;
-    }
-    throw new RulesetsNotFoundError(
-      `No rulesets found at ${candidates.map((c) => `"${c}"`).join(" or ")}. ` +
-        `Point --core (or \`evolith profile\`) at a valid Evolith Core checkout, ` +
-        `or omit --core to use the rulesets bundled with the CLI.`,
+    const { rulesetsRoot, probes } = await probeRulesetsLocation(
+      corePath,
+      {
+        exists: (p) => this.fs.exists(p),
+        readdirNames: (p) => this.fs.readdirNames(p),
+      },
+      path.sep,
     );
+
+    if (!rulesetsRoot) {
+      // Not a `RulesetsNotFoundError`: the corpus ROOT is unlocatable, which is
+      // a configuration fault, not a missing ruleset. The subclass lets surfaces
+      // report it as such while every existing catch-site still matches.
+      throw new RulesetCorpusNotResolvedError(
+        describeRulesetsResolutionFailure(corePath, probes),
+      );
+    }
+
+    return rulesetsRoot;
   }
 
   async loadAllRulesets(corePath: string): Promise<NormalizedRule[]> {

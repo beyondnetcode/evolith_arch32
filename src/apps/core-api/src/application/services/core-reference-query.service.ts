@@ -1,6 +1,11 @@
 import * as path from 'path';
 import { Injectable, Inject } from '@nestjs/common';
 import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
+import {
+  describeRulesetsResolutionFailure,
+  probeRulesetsLocation,
+} from '@beyondnet/evolith-core-domain/application/paths/rulesets-location';
+import { RulesetCorpusNotResolvedError } from '@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port';
 
 export interface RulesetSummary {
   id: string;
@@ -25,10 +30,7 @@ export class CoreReferenceQueryService {
   constructor(@Inject('IFileSystem') private readonly fs: IFileSystem) {}
 
   async listRulesets(corePath: string): Promise<RulesetSummary[]> {
-    const files = [
-      ...(await this.findRulesetFiles(path.join(corePath, 'rulesets'))),
-      ...(await this.findRulesetFiles(path.join(corePath, 'reference', 'architecture', 'topologies')))
-    ];
+    const files = await this.findAllRulesetFiles(corePath);
     const results = await Promise.allSettled(files.map(async (file) => {
       const content = await this.fs.readFile(file);
       const parsed = JSON.parse(content) as Record<string, unknown>;
@@ -41,10 +43,7 @@ export class CoreReferenceQueryService {
   }
 
   async getRuleset(corePath: string, rulesetId: string): Promise<Record<string, unknown> | undefined> {
-    const files = [
-      ...(await this.findRulesetFiles(path.join(corePath, 'rulesets'))),
-      ...(await this.findRulesetFiles(path.join(corePath, 'reference', 'architecture', 'topologies')))
-    ];
+    const files = await this.findAllRulesetFiles(corePath);
     for (const file of files) {
       try {
         const parsed = JSON.parse(await this.fs.readFile(file)) as Record<string, unknown>;
@@ -68,9 +67,40 @@ export class CoreReferenceQueryService {
     return (await this.loadPhaseGates(corePath)).find((gate) => gate.phase === phaseNumber);
   }
 
+  /**
+   * Every file the reference surface considers a ruleset, from the RESOLVED
+   * corpus root.
+   *
+   * GT-566: this used to scan `<corePath>/rulesets` unconditionally. Against a
+   * Core monorepo checkout that directory holds only `agents/`, so
+   * `GET /reference/rulesets` answered `[]` — "this Core has no rulesets" — for
+   * a Core with a 145-file corpus one directory over. An empty list is the
+   * worst possible answer here because it looks like a successful query. Fail
+   * closed instead: if the corpus cannot be located, say so and say where we
+   * looked.
+   */
+  private async findAllRulesetFiles(corePath: string): Promise<string[]> {
+    const { rulesetsRoot, probes } = await probeRulesetsLocation(
+      corePath,
+      { exists: (p) => this.fs.exists(p), readdirNames: (p) => this.fs.readdirNames(p) },
+      path.sep,
+    );
+    if (!rulesetsRoot) {
+      throw new RulesetCorpusNotResolvedError(
+        describeRulesetsResolutionFailure(corePath, probes),
+      );
+    }
+    return [
+      ...(await this.findRulesetFiles(rulesetsRoot)),
+      ...(await this.findRulesetFiles(path.join(corePath, 'reference', 'architecture', 'topologies'))),
+    ];
+  }
+
   private async loadPhaseGates(corePath: string): Promise<PhaseGate[]> {
+    // GT-566: probe both corpus layouts rather than only `<core>/rulesets`.
     const candidates = [
       path.join(corePath, 'rulesets', 'sdlc', 'phase-gates.rules.json'),
+      path.join(corePath, 'src', 'rulesets', 'sdlc', 'phase-gates.rules.json'),
     ];
     for (const candidate of candidates) {
       if (await this.fs.exists(candidate)) {

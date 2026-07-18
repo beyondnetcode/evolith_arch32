@@ -81,7 +81,18 @@ export class HttpExceptionFilter implements ExceptionFilter {
     } else if (exception instanceof Error) {
       detail = exception.message;
 
-      if (exception.name === 'RulesetsNotFoundError') {
+      // GT-566: an unlocatable ruleset CORPUS is a server misconfiguration
+      // (`CORE_PATH` points at a tree with no corpus), not a client sending an
+      // unprocessable entity. Reporting it as 422 "Ruleset Not Found" sent
+      // readers hunting for a ruleset that was never missing. Must precede both
+      // the RulesetsNotFoundError branch (it is a subclass) and the
+      // `does not exist` heuristic below, which the probe trail would otherwise
+      // trip into a 404. The detail carries every path tried.
+      if (exception.name === 'RulesetCorpusNotResolvedError') {
+        status = HttpStatus.INTERNAL_SERVER_ERROR;
+        title = 'Ruleset Corpus Not Resolved';
+        domainCode = 'INTERNAL_ERROR';
+      } else if (exception.name === 'RulesetsNotFoundError') {
         status = HttpStatus.UNPROCESSABLE_ENTITY;
         title = 'Ruleset Not Found';
         domainCode = 'RULESET_NOT_FOUND';

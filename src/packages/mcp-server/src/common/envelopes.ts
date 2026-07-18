@@ -119,6 +119,11 @@ export function toErrorEnvelope(err: unknown, meta: MetaInput): ErrorEnvelope {
   // DomainException), so it collapsed to INTERNAL_ERROR while the CLI classifies
   // it as RULESET_NOT_FOUND. Recognise it by name (avoids a cross-package
   // instanceof) so MCP and CLI agree on the error code.
+  // GT-566: `RulesetCorpusNotResolvedError` (a RulesetsNotFoundError subclass)
+  // is deliberately NOT mapped here. An unlocatable corpus is a server
+  // misconfiguration, not a missing ruleset, so it falls through to
+  // INTERNAL_ERROR — matching what core-api's exception filter reports for it.
+  // The name check keeps the two apart without a cross-package instanceof.
   if (err instanceof Error && err.name === 'RulesetsNotFoundError') {
     return failure(ErrorCodes.RULESET_NOT_FOUND, message, meta);
   }

@@ -37,12 +37,32 @@ describe('DiskRulesetRepository', () => {
     // GT-474: zero rulesets is a hard error — never an empty, passable result.
     it('should throw when rulesets dir does not exist', async () => {
       mockFs.exists.mockResolvedValue(false);
-      await expect(repo.loadAllRulesets('/test')).rejects.toThrow('No rulesets found');
+      // GT-566 reworded this into a per-candidate probe trail; the invariant is
+      // unchanged — an unresolvable corpus is a hard, self-explaining error.
+      await expect(repo.loadAllRulesets('/test')).rejects.toThrow(
+        'Could not locate the Evolith ruleset corpus',
+      );
+      await expect(repo.loadAllRulesets('/test')).rejects.toThrow('/test/src/rulesets');
     });
 
-    it('should throw when no ruleset files found', async () => {
+    // GT-566: a directory that exists but holds no canonical ruleset family is
+    // NOT a corpus (this is the `<repo>/rulesets/agents` case that shadowed the
+    // real corpus). It must be skipped during resolution, not accepted and then
+    // reported as an empty corpus.
+    it('should not accept a non-corpus directory as the rulesets root', async () => {
       mockFs.exists.mockResolvedValue(true);
       mockFs.readdirNames.mockResolvedValue(['other.txt']);
+      mockFs.stat.mockResolvedValue({ isDirectory: () => false, isFile: () => true } as any);
+      await expect(repo.loadAllRulesets('/test')).rejects.toThrow(
+        'EXISTS but is not a ruleset corpus',
+      );
+    });
+
+    it('should throw when a real corpus root yields zero rules', async () => {
+      // `schema/` marks this as a genuine corpus root, so resolution succeeds
+      // and we exercise the DISTINCT zero-rules guard.
+      mockFs.exists.mockResolvedValue(true);
+      mockFs.readdirNames.mockResolvedValue(['schema', 'other.txt']);
       mockFs.stat.mockResolvedValue({ isDirectory: () => false, isFile: () => true } as any);
       await expect(repo.loadAllRulesets('/test')).rejects.toThrow('0 rules normalized');
     });

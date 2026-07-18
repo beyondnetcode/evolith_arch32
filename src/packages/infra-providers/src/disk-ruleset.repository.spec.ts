@@ -1,5 +1,7 @@
 import { IFileSystem, ILogger } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { DiskRulesetRepository, RulesetsNotFoundError } from './disk-ruleset.repository';
+import { NodeFileSystemProvider } from './node-filesystem.provider';
+import * as nodePath from 'path';
 
 interface FakeFsConfig {
   files: Record<string, string>;
@@ -90,9 +92,11 @@ describe('DiskRulesetRepository', () => {
     await expect(repo.loadAllRulesets('/core')).rejects.toThrow(
       RulesetsNotFoundError,
     );
-    await expect(repo.loadAllRulesets('/core')).rejects.toThrow(
-      /"\/core\/rulesets" or "\/core\/src\/rulesets"/,
-    );
+    // GT-566 reformatted this into a per-candidate trail (each line says whether
+    // the path existed); the invariant under test — BOTH probed paths are named
+    // so the operator need not guess where we looked — is unchanged.
+    await expect(repo.loadAllRulesets('/core')).rejects.toThrow(/"\/core\/rulesets"/);
+    await expect(repo.loadAllRulesets('/core')).rejects.toThrow(/"\/core\/src\/rulesets"/);
   });
 
   // GT-474 regression: the Evolith Core monorepo keeps rulesets at
@@ -115,7 +119,14 @@ describe('DiskRulesetRepository', () => {
   });
 
   it('throws when the rulesets directory exists but yields zero rules', async () => {
-    const fs = makeFs({ dirs: new Set(['/core/rulesets']), files: {} });
+    // The corpus root must be corpus-SHAPED (GT-566) for this to exercise the
+    // zero-rules guard rather than the resolution guard — the two failures are
+    // distinct and both must keep working. `schema/` makes it a real corpus
+    // root; it just contains no `*.rules.json`.
+    const fs = makeFs({
+      dirs: new Set(['/core/rulesets', '/core/rulesets/schema']),
+      files: { '/core/rulesets/schema/ruleset-standard.schema.json': SCHEMA },
+    });
     const repo = new DiskRulesetRepository(fs, makeLogger());
     await expect(repo.loadAllRulesets('/core')).rejects.toThrow(
       /0 rules normalized/,
@@ -287,3 +298,150 @@ describe('DiskRulesetRepository', () => {
     expect(rules.map((r) => r.id)).toEqual(['N-1']);
   });
 });
+
+/**
+ * GT-566 — corpus resolution must be content-qualified and fail closed.
+ *
+ * The bug these pin: `resolveRulesetsDir` used to qualify a candidate by
+ * directory EXISTENCE. In the Core monorepo both `<repo>/rulesets` and
+ * `<repo>/src/rulesets` exist, and only the latter is the corpus — the former
+ * is the satellite-side agents directory. Existence-qualification latched onto
+ * `<repo>/rulesets`, found zero `*.rules.json`, and raised a
+ * `RULESET_NOT_FOUND` (surfaced by core-api as a 422) that read as a missing
+ * ruleset rather than a resolution that stopped at the wrong tree.
+ */
+describe('DiskRulesetRepository — corpus resolution (GT-566)', () => {
+  const REAL_CORPUS_DIRS = new Set([
+    '/repo/rulesets',
+    '/repo/rulesets/agents',
+    '/repo/src',
+    '/repo/src/rulesets',
+    '/repo/src/rulesets/schema',
+    '/repo/src/rulesets/architecture',
+  ]);
+
+  /** Mirrors the real repo: an agents dir at `rulesets/`, the corpus at `src/rulesets/`. */
+  function makeMonorepoFs() {
+    return makeFs({
+      dirs: REAL_CORPUS_DIRS,
+      files: {
+        // The decoy: `rulesets/` exists but holds only the agents registry.
+        '/repo/rulesets/agents/agents-registry.json': JSON.stringify({ agents: [] }),
+        // The real corpus.
+        '/repo/src/rulesets/schema/ruleset-standard.schema.json': SCHEMA,
+        '/repo/src/rulesets/architecture/hexagonal.rules.json': JSON.stringify({
+          rules: [{ id: 'HXA-1', severity: 'MUST', title: 'Ports and adapters' }],
+        }),
+      },
+    });
+  }
+
+  it('resolves the real corpus at src/rulesets when rulesets/ holds only agents', async () => {
+    const repo = new DiskRulesetRepository(makeMonorepoFs(), makeLogger());
+    const rules = await repo.loadAllRulesets('/repo');
+    // Pre-fix this threw RulesetsNotFoundError: `rulesets/` was selected on
+    // existence alone and yielded 0 files.
+    expect(rules.map((r) => r.id)).toEqual(['HXA-1']);
+  });
+
+  it('still prefers <core>/rulesets when THAT is the corpus (bundled CLI layout)', async () => {
+    const fs = makeFs({
+      dirs: new Set(['/pkg/rulesets', '/pkg/rulesets/schema', '/pkg/rulesets/agents']),
+      files: {
+        '/pkg/rulesets/schema/ruleset-standard.schema.json': SCHEMA,
+        '/pkg/rulesets/agents/agents-registry.json': JSON.stringify({ agents: [] }),
+        '/pkg/rulesets/bundled.rules.json': JSON.stringify({
+          rules: [{ id: 'B-1', severity: 'MUST', title: 'bundled' }],
+        }),
+      },
+    });
+    const repo = new DiskRulesetRepository(fs, makeLogger());
+    expect((await repo.loadAllRulesets('/pkg')).map((r) => r.id)).toEqual(['B-1']);
+  });
+
+  it('fails closed with a legible error naming every path tried when no corpus exists', async () => {
+    const fs = makeFs({ dirs: new Set(['/empty']), files: {} });
+    const repo = new DiskRulesetRepository(fs, makeLogger());
+
+    const err = await repo.loadAllRulesets('/empty').then(
+      () => null,
+      (e: unknown) => e as Error,
+    );
+
+    expect(err).toBeInstanceOf(RulesetsNotFoundError);
+    // Both candidates named, so the operator does not have to guess where we looked.
+    expect(err!.message).toContain('/empty/rulesets');
+    expect(err!.message).toContain('/empty/src/rulesets');
+    expect(err!.message).toContain('does not exist');
+    // Not a "the ruleset you asked for is missing" message.
+    expect(err!.message).toContain('Could not locate the Evolith ruleset corpus');
+  });
+
+  it('says the LAYOUT is wrong when a candidate exists but is not corpus-shaped', async () => {
+    // No corpus anywhere — only the agents decoy. This is the diagnosis that
+    // distinguishes "wrong CORE_PATH" from "right path, wrong tree".
+    const fs = makeFs({
+      dirs: new Set(['/decoy/rulesets', '/decoy/rulesets/agents']),
+      files: { '/decoy/rulesets/agents/agents-registry.json': '{}' },
+    });
+    const repo = new DiskRulesetRepository(fs, makeLogger());
+
+    const err = await repo.loadAllRulesets('/decoy').then(
+      () => null,
+      (e: unknown) => e as Error,
+    );
+
+    expect(err).toBeInstanceOf(RulesetsNotFoundError);
+    expect(err!.message).toContain('EXISTS but is not a ruleset corpus');
+    expect(err!.message).toContain('agents');
+    expect(err!.message).toContain('The layout is likely wrong');
+  });
+});
+
+/**
+ * GT-566 — the reported symptom, pinned against the REAL repository layout.
+ *
+ * The SDK contract test could not point CORE_PATH at the repo root: doing so
+ * 422'd with RULESET_NOT_FOUND, so it composed a symlinked fixture core path
+ * instead. This test is the thing that keeps that workaround unnecessary. It
+ * uses the real filesystem deliberately — a mocked layout cannot catch the
+ * repo's real layout drifting again.
+ */
+describe('DiskRulesetRepository — real repo layout (GT-566)', () => {
+  const nodeFs = new NodeFileSystemProvider().createFileSystem();
+
+  /** Marker-based ascent, mirroring .harness/scripts/lib/paths.mjs ROOT_MARKERS. */
+  function findRepoRoot(): string | undefined {
+    let dir = __dirname;
+    for (let i = 0; i < 12; i++) {
+      const markers = ['package.json', '.harness', 'evolith.yaml'];
+      if (markers.every((m) => nodeFs.existsSync(nodePath.join(dir, m)))) return dir;
+      const parent = nodePath.dirname(dir);
+      if (parent === dir) break;
+      dir = parent;
+    }
+    return undefined;
+  }
+
+  const repoRoot = findRepoRoot();
+  // Skip rather than fail when the tests run from a published tarball with no
+  // repo around them; inside the monorepo this always runs.
+  const itInRepo = repoRoot ? it : it.skip;
+
+  itInRepo('CORE_PATH pointed at the repo root loads the real corpus', async () => {
+    const repo = new DiskRulesetRepository(nodeFs, makeLogger());
+    const rules = await repo.loadAllRulesets(repoRoot!);
+    // The corpus is ~350 rules; assert a floor rather than an exact count so
+    // authoring a new ruleset does not break this test. The point is that it is
+    // the real corpus and not the empty `rulesets/agents` tree.
+    expect(rules.length).toBeGreaterThan(100);
+  }, 60_000);
+
+  itInRepo('the repo root still has the agents decoy that used to shadow the corpus', () => {
+    // If this stops being true the bug can no longer reproduce, and the guard
+    // above is measuring nothing — fail loudly instead of passing vacuously.
+    expect(nodeFs.existsSync(nodePath.join(repoRoot!, 'rulesets', 'agents'))).toBe(true);
+    expect(nodeFs.existsSync(nodePath.join(repoRoot!, 'src', 'rulesets', 'schema'))).toBe(true);
+  });
+});
+

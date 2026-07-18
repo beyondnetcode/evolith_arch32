@@ -215,21 +215,16 @@ describe('GT-565 — @beyondnet/evolith-sdk types describe the real wire', () =>
     beforeAll(async () => {
       fixtureRoot = path.join(os.tmpdir(), `evolith-sdk-contract-${process.pid}`);
       const projectPath = path.join(fixtureRoot, workspaceRef);
-      // The two endpoints under test resolve their corpora from DIFFERENT
-      // layouts in this repo: gate evaluation reads the gate registry at
-      // <repo>/reference/governance/sdlc/gates/, while the ruleset validator
-      // reads <corePath>/rulesets — and the 270-file corpus actually lives at
-      // <repo>/src/rulesets (only an `agents/` stub sits at <repo>/rulesets).
-      // Pointing CORE_PATH at either one alone makes the other endpoint fail
-      // (validate-satellite 422s with RULESET_NOT_FOUND against the repo root).
-      // Compose a core path that satisfies both, rather than testing a
-      // degraded surface — a contract test asserted against an erroring
-      // endpoint proves nothing.
-      const corePath = path.join(fixtureRoot, 'core');
+      // GT-566: CORE_PATH is the repo root, plain. This used to need a
+      // symlinked fixture core (reference/ + src/rulesets/ grafted together as
+      // `rulesets/`) because ruleset resolution qualified candidates by
+      // directory EXISTENCE and so latched onto <repo>/rulesets — the
+      // satellite-side agents directory — instead of the corpus at
+      // <repo>/src/rulesets, making validate-satellite 422. Resolution is now
+      // content-qualified, so both endpoints read the real corpus from the
+      // repo root and the workaround is gone.
+      const corePath = REPO_ROOT;
       await fs.ensureDir(projectPath);
-      await fs.ensureDir(corePath);
-      await fs.ensureSymlink(path.join(REPO_ROOT, 'reference'), path.join(corePath, 'reference'), 'dir');
-      await fs.ensureSymlink(path.join(REPO_ROOT, 'src/rulesets'), path.join(corePath, 'rulesets'), 'dir');
 
       // The REST surface resolves projectPath/corePath server-side from these
       // env vars (WorkspaceReferenceResolverService). They must be set BEFORE

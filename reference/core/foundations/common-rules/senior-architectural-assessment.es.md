@@ -32,7 +32,7 @@ El repositorio presenta una arquitectura de referencia corporativa con un nivel 
 | Observabilidad | 8/10 | OTel + Loki + Jaeger es stack correcto; falta SLO/SLA definidos |
 | Seguridad | 8/10 | Zero-trust + RBAC/ABAC + MFA bien documentado |
 | Multi-tenancy | 9/10 | Dual-layer es el patrón de máxima confianza para SaaS |
-| Resiliencia | 7/10 | Circuit breaker con `opossum` ok; faltan Bulkhead y Retry policies explícitas |
+| Resiliencia | 4/10 | `CircuitBreakerService` envuelve `opossum` correctamente y está provisto en `app.module.ts`, pero tiene CERO inyecciones y CERO llamadas a `createBreaker` en todo `src/` -- nada está detrás de un breaker. Verificado 2026-07-18, ver [GT-560](../../control-center/gaps/gap-reference-catalog.es.md#gt-560). Nótese que el Core es un evaluador sin estado (ADR-0101), sin BD ni salidas HTTP, así que puede necesitar muy poco de esto; la nota refleja una afirmación no sustentada, no una capacidad ausente |
 | Testing Strategy | 6/10 | 70% threshold es insuficiente para dominio crítico; faltan mutation tests |
 | Debt / Risk Management | 5/10 | Solo 3 riesgos y 2 deudas documentadas; subrepresentado |
 | Stack .NET/C# | 4/10 | [ADR-0041](../../architecture/adrs/dotnet/0041-canonical-dotnet-backend-architecture.es.md) existe pero está infradesarrollado vs Node.js |

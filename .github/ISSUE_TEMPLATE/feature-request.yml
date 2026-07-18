@@ -1,0 +1,69 @@
+name: "Feature Request"
+description: Suggest a capability Evolith does not have yet
+title: "feat: [Short description of the capability]"
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the problem you are trying to solve before the solution you have in mind —
+        that gives us room to propose something that fits the framework better.
+
+        If you are unsure whether this is a feature or just a question, start a
+        [Discussion](https://github.com/beyondnetcode/evolith_arch32/discussions) instead.
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Which part of Evolith would this affect?
+      options:
+        - CLI (@beyondnet/evolith-cli)
+        - MCP server
+        - Core API (REST)
+        - Agent runtime
+        - Rules and policies
+        - CI harness / validation scripts
+        - Documentation
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe the situation that led you here, not the feature. What are you unable to do today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to happen?
+      description: Your proposed capability. Concrete examples (a command you wish existed, a response you wish you got) help a lot.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What have you tried or considered?
+      description: Existing commands, workarounds, or other tools, and why they fall short.
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        A capability that changes how the framework itself is structured usually needs an
+        Architecture Decision Record. If you already know that is the case, the
+        **Architecture Decision Proposal** template is the more direct route — but do not
+        worry about picking correctly, a maintainer will redirect this if needed.
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Willing to contribute?
+      options:
+        - label: I would like to help implement this.
+          required: false

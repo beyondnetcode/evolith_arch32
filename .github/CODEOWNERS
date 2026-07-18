@@ -1,0 +1,39 @@
+# Evolith Core - review routing
+#
+# Syntax: https://docs.github.com/articles/about-code-owners
+# Later matches win, so the catch-all comes first and specific areas refine it.
+#
+# NOTE: @beyondnetcode/evolith-core-s-development was VERIFIED against the org
+# (`gh api orgs/beyondnetcode/teams`) and confirmed to have access to this
+# repository. That check matters: GitHub silently ignores an owner it cannot
+# resolve, so a wrong handle here yields no review routing at all while the file
+# looks correct. This file first shipped naming `@beyondnetcode/evolith-team`,
+# copied from the release workflow's failure notifier - and that team does not
+# exist. If the team is renamed, update every entry below together, and verify.
+
+# Default owner for anything not matched more specifically.
+*                                   @beyondnetcode/evolith-core-s-development
+
+# Governance surfaces. Changes here alter the rules the rest of the repo obeys.
+/reference/core/architecture/adrs/  @beyondnetcode/evolith-core-s-development
+/reference/core/control-center/     @beyondnetcode/evolith-core-s-development
+/AGENTS.md                          @beyondnetcode/evolith-core-s-development
+/AGENTS.es.md                       @beyondnetcode/evolith-core-s-development
+/CONTRIBUTING.md                    @beyondnetcode/evolith-core-s-development
+/CONTRIBUTING.es.md                 @beyondnetcode/evolith-core-s-development
+/SECURITY.md                        @beyondnetcode/evolith-core-s-development
+
+# Executable governance: native rules and their Rego counterparts must stay at
+# rule-ID parity, so both halves route to the same reviewers.
+/src/rulesets/                      @beyondnetcode/evolith-core-s-development
+
+# CI harness and workflows.
+/.harness/                          @beyondnetcode/evolith-core-s-development
+/.github/                           @beyondnetcode/evolith-core-s-development
+
+# Executable surfaces.
+/src/sdk/cli/                       @beyondnetcode/evolith-core-s-development
+/src/apps/core-api/                 @beyondnetcode/evolith-core-s-development
+/src/apps/agent-runtime-api/        @beyondnetcode/evolith-core-s-development
+/src/packages/core-domain/          @beyondnetcode/evolith-core-s-development
+/src/packages/mcp-server/           @beyondnetcode/evolith-core-s-development

@@ -159,14 +159,102 @@ The Core-API is **REST-only** (no GraphQL, no SSE), served under `/api/v1`. Ever
 
 ### H. Tracker
 
-`gap-tracking.md` and `maturity-assessment.md` (under `reference/core/sdlc/standards/vision/`) are the **only** tracking surfaces. Update them through their bilingual pairs and keep closure evidence in sync; the `08-validate-tracking.mjs` and `09-reconcile-maturity.mjs` gates verify them.
+The tracking surfaces live under [`reference/core/control-center/`](./reference/core/control-center/README.md):
 
-## 6. Pull Request Process
+- [`gaps/gap-tracking.md`](./reference/core/control-center/gaps/gap-tracking.md) — the board, one row per gap. This is the canonical status source.
+- [`gaps/gap-reference-catalog.md`](./reference/core/control-center/gaps/gap-reference-catalog.md) — the full detail behind every board row.
+- [`maturity-reports/maturity-assessment.md`](./reference/core/control-center/maturity-reports/maturity-assessment.md) — the maturity surface.
+- [`evidence/gap-closure-evidence.json`](./reference/core/control-center/evidence/gap-closure-evidence.json) — the machine-readable closure registry.
+
+These are the **only** tracking surfaces. Update them through their bilingual pairs and keep closure evidence in sync; the `08-validate-tracking.mjs` and `09-reconcile-maturity.mjs` gates verify them. Section 6 below describes the intake procedure end to end.
+
+## 6. Filing a Gap
+
+A gap (`GT-###`) is how a finding becomes tracked work. Nothing is generated for you: every artifact below is hand-written, and `08-validate-tracking.mjs` fails the build if any of them is missing or inconsistent. Read the [Gap Closure Evidence Standard](./reference/core/control-center/evidence/gap-closure-evidence-standard.md) before you start.
+
+### A. Reserve the Identifier First
+
+`GT-` numbers are a **globally shared allocator**: parallel sessions collide if two of them read-then-write it at once. The [Session Coordination Ledger](./reference/core/control-center/COORDINATION.md) is the only place to claim one, using the reserve-then-push protocol:
+
+1. `git fetch origin` and read the *Allocator registers* table in the ledger.
+2. Take the current next-free `GT-` value, bump the register in the ledger, and **push that file first**, in its own tiny commit. That reserves the number for you.
+3. If the push is rejected, someone bumped first: re-fetch, take the new next-free value, retry. Never use `--force`.
+4. Only then create the board row and catalog entry that use the number.
+
+Whoever pushes the ledger bump first owns the number. The same protocol governs ADR numbers. Declare your lane in the *Active lanes* table so two sessions do not edit the same rows.
+
+### B. Add the Board Row
+
+Add one row to `gap-tracking.md` **and** its Spanish counterpart `gap-tracking.es.md`. The columns are `ID | Gap | Component | Phase | Criticality | Complexity | Status`:
+
+- `ID` is a link to the catalog anchor, written as ``[`GT-###`](./gap-reference-catalog.md#gt-###)``. The guard reads the ID from the backticks, so the format is not cosmetic.
+- `Gap` is a bolded one-line statement of the problem followed by the evidence and the proposed fix.
+- `Criticality` is `P0`-`P3`; `Complexity` is `XS`-`XL`.
+- `Status` is one of `PENDING`, `IN-PROGRESS`, `DONE`, `DEFERRED` (Spanish: `PENDIENTE`, `EN-PROGRESO`, `COMPLETADO`, `DIFERIDO`). The guard compares EN and ES row-by-row: identical ID order and semantically equal status, or it fails.
+
+Rows are ordered pending first (by criticality, then complexity), then completed. Update the `**Progress:** N / T done · ... ` counter in a small, dedicated board-sync commit, immediately after a `git fetch`, and push at once — that single line is the highest-contention text in the repository.
+
+### C. Write the Catalog Entry in Both Languages
+
+Every board row needs a section in `gap-reference-catalog.md` **and** in `gap-reference-catalog.es.md`. The heading must be exactly `#### GT-###` on its own line; the guard matches that shape literally. The body follows the established entry schema:
+
+```markdown
+#### GT-###
+
+**Title:** One sentence naming the defect, not the wish.
+
+- **Purpose:** What the change must achieve.
+- **Evidence:** The observed facts, with real paths, counts and commands.
+- **Impact:** What breaks or is unreachable today.
+- **Risk:** What it costs to leave unfixed.
+- **Affected files:** The concrete paths.
+- **Component:** `Name` · **Dimension:** Governance · **Type:** docs
+- **Criticality:** P2 · **Complexity:** S
+- **Proposed fix:** How it is intended to be closed.
+- **Acceptance criteria:**
+  - [ ] A verifiable statement, one per deliverable.
+- **Dependencies:** Other gaps or proposals, or `none`.
+- **Status:** `PENDING`
+```
+
+Every acceptance criterion must be checkable by someone who did not write it. When the gap is closed, **every** `- [ ]` must become `- [x]` in **both** languages: an unchecked criterion under a `DONE` status fails the guard.
+
+### D. Record the Closure Evidence
+
+A `DONE` board row without a closure record is a build failure. Append exactly one object to the `closures` array of [`gap-closure-evidence.json`](./reference/core/control-center/evidence/gap-closure-evidence.json):
+
+```json
+{
+  "id": "GT-###",
+  "closedAt": "2026-07-18",
+  "closureCommit": "83539a29",
+  "evidence": ["path/to/a/file/that/proves/it.ts"],
+  "validationCommands": ["node .harness/scripts/ci/08-validate-tracking.mjs"],
+  "dependencyDisposition": "none",
+  "dependencyRationale": "Required whenever the disposition is not none."
+}
+```
+
+`closedAt` must not be in the future, `closureCommit` must be a commit that exists in the repository, and every `evidence` path must resolve to a real file — the guard checks all three. `dependencyDisposition` is one of `none`, `satisfied`, `accepted-scope`, `deferred`. The registry is append-only and English is its canonical language. Pending, in-progress and deferred gaps must **not** carry an active closure record. No placeholder commit, speculative evidence, or waived checkbox is acceptable.
+
+### E. Validate Before You Push
+
+Run the guard from the repository root and make sure it is green:
+
+```bash
+node .harness/scripts/ci/08-validate-tracking.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
+node .harness/scripts/ci/04-check-bilingual-parity.mjs
+```
+
+If you only want to report a finding and not track it yourself, open an issue instead — the [issue chooser](https://github.com/beyondnetcode/evolith_arch32/issues/new/choose) offers a bug report, a feature request, a documentation gap, and an ADR proposal. A maintainer will allocate the `GT-###` for you.
+
+## 7. Pull Request Process
 
 1. **Branching:** Follow [ADR-0050](./reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.md). Feature work flows into `develop`, and `develop` is promoted to `main`. Prefix your branches correctly (e.g., `feature/`, `docs/`, `fix/`).
 2. **ADR Updates:** If your PR introduces an architectural change or a new tool, it *must* be accompanied by an update to an existing ADR or a new ADR following [ADR-0068](./reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md).
 3. **Commit Messages:** We use semantic versioning and release-please. Your commit messages must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification, using types such as `feat`, `fix`, `docs`, `ci`, and `chore` (e.g., `feat:`, `docs:`, `fix:`).
-4. **Issues:** Open an issue before large changes so the design can be discussed. Reference the relevant `GT-###` gap identifier when your work closes a tracked gap.
+4. **Issues:** Open an issue before large changes so the design can be discussed. Reference the relevant `GT-###` gap identifier when your work closes a tracked gap — see Section 6 for how to file one.
 5. **Code Review:** All PRs require review. Our automated workflows post coverage impact, structural validation, and Winston agentic review results on your PR.
 
 Thank you for helping us evolve the core!

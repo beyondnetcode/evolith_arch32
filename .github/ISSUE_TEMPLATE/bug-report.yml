@@ -1,0 +1,84 @@
+name: "Bug Report"
+description: Something does not work the way it is documented or the way it should
+title: "fix: [Short description of what is broken]"
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. You do not need to know the Evolith
+        governance model to file a bug — describe what you did, what you expected, and
+        what happened instead.
+
+        If the problem is a security vulnerability, **stop here** and report it privately
+        instead: https://github.com/beyondnetcode/evolith_arch32/security/advisories/new
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where did you hit this?
+      options:
+        - CLI (@beyondnet/evolith-cli)
+        - MCP server
+        - Core API (REST)
+        - Agent runtime
+        - CI harness / validation scripts
+        - Documentation
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What happened
+      description: Describe the actual behaviour, including any error message. Paste the full output rather than summarising it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: The exact commands you ran, in order. A reproduction we can run ourselves is the single most useful thing in this form.
+      placeholder: |
+        1. npm install
+        2. npx evolith validate --format json
+        3. Observe the error below
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Node version (`node --version`), operating system, and the Evolith version or commit SHA you are on.
+      placeholder: |
+        Node: v20.11.0
+        OS: macOS 14.5 / Ubuntu 22.04
+        Evolith: @beyondnet/evolith-cli 1.1.4 (or commit abc1234)
+    validations:
+      required: true
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Workaround, if you found one
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Willing to contribute?
+      options:
+        - label: I would like to submit a pull request for this.
+          required: false

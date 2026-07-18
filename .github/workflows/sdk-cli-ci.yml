@@ -10,14 +10,28 @@ on:
     paths:
       - 'src/sdk/cli/**'
       - '.harness/**'
-      - 'release-please-config.json'
+      # package.json / package-lock.json: this pipeline installs with `npm ci`,
+      # so a lock desync breaks every job here -- and until now neither file
+      # triggered it, meaning the break AND its fix both went unnoticed by the
+      # workflow they affect. (`release-please-config.json` used to be listed and
+      # was removed: it was deleted in aed33ba9, so the filter watched a path that
+      # cannot change.)
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/sdk-cli-ci.yml'
   push:
     branches: [main, develop]
     paths:
       - 'src/sdk/cli/**'
       - '.harness/**'
-      - 'release-please-config.json'
+      # package.json / package-lock.json: this pipeline installs with `npm ci`,
+      # so a lock desync breaks every job here -- and until now neither file
+      # triggered it, meaning the break AND its fix both went unnoticed by the
+      # workflow they affect. (`release-please-config.json` used to be listed and
+      # was removed: it was deleted in aed33ba9, so the filter watched a path that
+      # cannot change.)
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/sdk-cli-ci.yml'
   workflow_dispatch:
 

@@ -95,10 +95,13 @@ export function validateKnowledgeIntake(root = ROOT) {
   const srcValidate = ajv.compile(JSON.parse(fs.readFileSync(path.join(root, SRC_SCHEMA), 'utf8')));
   const acceptedTopologyIds = loadAcceptedTopologyIds(root, errors);
 
-  const kiFiles = fs.existsSync(intakePath) ? fs.readdirSync(intakePath).filter((file) => /^KI-[A-Z0-9-]+\.ya?ml$/.test(file)).sort() : [];
+  // ADR-0115 — both axes live here: KI-* (external work) and KO-* (emergent
+  // observation). Before this the glob was KI-only, so a KO record was silently
+  // ignored and the gate reported green without ever having looked at it.
+  const kiFiles = fs.existsSync(intakePath) ? fs.readdirSync(intakePath).filter((file) => /^(KI|KO)-[A-Z0-9-]+\.ya?ml$/.test(file)).sort() : [];
   const srcFiles = fs.existsSync(intakePath) ? fs.readdirSync(intakePath).filter((file) => /^SRC-[A-Z0-9-]+\.ya?ml$/.test(file)).sort() : [];
 
-  if (!kiFiles.length) errors.push(`${INTAKE_DIR} must contain at least one KI-*.yaml candidate`);
+  if (!kiFiles.length) errors.push(`${INTAKE_DIR} must contain at least one KI-*.yaml or KO-*.yaml candidate`);
 
   const knownKiIds = new Set();
   const knownSrcIds = new Set();
@@ -166,7 +169,12 @@ export function validateKnowledgeIntake(root = ROOT) {
     srcKiLinks.set(entry.source_registry_id, entry.ki_links || []);
   }
 
+  // Only the EXTERNAL axis owes a SRC-* registry entry: that record carries the
+  // licensing and retention terms of a third-party work. An emergent KO-*
+  // observation has no rights holder, so demanding one would be meaningless —
+  // its evidentiary duty is discharged by origin.evidence_ref under KO-R03.
   for (const kiId of knownKiIds) {
+    if (!kiId.startsWith('KI-')) continue;
     const srcId = [...knownSrcIds].find((s) => {
       const links = srcKiLinks.get(s) || [];
       return links.includes(kiId);
@@ -261,7 +269,9 @@ async function run() {
     console.error(`❌ Knowledge intake validation failed:\n- ${result.errors.join('\n- ')}`);
     process.exit(1);
   }
-  console.log(`✅ Knowledge intake validation passed for ${result.files.length} KI candidate(s) and ${result.srcFiles.length} SRC registry entr(ies); Native and OPA controls verified.`);
+  const external = result.files.filter((f) => f.startsWith('KI-')).length;
+  const emergent = result.files.filter((f) => f.startsWith('KO-')).length;
+  console.log(`✅ Knowledge intake validation passed for ${external} external (KI-*) + ${emergent} emergent (KO-*) candidate(s) and ${result.srcFiles.length} SRC registry entr(ies); Native and OPA controls verified.`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) run();

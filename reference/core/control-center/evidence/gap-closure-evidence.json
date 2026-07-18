@@ -7996,6 +7996,76 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "The gap has no dependencies: the files are self-contained GitHub community-health files. It feeds the GitHub bridge deliverable of UP-003, but nothing had to land first for these to take effect."
+    },
+    {
+      "id": "GT-523",
+      "closedAt": "2026-07-18",
+      "closureCommit": "35ea46e1",
+      "evidence": [
+        "reference/core/control-center/gaps/gap-tracking.md",
+        "reference/core/control-center/gaps/gap-tracking.es.md",
+        "reference/core/control-center/gaps/gap-reference-catalog.md",
+        "reference/core/control-center/gaps/gap-reference-catalog.es.md",
+        "reference/core/control-center/evidence/gap-closure-evidence.json",
+        "reference/core/control-center/maturity-reports/maturity-evidence.json",
+        ".harness/scripts/ci/08-validate-tracking.mjs",
+        ".github/workflows/docs.yml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs -- exit 0, zero ERROR lines, \"Validated 565 gaps and 530 closure records\". The ~653-error report that opened this gap is gone: EN/ES boards resync row-for-row, every board id has a catalog section in both languages, and the progress counters are re-derived from the rows the guard itself parses.",
+        "Board/registry reconciliation landed across f3f271da (EN/ES resync, GT-484 status desync), f70b98ce (six legacy closure records repaired: partial -> accepted-scope for GT-425/431/434/462, GT-463 criteria checked against evidence, GT-465 reworded to delivered scope) and e138b1d4 (records for GT-519/438/451).",
+        "ES token normalization verified: zero `HECHO` status cells remain in gap-tracking.es.md, all 13 normalized to COMPLETADO (GT-480).",
+        "Guard re-arm confirmed delivered by GT-476 (now DONE): .github/workflows/docs.yml runs 08-validate-tracking.mjs and 09-reconcile-maturity.mjs --check, so both guards are armed in CI rather than dormant.",
+        "The CI-owned remainder was paid genuinely, not by a date bump (commit 35ea46e1): all four checks in maturity-evidence.json now carry observedAt 2026-07-18 with real GitHub Actions run URLs and commits, asOf is re-synced to the board, and the observation was honest enough to INVERT three checks from PASS to BLOCKED -- MCP smoke timeout, branch coverage 62.89% against a 75% gate, and 174 doc-validation errors -- with no threshold relaxed and no stale figure carried forward.",
+        "Placeholder mapping cleared before closing: the three BLOCKED checks that had been provisionally mapped to GT-523 pending rows of their own are repointed to GT-561 (cli-baseline), GT-562 (coverage) and GT-563 (documentation), so no maturity evidence maps to a closed gap. The `release` check's pointer at the now-closed GT-552 was repointed to GT-563, the cause its own summary already named as what actually reds the gate; 09-reconcile-maturity.mjs no longer reports \"must map BLOCKED evidence to an active gap\"."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Two items are deliberately outside this closure rather than claimed. First, the guard path-fix and CI re-arm were always delegated to GT-476, which is now DONE and verified in docs.yml. Second, `09-reconcile-maturity.mjs` still reports its generated snapshot as stale: maturity-reconciliation.json has not been regenerated, and that regeneration is owned by GT-553 (the guard's dead path constants and ruleset miscount) and GT-445 (the stale doc-count surfaces), not by this gap, whose scope was the board/registry reconciliation and the fresh maturity OBSERVATION -- both of which are done. The three failures the observation exposed are not remainders of this gap either; they are independent defects now carried by GT-561, GT-562 and GT-563."
+    },
+    {
+      "id": "GT-564",
+      "closedAt": "2026-07-18",
+      "closureCommit": "af0deffe",
+      "evidence": [
+        "src/packages/sdk-client/src/mcp/types.ts",
+        "src/packages/sdk-client/src/rest/types.ts",
+        "src/packages/sdk-client/src/index.ts",
+        "src/packages/sdk-client/package.json",
+        "src/packages/sdk-client/README.md",
+        "src/packages/sdk-client/README.es.md",
+        "src/packages/sdk-client/src/__tests__/sdk.spec.ts"
+      ],
+      "validationCommands": [
+        "Justification measured before the fix: REST and MCP call the SAME use case and return the domain object verbatim, so there was no reshaping that could justify separate DTOs -- the SDK's payload types were a fork, not a transport projection.",
+        "Divergences confirmed: the SDK declared `passed: boolean` where the API emits `verdict: 'passed'|'failed'|'skipped'`, and README.md instructed users to print `result.data.passed`, which is undefined at runtime; `gateId`, `rulesetRef` and `rulesetVersion` were omitted although they ARE emitted; the REQUIRED `location` was dropped; `artifact?` and `remediation?` were declared although no producer emits them; `ViolationSeverity` admitted an unreachable 'info' and was forked across two files; `ValidationIssue` had degraded to `severity: string`, losing the MUST|SHOULD|COULD constraint.",
+        "Fix verified in src/packages/sdk-client/src/mcp/types.ts and src/rest/types.ts: both now re-export from `@beyondnet/evolith-core-domain` (gate-evidence and application/validators/ruleset-validator.types) rather than redeclaring, so there is a single source of truth. README.md's example now prints `result.data.verdict`, `gateId` and `rulesetVersion`.",
+        "Semver decision recorded: `src/packages/sdk-client/package.json` is at 2.0.0 with `@beyondnet/evolith-core-domain` as a real dependency. A major bump was chosen over a deprecation window because a window preserves types that are actively wrong and any 1.1.0 consumer is already broken at runtime; a real dependency was chosen over vendored copies with a parity guard because two sources of truth plus a watcher is the pattern being removed.",
+        "npx jest in sdk-client -- 54/54 passing; npx tsc --noEmit clean for sdk-client, mcp-server and src/sdk/cli."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "This gap retires the two sdk-client forks that GT-558 recorded as an unresolved follow-up, and the semver decision GT-558 deferred is taken here. One item is deliberately left outside the closure: publishing 2.0.0 to the npm registry is an owner decision and a release action, not a code change, so it is excluded from scope rather than claimed as done. The drift mechanism that allowed the fork is closed separately by GT-565."
+    },
+    {
+      "id": "GT-565",
+      "closedAt": "2026-07-18",
+      "closureCommit": "2db2306c",
+      "evidence": [
+        "src/tests/contract/sdk-wire-contract.spec.ts",
+        "src/tests/contract/sdk-type-contract.types.ts",
+        "src/tests/contract/tsconfig.sdk-type-contract.json",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "Root cause of GT-564 measured: the SDK's tests mocked `fetch` to return the SDK's OWN invented shape and asserted on it -- a closed loop in which no divergence from the API is observable, so the types could drift arbitrarily and the suite stayed green.",
+        "Two layers were built rather than one, because each is blind to a drift the other catches: the compile-time layer cannot see a controller change its response without touching the domain type, and the runtime layer cannot see fields absent from the sample or required-vs-optional distinctions.",
+        "The cost objection was measured, not assumed: booting core-api takes ~3s, so the argument for a compile-time-only check did not survive measurement.",
+        "The runtime checker's key set and required flags are TYPE-DERIVED from the SDK types in src/tests/contract/sdk-type-contract.types.ts, so the runtime half cannot drift from the type it enforces. Proven to bite with three deliberate breaks, each caught and then restored.",
+        "CI wiring (commit 1875f725): the suite existed, passed, and ran in NO workflow; .github/workflows/ci-cd.yml now carries a `test-contract` job (\"Test contract (SDK wire fidelity)\") running `npm run test:contract`.",
+        "Follow-on (commit e25804dc): the suite's symlink workaround was REMOVED because the underlying ruleset resolution was fixed to resolve the corpus by CONTENT rather than by directory existence -- the removal is the evidence that fix is real, since the suite would fail without it.",
+        "npm run test:contract -- 43/43 passing."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The suite pins the contract restored by GT-564, so the two land as a pair: GT-564 repairs the types and this gap makes them accountable to the wire. Two follow-on commits are inside the closure rather than deferred -- 1875f725 wires the suite into ci-cd.yml, and e25804dc fixes the ruleset resolution that the suite had been working around with a symlink."
     }
   ]
 }

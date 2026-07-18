@@ -3,14 +3,14 @@
   "scope": "evolith-core",
   "asOf": "2026-07-13",
   "gaps": {
-    "total": 559,
-    "done": 540,
+    "total": 565,
+    "done": 548,
     "pending": 8,
-    "inProgress": 7,
+    "inProgress": 5,
     "deferred": 4
   },
   "evidence": {
-    "closureRecords": 522,
+    "closureRecords": 530,
     "cliPackage": "@beyondnet/evolith-cli@1.1.0",
     "adrCount": 132,
     "rulesetCount": 145,
@@ -22,36 +22,36 @@
       "status": "BLOCKED",
       "observedAt": "2026-07-18",
       "commit": "27e7a01f",
-      "gap": "GT-523",
+      "gap": "GT-561",
       "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29646397424",
-      "summary": "Re-observed 2026-07-18 on develop and NOT green. Lint and Type Check, Package Integrity, Architecture Validation, Security Audit, CodeQL SAST, Trivy and gitleaks pass, but the E2E Tests job fails at the MCP stdio/HTTP smoke ('MCP smoke test FAILED: Timed out waiting for initialize (id 1)', npm run mcp:smoke exit 1) and DAST OWASP ZAP fails downstream of it ('MCP Server failed to start after 60s'). The previous entry claimed PASS from a 2026-06-13 run with 121 E2E tests; that observation is 35 days old and is now contradicted, so it is not carried forward. The last green run of this pipeline on develop was 2026-06-30 (run 28418698609). No dedicated gap row exists yet for the MCP smoke timeout; mapped to GT-523 (the maturity-evidence refresh) pending registration of its own gap."
+      "summary": "Re-observed 2026-07-18 on develop and NOT green. Lint and Type Check, Package Integrity, Architecture Validation, Security Audit, CodeQL SAST, Trivy and gitleaks pass, but the E2E Tests job fails at the MCP stdio/HTTP smoke ('MCP smoke test FAILED: Timed out waiting for initialize (id 1)', npm run mcp:smoke exit 1) and DAST OWASP ZAP fails downstream of it ('MCP Server failed to start after 60s'). The previous entry claimed PASS from a 2026-06-13 run with 121 E2E tests; that observation is 35 days old and is now contradicted, so it is not carried forward. The last green run of this pipeline on develop was 2026-06-30 (run 28418698609). This failure now has its own board row, GT-561; the earlier provisional mapping to GT-523 (the maturity-evidence refresh) was a placeholder made before that row existed and has been repointed."
     },
     {
       "id": "coverage",
       "status": "BLOCKED",
       "observedAt": "2026-07-18",
       "commit": "27e7a01f",
-      "gap": "GT-523",
+      "gap": "GT-562",
       "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29646397424",
-      "summary": "Re-observed 2026-07-18 on develop and NOT green. Every test passes -- 71 suites, 969 tests, 0 failures -- but the blocking coverage gate fails: 'Jest: Coverage for branches (62.89%) does not meet \"global\" threshold (75%)'. The previous entry claimed PASS with 1,206 passing tests and 80.65% statement coverage as of 2026-06-13; both the test count and the coverage figure are stale and the gate outcome has inverted, so neither number is carried forward. The threshold itself is NOT being relaxed: the honest reading is that branch coverage regressed below a threshold that remains correct. No dedicated gap row exists yet for the branch-coverage regression; mapped to GT-523 (the maturity-evidence refresh) pending registration of its own gap."
+      "summary": "Re-observed 2026-07-18 on develop and NOT green. Every test passes -- 71 suites, 969 tests, 0 failures -- but the blocking coverage gate fails: 'Jest: Coverage for branches (62.89%) does not meet \"global\" threshold (75%)'. The previous entry claimed PASS with 1,206 passing tests and 80.65% statement coverage as of 2026-06-13; both the test count and the coverage figure are stale and the gate outcome has inverted, so neither number is carried forward. The threshold itself is NOT being relaxed: the honest reading is that branch coverage regressed below a threshold that remains correct. This regression now has its own board row, GT-562; the earlier provisional mapping to GT-523 (the maturity-evidence refresh) was a placeholder made before that row existed and has been repointed."
     },
     {
       "id": "documentation",
       "status": "BLOCKED",
       "observedAt": "2026-07-18",
       "commit": "27e7a01f",
-      "gap": "GT-523",
+      "gap": "GT-563",
       "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29646397424",
-      "summary": "Re-observed 2026-07-18 and NOT green. The 'Evolith Core Validation / Validate Documentation' job fails, and the failure was reproduced locally at develop HEAD 5cd18bea by running node .harness/scripts/ci/01-validate-docs.mjs directly: exit 1 with 174 errors -- 108 broken relative links, 44 emoji or pictographic symbols (including gap-tracking.md and gap-tracking.es.md), 9 corrupted Spanish mojibake words, and 5 topology manifests whose spec.corpus.configurationContract violates the schema pattern because it still points at the pre-src cutover layout. Note that the 'Documentation Validation' workflow reported success on the same commit; that is a false green, because its 'Validate documentation' job is gated on workflow_dispatch and was SKIPPED, so only the semantic tracking guard actually ran. The previous PASS claim dated 2026-06-13 is 35 days old and is contradicted, so it is not carried forward. No dedicated gap row exists yet for these 174 documentation errors; mapped to GT-523 (the maturity-evidence refresh) pending registration of its own gap."
+      "summary": "Re-observed 2026-07-18 and NOT green. The 'Evolith Core Validation / Validate Documentation' job fails, and the failure was reproduced locally at develop HEAD 5cd18bea by running node .harness/scripts/ci/01-validate-docs.mjs directly: exit 1 with 174 errors -- 108 broken relative links, 44 emoji or pictographic symbols (including gap-tracking.md and gap-tracking.es.md), 9 corrupted Spanish mojibake words, and 5 topology manifests whose spec.corpus.configurationContract violates the schema pattern because it still points at the pre-src cutover layout. Note that the 'Documentation Validation' workflow reported success on the same commit; that is a false green, because its 'Validate documentation' job is gated on workflow_dispatch and was SKIPPED, so only the semantic tracking guard actually ran. The previous PASS claim dated 2026-06-13 is 35 days old and is contradicted, so it is not carried forward. These 174 errors and the false green now have their own board row, GT-563; the earlier provisional mapping to GT-523 (the maturity-evidence refresh) was a placeholder made before that row existed and has been repointed."
     },
     {
       "id": "release",
       "status": "BLOCKED",
       "observedAt": "2026-07-18",
       "commit": "df3c173c",
-      "gap": "GT-552",
+      "gap": "GT-563",
       "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29641024724",
-      "summary": "Downgraded from RESOLVED to BLOCKED on a re-observation dated 2026-07-18. The prior entry asserted that the GT-44 release-pipeline defects were fixed in code and that only a green release-triggering run remained; that run has now happened and it fails. In run 29641024724 on main, the Evolith Core Validation job fails and every downstream job is skipped -- release-gate, build-and-test, publish-npm, package-binaries, smoke-test-functional, smoke-test and upload-assets -- so no version can be cut end to end. This is the condition tracked by GT-552 (release-please is wired to release-please-config.json and .release-please-manifest.json, both deleted in aed33ba9), compounded by the documentation-validation failure above which is what actually reds the gate. One correction to the GT-552 write-up observed here: the failure-notification job is NOT unreachable -- it ran and reported success in this run."
+      "summary": "Downgraded from RESOLVED to BLOCKED on a re-observation dated 2026-07-18. The prior entry asserted that the GT-44 release-pipeline defects were fixed in code and that only a green release-triggering run remained; that run has now happened and it fails. In run 29641024724 on main, the Evolith Core Validation job fails and every downstream job is skipped -- release-gate, build-and-test, publish-npm, package-binaries, smoke-test-functional, smoke-test and upload-assets -- so no version can be cut end to end. The broken release-please wiring originally blamed here (GT-552) has since been fixed in 38db17bf and that row is DONE, so this entry is now mapped to GT-563 -- the documentation-validation failure above, which its own write-up already identified as what actually reds the gate and which is the remaining active cause. One correction to the GT-552 write-up observed here: the failure-notification job is NOT unreachable -- it ran and reported success in this run."
     }
   ],
   "externalProducts": [

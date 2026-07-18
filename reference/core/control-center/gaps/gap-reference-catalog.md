@@ -6752,6 +6752,19 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 **References:** `.harness/scripts/ci/08-validate-tracking.mjs`; `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/evidence/gap-closure-evidence.json` (`d11c6e52`); GT-476, GT-477, GT-480.
 
+**Delivered scope** _(this entry predates the acceptance-criteria schema; the proposed-fix clauses are checked off here instead)_:
+- [x] EN/ES boards resynced row-for-row. _(`f3f271da`, `e138b1d4`; guard 08 green)_
+- [x] Catalog sections authored for `GT-486…509` and `GT-511…522` in both languages.
+- [x] The 13 ES `HECHO` tokens normalized to `COMPLETADO` (GT-480); no `HECHO` status cell remains.
+- [x] The 10 legacy invalid closure records repaired — `partial`→`accepted-scope` (GT-425/431/434/462), GT-463 criteria checked against evidence, GT-465 reworded to delivered scope. _(`f70b98ce`)_
+- [x] Progress/Progreso counters re-derived and kept consistent in both languages (GT-477).
+- [x] Guards 08 and 09 re-armed in CI — `.github/workflows/docs.yml` runs both. _(delegated to and delivered by GT-476, now `DONE`)_
+- [x] The CI-owned remainder paid: the maturity evidence was genuinely re-observed, not date-bumped. _(commit `35ea46e1`)_
+
+**Closure (2026-07-18, commit `35ea46e1`):** The board/registry drift this gap tracked is reconciled and guard 08 is green. The last remainder — a genuine fresh maturity observation rather than a local date bump — was performed in `35ea46e1`: all four checks carry `observedAt` 2026-07-18 with real run URLs and commits, `asOf` re-synced to the board, and three checks honestly INVERTED from PASS to BLOCKED with no threshold relaxed. Those three failures had been mapped to this gap as an explicit placeholder; they now hold their own rows ([GT-561](#gt-561), [GT-562](#gt-562), [GT-563](#gt-563)) and `maturity-evidence.json` has been repointed at them, so closing this row leaves no evidence attached to a closed gap. _Not claimed by this closure:_ `09-reconcile-maturity.mjs` still reports its snapshot as stale, because the generated `maturity-reconciliation.json` has not been regenerated — that regeneration belongs to [GT-553](#gt-553) and [GT-445](#gt-445), not here.
+
+**Status:** `DONE`
+
 #### GT-552
 
 **Title:** `release-please` is wired to configuration files that no longer exist
@@ -6988,3 +7001,50 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] The `validate` job runs unconditionally, so the workflow result reflects the validator's verdict.
 - **Dependencies:** None.
 - **Status:** `PENDING`
+
+#### GT-564
+
+**Title:** The SDK's exported payload types were a fork that did not describe the wire
+
+- **Purpose:** Make the types a consumer imports be the types the API actually emits, so the SDK stops being a second, wrong description of the same contract.
+- **Evidence:** Both REST and MCP call the **same** use case and return the domain object **verbatim**, so there was no reshaping to justify separate DTOs. The fork nevertheless declared `passed: boolean` where the API emits `verdict: 'passed'\|'failed'\|'skipped'`, and `README.md` instructed users to print `result.data.passed` — **undefined at runtime**. It omitted `gateId`, `rulesetRef` and `rulesetVersion`, which ARE emitted; it dropped the REQUIRED `location`; and it declared `artifact?` and `remediation?`, which **no producer emits**. `ViolationSeverity` admitted an unreachable `'info'` and was forked across two files, and `ValidationIssue` had degraded to `severity: string`, losing the `MUST\|SHOULD\|COULD` constraint.
+- **Impact:** Every consumer typing against the SDK was typed against a contract nothing produces, and the published README's first example was wrong at runtime.
+- **Risk:** A wrong type is worse than an absent one: it compiles, so the error surfaces only in production, and the deprecation window normally used to soften a breaking change would have preserved the wrongness for its duration.
+- **Affected files:** `src/packages/sdk-client/src/mcp/types.ts`; `src/packages/sdk-client/src/rest/types.ts`; `src/packages/sdk-client/src/index.ts`; `src/packages/sdk-client/README.md` and `README.es.md`; `src/packages/sdk-client/package.json`.
+- **Component:** `SDK` · **Dimension:** Governance · **Type:** backend
+- **Criticality:** P1 · **Complexity:** L
+- **Proposed fix:** Retire the forked payload types onto the domain contract by re-exporting `@beyondnet/evolith-core-domain`, and release the change as a major version.
+- **Acceptance criteria:**
+  - [x] `sdk-client` re-exports the payload types from `@beyondnet/evolith-core-domain` rather than redeclaring them, so there is one source of truth. _(commit `af0deffe`)_
+  - [x] The wrong declarations are gone: no boolean `passed`, `verdict` present, `gateId`/`rulesetRef`/`rulesetVersion` present, `location` required again, the unproduced `artifact?`/`remediation?` removed, the unreachable `'info'` severity removed, and `ValidationIssue.severity` back to `MUST\|SHOULD\|COULD`. _(commit `af0deffe`)_
+  - [x] `README.md` and `README.es.md` no longer instruct users to read `result.data.passed`; the example prints `verdict`, `gateId` and `rulesetVersion`. _(commit `af0deffe`)_
+  - [x] The package is bumped to **2.0.0** — a major bump rather than a deprecation window, because a window preserves types that are actively wrong and any 1.1.0 consumer is already broken at runtime. _(commit `af0deffe`)_
+  - [x] The dependency is real, not a vendored copy guarded for parity: two sources of truth plus a watcher is the pattern being removed. _(commit `af0deffe`)_
+  - [x] 54/54 sdk tests pass and `tsc` is clean for `sdk-client`, `mcp-server` and `src/sdk/cli`. _(commit `af0deffe`)_
+- **Dependencies:** Retires the two `sdk-client` forks recorded as an unresolved follow-up on [GT-558](#gt-558); the drift that allowed it is [GT-565](#gt-565).
+- **Closure (2026-07-18, commit `af0deffe`):** The SDK's payload types are now the domain's, imported rather than restated, and the package carries the major version that breaking change requires. _Deliberately not done:_ publishing 2.0.0 to the registry, which is the owner's call and not a code change.
+- **Status:** `DONE`
+
+#### GT-565
+
+**Title:** The SDK's tests asserted against the SDK's own invented shape, so its types could drift arbitrarily and stay green
+
+- **Purpose:** Make the SDK's types accountable to the wire that actually exists, so the drift behind [GT-564](#gt-564) cannot recur silently.
+- **Evidence:** This is the root cause of [GT-564](#gt-564): the SDK's tests mocked `fetch` to return the SDK's **own** invented shape and then asserted on it, a closed loop in which no divergence from the API is observable. The suite additionally ran in **no workflow at all** — it existed, it passed locally, and CI never executed it.
+- **Impact:** The one artefact that could have caught the forked types was structurally incapable of doing so, and was not being run regardless.
+- **Risk:** A test that asserts a mock against itself reports confidence proportional to nothing; a reviewer reasonably reads its green as contract coverage.
+- **Affected files:** `src/tests/contract/sdk-wire-contract.spec.ts`; `src/tests/contract/sdk-type-contract.types.ts`; `src/tests/contract/tsconfig.sdk-type-contract.json`; `.github/workflows/ci-cd.yml`.
+- **Component:** `Testing` · **Dimension:** Reliability · **Type:** tooling
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Assert the SDK types against a real response from a booted core-api, in both a compile-time and a runtime layer, and wire the suite into CI.
+- **Acceptance criteria:**
+  - [x] Two layers, because each is blind to a drift the other catches: compile-time cannot see a controller change its response without touching the domain type, and runtime cannot see fields absent from the sample or required-vs-optional distinctions. _(commit `2db2306c`)_
+  - [x] The cost objection to booting a real server was measured rather than assumed: booting core-api takes **~3s**, so the argument for a compile-time-only check did not survive measurement. _(commit `2db2306c`)_
+  - [x] The runtime checker's key set and required flags are **type-derived** from the SDK types, so the runtime half cannot drift from the type it enforces. _(commit `2db2306c`)_
+  - [x] The suite is proven to bite: three deliberate breaks were introduced and each was caught, then restored. _(commit `2db2306c`)_
+  - [x] The suite is wired into `ci-cd.yml` as a `test-contract` job, having previously run in no workflow. _(commit `1875f725`)_
+  - [x] The symlink workaround the suite needed is REMOVED, because the underlying ruleset resolution was fixed to resolve the corpus by content rather than by directory existence — the removal is the evidence that fix is real. _(commit `e25804dc`)_
+  - [x] 43/43 contract tests pass. _(`npm run test:contract`)_
+- **Dependencies:** Pins the contract restored by [GT-564](#gt-564); the ruleset-resolution fix in `e25804dc` is a follow-on of this gap, not a separate dependency.
+- **Closure (2026-07-18, commit `2db2306c`):** The SDK's types are now checked against a response from a real booted core-api instead of against a mock of themselves, in two layers whose runtime half is derived from the type it enforces, and the suite runs in CI. _Follow-on commits:_ `1875f725` (CI wiring) and `e25804dc` (ruleset resolution by content, which retired the symlink workaround).
+- **Status:** `DONE`

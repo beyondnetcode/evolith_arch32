@@ -6657,6 +6657,19 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 **Referencias:** `.harness/scripts/ci/08-validate-tracking.mjs`; `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/evidence/gap-closure-evidence.json` (`d11c6e52`); GT-476, GT-477, GT-480.
 
+**Alcance entregado** _(esta entrada es anterior al esquema de criterios de aceptación; se marcan aquí las cláusulas del fix propuesto)_:
+- [x] Boards EN/ES resincronizados fila por fila. _(`f3f271da`, `e138b1d4`; guard 08 en verde)_
+- [x] Secciones de catálogo redactadas para `GT-486…509` y `GT-511…522` en ambos idiomas.
+- [x] Los 13 tokens `HECHO` en ES normalizados a `COMPLETADO` (GT-480); no queda ninguna celda de estado `HECHO`.
+- [x] Los 10 registros de cierre legacy inválidos reparados — `partial`→`accepted-scope` (GT-425/431/434/462), criterios de GT-463 verificados contra evidencia, GT-465 reescrito al alcance entregado. _(`f70b98ce`)_
+- [x] Contadores Progress/Progreso re-derivados y consistentes en ambos idiomas (GT-477).
+- [x] Guards 08 y 09 re-armados en CI — `.github/workflows/docs.yml` ejecuta ambos. _(delegado a y entregado por GT-476, ahora `COMPLETADO`)_
+- [x] Remanente CI-owned pagado: la evidencia de madurez se re-observó de verdad, sin bumpear fechas. _(commit `35ea46e1`)_
+
+**Cierre (2026-07-18, commit `35ea46e1`):** La deriva board/registro que rastreaba este gap está reconciliada y el guard 08 está en verde. El último remanente — una observación de madurez genuinamente fresca en vez de un date-bump local — se ejecutó en `35ea46e1`: las cuatro checks llevan `observedAt` 2026-07-18 con URLs de corrida y commits reales, el `asOf` re-sincronizado al board, y tres checks se INVIRTIERON honestamente de PASS a BLOCKED sin relajar ningún umbral. Esas tres fallas estaban mapeadas a este gap como placeholder explícito; ya tienen sus propias filas ([GT-561](#gt-561), [GT-562](#gt-562), [GT-563](#gt-563)) y `maturity-evidence.json` fue repuntado hacia ellas, de modo que cerrar esta fila no deja evidencia colgando de un gap cerrado. _No reclamado por este cierre:_ `09-reconcile-maturity.mjs` sigue reportando su snapshot como stale, porque el `maturity-reconciliation.json` generado no se ha regenerado — esa regeneración pertenece a [GT-553](#gt-553) y [GT-445](#gt-445), no a este gap.
+
+**Estado:** `COMPLETADO`
+
 #### GT-552
 
 **Título:** `release-please` apunta a archivos de configuración que ya no existen
@@ -6893,3 +6906,50 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] El job `validate` corre sin condición, de modo que el resultado del workflow refleja el veredicto del validador.
 - **Dependencias:** Ninguna.
 - **Estado:** `PENDIENTE`
+
+#### GT-564
+
+**Título:** Los tipos de payload exportados por el SDK eran una bifurcación que no describía el cable
+
+- **Propósito:** Lograr que los tipos que importa un consumidor sean los tipos que la API realmente emite, para que el SDK deje de ser una segunda descripción — equivocada — del mismo contrato.
+- **Evidencia:** Tanto REST como MCP invocan el **mismo** caso de uso y devuelven el objeto de dominio **verbatim**, así que no había ninguna transformación que justificara DTOs separados. Aun así la bifurcación declaraba `passed: boolean` donde la API emite `verdict: 'passed'\|'failed'\|'skipped'`, y el `README.md` indicaba imprimir `result.data.passed` — **undefined en ejecución**. Omitía `gateId`, `rulesetRef` y `rulesetVersion`, que SÍ se emiten; eliminaba el `location` REQUERIDO; y declaraba `artifact?` y `remediation?`, que **ningún productor emite**. `ViolationSeverity` admitía un `'info'` inalcanzable y estaba bifurcado en dos archivos, y `ValidationIssue` había degradado a `severity: string`, perdiendo la restricción `MUST\|SHOULD\|COULD`.
+- **Impacto:** Todo consumidor tipado contra el SDK estaba tipado contra un contrato que nada produce, y el primer ejemplo del README publicado era incorrecto en ejecución.
+- **Riesgo:** Un tipo equivocado es peor que un tipo ausente: compila, así que el error solo aparece en producción, y la ventana de deprecación con la que normalmente se suaviza un cambio incompatible habría preservado esa incorrección durante toda su duración.
+- **Archivos afectados:** `src/packages/sdk-client/src/mcp/types.ts`; `src/packages/sdk-client/src/rest/types.ts`; `src/packages/sdk-client/src/index.ts`; `src/packages/sdk-client/README.md` y `README.es.md`; `src/packages/sdk-client/package.json`.
+- **Componente:** `SDK` · **Dimensión:** Governance · **Tipo:** backend
+- **Criticidad:** P1 · **Complejidad:** L
+- **Fix propuesto:** Retirar los tipos de payload bifurcados sobre el contrato de dominio reexportando `@beyondnet/evolith-core-domain`, y publicar el cambio como versión mayor.
+- **Criterios de aceptación:**
+  - [x] `sdk-client` reexporta los tipos de payload desde `@beyondnet/evolith-core-domain` en vez de redeclararlos, de modo que hay una sola fuente de verdad. _(commit `af0deffe`)_
+  - [x] Las declaraciones equivocadas ya no están: no hay `passed` booleano, `verdict` está presente, `gateId`/`rulesetRef`/`rulesetVersion` están presentes, `location` vuelve a ser requerido, se eliminan `artifact?`/`remediation?` que nadie produce, se elimina la severidad `'info'` inalcanzable y `ValidationIssue.severity` vuelve a `MUST\|SHOULD\|COULD`. _(commit `af0deffe`)_
+  - [x] `README.md` y `README.es.md` ya no indican leer `result.data.passed`; el ejemplo imprime `verdict`, `gateId` y `rulesetVersion`. _(commit `af0deffe`)_
+  - [x] El paquete sube a **2.0.0** — bump mayor en vez de ventana de deprecación, porque una ventana preserva tipos que son activamente incorrectos y cualquier consumidor de 1.1.0 ya está roto en ejecución. _(commit `af0deffe`)_
+  - [x] La dependencia es real, no una copia vendorizada con un guard de paridad: dos fuentes de verdad más un vigilante es justamente el patrón que se está eliminando. _(commit `af0deffe`)_
+  - [x] Pasan 54/54 tests del sdk y `tsc` queda limpio para `sdk-client`, `mcp-server` y `src/sdk/cli`. _(commit `af0deffe`)_
+- **Dependencias:** Retira las dos bifurcaciones de `sdk-client` registradas como seguimiento sin resolver en [GT-558](#gt-558); la deriva que lo permitió es [GT-565](#gt-565).
+- **Cierre (2026-07-18, commit `af0deffe`):** Los tipos de payload del SDK son ahora los del dominio, importados en vez de reenunciados, y el paquete lleva la versión mayor que ese cambio incompatible exige. _Deliberadamente sin hacer:_ publicar 2.0.0 al registry, que es decisión del owner y no un cambio de código.
+- **Estado:** `COMPLETADO`
+
+#### GT-565
+
+**Título:** Los tests del SDK afirmaban contra la forma inventada por el propio SDK, así que sus tipos podían derivar arbitrariamente y seguir en verde
+
+- **Propósito:** Hacer que los tipos del SDK rindan cuentas ante el cable que existe de verdad, para que la deriva detrás de [GT-564](#gt-564) no pueda repetirse en silencio.
+- **Evidencia:** Esta es la causa raíz de [GT-564](#gt-564): los tests del SDK mockeaban `fetch` para devolver la forma **inventada por el propio SDK** y luego afirmaban sobre ella, un lazo cerrado en el que ninguna divergencia respecto de la API es observable. Además la suite no corría en **ningún workflow**: existía, pasaba localmente, y CI nunca la ejecutaba.
+- **Impacto:** El único artefacto que podía haber detectado los tipos bifurcados era estructuralmente incapaz de hacerlo, y de todos modos no se estaba ejecutando.
+- **Riesgo:** Un test que afirma un mock contra sí mismo reporta una confianza proporcional a nada; un revisor lee razonablemente ese verde como cobertura de contrato.
+- **Archivos afectados:** `src/tests/contract/sdk-wire-contract.spec.ts`; `src/tests/contract/sdk-type-contract.types.ts`; `src/tests/contract/tsconfig.sdk-type-contract.json`; `.github/workflows/ci-cd.yml`.
+- **Componente:** `Testing` · **Dimensión:** Reliability · **Tipo:** tooling
+- **Criticidad:** P1 · **Complejidad:** M
+- **Fix propuesto:** Verificar los tipos del SDK contra una respuesta real de un core-api arrancado, en una capa de compilación y otra de ejecución, y cablear la suite en CI.
+- **Criterios de aceptación:**
+  - [x] Dos capas, porque cada una es ciega a una deriva que la otra detecta: en compilación no se ve que un controller cambie su respuesta sin tocar el tipo de dominio, y en ejecución no se ven los campos ausentes de la muestra ni la distinción requerido-vs-opcional. _(commit `2db2306c`)_
+  - [x] La objeción de costo por arrancar un servidor real se midió en vez de suponerse: arrancar core-api toma **~3s**, así que el argumento para quedarse solo en compilación no sobrevivió a la medición. _(commit `2db2306c`)_
+  - [x] El conjunto de claves y los flags de obligatoriedad del verificador en ejecución se **derivan del tipo** del SDK, de modo que la mitad en ejecución no puede derivar respecto del tipo que impone. _(commit `2db2306c`)_
+  - [x] Está probado que la suite muerde: se introdujeron tres roturas deliberadas, cada una fue detectada y luego restaurada. _(commit `2db2306c`)_
+  - [x] La suite queda cableada en `ci-cd.yml` como job `test-contract`, tras no correr previamente en ningún workflow. _(commit `1875f725`)_
+  - [x] El workaround de symlink que la suite necesitaba queda ELIMINADO, porque se arregló la resolución de rulesets subyacente para resolver el corpus por contenido y no por existencia de directorio — la eliminación es la evidencia de que ese arreglo es real. _(commit `e25804dc`)_
+  - [x] Pasan 43/43 tests de contrato. _(`npm run test:contract`)_
+- **Dependencias:** Fija el contrato restaurado por [GT-564](#gt-564); el arreglo de resolución de rulesets en `e25804dc` es un follow-on de este gap, no una dependencia aparte.
+- **Cierre (2026-07-18, commit `2db2306c`):** Los tipos del SDK se verifican ahora contra una respuesta de un core-api real arrancado en vez de contra un mock de sí mismos, en dos capas cuya mitad de ejecución se deriva del tipo que impone, y la suite corre en CI. _Commits de follow-on:_ `1875f725` (cableado en CI) y `e25804dc` (resolución de rulesets por contenido, que retiró el workaround de symlink).
+- **Estado:** `COMPLETADO`

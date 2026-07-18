@@ -97,7 +97,7 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 
 ### Dimension 3: Governance Exposure Completeness — **Level 4 (Managed)**
 * **State:** `Validated`
-* **Evidence:** 32 MCP tools, 9 resources, and 8 prompts cover validation, agents, architecture, SDLC, prioritization, metrics, and gate evaluation with runtime-schema conformance checks.
+* **Evidence:** 47 MCP tools, 11 resources, and 8 prompts cover validation, agents, architecture, SDLC, prioritization, metrics, and gate evaluation with runtime-schema conformance checks.
 * **Path to Level 5:** hot-reload of rulesets and measured adoption across satellite repositories.
 
 ### Dimension 4: CLI Developer Experience — **Level 4 (Managed)**

@@ -150,3 +150,38 @@ describe('KnowledgeOpportunityProvider', () => {
     expect((await p.collect(target, ctx)).findings).toHaveLength(1);
   });
 });
+
+/**
+ * The wiring contract for the `ground` step (ADR-0115). These pin the guard
+ * rather than the plumbing: the detector is only meaningful once a corpus
+ * exists, and getting that wrong turns it into a noise generator.
+ */
+describe('grounding wiring contract', () => {
+  const observationsFrom = (totalChunks: number, citationCount: number) => {
+    const provider = new KnowledgeOpportunityProvider({ now: clock });
+    // Mirrors the guard in agent-runtime.service.ts: observe only when the
+    // corpus could have answered.
+    if (totalChunks > 0) {
+      provider.observe({ intent: 'how do aggregates commit', citationCount });
+      provider.observe({ intent: 'how do aggregates commit', citationCount });
+    }
+    return provider;
+  };
+
+  it('observes nothing when the corpus is empty — zero citations there means "no corpus", not "no answer"', async () => {
+    const ev = await observationsFrom(0, 0).collect(target, ctx);
+    expect(ev.metrics.unansweredIntents).toBe(0);
+    expect(ev.findings).toHaveLength(0);
+  });
+
+  it('detects the gap once a populated corpus fails to answer', async () => {
+    const ev = await observationsFrom(500, 0).collect(target, ctx);
+    expect(ev.findings).toHaveLength(1);
+  });
+
+  it('stays silent when a populated corpus answers', async () => {
+    const ev = await observationsFrom(500, 4).collect(target, ctx);
+    expect(ev.findings).toHaveLength(0);
+    expect(ev.metrics.unansweredIntents).toBe(0);
+  });
+});

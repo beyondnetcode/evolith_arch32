@@ -70,6 +70,12 @@ export interface AgentRuntimeDeps {
    */
   readonly knowledge?: IKnowledgePort;
   /**
+   * ADR-0115 — optional sensor fed by the `ground` step. Absent by default: it
+   * only observes, never alters the run, and a deployment without a corpus has
+   * nothing meaningful for it to see.
+   */
+  readonly knowledgeOpportunity?: { observe(o: { intent: string; citationCount: number; corpusVersion?: string; repository?: string }): void };
+  /**
    * Optional workspace-context assembler (GT-438). When present, the runtime
    * gathers the real workspace files and passes them INLINE to the stateless
    * Core `evaluate()` (via `evaluationInput.files`), so the Core governs actual
@@ -152,6 +158,24 @@ export class AgentRuntimeService implements IAgentRuntime {
           const citations = kr.chunks.map((c) => (c.sectionHeading ? `${c.sourceFile}#${c.sectionHeading}` : c.sourceFile));
           const corpusVersion = kr.chunks.find((c) => c.corpusVersion)?.corpusVersion;
           grounding = { corpusVersion, citations };
+
+          // ADR-0115 — feed the retrieval outcome to the knowledge-opportunity
+          // detector. An intent that retrieved NOTHING is a question the corpus
+          // cannot answer, and repeated it is a documented gap.
+          //
+          // GUARDED ON A NON-EMPTY CORPUS, and that guard is the whole point:
+          // against an empty index every intent returns zero citations, so the
+          // detector would report that everything is a knowledge gap. "No
+          // answer" only carries meaning once there is a corpus that could have
+          // answered. Until then we observe nothing rather than observe noise.
+          if (this.deps.knowledgeOpportunity && kr.totalChunks > 0) {
+            this.deps.knowledgeOpportunity.observe({
+              intent: request.intent,
+              citationCount: kr.chunks.length,
+              corpusVersion,
+              repository: request.context?.productId,
+            });
+          }
         } catch {
           // grounding is advisory; never block the run on a corpus outage.
         }

@@ -9,9 +9,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const CLI = path.join(ROOT, 'sdk/cli');
-const EN_OUT = path.join(ROOT, 'reference/products/smart-cli/product-inventory.md');
-const ES_OUT = path.join(ROOT, 'reference/products/smart-cli/product-inventory.es.md');
+// Paths follow the `src/`-nested monorepo layout (post the apps/->src/ cutover);
+// output lands in product/products/smart-cli/ where the public docs live (GT-445).
+const CLI = path.join(ROOT, 'src/sdk/cli');
+const EN_OUT = path.join(ROOT, 'product/products/smart-cli/product-inventory.md');
+const ES_OUT = path.join(ROOT, 'product/products/smart-cli/product-inventory.es.md');
 
 // A tool that only launches the MCP server is infrastructure, not a governance tool.
 const META_TOOLS = new Set(['evolith-mcp']);
@@ -36,13 +38,13 @@ function uniqueMatches(content, regex) {
 }
 
 export function buildInventory(root = ROOT) {
-  const cli = path.join(root, 'sdk/cli');
+  const cli = path.join(root, 'src/sdk/cli');
   const pkg = JSON.parse(read(path.join(cli, 'package.json')) || '{}');
 
   // MCP surfaces — counted from the canonical mcp-server registration sources
   // (GAP DOC-INVENTORY: the server moved to packages/mcp-server in cc5b9c67;
   // the old sdk/cli/src/infrastructure/mcp path was deleted and reported 0/0/0).
-  const mcpSrc = path.join(root, 'packages/mcp-server/src');
+  const mcpSrc = path.join(root, 'src/packages/mcp-server/src');
   const toolSources = walk(path.join(mcpSrc, 'tools'), (f) => f.endsWith('.ts') && !f.includes('.spec.'))
     .map(read).join('\n');
   const tools = uniqueMatches(toolSources, /name:\s*['"](evolith-[a-z-]+)['"]/g)

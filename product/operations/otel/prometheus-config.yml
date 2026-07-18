@@ -34,6 +34,22 @@ scrape_configs:
       - targets: ['agent-runtime:3000']
         labels: { service: 'agent-runtime', environment: 'development' }
 
+  # GT-551: scrape the OPA sidecar so policy-decision reliability is observable.
+  # OPA serves Prometheus metrics at /metrics on its main server port (8181) — no
+  # extra flag needed; the chart now exposes it as the `opa-metrics` service port.
+  # The job name MUST stay `opa`: the OpaEvaluationFailure rule scopes on
+  # {job="opa"} so it can never match our own `evolith_http_*` series.
+  # OPA's endpoint is unauthenticated (pod/cluster-internal), hence no credentials.
+  # In k8s prefer a ServiceMonitor selecting the `opa-metrics` port.
+  # CAVEAT: OPA ships as a k8s sidecar (evolith-mcp chart), so this target resolves
+  # in-cluster via that service port. The runnable docker-compose stack does not run
+  # OPA yet, so there the target stays down until it is added (GT-547).
+  - job_name: 'opa'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['mcp:8181']
+        labels: { service: 'opa', environment: 'development' }
+
   - job_name: 'otel-collector'
     static_configs:
       - targets: ['otel-collector:8888']

@@ -12,6 +12,9 @@ export { InProcessCoreEvaluationAdapter } from './core/in-process-core-evaluatio
 export type { CoreEvaluationOrchestrator } from './core/in-process-core-evaluation.adapter';
 export { HttpCoreEvaluationAdapter } from './core/http-core-evaluation.adapter';
 export type { HttpCoreOptions } from './core/http-core-evaluation.adapter';
+// Workspace-context assembler — real inline workspace for the Core (GT-438)
+export { FsWorkspaceContextAdapter } from './core/fs-workspace-context.adapter';
+export type { FsWorkspaceContextOptions, WorkspaceFsLike } from './core/fs-workspace-context.adapter';
 
 // Policy / OPA
 export { StubPolicyValidationAdapter, denyOnFailedEvaluation } from './policy/stub-policy-validation.adapter';
@@ -74,12 +77,19 @@ export type { FileSchedulerOptions } from './scheduler/file-scheduler.adapter';
 
 // Approval
 export { AutoApprovalAdapter, DenyByDefaultApprovalAdapter } from './approval/policy-approval.adapter';
-export { ChatApprovalAdapter } from './approval/chat-approval.adapter';
-export { SlackApprovalAdapter } from './approval/slack-approval.adapter';
+export { ChatApprovalAdapter, ChatApprovalTransport } from './approval/chat-approval.adapter';
+export type { ChatApprovalOptions, ChatClient } from './approval/chat-approval.adapter';
+export { SlackApprovalAdapter, SlackApprovalTransport } from './approval/slack-approval.adapter';
+export type { SlackApprovalOptions, SlackClient } from './approval/slack-approval.adapter';
 // GT-441: real fail-closed HITL gate (pending/approve/reject/expire)
 export { PendingApprovalAdapter, NoopApprovalTransport, ApprovalResolutionError } from './approval/pending-approval.adapter';
 export type { PendingApprovalOptions } from './approval/pending-approval.adapter';
 export { InMemoryApprovalStore } from './approval/in-memory-approval-store';
+// GT-441: durable file-backed approval store + real Slack incoming-webhook client
+export { FileApprovalStore } from './approval/file-approval-store';
+export type { FileApprovalStoreOptions, ApprovalStoreFsLike } from './approval/file-approval-store';
+export { HttpSlackClient } from './approval/http-slack-client';
+export type { HttpSlackClientOptions } from './approval/http-slack-client';
 
 // Engine (Hermes is OPTIONAL and lives only here, never in the domain)
 export { StubAgentEngineAdapter } from './engine/stub-agent-engine.adapter';

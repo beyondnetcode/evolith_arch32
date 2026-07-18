@@ -12,6 +12,7 @@ import {
   OpaCliPolicyValidationAdapter,
   InMemoryKnowledgeAdapter,
   PgVectorKnowledgeAdapter,
+  FsWorkspaceContextAdapter,
 } from '@beyondnet/evolith-agent-runtime';
 import { createRuntimeFromEnv, resolveProfile, resolveKnowledgeAdapter } from './runtime.factory';
 
@@ -219,6 +220,23 @@ describe('createRuntimeFromEnv — profile selection matrix (GT-438)', () => {
     it('is wired onto the bundle by createRuntimeFromEnv (in-memory by default)', () => {
       const { deps } = createRuntimeFromEnv({});
       expect(deps.knowledge).toBeInstanceOf(InMemoryKnowledgeAdapter);
+    });
+  });
+
+  describe('workspace-context assembler wiring (GT-438)', () => {
+    it('leaves workspaceContext unset when no corpus root is configured', () => {
+      const { deps } = createRuntimeFromEnv({});
+      expect(deps.workspaceContext).toBeUndefined();
+    });
+
+    it('wires the FS assembler from a dedicated AGENT_RUNTIME_WORKSPACE_CONTEXT_ROOT', () => {
+      const { deps } = createRuntimeFromEnv({ AGENT_RUNTIME_WORKSPACE_CONTEXT_ROOT: '/app/corpus' });
+      expect(deps.workspaceContext).toBeInstanceOf(FsWorkspaceContextAdapter);
+    });
+
+    it('falls back to AGENT_RUNTIME_WORKSPACE_ROOT (the shared mounted corpus)', () => {
+      const { deps } = createRuntimeFromEnv({ AGENT_RUNTIME_WORKSPACE_ROOT: '/app/corpus' });
+      expect(deps.workspaceContext).toBeInstanceOf(FsWorkspaceContextAdapter);
     });
   });
 });

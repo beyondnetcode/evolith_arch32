@@ -97,7 +97,7 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
 
 ### Dimensión 3: Completitud de Exposición de Gobernanza — **Nivel 4 (Gestionado)**
 * **Estado:** `Validado`
-* **Evidencia:** 32 tools MCP, 9 resources y 8 prompts cubren validación, agentes, arquitectura, SDLC, priorización, métricas y evaluación de gates con checks de conformidad de schemas runtime.
+* **Evidencia:** 47 tools MCP, 11 resources y 8 prompts cubren validación, agentes, arquitectura, SDLC, priorización, métricas y evaluación de gates con checks de conformidad de schemas runtime.
 * **Camino al Nivel 5:** hot-reload de rulesets y adopción medida en repositorios satélite.
 
 ### Dimensión 4: Experiencia de Desarrollador CLI — **Nivel 4 (Gestionado)**

@@ -118,6 +118,48 @@ Cada servicio en `docker-compose.yml` declara `deploy.resources.limits` para evi
 
 ---
 
+## Secretos y Conectividad de Datos
+
+**Almacén de secretos (GT-442).** Cada servicio toma sus credenciales de un Secret
+de Kubernetes pre-creado referenciado por nombre — los charts nunca incrustan un
+literal. Cada deployment lo inyecta con `secretKeyRef`, gated por
+`auth.existingSecretName`:
+
+| Chart | Nombre del secret (`auth.existingSecretName`) | Clave (`auth.apiKeyKey`) |
+| :--- | :--- | :--- |
+| `evolith-core-api` | `core-api-auth` | `EVOLITH_API_KEY` |
+| `evolith-mcp` | `mcp-auth` | `EVOLITH_API_KEY` |
+| `evolith-agent-runtime` | `agent-runtime-auth` | `AGENT_RUNTIME_API_KEY` |
+
+`evolith-mcp` consume además `opa-bundle-credentials` (acceso al registry de
+bundles) y `opa-bundle-signing-key` (verificación de firma), ambos por nombre de
+secret. Créalos fuera de banda, por ejemplo:
+
+```bash
+kubectl create secret generic core-api-auth --from-literal=EVOLITH_API_KEY=<key>
+```
+
+En el VPS los valores equivalentes son variables de entorno de la aplicación en
+Coolify (almacenadas cifradas) — ver [vps-coolify](./vps-coolify/README.es.md).
+
+**Conectividad de datos — el Core no tiene base de datos.** `core-api` y
+`agent-runtime-api` declaran **cero** dependencias de base de datos: sin driver,
+sin ORM, sin cadena de conexión. Es por diseño, no un olvido — ADR-0101 define el
+Core como un **motor de evaluación stateless** (entra `EvaluationContext`, sale
+`EvaluationResult`; producto/tenant/iniciativa son contexto opaco, nunca entidades
+persistidas). Por eso **no existe `DATABASE_URL` en ninguna config de despliegue
+del Core**, y añadirla contradiría ADR-0101.
+
+La persistencia vive en el **Tracker** (su propio Postgres, `tracker_governance`),
+que es un repositorio aparte con su propio despliegue y configuración de secretos.
+Cualquier trabajo de conectividad de DB pertenece a ese board, no a la infra del Core.
+
+> Las cadenas `postgresql` en `core-api` (`projects.controller.ts`,
+> `core-domain.module.ts`) son el **generador de scaffolding** eligiendo base de
+> datos para el proyecto *generado* — no son una conexión de runtime del Core.
+
+---
+
 ## Guías de Despliegue
 
 | Guía | Descripción |

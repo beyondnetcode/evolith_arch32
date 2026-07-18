@@ -11,7 +11,11 @@ import type { EnforceDescriptor, NormalizedRule } from '../../../domain/models/n
 import { makeViolation, type Violation } from '../../../domain/violation';
 import type { WorkspaceEvaluationContext } from '../evaluators/evaluator.interface';
 import { EnforcerEvaluator } from './enforcer-evaluator';
-import type { EnforcerRuntime, IEnforcerAdapter } from './enforcer.types';
+import { createCompositeEnforcerStrategy } from './enforcer-subsystem';
+import { StubProcessRunner, type EnforcerRuntime, type IEnforcerAdapter } from './enforcer.types';
+import type {
+  IRuleEvaluatorStrategy, RuleEvaluationResult,
+} from '../evaluators/evaluator.interface';
 import {
   ENFORCER_METRICS,
   isTimeoutError,
@@ -193,5 +197,48 @@ describe('EnforcerEvaluator observability wiring (GT-519 AC3)', () => {
     expect(withMeter.map((r) => ({ id: r.rule.id, result: r.result }))).toEqual(
       withoutMeter.map((r) => ({ id: r.rule.id, result: r.result })),
     );
+  });
+});
+
+describe('subsystem seam: createCompositeEnforcerStrategy threads options.metrics (GT-519 AC3)', () => {
+  // Native strategy stub: passes everything (stands in for native/opa).
+  class PassThroughStrategy implements IRuleEvaluatorStrategy {
+    async evaluateAll(rules: NormalizedRule[]): Promise<RuleEvaluationResult[]> {
+      return rules.map((r) => ({ rule: r, result: 'passed' as const }));
+    }
+  }
+
+  const netArchRule: NormalizedRule = rule('HXA-01', {
+    engine: 'enforcer', tool: 'NetArchTest', toolRuleId: 'Domain_should_not_depend_on_Infrastructure', runtime: 'dotnet',
+  });
+  const DOTNET_FAILURE = [
+    '  Failed Domain_should_not_depend_on_Infrastructure [45 ms]',
+    '   NetArchTest: expected no dependencies but found MyApp.Domain.Order -> MyApp.Infrastructure.Db',
+    'Failed!  - Failed:     1, Passed:     9, Skipped:     0, Total:    10',
+  ].join('\n');
+
+  it('an enforce rule run through the composite records duration + violations on the injected meter', async () => {
+    const meter = new RecordingEnforcerMetrics();
+    const runner = new StubProcessRunner({ exitCode: 0, stdout: '', stderr: '' }, {
+      dotnet: { exitCode: 1, stdout: DOTNET_FAILURE, stderr: '' },
+    });
+
+    // This is the exact call RulesetValidatorService makes when a host injects options.metrics.
+    const strategy = createCompositeEnforcerStrategy(new PassThroughStrategy(), runner, { metrics: meter });
+    const results = await strategy.evaluateAll([netArchRule], ctx);
+
+    expect(results.find((r) => r.rule.id === 'HXA-01')?.result).toBe('failed');
+    expect(meter.durations).toHaveLength(1);
+    expect(meter.durations[0]).toMatchObject({ tool: 'NetArchTest', runtime: 'dotnet', outcome: 'ok' });
+    expect(meter.violations).toEqual([{ tool: 'NetArchTest', runtime: 'dotnet', count: 1 }]);
+  });
+
+  it('omitting options.metrics falls back to the noop default (no throw, results intact)', async () => {
+    const runner = new StubProcessRunner({ exitCode: 0, stdout: '', stderr: '' }, {
+      dotnet: { exitCode: 1, stdout: DOTNET_FAILURE, stderr: '' },
+    });
+    const strategy = createCompositeEnforcerStrategy(new PassThroughStrategy(), runner);
+    const results = await strategy.evaluateAll([netArchRule], ctx);
+    expect(results.find((r) => r.rule.id === 'HXA-01')?.result).toBe('failed');
   });
 });

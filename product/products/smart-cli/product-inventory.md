@@ -7,12 +7,12 @@ Generated inventory of the installable Evolith CLI and MCP surface. Do not edit 
 
 | Field | Value |
 |---|---|
-| Package | `@beyondnet/evolith-cli@1.1.4` |
+| Package | `@beyondnet/evolith-cli@1.1.0` |
 | Binary | `evolith-cli` |
-| CLI commands | 26 |
-| MCP tools | 33 |
-| MCP resources | 9 |
+| CLI commands | 31 |
+| MCP tools | 47 |
+| MCP resources | 11 |
 | MCP prompts | 8 |
 | MCP transports | `stdio (JSON-RPC 2.0)`, `Streamable HTTP (official MCP SDK)` |
-| Phase-gate schemas | 40 |
+| Phase-gate schemas | 44 |
 | Statement coverage | pending a coverage run |

@@ -6,21 +6,61 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 
 | Tool Name | Category | Purpose | Mutative |
 |-----------|----------|---------|----------|
-| `evolith-agent-handoff` | SDLC | Create agent configuration files | Yes |
-| `evolith-architecture-evaluate` | Architecture | Evaluate architecture patterns | No |
-| `evolith-gate-status` | SDLC | Get phase gate validation status | No |
-| `evolith-moscow-analyze` | Planning | Run MoSCoW prioritization | No |
-| `evolith-moscow-export` | Planning | Export MoSCoW results | No |
-| `evolith-sdlc-handoff` | SDLC | Generate SDLC handoff artifacts | Yes |
-| `evolith-validate` | Validation | Validate project artifacts | No |
-| `evolith-phase-advance` | SDLC | Propose phase transition | Yes |
-| `evolith-auto-fix` | Architecture | Auto-fix architectural violations | Yes |
-| `evolith-alias` | Configuration | Manage CLI command aliases | Yes |
-| `evolith-schema` | Validation | Generate phase-gate schemas | Yes |
+| `evolith-adr-create` | ADR | Create a new Architecture Decision Record. Writes reference/archite… | Yes |
+| `evolith-adr-get` | ADR | Get the full details of a single ADR by id (e.g. ADR-0001) or number. | No |
+| `evolith-adr-list` | ADR | List all Architecture Decision Records (id, title, status, date). | No |
+| `evolith-adr-matrix` | ADR | Get the ADR matrix summary (totals by status + recent ADRs). | No |
+| `evolith-adr-update` | ADR | Update the status of an existing ADR (Proposed | Accepted | Depreca… | Yes |
+| `evolith-agent-install` | Agents | Install a new Evolith agent | Yes |
+| `evolith-agent-list` | Agents | List all installed Evolith agents | No |
+| `evolith-agent-remove` | Agents | Remove an Evolith agent | Yes |
+| `evolith-agent-run` | Agents | Run an intent through the Agent Runtime pipeline | No |
+| `evolith-agent-upgrade` | Agents | Upgrade an existing Evolith agent | Yes |
+| `evolith-agent-validate` | Agents | Validate a specific agent ruleset | No |
+| `evolith-architecture-validate` | Architecture | Validate repository architecture along the progressive maturity axis | No |
+| `evolith-drift-detect` | Architecture | Detect architecture drift in a repository | No |
+| `evolith-phase-artifacts-evaluate` | Architecture | Measure downstream-phase artifact completeness for a confirmed topo… | No |
+| `evolith-topology-get` | Architecture | Get a specific architecture topology by ID | No |
+| `evolith-topology-list` | Architecture | List all available architecture topologies in Evolith Core. | No |
+| `evolith-topology-recommend` | Architecture | Recommend a topology composition from technical signals (advisory, … | No |
+| `evolith-auto-fix` | Auto-fix | Apply automatic fixes to architectural violations reported by Evoli… | Yes |
+| `evolith-composable-validate` | Composable-validate.tool | Validate using the composable engine (GT-312). Supports multiple va… | No |
+| `evolith-config-get` | Config | Get Evolith configuration value | No |
+| `evolith-config-set` | Config | Set Evolith configuration value | Yes |
+| `evolith-docs-scaffold` | Docs-scaffold.tool | Scaffold the base documentation required by Evolith (README.md, AGE… | Yes |
+| `evolith-evaluate` | Evaluate.tool | Evaluate a canonical EvaluationContext (gates, artifacts, rules, co… | No |
+| `evolith-fixtures` | Fixtures | Seed reproducible fixtures and sample data (evolith.yaml, ADRs, rul… | Yes |
+| `evolith-upgrade-apply` | Governance | Apply a satellite upgrade from the upstream Evolith core. Writes fi… | Yes |
+| `evolith-upgrade-plan` | Governance | Plan a satellite upgrade against the upstream Evolith core (read-on… | Yes |
+| `evolith-init-batch` | Init | Non-interactive (batch/CI) initialization of an Evolith satellite. … | Yes |
+| `evolith-metrics` | Metrics.tool | Get MCP server metrics (per-tool call counts, latency, failures) | No |
+| `evolith-phase-advance` | Phase-advance | Propose an SDLC phase transition by evaluating the current phase ex… | Yes |
+| `evolith-moscow-create` | Planning | Create a new MoSCoW prioritization analysis | Yes |
+| `evolith-moscow-list` | Planning | List all MoSCoW analyses in a repository | No |
+| `evolith-moscow-load` | Planning | Load an existing MoSCoW analysis | No |
+| `evolith-moscow-remove` | Planning | Remove a specific item from a MoSCoW analysis | Yes |
+| `evolith-moscow-report` | Planning | Generate a markdown report of a MoSCoW analysis | No |
+| `evolith-moscow-update` | Planning | Update a specific item in a MoSCoW analysis | Yes |
+| `evolith-moscow-validate` | Planning | Validate a MoSCoW analysis rules (e.g. 60/20/20 split) | No |
+| `evolith-satellite-adopt` | Satellite-adopt.tool | Adopt an existing GitHub repository as an Evolith satellite. Return… | Yes |
+| `evolith-satellite-create` | Satellite-create.tool | Create a new satellite repository on GitHub and register it with Ev… | Yes |
+| `evolith-satellite-list` | Satellite-list.tool | List all registered Evolith satellites from the local satellite-reg… | No |
+| `evolith-satellite-status` | Satellite-status.tool | Get the status and details of a registered Evolith satellite by its… | No |
+| `evolith-scaffold` | Scaffold.tool | Scaffold an Evolith satellite along the progressive maturity axis | Yes |
+| `evolith-dora-metrics` | SDLC | Calculate DORA metrics approximations using Git log history | No |
+| `evolith-gate-evaluate` | SDLC | Evaluate a specific SDLC phase gate | No |
+| `evolith-sdlc-handoff` | SDLC | Perform a phase gate handoff (e.g. phase-0 to phase-1) | Yes |
+| `evolith-sdlc-status` | SDLC | Get the current SDLC phase status | No |
+| `evolith-sdlc-generate` | Sdlc-generate.tool | Generate a Hexagonal Architecture scaffold from a Mermaid classDiag… | Yes |
+| `evolith-validate` | Validate.tool | Validate a satellite repository against Evolith rules. Supports end… | No |
+
+> **Derived from source (GT-445).** The inventory above is the complete set of **47** governance MCP tools, reconciled from the canonical registration sources under `src/packages/mcp-server/src/tools/` (name + description) — it is the authoritative surface alongside the generated [Product Surface Inventory](../../../../../../product/products/smart-cli/product-inventory.md) and the live MCP registry. Category is derived from the tool source file; *Mutative* is a verb heuristic. Regenerate when tools change.
 
 ---
 
 ## Tool Specifications
+
+> **Legacy curated subset — being superseded.** The detailed specs below predate the current 47-tool surface: several document **obsolete tool names that no longer exist** (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`). The authoritative, complete list is the **Tool Inventory** table above. Full per-tool spec regeneration from source is a follow-on (GT-445).
 
 ### evolith-agent-handoff
 

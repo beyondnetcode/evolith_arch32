@@ -2,6 +2,7 @@ export * from './agent-runtime.port';
 export * from './interaction-adapter.port';
 export * from './harness.port';
 export * from './core-evaluation.port';
+export * from './workspace-context.port';
 export * from './policy-validation.port';
 export * from './tracker-trace.port';
 export * from './memory.port';

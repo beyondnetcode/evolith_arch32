@@ -181,11 +181,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Registrar el Composite en `evaluate` / la tool MCP `architecture` / `POST /api/v1/evaluate`; fijar versiones exactas de herramientas (`validated-tool-catalog.md` ↔ `enforcer-catalog.json`); construir imágenes de CI componibles por runtime (no un monolito) con escaneo de vulnerabilidades + Renovate; emitir métricas OTel de enforcer (duración, tasa de fallo, timeouts, conteos de violaciones).
 - **Acceptance criteria:**
-  - [ ] Los tests de paridad están en verde en CLI/MCP/REST para la ruta de enforcer.
-  - [ ] Las versiones de herramientas están fijadas y son reproducibles; las imágenes de CI son por runtime y con escaneo de vulnerabilidades.
+  - [x] Los tests de paridad están en verde en CLI/MCP/REST para la ruta de enforcer. _(Wave 4 `f8310fac`: **bug latente arreglado** — ninguna factory de DI de superficie inyectaba un `processRunner`, así que `RulesetValidatorService` nunca envolvía su strategy con el Composite y la ruta de enforcer era inalcanzable en las tres superficies. Ahora `NodeProcessRunner` se inyecta en core-api `core-domain.module.ts`, cli `app.module.ts`, mcp-server `domain.module.ts`; `enforcer-surface-parity.spec.ts` asegura resultados byte-idénticos + guard de divergencia + guard anti-drift a nivel de fuente)_
+  - [~] Las versiones de herramientas están fijadas y son reproducibles; las imágenes de CI son por runtime y con escaneo de vulnerabilidades. _(parte de código HECHA: pins exactos x.y.z en `enforcer-catalog.json` ↔ `validated-tool-catalog.md` §4.3 + `enforcer-catalog-doc-parity.spec.ts` falla ante cualquier drift/pin no-exacto. **Deploy-gated:** imágenes CI componibles por runtime + vuln-scan + Renovate son de ops/pipeline)_
   - [x] Las corridas de enforcer emiten métricas OTel (duración, tasa de fallo, timeouts, conteos de violaciones).
 - **Dependencies:** GT-514.
-- **Status:** `PENDING`
+- **Cierre (2026-07-17, commit `4eb471a6`):** se cerró el último seam de código — las métricas OTel de enforcer se emitían internamente pero el puerto era incableable por cualquier superficie (`RulesetValidatorService`/`RulesetValidatorOptions` ni aceptaba ni reenviaba `IEnforcerMetrics`, y los tipos no se exportaban). Ahora `metrics?` fluye por la factory del subsistema y la API de métricas se re-exporta desde core-domain. Verificado: core-domain 1026/1026, mcp 326/326, cli 969/969, core-api 152/152. La mitad de imágenes CI del criterio 2 sigue deploy-gated (`[~]`, accepted-scope). → **DONE**.
+- **Status:** `DONE`
 
 #### GT-520
 
@@ -776,8 +777,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Habilitar el `/metrics` de OPA (contadores de decisión + error, latencia de eval), añadir un job de scrape y exponerlo en el dashboard Governance Health (GT-544).
 - **Acceptance criteria:**
-  - [ ] `opa_evaluation_errors_total` (y métricas de decisión/latencia) se scrapean y son visibles.
-  - [ ] La alerta `OpaEvaluationFailure` evalúa contra una serie real.
+  - [~] Las métricas reales de OPA están expuestas y hay un job de scrape configurado. _(**La premisa del enunciado original era falsa**: `opa_evaluation_errors_total` no existe — verificado empíricamente contra el binario pinneado, OPA emite SOLO `go_*`, `process_*` y `http_request_duration_seconds{code,handler,method}`, cero series `opa_*`. Entregado: el Service de `evolith-mcp` publica el 8181 del sidecar como `opa-metrics` (antes pod-local/inalcanzable) y existe un job `opa`. **La visibilidad viva en cluster es deploy-gated** — requiere un cluster corriendo.)_
+  - [x] La alerta `OpaEvaluationFailure` evalúa contra una serie real. _(Reapuntada a `rate(http_request_duration_seconds_count{job="opa",handler=~"v1/data.*",code=~"5.."}[5m]) > 0` — 5xx en el handler de decisión de OPA — scopeada a `job="opa"` para que jamás matchee nuestras `evolith_http_*`. Selector verificado contra series vivas: `handler="v1/data"` se emite y `code` sigue el status HTTP (200/400 observados), así que `code=~"5.."` matchea fallos reales.)_
 - **Dependencies:** GT-544; GT-545.
 - **Status:** `PENDING`
 
@@ -1857,6 +1858,13 @@ Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monore
 **Título:** Estrategia de secrets + conectividad a DB de producción
 
 **Problema:** sin secret store documentado (Coolify vault / K8s secrets) y sin DATABASE_URL/config de conexión en el deploy. **Cierre:** secret store cableado + config de DB documentada y aplicada. **Referencias:** helm values; docker-compose; vps-coolify.
+
+**Resolución (2026-07-17) — ambas mitades del enunciado original estaban desalineadas con el código.**
+
+- *Secret store: sustancialmente ya entregado.* Los tres charts toman credenciales de un Secret de K8s pre-creado **por nombre**, inyectado con `secretKeyRef` y gated por `auth.existingSecretName` — `evolith-core-api`→`core-api-auth`/`EVOLITH_API_KEY`, `evolith-mcp`→`mcp-auth`/`EVOLITH_API_KEY`, `evolith-agent-runtime`→`agent-runtime-auth`/`AGENT_RUNTIME_API_KEY`; `evolith-mcp` consume además `opa-bundle-credentials` y `opa-bundle-signing-key` por nombre. Ningún chart incrusta un literal. El gap era que esto estaba sin documentar y disperso — ahora consolidado en `product/infra/README.md`(+`.es.md`) §*Secretos y Conectividad de Datos*, incluyendo el equivalente Coolify (variable de entorno cifrada).
+- *Conectividad a DB: NO APLICA al Core.* `core-api` y `agent-runtime-api` declaran **cero** dependencias de base de datos (sin driver, sin ORM, sin cadena de conexión) — verificado contra ambos `package.json`. Es ADR-0101 por diseño: el Core es un **motor de evaluación stateless** (`EvaluationContext` → `EvaluationResult`; producto/tenant/iniciativa son contexto opaco, nunca entidades persistidas). Un `DATABASE_URL` no está "faltando" — no hay a qué conectarse, y añadirlo *contradiría* ADR-0101. Las cadenas `postgresql` en `projects.controller.ts` / `core-domain.module.ts` son el **generador de scaffolding** eligiendo base de datos para el proyecto *generado*, no una conexión de runtime del Core. La persistencia vive en el **Tracker** (su propio Postgres, `tracker_governance`) — repositorio aparte; todo trabajo de conectividad de DB se delega a ese board.
+
+**Pendiente (owner-gated, no código):** aprovisionar los valores reales de los secretos en el VPS/cluster — el mismo bloqueo rastreado por [`GT-324`](#gt-324) / [`GT-437`](#gt-437).
 
 #### GT-443
 

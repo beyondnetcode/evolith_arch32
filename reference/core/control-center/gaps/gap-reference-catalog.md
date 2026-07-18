@@ -188,7 +188,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] Enforcer runs emit OTel metrics (duration, failure rate, timeouts, violation counts).
 - **Dependencies:** GT-514.
 - **Progress (2026-07-13, Wave 4, commit `f8310fac`):** Criteria 1 & 3 met; criterion 2 code-complete, CI-image build deploy-gated. Kept `IN-PROGRESS` until the per-runtime vuln-scanned CI images + Renovate pin-maintenance land (ops). core-domain enforcement 144/144 + mcp-server 324/324 green.
-- **Status:** `IN-PROGRESS`
+- **Closure (2026-07-17, commit `4eb471a6`):** the last code seam closed — enforcer OTel metrics were emitted internally but the port was un-wireable through any surface (`RulesetValidatorService`/`RulesetValidatorOptions` neither accepted nor forwarded `IEnforcerMetrics`, and the types weren't exported). Now `metrics?` threads through the subsystem factory and the metrics API is re-exported from core-domain. Verified: core-domain 1026/1026, mcp 326/326, cli 969/969, core-api 152/152. Criterion 2's CI-image half stays deploy-gated (`[~]`, accepted-scope). → **DONE**.
+- **Status:** `DONE`
 
 #### GT-520
 
@@ -780,8 +781,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Enable OPA's `/metrics` (decision + error counters, eval latency), add a scrape job, and surface it on the Governance Health dashboard (GT-544).
 - **Acceptance criteria:**
-  - [ ] `opa_evaluation_errors_total` (and decision/latency metrics) are scraped and visible.
-  - [ ] The `OpaEvaluationFailure` alert evaluates against a real series.
+  - [~] OPA's real metrics are exposed and a scrape job is configured. _(**The original wording's premise was false**: `opa_evaluation_errors_total` does not exist — verified empirically against the pinned binary, OPA emits ONLY `go_*`, `process_*` and `http_request_duration_seconds{code,handler,method}`, zero `opa_*` series. Delivered: the `evolith-mcp` Service publishes the sidecar's 8181 as `opa-metrics` (was pod-local/unreachable) and an `opa` scrape job exists. **Live in-cluster visibility is deploy-gated** — needs a running cluster.)_
+  - [x] The `OpaEvaluationFailure` alert evaluates against a real series. _(Repointed to `rate(http_request_duration_seconds_count{job="opa",handler=~"v1/data.*",code=~"5.."}[5m]) > 0` — 5xx on OPA's policy-decision handler — scoped to `job="opa"` so it can never match our own `evolith_http_*`. Selector verified against live series: `handler="v1/data"` is emitted and `code` tracks HTTP status (200/400 observed), so `code=~"5.."` matches real failures.)_
 - **Dependencies:** GT-544; GT-545.
 - **Status:** `PENDING`
 
@@ -1867,6 +1868,13 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 **Title:** Production secrets + DB connectivity strategy
 
 **Problem:** no documented secret store (Coolify vault / K8s secrets) and no DATABASE_URL/connection config in the deploy setup. **Closure:** secret store wired + DB connection config documented and applied. **References:** helm values; docker-compose; vps-coolify.
+
+**Resolution (2026-07-17) — both halves of the original framing were misaligned with the codebase.**
+
+- *Secret store: substantially already delivered.* All three charts take credentials from a pre-created K8s Secret **by name**, injected with `secretKeyRef` and gated on `auth.existingSecretName` — `evolith-core-api`→`core-api-auth`/`EVOLITH_API_KEY`, `evolith-mcp`→`mcp-auth`/`EVOLITH_API_KEY`, `evolith-agent-runtime`→`agent-runtime-auth`/`AGENT_RUNTIME_API_KEY`; `evolith-mcp` also consumes `opa-bundle-credentials` and `opa-bundle-signing-key` by name. No chart embeds a literal. The gap was that this was undocumented and scattered — now consolidated in `product/infra/README.md`(+`.es.md`) §*Secrets and Data Connectivity*, including the Coolify (encrypted env var) equivalent.
+- *DB connectivity: NOT APPLICABLE to the Core.* `core-api` and `agent-runtime-api` declare **zero** database dependencies (no driver, no ORM, no connection string) — verified against both `package.json`s. This is ADR-0101 by design: the Core is a **stateless evaluation engine** (`EvaluationContext` → `EvaluationResult`; product/tenant/initiative are opaque context, never persisted entities). A `DATABASE_URL` is therefore not "missing" — there is nothing to connect to, and adding one would *contradict* ADR-0101. The `postgresql` strings in `projects.controller.ts` / `core-domain.module.ts` are the **scaffolding generator** choosing a database for the *generated* project, not a Core runtime connection. Persistence lives in the **Tracker** (its own Postgres, `tracker_governance`) — a separate repository; any DB-connectivity work is delegated to that board.
+
+**Remaining (owner-gated, not code):** provisioning the actual secret values on the VPS/cluster — the same blocker tracked by [`GT-324`](#gt-324) / [`GT-437`](#gt-437).
 
 #### GT-443
 

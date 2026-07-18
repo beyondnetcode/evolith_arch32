@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.2]
+
+### Bug Fixes
+
+* **deps:** declare `@beyondnet/evolith-infra-providers` as a runtime dependency. It is imported by the shipped `dist` (`app.module.js`, `scaffold`, `waiver`, `topology recommend`, `satellite create/adopt`) but was missing from `dependencies`, so a clean install (`npx`/`npm i -g`) crashed at boot with `Cannot find module '@beyondnet/evolith-infra-providers'` — the 1.0.1 artifact did not run at all (GT-451).
+
+### Build
+
+* **release:** harden the release-drift guard (`check:release-drift`) to also assert every `@beyondnet/*` package imported by the shipped `dist` is declared in `dependencies`, so a missing runtime dependency can never be published again (GT-451).
+
 ## [Unreleased]
 
 ### Features

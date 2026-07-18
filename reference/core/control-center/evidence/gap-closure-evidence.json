@@ -7717,6 +7717,112 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-514 (ShellEnforcerAdapter/IProcessRunner seam) + GT-515 (SARIF 2.1.0 ingester, reused wholesale by the security adapters) both DONE. Criterion #1's own gate held: import-linter (Python) + Checkov/Trivy (IaC/security) landed and were exercised against real corpora; Deptrac (PHP) / ArchUnit (JVM) / jQAssistant (Neo4j) correctly stay adapter-pending — no real repo of those runtimes exists to exercise them, so building them would be speculative and untestable per the gap's Risk/Evidence."
+    },
+    {
+      "id": "GT-519",
+      "closedAt": "2026-07-17",
+      "closureCommit": "4eb471a6",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/ruleset-validator.types.ts",
+        "src/packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/index.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/enforcer-metrics.spec.ts",
+        "src/packages/core-domain/src/index.ts"
+      ],
+      "validationCommands": [
+        "core-domain 1026/1026 (+2 tests locking options.metrics threading through createCompositeEnforcerStrategy + the noop fallback); mcp 326/326; cli 969/969; core-api 152/152; tsc --noEmit clean across all four.",
+        "Public seam verified: RulesetValidatorOptions.metrics forwarded into the enforcer subsystem factory and the metrics API (IEnforcerMetrics/NoopEnforcerMetrics/RecordingEnforcerMetrics/ENFORCER_METRICS) re-exported from core-domain, so a host can construct a real Meter-backed adapter (previously the seam was permanently no-op and un-wireable through any surface)."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Parity wiring (processRunner injected in CLI/MCP/REST) and enforcer-catalog<->tool-catalog version pins were already live (f8310fac/4b6db4d5); this closed the remaining OTel-metrics seam. Ops-only remainder stays out of scope: per-runtime composable CI images + vuln-scan/Renovate, and activating a live OTel Meter-backed IEnforcerMetrics adapter inside each surface module (host config) — the code seam is complete and importable."
+    },
+    {
+      "id": "GT-438",
+      "closedAt": "2026-07-17",
+      "closureCommit": "ff57cec6",
+      "evidence": [
+        "src/packages/agent-runtime/src/domain/ports/workspace-context.port.ts",
+        "src/packages/agent-runtime/src/adapters/core/fs-workspace-context.adapter.ts",
+        "src/packages/agent-runtime/src/application/agent-runtime.service.ts",
+        "src/packages/agent-runtime/src/application/context-mapper.ts",
+        "src/apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts"
+      ],
+      "validationCommands": [
+        "agent-runtime 131/131 (+8 workspace-context tests); agent-runtime-api 80/80 (+3 factory wiring tests); tsc --noEmit clean.",
+        "The runtime assembles the workspace and passes it inline as evaluationInput.files (the OverlayFileSystem shape the Core API already consumes), so the stateless Core no longer evaluates an empty context; a workspace outage degrades to the prior flow (never fails a run)."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The HttpCoreEvaluationAdapter was already wired+verified in kind; this landed the last non-gated piece (real workspace-context assembly). Gated remainder stays out of scope by design: the real reasoning engine (GT-385/Hermes) and durable memory/scheduler needing external services; a Tracker-driven context assembler is a future sibling adapter behind the same IWorkspaceContextPort."
+    },
+    {
+      "id": "GT-451",
+      "closedAt": "2026-07-17",
+      "closureCommit": "fd03cf53",
+      "evidence": [
+        "src/sdk/cli/package.json",
+        "src/sdk/cli/scripts/check-release-drift.mjs",
+        "src/sdk/cli/CHANGELOG.md",
+        "src/packages/core-domain/package.json",
+        "src/packages/mcp-server/package.json"
+      ],
+      "validationCommands": [
+        "Verified against the LIVE npm registry: a clean `npm i @beyondnet/evolith-cli@1.1.0` in an empty project resolves the full closure from npm (agent-runtime/core-domain/infra-providers/sdk all 1.1.0) and the CLI boots — `--version` -> 1.1.0, `evaluate --help` OK, `enforce --help` OK (exercises enforcement/policy-compiler, the subpath missing from the stale 1.0.0). cli dist-tag latest: 1.1.0.",
+        "check:release-drift hardened to fail the publish when the shipped dist imports any @beyondnet/* not declared in dependencies — proven: aborts without the infra-providers dep, passes with it. npm publish --dry-run green for all 8 packages."
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "The real defect was the whole @beyondnet/evolith-*@1.0.0 line being stale vs develop (CLI deep-imports subpaths absent from the 1.0.0 tarballs) plus cli@1.0.1 crashing on an undeclared infra-providers dep. Resolved by a coordinated 1.1.0 re-release of all 8 packages (owner published in dependency order); the owner-publish dependency is now satisfied and verified live."
+    },
+    {
+      "id": "GT-437",
+      "closedAt": "2026-07-17",
+      "closureCommit": "1ddbe25b",
+      "evidence": [
+        ".github/workflows/ci-cd.yml",
+        "src/apps/agent-runtime-api/Dockerfile"
+      ],
+      "validationCommands": [
+        "ci-cd.yml parses as YAML and resolves to 3 docker-services matrix entries (core-api -> evolith-core-api, mcp-server -> evolith-mcp, agent-runtime -> evolith-agent-runtime) and 3 Coolify deploy steps; the referenced ./src/apps/agent-runtime-api/Dockerfile exists.",
+        "The gap's premise was partly stale: agent-runtime was already built/tested by ci-cd.yml (3 workspace builds). The real hole — absent from the docker-services matrix and from the deploy job on main (docker-images.yml only covered it on tags/workflow_dispatch) — is now closed; agent-runtime-api sits in the same CI/CD posture as its two sibling services."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Workflow wiring is complete and validated declaratively (YAML parse + Dockerfile path + parity with two already-working sibling services). The deploy step uses the established fail-soft contract (unset hook warns and exits 0, never failing CD). Provisioning COOLIFY_AGENTRUNTIME_DEPLOY_HOOK / COOLIFY_API_TOKEN is owner-gated and already tracked by GT-324; the first live build+deploy runs on the next merge to main, since this job is main/tag-only and cannot be exercised from develop."
+    },
+    {
+      "id": "GT-551",
+      "closedAt": "2026-07-17",
+      "closureCommit": "e32e3412",
+      "evidence": [
+        "product/operations/alerts/prometheus-alerts.yml",
+        "product/operations/otel/prometheus-config.yml",
+        "product/infra/helm/evolith-mcp/templates/service.yaml"
+      ],
+      "validationCommands": [
+        "Empirical metric discovery against the pinned OPA binary (.harness/bin/opa): `opa run --server` + GET /metrics exposes ONLY go_*, process_* and http_request_duration_seconds{code,handler,method} — ZERO opa_* series, so the pre-existing `opa_evaluation_errors_total` expression could never fire (false coverage).",
+        "Alert selector verified against live series: handler=\"v1/data\" is emitted (so handler=~\"v1/data.*\" matches) and the `code` label tracks HTTP status (200 and 400 observed), so code=~\"5..\" matches real 5xx policy-decision failures.",
+        "helm template product/infra/helm/evolith-mcp — Service renders the `opa-metrics` port (targetPort opa-http) with opa.enabled=true and omits it with opa.enabled=false (1 vs 0 occurrences); helm lint passes (0 charts failed).",
+        "YAML parse green for prometheus-alerts.yml and prometheus-config.yml; scrape jobs resolve to core-api, mcp, agent-runtime, opa, otel-collector, prometheus."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Both halves the gap names are closed: the sidecar is now EXPOSED (Service opa-metrics port; it was pod-local and unreachable) and SCRAPED (new `opa` job whose name matches the alert scope). A third, deeper defect was found and fixed: the alert referenced a metric OPA does not emit, so scraping alone would not have made it fire. Deploy-gated remainder: the live in-cluster scrape needs a running cluster; promtool was unavailable locally so the rule was validated by YAML parse + empirical series matching instead of `promtool check rules`; and the docker-compose stack does not run OPA yet, tracked by GT-547."
+    },
+    {
+      "id": "GT-442",
+      "closedAt": "2026-07-17",
+      "closureCommit": "fd9f56de",
+      "evidence": [
+        "product/infra/README.md",
+        "product/infra/README.es.md",
+        "product/infra/helm/evolith-core-api/values.yaml",
+        "product/infra/helm/evolith-mcp/values.yaml",
+        "product/infra/helm/evolith-agent-runtime/values.yaml"
+      ],
+      "validationCommands": [
+        "Secret wiring verified in all three charts: each takes credentials from a pre-created K8s Secret BY NAME, injected via secretKeyRef and gated on auth.existingSecretName — evolith-core-api -> core-api-auth/EVOLITH_API_KEY, evolith-mcp -> mcp-auth/EVOLITH_API_KEY, evolith-agent-runtime -> agent-runtime-auth/AGENT_RUNTIME_API_KEY; evolith-mcp additionally consumes opa-bundle-credentials and opa-bundle-signing-key by name. No chart embeds a literal credential.",
+        "DB-connectivity claim disproved against the code: core-api and agent-runtime-api declare ZERO database dependencies (no pg/typeorm/prisma/mongo driver or ORM) in their package.json. The `postgresql` occurrences in projects.controller.ts / core-domain.module.ts are the scaffolding generator selecting a database for the GENERATED project, not a Core runtime connection.",
+        "Consolidated the previously scattered secret configuration into product/infra/README.md and README.es.md, section 'Secrets and Data Connectivity' / 'Secretos y Conectividad de Datos', including the kubectl create secret example and the Coolify encrypted-env-var equivalent."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Both halves of the original framing were misaligned with the codebase. The secret store was substantially already wired (K8s Secrets by name via secretKeyRef across all three charts); what was genuinely missing was documentation, now consolidated bilingually. The DB half is NOT APPLICABLE to the Core: ADR-0101 makes it a stateless evaluation engine (EvaluationContext -> EvaluationResult, no persisted entities), so there is no DATABASE_URL to configure and adding one would contradict the ADR — persistence lives in the Tracker (own Postgres, tracker_governance), a separate repository whose board owns any DB-connectivity work. Remaining is owner-gated and not code: provisioning the real secret VALUES on the VPS/cluster, the same blocker already tracked by GT-324 and GT-437."
     }
   ]
 }

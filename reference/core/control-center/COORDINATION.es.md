@@ -25,7 +25,7 @@ Quien pushee primero el bump del ledger se queda el número. Nunca `--force`.
 
 | Asignador | Próximo libre | Último reclamado | Por |
 |-----------|-----------|--------------|-----|
-| Número de ADR (`reference/core/architecture/adrs/core/NNNN-*`) | **0117** | 0116 — Harness Core: canonical Finding + authority boundary | harness-normalisation lane (0114 still earmarked by UP-003) |
+| Número de ADR (`reference/core/architecture/adrs/core/NNNN-*`) | **0118** | 0117 — La paridad bilingüe aplica a fuentes autoradas, no a proyecciones generadas | harness-normalisation lane (0114 still earmarked by UP-003) |
 | GT-ID (filas de `gap-tracking.md`) | **GT-560** | GT-559 — advisory-authority single source (P0 wave) | harness-normalisation lane |
 
 > El contador **`**Progress:**`** del board NO se reserva por bloque — ver su protocolo abajo.

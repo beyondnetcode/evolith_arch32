@@ -1859,6 +1859,13 @@ Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monore
 
 **Problema:** sin secret store documentado (Coolify vault / K8s secrets) y sin DATABASE_URL/config de conexión en el deploy. **Cierre:** secret store cableado + config de DB documentada y aplicada. **Referencias:** helm values; docker-compose; vps-coolify.
 
+**Resolución (2026-07-17) — ambas mitades del enunciado original estaban desalineadas con el código.**
+
+- *Secret store: sustancialmente ya entregado.* Los tres charts toman credenciales de un Secret de K8s pre-creado **por nombre**, inyectado con `secretKeyRef` y gated por `auth.existingSecretName` — `evolith-core-api`→`core-api-auth`/`EVOLITH_API_KEY`, `evolith-mcp`→`mcp-auth`/`EVOLITH_API_KEY`, `evolith-agent-runtime`→`agent-runtime-auth`/`AGENT_RUNTIME_API_KEY`; `evolith-mcp` consume además `opa-bundle-credentials` y `opa-bundle-signing-key` por nombre. Ningún chart incrusta un literal. El gap era que esto estaba sin documentar y disperso — ahora consolidado en `product/infra/README.md`(+`.es.md`) §*Secretos y Conectividad de Datos*, incluyendo el equivalente Coolify (variable de entorno cifrada).
+- *Conectividad a DB: NO APLICA al Core.* `core-api` y `agent-runtime-api` declaran **cero** dependencias de base de datos (sin driver, sin ORM, sin cadena de conexión) — verificado contra ambos `package.json`. Es ADR-0101 por diseño: el Core es un **motor de evaluación stateless** (`EvaluationContext` → `EvaluationResult`; producto/tenant/iniciativa son contexto opaco, nunca entidades persistidas). Un `DATABASE_URL` no está "faltando" — no hay a qué conectarse, y añadirlo *contradiría* ADR-0101. Las cadenas `postgresql` en `projects.controller.ts` / `core-domain.module.ts` son el **generador de scaffolding** eligiendo base de datos para el proyecto *generado*, no una conexión de runtime del Core. La persistencia vive en el **Tracker** (su propio Postgres, `tracker_governance`) — repositorio aparte; todo trabajo de conectividad de DB se delega a ese board.
+
+**Pendiente (owner-gated, no código):** aprovisionar los valores reales de los secretos en el VPS/cluster — el mismo bloqueo rastreado por [`GT-324`](#gt-324) / [`GT-437`](#gt-437).
+
 #### GT-443
 
 **Título:** Validación de reliability (circuit breakers, carga, DR)

@@ -118,6 +118,47 @@ Every service in `docker-compose.yml` declares `deploy.resources.limits` to prev
 
 ---
 
+## Secrets and Data Connectivity
+
+**Secret store (GT-442).** Every service takes its credentials from a pre-created
+Kubernetes Secret referenced by name — the charts never embed a literal. Each
+deployment injects it with `secretKeyRef`, gated on `auth.existingSecretName`:
+
+| Chart | Secret name (`auth.existingSecretName`) | Key (`auth.apiKeyKey`) |
+| :--- | :--- | :--- |
+| `evolith-core-api` | `core-api-auth` | `EVOLITH_API_KEY` |
+| `evolith-mcp` | `mcp-auth` | `EVOLITH_API_KEY` |
+| `evolith-agent-runtime` | `agent-runtime-auth` | `AGENT_RUNTIME_API_KEY` |
+
+`evolith-mcp` additionally consumes `opa-bundle-credentials` (bundle registry
+access) and `opa-bundle-signing-key` (bundle signature verification), both by
+secret name. Create them out-of-band, for example:
+
+```bash
+kubectl create secret generic core-api-auth --from-literal=EVOLITH_API_KEY=<key>
+```
+
+On the VPS the equivalent values are Coolify application environment variables
+(stored encrypted) — see [vps-coolify](./vps-coolify/README.md).
+
+**Data connectivity — the Core has no database.** `core-api` and
+`agent-runtime-api` declare **zero** database dependencies: no driver, no ORM, no
+connection string. This is by design, not an omission — ADR-0101 makes the Core a
+**stateless evaluation engine** (`EvaluationContext` in → `EvaluationResult` out;
+product/tenant/initiative are opaque context, never persisted entities). So there
+is deliberately **no `DATABASE_URL` in any Core deployment config**, and adding one
+would contradict ADR-0101.
+
+Persistence lives in the **Tracker** (its own Postgres, `tracker_governance`),
+which is a separate repository with its own deployment and secret configuration.
+Any DB-connectivity work belongs to that board, not to Core infra.
+
+> The `postgresql` strings in `core-api` (`projects.controller.ts`,
+> `core-domain.module.ts`) are the **scaffolding generator** picking a database for
+> the *generated* project — they are not a Core runtime connection.
+
+---
+
 ## Deployment Guides
 
 | Guide | Description |

@@ -1869,6 +1869,13 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 
 **Problem:** no documented secret store (Coolify vault / K8s secrets) and no DATABASE_URL/connection config in the deploy setup. **Closure:** secret store wired + DB connection config documented and applied. **References:** helm values; docker-compose; vps-coolify.
 
+**Resolution (2026-07-17) — both halves of the original framing were misaligned with the codebase.**
+
+- *Secret store: substantially already delivered.* All three charts take credentials from a pre-created K8s Secret **by name**, injected with `secretKeyRef` and gated on `auth.existingSecretName` — `evolith-core-api`→`core-api-auth`/`EVOLITH_API_KEY`, `evolith-mcp`→`mcp-auth`/`EVOLITH_API_KEY`, `evolith-agent-runtime`→`agent-runtime-auth`/`AGENT_RUNTIME_API_KEY`; `evolith-mcp` also consumes `opa-bundle-credentials` and `opa-bundle-signing-key` by name. No chart embeds a literal. The gap was that this was undocumented and scattered — now consolidated in `product/infra/README.md`(+`.es.md`) §*Secrets and Data Connectivity*, including the Coolify (encrypted env var) equivalent.
+- *DB connectivity: NOT APPLICABLE to the Core.* `core-api` and `agent-runtime-api` declare **zero** database dependencies (no driver, no ORM, no connection string) — verified against both `package.json`s. This is ADR-0101 by design: the Core is a **stateless evaluation engine** (`EvaluationContext` → `EvaluationResult`; product/tenant/initiative are opaque context, never persisted entities). A `DATABASE_URL` is therefore not "missing" — there is nothing to connect to, and adding one would *contradict* ADR-0101. The `postgresql` strings in `projects.controller.ts` / `core-domain.module.ts` are the **scaffolding generator** choosing a database for the *generated* project, not a Core runtime connection. Persistence lives in the **Tracker** (its own Postgres, `tracker_governance`) — a separate repository; any DB-connectivity work is delegated to that board.
+
+**Remaining (owner-gated, not code):** provisioning the actual secret values on the VPS/cluster — the same blocker tracked by [`GT-324`](#gt-324) / [`GT-437`](#gt-437).
+
 #### GT-443
 
 **Title:** Reliability validation (circuit breakers, load, DR)

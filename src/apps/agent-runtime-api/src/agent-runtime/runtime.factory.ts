@@ -270,13 +270,19 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
 
   // Workspace context (GT-438) — assemble the REAL workspace so the stateless
   // Core evaluates actual content INLINE (`evaluationInput.files`) instead of an
-  // empty context (which yields GOV-000 "nothing to evaluate"). Opt-in via a
-  // dedicated corpus root; falls back to AGENT_RUNTIME_WORKSPACE_ROOT (the same
-  // mounted corpus the .harness/OPA seams use) when only that is set. Unset in
-  // both ⇒ the prior workspaceRef-only flow is preserved.
+  // empty context (which yields GOV-000 "nothing to evaluate").
+  //
+  // STRICTLY opt-in via its OWN variable. It deliberately does NOT fall back to
+  // AGENT_RUNTIME_WORKSPACE_ROOT: that variable predates this feature, means
+  // "where the mounted corpus lives" for the .harness/OPA seams, and the service
+  // image hard-codes it (`ENV AGENT_RUNTIME_WORKSPACE_ROOT=/repo/corpus`). Reusing
+  // it silently turned whole-corpus inlining ON in every containerised deployment:
+  // the runtime inlined the entire bundled corpus into one evaluate request, the
+  // Core rejected the oversized body BEFORE its audit interceptor (so the failure
+  // never even appeared in the logs), and the governed chain died on an opaque
+  // `Core evaluation failed: HTTP 500`. Unset ⇒ the prior workspaceRef-only flow.
   const trimmed = (v: string | undefined): string | undefined => (v && v.trim() ? v.trim() : undefined);
-  const workspaceContextRoot =
-    trimmed(env.AGENT_RUNTIME_WORKSPACE_CONTEXT_ROOT) ?? trimmed(env.AGENT_RUNTIME_WORKSPACE_ROOT);
+  const workspaceContextRoot = trimmed(env.AGENT_RUNTIME_WORKSPACE_CONTEXT_ROOT);
   if (workspaceContextRoot) {
     overrides = {
       ...overrides,

@@ -6960,11 +6960,12 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Criticality:** P1 · **Complexity:** M
 - **Proposed fix:** Diagnose why the server never answers `initialize` within the smoke timeout, fix the cause, and confirm DAST recovers once the server starts.
 - **Acceptance criteria:**
-  - [ ] The MCP smoke completes without a timeout on `initialize`.
-  - [ ] The E2E Tests job passes.
-  - [ ] DAST no longer fails with `MCP Server failed to start after 60s`.
+  - [x] The MCP smoke completes without a timeout on `initialize`. _(run [29665015800](https://github.com/beyondnetcode/evolith_arch32/actions/runs/29665015800): passes on both transports -- 47 tools, 11 resources, 8 prompts, both `tools/call` checks, stdio and HTTP)_
+  - [x] The E2E Tests job passes. _(**success** in run 29665015800)_
+  - [x] DAST no longer fails with `MCP Server failed to start after 60s`. _(the DAST job's `Start MCP Server` and `Wait for MCP Server` steps both succeed in run 29665015800)_
 - **Dependencies:** None.
-- **Status:** `PENDING`
+- **Closure (2026-07-18, commit `b408a0ef`):** The server was never broken. The smoke spawned `node dist/main.js mcp serve` from the CLI's dist, and commit `dc0b9667` (2026-06-30, "decouple mcp-server from smart-cli") DELETED that command — the exact date of the last green run. The process died instantly with `error: unknown command 'mcp'`, but the stdio path piped stderr and never read it, so an instant hard failure was reported as a 5-second timeout; that misdirection is why the cause stayed opaque for 19 days. The fix repoints both transports at the standalone gateway, adds a pre-flight check that fails with "build it first" rather than timing out, and folds stderr and the early-exit code into the failure message. _No assertion was weakened and NO timeout was raised_ — startup measures ~1s, so the 5s limit was never implicated. _Correction to this gap's own premise:_ DAST was NOT a downstream cascade from E2E. The jobs are independent and DAST carried its OWN copy of the same stale `mcp serve` invocation, so fixing the smoke alone would have left it red; its start step was repointed too, plus `--allow-no-auth` so ZAP scans a reachable surface. _Three follow-on commits were needed before the criteria could be OBSERVED_, and the chain is recorded because each layer hid the one beneath: `6cac6cda` — the SDK 2.0.0 bump had left `package-lock.json` desynced, so `npm ci` refused and eight jobs died on their first step, never reaching the smoke; `b75d43fc` — the CLI pipeline's `paths` filter did not list `package.json` / `package-lock.json`, so neither the break nor its fix triggered the pipeline they affected (it also listed `release-please-config.json`, deleted in `aed33ba9` — a filter watching a path that cannot change); `37cbeae1` — DAST still reported red on `Resource not accessible by integration`, because the ZAP action files its report as a GitHub issue and the workflow grants no `issues: write`; the scan itself was clean (`FAIL-NEW: 0, PASS: 146`), so issue-filing was disabled rather than granting a scanner write access, the report already being uploaded as an artifact. _Stated plainly:_ the job still shows red for reasons unrelated to this gap — the CLI's branch-coverage gate (69.3% against a 75% threshold, tracked by [GT-562](#gt-562)) and 12 pre-existing bilingual-terminology findings in files last touched between 2026-07-04 and 2026-07-13. The pipeline is not green.
+- **Status:** `DONE`
 
 #### GT-562
 
@@ -6997,10 +6998,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Criticality:** P2 · **Complexity:** L
 - **Proposed fix:** Clear the 174 errors and remove the `workflow_dispatch` gate on the `validate` job so the check runs on every push. Both halves belong to this gap.
 - **Acceptance criteria:**
-  - [ ] `node .harness/scripts/ci/01-validate-docs.mjs` exits 0.
-  - [ ] The `validate` job runs unconditionally, so the workflow result reflects the validator's verdict.
+  - [x] `node .harness/scripts/ci/01-validate-docs.mjs` exits 0.
+  - [x] The `validate` job runs unconditionally, so the workflow result reflects the validator's verdict.
 - **Dependencies:** None.
-- **Status:** `PENDING`
+- **Closure (2026-07-18, commit `c63c3eb7`):** The workflow gated its `validate` job on `workflow_dispatch`, so on push and pull_request only the tracking guard ran and the job reported green over a check that never executed. It is now armed on both, blocking. THREE OF THE FOUR ERROR CATEGORIES WERE NOT DEFECTS: 97 of 108 "broken links" lived in `src/sdk/cli/rulesets/**`, a gitignored build-time copy byte-identical to its source and breaking only because it sits two directories deeper -- the exemption for exactly this already existed but pointed at a path present in neither location, and now derives from git so it cannot go stale again; all 9 "mojibake" were false positives, the rule matching word-initial corrupted vowels without a word boundary so `ipicas` matched inside correctly-spelled `tipicas`; and the 5 schema violations were a stale schema whose allowed roots were the pre-`src/` layout. Two further defects surfaced and were fixed: `stripCodeBlocks` matched fences unanchored, so an inline triple backtick desynchronized pairing and blanked the prose BETWEEN blocks instead of the blocks, silently exempting it from every content check and hiding real emoji violations; and `10-validate-contract-conformance.mjs` had crashed on every invocation since the `src/` refactor, unnoticed because its calling job was skipped -- fixing it surfaced 3 real defects it could never report. Mermaid parse errors from unquoted parentheses in subgraph titles were fixed in `019a1e19` and verified by rendering, not inspection. _Stated plainly:_ `Evolith Core Validation` still fails, on a DIFFERENT check -- `bilingual-terminology-lint`, 12 findings in files last touched between 2026-07-04 and 2026-07-13. That is pre-existing debt newly reachable because this gap's fixes let the job get that far. The job is not green.
+- **Status:** `DONE`
 
 #### GT-564
 

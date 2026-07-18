@@ -8066,6 +8066,42 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The suite pins the contract restored by GT-564, so the two land as a pair: GT-564 repairs the types and this gap makes them accountable to the wire. Two follow-on commits are inside the closure rather than deferred -- 1875f725 wires the suite into ci-cd.yml, and e25804dc fixes the ruleset resolution that the suite had been working around with a symlink."
+    },
+    {
+      "id": "GT-561",
+      "closedAt": "2026-07-18",
+      "closureCommit": "b408a0ef",
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml",
+        "src/sdk/cli/examples/mcp-test.js",
+        "package-lock.json"
+      ],
+      "validationCommands": [
+        "Root cause measured, not guessed: the server was never broken. The smoke spawned `node dist/main.js mcp serve` from the CLI's dist, and commit dc0b9667 (2026-06-30, \"decouple mcp-server from smart-cli\") DELETED that command -- the exact date of the last green run. The process died instantly with `error: unknown command 'mcp'`, but the stdio path piped stderr and never read it, so an instant hard failure was reported as a 5-second timeout; that misdirection is why the cause stayed opaque for 19 days.",
+        "Fix (b408a0ef): both transports repointed at the standalone gateway; a pre-flight check that fails with \"build it first\" rather than timing out; stderr and the early-exit code captured and folded into the failure message. NO assertion was weakened and NO timeout was raised -- startup measured ~1s, so the 5s limit was never implicated.",
+        "Correction to the gap's own premise: DAST was NOT a downstream cascade from E2E. The jobs are independent and DAST carried its OWN copy of the same stale `mcp serve` invocation, so fixing the smoke alone would have left it red. Its start step was repointed too, plus --allow-no-auth so ZAP scans a reachable surface.",
+        "Three follow-on commits were needed before the criteria could be OBSERVED, each layer hiding the one beneath. 6cac6cda: the SDK 2.0.0 bump had left package-lock.json desynced, so `npm ci` refused and eight jobs died on their first step, never reaching the smoke. b75d43fc: the CLI pipeline's `paths` filter did not list package.json / package-lock.json, so neither the break nor its fix triggered the pipeline they affected -- it also listed release-please-config.json, deleted in aed33ba9, a filter watching a path that cannot change. 37cbeae1: DAST still reported red on `Resource not accessible by integration` because the ZAP action files its report as a GitHub issue and the workflow grants no `issues: write`; the scan itself was clean (FAIL-NEW: 0, PASS: 146), so issue-filing was disabled rather than granting a scanner write access, the report already being uploaded as an artifact.",
+        "CI verification -- run 29665015800 (https://github.com/beyondnetcode/evolith_arch32/actions/runs/29665015800): (1) the MCP smoke completes without a timeout on `initialize`, passing on BOTH transports -- 47 tools, 11 resources, 8 prompts, both tools/call checks, stdio and HTTP; (2) the E2E Tests job is success; (3) the DAST job's `Start MCP Server` and `Wait for MCP Server` steps both succeed.",
+        "Recorded honestly: the job still shows red for reasons unrelated to this gap -- the CLI's branch-coverage gate (69.3% against a 75% threshold, tracked by GT-562) and 12 pre-existing bilingual-terminology findings in files last touched between 2026-07-04 and 2026-07-13. The pipeline is NOT green and this closure does not claim it is."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-563",
+      "closedAt": "2026-07-18",
+      "closureCommit": "c63c3eb7",
+      "evidence": [
+        ".github/workflows/docs.yml",
+        ".harness/scripts/ci/01-validate-docs.mjs",
+        ".harness/scripts/ci/10-validate-contract-conformance.mjs",
+        "reference/core/architecture/foundations/ports-and-adapters.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs -> exit 0, 'Documentation validation passed for 1535 Markdown files'",
+        "node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid -> 1535 files and 407 Mermaid diagrams rendered",
+        "docs.yml: triggers workflow_dispatch/pull_request/push, and the validate job carries no `if:` condition, so the workflow result now reflects the validator's verdict"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

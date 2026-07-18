@@ -6880,7 +6880,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Impacto:** El gate de cobertura bloquea, y la lectura honesta es que la cobertura de ramas cayó por debajo de un umbral que sigue siendo correcto.
 - **Riesgo:** La respuesta más barata -- relajar el umbral -- convertiría una regresión medida en un estándar rebajado de forma permanente.
 - **Archivos afectados:** la suite de tests de `core-api` y su configuración de cobertura de Jest.
-- **Componente:** `Core API` · **Dimensión:** Reliability · **Tipo:** testing
+- **Componente:** `SDK CLI` · **Dimensión:** Reliability · **Tipo:** testing
 - **Criticidad:** P2 · **Complejidad:** M
 - **Fix propuesto:** Añadir cobertura de ramas donde se perdió hasta que la suite supere el 75 por ciento. El gate se deja deliberadamente intacto.
 - **Criterios de aceptación:**

@@ -6975,7 +6975,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** The coverage gate blocks, and the honest reading is that branch coverage fell below a threshold that remains correct.
 - **Risk:** The cheapest response -- relaxing the threshold -- would convert a measured regression into a permanently lowered standard.
 - **Affected files:** the `core-api` test suite and its Jest coverage configuration.
-- **Component:** `Core API` · **Dimension:** Reliability · **Type:** testing
+- **Component:** `SDK CLI` · **Dimension:** Reliability · **Type:** testing
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Add branch coverage where it was lost until the suite clears 75 percent. The gate is deliberately left untouched.
 - **Acceptance criteria:**

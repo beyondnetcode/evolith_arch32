@@ -7771,6 +7771,21 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "The real defect was the whole @beyondnet/evolith-*@1.0.0 line being stale vs develop (CLI deep-imports subpaths absent from the 1.0.0 tarballs) plus cli@1.0.1 crashing on an undeclared infra-providers dep. Resolved by a coordinated 1.1.0 re-release of all 8 packages (owner published in dependency order); the owner-publish dependency is now satisfied and verified live."
+    },
+    {
+      "id": "GT-437",
+      "closedAt": "2026-07-17",
+      "closureCommit": "1ddbe25b",
+      "evidence": [
+        ".github/workflows/ci-cd.yml",
+        "src/apps/agent-runtime-api/Dockerfile"
+      ],
+      "validationCommands": [
+        "ci-cd.yml parses as YAML and resolves to 3 docker-services matrix entries (core-api -> evolith-core-api, mcp-server -> evolith-mcp, agent-runtime -> evolith-agent-runtime) and 3 Coolify deploy steps; the referenced ./src/apps/agent-runtime-api/Dockerfile exists.",
+        "The gap's premise was partly stale: agent-runtime was already built/tested by ci-cd.yml (3 workspace builds). The real hole — absent from the docker-services matrix and from the deploy job on main (docker-images.yml only covered it on tags/workflow_dispatch) — is now closed; agent-runtime-api sits in the same CI/CD posture as its two sibling services."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Workflow wiring is complete and validated declaratively (YAML parse + Dockerfile path + parity with two already-working sibling services). The deploy step uses the established fail-soft contract (unset hook warns and exits 0, never failing CD). Provisioning COOLIFY_AGENTRUNTIME_DEPLOY_HOOK / COOLIFY_API_TOKEN is owner-gated and already tracked by GT-324; the first live build+deploy runs on the next merge to main, since this job is main/tag-only and cannot be exercised from develop."
     }
   ]
 }

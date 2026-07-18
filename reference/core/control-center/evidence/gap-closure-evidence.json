@@ -7786,6 +7786,24 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Workflow wiring is complete and validated declaratively (YAML parse + Dockerfile path + parity with two already-working sibling services). The deploy step uses the established fail-soft contract (unset hook warns and exits 0, never failing CD). Provisioning COOLIFY_AGENTRUNTIME_DEPLOY_HOOK / COOLIFY_API_TOKEN is owner-gated and already tracked by GT-324; the first live build+deploy runs on the next merge to main, since this job is main/tag-only and cannot be exercised from develop."
+    },
+    {
+      "id": "GT-551",
+      "closedAt": "2026-07-17",
+      "closureCommit": "e32e3412",
+      "evidence": [
+        "product/operations/alerts/prometheus-alerts.yml",
+        "product/operations/otel/prometheus-config.yml",
+        "product/infra/helm/evolith-mcp/templates/service.yaml"
+      ],
+      "validationCommands": [
+        "Empirical metric discovery against the pinned OPA binary (.harness/bin/opa): `opa run --server` + GET /metrics exposes ONLY go_*, process_* and http_request_duration_seconds{code,handler,method} — ZERO opa_* series, so the pre-existing `opa_evaluation_errors_total` expression could never fire (false coverage).",
+        "Alert selector verified against live series: handler=\"v1/data\" is emitted (so handler=~\"v1/data.*\" matches) and the `code` label tracks HTTP status (200 and 400 observed), so code=~\"5..\" matches real 5xx policy-decision failures.",
+        "helm template product/infra/helm/evolith-mcp — Service renders the `opa-metrics` port (targetPort opa-http) with opa.enabled=true and omits it with opa.enabled=false (1 vs 0 occurrences); helm lint passes (0 charts failed).",
+        "YAML parse green for prometheus-alerts.yml and prometheus-config.yml; scrape jobs resolve to core-api, mcp, agent-runtime, opa, otel-collector, prometheus."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Both halves the gap names are closed: the sidecar is now EXPOSED (Service opa-metrics port; it was pod-local and unreachable) and SCRAPED (new `opa` job whose name matches the alert scope). A third, deeper defect was found and fixed: the alert referenced a metric OPA does not emit, so scraping alone would not have made it fire. Deploy-gated remainder: the live in-cluster scrape needs a running cluster; promtool was unavailable locally so the rule was validated by YAML parse + empirical series matching instead of `promtool check rules`; and the docker-compose stack does not run OPA yet, tracked by GT-547."
     }
   ]
 }

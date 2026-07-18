@@ -62,15 +62,22 @@ groups:
           description: "Queue {{ $labels.queue }} has {{ $value }} messages pending for more than 10 minutes."
           runbook_url: "https://github.com/beyondnetcode/evolith/blob/main/reference/operations/README.md"
 
+      # GT-551: this rule previously fired on `opa_evaluation_errors_total`, a metric
+      # OPA does NOT emit — verified empirically against the pinned binary
+      # (`opa run --server` + GET /metrics exposes ONLY go_*, process_* and
+      # `http_request_duration_seconds{code,handler,method}`; zero `opa_*` series).
+      # The alert could therefore never fire, giving false coverage. Real signal:
+      # 5xx responses on OPA's policy-decision handler (`v1/data`), scoped to the
+      # opa job so it can never match our own `evolith_http_*` series.
       - alert: OpaEvaluationFailure
-        expr: rate(opa_evaluation_errors_total[5m]) > 0
+        expr: rate(http_request_duration_seconds_count{job="opa",handler=~"v1/data.*",code=~"5.."}[5m]) > 0
         for: 5m
         labels:
           severity: warning
           service: opa
         annotations:
           summary: "OPA evaluation errors detected"
-          description: "OPA policy evaluation errors are occurring at {{ $value | humanize }}/s."
+          description: "OPA policy decisions are failing (5xx on v1/data) at {{ $value | humanize }}/s."
           runbook_url: "https://github.com/beyondnetcode/evolith/blob/main/reference/operations/README.md"
 
   - name: core-api-alerts

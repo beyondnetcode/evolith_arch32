@@ -11,5 +11,14 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    {{- if .Values.opa.enabled }}
+    # GT-551: expose the OPA sidecar's HTTP port so Prometheus can reach its
+    # /metrics endpoint. Without this the sidecar is pod-local only and
+    # policy-decision reliability is unobservable from outside the pod.
+    - port: 8181
+      targetPort: opa-http
+      protocol: TCP
+      name: opa-metrics
+    {{- end }}
   selector:
     app: {{ include "evolith-mcp.name" . }}

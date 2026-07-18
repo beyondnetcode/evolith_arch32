@@ -234,8 +234,25 @@ describe('createRuntimeFromEnv — profile selection matrix (GT-438)', () => {
       expect(deps.workspaceContext).toBeInstanceOf(FsWorkspaceContextAdapter);
     });
 
-    it('falls back to AGENT_RUNTIME_WORKSPACE_ROOT (the shared mounted corpus)', () => {
+    // Regression guard: this used to FALL BACK to AGENT_RUNTIME_WORKSPACE_ROOT.
+    // That variable predates the feature, means "where the mounted corpus lives"
+    // for the .harness/OPA seams, and the service image hard-codes it
+    // (`ENV AGENT_RUNTIME_WORKSPACE_ROOT=/repo/corpus`). The fallback therefore
+    // switched whole-corpus inlining ON in every containerised deployment: the
+    // runtime inlined the entire bundled corpus into one evaluate request, the
+    // Core rejected the oversized body before its audit interceptor (invisible in
+    // logs), and the governed chain died on an opaque "HTTP 500". Inlining must be
+    // opt-in through its OWN variable only.
+    it('does NOT activate from AGENT_RUNTIME_WORKSPACE_ROOT alone (that var is the .harness/OPA corpus root)', () => {
       const { deps } = createRuntimeFromEnv({ AGENT_RUNTIME_WORKSPACE_ROOT: '/app/corpus' });
+      expect(deps.workspaceContext).toBeUndefined();
+    });
+
+    it('still activates when both are set, honouring the dedicated variable', () => {
+      const { deps } = createRuntimeFromEnv({
+        AGENT_RUNTIME_WORKSPACE_ROOT: '/repo/corpus',
+        AGENT_RUNTIME_WORKSPACE_CONTEXT_ROOT: '/app/satellite',
+      });
       expect(deps.workspaceContext).toBeInstanceOf(FsWorkspaceContextAdapter);
     });
   });

@@ -5,7 +5,9 @@ services:
   # 1. Primary Relational Database (PostgreSQL 16)
   # ---------------------------------------------------------
   postgres:
-    image: postgres:16-alpine
+    # ADR-0112 §3 — pgvector on the PostgreSQL instance Evolith already runs.
+    # Drop-in for postgres:16-alpine (same PG 16) plus the `vector` extension.
+    image: pgvector/pgvector:pg16
     container_name: ums-postgres
     restart: always
     environment:
@@ -16,6 +18,10 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      # Provisions the evolith_rag database + pgvector extension + rag_chunks on
+      # first init. The DDL is mounted from its single source of truth, not copied.
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+      - ../../.harness/scripts/ci/rag-pgvector.schema.sql:/evolith/rag-pgvector.schema.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ums_user -d ums_db"]
       interval: 5s
@@ -415,7 +421,44 @@ services:
 # ---------------------------------------------------------
 # Persistent Volume Declarations
 # ---------------------------------------------------------
+  # ADR-0112 §4 — local inference sidecar for RAG embeddings. The Node process
+  # never runs the model in-process; embeddings are computed on-perimeter so
+  # there is NO corpus egress. Model and dimension are pinned by ADR-0112 §1/§2
+  # (Qwen3-Embedding-0.6B, 1024) and consumed via EVOLITH_RAG_EMBED_URL.
+  #
+  # Behind the `rag` profile: the image pulls model weights measured in GB, so it
+  # must be opted into explicitly:
+  #   docker compose --profile rag up -d rag-embeddings
+  #
+  # The write-side embedder posts OpenAI-shaped {model, input} and accepts
+  # OpenAI {data:[{embedding}]}, TEI [[...]] or {embeddings} responses, so any
+  # OpenAI-compatible embedding server works here.
+  rag-embeddings:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.5
+    container_name: evolith-rag-embeddings
+    profiles: ["rag"]
+    restart: unless-stopped
+    command: ["--model-id", "Qwen/Qwen3-Embedding-0.6B", "--port", "8080"]
+    ports:
+      - "8085:8080"
+    volumes:
+      - rag_embeddings_cache:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 300s
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+    networks:
+      - ums-network
+
 volumes:
+  rag_embeddings_cache:
   postgres_data:
   sqlserver_data:
   mongodb_data:

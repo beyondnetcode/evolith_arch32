@@ -7717,6 +7717,60 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-514 (ShellEnforcerAdapter/IProcessRunner seam) + GT-515 (SARIF 2.1.0 ingester, reused wholesale by the security adapters) both DONE. Criterion #1's own gate held: import-linter (Python) + Checkov/Trivy (IaC/security) landed and were exercised against real corpora; Deptrac (PHP) / ArchUnit (JVM) / jQAssistant (Neo4j) correctly stay adapter-pending — no real repo of those runtimes exists to exercise them, so building them would be speculative and untestable per the gap's Risk/Evidence."
+    },
+    {
+      "id": "GT-519",
+      "closedAt": "2026-07-17",
+      "closureCommit": "4eb471a6",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/ruleset-validator.types.ts",
+        "src/packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/index.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/enforcer-metrics.spec.ts",
+        "src/packages/core-domain/src/index.ts"
+      ],
+      "validationCommands": [
+        "core-domain 1026/1026 (+2 tests locking options.metrics threading through createCompositeEnforcerStrategy + the noop fallback); mcp 326/326; cli 969/969; core-api 152/152; tsc --noEmit clean across all four.",
+        "Public seam verified: RulesetValidatorOptions.metrics forwarded into the enforcer subsystem factory and the metrics API (IEnforcerMetrics/NoopEnforcerMetrics/RecordingEnforcerMetrics/ENFORCER_METRICS) re-exported from core-domain, so a host can construct a real Meter-backed adapter (previously the seam was permanently no-op and un-wireable through any surface)."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Parity wiring (processRunner injected in CLI/MCP/REST) and enforcer-catalog<->tool-catalog version pins were already live (f8310fac/4b6db4d5); this closed the remaining OTel-metrics seam. Ops-only remainder stays out of scope: per-runtime composable CI images + vuln-scan/Renovate, and activating a live OTel Meter-backed IEnforcerMetrics adapter inside each surface module (host config) — the code seam is complete and importable."
+    },
+    {
+      "id": "GT-438",
+      "closedAt": "2026-07-17",
+      "closureCommit": "ff57cec6",
+      "evidence": [
+        "src/packages/agent-runtime/src/domain/ports/workspace-context.port.ts",
+        "src/packages/agent-runtime/src/adapters/core/fs-workspace-context.adapter.ts",
+        "src/packages/agent-runtime/src/application/agent-runtime.service.ts",
+        "src/packages/agent-runtime/src/application/context-mapper.ts",
+        "src/apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts"
+      ],
+      "validationCommands": [
+        "agent-runtime 131/131 (+8 workspace-context tests); agent-runtime-api 80/80 (+3 factory wiring tests); tsc --noEmit clean.",
+        "The runtime assembles the workspace and passes it inline as evaluationInput.files (the OverlayFileSystem shape the Core API already consumes), so the stateless Core no longer evaluates an empty context; a workspace outage degrades to the prior flow (never fails a run)."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The HttpCoreEvaluationAdapter was already wired+verified in kind; this landed the last non-gated piece (real workspace-context assembly). Gated remainder stays out of scope by design: the real reasoning engine (GT-385/Hermes) and durable memory/scheduler needing external services; a Tracker-driven context assembler is a future sibling adapter behind the same IWorkspaceContextPort."
+    },
+    {
+      "id": "GT-451",
+      "closedAt": "2026-07-17",
+      "closureCommit": "fd03cf53",
+      "evidence": [
+        "src/sdk/cli/package.json",
+        "src/sdk/cli/scripts/check-release-drift.mjs",
+        "src/sdk/cli/CHANGELOG.md",
+        "src/packages/core-domain/package.json",
+        "src/packages/mcp-server/package.json"
+      ],
+      "validationCommands": [
+        "Verified against the LIVE npm registry: a clean `npm i @beyondnet/evolith-cli@1.1.0` in an empty project resolves the full closure from npm (agent-runtime/core-domain/infra-providers/sdk all 1.1.0) and the CLI boots — `--version` -> 1.1.0, `evaluate --help` OK, `enforce --help` OK (exercises enforcement/policy-compiler, the subpath missing from the stale 1.0.0). cli dist-tag latest: 1.1.0.",
+        "check:release-drift hardened to fail the publish when the shipped dist imports any @beyondnet/* not declared in dependencies — proven: aborts without the infra-providers dep, passes with it. npm publish --dry-run green for all 8 packages."
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "The real defect was the whole @beyondnet/evolith-*@1.0.0 line being stale vs develop (CLI deep-imports subpaths absent from the 1.0.0 tarballs) plus cli@1.0.1 crashing on an undeclared infra-providers dep. Resolved by a coordinated 1.1.0 re-release of all 8 packages (owner published in dependency order); the owner-publish dependency is now satisfied and verified live."
     }
   ]
 }

@@ -181,11 +181,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Registrar el Composite en `evaluate` / la tool MCP `architecture` / `POST /api/v1/evaluate`; fijar versiones exactas de herramientas (`validated-tool-catalog.md` ↔ `enforcer-catalog.json`); construir imágenes de CI componibles por runtime (no un monolito) con escaneo de vulnerabilidades + Renovate; emitir métricas OTel de enforcer (duración, tasa de fallo, timeouts, conteos de violaciones).
 - **Acceptance criteria:**
-  - [ ] Los tests de paridad están en verde en CLI/MCP/REST para la ruta de enforcer.
-  - [ ] Las versiones de herramientas están fijadas y son reproducibles; las imágenes de CI son por runtime y con escaneo de vulnerabilidades.
+  - [x] Los tests de paridad están en verde en CLI/MCP/REST para la ruta de enforcer. _(Wave 4 `f8310fac`: **bug latente arreglado** — ninguna factory de DI de superficie inyectaba un `processRunner`, así que `RulesetValidatorService` nunca envolvía su strategy con el Composite y la ruta de enforcer era inalcanzable en las tres superficies. Ahora `NodeProcessRunner` se inyecta en core-api `core-domain.module.ts`, cli `app.module.ts`, mcp-server `domain.module.ts`; `enforcer-surface-parity.spec.ts` asegura resultados byte-idénticos + guard de divergencia + guard anti-drift a nivel de fuente)_
+  - [~] Las versiones de herramientas están fijadas y son reproducibles; las imágenes de CI son por runtime y con escaneo de vulnerabilidades. _(parte de código HECHA: pins exactos x.y.z en `enforcer-catalog.json` ↔ `validated-tool-catalog.md` §4.3 + `enforcer-catalog-doc-parity.spec.ts` falla ante cualquier drift/pin no-exacto. **Deploy-gated:** imágenes CI componibles por runtime + vuln-scan + Renovate son de ops/pipeline)_
   - [x] Las corridas de enforcer emiten métricas OTel (duración, tasa de fallo, timeouts, conteos de violaciones).
 - **Dependencies:** GT-514.
-- **Status:** `PENDING`
+- **Cierre (2026-07-17, commit `4eb471a6`):** se cerró el último seam de código — las métricas OTel de enforcer se emitían internamente pero el puerto era incableable por cualquier superficie (`RulesetValidatorService`/`RulesetValidatorOptions` ni aceptaba ni reenviaba `IEnforcerMetrics`, y los tipos no se exportaban). Ahora `metrics?` fluye por la factory del subsistema y la API de métricas se re-exporta desde core-domain. Verificado: core-domain 1026/1026, mcp 326/326, cli 969/969, core-api 152/152. La mitad de imágenes CI del criterio 2 sigue deploy-gated (`[~]`, accepted-scope). → **DONE**.
+- **Status:** `DONE`
 
 #### GT-520
 

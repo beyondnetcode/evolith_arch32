@@ -188,7 +188,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] Enforcer runs emit OTel metrics (duration, failure rate, timeouts, violation counts).
 - **Dependencies:** GT-514.
 - **Progress (2026-07-13, Wave 4, commit `f8310fac`):** Criteria 1 & 3 met; criterion 2 code-complete, CI-image build deploy-gated. Kept `IN-PROGRESS` until the per-runtime vuln-scanned CI images + Renovate pin-maintenance land (ops). core-domain enforcement 144/144 + mcp-server 324/324 green.
-- **Status:** `IN-PROGRESS`
+- **Closure (2026-07-17, commit `4eb471a6`):** the last code seam closed — enforcer OTel metrics were emitted internally but the port was un-wireable through any surface (`RulesetValidatorService`/`RulesetValidatorOptions` neither accepted nor forwarded `IEnforcerMetrics`, and the types weren't exported). Now `metrics?` threads through the subsystem factory and the metrics API is re-exported from core-domain. Verified: core-domain 1026/1026, mcp 326/326, cli 969/969, core-api 152/152. Criterion 2's CI-image half stays deploy-gated (`[~]`, accepted-scope). → **DONE**.
+- **Status:** `DONE`
 
 #### GT-520
 

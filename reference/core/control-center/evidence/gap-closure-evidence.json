@@ -7904,6 +7904,98 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "The gap has no dependencies. Three areas are deliberately NOT encoded and are recorded as scope boundaries rather than blockers: human self-review (no ADR bars it, so there is no rule to encode), which office may ratify/waive/enforce (deferred to domain/rbac), and KI-R03's evidence gate (stays in knowledge-intake.rego). One follow-up is noted: PromotionStatus is now declared both here and in agent-runtime/src/application/automation-candidate.ts:25."
+    },
+    {
+      "id": "GT-445",
+      "closedAt": "2026-07-18",
+      "closureCommit": "702de08b",
+      "evidence": [
+        ".harness/scripts/ci/07-generate-inventories.mjs",
+        "reference/core/control-center/maturity-reports/inventory-summary.md",
+        "reference/core/control-center/maturity-reports/maturity-reconciliation.json",
+        "reference/core/control-center/maturity-reports/maturity-assessment.md",
+        "product/products/smart-cli/product-inventory.md",
+        "reference/core/foundations/common-rules/ai-augmented/03-tools-catalog/evolith-mcp-tools.md"
+      ],
+      "validationCommands": [
+        "All four named surfaces are regenerated. maturity-reconciliation.json was regenerated in 35ea46e1 and now reports 559 gaps / 145 rulesets / 132 ADRs / @beyondnet/evolith-cli@1.1.0.",
+        "maturity-assessment.md verified clean: no `1.1.4`, no \"32 tools\", no `@evolith/smart-cli`. product-inventory.md clean at 1.1.0. evolith-mcp-tools.md regenerated to the source-derived 47-tool table in 459676aa.",
+        "The final blocker was the inventory generator itself: `07-generate-inventories.mjs` resolved the dead `rulesets/` path and reported 0, wrote to an orphaned location, and its `--check` flag WROTE FILES instead of only checking. Fixed in 702de08b.",
+        "Measured effect: the canonical `reference/core/control-center/maturity-reports/inventory-summary.md` went from a two-week-frozen 119 ADRs / 144 rulesets / 40 schemas to 132 / 145 / 44, now agreeing exactly with what `09-reconcile-maturity.mjs` derives independently.",
+        "Corpus cross-check: `find src/rulesets -name \"*.rules.json\" | wc -l` -> 145, the same figure both scripts now report."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "The gap has no remaining dependencies. Regeneration had been gated on the inventory generator producing real numbers; that generator was the last blocker and was fixed in the closure commit, so the four surfaces could be regenerated from code rather than by hand and nothing is left waiting."
+    },
+    {
+      "id": "GT-552",
+      "closedAt": "2026-07-18",
+      "closureCommit": "38db17bf",
+      "evidence": [
+        ".github/workflows/sdk-cli-release.yml"
+      ],
+      "validationCommands": [
+        "Criterion 1: the workflow no longer references `release-please-config.json` or `.release-please-manifest.json`; both were deleted in aed33ba9 and are no longer passed to any action.",
+        "Criterion 2: the `release-please` job was replaced by a `release-gate` job, so the workflow no longer claims it can auto-cut a version.",
+        "Criterion 3, with a correction to the original write-up: the failure-notification job is NOT unreachable dead code. It RAN AND SUCCEEDED in run 29641024724, which disproves the claim that it was gated behind an output that could never be true.",
+        "Provenance of the closure commit: `git log --oneline -3 -- .github/workflows/sdk-cli-release.yml` shows 38db17bf as the commit where the file's current state landed.",
+        "Recorded honestly: the release pipeline still fails, for unrelated reasons now tracked by GT-561 (MCP smoke timeout), GT-562 (branch-coverage regression) and GT-563 (doc validation). This gap was about the broken WIRING, which is fixed."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "The gap has no dependencies: the defect and its fix are contained in a single workflow file. The pipeline failures that remain are separate defects with their own board rows (GT-561, GT-562, GT-563) rather than blockers on this one."
+    },
+    {
+      "id": "GT-553",
+      "closedAt": "2026-07-18",
+      "closureCommit": "35ea46e1",
+      "evidence": [
+        ".harness/scripts/ci/09-reconcile-maturity.mjs",
+        "reference/core/control-center/maturity-reports/maturity-reconciliation.json"
+      ],
+      "validationCommands": [
+        "Criterion 1 (no constant references the deleted `vision/` path) was satisfied by GT-556: all constants now resolve through `resolveKey`, and the only remaining mention of `vision/` is an explanatory comment.",
+        "Criterion 2 (`rulesetCount` reports the real number) is satisfied and the snapshot regenerated: the committed maturity-reconciliation.json now reports \"rulesetCount\": 145.",
+        "Corpus cross-check: `find src/rulesets -name \"*.rules.json\" | wc -l` -> 145, matching the regenerated figure.",
+        "Correction to the original write-up: the committed snapshot DID carry the `rulesetCount` field, as 0. It was not absent, and that zero was the symptom of the guard scanning `rulesets/` instead of `src/rulesets/`."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "The gap has no remaining dependencies. Regeneration had been recorded as gated on the maturity-evidence refresh tracked by GT-523, but the snapshot was regenerated in this closure commit, so nothing is left waiting on that gate."
+    },
+    {
+      "id": "GT-554",
+      "closedAt": "2026-07-18",
+      "closureCommit": "9a13d0d6",
+      "evidence": [
+        "CONTRIBUTING.md",
+        "CONTRIBUTING.es.md"
+      ],
+      "validationCommands": [
+        "Criterion 1: section 5.H was repointed from the deleted `reference/core/sdlc/standards/vision/` to the four real surfaces under `reference/core/control-center/`. The Spanish file's drifted paths were fixed too -- `sdk/cli`, `rulesets/schema/` and `rulesets/opa/` were all missing the `src/` prefix -- since the criterion is that every cited path resolves. 28/28 headings.",
+        "Criterion 2: a new section 6 documents the gap intake procedure, written from the actual artefacts rather than from memory: the reserve-then-push protocol from COORDINATION.md, the board row shape that 08-validate-tracking.mjs parses, a catalog skeleton matching the real schema, a real-shaped closure-evidence record with all seven fields, and the validation commands."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "The gap has no dependencies: it is a documentation change describing artefacts that already exist. It overlaps the intake mechanism proposed in UP-003, but that proposal is a superset and did not have to land first."
+    },
+    {
+      "id": "GT-555",
+      "closedAt": "2026-07-18",
+      "closureCommit": "9a13d0d6",
+      "evidence": [
+        ".github/CODEOWNERS",
+        ".github/ISSUE_TEMPLATE/config.yml",
+        ".github/ISSUE_TEMPLATE/bug-report.yml",
+        ".github/ISSUE_TEMPLATE/feature-request.yml",
+        ".github/FUNDING.yml",
+        ".github/workflows/sdk-cli-release.yml"
+      ],
+      "validationCommands": [
+        "Added `.github/CODEOWNERS`, `.github/ISSUE_TEMPLATE/config.yml` (blank issues off; contact links to Discussions, the private security advisory and CONTRIBUTING), and bug-report and feature-request templates written in plain language. `FUNDING.yml` moved from `src/sdk/cli/` to `.github/` so GitHub renders it.",
+        "Near-miss recorded: CODEOWNERS first shipped naming `@beyondnetcode/evolith-team`, copied from the release workflow's failure notifier. That team DOES NOT EXIST -- `gh api orgs/beyondnetcode/teams` returns only `evolith-core-s-development`.",
+        "Why that mattered: GitHub silently ignores an unresolvable owner, so every CODEOWNERS line would have routed nothing while the file looked correct.",
+        "Corrected to the verified team, which was also confirmed to have repository access. The same bad handle in `.github/workflows/sdk-cli-release.yml` was fixed, which means that failure notification had been at-mentioning nobody."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "The gap has no dependencies: the files are self-contained GitHub community-health files. It feeds the GitHub bridge deliverable of UP-003, but nothing had to land first for these to take effect."
     }
   ]
 }

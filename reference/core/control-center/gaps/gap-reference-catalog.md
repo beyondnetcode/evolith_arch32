@@ -1894,6 +1894,9 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 
 **Problem:** several auto/hand-maintained surfaces still assert pre-reset numbers — `maturity-reconciliation.json` (`@evolith/smart-cli@1.1.4` published + 422/423 gaps), `maturity-assessment.md` (`1.1.0`, "32 MCP tools"), `product-inventory.md` (`1.1.4`, 33 tools / 26 commands), and the hand-written `evolith-mcp-tools.md` catalog (obsolete tool names) — contradicting reality (packages 0.0.1 deprecated; board 432/447). **Closure:** after the in-flight topology/phase-artifacts surface edits land, regenerate the inventory/reconciliation snapshots from code (not by hand) and refresh the assessment + tool catalog — resetting versions to the 0.0.1→1.0.0 baseline and deriving tool/command/resource/prompt counts from the real registries. The 2026-07-04 doc-alignment audit fixed the version/link/field drift; the count-sensitive regeneration is gated on the surface edits landing. **References:** maturity-reconciliation.json; maturity-assessment.md; product-inventory.md; evolith-mcp-tools.md; generate-product-inventory.mjs; 09-reconcile-maturity.mjs.
 
+- **Closure (2026-07-18, commit `702de08b`):** All four named surfaces are regenerated. `maturity-reconciliation.json` was regenerated in `35ea46e1` (559 gaps / 145 rulesets / 132 ADRs / CLI 1.1.0); `maturity-assessment.md` verified clean -- no `1.1.4`, no "32 tools", no `@evolith/smart-cli`; `product-inventory.md` clean at 1.1.0; `evolith-mcp-tools.md` regenerated to 47 tools in `459676aa`. The final blocker was the inventory generator itself: `07-generate-inventories.mjs` resolved the dead `rulesets/` path and reported 0, wrote to an orphaned location, and its `--check` flag WROTE FILES. Fixed in `702de08b`; the canonical `maturity-reports/inventory-summary.md` went from a two-week-frozen 119 ADRs / 144 rulesets / 40 schemas to 132 / 145 / 44, now agreeing exactly with what script 09 derives independently.
+- **Status:** `DONE`
+
 #### GT-446
 
 **Title:** Tracker production pilot (cross-repo, evolith_tracker)
@@ -6762,11 +6765,12 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Criticality:** P1 · **Complexity:** S
 - **Proposed fix:** Decide between the two coherent end states — restore the release-please configuration, or migrate the workflow to the manual-versioning model the deleting commit declared — and align the failure-notification gate accordingly.
 - **Acceptance criteria:**
-  - [ ] The release workflow no longer references files that do not exist.
-  - [ ] A version can be cut end to end, or the workflow no longer claims it can.
-  - [ ] The automated failure-notification issue is reachable, or removed as dead code.
+  - [x] The release workflow no longer references files that do not exist -- `release-please-config.json` and `.release-please-manifest.json` (both deleted in `aed33ba9`) are no longer passed to any action. _(commit `38db17bf`)_
+  - [x] The workflow no longer claims it can cut a version: the `release-please` job was replaced by a `release-gate` job. _(commit `38db17bf`)_
+  - [x] The automated failure-notification issue is reachable -- it RAN AND SUCCEEDED, which disproves the original write-up's claim that it was unreachable dead code. _(run 29641024724)_
 - **Dependencies:** None.
-- **Status:** `PENDING`
+- **Closure (2026-07-18, commit `38db17bf`):** The wiring is fixed: the two phantom configuration files are gone from the workflow and the orphaned `release-please` job is now a `release-gate` job, so the workflow no longer asserts an ability it does not have. _Correction to the original write-up:_ `failure-notification` was NOT dead code -- it ran and succeeded in run 29641024724. _Recorded honestly:_ the release pipeline still fails, for unrelated reasons now tracked by [`GT-561`](#gt-561), [`GT-562`](#gt-562) and [`GT-563`](#gt-563); this gap was about the broken WIRING, which is fixed.
+- **Status:** `DONE`
 
 #### GT-553
 
@@ -6781,10 +6785,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Delete the three dead constants and repoint the ruleset scan at `src/rulesets/`; regenerate the snapshot.
 - **Acceptance criteria:**
-  - [ ] No constant in the guard references the deleted `vision/` path.
-  - [ ] `rulesetCount` reports the real number of rulesets under `src/rulesets/`.
-- **Dependencies:** Regeneration is gated on the maturity evidence refresh tracked by [`GT-523`](#gt-523).
-- **Status:** `PENDING`
+  - [x] No constant in the guard references the deleted `vision/` path -- satisfied by [`GT-556`](#gt-556): all constants now resolve through `resolveKey`, and the only remaining mention is an explanatory comment. _(commit `35ea46e1`)_
+  - [x] `rulesetCount` reports the real number of rulesets under `src/rulesets/`: **145**, matching `find src/rulesets -name "*.rules.json" | wc -l`. _(commit `35ea46e1`)_
+- **Dependencies:** Regeneration was gated on the maturity evidence refresh tracked by [`GT-523`](#gt-523); the snapshot was regenerated in `35ea46e1`, so nothing is left waiting.
+- **Closure (2026-07-18, commit `35ea46e1`):** Both criteria are met and the snapshot is regenerated. _Correction to the original write-up:_ the committed snapshot DID carry the `rulesetCount` field, as `0` -- it was not absent, and that zero was the symptom of the `rulesets/` versus `src/rulesets/` scan.
+- **Status:** `DONE`
 
 #### GT-554
 
@@ -6799,10 +6804,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Repoint section 5.H to `control-center/`, and document the gap intake procedure end to end, including identifier allocation.
 - **Acceptance criteria:**
-  - [ ] Every path cited in CONTRIBUTING resolves.
-  - [ ] The document explains how to file a gap: entry schema, identifier allocation and closure evidence.
+  - [x] Every path cited in CONTRIBUTING resolves -- section 5.H repointed from the deleted `reference/core/sdlc/standards/vision/` to the four real surfaces under `control-center/`, and the Spanish file's drifted paths (`sdk/cli`, `rulesets/schema/`, `rulesets/opa/`, all missing `src/`) were fixed too. 28/28 headings. _(commit `9a13d0d6`)_
+  - [x] The document explains how to file a gap: a new section 6 documents the intake procedure written from the actual artefacts -- the reserve-then-push protocol from `COORDINATION.md`, the board row shape the guard parses, a catalog skeleton matching the real schema, a real-shaped closure-evidence record with all seven fields, and the validation commands. _(commit `9a13d0d6`)_
 - **Dependencies:** Overlaps the intake mechanism proposed in [UP-003](../opportunities/UP-003-user-contribution-intake-mechanism.md).
-- **Status:** `PENDING`
+- **Closure (2026-07-18, commit `9a13d0d6`):** CONTRIBUTING now describes the process that actually exists: every cited path resolves in both languages, and the procedure is written from the artefacts a contributor will meet rather than from memory.
+- **Status:** `DONE`
 
 #### GT-555
 
@@ -6817,11 +6823,12 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Add `CODEOWNERS`, an issue-template `config.yml` linking Discussions and security reporting, bug-report and feature-request templates, and relocate `FUNDING.yml` to `.github/`.
 - **Acceptance criteria:**
-  - [ ] `CODEOWNERS` exists and routes review for the main areas.
-  - [ ] A bug report and a feature request can be filed from the issue chooser.
-  - [ ] `FUNDING.yml` renders on the repository page.
+  - [x] `CODEOWNERS` exists and routes review for the main areas -- `.github/CODEOWNERS`. _(commit `9a13d0d6`)_
+  - [x] A bug report and a feature request can be filed from the issue chooser -- `.github/ISSUE_TEMPLATE/bug-report.yml` and `feature-request.yml`, in plain language, plus `config.yml` turning blank issues off and offering contact links to Discussions, the private security advisory and CONTRIBUTING. _(commit `9a13d0d6`)_
+  - [x] `FUNDING.yml` renders on the repository page -- moved from `src/sdk/cli/` to `.github/`. _(commit `9a13d0d6`)_
 - **Dependencies:** Feeds the GitHub bridge deliverable of [UP-003](../opportunities/UP-003-user-contribution-intake-mechanism.md).
-- **Status:** `PENDING`
+- **Closure (2026-07-18, commit `9a13d0d6`):** The collaboration surface is usable from outside the core team. _Near-miss recorded:_ CODEOWNERS first shipped naming `@beyondnetcode/evolith-team`, copied from the release workflow's failure notifier -- that team DOES NOT EXIST (`gh api orgs/beyondnetcode/teams` returns only `evolith-core-s-development`). GitHub silently ignores an unresolvable owner, so every line would have routed nothing while the file looked correct. Corrected to the verified team, which was also confirmed to have repository access; the same bad handle in `sdk-cli-release.yml` was fixed, meaning that failure notification had been at-mentioning nobody.
+- **Status:** `DONE`
 
 #### GT-556
 
@@ -6907,3 +6914,77 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Dependencies:** Recorded in [ADR-0116](../../architecture/adrs/core/0116-canonical-finding-and-authority-boundary.md); ADR-0097 supplies the promotion lifecycle encoded here.
 - **Closure (2026-07-18, commit `e1f4901a`):** The boundary is executable and recorded in ADR-0116. _Deliberately not encoded:_ human self-review (no ADR bars it); which office may ratify, waive or enforce (deferred to `domain/rbac`); and KI-R03's evidence gate (stays in `knowledge-intake.rego`). _Follow-up noted:_ `PromotionStatus` is now declared both here and in `agent-runtime/src/application/automation-candidate.ts:25`.
 - **Status:** `DONE`
+
+#### GT-560
+
+**Title:** The circuit breaker is a DI-registered orphan
+
+- **Purpose:** Either put real downstream calls behind the breaker, or stop scoring resilience on a component that protects nothing.
+- **Evidence:** `CircuitBreakerService` (`src/apps/core-api/src/infrastructure/resilience/circuit-breaker.service.ts`) genuinely wraps opossum 9.0.0 and is provided in `src/apps/core-api/src/app.module.ts:99`, but across all of `src/` there are ZERO injections of the service and ZERO `createBreaker` callers outside the service and its own spec. No database call, HTTP call or satellite fetch sits behind a breaker, and `getStats()` is unreachable from any controller.
+- **Impact:** `reference/core/foundations/common-rules/senior-architectural-assessment.md:35` scores "Resilience 7/10 -- Circuit breaker via `opossum` is OK", a rating awarded to a component that protects nothing.
+- **Risk:** A resilience score derived from a registered-but-unused provider is an overstatement of what the system survives.
+- **Affected files:** `src/apps/core-api/src/infrastructure/resilience/circuit-breaker.service.ts`; `src/apps/core-api/src/app.module.ts`; `reference/core/foundations/common-rules/senior-architectural-assessment.md`.
+- **Component:** `Core API` · **Dimension:** Reliability · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Decide WHICH downstream dependencies must be wrapped and route them through the breaker, then re-derive the resilience score from what is actually protected. The decision is a production design decision, which is why it was not done inline.
+- **Acceptance criteria:**
+  - [ ] At least one real downstream call is executed through `CircuitBreakerService`.
+  - [ ] `getStats()` is reachable from an operational surface.
+  - [ ] The resilience rating in the assessment reflects what the breaker actually protects.
+- **Dependencies:** None.
+- **Status:** `PENDING`
+
+#### GT-561
+
+**Title:** The MCP smoke test times out, failing E2E and cascading into DAST
+
+- **Purpose:** Restore a green pipeline so a genuine regression is still visible.
+- **Evidence:** The E2E Tests job fails at the MCP stdio/HTTP smoke with `MCP smoke test FAILED: Timed out waiting for initialize (id 1)`; DAST then fails downstream with `MCP Server failed to start after 60s`. Observed 2026-07-18 in run 29646397424. The last green run of this pipeline was 2026-06-30.
+- **Impact:** Two jobs are red on every run, and the DAST failure is a consequence of the first rather than an independent finding.
+- **Risk:** A permanently red pipeline normalises the red signal, after which a real regression arrives unnoticed.
+- **Affected files:** the MCP smoke harness and the `mcp:smoke` script it runs.
+- **Component:** `MCP Server` · **Dimension:** Reliability · **Type:** ci
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Diagnose why the server never answers `initialize` within the smoke timeout, fix the cause, and confirm DAST recovers once the server starts.
+- **Acceptance criteria:**
+  - [ ] The MCP smoke completes without a timeout on `initialize`.
+  - [ ] The E2E Tests job passes.
+  - [ ] DAST no longer fails with `MCP Server failed to start after 60s`.
+- **Dependencies:** None.
+- **Status:** `PENDING`
+
+#### GT-562
+
+**Title:** Branch coverage regressed below the gate
+
+- **Purpose:** Repay a coverage regression rather than move the line that detected it.
+- **Evidence:** 71 suites and 969 tests pass with 0 failures, but the blocking coverage gate fails: `Coverage for branches (62.89%) does not meet "global" threshold (75%)`. Observed 2026-07-18 in run 29646397424.
+- **Impact:** The coverage gate blocks, and the honest reading is that branch coverage fell below a threshold that remains correct.
+- **Risk:** The cheapest response -- relaxing the threshold -- would convert a measured regression into a permanently lowered standard.
+- **Affected files:** the `core-api` test suite and its Jest coverage configuration.
+- **Component:** `Core API` · **Dimension:** Reliability · **Type:** testing
+- **Criticality:** P2 · **Complexity:** M
+- **Proposed fix:** Add branch coverage where it was lost until the suite clears 75 percent. The gate is deliberately left untouched.
+- **Acceptance criteria:**
+  - [ ] Branch coverage is at or above the existing 75 percent global threshold.
+  - [ ] The threshold itself is unchanged.
+- **Dependencies:** None.
+- **Status:** `PENDING`
+
+#### GT-563
+
+**Title:** 174 doc-validation errors, and the workflow that should catch them reports success
+
+- **Purpose:** Fix the documentation corpus and make the check that measures it actually run.
+- **Evidence:** `01-validate-docs.mjs` exits 1 with 174 errors -- 108 broken links, 44 emoji, 9 mojibake and 5 topology-manifest schema violations -- confirmed locally at commit `5cd18bea`. Separately, the `Documentation Validation` workflow reports SUCCESS on that same commit, because its `validate` job is gated on `workflow_dispatch` and is therefore skipped; only the tracking guard runs.
+- **Impact:** The corpus carries 174 real errors while the workflow that should surface them is green.
+- **Risk:** A red check nobody sees is worse than a red check: the green badge is cited as evidence that the corpus is clean.
+- **Affected files:** `.harness/scripts/ci/01-validate-docs.mjs`; the `Documentation Validation` workflow; the 174 reported locations.
+- **Component:** `Documentation` · **Dimension:** Governance · **Type:** docs
+- **Criticality:** P2 · **Complexity:** L
+- **Proposed fix:** Clear the 174 errors and remove the `workflow_dispatch` gate on the `validate` job so the check runs on every push. Both halves belong to this gap.
+- **Acceptance criteria:**
+  - [ ] `node .harness/scripts/ci/01-validate-docs.mjs` exits 0.
+  - [ ] The `validate` job runs unconditionally, so the workflow result reflects the validator's verdict.
+- **Dependencies:** None.
+- **Status:** `PENDING`

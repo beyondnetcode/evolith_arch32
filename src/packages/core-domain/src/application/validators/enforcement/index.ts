@@ -2,6 +2,7 @@
 export * from './enforcer.types';
 export * from './shell-enforcer-adapter';
 export * from './enforcer-evaluator';
+export * from './enforcer-metrics';
 export * from './composite-rule-evaluator';
 export * from './enforcer-subsystem';
 export * from './edit-gate';

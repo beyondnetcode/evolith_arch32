@@ -9,6 +9,25 @@ export type {
   ProcessResult,
   EnforcerRuntime,
 } from './application/validators/enforcement/enforcer.types';
+// Enforcer OTel metrics port (GT-519 · EAG-14 — AC3). The public seam a host maps onto a real
+// OpenTelemetry `Meter` so enforcer runs emit duration/failure/timeout/violation telemetry. Ships
+// a zero-cost noop default + an in-memory recorder; core-domain never depends on the OTel SDK.
+export type {
+  IEnforcerMetrics,
+  EnforcerMetricDescriptor,
+  EnforcerRunAttributes,
+  EnforcerDurationSample,
+  EnforcerFailureSample,
+  EnforcerTimeoutSample,
+  EnforcerViolationSample,
+  EnforcerRunOutcome,
+  EnforcerFailureReason,
+} from './application/validators/enforcement/enforcer-metrics';
+export {
+  ENFORCER_METRICS,
+  NoopEnforcerMetrics,
+  RecordingEnforcerMetrics,
+} from './application/validators/enforcement/enforcer-metrics';
 export {
   buildRestorePlan,
   resolveProjectScope,

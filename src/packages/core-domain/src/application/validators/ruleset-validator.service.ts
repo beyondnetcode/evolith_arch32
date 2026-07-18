@@ -46,7 +46,7 @@ export class RulesetValidatorService {
     // the enforcer subsystem (sandbox-wrapped adapters). Non-forking — without enforcer
     // rules the composite delegates everything to the base strategy.
     const strategy = options.processRunner
-      ? createCompositeEnforcerStrategy(baseStrategy, options.processRunner)
+      ? createCompositeEnforcerStrategy(baseStrategy, options.processRunner, { metrics: options.metrics })
       : baseStrategy;
 
     this.engine = new RuleEvaluationEngine({

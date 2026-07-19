@@ -18,7 +18,7 @@ import {
 } from '@beyondnet/evolith-core-domain/application/validators';
 import { IFileSystem, ILogger, IConfigParser, ICatalogLoader } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { DiskRulesetRepository } from '@beyondnet/evolith-infra-providers';
-import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@beyondnet/evolith-core-domain/application/services';
+import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService, PatternCatalogService } from '@beyondnet/evolith-core-domain/application/services';
 
 const CoreDomainProviders = [
   {
@@ -86,6 +86,11 @@ const CoreDomainProviders = [
   {
     provide: TopologyCatalogService,
     useFactory: (fs: IFileSystem, logger: ILogger) => new TopologyCatalogService(fs, logger),
+    inject: ['IFileSystem', 'ILogger'],
+  },
+  {
+    provide: PatternCatalogService,
+    useFactory: (fs: IFileSystem, logger: ILogger) => new PatternCatalogService(fs, logger),
     inject: ['IFileSystem', 'ILogger'],
   },
   {

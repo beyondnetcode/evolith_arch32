@@ -18,6 +18,10 @@ import { ScaffoldCommand } from './commands/architecture/scaffold.command';
 import { TopologyCommand } from './commands/topology/topology.command';
 import { RecommendCommand } from './commands/topology/recommend.command';
 import { PhaseArtifactsCommand } from './commands/topology/phase-artifacts.command';
+import { PatternsCommand } from './commands/patterns/patterns.command';
+import { PatternsListCommand } from './commands/patterns/list.command';
+import { PatternsGetCommand } from './commands/patterns/get.command';
+import { PatternsForTopologyCommand } from './commands/patterns/for-topology.command';
 import { ADRCommand } from './commands/adr/adr.command';
 import { StandardsCommand } from './commands/standards/standards.command';
 import { CompletionCommand } from './commands/completion/completion.command';
@@ -82,6 +86,10 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     TopologyCommand,
     RecommendCommand,
     PhaseArtifactsCommand,
+    PatternsCommand,
+    PatternsListCommand,
+    PatternsGetCommand,
+    PatternsForTopologyCommand,
     ADRCommand,
     StandardsCommand,
     CompletionCommand,

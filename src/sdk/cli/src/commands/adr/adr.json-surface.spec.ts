@@ -203,35 +203,18 @@ describe('ADRCommand — ADR-0073 JSON surface', () => {
       expect(JSON.stringify(soleEnvelope())).toContain('superseded');
     });
 
-    it('surfaces the underlying failure in the payload when the update throws', async () => {
+    it('surfaces the underlying failure as a top-level error envelope when the update throws', async () => {
+      // The outcome must live in the documented top-level fields — a consumer
+      // routing on `success` / `error.code` has to read this as a failure.
       mockUpdateStatus.mockRejectedValue(new Error('file is read-only'));
 
       await command.executeCommand([], { update: 'ADR-0001', status: 'accepted', ...JSON_FORMAT });
 
       const envelope = soleEnvelope();
-      expect((envelope.data as { error?: string }).error).toContain('file is read-only');
-      expect((envelope.data as { success?: boolean }).success).toBe(false);
-    });
-
-    it('KNOWN DEFECT: wraps that failure in a top-level success envelope', async () => {
-      // Documented, not blessed. `adr`, `standards`, `agents` and `chat` build
-      // their failure output with `createSuccessEnvelope({ success: false, ... })`
-      // (18 call sites), so `envelope.success` is TRUE for a failed command and
-      // the real outcome is buried one level down in `data.success`. Any consumer
-      // that routes on the documented top-level field reads a failure as a pass.
-      //
-      // This is a CHARACTERIZATION test: it asserts what the code does today so
-      // the defect is recorded rather than rediscovered. When the call sites are
-      // switched to `createErrorEnvelope` this test will FAIL — at which point it
-      // should be DELETED, not updated to match.
-      mockUpdateStatus.mockRejectedValue(new Error('file is read-only'));
-
-      await command.executeCommand([], { update: 'ADR-0001', status: 'accepted', ...JSON_FORMAT });
-
-      const envelope = soleEnvelope();
-      expect(envelope.success).toBe(true); // ← wrong; the command failed
-      expect(envelope.error).toBeUndefined(); // ← wrong; there IS an error
-      expect((envelope.data as { success?: boolean }).success).toBe(false);
+      expect(envelope.success).toBe(false);
+      expect(envelope.error?.code).toBe('IO_ERROR');
+      expect(envelope.error?.message).toContain('file is read-only');
+      expect(process.exitCode).toBe(1);
     });
   });
 

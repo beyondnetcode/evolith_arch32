@@ -290,7 +290,7 @@ export class ADRCommand extends BaseEvolithCommand {
       const message = 'Estado requerido. Usa --status <Accepted|Deprecated|Superseded|Amended>';
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createSuccessEnvelope({ error: message }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       } else {
         this.promptService.showError(message);
       }
@@ -329,7 +329,7 @@ export class ADRCommand extends BaseEvolithCommand {
         const message = `ADR ${id} no encontrado`;
         if (json) {
           process.exitCode = 1;
-          console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
         } else {
           this.promptService.showError(message);
         }
@@ -342,7 +342,7 @@ export class ADRCommand extends BaseEvolithCommand {
       if (json) {
         process.exitCode = 1;
         const message = error instanceof Error ? error.message : String(error);
-        console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       } else {
         this.promptService.showError('✗ Error actualizando ADR');
       }

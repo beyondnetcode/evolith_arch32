@@ -229,6 +229,13 @@ jobs:
         run: |
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-agent-runtime
+          # core-api's core-domain.module.ts imports NodeFileSystemProvider,
+          # NestLoggerProvider and YamlConfigParserProvider from infra-providers,
+          # and the contract suite compiles that module. Without this build the
+          # job dies with "Cannot find module '@beyondnet/evolith-infra-providers'".
+          # Proven causally, not guessed: removing the local dist reproduces the
+          # CI error exactly; restoring it turns the suite 43/43 green.
+          npm run build --workspace @beyondnet/evolith-infra-providers
       - name: Run contract tests
         run: npm run test:contract
 

@@ -94,7 +94,7 @@
       "note": "ACL-01 through ACL-06 rule statements. No prose pattern guide documents this pattern."
     },
     {
-      "href": "reference/core/architecture/topologies/ai/agentic-ai/patterns.md",
+      "href": "src/rulesets/topologies/agentic-ai/patterns.md",
       "note": "'Retrieved text as policy' anti-pattern and its required correction."
     }
   ]

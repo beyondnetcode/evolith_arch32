@@ -39,41 +39,41 @@
         "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
-        "rulesets/topologies/agentic-ai/agentic-ai.rules.json"
+        "src/rulesets/topologies/agentic-ai/agentic-ai.rules.json"
       ],
       "opaPolicies": [
-        "rulesets/topologies/agentic-ai/agentic-ai.rego"
+        "src/rulesets/topologies/agentic-ai/agentic-ai.rego"
       ],
       "aiRulesets": [
-        "rulesets/topologies/agentic-ai/README.md",
-        "rulesets/topologies/agentic-ai/maturity.md",
-        "rulesets/topologies/agentic-ai/adoption.md",
-        "rulesets/topologies/agentic-ai/operations.md",
-        "rulesets/topologies/agentic-ai/security.md",
-        "rulesets/topologies/agentic-ai/resilience.md",
-        "rulesets/topologies/agentic-ai/patterns.md",
-        "rulesets/topologies/agentic-ai/evolution.md"
+        "src/rulesets/topologies/agentic-ai/README.md",
+        "src/rulesets/topologies/agentic-ai/maturity.md",
+        "src/rulesets/topologies/agentic-ai/adoption.md",
+        "src/rulesets/topologies/agentic-ai/operations.md",
+        "src/rulesets/topologies/agentic-ai/security.md",
+        "src/rulesets/topologies/agentic-ai/resilience.md",
+        "src/rulesets/topologies/agentic-ai/patterns.md",
+        "src/rulesets/topologies/agentic-ai/evolution.md"
       ],
       "umsContracts": [
-        "reference/knowledge/demo/ums-reference-model.md"
+        "product/research/demo/ums-reference-model.md"
       ]
     },
     "corpus": {
       "guidance": {
-        "profile": "rulesets/topologies/agentic-ai/README.md",
-        "maturityGuide": "rulesets/topologies/agentic-ai/maturity.md"
+        "profile": "src/rulesets/topologies/agentic-ai/README.md",
+        "maturityGuide": "src/rulesets/topologies/agentic-ai/maturity.md"
       },
       "configurationContract": "src/rulesets/topologies/agentic-ai/agent.config.schema.json",
       "fixtures": {
-        "valid": "rulesets/topologies/agentic-ai/fixtures/valid-agent.config.json",
-        "invalid": "rulesets/topologies/agentic-ai/fixtures/invalid-agent.config.json"
+        "valid": "src/rulesets/topologies/agentic-ai/fixtures/valid-agent.config.json",
+        "invalid": "src/rulesets/topologies/agentic-ai/fixtures/invalid-agent.config.json"
       },
       "nativeEvaluator": "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
       "tests": {
         "positive": "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts",
         "negative": "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts"
       },
-      "evidence": "rulesets/topologies/agentic-ai/evidence.md"
+      "evidence": "src/rulesets/topologies/agentic-ai/evidence.md"
     },
     "operationalBudgets": {
       "tokenBudgetPerExecution": 100000,

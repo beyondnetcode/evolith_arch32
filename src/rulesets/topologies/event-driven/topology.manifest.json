@@ -36,34 +36,34 @@
         "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
-        "rulesets/topologies/event-driven/event-driven.rules.json"
+        "src/rulesets/topologies/event-driven/event-driven.rules.json"
       ],
       "opaPolicies": [
-        "rulesets/topologies/event-driven/event-driven.rego"
+        "src/rulesets/topologies/event-driven/event-driven.rego"
       ],
       "aiRulesets": [
-        "rulesets/topologies/event-driven/README.md"
+        "src/rulesets/topologies/event-driven/README.md"
       ],
       "umsContracts": [
-        "reference/knowledge/demo/ums-reference-model.md"
+        "product/research/demo/ums-reference-model.md"
       ]
     },
     "corpus": {
       "guidance": {
-        "profile": "rulesets/topologies/event-driven/README.md",
-        "maturityGuide": "rulesets/topologies/event-driven/maturity.md"
+        "profile": "src/rulesets/topologies/event-driven/README.md",
+        "maturityGuide": "src/rulesets/topologies/event-driven/maturity.md"
       },
       "configurationContract": "src/rulesets/topologies/event-driven/topology.config.schema.json",
       "fixtures": {
-        "valid": "rulesets/topologies/event-driven/fixtures/valid.topology.config.json",
-        "invalid": "rulesets/topologies/event-driven/fixtures/invalid.topology.config.json"
+        "valid": "src/rulesets/topologies/event-driven/fixtures/valid.topology.config.json",
+        "invalid": "src/rulesets/topologies/event-driven/fixtures/invalid.topology.config.json"
       },
       "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
       "tests": {
         "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
         "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
       },
-      "evidence": "reference/core/control-center/maturity-evidence.json"
+      "evidence": "reference/core/control-center/maturity-reports/maturity-evidence.json"
     },
     "operationalInterfaces": {
       "cli": {

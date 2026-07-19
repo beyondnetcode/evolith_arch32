@@ -34,34 +34,34 @@
         "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
-        "rulesets/topologies/data-mesh/data-mesh.rules.json"
+        "src/rulesets/topologies/data-mesh/data-mesh.rules.json"
       ],
       "opaPolicies": [
-        "rulesets/topologies/data-mesh/data-mesh.rego"
+        "src/rulesets/topologies/data-mesh/data-mesh.rego"
       ],
       "aiRulesets": [
-        "rulesets/topologies/data-mesh/README.md"
+        "src/rulesets/topologies/data-mesh/README.md"
       ],
       "umsContracts": [
-        "reference/knowledge/demo/ums-reference-model.md"
+        "product/research/demo/ums-reference-model.md"
       ]
     },
     "corpus": {
       "guidance": {
-        "profile": "rulesets/topologies/data-mesh/README.md",
-        "maturityGuide": "rulesets/topologies/data-mesh/maturity.md"
+        "profile": "src/rulesets/topologies/data-mesh/README.md",
+        "maturityGuide": "src/rulesets/topologies/data-mesh/maturity.md"
       },
       "configurationContract": "src/rulesets/topologies/data-mesh/topology.config.schema.json",
       "fixtures": {
-        "valid": "rulesets/topologies/data-mesh/fixtures/valid.topology.config.json",
-        "invalid": "rulesets/topologies/data-mesh/fixtures/invalid.topology.config.json"
+        "valid": "src/rulesets/topologies/data-mesh/fixtures/valid.topology.config.json",
+        "invalid": "src/rulesets/topologies/data-mesh/fixtures/invalid.topology.config.json"
       },
       "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
       "tests": {
         "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
         "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
       },
-      "evidence": "reference/core/control-center/maturity-evidence.json"
+      "evidence": "reference/core/control-center/maturity-reports/maturity-evidence.json"
     },
     "operationalInterfaces": {
       "cli": {

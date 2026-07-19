@@ -16,7 +16,15 @@ const INTAKE_DIR = 'product/research/intake';
 const KI_SCHEMA = 'src/rulesets/schema/knowledge-intake.schema.json';
 const SRC_SCHEMA = 'src/rulesets/schema/source-registry.schema.json';
 const PROJ_SCHEMA = 'src/rulesets/schema/knowledge-projection.schema.json';
-const MANIFEST_ROOT = path.join('reference', 'core', 'architecture', 'topologies');
+// The corpus lives in two roots and must be read from BOTH: the five advanced
+// topologies are canonical under src/rulesets (GT-329), the progressive axis
+// stays under reference/. Scanning only one silently halves the accepted-topology
+// set, which would reject valid `related_topology` values as unknown.
+const MANIFEST_ROOTS = [
+  path.join('src', 'rulesets', 'topologies'),
+  path.join('reference', 'core', 'architecture', 'topologies'),
+];
+const MANIFEST_ROOT = MANIFEST_ROOTS.join(' + ');
 const OPA_POLICY = 'src/rulesets/opa/knowledge-intake.rego';
 const OPA_TEST = 'src/rulesets/opa/knowledge-intake.test.rego';
 
@@ -36,7 +44,9 @@ function readJson(filePath, errors) {
 
 function loadAcceptedTopologyIds(root, errors) {
   const ids = new Set();
-  const manifests = walk(path.join(root, MANIFEST_ROOT), (file) => path.basename(file) === 'topology.manifest.json');
+  const manifests = MANIFEST_ROOTS.flatMap((rel) =>
+    walk(path.join(root, rel), (file) => path.basename(file) === 'topology.manifest.json')
+  );
   for (const manifestPath of manifests) {
     const manifest = readJson(manifestPath, errors);
     if (manifest && manifest.metadata?.status === 'accepted') {

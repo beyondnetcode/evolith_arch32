@@ -54,7 +54,7 @@ None yet. This pattern has no runtime-specific canonical implementation (CP-NN) 
 
 ## Sources
 
-- `reference/core/architecture/topologies/data/data-mesh/patterns.md` — Consumption Contracts section.
+- `src/rulesets/topologies/data-mesh/patterns.md` — Consumption Contracts section.
 
 ---
 

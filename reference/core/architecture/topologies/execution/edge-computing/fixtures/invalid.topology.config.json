@@ -1,6 +1,0 @@
-{
-  "topology": "edge-computing",
-  "syncStrategy": "invalid-strategy",
-  "edgeIsolation": false,
-  "conflictResolution": ""
-}

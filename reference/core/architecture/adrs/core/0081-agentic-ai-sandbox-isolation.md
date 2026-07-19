@@ -43,7 +43,7 @@ The selected option is evaluated by whether it prevents a compromised prompt or 
 ## References
 
 - [MCP Security Guidance](../../../foundations/common-rules/ai-augmented/02-mcp-integration/mcp-security.md)
-- [Agentic AI Topology Profile](../../topologies/ai/agentic-ai/README.md)
+- [Agentic AI Topology Profile](../../../../../src/rulesets/topologies/agentic-ai/README.md)
 
 ## Related Decisions and Standards
 

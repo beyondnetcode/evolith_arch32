@@ -63,7 +63,7 @@ None yet. This pattern has no runtime-specific canonical implementation (CP-NN) 
 
 ## Sources
 
-- `reference/core/architecture/topologies/integration/event-driven/patterns.md` — Transactional Outbox section.
+- `src/rulesets/topologies/event-driven/patterns.md` — Transactional Outbox section.
 
 > **Note:** This pattern is enforced by two independent engines: the event-driven topology ruleset (ED-R02) and the generated ADR ruleset (CORE-0033-01).
 

@@ -43,7 +43,7 @@ La opcion seleccionada se evalua por si evita que un prompt o respuesta de herra
 ## Referencias
 
 - [Guia de Seguridad MCP](../../../foundations/common-rules/ai-augmented/02-mcp-integration/mcp-security.es.md)
-- [Perfil de Topologia de IA Agentica](../../topologies/ai/agentic-ai/README.es.md)
+- [Perfil de Topologia de IA Agentica](../../../../../src/rulesets/topologies/agentic-ai/README.es.md)
 
 ## Decisiones y Estandares Relacionados
 

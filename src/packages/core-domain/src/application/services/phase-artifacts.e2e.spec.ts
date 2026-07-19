@@ -14,7 +14,7 @@ const readJson = (rel: string) => JSON.parse(fs.readFileSync(path.join(repoRoot,
 
 const MANIFEST: Record<string, string> = {
   microservices: 'reference/core/architecture/topologies/progressive-axis/microservices/topology.manifest.json',
-  'event-driven': 'reference/core/architecture/topologies/integration/event-driven/topology.manifest.json',
+  'event-driven': 'src/rulesets/topologies/event-driven/topology.manifest.json',
 };
 const getPhaseProfile = (topo: string, phase: DownstreamPhase) => {
   const rel = MANIFEST[topo];

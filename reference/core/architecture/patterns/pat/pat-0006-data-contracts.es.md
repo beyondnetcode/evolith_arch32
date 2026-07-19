@@ -59,7 +59,7 @@ Ninguna todavía. Este patrón aún no tiene implementación canónica por runti
 
 ## Fuentes
 
-- `reference/core/architecture/topologies/data/data-mesh/patterns.md` — Sección Data Contracts.
+- `src/rulesets/topologies/data-mesh/patterns.md` — Sección Data Contracts.
 
 ---
 

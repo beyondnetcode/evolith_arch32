@@ -1,7 +1,7 @@
 # ADR-0041: Evaluación de Políticas Dual-Engine (Nativo + OPA)
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-11

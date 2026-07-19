@@ -1,7 +1,7 @@
 # ADR-0017: Estrategia de Feature Flagging para Entrega Progresiva
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-09

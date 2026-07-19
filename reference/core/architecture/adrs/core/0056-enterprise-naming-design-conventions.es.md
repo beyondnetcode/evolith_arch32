@@ -2,7 +2,7 @@
 
 ## Status
 
-**Proposed** - supersedes the naming scope of [ADR-0049 (Naming Semantics & Código Limpio Policy)](./0049-naming-semantics-clean-code-policy.md) with binding, language-specific, and platform-specific rules.
+**Estado:** Accepted — extiende y amplía el alcance de [ADR-0049 (Semántica de Nombres y Política de Código Limpio)](./0049-naming-semantics-clean-code-policy.es.md) a todas las capas del ecosistema enterprise (código, API, base de datos, eventos, data warehouse, patrones tácticos DDD).
 
 ## Date
 

@@ -3,7 +3,7 @@
 # ADR-0097: Estándar de Gobernanza del Ciclo de Vida del Conocimiento
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-21

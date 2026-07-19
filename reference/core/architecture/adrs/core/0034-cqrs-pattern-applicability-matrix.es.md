@@ -1,7 +1,7 @@
 # ADR-0034: Matriz de Aplicación del Patrón CQRS
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-11

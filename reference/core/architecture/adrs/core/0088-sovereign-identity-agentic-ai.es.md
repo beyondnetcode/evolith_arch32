@@ -3,7 +3,7 @@
 # ADR-0088: Identidad Soberana para IA Agéntica
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-20

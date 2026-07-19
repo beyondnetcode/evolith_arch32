@@ -1,7 +1,7 @@
 # [ADR 0022](0022-contextual-auth-and-pluggable-projections.md): Contextual Authentication and Pluggable Output Projections
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-08

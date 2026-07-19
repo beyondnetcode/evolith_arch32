@@ -1,7 +1,8 @@
 # [ADR 0063](0063-dotnet-b2b-idempotency-middleware.md): B2B Request Idempotency Middleware in ASP.NET Core
 
 ## 1. Status
-**Status**: Proposed
+**Status**: Accepted
+**Ratified**: 2026-07-19 by repository owner, formalizing enforcement already active via the generated ruleset `adr-dotnet-0063-b2b-request-idempotency-middleware-in-asp-net-core.rules.json`.
 **Date**: 2026-05-23
 **Scope**: Technology Stack - .NET API Integration & Reliability
 

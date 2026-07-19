@@ -2,7 +2,7 @@
 
 ## Estado
 
-Propuesto (Preparacion para Fase 3)
+Proposed (Preparacion para Fase 3)
 
 ## Fecha
 2026-06-03

@@ -1,7 +1,7 @@
 # ADR-0035: Distributed Saga Pattern Implementation Strategy
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-11

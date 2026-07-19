@@ -1,6 +1,6 @@
 # ADR-0075: Estrategia de Autenticación del Core API
 
-- **Estado:** Reemplazado por ADR-0080
+- **Estado:** Superseded by ADR-0080
 - **Decisores:** Evolith Architecture Board
 - **Fecha:** 2026-06-14
 

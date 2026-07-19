@@ -1,7 +1,7 @@
 # [ADR 0004](0004-frontend-offline-resilience.md): Resiliencia Offline del Frontend
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

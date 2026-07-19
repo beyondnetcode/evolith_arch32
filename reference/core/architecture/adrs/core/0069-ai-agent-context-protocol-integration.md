@@ -1,7 +1,7 @@
 # ADR-0069: AI Agent Context Protocol Integration
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-06-06

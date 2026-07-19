@@ -3,7 +3,7 @@
 ## 1. Metadata
 * **ADR ID:** 0054
 * **Title:** Database Design and Normalization Standards
-* **Status:** Approved
+* **Status:** Accepted
 * **Authors:** Enterprise Architecture Office
 * **Reviewers:** Corporate Architecture Board, CTO Office
 * **Date:** 2026-05-14

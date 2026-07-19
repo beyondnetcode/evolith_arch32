@@ -1,7 +1,7 @@
 # ADR-0039: Deployment Topology Abstraction & Environment Switcher
 
 ## 1. Status
-**Status**: Approved 
+**Status**: Accepted
 **Date**: 2026-05-11 
 **Deciders**: Enterprise Architecture Board 
 **Consulted**: DevOps Team, Security Council 

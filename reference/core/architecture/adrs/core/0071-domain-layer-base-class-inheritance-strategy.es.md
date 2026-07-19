@@ -2,7 +2,7 @@
 
 ## Estado
 
-Aceptado
+Accepted
 
 ## Fecha
 

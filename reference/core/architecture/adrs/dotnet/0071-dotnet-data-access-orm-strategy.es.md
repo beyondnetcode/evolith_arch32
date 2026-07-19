@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Estado** | Aprobado |
+| **Estado** | Accepted |
 | **Fecha** | 2026-05-15 |
 | **Alcance** | Stack Tecnológico — Acceso a Datos .NET |
 | **Supercede** | Guía parcial en [ADR-0041](./0041-canonical-dotnet-backend-architecture.es.md) |

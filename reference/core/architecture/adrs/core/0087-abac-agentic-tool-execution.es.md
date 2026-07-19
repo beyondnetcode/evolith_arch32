@@ -3,7 +3,7 @@
 # ADR-0087: Control de Acceso Basado en Atributos (ABAC) para Ejecución de Herramientas Agénticas
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-20

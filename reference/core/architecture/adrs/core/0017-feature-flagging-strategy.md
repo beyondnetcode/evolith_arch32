@@ -1,7 +1,7 @@
 # ADR-0017: Feature Flagging Strategy for Progressive Delivery
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-09

@@ -1,7 +1,7 @@
 # [ADR 0007](0007-observability-telemetry-loki-opentelemetry.md): Observabilidad con OpenTelemetry, Loki y Jaeger
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

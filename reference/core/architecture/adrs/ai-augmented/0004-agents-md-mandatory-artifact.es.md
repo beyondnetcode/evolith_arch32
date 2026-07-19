@@ -3,7 +3,7 @@
 # ADR-0004: AGENTS.md como Artefacto Obligatorio del Repositorio
 
 ## Status
-Aceptado
+Accepted
 
 ## Date
 2026-06-23

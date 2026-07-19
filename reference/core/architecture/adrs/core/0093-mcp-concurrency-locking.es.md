@@ -3,7 +3,7 @@
 # ADR-0093: Estándar de Control de Concurrencia y Bloqueo de Recursos para Herramientas MCP
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-20

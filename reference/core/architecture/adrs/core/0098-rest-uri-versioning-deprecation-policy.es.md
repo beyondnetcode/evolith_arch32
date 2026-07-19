@@ -5,7 +5,7 @@
 > **Firma del Agente:** Architect Agent (Winston)
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-21

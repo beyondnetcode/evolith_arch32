@@ -3,7 +3,7 @@
 # ADR-0005: Politica de Humano-en-el-Loop para Operaciones Autonomas de Agentes
 
 ## Status
-Aceptado
+Accepted
 
 ## Date
 2026-06-23

@@ -3,7 +3,7 @@
 ## 1. Metadata
 * **ADR ID:** 0053
 * **Title:** Integration and E2E Testing Strategy
-* **Status:** Approved
+* **Status:** Accepted
 * **Authors:** Enterprise Architecture Office
 * **Reviewers:** Corporate Architecture Board, CTO Office
 * **Date:** 2026-05-14

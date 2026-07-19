@@ -1,7 +1,7 @@
 # [ADR 0012](0012-advanced-authorization-rbac-abac.md): Advanced Authorization (RBAC/ABAC) Strategy
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-08

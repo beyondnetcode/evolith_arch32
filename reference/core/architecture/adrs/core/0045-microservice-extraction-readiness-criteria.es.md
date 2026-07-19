@@ -1,7 +1,7 @@
 # ADR-0045: Criterios de Aceptación para la Extracción de Microservicios
 
 ## Estatus
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-12

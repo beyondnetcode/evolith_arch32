@@ -3,7 +3,7 @@
 # ADR-0085: Arquitectura de Distribución Agnóstica de OPA Wasm
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-20

@@ -1,7 +1,7 @@
 # ADR-0015: Event-Driven Architecture (EDA) for Intra-Domain Communication
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-08

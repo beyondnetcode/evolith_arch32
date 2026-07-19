@@ -3,7 +3,7 @@
 # ADR-0001: Ingenieria de Harness para Desarrollo Augmentado por IA
 
 ## Status
-Aceptado
+Accepted
 
 ## Date
 2026-06-23

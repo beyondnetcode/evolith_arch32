@@ -1,7 +1,7 @@
 # ADR-0031: Esquema por Contexto Delimitado y Catálogo de Eventos de Dominio
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-11

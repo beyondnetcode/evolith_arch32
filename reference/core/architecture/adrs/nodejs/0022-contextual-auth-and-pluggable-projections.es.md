@@ -1,7 +1,7 @@
 # [ADR 0022](0022-contextual-auth-and-pluggable-projections.md): Autenticación Contextual y Proyecciones de Salida Enchufables
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

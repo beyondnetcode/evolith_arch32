@@ -1,7 +1,7 @@
 # ADR-0028: Self-Hosted, Open-Source Hybrid Infrastructure
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-09

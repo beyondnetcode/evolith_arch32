@@ -1,7 +1,7 @@
 # ADR-0018: Pirámide de Pruebas y Puertas de Calidad Automatizadas
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

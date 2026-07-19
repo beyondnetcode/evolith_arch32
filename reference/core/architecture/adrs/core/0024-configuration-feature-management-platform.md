@@ -1,7 +1,7 @@
 # ADR-0024: Centralized Configuration & Feature Platform
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-09

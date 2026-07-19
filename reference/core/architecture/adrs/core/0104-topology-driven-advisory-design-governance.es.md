@@ -5,7 +5,7 @@
 > **Firma del Agente:** Architect Agent (Winston)
 
 ## Estado
-Propuesto (2026-07-04 — pendiente del Architecture Board) — **extiende [ADR-0079](./0079-multi-topology-reference-corpus.es.md) (corpus multi-topología) y [ADR-0101](./0101-core-stateless-evaluation-engine.es.md) (motor de evaluación stateless)**
+Proposed (2026-07-04 — pendiente del Architecture Board) — **extiende [ADR-0079](./0079-multi-topology-reference-corpus.es.md) (corpus multi-topología) y [ADR-0101](./0101-core-stateless-evaluation-engine.es.md) (motor de evaluación stateless)**
 
 ## Fecha
 2026-07-04

@@ -1,7 +1,7 @@
 # ADR-0028: Infraestructura Híbrida de Código Abierto Autohospedada
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-09

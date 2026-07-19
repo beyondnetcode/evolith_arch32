@@ -5,7 +5,7 @@
 > **Agent Signature:** Architect Agent (Winston)
 
 ## Status
-Approved — **scheduled for re-evaluation before 2026-12-31** (see *Review Trigger*)
+Accepted — **scheduled for re-evaluation before 2026-12-31** (see *Review Trigger*)
 
 ## Date
 2026-07-09

@@ -1,7 +1,7 @@
 # [ADR 0066](0066-dotnet-lightweight-http-idempotency.md): Idempotencia HTTP Ligera en .NET via IMemoryCache / IDistributedCache
 
 ## 1. Estado
-**Estado**: Aceptado
+**Estado**: Accepted
 **Fecha**: 2026-05-24
 **Alcance**: Stack Tecnológico - Confiabilidad de API .NET
 **Origen satélite**: UMS ADR-0063 (FIX-06/RISK-05) — promovido a baseline corporativo

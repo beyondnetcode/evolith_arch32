@@ -5,7 +5,7 @@
 > **Firma del Agente:** Architect Agent (Winston)
 
 ## Estado
-Propuesto (2026-07-07)
+Proposed (2026-07-07)
 
 ## Fecha
 2026-07-07

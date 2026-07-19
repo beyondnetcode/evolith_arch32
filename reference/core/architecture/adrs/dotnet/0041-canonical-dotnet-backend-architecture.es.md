@@ -1,7 +1,7 @@
 # [ADR 0041](0041-canonical-dotnet-backend-architecture.md): Arquitectura de Backend Canónica para .NET (C#)
 
 ## 1. Estado
-**Estado**: Aprobado 
+**Estado**: Accepted
 **Fecha**: 2026-05-11 
 **Alcance**: Stack Tecnológico - Específico de .NET 
 

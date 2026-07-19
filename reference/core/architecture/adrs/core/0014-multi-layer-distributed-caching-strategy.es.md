@@ -1,7 +1,7 @@
 # ADR-0014: Estrategia de Caché Distribuido Multi-Capa
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

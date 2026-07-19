@@ -1,7 +1,7 @@
 # [ADR 0075](0075-application-gateway-bff-nestjs.es.md): Gateway de Aplicación (BFF) con NestJS
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-06-12

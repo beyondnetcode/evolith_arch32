@@ -1,7 +1,7 @@
 # ADR-0013: Topología de Infraestructura Cloud y Recuperación ante Desastres (DR)
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

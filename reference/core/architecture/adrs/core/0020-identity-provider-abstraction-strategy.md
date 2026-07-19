@@ -1,7 +1,7 @@
 # ADR-0020: Identity Provider Abstraction Strategy
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-09

@@ -1,7 +1,8 @@
 # [ADR 0069](0069-dotnet-grpc-service-setup-protobuf-contracts.md): Configuración de Servicios gRPC en .NET y Contratos Protobuf
 
 ## 1. Estado
-**Estado**: Propuesto
+**Estado**: Accepted
+**Ratificado**: 2026-07-19 por el propietario del repositorio, formalizando el enforcement ya activo mediante el ruleset generado `adr-dotnet-0069-net-grpc-service-setup-protobuf-contracts.rules.json`.
 **Fecha**: 2026-06-06
 **Alcance**: Stack de Tecnología — Comunicación Inter-Servicio en .NET
 **Owner**: Architecture Board de Evolith

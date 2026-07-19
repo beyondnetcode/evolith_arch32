@@ -1,6 +1,6 @@
 # ADR-0084: Data Mesh y Datos como Producto
 
-**Estado:** Aceptado  
+**Estado:** Accepted
 **Fecha:** 2026-06-20  
 **Etiquetas:** `architecture`, `data`, `topology`
 

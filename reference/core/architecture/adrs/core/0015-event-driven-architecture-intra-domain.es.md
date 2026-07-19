@@ -1,7 +1,7 @@
 # ADR-0015: Arquitectura Dirigida por Eventos (EDA) para la Comunicación Intra-Dominio
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

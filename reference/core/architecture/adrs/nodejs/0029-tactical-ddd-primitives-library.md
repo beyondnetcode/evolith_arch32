@@ -1,7 +1,7 @@
 # [ADR 0029](0029-tactical-ddd-primitives-library.md): Adoption of Tactical DDD Primitives Library
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-09

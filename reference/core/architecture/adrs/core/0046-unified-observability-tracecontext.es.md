@@ -1,7 +1,7 @@
 # ADR-0046: Trazabilidad Unificada vía W3C TraceContext
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-12

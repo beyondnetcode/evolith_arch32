@@ -2,7 +2,7 @@
 
 ## Status
 
-**Accepted** — extends and expands the scope of [ADR-0049 (Naming Semantics & Clean Code Policy)](./0049-naming-semantics-clean-code-policy.md) to all layers of the enterprise ecosystem (code, API, database, events, data warehouse, DDD tactical patterns).
+**Status:** Accepted — extends and expands the scope of [ADR-0049 (Naming Semantics & Clean Code Policy)](./0049-naming-semantics-clean-code-policy.md) to all layers of the enterprise ecosystem (code, API, database, events, data warehouse, DDD tactical patterns).
 
 ## Date
 

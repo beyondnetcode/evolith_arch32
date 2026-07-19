@@ -2,7 +2,7 @@
 
 > **Bilingual Navigation:** [Versión en Español](./adr-authoring-standard.es.md)
 
-**Status:** Approved
+**Status:** Accepted
 **Owner:** Evolith Architecture Board
 **Created:** 2026-06-10
 **Applies to:** every ADR under `reference/core/architecture/adrs/` (core and platform categories)
@@ -37,7 +37,23 @@ Every ADR must contain these sections. Accepted legacy aliases (left over from e
 | 7 | **References** | Verifiable links: specs, documentation, issues, benchmarks | `Links` |
 | 8 | **Related Decisions and Standards** | Links to related ADRs, Evolith standards, rulesets, and impacted artifacts | `Related ADRs`, `Relationships` |
 
-Plus the standard header metadata: **Status** (`Proposed` / `Approved` / `Superseded by ADR-XXXX` / `Deprecated`) and **Date**.
+Plus the standard header metadata: **Status** and **Date**.
+
+**Status vocabulary (canonical).** The status value is a controlled enum, not prose. The only admissible values are those defined by the executable schema [`src/rulesets/schema/adr.schema.json`](../../../../src/rulesets/schema/adr.schema.json):
+
+| Value | Meaning |
+|---|---|
+| `Proposed` | Recorded but not yet binding. Requires ratification before it becomes normative. |
+| `Accepted` | Ratified and normative. |
+| `Superseded` | Replaced by a later decision. Always qualify: `Superseded by ADR-XXXX`. |
+| `Deprecated` | No longer applicable and not replaced. |
+
+Rules:
+
+- `Accepted` is the single ratification token. **`Approved` is retired** -- it was never in the schema enum, and the corpus was normalized to `Accepted` on 2026-07-19.
+- **The enum value is written in English in both language editions.** Only the field *label* is translated (`**Status:**` in EN, `**Estado:**` in ES); the value stays `Accepted`, never `Aprobado` or `Aceptado`. This keeps the ES edition validatable against the same schema.
+- Qualifying prose may follow the token on the same line (dates, ratification notes, links). The token must come first.
+- Ratification provenance must be truthful. Record who ratified and when -- do not attribute a decision to an Architecture Board session that did not occur.
 
 ## 3. Additional Required Sections — Platform ADRs Only
 

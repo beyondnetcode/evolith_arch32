@@ -1,7 +1,7 @@
 # [ADR 0043](0043-data-access-orm-strategy.md): Data Access and ORM Strategy for Node.js
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-12

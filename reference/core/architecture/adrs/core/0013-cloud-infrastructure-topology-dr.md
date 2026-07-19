@@ -1,7 +1,7 @@
 # ADR-0013: Cloud Infrastructure Topology and Disaster Recovery (DR)
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-08

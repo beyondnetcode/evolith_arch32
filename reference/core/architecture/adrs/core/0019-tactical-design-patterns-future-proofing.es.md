@@ -1,7 +1,7 @@
 # ADR-0019: Patrones de Diseño Táctico para Blindaje a Futuro
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

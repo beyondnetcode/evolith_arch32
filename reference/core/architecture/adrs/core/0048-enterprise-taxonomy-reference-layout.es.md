@@ -1,7 +1,7 @@
 # ADR-0048: Estandarización de Taxonomía Empresarial y Layout (Enterprise Standards)
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-05-29

@@ -1,7 +1,7 @@
 # ADR-0031: Schema-per-Bounded-Context and Domain Event Catalog
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-11

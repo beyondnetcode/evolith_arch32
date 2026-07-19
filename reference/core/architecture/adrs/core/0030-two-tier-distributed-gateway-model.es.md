@@ -1,7 +1,7 @@
 # ADR-0030: Modelo de Gateway Distribuido de Dos Capas
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-10

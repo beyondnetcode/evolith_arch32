@@ -1,7 +1,7 @@
 # [ADR 0064](0064-dotnet-request-scope-observability-context.md): Propagación del Contexto de Observabilidad con Scope de Request en .NET
 
 ## 1. Estado
-**Estado**: Aceptado  
+**Estado**: Accepted
 **Fecha**: 2026-05-24  
 **Alcance**: Stack Tecnológico - Observabilidad Cross-Cutting en .NET  
 **Origen satélite**: UMS ADR-0061 — promovido a baseline corporativo tras confirmar cero dependencias específicas de UMS

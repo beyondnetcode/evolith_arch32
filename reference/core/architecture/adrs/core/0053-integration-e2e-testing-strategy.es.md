@@ -3,7 +3,7 @@
 ## 1. Metadatos
 * **ADR ID:** 0053
 * **Título:** Estrategia de Pruebas de Integración y E2E
-* **Estado:** Aprobado
+* **Estado:** Accepted
 * **Autores:** Oficina de Arquitectura Empresarial
 * **Revisores:** Comité de Arquitectura Corporativa, Oficina del CTO
 * **Fecha:** 2026-05-14

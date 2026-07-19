@@ -1,7 +1,7 @@
 # ADR-0036: Estrategia de Entrega y Control de Flujo del Bus de Mensajes
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-11

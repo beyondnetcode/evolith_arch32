@@ -3,7 +3,7 @@
 # ADR-0003: Gobernanza de Seleccion de Modelos para Flujos de Trabajo Augmentados por IA
 
 ## Status
-Aceptado
+Accepted
 
 ## Date
 2026-06-23

@@ -1,7 +1,7 @@
 # [ADR 0021](0021-high-performance-auth-and-graph-compilation.md): High-Performance Authentication Graph Compilation
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-08

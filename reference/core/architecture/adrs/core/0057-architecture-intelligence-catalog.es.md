@@ -4,7 +4,7 @@
 ---
 
 ## Status
-Aceptado
+Accepted
 ## Fecha
 2026-06-03
 

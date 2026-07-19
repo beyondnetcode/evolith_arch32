@@ -1,7 +1,7 @@
 # [ADR 0074](0074-monorepo-orchestration-nx.es.md): Orquestación de Monorepo con Nx
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-06-12

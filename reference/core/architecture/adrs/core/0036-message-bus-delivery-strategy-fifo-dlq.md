@@ -1,7 +1,7 @@
 # ADR-0036: Message Bus Delivery & Flow Control Strategy
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-11

@@ -7,7 +7,7 @@
 > **Firma de Agente:** Architect Agent (Winston)
 
 ## Estado
-Aceptado (2026-07-02 — Comité de Arquitectura)
+Accepted (2026-07-02 — Comité de Arquitectura)
 
 ## Fecha
 2026-07-02

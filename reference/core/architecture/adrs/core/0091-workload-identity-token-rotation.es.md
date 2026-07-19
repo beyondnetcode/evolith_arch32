@@ -3,7 +3,7 @@
 # ADR-0091: Estándar de Rotación de Tokens de Identidad de Workload
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-20

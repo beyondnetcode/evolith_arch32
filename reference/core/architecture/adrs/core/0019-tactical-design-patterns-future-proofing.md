@@ -1,7 +1,7 @@
 # ADR-0019: Tactical Design Patterns for Future-Proofing
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-08

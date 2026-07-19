@@ -1,7 +1,7 @@
 # [ADR 0038](0038-error-handling-result-pattern-strategy.md): Estrategia Empresarial de Manejo de Errores y Patrón Result
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-11

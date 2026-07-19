@@ -1,7 +1,7 @@
 # ADR-0005: Puertas de Calidad SAST Automatizadas en CI/CD
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

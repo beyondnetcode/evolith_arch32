@@ -1,7 +1,7 @@
 # ADR-0025: Feature Flag Provider Abstraction Strategy
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-09

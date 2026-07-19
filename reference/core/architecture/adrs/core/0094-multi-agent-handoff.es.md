@@ -3,7 +3,7 @@
 # ADR-0094: Estándares de Handoff Multi-Agente y Delegación de Tareas
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-20

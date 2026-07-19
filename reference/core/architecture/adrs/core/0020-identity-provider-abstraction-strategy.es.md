@@ -1,7 +1,7 @@
 # ADR-0020: Estrategia de Abstracción de Proveedor de Identidad
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-09

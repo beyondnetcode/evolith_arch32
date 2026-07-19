@@ -1,7 +1,8 @@
 # [ADR-0070](0070-enterprise-minimal-apis-adoption.md): .NET API Endpoint Strategy
 
 ## 1. Status
-**Status**: Proposed 
+**Status**: Accepted 
+**Ratified**: 2026-07-19 by repository owner, formalizing enforcement already active via the generated ruleset `adr-dotnet-0070-net-api-endpoint-strategy.rules.json`.
 **Date**: 2026-05-13 
 **Scope**: Technology Stack - .NET APIs 
 

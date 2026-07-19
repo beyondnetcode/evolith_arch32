@@ -5,7 +5,7 @@
 > **Firma del agente:** Agente Arquitecto (Winston)
 
 ## Estado
-Propuesto (2026-07-13 — Consejo de Arquitectura)
+Proposed (2026-07-13 — Consejo de Arquitectura)
 
 ## Fecha
 2026-07-13

@@ -1,7 +1,7 @@
 # ADR-0034: CQRS Pattern Application Matrix
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-11

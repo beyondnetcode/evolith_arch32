@@ -4,7 +4,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | Approved |
+| **Status** | Accepted |
 | **Date** | 2026-05-15 |
 | **Scope** | Technology Stack — .NET Data Access |
 | **Supersedes** | Partial guidance in [ADR-0041](./0041-canonical-dotnet-backend-architecture.md) |

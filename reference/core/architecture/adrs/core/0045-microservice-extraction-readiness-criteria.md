@@ -1,7 +1,7 @@
 # ADR-0045: Microservice Extraction Readiness Criteria
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-12

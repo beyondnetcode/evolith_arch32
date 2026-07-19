@@ -61,6 +61,11 @@ const TOOL_CLASSIFICATION: Record<string, ToolClass> = {
   'evolith-topology-get': 'read',
   'evolith-topology-recommend': 'read',
 
+  // Canonical pattern catalog (read: PAT-NNNN records, no mutation)
+  'evolith-pattern-list': 'read',
+  'evolith-pattern-get': 'read',
+  'evolith-pattern-list-by-topology': 'read',
+
   // MoSCoW (create/update/remove/load mutate the backing file; the rest read)
   'evolith-moscow-create': 'write',
   'evolith-moscow-load': 'read',

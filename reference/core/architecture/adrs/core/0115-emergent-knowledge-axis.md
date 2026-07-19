@@ -22,7 +22,7 @@ It has no answer for the opposite direction: knowledge that **emerges from apply
 
 This is not hypothetical. Concrete evidence in this repository today:
 
-- No shipped interface can capture such a finding (CLI 31 commands, MCP 47 tools, Core API ~25 endpoints, agent-runtime 7 skills — none is an intake).
+- No shipped interface can capture such a finding (CLI 31 commands, MCP 50 tools, Core API ~25 endpoints, agent-runtime 7 skills — none is an intake).
 - `approved_knowledge_ids` is empty: nothing has ever been promoted into retrieval.
 - The `ground` step in the governed chain queries `IKnowledgePort` on every run and discards the outcome — the single richest signal of a knowledge gap is computed and thrown away.
 

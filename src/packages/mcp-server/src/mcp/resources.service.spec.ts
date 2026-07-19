@@ -113,6 +113,44 @@ describe('ResourcesService', () => {
     expect(contracts.error).toBe('Machine contracts not found');
   });
 
+  // Canonical patterns (PAT-NNNN) — analogue of evolith://architecture/topologies.
+  it('lists and serves the canonical pattern catalogue resource', async () => {
+    const patDir = path.join(root, 'reference', 'core', 'architecture', 'patterns', 'pat');
+    await fsExtra.ensureDir(patDir);
+    await fsExtra.writeJson(path.join(patDir, 'pat-0001-database-per-service.json'), {
+      id: 'PAT-0001',
+      name: 'Database per Service',
+      kind: 'pattern',
+      category: 'data-ownership',
+      status: 'accepted',
+      problem: 'Shared schemas couple services.',
+      forces: ['autonomy'],
+      solution: 'Each service owns its schema.',
+      appliesTo: [{ topology: 'microservices', applicability: 'required', guidance: 'Mandatory.' }],
+      enforcedBy: [{ ruleId: 'TOPO-MS-01', engine: 'topology-ruleset' }],
+    });
+
+    const uris = (await service.list()).resources.map((r) => r.uri);
+    expect(uris).toContain('evolith://architecture/patterns');
+
+    const patterns = (await service.read('evolith://architecture/patterns')) as {
+      count: number;
+      patterns: Array<{ id: string }>;
+    };
+    expect(patterns.count).toBe(1);
+    expect(patterns.patterns[0].id).toBe('PAT-0001');
+  });
+
+  it("reports the pattern catalogue's anti-empty guard instead of a vacuous empty list", async () => {
+    // No pattern corpus under the discovered core path.
+    const patterns = (await service.read('evolith://architecture/patterns')) as {
+      error?: string;
+      patterns?: unknown[];
+    };
+    expect(patterns.patterns).toBeUndefined();
+    expect(patterns.error).toContain('No canonical pattern directory found');
+  });
+
   it('throws for an unknown URI', async () => {
     await expect(service.read('evolith://unknown')).rejects.toThrow('Unknown resource URI');
   });

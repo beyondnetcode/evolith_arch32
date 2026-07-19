@@ -36,13 +36,18 @@ function parseBoard(content) {
     const cells = line.slice(1, -1).split(/(?<!\\)\|/).map((cell) => cell.trim());
     if (cells.length < 7) continue;
 
+    // UP-001 Amendment 1 inserted "What it means" and "Example" between Gap and
+    // Component, so these are no longer at fixed offsets. Anchor on the tail of
+    // the row instead: the last five columns are component, phase, criticality,
+    // complexity, status in both the old and new schema.
+    const tail = cells.length - 5;
     const id = cells[0].match(/(GT-\d+|MT-A\d+)/)?.[1];
     const title = stripCell(cells[1]);
-    const component = stripCell(cells[2]);
-    const phase = stripCell(cells[3]);
-    const criticality = stripCell(cells[4]);
-    const complexity = stripCell(cells[5]);
-    const status = stripCell(cells[6]);
+    const component = stripCell(cells[tail]);
+    const phase = stripCell(cells[tail + 1]);
+    const criticality = stripCell(cells[tail + 2]);
+    const complexity = stripCell(cells[tail + 3]);
+    const status = stripCell(cells[tail + 4]);
 
     if (!id || !criticality.startsWith('P')) continue;
     rows.push({ id, title, component, phase, criticality, complexity, status });

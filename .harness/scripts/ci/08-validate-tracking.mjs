@@ -36,6 +36,27 @@ const DEPENDENCY_DISPOSITIONS = new Set([
   'deferred',
 ]);
 
+
+/**
+ * Split a Markdown table row into its cells.
+ *
+ * The previous implementation used `.filter(Boolean)`, which drops EMPTY cells
+ * rather than just the empties produced by the leading and trailing pipes. That
+ * silently shifts every column after a blank one, so a row with an unfilled cell
+ * had its status read from the wrong column -- or as `undefined`. It also made
+ * any incremental schema change impossible: a half-migrated board would misparse
+ * rather than fail loudly.
+ *
+ * Only the outer empties are dropped now; interior blanks are preserved and keep
+ * their position.
+ */
+function splitRow(line) {
+  const cells = line.split(/(?<!\\)\|/).map((cell) => cell.trim());
+  if (cells.length && cells[0] === '') cells.shift();
+  if (cells.length && cells[cells.length - 1] === '') cells.pop();
+  return cells;
+}
+
 function parseTableRows(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
   const rows = [];
@@ -46,7 +67,7 @@ function parseTableRows(filePath) {
   for (const line of content.split('\n')) {
     if (line.startsWith('| ID |')) {
       inTable = true;
-      const headers = line.split(/(?<!\\)\|/).map((col) => col.trim()).filter(Boolean);
+      const headers = splitRow(line);
       statusColIndex = headers.findIndex((header) => localePatterns.some((pattern) => header.includes(pattern)));
       if (statusColIndex === -1) statusColIndex = headers.length - 1;
       continue;
@@ -58,7 +79,7 @@ function parseTableRows(filePath) {
     // but must not stop parsing — a later "| ID |" header re-opens parsing.
     if (!line.trim().startsWith('|')) { inTable = false; continue; }
 
-    const cols = line.split(/(?<!\\)\|/).map((column) => column.trim()).filter(Boolean);
+    const cols = splitRow(line);
     const idMatch = cols[0]?.match(/`(GT-\d+|MT-A\d+)`/);
     if (idMatch && statusColIndex !== -1 && cols.length > statusColIndex) {
       rows.push({

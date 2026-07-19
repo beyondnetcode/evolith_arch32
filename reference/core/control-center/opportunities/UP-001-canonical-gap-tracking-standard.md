@@ -7,6 +7,7 @@
 | **ID** | UP-001 |
 | **Status** | PROPOSED |
 | **Date** | 2026-06-28 |
+| **Last Amended** | 2026-07-18 — Amendment 1 (board column schema, see §6) |
 | **Initiated by** | Evolith Tracker (satellite pilot) |
 | **Addressed to** | Evolith Core Architecture Board |
 | **Priority** | P0 |
@@ -37,7 +38,7 @@ Promote Core's gap-tracking system to a **canonical ecosystem standard**, with a
 
 | Piece | Artifact | Key constraints |
 |---|---|---|
-| **Board** | `*-gap-tracking.md` | Single table `ID \| Gap \| Component \| Phase \| Criticality \| Complexity \| Status`; `Criticality ∈ {P0,P1,P2,P3}`, `Complexity ∈ {XS,S,M,L,XL}`, `Status ∈ {PENDING,IN-PROGRESS,BLOCKED,DEFERRED,DONE}` in backticks; IDs link to catalog; pending-first order (P0→P3, then XS→XL); footer with **Progress** + **Waves** log. |
+| **Board** | `*-gap-tracking.md` | Single table `ID \| Gap \| What it means \| Example \| Component \| Phase \| Criticality \| Complexity \| Status` (column rules in §6); `Criticality ∈ {P0,P1,P2,P3}`, `Complexity ∈ {XS,S,M,L,XL}`, `Status ∈ {PENDING,IN-PROGRESS,BLOCKED,DEFERRED,DONE}` in backticks; IDs link to catalog; pending-first order (P0→P3, then XS→XL); footer with **Progress** + **Waves** log. |
 | **Catalog** | `*-gap-reference-catalog.md` | `#### <ID>` + `**Title**` + bullets (Purpose / Evidence / Impact / Risk / Affected files / Complexity / Proposed fix / Acceptance criteria with checkboxes / Dependencies). |
 | **Closure-Evidence Standard** | `*-gap-closure-evidence-standard.md` + `*-gap-closure-evidence.json` | One record per `DONE`: `{id, closedAt, closureCommit, evidence[], validationCommands[], dependencyDisposition, dependencyRationale}`. |
 | **Maturity Reconciliation** | `*-maturity-reconciliation.json` | Counts + readiness, **independent per repo**. Core already marks `Evolith Tracker → maturityIncluded:false`. |
@@ -132,6 +133,68 @@ This enables the Tracker to render **a unified ecosystem-wide gap panel**.
 
 ---
 
+### 6. Amendment 1 — Board Column Schema (2026-07-18)
+
+**Approved by the owner.** This amendment is normative and supersedes the seven-column board schema declared in §1.1. It applies to Core and to every satellite that mirrors this standard.
+
+#### 6.1 Why
+
+The board and the catalog have distinct jobs, and the standard already says so: the board is the set of **headlines**, the catalog is the **detail**. The `Gap` column stopped honouring that separation and became a changelog — rows accumulate session-by-session history, dates, commit hashes, superseded findings and nested markdown inside a single table cell. A row of several hundred words is unreadable as a table and duplicates the catalog entry that already holds the same material. The fix restores the separation and adds the two columns a non-specialist reader needs in order to understand a row without opening the catalog.
+
+#### 6.2 New schema
+
+| Language | Header row |
+|---|---|
+| **EN** | `\| ID \| Gap \| What it means \| Example \| Component \| Phase \| Criticality \| Complexity \| Status \|` |
+| **ES** | `\| ID \| Gap \| Qué significa \| Ejemplo \| Componente \| Fase \| Criticidad \| Complejidad \| Estado \|` |
+
+The two new columns are inserted **after `Gap`**. All other columns keep their meaning, vocabulary and ordering rules from §1.1. The `gap-board.schema.json` of §1.2, when authored, must encode this nine-column shape, not the superseded seven.
+
+#### 6.3 Column rules (the substance of this amendment)
+
+| Column | Rule |
+|---|---|
+| **`Gap`** | ONE sentence, present tense, roughly 100 characters, stating what is broken. No history, no commit hashes, no dates, no `RESOLVED:` prefixes, no nested markdown. Progress and closure narrative go in the **catalog entry**, never in the row. |
+| **`What it means`** | Plain language for a reader who is not an engineer and has no context. No jargon, no identifiers, no file paths. It explains the **CONSEQUENCE**, not the mechanism. |
+| **`Example`** | One concrete instance that makes it click — a measured number or an observed behaviour. Not a restatement of the `Gap` cell in other words. |
+
+#### 6.4 Reference examples
+
+These are the owner-approved worked examples. Implementers calibrate against them.
+
+| ID | Gap | What it means | Example |
+|---|---|---|---|
+| `GT-556` | Checks resolved paths from the directory they were invoked in | An automated check gave a different answer depending on where you ran it from, and always said everything was fine | From the repo root it saw 8 items; from `src/` it saw 5. It approved in both cases |
+| `GT-560` | The protection switch is not connected to anything | There is a mechanism to stop an external outage taking the service down, but it guards no real call | The architecture assessment scored resilience 7/10 citing that mechanism, which nothing uses |
+| `GT-563` | Documentation validation never ran in CI | The check existed and reported green without having inspected anything, because it only ran if someone launched it by hand | 174 real errors coexisted with a green CI for weeks |
+
+#### 6.5 Constraint imposed on implementers
+
+The tracking guard (`.harness/scripts/ci/08-validate-tracking.mjs`) locates the status column **by header name, not by position**: it opens a table on a line starting `| ID |` and finds the status index by matching the header text against `Status` / `State` / `Estado` / `Estat`. Adding columns is therefore safe — but only while all three of these hold, and the standard requires them of every conforming board:
+
+- The header row still **begins with `| ID |`**.
+- The header row still **contains `Status` (EN) or `Estado` (ES)** as a column name.
+- The gap id stays in the **first column**.
+
+A board that renames the status header, reorders the id out of position one, or breaks the `| ID |` prefix will silently stop being parsed. Any future column change must preserve these three invariants.
+
+#### 6.6 Migration may proceed in waves
+
+Commit `ce658404` fixed the guard to parse rows **positionally**. It previously split rows with `filter(Boolean)`, which dropped empty cells rather than only the empties produced by the leading and trailing pipes — so a single blank cell shifted every column after it and the status was read from the wrong column, or read as `undefined`.
+
+Because of that fix, **a partially migrated board parses correctly instead of misreading**: rows already carrying the nine columns and rows still carrying seven can coexist while a migration is in flight, and rows with an unfilled `What it means` or `Example` cell keep their remaining columns aligned. This is the property that makes the migration tractable, and it is the reason boards **may** be migrated in waves rather than in a single atomic rewrite. Record it as a precondition: a satellite whose guard predates `ce658404` must take that fix before starting a waved migration.
+
+#### 6.7 Migration scope
+
+| Board | Rows to migrate |
+|---|---|
+| Evolith Core — `gap-tracking.md` + `gap-tracking.es.md` | 565 rows per language |
+| Evolith Tracker — `tracker-gap-tracking.md` (+ ES) | 215 rows |
+
+History displaced from a `Gap` cell is not discarded: it moves to the corresponding catalog entry, which is where the standard already puts detail.
+
+---
+
 ## Acceptance Criteria
 
 - [ ] ADR `core/00NN` approved: the four-piece standard is **mandatory** for Core and all satellites.
@@ -141,6 +204,8 @@ This enables the Tracker to render **a unified ecosystem-wide gap panel**.
 - [ ] **Zero divergent formats**: a single way to control gaps remains; ad-hoc records are deprecated.
 - [ ] Bilingual where applicable (docs) and canonical English for machine-readable artifacts (ADR-0090).
 - [ ] Tracker consumes `/api/v1/gaps/summary` and renders a unified ecosystem gap panel.
+- [ ] **Amendment 1**: every conforming board carries the nine-column schema of §6.2, and `Gap` / `What it means` / `Example` satisfy the rules of §6.3 — no row keeps history, dates or commit hashes in the `Gap` cell.
+- [ ] **Amendment 1**: Core (565 rows per language) and Tracker (215 rows) are migrated, with displaced history relocated to the catalog and the three guard invariants of §6.5 intact.
 
 ---
 

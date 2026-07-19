@@ -86,12 +86,12 @@ const filesRead = [
   ".harness/rules/global-rules.md",
   ".harness/playbooks/self-improving-loop.md",
   ".harness/manifest.yaml",
-  "reference/core/control-center/gap-tracking.md",
-  "reference/core/control-center/gap-reference-catalog.md",
-  "reference/core/control-center/gap-closure-evidence.json",
+  "reference/core/control-center/gaps/gap-tracking.md",
+  "reference/core/control-center/gaps/gap-reference-catalog.md",
+  "reference/core/control-center/evidence/gap-closure-evidence.json",
 ].filter(exists);
 
-const gapTracking = read("reference/core/control-center/gap-tracking.md");
+const gapTracking = read("reference/core/control-center/gaps/gap-tracking.md");
 const manifest = read(".harness/manifest.yaml");
 const openGaps = parseOpenGaps(gapTracking);
 const topGaps = openGaps.slice(0, 5);

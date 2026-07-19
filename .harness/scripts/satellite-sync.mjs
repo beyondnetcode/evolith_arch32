@@ -66,7 +66,11 @@ function getCorporateArtifacts() {
     }
   }
 
-  const standardsDir = path.join(root, "reference/core/sdlc/standards");
+  // The standards corpus lived at `reference/governance/standards/` and was
+  // moved to `reference/core/foundations/common-rules/` by e16120e9. A prior
+  // fix (d951ae00) retargeted this at `reference/core/sdlc/standards`, which
+  // has never existed -- so this walk has been silently syncing zero standards.
+  const standardsDir = path.join(root, "reference/core/foundations/common-rules");
   if (fs.existsSync(standardsDir)) {
     function walkStandards(dir) {
       for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -87,7 +91,7 @@ function getCorporateArtifacts() {
     walkStandards(standardsDir);
   }
 
-  const patternsDir = path.join(root, "reference/core/architecture/canonical-patterns");
+  const patternsDir = path.join(root, "reference/core/architecture/patterns");
   if (fs.existsSync(patternsDir)) {
     for (const runtime of fs.readdirSync(patternsDir)) {
       const runtimePath = path.join(patternsDir, runtime);
@@ -97,7 +101,7 @@ function getCorporateArtifacts() {
         artifacts.push({
           type: "pattern",
           runtime,
-          file: `reference/core/architecture/canonical-patterns/${runtime}/${file}`
+          file: `reference/core/architecture/patterns/${runtime}/${file}`
         });
       }
     }

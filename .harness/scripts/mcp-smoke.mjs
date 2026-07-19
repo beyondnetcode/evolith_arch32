@@ -17,11 +17,11 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..', '..');
-const cliMain = path.join(root, 'sdk', 'cli', 'dist', 'main.js');
+const cliMain = path.join(root, 'src', 'sdk', 'cli', 'dist', 'main.js');
 const evidenceDir = path.join(root, '.harness', 'evidence');
 
 if (!fs.existsSync(cliMain)) {
-  console.error(`CLI not built: ${cliMain} not found.\nRun: cd sdk/cli && npm run build`);
+  console.error(`CLI not built: ${cliMain} not found.\nRun: cd src/sdk/cli && npm run build`);
   process.exit(1);
 }
 
@@ -155,7 +155,7 @@ function writeEvidence(success) {
     source: 'mcp-smoke.mjs',
     generatedAt: new Date().toISOString(),
     producer: 'evolith-harness/mcp-smoke',
-    sourceRef: 'sdk/cli/dist/main.js',
+    sourceRef: 'src/sdk/cli/dist/main.js',
     status: success && Object.values(results).every(r => r.ok) ? 'passed' : 'failed',
     evaluatedRules: ['MCP-01', 'MCP-02', 'MCP-03', 'MCP-05', 'CLI-RR-04'],
     blockingFailures: Object.entries(results)

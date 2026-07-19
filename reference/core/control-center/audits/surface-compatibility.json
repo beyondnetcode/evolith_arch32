@@ -5,21 +5,21 @@
   "lastReviewed": "2026-06-21",
   "surfaces": {
     "rest": {
-      "module": "apps/core-api/src/infrastructure/interceptors/envelope.interceptor.ts",
+      "module": "src/apps/core-api/src/infrastructure/interceptors/envelope.interceptor.ts",
       "constant": "ENVELOPE_SCHEMA_VERSION",
       "produces": ["1.0.0"],
       "consumes": ["1.x"],
       "notes": "REST envelope built by EnvelopeInterceptor; error path wraps RFC 9457 Problem Details under error.details."
     },
     "cli": {
-      "module": "packages/core-domain/src/domain/gate-evidence.ts",
+      "module": "src/packages/core-domain/src/domain/gate-evidence.ts",
       "constant": "OUTPUT_ENVELOPE_SCHEMA_VERSION",
       "produces": ["1.0.0"],
       "consumes": ["1.x"],
       "notes": "Canonical OutputMeta shared by sdk/cli commands (gate, phase-advance)."
     },
     "mcp": {
-      "module": "packages/mcp-server/src/common/envelopes.ts",
+      "module": "src/packages/mcp-server/src/common/envelopes.ts",
       "constant": "MCP_ENVELOPE_SCHEMA_VERSION",
       "produces": ["1.0.0"],
       "consumes": ["1.x"],

@@ -31,7 +31,7 @@ Output: JSON report to stdout
 }
 
 const root = process.cwd();
-const adrsDir = path.join(root, "reference", "architecture", "adrs");
+const adrsDir = path.join(root, "reference", "core", "architecture", "adrs");
 
 function collectAdrFiles(dir) {
   const results = [];

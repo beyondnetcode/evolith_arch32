@@ -28,8 +28,12 @@ const root = process.cwd();
 const format = args.includes("--format") ? args[args.indexOf("--format") + 1] : "json";
 const storyDirIdx = args.indexOf("--story-dir");
 const storyDir = storyDirIdx !== -1 ? args[storyDirIdx + 1] : path.join(root, "docs", "planning-artifacts");
-const adrsDir = path.join(root, "reference", "architecture", "adrs", "core");
-const rulesDir = path.join(root, "reference", "governance", "standards");
+const adrsDir = path.join(root, "reference", "core", "architecture", "adrs", "core");
+// `reference/governance/standards/` was dissolved by the taxonomy refactor
+// (e16120e9): the engineering/communication/ai-augmented standards corpus
+// landed under `reference/core/foundations/common-rules/`. Note this is NOT
+// `reference/core/sdlc/standards` -- that path does not exist.
+const rulesDir = path.join(root, "reference", "core", "foundations", "common-rules");
 
 function collectMarkdownFiles(dir) {
   const results = [];

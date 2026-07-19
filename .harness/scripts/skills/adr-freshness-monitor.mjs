@@ -34,7 +34,7 @@ const criticalThreshold = args.includes("--critical-threshold")
   ? parseInt(args[args.indexOf("--critical-threshold") + 1], 10)
   : 365;
 
-const adrsDir = path.join(root, "reference", "architecture", "adrs");
+const adrsDir = path.join(root, "reference", "core", "architecture", "adrs");
 
 function collectAdrFiles(dir) {
   const results = [];

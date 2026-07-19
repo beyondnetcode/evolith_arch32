@@ -21,11 +21,11 @@ import addFormats from 'ajv-formats';
 const ROOT = resolve(process.cwd());
 const MATRIX_PATH = join(
   ROOT,
-  'reference/core/control-center/surface-compatibility.json',
+  'reference/core/control-center/audits/surface-compatibility.json',
 );
 const SCHEMA_PATH = join(
   ROOT,
-  'reference/core/control-center/surface-compatibility.schema.json',
+  'reference/core/control-center/audits/surface-compatibility.schema.json',
 );
 
 const SEMVER = /^\d+\.\d+\.\d+$/;

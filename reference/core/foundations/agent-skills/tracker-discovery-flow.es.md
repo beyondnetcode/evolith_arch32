@@ -49,7 +49,7 @@ Iniciativa PENDIENTE ──(activación agéntica/mixta, L-012)──► DISCOVE
 ## 4. Implicaciones Cross-Repo y de Core
 
 - **Primer canal Tracker→Core-arquitectura (D-002):** requiere una superficie de asesoría gobernada sobre el Architecture Hub (MCP/Core API), con el razonamiento de `architect`/Winston detrás de `IAgentEnginePort`. Core sigue stateless; el Tracker persiste la evidencia de asesoría (D-005).
-- **PRD como piso canónico (D-004):** el schema del PRD (con sección KDD opcional) es candidato al corpus de Core (`rulesets/schema/`), heredado por Tracker y satélites; no-overrideable por L-010.
+- **PRD como piso canónico (D-004):** el schema del PRD (con sección KDD opcional) es candidato al corpus de Core (`src/rulesets/schema/`), heredado por Tracker y satélites; no-overrideable por L-010.
 - **Blueprint progresivo (D-003):** `TechnicalBlueprint` gana un estado draft originado en Discovery que alimenta Design — refinamiento de Arquitectura Progresiva de EPIC-001.
 - **Reconciliación de agregado:** el agregado `Initiative` del Tracker debe listar el PRD explícitamente (hoy solo lista Canvas/BusinessCase/TechnicalJustification/Checklist).
 

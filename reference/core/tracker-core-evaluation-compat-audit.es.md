@@ -23,10 +23,10 @@
 
 **Hallazgos de alto impacto (reverificados contra el código):**
 
-1. **Colisión de nombre `EvaluationContext`** — ya existe en `packages/core-domain/src/application/validators/evaluators/evaluator.interface.ts:3-5` pero significa `{ satellitePath, corePath }` (contexto de *filesystem*), **no** el contexto canónico de ~20 campos. Verificado.
-2. **`POST /api/v1/evaluate` viola ADR-0074** — `apps/core-api/src/presentation/dtos/evaluation.dto.ts:8,13` (`EvaluateSatelliteDto { satellitePath, corePath? }`) recibe paths crudos en vez de un `workspaceRef` opaco. Verificado.
-3. **`phase-gates.rego` triple-desconectado** — ausente de `rulesets/opa/main.rego` (0 imports), **sin** `phase-gates.input.schema.json`, y sin shape en el builder. Es el único rego alineado con el modelo Tracker y no se ejecuta. Verificado.
-4. **Conflación `input.story.*`** — `rulesets/opa/dod.rego` usa `input.story` 11 veces (entidad del Tracker como raíz de input); policy huérfana que ningún builder puebla. Verificado. (También `0` herramientas `core.evaluate` en MCP — verificado.)
+1. **Colisión de nombre `EvaluationContext`** — ya existe en `src/packages/core-domain/src/application/validators/evaluators/evaluator.interface.ts:3-5` pero significa `{ satellitePath, corePath }` (contexto de *filesystem*), **no** el contexto canónico de ~20 campos. Verificado.
+2. **`POST /api/v1/evaluate` viola ADR-0074** — `src/apps/core-api/src/presentation/dtos/evaluation.dto.ts:8,13` (`EvaluateSatelliteDto { satellitePath, corePath? }`) recibe paths crudos en vez de un `workspaceRef` opaco. Verificado.
+3. **`phase-gates.rego` triple-desconectado** — ausente de `src/rulesets/opa/main.rego` (0 imports), **sin** `phase-gates.input.schema.json`, y sin shape en el builder. Es el único rego alineado con el modelo Tracker y no se ejecuta. Verificado.
+4. **Conflación `input.story.*`** — `src/rulesets/opa/dod.rego` usa `input.story` 11 veces (entidad del Tracker como raíz de input); policy huérfana que ningún builder puebla. Verificado. (También `0` herramientas `core.evaluate` en MCP — verificado.)
 
 **Causa raíz bilateral:** (Core) acoplamiento a filesystem (paths + escaneo de disco, 5 shapes de input sin builder único); (Tracker) su embrión `EvaluateCriterionRequest` cubre ~5 de 17 campos del contexto objetivo y traslada el resto a resolución por referencia (`rulesetRef`) y a estado interno, incompatible con un Core que debe recibir **todo el contexto temporal** en el request.
 
@@ -65,7 +65,7 @@
 |---|---|---|---|
 | **Core API** | **NO** | `evaluation.controller.ts:18-30` (delega en `ValidateSatelliteUseCase` con `manifest`); `evaluation.dto.ts:4-24` (DTO confirmado: solo `satellitePath`, `corePath?`, `topology?`, `phase?`) | `POST /api/v1/evaluate` es un evaluador de satélite **por path crudo**, no el `/evaluate` genérico. No acepta `EvaluationContext` (sin `kinds[]`, identificadores opacos, artifacts/evidence/checkpoint/deployment, rulesetRef/blueprintRef). Devuelve `EvaluationVerdict` legacy, no `EvaluationResult`. Viola ADR-0074 (recibe `satellitePath`, no `workspaceRef`). |
 | **CLI** | **PARCIAL** | `validate.command.ts:127-364` (pipeline GT-281 vía `--manifest/--phase/--topology`); `gate.command.ts:50-117` + `phase-advance.command.ts:49-122` (ecoan `tenant`/`initiative` opacos) | No existe `evolith evaluate --context <file.json>`. El contexto se arma de flags sueltos por comando; no consume ni emite el contrato canónico. `validate` y `sdlc gate-status` rompen paridad de envelope ADR-0073. Pasa paths reales, no `workspaceRef`. |
-| **MCP** | **PARCIAL** | `composable-validate.tool.ts:17-57` (input más rico, aún plano); `gate.tools.ts:26-84` + `phase-advance.tools.ts:26-82` (aceptan `tenant`/`initiative`/`evaluatedBy`); `mcp-tool-dispatch.ts:62-72` (propaga contexto opaco a telemetría) | No existe `core.evaluate`/`evolith-evaluate` que reciba el `EvaluationContext` completo (0 ocurrencias en `packages/mcp-server/src`). Outputs legacy. HITL implícito (solo tools mutativas); sin `executionMode` declarativo; ningún tool emite `requiere-revisión-manual`. |
+| **MCP** | **PARCIAL** | `composable-validate.tool.ts:17-57` (input más rico, aún plano); `gate.tools.ts:26-84` + `phase-advance.tools.ts:26-82` (aceptan `tenant`/`initiative`/`evaluatedBy`); `mcp-tool-dispatch.ts:62-72` (propaga contexto opaco a telemetría) | No existe `core.evaluate`/`evolith-evaluate` que reciba el `EvaluationContext` completo (0 ocurrencias en `src/packages/mcp-server/src`). Outputs legacy. HITL implícito (solo tools mutativas); sin `executionMode` declarativo; ningún tool emite `requiere-revisión-manual`. |
 | **Rulesets / OPA** | **NO** | `opa-input-builder.ts:8-61` (builder escanea disco); `evaluator.interface.ts:3-6` (`EvaluationContext` homónimo FS); `phase-gates.rego:8-77` (único shape alineado, desconectado) | `input.context` canónico no existe en ninguna policy (0 resultados). 5 shapes de input incompatibles; un solo builder cubre 1 (`satellite`/`core`). `phase-gates.rego` (el único alineado con Tracker) sin wiring en `main.rego`, sin schema, sin builder. Paridad native+OPA sin builder compartido → drift estructural. |
 
 **Síntesis:** 0 subsistemas SOPORTAN; 2 PARCIAL (CLI, MCP — aproximan con operaciones fragmentadas + ecos opacos); 2 NO (Core API, Rulesets/OPA — acoplados a filesystem). La paridad BR-008 entre superficies es **uniforme en la carencia**: ninguna expone el contrato canónico.
@@ -265,25 +265,25 @@ export interface EvaluationResult {
 
 ## Conclusión accionable (orden de implementación sugerido)
 
-1. **Definir el contrato canónico en `@beyondnet/evolith-core-domain`** (`EvaluationContext`/`EvaluationResult` §8/§9) y **renombrar el homónimo** FS (`evaluator.interface.ts:3-6` → `RuleEvaluationFsContext`) para eliminar la colisión. Resolver también el choque de nombres `GateDecision` (target Tracker vs `packages/core-domain/src/gates/decision/gate-decision.ts`, GT-316).
+1. **Definir el contrato canónico en `@beyondnet/evolith-core-domain`** (`EvaluationContext`/`EvaluationResult` §8/§9) y **renombrar el homónimo** FS (`evaluator.interface.ts:3-6` → `RuleEvaluationFsContext`) para eliminar la colisión. Resolver también el choque de nombres `GateDecision` (target Tracker vs `src/packages/core-domain/src/gates/decision/gate-decision.ts`, GT-316).
 2. **Crear la capa de mapeo única** `EvaluationContext → input` que alimente *a la vez* al `OpaInputBuilder` y a los 12 handlers nativos (hoy dos rutas FS paralelas → drift estructural, B5). Wirear `phase-gates.rego` en `main.rego`, crear su `input.schema.json` y su shape en el builder (B3).
 3. **Refactorizar `POST /api/v1/evaluate`** sobre `composable-validate` (multi-kind), reemplazando `EvaluateSatelliteDto` por `EvaluationContextDto` con `workspaceRef` (mata la violación ADR-0074) y normalizando la salida a `EvaluationResult` con `Verdict` enum.
 4. **Exponer engines faltantes** (blueprint, deployment, checkpoint, evidence declarada, compliance ponderada) como `kinds` del `/evaluate`.
 5. **Paridad de superficies (BR-008):** añadir `evolith evaluate --context <file.json>` (CLI) y `evolith-evaluate` / `core.evaluate` (MCP); envolver salidas que aún rompen ADR-0073 (`validate`, `sdlc gate-status`).
 6. **Modelar upstream en Tracker** las entidades ausentes (oportunidad, intake, iniciativa, agrupación) que originan `initiativeId`/`initiativeGroupId`; y reconciliar la deuda de `POST /phases/transition` (muta estado canónico).
 
-**Archivos ancla verificados en esta síntesis:** `apps/core-api/src/presentation/dtos/evaluation.dto.ts:4-24`, `apps/core-api/src/presentation/controllers/evaluation.controller.ts:18-30`, `packages/core-domain/src/application/validators/evaluators/evaluator.interface.ts:3-6` (homónimo FS confirmado). Resto de anclajes provienen del dossier de los 5 lectores (rutas citadas inline).
+**Archivos ancla verificados en esta síntesis:** `src/apps/core-api/src/presentation/dtos/evaluation.dto.ts:4-24`, `src/apps/core-api/src/presentation/controllers/evaluation.controller.ts:18-30`, `src/packages/core-domain/src/application/validators/evaluators/evaluator.interface.ts:3-6` (homónimo FS confirmado). Resto de anclajes provienen del dossier de los 5 lectores (rutas citadas inline).
 
 
 ---
 
 ## 4. Comandos / capacidades requeridas para CLI (incluye `evolith evaluate`; paridad con API)
 
-> Estado base: la CLI **no** tiene `evolith evaluate` ni `--context file.json`; arma el contexto desde flags sueltos y `validate`/`gate-status` ni siquiera emiten envelope ADR-0073. Anclaje en `sdk/cli/src/commands/`.
+> Estado base: la CLI **no** tiene `evolith evaluate` ni `--context file.json`; arma el contexto desde flags sueltos y `validate`/`gate-status` ni siquiera emiten envelope ADR-0073. Anclaje en `src/sdk/cli/src/commands/`.
 
 | # | Capacidad requerida | Qué debe hacer | Anclaje (existe hoy) / Brecha | GT |
 |---|---|---|---|---|
-| C1 | **Comando nuevo `evolith evaluate --context <file.json> [--format json]`** | Deserializar un `EvaluationContext` canónico (`core-evaluation-engine-design.es.md:299-334`), invocar el pipeline agregado y devolver `EvaluationResult` en `SuccessEnvelope` ADR-0073 | **BRECHA total**: no existe `evaluate.command.ts` ni `EvaluationContext`/`EvaluationResult` en todo `sdk/cli/src/` | GT-378/GT-381 |
+| C1 | **Comando nuevo `evolith evaluate --context <file.json> [--format json]`** | Deserializar un `EvaluationContext` canónico (`core-evaluation-engine-design.es.md:299-334`), invocar el pipeline agregado y devolver `EvaluationResult` en `SuccessEnvelope` ADR-0073 | **BRECHA total**: no existe `evaluate.command.ts` ni `EvaluationContext`/`EvaluationResult` en todo `src/sdk/cli/src/` | GT-378/GT-381 |
 | C2 | **Aceptar `EvaluationContext` por contrato, no por flags** | Soportar `kinds[]`, `tenant/product/initiative/initiativeGroup`, `phaseId`, `gateId`, `artifactIds[]`, `rulesetRef/Version`, `blueprintRef`, `topologyRef`, `schemaRef`, `evidence[]`, `deployment`, `checkpoint`, `externalReferences[]`, `correlationId`, `passthrough` | **BRECHA**: hoy el "contexto" es un literal local (`validate.command.ts:143-152`, `:181-188`) con `satellitePath/corePath/topology/phase/rulesetId/adrId/filePath` | GT-377/GT-378 |
 | C3 | **`workspaceRef` opaco en lugar de paths reales** | Reemplazar `--satellite/-s`, `--core/-c`, `--project`, `--path` por una referencia opaca resuelta server-side | **BRECHA compartida**: la CLI pasa paths crudos (`validate.command.ts` `--satellite`; `gate.command.ts` `--project`; `drift.command.ts` `--path`), violando "el Core nunca ve paths" (`design.es.md:321-322`) | GT-378 |
 | C4 | **Envelope ADR-0073 universal en `validate`** | Envolver el verdict del pipeline en `createSuccessEnvelope`/`createErrorEnvelope` igual que `gate`/`phase`/`drift` | **BRECHA de paridad**: `validate` serializa un `ValidationResult` plano y solo imprime el verdict como texto (`validate.command.ts:265-289`, `:331-353`) | GT-378 |
@@ -298,7 +298,7 @@ Comandos que **se conservan** como sub-evaluaciones (mapeables a `kinds`): `gate
 
 ## 5. Capacidades requeridas para MCP (`core.evaluate`; paridad; modo agéntico/HITL)
 
-> Estado base: cero ocurrencias de `EvaluationContext`/`EvaluationResult`/`core.evaluate` en `packages/mcp-server/src/` y `packages/mcp-tools/src/`. El dispatcher ya tiene cimientos reutilizables (envelope, contexto opaco, ABAC dual-engine, mutative gate).
+> Estado base: cero ocurrencias de `EvaluationContext`/`EvaluationResult`/`core.evaluate` en `src/packages/mcp-server/src/` y `packages/mcp-tools/src/`. El dispatcher ya tiene cimientos reutilizables (envelope, contexto opaco, ABAC dual-engine, mutative gate).
 
 | # | Capacidad requerida | Qué debe hacer | Anclaje (existe hoy) / Brecha | GT |
 |---|---|---|---|---|
@@ -322,8 +322,8 @@ Paridad BR-008: la brecha de `core.evaluate(EvaluationContext)` es **uniforme en
 | # | Interfaz/servicio interno | Responsabilidad | Reusa / Choca con (ruta:linea) | Estado |
 |---|---|---|---|---|
 | I1 | **`EvaluationOrchestrator` (servicio de aplicación)** | Recibir `EvaluationContext`, despachar por `kinds[]` a los engines, agregar sub-resultados en `EvaluationResult` con `overallVerdict` derivado | Orquesta sobre `SatelliteEvaluationPipeline.evaluate()` (`:39-98`) que ya devuelve `EvaluationVerdict{passed,gates[],summary,outputEnvelope}` | BRECHA (a crear) |
-| I2 | **`EvaluationContextBuilder` (puerto + impl)** | Mapear `EvaluationContext` canónico → `SatelliteManifest` (input del pipeline) resolviendo `workspaceRef` a paths server-side | Adapta a `SatelliteManifest` (`satellite-manifest.ts`) consumido por `pipeline.evaluate(manifest)` (`:39`). Resuelve `workspaceRef` vía `WorkspaceReferenceResolverService` (`apps/core-api/.../workspace-reference-resolver.service.ts:9-11`) | BRECHA (a crear) |
-| I3 | **`IWorkspaceReferenceResolver` (puerto en core-domain)** | Abstraer la resolución `workspaceRef → {satellitePath, corePath}` para que el dominio nunca vea paths | Hoy el resolver vive en `apps/core-api` (capa de presentación); el dominio recibe paths directos (`evaluator.interface.ts:3-6`). Debe **promoverse a puerto de dominio** | BRECHA (a crear) |
+| I2 | **`EvaluationContextBuilder` (puerto + impl)** | Mapear `EvaluationContext` canónico → `SatelliteManifest` (input del pipeline) resolviendo `workspaceRef` a paths server-side | Adapta a `SatelliteManifest` (`satellite-manifest.ts`) consumido por `pipeline.evaluate(manifest)` (`:39`). Resuelve `workspaceRef` vía `WorkspaceReferenceResolverService` (`src/apps/core-api/.../workspace-reference-resolver.service.ts:9-11`) | BRECHA (a crear) |
+| I3 | **`IWorkspaceReferenceResolver` (puerto en core-domain)** | Abstraer la resolución `workspaceRef → {satellitePath, corePath}` para que el dominio nunca vea paths | Hoy el resolver vive en `src/apps/core-api` (capa de presentación); el dominio recibe paths directos (`evaluator.interface.ts:3-6`). Debe **promoverse a puerto de dominio** | BRECHA (a crear) |
 | I4 | **`ICanonicalResultMapper`** | Normalizar salidas legacy (`GateEvidence`, `ValidationResult`, `EvaluationVerdict` con `passed/failed`) → sub-resultados canónicos (`GateEvaluationResult` con `Verdict` enum, `ArtifactEvaluationResult`, etc.) | Reusa helpers de migración `verdict.ts:63-100` (hoy **no aplicados** en presentación). Mapea `satellite-manifest.ts` `GateEvaluationResult` legacy → `design.es.md:401-409` canónico | BRECHA (a crear) |
 | I5 | **Catálogo de 13 engines tras una interfaz común** | Gate(1), Artifact(2), Evidence(3), Architecture(4), Blueprint(5), Ruleset/OPA(6), Topology(7), Checkpoint(9), Compliance(10), Recommendation, Deployment, Drift, Decision-Recommendation | Reusa use-cases existentes: `evaluate-gate.use-case.ts`, `validate-satellite.use-case.ts`, `validate-blueprint.use-case.ts` (sin controller hoy), `propose-phase-advance.use-case.ts`. **Faltan**: Deployment engine, Compliance agregada, Decision-Recommendation, Topology-conformance (solo hay lectura) | PARCIAL |
 | I6 | **`IEvaluationContextPort` (entrada única)** | Único punto de entrada que API/CLI/MCP invocan con `EvaluationContext` → `EvaluationResult` | Reemplaza los DTOs por entidad de cada controller; alinea con ADR-0074 (REST-only) | BRECHA (a crear) |
@@ -339,7 +339,7 @@ Nota de homónimo a resolver antes de I1-I3: el `EvaluationContext` del código 
 
 | # | Cambio requerido | Detalle | Anclaje (estado hoy) | GT |
 |---|---|---|---|---|
-| R-1 | **Introducir `input.context` canónico** | Raíz de input con identificadores opacos + facts declarados (gate, evidence[], artifacts, architecture, checkpoint, deployment) | `grep input.context` → **0 resultados** en `rulesets/opa/*.rego` (B1) | GT-380 |
+| R-1 | **Introducir `input.context` canónico** | Raíz de input con identificadores opacos + facts declarados (gate, evidence[], artifacts, architecture, checkpoint, deployment) | `grep input.context` → **0 resultados** en `src/rulesets/opa/*.rego` (B1) | GT-380 |
 | R-2 | **Builder único native+OPA** | Una sola capa de mapeo que alimente el JSON de OPA (`opa-evaluator.ts:70`) **y** los 12 handlers nativos, eliminando la doble lectura del FS | **BRECHA estructural (B5)**: OPA usa `OpaInputBuilder`, los handlers re-escanean FS por su cuenta (`evidence-rule.handler.ts:15-20`, `sdlc-rule.handler.ts:33-37`) → drift garantizado | GT-378/GT-380 |
 | R-3 | **Re-anclar `dod.rego` fuera de `input.story.*`** | "story" es entidad del Tracker; debe entrar como `EvidenceContext`/facts bajo `input.context`, no como raíz `story` | **Conflación (B4)**: `dod.rego:3-42` + `dod.input.schema.json` exigen `story` que ningún builder puebla → policy inalcanzable | GT-380 |
 | R-4 | **Re-anclar `compliance-baseline.rego` fuera de `input.spec`** | Tercer shape huérfano; mapear a `input.context` | **Conflación (B4)**: `compliance-baseline.rego:21-96` espera `input.spec`, no producido por el builder | GT-380 |
@@ -361,7 +361,7 @@ Paridad native+OPA (ADR-0041): introducir `input.context` **rompería ambos moto
 | OPA/native no consumen `EvaluationContext`; builder solo lee FS y emite 1 de 5 shapes | **Crítica** | OPA/Rulesets | `opa-input-builder.ts:8-61`; `grep input.context`→0 |
 | 5 shapes de input OPA incompatibles; sin builder único | **Crítica** | OPA/Rulesets | `dod.rego`/`compliance-baseline.rego`/`phase-gates.rego`/`abac` vs `opa-input-builder.ts:18-59` |
 | `/v1/evaluate` recibe `satellitePath` crudo (viola ADR-0074/resolver) | **Crítica** | Core API | `evaluation.dto.ts:8`; resolver en `workspace-reference-resolver.service.ts:17-28` |
-| Sin tool `core.evaluate`/`evolith-evaluate` en MCP | **Crítica** | MCP | 0 hits en `packages/mcp-server/src/`; cercano `composable-validate.tool.ts:87-96` |
+| Sin tool `core.evaluate`/`evolith-evaluate` en MCP | **Crítica** | MCP | 0 hits en `src/packages/mcp-server/src/`; cercano `composable-validate.tool.ts:87-96` |
 | Sin comando `evolith evaluate --context` en CLI | **Alta** | CLI | sin `evaluate.command.ts` en `commands/` |
 | `phase-gates.rego` triple-desconectado (no en `main.rego`, sin schema, sin builder) | **Alta** | OPA/Rulesets | `main.rego:1-31` (31 imports, sin `phase_gates`); `phase-gates.input.schema.json` no existe |
 | `dod.rego` (`input.story`) y `compliance-baseline.rego` (`input.spec`) huérfanas | **Alta** | OPA/Rulesets | `dod.rego:3`; `compliance-baseline.rego:21` |
@@ -490,7 +490,7 @@ El agente crítico del workflow no se ejecutó (presupuesto de sesión); la veri
 | `/v1/evaluate` recibe `satellitePath` crudo (viola ADR-0074) | ✅ CONFIRMADO | `evaluation.dto.ts:8,13` |
 | `phase-gates.rego` ausente de `main.rego` y sin schema | ✅ CONFIRMADO | `main.rego` (0 `phase_gates`); no existe `schemas/phase-gates.input.schema.json` |
 | `dod.rego` usa `input.story.*` | ✅ CONFIRMADO | `dod.rego` (11 ocurrencias) |
-| Sin `core.evaluate`/`evolith-evaluate` en MCP | ✅ CONFIRMADO | `packages/mcp-server/src` (0 ocurrencias) |
+| Sin `core.evaluate`/`evolith-evaluate` en MCP | ✅ CONFIRMADO | `src/packages/mcp-server/src` (0 ocurrencias) |
 
 El backlog (§13) reutiliza los GT ya creados (**GT-376…GT-381**, R0–R5) y los ancla a los hallazgos de esta auditoría, por lo que no introduce GTs nuevos.
 
@@ -580,7 +580,7 @@ Nota de costura viva: el único punto de mutación de fase real hoy es `POST /ap
 | `EvaluateCriterionRequest` | :340-351 | **EvaluationContext** (entrada) | Embrión parcial: cubre identificadores + fase + gate + ruleset + evidencias-por-ref. Faltan ~12 campos (ver §2) |
 | `EvidenceItem` | :100-149 | Sub-estructura de **EvaluationContext** (evidencias/artefactos/checkpoints) y entrada del EvaluationResult (evidencias faltantes) | Embrión rico: `references[]` :128-132 cubre artifact/commit/PR/pipeline/test/deployment/trace/document → mapea a "artefactos presentados" + "checkpoints externos". `producer` :120-126 (model/prompt/skill) → soporta "modo agéntico". `integrity` :134-138 → soporta "justificación/versión". Pero el evaluador hoy solo recibe `evidenceIds`, no el `EvidenceItem` completo |
 | `TechnicalEvaluationResult` | :157-176 | **EvaluationResult** (salida) | Embrión parcial del Result. Mapeo de campos abajo |
-| `GateDecision` (canónica Tracker) | :186-204 | NO es EvaluationResult — es la decisión canónica que Tracker construye **a partir de** el EvaluationResult | Distinto plano: el Core devuelve evaluación; Tracker decide. Choque de nombres con la `GateDecision` ya existente en Core (`packages/core-domain/src/gates/decision/gate-decision.ts`, nota :183) |
+| `GateDecision` (canónica Tracker) | :186-204 | NO es EvaluationResult — es la decisión canónica que Tracker construye **a partir de** el EvaluationResult | Distinto plano: el Core devuelve evaluación; Tracker decide. Choque de nombres con la `GateDecision` ya existente en Core (`src/packages/core-domain/src/gates/decision/gate-decision.ts`, nota :183) |
 
 **Mapeo `TechnicalEvaluationResult` → `EvaluationResult` objetivo:**
 
@@ -607,7 +607,7 @@ Nota de costura viva: el único punto de mutación de fase real hoy es `POST /ap
 2. **Brecha de contenido del contexto:** ~12 de 17 campos del EvaluationContext objetivo no viajan en el request (modo de ejecución, contexto arquitectónico, blueprint/topología, restricciones del tenant, historial de decisiones, config SDLC explícita, artefactos requeridos-vs-presentados, checkpoints, resultado esperado, initiative_id/group). El diseño actual los **resuelve por referencia/estado interno de Tracker**, lo que es incompatible con un Core estrictamente stateless que debe recibir todo el contexto temporal.
 3. **Brecha de modelado upstream:** el ER de Tracker no modela oportunidades, intakes, iniciativas ni agrupaciones — los `initiative_id`/`initiative_group_id` del EvaluationContext objetivo no tienen origen en el modelo de entidades documentado.
 4. **Brecha de resultado:** el `TechnicalEvaluationResult` no expone policies OPA aplicadas, riesgos, nivel de confianza, recomendaciones/decisiones-sugeridas, ni versión de policy/blueprint — todos campos del EvaluationResult objetivo.
-5. **Choque de nombres `GateDecision`** (target Tracker vs `packages/core-domain/src/gates/decision/gate-decision.ts`) a resolver antes de implementar (nota en `:183` y `README.md:68`, GT-316).
+5. **Choque de nombres `GateDecision`** (target Tracker vs `src/packages/core-domain/src/gates/decision/gate-decision.ts`) a resolver antes de implementar (nota en `:183` y `README.md:68`, GT-316).
 
 Archivos fuente leídos: `/Users/beyondnet/Source/evolith/product/products/evolith-tracker/sdlc-tracker-technical-interfaces.md`, `/Users/beyondnet/Source/evolith/product/products/evolith-tracker/README.md`, `/Users/beyondnet/Source/evolith/product/products/evolith-tracker/architecture/README.md`, `/Users/beyondnet/Source/evolith/product/suite/architecture/evolith-governed-composition-target-design.md`.
 
@@ -681,7 +681,7 @@ Resumen: de los 10 tipos, **0 EXISTE plenamente**, **5 PARCIAL** (fase, gate, ar
 - **Envelope ADR-0073 sí está universalizado** (`ApiEnvelopeResponse` en todos los controllers + `EnvelopeInterceptor`), por lo que el "envoltorio" para `SuccessEnvelope<EvaluationResult>` (design `:483`) ya existe; lo que falta es el **payload `data`** con la forma `EvaluationResult`.
 - **Brecha estructural principal**: no existe un controller que reciba `EvaluationContext` (un único body multi-kind) ni devuelva `EvaluationResult` (sub-resultados por engine + risks/gaps/recommendations/requiredActions/decisionRecommendation/compliance). El más cercano arquitectónicamente es `composable-validate.controller.ts`, pero su DTO usa kinds implícitos por presencia de campo y su salida no está normalizada al contrato canónico.
 
-Archivos ancla leídos: `apps/core-api/src/presentation/controllers/{evaluation,gates,phases,architecture,composable-validate,projects,satellites,reference}.controller.ts`; `apps/core-api/src/presentation/dtos/{evaluation,gates,phases,architecture,projects,satellite}.dto.ts`; `apps/core-api/src/presentation/decorators/swagger-envelope.decorator.ts`; `apps/core-api/src/infrastructure/interceptors/envelope.interceptor.ts`; `apps/core-api/src/application/services/workspace-reference-resolver.service.ts`; `packages/core-domain/src/domain/{gate-evidence.ts,satellite-manifest.ts,verdict/verdict.ts}`; `packages/core-domain/src/application/use-cases/{evaluate-gate,validate-satellite,validate-blueprint}.use-case.ts`; `product/products/core-api/api-reference.md`; `reference/core/core-evaluation-engine-design.es.md`.
+Archivos ancla leídos: `src/apps/core-api/src/presentation/controllers/{evaluation,gates,phases,architecture,composable-validate,projects,satellites,reference}.controller.ts`; `src/apps/core-api/src/presentation/dtos/{evaluation,gates,phases,architecture,projects,satellite}.dto.ts`; `src/apps/core-api/src/presentation/decorators/swagger-envelope.decorator.ts`; `src/apps/core-api/src/infrastructure/interceptors/envelope.interceptor.ts`; `src/apps/core-api/src/application/services/workspace-reference-resolver.service.ts`; `src/packages/core-domain/src/domain/{gate-evidence.ts,satellite-manifest.ts,verdict/verdict.ts}`; `src/packages/core-domain/src/application/use-cases/{evaluate-gate,validate-satellite,validate-blueprint}.use-case.ts`; `product/products/core-api/api-reference.md`; `reference/core/core-evaluation-engine-design.es.md`.
 
 
 ### A.3 — CLI
@@ -702,7 +702,7 @@ Archivos ancla leídos: `apps/core-api/src/presentation/controllers/{evaluation,
 
 ### ¿Puede la CLI consumir un `EvaluationContext` hoy? ¿Falta `evolith evaluate`?
 
-**No existe `--context file.json` en ningún comando** y **no existe comando `evolith evaluate`** (`grep -L` sobre `commands/` no devuelve ningún `evaluate.command.ts`; los comandos registrados son los listados en `commands/`, sin `evaluate`; tampoco aparece `EvaluationContext`/`EvaluationResult` en todo `sdk/cli/src/`).
+**No existe `--context file.json` en ningún comando** y **no existe comando `evolith evaluate`** (`grep -L` sobre `commands/` no devuelve ningún `evaluate.command.ts`; los comandos registrados son los listados en `commands/`, sin `evaluate`; tampoco aparece `EvaluationContext`/`EvaluationResult` en todo `src/sdk/cli/src/`).
 
 - La CLI **arma el contexto internamente a partir de flags sueltos**, no lo recibe como un contrato único. En `validate` el "contexto" es un objeto literal local (`validate.command.ts:143-152` y `:181-188`) con `satellitePath/corePath/topology/phase/rulesetId/adrId/filePath` — no es el `EvaluationContext` canónico (`core-evaluation-engine-design.es.md:299-334`).
 - Los identificadores opacos solo existen, y parcialmente, en `gate` y `phase`: `--tenant`/`--initiative` se ecoan en `meta.context` (`gate.command.ts:54-55`, `phase-advance.command.ts:53-54`) y pueden venir del `ProfileConfig` (`config.service.ts:9-13` define `tenant`/`initiative`). Pero **`validate`, `drift`, `sdlc gate-status` y `standards` no aceptan tenant/initiative**.
@@ -744,7 +744,7 @@ Archivos relevantes (rutas absolutas):
 
 ### Catálogo de herramientas y qué evalúan
 
-Anclado en `packages/mcp-server/src/tools/tools.module.ts:59-76` (registro real). Cada herramienta es un adaptador delgado que delega en `@beyondnet/evolith-core` y devuelve un payload crudo que el dispatcher envuelve en el envelope ADR-0073 (`mcp-tool-dispatch.ts:194-195`).
+Anclado en `src/packages/mcp-server/src/tools/tools.module.ts:59-76` (registro real). Cada herramienta es un adaptador delgado que delega en `@beyondnet/evolith-core` y devuelve un payload crudo que el dispatcher envuelve en el envelope ADR-0073 (`mcp-tool-dispatch.ts:194-195`).
 
 | Herramienta MCP | Qué evalúa | Input schema (campos clave) | Output | ¿Acepta EvaluationContext? | Brecha |
 |---|---|---|---|---|---|
@@ -763,7 +763,7 @@ Herramientas adicionales registradas pero fuera del set auditado (todas con el m
 
 ### ¿Falta una herramienta `core.evaluate` que reciba el EvaluationContext completo?
 
-**SÍ — es la brecha estructural principal.** Búsqueda exhaustiva en `packages/mcp-server/src/` y `packages/mcp-tools/src/`: **cero** ocurrencias de `EvaluationContext`, `EvaluationResult`, `core.evaluate`, `evolith-evaluate`, ni de los campos del contrato objetivo (`customConstraints`, `checkpoints`, `expectedResult`, `availableEvidences`). El término "blueprint" solo aparece como ruta de artefacto en `sdlc.tools.ts:31-32`.
+**SÍ — es la brecha estructural principal.** Búsqueda exhaustiva en `src/packages/mcp-server/src/` y `packages/mcp-tools/src/`: **cero** ocurrencias de `EvaluationContext`, `EvaluationResult`, `core.evaluate`, `evolith-evaluate`, ni de los campos del contrato objetivo (`customConstraints`, `checkpoints`, `expectedResult`, `availableEvidences`). El término "blueprint" solo aparece como ruta de artefacto en `sdlc.tools.ts:31-32`.
 
 - No existe un tool MCP único que reciba el `EvaluationContext` completo (identificadores, validación solicitada, fase, gate, artefactos requeridos+presentados, evidencias, checkpoints, config SDLC del tenant, restricciones, rulesets/policies, modo de ejecución, contexto arquitectónico, blueprint/topología, historial de decisiones, resultado esperado) y devuelva el `EvaluationResult` estructurado (estado, resultado aprobado/condicionado/pendiente/requiere-revisión-manual, reglas, policies OPA, brechas, riesgos, evidencias faltantes, recomendaciones, acciones, decisiones sugeridas, confianza, justificación, versiones).
 - Lo más cercano es `evolith-composable-validate`, pero su `context` interno (`composable-validate.tool.ts:87-96`) es plano: `{satellitePath, corePath, engine, topology, phase, rulesetId, adrId, filePath}`. No transporta tenant/initiative/gate/evidencias/checkpoints/modo/expectedResult.
@@ -801,7 +801,7 @@ El campo `executionMode` (manual/híbrido/agéntico) del `EvaluationContext` obj
 
 ### Resumen de brechas MCP
 
-- **GAP-MCP-1 (estructural):** no existe `core.evaluate` / `evolith-evaluate` que reciba el `EvaluationContext` completo y devuelva `EvaluationResult` estructurado. Diseño objetivo en `reference/core/core-evaluation-engine-design.es.md` no tiene contraparte en `packages/mcp-server/src/tools/`.
+- **GAP-MCP-1 (estructural):** no existe `core.evaluate` / `evolith-evaluate` que reciba el `EvaluationContext` completo y devuelva `EvaluationResult` estructurado. Diseño objetivo en `reference/core/core-evaluation-engine-design.es.md` no tiene contraparte en `src/packages/mcp-server/src/tools/`.
 - **GAP-MCP-2:** los inputs actuales son flags planos (`path`, `phase`, `topology`, `ruleset`); faltan artefactos requeridos+presentados, evidencias disponibles, checkpoints externos, restricciones del tenant, config SDLC del tenant, contexto arquitectónico, historial de decisiones y `expectedResult`.
 - **GAP-MCP-3:** los outputs (`GateEvidence`, `ValidationResult`, `{passed, gates[]}`) no se ajustan al `EvaluationResult` objetivo (faltan: riesgos, decisiones sugeridas, nivel de confianza, justificación técnica, versiones de core/ruleset/policy/blueprint, veredicto `condicionado`/`requiere-revisión-manual`).
 - **GAP-MCP-4:** sin `executionMode` (manual/híbrido/agéntico) declarativo; HITL implícito y limitado a tools mutativas; ningún tool emite veredicto `requiere-revisión-manual`.
@@ -830,7 +830,7 @@ El campo `executionMode` (manual/híbrido/agéntico) del `EvaluationContext` obj
 
 ### 1. Shape de input que consumen HOY las policies
 
-`input.context` canónico **no existe en ninguna policy** (verificado: `grep "input.context"` → 0 resultados en `rulesets/opa/*.rego`). El builder real (`opa-input-builder.ts:18-59`) emite exclusivamente `{ satellitePath, corePath, satellite:{...}, core:{...} }`.
+`input.context` canónico **no existe en ninguna policy** (verificado: `grep "input.context"` → 0 resultados en `src/rulesets/opa/*.rego`). El builder real (`opa-input-builder.ts:18-59`) emite exclusivamente `{ satellitePath, corePath, satellite:{...}, core:{...} }`.
 
 | Policy (.rego) | Raíz de input que lee HOY | ¿Acepta contexto Tracker (tenant/product/initiative/phase/gate/artifacts/evidence)? | Brecha |
 |---|---|---|---|

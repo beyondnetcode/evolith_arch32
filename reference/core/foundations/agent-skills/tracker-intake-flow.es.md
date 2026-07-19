@@ -69,7 +69,7 @@ Capturar las decisiones guiadas por el dueño sobre **cómo entra el trabajo a E
 
 ## 4. Implicaciones Cross-Repo y de Core
 
-- **Adiciones implícitas al corpus de Core:** schema del formato unificado de entrada (L-002/L-008), criterios default de aceptación del Gate 0 + designación del piso inmutable (L-006/L-010), política `rejectionCycle` (L-011), schema de artefactos KDD (L-009). Candidatos a `rulesets/schema/` + rulesets, heredados por Tracker y satélites.
+- **Adiciones implícitas al corpus de Core:** schema del formato unificado de entrada (L-002/L-008), criterios default de aceptación del Gate 0 + designación del piso inmutable (L-006/L-010), política `rejectionCycle` (L-011), schema de artefactos KDD (L-009). Candidatos a `src/rulesets/schema/` + rulesets, heredados por Tracker y satélites.
 - **Conexión estratégica:** L-006 aporta el requisito de producto para cerrar **GT-08…GT-11** (validación de contenido/umbral de gates) — la mayor brecha de credibilidad del maturity assessment actual.
 - **Nuevo actor:** ADMIN ROOT (super-admin del SaaS) — opera solo la capa overrideable; no tiene autoridad del piso (L-010).
 - **Cambio de máquina de estados:** el modelo one-shot `PROMOTED | REJECTED` del Intake se reemplaza por una máquina iterativa, versionada y re-entrante (L-004/L-011).

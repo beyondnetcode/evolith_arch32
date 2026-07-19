@@ -35,34 +35,34 @@
         "reference/core/architecture/adrs/core/0095-serverless-architecture-governance.md"
       ],
       "rulesets": [
-        "rulesets/topologies/serverless/serverless.rules.json"
+        "src/rulesets/topologies/serverless/serverless.rules.json"
       ],
       "opaPolicies": [
-        "rulesets/topologies/serverless/serverless.rego"
+        "src/rulesets/topologies/serverless/serverless.rego"
       ],
       "aiRulesets": [
-        "rulesets/topologies/serverless/README.md"
+        "src/rulesets/topologies/serverless/README.md"
       ],
       "umsContracts": [
-        "reference/knowledge/demo/ums-reference-model.md"
+        "product/research/demo/ums-reference-model.md"
       ]
     },
     "corpus": {
       "guidance": {
-        "profile": "rulesets/topologies/serverless/README.md",
-        "maturityGuide": "rulesets/topologies/serverless/maturity.md"
+        "profile": "src/rulesets/topologies/serverless/README.md",
+        "maturityGuide": "src/rulesets/topologies/serverless/maturity.md"
       },
       "configurationContract": "src/rulesets/topologies/serverless/topology.config.schema.json",
       "fixtures": {
-        "valid": "rulesets/topologies/serverless/fixtures/valid.topology.config.json",
-        "invalid": "rulesets/topologies/serverless/fixtures/invalid.topology.config.json"
+        "valid": "src/rulesets/topologies/serverless/fixtures/valid.topology.config.json",
+        "invalid": "src/rulesets/topologies/serverless/fixtures/invalid.topology.config.json"
       },
       "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
       "tests": {
         "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
         "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
       },
-      "evidence": "reference/core/control-center/maturity-evidence.json"
+      "evidence": "reference/core/control-center/maturity-reports/maturity-evidence.json"
     },
     "operationalBudgets": {
       "latencyBudgetMs": 1500,

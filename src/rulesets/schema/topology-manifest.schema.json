@@ -359,7 +359,7 @@
   "definitions": {
     "repositoryPath": {
       "type": "string",
-      "pattern": "^(src/)?(reference|rulesets|packages|sdk|apps)/[A-Za-z0-9._/-]+$",
+      "pattern": "^(src/)?(reference|rulesets|packages|sdk|apps|product)/[A-Za-z0-9._/-]+$",
       "description": "Repository-relative path without leading slash. The optional src/ prefix reflects the src/ refactor, which moved rulesets, packages, sdk and apps under src/ while reference/ stayed at the root; these paths are resolved by joining against the repository root (GT-563)."
     },
     "kebabIdentifier": {

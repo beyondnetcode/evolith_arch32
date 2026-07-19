@@ -34,34 +34,34 @@
         "reference/core/architecture/adrs/core/0096-edge-computing-architecture-governance.md"
       ],
       "rulesets": [
-        "rulesets/topologies/edge-computing/edge-computing.rules.json"
+        "src/rulesets/topologies/edge-computing/edge-computing.rules.json"
       ],
       "opaPolicies": [
-        "rulesets/topologies/edge-computing/edge-computing.rego"
+        "src/rulesets/topologies/edge-computing/edge-computing.rego"
       ],
       "aiRulesets": [
-        "rulesets/topologies/edge-computing/README.md"
+        "src/rulesets/topologies/edge-computing/README.md"
       ],
       "umsContracts": [
-        "reference/knowledge/demo/ums-reference-model.md"
+        "product/research/demo/ums-reference-model.md"
       ]
     },
     "corpus": {
       "guidance": {
-        "profile": "rulesets/topologies/edge-computing/README.md",
-        "maturityGuide": "rulesets/topologies/edge-computing/maturity.md"
+        "profile": "src/rulesets/topologies/edge-computing/README.md",
+        "maturityGuide": "src/rulesets/topologies/edge-computing/maturity.md"
       },
       "configurationContract": "src/rulesets/topologies/edge-computing/topology.config.schema.json",
       "fixtures": {
-        "valid": "rulesets/topologies/edge-computing/fixtures/valid.topology.config.json",
-        "invalid": "rulesets/topologies/edge-computing/fixtures/invalid.topology.config.json"
+        "valid": "src/rulesets/topologies/edge-computing/fixtures/valid.topology.config.json",
+        "invalid": "src/rulesets/topologies/edge-computing/fixtures/invalid.topology.config.json"
       },
       "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
       "tests": {
         "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
         "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
       },
-      "evidence": "reference/core/control-center/maturity-evidence.json"
+      "evidence": "reference/core/control-center/maturity-reports/maturity-evidence.json"
     },
     "operationalBudgets": {
       "latencyBudgetMs": 200,

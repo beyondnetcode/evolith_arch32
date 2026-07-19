@@ -133,7 +133,8 @@ Los contratos JSON-Schema viven en `src/rulesets/schema/`. Los cambios se verifi
 
 Las reglas nativas se declaran por dominio bajo `src/rulesets/<dominio>/`, y sus contrapartes Rego ejecutables viven en `src/rulesets/opa/`. **Native y OPA deben mantenerse en paridad de rule-ID:** los gates de paridad fallan en cerrado ante cualquier drift de verdict, rule-ID, severidad o evidencia.
 
-- Fixtures del evaluador nativo: `28-native-evaluator-parity.mjs`.
+- Veredictos del evaluador nativo: `native-opa-parity.spec.ts` (suite jest de core-domain).
+- **Cobertura** de fixtures del evaluador nativo (que ese spec ejercite todos los fixtures): `28-native-evaluator-parity.mjs`.
 - Paridad semántica Native/OPA: `27-opa-parity-gate.mjs` (acotado por commit; un barrido completo programado corre a diario). Recompila las políticas con `npm run build:policy` tras tocar cualquier archivo `.rego`.
 
 ### D. Fases, Gates y Topologías

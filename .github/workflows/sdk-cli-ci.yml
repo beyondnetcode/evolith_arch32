@@ -222,7 +222,11 @@ jobs:
       - name: Doc Complexity Score
         run: node .harness/scripts/doc-complexity-score.mjs --threshold=15
 
-      - name: Native Evaluator Parity Gate (GT-229)
+      # Coverage gate only: verifies every parity fixture on disk is actually
+      # exercised by native-opa-parity.spec.ts. The real verdict evaluation
+      # runs in the core-domain jest suite (ci-cd.yml -> test-core-domain).
+      # This job does no `npm ci`, so it cannot run jest itself.
+      - name: Parity Fixture Coverage Gate (GT-229)
         run: node .harness/scripts/ci/28-native-evaluator-parity.mjs
 
       - name: Core OPA Governance Suite (GT-347)

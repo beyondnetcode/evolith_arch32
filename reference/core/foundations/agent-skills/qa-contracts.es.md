@@ -46,7 +46,9 @@ node .harness/scripts/ci/27-opa-parity-gate.mjs
 # Corrida completa programada sobre cada topología aceptada:
 EVOLITH_PARITY_FULL=true node .harness/scripts/ci/27-opa-parity-gate.mjs
 
-# Paridad del evaluador Native de TypeScript sobre src/packages/core-domain/test/parity-fixtures/
+# COBERTURA de fixtures de paridad sobre src/packages/core-domain/test/parity-fixtures/
+# (NO evalúa veredictos — eso es native-opa-parity.spec.ts, en la suite jest de
+#  core-domain. Este gate verifica que el spec ejercite todos los fixtures.)
 node .harness/scripts/ci/28-native-evaluator-parity.mjs
 
 # Suites de pruebas OPA Rego por-topología (.rego + .test.rego declarados en manifiestos aceptados)
@@ -72,7 +74,7 @@ node .harness/scripts/ci/30-validate-phase-topology-disjoint.mjs
 Reporta cada gate como **PASS** o **FAIL** junto con su línea de evidencia legible por máquina:
 
 - `27-opa-parity-gate.mjs` emite `PARITY {…}` con `evaluated`, `drifting`, `missingInputs` y reportes por-fixture. **FAIL (bloquea el merge)** cuando `drifting > 0` (salida 1). Una corrida diferida sin bundles compilados es PASS (salida 0) y debe confirmarse en verde por la corrida completa programada.
-- `28-native-evaluator-parity.mjs` emite `NATIVE_PARITY {…}`. Cualquier drift, fixture faltante o error del evaluador es **FAIL (bloquea el merge)**.
+- `28-native-evaluator-parity.mjs` emite `NATIVE_PARITY_COVERAGE {…}`. Es un gate de **cobertura**: no evalúa veredictos. **FAIL (bloquea el merge)** ante corpus de fixtures ausente/vacío, un fixture que el spec nunca ejercita (forma huérfana, cero escenarios, cero aserciones), drift del directorio de fixtures entre gate y spec, o la suite de core-domain descableada de CI. La comparación real de veredictos del NativeEvaluator es `native-opa-parity.spec.ts`, ejecutada por la suite jest de core-domain (`ci-cd.yml` → `test-core-domain`).
 - `28-test-topology-opa.mjs` y `29-test-core-opa.mjs` hacen **FAIL (bloquea el merge)** ante cualquier caso OPA fallido, suite vacía, `.test.rego` faltante, o error de carga/parseo.
 - `10-validate-contract-conformance.mjs` hace **FAIL (bloquea el merge)** ante violaciones de SemVer, discrepancia de hash de esquema, ruta de esquema no resoluble, o divergencia de pin productor/consumidor.
 - `26-validate-topology-rule-coverage.mjs` hace **FAIL (bloquea el merge)** ante cualquier error de cobertura (una regla presente en un solo motor rompe la R-25).

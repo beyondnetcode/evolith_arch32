@@ -23,8 +23,8 @@ Whoever pushes the ledger bump first owns the number. No `--force`, ever.
 
 | Allocator | Next free | Last claimed | By |
 |-----------|-----------|--------------|-----|
-| ADR number (`reference/core/architecture/adrs/core/NNNN-*`) | **0114** | 0113 — Lighthouse evidence adapter | enforcers/evidence lane (0114 earmarked by UP-003) |
-| GT-ID (`gap-tracking.md` rows) | **GT-556** | GT-555 — GitHub collaboration surface (UP-003 wave) | contribution-mechanism lane |
+| ADR number (`reference/core/architecture/adrs/core/NNNN-*`) | **0118** | 0117 — Bilingual parity applies to authored sources, not generated projections | harness-normalisation lane (0114 still earmarked by UP-003) |
+| GT-ID (`gap-tracking.md` rows) | **GT-566** | GT-565 — SDK contract test (wire fidelity) | harness-normalisation lane |
 
 > The board **`**Progress:**`** counter is NOT block-reserved — see its protocol below.
 > `gap-closure-evidence.json` is append-only (low collision); still push promptly.
@@ -37,6 +37,7 @@ Two sessions never edit the same board/catalog rows if they stay in their lane.
 |---------|---------------|------------------|--------|
 | **RAG model maturity assessment** | RAG / embeddings / maturity | GT-538…541 + follow-ons + RAG ADRs (0112) | active (not running now; last push 12:24) |
 | **Gap-closing waves (Winston)** | enforcers / evidence-seam / runtime | GT-533-wire, GT-516, GT-524, GT-520, GT-513, GT-535 | **paused** pending coordination |
+| **Harness normalisation (P0)** | shared harness capabilities | GT-556…559 + ADR-0116 | active |
 
 If you need a gap outside your lane, claim it here first (add a row / note) before touching it.
 

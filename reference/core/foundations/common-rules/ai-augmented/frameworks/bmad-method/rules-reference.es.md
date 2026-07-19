@@ -47,12 +47,15 @@
 
 **Condición de activación:** Cada vez que se crea o modifica un documento en un idioma, la contraparte en el otro idioma debe actualizarse en la misma confirmación o PR.
 
-**Ejemplo de cumplimiento:**```
+**Ejemplo de cumplimiento:**
+```
 CORRECT: Modifying reference-blueprint.md → also modify reference-blueprint.es.md
          in the same PR with equivalent content changes.
 
 VIOLATION: Merging an EN ADR update without updating the ES counterpart.
-```**Notas de adaptación:** Si su equipo es monolingüe, el alcance de R-01 puede ser "las variantes de la documentación deben permanecer sincronizadas" (por ejemplo, resumen frente a versión completa, interna frente a externa). El principio subyacente (ninguna variante se vuelve obsoleta) sigue siendo válido.
+```
+
+**Notas de adaptación:** Si su equipo es monolingüe, el alcance de R-01 puede ser "las variantes de la documentación deben permanecer sincronizadas" (por ejemplo, resumen frente a versión completa, interna frente a externa). El principio subyacente (ninguna variante se vuelve obsoleta) sigue siendo válido.
 
 ---
 ### R-02 — Context Authority
@@ -64,13 +67,16 @@ VIOLATION: Merging an EN ADR update without updating the ES counterpart.
 
 **Condición de activación:** Antes de que cualquier agente produzca una recomendación técnica, debe verificar que la recomendación sea consistente con las fuentes autorizadas actuales.
 
-**Ejemplo de cumplimiento:**```
+**Ejemplo de cumplimiento:**
+```
 CORRECT: @architect checks ADR-0030 (Kong gateway decision) before recommending
          an API routing change.
 
 VIOLATION: @architect recommends AWS API Gateway without checking whether
            ADR-0030 exists and is still active.
-```**Notas de adaptación:** Defina qué significa "contexto autorizado" en su repositorio. Podría ser: registro ADR, `DECISIONS.md`, documento de pila tecnológica aprobado o una combinación.
+```
+
+**Notas de adaptación:** Defina qué significa "contexto autorizado" en su repositorio. Podría ser: registro ADR, `DECISIONS.md`, documento de pila tecnológica aprobado o una combinación.
 
 ---
 ### R-03 — UTF-8 Clean
@@ -84,10 +90,13 @@ VIOLATION: @architect recommends AWS API Gateway without checking whether
 
 **Cumplimiento automatizado:** `validate-docs.mjs` escanea todos los archivos Markdown y falla al detectar violaciones de codificación.
 
-**Ejemplo de cumplimiento:**```
+**Ejemplo de cumplimiento:**
+```
 VIOLATION: Using checkmark (U+2713) or cross-mark (U+274C) symbols in code examples.
 CORRECT:   Using text equivalents: // CORRECT, // WRONG, OK:, ERROR:
-```**Notas de adaptación:** Si su equipo utiliza una herramienta de validación de documentación diferente, asigne esta regla a cualquier verificación de codificación que realice su CI. La restricción clave es: los agentes de IA no deben introducir caracteres que no sean UTF-8 que rompan las herramientas posteriores.
+```
+
+**Notas de adaptación:** Si su equipo utiliza una herramienta de validación de documentación diferente, asigne esta regla a cualquier verificación de codificación que realice su CI. La restricción clave es: los agentes de IA no deben introducir caracteres que no sean UTF-8 que rompan las herramientas posteriores.
 
 ---
 ### R-04 — Label Language
@@ -101,7 +110,8 @@ CORRECT:   Using text equivalents: // CORRECT, // WRONG, OK:, ERROR:
 
 **Exención:** Los identificadores de códigos técnicos utilizados como etiquetas de diagramas (nombres de interfaces, nombres de eventos, nombres de clases, ID de ADR) permanecen en inglés en todos los documentos. Ejemplo: `IEventBusPort`, `UserRegisteredEvent`, `ADR-0015`. Estos son identificadores de código, no lenguaje natural; traducirlos rompería la trazabilidad.
 
-**Ejemplo de cumplimiento:**```
+**Ejemplo de cumplimiento:**
+```
 Spanish document — CORRECT:
   graph LR
     A[Servicio de Autenticación] --> B[Base de Datos]
@@ -126,7 +136,8 @@ Spanish document — EXEMPT (code identifier):
 
 **Condición de activación:** Cualquier documento que nombre una tecnología, biblioteca o marco específico.
 
-**Ejemplo de cumplimiento:**```
+**Ejemplo de cumplimiento:**
+```
 CORRECT: @architect references RabbitMQ for Phase 2 event bus, consistent with ADR-0015.
 VIOLATION: @architect recommends Kafka for a Phase 1 implementation without an
            overriding ADR.
@@ -143,7 +154,22 @@ VIOLATION: @architect recommends Kafka for a Phase 1 implementation without an
 
 **Condición de activación:** Cualquier historia de usuario, especificación funcional o creación o revisión de una sección PRD.
 
-**Estructura:**```markdown```
+**Estructura:**
+
+```markdown
+# STORY-001: User Login
+
+<!-- ## Business Narrative -->
+As a [user], I want to [action] so that [business value].
+
+<!-- ### Acceptance Criteria -->
+- Scenario 1: [Given/When/Then in business terms]
+
+<!-- ## Technical Requirements -->
+- Auth method: JWT RS256, 15-minute expiry
+- Storage: HttpOnly cookie, Secure flag, SameSite=Strict
+- Schema: auth.users table, bcrypt hash comparison
+```
 ### R-07 — Traceability
 **Restricción:** Cuando un caso de uso cambia, actualice todos los diagramas relevantes y registre el cambio con: Documento, Tipo, Descripción del cambio, ID del caso de uso.
 
@@ -151,7 +177,8 @@ VIOLATION: @architect recommends Kafka for a Phase 1 implementation without an
 
 **Condición de activación:** Cualquier modificación de un caso de uso, historia de usuario o requisito funcional.
 
-**Ejemplo de cumplimiento:**```
+**Ejemplo de cumplimiento:**
+```
 Change log entry:
 | Document | Type | Change | UC ID |
 |---|---|---|---|
@@ -167,7 +194,8 @@ Change log entry:
 
 **Condición de activación:** Cualquier documento o diagrama que describa los flujos de autenticación o autorización.
 
-**Ejemplo de cumplimiento:**```
+**Ejemplo de cumplimiento:**
+```
 CORRECT: Auth diagram shows:
   - External IDP flow: OAuth2/OIDC → token exchange → JWT issuance
   - Internal flow: email+password → bcrypt comparison → JWT issuance
@@ -196,11 +224,14 @@ VIOLATION: Auth diagram only shows the OAuth2 path, leaving internal
 
 **Condición de activación:** Cualquier agente que realice una auditoría de documentación o código.
 
-**Formato:**```
+**Formato:**
+```
 | Document | Location | Issue Type | Severity | Recommended Fix |
 |---|---|---|---|---|
 | reference-blueprint.md | Section 5, Risk Table | Formatting — broken table | Medium | Collapse extra pipe into Description column |
-```**Niveles de gravedad:** Crítico, Alto, Medio, Bajo, Información
+```
+
+**Niveles de gravedad:** Crítico, Alto, Medio, Bajo, Información
 
 ---
 ### R-11 — Execution Order
@@ -210,7 +241,8 @@ VIOLATION: Auth diagram only shows the OAuth2 path, leaving internal
 
 **Condición de activación:** Cualquier tarea que requiera tanto validación funcional como revisión del diseño técnico.
 
-**Ejemplo de cumplimiento:**```
+**Ejemplo de cumplimiento:**
+```
 CORRECT:
   1. @po reviews story → approves business narrative and acceptance criteria
   2. @architect reviews story → validates technical requirements section
@@ -251,7 +283,8 @@ VIOLATION:
 
 **Condición de activación:** Cualquier documento técnico que especifique detalles de implementación, opciones de tecnología o patrones de código.
 
-**Ejemplo de cumplimiento:**```
+**Ejemplo de cumplimiento:**
+```
 CORRECT: Node.js ADR references authoritative-tech-stack-nodejs.md and uses
          TypeORM, NestJS, and Jest — all in the approved Node.js profile.
 
@@ -267,7 +300,8 @@ VIOLATION: Node.js ADR recommends Dapper (a .NET library) for data access.
 
 **Condición de activación:** Cualquier documento o diseño que aborde patrones de arrendamiento múltiple, aislamiento de inquilinos o acceso a datos.
 
-**Ejemplo de cumplimiento:**```
+**Ejemplo de cumplimiento:**
+```
 CORRECT: "Tenant context is injected at the application layer via TenantContext
 service. PostgreSQL RLS policies provide a secondary enforcement layer."
 
@@ -284,7 +318,8 @@ VIOLATION: "Tenant isolation is handled exclusively by RLS policies."
 
 **Condición de activación:** Diseño o revisión de cualquier catálogo paramétrico, tabla de búsqueda o entidad de configuración.
 
-**Esquema mínimo:**```typescript
+**Esquema mínimo:**
+```typescript
 interface CatalogEntry {
   code: string;        // Unique identifier — used in code references
   value: string;       // Human-readable label
@@ -301,7 +336,8 @@ interface CatalogEntry {
 
 **Condición de activación:** Diseño o revisión de bibliotecas compartidas, dependencias entre módulos o interfaces de contexto limitadas.
 
-**Ejemplo de cumplimiento:**```
+**Ejemplo de cumplimiento:**
+```
 CORRECT: Module A communicates with Module B exclusively through IEventBusPort.
          Extraction of Module B requires only a new adapter — no domain changes.
 
@@ -318,7 +354,8 @@ VIOLATION: Module A directly imports Module B's repository class.
 
 **Condición de activación:** Cualquier documento o diseño que aborde los puntos finales de API cuando tanto REST como GraphQL están activos.
 
-**Ejemplo de cumplimiento:**```
+**Ejemplo de cumplimiento:**
+```
 CORRECT:
   Commands (create, update, delete): REST endpoints exclusively
   Queries: Available via both REST and GraphQL with equivalent results
@@ -331,7 +368,8 @@ VIOLATION:
 ---
 
 ## Portable Rules Block
-La siguiente es una versión condensada de las 18 reglas adecuadas para pegar directamente en un indicador del sistema `AGENTS.md`, `.cursorrules` o herramienta AI:```markdown
+La siguiente es una versión condensada de las 18 reglas adecuadas para pegar directamente en un indicador del sistema `AGENTS.md`, `.cursorrules` o herramienta AI:
+```markdown
 <!-- ## Binding Harness Rules -->
 
 | ID | Rule | Constraint |
@@ -354,6 +392,8 @@ La siguiente es una versión condensada de las 18 reglas adecuadas para pegar di
 | R-16 | Catalog Contract | Parametric entities: code + value + description minimum |
 | R-17 | Modular Extraction | Module boundaries must preserve future extraction readiness |
 | R-18 | Hybrid API | REST commands-first; query behavior consistent across REST+GraphQL |
-```---
+```
+
+---
 
 [Volver a la descripción general del MÉTODO BMAD](./README.md)

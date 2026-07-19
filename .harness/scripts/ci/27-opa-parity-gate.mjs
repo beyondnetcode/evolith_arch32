@@ -17,26 +17,70 @@
  */
 
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { execSync } from 'node:child_process';
 import { evaluateWasm, normalizeOpaDecisions } from './opa-eval.mjs';
-import { parityReport, scopeTopologies, contentVersion } from './parity-gate.mjs';
+// `scopeTopologies` is deliberately no longer used here: its `changedPaths == null -> return
+// everything` branch is the widening this gate now refuses to be able to express.
+import { parityReport, contentVersion } from './parity-gate.mjs';
 
-const ROOT = process.cwd();
+// GT-556/557: ROOT came from process.cwd() and the TOPO_ROOTS loop skipped any root
+// that did not exist, so a moved root silently shrank the scanned corpus while the gate
+// still reported "deferred, exit 0". Roots are now fail-closed and the manifest corpus
+// size is asserted before any scoping is applied.
+import { REPO_ROOT, collectFiles, relativeToRoot } from '../lib/paths.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
+// GT-556/558: the scope of this run is a declared contract, not an inference. An error
+// while determining it narrows to nothing — it can no longer widen the run.
+import { declareScope, activateScope, resolveScope, isInScope, formatScopeContract } from '../lib/scope.mjs';
+
+const ROOT = REPO_ROOT;
 // GT-329: canonical topology roots — progressive-axis stays in reference/; advanced topologies in rulesets/
-const TOPO_ROOTS = [
-  'reference/core/architecture/topologies',
-  'src/rulesets/topologies',
-];
+const TOPO_ROOT_KEYS = ['topologiesReference', 'topologiesRulesets'];
 // Full/scheduled run evaluates all accepted topologies; otherwise scope to changed.
+// This is a scope DECLARED before the run starts (scheduled workflow sets the env), which
+// is categorically different from a run that widened itself while executing.
 const FULL_RUN = process.env.EVOLITH_PARITY_FULL === 'true';
 
+/**
+ * The changed-file set, as a fallible resolver.
+ *
+ * GT-556 pinned git to the repo root, fixing the symptom. GT-558 removes the structure:
+ * this no longer catches. Previously an exception here returned `null`, which
+ * `scopeTopologies` read as "no diff context, evaluate everything" — a *failure* promoted
+ * the run from scoped to FULL, and the gate evaluated 26 fixtures from /tmp and 0 from the
+ * repo root, exiting 0 both times. It now throws into `resolveScope`, whose failure branch
+ * carries no scope at all, so there is nothing to widen to.
+ */
 function changedPaths() {
-  try {
-    return execSync('git diff --name-only HEAD~1 HEAD', { encoding: 'utf8' }).split('\n').filter(Boolean);
-  } catch {
-    return null; // no diff context — treat as full
-  }
+  return execSync('git diff --name-only HEAD~1 HEAD', { encoding: 'utf8', cwd: ROOT }).split('\n').filter(Boolean);
+}
+
+/**
+ * Resolve the topologies this run may evaluate, or refuse.
+ *
+ * @returns {{ok: true, topologies: object[], scope: object} | {ok: false, reason: string}}
+ */
+function resolveEvaluationScope(topologies) {
+  const declared = declareScope({
+    id: 'opa-parity-gate',
+    root: ROOT,
+    include: topologies.length > 0 ? topologies.map((t) => t.dir) : ['.'],
+    effects: ['read'], // the gate reads fixtures and bundles; it never mutates the tree
+    declaredBy: 'ci:27-opa-parity-gate',
+    reason: FULL_RUN
+      ? 'Scheduled full parity sweep: every accepted topology, declared up front via EVOLITH_PARITY_FULL.'
+      : 'Per-commit run: only topologies touched by the commit under test.',
+  });
+
+  // FULL is a scope declared before execution, so it activates at the declaration.
+  if (FULL_RUN) return { ok: true, topologies, scope: activateScope(declared) };
+
+  const resolution = resolveScope(declared, () => ({ include: changedPaths() }));
+  if (!resolution.ok) return { ok: false, reason: resolution.reason };
+
+  const scope = resolution.scope;
+  return { ok: true, scope, topologies: topologies.filter((t) => isInScope(scope, { path: t.dir, effect: 'read' })) };
 }
 
 function readIfExists(rel) {
@@ -45,33 +89,42 @@ function readIfExists(rel) {
 }
 
 function acceptedTopologies() {
+  const files = collectFiles(TOPO_ROOT_KEYS, 'topology.manifest.json');
+
+  // The corpus — not the accepted subset — is what proves the gate looked in the right
+  // place. Zero accepted topologies can be a real state; zero manifests cannot.
+  assertScanned(files.length, { what: 'topology manifests', where: TOPO_ROOT_KEYS });
+
   const out = [];
-  const walk = (dir) => {
-    for (const e of readdirSync(resolve(ROOT, dir), { withFileTypes: true })) {
-      const rel = `${dir}/${e.name}`;
-      if (e.isDirectory()) walk(rel);
-      else if (e.name === 'topology.manifest.json') {
-        try {
-          const m = JSON.parse(readFileSync(resolve(ROOT, rel), 'utf8'));
-          if (m?.metadata?.status === 'accepted') {
-            out.push({ dir, id: m.metadata.id, version: m.metadata.version });
-          }
-        } catch {
-          /* manifest parse issues are covered by the drift audit (GT-147) */
-        }
+  for (const full of files) {
+    try {
+      const m = JSON.parse(readFileSync(full, 'utf8'));
+      if (m?.metadata?.status === 'accepted') {
+        out.push({ dir: relativeToRoot(dirname(full)), id: m.metadata.id, version: m.metadata.version });
       }
+    } catch {
+      /* manifest parse issues are covered by the drift audit (GT-147) */
     }
-  };
-  for (const root of TOPO_ROOTS) {
-    if (existsSync(resolve(ROOT, root))) walk(root);
   }
   return out;
 }
 
 async function main() {
   console.log('⚖️  Executable OPA Tests & Native/OPA Parity Gate (GT-149)');
-  const topologies = scopeTopologies(acceptedTopologies(), FULL_RUN ? null : changedPaths(), FULL_RUN);
-  console.log(`   Scope: ${FULL_RUN ? 'FULL (scheduled)' : 'changed topologies'} — ${topologies.length} accepted topology(ies).`);
+
+  const resolved = resolveEvaluationScope(acceptedTopologies());
+  if (!resolved.ok) {
+    // The refusal. There is deliberately no fallback branch here: the failure carries no
+    // scope, so "evaluate everything instead" is not an option the code can reach.
+    console.error('❌ OPA parity gate refuses to run: its scope could not be determined.');
+    console.error(`   ${resolved.reason}`);
+    console.error('   Re-run from the repository root, or declare a full sweep explicitly with EVOLITH_PARITY_FULL=true.');
+    process.exit(1);
+  }
+
+  const { topologies, scope } = resolved;
+  console.log(`   Scope: ${FULL_RUN ? 'FULL (declared via EVOLITH_PARITY_FULL)' : 'changed topologies'} — ${topologies.length} accepted topology(ies).`);
+  console.log(formatScopeContract(scope).split('\n').map((l) => `   ${l}`).join('\n'));
   const reports = [];
   let missingInputs = 0;
   let drifting = 0;

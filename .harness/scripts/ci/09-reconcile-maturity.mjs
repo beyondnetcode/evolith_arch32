@@ -3,13 +3,21 @@ import path from 'path';
 import { execFileSync } from 'child_process';
 import { fileURLToPath, pathToFileURL } from 'url';
 
-const ROOT = path.resolve(process.env.EVOLITH_MATURITY_ROOT || '.');
-const VISION_DIR = path.join(ROOT, 'reference/core/sdlc/standards/vision');
-const BOARD = path.join(VISION_DIR, 'gap-tracking.md');
-const REGISTRY = path.join(VISION_DIR, 'gap-closure-evidence.json');
-const CLI_PACKAGE = path.join(ROOT, 'src/sdk/cli/package.json');
-const RUNTIME_EVIDENCE = path.join(VISION_DIR, 'maturity-evidence.json');
-const OUTPUT = path.join(ROOT, 'reference/core/control-center/maturity-reports/maturity-reconciliation.json');
+// GT-556/557: `reference/core/sdlc/standards/vision` no longer exists — its three
+// inputs split across control-center/{gaps,evidence,maturity-reports}, which is why this
+// script crashed. It also counted `.rules.json` under `rulesets/`, a directory that
+// still EXISTS but holds only `agents/` — so `rulesetCount` silently reported 0 instead
+// of 145. That second bug is the reason a path check alone is not enough: the path was
+// live, the corpus was empty, and the snapshot was quietly wrong.
+import { REPO_ROOT, resolve as resolveKey, expected, relativeToRoot } from '../lib/paths.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
+
+const ROOT = REPO_ROOT;
+const BOARD = resolveKey('gapTracking');
+const REGISTRY = resolveKey('gapClosureEvidence');
+const CLI_PACKAGE = resolveKey('cliPackageJson');
+const RUNTIME_EVIDENCE = resolveKey('maturityEvidence');
+const OUTPUT = expected('maturityReports', 'maturity-reconciliation.json');
 // PASS: green observed run. BLOCKED: failing/unmet, must map to an active gap.
 // RESOLVED: the blocking gap is closed in code (cites its closure commit) and the
 // only residual is a runtime re-run; it maps to a closed gap and does not require a
@@ -102,6 +110,12 @@ export function validateRuntimeEvidence(evidence, board, root = ROOT, now = new 
   return errors;
 }
 
+// A count of zero from a directory that exists means the corpus moved, not that it is
+// empty — the exact shape of the `rulesets/` regression above.
+function counted(what, where, n) {
+  return assertScanned(n, { what, where });
+}
+
 export function buildSnapshot(root = ROOT) {
   const boardContent = fs.readFileSync(path.join(root, 'reference/core/control-center/gaps/gap-tracking.md'), 'utf8');
   const board = { ...parseBoard(boardContent), content: boardContent };
@@ -128,9 +142,11 @@ export function buildSnapshot(root = ROOT) {
     evidence: {
       closureRecords: closures.length,
       cliPackage: `${cliPackage.name}@${cliPackage.version}`,
-      adrCount: countFiles(path.join(root, 'reference/core/architecture/adrs'), /^\d{4}-.*\.md$/, /\.es\.md$/),
-      rulesetCount: countFiles(path.join(root, 'rulesets'), /\.rules\.json$/),
-      schemaCount: countFiles(path.join(root, 'src/rulesets/schema'), /\.schema\.json$/),
+      adrCount: counted('ADRs', 'adrs', countFiles(resolveKey('adrs'), /^\d{4}-.*\.md$/, /\.es\.md$/)),
+      // `rulesets` (no `src/` prefix) resolved to a real but unrelated directory, so this
+      // counted 0 for months without failing. Now it counts the real corpus and asserts it.
+      rulesetCount: counted('rulesets', 'topologiesRulesets', countFiles(resolveKey('rulesets'), /\.rules\.json$/)),
+      schemaCount: counted('ruleset schemas', 'rulesetSchemas', countFiles(resolveKey('rulesetSchemas'), /\.schema\.json$/)),
     },
     readiness: runtimeEvidence.checks,
     externalProducts: [

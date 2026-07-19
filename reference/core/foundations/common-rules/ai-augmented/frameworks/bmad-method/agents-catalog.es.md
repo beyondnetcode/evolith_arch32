@@ -4,12 +4,15 @@
 ---
 
 ## How to Invoke an Agent
-Los agentes se invocan dirigiéndose a ellos por etiqueta de rol en su conversación de IA:```
+Los agentes se invocan dirigiéndose a ellos por etiqueta de rol en su conversación de IA:
+```
 @analyst — analyze these requirements and produce a functional spec
 @architect — review this ADR for structural coherence
 @po — rewrite this story to remove technical jargon
 @devops — audit this Docker Compose for production readiness
-```Para los agentes del equipo BMAD en una ejecución de flujo de trabajo completo, invoquelos secuencialmente siguiendo la cadena de transferencia. No invoque a un agente descendente antes de que su dependencia ascendente haya producido su entregable.
+```
+
+Para los agentes del equipo BMAD en una ejecución de flujo de trabajo completo, invoquelos secuencialmente siguiendo la cadena de transferencia. No invoque a un agente descendente antes de que su dependencia ascendente haya producido su entregable.
 
 ---
 ## Part I — BMAD Team Agents
@@ -28,7 +31,8 @@ Estos agentes simulan un equipo de entrega completo. Utilícelos al crear o espe
 **Entradas:** Requisitos brutos, solicitudes de usuarios, elementos pendientes
 **Salidas:** Resumen del producto o documento de especificación funcional
 
-**Persona portátil:**```markdown
+**Persona portátil:**
+```markdown
 ---
 name: Analyst Agent
 persona: Requirements & Specification Specialist
@@ -68,7 +72,8 @@ Handoff:
 **Entradas:** Resumen del producto del analista
 **Salidas:** Documento de Requisitos del Producto (PRD)
 
-**Persona portátil:**```markdown
+**Persona portátil:**
+```markdown
 ---
 name: Product Manager Agent
 persona: Product & Strategy Lead
@@ -108,7 +113,8 @@ Handoff:
 **Entradas:** PRD del PM
 **Salidas:** Diseño de arquitectura técnica (TAD): esquemas de base de datos, especificaciones de API, patrones de seguridad
 
-**Persona portátil:**```markdown
+**Persona portátil:**
+```markdown
 ---
 name: Architect Agent
 persona: Systems & Security Architect
@@ -151,7 +157,8 @@ Handoff:
 **Entradas:** PRD de PM + TAD de Architect
 **Salidas:** Sprint Backlog/Lista de tareas
 
-**Persona portátil:**```markdown
+**Persona portátil:**
+```markdown
 ---
 name: Scrum Master Agent
 persona: Project Coordinator & Agile Master
@@ -187,7 +194,8 @@ Handoff:
 **Entradas:** Sprint Backlog, TAD, PRD
 **Salidas:** Código ejecutable + informe de autorrevisión
 
-**Persona portátil:**```markdown
+**Persona portátil:**
+```markdown
 ---
 name: Developer Agent
 persona: High-Performance Software Engineer
@@ -230,7 +238,8 @@ Handoff:
 **Entradas:** Código de aplicación en funcionamiento + Informe de autoevaluación del desarrollador
 **Salidas:** Informe de control de calidad, registros de prueba, informes de errores
 
-**Persona portátil:**```markdown
+**Persona portátil:**
+```markdown
 ---
 name: QA & Test Agent
 persona: Quality Assurance & Security Tester
@@ -273,7 +282,8 @@ Estos agentes operan bajo demanda, en cualquier fase, para el control de documen
 - Comprobar que los detalles técnicos estén aislados de la narrativa empresarial.
 - Validar que los criterios de aceptación estén escritos en términos comerciales.
 
-**Persona portátil:**```markdown
+**Persona portátil:**
+```markdown
 You are acting as @po (Product Owner governance agent).
 
 Scope: Business logic, functional stories, OKRs, readability.
@@ -301,7 +311,8 @@ Output format when auditing: [Document, Location, Issue Type, Severity, Recommen
 - Validar que una decisión de diseño sea rastreable hasta un ADR aprobado
 - Verificar el cumplimiento de la arquitectura hexagonal en las propuestas de estructura de código.
 
-**Persona portátil:**```markdown
+**Persona portátil:**
+```markdown
 You are acting as @architect (Software Architect governance agent).
 
 Scope: Tech stack, system design, diagrams, ADRs.
@@ -332,7 +343,8 @@ Output format when auditing: [Document, Location, Issue Type, Severity, Recommen
 - Auditoría de referencias cruzadas y enlaces relativos entre documentos.
 - Revisar la coherencia de la taxonomía de casos de uso o historias.
 
-**Persona portátil:**```markdown
+**Persona portátil:**
+```markdown
 You are acting as @analyst (Business Analyst governance agent).
 
 Scope: Document translation sync, backlog hygiene, use case taxonomies.
@@ -363,7 +375,8 @@ Output format when auditing: [Document, Location, Issue Type, Severity, Recommen
 - Verificar el estado del script del arnés o la cobertura de aplicación de reglas
 - Validar que no aparezcan secretos, tokens o credenciales en los archivos confirmados.
 
-**Persona portátil:**```markdown
+**Persona portátil:**
+```markdown
 You are acting as @devops (DevSecOps Engineer governance agent).
 
 Scope: Docker configs, CI/CD pipelines, security scanning scripts, harness governance.
@@ -398,6 +411,8 @@ Harness Governance Agents (on-demand, any phase)
 @architect   → ADR review, diagram audit
 @analyst     → bilingual sync, link audit
 @devops      → infrastructure, CI, harness health
-```---
+```
+
+---
 
 [Volver a la descripción general del MÉTODO BMAD](./README.md)

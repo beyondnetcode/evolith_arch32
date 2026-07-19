@@ -39,9 +39,20 @@ jobs:
 
   validate:
     name: Validate documentation
-    # The full documentation-publish pipeline stays manual (workflow_dispatch);
-    # only the tracking-guard job above is armed for PRs/pushes (GT-476).
-    if: github.event_name == 'workflow_dispatch'
+    # GT-563: this job used to carry `if: github.event_name == 'workflow_dispatch'`,
+    # so on every push and pull_request it was SKIPPED -- and a skipped job reports
+    # neutral, which GitHub rolls up as a green "Documentation Validation" check. The
+    # workflow therefore reported SUCCESS on commits whose docs did not validate. A
+    # check that cannot fail is not a check; it is a false signal, and it is worse than
+    # a red one because nobody goes looking for it.
+    #
+    # The gate is removed: validation now runs on push and pull_request, and it BLOCKS.
+    # It is deliberately not marked continue-on-error -- a non-blocking gate would
+    # reproduce the exact defect this fixes, just with more convincing logs.
+    #
+    # The old comment justified the gate as keeping "the full documentation-publish
+    # pipeline" out of PRs. That rationale did not hold: this workflow has no publish
+    # step. The job is npm ci plus a handful of node validators.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -77,16 +88,26 @@ jobs:
       - name: Validate product documentation synchronization
         run: node .harness/scripts/ci/11-validate-product-docs.mjs
 
+      # GT-563: the steps below REPORT, they do not validate. This job runs no tests and
+      # produces no coverage data, and COVERAGE_REPORT.md is untracked, so on a PR the
+      # dashboard --check can only ever report "COVERAGE_REPORT.md is missing" and the
+      # upload can only ever attach nothing. They stay on workflow_dispatch, where a
+      # coverage run can precede them and they measure something real.
+      #
+      # This is a deliberately narrow gate: every VALIDATOR above runs on push and
+      # pull_request and blocks. Only report generation is manual.
       - name: Check coverage dashboard is up to date
+        if: github.event_name == 'workflow_dispatch'
         run: node .harness/scripts/coverage-dashboard.mjs --check
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v7
-        if: always()
+        if: github.event_name == 'workflow_dispatch'
         with:
           name: coverage-report
           path: COVERAGE_REPORT.md
           retention-days: 30
 
       - name: Report bilingual coverage
+        if: github.event_name == 'workflow_dispatch'
         run: node .harness/scripts/bilingual-coverage.mjs

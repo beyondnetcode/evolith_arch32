@@ -32,18 +32,29 @@ Las estrategias de implementación válidas incluyen, entre otras:
 - bases de datos físicas separadas cuando esté justificado;
 - modelos de lectura, proyecciones o almacenes de informes aprobados para consultas entre módulos.
 
-Para implementaciones de referencia de Evolith, el valor predeterminado recomendado es:```text
+Para implementaciones de referencia de Evolith, el valor predeterminado recomendado es:
+```text
 Single physical database + logically separated persistence areas per module/domain
-```Cuando el motor de base de datos seleccionado admite esquemas como contenedores lógicos de primera clase, la estrategia de referencia preferida es:```text
+```
+
+Cuando el motor de base de datos seleccionado admite esquemas como contenedores lógicos de primera clase, la estrategia de referencia preferida es:
+
+```text
 Single physical database + schema per module/domain
-```Ejemplo de estructura de referencia:```text
+```
+
+Ejemplo de estructura de referencia:
+
+```text
 evolith_database
 ├── identity_boundary
 ├── access_boundary
 ├── tenant_boundary
 ├── audit_boundary
 └── notification_boundary
-```Esta decisión no exige múltiples bases de datos físicas durante la primera fase de implementación. La separación física de la base de datos se difiere hasta que un módulo tenga una necesidad justificada de implementación, escalamiento, propiedad, aislamiento de seguridad o extracción de microservicios independientes.
+```
+
+Esta decisión no exige múltiples bases de datos físicas durante la primera fase de implementación. La separación física de la base de datos se difiere hasta que un módulo tenga una necesidad justificada de implementación, escalamiento, propiedad, aislamiento de seguridad o extracción de microservicios independientes.
 ## Architectural Rules
 1. Cada módulo posee su modelo de persistencia y estructuras de persistencia internas.
 2. Un módulo no debe mutar directamente las estructuras de persistencia propiedad de otro módulo.
@@ -61,7 +72,8 @@ Este enfoque se alinea con el principio de Evolith:
 
 > Separar conceptualmente antes de separar físicamente.
 
-Permite el siguiente camino evolutivo:```text
+Permite el siguiente camino evolutivo:
+```text
 Modular Monolith with explicit persistence boundaries
         ↓
 Identify a module that requires extraction

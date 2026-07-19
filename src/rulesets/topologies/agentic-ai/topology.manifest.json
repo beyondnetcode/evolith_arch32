@@ -63,7 +63,7 @@
         "profile": "rulesets/topologies/agentic-ai/README.md",
         "maturityGuide": "rulesets/topologies/agentic-ai/maturity.md"
       },
-      "configurationContract": "rulesets/topologies/agentic-ai/agent.config.schema.json",
+      "configurationContract": "src/rulesets/topologies/agentic-ai/agent.config.schema.json",
       "fixtures": {
         "valid": "rulesets/topologies/agentic-ai/fixtures/valid-agent.config.json",
         "invalid": "rulesets/topologies/agentic-ai/fixtures/invalid-agent.config.json"

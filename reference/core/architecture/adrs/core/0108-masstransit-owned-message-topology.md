@@ -81,7 +81,7 @@ Operator is used **only** for the broker RBAC that MassTransit cannot self-decla
 ## References
 - ADR-0106 (master tenant context projections) · ADR-0107 (single-cluster topology) ·
   ADR-0033 (transactional outbox) · ADR-0050 (messaging naming).
-- Deployment strategy [§5](../../../../product/suite/architecture/evolith-suite-deployment-strategy.md) (verified messaging corrections).
+- Deployment strategy [§5](../../../../../product/suite/architecture/evolith-suite-deployment-strategy.md) (verified messaging corrections).
 - Canonical flow: `mms/docs/architecture/tenant-master-data-projection.md`.
 - Gap: Core board **GT-462**; risk register §15 #2/#3.
 - Manifest: `deploy/kubernetes/messaging/broker-rbac.yaml`.

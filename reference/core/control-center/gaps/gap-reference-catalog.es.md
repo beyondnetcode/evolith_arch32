@@ -390,7 +390,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Acceptance criteria:**
   - [ ] Una actividad acotada se ejecuta vía el adaptador con permisos/plan/aprobación y captura de evidencia. _(el adaptador es acotado —rechaza tools fuera del catálogo— y el envelope del runtime (approval/policy/trace) lo gobierna; la ejecución viva contra Claude/Cowork requiere el `CoworkClient` real —conector/infra)_
   - [x] El ejecutor es reemplazable (cumple el contrato de ejecución del agent-runtime). _(`CoworkAgentEngineAdapter implements IAgentEnginePort`, drop-in como stub/hermes/swarms)_
-- **Dependencies:** GT-387, GT-441.
+- **Dependencies:** GT-387, GT-441. **Bloqueado (2026-07-18) por el trabajo de aprobación del lado Tracker:** el envelope del runtime que gobierna este adaptador enruta la aprobación HITL al Tracker (`TrackerApprovalAdapter`, GT-441, commit `ef9a14d8`), y el endpoint del Tracker al que pregunta todavía no existe — así que toda actividad Cowork gobernada marcada `requiresApproval` se deniega fail-closed hasta que el Tracker lo entregue. Esa mitad se sigue en el board propio del Tracker como `CD-23` (`evolith_tracker` · `docs/audit/tracker-gap-tracking.md`). Este ítem se queda en el board del Core y conserva su estado: sus ficheros afectados son código `agent-runtime` del Core, y la propia regla del catálogo del Tracker es que el trabajo que aterriza en código del Core pertenece al board del Core.
 - **Status:** `IN-PROGRESS`
 
 #### GT-532
@@ -1853,6 +1853,12 @@ Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monore
 
 **Problema:** el AutoApprovalAdapter por defecto auto-aprueba; ChatApprovalAdapter/SlackApprovalAdapter son stubs. **Cierre:** human-in-the-loop real de Tracker/chat detrás de IApprovalPort. **Referencias:** adapters de approval; GT-387.
 
+**Progreso (2026-07-18, commit `ef9a14d8`) — la decisión de canal está tomada y su lado Core está entregado.** El dueño eligió el Tracker: la aprobación va allí, y quién puede aprobar es configuración por tenant ALLÍ. `TrackerApprovalAdapter` implementa `IApprovalPort` preguntando y obedeciendo, por ADR-0101 (el Core recomienda; el Tracker decide, persiste y audita). Deliberadamente no copia la forma de Slack/chat —ésos son envoltorios de entrega sobre un `PendingApprovalAdapter` local donde el Core aún posee el registro, el TTL y la máquina de estados—, así que no posee registro, ni TTL, ni store, y no expone `approve()`/`reject()` en absoluto: una vía de resolución en el Core sería un segundo origen de una concesión, que es precisamente la autoridad que este adaptador existe para ceder. Seis caminos denegatorios fail-closed contra uno de concesión (tenant ausente o en blanco sin llamar nunca al cliente, sin cliente cableado, excepción lanzada, cuelgue acotado por un temporizador inyectable, respuesta malformada, estado no modelado), cada uno con test, más un test final que los recorre todos afirmando `granted: false`. «El Tracker dijo que no» y «no pude preguntar al Tracker» se distinguen por prefijos estables en `reason` con el predicado `isTrackerUnavailable()` en vez de parsear prosa, porque uno es una decisión y el otro una avería. `TrackerApprovalResponse.status` está tipado `string`, no `ApprovalStatus`, porque llega de otro repositorio y tiparlo como el enum haría que el Core afirmara una garantía que sólo el Tracker puede dar; la rama de fallo no lleva campo `status` en absoluto, en espejo de la rama de fallo de `scope-contract`. Verificado: 4 ficheros / +631 líneas, agent-runtime **226 tests**, tsc limpio. **No verificado: nada end-to-end** — todos los tests corren contra fakes inyectados, porque el endpoint no existe en este repositorio.
+
+**Alcance movido fuera (2026-07-18):** la mitad restante es íntegramente del lado Tracker y queda registrada en el board de gaps propio del Tracker como **`CD-23`** (`evolith_tracker` · `docs/audit/tracker-gap-tracking.md` / `tracker-gap-reference-catalog.md`) — un endpoint que acepta `TrackerApprovalSubmission` y devuelve `{ status, approver?, reason?, approvalId? }`, donde `status` es exactamente uno de `pending`/`approved`/`rejected`/`expired` (cualquier otro valor el Core lo trata como avería por diseño, así que un estado no modelado es una denegación y no un paso), `approver` lo puebla el Tracker en `approved`/`rejected` (el Core nunca lo suministra ni cae a `requestedBy`), la configuración de aprobadores por tenant se resuelve íntegramente del lado Tracker, y `correlationId` es idempotente para que una resumisión devuelva el mismo `approvalId` en vez de abrir una segunda aprobación.
+
+**Decisión de estado — se mantiene `EN-PROGRESO`, no se cierra.** El alcance del lado Core no está completo, así que `COMPLETADO` sería una afirmación falsa por dos motivos: (1) `TrackerApprovalClient` —el esquema de URL, la auth y la política de reintentos detrás del seam inyectable— es código del Core en `agent-runtime` y está sin implementar, deliberadamente, porque escribir un cliente contra un contrato que nadie había acordado sería fabricar ese acuerdo; y (2) el remanente deployment-gated ya registrado arriba (URL/secret de webhook en runtime, opt-in de bootstrap, smoke vivo) sigue igual. Entregar el endpoint al board del Tracker retira la obligación del Tracker de esta fila, no la del Core. Cerrar aquí anunciaría un canal HITL funcionando cuyo único comportamiento observable en producción hoy es una denegación fail-closed.
+
 #### GT-442
 
 **Título:** Estrategia de secrets + conectividad a DB de producción
@@ -1883,6 +1889,9 @@ Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monore
 **Título:** Regenerar las superficies de conteos/versiones desactualizadas a la línea base nueva 0.0.1
 
 **Problema:** varias superficies auto/manuales aún afirman números pre-reset — `maturity-reconciliation.json` (`@evolith/smart-cli@1.1.4` publicado + 422/423 gaps), `maturity-assessment.md` (`1.1.0`, "32 MCP tools"), `product-inventory.md` (`1.1.4`, 33 tools / 26 comandos), y el catálogo escrito a mano `evolith-mcp-tools.md` (nombres de tools obsoletos) — contradiciendo la realidad (paquetes 0.0.1 deprecados; board 432/447). **Cierre:** tras aterrizar los cambios en curso de topology/phase-artifacts, regenerar los snapshots de inventario/reconciliación desde código (no a mano) y refrescar el assessment + el catálogo de tools — reseteando versiones a la línea base 0.0.1→1.0.0 y derivando conteos de tools/comandos/resources/prompts de los registros reales. El audit de alineación del 2026-07-04 corrigió el drift de versión/links/campos; la regeneración sensible a conteos está gated por esos cambios. **Referencias:** maturity-reconciliation.json; maturity-assessment.md; product-inventory.md; evolith-mcp-tools.md; generate-product-inventory.mjs; 09-reconcile-maturity.mjs.
+
+- **Cierre (2026-07-18, commit `702de08b`):** Las cuatro superficies nombradas están regeneradas. `maturity-reconciliation.json` se regeneró en `35ea46e1` (559 gaps / 145 rulesets / 132 ADRs / CLI 1.1.0); `maturity-assessment.md` verificado limpio -- sin `1.1.4`, sin "32 tools", sin `@evolith/smart-cli`; `product-inventory.md` limpio en 1.1.0; `evolith-mcp-tools.md` regenerado a 47 tools en `459676aa`. El bloqueador final era el propio generador de inventario: `07-generate-inventories.mjs` resolvía la ruta muerta `rulesets/` y reportaba 0, escribía en una ubicación huérfana, y su flag `--check` ESCRIBÍA ARCHIVOS. Arreglado en `702de08b`; el canónico `maturity-reports/inventory-summary.md` pasó de unos congelados por dos semanas 119 ADRs / 144 rulesets / 40 schemas a 132 / 145 / 44, coincidiendo ahora exactamente con lo que el script 09 deriva de forma independiente.
+- **Estado:** `COMPLETADO`
 
 #### GT-446
 
@@ -6654,6 +6663,19 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 **Referencias:** `.harness/scripts/ci/08-validate-tracking.mjs`; `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/evidence/gap-closure-evidence.json` (`d11c6e52`); GT-476, GT-477, GT-480.
 
+**Alcance entregado** _(esta entrada es anterior al esquema de criterios de aceptación; se marcan aquí las cláusulas del fix propuesto)_:
+- [x] Boards EN/ES resincronizados fila por fila. _(`f3f271da`, `e138b1d4`; guard 08 en verde)_
+- [x] Secciones de catálogo redactadas para `GT-486…509` y `GT-511…522` en ambos idiomas.
+- [x] Los 13 tokens `HECHO` en ES normalizados a `COMPLETADO` (GT-480); no queda ninguna celda de estado `HECHO`.
+- [x] Los 10 registros de cierre legacy inválidos reparados — `partial`→`accepted-scope` (GT-425/431/434/462), criterios de GT-463 verificados contra evidencia, GT-465 reescrito al alcance entregado. _(`f70b98ce`)_
+- [x] Contadores Progress/Progreso re-derivados y consistentes en ambos idiomas (GT-477).
+- [x] Guards 08 y 09 re-armados en CI — `.github/workflows/docs.yml` ejecuta ambos. _(delegado a y entregado por GT-476, ahora `COMPLETADO`)_
+- [x] Remanente CI-owned pagado: la evidencia de madurez se re-observó de verdad, sin bumpear fechas. _(commit `35ea46e1`)_
+
+**Cierre (2026-07-18, commit `35ea46e1`):** La deriva board/registro que rastreaba este gap está reconciliada y el guard 08 está en verde. El último remanente — una observación de madurez genuinamente fresca en vez de un date-bump local — se ejecutó en `35ea46e1`: las cuatro checks llevan `observedAt` 2026-07-18 con URLs de corrida y commits reales, el `asOf` re-sincronizado al board, y tres checks se INVIRTIERON honestamente de PASS a BLOCKED sin relajar ningún umbral. Esas tres fallas estaban mapeadas a este gap como placeholder explícito; ya tienen sus propias filas ([GT-561](#gt-561), [GT-562](#gt-562), [GT-563](#gt-563)) y `maturity-evidence.json` fue repuntado hacia ellas, de modo que cerrar esta fila no deja evidencia colgando de un gap cerrado. _No reclamado por este cierre:_ `09-reconcile-maturity.mjs` sigue reportando su snapshot como stale, porque el `maturity-reconciliation.json` generado no se ha regenerado — esa regeneración pertenece a [GT-553](#gt-553) y [GT-445](#gt-445), no a este gap.
+
+**Estado:** `COMPLETADO`
+
 #### GT-552
 
 **Título:** `release-please` apunta a archivos de configuración que ya no existen
@@ -6667,11 +6689,12 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criticidad:** P1 · **Complejidad:** S
 - **Fix propuesto:** Decidir entre los dos estados finales coherentes — restaurar la configuración de release-please, o migrar el workflow al modelo de versionado manual que declaró el commit que la borró — y alinear el gate de failure-notification en consecuencia.
 - **Criterios de aceptación:**
-  - [ ] El workflow de release ya no referencia archivos inexistentes.
-  - [ ] Se puede cortar una versión end-to-end, o el workflow ya no afirma que puede.
-  - [ ] El issue automático de failure-notification es alcanzable, o se elimina como código muerto.
+  - [x] El workflow de release ya no referencia archivos inexistentes -- `release-please-config.json` y `.release-please-manifest.json` (ambos borrados en `aed33ba9`) ya no se pasan a ninguna action. _(commit `38db17bf`)_
+  - [x] El workflow ya no afirma que puede cortar una versión: el job `release-please` fue reemplazado por un job `release-gate`. _(commit `38db17bf`)_
+  - [x] El issue automático de failure-notification es alcanzable -- SE EJECUTÓ Y TUVO ÉXITO, lo que refuta la afirmación del enunciado original de que era código muerto inalcanzable. _(corrida 29641024724)_
 - **Dependencias:** Ninguna.
-- **Estado:** `PENDIENTE`
+- **Cierre (2026-07-18, commit `38db17bf`):** El cableado está arreglado: los dos archivos de configuración fantasma desaparecieron del workflow y el job huérfano `release-please` es ahora un job `release-gate`, así que el workflow ya no afirma una capacidad que no tiene. _Corrección al enunciado original:_ `failure-notification` NO era código muerto -- se ejecutó y tuvo éxito en la corrida 29641024724. _Registrado con honestidad:_ el pipeline de release sigue fallando, por motivos no relacionados ahora rastreados por [`GT-561`](#gt-561), [`GT-562`](#gt-562) y [`GT-563`](#gt-563); este gap trataba del CABLEADO roto, que está arreglado.
+- **Estado:** `COMPLETADO`
 
 #### GT-553
 
@@ -6686,10 +6709,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criticidad:** P2 · **Complejidad:** S
 - **Fix propuesto:** Borrar las tres constantes muertas y reapuntar el escaneo de rulesets a `src/rulesets/`; regenerar el snapshot.
 - **Criterios de aceptación:**
-  - [ ] Ninguna constante del guard referencia la ruta `vision/` borrada.
-  - [ ] `rulesetCount` reporta el número real de rulesets bajo `src/rulesets/`.
-- **Dependencias:** La regeneración está gated por el refresh de evidencia de madurez rastreado en [`GT-523`](#gt-523).
-- **Estado:** `PENDIENTE`
+  - [x] Ninguna constante del guard referencia la ruta `vision/` borrada -- satisfecho por [`GT-556`](#gt-556): todas las constantes resuelven ahora vía `resolveKey`, y la única mención restante es un comentario explicativo. _(commit `35ea46e1`)_
+  - [x] `rulesetCount` reporta el número real de rulesets bajo `src/rulesets/`: **145**, coincidiendo con `find src/rulesets -name "*.rules.json" | wc -l`. _(commit `35ea46e1`)_
+- **Dependencias:** La regeneración estaba gated por el refresh de evidencia de madurez rastreado en [`GT-523`](#gt-523); el snapshot se regeneró en `35ea46e1`, así que no queda nada esperando.
+- **Cierre (2026-07-18, commit `35ea46e1`):** Ambos criterios se cumplen y el snapshot está regenerado. _Corrección al enunciado original:_ el snapshot commiteado SÍ llevaba el campo `rulesetCount`, como `0` -- no estaba ausente, y ese cero era el síntoma del escaneo a `rulesets/` en vez de `src/rulesets/`.
+- **Estado:** `COMPLETADO`
 
 #### GT-554
 
@@ -6704,10 +6728,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criticidad:** P2 · **Complejidad:** S
 - **Fix propuesto:** Reapuntar la sección 5.H a `control-center/`, y documentar el procedimiento de intake de gaps de principio a fin, incluyendo la asignación de identificadores.
 - **Criterios de aceptación:**
-  - [ ] Toda ruta citada en CONTRIBUTING resuelve.
-  - [ ] El documento explica cómo registrar un gap: esquema de entrada, asignación de identificador y evidencia de cierre.
+  - [x] Toda ruta citada en CONTRIBUTING resuelve -- la sección 5.H se reapuntó del borrado `reference/core/sdlc/standards/vision/` a las cuatro superficies reales bajo `control-center/`, y las rutas con drift del archivo en español (`sdk/cli`, `rulesets/schema/`, `rulesets/opa/`, todas sin `src/`) también se corrigieron. 28/28 encabezados. _(commit `9a13d0d6`)_
+  - [x] El documento explica cómo registrar un gap: una nueva sección 6 documenta el procedimiento de intake escrito desde los artefactos reales -- el protocolo de reservar-luego-empujar de `COORDINATION.md`, la forma de fila del board que el guard parsea, un esqueleto de catálogo que coincide con el esquema real, un registro de evidencia de cierre con forma real y sus siete campos, y los comandos de validación. _(commit `9a13d0d6`)_
 - **Dependencias:** Se solapa con el mecanismo de intake propuesto en [UP-003](../opportunities/UP-003-user-contribution-intake-mechanism.es.md).
-- **Estado:** `PENDIENTE`
+- **Cierre (2026-07-18, commit `9a13d0d6`):** CONTRIBUTING describe ahora el proceso que realmente existe: toda ruta citada resuelve en ambos idiomas, y el procedimiento está escrito desde los artefactos que el contribuidor va a encontrar, no de memoria.
+- **Estado:** `COMPLETADO`
 
 #### GT-555
 
@@ -6722,8 +6747,220 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criticidad:** P2 · **Complejidad:** S
 - **Fix propuesto:** Añadir `CODEOWNERS`, un `config.yml` de plantillas que enlace Discussions y el reporte de seguridad, plantillas de bug y de funcionalidad, y reubicar `FUNDING.yml` a `.github/`.
 - **Criterios de aceptación:**
-  - [ ] Existe `CODEOWNERS` y enruta la revisión de las áreas principales.
-  - [ ] Se puede registrar un bug y una solicitud de funcionalidad desde el selector de issues.
-  - [ ] `FUNDING.yml` se renderiza en la página del repositorio.
+  - [x] Existe `CODEOWNERS` y enruta la revisión de las áreas principales -- `.github/CODEOWNERS`. _(commit `9a13d0d6`)_
+  - [x] Se puede registrar un bug y una solicitud de funcionalidad desde el selector de issues -- `.github/ISSUE_TEMPLATE/bug-report.yml` y `feature-request.yml`, en lenguaje llano, más `config.yml` que desactiva los issues en blanco y ofrece enlaces de contacto a Discussions, el aviso privado de seguridad y CONTRIBUTING. _(commit `9a13d0d6`)_
+  - [x] `FUNDING.yml` se renderiza en la página del repositorio -- movido de `src/sdk/cli/` a `.github/`. _(commit `9a13d0d6`)_
 - **Dependencias:** Alimenta el entregable de puente a GitHub de [UP-003](../opportunities/UP-003-user-contribution-intake-mechanism.es.md).
+- **Cierre (2026-07-18, commit `9a13d0d6`):** La superficie de colaboración es usable desde fuera del equipo core. _Casi-fallo registrado:_ CODEOWNERS salió primero nombrando `@beyondnetcode/evolith-team`, copiado del notificador de fallos del workflow de release -- ese equipo NO EXISTE (`gh api orgs/beyondnetcode/teams` devuelve solo `evolith-core-s-development`). GitHub ignora en silencio un owner que no resuelve, así que cada línea habría enrutado a nadie mientras el archivo parecía correcto. Corregido al equipo verificado, que además se confirmó con acceso al repositorio; el mismo handle erróneo en `sdk-cli-release.yml` fue arreglado, lo que significa que esa notificación de fallo llevaba mencionando a nadie.
+- **Estado:** `COMPLETADO`
+
+#### GT-556
+
+**Título:** Los guards del harness resolvían rutas desde `process.cwd()`, así que la respuesta de un guard dependía de dónde se invocara
+
+- **Propósito:** Hacer que un guard produzca el mismo veredicto sin importar el directorio desde el que se ejecuta, y que una ruta muerta falle en voz alta en vez de leer silenciosamente nada.
+- **Evidencia:** `30-validate-phase-topology-disjoint` reportó **8 ids de topología desde la raíz del repo y 5 desde `src/`**, saliendo con 0 en ambos casos — el mismo guard, el mismo commit, dos respuestas distintas y ningún fallo en ninguna. Seis literales de ruta del harness apuntaban a directorios que ya no existen: `rulesets/topologies` (real: `src/rulesets/topologies`), `reference/products` (real: `product/products`), `reference/knowledge/demo/examples` (real: `product/research/demo/examples`), `reference/infrastructure/helm` (real: `product/infra/helm`), `reference/navigation` (real: `MASTER_INDEX.md` en la raíz / `control-center/taxonomy`) y `reference/core/sdlc/standards/vision` (real: repartido entre `control-center/{gaps,evidence,maturity-reports}`).
+- **Impacto:** Todo guard que lee el repositorio solo es confiable si se invoca desde un directorio concreto, y esa no es una propiedad que CI, un hook de pre-commit y una shell de desarrollo compartan.
+- **Riesgo:** Un guard cuyo alcance se encoge en silencio con el directorio de trabajo es peor que no tener guard: produce un verde que un revisor trata razonablemente como cobertura.
+- **Archivos afectados:** `.harness/scripts/lib/paths.mjs`; los 15 guards migrados bajo `.harness/scripts/ci/`.
+- **Componente:** `Harness` · **Dimensión:** Reliability · **Tipo:** tooling
+- **Criticidad:** P0 · **Complejidad:** M
+- **Fix propuesto:** Derivar la raíz del repositorio por ascenso de marcadores en vez de desde `process.cwd()`, hacer que la resolución de rutas falle cerrada cuando el destino no existe, y migrar todos los guards al resolvedor compartido.
+- **Criterios de aceptación:**
+  - [x] La raíz del repositorio se deriva por ascenso de marcadores — `package.json`, `.harness` y `evolith.yaml` presentes **juntos** — de modo que no depende del directorio de invocación. _(commit `83539a29`)_
+  - [x] `resolve()` lanza cuando una ruta no existe, con `optional()` como vía de escape explícita para destinos genuinamente opcionales; `PATH_KEYS` exporta las ~45 ubicaciones nombradas, así que un literal muerto no puede reintroducirse a mano. _(commit `83539a29`)_
+  - [x] Los seis literales de ruta muertos están reparados y un `collectFiles()` compartido reemplaza los cinco recorridos de directorio artesanales. _(commit `83539a29`)_
+  - [x] Los 15 scripts migrados — 06, 09, 11, 12, 19, 21, 22, 25, 27, 29, 30, 31, 32, 33 y `34-check-skill-registry-parity` — producen cada uno salida idéntica desde la raíz del repo, desde `src/` y desde `/tmp`. _(el script 30 ahora reporta "5 SDLC phase ids disjoint from 8 topology ids" desde los tres)_
+- **Dependencias:** ninguna.
+- **Cierre (2026-07-18, commit `83539a29`):** La resolución de rutas del harness es ahora fail-closed e independiente del cwd. La divergencia 8-vs-5 del script 30 desapareció: los mismos tres directorios de invocación arrojan el mismo corpus, y un literal de ruta que ya no resuelve lanza en vez de leer un conjunto vacío.
+- **Status:** `DONE`
+
+#### GT-557
+
+**Título:** Una comprobación que escaneaba cero elementos reportaba éxito
+
+- **Propósito:** Hacer distinguible "no encontré problemas" de "no miré nada", para que un escaneo vacío no pueda pasar por cobertura.
+- **Evidencia:** **Siete falsos verdes confirmados.** El par decisivo son `31-detect-duplicate-rulesets` y `32-validate-ruleset-schemas`, que escaneaban `rulesets/` — un directorio que **existe** pero solo contiene `agents/`, así que cero archivos `.rules.json` coincidían mientras el corpus real de **145 rulesets** vive en `src/rulesets`. `existsSync` pasaba, la ruta estaba viva, y la respuesta seguía siendo fabricada; por eso el guardrail debe aseverar sobre elementos escaneados y no sobre validez de ruta. Las otras instancias: `12-validate-bmad-signatures` imprimía su línea de éxito porque `if (existsSync(adrDir))` saltaba el bucle entero; `11-validate-product-docs` leía el `package.json` equivocado, de modo que `pkg.version` era siempre `undefined` y su aserción de deriva de versión nunca podía dispararse (su lista SHIPPED además nombraba `evolith-cli` donde el directorio real es `smart-cli`); la comprobación de barrel de `33-check-adapter-freshness` nunca se disparaba; y `27-opa-parity-gate` evaluaba 26 fixtures desde `/tmp` y 0 desde la raíz del repo, exit 0 en ambos casos, porque `git diff` heredaba el cwd y el `catch` promovía silenciosamente la ejecución a alcance FULL.
+- **Impacto:** Siete guards que un revisor contaba como cobertura no aseveraban nada, atravesando rulesets, firmas de ADR, docs de producto, frescura de adaptadores y paridad OPA.
+- **Riesgo:** Un falso verde es más dañino que una comprobación ausente, porque se cita activamente como evidencia de que la propiedad se cumple.
+- **Archivos afectados:** `.harness/scripts/lib/coverage.mjs`; `.harness/scripts/lib/coverage.test.mjs`, `.harness/scripts/lib/paths.test.mjs`.
+- **Componente:** `Harness` · **Dimensión:** Reliability · **Tipo:** tooling
+- **Criticidad:** P0 · **Complejidad:** M
+- **Fix propuesto:** Introducir una aserción de cobertura compartida que falle cuando un escaneo no tocó ningún elemento, impida que una fuente viva enmascare una muerta, y exija una justificación escrita allí donde el vacío sea genuinamente legítimo.
+- **Criterios de aceptación:**
+  - [x] `assertScanned` lanza cuando un escaneo produjo cero elementos, así que un corpus vacío ya no puede reportar éxito. _(commit `83539a29`)_
+  - [x] `assertScannedPerSource` impide que una raíz viva enmascare una muerta en un escaneo multi-fuente. _(commit `83539a29`)_
+  - [x] `allowEmpty` exige un `reason` escrito en el call site y deliberadamente **no** es configurable desde una variable de entorno ni un archivo de configuración, así que la exención no puede concederse a distancia. _(commit `83539a29`)_
+  - [x] La regresión queda fijada por tests: 28 tests en `.harness/scripts/lib/*.test.mjs`, incluidas tres pruebas de independencia del cwd — invarianza ante chdir, un subproceso real lanzado desde tres directorios, y un test de tamaño de corpus que fija la regresión 8-vs-5. _(`node --test .harness/scripts/lib/paths.test.mjs .harness/scripts/lib/coverage.test.mjs` — 28 pasando)_
+- **Dependencias:** ninguna.
+- **Cierre (2026-07-18, commit `83539a29`):** El guardrail asevera sobre lo que se escaneó, no sobre si una ruta resulta existir — que es exactamente la distinción que el caso `rulesets/` derrotaba. Medido contra el corpus: `find src/rulesets -name "*.rules.json" | wc -l` devuelve 145 donde el `rulesets/` escaneado devolvía 0.
+- **Status:** `DONE`
+
+#### GT-558
+
+**Título:** Coexistían seis modelos de hallazgo cuya intersección real era solo `message` más alguna noción de severidad
+
+- **Propósito:** Dar al hallazgo una forma que pueda conservar al cruzar de una revisión a un scorecard y a la base de conocimiento, y hacer imposible omitir su origen.
+- **Evidencia:** Coexistían seis modelos — `EvidenceFinding`, `RiskFinding`, `GapFinding`, `GateViolation`, `ValidationIssue` y `Violation`. Su intersección real es `message` más alguna noción de severidad; **cinco no llevan procedencia y ninguno lleva determinismo**. `GateViolation` y `ValidationIssue` además se habían **bifurcado** hacia `src/packages/sdk-client/src/mcp/types.ts`: el `GateViolation` del SDK ensanchó la severidad y reemplazó el `location` REQUERIDO por un `artifact?` opcional, y el `ValidationIssue` del SDK degradó a `severity: string`, perdiendo la restricción `MUST|SHOULD|COULD`. Ninguna de las bifurcaciones es asignable a su contraparte de dominio en ninguna dirección.
+- **Impacto:** Un hallazgo que se mueve entre superficies pierde procedencia y significado de severidad en cada salto, y el sistema de tipos no puede detectar la pérdida.
+- **Riesgo:** La reconciliación de severidad es una proyección interpretativa y por tanto no es reversible; colapsarla sin retener el token propio del productor destruye información en silencio.
+- **Archivos afectados:** `src/packages/core-domain/src/evaluation/contracts/finding.ts`; `src/packages/core-domain/src/evaluation/sarif-exporter.ts`.
+- **Componente:** `Core Domain` · **Dimensión:** Governance · **Tipo:** backend
+- **Criticidad:** P0 · **Complejidad:** M
+- **Fix propuesto:** Añadir un `Finding` canónico con mappers puros desde las seis formas, estrictamente aditivo, con el origen como argumento requerido y el token de severidad literal del productor retenido.
+- **Criterios de aceptación:**
+  - [x] Existe un `Finding` canónico con mappers puros desde las seis formas, y el cambio es **estrictamente aditivo** — no se modificó ninguna interfaz ni call site existente. _(commit `30013b07`)_
+  - [x] `FindingOrigin` es un segundo argumento requerido en todos los mappers, así que un hallazgo sin atribuir es un error de compilación. _(commit `30013b07`)_
+  - [x] La severidad reconcilia a `info|low|medium|high|critical`, con `error` mapeando a `high` y deliberadamente **no** a `critical`, y el token literal del productor retenido en `sourceSeverity` porque la proyección no es reversible; `advisory: true` es un tipo literal. _(commit `30013b07`)_
+  - [x] Queda resuelta la séptima duplicación que el compilador sacó a la luz al cablear el barrel: `sarif-exporter.ts` tenía su propio `parseFindingLocation`, y como los dos **no** son equivalentes — SARIF trata cualquier string como un uri de archivo, mientras el canónico distingue un `path` parseable de un `ref` opaco y excluye URLs — el interno de SARIF se renombró `parseSarifLocation` en vez de fusionarse. _(commit `30013b07`)_
+  - [x] 38 tests nuevos cubren el contrato y los mappers. _(`npx jest` en core-domain: 106 suites / 1145 tests pasando)_
+- **Dependencias:** Registrado en [ADR-0116](../../architecture/adrs/core/0116-canonical-finding-and-authority-boundary.es.md).
+- **Cierre (2026-07-18, commit `30013b07`):** El contrato canónico y sus seis mappers están en su sitio y registrados en ADR-0116, aditivos por construcción, así que no hubo que migrar nada para aterrizarlo. _Follow-up anotado:_ las dos bifurcaciones de `sdk-client` siguen **sin retirar** — quitarlas es un cambio incompatible y requiere una decisión de semver.
+- **Status:** `DONE`
+
+#### GT-559
+
+**Título:** La frontera de autoridad consultiva era prosa recodificada en 60 archivos
+
+- **Propósito:** Convertir la frontera de autoridad consultiva en algo que un revisor pueda citar y una máquina pueda comprobar.
+- **Evidencia:** La frontera estaba reformulada como prosa a lo largo de **60 archivos** — "binding: false", "advisory", "non-binding", "recommends but does not decide" — así que no había nada que citar en una revisión ni nada que pudiera detectar una violación.
+- **Impacto:** La restricción más estructural de un motor consultivo solo podía aplicarla un lector que casualmente la recordara.
+- **Riesgo:** Una regla que solo existe como prosa deriva entre sus reformulaciones, y la deriva es invisible.
+- **Archivos afectados:** `src/packages/core-domain/src/domain/authority-policy.ts`.
+- **Componente:** `Core Domain` · **Dimensión:** Governance · **Tipo:** backend
+- **Criticidad:** P0 · **Complejidad:** M
+- **Fix propuesto:** Codificar la frontera como una función de decisión tipada con ids de regla estables y referencias a cláusulas del ADR, y codificar el ciclo de vida de promoción de ADR-0097 como datos en vez de describirlo de nuevo.
+- **Criterios de aceptación:**
+  - [x] `evaluateAuthority()` devuelve una decisión tipada que lleva una razón citable, un id de regla estable (`AP-R01`..`AP-R06`) y la cláusula del ADR de la que deriva. _(commit `e1f4901a`)_
+  - [x] `ActorKind` (`agent|engine|ci|human|custodian|board`) separa las acciones asertivas — `observe`, `recommend`, `attach-evidence`, `draft-candidate` — de las autoritativas — `accept`, `promote`, `ratify`, `waive`, `enforce`. _(commit `e1f4901a`)_
+  - [x] El ciclo de vida de ADR-0097 está codificado como datos (`PROMOTION_SEQUENCE`, `PROMOTION_AUTHORITY`, `isValidPromotion`), y la promoción se comprueba como dos preguntas separadas — si el movimiento es legal (AP-R04) y si este es el actor que puede hacerlo (AP-R05) — de modo que un revisor puede distinguir "etapa equivocada" de "persona equivocada"; AP-R03 (auto-autorización) está ordenada por delante de AP-R02 (el actor no es humano) deliberadamente. _(commit `e1f4901a`)_
+  - [x] 34 tests nuevos cubren las reglas y su ordenamiento. _(`npx jest` en core-domain: 106 suites / 1145 tests pasando)_
+- **Dependencias:** Registrado en [ADR-0116](../../architecture/adrs/core/0116-canonical-finding-and-authority-boundary.es.md); ADR-0097 aporta el ciclo de vida de promoción aquí codificado.
+- **Cierre (2026-07-18, commit `e1f4901a`):** La frontera es ejecutable y está registrada en ADR-0116. _Deliberadamente no codificado:_ la auto-revisión humana (ningún ADR la prohíbe); qué oficina puede ratificar, dispensar o hacer cumplir (diferido a `domain/rbac`); y el gate de evidencia de KI-R03 (permanece en `knowledge-intake.rego`). _Follow-up anotado:_ `PromotionStatus` está ahora declarado tanto aquí como en `agent-runtime/src/application/automation-candidate.ts:25`.
+- **Status:** `DONE`
+
+#### GT-560
+
+**Título:** El circuit breaker es un huérfano registrado en DI
+
+- **Propósito:** O poner llamadas reales a dependencias detrás del breaker, o dejar de puntuar resiliencia sobre un componente que no protege nada.
+- **Evidencia:** `CircuitBreakerService` (`src/apps/core-api/src/infrastructure/resilience/circuit-breaker.service.ts`) envuelve genuinamente opossum 9.0.0 y está provisto en `src/apps/core-api/src/app.module.ts:99`, pero en todo `src/` hay CERO inyecciones del servicio y CERO llamadores de `createBreaker` fuera del propio servicio y su spec. Ninguna llamada a base de datos, llamada HTTP ni fetch a satélite está detrás de un breaker, y `getStats()` es inalcanzable desde cualquier controlador.
+- **Impacto:** `reference/core/foundations/common-rules/senior-architectural-assessment.md:35` puntúa "Resilience 7/10 -- Circuit breaker via `opossum` is OK", una calificación otorgada a un componente que no protege nada.
+- **Riesgo:** Una puntuación de resiliencia derivada de un provider registrado pero sin usar exagera lo que el sistema realmente sobrevive.
+- **Archivos afectados:** `src/apps/core-api/src/infrastructure/resilience/circuit-breaker.service.ts`; `src/apps/core-api/src/app.module.ts`; `reference/core/foundations/common-rules/senior-architectural-assessment.md`.
+- **Componente:** `Core API` · **Dimensión:** Reliability · **Tipo:** backend
+- **Criticidad:** P1 · **Complejidad:** M
+- **Fix propuesto:** Decidir QUÉ dependencias deben envolverse y enrutarlas por el breaker, y luego volver a derivar la puntuación de resiliencia de lo que realmente está protegido. La decisión es de diseño de producción, y por eso no se hizo en línea.
+- **Segunda investigacion (2026-07-18) -- el alcance reducido TAMBIEN era falso:** "envolver la cache Redis" no se puede hacer, porque **core-api nunca se conecta a Redis**. Dos defectos independientes: `redis-store.factory.ts:13` desestructura `{ KeyvRedis }` de `@keyv/redis`, pero v5 lo exporta como DEFAULT -- el export nombrado es `undefined`, asi que `new KeyvRedis(url)` lanza y el try/catch de :29 se lo traga; y `redis-cache.module.ts:28` pasa `store:` mientras cache-manager v3 lee `stores:`, de modo que arreglar solo el primero seguiria dando una cache en memoria. Neto: la cache funciona pero es local al proceso, toda la configuracion `REDIS_*` se ignora en silencio, y se registran dos avisos en cada arranque. Envolver esto habria puesto una maquina de estados alrededor de un `Map`. **Y arreglar solo el cableado seria estrictamente PEOR que hoy:** con un Redis bien cableado pero inalcanzable, `get`/`set` se CUELGAN indefinidamente en vez de rechazar (medido: siguen pendientes a los 8s y a los 16s), convirtiendo un fallo de cache en una peticion colgada. El breaker se justifica solo CONJUNTAMENTE con el arreglo del cableado, nunca antes ni como seguimiento -- el timeout de opossum convierte el cuelgue en un fallo rapido y el fallback lo convierte en un miss. La decision previa se mantiene: habilitar Redis convierte una dependencia de red hoy inexistente en una viva, y eso es decision de diseno de produccion. Si la cache local al proceso basta para un evaluador sin estado (ADR-0101), el arreglo correcto es BORRAR el cableado muerto de Redis y sacar el breaker del alcance, no repararlo. Hallazgo adyacente: `CacheMetricsService.recordHit/recordMiss/recordError` tampoco tienen llamadores, asi que las metricas de cache son permanentemente cero.
+- **Investigacion (2026-07-18):** La premisa de que hay dependencias que envolver es en gran medida FALSA, y eso cambia el arreglo. `core-api` hace exactamente dos llamadas salientes, ambas en guards (`api-key.guard.ts`, `metrics-auth.guard.ts`): un `fetch` al sidecar de Dapr para leer un secreto, ya cacheado por proceso, ya envuelto en try/catch y ya con caida a variable de entorno. No declara cliente HTTP (ni axios ni got ni undici) ni driver de base de datos. Es coherente con ADR-0101, que hace del Core un evaluador sin estado: un servicio que no llama a nadie no necesita protegerse de que nadie le falle. La unica dependencia saliente recurrente es la cache Redis via `RedisCacheModule`. Los adaptadores que SI hacen I/O de red -- `webhook.adapter.ts` y `github-api.adapter.ts` -- viven en `infra-providers` y los consume el CLI, no el Core. Las opciones honestas son: envolver solo la cache Redis (pequeno y honesto); mover el breaker a `infra-providers`, donde estan las llamadas reales; o aceptar que el Core necesita muy poco de esto. Lo que NO esta en duda es la nota: `senior-architectural-assessment.md` puntuaba Resiliencia 7/10 sobre un componente que no protege nada, corregida a 4/10 con la evidencia.
+- **Criterios de aceptación:**
+  - [ ] Al menos una llamada real a una dependencia se ejecuta a través de `CircuitBreakerService`.
+  - [ ] `getStats()` es alcanzable desde una superficie operativa.
+  - [ ] La calificación de resiliencia del assessment refleja lo que el breaker protege realmente.
+- **Dependencias:** Ninguna.
 - **Estado:** `PENDIENTE`
+
+#### GT-561
+
+**Título:** El smoke test de MCP expira, hace fallar E2E y arrastra a DAST
+
+- **Propósito:** Restaurar un pipeline verde para que una regresión genuina siga siendo visible.
+- **Evidencia:** El job E2E Tests falla en el smoke stdio/HTTP de MCP con `MCP smoke test FAILED: Timed out waiting for initialize (id 1)`; DAST falla después, aguas abajo, con `MCP Server failed to start after 60s`. Observado el 2026-07-18 en la corrida 29646397424. La última corrida verde de este pipeline fue el 2026-06-30.
+- **Impacto:** Dos jobs están en rojo en cada corrida, y el fallo de DAST es consecuencia del primero, no un hallazgo independiente.
+- **Riesgo:** Un pipeline permanentemente rojo normaliza la señal roja, y a partir de ahí una regresión real pasa inadvertida.
+- **Archivos afectados:** el harness de smoke de MCP y el script `mcp:smoke` que ejecuta.
+- **Componente:** `MCP Server` · **Dimensión:** Reliability · **Tipo:** ci
+- **Criticidad:** P1 · **Complejidad:** M
+- **Fix propuesto:** Diagnosticar por qué el servidor nunca responde `initialize` dentro del timeout del smoke, corregir la causa, y confirmar que DAST se recupera cuando el servidor arranca.
+- **Criterios de aceptación:**
+  - [x] El smoke de MCP completa sin timeout en `initialize`. _(corrida [29665015800](https://github.com/beyondnetcode/evolith_arch32/actions/runs/29665015800): pasa en ambos transportes -- 47 tools, 11 resources, 8 prompts, ambos chequeos `tools/call`, stdio y HTTP)_
+  - [x] El job E2E Tests pasa. _(**success** en la corrida 29665015800)_
+  - [x] DAST ya no falla con `MCP Server failed to start after 60s`. _(los pasos `Start MCP Server` y `Wait for MCP Server` del job DAST tienen éxito ambos en la corrida 29665015800)_
+- **Dependencias:** Ninguna.
+- **Cierre (2026-07-18, commit `b408a0ef`):** El servidor nunca estuvo roto. El smoke lanzaba `node dist/main.js mcp serve` desde el dist del CLI, y el commit `dc0b9667` (2026-06-30, "decouple mcp-server from smart-cli") ELIMINÓ ese comando — la fecha exacta de la última corrida verde. El proceso moría al instante con `error: unknown command 'mcp'`, pero la ruta stdio canalizaba stderr y nunca lo leía, así que un fallo duro instantáneo se reportaba como un timeout de 5 segundos; esa desorientación es la razón de que la causa permaneciera opaca 19 días. El fix reapunta ambos transportes al gateway standalone, agrega un chequeo previo que falla con "build it first" en vez de expirar, y pliega stderr y el código de salida temprana dentro del mensaje de fallo. _No se debilitó ninguna aserción y NO se subió ningún timeout_ — el arranque mide ~1s, así que el límite de 5s nunca estuvo implicado. _Corrección a la premisa del propio gap:_ DAST NO era una cascada aguas abajo de E2E. Los jobs son independientes y DAST llevaba su PROPIA copia de la misma invocación obsoleta `mcp serve`, así que arreglar solo el smoke lo habría dejado en rojo; su paso de arranque también fue reapuntado, más `--allow-no-auth` para que ZAP escanee una superficie alcanzable. _Se necesitaron tres commits de seguimiento antes de poder OBSERVAR los criterios_, y la cadena queda registrada porque cada capa ocultaba la de abajo: `6cac6cda` — el bump de SDK 2.0.0 había dejado `package-lock.json` desincronizado, así que `npm ci` se negaba y ocho jobs morían en su primer paso, sin llegar nunca al smoke; `b75d43fc` — el filtro `paths` del pipeline del CLI no listaba `package.json` / `package-lock.json`, así que ni la rotura ni su arreglo disparaban el pipeline que afectaban (también listaba `release-please-config.json`, borrado en `aed33ba9` — un filtro vigilando una ruta que no puede cambiar); `37cbeae1` — DAST seguía reportando rojo por `Resource not accessible by integration`, porque la acción de ZAP archiva su reporte como issue de GitHub y el workflow no otorga `issues: write`; el escaneo en sí estaba limpio (`FAIL-NEW: 0, PASS: 146`), así que se deshabilitó el archivado de issues en vez de darle permiso de escritura a un escáner, ya que el reporte se sube como artefacto. _Dicho con claridad:_ el job sigue mostrándose en rojo por razones ajenas a este gap — el gate de cobertura de ramas del CLI (69.3% contra un umbral de 75%, rastreado por [GT-562](#gt-562)) y 12 hallazgos preexistentes de terminología bilingüe en archivos tocados por última vez entre 2026-07-04 y 2026-07-13. El pipeline no está verde.
+- **Estado:** `COMPLETADO`
+
+#### GT-562
+
+**Título:** La cobertura de ramas regresionó por debajo del gate
+
+- **Propósito:** Saldar una regresión de cobertura en vez de mover la línea que la detectó.
+- **Evidencia:** Pasan 71 suites y 969 tests con 0 fallos, pero el gate bloqueante de cobertura falla: `Coverage for branches (62.89%) does not meet "global" threshold (75%)`. Observado el 2026-07-18 en la corrida 29646397424.
+- **Impacto:** El gate de cobertura bloquea, y la lectura honesta es que la cobertura de ramas cayó por debajo de un umbral que sigue siendo correcto.
+- **Riesgo:** La respuesta más barata -- relajar el umbral -- convertiría una regresión medida en un estándar rebajado de forma permanente.
+- **Archivos afectados:** la suite de tests de `core-api` y su configuración de cobertura de Jest.
+- **Componente:** `SDK CLI` · **Dimensión:** Reliability · **Tipo:** testing
+- **Criticidad:** P2 · **Complejidad:** M
+- **Fix propuesto:** Añadir cobertura de ramas donde se perdió hasta que la suite supere el 75 por ciento. El gate se deja deliberadamente intacto.
+- **Decision del propietario (2026-07-18):** Registrado como DEUDA en vez de pagarse ahora. La cobertura paso de 62.85% a 69.38% (+168 ramas) cubriendo aquellas cuyo fallo si haria dano -- `handleError`, las rutas de aprobacion/expiracion del comando waiver, la validacion contra cero reglas, la resolucion del corpus empaquetado que toma todo usuario instalado, y el orden de precedencia de satelites de ADR-0109. Los 5.6 puntos restantes cuestan unas 100-140 pruebas sobre el gating de asistentes interactivos (`init`, `update`, `scaffold`, `profile`, `satellite-adopt`) y el formateador YAML/tabla -- pruebas que comprueban que se pregunto algo a un mock. EL UMBRAL SE QUEDA EN 75 Y LA PUERTA SIGUE EN ROJO: esto es una regresion a pagar, no un liston que bajar. Otras ~100 ramas en `adr`/`standards`/`agents` quedan excluidas a proposito porque estan dominadas por el defecto del sobre de exito hallado junto a este trabajo; cubrirlas antes de arreglarlo bendeciria el bug.
+- **Criterios de aceptación:**
+  - [ ] La cobertura de ramas está en o por encima del umbral global existente del 75 por ciento.
+  - [ ] El umbral en sí queda sin cambios.
+- **Dependencias:** Ninguna.
+- **Estado:** `PENDIENTE`
+
+#### GT-563
+
+**Título:** 174 errores de validación documental, y el workflow que debería detectarlos reporta éxito
+
+- **Propósito:** Arreglar el corpus documental y hacer que el check que lo mide realmente se ejecute.
+- **Evidencia:** `01-validate-docs.mjs` sale con 1 y 174 errores -- 108 enlaces rotos, 44 emoji, 9 mojibake y 5 violaciones de esquema de topology-manifest -- confirmado localmente en el commit `5cd18bea`. Aparte, el workflow `Documentation Validation` reporta SUCCESS en ese mismo commit, porque su job `validate` está condicionado a `workflow_dispatch` y por tanto se salta; solo corre el guard de tracking.
+- **Impacto:** El corpus arrastra 174 errores reales mientras el workflow que debería exponerlos está en verde.
+- **Riesgo:** Un check en rojo que nadie ve es peor que un check en rojo: la insignia verde se cita como evidencia de que el corpus está limpio.
+- **Archivos afectados:** `.harness/scripts/ci/01-validate-docs.mjs`; el workflow `Documentation Validation`; las 174 ubicaciones reportadas.
+- **Componente:** `Documentation` · **Dimensión:** Governance · **Tipo:** docs
+- **Criticidad:** P2 · **Complejidad:** L
+- **Fix propuesto:** Limpiar los 174 errores y quitar el gate `workflow_dispatch` del job `validate` para que el check corra en cada push. Ambas mitades pertenecen a este gap.
+- **Criterios de aceptación:**
+  - [x] `node .harness/scripts/ci/01-validate-docs.mjs` sale con 0.
+  - [x] El job `validate` corre sin condición, de modo que el resultado del workflow refleja el veredicto del validador.
+- **Dependencias:** Ninguna.
+- **Cierre (2026-07-18, commit `c63c3eb7`):** El workflow condicionaba su job `validate` a `workflow_dispatch`, de modo que en push y pull_request solo corria el guard de tracking y el job reportaba verde sobre una comprobacion que nunca se ejecutaba. Ahora esta armado en ambos, bloqueante. TRES DE LAS CUATRO CATEGORIAS DE ERROR NO ERAN DEFECTOS: 97 de 108 "enlaces rotos" vivian en `src/sdk/cli/rulesets/**`, una copia de build gitignoreada, identica byte a byte a su origen y rota solo porque esta dos directorios mas abajo -- la exencion para exactamente esto ya existia pero apuntaba a una ruta ausente en ambas ubicaciones, y ahora se deriva de git para que no vuelva a quedar obsoleta; los 9 "mojibake" eran todos falsos positivos, con la regla buscando vocales corruptas al inicio de palabra sin limite de palabra, de forma que `ipicas` casaba dentro de `tipicas` correctamente escrito; y las 5 violaciones de esquema eran un esquema obsoleto cuyas raices permitidas eran el layout anterior a `src/`. Aparecieron y se corrigieron dos defectos mas: `stripCodeBlocks` casaba fences sin anclar, asi que un triple backtick en linea desincronizaba el emparejado y borraba la PROSA ENTRE bloques en vez de los bloques, eximiendola en silencio de toda comprobacion de contenido y ocultando violaciones reales de emoji; y `10-validate-contract-conformance.mjs` llevaba crasheando en cada invocacion desde el refactor a `src/`, sin que nadie lo viera porque su job llamante estaba saltado -- al arreglarlo aparecieron 3 defectos reales que nunca pudo reportar. Los errores de parseo de mermaid por parentesis sin comillas en titulos de subgraph se corrigieron en `019a1e19`, verificados renderizando y no por inspeccion. _Dicho sin rodeos:_ `Evolith Core Validation` sigue fallando, en una comprobacion DISTINTA -- `bilingual-terminology-lint`, 12 hallazgos en ficheros tocados por ultima vez entre 2026-07-04 y 2026-07-13. Es deuda anterior que se hizo alcanzable justo porque los arreglos de este gap dejaron al job llegar hasta ahi. El job no esta verde.
+- **Estado:** `COMPLETADO`
+
+#### GT-564
+
+**Título:** Los tipos de payload exportados por el SDK eran una bifurcación que no describía el cable
+
+- **Propósito:** Lograr que los tipos que importa un consumidor sean los tipos que la API realmente emite, para que el SDK deje de ser una segunda descripción — equivocada — del mismo contrato.
+- **Evidencia:** Tanto REST como MCP invocan el **mismo** caso de uso y devuelven el objeto de dominio **verbatim**, así que no había ninguna transformación que justificara DTOs separados. Aun así la bifurcación declaraba `passed: boolean` donde la API emite `verdict: 'passed'\|'failed'\|'skipped'`, y el `README.md` indicaba imprimir `result.data.passed` — **undefined en ejecución**. Omitía `gateId`, `rulesetRef` y `rulesetVersion`, que SÍ se emiten; eliminaba el `location` REQUERIDO; y declaraba `artifact?` y `remediation?`, que **ningún productor emite**. `ViolationSeverity` admitía un `'info'` inalcanzable y estaba bifurcado en dos archivos, y `ValidationIssue` había degradado a `severity: string`, perdiendo la restricción `MUST\|SHOULD\|COULD`.
+- **Impacto:** Todo consumidor tipado contra el SDK estaba tipado contra un contrato que nada produce, y el primer ejemplo del README publicado era incorrecto en ejecución.
+- **Riesgo:** Un tipo equivocado es peor que un tipo ausente: compila, así que el error solo aparece en producción, y la ventana de deprecación con la que normalmente se suaviza un cambio incompatible habría preservado esa incorrección durante toda su duración.
+- **Archivos afectados:** `src/packages/sdk-client/src/mcp/types.ts`; `src/packages/sdk-client/src/rest/types.ts`; `src/packages/sdk-client/src/index.ts`; `src/packages/sdk-client/README.md` y `README.es.md`; `src/packages/sdk-client/package.json`.
+- **Componente:** `SDK` · **Dimensión:** Governance · **Tipo:** backend
+- **Criticidad:** P1 · **Complejidad:** L
+- **Fix propuesto:** Retirar los tipos de payload bifurcados sobre el contrato de dominio reexportando `@beyondnet/evolith-core-domain`, y publicar el cambio como versión mayor.
+- **Criterios de aceptación:**
+  - [x] `sdk-client` reexporta los tipos de payload desde `@beyondnet/evolith-core-domain` en vez de redeclararlos, de modo que hay una sola fuente de verdad. _(commit `af0deffe`)_
+  - [x] Las declaraciones equivocadas ya no están: no hay `passed` booleano, `verdict` está presente, `gateId`/`rulesetRef`/`rulesetVersion` están presentes, `location` vuelve a ser requerido, se eliminan `artifact?`/`remediation?` que nadie produce, se elimina la severidad `'info'` inalcanzable y `ValidationIssue.severity` vuelve a `MUST\|SHOULD\|COULD`. _(commit `af0deffe`)_
+  - [x] `README.md` y `README.es.md` ya no indican leer `result.data.passed`; el ejemplo imprime `verdict`, `gateId` y `rulesetVersion`. _(commit `af0deffe`)_
+  - [x] El paquete sube a **2.0.0** — bump mayor en vez de ventana de deprecación, porque una ventana preserva tipos que son activamente incorrectos y cualquier consumidor de 1.1.0 ya está roto en ejecución. _(commit `af0deffe`)_
+  - [x] La dependencia es real, no una copia vendorizada con un guard de paridad: dos fuentes de verdad más un vigilante es justamente el patrón que se está eliminando. _(commit `af0deffe`)_
+  - [x] Pasan 54/54 tests del sdk y `tsc` queda limpio para `sdk-client`, `mcp-server` y `src/sdk/cli`. _(commit `af0deffe`)_
+- **Dependencias:** Retira las dos bifurcaciones de `sdk-client` registradas como seguimiento sin resolver en [GT-558](#gt-558); la deriva que lo permitió es [GT-565](#gt-565).
+- **Cierre (2026-07-18, commit `af0deffe`):** Los tipos de payload del SDK son ahora los del dominio, importados en vez de reenunciados, y el paquete lleva la versión mayor que ese cambio incompatible exige. _Deliberadamente sin hacer:_ publicar 2.0.0 al registry, que es decisión del owner y no un cambio de código.
+- **Estado:** `COMPLETADO`
+
+#### GT-565
+
+**Título:** Los tests del SDK afirmaban contra la forma inventada por el propio SDK, así que sus tipos podían derivar arbitrariamente y seguir en verde
+
+- **Propósito:** Hacer que los tipos del SDK rindan cuentas ante el cable que existe de verdad, para que la deriva detrás de [GT-564](#gt-564) no pueda repetirse en silencio.
+- **Evidencia:** Esta es la causa raíz de [GT-564](#gt-564): los tests del SDK mockeaban `fetch` para devolver la forma **inventada por el propio SDK** y luego afirmaban sobre ella, un lazo cerrado en el que ninguna divergencia respecto de la API es observable. Además la suite no corría en **ningún workflow**: existía, pasaba localmente, y CI nunca la ejecutaba.
+- **Impacto:** El único artefacto que podía haber detectado los tipos bifurcados era estructuralmente incapaz de hacerlo, y de todos modos no se estaba ejecutando.
+- **Riesgo:** Un test que afirma un mock contra sí mismo reporta una confianza proporcional a nada; un revisor lee razonablemente ese verde como cobertura de contrato.
+- **Archivos afectados:** `src/tests/contract/sdk-wire-contract.spec.ts`; `src/tests/contract/sdk-type-contract.types.ts`; `src/tests/contract/tsconfig.sdk-type-contract.json`; `.github/workflows/ci-cd.yml`.
+- **Componente:** `Testing` · **Dimensión:** Reliability · **Tipo:** tooling
+- **Criticidad:** P1 · **Complejidad:** M
+- **Fix propuesto:** Verificar los tipos del SDK contra una respuesta real de un core-api arrancado, en una capa de compilación y otra de ejecución, y cablear la suite en CI.
+- **Criterios de aceptación:**
+  - [x] Dos capas, porque cada una es ciega a una deriva que la otra detecta: en compilación no se ve que un controller cambie su respuesta sin tocar el tipo de dominio, y en ejecución no se ven los campos ausentes de la muestra ni la distinción requerido-vs-opcional. _(commit `2db2306c`)_
+  - [x] La objeción de costo por arrancar un servidor real se midió en vez de suponerse: arrancar core-api toma **~3s**, así que el argumento para quedarse solo en compilación no sobrevivió a la medición. _(commit `2db2306c`)_
+  - [x] El conjunto de claves y los flags de obligatoriedad del verificador en ejecución se **derivan del tipo** del SDK, de modo que la mitad en ejecución no puede derivar respecto del tipo que impone. _(commit `2db2306c`)_
+  - [x] Está probado que la suite muerde: se introdujeron tres roturas deliberadas, cada una fue detectada y luego restaurada. _(commit `2db2306c`)_
+  - [x] La suite queda cableada en `ci-cd.yml` como job `test-contract`, tras no correr previamente en ningún workflow. _(commit `1875f725`)_
+  - [x] El workaround de symlink que la suite necesitaba queda ELIMINADO, porque se arregló la resolución de rulesets subyacente para resolver el corpus por contenido y no por existencia de directorio — la eliminación es la evidencia de que ese arreglo es real. _(commit `e25804dc`)_
+  - [x] Pasan 43/43 tests de contrato. _(`npm run test:contract`)_
+- **Dependencias:** Fija el contrato restaurado por [GT-564](#gt-564); el arreglo de resolución de rulesets en `e25804dc` es un follow-on de este gap, no una dependencia aparte.
+- **Cierre (2026-07-18, commit `2db2306c`):** Los tipos del SDK se verifican ahora contra una respuesta de un core-api real arrancado en vez de contra un mock de sí mismos, en dos capas cuya mitad de ejecución se deriva del tipo que impone, y la suite corre en CI. _Commits de follow-on:_ `1875f725` (cableado en CI) y `e25804dc` (resolución de rulesets por contenido, que retiró el workaround de symlink).
+- **Estado:** `COMPLETADO`

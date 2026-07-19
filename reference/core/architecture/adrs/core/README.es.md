@@ -90,6 +90,9 @@
 * [0111-quality-signal-provider-port](./0111-quality-signal-provider-port.es.md) — **Puerto de Proveedores de Señales de Calidad — la evidencia externa (Lighthouse, TestSprite, …) entra vía adaptadores y `Evidence` canónica; el Core nunca depende de ninguna herramienta**
 * [0112-rag-embedding-and-vector-store-platform](./0112-rag-embedding-and-vector-store-platform.es.md) — **Plataforma de embeddings y vector store para RAG — Qwen3-Embedding (Apache-2.0) totalmente OSS/self-hosted sobre pgvector; realiza el contrato agnóstico al modelo del ADR-0090, cero egress del corpus**
 * [0113-nodejs-lighthouse-evidence-adapter](./0113-nodejs-lighthouse-evidence-adapter.es.md) — **Plataforma Node.js — Lighthouse (Apache-2.0) como adaptador de evidencia de referencia detrás del puerto de Proveedores de Señales de Calidad; opcional, importado dinámicamente, determinista**
+* [0115-emergent-knowledge-axis](./0115-emergent-knowledge-axis.es.md) — **Eje de conocimiento emergente: conocimiento originado al APLICAR el estándar (`KO-*`), distinto de la captación externa (`KI-*`); los agentes solo pueden redactar en `candidate`**
+* [0116-canonical-finding-and-authority-boundary](./0116-canonical-finding-and-authority-boundary.es.md) — **Contrato canónico `Finding` (procedencia/determinismo obligatorios, `advisory: true`) y una frontera de autoridad consultiva ejecutable (`evaluateAuthority`, AP-R01..R06)**
+* [0117-bilingual-parity-scope-authored-sources](./0117-bilingual-parity-scope-authored-sources.es.md) — **La paridad bilingüe aplica a fuentes AUTORADAS, nunca a proyecciones generadas; los árboles generados heredan la paridad de sus fuentes, exclusiones declaradas en código con generador + razón**
 
 ---
 [Volver al Nivel Superior](../README.es.md)

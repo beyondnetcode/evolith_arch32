@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or idea (Discussions)
+    url: https://github.com/beyondnetcode/evolith_arch32/discussions
+    about: Ask how something works, or float an idea before it becomes a proposal. Not for defects.
+  - name: Report a security vulnerability (private)
+    url: https://github.com/beyondnetcode/evolith_arch32/security/advisories/new
+    about: Never report a vulnerability in a public issue. This opens a private advisory visible only to you and the maintainers.
+  - name: Contribution guide
+    url: https://github.com/beyondnetcode/evolith_arch32/blob/main/CONTRIBUTING.md
+    about: How to build, test, and validate a change, and how a finding becomes a tracked GT-### gap.

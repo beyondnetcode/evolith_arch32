@@ -11,42 +11,41 @@
  */
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { auditSources, auditTopology, summarize } from './drift-audit.mjs';
+// GT-556/557: roots came from process.cwd(), so running from src/ crashed (or, worse,
+// scanned a subset). The `existsSync` skip over TOPO_ROOTS meant a root that moved was
+// silently dropped instead of failing. Both are now fail-closed.
+import { REPO_ROOT, collectFiles, resolve as resolveKey, relativeToRoot } from '../lib/paths.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
 
-const ROOT = process.cwd();
+const ROOT = REPO_ROOT;
 const CI_DIR = '.harness/scripts/ci';
 // GT-329: canonical topology roots — progressive-axis stays in reference/; advanced topologies in rulesets/
-const TOPO_ROOTS = [
-  'reference/core/architecture/topologies',
-  'src/rulesets/topologies',
-];
+const TOPO_ROOT_KEYS = ['topologiesReference', 'topologiesRulesets'];
 
 function capabilityScripts() {
-  return readdirSync(resolve(ROOT, CI_DIR))
+  const ciDir = resolveKey('harnessCiScripts');
+  const scripts = readdirSync(ciDir)
     .filter((f) => /^\d+-.*\.mjs$/.test(f) && !f.endsWith('.test.mjs'))
-    .map((f) => ({ file: `${CI_DIR}/${f}`, source: readFileSync(resolve(ROOT, CI_DIR, f), 'utf8') }));
+    .map((f) => ({ file: `${CI_DIR}/${f}`, source: readFileSync(resolve(ciDir, f), 'utf8') }));
+
+  assertScanned(scripts.length, { what: 'CI capability scripts', where: 'harnessCiScripts' });
+  return scripts;
 }
 
 function topologyManifests() {
-  const out = [];
-  const walk = (dir) => {
-    for (const entry of readdirSync(resolve(ROOT, dir), { withFileTypes: true })) {
-      const rel = `${dir}/${entry.name}`;
-      if (entry.isDirectory()) walk(rel);
-      else if (entry.name === 'topology.manifest.json') {
-        try {
-          out.push({ dir, manifest: JSON.parse(readFileSync(resolve(ROOT, rel), 'utf8')) });
-        } catch (e) {
-          out.push({ dir, manifest: null, parseError: e.message, file: rel });
-        }
-      }
+  const files = collectFiles(TOPO_ROOT_KEYS, 'topology.manifest.json');
+  assertScanned(files.length, { what: 'topology manifests', where: TOPO_ROOT_KEYS });
+
+  return files.map((full) => {
+    const dir = relativeToRoot(dirname(full));
+    try {
+      return { dir, manifest: JSON.parse(readFileSync(full, 'utf8')) };
+    } catch (e) {
+      return { dir, manifest: null, parseError: e.message, file: relativeToRoot(full) };
     }
-  };
-  for (const root of TOPO_ROOTS) {
-    if (existsSync(resolve(ROOT, root))) walk(root);
-  }
-  return out;
+  });
 }
 
 function main() {

@@ -1,4 +1,5 @@
 {
+  "$comment": "GT-564: this package resolves modules with the legacy node10 algorithm, which ignores the `exports` map of @beyondnet/evolith-core-domain. The `paths` mappings let the SDK name the canonical domain contracts by their published subpath. Every such import is `import type`, so nothing is emitted and there is no runtime coupling to the mapping.",
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "module": "commonjs",
@@ -7,6 +8,10 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./",
+    "paths": {
+      "@beyondnet/evolith-core-domain": ["../core-domain/dist/index.d.ts"],
+      "@beyondnet/evolith-core-domain/*": ["../core-domain/dist/*"]
+    },
     "resolveJsonModule": true,
     "noFallthroughCasesInSwitch": false,
     "useUnknownInCatchVariables": false,

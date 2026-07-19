@@ -2,10 +2,18 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import {
+  partitionByExclusions,
+  formatExclusionReport
+} from "../../lib/generated-doc-exclusions.mjs";
 
 const root = process.cwd();
 const failures = [];
 const orphans = [];
+/** Every English .md under reference/ (repo-relative, POSIX) — input to the exclusion partition. */
+const referenceEnglishDocs = [];
+/** English docs under reference/ with no .es.md sibling, before exclusions are applied. */
+const orphanCandidates = [];
 
 const PARITY_EXEMPT_BASENAMES = new Set([
   "CHANGELOG.md",
@@ -16,9 +24,21 @@ const PARITY_EXEMPT_BASENAMES = new Set([
   "EVOLITH-ARCHITECTURE-DESIGN.md"
 ]);
 
+// GT-563 follow-on: this counter used to run over the RAW file, so a `## ...` line
+// inside a fenced code block counted as a real header. That is not a header, and it let
+// structural mismatches pass here while 01-validate-docs.mjs (which does strip fences)
+// failed on the same files -- parity is meant to be the authority, so it has to see the
+// same headers. Fence stripping is kept byte-for-byte in sync with the matcher in
+// .harness/scripts/ci/01-validate-docs.mjs.
+function stripCodeBlocks(content) {
+  return content
+    .replace(/^ {0,3}```[^\n]*\n[\s\S]*?^ {0,3}```[^\n]*$/gm, (match) => match.replace(/[^\r\n]/g, " "))
+    .replace(/`[^`\r\n]+`/g, (match) => match.replace(/[^\r\n]/g, " "));
+}
+
 function countHeaders(content) {
   const headingPattern = /^#{2,3}\s+.+$/gm;
-  const matches = [...content.matchAll(headingPattern)];
+  const matches = [...stripCodeBlocks(content).matchAll(headingPattern)];
   return matches.length;
 }
 
@@ -77,12 +97,32 @@ for (const file of markdownFiles) {
 
   // 2. Orphan Check (Only for files under 'reference/')
   if (relative.startsWith("reference") && relative.endsWith(".md") && !relative.endsWith(".es.md")) {
+    referenceEnglishDocs.push(relative.split(path.sep).join("/"));
     const spanishFile = file.replace(/\.md$/, ".es.md");
     if (!fs.existsSync(spanishFile)) {
-      orphans.push(`${relative} → missing ${path.relative(root, spanishFile)}`);
+      orphanCandidates.push(relative.split(path.sep).join("/"));
     }
   }
 }
+
+// Declared exclusions: generator-written English-only output. The exclusion table lives in
+// .harness/scripts/lib/generated-doc-exclusions.mjs — each entry names its generator and its
+// reason, and membership is proven by a content marker or a pinned inventory. Partition over
+// EVERY English doc under reference/ (not just the orphans) so a count-pinned tree is measured
+// against its real shape rather than against whichever subset happens to be untranslated.
+const partition = partitionByExclusions(
+  referenceEnglishDocs,
+  (rel) => fs.readFileSync(path.join(root, rel), "utf8")
+);
+const excludedPaths = new Set(partition.excluded.flatMap((x) => x.files));
+
+for (const relative of orphanCandidates) {
+  if (excludedPaths.has(relative)) continue;
+  orphans.push(`${relative} → missing ${relative.replace(/\.md$/, ".es.md")}`);
+}
+
+// Always printed, pass or fail. An exclusion the operator cannot see is a false green.
+console.log(formatExclusionReport(partition));
 
 let hasError = false;
 

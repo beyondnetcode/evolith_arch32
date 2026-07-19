@@ -206,6 +206,32 @@ jobs:
       - name: Run sdk-client tests with coverage
         run: npm run test:cov --workspace @beyondnet/evolith-sdk
 
+  # GT-565: this suite existed, passed, and ran in NO workflow. A contract test CI
+  # never executes is the same false-signal class it exists to catch -- it is the
+  # mechanism that would have caught the sdk-client type drift, and it was
+  # disconnected the whole time the drift went unnoticed.
+  test-contract:
+    name: Test contract (SDK wire fidelity)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      # The runtime layer boots core-api, and the compile-time layer resolves the
+      # SDK against the BUILT core-domain, so both must exist before the run.
+      - name: Build workspace dependencies
+        run: |
+          npm run build --workspace @beyondnet/evolith-core-domain
+          npm run build --workspace @beyondnet/evolith-agent-runtime
+      - name: Run contract tests
+        run: npm run test:contract
+
   # W-Coverage: the filesystem/logger/config/github adapters ran in NO CI job.
   test-infra-providers:
     name: Test infra-providers

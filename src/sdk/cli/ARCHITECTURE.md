@@ -37,7 +37,6 @@ graph TB
         CMD_ADR["adr"]
         CMD_Agents["agents"]
         CMD_SDLC["sdlc"]
-        CMD_MCP["mcp serve"]
         CMD_Standards["standards"]
         CMD_Docs["docs"]
     end

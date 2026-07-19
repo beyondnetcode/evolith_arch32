@@ -125,7 +125,7 @@ export const RISK_LEVEL_TO_SARIF_LEVEL: Readonly<Record<RiskLevel, SarifLevel>> 
  */
 const LOCATION_RE = /^(.+?)(?::(\d+)(?::(\d+))?)?$/;
 
-export function parseFindingLocation(
+export function parseSarifLocation(
   location: string | undefined,
 ): { readonly uri: string; readonly startLine?: number; readonly startColumn?: number } | undefined {
   if (!location) return undefined;
@@ -140,7 +140,7 @@ export function parseFindingLocation(
 
 /** Build the SARIF `locations` array for a finding, omitting `region` when there is no line. */
 function toSarifLocations(location: string | undefined): readonly SarifLocation[] | undefined {
-  const parsed = parseFindingLocation(location);
+  const parsed = parseSarifLocation(location);
   if (!parsed) return undefined;
   const region: SarifRegion | undefined =
     parsed.startLine != null
@@ -224,7 +224,7 @@ export function exportEvaluationResultToSarif(
  */
 export function evaluationResultToViolations(result: EvaluationResult, source: string): Violation[] {
   return result.gaps.map((gap) => {
-    const parsed = parseFindingLocation(gap.location);
+    const parsed = parseSarifLocation(gap.location);
     // `requirementRef` is the rule id OR an ADR ref (violationToGapFinding uses `adrRef ?? ruleId`);
     // keep the ADR shape so the compliance mapping (byAdr) resolves (GT-525).
     const ref = gap.requirementRef || gap.id;

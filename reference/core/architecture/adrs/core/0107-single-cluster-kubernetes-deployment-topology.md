@@ -150,8 +150,8 @@ production release unit.
   future high-scale product can graduate to its own cluster behind the same contracts.
 
 ## References
-- [Canonical: Tenant Master-Data Projection design](../../../../../../mms/docs/architecture/tenant-master-data-projection.md)
-- [Evolith Governed Composition Target Design](../../../../product/suite/architecture/evolith-governed-composition-target-design.md)
+- Canonical: Tenant Master-Data Projection design — `mms/docs/architecture/tenant-master-data-projection.md` (external `mms` repository).
+- [Evolith Governed Composition Target Design](../../../../../product/suite/architecture/evolith-governed-composition-target-design.md)
 
 ## Related Decisions and Standards
 - [ADR-0106: Master Tenant and Context Projections](./0106-master-tenant-context-projections.md)

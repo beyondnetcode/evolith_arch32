@@ -10,8 +10,13 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const root = process.cwd();
-const rulesetsDir = path.join(root, "rulesets");
+// GT-556/557: same defect as script 31 — `rulesets/` exists but holds no `.rules.json`,
+// so this schema validator reported "all schemas validated successfully" having
+// validated nothing at all. The real corpus is `src/rulesets`.
+import { resolve as resolveKey, relativeToRoot } from '../lib/paths.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
+
+const rulesetsDir = resolveKey("rulesets");
 
 // Try to load ajv
 let Ajv;
@@ -59,6 +64,7 @@ function loadSchema(schemaRef, rulesetDir) {
 }
 
 const rulesets = findRulesets(rulesetsDir);
+assertScanned(rulesets.length, { what: "rulesets (*.rules.json)", where: relativeToRoot(rulesetsDir) });
 let failed = 0;
 let passed = 0;
 let skipped = 0;

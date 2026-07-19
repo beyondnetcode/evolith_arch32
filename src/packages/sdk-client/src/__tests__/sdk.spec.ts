@@ -9,12 +9,47 @@
  *  - createJsonRpcTransport factory
  *  - EvolithApiError shape
  *  - barrel re-exports (index.ts)
+ *
+ * GT-564: the mocked payloads below are the shapes the producers actually
+ * emit — `EvaluateGateUseCase` returns `GateEvidence` (`verdict`, `gateId`,
+ * `rulesetRef`, `rulesetVersion`, violations carrying `location`) and
+ * `RulesetValidatorService#validate` returns `ValidationResult` (`status`,
+ * `coreRef`, `timestamp`). Mocking the SDK's own shape and asserting on it
+ * proves nothing, so these fixtures are typed against the domain contract:
+ * a drift in core-domain now fails this suite at compile time.
  */
 
 import { EvolithRestClient, EvolithApiError } from '../rest/evolith-rest-client';
 import { EvolithMcpClient, createJsonRpcTransport } from '../mcp/evolith-mcp-client';
 import type { GateEvaluateOutput, PhaseAdvanceOutput, ValidateJsonOutput } from '../mcp/types';
-import type { EvaluateGateRequest } from '../rest/types';
+import type { EvaluateGateRequest, GateEvidence, ValidationResult } from '../rest/types';
+
+/** A GateEvidence exactly as EvaluateGateUseCase emits it. */
+function gateEvidence(overrides: Partial<GateEvidence> = {}): GateEvidence {
+  return {
+    gateId: 'discovery-gate',
+    phase: 'discovery',
+    verdict: 'passed',
+    rulesetRef: 'rulesets/gates/phase-gates.yaml',
+    rulesetVersion: '1.0.0',
+    violations: [],
+    evaluatedAt: '2026-07-18T00:00:00.000Z',
+    evaluatedBy: 'agent',
+    ...overrides,
+  };
+}
+
+/** A ValidationResult exactly as RulesetValidatorService#validate emits it. */
+function validationResult(overrides: Partial<ValidationResult> = {}): ValidationResult {
+  return {
+    status: 'passed',
+    rulesChecked: 12,
+    issues: [],
+    coreRef: { version: '1.1.0', path: '/repos/evolith' },
+    timestamp: '2026-07-18T00:00:00.000Z',
+    ...overrides,
+  };
+}
 
 /** Build a mock fetch that resolves an ok JSON response with `data`. */
 function okFetch(data: unknown = {}): jest.Mock {
@@ -94,7 +129,7 @@ describe('EvolithRestClient', () => {
   });
 
   it('evaluateGate POSTs to the encoded gate route with a JSON body', async () => {
-    const mockFetch = okFetch({ phase: 'discovery', passed: true, violations: [] });
+    const mockFetch = okFetch(gateEvidence());
     const client = new EvolithRestClient({
       baseUrl: 'http://localhost:3000',
       fetch: mockFetch as unknown as typeof fetch,
@@ -108,7 +143,30 @@ describe('EvolithRestClient', () => {
     expect(init.method).toBe('POST');
     expect(JSON.parse(init.body as string)).toEqual(body);
     expect(result.data.phase).toBe('discovery');
-    expect(result.data.passed).toBe(true);
+    expect(result.data.verdict).toBe('passed');
+    expect(result.data.gateId).toBe('discovery-gate');
+    expect(result.data.rulesetRef).toBe('rulesets/gates/phase-gates.yaml');
+    expect(result.data.rulesetVersion).toBe('1.0.0');
+  });
+
+  it('surfaces a failing verdict and its violations with a location', async () => {
+    const mockFetch = okFetch(
+      gateEvidence({
+        verdict: 'failed',
+        violations: [
+          { ruleId: 'R-01', severity: 'error', location: 'docs/README.md', message: 'Missing README' },
+        ],
+      }),
+    );
+    const client = new EvolithRestClient({
+      baseUrl: 'http://localhost:3000',
+      fetch: mockFetch as unknown as typeof fetch,
+    });
+
+    const result = await client.evaluateGate('PG1-01', { workspaceRef: 'op_abc123' });
+    expect(result.data.verdict).toBe('failed');
+    expect(result.data.violations[0].location).toBe('docs/README.md');
+    expect(result.data.violations[0].severity).toBe('error');
   });
 
   it('evaluatePhaseGate maps each phase name to its gate id', async () => {
@@ -120,7 +178,7 @@ describe('EvolithRestClient', () => {
       ['release', 'PG5-01'],
     ];
     for (const [phase, gateId] of cases) {
-      const mockFetch = okFetch({ phase, passed: true, violations: [] });
+      const mockFetch = okFetch(gateEvidence({ phase }));
       const client = new EvolithRestClient({
         baseUrl: 'http://localhost:3000',
         fetch: mockFetch as unknown as typeof fetch,
@@ -168,15 +226,19 @@ describe('EvolithRestClient', () => {
   });
 
   it('validateSatellite POSTs to /v1/architecture/validate-satellite', async () => {
-    const mockFetch = okFetch({ passed: true, issues: [] });
+    const mockFetch = okFetch(validationResult({ status: 'warning' }));
     const client = new EvolithRestClient({
       baseUrl: 'http://localhost:3000',
       fetch: mockFetch as unknown as typeof fetch,
     });
-    await client.validateSatellite({ workspaceRef: 'op_x' });
+    const result = await client.validateSatellite({ workspaceRef: 'op_x' });
     const [url, init] = lastCall(mockFetch);
     expect(url).toBe('http://localhost:3000/api/v1/architecture/validate-satellite');
     expect(init.method).toBe('POST');
+    // 'warning' is a real third status the previous boolean `passed` could not express.
+    expect(result.data.status).toBe('warning');
+    expect(result.data.coreRef.version).toBe('1.1.0');
+    expect(result.data.timestamp).toBe('2026-07-18T00:00:00.000Z');
   });
 
   it('detectDrift POSTs to /v1/architecture/detect-drift', async () => {
@@ -331,11 +393,12 @@ describe('EvolithMcpClient', () => {
   });
 
   it('dispatches evaluateGate with the correct tool name and parses output', async () => {
-    const gateOutput: GateEvaluateOutput = {
-      phase: 'discovery',
-      passed: false,
-      violations: [{ ruleId: 'R-01', severity: 'error', message: 'Missing README' }],
-    };
+    const gateOutput: GateEvaluateOutput = gateEvidence({
+      verdict: 'failed',
+      violations: [
+        { ruleId: 'R-01', severity: 'error', location: 'README.md', message: 'Missing README' },
+      ],
+    });
     const transport = jest.fn().mockResolvedValue([{ type: 'text', text: JSON.stringify(gateOutput) }]);
     const client = new EvolithMcpClient({ transport });
     const result = await client.evaluateGate({ phase: 'discovery', projectPath: '/repos/my-svc' });
@@ -344,19 +407,54 @@ describe('EvolithMcpClient', () => {
       phase: 'discovery',
       projectPath: '/repos/my-svc',
     });
-    expect(result.parsed.passed).toBe(false);
+    expect(result.parsed.verdict).toBe('failed');
     expect(result.parsed.violations).toHaveLength(1);
+    expect(result.parsed.violations[0].location).toBe('README.md');
     expect(result.isError).toBe(false);
   });
 
+  it('carries the summary roll-up the tool adds in evidenceMode: summary', async () => {
+    const summaryOutput: GateEvaluateOutput = {
+      ...gateEvidence({ verdict: 'failed', violations: [] }),
+      summary: { errors: 2, warnings: 1 },
+    };
+    const transport = jest.fn().mockResolvedValue([{ type: 'text', text: JSON.stringify(summaryOutput) }]);
+    const client = new EvolithMcpClient({ transport });
+    const result = await client.evaluateGate({
+      phase: 'discovery',
+      projectPath: '/repos/my-svc',
+      evidenceMode: 'summary',
+    });
+
+    expect(result.parsed.summary).toEqual({ errors: 2, warnings: 1 });
+    expect(result.parsed.violations).toHaveLength(0);
+    expect(result.parsed.gateId).toBe('discovery-gate');
+  });
+
   it('dispatches validate with the correct tool name', async () => {
-    const out: ValidateJsonOutput = { status: 'passed', rulesChecked: 12, issues: [] };
+    const out: ValidateJsonOutput = validationResult({
+      status: 'failed',
+      issues: [
+        {
+          ruleId: 'ARC-001',
+          severity: 'MUST',
+          category: 'architecture',
+          title: 'Missing ADR registry',
+          description: 'evolith.yaml declares no adrRegistry entries',
+          blocking: true,
+        },
+      ],
+    });
     const transport = jest.fn().mockResolvedValue([{ type: 'text', text: JSON.stringify(out) }]);
     const client = new EvolithMcpClient({ transport });
     const result = await client.validate({ path: '/repos/my-svc', format: 'json' });
 
     expect(transport).toHaveBeenCalledWith('evolith-validate', { path: '/repos/my-svc', format: 'json' });
-    expect((result.parsed as ValidateJsonOutput).status).toBe('passed');
+    const parsed = result.parsed as ValidateJsonOutput;
+    expect(parsed.status).toBe('failed');
+    // MoSCoW severity survives the round trip — it used to be widened to `string`.
+    expect(parsed.issues[0].severity).toBe('MUST');
+    expect(parsed.issues[0].description).toBe('evolith.yaml declares no adrRegistry entries');
   });
 
   it('dispatches advancePhase with the correct tool name', async () => {
@@ -469,7 +567,7 @@ describe('createJsonRpcTransport', () => {
 
   it('integrates end-to-end with EvolithMcpClient', async () => {
     const sendRequest = jest.fn().mockResolvedValue({
-      content: [{ type: 'text', text: JSON.stringify({ status: 'failed', rulesChecked: 3, issues: [] }) }],
+      content: [{ type: 'text', text: JSON.stringify(validationResult({ status: 'failed', rulesChecked: 3 })) }],
     });
     const client = new EvolithMcpClient({ transport: createJsonRpcTransport(sendRequest) });
     const result = await client.validate({ path: '/repos/x' });
@@ -479,10 +577,30 @@ describe('createJsonRpcTransport', () => {
 
 // ─── Compile-time type checks (no runtime assertions needed) ──────────────────
 
-type AssertGatePhase = 'discovery' | 'design' | 'construction' | 'qa' | 'release';
-const _gatePhase: AssertGatePhase = 'discovery';
-void _gatePhase;
+// GT-564: the REST and MCP names must resolve to the SAME canonical
+// core-domain type, not to two structurally similar forks. `Exclude` on both
+// sides fails to compile the moment either alias drifts.
+type Equals<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;
 
-type AssertEvaluatorKind = 'human' | 'agent' | 'ci';
-const _kind: AssertEvaluatorKind = 'agent';
+const _violationAliasesAreOneType: Equals<
+  import('../rest/types').GateViolation,
+  import('../mcp/types').GateViolation
+> = true;
+void _violationAliasesAreOneType;
+
+const _phaseAliasesAreOneType: Equals<
+  import('../rest/types').GatePhase,
+  import('../mcp/types').GatePhase
+> = true;
+void _phaseAliasesAreOneType;
+
+// `verdict` replaced the fictional `passed`, and 'info' is not a severity any
+// producer can emit (VIOLATION_SEVERITIES = ['error','warning']).
+const _verdict: import('../rest/types').GateVerdict = 'skipped';
+void _verdict;
+
+const _severity: import('../rest/types').ViolationSeverity = 'warning';
+void _severity;
+
+const _kind: import('../mcp/types').EvaluatorKind = 'agent';
 void _kind;

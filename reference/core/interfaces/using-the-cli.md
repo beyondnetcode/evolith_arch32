@@ -761,7 +761,7 @@ evolith-cli standards --export STD-0001 --format markdown
 ```
 
 **Qué esperar.** En humano, tablas y fichas con las reglas y sus severidades
-(🔴 error / 🟡 warning / 🔵 info). En `--format json`, el envelope con el
+(error / warning / info). En `--format json`, el envelope con el
 listado, el estándar pedido o el resultado de la validación (`totalRules`,
 `passed`, `failed`). Pedir un estándar inexistente con `--get` **sale con código
 ≠ 0**. Ojo con el nombre de `--format`: si exportas en JSON con

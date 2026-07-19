@@ -10,14 +10,28 @@ on:
     paths:
       - 'src/sdk/cli/**'
       - '.harness/**'
-      - 'release-please-config.json'
+      # package.json / package-lock.json: this pipeline installs with `npm ci`,
+      # so a lock desync breaks every job here -- and until now neither file
+      # triggered it, meaning the break AND its fix both went unnoticed by the
+      # workflow they affect. (`release-please-config.json` used to be listed and
+      # was removed: it was deleted in aed33ba9, so the filter watched a path that
+      # cannot change.)
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/sdk-cli-ci.yml'
   push:
     branches: [main, develop]
     paths:
       - 'src/sdk/cli/**'
       - '.harness/**'
-      - 'release-please-config.json'
+      # package.json / package-lock.json: this pipeline installs with `npm ci`,
+      # so a lock desync breaks every job here -- and until now neither file
+      # triggered it, meaning the break AND its fix both went unnoticed by the
+      # workflow they affect. (`release-please-config.json` used to be listed and
+      # was removed: it was deleted in aed33ba9, so the filter watched a path that
+      # cannot change.)
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/sdk-cli-ci.yml'
   workflow_dispatch:
 
@@ -467,9 +481,9 @@ jobs:
         run: npm run build
 
       - name: Start MCP Server
-        working-directory: ${{ env.CLI_DIR }}
+        working-directory: src/packages/mcp-server
         run: |
-          node dist/main.js mcp serve --transport http --port 3001 &
+          node dist/main.js serve --transport http --port 3001 --allow-no-auth &
           MCP_PID=$!
           echo "MCP_PID=$MCP_PID" >> $GITHUB_ENV
           echo "Started MCP server (pid=$MCP_PID)"
@@ -491,6 +505,14 @@ jobs:
         with:
           target: 'http://localhost:3001'
           cmd_options: '-a'
+          # The action files its report as a GitHub issue by default, which needs
+          # `issues: write`. The scan itself was passing (FAIL-NEW: 0, PASS: 146)
+          # and the job still reported failure -- on "Resource not accessible by
+          # integration", i.e. the report step, not the scan. The findings are
+          # already uploaded as an artifact below, so issue-filing is redundant;
+          # turning it off is preferable to granting a scanner write access to
+          # the issue tracker.
+          allow_issue_writing: false
 
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v7

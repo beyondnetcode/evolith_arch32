@@ -394,7 +394,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Acceptance criteria:**
   - [ ] A bounded activity runs via the adapter with permissions/plan/approval and evidence capture. _(the adapter is bounded —rejects out-of-catalog tools— and the runtime envelope (approval/policy/trace) governs it; live execution against Claude/Cowork needs the real `CoworkClient` —connector/infra)_
   - [x] The executor is replaceable (satisfies the agent-runtime execution contract). _(`CoworkAgentEngineAdapter implements IAgentEnginePort`, drop-in like stub/hermes/swarms)_
-- **Dependencies:** GT-387, GT-441.
+- **Dependencies:** GT-387, GT-441. **Blocked (2026-07-18) on Tracker-side approval work:** the runtime envelope governing this adapter routes HITL approval to the Tracker (`TrackerApprovalAdapter`, GT-441, commit `ef9a14d8`), and the Tracker endpoint it asks does not exist yet — so every governed Cowork activity flagged `requiresApproval` is denied fail-closed until the Tracker ships it. That half is tracked on the Tracker's own board as `CD-23` (`evolith_tracker` · `docs/audit/tracker-gap-tracking.md`). This item stays on the Core board and keeps its status: its affected files are Core `agent-runtime` code, and the Tracker catalog's own rule is that work landing in Core code belongs on the Core board.
 - **Status:** `IN-PROGRESS`
 
 #### GT-532
@@ -1863,6 +1863,12 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 
 **Progress:** (2026-07-13, Wave 1 — verified, commit `50b77f5c`) The deterministic, ungated core is DONE: `PendingApprovalAdapter` behind `IApprovalPort` models pending → approved/rejected/expired (never self-grants); fail-closed (pending/expired/rejected/unknown all read `granted:false`; only an explicit un-expired human `approve` grants); TTL timeout ⇒ denied; full audit trail. 10/10 unit tests. **Remaining (gated):** the human-notification CHANNEL wiring (Tracker/Hermes/chat) is a design decision — kept `IN-PROGRESS` until the channel is decided and wired.
 
+**Progress (2026-07-18, commit `ef9a14d8`) — the channel decision is made and the Core side of it is delivered.** The owner chose the Tracker: approval goes there, and who may approve is per-tenant configuration THERE. `TrackerApprovalAdapter` implements `IApprovalPort` by asking and obeying, per ADR-0101 (the Core recommends; the Tracker decides, persists and audits). It deliberately does not copy the Slack/chat shape — those are delivery wrappers over a local `PendingApprovalAdapter` where the Core still owns the record, the TTL and the state machine — so it owns no record, no TTL and no store, and exposes no `approve()`/`reject()` at all: a resolution path in the Core would be a second origin for a grant, which is precisely the authority this adapter exists to give away. Six fail-closed deny paths against one grant path (absent/whitespace tenant with the client never called, no client wired, thrown error, hang bounded by an injectable timer, malformed response, unmodelled status), each tested, plus a final test looping them all asserting `granted: false`. "The Tracker said no" and "I could not ask the Tracker" are distinguished by stable `reason` prefixes with an `isTrackerUnavailable()` predicate rather than prose-parsing, because one is a decision and the other an outage. `TrackerApprovalResponse.status` is typed `string`, not `ApprovalStatus`, because it arrives from another repository and typing it as the enum would have the Core assert a guarantee only the Tracker can make; the failure branch carries no `status` field at all, mirroring `scope-contract`'s failure branch. Verified: 4 files / +631 lines, agent-runtime **226 tests**, tsc clean. **Not verified: anything end to end** — every test runs against injected fakes, because the endpoint does not exist in this repository.
+
+**Scope moved out (2026-07-18):** the remaining half is entirely Tracker-side and is registered on the Tracker's own gap board as **`CD-23`** (`evolith_tracker` · `docs/audit/tracker-gap-tracking.md` / `tracker-gap-reference-catalog.md`) — an endpoint accepting `TrackerApprovalSubmission` and returning `{ status, approver?, reason?, approvalId? }`, where `status` is exactly one of `pending`/`approved`/`rejected`/`expired` (anything else the Core treats as an outage by design, so an unmodelled status is a deny and not a pass), `approver` is populated by the Tracker on `approved`/`rejected` (the Core never supplies one and will not fall back to `requestedBy`), per-tenant approver configuration resolves entirely Tracker-side, and `correlationId` is idempotent so a resubmission returns the same `approvalId` instead of opening a second approval.
+
+**Status decision — kept `IN-PROGRESS`, not closed.** The Core-side scope is not complete, so `DONE` would be a false claim on two counts: (1) `TrackerApprovalClient` — the URL scheme, auth and retry policy behind the injectable seam — is Core code in `agent-runtime` and is unimplemented, deliberately, because writing a client against a contract nobody had agreed would be fabricating that agreement; and (2) the deployment-gated remainder recorded above (runtime webhook URL/secret, bootstrap opt-in, live smoke) is unchanged. Handing the endpoint to the Tracker board removes the Tracker's obligation from this row, not the Core's. Closing here would advertise a working HITL channel whose only observable behaviour in production today is a fail-closed deny.
+
 #### GT-442
 
 **Title:** Production secrets + DB connectivity strategy
@@ -1893,6 +1899,9 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 **Title:** Regenerate the stale doc-count / version surfaces to the fresh 0.0.1 baseline
 
 **Problem:** several auto/hand-maintained surfaces still assert pre-reset numbers — `maturity-reconciliation.json` (`@evolith/smart-cli@1.1.4` published + 422/423 gaps), `maturity-assessment.md` (`1.1.0`, "32 MCP tools"), `product-inventory.md` (`1.1.4`, 33 tools / 26 commands), and the hand-written `evolith-mcp-tools.md` catalog (obsolete tool names) — contradicting reality (packages 0.0.1 deprecated; board 432/447). **Closure:** after the in-flight topology/phase-artifacts surface edits land, regenerate the inventory/reconciliation snapshots from code (not by hand) and refresh the assessment + tool catalog — resetting versions to the 0.0.1→1.0.0 baseline and deriving tool/command/resource/prompt counts from the real registries. The 2026-07-04 doc-alignment audit fixed the version/link/field drift; the count-sensitive regeneration is gated on the surface edits landing. **References:** maturity-reconciliation.json; maturity-assessment.md; product-inventory.md; evolith-mcp-tools.md; generate-product-inventory.mjs; 09-reconcile-maturity.mjs.
+
+- **Closure (2026-07-18, commit `702de08b`):** All four named surfaces are regenerated. `maturity-reconciliation.json` was regenerated in `35ea46e1` (559 gaps / 145 rulesets / 132 ADRs / CLI 1.1.0); `maturity-assessment.md` verified clean -- no `1.1.4`, no "32 tools", no `@evolith/smart-cli`; `product-inventory.md` clean at 1.1.0; `evolith-mcp-tools.md` regenerated to 47 tools in `459676aa`. The final blocker was the inventory generator itself: `07-generate-inventories.mjs` resolved the dead `rulesets/` path and reported 0, wrote to an orphaned location, and its `--check` flag WROTE FILES. Fixed in `702de08b`; the canonical `maturity-reports/inventory-summary.md` went from a two-week-frozen 119 ADRs / 144 rulesets / 40 schemas to 132 / 145 / 44, now agreeing exactly with what script 09 derives independently.
+- **Status:** `DONE`
 
 #### GT-446
 
@@ -6749,6 +6758,19 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 **References:** `.harness/scripts/ci/08-validate-tracking.mjs`; `.harness/scripts/ci/09-reconcile-maturity.mjs`; `reference/core/control-center/evidence/gap-closure-evidence.json` (`d11c6e52`); GT-476, GT-477, GT-480.
 
+**Delivered scope** _(this entry predates the acceptance-criteria schema; the proposed-fix clauses are checked off here instead)_:
+- [x] EN/ES boards resynced row-for-row. _(`f3f271da`, `e138b1d4`; guard 08 green)_
+- [x] Catalog sections authored for `GT-486…509` and `GT-511…522` in both languages.
+- [x] The 13 ES `HECHO` tokens normalized to `COMPLETADO` (GT-480); no `HECHO` status cell remains.
+- [x] The 10 legacy invalid closure records repaired — `partial`→`accepted-scope` (GT-425/431/434/462), GT-463 criteria checked against evidence, GT-465 reworded to delivered scope. _(`f70b98ce`)_
+- [x] Progress/Progreso counters re-derived and kept consistent in both languages (GT-477).
+- [x] Guards 08 and 09 re-armed in CI — `.github/workflows/docs.yml` runs both. _(delegated to and delivered by GT-476, now `DONE`)_
+- [x] The CI-owned remainder paid: the maturity evidence was genuinely re-observed, not date-bumped. _(commit `35ea46e1`)_
+
+**Closure (2026-07-18, commit `35ea46e1`):** The board/registry drift this gap tracked is reconciled and guard 08 is green. The last remainder — a genuine fresh maturity observation rather than a local date bump — was performed in `35ea46e1`: all four checks carry `observedAt` 2026-07-18 with real run URLs and commits, `asOf` re-synced to the board, and three checks honestly INVERTED from PASS to BLOCKED with no threshold relaxed. Those three failures had been mapped to this gap as an explicit placeholder; they now hold their own rows ([GT-561](#gt-561), [GT-562](#gt-562), [GT-563](#gt-563)) and `maturity-evidence.json` has been repointed at them, so closing this row leaves no evidence attached to a closed gap. _Not claimed by this closure:_ `09-reconcile-maturity.mjs` still reports its snapshot as stale, because the generated `maturity-reconciliation.json` has not been regenerated — that regeneration belongs to [GT-553](#gt-553) and [GT-445](#gt-445), not here.
+
+**Status:** `DONE`
+
 #### GT-552
 
 **Title:** `release-please` is wired to configuration files that no longer exist
@@ -6762,11 +6784,12 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Criticality:** P1 · **Complexity:** S
 - **Proposed fix:** Decide between the two coherent end states — restore the release-please configuration, or migrate the workflow to the manual-versioning model the deleting commit declared — and align the failure-notification gate accordingly.
 - **Acceptance criteria:**
-  - [ ] The release workflow no longer references files that do not exist.
-  - [ ] A version can be cut end to end, or the workflow no longer claims it can.
-  - [ ] The automated failure-notification issue is reachable, or removed as dead code.
+  - [x] The release workflow no longer references files that do not exist -- `release-please-config.json` and `.release-please-manifest.json` (both deleted in `aed33ba9`) are no longer passed to any action. _(commit `38db17bf`)_
+  - [x] The workflow no longer claims it can cut a version: the `release-please` job was replaced by a `release-gate` job. _(commit `38db17bf`)_
+  - [x] The automated failure-notification issue is reachable -- it RAN AND SUCCEEDED, which disproves the original write-up's claim that it was unreachable dead code. _(run 29641024724)_
 - **Dependencies:** None.
-- **Status:** `PENDING`
+- **Closure (2026-07-18, commit `38db17bf`):** The wiring is fixed: the two phantom configuration files are gone from the workflow and the orphaned `release-please` job is now a `release-gate` job, so the workflow no longer asserts an ability it does not have. _Correction to the original write-up:_ `failure-notification` was NOT dead code -- it ran and succeeded in run 29641024724. _Recorded honestly:_ the release pipeline still fails, for unrelated reasons now tracked by [`GT-561`](#gt-561), [`GT-562`](#gt-562) and [`GT-563`](#gt-563); this gap was about the broken WIRING, which is fixed.
+- **Status:** `DONE`
 
 #### GT-553
 
@@ -6781,10 +6804,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Delete the three dead constants and repoint the ruleset scan at `src/rulesets/`; regenerate the snapshot.
 - **Acceptance criteria:**
-  - [ ] No constant in the guard references the deleted `vision/` path.
-  - [ ] `rulesetCount` reports the real number of rulesets under `src/rulesets/`.
-- **Dependencies:** Regeneration is gated on the maturity evidence refresh tracked by [`GT-523`](#gt-523).
-- **Status:** `PENDING`
+  - [x] No constant in the guard references the deleted `vision/` path -- satisfied by [`GT-556`](#gt-556): all constants now resolve through `resolveKey`, and the only remaining mention is an explanatory comment. _(commit `35ea46e1`)_
+  - [x] `rulesetCount` reports the real number of rulesets under `src/rulesets/`: **145**, matching `find src/rulesets -name "*.rules.json" | wc -l`. _(commit `35ea46e1`)_
+- **Dependencies:** Regeneration was gated on the maturity evidence refresh tracked by [`GT-523`](#gt-523); the snapshot was regenerated in `35ea46e1`, so nothing is left waiting.
+- **Closure (2026-07-18, commit `35ea46e1`):** Both criteria are met and the snapshot is regenerated. _Correction to the original write-up:_ the committed snapshot DID carry the `rulesetCount` field, as `0` -- it was not absent, and that zero was the symptom of the `rulesets/` versus `src/rulesets/` scan.
+- **Status:** `DONE`
 
 #### GT-554
 
@@ -6799,10 +6823,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Repoint section 5.H to `control-center/`, and document the gap intake procedure end to end, including identifier allocation.
 - **Acceptance criteria:**
-  - [ ] Every path cited in CONTRIBUTING resolves.
-  - [ ] The document explains how to file a gap: entry schema, identifier allocation and closure evidence.
+  - [x] Every path cited in CONTRIBUTING resolves -- section 5.H repointed from the deleted `reference/core/sdlc/standards/vision/` to the four real surfaces under `control-center/`, and the Spanish file's drifted paths (`sdk/cli`, `rulesets/schema/`, `rulesets/opa/`, all missing `src/`) were fixed too. 28/28 headings. _(commit `9a13d0d6`)_
+  - [x] The document explains how to file a gap: a new section 6 documents the intake procedure written from the actual artefacts -- the reserve-then-push protocol from `COORDINATION.md`, the board row shape the guard parses, a catalog skeleton matching the real schema, a real-shaped closure-evidence record with all seven fields, and the validation commands. _(commit `9a13d0d6`)_
 - **Dependencies:** Overlaps the intake mechanism proposed in [UP-003](../opportunities/UP-003-user-contribution-intake-mechanism.md).
-- **Status:** `PENDING`
+- **Closure (2026-07-18, commit `9a13d0d6`):** CONTRIBUTING now describes the process that actually exists: every cited path resolves in both languages, and the procedure is written from the artefacts a contributor will meet rather than from memory.
+- **Status:** `DONE`
 
 #### GT-555
 
@@ -6817,8 +6842,220 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Criticality:** P2 · **Complexity:** S
 - **Proposed fix:** Add `CODEOWNERS`, an issue-template `config.yml` linking Discussions and security reporting, bug-report and feature-request templates, and relocate `FUNDING.yml` to `.github/`.
 - **Acceptance criteria:**
-  - [ ] `CODEOWNERS` exists and routes review for the main areas.
-  - [ ] A bug report and a feature request can be filed from the issue chooser.
-  - [ ] `FUNDING.yml` renders on the repository page.
+  - [x] `CODEOWNERS` exists and routes review for the main areas -- `.github/CODEOWNERS`. _(commit `9a13d0d6`)_
+  - [x] A bug report and a feature request can be filed from the issue chooser -- `.github/ISSUE_TEMPLATE/bug-report.yml` and `feature-request.yml`, in plain language, plus `config.yml` turning blank issues off and offering contact links to Discussions, the private security advisory and CONTRIBUTING. _(commit `9a13d0d6`)_
+  - [x] `FUNDING.yml` renders on the repository page -- moved from `src/sdk/cli/` to `.github/`. _(commit `9a13d0d6`)_
 - **Dependencies:** Feeds the GitHub bridge deliverable of [UP-003](../opportunities/UP-003-user-contribution-intake-mechanism.md).
+- **Closure (2026-07-18, commit `9a13d0d6`):** The collaboration surface is usable from outside the core team. _Near-miss recorded:_ CODEOWNERS first shipped naming `@beyondnetcode/evolith-team`, copied from the release workflow's failure notifier -- that team DOES NOT EXIST (`gh api orgs/beyondnetcode/teams` returns only `evolith-core-s-development`). GitHub silently ignores an unresolvable owner, so every line would have routed nothing while the file looked correct. Corrected to the verified team, which was also confirmed to have repository access; the same bad handle in `sdk-cli-release.yml` was fixed, meaning that failure notification had been at-mentioning nobody.
+- **Status:** `DONE`
+
+#### GT-556
+
+**Title:** Harness guards resolved paths from `process.cwd()`, so a guard's answer depended on where it was invoked
+
+- **Purpose:** Make a guard produce the same verdict regardless of the directory it is run from, and make a dead path fail loudly instead of silently reading nothing.
+- **Evidence:** `30-validate-phase-topology-disjoint` reported **8 topology ids from the repo root and 5 from `src/`**, exiting 0 both times — the same guard, the same commit, two different answers and no failure either way. Six path literals in the harness pointed at directories that no longer exist: `rulesets/topologies` (real: `src/rulesets/topologies`), `reference/products` (real: `product/products`), `reference/knowledge/demo/examples` (real: `product/research/demo/examples`), `reference/infrastructure/helm` (real: `product/infra/helm`), `reference/navigation` (real: root `MASTER_INDEX.md` / `control-center/taxonomy`) and `reference/core/sdlc/standards/vision` (real: split across `control-center/{gaps,evidence,maturity-reports}`).
+- **Impact:** Every guard that reads the repository becomes trustworthy only if invoked from one specific directory, which is not a property CI, a pre-commit hook and a developer shell share.
+- **Risk:** A guard whose scope silently shrinks with the working directory is worse than no guard: it produces a green result that a reviewer reasonably treats as coverage.
+- **Affected files:** `.harness/scripts/lib/paths.mjs`; the 15 migrated guards under `.harness/scripts/ci/`.
+- **Component:** `Harness` · **Dimension:** Reliability · **Type:** tooling
+- **Criticality:** P0 · **Complexity:** M
+- **Proposed fix:** Derive the repository root by marker ascent rather than from `process.cwd()`, make path resolution fail closed when the target does not exist, and migrate every guard onto the shared resolver.
+- **Acceptance criteria:**
+  - [x] The repository root is derived by marker ascent — `package.json`, `.harness` and `evolith.yaml` present **together** — so it does not depend on the invocation directory. _(commit `83539a29`)_
+  - [x] `resolve()` throws when a path does not exist, with `optional()` as the explicit escape hatch for genuinely optional targets; `PATH_KEYS` exports the ~45 named locations so a dead literal cannot be reintroduced by hand. _(commit `83539a29`)_
+  - [x] The six dead path literals are repaired and a shared `collectFiles()` replaces the five hand-rolled directory walkers. _(commit `83539a29`)_
+  - [x] The 15 migrated scripts — 06, 09, 11, 12, 19, 21, 22, 25, 27, 29, 30, 31, 32, 33 and `34-check-skill-registry-parity` — each produce identical output from the repo root, from `src/` and from `/tmp`. _(script 30 now reports "5 SDLC phase ids disjoint from 8 topology ids" from all three)_
+- **Dependencies:** none.
+- **Closure (2026-07-18, commit `83539a29`):** Path resolution in the harness is now fail-closed and cwd-independent. The 8-vs-5 divergence in script 30 is gone: the same three invocation directories now yield the same corpus, and a path literal that no longer resolves raises instead of reading an empty set.
+- **Status:** `DONE`
+
+#### GT-557
+
+**Title:** A check that scanned zero items reported success
+
+- **Purpose:** Make "found no problems" distinguishable from "looked at nothing", so an empty scan cannot pass as coverage.
+- **Evidence:** **Seven confirmed false greens.** The decisive pair is `31-detect-duplicate-rulesets` and `32-validate-ruleset-schemas`, which scanned `rulesets/` — a directory that **exists** but contains only `agents/`, so zero `.rules.json` files matched while the real corpus of **145 rulesets** sits in `src/rulesets`. `existsSync` passed, the path was live, and the answer was still fabricated; this is why the guardrail must assert on items scanned rather than on path validity. The other instances: `12-validate-bmad-signatures` printed its success line because `if (existsSync(adrDir))` skipped the whole loop; `11-validate-product-docs` read the wrong `package.json`, so `pkg.version` was always `undefined` and its version-drift assertion could never fire (its SHIPPED list also named `evolith-cli` where the real directory is `smart-cli`); `33-check-adapter-freshness`'s barrel check never fired; and `27-opa-parity-gate` evaluated 26 fixtures from `/tmp` and 0 from the repo root, exit 0 both times, because `git diff` inherited the cwd and the `catch` silently promoted the run to FULL scope.
+- **Impact:** Seven guards that a reviewer counted as coverage were asserting nothing, across rulesets, ADR signatures, product docs, adapter freshness and OPA parity.
+- **Risk:** A false green is more damaging than a missing check, because it is actively cited as evidence that the property holds.
+- **Affected files:** `.harness/scripts/lib/coverage.mjs`; `.harness/scripts/lib/coverage.test.mjs`, `.harness/scripts/lib/paths.test.mjs`.
+- **Component:** `Harness` · **Dimension:** Reliability · **Type:** tooling
+- **Criticality:** P0 · **Complexity:** M
+- **Proposed fix:** Introduce a shared coverage assertion that fails when a scan touched zero items, refuses to let a live source mask a dead one, and requires a written justification wherever emptiness is genuinely legitimate.
+- **Acceptance criteria:**
+  - [x] `assertScanned` throws when a scan produced zero items, so an empty corpus can no longer report success. _(commit `83539a29`)_
+  - [x] `assertScannedPerSource` prevents a live root from masking a dead one in a multi-source scan. _(commit `83539a29`)_
+  - [x] `allowEmpty` requires a written `reason` at the call site and is deliberately **not** settable from an environment variable or a configuration file, so the exemption cannot be granted remotely. _(commit `83539a29`)_
+  - [x] The regression is pinned by tests: 28 tests in `.harness/scripts/lib/*.test.mjs`, including three cwd-independence proofs — chdir invariance, a real subprocess launched from three directories, and a corpus-size test pinning the 8-vs-5 regression. _(`node --test .harness/scripts/lib/paths.test.mjs .harness/scripts/lib/coverage.test.mjs` — 28 passing)_
+- **Dependencies:** none.
+- **Closure (2026-07-18, commit `83539a29`):** The guardrail asserts on what was scanned, not on whether a path happens to exist — which is precisely the distinction the `rulesets/` case defeated. Measured against the corpus: `find src/rulesets -name "*.rules.json" | wc -l` returns 145 where the scanned `rulesets/` returned 0.
+- **Status:** `DONE`
+
+#### GT-558
+
+**Title:** Six finding models coexisted, whose true intersection was only `message` plus some notion of severity
+
+- **Purpose:** Give a finding one shape it can keep as it crosses from a review to a scorecard to the knowledge base, and make its origin impossible to omit.
+- **Evidence:** Six models coexisted — `EvidenceFinding`, `RiskFinding`, `GapFinding`, `GateViolation`, `ValidationIssue` and `Violation`. Their true intersection is `message` plus some notion of severity; **five carry no provenance and none carries determinism**. `GateViolation` and `ValidationIssue` had additionally **forked** into `src/packages/sdk-client/src/mcp/types.ts`: the SDK `GateViolation` widened severity and replaced the REQUIRED `location` with an optional `artifact?`, and the SDK `ValidationIssue` degraded to `severity: string`, losing the `MUST|SHOULD|COULD` constraint. Neither fork is assignable to its domain counterpart in either direction.
+- **Impact:** A finding that moves between surfaces loses provenance and severity meaning at each hop, and the type system cannot detect the loss.
+- **Risk:** Severity reconciliation is an interpretive projection and is therefore not reversible; collapsing it without retaining the producer's own token destroys information silently.
+- **Affected files:** `src/packages/core-domain/src/evaluation/contracts/finding.ts`; `src/packages/core-domain/src/evaluation/sarif-exporter.ts`.
+- **Component:** `Core Domain` · **Dimension:** Governance · **Type:** backend
+- **Criticality:** P0 · **Complexity:** M
+- **Proposed fix:** Add a canonical `Finding` with pure mappers from all six shapes, strictly additive, with origin as a required argument and the producer's verbatim severity token retained.
+- **Acceptance criteria:**
+  - [x] A canonical `Finding` exists with pure mappers from all six shapes, and the change is **strictly additive** — no existing interface or call site was modified. _(commit `30013b07`)_
+  - [x] `FindingOrigin` is a required second argument on every mapper, so an unattributed finding is a compile error. _(commit `30013b07`)_
+  - [x] Severity reconciles to `info|low|medium|high|critical`, with `error` mapping to `high` and deliberately **not** to `critical`, and the producer's verbatim token retained in `sourceSeverity` because the projection is not reversible; `advisory: true` is a literal type. _(commit `30013b07`)_
+  - [x] The seventh duplication surfaced by the compiler when wiring the barrel is resolved: `sarif-exporter.ts` had its own `parseFindingLocation`, and because the two are **not** equivalent — SARIF treats any string as a file uri, while the canonical one distinguishes a parseable `path` from an opaque `ref` and excludes URLs — the SARIF-internal one was renamed `parseSarifLocation` rather than merged. _(commit `30013b07`)_
+  - [x] 38 new tests cover the contract and the mappers. _(`npx jest` in core-domain: 106 suites / 1145 tests passing)_
+- **Dependencies:** Recorded in [ADR-0116](../../architecture/adrs/core/0116-canonical-finding-and-authority-boundary.md).
+- **Closure (2026-07-18, commit `30013b07`):** The canonical contract and its six mappers are in place and recorded in ADR-0116, additive by construction so nothing had to be migrated to land it. _Follow-up noted:_ the two `sdk-client` forks are **unretired** — removing them is a breaking change and needs a semver decision.
+- **Status:** `DONE`
+
+#### GT-559
+
+**Title:** The advisory-authority boundary was prose re-encoded across 60 files
+
+- **Purpose:** Turn the advisory-authority boundary into something a reviewer can cite and a machine can check.
+- **Evidence:** The boundary was restated as prose across **60 files** — "binding: false", "advisory", "non-binding", "recommends but does not decide" — so there was nothing to cite in a review and nothing that could detect a violation.
+- **Impact:** The single most load-bearing constraint of an advisory engine could only be enforced by a reader who happened to remember it.
+- **Risk:** A rule that exists only as prose drifts between its restatements, and the drift is invisible.
+- **Affected files:** `src/packages/core-domain/src/domain/authority-policy.ts`.
+- **Component:** `Core Domain` · **Dimension:** Governance · **Type:** backend
+- **Criticality:** P0 · **Complexity:** M
+- **Proposed fix:** Encode the boundary as a typed decision function with stable rule ids and ADR clause references, and encode the ADR-0097 promotion lifecycle as data rather than describing it again.
+- **Acceptance criteria:**
+  - [x] `evaluateAuthority()` returns a typed decision carrying a quotable reason, a stable rule id (`AP-R01`..`AP-R06`) and the ADR clause it derives from. _(commit `e1f4901a`)_
+  - [x] `ActorKind` (`agent|engine|ci|human|custodian|board`) separates assertive actions — `observe`, `recommend`, `attach-evidence`, `draft-candidate` — from authoritative ones — `accept`, `promote`, `ratify`, `waive`, `enforce`. _(commit `e1f4901a`)_
+  - [x] The ADR-0097 lifecycle is encoded as data (`PROMOTION_SEQUENCE`, `PROMOTION_AUTHORITY`, `isValidPromotion`), and promotion is checked as two separate questions — is the move legal (AP-R04) and is this the actor who may make it (AP-R05) — so a reviewer can tell "wrong stage" from "wrong person"; AP-R03 (self-authorization) is ordered ahead of AP-R02 (actor is not human) deliberately. _(commit `e1f4901a`)_
+  - [x] 34 new tests cover the rules and their ordering. _(`npx jest` in core-domain: 106 suites / 1145 tests passing)_
+- **Dependencies:** Recorded in [ADR-0116](../../architecture/adrs/core/0116-canonical-finding-and-authority-boundary.md); ADR-0097 supplies the promotion lifecycle encoded here.
+- **Closure (2026-07-18, commit `e1f4901a`):** The boundary is executable and recorded in ADR-0116. _Deliberately not encoded:_ human self-review (no ADR bars it); which office may ratify, waive or enforce (deferred to `domain/rbac`); and KI-R03's evidence gate (stays in `knowledge-intake.rego`). _Follow-up noted:_ `PromotionStatus` is now declared both here and in `agent-runtime/src/application/automation-candidate.ts:25`.
+- **Status:** `DONE`
+
+#### GT-560
+
+**Title:** The circuit breaker is a DI-registered orphan
+
+- **Purpose:** Either put real downstream calls behind the breaker, or stop scoring resilience on a component that protects nothing.
+- **Evidence:** `CircuitBreakerService` (`src/apps/core-api/src/infrastructure/resilience/circuit-breaker.service.ts`) genuinely wraps opossum 9.0.0 and is provided in `src/apps/core-api/src/app.module.ts:99`, but across all of `src/` there are ZERO injections of the service and ZERO `createBreaker` callers outside the service and its own spec. No database call, HTTP call or satellite fetch sits behind a breaker, and `getStats()` is unreachable from any controller.
+- **Impact:** `reference/core/foundations/common-rules/senior-architectural-assessment.md:35` scores "Resilience 7/10 -- Circuit breaker via `opossum` is OK", a rating awarded to a component that protects nothing.
+- **Risk:** A resilience score derived from a registered-but-unused provider is an overstatement of what the system survives.
+- **Affected files:** `src/apps/core-api/src/infrastructure/resilience/circuit-breaker.service.ts`; `src/apps/core-api/src/app.module.ts`; `reference/core/foundations/common-rules/senior-architectural-assessment.md`.
+- **Component:** `Core API` · **Dimension:** Reliability · **Type:** backend
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Decide WHICH downstream dependencies must be wrapped and route them through the breaker, then re-derive the resilience score from what is actually protected. The decision is a production design decision, which is why it was not done inline.
+- **Second investigation (2026-07-18) -- the narrowed scope was ALSO false:** "wrap the Redis cache" cannot be done, because **core-api never connects to Redis**. Two independent defects: `redis-store.factory.ts:13` destructures `{ KeyvRedis }` from `@keyv/redis`, but v5 exports it as the DEFAULT -- the named export is `undefined`, so `new KeyvRedis(url)` throws and the try/catch at :29 swallows it; and `redis-cache.module.ts:28` passes `store:` while cache-manager v3 reads `stores:`, so even fixing the first alone still yields an in-memory cache. Net: caching works but is process-local, all `REDIS_*` config is silently ignored, and two warnings are logged every boot. Wrapping this would have put a state machine around a `Map`. **And fixing the wiring alone would be strictly WORSE than today:** with a correctly-wired but unreachable Redis, `get`/`set` HANG indefinitely rather than rejecting (measured: still pending at 8s and 16s), converting a cache miss into a hung request. The breaker is justified only JOINTLY with the wiring fix, never before and never as a follow-up -- opossum's timeout converts the hang into a fast failure and the fallback converts that into a miss. The prior decision stands: enabling Redis turns a currently-nonexistent network dependency into a live one, which is a production design decision. If process-local caching is adequate for a stateless evaluator (ADR-0101), the right fix is to DELETE the dead Redis wiring and de-scope the breaker rather than repair it. Adjacent finding: `CacheMetricsService.recordHit/recordMiss/recordError` also have no callers, so cache metrics are permanently zero.
+- **Investigation (2026-07-18):** The premise that there are downstreams to wrap is largely FALSE, and this changes the fix. `core-api` makes exactly two outbound calls, both in guards (`api-key.guard.ts`, `metrics-auth.guard.ts`): a `fetch` to the Dapr sidecar for a secret, already cached per process, already wrapped in try/catch, and already falling back to an env var. It declares no HTTP client (no axios/got/undici) and no database driver. That is consistent with ADR-0101, which makes the Core a stateless evaluator: a service that calls nobody does not need protecting from nobody failing. The only recurring outbound dependency is the Redis cache via `RedisCacheModule`. The adapters that DO perform network I/O -- `webhook.adapter.ts` and `github-api.adapter.ts` -- live in `infra-providers` and are consumed by the CLI, not the Core. So the honest options are: wrap only the Redis cache (small, honest); move the breaker to `infra-providers` where the real calls are; or accept that the Core needs very little of it. What is NOT in doubt is the score: `senior-architectural-assessment.md` rated Resilience 7/10 on a component protecting nothing, corrected to 4/10 with the evidence.
+- **Acceptance criteria:**
+  - [ ] At least one real downstream call is executed through `CircuitBreakerService`.
+  - [ ] `getStats()` is reachable from an operational surface.
+  - [ ] The resilience rating in the assessment reflects what the breaker actually protects.
+- **Dependencies:** None.
 - **Status:** `PENDING`
+
+#### GT-561
+
+**Title:** The MCP smoke test times out, failing E2E and cascading into DAST
+
+- **Purpose:** Restore a green pipeline so a genuine regression is still visible.
+- **Evidence:** The E2E Tests job fails at the MCP stdio/HTTP smoke with `MCP smoke test FAILED: Timed out waiting for initialize (id 1)`; DAST then fails downstream with `MCP Server failed to start after 60s`. Observed 2026-07-18 in run 29646397424. The last green run of this pipeline was 2026-06-30.
+- **Impact:** Two jobs are red on every run, and the DAST failure is a consequence of the first rather than an independent finding.
+- **Risk:** A permanently red pipeline normalises the red signal, after which a real regression arrives unnoticed.
+- **Affected files:** the MCP smoke harness and the `mcp:smoke` script it runs.
+- **Component:** `MCP Server` · **Dimension:** Reliability · **Type:** ci
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Diagnose why the server never answers `initialize` within the smoke timeout, fix the cause, and confirm DAST recovers once the server starts.
+- **Acceptance criteria:**
+  - [x] The MCP smoke completes without a timeout on `initialize`. _(run [29665015800](https://github.com/beyondnetcode/evolith_arch32/actions/runs/29665015800): passes on both transports -- 47 tools, 11 resources, 8 prompts, both `tools/call` checks, stdio and HTTP)_
+  - [x] The E2E Tests job passes. _(**success** in run 29665015800)_
+  - [x] DAST no longer fails with `MCP Server failed to start after 60s`. _(the DAST job's `Start MCP Server` and `Wait for MCP Server` steps both succeed in run 29665015800)_
+- **Dependencies:** None.
+- **Closure (2026-07-18, commit `b408a0ef`):** The server was never broken. The smoke spawned `node dist/main.js mcp serve` from the CLI's dist, and commit `dc0b9667` (2026-06-30, "decouple mcp-server from smart-cli") DELETED that command — the exact date of the last green run. The process died instantly with `error: unknown command 'mcp'`, but the stdio path piped stderr and never read it, so an instant hard failure was reported as a 5-second timeout; that misdirection is why the cause stayed opaque for 19 days. The fix repoints both transports at the standalone gateway, adds a pre-flight check that fails with "build it first" rather than timing out, and folds stderr and the early-exit code into the failure message. _No assertion was weakened and NO timeout was raised_ — startup measures ~1s, so the 5s limit was never implicated. _Correction to this gap's own premise:_ DAST was NOT a downstream cascade from E2E. The jobs are independent and DAST carried its OWN copy of the same stale `mcp serve` invocation, so fixing the smoke alone would have left it red; its start step was repointed too, plus `--allow-no-auth` so ZAP scans a reachable surface. _Three follow-on commits were needed before the criteria could be OBSERVED_, and the chain is recorded because each layer hid the one beneath: `6cac6cda` — the SDK 2.0.0 bump had left `package-lock.json` desynced, so `npm ci` refused and eight jobs died on their first step, never reaching the smoke; `b75d43fc` — the CLI pipeline's `paths` filter did not list `package.json` / `package-lock.json`, so neither the break nor its fix triggered the pipeline they affected (it also listed `release-please-config.json`, deleted in `aed33ba9` — a filter watching a path that cannot change); `37cbeae1` — DAST still reported red on `Resource not accessible by integration`, because the ZAP action files its report as a GitHub issue and the workflow grants no `issues: write`; the scan itself was clean (`FAIL-NEW: 0, PASS: 146`), so issue-filing was disabled rather than granting a scanner write access, the report already being uploaded as an artifact. _Stated plainly:_ the job still shows red for reasons unrelated to this gap — the CLI's branch-coverage gate (69.3% against a 75% threshold, tracked by [GT-562](#gt-562)) and 12 pre-existing bilingual-terminology findings in files last touched between 2026-07-04 and 2026-07-13. The pipeline is not green.
+- **Status:** `DONE`
+
+#### GT-562
+
+**Title:** Branch coverage regressed below the gate
+
+- **Purpose:** Repay a coverage regression rather than move the line that detected it.
+- **Evidence:** 71 suites and 969 tests pass with 0 failures, but the blocking coverage gate fails: `Coverage for branches (62.89%) does not meet "global" threshold (75%)`. Observed 2026-07-18 in run 29646397424.
+- **Impact:** The coverage gate blocks, and the honest reading is that branch coverage fell below a threshold that remains correct.
+- **Risk:** The cheapest response -- relaxing the threshold -- would convert a measured regression into a permanently lowered standard.
+- **Affected files:** the `core-api` test suite and its Jest coverage configuration.
+- **Component:** `SDK CLI` · **Dimension:** Reliability · **Type:** testing
+- **Criticality:** P2 · **Complexity:** M
+- **Proposed fix:** Add branch coverage where it was lost until the suite clears 75 percent. The gate is deliberately left untouched.
+- **Owner decision (2026-07-18):** Recorded as DEBT rather than paid now. Coverage moved 62.85% -> 69.38% (+168 branches) by covering the branches whose failure would actually hurt -- `handleError`, the waiver command's approve/expire paths, validate-against-zero-rules, the bundled-ruleset resolution every installed user takes, and the ADR-0109 satellite precedence order. The remaining 5.6 points cost roughly 100-140 tests over interactive wizard gating (`init`, `update`, `scaffold`, `profile`, `satellite-adopt`) and the YAML/table pretty-printer -- tests that assert a mock was asked a question. THE THRESHOLD STAYS AT 75 AND THE GATE STAYS RED: this is a regression to repay, not a bar to lower. A further ~100 branches in `adr`/`standards`/`agents` are excluded on purpose because they are dominated by the success-envelope defect found alongside this work; covering them before that is fixed would bless the bug.
+- **Acceptance criteria:**
+  - [ ] Branch coverage is at or above the existing 75 percent global threshold.
+  - [ ] The threshold itself is unchanged.
+- **Dependencies:** None.
+- **Status:** `PENDING`
+
+#### GT-563
+
+**Title:** 174 doc-validation errors, and the workflow that should catch them reports success
+
+- **Purpose:** Fix the documentation corpus and make the check that measures it actually run.
+- **Evidence:** `01-validate-docs.mjs` exits 1 with 174 errors -- 108 broken links, 44 emoji, 9 mojibake and 5 topology-manifest schema violations -- confirmed locally at commit `5cd18bea`. Separately, the `Documentation Validation` workflow reports SUCCESS on that same commit, because its `validate` job is gated on `workflow_dispatch` and is therefore skipped; only the tracking guard runs.
+- **Impact:** The corpus carries 174 real errors while the workflow that should surface them is green.
+- **Risk:** A red check nobody sees is worse than a red check: the green badge is cited as evidence that the corpus is clean.
+- **Affected files:** `.harness/scripts/ci/01-validate-docs.mjs`; the `Documentation Validation` workflow; the 174 reported locations.
+- **Component:** `Documentation` · **Dimension:** Governance · **Type:** docs
+- **Criticality:** P2 · **Complexity:** L
+- **Proposed fix:** Clear the 174 errors and remove the `workflow_dispatch` gate on the `validate` job so the check runs on every push. Both halves belong to this gap.
+- **Acceptance criteria:**
+  - [x] `node .harness/scripts/ci/01-validate-docs.mjs` exits 0.
+  - [x] The `validate` job runs unconditionally, so the workflow result reflects the validator's verdict.
+- **Dependencies:** None.
+- **Closure (2026-07-18, commit `c63c3eb7`):** The workflow gated its `validate` job on `workflow_dispatch`, so on push and pull_request only the tracking guard ran and the job reported green over a check that never executed. It is now armed on both, blocking. THREE OF THE FOUR ERROR CATEGORIES WERE NOT DEFECTS: 97 of 108 "broken links" lived in `src/sdk/cli/rulesets/**`, a gitignored build-time copy byte-identical to its source and breaking only because it sits two directories deeper -- the exemption for exactly this already existed but pointed at a path present in neither location, and now derives from git so it cannot go stale again; all 9 "mojibake" were false positives, the rule matching word-initial corrupted vowels without a word boundary so `ipicas` matched inside correctly-spelled `tipicas`; and the 5 schema violations were a stale schema whose allowed roots were the pre-`src/` layout. Two further defects surfaced and were fixed: `stripCodeBlocks` matched fences unanchored, so an inline triple backtick desynchronized pairing and blanked the prose BETWEEN blocks instead of the blocks, silently exempting it from every content check and hiding real emoji violations; and `10-validate-contract-conformance.mjs` had crashed on every invocation since the `src/` refactor, unnoticed because its calling job was skipped -- fixing it surfaced 3 real defects it could never report. Mermaid parse errors from unquoted parentheses in subgraph titles were fixed in `019a1e19` and verified by rendering, not inspection. _Stated plainly:_ `Evolith Core Validation` still fails, on a DIFFERENT check -- `bilingual-terminology-lint`, 12 findings in files last touched between 2026-07-04 and 2026-07-13. That is pre-existing debt newly reachable because this gap's fixes let the job get that far. The job is not green.
+- **Status:** `DONE`
+
+#### GT-564
+
+**Title:** The SDK's exported payload types were a fork that did not describe the wire
+
+- **Purpose:** Make the types a consumer imports be the types the API actually emits, so the SDK stops being a second, wrong description of the same contract.
+- **Evidence:** Both REST and MCP call the **same** use case and return the domain object **verbatim**, so there was no reshaping to justify separate DTOs. The fork nevertheless declared `passed: boolean` where the API emits `verdict: 'passed'\|'failed'\|'skipped'`, and `README.md` instructed users to print `result.data.passed` — **undefined at runtime**. It omitted `gateId`, `rulesetRef` and `rulesetVersion`, which ARE emitted; it dropped the REQUIRED `location`; and it declared `artifact?` and `remediation?`, which **no producer emits**. `ViolationSeverity` admitted an unreachable `'info'` and was forked across two files, and `ValidationIssue` had degraded to `severity: string`, losing the `MUST\|SHOULD\|COULD` constraint.
+- **Impact:** Every consumer typing against the SDK was typed against a contract nothing produces, and the published README's first example was wrong at runtime.
+- **Risk:** A wrong type is worse than an absent one: it compiles, so the error surfaces only in production, and the deprecation window normally used to soften a breaking change would have preserved the wrongness for its duration.
+- **Affected files:** `src/packages/sdk-client/src/mcp/types.ts`; `src/packages/sdk-client/src/rest/types.ts`; `src/packages/sdk-client/src/index.ts`; `src/packages/sdk-client/README.md` and `README.es.md`; `src/packages/sdk-client/package.json`.
+- **Component:** `SDK` · **Dimension:** Governance · **Type:** backend
+- **Criticality:** P1 · **Complexity:** L
+- **Proposed fix:** Retire the forked payload types onto the domain contract by re-exporting `@beyondnet/evolith-core-domain`, and release the change as a major version.
+- **Acceptance criteria:**
+  - [x] `sdk-client` re-exports the payload types from `@beyondnet/evolith-core-domain` rather than redeclaring them, so there is one source of truth. _(commit `af0deffe`)_
+  - [x] The wrong declarations are gone: no boolean `passed`, `verdict` present, `gateId`/`rulesetRef`/`rulesetVersion` present, `location` required again, the unproduced `artifact?`/`remediation?` removed, the unreachable `'info'` severity removed, and `ValidationIssue.severity` back to `MUST\|SHOULD\|COULD`. _(commit `af0deffe`)_
+  - [x] `README.md` and `README.es.md` no longer instruct users to read `result.data.passed`; the example prints `verdict`, `gateId` and `rulesetVersion`. _(commit `af0deffe`)_
+  - [x] The package is bumped to **2.0.0** — a major bump rather than a deprecation window, because a window preserves types that are actively wrong and any 1.1.0 consumer is already broken at runtime. _(commit `af0deffe`)_
+  - [x] The dependency is real, not a vendored copy guarded for parity: two sources of truth plus a watcher is the pattern being removed. _(commit `af0deffe`)_
+  - [x] 54/54 sdk tests pass and `tsc` is clean for `sdk-client`, `mcp-server` and `src/sdk/cli`. _(commit `af0deffe`)_
+- **Dependencies:** Retires the two `sdk-client` forks recorded as an unresolved follow-up on [GT-558](#gt-558); the drift that allowed it is [GT-565](#gt-565).
+- **Closure (2026-07-18, commit `af0deffe`):** The SDK's payload types are now the domain's, imported rather than restated, and the package carries the major version that breaking change requires. _Deliberately not done:_ publishing 2.0.0 to the registry, which is the owner's call and not a code change.
+- **Status:** `DONE`
+
+#### GT-565
+
+**Title:** The SDK's tests asserted against the SDK's own invented shape, so its types could drift arbitrarily and stay green
+
+- **Purpose:** Make the SDK's types accountable to the wire that actually exists, so the drift behind [GT-564](#gt-564) cannot recur silently.
+- **Evidence:** This is the root cause of [GT-564](#gt-564): the SDK's tests mocked `fetch` to return the SDK's **own** invented shape and then asserted on it, a closed loop in which no divergence from the API is observable. The suite additionally ran in **no workflow at all** — it existed, it passed locally, and CI never executed it.
+- **Impact:** The one artefact that could have caught the forked types was structurally incapable of doing so, and was not being run regardless.
+- **Risk:** A test that asserts a mock against itself reports confidence proportional to nothing; a reviewer reasonably reads its green as contract coverage.
+- **Affected files:** `src/tests/contract/sdk-wire-contract.spec.ts`; `src/tests/contract/sdk-type-contract.types.ts`; `src/tests/contract/tsconfig.sdk-type-contract.json`; `.github/workflows/ci-cd.yml`.
+- **Component:** `Testing` · **Dimension:** Reliability · **Type:** tooling
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Assert the SDK types against a real response from a booted core-api, in both a compile-time and a runtime layer, and wire the suite into CI.
+- **Acceptance criteria:**
+  - [x] Two layers, because each is blind to a drift the other catches: compile-time cannot see a controller change its response without touching the domain type, and runtime cannot see fields absent from the sample or required-vs-optional distinctions. _(commit `2db2306c`)_
+  - [x] The cost objection to booting a real server was measured rather than assumed: booting core-api takes **~3s**, so the argument for a compile-time-only check did not survive measurement. _(commit `2db2306c`)_
+  - [x] The runtime checker's key set and required flags are **type-derived** from the SDK types, so the runtime half cannot drift from the type it enforces. _(commit `2db2306c`)_
+  - [x] The suite is proven to bite: three deliberate breaks were introduced and each was caught, then restored. _(commit `2db2306c`)_
+  - [x] The suite is wired into `ci-cd.yml` as a `test-contract` job, having previously run in no workflow. _(commit `1875f725`)_
+  - [x] The symlink workaround the suite needed is REMOVED, because the underlying ruleset resolution was fixed to resolve the corpus by content rather than by directory existence — the removal is the evidence that fix is real. _(commit `e25804dc`)_
+  - [x] 43/43 contract tests pass. _(`npm run test:contract`)_
+- **Dependencies:** Pins the contract restored by [GT-564](#gt-564); the ruleset-resolution fix in `e25804dc` is a follow-on of this gap, not a separate dependency.
+- **Closure (2026-07-18, commit `2db2306c`):** The SDK's types are now checked against a response from a real booted core-api instead of against a mock of themselves, in two layers whose runtime half is derived from the type it enforces, and the suite runs in CI. _Follow-on commits:_ `1875f725` (CI wiring) and `e25804dc` (ruleset resolution by content, which retired the symlink workaround).
+- **Status:** `DONE`

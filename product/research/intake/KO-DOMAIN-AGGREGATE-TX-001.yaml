@@ -1,0 +1,70 @@
+knowledge_id: KO-DOMAIN-AGGREGATE-TX-001
+origin:
+  class: violation
+  repository: satellite-ums
+  component: ApproveTenantSignupCommandHandler
+  detected_by: '@winston-architect'
+  detected_at: "2026-07-18"
+  sensitivity: internal
+  # commit / pull_request / file / evidence_ref are deliberately ABSENT.
+  # This record is at `candidate`, where KO-R03 does not yet require evidence.
+  # They MUST be supplied before promotion to `evaluated` — see the
+  # "Pending verification" block in the synthesis.
+assessment:
+  trust_level: secondary
+  portability: high
+  topologies:
+    - modular-monolith
+    - distributed-modules
+    - microservices
+  maturity: proven
+  preconditions:
+    - domain-modeling-established
+    - bounded-contexts-defined
+  anti_patterns:
+    - multi-aggregate-transaction
+    - pre-commit-event-publication
+    - broker-for-intra-service-handoff
+    - domain-integration-event-conflation
+  alternatives:
+    - transactional-outbox
+    - eventual-consistency-via-process-manager
+    - aggregate-boundary-redesign
+  related_topologies:
+    - event-driven
+  concerns:
+    - domain-modeling
+    - consistency
+    - messaging
+promotion:
+  status: candidate
+  promoted_at: null
+  promoted_by: null
+  adr: null
+  native_rule: null
+  opa_policy: null
+  fixtures: []
+  disposition: null
+review:
+  owner: '@winston'
+  next_review_at: "2027-01-18"
+  review_freshness: "2026-07-18"
+synthesis: >-
+  CONFIRMED FACTS (as reported, not yet verified against the repository): a
+  command handler commits changes to more than one aggregate inside a single
+  transaction; domain events are published before that transaction commits; a
+  message broker carries a handoff that stays inside one service; and there is no
+  transactional outbox. Domain events and integration events are not
+  distinguished. AGENT INTERPRETATION: the transaction boundary appears to be
+  drawn around the use case rather than around the aggregate, which is what makes
+  the other four observations follow rather than being independent defects.
+  Publishing before commit can emit an event for a state that never persists;
+  a broker for an intra-service handoff buys asynchrony at the cost of a delivery
+  guarantee the process did not need. The reusable knowledge is the boundary rule
+  itself, not this handler. RISK: abstractions such as an IUnitOfWorkScope, or a
+  recommendation that blesses multi-aggregate commits, would institutionalise the
+  anti-pattern by making it the path of least resistance. PENDING VERIFICATION:
+  the repository, commit, file and Evidence provenance hash are unconfirmed; the
+  claim that no outbox exists needs checking against the codebase; and whether
+  the aggregates are genuinely separate consistency boundaries, or one modelled
+  as two, decides whether the fix is an outbox or a remodelling.

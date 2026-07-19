@@ -1,10 +1,42 @@
 /**
- * REST API types derived from the Evolith Core API controller DTOs and
- * OpenAPI configuration (apps/core-api/src/openapi/openapi-config.ts).
+ * REST API types for the Evolith Core API.
  *
- * These types mirror the NestJS DTOs from apps/core-api/src/presentation/dtos/
- * and the envelope decorator from ApiEnvelopeResponse.
+ * GT-564: response payload types are NOT redeclared here. Core-api returns the
+ * domain objects verbatim (there is no controller-level reshaping), so this
+ * module re-exports the canonical contracts from
+ * `@beyondnet/evolith-core-domain`. Only genuinely transport-layer shapes —
+ * the response envelope (mirroring
+ * apps/core-api/src/infrastructure/interceptors/envelope.interceptor.ts) and
+ * the request DTOs — are owned here.
  */
+
+import type {
+  GatePhase,
+  GateVerdict,
+  GateViolation,
+  GateEvidence,
+  ViolationSeverity,
+  EvaluatorKind,
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import type {
+  ValidationResult,
+  ValidationIssue,
+} from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.types';
+
+/**
+ * Canonical domain contracts, re-exported so SDK consumers keep a single import
+ * site. These are aliases, not forks — the definitions live in core-domain.
+ */
+export type {
+  GatePhase,
+  GateVerdict,
+  GateViolation,
+  GateEvidence,
+  ViolationSeverity,
+  EvaluatorKind,
+  ValidationResult,
+  ValidationIssue,
+};
 
 // ─── Common envelope ─────────────────────────────────────────────────────────
 // Mirrors apps/core-api/src/infrastructure/interceptors/envelope.interceptor.ts:
@@ -32,32 +64,15 @@ export type ApiEnvelope<T> = SuccessEnvelope<T> | ErrorEnvelope;
 
 // ─── Gate Evaluation ─────────────────────────────────────────────────────────
 
-export type GatePhase = 'discovery' | 'design' | 'construction' | 'qa' | 'release';
-
 export interface EvaluateGateRequest {
   /** Opaque workspace reference issued by the Tracker BFF */
   workspaceRef: string;
 }
 
-export type ViolationSeverity = 'error' | 'warning' | 'info';
-
-export interface GateViolation {
-  ruleId: string;
-  severity: ViolationSeverity;
-  message: string;
-  artifact?: string;
-  remediation?: string;
-}
-
-export interface GateEvidence {
-  phase: GatePhase;
-  passed: boolean;
-  violations: GateViolation[];
-  evaluatedBy?: string;
-  evaluatedAt?: string;
-  summary?: { errors: number; warnings: number };
-}
-
+/**
+ * `POST /api/v1/gates/:gateId/evaluate` wraps the domain `GateEvidence`
+ * verbatim (gates.controller.ts → createSuccessEnvelope(result)).
+ */
 export type EvaluateGateResponse = SuccessEnvelope<GateEvidence>;
 
 // ─── Phase Transition ────────────────────────────────────────────────────────
@@ -107,18 +122,13 @@ export interface DetectDriftRequest {
   declaredLevel?: string;
 }
 
-export interface ValidationResult {
-  passed: boolean;
-  issues: Array<{
-    ruleId: string;
-    severity: string;
-    title: string;
-    blocking: boolean;
-    category?: string;
-  }>;
-  rulesChecked?: number;
-}
-
+/**
+ * `POST /api/v1/architecture/validate-satellite` returns the domain
+ * `ValidationResult` verbatim. (The controller can also return an ADR-0073
+ * output envelope, but only when the body carries a `manifest` — a field
+ * `ValidateSatelliteRequest` does not expose, so that branch is unreachable
+ * from this client.)
+ */
 export type ValidateSatelliteResponse = SuccessEnvelope<ValidationResult>;
 export type DetectDriftResponse = SuccessEnvelope<unknown>;
 

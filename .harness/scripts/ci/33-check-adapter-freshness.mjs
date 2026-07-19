@@ -13,13 +13,18 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const root = process.cwd();
+// GT-556: root came from process.cwd(), and the adapters barrel was read from
+// `packages/agent-runtime/...` — missing the `src/` prefix, so the barrel-export check
+// silently never fired.
+import { REPO_ROOT, resolve as resolveKey } from '../lib/paths.mjs';
+
+const root = REPO_ROOT;
 const issues = [];
 
 // --- Check 1: Agent definitions vs adapter implementations ---
 
-const agentsDir = path.join(root, "reference/core/foundations/agent-skills");
-const adaptersDir = path.join(root, "src/packages/agent-runtime/src/adapters/interaction");
+const agentsDir = resolveKey("agentSkills");
+const adaptersDir = resolveKey("agentRuntimeInteractionAdapters");
 
 if (fs.existsSync(agentsDir) && fs.existsSync(adaptersDir)) {
   const agentFiles = fs.readdirSync(agentsDir).filter(f => f.endsWith(".md") && !f.endsWith(".es.md"));
@@ -43,7 +48,7 @@ if (fs.existsSync(agentsDir) && fs.existsSync(adaptersDir)) {
 
 // --- Check 2: Skill manifest vs skill implementations ---
 
-const manifestPath = path.join(root, "reference/core/foundations/agent-skills/manifest.json");
+const manifestPath = resolveKey("agentSkillsManifest");
 if (fs.existsSync(manifestPath)) {
   const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
   for (const skill of manifest.skills || []) {
@@ -58,7 +63,7 @@ if (fs.existsSync(manifestPath)) {
 
 // --- Check 3: Adapter exports vs adapter files ---
 
-const barrelPath = path.join(root, "packages/agent-runtime/src/adapters/index.ts");
+const barrelPath = resolveKey("agentRuntimeAdaptersBarrel");
 if (fs.existsSync(barrelPath)) {
   const barrel = fs.readFileSync(barrelPath, "utf-8");
   const exportedAdapters = [...barrel.matchAll(/export \{ (\w+) \}/g)].map(m => m[1]);

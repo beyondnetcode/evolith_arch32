@@ -151,8 +151,8 @@ la unidad de release de producción.
   contratos.
 
 ## Referencias
-- [Canónico: Diseño de Proyección de Tenant (Master Data)](../../../../../../mms/docs/architecture/tenant-master-data-projection.md)
-- [Evolith Governed Composition Target Design](../../../../product/suite/architecture/evolith-governed-composition-target-design.md)
+- Canónico: Diseño de Proyección de Tenant (Master Data) — `mms/docs/architecture/tenant-master-data-projection.md` (repositorio externo `mms`).
+- [Evolith Governed Composition Target Design](../../../../../product/suite/architecture/evolith-governed-composition-target-design.md)
 
 ## Decisiones y Estándares Relacionados
 - [ADR-0106: Master Tenant y Proyecciones de Contexto](./0106-master-tenant-context-projections.es.md)

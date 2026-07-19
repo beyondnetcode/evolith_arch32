@@ -158,10 +158,10 @@ Multi-cluster-por-producto se **rechaza**: obliga a federar/shovel RabbitMQ entr
 
 La verificación adversarial encontró que la topología CRD previamente declarada **no coincide con cómo MassTransit mueve mensajes en realidad**. Tres defectos verificados y sus resoluciones:
 
-### 5.1 ✂️ `x-consistent-hash` no hace fan-out (crítico, corregido por cambio de diseño)
+### 5.1 `x-consistent-hash` no hace fan-out (crítico, corregido por cambio de diseño)
 Un exchange consistent-hash enruta cada mensaje a **exactamente una** cola enlazada — con `ums.tenant-projection` y `tracker.tenant-projection` ambas enlazadas, cada evento llegaría a UMS **o** a Tracker (~50/50 por hash de tenantId), nunca a ambos. **Regla:** consistent-hash es una *herramienta de particionamiento dentro de un grupo consumidor*, nunca de distribución pub/sub. El fan-out requiere un exchange fanout/topic con un binding por grupo consumidor.
 
-### 5.2 ✂️ MassTransit es dueño de la topología de mensajes (crítico, decisión)
+### 5.2 MassTransit es dueño de la topología de mensajes (crítico, decisión)
 MassTransit auto-declara un **type-exchange fanout** (`Evolith.Contracts.MasterData:TenantEvent`) y enlaza el exchange/cola de cada endpoint consumidor — esa es la topología por la que fluyó el E2E validado; el exchange CRD era letra muerta, y las colas pre-creadas por CRD con argumentos DLX harían fallar la re-declaración de MassTransit (`406 PRECONDITION_FAILED` → el endpoint falla para siempre mientras el pod sigue Ready — la clásica falla silenciosa de las 3 a.m.).
 
 **Decisión — adoptar las convenciones de MassTransit:**
@@ -170,7 +170,7 @@ MassTransit auto-declara un **type-exchange fanout** (`Evolith.Contracts.MasterD
 - Los nombres de endpoint quedan fijados en código (`ums.tenant-projection`, `tracker.tenant-projection`).
 - Permisos del broker como **regex sobre prefijos de nombres** (grants solo por verbo rompen el arranque de MassTransit): `mms` → configure/write sobre `^(Evolith\.Contracts\.MasterData.*|mms\..*)$`; `ums` → configure/write/read sobre `^(ums\..*|Evolith\.Contracts\.MasterData.*)$`; `tracker` simétrico.
 
-### 5.3 ✂️ Los mensajes veneno caen en `<queue>_error`, no en un DLX (mayor, decisión)
+### 5.3 Los mensajes veneno caen en `<queue>_error`, no en un DLX (mayor, decisión)
 Agotados los reintentos, MassTransit **mueve** el mensaje fallido a `<queue>_error` — nunca hace nack, así que el `x-dead-letter-exchange` del broker jamás se dispara. **Decisión:** adoptar la convención de MassTransit — alertar sobre profundidad > 0 de `ums.tenant-projection_error` / `tracker.tenant-projection_error`; el runbook de reproceso hace shovel de `_error` a la cola principal; las CRDs DLX/DLQ se retiran junto con §5.2.
 
 ### 5.4 Regla de probes (contradicción resuelta)
@@ -287,21 +287,21 @@ Deltas de código por producto (BUILD, prerequisito de G2): MMS no tiene OTel; a
 
 | # | Riesgo | Sev | Owner | Mitigación | Fase |
 |---|---|---|---|---|---|
-| 1 | Ownership de tenant con dos escritores | 🔴 | Winston | Escalera M0–M4 (§12) | fases M |
-| 2 | ~~Exchange consistent-hash divide el tráfico entre consumidores~~ **corregido por decisión §5.2** | 🔴→✅ | Arq | Topología fanout de MassTransit | retiro de CRDs BUILD |
-| 3 | Conflicto de declaración CRD/código (406 → consumidor muerto silencioso) | 🔴 | Arq | retirar CRDs de colas (§5.2); G1 verifica endpoint *arrancado* | M0 |
-| 4 | Inbox de dedup no cableado en consumidores | 🟠 | DevOps | `UseEntityFrameworkOutbox` en endpoints (§5.5-1) + assert InboxState en G1 | M0 |
-| 5 | Carrera de concurrencia en proyección (regresión permanente) | 🟠 | DevOps | upsert condicional set-based (§5.5-2) | M0 |
-| 6 | Probes de MMS requieren Development → CrashLoop en prod | 🟠 | Infra | endpoints `/health` reales antes del primer deploy a staging | pre-staging |
-| 7 | Fallback `Default`/`DefaultConnection` → consumidores apuntando a localhost | 🟠 | Infra | fix del fallback + `MasterDataDb` explícito en charts | M0 |
-| 8 | Migraciones al arranque compiten con replicas>1 | 🟠 | Infra | patrón migrate-Job en toda la suite | pre-staging |
-| 9 | Alertas de veneno mirando la cola equivocada (DLX vs `_error`) | 🟠 | Infra | alertas de profundidad `_error` + runbook de shovel (§5.3) | pre-staging |
-| 10 | Broker = dependencia crítica compartida | 🟠 | Infra | outbox (probado) + quorum con ≥3 nodos + degradación solo-frescura (§5.6) | permanente |
-| 11 | Credenciales en texto plano en values de mms-helm; default-user compartido | 🟡 | Infra | usuarios de broker por producto (CRDs) + ESO/AKV | pre-staging |
-| 12 | Deriva de contrato entre 3 copias de TenantEvent | 🟡 | DevOps | `Evolith.Messaging.Contracts` + contract tests en G0 | M0–M1 |
-| 13 | El CNI de kind no aplica NetworkPolicies (trampa de paridad) | 🟡 | Infra | Cilium en kind + aserciones allow/deny en G1 | pre-staging |
-| 14 | El CRUD de tenants de MMS no tiene authN | 🟡 | Arq | authN antes de cualquier exposición por ingress | pre-staging |
-| 15 | Comportamiento del consumidor no observable | 🟡 | Infra | deltas de código §14 como prerequisito de G2 | pre-staging |
+| 1 | Ownership de tenant con dos escritores | Crítica | Winston | Escalera M0–M4 (§12) | fases M |
+| 2 | ~~Exchange consistent-hash divide el tráfico entre consumidores~~ **corregido por decisión §5.2** | Crítica -> resuelto | Arq | Topología fanout de MassTransit | retiro de CRDs BUILD |
+| 3 | Conflicto de declaración CRD/código (406 → consumidor muerto silencioso) | Crítica | Arq | retirar CRDs de colas (§5.2); G1 verifica endpoint *arrancado* | M0 |
+| 4 | Inbox de dedup no cableado en consumidores | Mayor | DevOps | `UseEntityFrameworkOutbox` en endpoints (§5.5-1) + assert InboxState en G1 | M0 |
+| 5 | Carrera de concurrencia en proyección (regresión permanente) | Mayor | DevOps | upsert condicional set-based (§5.5-2) | M0 |
+| 6 | Probes de MMS requieren Development → CrashLoop en prod | Mayor | Infra | endpoints `/health` reales antes del primer deploy a staging | pre-staging |
+| 7 | Fallback `Default`/`DefaultConnection` → consumidores apuntando a localhost | Mayor | Infra | fix del fallback + `MasterDataDb` explícito en charts | M0 |
+| 8 | Migraciones al arranque compiten con replicas>1 | Mayor | Infra | patrón migrate-Job en toda la suite | pre-staging |
+| 9 | Alertas de veneno mirando la cola equivocada (DLX vs `_error`) | Mayor | Infra | alertas de profundidad `_error` + runbook de shovel (§5.3) | pre-staging |
+| 10 | Broker = dependencia crítica compartida | Mayor | Infra | outbox (probado) + quorum con ≥3 nodos + degradación solo-frescura (§5.6) | permanente |
+| 11 | Credenciales en texto plano en values de mms-helm; default-user compartido | Menor | Infra | usuarios de broker por producto (CRDs) + ESO/AKV | pre-staging |
+| 12 | Deriva de contrato entre 3 copias de TenantEvent | Menor | DevOps | `Evolith.Messaging.Contracts` + contract tests en G0 | M0–M1 |
+| 13 | El CNI de kind no aplica NetworkPolicies (trampa de paridad) | Menor | Infra | Cilium en kind + aserciones allow/deny en G1 | pre-staging |
+| 14 | El CRUD de tenants de MMS no tiene authN | Menor | Arq | authN antes de cualquier exposición por ingress | pre-staging |
+| 15 | Comportamiento del consumidor no observable | Menor | Infra | deltas de código §14 como prerequisito de G2 | pre-staging |
 
 ## 16. Backlog BUILD priorizado
 

@@ -158,10 +158,10 @@ Multi-cluster-per-product is **rejected**: it forces RabbitMQ federation/shovel 
 
 The adversarial verification found that the previously-declared CRD topology **does not match how MassTransit actually moves messages**. Three verified defects and their resolutions:
 
-### 5.1 ✂️ `x-consistent-hash` cannot fan out (critical, fixed by design change)
+### 5.1 `x-consistent-hash` cannot fan out (critical, fixed by design change)
 A consistent-hash exchange routes each message to **exactly one** bound queue — with `ums.tenant-projection` and `tracker.tenant-projection` both bound, each event would reach **either** UMS **or** Tracker (~50/50 by tenantId hash), never both. **Rule:** consistent-hash is a *partitioning tool inside one consumer group*, never a pub/sub distribution tool. Fan-out needs a fanout/topic exchange with one binding per consumer group.
 
-### 5.2 ✂️ MassTransit owns the message topology (critical, decision)
+### 5.2 MassTransit owns the message topology (critical, decision)
 MassTransit auto-declares a **fanout type-exchange** (`Evolith.Contracts.MasterData:TenantEvent`) and binds each consumer endpoint's exchange/queue to it — that is the topology the validated E2E actually flowed through; the CRD exchange was dead weight, and CRD-pre-created queues with DLX arguments would make MassTransit's re-declare fail (`406 PRECONDITION_FAILED` → endpoint faults forever while the pod stays Ready — the classic silent 3 a.m. failure).
 
 **Decision — embrace MassTransit conventions:**
@@ -170,7 +170,7 @@ MassTransit auto-declares a **fanout type-exchange** (`Evolith.Contracts.MasterD
 - Consumer endpoint names stay pinned in code (`ums.tenant-projection`, `tracker.tenant-projection` consumer definitions).
 - Broker permissions as **regex over naming prefixes** (verb-only grants break MassTransit startup): `mms` → configure/write on `^(Evolith\.Contracts\.MasterData.*|mms\..*)$`; `ums` → configure/write/read on `^(ums\..*|Evolith\.Contracts\.MasterData.*)$`; `tracker` symmetric.
 
-### 5.3 ✂️ Poison messages land in `<queue>_error`, not a DLX (major, decision)
+### 5.3 Poison messages land in `<queue>_error`, not a DLX (major, decision)
 After retries are exhausted MassTransit **moves** the faulted message to `<queue>_error` — it never nacks, so broker `x-dead-letter-exchange` never fires. **Decision:** adopt the MassTransit convention — alert on `ums.tenant-projection_error` / `tracker.tenant-projection_error` depth > 0; the reprocess runbook shovels from `_error` back to the main queue; the DLX/DLQ CRDs are retired with §5.2.
 
 ### 5.4 Probe rule (resolved contradiction)
@@ -287,21 +287,21 @@ Per-product code deltas (BUILD, prerequisites for G2): MMS has zero OTel; UMS `O
 
 | # | Risk | Sev | Owner | Mitigation | Phase |
 |---|---|---|---|---|---|
-| 1 | Two-writer tenant ownership (UMS/Tracker still author) | 🔴 | Winston | M0–M4 ladder (§12) | M-phases |
-| 2 | ~~Consistent-hash exchange splits traffic between consumers~~ **fixed by §5.2 decision** | 🔴→✅ | Arch | MassTransit-owned fanout topology | done in doc; CRD retirement BUILD |
-| 3 | CRD/code queue-declare conflict (406 → silent dead consumer) | 🔴 | Arch | retire queue CRDs (§5.2); G1 asserts endpoint *started* | M0 |
-| 4 | Inbox dedup not wired in consumers | 🟠 | DevOps | `UseEntityFrameworkOutbox` on endpoints (§5.5-1) + G1 InboxState assert | M0 |
-| 5 | Projection concurrency race (permanent regression) | 🟠 | DevOps | conditional set-based upsert (§5.5-2) | M0 |
-| 6 | MMS probes require Development env → prod CrashLoop | 🟠 | Infra | real `/health` endpoints before first staging deploy | pre-staging |
-| 7 | `Default`/`DefaultConnection` fallback → consumers silently on localhost | 🟠 | Infra | fix fallback + explicit `MasterDataDb` in charts | M0 |
-| 8 | Startup migrations race at replicas>1 | 🟠 | Infra | migrate-Job pattern suite-wide | pre-staging |
-| 9 | Poison-message alerts watching the wrong queue (DLX vs `_error`) | 🟠 | Infra | `_error`-depth alerts + shovel runbook (§5.3) | pre-staging |
-| 10 | Broker = shared critical dependency | 🟠 | Infra | outbox (proven) + quorum where ≥3 nodes + freshness-only degradation (§5.6) | standing |
-| 11 | Plaintext creds in mms-helm values; shared default-user | 🟡 | Infra | per-product broker users (CRDs) + ESO/AKV | pre-staging |
-| 12 | Contract drift across 3 TenantEvent copies | 🟡 | DevOps | `Evolith.Messaging.Contracts` + G0 contract tests | M0–M1 |
-| 13 | kind CNI doesn't enforce NetworkPolicies (parity trap) | 🟡 | Infra | Cilium on kind + G1 allow/deny assertions | pre-staging |
-| 14 | MMS tenant CRUD has no authN | 🟡 | Arch | authN before any ingress exposure | pre-staging |
-| 15 | Consumer behavior unobservable (no MassTransit traces/meters) | 🟡 | Infra | §14 code deltas as G2 prerequisite | pre-staging |
+| 1 | Two-writer tenant ownership (UMS/Tracker still author) | Critical | Winston | M0–M4 ladder (§12) | M-phases |
+| 2 | ~~Consistent-hash exchange splits traffic between consumers~~ **fixed by §5.2 decision** | Critical -> resolved | Arch | MassTransit-owned fanout topology | done in doc; CRD retirement BUILD |
+| 3 | CRD/code queue-declare conflict (406 → silent dead consumer) | Critical | Arch | retire queue CRDs (§5.2); G1 asserts endpoint *started* | M0 |
+| 4 | Inbox dedup not wired in consumers | Major | DevOps | `UseEntityFrameworkOutbox` on endpoints (§5.5-1) + G1 InboxState assert | M0 |
+| 5 | Projection concurrency race (permanent regression) | Major | DevOps | conditional set-based upsert (§5.5-2) | M0 |
+| 6 | MMS probes require Development env → prod CrashLoop | Major | Infra | real `/health` endpoints before first staging deploy | pre-staging |
+| 7 | `Default`/`DefaultConnection` fallback → consumers silently on localhost | Major | Infra | fix fallback + explicit `MasterDataDb` in charts | M0 |
+| 8 | Startup migrations race at replicas>1 | Major | Infra | migrate-Job pattern suite-wide | pre-staging |
+| 9 | Poison-message alerts watching the wrong queue (DLX vs `_error`) | Major | Infra | `_error`-depth alerts + shovel runbook (§5.3) | pre-staging |
+| 10 | Broker = shared critical dependency | Major | Infra | outbox (proven) + quorum where ≥3 nodes + freshness-only degradation (§5.6) | standing |
+| 11 | Plaintext creds in mms-helm values; shared default-user | Minor | Infra | per-product broker users (CRDs) + ESO/AKV | pre-staging |
+| 12 | Contract drift across 3 TenantEvent copies | Minor | DevOps | `Evolith.Messaging.Contracts` + G0 contract tests | M0–M1 |
+| 13 | kind CNI doesn't enforce NetworkPolicies (parity trap) | Minor | Infra | Cilium on kind + G1 allow/deny assertions | pre-staging |
+| 14 | MMS tenant CRUD has no authN | Minor | Arch | authN before any ingress exposure | pre-staging |
+| 15 | Consumer behavior unobservable (no MassTransit traces/meters) | Minor | Infra | §14 code deltas as G2 prerequisite | pre-staging |
 
 ## 16. Prioritized BUILD backlog
 

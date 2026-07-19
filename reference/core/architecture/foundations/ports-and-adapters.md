@@ -125,13 +125,13 @@ The current fragmented state allows certain interfaces (like Chat or MCP) to occ
 
 ```mermaid
 graph TD
-    subgraph Current State (Fragmented)
+    subgraph "Current State (Fragmented)"
         CLI_C[Evolith CLI] --> Runtime_C[Runtime Orchestrator]
         Chat_C[Hermes Chat Box] -.->|Bypasses Governance| Engine_C[Hermes Engine]
         MCP_C[MCP Server] -.->|Direct| Core_C[Core API]
     end
 
-    subgraph Target State (Governed)
+    subgraph "Target State (Governed)"
         CLI_T[Evolith CLI] --> IAP_T(InteractionAdapterPort)
         Chat_T[Hermes Chat Box] --> IAP_T
         MCP_T[MCP Server] --> IAP_T

@@ -53,7 +53,7 @@
         "profile": "rulesets/topologies/event-driven/README.md",
         "maturityGuide": "rulesets/topologies/event-driven/maturity.md"
       },
-      "configurationContract": "rulesets/topologies/event-driven/topology.config.schema.json",
+      "configurationContract": "src/rulesets/topologies/event-driven/topology.config.schema.json",
       "fixtures": {
         "valid": "rulesets/topologies/event-driven/fixtures/valid.topology.config.json",
         "invalid": "rulesets/topologies/event-driven/fixtures/invalid.topology.config.json"

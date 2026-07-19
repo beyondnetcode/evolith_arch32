@@ -9,8 +9,12 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const root = process.cwd();
-const rulesPath = path.join(root, "src/rulesets/sdlc/phase-gates.rules.json");
+// GT-556: root came from process.cwd() — running from src/ looked for
+// src/src/rulesets/... and aborted.
+import { REPO_ROOT, resolve as resolveKey } from '../lib/paths.mjs';
+
+const root = REPO_ROOT;
+const rulesPath = resolveKey("phaseGateRules");
 const rulesetDir = path.dirname(rulesPath);
 
 const failures = [];

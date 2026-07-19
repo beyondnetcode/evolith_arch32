@@ -128,13 +128,13 @@ El estado fragmentado actual permite que ciertas interfaces (como Chat o MCP) oc
 
 ```mermaid
 graph TD
-    subgraph Estado Actual (Fragmentado)
+    subgraph "Estado Actual (Fragmentado)"
         CLI_C[Evolith CLI] --> Runtime_C[Runtime Orchestrator]
         Chat_C[Hermes Chat Box] -.->|Evade Gobernanza| Engine_C[Hermes Engine]
         MCP_C[MCP Server] -.->|Directo| Core_C[Core API]
     end
 
-    subgraph Estado Objetivo (Gobernado)
+    subgraph "Estado Objetivo (Gobernado)"
         CLI_T[Evolith CLI] --> IAP_T(InteractionAdapterPort)
         Chat_T[Hermes Chat Box] --> IAP_T
         MCP_T[MCP Server] --> IAP_T

@@ -122,9 +122,19 @@ for (const file of files) {
   // `[0006-microservices-...](./0006-microservices-...es.md)`) are not
   // translatable prose. Strip fenced + inline code AND markdown links before
   // matching, mirroring 01-validate-docs / 04-check-bilingual-parity.
+  // GT-563: the fence pattern was unanchored, the same defect just fixed in
+  // 01-validate-docs. A triple backtick written INLINE as prose counts as a real
+  // delimiter, which shifts fence pairing by one for the rest of the file -- from
+  // there the matcher blanks the PROSE BETWEEN blocks instead of the blocks. That
+  // both hides real findings and manufactures false ones: it was reporting
+  // `--topology microservices` and `` `modular-monolith` `` -- literal CLI flag
+  // values -- as untranslated terminology. Auto-fixing those would have rewritten
+  // documented commands into something that does not run.
+  //
+  // Fences are anchored to line starts, which is where Markdown requires them.
   const stripCode = (s) =>
     s
-      .replace(/```[\s\S]*?```/g, " ")
+      .replace(/^ {0,3}```[^\n]*\n[\s\S]*?^ {0,3}```[^\n]*$/gm, " ")
       .replace(/`[^`\r\n]+`/g, " ")
       .replace(/\[[^\]]*\]\([^)]*\)/g, " ");
   const esContent = stripCode(esRaw);

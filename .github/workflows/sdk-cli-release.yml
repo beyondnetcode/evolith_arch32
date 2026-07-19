@@ -434,7 +434,7 @@ jobs:
 
                 Please check the workflow logs and fix the issue.
 
-                @beyondnetcode/evolith-team`,
+                @beyondnetcode/evolith-core-s-development`,
                 labels: ['bug', 'release']
               });
               core.info('Failure issue created');

@@ -26,7 +26,13 @@ import path from "node:path";
 import { execSync } from "node:child_process";
 import crypto from "node:crypto";
 
-const root = process.cwd();
+// GT-556: root came from process.cwd(), so every glob and every git invocation below
+// silently re-scoped itself to wherever the script happened to be launched from.
+// The `reference/navigation/**` patterns were also dead — navigation now lives at the
+// repo-root MASTER_INDEX.md plus reference/core/control-center/taxonomy.
+import { REPO_ROOT } from '../lib/paths.mjs';
+
+const root = REPO_ROOT;
 
 // ============================================================================
 // CHANGE CATEGORY DEFINITIONS
@@ -171,9 +177,7 @@ const IMPACT_ZONE_FILES = {
     "reference/**/*.es.md",
   ],
   navigation: [
-    "reference/navigation/MASTER_INDEX.md",
-    "reference/navigation/MASTER_INDEX.es.md",
-    "reference/navigation/README.md",
+    "reference/core/control-center/taxonomy/**/*.md",
     "MASTER_INDEX.md",
     "MASTER_INDEX.es.md",
     "README.md",
@@ -518,10 +522,10 @@ const SYNC_RULES = {
       }
 
       // Update navigation if in navigation directory
-      if (change.file.includes("/navigation/")) {
+      if (change.file.includes("/taxonomy/") || change.file === "MASTER_INDEX.md") {
         syncs.push({
           type: "navigation_sync",
-          target: "reference/navigation/MASTER_INDEX.md",
+          target: "MASTER_INDEX.md",
           action: "updated",
           changeSource: change.file,
           details: "MASTER_INDEX refreshed for navigation changes"

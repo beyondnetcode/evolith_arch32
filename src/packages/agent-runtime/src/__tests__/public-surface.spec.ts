@@ -68,7 +68,13 @@ const ADAPTERS_SURFACE = [
   'StubCoreEvaluationAdapter',
   'StubPolicyValidationAdapter',
   'SwarmsAgentAdapter',
+  // GT-441 — Tracker-routed HITL. ADDITIVE to the GT-388 freeze: new names only,
+  // no existing export changed or removed, so the frozen contract holds.
+  'TRACKER_DECISION_PREFIX',
+  'TRACKER_UNAVAILABLE_PREFIX',
+  'TrackerApprovalAdapter',
   'denyOnFailedEvaluation',
+  'isTrackerUnavailable',
   'loadManifest',
   'parseManifest',
 ].sort();

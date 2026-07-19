@@ -1040,6 +1040,125 @@
         "exposed": false,
         "exempt": "interactive conversational loop; not applicable to stateless REST"
       }
+    },
+    {
+      "id": "pattern-list",
+      "name": "List canonical architecture patterns",
+      "description": "List the canonical PAT-NNNN architecture patterns, filterable by category, kind, applicable topology and whether they carry executable enforcement",
+      "cli": {
+        "exposed": true,
+        "command": "patterns list"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-pattern-list"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "GET /api/v1/architecture/patterns"
+      }
+    },
+    {
+      "id": "pattern-get",
+      "name": "Get a canonical architecture pattern",
+      "description": "Get a single canonical architecture pattern by id (case-insensitive), with its problem, forces, governing ADRs and enforcing rules",
+      "cli": {
+        "exposed": true,
+        "command": "patterns get"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-pattern-get"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "GET /api/v1/architecture/patterns/:id"
+      }
+    },
+    {
+      "id": "pattern-list-by-topology",
+      "name": "List patterns applicable to a topology",
+      "description": "List the patterns that apply to a topology with applicability, per-topology guidance and the rule ids that enforce them, ordered required to optional",
+      "cli": {
+        "exposed": true,
+        "command": "patterns for-topology"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-pattern-list-by-topology"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "GET /api/v1/architecture/topologies/:id/patterns"
+      }
+    },
+    {
+      "id": "enforcement-operations",
+      "name": "Enforcement operations",
+      "description": "Lower `enforce:` blocks into tool configuration (compile) and run the edit-time cross-agent gate (edit, PreToolUse hook)",
+      "cli": {
+        "exposed": true,
+        "command": "enforce"
+      },
+      "mcp": {
+        "exposed": false,
+        "exempt": "edit-time hook and local tool-config generation; both act on the developer's working tree, which an MCP client does not own"
+      },
+      "rest": {
+        "exposed": false,
+        "exempt": "operates on a local working tree and tool configuration; nothing for a stateless Core to evaluate remotely"
+      }
+    },
+    {
+      "id": "waiver-lifecycle",
+      "name": "Evaluation waiver lifecycle",
+      "description": "Request, approve, revise and list evaluation waivers used to suppress findings by waiverRef",
+      "cli": {
+        "exposed": true,
+        "command": "waiver"
+      },
+      "mcp": {
+        "exposed": false,
+        "exempt": "waiver approval is a human governance act; exposing it to autonomous agents would let the evaluated party clear its own findings"
+      },
+      "rest": {
+        "exposed": false,
+        "exempt": "not yet exposed; waiver state is owned by the Tracker, not by the stateless Core"
+      }
+    },
+    {
+      "id": "agent-run",
+      "name": "Run an intent through the Agent Runtime",
+      "description": "Run an intent through the Agent Runtime pipeline via the agent-runtime-api",
+      "cli": {
+        "exposed": false,
+        "exempt": "`evolith chat` already drives the Agent Runtime from the CLI with a conversational surface"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-agent-run"
+      },
+      "rest": {
+        "exposed": false,
+        "exempt": "served by the Agent Runtime API itself (POST /v1/agent/handle), not by Core API"
+      }
+    },
+    {
+      "id": "capability-manifest",
+      "name": "Core capability manifest",
+      "description": "Return the Core capability manifest describing what this Core build supports",
+      "cli": {
+        "exposed": false,
+        "exempt": "`evolith api` browses the surface locally; the manifest describes a remote Core"
+      },
+      "mcp": {
+        "exposed": false,
+        "exempt": "exposed as the MCP RESOURCE `evolith://capabilities`, not as a tool; the matrix has no resource field, so it is recorded here rather than claimed as a tool that does not exist"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "GET /api/v1/capabilities"
+      }
     }
   ]
 }

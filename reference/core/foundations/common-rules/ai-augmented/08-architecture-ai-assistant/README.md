@@ -30,7 +30,7 @@ Vendors integrate without            Vendors receive architecture
 respecting contract standards   →    guardrails embedded in their
                                       AI tools from day 1
 
-57 ADRs exist but no AI agent    →    Every AI agent can query and
+133 ADRs exist but no AI agent   →    Every AI agent can query and
 knows about them                      reason about any ADR in context
 ```
 

@@ -31,7 +31,7 @@ Los proveedores integran sin          Los proveedores reciben guardrails
 respetar estándares de        →       arquitectónicos embebidos en sus
 contrato                              herramientas AI desde el día 1
 
-Existen 57 ADRs pero ningún    →      Cada agente AI puede consultar y
+Existen 133 ADRs pero ningún   →      Cada agente AI puede consultar y
 agente AI los conoce                  razonar sobre cualquier ADR en contexto
 ```
 

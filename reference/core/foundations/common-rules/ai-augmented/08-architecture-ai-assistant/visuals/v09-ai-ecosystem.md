@@ -25,7 +25,7 @@ flowchart TB
 
     subgraph KNOWLEDGE[" Evolith Knowledge Base (RAG)"]
         direction LR
-        K1["ADR Vector Store\n57+ ADRs indexed\nby runtime+phase+domain"]:::knowledge
+        K1["ADR Vector Store\n133 ADRs indexed\nby runtime+phase+domain"]:::knowledge
         K2["Patterns Store\nCP-01..08\nwith code templates"]:::knowledge
         K3["Standards Store\nEngineering rules\nNaming + Security"]:::knowledge
         K4["System Prompt Core\nALWAYS injected\nHard constraints"]:::knowledge

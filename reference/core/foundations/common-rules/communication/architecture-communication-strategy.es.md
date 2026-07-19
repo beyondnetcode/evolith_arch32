@@ -89,7 +89,7 @@ Juntos forman un **ecosistema corporativo de dos capas:**
 │                         │ Checklist de Simplicidad Fase 01               │
 │                         │ Especificación de Topología C4                 │
 ├─────────────────────────┼────────────────────────────────────────────────┤
-│ Decisiones              │ 57 ADRs: Core / Node.js / .NET / Android       │
+│ Decisiones              │ 133 ADRs: Core / Node.js / .NET / Android      │
 │ Arquitectónicas         │ Matriz de Decisiones ADR                       │
 │                         │ Criterios de Extracción a Microservicios       │
 ├─────────────────────────┼────────────────────────────────────────────────┤
@@ -282,7 +282,7 @@ Juntos forman un **ecosistema corporativo de dos capas:**
 **Mensaje central:** "Evolith previene el caos arquitectónico a medida que la empresa crece. Es el contrato técnico que protege la inversión."
 
 Puntos clave:
-- 57+ decisiones arquitectónicas prevalidadas = menor riesgo a nivel directivo
+- 133 decisiones arquitectónicas prevalidadas = menor riesgo a nivel directivo
 - Ruta de 3 fases = costo y cronograma predecibles
 - UMS demuestra que el modelo funciona hoy en producción
 - El Architecture Board asegura gobernanza sin burocracia
@@ -295,7 +295,7 @@ Puntos clave:
 **Mensaje central:** "Cada decisión está documentada, justificada y es aplicable. Heredas un conjunto curado de estándares y los extiendes con ADRs locales."
 
 Puntos clave:
-- 57 ADRs agnósticos + específicos de runtime con contexto/decisión/consecuencias
+- 133 ADRs agnósticos + específicos de runtime con contexto/decisión/consecuencias
 - Criterios claros de extracción que previenen splits prematuros (ADR-0045)
 - Modelo de herencia para repositorios hijos con rutas de divergencia documentadas
 - Proceso de revisión del Architecture Board para promociones upstream

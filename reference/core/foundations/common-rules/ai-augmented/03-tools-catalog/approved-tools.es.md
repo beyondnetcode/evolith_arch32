@@ -19,19 +19,21 @@
 
 ## 4. Evolith MCP Tools (Implemented)
 
-Ver [Catálogo de Herramientas MCP de Evolith](./evolith-mcp-tools.es.md) para la lista completa de 11 herramientas:
+> **Aquí no vive una segunda copia de los nombres de herramientas.** Esta página enumeraba 11 herramientas, de las cuales siete (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`) **nunca existieron o ya no existen en el código**. Un duplicado mantenido a mano de la superficie de herramientas deriva en cuanto se agrega o renombra una, así que se eliminó. No lo reintroduzcas.
 
-- `evolith-agent-handoff` - Crear archivos de configuración de agente
-- `evolith-architecture-evaluate` - Evaluar patrones de arquitectura
-- `evolith-gate-status` - Obtener estado de validación de gates
-- `evolith-moscow-analyze` - Ejecutar priorización MoSCoW
-- `evolith-moscow-export` - Exportar resultados MoSCoW
+El servidor MCP de Evolith registra **47** herramientas de gobernanza. La lista autoritativa, derivada de la fuente, es la tabla **Tool Inventory** del [Catálogo de Herramientas MCP de Evolith](./evolith-mcp-tools.es.md) — reconciliada desde los registros de herramientas en `src/packages/mcp-server/src/tools/`. Verificable con:
+
+```bash
+grep -rhoE "name: '(evolith-[a-z0-9-]+)'" src/packages/mcp-server/src/tools/*.ts \
+  --exclude='*.spec.ts' | sort -u | wc -l   # -> 47
+```
+
+Ejemplos ilustrativos únicamente (no es un catálogo):
+
+- `evolith-validate` - Validar un repositorio satélite contra las reglas de Evolith
 - `evolith-sdlc-handoff` - Generar artefactos de handoff SDLC
-- `evolith-validate` - Validar artefactos del proyecto
 - `evolith-phase-advance` - Proponer transiciones de fase
 - `evolith-auto-fix` - **Auto-corregir violaciones arquitectónicas** (GT-115)
-- `evolith-alias` - Gestionar aliases de comandos CLI
-- `evolith-schema` - Generar schemas de phase-gate
 
 Todas las herramientas siguen los [Principios de Diseño de Herramientas](./tool-design-principles.es.md) para comportamiento determinístico consumible por agentes.
 

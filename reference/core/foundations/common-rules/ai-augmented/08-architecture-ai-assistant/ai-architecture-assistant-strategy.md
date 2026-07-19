@@ -13,7 +13,7 @@
 
 > **Every AI coding agent that touches corporate software must reason as if the Principal Architect is in the room.**
 
-The Evolith knowledge base — 57+ ADRs, blueprints, canonical patterns, DDD rules, SDLC standards, governance policies, naming conventions, and observability standards — becomes the **enterprise-grade memory** of every AI assistant in the organization.
+The Evolith knowledge base — 133 ADRs, blueprints, canonical patterns, DDD rules, SDLC standards, governance policies, naming conventions, and observability standards — becomes the **enterprise-grade memory** of every AI assistant in the organization.
 
 This is not about building a chatbot. It is about making the architectural standards **self-enforcing** through AI — so that no matter which tool a developer, vendor, or agent uses (Claude, Copilot, Cursor, Codex, Roo, Cline, Continue), they always get architecture-aligned suggestions, rejections, and explanations.
 
@@ -77,7 +77,7 @@ EVOLITH REPOSITORY                    AI KNOWLEDGE BASE
 ─────────────────                     ─────────────────
 
 reference/core/architecture/adrs/          ┌─────────────────────┐
-  *.md files (57+ ADRs)     ──────── │  ADR Vector Store   │
+  *.md files (133 ADRs)     ──────── │  ADR Vector Store   │
                                        │  (chunked by section│
 reference/core/architecture/                │   + metadata tags)  │
   blueprints/*.md           ──────── │  Blueprint Store    │

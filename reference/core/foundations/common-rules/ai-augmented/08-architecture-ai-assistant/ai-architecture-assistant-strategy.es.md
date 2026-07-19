@@ -13,7 +13,7 @@
 
 > **Cada agente AI de codificación que toca software corporativo debe razonar como si el Arquitecto Principal estuviera en la sala.**
 
-La base de conocimiento de Evolith — 57+ ADRs, blueprints, patrones canónicos, reglas DDD, estándares SDLC, políticas de gobernanza, convenciones de nombres y estándares de observabilidad — se convierte en la **memoria de nivel empresarial** de cada asistente AI en la organización.
+La base de conocimiento de Evolith — 133 ADRs, blueprints, patrones canónicos, reglas DDD, estándares SDLC, políticas de gobernanza, convenciones de nombres y estándares de observabilidad — se convierte en la **memoria de nivel empresarial** de cada asistente AI en la organización.
 
 Esto no se trata de construir un chatbot. Se trata de hacer que los estándares arquitectónicos sean **autoaplicables** a través de IA — de modo que sin importar qué herramienta use un desarrollador, proveedor o agente (Claude, Copilot, Cursor, Codex, Roo, Cline, Continue), siempre reciban sugerencias, rechazos y explicaciones alineados con la arquitectura.
 
@@ -78,7 +78,7 @@ REPOSITORIO EVOLITH                   BASE DE CONOCIMIENTO AI
 ───────────────────                   ──────────────────────
 
 reference/core/architecture/adrs/          ┌─────────────────────┐
-  archivos *.md (57+ ADRs)  ──────── │  ADR Vector Store   │
+  archivos *.md (133 ADRs)  ──────── │  ADR Vector Store   │
                                        │  (por sección       │
 reference/core/architecture/                │   + etiquetas meta) │
   blueprints/*.md           ──────── │  Blueprint Store    │

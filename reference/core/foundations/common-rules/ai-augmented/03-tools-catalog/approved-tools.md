@@ -20,19 +20,21 @@ This is a baseline of approved generic tools currently usable inside the monorep
 
 ## 4. Evolith MCP Tools (Implemented)
 
-See [Evolith MCP Tools Catalog](./evolith-mcp-tools.md) for the complete list of 11 tools:
+> **No second copy of the tool names lives here.** This page previously enumerated 11 tools, seven of which (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`) **never existed or no longer exist in code**. A hand-maintained duplicate of the tool surface drifts the moment a tool is added or renamed, so it has been removed. Do not reintroduce one.
 
-- `evolith-agent-handoff` - Create agent configuration files
-- `evolith-architecture-evaluate` - Evaluate architecture patterns
-- `evolith-gate-status` - Get phase gate validation status
-- `evolith-moscow-analyze` - Run MoSCoW prioritization
-- `evolith-moscow-export` - Export MoSCoW results
+The Evolith MCP server registers **47** governance tools. The authoritative, source-derived list is the **Tool Inventory** table in [Evolith MCP Tools Catalog](./evolith-mcp-tools.md) — reconciled from the tool registrations under `src/packages/mcp-server/src/tools/`. Verify with:
+
+```bash
+grep -rhoE "name: '(evolith-[a-z0-9-]+)'" src/packages/mcp-server/src/tools/*.ts \
+  --exclude='*.spec.ts' | sort -u | wc -l   # -> 47
+```
+
+Illustrative examples only (not a catalog):
+
+- `evolith-validate` - Validate a satellite repository against Evolith rules
 - `evolith-sdlc-handoff` - Generate SDLC handoff artifacts
-- `evolith-validate` - Validate project artifacts
 - `evolith-phase-advance` - Propose phase transitions
 - `evolith-auto-fix` - **Auto-fix architectural violations** (GT-115)
-- `evolith-alias` - Manage CLI command aliases
-- `evolith-schema` - Generate phase-gate schemas
 
 All tools follow the [Tool Design Principles](./tool-design-principles.md) for deterministic, agent-consumable behavior.
 

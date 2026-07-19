@@ -7,6 +7,7 @@
 | **ID** | UP-001 |
 | **Estado** | PROPUESTO |
 | **Fecha** | 2026-06-28 |
+| **Última enmienda** | 2026-07-18 — Enmienda 1 (esquema de columnas del board, ver §6) |
 | **Iniciado por** | Evolith Tracker (satélite piloto) |
 | **Dirigido a** | Architecture Board de Evolith Core |
 | **Prioridad** | P0 |
@@ -37,7 +38,7 @@ Promover el sistema de gap-tracking de Core a **estándar canónico del ecosiste
 
 | Pieza | Artefacto | Restricciones clave |
 |---|---|---|
-| **Board** | `*-gap-tracking.md` | Tabla única `ID \| Gap \| Component \| Phase \| Criticality \| Complexity \| Status`; `Criticality ∈ {P0,P1,P2,P3}`, `Complexity ∈ {XS,S,M,L,XL}`, `Status ∈ {PENDING,IN-PROGRESS,BLOCKED,DEFERRED,DONE}` en backticks; IDs enlazan al catálogo; orden pendientes-primero (P0→P3, luego XS→XL); footer con **Progress** + log de **Waves**. |
+| **Board** | `*-gap-tracking.md` | Tabla única `ID \| Gap \| Qué significa \| Ejemplo \| Componente \| Fase \| Criticidad \| Complejidad \| Estado` (reglas de columna en §6); `Criticality ∈ {P0,P1,P2,P3}`, `Complexity ∈ {XS,S,M,L,XL}`, `Status ∈ {PENDING,IN-PROGRESS,BLOCKED,DEFERRED,DONE}` en backticks; IDs enlazan al catálogo; orden pendientes-primero (P0→P3, luego XS→XL); footer con **Progress** + log de **Waves**. |
 | **Catálogo** | `*-gap-reference-catalog.md` | `#### <ID>` + `**Title**` + viñetas (Purpose / Evidence / Impact / Risk / Affected files / Complexity / Proposed fix / Acceptance criteria con checkboxes / Dependencies). |
 | **Closure-Evidence Standard** | `*-gap-closure-evidence-standard.md` + `*-gap-closure-evidence.json` | Un record por `DONE`: `{id, closedAt, closureCommit, evidence[], validationCommands[], dependencyDisposition, dependencyRationale}`. |
 | **Maturity Reconciliation** | `*-maturity-reconciliation.json` | Conteos + readiness, **independiente por repo**. Core ya marca `Evolith Tracker → maturityIncluded:false`. |
@@ -132,6 +133,68 @@ Esto habilita que el Tracker renderice **un único panel de gaps de todo el ecos
 
 ---
 
+### 6. Enmienda 1 — Esquema de Columnas del Board (2026-07-18)
+
+**Aprobada por el owner.** Esta enmienda es normativa y sustituye al esquema de siete columnas declarado en §1.1. Aplica a Core y a todo satélite que replique este estándar.
+
+#### 6.1 Por qué
+
+El board y el catálogo tienen trabajos distintos, y el estándar ya lo dice: el board es el conjunto de **titulares**, el catálogo es el **detalle**. La columna `Gap` dejó de honrar esa separación y se convirtió en un changelog — las filas acumulan historia sesión a sesión, fechas, hashes de commit, hallazgos ya superados y markdown anidado dentro de una sola celda de tabla. Una fila de varios cientos de palabras es ilegible como tabla y duplica la entrada de catálogo que ya contiene ese mismo material. La corrección restaura la separación y añade las dos columnas que un lector no especialista necesita para entender una fila sin abrir el catálogo.
+
+#### 6.2 Nuevo esquema
+
+| Idioma | Fila de cabecera |
+|---|---|
+| **EN** | `\| ID \| Gap \| What it means \| Example \| Component \| Phase \| Criticality \| Complexity \| Status \|` |
+| **ES** | `\| ID \| Gap \| Qué significa \| Ejemplo \| Componente \| Fase \| Criticidad \| Complejidad \| Estado \|` |
+
+Las dos columnas nuevas se insertan **después de `Gap`**. El resto de columnas conserva su significado, vocabulario y reglas de orden de §1.1. El `gap-board.schema.json` de §1.2, cuando se redacte, debe codificar esta forma de nueve columnas, no la de siete ya sustituida.
+
+#### 6.3 Reglas de columna (la sustancia de esta enmienda)
+
+| Columna | Regla |
+|---|---|
+| **`Gap`** | UNA sola frase, en presente, de unos 100 caracteres, que enuncie qué está roto. Sin historia, sin hashes de commit, sin fechas, sin prefijos `RESUELTO:`, sin markdown anidado. El avance y la narrativa de cierre van en la **entrada de catálogo**, nunca en la fila. |
+| **`Qué significa`** | Lenguaje llano para un lector que no es ingeniero y no tiene contexto. Sin jerga, sin identificadores, sin rutas de archivo. Explica la **CONSECUENCIA**, no el mecanismo. |
+| **`Ejemplo`** | Un caso concreto que lo haga evidente — un número medido o un comportamiento observado. No una reformulación de la celda `Gap` con otras palabras. |
+
+#### 6.4 Ejemplos de referencia
+
+Estos son los ejemplos trabajados aprobados por el owner. Los implementadores se calibran contra ellos.
+
+| ID | Gap | Qué significa | Ejemplo |
+|---|---|---|---|
+| `GT-556` | Los checks resuelven rutas desde el directorio donde se los invocó | Una verificación automática daba una respuesta distinta según desde dónde la ejecutaras, y siempre decía que todo estaba bien | Desde la raíz del repo veía 8 elementos; desde `src/` veía 5. Aprobaba en ambos casos |
+| `GT-560` | El interruptor de protección no está conectado a nada | Existe un mecanismo para evitar que una caída externa tumbe el servicio, pero no protege ninguna llamada real | La evaluación de arquitectura puntuó resiliencia 7/10 citando ese mecanismo, que nadie usa |
+| `GT-563` | La validación de documentación nunca corrió en CI | El check existía y reportaba verde sin haber inspeccionado nada, porque solo corría si alguien lo lanzaba a mano | 174 errores reales convivieron con un CI en verde durante semanas |
+
+#### 6.5 Restricción impuesta a los implementadores
+
+El guard de tracking (`.harness/scripts/ci/08-validate-tracking.mjs`) localiza la columna de estado **por nombre de cabecera, no por posición**: abre una tabla en una línea que empieza con `| ID |` y halla el índice de estado comparando el texto de cabecera contra `Status` / `State` / `Estado` / `Estat`. Añadir columnas es por tanto seguro — pero solo mientras se cumplan estas tres condiciones, que el estándar exige a todo board conforme:
+
+- La fila de cabecera sigue **empezando con `| ID |`**.
+- La fila de cabecera sigue **conteniendo `Status` (EN) o `Estado` (ES)** como nombre de columna.
+- El id del gap permanece en la **primera columna**.
+
+Un board que renombre la cabecera de estado, saque el id de la posición uno o rompa el prefijo `| ID |` dejará de ser parseado en silencio. Todo cambio futuro de columnas debe preservar estos tres invariantes.
+
+#### 6.6 La migración puede hacerse por olas
+
+El commit `ce658404` corrigió el guard para parsear las filas **posicionalmente**. Antes partía las filas con `filter(Boolean)`, que descartaba las celdas vacías en lugar de solo las vacías producidas por los pipes inicial y final — así que una sola celda en blanco desplazaba todas las columnas siguientes y el estado se leía de la columna equivocada, o como `undefined`.
+
+Gracias a esa corrección, **un board parcialmente migrado parsea correctamente en vez de leerse mal**: las filas que ya llevan las nueve columnas y las que aún llevan siete pueden convivir mientras una migración está en vuelo, y las filas con la celda `Qué significa` o `Ejemplo` sin rellenar mantienen alineadas el resto de columnas. Esta es la propiedad que hace tratable la migración, y es la razón por la que los boards **pueden** migrarse por olas en vez de en una única reescritura atómica. Regístrese como precondición: un satélite cuyo guard sea anterior a `ce658404` debe incorporar esa corrección antes de iniciar una migración por olas.
+
+#### 6.7 Alcance de la migración
+
+| Board | Filas a migrar |
+|---|---|
+| Evolith Core — `gap-tracking.md` + `gap-tracking.es.md` | 565 filas por idioma |
+| Evolith Tracker — `tracker-gap-tracking.md` (+ ES) | 215 filas |
+
+La historia desplazada de una celda `Gap` no se descarta: se traslada a la entrada de catálogo correspondiente, que es donde el estándar ya ubica el detalle.
+
+---
+
 ## Criterios de Aceptación
 
 - [ ] ADR `core/00NN` aprobado: el estándar de 4 piezas es **obligatorio** para Core y todos los satélites.
@@ -141,6 +204,8 @@ Esto habilita que el Tracker renderice **un único panel de gaps de todo el ecos
 - [ ] **Cero formatos divergentes**: queda una única forma de controlar gaps; los registros ad-hoc quedan deprecados.
 - [ ] Bilingüe donde aplica (docs) e inglés canónico para artefactos machine-readable (ADR-0090).
 - [ ] Tracker consume `/api/v1/gaps/summary` y muestra el panel unificado de gaps del ecosistema.
+- [ ] **Enmienda 1**: todo board conforme lleva el esquema de nueve columnas de §6.2, y `Gap` / `Qué significa` / `Ejemplo` cumplen las reglas de §6.3 — ninguna fila conserva historia, fechas ni hashes de commit en la celda `Gap`.
+- [ ] **Enmienda 1**: Core (565 filas por idioma) y Tracker (215 filas) están migrados, con la historia desplazada reubicada en el catálogo y los tres invariantes del guard de §6.5 intactos.
 
 ---
 

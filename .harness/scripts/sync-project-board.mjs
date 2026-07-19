@@ -112,16 +112,33 @@ function processTrackingFile(filePath, isSpanish) {
   
   let stats = { completados: 0, pendientes: 0, enProgreso: 0, diferidos: 0, total: 0 };
   
+  // GT board schema (UP-001 Amendment 1) added two columns BEFORE Status, so the
+  // status index is no longer 7. It is resolved from the header row -- and this
+  // script WRITES status back by index, so a stale constant here would silently
+  // overwrite the wrong cell (complexity) instead of the status.
+  let statusIdx = -1;
+  let complexityIdx = -1;
+  for (const l of lines) {
+    if (!l.startsWith('| ID |')) continue;
+    const h = l.split('|').map(s => s.trim());
+    statusIdx = h.findIndex((x) => /^(Status|Estado)$/i.test(x));
+    complexityIdx = h.findIndex((x) => /^(Complexity|Complejidad)$/i.test(x));
+    break;
+  }
+  if (statusIdx === -1) {
+    throw new Error(`[sync-project-board] no Status/Estado column found in the header of ${filePath}. Refusing to rewrite status by guessed position.`);
+  }
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     if (line.startsWith('|') && (line.includes('`GT-') || line.includes('`MT-A'))) {
       const parts = line.split('|').map(s => s.trim());
-      if (parts.length >= 8) {
+      if (parts.length > statusIdx) {
         const idMatch = parts[1].match(/\[\`(GT-\d+|MT-A\d+)\`\]/);
         if (idMatch) {
           const gapId = idMatch[1];
           seenGaps.add(gapId);
-          let localStatus = parts[7].replace(/`/g, '');
+          let localStatus = parts[statusIdx].replace(/`/g, '');
           const ghItem = ghMap.get(gapId);
           
           if (ghItem) {
@@ -145,7 +162,7 @@ function processTrackingFile(filePath, isSpanish) {
               }
               
               // Sync Size
-              const complexity = parts[5].trim();
+              const complexity = complexityIdx === -1 ? '' : parts[complexityIdx].trim();
               if (SIZE_OPTIONS[complexity]) {
                 console.log(`📤 Pushing ${gapId} Size (${complexity}) to GitHub...`);
                 execSync(`gh project item-edit --id ${ghItem.id} --project-id ${PROJECT_NODE_ID} --field-id ${SIZE_FIELD_ID} --single-select-option-id ${SIZE_OPTIONS[complexity]}`);
@@ -154,19 +171,19 @@ function processTrackingFile(filePath, isSpanish) {
               // GH wins. Update Local if necessary
               if (isGhDone && !isLocalDone) {
                 console.log(`📥 Pulling ${gapId} state from GitHub (Marking as Done/COMPLETADO)`);
-                parts[7] = isSpanish ? '`COMPLETADO`' : '`DONE`';
+                parts[statusIdx] = isSpanish ? '`COMPLETADO`' : '`DONE`';
                 lines[i] = parts.join(' | ').replace(/^ \| /, '| ').replace(/ \| $/, ' |');
                 fileModified = true;
                 localStatus = isSpanish ? 'COMPLETADO' : 'DONE';
               } else if (isGhRevision && !isLocalRevision) {
                 console.log(`📥 Pulling ${gapId} state from GitHub (Marking as REVISIÓN/REVISION)`);
-                parts[7] = isSpanish ? '`REVISIÓN`' : '`REVISION`';
+                parts[statusIdx] = isSpanish ? '`REVISIÓN`' : '`REVISION`';
                 lines[i] = parts.join(' | ').replace(/^ \| /, '| ').replace(/ \| $/, ' |');
                 fileModified = true;
                 localStatus = isSpanish ? 'REVISIÓN' : 'REVISION';
               } else if (!isGhDone && !isGhRevision && isLocalDone) {
                 console.log(`📥 Pulling ${gapId} state from GitHub (Marking as PENDIENTE/PENDING)`);
-                parts[7] = isSpanish ? '`PENDIENTE`' : '`PENDING`';
+                parts[statusIdx] = isSpanish ? '`PENDIENTE`' : '`PENDING`';
                 lines[i] = parts.join(' | ').replace(/^ \| /, '| ').replace(/ \| $/, ' |');
                 fileModified = true;
                 localStatus = isSpanish ? 'PENDIENTE' : 'PENDING';

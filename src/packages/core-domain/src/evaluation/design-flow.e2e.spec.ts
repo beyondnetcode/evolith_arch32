@@ -19,7 +19,7 @@ const rules = readJson('src/rulesets/architecture/topology-recommendation.rules.
 
 const MANIFEST: Record<string, string> = {
   'distributed-modules': 'reference/core/architecture/topologies/progressive-axis/distributed-modules/topology.manifest.json',
-  'event-driven': 'reference/core/architecture/topologies/integration/event-driven/topology.manifest.json',
+  'event-driven': 'src/rulesets/topologies/event-driven/topology.manifest.json',
 };
 const getDesignProfile = async (_corePath: string, ref: string) => {
   const rel = MANIFEST[ref];

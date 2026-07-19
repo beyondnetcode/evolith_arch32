@@ -14,11 +14,11 @@ La guia topologica es dimensional, orientada por manifiestos y ejecutable median
 | [Perfil de Monolito Modular](./progressive-axis/modular-monolith/README.es.md) | Topologia inicial canonica compatible con F1 | Si |
 | [Perfil de Modulos Distribuidos](./progressive-axis/distributed-modules/README.es.md) | Topologia canonica de extraccion controlada compatible con F2 | Si |
 | [Perfil de Microservicios](./progressive-axis/microservices/README.es.md) | Topologia canonica de servicios compatible con F3 | Si |
-| [Perfil Serverless](./execution/serverless/README.es.md) | Topologia accepted de ejecucion administrada | Si |
-| [Perfil Edge Computing](./execution/edge-computing/README.es.md) | Topologia accepted de ejecucion orientada a localidad | Si |
-| [Perfil Event-Driven](./integration/event-driven/README.es.md) | Topologia accepted de integracion asincrona | Si |
-| [Perfil Data Mesh](./data/data-mesh/README.es.md) | Topologia accepted de ownership analitico distribuido | Si |
-| [Perfil Agentic AI](./ai/agentic-ai/README.es.md) | Topologia draft AI-first y de workflows agentic | No |
+| [Perfil Serverless](../../../../src/rulesets/topologies/serverless/README.es.md) | Topologia accepted de ejecucion administrada | Si |
+| [Perfil Edge Computing](../../../../src/rulesets/topologies/edge-computing/README.es.md) | Topologia accepted de ejecucion orientada a localidad | Si |
+| [Perfil Event-Driven](../../../../src/rulesets/topologies/event-driven/README.es.md) | Topologia accepted de integracion asincrona | Si |
+| [Perfil Data Mesh](../../../../src/rulesets/topologies/data-mesh/README.es.md) | Topologia accepted de ownership analitico distribuido | Si |
+| [Perfil Agentic AI](../../../../src/rulesets/topologies/agentic-ai/README.es.md) | Topologia draft AI-first y de workflows agentic | No |
 
 ## Dimensiones Gobernadas
 

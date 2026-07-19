@@ -43,7 +43,7 @@ The decision is evaluated by whether an auditor can reconstruct who requested an
 ## References
 
 - [Human-in-the-Loop Pattern](../../../foundations/common-rules/ai-augmented/05-agentic-patterns/human-in-the-loop.md)
-- [Agentic AI Topology Profile](../../topologies/ai/agentic-ai/README.md)
+- [Agentic AI Topology Profile](../../../../../src/rulesets/topologies/agentic-ai/README.md)
 
 ## Related Decisions and Standards
 

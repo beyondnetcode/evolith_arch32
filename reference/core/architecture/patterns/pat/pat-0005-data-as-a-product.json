@@ -68,7 +68,7 @@
   ],
   "sources": [
     {
-      "href": "reference/core/architecture/topologies/data/data-mesh/patterns.md",
+      "href": "src/rulesets/topologies/data-mesh/patterns.md",
       "note": "Data as a Product and Domain Ownership sections."
     }
   ]

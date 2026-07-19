@@ -65,7 +65,7 @@ Ninguna todavía. Este patrón aún no tiene implementación canónica por runti
 ## Fuentes
 
 - `src/rulesets/acl/anti-corruption-layer.rules.json` — Enunciados de las reglas ACL-01 a ACL-06. Ninguna guía de patrones en prosa documenta este patrón.
-- `reference/core/architecture/topologies/ai/agentic-ai/patterns.md` — Antipatrón 'Retrieved text as policy' y su corrección requerida.
+- `src/rulesets/topologies/agentic-ai/patterns.md` — Antipatrón 'Retrieved text as policy' y su corrección requerida.
 
 > **Nota:** Seis identificadores de regla enforzan este patrón y ninguna guía de patrones del corpus lo describe. Ningún ADR registra la decisión.
 

@@ -63,7 +63,7 @@ Ninguna todavía. Este patrón aún no tiene implementación canónica por runti
 
 ## Fuentes
 
-- `reference/core/architecture/topologies/integration/event-driven/patterns.md` — Sección Transactional Outbox.
+- `src/rulesets/topologies/event-driven/patterns.md` — Sección Transactional Outbox.
 
 > **Nota:** Este patrón está enforzado por dos motores independientes: el ruleset de la topología event-driven (ED-R02) y el ruleset generado del ADR (CORE-0033-01).
 

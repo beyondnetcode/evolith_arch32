@@ -60,7 +60,7 @@ Ninguna todavía. Este patrón aún no tiene implementación canónica por runti
 
 ## Fuentes
 
-- `reference/core/architecture/topologies/data/data-mesh/patterns.md` — Secciones Data as a Product y Domain Ownership.
+- `src/rulesets/topologies/data-mesh/patterns.md` — Secciones Data as a Product y Domain Ownership.
 
 ---
 

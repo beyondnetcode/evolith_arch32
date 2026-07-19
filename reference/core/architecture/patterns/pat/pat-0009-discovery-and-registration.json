@@ -45,7 +45,7 @@
   ],
   "sources": [
     {
-      "href": "reference/core/architecture/topologies/data/data-mesh/patterns.md",
+      "href": "src/rulesets/topologies/data-mesh/patterns.md",
       "note": "Discovery and Registration section."
     }
   ]

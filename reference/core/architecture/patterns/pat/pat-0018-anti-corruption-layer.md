@@ -65,7 +65,7 @@ None yet. This pattern has no runtime-specific canonical implementation (CP-NN) 
 ## Sources
 
 - `src/rulesets/acl/anti-corruption-layer.rules.json` — ACL-01 through ACL-06 rule statements. No prose pattern guide documents this pattern.
-- `reference/core/architecture/topologies/ai/agentic-ai/patterns.md` — 'Retrieved text as policy' anti-pattern and its required correction.
+- `src/rulesets/topologies/agentic-ai/patterns.md` — 'Retrieved text as policy' anti-pattern and its required correction.
 
 > **Note:** Six rule identifiers enforce this pattern and no pattern guide in the corpus describes it. No ADR records the decision.
 

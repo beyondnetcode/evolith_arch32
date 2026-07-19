@@ -1,6 +1,0 @@
-{
-  "topology": "serverless",
-  "stateless": false,
-  "package": { "maxSizeMb": 100 },
-  "coldStart": { "maxInitMilliseconds": -1, "lazyInitialization": false }
-}

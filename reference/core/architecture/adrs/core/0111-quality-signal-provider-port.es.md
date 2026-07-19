@@ -17,7 +17,7 @@ Evolith Core es un Motor de Evaluación stateless y determinista: recibe un
 rulesets y OPA ([ADR-0101](./0101-core-stateless-evaluation-engine.md)). La suite
 se posiciona como una capa de *gobernanza de arquitectura para la era de la IA*
 que conecta las decisiones arquitectónicas con la calidad técnica, el testing, el
-performance, la documentación y la ejecución a lo largo del SDLC.
+rendimiento, la documentación y la ejecución a lo largo del SDLC.
 
 Cumplir ese posicionamiento exige **evidencia**: los criterios que el Core deriva
 de un diseño/blueprint ([ADR-0104](./0104-topology-driven-advisory-design-governance.md))
@@ -210,7 +210,7 @@ suite.
 
 - [ADR-0101](./0101-core-stateless-evaluation-engine.md) — Core como Motor de
   Evaluación stateless (el contrato que consume `Evidence`).
-- [ADR-0102](./0102-evolith-agent-runtime.md) — capa agéntica de ports & adapters;
+- [ADR-0102](./0102-evolith-agent-runtime.md) — capa agéntica de puertos y adaptadores;
   este ADR aplica el mismo principio a los productores de evidencia y reutiliza la
   capa de orquestación que ejecuta los proveedores.
 - [ADR-0104](./0104-topology-driven-advisory-design-governance.md) — deriva los

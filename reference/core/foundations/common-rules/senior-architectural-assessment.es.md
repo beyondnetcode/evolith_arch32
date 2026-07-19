@@ -117,7 +117,7 @@ El corpus .NET es ADR-0041 más ADR-0060, 0061, 0062, 0063, 0064, 0065, 0066, 00
 > ```csharp
 > // ADR-0041 debería incluir estructura canónica:
 > /src
->  /Domain // Entities, VOs, Domain Events (sin dependencias externas)
+>  /Domain // Entidades, VOs, Eventos de Dominio (sin dependencias externas)
 >  /Application // Use Cases, Commands, Queries (MediatR)
 >  /Infrastructure // EF Core, gRPC clients, OpenBao integration
 >  /Api // Minimal API / Controller layer

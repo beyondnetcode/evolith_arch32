@@ -59,9 +59,9 @@ un proveedor de despliegue.
 El diseño favorece degradación explícita: cache opcional, adaptadores desacoplados y
 contratos que permiten fallar rápido cuando falta evidencia o configuración.
 
-## 6. Estrategia de Performance
+## 6. Estrategia de Rendimiento
 
-La performance se trata como propiedad verificable por superficie: API, MCP, CLI,
+El rendimiento se trata como propiedad verificable por superficie: API, MCP, CLI,
 runtime de agentes y evaluadores.
 
 ### 6.1 Cache

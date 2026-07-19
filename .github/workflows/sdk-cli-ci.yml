@@ -229,6 +229,13 @@ jobs:
       - name: Parity Fixture Coverage Gate (GT-229)
         run: node .harness/scripts/ci/28-native-evaluator-parity.mjs
 
+      # Five architectural health checks over core-domain: no tenant identity in
+      # Core (ADR-0101), TypeScript/OPA rule sync, capability contracts, progress
+      # emitters, and inbound-port boundaries. Dependency-free like its
+      # neighbours -- node builtins only, every path it reads is tracked in git.
+      - name: Core Health Checks (S1/D1/H1/H2/B1)
+        run: node .harness/scripts/ci/35-validate-core-health.mjs
+
       - name: Core OPA Governance Suite (GT-347)
         run: node .harness/scripts/ci/29-test-core-opa.mjs
 

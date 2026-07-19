@@ -98,6 +98,7 @@ export {
 export {
   TopologyCatalogService,
   TopologyRecommendationService,
+  PatternCatalogService,
   PhaseArtifactProfileService,
 } from "@beyondnet/evolith-core-domain/application/services";
 
@@ -110,6 +111,19 @@ export type {
   TopologyDesignProfile,
   DownstreamPhase,
   PhaseArtifactResult,
+  PatternRecord,
+  PatternKind,
+  PatternCategory,
+  PatternStatus,
+  PatternApplicability,
+  PatternApplication,
+  PatternEnforcement,
+  PatternGovernance,
+  PatternRelationship,
+  PatternVariant,
+  PatternImplementation,
+  PatternCatalogFilters,
+  TopologyPatternApplication,
 } from "@beyondnet/evolith-core-domain/application/services";
 
 export type { ValidationResult } from "@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service";

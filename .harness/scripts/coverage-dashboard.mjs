@@ -2,10 +2,11 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { partitionByExclusions } from "./lib/generated-doc-exclusions.mjs";
 
 const root = process.cwd();
 const referenceDir = path.join(root, "reference");
-const reportPath = path.join(root, "COVERAGE_REPORT.md");
+const reportPath = path.join(root, "reference", "core", "control-center", "audits", "COVERAGE_REPORT.md");
 const checkMode = process.argv.includes("--check");
 
 const ignored = new Set([".git", "node_modules", "dist", "build", "coverage", ".nx"]);
@@ -29,7 +30,23 @@ function isEsFile(file) {
   return rel.split(path.sep).some(p => p.endsWith("-es"));
 }
 
-const enFiles = files.filter(f => !isEsFile(f));
+// Declared exclusions: generator-written English-only output (the projected OKF
+// bundle, the wiki mirror, the captured interface how-tos, and this dashboard's
+// own report). The table is the SAME one `ci/suites/bilingual-suite.mjs` enforces
+// — importing it rather than restating it is the point.
+//
+// Without this, the dashboard counted 26 deliberately-exempt files as missing
+// translations and reported 95.2% coverage while `04-check-bilingual-parity`
+// passed clean. Two tools contradicting each other, and the wrong number was the
+// one written into a committed audit artefact.
+const allEnRelative = files.filter((f) => !isEsFile(f)).map((f) => path.relative(root, f));
+const exclusionPartition = partitionByExclusions(allEnRelative, (rel) =>
+  fs.readFileSync(path.join(root, rel), "utf8")
+);
+const excludedRelative = new Set(exclusionPartition.excluded.flatMap((x) => x.files));
+const isExcluded = (f) => excludedRelative.has(path.relative(root, f));
+
+const enFiles = files.filter(f => !isEsFile(f) && !isExcluded(f));
 const esFiles = files.filter(f => isEsFile(f));
 
 function normalizeKey(file) {
@@ -224,6 +241,20 @@ const unpairedEs = esFiles.filter(f => {
 });
 const hasUnpaired = unpairedEn.length > 0 || unpairedEs.length > 0;
 
+
+// A non-zero exit that says nothing is the failure mode this repo has spent the
+// week removing. Name the unpaired files before leaving.
+function reportUnpaired() {
+  if (unpairedEn.length) {
+    console.error(`\n\u274c ${unpairedEn.length} English doc(s) with no Spanish counterpart:`);
+    for (const f of unpairedEn) console.error(`   ${path.relative(root, f)}`);
+  }
+  if (unpairedEs.length) {
+    console.error(`\n\u274c ${unpairedEs.length} Spanish doc(s) with no English counterpart:`);
+    for (const f of unpairedEs) console.error(`   ${path.relative(root, f)}`);
+  }
+}
+
 if (checkMode) {
   // CI drift gate: verify the committed COVERAGE_REPORT.md matches what the
   // current corpus would generate (ignoring the timestamp). No file is written.
@@ -239,7 +270,7 @@ if (checkMode) {
     process.exit(1);
   }
   console.log("✅ COVERAGE_REPORT.md is up to date.");
-  if (hasUnpaired) process.exit(1);
+  if (hasUnpaired) { reportUnpaired(); process.exit(1); }
   process.exit(0);
 }
 
@@ -248,6 +279,7 @@ console.log(report);
 fs.writeFileSync(reportPath, report, "utf8");
 
 if (hasUnpaired) {
+  reportUnpaired();
   process.exit(1);
 }
 

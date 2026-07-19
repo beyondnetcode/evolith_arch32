@@ -45,7 +45,7 @@ const WORKSTREAMS = [
     id: 'WS2',
     name: 'Architecture Validation',
     checks: [
-      { name: 'CLI validate command exists', path: 'sdk/cli/src/commands/validate' },
+      { name: 'CLI validate command exists', path: 'src/sdk/cli/src/commands/validate' },
       { name: 'Architecture rules for F1/F2/F3', path: 'src/rulesets/architecture' },
       { name: 'OPA policies for architecture', path: 'src/rulesets/architecture/opa' },
     ]
@@ -54,67 +54,67 @@ const WORKSTREAMS = [
     id: 'WS3',
     name: 'Executable SDLC Engine',
     checks: [
-      { name: 'SDLC handoff command exists', path: 'sdk/cli/src/commands/sdlc' },
-      { name: 'Gate evaluation logic exists', path: 'packages/core-domain/src/gates' },
-      { name: 'Phase transition logic exists', path: 'packages/core-domain/src/phases' },
+      { name: 'SDLC handoff command exists', path: 'src/sdk/cli/src/commands/sdlc' },
+      { name: 'Gate evaluation logic exists', path: 'src/packages/core-domain/src/gates' },
+      { name: 'Phase transition logic exists', path: 'src/packages/core-domain/src/phases' },
     ]
   },
   {
     id: 'WS4',
     name: 'MCP Server at 100%',
     checks: [
-      { name: 'MCP server exists', path: 'packages/mcp-server/src' },
-      { name: 'MCP tools for evaluation', path: 'packages/mcp-server/src/tools' },
-      { name: 'MCP resources for corpus', path: 'packages/mcp-server/src/resources' },
-      { name: 'WatcherService integration', path: 'packages/mcp-server/src/watcher' },
+      { name: 'MCP server exists', path: 'src/packages/mcp-server/src' },
+      { name: 'MCP tools for evaluation', path: 'src/packages/mcp-server/src/tools' },
+      { name: 'MCP resources for corpus', path: 'src/packages/mcp-server/src/resources' },
+      { name: 'WatcherService integration', path: 'src/packages/mcp-server/src/watcher' },
     ]
   },
   {
     id: 'WS5',
     name: 'core-api (REST)',
     checks: [
-      { name: 'Core API exists', path: 'apps/core-api/src' },
-      { name: 'REST controllers for evaluation', path: 'apps/core-api/src/presentation/controllers' },
-      { name: 'OpenAPI specification', path: 'apps/core-api/src/openapi' },
+      { name: 'Core API exists', path: 'src/apps/core-api/src' },
+      { name: 'REST controllers for evaluation', path: 'src/apps/core-api/src/presentation/controllers' },
+      { name: 'OpenAPI specification', path: 'src/apps/core-api/src/openapi' },
     ]
   },
   {
     id: 'WS6',
     name: 'Remaining Stub Commands',
     checks: [
-      { name: 'agents command exists', path: 'sdk/cli/src/commands/agents' },
-      { name: 'upgrade command exists', path: 'sdk/cli/src/commands/upgrade' },
-      { name: 'docs command exists', path: 'sdk/cli/src/commands/docs' },
-      { name: 'scaffold command exists', path: 'sdk/cli/src/commands/architecture/scaffold' },
+      { name: 'agents command exists', path: 'src/sdk/cli/src/commands/agents' },
+      { name: 'upgrade command exists', path: 'src/sdk/cli/src/commands/upgrade' },
+      { name: 'docs command exists', path: 'src/sdk/cli/src/commands/docs' },
+      { name: 'scaffold command exists', path: 'src/sdk/cli/src/commands/architecture/scaffold' },
     ]
   },
   {
     id: 'WS7',
     name: 'New Target Design',
     checks: [
-      { name: 'Evidence Graph implementation', path: 'packages/core-domain/src/evidence' },
-      { name: 'Gate Decision model', path: 'packages/core-domain/src/gates/decision' },
-      { name: 'Phase Transition model', path: 'packages/core-domain/src/phases/transition' },
-      { name: 'Provider ports model', path: 'packages/core-domain/src/providers' },
-      { name: 'Tenant authority model', path: 'packages/core-domain/src/tenancy' },
+      { name: 'Evidence Graph implementation', path: 'src/packages/core-domain/src/evidence' },
+      { name: 'Gate Decision model', path: 'src/packages/core-domain/src/gates/decision' },
+      { name: 'Phase Transition model', path: 'src/packages/core-domain/src/phases/transition' },
+      { name: 'Provider ports model', path: 'src/packages/core-domain/src/providers' },
+      { name: 'Tenant authority model', path: 'src/packages/core-domain/src/tenancy' },
     ]
   },
   {
     id: 'WS8',
     name: 'Extensibility',
     checks: [
-      { name: 'Plugin system for commands', path: 'sdk/cli/src/plugins' },
-      { name: 'Contribution validation', path: 'sdk/cli/src/contributions' },
+      { name: 'Plugin system for commands', path: 'src/sdk/cli/src/plugins' },
+      { name: 'Contribution validation', path: 'src/sdk/cli/src/contributions' },
     ]
   },
   {
     id: 'WS9',
     name: 'Quality and Release-Gate',
     checks: [
-      { name: 'Test suite exists', path: 'sdk/cli/src/__tests__' },
-      { name: 'E2E tests exist', path: 'sdk/cli/src/__tests__/e2e' },
+      { name: 'Test suite exists', path: 'src/sdk/cli/src/__tests__' },
+      { name: 'E2E tests exist', path: 'src/sdk/cli/src/__tests__/e2e' },
       { name: 'Bilingual parity check', path: '.harness/scripts/ci/04-check-bilingual-parity.mjs' },
-      { name: 'Coverage report', path: 'COVERAGE_REPORT.md' },
+      { name: 'Coverage report', path: 'reference/core/control-center/audits/COVERAGE_REPORT.md' },
     ]
   },
 ];

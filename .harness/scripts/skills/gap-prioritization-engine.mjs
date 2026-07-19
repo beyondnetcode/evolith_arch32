@@ -35,21 +35,71 @@ const closureEvidencePath = path.join(root, "reference", "core", "control-center
 
 const impactMap = { P0: 4, P1: 3, P2: 2, P3: 1 };
 
+/**
+ * Split a Markdown table row into its cells, mirroring
+ * `.harness/scripts/ci/08-validate-tracking.mjs`.
+ *
+ * Only the empties produced by the leading and trailing pipes are dropped;
+ * interior blanks keep their position. Dropping them (e.g. via `.filter(Boolean)`)
+ * shifts every column after an unfilled cell, and the board has many of those.
+ */
+function splitRow(line) {
+  const cells = line.split(/(?<!\\)\|/).map((cell) => cell.trim());
+  if (cells.length && cells[0] === "") cells.shift();
+  if (cells.length && cells[cells.length - 1] === "") cells.pop();
+  return cells;
+}
+
+function cellText(cell) {
+  return (cell || "").replaceAll("`", "").trim();
+}
+
+/**
+ * Read the board positionally off its header row (UP-001 Amendment 1 schema:
+ * ID | Gap | What it means | Example | Component | Phase | Criticality | Complexity | Status),
+ * rather than by a fixed-shape regex. Column order changes with the schema, so the
+ * indices are resolved from the header each run.
+ */
 function parseGapTracking(filePath) {
   if (!fs.existsSync(filePath)) return [];
   const content = fs.readFileSync(filePath, "utf8");
   const rows = [];
-  const tableRegex = /\|\s*(GT-\d+)\s*\|\s*(.+?)\s*\|\s*(DONE|executable|accepted|evaluated|candidate)\s*\|\s*(P[0-3])\s*\|\s*(S|M|L)\s*\|/g;
-  let match;
-  while ((match = tableRegex.exec(content)) !== null) {
+  let cols = null;
+  let inTable = false;
+
+  for (const line of content.split("\n")) {
+    if (line.startsWith("| ID |")) {
+      inTable = true;
+      const headers = splitRow(line).map((header) => header.toLowerCase());
+      const indexOf = (name) => headers.findIndex((header) => header.includes(name));
+      const status = indexOf("status");
+      cols = {
+        title: indexOf("gap"),
+        status: status === -1 ? headers.length - 1 : status,
+        criticality: indexOf("criticality"),
+        complexity: indexOf("complexity"),
+      };
+      continue;
+    }
+    if (!inTable) continue;
+    if (line.startsWith("|---|")) continue;
+    // The board may span several tables (e.g. an active table plus a <details>
+    // archive). A non-table line closes the current one; a later header re-opens.
+    if (!line.trim().startsWith("|")) { inTable = false; continue; }
+
+    const cells = splitRow(line);
+    const idMatch = cells[0]?.match(/`(GT-\d+|MT-A\d+)`/);
+    if (!idMatch || cells.length <= cols.status) continue;
+
     rows.push({
-      id: match[1],
-      title: match[2].trim(),
-      status: match[3],
-      criticality: match[4],
-      complexity: match[5],
+      id: idMatch[1],
+      title: cellText(cells[cols.title]).slice(0, 200),
+      status: cellText(cells[cols.status]).toUpperCase(),
+      criticality: cellText(cells[cols.criticality]) || null,
+      complexity: cellText(cells[cols.complexity]) || null,
     });
   }
+
   return rows;
 }
 
@@ -57,13 +107,13 @@ function parseClosureEvidence(filePath) {
   if (!fs.existsSync(filePath)) return new Set();
   try {
     const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    // The registry is `{ closures: [...] }`; the presence of a record IS the
+    // closure claim — the records carry no `status` field.
+    const entries = Array.isArray(data) ? data : (data?.closures ?? []);
     const doneIds = new Set();
-    if (Array.isArray(data)) {
-      for (const entry of data) {
-        if (entry.status === "DONE" || entry.status === "done") {
-          doneIds.add(entry.gapId || entry.id);
-        }
-      }
+    for (const entry of entries) {
+      const id = entry?.id || entry?.gapId;
+      if (id) doneIds.add(id);
     }
     return doneIds;
   } catch {

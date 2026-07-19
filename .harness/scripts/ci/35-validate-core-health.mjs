@@ -45,10 +45,19 @@ function evaluate(id, name, testFn) {
 // ----------------------------------------------------------------------------
 
 evaluate("S1", "No Tenant State in Core", () => {
-  const coreDomainSrc = path.join(root, "packages/core-domain/src");
+  const coreDomainSrcRel = "src/packages/core-domain/src";
+  const coreDomainSrc = path.join(root, coreDomainSrcRel);
   let evidence = [];
-  
-  if (fs.existsSync(coreDomainSrc)) {
+
+  if (!fs.existsSync(coreDomainSrc)) {
+    throw new Error(
+      `core-domain source directory does not exist: ${coreDomainSrcRel}\n` +
+      `Refusing to report statelessness over a tree that is not there -- ` +
+      `a dead path must never be reported as "Clean".`
+    );
+  }
+
+  {
     try {
       // Find hardcoded tenant_id or workspaceRef inside entities/services (excluding context objects, tests, and the evaluation layer itself)
       const grepOut = execSync(`grep -rnw '${coreDomainSrc}' -e 'tenant_id' -e 'workspaceRef' | grep -v 'EvaluationContext' | grep -v 'evaluation/' | grep -v 'spec.ts' || true`, { encoding: 'utf8' }).trim();
@@ -71,12 +80,37 @@ evaluate("S1", "No Tenant State in Core", () => {
 // ----------------------------------------------------------------------------
 
 evaluate("D1", "TypeScript / OPA Sync", () => {
-  const opaDir = path.join(root, "src/rulesets/opa");
-  const tsRulesDir = path.join(root, "packages/core-domain/src/domain/rules");
-  
-  const opaFiles = fs.existsSync(opaDir) ? fs.readdirSync(opaDir).filter(f => f.endsWith('.rego')) : [];
-  const tsFiles = fs.existsSync(tsRulesDir) ? fs.readdirSync(tsRulesDir).filter(f => f.endsWith('.ts') && !f.endsWith('.spec.ts') && !f.includes('index')) : [];
-  
+  const opaDirRel = "src/rulesets/opa";
+  // `packages/core-domain/src/domain/rules` never existed at any point in this
+  // repo's history (verified with `git log --all -- '*domain/rules*'`) -- it was
+  // fabricated, so this heuristic always counted 0 TS rules. The real TypeScript
+  // counterpart of the .rego corpus is the native evaluator's handler set, which
+  // NativeEvaluator composes and native-opa-parity.spec.ts pairs against OPA.
+  const tsRulesDirRel = "src/packages/core-domain/src/application/validators/evaluators/handlers";
+  const opaDir = path.join(root, opaDirRel);
+  const tsRulesDir = path.join(root, tsRulesDirRel);
+
+  for (const [rel, abs] of [[opaDirRel, opaDir], [tsRulesDirRel, tsRulesDir]]) {
+    if (!fs.existsSync(abs)) {
+      throw new Error(
+        `Rule directory does not exist: ${rel}\n` +
+        `Refusing to report engine parity over a corpus that is not there -- ` +
+        `a dead path must never be reported as a parity heuristic result.`
+      );
+    }
+  }
+
+  const opaFiles = fs.readdirSync(opaDir).filter(f => f.endsWith('.rego'));
+  const tsFiles = fs.readdirSync(tsRulesDir).filter(f => f.endsWith('.ts') && !f.endsWith('.spec.ts') && !f.includes('index'));
+
+  if (opaFiles.length === 0 || tsFiles.length === 0) {
+    throw new Error(
+      `Scanned ${opaDirRel} (${opaFiles.length} .rego) and ${tsRulesDirRel} (${tsFiles.length} .ts) ` +
+      `and one side is empty.\n` +
+      `A zero-rule scan must never be reported as a parity result -- that is a vacuous pass.`
+    );
+  }
+
   return {
     pass: true, // This is a heuristic check; deep parity is done by 10-validate-contract-conformance
     evidence: `OPA rules: ${opaFiles.length}. TS rules: ${tsFiles.length}. (Deep sync verified by 10-validate-contract-conformance)`
@@ -101,11 +135,19 @@ evaluate("H1", "Capabilities over Scripts & JSON Schema Contracts", () => {
 });
 
 evaluate("H2", "Progress Audit Emitters", () => {
-  const runtimeBootstrapPath = path.join(root, "packages/agent-runtime/src/bootstrap.ts");
-  const agentRuntimeSrc = path.join(root, "packages/agent-runtime/src");
+  const agentRuntimeSrcRel = "src/packages/agent-runtime/src";
+  const runtimeBootstrapPath = path.join(root, agentRuntimeSrcRel, "bootstrap.ts");
+  const agentRuntimeSrc = path.join(root, agentRuntimeSrcRel);
   let pass = false;
-  
-  if (fs.existsSync(agentRuntimeSrc)) {
+
+  if (!fs.existsSync(agentRuntimeSrc)) {
+    throw new Error(
+      `agent-runtime source directory does not exist: ${agentRuntimeSrcRel}\n` +
+      `Refusing to report emitter presence over a tree that is not there.`
+    );
+  }
+
+  {
       try {
         const grepOut = execSync(`grep -rnw '${agentRuntimeSrc}' -e 'progress-audit.jsonl' || true`, { encoding: 'utf8' }).trim();
         if (grepOut) pass = true;

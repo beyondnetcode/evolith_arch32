@@ -3,8 +3,8 @@ import fs from 'fs';
 import path from 'path';
 
 const ROOT = path.resolve('.');
-const EN = path.join(ROOT, 'reference/core/control-center/gap-tracking.md');
-const ES = path.join(ROOT, 'reference/core/control-center/gap-tracking.es.md');
+const EN = path.join(ROOT, 'reference/core/control-center/gaps/gap-tracking.md');
+const ES = path.join(ROOT, 'reference/core/control-center/gaps/gap-tracking.es.md');
 
 function extractAllRows(content) {
   const lines = content.split('\n');

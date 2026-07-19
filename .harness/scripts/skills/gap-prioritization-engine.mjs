@@ -30,8 +30,8 @@ const stagnantThreshold = args.includes("--stagnant-threshold")
   : 30;
 const includeDone = args.includes("--include-done");
 
-const gapTrackingPath = path.join(root, "reference", "governance", "standards", "vision", "gap-tracking.md");
-const closureEvidencePath = path.join(root, "reference", "governance", "standards", "vision", "gap-closure-evidence.json");
+const gapTrackingPath = path.join(root, "reference", "core", "control-center", "gaps", "gap-tracking.md");
+const closureEvidencePath = path.join(root, "reference", "core", "control-center", "evidence", "gap-closure-evidence.json");
 
 const impactMap = { P0: 4, P1: 3, P2: 2, P3: 1 };
 

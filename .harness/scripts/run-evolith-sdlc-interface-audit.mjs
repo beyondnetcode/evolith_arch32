@@ -212,7 +212,7 @@ async function grepTarget(target, pattern, exts) {
   }
   if (target === 'EVENT_SRC') {
     // search app/domain source but exclude code generators (scaffolders emit sample events)
-    const dirs = ['packages/core-domain/src', 'apps/core-api/src', 'packages/mcp-server/src'];
+    const dirs = ['src/packages/core-domain/src', 'src/apps/core-api/src', 'src/packages/mcp-server/src'];
     for (const d of dirs) {
       const files = (await walk(path.join(rootDir, d), ['.ts'])).filter((f) => !/generators|scaffold|\.(spec|test)\.ts$/.test(f));
       for (const f of files) { const c = await readSafe(f); if (c && re.test(c)) return true; }

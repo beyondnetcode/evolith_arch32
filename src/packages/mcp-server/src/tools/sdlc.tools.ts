@@ -1,6 +1,7 @@
 import * as path from 'node:path';
 import type { IFileSystem, IConfigParser } from '@beyondnet/evolith-core';
 import { readGitLog, isGitRepo } from '@beyondnet/evolith-core';
+import { resolveArtifactPath } from '@beyondnet/evolith-core-domain/application/validators/artifact-path-resolver';
 import { McpTool } from '../mcp/tool.interface';
 
 const PHASES = ['phase-0', 'phase-1', 'phase-2', 'phase-3', 'phase-4', 'phase-5'];
@@ -19,53 +20,6 @@ const PHASE_REQUIREMENTS: PhaseRequirement[] = [
   { phase: 'phase-5', artifacts: ['Release Notes', 'Observability Validation', 'Rollback Procedure', 'On-Call Handoff', 'Deployment Evidence'] },
 ];
 
-/**
- * Repo-relative location of each SDLC artifact, keyed by logical artifact name.
- *
- * Two kinds of entry live here:
- *  - Satellite-produced evidence (`.evolith/*`, `coverage/*`, `.github/workflows`,
- *    `reference/architecture/adrs/adr-matrix.json`) — produced by the project being
- *    inspected. `adr-matrix.json` is the layout written by `initialize-project`
- *    and `AdrService`, so it is deliberately NOT under `reference/core/`.
- *  - Evolith Core reference documents (templates, blueprints, manifesto) — these
- *    track the canonical Core doc tree, which moved under `reference/core/` and is
- *    reflected below.
- *
- * NOTE: this map duplicates `EvidenceValidator` in core-domain, which models the
- * same artifacts as a two-tier lookup (satellite-native path first, Core template
- * fallback second). Collapsing both tiers into one satellite-relative map here is
- * a known design wart — see the report accompanying this change.
- */
-const ARTIFACT_PATHS: Record<string, string> = {
-  'PRD': 'reference/core/sdlc/04-artifact-templates/prd-template.md',
-  'Discovery Canvas': 'reference/core/sdlc/04-artifact-templates/discovery-canvas-template.md',
-  'Technical Feasibility Canvas': 'reference/core/sdlc/04-artifact-templates/technical-feasibility-template.md',
-  'Ballpark Estimation': 'reference/core/sdlc/04-artifact-templates/ballpark-estimation-template.md',
-  'MoSCoW Prioritization Matrix': '.evolith/moscow/phase-0.json',
-  'Build-versus-Compose Analysis': '.evolith/build-vs-compose.json',
-  'ADR Registry': 'reference/architecture/adrs/adr-matrix.json',
-  'Reference Blueprint Alignment': 'reference/core/architecture/blueprints/reference-blueprint.md',
-  'Simplicity Checklist Phase 1': 'reference/core/architecture/blueprints/simplicity-checklist-phase-01.md',
-  'Bounded Context Map': 'reference/core/foundations/satellite-definitions/bounded-context-map.md',
-  'Engineering Manifesto': 'reference/core/foundations/common-rules/engineering-manifesto.md',
-  'SDLC Quality Gates': 'reference/core/sdlc/quality-gates.md',
-  'Canonical Patterns': 'reference/core/architecture/patterns',
-  'CI Pipeline': '.github/workflows',
-  'Definition of Done Checklist': 'reference/core/sdlc/02-engineering/construction-focused-sdlc-framework.md',
-  'Documentation Delta': 'reference/core/sdlc/03-documentation',
-  'Coverage Report': 'coverage/coverage-summary.json',
-  'Test Summary Report': 'reference/core/sdlc/04-artifact-templates/test-summary-report-template.md',
-  'Acceptance Validation': '.evolith/acceptance-validation.json',
-  'Security Scan Report': 'reference/core/sdlc/04-artifact-templates/security-scan-report-template.md',
-  'Integration Evidence': 'reference/core/sdlc/04-artifact-templates/integration-evidence-template.md',
-  'Pyramid Distribution': 'coverage/coverage-summary.json',
-  'Release Notes': 'reference/core/sdlc/04-artifact-templates/release-notes-template.md',
-  'Observability Validation': 'reference/core/sdlc/04-artifact-templates/observability-validation-template.md',
-  'Rollback Procedure': 'reference/core/sdlc/04-artifact-templates/rollback-rehearsal-template.md',
-  'On-Call Handoff': 'reference/core/sdlc/04-artifact-templates/on-call-handoff-template.md',
-  'Deployment Evidence': '.evolith/deployment-evidence.json',
-};
-
 /** SDLC tools: phase status, phase handoff (mutative), and DORA metrics. */
 export function createSdlcTools(fs: IFileSystem, configParser: IConfigParser): McpTool[] {
   return [
@@ -73,12 +27,19 @@ export function createSdlcTools(fs: IFileSystem, configParser: IConfigParser): M
       schema: {
         name: 'evolith-sdlc-status',
         description: 'Get the current SDLC phase status',
-        inputSchema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string' },
+            corePath: { type: 'string', description: 'Optional explicit path to the Evolith core repository (template fallback tier)' },
+          },
+          required: ['path'],
+        },
       },
       execute: async (args) => {
         const repoPath = args.path as string;
         if (!repoPath) return { error: true, message: 'path is required' };
-        return sdlcStatus(repoPath, fs, configParser);
+        return sdlcStatus(repoPath, fs, configParser, args.corePath as string | undefined);
       },
     },
     {
@@ -89,6 +50,7 @@ export function createSdlcTools(fs: IFileSystem, configParser: IConfigParser): M
           type: 'object',
           properties: {
             path: { type: 'string' },
+            corePath: { type: 'string', description: 'Optional explicit path to the Evolith core repository (template fallback tier)' },
             fromPhase: { type: 'string' },
             toPhase: { type: 'string' },
             confirm: { type: 'boolean', description: 'Confirm mutative operation' },
@@ -100,7 +62,7 @@ export function createSdlcTools(fs: IFileSystem, configParser: IConfigParser): M
       execute: async (args) => {
         const repoPath = args.path as string;
         if (!repoPath) return { error: true, message: 'path is required' };
-        return sdlcHandoff(repoPath, args.fromPhase as string, args.toPhase as string, fs, configParser);
+        return sdlcHandoff(repoPath, args.fromPhase as string, args.toPhase as string, fs, configParser, args.corePath as string | undefined);
       },
     },
     {
@@ -146,7 +108,18 @@ export function createSdlcTools(fs: IFileSystem, configParser: IConfigParser): M
   ];
 }
 
-async function sdlcStatus(repoPath: string, fs: IFileSystem, configParser: IConfigParser) {
+/**
+ * @param corePath Optional root of the Evolith Core repository. When omitted,
+ *   only the satellite tier is consulted: we deliberately do NOT guess a Core
+ *   location, because a blank Core template must never be counted as the
+ *   satellite's own evidence.
+ */
+async function sdlcStatus(
+  repoPath: string,
+  fs: IFileSystem,
+  configParser: IConfigParser,
+  corePath?: string,
+) {
   const evolithYamlPath = path.join(repoPath, 'evolith.yaml');
   let currentPhase = 'phase-0';
   let phaseIndex = 0;
@@ -161,8 +134,10 @@ async function sdlcStatus(repoPath: string, fs: IFileSystem, configParser: IConf
 
   const phaseStatus = PHASES.map((phase, i) => {
     const requirements = PHASE_REQUIREMENTS[i].artifacts.map((artifact) => {
-      const artifactPath = ARTIFACT_PATHS[artifact] || artifact;
-      const exists = fs.existsSync(path.join(repoPath, artifactPath));
+      // Satellite-native path first, Core template only as a fallback — the same
+      // cascade EvidenceValidator uses, because it is literally the same function.
+      const artifactPath = resolveArtifactPath(artifact, repoPath, corePath);
+      const exists = fs.existsSync(artifactPath);
       return { artifact, exists };
     });
     return {
@@ -187,6 +162,7 @@ async function sdlcHandoff(
   toPhase: string,
   fs: IFileSystem,
   configParser: IConfigParser,
+  corePath?: string,
 ) {
   const fromIndex = PHASES.indexOf(fromPhase);
   const toIndex = PHASES.indexOf(toPhase);
@@ -197,7 +173,7 @@ async function sdlcHandoff(
     throw new Error('Handoff must be to the next consecutive phase');
   }
 
-  const status = await sdlcStatus(repoPath, fs, configParser);
+  const status = await sdlcStatus(repoPath, fs, configParser, corePath);
   const currentStatus = status.phaseStatus[fromIndex];
   if (currentStatus.status !== 'complete') {
     throw new Error(`Cannot handoff from ${fromPhase}: phase requirements not met`);

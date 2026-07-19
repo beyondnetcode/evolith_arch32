@@ -2,6 +2,7 @@
 
 **Tipo:** Patrón Canónico — .NET (C#)  
 **Estado:** Aceptado  
+**Implementa:** [PAT-0010: Puertos y Adaptadores](../pat/pat-0010-ports-and-adapters.es.md)  
 **ADRs relacionados:**
 - [ADR-0041: Arquitectura .NET Backend Canónica](../../adrs/dotnet/0041-canonical-dotnet-backend-architecture.es.md)
 - [ADR-0064: Contexto de Observabilidad con Scope de Request](../../adrs/dotnet/0064-dotnet-request-scope-observability-context.es.md)

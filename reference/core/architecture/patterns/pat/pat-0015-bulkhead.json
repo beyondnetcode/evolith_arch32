@@ -1,0 +1,56 @@
+{
+  "id": "PAT-0015",
+  "name": "Bulkhead",
+  "aka": [
+    "Resource Pool Isolation"
+  ],
+  "kind": "pattern",
+  "category": "resilience",
+  "status": "accepted",
+  "problem": "When every outbound dependency draws from one shared pool of connections and threads, a single slow dependency exhausts the pool and takes down calls to every other dependency, including healthy ones.",
+  "forces": [
+    "Partitioned pools waste capacity that a shared pool would have redistributed.",
+    "Per-dependency sizing requires knowing each dependency's load profile.",
+    "Isolation contains the failure but does not shorten it."
+  ],
+  "solution": "Resource pools — connections, threads — are isolated per upstream dependency, so exhaustion caused by one dependency cannot starve calls to any other.",
+  "appliesTo": [
+    {
+      "topology": "microservices",
+      "applicability": "required",
+      "guidance": "Each service implements bulkhead isolation with resource pools partitioned per upstream dependency. Enforced by MS-R03."
+    },
+    {
+      "topology": "distributed-modules",
+      "applicability": "recommended",
+      "guidance": "Applies once module calls cross a process boundary and consume a connection pool."
+    },
+    {
+      "topology": "serverless",
+      "applicability": "optional",
+      "guidance": "The platform's per-invocation isolation supplies much of the effect; explicit pools still matter for shared downstream connections."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "complements",
+      "target": "PAT-0014",
+      "note": "The bulkhead contains the blast radius; the breaker stops the bleeding."
+    }
+  ],
+  "governedBy": [],
+  "enforcedBy": [
+    {
+      "ruleId": "MS-R03",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/progressive-axis/microservices/microservices.rules.json",
+      "statement": "Each service MUST implement bulkhead isolation: resource pools (connections, threads) are isolated per upstream dependency."
+    }
+  ],
+  "sources": [
+    {
+      "href": "src/rulesets/topologies/progressive-axis/microservices/microservices.rules.json",
+      "note": "MS-R03 rule statement, the only description of this pattern in the corpus."
+    }
+  ]
+}

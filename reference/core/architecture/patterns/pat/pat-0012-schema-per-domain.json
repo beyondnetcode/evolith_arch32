@@ -1,0 +1,105 @@
+{
+  "id": "PAT-0012",
+  "name": "Schema per Domain",
+  "aka": [
+    "Schema-per-Bounded-Context",
+    "Modular Monolith Persistence Boundaries"
+  ],
+  "kind": "pattern",
+  "category": "data-ownership",
+  "status": "accepted",
+  "problem": "A monolith whose source is modular but whose persistence is an unconstrained shared model develops hidden coupling through direct table access, cross-domain joins, and migration conflicts that are very difficult to remove later.",
+  "forces": [
+    "A single database instance makes cross-schema joins physically possible even when they are prohibited.",
+    "Foreign keys across schemas are the most convenient and most damaging shortcut available.",
+    "Independent migrations per module trade convenience for a future extraction path."
+  ],
+  "solution": "Each bounded context owns its database schema exclusively. Shared schemas are prohibited and cross-module data access occurs only through published APIs. Each module runs its migrations independently, with no cross-module migration dependencies. Foreign keys across module schemas are prohibited; use application-level references instead.",
+  "appliesTo": [
+    {
+      "topology": "modular-monolith",
+      "applicability": "required",
+      "guidance": "Each bounded context has its own schema or database instance; naming follows {module_name}_{domain_entity}. Enforced by MM-R05 and MM-R02."
+    },
+    {
+      "topology": "distributed-modules",
+      "applicability": "required",
+      "guidance": "Schema ownership hardens into module data isolation under DM-R03."
+    },
+    {
+      "topology": "microservices",
+      "applicability": "required",
+      "guidance": "Scales up to instance granularity — see PAT-0001."
+    }
+  ],
+  "variants": [
+    {
+      "name": "Schema-per-Domain",
+      "scope": "bounded-context",
+      "invariant": "A bounded context owns its schema exclusively inside one database instance.",
+      "patternRef": "PAT-0012"
+    },
+    {
+      "name": "Database-per-Service",
+      "scope": "service",
+      "invariant": "A service owns its database instance exclusively.",
+      "patternRef": "PAT-0001",
+      "notes": "The same invariant at deployment granularity."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "variantOf",
+      "target": "PAT-0001",
+      "note": "Same invariant — nobody touches another owner's persistence — at schema rather than instance granularity."
+    },
+    {
+      "type": "complements",
+      "target": "PAT-0013",
+      "note": "A module whose schema is already independent can be migrated to a standalone database."
+    }
+  ],
+  "governedBy": [
+    {
+      "adr": "ADR-0067",
+      "track": "core",
+      "title": "Modular Monolith Persistence Boundaries",
+      "href": "../../adrs/core/0067-modular-monolith-schema-per-domain.md",
+      "verification": "verified",
+      "verifiedOn": "2026-07-19",
+      "note": "The modular-monolith patterns guide heads this section 'Schema-per-Domain (ADR-0067)'; the ADR's recorded title is 'Modular Monolith Persistence Boundaries'. The decision covers the claim."
+    },
+    {
+      "adr": "ADR-0031",
+      "track": "core",
+      "title": "Schema-per-Bounded-Context and Domain Event Catalog",
+      "href": "../../adrs/core/0031-schema-per-context-domain-event-catalog.md",
+      "verification": "verified",
+      "verifiedOn": "2026-07-19"
+    }
+  ],
+  "enforcedBy": [
+    {
+      "ruleId": "MM-R05",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
+      "statement": "Each bounded context MUST have its own database schema or database instance. Shared database is prohibited."
+    },
+    {
+      "ruleId": "MM-R02",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json"
+    },
+    {
+      "ruleId": "CORE-0031-01",
+      "engine": "adr-ruleset",
+      "ruleset": "src/rulesets/adr/generated/adr-0031-schema-per-bounded-context-and-domain-event-catalog.rules.json"
+    }
+  ],
+  "sources": [
+    {
+      "href": "reference/core/architecture/topologies/progressive-axis/modular-monolith/patterns.md",
+      "note": "Schema-per-Domain section."
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 
 **Type:** Canonical Pattern — .NET (C#)  
 **Status:** Accepted  
+**Implements:** [PAT-0010: Ports and Adapters](../pat/pat-0010-ports-and-adapters.md)  
 **Related ADRs:**
 - [ADR-0041: Canonical .NET Backend Architecture](../../adrs/dotnet/0041-canonical-dotnet-backend-architecture.md)
 - [ADR-0064: Request-Scope Observability Context](../../adrs/dotnet/0064-dotnet-request-scope-observability-context.md)

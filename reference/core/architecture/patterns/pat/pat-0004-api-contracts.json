@@ -1,0 +1,76 @@
+{
+  "id": "PAT-0004",
+  "name": "Explicit Versioned API Contracts",
+  "aka": [
+    "Contract-First Development",
+    "Inter-Module Contracts"
+  ],
+  "kind": "pattern",
+  "category": "contracts",
+  "status": "accepted",
+  "problem": "When the interface between two components exists only as code, its shape is discovered by reading the implementation, its changes are unreviewable, and every consumer learns about a breaking change by failing.",
+  "forces": [
+    "Schema languages add a design step before implementation can start.",
+    "Contract-first enables parallel development through generated mocks.",
+    "A registry is required for versioning and compatibility checking to be automatic rather than social."
+  ],
+  "solution": "All inter-component communication uses explicit contract definitions in a machine-readable schema language — Protobuf, JSON Schema, or OpenAPI. Contracts are registered, versioned, and backward-compatible within a major version. The contract is designed before the implementation and is the primary inter-component documentation.",
+  "appliesTo": [
+    {
+      "topology": "distributed-modules",
+      "applicability": "required",
+      "guidance": "Protobuf for high-performance internal RPC; OpenAPI for HTTP/REST exposed externally; all registered in a central schema registry. Enforced by DM-R02."
+    },
+    {
+      "topology": "microservices",
+      "applicability": "required",
+      "guidance": "Contract-first is the precondition for independent deployability under MS-R01."
+    },
+    {
+      "topology": "modular-monolith",
+      "applicability": "required",
+      "guidance": "Every cross-module interaction is governed by an OpenAPI specification or equivalent; undocumented interactions are violations."
+    },
+    {
+      "topology": "event-driven",
+      "applicability": "required",
+      "guidance": "The contract is the AsyncAPI event schema; ED-R01 requires strictAsyncApi=true."
+    },
+    {
+      "topology": "data-mesh",
+      "applicability": "recommended",
+      "guidance": "Data products express their interface as data contracts — see PAT-0006."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "complements",
+      "target": "PAT-0002",
+      "note": "Contract tests verify at build time what the contract asserts."
+    },
+    {
+      "type": "complements",
+      "target": "PAT-0001",
+      "note": "Published contracts are the only sanctioned path across a data ownership boundary."
+    }
+  ],
+  "governedBy": [],
+  "enforcedBy": [
+    {
+      "ruleId": "DM-R02",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json",
+      "statement": "All inter-module communication MUST use explicit contract definitions (Protobuf, JSON Schema, or OpenAPI). Contracts are versioned and backward-compatible."
+    }
+  ],
+  "sources": [
+    {
+      "href": "reference/core/architecture/topologies/progressive-axis/distributed-modules/patterns.md",
+      "note": "API Contracts and Contract-First Development sections."
+    },
+    {
+      "href": "reference/core/architecture/topologies/progressive-axis/modular-monolith/patterns.md",
+      "note": "Module Boundary Contracts section."
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "id": "PAT-0007",
+  "name": "Federated Governance",
+  "aka": [
+    "Federated Computational Governance"
+  ],
+  "kind": "pattern",
+  "category": "governance",
+  "status": "accepted",
+  "problem": "Fully centralised governance becomes a review bottleneck that domains route around; fully decentralised governance produces as many standards as there are domains.",
+  "forces": [
+    "Central bodies have the mandate for consistency but not the domain knowledge to apply it.",
+    "Domains have the knowledge but no incentive toward organisational consistency.",
+    "Exceptions are inevitable and must be visible rather than informal."
+  ],
+  "solution": "Governance operates at two levels. A central body defines policy — classification, security, compliance — and domains enforce it within their own product boundaries. Governance exceptions require formal approval and are tracked in the governance registry.",
+  "appliesTo": [
+    {
+      "topology": "data-mesh",
+      "applicability": "required",
+      "guidance": "data-mesh.config.json declares federatedGovernance=true; exceptions are tracked in the governance registry. Enforced by DAM-R03."
+    },
+    {
+      "topology": "microservices",
+      "applicability": "recommended",
+      "guidance": "Central policy with per-service enforcement mirrors the same split at service granularity."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "complements",
+      "target": "PAT-0005",
+      "note": "Federated governance presupposes clear domain ownership of each product."
+    }
+  ],
+  "governedBy": [
+    {
+      "adr": "ADR-0084",
+      "track": "core",
+      "title": "Data Mesh and Data as a Product",
+      "href": "../../adrs/core/0084-data-mesh-data-products.md",
+      "verification": "verified",
+      "verifiedOn": "2026-07-19"
+    }
+  ],
+  "enforcedBy": [
+    {
+      "ruleId": "DAM-R03",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/data-mesh/data-mesh.rules.json",
+      "statement": "data-mesh.config.json MUST declare federatedGovernance=true."
+    }
+  ],
+  "sources": [
+    {
+      "href": "reference/core/architecture/topologies/data/data-mesh/patterns.md",
+      "note": "Federated Governance section."
+    }
+  ]
+}

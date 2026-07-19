@@ -13,7 +13,7 @@ Usar fan-out para distribuir trabajo entre múltiples invocaciones paralelas de 
 
 ## Funciones de Estado / Workflows
 
-Orquestar procesos de múltiples pasos con máquinas de estados (SV-R01). Definir estados explícitos, transiciones y manejadores de errores. Persistir el estado del workflow externamente para sobrevivir reinicios de funciones. Usar workflows visuales para lógica de negocio compleja que excede una sola función.
+Orquestar procesos de múltiples pasos con máquinas de estados. Ninguna regla serverless gobierna las máquinas de estados — SV-R01 a SV-R04 cubren el contrato declarado, la ejecución sin estado, el tamaño del paquete y el inicio en frío, y SV-SEC-01/02 cubren seguridad; tratar esta sección como orientación, no como requisito ejecutable. Definir estados explícitos, transiciones y manejadores de errores. Persistir el estado del workflow externamente para sobrevivir reinicios de funciones. Usar workflows visuales para lógica de negocio compleja que excede una sola función.
 
 ## Filtrado de Eventos
 

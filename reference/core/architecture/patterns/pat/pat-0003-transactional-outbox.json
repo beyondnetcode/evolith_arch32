@@ -1,0 +1,89 @@
+{
+  "id": "PAT-0003",
+  "name": "Transactional Outbox",
+  "aka": [
+    "Outbox Pattern",
+    "Reliable Event Publication"
+  ],
+  "kind": "pattern",
+  "category": "integration",
+  "status": "accepted",
+  "problem": "Writing to the database and publishing to the broker are two separate operations. If the process dies between them, the state change is durable but the event never reaches subscribers, and no retry can recover an event that was never recorded.",
+  "forces": [
+    "Distributed transactions across a database and a broker are unavailable or unacceptably expensive.",
+    "At-least-once relay is achievable; exactly-once publication is not.",
+    "The relay adds latency between the business write and the event becoming visible."
+  ],
+  "solution": "Events are written to an outbox table within the same database transaction as the business write. A separate relay — change data capture or a polling publisher — moves outbox rows to the broker. Because the relay is at-least-once, consumers must deduplicate.",
+  "appliesTo": [
+    {
+      "topology": "event-driven",
+      "applicability": "required",
+      "guidance": "The satellite declares transactionalOutbox=true in event-driven.config.json. Enforced by ED-R02."
+    },
+    {
+      "topology": "microservices",
+      "applicability": "recommended",
+      "guidance": "Each service relays its own outbox; the outbox never crosses a service's data boundary."
+    },
+    {
+      "topology": "distributed-modules",
+      "applicability": "recommended",
+      "guidance": "Applied per module, alongside schema-validated event payloads under DM-R04."
+    },
+    {
+      "topology": "modular-monolith",
+      "applicability": "optional",
+      "guidance": "The outbox is intra-database; the durability gap it closes is narrower inside a single deployment unit."
+    }
+  ],
+  "variants": [
+    {
+      "name": "CDC relay",
+      "scope": "service",
+      "invariant": "A change data capture connector streams committed outbox rows to the broker without application code."
+    },
+    {
+      "name": "Polling publisher",
+      "scope": "service",
+      "invariant": "A scheduled publisher reads unsent outbox rows and marks them dispatched after broker acknowledgement."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "requires",
+      "target": "PAT-0017",
+      "note": "The outbox publishes duplicates during failover; without idempotent consumers the pattern moves the defect rather than fixing it."
+    }
+  ],
+  "governedBy": [
+    {
+      "adr": "ADR-0033",
+      "track": "core",
+      "title": "Transactional Outbox Pattern for Async Messaging",
+      "href": "../../adrs/core/0033-transactional-outbox-pattern.md",
+      "verification": "verified",
+      "verifiedOn": "2026-07-19"
+    }
+  ],
+  "enforcedBy": [
+    {
+      "ruleId": "ED-R02",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/event-driven/event-driven.rules.json",
+      "statement": "event-driven.config.json MUST declare transactionalOutbox=true."
+    },
+    {
+      "ruleId": "CORE-0033-01",
+      "engine": "adr-ruleset",
+      "ruleset": "src/rulesets/adr/generated/adr-0033-transactional-outbox-pattern-for-async-messaging.rules.json",
+      "statement": "Design and implementation SHOULD honor the decision recorded in ADR-0033 (core track)."
+    }
+  ],
+  "sources": [
+    {
+      "href": "reference/core/architecture/topologies/integration/event-driven/patterns.md",
+      "note": "Transactional Outbox section."
+    }
+  ]
+}

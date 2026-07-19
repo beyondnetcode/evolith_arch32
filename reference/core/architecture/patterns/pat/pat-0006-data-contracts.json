@@ -1,0 +1,72 @@
+{
+  "id": "PAT-0006",
+  "name": "Data Contracts",
+  "aka": [
+    "Producer Contracts",
+    "Data Product Interface"
+  ],
+  "kind": "pattern",
+  "category": "contracts",
+  "status": "accepted",
+  "problem": "A producer and a consumer agreeing informally on a dataset's shape, quality, and freshness have no artefact the platform can enforce. The agreement degrades silently as the schema evolves.",
+  "forces": [
+    "Machine-readable contracts constrain producers but are the only kind a platform can check.",
+    "Backward compatibility limits schema evolution; breaking it forces a new versioned product.",
+    "Quality and freshness guarantees are as load-bearing as the schema itself."
+  ],
+  "solution": "A data contract is a formal, machine-readable, versioned agreement between producer and consumer specifying the schema, quality guarantees, freshness SLAs, and access policies of a data product. Manual agreements are not valid contracts. Schema changes maintain backward compatibility; breaking changes require a new versioned data product.",
+  "appliesTo": [
+    {
+      "topology": "data-mesh",
+      "applicability": "required",
+      "guidance": "data-mesh.config.json declares hasDataContracts=true and hasBackwardCompatibleContracts=true; the self-serve platform mediates the contract lifecycle. Enforced by DAM-R02 and DAM-R08."
+    },
+    {
+      "topology": "event-driven",
+      "applicability": "recommended",
+      "guidance": "Event schemas are the equivalent artefact; ED-R06 imposes the same backward-compatibility invariant."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "complements",
+      "target": "PAT-0008",
+      "note": "Consumption contracts document the consumer side of the same relationship."
+    },
+    {
+      "type": "variantOf",
+      "target": "PAT-0004",
+      "note": "The same explicit-versioned-contract invariant applied to data products rather than to APIs."
+    }
+  ],
+  "governedBy": [
+    {
+      "adr": "ADR-0084",
+      "track": "core",
+      "title": "Data Mesh and Data as a Product",
+      "href": "../../adrs/core/0084-data-mesh-data-products.md",
+      "verification": "verified",
+      "verifiedOn": "2026-07-19"
+    }
+  ],
+  "enforcedBy": [
+    {
+      "ruleId": "DAM-R02",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/data-mesh/data-mesh.rules.json",
+      "statement": "data-mesh.config.json MUST declare hasDataContracts=true."
+    },
+    {
+      "ruleId": "DAM-R08",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/data-mesh/data-mesh.rules.json",
+      "statement": "All data product schema changes MUST maintain backward compatibility (hasBackwardCompatibleContracts=true). Breaking changes require a new versioned data product."
+    }
+  ],
+  "sources": [
+    {
+      "href": "reference/core/architecture/topologies/data/data-mesh/patterns.md",
+      "note": "Data Contracts section."
+    }
+  ]
+}

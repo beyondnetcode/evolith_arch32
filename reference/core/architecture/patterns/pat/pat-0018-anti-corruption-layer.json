@@ -1,0 +1,101 @@
+{
+  "id": "PAT-0018",
+  "name": "Anti-Corruption Layer",
+  "aka": [
+    "ACL",
+    "Translation Layer"
+  ],
+  "kind": "pattern",
+  "category": "integration",
+  "status": "accepted",
+  "problem": "An external system's model, admitted unchanged, becomes the internal model. Its identifiers, its optionality, and its inconsistencies spread through the domain, and the domain can no longer evolve independently of a system nobody here controls.",
+  "forces": [
+    "Translation is duplicated work whose value is only visible when the external system changes.",
+    "Rejecting non-compliant data creates operational load that silent normalisation would have hidden.",
+    "The layer must version in lockstep with the internal schemas it protects."
+  ],
+  "solution": "All external data is validated against the internal schemas before entering the governance model, and unvalidated data is rejected. Non-compliant data is rejected rather than normalised: silent transformation to make external data fit is prohibited. Every transformation preserves traceability to the originating external entity, and the layer lives in the infrastructure/adapter layer, never in domain entities or application services.",
+  "appliesTo": [
+    {
+      "topology": "modular-monolith",
+      "applicability": "required",
+      "guidance": "Applies at every ingestion point; ACL code sits in the module's infrastructure layer behind a port. Enforced by ACL-01 through ACL-06."
+    },
+    {
+      "topology": "distributed-modules",
+      "applicability": "required",
+      "guidance": "Each module owns the ACL for the external systems it integrates with."
+    },
+    {
+      "topology": "microservices",
+      "applicability": "required",
+      "guidance": "The ACL is what keeps a wrapper service from becoming a pass-through of the vendor model."
+    },
+    {
+      "topology": "agentic-ai",
+      "applicability": "required",
+      "guidance": "Retrieved text is data, not policy: provenance and schema are validated before it can influence behaviour."
+    },
+    {
+      "topology": "data-mesh",
+      "applicability": "recommended",
+      "guidance": "External sources feeding a data product are translated before the product's contract is applied."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "variantOf",
+      "target": "PAT-0010",
+      "note": "A driven adapter whose specific responsibility is model translation and rejection."
+    },
+    {
+      "type": "complements",
+      "target": "PAT-0004",
+      "note": "The external contract is what the layer validates against."
+    }
+  ],
+  "governedBy": [],
+  "enforcedBy": [
+    {
+      "ruleId": "ACL-01",
+      "engine": "acl-ruleset",
+      "ruleset": "src/rulesets/acl/anti-corruption-layer.rules.json",
+      "statement": "All external data ingested into a satellite product MUST be validated against Evolith Core schemas before entering the governance model. Unvalidated data MUST be rejected."
+    },
+    {
+      "ruleId": "ACL-02",
+      "engine": "acl-ruleset",
+      "ruleset": "src/rulesets/acl/anti-corruption-layer.rules.json"
+    },
+    {
+      "ruleId": "ACL-03",
+      "engine": "acl-ruleset",
+      "ruleset": "src/rulesets/acl/anti-corruption-layer.rules.json"
+    },
+    {
+      "ruleId": "ACL-04",
+      "engine": "acl-ruleset",
+      "ruleset": "src/rulesets/acl/anti-corruption-layer.rules.json"
+    },
+    {
+      "ruleId": "ACL-05",
+      "engine": "acl-ruleset",
+      "ruleset": "src/rulesets/acl/anti-corruption-layer.rules.json"
+    },
+    {
+      "ruleId": "ACL-06",
+      "engine": "acl-ruleset",
+      "ruleset": "src/rulesets/acl/anti-corruption-layer.rules.json"
+    }
+  ],
+  "sources": [
+    {
+      "href": "src/rulesets/acl/anti-corruption-layer.rules.json",
+      "note": "ACL-01 through ACL-06 rule statements. No prose pattern guide documents this pattern."
+    },
+    {
+      "href": "reference/core/architecture/topologies/ai/agentic-ai/patterns.md",
+      "note": "'Retrieved text as policy' anti-pattern and its required correction."
+    }
+  ]
+}

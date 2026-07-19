@@ -18,9 +18,9 @@ Los módulos se comunican sincrónicamente a través de contratos de API explíc
 - **Registro de esquemas**: Todos los contratos se registran en un registro centralizado de esquemas con versionado y verificaciones de compatibilidad.
 - **Compatibilidad retroactiva**: Los cambios de contrato deben mantener compatibilidad retroactiva dentro de una versión principal.
 
-## Coreografía de Eventos (DM-R04)
+## Coreografía de Eventos
 
-Los cambios de estado cross-module se comunican vía eventos asíncronos utilizando coreografía sobre orquestación.
+Los cambios de estado cross-module se comunican vía eventos asíncronos. La coreografía no es incondicional: según **ADR-0035**, es la recomendación estándar para cadenas cortas (**2 a 3 pasos**), mientras que la orquestación con un Saga Orchestrator dedicado es obligatoria para flujos complejos (**más de 3 pasos**). DM-R04 gobierna únicamente los esquemas de payload de eventos y no impone un estilo de coordinación.
 
 - **Validación de esquema de eventos**: Todos los eventos se conforman a un esquema registrado; eventos inválidos se rechazan al momento de publicar (DM-R04).
 - **Consumidores idempotentes**: Los consumidores de eventos deben manejar la entrega duplicada gracefulmente.

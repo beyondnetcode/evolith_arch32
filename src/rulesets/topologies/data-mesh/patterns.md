@@ -5,7 +5,7 @@
 **Owner:** Data Architecture
 **Topology:** Data Mesh
 **Related Rules:** DAM-R01, DAM-R02, DAM-R06
-**Related ADRs:** ADR-0084, ADR-0079
+**Related ADRs:** ADR-0084
 
 ## Purpose
 

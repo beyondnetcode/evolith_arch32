@@ -145,6 +145,12 @@ export class AdrValidationMode implements ValidationMode {
     const path = await import('path');
 
     const possiblePaths = [
+      // Core's own ADR corpus moved under `reference/core/` in the taxonomy
+      // reorg. Without this entry the first candidate never resolved against a
+      // Core checkout, so ADR validation silently fell through to the
+      // satellite's `docs/adrs` and never saw a Core ADR at all.
+      path.join(context.corePath || context.satellitePath, 'reference', 'core', 'architecture', 'adrs'),
+      // Retained: a SATELLITE may legitimately use the un-prefixed layout.
       path.join(context.corePath || context.satellitePath, 'reference', 'architecture', 'adrs'),
       path.join(context.satellitePath, 'docs', 'adrs'),
     ];

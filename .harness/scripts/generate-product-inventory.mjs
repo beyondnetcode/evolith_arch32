@@ -115,9 +115,31 @@ function run() {
   const check = process.argv.includes('--check');
 
   if (check) {
-    const stale = (read(EN_OUT) !== en) || (read(ES_OUT) !== es);
+    // The coverage row is ENVIRONMENT-DEPENDENT: it reads
+    // `src/sdk/cli/coverage/coverage-summary.json`, which exists after a local
+    // coverage run and does not exist in the docs CI job. Comparing it made this
+    // gate unsatisfiable — the committed file could match a developer's machine
+    // or CI, never both, so it reported "stale" in one of the two no matter what
+    // was committed. Normalise that row away before comparing, exactly as
+    // coverage-dashboard.mjs strips its timestamp. Everything else — command,
+    // tool, resource, prompt and schema counts — is still compared strictly.
+    const stripCoverage = (t) =>
+      t.replace(/^\|\s*(Statement coverage|Cobertura de statements)\s*\|.*$/gm, '| coverage | <env> |');
+    const stale =
+      stripCoverage(read(EN_OUT)) !== stripCoverage(en) ||
+      stripCoverage(read(ES_OUT)) !== stripCoverage(es);
     if (stale) {
-      console.error('❌ Product inventory is stale. Run: node .harness/scripts/generate-product-inventory.mjs');
+      const diff = [];
+      for (const [label, actual, expected] of [['EN', read(EN_OUT), en], ['ES', read(ES_OUT), es]]) {
+        const a = stripCoverage(actual).split('\n');
+        const e = stripCoverage(expected).split('\n');
+        for (let i = 0; i < Math.max(a.length, e.length); i++) {
+          if (a[i] !== e[i]) diff.push(`  ${label}:${i + 1} committed: ${a[i] ?? '(none)'}\n  ${label}:${i + 1} expected : ${e[i] ?? '(none)'}`);
+        }
+      }
+      // "stale" with an empty detail is how this failed in CI for weeks. Say what differs.
+      console.error('❌ Product inventory is stale. Differences:\n' + diff.join('\n'));
+      console.error('   Run: node .harness/scripts/generate-product-inventory.mjs');
       process.exit(1);
     }
     console.log('✅ Product inventory matches the installable surface.');

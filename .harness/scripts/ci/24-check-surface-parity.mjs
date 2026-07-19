@@ -25,8 +25,11 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '../../..');
 
-const MATRIX_PATH = resolve(ROOT, 'reference/core/control-center/surface-parity-matrix.json');
-const SCHEMA_PATH = resolve(ROOT, 'reference/core/control-center/surface-parity-matrix.schema.json');
+const MATRIX_PATH = resolve(ROOT, 'reference/core/control-center/audits/surface-parity-matrix.json');
+const SCHEMA_PATH = resolve(
+  ROOT,
+  'reference/core/control-center/audits/surface-parity-matrix.schema.json',
+);
 
 let exitCode = 0;
 const errors = [];
@@ -36,10 +39,23 @@ function error(msg) {
   exitCode = 1;
 }
 
+/** Print the accumulated errors and abort. Never exit silently. */
+function fatal(msg) {
+  error(msg);
+  console.error('\u2717 Surface parity check failed:\n');
+  for (const err of errors) {
+    console.error(`  \u2022 ${err}`);
+  }
+  process.exit(1);
+}
+
 // --- Step 1: Load and parse matrix ---
 if (!existsSync(MATRIX_PATH)) {
-  error(`Surface parity matrix not found at ${MATRIX_PATH}`);
-  process.exit(1);
+  fatal(`Surface parity matrix not found at ${MATRIX_PATH}`);
+}
+
+if (!existsSync(SCHEMA_PATH)) {
+  fatal(`Surface parity matrix schema not found at ${SCHEMA_PATH}`);
 }
 
 const matrixRaw = readFileSync(MATRIX_PATH, 'utf-8');
@@ -47,8 +63,7 @@ let matrix;
 try {
   matrix = JSON.parse(matrixRaw);
 } catch (e) {
-  error(`Invalid JSON in surface-parity-matrix.json: ${e.message}`);
-  process.exit(1);
+  fatal(`Invalid JSON in ${MATRIX_PATH}: ${e.message}`);
 }
 
 // --- Step 2: Validate structure ---

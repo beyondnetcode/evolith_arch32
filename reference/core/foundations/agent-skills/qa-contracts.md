@@ -46,7 +46,9 @@ node .harness/scripts/ci/27-opa-parity-gate.mjs
 # Full scheduled run across every accepted topology:
 EVOLITH_PARITY_FULL=true node .harness/scripts/ci/27-opa-parity-gate.mjs
 
-# Native TypeScript evaluator parity over src/packages/core-domain/test/parity-fixtures/
+# Parity fixture COVERAGE over src/packages/core-domain/test/parity-fixtures/
+# (does NOT evaluate verdicts — that is native-opa-parity.spec.ts, in the
+#  core-domain jest suite. This gate verifies the spec exercises every fixture.)
 node .harness/scripts/ci/28-native-evaluator-parity.mjs
 
 # Per-topology OPA Rego test suites (.rego + .test.rego declared in accepted manifests)
@@ -72,7 +74,7 @@ node .harness/scripts/ci/30-validate-phase-topology-disjoint.mjs
 Report each gate as **PASS** or **FAIL** with its machine-readable evidence line:
 
 - `27-opa-parity-gate.mjs` emits `PARITY {…}` with `evaluated`, `drifting`, `missingInputs`, and per-fixture reports. **FAIL (blocks merge)** when `drifting > 0` (exit 1). A deferred run with no compiled bundles is PASS (exit 0) and must be confirmed green by the scheduled full run.
-- `28-native-evaluator-parity.mjs` emits `NATIVE_PARITY {…}`. Any drift, missing fixture, or evaluator error is **FAIL (blocks merge)**.
+- `28-native-evaluator-parity.mjs` emits `NATIVE_PARITY_COVERAGE {…}`. It is a **coverage** gate: it does not evaluate verdicts. **FAIL (blocks merge)** on a missing/empty fixture corpus, a fixture the spec never exercises (orphan shape, zero scenarios, zero assertions), a spec/gate fixture-directory drift, or the core-domain suite being unwired from CI. The actual NativeEvaluator verdict comparison is `native-opa-parity.spec.ts`, run by the core-domain jest suite (`ci-cd.yml` → `test-core-domain`).
 - `28-test-topology-opa.mjs` and `29-test-core-opa.mjs` **FAIL (blocks merge)** on any failing OPA case, empty suite, missing `.test.rego`, or load/parse error.
 - `10-validate-contract-conformance.mjs` **FAIL (blocks merge)** on SemVer violations, schema hash mismatch, unresolved schema path, or producer/consumer pin divergence.
 - `26-validate-topology-rule-coverage.mjs` **FAIL (blocks merge)** on any coverage error (a rule present in only one engine breaks R-25).

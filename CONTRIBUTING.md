@@ -133,7 +133,8 @@ JSON-Schema contracts live in `src/rulesets/schema/`. Changes are checked by the
 
 Native rules are declared per domain under `src/rulesets/<domain>/`, and their executable Rego counterparts live in `src/rulesets/opa/`. **Native and OPA must stay at rule-ID parity:** the parity gates fail closed on any verdict, rule-ID, severity, or evidence drift.
 
-- Native evaluator fixtures: `28-native-evaluator-parity.mjs`.
+- Native evaluator verdicts: `native-opa-parity.spec.ts` (core-domain jest suite).
+- Native evaluator fixture **coverage** (every fixture is actually exercised by that spec): `28-native-evaluator-parity.mjs`.
 - Native/OPA semantic parity: `27-opa-parity-gate.mjs` (scoped per commit; a full scheduled sweep runs daily). Recompile policies with `npm run build:policy` after touching any `.rego` file.
 
 ### D. Phases, Gates, and Topologies

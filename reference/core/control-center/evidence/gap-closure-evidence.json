@@ -187,7 +187,7 @@
       "evidence": [
         "src/rulesets/schema/topology-manifest.schema.json",
         "reference/core/architecture/topologies/progressive-axis/modular-monolith/topology.manifest.json",
-        "reference/core/architecture/topologies/ai/agentic-ai/topology.manifest.json"
+        "src/rulesets/topologies/agentic-ai/topology.manifest.json"
       ],
       "validationCommands": [
         "ajv compile of topology-manifest.schema.json + validate all 8 topology.manifest.json (8 valid, 0 invalid)"
@@ -301,12 +301,12 @@
       "closedAt": "2026-06-22",
       "closureCommit": "fcd5d2af",
       "evidence": [
-        "reference/core/architecture/topologies/integration/event-driven/event-driven.rules.json",
-        "reference/core/architecture/topologies/integration/event-driven/event-driven.rego",
-        "reference/core/architecture/topologies/integration/event-driven/event-driven.test.rego",
-        "reference/core/architecture/topologies/data/data-mesh/data-mesh.rules.json",
-        "reference/core/architecture/topologies/data/data-mesh/data-mesh.rego",
-        "reference/core/architecture/topologies/data/data-mesh/data-mesh.test.rego"
+        "src/rulesets/topologies/event-driven/event-driven.rules.json",
+        "src/rulesets/topologies/event-driven/event-driven.rego",
+        "src/rulesets/topologies/event-driven/event-driven.test.rego",
+        "src/rulesets/topologies/data-mesh/data-mesh.rules.json",
+        "src/rulesets/topologies/data-mesh/data-mesh.rego",
+        "src/rulesets/topologies/data-mesh/data-mesh.test.rego"
       ],
       "validationCommands": [
         ".harness/bin/opa test reference/core/architecture/topologies/integration/event-driven/event-driven.rego reference/core/architecture/topologies/integration/event-driven/event-driven.test.rego -v",
@@ -556,8 +556,8 @@
       "closureCommit": "956bba24",
       "evidence": [
         "src/rulesets/schema/topology-manifest.schema.json",
-        "reference/core/architecture/topologies/execution/serverless/topology.manifest.json",
-        "reference/core/architecture/topologies/execution/edge-computing/topology.manifest.json",
+        "src/rulesets/topologies/serverless/topology.manifest.json",
+        "src/rulesets/topologies/edge-computing/topology.manifest.json",
         "reference/core/architecture/topologies/execution/operational-budgets-runbook.md",
         "reference/core/architecture/topologies/execution/operational-budgets-runbook.es.md",
         ".harness/scripts/validate-topology-manifests.mjs"
@@ -648,8 +648,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "fcf22ee27a160d1e5b34acab7210186531495a3d",
       "evidence": [
-        "reference/core/architecture/topologies/execution/edge-computing/edge-computing.rules.json",
-        "reference/core/architecture/topologies/execution/edge-computing/edge-computing.rego",
+        "src/rulesets/topologies/edge-computing/edge-computing.rules.json",
+        "src/rulesets/topologies/edge-computing/edge-computing.rego",
         "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
@@ -665,8 +665,8 @@
       "closureCommit": "e72d8c1de0fa10ee0abc853c5c04be36f032830f",
       "evidence": [
         "reference/core/architecture/adrs/core/0084-data-mesh-data-products.md",
-        "reference/core/architecture/topologies/data/data-mesh/data-mesh.rules.json",
-        "reference/core/architecture/topologies/data/data-mesh/data-mesh.rego",
+        "src/rulesets/topologies/data-mesh/data-mesh.rules.json",
+        "src/rulesets/topologies/data-mesh/data-mesh.rego",
         "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
@@ -681,10 +681,10 @@
       "closedAt": "2026-06-20",
       "closureCommit": "8566249bbefe547f87116d90ecb8c8a797e5cc2b",
       "evidence": [
-        "reference/core/architecture/topologies/execution/serverless/serverless.rules.json",
-        "reference/core/architecture/topologies/execution/serverless/serverless.rego",
+        "src/rulesets/topologies/serverless/serverless.rules.json",
+        "src/rulesets/topologies/serverless/serverless.rego",
         "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
-        "reference/core/architecture/topologies/execution/serverless/README.md"
+        "src/rulesets/topologies/serverless/README.md"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs",
@@ -697,10 +697,10 @@
       "closedAt": "2026-06-20",
       "closureCommit": "8566249bbefe547f87116d90ecb8c8a797e5cc2b",
       "evidence": [
-        "reference/core/architecture/topologies/integration/event-driven/event-driven.rules.json",
-        "reference/core/architecture/topologies/integration/event-driven/event-driven.rego",
+        "src/rulesets/topologies/event-driven/event-driven.rules.json",
+        "src/rulesets/topologies/event-driven/event-driven.rego",
         "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
-        "reference/core/architecture/topologies/integration/event-driven/README.md"
+        "src/rulesets/topologies/event-driven/README.md"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs",
@@ -714,11 +714,11 @@
       "closureCommit": "0fc716a48dc24ea2bec348a42b3780661de5a0b4",
       "evidence": [
         "reference/core/architecture/topologies/topology-corpus-standard.md",
-        "reference/core/architecture/topologies/ai/agentic-ai/topology.manifest.json",
-        "reference/core/architecture/topologies/ai/agentic-ai/adoption.md",
-        "reference/core/architecture/topologies/ai/agentic-ai/operations.md",
-        "reference/core/architecture/topologies/ai/agentic-ai/security.md",
-        "reference/core/architecture/topologies/ai/agentic-ai/agent.config.schema.json",
+        "src/rulesets/topologies/agentic-ai/topology.manifest.json",
+        "src/rulesets/topologies/agentic-ai/adoption.md",
+        "src/rulesets/topologies/agentic-ai/operations.md",
+        "src/rulesets/topologies/agentic-ai/security.md",
+        "src/rulesets/topologies/agentic-ai/agent.config.schema.json",
         ".harness/scripts/validate-topology-manifests.mjs"
       ],
       "validationCommands": [
@@ -805,8 +805,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "1ee04e6",
       "evidence": [
-        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.rules.json",
-        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.rego",
+        "src/rulesets/topologies/agentic-ai/agentic-ai.rules.json",
+        "src/rulesets/topologies/agentic-ai/agentic-ai.rego",
         "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
@@ -820,8 +820,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "1ee04e6",
       "evidence": [
-        "reference/core/architecture/topologies/integration/event-driven/event-driven.rules.json",
-        "reference/core/architecture/topologies/integration/event-driven/event-driven.rego",
+        "src/rulesets/topologies/event-driven/event-driven.rules.json",
+        "src/rulesets/topologies/event-driven/event-driven.rego",
         "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
@@ -835,8 +835,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "6049045",
       "evidence": [
-        "reference/core/architecture/topologies/execution/serverless/serverless.rules.json",
-        "reference/core/architecture/topologies/execution/serverless/serverless.rego",
+        "src/rulesets/topologies/serverless/serverless.rules.json",
+        "src/rulesets/topologies/serverless/serverless.rego",
         "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
@@ -2615,44 +2615,44 @@
       "closedAt": "2026-06-20",
       "closureCommit": "0c5c57d52a89db364626725b40062d6d9ce9da03",
       "evidence": [
-        "reference/core/architecture/topologies/execution/serverless/maturity.md",
-        "reference/core/architecture/topologies/execution/serverless/maturity.es.md",
-        "reference/core/architecture/topologies/execution/serverless/topology.config.schema.json",
-        "reference/core/architecture/topologies/execution/serverless/fixtures/valid.topology.config.json",
-        "reference/core/architecture/topologies/execution/serverless/fixtures/invalid.topology.config.json",
-        "reference/core/architecture/topologies/execution/serverless/serverless.test.rego",
-        "reference/core/architecture/topologies/execution/serverless/topology.manifest.json",
-        "reference/core/architecture/topologies/execution/serverless/README.md",
-        "reference/core/architecture/topologies/execution/serverless/README.es.md",
+        "src/rulesets/topologies/serverless/maturity.md",
+        "src/rulesets/topologies/serverless/maturity.es.md",
+        "src/rulesets/topologies/serverless/topology.config.schema.json",
+        "src/rulesets/topologies/serverless/fixtures/valid.topology.config.json",
+        "src/rulesets/topologies/serverless/fixtures/invalid.topology.config.json",
+        "src/rulesets/topologies/serverless/serverless.test.rego",
+        "src/rulesets/topologies/serverless/topology.manifest.json",
+        "src/rulesets/topologies/serverless/README.md",
+        "src/rulesets/topologies/serverless/README.es.md",
         "reference/core/architecture/adrs/core/0095-serverless-architecture-governance.md",
         "reference/core/architecture/adrs/core/0095-serverless-architecture-governance.es.md",
-        "reference/core/architecture/topologies/integration/event-driven/maturity.md",
-        "reference/core/architecture/topologies/integration/event-driven/maturity.es.md",
-        "reference/core/architecture/topologies/integration/event-driven/topology.config.schema.json",
-        "reference/core/architecture/topologies/integration/event-driven/fixtures/valid.topology.config.json",
-        "reference/core/architecture/topologies/integration/event-driven/fixtures/invalid.topology.config.json",
-        "reference/core/architecture/topologies/integration/event-driven/event-driven.test.rego",
-        "reference/core/architecture/topologies/integration/event-driven/topology.manifest.json",
-        "reference/core/architecture/topologies/integration/event-driven/README.md",
-        "reference/core/architecture/topologies/integration/event-driven/README.es.md",
-        "reference/core/architecture/topologies/data/data-mesh/maturity.md",
-        "reference/core/architecture/topologies/data/data-mesh/maturity.es.md",
-        "reference/core/architecture/topologies/data/data-mesh/topology.config.schema.json",
-        "reference/core/architecture/topologies/data/data-mesh/fixtures/valid.topology.config.json",
-        "reference/core/architecture/topologies/data/data-mesh/fixtures/invalid.topology.config.json",
-        "reference/core/architecture/topologies/data/data-mesh/data-mesh.test.rego",
-        "reference/core/architecture/topologies/data/data-mesh/topology.manifest.json",
-        "reference/core/architecture/topologies/data/data-mesh/README.md",
-        "reference/core/architecture/topologies/data/data-mesh/README.es.md",
-        "reference/core/architecture/topologies/execution/edge-computing/maturity.md",
-        "reference/core/architecture/topologies/execution/edge-computing/maturity.es.md",
-        "reference/core/architecture/topologies/execution/edge-computing/topology.config.schema.json",
-        "reference/core/architecture/topologies/execution/edge-computing/fixtures/valid.topology.config.json",
-        "reference/core/architecture/topologies/execution/edge-computing/fixtures/invalid.topology.config.json",
-        "reference/core/architecture/topologies/execution/edge-computing/edge-computing.test.rego",
-        "reference/core/architecture/topologies/execution/edge-computing/topology.manifest.json",
-        "reference/core/architecture/topologies/execution/edge-computing/README.md",
-        "reference/core/architecture/topologies/execution/edge-computing/README.es.md",
+        "src/rulesets/topologies/event-driven/maturity.md",
+        "src/rulesets/topologies/event-driven/maturity.es.md",
+        "src/rulesets/topologies/event-driven/topology.config.schema.json",
+        "src/rulesets/topologies/event-driven/fixtures/valid.topology.config.json",
+        "src/rulesets/topologies/event-driven/fixtures/invalid.topology.config.json",
+        "src/rulesets/topologies/event-driven/event-driven.test.rego",
+        "src/rulesets/topologies/event-driven/topology.manifest.json",
+        "src/rulesets/topologies/event-driven/README.md",
+        "src/rulesets/topologies/event-driven/README.es.md",
+        "src/rulesets/topologies/data-mesh/maturity.md",
+        "src/rulesets/topologies/data-mesh/maturity.es.md",
+        "src/rulesets/topologies/data-mesh/topology.config.schema.json",
+        "src/rulesets/topologies/data-mesh/fixtures/valid.topology.config.json",
+        "src/rulesets/topologies/data-mesh/fixtures/invalid.topology.config.json",
+        "src/rulesets/topologies/data-mesh/data-mesh.test.rego",
+        "src/rulesets/topologies/data-mesh/topology.manifest.json",
+        "src/rulesets/topologies/data-mesh/README.md",
+        "src/rulesets/topologies/data-mesh/README.es.md",
+        "src/rulesets/topologies/edge-computing/maturity.md",
+        "src/rulesets/topologies/edge-computing/maturity.es.md",
+        "src/rulesets/topologies/edge-computing/topology.config.schema.json",
+        "src/rulesets/topologies/edge-computing/fixtures/valid.topology.config.json",
+        "src/rulesets/topologies/edge-computing/fixtures/invalid.topology.config.json",
+        "src/rulesets/topologies/edge-computing/edge-computing.test.rego",
+        "src/rulesets/topologies/edge-computing/topology.manifest.json",
+        "src/rulesets/topologies/edge-computing/README.md",
+        "src/rulesets/topologies/edge-computing/README.es.md",
         "reference/core/architecture/adrs/core/0096-edge-computing-architecture-governance.md",
         "reference/core/architecture/adrs/core/0096-edge-computing-architecture-governance.es.md",
         "reference/core/architecture/topologies/README.md",
@@ -2688,21 +2688,21 @@
         "reference/core/architecture/topologies/progressive-axis/microservices/parity-fixtures/compliant.json",
         "reference/core/architecture/topologies/progressive-axis/microservices/parity-fixtures/violation.json",
         "reference/core/architecture/topologies/progressive-axis/microservices/microservices.wasm",
-        "reference/core/architecture/topologies/execution/serverless/parity-fixtures/compliant.json",
-        "reference/core/architecture/topologies/execution/serverless/parity-fixtures/violation.json",
-        "reference/core/architecture/topologies/execution/serverless/serverless.wasm",
-        "reference/core/architecture/topologies/execution/edge-computing/parity-fixtures/compliant.json",
-        "reference/core/architecture/topologies/execution/edge-computing/parity-fixtures/violation.json",
-        "reference/core/architecture/topologies/execution/edge-computing/edge-computing.wasm",
-        "reference/core/architecture/topologies/integration/event-driven/parity-fixtures/compliant.json",
-        "reference/core/architecture/topologies/integration/event-driven/parity-fixtures/violation.json",
-        "reference/core/architecture/topologies/integration/event-driven/event-driven.wasm",
-        "reference/core/architecture/topologies/data/data-mesh/parity-fixtures/compliant.json",
-        "reference/core/architecture/topologies/data/data-mesh/parity-fixtures/violation.json",
-        "reference/core/architecture/topologies/data/data-mesh/data-mesh.wasm",
-        "reference/core/architecture/topologies/ai/agentic-ai/parity-fixtures/compliant.json",
-        "reference/core/architecture/topologies/ai/agentic-ai/parity-fixtures/violation.json",
-        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.wasm",
+        "src/rulesets/topologies/serverless/parity-fixtures/compliant.json",
+        "src/rulesets/topologies/serverless/parity-fixtures/violation.json",
+        "src/rulesets/topologies/serverless/serverless.wasm",
+        "src/rulesets/topologies/edge-computing/parity-fixtures/compliant.json",
+        "src/rulesets/topologies/edge-computing/parity-fixtures/violation.json",
+        "src/rulesets/topologies/edge-computing/edge-computing.wasm",
+        "src/rulesets/topologies/event-driven/parity-fixtures/compliant.json",
+        "src/rulesets/topologies/event-driven/parity-fixtures/violation.json",
+        "src/rulesets/topologies/event-driven/event-driven.wasm",
+        "src/rulesets/topologies/data-mesh/parity-fixtures/compliant.json",
+        "src/rulesets/topologies/data-mesh/parity-fixtures/violation.json",
+        "src/rulesets/topologies/data-mesh/data-mesh.wasm",
+        "src/rulesets/topologies/agentic-ai/parity-fixtures/compliant.json",
+        "src/rulesets/topologies/agentic-ai/parity-fixtures/violation.json",
+        "src/rulesets/topologies/agentic-ai/agentic-ai.wasm",
         ".harness/scripts/ci/27-opa-parity-gate.mjs",
         ".harness/scripts/ci/28-test-topology-opa.mjs",
         ".harness/scripts/ci/opa-eval.mjs",
@@ -2792,17 +2792,17 @@
       "closedAt": "2026-06-21",
       "closureCommit": "19fb0c41",
       "evidence": [
-        "reference/core/architecture/topologies/ai/agentic-ai/README.md",
-        "reference/core/architecture/topologies/ai/agentic-ai/README.es.md",
-        "reference/core/architecture/topologies/ai/agentic-ai/operations.md",
-        "reference/core/architecture/topologies/ai/agentic-ai/operations.es.md",
-        "reference/core/architecture/topologies/ai/agentic-ai/runbooks.md",
-        "reference/core/architecture/topologies/ai/agentic-ai/runbooks.es.md",
-        "reference/core/architecture/topologies/ai/agentic-ai/agent.config.schema.json",
-        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.rules.json",
-        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.rego",
-        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.test.rego",
-        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.wasm",
+        "src/rulesets/topologies/agentic-ai/README.md",
+        "src/rulesets/topologies/agentic-ai/README.es.md",
+        "src/rulesets/topologies/agentic-ai/operations.md",
+        "src/rulesets/topologies/agentic-ai/operations.es.md",
+        "src/rulesets/topologies/agentic-ai/runbooks.md",
+        "src/rulesets/topologies/agentic-ai/runbooks.es.md",
+        "src/rulesets/topologies/agentic-ai/agent.config.schema.json",
+        "src/rulesets/topologies/agentic-ai/agentic-ai.rules.json",
+        "src/rulesets/topologies/agentic-ai/agentic-ai.rego",
+        "src/rulesets/topologies/agentic-ai/agentic-ai.test.rego",
+        "src/rulesets/topologies/agentic-ai/agentic-ai.wasm",
         "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
@@ -3505,11 +3505,11 @@
         "reference/core/architecture/topologies/progressive-axis/modular-monolith/topology.manifest.json",
         "reference/core/architecture/topologies/progressive-axis/distributed-modules/topology.manifest.json",
         "reference/core/architecture/topologies/progressive-axis/microservices/topology.manifest.json",
-        "reference/core/architecture/topologies/execution/serverless/topology.manifest.json",
-        "reference/core/architecture/topologies/execution/edge-computing/topology.manifest.json",
-        "reference/core/architecture/topologies/integration/event-driven/topology.manifest.json",
-        "reference/core/architecture/topologies/data/data-mesh/topology.manifest.json",
-        "reference/core/architecture/topologies/ai/agentic-ai/topology.manifest.json"
+        "src/rulesets/topologies/serverless/topology.manifest.json",
+        "src/rulesets/topologies/edge-computing/topology.manifest.json",
+        "src/rulesets/topologies/event-driven/topology.manifest.json",
+        "src/rulesets/topologies/data-mesh/topology.manifest.json",
+        "src/rulesets/topologies/agentic-ai/topology.manifest.json"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-topology-manifests.mjs"
@@ -3808,8 +3808,8 @@
       "closureCommit": "f1d9814f",
       "evidence": [
         "reference/core/architecture/topologies/progressive-axis/modular-monolith/operations.md",
-        "reference/core/architecture/topologies/data/data-mesh/operations.md",
-        "reference/core/architecture/topologies/integration/event-driven/operations.md"
+        "src/rulesets/topologies/data-mesh/operations.md",
+        "src/rulesets/topologies/event-driven/operations.md"
       ],
       "validationCommands": [
         "echo validated"
@@ -3838,7 +3838,7 @@
       "closedAt": "2026-06-23",
       "closureCommit": "f1d9814f",
       "evidence": [
-        "reference/core/architecture/topologies/ai/agentic-ai/topology.manifest.json",
+        "src/rulesets/topologies/agentic-ai/topology.manifest.json",
         "src/rulesets/schema/topology-manifest.schema.json"
       ],
       "validationCommands": [
@@ -3882,7 +3882,7 @@
       "evidence": [
         "reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.test.rego",
         "reference/core/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.test.rego",
-        "reference/core/architecture/topologies/ai/agentic-ai/agentic-ai.test.rego"
+        "src/rulesets/topologies/agentic-ai/agentic-ai.test.rego"
       ],
       "validationCommands": [
         "echo validated"
@@ -4474,11 +4474,11 @@
       "closedAt": "2026-06-26",
       "closureCommit": "b7c379c0",
       "evidence": [
-        "reference/core/architecture/topologies/ai/agentic-ai/openapi/openapi.yaml",
-        "reference/core/architecture/topologies/data/data-mesh/openapi/openapi.yaml",
-        "reference/core/architecture/topologies/execution/edge-computing/openapi/openapi.yaml",
-        "reference/core/architecture/topologies/execution/serverless/openapi/openapi.yaml",
-        "reference/core/architecture/topologies/integration/event-driven/openapi/openapi.yaml",
+        "src/rulesets/topologies/agentic-ai/openapi/openapi.yaml",
+        "src/rulesets/topologies/data-mesh/openapi/openapi.yaml",
+        "src/rulesets/topologies/edge-computing/openapi/openapi.yaml",
+        "src/rulesets/topologies/serverless/openapi/openapi.yaml",
+        "src/rulesets/topologies/event-driven/openapi/openapi.yaml",
         "reference/core/architecture/topologies/progressive-axis/modular-monolith/openapi/openapi.yaml",
         "reference/core/architecture/topologies/progressive-axis/distributed-modules/openapi/openapi.yaml",
         "reference/core/architecture/topologies/progressive-axis/microservices/openapi/openapi.yaml",
@@ -4494,11 +4494,11 @@
       "closedAt": "2026-06-26",
       "closureCommit": "8f14459b",
       "evidence": [
-        "reference/core/architecture/topologies/ai/agentic-ai/mcp/mcp-manifest.json",
-        "reference/core/architecture/topologies/data/data-mesh/mcp/mcp-manifest.json",
-        "reference/core/architecture/topologies/execution/edge-computing/mcp/mcp-manifest.json",
-        "reference/core/architecture/topologies/execution/serverless/mcp/mcp-manifest.json",
-        "reference/core/architecture/topologies/integration/event-driven/mcp/mcp-manifest.json",
+        "src/rulesets/topologies/agentic-ai/mcp/mcp-manifest.json",
+        "src/rulesets/topologies/data-mesh/mcp/mcp-manifest.json",
+        "src/rulesets/topologies/edge-computing/mcp/mcp-manifest.json",
+        "src/rulesets/topologies/serverless/mcp/mcp-manifest.json",
+        "src/rulesets/topologies/event-driven/mcp/mcp-manifest.json",
         "reference/core/architecture/topologies/progressive-axis/modular-monolith/mcp/mcp-manifest.json",
         "reference/core/architecture/topologies/progressive-axis/distributed-modules/mcp/mcp-manifest.json",
         "reference/core/architecture/topologies/progressive-axis/microservices/mcp/mcp-manifest.json"
@@ -4513,19 +4513,19 @@
       "closedAt": "2026-06-26",
       "closureCommit": "7bed54d0",
       "evidence": [
-        "reference/core/architecture/topologies/ai/agentic-ai/cli/cli-flows.md",
-        "reference/core/architecture/topologies/data/data-mesh/cli/cli-flows.md",
-        "reference/core/architecture/topologies/execution/edge-computing/cli/cli-flows.md",
-        "reference/core/architecture/topologies/execution/serverless/cli/cli-flows.md",
-        "reference/core/architecture/topologies/integration/event-driven/cli/cli-flows.md",
+        "src/rulesets/topologies/agentic-ai/cli/cli-flows.md",
+        "src/rulesets/topologies/data-mesh/cli/cli-flows.md",
+        "src/rulesets/topologies/edge-computing/cli/cli-flows.md",
+        "src/rulesets/topologies/serverless/cli/cli-flows.md",
+        "src/rulesets/topologies/event-driven/cli/cli-flows.md",
         "reference/core/architecture/topologies/progressive-axis/modular-monolith/cli/cli-flows.md",
         "reference/core/architecture/topologies/progressive-axis/distributed-modules/cli/cli-flows.md",
         "reference/core/architecture/topologies/progressive-axis/microservices/cli/cli-flows.md",
-        "reference/core/architecture/topologies/ai/agentic-ai/cli/cli-flows.es.md",
-        "reference/core/architecture/topologies/data/data-mesh/cli/cli-flows.es.md",
-        "reference/core/architecture/topologies/execution/edge-computing/cli/cli-flows.es.md",
-        "reference/core/architecture/topologies/execution/serverless/cli/cli-flows.es.md",
-        "reference/core/architecture/topologies/integration/event-driven/cli/cli-flows.es.md",
+        "src/rulesets/topologies/agentic-ai/cli/cli-flows.es.md",
+        "src/rulesets/topologies/data-mesh/cli/cli-flows.es.md",
+        "src/rulesets/topologies/edge-computing/cli/cli-flows.es.md",
+        "src/rulesets/topologies/serverless/cli/cli-flows.es.md",
+        "src/rulesets/topologies/event-driven/cli/cli-flows.es.md",
         "reference/core/architecture/topologies/progressive-axis/modular-monolith/cli/cli-flows.es.md",
         "reference/core/architecture/topologies/progressive-axis/distributed-modules/cli/cli-flows.es.md",
         "reference/core/architecture/topologies/progressive-axis/microservices/cli/cli-flows.es.md"
@@ -8102,6 +8102,29 @@
         "docs.yml: triggers workflow_dispatch/pull_request/push, and the validate job carries no `if:` condition, so the workflow result now reflects the validator's verdict"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-566",
+      "closedAt": "2026-07-19",
+      "closureCommit": "29d69ae8",
+      "evidence": [
+        "reference/core/architecture/topologies/",
+        "src/rulesets/topologies/",
+        ".harness/scripts/ci/17-validate-knowledge-intake.mjs",
+        "src/packages/core-domain/src/application/services/topology-catalog.service.ts",
+        "src/packages/core-domain/src/evaluation/design-flow.e2e.spec.ts",
+        "src/packages/core-domain/src/application/services/phase-artifacts.e2e.spec.ts"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-topology-manifests.mjs -> exit 0, 'Topology manifest validation passed for 8 manifest files' (was 13; five were duplicates)",
+        "node .harness/scripts/ci/17-validate-knowledge-intake.mjs -> exit 0 after reading BOTH roots; exit 1 in the pre-deletion simulation, the single consumer the blast-radius simulation identified",
+        "node .harness/scripts/ci/01-validate-docs.mjs -> exit 0, 'Documentation validation passed for 1451 Markdown files', 0 broken relative links after repointing 14",
+        "node .harness/scripts/ci/{04,22,24,26,28,30,35,39}-*.mjs -> all exit 0",
+        "TopologyCatalogService.list() against the real corpus -> 8 topologies, no duplicates, all 8 with a designProfile",
+        "jest: CLI 1147, core-domain 1174, core 62, mcp-server 341, core-api 168 -> all exit 0"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Supersedes GT-329, which is NOT reopened or edited. GT-329's record is retained deliberately as the evidence that its closure was unsound: its implementing commit d2b7d2b7 has an empty --diff-filter=D, so it copied the corpus and deleted nothing while closing DONE against 'all topologies under a single canonical location'. Rewriting that record to match reality would destroy the only trace of how the false closure happened. Phase A (353cdbd4) repaired 46 dead references inside the src/ manifests first, because a corpus about to become canonical must resolve what it declares; 07064035 repaired validate-topology-manifests.mjs beforehand, since it validated only 5 of 13 manifests and reconciling against an unvalidated source would have been reckless. Collapsing the dual root is explicitly NOT claimed: the three progressive-axis topologies remain under reference/ where their full corpora live, documented as intentional in src/rulesets/topologies/README.md and .harness/scripts/lib/paths.mjs."
     }
   ]
 }

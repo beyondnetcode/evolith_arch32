@@ -1,7 +1,21 @@
 #!/usr/bin/env node
 /**
- * MCP smoke test.
- * Verifies the stdio AND HTTP/SSE JSON-RPC surfaces exposed by the built Evolith CLI.
+ * MCP smoke test — THE CANONICAL IMPLEMENTATION.
+ *
+ * This is the single real implementation of the MCP smoke. All protocol logic
+ * lives here and nowhere else. Despite sitting under `examples/`, this file is
+ * a CI GATE, not a sample (see "Naming" below).
+ *
+ * Invoked by:
+ *   - `npm run mcp:smoke` (src/sdk/cli/package.json) — used by CI in
+ *     .github/workflows/sdk-cli-ci.yml, job `e2e-tests`, step
+ *     "Run MCP Stdio and HTTP Smoke".
+ *   - `.harness/scripts/mcp-smoke.mjs` — a THIN SHIM that execs this file so the
+ *     harness path cited by ADR ai-augmented/0002 and by
+ *     reference/core/control-center/evidence/gap-closure-evidence.json keeps
+ *     working. That shim contains no protocol logic of its own.
+ *
+ * Verifies the stdio AND HTTP/SSE JSON-RPC surfaces of the MCP gateway.
  *
  * Transport 1 — stdio: spawns `node dist/main.js serve` and communicates
  *   directly over stdin/stdout with JSON-RPC 2.0.
@@ -12,6 +26,18 @@
  * NOTE: the server under test is the STANDALONE @beyondnet/evolith-mcp gateway.
  * The CLI hosted it behind `evolith-cli mcp serve` until dc0b9667 (2026-06-30)
  * decoupled the two; this smoke must spawn the gateway's own binary.
+ *
+ * EVIDENCE: on completion this writes .harness/evidence/mcp-smoke.evidence.json.
+ * That artifact is consumed by McpRuleHandler in core-domain, which evaluates
+ * rules MCP-01/02/03 by looking for `results.initialize`, `results['tools/list']`
+ * and `results['resources/list']`. Evidence generation lives here — in the
+ * implementation that actually observes the responses — so the recorded counts
+ * are real rather than inferred from an exit code.
+ *
+ * Naming: `examples/mcp-test.js` understates what this is. The path is retained
+ * deliberately because closure registers cite it verbatim
+ * (gap-closure-evidence.json, gap-reference-catalog.md), matching the precedent
+ * set when guard 28 was fixed by renaming the CI step rather than the file.
  */
 
 const { spawn } = require('node:child_process');
@@ -23,6 +49,33 @@ const cliRoot = path.resolve(__dirname, '..');
 const repoRoot = path.resolve(cliRoot, '..', '..', '..');
 const mcpServerRoot = path.join(repoRoot, 'src', 'packages', 'mcp-server');
 const mcpServerEntry = path.join(mcpServerRoot, 'dist', 'main.js');
+const evidenceDir = path.join(repoRoot, '.harness', 'evidence');
+
+/**
+ * Write the harness evidence artifact consumed by McpRuleHandler (MCP-01/02/03).
+ * `results` maps JSON-RPC method name -> observed outcome.
+ */
+function writeEvidence(results, passed) {
+  fs.mkdirSync(evidenceDir, { recursive: true });
+  const evidence = {
+    id: `mcp-smoke-${Date.now()}`,
+    source: 'src/sdk/cli/examples/mcp-test.js',
+    generatedAt: new Date().toISOString(),
+    producer: 'evolith-cli/mcp-smoke',
+    sourceRef: 'src/packages/mcp-server/dist/main.js',
+    status: passed ? 'passed' : 'failed',
+    evaluatedRules: ['MCP-01', 'MCP-02', 'MCP-03', 'MCP-05', 'CLI-RR-04'],
+    blockingFailures: Object.entries(results)
+      .filter(([, r]) => !r.ok)
+      .map(([id]) => id),
+    retentionPeriod: '90d',
+    owner: 'evolith-core-team',
+    results,
+  };
+  const outPath = path.join(evidenceDir, 'mcp-smoke.evidence.json');
+  fs.writeFileSync(outPath, JSON.stringify(evidence, null, 2) + '\n');
+  console.log(`Evidence written to ${path.relative(repoRoot, outPath)}`);
+}
 
 if (!fs.existsSync(mcpServerEntry)) {
   console.error(
@@ -35,6 +88,16 @@ if (!fs.existsSync(mcpServerEntry)) {
 // ---------------------------------------------------------------------------
 // Shared helpers
 // ---------------------------------------------------------------------------
+
+/**
+ * Observed outcomes keyed by JSON-RPC method, accumulated by the stdio run and
+ * serialised by writeEvidence(). Keys must match what McpRuleHandler looks for.
+ */
+const smokeResults = {};
+
+function recordResult(method, detail = {}) {
+  smokeResults[method] = { ok: true, ...detail };
+}
 
 function createRequest(id, method, params = {}) {
   return `${JSON.stringify({ jsonrpc: '2.0', id, method, params })}\n`;
@@ -185,6 +248,7 @@ async function runStdioSmoke() {
     assert(initialize.capabilities?.resources, 'initialize: missing resources capability');
     assert(initialize.capabilities?.prompts, 'initialize: missing prompts capability');
     console.log('  initialize         OK');
+    recordResult('initialize', { serverInfo: initialize.serverInfo });
 
     const tools = await checkedRequest(2, 'tools/list');
     const toolNames = new Set((tools.tools || []).map((t) => t.name));
@@ -192,16 +256,19 @@ async function runStdioSmoke() {
     assert(toolNames.has('evolith-metrics'), 'tools/list: missing evolith-metrics');
     assert(toolNames.has('evolith-architecture-validate'), 'tools/list: missing evolith-architecture-validate');
     console.log(`  tools/list         OK  (${tools.tools.length} tools)`);
+    recordResult('tools/list', { count: tools.tools.length });
 
     const resources = await checkedRequest(3, 'resources/list');
     assert(Array.isArray(resources.resources), 'resources/list: not an array');
     assert(resources.resources.length > 0, 'resources/list: empty');
     console.log(`  resources/list     OK  (${resources.resources.length} resources)`);
+    recordResult('resources/list', { count: resources.resources.length });
 
     const prompts = await checkedRequest(4, 'prompts/list');
     assert(Array.isArray(prompts.prompts), 'prompts/list: not an array');
     assert(prompts.prompts.length > 0, 'prompts/list: empty');
     console.log(`  prompts/list       OK  (${prompts.prompts.length} prompts)`);
+    recordResult('prompts/list', { count: prompts.prompts.length });
 
     const metrics = await checkedRequest(5, 'tools/call', { name: 'evolith-metrics', arguments: {} });
     assert(Array.isArray(metrics.content), 'tools/call metrics: content not an array');
@@ -333,7 +400,14 @@ async function main() {
   console.log('All MCP smoke tests passed.');
 }
 
-main().catch((error) => {
-  console.error(`MCP smoke test FAILED: ${error.message}`);
-  process.exit(1);
-});
+main()
+  .then(() => {
+    writeEvidence(smokeResults, true);
+  })
+  .catch((error) => {
+    console.error(`MCP smoke test FAILED: ${error.message}`);
+    // Still emit evidence so MCP-01/02/03 evaluate against the real failure
+    // rather than a stale artifact from an earlier passing run.
+    writeEvidence(smokeResults, false);
+    process.exit(1);
+  });

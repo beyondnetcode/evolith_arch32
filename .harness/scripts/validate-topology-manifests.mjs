@@ -9,7 +9,7 @@ import addFormats from "ajv-formats";
 const root = process.cwd();
 const schemaPath = path.join(root, "src", "rulesets", "schema", "topology-manifest.schema.json");
 const manifestRoots = [
-  path.join(root, "reference", "architecture", "topologies"),
+  path.join(root, "reference", "core", "architecture", "topologies"),
   path.join(root, "src", "rulesets", "topologies"),
 ];
 const failures = [];

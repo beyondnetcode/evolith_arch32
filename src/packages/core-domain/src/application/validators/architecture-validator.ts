@@ -110,7 +110,7 @@ async function resolveArchitectureRuleset(
     return path.join(corePath, manifestRuleset);
   }
   const profile = level === 'F1' ? 'modular-monolith' : level === 'F2' ? 'distributed-modules' : 'microservices';
-  return path.join(corePath, 'reference', 'architecture', 'topologies', 'progressive-axis', profile, `${profile}.rules.json`);
+  return path.join(corePath, 'reference', 'core', 'architecture', 'topologies', 'progressive-axis', profile, `${profile}.rules.json`);
 }
 
 async function resolveTopologyRuleset(

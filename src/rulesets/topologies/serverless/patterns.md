@@ -13,7 +13,7 @@ Use fan-out to distribute work across multiple parallel function invocations. Ag
 
 ## Step Functions / Workflows
 
-Orchestrate multi-step processes with state machines (SV-R01). Define explicit states, transitions, and error handlers. Persist workflow state externally to survive function restarts. Use visual workflows for complex business logic that exceeds a single function.
+Orchestrate multi-step processes with state machines. No serverless rule governs state machines — SV-R01 through SV-R04 cover the declared contract, stateless execution, package size, and cold start, and SV-SEC-01/02 cover security; treat this section as guidance, not an executable requirement. Define explicit states, transitions, and error handlers. Persist workflow state externally to survive function restarts. Use visual workflows for complex business logic that exceeds a single function.
 
 ## Event Filtering
 

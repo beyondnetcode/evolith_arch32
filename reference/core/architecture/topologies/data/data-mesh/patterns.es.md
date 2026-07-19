@@ -5,7 +5,7 @@
 **Propietario:** Arquitectura de Datos
 **Topología:** Malla de Datos
 **Reglas Relacionadas:** DAM-R01, DAM-R02, DAM-R06
-**ADRs Relacionados:** ADR-0084, ADR-0079
+**ADRs Relacionados:** ADR-0084
 
 ## Propósito
 

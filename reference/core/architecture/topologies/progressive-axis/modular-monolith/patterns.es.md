@@ -35,7 +35,7 @@ El monolito modular está diseñado para extracción eventual. El código se est
 - **Independencia de base de datos:** El esquema de cada módulo puede migrarse a una base de datos independiente
 - **Emisión de eventos:** Los módulos publican eventos de dominio a los que los servicios extraídos pueden suscribirse
 
-**Puntuación de preparación para extracción:** Cada módulo debe mantener una puntuación de preparación >= 70% para la extracción F2 (ADR-0045).
+**Puntuación de preparación para extracción:** **MM-R07** exige que cada módulo rastree una puntuación de preparación para extracción y la mantenga en **>= 70%** para pasar la puerta de Diseño de Fase 2 cuando se planifica F2. Los criterios de calificación subyacentes provienen de **ADR-0045**, que no define ningún porcentaje: un módulo califica para extracción solo si cumple **al menos 2 de 4** criterios (latencia P95 > 200 ms; > 4 despliegues independientes por semana; > 80% de commits de una sola squad; carga de BD > 20% del total de instancias) sostenidos durante **al menos 15 días**.
 
 ## Patrón Data Mapper y Repository
 
@@ -65,9 +65,11 @@ Cada módulo sigue internamente la arquitectura hexagonal. Las integraciones ext
 - **Adaptadores conductores:** Entrantes (controladores de API, manejadores de eventos)
 - **Adaptadores conducidos:** Salientes (repositorios de bases de datos, clientes de API externos)
 
-## Contratos de Límite de Módulo (MM-R05, MM-R06)
+## Contratos de Límite de Módulo
 
 Toda interacción entre módulos está gobernada por un contrato formal. Las interacciones no documentadas son violaciones.
+
+> **Estado de gobierno:** ninguna regla MM especifica formato de contrato, versionado ni obsolescencia. MM-R05 gobierna la separación de bases de datos y MM-R06 el uso de eventos de dominio para reacciones asíncronas; ninguna cubre las prácticas siguientes. Tratar esta sección como convención de la Junta, no como regla ejecutable.
 
 - **Formato del contrato:** Especificación OpenAPI o formato equivalente legible por máquina
 - **Versionado:** Los contratos siguen versionado semántico; los cambios de ruptura requieren planes de migración

@@ -18,9 +18,9 @@ Modules communicate synchronously via explicit, versioned API contracts. Contrac
 - **Schema registry**: All contracts are registered in a centralized schema registry with versioning and compatibility checks.
 - **Backward compatibility**: Contract changes must maintain backward compatibility within a major version.
 
-## Event Choreography (DM-R04)
+## Event Choreography
 
-Cross-module state changes are communicated via async events using choreography over orchestration.
+Cross-module state changes are communicated via async events. Choreography is not unconditional: per **ADR-0035**, it is the standard recommendation for short chains (**2 to 3 steps**), while orchestration with a dedicated Saga Orchestrator is mandatory for complex workflows (**more than 3 steps**). DM-R04 governs event payload schemas only and does not mandate a coordination style.
 
 - **Event schema validation**: All events conform to a registered schema; invalid events are rejected at publish time (DM-R04).
 - **Idempotent consumers**: Event consumers must handle duplicate delivery gracefully.

@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0061",
   "adrTitle": "Transactional Event Lifecycle in EF Core",
-  "status": "Proposed",
+  "status": "Accepted",
   "date": "2026-05-23",
   "rules": [
     {

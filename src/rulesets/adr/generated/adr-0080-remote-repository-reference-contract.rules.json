@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0080",
   "adrTitle": "Remote Repository Reference Contract",
-  "status": "Approved — Evolith Architecture Board, 2026-06-19.",
+  "status": "Accepted — Evolith Architecture Board, 2026-06-19.",
   "date": "2026-06-19",
   "rules": [
     {

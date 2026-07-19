@@ -27,9 +27,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const REPO_ROOT = join(__dirname, '..', '..');
 
-const ADR_BASE = join(REPO_ROOT, 'reference', 'architecture', 'adrs');
+const ADR_BASE = join(REPO_ROOT, 'reference', 'core', 'architecture', 'adrs');
 const TRACKS = ['core', 'nodejs', 'dotnet', 'ai-augmented', 'android'];
-const HANDCRAFTED_DIR = join(REPO_ROOT, 'rulesets', 'adr');
+const HANDCRAFTED_DIR = join(REPO_ROOT, 'src', 'rulesets', 'adr');
 const GENERATED_DIR = join(HANDCRAFTED_DIR, 'generated');
 const SCHEMA_REL_FROM_GENERATED = '../../schema/ruleset-standard.schema.json';
 
@@ -48,15 +48,40 @@ const EXECUTABLE_SIGNALS = [
 
 function listAdrFiles() {
   const files = [];
+  const missingTracks = [];
+  if (!existsSync(ADR_BASE)) {
+    throw new Error(
+      `ADR base directory does not exist: ${ADR_BASE}\n` +
+      `This generator scans the ADR corpus; a missing base means every count it ` +
+      `reports is meaningless. Fix the path rather than letting the scan return empty.`
+    );
+  }
   for (const track of TRACKS) {
     const dir = join(ADR_BASE, track);
-    if (!existsSync(dir)) continue;
+    if (!existsSync(dir)) { missingTracks.push(track); continue; }
     for (const name of readdirSync(dir).sort()) {
       if (!name.endsWith('.md')) continue;
       if (EXCLUDE_FILE_RE.test(name)) continue;
-      if (!/^\d{4}-/.test(name)) continue;
+      // Canonical filename is `NNNN-slug.md`. `ADR-NNNN-Slug.md` is a legacy
+      // non-conforming form that is nonetheless a real ADR -- match it too, or
+      // the corpus silently loses an entry (this is how the count sat at 132
+      // while the corpus held 133).
+      if (!/^\d{4}-/.test(name) && !/^ADR-\d{4}-/i.test(name)) continue;
       files.push({ track, name, path: join(dir, name) });
     }
+  }
+  if (missingTracks.length) {
+    throw new Error(
+      `ADR track directories missing under ${ADR_BASE}: ${missingTracks.join(', ')}\n` +
+      `Refusing to report coverage over a partial corpus.`
+    );
+  }
+  if (files.length === 0) {
+    throw new Error(
+      `Scanned ${ADR_BASE} and found zero ADRs.\n` +
+      `A zero-ADR scan must never be reported as "no drift, all ADRs covered" -- ` +
+      `that is a vacuous pass and it hid this generator's dead paths for weeks.`
+    );
   }
   return files;
 }

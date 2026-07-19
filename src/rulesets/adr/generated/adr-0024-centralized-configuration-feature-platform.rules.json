@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0024",
   "adrTitle": "Centralized Configuration & Feature Platform",
-  "status": "Approved",
+  "status": "Accepted",
   "date": "2026-05-09",
   "rules": [
     {

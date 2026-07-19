@@ -11,13 +11,13 @@ const addFormats = require('ajv-formats');
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dirname, '..', '..');
-const SCHEMA = JSON.parse(readFileSync(join(REPO_ROOT, 'rulesets', 'schema', 'ruleset-standard.schema.json'), 'utf8'));
+const SCHEMA = JSON.parse(readFileSync(join(REPO_ROOT, 'src', 'rulesets', 'schema', 'ruleset-standard.schema.json'), 'utf8'));
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 addFormats(ajv);
 const validate = ajv.compile(SCHEMA);
 
-const dirs = [join(REPO_ROOT, 'rulesets', 'adr'), join(REPO_ROOT, 'rulesets', 'adr', 'generated')];
+const dirs = [join(REPO_ROOT, 'src', 'rulesets', 'adr'), join(REPO_ROOT, 'src', 'rulesets', 'adr', 'generated')];
 let files = [];
 for (const d of dirs) {
   if (!existsSync(d)) continue;

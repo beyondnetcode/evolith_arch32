@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0042",
   "adrTitle": "Canonical Android Native Mobile Architecture",
-  "status": "Approved",
+  "status": "Accepted",
   "date": "2026-05-11",
   "rules": [
     {

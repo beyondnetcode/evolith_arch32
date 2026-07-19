@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0073",
   "adrTitle": "Unified CLI/MCP Output Contract and Gate Evidence Schema",
-  "status": "Approved — Evolith Architecture Board, 2026-06-10. Closes [GT-01](../../../governance/standards/vision/gap-reference-catalog.md#gt-01).",
+  "status": "Accepted — Evolith Architecture Board, 2026-06-10. Closes [GT-01](../../../control-center/gaps/gap-reference-catalog.md#gt-01).",
   "date": "2026-06-10",
   "rules": [
     {

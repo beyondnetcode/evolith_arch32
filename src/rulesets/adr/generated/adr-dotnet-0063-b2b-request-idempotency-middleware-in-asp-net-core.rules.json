@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0063",
   "adrTitle": "B2B Request Idempotency Middleware in ASP.NET Core",
-  "status": "Proposed",
+  "status": "Accepted",
   "date": "2026-05-23",
   "rules": [
     {

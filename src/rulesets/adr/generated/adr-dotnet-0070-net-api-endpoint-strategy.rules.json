@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0070",
   "adrTitle": ".NET API Endpoint Strategy",
-  "status": "Proposed",
+  "status": "Accepted",
   "date": "2026-05-13",
   "rules": [
     {

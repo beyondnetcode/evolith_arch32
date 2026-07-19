@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0022",
   "adrTitle": "Contextual Authentication and Pluggable Output Projections",
-  "status": "Approved",
+  "status": "Accepted",
   "date": "2026-05-08",
   "rules": [
     {

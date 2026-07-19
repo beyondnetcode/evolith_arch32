@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0030",
   "adrTitle": "Two-Tier Distributed Gateway Model",
-  "status": "Approved",
+  "status": "Accepted",
   "date": "2026-05-10",
   "rules": [
     {

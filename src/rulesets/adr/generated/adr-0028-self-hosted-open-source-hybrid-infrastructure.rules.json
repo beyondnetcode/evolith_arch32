@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0028",
   "adrTitle": "Self-Hosted, Open-Source Hybrid Infrastructure",
-  "status": "Approved",
+  "status": "Accepted",
   "date": "2026-05-09",
   "rules": [
     {

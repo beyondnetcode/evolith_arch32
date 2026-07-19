@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0008",
   "adrTitle": "Progressive Multi-Module Evolution with API Gateway and BFF Patterns",
-  "status": "Approved",
+  "status": "Accepted",
   "date": "2026-05-08",
   "rules": [
     {

@@ -7,7 +7,7 @@
   "adrId": "ADR-0048",
   "adrTitle": "Enterprise Taxonomy Standardization and Reference Layout",
   "status": "Accepted",
-  "date": "",
+  "date": "2026-05-15",
   "rules": [
     {
       "id": "CORE-0048-01",
@@ -24,5 +24,6 @@
   ],
   "references": [
     "reference/core/architecture/adrs/core/0048-enterprise-taxonomy-reference-layout.md"
-  ]
+  ],
+  "effectiveDate": "2026-05-15"
 }

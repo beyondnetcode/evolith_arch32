@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0053",
   "adrTitle": "Integration and E2E Testing Strategy",
-  "status": "Approved",
+  "status": "Accepted",
   "date": "2026-05-14",
   "rules": [
     {

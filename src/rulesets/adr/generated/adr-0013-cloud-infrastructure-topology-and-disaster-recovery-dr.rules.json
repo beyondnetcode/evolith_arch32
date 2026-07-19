@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0013",
   "adrTitle": "Cloud Infrastructure Topology and Disaster Recovery (DR)",
-  "status": "Approved",
+  "status": "Accepted",
   "date": "2026-05-08",
   "rules": [
     {

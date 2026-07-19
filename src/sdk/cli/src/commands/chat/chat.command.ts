@@ -5,6 +5,7 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { AgentRuntimeFactory } from '../../infrastructure/agent/agent-runtime.factory';
 import {
   createSuccessEnvelope,
+  createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 
@@ -36,7 +37,7 @@ export class ChatCommand extends BaseEvolithCommand {
     if (!message) {
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createSuccessEnvelope({ error: 'Message or intent required' }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', 'Message or intent required', { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       } else {
         this.promptService.showError('Please provide a message or intent to the chat.');
       }
@@ -68,7 +69,7 @@ export class ChatCommand extends BaseEvolithCommand {
       const message = err instanceof Error ? err.message : String(err);
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       } else {
         this.promptService.showError(`Agent Runtime error: ${message}`);
       }

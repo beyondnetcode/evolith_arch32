@@ -9,7 +9,7 @@ import { buildAgentRuleset } from '@beyondnet/evolith-core-domain/application/ag
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { EvolithRestClient } from '@beyondnet/evolith-sdk';
 import type { AgentRuntimeRequestWire } from '@beyondnet/evolith-agent-runtime';
-import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 
 let cachedFileSystem: IFileSystem | null = null;
 
@@ -227,7 +227,7 @@ export class AgentsCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (isJson) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       } else {
         throw error;
       }
@@ -285,7 +285,7 @@ export class AgentsCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (isJson) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       } else {
         throw error;
       }
@@ -313,7 +313,7 @@ export class AgentsCommand extends BaseEvolithCommand {
       if (agents.length === 0) {
         if (isJson) {
           process.exitCode = 1;
-          console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: 'No agents installed to validate' }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', 'No agents installed to validate', { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         } else {
           this.promptService.showWarning('No agents installed to validate.');
         }
@@ -338,7 +338,7 @@ export class AgentsCommand extends BaseEvolithCommand {
         const errorMsg = `Ruleset file not found: ${rulesetPath}`;
         if (isJson) {
           process.exitCode = 1;
-          console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: errorMsg }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('RULESET_NOT_FOUND', errorMsg, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         } else {
           this.promptService.showError(errorMsg);
         }
@@ -393,7 +393,7 @@ export class AgentsCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (isJson) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       } else {
         throw error;
       }
@@ -421,7 +421,7 @@ export class AgentsCommand extends BaseEvolithCommand {
       if (agents.length === 0) {
         if (isJson) {
           process.exitCode = 1;
-          console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: 'No agents installed to remove' }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', 'No agents installed to remove', { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         } else {
           this.promptService.showWarning('No agents installed to remove.');
         }
@@ -463,7 +463,7 @@ export class AgentsCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (isJson) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       } else {
         throw error;
       }
@@ -491,7 +491,7 @@ export class AgentsCommand extends BaseEvolithCommand {
       if (agents.length === 0) {
         if (isJson) {
           process.exitCode = 1;
-          console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: 'No agents installed to upgrade' }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', 'No agents installed to upgrade', { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         } else {
           this.promptService.showWarning('No agents installed to upgrade.');
         }
@@ -507,7 +507,7 @@ export class AgentsCommand extends BaseEvolithCommand {
       if (!agent) {
         if (isJson) {
           process.exitCode = 1;
-          console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: 'Agent not found' }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', 'Agent not found', { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         }
         return;
       }
@@ -519,7 +519,7 @@ export class AgentsCommand extends BaseEvolithCommand {
         const errorMsg = 'Agent ruleset not found';
         if (isJson) {
           process.exitCode = 1;
-          console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: errorMsg }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('RULESET_NOT_FOUND', errorMsg, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         } else {
           this.promptService.showError(errorMsg);
         }
@@ -556,7 +556,7 @@ export class AgentsCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (isJson) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createSuccessEnvelope({ success: false, error: message }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       } else {
         throw error;
       }

@@ -19,33 +19,50 @@ const PHASE_REQUIREMENTS: PhaseRequirement[] = [
   { phase: 'phase-5', artifacts: ['Release Notes', 'Observability Validation', 'Rollback Procedure', 'On-Call Handoff', 'Deployment Evidence'] },
 ];
 
+/**
+ * Repo-relative location of each SDLC artifact, keyed by logical artifact name.
+ *
+ * Two kinds of entry live here:
+ *  - Satellite-produced evidence (`.evolith/*`, `coverage/*`, `.github/workflows`,
+ *    `reference/architecture/adrs/adr-matrix.json`) — produced by the project being
+ *    inspected. `adr-matrix.json` is the layout written by `initialize-project`
+ *    and `AdrService`, so it is deliberately NOT under `reference/core/`.
+ *  - Evolith Core reference documents (templates, blueprints, manifesto) — these
+ *    track the canonical Core doc tree, which moved under `reference/core/` and is
+ *    reflected below.
+ *
+ * NOTE: this map duplicates `EvidenceValidator` in core-domain, which models the
+ * same artifacts as a two-tier lookup (satellite-native path first, Core template
+ * fallback second). Collapsing both tiers into one satellite-relative map here is
+ * a known design wart — see the report accompanying this change.
+ */
 const ARTIFACT_PATHS: Record<string, string> = {
-  'PRD': 'reference/governance/sdlc/04-artifact-templates/prd-template.md',
-  'Discovery Canvas': 'reference/governance/sdlc/04-artifact-templates/discovery-canvas-template.md',
-  'Technical Feasibility Canvas': 'reference/governance/sdlc/04-artifact-templates/technical-feasibility-template.md',
-  'Ballpark Estimation': 'reference/governance/sdlc/04-artifact-templates/ballpark-estimation-template.md',
+  'PRD': 'reference/core/sdlc/04-artifact-templates/prd-template.md',
+  'Discovery Canvas': 'reference/core/sdlc/04-artifact-templates/discovery-canvas-template.md',
+  'Technical Feasibility Canvas': 'reference/core/sdlc/04-artifact-templates/technical-feasibility-template.md',
+  'Ballpark Estimation': 'reference/core/sdlc/04-artifact-templates/ballpark-estimation-template.md',
   'MoSCoW Prioritization Matrix': '.evolith/moscow/phase-0.json',
   'Build-versus-Compose Analysis': '.evolith/build-vs-compose.json',
   'ADR Registry': 'reference/architecture/adrs/adr-matrix.json',
-  'Reference Blueprint Alignment': 'reference/architecture/blueprints/reference-blueprint.md',
-  'Simplicity Checklist Phase 1': 'reference/architecture/blueprints/simplicity-checklist-phase-01.md',
-  'Bounded Context Map': 'reference/architecture/contexts/bounded-context-map.md',
-  'Engineering Manifesto': 'reference/governance/sdlc/standards/engineering/engineering-manifesto.md',
-  'SDLC Quality Gates': 'reference/governance/sdlc/quality-gates.md',
-  'Canonical Patterns': 'reference/architecture/canonical-patterns',
+  'Reference Blueprint Alignment': 'reference/core/architecture/blueprints/reference-blueprint.md',
+  'Simplicity Checklist Phase 1': 'reference/core/architecture/blueprints/simplicity-checklist-phase-01.md',
+  'Bounded Context Map': 'reference/core/foundations/satellite-definitions/bounded-context-map.md',
+  'Engineering Manifesto': 'reference/core/foundations/common-rules/engineering-manifesto.md',
+  'SDLC Quality Gates': 'reference/core/sdlc/quality-gates.md',
+  'Canonical Patterns': 'reference/core/architecture/patterns',
   'CI Pipeline': '.github/workflows',
-  'Definition of Done Checklist': 'reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md',
-  'Documentation Delta': 'reference/governance/sdlc/03-documentation',
+  'Definition of Done Checklist': 'reference/core/sdlc/02-engineering/construction-focused-sdlc-framework.md',
+  'Documentation Delta': 'reference/core/sdlc/03-documentation',
   'Coverage Report': 'coverage/coverage-summary.json',
-  'Test Summary Report': 'reference/governance/sdlc/04-artifact-templates/test-summary-report-template.md',
+  'Test Summary Report': 'reference/core/sdlc/04-artifact-templates/test-summary-report-template.md',
   'Acceptance Validation': '.evolith/acceptance-validation.json',
-  'Security Scan Report': 'reference/governance/sdlc/04-artifact-templates/security-scan-report-template.md',
-  'Integration Evidence': 'reference/governance/sdlc/04-artifact-templates/integration-evidence-template.md',
+  'Security Scan Report': 'reference/core/sdlc/04-artifact-templates/security-scan-report-template.md',
+  'Integration Evidence': 'reference/core/sdlc/04-artifact-templates/integration-evidence-template.md',
   'Pyramid Distribution': 'coverage/coverage-summary.json',
-  'Release Notes': 'reference/governance/sdlc/04-artifact-templates/release-notes-template.md',
-  'Observability Validation': 'reference/governance/sdlc/04-artifact-templates/observability-validation-template.md',
-  'Rollback Procedure': 'reference/governance/sdlc/04-artifact-templates/rollback-rehearsal-template.md',
-  'On-Call Handoff': 'reference/governance/sdlc/04-artifact-templates/on-call-handoff-template.md',
+  'Release Notes': 'reference/core/sdlc/04-artifact-templates/release-notes-template.md',
+  'Observability Validation': 'reference/core/sdlc/04-artifact-templates/observability-validation-template.md',
+  'Rollback Procedure': 'reference/core/sdlc/04-artifact-templates/rollback-rehearsal-template.md',
+  'On-Call Handoff': 'reference/core/sdlc/04-artifact-templates/on-call-handoff-template.md',
   'Deployment Evidence': '.evolith/deployment-evidence.json',
 };
 

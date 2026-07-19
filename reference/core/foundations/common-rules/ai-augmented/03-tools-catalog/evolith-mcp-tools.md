@@ -22,6 +22,9 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 | `evolith-phase-artifacts-evaluate` | Architecture | Measure downstream-phase artifact completeness for a confirmed topo… | No |
 | `evolith-topology-get` | Architecture | Get a specific architecture topology by ID | No |
 | `evolith-topology-list` | Architecture | List all available architecture topologies in Evolith Core. | No |
+| `evolith-pattern-list` | Architecture | List canonical architecture patterns, filterable by category, kind, topology and whether they carry executable enforcement. | No |
+| `evolith-pattern-get` | Architecture | Get a single canonical architecture pattern by id (case-insensitive). | No |
+| `evolith-pattern-list-by-topology` | Architecture | List the patterns that apply to a topology, with applicability, guidance and the rule ids that enforce them. | No |
 | `evolith-topology-recommend` | Architecture | Recommend a topology composition from technical signals (advisory, … | No |
 | `evolith-auto-fix` | Auto-fix | Apply automatic fixes to architectural violations reported by Evoli… | Yes |
 | `evolith-composable-validate` | Composable-validate.tool | Validate using the composable engine (GT-312). Supports multiple va… | No |
@@ -54,7 +57,7 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 | `evolith-sdlc-generate` | Sdlc-generate.tool | Generate a Hexagonal Architecture scaffold from a Mermaid classDiag… | Yes |
 | `evolith-validate` | Validate.tool | Validate a satellite repository against Evolith rules. Supports end… | No |
 
-> **Derived from source (GT-445).** The inventory above is the complete set of **47** governance MCP tools, reconciled from the canonical registration sources under `src/packages/mcp-server/src/tools/` (name + description) — it is the authoritative surface alongside the generated [Product Surface Inventory](../../../../../../product/products/smart-cli/product-inventory.md) and the live MCP registry. Category is derived from the tool source file; *Mutative* is a verb heuristic. Regenerate when tools change.
+> **Derived from source (GT-445).** The inventory above is the complete set of **50** governance MCP tools, reconciled from the canonical registration sources under `src/packages/mcp-server/src/tools/` (name + description) — it is the authoritative surface alongside the generated [Product Surface Inventory](../../../../../../product/products/smart-cli/product-inventory.md) and the live MCP registry. Category is derived from the tool source file; *Mutative* is a verb heuristic. Regenerate when tools change.
 
 ---
 

@@ -24,6 +24,7 @@ import { createAutoFixTools } from './auto-fix.tools';
 import { createConfigTools } from './config.tools';
 import { createMetricsTools } from './metrics.tool';
 import { createTopologyTools } from './topology.tools';
+import { createPatternTools } from './pattern.tools';
 import { createInitTools } from './init.tools';
 import { createAdrTools } from './adr.tools';
 import { DocsScaffoldTool } from './docs-scaffold.tool';
@@ -88,6 +89,7 @@ import { createScaffoldTools } from './scaffold.tool';
         ...createConfigTools(),
         ...createMetricsTools(metrics),
         ...createTopologyTools(fs, new NestLoggerProvider().createLogger('TopologyTool')),
+        ...createPatternTools(fs, new NestLoggerProvider().createLogger('PatternTool')),
         ...createInitTools(fs),
         ...createAdrTools(fs),
         docsScaffold,

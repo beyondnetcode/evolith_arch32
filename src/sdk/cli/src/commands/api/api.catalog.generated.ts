@@ -130,6 +130,18 @@ export const GENERATED_TOOLS: ApiEntry[] = [
     "description": "Validate a MoSCoW analysis rules (e.g. 60/20/20 split)"
   },
   {
+    "name": "evolith-pattern-get",
+    "description": "Get one canonical pattern (PAT-NNNN) by id, case-insensitively. Returns the full record — problem, forces, solution, applicability per topology, governing ADRs and enforcing rules — in the ADR-0073 success envelope."
+  },
+  {
+    "name": "evolith-pattern-list",
+    "description": "List the canonical architectural patterns and anti-patterns (PAT-NNNN) published by Evolith Core, optionally filtered by category, kind, applicable topology, or whether a rule already enforces them. Returns the records in the ADR-0073 success envelope."
+  },
+  {
+    "name": "evolith-pattern-list-by-topology",
+    "description": "List the canonical patterns that apply to a topology, how strongly (required → recommended → optional) and — the point of the query — which rules each one imposes (`enforcedBy`). `not-applicable` entries are excluded. Returns the applications in the ADR-0073 success envelope."
+  },
+  {
     "name": "evolith-phase-advance",
     "description": "Propose an SDLC phase transition by evaluating the current phase exit criteria"
   },
@@ -200,6 +212,11 @@ export const GENERATED_RESOURCES: ApiResource[] = [
     "uri": "evolith://agents",
     "name": "Agents",
     "description": "List of installed Evolith agents"
+  },
+  {
+    "uri": "evolith://architecture/patterns",
+    "name": "Architecture Patterns",
+    "description": "Canonical architectural patterns and anti-patterns (PAT-NNNN) with their applicability and enforcing rules"
   },
   {
     "uri": "evolith://architecture/topologies",

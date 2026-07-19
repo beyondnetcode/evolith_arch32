@@ -2,7 +2,7 @@ import * as path from 'node:path';
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { IFileSystem, IConfigParser } from '@beyondnet/evolith-core';
 import { FILE_SYSTEM, CONFIG_PARSER } from '../domain/domain.tokens';
-import { TopologyCatalogService } from '@beyondnet/evolith-core';
+import { TopologyCatalogService, PatternCatalogService } from '@beyondnet/evolith-core';
 import { buildCapabilityManifest } from '@beyondnet/evolith-core-domain/capabilities/capabilities-manifest';
 import { McpCacheService } from './mcp-cache.service';
 
@@ -39,6 +39,7 @@ const RESOURCES: Resource[] = [
   { uri: 'evolith://repository/config', name: 'Repository Config', description: 'Repository evolith.yaml content' },
   { uri: 'evolith://moscow/phase-0', name: 'MoSCoW Phase 0', description: 'MoSCoW prioritization matrix for discovery phase' },
   { uri: 'evolith://architecture/topologies', name: 'Architecture Topologies', description: 'List of all available architecture topologies' },
+  { uri: 'evolith://architecture/patterns', name: 'Architecture Patterns', description: 'Canonical architectural patterns and anti-patterns (PAT-NNNN) with their applicability and enforcing rules' },
   // GT-520 · EAG-15 — machine-discoverable governance surface. `capabilities`
   // serves the versioned capability manifest (GT-513) so a consumer can discover
   // WHAT the Core evaluates; `contracts` serves the published machine-contracts /
@@ -54,6 +55,7 @@ const RESOURCES: Resource[] = [
 @Injectable()
 export class ResourcesService {
   private topologyCatalog: TopologyCatalogService;
+  private patternCatalog: PatternCatalogService;
 
   constructor(
     @Inject(FILE_SYSTEM) private readonly fs: IFileSystem,
@@ -61,6 +63,7 @@ export class ResourcesService {
     @Optional() private readonly cache?: McpCacheService,
   ) {
     this.topologyCatalog = new TopologyCatalogService(fs, console as any);
+    this.patternCatalog = new PatternCatalogService(fs, console as any);
   }
 
   async list(): Promise<{ resources: Resource[] }> {
@@ -91,6 +94,7 @@ export class ResourcesService {
     if (uri === 'evolith://open-core/artifacts') return this.getOpenCoreArtifacts();
     if (uri === 'evolith://acl/rules') return this.getAclRules();
     if (uri === 'evolith://architecture/topologies') return this.getTopologiesList();
+    if (uri === 'evolith://architecture/patterns') return this.getPatternsList();
     if (uri.startsWith('evolith://architecture/topology/')) return this.getTopologyContent(uri.replace('evolith://architecture/topology/', ''));
     throw new Error(`Unknown resource URI: ${uri}`);
   }
@@ -202,6 +206,23 @@ export class ResourcesService {
       return { topologies, count: topologies.length };
     } catch (e) {
       return { error: String(e) };
+    }
+  }
+
+  /**
+   * Canonical patterns (PAT-NNNN). Reads through the single `PatternCatalogService`
+   * reader — no path probing or parsing duplicated here. The service THROWS on a
+   * missing/empty corpus (a vacuous `[]` reported as success is the failure mode it
+   * guards against), so the throw is surfaced as a readable `error` field, matching
+   * `getTopologiesList` above.
+   */
+  private async getPatternsList() {
+    try {
+      const corePath = this.findCorePath();
+      const patterns = await this.patternCatalog.list(corePath);
+      return { patterns, count: patterns.length };
+    } catch (e) {
+      return { error: e instanceof Error ? e.message : String(e) };
     }
   }
 

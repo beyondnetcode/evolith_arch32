@@ -6,7 +6,7 @@
 **Clase:** Patrón  
 **Categoría:** Estructura  
 **Estado:** Accepted  
-**También conocido como:** Hexagonal Architecture, Clean Architecture  
+**También conocido como:** Arquitectura Hexagonal, Arquitectura Limpia  
 
 ---
 
@@ -52,7 +52,7 @@ La capa de dominio contiene solo tipos de negocio puros e interfaces de puerto, 
 
 | ADR | Título registrado | Verificación | Nota |
 |---|---|---|---|
-| [ADR-0002](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md) | Clean Hexagonal Architecture with NestJS (nodejs) | verificado | Tanto MM-R03 como HXA-01..07 referencian 'core/ADR-0002', pero no existe ningún ADR numerado 0002 en el track core; el ruleset hexagonal está ligado al ADR-0002 del track nodejs. El calificador de track del texto de la regla es incorrecto, la decisión en sí es real. |
+| [ADR-0002](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md) | `Clean Hexagonal Architecture with NestJS` (nodejs) | verificado | Tanto MM-R03 como HXA-01..07 referencian 'core/ADR-0002', pero no existe ningún ADR numerado 0002 en el track core; el ruleset hexagonal está ligado al ADR-0002 del track nodejs. El calificador de track del texto de la regla es incorrecto, la decisión en sí es real. |
 
 ## Variantes
 
@@ -70,7 +70,7 @@ Ninguna registrada.
 
 ## Fuentes
 
-- `reference/core/architecture/topologies/progressive-axis/modular-monolith/patterns.md` — Sección Ports & Adapters (Hexagonal Architecture).
+- `reference/core/architecture/topologies/progressive-axis/modular-monolith/patterns.md` — Sección `Ports & Adapters (Hexagonal Architecture)`.
 
 > **Nota:** Nueve identificadores de regla en dos motores ya enforzan este patrón; ninguno estaba enlazado desde la prosa que lo describe.
 

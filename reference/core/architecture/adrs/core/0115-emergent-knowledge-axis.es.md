@@ -22,7 +22,7 @@ No tiene respuesta para la dirección contraria: el conocimiento que **emerge de
 
 No es hipotético. Evidencia concreta hoy en este repositorio:
 
-- Ninguna interfaz publicada puede capturar ese hallazgo (CLI 31 comandos, MCP 47 tools, Core API ~25 endpoints, agent-runtime 7 skills — ninguna es de intake).
+- Ninguna interfaz publicada puede capturar ese hallazgo (CLI 31 comandos, MCP 50 tools, Core API ~25 endpoints, agent-runtime 7 skills — ninguna es de intake).
 - `approved_knowledge_ids` está vacío: nunca se ha promovido nada a retrieval.
 - El paso `ground` de la cadena gobernada consulta `IKnowledgePort` en cada ejecución y descarta el resultado — la señal más rica de vacío de conocimiento se calcula y se tira.
 

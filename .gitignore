@@ -179,3 +179,12 @@ reference/knowledge/derived/
 # RAG index receipts — build artifacts emitted by the sync/backfill scripts
 rag-sync-receipt.json
 rag-backfill-receipt.json
+
+# Harness evidence artifacts: timestamped, regenerable smoke output consumed by
+# McpRuleHandler (MCP-01/02/03). Produced by `npm run mcp:smoke` and listed in
+# .harness/scripts/cleanup-temp-files.mjs as regenerable. It was neither tracked
+# nor ignored, which left it showing as untracked forever and invited accidental
+# `git add -A` sweeps. When absent the handler returns `skipped` with an
+# actionable message, which is the honest outcome -- shipping a months-old
+# timestamped smoke result as committed evidence would be worse.
+.harness/evidence/

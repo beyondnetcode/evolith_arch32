@@ -22,21 +22,20 @@
     },
     {
       "id": "documentation",
-      "status": "BLOCKED",
-      "observedAt": "2026-07-18",
+      "status": "PASS",
+      "observedAt": "2026-07-19",
       "commit": "27e7a01f",
-      "gap": "GT-563",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29646397424",
-      "summary": "Re-observed 2026-07-18 and NOT green. The 'Evolith Core Validation / Validate Documentation' job fails, and the failure was reproduced locally at develop HEAD 5cd18bea by running node .harness/scripts/ci/01-validate-docs.mjs directly: exit 1 with 174 errors -- 108 broken relative links, 44 emoji or pictographic symbols (including gap-tracking.md and gap-tracking.es.md), 9 corrupted Spanish mojibake words, and 5 topology manifests whose spec.corpus.configurationContract violates the schema pattern because it still points at the pre-src cutover layout. Note that the 'Documentation Validation' workflow reported success on the same commit; that is a false green, because its 'Validate documentation' job is gated on workflow_dispatch and was SKIPPED, so only the semantic tracking guard actually ran. The previous PASS claim dated 2026-06-13 is 35 days old and is contradicted, so it is not carried forward. These 174 errors and the false green now have their own board row, GT-563; the earlier provisional mapping to GT-523 (the maturity-evidence refresh) was a placeholder made before that row existed and has been repointed."
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29702785020",
+      "summary": "Re-observed 2026-07-19 on main (787d2bab) and GREEN as a documentation check. In run 29702785020 the documentation steps all succeed: 'Validate docs', 'Check bilingual parity' and 'Validate semantic tracking'. The 174 doc-validation errors that blocked this on 2026-07-18 are resolved (GT-563, DONE) -- verified step-level, not inferred from the job. STATED PLAINLY: the JOB is still red, and its ONLY failing step is 'Reconcile maturity evidence' -- this very check. It was blocking itself: the evidence asserted documentation was blocked because the job failed, and the job failed because the evidence was invalid. Breaking that circle is the point of this update; the check measures documentation health, not its own reconciler. Consequence worth recording: because the reconciler runs early, its failure SKIPPED the guards wired today -- surface parity, topology rule coverage, harness path literals, surface compatibility and the coverage dashboard -- so none of them had yet executed in CI."
     },
     {
       "id": "release",
       "status": "BLOCKED",
-      "observedAt": "2026-07-18",
+      "observedAt": "2026-07-19",
       "commit": "df3c173c",
-      "gap": "GT-563",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29641024724",
-      "summary": "Downgraded from RESOLVED to BLOCKED on a re-observation dated 2026-07-18. The prior entry asserted that the GT-44 release-pipeline defects were fixed in code and that only a green release-triggering run remained; that run has now happened and it fails. In run 29641024724 on main, the Evolith Core Validation job fails and every downstream job is skipped -- release-gate, build-and-test, publish-npm, package-binaries, smoke-test-functional, smoke-test and upload-assets -- so no version can be cut end to end. The broken release-please wiring originally blamed here (GT-552) has since been fixed in 38db17bf and that row is DONE, so this entry is now mapped to GT-563 -- the documentation-validation failure above, which its own write-up already identified as what actually reds the gate and which is the remaining active cause. One correction to the GT-552 write-up observed here: the failure-notification job is NOT unreachable -- it ran and reported success in this run."
+      "gap": "GT-562",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29701126371",
+      "summary": "Re-observed 2026-07-19 on main and still NOT green, remapped from GT-563 (DONE) to GT-562 (PENDING), which is the gap that actually owns the remaining blockage. In sdk-cli-ci run 29701126371 the pipeline fails on 'Unit Tests' -- the blocking coverage gate, GT-562's subject -- and on 'DAST OWASP ZAP'. No version can be cut while those are red. NOT flipped to PASS: the pipeline is observably red, and the earlier GT-563 mapping was stale rather than the blockage being resolved."
     }
   ]
 }

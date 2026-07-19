@@ -41,13 +41,24 @@ import type { PhaseArtifactResult } from '@beyondnet/evolith-core-domain/applica
  *    test that silently requires a build step is environment-dependent by
  *    construction.
  *
- * 2. The dependency bought NOTHING. The corpus reaches this command through
- *    exactly one channel — `spec.phaseProfiles` on a topology manifest — and NO
- *    topology in the real corpus defines `phaseProfiles` at all (verified across
- *    all five: data-mesh, serverless, agentic-ai, edge-computing, event-driven).
- *    So the real corpus contributed an empty union, and the union branch in
- *    `PhaseArtifactProfileService.evaluate` was never exercised despite the
- *    ceremony of reading 145 files.
+ * 2. The dependency bought nothing AT THE TIME, and the reason it bought nothing
+ *    was itself a defect rather than a property of the corpus.
+ *
+ *    CORRECTED: an earlier version of this comment asserted that "NO topology in
+ *    the real corpus defines `phaseProfiles` at all (verified across all five:
+ *    data-mesh, serverless, agentic-ai, edge-computing, event-driven)". That was
+ *    false, and those five are exactly the five that were being SHADOWED.
+ *    `TopologyCatalogService` aggregates several roots and de-duplicates by
+ *    `metadata.id` on first occurrence; `src/rulesets/topologies` is probed
+ *    before `reference/core/architecture/topologies`, and only the reference
+ *    copies carried `designProfile`/`phaseProfiles`. So the verification was
+ *    performed through the shadow and recorded its result as a fact about the
+ *    corpus. All eight topologies now resolve with a `designProfile`, and seven
+ *    of eight with `phaseProfiles` (modular-monolith genuinely has none — that
+ *    is a content gap, not a shadow).
+ *
+ *    The catalogue now throws when a shadowed manifest is richer than the
+ *    winning one, so this class of silent loss cannot recur.
  *
  * The fixture below is therefore both hermetic AND strictly stronger: it defines
  * a topology that really does contribute required, conditional and

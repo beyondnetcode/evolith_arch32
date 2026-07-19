@@ -71,7 +71,34 @@ export class TopologyCatalogService {
     const manifests = await Promise.all(files.map((file) => this.readManifest(file)));
     const byId = new Map<string, TopologyManifest>();
     for (const manifest of manifests) {
-      if (!byId.has(manifest.metadata.id)) byId.set(manifest.metadata.id, manifest);
+      const existing = byId.get(manifest.metadata.id);
+      if (!existing) {
+        byId.set(manifest.metadata.id, manifest);
+        continue;
+      }
+      // A shadowed copy that carries spec keys the winner lacks is not a
+      // harmless duplicate -- it is silent governance loss. This exact shape
+      // disabled ADR-0104 for five topologies: the `src/` manifests lacked
+      // `designProfile`/`phaseProfiles`, the `reference/` ones had them, and
+      // first-occurrence-wins discarded the richer copy with no signal at all.
+      // It went unnoticed for two weeks and got recorded as fact in a spec
+      // comment ("NO topology defines phaseProfiles"), because the observation
+      // was taken through this very shadow.
+      //
+      // Differences in path-shaped fields are expected while the corpus lives
+      // in two roots, so only MISSING KEYS are treated as an error.
+      const lost = Object.keys((manifest as { spec?: Record<string, unknown> }).spec ?? {}).filter(
+        (key) => !(key in ((existing as { spec?: Record<string, unknown> }).spec ?? {}))
+      );
+      if (lost.length > 0) {
+        throw new Error(
+          `Topology manifest '${manifest.metadata.id}' is shadowed and the shadowed copy is richer.\n` +
+            `Winning copy is missing spec key(s) the shadowed copy defines: ${lost.join(', ')}.\n` +
+            `Resolution order is ${candidateRoots.join(' > ')}.\n` +
+            `Refusing to serve a silently degraded manifest -- port the missing keys into the winning copy, ` +
+            `or collapse the corpus to a single root.`
+        );
+      }
     }
     return [...byId.values()].sort((a, b) => a.metadata.id.localeCompare(b.metadata.id));
   }

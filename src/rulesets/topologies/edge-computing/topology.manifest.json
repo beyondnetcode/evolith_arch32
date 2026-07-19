@@ -96,6 +96,37 @@
           "POST /topologies/{id}/validate"
         ]
       }
+    },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "performance-plan",
+          "criteria": "Edge latency budget and offline-first behavior."
+        },
+        {
+          "artifactKind": "infrastructure-plan",
+          "criteria": "Edge placement, replication, and sync strategy."
+        }
+      ],
+      "conditional": []
+    },
+    "phaseProfiles": {
+      "quality": {
+        "conditional": [
+          {
+            "artifactKind": "performance-validation",
+            "criteria": "Edge latency/offline behavior validated."
+          }
+        ]
+      },
+      "deployment": {
+        "conditional": [
+          {
+            "artifactKind": "runtime-budget-validation",
+            "criteria": "Edge placement/sync validated in the target environment."
+          }
+        ]
+      }
     }
   },
   "businessBoundary": {

@@ -90,6 +90,37 @@
           "POST /topologies/{id}/validate"
         ]
       }
+    },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "data-product-contract-set",
+          "criteria": "Contracts for each data product (ports, SLOs, schema)."
+        },
+        {
+          "artifactKind": "data-ownership-map",
+          "criteria": "Domain ownership and access boundaries for data products."
+        }
+      ],
+      "conditional": []
+    },
+    "phaseProfiles": {
+      "quality": {
+        "conditional": [
+          {
+            "artifactKind": "data-product-slo-validation",
+            "criteria": "Data product contracts/SLOs verified."
+          }
+        ]
+      },
+      "deployment": {
+        "conditional": [
+          {
+            "artifactKind": "data-product-publication",
+            "criteria": "Data products published with ownership handoff."
+          }
+        ]
+      }
     }
   },
   "businessBoundary": {

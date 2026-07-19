@@ -97,6 +97,37 @@
           "POST /topologies/{id}/validate"
         ]
       }
+    },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "performance-plan",
+          "criteria": "Cold-start and per-execution cost within operationalBudgets."
+        },
+        {
+          "artifactKind": "infrastructure-plan",
+          "criteria": "Function packaging, triggers, and concurrency limits."
+        }
+      ],
+      "conditional": []
+    },
+    "phaseProfiles": {
+      "quality": {
+        "conditional": [
+          {
+            "artifactKind": "performance-validation",
+            "criteria": "Cold-start/latency/cost within operational budgets."
+          }
+        ]
+      },
+      "deployment": {
+        "conditional": [
+          {
+            "artifactKind": "runtime-budget-validation",
+            "criteria": "Cold-start/cost/latency validated in the target environment."
+          }
+        ]
+      }
     }
   },
   "businessBoundary": {

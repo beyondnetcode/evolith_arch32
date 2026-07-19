@@ -1,10 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CacheModule } from '@nestjs/cache-manager';
+import { NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { ArchitectureController } from './architecture.controller';
 import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 import { ArchitectureDriftService } from '@beyondnet/evolith-core-domain/application/validators';
-import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@beyondnet/evolith-core-domain/application/services';
+import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService, PatternCatalogService } from '@beyondnet/evolith-core-domain/application/services';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
+
+const PAT_0001 = {
+  id: 'PAT-0001',
+  name: 'Database per Service',
+  kind: 'pattern',
+  category: 'data-ownership',
+  status: 'accepted',
+  appliesTo: [{ topology: 'microservices', applicability: 'required', guidance: 'Own your data.' }],
+  enforcedBy: [{ ruleId: 'MS-DATA-01', engine: 'topology-ruleset' }],
+} as any;
 
 describe('ArchitectureController', () => {
   let controller: ArchitectureController;
@@ -12,6 +23,7 @@ describe('ArchitectureController', () => {
   let driftService: { detectDrift: jest.Mock };
   let workspaceResolver: { resolve: jest.Mock; corePath: jest.Mock };
   let topologyCatalog: { list: jest.Mock; get: jest.Mock };
+  let patternCatalog: { list: jest.Mock; get: jest.Mock; listByTopology: jest.Mock };
   let fileSystem: { readFile: jest.Mock };
 
   beforeEach(async () => {
@@ -19,6 +31,13 @@ describe('ArchitectureController', () => {
     driftService = { detectDrift: jest.fn().mockResolvedValue({ driftDetected: false }) };
     workspaceResolver = { resolve: jest.fn().mockReturnValue('/workspaces/op_01'), corePath: jest.fn().mockReturnValue('/core') } as any;
     topologyCatalog = { list: jest.fn().mockResolvedValue([{ metadata: { id: 'test-topology' } }]), get: jest.fn().mockResolvedValue({ metadata: { id: 'test-topology' } }) };
+    patternCatalog = {
+      list: jest.fn().mockResolvedValue([PAT_0001]),
+      get: jest.fn().mockResolvedValue(PAT_0001),
+      listByTopology: jest.fn().mockResolvedValue([
+        { pattern: PAT_0001, applicability: 'required', guidance: 'Own your data.', enforcedBy: PAT_0001.enforcedBy },
+      ]),
+    };
     fileSystem = { readFile: jest.fn() };
     const module: TestingModule = await Test.createTestingModule({
       imports: [CacheModule.register()],
@@ -28,6 +47,7 @@ describe('ArchitectureController', () => {
         { provide: ArchitectureDriftService, useValue: driftService },
         { provide: WorkspaceReferenceResolverService, useValue: workspaceResolver },
         { provide: TopologyCatalogService, useValue: topologyCatalog },
+        { provide: PatternCatalogService, useValue: patternCatalog },
         { provide: TopologyRecommendationService, useValue: new TopologyRecommendationService() },
         { provide: PhaseArtifactProfileService, useValue: new PhaseArtifactProfileService() },
         { provide: 'IFileSystem', useValue: fileSystem },
@@ -53,6 +73,52 @@ describe('ArchitectureController', () => {
     it('should throw NotFoundException if topology not found', async () => {
       topologyCatalog.get.mockResolvedValue(undefined);
       await expect(controller.getTopology('unknown')).rejects.toThrow('Topology unknown not found');
+    });
+  });
+
+  describe('canonical pattern catalogue', () => {
+    it('lists every pattern when no filter is supplied', async () => {
+      const result = await controller.listPatterns({});
+      expect(patternCatalog.list).toHaveBeenCalledWith('/core', {});
+      expect(result).toEqual([PAT_0001]);
+    });
+
+    it('passes the query filters straight through to the domain service', async () => {
+      await controller.listPatterns({ kind: 'anti-pattern', category: 'resilience', topology: 'microservices', enforced: true });
+      expect(patternCatalog.list).toHaveBeenCalledWith('/core', {
+        kind: 'anti-pattern',
+        category: 'resilience',
+        topology: 'microservices',
+        enforced: true,
+      });
+    });
+
+    it('gets one pattern by id', async () => {
+      const result = await controller.getPattern('pat-0001');
+      expect(patternCatalog.get).toHaveBeenCalledWith('/core', 'pat-0001');
+      expect(result).toEqual(PAT_0001);
+    });
+
+    it('throws NotFoundException for an unknown pattern id', async () => {
+      patternCatalog.get.mockResolvedValue(undefined);
+      await expect(controller.getPattern('PAT-9999')).rejects.toThrow(NotFoundException);
+      await expect(controller.getPattern('PAT-9999')).rejects.toThrow('Pattern PAT-9999 not found');
+    });
+
+    it('lists the patterns that apply to a topology with the rules they impose', async () => {
+      const result = await controller.listTopologyPatterns('microservices');
+      expect(patternCatalog.listByTopology).toHaveBeenCalledWith('/core', 'microservices');
+      expect(result).toEqual([
+        { pattern: PAT_0001, applicability: 'required', guidance: 'Own your data.', enforcedBy: PAT_0001.enforcedBy },
+      ]);
+    });
+
+    it('maps a missing corpus to 500, not 404, and does not leak the underlying message', async () => {
+      patternCatalog.list.mockRejectedValue(new Error('No canonical pattern directory found under /core. Looked in: /core/reference/...'));
+      const failure = controller.listPatterns({});
+      await expect(failure).rejects.toThrow(InternalServerErrorException);
+      await expect(controller.listPatterns({})).rejects.toThrow(/could not be read on this server/);
+      await expect(controller.listPatterns({})).rejects.not.toThrow(/Looked in/);
     });
   });
 

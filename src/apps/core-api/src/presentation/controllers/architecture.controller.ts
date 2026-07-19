@@ -1,12 +1,12 @@
-import { Controller, Post, Get, Param, Body, HttpCode, HttpStatus, NotFoundException, UseInterceptors, Inject } from '@nestjs/common';
+import { Controller, Post, Get, Param, Query, Body, HttpCode, HttpStatus, NotFoundException, InternalServerErrorException, UseInterceptors, Inject, Logger } from '@nestjs/common';
 import { CACHE_MANAGER, CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
-import { ApiOperation, ApiBody } from '@nestjs/swagger';
+import { ApiOperation, ApiBody, ApiParam } from '@nestjs/swagger';
 import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 import { ArchitectureDriftService } from '@beyondnet/evolith-core-domain/application/validators';
-import { ValidateSatelliteDto, DetectDriftDto, RecommendTopologyDto, EvaluatePhaseArtifactsDto } from '../dtos/architecture.dto';
+import { ValidateSatelliteDto, DetectDriftDto, RecommendTopologyDto, EvaluatePhaseArtifactsDto, ListPatternsQueryDto } from '../dtos/architecture.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
-import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@beyondnet/evolith-core-domain/application/services';
+import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService, PatternCatalogService } from '@beyondnet/evolith-core-domain/application/services';
 import type { TopologyRecommendationRules, DownstreamPhase } from '@beyondnet/evolith-core-domain/application/services';
 import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
@@ -14,11 +14,14 @@ import { CacheKeys, CacheTTL as TTL } from '../../infrastructure/cache/cache-key
 
 @Controller({ path: 'architecture', version: '1' })
 export class ArchitectureController {
+  private readonly logger = new Logger(ArchitectureController.name);
+
   constructor(
     private readonly driftService: ArchitectureDriftService,
     private readonly validateSatelliteUseCase: ValidateSatelliteUseCase,
     private readonly workspaceResolver: WorkspaceReferenceResolverService,
     private readonly topologyCatalog: TopologyCatalogService,
+    private readonly patternCatalog: PatternCatalogService,
     private readonly recommendationService: TopologyRecommendationService,
     private readonly phaseArtifactService: PhaseArtifactProfileService,
     @Inject('IFileSystem') private readonly fileSystem: IFileSystem,
@@ -46,6 +49,68 @@ export class ArchitectureController {
       throw new NotFoundException(`Topology ${id} not found`);
     }
     return topology;
+  }
+
+  @Get('topologies/:id/patterns')
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(TTL.pattern)
+  @ApiOperation({
+    summary: 'List the canonical patterns that apply to a topology, with the rules they impose',
+    description:
+      'Ordered required → recommended → optional; `not-applicable` entries are excluded. Each item carries ' +
+      'the pattern, its applicability inside this topology, the per-topology guidance, and the `enforcedBy` ' +
+      'rules — i.e. what adopting the topology actually obliges you to satisfy.',
+  })
+  @ApiParam({ name: 'id', description: 'Topology identifier', example: 'microservices' })
+  @ApiEnvelopeResponse(undefined, { isArray: true, description: 'Pattern applications for the topology' })
+  async listTopologyPatterns(@Param('id') id: string) {
+    return this.readCatalog(() => this.patternCatalog.listByTopology(this.workspaceResolver.corePath(), id));
+  }
+
+  @Get('patterns')
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(TTL.pattern)
+  @ApiOperation({ summary: 'List the canonical architecture patterns (PAT-NNNN), optionally filtered' })
+  @ApiEnvelopeResponse(undefined, { isArray: true, description: 'Canonical pattern records' })
+  async listPatterns(@Query() query: ListPatternsQueryDto) {
+    return this.readCatalog(() => this.patternCatalog.list(this.workspaceResolver.corePath(), query));
+  }
+
+  @Get('patterns/:id')
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(TTL.pattern)
+  @ApiOperation({ summary: 'Get one canonical architecture pattern by its PAT identifier (case-insensitive)' })
+  @ApiParam({ name: 'id', description: 'Canonical pattern identifier', example: 'PAT-0001' })
+  @ApiEnvelopeResponse(undefined, { description: 'Canonical pattern record' })
+  async getPattern(@Param('id') id: string) {
+    const pattern = await this.readCatalog(() => this.patternCatalog.get(this.workspaceResolver.corePath(), id));
+    if (!pattern) {
+      throw new NotFoundException(`Pattern ${id} not found`);
+    }
+    return pattern;
+  }
+
+  /**
+   * Maps pattern-catalogue faults onto the right HTTP class.
+   *
+   * `PatternCatalogService` deliberately THROWS when the corpus directory is missing or the
+   * scan yields zero records, rather than returning `[]`. That is a server-side deployment
+   * fault ("this Core has no corpus"), not a client asking for something that does not exist,
+   * so it must be a 500 and never a 404 — a 404 would let a broken image masquerade as an
+   * empty-but-healthy catalogue, which is the exact failure this repo already ate once.
+   * The underlying message names filesystem paths, so it is logged, not returned: the client
+   * gets a stable, sanitized detail and no stack.
+   */
+  private async readCatalog<T>(operation: () => Promise<T>): Promise<T> {
+    try {
+      return await operation();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Canonical pattern catalogue unavailable: ${message}`);
+      throw new InternalServerErrorException(
+        'The canonical pattern catalogue could not be read on this server. The Core corpus is missing or malformed.',
+      );
+    }
   }
 
   @Post('validate-satellite')

@@ -374,7 +374,7 @@ export async function provisionEvaluationEnvironment(
 
 /**
  * An opaque locator for a satellite repository revision to analyze. The Core never
- * receives raw disk paths (ADR-0074); it receives this reference and the reader resolves
+ * receives raw disk paths (ADR-0080); it receives this reference and the reader resolves
  * the bytes. Fields are all optional so the same shape covers GitHub coordinates, an
  * evaluation `workspaceRef`, or an already-inlined payload.
  */
@@ -383,7 +383,7 @@ export interface RepositorySourceRef {
   readonly repo?: string;
   /** Branch, tag, or commit SHA to fetch. */
   readonly ref?: string;
-  /** Opaque workspace reference (ADR-0074) when coordinates are not used. */
+  /** Opaque workspace reference (ADR-0080) when coordinates are not used. */
   readonly workspaceRef?: string;
 }
 

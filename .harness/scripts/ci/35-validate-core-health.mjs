@@ -59,10 +59,33 @@ evaluate("S1", "No Tenant State in Core", () => {
 
   {
     try {
-      // Find hardcoded tenant_id or workspaceRef inside entities/services (excluding context objects, tests, and the evaluation layer itself)
-      const grepOut = execSync(`grep -rnw '${coreDomainSrc}' -e 'tenant_id' -e 'workspaceRef' | grep -v 'EvaluationContext' | grep -v 'evaluation/' | grep -v 'spec.ts' || true`, { encoding: 'utf8' }).trim();
+      // What this rule is actually protecting: the Core must never learn WHICH
+      // tenant it is evaluating for. `tenant_id` is that leak.
+      //
+      // `workspaceRef` is NOT, and used to be listed here by mistake. ADR-0080
+      // "Remote Repository Reference Contract" (Accepted 2026-06-19) makes it the
+      // sanctioned mechanism for the opposite property: the Tracker issues an
+      // OPAQUE reference so that "Core executes the governance use case without
+      // receiving a user token, credential, tenant identity, or absolute
+      // workspace path". Grepping for it flagged the very construct that keeps
+      // Core stateless -- and flagged a doc COMMENT as evidence, which is the
+      // tell that a word-grep cannot tell a design from a mention.
+      //
+      // NOT COVERED, stated rather than implied: this finds an identifier by
+      // name. It cannot detect tenant identity arriving under a different name,
+      // being derived from an absolute path, or being persisted. Those need a
+      // real analysis, not a grep.
+      const grepOut = execSync(`grep -rnw '${coreDomainSrc}' -e 'tenant_id' | grep -v 'EvaluationContext' | grep -v 'evaluation/' | grep -v 'spec.ts' || true`, { encoding: 'utf8' }).trim();
       if (grepOut) {
-        evidence = grepOut.split('\n').map(l => l.trim()).filter(Boolean);
+        // A match inside a comment is a mention, not a leak.
+        evidence = grepOut
+          .split('\n')
+          .map(l => l.trim())
+          .filter(Boolean)
+          .filter(line => {
+            const code = line.slice(line.indexOf(':', line.indexOf(':') + 1) + 1).trim();
+            return !(code.startsWith('*') || code.startsWith('//') || code.startsWith('/*'));
+          });
       }
     } catch (e) {
       // grep fails if no matches, which is good

@@ -20,7 +20,7 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 
 const root = process.cwd();
-const wikiDir = path.join(root, "wiki");
+const wikiDir = path.join(root, "reference", "wiki");
 const fingerprintFile = path.join(wikiDir, ".fingerprint");
 
 // ─── Source files ──────────────────────────────────────────────────────────────
@@ -32,8 +32,8 @@ const WIKI_SOURCES = {
   },
   "Getting-Started.md": {
     files: [
-      "reference/products/smart-cli/README.md",
-      "reference/products/mcp-services/README.md",
+      "product/products/smart-cli/README.md",
+      "product/products/mcp-services/README.md",
     ],
     transform: transformGettingStarted,
   },
@@ -46,9 +46,9 @@ const WIKI_SOURCES = {
   },
   "Products.md": {
     files: [
-      "reference/products/smart-cli/README.md",
-      "reference/products/mcp-services/README.md",
-      "reference/products/core-api/README.md",
+      "product/products/smart-cli/README.md",
+      "product/products/mcp-services/README.md",
+      "product/products/core-api/README.md",
     ],
     transform: transformProducts,
   },
@@ -56,7 +56,7 @@ const WIKI_SOURCES = {
     files: [
       "reference/core/sdlc/standards/README.md",
       "reference/core/sdlc/README.md",
-      "reference/core/control-center/gap-tracking.md",
+      "reference/core/control-center/gaps/gap-tracking.md",
     ],
     transform: transformGovernance,
   },
@@ -202,16 +202,16 @@ evolith-mcp
 ## Repository Stats
 
 - **${stats.totalGaps} tracked gaps** (${stats.doneGaps} done, ${stats.openGaps} open)
-- **8 topology profiles** with full guidance corpus
-- **22 MCP tools** for AI agent integration
-- **29 CI validation gates**
+- **${countTopologyProfiles()} topology profiles** with full guidance corpus
+- **${countMcpTools()} MCP tools** for AI agent integration
+- **${countCiGates()} CI validation gates**
 - **Bilingual** (English + Spanish) documentation
 ` + addWikiFooter("Home");
 }
 
 function transformGettingStarted(sources) {
-  const cli = stripBilingualNav(sources["reference/products/smart-cli/README.md"] || "");
-  const mcp = stripBilingualNav(sources["reference/products/mcp-services/README.md"] || "");
+  const cli = stripBilingualNav(sources["product/products/smart-cli/README.md"] || "");
+  const mcp = stripBilingualNav(sources["product/products/mcp-services/README.md"] || "");
 
   return addWikiHeader(
     "Getting Started",
@@ -372,14 +372,15 @@ reference/core/architecture/
 function transformProducts(sources) {
   return addWikiHeader(
     "Products",
-    "CLI, MCP Services, Core API — the three operational interfaces."
+    "CLI, MCP Services, Core API, Agent Runtime — the four operational interfaces."
   ) + `## Product Overview
 
 | Product | Package | Purpose |
 |---------|---------|---------|
 | **Evolith CLI** | \`@beyondnet/evolith-cli\` | Developer-facing governance tool |
 | **MCP Services** | (bundled in CLI) | AI agent integration via MCP |
-| **Core API** | \`apps/core-api\` | REST API for orchestration systems |
+| **Core API** | \`src/apps/core-api\` | REST API for orchestration systems |
+| **Agent Runtime** | \`src/packages/agent-runtime\` + \`src/apps/agent-runtime-api\` | Agentic mediation layer over Core |
 
 ---
 
@@ -396,7 +397,7 @@ evolith-mcp
 
 **Key commands**: init, validate, adr, standards, docs, mcp serve
 
-Docs: [reference/products/smart-cli/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/products/smart-cli)
+Docs: [product/products/smart-cli/](https://github.com/beyondnetcode/evolith_arch32/tree/main/product/products/smart-cli)
 
 ---
 
@@ -412,7 +413,7 @@ Exposes Evolith governance as real-time context for LLMs and autonomous agents t
 
 **Transports**: stdio (JSON-RPC 2.0), Streamable HTTP
 
-Docs: [reference/products/mcp-services/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/products/mcp-services)
+Docs: [product/products/mcp-services/](https://github.com/beyondnetcode/evolith_arch32/tree/main/product/products/mcp-services)
 
 ---
 
@@ -429,7 +430,32 @@ Central validation, state, and governance engine. NestJS + TypeScript.
 
 **Stack**: NestJS, TypeScript, PostgreSQL, MongoDB, Redis, OPA WASM
 
-Docs: [reference/products/core-api/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/products/core-api)
+Docs: [product/products/core-api/](https://github.com/beyondnetcode/evolith_arch32/tree/main/product/products/core-api)
+
+---
+
+## Agent Runtime
+
+Decoupled agentic layer that sits between external callers and Evolith Core. Implements a **Ports & Adapters (Hexagonal)** model — every dependency (Core evaluation, OPA, .harness, Tracker, Memory, Scheduler, Hermes) is hidden behind a port and satisfied by a swappable adapter.
+
+\`\`\`
+External Client / Tracker / Chat / CLI
+        → Agent Runtime (POST /v1/agent/handle)
+        → Ports  →  Adapters
+        → .harness · Evolith Core · OPA · Tracker · Hermes
+\`\`\`
+
+| Capability | Description |
+|------------|-------------|
+| **Skill dispatch** | Routes intents to the correct governance tool via \`.harness\` |
+| **Hermes integration** | Hermes Agent is one pluggable adapter — the runtime does not depend on it |
+| **Policy validation** | OPA CLI adapter enforces governance policies per request |
+| **Tracing** | HTTP Tracker adapter emits structured traces for every handled request |
+| **Auth** | API key guard (Bearer / x-api-key), fail-closed in production |
+
+**Key endpoints**: \`POST /v1/agent/handle\` · \`GET /v1/agent/skills\` · \`GET /health\`
+
+**Package**: \`@beyondnet/evolith-agent-runtime\` · **Service**: \`src/apps/agent-runtime-api\` · **Deploy**: \`evolithruntime.beyondnet.cloud\`
 ` + addWikiFooter("Products");
 }
 
@@ -575,16 +601,88 @@ The pre-commit hook presents 5 CI modes:
 }
 
 function extractStats() {
-  const tracking = readFileSafe(
-    "reference/core/control-center/gap-tracking.md"
+  // The board moved under `gaps/`. Reading the old path returned "" and every
+  // figure below silently fell back to a hardcoded 2025 snapshot -- and the
+  // `312` baked into the regex meant the match could never succeed even once
+  // the path was right, so the fallback was permanent by construction.
+  const rel = "reference/core/control-center/gaps/gap-tracking.md";
+  const tracking = readFileSafe(rel);
+  if (!tracking) {
+    throw new Error(
+      `sync-wiki: cannot read the gap board at ${rel}.\n` +
+      `Refusing to publish wiki stats from hardcoded fallbacks -- that is how ` +
+      `"312 tracked gaps (290 done, 22 open)" survived on the public wiki long ` +
+      `after the real board passed 500.`
+    );
+  }
+  const progress = tracking.match(
+    /\*\*Progress:\*\*\s*(\d+)\s*\/\s*(\d+)\s*done\s*·\s*(\d+)\s*in progress\s*·\s*(\d+)\s*pending\s*·\s*(\d+)\s*deferred/
   );
-  const doneMatch = tracking.match(/(\d+)\s*\/\s*312\s*done/);
-  const openMatch = tracking.match(/(\d+)\s*pending/);
+  if (!progress) {
+    throw new Error(
+      `sync-wiki: could not parse the Progress line in ${rel}. ` +
+      `Fix the parser rather than shipping stale counts.`
+    );
+  }
+  const [, done, total, inProgress, pending, deferred] = progress;
   return {
-    totalGaps: 312,
-    doneGaps: doneMatch ? doneMatch[1] : "290",
-    openGaps: openMatch ? openMatch[1] : "22",
+    totalGaps: Number(total),
+    doneGaps: Number(done),
+    openGaps: Number(inProgress) + Number(pending) + Number(deferred),
   };
+}
+
+/** Count topology profiles from the manifests, never from memory. */
+function countTopologyProfiles() {
+  const dir = path.join(root, "reference/core/architecture/topologies");
+  if (!fs.existsSync(dir)) {
+    throw new Error(`sync-wiki: topology directory not found at ${dir}`);
+  }
+  // Topologies live at the SECOND level: the first level is the category
+  // (progressive-axis, execution, integration, data, ai) and the leaves are the
+  // 8 actual profiles. Counting the first level yields 5 and is wrong.
+  let n = 0;
+  for (const cat of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (!cat.isDirectory()) continue;
+    n += fs
+      .readdirSync(path.join(dir, cat.name), { withFileTypes: true })
+      .filter((e) => e.isDirectory()).length;
+  }
+  if (n === 0) throw new Error(`sync-wiki: scanned ${dir} and found zero topologies`);
+  return n;
+}
+
+/** Count the numbered CI gate scripts, never from memory. */
+function countCiGates() {
+  const dir = path.join(root, ".harness/scripts/ci");
+  if (!fs.existsSync(dir)) {
+    throw new Error(`sync-wiki: CI script directory not found at ${dir}`);
+  }
+  const n = fs
+    .readdirSync(dir)
+    .filter((f) => /^\d+-.*\.mjs$/.test(f) && !f.endsWith(".test.mjs")).length;
+  if (n === 0) throw new Error(`sync-wiki: scanned ${dir} and found zero CI gates`);
+  return n;
+}
+
+/** Count the registered `evolith-*` MCP tools from source, never from memory. */
+function countMcpTools() {
+  const dir = path.join(root, "src/packages/mcp-server/src/tools");
+  if (!fs.existsSync(dir)) {
+    throw new Error(`sync-wiki: MCP tool directory not found at ${dir}`);
+  }
+  const names = new Set();
+  for (const f of fs.readdirSync(dir)) {
+    if (!f.endsWith(".ts") || f.endsWith(".spec.ts")) continue;
+    const src = fs.readFileSync(path.join(dir, f), "utf8");
+    for (const m of src.matchAll(/name:\s*['"](evolith-[a-z0-9-]+)['"]/g)) {
+      names.add(m[1]);
+    }
+  }
+  if (names.size === 0) {
+    throw new Error(`sync-wiki: scanned ${dir} and found zero MCP tools`);
+  }
+  return names.size;
 }
 
 // ─── Fingerprint & Diff Detection ──────────────────────────────────────────────
@@ -616,6 +714,7 @@ function saveFingerprint() {
 function main() {
   const args = process.argv.slice(2);
   const force = args.includes("--force");
+  const allowContentLoss = args.includes("--allow-content-loss");
   const check = args.includes("--check");
 
   if (check) {
@@ -637,6 +736,7 @@ function main() {
   fs.mkdirSync(wikiDir, { recursive: true });
 
   let generated = 0;
+  let skipped = 0;
   for (const [pageName, config] of Object.entries(WIKI_SOURCES)) {
     const sources = {};
     for (const f of config.files) {
@@ -644,13 +744,53 @@ function main() {
     }
     const content = config.transform(sources);
     const outPath = path.join(wikiDir, pageName);
+
+    // Content-loss guard.
+    //
+    // `reference/wiki/` claims to be auto-generated, but pages here carry
+    // hand-written sections the templates below cannot reproduce (the Agent
+    // Runtime section in Products, the topology table in Architecture). Until
+    // this run, that content survived only because the generator was writing to
+    // a phantom `wiki/` directory at the repo root -- the bug was the only thing
+    // protecting it. With the path repaired, `--force` (which .husky/pre-push
+    // invokes on every doc change) would silently overwrite those sections.
+    //
+    // So: refuse to shrink a page. Fold the missing content into the template
+    // above, or pass --allow-content-loss if the removal is genuinely intended.
+    if (!allowContentLoss && fs.existsSync(outPath)) {
+      // Line-level, not heading-level: the content at risk includes table rows
+      // INSIDE an existing section (the topology table in Architecture), which a
+      // heading-only comparison walks straight past.
+      const boilerplate = /^\s*$|Last updated:|^---$/;
+      const existing = fs.readFileSync(outPath, "utf8");
+      const newLines = new Set(content.split("\n").map((l) => l.trim()));
+      const dropped = existing
+        .split("\n")
+        .map((l) => l.trim())
+        .filter((l) => !boilerplate.test(l) && !newLines.has(l));
+      if (dropped.length) {
+        // Skip the page rather than throwing: this runs in .husky/pre-push, and
+        // blocking every push would be a worse failure than an out-of-date page.
+        // The content is preserved and the reason is stated loudly.
+        console.warn(
+          `  ⏭  ${pageName} SKIPPED — regenerating it would drop ${dropped.length} ` +
+          `hand-written line(s) the template cannot reproduce:\n` +
+          dropped.map((h) => `       ${h}`).join("\n") + "\n" +
+          `       Port them into the template in this script, then this page ` +
+          `will regenerate normally (or pass --allow-content-loss).`
+        );
+        skipped++;
+        continue;
+      }
+    }
+
     fs.writeFileSync(outPath, content);
     generated++;
     console.log(`  ✅ ${pageName}`);
   }
 
   saveFingerprint();
-  console.log(`\n📦 Generated ${generated} wiki pages in reference/wiki/`);
+  console.log(`\n📦 Generated ${generated} wiki page(s) in reference/wiki/${skipped ? `, ${skipped} skipped to avoid content loss` : ""}`);
   console.log("   Run 'git add reference/wiki/' to include in commit.");
 }
 

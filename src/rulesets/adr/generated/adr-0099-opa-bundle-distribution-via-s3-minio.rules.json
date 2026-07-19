@@ -7,7 +7,7 @@
   "adrId": "ADR-0099",
   "adrTitle": "OPA Bundle Distribution via S3 (MinIO)",
   "status": "Superseded by [ADR 0085](./0085-agnostic-opa-wasm-distribution.md)",
-  "date": "",
+  "date": "2026-06-22",
   "rules": [
     {
       "id": "CORE-0099-01",
@@ -23,5 +23,6 @@
   ],
   "references": [
     "reference/core/architecture/adrs/core/0099-opa-bundle-s3-distribution.md"
-  ]
+  ],
+  "effectiveDate": "2026-06-22"
 }

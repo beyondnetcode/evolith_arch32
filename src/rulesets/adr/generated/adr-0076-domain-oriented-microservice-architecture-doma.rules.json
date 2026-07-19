@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0076",
   "adrTitle": "Domain-Oriented Microservice Architecture (DOMA)",
-  "status": "Approved — Evolith Architecture Board, 2026-06-14.",
+  "status": "Accepted — Evolith Architecture Board, 2026-06-14.",
   "date": "2026-06-14",
   "rules": [
     {

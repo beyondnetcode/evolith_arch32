@@ -18,8 +18,8 @@ Evaluates the maturity of all interaction adapters against the `InteractionAdapt
 
 | Input | Source |
 |-------|--------|
-| Adapter implementations | `packages/agent-runtime/src/adapters/interaction/` |
-| Port contract | `packages/agent-runtime/src/domain/ports/interaction-adapter.port.ts` |
+| Adapter implementations | `src/packages/agent-runtime/src/adapters/interaction/` |
+| Port contract | `src/packages/agent-runtime/src/domain/ports/interaction-adapter.port.ts` |
 | Agent definitions | `.bmad-core/agents/*.md` |
 | Skill manifest | `.bmad-core/skills/manifest.json` |
 

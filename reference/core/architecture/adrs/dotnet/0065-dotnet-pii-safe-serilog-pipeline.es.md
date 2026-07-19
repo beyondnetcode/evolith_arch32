@@ -1,7 +1,7 @@
 # [ADR 0065](0065-dotnet-pii-safe-serilog-pipeline.md): Pipeline de Logging Estructurado Seguro de PII en .NET (Serilog)
 
 ## 1. Estado
-**Estado**: Aceptado  
+**Estado**: Accepted
 **Fecha**: 2026-05-24  
 **Alcance**: Stack Tecnológico - Seguridad / Observabilidad .NET  
 **Origen satélite**: UMS ADR-0062 (HARDENING-04) — promovido a baseline corporativo tras confirmar cero dependencias específicas de UMS

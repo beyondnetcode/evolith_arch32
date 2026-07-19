@@ -1,7 +1,7 @@
 # ADR-0050: Estandarizacion de la Estrategia de Ramas Gitflow
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-03

@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0052",
   "adrTitle": "Unit Testing Isolation Strategy (Mocks vs Stubs)",
-  "status": "Approved",
+  "status": "Accepted",
   "date": "2026-05-14",
   "rules": [
     {

@@ -1,7 +1,8 @@
 # [ADR 0062](0062-dotnet-immutable-audit-trail.md): Pista de Auditoría Inmutable en .NET vía Triggers DDL y Captura de Deltas
 
 ## 1. Estado
-**Estado**: Propuesto
+**Estado**: Accepted
+**Ratificado**: 2026-07-19 por el propietario del repositorio, formalizando el enforcement ya activo mediante el ruleset generado `adr-dotnet-0062-net-immutable-audit-trail-via-ddl-triggers-delta-capture.rules.json`.
 **Fecha**: 2026-05-23
 **Alcance**: Stack Tecnológico - Seguridad y Cumplimiento en .NET
 

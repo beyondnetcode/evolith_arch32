@@ -1,7 +1,7 @@
 # ADR-0011: Patrones de Resiliencia y Tolerancia a Fallos
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

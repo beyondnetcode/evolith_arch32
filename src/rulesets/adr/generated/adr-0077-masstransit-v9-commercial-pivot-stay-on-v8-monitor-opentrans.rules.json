@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0077",
   "adrTitle": "MassTransit v9 Commercial Pivot — Stay on v8, Monitor OpenTransit",
-  "status": "Approved — Evolith Architecture Board, 2026-06-15.",
+  "status": "Accepted — Evolith Architecture Board, 2026-06-15.",
   "date": "2026-06-15",
   "rules": [
     {

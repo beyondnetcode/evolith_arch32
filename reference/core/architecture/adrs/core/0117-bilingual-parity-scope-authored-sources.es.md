@@ -6,7 +6,7 @@
 
 ## Estado
 
-Aceptado (2026-07-18 — implementado en `develop`)
+Accepted (2026-07-18 — implementado en `develop`)
 
 Este ADR registra una decisión de política que **ya está implementada**, no una
 que se propone:

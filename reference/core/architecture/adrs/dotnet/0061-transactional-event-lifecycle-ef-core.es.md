@@ -1,7 +1,8 @@
 # [ADR 0061](0061-transactional-event-lifecycle-ef-core.md): Ciclo de Vida Transaccional de Eventos en EF Core
 
 ## 1. Estado
-**Estado**: Propuesto
+**Estado**: Accepted
+**Ratificado**: 2026-07-19 por el propietario del repositorio, formalizando el enforcement ya activo mediante el ruleset generado `adr-dotnet-0061-transactional-event-lifecycle-in-ef-core.rules.json`.
 **Fecha**: 2026-05-23
 **Alcance**: Stack Tecnológico - Confiabilidad Transaccional en .NET
 

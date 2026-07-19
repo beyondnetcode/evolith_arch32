@@ -1,7 +1,7 @@
 # ADR-0018: Testing Pyramid and Automated Quality Gates
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-08

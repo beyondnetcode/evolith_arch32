@@ -2,7 +2,7 @@
 
 > **Navegación Bilingüe:** [English Version](./adr-authoring-standard.md)
 
-**Estado:** Aprobado
+**Estado:** Accepted
 **Responsable:** Evolith Architecture Board
 **Creado:** 2026-06-10
 **Aplica a:** todo ADR bajo `reference/core/architecture/adrs/` (categorías core y de plataforma)
@@ -37,7 +37,23 @@ Todo ADR debe contener estas secciones. Los alias legados (de plantillas anterio
 | 7 | **Referencias** | Enlaces verificables: specs, documentación, issues, benchmarks | `Links` |
 | 8 | **Decisiones y Estándares Relacionados** | Enlaces a ADRs relacionados, estándares Evolith, rulesets y artefactos impactados | `Related ADRs`, `Relationships` |
 
-Más la metadata estándar de cabecera: **Estado** (`Propuesto` / `Aprobado` / `Reemplazado por ADR-XXXX` / `Obsoleto`) y **Fecha**.
+Más la metadata estándar de cabecera: **Estado** y **Fecha**.
+
+**Vocabulario de estado (canónico).** El valor de estado es un enum controlado, no prosa. Los únicos valores admisibles son los definidos por el esquema ejecutable [`src/rulesets/schema/adr.schema.json`](../../../../src/rulesets/schema/adr.schema.json):
+
+| Valor | Significado |
+|---|---|
+| `Proposed` | Registrado pero aún no vinculante. Requiere ratificación para volverse normativo. |
+| `Accepted` | Ratificado y normativo. |
+| `Superseded` | Reemplazado por una decisión posterior. Calificar siempre: `Superseded by ADR-XXXX`. |
+| `Deprecated` | Ya no aplica y no fue reemplazado. |
+
+Reglas:
+
+- `Accepted` es el único token de ratificación. **`Approved` queda retirado** -- nunca estuvo en el enum del esquema, y el corpus se normalizó a `Accepted` el 2026-07-19.
+- **El valor del enum se escribe en inglés en ambas ediciones de idioma.** Solo se traduce la *etiqueta* del campo (`**Status:**` en EN, `**Estado:**` en ES); el valor permanece `Accepted`, nunca `Aprobado` ni `Aceptado`. Así la edición ES se valida contra el mismo esquema.
+- Puede seguir prosa calificadora en la misma línea (fechas, notas de ratificación, enlaces). El token debe ir primero.
+- La procedencia de la ratificación debe ser veraz. Registrar quién ratificó y cuándo -- no atribuir una decisión a una sesión del Architecture Board que no ocurrió.
 
 ## 3. Secciones Adicionales Requeridas — Solo ADRs de Plataforma
 

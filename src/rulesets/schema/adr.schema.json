@@ -10,7 +10,7 @@
     "status": {
       "type": "string",
       "enum": ["Proposed", "Accepted", "Deprecated", "Superseded"],
-      "description": "ADR lifecycle status. Proposed ADRs require Architecture Board review before merge."
+      "description": "ADR lifecycle status. Canonical controlled vocabulary -- 'Accepted' is the sole ratification token ('Approved' is retired). The value is written in English in both the EN and ES editions; only the field label is translated. Proposed ADRs are not yet binding and require ratification before merge."
     },
     "date": {
       "type": "string",

@@ -1,7 +1,7 @@
 # ADR-0001: Principio de Orquestación de Monorepo
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

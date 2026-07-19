@@ -1,7 +1,7 @@
 # [ADR 0042](0042-canonical-android-mobile-architecture.md): Canonical Android Native Mobile Architecture
 
 ## 1. Status
-**Status**: Approved 
+**Status**: Accepted
 **Date**: 2026-05-11 
 **Scope**: Technology Stack - Mobile Specific 
 

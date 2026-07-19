@@ -3,7 +3,7 @@
 # ADR-0086: Estándar de Telemetría y Control de Costos para IA Agéntica
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-20

@@ -1,7 +1,7 @@
 # ADR-0014: Multi-Layer Distributed Caching Strategy
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-08

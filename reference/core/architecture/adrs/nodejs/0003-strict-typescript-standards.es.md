@@ -1,7 +1,7 @@
 # [ADR 0003](0003-strict-typescript-standards.md): Estándares Estrictos de TypeScript
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

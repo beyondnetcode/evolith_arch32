@@ -89,7 +89,7 @@ Together they form a **two-layer corporate ecosystem:**
 │                         │ Simplicity Checklist Phase 01                  │
 │                         │ C4 Topology Spec                               │
 ├─────────────────────────┼────────────────────────────────────────────────┤
-│ Architecture Decisions  │ 57 ADRs across Core / Node.js / .NET / Android │
+│ Architecture Decisions  │ 133 ADRs: Core / Node.js / .NET / Android      │
 │                         │ ADR Decision Matrix                            │
 │                         │ Microservice Extraction Criteria (ADR-0045)    │
 ├─────────────────────────┼────────────────────────────────────────────────┤
@@ -282,7 +282,7 @@ This map answers "what can the Evolith platform do for a product team?"
 **Core message:** "Evolith prevents architectural chaos as the company grows. It is the technical contract that protects investment."
 
 Talking points:
-- 57+ pre-validated architectural decisions = less board-level risk
+- 133 pre-validated architectural decisions = less board-level risk
 - 3-phase evolution path = predictable cost and timeline
 - UMS proves the model works in production today
 - Architecture Board ensures governance without bureaucracy
@@ -295,7 +295,7 @@ Talking points:
 **Core message:** "Every decision is documented, justified, and enforceable. You inherit a curated set of standards and extend them with local ADRs."
 
 Talking points:
-- 57 runtime-agnostic + runtime-specific ADRs with context/decision/consequences
+- 133 runtime-agnostic + runtime-specific ADRs with context/decision/consequences
 - Clear extraction criteria prevent premature microservice splits (ADR-0045)
 - Child repository inheritance model with documented divergence paths
 - Architecture Board review process for promotions upstream

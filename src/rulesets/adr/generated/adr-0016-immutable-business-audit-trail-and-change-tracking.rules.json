@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0016",
   "adrTitle": "Immutable Business Audit Trail and Change Tracking",
-  "status": "Approved",
+  "status": "Accepted",
   "date": "2026-05-09",
   "rules": [
     {

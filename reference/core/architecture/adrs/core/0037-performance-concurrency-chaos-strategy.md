@@ -1,7 +1,7 @@
 # ADR-0037: Enterprise Performance, Concurrency & Chaos Verification Strategy
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-11

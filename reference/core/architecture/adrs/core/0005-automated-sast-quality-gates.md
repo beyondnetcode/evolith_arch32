@@ -1,7 +1,7 @@
 # ADR-0005: Automated SAST Quality Gates in CI/CD
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-08

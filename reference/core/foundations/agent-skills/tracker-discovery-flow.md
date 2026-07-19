@@ -49,7 +49,7 @@ PENDING Initiative ──(agentic/mixed activation, L-012)──► DISCOVERY (F
 ## 4. Cross-Repo & Core Implications
 
 - **First Tracker→Core-architecture channel (D-002):** requires a governed advisory surface over the Architecture Hub (MCP/Core API), with the `architect`/Winston reasoning behind `IAgentEnginePort`. Core stays stateless; Tracker persists the advisory evidence (D-005).
-- **PRD as canonical floor (D-004):** PRD schema (with optional KDD section) is a Core-corpus candidate (`rulesets/schema/`), inherited by Tracker and satellites; non-overrideable per L-010.
+- **PRD as canonical floor (D-004):** PRD schema (with optional KDD section) is a Core-corpus candidate (`src/rulesets/schema/`), inherited by Tracker and satellites; non-overrideable per L-010.
 - **Progressive blueprint (D-003):** `TechnicalBlueprint` gains a Discovery-originated draft state feeding Design — a Progressive-Architecture refinement of EPIC-001.
 - **Aggregate reconciliation:** the Tracker `Initiative` aggregate must list the PRD explicitly (today it lists Canvas/BusinessCase/TechnicalJustification/Checklist only).
 

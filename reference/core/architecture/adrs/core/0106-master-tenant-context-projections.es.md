@@ -5,7 +5,7 @@
 > **Firma del Agente:** Agente Arquitecto (Winston)
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-07-08

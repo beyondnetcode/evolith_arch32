@@ -1,7 +1,7 @@
 # ADR-0016: Pista de Auditoría de Negocio Inmutable y Rastreo de Cambios
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-09

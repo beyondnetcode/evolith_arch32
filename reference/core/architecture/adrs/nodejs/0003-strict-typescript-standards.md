@@ -1,7 +1,7 @@
 # [ADR 0003](0003-strict-typescript-standards.md): Strict TypeScript Standards
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-08

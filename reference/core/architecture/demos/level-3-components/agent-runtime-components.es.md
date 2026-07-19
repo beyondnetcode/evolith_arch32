@@ -10,7 +10,7 @@
 
 El **Agent Runtime Engine** orquesta ejecuciones gobernadas de agentes de IA. Recibe tareas desde Tracker, MCP, CLI o clientes HTTP, resuelve skills, aplica límites de aprobación y política, invoca capacidades a través de puertos abstraídos y publica eventos de traza/memoria.
 
-Utiliza la **Arquitectura Hexagonal (Ports and Adapters)**.
+Utiliza la **Arquitectura Hexagonal (Puertos y Adaptadores)**.
 
 ## 2. Diagrama de Componentes
 

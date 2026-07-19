@@ -1,7 +1,7 @@
 # ADR-0032: API Protocol Selection Matrix (REST vs gRPC vs GraphQL)
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-11

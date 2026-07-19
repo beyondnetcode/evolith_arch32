@@ -46,8 +46,9 @@ graph TB
     PARSE --> CONTEXT
     CONTEXT --> GUIDANCE
     GUIDANCE --> EXEC
-    EXEC --> OUTPUT
-    OUTPUT --> VALID
+    EXEC --> VALID
+    EXEC --> REPORT
+    EXEC --> CONFIG
 
     style User fill:#1e3a5f,stroke:#3b82f6,color:#fff
     style CLI fill:#065f46,stroke:#10b981,color:#fff

@@ -1,7 +1,7 @@
 # ADR-0035: Estrategia de Implementación del Patrón Distributed Saga
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-11

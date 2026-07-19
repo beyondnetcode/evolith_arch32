@@ -4,7 +4,7 @@
 
 ## Estado
 
-Aceptado
+Accepted
 
 ## Fecha
 

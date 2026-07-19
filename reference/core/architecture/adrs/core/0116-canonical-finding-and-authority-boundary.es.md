@@ -6,7 +6,7 @@
 
 ## Estado
 
-Aceptado (2026-07-18 — implementado en `develop`)
+Accepted (2026-07-18 — implementado en `develop`)
 
 Este ADR registra dos decisiones que **ya están implementadas y fusionadas**, no
 dos decisiones que se proponen:

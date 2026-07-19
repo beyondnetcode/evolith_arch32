@@ -3,7 +3,7 @@
 ## 1. Metadatos
 * **ADR ID:** 0051
 * **Título:** Estrategia de Selección de Motores de Base de Datos Empresarial
-* **Estado:** Aprobado
+* **Estado:** Accepted
 * **Autores:** Oficina de Arquitectura Empresarial
 * **Revisores:** Comité de Arquitectura Corporativa, Oficina del CTO
 * **Fecha:** 2026-05-14

@@ -3,7 +3,7 @@
 # ADR-0092: Prevención de Bucles Infinitos de Agentes y Reglas de Circuit Breaker
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-20

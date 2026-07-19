@@ -3,7 +3,7 @@
 ## 1. Metadatos
 * **ADR ID:** 0052
 * **Título:** Estrategia de Aislamiento de Pruebas Unitarias (Mocks vs Stubs)
-* **Estado:** Aprobado
+* **Estado:** Accepted
 * **Autores:** Oficina de Arquitectura Empresarial
 * **Revisores:** Comité de Arquitectura Corporativa, Oficina del CTO
 * **Fecha:** 2026-05-14

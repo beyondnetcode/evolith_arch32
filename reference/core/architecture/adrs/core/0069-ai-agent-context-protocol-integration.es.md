@@ -1,7 +1,7 @@
 # ADR-0069: Integración de Protocolo de Contexto para Agentes IA
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-06-06

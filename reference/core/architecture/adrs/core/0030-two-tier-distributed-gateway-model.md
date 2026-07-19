@@ -1,7 +1,7 @@
 # ADR-0030: Two-Tier Distributed Gateway Model
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-10

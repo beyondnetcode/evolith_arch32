@@ -1,7 +1,7 @@
 # ADR-0025: Estrategia de Abstracción de Proveedor de Feature Flags
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-09

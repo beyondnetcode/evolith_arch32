@@ -1,7 +1,8 @@
 # [ADR-0070](0070-enterprise-minimal-apis-adoption.md): Estrategia de Endpoints en APIs .NET
 
 ## 1. Estado
-**Estado**: Propuesto 
+**Estado**: Accepted 
+**Ratificado**: 2026-07-19 por el propietario del repositorio, formalizando el enforcement ya activo mediante el ruleset generado `adr-dotnet-0070-net-api-endpoint-strategy.rules.json`.
 **Fecha**: 2026-05-13 
 **Alcance**: Stack Tecnológico - APIs .NET 
 

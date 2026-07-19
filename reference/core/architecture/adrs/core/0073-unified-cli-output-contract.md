@@ -4,7 +4,7 @@
 
 ## Status
 
-Approved — Evolith Architecture Board, 2026-06-10. Closes [GT-01](../../../control-center/gaps/gap-reference-catalog.md#gt-01).
+Accepted — Evolith Architecture Board, 2026-06-10. Closes [GT-01](../../../control-center/gaps/gap-reference-catalog.md#gt-01).
 
 ## Date
 

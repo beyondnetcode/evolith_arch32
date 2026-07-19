@@ -1,7 +1,7 @@
 # ADR-0006: Transición a Microservicios con Patrón Sidecar
 
 ## Estado
-Aprobado - Backlog (Hito de Fase 3)
+Accepted - Backlog (Hito de Fase 3)
 
 ## Fecha
 2026-05-08

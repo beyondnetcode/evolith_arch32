@@ -88,6 +88,9 @@ jobs:
       - name: Validate product documentation synchronization
         run: node .harness/scripts/ci/11-validate-product-docs.mjs
 
+      - name: Check surface parity matrix
+        run: node .harness/scripts/ci/24-check-surface-parity.mjs
+
       # GT-563: the steps below REPORT, they do not validate. This job runs no tests and
       # produces no coverage data, and COVERAGE_REPORT.md is untracked, so on a PR the
       # dashboard --check can only ever report "COVERAGE_REPORT.md is missing" and the

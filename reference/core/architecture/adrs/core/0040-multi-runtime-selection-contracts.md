@@ -1,7 +1,7 @@
 # ADR-0040: Multi-Runtime Selection Matrix & Inter-Runtime Contracts
 
 ## 1. Status
-**Status**: Approved 
+**Status**: Accepted
 **Date**: 2026-05-11 
 **Scope**: Corporate Governance (Mandatory) 
 

@@ -1,7 +1,7 @@
 # ADR-0037: Estrategia Empresarial de Verificación de Rendimiento, Concurrencia y Caos
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-11

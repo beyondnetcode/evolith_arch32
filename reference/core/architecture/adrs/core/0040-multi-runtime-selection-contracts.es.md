@@ -1,7 +1,7 @@
 # ADR-0040: Matriz de Selección de Multi-Runtime y Contratos Entre Runtimes
 
 ## 1. Estado
-**Estado**: Aprobado 
+**Estado**: Accepted
 **Fecha**: 2026-05-11 
 **Alcance**: Gobernanza Corporativa (Obligatorio) 
 

@@ -1,7 +1,7 @@
 # ADR-0068: GitFlow de Lanzamiento de Documentación
 
 ## Estado
-Propuesto
+Proposed
 
 ## Fecha
 2026-05-29

@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0006",
   "adrTitle": "Microservices Transition via Sidecar Pattern",
-  "status": "Approved - Backlog (Phase 3 Milestone)",
+  "status": "Accepted - Backlog (Phase 3 Milestone)",
   "date": "2026-05-08",
   "rules": [
     {

@@ -6,7 +6,7 @@ import { dirname, join, basename } from 'node:path';
 import { generate, buildRuleset, REPO_ROOT } from './generate-adr-rulesets.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const HANDCRAFTED_DIR = join(REPO_ROOT, 'rulesets', 'adr');
+const HANDCRAFTED_DIR = join(REPO_ROOT, 'src', 'rulesets', 'adr');
 
 // Map handcrafted track-id key -> relative ruleset path.
 function handcraftedPaths() {

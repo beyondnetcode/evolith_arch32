@@ -7,7 +7,7 @@
   "adrId": "ADR-0085",
   "adrTitle": "Agnostic OPA Wasm Distribution Architecture",
   "status": "Accepted",
-  "date": "",
+  "date": "2026-06-20",
   "rules": [
     {
       "id": "CORE-0085-01",
@@ -24,5 +24,6 @@
   ],
   "references": [
     "reference/core/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.md"
-  ]
+  ],
+  "effectiveDate": "2026-06-20"
 }

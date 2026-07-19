@@ -1,7 +1,7 @@
 # [ADR 0021](0021-high-performance-auth-and-graph-compilation.md): Compilación de Grafos de Autorización de Alto Rendimiento
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

@@ -3,7 +3,7 @@
 ## 1. Metadata
 * **ADR ID:** 0047
 * **Título:** Marco de Evolución Arquitectónica Progresiva: Monolito Modular → Microservicios
-* **Estado:** Aprobado
+* **Estado:** Accepted
 * **Autores:** Oficina de Arquitectura Enterprise
 * **Revisores:** Junta Arquitectónica Corporativa, Oficina del CTO
 * **Fecha:** 2026-05-12

@@ -4,7 +4,7 @@
 
 ## Estado
 
-Aprobado — Evolith Architecture Board, 2026-06-14.
+Accepted — Evolith Architecture Board, 2026-06-14.
 
 ## Fecha
 

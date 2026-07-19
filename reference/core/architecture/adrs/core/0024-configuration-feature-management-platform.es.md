@@ -1,7 +1,7 @@
 # ADR-0024: Plataforma de Gestión de Características y Configuración
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-09

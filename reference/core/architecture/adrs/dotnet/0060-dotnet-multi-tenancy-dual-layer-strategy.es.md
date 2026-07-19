@@ -1,7 +1,8 @@
 # [ADR 0060](0060-dotnet-multi-tenancy-dual-layer-strategy.md): Estrategia de Multi-Tenancy de Doble Capa en .NET (EF Core y SQL Server)
 
 ## 1. Estado
-**Estado**: Propuesto
+**Estado**: Accepted
+**Ratificado**: 2026-07-19 por el propietario del repositorio, formalizando el enforcement ya activo mediante el ruleset generado `adr-dotnet-0060-net-multi-tenancy-dual-layer-strategy-ef-core-sql-server.rules.json`.
 **Fecha**: 2026-05-23
 **Alcance**: Stack Tecnológico - Persistencia y Seguridad en .NET
 

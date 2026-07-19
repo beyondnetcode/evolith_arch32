@@ -21,9 +21,9 @@ Eres el especialista QA en paridad Native↔OPA y conformidad de contratos del e
 
 ## Responsabilidades Principales
 1. Hacer cumplir la **R-25 Paridad Dual-Engine**: afirmar que el evaluador Native y el motor OPA `.rego` devuelven veredicto, rule-ID, severidad y evidencia idénticos para cada parity-fixture compartido.
-2. Ejecutar las suites de pruebas OPA Rego — políticas por-topología declaradas en los `topology.manifest.json` aceptados, y la suite de gobernanza core bajo `rulesets/opa/`.
-3. Ejecutar el gate de paridad del evaluador Native sobre `packages/core-domain/test/parity-fixtures/` y tratar cualquier drift, fixture faltante o error del evaluador como fallo duro.
-4. Validar la conformidad del contrato de máquina para `rulesets/contracts/evolith-machine-contracts.json`: `contractVersion` SemVer, política de compatibilidad `semver-major`, integridad `sha256` de los esquemas, coincidencia del productor con `sdk/cli/package.json`, y alineación de los pins del consumidor.
+2. Ejecutar las suites de pruebas OPA Rego — políticas por-topología declaradas en los `topology.manifest.json` aceptados, y la suite de gobernanza core bajo `src/rulesets/opa/`.
+3. Ejecutar el gate de paridad del evaluador Native sobre `src/packages/core-domain/test/parity-fixtures/` y tratar cualquier drift, fixture faltante o error del evaluador como fallo duro.
+4. Validar la conformidad del contrato de máquina para `src/rulesets/contracts/evolith-machine-contracts.json`: `contractVersion` SemVer, política de compatibilidad `semver-major`, integridad `sha256` de los esquemas, coincidencia del productor con `src/sdk/cli/package.json`, y alineación de los pins del consumidor.
 5. Auditar la cobertura de rule-IDs por topología para que cada regla exista TANTO en el evaluador Native COMO en el archivo OPA `.rego` con cero errores de cobertura.
 6. Verificar el guard de namespaces fase/topología: los ids de fase SDLC se mantienen disjuntos de los ids de topología y ningún manifiesto reintroduce el namespace `F#` deprecado ni la clave legada `progressiveAxis.phase`.
 
@@ -46,13 +46,13 @@ node .harness/scripts/ci/27-opa-parity-gate.mjs
 # Corrida completa programada sobre cada topología aceptada:
 EVOLITH_PARITY_FULL=true node .harness/scripts/ci/27-opa-parity-gate.mjs
 
-# Paridad del evaluador Native de TypeScript sobre packages/core-domain/test/parity-fixtures/
+# Paridad del evaluador Native de TypeScript sobre src/packages/core-domain/test/parity-fixtures/
 node .harness/scripts/ci/28-native-evaluator-parity.mjs
 
 # Suites de pruebas OPA Rego por-topología (.rego + .test.rego declarados en manifiestos aceptados)
 node .harness/scripts/ci/28-test-topology-opa.mjs
 
-# Suite de gobernanza core OPA — opa test rulesets/opa/ (esquemas excluidos)
+# Suite de gobernanza core OPA — opa test src/rulesets/opa/ (esquemas excluidos)
 node .harness/scripts/ci/29-test-core-opa.mjs
 
 # Conformidad del contrato de máquina: SemVer, sha256, pinning productor/consumidor

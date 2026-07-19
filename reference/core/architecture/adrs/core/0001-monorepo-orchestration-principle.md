@@ -1,7 +1,7 @@
 # ADR-0001: Monorepo Orchestration Principle
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-08

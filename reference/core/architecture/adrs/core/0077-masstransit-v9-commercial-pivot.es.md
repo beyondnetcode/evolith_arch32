@@ -4,7 +4,7 @@
 
 ## Estado
 
-Aprobado — Comité de Arquitectura Evolith, 2026-06-15.
+Accepted — Comité de Arquitectura Evolith, 2026-06-15.
 
 ## Fecha
 

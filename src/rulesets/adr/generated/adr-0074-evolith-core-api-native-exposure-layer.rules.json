@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0074",
   "adrTitle": "Evolith Core API Native Exposure Layer",
-  "status": "Approved — Evolith Architecture Board, 2026-06-13.",
+  "status": "Accepted — Evolith Architecture Board, 2026-06-13.",
   "date": "2026-06-13",
   "rules": [
     {

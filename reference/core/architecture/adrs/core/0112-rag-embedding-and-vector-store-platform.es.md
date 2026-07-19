@@ -3,7 +3,7 @@
 # ADR-0112: Plataforma de Embeddings y Vector Store para RAG (Qwen3-Embedding sobre pgvector)
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-07-13

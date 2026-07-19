@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0079",
   "adrTitle": "Multi-Topology Reference Corpus and Topology Manifest Contract",
-  "status": "Approved — Evolith Architecture Board, 2026-06-18.",
+  "status": "Accepted — Evolith Architecture Board, 2026-06-18.",
   "date": "2026-06-18",
   "rules": [
     {

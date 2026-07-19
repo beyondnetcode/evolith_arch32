@@ -3,7 +3,7 @@
 # ADR-0002: Protocolo de Integracion MCP para Invocacion de Herramientas de Agentes
 
 ## Status
-Aceptado
+Accepted
 
 ## Date
 2026-06-23

@@ -1,7 +1,7 @@
 # ADR-0016: Immutable Business Audit Trail and Change Tracking
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-09

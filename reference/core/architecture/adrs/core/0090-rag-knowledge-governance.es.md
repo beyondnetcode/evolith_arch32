@@ -3,7 +3,7 @@
 # ADR-0090: Estándar de Gobernanza de Conocimiento RAG
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-20

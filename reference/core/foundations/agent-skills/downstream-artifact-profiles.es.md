@@ -30,10 +30,10 @@ Los artifactKinds son blockKinds `kebab-case`, extensibles bajo Convention over 
 **Derivados por topología (conditional):**
 | topología | artifactKind | criterio |
 |---|---|---|
-| distributed-modules / microservices | `per-unit-ci-evidence` | CI independiente por módulo/servicio. |
-| microservices | `doma-implementation-check` | Un servicio ↔ un bounded context, implementado. |
-| event-driven | `event-contract-implementation` | Productores/consumidores implementan los contratos de evento declarados. |
-| agentic-ai | `agent-capability-implementation` | Capacidades de agente gobernadas implementadas tras puertos. |
+| `distributed-modules` / `microservices` | `per-unit-ci-evidence` | CI independiente por módulo/servicio. |
+| `microservices` | `doma-implementation-check` | Un servicio ↔ un bounded context, implementado. |
+| `event-driven` | `event-contract-implementation` | Productores/consumidores implementan los contratos de evento declarados. |
+| `agentic-ai` | `agent-capability-implementation` | Capacidades de agente gobernadas implementadas tras puertos. |
 
 ## 2. Calidad (Fase 4) — Gate: Quality Gate (CFR < 2% · cero defectos críticos)
 
@@ -51,11 +51,11 @@ Los artifactKinds son blockKinds `kebab-case`, extensibles bajo Convention over 
 **Derivados por topología (conditional):**
 | topología | artifactKind | criterio |
 |---|---|---|
-| serverless / edge-computing | `performance-validation` | Cold-start/latencia/costo dentro de los operational budgets. |
-| event-driven | `async-consumer-test` | Tests de consumidor/idempotencia por cada evento. |
-| data-mesh | `data-product-slo-validation` | Contratos/SLOs de data product verificados. |
-| agentic-ai | `agent-safety-validation` | Token-budget, aislamiento de sandbox, conformidad MCP verificados. |
-| microservices | `cross-service-integration-test` | Integración/e2e entre servicios en verde. |
+| `serverless` / `edge-computing` | `performance-validation` | Cold-start/latencia/costo dentro de los operational budgets. |
+| `event-driven` | `async-consumer-test` | Tests de consumidor/idempotencia por cada evento. |
+| `data-mesh` | `data-product-slo-validation` | Contratos/SLOs de data product verificados. |
+| `agentic-ai` | `agent-safety-validation` | Token-budget, aislamiento de sandbox, conformidad MCP verificados. |
+| `microservices` | `cross-service-integration-test` | Integración/e2e entre servicios en verde. |
 
 ## 3. Despliegue / Release (Fase 5) — Gate: Human Sign-Off (Production Live)
 
@@ -72,10 +72,10 @@ Los artifactKinds son blockKinds `kebab-case`, extensibles bajo Convention over 
 **Derivados por topología (conditional):**
 | topología | artifactKind | criterio |
 |---|---|---|
-| serverless / edge-computing | `runtime-budget-validation` | Cold-start/costo/latencia validados en el entorno objetivo. |
-| microservices | `progressive-rollout-plan` | Canary/blue-green por servicio. |
-| agentic-ai | `agent-operational-guardrails` | Rotación de credenciales activa, límites de sandbox aplicados, aprobación HITL cableada. |
-| data-mesh | `data-product-publication` | Data products publicados con handoff de ownership. |
+| `serverless` / `edge-computing` | `runtime-budget-validation` | Cold-start/costo/latencia validados en el entorno objetivo. |
+| `microservices` | `progressive-rollout-plan` | Canary/blue-green por servicio. |
+| `agentic-ai` | `agent-operational-guardrails` | Rotación de credenciales activa, límites de sandbox aplicados, aprobación HITL cableada. |
+| `data-mesh` | `data-product-publication` | Data products publicados con handoff de ownership. |
 
 ---
 

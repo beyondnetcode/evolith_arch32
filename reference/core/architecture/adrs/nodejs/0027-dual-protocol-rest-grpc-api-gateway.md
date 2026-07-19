@@ -1,7 +1,7 @@
 # [ADR 0027](0027-dual-protocol-rest-grpc-api-gateway.md): Dual-Protocol API Strategy (REST & gRPC)
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-09

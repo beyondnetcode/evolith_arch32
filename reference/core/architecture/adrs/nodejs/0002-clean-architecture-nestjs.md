@@ -1,7 +1,7 @@
 # [ADR 0002](0002-clean-architecture-nestjs.md): Clean Hexagonal Architecture with NestJS
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-08

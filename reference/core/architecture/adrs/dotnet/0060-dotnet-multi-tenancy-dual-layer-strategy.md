@@ -1,7 +1,8 @@
 # [ADR 0060](0060-dotnet-multi-tenancy-dual-layer-strategy.md): .NET Multi-Tenancy Dual-Layer Strategy (EF Core & SQL Server)
 
 ## 1. Status
-**Status**: Proposed
+**Status**: Accepted
+**Ratified**: 2026-07-19 by repository owner, formalizing enforcement already active via the generated ruleset `adr-dotnet-0060-net-multi-tenancy-dual-layer-strategy-ef-core-sql-server.rules.json`.
 **Date**: 2026-05-23
 **Scope**: Technology Stack - .NET Persistence & Security
 

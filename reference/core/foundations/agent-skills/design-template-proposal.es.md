@@ -23,7 +23,7 @@ Proponer proactivamente **templates de diseño** reutilizables — composiciones
 3. Producir tres templates para la misma necesidad:
    - **simple** — la composición mínima viable (bloques universales + el set derivado más pequeño);
    - **medio** — añade los bloques condicionales que la composición recomienda;
-   - **complejo** — cobertura total incl. profundidad de resiliencia/observabilidad/performance.
+   - **complejo** — cobertura total incl. profundidad de resiliencia/observabilidad/rendimiento.
 4. Preferir bloques canónicos (`core`); introducir bloques `tenant` solo cuando ningún canónico encaje.
 5. Emitir cada uno como propuesta `scope: core` (catálogo) o `scope: tenant` con `provenance.proposedBy: agent`.
 

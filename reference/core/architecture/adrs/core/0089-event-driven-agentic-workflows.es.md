@@ -3,7 +3,7 @@
 # ADR-0089: Patrón de Flujos de Trabajo Agénticos Orientados a Eventos
 
 ## Estado
-Aceptado
+Accepted
 
 ## Fecha
 2026-06-20

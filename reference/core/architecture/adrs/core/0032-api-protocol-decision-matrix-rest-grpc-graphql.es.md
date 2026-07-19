@@ -1,7 +1,7 @@
 # ADR-0032: Matriz de Selección de Protocolo de API (REST vs gRPC vs GraphQL)
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-11

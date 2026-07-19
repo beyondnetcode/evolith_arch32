@@ -8,7 +8,7 @@
 
 ### Implementación (30%)
 
-- [ ] Archivo del adaptador existe en `packages/agent-runtime/src/adapters/interaction/`
+- [ ] Archivo del adaptador existe en `src/packages/agent-runtime/src/adapters/interaction/`
 - [ ] Implementa la interfaz `InteractionAdapterPort<TInput>`
 - [ ] Declara la constante `sourceInterface` correcta
 - [ ] `toRuntimeRequest()` mapea todos los campos de entrada a `AgentRuntimeRequest`
@@ -25,7 +25,7 @@
 
 ### Integración (15%)
 
-- [ ] Exportado desde `packages/agent-runtime/src/adapters/index.ts`
+- [ ] Exportado desde `src/packages/agent-runtime/src/adapters/index.ts`
 - [ ] Registrado en el barrel con export de tipo correcto
 - [ ] Puede ser instanciado y usado en un harness de test
 

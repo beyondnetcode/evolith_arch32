@@ -3,7 +3,7 @@
 ## 1. Metadata
 * **ADR ID:** 0049
 * **Título:** Estándares de Semántica y Nomenclatura Código Limpio (E2E y Global)
-* **Estado:** Aprobado (Propuesto)
+* **Estado:** Accepted
 * **Autores:** Oficina de Arquitectura Enterprise
 * **Revisores:** Junta Arquitectónica Corporativa, Oficina del CTO
 * **Fecha:** 2026-05-13

@@ -69,7 +69,7 @@ Capture the owner-guided decisions about **how work enters Evolith Tracker**, so
 
 ## 4. Cross-Repo & Core Implications
 
-- **Core corpus additions implied:** unified entry-format schema (L-002/L-008), Gate 0 default acceptance criteria + immutable-floor designation (L-006/L-010), `rejectionCycle` policy (L-011), KDD artifact schema (L-009). Candidates for `rulesets/schema/` + rulesets, inherited by Tracker and satellites.
+- **Core corpus additions implied:** unified entry-format schema (L-002/L-008), Gate 0 default acceptance criteria + immutable-floor designation (L-006/L-010), `rejectionCycle` policy (L-011), KDD artifact schema (L-009). Candidates for `src/rulesets/schema/` + rulesets, inherited by Tracker and satellites.
 - **Strategic connection:** L-006 supplies the product requirement to close **GT-08…GT-11** (gate content/threshold validation) — the single biggest credibility gap in the current maturity assessment.
 - **New actor:** ADMIN ROOT (SaaS super-admin) — operates the overrideable layer only; does not hold floor authority (L-010).
 - **State-machine change:** the one-shot `PROMOTED | REJECTED` Intake model is replaced by an iterative, versioned, re-entrant machine (L-004/L-011).

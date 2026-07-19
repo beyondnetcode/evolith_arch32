@@ -7,7 +7,7 @@
   "adrId": "ADR-0041",
   "adrTitle": "Dual-Engine Policy Evaluation (Native + OPA)",
   "status": "Accepted",
-  "date": "",
+  "date": "2026-06-11",
   "rules": [
     {
       "id": "CORE-0041-01",
@@ -24,5 +24,6 @@
   ],
   "references": [
     "reference/core/architecture/adrs/core/0041-dual-engine-policy-evaluation.md"
-  ]
+  ],
+  "effectiveDate": "2026-06-11"
 }

@@ -1,7 +1,7 @@
 # ADR-0010: Estrategia de Arquitectura Multi-Tenancy para la Evolución SaaS
 
 ## Estado
-Aprobado
+Accepted
 
 ## Fecha
 2026-05-08

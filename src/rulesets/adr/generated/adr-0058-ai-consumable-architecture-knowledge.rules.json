@@ -7,7 +7,7 @@
   "adrId": "ADR-0058",
   "adrTitle": "AI-Consumable Architecture Knowledge",
   "status": "Accepted",
-  "date": "",
+  "date": "2026-05-27",
   "rules": [
     {
       "id": "CORE-0058-01",
@@ -23,5 +23,6 @@
   ],
   "references": [
     "reference/core/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md"
-  ]
+  ],
+  "effectiveDate": "2026-05-27"
 }

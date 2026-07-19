@@ -13,7 +13,7 @@
 
 El repositorio presenta una arquitectura de referencia corporativa con un nivel de madurez documental notable. Se destacan positivamente:
 
-- **44 ADRs formalizados y trazables**, con linkeo bidireccional entre blueprint y decisiones técnicas.
+- **133 ADRs formalizados y trazables**, con linkeo bidireccional entre blueprint y decisiones técnicas.
 - **Modelo Arquitectónico** (Hexagonal + DDD opcional + Polyglot) correctamente justificado y no impuesto.
 - **Entregas mediante método spec-driven AI-DD** optimizadas mediante flujos Spec-Driven dirigidos por Agentes de IA.
 - **IEventBusPort injectable** - es la decisión correcta; permite la transición In-Memory -> RabbitMQ -> Kafka sin tocar el dominio.
@@ -28,14 +28,14 @@ El repositorio presenta una arquitectura de referencia corporativa con un nivel 
 | :--- | :--- | :--- |
 | Diseño Hexagonal | 9/10 | Correctamente implementado; dominio sin dependencias externas |
 | Ruta de Migración a Microservicios | 6/10 | Débil en detalles concretos de extracción y punto de trigger |
-| Gobernanza de ADRs | 8/10 | 44 ADRs bien clasificados, pero faltan criterios de revisión/deprecación |
+| Gobernanza de ADRs | 8/10 | 133 ADRs bien clasificados, pero faltan criterios de revisión/deprecación |
 | Observabilidad | 8/10 | OTel + Loki + Jaeger es stack correcto; falta SLO/SLA definidos |
 | Seguridad | 8/10 | Zero-trust + RBAC/ABAC + MFA bien documentado |
 | Multi-tenancy | 9/10 | Dual-layer es el patrón de máxima confianza para SaaS |
 | Resiliencia | 4/10 | `CircuitBreakerService` envuelve `opossum` correctamente y está provisto en `app.module.ts`, pero tiene CERO inyecciones y CERO llamadas a `createBreaker` en todo `src/` -- nada está detrás de un breaker. Verificado 2026-07-18, ver [GT-560](../../control-center/gaps/gap-reference-catalog.es.md#gt-560). Nótese que el Core es un evaluador sin estado (ADR-0101), sin BD ni salidas HTTP, así que puede necesitar muy poco de esto; la nota refleja una afirmación no sustentada, no una capacidad ausente |
 | Testing Strategy | 6/10 | 70% threshold es insuficiente para dominio crítico; faltan mutation tests |
 | Debt / Risk Management | 5/10 | Solo 3 riesgos y 2 deudas documentadas; subrepresentado |
-| Stack .NET/C# | 4/10 | [ADR-0041](../../architecture/adrs/dotnet/0041-canonical-dotnet-backend-architecture.es.md) existe pero está infradesarrollado vs Node.js |
+| Stack .NET/C# | 6/10 | 12 ADRs .NET vs 21 de Node.js (medido 2026-07-19). [ADR-0041](../../architecture/adrs/dotnet/0041-canonical-dotnet-backend-architecture.es.md) se complementa con ADR-0060..0072; los gaps residuales son gestión de secretos y un ADR dedicado de configuración OTel -- ver C3 |
 
 ---
 
@@ -84,31 +84,49 @@ Phase 3 (Mesh): Each service owns its DB completely; queries cross-service via A
 
 ---
 
-### CRíTICO - C3: [ADR-0041](../../architecture/adrs/dotnet/0041-canonical-dotnet-backend-architecture.es.md) (.NET) es un Ciudadano de Segunda Clase
+### RESUELTO - C3: ".NET es un Ciudadano de Segunda Clase" — la premisa era falsa; quedan dos sub-gaps acotados
 
-**Hallazgo:** El stack Node.js tiene 14 ADRs dedicados. El stack .NET/C# tiene exactamente **1 ADR ([ADR-0041](../../architecture/adrs/dotnet/0041-canonical-dotnet-backend-architecture.es.md))**. La tabla de runtimes del blueprint lo define como "High Compute / Workers / Batch" pero no hay:
-- Patrón de proyecto canónico en C# (estructura de carpetas, configuración de DI)
-- Estrategia de comunicación .NET NestJS (solo se menciona gRPC + Protobuf en general)
-- Gestión de secretos desde OpenBao en .NET
-- Observabilidad (OTel) en .NET con configuración específica
+**Hallazgo original (se conserva para el registro):** "El stack Node.js tiene 14 ADRs dedicados. El stack .NET/C# tiene exactamente **1 ADR** ([ADR-0041](../../architecture/adrs/dotnet/0041-canonical-dotnet-backend-architecture.es.md))". Ese conteo era la premisa de toda la recomendación de remediación de más abajo.
 
-**Impacto:** Para un desarrollador C#/TypeScript, esta brecha es significativa. El equipo .NET tendrá que improvisar lo que Node.js tiene documentado como ley.
+**Corrección (medido el 2026-07-19).** La premisa es falsa. Contando archivos `NNNN-*.md` (excluyendo `.es.md` y `README.md`) bajo `reference/core/architecture/adrs/`:
 
-**Recomendaciones Inmediatas:**
+| Stack | ADRs | Afirmado por el hallazgo original |
+| :--- | ---: | ---: |
+| Core (agnóstico de runtime) | 93 | — |
+| Node.js | 21 | 14 |
+| **.NET** | **12** | **1** |
+| AI-augmented | 6 | — |
+| Android | 1 | — |
+| **Corpus total** | **133** | 44 |
 
-```csharp
-// [ADR-0041](../../architecture/adrs/dotnet/0041-canonical-dotnet-backend-architecture.es.md) debería incluir estructura canónica:
-/src
- /Domain // Entities, VOs, Domain Events (sin dependencias externas)
- /Application // Use Cases, Commands, Queries (MediatR)
- /Infrastructure // EF Core, gRPC clients, OpenBao integration
- /Api // Minimal API / Controller layer
-```
+El corpus .NET es ADR-0041 más ADR-0060, 0061, 0062, 0063, 0064, 0065, 0066, 0069, 0070, 0071 y 0072. El conteo de AI-augmented incluye `ADR-0104-Interaction-Adapter-Port.md`, un ADR real cuyo nombre de archivo no sigue la convención `NNNN-` y por tanto es invisible para globs ingenuos.
 
-ADRs pendientes para .NET:
-- [ADR-0057](../../architecture/adrs/dotnet/0071-dotnet-data-access-orm-strategy.es.md): .NET Data Access Strategy (EF Core + Dapper) — ya existe, pendiente de revisión para este gap
-- `ADR-0068: .NET gRPC Service Setup & Protobuf Contracts` — pendiente de creación
-- `ADR-0069: .NET OpenTelemetry Configuration` — pendiente de creación
+**Sub-gaps que sí están cerrados:**
+- *Patrón de proyecto canónico en C# (estructura de carpetas, configuración de DI)* — cubierto por [ADR-0041](../../architecture/adrs/dotnet/0041-canonical-dotnet-backend-architecture.es.md) (§3.A Core Configuration, §3.B Design Directives) y [ADR-0072](../../architecture/adrs/dotnet/0072-dotnet-aop-cross-cutting-concern-strategy.es.md) (cross-cutting concerns / AOP).
+- *Comunicación .NET ↔ NestJS (gRPC + Protobuf)* — cubierto por [ADR-0069](../../architecture/adrs/dotnet/0069-dotnet-grpc-service-setup-protobuf-contracts.es.md), que especifica el setup del servidor gRPC, canales gestionados por `IHttpClientFactory` y la gobernanza de contratos Protobuf.
+- *Acceso a datos* — cubierto por [ADR-0071](../../architecture/adrs/dotnet/0071-dotnet-data-access-orm-strategy.es.md) (EF Core + Dapper).
+
+**Sub-gaps que siguen realmente abiertos** (verificado por grep sobre `reference/core/architecture/adrs/dotnet/`):
+- **Gestión de secretos en .NET (OpenBao/Vault) — ABIERTO.** Ningún ADR .NET coincide con `openbao`, `vault`, `hashicorp` ni `secret manag*`. No hay historia de secretos del lado .NET.
+- **Configuración dedicada de OpenTelemetry en .NET — ABIERTO.** OTel se referencia *dentro* de [ADR-0064](../../architecture/adrs/dotnet/0064-dotnet-request-scope-observability-context.es.md) (propagación con Activity/DiagnosticSource) y [ADR-0069](../../architecture/adrs/dotnet/0069-dotnet-grpc-service-setup-protobuf-contracts.es.md) (instrumentación gRPC), pero ningún ADR especifica el pipeline OTel completo de .NET. Nótese que la propia acción del ADR-0069 — *"Create ADR-0072 for .NET OpenTelemetry Configuration"* — no se cumplió: el slot 0072 lo ocupó el ADR de estrategia AOP.
+
+**Impacto (revisado):** acotado, no sistémico. El stack .NET está documentado a aproximadamente la mitad de profundidad que Node.js por conteo de ADRs, no a 1/14. Faltan dos ADRs concretos; la caracterización de "improvisarlo todo" ya no se sostiene.
+
+> **RECOMENDACIÓN RETIRADA.** El bloque de abajo — meter la estructura canónica de proyecto dentro del ADR-0041 como si fuera el único ADR .NET, y crear `ADR-0068`/`ADR-0069` desde cero — se apoyaba en el conteo falso de "exactamente 1 ADR". El ADR-0041 ya lleva la estructura canónica y gRPC se entregó como ADR-0069. No lo ejecutes. Se preserva solo para que el razonamiento quede auditable.
+>
+> ```csharp
+> // ADR-0041 debería incluir estructura canónica:
+> /src
+>  /Domain // Entidades, VOs, Eventos de Dominio (sin dependencias externas)
+>  /Application // Use Cases, Commands, Queries (MediatR)
+>  /Infrastructure // EF Core, gRPC clients, OpenBao integration
+>  /Api // Minimal API / Controller layer
+> ```
+>
+> ADRs pendientes para .NET *(según se escribió originalmente)*:
+> - `ADR-0057`: .NET Data Access Strategy — superado, existe como ADR-0071
+> - `ADR-0068: .NET gRPC Service Setup & Protobuf Contracts` — entregado como ADR-0069
+> - `ADR-0069: .NET OpenTelemetry Configuration` — sigue abierto, pero el número está tomado; ver los dos sub-gaps abiertos arriba
 
 ---
 
@@ -300,8 +318,9 @@ app.MapGrpcService<TodoService>();
 
 ### Sprint 2 (Corto plazo)
 - [] Revisar [ADR-0057](../../architecture/adrs/dotnet/0071-dotnet-data-access-orm-strategy.es.md) — cubre ORM Strategy EF Core + Dapper; verificar si cierra el gap identificado
-- [] Crear ADR-0068: .NET gRPC Setup & Protobuf Contract Governance
-- [] Crear ADR-0069: .NET OTel Configuration
+- [x] .NET gRPC Setup & Protobuf Contract Governance — entregado como [ADR-0069](../../architecture/adrs/dotnet/0069-dotnet-grpc-service-setup-protobuf-contracts.es.md)
+- [] Crear un ADR dedicado de configuración de OpenTelemetry en .NET — sigue faltando (OTel solo aparece dentro de ADR-0064/0069)
+- [] Crear un ADR de gestión de secretos en .NET (OpenBao/Vault) — ningún ADR .NET lo cubre
 - [] Actualizar [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) con coverage thresholds por capa
 - [] Agregar ejemplo canónico de Saga a [ADR-0035](../../architecture/adrs/core/0035-distributed-saga-pattern-strategy.es.md)
 

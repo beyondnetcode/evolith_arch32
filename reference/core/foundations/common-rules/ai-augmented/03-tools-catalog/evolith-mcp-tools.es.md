@@ -4,23 +4,13 @@ Este documento cataloga todas las herramientas MCP proporcionadas por Evolith CL
 
 ## Inventario de Herramientas
 
-| Nombre | Categoría | Propósito | Mutativa |
-|--------|-----------|-----------|----------|
-| `evolith-agent-handoff` | SDLC | Crear archivos de configuración de agente | Sí |
-| `evolith-architecture-evaluate` | Arquitectura | Evaluar patrones de arquitectura | No |
-| `evolith-gate-status` | SDLC | Obtener estado de validación de gates | No |
-| `evolith-moscow-analyze` | Planificación | Ejecutar priorización MoSCoW | No |
-| `evolith-moscow-export` | Planificación | Exportar resultados MoSCoW | No |
-| `evolith-sdlc-handoff` | SDLC | Generar artefactos de handoff SDLC | Sí |
-| `evolith-validate` | Validación | Validar artefactos del proyecto | No |
-| `evolith-phase-advance` | SDLC | Proponer transición de fase | Sí |
-| `evolith-auto-fix` | Arquitectura | Auto-corregir violaciones arquitectónicas | Sí |
-| `evolith-alias` | Configuración | Gestionar aliases de comandos CLI | Sí |
-| `evolith-schema` | Validación | Generar schemas de phase-gate | Sí |
+> **Tabla obsoleta retirada (GT-445).** Esta página listaba 11 herramientas; siete de ellas (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`) **no existen en el código**. La superficie real son **47** herramientas MCP de gobernanza. El inventario autoritativo, derivado de la fuente (`src/packages/mcp-server/src/tools/`), se mantiene en la tabla **Tool Inventory** de la [versión en inglés](./evolith-mcp-tools.md#tool-inventory); no se mantiene aquí una segunda copia traducida porque derivaría de la fuente. Regenerar la tabla en español es un follow-on de GT-445.
 
 ---
 
 ## Especificaciones de Herramientas
+
+> **Subconjunto curado heredado — en proceso de ser superado.** Las especificaciones detalladas de abajo son anteriores a la superficie actual de 47 herramientas: varias documentan **nombres de herramientas obsoletos que ya no existen** (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`). La lista autoritativa y completa es la tabla **Tool Inventory** enlazada arriba. La regeneración completa de las especificaciones por herramienta desde la fuente es un follow-on (GT-445).
 
 ### evolith-agent-handoff
 

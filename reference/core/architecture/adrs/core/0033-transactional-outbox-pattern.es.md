@@ -1,7 +1,7 @@
 # ADR-0033: Patrón Transactional Outbox para Mensajería Asíncrona
 
 ## Estado
-Propuesto (Aprobado vía Roadmap de Madurez)
+Proposed (Aprobado vía Roadmap de Madurez)
 
 ## Fecha
 2026-05-11

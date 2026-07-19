@@ -1,7 +1,7 @@
 # ADR-0006: Microservices Transition via Sidecar Pattern
 
 ## Status
-Approved - Backlog (Phase 3 Milestone)
+Accepted - Backlog (Phase 3 Milestone)
 
 ## Date
 2026-05-08

@@ -14,7 +14,7 @@ flowchart LR
 
     subgraph SOURCE[" Evolith Repository (Source of Truth)"]
         direction TB
-        S1["reference/core/architecture/adrs/**/*.md\n57+ ADRs"]:::source
+        S1["reference/core/architecture/adrs/**/*.md\n133 ADRs"]:::source
         S2["reference/core/architecture/\ncanonical-patterns/**/*.md"]:::source
         S3["reference/core/sdlc/standards/\nengineering-manifesto.md"]:::source
         S4["reference/core/sdlc/glossary/glossary.md\nNaming conventions"]:::source

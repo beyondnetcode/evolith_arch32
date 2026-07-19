@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0015",
   "adrTitle": "Event-Driven Architecture (EDA) for Intra-Domain Communication",
-  "status": "Approved",
+  "status": "Accepted",
   "date": "2026-05-08",
   "rules": [
     {

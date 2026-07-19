@@ -1,7 +1,7 @@
 # [ADR 0023](0023-centralized-ums-vs-decentralized-access.md): Centralized Authorization Core Strategy
 
 ## Status
-Approved
+Accepted
 
 ## Date
 2026-05-09

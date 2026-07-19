@@ -1,7 +1,7 @@
 # ADR-0044: Estrategia de Persistencia de Seguridad Configurable (Agnosticismo vs. RLS Nativo)
 
 ## Estado
-Propuesto
+Proposed
 
 ## Fecha
 2026-05-12

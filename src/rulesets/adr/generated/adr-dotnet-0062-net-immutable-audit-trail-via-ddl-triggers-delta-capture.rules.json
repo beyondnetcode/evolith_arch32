@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0062",
   "adrTitle": ".NET Immutable Audit Trail via DDL Triggers & Delta Capture",
-  "status": "Proposed",
+  "status": "Accepted",
   "date": "2026-05-23",
   "rules": [
     {

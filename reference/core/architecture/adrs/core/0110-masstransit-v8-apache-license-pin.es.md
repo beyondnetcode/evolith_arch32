@@ -5,7 +5,7 @@
 > **Firma del agente:** Architect Agent (Winston)
 
 ## Estado
-Aprobado — **reevaluación programada antes del 2026-12-31** (ver *Disparadores de revisión*)
+Accepted — **reevaluación programada antes del 2026-12-31** (ver *Disparadores de revisión*)
 
 ## Fecha
 2026-07-09

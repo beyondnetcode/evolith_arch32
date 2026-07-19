@@ -7,15 +7,15 @@
   "adrId": "ADR-0057",
   "adrTitle": "Architecture Intelligence Catalog",
   "status": "Accepted",
-  "date": "",
+  "date": "2026-05-27",
   "rules": [
     {
       "id": "CORE-0057-01",
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0057: Architecture Intelligence Catalog",
-      "description": "Design and implementation SHOULD honor the decision recorded in ADR-0057 (core track). ADR decision: Evolith adopts an Architecture Intelligence Catalog under: text reference/knowledge/architecture intelligence/ This catalog is used to: curate architectural ideas analyze tradeoffs classify adoption maturity document pattern cards connect external inspiration with Evolith governance prepare selected knowledge for AI a… Manual attestation required — not machine-verifiable.",
-      "statement": "ADR decision: Evolith adopts an Architecture Intelligence Catalog under: text reference/knowledge/architecture intelligence/ This catalog is used to: curate architectural ideas analyze tradeoffs classify adoption maturity document pattern cards connect external inspiration with Evolith governance prepare selected knowledge for AI a…",
+      "description": "Design and implementation SHOULD honor the decision recorded in ADR-0057 (core track). ADR decision: Evolith adopts an Architecture Intelligence Catalog under: text product/research/architecture intelligence/ This catalog is used to: curate architectural ideas analyze tradeoffs classify adoption maturity document pattern cards connect external inspiration with Evolith governance prepare selected knowledge for AI assi… Manual attestation required — not machine-verifiable.",
+      "statement": "ADR decision: Evolith adopts an Architecture Intelligence Catalog under: text product/research/architecture intelligence/ This catalog is used to: curate architectural ideas analyze tradeoffs classify adoption maturity document pattern cards connect external inspiration with Evolith governance prepare selected knowledge for AI assi…",
       "rationale": "Derived from ADR-0057 \"Decision\" section. No machine-verifiable signals detected; treated as an advisory design decision.",
       "blocking": false,
       "enforcement": "advisory"
@@ -23,5 +23,6 @@
   ],
   "references": [
     "reference/core/architecture/adrs/core/0057-architecture-intelligence-catalog.md"
-  ]
+  ],
+  "effectiveDate": "2026-05-27"
 }

@@ -18,8 +18,8 @@ Evalúa la madurez de todos los adaptadores de interacción contra el contrato `
 
 | Entrada | Fuente |
 |---------|--------|
-| Implementaciones de adaptadores | `packages/agent-runtime/src/adapters/interaction/` |
-| Contrato de puerto | `packages/agent-runtime/src/domain/ports/interaction-adapter.port.ts` |
+| Implementaciones de adaptadores | `src/packages/agent-runtime/src/adapters/interaction/` |
+| Contrato de puerto | `src/packages/agent-runtime/src/domain/ports/interaction-adapter.port.ts` |
 | Definiciones de agentes | `.bmad-core/agents/*.md` |
 | Manifiesto de skills | `.bmad-core/skills/manifest.json` |
 

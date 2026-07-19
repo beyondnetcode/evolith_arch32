@@ -7,7 +7,7 @@
   "adrId": "ADR-0086",
   "adrTitle": "Agentic AI Telemetry & Cost Control Standard",
   "status": "Accepted",
-  "date": "",
+  "date": "2026-06-20",
   "rules": [
     {
       "id": "CORE-0086-01",
@@ -23,5 +23,6 @@
   ],
   "references": [
     "reference/core/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.md"
-  ]
+  ],
+  "effectiveDate": "2026-06-20"
 }

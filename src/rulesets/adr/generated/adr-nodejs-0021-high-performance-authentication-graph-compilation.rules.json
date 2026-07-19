@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "adrId": "ADR-0021",
   "adrTitle": "High-Performance Authentication Graph Compilation",
-  "status": "Approved",
+  "status": "Accepted",
   "date": "2026-05-08",
   "rules": [
     {

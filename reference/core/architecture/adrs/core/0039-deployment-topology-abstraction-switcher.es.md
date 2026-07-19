@@ -1,7 +1,7 @@
 # ADR-0039: Abstracción de Topología de Despliegue y Conmutador de Entorno
 
 ## 1. Estado
-**Estado**: Aprobado 
+**Estado**: Accepted
 **Fecha**: 2026-05-11 
 **Decisores**: Junta de Arquitectura Empresarial 
 **Consultados**: Equipo DevOps, Consejo de Seguridad 

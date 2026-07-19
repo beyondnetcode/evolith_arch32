@@ -10,8 +10,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const MANIFEST_ROOT = path.join('reference', 'architecture', 'topologies');
-const SATELLITE_CONTRACT = path.join('rulesets', 'governance', 'satellite-contracts.rules.json');
+const MANIFEST_ROOT = path.join('reference', 'core', 'architecture', 'topologies');
+const SATELLITE_CONTRACT = path.join('src', 'rulesets', 'governance', 'satellite-contracts.rules.json');
 
 function walk(directory, predicate) {
   if (!fs.existsSync(directory)) return [];

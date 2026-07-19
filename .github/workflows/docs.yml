@@ -91,6 +91,9 @@ jobs:
       - name: Check surface parity matrix
         run: node .harness/scripts/ci/24-check-surface-parity.mjs
 
+      - name: Validate topology rule coverage
+        run: node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs
+
       # GT-563: the steps below REPORT, they do not validate. This job runs no tests and
       # produces no coverage data, and COVERAGE_REPORT.md is untracked, so on a PR the
       # dashboard --check can only ever report "COVERAGE_REPORT.md is missing" and the

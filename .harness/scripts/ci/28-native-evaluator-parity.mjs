@@ -15,12 +15,16 @@ import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const ROOT = process.cwd();
-const FIXTURES_DIR = 'packages/core-domain/test/parity-fixtures';
+const FIXTURES_DIR = 'src/packages/core-domain/test/parity-fixtures';
 
 function loadFixtures() {
   const dir = resolve(ROOT, FIXTURES_DIR);
   if (!existsSync(dir)) {
-    return [];
+    throw new Error(
+      `Parity fixture directory does not exist: ${FIXTURES_DIR}\n` +
+      `Refusing to report parity over a corpus that is not there -- ` +
+      `a dead path must never be reported as "no drift".`
+    );
   }
   return readdirSync(dir)
     .filter(f => f.endsWith('.fixture.json'))
@@ -58,9 +62,12 @@ function main() {
   };
 
   if (fixtures.length === 0) {
-    console.log('   ℹ️  No parity fixtures found. Gate passes with empty report.');
     console.log(`NATIVE_PARITY ${JSON.stringify(report)}`);
-    process.exit(0);
+    throw new Error(
+      `Scanned ${FIXTURES_DIR} and found zero *.fixture.json parity fixtures.\n` +
+      `A zero-fixture scan must never be reported as "parity holds" -- ` +
+      `that is a vacuous pass and it hid this gate's dead path for weeks.`
+    );
   }
 
   console.log(`   ${totalRules} rules across ${domains.length} domain(s), ${totalScenarios} scenario(s).`);
@@ -69,7 +76,9 @@ function main() {
   process.exit(0);
 }
 
-main().catch(err => {
+try {
+  main();
+} catch (err) {
   console.error('❌ Native evaluator parity gate failed:', err.message);
   process.exit(1);
-});
+}

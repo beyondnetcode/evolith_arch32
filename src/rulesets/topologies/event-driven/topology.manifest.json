@@ -92,6 +92,43 @@
           "POST /topologies/{id}/validate"
         ]
       }
+    },
+    "designProfile": {
+      "required": [
+        {
+          "artifactKind": "event-contract-catalog",
+          "criteria": "Versioned, schema-validated event contracts."
+        },
+        {
+          "artifactKind": "async-payload-schema-set",
+          "criteria": "Schemas for every async payload (JSON Schema/Protobuf)."
+        }
+      ],
+      "conditional": [
+        {
+          "artifactKind": "transactional-outbox-plan",
+          "condition": "composed-with:progressive-axis",
+          "criteria": "Atomic state/event consistency at async scale."
+        }
+      ]
+    },
+    "phaseProfiles": {
+      "construction": {
+        "conditional": [
+          {
+            "artifactKind": "event-contract-implementation",
+            "criteria": "Producers/consumers implement the declared event contracts."
+          }
+        ]
+      },
+      "quality": {
+        "conditional": [
+          {
+            "artifactKind": "async-consumer-test",
+            "criteria": "Consumer/idempotency tests for every event."
+          }
+        ]
+      }
     }
   },
   "businessBoundary": {

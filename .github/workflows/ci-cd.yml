@@ -227,15 +227,25 @@ jobs:
       # SDK against the BUILT core-domain, so both must exist before the run.
       - name: Build workspace dependencies
         run: |
+          # ORDER MATTERS. The contract suite compiles core-api's module chain and
+          # the CLI's commands, so it needs every package those import, built in
+          # dependency order: core must precede mcp (mcp imports it), and
+          # core-domain must precede everything (its subpath exports, e.g.
+          # `common/request-context`, only resolve once built).
+          #
+          # Derived empirically, not guessed: every dist was moved aside to
+          # reproduce a clean CI checkout, then packages were added one at a time
+          # until `npm run test:contract` went 43/43. The previous list stopped at
+          # core-domain + agent-runtime, which is why this job had never once
+          # passed since it was wired.
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
-          npm run build --workspace @beyondnet/evolith-agent-runtime
-          # core-api's core-domain.module.ts imports NodeFileSystemProvider,
-          # NestLoggerProvider and YamlConfigParserProvider from infra-providers,
-          # and the contract suite compiles that module. Without this build the
-          # job dies with "Cannot find module '@beyondnet/evolith-infra-providers'".
-          # Proven causally, not guessed: removing the local dist reproduces the
-          # CI error exactly; restoring it turns the suite 43/43 green.
           npm run build --workspace @beyondnet/evolith-infra-providers
+          npm run build --workspace @beyondnet/evolith-core
+          npm run build --workspace @beyondnet/evolith-agent-runtime
+          # sdk BEFORE mcp: mcp's agent.tools.ts imports @beyondnet/evolith-sdk.
+          npm run build --workspace @beyondnet/evolith-sdk
+          npm run build --workspace @beyondnet/evolith-mcp
       - name: Run contract tests
         run: npm run test:contract
 

@@ -6964,3 +6964,26 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Dependencias:** Fija el contrato restaurado por [GT-564](#gt-564); el arreglo de resolución de rulesets en `e25804dc` es un follow-on de este gap, no una dependencia aparte.
 - **Cierre (2026-07-18, commit `2db2306c`):** Los tipos del SDK se verifican ahora contra una respuesta de un core-api real arrancado en vez de contra un mock de sí mismos, en dos capas cuya mitad de ejecución se deriva del tipo que impone, y la suite corre en CI. _Commits de follow-on:_ `1875f725` (cableado en CI) y `e25804dc` (resolución de rulesets por contenido, que retiró el workaround de symlink).
 - **Estado:** `COMPLETADO`
+
+#### GT-566
+
+**Título:** Deduplicar el corpus de topologías que GT-329 declaró unificado (supersede a GT-329)
+
+- **Propósito:** Lograr de verdad lo que GT-329 afirmó: retirar el corpus de topologías duplicado para que cada topología exista en un solo sitio. GT-329 NO se reabre ni se edita — su registro se conserva como evidencia de que su cierre fue infundado.
+- **Evidencia:** `d2b7d2b7`, el commit de implementación de GT-329, tiene un `--diff-filter=D` VACÍO: copió las cinco topologías avanzadas y no borró nada, y se cerró como COMPLETADO contra el criterio "todas las topologías en una única ubicación canónica". Diez lápidas `RELOCATED.md` afirmaban que "todo el tooling, los scripts de CI y los validadores leen ya de la ruta canónica" mientras `generate-rule-coverage`, `28-test-topology-opa`, `17-validate-knowledge-intake` y `sync-wiki` leían el directorio que llamaban histórico. Las lápidas citaban además una ruta pre-refactor (`rulesets/topologies/`, sin `src/`).
+- **Impacto:** Las dos copias derivaron. Solo los manifiestos de `reference/` llevaban `spec.designProfile` y `spec.phaseProfiles` (añadidos en `3fe3be23`, 2026-07-04), y `TopologyCatalogService` deduplica por primera ocurrencia con `src/rulesets/topologies` sondeado primero — así que el gobierno de fase de diseño de ADR-0104 / GT-425 evaluó contra perfiles indefinidos en cinco de ocho topologías durante dos semanas, sin error y sin aviso. La conclusión falsa quedó luego registrada como hecho verificado en `phase-artifacts.command.spec.ts`, que afirmaba "NINGUNA topología del corpus real define `phaseProfiles`" — enumerando exactamente las cinco sombreadas.
+- **Riesgo:** Reconciliar contra una fuente no validada. `validate-topology-manifests.mjs` arrastraba una ruta muerta sin `core/` y validaba solo 5 de 13 manifiestos, así que eso se arregló primero (`07064035`).
+- **Archivos afectados:** `reference/core/architecture/topologies/{ai,data,execution,integration}/**` (retirados), `src/rulesets/topologies/*/topology.manifest.json`, `.harness/scripts/ci/17-validate-knowledge-intake.mjs`, dos ADRs, el README de topologías, 21 fichas de patrones, dos specs E2E.
+- **Componente:** `Governance` · **Dimensión:** Integridad del corpus · **Tipo:** backend
+- **Criticidad:** P2 · **Complejidad:** M
+- **Arreglo propuesto:** Reparar primero las referencias muertas propias de los manifiestos de `src/`, luego retirar las copias duplicadas de `reference/` y repuntar cada consumidor que las leía.
+- **Criterios de aceptación:**
+  - [x] Cada topología existe en exactamente una ubicación (180 archivos duplicados retirados).
+  - [x] Radio de impacto medido por simulación antes de borrar — se rompió exactamente un consumidor, que ahora lee ambas raíces.
+  - [x] Los manifiestos de `src/` resuelven todas las referencias que declaran (46 referencias muertas reparadas).
+  - [x] 8 manifiestos validan, el catálogo resuelve las 8 con `designProfile`, 11 guardas en exit 0, 2892 tests en verde.
+  - [~] RAÍZ canónica única — explícitamente fuera de alcance, ver abajo.
+- **Fuera de alcance, deliberadamente:** Colapsar la raíz dual. Las tres topologías del eje progresivo permanecen bajo `reference/`, donde están sus corpus completos; tanto `src/rulesets/topologies/README.md` como `.harness/scripts/lib/paths.mjs` documentan esa separación como intencional. Deduplicar y ubicación única son objetivos distintos, y solo se decidió el primero. Los registros históricos de `control-center/` conservan las rutas viejas a propósito — reescribirlos borraría la evidencia que este gap existe para preservar.
+- **Dependencias:** [`GT-329`](#gt-329) (superseded, no reabierto).
+- **Estado:** `COMPLETADO`
+

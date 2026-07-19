@@ -7059,3 +7059,26 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Dependencies:** Pins the contract restored by [GT-564](#gt-564); the ruleset-resolution fix in `e25804dc` is a follow-on of this gap, not a separate dependency.
 - **Closure (2026-07-18, commit `2db2306c`):** The SDK's types are now checked against a response from a real booted core-api instead of against a mock of themselves, in two layers whose runtime half is derived from the type it enforces, and the suite runs in CI. _Follow-on commits:_ `1875f725` (CI wiring) and `e25804dc` (ruleset resolution by content, which retired the symlink workaround).
 - **Status:** `DONE`
+
+#### GT-566
+
+**Title:** Deduplicate the topology corpus that GT-329 declared unified (supersedes GT-329)
+
+- **Purpose:** Actually achieve what GT-329 claimed: remove the duplicated topology corpus so each topology exists in exactly one place. GT-329 is NOT reopened or edited — its record stands as evidence that its closure was unsound.
+- **Evidence:** `d2b7d2b7`, GT-329's implementing commit, has an EMPTY `--diff-filter=D`: it copied the five advanced topologies and deleted nothing, then closed DONE against "all topologies under a single canonical location". Ten `RELOCATED.md` tombstones asserted that "all tooling, CI scripts, and validators now read from the canonical path" while `generate-rule-coverage`, `28-test-topology-opa`, `17-validate-knowledge-intake` and `sync-wiki` read the directory they called historical. The tombstones also named a pre-refactor path (`rulesets/topologies/`, missing `src/`).
+- **Impact:** The two copies diverged. Only the `reference/` manifests carried `spec.designProfile` and `spec.phaseProfiles` (added `3fe3be23`, 2026-07-04), and `TopologyCatalogService` de-dupes first-occurrence-wins with `src/rulesets/topologies` probed first — so ADR-0104 / GT-425 design-phase governance evaluated against undefined profiles for five of eight topologies for two weeks, with no error and no warning. The false conclusion was then recorded as verified fact in `phase-artifacts.command.spec.ts`, which asserted "NO topology in the real corpus defines `phaseProfiles`" — listing exactly the five shadowed ones.
+- **Risk:** Reconciling against an unvalidated source. `validate-topology-manifests.mjs` carried a `core/`-less dead path and validated only 5 of 13 manifests, so this was fixed first (`07064035`).
+- **Affected files:** `reference/core/architecture/topologies/{ai,data,execution,integration}/**` (removed), `src/rulesets/topologies/*/topology.manifest.json`, `.harness/scripts/ci/17-validate-knowledge-intake.mjs`, two ADRs, the topologies README, 21 pattern fichas, two E2E specs.
+- **Component:** `Governance` · **Dimension:** Corpus integrity · **Type:** backend
+- **Criticality:** P2 · **Complexity:** M
+- **Proposed fix:** Repair the `src/` manifests' own dead references first, then remove the duplicated `reference/` copies and repoint every consumer that read them.
+- **Acceptance criteria:**
+  - [x] Every topology exists in exactly one location (180 duplicated files removed).
+  - [x] Blast radius measured by simulation before deletion — exactly one consumer broke, and now reads both roots.
+  - [x] `src/` manifests resolve every reference they declare (46 dead refs repaired).
+  - [x] 8 manifests validate, catalogue resolves all 8 with a `designProfile`, 11 guards exit 0, 2892 tests green.
+  - [~] Single canonical ROOT — explicitly out of scope, see below.
+- **Out of scope, deliberately:** Collapsing the dual root. The three progressive-axis topologies remain under `reference/` where their full corpora live; `src/rulesets/topologies/README.md` and `.harness/scripts/lib/paths.mjs` both document that split as intentional. Deduplication and single-location are different goals, and only the first was decided. Historical records in `control-center/` keep the old paths on purpose — rewriting them would erase the evidence this gap exists to preserve.
+- **Dependencies:** [`GT-329`](#gt-329) (superseded, not reopened).
+- **Status:** `DONE`
+

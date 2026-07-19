@@ -161,13 +161,13 @@ flowchart TB
   end
   subgraph CORE["repo · evolith_arch32 (Evolith Core · Constitución)"]
     subgraph EXP["Capa de Exposición del Core · ADR-0074"]
-      API["apps/core-api<br/>REST · 8 controllers"]
-      MCP["mcp-server<br/>MCP · 47 tools · 9 resources"]
-      CLI["evolith-cli<br/>CLI · 20 commands"]
+      API["apps/core-api<br/>REST · 11 controllers"]
+      MCP["mcp-server<br/>MCP · 47 tools · 11 resources"]
+      CLI["evolith-cli<br/>CLI · 31 commands"]
     end
     subgraph RT["Agent Runtime · @beyondnet/evolith-agent-runtime"]
-      ARS["AgentRuntimeService<br/>12 puertos · 30 adaptadores"]
-      IA["InteractionAdapters<br/>CLI · Chat · Hermes · MCP · External"]
+      ARS["AgentRuntimeService<br/>16 puertos · 38 adaptadores"]
+      IA["InteractionAdapters<br/>CLI Command · CLI Chat · Hermes · MCP · OpenCode · External"]
     end
     DOM["@beyondnet/evolith-core-domain<br/>EvaluationOrchestrator · 10 Kinds<br/>rulesets JSON · OPA/WASM · schemas"]
     API --> DOM
@@ -203,11 +203,11 @@ flowchart TB
 
 | Interfaz | Consumidor | Propósito |
 |---|---|---|
-| **API REST** | UI del Tracker, CI/CD e integraciones empresariales | 8 controllers, ~20 endpoints: evaluación, gates, fases, arquitectura, proyectos,.satélites, caché, salud |
-| **MCP HTTP/SSE** | LLMs y agentes autónomos | 47 tools, 9 resources, 8 prompts: evaluación, validación, agentes, ADRs, MoSCoW, drift, configuración |
-| **CLI** | Roles de ingeniería y producto | 20 comandos: validate, evaluate, gate, drift, scaffold, ADR lifecycle, agents, chat, satellite, sdlc |
-| **Agent Runtime** | Agentes IA, chatboxes, triggers externos | 12 puertos hexagonales, 5 interaction adapters (CLI, Chat, Hermes, MCP, External), orquestación gobernada con OPA + HITL |
-| **Webhook / Bus de Eventos** | Sistemas internos y externos | Propagar comandos, evidencias, cambios de estado y resultados de gates |
+| **API REST** | UI del Tracker, CI/CD e integraciones empresariales | 11 controllers: evaluación, gates, fases, arquitectura, proyectos, satélites, capabilities, composable-validate, reference, metrics, salud |
+| **MCP HTTP/SSE** | LLMs y agentes autónomos | 47 tools, 11 resources, 8 prompts: evaluación, validación, agentes, ADRs, MoSCoW, drift, configuración |
+| **CLI** | Roles de ingeniería y producto | 31 comandos: validate, evaluate, gate, drift, scaffold, ADR lifecycle, agents, chat, satellite, sdlc |
+| **Agent Runtime** | Agentes IA, chatboxes, triggers externos | 16 puertos hexagonales, 38 adaptadores, 6 interaction adapters (CLI Command, CLI Chat, Hermes, MCP, OpenCode, External), orquestación gobernada con OPA + HITL |
+| **Webhook / Bus de Eventos** — *no implementado, roadmap* | *(ninguno todavía)* | **Hoy no se entrega ninguna superficie de webhook ni de bus de eventos.** Evolith no expone endpoint de webhook entrante ni emite tráfico saliente de webhooks o eventos. El único código relacionado es `src/packages/infra-providers/src/webhook.adapter.ts`, un adaptador **solo-saliente** sin ninguna superficie conectada. Ver [Ecosistema y Comunicación](../../products/ecosystem-and-communication.es.md). Propagar comandos, evidencias, cambios de estado y resultados de gates de forma reactiva sigue siendo un ítem de roadmap. |
 
 ---
 

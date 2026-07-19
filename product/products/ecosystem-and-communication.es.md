@@ -13,23 +13,24 @@ La dirección de dependencia es unidireccional e innegociable: **los productos c
 **Objetivos:**
 
 - Hacer visible y auditable la dirección de dependencia de fundación a producto.
-- Mapear las superficies de comunicación reales (REST `/api/v1`, CLI, MCP `stdio` + HTTP, archivos estructurados) sin inventar canales.
+- Mapear las superficies de comunicación reales (REST `/api/v1`, CLI, MCP `stdio` + HTTP, Agent Runtime API `/v1/agent`, archivos estructurados) sin inventar canales.
 - Separar el modelo de **fases del SDLC** (de idea a producto) del modelo de **fuente de verdad** (docs humanas vs. contratos estructurados validables).
 
 ## 1. Ecosistema: la fundación Core y la Product Suite
 
-Evolith Core (`packages/core`, `core-domain`, `infra-providers`, `sdk-client`, `mcp-tools`) es la fundación de la plataforma: las reglas universales más el motor de gobernanza del SDLC. Cada producto de la Suite consume Core y expone una porción de él a través de una superficie específica. **Core API** (`apps/core-api`) es la capa de exposición REST del dominio; **Evolith CLI** (`sdk/cli`) es la superficie de terminal y además incluye los **MCP Services** (`packages/mcp-server`); **Tracker** es el producto de gobernanza en runtime, en etapa de diseño, que consume Core estrictamente como cliente externo; **UMS Reference** es un satélite open-source que *adopta* Core en lugar de implementar la plataforma.
+Evolith Core (`packages/core`, `core-domain`, `contracts`, `infra-providers`, `sdk-client`, más los paquetes `mcp-server` y `agent-runtime`) es la fundación de la plataforma: las reglas universales más el motor de gobernanza del SDLC. Cada producto de la Suite consume Core y expone una porción de él a través de una superficie específica. **Core API** (`apps/core-api`) es la capa de exposición REST del dominio; **Evolith CLI** (`sdk/cli`) es la superficie de terminal y además incluye los **MCP Services** (`packages/mcp-server`); la **Agent Runtime API** (`apps/agent-runtime-api`) es la superficie HTTP sobre `packages/agent-runtime`; **Tracker** es el producto de gobernanza en runtime, en etapa de diseño, que consume Core estrictamente como cliente externo; **UMS Reference** es un satélite open-source que *adopta* Core en lugar de implementar la plataforma.
 
 ```mermaid
 graph TD
     subgraph Foundation["Evolith Core (fundación)"]
-        CORE["packages/core · core-domain<br/>infra-providers · sdk-client · mcp-tools<br/>reglas universales + motor de gobernanza SDLC"]
+        CORE["packages/core · core-domain · contracts<br/>infra-providers · sdk-client<br/>mcp-server · agent-runtime<br/>reglas universales + motor de gobernanza SDLC"]
     end
 
     subgraph Suite["Evolith Product Suite (consume Core)"]
         API["Core API<br/>apps/core-api · REST /api/v1"]
         CLI["Evolith CLI<br/>sdk/cli · @beyondnet/evolith-cli"]
         MCP["MCP Services<br/>packages/mcp-server · stdio + HTTP"]
+        ART["Agent Runtime API<br/>apps/agent-runtime-api · REST /v1/agent"]
         TRK["Evolith Tracker<br/>gobernanza runtime (en diseño)"]
     end
 
@@ -40,6 +41,7 @@ graph TD
     API -->|consume| CORE
     CLI -->|consume| CORE
     MCP -->|consume| CORE
+    ART -->|consume| CORE
     CLI -->|incluye| MCP
     TRK -->|cliente externo| API
     UMS -.->|adopta rulesets / ADRs| CORE
@@ -47,16 +49,19 @@ graph TD
     CORE -.->|la evidencia de UMS informa ADRs| UMS
 ```
 
-**Notas.** Core es la fuente autoritativa de decisiones, estándares y patrones; los productos de la Suite lo implementan y no pueden redefinirlo. Core API, Evolith CLI y MCP Services se enlazan directamente con el dominio Core. Los MCP Services se incluyen **dentro** de `@beyondnet/evolith-cli` (sin instalación aparte) y además corren como servicio HTTP fail-closed. Tracker está documentado como **en etapa de diseño**: alcanza Core solo como cliente HTTP externo de la capa de exposición Core API (ADR-0074 / ADR-0075), nunca redefiniendo Core. UMS es *evidencia, no política* — adopta rulesets y ADRs de Core, y su evidencia puede informar nuevos ADRs de Core, pero nunca se vuelve autoritativa.
+**Notas.** Core es la fuente autoritativa de decisiones, estándares y patrones; los productos de la Suite lo implementan y no pueden redefinirlo. Core API, Evolith CLI, MCP Services y la Agent Runtime API se enlazan directamente con el dominio Core. Los MCP Services se incluyen **dentro** de `@beyondnet/evolith-cli` (sin instalación aparte) y además corren como servicio HTTP fail-closed. Tracker está documentado como **en etapa de diseño**: alcanza Core solo como cliente HTTP externo de la capa de exposición Core API (ADR-0074 / ADR-0075), nunca redefiniendo Core. UMS es *evidencia, no política* — adopta rulesets y ADRs de Core, y su evidencia puede informar nuevos ADRs de Core, pero nunca se vuelve autoritativa.
 
 ## 2. Cómo se comunican los productos
 
-Existen cuatro superficies de comunicación reales, todas resolviendo a través de los mismos contratos Core y el envelope de salida compartido ADR-0073:
+Existen cinco superficies de comunicación reales, todas resolviendo a través de los mismos contratos Core y el envelope de salida compartido ADR-0073:
 
 - **REST `/api/v1`** — Core API es REST-only (sin GraphQL, sin SSE), versionada por URI bajo `/api/v1`, con un envelope plano ADR-0073 (`success`, `data`, `meta` con `command` / `executedAt` / `durationMs` / `correlationId` / `context` / `schemaVersion`) y problem details RFC 9457 para errores. `/health` y `/metrics` son neutrales de versión.
 - **CLI** — `evolith-cli` ejecuta comandos de gobernanza, validación y SDLC desde la terminal contra un repositorio satélite.
 - **MCP** — acceso gobernado a herramientas de IA sobre `stdio` (JSON-RPC 2.0) y Streamable HTTP (fail-closed, API-key).
+- **Agent Runtime API `/v1/agent`** — la superficie HTTP para orquestación gobernada de agentes (`apps/agent-runtime-api`, NestJS, guard fail-closed de API-key/JWT): `POST handle`, `POST converse`, `POST hermes`, `POST stream` (SSE), `GET skills`, más `/health` y `/metrics` neutrales de versión.
 - **Archivos estructurados** — schemas, manifiestos (`evolith.yaml`), rulesets y OPA `.rego`/`policy.wasm` son los contratos validables por máquina que cada superficie resuelve.
+
+**Agent Runtime API.** `apps/agent-runtime-api` es la exposición HTTP NestJS sobre `packages/agent-runtime`, la capa agéntica hexagonal definida por el [ADR-0102](../../reference/core/architecture/adrs/core/0102-evolith-agent-runtime.es.md). Donde Core API expone *evaluación* y MCP expone *herramientas*, la Agent Runtime API expone *orquestación gobernada*: enruta una interacción a través de los puertos y adaptadores del runtime — motor de agentes, validación de políticas (OPA), aprobaciones (HITL), memoria, conocimiento, skills y trazado al tracker — de modo que la acción de un agente queda sujeta a las mismas reglas de Core que cualquier otra superficie. Su controller se monta en `@Controller('v1/agent')` y sus rutas son `handle` (acción gobernada única), `converse` (multi-turno), `hermes` (punto de entrada del chatbox Hermes), `stream` (stream SSE de tokens/eventos) y `skills` (listado del registro). Se entrega como su propio contenedor (`src/apps/agent-runtime-api/Dockerfile`) con su propio chart de Helm (`product/infra/helm/evolith-agent-runtime/`) y corre en `evolithruntime.beyondnet.cloud`. Como toda otra superficie, *consume* Core y nunca lo redefine.
 
 ```mermaid
 graph LR
@@ -70,17 +75,21 @@ graph LR
     CI -->|HTTP| API
     AGENT -->|stdio JSON-RPC| MCP["MCP Services"]
     AGENT -->|Streamable HTTP<br/>API-key, fail-closed| MCP
+    AGENT -->|HTTP POST /v1/agent<br/>handle · converse · hermes · skills| ART["Agent Runtime API<br/>apps/agent-runtime-api"]
+    AGENT -->|SSE POST /v1/agent/stream| ART
 
     CLI -->|lee / escribe| FILES["Archivos estructurados<br/>evolith.yaml · schemas<br/>rulesets · OPA .rego/.wasm"]
     API -->|evalúa| FILES
     MCP -->|evalúa| FILES
+    ART -->|evalúa| FILES
 
     CLI -->|envelope ADR-0073| CORE["Dominio Evolith Core"]
     API -->|envelope ADR-0073| CORE
     MCP -->|envelope ADR-0073| CORE
+    ART -->|puertos y adaptadores ADR-0102| CORE
 ```
 
-**Sync vs. async.** Todas las superficies actuales son **síncronas request/response**: las llamadas REST `/api/v1`, las invocaciones de la CLI y las llamadas a herramientas MCP por `stdio`/HTTP devuelven cada una un único envelope. **No hay bus de Eventos ni entrega por webhooks** en las superficies entregadas, y Core API no expone stream SSE — la integración asíncrona y orientada a eventos es una *opción* de topología (`event-driven`), no un canal actual del ecosistema. La única noción "async" en alcance es el propio SDLC: la evidencia se acumula a lo largo de las fases con el tiempo, pero cada llamada individual a una superficie es síncrona.
+**Sync vs. async.** Todas las superficies de **gobernanza** son **síncronas request/response**: las llamadas REST `/api/v1`, las invocaciones de la CLI y las llamadas a herramientas MCP por `stdio`/HTTP devuelven cada una un único envelope, y Core API no expone stream SSE. El único canal de streaming del ecosistema es el `POST /v1/agent/stream` de la Agent Runtime API, declarado con `@Sse` de NestJS: el cliente abre una única petición HTTP y el servidor le empuja una secuencia ordenada de Server-Sent Events sobre esa misma conexión a medida que avanza la orquestación, cerrando el stream al terminar la ejecución. Sigue siendo **iniciado por el cliente y unidireccional** (servidor → cliente, sobre la propia petición del cliente): no es un canal pub/sub y no entrega nada a un tercero. **No hay bus de eventos ni entrega por webhooks** en las superficies entregadas: nada se suscribe y nada se empuja a un endpoint externo. La integración asíncrona y orientada a eventos sigue siendo una *opción* de topología (`event-driven`), no un canal actual del ecosistema. Más allá de eso, la única noción "async" en alcance es el propio SDLC: la evidencia se acumula a lo largo de las fases con el tiempo, pero cada llamada individual de gobernanza es síncrona.
 
 ## 3. De la idea al producto a través de las fases del SDLC
 

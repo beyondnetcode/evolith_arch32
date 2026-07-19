@@ -92,9 +92,9 @@ Evolith se distribuye como una suite de productos coordinados sobre una base com
 | **[MCP Services](product/products/mcp-services/README.es.md)**        | Gobernanza como contexto en vivo para LLMs y agentes de IA (47 tools, 9 resources, 8 prompts)                                |
 | **[Agent Runtime](reference/core/architecture/foundations/README.es.md)**       | Capa de mediación agéntica — orquesta el Core mediante Puertos y Adaptadores; Hermes es uno de los adaptadores reemplazables |
 | **[Evolith Tracker](product/products/evolith-tracker/README.es.md)**     | Gobernanza del ciclo de vida del negocio — fases, propietarios, financiación y ROI                                           |
-| **[Rulesets](rulesets/README.es.md)**            | Reglas de aplicación legibles por máquina por topología                                                                      |
-| **[Políticas OPA](rulesets/opa/README.es.md)**       | Controles de política granulares integrados en el pipeline                                                                   |
-| **[Schemas y Manifests](rulesets/schema/README.es.md)** | Contratos estructurados para artefactos y definiciones de topología                                                          |
+| **[Rulesets](src/rulesets/README.es.md)**            | Reglas de aplicación legibles por máquina por topología                                                                      |
+| **[Políticas OPA](src/rulesets/opa/README.es.md)**       | Controles de política granulares integrados en el pipeline                                                                   |
+| **[Schemas y Manifests](src/rulesets/schema/README.es.md)** | Contratos estructurados para artefactos y definiciones de topología                                                          |
 
 ---
 

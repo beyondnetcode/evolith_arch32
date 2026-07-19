@@ -1,0 +1,62 @@
+{
+  "id": "PAT-0002",
+  "name": "Contract Testing",
+  "aka": [
+    "Consumer-Driven Contract Testing",
+    "Pact Testing"
+  ],
+  "kind": "pattern",
+  "category": "contracts",
+  "status": "accepted",
+  "problem": "A provider can satisfy its own tests and still break every consumer, because nothing in the provider's pipeline knows what consumers actually depend on. The break is discovered in integration, after deployment.",
+  "forces": [
+    "Integration environments detect breakage late and expensively; unit tests detect it not at all.",
+    "Consumers must express their expectations without forcing the provider to run consumer test suites.",
+    "Contract coverage must include asynchronous events, not only synchronous calls."
+  ],
+  "solution": "Every inter-service contract, synchronous and asynchronous alike, has contract tests that validate backward compatibility before merge. Contract tests run in CI on every change, and a deployment that breaks a published contract is rejected.",
+  "appliesTo": [
+    {
+      "topology": "microservices",
+      "applicability": "required",
+      "guidance": "Applies to synchronous gRPC/REST and to asynchronous event contracts alike; validated before merge. Enforced by MS-R05."
+    },
+    {
+      "topology": "distributed-modules",
+      "applicability": "recommended",
+      "guidance": "CI verifies contract backward compatibility on every change to a module interface."
+    },
+    {
+      "topology": "event-driven",
+      "applicability": "recommended",
+      "guidance": "Event schemas are the contract; backward compatibility is separately enforced by ED-R06."
+    },
+    {
+      "topology": "modular-monolith",
+      "applicability": "optional",
+      "guidance": "Cross-module contracts are validated in CI, but a single deployment unit removes the version-skew risk contract testing targets."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "requires",
+      "target": "PAT-0004",
+      "note": "There is nothing to test until the contract is explicit and versioned."
+    }
+  ],
+  "governedBy": [],
+  "enforcedBy": [
+    {
+      "ruleId": "MS-R05",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/progressive-axis/microservices/microservices.rules.json",
+      "statement": "All inter-service contracts (synchronous gRPC/REST and asynchronous events) MUST have contract tests (Pact or equivalent) that validate backward compatibility before merge."
+    }
+  ],
+  "sources": [
+    {
+      "href": "reference/core/architecture/topologies/progressive-axis/microservices/patterns.md",
+      "note": "Contract Testing section."
+    }
+  ]
+}

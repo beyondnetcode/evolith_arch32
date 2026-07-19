@@ -3,6 +3,7 @@
 **Type:** Canonical Pattern — .NET (C#)  
 **Status:** Accepted  
 **Related ADR:** [ADR-0066: .NET Lightweight HTTP Idempotency](../../adrs/dotnet/0066-dotnet-lightweight-http-idempotency.md)
+**Implements:** [PAT-0017: Idempotent Consumer](../pat/pat-0017-idempotent-consumer.md)  
 
 ---
 

@@ -1,0 +1,84 @@
+{
+  "id": "PAT-0013",
+  "name": "Strangler Fig Preparation",
+  "aka": [
+    "Extraction Readiness",
+    "Migration-Ready Modularity"
+  ],
+  "kind": "pattern",
+  "category": "delivery",
+  "status": "accepted",
+  "problem": "Extracting a module from a monolith is a rewrite whenever the module shares in-memory state, has no interface boundary, or cannot have its schema separated. The decision to extract then arrives years after the code that made it impossible.",
+  "forces": [
+    "Preparing for an extraction that may never happen is speculative work with real present cost.",
+    "Readiness is only credible if it is measured continuously, not asserted at migration time.",
+    "The score must gate a phase, otherwise it is a report nobody reads."
+  ],
+  "solution": "Modules are structured so they can be surgically extracted without a rewrite: every module exposes a well-defined API boundary, modules share no in-memory state or static variables, each module's schema can be migrated to a standalone database, and modules publish domain events that an extracted service can subscribe to. Extraction readiness is scored continuously and the score gates the design phase.",
+  "appliesTo": [
+    {
+      "topology": "modular-monolith",
+      "applicability": "required",
+      "guidance": "The satellite tracks an extraction readiness score that must be at least 70% to pass the Phase 2 Design gate when a distributed-modules step is planned. Enforced by MM-R07."
+    },
+    {
+      "topology": "distributed-modules",
+      "applicability": "required",
+      "guidance": "The same score is re-evaluated against microservices-specific criteria and must be at least 80%. Enforced by DM-R08."
+    },
+    {
+      "topology": "microservices",
+      "applicability": "not-applicable",
+      "guidance": "The extraction has already happened; the score no longer gates anything."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "requires",
+      "target": "PAT-0012",
+      "note": "A module whose schema is not separable cannot reach a passing readiness score."
+    },
+    {
+      "type": "requires",
+      "target": "PAT-0010",
+      "note": "The well-defined API boundary the score measures is the module's port surface."
+    }
+  ],
+  "governedBy": [
+    {
+      "adr": "ADR-0045",
+      "track": "core",
+      "title": "Microservice Extraction Readiness Criteria",
+      "href": "../../adrs/core/0045-microservice-extraction-readiness-criteria.md",
+      "verification": "verified",
+      "verifiedOn": "2026-07-19"
+    }
+  ],
+  "enforcedBy": [
+    {
+      "ruleId": "MM-R07",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
+      "statement": "Satellite MUST track and maintain extraction readiness score per ADR-0045. Score MUST be >= 70% to pass Phase 2 Design gate when F2 is planned.",
+      "threshold": ">= 70%"
+    },
+    {
+      "ruleId": "DM-R08",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json",
+      "statement": "Satellite MUST track extraction readiness per ADR-0045 with F3-specific criteria. Score MUST be >= 80% to pass Phase 2 Design gate when F3 is planned.",
+      "threshold": ">= 80%"
+    },
+    {
+      "ruleId": "CORE-0045-01",
+      "engine": "adr-ruleset",
+      "ruleset": "src/rulesets/adr/generated/adr-0045-microservice-extraction-readiness-criteria.rules.json"
+    }
+  ],
+  "sources": [
+    {
+      "href": "reference/core/architecture/topologies/progressive-axis/modular-monolith/patterns.md",
+      "note": "Strangler Fig Preparation section."
+    }
+  ]
+}

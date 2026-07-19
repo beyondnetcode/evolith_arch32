@@ -3,6 +3,7 @@
 **Tipo:** Patrón Canónico — .NET (C#)  
 **Estado:** Aceptado  
 **ADR relacionado:** [ADR-0066: Idempotencia HTTP Ligera en .NET](../../adrs/dotnet/0066-dotnet-lightweight-http-idempotency.es.md)
+**Implementa:** [PAT-0017: Consumidor Idempotente](../pat/pat-0017-idempotent-consumer.es.md)  
 
 ---
 

@@ -1,0 +1,326 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/pattern.schema.json",
+  "title": "Evolith Canonical Architectural Pattern (PAT)",
+  "description": "JSON Schema for validating PAT-NNNN records under reference/core/architecture/patterns/pat/. A PAT is a runtime-agnostic architectural pattern or anti-pattern: it states the norm (problem, forces, solution), where it applies per topology, which existing rule IDs enforce it, which ADRs govern it (with an explicit verification status, because ADR citations in the prose corpus are frequently wrong), and which runtime-specific Canonical Patterns (CP-NN) implement it. Implementation tutorials are deliberately NOT part of the norm: they are referenced through implementationGuide.",
+  "type": "object",
+  "required": ["id", "name", "kind", "category", "status", "problem", "forces", "solution", "appliesTo", "enforcedBy"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^PAT-\\d{4}$",
+      "description": "Stable canonical pattern identifier, for example PAT-0001. Distinct from the CP-NN namespace, which identifies runtime-specific implementations."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Canonical, runtime-agnostic pattern name."
+    },
+    "aka": {
+      "type": "array",
+      "description": "Alternative names the pattern is known by across the corpus and the wider literature. Used to reconcile divergent naming between topology guides.",
+      "items": { "type": "string", "minLength": 2 },
+      "uniqueItems": true
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["pattern", "anti-pattern"],
+      "description": "Whether the record prescribes a solution (pattern) or prohibits a practice (anti-pattern). Anti-patterns MUST additionally supply whyProhibited and requiredCorrection."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "data-ownership",
+        "contracts",
+        "resilience",
+        "integration",
+        "governance",
+        "structure",
+        "observability",
+        "security",
+        "ai-safety",
+        "delivery"
+      ],
+      "description": "Primary concern the pattern addresses."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "proposed", "accepted", "deprecated", "superseded"],
+      "description": "Governance status of the pattern record."
+    },
+    "problem": {
+      "type": "string",
+      "minLength": 20,
+      "description": "The failure mode the pattern exists to prevent. Normative prose only; no implementation detail."
+    },
+    "forces": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Competing pressures that make the problem non-trivial. Each entry is one force.",
+      "items": { "type": "string", "minLength": 10 }
+    },
+    "solution": {
+      "type": "string",
+      "minLength": 20,
+      "description": "The invariant the pattern imposes, stated normatively and runtime-agnostically. This is the NORM. Step-by-step guidance, code, and platform choices belong in implementationGuide, never here."
+    },
+    "whyProhibited": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Anti-patterns only: why the practice is prohibited."
+    },
+    "requiredCorrection": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Anti-patterns only: the mandated replacement practice."
+    },
+    "implementationGuide": {
+      "type": "object",
+      "description": "Pointer to extended, non-normative implementation guidance. Deliberately a reference rather than inline prose: long tutorials embedded in a norm cause the catalogue to inherit unreviewed, sometimes defective sample code.",
+      "required": ["href"],
+      "additionalProperties": false,
+      "properties": {
+        "href": {
+          "type": "string",
+          "minLength": 3,
+          "description": "Relative path to the guidance document."
+        },
+        "summary": {
+          "type": "string",
+          "description": "One-line description of what the linked guidance covers."
+        },
+        "normative": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the linked guidance carries normative weight. Defaults to false; guidance is advisory unless a rule ID enforces it."
+        },
+        "caveats": {
+          "type": "array",
+          "description": "Known defects or divergences in the linked guidance that reviewers must not propagate.",
+          "items": { "type": "string", "minLength": 5 }
+        }
+      }
+    },
+    "appliesTo": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Topologies in which the pattern applies, each with its own guidance. This replaces per-topology applicability tables embedded in individual topology guides, which drift from the topology profiles they describe.",
+      "items": {
+        "type": "object",
+        "required": ["topology", "applicability", "guidance"],
+        "additionalProperties": false,
+        "properties": {
+          "topology": {
+            "type": "string",
+            "enum": [
+              "modular-monolith",
+              "distributed-modules",
+              "microservices",
+              "event-driven",
+              "serverless",
+              "edge-computing",
+              "data-mesh",
+              "agentic-ai"
+            ],
+            "description": "Topology identifier, matching the topology manifest metadata.id."
+          },
+          "applicability": {
+            "type": "string",
+            "enum": ["required", "recommended", "optional", "not-applicable"],
+            "description": "Strength of the pattern's applicability in this topology."
+          },
+          "guidance": {
+            "type": "string",
+            "minLength": 10,
+            "description": "How the pattern is realised in this topology specifically."
+          }
+        }
+      }
+    },
+    "variants": {
+      "type": "array",
+      "description": "Named realisations of the same invariant at a different granularity or scope, for example Schema-per-Domain and Database-per-Service.",
+      "items": {
+        "type": "object",
+        "required": ["name", "scope", "invariant"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 3 },
+          "scope": {
+            "type": "string",
+            "enum": ["module", "bounded-context", "service", "domain", "product", "cluster"],
+            "description": "Granularity at which this variant applies the invariant."
+          },
+          "invariant": {
+            "type": "string",
+            "minLength": 10,
+            "description": "The invariant restated at this granularity."
+          },
+          "patternRef": {
+            "type": "string",
+            "pattern": "^PAT-\\d{4}$",
+            "description": "PAT that carries this variant as its own record, when one exists."
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "description": "Typed links to other canonical patterns.",
+      "items": {
+        "type": "object",
+        "required": ["type", "target"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["complements", "requires", "conflictsWith", "variantOf", "supersedes"],
+            "description": "Nature of the relationship."
+          },
+          "target": {
+            "type": "string",
+            "pattern": "^PAT-\\d{4}$",
+            "description": "The related canonical pattern."
+          },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "governedBy": {
+      "type": "array",
+      "description": "ADRs that govern the pattern. Every entry carries an explicit verification status: citations in the prose corpus were audited and a majority pointed at ADRs whose recorded decision does not cover the cited claim, so an unverified citation MUST NOT be treated as governance.",
+      "items": {
+        "type": "object",
+        "required": ["adr", "verification"],
+        "additionalProperties": false,
+        "properties": {
+          "adr": {
+            "type": "string",
+            "pattern": "^ADR-\\d{4}$",
+            "description": "ADR identifier."
+          },
+          "track": {
+            "type": "string",
+            "enum": ["core", "nodejs", "dotnet", "android", "ai-augmented"],
+            "description": "ADR track the identifier belongs to. ADR numbers are only unique within a track."
+          },
+          "title": {
+            "type": "string",
+            "description": "Recorded ADR title, copied from the ADR heading, not paraphrased from the citing document."
+          },
+          "href": {
+            "type": "string",
+            "description": "Relative path to the ADR file."
+          },
+          "verification": {
+            "type": "string",
+            "enum": ["verified", "asserted", "refuted"],
+            "description": "verified: the ADR file was read and its decision covers this pattern. asserted: the corpus claims the link but it has not been confirmed. refuted: the ADR exists but its recorded decision does not support the claim."
+          },
+          "verifiedOn": {
+            "type": "string",
+            "format": "date",
+            "description": "Date the verification was performed."
+          },
+          "note": {
+            "type": "string",
+            "description": "Discrepancy detail, for example a title the citing document renders differently from the ADR itself."
+          }
+        }
+      }
+    },
+    "enforcedBy": {
+      "type": "array",
+      "description": "Existing rule identifiers that already enforce this pattern. This is the field that converts a descriptive catalogue entry into a governed one: a pattern with a non-empty enforcedBy is machine-checkable today.",
+      "items": {
+        "type": "object",
+        "required": ["ruleId", "engine"],
+        "additionalProperties": false,
+        "properties": {
+          "ruleId": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9-]*-?[A-Z]*\\d{2}(-\\d{2})?$",
+            "description": "Rule identifier exactly as declared in its ruleset, for example MS-R06, ED-R02, HXA-01, ACL-01, CORE-0011-01."
+          },
+          "engine": {
+            "type": "string",
+            "enum": ["topology-ruleset", "adr-ruleset", "acl-ruleset", "cross-cutting-ruleset", "opa", "ci-guard"],
+            "description": "Which enforcement surface owns the rule."
+          },
+          "ruleset": {
+            "type": "string",
+            "description": "Relative path to the ruleset file declaring the rule."
+          },
+          "statement": {
+            "type": "string",
+            "description": "The rule's own normative statement, quoted from the ruleset."
+          },
+          "threshold": {
+            "type": "string",
+            "description": "Numeric gate the rule imposes, when it imposes one, for example '>= 70%'."
+          }
+        }
+      }
+    },
+    "implementations": {
+      "type": "array",
+      "description": "Runtime-specific Canonical Patterns implementing this PAT. A PAT may have zero implementations; a CP implements at most one PAT.",
+      "items": {
+        "type": "object",
+        "required": ["id", "runtime", "href"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^CP-\\d{2}$",
+            "description": "Canonical Pattern identifier."
+          },
+          "runtime": {
+            "type": "string",
+            "enum": ["dotnet", "nodejs", "android", "python", "java", "go"],
+            "description": "Runtime ecosystem the implementation targets."
+          },
+          "href": {
+            "type": "string",
+            "description": "Relative path to the CP document."
+          }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "description": "Documents the record's content was taken from, so the norm can be traced back to the prose it generalises.",
+      "items": {
+        "type": "object",
+        "required": ["href"],
+        "additionalProperties": false,
+        "properties": {
+          "href": { "type": "string", "minLength": 3 },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "kind": { "const": "anti-pattern" } },
+        "required": ["kind"]
+      },
+      "then": {
+        "required": ["whyProhibited", "requiredCorrection"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "kind": { "const": "pattern" } },
+        "required": ["kind"]
+      },
+      "then": {
+        "not": { "required": ["whyProhibited"] }
+      }
+    }
+  ]
+}

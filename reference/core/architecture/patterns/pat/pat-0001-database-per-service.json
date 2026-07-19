@@ -1,0 +1,98 @@
+{
+  "id": "PAT-0001",
+  "name": "Database per Service",
+  "aka": [
+    "No Shared Persistence",
+    "Service Owns Its Data"
+  ],
+  "kind": "pattern",
+  "category": "data-ownership",
+  "status": "accepted",
+  "problem": "Services that share a database couple their release cycles: one team's schema migration breaks another team's service at runtime, and the dependency is invisible to contract review because it never crosses an API.",
+  "forces": [
+    "Independent deployability pulls data apart; join convenience pulls it together.",
+    "Reading another service's tables is always cheaper in the short term than publishing an interface.",
+    "Denormalised copies cost storage and introduce staleness, but they are the price of ownership."
+  ],
+  "solution": "Each service owns its data store exclusively. No service may read or write another service's database directly. Cross-service data access goes through published APIs or events.",
+  "appliesTo": [
+    {
+      "topology": "microservices",
+      "applicability": "required",
+      "guidance": "Each service owns its data store exclusively; no shared databases and no cross-service table access. Enforced by MS-R06."
+    },
+    {
+      "topology": "distributed-modules",
+      "applicability": "required",
+      "guidance": "No module queries another module's persistence layer; access flows through the owning module's published interface. Enforced by DM-R03."
+    },
+    {
+      "topology": "modular-monolith",
+      "applicability": "recommended",
+      "guidance": "Applied at schema rather than instance granularity — see the Schema-per-Domain variant in PAT-0012."
+    },
+    {
+      "topology": "data-mesh",
+      "applicability": "required",
+      "guidance": "Each data product's storage is owned by exactly one domain; ownership is never shared."
+    }
+  ],
+  "variants": [
+    {
+      "name": "Schema-per-Domain",
+      "scope": "bounded-context",
+      "invariant": "A bounded context owns its schema exclusively; foreign keys across module schemas are prohibited.",
+      "patternRef": "PAT-0012",
+      "notes": "Same invariant — nobody touches another owner's persistence — applied at schema granularity inside a single deployment unit."
+    },
+    {
+      "name": "Database-per-Service",
+      "scope": "service",
+      "invariant": "A service owns its database instance exclusively.",
+      "patternRef": "PAT-0001"
+    }
+  ],
+  "relationships": [
+    {
+      "type": "complements",
+      "target": "PAT-0004",
+      "note": "Published API contracts are the sanctioned replacement for direct table access."
+    },
+    {
+      "type": "complements",
+      "target": "PAT-0003",
+      "note": "The outbox is how an owner publishes its data changes without giving up ownership."
+    }
+  ],
+  "governedBy": [
+    {
+      "adr": "ADR-0076",
+      "track": "core",
+      "title": "Domain-Oriented Microservice Architecture (DOMA)",
+      "href": "../../adrs/core/0076-domain-oriented-microservice-architecture.md",
+      "verification": "verified",
+      "verifiedOn": "2026-07-19",
+      "note": "The microservices patterns guide cites this ADR as 'Domain-oriented data ownership'; the recorded title is 'Domain-Oriented Microservice Architecture (DOMA)'. The decision does cover domain data ownership, but the label in the citing document is not the ADR's own."
+    }
+  ],
+  "enforcedBy": [
+    {
+      "ruleId": "MS-R06",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/progressive-axis/microservices/microservices.rules.json",
+      "statement": "Each service owns its data store exclusively. No shared databases, no cross-service table access, no data leakage through APIs."
+    },
+    {
+      "ruleId": "DM-R03",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json",
+      "statement": "No module can directly query another module's persistence layer. All data access goes through the owning module's published interface."
+    }
+  ],
+  "sources": [
+    {
+      "href": "reference/core/architecture/topologies/progressive-axis/microservices/patterns.md",
+      "note": "Database per Service section."
+    }
+  ]
+}

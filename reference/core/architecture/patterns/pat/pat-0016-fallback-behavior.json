@@ -1,0 +1,56 @@
+{
+  "id": "PAT-0016",
+  "name": "Fallback Behavior",
+  "aka": [
+    "Graceful Degradation"
+  ],
+  "kind": "pattern",
+  "category": "resilience",
+  "status": "accepted",
+  "problem": "A call whose only failure path is to propagate the error converts every downstream outage into a full outage of the caller, even when a degraded but useful response was available.",
+  "forces": [
+    "A stale or partial answer may be worse than no answer for some operations and better for most.",
+    "Fallbacks hide outages from users and therefore must be observable to operators.",
+    "Defining the degraded response is a product decision, not only an engineering one."
+  ],
+  "solution": "Every call to an external or downstream component has a defined behaviour for when that component is unavailable. Graceful degradation is required: the caller returns a degraded but defined response rather than propagating the failure.",
+  "appliesTo": [
+    {
+      "topology": "microservices",
+      "applicability": "required",
+      "guidance": "All inter-service calls have defined fallback behaviour when the downstream service is unavailable. Enforced by MS-R04."
+    },
+    {
+      "topology": "distributed-modules",
+      "applicability": "recommended",
+      "guidance": "Pairs with the circuit breaker required by DM-R07: the fallback defines what an open breaker returns."
+    },
+    {
+      "topology": "edge-computing",
+      "applicability": "recommended",
+      "guidance": "Disconnected operation is the fallback path, not an exceptional one."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "complements",
+      "target": "PAT-0014",
+      "note": "The breaker decides when to stop calling; the fallback decides what to return instead."
+    }
+  ],
+  "governedBy": [],
+  "enforcedBy": [
+    {
+      "ruleId": "MS-R04",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/progressive-axis/microservices/microservices.rules.json",
+      "statement": "All inter-service calls MUST have defined fallback behavior when the downstream service is unavailable. Graceful degradation is required."
+    }
+  ],
+  "sources": [
+    {
+      "href": "src/rulesets/topologies/progressive-axis/microservices/microservices.rules.json",
+      "note": "MS-R04 rule statement, the only description of this pattern in the corpus."
+    }
+  ]
+}

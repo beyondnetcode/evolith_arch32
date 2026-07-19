@@ -1,0 +1,52 @@
+{
+  "id": "PAT-0009",
+  "name": "Discovery and Registration",
+  "aka": [
+    "Data Catalog Registration",
+    "Discoverability"
+  ],
+  "kind": "pattern",
+  "category": "governance",
+  "status": "accepted",
+  "problem": "A published asset nobody can find is rebuilt by every domain that needs it, and an asset used without a catalogue entry has no recorded owner to contact when it fails.",
+  "forces": [
+    "Registration must be a publication gate, not a post-hoc documentation chore.",
+    "Draft assets must be excluded from the index without blocking their development.",
+    "Catalogue metadata rots unless registration is enforced rather than encouraged."
+  ],
+  "solution": "Every published asset registers in a central discovery index with owner, description, schema, classification, SLOs, contact information, and consumption instructions. Registration is a prerequisite for publication. Unregistered assets are invisible to consumers and must not be used for cross-domain sharing; draft assets are excluded from the index.",
+  "appliesTo": [
+    {
+      "topology": "data-mesh",
+      "applicability": "required",
+      "guidance": "data-mesh.config.json declares hasDiscoveryRegistration=true; registration precedes publication. Enforced by DAM-R09."
+    },
+    {
+      "topology": "microservices",
+      "applicability": "recommended",
+      "guidance": "The runtime analogue is the service registry with health-checked instances."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "requires",
+      "target": "PAT-0005",
+      "note": "What is registered is a product, with an owner and an SLA."
+    }
+  ],
+  "governedBy": [],
+  "enforcedBy": [
+    {
+      "ruleId": "DAM-R09",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/data-mesh/data-mesh.rules.json",
+      "statement": "All data products SHOULD register in a central data catalog (hasDiscoveryRegistration=true) with owner, description, schema, SLO, and consumption instructions."
+    }
+  ],
+  "sources": [
+    {
+      "href": "reference/core/architecture/topologies/data/data-mesh/patterns.md",
+      "note": "Discovery and Registration section."
+    }
+  ]
+}

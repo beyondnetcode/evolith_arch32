@@ -1,0 +1,75 @@
+{
+  "id": "PAT-0005",
+  "name": "Data as a Product",
+  "aka": [
+    "Data Product"
+  ],
+  "kind": "pattern",
+  "category": "governance",
+  "status": "accepted",
+  "problem": "Data shared as ad-hoc extracts and views has no owner, no service level, and no lifecycle. Consumers build on it, it changes without notice, and there is nobody accountable for the breakage.",
+  "forces": [
+    "Product-grade data costs more to publish than an extract, and the cost is borne by the producer while the benefit accrues to consumers.",
+    "Discoverability and trustworthiness are properties of the surrounding platform, not of the dataset.",
+    "Draft data must be excluded from consumption without blocking domain experimentation."
+  ],
+  "solution": "Data products are first-class architectural entities with explicit ownership, SLAs, schemas, and lifecycle management. They are managed assets, not ad-hoc extracts or views. Each product exposes a stable interface defined by its schema and must be discoverable, addressable, and trustworthy.",
+  "appliesTo": [
+    {
+      "topology": "data-mesh",
+      "applicability": "required",
+      "guidance": "The satellite declares isDataProduct=true in data-mesh.config.json; products in draft status are excluded from the discovery index. Enforced by DAM-R01."
+    },
+    {
+      "topology": "microservices",
+      "applicability": "recommended",
+      "guidance": "A service publishing analytical data to other domains publishes it as a product, not as a database export."
+    },
+    {
+      "topology": "distributed-modules",
+      "applicability": "optional",
+      "guidance": "Applies where a module's data is consumed beyond its own bounded context."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "requires",
+      "target": "PAT-0006",
+      "note": "A product without a data contract has no stable interface."
+    },
+    {
+      "type": "requires",
+      "target": "PAT-0009",
+      "note": "Discovery registration is a prerequisite for publication."
+    },
+    {
+      "type": "complements",
+      "target": "PAT-0007",
+      "note": "Domain ownership is what federated governance federates to."
+    }
+  ],
+  "governedBy": [
+    {
+      "adr": "ADR-0084",
+      "track": "core",
+      "title": "Data Mesh and Data as a Product",
+      "href": "../../adrs/core/0084-data-mesh-data-products.md",
+      "verification": "verified",
+      "verifiedOn": "2026-07-19"
+    }
+  ],
+  "enforcedBy": [
+    {
+      "ruleId": "DAM-R01",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/data-mesh/data-mesh.rules.json",
+      "statement": "A Data Mesh satellite MUST provide data-mesh.config.json and declare isDataProduct=true."
+    }
+  ],
+  "sources": [
+    {
+      "href": "reference/core/architecture/topologies/data/data-mesh/patterns.md",
+      "note": "Data as a Product and Domain Ownership sections."
+    }
+  ]
+}

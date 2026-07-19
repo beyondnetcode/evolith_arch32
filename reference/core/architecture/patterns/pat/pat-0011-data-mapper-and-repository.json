@@ -1,0 +1,57 @@
+{
+  "id": "PAT-0011",
+  "name": "Data Mapper and Repository",
+  "aka": [
+    "Repository Pattern",
+    "Pure Domain Model"
+  ],
+  "kind": "pattern",
+  "category": "structure",
+  "status": "accepted",
+  "problem": "An Active Record entity is simultaneously a business object and a row. Its business rules cannot be tested without a database, and every persistence concern — lazy loading, change tracking, connection lifetime — leaks into domain reasoning.",
+  "forces": [
+    "Active Record is faster to write for simple CRUD and slower to change for real domains.",
+    "Explicit mapping duplicates field lists; the duplication is the cost of the boundary.",
+    "Transaction boundaries must live somewhere, and the domain is the wrong place."
+  ],
+  "solution": "Domain entities are pure business objects with no persistence awareness and no reference to persistence frameworks. Repository interfaces are defined in the domain layer and implemented in infrastructure. Data mappers translate between domain entities and persistence models. Transaction boundaries are managed at the module level. Active Record is prohibited.",
+  "appliesTo": [
+    {
+      "topology": "modular-monolith",
+      "applicability": "required",
+      "guidance": "Applied per module; the repository interface lives in the module's domain layer and the implementation in its infrastructure layer. Enforced by MM-R12."
+    },
+    {
+      "topology": "distributed-modules",
+      "applicability": "recommended",
+      "guidance": "Unchanged by the split; the repository implementation may become a remote client."
+    },
+    {
+      "topology": "microservices",
+      "applicability": "recommended",
+      "guidance": "Keeps the service's domain independently testable from its data store."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "variantOf",
+      "target": "PAT-0010",
+      "note": "The persistence-specific case of the ports-and-adapters boundary."
+    }
+  ],
+  "governedBy": [],
+  "enforcedBy": [
+    {
+      "ruleId": "MM-R12",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
+      "statement": "Domain entities SHOULD NOT reference persistence frameworks. Use Data Mapper pattern to keep domain model pure and persistence-agnostic."
+    }
+  ],
+  "sources": [
+    {
+      "href": "reference/core/architecture/topologies/progressive-axis/modular-monolith/patterns.md",
+      "note": "Data Mapper & Repository Pattern section."
+    }
+  ]
+}

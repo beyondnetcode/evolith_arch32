@@ -1,0 +1,46 @@
+{
+  "id": "PAT-0008",
+  "name": "Consumption Contracts",
+  "aka": [
+    "Consumer Registration"
+  ],
+  "kind": "pattern",
+  "category": "contracts",
+  "status": "accepted",
+  "problem": "A producer that does not know who consumes its product, which fields they depend on, or at what volume, cannot assess the blast radius of any change and cannot notify anyone before making it.",
+  "forces": [
+    "Registration is friction imposed on consumers to benefit producers.",
+    "Unregistered consumption is invisible and therefore unbreakable-by-accident only until it breaks.",
+    "Access control and consumption registration answer the same question and should not diverge."
+  ],
+  "solution": "Consumers register explicit consumption contracts declaring the fields, freshness SLO, and volume expectations they depend on, plus their query patterns, access scope, and usage constraints. Unregistered consumers may be blocked from accessing products pending contract registration.",
+  "appliesTo": [
+    {
+      "topology": "data-mesh",
+      "applicability": "required",
+      "guidance": "data-mesh.config.json declares hasConsumptionContracts=true; consumption contracts complement production contracts. Enforced by DAM-R06."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "complements",
+      "target": "PAT-0006",
+      "note": "The producer side of the same agreement."
+    }
+  ],
+  "governedBy": [],
+  "enforcedBy": [
+    {
+      "ruleId": "DAM-R06",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/data-mesh/data-mesh.rules.json",
+      "statement": "All data product consumers MUST register explicit consumption contracts (hasConsumptionContracts=true), declaring the fields, freshness SLO, and volume expectations they depend on."
+    }
+  ],
+  "sources": [
+    {
+      "href": "reference/core/architecture/topologies/data/data-mesh/patterns.md",
+      "note": "Consumption Contracts section."
+    }
+  ]
+}

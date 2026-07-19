@@ -1,0 +1,96 @@
+{
+  "id": "PAT-0017",
+  "name": "Idempotent Consumer",
+  "aka": [
+    "Deduplicated Consumer",
+    "Exactly-Once Effect"
+  ],
+  "kind": "pattern",
+  "category": "resilience",
+  "status": "accepted",
+  "problem": "Every reliable delivery mechanism available — broker redelivery, outbox relay, client retry, saga compensation — is at-least-once. A consumer that assumes single delivery produces duplicate aggregates or inconsistent state the first time a failover occurs.",
+  "forces": [
+    "Exactly-once delivery is not achievable; exactly-once effect is, and only at the consumer.",
+    "Deduplication state must be durable for at least as long as the redelivery window.",
+    "The deduplication key must be supplied by the producer or derived deterministically, never generated on receipt."
+  ],
+  "solution": "Every consumer implements idempotency using a deduplicated message key. The key identifies the logical operation, not the delivery attempt. A repeated key produces the recorded outcome without re-executing the handler.",
+  "appliesTo": [
+    {
+      "topology": "event-driven",
+      "applicability": "required",
+      "guidance": "Consumers declare hasIdempotencyKey=true in event-driven.config.json. Enforced by ED-R05."
+    },
+    {
+      "topology": "distributed-modules",
+      "applicability": "required",
+      "guidance": "Event consumers must handle duplicate delivery gracefully; cross-module ordering is only best-effort."
+    },
+    {
+      "topology": "microservices",
+      "applicability": "required",
+      "guidance": "Applies to mutating HTTP endpoints as well as to event handlers, since retries reach both."
+    },
+    {
+      "topology": "serverless",
+      "applicability": "required",
+      "guidance": "Managed event sources retry on any non-success result, making duplicate invocation routine."
+    }
+  ],
+  "variants": [
+    {
+      "name": "Idempotency-key middleware",
+      "scope": "service",
+      "invariant": "A client-supplied key is recorded with its response and replayed verbatim on repeat, without invoking the handler.",
+      "notes": "Realised for .NET in CP-03."
+    },
+    {
+      "name": "Consumer-side deduplication store",
+      "scope": "service",
+      "invariant": "Processed message keys are persisted and checked before handling."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "requires",
+      "target": "PAT-0003",
+      "note": "The outbox is the most common source of the duplicates this pattern absorbs."
+    }
+  ],
+  "governedBy": [
+    {
+      "adr": "ADR-0036",
+      "track": "core",
+      "title": "Message Bus Delivery & Flow Control Strategy",
+      "href": "../../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.md",
+      "verification": "verified",
+      "verifiedOn": "2026-07-19",
+      "note": "Section 6 of the ADR records an 'Idempotent Consumer Mandate'."
+    }
+  ],
+  "enforcedBy": [
+    {
+      "ruleId": "ED-R05",
+      "engine": "topology-ruleset",
+      "ruleset": "src/rulesets/topologies/event-driven/event-driven.rules.json",
+      "statement": "All event consumers MUST implement idempotency using a deduplicated message key (hasIdempotencyKey=true in event-driven.config.json)."
+    }
+  ],
+  "implementations": [
+    {
+      "id": "CP-03",
+      "runtime": "dotnet",
+      "href": "../dotnet/cp-03-lightweight-http-idempotency.md"
+    }
+  ],
+  "sources": [
+    {
+      "href": "src/rulesets/topologies/event-driven/event-driven.rules.json",
+      "note": "ED-R05 rule statement."
+    },
+    {
+      "href": "reference/core/architecture/topologies/progressive-axis/distributed-modules/patterns.md",
+      "note": "Event Choreography section, idempotent consumers bullet."
+    }
+  ]
+}

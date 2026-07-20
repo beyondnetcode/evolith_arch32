@@ -1,4 +1,10 @@
-# Index of research
+# Índice de research
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
+> **Navegación Bilingüe:** [English Version](./README.md)
 
+## Archivos
+
+* [`minimal-apis-vs-controllers-analysis.es.md`](./minimal-apis-vs-controllers-analysis.es.md)
+
+---
+[Volver al Nivel Superior](../README.es.md)

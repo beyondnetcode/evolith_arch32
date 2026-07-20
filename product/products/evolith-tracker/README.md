@@ -120,4 +120,8 @@ Contribution standards for this repository (clone/dev-setup, test commands, bran
 
 ---
 
+Detailed architecture for this product lives in [`architecture/`](./architecture/README.md).
+
+---
+
 [Back to Product-Specific Designs](../README.md)

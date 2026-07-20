@@ -1,6 +1,10 @@
 # Index of research
 
-* [minimal-apis-vs-controllers-analysis](./minimal-apis-vs-controllers-analysis.md)
+> **Bilingual Navigation:** [Versión en Español](./README.es.md)
+
+## Files
+
+* [`minimal-apis-vs-controllers-analysis.md`](./minimal-apis-vs-controllers-analysis.md)
 
 ---
-[Back to Upper Level](../../../README.md)
+[Back to Upper Level](../README.md)

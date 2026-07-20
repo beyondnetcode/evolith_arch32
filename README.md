@@ -196,6 +196,7 @@ Evolith CLI ships **25 commands** and is configured via **`evolith.yaml`**. Full
 | Area | Link |
 |---|---|
 | Core constitution | [Evolith Core hub](./reference/core/README.md) |
+| Product corpus | [Product hub](./product/README.md) |
 | Interface how-to (CLI / MCP / REST) | [Interface guides](./reference/core/interfaces/README.md) |
 | Master Architecture | [C4 Master Architecture](./reference/core/architecture/demos/C4-MASTER-ARCHITECTURE.md) |
 | SDLC governance | [SDLC Governance Center](./reference/core/sdlc/README.md) |

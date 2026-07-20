@@ -215,6 +215,18 @@ Evolith CLI forma parte de la **suite Evolith**, construida sobre **Evolith Core
 - [Integración MCP](../../../src/sdk/cli/docs/MCP-INTEGRATION.md) — detalles del protocolo MCP.
 - [Protocolo de Handoff](../../../src/sdk/cli/docs/HANDOFF-PROTOCOL.md) — especificación del artefacto de handoff SDLC.
 
+## Documentación Adicional
+
+El material más profundo vive en [`docs/`](./docs/):
+
+| Documento | Contenido |
+| :--- | :--- |
+| [Visión](./docs/VISION.es.md) | Visión y posicionamiento del producto |
+| [Integración MCP](./docs/MCP-INTEGRATION.es.md) | Cómo la CLI expone y consume MCP |
+| [Protocolo de Handoff](./docs/HANDOFF-PROTOCOL.es.md) | Contrato de handoff entre agentes |
+| [Modelos de Datos](./docs/data-models.es.md) | Estructuras de datos canónicas |
+| [Demo](./docs/SMART-CLI-DEMO.es.md) | Recorrido de una sesión completa |
+
 ## Soporte
 
 - [Issue Tracker](https://github.com/beyondnetcode/evolith_arch32/issues)

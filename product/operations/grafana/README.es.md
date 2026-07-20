@@ -1,4 +1,10 @@
-# Index of grafana
+# Índice de grafana
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
+> **Navegación Bilingüe:** [English Version](./README.md)
 
+## Subdirectorios
+
+* [`provisioning/`](./provisioning/README.es.md)
+
+---
+[Volver al Nivel Superior](../README.es.md)

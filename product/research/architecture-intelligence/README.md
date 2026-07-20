@@ -41,4 +41,13 @@ Product-specific implementation evidence remains in UMS or another satellite rep
 
 ---
 
+## In This Area
+
+| Topic | Document |
+| :--- | :--- |
+| **AI** | [`ai/`](./ai/ai-knowledge-strategy.md) — AI knowledge strategy |
+| **Trade-offs** | [`tradeoffs/`](./tradeoffs/architecture-radar.md) — architecture radar |
+
+---
+
 [Back to Knowledge Area](../demo/README.md) | [Back to Repository Root](../../../README.md)

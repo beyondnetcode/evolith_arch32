@@ -1,4 +1,10 @@
-# Index of tempo
+# Índice de tempo
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
+> **Navegación Bilingüe:** [English Version](./README.md)
 
+## Archivos
+
+* [`tempo.yaml`](./tempo.yaml)
+
+---
+[Volver al Nivel Superior](../README.es.md)

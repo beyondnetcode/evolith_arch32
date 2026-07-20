@@ -53,5 +53,11 @@ Explore the complete migration record and boundary definitions directly within t
 | [UMS Repository](https://github.com/beyondnetcode/ums) | View the open-source executable application codebase and current setup instructions. |
 | [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) | Official documentation of UMS's modular boundaries and architectural decisions. |
 
+## Worked Examples
+
+| Example | Description |
+| :--- | :--- |
+| [Cross-Topology Composition](./examples/cross-topology-composition/README.md) | Composing a progressive-axis topology with an integration-axis one |
+
 ---
 [Back to Reference Hub](../../../README.md)

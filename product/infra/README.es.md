@@ -168,4 +168,21 @@ Cualquier trabajo de conectividad de DB pertenece a ese board, no a la infra del
 
 ---
 
+## Áreas de Infraestructura
+
+El stack local de Compose descrito arriba es solo una parte de este directorio. El resto:
+
+| Área | Punto de entrada | Contenido |
+| :--- | :--- | :--- |
+| **CI/CD** | [`ci-cd/`](./ci-cd/github-actions-profile.es.md) | Perfil de pipeline de GitHub Actions |
+| **Docker** | [`docker/`](./docker/README.es.md) | Dockerfiles por servicio y contexto de build |
+| **Helm** | [`helm/`](./helm/README.es.md) | Charts de `evolith-core-api`, `evolith-mcp`, `evolith-agent-runtime` |
+| **Kubernetes** | [`kubernetes/`](./kubernetes/README.es.md) | Manifiestos y topología de cluster |
+| **Observabilidad** | [`observability/`](./observability/otel-stack-profile.es.md) | Perfil del stack OTel, config de Prometheus, assets de Grafana |
+| **SCM** | [`scm/`](./scm/github-profile.es.md) | Perfil de repositorio y protección de ramas |
+| **Seguridad** | [`security/`](./security/codeql-trivy-profile.es.md) | Perfil de escaneo CodeQL y Trivy |
+| **VPS — Coolify** | [`vps-coolify/`](./vps-coolify/README.es.md) | Despliegue en VPS autoalojado |
+
+---
+
 [Volver a la Raíz del Repositorio](../../README.es.md)

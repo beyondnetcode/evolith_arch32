@@ -120,4 +120,8 @@ Los estándares de contribución de este repositorio (clone/dev-setup, comandos 
 
 ---
 
+La arquitectura detallada de este producto vive en [`architecture/`](./architecture/README.es.md).
+
+---
+
 [Volver a Diseños Específicos de Productos](../README.es.md)

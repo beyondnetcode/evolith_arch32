@@ -6888,16 +6888,17 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** Pasan 71 suites y 969 tests con 0 fallos, pero el gate bloqueante de cobertura falla: `Coverage for branches (62.89%) does not meet "global" threshold (75%)`. Observado el 2026-07-18 en la corrida 29646397424.
 - **Impacto:** El gate de cobertura bloquea, y la lectura honesta es que la cobertura de ramas cayó por debajo de un umbral que sigue siendo correcto.
 - **Riesgo:** La respuesta más barata -- relajar el umbral -- convertiría una regresión medida en un estándar rebajado de forma permanente.
-- **Archivos afectados:** la suite de tests de `core-api` y su configuración de cobertura de Jest.
+- **Archivos afectados:** la suite de tests de `src/sdk/cli` y su configuración de cobertura de Jest. _(Corrección: el enunciado original decía `core-api`. El gate que falla es el del CLI, que es además lo que dice el campo Componente.)_
 - **Componente:** `SDK CLI` · **Dimensión:** Reliability · **Tipo:** testing
 - **Criticidad:** P2 · **Complejidad:** M
 - **Fix propuesto:** Añadir cobertura de ramas donde se perdió hasta que la suite supere el 75 por ciento. El gate se deja deliberadamente intacto.
 - **Decision del propietario (2026-07-18):** Registrado como DEUDA en vez de pagarse ahora. La cobertura paso de 62.85% a 69.38% (+168 ramas) cubriendo aquellas cuyo fallo si haria dano -- `handleError`, las rutas de aprobacion/expiracion del comando waiver, la validacion contra cero reglas, la resolucion del corpus empaquetado que toma todo usuario instalado, y el orden de precedencia de satelites de ADR-0109. Los 5.6 puntos restantes cuestan unas 100-140 pruebas sobre el gating de asistentes interactivos (`init`, `update`, `scaffold`, `profile`, `satellite-adopt`) y el formateador YAML/tabla -- pruebas que comprueban que se pregunto algo a un mock. EL UMBRAL SE QUEDA EN 75 Y LA PUERTA SIGUE EN ROJO: esto es una regresion a pagar, no un liston que bajar. Otras ~100 ramas en `adr`/`standards`/`agents` quedan excluidas a proposito porque estan dominadas por el defecto del sobre de exito hallado junto a este trabajo; cubrirlas antes de arreglarlo bendeciria el bug.
+- **Cierre (2026-07-20, commit `7cffd734`):** La deuda se pagó, no se condonó. La cobertura de ramas pasó de 70.57% (1890/2678) a **75.54%**, jest sale con código 0, y el umbral de `jest.config` quedó intacto — 85 suites, 1250 tests, 0 fallos. La estimación que el propio gap hizo del trabajo restante resultó tener la forma equivocada: predecía "100-140 pruebas sobre el gating de asistentes interactivos... pruebas que comprueban que se preguntó algo a un mock", pero las ramas sin cubrir no eran los asistentes. Eran las **rutas no interactivas y legibles por máquina** — `--format json` en `update`/`profile`/`agents`/`api`/`scaffold`, `init` en modo batch, y el reporte humano del motor composable — las rutas que ninguna persona recorre a mano, que es justamente la razón de que nadie hubiera notado que estaban sin probar. Esas sí valen la aserción: son el contrato del que dependen todos los scripts y jobs de CI. Tres de ellas no tenían entrada posible hasta que cambió el código: `agents --name` no existía, así que la ruta no interactiva carecía de punto de entrada (se añadió, con el agente inexistente devolviendo `RULESET_NOT_FOUND` en vez de seguir de largo); las specs de `scaffold` stubbeaban `process.exit`, que no detiene la ejecución, así que el código seguía corriendo más allá de lo que se afirmaba (leer el PRIMER envelope hace que la aserción signifique lo que dice); y el reporte composable no tiene costura, vive dentro de `executeCommand` — pero `createComposableEngine()` carga sus cinco modos con `require` diferido, así que se pueden mockear por ruta de módulo, y esa es toda la razón de que esa spec sea un archivo aparte (`jest.mock` es de alcance por archivo). _Sobre la exclusión que este gap declaraba:_ se reservaba ~100 ramas en `adr`/`agents` porque cubrirlas "bendeciría" el defecto del sobre de éxito. Ese defecto se arregló antes, en la misma campaña, y las pruebas nuevas **afirman explícitamente el contrato corregido de ADR-0073** — `success` del envelope significa que el comando corrió, el veredicto viaja dentro, el exit code lo transporta — de modo que fijan la conducta correcta en lugar de congelar la equivocada.
 - **Criterios de aceptación:**
-  - [ ] La cobertura de ramas está en o por encima del umbral global existente del 75 por ciento.
-  - [ ] El umbral en sí queda sin cambios.
+  - [x] La cobertura de ramas está en o por encima del umbral global existente del 75 por ciento. — 75.54%, medido localmente con `npx jest --coverage` saliendo en 0.
+  - [x] El umbral en sí queda sin cambios. — sigue en 75; el diff toca solo archivos de spec más la opción `agents --name`.
 - **Dependencias:** Ninguna.
-- **Estado:** `PENDIENTE`
+- **Estado:** `COMPLETADO`
 
 #### GT-563
 
@@ -7007,3 +7008,23 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Reactivar el despliegue al VPS es un unico paso deliberado y documentado.
 - **Dependencies:** ninguna en el repo.
 - **Status:** `COMPLETADO`
+
+#### GT-568
+
+**Título:** Security Audit falla por un aviso de solo-desarrollo, así que la señal no corresponde al riesgo
+
+- **Propósito:** Que la puerta de seguridad se ponga en rojo por motivos que puedan alcanzar de verdad a un usuario, y decidir el bump transitivo de forma deliberada y no por reflejo.
+- **Evidencia:** `npm audit` reporta `brace-expansion` (GHSA-3jxr-9vmj-r5cp, DoS por expansión de tiempo exponencial de grupos `{}` consecutivos que no expanden) con severidad alta: `1 high severity vulnerability`, código de salida 1. Las seis rutas de resolución son `node_modules/@eslint/config-array/node_modules/brace-expansion`, `@eslint/eslintrc`, `@typescript-eslint/typescript-estree`, `test-exclude`, `eslint` y la raíz — todas y cada una herramientas de build o lint. Observado el 2026-07-20 en la corrida 29780735123.
+- **Impacto:** El job `Security Audit` bloquea el pipeline de CI del CLI por una vulnerabilidad sin camino hacia un artefacto publicado, lo que acostumbra a quien lo lee a descontar justo el job cuyos rojos jamás deberían descontarse.
+- **Riesgo:** Hay dos errores opuestos disponibles. Silenciar el hallazgo sin acotar el audit oculta futuros avisos *reales* de producción; correr `npm audit fix` reescribe `package-lock.json`, y regenerar el lockfile completo está vedado aquí — el incidente del `overrides.ajv` mostró hasta dónde se propaga eso.
+- **Archivos afectados:** `.github/workflows/sdk-cli-ci.yml` (el job `Security Audit`), `package-lock.json`.
+- **Componente:** `Infra` · **Dimensión:** Security · **Tipo:** ci
+- **Criticidad:** P2 · **Complejidad:** S
+- **Fix propuesto:** Resolver acotamiento y remediación juntos — acotar el audit a lo que se publica (`--omit=dev`, o una excepción registrada y razonada con fecha de vencimiento) para que la puerta hable de riesgo de producción, y tomar el bump transitivo solo si puede hacerse como cambio dirigido y no como regeneración del lockfile.
+- **Procedencia:** Preexistente, y explícitamente NO causado por el trabajo de cobertura de [GT-562](#gt-562) — ambos se observaron en la misma corrida 29780735123, en la cual `Unit Tests` pasó y este job no.
+- **Criterios de aceptación:**
+  - [ ] El job `Security Audit` pasa, o falla solo ante avisos alcanzables desde el paquete publicado.
+  - [ ] El alcance del audit queda explícito en el workflow, para que quien lo lea después sepa qué cubre y qué no.
+  - [ ] `package-lock.json` no se regenera por completo.
+- **Dependencias:** Ninguna.
+- **Estado:** `PENDIENTE`

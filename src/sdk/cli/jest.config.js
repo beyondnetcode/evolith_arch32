@@ -44,7 +44,7 @@ module.exports = {
     '^conf$': '<rootDir>/src/test/__mocks__/conf.ts',
     '^chokidar$': '<rootDir>/src/test/__mocks__/chokidar.ts',
   },
-  setupFilesAfterEnv: [],
+  setupFilesAfterEnv: ['<rootDir>/src/test/reset-exit-code.setup.ts'],
   testTimeout: 10000,
   verbose: true,
   // OPP-003: Suppress console noise during tests for cleaner output

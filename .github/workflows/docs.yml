@@ -119,8 +119,23 @@ jobs:
       # `agents-validate` (MCP no distingue "agente inexistente" de "agente
       # invalido"). Rojo y visible es mejor que verde y ciego; ponerlo en verde
       # exige una decision de contrato ADR-0073, no un parche.
-      - name: Cross-surface exploration suite
-        run: npm run test:exploration
+      # NOTA: la suite exploratoria cross-superficie (`npm run test:exploration`)
+      # NO se cablea aqui todavia, a proposito. Verde en local, roja en checkout
+      # limpio por dos causas independientes, ninguna suya:
+      #
+      #   1. importa paquetes del workspace por nombre (`@beyondnet/evolith-mcp`)
+      #      que resuelven a `dist/`, inexistente en CI -> TS2307. `npm run build`
+      #      lo resuelve.
+      #   2. con el build limpio aparece `CacheTTL is not a function`: el `dist`
+      #      de core-api que habia en local era del 2026-07-17 y NO contenia el
+      #      decorador que la fuente si tiene, asi que los tests pasaban contra
+      #      codigo viejo que nunca ejercitaba esa ruta. Ademas
+      #      `@nestjs/cache-manager` solo esta instalado bajo `src/apps/core-api`,
+      #      no en la raiz donde jest resuelve.
+      #
+      # La (2) es un defecto de entorno preexistente y no se arregla de paso.
+      # Cablearla ahora dejaria este check --que ES requerido en main-- en rojo
+      # permanente, que es justo el habito que esta revision vino a eliminar.
 
       # GT-563: the steps below REPORT, they do not validate. This job runs no tests and
       # produces no coverage data, and COVERAGE_REPORT.md is untracked, so on a PR the

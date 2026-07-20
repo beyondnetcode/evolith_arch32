@@ -57,7 +57,7 @@ Response (captured live):
   "success": false,
   "error": {
     "code": "INTERNAL_ERROR",
-    "message": "Model file not found: /private/abs/path/to/your-satellite/package.json"
+    "message": "Model file not found: /abs/path/to/your-satellite/package.json"
   },
   "meta": {
     "command": "GenerateDomainCommand",

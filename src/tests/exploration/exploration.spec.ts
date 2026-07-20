@@ -143,7 +143,15 @@ describe('Cross-surface exploration agent (F1)', () => {
       return v;
     }, 2);
     const wsRef = projectPath.split('/').pop();
-    capture = capture.split(projectPath).join('/abs/path/to/your-satellite');
+    // La forma RESUELTA primero. En macOS `/var/folders` es symlink a
+    // `/private/var/folders` y varias respuestas devuelven el realpath;
+    // reemplazar solo la forma sin resolver consumia el resto de la ruta y
+    // dejaba un `/private` huerfano pegado al placeholder
+    // (`/private/abs/path/to/your-satellite`), que es exactamente lo que hacia
+    // fallar el chequeo anti-drift solo fuera de macOS.
+    for (const p of [fs.realpathSync(projectPath), projectPath]) {
+      capture = capture.split(p).join('/abs/path/to/your-satellite');
+    }
     if (wsRef) capture = capture.split(wsRef).join('your-satellite');
     // REPO_ROOT tambien: faltaba, y es la ruta del checkout. Los how-to
     // generados llevaban embebida la ruta absoluta de la maquina que los genero

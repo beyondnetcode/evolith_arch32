@@ -245,7 +245,7 @@ Response (captured live):
               "passed": false,
               "found": false,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /private/abs/path/to/your-satellite/docs/prd.md",
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
               "required": true
             },
             {
@@ -253,7 +253,7 @@ Response (captured live):
               "passed": false,
               "found": false,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /private/abs/path/to/your-satellite/docs/discovery-canvas.md",
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
               "required": true
             },
             {
@@ -261,13 +261,14 @@ Response (captured live):
               "passed": false,
               "found": false,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /private/abs/path/to/your-satellite/docs/technical-feasibility.md",
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
               "required": true
             },
             {
               "artifact": "Ballpark Estimation",
               "passed": false,
-              "found":
+              "found": false,
+              "s
   … (truncated)
 ```
 

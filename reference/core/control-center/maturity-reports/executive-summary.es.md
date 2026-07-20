@@ -44,19 +44,19 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-07-13 |
 | Gaps totales | 567 |
-| Gaps cerrados | 551 |
-| Gaps pendientes | 16 |
+| Gaps cerrados | 552 |
+| Gaps pendientes | 15 |
 | P0 abiertos | 2 |
 | P1 abiertos | 4 |
 | P2 abiertos | 6 |
-| Cierre total | 97.2% |
-| Registros de evidencia de cierre | 533 |
+| Cierre total | 97.4% |
+| Registros de evidencia de cierre | 534 |
 | Readiness registrado | 3 BLOCKED, 1 PASS |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
 | `Cross` | 3 | 2 | 1 | [GT-447](../gaps/gap-reference-catalog.es.md#gt-447), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
-| `Infra` | 3 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-567](../gaps/gap-reference-catalog.es.md#gt-567) |
+| `Infra` | 2 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464) |
 | `Core API` | 2 | 0 | 1 | [GT-560](../gaps/gap-reference-catalog.es.md#gt-560), [GT-522](../gaps/gap-reference-catalog.es.md#gt-522) |
 | `Agent Runtime` | 1 | 0 | 1 | [GT-441](../gaps/gap-reference-catalog.es.md#gt-441) |
 | `agent-runtime` | 1 | 0 | 0 | [GT-531](../gaps/gap-reference-catalog.es.md#gt-531) |

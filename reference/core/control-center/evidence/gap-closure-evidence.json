@@ -8125,6 +8125,22 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Supersedes GT-329, which is NOT reopened or edited. GT-329's record is retained deliberately as the evidence that its closure was unsound: its implementing commit d2b7d2b7 has an empty --diff-filter=D, so it copied the corpus and deleted nothing while closing DONE against 'all topologies under a single canonical location'. Rewriting that record to match reality would destroy the only trace of how the false closure happened. Phase A (353cdbd4) repaired 46 dead references inside the src/ manifests first, because a corpus about to become canonical must resolve what it declares; 07064035 repaired validate-topology-manifests.mjs beforehand, since it validated only 5 of 13 manifests and reconciling against an unvalidated source would have been reckless. Collapsing the dual root is explicitly NOT claimed: the three progressive-axis topologies remain under reference/ where their full corpora live, documented as intentional in src/rulesets/topologies/README.md and .harness/scripts/lib/paths.mjs."
+    },
+    {
+      "id": "GT-567",
+      "closedAt": "2026-07-20",
+      "closureCommit": "b33bc4ea",
+      "evidence": [
+        ".github/workflows/ci-cd.yml",
+        "reference/core/control-center/gaps/gap-reference-catalog.md"
+      ],
+      "validationCommands": [
+        "CI run 29774294630 sobre main 0fcf6599 -> workflow completed/SUCCESS con 'Deploy services (Coolify)' en SKIPPED, no failure. Primera corrida verde de ci-cd desde 2026-07-19; antes fallaba en 14+ pushes consecutivos con 'curl: (28) Failed to connect to 72.60.63.240 port 8000'.",
+        "gh variable list -> VPS_DEPLOY_ENABLED=false; gh api .../actions/secrets -> los tres COOLIFY_* siguen presentes (no se borro ninguno).",
+        "kubectl --context kind-evolith-cluster -n evolith-local get pods -> core-api, mcp y agent-runtime en 1/1, 0 reinicios, 2d14h; port-forward + GET /health -> HTTP 200 con envelope ADR-0073 conforme. El entorno objetivo real esta sano."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "El VPS sigue caido y NO se reparo: esta fuera de alcance por decision del owner, que opera hoy contra Docker + kind local (cluster evolith-cluster). Lo que se cierra es el defecto de CD --afirmar una entrega que no realiza y dejar un rojo permanente que nadie lee-- no la caida del host. Reactivar el despliegue cuando el VPS vuelva es un unico paso documentado en el propio workflow: gh variable set VPS_DEPLOY_ENABLED --body true. El tercer criterio (senal de caida que no dependa de que alguien mergee) queda cubierto por el mismo texto como requisito explicito para ese momento, no como trabajo hecho ahora: sin VPS en alcance no hay servicio remoto que sondear."
     }
   ]
 }

@@ -7097,8 +7097,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Explicitly NOT the fix:** making the step fail-soft on connection errors. That greens the check while the deploy still does not happen, and would keep the pipeline claiming a delivery it never performs.
 - **When the VPS returns:** the signal must not depend on someone merging. The deploy job only runs on push, so it says nothing while nobody touches `main` — an uptime probe against the service URLs is the right shape.
 - **Acceptance criteria:**
-  - [ ] CD no longer fails on pushes to `main` while the VPS is out of scope.
-  - [ ] The pipeline does not report a delivery it is not performing.
-  - [ ] Reinstating VPS deployment is a documented, single deliberate step.
+  - [x] CD no longer fails on pushes to `main` while the VPS is out of scope.
+  - [x] The pipeline does not report a delivery it is not performing.
+  - [x] Reinstating VPS deployment is a documented, single deliberate step.
 - **Dependencies:** none in-repo.
-- **Status:** `PENDING`
+- **Status:** `DONE`

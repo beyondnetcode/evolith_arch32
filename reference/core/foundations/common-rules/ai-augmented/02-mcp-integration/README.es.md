@@ -1,4 +1,9 @@
-# Index of 02-mcp-integration
+# Índice de 02-mcp-integration
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
+* [mcp-client-guide](./mcp-client-guide.es.md)
+* [mcp-overview](./mcp-overview.es.md)
+* [mcp-security](./mcp-security.es.md)
+* [mcp-server-guide](./mcp-server-guide.es.md)
 
+---
+[Volver al Nivel Superior](../README.es.md)

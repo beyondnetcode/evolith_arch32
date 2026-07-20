@@ -61,7 +61,8 @@ Products consume Core. They do not redefine it.
 |---|---|---|---|---|
 | [Architecture Hub](./architecture/README.md) | Universal principles, patterns, reference models, contracts, and Core ADRs | Guide corporate design | Area hub | Yes |
 | [SDLC Governance Center](./sdlc/README.md) | Phases, gates, artifacts, evidences, roles, waivers, traceability, and metrics | Govern the complete lifecycle | Domain hub | Yes |
-| Standards and Governance Center | Reusable standards and governance rules | Align teams to unified policies | Area hub | Yes |
+| [Foundations Hub](./foundations/README.md) | Principles, common rules, satellite definitions, inheritance model, and agent skills | Align teams to unified policies | Domain hub | Yes |
+| [Control Center](./control-center/README.md) | Gap tracking, maturity reports, audits, evidence, and taxonomy | Observe tracking, assessment, and improvement | Domain hub | Yes |
 | [Interface How-To](./interfaces/README.md) | Readable guides to drive the Core across CLI, MCP, and REST — every command/tool/endpoint with its options and examples | Learn and reference the interfaces | Area hub | Yes |
 | [Rulesets Hub](../../src/rulesets/README.md) | Machine-consumable validation policies and contracts | Validate compliance automatically | Rules hub | Yes |
 | [Governance Hub](./sdlc/governance/README.md) | Canonical terminology, classifications, and boundaries | Maintain consistent language and boundaries | Area hub | Yes |

@@ -47,8 +47,8 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 | Directorio / Tipo de archivo | Propósito |
 |---|---|
 | `*-template.es.md` | Landing page del artefacto. Empieza aquí para entender cuándo y cómo usar el artefacto. |
-| `source/*-template-source.es.md` | Fuente Markdown lista para copiar al crear un nuevo artefacto. |
-| `examples/*-example-ums.es.md` | Ejemplo renderizado UMS para entender el artefacto completado esperado. |
+| [`source/`](./source/README.es.md) | Fuente Markdown lista para copiar al crear un nuevo artefacto. |
+| [`examples/`](./examples/README.es.md) | Ejemplo renderizado UMS para entender el artefacto completado esperado. |
 | `*.md` | Versión en inglés con la misma estructura. |
 
 ---

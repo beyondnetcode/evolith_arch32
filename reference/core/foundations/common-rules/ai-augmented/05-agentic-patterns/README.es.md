@@ -1,4 +1,10 @@
-# Index of 05-agentic-patterns
+# Índice de 05-agentic-patterns
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
+* [human-in-the-loop](./human-in-the-loop.es.md)
+* [multi-agent](./multi-agent.es.md)
+* [patterns-overview](./patterns-overview.es.md)
+* [plan-and-execute](./plan-and-execute.es.md)
+* [single-agent](./single-agent.es.md)
 
+---
+[Volver al Nivel Superior](../README.es.md)

@@ -97,6 +97,15 @@ jobs:
 
       - name: Security Vulnerability Audit
         working-directory: ${{ env.CLI_DIR }}
+        # Scope, made explicit (GT-568): there is a single root lockfile, so this
+        # audits the ENTIRE monorepo dependency tree — every workspace's prod and
+        # dev deps — not just the CLI's. That is deliberate: it is stricter than a
+        # CLI-only or prod-only scan. It fails on HIGH+ advisories; anything below
+        # is reported by `npm audit` at job-log level without blocking. When a
+        # transitive advisory has no upstream fix in its consumer's range, pin the
+        # patched version with a targeted `overrides` entry in the root
+        # package.json (see js-yaml / brace-expansion / protobufjs) rather than
+        # regenerating package-lock.json wholesale.
         run: npm audit --audit-level=high
 
   # ============================================

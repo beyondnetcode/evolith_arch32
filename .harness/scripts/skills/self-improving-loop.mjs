@@ -46,21 +46,59 @@ function read(relativePath) {
   return fs.existsSync(absolutePath) ? fs.readFileSync(absolutePath, "utf8") : "";
 }
 
+/**
+ * Split a markdown table row into cells.
+ *
+ * Two things this must NOT do, both of which it used to:
+ *  - split on `\|`, which is an escaped pipe inside a cell, not a separator
+ *    (the GT board writes `config\|configRef`, `warn\|block` in prose);
+ *  - drop empty cells with filter(Boolean) -- the board leaves cells blank, so
+ *    dropping them shifts every later index by however many blanks that
+ *    particular row happens to have.
+ *
+ * Together they made a fixed `columns[6]` land off-target on 46 of 540 rows,
+ * reading a Criticality or Complexity value as the Status. Since rows whose
+ * status reads DONE are skipped, a misread reopened already-closed gaps.
+ */
+function splitRow(line) {
+  return line.split(/(?<!\\)\|/).map((value) => value.trim());
+}
+
 function parseOpenGaps(markdown) {
+  const lines = markdown.split("\n");
+
+  // Resolve columns by header name rather than by fixed position: the board
+  // schema has gained columns before (UP-001 Amendment 1) and will again.
+  const headerLine = lines.find((l) => l.startsWith("| ID |"));
+  if (!headerLine) return [];
+  const header = splitRow(headerLine);
+  const idx = (...names) =>
+    header.findIndex((h) => names.some((n) => new RegExp(`^${n}$`, "i").test(h)));
+
+  const col = {
+    id: idx("ID"),
+    title: idx("Gap"),
+    component: idx("Component", "Componente"),
+    priority: idx("Criticality", "Criticidad"),
+    complexity: idx("Complexity", "Complejidad"),
+    status: idx("Status", "Estado"),
+  };
+  if (col.id === -1 || col.status === -1) return [];
+
   const rows = [];
-  for (const line of markdown.split("\n")) {
+  for (const line of lines) {
     if (!line.startsWith("| [`GT-")) continue;
-    const columns = line.split("|").map((value) => value.trim()).filter(Boolean);
-    if (columns.length < 7) continue;
-    const id = columns[0].match(/GT-\d+/)?.[0];
-    const status = columns[6].replaceAll("`", "");
+    const columns = splitRow(line);
+    if (columns.length <= col.status) continue;
+    const id = columns[col.id].match(/GT-\d+/)?.[0];
+    const status = columns[col.status].replaceAll("`", "");
     if (!id || status === "DONE" || status === "COMPLETADO") continue;
     rows.push({
       id,
-      title: columns[1].replace(/\[`?GT-\d+`?\]\([^)]+\)/g, "").trim(),
-      component: columns[2].replaceAll("`", ""),
-      priority: columns[4],
-      complexity: columns[5],
+      title: columns[col.title].replace(/\[`?GT-\d+`?\]\([^)]+\)/g, "").trim(),
+      component: columns[col.component].replaceAll("`", ""),
+      priority: columns[col.priority],
+      complexity: columns[col.complexity],
       status,
     });
   }

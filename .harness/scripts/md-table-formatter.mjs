@@ -32,6 +32,21 @@ const inPlace = args.includes("--in-place");
 const dryRun = args.includes("--dry-run");
 const verbose = args.includes("--verbose");
 
+/**
+ * Split a markdown table row into cells, honouring `\|` as an escaped pipe
+ * inside a cell rather than a separator.
+ *
+ * A naive split("|") produced one extra cell on any row using `\|` in prose
+ * (the GT board does so constantly: `config\|configRef`, `warn\|block`). Since
+ * the rebuild below only emits the first `colCount` cells, the surplus pushed
+ * the tail off the end and this formatter silently DELETED the last column --
+ * the Status of 31 EN and 33 ES rows -- while writing the file in place.
+ */
+function splitCells(line) {
+  const parts = line.split(/(?<!\\)\|/);
+  return parts.map(c => c.trim()).filter((_, i) => i > 0 && i < parts.length - 1);
+}
+
 function formatTable(tableLines) {
   if (tableLines.length < 2) return tableLines;
 
@@ -39,8 +54,7 @@ function formatTable(tableLines) {
   const alignments = [];
 
   for (const line of tableLines) {
-    const cells = line.split("|").map(c => c.trim()).filter((_, i) => i > 0 && i < line.split("|").length - 1);
-    rows.push(cells);
+    rows.push(splitCells(line));
   }
 
   const headerRow = rows[0];
@@ -48,7 +62,7 @@ function formatTable(tableLines) {
 
   if (rows.length >= 3 && tableLines[1].includes("---")) {
     const sepRow = tableLines[1];
-    const alignParts = sepRow.split("|").filter((_, i) => i > 0 && i < sepRow.split("|").length - 1);
+    const alignParts = splitCells(sepRow);
     for (const part of alignParts) {
       const trimmed = part.trim();
       if (trimmed.startsWith(":") && trimmed.endsWith(":")) {

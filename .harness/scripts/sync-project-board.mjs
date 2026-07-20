@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import { execSync } from 'child_process';
 
 // GT-313: source the GitHub token securely — never from a plaintext .env.
@@ -103,6 +104,50 @@ for (const item of ghItems) {
 }
 
 // 3. Process Markdown
+
+/**
+ * Map a Status cell to a progress bucket.
+ *
+ * The two boards do not spell status the same way (`DONE`/`COMPLETADO`,
+ * `IN-PROGRESS`/`EN-PROGRESO`), so the comparison must normalise case and
+ * separators before matching. Comparing raw literals made the EN and ES
+ * totals disagree about the same board: the ES spelling fell through the
+ * `else` into "pending", reporting `0 en progreso · 44 pendientes` against
+ * the EN `5 in progress · 37 pending`.
+ */
+const unknownStatuses = new Map();
+function classifyStatus(raw, filePath) {
+  const s = raw.toUpperCase().replace(/[\s_-]+/g, ' ').trim();
+  if (s === 'DONE' || s === 'COMPLETADO') return 'completados';
+  if (s === 'DEFERRED' || s === 'DIFERIDO') return 'diferidos';
+  if (s === 'IN PROGRESS' || s === 'EN PROGRESO') return 'enProgreso';
+  if (s === 'PENDING' || s === 'PENDIENTE') return 'pendientes';
+  // REVISION/REVISIÓN has no column in the progress line and has always been
+  // counted as pending. Kept as-is deliberately: changing it would move numbers
+  // on the board, which is a governance call, not a bug fix.
+  if (s === 'REVISION') return 'pendientes';
+  // Anything else is drift between the board schema and this script. Counting
+  // it silently as "pending" is what hid the bug above, so make it audible.
+  const key = `${path.basename(filePath)}: ${raw}`;
+  unknownStatuses.set(key, (unknownStatuses.get(key) || 0) + 1);
+  return 'pendientes';
+}
+
+/**
+ * Split a markdown table row into cells.
+ *
+ * `\|` is an escaped pipe *inside* a cell, not a separator — the GT board uses
+ * it constantly in prose (`config\|configRef`, `warn\|block`). A naive
+ * `split('|')` breaks those rows into one extra field, shifting every cell
+ * right, so a Status read by header index landed on Complexity instead
+ * (returning `L`, `S`, `XS`, `P1`...). 31 EN and 33 ES rows are affected, and
+ * because this script also WRITES the status back by that index, it would have
+ * overwritten the Complexity cell and mangled the escaping on re-join.
+ */
+function splitRow(line) {
+  return line.split(/(?<!\\)\|/).map((s) => s.trim());
+}
+
 const seenGaps = new Set();
 function processTrackingFile(filePath, isSpanish) {
   if (!fs.existsSync(filePath)) return false;
@@ -120,7 +165,7 @@ function processTrackingFile(filePath, isSpanish) {
   let complexityIdx = -1;
   for (const l of lines) {
     if (!l.startsWith('| ID |')) continue;
-    const h = l.split('|').map(s => s.trim());
+    const h = splitRow(l);
     statusIdx = h.findIndex((x) => /^(Status|Estado)$/i.test(x));
     complexityIdx = h.findIndex((x) => /^(Complexity|Complejidad)$/i.test(x));
     break;
@@ -132,7 +177,7 @@ function processTrackingFile(filePath, isSpanish) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     if (line.startsWith('|') && (line.includes('`GT-') || line.includes('`MT-A'))) {
-      const parts = line.split('|').map(s => s.trim());
+      const parts = splitRow(line);
       if (parts.length > statusIdx) {
         const idMatch = parts[1].match(/\[\`(GT-\d+|MT-A\d+)\`\]/);
         if (idMatch) {
@@ -192,10 +237,8 @@ function processTrackingFile(filePath, isSpanish) {
           }
           
           // Tally stats
-          if (localStatus === 'COMPLETADO' || localStatus === 'DONE') stats.completados++;
-          else if (localStatus === 'DIFERIDO' || localStatus === 'DEFERRED') stats.diferidos++;
-          else if (localStatus === 'EN PROGRESO' || localStatus === 'IN-PROGRESS') stats.enProgreso++;
-          else stats.pendientes++;
+          const bucket = classifyStatus(localStatus, filePath);
+          stats[bucket]++;
           stats.total++;
         }
       }
@@ -240,6 +283,12 @@ if (isLocalModified) {
       }
     }
   }
+}
+
+if (unknownStatuses.size > 0) {
+  console.log('\n⚠️ Estados no reconocidos (contados como pendientes):');
+  for (const [key, count] of unknownStatuses) console.log(`     ${key}  ×${count}`);
+  console.log('   Añádelos a classifyStatus() o corrige el tablero: mientras tanto los totales mienten.');
 }
 
 if (modEs || modEn) {

@@ -14,7 +14,7 @@ All SDK, CLI, and MCP operations derive from Evolith Core artifacts:
 - Rulesets in `rulesets/`
 - ADRs in `reference/core/architecture/adrs/`
 - Standards in `reference/core/sdlc/standards/`
-- Schemas in `rulesets/schema/`
+- Schemas in `src/rulesets/schema/`
 - Templates in `.harness/templates/`
 
 No component creates its own truth. Every rule, artifact, and standard must be traceable to its source in Evolith Core.
@@ -74,7 +74,7 @@ No component creates its own truth. Every rule, artifact, and standard must be t
 └── Implements CLI commands using @beyondnet/evolith-sdk-core
 ```
 
-**Note:** Currently, SDK and CLI are combined in `sdk/cli/`. Future refactoring should extract SDK into separate packages.
+**Note:** Currently, SDK and CLI are combined in `src/sdk/cli/`. Future refactoring should extract SDK into separate packages.
 
 ### 2.2 Core Services
 

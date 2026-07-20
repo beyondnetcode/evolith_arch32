@@ -13,7 +13,7 @@ The Agent Runtime is a thin, governed orchestration layer. Given an
 `AgentRuntimeRequest` it resolves the tenant/product/initiative context, selects
 a governed capability, invokes the right ports, runs validations, returns an
 `AgentRuntimeResult`, and emits trazability. It is implemented in
-[`packages/agent-runtime`](../../../../src/packages/agent-runtime/README.md) following
+[`src/packages/agent-runtime`](../../../../src/packages/agent-runtime/README.md) following
 **Puertos y Adaptadores** so no runtime/LLM technology becomes a domain
 dependency. 
 

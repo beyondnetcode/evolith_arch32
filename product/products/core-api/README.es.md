@@ -109,7 +109,7 @@ Los clientes se conectan al Core API a través de endpoints REST estándar versi
 }
 ```
 
-La documentación detallada de los endpoints, payloads de request y envelopes de error se encuentra en la [Referencia de la API](./api-reference.md). Para la referencia operativa completa (instalación, configuración, modelo de seguridad, flujos por tenant y observabilidad), consulta el README de código autoritativo en [`apps/core-api/README.md`](../../../src/apps/core-api/README.md).
+La documentación detallada de los endpoints, payloads de request y envelopes de error se encuentra en la [Referencia de la API](./api-reference.md). Para la referencia operativa completa (instalación, configuración, modelo de seguridad, flujos por tenant y observabilidad), consulta el README de código autoritativo en [`src/apps/core-api/README.md`](../../../src/apps/core-api/README.md).
 
 Para contribuir (clonar, construir, ejecutar las suites de tests, convenciones de ramas/commits), consulta la guía raíz [`CONTRIBUTING.md`](../../../CONTRIBUTING.md).
 

@@ -228,7 +228,7 @@ interface TechnicalEvaluationResult {
 
 Produced only by Tracker.
 
-> **Naming-collision note.** A `GateDecision` type already ships in Core (`packages/core-domain/src/gates/decision/gate-decision.ts`) with a **different, narrower shape** — `{ gateId, phase: number, verdict: Verdict (PASS/FAIL), score, violations[], decidedAt, decidedBy, waiverRef? }`, created by `makeGateDecision()` inside Core, not by Tracker. The canonical Tracker `GateDecision` below (rich record with `status`, snapshots, approvals, exceptions) is the **target** and is distinct from the existing Core value object. Implementers must disambiguate the two names (e.g. namespace or rename) before building Tracker.
+> **Naming-collision note.** A `GateDecision` type already ships in Core (`src/packages/core-domain/src/gates/decision/gate-decision.ts`) with a **different, narrower shape** — `{ gateId, phase: number, verdict: Verdict (PASS/FAIL), score, violations[], decidedAt, decidedBy, waiverRef? }`, created by `makeGateDecision()` inside Core, not by Tracker. The canonical Tracker `GateDecision` below (rich record with `status`, snapshots, approvals, exceptions) is the **target** and is distinct from the existing Core value object. Implementers must disambiguate the two names (e.g. namespace or rename) before building Tracker.
 
 ```typescript
 interface GateDecision {
@@ -464,7 +464,7 @@ The following interfaces are prohibited:
 - governed action whose UMS authorization graph does not match an active Tracker Tenant projection;
 - provider payload accepted directly into the canonical domain without ACL mapping.
 
-> **Live-endpoint reconciliation.** Core-API today ships `POST /api/v1/phases/transition` (`apps/core-api/src/presentation/controllers/phases.controller.ts` → `PhaseTransitionUseCase`), which executes `from → to` transitions over REST. That endpoint predates this design; the "must not mutate canonical phase state" invariant above is a **target** to be enforced once Tracker owns phase state, not an invariant the current Core-API already honors. Until Tracker exists, this REST endpoint remains the only transition path.
+> **Live-endpoint reconciliation.** Core-API today ships `POST /api/v1/phases/transition` (`src/apps/core-api/src/presentation/controllers/phases.controller.ts` → `PhaseTransitionUseCase`), which executes `from → to` transitions over REST. That endpoint predates this design; the "must not mutate canonical phase state" invariant above is a **target** to be enforced once Tracker owns phase state, not an invariant the current Core-API already honors. Until Tracker exists, this REST endpoint remains the only transition path.
 
 ---
 

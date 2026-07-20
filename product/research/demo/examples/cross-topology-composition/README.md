@@ -34,7 +34,7 @@ For this example:
 | Check | Result |
 |---|---|
 | `modular-monolith` is accepted | Yes — manifest at `reference/core/architecture/topologies/progressive-axis/modular-monolith/topology.manifest.json` |
-| `event-driven` is accepted | Yes — manifest at `reference/core/architecture/topologies/integration/event-driven/topology.manifest.json` |
+| `event-driven` is accepted | Yes — manifest at `src/rulesets/topologies/event-driven/topology.manifest.json` |
 | Dimensions differ | Yes — `progressive-axis` vs `integration` |
 | `modular-monolith.composableWith` includes `event-driven` | Yes |
 | `event-driven.composableWith` includes `modular-monolith` | Yes |

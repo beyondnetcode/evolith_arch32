@@ -15,8 +15,8 @@ CLI, MCP Services, Core API, Agent Runtime — the four operational interfaces.
 |---------|---------|---------|
 | **Evolith CLI** | `@beyondnet/evolith-cli` | Developer-facing governance tool |
 | **MCP Services** | (bundled in CLI) | AI agent integration via MCP |
-| **Core API** | `apps/core-api` | REST API for orchestration systems |
-| **Agent Runtime** | `packages/agent-runtime` + `apps/agent-runtime-api` | Agentic mediation layer over Core |
+| **Core API** | `src/apps/core-api` | REST API for orchestration systems |
+| **Agent Runtime** | `src/packages/agent-runtime` + `src/apps/agent-runtime-api` | Agentic mediation layer over Core |
 
 ---
 
@@ -90,7 +90,7 @@ External Client / Tracker / Chat / CLI
 | **Tracing** | HTTP Tracker adapter emits structured traces for every handled request |
 | **Auth** | API key guard (Bearer / x-api-key), fail-closed in production |
 
-**Package**: `@beyondnet/evolith-agent-runtime` · **Service**: `apps/agent-runtime-api` · **Deploy**: `evolithruntime.beyondnet.cloud`
+**Package**: `@beyondnet/evolith-agent-runtime` · **Service**: `src/apps/agent-runtime-api` · **Deploy**: `evolithruntime.beyondnet.cloud`
 
 **Key endpoints**: `POST /v1/agent/handle` · `GET /v1/agent/skills` · `GET /health`
 

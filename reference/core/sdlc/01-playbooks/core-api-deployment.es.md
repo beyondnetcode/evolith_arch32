@@ -11,7 +11,7 @@ Este manual de despliegue establece los estándares operativos, estrategias de l
 Antes de desplegar la Core API, se debe validar la configuración para garantizar que todas las variables de entorno estén correctamente completadas y que las reglas estructurales estén activas.
 
 ### Esquema de Configuración (Validado por Zod)
-La aplicación valida la configuración del entorno al inicio utilizando un esquema de Zod definido en `apps/core-api/src/infrastructure/config/env.validation.ts`. Las variables críticas son:
+La aplicación valida la configuración del entorno al inicio utilizando un esquema de Zod definido en `src/apps/core-api/src/infrastructure/config/env.validation.ts`. Las variables críticas son:
 
 * `PORT`: El puerto de ejecución de la aplicación (por defecto `3000`).
 * `CORE_PATH`: La ruta absoluta a los rulesets locales canónicos y archivos de topologías.

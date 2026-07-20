@@ -16,7 +16,7 @@ Accepted (2026-06-29 — Architecture Board) — **supersedes Decision 1 of [ADR
 
 That contradicts the corrected criterion (the Core must not own/persist product/tenant/initiative/evidence/decision) **and the real code**, which is already a stateless evaluator:
 
-- `packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts` — a pure pipeline `manifest → topology → gate → Rego rules → verdict`, no persistence.
+- `src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts` — a pure pipeline `manifest → topology → gate → Rego rules → verdict`, no persistence.
 - `packages/core-domain/src/domain/gate-evidence.ts:87-89` — `ExecutionContext { initiative?; tenant?; phase? }` explicitly *"Never persisted or interpreted"*.
 - `packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts:55` — returns `skipped` ("Sprint throughput requires tracker data"): the Core declines operational data.
 - `apps/core-api/src/application/services/workspace-reference-resolver.service.ts:9-11` — the Core "never receives a user path, UMS token, repository credential, or tenant identifier"; consumers pass an opaque reference.

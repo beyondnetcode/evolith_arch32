@@ -8,7 +8,7 @@
 | **Package** | `@beyondnet/evolith-cli` |
 | **Version** | `1.1.4` |
 | **Binary** | `evolith-cli` |
-| **Source of truth** | [`sdk/cli/README.md`](../../../src/sdk/cli/README.md) (authoritative, 1200+ lines) |
+| **Source of truth** | [`src/sdk/cli/README.md`](../../../src/sdk/cli/README.md) (authoritative, 1200+ lines) |
 | **Surface inventory** | [`product-inventory.md`](./product-inventory.md) (generated — do not hand-edit) |
 
 This page is a **hub**: it orients you and points to the authoritative deeper docs. For exhaustive per-command options, always defer to the [code README](../../../src/sdk/cli/README.md) and the generated [Product Surface Inventory](./product-inventory.md).
@@ -205,7 +205,7 @@ Optional defaults consumed by `validate` (topology, phase, rulesets, engine) als
 
 ## Where this sits in Evolith
 
-Evolith CLI is part of the **Evolith suite**, built on **Evolith Core** (`packages/core`, `core-domain`, `infra-providers`, `sdk-client`, `mcp-tools`). Sibling products: **Evolith Tracker**, **Core API** (`apps/core-api`), **Evolith MCP Services**, and the **UMS Reference** model.
+Evolith CLI is part of the **Evolith suite**, built on **Evolith Core** (`src/packages/core`, `core-domain`, `infra-providers`, `sdk-client`, `mcp-tools`). Sibling products: **Evolith Tracker**, **Core API** (`src/apps/core-api`), **Evolith MCP Services**, and the **UMS Reference** model.
 
 ## Documentation
 

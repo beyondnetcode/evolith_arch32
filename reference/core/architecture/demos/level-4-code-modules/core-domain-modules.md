@@ -47,9 +47,9 @@ evolith/
 
 ## 3. Key Relationships
 
-1. **`core-domain` package:** Used universally by `apps/core-api`, `packages/agent-runtime`, `packages/mcp-server` and `sdk/cli`. It keeps framework-specific NestJS/runtime wiring outside the domain contracts.
+1. **`core-domain` package:** Used universally by `src/apps/core-api`, `src/packages/agent-runtime`, `src/packages/mcp-server` and `src/sdk/cli`. It keeps framework-specific NestJS/runtime wiring outside the domain contracts.
 2. **Canonical evaluation:** `src/evaluation/` defines `EvaluationContext`, `EvaluationResult`, `EvaluationOrchestrator`, kind evaluators, and ports shared by Core API, MCP and CLI.
-3. **Native + OPA parity:** `src/application/validators/evaluators/` and `rulesets/opa/` provide the dual-engine evaluation path required by repository governance.
+3. **Native + OPA parity:** `src/application/validators/evaluators/` and `src/rulesets/opa/` provide the dual-engine evaluation path required by repository governance.
 4. **Opaque context:** Tenant/product/initiative identifiers are accepted as temporary context only. Core may reflect them in traces/results but does not own authorization, tenant persistence, or binding gate decisions.
 
 ---

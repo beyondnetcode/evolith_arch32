@@ -110,7 +110,7 @@ raíz de satélite (ADR-0070, dicotomía `src/`/`docs/`) sigue aplicando **por p
 - **Implementación requerida (condiciona el cutover, se trackea como gaps):**
   1. Reescritura de SVC-01 + SVC-06 en `satellite-contracts.rules.json` + `satellite-contracts.rego`
      (+ input schema, + handler nativo consciente de workspace).
-  2. Schema `evolith.workspace.yaml` (`kind: SatelliteWorkspace`) en `rulesets/schema/`.
+  2. Schema `evolith.workspace.yaml` (`kind: SatelliteWorkspace`) en `src/rulesets/schema/`.
   3. `SatelliteRecord.subpath` + `satellite-record.schema.json` + enumeración del registro.
   4. Unificación `--satellite` en validate/gate/phase/upgrade + resolución por ancestro + flag en
      `upgrade`.

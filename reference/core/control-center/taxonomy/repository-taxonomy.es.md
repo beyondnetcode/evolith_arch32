@@ -65,7 +65,7 @@ El repositorio contiene artefactos arquitectonicos, no una aplicacion local de p
 | Orientacion | Ayudar al lector a navegar el corpus | `README.es.md`, `MASTER_INDEX.es.md`, `reference/getting-started/` | Navegacional |
 | Referencia canonica | Definir politica reutilizable, criterios de decision y trade-offs aceptados | `reference/core/architecture/blueprints/`, `reference/core/architecture/adrs/`, `reference/core/sdlc/` | Normativa o decisoria segun estado del documento |
 | Corpus de referencia topologica | Definir perfiles topologicos legibles por humanos, dimensiones, vinculos ADR, restricciones operativas y guia de adopcion para familias topologicas | `reference/core/architecture/topologies/` | Normativa cuando esta respaldada por un ADR o estandar aceptado; draft hasta su ratificacion |
-| Rulesets ejecutables | Codificar politica arquitectonica como reglas legibles por maquina gobernadas por Native y OPA | `rulesets/`, `rulesets/topologies/` | Gobernanza ejecutable |
+| Rulesets ejecutables | Codificar politica arquitectonica como reglas legibles por maquina gobernadas por Native y OPA | `rulesets/`, `src/rulesets/topologies/` | Gobernanza ejecutable |
 | Guia de implementacion por runtime | Materializar decisiones aceptadas para un runtime declarado | `reference/core/architecture/patterns/`, blueprints y ADRs especificos | Reutilizable solo dentro del alcance declarado de runtime y ADR |
 | Evidencia aplicada de producto | Demostrar adopcion y especializacion en un producto empresarial | `product/research/demo/`, codigo y docs externos de `beyondnetcode/ums` | Ilustrativa hasta su promocion a un artefacto canonico |
 
@@ -76,7 +76,7 @@ Reglas obligatorias de interpretacion:
 - Un aprendizaje de UMS solo se convierte en autoridad reutilizable mediante un ADR, estandar, blueprint o patron canonico aceptado.
 - El corpus documental canonico vive en `reference/`; no se debe crear una jerarquia paralela `docs/` en la raiz.
 - La guia multi-topologia escrita para humanos vive en `reference/core/architecture/topologies/`. Esta ruta es el corpus canonico para perfiles topologicos y guia de dimensiones topologicas; es distinta de las reglas ejecutables, que pertenecen bajo `rulesets/`.
-- Las reglas multi-topologia ejecutables viven en `rulesets/topologies/`. Esta ruta es la ubicacion canonica de reglas topologicas legibles por maquina y debe preservar Dual-Engine Parity cuando una regla tenga evaluadores Native TypeScript y OPA/Rego.
+- Las reglas multi-topologia ejecutables viven en `src/rulesets/topologies/`. Esta ruta es la ubicacion canonica de reglas topologicas legibles por maquina y debe preservar Dual-Engine Parity cuando una regla tenga evaluadores Native TypeScript y OPA/Rego.
 
 ## 5. Separacion entre Producto y Upstream
 
@@ -90,12 +90,12 @@ La raiz debe mantenerse pequena y navegable. Las categorias permitidas son:
 - Dot-folders de tooling y plataforma: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, `.mimocode/`, `.claude/`, `.obsidian/`, y configuracion de editores o automatizacion (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
 - **Convencion de carpetas de herramientas:** Cada herramienta de IA/IDE/autoria obtiene su propia carpeta con punto en la raiz del repositorio (`.claude/`, `.mimocode/`, `.obsidian/`, `.vscode/`). No se pueden anidar dentro de una carpeta padre porque cada runtime espera su configuracion en la raiz del workspace. NO crear carpetas de agrupacion como `.setup/` o similares — los contratos de las herramientas requieren ubicacion en la raiz.
 - `reference/` para el corpus documental y arquitectonico.
-- `sdk/` para tooling de acceso ejecutable, CLI y MCP.
-- `rulesets/` para reglas de gobernanza legibles por maquina, incluyendo `rulesets/topologies/` para reglas ejecutables especificas por topologia.
+- `src/sdk/` para tooling de acceso ejecutable, CLI y MCP.
+- `rulesets/` para reglas de gobernanza legibles por maquina, incluyendo `src/rulesets/topologies/` para reglas ejecutables especificas por topologia.
 
 No se mantienen directorios `src/` de aplicaciones en este repositorio; la implementacion ejecutable pertenece a UMS o a otro repositorio de producto con alcance explicito.
 
-El directorio `/topologies/` en la raiz queda explicitamente prohibido. La gobernanza multi-topologia no crea una nueva area de contenido en la raiz del repositorio; debe permanecer dentro de los limites de autoridad existentes establecidos por [ADR-0048](../../architecture/adrs/core/0048-enterprise-taxonomy-reference-layout.es.md), [ADR-0070](../../architecture/adrs/core/0070-lean-root-repository-taxonomy.es.md) y [ADR-0079](../../architecture/adrs/core/0079-multi-topology-reference-corpus.es.md). Cualquier propuesta futura para crear `/topologies/` en la raiz del repositorio requiere un ADR reemplazante aceptado que modifique la taxonomia de raiz, actualice este estandar, actualice `rulesets/cross-cutting/repository-taxonomy.rules.json`, actualice `rulesets/opa/taxonomy.rego` y actualice `.harness/scripts/ci/03-validate-root-cleanliness.mjs` en el mismo cambio.
+El directorio `/topologies/` en la raiz queda explicitamente prohibido. La gobernanza multi-topologia no crea una nueva area de contenido en la raiz del repositorio; debe permanecer dentro de los limites de autoridad existentes establecidos por [ADR-0048](../../architecture/adrs/core/0048-enterprise-taxonomy-reference-layout.es.md), [ADR-0070](../../architecture/adrs/core/0070-lean-root-repository-taxonomy.es.md) y [ADR-0079](../../architecture/adrs/core/0079-multi-topology-reference-corpus.es.md). Cualquier propuesta futura para crear `/topologies/` en la raiz del repositorio requiere un ADR reemplazante aceptado que modifique la taxonomia de raiz, actualice este estandar, actualice `src/rulesets/cross-cutting/repository-taxonomy.rules.json`, actualice `src/rulesets/opa/taxonomy.rego` y actualice `.harness/scripts/ci/03-validate-root-cleanliness.mjs` en el mismo cambio.
 
 ---
 [Volver al Hub de Referencia](../../../README.es.md)

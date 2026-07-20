@@ -107,7 +107,7 @@ and is explicitly out of scope — Core remains the sovereign upstream governanc
 - **Required implementation (gated before cutover, tracked as gaps):**
   1. SVC-01 rewrite + SVC-06 in `satellite-contracts.rules.json` + `satellite-contracts.rego`
      (+ input schema, + native handler workspace-awareness).
-  2. `evolith.workspace.yaml` schema (`kind: SatelliteWorkspace`) in `rulesets/schema/`.
+  2. `evolith.workspace.yaml` schema (`kind: SatelliteWorkspace`) in `src/rulesets/schema/`.
   3. `SatelliteRecord.subpath` + `satellite-record.schema.json` + registry enumeration.
   4. CLI `--satellite` unification across validate/gate/phase/upgrade + nearest-ancestor resolution
      + `upgrade` flag.

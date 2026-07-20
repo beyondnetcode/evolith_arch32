@@ -13,7 +13,7 @@ Este directorio contiene charts Helm para desplegar componentes de la aplicació
 | `evolith-agent-runtime/` | Chart Helm para el servicio Agent Runtime; `evolithruntime.beyondnet.cloud`, secret de API key, OPA de la imagen |
 
 > **Nota:** la antigua plantilla genérica `evolith-bff` se renombró a
-> `evolith-core-api` (apuntando a la imagen real de `apps/core-api`). Todos los
+> `evolith-core-api` (apuntando a la imagen real de `src/apps/core-api`). Todos los
 > charts están alineados al dominio `beyondnet.cloud` y al registry
 > `ghcr.io/beyondnetcode/*`. Ver [Topología de despliegue](../deployment-topology.es.md)
 > para el mapa canónico de servicios.
@@ -30,7 +30,7 @@ bash product/infra/helm/local-test.sh smoke
 ```
 
 `kind-apps-up` crea o reutiliza un clúster `kind` llamado `evolith`, construye
-`apps/core-api`, `packages/mcp-server` y `apps/agent-runtime-api`, carga esas
+`src/apps/core-api`, `src/packages/mcp-server` y `src/apps/agent-runtime-api`, carga esas
 imágenes en el clúster, crea secrets locales de API key e instala solo los
 charts de aplicación. Usa `apps-up` cuando Kubernetes de Docker Desktop ya esté
 activo y comparta el daemon local de imágenes Docker.
@@ -158,7 +158,7 @@ Establecer a `false` para entornos de desarrollo donde el endpoint del bundle pu
 
 ### Validación CI
 
-`node .harness/scripts/ci/29-validate-opa-sidecar-bundles.mjs` renderiza ambos charts, valida los values con un check nativo Node.js y evalúa la política OPA equivalente en `rulesets/infrastructure/opa/opa-sidecar-bundle.rego`. El check falla cuando el endpoint del bundle no usa HTTPS, faltan credenciales, la firma o el digest no están habilitados, o el probe de readiness del sidecar no falla cerrado.
+`node .harness/scripts/ci/29-validate-opa-sidecar-bundles.mjs` renderiza ambos charts, valida los values con un check nativo Node.js y evalúa la política OPA equivalente en `src/rulesets/infrastructure/opa/opa-sidecar-bundle.rego`. El check falla cuando el endpoint del bundle no usa HTTPS, faltan credenciales, la firma o el digest no están habilitados, o el probe de readiness del sidecar no falla cerrado.
 
 ---
 

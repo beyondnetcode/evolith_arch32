@@ -5,7 +5,7 @@
 Every external integration is a **port** (an interface in the domain). Concrete
 technology lives only in **adapters**. This is what keeps Hermes, OPA, the
 Tracker, and even `.harness` swappable. Source:
-[`packages/agent-runtime/src/domain/ports`](../../../../src/packages/agent-runtime/src/domain/ports).
+[`src/packages/agent-runtime/src/domain/ports`](../../../../src/packages/agent-runtime/src/domain/ports).
 
 ## Port catalog
 

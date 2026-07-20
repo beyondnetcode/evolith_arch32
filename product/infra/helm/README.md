@@ -13,7 +13,7 @@ This directory contains Helm charts for deploying reference application componen
 | `evolith-agent-runtime/` | Helm chart for the Agent Runtime service; `evolithruntime.beyondnet.cloud`, API-key secret, in-image OPA |
 
 > **Note:** the former generic `evolith-bff` template was renamed to
-> `evolith-core-api` (pointing at the real `apps/core-api` image). All charts are
+> `evolith-core-api` (pointing at the real `src/apps/core-api` image). All charts are
 > aligned to the `beyondnet.cloud` domain and the `ghcr.io/beyondnetcode/*`
 > registry. See [Deployment Topology](../deployment-topology.md) for the canonical
 > service map.
@@ -30,7 +30,7 @@ bash product/infra/helm/local-test.sh smoke
 ```
 
 `kind-apps-up` creates or reuses a `kind` cluster named `evolith`, builds
-`apps/core-api`, `packages/mcp-server`, and `apps/agent-runtime-api`, loads those
+`src/apps/core-api`, `src/packages/mcp-server`, and `src/apps/agent-runtime-api`, loads those
 images into the cluster, creates local API-key secrets, and installs only the
 application charts. Use `apps-up` instead when Docker Desktop Kubernetes is
 already running and shares the local Docker image daemon.
@@ -158,7 +158,7 @@ Set to `false` for development environments where the bundle endpoint may not be
 
 ### CI Validation
 
-`node .harness/scripts/ci/29-validate-opa-sidecar-bundles.mjs` renders both charts, validates the values with a native Node.js check, and evaluates the equivalent OPA policy in `rulesets/infrastructure/opa/opa-sidecar-bundle.rego`. The check fails when the bundle endpoint is not HTTPS, credentials are missing, signing or digest verification is disabled, or the sidecar readiness probe does not fail closed.
+`node .harness/scripts/ci/29-validate-opa-sidecar-bundles.mjs` renders both charts, validates the values with a native Node.js check, and evaluates the equivalent OPA policy in `src/rulesets/infrastructure/opa/opa-sidecar-bundle.rego`. The check fails when the bundle endpoint is not HTTPS, credentials are missing, signing or digest verification is disabled, or the sidecar readiness probe does not fail closed.
 
 ---
 

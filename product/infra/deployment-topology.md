@@ -14,7 +14,7 @@ models stop diverging.
 
 ## Canonical truth (ADR-0074)
 
-- The official network exposure layer of Evolith Core is **`apps/core-api`**
+- The official network exposure layer of Evolith Core is **`src/apps/core-api`**
   ([ADR-0074](../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md)) —
   a NestJS REST API. This is the real service consumers hit.
 - **`evolith-bff`** (historically the Helm chart, the `bff` compose service, and
@@ -26,8 +26,8 @@ models stop diverging.
   `product/infra/docker/bff.Dockerfile` remains, as a reference template.
 - **"Tracker BFF"** (architecture doc §11) is **external** — it belongs to
   Evolith Tracker and *consumes* core-api; it is not deployed from this repo.
-- Real per-service Dockerfiles are `apps/core-api/Dockerfile`,
-  `packages/mcp-server/Dockerfile`, `apps/agent-runtime-api/Dockerfile`. The
+- Real per-service Dockerfiles are `src/apps/core-api/Dockerfile`,
+  `src/packages/mcp-server/Dockerfile`, `src/apps/agent-runtime-api/Dockerfile`. The
   files under `product/infra/docker/*.Dockerfile` are illustrative
   templates, not the production build.
 
@@ -35,10 +35,10 @@ models stop diverging.
 
 | Canonical service | Real build | Coolify (LIVE) | docker-compose | Helm chart |
 |---|---|---|---|---|
-| **CORE-API** | `apps/core-api/Dockerfile` | `evolith-core-api` · `evolith.beyondnet.cloud` | `core-api` (real build) | `evolith-core-api` · `evolith.beyondnet.cloud` |
-| **MCP Server** | `packages/mcp-server/Dockerfile` | `evolith-mcp` · `mcpevolith.beyondnet.cloud` | `mcp` (real build) | `evolith-mcp` · `mcpevolith.beyondnet.cloud` |
-| **Agent Runtime** | `apps/agent-runtime-api/Dockerfile` | prepared · `evolithruntime.beyondnet.cloud` | `agent-runtime` (real build) | `evolith-agent-runtime` · `evolithruntime.beyondnet.cloud` |
-| **SMART-CLI** | `sdk/cli` | npm `@beyondnet/evolith-cli` | n/a | n/a |
+| **CORE-API** | `src/apps/core-api/Dockerfile` | `evolith-core-api` · `evolith.beyondnet.cloud` | `core-api` (real build) | `evolith-core-api` · `evolith.beyondnet.cloud` |
+| **MCP Server** | `src/packages/mcp-server/Dockerfile` | `evolith-mcp` · `mcpevolith.beyondnet.cloud` | `mcp` (real build) | `evolith-mcp` · `mcpevolith.beyondnet.cloud` |
+| **Agent Runtime** | `src/apps/agent-runtime-api/Dockerfile` | prepared · `evolithruntime.beyondnet.cloud` | `agent-runtime` (real build) | `evolith-agent-runtime` · `evolithruntime.beyondnet.cloud` |
+| **SMART-CLI** | `src/sdk/cli` | npm `@beyondnet/evolith-cli` | n/a | n/a |
 | **Tracker BFF** | external (Tracker) | n/a | n/a | n/a |
 
 `product/infra/docker-compose.evolith.yml` builds all three services from the
@@ -73,7 +73,7 @@ each with build context `../..` — no template image is on the compose path.
 
 - Treat **`core-api`** (ADR-0074) as the canonical name everywhere. Either rename
   the Helm `evolith-bff` chart to `evolith-core-api` pointing at the real
-  `apps/core-api` image, or keep `evolith-bff` clearly labelled as a generic
+  `src/apps/core-api` image, or keep `evolith-bff` clearly labelled as a generic
   template and add a real `evolith-core-api` chart.
 - Standardize one **canonical domain**. Recommended: `*.beyondnet.cloud` (already
   live on Coolify) — update Helm `ingressRoute.host` accordingly.
@@ -93,7 +93,7 @@ The in-repo reconciliation has been applied:
 2. **Canonical registry → `ghcr.io/beyondnetcode/*`.** Chart `image.repository`
    updated for all three; the `docker-images.yml` workflow publishes there.
 3. **`evolith-bff` renamed to `evolith-core-api`**, modeled on the real
-   `apps/core-api` (in-process OPA, no sidecar, `/health` probes, port 3000,
+   `src/apps/core-api` (in-process OPA, no sidecar, `/health` probes, port 3000,
    `EVOLITH_API_KEY` secret). The `evolith-mcp` chart's stale `3001` port and
    non-existent `/ready`,`/startup` probes were corrected to `3000` + `/health`.
 

@@ -15,12 +15,12 @@ Evolith Core is a governance engine for software development lifecycle (SDLC) en
 
 | Area | Path | Purpose |
 |---|---|---|
-| Domain logic | `packages/core-domain/src/domain/` | Entities, events, state machines, RBAC, verdict |
-| Application layer | `packages/core-domain/src/application/` | Use cases, services, ports |
-| Infrastructure | `packages/core-domain/src/infrastructure/` | Event bus, audit, webhook, adapters |
-| MCP server | `packages/mcp-server/src/` | MCP tool definitions and transport |
-| Core REST API | `apps/core-api/src/` | NestJS API surface |
-| CLI | `sdk/cli/src/` | Evolith CLI commands |
+| Domain logic | `src/packages/core-domain/src/domain/` | Entities, events, state machines, RBAC, verdict |
+| Application layer | `src/packages/core-domain/src/application/` | Use cases, services, ports |
+| Infrastructure | `src/packages/core-domain/src/infrastructure/` | Event bus, audit, webhook, adapters |
+| MCP server | `src/packages/mcp-server/src/` | MCP tool definitions and transport |
+| Core REST API | `src/apps/core-api/src/` | NestJS API surface |
+| CLI | `src/sdk/cli/src/` | Evolith CLI commands |
 | Rulesets | `rulesets/` | OPA policies + topology rules |
 | SDLC data | `reference/core/sdlc/` | Phase/gate JSON definitions |
 | ADRs | `reference/core/sdlc/governance/` | Architecture Decision Records |
@@ -48,8 +48,8 @@ Satellites (external projects) submit evidence to Core via REST, MCP, or CLI. Co
 
 1. **Core stores zero tenant config** — all tenant composition flows through `ValidateWorkflowUseCase` with a caller-supplied `WorkflowDefinition`.
 2. **Canonical gate source** — `reference/core/sdlc/gates/gate-f*.json` (not `rulesets/phase-gates/phase-gates.rules.json`).
-3. **Canonical topology location** — `rulesets/topologies/` (all 8 topologies; the `reference/core/architecture/topologies/` dirs have `RELOCATED.md` stubs).
-4. **Canonical verdict** — `Verdict` enum (`PASS|FAIL|WAIVE|SKIP`) from `packages/core-domain/src/domain/verdict/verdict.ts`.
+3. **Canonical topology location** — `src/rulesets/topologies/` (all 8 topologies; the `reference/core/architecture/topologies/` dirs have `RELOCATED.md` stubs).
+4. **Canonical verdict** — `Verdict` enum (`PASS|FAIL|WAIVE|SKIP`) from `src/packages/core-domain/src/domain/verdict/verdict.ts`.
 5. **Event bus is additive** — `IDomainEventBus` is optional in all use cases; absence does not break existing flows.
 6. **Bilingual parity** — every English doc must have an `*.es.md` counterpart.
 

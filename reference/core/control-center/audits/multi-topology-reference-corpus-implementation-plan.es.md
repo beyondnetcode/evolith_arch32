@@ -22,7 +22,7 @@ La dirección aprobada es:
 2. Tratar cada topología como un perfil gobernado declarado por un `topology.manifest.json`.
 3. Mantener los ADRs universales en el registro ADR existente y referenciarlos desde los perfiles topológicos.
 4. Ubicar la documentación topológica escrita por humanos bajo `reference/core/architecture/topologies/`.
-5. Ubicar las reglas topológicas ejecutables bajo `rulesets/topologies/`.
+5. Ubicar las reglas topológicas ejecutables bajo `src/rulesets/topologies/`.
 6. Preservar la Paridad de Dos Motores: cada nueva regla de validación topológica requiere cobertura de ruleset JSON nativo y cobertura OPA/Rego equivalente.
 7. No crear un directorio `/topologies/` en la raíz salvo que un ADR futuro cambie explícitamente la taxonomía de raíz.
 
@@ -270,7 +270,7 @@ Usar este orden. No avanzar a implementación antes de que existan el ADR y el s
 2. Actualizar taxonomía del repositorio y reglas de taxonomía.
 3. Agregar `topology-manifest.schema.json`.
 4. Crear `reference/core/architecture/topologies/README.md` y `.es.md`.
-5. Crear `rulesets/topologies/README.md` y `.es.md`.
+5. Crear `src/rulesets/topologies/README.md` y `.es.md`.
 6. Crear los perfiles `progressive-axis` y mapear F1/F2/F3.
 7. Crear perfiles draft para serverless, edge, event-driven, data mesh y agentic AI.
 8. Agregar carga de rulesets topológicos a la capa compartida Core Domain.
@@ -314,7 +314,7 @@ La transición al Corpus de Referencia Multi-Topología está completa solo cuan
 1. El ADR Multi-Topology está aceptado.
 2. El schema de manifiesto topológico existe y se valida.
 3. `reference/core/architecture/topologies/` está enlazado desde Architecture Hub e índices de navegación.
-4. `rulesets/topologies/` existe y está enlazado desde Rulesets Hub.
+4. `src/rulesets/topologies/` existe y está enlazado desde Rulesets Hub.
 5. Modular monolith está representado como el primer perfil topológico.
 6. La compatibilidad F1/F2/F3 se preserva.
 7. Los perfiles serverless, edge computing, event-driven, data mesh y agentic AI existen al menos como draft.

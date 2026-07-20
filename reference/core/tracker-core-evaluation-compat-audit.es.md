@@ -470,9 +470,9 @@ Paridad native+OPA (ADR-0041): introducir `input.context` **rompería ambos moto
 ---
 
 **Archivos ancla nuevos verificados en esta síntesis (rutas absolutas):**
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts` (pipeline reusable, `:23-98`)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/evaluator.interface.ts` (homónimo `EvaluationContext`, `:3-6`)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts` (builder FS-only, `:8-61`)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts` (pipeline reusable, `:23-98`)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/evaluator.interface.ts` (homónimo `EvaluationContext`, `:3-6`)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts` (builder FS-only, `:8-61`)
 - `/Users/beyondnet/Source/evolith/reference/core/core-evaluation-engine-design.es.md` (contrato canónico `:299-479`; roadmap R0-R5 `:1522-1552`)
 - `/Users/beyondnet/Source/evolith/rulesets/opa/main.rego` (31 imports; sin `phase_gates`, `:1-31`)
 - `/Users/beyondnet/Source/evolith/reference/core/control-center/gaps/gap-tracking.md` (GT-375 umbrella + GT-376..GT-381, `:16-22`)
@@ -724,17 +724,17 @@ Brechas para paridad CLI↔Core API:
 **Resumen ejecutable:** la CLI hoy NO consume un `EvaluationContext` ni emite un `EvaluationResult`; lo aproxima con `validate --manifest --phase --topology` (pipeline GT-281) más `gate`/`phase`/`drift` por separado. Para paridad BR-008 con `POST /v1/evaluate` faltan: (1) comando `evolith evaluate --context <file.json>`, (2) envelope ADR-0073 en `validate` y `sdlc gate-status`, (3) ampliación del contrato de entrada (CLI flags y `EvaluateSatelliteDto`) al `EvaluationContext` canónico con identificadores opacos y `workspaceRef`.
 
 Archivos relevantes (rutas absolutas):
-- `/Users/beyondnet/Source/evolith/sdk/cli/src/commands/validate/validate.command.ts`
-- `/Users/beyondnet/Source/evolith/sdk/cli/src/commands/gate/gate.command.ts`
-- `/Users/beyondnet/Source/evolith/sdk/cli/src/commands/phase/phase-advance.command.ts`
-- `/Users/beyondnet/Source/evolith/sdk/cli/src/commands/sdlc/gate-status.command.ts`
-- `/Users/beyondnet/Source/evolith/sdk/cli/src/commands/drift/drift.command.ts`
-- `/Users/beyondnet/Source/evolith/sdk/cli/src/commands/architecture/scaffold.command.ts`
-- `/Users/beyondnet/Source/evolith/sdk/cli/src/commands/standards/standards.command.ts`
-- `/Users/beyondnet/Source/evolith/sdk/cli/src/infrastructure/cli/base-command.ts` (`profile`)
-- `/Users/beyondnet/Source/evolith/sdk/cli/src/infrastructure/config/config.service.ts:9-13` (`ProfileConfig`: tenant/initiative)
-- `/Users/beyondnet/Source/evolith/apps/core-api/src/presentation/controllers/evaluation.controller.ts` (`POST /v1/evaluate`)
-- `/Users/beyondnet/Source/evolith/apps/core-api/src/presentation/dtos/evaluation.dto.ts` (`EvaluateSatelliteDto`)
+- `/Users/beyondnet/Source/evolith/src/sdk/cli/src/commands/validate/validate.command.ts`
+- `/Users/beyondnet/Source/evolith/src/sdk/cli/src/commands/gate/gate.command.ts`
+- `/Users/beyondnet/Source/evolith/src/sdk/cli/src/commands/phase/phase-advance.command.ts`
+- `/Users/beyondnet/Source/evolith/src/sdk/cli/src/commands/sdlc/gate-status.command.ts`
+- `/Users/beyondnet/Source/evolith/src/sdk/cli/src/commands/drift/drift.command.ts`
+- `/Users/beyondnet/Source/evolith/src/sdk/cli/src/commands/architecture/scaffold.command.ts`
+- `/Users/beyondnet/Source/evolith/src/sdk/cli/src/commands/standards/standards.command.ts`
+- `/Users/beyondnet/Source/evolith/src/sdk/cli/src/infrastructure/cli/base-command.ts` (`profile`)
+- `/Users/beyondnet/Source/evolith/src/sdk/cli/src/infrastructure/config/config.service.ts:9-13` (`ProfileConfig`: tenant/initiative)
+- `/Users/beyondnet/Source/evolith/src/apps/core-api/src/presentation/controllers/evaluation.controller.ts` (`POST /v1/evaluate`)
+- `/Users/beyondnet/Source/evolith/src/apps/core-api/src/presentation/dtos/evaluation.dto.ts` (`EvaluateSatelliteDto`)
 - `/Users/beyondnet/Source/evolith/reference/core/core-evaluation-engine-design.es.md:299-334` (`EvaluationContext` objetivo)
 
 
@@ -808,18 +808,18 @@ El campo `executionMode` (manual/híbrido/agéntico) del `EvaluationContext` obj
 - **GAP-MCP-5 (menor):** `evolith-sdlc-status` usa eje `phase-0..5` obsoleto, divergente del eje canónico de las demás tools.
 
 ### Archivos relevantes (rutas absolutas)
-- `/Users/beyondnet/Source/evolith/packages/mcp-server/src/tools/validate.tool.ts`
-- `/Users/beyondnet/Source/evolith/packages/mcp-server/src/tools/composable-validate.tool.ts`
-- `/Users/beyondnet/Source/evolith/packages/mcp-server/src/tools/gate.tools.ts`
-- `/Users/beyondnet/Source/evolith/packages/mcp-server/src/tools/phase-advance.tools.ts`
-- `/Users/beyondnet/Source/evolith/packages/mcp-server/src/tools/architecture.tools.ts`
-- `/Users/beyondnet/Source/evolith/packages/mcp-server/src/tools/topology.tools.ts`
-- `/Users/beyondnet/Source/evolith/packages/mcp-server/src/tools/sdlc.tools.ts`
-- `/Users/beyondnet/Source/evolith/packages/mcp-server/src/tools/tools.module.ts`
-- `/Users/beyondnet/Source/evolith/packages/mcp-server/src/mcp/tool.interface.ts`
-- `/Users/beyondnet/Source/evolith/packages/mcp-server/src/mcp/tool-registry.service.ts`
-- `/Users/beyondnet/Source/evolith/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts` (envelope ADR-0073, mutative gate/HITL, propagación de contexto opaco)
-- `/Users/beyondnet/Source/evolith/packages/mcp-server/src/mcp/abac-evaluator.ts` (ABAC dual-engine, modo agéntico)
+- `/Users/beyondnet/Source/evolith/src/packages/mcp-server/src/tools/validate.tool.ts`
+- `/Users/beyondnet/Source/evolith/src/packages/mcp-server/src/tools/composable-validate.tool.ts`
+- `/Users/beyondnet/Source/evolith/src/packages/mcp-server/src/tools/gate.tools.ts`
+- `/Users/beyondnet/Source/evolith/src/packages/mcp-server/src/tools/phase-advance.tools.ts`
+- `/Users/beyondnet/Source/evolith/src/packages/mcp-server/src/tools/architecture.tools.ts`
+- `/Users/beyondnet/Source/evolith/src/packages/mcp-server/src/tools/topology.tools.ts`
+- `/Users/beyondnet/Source/evolith/src/packages/mcp-server/src/tools/sdlc.tools.ts`
+- `/Users/beyondnet/Source/evolith/src/packages/mcp-server/src/tools/tools.module.ts`
+- `/Users/beyondnet/Source/evolith/src/packages/mcp-server/src/mcp/tool.interface.ts`
+- `/Users/beyondnet/Source/evolith/src/packages/mcp-server/src/mcp/tool-registry.service.ts`
+- `/Users/beyondnet/Source/evolith/src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts` (envelope ADR-0073, mutative gate/HITL, propagación de contexto opaco)
+- `/Users/beyondnet/Source/evolith/src/packages/mcp-server/src/mcp/abac-evaluator.ts` (ABAC dual-engine, modo agéntico)
 
 
 ### A.5 — Rulesets / OPA
@@ -888,11 +888,11 @@ El único punto donde el Tracker enviaría gate+artefactos+evidencias es el gate
 | B8 | Gate evaluation real (`EvaluateGateUseCase`) valida por FS y no ejecuta OPA `phase-gates` | **Media** | `evaluate-gate.use-case.ts:65-68`; `phase-gate-validator.service.ts` |
 
 **Archivos clave (rutas absolutas):**
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts` (builder FS-only)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/evaluator.interface.ts` (homónimo `EvaluationContext = {satellitePath, corePath}`)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts` y `native-evaluator.ts` (paridad sin builder compartido)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts` (builder FS-only)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/evaluator.interface.ts` (homónimo `EvaluationContext = {satellitePath, corePath}`)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts` y `native-evaluator.ts` (paridad sin builder compartido)
 - `/Users/beyondnet/Source/evolith/rulesets/opa/{phase-gates,dod,compliance-baseline,evidence,multi-tenancy,governance,abac-mcp-tool-access}.rego`
 - `/Users/beyondnet/Source/evolith/rulesets/opa/main.rego` (no agrega phase-gates)
 - `/Users/beyondnet/Source/evolith/rulesets/opa/schemas/*.input.schema.json` (26 schemas, sin `phase-gates`)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/use-cases/evaluate-gate.use-case.ts` (gate real, FS-based, sin OPA)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/use-cases/evaluate-gate.use-case.ts` (gate real, FS-based, sin OPA)
 - `/Users/beyondnet/Source/evolith/reference/core/core-evaluation-engine-design.md:299-334` (contrato canónico objetivo `EvaluationContext`)

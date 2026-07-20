@@ -94,7 +94,7 @@ El runtime soporta Streaming Basado en Eventos a través de Server-Sent Events (
 
 ## Evidence and Evaluation Criteria
 
-La implementación ([`packages/agent-runtime`](../../../../../src/packages/agent-runtime/README.es.md))
+La implementación ([`src/packages/agent-runtime`](../../../../../src/packages/agent-runtime/README.es.md))
 satisface los criterios de aceptación, verificados con build + pruebas:
 
 - El Core no está acoplado a Hermes (confirmado por grep: sin import de Hermes
@@ -122,7 +122,7 @@ versionado y el catálogo de skills explícito.
 
 - [Documentación de arquitectura del Agent Runtime](../../../../../src/packages/agent-runtime/README.es.md)
 - [`.harness/manifest.yaml`](../../../../../.harness/manifest.yaml)
-- [`packages/agent-runtime`](../../../../../src/packages/agent-runtime/README.es.md)
+- [`src/packages/agent-runtime`](../../../../../src/packages/agent-runtime/README.es.md)
 
 ## Related Decisions and Standards
 

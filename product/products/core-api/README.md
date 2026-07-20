@@ -109,7 +109,7 @@ Clients connect to the Core API via standard REST endpoints versioned under `/ap
 }
 ```
 
-Detailed endpoint documentation, request bodies, and error response envelopes can be found in the [API Reference](./api-reference.md). For the complete operational reference (installation, configuration, security model, tenant flows, and observability), see the authoritative code README at [`apps/core-api/README.md`](../../../src/apps/core-api/README.md).
+Detailed endpoint documentation, request bodies, and error response envelopes can be found in the [API Reference](./api-reference.md). For the complete operational reference (installation, configuration, security model, tenant flows, and observability), see the authoritative code README at [`src/apps/core-api/README.md`](../../../src/apps/core-api/README.md).
 
 To contribute (clone, build, run the test suites, branch/commit conventions), see the repository-root [`CONTRIBUTING.md`](../../../CONTRIBUTING.md).
 

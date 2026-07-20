@@ -5,7 +5,7 @@
 Toda integración externa es un **puerto** (una interfaz en el dominio). La
 tecnología concreta vive solo en **adaptadores**. Esto es lo que mantiene
 intercambiables a Hermes, OPA, el Tracker e incluso `.harness`. Fuente:
-[`packages/agent-runtime/src/domain/ports`](../../../../src/packages/agent-runtime/src/domain/ports).
+[`src/packages/agent-runtime/src/domain/ports`](../../../../src/packages/agent-runtime/src/domain/ports).
 
 ## Catálogo de puertos
 

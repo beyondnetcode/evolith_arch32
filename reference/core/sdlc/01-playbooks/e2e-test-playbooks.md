@@ -15,7 +15,7 @@ A green run of all four playbooks is the cross-surface E2E gate.
 
 - **Surface:** SDLC governance domain (phase → gate → artifact → verdict).
 - **Command:** `npm run test:e2e --workspace @beyondnet/evolith-core-domain`
-- **Suite:** `packages/core-domain/src/__e2e__/governance-flow.e2e.spec.ts` (13 tests).
+- **Suite:** `src/packages/core-domain/src/__e2e__/governance-flow.e2e.spec.ts` (13 tests).
 - **Scenarios:** ARCHITECT gate approval (PASS verdict + `GateApprovedEvent` + audit + phase transitions); missing artifact → FAIL + `GateRejectedEvent`; RBAC denial (`GateAuthorizationError`); webhook delivery of `gate.approved`; 5-phase workflow + Blueprint validation.
 - **Expected:** 13/13 green against a real tmpdir satellite.
 
@@ -31,7 +31,7 @@ A green run of all four playbooks is the cross-surface E2E gate.
 
 - **Surface:** `core-api` HTTP surface (URI versioning `api/v1`, version-neutral `/health`, `/metrics`).
 - **Command:** `npm run --workspace apps/core-api test:e2e`
-- **Suite:** `apps/core-api/test/app.e2e-spec.ts`.
+- **Suite:** `src/apps/core-api/test/app.e2e-spec.ts`.
 - **Scenarios:** `GET /health/live` → 200; `GET /health` → 200; `GET /metrics` → 200; `GET /api/v1/rulesets` → 200; `GET /` → 404 (no root route).
 - **Expected:** 5/5 green. Requires `WORKSPACE_ROOT` (set by `test-setup.js` via `setupFiles`).
 
@@ -39,7 +39,7 @@ A green run of all four playbooks is the cross-surface E2E gate.
 
 - **Surface:** `mcp-server` MCP HTTP protocol surface.
 - **Command:** `npm run --workspace packages/mcp-server build && npm run --workspace packages/mcp-server test:e2e`
-- **Suite:** `packages/mcp-server/test/mcp-server.e2e-spec.ts` (spawns `node dist/main serve --transport http`).
+- **Suite:** `src/packages/mcp-server/test/mcp-server.e2e-spec.ts` (spawns `node dist/main serve --transport http`).
 - **Scenarios:** public `/health` → 200; `POST /` without key → 401 (fail-closed auth); `initialize` with key → 200 + `serverInfo.name = evolith-mcp` + `mcp-session-id`.
 - **Expected:** 3/3 green. Requires a prior build (`dist/main`).
 

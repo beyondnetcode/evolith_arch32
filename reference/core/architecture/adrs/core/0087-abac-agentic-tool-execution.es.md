@@ -46,7 +46,7 @@ Según el ADR-0041, la lógica de autorización DEBE implementarse en **ambos**:
 1. Un evaluador TypeScript nativo (para cumplimiento en línea dentro del sandbox)
 2. Una política OPA `.rego` correspondiente (para gobernanza de políticas como código)
 
-La política de referencia se encuentra en [`rulesets/opa/abac-mcp-tool-access.rego`](../../../../../src/rulesets/opa/abac-mcp-tool-access.rego).
+La política de referencia se encuentra en [`src/rulesets/opa/abac-mcp-tool-access.rego`](../../../../../src/rulesets/opa/abac-mcp-tool-access.rego).
 
 ## Consecuencias
 

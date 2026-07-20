@@ -6,7 +6,7 @@ Evolith MCP Services expose Evolith Core governance as real-time context for LLM
 
 ## Overview
 
-The MCP server turns the Core reference corpus, rulesets, and phase gates into governed **tools**, **resources**, and **prompts** that an agent can call to retrieve context, evaluate criteria, and submit evidence — under the same contracts as the CLI and REST surfaces. The server lives in [`packages/mcp-server`](../../../src/packages/mcp-server) and is started via the `evolith-mcp` binary; see its [README](../../../src/packages/mcp-server/README.md) for the full tool/resource/prompt reference, auth model, and deployment guide.
+The MCP server turns the Core reference corpus, rulesets, and phase gates into governed **tools**, **resources**, and **prompts** that an agent can call to retrieve context, evaluate criteria, and submit evidence — under the same contracts as the CLI and REST surfaces. The server lives in [`src/packages/mcp-server`](../../../src/packages/mcp-server) and is started via the `evolith-mcp` binary; see its [README](../../../src/packages/mcp-server/README.md) for the full tool/resource/prompt reference, auth model, and deployment guide.
 
 > **User manual — [Using MCP](../../../reference/core/interfaces/using-the-mcp.md).** A readable, task-oriented guide to every one of the 47 `evolith-*` tools — inputs, the mutative-approval gate, and worked call/response examples. Part of the [Interface How-To hub](../../../reference/core/interfaces/README.md) (CLI · MCP · REST) with per-SDLC-phase catalogs and playbooks.
 
@@ -47,7 +47,7 @@ The system is **intelligent and flexible** — users can combine any entry point
 
 ## Install and prerequisites
 
-- **Prerequisite:** Node.js `>=20.0.0` (`engines.node` in `packages/mcp-server/package.json`). No database is required; HTTP API keys are stored in-process.
+- **Prerequisite:** Node.js `>=20.0.0` (`engines.node` in `src/packages/mcp-server/package.json`). No database is required; HTTP API keys are stored in-process.
 - **Install:**
 
 ```bash
@@ -98,7 +98,7 @@ The lightweight `@beyondnet/evolith-mcp-tools` package has been retired. The can
 | stdio: logs mixed into the MCP response | Expected — logs go to **stderr**, stdout is reserved for the JSON-RPC stream. Read stderr separately. |
 | HTTP `401 Unauthorized` | Missing/incorrect `EVOLITH_API_KEY`, or an invalid JWT when `JWT_SECRET` is set. |
 | `ABAC-02: No roles present` | The authenticated principal has no roles; supply roles via the JWT `roles` claim, or use the API key (admin context). |
-| `OPA: policy.wasm not found` | `engine: "opa"` needs `sdk/cli/rulesets/opa/policy.wasm` under `CORE_PATH`. A missing policy is **fail-closed in production** (hard deny, `ABAC_POLICY_MISSING`) and abstains only in non-production; use `engine: "native"` to bypass OPA. |
+| `OPA: policy.wasm not found` | `engine: "opa"` needs `src/sdk/cli/rulesets/opa/policy.wasm` under `CORE_PATH`. A missing policy is **fail-closed in production** (hard deny, `ABAC_POLICY_MISSING`) and abstains only in non-production; use `engine: "native"` to bypass OPA. |
 
 ## Conformance
 

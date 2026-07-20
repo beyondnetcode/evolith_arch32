@@ -6987,3 +6987,23 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Dependencias:** [`GT-329`](#gt-329) (superseded, no reabierto).
 - **Estado:** `COMPLETADO`
 
+#### GT-567
+
+**Title:** CD despliega al VPS, que esta fuera de alcance: falla en cada push a `main` y nadie lee el rojo
+
+- **Purpose:** Que CD deje de fallar contra un entorno que deliberadamente no se usa, sin perder la senal cuando el VPS vuelva a estar en alcance.
+- **CORRECCION al primer texto de este gap:** afirmaba que "produccion lleva caida al menos dos dias". **Era falso.** El VPS no es el entorno objetivo actual. Hoy todo corre en Docker + kind local y las pruebas van contra el cluster `evolith-cluster`; el VPS se retoma mas adelante. La correccion importa porque el encuadre original habria mandado a alguien a atender un incidente de produccion que no existe.
+- **Evidence:** `Deploy services (Coolify)` de `ci-cd.yml` falla en cada push a `main` desde el 2026-07-19 — 14+ corridas seguidas, la mas antigua comprobada `27fbc2f0`. El step que cae es el hook de core-api: `curl: (28) Failed to connect to 72.60.63.240 port 8000`. Los secrets SI estan configurados, asi que el job no toma su rama de skip: lo intenta y no alcanza el host, que no responde en ningun puerto (panel `:8000`, `evolith.beyondnet.cloud` y `mcpevolith.beyondnet.cloud`, todos HTTP 000, verificado fuera de GitHub Actions).
+- **El entorno real esta sano:** cluster kind `evolith-cluster`, control-plane `Ready` desde hace 2d14h, namespace `evolith-local` con `evolith-core-api`, `evolith-mcp` y `evolith-agent-runtime` en `1/1` y cero reinicios. `GET /health` de core-api devuelve HTTP 200 con envelope ADR-0073 conforme. Es la misma ventana en la que el deploy al VPS lleva fallando: el rojo nunca dijo nada sobre el entorno que si se usa.
+- **Impact:** Rojo permanente en cada push a `main` que nadie lee, porque el job no es check requerido. Peor: `Build & Push Services (GHCR)` sigue verde publicando imagenes que ningun runtime consume — el pipeline reporta una entrega que no realiza.
+- **Component:** `Infra` · **Dimension:** Delivery · **Type:** infra
+- **Criticality:** P3 · **Complexity:** S
+- **Proposed fix:** Condicionar el job `deploy` a que el VPS este en alcance, para que CD deje de afirmar una entrega que no hace. Dos formas viables: quitar los secrets `COOLIFY_*` (el job ya hace fail-soft y salta cuando faltan, que es exactamente este caso) o condicionarlo a un flag explicito. NO borrar el job: el VPS vuelve mas adelante.
+- **Explicitly NOT the fix:** hacer fail-soft el step ante errores de conexion. Pone el check en verde mientras el despliegue sigue sin ocurrir, y mantendria al pipeline afirmando una entrega que nunca realiza.
+- **Cuando vuelva el VPS:** la senal no debe depender de que alguien mergee. El job de deploy solo corre en push, asi que calla mientras nadie toca `main` — una sonda de uptime contra las URLs de servicio es la forma correcta.
+- **Acceptance criteria:**
+  - [ ] CD deja de fallar en los push a `main` mientras el VPS este fuera de alcance.
+  - [ ] El pipeline no reporta una entrega que no esta realizando.
+  - [ ] Reactivar el despliegue al VPS es un unico paso deliberado y documentado.
+- **Dependencies:** ninguna en el repo.
+- **Status:** `PENDING`

@@ -43,20 +43,20 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Indicator | Value |
 |---|---:|
 | Canonical board date | 2026-07-13 |
-| Total gaps | 566 |
+| Total gaps | 567 |
 | Closed gaps | 551 |
-| Open gaps | 15 |
+| Open gaps | 16 |
 | Open P0 | 2 |
 | Open P1 | 4 |
 | Open P2 | 6 |
-| Total closure | 97.3% |
+| Total closure | 97.2% |
 | Closure evidence records | 533 |
 | Recorded readiness | 3 BLOCKED, 1 PASS |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
 | `Cross` | 3 | 2 | 1 | [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
-| `Infra` | 2 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-464](../gaps/gap-reference-catalog.md#gt-464) |
+| `Infra` | 3 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-567](../gaps/gap-reference-catalog.md#gt-567) |
 | `Core API` | 2 | 0 | 1 | [GT-560](../gaps/gap-reference-catalog.md#gt-560), [GT-522](../gaps/gap-reference-catalog.md#gt-522) |
 | `Agent Runtime` | 1 | 0 | 1 | [GT-441](../gaps/gap-reference-catalog.md#gt-441) |
 | `agent-runtime` | 1 | 0 | 0 | [GT-531](../gaps/gap-reference-catalog.md#gt-531) |

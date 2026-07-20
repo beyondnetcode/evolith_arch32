@@ -83,6 +83,9 @@
     "yaml": "2.9.0",
     "zod": "4.4.3"
   },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0"
+  },
   "devDependencies": {
     "@types/fs-extra": "11.0.4",
     "@types/jest": "30.0.0",

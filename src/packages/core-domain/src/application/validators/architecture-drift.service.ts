@@ -77,7 +77,12 @@ export class ArchitectureDriftService {
       { level: declaredLevel },
     );
 
-    const history = options.storeHistory !== false
+    // La lectura sigue la misma regla que la escritura: sin opt-in el Core no
+    // toca el workspace ni para leer. Dejarla en `!== false` hacia que leyera
+    // un historial que nunca escribia, y que la clasificacion new/persistent
+    // dependiera de si el filesystem resultaba ser escribible -- distinta en
+    // local y en contenedor para la misma entrada.
+    const history = options.storeHistory === true
       ? await this.loadHistory(options.projectPath, options.historyPath)
       : [];
 
@@ -110,7 +115,15 @@ export class ArchitectureDriftService {
       historyPath: options.historyPath || path.join(options.projectPath, '.evolith', 'drift-history.json'),
     };
 
-    if (options.storeHistory !== false) {
+    // OPT-IN, no opt-out (ADR-0101). Con `!== false` cualquier llamador que no
+    // lo pasara --incluida la ruta de evaluacion del Core-- escribia
+    // `.evolith/drift-history.json` en el workspace, y el fallo se tragaba en
+    // silencio. En un Core contenerizado de solo lectura eso significa que la
+    // clasificacion new/persistent depende de estado que nunca llega a
+    // guardarse: TODO se reclasifica como "nuevo" para siempre, sin senal.
+    // El unico llamador de produccion que quiere historial es la CLI, que corre
+    // en el workspace del usuario y ya lo pide de forma explicita.
+    if (options.storeHistory === true) {
       await this.storeHistory(options.projectPath, report, history, options.historyPath);
     }
 

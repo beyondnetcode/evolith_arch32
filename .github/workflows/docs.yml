@@ -127,6 +127,14 @@ jobs:
       - name: Build workspace packages
         run: npm run build
 
+      # `npm run build` de la raiz es `tsc -b`, que NO dispara los hooks npm de
+      # cada paquete. `copy-rulesets` es el `prebuild` del CLI y puebla su copia
+      # de bundling `src/sdk/cli/rulesets/` (gitignorada, 3 ficheros trackeados
+      # de 164). Sin este paso CI evaluaba un corpus distinto del local -- 98
+      # reglas frente a 102 -- y los how-to generados no podian coincidir.
+      - name: Populate CLI bundled ruleset corpus
+        run: npm run copy-rulesets --workspace @beyondnet/evolith-cli
+
       - name: Cross-surface exploration suite
         run: npm run test:exploration
 

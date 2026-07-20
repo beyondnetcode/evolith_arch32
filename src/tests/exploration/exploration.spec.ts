@@ -140,6 +140,27 @@ describe('Cross-surface exploration agent (F1)', () => {
       if (k.endsWith('Ms') && typeof v === 'number') return 0;
       if (k === 'correlationId' || k === 'traceId') return '<uuid>';
       if (typeof v === 'string' && ISO.test(v)) return '<timestamp>';
+      // El VEREDICTO de una evaluacion es tan volatil como una marca de tiempo:
+      // depende del corpus y del estado del workspace en el momento de la
+      // captura. `rulesChecked` daba 102 aqui y 98 en CI, y con ello la lista de
+      // `issues` se desplazaba entera. Se persiguieron cuatro causas de entorno
+      // (rutas de maquina, policy.wasm, el binario opa, la copia bundled del
+      // CLI) y ninguna lo explicaba.
+      //
+      // El problema no era el entorno sino el contrato del documento: un how-to
+      // ensena COMO INVOCAR una interfaz, y presentar como dato un numero que
+      // cambia entre maquinas es desinformar al lector ademas de hacer
+      // infalseable el chequeo anti-drift. Se normaliza igual que los ms y los
+      // uuids: la FORMA de la respuesta se conserva, su contenido volatil no.
+      if (k === 'rulesChecked' && typeof v === 'number') return '<n>';
+      if (k === 'issues' && Array.isArray(v)) return '<issues[]>';
+      // Mismo criterio para el veredicto del drift: son hallazgos sobre el
+      // workspace del momento, no parte del contrato de la interfaz. El how-to
+      // conserva el envelope completo, la peticion y TODOS los nombres de campo
+      // -- que es lo que necesita quien va a invocarla.
+      if (['newViolations', 'persistentViolations', 'resolvedViolations'].includes(k) && Array.isArray(v)) {
+        return `<${k}[]>`;
+      }
       return v;
     }, 2);
     const wsRef = projectPath.split('/').pop();
@@ -236,6 +257,18 @@ describe('Cross-surface exploration agent (F1)', () => {
         // Decir QUE difiere, no solo que difiere. Sin esto el fallo solo nombra
         // la fase, y diagnosticar un drift que unicamente se reproduce en CI se
         // convierte en adivinar a ciegas a tres minutos por intento.
+        // Diferencia de CONJUNTOS de ruleId. Las lineas divergentes solas no
+        // bastan: cuando cambia el numero de reglas evaluadas, la lista se
+        // desplaza y toda comparacion posicional miente. Esto nombra
+        // exactamente que reglas sobran o faltan en cada entorno.
+        const ids = (s: string) => new Set((s.match(/"ruleId": "[^"]+"/g) || []).map((m) => m.slice(11, -1)));
+        const [ca, cb] = [ids(committed), ids(rendered)];
+        const soloCommit = [...ca].filter((x) => !cb.has(x));
+        const soloGen = [...cb].filter((x) => !ca.has(x));
+        if (soloCommit.length || soloGen.length) {
+          console.log(`[howto-drift] ${phaseKey} ruleIds solo en commiteado: ${JSON.stringify(soloCommit)}`);
+          console.log(`[howto-drift] ${phaseKey} ruleIds solo en generado  : ${JSON.stringify(soloGen)}`);
+        }
         const a = committed.split('\n');
         const b = rendered.split('\n');
         for (let i = 0, shown = 0; i < Math.max(a.length, b.length) && shown < 3; i++) {

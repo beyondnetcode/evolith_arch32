@@ -513,20 +513,9 @@ Response (captured live):
     "detectedLevel": "F1",
     "driftDetected": true,
     "driftSeverity": "medium",
-    "newViolations": [
-      {
-        "ruleId": "ARCH-RULESET-MISSING",
-        "severity": "SHOULD",
-        "category": "architecture",
-        "title": "Ruleset not found",
-        "description": "Could not find architecture rules at /tmp/evolith/reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
-        "blocking": false,
-        "firstDetected": "<timestamp>",
-        "status": "new"
-      }
-    ],
-    "resolvedViolations": [],
-    "persistentViolations": [],
+    "newViolations": "<newViolations[]>",
+    "resolvedViolations": "<resolvedViolations[]>",
+    "persistentViolations": "<persistentViolations[]>",
     "overallScore": 100,
     "timestamp": "<timestamp>",
     "historyPath": "/abs/path/to/your-satellite/.evolith/drift-history.json"
@@ -606,34 +595,22 @@ Response (captured live):
     "detectedLevel": "F1",
     "driftDetected": true,
     "driftSeverity": "critical",
-    "newViolations": [
-      {
-        "ruleId": "MM-R03",
-        "severity": "MUST",
-        "category": "hexagonal-architecture",
-        "title": "Ports and Adapters Boundary",
-        "description": "All bounded contexts MUST implement hexagonal architecture (core/ADR-0002). Domain layer has zero external dependencies. Infrastructure adapters are injected via ports. - No ports directory found (expected: src/ports or src/application/ports)",
-        "blocking": true,
-        "firstDetected": "<timestamp>",
-        "status": "new"
-      },
-      {
-        "ruleId": "MM-R04",
-        "severity": "MUST",
-        "category": "communication",
-        "title": "Inter-Context Communication via Ports",
-        "description": "Cross-bounded-context communication MUST use explicit application-layer port interfaces. No direct infrastructure-to-infrastructure calls. - No contracts/ directory found for inter-module contracts",
-        "blocking": true,
-        "firstDetected": "<timestamp>",
-        "status": "new"
-      },
-      {
-        "ruleId": "MM-R05",
-        "severity": "MUST",
-        "category": "persistence",
-        "title": "No Shared Database Across Bounded Contexts",
-        "description": "E
-  … (truncated)
+    "newViolations": "<newViolations[]>",
+    "resolvedViolations": "<resolvedViolations[]>",
+    "persistentViolations": "<persistentViolations[]>",
+    "overallScore": 45,
+    "timestamp": "<timestamp>",
+    "historyPath": "/abs/path/to/your-satellite/.evolith/drift-history.json"
+  },
+  "meta": {
+    "command": "http POST /api/v1/architecture/detect-drift",
+    "executedAt": "<timestamp>",
+    "durationMs": 0,
+    "correlationId": "<uuid>",
+    "context": {},
+    "schemaVersion": "1.0.0"
+  }
+}
 ```
 
 ---

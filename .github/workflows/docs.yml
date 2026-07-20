@@ -112,26 +112,23 @@ jobs:
       - name: Run governance validator suite
         run: node .harness/scripts/ci-runner.mjs governance
 
-      # Suite exploratoria: NO cableada. Lo que SI quedo resuelto y verificado
-      # en CI es lo que importaba -- `findings = 0`: la suite es hermetica (cwd
-      # en su satelite temporal, ya no scaffoldea en la raiz del repo) y los
-      # bindings pasan el mismo contexto a las tres superficies, asi que las 3
-      # "divergencias cross-superficie" resultaron ser el arnes comparando
-      # preguntas distintas, no bugs de producto.
+      # Suite exploratoria cross-superficie: ejerce CLI, MCP y REST de VERDAD
+      # (48 operaciones, 66 invocaciones) y compara sus respuestas.
       #
-      # Lo que bloquea el cableado es OTRO test de la misma suite: el chequeo
-      # anti-drift byte-a-byte de los how-to. Esos documentos EMBEBEN el
-      # resultado de una evaluacion en vivo, y ese resultado difiere entre
-      # entornos: `rulesChecked` 102 en local vs 98 en CI, con IDs de regla
-      # distintos. Descartadas tres causas (rutas de maquina --si lo eran, ya
-      # saneadas--, policy.wasm gitignorado, y la copia bundled del CLI que CI
-      # no generaba, ahora poblada arriba). La causa de fondo es estructural:
-      # comparar byte a byte un documento generado que contiene la salida de una
-      # evaluacion exige fijar TODAS sus entradas, y todavia queda alguna sin
-      # fijar.
-      #
-      # El fallo ya imprime las lineas divergentes, asi que el siguiente intento
-      # parte del diff y no de una conjetura.
+      # Es hermetica: su cwd es el satelite temporal que ella construye, asi que
+      # no scaffoldea en la raiz del repo ni depende de lo que dejaran corridas
+      # anteriores. Y los how-to derivados ya no embeben el VEREDICTO de la
+      # evaluacion (`rulesChecked`, `issues`, las listas de violaciones), que
+      # variaba entre maquinas y hacia infalseable el chequeo anti-drift.
+      - name: Build workspace packages
+        run: npm run build
+
+      - name: Populate CLI bundled ruleset corpus
+        run: npm run copy-rulesets --workspace @beyondnet/evolith-cli
+
+      - name: Cross-surface exploration suite
+        run: npm run test:exploration
+
       # GT-563: the steps below REPORT, they do not validate. This job runs no tests and
       # produces no coverage data, and COVERAGE_REPORT.md is untracked, so on a PR the
       # dashboard --check can only ever report "COVERAGE_REPORT.md is missing" and the

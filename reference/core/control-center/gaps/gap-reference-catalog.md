@@ -31,7 +31,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] Fingerprint is stable across `message` edits (normalized path, message excluded).
   - [x] Round-trip Violation ⇄ GapFinding/RiskFinding with zero orphan rules against `evidence-manifest.rules.json` (EVD-01..04).
 - **Dependencies:** none.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 #### GT-512
 
@@ -90,7 +90,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] `IEnforcerAdapter` returns `Violation[]` (GT-511 model) via `IProcessRunner`.
   - [x] `enforcer-catalog.json` matches `validated-tool-catalog.md`.
 - **Dependencies:** GT-511, GT-512.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 #### GT-515
 
@@ -148,7 +148,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] The baseline survives tool upgrades (fingerprint-stable rebase).
   - [x] A single authoritative baseline (no parallel native/enforcer stores) with a ratchet that fails on growth.
 - **Dependencies:** GT-511.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 #### GT-518
 
@@ -784,7 +784,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] OPA's real metrics are exposed and a scrape job is configured. _(**The original wording's premise was false**: `opa_evaluation_errors_total` does not exist — OPA emits ONLY `go_*`, `process_*` and `http_request_duration_seconds{code,handler,method}`, zero `opa_*` series. Delivered: the `evolith-mcp` Service publishes the sidecar's 8181 as `opa-metrics` (was pod-local/unreachable) and an `opa` scrape job exists. **LIVE-VERIFIED in a kind cluster (`evolith-cluster`, 2026-07-18):** with `opa.enabled=true` the Service gained `opa-metrics 8181→opa-http` on the real k8s object and the pod came up with the `opa` sidecar; fetching `http://<pod-ip>:8181/metrics` from another pod returned **HTTP 200 with 109 metrics, 0 `opa_*` series and `http_request_duration_seconds` present** — confirming in a deployed cluster what the binary probe showed.)_
   - [x] The `OpaEvaluationFailure` alert evaluates against a real series. _(Repointed to `rate(http_request_duration_seconds_count{job="opa",handler=~"v1/data.*",code=~"5.."}[5m]) > 0` — 5xx on OPA's policy-decision handler — scoped to `job="opa"` so it can never match our own `evolith_http_*`. Selector verified against live series: `handler="v1/data"` is emitted and `code` tracks HTTP status (200/400 observed), so `code=~"5.."` matches real failures.)_
 - **Dependencies:** GT-544; GT-545.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 ---
 

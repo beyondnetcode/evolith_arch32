@@ -230,4 +230,11 @@ async function main() {
   }
 }
 
-main().catch(console.error);
+// `main().catch(console.error)` imprimia el error y salia con codigo 0: un
+// runner de CI que no podia fallar por crash. Un fallo de script si salia 1
+// correctamente, pero una excepcion no capturada en main() (ENOENT, JSON
+// invalido, un guard que revienta) se reportaba como pipeline verde.
+main().catch((error) => {
+  console.error('\n❌ CI runner crashed:', error?.stack || error);
+  process.exit(1);
+});

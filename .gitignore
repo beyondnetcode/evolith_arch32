@@ -188,3 +188,10 @@ rag-backfill-receipt.json
 # actionable message, which is the honest outcome -- shipping a months-old
 # timestamped smoke result as committed evidence would be worse.
 .harness/evidence/
+
+# Artefactos que genera el propio CLI al ejecutarse desde la raiz del repo
+# (`evolith init`, `evolith agents install`). Se commitearon por accidente una
+# vez y fosilizaron como si fueran taxonomia. Las fixtures reales viven en
+# src/sdk/cli/test-project/ y src/sdk/cli/rulesets/.
+/test-project/
+/rulesets/

@@ -4,7 +4,12 @@ apiVersion: evolith.dev/v1
 kind: Satellite
 
 metadata:
-  name: my-satellite
+  # El Core es satelite de si mismo y se gobierna con su propio contrato. El
+  # valor anterior, `my-satellite`, era el default de la plantilla que dejo un
+  # `evolith init` ejecutado desde la raiz: el repo se identificaba con el
+  # nombre de ejemplo. Este fichero ademas es ROOT_MARKER en
+  # .harness/scripts/lib/paths.mjs, asi que no puede borrarse.
+  name: evolith
   # Progressive-axis phase: F1=modular-monolith, F2=distributed-modules, F3=microservices.
   phase: F1
   architectureVersion: 0.1.0

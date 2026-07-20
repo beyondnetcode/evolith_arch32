@@ -300,7 +300,11 @@ export const BINDINGS: Record<string, Binding> = {
 
   'agents-validate': {
     verified: true,
-    cli: (c) => ['agents', 'validate', '--format', 'json'],
+    // Both surfaces must be given the SAME agent. Previously the CLI ran with no
+    // target and the MCP tool with `gap-analyzer`, so the oracle compared two
+    // different questions and reported a cross-surface divergence that was an
+    // artefact of the binding, not of the product.
+    cli: (c) => ['agents', 'validate', '--name', 'gap-analyzer', '--format', 'json'],
     mcp: (c) => ({ tool: 'evolith-agent-validate', args: { name: 'gap-analyzer' } }),
   },
 

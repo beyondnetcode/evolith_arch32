@@ -109,19 +109,50 @@ evolith-cli validate --satellite /abs/path/to/your-satellite --core /abs/path/to
 Response (captured live):
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "RULESET_NOT_FOUND",
-    "message": "No rulesets loaded from \"/Users/beyondnet/Source/evolith/rulesets\" (0 ruleset file(s) found, 0 rules normalized). Refusing to validate against an empty ruleset corpus."
-  },
-  "meta": {
-    "command": "evolith validate",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
-    "schemaVersion": "1.0.0"
-  }
-}
+  "success": true,
+  "data": {
+    "status": "failed",
+    "rulesChecked": 102,
+    "issues": [
+      {
+        "ruleId": "CLI-RR-01",
+        "severity": "MUST",
+        "category": "build",
+        "title": "TypeScript Build Must Pass",
+        "description": "dist/main.js not found — run npm run build in sdk/cli",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-02",
+        "severity": "MUST",
+        "category": "tests",
+        "title": "Unit and Integration Tests Must Start and Pass",
+        "description": "dist/ not found — run npm run build",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-05",
+        "severity": "SHOULD",
+        "category": "documentation",
+        "title": "Release Documentation Must Match Implementation",
+        "description": "CLI missing README.md or ARCHITECTURE.md",
+        "blocking": false
+      },
+      {
+        "ruleId": "TAX-05",
+        "severity": "MUST",
+        "category": "directory-structure",
+        "title": "Evolith Core structure: reference/, sdk/, rulesets/",
+        "description": "Missing top-level directories: sdk",
+        "blocking": true
+      },
+      {
+        "ruleId": "INH-02",
+        "severity": "MUST",
+        "category": "inheritance",
+        "title": "Version Pinning",
+        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned references are p
+  … (truncated)
 ```
 
 #### MCP
@@ -150,21 +181,50 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "RULESET_NOT_FOUND",
-    "message": "No rulesets loaded from \"/Users/beyondnet/Source/evolith/rulesets\" (0 ruleset file(s) found, 0 rules normalized). Refusing to validate against an empty ruleset corpus."
-  },
-  "meta": {
-    "correlationId": "<uuid>",
-    "command": "evolith-validate",
-    "tool": "evolith-validate",
-    "durationMs": 0,
-    "executedAt": "<timestamp>",
-    "timestamp": "<timestamp>",
-    "schemaVersion": "1.0.0"
-  }
-}
+  "success": true,
+  "data": {
+    "status": "failed",
+    "rulesChecked": 102,
+    "issues": [
+      {
+        "ruleId": "CLI-RR-01",
+        "severity": "MUST",
+        "category": "build",
+        "title": "TypeScript Build Must Pass",
+        "description": "dist/main.js not found — run npm run build in sdk/cli",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-02",
+        "severity": "MUST",
+        "category": "tests",
+        "title": "Unit and Integration Tests Must Start and Pass",
+        "description": "dist/ not found — run npm run build",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-05",
+        "severity": "SHOULD",
+        "category": "documentation",
+        "title": "Release Documentation Must Match Implementation",
+        "description": "CLI missing README.md or ARCHITECTURE.md",
+        "blocking": false
+      },
+      {
+        "ruleId": "TAX-05",
+        "severity": "MUST",
+        "category": "directory-structure",
+        "title": "Evolith Core structure: reference/, sdk/, rulesets/",
+        "description": "Missing top-level directories: sdk",
+        "blocking": true
+      },
+      {
+        "ruleId": "INH-02",
+        "severity": "MUST",
+        "category": "inheritance",
+        "title": "Version Pinning",
+        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned references are p
+  … (truncated)
 ```
 
 #### REST
@@ -187,29 +247,50 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "RULESET_NOT_FOUND",
-    "message": "No rulesets loaded from \"/Users/beyondnet/Source/evolith/rulesets\" (0 ruleset file(s) found, 0 rules normalized). Refusing to validate against an empty ruleset corpus.",
-    "details": {
-      "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422",
-      "title": "Ruleset Not Found",
-      "status": 422,
-      "detail": "No rulesets loaded from \"/Users/beyondnet/Source/evolith/rulesets\" (0 ruleset file(s) found, 0 rules normalized). Refusing to validate against an empty ruleset corpus.",
-      "instance": "/api/v1/architecture/validate-satellite",
-      "timestamp": "<timestamp>",
-      "traceId": "<uuid>"
-    }
-  },
-  "meta": {
-    "command": "http POST /api/v1/architecture/validate-satellite",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
-    "context": {},
-    "schemaVersion": "1.0.0"
-  }
-}
+  "success": true,
+  "data": {
+    "status": "failed",
+    "rulesChecked": 102,
+    "issues": [
+      {
+        "ruleId": "CLI-RR-01",
+        "severity": "MUST",
+        "category": "build",
+        "title": "TypeScript Build Must Pass",
+        "description": "dist/main.js not found — run npm run build in sdk/cli",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-02",
+        "severity": "MUST",
+        "category": "tests",
+        "title": "Unit and Integration Tests Must Start and Pass",
+        "description": "dist/ not found — run npm run build",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-05",
+        "severity": "SHOULD",
+        "category": "documentation",
+        "title": "Release Documentation Must Match Implementation",
+        "description": "CLI missing README.md or ARCHITECTURE.md",
+        "blocking": false
+      },
+      {
+        "ruleId": "TAX-05",
+        "severity": "MUST",
+        "category": "directory-structure",
+        "title": "Evolith Core structure: reference/, sdk/, rulesets/",
+        "description": "Missing top-level directories: sdk",
+        "blocking": true
+      },
+      {
+        "ruleId": "INH-02",
+        "severity": "MUST",
+        "category": "inheritance",
+        "title": "Version Pinning",
+        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned references are p
+  … (truncated)
 ```
 
 ---
@@ -450,33 +531,35 @@ Response (captured live):
     "declaredLevel": "F1",
     "detectedLevel": "F1",
     "driftDetected": true,
-    "driftSeverity": "medium",
+    "driftSeverity": "critical",
     "newViolations": [
       {
-        "ruleId": "ARCH-RULESET-MISSING",
-        "severity": "SHOULD",
-        "category": "architecture",
-        "title": "Ruleset not found",
-        "description": "Could not find architecture rules at reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
-        "blocking": false,
+        "ruleId": "MM-R03",
+        "severity": "MUST",
+        "category": "hexagonal-architecture",
+        "title": "Ports and Adapters Boundary",
+        "description": "All bounded contexts MUST implement hexagonal architecture (core/ADR-0002). Domain layer has zero external dependencies. Infrastructure adapters are injected via ports. - No ports directory found (expected: src/ports or src/application/ports)",
+        "blocking": true,
         "firstDetected": "<timestamp>",
         "status": "new"
-      }
-    ],
-    "resolvedViolations": [],
-    "persistentViolations": [],
-    "overallScore": 100,
-    "timestamp": "<timestamp>",
-    "historyPath": "/abs/path/to/your-satellite/.evolith/drift-history.json"
-  },
-  "meta": {
-    "command": "evolith drift detect",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
-    "schemaVersion": "1.0.0"
-  }
-}
+      },
+      {
+        "ruleId": "MM-R04",
+        "severity": "MUST",
+        "category": "communication",
+        "title": "Inter-Context Communication via Ports",
+        "description": "Cross-bounded-context communication MUST use explicit application-layer port interfaces. No direct infrastructure-to-infrastructure calls. - No contracts/ directory found for inter-module contracts",
+        "blocking": true,
+        "firstDetected": "<timestamp>",
+        "status": "new"
+      },
+      {
+        "ruleId": "MM-R05",
+        "severity": "MUST",
+        "category": "persistence",
+        "title": "No Shared Database Across Bounded Contexts",
+        "description": "E
+  … (truncated)
 ```
 
 #### MCP
@@ -543,8 +626,10 @@ Response (captured live):
     "declaredLevel": "F1",
     "detectedLevel": "F1",
     "driftDetected": true,
-    "driftSeverity": "critical",
-    "newViolations": [
+    "driftSeverity": "high",
+    "newViolations": [],
+    "resolvedViolations": [],
+    "persistentViolations": [
       {
         "ruleId": "MM-R03",
         "severity": "MUST",
@@ -569,8 +654,7 @@ Response (captured live):
         "ruleId": "MM-R05",
         "severity": "MUST",
         "category": "persistence",
-        "title": "No Shared Database Across Bounded Contexts",
-        "description": "E
+        "title": "No Shared Da
   … (truncated)
 ```
 
@@ -590,7 +674,8 @@ Command: `evolith-cli evaluate`
 | `-c, --core [path]` | Path to the Evolith Core repository (default: auto-detect) |
 | `-p, --phase [id]` | Canonical SDLC phase id (discovery|design|construction|qa|release) |
 | `-t, --topology [id]` | Topology reference/override |
-| `-f, --format [string]` | Output format (json | text). Default: json |
+| `-f, --format [string]` | Output format (json | text | sarif | drift). Default: json |
+| `--evidence [path]` | Write the enforcer-evidence manifest (EVD-01..03) to a file (GT-518) |
 
 Example:
 ```bash
@@ -599,19 +684,53 @@ evolith-cli evaluate --workspace /abs/path/to/your-satellite --core /abs/path/to
 Response (captured live):
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "RULESET_NOT_FOUND",
-    "message": "No rulesets loaded from \"/Users/beyondnet/Source/evolith/rulesets\" (0 ruleset file(s) found, 0 rules normalized). Refusing to validate against an empty ruleset corpus."
-  },
-  "meta": {
-    "command": "EvaluateCommand",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
-    "schemaVersion": "1.0.0"
-  }
-}
+  "success": true,
+  "data": {
+    "overallVerdict": "FAIL",
+    "outcome": "rejected",
+    "results": {
+      "gate": [
+        {
+          "gateId": "general-rulesets",
+          "verdict": "FAIL",
+          "artifactResults": [
+            {
+              "artifactId": "build",
+              "verdict": "FAIL",
+              "present": false,
+              "ruleRefs": [
+                "CLI-RR-01"
+              ],
+              "gaps": [
+                {
+                  "id": "general-rulesets:CLI-RR-01",
+                  "requirementRef": "CLI-RR-01",
+                  "severity": "error",
+                  "message": "TypeScript Build Must Pass: dist/main.js not found — run npm run build in sdk/cli",
+                  "location": "build"
+                }
+              ]
+            },
+            {
+              "artifactId": "tests",
+              "verdict": "FAIL",
+              "present": false,
+              "ruleRefs": [
+                "CLI-RR-02"
+              ],
+              "gaps": [
+                {
+                  "id": "general-rulesets:CLI-RR-02",
+                  "requirementRef": "CLI-RR-02",
+                  "severity": "error",
+                  "message": "Unit and Integration Tests Must Start and Pass: dist/ not found — run npm run build",
+                  "location": "tests"
+                }
+              ]
+            },
+            {
+   
+  … (truncated)
 ```
 
 #### MCP
@@ -649,21 +768,49 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "RULESET_NOT_FOUND",
-    "message": "No rulesets loaded from \"/Users/beyondnet/Source/evolith/rulesets\" (0 ruleset file(s) found, 0 rules normalized). Refusing to validate against an empty ruleset corpus."
-  },
-  "meta": {
-    "correlationId": "<uuid>",
-    "command": "evolith-evaluate",
-    "tool": "evolith-evaluate",
-    "durationMs": 0,
-    "executedAt": "<timestamp>",
-    "timestamp": "<timestamp>",
-    "schemaVersion": "1.0.0"
-  }
-}
+  "success": true,
+  "data": {
+    "success": true,
+    "data": {
+      "overallVerdict": "FAIL",
+      "outcome": "rejected",
+      "results": {
+        "gate": [
+          {
+            "gateId": "general-rulesets",
+            "verdict": "FAIL",
+            "artifactResults": [
+              {
+                "artifactId": "governance",
+                "verdict": "FAIL",
+                "present": false,
+                "ruleRefs": [
+                  "GOV-000"
+                ],
+                "gaps": [
+                  {
+                    "id": "general-rulesets:GOV-000",
+                    "requirementRef": "GOV-000",
+                    "severity": "error",
+                    "message": "Missing evolith.yaml: Every satellite repository must have an evolith.yaml file at the root.",
+                    "location": "governance"
+                  }
+                ]
+              },
+              {
+                "artifactId": "build",
+                "verdict": "FAIL",
+                "present": false,
+                "ruleRefs": [
+                  "CLI-RR-01"
+                ],
+                "gaps": [
+                  {
+                    "id": "general-rulesets:CLI-RR-01",
+                    "requirementRef": "CLI-RR-01",
+                    "severity": "error",
+                    "message": "TypeScript Build Must Pass: dist/main.js not found — run npm run
+  … (truncated)
 ```
 
 #### REST
@@ -722,29 +869,53 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "RULESET_NOT_FOUND",
-    "message": "No rulesets loaded from \"/Users/beyondnet/Source/evolith/rulesets\" (0 ruleset file(s) found, 0 rules normalized). Refusing to validate against an empty ruleset corpus.",
-    "details": {
-      "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422",
-      "title": "Ruleset Not Found",
-      "status": 422,
-      "detail": "No rulesets loaded from \"/Users/beyondnet/Source/evolith/rulesets\" (0 ruleset file(s) found, 0 rules normalized). Refusing to validate against an empty ruleset corpus.",
-      "instance": "/api/v1/evaluate",
-      "timestamp": "<timestamp>",
-      "traceId": "<uuid>"
-    }
-  },
-  "meta": {
-    "command": "http POST /api/v1/evaluate",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
-    "context": {},
-    "schemaVersion": "1.0.0"
-  }
-}
+  "success": true,
+  "data": {
+    "overallVerdict": "FAIL",
+    "outcome": "rejected",
+    "results": {
+      "gate": [
+        {
+          "gateId": "general-rulesets",
+          "verdict": "FAIL",
+          "artifactResults": [
+            {
+              "artifactId": "build",
+              "verdict": "FAIL",
+              "present": false,
+              "ruleRefs": [
+                "CLI-RR-01"
+              ],
+              "gaps": [
+                {
+                  "id": "general-rulesets:CLI-RR-01",
+                  "requirementRef": "CLI-RR-01",
+                  "severity": "error",
+                  "message": "TypeScript Build Must Pass: dist/main.js not found — run npm run build in sdk/cli",
+                  "location": "build"
+                }
+              ]
+            },
+            {
+              "artifactId": "tests",
+              "verdict": "FAIL",
+              "present": false,
+              "ruleRefs": [
+                "CLI-RR-02"
+              ],
+              "gaps": [
+                {
+                  "id": "general-rulesets:CLI-RR-02",
+                  "requirementRef": "CLI-RR-02",
+                  "severity": "error",
+                  "message": "Unit and Integration Tests Must Start and Pass: dist/ not found — run npm run build",
+                  "location": "tests"
+                }
+              ]
+            },
+            {
+   
+  … (truncated)
 ```
 
 ---

@@ -46,7 +46,15 @@ if [ "$TTY_AVAILABLE" = false ]; then
     echo "$MODE" > .git/EVOLITH_CI_MODE
     echo "$TARGET" > .git/EVOLITH_PUSH_TARGET
     echo "$MERGE_METHOD" > .git/EVOLITH_MERGE_METHOD
-    echo "No TTY available — owner mode: using env defaults or skip."
+    echo "No TTY available — owner mode: mode=$MODE."
+    # Antes se salia con exit 0 SIEMPRE, asi que ningun commit sin TTY (agente,
+    # script, CI) llegaba nunca al ci-runner de la linea final. Ahora, si el
+    # modo pide validacion, se ejecuta. `skip` sigue saliendo limpio: la
+    # validacion de verdad la hace CI, esto es solo feedback local rapido.
+    if [ "$MODE" != "skip" ]; then
+      echo "Running CI in $MODE mode..."
+      node .harness/scripts/ci-runner.mjs "$MODE"
+    fi
     exit 0
   fi
 
@@ -136,7 +144,12 @@ fi
 echo ""
 echo "Generating executive governance summary..."
 node .harness/scripts/generate-executive-summary.mjs
-git add reference/governance/standards/vision/executive-summary.md reference/governance/standards/vision/executive-summary.es.md
+# El generador escribe en control-center/maturity-reports/. La ruta anterior
+# (reference/governance/standards/vision/) desaparecio en el refactor: el
+# resumen se regeneraba en cada commit y NUNCA se stageaba, asi que el guard
+# 05-validate-executive-summary lo reportaba stale de forma permanente.
+git add reference/core/control-center/maturity-reports/executive-summary.md \
+        reference/core/control-center/maturity-reports/executive-summary.es.md
 
 echo ""
 echo "Running CI in $MODE mode..."

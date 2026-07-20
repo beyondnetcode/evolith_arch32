@@ -437,11 +437,19 @@ describe('DiskRulesetRepository — real repo layout (GT-566)', () => {
     expect(rules.length).toBeGreaterThan(100);
   }, 60_000);
 
-  itInRepo('the repo root still has the agents decoy that used to shadow the corpus', () => {
-    // If this stops being true the bug can no longer reproduce, and the guard
-    // above is measuring nothing — fail loudly instead of passing vacuously.
-    expect(nodeFs.existsSync(nodePath.join(repoRoot!, 'rulesets', 'agents'))).toBe(true);
+  itInRepo('the repo root resolves to the real corpus, not to a same-named tree', () => {
+    // Antes esto afirmaba que el repo AUN tenia el señuelo `rulesets/agents/` en
+    // la raiz, y fallaba ruidosamente si desaparecia -- para que el test de
+    // arriba no pasara en vacio. Cumplio su funcion: el señuelo se elimino
+    // (ADR-0118, era residuo de correr el CLI desde la raiz) y esto lo detecto.
+    //
+    // La condicion sigue siendo necesaria, pero ya no depende de que exista
+    // basura en el repo: el corpus real debe estar donde se cree que esta. Y la
+    // conducta de esquivar un arbol homonimo la cubre el test sintetico
+    // "says the LAYOUT is wrong when a candidate exists but is not corpus-shaped",
+    // que construye su propio `/decoy/rulesets/agents` y no depende del disco.
     expect(nodeFs.existsSync(nodePath.join(repoRoot!, 'src', 'rulesets', 'schema'))).toBe(true);
+    expect(nodeFs.existsSync(nodePath.join(repoRoot!, 'rulesets'))).toBe(false);
   });
 });
 

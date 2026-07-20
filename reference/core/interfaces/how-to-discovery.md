@@ -278,6 +278,7 @@ Tool: `evolith-sdlc-status`
 | Argument | Type | Req. | Description |
 | --- | --- | --- | --- |
 | `path` | string | ✓ | — |
+| `corePath` | string |  | Optional explicit path to the Evolith core repository (template fallback tier) |
 
 Example (`tools/call`):
 ```json

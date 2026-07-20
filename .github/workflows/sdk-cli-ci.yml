@@ -512,7 +512,12 @@ jobs:
           exit 1
 
       - name: Run OWASP ZAP Full Scan
-        uses: zaproxy/action-full-scan@v0.10.0
+        # v0.10.0 bundled a deprecated upload-artifact, so its internal upload of
+        # the `zap_scan` artifact hit the retired v3 artifact API and the job
+        # failed with "The artifact name zap_scan is not valid" -- after a clean
+        # scan (FAIL-NEW: 0, WARN-NEW: 1, PASS: 146). v0.12.0 stopped using the
+        # deprecated version; this pins the current release.
+        uses: zaproxy/action-full-scan@v0.13.0
         with:
           target: 'http://localhost:3001'
           cmd_options: '-a'

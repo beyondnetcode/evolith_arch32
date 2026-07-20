@@ -18,6 +18,11 @@
     "noImplicitAny": false,
     "forceConsistentCasingInFileNames": false,
     "types": ["jest", "node"],
+    // TS 6 marca `baseUrl` como deprecado y lo convierte en ERROR (TS5101), lo
+    // que dejo a `gen-howto.ts` sin poder ejecutarse: por eso los how-to
+    // llevaban tiempo stale y el chequeo anti-drift del explorador en rojo.
+    // `baseUrl` sigue siendo necesario porque `paths` de abajo es relativo a el.
+    "ignoreDeprecations": "6.0",
     "baseUrl": "../..",
     "paths": {
       "@beyondnet/evolith-core-domain/*": ["packages/core-domain/dist/*"],

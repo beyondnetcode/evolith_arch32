@@ -1,7 +1,12 @@
 package evolith.taxonomy
 
 violations[{"id": "TAX-05", "message": msg}] {
-    expected := {"reference", "rulesets", "sdk", ".harness"}
+    # Layout post-refactor: `sdk/` y `rulesets/` se movieron bajo `src/`, y
+    # `product/` es un dominio de primer nivel (ADR-0048). La expectativa
+    # anterior --{reference, rulesets, sdk, .harness}-- describia un repo que ya
+    # no existe, y era la unica razon por la que el `rulesets/` accidental de la
+    # raiz no se podia borrar: hacerlo rompia esta regla.
+    expected := {"reference", "product", "src", ".harness"}
     actual := {dir | dir := input.core.directories[_]}
     missing := expected - actual
     count(missing) > 0

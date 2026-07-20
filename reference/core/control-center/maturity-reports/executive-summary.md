@@ -11,9 +11,9 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 **Current decision:** NO-GO for production expansion or a major release: active P0 blockers remain.
 
-**Biggest problem now:** `Evolith CLI` carries the highest weighted open risk (37 open, 1 P0). Attack that concentration before expanding scope.
+**Biggest problem now:** `Cross` carries the highest weighted open risk (3 open, 2 P0). Attack that concentration before expanding scope.
 
-**Where to attack first:** [GT-451](../gaps/gap-reference-catalog.md#gt-451), [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435).
+**Where to attack first:** [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435).
 
 ## Strategic Diagnosis
 
@@ -25,42 +25,41 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-451](../gaps/gap-reference-catalog.md#gt-451), [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435) |
-| 2 | Highest-risk area | `Evolith CLI` has the largest weighted open load. | [GT-451](../gaps/gap-reference-catalog.md#gt-451), [GT-453](../gaps/gap-reference-catalog.md#gt-453), [GT-454](../gaps/gap-reference-catalog.md#gt-454), [GT-458](../gaps/gap-reference-catalog.md#gt-458), [GT-459](../gaps/gap-reference-catalog.md#gt-459), [GT-456](../gaps/gap-reference-catalog.md#gt-456), +31 |
-| 3 | Quick wins | High criticality with XS/S complexity. | [GT-453](../gaps/gap-reference-catalog.md#gt-453), [GT-442](../gaps/gap-reference-catalog.md#gt-442), [GT-454](../gaps/gap-reference-catalog.md#gt-454), [GT-458](../gaps/gap-reference-catalog.md#gt-458), [GT-459](../gaps/gap-reference-catalog.md#gt-459), [GT-475](../gaps/gap-reference-catalog.md#gt-475) |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-453](../gaps/gap-reference-catalog.md#gt-453), [GT-442](../gaps/gap-reference-catalog.md#gt-442), [GT-454](../gaps/gap-reference-catalog.md#gt-454), [GT-458](../gaps/gap-reference-catalog.md#gt-458), [GT-459](../gaps/gap-reference-catalog.md#gt-459), [GT-475](../gaps/gap-reference-catalog.md#gt-475), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-437](../gaps/gap-reference-catalog.md#gt-437), +8 |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-457](../gaps/gap-reference-catalog.md#gt-457), [GT-480](../gaps/gap-reference-catalog.md#gt-480), [GT-481](../gaps/gap-reference-catalog.md#gt-481), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-445](../gaps/gap-reference-catalog.md#gt-445), [GT-460](../gaps/gap-reference-catalog.md#gt-460), +30 |
+| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435) |
+| 2 | Highest-risk area | `Cross` has the largest weighted open load. | [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
+| 3 | Quick wins | High criticality with XS/S complexity. | - |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-441](../gaps/gap-reference-catalog.md#gt-441), [GT-560](../gaps/gap-reference-catalog.md#gt-560), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-531](../gaps/gap-reference-catalog.md#gt-531), [GT-536](../gaps/gap-reference-catalog.md#gt-536), [GT-562](../gaps/gap-reference-catalog.md#gt-562), [GT-443](../gaps/gap-reference-catalog.md#gt-443) |
 
 ## Current Blockers
 
 | ID | Attack | Component | Effort |
 |---|---|---|---|
-| [GT-451](../gaps/gap-reference-catalog.md#gt-451) | **Umbrella — the published npm CLI (@beyondnet/evolith-cli@1.0.0) is STALE vs src/sdk/cli/src, under the same 1.0.0 (SemVer immutability violation).** Verified on the MMS satellite: the installed dist lacks batch-init (resolveBatchInput) and crashes evaluate with IConfigParser is required — both already fixed in source. So F-001/F-008 read as regressions of GT-12/GT-395 only because the artifact predates their fixes. **Correction: F-007 (gate/phase/sdlc-status ENOENT on reference/governance/sdlc/gates) is NOT fixed in source — the path is wrong AND the gate data files never existed; tracked separately as GT-461.** Fix: bump 1.0.1 + rebuild + republish + a release guard that diffs published-vs-built dist. **IN-PROGRESS: version bumped to 1.0.1, CHANGELOG updated, and a check:release-drift guard wired into prepublishOnly (fails the publish when the built dist lacks the merged fixes). Follow-on: run npm publish (owner) so satellites get F-001/F-008.** | `Evolith CLI` | P0/M |
-| [GT-447](../gaps/gap-reference-catalog.md#gt-447) | **MILESTONE — Objective 1: full stack FUNCTIONAL LOCALLY (Docker/Kubernetes).** Bring up the whole chain — Tracker BFF/API → Evolith Core (CLI, core-api, MCP, agent-runtime) — with REAL adapters (not stubs), real Tracker↔Core evaluate() integration, and the UI (tracker-web) connected to the LOCAL URLs. UI design refactor is deferred to Phase 2. One-command bring-up (docker-compose / kind). Gathers the M1 subset of GT-435: GT-438 (real adapters), GT-446 (Tracker integration + local DB), GT-436 (publish real 1.0.0 packages to npm — when genuinely ready), GT-439 (fail-closed auth + tenant guard), GT-440 (observability), local compose/k8s. Only real HITL / pen-test relaxed for local. | `Cross` | P0/L |
-| [GT-435](../gaps/gap-reference-catalog.md#gt-435) | EPIC — Road to Production of the conceptual suite diagram (Core hubs → Hermes/Agent Runtime → Exposure CLI/API/MCP → Tracker → satellites). Assessment 2026-07-04: Core ~95% ready (L4); the sole active CD blocker is GT-324; distribution blocked by the 0.0.1 package deprecation; agent-runtime defaults to stubs; Tracker is a real .NET scaffold but lagging the current Core design. **Umbrella — decomposed into GT-436…GT-446 (+ GT-324), organized under two milestones: GT-447 (Objective 1 — local functional) and GT-448 (Objective 2 — production).** | `Cross` | P0/XL |
+| [GT-447](../gaps/gap-reference-catalog.md#gt-447) | The whole stack does not come up locally yet: the engine starts, the companion app and the interface do not | `Cross` | P0/L |
+| [GT-435](../gaps/gap-reference-catalog.md#gt-435) | The end-to-end path from code to a running product in real use is not deployed or validated | `Cross` | P0/XL |
 
 ## Metrics
 
 | Indicator | Value |
 |---|---:|
-| Canonical board date | 2026-07-09 |
-| Total gaps | 510 |
-| Closed gaps | 451 |
-| Open gaps | 59 |
-| Open P0 | 3 |
-| Open P1 | 16 |
-| Open P2 | 36 |
-| Total closure | 88.4% |
-| Closure evidence records | 417 |
-| Recorded readiness | 3 PASS, 1 RESOLVED |
+| Canonical board date | 2026-07-13 |
+| Total gaps | 566 |
+| Closed gaps | 551 |
+| Open gaps | 15 |
+| Open P0 | 2 |
+| Open P1 | 4 |
+| Open P2 | 6 |
+| Total closure | 97.3% |
+| Closure evidence records | 533 |
+| Recorded readiness | 3 BLOCKED, 1 PASS |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Evolith CLI` | 37 | 1 | 7 | [GT-451](../gaps/gap-reference-catalog.md#gt-451), [GT-453](../gaps/gap-reference-catalog.md#gt-453), [GT-454](../gaps/gap-reference-catalog.md#gt-454), [GT-458](../gaps/gap-reference-catalog.md#gt-458), +33 |
 | `Cross` | 3 | 2 | 1 | [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
-| `Infra` | 4 | 0 | 3 | [GT-442](../gaps/gap-reference-catalog.md#gt-442), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-437](../gaps/gap-reference-catalog.md#gt-437), [GT-464](../gaps/gap-reference-catalog.md#gt-464) |
-| `Agent Runtime` | 2 | 0 | 2 | [GT-438](../gaps/gap-reference-catalog.md#gt-438), [GT-441](../gaps/gap-reference-catalog.md#gt-441) |
-| `Governance` | 4 | 0 | 0 | [GT-480](../gaps/gap-reference-catalog.md#gt-480), [GT-445](../gaps/gap-reference-catalog.md#gt-445), [GT-477](../gaps/gap-reference-catalog.md#gt-477), [GT-510](../gaps/gap-reference-catalog.md#gt-510) |
+| `Infra` | 2 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-464](../gaps/gap-reference-catalog.md#gt-464) |
+| `Core API` | 2 | 0 | 1 | [GT-560](../gaps/gap-reference-catalog.md#gt-560), [GT-522](../gaps/gap-reference-catalog.md#gt-522) |
+| `Agent Runtime` | 1 | 0 | 1 | [GT-441](../gaps/gap-reference-catalog.md#gt-441) |
+| `agent-runtime` | 1 | 0 | 0 | [GT-531](../gaps/gap-reference-catalog.md#gt-531) |
 
 ## Source and Refresh Rule
 

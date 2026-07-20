@@ -14,6 +14,14 @@ Universal — All Evolith satellite repositories
 
 > **Satellite origin:** Originally validated in UMS satellite (UMS ADR-0064). Promoted to Evolith corporate baseline.
 
+> **Does NOT govern the Core hub.** The Scope line above is literal: this ADR
+> applies to satellite repositories only. It mandates `src/` + `docs/`, a shape
+> the hub does not have — the hub carries a governance corpus (`reference/`,
+> `product/`) that no satellite has, and the taxonomy spec forbids a root
+> `docs/` hierarchy. Applying this ADR to the hub by inertia is what left the
+> hub root ungoverned in practice. The hub is governed by
+> [ADR-0118](./0118-core-hub-repository-taxonomy.md).
+
 ---
 
 ## Context and Problem Statement

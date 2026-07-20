@@ -93,6 +93,7 @@
 * [0115-emergent-knowledge-axis](./0115-emergent-knowledge-axis.es.md) — **Eje de conocimiento emergente: conocimiento originado al APLICAR el estándar (`KO-*`), distinto de la captación externa (`KI-*`); los agentes solo pueden redactar en `candidate`**
 * [0116-canonical-finding-and-authority-boundary](./0116-canonical-finding-and-authority-boundary.es.md) — **Contrato canónico `Finding` (procedencia/determinismo obligatorios, `advisory: true`) y una frontera de autoridad consultiva ejecutable (`evaluateAuthority`, AP-R01..R06)**
 * [0117-bilingual-parity-scope-authored-sources](./0117-bilingual-parity-scope-authored-sources.es.md) — **La paridad bilingüe aplica a fuentes AUTORADAS, nunca a proyecciones generadas; los árboles generados heredan la paridad de sus fuentes, exclusiones declaradas en código con generador + razón**
+* [0118-core-hub-repository-taxonomy](./0118-core-hub-repository-taxonomy.es.md) — **La raíz del hub Core tiene taxonomía propia, distinta de la de satélites: reference/ + product/ + src/ + .harness/; ADR-0070 gobierna solo satélites; la imposición es 03-validate-root-cleanliness.mjs + TAX-05**
 
 ---
 [Volver al Nivel Superior](../README.es.md)

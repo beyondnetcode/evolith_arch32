@@ -24,7 +24,18 @@ assertScanned(adrs.length, { what: "ADRs", where: relativeToRoot(adrDir) });
 
 for (const adr of adrs) {
   const content = fs.readFileSync(path.join(adrDir, adr), "utf8");
-  if (!content.includes("Agent Signature:") && !content.includes("Firma del Agente:") && !content.includes("Author: Architect Agent") && !content.includes("Author: Docs Agent")) {
+  // Case-insensitive a proposito. La comparacion exacta reportaba "missing
+  // agent signature" en 4 ADRs (0108..0111 .es) que SI la tienen, escrita como
+  // `Firma del agente:` en minuscula. Un guard que dice "falta" cuando lo que
+  // hay es otra capitalizacion manda a corregir el documento equivocado.
+  const haystack = content.toLowerCase();
+  const accepted = [
+    "agent signature:",
+    "firma del agente:",
+    "author: architect agent",
+    "author: docs agent",
+  ];
+  if (!accepted.some((marker) => haystack.includes(marker))) {
     console.error(`❌ [BMAD Signature Validation] Missing agent signature in ADR: ${adr}`);
     failures++;
   }

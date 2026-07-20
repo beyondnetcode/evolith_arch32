@@ -281,7 +281,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Cada violación puede portar `owner` + `complianceControl` resueltos y emitidos en la evidencia. _(`Violation.complianceControls` + `enrichViolationsWithCompliance`, agregado en `buildEnforcerEvidence` y cableado en `emitEvaluationEvidence`)_
   - [x] El catálogo de controles está versionado y desacoplado del código de reglas. _(`ComplianceControlCatalog`/`ComplianceMapping` con `version`, data-driven; `57b2cc09`)_
 - **Dependencies:** GT-518, GT-511.
-- **Status:** `COMPLETED`
+- **Status:** `DONE`
 
 #### GT-526
 
@@ -318,7 +318,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Al menos un conector (p. ej. Backstage) resuelve owner y lo enchufa al enriquecimiento de violaciones. _(loader Backstage `loadBackstageOwnership` + `fetchBlueprintOwnership` Port/Cortex sobre los parsers puros; cliente inyectable)_
   - [x] Los conectores son read-only y no introducen lock-in de proveedor. _(los parsers solo leen y normalizan; nada escribe ni acopla al proveedor)_
 - **Dependencies:** GT-511.
-- **Status:** `COMPLETED`
+- **Status:** `DONE`
 
 #### GT-528
 
@@ -337,7 +337,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Cada regla generada traza al elemento de modelo/ADR de origen. _(`ruleId` `C4-<id>` + `adrRef` del elemento)_
   - [x] Ingesta del `.dsl` crudo → `C4Model`. _(`parseStructurizrDsl`; core-domain 950/950; `5c66dd69`)_
 - **Dependencies:** GT-516.
-- **Status:** `COMPLETED`
+- **Status:** `DONE`
 
 #### GT-529
 
@@ -355,7 +355,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Elementos de Jira se mapean a artefactos Evolith preservando origen/identidad/timestamps/linaje. _(`parseJiraIssue`→`CanonicalWorkItem` con `WorkItemProvenance`; rechaza sin id)_
   - [x] Completar un workflow de Jira no autoriza por sí solo una transición de fase. _(`authorizesPhaseTransition:false` por contrato + `externalWorkAuthorizesTransition`⇒false)_
 - **Dependencies:** none.
-- **Status:** `COMPLETED`
+- **Status:** `DONE`
 
 #### GT-530
 
@@ -373,7 +373,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Un trace/evaluación de Langfuse se mapea a evidencia canónica consumible por un gate. _(`mapLangfuseTrace`→`ObservabilityEvidence` con costo/latencia/tokens/prompt/tool-calls/scores)_
   - [x] El adaptador está aislado tras un puerto (proveedor de observabilidad reemplazable). _(`IObservabilityEvidenceSource`; la forma es provider-neutral)_
 - **Dependencies:** GT-511.
-- **Status:** `COMPLETED`
+- **Status:** `DONE`
 
 #### GT-531
 

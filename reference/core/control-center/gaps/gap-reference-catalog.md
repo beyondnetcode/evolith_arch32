@@ -285,7 +285,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] Each violation can carry resolved `owner` + `complianceControl` emitted in evidence. _(`Violation.complianceControls` + `enrichViolationsWithCompliance`, aggregated in `buildEnforcerEvidence` and wired into `emitEvaluationEvidence`)_
   - [x] The control catalog is versioned and decoupled from rule code. _(`ComplianceControlCatalog`/`ComplianceMapping` with `version`, data-driven; `57b2cc09`)_
 - **Dependencies:** GT-518, GT-511.
-- **Status:** `COMPLETED`
+- **Status:** `DONE`
 
 #### GT-526
 
@@ -322,7 +322,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] At least one connector (e.g. Backstage) resolves owner and feeds violation enrichment. _(Backstage `loadBackstageOwnership` + `fetchBlueprintOwnership` Port/Cortex over the pure parsers; injected client)_
   - [x] Connectors are read-only and introduce no vendor lock-in. _(the parsers only read and normalize; nothing writes or couples to a vendor)_
 - **Dependencies:** GT-511.
-- **Status:** `COMPLETED`
+- **Status:** `DONE`
 
 #### GT-528
 
@@ -341,7 +341,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] Each generated rule traces to its source model element/ADR. _(`ruleId` `C4-<id>` + the element's `adrRef`)_
   - [x] Raw `.dsl` ingestion → `C4Model`. _(`parseStructurizrDsl`; core-domain 950/950; `5c66dd69`)_
 - **Dependencies:** GT-516.
-- **Status:** `COMPLETED`
+- **Status:** `DONE`
 
 #### GT-529
 
@@ -359,7 +359,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] Jira items map to Evolith artifacts preserving origin/identity/timestamps/lineage. _(`parseJiraIssue`→`CanonicalWorkItem` with `WorkItemProvenance`; rejects a missing id)_
   - [x] Completing a Jira workflow does not by itself authorize a phase transition. _(`authorizesPhaseTransition:false` by contract + `externalWorkAuthorizesTransition`⇒false)_
 - **Dependencies:** none.
-- **Status:** `COMPLETED`
+- **Status:** `DONE`
 
 #### GT-530
 
@@ -377,7 +377,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] A Langfuse trace/evaluation maps to canonical evidence consumable by a gate. _(`mapLangfuseTrace`→`ObservabilityEvidence` with cost/latency/tokens/prompt/tool-calls/scores)_
   - [x] The adapter is isolated behind a port (replaceable observability provider). _(`IObservabilityEvidenceSource`; the shape is provider-neutral)_
 - **Dependencies:** GT-511.
-- **Status:** `COMPLETED`
+- **Status:** `DONE`
 
 #### GT-531
 

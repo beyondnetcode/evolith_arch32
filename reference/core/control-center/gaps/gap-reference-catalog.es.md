@@ -7002,8 +7002,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Explicitly NOT the fix:** hacer fail-soft el step ante errores de conexion. Pone el check en verde mientras el despliegue sigue sin ocurrir, y mantendria al pipeline afirmando una entrega que nunca realiza.
 - **Cuando vuelva el VPS:** la senal no debe depender de que alguien mergee. El job de deploy solo corre en push, asi que calla mientras nadie toca `main` — una sonda de uptime contra las URLs de servicio es la forma correcta.
 - **Acceptance criteria:**
-  - [ ] CD deja de fallar en los push a `main` mientras el VPS este fuera de alcance.
-  - [ ] El pipeline no reporta una entrega que no esta realizando.
-  - [ ] Reactivar el despliegue al VPS es un unico paso deliberado y documentado.
+  - [x] CD deja de fallar en los push a `main` mientras el VPS este fuera de alcance.
+  - [x] El pipeline no reporta una entrega que no esta realizando.
+  - [x] Reactivar el despliegue al VPS es un unico paso deliberado y documentado.
 - **Dependencies:** ninguna en el repo.
-- **Status:** `PENDING`
+- **Status:** `DONE`

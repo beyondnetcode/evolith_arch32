@@ -381,3 +381,119 @@ describe('AgentsCommand — option parsers', () => {
     expect(cmd.parseList()).toBe(true);
   });
 });
+
+// El modo `--format json` era el grueso de las ramas sin cubrir de este
+// comando: cada accion (list, validate, install, remove, upgrade) tiene su par
+// json/humano y solo se ejercitaba el humano. Es el modo por el que un agente
+// invoca la CLI, y donde el envelope ADR-0073 es lo unico legible por maquina.
+describe('AgentsCommand — --format json', () => {
+  let logSpy: jest.SpyInstance;
+  const J = { format: 'json' } as never;
+
+  const env = () => {
+    const printed = logSpy.mock.calls
+      .map((c: unknown[]) => String(c[0]))
+      .filter((s: string) => s.trim().startsWith('{'));
+    expect(printed.length).toBeGreaterThan(0);
+    return JSON.parse(printed[printed.length - 1]);
+  };
+
+  beforeEach(() => {
+    logSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    process.exitCode = undefined;
+  });
+
+  afterEach(() => {
+    logSpy.mockRestore();
+    process.exitCode = undefined;
+  });
+
+  it('list emite envelope de exito con los agentes instalados', async () => {
+    mockDiscover.mockResolvedValue([
+      { name: 'gap-analyzer', version: '1.0.0', template: 'standard' },
+    ]);
+    await new AgentsCommand(makePrompt()).executeCommand(['list'], J);
+    const e = env();
+    expect(e.success).toBe(true);
+    expect(JSON.stringify(e.data)).toMatch(/gap-analyzer/);
+  });
+
+  it('list con cero agentes sigue siendo exito, no error', async () => {
+    mockDiscover.mockResolvedValue([]);
+    await new AgentsCommand(makePrompt()).executeCommand(['list'], J);
+    expect(env().success).toBe(true);
+  });
+
+  it('validate sin agentes instalados falla como RULESET_NOT_FOUND al pedir uno por nombre', async () => {
+    mockDiscover.mockResolvedValue([]);
+    await new AgentsCommand(makePrompt()).executeCommand(
+      ['validate'],
+      { format: 'json', name: 'gap-analyzer' } as never,
+    );
+    const e = env();
+    expect(e.success).toBe(false);
+    expect(e.error.code).toBe('RULESET_NOT_FOUND');
+  });
+
+  it('validate exige --name en json en vez de colgarse esperando un prompt', async () => {
+    mockDiscover.mockResolvedValue([{ name: 'gap-analyzer', version: '1.0.0' }]);
+    await new AgentsCommand(makePrompt()).executeCommand(['validate'], J);
+    const e = env();
+    expect(e.success).toBe(false);
+    expect(e.error.message).toMatch(/--name/);
+  });
+
+  it('validate reporta el ruleset ausente nombrando la ruta', async () => {
+    mockDiscover.mockResolvedValue([{ name: 'gap-analyzer', version: '1.0.0' }]);
+    mockFsExists.mockResolvedValue(false);
+    await new AgentsCommand(makePrompt()).executeCommand(
+      ['validate'],
+      { format: 'json', name: 'gap-analyzer' } as never,
+    );
+    const e = env();
+    expect(e.success).toBe(false);
+    expect(e.error.code).toBe('RULESET_NOT_FOUND');
+  });
+
+  it('validate devuelve el veredicto NEGATIVO como exito, con sus issues', async () => {
+    mockDiscover.mockResolvedValue([{ name: 'gap-analyzer', version: '1.0.0' }]);
+    mockFsExists.mockResolvedValue(true);
+    mockFsReadJson.mockResolvedValue({
+      agent: { name: 'gap-analyzer' },
+      ruleset: { version: '1.0.0' },
+      principles: [{ principle: 'sin id ni severity' }],
+    });
+    await new AgentsCommand(makePrompt()).executeCommand(
+      ['validate'],
+      { format: 'json', name: 'gap-analyzer' } as never,
+    );
+    const e = env();
+    // ADR-0073: el comando corrio (success) y el veredicto viaja dentro.
+    expect(e.success).toBe(true);
+    expect(e.data.passed).toBe(false);
+    expect(e.data.issuesCount).toBeGreaterThan(0);
+  });
+
+  it('validate marca passed cuando el ruleset esta completo', async () => {
+    mockDiscover.mockResolvedValue([{ name: 'gap-analyzer', version: '1.0.0' }]);
+    mockFsExists.mockResolvedValue(true);
+    mockFsReadJson.mockResolvedValue({
+      agent: { name: 'gap-analyzer' },
+      ruleset: { version: '1.0.0' },
+      principles: [{ id: 'ACL-01', principle: 'ok', severity: 'MUST' }],
+    });
+    await new AgentsCommand(makePrompt()).executeCommand(
+      ['validate'],
+      { format: 'json', name: 'gap-analyzer' } as never,
+    );
+    const e = env();
+    expect(e.success).toBe(true);
+    expect(e.data.passed).toBe(true);
+  });
+
+  it('remove sin agentes instalados no revienta y responde en json', async () => {
+    mockDiscover.mockResolvedValue([]);
+    await new AgentsCommand(makePrompt()).executeCommand(['remove'], J);
+    expect(env()).toHaveProperty('meta');
+  });
+});

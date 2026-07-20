@@ -6983,16 +6983,17 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Evidence:** 71 suites and 969 tests pass with 0 failures, but the blocking coverage gate fails: `Coverage for branches (62.89%) does not meet "global" threshold (75%)`. Observed 2026-07-18 in run 29646397424.
 - **Impact:** The coverage gate blocks, and the honest reading is that branch coverage fell below a threshold that remains correct.
 - **Risk:** The cheapest response -- relaxing the threshold -- would convert a measured regression into a permanently lowered standard.
-- **Affected files:** the `core-api` test suite and its Jest coverage configuration.
+- **Affected files:** the `src/sdk/cli` test suite and its Jest coverage configuration. _(Correction: the original write-up said `core-api`. The failing gate is the CLI's, which is also what the Component field says.)_
 - **Component:** `SDK CLI` · **Dimension:** Reliability · **Type:** testing
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Add branch coverage where it was lost until the suite clears 75 percent. The gate is deliberately left untouched.
 - **Owner decision (2026-07-18):** Recorded as DEBT rather than paid now. Coverage moved 62.85% -> 69.38% (+168 branches) by covering the branches whose failure would actually hurt -- `handleError`, the waiver command's approve/expire paths, validate-against-zero-rules, the bundled-ruleset resolution every installed user takes, and the ADR-0109 satellite precedence order. The remaining 5.6 points cost roughly 100-140 tests over interactive wizard gating (`init`, `update`, `scaffold`, `profile`, `satellite-adopt`) and the YAML/table pretty-printer -- tests that assert a mock was asked a question. THE THRESHOLD STAYS AT 75 AND THE GATE STAYS RED: this is a regression to repay, not a bar to lower. A further ~100 branches in `adr`/`standards`/`agents` are excluded on purpose because they are dominated by the success-envelope defect found alongside this work; covering them before that is fixed would bless the bug.
+- **Closure (2026-07-20, commit `7cffd734`):** The debt was paid, not written off. Branch coverage went from 70.57% (1890/2678) to **75.54%**, jest exits 0, and the threshold in `jest.config` was not touched — 85 suites, 1250 tests, 0 failures. The gap's own estimate of the remaining work proved to be the wrong shape: it predicted "100-140 tests over interactive wizard gating... tests that assert a mock was asked a question," but the uncovered branches were not the wizards. They were the **non-interactive and machine-readable paths** — `--format json` across `update`/`profile`/`agents`/`api`/`scaffold`, `init` in batch mode, and the composable engine's human report — the paths a person never walks by hand, which is precisely why nobody had noticed they were untested. Those are worth asserting: they are the contract every script and CI job depends on. Three of them had no way in until the code changed: `agents --name` did not exist, so the non-interactive path had no entry point (added, with a missing agent returning `RULESET_NOT_FOUND` rather than falling through); `scaffold`'s specs stubbed `process.exit`, which does not halt, so execution ran past the assertion (reading the FIRST envelope makes the assertion mean what it says); and the composable report has no seam, living inside `executeCommand` — but `createComposableEngine()` `require`s its five modes lazily, so they can be mocked by module path, which is the whole reason that spec is a separate file (`jest.mock` is file-scoped). _On the exclusion this gap declared:_ it withheld ~100 branches in `adr`/`agents` because covering them would "bless" the success-envelope defect. That defect was fixed earlier in the same campaign, and the new tests now **assert the corrected ADR-0073 contract explicitly** — envelope `success` means the command ran, the verdict travels inside, the exit code carries it — so they pin the right behaviour instead of freezing the wrong one.
 - **Acceptance criteria:**
-  - [ ] Branch coverage is at or above the existing 75 percent global threshold.
-  - [ ] The threshold itself is unchanged.
+  - [x] Branch coverage is at or above the existing 75 percent global threshold. — 75.54%, measured locally with `npx jest --coverage` exiting 0.
+  - [x] The threshold itself is unchanged. — still 75; the diff touches only spec files plus the `agents --name` option.
 - **Dependencies:** None.
-- **Status:** `PENDING`
+- **Status:** `DONE`
 
 #### GT-563
 
@@ -7102,3 +7103,23 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] Reinstating VPS deployment is a documented, single deliberate step.
 - **Dependencies:** none in-repo.
 - **Status:** `DONE`
+
+#### GT-568
+
+**Title:** Security Audit fails on a dev-only advisory, so the signal does not match the risk
+
+- **Purpose:** Make the security gate red for reasons that can actually reach a user, and decide the transitive bump deliberately rather than by reflex.
+- **Evidence:** `npm audit` reports `brace-expansion` (GHSA-3jxr-9vmj-r5cp, DoS via exponential-time expansion of consecutive non-expanding `{}` groups) at high severity: `1 high severity vulnerability`, exit code 1. The six resolution paths are `node_modules/@eslint/config-array/node_modules/brace-expansion`, `@eslint/eslintrc`, `@typescript-eslint/typescript-estree`, `test-exclude`, `eslint`, and the root — every one of them build or lint tooling. Observed 2026-07-20 in run 29780735123.
+- **Impact:** The `Security Audit` job blocks the CLI CI pipeline on a vulnerability with no path to a published artifact, which trains readers to discount the one job whose reds should never be discounted.
+- **Risk:** Two opposite errors are available. Suppressing the finding without scoping the audit hides future *real* production advisories; running `npm audit fix` rewrites `package-lock.json`, and a full lockfile regeneration is off-limits here — the `overrides.ajv` incident showed how far that ripples.
+- **Affected files:** `.github/workflows/sdk-cli-ci.yml` (the `Security Audit` job), `package-lock.json`.
+- **Component:** `Infra` · **Dimension:** Security · **Type:** ci
+- **Criticality:** P2 · **Complexity:** S
+- **Proposed fix:** Settle scoping and remediation together — scope the audit to what ships (`--omit=dev`, or a recorded, reasoned exception with an expiry) so the gate speaks about production risk, and take the transitive bump only if it can be done as a targeted change rather than a lockfile regeneration.
+- **Provenance:** Pre-existing, and explicitly NOT caused by the coverage work in [GT-562](#gt-562) — both were observed in the same run 29780735123, in which `Unit Tests` passed and this job did not.
+- **Acceptance criteria:**
+  - [ ] The `Security Audit` job passes, or fails only on advisories reachable from the published package.
+  - [ ] The audit's scope is explicit in the workflow, so a future reader can tell what it does and does not cover.
+  - [ ] `package-lock.json` is not regenerated wholesale.
+- **Dependencies:** None.
+- **Status:** `PENDING`

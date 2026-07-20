@@ -1,24 +1,23 @@
 {
   "schemaVersion": "1.0.0",
-  "asOf": "2026-07-13",
+  "asOf": "2026-07-20",
   "checks": [
     {
       "id": "cli-baseline",
       "status": "BLOCKED",
-      "observedAt": "2026-07-18",
-      "commit": "27e7a01f",
-      "gap": "GT-562",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29646397424",
-      "summary": "Re-observed 2026-07-18 on develop and NOT green. Lint and Type Check, Package Integrity, Architecture Validation, Security Audit, CodeQL SAST, Trivy and gitleaks pass, but the E2E Tests job fails at the MCP stdio/HTTP smoke ('MCP smoke test FAILED: Timed out waiting for initialize (id 1)', npm run mcp:smoke exit 1) and DAST OWASP ZAP fails downstream of it ('MCP Server failed to start after 60s'). MAPPING RECONCILED 2026-07-19: the originally-observed cause is closed. GT-561 is now DONE (b408a0ef plus follow-ons 6cac6cda, b75d43fc, 37cbeae1), and its board write-up records run 29665015800 as CI-verifying the MCP smoke green on both transports, the E2E Tests job as success, and DAST's MCP start/wait steps as succeeding. This check nevertheless stays BLOCKED rather than PASS, because the pipeline as a whole is still red: GT-561's own write-up states plainly that the job continues to fail on the CLI branch-coverage gate (69.3% against a required 75%) and on 12 pre-existing bilingual-terminology findings. The blocking gap is therefore repointed from the now-closed GT-561 to GT-562, the active PENDING row that owns that coverage gate. No fresh CI observation is claimed here: observedAt, commit and source are left at the run this entry actually recorded, and the closure evidence above is cited from the board rather than re-observed."
+      "observedAt": "2026-07-20",
+      "commit": "6066a4b2",
+      "gap": "GT-568",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29780735123",
+      "summary": "Re-observed 2026-07-20 on develop and NOT green, but the blockage has moved and shrunk. Eleven of twelve jobs now succeed -- Lint and Type Check, Package Integrity, Architecture Validation, CodeQL SAST, Trivy, gitleaks, DAST OWASP ZAP, E2E Tests, Winston Agentic Review, and Unit Tests, which passed for the first time since 2026-06-30. The two causes this entry previously named are both resolved: the MCP smoke (GT-561, DONE) and the branch-coverage gate (GT-562, DONE at 75.54%). What remains is a single job, Security Audit, failing on a high-severity brace-expansion advisory (GHSA-3jxr-9vmj-r5cp) whose six resolution paths are all dev-only lint/build tooling, none of which ship in the published CLI. The mapping is therefore repointed to GT-568, the new PENDING row that owns it. Not flipped to PASS: the pipeline is observably red, and a dev-only advisory is still a red until it is either scoped or fixed."
     },
     {
       "id": "coverage",
-      "status": "BLOCKED",
-      "observedAt": "2026-07-18",
-      "commit": "27e7a01f",
-      "gap": "GT-562",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29646397424",
-      "summary": "Re-observed 2026-07-18 on develop and NOT green. Every test passes -- 71 suites, 969 tests, 0 failures -- but the blocking coverage gate fails: 'Jest: Coverage for branches (62.89%) does not meet \"global\" threshold (75%)'. The previous entry claimed PASS with 1,206 passing tests and 80.65% statement coverage as of 2026-06-13; both the test count and the coverage figure are stale and the gate outcome has inverted, so neither number is carried forward. The threshold itself is NOT being relaxed: the honest reading is that branch coverage regressed below a threshold that remains correct. This regression now has its own board row, GT-562; the earlier provisional mapping to GT-523 (the maturity-evidence refresh) was a placeholder made before that row existed and has been repointed."
+      "status": "PASS",
+      "observedAt": "2026-07-20",
+      "commit": "6066a4b2",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29780735123",
+      "summary": "Re-observed 2026-07-20 on develop and GREEN. The Unit Tests job succeeds: 85 suites, 1250 tests, 0 failures, and the blocking gate clears -- Branches 75.54% (2023/2678) against the unchanged 75% global threshold, with statements 88.23%, functions 86.54%, lines 88.52%. The regression recorded on 2026-07-18 (62.89%) was repaid, not relaxed: the threshold in jest.config.js is untouched. GT-562, which owned this blockage, is DONE. Two commits were needed and the second matters for anyone reading this later: 7cffd734 earned the branches back, and 6066a4b2 fixed a leak that made the job fail ANYWAY with everything passing -- under --runInBand, which is how CI runs, a CLI command setting process.exitCode = 1 to carry its verdict leaves it set for the rest of the shared process. That leak predates the coverage work, so this job could not have gone green at any coverage level; the gate had been taking the blame for two failures while concealing one."
     },
     {
       "id": "documentation",
@@ -30,12 +29,11 @@
     },
     {
       "id": "release",
-      "status": "BLOCKED",
-      "observedAt": "2026-07-19",
-      "commit": "df3c173c",
-      "gap": "GT-562",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29701126371",
-      "summary": "Re-observed 2026-07-19 on main and still NOT green, remapped from GT-563 (DONE) to GT-562 (PENDING), which is the gap that actually owns the remaining blockage. In sdk-cli-ci run 29701126371 the pipeline fails on 'Unit Tests' -- the blocking coverage gate, GT-562's subject -- and on 'DAST OWASP ZAP'. No version can be cut while those are red. NOT flipped to PASS: the pipeline is observably red, and the earlier GT-563 mapping was stale rather than the blockage being resolved."
+      "status": "PASS",
+      "observedAt": "2026-07-20",
+      "commit": "0fcf6599",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29777507059",
+      "summary": "Re-observed 2026-07-20 on main and GREEN: the Evolith SDK CLI Release Pipeline completed with conclusion success in run 29777507059 (and again in 29776938707), where the previous entry had recorded it red on 2026-07-19. The two blockages that entry named are gone -- Unit Tests now passes (GT-562, DONE) and DAST OWASP ZAP passes (GT-561's follow-on 37cbeae1). The GT-562 mapping is cleared because the gap is closed and this check no longer needs one."
     }
   ]
 }

@@ -256,4 +256,126 @@ describe('InitCommand', () => {
       expect(command.parseDb('mongodb')).toBe('mongodb');
     });
   });
+
+  // El camino NO interactivo (`--config` / `--name --yes`) no tenia ninguna
+  // prueba: resolveBatchInput y readSetupFile eran ramas muertas para la suite,
+  // y son justo las que usa un agente o un script -- el modo en que este comando
+  // se invoca fuera de una terminal.
+  describe('batch (no interactivo)', () => {
+    const os = require('os');
+    const nodeFs = require('fs');
+    const nodePath = require('path');
+    let tmp: string;
+
+    beforeEach(() => {
+      tmp = nodeFs.mkdtempSync(nodePath.join(os.tmpdir(), 'evolith-init-batch-'));
+    });
+
+    afterEach(() => {
+      nodeFs.rmSync(tmp, { recursive: true, force: true });
+    });
+
+    const writeConfig = (data: unknown, name = 'setup.json') => {
+      const file = nodePath.join(tmp, name);
+      nodeFs.writeFileSync(file, typeof data === 'string' ? data : JSON.stringify(data));
+      return file;
+    };
+
+    it('no pregunta nada cuando se pasa --name con --yes', async () => {
+      await command.executeCommand([], { name: 'batch-proj', yes: true } as never);
+      expect(mockAskInitOptions).not.toHaveBeenCalled();
+      expect(mockExecute).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'batch-proj' }),
+        expect.any(String),
+      );
+    });
+
+    it('aplica defaults seguros para que un --name --yes minimo no requiera mas flags', async () => {
+      await command.executeCommand([], { name: 'defaults-proj', yes: true } as never);
+      expect(mockExecute).toHaveBeenCalledWith(
+        expect.objectContaining({
+          runtime: 'nodejs',
+          monorepo: 'none',
+          architecture: 'clean',
+          database: 'postgresql',
+          apiProtocol: 'rest',
+          ciCd: 'github-actions',
+          observability: 'opentelemetry',
+          features: [],
+          agents: [],
+        }),
+        expect.any(String),
+      );
+    });
+
+    it('cada flag sobreescribe su campo canonico', async () => {
+      await command.executeCommand([], {
+        name: 'flagged', yes: true,
+        runtime: 'dotnet', monorepo: 'nx', arch: 'hexagonal', db: 'mongodb',
+      } as never);
+      expect(mockExecute).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'flagged', runtime: 'dotnet', monorepo: 'nx',
+          architecture: 'hexagonal', database: 'mongodb',
+        }),
+        expect.any(String),
+      );
+    });
+
+    it('lee el proyecto desde un --config sin necesidad de --yes', async () => {
+      const file = writeConfig({ name: 'from-file', runtime: 'dotnet' });
+      await command.executeCommand([], { config: file } as never);
+      expect(mockAskInitOptions).not.toHaveBeenCalled();
+      expect(mockExecute).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'from-file', runtime: 'dotnet' }),
+        expect.any(String),
+      );
+    });
+
+    it('los flags ganan sobre el --config cuando ambos definen el mismo campo', async () => {
+      const file = writeConfig({ name: 'del-fichero', runtime: 'dotnet' });
+      await command.executeCommand([], { config: file, name: 'del-flag' } as never);
+      expect(mockExecute).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'del-flag', runtime: 'dotnet' }),
+        expect.any(String),
+      );
+    });
+
+    it('falla con una ruta accionable si el --config no existe', async () => {
+      const missing = nodePath.join(tmp, 'no-existe.json');
+      await expect(
+        command.executeCommand([], { config: missing } as never),
+      ).rejects.toThrow(/Config file not found/);
+    });
+
+    it('nombra el fichero y el motivo cuando el --config trae JSON invalido', async () => {
+      const file = writeConfig('{ esto no es json', 'roto.json');
+      await expect(
+        command.executeCommand([], { config: file } as never),
+      ).rejects.toThrow(/Invalid JSON in config file/);
+    });
+
+    it('exige un nombre de proyecto y dice como darlo', async () => {
+      await expect(
+        command.executeCommand([], { yes: true } as never),
+      ).rejects.toThrow(/requires a project name/);
+    });
+
+    it('sin --config ni --yes cae al wizard interactivo', async () => {
+      mockAskInitOptions.mockResolvedValue(null);
+      await command.executeCommand([], {} as never);
+      expect(mockAskInitOptions).toHaveBeenCalled();
+    });
+
+    it('en --format json emite el envelope y calla la salida humana', async () => {
+      await command.executeCommand([], {
+        name: 'json-proj', yes: true, format: 'json',
+      } as never);
+      const printed = logSpy.mock.calls.map((c: unknown[]) => String(c[0])).filter((s: string) => s.trim().startsWith('{'));
+      expect(printed.length).toBeGreaterThan(0);
+      const env = JSON.parse(printed[printed.length - 1]);
+      expect(env.success).toBe(true);
+      expect(env.meta.command).toBe('evolith init');
+    });
+  });
 });

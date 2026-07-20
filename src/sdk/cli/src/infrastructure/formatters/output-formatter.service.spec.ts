@@ -258,4 +258,106 @@ describe('OutputFormatterService', () => {
       });
     });
   });
+
+  // Este servicio es funcion pura -- sin I/O ni mocks -- y aun asi tenia 33 ramas
+  // sin ejercitar: los casos degenerados (vacio, primitivos, null) y el
+  // renderizado de arrays de issues que GT-457 anadio para que la salida en tabla
+  // no escondiera los hallazgos tras un "[N items]".
+  describe('casos degenerados y formatValue', () => {
+    const svc = new OutputFormatterService();
+    const O = (format: string) => ({ format }) as never;
+
+    it('un formato desconocido cae a json en vez de romper', () => {
+      expect(svc.format({ a: 1 }, O('inventado'))).toBe(JSON.stringify({ a: 1 }, null, 2));
+    });
+
+    it.each(['table', 'markdown'])('%s sobre un array vacio dice (empty)', (fmt) => {
+      expect(svc.format([], O(fmt))).toBe('(empty)');
+    });
+
+    it('table sobre un objeto vacio dice (empty)', () => {
+      expect(svc.format({}, O('table'))).toBe('(empty)');
+    });
+
+    it.each(['table', 'markdown', 'yaml'])('%s sobre un primitivo lo convierte a texto', (fmt) => {
+      expect(svc.format(42, O(fmt))).toContain('42');
+    });
+
+    it('table sobre un array de primitivos los lista uno por linea', () => {
+      expect(svc.format(['uno', 'dos'], O('table'))).toBe('uno\ndos');
+    });
+
+    it('markdown sobre un array de primitivos usa vinetas', () => {
+      expect(svc.format(['uno', 'dos'], O('markdown'))).toBe('- uno\n- dos');
+    });
+
+    it('table sobre un array de objetos rinde cabecera, separador y filas', () => {
+      const out = svc.format([{ ruleId: 'A-1', ok: true }], O('table'));
+      const lines = out.split('\n');
+      expect(lines[0]).toMatch(/Rule Id/);
+      expect(lines[1]).toMatch(/─/);
+      expect(lines[2]).toMatch(/A-1/);
+    });
+
+    it('markdown sobre un array de objetos rinde una tabla markdown', () => {
+      const out = svc.format([{ ruleId: 'A-1' }], O('markdown'));
+      expect(out).toMatch(/^\| Rule Id \|/m);
+      expect(out).toMatch(/^\| --- \|/m);
+    });
+
+    it('humaniza las claves camelCase y snake_case en la cabecera', () => {
+      const out = svc.format([{ ruleId: 'x', phase_name: 'y' }], O('markdown'));
+      expect(out).toMatch(/Rule Id/);
+      expect(out).toMatch(/Phase name/);
+    });
+
+    it('null y undefined se rinden como (none), no como texto vacio', () => {
+      const out = svc.format({ a: null, b: undefined }, O('table'));
+      expect(out).toMatch(/\(none\)/);
+    });
+
+    it('los booleanos se rinden como marca y aspa', () => {
+      const out = svc.format({ si: true, no: false }, O('table'));
+      expect(out).toMatch(/✓/);
+      expect(out).toMatch(/✗/);
+    });
+
+    it('un array corriente se resume por conteo', () => {
+      expect(svc.format({ xs: [1, 2, 3] }, O('table'))).toMatch(/\[3 items\]/);
+    });
+
+    it('un array de ISSUES se detalla en vez de resumirse (GT-457)', () => {
+      const out = svc.format(
+        { issues: [{ ruleId: 'HXA-01', title: 'Capa cruzada', severity: 'MUST' }] },
+        O('table'),
+      );
+      expect(out).toMatch(/1 issue\(s\)/);
+      expect(out).toMatch(/HXA-01/);
+      expect(out).toMatch(/Capa cruzada/);
+      expect(out).toMatch(/MUST/);
+      expect(out).not.toMatch(/\[1 items\]/);
+    });
+
+    it('la descripcion sale en su propia linea cuando aporta sobre el titulo', () => {
+      const out = svc.format(
+        { issues: [{ ruleId: 'A-1', title: 'Titulo', description: 'Detalle distinto' }] },
+        O('table'),
+      );
+      expect(out).toMatch(/Titulo/);
+      expect(out).toMatch(/Detalle distinto/);
+    });
+
+    it.each(['remediation', 'fix', 'hint'])('el hint de remediacion se muestra desde %s', (key) => {
+      const out = svc.format(
+        { issues: [{ ruleId: 'A-1', title: 'T', [key]: 'haz esto' }] },
+        O('table'),
+      );
+      expect(out).toMatch(/fix:/);
+      expect(out).toMatch(/haz esto/);
+    });
+
+    it('un objeto anidado no-issue se serializa como json inline', () => {
+      expect(svc.format({ cfg: { a: 1 } }, O('table'))).toMatch(/\{"a":1\}/);
+    });
+  });
 });

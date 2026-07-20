@@ -510,35 +510,33 @@ Response (captured live):
     "declaredLevel": "F1",
     "detectedLevel": "F1",
     "driftDetected": true,
-    "driftSeverity": "critical",
+    "driftSeverity": "medium",
     "newViolations": [
       {
-        "ruleId": "MM-R03",
-        "severity": "MUST",
-        "category": "hexagonal-architecture",
-        "title": "Ports and Adapters Boundary",
-        "description": "All bounded contexts MUST implement hexagonal architecture (core/ADR-0002). Domain layer has zero external dependencies. Infrastructure adapters are injected via ports. - No ports directory found (expected: src/ports or src/application/ports)",
-        "blocking": true,
+        "ruleId": "ARCH-RULESET-MISSING",
+        "severity": "SHOULD",
+        "category": "architecture",
+        "title": "Ruleset not found",
+        "description": "Could not find architecture rules at /var/folders/xm/4qq25s3j75b92kbk2j1z1vxr0000gn/T/evolith/reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
+        "blocking": false,
         "firstDetected": "<timestamp>",
         "status": "new"
-      },
-      {
-        "ruleId": "MM-R04",
-        "severity": "MUST",
-        "category": "communication",
-        "title": "Inter-Context Communication via Ports",
-        "description": "Cross-bounded-context communication MUST use explicit application-layer port interfaces. No direct infrastructure-to-infrastructure calls. - No contracts/ directory found for inter-module contracts",
-        "blocking": true,
-        "firstDetected": "<timestamp>",
-        "status": "new"
-      },
-      {
-        "ruleId": "MM-R05",
-        "severity": "MUST",
-        "category": "persistence",
-        "title": "No Shared Database Across Bounded Contexts",
-        "description": "E
-  … (truncated)
+      }
+    ],
+    "resolvedViolations": [],
+    "persistentViolations": [],
+    "overallScore": 100,
+    "timestamp": "<timestamp>",
+    "historyPath": "/abs/path/to/your-satellite/.evolith/drift-history.json"
+  },
+  "meta": {
+    "command": "evolith drift detect",
+    "executedAt": "<timestamp>",
+    "durationMs": 0,
+    "correlationId": "<uuid>",
+    "schemaVersion": "1.0.0"
+  }
+}
 ```
 
 #### MCP
@@ -605,10 +603,8 @@ Response (captured live):
     "declaredLevel": "F1",
     "detectedLevel": "F1",
     "driftDetected": true,
-    "driftSeverity": "high",
-    "newViolations": [],
-    "resolvedViolations": [],
-    "persistentViolations": [
+    "driftSeverity": "critical",
+    "newViolations": [
       {
         "ruleId": "MM-R03",
         "severity": "MUST",
@@ -633,7 +629,8 @@ Response (captured live):
         "ruleId": "MM-R05",
         "severity": "MUST",
         "category": "persistence",
-        "title": "No Shared Da
+        "title": "No Shared Database Across Bounded Contexts",
+        "description": "E
   … (truncated)
 ```
 

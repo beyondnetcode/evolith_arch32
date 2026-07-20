@@ -26,12 +26,16 @@ module.exports = {
     '<rootDir>/apps/core-api/node_modules',
     '<rootDir>/packages/mcp-server/node_modules',
   ],
-  // The mcp-server carries node_modules manual mocks (cache-manager, etc.) that jest
-  // would otherwise auto-apply, breaking the real core-api DI graph. Ignore them and
-  // the built dist duplicates (haste-map collisions) — same as the contract suite.
+  // Los dobles de mcp-server ya NO viven en `__mocks__/`: se renombraron a
+  // `src/test-doubles/` (mcp-server los cablea explicitamente por
+  // moduleNameMapper en su propio jest.config, nunca dependio del auto-descubrimiento).
+  // Mientras se llamaban `__mocks__`, jest los auto-aplicaba a CUALQUIER suite que
+  // los tuviera en su haste map: aqui `require.resolve` devolvia el paquete real y
+  // `require()` el mock, que no exporta CacheTTL -> "CacheTTL is not a function" al
+  // cargar el controller de core-api. `modulePathIgnorePatterns` no lo evitaba:
+  // filtra rutas de modulo, no el registro de mocks.
   modulePathIgnorePatterns: [
     '<rootDir>/packages/mcp-server/dist/',
-    '<rootDir>/packages/mcp-server/src/__mocks__/',
   ],
   testEnvironment: 'node',
   testTimeout: 180000,

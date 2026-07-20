@@ -78,7 +78,7 @@ Response (captured live):
         "severity": "MUST",
         "category": "directory-structure",
         "title": "Evolith Core structure: reference/, sdk/, rulesets/",
-        "description": "Missing top-level directories: sdk",
+        "description": "Missing top-level directories: rulesets, sdk",
         "blocking": true
       },
       {
@@ -86,7 +86,7 @@ Response (captured live):
         "severity": "MUST",
         "category": "inheritance",
         "title": "Version Pinning",
-        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned references are p
+        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned refere
   … (truncated)
 ```
 
@@ -150,7 +150,7 @@ Response (captured live):
         "severity": "MUST",
         "category": "directory-structure",
         "title": "Evolith Core structure: reference/, sdk/, rulesets/",
-        "description": "Missing top-level directories: sdk",
+        "description": "Missing top-level directories: rulesets, sdk",
         "blocking": true
       },
       {
@@ -158,7 +158,7 @@ Response (captured live):
         "severity": "MUST",
         "category": "inheritance",
         "title": "Version Pinning",
-        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned references are p
+        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned refere
   … (truncated)
 ```
 
@@ -216,7 +216,7 @@ Response (captured live):
         "severity": "MUST",
         "category": "directory-structure",
         "title": "Evolith Core structure: reference/, sdk/, rulesets/",
-        "description": "Missing top-level directories: sdk",
+        "description": "Missing top-level directories: rulesets, sdk",
         "blocking": true
       },
       {
@@ -224,7 +224,7 @@ Response (captured live):
         "severity": "MUST",
         "category": "inheritance",
         "title": "Version Pinning",
-        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned references are p
+        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned refere
   … (truncated)
 ```
 

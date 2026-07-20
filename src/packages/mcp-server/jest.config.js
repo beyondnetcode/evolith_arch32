@@ -35,9 +35,9 @@ module.exports = {
     "^@modelcontextprotocol/sdk/server/streamableHttp\\.js$":
       "<rootDir>/../../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/streamableHttp.js",
     "^@nestjs/cache-manager$":
-      "<rootDir>/__mocks__/@nestjs/cache-manager.ts",
+      "<rootDir>/test-doubles/@nestjs/cache-manager.ts",
     "^cache-manager$":
-      "<rootDir>/__mocks__/cache-manager.ts",
+      "<rootDir>/test-doubles/cache-manager.ts",
   },
   collectCoverageFrom: [
     "**/*.ts",

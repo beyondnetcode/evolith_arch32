@@ -222,7 +222,21 @@ describe('Cross-surface exploration agent (F1)', () => {
     for (const phaseKey of Object.keys(PHASES)) {
       const docPath = path.join(REPO_ROOT, `reference/core/interfaces/how-to-${phaseKey}.md`);
       const committed = fs.existsSync(docPath) ? fs.readFileSync(docPath, 'utf-8') : '';
-      if (committed !== renderPhase(phaseKey, matrix, cap)) stale.push(phaseKey);
+      const rendered = renderPhase(phaseKey, matrix, cap);
+      if (committed !== rendered) {
+        stale.push(phaseKey);
+        // Decir QUE difiere, no solo que difiere. Sin esto el fallo solo nombra
+        // la fase, y diagnosticar un drift que unicamente se reproduce en CI se
+        // convierte en adivinar a ciegas a tres minutos por intento.
+        const a = committed.split('\n');
+        const b = rendered.split('\n');
+        for (let i = 0, shown = 0; i < Math.max(a.length, b.length) && shown < 3; i++) {
+          if (a[i] !== b[i]) {
+            console.log(`[howto-drift] ${phaseKey} L${i + 1}\n  commiteado: ${JSON.stringify(a[i]?.slice(0, 160))}\n  generado  : ${JSON.stringify(b[i]?.slice(0, 160))}`);
+            shown++;
+          }
+        }
+      }
     }
     // If this fails, the source of truth (matrix / bindings / options) changed
     // but the docs weren't regenerated. Run:

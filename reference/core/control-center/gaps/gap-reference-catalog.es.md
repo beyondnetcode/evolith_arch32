@@ -6987,3 +6987,22 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Dependencias:** [`GT-329`](#gt-329) (superseded, no reabierto).
 - **Estado:** `COMPLETADO`
 
+#### GT-567
+
+**Title:** El VPS de Coolify esta inalcanzable y no se despliega nada desde hace dias, sin ninguna senal que alguien mire
+
+- **Purpose:** Restaurar el runtime de despliegue, y hacer visible su fallo cuando vuelva a ocurrir.
+- **Evidence:** `Deploy services (Coolify)` de `ci-cd.yml` falla en cada push a `main` desde el 2026-07-19 — 14+ corridas seguidas, la mas antigua comprobada `27fbc2f0`. El step que cae es el hook de core-api: `curl: (28) Failed to connect to 72.60.63.240 port 8000 after 134336 ms`. Los secrets SI estan configurados: el job no tomo su rama de skip, lo intento y no alcanzo el host.
+- **Impact:** El host no responde en NINGUN puerto. Verificado de forma independiente fuera de GitHub Actions: el panel de Coolify (`:8000`) rechaza la conexion, y los dos servicios desplegados agotan el tiempo — `https://evolith.beyondnet.cloud` (core-api, app id 12) y `http://mcpevolith.beyondnet.cloud` (MCP, app id 13), cada uno HTTP 000 tras 15s. El DNS resuelve ambos a `72.60.63.240`, asi que los dominios estan bien y el host no. **Produccion lleva caida, no solo sin desplegar, al menos dos dias.** Mientras tanto `Build & Push Services (GHCR)` sigue en verde, asi que se siguen publicando imagenes contra un runtime que nunca las recibe.
+- **Risk:** El job no es check requerido, asi que su rojo no bloquea nada y nadie miro. La misma invisibilidad que dejo correr esto dos dias dejara correr la proxima caida igual de tiempo.
+- **Affected files:** `.github/workflows/ci-cd.yml` (job `deploy`); el runtime esta fuera del repo (VPS Hostinger `root@72.60.63.240`, Coolify v4).
+- **Component:** `Infra` · **Dimension:** Delivery · **Type:** infra
+- **Criticality:** P1 · **Complexity:** M
+- **Proposed fix:** Diagnosticar primero el VPS (apagado / red / firewall) desde el panel de Hostinger o por SSH — eso es infra del owner, no un cambio de repositorio. Despues decidir como se vuelve visible la caida: una sonda de uptime contra las dos URLs de servicio es mejor senal que el job de deploy, que solo corre en push y por tanto no dice nada mientras nadie mergea.
+- **Explicitly NOT the fix:** hacer fail-soft el step de deploy ante errores de conexion. Pondria el check en verde mientras el despliegue sigue sin ocurrir. El step ya hace fail-soft el unico caso que lo merece (secrets ausentes); que falle duro cuando el host no responde es correcto, y es la unica razon por la que esto se encontro.
+- **Acceptance criteria:**
+  - [ ] El VPS responde, y ambas URLs de servicio devuelven estado saludable.
+  - [ ] `Deploy services (Coolify)` pasa en un push a `main`.
+  - [ ] La caida de un servicio desplegado produce una senal que no dependa de que alguien mergee.
+- **Dependencies:** ninguna en el repo. Bloqueado por acceso a infraestructura del owner.
+- **Status:** `PENDING`

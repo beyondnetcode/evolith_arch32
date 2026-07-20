@@ -355,10 +355,17 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ github.sha }}
 
-  # GT-324: deploy the freshly-pushed images to the Coolify runtime. This job is
-  # SAFE to merge without secrets — each step no-ops (with a warning) until the
-  # COOLIFY_API_TOKEN + per-service deploy-hook secrets are configured in the
-  # repository settings, at which point CD becomes fully automatic.
+  # GT-324: deploy the freshly-pushed images to the Coolify runtime.
+  #
+  # El fail-soft cubre UN solo modo de fallo: secrets ausentes. Sin
+  # COOLIFY_API_TOKEN o sin el deploy-hook del servicio, el step avisa y sale 0,
+  # asi que el workflow es seguro de mergear antes de configurar CD.
+  #
+  # Con los secrets PUESTOS, este job falla duro y debe hacerlo: `curl --fail`
+  # sale distinto de cero si el hook no responde, y eso significa que el
+  # despliegue no ocurrio. El comentario anterior decia "never fails CD", que era
+  # falso y ademas indeseable -- un step de despliegue que no puede fallar no
+  # informa de nada. Si esto esta rojo, mira el runtime antes que el workflow.
   deploy:
     name: Deploy services (Coolify)
     needs: [docker-services]

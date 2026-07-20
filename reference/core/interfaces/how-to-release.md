@@ -282,6 +282,7 @@ Example (`tools/call`):
     "fromPhase": "discovery",
     "toPhase": "design",
     "projectPath": "/abs/path/to/your-satellite",
+    "corePath": "/abs/path/to/evolith-core",
     "evaluatedBy": "ci"
   }
 }
@@ -388,7 +389,7 @@ Command: `evolith-cli sdlc gate-status`
 
 Example:
 ```bash
-evolith-cli sdlc gate-status --since 90 --format json
+evolith-cli sdlc gate-status --since 90 --core /abs/path/to/evolith-core --format json
 ```
 Response (captured live):
 ```json
@@ -412,7 +413,7 @@ Response (captured live):
               "passed": false,
               "found": false,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /Users/beyondnet/Source/evolith/docs/prd.md",
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
               "required": true
             },
             {
@@ -420,7 +421,7 @@ Response (captured live):
               "passed": false,
               "found": false,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /Users/beyondnet/Source/evolith/docs/discovery-canvas.md",
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
               "required": true
             },
             {
@@ -428,14 +429,14 @@ Response (captured live):
               "passed": false,
               "found": false,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /Users/beyondnet/Source/evolith/docs/technical-feasibility.md",
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
               "required": true
             },
             {
               "artifact": "Ballpark Estimation",
               "passed": false,
               "found": false,
-    
+              "s
   … (truncated)
 ```
 
@@ -452,6 +453,7 @@ Example (`tools/call`):
 {
   "name": "evolith-dora-metrics",
   "arguments": {
+    "path": "/abs/path/to/your-satellite",
     "since": 90
   }
 }
@@ -462,7 +464,7 @@ Response (captured live):
   "success": true,
   "data": {
     "error": true,
-    "message": "path is required"
+    "message": "Not a git repository"
   },
   "meta": {
     "correlationId": "<uuid>",
@@ -517,7 +519,7 @@ Response (captured live):
         "severity": "SHOULD",
         "category": "architecture",
         "title": "Ruleset not found",
-        "description": "Could not find architecture rules at /var/folders/xm/4qq25s3j75b92kbk2j1z1vxr0000gn/T/evolith/reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
+        "description": "Could not find architecture rules at /tmp/evolith/reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
         "blocking": false,
         "firstDetected": "<timestamp>",
         "status": "new"

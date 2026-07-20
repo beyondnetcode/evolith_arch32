@@ -221,7 +221,7 @@ Command: `evolith-cli sdlc gate-status`
 
 Example:
 ```bash
-evolith-cli sdlc gate-status --format json
+evolith-cli sdlc gate-status --core /abs/path/to/evolith-core --format json
 ```
 Response (captured live):
 ```json
@@ -245,7 +245,7 @@ Response (captured live):
               "passed": false,
               "found": false,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /Users/beyondnet/Source/evolith/docs/prd.md",
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
               "required": true
             },
             {
@@ -253,7 +253,7 @@ Response (captured live):
               "passed": false,
               "found": false,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /Users/beyondnet/Source/evolith/docs/discovery-canvas.md",
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
               "required": true
             },
             {
@@ -261,14 +261,14 @@ Response (captured live):
               "passed": false,
               "found": false,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /Users/beyondnet/Source/evolith/docs/technical-feasibility.md",
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
               "required": true
             },
             {
               "artifact": "Ballpark Estimation",
               "passed": false,
               "found": false,
-    
+              "s
   … (truncated)
 ```
 
@@ -284,7 +284,10 @@ Example (`tools/call`):
 ```json
 {
   "name": "evolith-sdlc-status",
-  "arguments": {}
+  "arguments": {
+    "path": "/abs/path/to/your-satellite",
+    "corePath": "/abs/path/to/evolith-core"
+  }
 }
 ```
 Response (captured live):
@@ -292,19 +295,65 @@ Response (captured live):
 {
   "success": true,
   "data": {
-    "error": true,
-    "message": "path is required"
-  },
-  "meta": {
-    "correlationId": "<uuid>",
-    "command": "evolith-sdlc-status",
-    "tool": "evolith-sdlc-status",
-    "durationMs": 0,
-    "executedAt": "<timestamp>",
-    "timestamp": "<timestamp>",
-    "schemaVersion": "1.0.0"
-  }
-}
+    "repository": "/abs/path/to/your-satellite",
+    "currentPhase": "phase-0",
+    "phaseStatus": [
+      {
+        "phase": "phase-0",
+        "status": "complete",
+        "requirements": [
+          {
+            "artifact": "evolith.yaml",
+            "exists": true
+          },
+          {
+            "artifact": "README.md",
+            "exists": false
+          },
+          {
+            "artifact": ".evolith/moscow/phase-0.json",
+            "exists": false
+          }
+        ]
+      },
+      {
+        "phase": "phase-1",
+        "status": "next",
+        "requirements": [
+          {
+            "artifact": "PRD",
+            "exists": false
+          },
+          {
+            "artifact": "Discovery Canvas",
+            "exists": false
+          },
+          {
+            "artifact": "Technical Feasibility Canvas",
+            "exists": false
+          },
+          {
+            "artifact": "Ballpark Estimation",
+            "exists": false
+          },
+          {
+            "artifact": "MoSCoW Prioritization Matrix",
+            "exists": false
+          },
+          {
+            "artifact": "Build-versus-Compose Analysis",
+            "exists": false
+          }
+        ]
+      },
+      {
+        "phase": "phase-2",
+        "status": "pending",
+        "requirements": [
+          {
+            "artifact": "ADR Registry",
+       
+  … (truncated)
 ```
 
 #### REST
@@ -391,45 +440,20 @@ Response (captured live):
   "success": true,
   "data": {
     "tool": "evolith-topology-list",
-    "count": 8,
-    "topologies": [
-      {
-        "apiVersion": "evolith.dev/topology/v1",
-        "kind": "TopologyManifest",
-        "metadata": {
-          "id": "agentic-ai",
-          "name": "Agentic AI",
-          "dimension": "ai",
-          "status": "accepted",
-          "version": "0.1.0",
-          "governance": {
-            "owner": "AI Architecture",
-            "criticality": "P1"
-          }
-        },
-        "spec": {
-          "summary": "AI-first and agentic workflow topology for MCP-enabled context injection, governed tools, auditable actions, and architecture-aware implementation assistance.",
-          "topologyType": "agentic-ai",
-          "compatibility": {
-            "progressiveAxis": {
-              "maturityLevel": "cross",
-              "profile": "cross"
-            },
-            "composableWith": [
-              "modular-monolith",
-              "distributed-modules",
-              "microservices",
-              "serverless",
-              "event-driven",
-              "data-mesh",
-              "edge-computing"
-            ]
-          },
-          "artifacts": {
-            "adrs": [
-              "reference/core/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md",
-              "reference/core/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md"
-  … (truncated)
+    "count": 0,
+    "topologies": [],
+    "timestamp": "<timestamp>"
+  },
+  "meta": {
+    "correlationId": "<uuid>",
+    "command": "evolith-topology-list",
+    "tool": "evolith-topology-list",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
+    "timestamp": "<timestamp>",
+    "schemaVersion": "1.0.0"
+  }
+}
 ```
 
 #### REST

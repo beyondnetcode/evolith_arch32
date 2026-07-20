@@ -57,7 +57,9 @@ export const BINDINGS: Record<string, Binding> = {
     ],
     mcp: (c) => ({
       tool: 'evolith-phase-advance',
-      args: { fromPhase: 'discovery', toPhase: 'design', projectPath: c.projectPath, evaluatedBy: 'ci' },
+      // corePath faltaba solo aqui: la CLI recibia --core y MCP resolvia desde
+      // cwd, asi que devolvia RULESET_NOT_FOUND mientras las otras dos pasaban.
+      args: { fromPhase: 'discovery', toPhase: 'design', projectPath: c.projectPath, corePath: c.corePath, evaluatedBy: 'ci' },
     }),
     rest: (c) => ({
       method: 'POST',
@@ -77,8 +79,11 @@ export const BINDINGS: Record<string, Binding> = {
 
   'sdlc-status': {
     verified: true,
-    cli: (c) => ['sdlc', 'gate-status', '--format', 'json'],
-    mcp: (c) => ({ tool: 'evolith-sdlc-status', args: {} }),
+    // Ambas superficies deben mirar al MISMO proyecto y al MISMO core. Sin
+    // contexto explicito cada una caia en su propio default (cwd para la CLI,
+    // cwd del servidor para MCP) y el oraculo comparaba dos preguntas distintas.
+    cli: (c) => ['sdlc', 'gate-status', '--core', c.corePath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-sdlc-status', args: { path: c.projectPath, corePath: c.corePath } }),
   },
 
   'sdlc-handoff': {
@@ -195,8 +200,8 @@ export const BINDINGS: Record<string, Binding> = {
 
   'dora-metrics': {
     verified: true,
-    cli: (c) => ['sdlc', 'gate-status', '--since', '90', '--format', 'json'],
-    mcp: (c) => ({ tool: 'evolith-dora-metrics', args: { since: 90 } }),
+    cli: (c) => ['sdlc', 'gate-status', '--since', '90', '--core', c.corePath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-dora-metrics', args: { path: c.projectPath, since: 90 } }),
   },
 
   // =========================================================================

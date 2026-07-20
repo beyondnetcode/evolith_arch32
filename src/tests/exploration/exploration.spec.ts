@@ -47,6 +47,7 @@ describe('Cross-surface exploration agent (F1)', () => {
   let restApp: INestApplication;
   let mcpServer: { app: { close: () => Promise<void> } };
   let projectPath: string;
+  let originalCwd: string;
   let run: RunResult;
   const OUT_DIR = path.join(REPO_ROOT, 'src/tests/exploration/.out');
 
@@ -58,6 +59,22 @@ describe('Cross-surface exploration agent (F1)', () => {
     process.env.CORE_PATH = REPO_ROOT;
     await fs.ensureDir(projectPath);
     await fs.writeFile(path.join(projectPath, 'evolith.yaml'), SATELLITE_YAML);
+
+    // HERMETICIDAD. Los comandos que no reciben un directorio explicito operan
+    // sobre `process.cwd()`. Sin esto, la suite corria contra la RAIZ DEL REPO:
+    // `init` scaffoldeaba un `test-project/` ahi (el mismo artefacto que
+    // ADR-0118 elimino y que reaparecia solo), y las operaciones que leen estado
+    // del proyecto lo encontraban o no segun lo que hubieran dejado corridas
+    // ANTERIORES. De ahi que diera 6/6 en una maquina usada y 3 fallos en un
+    // checkout limpio: `sdlc-status` y `dora-metrics` reportaban una divergencia
+    // CLI/MCP que era un artefacto del entorno, no del producto.
+    //
+    // El cwd pasa a ser el satelite temporal que la propia suite construye, que
+    // es contra lo que dice ejercer. `corePath`/`CORE_PATH` ya se pasan
+    // explicitos y `REPO_ROOT` es absoluto, asi que la resolucion del Core no
+    // depende del cwd.
+    originalCwd = process.cwd();
+    process.chdir(projectPath);
 
     // CLI: bootstrap via CommandTestFactory with the mock prompt service.
     const { AppModule: CliAppModule } = await import('../../sdk/cli/src/app.module');
@@ -126,14 +143,42 @@ describe('Cross-surface exploration agent (F1)', () => {
       return v;
     }, 2);
     const wsRef = projectPath.split('/').pop();
-    capture = capture.split(projectPath).join('/abs/path/to/your-satellite');
+    // La forma RESUELTA primero. En macOS `/var/folders` es symlink a
+    // `/private/var/folders` y varias respuestas devuelven el realpath;
+    // reemplazar solo la forma sin resolver consumia el resto de la ruta y
+    // dejaba un `/private` huerfano pegado al placeholder
+    // (`/private/abs/path/to/your-satellite`), que es exactamente lo que hacia
+    // fallar el chequeo anti-drift solo fuera de macOS.
+    for (const p of [fs.realpathSync(projectPath), projectPath]) {
+      capture = capture.split(p).join('/abs/path/to/your-satellite');
+    }
     if (wsRef) capture = capture.split(wsRef).join('your-satellite');
+    // REPO_ROOT tambien: faltaba, y es la ruta del checkout. Los how-to
+    // generados llevaban embebida la ruta absoluta de la maquina que los genero
+    // (`/Users/<alguien>/...` en los commiteados), asi que NUNCA podian coincidir
+    // con los de otra maquina -- el drift en CI no era drift, era el nombre del
+    // directorio de trabajo. Sin esto el chequeo anti-drift es infalseable.
+    capture = capture.split(REPO_ROOT).join('/abs/path/to/evolith-core');
+    // Y el tmpdir del sistema, normalizado. No basta con `projectPath`: la
+    // captura tambien traia rutas como `<tmpdir>/evolith/reference/core/...`,
+    // que en Linux son `/tmp/...` y en macOS `/var/folders/xm/…/T/...`. Ese
+    // prefijo, propio de la maquina, viajaba a los how-to commiteados y hacia
+    // imposible que coincidieran entre plataformas. Se normaliza a `/tmp` (no-op
+    // en Linux) e incluye la forma resuelta, porque en macOS `/var/folders` es
+    // un symlink a `/private/var/folders` y algunas respuestas devuelven ya el
+    // realpath.
+    for (const tmp of [fs.realpathSync(os.tmpdir()), os.tmpdir()]) {
+      capture = capture.split(tmp).join('/tmp');
+    }
     fs.writeFileSync(path.join(OUT_DIR, 'howto-capture.json'), capture);
   }, 180000);
 
   afterAll(async () => {
     await mcpServer?.app.close();
     await restApp?.close();
+    // Volver ANTES de borrar el directorio: quedarse dentro de una ruta
+    // eliminada rompe cualquier resolucion relativa posterior.
+    if (originalCwd) process.chdir(originalCwd);
     await fs.remove(projectPath);
     process.exit = originalProcessExit;
   });
@@ -185,7 +230,21 @@ describe('Cross-surface exploration agent (F1)', () => {
     for (const phaseKey of Object.keys(PHASES)) {
       const docPath = path.join(REPO_ROOT, `reference/core/interfaces/how-to-${phaseKey}.md`);
       const committed = fs.existsSync(docPath) ? fs.readFileSync(docPath, 'utf-8') : '';
-      if (committed !== renderPhase(phaseKey, matrix, cap)) stale.push(phaseKey);
+      const rendered = renderPhase(phaseKey, matrix, cap);
+      if (committed !== rendered) {
+        stale.push(phaseKey);
+        // Decir QUE difiere, no solo que difiere. Sin esto el fallo solo nombra
+        // la fase, y diagnosticar un drift que unicamente se reproduce en CI se
+        // convierte en adivinar a ciegas a tres minutos por intento.
+        const a = committed.split('\n');
+        const b = rendered.split('\n');
+        for (let i = 0, shown = 0; i < Math.max(a.length, b.length) && shown < 3; i++) {
+          if (a[i] !== b[i]) {
+            console.log(`[howto-drift] ${phaseKey} L${i + 1}\n  commiteado: ${JSON.stringify(a[i]?.slice(0, 160))}\n  generado  : ${JSON.stringify(b[i]?.slice(0, 160))}`);
+            shown++;
+          }
+        }
+      }
     }
     // If this fails, the source of truth (matrix / bindings / options) changed
     // but the docs weren't regenerated. Run:

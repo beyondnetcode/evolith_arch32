@@ -57,7 +57,7 @@ Response (captured live):
   "success": false,
   "error": {
     "code": "INTERNAL_ERROR",
-    "message": "No valid Mermaid classDiagram found in the model file."
+    "message": "Model file not found: /abs/path/to/your-satellite/package.json"
   },
   "meta": {
     "command": "GenerateDomainCommand",
@@ -349,9 +349,10 @@ Response (captured live):
     ],
     "coreRef": {
       "version": null,
-      "path": "/Users/beyondnet/Source/evolith"
+      "path": "/abs/path/to/evolith-core"
     },
-    "timestamp": "<timestamp
+    "timestamp": "<timestamp>"
+  }
   … (truncated)
 ```
 
@@ -538,7 +539,7 @@ Response (captured live):
         "severity": "SHOULD",
         "category": "architecture",
         "title": "Ruleset not found",
-        "description": "Could not find architecture rules at /var/folders/xm/4qq25s3j75b92kbk2j1z1vxr0000gn/T/evolith/reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
+        "description": "Could not find architecture rules at /tmp/evolith/reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
         "blocking": false,
         "firstDetected": "<timestamp>",
         "status": "new"

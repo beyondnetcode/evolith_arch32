@@ -7084,20 +7084,21 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-567
 
-**Title:** The Coolify VPS is unreachable and nothing has deployed for days, with no signal anyone reads
+**Title:** CD deploys to the VPS, which is out of scope: it fails on every push to `main` and nobody reads the red
 
-- **Purpose:** Restore the deployment runtime, and make its failure visible when it recurs.
-- **Evidence:** `Deploy services (Coolify)` in `ci-cd.yml` has failed on every push to `main` since 2026-07-19 — 14+ consecutive runs, the oldest checked being `27fbc2f0`. The failing step is the core-api deploy hook: `curl: (28) Failed to connect to 72.60.63.240 port 8000 after 134336 ms`. The secrets ARE configured — the job did not take its skip branch, it tried and could not reach the host.
-- **Impact:** The host answers on NO port. Verified independently from outside GitHub Actions: the Coolify panel (`:8000`) refuses connection, and both deployed services time out — `https://evolith.beyondnet.cloud` (core-api, app id 12) and `http://mcpevolith.beyondnet.cloud` (MCP, app id 13), each HTTP 000 after 15s. DNS resolves both to `72.60.63.240`, so the domains are fine and the host is not. **Production has been down, not merely undeployed, for at least two days.** Meanwhile `Build & Push Services (GHCR)` stays green, so images keep publishing against a runtime that never receives them.
-- **Risk:** The job is not a required check, so its red never blocks anything and nobody looked. The same invisibility that let this run for two days will let the next outage run just as long.
-- **Affected files:** `.github/workflows/ci-cd.yml` (`deploy` job); the runtime itself is out-of-repo (Hostinger VPS `root@72.60.63.240`, Coolify v4).
+- **Purpose:** Stop CD from failing against an environment that is deliberately not in use, without losing the signal when the VPS comes back into scope.
+- **CORRECTION to this gap's first write-up:** it stated that "production has been down for at least two days". **That was wrong.** The VPS is not the current target environment. Today everything runs on local Docker + kind, and testing goes against the `evolith-cluster` cluster; the VPS is picked up later. The correction matters because the original framing would have sent someone to fight a production incident that does not exist.
+- **Evidence:** `Deploy services (Coolify)` in `ci-cd.yml` has failed on every push to `main` since 2026-07-19 — 14+ consecutive runs, oldest checked `27fbc2f0`. The failing step is the core-api hook: `curl: (28) Failed to connect to 72.60.63.240 port 8000`. The secrets ARE configured, so the job does not take its skip branch: it tries and cannot reach the host, which answers on no port (panel `:8000`, `evolith.beyondnet.cloud` and `mcpevolith.beyondnet.cloud` all HTTP 000, verified from outside GitHub Actions).
+- **The actual environment is healthy:** kind cluster `evolith-cluster`, control-plane `Ready` for 2d14h, namespace `evolith-local` running `evolith-core-api`, `evolith-mcp` and `evolith-agent-runtime` at `1/1` with zero restarts. `GET /health` on core-api returns HTTP 200 with a conformant ADR-0073 envelope. That is the same window in which the VPS deploy has been failing — so the red never signalled anything about the environment actually in use.
+- **Impact:** Permanent red on every push to `main` that nobody reads, because the job is not a required check. Worse, `Build & Push Services (GHCR)` stays green publishing images that no runtime consumes — the pipeline reports delivery it is not performing.
 - **Component:** `Infra` · **Dimension:** Delivery · **Type:** infra
-- **Criticality:** P1 · **Complexity:** M
-- **Proposed fix:** Diagnose the VPS first (powered off / networking / firewall) via the Hostinger panel or SSH — that is owner infra, not a repository change. Then decide how the outage becomes visible: an uptime probe against the two service URLs is a better signal than the deploy job, which only runs on push and therefore says nothing while nobody merges.
-- **Explicitly NOT the fix:** making the deploy step fail-soft on connection errors. It would turn the check green while the deploy still does not happen. The step already fail-softs the one case that warrants it (unset secrets); a hard failure when the host is unreachable is correct and is the only reason this was found at all.
+- **Criticality:** P3 · **Complexity:** S
+- **Proposed fix:** Gate the `deploy` job on the VPS being in scope, so CD stops asserting a delivery it is not doing. Two viable shapes: unset the `COOLIFY_*` secrets (the job already fail-softs and skips when they are absent, which is exactly this case) or make the job conditional on an explicit flag. Do NOT delete the job — the VPS returns later.
+- **Explicitly NOT the fix:** making the step fail-soft on connection errors. That greens the check while the deploy still does not happen, and would keep the pipeline claiming a delivery it never performs.
+- **When the VPS returns:** the signal must not depend on someone merging. The deploy job only runs on push, so it says nothing while nobody touches `main` — an uptime probe against the service URLs is the right shape.
 - **Acceptance criteria:**
-  - [ ] The VPS responds, and both service URLs return a healthy status.
-  - [ ] `Deploy services (Coolify)` passes on a push to `main`.
-  - [ ] The outage of a deployed service produces a signal that does not depend on someone merging.
-- **Dependencies:** none in-repo. Blocked on owner infrastructure access.
+  - [ ] CD no longer fails on pushes to `main` while the VPS is out of scope.
+  - [ ] The pipeline does not report a delivery it is not performing.
+  - [ ] Reinstating VPS deployment is a documented, single deliberate step.
+- **Dependencies:** none in-repo.
 - **Status:** `PENDING`

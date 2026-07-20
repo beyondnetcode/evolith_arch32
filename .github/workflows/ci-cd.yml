@@ -366,11 +366,23 @@ jobs:
   # despliegue no ocurrio. El comentario anterior decia "never fails CD", que era
   # falso y ademas indeseable -- un step de despliegue que no puede fallar no
   # informa de nada. Si esto esta rojo, mira el runtime antes que el workflow.
+  #
+  # GT-567: APAGADO A PROPOSITO via `vars.VPS_DEPLOY_ENABLED`. El entorno
+  # objetivo es hoy Docker + kind local (cluster `evolith-cluster`); el VPS se
+  # retoma mas adelante. Sin este flag el job fallaba en CADA push a `main`
+  # desde 2026-07-19 contra un host fuera de alcance, y como no es check
+  # requerido nadie leia el rojo.
+  #
+  # Se apaga con una VARIABLE y no borrando los secrets a proposito: borrarlos
+  # deja el apagado invisible --dentro de un mes el job simplemente saltaria y
+  # nadie sabria si fue deliberado-- y sus valores solo se pueden reponer desde
+  # el panel de Coolify, o sea con el VPS levantado. Aqui queda escrito el
+  # porque, y reactivar es UN paso: `gh variable set VPS_DEPLOY_ENABLED --body true`.
   deploy:
     name: Deploy services (Coolify)
     needs: [docker-services]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && vars.VPS_DEPLOY_ENABLED == 'true'
     steps:
       - name: Trigger Coolify deploy (core-api)
         env:

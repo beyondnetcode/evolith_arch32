@@ -145,6 +145,12 @@ describe('Cross-surface exploration agent (F1)', () => {
     const wsRef = projectPath.split('/').pop();
     capture = capture.split(projectPath).join('/abs/path/to/your-satellite');
     if (wsRef) capture = capture.split(wsRef).join('your-satellite');
+    // REPO_ROOT tambien: faltaba, y es la ruta del checkout. Los how-to
+    // generados llevaban embebida la ruta absoluta de la maquina que los genero
+    // (`/Users/<alguien>/...` en los commiteados), asi que NUNCA podian coincidir
+    // con los de otra maquina -- el drift en CI no era drift, era el nombre del
+    // directorio de trabajo. Sin esto el chequeo anti-drift es infalseable.
+    capture = capture.split(REPO_ROOT).join('/abs/path/to/evolith-core');
     fs.writeFileSync(path.join(OUT_DIR, 'howto-capture.json'), capture);
   }, 180000);
 

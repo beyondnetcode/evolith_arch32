@@ -284,9 +284,10 @@ Response (captured live):
     ],
     "coreRef": {
       "version": null,
-      "path": "/Users/beyondnet/Source/evolith"
+      "path": "/abs/path/to/evolith-core"
     },
-    "timestamp": "<timestamp
+    "timestamp": "<timestamp>"
+  }
   … (truncated)
 ```
 

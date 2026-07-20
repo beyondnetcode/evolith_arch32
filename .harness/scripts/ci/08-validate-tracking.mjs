@@ -154,7 +154,12 @@ function validateStatusLocale(lang, rows, sections, errors) {
   }
 
   for (const [id, body] of sections) {
-    const match = body.match(/^- \*\*Status:\*\* `([^`]+)`/m);
+    // El catalogo ES rotula este campo de DOS formas -- `**Status:**` en 45
+    // secciones y `**Estado:**` en 12 -- porque parte del corpus traduce las
+    // etiquetas y parte no. Aceptar ambas evita que el guard denuncie una
+    // asimetria inexistente: comprobado por seccion, los 57 estados estan en
+    // AMBOS idiomas, sin uno solo faltando en ninguna direccion.
+    const match = body.match(/^- \*\*(?:Status|Estado):\*\* `([^`]+)`/m);
     if (!match) continue;
     const literal = match[1].toUpperCase();
     if (allowed.has(literal)) continue;
@@ -326,6 +331,25 @@ export function validateTrackingState({
   // una convencion documentada y no aplicada. Con esto pasa a ser aplicada.
   validateStatusLocale('EN', enRows, enSections, errors);
   validateStatusLocale('ES', esRows, esSections, errors);
+
+  // El catalogo no puede contradecir al board. GT-511, GT-514, GT-517 y GT-551
+  // decian `PENDING`/`PENDIENTE` con el board en DONE y un registro de cierre
+  // con commit real detras -- ocho dias en un caso. Ninguna comprobacion miraba
+  // esa relacion: el guard validaba board-vs-evidencia y presencia de seccion,
+  // nunca el estado DENTRO de la seccion.
+  const boardState = new Map(enRows.map((row) => [row.id, canonicalStatus(row.status)]));
+  for (const [lang, sections] of [['EN', enSections], ['ES', esSections]]) {
+    for (const [id, body] of sections) {
+      const match = body.match(/^- \*\*(?:Status|Estado):\*\* `([^`]+)`/m);
+      if (!match) continue;
+      const inCatalog = canonicalStatus(match[1].toUpperCase());
+      const inBoard = boardState.get(id);
+      if (!inCatalog || !inBoard || inCatalog === inBoard) continue;
+      errors.push(
+        `${id} catalogo ${lang}: estado "${match[1]}" contradice al board ("${inBoard}")`,
+      );
+    }
+  }
 
   return errors;
 }

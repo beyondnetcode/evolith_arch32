@@ -44,19 +44,50 @@ evolith-cli validate --satellite /abs/path/to/your-satellite --core /abs/path/to
 Response (captured live):
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "RULESET_NOT_FOUND",
-    "message": "No rulesets loaded from \"/Users/beyondnet/Source/evolith/rulesets\" (0 ruleset file(s) found, 0 rules normalized). Refusing to validate against an empty ruleset corpus."
-  },
-  "meta": {
-    "command": "evolith validate",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
-    "schemaVersion": "1.0.0"
-  }
-}
+  "success": true,
+  "data": {
+    "status": "failed",
+    "rulesChecked": 102,
+    "issues": [
+      {
+        "ruleId": "CLI-RR-01",
+        "severity": "MUST",
+        "category": "build",
+        "title": "TypeScript Build Must Pass",
+        "description": "dist/main.js not found — run npm run build in sdk/cli",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-02",
+        "severity": "MUST",
+        "category": "tests",
+        "title": "Unit and Integration Tests Must Start and Pass",
+        "description": "dist/ not found — run npm run build",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-05",
+        "severity": "SHOULD",
+        "category": "documentation",
+        "title": "Release Documentation Must Match Implementation",
+        "description": "CLI missing README.md or ARCHITECTURE.md",
+        "blocking": false
+      },
+      {
+        "ruleId": "TAX-05",
+        "severity": "MUST",
+        "category": "directory-structure",
+        "title": "Evolith Core structure: reference/, sdk/, rulesets/",
+        "description": "Missing top-level directories: sdk",
+        "blocking": true
+      },
+      {
+        "ruleId": "INH-02",
+        "severity": "MUST",
+        "category": "inheritance",
+        "title": "Version Pinning",
+        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned references are p
+  … (truncated)
 ```
 
 #### MCP
@@ -85,21 +116,50 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "RULESET_NOT_FOUND",
-    "message": "No rulesets loaded from \"/Users/beyondnet/Source/evolith/rulesets\" (0 ruleset file(s) found, 0 rules normalized). Refusing to validate against an empty ruleset corpus."
-  },
-  "meta": {
-    "correlationId": "<uuid>",
-    "command": "evolith-validate",
-    "tool": "evolith-validate",
-    "durationMs": 0,
-    "executedAt": "<timestamp>",
-    "timestamp": "<timestamp>",
-    "schemaVersion": "1.0.0"
-  }
-}
+  "success": true,
+  "data": {
+    "status": "failed",
+    "rulesChecked": 102,
+    "issues": [
+      {
+        "ruleId": "CLI-RR-01",
+        "severity": "MUST",
+        "category": "build",
+        "title": "TypeScript Build Must Pass",
+        "description": "dist/main.js not found — run npm run build in sdk/cli",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-02",
+        "severity": "MUST",
+        "category": "tests",
+        "title": "Unit and Integration Tests Must Start and Pass",
+        "description": "dist/ not found — run npm run build",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-05",
+        "severity": "SHOULD",
+        "category": "documentation",
+        "title": "Release Documentation Must Match Implementation",
+        "description": "CLI missing README.md or ARCHITECTURE.md",
+        "blocking": false
+      },
+      {
+        "ruleId": "TAX-05",
+        "severity": "MUST",
+        "category": "directory-structure",
+        "title": "Evolith Core structure: reference/, sdk/, rulesets/",
+        "description": "Missing top-level directories: sdk",
+        "blocking": true
+      },
+      {
+        "ruleId": "INH-02",
+        "severity": "MUST",
+        "category": "inheritance",
+        "title": "Version Pinning",
+        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned references are p
+  … (truncated)
 ```
 
 #### REST
@@ -122,29 +182,50 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "RULESET_NOT_FOUND",
-    "message": "No rulesets loaded from \"/Users/beyondnet/Source/evolith/rulesets\" (0 ruleset file(s) found, 0 rules normalized). Refusing to validate against an empty ruleset corpus.",
-    "details": {
-      "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422",
-      "title": "Ruleset Not Found",
-      "status": 422,
-      "detail": "No rulesets loaded from \"/Users/beyondnet/Source/evolith/rulesets\" (0 ruleset file(s) found, 0 rules normalized). Refusing to validate against an empty ruleset corpus.",
-      "instance": "/api/v1/architecture/validate-satellite",
-      "timestamp": "<timestamp>",
-      "traceId": "<uuid>"
-    }
-  },
-  "meta": {
-    "command": "http POST /api/v1/architecture/validate-satellite",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
-    "context": {},
-    "schemaVersion": "1.0.0"
-  }
-}
+  "success": true,
+  "data": {
+    "status": "failed",
+    "rulesChecked": 102,
+    "issues": [
+      {
+        "ruleId": "CLI-RR-01",
+        "severity": "MUST",
+        "category": "build",
+        "title": "TypeScript Build Must Pass",
+        "description": "dist/main.js not found — run npm run build in sdk/cli",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-02",
+        "severity": "MUST",
+        "category": "tests",
+        "title": "Unit and Integration Tests Must Start and Pass",
+        "description": "dist/ not found — run npm run build",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-05",
+        "severity": "SHOULD",
+        "category": "documentation",
+        "title": "Release Documentation Must Match Implementation",
+        "description": "CLI missing README.md or ARCHITECTURE.md",
+        "blocking": false
+      },
+      {
+        "ruleId": "TAX-05",
+        "severity": "MUST",
+        "category": "directory-structure",
+        "title": "Evolith Core structure: reference/, sdk/, rulesets/",
+        "description": "Missing top-level directories: sdk",
+        "blocking": true
+      },
+      {
+        "ruleId": "INH-02",
+        "severity": "MUST",
+        "category": "inheritance",
+        "title": "Version Pinning",
+        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned references are p
+  … (truncated)
 ```
 
 ---

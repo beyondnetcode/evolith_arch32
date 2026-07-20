@@ -1,6 +1,7 @@
 import * as path from 'node:path';
 import type { IFileSystem } from '@beyondnet/evolith-core';
 import { McpTool } from '../mcp/tool.interface';
+import { DomainException, ErrorCodes } from '../common/errors';
 import { EvolithRestClient } from '@beyondnet/evolith-sdk';
 import type { AgentRuntimeRequestWire } from '@beyondnet/evolith-agent-runtime';
 
@@ -155,15 +156,33 @@ async function agentList(dir: string, fs: IFileSystem) {
   return { agents, count: agents.length };
 }
 
+/**
+ * Aligned with the CLI's `agents validate`, which is the reference surface.
+ *
+ * Two cases that used to collapse into a single `valid:false`:
+ *
+ *   - the ruleset does not exist  -> a MISSING RESOURCE. Throws, so the caller
+ *     gets an error, mirroring the CLI's `RULESET_NOT_FOUND` error envelope and
+ *     matching `agentUpgrade` right below, which already threw for this case.
+ *   - the ruleset exists but is invalid -> a NEGATIVE VERDICT. Returns
+ *     successfully with the verdict in the payload, per ADR-0073: the envelope
+ *     says the command ran, the verdict says what it found.
+ *
+ * The two `principle.*` checks were missing here, so the surfaces could return
+ * opposite verdicts for the same ruleset. Same rules on both sides now.
+ */
 async function agentValidate(name: string, dir: string, fs: IFileSystem) {
   const rulesetPath = path.join(dir, 'rulesets', 'agents', name, 'agent.rules.json');
   if (!(await fs.exists(rulesetPath))) {
-    return { valid: false, error: `Agent '${name}' not found` };
+    // DomainException preserves its code through `toErrorEnvelope`; a plain
+    // Error would collapse to INTERNAL_ERROR and the surfaces would still
+    // disagree -- failing together, but for apparently different reasons.
+    throw new DomainException(ErrorCodes.RULESET_NOT_FOUND, `Ruleset file not found: ${rulesetPath}`);
   }
   const ruleset = (await fs.readJson(rulesetPath)) as {
     agent?: { name?: string };
     ruleset?: { version?: string };
-    principles?: unknown[];
+    principles?: Array<{ id?: string; principle?: string; severity?: string }>;
   };
   const issues: Array<{ field: string; message: string }> = [];
   if (!ruleset.agent?.name) issues.push({ field: 'agent.name', message: 'Agent name is required' });
@@ -171,7 +190,20 @@ async function agentValidate(name: string, dir: string, fs: IFileSystem) {
   if (!ruleset.principles || ruleset.principles.length === 0) {
     issues.push({ field: 'principles', message: 'At least one principle is required' });
   }
-  return { valid: issues.length === 0, agent: name, issues, timestamp: new Date().toISOString() };
+  for (const principle of ruleset.principles || []) {
+    if (!principle.id) issues.push({ field: 'principle.missing-id', message: `Principle "${principle.principle}" missing ID` });
+    if (!principle.severity) issues.push({ field: 'principle.missing-severity', message: `Principle "${principle.id}" missing severity` });
+  }
+  return {
+    agent: name,
+    passed: issues.length === 0,
+    issuesCount: issues.length,
+    issues,
+    // `valid` predates the alignment and is kept as an alias so existing agent
+    // callers do not break on the rename.
+    valid: issues.length === 0,
+    timestamp: new Date().toISOString(),
+  };
 }
 
 async function agentUpgrade(name: string, dir: string, fs: IFileSystem) {

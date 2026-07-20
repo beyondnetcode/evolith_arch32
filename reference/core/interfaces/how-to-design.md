@@ -680,6 +680,7 @@ Tool: `evolith-sdlc-handoff`
 | Argument | Type | Req. | Description |
 | --- | --- | --- | --- |
 | `path` | string | ✓ | — |
+| `corePath` | string |  | Optional explicit path to the Evolith core repository (template fallback tier) |
 | `fromPhase` | string | ✓ | — |
 | `toPhase` | string | ✓ | — |
 | `confirm` | boolean |  | Confirm mutative operation |

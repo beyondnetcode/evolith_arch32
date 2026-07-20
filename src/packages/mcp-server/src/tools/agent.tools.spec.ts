@@ -45,10 +45,34 @@ describe('agent tools', () => {
     expect(after.agents).toEqual([]);
   });
 
-  it('returns an error validating a missing agent and throws upgrading one', async () => {
-    const validate = (await byName(tools, 'evolith-agent-validate').execute({ name: 'ghost', dir })) as { valid: boolean };
-    expect(validate.valid).toBe(false);
+  it('throws for a missing agent on both validate and upgrade', async () => {
+    // Previously validate returned `{valid:false}` for a missing agent while
+    // upgrade threw -- the asymmetry this test used to codify. A missing ruleset
+    // is an absent resource on every surface, not a negative verdict, so it
+    // fails the same way the CLI's RULESET_NOT_FOUND envelope does.
+    await expect(byName(tools, 'evolith-agent-validate').execute({ name: 'ghost', dir })).rejects.toThrow('Ruleset file not found');
     await expect(byName(tools, 'evolith-agent-upgrade').execute({ name: 'ghost', dir })).rejects.toThrow("Agent 'ghost' not found");
+  });
+
+  it('reports an invalid ruleset as a negative verdict, not a failed call', async () => {
+    await byName(tools, 'evolith-agent-install').execute({ name: 'broken', dir });
+    const rulesetPath = path.join(dir, 'rulesets', 'agents', 'broken', 'agent.rules.json');
+    await fs.writeJson(rulesetPath, { agent: { name: 'broken' }, ruleset: { version: '1.0.0' }, principles: [{ principle: 'no id, no severity' }] });
+
+    const result = (await byName(tools, 'evolith-agent-validate').execute({ name: 'broken', dir })) as {
+      passed: boolean; issuesCount: number; valid: boolean;
+      issues: Array<{ field: string }>;
+    };
+
+    // The call succeeds; the verdict is negative and carries its reasons.
+    expect(result.passed).toBe(false);
+    expect(result.valid).toBe(false);
+    expect(result.issuesCount).toBeGreaterThan(0);
+    // The two principle checks the CLI had and MCP lacked, so both surfaces
+    // now reach the same verdict on the same ruleset.
+    expect(result.issues.map((i) => i.field)).toEqual(
+      expect.arrayContaining(['principle.missing-id', 'principle.missing-severity']),
+    );
   });
 
   it('supports minimal and enterprise templates', async () => {

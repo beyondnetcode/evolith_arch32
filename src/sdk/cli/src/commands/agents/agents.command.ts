@@ -318,11 +318,19 @@ export class AgentsCommand extends BaseEvolithCommand {
       const agents = await this.registry.discover(process.cwd());
 
       if (agents.length === 0) {
+        // Con --name la pregunta es "¿existe ESE agente?", y la respuesta es
+        // que no: mismo caso que pedir uno inexistente habiendo otros, y mismo
+        // codigo que usa la ruta de ruleset ausente mas abajo. Sin --name, la
+        // pregunta es distinta y sigue siendo VALIDATION_FAILED.
+        const code = options?.name ? 'RULESET_NOT_FOUND' : 'VALIDATION_FAILED';
+        const msg = options?.name
+          ? `Agent not found: ${options.name}. No agents installed.`
+          : 'No agents installed to validate';
         if (isJson) {
           process.exitCode = 1;
-          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', 'No agents installed to validate', { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope(code, msg, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         } else {
-          this.promptService.showWarning('No agents installed to validate.');
+          this.promptService.showWarning(`${msg}.`);
         }
         return;
       }
@@ -334,7 +342,7 @@ export class AgentsCommand extends BaseEvolithCommand {
           const errorMsg = `Agent not found: ${options.name}. Installed: ${agents.map((a) => a.name).join(', ') || 'none'}`;
           if (isJson) {
             process.exitCode = 1;
-            console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', errorMsg, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+            console.log(JSON.stringify(createErrorEnvelope('RULESET_NOT_FOUND', errorMsg, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
           } else {
             this.promptService.showError(errorMsg);
           }

@@ -236,6 +236,18 @@ describe('Cross-surface exploration agent (F1)', () => {
         // Decir QUE difiere, no solo que difiere. Sin esto el fallo solo nombra
         // la fase, y diagnosticar un drift que unicamente se reproduce en CI se
         // convierte en adivinar a ciegas a tres minutos por intento.
+        // Diferencia de CONJUNTOS de ruleId. Las lineas divergentes solas no
+        // bastan: cuando cambia el numero de reglas evaluadas, la lista se
+        // desplaza y toda comparacion posicional miente. Esto nombra
+        // exactamente que reglas sobran o faltan en cada entorno.
+        const ids = (s: string) => new Set((s.match(/"ruleId": "[^"]+"/g) || []).map((m) => m.slice(11, -1)));
+        const [ca, cb] = [ids(committed), ids(rendered)];
+        const soloCommit = [...ca].filter((x) => !cb.has(x));
+        const soloGen = [...cb].filter((x) => !ca.has(x));
+        if (soloCommit.length || soloGen.length) {
+          console.log(`[howto-drift] ${phaseKey} ruleIds solo en commiteado: ${JSON.stringify(soloCommit)}`);
+          console.log(`[howto-drift] ${phaseKey} ruleIds solo en generado  : ${JSON.stringify(soloGen)}`);
+        }
         const a = committed.split('\n');
         const b = rendered.split('\n');
         for (let i = 0, shown = 0; i < Math.max(a.length, b.length) && shown < 3; i++) {

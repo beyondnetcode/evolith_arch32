@@ -132,6 +132,16 @@ jobs:
       #
       # El fallo ya imprime las lineas divergentes, asi que el siguiente intento
       # parte del diff y no de una conjetura.
+      # Diagnostico temporal: corre la suite exploratoria SOLO bajo dispatch
+      # manual, para que CI revele que ruleIds difieren sin poner en rojo el
+      # check requerido. Se retira en cuanto el drift este aislado.
+      - name: Cross-surface exploration suite (diagnostico, solo dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          npm run build
+          npm run copy-rulesets --workspace @beyondnet/evolith-cli
+          npm run test:exploration
+
       # GT-563: the steps below REPORT, they do not validate. This job runs no tests and
       # produces no coverage data, and COVERAGE_REPORT.md is untracked, so on a PR the
       # dashboard --check can only ever report "COVERAGE_REPORT.md is missing" and the

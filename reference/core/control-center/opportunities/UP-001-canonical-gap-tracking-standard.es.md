@@ -7,7 +7,7 @@
 | **ID** | UP-001 |
 | **Estado** | PROPUESTO |
 | **Fecha** | 2026-06-28 |
-| **Última enmienda** | 2026-07-18 — Enmienda 1 (esquema de columnas del board, ver §6) |
+| **Última enmienda** | 2026-07-20 — Enmienda 2 (los literales de estado se localizan, ver §7) |
 | **Iniciado por** | Evolith Tracker (satélite piloto) |
 | **Dirigido a** | Architecture Board de Evolith Core |
 | **Prioridad** | P0 |
@@ -192,6 +192,44 @@ Gracias a esa corrección, **un board parcialmente migrado parsea correctamente 
 | Evolith Tracker — `tracker-gap-tracking.md` (+ ES) | 215 filas |
 
 La historia desplazada de una celda `Gap` no se descarta: se traslada a la entrada de catálogo correspondiente, que es donde el estándar ya ubica el detalle.
+
+---
+
+### 7. Enmienda 2 — Los Literales de Estado se Localizan (2026-07-20)
+
+**Aprobada por el owner.** Esta enmienda es normativa y aclara §1.1, que declaraba `Status ∈ {PENDING,IN-PROGRESS,BLOCKED,DEFERRED,DONE}` sin decir si esos tokens son un ESTADO canónico o una grafía literal.
+
+#### 7.1 Por qué
+
+El estándar se escribió desde la perspectiva del board en inglés y nunca contempló su propia traducción. Leído al pie de la letra, dejaba fuera de norma a toda superficie en español — incluidas las 552 filas de `COMPLETADO` de `gap-tracking.es.md` del Core, práctica establecida desde hace meses, y el `STATUS_MAP` bilingüe que `08-validate-tracking.mjs` lleva **a propósito** para que ambas grafías validen.
+
+Dos lecturas de la misma línea se habían separado en la práctica: el board ES localizaba el literal, el catálogo ES conservaba el inglés. Ninguna era incorrecta según el texto tal como estaba escrito, y ese es el defecto que esta enmienda cierra. Un estándar que la mitad del corpus incumple no se está aplicando: se está ignorando, y una regla ignorada enseña a ignorar la siguiente.
+
+#### 7.2 Regla
+
+El **estado** es canónico e independiente del idioma. El **literal** es su representación en el idioma de la superficie:
+
+| Estado canónico | Literal EN | Literal ES |
+|---|---|---|
+| pending | `PENDING` | `PENDIENTE` |
+| in-progress | `IN-PROGRESS` | `EN-PROGRESO` |
+| blocked | `BLOCKED` | `BLOQUEADO` |
+| deferred | `DEFERRED` | `DIFERIDO` |
+| done | `DONE` | `COMPLETADO` |
+
+Aplica a **todas** las superficies de seguimiento de un idioma: tanto la columna `Status`/`Estado` del board como el campo `**Status:**` del catálogo. Dentro de un idioma el literal es el mismo en todas partes; un `DONE` en un fichero `.es.md` no es conforme, y un `COMPLETADO` en uno `.md` tampoco.
+
+Ningún token fuera de esta tabla es válido. `COMPLETED` y `OPEN` aparecieron en el corpus y no forman parte del vocabulario — el primero se corrigió a `DONE` en ambos catálogos, el segundo sigue mapeado por el guard solo para filas históricas.
+
+#### 7.3 Consecuencia para los guards
+
+Un guard DEBE comparar el estado canónico, nunca el literal, para que las comprobaciones de paridad EN/ES funcionen entre idiomas. `08-validate-tracking.mjs` ya lo hace mediante `STATUS_MAP`; ese mapeo queda por la presente como normativo y no incidental.
+
+Un guard PUEDE además verificar que una superficie use el literal de su propio idioma. Hoy ninguno lo hace, que es por lo que esta deriva sobrevivió sin detectarse y por lo que existe §7.4.
+
+#### 7.4 Follow-up conocido
+
+Hoy no falla nada cuando una superficie usa el literal del idioma equivocado — el guard normaliza ambos y reporta verde. Hasta que exista una comprobación a nivel de literal, esta enmienda es una convención documentada, no una aplicada.
 
 ---
 

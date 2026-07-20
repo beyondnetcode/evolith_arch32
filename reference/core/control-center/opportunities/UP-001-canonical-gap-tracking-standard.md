@@ -7,7 +7,7 @@
 | **ID** | UP-001 |
 | **Status** | PROPOSED |
 | **Date** | 2026-06-28 |
-| **Last Amended** | 2026-07-18 — Amendment 1 (board column schema, see §6) |
+| **Last Amended** | 2026-07-20 — Amendment 2 (status literals are localised, see §7) |
 | **Initiated by** | Evolith Tracker (satellite pilot) |
 | **Addressed to** | Evolith Core Architecture Board |
 | **Priority** | P0 |
@@ -192,6 +192,44 @@ Because of that fix, **a partially migrated board parses correctly instead of mi
 | Evolith Tracker — `tracker-gap-tracking.md` (+ ES) | 215 rows |
 
 History displaced from a `Gap` cell is not discarded: it moves to the corresponding catalog entry, which is where the standard already puts detail.
+
+---
+
+### 7. Amendment 2 — Status Literals Are Localised (2026-07-20)
+
+**Approved by the owner.** This amendment is normative and clarifies §1.1, which declared `Status ∈ {PENDING,IN-PROGRESS,BLOCKED,DEFERRED,DONE}` without saying whether those tokens are a canonical STATE or a literal spelling.
+
+#### 7.1 Why
+
+The standard was written from the perspective of the English board and never contemplated its own translation. Read literally, it made every Spanish surface non-conforming — including 552 rows of `COMPLETADO` in Core's `gap-tracking.es.md`, established practice for months, and the bilingual `STATUS_MAP` that `08-validate-tracking.mjs` carries **deliberately** so both spellings validate.
+
+Two readings of the same line had drifted apart in practice: the ES board localised the literal, the ES catalog kept the English one. Neither was wrong under the text as written, which is the defect this amendment closes. A standard that half the corpus violates is not being enforced; it is being ignored, and an ignored rule teaches people to ignore the next one.
+
+#### 7.2 Rule
+
+The **state** is canonical and language-independent. The **literal** is its rendering in the surface's language:
+
+| Canonical state | EN literal | ES literal |
+|---|---|---|
+| pending | `PENDING` | `PENDIENTE` |
+| in-progress | `IN-PROGRESS` | `EN-PROGRESO` |
+| blocked | `BLOCKED` | `BLOQUEADO` |
+| deferred | `DEFERRED` | `DIFERIDO` |
+| done | `DONE` | `COMPLETADO` |
+
+This applies to **every** tracking surface of a language: the board's `Status`/`Estado` column and the catalog's `**Status:**` field alike. Within one language the literal is the same everywhere; a `DONE` in an `.es.md` file is non-conforming, and so is a `COMPLETADO` in an `.md` one.
+
+No token outside this table is valid. `COMPLETED` and `OPEN` appeared in the corpus and are not part of the vocabulary — the first was corrected to `DONE` in both catalogs, the second remains mapped by the guard for historical rows only.
+
+#### 7.3 Consequence for guards
+
+A guard MUST compare the canonical state, never the literal, so that EN/ES parity checks work across languages. `08-validate-tracking.mjs` already does this through `STATUS_MAP`; that mapping is hereby normative rather than incidental.
+
+A guard MAY additionally assert that a surface uses its own language's literal. None does today, which is why this drift survived unnoticed and is why §7.4 exists.
+
+#### 7.4 Known follow-up
+
+Nothing yet fails when a surface uses the wrong language's literal — the guard normalises both and reports green. Until a literal-level check exists, this amendment is a documented convention, not an enforced one.
 
 ---
 

@@ -125,6 +125,46 @@ function parseProgress(content, isEs) {
   };
 }
 
+// UP-001 §7.2: el estado es canonico e independiente del idioma, el literal es
+// su representacion en el idioma de la superficie. `STATUS_MAP` de arriba
+// normaliza ambos para que la paridad EN/ES funcione -- y precisamente por eso
+// no puede detectar que una superficie use el literal del idioma equivocado:
+// para el, `DONE` y `COMPLETADO` son el mismo estado. Esa ceguera es la razon de
+// que 6 filas `DONE` sobrevivieran meses en el board ES y 45 en su catalogo.
+const LOCALE_LITERALS = {
+  EN: new Set(['PENDING', 'IN-PROGRESS', 'BLOCKED', 'DEFERRED', 'DONE']),
+  ES: new Set(['PENDIENTE', 'EN-PROGRESO', 'BLOQUEADO', 'DIFERIDO', 'COMPLETADO']),
+};
+
+/**
+ * Verifica que una superficie use SOLO los literales de su propio idioma, tanto
+ * en la columna Estado del board como en el campo `**Status:**` del catalogo.
+ * Comprobar el estado canonico no basta: ahi es donde vivia el punto ciego.
+ */
+function validateStatusLocale(lang, rows, sections, errors) {
+  const allowed = LOCALE_LITERALS[lang];
+  const other = lang === 'EN' ? 'ES' : 'EN';
+
+  for (const row of rows) {
+    if (!row.status || allowed.has(row.status)) continue;
+    const hint = LOCALE_LITERALS[other].has(row.status)
+      ? ` — es el literal ${other}; usa el ${lang} equivalente`
+      : ' — no pertenece al vocabulario de UP-001 §7.2';
+    errors.push(`${row.id} board ${lang}: literal de estado "${row.status}" fuera de idioma${hint}`);
+  }
+
+  for (const [id, body] of sections) {
+    const match = body.match(/^- \*\*Status:\*\* `([^`]+)`/m);
+    if (!match) continue;
+    const literal = match[1].toUpperCase();
+    if (allowed.has(literal)) continue;
+    const hint = LOCALE_LITERALS[other].has(literal)
+      ? ` — es el literal ${other}; usa el ${lang} equivalente`
+      : ' — no pertenece al vocabulario de UP-001 §7.2';
+    errors.push(`${id} catalogo ${lang}: literal de estado "${literal}" fuera de idioma${hint}`);
+  }
+}
+
 function canonicalStatus(status) {
   return STATUS_MAP.get(status);
 }
@@ -280,6 +320,12 @@ export function validateTrackingState({
       errors.push(`${row.id} has closure evidence but status is ${status}`);
     }
   }
+
+  // UP-001 §7.4 pedia esto explicitamente: hasta ahora nada fallaba cuando una
+  // superficie usaba el literal del idioma equivocado, asi que la enmienda era
+  // una convencion documentada y no aplicada. Con esto pasa a ser aplicada.
+  validateStatusLocale('EN', enRows, enSections, errors);
+  validateStatusLocale('ES', esRows, esSections, errors);
 
   return errors;
 }

@@ -31,7 +31,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] El fingerprint es estable ante ediciones de `message` (path normalizado, message excluido).
   - [x] Round-trip Violation ⇄ GapFinding/RiskFinding con cero reglas huérfanas contra `evidence-manifest.rules.json` (EVD-01..04).
 - **Dependencies:** none.
-- **Status:** `PENDING`
+- **Status:** `PENDIENTE`
 
 #### GT-512
 
@@ -50,7 +50,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] El sandbox deniega egress + acceso a secretos y aplica ulimits/cgroups + una allowlist de binarios. _(hecho: allowlist + denegación de secretos + wrapper fail-closed (política) y ahora el `NodeProcessRunner` NO hereda secretos del entorno padre —passthrough curado— en runtime; el enforcement OS-level de egress/cgroups/namespaces queda deploy-gated en un contenedor aislado)_
   - [x] Re-evaluar un commit sin cambios pega al cache (scope SHA + archivos-cambiados).
 - **Dependencies:** GT-511.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-513
 
@@ -70,7 +70,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Los tests de paridad de contrato fallan ante drift entre el paquete y los endpoints. _(el spec de paridad enlaza el paquete al productor vivo `buildCapabilityManifest`; casos dedicados prueban que FALLA ante un engine añadido y ante regresión a un solo consumidor + guard sha256 por schema)_
 - **Dependencies:** GT-511.
 - **Cierre (2026-07-13, Ola 3, commit `9f027797`):** Solo-REST según ADR-0074. El endpoint `/api/v1/capabilities` + manifiesto de dominio ya estaban en develop (ola previa); esto cierra el paquete frontera SemVer + el guard de paridad que falla ante drift. contracts 13/13; límite hexagonal intacto (el runtime de contracts no importa core-domain; solo su test enlaza el productor).
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-514
 
@@ -89,7 +89,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] `IEnforcerAdapter` retorna `Violation[]` (modelo GT-511) vía `IProcessRunner`.
   - [x] `enforcer-catalog.json` coincide con `validated-tool-catalog.md`.
 - **Dependencies:** GT-511, GT-512.
-- **Status:** `PENDING`
+- **Status:** `PENDIENTE`
 
 #### GT-515
 
@@ -108,7 +108,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] El ingester SARIF 2.1.0 es genérico y reutilizado (no específico de depcruise).
   - [x] 0 falsos positivos en un corpus real antes de habilitar cualquier bloqueo. _(bloqueado por GT-512: requiere una corrida real de `depcruise` en un entorno restaurado)_
 - **Dependencies:** GT-514, GT-512.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-516
 
@@ -127,7 +127,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Las reglas no compilables toman un fallback documentado por regla (sin falla en bloque).
   - [x] El test round-trip pasa con 0 falsos positivos.
 - **Dependencies:** GT-514.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-517
 
@@ -146,7 +146,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] El baseline sobrevive upgrades de herramientas (rebase fingerprint-estable).
   - [x] Un único baseline autoritativo (sin stores nativo/enforcer paralelos) con un ratchet que falla ante crecimiento.
 - **Dependencies:** GT-511.
-- **Status:** `PENDING`
+- **Status:** `PENDIENTE`
 
 #### GT-518
 
@@ -166,7 +166,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Existe una ruta de waiver (request/approve/version/expire) para `waiverRef`. _(máquina de estados determinista `domain/waiver.ts` + `applyWaivers` con auditoría; **falta:** store durable + subcomando CLI `waiver`)_
 - **Dependencies:** GT-514, GT-516.
 - **Progreso (2026-07-13, Ola 6, commit `41135566`):** En el seam de core-domain (reusa `sarif-exporter`/`EvidenceNormalizer`, el Core queda puro). core-domain 1018/1018 + CLI evaluate 6/6. Queda `IN-PROGRESS`: publish live Checks API + store durable de waivers + subcomando CLI.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-519
 
@@ -186,7 +186,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Las corridas de enforcer emiten métricas OTel (duración, tasa de fallo, timeouts, conteos de violaciones).
 - **Dependencies:** GT-514.
 - **Cierre (2026-07-17, commit `4eb471a6`):** se cerró el último seam de código — las métricas OTel de enforcer se emitían internamente pero el puerto era incableable por cualquier superficie (`RulesetValidatorService`/`RulesetValidatorOptions` ni aceptaba ni reenviaba `IEnforcerMetrics`, y los tipos no se exportaban). Ahora `metrics?` fluye por la factory del subsistema y la API de métricas se re-exporta desde core-domain. Verificado: core-domain 1026/1026, mcp 326/326, cli 969/969, core-api 152/152. La mitad de imágenes CI del criterio 2 sigue deploy-gated (`[~]`, accepted-scope). → **DONE**.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-520
 
@@ -205,7 +205,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Cada `tools/call` es verificado por ABAC por identidad y auditado.
   - [x] Se sirven los recursos `evolith://capabilities` y `evolith://contracts`.
 - **Dependencies:** GT-513, y la decisión de identidad (rastreada como EAG-01 en el tablero del Tracker).
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-521
 
@@ -225,7 +225,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Dependencies:** GT-514, GT-515.
 - **Note (2026-07-12):** promovido `DEFERRED`→`PENDING` como parte de la base multi-lenguaje común (junto a GT-524 .NET). Pendiente previo al adaptador JVM: catalogar ArchUnit/jQAssistant en §4.3 de `validated-tool-catalog.md` (hoy ausente).
 - **COMPLETADO (`e322bd7b`):** aterrizaron los dos runtimes con corpus real en esta máquina — **`ImportLinterAdapter` (Python)** (`parseImportLinterReport`: reporte de contratos rotos de `lint-imports` → `Violation` canónico, `file=''`, `line=null`, la cadena de import rota en el mensaje; `isImportLinterFailure`: una corrida completa siempre imprime "Contracts: N kept, M broken." así que su ausencia en exit≠0 ⇒ SKIP, no false-pass) y los **adaptadores security-SARIF (Checkov/Trivy + cualquier emisor SARIF)** (`parseSecuritySarif` reusa el `ingestSarif` de GT-515 tal cual y estampa `category='security'`). Se agregó el campo opcional `Violation.category` (schema + modelo) para que los hallazgos de seguridad ruteen a la dimensión de seguridad. Registrados Checkov/Trivy en `enforcer-catalog.json` + §4.3; `createEnforcerAdapters` devuelve ahora los cinco (dependency-cruiser/NetArchTest/import-linter/Checkov/Trivy). **Verificado en vivo:** un paquete Python real donde el dominio importa infraestructura → 1 Violation (limpio → 0); un SARIF real de Checkov sobre Terraform (8 hallazgos) → 8 Violations todos `category='security'` (limpio → 0). core-domain 1024/1024, core-api tsc limpio. **Deptrac (PHP) / ArchUnit (JVM) / jQAssistant (Neo4j) quedan pendientes de adaptador — no existe un repo real de esos runtimes para ejercitarlos (el propio gate del criterio #1); construirlos ahora sería el código especulativo e imposible de probar que el Risk/Evidence de este gap advierten.**
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-522
 
@@ -243,7 +243,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [ ] Solo se persigue si un consumidor concreto requiere GraphQL.
   - [ ] Si se construye: solo-lectura, con feature-flag, con límites de profundidad/complejidad, sin mutaciones de decisión.
 - **Dependencies:** GT-513.
-- **Status:** `DEFERRED`
+- **Status:** `DIFERIDO`
 
 > **GT-524…GT-532** son el **Refuerzo de poder de Core** derivado del análisis de posicionamiento (`product/suite/positioning/evolith-strategic-positioning-comparative-landscape.md`, ejes 1 y 2). Están ordenadas por prioridad con las **bases arquitectónicas comunes primero**: base multi-lenguaje (GT-524) → cross-cutting de compliance (GT-525) → superficie de control edit-time (GT-526) → conectores del wedge (GT-527/528, eje 2) → integraciones del surround (GT-529…532, eje 1). Complementan a GT-511…GT-522 (motor de enforcement) sin duplicarlas.
 
@@ -263,7 +263,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] `NetArchTestAdapter` produce `Violation[]` desde una corrida real contra un proyecto .NET restaurado. _(parser + costura hechos: `parseNetArchTestReport`/`isNetArchTestFailure`/`createNetArchTestAdapter`, unit-tested 11/11 con un transcript de `dotnet test`; la corrida real está bloqueada por GT-512)_
   - [x] 0 falsos positivos en un corpus .NET real antes de cualquier bloqueo de merge. _(lado parser: limpio/malformado⇒`[]` y summary nunca mis-parseado; el gate contra corpus real requiere GT-512)_
 - **Dependencies:** GT-514, GT-512.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-525
 
@@ -281,7 +281,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Cada violación puede portar `owner` + `complianceControl` resueltos y emitidos en la evidencia. _(`Violation.complianceControls` + `enrichViolationsWithCompliance`, agregado en `buildEnforcerEvidence` y cableado en `emitEvaluationEvidence`)_
   - [x] El catálogo de controles está versionado y desacoplado del código de reglas. _(`ComplianceControlCatalog`/`ComplianceMapping` con `version`, data-driven; `57b2cc09`)_
 - **Dependencies:** GT-518, GT-511.
-- **Status:** `COMPLETED`
+- **Status:** `COMPLETADO`
 
 #### GT-526
 
@@ -300,7 +300,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] El mecanismo es neutral cross-agente (no atado a un único proveedor). _(registro `VendorHookAdapter`: `claude-code` parsea PreToolUse Write/Edit/MultiEdit; `generic` acepta un `{filePath,content}` canónico para que Cursor/Copilot se enchufen sin código; `evaluateEdit`/`EditBoundaryRule` sigue siendo función pura neutral)_
 - **Dependencies:** GT-516, GT-520.
 - **Cierre (2026-07-13, Ola 2, commit `8fd95eb3`):** Se entregó el adapter por-agente en `src/sdk/cli` (acción `enforce edit` + servicio `edit-hook`, normalizador de payload, loader de reglas de límite), con docs (snippet `.claude/settings.json`, matcher `Write|Edit|MultiEdit`), wrapper listo `examples/claude-code-pretooluse-hook.sh` y un contrato compilado de ejemplo. Las tool-calls que no escriben/no reconocidas se permiten (el gate nunca bloquea lo que no puede evaluar). 45 tests focalizados + suite CLI completa 967/967. Completa las tres superficies READ→CONTROL (pre-gen MCP + PR/CI + edit-time). _Nota op:_ el hook de Claude Code es un wrapper de shell que el usuario registra en su settings.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-527
 
@@ -318,7 +318,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Al menos un conector (p. ej. Backstage) resuelve owner y lo enchufa al enriquecimiento de violaciones. _(loader Backstage `loadBackstageOwnership` + `fetchBlueprintOwnership` Port/Cortex sobre los parsers puros; cliente inyectable)_
   - [x] Los conectores son read-only y no introducen lock-in de proveedor. _(los parsers solo leen y normalizan; nada escribe ni acopla al proveedor)_
 - **Dependencies:** GT-511.
-- **Status:** `COMPLETED`
+- **Status:** `COMPLETADO`
 
 #### GT-528
 
@@ -337,7 +337,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Cada regla generada traza al elemento de modelo/ADR de origen. _(`ruleId` `C4-<id>` + `adrRef` del elemento)_
   - [x] Ingesta del `.dsl` crudo → `C4Model`. _(`parseStructurizrDsl`; core-domain 950/950; `5c66dd69`)_
 - **Dependencies:** GT-516.
-- **Status:** `COMPLETED`
+- **Status:** `COMPLETADO`
 
 #### GT-529
 
@@ -355,7 +355,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Elementos de Jira se mapean a artefactos Evolith preservando origen/identidad/timestamps/linaje. _(`parseJiraIssue`→`CanonicalWorkItem` con `WorkItemProvenance`; rechaza sin id)_
   - [x] Completar un workflow de Jira no autoriza por sí solo una transición de fase. _(`authorizesPhaseTransition:false` por contrato + `externalWorkAuthorizesTransition`⇒false)_
 - **Dependencies:** none.
-- **Status:** `COMPLETED`
+- **Status:** `COMPLETADO`
 
 #### GT-530
 
@@ -373,7 +373,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Un trace/evaluación de Langfuse se mapea a evidencia canónica consumible por un gate. _(`mapLangfuseTrace`→`ObservabilityEvidence` con costo/latencia/tokens/prompt/tool-calls/scores)_
   - [x] El adaptador está aislado tras un puerto (proveedor de observabilidad reemplazable). _(`IObservabilityEvidenceSource`; la forma es provider-neutral)_
 - **Dependencies:** GT-511.
-- **Status:** `COMPLETED`
+- **Status:** `COMPLETADO`
 
 #### GT-531
 
@@ -391,7 +391,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [ ] Una actividad acotada se ejecuta vía el adaptador con permisos/plan/aprobación y captura de evidencia. _(el adaptador es acotado —rechaza tools fuera del catálogo— y el envelope del runtime (approval/policy/trace) lo gobierna; la ejecución viva contra Claude/Cowork requiere el `CoworkClient` real —conector/infra)_
   - [x] El ejecutor es reemplazable (cumple el contrato de ejecución del agent-runtime). _(`CoworkAgentEngineAdapter implements IAgentEnginePort`, drop-in como stub/hermes/swarms)_
 - **Dependencies:** GT-387, GT-441. **Bloqueado (2026-07-18) por el trabajo de aprobación del lado Tracker:** el envelope del runtime que gobierna este adaptador enruta la aprobación HITL al Tracker (`TrackerApprovalAdapter`, GT-441, commit `ef9a14d8`), y el endpoint del Tracker al que pregunta todavía no existe — así que toda actividad Cowork gobernada marcada `requiresApproval` se deniega fail-closed hasta que el Tracker lo entregue. Esa mitad se sigue en el board propio del Tracker como `CD-23` (`evolith_tracker` · `docs/audit/tracker-gap-tracking.md`). Este ítem se queda en el board del Core y conserva su estado: sus ficheros afectados son código `agent-runtime` del Core, y la propia regla del catálogo del Tracker es que el trabajo que aterriza en código del Core pertenece al board del Core.
-- **Status:** `IN-PROGRESS`
+- **Status:** `EN-PROGRESO`
 
 #### GT-532
 
@@ -409,7 +409,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [ ] Vistas de portafolio y paquetes por tenant disponibles en el Tracker.
   - [ ] No introduce dependencia inversa Core→Tracker.
 - **Dependencies:** none.
-- **Status:** `PENDING`
+- **Status:** `PENDIENTE`
 
 #### GT-533
 
@@ -429,7 +429,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] El registro por tenant habilita/deshabilita proveedores de forma declarativa. _(`TenantQualitySignalRegistry` en agent-runtime; aislado de fallos, re-normalizado por el ACL canónico)_
 - **Dependencies:** ADR-0111; compone con GT-530.
 - **Cierre (2026-07-13, Olas 1+3):** Ola 1 (`d56ba32c`) fundó la costura (Evidence/Provenance canónicos + puerto `IQualitySignalProvider` en orquestación + registro por tenant); Ola 3 (`baf570f4`) la cableó VIVA en el pipeline de evaluación, cerrando el loop ADR-0104. Grep limpio de acoplamiento Core→proveedor; core-domain 966/966 + agent-runtime 98/98.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-534
 
@@ -448,7 +448,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] El ADR de Plataforma Node.js acompañante registra la elección de proveedor/runtime. _(ADR-0113 bilingüe e indexado — renumerado desde 0112 para evitar colisión con el ADR-0112 RAG concurrente)_
 - **Dependencies:** GT-533.
 - **Cierre (2026-07-13, Ola 2, commit `af97a14c`):** Primer proveedor concreto detrás de la costura GT-533. El run de Chrome headless queda tras un puerto `LighthouseRunner` inyectado (lighthouse/chrome-launcher importados dinámicamente, no son dep de build — ADR-0111 §5); 27 tests con LHR stub (sin Chrome). infra-providers 105/105. _Nota runtime:_ un run real end-to-end requiere Chrome headless + URL desplegada; registrar el proveedor en `TenantQualitySignalRegistry` es parte del follow-on de cableado de GT-533.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-535
 
@@ -467,7 +467,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] El gate puede tratar las regresiones estructurales como bloqueantes; atribución respetada. _(`evaluateStructuralGate` — mapeo determinista severidad→decisión; `DEFAULT_STRUCTURAL_GATE_POLICY` bloquea high/critical; `RUBRIC_ATTRIBUTION` acredita la metodología comunitaria, reexpresada en nuestras palabras)_
 - **Dependencies:** GT-533.
 - **Cierre (2026-07-13, Ola 4, commit `d450d969`):** Rúbrica como datos de dominio puros (siete estándares sobre una jerarquía `info<low<medium<high<critical`); SkillDescriptor `code-quality-structural-review` en DEFAULT_SKILLS (guard de paridad de registro GT-424 verde); `StructuralReviewProvider` implementa `IQualitySignalProvider` y se registra en el `TenantQualitySignalRegistry` (GT-533); el borde LLM/agente queda tras `IStructuralReviewer`. agent-runtime 110/110.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-536
 
@@ -485,7 +485,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [ ] El adaptador está deshabilitado por defecto y solo se activa con opt-in explícito por tenant.
   - [ ] Ninguna ruta hace que el build/run de la suite dependa de TestSprite.
 - **Dependencies:** GT-533.
-- **Status:** `DEFERRED`
+- **Status:** `DIFERIDO`
 
 #### GT-537
 
@@ -503,7 +503,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [ ] El pack es opcional y no añade dependencia al Core.
   - [ ] Produce un score + plan por severidad consistente con el modelo de scorecard.
 - **Dependencies:** GT-533.
-- **Status:** `DEFERRED`
+- **Status:** `DIFERIDO`
 
 #### GT-538
 
@@ -522,7 +522,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Las columnas de metadata soportan filtrado por `source_file`, `adr_id`, `language`, `corpus_version`. _(columnas de primera clase + índices btree en `rag-pgvector.schema.sql`; el upsert persiste las cuatro, verificado contra un cliente stub)_
 - **Dependencies:** ADR-0090; ADR-0112 (plataforma: pgvector sobre el Postgres existente, `vector(1024)`, HNSW); compone con GT-145.
 - **Progreso (2026-07-13, Ola 5, commit `cace6118`):** Adaptador durable entregado en el seam CI correcto (`.harness/scripts/ci/rag-pgvector.{mjs,schema.sql,test.mjs}`) — `vector(1024)` + HNSW `vector_cosine_ops` según ADR-0112, embed placeholder `hashEmbed@1024` (Qwen3 real = GT-539). 10 node:test + 9 de regresión verdes; `createRagAdapter({provider:'pgvector'})` ⇒ `durable:true`. Destraba GT-539/GT-540. Queda `IN-PROGRESS`: el sync live contra Postgres+pgvector real es deploy-gated.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-539
 
@@ -541,7 +541,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Las credenciales son secretos CI enmascarados; ninguna key en el diff ni en los logs. _(config por env; seam `fetch` inyectado, sin lib de red importada en load; sidecar on-perimeter, fail-closed ante error de transporte / dimensión incorrecta)_
 - **Dependencies:** ADR-0090 §3; ADR-0003; ADR-0112 (plataforma: Qwen3-Embedding); compone con GT-538.
 - **Progreso (2026-07-13, Ola 6, commit `c4e612b7`):** Embedder model-agnostic cableado en el seam rag-port `.harness` correcto (reusa el adapter durable GT-538); consistencia de dimensión asertada (modelo == store 1024, fail-closed). rag node:tests 38/38. Queda `IN-PROGRESS`: sidecar corriendo + entrada `model-registry.json` (ADR-0003) para `qwen3-embedding-0.6b`.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-540
 
@@ -560,7 +560,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] La fila Knowledge/RAG de `maturity-assessment.md` se actualiza de "Not implemented" al adaptador entregado.
 - **Dependencies:** GT-538; GT-539; ADR-0090; ADR-0112 (plataforma: mismo modelo+dim que el write-side).
 - **Cierre (2026-07-13, Ola 6, commit `40464149`):** El read-side RAG es real — adaptador `IKnowledgePort` de producción que fundamenta las recomendaciones cosine-rankeando el corpus GT-538 vía el embedder GT-539, totalmente hexagonal (cliente pg y embedder inyectados; sin `pg` en build; elección de modelo en el borde de wiring). `runtime.factory.ts` lo selecciona vía `AGENT_RUNTIME_KNOWLEDGE_MODE=pgvector` / `EVOLITH_RAG_PG_URL` (falla-fuerte ante misconfig; `InMemoryKnowledgeAdapter` sigue siendo el default). agent-runtime 118/118 + agent-runtime-api 67/67. _Deploy-gated:_ la corrida live contra Postgres + sidecar Qwen3 (no es criterio de aceptación).
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-541
 
@@ -578,7 +578,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Un commit a `reference/` dispara un re-embed delta que hace upsert solo de los chunks cambiados y registra un recibo.
   - [x] Al menos un agente (Winston) consulta `IKnowledgePort` antes de recomendar y cita `corpus_version`.
 - **Dependencies:** GT-538; GT-539; GT-540; ADR-0090 §4.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 ---
 
@@ -600,7 +600,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Una evaluación de gate incrementa `evolith_gate_evaluations_total` con label `verdict`/`gateId` y observa el histograma de duración.
   - [x] `GET /metrics` muestra series de gate no-cero tras una evaluación; un test afirma el incremento.
 - **Dependencies:** ninguna (infra ya presente).
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 ---
 
@@ -620,7 +620,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Cada nombre de métrica en `prometheus-alerts.yml` y `core-api-slo.md` mapea a una serie emitida por un servicio.
   - [x] El histograma de latencia HTTP aparece en `/metrics` y `histogram_quantile(...)` devuelve datos.
 - **Dependencies:** relacionado con GT-550 (guard); GT-542.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 ---
 
@@ -640,7 +640,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Grafana provisiona un datasource Prometheus al arrancar.
   - [x] Al menos los dashboards SRE y Governance Health se commitean como JSON y cargan sin setup manual.
 - **Dependencies:** GT-542; GT-543; GT-545.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 ---
 
@@ -660,7 +660,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Prometheus muestra los tres servicios `up==1`.
   - [x] El job de core-api se autentica contra el `/metrics` protegido.
 - **Dependencies:** GT-547; GT-549.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 ---
 
@@ -680,7 +680,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Una corrida de agente incrementa contadores de run/skill y observa el histograma de duración.
   - [x] `/metrics` muestra las series de negocio junto a las métricas default de Node.
 - **Dependencies:** GT-519 (puerto de métricas).
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 ---
 
@@ -700,7 +700,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Un comando levanta los servicios Node con un Prometheus scrapeando + Grafana provisionado.
   - [x] El perfil es opt-in y está documentado.
 - **Dependencies:** GT-544; GT-545.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 ---
 
@@ -720,7 +720,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Las métricas de gate/agente llevan una label `tenant` acotada con tope de cardinalidad documentado.
   - [x] Un panel por tenant filtra correctamente sin crecimiento ilimitado de series.
 - **Dependencies:** GT-542; GT-546.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 ---
 
@@ -740,7 +740,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] `/metrics` sin autenticar en agent-runtime y mcp es rechazado o restringido por red.
   - [x] El scraper de Prometheus sigue teniendo éxito con credenciales/fuente permitida.
 - **Dependencies:** GT-545.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 ---
 
@@ -760,7 +760,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] El guard falla cuando una alerta referencia una métrica que ningún servicio emite.
   - [x] Corre en CI ante cambios en alertas/SLO/definiciones de métricas.
 - **Dependencies:** GT-543.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 ---
 
@@ -780,7 +780,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Las métricas reales de OPA están expuestas y hay un job de scrape configurado. _(**La premisa del enunciado original era falsa**: `opa_evaluation_errors_total` no existe — OPA emite SOLO `go_*`, `process_*` y `http_request_duration_seconds{code,handler,method}`, cero series `opa_*`. Entregado: el Service de `evolith-mcp` publica el 8181 del sidecar como `opa-metrics` (antes pod-local/inalcanzable) y existe un job `opa`. **VERIFICADO EN VIVO en un cluster kind (`evolith-cluster`, 2026-07-18):** con `opa.enabled=true` el Service ganó `opa-metrics 8181→opa-http` en el objeto k8s real y el pod levantó con el sidecar `opa`; hacer fetch a `http://<pod-ip>:8181/metrics` desde otro pod devolvió **HTTP 200 con 109 métricas, 0 series `opa_*` y `http_request_duration_seconds` presente** — confirmando en un cluster desplegado lo que mostró el sondeo del binario.)_
   - [x] La alerta `OpaEvaluationFailure` evalúa contra una serie real. _(Reapuntada a `rate(http_request_duration_seconds_count{job="opa",handler=~"v1/data.*",code=~"5.."}[5m]) > 0` — 5xx en el handler de decisión de OPA — scopeada a `job="opa"` para que jamás matchee nuestras `evolith_http_*`. Selector verificado contra series vivas: `handler="v1/data"` se emite y `code` sigue el status HTTP (200/400 observados), así que `code=~"5.."` matchea fallos reales.)_
 - **Dependencies:** GT-544; GT-545.
-- **Status:** `PENDING`
+- **Status:** `PENDIENTE`
 
 ---
 
@@ -6773,7 +6773,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Los 15 scripts migrados — 06, 09, 11, 12, 19, 21, 22, 25, 27, 29, 30, 31, 32, 33 y `34-check-skill-registry-parity` — producen cada uno salida idéntica desde la raíz del repo, desde `src/` y desde `/tmp`. _(el script 30 ahora reporta "5 SDLC phase ids disjoint from 8 topology ids" desde los tres)_
 - **Dependencias:** ninguna.
 - **Cierre (2026-07-18, commit `83539a29`):** La resolución de rutas del harness es ahora fail-closed e independiente del cwd. La divergencia 8-vs-5 del script 30 desapareció: los mismos tres directorios de invocación arrojan el mismo corpus, y un literal de ruta que ya no resuelve lanza en vez de leer un conjunto vacío.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-557
 
@@ -6794,7 +6794,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] La regresión queda fijada por tests: 28 tests en `.harness/scripts/lib/*.test.mjs`, incluidas tres pruebas de independencia del cwd — invarianza ante chdir, un subproceso real lanzado desde tres directorios, y un test de tamaño de corpus que fija la regresión 8-vs-5. _(`node --test .harness/scripts/lib/paths.test.mjs .harness/scripts/lib/coverage.test.mjs` — 28 pasando)_
 - **Dependencias:** ninguna.
 - **Cierre (2026-07-18, commit `83539a29`):** El guardrail asevera sobre lo que se escaneó, no sobre si una ruta resulta existir — que es exactamente la distinción que el caso `rulesets/` derrotaba. Medido contra el corpus: `find src/rulesets -name "*.rules.json" | wc -l` devuelve 145 donde el `rulesets/` escaneado devolvía 0.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-558
 
@@ -6816,7 +6816,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] 38 tests nuevos cubren el contrato y los mappers. _(`npx jest` en core-domain: 106 suites / 1145 tests pasando)_
 - **Dependencias:** Registrado en [ADR-0116](../../architecture/adrs/core/0116-canonical-finding-and-authority-boundary.es.md).
 - **Cierre (2026-07-18, commit `30013b07`):** El contrato canónico y sus seis mappers están en su sitio y registrados en ADR-0116, aditivos por construcción, así que no hubo que migrar nada para aterrizarlo. _Follow-up anotado:_ las dos bifurcaciones de `sdk-client` siguen **sin retirar** — quitarlas es un cambio incompatible y requiere una decisión de semver.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-559
 
@@ -6837,7 +6837,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] 34 tests nuevos cubren las reglas y su ordenamiento. _(`npx jest` en core-domain: 106 suites / 1145 tests pasando)_
 - **Dependencias:** Registrado en [ADR-0116](../../architecture/adrs/core/0116-canonical-finding-and-authority-boundary.es.md); ADR-0097 aporta el ciclo de vida de promoción aquí codificado.
 - **Cierre (2026-07-18, commit `e1f4901a`):** La frontera es ejecutable y está registrada en ADR-0116. _Deliberadamente no codificado:_ la auto-revisión humana (ningún ADR la prohíbe); qué oficina puede ratificar, dispensar o hacer cumplir (diferido a `domain/rbac`); y el gate de evidencia de KI-R03 (permanece en `knowledge-intake.rego`). _Follow-up anotado:_ `PromotionStatus` está ahora declarado tanto aquí como en `agent-runtime/src/application/automation-candidate.ts:25`.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`
 
 #### GT-560
 
@@ -7006,4 +7006,4 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El pipeline no reporta una entrega que no esta realizando.
   - [x] Reactivar el despliegue al VPS es un unico paso deliberado y documentado.
 - **Dependencies:** ninguna en el repo.
-- **Status:** `DONE`
+- **Status:** `COMPLETADO`

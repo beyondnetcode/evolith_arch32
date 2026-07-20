@@ -48,6 +48,7 @@ La guia topologica es dimensional, orientada por manifiestos y ejecutable median
 | [Schema de Manifiesto Topologico](../../../../src/rulesets/schema/topology-manifest.schema.json) | Contrato de manifiesto legible por maquina |
 | [Plan de Implementacion Multi-Topology](../../control-center/audits/multi-topology-reference-corpus-implementation-plan.es.md) | Plan de ejecucion de apoyo |
 | [Tablero de Seguimiento de Gaps](../../control-center/gaps/gap-tracking.es.md) | Tracker canonico de estado |
+| [Ejecucion — Runbook de Presupuestos Operativos](./execution/operational-budgets-runbook.es.md) | Presupuestos operativos y runbook para la ejecucion topologica |
 
 ---
 [Volver al Hub de Arquitectura](../README.es.md)

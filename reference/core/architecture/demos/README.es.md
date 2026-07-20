@@ -22,6 +22,8 @@ Ordenadas de la [[política]] general a la evidencia concreta:
 |---|---|---|---|---|
 | [Baseline Agnóstica](../foundations/agnostic-baseline.es.md) | Principios, patrones y restricciones no negociables agnósticos al runtime de máximo nivel | Anclar cada producto y runtime a una sola baseline | Política de baseline | Sí |
 | [Arquitectura Maestra C4](./C4-MASTER-ARCHITECTURE.es.md) | Diseño de sistema end-to-end consolidado y verificado (core-api, servidor MCP y Agent Runtime desplegados) | Ver la arquitectura tal como está construida y desplegada | Diseño de sistema | No |
+| [C4 Nivel 3 — Componentes](./level-3-components/README.es.md) | Desglose de componentes por desplegable: core-api, servidor MCP, Agent Runtime, Evolith CLI | Hacer zoom en los internos de un contenedor | Diseño de sistema | No |
+| [C4 Nivel 4 — Módulos de Código](./level-4-code-modules/README.es.md) | Vista a nivel de módulos de `core-domain` | Hacer zoom en la estructura del código | Diseño de sistema | No |
 | [Visual Map](https://beyondnetcode.github.io/evolith_arch32/) | Explorador interactivo de la arquitectura de Evolith | Navegar visualmente el modelo C4 y sus componentes | Mapa interactivo | No |
 | [Flujos de Interfaces del Core](./view-by-interface-flow.es.md) | Contratos IN/OUT, rutas de procesamiento, resiliencia, auditoría y guía de clientes para interfaces Core | Entender cómo la comunicación cruza cada límite del Core | Vista de arquitectura | No |
 | [Principios](../../foundations/principles/README.es.md) | Principios arquitectónicos fundacionales | Fundamentar todas las decisiones en principios compartidos | Hub de área | Sí |

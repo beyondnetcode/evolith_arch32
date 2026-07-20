@@ -154,13 +154,25 @@ Decisiones ligadas a clientes móviles resilientes.
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
-| ADR-AI-001 | Harness Engineering como estándar agéntico | Estandarizar los harnesses de agentes | ADR de IA (propuesto) | No |
-| ADR-AI-002 | MCP como protocolo de integración agente-servicio | Estandarizar la integración de agentes | ADR de IA (propuesto) | No |
-| ADR-AI-003 | Criterios de selección y gobernanza de modelos | Gobernar las elecciones de modelos | ADR de IA (propuesto) | No |
-| ADR-AI-004 | AGENTS.md como artefacto obligatorio (nivel 1+) | Hacer explícitas las reglas de agentes | ADR de IA (propuesto) | No |
-| ADR-AI-005 | Política Human-in-the-Loop para operaciones irreversibles | Mantener a los humanos accountable | ADR de IA (propuesto) | No |
+Los ADRs de IA aceptados viven en [`ai-augmented/`](./ai-augmented/), dentro de este
+árbol de ADRs:
 
--> [Ver todos los ADRs de IA](../../foundations/common-rules/ai-augmented/06-adrs/README.es.md)
+| Documento | Descripción | Meta / Objetivo | Tipo | Obligatorio |
+|---|---|---|---|---|
+| [ADR 0001: Harness Engineering](./ai-augmented/0001-harness-engineering.es.md) | Harness Engineering para desarrollo aumentado por IA | Estandarizar los harnesses de agentes | ADR de IA (aceptado) | No |
+| [ADR 0002: Protocolo de Integración MCP](./ai-augmented/0002-mcp-integration-protocol.es.md) | MCP como protocolo de integración agente-servicio | Estandarizar la integración de agentes | ADR de IA (aceptado) | No |
+| [ADR 0003: Gobernanza de Selección de Modelos](./ai-augmented/0003-model-selection-governance.es.md) | Criterios de selección y gobernanza de modelos | Gobernar las elecciones de modelos | ADR de IA (aceptado) | No |
+| [ADR 0004: AGENTS.md Artefacto Obligatorio](./ai-augmented/0004-agents-md-mandatory-artifact.es.md) | AGENTS.md como artefacto obligatorio (nivel 1+) | Hacer explícitas las reglas de agentes | ADR de IA (aceptado) | No |
+| [ADR 0005: Política Human-in-the-Loop](./ai-augmented/0005-human-in-the-loop-policy.es.md) | Política Human-in-the-Loop para operaciones irreversibles | Mantener a los humanos accountable | ADR de IA (aceptado) | No |
+| [ADR 0104: Interaction Adapter Port](./ai-augmented/ADR-0104-Interaction-Adapter-Port.es.md) | Puerto de adaptador de interacción para mediación agéntica | Acotar la costura de interacción agéntica | ADR de IA | No |
+
+> **Existen dos conjuntos de ADRs de IA.** La tabla de arriba es la autoritativa
+> (estado **Accepted**, 2026-06-23). Un conjunto anterior y más corto de propuestas
+> (estado **Proposed**, 2026-05-11) vive en el corpus de IA en
+> [06-adrs](../../foundations/common-rules/ai-augmented/06-adrs/README.es.md) bajo
+> identificadores `ADR-AI-NNN`. Reconciliar ambos — superseder o fusionar el conjunto
+> de propuestas — es decisión del Architecture Board y no se ha aplicado aquí.
+
 
 ---
 

@@ -154,13 +154,24 @@ Decisions tied to resilient mobile clients.
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
-| ADR-AI-001 | Harness Engineering as agentic standard | Standardize agent harnesses | AI ADR (proposed) | No |
-| ADR-AI-002 | MCP as agent-service integration protocol | Standardize agent integration | AI ADR (proposed) | No |
-| ADR-AI-003 | Model selection and governance criteria | Govern model choices | AI ADR (proposed) | No |
-| ADR-AI-004 | AGENTS.md as mandatory artifact (level 1+) | Make agent rules explicit | AI ADR (proposed) | No |
-| ADR-AI-005 | Human-in-the-Loop policy for irreversible operations | Keep humans accountable | AI ADR (proposed) | No |
+The accepted AI-augmented ADRs live in [`ai-augmented/`](./ai-augmented/) within this
+ADR tree:
 
--> [View all AI ADRs](../../foundations/common-rules/ai-augmented/06-adrs/README.md)
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [ADR 0001: Harness Engineering](./ai-augmented/0001-harness-engineering.md) | Harness Engineering for AI-augmented development | Standardize agent harnesses | AI ADR (accepted) | No |
+| [ADR 0002: MCP Integration Protocol](./ai-augmented/0002-mcp-integration-protocol.md) | MCP as agent-service integration protocol | Standardize agent integration | AI ADR (accepted) | No |
+| [ADR 0003: Model Selection Governance](./ai-augmented/0003-model-selection-governance.md) | Model selection and governance criteria | Govern model choices | AI ADR (accepted) | No |
+| [ADR 0004: AGENTS.md Mandatory Artifact](./ai-augmented/0004-agents-md-mandatory-artifact.md) | AGENTS.md as mandatory artifact (level 1+) | Make agent rules explicit | AI ADR (accepted) | No |
+| [ADR 0005: Human-in-the-Loop Policy](./ai-augmented/0005-human-in-the-loop-policy.md) | Human-in-the-Loop policy for irreversible operations | Keep humans accountable | AI ADR (accepted) | No |
+| [ADR 0104: Interaction Adapter Port](./ai-augmented/ADR-0104-Interaction-Adapter-Port.md) | Interaction adapter port for agentic mediation | Bound the agentic interaction seam | AI ADR | No |
+
+> **Two AI ADR sets exist.** The table above is the authoritative one (status
+> **Accepted**, 2026-06-23). An earlier, shorter proposal set (status **Proposed**,
+> 2026-05-11) lives in the AI-augmented corpus at
+> [06-adrs](../../foundations/common-rules/ai-augmented/06-adrs/README.md) under
+> `ADR-AI-NNN` identifiers. Reconciling the two — superseding or merging the
+> proposal set — is an Architecture Board decision and has not been applied here.
 
 ---
 

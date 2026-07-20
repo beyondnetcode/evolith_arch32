@@ -53,5 +53,9 @@ Esta topologia no es una recompensa por crecimiento del codigo. Es un modelo ope
 
 Este perfil es solo tecnico. Define restricciones de arquitectura y contexto de validacion. No define timing de entrega, ownership, staffing, ROI, costo, presupuesto ni priorizacion de Funnel 0. Evolith Tracker posee esas preocupaciones de negocio mediante su ACL.
 
+## Flujos de CLI
+
+Ver [`cli/cli-flows.es.md`](./cli/cli-flows.es.md) para los flujos de interaccion CLI de este perfil.
+
 ---
 [Volver al Hub de Topologias](../../README.es.md)

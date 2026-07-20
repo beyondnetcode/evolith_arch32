@@ -48,6 +48,7 @@ Topology guidance is dimensional, manifest-driven, and executable through the sh
 | [Topology Manifest Schema](../../../../src/rulesets/schema/topology-manifest.schema.json) | Machine-readable manifest contract |
 | [Multi-Topology Implementation Plan](../../control-center/audits/multi-topology-reference-corpus-implementation-plan.md) | Supporting execution plan |
 | [Gap Tracking Board](../../control-center/gaps/gap-tracking.md) | Canonical status tracker |
+| [Execution — Operational Budgets Runbook](./execution/operational-budgets-runbook.md) | Operational budgets and runbook for topology execution |
 
 ---
 [Back to Architecture Hub](../README.md)

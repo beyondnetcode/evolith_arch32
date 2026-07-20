@@ -43,9 +43,9 @@ Promover el **modelo de gobierno Producto/Iniciativa** a estándar canónico del
 - Formalizar los tres tipos de salida: `ValidationResult` (evaluación), `DecisionRecord` (decisión vinculante, emitida por Tracker), `AdvisoryRecord` (asistencia arquitectónica no vinculante, producida por motores advisory + agentes IA como Winston).
 
 ### 3. Schemas y rulesets
-- Nuevos schemas en `rulesets/schema/`: `product`, `initiative`, `external-reference`, `artifact`, `evidence`, `validation-result`, `decision-record`, `advisory-record`.
+- Nuevos schemas en `src/rulesets/schema/`: `product`, `initiative`, `external-reference`, `artifact`, `evidence`, `validation-result`, `decision-record`, `advisory-record`.
 - Deprecar (con grandfathering) `evolith-user-story`, `agile-backlog`, `functional-story`, `ballpark-estimation`, `technical-story` → perfiles de `external-reference`.
-- Quitar artefactos de historia de `mandatoryEvidence` en `rulesets/sdlc/phase-gates.rules.json`; reescribir `DOD-03` fuera de "story tracker". Añadir un contrato `product-initiative` a `satellite-contracts.rules.json` (modo `warn` → `fail`).
+- Quitar artefactos de historia de `mandatoryEvidence` en `src/rulesets/sdlc/phase-gates.rules.json`; reescribir `DOD-03` fuera de "story tracker". Añadir un contrato `product-initiative` a `satellite-contracts.rules.json` (modo `warn` → `fail`).
 
 ### 4. Políticas OPA
 - Introducir el `input.context` canónico (tenant, product, initiative, phase, gate, artifacts, evidence, externalReferences, rulesetSnapshot). Re-anclar `dod.rego` (hoy 100% `input.story.*`) a Iniciativa + Evidencia; añadir `multi-tenancy` MTN-09..11 y scoping ABAC tenant/product/initiative. Paridad Native+OPA (ADR-0041).
@@ -67,7 +67,7 @@ Promover el **modelo de gobierno Producto/Iniciativa** a estándar canónico del
 ## Criterios de aceptación
 
 - [ ] ADR-0100 aprobado: frontera gobierno/ejecución canónica para el Core y todos los satélites.
-- [ ] Entidades `Producto`/`Iniciativa` + los ocho schemas nuevos en `rulesets/schema/`; contrato `product-initiative` en `satellite-contracts` + `input.context` OPA conectado a `/evaluate`.
+- [ ] Entidades `Producto`/`Iniciativa` + los ocho schemas nuevos en `src/rulesets/schema/`; contrato `product-initiative` en `satellite-contracts` + `input.context` OPA conectado a `/evaluate`.
 - [ ] Ningún gate del Core depende de historias/backlog; `ExternalReference` es la única costura operativa (reglas `EXT-01..05`).
 - [ ] `ValidationResult` / `DecisionRecord` / `AdvisoryRecord` separados; `Verdict` reutilizado (sin nuevo vocabulario); `GateDecision` → `CoreGateVerdict`; `'WAIVED'` → `Verdict.WAIVE`.
 - [ ] `EVOLITH_PARITY_FULL=true` con 0 drift (Native + OPA).
@@ -84,10 +84,10 @@ Promover el **modelo de gobierno Producto/Iniciativa** a estándar canónico del
 | Documento de diseño | `reference/core/product-initiative-governance-redesign.es.md` |
 | ADR | `reference/core/architecture/adrs/core/0100-governance-execution-boundary-product-initiative.md` |
 | Evidencia de conflación | `reference/core/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,209,223` |
-| Entidades ausentes | `packages/core-domain/src/domain/entities/`, `gate-evidence.ts:87-89` |
+| Entidades ausentes | `src/packages/core-domain/src/domain/entities/`, `gate-evidence.ts:87-89` |
 | Precedente de frontera | `packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts:55` |
 | Modelo del Tracker | `product/products/evolith-tracker/sdlc-tracker-technical-interfaces.md:415-428` |
-| Ruleset / Rego de phase-gates | `rulesets/sdlc/phase-gates.rules.json`, `rulesets/opa/phase-gates.rego`, `rulesets/opa/dod.rego` |
+| Ruleset / Rego de phase-gates | `src/rulesets/sdlc/phase-gates.rules.json`, `src/rulesets/opa/phase-gates.rego`, `src/rulesets/opa/dod.rego` |
 | Contratos de satélite | `rulesets/satellite-contracts/satellite-contracts.rules.json` |
 
 ---

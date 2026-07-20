@@ -100,7 +100,7 @@ The selected option was evaluated against:
 
 Evidence used:
 
-- existing F1/F2/F3 rulesets under `rulesets/architecture/`;
+- existing F1/F2/F3 rulesets under `src/rulesets/architecture/`;
 - existing OPA architecture policy under `rulesets/opa/architecture.rego`;
 - ADR-0048 and ADR-0070 root taxonomy constraints;
 - ADR-0073 unified CLI/MCP output contract;
@@ -122,7 +122,7 @@ Evidence used:
 - Dual-Engine Parity increases implementation work for every new topology rule.
 - Existing tools that only know `--arch-level` require a compatibility mapping during migration.
 
-**Accepted trade-off:** the initial implementation will use `reference/core/architecture/topologies/` and `rulesets/topologies/` instead of root `/topologies/` to preserve current repository taxonomy. A future ADR may revisit root placement only if the governance value outweighs the root-taxonomy cost.
+**Accepted trade-off:** the initial implementation will use `reference/core/architecture/topologies/` and `src/rulesets/topologies/` instead of root `/topologies/` to preserve current repository taxonomy. A future ADR may revisit root placement only if the governance value outweighs the root-taxonomy cost.
 
 ## References
 

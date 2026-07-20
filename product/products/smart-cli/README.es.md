@@ -8,7 +8,7 @@
 | **Paquete** | `@beyondnet/evolith-cli` |
 | **Versión** | `1.1.4` |
 | **Binario** | `evolith-cli` |
-| **Fuente de verdad** | [`sdk/cli/README.md`](../../../src/sdk/cli/README.md) (autoritativo, 1200+ líneas) |
+| **Fuente de verdad** | [`src/sdk/cli/README.md`](../../../src/sdk/cli/README.md) (autoritativo, 1200+ líneas) |
 | **Inventario de superficie** | [`product-inventory.md`](./product-inventory.md) (generado — no editar a mano) |
 
 Esta página es un **hub**: te orienta y te dirige a la documentación profunda autoritativa. Para las opciones exhaustivas de cada comando, remítete siempre al [README de código](../../../src/sdk/cli/README.md) y al [Inventario de Superficie de Producto](./product-inventory.md) generado.
@@ -205,7 +205,7 @@ Los valores por defecto opcionales que consume `validate` (topología, fase, rul
 
 ## Dónde encaja en Evolith
 
-Evolith CLI forma parte de la **suite Evolith**, construida sobre **Evolith Core** (`packages/core`, `core-domain`, `infra-providers`, `sdk-client`, `mcp-tools`). Productos hermanos: **Evolith Tracker**, **Core API** (`apps/core-api`), **Evolith MCP Services** y el modelo de referencia **UMS Reference**.
+Evolith CLI forma parte de la **suite Evolith**, construida sobre **Evolith Core** (`src/packages/core`, `core-domain`, `infra-providers`, `sdk-client`, `mcp-tools`). Productos hermanos: **Evolith Tracker**, **Core API** (`src/apps/core-api`), **Evolith MCP Services** y el modelo de referencia **UMS Reference**.
 
 ## Documentación
 
@@ -214,6 +214,18 @@ Evolith CLI forma parte de la **suite Evolith**, construida sobre **Evolith Core
 - [Guía de demostración](../../../src/sdk/cli/docs/SMART-CLI-DEMO.md) — recorrido de extremo a extremo.
 - [Integración MCP](../../../src/sdk/cli/docs/MCP-INTEGRATION.md) — detalles del protocolo MCP.
 - [Protocolo de Handoff](../../../src/sdk/cli/docs/HANDOFF-PROTOCOL.md) — especificación del artefacto de handoff SDLC.
+
+## Documentación Adicional
+
+El material más profundo vive en [`docs/`](./docs/):
+
+| Documento | Contenido |
+| :--- | :--- |
+| [Visión](./docs/VISION.es.md) | Visión y posicionamiento del producto |
+| [Integración MCP](./docs/MCP-INTEGRATION.es.md) | Cómo la CLI expone y consume MCP |
+| [Protocolo de Handoff](./docs/HANDOFF-PROTOCOL.es.md) | Contrato de handoff entre agentes |
+| [Modelos de Datos](./docs/data-models.es.md) | Estructuras de datos canónicas |
+| [Demo](./docs/SMART-CLI-DEMO.es.md) | Recorrido de una sesión completa |
 
 ## Soporte
 

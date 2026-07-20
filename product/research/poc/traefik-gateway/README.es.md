@@ -1,4 +1,10 @@
-# Index of traefik-gateway
+# Índice de traefik-gateway
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
+> **Navegación Bilingüe:** [English Version](./README.md)
 
+## Archivos
+
+* [`docker-compose.yml`](./docker-compose.yml)
+
+---
+[Volver al Nivel Superior](../README.es.md)

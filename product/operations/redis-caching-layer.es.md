@@ -47,7 +47,7 @@
 | Estado de gate | 300s (5 min) | Las transiciones de fase son deliberadas; TTL corto no es necesario |
 | Descubrimiento MCP | 600s (10 min) | Las listas de herramientas/recursos son estáticas en runtime; TTL largo es seguro |
 
-Todos los TTLs están definidos en `apps/core-api/src/infrastructure/cache/cache-keys.ts` (constante `CacheTTL`) y `packages/mcp-server/src/mcp/mcp-cache.service.ts`.
+Todos los TTLs están definidos en `src/apps/core-api/src/infrastructure/cache/cache-keys.ts` (constante `CacheTTL`) y `src/packages/mcp-server/src/mcp/mcp-cache.service.ts`.
 
 ## Invalidación de Caché
 

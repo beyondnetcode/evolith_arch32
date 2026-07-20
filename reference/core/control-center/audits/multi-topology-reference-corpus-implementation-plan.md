@@ -22,7 +22,7 @@ The approved direction is:
 2. Treat each topology as a governed profile declared by a `topology.manifest.json`.
 3. Keep universal ADRs in the existing ADR registry and reference them from topology profiles.
 4. Put human-authored topology documentation under `reference/core/architecture/topologies/`.
-5. Put executable topology rules under `rulesets/topologies/`.
+5. Put executable topology rules under `src/rulesets/topologies/`.
 6. Preserve Dual-Engine Parity: every new topology validation rule requires Native JSON ruleset coverage and matching OPA/Rego coverage.
 7. Do not create a root-level `/topologies/` directory unless a future ADR explicitly changes the root taxonomy.
 
@@ -270,7 +270,7 @@ Use this order. Do not skip ahead to implementation before the ADR and schema ex
 2. Update repository taxonomy and taxonomy rules.
 3. Add `topology-manifest.schema.json`.
 4. Create `reference/core/architecture/topologies/README.md` and `.es.md`.
-5. Create `rulesets/topologies/README.md` and `.es.md`.
+5. Create `src/rulesets/topologies/README.md` and `.es.md`.
 6. Create the `progressive-axis` profiles and map F1/F2/F3.
 7. Create draft profiles for serverless, edge, event-driven, data mesh, and agentic AI.
 8. Add topology ruleset loading to the shared Core Domain layer.
@@ -314,7 +314,7 @@ The Multi-Topology Reference Corpus transition is complete only when:
 1. Multi-Topology ADR is accepted.
 2. Topology manifest schema exists and is validated.
 3. `reference/core/architecture/topologies/` is linked from Architecture Hub and navigation indexes.
-4. `rulesets/topologies/` exists and is linked from Rulesets Hub.
+4. `src/rulesets/topologies/` exists and is linked from Rulesets Hub.
 5. Modular monolith is represented as the first topology profile.
 6. F1/F2/F3 compatibility is preserved.
 7. Serverless, edge computing, event-driven, data mesh, and agentic AI profiles exist at least as draft profiles.

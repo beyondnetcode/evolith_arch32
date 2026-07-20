@@ -18,7 +18,7 @@ Accepted (2026-06-29 — Architecture Board) — **supersede la Decisión 1 de [
 
 Eso contradice el criterio corregido (el Core no debe poseer/persistir producto/tenant/iniciativa/evidencia/decisión) **y el código real**, que ya es un evaluador stateless:
 
-- `packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts` — pipeline puro `manifest → topología → gate → reglas Rego → verdict`, sin persistencia.
+- `src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts` — pipeline puro `manifest → topología → gate → reglas Rego → verdict`, sin persistencia.
 - `packages/core-domain/src/domain/gate-evidence.ts:87-89` — `ExecutionContext { initiative?; tenant?; phase? }` explícitamente *"Never persisted or interpreted"*.
 - `packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts:55` — devuelve `skipped` ("Sprint throughput requires tracker data"): el Core declina datos operativos.
 - `apps/core-api/src/application/services/workspace-reference-resolver.service.ts:9-11` — el Core "never receives a user path, UMS token, repository credential, or tenant identifier"; el consumidor pasa una referencia opaca.

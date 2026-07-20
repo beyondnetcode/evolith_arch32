@@ -1,4 +1,10 @@
-# Index of provisioning
+# Índice de provisioning
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
+> **Navegación Bilingüe:** [English Version](./README.md)
 
+## Subdirectorios
+
+* [`datasources/`](./datasources/README.es.md)
+
+---
+[Volver al Nivel Superior](../README.es.md)

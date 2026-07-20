@@ -14,7 +14,7 @@ El Agent Runtime es una capa de orquestación delgada y gobernada. Dado un
 selecciona una capacidad gobernada, invoca los puertos adecuados, ejecuta
 validaciones, devuelve un `AgentRuntimeResult` y emite trazabilidad. Está
 implementada en
-[`packages/agent-runtime`](../../../../src/packages/agent-runtime/README.es.md)
+[`src/packages/agent-runtime`](../../../../src/packages/agent-runtime/README.es.md)
 siguiendo **Puertos y Adaptadores** para que ninguna tecnología de runtime/LLM
 se convierta en dependencia del dominio.
 

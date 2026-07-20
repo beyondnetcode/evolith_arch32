@@ -26,7 +26,7 @@ Esta área define la arquitectura interna prevista de Evolith Tracker (diseño o
 - [Diseño de Interfaces Técnicas de Tracker](../sdlc-tracker-technical-interfaces.es.md)
 - Secciones específicas de Tracker del [Diseño Objetivo de Composición Gobernada](../../../suite/architecture/evolith-governed-composition-target-design.es.md)
 
-> **Qué existe hoy.** No hay arquitectura de Tracker construida. Las únicas costuras entregadas que habilitan a Tracker viven en Core (`apps/core-api` solo REST bajo `/api/v1`, `packages/core-domain`); ver el delta [Qué Existe Hoy vs. el Objetivo](../README.es.md#31-qué-existe-hoy-vs-el-objetivo) en el README del producto para el inventario de costuras en vivo y sus referencias de gap-tracking.
+> **Qué existe hoy.** No hay arquitectura de Tracker construida. Las únicas costuras entregadas que habilitan a Tracker viven en Core (`src/apps/core-api` solo REST bajo `/api/v1`, `src/packages/core-domain`); ver el delta [Qué Existe Hoy vs. el Objetivo](../README.es.md#31-qué-existe-hoy-vs-el-objetivo) en el README del producto para el inventario de costuras en vivo y sus referencias de gap-tracking.
 
 ## Límite
 

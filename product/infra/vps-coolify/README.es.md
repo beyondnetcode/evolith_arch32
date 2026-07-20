@@ -111,7 +111,7 @@ Ambos usan builds multi-stage en Alpine y corren como usuario no-root `evolith` 
 
 1. Coolify → **Projects → New Application → Docker**.
 2. Fuente: GitHub → seleccionar repo `evolith` → rama `main`.
-3. Build context: `apps/core-api`, Dockerfile: `apps/core-api/Dockerfile`.
+3. Build context: `src/apps/core-api`, Dockerfile: `src/apps/core-api/Dockerfile`.
 4. Puerto: `3000`.
 5. Dominio: `api.tudominio.com` (Coolify configura Traefik + Let's Encrypt automáticamente).
 6. Variables de entorno:
@@ -128,7 +128,7 @@ Ambos usan builds multi-stage en Alpine y corren como usuario no-root `evolith` 
 ### mcp-server
 
 Repetir los pasos anteriores con:
-- Build context: `packages/mcp-server`
+- Build context: `src/packages/mcp-server`
 - Puerto: `3001`
 - Dominio: `mcp.tudominio.com`
 

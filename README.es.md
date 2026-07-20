@@ -194,6 +194,7 @@ Evolith CLI incluye **20 comandos** y se configura mediante **`evolith.yaml`**. 
 | Área | Enlace |
 |---|---|
 | Constitución Core | [Hub de Evolith Core](./reference/core/README.es.md) |
+| Corpus de producto | [Hub de Producto](./product/README.es.md) |
 | Arquitectura Maestra | [Arquitectura Maestra C4](./reference/core/architecture/demos/C4-MASTER-ARCHITECTURE.es.md) |
 | Gobernanza SDLC | [Centro de Gobernanza SDLC](./reference/core/sdlc/README.es.md) |
 | Topologías | [Hub de Topologías](./reference/core/architecture/topologies/README.es.md) |

@@ -22,6 +22,8 @@ Ordered from general policy to concrete evidence:
 |---|---|---|---|---|
 | [Agnostic Baseline](../foundations/agnostic-baseline.md) | Top-level runtime-agnostic principles, patterns, and non-negotiable constraints | Anchor every product and runtime to one baseline | Baseline policy | Yes |
 | [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.md) | Consolidated, verified end-to-end system design (deployed core-api, MCP server, Agent Runtime) | See the architecture as actually built and deployed | System design | No |
+| [C4 Level 3 — Components](./level-3-components/README.md) | Component breakdown per deployable: core-api, MCP server, Agent Runtime, Evolith CLI | Zoom into a container's internals | System design | No |
+| [C4 Level 4 — Code Modules](./level-4-code-modules/README.md) | Module-level view of `core-domain` | Zoom into the code structure | System design | No |
 | [Visual Map](https://beyondnetcode.github.io/evolith_arch32/) | Interactive explorer for the Evolith architecture | Navigate the C4 model and its components visually | Interactive map | No |
 | [Core Interface Flows](./view-by-interface-flow.md) | IN/OUT contracts, processing paths, resilience, audit, and client guidance for Core interfaces | Understand how communication crosses every Core boundary | Architecture view | No |
 | [Principles](../../foundations/principles/README.md) | Foundational architecture principles | Ground all decisions in shared principles | Area hub | Yes |

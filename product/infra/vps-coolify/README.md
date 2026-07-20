@@ -111,7 +111,7 @@ Both use multi-stage Alpine builds and run as non-root user `evolith` (UID 1001)
 
 1. Coolify → **Projects → New Application → Docker**.
 2. Source: GitHub → select `evolith` repo → branch `main`.
-3. Build context: `apps/core-api`, Dockerfile: `apps/core-api/Dockerfile`.
+3. Build context: `src/apps/core-api`, Dockerfile: `src/apps/core-api/Dockerfile`.
 4. Port: `3000`.
 5. Domain: `api.yourdomain.com` (Coolify configures Traefik + Let's Encrypt automatically).
 6. Environment variables:
@@ -128,7 +128,7 @@ Both use multi-stage Alpine builds and run as non-root user `evolith` (UID 1001)
 ### mcp-server
 
 Repeat the steps above with:
-- Build context: `packages/mcp-server`
+- Build context: `src/packages/mcp-server`
 - Port: `3001`
 - Domain: `mcp.yourdomain.com`
 

@@ -52,5 +52,11 @@ Explora el registro completo de migración y las fronteras de diseño dentro de 
 | [Repositorio UMS](https://github.com/beyondnetcode/ums) | Acceso al código ejecutable del producto y sus instrucciones actuales de despliegue. |
 | [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) | Documentación oficial de los límites modulares y decisiones técnicas de UMS. |
 
+## Ejemplos Resueltos
+
+| Ejemplo | Descripción |
+| :--- | :--- |
+| [Composición Cross-Topología](./examples/cross-topology-composition/README.es.md) | Componer una topología del eje progresivo con una del eje de integración |
+
 ---
 [Volver al Hub de Referencia](../../../README.es.md)

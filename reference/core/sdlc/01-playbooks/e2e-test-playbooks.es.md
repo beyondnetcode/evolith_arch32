@@ -15,7 +15,7 @@ reproducible. Un run verde de los cuatro playbooks es el gate E2E cross-superfic
 
 - **Superficie:** dominio de governance SDLC (fase → gate → artefacto → verdict).
 - **Comando:** `npm run test:e2e --workspace @beyondnet/evolith-core-domain`
-- **Suite:** `packages/core-domain/src/__e2e__/governance-flow.e2e.spec.ts` (13 tests).
+- **Suite:** `src/packages/core-domain/src/__e2e__/governance-flow.e2e.spec.ts` (13 tests).
 - **Escenarios:** aprobación de gate por ARCHITECT (verdict PASS + `GateApprovedEvent` + auditoría + transiciones de fase); artefacto faltante → FAIL + `GateRejectedEvent`; denegación RBAC (`GateAuthorizationError`); entrega de webhook de `gate.approved`; validación de workflow de 5 fases + Blueprint.
 - **Esperado:** 13/13 verde contra un satélite real en tmpdir.
 
@@ -31,7 +31,7 @@ reproducible. Un run verde de los cuatro playbooks es el gate E2E cross-superfic
 
 - **Superficie:** superficie HTTP de `core-api` (versionado URI `api/v1`, `/health` neutral, `/metrics`).
 - **Comando:** `npm run --workspace apps/core-api test:e2e`
-- **Suite:** `apps/core-api/test/app.e2e-spec.ts`.
+- **Suite:** `src/apps/core-api/test/app.e2e-spec.ts`.
 - **Escenarios:** `GET /health/live` → 200; `GET /health` → 200; `GET /metrics` → 200; `GET /api/v1/rulesets` → 200; `GET /` → 404 (sin ruta raíz).
 - **Esperado:** 5/5 verde. Requiere `WORKSPACE_ROOT` (puesto por `test-setup.js` vía `setupFiles`).
 
@@ -39,7 +39,7 @@ reproducible. Un run verde de los cuatro playbooks es el gate E2E cross-superfic
 
 - **Superficie:** superficie de protocolo MCP HTTP de `mcp-server`.
 - **Comando:** `npm run --workspace packages/mcp-server build && npm run --workspace packages/mcp-server test:e2e`
-- **Suite:** `packages/mcp-server/test/mcp-server.e2e-spec.ts` (levanta `node dist/main serve --transport http`).
+- **Suite:** `src/packages/mcp-server/test/mcp-server.e2e-spec.ts` (levanta `node dist/main serve --transport http`).
 - **Escenarios:** `/health` público → 200; `POST /` sin key → 401 (auth fail-closed); `initialize` con key → 200 + `serverInfo.name = evolith-mcp` + `mcp-session-id`.
 - **Esperado:** 3/3 verde. Requiere build previo (`dist/main`).
 

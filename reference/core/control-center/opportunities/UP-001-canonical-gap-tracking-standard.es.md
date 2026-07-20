@@ -43,7 +43,7 @@ Promover el sistema de gap-tracking de Core a **estándar canónico del ecosiste
 | **Closure-Evidence Standard** | `*-gap-closure-evidence-standard.md` + `*-gap-closure-evidence.json` | Un record por `DONE`: `{id, closedAt, closureCommit, evidence[], validationCommands[], dependencyDisposition, dependencyRationale}`. |
 | **Maturity Reconciliation** | `*-maturity-reconciliation.json` | Conteos + readiness, **independiente por repo**. Core ya marca `Evolith Tracker → maturityIncluded:false`. |
 
-**1.2** Crear los **JSON Schemas** en `rulesets/schema/`:
+**1.2** Crear los **JSON Schemas** en `src/rulesets/schema/`:
 
 - `gap-board.schema.json`
 - `gap-catalog-entry.schema.json`
@@ -198,7 +198,7 @@ La historia desplazada de una celda `Gap` no se descarta: se traslada a la entra
 ## Criterios de Aceptación
 
 - [ ] ADR `core/00NN` aprobado: el estándar de 4 piezas es **obligatorio** para Core y todos los satélites.
-- [ ] 4 JSON Schemas en `rulesets/schema/` + contrato `gap-tracking` en `satellite-contracts` + reglas OPA conectadas a `/evaluate`.
+- [ ] 4 JSON Schemas en `src/rulesets/schema/` + contrato `gap-tracking` en `satellite-contracts` + reglas OPA conectadas a `/evaluate`.
 - [ ] `evolith gap …` (CLI), `evolith-gap-*` (MCP) y `/api/v1/gaps[…]` (API) operativos **con paridad** (BR-008) y envelope ADR-0073.
 - [ ] Un satélite no conforme **falla** la evaluación de Core (regla `gap-tracking` en estado `failed`).
 - [ ] **Cero formatos divergentes**: queda una única forma de controlar gaps; los registros ad-hoc quedan deprecados.
@@ -222,7 +222,7 @@ La historia desplazada de una celda `Gap` no se descarta: se traslada a la entra
 | Reconcile Maturity Harness | `.harness/scripts/reconcile-maturity.mjs` |
 | Sync Tracking Order Harness | `.harness/scripts/sync-tracking-order.mjs` |
 | MCP Read Gap Tracking | `packages/mcp-tools/src/tools/read-gap-tracking.js` |
-| Core API | `apps/core-api` (ADR-0074 / ADR-0073) |
+| Core API | `src/apps/core-api` (ADR-0074 / ADR-0073) |
 
 ---
 

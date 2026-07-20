@@ -370,8 +370,8 @@ persiste ni interpreta* producto, tenant ni iniciativa.
 
 ### Artefactos legacy (diseño tenant-aware superado)
 
-`rulesets/tenants/`, `rulesets/schema/tenant.schema.json`,
-`rulesets/schema/tenant-override.schema.json` y `rulesets/opa/multi-tenancy.rego`
+`src/rulesets/tenants/`, `src/rulesets/schema/tenant.schema.json`,
+`src/rulesets/schema/tenant-override.schema.json` y `src/rulesets/opa/multi-tenancy.rego`
 **existen físicamente en disco**, pero son artefactos **legacy** del diseño
 pre-ADR-0101 (tenant-aware). ADR-0101 supersede ese modelo: el Core no aplica
 overrides por tenant ni evalúa identidad de tenant. Su remoción física es una

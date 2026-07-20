@@ -1,4 +1,8 @@
-# Index of 00-overview
+# Índice de 00-overview
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
+* [adoption-guide](./adoption-guide.es.md)
+* [glossary](./glossary.es.md)
+* [what-is-this](./what-is-this.es.md)
 
+---
+[Volver al Nivel Superior](../README.es.md)

@@ -23,8 +23,8 @@ Usa este mapa cuando necesites decidir dónde leer, editar, agregar o auditar co
 |---|---|
 | Comenzar por el portal | Usar el [README](../../../../README.es.md) raíz y luego el [Índice Maestro Global](./MASTER_INDEX.es.md) cuando ya conozcas la familia del artefacto. |
 | Mantener estándares en `reference/` | Documentos de arquitectura, gobernanza, SDLC, operaciones y referencia de productos pertenecen bajo `reference/`. |
-| Mantener reglas ejecutables en `rulesets/` | La política arquitectónica legible por máquina pertenece en `rulesets/`; las reglas específicas por topología pertenecen en `rulesets/topologies/`. |
-| Mantener implementación de producto fuera del corpus | `apps/`, `packages/`, `sdk/` y `tests/` locales soportan superficies de gobernanza ejecutable; el código de producto de negocio permanece fuera de este repositorio salvo alcance explícito. |
+| Mantener reglas ejecutables en `rulesets/` | La política arquitectónica legible por máquina pertenece en `rulesets/`; las reglas específicas por topología pertenecen en `src/rulesets/topologies/`. |
+| Mantener implementación de producto fuera del corpus | `src/apps/`, `src/packages/`, `src/sdk/` y `tests/` locales soportan superficies de gobernanza ejecutable; el código de producto de negocio permanece fuera de este repositorio salvo alcance explícito. |
 | No crear áreas raíz casualmente | Nuevos directorios raíz requieren autoridad taxonómica aceptada y actualización sincronizada de reglas/scripts. |
 | Preservar paridad bilingüe | Archivos Markdown individuales usan `.es.md`; contenido español agrupado usa `-es/` solo cuando el área ya sigue esa convención. |
 
@@ -48,7 +48,7 @@ Usa este mapa cuando necesites decidir dónde leer, editar, agregar o auditar co
 | `reference/navigation/` | C1 | Índice maestro global y activos de navegación | Mantener el ruteo completo del repositorio | Divergir del modelo de navegación raíz |
 | `reference/core/architecture/` | C0 | Hub de arquitectura, ADRs, blueprints, patrones canónicos, principios y corpus topológico | Agregar autoridad arquitectónica, decisiones aceptadas y patrones reutilizables | Tratar decisiones específicas de UMS como universales sin autoridad de ADR/estándar |
 | `reference/core/architecture/adrs/` | C0 | Registros de decisión arquitectónica aceptados, propuestos o reemplazados | Registrar decisiones arquitectónicas durables y actualizar enlaces entrantes | Ocultar decisiones en archivos de planeamiento o reportes |
-| `reference/core/architecture/topologies/` | C1 | Guía topológica legible por humanos y reportes de madurez | Mantener guía de adopción, operación, evolución y madurez por topología | Poner reglas ejecutables aquí; usar `rulesets/topologies/` |
+| `reference/core/architecture/topologies/` | C1 | Guía topológica legible por humanos y reportes de madurez | Mantener guía de adopción, operación, evolución y madurez por topología | Poner reglas ejecutables aquí; usar `src/rulesets/topologies/` |
 | `reference/core/sdlc/` | C0 | SDLC, estándares, gobernanza ADR, terminología y onboarding | Mantener reglas de gobernanza, gates de ciclo de vida y estándares | Crear gobernanza paralela bajo `docs/` raíz |
 | `product/suite/` | C1 | Visión de portafolio, estrategia de suite, posicionamiento y comunicaciones | Alinear dirección de producto con gobernanza Core | Guardar artefactos de delivery que pertenecen a un producto específico |
 | `product/products/` | C1 | Documentos internos de referencia para productos Evolith como Core API, Tracker, servicios MCP, Evolith CLI y referencia UMS | Mantener documentación de producto alineada con estándares Core | Mezclar código fuente ejecutable con documentación de referencia |
@@ -75,25 +75,25 @@ Usa este mapa cuando necesites decidir dónde leer, editar, agregar o auditar co
 | Ruta | Criticidad | Qué encuentras | Qué hacer allí | No hacer |
 |---|---|---|---|---|
 | `rulesets/` | C0 | Hub de gobernanza arquitectónica legible por máquina | Mantener reglas descubribles, versionadas y validadas | Guardar estándares solo-prosa aquí |
-| `rulesets/opa/` | C0 | Políticas OPA/Rego transversales y schemas | Mantener paridad con evaluadores nativos cuando cambien reglas | Agregar Rego sin tests o paridad nativa cuando sea requerida |
-| `rulesets/topologies/` | C0 | Reglas ejecutables específicas por topología | Preservar paridad de topologías aceptadas entre Native y OPA donde aplique | Poner guía topológica legible por humanos aquí |
-| `rulesets/cross-cutting/` | C0 | Restricciones transversales y taxonomía del repositorio | Actualizar con cambios de reglas taxonómicas | Cambiar política sin validadores correspondientes |
-| `rulesets/contracts/` | C0 | Reglas de contrato y fixtures | Mantener reproducibles ADR-0073 y contratos de superficie | Dejar que fixtures deriven del comportamiento CLI/MCP/API |
-| `rulesets/sdlc/`, `rulesets/evidence/`, `rulesets/governance/`, `rulesets/adr/` | C0 | Reglas de validación de ciclo de vida, evidencia, gobernanza y ADR | Mantener la gobernanza exigida por CI sincronizada con estándares | Declarar una regla documental que ningún evaluador aplica |
-| `rulesets/cli/`, `rulesets/mcp/`, `rulesets/architecture/`, `rulesets/infrastructure/`, `rulesets/observability/`, `rulesets/schema/`, `rulesets/acl/` | C0 | Dominios de validación por superficie | Actualizar cuando cambie la arquitectura o conducta runtime correspondiente | Mezclar dominios de reglas no relacionados |
+| `src/rulesets/opa/` | C0 | Políticas OPA/Rego transversales y schemas | Mantener paridad con evaluadores nativos cuando cambien reglas | Agregar Rego sin tests o paridad nativa cuando sea requerida |
+| `src/rulesets/topologies/` | C0 | Reglas ejecutables específicas por topología | Preservar paridad de topologías aceptadas entre Native y OPA donde aplique | Poner guía topológica legible por humanos aquí |
+| `src/rulesets/cross-cutting/` | C0 | Restricciones transversales y taxonomía del repositorio | Actualizar con cambios de reglas taxonómicas | Cambiar política sin validadores correspondientes |
+| `src/rulesets/contracts/` | C0 | Reglas de contrato y fixtures | Mantener reproducibles ADR-0073 y contratos de superficie | Dejar que fixtures deriven del comportamiento CLI/MCP/API |
+| `src/rulesets/sdlc/`, `src/rulesets/evidence/`, `src/rulesets/governance/`, `src/rulesets/adr/` | C0 | Reglas de validación de ciclo de vida, evidencia, gobernanza y ADR | Mantener la gobernanza exigida por CI sincronizada con estándares | Declarar una regla documental que ningún evaluador aplica |
+| `src/rulesets/cli/`, `src/rulesets/mcp/`, `src/rulesets/architecture/`, `src/rulesets/infrastructure/`, `src/rulesets/observability/`, `src/rulesets/schema/`, `src/rulesets/acl/` | C0 | Dominios de validación por superficie | Actualizar cuando cambie la arquitectura o conducta runtime correspondiente | Mezclar dominios de reglas no relacionados |
 
 ## Workspaces de Producto y Runtime
 
 | Ruta | Criticidad | Qué encuentras | Qué hacer allí | No hacer |
 |---|---|---|---|---|
-| `apps/core-api/` | C0 | Workspace del Service CORE API | Validar conducta API, contratos, auth, cache y endpoints de gobernanza | Tratarlo como código genérico de negocio de producto |
+| `src/apps/core-api/` | C0 | Workspace del Service CORE API | Validar conducta API, contratos, auth, cache y endpoints de gobernanza | Tratarlo como código genérico de negocio de producto |
 | `apps/agent-sandbox/` | C1 | Workspace de aplicación sandbox agéntica | Probar patrones de interacción agéntica de forma segura | Guardar secretos productivos o data de tenant |
-| `packages/core-domain/` | C0 | Modelo de dominio Core y casos de uso | Preservar aislamiento DDD y lógica de dominio de gobernanza ejecutable | Agregar preocupaciones de infraestructura a la capa de dominio |
-| `packages/core/` | C1 | Implementación de paquete core compartido | Mantener lógica runtime reutilizable con alcance y pruebas | Crear utilidades compartidas ambiguas sin ownership |
-| `packages/infra-providers/` | C1 | Adaptadores de proveedores de infraestructura | Encapsular lógica de integración con plataforma/proveedor | Filtrar supuestos de proveedor hacia código de dominio |
-| `packages/mcp-server/` | C0 | Implementación del servidor MCP | Mantener herramientas MCP, auth, contratos y transporte alineados con ADRs | Duplicar comportamiento solo-CLI sin paridad contractual |
+| `src/packages/core-domain/` | C0 | Modelo de dominio Core y casos de uso | Preservar aislamiento DDD y lógica de dominio de gobernanza ejecutable | Agregar preocupaciones de infraestructura a la capa de dominio |
+| `src/packages/core/` | C1 | Implementación de paquete core compartido | Mantener lógica runtime reutilizable con alcance y pruebas | Crear utilidades compartidas ambiguas sin ownership |
+| `src/packages/infra-providers/` | C1 | Adaptadores de proveedores de infraestructura | Encapsular lógica de integración con plataforma/proveedor | Filtrar supuestos de proveedor hacia código de dominio |
+| `src/packages/mcp-server/` | C0 | Implementación del servidor MCP | Mantener herramientas MCP, auth, contratos y transporte alineados con ADRs | Duplicar comportamiento solo-CLI sin paridad contractual |
 | `packages/mcp-tools/` | C1 | Superficie del paquete de herramientas MCP | Mantener herramientas descubribles y alineadas a contratos | Mezclar workflows de producto no relacionados |
-| `sdk/cli/` | C0 | Workspace y superficie de distribución de Evolith CLI | Mantener CLI, plantillas, integración shell, validación local y paridad contractual | Usar `dist/` generado como fuente de verdad |
+| `src/sdk/cli/` | C0 | Workspace y superficie de distribución de Evolith CLI | Mantener CLI, plantillas, integración shell, validación local y paridad contractual | Usar `dist/` generado como fuente de verdad |
 | `tests/contract/` | C0 | Tests contractuales entre superficies | Validar contratos roundtrip CLI/MCP/API | Deshabilitar cobertura contractual fallida sin gap registrado |
 
 ## Automatización y Tooling
@@ -130,10 +130,10 @@ Usa este mapa cuando necesites decidir dónde leer, editar, agregar o auditar co
 | Un estándar arquitectónico normativo | `reference/core/sdlc/standards/` o área arquitectónica aceptada | Par bilingüe, referencias autoritativas y reglas afectadas si es exigible |
 | Una decisión arquitectónica | `reference/core/architecture/adrs/` | Actualizaciones de registro/índice ADR y enlaces entrantes |
 | Guía topológica legible por humanos | `reference/core/architecture/topologies/` | Paridad de madurez topológica y guía bilingüe |
-| Política topológica ejecutable | `rulesets/topologies/` y evaluador OPA/native correspondiente cuando aplique | Paridad dual-engine y validación de reglas topológicas |
+| Política topológica ejecutable | `src/rulesets/topologies/` y evaluador OPA/native correspondiente cuando aplique | Paridad dual-engine y validación de reglas topológicas |
 | Planeamiento o estado específico de producto | `product/products/<producto>/` | Mantener alcance de producto explícito |
 | Evidencia aplicada UMS | `product/research/demo/` | No promover como universal sin autoridad aceptada |
-| Implementación runtime de superficies de gobernanza | `apps/`, `packages/`, `sdk/` o `tests/` | Build, tests, contratos y documentación afectada |
+| Implementación runtime de superficies de gobernanza | `src/apps/`, `src/packages/`, `src/sdk/` o `tests/` | Build, tests, contratos y documentación afectada |
 | Evidencia generada o temporal | Ubicación existente de salida generada | Comando reproducible y sin edición manual salvo documentación explícita |
 
 ## Validación

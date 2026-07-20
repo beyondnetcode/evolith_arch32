@@ -65,7 +65,7 @@ The repository contains architectural artifacts, not a local product application
 | Guidance | Help the reader navigate the corpus | `README.md`, `MASTER_INDEX.md`, `reference/getting-started/` | Navigational |
 | Canonical Reference | Define reusable policy, decision criteria, and accepted trade-offs | `reference/core/architecture/blueprints/`, `reference/core/architecture/adrs/`, `reference/core/sdlc/` | Normative or decisional depending on document status |
 | Topology Reference Corpus | Define human-readable topology profiles, dimensions, ADR bindings, operating constraints, and adoption guidance for topology families | `reference/core/architecture/topologies/` | Normative when backed by an accepted ADR or standard; draft until ratified |
-| Executable Rulesets | Encode architecture policy as machine-readable Native and OPA-governed rules | `rulesets/`, `rulesets/topologies/` | Executable governance |
+| Executable Rulesets | Encode architecture policy as machine-readable Native and OPA-governed rules | `rulesets/`, `src/rulesets/topologies/` | Executable governance |
 | Runtime-Specific Implementation Guide | Materialize accepted decisions for a declared runtime | `reference/core/architecture/patterns/`, blueprints, and specific ADRs | Reusable only within the declared runtime scope and ADR |
 | Applied Product Evidence | Demonstrate adoption and specialization in an enterprise product | `product/research/demo/`, code, and external docs of `beyondnetcode/ums` | Illustrative until promotion to a canonical artifact |
 
@@ -76,7 +76,7 @@ Mandatory interpretation rules:
 - A UMS learning only becomes reusable authority through an accepted ADR, standard, blueprint, or canonical pattern.
 - The canonical documentary corpus lives in `reference/`; a parallel `docs/` hierarchy should not be created at the root.
 - Human-authored multi-topology guidance lives in `reference/core/architecture/topologies/`. This path is the canonical corpus for topology profiles and topology-dimension guidance; it is distinct from executable rules, which belong under `rulesets/`.
-- Executable multi-topology rules live in `rulesets/topologies/`. This path is the canonical location for topology-specific machine-readable rules and must preserve Dual-Engine Parity when a rule has both Native TypeScript and OPA/Rego evaluators.
+- Executable multi-topology rules live in `src/rulesets/topologies/`. This path is the canonical location for topology-specific machine-readable rules and must preserve Dual-Engine Parity when a rule has both Native TypeScript and OPA/Rego evaluators.
 
 ## 5. Separation Between Product and Upstream
 
@@ -90,12 +90,12 @@ The root should be kept small and navigable. Permitted categories are:
 - Tooling and platform dot-folders: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, `.mimocode/`, `.claude/`, `.obsidian/`, and editor or automation configuration (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
 - **Tool folder convention:** Each AI/IDE/authoring tool gets its own dot-folder at repository root (`.claude/`, `.mimocode/`, `.obsidian/`, `.vscode/`). These cannot be nested inside a parent folder because each tool's runtime expects its configuration at the workspace root. Do NOT create `.setup/` or similar grouping folders — tool contracts require root-level placement.
 - `reference/` for the documentary and architectural corpus.
-- `sdk/` for CLI, MCP, and executable access tooling.
-- `rulesets/` for machine-readable governance rules, including `rulesets/topologies/` for topology-specific executable rules.
+- `src/sdk/` for CLI, MCP, and executable access tooling.
+- `rulesets/` for machine-readable governance rules, including `src/rulesets/topologies/` for topology-specific executable rules.
 
 No application `src/` directories are maintained in this repository; executable implementation belongs to UMS or another product repository with explicit scope.
 
-Root-level `/topologies/` is explicitly prohibited. Multi-topology governance does not create a new repository-root content area; it must remain inside the existing authority boundaries established by [ADR-0048](../../architecture/adrs/core/0048-enterprise-taxonomy-reference-layout.md), [ADR-0070](../../architecture/adrs/core/0070-lean-root-repository-taxonomy.md), and [ADR-0079](../../architecture/adrs/core/0079-multi-topology-reference-corpus.md). Any future proposal to create `/topologies/` at the repository root requires a superseding accepted ADR that amends the root taxonomy, updates this standard, updates `rulesets/cross-cutting/repository-taxonomy.rules.json`, updates `rulesets/opa/taxonomy.rego`, and updates `.harness/scripts/ci/03-validate-root-cleanliness.mjs` in the same change.
+Root-level `/topologies/` is explicitly prohibited. Multi-topology governance does not create a new repository-root content area; it must remain inside the existing authority boundaries established by [ADR-0048](../../architecture/adrs/core/0048-enterprise-taxonomy-reference-layout.md), [ADR-0070](../../architecture/adrs/core/0070-lean-root-repository-taxonomy.md), and [ADR-0079](../../architecture/adrs/core/0079-multi-topology-reference-corpus.md). Any future proposal to create `/topologies/` at the repository root requires a superseding accepted ADR that amends the root taxonomy, updates this standard, updates `src/rulesets/cross-cutting/repository-taxonomy.rules.json`, updates `src/rulesets/opa/taxonomy.rego`, and updates `.harness/scripts/ci/03-validate-root-cleanliness.mjs` in the same change.
 
 ---
 [Back to Reference Hub](../../../README.md)

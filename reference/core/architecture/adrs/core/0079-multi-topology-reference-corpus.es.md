@@ -100,7 +100,7 @@ La opción seleccionada se evaluó contra:
 
 Evidencia usada:
 
-- rulesets F1/F2/F3 existentes bajo `rulesets/architecture/`;
+- rulesets F1/F2/F3 existentes bajo `src/rulesets/architecture/`;
 - política OPA de arquitectura existente bajo `rulesets/opa/architecture.rego`;
 - restricciones de taxonomía raíz de ADR-0048 y ADR-0070;
 - contrato unificado de salida CLI/MCP de ADR-0073;
@@ -122,7 +122,7 @@ Evidencia usada:
 - La Paridad de Dos Motores aumenta el trabajo de implementación para cada nueva regla topológica.
 - Las herramientas existentes que solo conocen `--arch-level` requieren un mapping de compatibilidad durante la migración.
 
-**Trade-off aceptado:** la implementación inicial usará `reference/core/architecture/topologies/` y `rulesets/topologies/` en lugar de `/topologies/` raíz para preservar la taxonomía actual del repositorio. Un ADR futuro puede reconsiderar la ubicación en raíz solo si el valor de gobernanza supera el costo taxonómico.
+**Trade-off aceptado:** la implementación inicial usará `reference/core/architecture/topologies/` y `src/rulesets/topologies/` en lugar de `/topologies/` raíz para preservar la taxonomía actual del repositorio. Un ADR futuro puede reconsiderar la ubicación en raíz solo si el valor de gobernanza supera el costo taxonómico.
 
 ## Referencias
 

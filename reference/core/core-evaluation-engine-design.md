@@ -72,7 +72,7 @@ The prior design (`reference/core/product-initiative-governance-redesign.md`, co
 | Explicitly ephemeral execution context | `gate-evidence.ts:87-89` — `ExecutionContext { initiative?; tenant?; phase? }` *"Never persisted or interpreted"* | `tenant`/`initiative` are a **context echo**, not entities. |
 | The Core declines execution data | `executive-scorecard-rule.handler.ts:55` — `result: 'skipped', 'Sprint throughput requires tracker data'` | Firm precedent: the Core **does not resolve** operational data; it delegates it to the Tracker. |
 | The consumer passes an opaque identifier; the Core never sees tenant/credentials/user paths | `workspace-reference-resolver.service.ts:9-11` | Ideal isolation pattern: the Core receives **opaque context references**, not business entities. |
-| **No product/tenant/initiative/evidence/decision repo exists** (grep confirmed) | `grep` over `packages/`+`apps/` → 0 matches | The prior doc proposed building from scratch something the criterion prohibits. |
+| **No product/tenant/initiative/evidence/decision repo exists** (grep confirmed) | `grep` over `src/packages/`+`src/apps/` → 0 matches | The prior doc proposed building from scratch something the criterion prohibits. |
 | The only governance repo = definition, not operation | `application/ports/blueprint-repository.port.ts` (`IBlueprintRepository`) | The Core only "persists" **versioned definitions** (blueprints/rulesets/standards), not operational instances. |
 
 **Conclusion:** the prior doc "raised" Product/Initiative from **context** to **entity-with-repo**. The correction returns them to their correct altitude: `ProductContext`/`InitiativeContext` as input and `DecisionRecommendation`/`Recommendation` as output. No new persistence is built; on the contrary, the persistence proposal is **removed** and the stateless nature already present in the code is preserved.
@@ -485,14 +485,14 @@ export interface EvaluationResult {
 - Required corrections: ADR `0100` decision 1 → "Core stateless evaluator; product/tenant/initiative are context only"; UP-002 deliverable 2 → remove entities+repos; gap GT-375 → reframe as "context/result contracts", not entities; `product-initiative-governance-redesign.md:1225-1521` (repos, Register/Open/Record use-cases, write POST endpoints) → **remove**.
 
 **Anchor files (absolute paths):**
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts`
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/use-cases/evaluate-gate.use-case.ts`
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/gate-evidence.ts` (`ExecutionContext` :87-89)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/verdict/verdict.ts` (`Verdict` :14)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/sdlc/phase-id.ts` (`PhaseId` :14)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts` (`:55` precedent "requires tracker data")
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/ports/blueprint-repository.port.ts` (only repo = definition)
-- `/Users/beyondnet/Source/evolith/apps/core-api/src/application/services/workspace-reference-resolver.service.ts` (`:9-11` isolation)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts`
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/use-cases/evaluate-gate.use-case.ts`
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/domain/gate-evidence.ts` (`ExecutionContext` :87-89)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/domain/verdict/verdict.ts` (`Verdict` :14)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/domain/sdlc/phase-id.ts` (`PhaseId` :14)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts` (`:55` precedent "requires tracker data")
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/ports/blueprint-repository.port.ts` (only repo = definition)
+- `/Users/beyondnet/Source/evolith/src/apps/core-api/src/application/services/workspace-reference-resolver.service.ts` (`:9-11` isolation)
 - `/Users/beyondnet/Source/evolith/product/products/evolith-tracker/sdlc-tracker-technical-interfaces.md` (`:30`, `:340-360`, `:415-428` Tracker model)
 - `/Users/beyondnet/Source/evolith/reference/core/product-initiative-governance-redesign.md` (prior design to be corrected; violations at `:1225-1521`)
 
@@ -715,19 +715,19 @@ Each `EvaluationResult` finding is built from the internal `RuleEvaluationResult
 ---
 
 **Anchor files (absolute paths):**
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts` (`evaluateGate` :126-224, `summary` :64-76, `remediationFor` :103-111, `resolveTopology` :226-248, blocking OPA :187-188)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/evaluator.interface.ts` (`RuleEvaluationResult` tri-state :8-13)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts` (dispatch + skip with no handler :53-74; 12 handlers :26-39)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts` (default defense :54-61, schema validation :25-47, violation↔rule correlation :101-110)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/handlers/evidence-rule.handler.ts` (EVD-01..04 :36-67)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts` (categories + dispatch :11-36)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts` ("requires tracker data" precedent :29,:53,:55,:70)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/handlers/rule-handler.interface.ts` (`INativeRuleHandler` :4-7)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/use-cases/validate-blueprint.use-case.ts` (5 adherence checks :69-84, :127-231; verdict :86-88)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/use-cases/propose-phase-advance.use-case.ts` (proposal without mutation :16-43)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/services/sdlc-data-loader.service.ts` (`StructuredGate` :19-35, `loadGatesForPhase` :100)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/verdict/verdict.ts` (`Verdict` :14, `fromLegacyGateEvidence` :63-71, `VerdictReason` :35-40)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/models/normalized-rule.ts` (`NormalizedRule` :1-10)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts` (`evaluateGate` :126-224, `summary` :64-76, `remediationFor` :103-111, `resolveTopology` :226-248, blocking OPA :187-188)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/evaluator.interface.ts` (`RuleEvaluationResult` tri-state :8-13)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts` (dispatch + skip with no handler :53-74; 12 handlers :26-39)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts` (default defense :54-61, schema validation :25-47, violation↔rule correlation :101-110)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/handlers/evidence-rule.handler.ts` (EVD-01..04 :36-67)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts` (categories + dispatch :11-36)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts` ("requires tracker data" precedent :29,:53,:55,:70)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/handlers/rule-handler.interface.ts` (`INativeRuleHandler` :4-7)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/use-cases/validate-blueprint.use-case.ts` (5 adherence checks :69-84, :127-231; verdict :86-88)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/use-cases/propose-phase-advance.use-case.ts` (proposal without mutation :16-43)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/services/sdlc-data-loader.service.ts` (`StructuredGate` :19-35, `loadGatesForPhase` :100)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/domain/verdict/verdict.ts` (`Verdict` :14, `fromLegacyGateEvidence` :63-71, `VerdictReason` :35-40)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/domain/models/normalized-rule.ts` (`NormalizedRule` :1-10)
 
 
 ---
@@ -927,14 +927,14 @@ sequenceDiagram
 - All Core endpoints return `SuccessEnvelope<EvaluationResult | sub-result>` (ADR-0073, `gate-evidence.ts:119-135`) over REST-only (ADR-0074).
 
 **Anchor files (absolute paths):**
-- `/Users/beyondnet/Source/evolith/apps/core-api/src/presentation/controllers/evaluation.controller.ts` (`:13-31` `POST /evaluate` → envelope pattern)
-- `/Users/beyondnet/Source/evolith/apps/core-api/src/presentation/controllers/gates.controller.ts` (`:15-30` `/gates/:gateId/evaluate`, opaque `workspaceRef`)
-- `/Users/beyondnet/Source/evolith/apps/core-api/src/presentation/controllers/composable-validate.controller.ts` (`:19` topologies; `:50-85` modes)
-- `/Users/beyondnet/Source/evolith/apps/core-api/src/application/services/workspace-reference-resolver.service.ts` (`:9-11` isolation)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts` (`:126-224` gate, `:134-213` artifacts, `:226-248` topology)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/use-cases/validate-blueprint.use-case.ts`, `propose-phase-advance.use-case.ts`
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts` (`:55` "requires tracker data")
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/ports/blueprint-repository.port.ts` (single repo = definition)
+- `/Users/beyondnet/Source/evolith/src/apps/core-api/src/presentation/controllers/evaluation.controller.ts` (`:13-31` `POST /evaluate` → envelope pattern)
+- `/Users/beyondnet/Source/evolith/src/apps/core-api/src/presentation/controllers/gates.controller.ts` (`:15-30` `/gates/:gateId/evaluate`, opaque `workspaceRef`)
+- `/Users/beyondnet/Source/evolith/src/apps/core-api/src/presentation/controllers/composable-validate.controller.ts` (`:19` topologies; `:50-85` modes)
+- `/Users/beyondnet/Source/evolith/src/apps/core-api/src/application/services/workspace-reference-resolver.service.ts` (`:9-11` isolation)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts` (`:126-224` gate, `:134-213` artifacts, `:226-248` topology)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/use-cases/validate-blueprint.use-case.ts`, `propose-phase-advance.use-case.ts`
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts` (`:55` "requires tracker data")
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/ports/blueprint-repository.port.ts` (single repo = definition)
 - `/Users/beyondnet/Source/evolith/product/products/core-api/api-reference.md` (`:189-254` current endpoints; `:212` legacy transition)
 - `/Users/beyondnet/Source/evolith/product/products/evolith-tracker/sdlc-tracker-technical-interfaces.md` (`:30-31` external/decision invariants, `:179-204` GateDecision, `:224-262` decision sequence, `:340-360` `EvaluateCriterionRequest`, `:381` provisional transition)
 
@@ -969,9 +969,9 @@ The SPINE establishes that the **Ruleset Execution Engine** (#7) and the **OPA P
 
 | Ruleset (path) | Change | New evaluation-context-oriented semantics |
 |---|---|---|
-| `rulesets/phase-gates/phase-gates.rules.json` · `rulesets/sdlc/phase-gates.rules.json` | **No content change**; consumption reframing. Keep `mandatoryEvidence[]`, `blockingCriteria[]`, `schemaRef`. The canonical duplication is addressed in 18.4. | The Gate Evaluation Engine (#1) receives `phaseId`/`gateId` + `artifacts[]`/`evidence[]` from the `EvaluationContext` and checks each `mandatoryEvidence` against what is **declared**, not against `fs.exists`. Produces `GateEvaluationResult` (verdict `PASS/FAIL/WAIVE/SKIP`). Missing evidence → `GapFinding` + `RequiredAction`, not a disk read. |
+| `rulesets/phase-gates/phase-gates.rules.json` · `src/rulesets/sdlc/phase-gates.rules.json` | **No content change**; consumption reframing. Keep `mandatoryEvidence[]`, `blockingCriteria[]`, `schemaRef`. The canonical duplication is addressed in 18.4. | The Gate Evaluation Engine (#1) receives `phaseId`/`gateId` + `artifacts[]`/`evidence[]` from the `EvaluationContext` and checks each `mandatoryEvidence` against what is **declared**, not against `fs.exists`. Produces `GateEvaluationResult` (verdict `PASS/FAIL/WAIVE/SKIP`). Missing evidence → `GapFinding` + `RequiredAction`, not a disk read. |
 | `src/rulesets/sdlc/quality-thresholds.rules.json` | **No content change.** The thresholds (QT-01..08) and `waiverPolicy` remain Definition. | The Ruleset Execution Engine (#7) evaluates each threshold against **declared metrics** in `ctx.evidence[]`/`ctx.checkpoint.metrics`. If the metric is not present in the context (e.g. actual coverage), the Core returns `SKIP`/`indeterminate` (precedent `executive-scorecard-rule.handler.ts:55`) — it does **not** open the repo to measure. |
-| `rulesets/satellite-contracts/satellite-contracts.rules.json` · `rulesets/governance/satellite-contracts.rules.json` | **Reframing + correction of obsolete items.** (1) `contractFields` still describe the **shape** of `evolith.yaml` (valid Definition). (2) `metadata.phase` "Must be F1, F2, or F3" (`:35`) and `f1Rules/f2Rules/f3Rules` (`:179-181`) are **topology** mixed with SDLC: annotate that they are topology aliases, not SDLC phases. (3) Rules with an operational verb — `SVC-02` "registry before first push" (`:135-138`), `SVC-05` "Core registry / releases" (`:153-156`), `MIG-01..03` (`:158-174`) — **move their execution to the consumer**; the Core only defines the criterion. | The Core **validates the structure** of `evolith.yaml` when the consumer sends it as a declared artifact in `ctx.artifacts[]` (kind `satellite-contract`) and produces `ArtifactEvaluationResult`. The Core does **not** query a satellite registry, does **not** validate against "existing releases", does **not** execute `push`/`upgrade`/`archival`: those are Tracker/CLI operations. `confirms:` ✅ stateless-evaluable (validation is purely structural over the declared content). |
+| `rulesets/satellite-contracts/satellite-contracts.rules.json` · `src/rulesets/governance/satellite-contracts.rules.json` | **Reframing + correction of obsolete items.** (1) `contractFields` still describe the **shape** of `evolith.yaml` (valid Definition). (2) `metadata.phase` "Must be F1, F2, or F3" (`:35`) and `f1Rules/f2Rules/f3Rules` (`:179-181`) are **topology** mixed with SDLC: annotate that they are topology aliases, not SDLC phases. (3) Rules with an operational verb — `SVC-02` "registry before first push" (`:135-138`), `SVC-05` "Core registry / releases" (`:153-156`), `MIG-01..03` (`:158-174`) — **move their execution to the consumer**; the Core only defines the criterion. | The Core **validates the structure** of `evolith.yaml` when the consumer sends it as a declared artifact in `ctx.artifacts[]` (kind `satellite-contract`) and produces `ArtifactEvaluationResult`. The Core does **not** query a satellite registry, does **not** validate against "existing releases", does **not** execute `push`/`upgrade`/`archival`: those are Tracker/CLI operations. `confirms:` ✅ stateless-evaluable (validation is purely structural over the declared content). |
 | `src/rulesets/evidence/evidence-manifest.rules.json` | **No content change**; reframing. EVD-01..04 (identity/traceability/integrity/retention) are Definition of "acceptable evidence shape". | The Evidence Evaluation Engine (#3) receives `ctx.evidence[]` (`EvidenceContext`: `evidenceId`, `references[]`, `integrity.contentHash`) and checks **sufficiency/integrity of what is declared** → `EvidenceEvaluationResult`. It does **not store** the evidence (the Evidence Graph belongs to the Tracker). `EVD-02` "sourceRef resolvable" becomes "reference present and well-formed"; **resolving/opening** the source belongs to the consumer. |
 | `src/rulesets/adr/*.rules.json` · `src/rulesets/adr/generated/*` | No structural change. Annotate that they evaluate against ADRs **declared** in `ctx.architecture.decisionRefs[]`, not read from the repo. | The Architecture Evaluation Engine (#4) and the Ruleset Execution Engine (#7) evaluate adherence to decisions declared as references in the context → `ArchitectureEvaluationResult`/findings. |
 | `src/rulesets/topologies/**` · `src/rulesets/architecture/README.md` | No content change. Keep resolution via `topology.manifest.json`. | The Topology Recommendation Engine (#6) receives `ctx.topologyRef`/`ctx.architecture` and returns `Recommendation[]` (suggested topology) — it **recommends**, it does not mutate. |
@@ -1040,8 +1040,8 @@ The SPINE establishes that the **Ruleset Execution Engine** (#7) and the **OPA P
 
 | Debt | Anchor | Note |
 |---|---|---|
-| **Duplication of `phase-gates.rules.json`** in `rulesets/phase-gates/` and `rulesets/sdlc/` with **identical** content (verified: both files match) | `rulesets/phase-gates/phase-gates.rules.json` vs `rulesets/sdlc/phase-gates.rules.json` | Designate one as canonical (Standard Catalog) and the other as alias/derived; avoids Definition drift. |
-| **Duplication of `satellite-contracts.rules.json`** | `rulesets/satellite-contracts/` vs `rulesets/governance/satellite-contracts.rules.json` | Same: one canonical. |
+| **Duplication of `phase-gates.rules.json`** in `src/rulesets/phase-gates/` and `src/rulesets/sdlc/` with **identical** content (verified: both files match) | `rulesets/phase-gates/phase-gates.rules.json` vs `src/rulesets/sdlc/phase-gates.rules.json` | Designate one as canonical (Standard Catalog) and the other as alias/derived; avoids Definition drift. |
+| **Duplication of `satellite-contracts.rules.json`** | `rulesets/satellite-contracts/` vs `src/rulesets/governance/satellite-contracts.rules.json` | Same: one canonical. |
 | **Divergent copies** cross-cutting vs canonical (stated in the README itself) | `src/rulesets/README.md:104-108,138-141` | The `cross-cutting/*.rules.json` diverge from the canonical ones; consolidate as a single Definition. |
 | **SDLC↔topology mix** in satellite-contracts (`metadata.phase` "F1/F2/F3") | `satellite-contracts.rules.json:35,179-181` | F1/F2/F3 are **topology** aliases, not SDLC phases (`README.md:28,177`); the context's canonical `phase_id` is `discovery..release`. Annotate explicitly so as not to reintroduce the conflation. |
 
@@ -1058,10 +1058,10 @@ The SPINE establishes that the **Ruleset Execution Engine** (#7) and the **OPA P
 - `/Users/beyondnet/Source/evolith/rulesets/schema/satellite-record.schema.json` (provisioning entity — externalize)
 - `/Users/beyondnet/Source/evolith/rulesets/schema/tenant-override.schema.json` (split Definition vs operation)
 - `/Users/beyondnet/Source/evolith/rulesets/schema/waiver.schema.json` (shape = Definition; issuance = Tracker)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts:8-60` (FS-scan → `EvaluationContext` projection)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts:134-183` (replace `fs.exists` with `ctx.artifacts[]`)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/ruleset-validator.service.ts:53-79`
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts:55` (`SKIP`/"requires tracker data" precedent)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts:8-60` (FS-scan → `EvaluationContext` projection)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts:134-183` (replace `fs.exists` with `ctx.artifacts[]`)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/ruleset-validator.service.ts:53-79`
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts:55` (`SKIP`/"requires tracker data" precedent)
 
 ---
 
@@ -1242,8 +1242,8 @@ This is **opaque-identifier coherence**, not tenant ownership nor data filtering
 - `/Users/beyondnet/Source/evolith/rulesets/opa/schemas/evidence.input.schema.json` (`core.evidence` `:8-31`)
 - `/Users/beyondnet/Source/evolith/rulesets/opa/schemas/multi-tenancy.input.schema.json`
 - `/Users/beyondnet/Source/evolith/rulesets/opa/schemas/abac-mcp-tool-access.input.schema.json`
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts` (`:55` SKIP precedent "requires tracker data")
-- `/Users/beyondnet/Source/evolith/apps/core-api/src/application/services/workspace-reference-resolver.service.ts` (`:9-11` isolation — tenant never interpreted)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts` (`:55` SKIP precedent "requires tracker data")
+- `/Users/beyondnet/Source/evolith/src/apps/core-api/src/application/services/workspace-reference-resolver.service.ts` (`:9-11` isolation — tenant never interpreted)
 
 ## 20. Required changes to blueprints (Dimension D20)
 
@@ -1393,10 +1393,10 @@ export interface TopologyRecommendationResult {
 ### 20.6 Files to correct (absolute paths)
 
 - `/Users/beyondnet/Source/evolith/rulesets/schema/blueprint.schema.json` — split into `blueprint-definition.schema.json` (+ `blueprint-context.schema.json`); `phase:integer 1–5` → canonical `phaseId`; `topology` enum → `topologyRef`; reconcile with `BlueprintContent`.
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/use-cases/validate-blueprint.use-case.ts` — refactor into a pure engine `(BlueprintContext) → BlueprintEvaluationResult`; remove mutation of `state` (`:90-91,233-256`), `verdictHistory.push` (`:94-99`), and event publication (`:102-118`); resolve definitions via the registry, not by `corePath`/`sdlcPath`.
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/entities/blueprint.ts` — separate `BlueprintDefinition` (immutable, versioned) from `BlueprintContext` (input); remove `state`/`tenantId`/`verdictHistory` from the definition.
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/services/topology-catalog.service.ts` — unify the manifest path with `validate-blueprint.use-case.ts` (drift `reference/core/architecture/topologies` vs `src/rulesets/topologies/`); expose it as the Standard Catalog Registry.
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/ports/blueprint-repository.port.ts` — reframe `IBlueprintRepository` as a catalog of `BlueprintDefinition` (read-only), not product CRUD.
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/use-cases/validate-blueprint.use-case.ts` — refactor into a pure engine `(BlueprintContext) → BlueprintEvaluationResult`; remove mutation of `state` (`:90-91,233-256`), `verdictHistory.push` (`:94-99`), and event publication (`:102-118`); resolve definitions via the registry, not by `corePath`/`sdlcPath`.
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/domain/entities/blueprint.ts` — separate `BlueprintDefinition` (immutable, versioned) from `BlueprintContext` (input); remove `state`/`tenantId`/`verdictHistory` from the definition.
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/services/topology-catalog.service.ts` — unify the manifest path with `validate-blueprint.use-case.ts` (drift `reference/core/architecture/topologies` vs `src/rulesets/topologies/`); expose it as the Standard Catalog Registry.
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/ports/blueprint-repository.port.ts` — reframe `IBlueprintRepository` as a catalog of `BlueprintDefinition` (read-only), not product CRUD.
 - `/Users/beyondnet/Source/evolith/reference/core/architecture/blueprints/reference-blueprint.md` — reinforce the separation between normative (the definition that is evaluated) and concrete profile (the context the product sends).
 
 ## 21. Required documentation changes
@@ -1582,12 +1582,12 @@ Incremental roadmap with **backward compatibility** at every phase. The backlog 
 ---
 
 **Real anchors (absolute paths) used in this dimension:**
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts` (stateless pipeline `:39-98`, `summary :69-76`, `resolveTopology :226-248`, `remediationFor :103-111`)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/gate-evidence.ts` (`ExecutionContext` "Never persisted or interpreted" `:87-92`; envelope `:119-135`; `OUTPUT_ENVELOPE_SCHEMA_VERSION :99`; `PhaseTransitionProposal :79-85`)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/verdict/verdict.ts` (`Verdict :14`, helpers `:63-100`)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/sdlc/phase-id.ts` (`PhaseId :14`)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts` (`:55` "requires tracker data")
-- `/Users/beyondnet/Source/evolith/apps/core-api/src/application/services/workspace-reference-resolver.service.ts` (`:9-11` isolation)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts` (stateless pipeline `:39-98`, `summary :69-76`, `resolveTopology :226-248`, `remediationFor :103-111`)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/domain/gate-evidence.ts` (`ExecutionContext` "Never persisted or interpreted" `:87-92`; envelope `:119-135`; `OUTPUT_ENVELOPE_SCHEMA_VERSION :99`; `PhaseTransitionProposal :79-85`)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/domain/verdict/verdict.ts` (`Verdict :14`, helpers `:63-100`)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/domain/sdlc/phase-id.ts` (`PhaseId :14`)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts` (`:55` "requires tracker data")
+- `/Users/beyondnet/Source/evolith/src/apps/core-api/src/application/services/workspace-reference-resolver.service.ts` (`:9-11` isolation)
 - `/Users/beyondnet/Source/evolith/reference/core/control-center/opportunities/UP-002-product-initiative-governance-model.md` (deliverable 7 `:57-58` with repositories to remove; AC `:65-74`)
 - `/Users/beyondnet/Source/evolith/reference/core/control-center/gaps/gap-reference-catalog.md` (`GT-375 :15-32`, roadmap R0–R5 `:25`)
 - `/Users/beyondnet/Source/evolith/reference/core/control-center/gaps/gap-tracking.md` (board; `GT-375` PENDING P0/XL `:16`; current maximum = GT-375)

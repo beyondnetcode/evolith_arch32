@@ -167,4 +167,21 @@ Any DB-connectivity work belongs to that board, not to Core infra.
 
 ---
 
+## Infrastructure Areas
+
+The local Compose stack described above is one part of this directory. The rest:
+
+| Area | Entry point | Content |
+| :--- | :--- | :--- |
+| **CI/CD** | [`ci-cd/`](./ci-cd/github-actions-profile.md) | GitHub Actions pipeline profile |
+| **Docker** | [`docker/`](./docker/README.md) | Per-service Dockerfiles and build context |
+| **Helm** | [`helm/`](./helm/README.md) | Charts for `evolith-core-api`, `evolith-mcp`, `evolith-agent-runtime` |
+| **Kubernetes** | [`kubernetes/`](./kubernetes/README.md) | Manifests and cluster topology |
+| **Observability** | [`observability/`](./observability/otel-stack-profile.md) | OTel stack profile, Prometheus config, Grafana assets |
+| **SCM** | [`scm/`](./scm/github-profile.md) | Repository and branch protection profile |
+| **Security** | [`security/`](./security/codeql-trivy-profile.md) | CodeQL and Trivy scanning profile |
+| **VPS — Coolify** | [`vps-coolify/`](./vps-coolify/README.md) | Self-hosted VPS deployment |
+
+---
+
 [Back to Repository Root](../../README.md)

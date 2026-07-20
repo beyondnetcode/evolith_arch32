@@ -23,7 +23,7 @@ Si forzamos al Tracker a alojar la lógica de dominio, violamos la regla fundame
 **Objetivo:** Definir una capa de exposición de red oficial y escalable para Evolith Core que encapsule la lógica de dominio y proporcione interfaces estándar REST a clientes externos (como Evolith Tracker y Agentes de IA), con MCP servido por el gateway independiente.
 
 **En alcance:**
-- Creación de `apps/core-api` dentro del monorepo Evolith Core.
+- Creación de `src/apps/core-api` dentro del monorepo Evolith Core.
 - Selección del stack tecnológico (NestJS).
 - Definición de límites entre Evolith Core y Evolith Tracker.
 
@@ -35,20 +35,20 @@ Si forzamos al Tracker a alojar la lógica de dominio, violamos la regla fundame
 
 1. **Tracker BFF (Backend-For-Frontend) dentro de Evolith Core:** Construir el backend del Tracker en este repositorio. Rechazado: Viola el límite del repositorio. Evolith Core es una referencia arquitectónica, no una base de código de producto para la UI del Tracker.
 2. **Exponer el Dominio Core solo vía npm:** Forzar al Tracker a importar `@beyondnet/evolith-cli` como una biblioteca y construir su propia API. Rechazado: El Tracker queda estrechamente acoplado al entorno de ejecución del Core; cualquier lógica de API no sería reutilizable para otros clientes (como dashboards ejecutivos).
-3. **Evolith Core API usando NestJS (elegido):** Construir un API gateway dedicado (`apps/core-api`) dentro del monorepo `evolith_arch32` usando NestJS. Esta API envuelve el Dominio Core y expone interfaces de red estándar. El Tracker permanece como un consumidor externo.
+3. **Evolith Core API usando NestJS (elegido):** Construir un API gateway dedicado (`src/apps/core-api`) dentro del monorepo `evolith_arch32` usando NestJS. Esta API envuelve el Dominio Core y expone interfaces de red estándar. El Tracker permanece como un consumidor externo.
 
 ## Decisión y Justificación
 
-Adoptar la **opción 3**. Construiremos el **Evolith Core API** como una aplicación NestJS en el directorio `apps/core-api`.
+Adoptar la **opción 3**. Construiremos el **Evolith Core API** como una aplicación NestJS en el directorio `src/apps/core-api`.
 
 **Elementos ratificados:**
-1. **Soberanía de Red:** Evolith Core es el único propietario de su dominio, rulesets y lógica de evaluación. Expone esta capacidad de forma nativa a través de `apps/core-api`.
+1. **Soberanía de Red:** Evolith Core es el único propietario de su dominio, rulesets y lógica de evaluación. Expone esta capacidad de forma nativa a través de `src/apps/core-api`.
 2. **Agnosticismo del Cliente:** El Evolith Tracker actúa estrictamente como cliente de la Core API. Tracker consumirá interfaces REST para mostrar phase gates, estados de validación y gestionar el SDLC.
 3. **Estructura Monorepo:** El `package.json` raíz se actualizará para admitir workspaces npm apuntando a `apps/*` y `sdk/*`.
 4. **Stack Tecnológico:** Se selecciona NestJS para el `core-api` con el fin de mantener un tipado fuerte, hacer cumplir la arquitectura hexagonal de forma nativa e integrar a la perfección la lógica de dominio TypeScript existente de la `evolith-cli`.
-5. **Exposición MCP (enmendado 2026-06-19 — ver Enmienda):** La lógica del servidor MCP existente se expone como una interfaz NestJS dedicada que sirve a los Agentes de IA por MCP junto a los consumidores REST, compartiendo los mismos casos de uso de la capa de aplicación que `apps/core-api` y la CLI.
+5. **Exposición MCP (enmendado 2026-06-19 — ver Enmienda):** La lógica del servidor MCP existente se expone como una interfaz NestJS dedicada que sirve a los Agentes de IA por MCP junto a los consumidores REST, compartiendo los mismos casos de uso de la capa de aplicación que `src/apps/core-api` y la CLI.
 
-> **Enmienda (2026-06-19, GT-119):** El elemento ratificado 5 especificaba originalmente la lógica MCP como *"integrada o envuelta en la aplicación NestJS para proporcionar una unidad de despliegue unificada."* Tal como se implementó bajo [ADR-0075](../../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), el gateway MCP se extrajo a un **paquete NestJS independiente** (`@beyondnet/evolith-mcp`) en lugar de fusionarse en `apps/core-api`. `evolith-mcp` delega en ese paquete, y `apps/core-api` **no** sirve MCP. Esto preserva el principio de lógica de dominio única (todas las superficies invocan los mismos casos de uso de aplicación) manteniendo MCP, REST y CLI como **unidades de despliegue independientes**, lo que mejora el aislamiento de protocolo y permite que el transporte MCP escale por separado. La Visión de Producto §2.5 Capa de Interfaces Técnicas ya refleja esta exposición de dos capas.
+> **Enmienda (2026-06-19, GT-119):** El elemento ratificado 5 especificaba originalmente la lógica MCP como *"integrada o envuelta en la aplicación NestJS para proporcionar una unidad de despliegue unificada."* Tal como se implementó bajo [ADR-0075](../../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), el gateway MCP se extrajo a un **paquete NestJS independiente** (`@beyondnet/evolith-mcp`) en lugar de fusionarse en `src/apps/core-api`. `evolith-mcp` delega en ese paquete, y `src/apps/core-api` **no** sirve MCP. Esto preserva el principio de lógica de dominio única (todas las superficies invocan los mismos casos de uso de aplicación) manteniendo MCP, REST y CLI como **unidades de despliegue independientes**, lo que mejora el aislamiento de protocolo y permite que el transporte MCP escale por separado. La Visión de Producto §2.5 Capa de Interfaces Técnicas ya refleja esta exposición de dos capas.
 
 **Justificación:** Esta decisión preserva la soberanía del dominio de Evolith Core al tiempo que proporciona una interfaz madura y escalable para el SaaS Evolith Tracker. NestJS se alinea perfectamente con nuestro ecosistema TypeScript existente y hace cumplir estrictamente la inyección de dependencias y los límites hexagonales que hemos estandarizado.
 

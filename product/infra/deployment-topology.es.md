@@ -14,7 +14,7 @@ nombre", para que los modelos Coolify (en vivo), docker-compose (local) y Helm
 
 ## Verdad canónica (ADR-0074)
 
-- La capa oficial de exposición de red de Evolith Core es **`apps/core-api`**
+- La capa oficial de exposición de red de Evolith Core es **`src/apps/core-api`**
   ([ADR-0074](../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)) —
   una API REST NestJS. Es el servicio real que consumen los clientes.
 - **`evolith-bff`** (históricamente el chart Helm, el servicio `bff` de compose y
@@ -26,8 +26,8 @@ nombre", para que los modelos Coolify (en vivo), docker-compose (local) y Helm
   Solo queda `product/infra/docker/bff.Dockerfile`, como plantilla de referencia.
 - **"Tracker BFF"** (doc de arquitectura §11) es **externo** — pertenece a
   Evolith Tracker y *consume* core-api; no se despliega desde este repo.
-- Los Dockerfiles reales por servicio son `apps/core-api/Dockerfile`,
-  `packages/mcp-server/Dockerfile`, `apps/agent-runtime-api/Dockerfile`. Los
+- Los Dockerfiles reales por servicio son `src/apps/core-api/Dockerfile`,
+  `src/packages/mcp-server/Dockerfile`, `src/apps/agent-runtime-api/Dockerfile`. Los
   archivos bajo `product/infra/docker/*.Dockerfile` son plantillas
   ilustrativas, no el build de producción.
 
@@ -35,10 +35,10 @@ nombre", para que los modelos Coolify (en vivo), docker-compose (local) y Helm
 
 | Servicio canónico | Build real | Coolify (en vivo) | docker-compose | Chart Helm |
 |---|---|---|---|---|
-| **CORE-API** | `apps/core-api/Dockerfile` | `evolith-core-api` · `evolith.beyondnet.cloud` | `core-api` (build real) | `evolith-core-api` · `evolith.beyondnet.cloud` |
-| **MCP Server** | `packages/mcp-server/Dockerfile` | `evolith-mcp` · `mcpevolith.beyondnet.cloud` | `mcp` (build real) | `evolith-mcp` · `mcpevolith.beyondnet.cloud` |
-| **Agent Runtime** | `apps/agent-runtime-api/Dockerfile` | preparado · `evolithruntime.beyondnet.cloud` | `agent-runtime` (build real) | `evolith-agent-runtime` · `evolithruntime.beyondnet.cloud` |
-| **SMART-CLI** | `sdk/cli` | npm `@beyondnet/evolith-cli` | n/a | n/a |
+| **CORE-API** | `src/apps/core-api/Dockerfile` | `evolith-core-api` · `evolith.beyondnet.cloud` | `core-api` (build real) | `evolith-core-api` · `evolith.beyondnet.cloud` |
+| **MCP Server** | `src/packages/mcp-server/Dockerfile` | `evolith-mcp` · `mcpevolith.beyondnet.cloud` | `mcp` (build real) | `evolith-mcp` · `mcpevolith.beyondnet.cloud` |
+| **Agent Runtime** | `src/apps/agent-runtime-api/Dockerfile` | preparado · `evolithruntime.beyondnet.cloud` | `agent-runtime` (build real) | `evolith-agent-runtime` · `evolithruntime.beyondnet.cloud` |
+| **SMART-CLI** | `src/sdk/cli` | npm `@beyondnet/evolith-cli` | n/a | n/a |
 | **Tracker BFF** | externo (Tracker) | n/a | n/a | n/a |
 
 `product/infra/docker-compose.evolith.yml` construye los tres servicios desde los
@@ -77,7 +77,7 @@ camino de compose.
 
 - Tratar **`core-api`** (ADR-0074) como el nombre canónico en todas partes. O
   renombrar el chart Helm `evolith-bff` a `evolith-core-api` apuntando a la imagen
-  real de `apps/core-api`, o mantener `evolith-bff` claramente etiquetado como
+  real de `src/apps/core-api`, o mantener `evolith-bff` claramente etiquetado como
   plantilla genérica y agregar un chart real `evolith-core-api`.
 - Estandarizar un **dominio canónico**. Recomendado: `*.beyondnet.cloud` (ya en
   vivo en Coolify) — actualizar `ingressRoute.host` de Helm en consecuencia.
@@ -98,7 +98,7 @@ La reconciliación en el repo ya fue aplicada:
 2. **Registry canónico → `ghcr.io/beyondnetcode/*`.** `image.repository` de los
    tres charts actualizado; el workflow `docker-images.yml` publica ahí.
 3. **`evolith-bff` renombrado a `evolith-core-api`**, modelado sobre el
-   `apps/core-api` real (OPA in-process, sin sidecar, probes `/health`, puerto
+   `src/apps/core-api` real (OPA in-process, sin sidecar, probes `/health`, puerto
    3000, secret `EVOLITH_API_KEY`). En `evolith-mcp` se corrigió el puerto `3001`
    obsoleto y los probes inexistentes `/ready`,`/startup` a `3000` + `/health`.
 

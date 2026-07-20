@@ -23,8 +23,8 @@ Use this map when you need to decide where to read, edit, add, or audit content 
 |---|---|
 | Start from the portal | Use the root [README](../../../../README.md), then the [Global Master Index](./MASTER_INDEX.md) when you already know the artifact family. |
 | Keep standards in `reference/` | Architecture, governance, SDLC, operations, and product-reference documents belong under `reference/`. |
-| Keep executable rules in `rulesets/` | Machine-readable architecture policy belongs in `rulesets/`; topology-specific rules belong in `rulesets/topologies/`. |
-| Keep product implementation outside the corpus | Local `apps/`, `packages/`, `sdk/`, and `tests/` support executable governance surfaces; business product code remains outside this repository unless explicitly scoped. |
+| Keep executable rules in `rulesets/` | Machine-readable architecture policy belongs in `rulesets/`; topology-specific rules belong in `src/rulesets/topologies/`. |
+| Keep product implementation outside the corpus | Local `src/apps/`, `src/packages/`, `src/sdk/`, and `tests/` support executable governance surfaces; business product code remains outside this repository unless explicitly scoped. |
 | Do not create root content areas casually | New root directories require accepted taxonomy authority and synchronized rule/script updates. |
 | Preserve bilingual parity | Individual Markdown files use `.es.md`; grouped Spanish content uses `-es/` only when the area already follows that convention. |
 
@@ -48,7 +48,7 @@ Use this map when you need to decide where to read, edit, add, or audit content 
 | `reference/navigation/` | C1 | Global master index and navigation assets | Maintain complete repository routing | Diverge from the root navigation model |
 | `reference/core/architecture/` | C0 | Architecture hub, ADRs, blueprints, canonical patterns, principles, topology corpus | Add architecture authority, accepted decisions, and reusable patterns | Treat UMS-specific choices as universal without ADR/standard authority |
 | `reference/core/architecture/adrs/` | C0 | Accepted, proposed, or superseded architectural decision records | Record durable architectural decisions and update inbound links | Hide decisions in planning or report files |
-| `reference/core/architecture/topologies/` | C1 | Human-readable topology guidance and maturity reports | Maintain topology adoption, operation, evolution, and maturity guidance | Put executable rules here; use `rulesets/topologies/` instead |
+| `reference/core/architecture/topologies/` | C1 | Human-readable topology guidance and maturity reports | Maintain topology adoption, operation, evolution, and maturity guidance | Put executable rules here; use `src/rulesets/topologies/` instead |
 | `reference/core/sdlc/` | C0 | SDLC, standards, ADR governance, terminology, and onboarding | Maintain governance rules, lifecycle gates, and standards | Create parallel governance under root `docs/` |
 | `product/suite/` | C1 | Portfolio vision, product-suite strategy, positioning, and communications | Align product direction with Core governance | Store product delivery artifacts that belong to a specific product |
 | `product/products/` | C1 | Internal reference docs for Evolith products such as Core API, Tracker, MCP services, Evolith CLI, and UMS reference | Keep product documentation aligned with Core standards | Mix executable source code with reference documentation |
@@ -75,25 +75,25 @@ Use this map when you need to decide where to read, edit, add, or audit content 
 | Path | Criticality | What you find | What to do there | Do not |
 |---|---|---|---|---|
 | `rulesets/` | C0 | Machine-readable architecture governance hub | Keep rules discoverable, versioned, and validated | Store prose-only standards here |
-| `rulesets/opa/` | C0 | Cross-cutting OPA/Rego policies and schemas | Maintain parity with native evaluators when rules change | Add Rego without tests or native parity when required |
-| `rulesets/topologies/` | C0 | Executable topology-specific rules | Preserve accepted topology parity across Native and OPA where applicable | Put human-readable topology guidance here |
-| `rulesets/cross-cutting/` | C0 | Repository-wide taxonomy and cross-cutting constraints | Update with taxonomy rule changes | Change policy without matching validators |
-| `rulesets/contracts/` | C0 | Contract rules and fixtures | Keep ADR-0073 and surface contracts reproducible | Let fixtures drift from CLI/MCP/API behavior |
-| `rulesets/sdlc/`, `rulesets/evidence/`, `rulesets/governance/`, `rulesets/adr/` | C0 | Lifecycle, evidence, governance, and ADR validation rules | Keep CI-enforced governance synchronized with standards | Let documentation declare a rule that no evaluator enforces |
-| `rulesets/cli/`, `rulesets/mcp/`, `rulesets/architecture/`, `rulesets/infrastructure/`, `rulesets/observability/`, `rulesets/schema/`, `rulesets/acl/` | C0 | Surface-specific validation domains | Update when the corresponding architecture or runtime behavior changes | Mix unrelated rule domains |
+| `src/rulesets/opa/` | C0 | Cross-cutting OPA/Rego policies and schemas | Maintain parity with native evaluators when rules change | Add Rego without tests or native parity when required |
+| `src/rulesets/topologies/` | C0 | Executable topology-specific rules | Preserve accepted topology parity across Native and OPA where applicable | Put human-readable topology guidance here |
+| `src/rulesets/cross-cutting/` | C0 | Repository-wide taxonomy and cross-cutting constraints | Update with taxonomy rule changes | Change policy without matching validators |
+| `src/rulesets/contracts/` | C0 | Contract rules and fixtures | Keep ADR-0073 and surface contracts reproducible | Let fixtures drift from CLI/MCP/API behavior |
+| `src/rulesets/sdlc/`, `src/rulesets/evidence/`, `src/rulesets/governance/`, `src/rulesets/adr/` | C0 | Lifecycle, evidence, governance, and ADR validation rules | Keep CI-enforced governance synchronized with standards | Let documentation declare a rule that no evaluator enforces |
+| `src/rulesets/cli/`, `src/rulesets/mcp/`, `src/rulesets/architecture/`, `src/rulesets/infrastructure/`, `src/rulesets/observability/`, `src/rulesets/schema/`, `src/rulesets/acl/` | C0 | Surface-specific validation domains | Update when the corresponding architecture or runtime behavior changes | Mix unrelated rule domains |
 
 ## Product And Runtime Workspaces
 
 | Path | Criticality | What you find | What to do there | Do not |
 |---|---|---|---|---|
-| `apps/core-api/` | C0 | Service CORE API workspace | Validate API behavior, contracts, auth, cache, and governance endpoints | Treat it as generic product business code |
+| `src/apps/core-api/` | C0 | Service CORE API workspace | Validate API behavior, contracts, auth, cache, and governance endpoints | Treat it as generic product business code |
 | `apps/agent-sandbox/` | C1 | Agent sandbox application workspace | Test agentic interaction patterns safely | Store production secrets or tenant data |
-| `packages/core-domain/` | C0 | Core domain model and use cases | Preserve DDD isolation and executable governance domain logic | Add infrastructure concerns to the domain layer |
-| `packages/core/` | C1 | Shared core package implementation | Keep reusable runtime logic scoped and tested | Create ambiguous shared utilities without ownership |
-| `packages/infra-providers/` | C1 | Infrastructure provider adapters | Encapsulate platform/provider integration logic | Leak provider assumptions into domain code |
-| `packages/mcp-server/` | C0 | MCP server implementation | Keep MCP tools, auth, contracts, and transport behavior aligned with ADRs | Duplicate CLI-only behavior without contract parity |
+| `src/packages/core-domain/` | C0 | Core domain model and use cases | Preserve DDD isolation and executable governance domain logic | Add infrastructure concerns to the domain layer |
+| `src/packages/core/` | C1 | Shared core package implementation | Keep reusable runtime logic scoped and tested | Create ambiguous shared utilities without ownership |
+| `src/packages/infra-providers/` | C1 | Infrastructure provider adapters | Encapsulate platform/provider integration logic | Leak provider assumptions into domain code |
+| `src/packages/mcp-server/` | C0 | MCP server implementation | Keep MCP tools, auth, contracts, and transport behavior aligned with ADRs | Duplicate CLI-only behavior without contract parity |
 | `packages/mcp-tools/` | C1 | MCP tool package surface | Keep tools discoverable and contract-aligned | Mix unrelated product workflows |
-| `sdk/cli/` | C0 | Evolith CLI workspace and distribution surface | Maintain CLI, templates, shell integration, local validation, and contract parity | Use generated `dist/` as source of truth |
+| `src/sdk/cli/` | C0 | Evolith CLI workspace and distribution surface | Maintain CLI, templates, shell integration, local validation, and contract parity | Use generated `dist/` as source of truth |
 | `tests/contract/` | C0 | Cross-surface contract tests | Validate CLI/MCP/API roundtrip contracts | Disable failing contract coverage without a tracked gap |
 
 ## Automation And Tooling
@@ -130,10 +130,10 @@ Use this map when you need to decide where to read, edit, add, or audit content 
 | A normative architecture standard | `reference/core/sdlc/standards/` or accepted architecture area | Bilingual pair, authoritative references, affected rule updates if enforceable |
 | An architectural decision | `reference/core/architecture/adrs/` | ADR registry/index updates and inbound link checks |
 | Human-readable topology guidance | `reference/core/architecture/topologies/` | Topology maturity parity and bilingual guidance |
-| Executable topology policy | `rulesets/topologies/` and matching OPA/native evaluator when required | Dual-engine parity and topology rule validation |
+| Executable topology policy | `src/rulesets/topologies/` and matching OPA/native evaluator when required | Dual-engine parity and topology rule validation |
 | Product-specific planning or state | `product/products/<product>/` | Keep product scope explicit |
 | UMS applied evidence | `product/research/demo/` | Do not promote as universal without accepted authority |
-| Runtime implementation for governance surfaces | `apps/`, `packages/`, `sdk/`, or `tests/` | Build, tests, contracts, and affected docs |
+| Runtime implementation for governance surfaces | `src/apps/`, `src/packages/`, `src/sdk/`, or `tests/` | Build, tests, contracts, and affected docs |
 | Generated or temporary evidence | Existing generated-output location | Reproducible command and no manual edits unless documented |
 
 ## Validation

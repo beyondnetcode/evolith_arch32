@@ -50,7 +50,7 @@ C4Component
 |-----------|----------------|
 | **Transport Layer** | Standard MCP SDK managing stdio and Streamable HTTP connection lifecycles. HTTP mode is fail-closed in production without an API key. |
 | **EvolithMcpServer** | Application entry point wiring MCP request handlers to the registry, resources, prompts, metrics, ABAC and audit services. |
-| **Tool Registry** | Module-composed registry fed by `packages/mcp-server/src/tools/tools.module.ts`; it is the canonical replacement for the retired lightweight `@beyondnet/evolith-mcp-tools` package. |
+| **Tool Registry** | Module-composed registry fed by `src/packages/mcp-server/src/tools/tools.module.ts`; it is the canonical replacement for the retired lightweight `@beyondnet/evolith-mcp-tools` package. |
 | **Tool Handlers** | Governed actions including `evolith-validate`, `evolith-evaluate`, satellite tools, agent tools, architecture tools, gate/phase tools, SDLC tools, topology tools, config tools, metrics and auto-fix tools. |
 | **Resources and Prompts** | Read-only context and reusable prompt payloads exposed through MCP resource and prompt handlers. |
 | **Auth / ABAC / Audit** | API key/JWT authentication, ABAC checks, mutative-tool gating, tool-call audit logs, and metrics. |

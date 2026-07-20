@@ -8,7 +8,7 @@
 **Classification:** Core Architecture Reference  
 **Governing ADR:** [ADR-0079: Multi-Topology Reference Corpus](../adrs/core/0079-multi-topology-reference-corpus.md)
 
-This document defines the dimensional model for the Evolith Core Multi-Topology Reference Corpus. It is the canonical interpretation layer for human-authored topology profiles under `reference/core/architecture/topologies/` and executable topology rules under `rulesets/topologies/`.
+This document defines the dimensional model for the Evolith Core Multi-Topology Reference Corpus. It is the canonical interpretation layer for human-authored topology profiles under `reference/core/architecture/topologies/` and executable topology rules under `src/rulesets/topologies/`.
 
 ## 1. Purpose
 
@@ -63,7 +63,7 @@ Each topology profile is a bounded technical context. A complete profile must co
 
 | Artifact Family | Required Purpose |
 |---|---|
-| `topology.manifest.json` | Binding machine-readable contract validated by `rulesets/schema/topology-manifest.schema.json`. |
+| `topology.manifest.json` | Binding machine-readable contract validated by `src/rulesets/schema/topology-manifest.schema.json`. |
 | `adrs/` | Topology-specific decisions only; universal Core ADRs are referenced, not duplicated. |
 | `designs/` and `diagrams/` | Human-readable design guidance and visual models. |
 | `ai-rulesets/` | AI-agent constraints and implementation context for MCP-enabled tools. |

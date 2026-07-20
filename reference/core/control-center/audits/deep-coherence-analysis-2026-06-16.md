@@ -78,7 +78,7 @@
 
 | # | Finding | Detail |
 |---|---------|--------|
-| 29 | **Evolith Core SDK has no tests** | `packages/core-domain/` has zero test coverage despite being shared |
+| 29 | **Evolith Core SDK has no tests** | `src/packages/core-domain/` has zero test coverage despite being shared |
 | 30 | **No BFF implementation code found** | 4 ADRs reference NestJS BFF but no code exists |
 | 31 | **MCP tools: 3 implemented as stubs** | `phase-advance.ts` 19.44% coverage; `validate.ts` 90% but fragile |
 

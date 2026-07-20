@@ -17,7 +17,9 @@ Use this index for engineering standards. If you are looking for the fastest rou
 
 ## Documents
 
+* [ai-augmented](./ai-augmented/README.md) — AI-augmented development corpus (harness, MCP, agentic patterns, maturity)
 * [api-dotnet](./api-dotnet/README.md)
+* [communication](./communication/architecture-communication-strategy.md) — architecture communication strategy · [visuals](./communication/visuals/README.md)
 * [content-management-abstraction](./content-management-abstraction.md)
 * [contract-testing-guideline](./contract-testing-guideline.md)
 * [convention-over-configuration](./convention-over-configuration.md)

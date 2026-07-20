@@ -52,5 +52,9 @@ This topology is not a halfway distributed monolith. Each distributed module mus
 
 This profile is technical-only. It defines architecture constraints and validation context. It does not define delivery timing, ownership, staffing, ROI, cost, budget, or Funnel 0 prioritization. Evolith Tracker owns those business concerns through its ACL.
 
+## CLI Flows
+
+See [`cli/cli-flows.md`](./cli/cli-flows.md) for the CLI interaction flows of this profile.
+
 ---
 [Back to Topology Hub](../../README.md)

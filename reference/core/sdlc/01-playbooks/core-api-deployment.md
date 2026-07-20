@@ -11,7 +11,7 @@ This playbook establishes the operational standards, roll-out strategies, and ro
 Before deploying the Core API, configuration must be validated to ensure all environment variables are correctly populated and structure rules are active.
 
 ### Configuration Schema (Zod-validated)
-The application validates environment configuration at startup using a Zod schema defined in `apps/core-api/src/infrastructure/config/env.validation.ts`. The critical variables are:
+The application validates environment configuration at startup using a Zod schema defined in `src/apps/core-api/src/infrastructure/config/env.validation.ts`. The critical variables are:
 
 * `PORT`: The target application execution port (default `3000`).
 * `CORE_PATH`: The absolute path to the local canonical rulesets and topologies files.

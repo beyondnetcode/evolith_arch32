@@ -15,12 +15,12 @@ Evolith Core es un motor de gobernanza para el cumplimiento del ciclo de vida de
 
 | Área | Ruta | Propósito |
 |---|---|---|
-| Lógica de dominio | `packages/core-domain/src/domain/` | Entidades, eventos, máquinas de estado, RBAC, veredicto |
-| Capa de aplicación | `packages/core-domain/src/application/` | Casos de uso, servicios, puertos |
-| Infraestructura | `packages/core-domain/src/infrastructure/` | Bus de eventos, auditoría, webhook, adaptadores |
-| Servidor MCP | `packages/mcp-server/src/` | Definiciones de herramientas MCP y transporte |
-| API REST Core | `apps/core-api/src/` | Superficie API NestJS |
-| CLI | `sdk/cli/src/` | Comandos Evolith CLI |
+| Lógica de dominio | `src/packages/core-domain/src/domain/` | Entidades, eventos, máquinas de estado, RBAC, veredicto |
+| Capa de aplicación | `src/packages/core-domain/src/application/` | Casos de uso, servicios, puertos |
+| Infraestructura | `src/packages/core-domain/src/infrastructure/` | Bus de eventos, auditoría, webhook, adaptadores |
+| Servidor MCP | `src/packages/mcp-server/src/` | Definiciones de herramientas MCP y transporte |
+| API REST Core | `src/apps/core-api/src/` | Superficie API NestJS |
+| CLI | `src/sdk/cli/src/` | Comandos Evolith CLI |
 | Rulesets | `rulesets/` | Políticas OPA + reglas de topología |
 | Datos SDLC | `reference/core/sdlc/` | Definiciones JSON de fases/gates |
 | ADRs | `reference/core/sdlc/governance/` | Registros de Decisiones de Arquitectura |
@@ -48,8 +48,8 @@ Los satélites (proyectos externos) envían evidencia a Core vía REST, MCP o CL
 
 1. **Core no almacena configuración de tenant** — toda la composición de tenant fluye a través de `ValidateWorkflowUseCase` con un `WorkflowDefinition` suministrado por el llamador.
 2. **Fuente canónica de gates** — `reference/core/sdlc/gates/gate-f*.json` (no `rulesets/phase-gates/phase-gates.rules.json`).
-3. **Ubicación canónica de topologías** — `rulesets/topologies/` (las 8 topologías; los directorios de `reference/core/architecture/topologies/` tienen stubs `RELOCATED.md`).
-4. **Veredicto canónico** — enum `Verdict` (`PASS|FAIL|WAIVE|SKIP`) en `packages/core-domain/src/domain/verdict/verdict.ts`.
+3. **Ubicación canónica de topologías** — `src/rulesets/topologies/` (las 8 topologías; los directorios de `reference/core/architecture/topologies/` tienen stubs `RELOCATED.md`).
+4. **Veredicto canónico** — enum `Verdict` (`PASS|FAIL|WAIVE|SKIP`) en `src/packages/core-domain/src/domain/verdict/verdict.ts`.
 5. **Bus de eventos es aditivo** — `IDomainEventBus` es opcional en todos los casos de uso; su ausencia no rompe flujos existentes.
 6. **Paridad bilingüe** — cada documento en inglés debe tener una contraparte `*.es.md`.
 

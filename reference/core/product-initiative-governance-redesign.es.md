@@ -1569,7 +1569,7 @@ Cada UseCase se proyecta a una herramienta, con la misma frontera (el Core eval�
 
 ---
 
-Archivos clave anclados en esta dimensión: `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/ports/blueprint-repository.port.ts`, `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/ports/event-bus.port.ts`, `/Users/beyondnet/Source/evolith/packages/core-domain/src/application/use-cases/index.ts` (+ `evaluate-gate`, `propose-phase-advance`, `phase-transition`, `validate-satellite`, `initialize-project`, `sync-satellite`), `/Users/beyondnet/Source/evolith/apps/core-api/src/presentation/controllers/` (`phases`, `gates`, `projects`, `satellites`, `evaluation`), `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/gate-evidence.ts`, `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/verdict/verdict.ts`, `/Users/beyondnet/Source/evolith/packages/core-domain/src/gates/decision/gate-decision.ts`, `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/satellite-record.ts`, `/Users/beyondnet/Source/evolith/product/products/core-api/api-reference.md`.
+Archivos clave anclados en esta dimensión: `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/ports/blueprint-repository.port.ts`, `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/ports/event-bus.port.ts`, `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/application/use-cases/index.ts` (+ `evaluate-gate`, `propose-phase-advance`, `phase-transition`, `validate-satellite`, `initialize-project`, `sync-satellite`), `/Users/beyondnet/Source/evolith/src/apps/core-api/src/presentation/controllers/` (`phases`, `gates`, `projects`, `satellites`, `evaluation`), `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/domain/gate-evidence.ts`, `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/domain/verdict/verdict.ts`, `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/gates/decision/gate-decision.ts`, `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/domain/satellite-record.ts`, `/Users/beyondnet/Source/evolith/product/products/core-api/api-reference.md`.
 
 ---
 
@@ -1779,7 +1779,7 @@ Fases incrementales con compatibilidad hacia atrás obligatoria. Cada fase exige
 - `/Users/beyondnet/Source/evolith/product/suite/strategy/evolutionary-strategy-roadmap.md` (RTD `:121`, fases evolutivas, triggers diferidos)
 - `/Users/beyondnet/Source/evolith/reference/core/sdlc/DECISIONS.md` (UP-001 `PROPOSED`, `:13`)
 - `/Users/beyondnet/Source/evolith/reference/core/control-center/gaps/gap-tracking.md` (formato del board, `GT-374` máximo, P0–P3/XS–XL, footer Waves/Progress) y `maturity-assessment.md` (superficies de seguimiento únicas)
-- `/Users/beyondnet/Source/evolith/packages/core-domain/src/domain/satellite-record.ts:13` (`phase: string` único), `gate-evidence.ts:87-90` (`initiative?` opaco), `application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts:55` (precedente `skipped` para datos de runtime)
+- `/Users/beyondnet/Source/evolith/src/packages/core-domain/src/domain/satellite-record.ts:13` (`phase: string` único), `gate-evidence.ts:87-90` (`initiative?` opaco), `application/validators/evaluators/handlers/executive-scorecard-rule.handler.ts:55` (precedente `skipped` para datos de runtime)
 
 ---
 

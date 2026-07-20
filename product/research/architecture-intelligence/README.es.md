@@ -41,4 +41,13 @@ La evidencia especifica de producto permanece en UMS u otro repositorio satelite
 
 ---
 
+## En Esta Área
+
+| Tema | Documento |
+| :--- | :--- |
+| **IA** | [`ai/`](./ai/ai-knowledge-strategy.es.md) — estrategia de conocimiento con IA |
+| **Trade-offs** | [`tradeoffs/`](./tradeoffs/architecture-radar.es.md) — radar de arquitectura |
+
+---
+
 [Volver al area de conocimiento](../demo/README.es.md) | [Volver al repositorio](../../../README.es.md)

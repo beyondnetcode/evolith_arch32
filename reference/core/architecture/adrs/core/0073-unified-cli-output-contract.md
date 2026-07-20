@@ -29,7 +29,7 @@ Today the CLI implements neither contract: `--format json` exists on some comman
 
 1. **GateEvidence only, no envelope (Core-side doc as-is).** Gate calls are structured but every other command stays ad-hoc; CI and agents still need per-command parsers. Rejected: solves one command, not the contract.
 2. **Envelope only, no typed payloads (Tracker-side doc as-is).** Uniform wrapper but `data` stays schemaless; the Tracker would re-validate shapes defensively. Rejected: pushes schema discipline downstream, violating the ACL principle that non-compliant data is rejected at the boundary.
-3. **Unified contract: envelope wrapping schema-typed payloads (chosen).** The Tracker-side envelope becomes the universal wrapper; the Core-side `GateEvidence` becomes the first schema-typed `data` payload, published as a JSON Schema in `rulesets/schema/`.
+3. **Unified contract: envelope wrapping schema-typed payloads (chosen).** The Tracker-side envelope becomes the universal wrapper; the Core-side `GateEvidence` becomes the first schema-typed `data` payload, published as a JSON Schema in `src/rulesets/schema/`.
 4. **Status quo (per-command ad-hoc JSON).** Rejected: blocks the Tracker, contradicts the vision's "structured gate evidence" requirement.
 
 ## Decision and Rationale
@@ -59,7 +59,7 @@ On failure, `success: false` and an `error` object replaces `data`:
 **Ratified elements:**
 
 1. **Envelope** as above. `meta.context` echoes caller-supplied context verbatim — the CLI stays stateless; `initiative`/`tenant` are opaque pass-through values, never CLI state.
-2. **`GateEvidence`** is the `data` payload of gate evaluation: `{ gateId, phase, verdict: passed|failed|skipped, rulesetRef, rulesetVersion, violations: [{ ruleId, severity: error|warning, location, message }], evaluatedAt, evaluatedBy: human|agent|ci }`. Published as `rulesets/schema/gate-evidence.schema.json` (deliverable of GT-02). All 27 rulesets already carry the `version` field `rulesetVersion` requires (verified 2026-06-10).
+2. **`GateEvidence`** is the `data` payload of gate evaluation: `{ gateId, phase, verdict: passed|failed|skipped, rulesetRef, rulesetVersion, violations: [{ ruleId, severity: error|warning, location, message }], evaluatedAt, evaluatedBy: human|agent|ci }`. Published as `src/rulesets/schema/gate-evidence.schema.json` (deliverable of GT-02). All 27 rulesets already carry the `version` field `rulesetVersion` requires (verified 2026-06-10).
 3. **Global flags:** `--format <json|table|yaml|markdown>` on every command; `--dry-run` on every write command; `--phase <discovery|design|construction|qa|release>` on gate-scoped commands. Context flags `--initiative` / `--tenant` are accepted and echoed, never persisted.
 4. **Initial error-code registry:** `GATE_BLOCKED`, `VALIDATION_FAILED`, `RULESET_NOT_FOUND`, `SCHEMA_INVALID`, `INVALID_PHASE`, `NOT_A_SATELLITE`, `IO_ERROR`, `INTERNAL_ERROR`. Codes are append-only; renaming or reusing a code is a breaking change requiring a superseding ADR.
 5. **Naming:** the package adds an `evolith` bin alias alongside `evolith-cli` (which remains for compatibility); documentation and new examples use `evolith <verb> <noun>`. MCP tool names mirror CLI commands with dash-joining (`evolith-gate-evaluate` ↔ `evolith gate evaluate`).
@@ -94,7 +94,7 @@ Evidence: both source design documents; verified code state of 2026-06-10 — `-
 - [ADR 0032: API Protocol Decision Matrix](./0032-api-protocol-decision-matrix-rest-grpc-graphql.md) — protocol selection principles
 - [ADR Authoring Standard](../adr-authoring-standard.md) — this ADR's structure
 - Gap items: [GT-01](../../../control-center/gaps/gap-reference-catalog.md#gt-01) (this decision), GT-02/GT-03/GT-06 (implementation), GT-12 (`--dry-run` completion), GT-18 (npm publication under the `evolith` alias)
-- Rulesets: `rulesets/cli/core-parity.rules.json`, future `rulesets/schema/gate-evidence.schema.json`
+- Rulesets: `src/rulesets/cli/core-parity.rules.json`, future `src/rulesets/schema/gate-evidence.schema.json`
 
 ---
 [Back to ADR Registry](../README.md)

@@ -47,7 +47,7 @@
 | Gate status | 300s (5 min) | Phase transitions are deliberate; short TTL not needed |
 | MCP discovery | 600s (10 min) | Tool/resource lists are static at runtime; long TTL safe |
 
-All TTLs are defined in `apps/core-api/src/infrastructure/cache/cache-keys.ts` (`CacheTTL` constant) and `packages/mcp-server/src/mcp/mcp-cache.service.ts`.
+All TTLs are defined in `src/apps/core-api/src/infrastructure/cache/cache-keys.ts` (`CacheTTL` constant) and `src/packages/mcp-server/src/mcp/mcp-cache.service.ts`.
 
 ## Cache Invalidation
 

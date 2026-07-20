@@ -9,7 +9,7 @@ Core capabilities through ports — without becoming coupled to any specific age
 framework. Hermes Agent, Swarms (OpenAI), another framework, or an in-house engine are all just
 replaceable adapters.
 
-Implementation: [`packages/agent-runtime`](../../../../src/packages/agent-runtime/README.md)
+Implementation: [`src/packages/agent-runtime`](../../../../src/packages/agent-runtime/README.md)
 · Decision record: [core/ADR-0102](../adrs/core/0102-evolith-agent-runtime.md).
 
 ## What is the Evolith Agent Runtime
@@ -64,7 +64,7 @@ const result = await runtime.handle(
 ```
 
 A runnable script lives at
-[`packages/agent-runtime/examples/validate-discovery-gate.mjs`](../../../../src/packages/agent-runtime/examples/validate-discovery-gate.mjs).
+[`src/packages/agent-runtime/examples/validate-discovery-gate.mjs`](../../../../src/packages/agent-runtime/examples/validate-discovery-gate.mjs).
 
 ## Client interaction pattern
 

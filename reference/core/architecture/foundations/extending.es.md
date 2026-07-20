@@ -129,4 +129,4 @@ expect(deps.tracker.events.map(e => e.type)).toContain('runtime.completed');
 ```
 
 Consulta las suites existentes en
-[`packages/agent-runtime/src/__tests__`](../../../../src/packages/agent-runtime/src/__tests__).
+[`src/packages/agent-runtime/src/__tests__`](../../../../src/packages/agent-runtime/src/__tests__).

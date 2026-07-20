@@ -6,7 +6,7 @@ test_core_with_required_dirs_has_no_violations {
     violations := repository_taxonomy.violations with input as {
         "repository": {
             "type": "core",
-            "directories": ["reference", "sdk", "rulesets", "src"],
+            "directories": ["reference", "product", "src"],
             "adrs": ["reference/architecture/adrs/core/0001-monorepo-orchestration.md", "reference/architecture/adrs/core/0001-monorepo-orchestration.es.md"]
         }
     }
@@ -50,7 +50,7 @@ test_adr_with_valid_name_has_no_violation {
     violations := repository_taxonomy.violations with input as {
         "repository": {
             "type": "core",
-            "directories": ["reference", "sdk", "rulesets"],
+            "directories": ["reference", "product", "src"],
             "adrs": ["reference/architecture/adrs/core/0002-clean-architecture.md", "reference/architecture/adrs/core/0002-clean-architecture.es.md"]
         }
     }
@@ -61,7 +61,7 @@ test_adr_invalid_name_is_violation {
     violations := repository_taxonomy.violations with input as {
         "repository": {
             "type": "core",
-            "directories": ["reference", "sdk", "rulesets"],
+            "directories": ["reference", "product", "src"],
             "adrs": ["reference/architecture/adrs/core/invalid-adr-name.md"]
         }
     }
@@ -72,7 +72,7 @@ test_adr_missing_bilingual_pair_is_violation {
     violations := repository_taxonomy.violations with input as {
         "repository": {
             "type": "core",
-            "directories": ["reference", "sdk", "rulesets"],
+            "directories": ["reference", "product", "src"],
             "adrs": ["reference/architecture/adrs/core/0001-feature.md"]
         }
     }

@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 import { resolveCoreOverride } from './core-resolver';
 import { resolveRulesets } from './rulesets-resolver';
@@ -101,14 +102,31 @@ describe('GT-456 unified Core resolution', () => {
     // only the satellite-side `agents/` directory. Qualifying candidates by mere
     // directory existence made this override resolve the agents tree, which then
     // loaded zero rules.
-    it('skips the repo-root rulesets/agents tree and resolves src/rulesets', () => {
-      const repoRoot = path.resolve(__dirname, '..', '..', '..', '..', '..', '..');
-      // Guard the fixture: if the decoy is gone the regression cannot reproduce.
-      expect(fs.existsSync(path.join(repoRoot, 'rulesets', 'agents'))).toBe(true);
+    // El señuelo se construye aquí. Antes dependía de que existiera un
+    // `rulesets/agents/` en la raíz del repo -- un artefacto accidental de haber
+    // ejecutado `evolith agents install` desde la raíz, ya eliminado. Un test de
+    // regresión que necesita basura en el repo para reproducir deja de ser un
+    // test en cuanto alguien limpia; y su propio guard de fixture era la señal
+    // de que su autor ya lo sospechaba.
+    it('skips a repo-root rulesets/agents tree and resolves src/rulesets', () => {
+      const fakeCore = fs.mkdtempSync(path.join(os.tmpdir(), 'evolith-core-'));
+      try {
+        // El señuelo: `<core>/rulesets` existe pero solo contiene agents/,
+        // ni un `*.rules.json`. Calificar por existencia de directorio lo elegía
+        // y cargaba cero reglas.
+        fs.mkdirSync(path.join(fakeCore, 'rulesets', 'agents'), { recursive: true });
+        // El corpus real, calificado por contenido.
+        fs.mkdirSync(path.join(fakeCore, 'src', 'rulesets', 'topologies'), { recursive: true });
+        fs.writeFileSync(
+          path.join(fakeCore, 'src', 'rulesets', 'topologies', 'sample.rules.json'),
+          JSON.stringify({ rules: [] }),
+        );
 
-      const resolved = resolveRulesets(repoRoot);
-      expect(resolved.rulesetsRoot).toBe(path.join(repoRoot, 'src', 'rulesets'));
-      expect(fs.existsSync(path.join(resolved.rulesetsRoot, 'topologies'))).toBe(true);
+        const resolved = resolveRulesets(fakeCore);
+        expect(resolved.rulesetsRoot).toBe(path.join(fakeCore, 'src', 'rulesets'));
+      } finally {
+        fs.rmSync(fakeCore, { recursive: true, force: true });
+      }
     });
   });
 });

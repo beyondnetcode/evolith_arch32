@@ -52,14 +52,12 @@ const allowedDirectories = new Set([
   ".vscode",
   "node_modules",
   "reference",
-  "rulesets",
   // Source workspaces live under src/ (npm workspaces: src/sdk/*, src/apps/*,
   // src/packages/*, src/tests). The old flat root layout (apps/, packages/,
   // sdk/, tests/) was relocated here, so those are no longer permitted at root.
   "src",
-  // Product documentation corpus and a sample satellite fixture project.
+  // Product documentation corpus.
   "product",
-  "test-project",
   "examples",
   "wiki"
 ]);

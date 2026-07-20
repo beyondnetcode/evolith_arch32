@@ -53,7 +53,7 @@ violations[{"id": "TAX-10", "message": msg}] {
 
 violations[{"id": "TAX-05", "message": msg}] {
     input.repository.type == "core"
-    expected := {"reference", "sdk", "rulesets"}
+    expected := {"reference", "product", "src"}
     actual := {dir | dir := input.repository.directories[_]}
     missing := expected - actual
     count(missing) > 0

@@ -112,24 +112,24 @@ jobs:
       - name: Run governance validator suite
         run: node .harness/scripts/ci-runner.mjs governance
 
-      # Suite exploratoria cross-superficie: NO cableada aqui todavia.
+      # Suite exploratoria cross-superficie: ejerce CLI, MCP y REST de VERDAD
+      # (48 operaciones, 66 invocaciones) y compara sus respuestas. Necesita los
+      # paquetes construidos porque los importa por nombre.
       #
-      # El bug que la bloqueaba (dobles de test compilados a dist/ que jest
-      # auto-registraba como mocks) SI esta arreglado, y en entorno limpio local
-      # da 6/6 con findings = 0. Pero al cablearla a este check --requerido en
-      # main-- CI encontro 3 divergencias que en local no reproducen:
-      #
-      #   - `sdlc-status` y `dora-metrics`: cli=false, mcp=true. Ambos bindings
-      #     de CLI corren `sdlc gate-status`, que en un checkout limpio no
-      #     encuentra estado que en un working tree usado si existe.
-      #   - drift de los how-to: se generan desde la captura EN VIVO de la
-      #     corrida, asi que su contenido depende del entorno. Un doc generado
-      #     con esa propiedad no puede compararse contra uno commiteado.
-      #
-      # Son hallazgos REALES y la suite hizo su trabajo al encontrarlos -- pero
-      # son trabajo nuevo, no una regresion. Cablearla ahora dejaria en rojo
-      # permanente el check que acaba de volverse requerido, que es el habito que
-      # esta revision vino a eliminar. Se cablea cuando las 3 esten resueltas.
+      # Estuvo sin cablear mientras no era hermetica: corria con el cwd en la
+      # RAIZ DEL REPO, asi que `init` scaffoldeaba un `test-project/` ahi y las
+      # operaciones que leen estado del proyecto lo encontraban o no segun lo que
+      # hubieran dejado corridas ANTERIORES. De ahi 6/6 en una maquina usada y
+      # fallos en checkout limpio. Ahora el cwd es el satelite temporal que la
+      # propia suite construye, y los bindings pasan el mismo contexto explicito
+      # a las tres superficies -- sin eso el oraculo comparaba preguntas
+      # distintas y reportaba divergencias que no existian.
+      - name: Build workspace packages
+        run: npm run build
+
+      - name: Cross-surface exploration suite
+        run: npm run test:exploration
+
       # GT-563: the steps below REPORT, they do not validate. This job runs no tests and
       # produces no coverage data, and COVERAGE_REPORT.md is untracked, so on a PR the
       # dashboard --check can only ever report "COVERAGE_REPORT.md is missing" and the

@@ -554,6 +554,7 @@ Example (`tools/call`):
     "fromPhase": "discovery",
     "toPhase": "design",
     "projectPath": "/abs/path/to/your-satellite",
+    "corePath": "/abs/path/to/evolith-core",
     "evaluatedBy": "ci"
   }
 }

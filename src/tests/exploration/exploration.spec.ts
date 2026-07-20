@@ -47,6 +47,7 @@ describe('Cross-surface exploration agent (F1)', () => {
   let restApp: INestApplication;
   let mcpServer: { app: { close: () => Promise<void> } };
   let projectPath: string;
+  let originalCwd: string;
   let run: RunResult;
   const OUT_DIR = path.join(REPO_ROOT, 'src/tests/exploration/.out');
 
@@ -58,6 +59,22 @@ describe('Cross-surface exploration agent (F1)', () => {
     process.env.CORE_PATH = REPO_ROOT;
     await fs.ensureDir(projectPath);
     await fs.writeFile(path.join(projectPath, 'evolith.yaml'), SATELLITE_YAML);
+
+    // HERMETICIDAD. Los comandos que no reciben un directorio explicito operan
+    // sobre `process.cwd()`. Sin esto, la suite corria contra la RAIZ DEL REPO:
+    // `init` scaffoldeaba un `test-project/` ahi (el mismo artefacto que
+    // ADR-0118 elimino y que reaparecia solo), y las operaciones que leen estado
+    // del proyecto lo encontraban o no segun lo que hubieran dejado corridas
+    // ANTERIORES. De ahi que diera 6/6 en una maquina usada y 3 fallos en un
+    // checkout limpio: `sdlc-status` y `dora-metrics` reportaban una divergencia
+    // CLI/MCP que era un artefacto del entorno, no del producto.
+    //
+    // El cwd pasa a ser el satelite temporal que la propia suite construye, que
+    // es contra lo que dice ejercer. `corePath`/`CORE_PATH` ya se pasan
+    // explicitos y `REPO_ROOT` es absoluto, asi que la resolucion del Core no
+    // depende del cwd.
+    originalCwd = process.cwd();
+    process.chdir(projectPath);
 
     // CLI: bootstrap via CommandTestFactory with the mock prompt service.
     const { AppModule: CliAppModule } = await import('../../sdk/cli/src/app.module');
@@ -134,6 +151,9 @@ describe('Cross-surface exploration agent (F1)', () => {
   afterAll(async () => {
     await mcpServer?.app.close();
     await restApp?.close();
+    // Volver ANTES de borrar el directorio: quedarse dentro de una ruta
+    // eliminada rompe cualquier resolucion relativa posterior.
+    if (originalCwd) process.chdir(originalCwd);
     await fs.remove(projectPath);
     process.exit = originalProcessExit;
   });

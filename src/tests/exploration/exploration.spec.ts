@@ -151,6 +151,17 @@ describe('Cross-surface exploration agent (F1)', () => {
     // con los de otra maquina -- el drift en CI no era drift, era el nombre del
     // directorio de trabajo. Sin esto el chequeo anti-drift es infalseable.
     capture = capture.split(REPO_ROOT).join('/abs/path/to/evolith-core');
+    // Y el tmpdir del sistema, normalizado. No basta con `projectPath`: la
+    // captura tambien traia rutas como `<tmpdir>/evolith/reference/core/...`,
+    // que en Linux son `/tmp/...` y en macOS `/var/folders/xm/…/T/...`. Ese
+    // prefijo, propio de la maquina, viajaba a los how-to commiteados y hacia
+    // imposible que coincidieran entre plataformas. Se normaliza a `/tmp` (no-op
+    // en Linux) e incluye la forma resuelta, porque en macOS `/var/folders` es
+    // un symlink a `/private/var/folders` y algunas respuestas devuelven ya el
+    // realpath.
+    for (const tmp of [fs.realpathSync(os.tmpdir()), os.tmpdir()]) {
+      capture = capture.split(tmp).join('/tmp');
+    }
     fs.writeFileSync(path.join(OUT_DIR, 'howto-capture.json'), capture);
   }, 180000);
 

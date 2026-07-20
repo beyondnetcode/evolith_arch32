@@ -518,7 +518,7 @@ Response (captured live):
         "severity": "SHOULD",
         "category": "architecture",
         "title": "Ruleset not found",
-        "description": "Could not find architecture rules at /var/folders/xm/4qq25s3j75b92kbk2j1z1vxr0000gn/T/evolith/reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
+        "description": "Could not find architecture rules at /tmp/evolith/reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
         "blocking": false,
         "firstDetected": "<timestamp>",
         "status": "new"

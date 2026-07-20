@@ -8,7 +8,7 @@ import { EnvelopeInterceptor } from '../../apps/core-api/src/infrastructure/inte
 import { HttpExceptionFilter } from '../../apps/core-api/src/infrastructure/filters/http-exception.filter';
 import { CliExecutor, RestExecutor, McpExecutor } from './executors';
 import { runExploration, Harness, RunResult } from './runner';
-import { REPO_ROOT } from './catalog';
+import { REPO_ROOT, loadCatalog } from './catalog';
 
 // jest-runner wraps process.exit and, under --runInBand, a real exit kills the
 // worker. The CLI gate/validate/phase commands legitimately exit non-zero on a
@@ -138,8 +138,13 @@ describe('Cross-surface exploration agent (F1)', () => {
     process.exit = originalProcessExit;
   });
 
-  it('discovers the full 61-operation surface-parity catalog', () => {
-    expect(run.coverage.totalOperations).toBe(61);
+  it('discovers every operation in the surface-parity catalog', () => {
+    // Derived from the matrix, never hardcoded: a literal count here fails the
+    // moment an operation is added, which trains people to ignore this suite.
+    // What matters is that discovery is COMPLETE, not that the total is a
+    // particular number.
+    expect(run.coverage.totalOperations).toBe(loadCatalog().length);
+    expect(run.coverage.totalOperations).toBeGreaterThan(0);
     expect(run.coverage.fullTriangle).toBeGreaterThanOrEqual(5);
   });
 

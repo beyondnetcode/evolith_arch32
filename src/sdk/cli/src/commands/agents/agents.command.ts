@@ -28,6 +28,13 @@ interface AgentsCommandOptions {
   run?: string;
   dryRun?: boolean;
   format?: 'json' | 'table' | 'yaml';
+  /**
+   * Target agent for `validate`. Without it the subcommand can only ask
+   * interactively, which makes `--format json` unusable from a script or an
+   * agent — while the MCP tool `evolith-agent-validate` has always taken a
+   * name. That asymmetry is the parity gap this closes.
+   */
+  name?: string;
 }
 
 const AGENT_TEMPLATES = [
@@ -320,10 +327,32 @@ export class AgentsCommand extends BaseEvolithCommand {
         return;
       }
 
-      const agentToValidate = await this.promptService.select({
-        message: 'Select agent to validate:',
-        options: agents.map(a => ({ value: a.name, label: a.name })),
-      });
+      let agentToValidate: string;
+      if (options?.name) {
+        const match = agents.find((a) => a.name === options.name);
+        if (!match) {
+          const errorMsg = `Agent not found: ${options.name}. Installed: ${agents.map((a) => a.name).join(', ') || 'none'}`;
+          if (isJson) {
+            process.exitCode = 1;
+            console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', errorMsg, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          } else {
+            this.promptService.showError(errorMsg);
+          }
+          return;
+        }
+        agentToValidate = match.name;
+      } else if (isJson) {
+        // Prompting here would hang a non-interactive caller. Fail with guidance
+        // instead, so a script gets an actionable error rather than a stall.
+        process.exitCode = 1;
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', 'Specify which agent to validate with --name <agent> when using --format json', { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        return;
+      } else {
+        agentToValidate = String(await this.promptService.select({
+          message: 'Select agent to validate:',
+          options: agents.map(a => ({ value: a.name, label: a.name })),
+        }));
+      }
 
       if (!isJson) {
         this.promptService.showInfo('\nValidating agent ruleset against engine...\n');
@@ -615,4 +644,7 @@ export class AgentsCommand extends BaseEvolithCommand {
 
   @Option({ flags: '--format [type]', description: 'Output format: json, table, yaml' })
   parseFormat(val: string): 'json' | 'table' | 'yaml' { return val as 'json' | 'table' | 'yaml'; }
+
+  @Option({ flags: '--name <agent>', description: 'Target agent for validate (required with --format json)' })
+  parseName(val: string): string { return val; }
 }

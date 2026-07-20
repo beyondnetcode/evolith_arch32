@@ -133,4 +133,84 @@ describe('UpdateCommand', () => {
       expect(result).toBe(true);
     });
   });
+
+  // El modo `--format json` estaba practicamente sin cubrir: cada `if (json)`
+  // de showCurrentVersion / checkForUpdates / installUpdate era una rama muerta
+  // para la suite. Es el modo que usa un agente o un script, donde ademas el
+  // contrato ADR-0073 importa.
+  describe('--format json', () => {
+    let logSpy: jest.SpyInstance;
+
+    const lastEnvelope = () => {
+      const printed = logSpy.mock.calls
+        .map((c: unknown[]) => String(c[0]))
+        .filter((s: string) => s.trim().startsWith('{'));
+      expect(printed.length).toBeGreaterThan(0);
+      return JSON.parse(printed[printed.length - 1]);
+    };
+
+    beforeEach(() => {
+      logSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    });
+
+    afterEach(() => logSpy.mockRestore());
+
+    it('--current emite un envelope con la version instalada', async () => {
+      await command.executeCommand([], { current: true, format: 'json' } as never);
+      const env = lastEnvelope();
+      expect(env.success).toBe(true);
+      expect(env.data.current).toEqual(expect.any(String));
+    });
+
+    it('--check informa que hay actualizacion cuando el registry va por delante', async () => {
+      const { execFileSync } = require('child_process');
+      (execFileSync as jest.Mock).mockReturnValue('"99.0.0"');
+      await command.executeCommand([], { check: true, format: 'json' } as never);
+      const env = lastEnvelope();
+      expect(env.success).toBe(true);
+      expect(env.data.latest).toBe('99.0.0');
+      expect(env.data.updateAvailable).toBe(true);
+    });
+
+    it('--check informa que NO hay actualizacion cuando ya se esta al dia', async () => {
+      const { execFileSync } = require('child_process');
+      (execFileSync as jest.Mock).mockReturnValue('"0.0.1"');
+      await command.executeCommand([], { check: true, format: 'json' } as never);
+      expect(lastEnvelope().data.updateAvailable).toBe(false);
+    });
+
+    it('--check emite un envelope de error si el registry no responde', async () => {
+      const { execFileSync } = require('child_process');
+      (execFileSync as jest.Mock).mockImplementation(() => {
+        throw new Error('registry unreachable');
+      });
+      await command.executeCommand([], { check: true, format: 'json' } as never);
+      const env = lastEnvelope();
+      expect(env.success).toBe(false);
+      expect(env.error.code).toEqual(expect.any(String));
+    });
+
+    it('--install no reinstala cuando ya se esta en la ultima version', async () => {
+      const { execFileSync } = require('child_process');
+      (execFileSync as jest.Mock).mockReturnValue('"0.0.1"');
+      await command.executeCommand([], { install: true, format: 'json' } as never);
+      const env = lastEnvelope();
+      expect(JSON.stringify(env)).toMatch(/0\.0\.1/);
+    });
+
+    it('--install emite un envelope de error si el registry no responde', async () => {
+      const { execFileSync } = require('child_process');
+      (execFileSync as jest.Mock).mockImplementation(() => {
+        throw new Error('registry unreachable');
+      });
+      await command.executeCommand([], { install: true, format: 'json' } as never);
+      expect(lastEnvelope().success).toBe(false);
+    });
+
+    it('sin flags emite la ayuda tambien en json', async () => {
+      await command.executeCommand([], { format: 'json' } as never);
+      const env = lastEnvelope();
+      expect(env).toHaveProperty('meta');
+    });
+  });
 });

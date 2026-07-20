@@ -410,4 +410,125 @@ describe('ScaffoldCommand', () => {
       expect(envelope.error.message).toContain('Unknown --phase');
     });
   });
+
+  // El camino `--format json` concentraba la mayoria de las ramas sin cubrir:
+  // validacion de flags obligatorios, normalizacion de --phase, la bifurcacion
+  // phase 1 (web standard) frente a 2/3 (host + remotes), los dominios opcionales
+  // y el guard de workspace. Es el modo por el que un agente scaffoldea.
+  describe('--format json', () => {
+    let logSpy: jest.SpyInstance;
+    let exitSpy: jest.SpyInstance;
+
+    const envelopes = () =>
+      logSpy.mock.calls
+        .map((c: unknown[]) => String(c[0]))
+        .filter((s: string) => s.trim().startsWith('{'))
+        .map((s: string) => JSON.parse(s));
+
+    const env = () => {
+      const all = envelopes();
+      expect(all.length).toBeGreaterThan(0);
+      return all[all.length - 1];
+    };
+
+    // Con `process.exit` stubeado la ejecucion NO se detiene: el comando sigue y
+    // puede emitir un segundo envelope (normalmente el INTERNAL_ERROR del catch,
+    // al operar sobre los datos que la validacion acababa de rechazar). Los tests
+    // de camino de error deben mirar el PRIMER envelope, que es el que el proceso
+    // real habria emitido antes de morir.
+    const firstEnv = () => {
+      const all = envelopes();
+      expect(all.length).toBeGreaterThan(0);
+      return all[0];
+    };
+
+    beforeEach(() => {
+      logSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+      // El comando llama process.exit(1) en sus caminos de error; sin stub, jest
+      // matarian el worker.
+      exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    });
+
+    afterEach(() => {
+      logSpy.mockRestore();
+      exitSpy.mockRestore();
+    });
+
+    it('exige --frontend, --orm y --phase, y dice cuales', async () => {
+      await command.executeCommand([], { format: 'json', dryRun: true } as never);
+      const e = firstEnv();
+      expect(e.success).toBe(false);
+      expect(e.error.message).toMatch(/--frontend, --orm, and --phase are required/);
+      expect(exitSpy).toHaveBeenCalledWith(1);
+    });
+
+    it('rechaza un --phase desconocido enumerando los validos', async () => {
+      await command.executeCommand([], {
+        format: 'json', dryRun: true, frontend: 'react', orm: 'prisma', phase: 'inventada',
+      } as never);
+      const e = firstEnv();
+      expect(e.success).toBe(false);
+      expect(e.error.message).toMatch(/modular-monolith, distributed-modules, microservices/);
+    });
+
+    it('phase 1 genera la web app standard, no el host', async () => {
+      await command.executeCommand([], {
+        format: 'json', dryRun: true, frontend: 'react', orm: 'prisma', phase: '1',
+      } as never);
+      expect(mockStrategy.generateStandardWebApp).toHaveBeenCalled();
+      expect(mockStrategy.generateHostApp).not.toHaveBeenCalled();
+      expect(env().data.status).toBe('dry-run');
+    });
+
+    it('phase 2 genera el host y parsea los remotes separados por coma', async () => {
+      await command.executeCommand([], {
+        format: 'json', dryRun: true, frontend: 'react', orm: 'prisma', phase: '2',
+        remotes: 'uno, dos ,, tres',
+      } as never);
+      expect(mockStrategy.generateHostApp).toHaveBeenCalledWith(
+        'tracker-host', ['uno', 'dos', 'tres'], 'react',
+      );
+      expect(mockStrategy.generateStandardWebApp).not.toHaveBeenCalled();
+    });
+
+    it('acepta el id del eje progresivo ademas del numero', async () => {
+      await command.executeCommand([], {
+        format: 'json', dryRun: true, frontend: 'react', orm: 'prisma',
+        phase: 'modular-monolith',
+      } as never);
+      expect(env().data.phase).toBe('1');
+    });
+
+    it('genera una libreria de dominio por cada --domains', async () => {
+      await command.executeCommand([], {
+        format: 'json', dryRun: true, frontend: 'react', orm: 'prisma', phase: '1',
+        domains: ['billing', 'identity'],
+      } as never);
+      expect(mockStrategy.generateLibrary).toHaveBeenCalledWith('billing', 'domain');
+      expect(mockStrategy.generateLibrary).toHaveBeenCalledWith('identity', 'domain');
+      expect(env().data.domains).toEqual(['billing', 'identity']);
+    });
+
+    it('un fallo de la estrategia sale como INTERNAL_ERROR, no como crash', async () => {
+      mockStrategy.generateApiApp.mockRejectedValueOnce(new Error('nx no disponible'));
+      await command.executeCommand([], {
+        format: 'json', dryRun: true, frontend: 'react', orm: 'prisma', phase: '1',
+      } as never);
+      const e = env();
+      expect(e.success).toBe(false);
+      expect(e.error.code).toBe('INTERNAL_ERROR');
+      expect(e.error.message).toMatch(/nx no disponible/);
+    });
+
+    it('sin workspace Nx falla como NOT_A_SATELLITE en vez de un spawn ENOENT', async () => {
+      jest.spyOn(command as never as { checkWorkspace: () => string }, 'checkWorkspace')
+        .mockReturnValue('No Nx workspace found at <cwd>/src');
+      await command.executeCommand([], {
+        format: 'json', frontend: 'react', orm: 'prisma', phase: '1',
+      } as never);
+      const e = env();
+      expect(e.success).toBe(false);
+      expect(e.error.code).toBe('NOT_A_SATELLITE');
+    });
+  });
 });

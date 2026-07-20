@@ -496,4 +496,72 @@ describe('ADRCommand', () => {
       expect(command.parseDryRun()).toBe(true);
     });
   });
+
+  // Ramas de presentacion y de error que no ejercitaba nadie: el truncado de
+  // titulos largos en la tabla, el bloque de tags opcional, el aviso de corpus
+  // vacio, y los caminos de fallo de get/update.
+  describe('presentacion y errores', () => {
+    const adr = (over: Record<string, unknown> = {}) => ({
+      id: 'ADR-0001',
+      title: 'Titulo corto',
+      status: 'Accepted',
+      date: '2026-01-01',
+      context: 'ctx',
+      decision: 'dec',
+      consequences: { positive: ['p'], negative: ['n'] },
+      ...over,
+    });
+
+    it('avisa cuando no hay ningun ADR registrado, en vez de imprimir una tabla vacia', async () => {
+      // El spec construye un PromptService REAL, asi que hay que espiar el
+      // prototipo -- no existe `.mock` sobre la instancia.
+      const warn = jest.spyOn(PromptService.prototype, 'showWarning').mockImplementation(() => undefined);
+      mockList.mockResolvedValue([]);
+      await command.executeCommand([], { list: true } as never);
+      expect(warn).toHaveBeenCalledWith(expect.stringMatching(/No hay ADRs/));
+      warn.mockRestore();
+    });
+
+    it('trunca a 50 el titulo largo al tabular, conservando el corto intacto', async () => {
+      const tableSpy = jest.spyOn(console, 'table').mockImplementation(() => undefined);
+      const largo = 'T'.repeat(80);
+      mockList.mockResolvedValue([adr({ title: largo }), adr({ id: 'ADR-0002' })]);
+      await command.executeCommand([], { list: true } as never);
+      const rows = tableSpy.mock.calls[0][0] as Array<{ title: string }>;
+      expect(rows[0].title).toHaveLength(50);
+      expect(rows[0].title.endsWith('...')).toBe(true);
+      expect(rows[1].title).toBe('Titulo corto');
+      tableSpy.mockRestore();
+    });
+
+    it('muestra los tags cuando el ADR los trae', async () => {
+      mockGet.mockResolvedValue(adr({ tags: ['seguridad', 'datos'] }));
+      await command.executeCommand([], { get: 'ADR-0001' } as never);
+      const out = logSpy.mock.calls.map((c: unknown[]) => String(c[0])).join('\n');
+      expect(out).toMatch(/seguridad/);
+      expect(out).toMatch(/datos/);
+    });
+
+    it('omite el bloque de tags cuando no los hay', async () => {
+      mockGet.mockResolvedValue(adr());
+      await command.executeCommand([], { get: 'ADR-0001' } as never);
+      const out = logSpy.mock.calls.map((c: unknown[]) => String(c[0])).join('\n');
+      expect(out).not.toMatch(/Tags:/);
+    });
+
+    it('update sin --status explica que estados admite', async () => {
+      const err = jest.spyOn(PromptService.prototype, 'showError').mockImplementation(() => undefined);
+      await command.executeCommand([], { update: 'ADR-0001' } as never);
+      expect(err).toHaveBeenCalledWith(expect.stringMatching(/Estado requerido/));
+      err.mockRestore();
+    });
+
+    it('un fallo del servicio al listar PROPAGA el error, no lo silencia', async () => {
+      // Comportamiento real verificado: el comando deja subir el fallo en vez de
+      // tragarselo. Se documenta como esta, no como yo suponia.
+      mockList.mockRejectedValue(new Error('corpus ilegible'));
+      await expect(command.executeCommand([], { list: true } as never))
+        .rejects.toThrow('corpus ilegible');
+    });
+  });
 });

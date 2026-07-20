@@ -47,47 +47,22 @@ Response (captured live):
   "success": true,
   "data": {
     "status": "failed",
-    "rulesChecked": 102,
-    "issues": [
-      {
-        "ruleId": "CLI-RR-01",
-        "severity": "MUST",
-        "category": "build",
-        "title": "TypeScript Build Must Pass",
-        "description": "dist/main.js not found — run npm run build in sdk/cli",
-        "blocking": true
-      },
-      {
-        "ruleId": "CLI-RR-02",
-        "severity": "MUST",
-        "category": "tests",
-        "title": "Unit and Integration Tests Must Start and Pass",
-        "description": "dist/ not found — run npm run build",
-        "blocking": true
-      },
-      {
-        "ruleId": "CLI-RR-05",
-        "severity": "SHOULD",
-        "category": "documentation",
-        "title": "Release Documentation Must Match Implementation",
-        "description": "CLI missing README.md or ARCHITECTURE.md",
-        "blocking": false
-      },
-      {
-        "ruleId": "TAX-05",
-        "severity": "MUST",
-        "category": "directory-structure",
-        "title": "Evolith Core structure: reference/, sdk/, rulesets/",
-        "description": "Missing top-level directories: rulesets, sdk",
-        "blocking": true
-      },
-      {
-        "ruleId": "INH-02",
-        "severity": "MUST",
-        "category": "inheritance",
-        "title": "Version Pinning",
-        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned refere
-  … (truncated)
+    "rulesChecked": "<n>",
+    "issues": "<issues[]>",
+    "coreRef": {
+      "version": null,
+      "path": "/abs/path/to/evolith-core"
+    },
+    "timestamp": "<timestamp>"
+  },
+  "meta": {
+    "command": "evolith validate",
+    "executedAt": "<timestamp>",
+    "durationMs": 0,
+    "correlationId": "<uuid>",
+    "schemaVersion": "1.0.0"
+  }
+}
 ```
 
 #### MCP
@@ -119,47 +94,24 @@ Response (captured live):
   "success": true,
   "data": {
     "status": "failed",
-    "rulesChecked": 102,
-    "issues": [
-      {
-        "ruleId": "CLI-RR-01",
-        "severity": "MUST",
-        "category": "build",
-        "title": "TypeScript Build Must Pass",
-        "description": "dist/main.js not found — run npm run build in sdk/cli",
-        "blocking": true
-      },
-      {
-        "ruleId": "CLI-RR-02",
-        "severity": "MUST",
-        "category": "tests",
-        "title": "Unit and Integration Tests Must Start and Pass",
-        "description": "dist/ not found — run npm run build",
-        "blocking": true
-      },
-      {
-        "ruleId": "CLI-RR-05",
-        "severity": "SHOULD",
-        "category": "documentation",
-        "title": "Release Documentation Must Match Implementation",
-        "description": "CLI missing README.md or ARCHITECTURE.md",
-        "blocking": false
-      },
-      {
-        "ruleId": "TAX-05",
-        "severity": "MUST",
-        "category": "directory-structure",
-        "title": "Evolith Core structure: reference/, sdk/, rulesets/",
-        "description": "Missing top-level directories: rulesets, sdk",
-        "blocking": true
-      },
-      {
-        "ruleId": "INH-02",
-        "severity": "MUST",
-        "category": "inheritance",
-        "title": "Version Pinning",
-        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned refere
-  … (truncated)
+    "rulesChecked": "<n>",
+    "issues": "<issues[]>",
+    "coreRef": {
+      "version": null,
+      "path": null
+    },
+    "timestamp": "<timestamp>"
+  },
+  "meta": {
+    "correlationId": "<uuid>",
+    "command": "evolith-validate",
+    "tool": "evolith-validate",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
+    "timestamp": "<timestamp>",
+    "schemaVersion": "1.0.0"
+  }
+}
 ```
 
 #### REST
@@ -185,47 +137,23 @@ Response (captured live):
   "success": true,
   "data": {
     "status": "failed",
-    "rulesChecked": 102,
-    "issues": [
-      {
-        "ruleId": "CLI-RR-01",
-        "severity": "MUST",
-        "category": "build",
-        "title": "TypeScript Build Must Pass",
-        "description": "dist/main.js not found — run npm run build in sdk/cli",
-        "blocking": true
-      },
-      {
-        "ruleId": "CLI-RR-02",
-        "severity": "MUST",
-        "category": "tests",
-        "title": "Unit and Integration Tests Must Start and Pass",
-        "description": "dist/ not found — run npm run build",
-        "blocking": true
-      },
-      {
-        "ruleId": "CLI-RR-05",
-        "severity": "SHOULD",
-        "category": "documentation",
-        "title": "Release Documentation Must Match Implementation",
-        "description": "CLI missing README.md or ARCHITECTURE.md",
-        "blocking": false
-      },
-      {
-        "ruleId": "TAX-05",
-        "severity": "MUST",
-        "category": "directory-structure",
-        "title": "Evolith Core structure: reference/, sdk/, rulesets/",
-        "description": "Missing top-level directories: rulesets, sdk",
-        "blocking": true
-      },
-      {
-        "ruleId": "INH-02",
-        "severity": "MUST",
-        "category": "inheritance",
-        "title": "Version Pinning",
-        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned refere
-  … (truncated)
+    "rulesChecked": "<n>",
+    "issues": "<issues[]>",
+    "coreRef": {
+      "version": null,
+      "path": null
+    },
+    "timestamp": "<timestamp>"
+  },
+  "meta": {
+    "command": "http POST /api/v1/architecture/validate-satellite",
+    "executedAt": "<timestamp>",
+    "durationMs": 0,
+    "correlationId": "<uuid>",
+    "context": {},
+    "schemaVersion": "1.0.0"
+  }
+}
 ```
 
 ---
@@ -263,32 +191,22 @@ Response (captured live):
   "success": true,
   "data": {
     "status": "failed",
-    "rulesChecked": 0,
-    "issues": [
-      {
-        "ruleId": "RULESET_NOT_FOUND",
-        "severity": "MUST",
-        "category": "ruleset",
-        "title": "Ruleset 'undefined' not found. Supported: acl, open-core, inheritance, satellite-contracts, executive-scorecards, cli-release, cli-parity, evidence, mcp, observability, compliance-baseline, definition-of-done, engineering-manifesto, repository-taxonomy, phase-gates, quality-thresholds, dependency-pinning",
-        "description": "Ruleset 'undefined' not found. Supported: acl, open-core, inheritance, satellite-contracts, executive-scorecards, cli-release, cli-parity, evidence, mcp, observability, compliance-baseline, definition-of-done, engineering-manifesto, repository-taxonomy, phase-gates, quality-thresholds, dependency-pinning",
-        "blocking": true
-      },
-      {
-        "ruleId": "GOV-CORE-UNRESOLVED",
-        "severity": "MUST",
-        "category": "governance",
-        "title": "No Core rulesets were resolved",
-        "description": "validate executed 0 rules — the Evolith Core rulesets could not be resolved. Pass --core <path> or set EVOLITH_CORE_PATH so governance rules actually run.",
-        "blocking": true
-      }
-    ],
+    "rulesChecked": "<n>",
+    "issues": "<issues[]>",
     "coreRef": {
       "version": null,
       "path": "/abs/path/to/evolith-core"
     },
     "timestamp": "<timestamp>"
+  },
+  "meta": {
+    "command": "evolith validate",
+    "executedAt": "<timestamp>",
+    "durationMs": 0,
+    "correlationId": "<uuid>",
+    "schemaVersion": "1.0.0"
   }
-  … (truncated)
+}
 ```
 
 #### MCP
@@ -327,16 +245,8 @@ Response (captured live):
       {
         "mode": "ruleset",
         "status": "failed",
-        "rulesChecked": 0,
-        "issues": [
-          {
-            "ruleId": "RULESET_NOT_FOUND",
-            "status": "fail",
-            "message": "Ruleset 'undefined' not found. Supported: acl, open-core, inheritance, satellite-contracts, executive-scorecards, cli-release, cli-parity, evidence, mcp, observability, compliance-baseline, definition-of-done, engineering-manifesto, repository-taxonomy, phase-gates, quality-thresholds, dependency-pinning",
-            "severity": "error",
-            "remediation": "Create ruleset with ID 'undefined'"
-          }
-        ]
+        "rulesChecked": "<n>",
+        "issues": "<issues[]>"
       }
     ],
     "totalRulesChecked": 0,
@@ -362,7 +272,29 @@ Response (captured live):
           "framework": "Express",
           "runtimeVersion": "Node 20"
         },
-        "sdlc"
+        "sdlc": {
+          "currentPhase": 1,
+          "gates": {}
+        },
+        "compliance": {
+          "adrRegistry": [
+            "core/ADR-0047"
+          ],
+          "localAdrTagEnforcement": "documented",
+          "coverageTarget": 80
+        }
+      }
+    },
+    "timestamp": "<timestamp>"
+  },
+  "meta": {
+    "correlationId": "<uuid>",
+    "command": "evolith-composable-validate",
+    "tool": "evolith-composable-validate",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
+    "timestamp": "<timestamp>",
+   
   … (truncated)
 ```
 
@@ -393,16 +325,8 @@ Response (captured live):
       {
         "mode": "ruleset",
         "status": "failed",
-        "rulesChecked": 0,
-        "issues": [
-          {
-            "ruleId": "RULESET_NOT_FOUND",
-            "status": "fail",
-            "message": "Ruleset 'undefined' not found. Supported: acl, open-core, inheritance, satellite-contracts, executive-scorecards, cli-release, cli-parity, evidence, mcp, observability, compliance-baseline, definition-of-done, engineering-manifesto, repository-taxonomy, phase-gates, quality-thresholds, dependency-pinning",
-            "severity": "error",
-            "remediation": "Create ruleset with ID 'undefined'"
-          }
-        ]
+        "rulesChecked": "<n>",
+        "issues": "<issues[]>"
       }
     ],
     "totalRulesChecked": 0,
@@ -432,8 +356,25 @@ Response (captured live):
           "currentPhase": 1,
           "gates": {}
         },
-   
-  … (truncated)
+        "compliance": {
+          "adrRegistry": [
+            "core/ADR-0047"
+          ],
+          "localAdrTagEnforcement": "documented",
+          "coverageTarget": 80
+        }
+      }
+    }
+  },
+  "meta": {
+    "command": "http POST /api/v1/validate/composable",
+    "executedAt": "<timestamp>",
+    "durationMs": 0,
+    "correlationId": "<uuid>",
+    "context": {},
+    "schemaVersion": "1.0.0"
+  }
+}
 ```
 
 ---

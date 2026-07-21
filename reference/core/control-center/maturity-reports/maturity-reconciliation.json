@@ -4,13 +4,13 @@
   "asOf": "2026-07-20",
   "gaps": {
     "total": 568,
-    "done": 553,
-    "pending": 6,
+    "done": 554,
+    "pending": 5,
     "inProgress": 5,
     "deferred": 4
   },
   "evidence": {
-    "closureRecords": 535,
+    "closureRecords": 536,
     "cliPackage": "@beyondnet/evolith-cli@1.1.0",
     "adrCount": 133,
     "rulesetCount": 163,
@@ -19,12 +19,11 @@
   "readiness": [
     {
       "id": "cli-baseline",
-      "status": "BLOCKED",
+      "status": "PASS",
       "observedAt": "2026-07-20",
-      "commit": "6066a4b2",
-      "gap": "GT-568",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29780735123",
-      "summary": "Re-observed 2026-07-20 on develop and NOT green, but the blockage has moved and shrunk. Eleven of twelve jobs now succeed -- Lint and Type Check, Package Integrity, Architecture Validation, CodeQL SAST, Trivy, gitleaks, DAST OWASP ZAP, E2E Tests, Winston Agentic Review, and Unit Tests, which passed for the first time since 2026-06-30. The two causes this entry previously named are both resolved: the MCP smoke (GT-561, DONE) and the branch-coverage gate (GT-562, DONE at 75.54%). What remains is a single job, Security Audit, failing on a high-severity brace-expansion advisory (GHSA-3jxr-9vmj-r5cp) whose six resolution paths are all dev-only lint/build tooling, none of which ship in the published CLI. The mapping is therefore repointed to GT-568, the new PENDING row that owns it. Not flipped to PASS: the pipeline is observably red, and a dev-only advisory is still a red until it is either scoped or fixed."
+      "commit": "92390d6d",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29785778145",
+      "summary": "Re-observed 2026-07-20 on develop and GREEN — the CLI CI pipeline is fully green for the first time since 2026-06-30. Run 29785778145 shows all thirteen jobs succeeding, CI Gate included: Lint and Type Check, Package Integrity, Architecture Validation, Evolith Core Validation, CodeQL SAST, Trivy, gitleaks, Unit Tests, E2E Tests, DAST OWASP ZAP, Winston Agentic Review, Security Audit, and the CI Gate. The three blockages this check tracked across its history are all closed: the MCP smoke (GT-561), the branch-coverage gate (GT-562, 75.54%), and the Security Audit advisories (GT-568 — js-yaml/brace-expansion/protobufjs patched via targeted overrides, 0 vulnerabilities). No active gap remains mapped because none is blocking."
     },
     {
       "id": "coverage",

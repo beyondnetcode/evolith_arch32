@@ -29,7 +29,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-447](../gaps/gap-reference-catalog.es.md#gt-447), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-441](../gaps/gap-reference-catalog.es.md#gt-441), [GT-560](../gaps/gap-reference-catalog.es.md#gt-560), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-568](../gaps/gap-reference-catalog.es.md#gt-568), [GT-531](../gaps/gap-reference-catalog.es.md#gt-531), [GT-536](../gaps/gap-reference-catalog.es.md#gt-536), [GT-443](../gaps/gap-reference-catalog.es.md#gt-443) |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-531](../gaps/gap-reference-catalog.es.md#gt-531), [GT-536](../gaps/gap-reference-catalog.es.md#gt-536), [GT-443](../gaps/gap-reference-catalog.es.md#gt-443) |
 
 ## Bloqueadores Actuales
 
@@ -44,19 +44,19 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-07-20 |
 | Gaps totales | 568 |
-| Gaps cerrados | 553 |
-| Gaps pendientes | 15 |
+| Gaps cerrados | 554 |
+| Gaps pendientes | 14 |
 | P0 abiertos | 2 |
 | P1 abiertos | 4 |
-| P2 abiertos | 6 |
-| Cierre total | 97.4% |
-| Registros de evidencia de cierre | 535 |
-| Readiness registrado | 1 BLOCKED, 3 PASS |
+| P2 abiertos | 5 |
+| Cierre total | 97.5% |
+| Registros de evidencia de cierre | 536 |
+| Readiness registrado | 4 PASS |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
 | `Cross` | 3 | 2 | 1 | [GT-447](../gaps/gap-reference-catalog.es.md#gt-447), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
-| `Infra` | 3 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-568](../gaps/gap-reference-catalog.es.md#gt-568) |
+| `Infra` | 2 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464) |
 | `Core API` | 2 | 0 | 1 | [GT-560](../gaps/gap-reference-catalog.es.md#gt-560), [GT-522](../gaps/gap-reference-catalog.es.md#gt-522) |
 | `Agent Runtime` | 1 | 0 | 1 | [GT-441](../gaps/gap-reference-catalog.es.md#gt-441) |
 | `agent-runtime` | 1 | 0 | 0 | [GT-531](../gaps/gap-reference-catalog.es.md#gt-531) |

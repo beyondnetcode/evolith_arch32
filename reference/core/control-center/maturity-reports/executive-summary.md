@@ -29,7 +29,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | 2 | Highest-risk area | `Cross` has the largest weighted open load. | [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
 | 3 | Quick wins | High criticality with XS/S complexity. | - |
 | 4 | P1 wave | Next hardening after P0 is cleared. | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-441](../gaps/gap-reference-catalog.md#gt-441), [GT-560](../gaps/gap-reference-catalog.md#gt-560), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-568](../gaps/gap-reference-catalog.md#gt-568), [GT-531](../gaps/gap-reference-catalog.md#gt-531), [GT-536](../gaps/gap-reference-catalog.md#gt-536), [GT-443](../gaps/gap-reference-catalog.md#gt-443) |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-531](../gaps/gap-reference-catalog.md#gt-531), [GT-536](../gaps/gap-reference-catalog.md#gt-536), [GT-443](../gaps/gap-reference-catalog.md#gt-443) |
 
 ## Current Blockers
 
@@ -44,19 +44,19 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-07-20 |
 | Total gaps | 568 |
-| Closed gaps | 553 |
-| Open gaps | 15 |
+| Closed gaps | 554 |
+| Open gaps | 14 |
 | Open P0 | 2 |
 | Open P1 | 4 |
-| Open P2 | 6 |
-| Total closure | 97.4% |
-| Closure evidence records | 535 |
-| Recorded readiness | 1 BLOCKED, 3 PASS |
+| Open P2 | 5 |
+| Total closure | 97.5% |
+| Closure evidence records | 536 |
+| Recorded readiness | 4 PASS |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
 | `Cross` | 3 | 2 | 1 | [GT-447](../gaps/gap-reference-catalog.md#gt-447), [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
-| `Infra` | 3 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-568](../gaps/gap-reference-catalog.md#gt-568) |
+| `Infra` | 2 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-464](../gaps/gap-reference-catalog.md#gt-464) |
 | `Core API` | 2 | 0 | 1 | [GT-560](../gaps/gap-reference-catalog.md#gt-560), [GT-522](../gaps/gap-reference-catalog.md#gt-522) |
 | `Agent Runtime` | 1 | 0 | 1 | [GT-441](../gaps/gap-reference-catalog.md#gt-441) |
 | `agent-runtime` | 1 | 0 | 0 | [GT-531](../gaps/gap-reference-catalog.md#gt-531) |

@@ -8165,6 +8165,25 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "Sin dependencias (el catalogo declara \"Dependencies: None\"). El gap se paga completo: el criterio era cruzar el 75% sin mover el umbral, y ambas mitades estan verificadas. Se corrigen dos afirmaciones del enunciado original. (1) 'Archivos afectados: core-api' era erroneo -- el gate que fallaba es el del CLI, coherente con el propio campo Componente 'SDK CLI'. (2) La estimacion del trabajo restante ('100-140 pruebas sobre asistentes interactivos... pruebas que comprueban que se pregunto algo a un mock') describia mal las ramas que faltaban: eran las rutas no interactivas y legibles por maquina (--format json en cinco comandos, init --batch, el reporte del motor composable), que son contrato real para scripts y CI, no ceremonia de mocks. La exclusion declarada de ~100 ramas en adr/agents ya no aplica: el defecto del sobre de exito que la motivaba se arreglo antes en esta campana, y las pruebas nuevas afirman el contrato corregido de ADR-0073 de forma explicita (success = el comando corrio; el veredicto viaja dentro; el exit code lo transporta), de modo que fijan la conducta correcta en vez de congelar la equivocada. Verificacion local, no CI: el job Unit Tests debe confirmarlo en la proxima corrida."
+    },
+    {
+      "id": "GT-568",
+      "closedAt": "2026-07-20",
+      "closureCommit": "92390d6d",
+      "evidence": [
+        "package.json",
+        ".github/workflows/sdk-cli-ci.yml",
+        "package-lock.json"
+      ],
+      "validationCommands": [
+        "npm audit --audit-level=high (desde src/sdk/cli, comando exacto del job) -> 'found 0 vulnerabilities', exit 0. Antes: 1 high (brace-expansion) en la corrida 29780735123; local ya mostraba 3 (brace-expansion high, js-yaml high, protobufjs moderate) porque el DB de avisos avanzo.",
+        "npm ls js-yaml --omit=dev -> evolith-cli -> nest-commander -> cosmiconfig -> js-yaml: confirma que js-yaml es dependencia de PRODUCCION del CLI publicado; acotar a --omit=dev lo habria ocultado, no resuelto.",
+        "npm ci -> exit 0, 'found 0 vulnerabilities'; instala js-yaml@4.3.0, brace-expansion@2.1.2, protobufjs@7.6.5. npm ci --dry-run exit 0 (lockfile consistente con package.json).",
+        "git diff --stat package-lock.json -> 1 file changed, 30 insertions(+), 18 deletions(-): diff acotado a los tres subarboles, NO regeneracion del lockfile.",
+        "npm run build (tsc -b) -> exit 0. Suites: CLI 132, core-api 168 (consumidor de @nestjs/swagger/js-yaml + grpc/protobufjs), core-domain 1174, agent-runtime 226, mcp 342 -> todas verdes, el bump minor de js-yaml no perturbo swagger ni cosmiconfig."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "Sin dependencias. El gap planteaba una decision (acotar el audit vs tomar el bump); la auditoria previa la resolvio al descubrir que la premisa 'todo dev-only' era incompleta: js-yaml (high) esta en la ruta de PRODUCCION del CLI publicado via nest-commander->cosmiconfig, asi que --omit=dev lo habria escondido. Se eligio ARREGLAR las tres (js-yaml 4.3.0, brace-expansion 2.1.2, protobufjs 7.6.5) con overrides dirigidos, no una regeneracion del lockfile (el incidente de ajv es el porque). El pin exacto 4.1.1 de @nestjs/swagger resistio el override plano y el update incremental; se resolvio con un override con alcance @nestjs/swagger + extraccion quirurgica de la entrada stale del lockfile para que dedupara al 4.3.0 top-level. El workflow ahora declara su propio alcance (criterio 2). Verificacion local + npm ci; el job Unit... perdon, el job Security Audit debe confirmarlo en la proxima corrida de CI."
     }
   ]
 }

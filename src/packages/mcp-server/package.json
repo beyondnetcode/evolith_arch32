@@ -51,7 +51,7 @@
     "@opentelemetry/auto-instrumentations-node": "0.77.0",
     "@opentelemetry/exporter-trace-otlp-http": "0.219.0",
     "@opentelemetry/sdk-node": "0.219.0",
-    "cache-manager": "7.2.8",
+    "cache-manager": "7.2.9",
     "class-transformer": "0.5.1",
     "class-validator": "0.15.1",
     "fs-extra": "10.1.0",

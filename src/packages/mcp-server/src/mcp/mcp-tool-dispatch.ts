@@ -34,7 +34,13 @@ export interface ToolCallResult {
   isError?: boolean;
 }
 
-export interface DispatchDeps {
+/** Dependencies for listing tools — only needs the registry. */
+export interface ListToolsDeps {
+  registry: ToolRegistryService;
+}
+
+/** Dependencies for calling tools — needs all dispatch concerns. */
+export interface CallToolDeps {
   registry: ToolRegistryService;
   metrics: MetricsService;
   abacEvaluator: AbacEvaluator;
@@ -42,7 +48,10 @@ export interface DispatchDeps {
   tracer: ReturnType<typeof trace.getTracer>;
 }
 
-export function handleListTools(deps: Pick<DispatchDeps, 'registry'>): {
+/** Backward-compatible aggregate. */
+export type DispatchDeps = CallToolDeps;
+
+export function handleListTools(deps: ListToolsDeps): {
   tools: ReturnType<ToolRegistryService['listSchemas']>;
 } {
   const context = mcpContextStorage.getStore();

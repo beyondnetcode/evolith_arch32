@@ -57,6 +57,9 @@ describe('Cross-surface exploration agent (F1)', () => {
     // vars. Set them BEFORE the core-api AppModule is imported/compiled.
     process.env.WORKSPACE_ROOT = path.dirname(projectPath);
     process.env.CORE_PATH = REPO_ROOT;
+    // H6: Core API requires auth by default. Exploration agent's REST executor
+    // doesn't send auth headers, so we explicitly opt out for test environment.
+    process.env.CORE_API_AUTH_REQUIRED = 'false';
     await fs.ensureDir(projectPath);
     await fs.writeFile(path.join(projectPath, 'evolith.yaml'), SATELLITE_YAML);
 

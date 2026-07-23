@@ -764,7 +764,7 @@ Endpoint: `POST /api/v1/evaluate`
 | `passthrough` |  | Opaque passthrough facts (echoed; the Core evaluates declared facts, never disk) |
 | `schemaVersion` |  | Contract schema version the consumer is sending |
 | `evaluationInput` |  | Inline satellite content evaluated in memory. When present, the Core evaluates these files (no disk read/write, no network for the content) instead of resolving a workspaceRef/satellitePath. |
-| `satellitePath` |  | LEGACY: filesystem path to the satellite repository |
+| `satellitePath` |  | LEGACY (deprecated): filesystem path to the satellite repository. Use workspaceRef instead. Path traversal validation required before use. |
 | `corePath` |  | LEGACY: explicit path to the Evolith Core repository |
 | `topology` |  | LEGACY: topology override |
 | `phase` |  | LEGACY: SDLC phase (f1..f5) |

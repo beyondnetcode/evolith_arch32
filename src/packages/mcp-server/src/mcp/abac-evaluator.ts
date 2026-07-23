@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 export interface AbacUserInput {
   id: string;
@@ -153,9 +153,12 @@ const DEPLOY_TOOLS = new Set([
 
 @Injectable()
 export class AbacEvaluator {
+  private readonly logger = new Logger('AbacEvaluator');
   // GT-348: cache compiled OPA policies by wasm path, invalidated on file mtime
   // change. AbacEvaluator is a singleton, so this persists across dispatches.
+  // M5: Cap cache at 100 entries to prevent unbounded growth (LRU-like eviction).
   private readonly policyCache = new Map<string, { mtimeMs: number; policy: any }>();
+  private static readonly MAX_CACHE_ENTRIES = 100;
 
   /** All tool names with an explicit ABAC classification (guard-test surface). */
   static classifiedToolNames(): string[] {
@@ -293,6 +296,12 @@ export class AbacEvaluator {
               }],
             };
           }
+          // Non-production: abstain but log warning (M1) — OPA policy issues
+          // should be caught before reaching production.
+          this.logger.warn(
+            `OPA policy missing at ${wasmPath} in ${input.environment} — OPA layer abstains. ` +
+            `Set REQUIRE_OPA_IN_ALL_ENVS=true to deny in non-production.`,
+          );
           return { allowed: true, violations: [] };
         }
         throw err;
@@ -305,6 +314,11 @@ export class AbacEvaluator {
         const policy = await loadPolicy(wasmBuffer);
         cached = { mtimeMs: stat.mtimeMs, policy };
         this.policyCache.set(wasmPath, cached);
+        // M5: Evict oldest entry if cache exceeds limit
+        if (this.policyCache.size > AbacEvaluator.MAX_CACHE_ENTRIES) {
+          const oldest = this.policyCache.keys().next().value;
+          if (oldest) this.policyCache.delete(oldest);
+        }
       }
 
       const resultSet = cached.policy.evaluate(input, 'evolith/abac/violations');

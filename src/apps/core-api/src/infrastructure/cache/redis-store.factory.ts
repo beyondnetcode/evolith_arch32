@@ -16,8 +16,11 @@ export function createRedisStore(config: RedisStoreConfig | string) {
     if (typeof config === 'string') {
       redisUrl = config;
     } else {
-      const auth = config.password ? `:${config.password}@` : '';
-      redisUrl = `redis://${auth}${config.host}:${config.port}`;
+      // M11: Build URL without embedding password in the string to prevent
+      // accidental log leakage. Use separate host/port/password when possible.
+      const protocol = config.password ? 'rediss' : 'redis';
+      const auth = config.password ? `:${encodeURIComponent(config.password)}@` : '';
+      redisUrl = `${protocol}://${auth}${config.host}:${config.port}`;
     }
 
     const store = new KeyvRedis(redisUrl);

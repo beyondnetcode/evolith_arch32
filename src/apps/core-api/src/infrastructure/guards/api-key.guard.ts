@@ -45,8 +45,14 @@ export class ApiKeyGuard implements CanActivate {
     }
 
     try {
-      const port = process.env.DAPR_HTTP_PORT || 3500;
-      const url = `http://localhost:${port}/v1.0/secrets/kubernetes-secret-store/core-api-auth`;
+      // M8: Validate DAPR_HTTP_PORT to prevent SSRF via DNS rebinding or port manipulation
+      const rawPort = process.env.DAPR_HTTP_PORT || '3500';
+      const portNum = Number(rawPort);
+      if (!Number.isFinite(portNum) || portNum < 1 || portNum > 65535 || String(portNum) !== rawPort) {
+        this.logger.warn(`Invalid DAPR_HTTP_PORT "${rawPort}", falling back to 3500`);
+      }
+      const port = (Number.isFinite(portNum) && portNum >= 1 && portNum <= 65535) ? portNum : 3500;
+      const url = `http://127.0.0.1:${port}/v1.0/secrets/kubernetes-secret-store/core-api-auth`;
       const response = await fetch(url);
       if (response.ok) {
         const data = await response.json() as Record<string, string>;

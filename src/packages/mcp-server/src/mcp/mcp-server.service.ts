@@ -353,6 +353,8 @@ export class McpServerService {
     // to the container. Override with MCP_HTTP_HOST=127.0.0.1 for local-only use.
     const host = process.env.MCP_HTTP_HOST ?? '0.0.0.0';
     await new Promise<void>((resolve, reject) => {
+      this.httpServer!.timeout = 30_000; // 30s request timeout (M3 / slowloris mitigation)
+      this.httpServer!.keepAliveTimeout = 65_000;
       this.httpServer!.listen(port, host, () => {
         this.logger.log(`Evolith MCP HTTP server listening on http://${host}:${port}`);
         resolve();

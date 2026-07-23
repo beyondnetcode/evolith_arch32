@@ -4,29 +4,39 @@ import { randomUUID } from 'crypto';
 import { AsyncLocalStorage } from 'async_hooks';
 import { requestContextStorage } from '@beyondnet/evolith-core-domain/common/request-context';
 
+/** M12: Validate header values contain only safe characters (alphanumeric, hyphens, underscores, dots). */
+const SAFE_HEADER_REGEX = /^[a-zA-Z0-9_\-\.]+$/;
+
+function sanitizeHeaderValue(value: string | undefined, maxLength = 256): string | undefined {
+  if (!value || typeof value !== 'string') return undefined;
+  const trimmed = value.trim().slice(0, maxLength);
+  return SAFE_HEADER_REGEX.test(trimmed) ? trimmed : undefined;
+}
+
 export const als = new AsyncLocalStorage<{ correlationId: string }>();
 
 export function correlationIdMiddleware(req: Request, res: Response, next: NextFunction) {
-  const correlationId = (req.headers['x-correlation-id'] as string) || randomUUID();
+  // M12: Sanitize all header values before reflecting them in responses
+  const correlationId = sanitizeHeaderValue(req.headers['x-correlation-id'] as string) || randomUUID();
   req.headers['x-correlation-id'] = correlationId;
   res.setHeader('x-correlation-id', correlationId);
 
-  const headerInitiative = req.headers['x-evolith-initiative'];
-  const headerTenant = req.headers['x-evolith-tenant'];
-  const headerPhase = req.headers['x-evolith-phase'];
+  const headerInitiative = sanitizeHeaderValue(req.headers['x-evolith-initiative'] as string);
+  const headerTenant = sanitizeHeaderValue(req.headers['x-evolith-tenant'] as string);
+  const headerPhase = sanitizeHeaderValue(req.headers['x-evolith-phase'] as string);
   const query = req.query as Record<string, unknown>;
   const body = (req.body as Record<string, unknown> | undefined) ?? {};
 
   const initiative =
-    (headerInitiative as string | undefined) ??
+    headerInitiative ??
     (query.initiative as string | undefined) ??
     (body.initiative as string | undefined);
   const tenant =
-    (headerTenant as string | undefined) ??
+    headerTenant ??
     (query.tenant as string | undefined) ??
     (body.tenant as string | undefined);
   const phase =
-    (headerPhase as string | undefined) ??
+    headerPhase ??
     (query.phase as string | undefined) ??
     (body.phase as string | undefined);
 

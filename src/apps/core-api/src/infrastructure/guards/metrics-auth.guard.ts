@@ -36,8 +36,11 @@ export class MetricsAuthGuard implements CanActivate {
     }
 
     try {
-      const port = process.env.DAPR_HTTP_PORT || 3500;
-      const url = `http://localhost:${port}/v1.0/secrets/kubernetes-secret-store/core-api-auth`;
+      // M8: Validate DAPR_HTTP_PORT to prevent SSRF
+      const rawPort = process.env.DAPR_HTTP_PORT || '3500';
+      const portNum = Number(rawPort);
+      const port = (Number.isFinite(portNum) && portNum >= 1 && portNum <= 65535 && String(portNum) === rawPort) ? portNum : 3500;
+      const url = `http://127.0.0.1:${port}/v1.0/secrets/kubernetes-secret-store/core-api-auth`;
       const response = await fetch(url);
       if (response.ok) {
         const data = await response.json() as Record<string, string>;

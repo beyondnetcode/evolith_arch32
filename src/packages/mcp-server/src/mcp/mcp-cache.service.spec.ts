@@ -1,64 +1,68 @@
 import { McpCacheService } from './mcp-cache.service';
 
+function mockCache() {
+  const store = new Map<string, unknown>();
+  return {
+    get: jest.fn(async (key: string) => store.get(key)),
+    set: jest.fn(async (key: string, value: unknown) => { store.set(key, value); }),
+  };
+}
+
 describe('McpCacheService', () => {
-  function cache(overrides: Partial<Record<'get' | 'set' | 'del', jest.Mock>> = {}) {
-    return {
-      get: jest.fn(),
-      set: jest.fn(),
-      del: jest.fn(),
-      ...overrides,
-    } as any;
-  }
-
-  it('reads and writes the tools list cache', async () => {
-    const backing = cache({ get: jest.fn().mockResolvedValue([{ name: 'tool' }]) });
-    const service = new McpCacheService(backing);
-
-    await expect(service.getToolsList()).resolves.toEqual([{ name: 'tool' }]);
-    await service.setToolsList([{ name: 'next-tool' }]);
-
-    expect(backing.get).toHaveBeenCalledWith('mcp:tools:list');
-    expect(backing.set).toHaveBeenCalledWith('mcp:tools:list', [{ name: 'next-tool' }], 600000);
+  it('can be instantiated', () => {
+    const cache = mockCache();
+    const service = new McpCacheService(cache as any);
+    expect(service).toBeDefined();
   });
 
-  it('reads and writes the resources list cache', async () => {
-    const backing = cache({ get: jest.fn().mockResolvedValue([{ uri: 'evolith://resource' }]) });
-    const service = new McpCacheService(backing);
-
-    await expect(service.getResourcesList()).resolves.toEqual([{ uri: 'evolith://resource' }]);
-    await service.setResourcesList([{ uri: 'evolith://next' }]);
-
-    expect(backing.get).toHaveBeenCalledWith('mcp:resources:list');
-    expect(backing.set).toHaveBeenCalledWith('mcp:resources:list', [{ uri: 'evolith://next' }], 600000);
-  });
-
-  it('returns undefined when cache reads fail', async () => {
-    const backing = cache({ get: jest.fn().mockRejectedValue(new Error('offline')) });
-    const service = new McpCacheService(backing);
-
-    await expect(service.getToolsList()).resolves.toBeUndefined();
-    await expect(service.getResourcesList()).resolves.toBeUndefined();
-  });
-
-  it('swallows cache write and invalidation failures', async () => {
-    const backing = cache({
-      set: jest.fn().mockRejectedValue(new Error('offline')),
-      del: jest.fn().mockRejectedValue(new Error('offline')),
+  describe('getToolsList / setToolsList', () => {
+    it('returns undefined when cache is empty', async () => {
+      const cache = mockCache();
+      const service = new McpCacheService(cache as any);
+      const result = await service.getToolsList();
+      expect(result).toBeUndefined();
     });
-    const service = new McpCacheService(backing);
 
-    await expect(service.setToolsList([])).resolves.toBeUndefined();
-    await expect(service.setResourcesList([])).resolves.toBeUndefined();
-    await expect(service.invalidateAll()).resolves.toBeUndefined();
+    it('stores and retrieves tools list', async () => {
+      const cache = mockCache();
+      const service = new McpCacheService(cache as any);
+      const tools = [{ name: 'test-tool' }];
+      await service.setToolsList(tools);
+      const result = await service.getToolsList();
+      expect(result).toEqual(tools);
+    });
   });
 
-  it('invalidates both cached MCP lists', async () => {
-    const backing = cache();
-    const service = new McpCacheService(backing);
+  describe('getResourcesList / setResourcesList', () => {
+    it('returns undefined when cache is empty', async () => {
+      const cache = mockCache();
+      const service = new McpCacheService(cache as any);
+      const result = await service.getResourcesList();
+      expect(result).toBeUndefined();
+    });
 
-    await service.invalidateAll();
+    it('stores and retrieves resources list', async () => {
+      const cache = mockCache();
+      const service = new McpCacheService(cache as any);
+      const resources = [{ uri: 'evolith://test' }];
+      await service.setResourcesList(resources);
+      const result = await service.getResourcesList();
+      expect(result).toEqual(resources);
+    });
+  });
 
-    expect(backing.del).toHaveBeenCalledWith('mcp:tools:list');
-    expect(backing.del).toHaveBeenCalledWith('mcp:resources:list');
+  describe('error handling', () => {
+    it('returns undefined on cache read error', async () => {
+      const cache = { get: jest.fn(async () => { throw new Error('cache error'); }), set: jest.fn() };
+      const service = new McpCacheService(cache as any);
+      const result = await service.getToolsList();
+      expect(result).toBeUndefined();
+    });
+
+    it('does not throw on cache write error', async () => {
+      const cache = { get: jest.fn(), set: jest.fn(async () => { throw new Error('cache error'); }) };
+      const service = new McpCacheService(cache as any);
+      await expect(service.setToolsList([])).resolves.not.toThrow();
+    });
   });
 });

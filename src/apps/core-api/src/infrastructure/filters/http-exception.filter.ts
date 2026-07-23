@@ -22,6 +22,7 @@ interface ProblemDetails {
   errors?: unknown[];
 }
 
+/** Registry: HTTP status → code string (replaces switch statement). */
 const STATUS_TO_CODE: Record<number, string> = {
   [HttpStatus.BAD_REQUEST]: 'BAD_REQUEST',
   [HttpStatus.UNAUTHORIZED]: 'UNAUTHORIZED',
@@ -33,6 +34,65 @@ const STATUS_TO_CODE: Record<number, string> = {
   [HttpStatus.SERVICE_UNAVAILABLE]: 'SERVICE_UNAVAILABLE',
   [HttpStatus.INTERNAL_SERVER_ERROR]: 'INTERNAL_ERROR',
 };
+
+/** Registry: HTTP status → human-readable title (replaces switch statement). */
+const STATUS_TO_TITLE: Record<number, string> = {
+  [HttpStatus.BAD_REQUEST]: 'Bad Request',
+  [HttpStatus.UNAUTHORIZED]: 'Unauthorized',
+  [HttpStatus.FORBIDDEN]: 'Forbidden',
+  [HttpStatus.NOT_FOUND]: 'Not Found',
+  [HttpStatus.UNPROCESSABLE_ENTITY]: 'Unprocessable Entity',
+  [HttpStatus.TOO_MANY_REQUESTS]: 'Too Many Requests',
+  [HttpStatus.SERVICE_UNAVAILABLE]: 'Service Unavailable',
+};
+
+/**
+ * Exception classifier — maps Error instances to HTTP status codes.
+ * Uses a registry of matchers instead of if/else chains (OCP: new exception
+ * types are added by registering a new matcher, not modifying this filter).
+ */
+interface ExceptionMatcher {
+  match(exception: Error): boolean;
+  getStatus(): number;
+  getTitle(): string;
+  getDomainCode(): string;
+}
+
+const EXCEPTION_MATCHERS: ExceptionMatcher[] = [
+  {
+    match: (e) => e.name === 'RulesetCorpusNotResolvedError',
+    getStatus: () => HttpStatus.INTERNAL_SERVER_ERROR,
+    getTitle: () => 'Ruleset Corpus Not Resolved',
+    getDomainCode: () => 'INTERNAL_ERROR',
+  },
+  {
+    match: (e) => e.name === 'RulesetsNotFoundError',
+    getStatus: () => HttpStatus.UNPROCESSABLE_ENTITY,
+    getTitle: () => 'Ruleset Not Found',
+    getDomainCode: () => 'RULESET_NOT_FOUND',
+  },
+  {
+    match: (e) => e.message.includes('not found') || e.message.includes('does not exist'),
+    getStatus: () => HttpStatus.NOT_FOUND,
+    getTitle: () => 'Not Found',
+    getDomainCode: () => '',
+  },
+  {
+    match: (e) => e.message.includes('validation') || e.message.includes('invalid') || e.message.includes('required'),
+    getStatus: () => HttpStatus.UNPROCESSABLE_ENTITY,
+    getTitle: () => 'Unprocessable Entity',
+    getDomainCode: () => '',
+  },
+];
+
+function classifyException(exception: Error): { status: number; title: string; domainCode: string } {
+  for (const matcher of EXCEPTION_MATCHERS) {
+    if (matcher.match(exception)) {
+      return { status: matcher.getStatus(), title: matcher.getTitle(), domainCode: matcher.getDomainCode() };
+    }
+  }
+  return { status: HttpStatus.INTERNAL_SERVER_ERROR, title: 'Internal Server Error', domainCode: 'INTERNAL_ERROR' };
+}
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -48,15 +108,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
     let title = 'Internal Server Error';
     let detail = 'An unexpected error occurred';
     let errors: unknown[] | undefined;
-    // Domain-code override for known non-HTTP domain errors, so the Tracker and
-    // the exploration tester see the SAME ADR-0073 code the CLI/MCP emit (e.g.
-    // RULESET_NOT_FOUND) instead of a generic INTERNAL_ERROR derived from status.
     let domainCode: string | undefined;
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
-      const exceptionResponse = exception.getResponse();
+      title = STATUS_TO_TITLE[status] || exception.message || title;
 
+      const exceptionResponse = exception.getResponse();
       if (typeof exceptionResponse === 'string') {
         detail = exceptionResponse;
       } else if (typeof exceptionResponse === 'object') {
@@ -67,42 +125,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
           detail = 'Validation failed';
         }
       }
-
-      switch (status) {
-        case HttpStatus.BAD_REQUEST: title = 'Bad Request'; break;
-        case HttpStatus.UNAUTHORIZED: title = 'Unauthorized'; break;
-        case HttpStatus.FORBIDDEN: title = 'Forbidden'; break;
-        case HttpStatus.NOT_FOUND: title = 'Not Found'; break;
-        case HttpStatus.UNPROCESSABLE_ENTITY: title = 'Unprocessable Entity'; break;
-        case HttpStatus.TOO_MANY_REQUESTS: title = 'Too Many Requests'; break;
-        case HttpStatus.SERVICE_UNAVAILABLE: title = 'Service Unavailable'; break;
-        default: title = exception.message || title;
-      }
     } else if (exception instanceof Error) {
       detail = exception.message;
-
-      // GT-566: an unlocatable ruleset CORPUS is a server misconfiguration
-      // (`CORE_PATH` points at a tree with no corpus), not a client sending an
-      // unprocessable entity. Reporting it as 422 "Ruleset Not Found" sent
-      // readers hunting for a ruleset that was never missing. Must precede both
-      // the RulesetsNotFoundError branch (it is a subclass) and the
-      // `does not exist` heuristic below, which the probe trail would otherwise
-      // trip into a 404. The detail carries every path tried.
-      if (exception.name === 'RulesetCorpusNotResolvedError') {
-        status = HttpStatus.INTERNAL_SERVER_ERROR;
-        title = 'Ruleset Corpus Not Resolved';
-        domainCode = 'INTERNAL_ERROR';
-      } else if (exception.name === 'RulesetsNotFoundError') {
-        status = HttpStatus.UNPROCESSABLE_ENTITY;
-        title = 'Ruleset Not Found';
-        domainCode = 'RULESET_NOT_FOUND';
-      } else if (detail.includes('not found') || detail.includes('does not exist')) {
-        status = HttpStatus.NOT_FOUND;
-        title = 'Not Found';
-      } else if (detail.includes('validation') || detail.includes('invalid') || detail.includes('required')) {
-        status = HttpStatus.UNPROCESSABLE_ENTITY;
-        title = 'Unprocessable Entity';
-      }
+      const classified = classifyException(exception);
+      status = classified.status;
+      title = classified.title;
+      domainCode = classified.domainCode || undefined;
     }
 
     const isProduction = process.env.NODE_ENV === 'production';

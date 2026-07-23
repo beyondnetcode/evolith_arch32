@@ -1,0 +1,27 @@
+{
+  "ruleset": "security-timing-safe-comparison",
+  "version": "1.0.0",
+  "description": "Validates that credential comparisons use constant-time algorithms",
+  "rules": [
+    {
+      "id": "SEC-TIMING-01",
+      "severity": "MUST",
+      "category": "security",
+      "title": "Constant-time credential comparison",
+      "description": "All credential, token, and secret comparisons MUST use crypto.timingSafeEqual() with SHA-256 hashing to prevent timing side-channel attacks. Never use !== or === for credential comparison.",
+      "blocking": true,
+      "validationQuery": "crypto.timingSafeEqual used for all credential comparisons",
+      "sourceFile": "security/timing-safe-comparison.rules.json"
+    },
+    {
+      "id": "SEC-TIMING-02",
+      "severity": "MUST",
+      "category": "security",
+      "title": "No early rejection on credential length",
+      "description": "Credential comparison must not reject based on length before performing the constant-time comparison. Hash to fixed-length buffers first.",
+      "blocking": true,
+      "validationQuery": "No length-based early return in credential comparison functions",
+      "sourceFile": "security/timing-safe-comparison.rules.json"
+    }
+  ]
+}

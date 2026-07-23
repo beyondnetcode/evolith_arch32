@@ -1,0 +1,27 @@
+{
+  "ruleset": "security-injection-prevention",
+  "version": "1.0.0",
+  "description": "Validates that code does not use shell exec() with user-controlled input",
+  "rules": [
+    {
+      "id": "SEC-INJ-01",
+      "severity": "MUST",
+      "category": "security",
+      "title": "No shell exec with user input",
+      "description": "Functions that execute shell commands must not interpolate user-controlled parameters into the command string. Use execFile() or spawn() with argument arrays instead.",
+      "blocking": true,
+      "validationQuery": "No calls to child_process.exec() with interpolated variables",
+      "sourceFile": "security/injection-prevention.rules.json"
+    },
+    {
+      "id": "SEC-INJ-02",
+      "severity": "MUST",
+      "category": "security",
+      "title": "Parameter allowlists for scaffold tools",
+      "description": "Tool parameters that map to shell commands (frontend framework, ORM, etc.) must be validated against an explicit allowlist before execution.",
+      "blocking": true,
+      "validationQuery": "Allowlist validation present for all tool parameters",
+      "sourceFile": "security/injection-prevention.rules.json"
+    }
+  ]
+}

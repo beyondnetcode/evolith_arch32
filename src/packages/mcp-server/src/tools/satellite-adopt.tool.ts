@@ -98,17 +98,27 @@ export class SatelliteAdoptTool implements McpTool {
   async execute(args: Record<string, unknown>): Promise<unknown> {
     const repoUrl = args.repoUrl as string;
     const token = args.token as string;
+
+    // Prefer GITHUB_TOKEN env var over tool argument (M4 / security)
+    const resolvedToken = token || process.env.GITHUB_TOKEN;
+    if (token && !process.env.GITHUB_TOKEN) {
+      console.warn(
+        'WARNING: Passing GitHub token as tool argument is deprecated. ' +
+        'Set GITHUB_TOKEN environment variable instead.',
+      );
+    }
+
     const topology = ((args.topology as string) || 'modular') as SatelliteTopology;
     const phase = (args.phase as string) || 'discovery';
     const satellitePath = (args.path as string) || process.cwd();
 
     if (!repoUrl) throw new Error('repoUrl is required');
-    if (!token) throw new Error('token is required');
+    if (!resolvedToken) throw new Error('token is required (pass as argument or set GITHUB_TOKEN env var)');
 
     const { owner: parsedOwner, name } = parseRepoUrl(repoUrl);
     const resolvedOwner = (args.owner as string) || parsedOwner;
 
-    const repo = await getGitHubRepository(token, resolvedOwner, name);
+    const repo = await getGitHubRepository(resolvedToken, resolvedOwner, name);
 
     if (!repo) {
       throw new Error(`Repository not found: ${resolvedOwner}/${name}`);

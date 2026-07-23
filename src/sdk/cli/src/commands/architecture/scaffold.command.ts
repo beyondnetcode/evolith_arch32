@@ -80,6 +80,16 @@ export class ScaffoldCommand extends BaseEvolithCommand {
         const rawPhase = options?.phase as string;
         const apiName = (options?.apiName as string) || 'tracker-api';
 
+        // M10: Validate against allowlists to prevent command injection (CWE-78)
+        const ALLOWED_FRONTEND = ['react', 'angular', 'vue'];
+        const ALLOWED_ORM = ['prisma', 'typeorm', 'drizzle'];
+        if (frontendFramework && !ALLOWED_FRONTEND.includes(frontendFramework)) {
+          throw new Error(`Invalid frontend "${frontendFramework}". Allowed: ${ALLOWED_FRONTEND.join(', ')}`);
+        }
+        if (orm && !ALLOWED_ORM.includes(orm)) {
+          throw new Error(`Invalid orm "${orm}". Allowed: ${ALLOWED_ORM.join(', ')}`);
+        }
+
         if (!frontendFramework || !orm || !rawPhase) {
           console.log(JSON.stringify(createErrorEnvelope(
             'VALIDATION_FAILED',

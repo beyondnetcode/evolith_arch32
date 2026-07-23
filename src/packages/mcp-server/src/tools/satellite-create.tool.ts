@@ -107,17 +107,27 @@ export class SatelliteCreateTool implements McpTool {
     const token = args.token as string;
     const name = args.name as string;
     const owner = args.owner as string;
+
+    // Prefer GITHUB_TOKEN env var over tool argument (M4 / security)
+    const resolvedToken = token || process.env.GITHUB_TOKEN;
+    if (token && !process.env.GITHUB_TOKEN) {
+      console.warn(
+        'WARNING: Passing GitHub token as tool argument is deprecated. ' +
+        'Set GITHUB_TOKEN environment variable instead. ' +
+        'Tool arguments may appear in audit logs and process listings.',
+      );
+    }
     const topology = ((args.topology as string) || 'modular') as SatelliteTopology;
     const phase = (args.phase as string) || 'discovery';
     const description = args.description as string | undefined;
     const isPrivate = Boolean(args.private);
     const satellitePath = (args.path as string) || process.cwd();
 
-    if (!token) throw new Error('token is required');
+    if (!resolvedToken) throw new Error('token is required (pass as argument or set GITHUB_TOKEN env var)');
     if (!name) throw new Error('name is required');
     if (!owner) throw new Error('owner is required');
 
-    const repo = await createGitHubRepository(token, owner, name, {
+    const repo = await createGitHubRepository(resolvedToken, owner, name, {
       description,
       private: isPrivate,
     });

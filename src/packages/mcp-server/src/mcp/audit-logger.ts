@@ -23,6 +23,15 @@ export class AuditLogger {
   private readonly events: AuditEvent[] = [];
   private static readonly MAX_EVENTS = 1000;
 
+  constructor() {
+    if (process.env.NODE_ENV === 'production') {
+      this.logger.warn(
+        'AuditLogger is using in-memory storage — audit events will be lost on restart. ' +
+        'For production use, implement persistent audit storage (e.g. database or external sink).',
+      );
+    }
+  }
+
   log(event: AuditEvent): void {
     this.events.unshift(event);
     if (this.events.length > AuditLogger.MAX_EVENTS) {

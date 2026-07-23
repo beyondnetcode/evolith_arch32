@@ -135,6 +135,14 @@ export class SatelliteAdoptCommand extends BaseEvolithCommand {
     // 6. Resolve GitHub token
     // -------------------------------------------------------------------------
     const token = options?.token ?? process.env['GITHUB_TOKEN'] ?? '';
+
+    // M9: Deprecation warning for --token flag
+    if (options?.token && !process.env['GITHUB_TOKEN']) {
+      console.warn(
+        'WARNING: --token flag is deprecated. Use the GITHUB_TOKEN environment variable instead.',
+      );
+    }
+
     if (!token && !json) {
       this.promptService.showWarning(
         'No GitHub token found. Set --token or GITHUB_TOKEN env var. ' +

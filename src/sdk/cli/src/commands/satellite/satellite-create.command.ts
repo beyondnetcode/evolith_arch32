@@ -89,6 +89,14 @@ export class SatelliteCreateCommand extends BaseEvolithCommand {
 
     const token = options?.token ?? process.env['GITHUB_TOKEN'] ?? '';
 
+    // M9: Deprecation warning for --token flag
+    if (options?.token && !process.env['GITHUB_TOKEN']) {
+      console.warn(
+        'WARNING: --token flag is deprecated. Use the GITHUB_TOKEN environment variable instead.\n' +
+        '  CLI flags appear in process listings and shell history.',
+      );
+    }
+
     if (!token) {
       const error = 'GitHub token not found. Pass --token or set the GITHUB_TOKEN environment variable.';
       if (json) {

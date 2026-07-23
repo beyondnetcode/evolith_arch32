@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { context as otelContext, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
 import * as path from 'node:path';
 import { createHash } from 'node:crypto';
@@ -51,6 +51,188 @@ export interface CallToolDeps {
 /** Backward-compatible aggregate. */
 export type DispatchDeps = CallToolDeps;
 
+/**
+ * Tool Dispatch Service — encapsulates MCP tool listing and calling logic.
+ * Converted from procedural module to class for testability (SRP + encapsulation).
+ */
+@Injectable()
+export class ToolDispatchService {
+  constructor(
+    private readonly registry: ToolRegistryService,
+    private readonly metrics: MetricsService,
+    private readonly abacEvaluator: AbacEvaluator,
+    private readonly logger: Logger,
+    private readonly tracer: ReturnType<typeof trace.getTracer>,
+  ) {}
+
+  /** List tools allowed for the current user context. */
+  listTools(): { tools: ReturnType<ToolRegistryService['listSchemas']> } {
+    const context = mcpContextStorage.getStore();
+    const allowedTools = this.registry.list().filter((tool) => {
+      if (!context) return true;
+      const requiredScope = tool.scope || (tool.mutative ? 'write' : 'read');
+      return context.scopes.includes(requiredScope);
+    });
+    return { tools: allowedTools.map((t) => t.schema) };
+  }
+
+  /** Execute a tool by name with ABAC, approval, and tracing. */
+  async callTool(
+    name: string,
+    args: Record<string, unknown> = {},
+  ): Promise<ToolCallResult> {
+    const argContext = (args.context as Record<string, unknown> | undefined) || {};
+    const correlationId = (args.correlationId as string) || (argContext.correlationId as string) || generateCorrelationId();
+    const initiative = (args.initiative as string | undefined) ?? (argContext.initiative as string | undefined);
+    const tenant = (args.tenant as string | undefined) ?? (argContext.tenant as string | undefined);
+    const phase = (args.phase as string | undefined) ?? (argContext.phase as string | undefined);
+
+    const contextObj = {
+      ...(initiative ? { initiative } : {}),
+      ...(tenant ? { tenant } : {}),
+      ...(phase ? { phase } : {}),
+    };
+    const startTime = Date.now();
+    const meta = (durationMs: number) => ({
+      correlationId,
+      tool: name,
+      durationMs,
+      ...(Object.keys(contextObj).length > 0 ? { context: contextObj } : {}),
+    });
+    const errorEnvelope = (env: unknown, durationMs: number): ToolCallResult => {
+      this.metrics.recordToolCall(name, durationMs, false);
+      return { content: [{ type: 'text', text: JSON.stringify(env, null, 2) }], isError: true };
+    };
+
+    const tool = this.registry.get(name);
+    if (!tool) {
+      this.metrics.recordError(`Unknown tool: ${name}`);
+      return errorEnvelope(failure(ErrorCodes.NOT_IMPLEMENTED, `Unknown tool: ${name}`, meta(0)), 0);
+    }
+
+    const context = mcpContextStorage.getStore();
+    const userContext: McpUserContext = context || {
+      id: 'anonymous',
+      role: 'anonymous',
+      roles: [],
+      tenant: tenant || 'default',
+      environment: process.env.NODE_ENV || 'development',
+      scopes: [],
+    };
+
+    const requiredScope = tool.scope || (tool.mutative ? 'write' : 'read');
+    if (context && !context.scopes.includes(requiredScope)) {
+      return errorEnvelope(
+        failure(ErrorCodes.FORBIDDEN, `Access denied. Requires '${requiredScope}' scope.`, meta(Date.now() - startTime)),
+        Date.now() - startTime,
+      );
+    }
+
+    const abacInput: AbacInput = {
+      user: { id: userContext.id, roles: userContext.roles, tenant: tenant || userContext.tenant },
+      tool_name: name,
+      resource_domain: 'mcp-server',
+      environment: userContext.environment,
+    };
+
+    let corePath = process.cwd();
+    if (corePath.endsWith('packages/mcp-server')) {
+      corePath = path.resolve(corePath, '../..');
+    }
+
+    const nativeDecision = this.abacEvaluator.evaluateNative(abacInput);
+    const opaDecision = await this.abacEvaluator.evaluateOpa(abacInput, corePath);
+
+    if (!nativeDecision.allowed || !opaDecision.allowed) {
+      const nativeMsgs = nativeDecision.violations.map(v => `${v.id}: ${v.message}`).join('; ');
+      const opaMsgs = opaDecision.violations.map(v => `${v.id}: ${v.message}`).join('; ');
+      return errorEnvelope(
+        failure(
+          ErrorCodes.FORBIDDEN,
+          `Access denied. ABAC check failed. Native: [${nativeMsgs}]. OPA: [${opaMsgs}].`,
+          meta(Date.now() - startTime),
+        ),
+        Date.now() - startTime,
+      );
+    }
+
+    if (tool.mutative) {
+      if (args.apply !== true || !args.approvalToken || typeof args.approvalToken !== 'string' || args.approvalToken.trim() === '') {
+        return errorEnvelope(
+          failure(
+            ErrorCodes.FORBIDDEN,
+            `Mutative operation '${name}' requires approval. Pass { "apply": true, "approvalToken": "..." }`,
+            meta(Date.now() - startTime),
+          ),
+          Date.now() - startTime,
+        );
+      }
+      this.logger.log(JSON.stringify({
+        event: 'MUTATIVE_TOOL_EXECUTION',
+        user: { id: userContext.id, roles: userContext.roles, tenant: tenant || userContext.tenant },
+        scopes: userContext.scopes,
+        tool: name,
+        approvalTokenFingerprint: fingerprintToken(args.approvalToken as string),
+        arguments: redactArgs(args),
+        timestamp: new Date().toISOString(),
+      }));
+    }
+
+    const traceparent = args.traceparent as string | undefined;
+    const otelGetter = {
+      get: (c: Record<string, string>, k: string) => c[k],
+      keys: (c: Record<string, string>) => Object.keys(c),
+    };
+    const otelCtx = traceparent
+      ? propagation.extract(otelContext.active(), { traceparent }, otelGetter)
+      : otelContext.active();
+
+    const span = this.tracer.startSpan(
+      `mcp.tool.${name}`,
+      {
+        attributes: {
+          'correlation.id': correlationId,
+          'tool.name': name,
+          'tool.mutative': !!tool.mutative,
+          ...(initiative ? { 'evolith.initiative': initiative } : {}),
+          ...(tenant ? { 'evolith.tenant': tenant } : {}),
+          ...(phase ? { 'evolith.phase': phase } : {}),
+        },
+      },
+      otelCtx,
+    );
+
+    try {
+      const data = await otelContext.with(trace.setSpan(otelCtx, span), () =>
+        runWithContext({ correlationId, initiative, tenant, phase }, () => tool.execute(args)),
+      );
+      const durationMs = Date.now() - startTime;
+      span.setStatus({ code: SpanStatusCode.OK });
+      span.setAttribute('tool.duration_ms', durationMs);
+      span.end();
+      this.metrics.recordToolCall(name, durationMs, true);
+      const env = success(data, meta(durationMs));
+      return { content: [{ type: 'text', text: JSON.stringify(env, null, 2) }] };
+    } catch (err) {
+      const durationMs = Date.now() - startTime;
+      const message = err instanceof Error ? err.message : String(err);
+      span.setStatus({ code: SpanStatusCode.ERROR, message });
+      span.setAttribute('tool.duration_ms', durationMs);
+      span.recordException(err instanceof Error ? err : new Error(String(err)));
+      span.end();
+      const env = toErrorEnvelope(err, meta(durationMs));
+      this.metrics.recordError(env.error.message.substring(0, 80));
+      return errorEnvelope(env, durationMs);
+    }
+  }
+}
+
+// ─── Backward-compatible standalone functions ──────────────────────────
+
+/**
+ * @deprecated Use ToolDispatchService.listTools() instead.
+ * Kept for backward compatibility with existing callers.
+ */
 export function handleListTools(deps: ListToolsDeps): {
   tools: ReturnType<ToolRegistryService['listSchemas']>;
 } {
@@ -63,154 +245,17 @@ export function handleListTools(deps: ListToolsDeps): {
   return { tools: allowedTools.map((t) => t.schema) };
 }
 
+/**
+ * @deprecated Use ToolDispatchService.callTool() instead.
+ * Kept for backward compatibility with existing callers.
+ */
 export async function handleCallTool(
   name: string,
   args: Record<string, unknown> = {},
   deps: DispatchDeps,
 ): Promise<ToolCallResult> {
-  const argContext = (args.context as Record<string, unknown> | undefined) || {};
-  const correlationId = (args.correlationId as string) || (argContext.correlationId as string) || generateCorrelationId();
-  const initiative = (args.initiative as string | undefined) ?? (argContext.initiative as string | undefined);
-  const tenant = (args.tenant as string | undefined) ?? (argContext.tenant as string | undefined);
-  const phase = (args.phase as string | undefined) ?? (argContext.phase as string | undefined);
-
-  const contextObj = {
-    ...(initiative ? { initiative } : {}),
-    ...(tenant ? { tenant } : {}),
-    ...(phase ? { phase } : {}),
-  };
-  const startTime = Date.now();
-  const meta = (durationMs: number) => ({
-    correlationId,
-    tool: name,
-    durationMs,
-    ...(Object.keys(contextObj).length > 0 ? { context: contextObj } : {}),
-  });
-  const errorEnvelope = (env: unknown, durationMs: number): ToolCallResult => {
-    deps.metrics.recordToolCall(name, durationMs, false);
-    return { content: [{ type: 'text', text: JSON.stringify(env, null, 2) }], isError: true };
-  };
-
-  const tool = deps.registry.get(name);
-  if (!tool) {
-    deps.metrics.recordError(`Unknown tool: ${name}`);
-    return errorEnvelope(failure(ErrorCodes.NOT_IMPLEMENTED, `Unknown tool: ${name}`, meta(0)), 0);
-  }
-
-  const context = mcpContextStorage.getStore();
-  const userContext: McpUserContext = context || {
-    id: 'anonymous',
-    role: 'anonymous',
-    roles: [],
-    tenant: tenant || 'default',
-    environment: process.env.NODE_ENV || 'development',
-    scopes: [],
-  };
-
-  const requiredScope = tool.scope || (tool.mutative ? 'write' : 'read');
-  if (context && !context.scopes.includes(requiredScope)) {
-    return errorEnvelope(
-      failure(ErrorCodes.FORBIDDEN, `Access denied. Requires '${requiredScope}' scope.`, meta(Date.now() - startTime)),
-      Date.now() - startTime,
-    );
-  }
-
-  const abacInput: AbacInput = {
-    user: { id: userContext.id, roles: userContext.roles, tenant: tenant || userContext.tenant },
-    tool_name: name,
-    resource_domain: 'mcp-server',
-    environment: userContext.environment,
-  };
-
-  let corePath = process.cwd();
-  if (corePath.endsWith('packages/mcp-server')) {
-    corePath = path.resolve(corePath, '../..');
-  }
-
-  const nativeDecision = deps.abacEvaluator.evaluateNative(abacInput);
-  const opaDecision = await deps.abacEvaluator.evaluateOpa(abacInput, corePath);
-
-  if (!nativeDecision.allowed || !opaDecision.allowed) {
-    const nativeMsgs = nativeDecision.violations.map(v => `${v.id}: ${v.message}`).join('; ');
-    const opaMsgs = opaDecision.violations.map(v => `${v.id}: ${v.message}`).join('; ');
-    return errorEnvelope(
-      failure(
-        ErrorCodes.FORBIDDEN,
-        `Access denied. ABAC check failed. Native: [${nativeMsgs}]. OPA: [${opaMsgs}].`,
-        meta(Date.now() - startTime),
-      ),
-      Date.now() - startTime,
-    );
-  }
-
-  if (tool.mutative) {
-    if (args.apply !== true || !args.approvalToken || typeof args.approvalToken !== 'string' || args.approvalToken.trim() === '') {
-      return errorEnvelope(
-        failure(
-          ErrorCodes.FORBIDDEN,
-          `Mutative operation '${name}' requires approval. Pass { "apply": true, "approvalToken": "..." }`,
-          meta(Date.now() - startTime),
-        ),
-        Date.now() - startTime,
-      );
-    }
-    // GAP MCP-SECLOG: never log the raw approval token or raw arguments; redact
-    // the token to a short fingerprint and strip secret-bearing arg keys.
-    deps.logger.log(JSON.stringify({
-      event: 'MUTATIVE_TOOL_EXECUTION',
-      user: { id: userContext.id, roles: userContext.roles, tenant: tenant || userContext.tenant },
-      scopes: userContext.scopes,
-      tool: name,
-      approvalTokenFingerprint: fingerprintToken(args.approvalToken as string),
-      arguments: redactArgs(args),
-      timestamp: new Date().toISOString(),
-    }));
-  }
-
-  const traceparent = args.traceparent as string | undefined;
-  const otelGetter = {
-    get: (c: Record<string, string>, k: string) => c[k],
-    keys: (c: Record<string, string>) => Object.keys(c),
-  };
-  const otelCtx = traceparent
-    ? propagation.extract(otelContext.active(), { traceparent }, otelGetter)
-    : otelContext.active();
-
-  const span = deps.tracer.startSpan(
-    `mcp.tool.${name}`,
-    {
-      attributes: {
-        'correlation.id': correlationId,
-        'tool.name': name,
-        'tool.mutative': !!tool.mutative,
-        ...(initiative ? { 'evolith.initiative': initiative } : {}),
-        ...(tenant ? { 'evolith.tenant': tenant } : {}),
-        ...(phase ? { 'evolith.phase': phase } : {}),
-      },
-    },
-    otelCtx,
+  const service = new ToolDispatchService(
+    deps.registry, deps.metrics, deps.abacEvaluator, deps.logger, deps.tracer,
   );
-
-  try {
-    const data = await otelContext.with(trace.setSpan(otelCtx, span), () =>
-      runWithContext({ correlationId, initiative, tenant, phase }, () => tool.execute(args)),
-    );
-    const durationMs = Date.now() - startTime;
-    span.setStatus({ code: SpanStatusCode.OK });
-    span.setAttribute('tool.duration_ms', durationMs);
-    span.end();
-    deps.metrics.recordToolCall(name, durationMs, true);
-    const env = success(data, meta(durationMs));
-    return { content: [{ type: 'text', text: JSON.stringify(env, null, 2) }] };
-  } catch (err) {
-    const durationMs = Date.now() - startTime;
-    const message = err instanceof Error ? err.message : String(err);
-    span.setStatus({ code: SpanStatusCode.ERROR, message });
-    span.setAttribute('tool.duration_ms', durationMs);
-    span.recordException(err instanceof Error ? err : new Error(String(err)));
-    span.end();
-    const env = toErrorEnvelope(err, meta(durationMs));
-    deps.metrics.recordError(env.error.message.substring(0, 80));
-    return errorEnvelope(env, durationMs);
-  }
+  return service.callTool(name, args);
 }

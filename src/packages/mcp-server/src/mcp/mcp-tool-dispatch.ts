@@ -21,7 +21,7 @@ function fingerprintToken(token: string | undefined): string {
 }
 
 /** Shallow-redact secret-bearing keys before logging tool arguments. */
-function redactArgs(args: Record<string, unknown>): Record<string, unknown> {
+export function redactArgs(args: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(args)) {
     out[key] = SENSITIVE_ARG_KEYS.has(key) ? '[redacted]' : value;

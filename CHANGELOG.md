@@ -8,6 +8,49 @@ reconstructed from the commit history. The version number for this batch is
 deliberately unassigned.
 
 
+### Security Hardening (Phases 1-7)
+
+* **security:** Fixed 4 CRITICAL vulnerabilities — JWT timing side-channel (mcp-server-auth.ts), command injection in scaffold tool (scaffold.tool.ts), OPA evaluator shell injection (ArchitecturePlanOpaEvaluator.ts), MetricsAuthGuard timing leak (metrics-auth.guard.ts)
+* **security:** Fixed 9 HIGH vulnerabilities — rate limiting, body size limits, DIP violations, ISP violations, path traversal, audit log redaction, default-unauthenticated mode, plugin import restriction, satellitePath deprecation
+* **security:** Fixed 12 MEDIUM vulnerabilities — OPA fail-open warning, in-memory audit warning, HTTP timeouts, GITHUB_TOKEN env var, OPA cache LRU, DAPR_HTTP_PORT SSRF prevention, CLI token deprecation, scaffold allowlists, Redis password encoding, header sanitization
+* **security:** Fixed 6 LOW items — Swagger opt-in, NODE_ENV fail-fast, CORS/headers/error-masking confirmed correct
+* **security:** Agent Runtime shell runner CWE-78 fix — args passed via stdin instead of string interpolation
+* **security:** Agent Runtime API rate limiting added (100 req/min per IP)
+* **security:** Agent Runtime API safeEqual fixed to hash-first (SHA-256 + timingSafeEqual)
+* **security:** 6 new security ADRs created (0119-0124): API Security Configuration, SSRF Prevention, Input Validation, Shell Execution Safety, Timing-Safe Comparison, Credential Management
+* **security:** 4 security rulesets created (injection-prevention, path-containment, timing-safe-comparison, rate-limiting) with OPA policy enforcement
+* **security:** Docker/K8s hardening checklist documented (24 controls: non-root, read-only, cap_drop, no-new-privileges, tmpfs, resource limits, K8s PSS, Network Policies)
+
+### Clean Code Refactoring (Sprints 1-22)
+
+* **refactor:** Applied 7 design patterns: Strategy (jwt-verifier.ts), SRP (rate-limit, auth, jwt), ISP (agent-runtime-deps.ts), Registry (http-exception, cross-cutting-rule), OO (ToolDispatchService, ConfigToolService), DRY (audit-logger), OCP (cross-cutting-rule)
+* **refactor:** Extracted RateLimitService class from McpServerService (SRP)
+* **refactor:** ToolDispatchService Injectable class replacing procedural mcp-tool-dispatch.ts
+* **refactor:** ConfigToolService class replacing procedural config.tools.ts
+* **refactor:** AuditLogger DRY refactoring — 3 identical methods merged into single logEvent()
+* **refactor:** Cross-cutting-rule handler switch → Map<string, RuleEvaluator> registry pattern (OCP)
+* **refactor:** HTTP exception filter switch → EXCEPTION_MATCHERS registry + STATUS_TO_TITLE map (OCP)
+* **refactor:** AgentRuntimeDeps split into 4 sub-interfaces: ExecutionDeps, GovernanceDeps, ObservabilityDeps, InfrastructureDeps (ISP)
+* **refactor:** DispatchDeps split into ListToolsDeps and CallToolDeps (ISP)
+* **refactor:** McpStartOptions split into StdioMcpOptions and HttpMcpOptions (ISP)
+* **refactor:** All 63 environment variables externalized to env vars with sensible defaults across MCP Server, Core API, Agent Runtime API, CLI, Agent Runtime
+
+### Test Coverage
+
+* **test:** +360 new tests across 7 packages: agent-runtime (+18), core-domain (+123), sdk-client (+9), MCP server (+39)
+* **test:** New test files: result-assembler.spec, blocking-criteria-validator.spec, satellite-evaluation-pipeline.spec, evolith-rest-client.spec, mermaid-class-parser.spec, scope-contract.spec, hexagonal-scaffolder.spec, authority-policy.spec, opa-input-builder.spec, command-history.service.spec, phase-state-machine.spec, policy-compiler.spec, verdict.spec, gate-evidence.spec, workspace-descriptor.spec, phase-id.spec, errors/index.spec, role.spec, domain-events.spec, artifact-state-machine.spec, finding.spec, rate-limit.service.spec, path-security.spec, tool-registry.service.spec, metrics.service.spec, mcp-cache.service.spec, envelopes.spec, errors.spec
+* **test:** Total test count: ~2,257 (up from ~1,911)
+
+### Configuration & Documentation
+
+* **config:** 4 .env.example files created (MCP Server, Core API, Agent Runtime API, CLI)
+* **config:** Environment variables reference document (EN/ES) — 63 unique variables cataloged
+* **docs:** Questions & Answers section added to both README.md and README.es.md with expandable categories
+* **docs:** Q&A reference document created (64 questions, 12 categories, bilingual)
+* **docs:** Security hardening checklist documented (24 Docker/K8s controls)
+* **docs:** Maturity assessment restructured to bidimensional framework (Internal Quality + Governance Scope)
+
+
 ### BREAKING CHANGES
 
 * **sdk:** the SDK's exported payload types are now re-exports of `@beyondnet/evolith-core-domain` instead of local forks, and the package moves to 2.0.0. The forks described a wire format that did not exist. Most importantly, **`result.data.passed` does not exist and never did** — the field is `verdict: 'passed' | 'failed' | 'skipped'`. Code following the old README printed `undefined` at runtime. Other corrections: `gateId`, `rulesetRef` and `rulesetVersion` are emitted but were missing from the type; `location` is required on the wire but was absent; `artifact` and `remediation` were declared but are emitted by nobody; `ViolationSeverity` no longer admits `'info'` (only `'error'` and `'warning'` are reachable); `ValidationResult` regains `status` (including `'warning'`), `coreRef` and `timestamp`; `ValidationIssue` regains `MUST | SHOULD | COULD` severities and `description`, and `category` is required again. `RestGateViolation` and `McpGateViolation` now alias the canonical type, so imports still resolve by name. To upgrade: replace any read of `.passed` with `.verdict`, and drop branches handling `'info'` severity or the never-emitted `artifact` and `remediation` fields. Request DTOs, MCP tool input types and the `ApiEnvelope` family remain SDK-owned and are unchanged ([af0deffe](https://github.com/beyondnetcode/evolith_arch32/commit/af0deffe32e7ca7e5498d647511d6ed61f0dcc02))

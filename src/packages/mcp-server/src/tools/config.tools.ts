@@ -5,17 +5,55 @@ import { McpTool } from '../mcp/tool.interface';
 import { sanitizePathInput } from '../utils/path-security';
 
 /**
- * Config tools — reads/writes evolith.yaml.
- *
- * DIP NOTE: Directly imports fs-extra and yaml. Other tool files in this
- * package accept IFileSystem as a parameter. For consistency, this file
- * should be refactored to accept injected dependencies. However, since
- * config tools are simple CRUD operations on a single YAML file, the
- * practical benefit is low. Marked for future cleanup.
- *
- * TODO: Accept IFileSystem + IConfigParser as parameters for DI consistency.
+ * Config Tool Service — reads/writes evolith.yaml.
+ * Converted from procedural module to class for testability (SRP).
  */
+export class ConfigToolService {
+  /**
+   * Read a nested key from evolith.yaml.
+   * @param dir Directory containing evolith.yaml
+   * @param key Dot-separated key path (e.g., 'product.phase')
+   */
+  async getConfig(dir: string, key: string): Promise<{ key: string; value: unknown }> {
+    const resolvedDir = path.resolve(dir);
+    const configPath = path.join(resolvedDir, 'evolith.yaml');
+    if (!(await fs.pathExists(configPath))) throw new Error('evolith.yaml not found');
+
+    const config = yaml.parse(await fs.readFile(configPath, 'utf-8'));
+    let value: unknown = config;
+    for (const k of key.split('.')) {
+      value = (value as Record<string, unknown>)?.[k];
+    }
+    return { key, value: value ?? null };
+  }
+
+  /**
+   * Set a nested key in evolith.yaml.
+   * @param dir Directory containing evolith.yaml
+   * @param key Dot-separated key path
+   * @param value Value to set (always stored as string)
+   */
+  async setConfig(dir: string, key: string, value: string): Promise<{ key: string; value: string; updated: boolean }> {
+    const resolvedDir = path.resolve(dir);
+    const configPath = path.join(resolvedDir, 'evolith.yaml');
+    if (!(await fs.pathExists(configPath))) throw new Error('evolith.yaml not found');
+
+    const config = yaml.parse(await fs.readFile(configPath, 'utf-8')) ?? {};
+    const keys = key.split('.');
+    let target: Record<string, unknown> = config;
+    for (let i = 0; i < keys.length - 1; i++) {
+      if (!target[keys[i]]) target[keys[i]] = {};
+      target = target[keys[i]] as Record<string, unknown>;
+    }
+    target[keys[keys.length - 1]] = value;
+    await fs.writeFile(configPath, yaml.stringify(config));
+    return { key, value, updated: true };
+  }
+}
+
+/** Create MCP tool definitions backed by ConfigToolService. */
 export function createConfigTools(): McpTool[] {
+  const service = new ConfigToolService();
   return [
     {
       schema: {
@@ -27,7 +65,10 @@ export function createConfigTools(): McpTool[] {
           required: ['key'],
         },
       },
-      execute: async (args) => handleConfigGet(args),
+      execute: async (args) => {
+        const dir = (args.dir as string) || process.cwd();
+        return service.getConfig(dir, args.key as string);
+      },
     },
     {
       schema: {
@@ -45,42 +86,10 @@ export function createConfigTools(): McpTool[] {
         },
       },
       mutative: true,
-      execute: async (args) => handleConfigSet(args),
+      execute: async (args) => {
+        const dir = (args.dir as string) || process.cwd();
+        return service.setConfig(dir, args.key as string, args.value as string);
+      },
     },
   ];
-}
-
-async function handleConfigGet(args: Record<string, unknown>) {
-  const dir = (args.dir as string) || process.cwd();
-  const resolvedDir = path.resolve(dir);
-  const configPath = path.join(resolvedDir, 'evolith.yaml');
-  if (!(await fs.pathExists(configPath))) throw new Error('evolith.yaml not found');
-
-  const config = yaml.parse(await fs.readFile(configPath, 'utf-8'));
-  const key = args.key as string;
-  let value: unknown = config;
-  for (const k of key.split('.')) {
-    value = (value as Record<string, unknown>)?.[k];
-  }
-  return { key, value: value ?? null };
-}
-
-async function handleConfigSet(args: Record<string, unknown>) {
-  const dir = (args.dir as string) || process.cwd();
-  const resolvedDir = path.resolve(dir);
-  const configPath = path.join(resolvedDir, 'evolith.yaml');
-  if (!(await fs.pathExists(configPath))) throw new Error('evolith.yaml not found');
-
-  const config = yaml.parse(await fs.readFile(configPath, 'utf-8')) ?? {};
-  const key = args.key as string;
-  const value = args.value as string;
-  const keys = key.split('.');
-  let target: Record<string, unknown> = config;
-  for (let i = 0; i < keys.length - 1; i++) {
-    if (!target[keys[i]]) target[keys[i]] = {};
-    target = target[keys[i]] as Record<string, unknown>;
-  }
-  target[keys[keys.length - 1]] = value;
-  await fs.writeFile(configPath, yaml.stringify(config));
-  return { key, value, updated: true };
 }

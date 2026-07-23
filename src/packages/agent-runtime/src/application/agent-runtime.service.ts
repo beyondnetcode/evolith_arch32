@@ -52,41 +52,15 @@ import {
   mergeStatus,
 } from './result-assembler';
 
-/** Ports the service depends on. Engine is OPTIONAL (works with no LLM at all). */
-export interface AgentRuntimeDeps {
-  readonly skillRegistry: ISkillRegistryPort;
-  readonly harness: IHarnessPort;
-  readonly coreEvaluation: ICoreEvaluationPort;
-  readonly policy: IPolicyValidationPort;
-  readonly tracker: ITrackerTracePort;
-  readonly memory: IMemoryPort;
-  readonly approval: IApprovalPort;
-  /** Optional reasoning engine (Hermes adapter, stub, or none). */
-  readonly engine?: IAgentEnginePort;
-  /**
-   * Optional read-side knowledge/RAG port (GT-408 in-memory default, GT-540
-   * pgvector in production). Carried on the bundle so grounded retrieval is
-   * reachable; the base flow itself does not depend on it.
-   */
-  readonly knowledge?: IKnowledgePort;
-  /**
-   * ADR-0115 — optional sensor fed by the `ground` step. Absent by default: it
-   * only observes, never alters the run, and a deployment without a corpus has
-   * nothing meaningful for it to see.
-   */
-  readonly knowledgeOpportunity?: { observe(o: { intent: string; citationCount: number; corpusVersion?: string; repository?: string }): void };
-  /**
-   * Optional workspace-context assembler (GT-438). When present, the runtime
-   * gathers the real workspace files and passes them INLINE to the stateless
-   * Core `evaluate()` (via `evaluationInput.files`), so the Core governs actual
-   * content instead of an empty context. Absent ⇒ prior workspaceRef-only flow.
-   */
-  readonly workspaceContext?: IWorkspaceContextPort;
-  /** Injected clock for deterministic tests. */
-  readonly now?: () => string;
-  /** Injected id generator for deterministic tests. */
-  readonly id?: () => string;
-}
+// Re-export sub-interfaces for consumers that only need a subset (ISP)
+export type {
+  ExecutionDeps,
+  GovernanceDeps,
+  ObservabilityDeps,
+  InfrastructureDeps,
+  AgentRuntimeDeps,
+} from './agent-runtime-deps';
+import type { AgentRuntimeDeps } from './agent-runtime-deps';
 
 const RUNTIME_ACTOR = 'agent_runtime';
 

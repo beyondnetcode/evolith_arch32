@@ -49,6 +49,13 @@ const MAX_BODY_BYTES = Number(process.env.MCP_MAX_BODY_BYTES) || 1024 * 1024;
 
 export type McpTransport = 'stdio' | 'http';
 
+/**
+ * MCP Server startup options.
+ *
+ * ISP NOTE: Originally mixed stdio (stdin/stdout) and HTTP (port/apiKey)
+ * concerns. Split into transport-specific types below for new code.
+ * The aggregate is kept for backward compatibility with existing callers.
+ */
 export interface McpStartOptions {
   transport?: McpTransport;
   port?: number;
@@ -57,6 +64,11 @@ export interface McpStartOptions {
   stdin?: Readable;
   stdout?: Writable;
 }
+
+/** ISP: Use this for new stdio-only code. */
+export type StdioMcpOptions = Pick<McpStartOptions, 'transport' | 'stdin' | 'stdout'> & { transport: 'stdio' };
+/** ISP: Use this for new HTTP-only code. */
+export type HttpMcpOptions = Pick<McpStartOptions, 'transport' | 'port' | 'apiKey' | 'allowNoAuth'> & { transport: 'http' };
 
 const SERVER_NAME = 'evolith-mcp';
 const SERVER_VERSION = '1.0.0';

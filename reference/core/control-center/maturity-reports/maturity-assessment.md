@@ -5,18 +5,28 @@
 **Status:** Active Assessment
 **Owner:** Evolith Architecture Board
 **Created:** 2026-06-10 (consolidates the former `maturity-matrix.md` and `maturity-evaluation.md`)
-**Last Updated:** 2026-06-22
+**Last Updated:** 2026-07-23
 **Companion document:** [Gap Tracking Board](../gaps/gap-tracking.md) — the single tracking surface for every open gap referenced here.
 
 ---
 
 ## 1. Purpose & Frameworks
 
-This is the **single maturity assessment** for Evolith Core. It measures three things:
+This is the **single maturity assessment** for Evolith Core. It is a **bidimensional evaluation** measuring two orthogonal aspects of the platform:
 
-1. **Compatibility with international standards** — TOGAF Architecture Capability Maturity Model (ACMM) for enterprise process and governance maturity, plus the Cloud Well-Architected Framework (WAF) pillars for technical maturity (section 3) and the enterprise microservices pattern/anti-pattern catalog (sections 5–6).
-2. **Match with the product vision** — pillar-by-pillar alignment against the [Product Vision Master](../../../../product/suite/vision/evolith-product-vision-master.md) (section 7).
-3. **Open gaps** — every deviation found here is tracked exclusively as a `GT-xx` item on the [Gap Tracking Board](../gaps/gap-tracking.md) (section 8). No gap is tracked in this document.
+**Dimension A — Internal Quality Maturity:** How well is Evolith Core built? Measured against TOGAF ACMM, Cloud WAF, international pattern catalogs, and adapter maturity levels (sections 3–7).
+
+**Dimension B — Governance Scope Maturity:** How broad is Evolith Core's architectural governance reach? Measured against its own multi-topology dimensional model across 5 dimensions and 8 composable topologies, plus AI-Augmented maturity (sections 8–10).
+
+This dual view prevents a common evaluation failure: a platform with high internal quality but narrow governance scope is fundamentally different from one with the same quality and full-spectrum topological coverage. Evolith Core is the latter.
+
+Specifically, the assessment measures:
+
+1. **Compatibility with international standards** — TOGAF ACMM for enterprise process governance maturity, Cloud WAF pillars for technical maturity (section 3), the enterprise microservices pattern/anti-pattern catalog (sections 6–7), and adapter capability maturity (section 5).
+2. **Multi-topology governance scope** — coverage across the 5 topology dimensions (progressive-axis, execution, integration, data, ai) with 8 composable topologies, all with dual-engine parity (section 8).
+3. **AI-Augmented maturity** — position against the 3-level × 5-dimension AI maturity matrix (section 10).
+4. **Match with the product vision** — pillar-by-pillar alignment against the [Product Vision Master](../../../../product/suite/vision/evolith-product-vision-master.md) (section 11).
+5. **Open gaps** — every deviation found here is tracked exclusively as a `GT-xx` item on the [Gap Tracking Board](../gaps/gap-tracking.md) (section 12). No gap is tracked in this document.
 
 **How to update:** re-score a section when its underlying evidence changes (ADR merged, gate closed, GT item done), update `Last Updated`, and keep gap registration on the board — never here.
 
@@ -124,28 +134,43 @@ This dimension measures the maturity of the interaction surfaces and internal or
 * **M4 — Production adapter implemented:** Real integration implemented (e.g., HTTP, Redis).
 * **M5 — Governed, observable and tested:** Fully covered by OPA, tracing, approval flows, and CI gates.
 
-| Capability / Port | Objective | Currently Implemented in Core/Runtime | State | Pending / Recommended | Closing Benefit | Priority |
-|---|---|---|---|---|---|---|
-| **Agent Engine** | Replaceable agentic reasoning. | `StubAgentEngineAdapter`, `HermesAgentAdapter`, `SwarmsAgentAdapter`, `RoutingAgentAdapter` | `Implemented` | `OpenCodeAgentAdapter`, `OllamaLocalAgentAdapter`, `OpenAIAdapter`, `ClaudeAdapter`, `GeminiAdapter` | Allows various agentic engines without coupling Evolith to Hermes. Favors privacy, cost, flexibility. | Medium |
-| **Engine Routing** | Select engine by intent or context. | `RoutingAgentAdapter` | `Partial` | `PolicyBasedEngineRouter`, `RiskAwareEngineRouter`, `CostAwareEngineRouter`, `PrivacyAwareEngineRouter` | Allows choosing engine by risk, cost, SDLC phase, privacy, or policy. | High |
-| **Harness Execution** | Execute simulated or real `.harness` capabilities. | `InMemoryHarnessAdapter`, `HarnessProcessAdapter` | `Implemented` | `DockerHarnessAdapter`, `KubernetesJobHarnessAdapter`, `RemoteHarnessAdapter`, `GitHubActionsHarnessAdapter` | Isolates validations, allows remote execution, CI/CD, and Kubernetes. | Medium |
-| **Core Evaluation** | Evaluate rules, gaps, risks, and governance. | `StubCoreEvaluationAdapter`, `InProcessCoreEvaluationAdapter`, `HttpCoreEvaluationAdapter` | `Implemented` | `GrpcCoreEvaluationAdapter`, `BatchCoreEvaluationAdapter`, `CachedCoreEvaluationAdapter` | Improves performance, scalability, and massive evaluation. | Medium |
-| **Policy / OPA** | Validate policies and block forbidden actions. | `StubPolicyValidationAdapter`, `OpaCliPolicyValidationAdapter` | `Implemented` | `OpaHttpAdapter`, `ConftestAdapter`, `KyvernoAdapter`, `PolicyBundleRegistryAdapter` | Enables remote policy-as-code, K8s validation, and versioned bundles. | High |
-| **Tracker Trace** | Publish traceability to memory or Tracker. | `InMemoryTrackerTraceAdapter`, `HttpTrackerTraceAdapter` | `Implemented` | `EventBusTraceAdapter`, `KafkaTraceAdapter`, `OpenTelemetryTraceAdapter`, `AuditLogTraceAdapter` | Enhances enterprise traceability, auditing, and observability. | Medium |
-| **Memory** | Maintain temporary/persisted runtime memory. | `InMemoryMemoryAdapter`, `FileMemoryAdapter` | `Implemented` | `RedisMemoryAdapter`, `PostgresMemoryAdapter`, `VectorMemoryAdapter`, `ObsidianVaultMemoryAdapter` | Enables shared, persistent, and semantic memory for agents. | Medium |
-| **Skill Registry** | Resolve intents/tools to governed capabilities. | `LocalSkillRegistryAdapter`, `DEFAULT_SKILLS` | `Implemented` | `RemoteSkillRegistryAdapter`, `GitSkillRegistryAdapter`, `MarketplaceSkillRegistryAdapter`, `TenantSkillBundleAdapter` | Allows versioned, inheritable, extensible capabilities by product/bundle. | High |
-| **Communication Gateway** | Adapt existing communication surfaces. | `CliCommunicationGatewayAdapter` | `Partial` | `InteractionAdapterPort`, `SmartCliCommandInteractionAdapter`, `SmartCliChatInteractionAdapter`, `HermesChatBoxInteractionAdapter`, `OpenCodeInteractionAdapter`, `McpInteractionAdapter`, `WebhookInteractionAdapter` | **Critical piece** to allow multiple interfaces without duplicating commands or bypassing governance. | Critical |
-| **Scheduler** | Schedule or defer runtime executions. | `InMemorySchedulerAdapter`, `FileSchedulerAdapter` | `Implemented` | `CronSchedulerAdapter`, `TemporalAdapter`, `BullMQSchedulerAdapter`, `KubernetesCronJobAdapter` | Allows recurrent audits, durable jobs, and scheduled re-validations. | Low |
-| **Approval / HITL** | Manage human-in-the-loop approval or default blocking. | `AutoApprovalAdapter`, `DenyByDefaultApprovalAdapter` | `Partial` | `TrackerApprovalAdapter`, `GitHubApprovalAdapter`, `SlackApprovalAdapter`, `TeamsApprovalAdapter`, `EmailApprovalAdapter` | Enables real human approval for sensitive actions. | High |
-| **MCP Interaction** | Expose Evolith to external agents via MCP. | MCP exists as ecosystem component, but lacks formal runtime adapter. | `Partial` | `McpInteractionAdapter`, `McpToolRegistryAdapter`, `McpPolicyGuardAdapter` | External agents consume Evolith capabilities with governance. | High |
-| **Evolith CLI Interaction** | Keep Evolith CLI as official console and governed entry. | Evolith CLI exists, but not formalized as a common interaction adapter. | `Partial` | `SmartCliCommandInteractionAdapter`, `SmartCliChatInteractionAdapter`, `CommandCapabilityAdapter` | CLI command and CLI chat use the same runtime/capability layer. | Critical |
-| **Hermes Chat Box Interaction** | Use Hermes Chat Box as optional conversational UI. | `HermesAgentAdapter` exists as engine, but Chat Box not formalized as source/interface adapter. | `Partial` | `HermesChatBoxInteractionAdapter` | Expose Hermes Chat Box without it executing commands directly. | High |
-| **OpenCode Interaction** | Use OpenCode as external chat/agent UI. | Not implemented. | `Not implemented` | `OpenCodeInteractionAdapter`, `OpenCodeMcpAdapter`, `OpenCodeCliBridgeAdapter` | Use OpenCode as external chat box without free shell access. | Medium |
-| **GitHub Automation** | Create satellite repos, issues, PRs, CI from governed flows. | Not implemented as direct runtime adapter. | `Not implemented` | `GitHubRepositoryAdapter`, `GitHubIssueAdapter`, `GitHubPullRequestAdapter`, `GitHubActionsAdapter` | Governed SDLC automation over GitHub. | Medium |
-| **Notifications / Collaboration** | Notify blocked gates, pending approvals, and results. | Not implemented as direct runtime adapter. | `Not implemented` | `SlackAdapter`, `TeamsAdapter`, `EmailNotificationAdapter`, `DiscordAdapter` | Improves collaboration, alerts, and approvals. | Medium |
-| **Observability** | Observe runtime, engines, latency, errors, and blocks. | Partial via Tracker Trace. | `Partial` | `OpenTelemetryAdapter`, `PrometheusMetricsAdapter`, `StructuredAuditAdapter` | Enterprise monitoring and technical auditing. | Medium |
-| **Knowledge / RAG** | Query ADRs, blueprints, rulesets before suggesting actions. | Production read-side delivered (GT-540): `PgVectorKnowledgeAdapter` runs cosine top-k over the GT-538 pgvector `rag_chunks` store via an injected GT-539 Qwen3 embedder (dim 1024, fail-closed) and returns ranked, cited `KnowledgeChunk[]`; selected over the token-overlap `InMemoryKnowledgeAdapter` default by `runtime.factory` (`AGENT_RUNTIME_KNOWLEDGE_MODE` / store URL). Live pgvector + sidecar run is deploy-gated. | `Implemented (deploy-gated run)` | `PgVectorKnowledgeAdapter` (GT-540), `InMemoryKnowledgeAdapter` (GT-408 default) | Enhances agentic recommendation quality using internal evidence. | High |
-| **Secrets / Config** | Manage credentials, endpoints, engine selection, and config. | Partial via bootstrap/overrides. | `Partial` | `VaultSecretAdapter`, `EnvConfigAdapter`, `RemoteConfigAdapter`, `PolicyBundleConfigAdapter` | Avoids hardcoding, improves per-environment configuration security. | High |
+### 5.1 Interaction Adapters (M-Level Assessment)
+
+All 6 interaction adapters have been implemented as production adapters (M4). None have reached M5.
+
+| Adapter | M-Level | Tests | Priority | Gaps to M5 |
+|---|:---:|:---|:---|:---|
+| `McpInteractionAdapter` | **M4** | 11 unit tests | High | OPA guard, tracing, manifest registration |
+| `SmartCliCommandInteractionAdapter` | **M4** | None | Critical | Unit tests, edge cases, manifest registration |
+| `SmartCliChatInteractionAdapter` | **M4** | None | Critical | Unit tests, edge cases, manifest registration |
+| `HermesChatBoxInteractionAdapter` | **M4** | None | High | Unit tests, manifest registration, standalone docs |
+| `OpenCodeInteractionAdapter` | **M4** | None | Medium | Distinct sourceInterface, tests, manifest |
+| `ExternalTriggerInteractionAdapter` | **M4** | None | High | Input validation, tests, manifest registration |
+
+**Distribution:** 0 M0-M3 · **6 M4** · 0 M5
+
+**Cross-cutting gaps to M5:** Only `McpInteractionAdapter` has test coverage. The remaining 5 adapters share: missing unit tests, no manifest registration, no agent definition references, no adapter-level OPA/trace/HITL integration (handled downstream in the runtime pipeline but not at adapter level).
+
+### 5.2 Port Adapters (Capability Inventory)
+
+| Capability / Port | Objective | Currently Implemented | State | Pending / Recommended | Priority |
+|---|---|---|---|---|---|
+| **Agent Engine** | Replaceable agentic reasoning. | `StubAgentEngineAdapter`, `HermesAgentAdapter`, `SwarmsAgentAdapter`, `RoutingAgentAdapter` | `Implemented` | `OpenCodeAgentAdapter`, `OllamaLocalAgentAdapter`, `OpenAIAdapter`, `ClaudeAdapter`, `GeminiAdapter` | Medium |
+| **Engine Routing** | Select engine by intent or context. | `RoutingAgentAdapter` | `Partial` | `PolicyBasedEngineRouter`, `RiskAwareEngineRouter`, `CostAwareEngineRouter`, `PrivacyAwareEngineRouter` | High |
+| **Harness Execution** | Execute simulated or real `.harness` capabilities. | `InMemoryHarnessAdapter`, `HarnessProcessAdapter` | `Implemented` | `DockerHarnessAdapter`, `KubernetesJobHarnessAdapter`, `RemoteHarnessAdapter`, `GitHubActionsHarnessAdapter` | Medium |
+| **Core Evaluation** | Evaluate rules, gaps, risks, and governance. | `StubCoreEvaluationAdapter`, `InProcessCoreEvaluationAdapter`, `HttpCoreEvaluationAdapter` | `Implemented` | `GrpcCoreEvaluationAdapter`, `BatchCoreEvaluationAdapter`, `CachedCoreEvaluationAdapter` | Medium |
+| **Policy / OPA** | Validate policies and block forbidden actions. | `StubPolicyValidationAdapter`, `OpaCliPolicyValidationAdapter` | `Implemented` | `OpaHttpAdapter`, `ConftestAdapter`, `KyvernoAdapter`, `PolicyBundleRegistryAdapter` | High |
+| **Tracker Trace** | Publish traceability to memory or Tracker. | `InMemoryTrackerTraceAdapter`, `HttpTrackerTraceAdapter` | `Implemented` | `EventBusTraceAdapter`, `KafkaTraceAdapter`, `OpenTelemetryTraceAdapter`, `AuditLogTraceAdapter` | Medium |
+| **Memory** | Maintain temporary/persisted runtime memory. | `InMemoryMemoryAdapter`, `FileMemoryAdapter` | `Implemented` | `RedisMemoryAdapter`, `PostgresMemoryAdapter`, `VectorMemoryAdapter`, `ObsidianVaultMemoryAdapter` | Medium |
+| **Skill Registry** | Resolve intents/tools to governed capabilities. | `LocalSkillRegistryAdapter`, `DEFAULT_SKILLS` | `Implemented` | `RemoteSkillRegistryAdapter`, `GitSkillRegistryAdapter`, `MarketplaceSkillRegistryAdapter`, `TenantSkillBundleAdapter` | High |
+| **Communication Gateway** | Adapt existing communication surfaces. | `CliCommunicationGatewayAdapter` + 6 interaction adapters (see 5.1) | `Implemented` | `WebhookInteractionAdapter` | Critical |
+| **Scheduler** | Schedule or defer runtime executions. | `InMemorySchedulerAdapter`, `FileSchedulerAdapter` | `Implemented` | `CronSchedulerAdapter`, `TemporalAdapter`, `BullMQSchedulerAdapter`, `KubernetesCronJobAdapter` | Low |
+| **Approval / HITL** | Manage human-in-the-loop approval or default blocking. | `AutoApprovalAdapter`, `DenyByDefaultApprovalAdapter` | `Partial` | `TrackerApprovalAdapter`, `GitHubApprovalAdapter`, `SlackApprovalAdapter`, `TeamsApprovalAdapter`, `EmailApprovalAdapter` | High |
+| **Knowledge / RAG** | Query ADRs, blueprints, rulesets before suggesting actions. | `PgVectorKnowledgeAdapter` (deploy-gated), `InMemoryMemoryAdapter` (default) | `Implemented (deploy-gated)` | Live pgvector + sidecar run | High |
+| **Observability** | Observe runtime, engines, latency, errors, and blocks. | Partial via Tracker Trace. | `Partial` | `OpenTelemetryAdapter`, `PrometheusMetricsAdapter`, `StructuredAuditAdapter` | Medium |
+| **GitHub Automation** | Create satellite repos, issues, PRs, CI from governed flows. | Not implemented as direct runtime adapter. | `Not implemented` | `GitHubRepositoryAdapter`, `GitHubIssueAdapter`, `GitHubPullRequestAdapter`, `GitHubActionsAdapter` | Medium |
+| **Notifications / Collaboration** | Notify blocked gates, pending approvals, and results. | Not implemented as direct runtime adapter. | `Not implemented` | `SlackAdapter`, `TeamsAdapter`, `EmailNotificationAdapter`, `DiscordAdapter` | Medium |
+| **Secrets / Config** | Manage credentials, endpoints, engine selection, and config. | Partial via bootstrap/overrides. | `Partial` | `VaultSecretAdapter`, `EnvConfigAdapter`, `RemoteConfigAdapter`, `PolicyBundleConfigAdapter` | High |
 
 ---
 
@@ -184,7 +209,86 @@ The architecture deploys explicit "antibodies" against the six highest-risk anti
 
 ---
 
-## 8. Product Vision Alignment
+## 8. Topology Governance Scope (Multi-Dimensional Coverage)
+
+> *This is the dimension that distinguishes Evolith from conventional architecture frameworks: not just internal quality, but breadth of governance reach.*
+
+### 8.1 Dimensional Model
+
+Evolith Core does not treat architecture topologies as mutually exclusive maturity labels. The [Topology Dimensions Model](../../architecture/topologies/topology-dimensions.md) (governed by [ADR-0079](../../architecture/adrs/core/0079-multi-topology-reference-corpus.md)) defines 5 dimensions with 8 composable topologies.
+
+| Dimension | Question Answered | Topologies |
+|---|---|---|
+| `progressive-axis` | How is the system decomposed and evolved? | `modular-monolith`, `distributed-modules`, `microservices` |
+| `execution` | Where and how does code execute? | `serverless`, `edge-computing` |
+| `integration` | How do components coordinate? | `event-driven` |
+| `data` | How is data ownership distributed? | `data-mesh` |
+| `ai` | How are AI agents governed? | `agentic-ai` |
+
+**Coverage: 5/5 dimensions (100%), 8/8 topologies (100%)**
+
+### 8.2 Per-Topology Maturity State
+
+| Topology | Dimension | Status | Native Rules | OPA Policy | OPA Tests | WASM | Config Schema | Fixtures | Bilingual | Budgets | ADRs |
+|---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Modular Monolith** | progressive-axis | Accepted v1.0.0 | YES | YES | YES | YES | YES | YES | YES | — | 4 |
+| **Distributed Modules** | progressive-axis | Accepted v1.0.0 | YES | YES | YES | YES | YES | YES | YES | — | 3 |
+| **Microservices** | progressive-axis | Accepted v1.0.0 | YES | YES | YES | YES | YES | YES | YES | — | 4 |
+| **Serverless** | execution | Accepted v1.0.0 | YES | YES | YES | YES | YES | YES | YES | YES | 2 |
+| **Edge Computing** | execution | Accepted v1.0.0 | YES | YES | YES | YES | YES | YES | YES | YES | 2 |
+| **Event-Driven** | integration | Accepted v1.0.0 | YES | YES | YES | YES | YES | YES | YES | — | 2 |
+| **Data Mesh** | data | Accepted v1.0.0 | YES | YES | YES | YES | YES | YES | YES | — | 2 |
+| **Agentic AI** | ai | Accepted v0.1.0 | YES | YES | YES | YES | YES | YES | YES | YES | 5 |
+
+**All 8 topologies have dual-engine parity** (Native `.rules.json` + OPA `.rego` + `.test.rego` + `.wasm`).
+
+### 8.3 Composition Matrix
+
+Topologies from different dimensions compose via `spec.compatibility.composableWith`. Two hub topologies provide maximum composability:
+
+| Hub Topology | Composes With |
+|---|---|
+| **Event-Driven** | ALL 7 other topologies |
+| **Agentic AI** | ALL 7 other topologies |
+
+**Reference composition:** `modular-monolith + event-driven` (validates in CI via `22-validate-topology-composition.mjs`).
+
+### 8.4 Operational Budgets
+
+Execution and AI topologies enforce operational budget contracts:
+
+| Topology | Budget Fields |
+|---|---|
+| Serverless | `latencyBudgetMs=1500`, `coldStartCeilingMs=1000`, `costCeilingPerExecutionCents=1` |
+| Edge Computing | `latencyBudgetMs=200`, `coldStartCeilingMs=300`, `costCeilingPerExecutionCents=1` |
+| Agentic AI | `tokenBudgetPerExecution=100000`, `credentialRotationIntervalHours=24`, `sandboxTimeoutMs=30000` |
+
+### 8.5 CI Validation Infrastructure
+
+| Script | Purpose |
+|---|---|
+| `validate-topology-manifests.mjs` | Validates all manifests against schema, budgets, R-27 corpus completeness |
+| `22-validate-topology-composition.mjs` | Cross-topology composition validation, pairwise composability |
+| `26-validate-topology-rule-coverage.mjs` | Native/OPA rule-ID coverage per manifest |
+| `28-test-topology-opa.mjs` | OPA test suites for all accepted topologies |
+| `30-validate-phase-topology-disjoint.mjs` | Namespace anti-collision (SDLC phases vs topology IDs) |
+
+### 8.6 Governance Scope Score
+
+| Indicator | Value |
+|---|---|
+| Dimensions governed | **5/5 (100%)** |
+| Topologies governed | **8/8 (100%)** |
+| Dual-engine parity | **8/8 (100%)** |
+| Operational budgets enforced | **3/3 required** |
+| Compositions validated in CI | Infrastructure complete |
+| Topology-specific ADRs | 13 across 8 topologies |
+
+**Governance Scope: COMPLETE** — Evolith Core covers the full spectrum of topologies defined in its dimensional model.
+
+---
+
+## 9. Product Vision Alignment
 
 Pillar-by-pillar match against the [Product Vision Master](../../../../product/suite/vision/evolith-product-vision-master.md). Detailed component scores live in the [Baseline Snapshot](../gaps/gap-reference-catalog.md#2-historical-baseline-snapshot) of the Gap Reference Catalog.
 
@@ -199,32 +303,42 @@ Pillar-by-pillar match against the [Product Vision Master](../../../../product/s
 
 ---
 
-## 9. Executive Scoring & Open Gaps
+## 10. AI-Augmented Dimension
 
-### Combined Score (TOGAF ACMM)
+Evolith Core adopts the AI-Augmented engineering section. The complementary [AI Maturity Matrix](../../foundations/common-rules/ai-augmented/07-maturity-model/ai-maturity-matrix.md) defines 3 levels across 5 dimensions.
 
-| Layer | Weight | Score (Evidence-Backed) |
-|-------|--------|-------------------------|
-| Runtime Architecture (Well-Architected pillars) | 60% | 3.4 ± 0.4 |
-| Technological Exposure (CLI + MCP) | 40% | 3.2 ± 0.4 |
+### 10.1 Per-Dimension Assessment
 
-**Overall Evolith Core Maturity: 3.32 ± 0.4 / 5.0 (Defined → Managed)**
+| Dimension | Level | Key Evidence | Gap to Level 3 |
+|---|:---:|---|---|
+| **Documentation** | **2 (AI-Integrated)** | AGENTS.md (132 lines, updated regularly), MCP Tools Catalog (50 tools), Model Catalog, Router Agent + 10 Discovery Agents with declared scope/inputs/outputs/handoff | Agent-specific ADRs, C4 architecture diagrams of orchestration topology |
+| **Tools** | **3 (AI-Orchestrated)** | 50 registered MCP tools, recursive agentic tool-calling with budget propagation (ADR-0002 §4), RAG semantic memory via pgvector + Qwen3 embedder, OTel/Langfuse observability, `LangfuseEvidenceAdapter` mapping traces/cost/latency | — (already Level 3) |
+| **Verification** | **2 (AI-Integrated)** | `.husky/pre-commit` (5 CI modes), 12 GitHub Actions workflows, daily OPA parity validation, architecture boundary guards, documentation validation, coverage gates (80.65%) | Autonomous verification agents patrolling continuously (Winston audit exists but requires manual invocation) |
+| **Models** | **2 (AI-Integrated)** | ADR-AI-003 formal governance, tiered model catalog (Large/Flash/Local), cost-per-token optimization targeting 30-40% reduction, Langfuse cost tracking infrastructure | Live token cost dashboard per agent/feature, automatic role-based multi-model routing |
+| **Security** | **2 (AI-Integrated)** | OAuth/API key/JWT authentication with constant-time comparison, ABAC dual-engine (OPA + TypeScript), role-based tool filtering, `AuditLogger` with redaction, HITL policy for destructive tools | Immutable audit storage, execution sandboxing, adaptive rate limiting with cost-based limits |
 
-The system is transitioning from fully documented (Level 3) to automatically governed (Level 4). By enforcing strict evidence backing, the score formally incorporates an **uncertainty penalty** for items that are `Designed` or `Implemented` but lack full automated validation.
+### 10.2 AI Maturity Summary
 
-### Current Reconciliation
+| Level | Dimensions at this level |
+|---|---|
+| Level 1 (AI-Assisted) | 0 |
+| Level 2 (AI-Integrated) | 4 (Documentation, Verification, Models, Security) |
+| Level 3 (AI-Orchestrated) | 1 (Tools) |
 
-Current totals are not maintained as narrative text. The machine-readable [Maturity Reconciliation](./maturity-reconciliation.json) is generated from the canonical Core board, closure registry, inventories, and CLI release metadata. `node .harness/scripts/ci/09-reconcile-maturity.mjs --check` fails when that snapshot drifts.
+**Overall AI Maturity: Level 2.2 (AI-Integrated → AI-Orchestrated)**
 
-Tracker and Product Suite maturity are explicitly excluded from the Core score because they have independent ownership and evidence lifecycles. Their product state cannot inflate this assessment.
+### 10.3 Certification Evidence
 
----
-
-## 10. AI-Augmented Dimension (Optional)
-
-For products adopting the AI-Augmented engineering section, a complementary maturity matrix exists with 3 levels: AI-Assisted, AI-Integrated, and AI-Orchestrated.
-
--> [View AI Maturity Matrix](../../foundations/common-rules/ai-augmented/07-maturity-model/ai-maturity-matrix.md)
+| Level | Criterion | Status |
+|---|---|---|
+| **Level 1** | `.husky/pre-commit` exists | PASS |
+| **Level 1** | `AGENTS.md` updated within 30 days | PASS |
+| **Level 2** | JSON Schema tool catalog published | PASS (MCP Tools Catalog) |
+| **Level 2** | CI logs with model mocks | PASS (OPA parity + architecture boundary guards) |
+| **Level 2** | Backend does not expose untokenized PII to LLM | PASS (SENSITIVE_ARG_KEYS redaction) |
+| **Level 3** | Token cost dashboard per agent/feature | NOT MET (infrastructure exists, live dashboard missing) |
+| **Level 3** | HITL switch blocking simulated transaction | PARTIAL (policy defined, full demo not evidenced) |
+| **Level 3** | Multi-agent architecture diagram approved | PARTIAL (agents documented, no C4 diagram)
 
 ---
 
@@ -238,6 +352,41 @@ This maturity assessment explicitly feeds the **BMAD Intelligence Feedback Loop*
 * **New Checklists:** `Adapter Maturity Checklist`, `Interaction Adapter Readiness Checklist`.
 
 These intelligence resources are versioned inside `.bmad-core/agents/` and apply continuously to future PRs and governance audits.
+
+---
+
+## 12. Executive Scoring & Open Gaps
+
+### Dimension A: Internal Quality Score (TOGAF ACMM)
+
+| Layer | Weight | Score (Evidence-Backed) |
+|-------|--------|-------------------------|
+| Runtime Architecture (Well-Architected pillars) | 60% | 3.4 ± 0.4 |
+| Technological Exposure (CLI + MCP) | 40% | 3.2 ± 0.4 |
+
+**Internal Quality: 3.32 ± 0.4 / 5.0 (Defined → Managed)**
+
+### Dimension B: Governance Scope Score
+
+| Indicator | Value |
+|---|---|
+| Topology dimensions governed | 5/5 (100%) |
+| Topologies with dual-engine parity | 8/8 (100%) |
+| Interaction adapters at M4 | 6/6 (100%) |
+| Anti-patterns immunized | 6/6 (100%) |
+| AI maturity (avg across 5 dimensions) | 2.2/3 (AI-Integrated) |
+
+**Governance Scope: COMPLETE across all 5 topology dimensions**
+
+### Combined Bidimensional Verdict
+
+> **Evolith Core is a multi-dimensional architectural governance platform with internal quality level 3.32/5 (Defined → Managed).** Its governance scope covers 100% of defined topologies (5 dimensions × 8 composable topologies), all with dual-engine parity (Native + OPA) and CI-validated composition. All 6 interaction adapters are production-ready (M4), 6/6 critical anti-patterns are immunized, and the AI-Augmented dimension has one capability (Tools) at Level 3 (AI-Orchestrated). Primary gaps: reliability pillar (Level 3→4), adapter M4→M5 progression (tests, OPA guard, tracing), and AI Verification/Models/Security (Level 2→3).
+
+### Current Reconciliation
+
+Current totals are not maintained as narrative text. The machine-readable [Maturity Reconciliation](./maturity-reconciliation.json) is generated from the canonical Core board, closure registry, inventories, and CLI release metadata. `node .harness/scripts/ci/09-reconcile-maturity.mjs --check` fails when that snapshot drifts.
+
+Tracker and Product Suite maturity are explicitly excluded from the Core score because they have independent ownership and evidence lifecycles. Their product state cannot inflate this assessment.
 
 ---
 

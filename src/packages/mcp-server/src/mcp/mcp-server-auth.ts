@@ -1,66 +1,30 @@
+/**
+ * MCP HTTP Authentication — Orchestrator.
+ *
+ * Routes authentication through a chain: OAuth → API Key → JWT → Dev Bypass.
+ * Delegates to focused modules:
+ * - mcp-auth-crypto.ts      → constant-time key comparison
+ * - mcp-auth-contexts.ts    → pre-built user contexts
+ * - mcp-auth-response.ts    → 401 response helper
+ * - oauth-resource-server.ts → OAuth 2.1 token verification
+ */
+
 import * as http from 'node:http';
 import * as crypto from 'node:crypto';
-import { ErrorCodes } from '../common/errors';
-import { failure, generateCorrelationId } from '../common/envelopes';
 import type { McpUserContext } from './mcp-user-context';
 import { verifyOAuthToken, type OAuthConfig, type JwksKeyResolver } from './oauth-resource-server';
-
-/**
- * Constant-time API-key comparison (GAP MCP-TIMING). Guards against the timing
- * side-channel of `===` by hashing to fixed-length buffers before comparing.
- * A configured key is required; empty/undefined presented tokens never match.
- */
-function safeKeyEqual(presented: string | undefined, configured: string | undefined): boolean {
-  if (!presented || !configured) return false;
-  const a = crypto.createHash('sha256').update(presented).digest();
-  const b = crypto.createHash('sha256').update(configured).digest();
-  return crypto.timingSafeEqual(a, b);
-}
-
-const ADMIN_CONTEXT: McpUserContext = Object.freeze({
-  id: 'admin-api-key',
-  role: 'admin',
-  roles: ['admin'],
-  tenant: 'default',
-  environment: process.env.NODE_ENV || 'development',
-  scopes: ['read', 'write', 'admin'],
-}) as McpUserContext;
-
-/** Read-only context for dev bypass — never grant admin in allowNoAuth mode (H3). */
-const READER_CONTEXT: McpUserContext = Object.freeze({
-  id: 'dev-allow-no-auth',
-  role: 'reader',
-  roles: ['reader'],
-  tenant: 'default',
-  environment: process.env.NODE_ENV || 'development',
-  scopes: ['read'],
-}) as McpUserContext;
-
-function writeUnauthorized(res: http.ServerResponse, message: string): null {
-  const correlationId = generateCorrelationId();
-  const err = failure(ErrorCodes.UNAUTHORIZED, message, { correlationId, tool: 'auth', durationMs: 0 });
-  res.writeHead(401, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(err));
-  return null;
-}
+import { safeKeyEqual } from './mcp-auth-crypto';
+import { ADMIN_CONTEXT, READER_CONTEXT } from './mcp-auth-contexts';
+import { writeUnauthorized } from './mcp-auth-response';
 
 /**
  * GT-520 · EAG-15 / AC1 — remote Streamable HTTP authentication entry point.
  *
  * Order of precedence:
- *  1. When OAuth is configured ({@link OAuthConfig}) and the request carries a
- *     `Bearer` token that is NOT the shared API key, the token is validated as an
- *     OAuth 2.1 access token (signature + iss/aud/exp). A valid token yields a
- *     {@link McpUserContext} built from its VERIFIED claims — this is the identity
- *     that flows into per-identity ABAC, never a raw request header.
- *  2. Otherwise the existing local path ({@link validateAuth}: shared API key,
- *     local HS256 JWT, or the dev `allowNoAuth` bypass) applies — preserving the
- *     stdio/local developer experience unchanged.
- *
- * A remote request with no accepted credential is rejected with 401. When OAuth
- * is configured, an unauthenticated request whose only credential is an
- * invalid/expired bearer falls through to {@link validateAuth}, which 401s it
- * (unless a shared API key or dev bypass independently authorizes it).
+ *  1. OAuth 2.1 bearer token (when configured)
+ *  2. Shared API key (Bearer or x-api-key header)
+ *  3. Local HS256 JWT
+ *  4. Dev allowNoAuth bypass (reader role only)
  */
 export async function authenticateHttpRequest(
   req: http.IncomingMessage,
@@ -73,20 +37,18 @@ export async function authenticateHttpRequest(
   const authHeader = req.headers.authorization || '';
   const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
 
+  // 1. OAuth path
   if (oauthConfig && bearerToken && !safeKeyEqual(bearerToken, apiKey)) {
     const payload = await verifyOAuthToken(bearerToken, oauthConfig, keyResolver);
     if (payload) return getContextFromPayload(payload);
-    // A bearer was presented but is not a valid OAuth token. It may still be a
-    // local HS256 JWT (validateAuth handles that); if not, validateAuth 401s.
-    // But if OAuth is the ONLY configured credential source (no shared API key,
-    // no local JWT secret, not a dev bypass), reject here so an invalid/expired
-    // OAuth bearer never silently degrades to an unauthenticated path.
+
     const hasLocalCredential = !!apiKey || !!process.env.JWT_SECRET || allowNoAuth;
     if (!hasLocalCredential) {
       return writeUnauthorized(res, 'Invalid or expired OAuth bearer token');
     }
   }
 
+  // 2-4. Local path
   return validateAuth(req, res, apiKey, allowNoAuth);
 }
 
@@ -96,26 +58,17 @@ export function validateAuth(
   apiKey: string | undefined,
   allowNoAuth = false,
 ): McpUserContext | null {
-  // L6: Treat undefined NODE_ENV as 'production' to prevent silent bypass.
-  // If NODE_ENV is unset in production, allowNoAuth would be enabled — a critical
-  // security misconfiguration. Defaulting to 'production' ensures fail-closed.
   const env = process.env.NODE_ENV || 'production';
 
+  // No API key configured
   if (!apiKey) {
     if (env === 'production' || !allowNoAuth) {
-      const correlationId = generateCorrelationId();
-      const err = failure(
-        ErrorCodes.UNAUTHORIZED,
-        'MCP server requires an API key. Set EVOLITH_API_KEY or --api-key.',
-        { correlationId, tool: 'auth', durationMs: 0 },
-      );
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(err));
-      return null;
+      return writeUnauthorized(res, 'MCP server requires an API key. Set EVOLITH_API_KEY or --api-key.');
     }
     return { ...READER_CONTEXT, environment: env };
   }
 
+  // API key validation
   const authHeader = req.headers.authorization || '';
   const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
   const apiKeyHeader = req.headers['x-api-key'] as string | undefined;
@@ -124,21 +77,14 @@ export function validateAuth(
     return { ...ADMIN_CONTEXT, environment: process.env.NODE_ENV || 'development' };
   }
 
+  // JWT fallback
   const jwtSecret = process.env.JWT_SECRET;
-  if (bearerToken && jwtSecret) { // codeql[js/user-controlled-val-in-sensitive-action] — intentional: JWT auth requires user-provided token
+  if (bearerToken && jwtSecret) { // codeql[js/user-controlled-val-in-sensitive-action]
     const payload = verifyJwtToken(bearerToken, jwtSecret);
     if (payload) return getContextFromPayload(payload);
   }
 
-  const correlationId = generateCorrelationId();
-  const err = failure(
-    ErrorCodes.UNAUTHORIZED,
-    'Invalid or missing API key or JWT token',
-    { correlationId, tool: 'auth', durationMs: 0 },
-  );
-  res.writeHead(401, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(err));
-  return null;
+  return writeUnauthorized(res, 'Invalid or missing API key or JWT token');
 }
 
 export function verifyJwtToken(token: string, secret: string): Record<string, unknown> | null {

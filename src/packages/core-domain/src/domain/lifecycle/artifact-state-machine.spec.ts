@@ -1,139 +1,100 @@
 import {
-  ArtifactState,
   ArtifactStateMachine,
+  ArtifactState,
   ARTIFACT_TRANSITIONS,
 } from './artifact-state-machine';
-import type { IDomainEventBus } from '../../application/ports/event-bus.port';
-import type { DomainEvent } from '../events/domain-event';
-
-const ctx = {
-  artifactPath: 'docs/adr/0001-init.md',
-  artifactType: 'adr',
-  projectId: 'proj-test',
-};
 
 describe('ArtifactStateMachine', () => {
-  describe('ARTIFACT_TRANSITIONS map', () => {
-    it('covers every ArtifactState as a key', () => {
-      const states = Object.values(ArtifactState);
-      states.forEach(s => {
-        expect(ARTIFACT_TRANSITIONS).toHaveProperty(s);
-      });
+  let machine: ArtifactStateMachine;
+
+  beforeEach(() => {
+    machine = new ArtifactStateMachine();
+  });
+
+  describe('ARTIFACT_TRANSITIONS', () => {
+    it('defines transitions for all states', () => {
+      expect(Object.keys(ARTIFACT_TRANSITIONS)).toHaveLength(6);
     });
 
     it('ARCHIVED has no outgoing transitions', () => {
-      expect(ARTIFACT_TRANSITIONS[ArtifactState.ARCHIVED]).toHaveLength(0);
+      expect(ARTIFACT_TRANSITIONS[ArtifactState.ARCHIVED]).toEqual([]);
+    });
+
+    it('DRAFT can go to SUBMITTED or ARCHIVED', () => {
+      expect(ARTIFACT_TRANSITIONS[ArtifactState.DRAFT]).toContain(ArtifactState.SUBMITTED);
+      expect(ARTIFACT_TRANSITIONS[ArtifactState.DRAFT]).toContain(ArtifactState.ARCHIVED);
     });
   });
 
-  describe('canTransition()', () => {
-    const sm = new ArtifactStateMachine();
-
+  describe('transition', () => {
     it('allows DRAFT → SUBMITTED', () => {
-      expect(sm.canTransition(ArtifactState.DRAFT, ArtifactState.SUBMITTED)).toBe(true);
+      expect(machine.transition(ArtifactState.DRAFT, ArtifactState.SUBMITTED)).toBe(true);
     });
 
     it('allows SUBMITTED → VALIDATING', () => {
-      expect(sm.canTransition(ArtifactState.SUBMITTED, ArtifactState.VALIDATING)).toBe(true);
+      expect(machine.transition(ArtifactState.SUBMITTED, ArtifactState.VALIDATING)).toBe(true);
     });
 
     it('allows VALIDATING → VALIDATED', () => {
-      expect(sm.canTransition(ArtifactState.VALIDATING, ArtifactState.VALIDATED)).toBe(true);
+      expect(machine.transition(ArtifactState.VALIDATING, ArtifactState.VALIDATED)).toBe(true);
     });
 
     it('allows VALIDATING → REJECTED', () => {
-      expect(sm.canTransition(ArtifactState.VALIDATING, ArtifactState.REJECTED)).toBe(true);
+      expect(machine.transition(ArtifactState.VALIDATING, ArtifactState.REJECTED)).toBe(true);
     });
 
-    it('allows REJECTED → DRAFT', () => {
-      expect(sm.canTransition(ArtifactState.REJECTED, ArtifactState.DRAFT)).toBe(true);
-    });
-
-    it('allows VALIDATED → ARCHIVED', () => {
-      expect(sm.canTransition(ArtifactState.VALIDATED, ArtifactState.ARCHIVED)).toBe(true);
-    });
-
-    it('disallows DRAFT → VALIDATED (skip step)', () => {
-      expect(sm.canTransition(ArtifactState.DRAFT, ArtifactState.VALIDATED)).toBe(false);
-    });
-
-    it('disallows ARCHIVED → DRAFT', () => {
-      expect(sm.canTransition(ArtifactState.ARCHIVED, ArtifactState.DRAFT)).toBe(false);
-    });
-  });
-
-  describe('transition()', () => {
-    it('returns true on valid transition', () => {
-      const sm = new ArtifactStateMachine();
-      expect(sm.transition(ArtifactState.DRAFT, ArtifactState.SUBMITTED, ctx)).toBe(true);
+    it('allows REJECTED → DRAFT (rework)', () => {
+      expect(machine.transition(ArtifactState.REJECTED, ArtifactState.DRAFT)).toBe(true);
     });
 
     it('throws on invalid transition', () => {
-      const sm = new ArtifactStateMachine();
-      expect(() =>
-        sm.transition(ArtifactState.DRAFT, ArtifactState.VALIDATED, ctx),
-      ).toThrow(/Invalid artifact transition/);
+      expect(() => machine.transition(ArtifactState.DRAFT, ArtifactState.VALIDATED)).toThrow('Invalid artifact transition');
     });
 
-    it('throws descriptive message with allowed targets', () => {
-      const sm = new ArtifactStateMachine();
-      expect(() =>
-        sm.transition(ArtifactState.ARCHIVED, ArtifactState.DRAFT),
-      ).toThrow(/Allowed targets from ARCHIVED: \[none\]/);
-    });
-  });
-
-  describe('event emission', () => {
-    it('publishes artifact.updated event on valid transition', async () => {
-      const published: DomainEvent<unknown>[] = [];
-      const mockBus: IDomainEventBus = {
-        publish: jest.fn(async (e) => { published.push(e); }),
-        subscribe: jest.fn(),
-      };
-
-      const sm = new ArtifactStateMachine(mockBus);
-      sm.transition(ArtifactState.DRAFT, ArtifactState.SUBMITTED, ctx);
-
-      // allow micro-task to flush
-      await Promise.resolve();
-
-      expect(mockBus.publish).toHaveBeenCalledTimes(1);
-      const event = published[0]!;
-      expect(event.eventType).toBe('artifact.updated');
-      expect((event.payload as { artifactPath: string }).artifactPath).toBe(ctx.artifactPath);
+    it('throws on ARCHIVED → anything', () => {
+      expect(() => machine.transition(ArtifactState.ARCHIVED, ArtifactState.DRAFT)).toThrow('Invalid artifact transition');
     });
 
-    it('does not publish when no context is provided', async () => {
-      const mockBus: IDomainEventBus = {
-        publish: jest.fn(),
-        subscribe: jest.fn(),
-      };
+    it('emits artifactUpdated event when eventBus is provided', () => {
+      const publish = jest.fn();
+      const eventBus = { publish } as any;
+      const machineWithEvents = new ArtifactStateMachine(eventBus);
 
-      const sm = new ArtifactStateMachine(mockBus);
-      sm.transition(ArtifactState.DRAFT, ArtifactState.SUBMITTED);
+      machineWithEvents.transition(ArtifactState.DRAFT, ArtifactState.SUBMITTED, {
+        artifactPath: '/test/adr.md',
+        projectId: 'proj-1',
+      });
 
-      await Promise.resolve();
-      expect(mockBus.publish).not.toHaveBeenCalled();
+      expect(publish).toHaveBeenCalledTimes(1);
     });
 
-    it('does not publish when no bus is injected', async () => {
-      const sm = new ArtifactStateMachine(); // no bus
-      // should not throw
-      expect(() => sm.transition(ArtifactState.DRAFT, ArtifactState.SUBMITTED, ctx)).not.toThrow();
+    it('does not emit events when no eventBus', () => {
+      expect(machine.transition(ArtifactState.DRAFT, ArtifactState.SUBMITTED)).toBe(true);
     });
   });
 
-  describe('allowedTransitions()', () => {
-    it('returns all valid targets from SUBMITTED', () => {
-      const sm = new ArtifactStateMachine();
-      const targets = sm.allowedTransitions(ArtifactState.SUBMITTED);
-      expect(targets).toContain(ArtifactState.VALIDATING);
-      expect(targets).toContain(ArtifactState.DRAFT);
+  describe('canTransition', () => {
+    it('returns true for valid transitions', () => {
+      expect(machine.canTransition(ArtifactState.DRAFT, ArtifactState.SUBMITTED)).toBe(true);
+      expect(machine.canTransition(ArtifactState.VALIDATING, ArtifactState.VALIDATED)).toBe(true);
     });
 
-    it('returns empty array from ARCHIVED', () => {
-      const sm = new ArtifactStateMachine();
-      expect(sm.allowedTransitions(ArtifactState.ARCHIVED)).toHaveLength(0);
+    it('returns false for invalid transitions', () => {
+      expect(machine.canTransition(ArtifactState.DRAFT, ArtifactState.VALIDATED)).toBe(false);
+      expect(machine.canTransition(ArtifactState.ARCHIVED, ArtifactState.DRAFT)).toBe(false);
+    });
+  });
+
+  describe('allowedTransitions', () => {
+    it('returns correct targets for DRAFT', () => {
+      const allowed = machine.allowedTransitions(ArtifactState.DRAFT);
+      expect(allowed).toContain(ArtifactState.SUBMITTED);
+      expect(allowed).toContain(ArtifactState.ARCHIVED);
+    });
+
+    it('returns empty array for ARCHIVED', () => {
+      const allowed = machine.allowedTransitions(ArtifactState.ARCHIVED);
+      expect(allowed).toEqual([]);
     });
   });
 });

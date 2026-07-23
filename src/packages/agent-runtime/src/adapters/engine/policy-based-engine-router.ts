@@ -153,7 +153,7 @@ export class PolicyBasedEngineRouter implements IAgentEnginePort {
     }
 
     // Budget-constrained requests go to stub
-    if (ctx.cost_budget && ctx.cost_budget.remaining_tokens < 1000) {
+    if (ctx.cost_budget && ctx.cost_budget.remaining_tokens < (Number(process.env.MIN_TOKEN_BUDGET) || 1000)) {
       return {
         engine: this.defaultEngine,
         reason: 'Cost budget exhausted — using local engine',

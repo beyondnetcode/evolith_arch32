@@ -114,7 +114,7 @@ function rowToChunk(row: PgChunkRow): KnowledgeChunk {
     adrId: row.adr_id ?? null,
     language: row.language,
     tokenEstimate: estimateTokens(text),
-    textPreview: text.slice(0, 120),
+    textPreview: text.slice(0, Number(process.env.KNOWLEDGE_TEXT_PREVIEW_LENGTH) || 120),
     text,
     score,
     charStart: row.char_start ?? undefined,

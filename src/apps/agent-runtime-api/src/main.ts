@@ -16,22 +16,22 @@ async function bootstrap() {
   // so we only coerce types here and never strip unknown fields.
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
-  // Rate limiting: simple in-memory IP-based limiter (100 req/min per IP)
-  // to prevent DoS on agent endpoints (MEDIUM finding).
+  // Rate limiting: configurable via env vars with sensible defaults (MEDIUM finding).
   const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-  const RATE_WINDOW = 60_000;
-  const RATE_MAX = 100;
+  const RATE_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS) || 60_000;
+  const RATE_MAX = Number(process.env.RATE_LIMIT_MAX_REQUESTS) || 100;
   app.use((req: any, res: any, next: any) => {
     const ip = req.socket?.remoteAddress || 'unknown';
     const now = Date.now();
     const entry = rateLimitMap.get(ip);
     if (!entry || now > entry.resetAt) {
-      rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_WINDOW });
+      rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
     } else {
       entry.count++;
       if (entry.count > RATE_MAX) {
-        res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '60' });
-        res.end(JSON.stringify({ error: 'Too many requests', retryAfter: 60 }));
+        const retryAfter = Math.ceil(RATE_WINDOW_MS / 1000);
+        res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(retryAfter) });
+        res.end(JSON.stringify({ error: 'Too many requests', retryAfter }));
         return;
       }
     }

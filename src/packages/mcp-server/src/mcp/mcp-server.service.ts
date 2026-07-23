@@ -42,10 +42,10 @@ function ensureDefaultMetrics(): void {
   }
 }
 
-// --- Rate limiting (H1) and body size limit (H2) ---
-const MAX_BODY_BYTES = 1024 * 1024; // 1 MB
-const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 100; // per window per IP
+// --- Rate limiting (H1) and body size limit (H2) — configurable via env vars ---
+const MAX_BODY_BYTES = Number(process.env.MCP_MAX_BODY_BYTES) || 1024 * 1024; // 1 MB default
+const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS) || 60_000; // 1 min default
+const RATE_LIMIT_MAX_REQUESTS = Number(process.env.RATE_LIMIT_MAX_REQUESTS) || 100; // per window per IP
 
 interface RateLimitEntry { count: number; resetAt: number; }
 const rateLimitMap = new Map<string, RateLimitEntry>();
@@ -353,8 +353,8 @@ export class McpServerService {
     // to the container. Override with MCP_HTTP_HOST=127.0.0.1 for local-only use.
     const host = process.env.MCP_HTTP_HOST ?? '0.0.0.0';
     await new Promise<void>((resolve, reject) => {
-      this.httpServer!.timeout = 30_000; // 30s request timeout (M3 / slowloris mitigation)
-      this.httpServer!.keepAliveTimeout = 65_000;
+      this.httpServer!.timeout = Number(process.env.HTTP_REQUEST_TIMEOUT_MS) || 30_000;
+      this.httpServer!.keepAliveTimeout = Number(process.env.HTTP_KEEPALIVE_TIMEOUT_MS) || 65_000;
       this.httpServer!.listen(port, host, () => {
         this.logger.log(`Evolith MCP HTTP server listening on http://${host}:${port}`);
         resolve();
@@ -368,8 +368,9 @@ export class McpServerService {
       // Rate limiting (H1) — reject requests that exceed the per-IP limit
       const clientIp = req.socket.remoteAddress || 'unknown';
       if (isRateLimited(clientIp)) {
-        res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '60' });
-        res.end(JSON.stringify({ error: 'Too many requests', retryAfter: 60 }));
+        const retryAfter = Math.ceil(RATE_LIMIT_WINDOW_MS / 1000);
+        res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(retryAfter) });
+        res.end(JSON.stringify({ error: 'Too many requests', retryAfter }));
         return;
       }
 

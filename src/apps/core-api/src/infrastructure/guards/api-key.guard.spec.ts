@@ -35,8 +35,15 @@ describe('ApiKeyGuard', () => {
     await expect(new ApiKeyGuard(reflector).canActivate(ctx())).resolves.toBe(true);
   });
 
-  it('allows when no key configured (migration-safe)', async () => {
+  it('denies when no key configured (fail-closed by default)', async () => {
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
+    // H6: fail-closed — rejects unauthenticated requests unless explicitly opted out
+    await expect(new ApiKeyGuard(reflector).canActivate(ctx())).rejects.toThrow(UnauthorizedException);
+  });
+
+  it('allows when no key configured and CORE_API_AUTH_REQUIRED=false (explicit opt-out)', async () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
+    process.env.CORE_API_AUTH_REQUIRED = 'false';
     await expect(new ApiKeyGuard(reflector).canActivate(ctx())).resolves.toBe(true);
   });
 

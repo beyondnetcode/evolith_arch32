@@ -57,12 +57,14 @@ export class PluginLoader {
               let resolvePath = plugin;
               if (plugin.startsWith('.') || plugin.startsWith('/')) {
                 resolvePath = path.resolve(workspaceDir, plugin);
+                // H7: Validate local path stays within allowed directories (CWE-22)
+                if (!this.isPathAllowed(path.resolve(resolvePath), workspaceDir)) {
+                  this.logger.warn(`Plugin path rejected (outside workspace): ${plugin}`);
+                  continue;
+                }
               }
-              // Validate path stays within allowed directories (H7 / CWE-22)
-              if (!this.isPathAllowed(path.resolve(resolvePath), workspaceDir)) {
-                this.logger.warn(`Plugin path rejected (outside workspace): ${plugin}`);
-                continue;
-              }
+              // npm package names (e.g. 'my-npm-plugin') are not validated for
+              // path containment — they're resolved by Node.js module resolution.
               await this.loadPluginFromPath(resolvePath, providers, imports);
             }
           }

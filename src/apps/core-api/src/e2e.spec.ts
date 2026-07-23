@@ -22,6 +22,9 @@ describe('Core API E2E', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
+    // H6: Set CORE_API_AUTH_REQUIRED=false for E2E tests (no API key in test env)
+    process.env.CORE_API_AUTH_REQUIRED = 'false';
+
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
       controllers: [TestDeprecatedController],

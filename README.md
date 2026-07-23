@@ -28,6 +28,7 @@
 
 - [What is Evolith?](#what-is-evolith)
 - [Why Evolith?](#why-evolith)
+- [Questions & Answers](#questions--answers)
 - [Core Concepts](#core-concepts)
 - [Product Ecosystem](#product-ecosystem)
 - [How It Works](#how-it-works)
@@ -60,6 +61,59 @@ Evolith makes governance **executable**:
 - Phase gates block progression until quality criteria are met.
 - AI agents and CI pipelines consume the same governance artifacts as humans.
 - Architecture decisions are traceable from ADR to production code.
+
+---
+
+## Questions & Answers
+
+<details>
+<summary><b>What is Evolith in one sentence?</b></summary>
+<br/>
+Evolith is an <b>executable architectural governance framework</b> — it makes sure architecture decisions actually get followed, automatically, whether the code is written by a human or an AI agent.
+</details>
+
+<details>
+<summary><b>What would I use it for?</b></summary>
+<br/>
+<ol>
+<li><b>Instant feedback</b> on architecture decisions — run <code>evolith validate</code> and know in seconds if your code follows your team's rules.</li>
+<li><b>No more surprise refactors</b> — architecture drift is caught at the gate, not six months later.</li>
+<li><b>AI-proof governance</b> — when an AI agent writes code, Evolith ensures it follows the same rules a senior architect would enforce.</li>
+</ol>
+</details>
+
+<details>
+<summary><b>How much does it cost?</b></summary>
+<br/>
+The core platform is <b>completely free</b> (MIT license): CLI, MCP server, Core API, Agent Runtime, 137 ADRs, 163 rulesets, 45 schemas. The only paid product is <b>Evolith Tracker</b> (enterprise multi-tenant governance — not yet released).
+</details>
+
+<details>
+<summary><b>How do I get started?</b></summary>
+<br/>
+
+```bash
+npm install -g @beyondnet/evolith-cli
+evolith init
+evolith validate
+```
+
+No database, no server, no Docker required.
+</details>
+
+<details>
+<summary><b>What topologies does it cover?</b></summary>
+<br/>
+Evolith governs <b>8 topologies</b> across 5 dimensions: Modular Monolith, Distributed Modules, Microservices (progressive-axis), Serverless, Edge Computing (execution), Event-Driven (integration), Data Mesh (data), and Agentic AI. All are composable.
+</details>
+
+<details>
+<summary><b>How does it work with AI tools like Cursor or Claude?</b></summary>
+<br/>
+Evolith ships an MCP server inside the CLI. Add it to your AI tool's config and your agent can query architecture rules, validate code, and evaluate gate readiness — all without bypassing governance.
+</details>
+
+**[Full Q&A: 64 questions across 12 categories →](./reference/core/sdlc/q-and-a.md)**
 
 ---
 

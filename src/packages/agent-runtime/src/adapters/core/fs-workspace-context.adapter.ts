@@ -53,9 +53,9 @@ const DEFAULT_INCLUDE_EXTENSIONS = ['.yaml', '.yml', '.md', '.json', '.toml'] as
 const DEFAULT_EXCLUDE_DIRS = [
   'node_modules', '.git', 'dist', 'build', 'coverage', '.turbo', '.next', 'out', '.cache',
 ] as const;
-const DEFAULT_MAX_FILES = 800;
-const DEFAULT_MAX_FILE_BYTES = 512 * 1024;
-const DEFAULT_MAX_TOTAL_BYTES = 8 * 1024 * 1024;
+const DEFAULT_MAX_FILES = Number(process.env.WORKSPACE_MAX_FILES) || 800;
+const DEFAULT_MAX_FILE_BYTES = Number(process.env.WORKSPACE_MAX_FILE_BYTES) || 512 * 1024;
+const DEFAULT_MAX_TOTAL_BYTES = Number(process.env.WORKSPACE_MAX_TOTAL_BYTES) || 8 * 1024 * 1024;
 
 export class FsWorkspaceContextAdapter implements IWorkspaceContextPort {
   private readonly fs: WorkspaceFsLike;

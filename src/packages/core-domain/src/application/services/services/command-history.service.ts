@@ -52,9 +52,10 @@ export class CommandHistoryService {
         }
       }
 
-      // Keep only last 1000 entries
-      if (this.history.entries.length > 1000) {
-        this.history.entries = this.history.entries.slice(-1000);
+      // Keep only last N entries (configurable via env)
+      const maxEntries = Number(process.env.COMMAND_HISTORY_MAX_ENTRIES) || 1000;
+      if (this.history.entries.length > maxEntries) {
+        this.history.entries = this.history.entries.slice(-maxEntries);
       }
     }
   }
@@ -81,7 +82,7 @@ export class CommandHistoryService {
     return id;
   }
 
-  async list(limit = 50, offset = 0): Promise<HistoryEntry[]> {
+  async list(limit = Number(process.env.COMMAND_HISTORY_DEFAULT_LIMIT) || 50, offset = 0): Promise<HistoryEntry[]> {
     await this.initialize();
 
     return this.history.entries
@@ -129,7 +130,7 @@ export class CommandHistoryService {
 
     const recent = this.history.entries.filter(e => {
       const diff = Date.now() - new Date(e.timestamp).getTime();
-      return diff < 24 * 60 * 60 * 1000; // Last 24 hours
+      return diff < (Number(process.env.COMMAND_HISTORY_RECENT_WINDOW_MS) || 24 * 60 * 60 * 1000);
     }).length;
 
     const usageMap = new Map<string, number>();

@@ -20,9 +20,9 @@ export class CircuitBreakerService {
     fallback?: (...args: unknown[]) => Promise<T>,
   ): CircuitBreaker {
     const breaker = new CircuitBreaker(fn, {
-      timeout: 10000,
-      errorThresholdPercentage: 50,
-      resetTimeout: 30000,
+      timeout: Number(process.env.CIRCUIT_BREAKER_TIMEOUT_MS) || 10000,
+      errorThresholdPercentage: Number(process.env.CIRCUIT_BREAKER_ERROR_THRESHOLD_PCT) || 50,
+      resetTimeout: Number(process.env.CIRCUIT_BREAKER_RESET_TIMEOUT_MS) || 30000,
     });
 
     if (fallback) {

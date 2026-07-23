@@ -69,7 +69,7 @@ export class EvolithRestClient {
       ...(options.apiKey ? { Authorization: `Bearer ${options.apiKey}` } : {}),
     };
     this.fetcher = options.fetch ?? globalThis.fetch;
-    this.timeoutMs = options.timeoutMs ?? 30_000;
+    this.timeoutMs = options.timeoutMs ?? (Number(process.env.EVOLITH_API_TIMEOUT_MS) || 30_000);
     this.satellites = new SatellitesClient(this.baseUrl, options.apiKey);
     this.agent = new AgentClient(options.agentUrl || this.baseUrl, options.apiKey);
   }

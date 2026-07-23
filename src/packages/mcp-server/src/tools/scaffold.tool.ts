@@ -24,7 +24,7 @@ const ALLOWED_ORM = new Set(['prisma', 'typeorm', 'drizzle']);
 class NodeCommandExecutor implements ICommandExecutor {
   async execute(command: string, cwd?: string): Promise<CommandResult> {
     try {
-      const { stdout, stderr } = await execAsync(command, { cwd, env: process.env, timeout: 120000 });
+      const { stdout, stderr } = await execAsync(command, { cwd, env: process.env, timeout: Number(process.env.MCP_SCAFFOLD_TIMEOUT_MS) || 120000 });
       return { success: true, stdout, stderr, exitCode: 0 };
     } catch (err) {
       const e = err as { stdout?: string; stderr?: string; code?: number; message?: string };

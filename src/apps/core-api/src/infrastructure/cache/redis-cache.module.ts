@@ -26,8 +26,8 @@ const logger = new Logger('RedisCacheModule');
 
         return {
           store,
-          ttl: 300_000,
-          max: 1000,
+          ttl: Number(process.env.REDIS_CACHE_TTL_MS) || 300_000,
+          max: Number(process.env.REDIS_CACHE_MAX_ENTRIES) || 1000,
         };
       },
     }),

@@ -6,8 +6,8 @@ import { McpCacheService } from './mcp-cache.service';
 @Module({
   imports: [
     CacheModule.register({
-      ttl: 600_000,
-      max: 500,
+      ttl: Number(process.env.MCP_CACHE_TTL_MS) || 600_000,
+      max: Number(process.env.MCP_CACHE_MAX_ENTRIES) || 500,
     }),
   ],
   providers: [McpCacheService],

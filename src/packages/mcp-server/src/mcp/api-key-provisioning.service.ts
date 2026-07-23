@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as crypto from 'node:crypto';
 
 const KEY_PREFIX = 'evk_';
-const KEY_ENTROPY_BYTES = 32;
-const DEFAULT_EXPIRY_DAYS = 90;
+const KEY_ENTROPY_BYTES = Number(process.env.API_KEY_ENTROPY_BYTES) || 32;
+const DEFAULT_EXPIRY_DAYS = Number(process.env.API_KEY_DEFAULT_EXPIRY_DAYS) || 90;
 
 export interface ApiKeyMetadata {
   id: string;

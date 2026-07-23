@@ -68,8 +68,8 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
     }),
     CoreDomainModule,
     ThrottlerModule.forRoot([{
-      ttl: 60000,
-      limit: 100,
+      ttl: Number(process.env.THROTTLE_TTL_MS) || 60000,
+      limit: Number(process.env.THROTTLE_MAX_REQUESTS) || 100,
     }]),
     LoggerModule.forRoot({
       pinoHttp: {

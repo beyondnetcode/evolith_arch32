@@ -37,9 +37,10 @@ export class CommandExecutor implements ICommandExecutor {
    */
   async execute(command: string, cwd?: string): Promise<CommandResult> {
     try {
+      const timeout = Number(process.env.CLI_COMMAND_TIMEOUT_MS) || 120_000;
       const options = cwd
-        ? { cwd, env: { ...process.env }, timeout: 120000 }
-        : { env: { ...process.env }, timeout: 120000 };
+        ? { cwd, env: { ...process.env }, timeout }
+        : { env: { ...process.env }, timeout };
 
       const { stdout, stderr: _stderr } = await execAsync(command, options);
       return CommandResult.ok(stdout);
@@ -58,9 +59,10 @@ export class CommandExecutor implements ICommandExecutor {
   async executeFile(file: string, args: string[], cwd?: string): Promise<CommandResult> {
     const bin = process.platform === 'win32' && WINDOWS_CMD_TOOLS.has(file) ? `${file}.cmd` : file;
     try {
+      const timeout = Number(process.env.CLI_COMMAND_TIMEOUT_MS) || 120_000;
       const options = cwd
-        ? { cwd, env: { ...process.env }, timeout: 120000 }
-        : { env: { ...process.env }, timeout: 120000 };
+        ? { cwd, env: { ...process.env }, timeout }
+        : { env: { ...process.env }, timeout };
 
       const { stdout } = await execFileAsync(bin, args, options);
       return CommandResult.ok(stdout);

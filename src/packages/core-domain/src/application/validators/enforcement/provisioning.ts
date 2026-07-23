@@ -141,7 +141,7 @@ export const DEFAULT_SANDBOX_POLICY: SandboxPolicy = {
   allowEgress: false,
   allowSecrets: false,
   binaryAllowlist: ['dependency-cruiser', 'depcruise', 'deptrac', 'import-linter', 'grimp', 'conftest', 'dotnet'],
-  timeoutMs: 120_000,
+  timeoutMs: Number(process.env.SANDBOX_TIMEOUT_MS) || 120_000,
   ulimits: { cpu: 60, nofile: 1024 },
 };
 

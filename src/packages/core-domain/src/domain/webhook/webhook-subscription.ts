@@ -11,9 +11,9 @@ export interface RetryPolicy {
 }
 
 export const DEFAULT_RETRY_POLICY: RetryPolicy = {
-  maxAttempts: 3,
-  backoffMs: 1000,
-  backoffMultiplier: 2,
+  maxAttempts: Number(process.env.WEBHOOK_MAX_ATTEMPTS) || 3,
+  backoffMs: Number(process.env.WEBHOOK_BACKOFF_MS) || 1000,
+  backoffMultiplier: Number(process.env.WEBHOOK_BACKOFF_MULTIPLIER) || 2,
 };
 
 /**

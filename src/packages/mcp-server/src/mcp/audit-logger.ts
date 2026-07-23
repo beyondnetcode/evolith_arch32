@@ -21,7 +21,7 @@ export interface AuditEvent {
 export class AuditLogger {
   private readonly logger = new Logger('AuditLogger');
   private readonly events: AuditEvent[] = [];
-  private static readonly MAX_EVENTS = 1000;
+  private static readonly MAX_EVENTS = Number(process.env.AUDIT_MAX_EVENTS) || 1000;
 
   constructor() {
     if (process.env.NODE_ENV === 'production') {
@@ -91,7 +91,7 @@ export class AuditLogger {
     });
   }
 
-  getRecentEvents(limit = 50): readonly AuditEvent[] {
+  getRecentEvents(limit = Number(process.env.AUDIT_DEFAULT_QUERY_LIMIT) || 50): readonly AuditEvent[] {
     return this.events.slice(0, limit);
   }
 

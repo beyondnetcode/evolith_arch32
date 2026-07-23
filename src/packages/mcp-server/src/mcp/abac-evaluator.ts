@@ -158,7 +158,7 @@ export class AbacEvaluator {
   // change. AbacEvaluator is a singleton, so this persists across dispatches.
   // M5: Cap cache at 100 entries to prevent unbounded growth (LRU-like eviction).
   private readonly policyCache = new Map<string, { mtimeMs: number; policy: any }>();
-  private static readonly MAX_CACHE_ENTRIES = 100;
+  private static readonly MAX_CACHE_ENTRIES = Number(process.env.ABAC_POLICY_CACHE_MAX) || 100;
 
   /** All tool names with an explicit ABAC classification (guard-test surface). */
   static classifiedToolNames(): string[] {

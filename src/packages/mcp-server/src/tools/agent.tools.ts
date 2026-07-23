@@ -109,7 +109,7 @@ export function createAgentTools(fs: IFileSystem): McpTool[] {
         },
       },
       mutative: true,
-      execute: async (args) => agentRun(args.intent as string, (args.url as string) || 'http://localhost:3000'),
+      execute: async (args) => agentRun(args.intent as string, (args.url as string) || process.env.AGENT_RUNTIME_URL || 'http://localhost:3000'),
     },
   ];
 }

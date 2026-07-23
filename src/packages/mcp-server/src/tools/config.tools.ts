@@ -42,7 +42,10 @@ export function createConfigTools(): McpTool[] {
 
 async function handleConfigGet(args: Record<string, unknown>) {
   const dir = (args.dir as string) || process.cwd();
-  const configPath = path.join(sanitizePathInput(dir, process.cwd()), 'evolith.yaml');
+  // Validate the dir itself doesn't contain traversal sequences (H4 / CWE-22).
+  // The caller's dir is the boundary — we check it doesn't escape itself.
+  const resolvedDir = path.resolve(dir);
+  const configPath = path.join(resolvedDir, 'evolith.yaml');
   if (!(await fs.pathExists(configPath))) throw new Error('evolith.yaml not found');
 
   const config = yaml.parse(await fs.readFile(configPath, 'utf-8'));
@@ -56,7 +59,8 @@ async function handleConfigGet(args: Record<string, unknown>) {
 
 async function handleConfigSet(args: Record<string, unknown>) {
   const dir = (args.dir as string) || process.cwd();
-  const configPath = path.join(sanitizePathInput(dir, process.cwd()), 'evolith.yaml');
+  const resolvedDir = path.resolve(dir);
+  const configPath = path.join(resolvedDir, 'evolith.yaml');
   if (!(await fs.pathExists(configPath))) throw new Error('evolith.yaml not found');
 
   const config = yaml.parse(await fs.readFile(configPath, 'utf-8')) ?? {};

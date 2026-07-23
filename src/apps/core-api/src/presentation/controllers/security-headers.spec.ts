@@ -11,6 +11,9 @@ describe('Security & Validation (Integration)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
+    // H6: Set CORE_API_AUTH_REQUIRED=false for integration tests (no API key in test env)
+    process.env.CORE_API_AUTH_REQUIRED = 'false';
+
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();

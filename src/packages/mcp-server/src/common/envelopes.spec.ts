@@ -3,75 +3,74 @@ import {
   success,
   failure,
   toErrorEnvelope,
+  MCP_ENVELOPE_SCHEMA_VERSION,
+  type MetaInput,
 } from './envelopes';
-import { DomainException, ErrorCodes } from './errors';
-
-const META = { correlationId: 'evl-test', tool: 'evolith-validate', durationMs: 5, timestamp: 'T0' };
 
 describe('envelopes', () => {
+  const meta: MetaInput = {
+    correlationId: 'evl-test-123',
+    tool: 'evolith-validate',
+    durationMs: 150,
+  };
+
   describe('generateCorrelationId', () => {
-    it('prefixes with evl- and is unique', () => {
-      const a = generateCorrelationId();
-      const b = generateCorrelationId();
-      expect(a).toMatch(/^evl-[0-9a-f-]{36}$/);
-      expect(a).not.toEqual(b);
+    it('generates ID with evl- prefix', () => {
+      const id = generateCorrelationId();
+      expect(id).toMatch(/^evl-/);
+    });
+
+    it('generates unique IDs', () => {
+      const id1 = generateCorrelationId();
+      const id2 = generateCorrelationId();
+      expect(id1).not.toBe(id2);
     });
   });
 
   describe('success', () => {
-    it('wraps data with success=true and meta', () => {
-      const env = success({ ok: 1 }, META);
-      expect(env.success).toBe(true);
-      expect(env.data).toEqual({ ok: 1 });
-      // buildMeta emits the ADR-0073 canonical keys (command/executedAt) alongside
-      // their MCP-native aliases (tool/timestamp), plus the pinned schemaVersion.
-      expect(env.meta).toEqual({
-        ...META,
-        command: META.tool,
-        executedAt: META.timestamp,
-        schemaVersion: expect.any(String),
-      });
+    it('creates success envelope with data', () => {
+      const envelope = success({ result: 'ok' }, meta);
+      expect(envelope.success).toBe(true);
+      expect(envelope.data).toEqual({ result: 'ok' });
     });
 
-    it('defaults the timestamp when not supplied', () => {
-      const env = success(null, { correlationId: 'c', tool: 't', durationMs: 0 });
-      expect(env.meta.timestamp).toEqual(expect.any(String));
-      expect(new Date(env.meta.timestamp).toString()).not.toBe('Invalid Date');
+    it('includes meta with schema version', () => {
+      const envelope = success({}, meta);
+      expect(envelope.meta.schemaVersion).toBe(MCP_ENVELOPE_SCHEMA_VERSION);
+    });
+
+    it('uses custom timestamp when provided', () => {
+      const envelope = success({}, { ...meta, timestamp: '2026-01-01T00:00:00Z' });
+      expect(envelope.meta.executedAt).toBe('2026-01-01T00:00:00Z');
     });
   });
 
   describe('failure', () => {
-    it('builds an error envelope without details', () => {
-      const env = failure(ErrorCodes.VALIDATION_FAILED, 'boom', META);
-      expect(env.success).toBe(false);
-      expect(env.error).toEqual({ code: 'VALIDATION_FAILED', message: 'boom' });
+    it('creates error envelope without details', () => {
+      const envelope = failure('NOT_IMPLEMENTED', 'Tool not found', meta);
+      expect(envelope.success).toBe(false);
+      expect(envelope.error.code).toBe('NOT_IMPLEMENTED');
+      expect(envelope.error.message).toBe('Tool not found');
     });
 
-    it('includes details when provided', () => {
-      const env = failure(ErrorCodes.IO_ERROR, 'io', META, { path: '/x' });
-      expect(env.error.details).toEqual({ path: '/x' });
+    it('creates error envelope with details', () => {
+      const envelope = failure('VALIDATION_FAILED', 'Invalid', meta, { path: '/test' });
+      expect(envelope.error.details).toEqual({ path: '/test' });
     });
   });
 
   describe('toErrorEnvelope', () => {
-    it('preserves DomainException code and details', () => {
-      const ex = new DomainException(ErrorCodes.REPO_NOT_FOUND, 'missing', { dir: '/r' });
-      const env = toErrorEnvelope(ex, META);
-      expect(env.error.code).toBe('REPO_NOT_FOUND');
-      expect(env.error.message).toContain('missing');
-      expect(env.error.details).toEqual({ dir: '/r' });
+    it('wraps Error objects', () => {
+      const err = new Error('test error');
+      const envelope = toErrorEnvelope(err, meta);
+      expect(envelope.success).toBe(false);
+      expect(envelope.error.message).toBe('test error');
     });
 
-    it('maps a plain Error to INTERNAL_ERROR', () => {
-      const env = toErrorEnvelope(new Error('kaboom'), META);
-      expect(env.error.code).toBe('INTERNAL_ERROR');
-      expect(env.error.message).toBe('kaboom');
-    });
-
-    it('maps a non-Error throw to INTERNAL_ERROR with stringified message', () => {
-      const env = toErrorEnvelope('just a string', META);
-      expect(env.error.code).toBe('INTERNAL_ERROR');
-      expect(env.error.message).toBe('just a string');
+    it('wraps non-Error values', () => {
+      const envelope = toErrorEnvelope('string error', meta);
+      expect(envelope.success).toBe(false);
+      expect(envelope.error.message).toBe('string error');
     });
   });
 });

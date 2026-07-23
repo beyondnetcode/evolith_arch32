@@ -42,24 +42,10 @@ function ensureDefaultMetrics(): void {
   }
 }
 
-// --- Rate limiting (H1) and body size limit (H2) — configurable via env vars ---
-const MAX_BODY_BYTES = Number(process.env.MCP_MAX_BODY_BYTES) || 1024 * 1024; // 1 MB default
-const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS) || 60_000; // 1 min default
-const RATE_LIMIT_MAX_REQUESTS = Number(process.env.RATE_LIMIT_MAX_REQUESTS) || 100; // per window per IP
+import { RateLimitService } from './rate-limit.service';
 
-interface RateLimitEntry { count: number; resetAt: number; }
-const rateLimitMap = new Map<string, RateLimitEntry>();
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return false;
-  }
-  entry.count++;
-  return entry.count > RATE_LIMIT_MAX_REQUESTS;
-}
+// --- Body size limit (H2) — configurable via env vars ---
+const MAX_BODY_BYTES = Number(process.env.MCP_MAX_BODY_BYTES) || 1024 * 1024;
 
 export type McpTransport = 'stdio' | 'http';
 
@@ -102,6 +88,7 @@ export class McpServerService {
   // shared transport (the old bug) rejected every second client with HTTP 400
   // "Server already initialized".
   private readonly httpSessions = new Map<string, { transport: StreamableHTTPServerTransport; server: Server }>();
+  private readonly rateLimit = new RateLimitService();
 
   constructor(
     private readonly registry: ToolRegistryService,
@@ -367,8 +354,8 @@ export class McpServerService {
   private async handleHttpRequest(req: http.IncomingMessage, res: http.ServerResponse, port: number): Promise<void> {
       // Rate limiting (H1) — reject requests that exceed the per-IP limit
       const clientIp = req.socket.remoteAddress || 'unknown';
-      if (isRateLimited(clientIp)) {
-        const retryAfter = Math.ceil(RATE_LIMIT_WINDOW_MS / 1000);
+      if (this.rateLimit.isRateLimited(clientIp)) {
+        const retryAfter = this.rateLimit.getRetryAfter();
         res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(retryAfter) });
         res.end(JSON.stringify({ error: 'Too many requests', retryAfter }));
         return;

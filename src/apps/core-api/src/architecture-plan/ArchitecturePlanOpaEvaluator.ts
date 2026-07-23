@@ -7,13 +7,25 @@ import * as crypto from 'crypto';
 
 const execFileAsync = promisify(execFile);
 
+/**
+ * Evaluates OPA policies for architecture planning.
+ *
+ * DIP NOTE: This class directly imports child_process, fs, and crypto.
+ * These are infrastructure concerns that should ideally be injected via
+ * ICommandExecutor and IFileSystem ports. However, the OPA binary
+ * execution pattern (temp file + execFile + cleanup) is sufficiently
+ * unique that a dedicated OPA adapter is more appropriate than
+ * general-purpose ports.
+ *
+ * TODO: Extract to OpaExecutionAdapter implementing an IOpaEvaluator port
+ * when the OPA integration surface grows beyond this single evaluator.
+ */
 @Injectable()
 export class ArchitecturePlanOpaEvaluator {
   private readonly logger = new Logger(ArchitecturePlanOpaEvaluator.name);
 
   async evaluate(policy: string, input: any): Promise<{ sdlc_mode: string; required_approvals: string[] }> {
     const rootDir = process.cwd();
-    // Use the downloaded OPA binary from the workspace harness
     const isWin = process.platform === 'win32';
     const opaBin = path.join(rootDir, '.harness', 'bin', isWin ? 'opa.exe' : 'opa');
     const policyFile = path.join(rootDir, 'rulesets', 'opa', `${policy}.rego`);
@@ -27,12 +39,10 @@ export class ArchitecturePlanOpaEvaluator {
       throw new Error(`Policy file ${policy}.rego is missing.`);
     }
 
-    // Write input to temporary file
     const tmpFile = path.join(rootDir, `.tmp-opa-input-${crypto.randomBytes(4).toString('hex')}.json`);
     fs.writeFileSync(tmpFile, JSON.stringify(input));
 
     try {
-      // Use execFile (not exec) to prevent shell injection (CWE-78 / GT-346)
       const { stdout } = await execFileAsync(opaBin, [
         'eval',
         '-d', policyFile,

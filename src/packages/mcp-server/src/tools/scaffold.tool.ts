@@ -10,6 +10,10 @@ import { McpTool } from '../mcp/tool.interface';
 
 const execAsync = promisify(exec);
 
+/** Allowlists for user-controlled scaffold parameters (CWE-78 mitigation). */
+const ALLOWED_FRONTEND = new Set(['react', 'angular', 'vue']);
+const ALLOWED_ORM = new Set(['prisma', 'typeorm', 'drizzle']);
+
 /**
  * Minimal {@link ICommandExecutor} for the MCP gateway: runs `npx nx` / `npm`
  * via child_process. Only `executeOrThrow` is exercised by
@@ -112,6 +116,14 @@ export function createScaffoldTools(): McpTool[] {
         if (!frontendFramework) throw new Error('frontend is required');
         if (!orm) throw new Error('orm is required');
         if (!rawPhase) throw new Error('phase is required');
+
+        // Validate against allowlists to prevent command injection (CWE-78)
+        if (!ALLOWED_FRONTEND.has(frontendFramework)) {
+          throw new Error(`Invalid frontend "${frontendFramework}". Allowed: ${[...ALLOWED_FRONTEND].join(', ')}`);
+        }
+        if (!ALLOWED_ORM.has(orm)) {
+          throw new Error(`Invalid orm "${orm}". Allowed: ${[...ALLOWED_ORM].join(', ')}`);
+        }
 
         const phase = toProgressivePhase(rawPhase);
         if (!phase) {

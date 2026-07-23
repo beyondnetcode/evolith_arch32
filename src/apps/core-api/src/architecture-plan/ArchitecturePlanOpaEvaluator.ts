@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 @Injectable()
 export class ArchitecturePlanOpaEvaluator {
@@ -32,7 +32,14 @@ export class ArchitecturePlanOpaEvaluator {
     fs.writeFileSync(tmpFile, JSON.stringify(input));
 
     try {
-      const { stdout } = await execAsync(`"${opaBin}" eval -d "${policyFile}" -i "${tmpFile}" "data.evolith.governance.architecture_planning" --format json`);
+      // Use execFile (not exec) to prevent shell injection (CWE-78 / GT-346)
+      const { stdout } = await execFileAsync(opaBin, [
+        'eval',
+        '-d', policyFile,
+        '-i', tmpFile,
+        'data.evolith.governance.architecture_planning',
+        '--format', 'json',
+      ]);
       
       const resultObj = JSON.parse(stdout);
       const data = resultObj.result?.[0]?.expressions?.[0]?.value || {};

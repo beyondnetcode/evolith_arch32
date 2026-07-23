@@ -27,6 +27,7 @@
 
 - [¿Qué es Evolith?](#qué-es-evolith)
 - [¿Por qué Evolith?](#por-qué-evolith)
+- [Preguntas y Respuestas](#preguntas-y-respuestas)
 - [Conceptos Clave](#conceptos-clave)
 - [Ecosistema de Productos](#ecosistema-de-productos)
 - [Cómo Funciona](#cómo-funciona)
@@ -59,6 +60,59 @@ Evolith hace que la gobernanza sea **ejecutable**:
 - Las compuertas de fase bloquean el avance hasta que se cumplen los criterios de calidad.
 - Los agentes de IA y los pipelines de CI consumen los mismos artefactos de gobernanza que los humanos.
 - Las decisiones de arquitectura son trazables desde el ADR hasta el código en producción.
+
+---
+
+## Preguntas y Respuestas
+
+<details>
+<summary><b>¿Qué es Evolith en una frase?</b></summary>
+<br/>
+Evolith es un <b>framework ejecutable de gobernanza arquitectónica</b> — se asegura de que las decisiones de arquitectura realmente se cumplan, automáticamente, ya sea que el código lo escriba un humano o un agente AI.
+</details>
+
+<details>
+<summary><b>¿Para qué lo usaría?</b></summary>
+<br/>
+<ol>
+<li><b>Feedback instantáneo</b> en decisiones arquitectónicas — ejecuta <code>evolith validate</code> y sabe en segundos si tu código cumple.</li>
+<li><b>Sin refactors sorpresa</b> — el drift arquitectónico se detecta en el gate, no六个月 después.</li>
+<li><b>Gobernanza a prueba de AI</b> — cuando un agente AI escribe código, Evolith asegura que siga las mismas reglas que un arquitecto senior.</li>
+</ol>
+</details>
+
+<details>
+<summary><b>¿Cuánto cuesta?</b></summary>
+<br/>
+La plataforma core es <b>completamente gratis</b> (licencia MIT): CLI, servidor MCP, Core API, Agent Runtime, 137 ADRs, 163 rulesets, 45 schemas. El único producto de pago es <b>Evolith Tracker</b> (gobernanza enterprise multi-tenant — aún no lanzado).
+</details>
+
+<details>
+<summary><b>¿Cómo empiezo?</b></summary>
+<br/>
+
+```bash
+npm install -g @beyondnet/evolith-cli
+evolith init
+evolith validate
+```
+
+Sin base de datos, sin servidor, sin Docker.
+</details>
+
+<details>
+<summary><b>¿Qué topologías cubre?</b></summary>
+<br/>
+Evolith gobierna <b>8 topologías</b> en 5 dimensiones: Modular Monolith, Distributed Modules, Microservices (progressive-axis), Serverless, Edge Computing (execution), Event-Driven (integration), Data Mesh (data) y Agentic AI. Todas componibles.
+</details>
+
+<details>
+<summary><b>¿Cómo funciona con herramientas AI como Cursor o Claude?</b></summary>
+<br/>
+Evolith envía un servidor MCP dentro del CLI. Agrégalo a la configuración de tu herramienta AI y tu agente puede consultar reglas, validar código y evaluar gates — todo gobernado.
+</details>
+
+**[Q&A completo: 64 preguntas en 12 categorías →](./reference/core/sdlc/q-and-a.es.md)**
 
 ---
 

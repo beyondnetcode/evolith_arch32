@@ -4,27 +4,52 @@ import { NormalizedRule } from '../../../../domain/models/normalized-rule';
 import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
+/** Strategy type for rule evaluation — replaces switch statements (R-33). */
+type RuleEvaluator = (rule: NormalizedRule, ctx: WorkspaceEvaluationContext) => Promise<RuleEvaluationResult>;
+
 /**
  * Cross-cutting rule handler — evaluates DOD, EM, CB, and TAX rules.
  *
- * CLEAN CODE TODO: The evalDod() and evalTaxonomy() methods contain switch
- * statements that dispatch to specific check methods. Per R-33 (Clean Code),
- * these should be refactored to a Strategy/Registry pattern:
- *
- *   const ruleStrategies = new Map<string, RuleEvaluator>();
- *   ruleStrategies.set('DOD-01', (rule, ctx) => this.checkForCiWorkflow(rule, ctx, 'pull request'));
- *   ruleStrategies.set('DOD-02', (rule, ctx) => this.checkForCoverage(rule, ctx));
- *   // ...
- *
- * This would eliminate the switch statements and make the handler OCP-compliant:
- * new rule types are added by registering a new strategy, not modifying evalDod().
- *
- * Impact: HIGH (10+ rule handlers have similar switch patterns)
- * Effort: MEDIUM (extract strategies, maintain same helper methods)
- * Risk: LOW (additive change, existing tests should pass)
+ * Uses a Strategy/Registry pattern instead of switch statements.
+ * New rule types are added by registering entries in the registries,
+ * not by modifying evaluate() (OCP compliant).
  */
 export class CrossCuttingRuleHandler implements INativeRuleHandler {
-  constructor(private readonly fs: IFileSystem) {}
+  /** Registry: rule ID → evaluation strategy for DOD rules. */
+  private readonly dodRegistry: Map<string, RuleEvaluator>;
+  /** Registry: rule ID → evaluation strategy for TAX rules. */
+  private readonly taxRegistry: Map<string, RuleEvaluator>;
+
+  constructor(private readonly fs: IFileSystem) {
+    // DOD rules registry
+    this.dodRegistry = new Map([
+      ['DOD-01', (r, c) => this.checkForCiWorkflow(r, c, 'pull request')],
+      ['DOD-02', (r, c) => this.checkForCoverage(r, c)],
+      ['DOD-03', (r, c) => this.checkForTestInfrastructure(r, c)],
+      ['DOD-04', (r, c) => this.checkForDocs(r, c)],
+      ['DOD-05', (r, c) => this.checkForEvidence(r, c, 'observability instrumentation', [
+        'otel.config.js', 'opentelemetry.config.js', 'src/instrumentation.ts',
+      ])],
+      ['DOD-06', (r, c) => this.checkForCiWorkflow(r, c, 'security')],
+      ['DOD-07', (r, c) => this.checkForEvidence(r, c, 'ADR directory', [
+        path.join('reference', 'core', 'architecture', 'adrs'),
+      ])],
+      ['DOD-08', (r, c) => this.checkForEvidence(r, c, 'integration tests', ['tests/integration', 'test/integration'])],
+      ['DOD-09', (r, c) => this.checkForCiWorkflow(r, c, 'lint')],
+      ['DOD-10', (r, c) => this.checkForEvidence(r, c, 'CI configuration', ['.github/workflows', '.gitlab-ci.yml', 'Jenkinsfile'])],
+    ]);
+
+    // TAX rules registry
+    this.taxRegistry = new Map([
+      ['TAX-01', (r, c) => this.evalFileNaming(r, c)],
+      ['TAX-02', (r, c) => this.evalNamingConvention(r, c, 'PascalCase')],
+      ['TAX-03', (r, c) => this.evalNamingConvention(r, c, 'camelCase')],
+      ['TAX-04', (r, c) => this.evalNamingConvention(r, c, 'UPPER_SNAKE_CASE')],
+      ['TAX-09', (r, c) => this.checkForEvidence(r, c, 'reference directory', ['reference'])],
+      ['TAX-10', (r, c) => this.evalNoProductInReference(r, c)],
+      ['TAX-11', (r, c) => this.evalNoRootTopologies(r, c)],
+    ]);
+  }
 
   canHandle(rule: NormalizedRule): boolean {
     return rule.id.startsWith('DOD-') || rule.id.startsWith('EM-') || rule.id.startsWith('CB-') || (
@@ -41,35 +66,10 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
     return { rule, result: 'skipped', message: 'Unhandled cross-cutting rule' };
   }
 
+  /** Registry-based dispatch for DOD rules (replaces switch statement). */
   private async evalDod(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
-    switch (rule.id) {
-      case 'DOD-01':
-        return this.checkForCiWorkflow(rule, ctx, 'pull request');
-      case 'DOD-02':
-        return this.checkForCoverage(rule, ctx);
-      case 'DOD-03':
-        return this.checkForTestInfrastructure(rule, ctx);
-      case 'DOD-04':
-        return this.checkForDocs(rule, ctx);
-      case 'DOD-05':
-        return this.checkForEvidence(rule, ctx, 'observability instrumentation', [
-          'otel.config.js', 'opentelemetry.config.js', 'src/instrumentation.ts',
-        ]);
-      case 'DOD-06':
-        return this.checkForCiWorkflow(rule, ctx, 'security');
-      case 'DOD-07':
-        return this.checkForEvidence(rule, ctx, 'ADR directory', [
-          path.join('reference', 'core', 'architecture', 'adrs'),
-        ]);
-      case 'DOD-08':
-        return this.checkForEvidence(rule, ctx, 'integration tests', ['tests/integration', 'test/integration']);
-      case 'DOD-09':
-        return this.checkForCiWorkflow(rule, ctx, 'lint');
-      case 'DOD-10':
-        return this.checkForEvidence(rule, ctx, 'CI configuration', ['.github/workflows', '.gitlab-ci.yml', 'Jenkinsfile']);
-      default:
-        return { rule, result: 'skipped', message: 'Unhandled DOD rule' };
-    }
+    const handler = this.dodRegistry.get(rule.id);
+    return handler ? handler(rule, ctx) : { rule, result: 'skipped', message: 'Unhandled DOD rule' };
   }
 
   private async evalEngineeringManifesto(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
@@ -108,17 +108,10 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
     return { rule, result: 'skipped', message: 'Unhandled CB-VAL rule' };
   }
 
+  /** Registry-based dispatch for TAX rules (replaces switch statement). */
   private async evalTaxonomy(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
-    switch (rule.id) {
-      case 'TAX-01': return this.evalFileNaming(rule, ctx);
-      case 'TAX-02': return this.evalNamingConvention(rule, ctx, 'PascalCase');
-      case 'TAX-03': return this.evalNamingConvention(rule, ctx, 'camelCase');
-      case 'TAX-04': return this.evalNamingConvention(rule, ctx, 'UPPER_SNAKE_CASE');
-      case 'TAX-09': return this.checkForEvidence(rule, ctx, 'reference directory', ['reference']);
-      case 'TAX-10': return this.evalNoProductInReference(rule, ctx);
-      case 'TAX-11': return this.evalNoRootTopologies(rule, ctx);
-      default: return { rule, result: 'skipped', message: 'Unhandled TAX rule' };
-    }
+    const handler = this.taxRegistry.get(rule.id);
+    return handler ? handler(rule, ctx) : { rule, result: 'skipped', message: 'Unhandled TAX rule' };
   }
 
   private async evalFileNaming(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {

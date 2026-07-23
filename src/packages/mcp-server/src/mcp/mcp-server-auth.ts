@@ -26,6 +26,16 @@ const ADMIN_CONTEXT: McpUserContext = Object.freeze({
   scopes: ['read', 'write', 'admin'],
 }) as McpUserContext;
 
+/** Read-only context for dev bypass — never grant admin in allowNoAuth mode (H3). */
+const READER_CONTEXT: McpUserContext = Object.freeze({
+  id: 'dev-allow-no-auth',
+  role: 'reader',
+  roles: ['reader'],
+  tenant: 'default',
+  environment: process.env.NODE_ENV || 'development',
+  scopes: ['read'],
+}) as McpUserContext;
+
 function writeUnauthorized(res: http.ServerResponse, message: string): null {
   const correlationId = generateCorrelationId();
   const err = failure(ErrorCodes.UNAUTHORIZED, message, { correlationId, tool: 'auth', durationMs: 0 });
@@ -100,7 +110,7 @@ export function validateAuth(
       res.end(JSON.stringify(err));
       return null;
     }
-    return { ...ADMIN_CONTEXT, environment: env };
+    return { ...READER_CONTEXT, environment: env };
   }
 
   const authHeader = req.headers.authorization || '';

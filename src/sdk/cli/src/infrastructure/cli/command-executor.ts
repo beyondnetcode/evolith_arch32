@@ -30,6 +30,11 @@ export class CommandExecutor implements ICommandExecutor {
   private toolCache: Map<string, boolean> = new Map();
   private versionCache: Map<string, string> = new Map();
 
+  /**
+   * @deprecated Use {@link executeFile} instead — this method runs through a
+   * shell and is an injection vector if any caller passes user-controlled data.
+   * Kept for backward compatibility; callers should migrate to executeFile().
+   */
   async execute(command: string, cwd?: string): Promise<CommandResult> {
     try {
       const options = cwd

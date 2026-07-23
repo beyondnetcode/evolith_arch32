@@ -26,7 +26,7 @@ import { AbacEvaluator } from './abac-evaluator';
 import { mcpContextStorage, McpUserContext } from './mcp-user-context';
 import { authenticateHttpRequest } from './mcp-server-auth';
 import { loadOAuthConfig, createJwksResolver, type OAuthConfig, type JwksKeyResolver } from './oauth-resource-server';
-import { handleCallTool, handleListTools, ToolCallResult } from './mcp-tool-dispatch';
+import { handleCallTool, handleListTools, ToolCallResult, redactArgs } from './mcp-tool-dispatch';
 import { McpCacheService } from './mcp-cache.service';
 
 export { McpUserContext, mcpContextStorage } from './mcp-user-context';
@@ -40,6 +40,25 @@ function ensureDefaultMetrics(): void {
     promClient.collectDefaultMetrics({ prefix: 'evolith_mcp_' });
     defaultMetricsRegistered = true;
   }
+}
+
+// --- Rate limiting (H1) and body size limit (H2) ---
+const MAX_BODY_BYTES = 1024 * 1024; // 1 MB
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 100; // per window per IP
+
+interface RateLimitEntry { count: number; resetAt: number; }
+const rateLimitMap = new Map<string, RateLimitEntry>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX_REQUESTS;
 }
 
 export type McpTransport = 'stdio' | 'http';
@@ -143,7 +162,7 @@ export class McpServerService {
       }
       this.auditLogger.logToolCall({
         tool: name,
-        args,
+        args: redactArgs(args),
         context: {
           initiative: (args.initiative as string) || undefined,
           tenant: (args.tenant as string) || context?.tenant,
@@ -287,9 +306,18 @@ export class McpServerService {
 
   /** Buffer a request body so we can inspect it (e.g. for `initialize`). */
   private static readBody(req: http.IncomingMessage): Promise<unknown> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const chunks: Buffer[] = [];
-      req.on('data', (c) => chunks.push(Buffer.from(c)));
+      let totalBytes = 0;
+      req.on('data', (c) => {
+        totalBytes += c.length;
+        if (totalBytes > MAX_BODY_BYTES) {
+          req.destroy();
+          reject(new Error('Request body exceeds 1 MB limit'));
+          return;
+        }
+        chunks.push(Buffer.from(c));
+      });
       req.on('end', () => {
         const raw = Buffer.concat(chunks).toString('utf-8');
         if (!raw) return resolve(undefined);
@@ -335,6 +363,14 @@ export class McpServerService {
 
   /** Per-request handler for the Streamable HTTP transport. */
   private async handleHttpRequest(req: http.IncomingMessage, res: http.ServerResponse, port: number): Promise<void> {
+      // Rate limiting (H1) — reject requests that exceed the per-IP limit
+      const clientIp = req.socket.remoteAddress || 'unknown';
+      if (isRateLimited(clientIp)) {
+        res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '60' });
+        res.end(JSON.stringify({ error: 'Too many requests', retryAfter: 60 }));
+        return;
+      }
+
       res.setHeader('Content-Security-Policy', "default-src 'none'");
       res.setHeader('X-Content-Type-Options', 'nosniff');
       res.setHeader('X-Frame-Options', 'DENY');

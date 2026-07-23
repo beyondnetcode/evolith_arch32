@@ -78,14 +78,23 @@ export class ApiKeyGuard implements CanActivate {
           'CORE_API_AUTH_REQUIRED=true but EVOLITH_API_KEY is not configured.',
         );
       }
-      if (!this.warnedNoKey) {
-        this.warnedNoKey = true;
-        this.logger.warn(
-          'EVOLITH_API_KEY is not set — CORE-API is running UNAUTHENTICATED. ' +
-            'Set EVOLITH_API_KEY to enforce API-key auth.',
-        );
+      // Fail-closed: reject unauthenticated requests instead of allowing them (H6).
+      // Previously this was a migration-safe rollout that allowed unauthenticated
+      // access; now we default to denying. Set CORE_API_AUTH_REQUIRED=false to
+      // explicitly opt-in to unauthenticated mode.
+      if (process.env.CORE_API_AUTH_REQUIRED === 'false') {
+        if (!this.warnedNoKey) {
+          this.warnedNoKey = true;
+          this.logger.warn(
+            'CORE_API_AUTH_REQUIRED=false — CORE-API is running UNAUTHENTICATED. ' +
+              'Set EVOLITH_API_KEY to enforce API-key auth.',
+          );
+        }
+        return true;
       }
-      return true;
+      throw new UnauthorizedException(
+        'EVOLITH_API_KEY is not configured. Set it or CORE_API_AUTH_REQUIRED=false to allow unauthenticated access.',
+      );
     }
 
     const req = context.switchToHttp().getRequest<Request>();

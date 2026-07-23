@@ -4,6 +4,7 @@ import { McpTool } from '../mcp/tool.interface';
 import { DomainException, ErrorCodes } from '../common/errors';
 import { EvolithRestClient } from '@beyondnet/evolith-sdk';
 import type { AgentRuntimeRequestWire } from '@beyondnet/evolith-agent-runtime';
+import { sanitizePathInput } from '../utils/path-security';
 
 interface AgentInfo {
   name: string;
@@ -114,7 +115,9 @@ export function createAgentTools(fs: IFileSystem): McpTool[] {
 }
 
 async function agentInstall(name: string, template: string, dir: string, fs: IFileSystem) {
-  const rulesetDir = path.join(dir, 'rulesets', 'agents', name);
+  // Validate name against path traversal (H4 / CWE-22)
+  const sanitizedName = sanitizePathInput(name, dir);
+  const rulesetDir = path.join(dir, 'rulesets', 'agents', path.basename(sanitizedName));
   const rulesetPath = path.join(rulesetDir, 'agent.rules.json');
   await fs.ensureDir(rulesetDir);
   await fs.writeJson(rulesetPath, getAgentTemplate(name, template));

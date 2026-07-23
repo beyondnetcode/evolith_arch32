@@ -288,7 +288,8 @@ export class EvaluationContextDto {
 
   // --- Legacy backward-compatibility fields (used only when workspaceRef is absent) ---
   @ApiPropertyOptional({
-    description: 'LEGACY: filesystem path to the satellite repository',
+    description: 'LEGACY (deprecated): filesystem path to the satellite repository. Use workspaceRef instead. Path traversal validation required before use.',
+    deprecated: true,
   })
   @IsOptional()
   @IsString()

@@ -30,7 +30,12 @@ export class NpmProvider {
     return commandExecutor.executeFile('npm', ['run', script], cwd);
   }
 
-  // Raw passthrough escape hatch — caller owns the command string (still shell).
+  /**
+   * Raw passthrough escape hatch — caller owns the command string (still shell).
+   * @deprecated Use specific methods (install, run, etc.) instead. This method
+   * runs through a shell and is an injection vector if user-controlled data is
+   * passed as part of the command string.
+   */
   async exec(cmd: string, cwd: string): Promise<CommandResult> {
     return commandExecutor.execute(cmd, cwd);
   }

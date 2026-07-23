@@ -6,6 +6,15 @@ import { Logger, Provider, Type } from '@nestjs/common';
 export class PluginLoader {
   private static readonly logger = new Logger('PluginLoader');
 
+  /** Validate that a resolved plugin path stays within allowed directories (H7). */
+  private static isPathAllowed(resolvedPath: string, workspaceDir: string): boolean {
+    const allowedBases = [
+      path.resolve(workspaceDir),
+      path.resolve(workspaceDir, '.evolith', 'plugins'),
+    ];
+    return allowedBases.some((base) => resolvedPath.startsWith(base));
+  }
+
   static async loadPlugins(workspaceDir: string = process.cwd()): Promise<{ providers: Provider[]; imports: Type[] }> {
     const providers: Provider[] = [];
     const imports: Type[] = [];
@@ -48,6 +57,11 @@ export class PluginLoader {
               let resolvePath = plugin;
               if (plugin.startsWith('.') || plugin.startsWith('/')) {
                 resolvePath = path.resolve(workspaceDir, plugin);
+              }
+              // Validate path stays within allowed directories (H7 / CWE-22)
+              if (!this.isPathAllowed(path.resolve(resolvePath), workspaceDir)) {
+                this.logger.warn(`Plugin path rejected (outside workspace): ${plugin}`);
+                continue;
               }
               await this.loadPluginFromPath(resolvePath, providers, imports);
             }

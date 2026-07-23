@@ -2,6 +2,7 @@ import * as path from 'node:path';
 import * as fs from 'fs-extra';
 import * as yaml from 'yaml';
 import { McpTool } from '../mcp/tool.interface';
+import { sanitizePathInput } from '../utils/path-security';
 
 /** Read/write tools over a repository's `evolith.yaml`. */
 export function createConfigTools(): McpTool[] {
@@ -41,7 +42,7 @@ export function createConfigTools(): McpTool[] {
 
 async function handleConfigGet(args: Record<string, unknown>) {
   const dir = (args.dir as string) || process.cwd();
-  const configPath = path.join(dir, 'evolith.yaml');
+  const configPath = path.join(sanitizePathInput(dir, process.cwd()), 'evolith.yaml');
   if (!(await fs.pathExists(configPath))) throw new Error('evolith.yaml not found');
 
   const config = yaml.parse(await fs.readFile(configPath, 'utf-8'));
@@ -55,7 +56,7 @@ async function handleConfigGet(args: Record<string, unknown>) {
 
 async function handleConfigSet(args: Record<string, unknown>) {
   const dir = (args.dir as string) || process.cwd();
-  const configPath = path.join(dir, 'evolith.yaml');
+  const configPath = path.join(sanitizePathInput(dir, process.cwd()), 'evolith.yaml');
   if (!(await fs.pathExists(configPath))) throw new Error('evolith.yaml not found');
 
   const config = yaml.parse(await fs.readFile(configPath, 'utf-8')) ?? {};

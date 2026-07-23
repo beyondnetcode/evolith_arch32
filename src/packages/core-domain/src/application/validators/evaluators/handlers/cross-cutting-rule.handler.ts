@@ -4,6 +4,25 @@ import { NormalizedRule } from '../../../../domain/models/normalized-rule';
 import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
+/**
+ * Cross-cutting rule handler — evaluates DOD, EM, CB, and TAX rules.
+ *
+ * CLEAN CODE TODO: The evalDod() and evalTaxonomy() methods contain switch
+ * statements that dispatch to specific check methods. Per R-33 (Clean Code),
+ * these should be refactored to a Strategy/Registry pattern:
+ *
+ *   const ruleStrategies = new Map<string, RuleEvaluator>();
+ *   ruleStrategies.set('DOD-01', (rule, ctx) => this.checkForCiWorkflow(rule, ctx, 'pull request'));
+ *   ruleStrategies.set('DOD-02', (rule, ctx) => this.checkForCoverage(rule, ctx));
+ *   // ...
+ *
+ * This would eliminate the switch statements and make the handler OCP-compliant:
+ * new rule types are added by registering a new strategy, not modifying evalDod().
+ *
+ * Impact: HIGH (10+ rule handlers have similar switch patterns)
+ * Effort: MEDIUM (extract strategies, maintain same helper methods)
+ * Risk: LOW (additive change, existing tests should pass)
+ */
 export class CrossCuttingRuleHandler implements INativeRuleHandler {
   constructor(private readonly fs: IFileSystem) {}
 

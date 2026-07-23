@@ -137,7 +137,11 @@ export function verifyJwtToken(token: string, secret: string): Record<string, un
     const hmac = crypto.createHmac('sha256', secret);
     hmac.update(`${headerB64}.${payloadB64}`);
     const expectedSignature = hmac.digest('base64url');
-    if (signatureB64 !== expectedSignature) return null;
+
+    // Constant-time comparison to prevent timing side-channel (CWE-208)
+    const sigBuf = Buffer.from(signatureB64, 'base64url');
+    const expectedBuf = Buffer.from(expectedSignature, 'base64url');
+    if (sigBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(sigBuf, expectedBuf)) return null;
 
     const payloadJson = Buffer.from(payloadB64, 'base64url').toString('utf8');
     const payload = JSON.parse(payloadJson);

@@ -1,6 +1,17 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
+import * as crypto from 'crypto';
+
+/**
+ * Constant-time API key comparison to prevent timing side-channel attacks (CWE-208).
+ * Mirrors the pattern from ApiKeyGuard.safeKeyEqual.
+ */
+function safeKeyEqual(presented: string, configured: string): boolean {
+  const a = crypto.createHash('sha256').update(presented).digest();
+  const b = crypto.createHash('sha256').update(configured).digest();
+  return crypto.timingSafeEqual(a, b);
+}
 
 /**
  * GT-393: Forces API key authentication on /metrics even when
@@ -58,7 +69,7 @@ export class MetricsAuthGuard implements CanActivate {
     }
 
     const token = authHeader.slice(7);
-    if (token !== configured) {
+    if (!safeKeyEqual(token, configured)) {
       throw new UnauthorizedException('Invalid API key.');
     }
 

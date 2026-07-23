@@ -1,0 +1,37 @@
+{
+  "ruleset": "security-rate-limiting",
+  "version": "1.0.0",
+  "description": "Validates that HTTP endpoints implement rate limiting",
+  "rules": [
+    {
+      "id": "SEC-RL-01",
+      "severity": "MUST",
+      "category": "security",
+      "title": "Rate limiting on HTTP endpoints",
+      "description": "All public HTTP endpoints MUST implement rate limiting to prevent denial-of-service attacks. Use configurable window and limit values from environment variables.",
+      "blocking": true,
+      "validationQuery": "Rate limiting configured with configurable env vars",
+      "sourceFile": "security/rate-limiting.rules.json"
+    },
+    {
+      "id": "SEC-RL-02",
+      "severity": "MUST",
+      "category": "security",
+      "title": "Request body size limits",
+      "description": "All HTTP services MUST enforce a maximum request body size to prevent memory exhaustion attacks.",
+      "blocking": true,
+      "validationQuery": "Body size limit configured via MCP_MAX_BODY_BYTES or equivalent",
+      "sourceFile": "security/rate-limiting.rules.json"
+    },
+    {
+      "id": "SEC-RL-03",
+      "severity": "SHOULD",
+      "category": "security",
+      "title": "HTTP server timeouts",
+      "description": "HTTP servers SHOULD configure request timeouts and keep-alive timeouts to prevent connection exhaustion (slowloris).",
+      "blocking": false,
+      "validationQuery": "httpServer.timeout and keepAliveTimeout configured",
+      "sourceFile": "security/rate-limiting.rules.json"
+    }
+  ]
+}

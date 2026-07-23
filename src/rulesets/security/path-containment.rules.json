@@ -1,0 +1,27 @@
+{
+  "ruleset": "security-path-containment",
+  "version": "1.0.0",
+  "description": "Validates that MCP tools sanitize path inputs to prevent traversal",
+  "rules": [
+    {
+      "id": "SEC-PATH-01",
+      "severity": "MUST",
+      "category": "security",
+      "title": "Path input sanitization",
+      "description": "All MCP tools that accept filesystem path arguments must use sanitizePathInput() to prevent path traversal attacks.",
+      "blocking": true,
+      "validationQuery": "sanitizePathInput() called on all path arguments",
+      "sourceFile": "security/path-containment.rules.json"
+    },
+    {
+      "id": "SEC-PATH-02",
+      "severity": "MUST",
+      "category": "security",
+      "title": "Base directory containment",
+      "description": "Resolved paths must be verified to remain within the intended base directory after resolution.",
+      "blocking": true,
+      "validationQuery": "Path resolved and verified against base directory",
+      "sourceFile": "security/path-containment.rules.json"
+    }
+  ]
+}

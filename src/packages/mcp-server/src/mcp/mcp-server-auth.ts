@@ -96,7 +96,10 @@ export function validateAuth(
   apiKey: string | undefined,
   allowNoAuth = false,
 ): McpUserContext | null {
-  const env = process.env.NODE_ENV || 'development';
+  // L6: Treat undefined NODE_ENV as 'production' to prevent silent bypass.
+  // If NODE_ENV is unset in production, allowNoAuth would be enabled — a critical
+  // security misconfiguration. Defaulting to 'production' ensures fail-closed.
+  const env = process.env.NODE_ENV || 'production';
 
   if (!apiKey) {
     if (env === 'production' || !allowNoAuth) {

@@ -26,9 +26,10 @@ async function bootstrap() {
 
   const config = app.get(ConfigService<EnvConfig>);
 
-  const swaggerEnabled =
-    config.get('NODE_ENV') !== 'production' ||
-    config.get('SWAGGER_ENABLED') === 'true';
+  // L2: Swagger requires explicit opt-in in all environments (security hardening).
+  // Previously auto-enabled in non-production, which exposed the full API surface
+  // on misconfigured NODE_ENV. Now requires SWAGGER_ENABLED=true everywhere.
+  const swaggerEnabled = config.get('SWAGGER_ENABLED') === 'true';
 
   if (swaggerEnabled) {
     setupOpenApi(app);

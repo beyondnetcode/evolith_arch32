@@ -231,6 +231,8 @@ describe('GT-565 — @beyondnet/evolith-sdk types describe the real wire', () =>
       // AppModule is imported so ConfigModule reads them at init.
       process.env.WORKSPACE_ROOT = fixtureRoot;
       process.env.CORE_PATH = corePath;
+      // H6: Contract tests hit core-api without auth — explicitly opt out of fail-closed
+      process.env.CORE_API_AUTH_REQUIRED = 'false';
 
       const { AppModule } = await import('../../apps/core-api/src/app.module');
       const moduleFixture: TestingModule = await Test.createTestingModule({

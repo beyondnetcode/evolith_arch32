@@ -211,6 +211,8 @@ describe('ADR-0073 contract roundtrip: gate evaluate', () => {
     // AppModule is imported/compiled so ConfigModule reads them at init.
     process.env.WORKSPACE_ROOT = path.dirname(projectPath);
     process.env.CORE_PATH = REPO_ROOT;
+    // H6: Contract tests hit core-api without auth — explicitly opt out of fail-closed
+    process.env.CORE_API_AUTH_REQUIRED = 'false';
     await fs.ensureDir(projectPath);
 
     // CLI: bootstrap via CommandTestFactory

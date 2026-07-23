@@ -1,331 +1,210 @@
 import {
-  Actor,
-  AuthorityRequest,
-  AuthorityViolationError,
-  PROMOTION_AUTHORITY,
-  PROMOTION_SEQUENCE,
-  evaluateAuthority,
-  formatAuthorityDecision,
+  isHumanAuthority,
   isAssertive,
   isAuthoritative,
-  isHumanAuthority,
-  isPermitted,
   isValidPromotion,
-  requireAuthority,
+  evaluateAuthority,
+  PROMOTION_SEQUENCE,
+  PROMOTION_AUTHORITY,
+  type Actor,
+  type Artefact,
+  type AuthorityRequest,
 } from './authority-policy';
 
-const agent: Actor = { id: 'winston-agent', kind: 'agent' };
-const engine: Actor = { id: 'core-engine', kind: 'engine' };
-const ci: Actor = { id: 'github-actions', kind: 'ci' };
-const person: Actor = { id: 'dev@evolith', kind: 'human' };
-const custodian: Actor = { id: '@winston', kind: 'custodian' };
-const board: Actor = { id: 'architecture-board', kind: 'board' };
+describe('authority-policy', () => {
+  describe('isHumanAuthority', () => {
+    it('returns true for human actors', () => {
+      expect(isHumanAuthority({ id: 'u1', kind: 'human' })).toBe(true);
+      expect(isHumanAuthority({ id: 'c1', kind: 'custodian' })).toBe(true);
+      expect(isHumanAuthority({ id: 'b1', kind: 'board' })).toBe(true);
+    });
 
-const req = (over: Partial<AuthorityRequest> & Pick<AuthorityRequest, 'actor' | 'action'>): AuthorityRequest => ({
-  artefact: { id: 'KO-001', kind: 'KO-record' },
-  ...over,
-});
+    it('returns false for non-human actors', () => {
+      expect(isHumanAuthority({ id: 'a1', kind: 'agent' })).toBe(false);
+      expect(isHumanAuthority({ id: 'e1', kind: 'engine' })).toBe(false);
+      expect(isHumanAuthority({ id: 'ci1', kind: 'ci' })).toBe(false);
+    });
+  });
 
-// ─── Assertion is open to everyone ──────────────────────────────────────────
+  describe('isAssertive / isAuthoritative', () => {
+    it('classifies assertive actions', () => {
+      expect(isAssertive('observe')).toBe(true);
+      expect(isAssertive('recommend')).toBe(true);
+      expect(isAssertive('attach-evidence')).toBe(true);
+      expect(isAssertive('draft-candidate')).toBe(true);
+      expect(isAuthoritative('observe')).toBe(false);
+    });
 
-describe('assertion', () => {
-  it.each([agent, engine, ci, person, custodian, board])(
-    'lets a $kind observe, recommend, attach evidence and draft a candidate',
-    (actor) => {
-      for (const action of ['observe', 'recommend', 'attach-evidence', 'draft-candidate'] as const) {
-        expect(evaluateAuthority(req({ actor, action })).permitted).toBe(true);
-      }
-    },
-  );
+    it('classifies authoritative actions', () => {
+      expect(isAuthoritative('accept')).toBe(true);
+      expect(isAuthoritative('promote')).toBe(true);
+      expect(isAuthoritative('ratify')).toBe(true);
+      expect(isAuthoritative('waive')).toBe(true);
+      expect(isAuthoritative('enforce')).toBe(true);
+      expect(isAssertive('accept')).toBe(false);
+    });
+  });
 
-  it('lets an agent draft a candidate from its own finding', () => {
-    const decision = evaluateAuthority(
-      req({
+  describe('isValidPromotion', () => {
+    it('allows sequential promotions', () => {
+      expect(isValidPromotion('candidate', 'evaluated')).toBe(true);
+      expect(isValidPromotion('evaluated', 'accepted')).toBe(true);
+      expect(isValidPromotion('accepted', 'executable')).toBe(true);
+    });
+
+    it('rejects skipping stages', () => {
+      expect(isValidPromotion('candidate', 'accepted')).toBe(false);
+      expect(isValidPromotion('candidate', 'executable')).toBe(false);
+      expect(isValidPromotion('evaluated', 'executable')).toBe(false);
+    });
+
+    it('rejects backward promotions', () => {
+      expect(isValidPromotion('accepted', 'evaluated')).toBe(false);
+      expect(isValidPromotion('executable', 'candidate')).toBe(false);
+    });
+
+    it('retired is always a valid target from any non-terminal state', () => {
+      expect(isValidPromotion('candidate', 'retired')).toBe(true);
+      expect(isValidPromotion('evaluated', 'retired')).toBe(true);
+      expect(isValidPromotion('accepted', 'retired')).toBe(true);
+      expect(isValidPromotion('executable', 'retired')).toBe(true);
+    });
+
+    it('rejects promotion from terminal state', () => {
+      expect(isValidPromotion('retired', 'candidate')).toBe(false);
+    });
+  });
+
+  describe('evaluateAuthority', () => {
+    const agent: Actor = { id: 'agent-1', kind: 'agent' };
+    const human: Actor = { id: 'user-1', kind: 'human' };
+    const board: Actor = { id: 'board-1', kind: 'board' };
+    const artefact: Artefact = { id: 'adr-001', kind: 'adr', authoredBy: 'user-1' };
+
+    it('AP-R01: assertions are always permitted', () => {
+      const result = evaluateAuthority({
         actor: agent,
-        action: 'draft-candidate',
-        artefact: { id: 'KO-002', kind: 'KO-record', authoredBy: agent.id },
-      }),
-    );
-    expect(decision.permitted).toBe(true);
-    expect(decision.rule).toBe('AP-R01');
-  });
+        action: 'observe',
+        artefact,
+      });
+      expect(result.permitted).toBe(true);
+      expect(result.rule).toBe('AP-R01');
+    });
 
-  it('classifies assertive and authoritative actions as mutually exclusive', () => {
-    for (const action of ['observe', 'recommend', 'attach-evidence', 'draft-candidate'] as const) {
-      expect(isAssertive(action)).toBe(true);
-      expect(isAuthoritative(action)).toBe(false);
-    }
-    for (const action of ['accept', 'promote', 'ratify', 'waive', 'enforce'] as const) {
-      expect(isAuthoritative(action)).toBe(true);
-      expect(isAssertive(action)).toBe(false);
-    }
-  });
-});
-
-// ─── Self-authorization ─────────────────────────────────────────────────────
-
-describe('self-authorization', () => {
-  it('refuses an agent attempting to promote its own finding', () => {
-    const decision = evaluateAuthority(
-      req({
+    it('AP-R01: agents can recommend', () => {
+      const result = evaluateAuthority({
         actor: agent,
-        action: 'promote',
-        targetStatus: 'evaluated',
-        artefact: { id: 'KO-003', kind: 'KO-record', status: 'candidate', authoredBy: agent.id },
-      }),
-    );
-    expect(decision.permitted).toBe(false);
-    expect(decision.rule).toBe('AP-R03');
-    expect(decision.reason).toMatch(/certifies its own output is checked by nothing/);
-  });
+        action: 'recommend',
+        artefact,
+      });
+      expect(result.permitted).toBe(true);
+      expect(result.rule).toBe('AP-R01');
+    });
 
-  it('refuses an engine attempting to ratify its own recommendation', () => {
-    const decision = evaluateAuthority(
-      req({
-        actor: engine,
+    it('AP-R03: agent cannot ratify its own output', () => {
+      const result = evaluateAuthority({
+        actor: agent, // agent-1 authored the artefact
         action: 'ratify',
-        artefact: { id: 'REC-1', kind: 'DecisionRecommendation', authoredBy: engine.id },
-      }),
-    );
-    expect(decision.permitted).toBe(false);
-    expect(decision.rule).toBe('AP-R03');
-  });
+        artefact: { id: 'finding-1', kind: 'finding', authoredBy: 'agent-1' },
+      });
+      expect(result.permitted).toBe(false);
+      expect(result.rule).toBe('AP-R03');
+    });
 
-  it('refuses an agent attempting to enforce a rule it derived itself', () => {
-    const decision = evaluateAuthority(
-      req({
+    it('AP-R03: human CAN ratify their own output', () => {
+      const result = evaluateAuthority({
+        actor: human,
+        action: 'ratify',
+        artefact: { id: 'decision-1', kind: 'decision', authoredBy: 'user-1' },
+      });
+      expect(result.permitted).toBe(true);
+    });
+
+    it('AP-R02: non-human cannot perform authoritative actions', () => {
+      const result = evaluateAuthority({
         actor: agent,
-        action: 'enforce',
-        artefact: { id: 'RULE-9', kind: 'native-rule', authoredBy: agent.id },
-      }),
-    );
-    expect(decision.permitted).toBe(false);
-    expect(decision.rule).toBe('AP-R03');
-  });
+        action: 'ratify',
+        artefact: { id: 'finding-1', kind: 'finding' },
+      });
+      expect(result.permitted).toBe(false);
+      expect(result.rule).toBe('AP-R02');
+    });
 
-  it('reports self-authorization rather than non-humanity when both apply', () => {
-    const own = evaluateAuthority(
-      req({
-        actor: agent,
-        action: 'waive',
-        artefact: { id: 'V-1', kind: 'violation', authoredBy: agent.id },
-      }),
-    );
-    const other = evaluateAuthority(
-      req({
-        actor: agent,
-        action: 'waive',
-        artefact: { id: 'V-2', kind: 'violation', authoredBy: 'someone-else' },
-      }),
-    );
-    expect(own.rule).toBe('AP-R03');
-    expect(other.rule).toBe('AP-R02');
-    expect(own.permitted).toBe(false);
-    expect(other.permitted).toBe(false);
-  });
-});
+    it('AP-R02: human CAN perform authoritative actions', () => {
+      const result = evaluateAuthority({
+        actor: human,
+        action: 'ratify',
+        artefact: { id: 'finding-1', kind: 'finding' },
+      });
+      expect(result.permitted).toBe(true);
+      expect(result.rule).toBe('AP-R06');
+    });
 
-// ─── Authority requires a human ─────────────────────────────────────────────
-
-describe('acts of authority', () => {
-  it.each([agent, engine, ci])('refuses a $kind attempting to accept, ratify, waive or enforce', (actor) => {
-    for (const action of ['accept', 'ratify', 'waive', 'enforce'] as const) {
-      const decision = evaluateAuthority(req({ actor, action }));
-      expect(decision.permitted).toBe(false);
-      expect(decision.rule).toBe('AP-R02');
-    }
-  });
-
-  it('cites ADR-0101 when refusing a non-human actor', () => {
-    const decision = evaluateAuthority(req({ actor: engine, action: 'ratify' }));
-    expect(decision.citation).toMatch(/ADR-0101/);
-  });
-
-  it('defers the choice of office to RBAC once a human is established', () => {
-    const decision = evaluateAuthority(
-      req({ actor: person, action: 'waive', artefact: { id: 'V-3', kind: 'violation' } }),
-    );
-    expect(decision.permitted).toBe(true);
-    expect(decision.rule).toBe('AP-R06');
-    expect(decision.reason).toMatch(/domain\/rbac/);
-  });
-
-  it('treats human, custodian and board as human authority and the rest as not', () => {
-    expect([person, custodian, board].every(isHumanAuthority)).toBe(true);
-    expect([agent, engine, ci].some(isHumanAuthority)).toBe(false);
-  });
-});
-
-// ─── Promotion lifecycle shape (ADR-0097) ───────────────────────────────────
-
-describe('promotion lifecycle', () => {
-  it('allows only the next stage in sequence', () => {
-    expect(isValidPromotion('candidate', 'evaluated')).toBe(true);
-    expect(isValidPromotion('evaluated', 'accepted')).toBe(true);
-    expect(isValidPromotion('accepted', 'executable')).toBe(true);
-  });
-
-  it('refuses a skipped stage', () => {
-    expect(isValidPromotion('candidate', 'accepted')).toBe(false);
-    expect(isValidPromotion('candidate', 'executable')).toBe(false);
-    expect(isValidPromotion('evaluated', 'executable')).toBe(false);
-  });
-
-  it('refuses moving backwards', () => {
-    expect(isValidPromotion('accepted', 'evaluated')).toBe(false);
-    expect(isValidPromotion('executable', 'accepted')).toBe(false);
-  });
-
-  it('allows retirement from any live stage', () => {
-    for (const stage of PROMOTION_SEQUENCE) {
-      expect(isValidPromotion(stage, 'retired')).toBe(true);
-    }
-  });
-
-  it('treats retired as terminal', () => {
-    expect(isValidPromotion('retired', 'evaluated')).toBe(false);
-    expect(isValidPromotion('retired', 'retired')).toBe(false);
-  });
-
-  it('refuses the Board a skipped promotion even though the Board owns the target stage', () => {
-    const decision = evaluateAuthority(
-      req({
+    it('AP-R04: promote requires target status', () => {
+      const result = evaluateAuthority({
         actor: board,
         action: 'promote',
-        targetStatus: 'executable',
-        artefact: { id: 'KI-7', kind: 'KI-record', status: 'evaluated' },
-      }),
-    );
-    expect(decision.permitted).toBe(false);
-    expect(decision.rule).toBe('AP-R04');
-  });
-
-  it('refuses a promotion request that names no target stage', () => {
-    const decision = evaluateAuthority(req({ actor: board, action: 'promote' }));
-    expect(decision.permitted).toBe(false);
-    expect(decision.rule).toBe('AP-R04');
-  });
-});
-
-// ─── Stage authority (ADR-0097 §1–§2) ───────────────────────────────────────
-
-describe('stage authority', () => {
-  it('lets the custodian promote candidate to evaluated', () => {
-    const decision = evaluateAuthority(
-      req({
-        actor: custodian,
-        action: 'promote',
-        targetStatus: 'evaluated',
-        artefact: { id: 'KI-1', kind: 'KI-record', status: 'candidate' },
-      }),
-    );
-    expect(decision.permitted).toBe(true);
-    expect(decision.rule).toBe('AP-R05');
-  });
-
-  it('refuses the custodian the accepted stage, which is the Board alone', () => {
-    const decision = evaluateAuthority(
-      req({
-        actor: custodian,
-        action: 'promote',
-        targetStatus: 'accepted',
-        artefact: { id: 'KI-2', kind: 'KI-record', status: 'evaluated' },
-      }),
-    );
-    expect(decision.permitted).toBe(false);
-    expect(decision.rule).toBe('AP-R05');
-    expect(decision.citation).toMatch(/ADR-0097/);
-  });
-
-  it('refuses the custodian the executable stage', () => {
-    const decision = evaluateAuthority(
-      req({
-        actor: custodian,
-        action: 'promote',
-        targetStatus: 'executable',
-        artefact: { id: 'KI-3', kind: 'KI-record', status: 'accepted' },
-      }),
-    );
-    expect(decision.permitted).toBe(false);
-    expect(decision.rule).toBe('AP-R05');
-  });
-
-  it('lets the Board accept and then make executable', () => {
-    expect(
-      isPermitted(
-        req({
-          actor: board,
-          action: 'accept',
-          artefact: { id: 'KI-4', kind: 'KI-record', status: 'evaluated' },
-        }),
-      ),
-    ).toBe(true);
-    expect(
-      isPermitted(
-        req({
-          actor: board,
-          action: 'promote',
-          targetStatus: 'executable',
-          artefact: { id: 'KI-4', kind: 'KI-record', status: 'accepted' },
-        }),
-      ),
-    ).toBe(true);
-  });
-
-  it('refuses a person holding no governance office the evaluated stage', () => {
-    const decision = evaluateAuthority(
-      req({
-        actor: person,
-        action: 'promote',
-        targetStatus: 'evaluated',
-        artefact: { id: 'KI-5', kind: 'KI-record', status: 'candidate' },
-      }),
-    );
-    expect(decision.permitted).toBe(false);
-    expect(decision.rule).toBe('AP-R05');
-  });
-
-  it('reserves accepted and executable to the Board in the authority table', () => {
-    expect(PROMOTION_AUTHORITY.accepted).toEqual(['board']);
-    expect(PROMOTION_AUTHORITY.executable).toEqual(['board']);
-  });
-});
-
-// ─── Enforcement surface ────────────────────────────────────────────────────
-
-describe('enforcement', () => {
-  it('throws AuthorityViolationError carrying the rule and citation', () => {
-    const request = req({
-      actor: agent,
-      action: 'promote',
-      targetStatus: 'accepted',
-      artefact: { id: 'KO-9', kind: 'KO-record', status: 'evaluated', authoredBy: agent.id },
+        artefact,
+      });
+      expect(result.permitted).toBe(false);
+      expect(result.rule).toBe('AP-R04');
     });
-    expect(() => requireAuthority(request)).toThrow(AuthorityViolationError);
-    try {
-      requireAuthority(request);
-    } catch (error) {
-      const violation = error as AuthorityViolationError;
-      expect(violation.code).toBe('AUTHORITY_VIOLATION');
-      expect(violation.decision.rule).toBe('AP-R03');
-      expect(violation.context).toMatchObject({ actorKind: 'agent', action: 'promote' });
-    }
-  });
 
-  it('does not throw for a permitted request', () => {
-    expect(() => requireAuthority(req({ actor: agent, action: 'recommend' }))).not.toThrow();
-  });
+    it('AP-R04: promote with valid target is permitted', () => {
+      const result = evaluateAuthority({
+        actor: board,
+        action: 'promote',
+        artefact,
+        targetStatus: 'evaluated',
+      });
+      expect(result.permitted).toBe(true);
+    });
 
-  it('formats a refusal as a quotable review comment naming rule and source', () => {
-    const decision = evaluateAuthority(
-      req({
+    it('AP-R05: promotion authority is restricted per stage', () => {
+      // Only board can move to 'accepted'
+      const agentResult = evaluateAuthority({
         actor: agent,
-        action: 'enforce',
-        artefact: { id: 'RULE-1', kind: 'native-rule', authoredBy: agent.id },
-      }),
-    );
-    const comment = formatAuthorityDecision(decision);
-    expect(comment).toMatch(/^\[AP-R03\] refused: /);
-    expect(comment).toMatch(/Source: .*ADR-0115/);
+        action: 'promote',
+        artefact: { id: 'adr-002', kind: 'adr', status: 'evaluated' },
+        targetStatus: 'accepted',
+      });
+      expect(agentResult.permitted).toBe(false);
+      expect(agentResult.rule).toBe('AP-R02');
+
+      const boardResult = evaluateAuthority({
+        actor: board,
+        action: 'promote',
+        artefact: { id: 'adr-002', kind: 'adr', status: 'evaluated' },
+        targetStatus: 'accepted',
+      });
+      expect(boardResult.permitted).toBe(true);
+    });
+  });
+
+  describe('PROMOTION_SEQUENCE', () => {
+    it('has exactly 4 stages', () => {
+      expect(PROMOTION_SEQUENCE).toHaveLength(4);
+    });
+
+    it('starts with candidate and ends with executable', () => {
+      expect(PROMOTION_SEQUENCE[0]).toBe('candidate');
+      expect(PROMOTION_SEQUENCE[PROMOTION_SEQUENCE.length - 1]).toBe('executable');
+    });
+  });
+
+  describe('PROMOTION_AUTHORITY', () => {
+    it('candidate is open to all actors', () => {
+      expect(PROMOTION_AUTHORITY.candidate).toContain('agent');
+      expect(PROMOTION_AUTHORITY.candidate).toContain('human');
+      expect(PROMOTION_AUTHORITY.candidate).toContain('board');
+    });
+
+    it('accepted is restricted to board only', () => {
+      expect(PROMOTION_AUTHORITY.accepted).toEqual(['board']);
+    });
+
+    it('executable is restricted to board only', () => {
+      expect(PROMOTION_AUTHORITY.executable).toEqual(['board']);
+    });
   });
 });

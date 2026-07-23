@@ -17,6 +17,17 @@ export interface AuditEvent {
   readonly errorMessage?: string;
 }
 
+/** Parameters for logEvent — shared by tool, resource, and prompt access logging. */
+export interface AuditEventParams {
+  tool: string;
+  args: Record<string, unknown>;
+  context: AuditEvent['context'];
+  durationMs: number;
+  status: 'success' | 'error' | 'denied';
+  correlationId: string;
+  errorMessage?: string;
+}
+
 @Injectable()
 export class AuditLogger {
   private readonly logger = new Logger('AuditLogger');
@@ -40,55 +51,31 @@ export class AuditLogger {
     this.logger.log(JSON.stringify(event));
   }
 
-  logToolCall(params: {
-    tool: string;
-    args: Record<string, unknown>;
-    context: AuditEvent['context'];
-    durationMs: number;
-    status: 'success' | 'error' | 'denied';
-    correlationId: string;
-    errorMessage?: string;
-  }): void {
-    this.log({
-      tool: params.tool,
-      args: params.args,
-      context: params.context,
-      durationMs: params.durationMs,
-      status: params.status,
-      correlationId: params.correlationId,
-      timestamp: new Date().toISOString(),
-      errorMessage: params.errorMessage,
-    });
-  }
-
-  logResourceAccess(params: {
-    tool: string;
-    args: Record<string, unknown>;
-    context: AuditEvent['context'];
-    durationMs: number;
-    status: 'success' | 'error' | 'denied';
-    correlationId: string;
-    errorMessage?: string;
-  }): void {
+  /**
+   * Log any access event (tool, resource, or prompt).
+   * Single method replacing the previous logToolCall/logResourceAccess/logPromptAccess
+   * which were identical in behavior (DRY refactoring).
+   */
+  logEvent(params: AuditEventParams): void {
     this.log({
       ...params,
       timestamp: new Date().toISOString(),
     });
   }
 
-  logPromptAccess(params: {
-    tool: string;
-    args: Record<string, unknown>;
-    context: AuditEvent['context'];
-    durationMs: number;
-    status: 'success' | 'error' | 'denied';
-    correlationId: string;
-    errorMessage?: string;
-  }): void {
-    this.log({
-      ...params,
-      timestamp: new Date().toISOString(),
-    });
+  /** @deprecated Use logEvent() instead. Kept for backward compatibility. */
+  logToolCall(params: AuditEventParams): void {
+    this.logEvent(params);
+  }
+
+  /** @deprecated Use logEvent() instead. Kept for backward compatibility. */
+  logResourceAccess(params: AuditEventParams): void {
+    this.logEvent(params);
+  }
+
+  /** @deprecated Use logEvent() instead. Kept for backward compatibility. */
+  logPromptAccess(params: AuditEventParams): void {
+    this.logEvent(params);
   }
 
   getRecentEvents(limit = Number(process.env.AUDIT_DEFAULT_QUERY_LIMIT) || 50): readonly AuditEvent[] {

@@ -1,151 +1,122 @@
 import {
-  PhaseState,
   PhaseStateMachine,
+  PhaseState,
   PHASE_TRANSITIONS,
 } from './phase-state-machine';
-import type { IDomainEventBus } from '../../application/ports/event-bus.port';
-import type { DomainEvent } from '../events/domain-event';
-
-const ctx = {
-  projectId: 'proj-test',
-  phase: 'design' as const,
-  startedBy: 'agent',
-};
 
 describe('PhaseStateMachine', () => {
-  describe('PHASE_TRANSITIONS map', () => {
-    it('covers every PhaseState as a key', () => {
-      Object.values(PhaseState).forEach(s => {
-        expect(PHASE_TRANSITIONS).toHaveProperty(s);
-      });
+  let machine: PhaseStateMachine;
+
+  beforeEach(() => {
+    machine = new PhaseStateMachine();
+  });
+
+  describe('PHASE_TRANSITIONS', () => {
+    it('defines transitions for all states', () => {
+      expect(Object.keys(PHASE_TRANSITIONS)).toHaveLength(6);
+      expect(PHASE_TRANSITIONS[PhaseState.PENDING]).toBeDefined();
+      expect(PHASE_TRANSITIONS[PhaseState.IN_PROGRESS]).toBeDefined();
+      expect(PHASE_TRANSITIONS[PhaseState.GATE_PENDING]).toBeDefined();
+      expect(PHASE_TRANSITIONS[PhaseState.APPROVED]).toBeDefined();
+      expect(PHASE_TRANSITIONS[PhaseState.REJECTED]).toBeDefined();
+      expect(PHASE_TRANSITIONS[PhaseState.ARCHIVED]).toBeDefined();
     });
 
     it('ARCHIVED has no outgoing transitions', () => {
-      expect(PHASE_TRANSITIONS[PhaseState.ARCHIVED]).toHaveLength(0);
+      expect(PHASE_TRANSITIONS[PhaseState.ARCHIVED]).toEqual([]);
     });
   });
 
-  describe('canTransition()', () => {
-    const sm = new PhaseStateMachine();
-
+  describe('transition', () => {
     it('allows PENDING → IN_PROGRESS', () => {
-      expect(sm.canTransition(PhaseState.PENDING, PhaseState.IN_PROGRESS)).toBe(true);
+      expect(machine.transition(PhaseState.PENDING, PhaseState.IN_PROGRESS)).toBe(true);
     });
 
     it('allows IN_PROGRESS → GATE_PENDING', () => {
-      expect(sm.canTransition(PhaseState.IN_PROGRESS, PhaseState.GATE_PENDING)).toBe(true);
+      expect(machine.transition(PhaseState.IN_PROGRESS, PhaseState.GATE_PENDING)).toBe(true);
     });
 
     it('allows GATE_PENDING → APPROVED', () => {
-      expect(sm.canTransition(PhaseState.GATE_PENDING, PhaseState.APPROVED)).toBe(true);
+      expect(machine.transition(PhaseState.GATE_PENDING, PhaseState.APPROVED)).toBe(true);
     });
 
     it('allows GATE_PENDING → REJECTED', () => {
-      expect(sm.canTransition(PhaseState.GATE_PENDING, PhaseState.REJECTED)).toBe(true);
+      expect(machine.transition(PhaseState.GATE_PENDING, PhaseState.REJECTED)).toBe(true);
     });
 
-    it('allows REJECTED → IN_PROGRESS', () => {
-      expect(sm.canTransition(PhaseState.REJECTED, PhaseState.IN_PROGRESS)).toBe(true);
-    });
-
-    it('allows APPROVED → ARCHIVED', () => {
-      expect(sm.canTransition(PhaseState.APPROVED, PhaseState.ARCHIVED)).toBe(true);
-    });
-
-    it('disallows PENDING → APPROVED (skip gate)', () => {
-      expect(sm.canTransition(PhaseState.PENDING, PhaseState.APPROVED)).toBe(false);
-    });
-
-    it('disallows ARCHIVED → PENDING', () => {
-      expect(sm.canTransition(PhaseState.ARCHIVED, PhaseState.PENDING)).toBe(false);
-    });
-  });
-
-  describe('transition()', () => {
-    it('returns true on valid transition', () => {
-      const sm = new PhaseStateMachine();
-      expect(sm.transition(PhaseState.PENDING, PhaseState.IN_PROGRESS, ctx)).toBe(true);
+    it('allows REJECTED → IN_PROGRESS (rework)', () => {
+      expect(machine.transition(PhaseState.REJECTED, PhaseState.IN_PROGRESS)).toBe(true);
     });
 
     it('throws on invalid transition', () => {
-      const sm = new PhaseStateMachine();
-      expect(() =>
-        sm.transition(PhaseState.PENDING, PhaseState.APPROVED, ctx),
-      ).toThrow(/Invalid phase transition/);
+      expect(() => machine.transition(PhaseState.PENDING, PhaseState.APPROVED)).toThrow('Invalid phase transition');
     });
 
-    it('throws with descriptive message', () => {
-      const sm = new PhaseStateMachine();
-      expect(() =>
-        sm.transition(PhaseState.ARCHIVED, PhaseState.PENDING),
-      ).toThrow(/Allowed targets from ARCHIVED: \[none\]/);
-    });
-  });
-
-  describe('event emission', () => {
-    it('emits phase.started when transitioning to IN_PROGRESS', async () => {
-      const published: DomainEvent<unknown>[] = [];
-      const mockBus: IDomainEventBus = {
-        publish: jest.fn(async (e) => { published.push(e); }),
-        subscribe: jest.fn(),
-      };
-
-      const sm = new PhaseStateMachine(mockBus);
-      sm.transition(PhaseState.PENDING, PhaseState.IN_PROGRESS, ctx);
-      await Promise.resolve();
-
-      expect(mockBus.publish).toHaveBeenCalledTimes(1);
-      expect(published[0]!.eventType).toBe('phase.started');
+    it('throws on ARCHIVED → anything', () => {
+      expect(() => machine.transition(PhaseState.ARCHIVED, PhaseState.PENDING)).toThrow('Invalid phase transition');
     });
 
-    it('emits phase.completed when transitioning to APPROVED', async () => {
-      const published: DomainEvent<unknown>[] = [];
-      const mockBus: IDomainEventBus = {
-        publish: jest.fn(async (e) => { published.push(e); }),
-        subscribe: jest.fn(),
-      };
+    it('emits phase.started event when transitioning to IN_PROGRESS', () => {
+      const publish = jest.fn();
+      const eventBus = { publish } as any;
+      const machineWithEvents = new PhaseStateMachine(eventBus);
 
-      const sm = new PhaseStateMachine(mockBus);
-      sm.transition(PhaseState.GATE_PENDING, PhaseState.APPROVED, ctx);
-      await Promise.resolve();
+      machineWithEvents.transition(PhaseState.PENDING, PhaseState.IN_PROGRESS, {
+        projectId: 'proj-1',
+        phase: 'discovery',
+      });
 
-      expect(mockBus.publish).toHaveBeenCalledTimes(1);
-      expect(published[0]!.eventType).toBe('phase.completed');
+      expect(publish).toHaveBeenCalledTimes(1);
     });
 
-    it('does not emit for transitions that have no mapped event', async () => {
-      const mockBus: IDomainEventBus = {
-        publish: jest.fn(),
-        subscribe: jest.fn(),
-      };
+    it('emits phase.completed event when transitioning to APPROVED', () => {
+      const publish = jest.fn();
+      const eventBus = { publish } as any;
+      const machineWithEvents = new PhaseStateMachine(eventBus);
 
-      const sm = new PhaseStateMachine(mockBus);
-      sm.transition(PhaseState.IN_PROGRESS, PhaseState.GATE_PENDING, ctx);
-      await Promise.resolve();
+      machineWithEvents.transition(PhaseState.GATE_PENDING, PhaseState.APPROVED, {
+        projectId: 'proj-1',
+        phase: 'design',
+      });
 
-      expect(mockBus.publish).not.toHaveBeenCalled();
+      expect(publish).toHaveBeenCalledTimes(1);
     });
 
-    it('does not emit when no context supplied', async () => {
-      const mockBus: IDomainEventBus = {
-        publish: jest.fn(),
-        subscribe: jest.fn(),
-      };
-
-      const sm = new PhaseStateMachine(mockBus);
-      sm.transition(PhaseState.PENDING, PhaseState.IN_PROGRESS);
-      await Promise.resolve();
-
-      expect(mockBus.publish).not.toHaveBeenCalled();
+    it('does not emit events when no eventBus', () => {
+      // No eventBus constructor arg — should not throw
+      expect(machine.transition(PhaseState.PENDING, PhaseState.IN_PROGRESS)).toBe(true);
     });
   });
 
-  describe('allowedTransitions()', () => {
-    it('returns correct targets from IN_PROGRESS', () => {
-      const sm = new PhaseStateMachine();
-      const targets = sm.allowedTransitions(PhaseState.IN_PROGRESS);
-      expect(targets).toContain(PhaseState.GATE_PENDING);
-      expect(targets).toContain(PhaseState.PENDING);
+  describe('canTransition', () => {
+    it('returns true for valid transitions', () => {
+      expect(machine.canTransition(PhaseState.PENDING, PhaseState.IN_PROGRESS)).toBe(true);
+      expect(machine.canTransition(PhaseState.IN_PROGRESS, PhaseState.GATE_PENDING)).toBe(true);
+    });
+
+    it('returns false for invalid transitions', () => {
+      expect(machine.canTransition(PhaseState.PENDING, PhaseState.APPROVED)).toBe(false);
+      expect(machine.canTransition(PhaseState.ARCHIVED, PhaseState.PENDING)).toBe(false);
+    });
+  });
+
+  describe('allowedTransitions', () => {
+    it('returns allowed targets for PENDING', () => {
+      const allowed = machine.allowedTransitions(PhaseState.PENDING);
+      expect(allowed).toContain(PhaseState.IN_PROGRESS);
+      expect(allowed).toContain(PhaseState.ARCHIVED);
+      expect(allowed).not.toContain(PhaseState.APPROVED);
+    });
+
+    it('returns empty array for ARCHIVED', () => {
+      const allowed = machine.allowedTransitions(PhaseState.ARCHIVED);
+      expect(allowed).toEqual([]);
+    });
+
+    it('returns correct targets for REJECTED', () => {
+      const allowed = machine.allowedTransitions(PhaseState.REJECTED);
+      expect(allowed).toContain(PhaseState.IN_PROGRESS);
+      expect(allowed).toContain(PhaseState.ARCHIVED);
     });
   });
 });

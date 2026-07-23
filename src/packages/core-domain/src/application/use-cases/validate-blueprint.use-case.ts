@@ -10,6 +10,11 @@
  *
  * On success the blueprint state transitions DRAFT → SUBMITTED → VALIDATING → VALIDATED
  * and the DomainEvents bus receives BlueprintGeneratedEvent + BlueprintValidatedEvent.
+ *
+ * DIP TODO: Directly imports `fs` (sync operations). Should accept IFileSystem
+ * via constructor injection for testability and to follow the hexagonal boundary.
+ * The sync operations (existsSync, readdirSync, readFileSync) need an async
+ * refactor or a dedicated IFileSystemSync port.
  */
 
 import * as path from 'path';

@@ -4,7 +4,17 @@ import * as yaml from 'yaml';
 import { McpTool } from '../mcp/tool.interface';
 import { sanitizePathInput } from '../utils/path-security';
 
-/** Read/write tools over a repository's `evolith.yaml`. */
+/**
+ * Config tools — reads/writes evolith.yaml.
+ *
+ * DIP NOTE: Directly imports fs-extra and yaml. Other tool files in this
+ * package accept IFileSystem as a parameter. For consistency, this file
+ * should be refactored to accept injected dependencies. However, since
+ * config tools are simple CRUD operations on a single YAML file, the
+ * practical benefit is low. Marked for future cleanup.
+ *
+ * TODO: Accept IFileSystem + IConfigParser as parameters for DI consistency.
+ */
 export function createConfigTools(): McpTool[] {
   return [
     {
@@ -42,8 +52,6 @@ export function createConfigTools(): McpTool[] {
 
 async function handleConfigGet(args: Record<string, unknown>) {
   const dir = (args.dir as string) || process.cwd();
-  // Validate the dir itself doesn't contain traversal sequences (H4 / CWE-22).
-  // The caller's dir is the boundary — we check it doesn't escape itself.
   const resolvedDir = path.resolve(dir);
   const configPath = path.join(resolvedDir, 'evolith.yaml');
   if (!(await fs.pathExists(configPath))) throw new Error('evolith.yaml not found');

@@ -16,6 +16,9 @@
  * OR the deprecated `f1..f5` / `gate-f1..f5` aliases — both are accepted and
  * matched after normalization. The on-disk gate/artifact data is still keyed
  * by the legacy `f#` id, so lookups normalize to it via `toLegacyPhaseId`.
+ *
+ * DIP TODO: Directly imports `fs` (sync operations). Should accept IFileSystem
+ * via constructor injection for testability and hexagonal boundary compliance.
  */
 
 import * as path from 'path';

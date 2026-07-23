@@ -1,3 +1,7 @@
+/**
+ * DIP TODO: Directly imports `fs`. Should accept IFileSystem via injection
+ * for testability and hexagonal boundary compliance.
+ */
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';

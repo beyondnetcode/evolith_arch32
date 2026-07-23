@@ -209,6 +209,7 @@ Evolith CLI ships **25 commands** and is configured via **`evolith.yaml`**. Full
 | Operations & SRE | [Operations hub](./product/operations/README.md) |
 | Onboarding by role | Getting Started by Role |
 | Ecosystem glossary | [Glossary](./reference/core/sdlc/glossary/glossary-ecosystem.md) |
+| Questions & Answers | [Q&A](./reference/core/sdlc/q-and-a.md) |
 | Gap tracking | [Gap Tracking Board](./reference/core/control-center/gaps/gap-tracking.md) |
 | Opportunities | [Opportunities Board](./reference/core/control-center/opportunities/README.md) |
 | All artifacts | [Global Master Index](./reference/core/control-center/taxonomy/MASTER_INDEX.md) |

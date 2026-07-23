@@ -164,7 +164,7 @@ export class ApiKeyProvisioningService {
 
     const result = this.generateKey(clientLabel, {
       scopes: ['read', 'write', 'admin'],
-      expiryDays: 365,
+      expiryDays: Number(process.env.API_KEY_LEGACY_EXPIRY_DAYS) || 365,
     });
 
     this.logger.log(`Migrated legacy API key for client "${clientLabel}" to ${result.metadata.id}`);

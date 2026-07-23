@@ -89,7 +89,12 @@ export class HarnessProcessAdapter implements IHarnessPort {
     };
 
     return await new Promise<HarnessExecutionResult>((resolve) => {
-      const child = spawn(command, args, { cwd: this.cwd, env });
+      const child = spawn(command, args, { cwd: this.cwd, env, stdio: ['pipe', 'pipe', 'pipe'] });
+      // Pass args via stdin for shell runner to prevent command injection (CWE-78)
+      if (cap.runner === 'shell') {
+        child.stdin?.write(JSON.stringify(request.args ?? {}));
+        child.stdin?.end();
+      }
       let stdout = '';
       let stderr = '';
       const timer = setTimeout(() => child.kill('SIGKILL'), this.timeoutMs);
@@ -129,7 +134,9 @@ export class HarnessProcessAdapter implements IHarnessPort {
         // Entry is the opa binary; args are forwarded verbatim if provided.
         return { command: entryPath, args: this.opaArgs(request) };
       case 'shell':
-        return { command: 'sh', args: ['-c', `${entryPath} ${argsJson}`] };
+        // Pass args via stdin (not string interpolation) to prevent command injection (CWE-78).
+        // The shell script should read from stdin or $AGENT_RUNTIME_ARGS env var.
+        return { command: entryPath, args: [] };
       case 'node':
       default:
         return { command: this.nodePath, args: [entryPath, '--args', argsJson] };

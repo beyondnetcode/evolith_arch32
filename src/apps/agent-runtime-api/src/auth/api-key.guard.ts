@@ -149,11 +149,11 @@ export class ApiKeyGuard implements CanActivate {
     return undefined;
   }
 
-  /** Constant-time-ish comparison to avoid trivial timing leaks. */
+  /** Constant-time comparison (CWE-208). Hash to fixed-length before comparing. */
   private safeEqual(a: string, b: string): boolean {
-    if (a.length !== b.length) return false;
-    let diff = 0;
-    for (let i = 0; i < a.length; i += 1) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-    return diff === 0;
+    const { createHash, timingSafeEqual } = require('node:crypto');
+    const ha = createHash('sha256').update(a).digest();
+    const hb = createHash('sha256').update(b).digest();
+    return timingSafeEqual(ha, hb);
   }
 }

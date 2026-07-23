@@ -16,6 +16,28 @@ async function bootstrap() {
   // so we only coerce types here and never strip unknown fields.
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
+  // Rate limiting: simple in-memory IP-based limiter (100 req/min per IP)
+  // to prevent DoS on agent endpoints (MEDIUM finding).
+  const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+  const RATE_WINDOW = 60_000;
+  const RATE_MAX = 100;
+  app.use((req: any, res: any, next: any) => {
+    const ip = req.socket?.remoteAddress || 'unknown';
+    const now = Date.now();
+    const entry = rateLimitMap.get(ip);
+    if (!entry || now > entry.resetAt) {
+      rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_WINDOW });
+    } else {
+      entry.count++;
+      if (entry.count > RATE_MAX) {
+        res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '60' });
+        res.end(JSON.stringify({ error: 'Too many requests', retryAfter: 60 }));
+        return;
+      }
+    }
+    next();
+  });
+
   const nodeEnv = process.env.NODE_ENV ?? "development";
   const rawOrigins = process.env.CORS_ORIGINS;
   app.enableCors({

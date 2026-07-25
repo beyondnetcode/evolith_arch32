@@ -1,0 +1,267 @@
+# ──────────────────────────────────────────────────────────────────────────
+# Evolith — FULL-STACK local bring-up (Objective 1 / GT-447).
+#
+# One command brings up the WHOLE product a person can navigate in a browser:
+#
+#   Engine (this repo, evolith)          Companion app + UI (sibling repo, evolith_tracker)
+#   ───────────────────────────          ───────────────────────────────────────────────
+#   redis                                tracker-postgres  (Tracker store)
+#   core-api        :3001                tracker-migrate   (EF Core migrations, one-shot)
+#   mcp             :3002                tracker-api  :5100 (.NET BFF, dev-auth)
+#   agent-runtime   :3003                tracker-gateway :4000 (NestJS aggregation BFF)
+#                                        tracker-web  :8088 (React SPA served by nginx)
+#
+# The browser chain (Objective-1 closure criterion) is:
+#   tracker-web (nginx, /api → tracker-api)
+#     → tracker-api (BFF, dev-auth)
+#       → core-api  POST /api/v1/evaluate   ← the governed evaluation, and back
+#
+# The tracker-api → core-api evaluation hop is wired DIRECT here (CoreApi__BaseUrl =
+# http://core-api:3000/api/v1), which is the gateway code's own default topology and the
+# exact flow GT-447 describes ("Tracker BFF → Core evaluate() and back"). The NestJS
+# tracker-gateway is also brought up (ADR T-052 aggregation surface, consuming core-api +
+# evolith-mcp), reachable on :4000, but it is NOT on the SPA's critical request path.
+#
+# USAGE (from the repo root or product/infra):
+#   cd product/infra
+#   EVOLITH_API_KEY=local-dev-key docker compose -f docker-compose.fullstack.yml up -d --build
+#   open http://localhost:8088          # Evolith Tracker Control Tower (dev-auth)
+#   docker compose -f docker-compose.fullstack.yml down -v
+#
+# NOTE: this file has cross-repo build contexts — it expects the `evolith_tracker`
+# repository checked out as a SIBLING of this repo (../../../evolith_tracker/src).
+# Run EITHER this file OR docker-compose.evolith.yml (engine-only), not both at once.
+# ──────────────────────────────────────────────────────────────────────────
+name: evolith-fullstack
+
+x-api-key: &api_key ${EVOLITH_API_KEY:-local-dev-key}
+
+services:
+  # ─── Engine: shared cache ────────────────────────────────────────────────
+  redis:
+    image: redis:7.2-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks: [evolith]
+
+  # ─── Engine: Core API (stateless evaluation engine, ADR-0101) ────────────
+  core-api:
+    build:
+      context: ../..
+      dockerfile: src/apps/core-api/Dockerfile
+    image: evolith-core-api:local
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      EVOLITH_API_KEY: *api_key
+      CORE_PATH: /app/corpus
+      WORKSPACE_ROOT: /app/corpus
+      REDIS_URL: redis://redis:6379
+      EVOLITH_METRICS_TENANT_ALLOWLIST: ${EVOLITH_METRICS_TENANT_ALLOWLIST:-}
+    ports:
+      - "3001:3000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks: [evolith]
+
+  # ─── Engine: MCP server (agent-facing surface) ───────────────────────────
+  mcp:
+    build:
+      context: ../..
+      dockerfile: src/packages/mcp-server/Dockerfile
+    image: evolith-mcp:local
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      TRANSPORT: http
+      EVOLITH_API_KEY: *api_key
+      EVOLITH_MCP_ALLOW_NO_AUTH: "false"
+      CORE_PATH: /app/corpus
+      WORKSPACE_ROOT: /app/corpus
+    ports:
+      - "3002:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks: [evolith]
+
+  # ─── Engine: Agent Runtime (uses the REAL Core over HTTP, GT-438) ────────
+  agent-runtime:
+    build:
+      context: ../..
+      dockerfile: src/apps/agent-runtime-api/Dockerfile
+    image: evolith-agent-runtime:local
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      AGENT_RUNTIME_API_KEY: *api_key
+      AGENT_RUNTIME_CORE_ENDPOINT: http://core-api:3000/api/v1/evaluate
+      AGENT_RUNTIME_CORE_TOKEN: *api_key
+      # GT-441: route sensitive-capability HITL approvals to the Tracker. The key is
+      # the CoreMachine credential the Tracker binds to a tenant (see tracker-api).
+      AGENT_RUNTIME_APPROVAL_TRACKER_URL: http://tracker-api:8080/api/v1
+      AGENT_RUNTIME_APPROVAL_TRACKER_KEY: ${HITL_CORE_MACHINE_KEY:-evolith-core-machine-key-local-dev-000000000001}
+    ports:
+      - "3003:3000"
+    depends_on:
+      core-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks: [evolith]
+
+  # ─── Tracker: Postgres store ─────────────────────────────────────────────
+  tracker-postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: evolith
+      POSTGRES_PASSWORD: localdev
+      POSTGRES_DB: evolith_tracker
+    ports:
+      - "5433:5432"
+    volumes:
+      - tracker_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U evolith -d evolith_tracker"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [evolith]
+
+  # ─── Tracker: EF Core migrations (one-shot, runs before tracker-api) ─────
+  # The .NET image carries pre-built EF migration bundles (one per DbContext).
+  # DS-08: migrations run out-of-band, NOT at app startup, so replicas never race.
+  tracker-migrate:
+    build:
+      context: ../../../evolith_tracker/src
+      dockerfile: apps/tracker-api/Dockerfile
+    image: evolith-tracker-api:local
+    restart: "no"
+    environment:
+      # The EF bundle is a single-file executable that self-extracts; the runtime
+      # user (uid 1001) has no home dir, so point the extraction cache at /tmp.
+      DOTNET_BUNDLE_EXTRACT_BASE_DIR: /tmp/efbundle
+      PGCONN: Host=tracker-postgres;Port=5432;Database=evolith_tracker;Username=evolith;Password=localdev
+    entrypoint: ["/bin/sh", "-c"]
+    # One bundle per DbContext (TrackerDbContext + TenantProjectionDbContext); apply both.
+    command:
+      - '/app/efbundle/efbundle --connection "$$PGCONN" && /app/efbundle-projection/efbundle-projection --connection "$$PGCONN"'
+    depends_on:
+      tracker-postgres:
+        condition: service_healthy
+    networks: [evolith]
+
+  # ─── Tracker: API (.NET 10 BFF, dev-auth in Development) ─────────────────
+  tracker-api:
+    image: evolith-tracker-api:local
+    restart: unless-stopped
+    environment:
+      # Development enables the DevBypass auth scheme (no UMS needed locally).
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=tracker-postgres;Port=5432;Database=evolith_tracker;Username=evolith;Password=localdev
+      # Direct Tracker-BFF → Core evaluation hop (code default topology; GT-447 flow).
+      CoreApi__BaseUrl: http://core-api:3000/api/v1
+      CoreApi__ApiKey: *api_key
+      CoreApi__MockFallback: "false"
+      CoreApi__LocalWorkspaceRef: rulesets
+      # SPA origin allowed through CORS (nginx same-origin proxy also covers this).
+      Cors__Origins__0: http://localhost:8088
+      # GT-441 / CD-23: a CoreMachine key for the agent-runtime HITL client. The
+      # Tracker derives the tenant from WHICH key matched, so this key is bound to
+      # the local dev tenant; the machine can only submit approvals (not resolve).
+      CoreMachine__Keys__0__TenantId: "11111111-1111-1111-1111-111111111111"
+      CoreMachine__Keys__0__Key: ${HITL_CORE_MACHINE_KEY:-evolith-core-machine-key-local-dev-000000000001}
+      CoreMachine__Keys__0__Status: active
+      CoreMachine__Keys__0__Description: agent-runtime local HITL (GT-441)
+    ports:
+      - "5100:8080"
+    depends_on:
+      tracker-migrate:
+        condition: service_completed_successfully
+      core-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks: [evolith]
+
+  # ─── Tracker: Gateway (NestJS aggregation BFF, ADR T-052) ────────────────
+  tracker-gateway:
+    build:
+      context: ../../../evolith_tracker/src
+      dockerfile: apps/tracker-gateway/Dockerfile
+    image: evolith-tracker-gateway:local
+    restart: unless-stopped
+    environment:
+      PORT: "4000"
+      CORE_API_BASE_URL: http://core-api:3000/api/v1
+      CORE_API_KEY: *api_key
+      CORE_MCP_URL: http://mcp:3000
+      CORE_MCP_KEY: *api_key
+      TRACKER_API_BASE_URL: http://tracker-api:8080
+    ports:
+      - "4000:4000"
+    depends_on:
+      core-api:
+        condition: service_healthy
+    networks: [evolith]
+
+  # ─── Tracker: Web SPA (React + Vite, served by nginx) ────────────────────
+  tracker-web:
+    build:
+      context: ../../../evolith_tracker/src
+      dockerfile: apps/tracker-web/Dockerfile
+      args:
+        # Bake the versioned BFF base (/api/v1) into the SPA at build time; nginx's
+        # /api/ proxy covers it. Must match tracker-api's CD-32 versioned surface.
+        VITE_TRACKER_BFF_BASE_URL: /api/v1
+    image: evolith-tracker-web:local
+    restart: unless-stopped
+    environment:
+      # nginx proxies /api/ → ${TRACKER_API_UPSTREAM}/api/ (see tracker-web nginx.conf).
+      TRACKER_API_UPSTREAM: http://tracker-api:8080
+    ports:
+      - "8088:8080"
+    depends_on:
+      tracker-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks: [evolith]
+
+networks:
+  evolith:
+    driver: bridge
+
+volumes:
+  tracker_pg_data:

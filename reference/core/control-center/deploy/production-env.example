@@ -1,0 +1,122 @@
+# ──────────────────────────────────────────────────────────────────────────
+# Evolith Engine — PRODUCTION environment template (Coolify / Hostinger VPS)
+#
+# Closes GT-448 / GT-435 ops path. PLACEHOLDER VALUES ONLY — no real secret is,
+# or must ever be, committed here. This file documents WHICH variables each
+# surface needs and WHERE the value lives; it is not loaded by anything.
+#
+# TWO distinct places hold configuration — do not mix them up:
+#   (A) GitHub repo Secrets/Variables  → drive the CD job in .github/workflows/ci-cd.yml
+#   (B) Coolify per-app Environment     → runtime config the containers read on boot
+#
+# Mirror of the proven local topology: product/infra/docker-compose.fullstack.yml
+# ──────────────────────────────────────────────────────────────────────────
+
+
+# ============================================================================
+# (A) GITHUB REPO SECRETS  —  set with: gh secret set <NAME>
+#     Consumed by the `deploy` job (Coolify hooks). Values come FROM Coolify.
+# ============================================================================
+
+# Coolify API token (Coolify → Keys & Tokens → API Tokens). Sent as
+# `Authorization: Bearer <token>` on every deploy-hook curl.
+COOLIFY_API_TOKEN=coolify-api-token-REPLACE_ME
+
+# Deploy webhook URLs — one per app (Coolify → <app> → Webhooks → Deploy).
+COOLIFY_COREAPI_DEPLOY_HOOK=https://coolify.example.com/api/v1/deploy?uuid=REPLACE_ME_COREAPI_APP12
+COOLIFY_MCP_DEPLOY_HOOK=https://coolify.example.com/api/v1/deploy?uuid=REPLACE_ME_MCP_APP13
+COOLIFY_AGENTRUNTIME_DEPLOY_HOOK=https://coolify.example.com/api/v1/deploy?uuid=REPLACE_ME_AGENTRUNTIME_APP
+
+# Not part of VPS promotion (listed for completeness):
+#   NPM_TOKEN       — only the `Publish npm` job (v* tags) uses it.
+#   GITHUB_TOKEN    — built-in; authenticates the GHCR image push. Do not create.
+
+
+# ============================================================================
+# (A) GITHUB REPO VARIABLE  —  set with: gh variable set <NAME> --body <value>
+# ============================================================================
+
+# THE production switch. `false`/unset → deploy job is skipped (GT-567, current
+# state). `true` → pushes to main trigger live Coolify deploys. IRREVERSIBLE
+# go-live; flip it as the final, deliberate user step.
+VPS_DEPLOY_ENABLED=false
+
+
+# ============================================================================
+# (B) COOLIFY RUNTIME ENV — core-api  (app id 12, GHCR: evolith-core-api)
+#     Stateless engine (ADR-0101). Corpus is baked into the image; no volume,
+#     no database of its own.
+# ============================================================================
+NODE_ENV=production
+PORT=3000
+# Shared engine API key (x-api-key). Generate a strong random value; must MATCH
+# the value used by mcp-server and by agent-runtime's AGENT_RUNTIME_CORE_TOKEN.
+# Do NOT reuse the local 'local-dev-key'.
+EVOLITH_API_KEY=CHANGE_ME_shared_engine_api_key
+# MUST stay /app/corpus — the image places rulesets + policy.wasm at
+# /app/corpus/rulesets; any other path fail-closes OPA in production.
+CORE_PATH=/app/corpus
+WORKSPACE_ROOT=/app/corpus
+# Point at the managed Coolify redis resource on the shared network.
+REDIS_URL=redis://redis:6379
+# Optional: comma-separated tenant ids allowed to read /metrics. Empty = default.
+EVOLITH_METRICS_TENANT_ALLOWLIST=
+
+
+# ============================================================================
+# (B) COOLIFY RUNTIME ENV — mcp-server  (app id 13, GHCR: evolith-mcp)
+#     Agent-facing surface. HTTP transport + API key.
+# ============================================================================
+NODE_ENV=production
+PORT=3000
+TRANSPORT=http
+# Same shared engine key as core-api.
+EVOLITH_API_KEY=CHANGE_ME_shared_engine_api_key
+# Keep auth ON in production — never 'true' on a customer-facing host.
+EVOLITH_MCP_ALLOW_NO_AUTH=false
+CORE_PATH=/app/corpus
+WORKSPACE_ROOT=/app/corpus
+
+
+# ============================================================================
+# (B) COOLIFY RUNTIME ENV — agent-runtime  (GHCR: evolith-agent-runtime)
+#     Uses the REAL Core over HTTP (GT-438).
+# ============================================================================
+NODE_ENV=production
+PORT=3000
+# Auth for the agent-runtime's own API surface.
+AGENT_RUNTIME_API_KEY=CHANGE_ME_agent_runtime_api_key
+# Where the runtime calls Core. Use the in-network core-api address + /evaluate.
+AGENT_RUNTIME_CORE_ENDPOINT=http://core-api:3000/api/v1/evaluate
+# Must equal core-api's EVOLITH_API_KEY (bearer/x-api-key the Core accepts).
+AGENT_RUNTIME_CORE_TOKEN=CHANGE_ME_shared_engine_api_key
+# GT-441 HITL — route sensitive-capability approvals to the Tracker. Only needed
+# if HITL is enabled in prod. URL is the deployed tracker-api /api/v1 base; the
+# key is a CoreMachine credential the Tracker binds to a tenant.
+AGENT_RUNTIME_APPROVAL_TRACKER_URL=https://tracker-api.example.com/api/v1
+AGENT_RUNTIME_APPROVAL_TRACKER_KEY=CHANGE_ME_core_machine_key
+
+
+# ============================================================================
+# (B) COOLIFY MANAGED RESOURCE — redis
+#     Add as a managed database/resource in the same project/network.
+#     image: redis:7.2-alpine ; reachable at redis://redis:6379
+# ============================================================================
+# (no env — managed by Coolify; ensure core-api REDIS_URL points at it)
+
+
+# ============================================================================
+# TRACKER COMPANION (separate repo evolith_tracker — its OWN pipeline)
+#     Listed so the §5 browser smoke test is reproducible. NOT deployed by
+#     this engine runbook. The evaluate hop + persistence + provenance:core
+#     signal all depend on these.
+# ============================================================================
+# tracker-api (the BFF that proxies the browser evaluate call to Core):
+#   ASPNETCORE_ENVIRONMENT=Production                 # (prod auth, NOT DevBypass)
+#   ConnectionStrings__DefaultConnection=Host=<pg>;Port=5432;Database=evolith_tracker;Username=<u>;Password=<pw>
+#   CoreApi__BaseUrl=http://core-api:3000/api/v1      # DIRECT Tracker → Core hop
+#   CoreApi__ApiKey=CHANGE_ME_shared_engine_api_key   # = core-api EVOLITH_API_KEY
+#   CoreApi__MockFallback=false                       # REQUIRED: guarantees provenance=core (no mock)
+#   CoreApi__LocalWorkspaceRef=rulesets
+# tracker-web:  VITE_TRACKER_BFF_BASE_URL=/api/v1 (build arg); nginx /api → tracker-api
+# tracker-postgres: the store that PERSISTS each evaluation (GT-435 criterion)

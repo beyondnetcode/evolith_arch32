@@ -62,6 +62,10 @@ const ADAPTERS_SURFACE = [
   'RoutingAgentAdapter',
   'SlackApprovalAdapter',
   'SlackApprovalTransport',
+  // GT-531 — supervised assistant reference wiring. ADDITIVE to the GT-388 freeze:
+  // new names only, no existing export changed or removed, so the frozen contract holds.
+  'ASSISTANT_INVOKE_SKILL_ID',
+  'SupervisedAssistantClient',
   'SmartCliChatInteractionAdapter',
   'SmartCliCommandInteractionAdapter',
   'StubAgentEngineAdapter',

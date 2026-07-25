@@ -11,6 +11,7 @@ export * from './scheduler.port';
 export * from './communication-gateway.port';
 export * from './approval.port';
 export * from './agent-engine.port';
+export * from './assistant-invocation.port';
 export * from './knowledge.port';
 export * from './quality-signal-provider.port';
 export * from './structural-reviewer.port';

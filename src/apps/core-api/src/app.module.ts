@@ -18,7 +18,6 @@ import { validateEnv } from './infrastructure/config/env.validation';
 import { AuditThrottlerGuard } from './infrastructure/guards/audit-throttler.guard';
 import { ApiKeyGuard } from './infrastructure/guards/api-key.guard';
 import { MetricsService } from './infrastructure/metrics/metrics.service';
-import { CircuitBreakerService } from './infrastructure/resilience/circuit-breaker.service';
 import { CoreReferenceQueryService } from './application/services/core-reference-query.service';
 import { ReferenceController } from './presentation/controllers/reference.controller';
 import { CapabilitiesController } from './presentation/controllers/capabilities.controller';
@@ -56,7 +55,7 @@ const blueprintExists = async (corePath: string, blueprintRef: string): Promise<
 
 /** Core version stamped into EvaluationResult.versions.core (GT-378). */
 const CORE_VERSION = '1.0.5';
-import { RedisCacheModule } from './infrastructure/cache/redis-cache.module';
+import { InMemoryCacheModule } from './infrastructure/cache/in-memory-cache.module';
 import { CacheMetricsService } from './infrastructure/cache/cache-metrics.service';
 
 @Module({
@@ -77,7 +76,7 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
         quietReqLogger: true,
       },
     }),
-    RedisCacheModule,
+    InMemoryCacheModule,
   ],
   controllers: [
     HealthController,
@@ -96,7 +95,6 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
     HealthService,
     MetricsService,
     CacheMetricsService,
-    CircuitBreakerService,
     CoreReferenceQueryService,
     WorkspaceReferenceResolverService,
     SatelliteRegistryService,

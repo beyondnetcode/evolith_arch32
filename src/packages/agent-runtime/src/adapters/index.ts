@@ -103,6 +103,9 @@ export type {
   TrackerApprovalSubmission,
   TrackerApprovalResponse,
 } from './approval/tracker-approval.adapter';
+// GT-441: the live HTTP client behind the Tracker-approval seam (POST /runtime-approvals).
+export { TrackerApprovalHttpClient } from './approval/tracker-approval.http-client';
+export type { TrackerApprovalHttpClientOptions } from './approval/tracker-approval.http-client';
 
 // Engine (Hermes is OPTIONAL and lives only here, never in the domain)
 export { StubAgentEngineAdapter } from './engine/stub-agent-engine.adapter';

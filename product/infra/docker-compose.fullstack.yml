@@ -114,6 +114,10 @@ services:
       AGENT_RUNTIME_API_KEY: *api_key
       AGENT_RUNTIME_CORE_ENDPOINT: http://core-api:3000/api/v1/evaluate
       AGENT_RUNTIME_CORE_TOKEN: *api_key
+      # GT-441: route sensitive-capability HITL approvals to the Tracker. The key is
+      # the CoreMachine credential the Tracker binds to a tenant (see tracker-api).
+      AGENT_RUNTIME_APPROVAL_TRACKER_URL: http://tracker-api:8080/api/v1
+      AGENT_RUNTIME_APPROVAL_TRACKER_KEY: ${HITL_CORE_MACHINE_KEY:-evolith-core-machine-key-local-dev-000000000001}
     ports:
       - "3003:3000"
     depends_on:
@@ -185,6 +189,13 @@ services:
       CoreApi__LocalWorkspaceRef: rulesets
       # SPA origin allowed through CORS (nginx same-origin proxy also covers this).
       Cors__Origins__0: http://localhost:8088
+      # GT-441 / CD-23: a CoreMachine key for the agent-runtime HITL client. The
+      # Tracker derives the tenant from WHICH key matched, so this key is bound to
+      # the local dev tenant; the machine can only submit approvals (not resolve).
+      CoreMachine__Keys__0__TenantId: "11111111-1111-1111-1111-111111111111"
+      CoreMachine__Keys__0__Key: ${HITL_CORE_MACHINE_KEY:-evolith-core-machine-key-local-dev-000000000001}
+      CoreMachine__Keys__0__Status: active
+      CoreMachine__Keys__0__Description: agent-runtime local HITL (GT-441)
     ports:
       - "5100:8080"
     depends_on:

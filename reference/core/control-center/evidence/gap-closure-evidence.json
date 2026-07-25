@@ -8184,6 +8184,23 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "Sin dependencias. El gap planteaba una decision (acotar el audit vs tomar el bump); la auditoria previa la resolvio al descubrir que la premisa 'todo dev-only' era incompleta: js-yaml (high) esta en la ruta de PRODUCCION del CLI publicado via nest-commander->cosmiconfig, asi que --omit=dev lo habria escondido. Se eligio ARREGLAR las tres (js-yaml 4.3.0, brace-expansion 2.1.2, protobufjs 7.6.5) con overrides dirigidos, no una regeneracion del lockfile (el incidente de ajv es el porque). El pin exacto 4.1.1 de @nestjs/swagger resistio el override plano y el update incremental; se resolvio con un override con alcance @nestjs/swagger + extraccion quirurgica de la entrada stale del lockfile para que dedupara al 4.3.0 top-level. El workflow ahora declara su propio alcance (criterio 2). Verificacion local + npm ci; el job Unit... perdon, el job Security Audit debe confirmarlo en la proxima corrida de CI."
+    },
+    {
+      "id": "GT-447",
+      "closedAt": "2026-07-24",
+      "closureCommit": "0b387b44",
+      "evidence": [
+        "product/infra/docker-compose.fullstack.yml"
+      ],
+      "validationCommands": [
+        "cd product/infra && EVOLITH_API_KEY=local-dev-key docker compose -f docker-compose.fullstack.yml up -d --build -> 8/8 servicios healthy (redis, core-api, mcp, agent-runtime, tracker-postgres, tracker-api, tracker-gateway, tracker-web); `docker compose ps` los muestra todos (healthy).",
+        "curl -sS -X POST http://localhost:8088/api/v1/core/evaluate -H 'Content-Type: application/json' -d '{\"targetType\":\"initiative\",\"targetId\":\"gt-447-demo\",\"phase\":\"design\",\"gate\":\"design-gate\",\"topology\":\"modular-monolith\"}' -> HTTP 200, status=COMPLETED, provenance=core, coreEndpoint=/api/v1/evaluate, overallVerdict=FAIL (39 hallazgos bloqueantes sobre el workspace 'rulesets'), durationMs~533. Round-trip real al Core por el chain completo del navegador (nginx -> tracker-api -> core-api), no un mock (MockFallback=false).",
+        "curl -sS http://localhost:8088/api/v1/core-evaluation-transactions/ -> la evaluacion queda persistida en Postgres (operationId tracker-82339e85..., status=completed, decision=FAILED); confirma el camino de escritura tracker-api -> Postgres.",
+        "Navegador (http://localhost:8088): la SPA React renderiza el Control Tower via dev-bypass; el network muestra /api/v1/{auth/config,auth/session,tenants,initiatives,sdlc-executions,core-evaluation-transactions,audit-entries} todos 200, indicador 'PostgreSQL healthy'.",
+        "node .harness/scripts/ci/08-validate-tracking.mjs -> verde con este registro de cierre + el flip del contador."
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-447 es un milestone cuyo alcance son sus 7 hijos (GT-436/438/439/440/446 en este repo + GT-437/442), todos ya COMPLETADOS. Este cierre entrega la aceptacion restante a nivel de milestone: un bring-up local full-stack de un solo comando que incluye la UI del Tracker (cross-repo), verificado end-to-end en un navegador. Los fixes de build de tracker-web viajan en la rama feature/gt-447-fullstack-local de evolith_tracker (f8b68f2). Nota: el appsettings committeado de tracker-api apunta CoreApi.BaseUrl al gateway con un path drifteado (/api/core/api/v1 vs la ruta real del gateway /api/core/evaluate) -- aqui se cableo el hop directo a core-api; se rastrea como follow-up aparte."
     }
   ]
 }

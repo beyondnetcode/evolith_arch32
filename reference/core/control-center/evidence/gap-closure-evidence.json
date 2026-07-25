@@ -8221,6 +8221,24 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "GT-560 no declara dependencias. Resuelto por la rama que el propio gap ofrecia ('o pones llamadas reales tras el breaker, o dejas de puntuar resiliencia de algo que no protege nada'): el Core es un evaluador stateless (ADR-0101) que no hace llamadas salientes de DB/HTTP, y el unico candidato de cache nunca conecto a Redis, asi que la resolucion honesta es la eliminacion, no la reparacion (reparar el wiring Redis solo es estrictamente peor -- un Redis inalcanzable cuelga get/set en vez de rechazar, por eso un breaker solo se justificaria JUNTO con el). El score ya estaba corregido a 4/10; la nota se reescribe para reflejar la eliminacion. Adjacent finding (CacheMetricsService sin cablear el write-side) queda deliberadamente como item menor aparte."
+    },
+    {
+      "id": "GT-441",
+      "closedAt": "2026-07-24",
+      "closureCommit": "a299ab89",
+      "evidence": [
+        "src/packages/agent-runtime/src/adapters/approval/tracker-approval.http-client.ts",
+        "src/apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts",
+        "product/infra/docker-compose.fullstack.yml"
+      ],
+      "validationCommands": [
+        "cd src/packages/agent-runtime && npm test -> 28 suites / 249 tests passed, incl. tracker-approval.http-client.spec: submit() POSTs to /runtime-approvals with x-api-key, DROPS tenantId from the body, maps the response; non-2xx throws; fed through the real adapter, an approved answer grants and a 401 denies fail-closed as unavailable.",
+        "cd src/apps/agent-runtime-api && npm test -> 7 suites / 81 tests passed; the runtime.factory approval wiring typechecks clean against the built package (tsc --noEmit -p tsconfig.json clean).",
+        "Live smoke vs the running Tracker (docker-compose.fullstack, tracker-api :5100 configured with a CoreMachine key bound to the dev tenant): client.submit() -> {status:pending, approvalId} (a real approval persisted in Postgres); adapter.requireApproval() -> {granted:false, status:pending}; a second submit with the same correlationId returns the SAME approvalId (idempotent); POST /runtime-approvals/{id}/resolve {status:rejected} as a dev-bypass human -> HTTP 200; a third submit -> {status:rejected, approver} and the adapter denies it as a tracker-decision. Full loop end to end.",
+        "node .harness/scripts/ci/08-validate-tracking.mjs -> green with this record + the counter flip (557/568)."
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-441 extends GT-387 (the governed-executor approval port, done in a prior wave) and its receiving half is CD-23 on the Tracker board, shipped 2026-07-19 (RuntimeApprovalEndpoints + migration AddRuntimeApprovals) — both satisfied, so the Core-side TrackerApprovalHttpClient could finally be written against a real, agreed contract instead of a fabricated one (the exact reason it was deliberately left unimplemented before). The approve->grant path is intentionally NOT live-smoked here: granting requires a designated UMS approver (CD-31) and dev-bypass carries every permission but no authority, which the endpoint deliberately rejects ('permission is not authority'). That path is covered by the adapter unit test (approved->grant) and the Tracker's own RuntimeApprovalEndpointTests; the pending, idempotency and human-reject paths ARE live-smoked against the real Tracker."
     }
   ]
 }

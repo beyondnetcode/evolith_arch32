@@ -45,6 +45,8 @@ import {
   InMemoryKnowledgeAdapter,
   PgVectorKnowledgeAdapter,
   PGVECTOR_KNOWLEDGE_DIM,
+  TrackerApprovalAdapter,
+  TrackerApprovalHttpClient,
   type EmbedQuery,
   type AgentRuntimeBundle,
   type AgentRuntimeOverrides,
@@ -332,6 +334,40 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
             "Use 'hermes', 'swarms', 'cowork', 'routing' or 'stub'.",
         );
     }
+  }
+
+  // Runtime HITL approval — route sensitive-capability approvals to the Tracker
+  // (GT-441). The package default is a local fail-closed PendingApprovalAdapter;
+  // wiring the Tracker makes the human decision happen THERE, per ADR-0101 (the
+  // Core asks; the Tracker decides, persists and audits, with per-tenant approver
+  // config). Opt-in via AGENT_RUNTIME_APPROVAL_TRACKER_URL (the BFF base including
+  // /api/v1). The CoreMachine key (AGENT_RUNTIME_APPROVAL_TRACKER_KEY) is what the
+  // Tracker binds to a tenant; under production it is MANDATORY alongside the URL —
+  // the approval endpoint is machine-authenticated, so an unauthenticated call is
+  // refused and would deny every governed request as unavailable. Unset ⇒ the local
+  // PendingApprovalAdapter default stays in every profile.
+  const approvalTrackerUrl = trimmed(env.AGENT_RUNTIME_APPROVAL_TRACKER_URL);
+  if (approvalTrackerUrl) {
+    const approvalKey = trimmed(env.AGENT_RUNTIME_APPROVAL_TRACKER_KEY);
+    if (isProd && !approvalKey) {
+      throw new Error(
+        '[agent-runtime] AGENT_RUNTIME_PROFILE=production requires AGENT_RUNTIME_APPROVAL_TRACKER_KEY ' +
+          'alongside AGENT_RUNTIME_APPROVAL_TRACKER_URL — the Tracker approval endpoint is machine-authenticated ' +
+          'and derives the tenant from the key; without it every governed request is denied as unavailable.',
+      );
+    }
+    const approvalTimeoutMs = Number(env.AGENT_RUNTIME_APPROVAL_TRACKER_TIMEOUT_MS) || undefined;
+    overrides = {
+      ...overrides,
+      approval: new TrackerApprovalAdapter({
+        client: new TrackerApprovalHttpClient({
+          baseUrl: approvalTrackerUrl,
+          apiKey: approvalKey,
+          timeoutMs: approvalTimeoutMs,
+        }),
+        timeoutMs: approvalTimeoutMs,
+      }),
+    };
   }
 
   // Tracker — publish trazability events to multiple destinations (Tracker HTTP, File JSONL, OTel).

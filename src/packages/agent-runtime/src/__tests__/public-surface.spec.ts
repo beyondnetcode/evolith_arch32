@@ -73,6 +73,7 @@ const ADAPTERS_SURFACE = [
   'TRACKER_DECISION_PREFIX',
   'TRACKER_UNAVAILABLE_PREFIX',
   'TrackerApprovalAdapter',
+  'TrackerApprovalHttpClient',
   'denyOnFailedEvaluation',
   'isTrackerUnavailable',
   'loadManifest',

@@ -1923,12 +1923,13 @@
       "closedAt": "2026-06-13",
       "closureCommit": "ec0a54c",
       "evidence": [
-        "src/apps/core-api/src/infrastructure/resilience/circuit-breaker.service.ts"
+        "reference/core/foundations/common-rules/senior-architectural-assessment.md"
       ],
       "validationCommands": [
         "npm test --workspace apps/core-api -- --testPathPatterns=\"circuit\" --no-coverage"
       ],
-      "dependencyDisposition": "none"
+      "dependencyDisposition": "none",
+      "closureNote": "2026-07-24 (GT-560): the circuit breaker delivered here was later found to be a DI-registered orphan protecting nothing (the Core is a stateless evaluator, ADR-0101) and was removed. This closure is SUPERSEDED by GT-560; evidence repointed to the resilience note in senior-architectural-assessment.md, which now documents the removal and the 4/10 rating."
     },
     {
       "id": "GT-75",
@@ -3976,7 +3977,7 @@
       "closedAt": "2026-06-23",
       "closureCommit": "4a876d5a",
       "evidence": [
-        "src/apps/core-api/src/infrastructure/cache/redis-cache.module.ts",
+        "src/apps/core-api/src/infrastructure/cache/in-memory-cache.module.ts",
         "src/apps/core-api/src/infrastructure/cache/cache-keys.ts",
         "src/packages/mcp-server/src/mcp/mcp-cache.module.ts",
         "product/operations/redis-caching-layer.md"
@@ -3985,7 +3986,7 @@
         "grep -c Redis apps/core-api/src/app.module.ts"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Implemented Redis caching for Core API and MCP with cache interceptors, metrics, and documentation."
+      "closureNote": "2026-07-24 (GT-560): the core-api Redis cache path never actually connected (two wiring bugs) and was removed; `redis-cache.module.ts` -> `in-memory-cache.module.ts` (honest per-process cache). Evidence repointed to the successor module; the other artifacts (cache-keys.ts, the MCP cache module, the caching-layer doc) are unchanged."
     },
     {
       "id": "GT-250",
@@ -8201,6 +8202,25 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-447 es un milestone cuyo alcance son sus 7 hijos (GT-436/438/439/440/446 en este repo + GT-437/442), todos ya COMPLETADOS. Este cierre entrega la aceptacion restante a nivel de milestone: un bring-up local full-stack de un solo comando que incluye la UI del Tracker (cross-repo), verificado end-to-end en un navegador. Los fixes de build de tracker-web viajan en la rama feature/gt-447-fullstack-local de evolith_tracker (f8b68f2). Nota: el appsettings committeado de tracker-api apunta CoreApi.BaseUrl al gateway con un path drifteado (/api/core/api/v1 vs la ruta real del gateway /api/core/evaluate) -- aqui se cableo el hop directo a core-api; se rastrea como follow-up aparte."
+    },
+    {
+      "id": "GT-560",
+      "closedAt": "2026-07-24",
+      "closureCommit": "729c14c1",
+      "evidence": [
+        "src/apps/core-api/src/infrastructure/cache/in-memory-cache.module.ts",
+        "src/apps/core-api/src/app.module.ts",
+        "reference/core/foundations/common-rules/senior-architectural-assessment.md"
+      ],
+      "validationCommands": [
+        "grep -rn 'CircuitBreakerService|createBreaker|opossum|createCacheStore|RedisCacheModule' src/apps/core-api/src -> 0 resultados (breaker huerfano + wiring Redis muerto removidos por completo).",
+        "cd src/apps/core-api && npm run build -> nest build exit 0 (sin referencias colgantes).",
+        "cd src/apps/core-api && npm test -> 28 suites / 158 tests passed (el spec borrado del breaker era el unico test que lo referenciaba).",
+        "npm install --package-lock-only --legacy-peer-deps -> diff de package-lock.json = 3 insertions / 20 deletions, solo opossum + @types/opossum (sin sprawl); npm ci sigue consistente para el build Docker de core-api.",
+        "node .harness/scripts/ci/08-validate-tracking.mjs -> verde con este registro + el flip del contador (556/568)."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "GT-560 no declara dependencias. Resuelto por la rama que el propio gap ofrecia ('o pones llamadas reales tras el breaker, o dejas de puntuar resiliencia de algo que no protege nada'): el Core es un evaluador stateless (ADR-0101) que no hace llamadas salientes de DB/HTTP, y el unico candidato de cache nunca conecto a Redis, asi que la resolucion honesta es la eliminacion, no la reparacion (reparar el wiring Redis solo es estrictamente peor -- un Redis inalcanzable cuelga get/set en vez de rechazar, por eso un breaker solo se justificaria JUNTO con el). El score ya estaba corregido a 4/10; la nota se reescribe para reflejar la eliminacion. Adjacent finding (CacheMetricsService sin cablear el write-side) queda deliberadamente como item menor aparte."
     }
   ]
 }

@@ -39,15 +39,21 @@ function isEsFile(file) {
 // translations and reported 95.2% coverage while `04-check-bilingual-parity`
 // passed clean. Two tools contradicting each other, and the wrong number was the
 // one written into a committed audit artefact.
-const allEnRelative = files.filter((f) => !isEsFile(f)).map((f) => path.relative(root, f));
-const exclusionPartition = partitionByExclusions(allEnRelative, (rel) =>
+// Feed BOTH EN and ES files through the shared exclusion table: bilingual-suite
+// exempts some docs on both sides (e.g. an ES-only historical audit whose EN
+// counterpart was removed in the apps/->src/ cutover). Partitioning only EN files
+// left those ES exemptions unapplied, so the dashboard flagged a deliberately
+// allowlisted ES orphan that `04-check-bilingual-parity` passes clean — the exact
+// two-tools-disagree failure this exclusion table exists to prevent.
+const allRelative = files.map((f) => path.relative(root, f));
+const exclusionPartition = partitionByExclusions(allRelative, (rel) =>
   fs.readFileSync(path.join(root, rel), "utf8")
 );
 const excludedRelative = new Set(exclusionPartition.excluded.flatMap((x) => x.files));
 const isExcluded = (f) => excludedRelative.has(path.relative(root, f));
 
 const enFiles = files.filter(f => !isEsFile(f) && !isExcluded(f));
-const esFiles = files.filter(f => isEsFile(f));
+const esFiles = files.filter(f => isEsFile(f) && !isExcluded(f));
 
 function normalizeKey(file) {
   const rel = path.relative(referenceDir, file);
@@ -223,8 +229,25 @@ function stripTimestamp(text) {
   return text.replace(/\*\*Generated:\*\* .*\n/, "**Generated:** <ts>\n");
 }
 
+// Basename-level parity exemptions — MUST mirror `PARITY_EXEMPT_BASENAMES` in
+// ci/suites/bilingual-suite.mjs (the authoritative gate). These are docs whose
+// counterpart was deliberately removed (e.g. an ES-only historical audit orphaned
+// by the apps/->src/ cutover) or that are single-language by policy. Without this,
+// the dashboard flags an orphan that `04-check-bilingual-parity` passes clean —
+// the two-tools-disagree failure mode this file already guards against elsewhere.
+const PARITY_EXEMPT_BASENAMES = new Set([
+  "CHANGELOG.md",
+  "CHANGELOG.es.md",
+  "tracker-core-evaluation-compat-audit.md",
+  "tracker-core-evaluation-compat-audit.es.md",
+  "RELOCATED.md",
+  "EVOLITH-ARCHITECTURE-DESIGN.md",
+]);
+const isParityExempt = (f) => PARITY_EXEMPT_BASENAMES.has(path.basename(f));
+
 // Determine unpaired sets (used for the hard parity gate / exit code).
 const unpairedEn = enFiles.filter(f => {
+  if (isParityExempt(f)) return false;
   const rel = path.relative(referenceDir, f);
   if (fs.existsSync(path.join(referenceDir, rel.replace(/\.md$/, ".es.md")))) return false;
   const parts = rel.split(path.sep);
@@ -236,6 +259,7 @@ const unpairedEn = enFiles.filter(f => {
   return true;
 });
 const unpairedEs = esFiles.filter(f => {
+  if (isParityExempt(f)) return false;
   const enFile = esToEnPath(f);
   return !fs.existsSync(enFile);
 });

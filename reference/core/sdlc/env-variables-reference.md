@@ -1,6 +1,6 @@
 # Evolith Core — Environment Variables Reference
 
-> **Bilingual Navigation:** [Versión en Español](./env-variables.es.md)
+> **Bilingual Navigation:** [Versión en Español](./env-variables-reference.es.md)
 
 **Status:** Active Reference
 **Owner:** Evolith Architecture Board

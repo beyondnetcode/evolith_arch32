@@ -115,6 +115,10 @@ export { SwarmsAgentAdapter } from './engine/swarms-agent.adapter';
 export type { SwarmsClient, SwarmsAdapterOptions } from './engine/swarms-agent.adapter';
 export { CoworkAgentEngineAdapter, COWORK_ENGINE } from './engine/cowork-agent.adapter';
 export type { CoworkClient, CoworkProposal, CoworkAdapterOptions } from './engine/cowork-agent.adapter';
+// GT-531: the fail-closed, off-by-default reference wiring that makes the REAL
+// (HITL-approved) call to the AI assistant behind the bounded Cowork executor.
+export { SupervisedAssistantClient, ASSISTANT_INVOKE_SKILL_ID } from './engine/supervised-assistant.client';
+export type { SupervisedAssistantOptions } from './engine/supervised-assistant.client';
 export { RoutingAgentAdapter } from './engine/routing-agent.adapter';
 export type { EngineRouterConfig } from './engine/routing-agent.adapter';
 export { PolicyBasedEngineRouter } from './engine/policy-based-engine-router';

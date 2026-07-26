@@ -91,6 +91,16 @@ const mockAskInitOptions = jest.fn();
   execute: mockExecute,
 }));
 
+/**
+ * GT-571: stdin drives interactivity. Jest runs with a non-TTY stdin, which is
+ * exactly the shape of a CI/agent invocation, so the interactive expectations
+ * below have to opt into a TTY explicitly.
+ */
+const originalStdinTTY = process.stdin.isTTY;
+const setStdinTTY = (value: boolean | undefined): void => {
+  Object.defineProperty(process.stdin, 'isTTY', { value, configurable: true });
+};
+
 describe('InitCommand', () => {
   let command: InitCommand;
   let logSpy: jest.SpyInstance;
@@ -132,9 +142,12 @@ describe('InitCommand', () => {
   afterEach(() => {
     logSpy.mockRestore();
     exitSpy.mockRestore();
+    setStdinTTY(originalStdinTTY);
   });
 
   describe('run', () => {
+    beforeEach(() => setStdinTTY(true));
+
     it('should show intro and prompt for project configuration', async () => {
       mockAskInitOptions.mockResolvedValue(defaultSelection);
 
@@ -355,13 +368,18 @@ describe('InitCommand', () => {
       ).rejects.toThrow(/Invalid JSON in config file/);
     });
 
-    it('exige un nombre de proyecto y dice como darlo', async () => {
-      await expect(
-        command.executeCommand([], { yes: true } as never),
-      ).rejects.toThrow(/requires a project name/);
+    // GT-571: `--yes` sin `--name` ya no es un error; el nombre del proyecto
+    // toma por defecto el del directorio destino, como cualquier scaffolder.
+    it('sin --name usa el nombre del directorio destino', async () => {
+      await command.executeCommand([], { yes: true } as never);
+      expect(mockExecute).toHaveBeenCalledWith(
+        expect.objectContaining({ name: nodePath.basename(process.cwd()) }),
+        expect.any(String),
+      );
     });
 
-    it('sin --config ni --yes cae al wizard interactivo', async () => {
+    it('sin --config ni --yes, y con stdin interactivo, cae al wizard', async () => {
+      setStdinTTY(true);
       mockAskInitOptions.mockResolvedValue(null);
       await command.executeCommand([], {} as never);
       expect(mockAskInitOptions).toHaveBeenCalled();
@@ -376,6 +394,172 @@ describe('InitCommand', () => {
       const env = JSON.parse(printed[printed.length - 1]);
       expect(env.success).toBe(true);
       expect(env.meta.command).toBe('evolith init');
+    });
+  });
+
+  // GT-571: los primeros 60 segundos del producto. `init` escribia en un
+  // subdirectorio (el `validate` siguiente apuntaba al padre y disparaba
+  // GOV-000), salia 0 al fallar, y en `--format json` con stdin cerrado
+  // preguntaba en vez de emitir un envelope.
+  describe('quickstart (GT-571)', () => {
+    const nodePath = require('path');
+    const makeFakeFs = () => ({
+      readFile: jest.fn(),
+      readFileBuffer: jest.fn(),
+      writeFile: jest.fn(),
+      exists: jest.fn(),
+      existsSync: jest.fn(),
+      readJson: jest.fn(),
+      writeJson: jest.fn(),
+      mkdir: jest.fn(),
+      readdir: jest.fn(),
+      readdirNames: jest.fn(),
+      copy: jest.fn(),
+      ensureDir: jest.fn(),
+      ensureFile: jest.fn(),
+      stat: jest.fn(),
+      remove: jest.fn(),
+    });
+
+    const scaffoldFsOf = () =>
+      (InitializeProjectUseCase as jest.Mock).mock.calls[
+        (InitializeProjectUseCase as jest.Mock).mock.calls.length - 1
+      ][0];
+
+    const commandWith = (fs: ReturnType<typeof makeFakeFs>) => {
+      const { CatalogLoader } = require('../../infrastructure/catalog/catalog-loader');
+      return new InitCommand(new CatalogLoader(), fs as never, new PromptService());
+    };
+
+    it('sin destino explicito escribe en el directorio actual, no en un subdirectorio', async () => {
+      const fs = makeFakeFs();
+      await commandWith(fs).executeCommand([], { name: 'my-sat', yes: true } as never);
+
+      // El caso de uso del dominio siempre compone `${cwd}/${name}`; el CLI lo
+      // remapea al destino real antes de que llegue al file system.
+      await scaffoldFsOf().writeJson(`${process.cwd()}/my-sat/evolith.yaml`, { a: 1 });
+      expect(fs.writeJson).toHaveBeenCalledWith(`${process.cwd()}/evolith.yaml`, { a: 1 });
+      expect(fs.writeJson).not.toHaveBeenCalledWith(
+        `${process.cwd()}/my-sat/evolith.yaml`,
+        expect.anything(),
+      );
+    });
+
+    it('con un directorio posicional escribe dentro de ese directorio', async () => {
+      const fs = makeFakeFs();
+      await commandWith(fs).executeCommand(['sub-dir'], { name: 'my-sat', yes: true } as never);
+
+      await scaffoldFsOf().ensureDir(`${process.cwd()}/my-sat`);
+      expect(fs.ensureDir).toHaveBeenCalledWith(nodePath.resolve(process.cwd(), 'sub-dir'));
+    });
+
+    it('--dir es equivalente al argumento posicional', async () => {
+      const fs = makeFakeFs();
+      await commandWith(fs).executeCommand([], { dir: 'otro', name: 'my-sat', yes: true } as never);
+
+      await scaffoldFsOf().writeFile(`${process.cwd()}/my-sat/README.md`, 'x');
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        `${nodePath.resolve(process.cwd(), 'otro')}/README.md`,
+        'x',
+      );
+    });
+
+    it('el nombre del proyecto por defecto es el del directorio destino', async () => {
+      await command.executeCommand(['un-satelite'], { yes: true } as never);
+      expect(mockExecute).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'un-satelite' }),
+        expect.any(String),
+      );
+    });
+
+    it('con stdin no interactivo no pregunta nada aunque falte --yes', async () => {
+      setStdinTTY(false);
+      await command.executeCommand([], {} as never);
+      expect(mockAskInitOptions).not.toHaveBeenCalled();
+      expect(mockExecute).toHaveBeenCalled();
+    });
+
+    it('--format json nunca pregunta, ni siquiera con TTY', async () => {
+      setStdinTTY(true);
+      await command.executeCommand([], { format: 'json' } as never);
+      expect(mockAskInitOptions).not.toHaveBeenCalled();
+    });
+
+    it('--format json emite exactamente un envelope y nada mas en stdout', async () => {
+      setStdinTTY(false);
+      const writeSpy = jest.spyOn(process.stdout, 'write').mockReturnValue(true);
+      try {
+        await command.executeCommand([], { name: 'json-only', yes: true, format: 'json' } as never);
+        expect(writeSpy).not.toHaveBeenCalled();
+        expect(logSpy).toHaveBeenCalledTimes(1);
+        const env = JSON.parse(String(logSpy.mock.calls[0][0]));
+        expect(env.success).toBe(true);
+        expect(env.data.targetDir).toBe(process.cwd());
+        expect(env.data.nextSteps).toContain('evolith validate');
+      } finally {
+        writeSpy.mockRestore();
+      }
+    });
+
+    it('un fallo de inicializacion sale con codigo distinto de cero', async () => {
+      mockExecute.mockResolvedValue({
+        success: false, artifacts: [], warnings: [], errors: ['Runtime nope not found'],
+      });
+
+      await command.executeCommand([], { name: 'boom', yes: true } as never);
+
+      expect(process.exitCode).toBe(1);
+    });
+
+    it('un fallo en --format json emite un envelope de error, no uno de exito', async () => {
+      mockExecute.mockResolvedValue({
+        success: false, artifacts: [], warnings: [], errors: ['Runtime nope not found'],
+      });
+
+      await command.executeCommand([], { name: 'boom', yes: true, format: 'json' } as never);
+
+      expect(process.exitCode).toBe(1);
+      const env = JSON.parse(String(logSpy.mock.calls[0][0]));
+      expect(env.success).toBe(false);
+      expect(env.error.code).toBe('INTERNAL_ERROR');
+      expect(env.error.details.errors).toEqual(['Runtime nope not found']);
+    });
+
+    it('dice donde inicializo y cual es el siguiente comando', async () => {
+      mockExecute.mockResolvedValue({
+        success: true, artifacts: ['my-sat/evolith.yaml'], warnings: [], errors: [],
+      });
+
+      await command.executeCommand([], { name: 'my-sat', yes: true } as never);
+
+      expect(p.log.info).toHaveBeenCalledWith(expect.stringContaining(process.cwd()));
+      // Los artefactos se reportan relativos al destino real, sin el prefijo
+      // `my-sat/` que asume un subdirectorio inexistente.
+      expect(p.log.info).toHaveBeenCalledWith(expect.stringContaining('    - evolith.yaml'));
+      expect(p.log.info).not.toHaveBeenCalledWith(expect.stringContaining('my-sat/evolith.yaml'));
+      const printed = logSpy.mock.calls.map((c: unknown[]) => String(c[0])).join('\n');
+      expect(printed).toContain('evolith validate');
+      expect(printed).not.toContain('cd my-sat');
+    });
+
+    it('--dry-run no escribe nada pero sigue reportando los artefactos', async () => {
+      const fs = makeFakeFs();
+      await commandWith(fs).executeCommand([], { name: 'my-sat', yes: true, dryRun: true } as never);
+
+      // El caso de uso recibe un sumidero que no escribe: ni siquiera crea el
+      // directorio destino, que ahora es el directorio del usuario.
+      const scaffoldFs = scaffoldFsOf();
+      await scaffoldFs.ensureDir(`${process.cwd()}/my-sat`);
+      await scaffoldFs.writeJson(`${process.cwd()}/my-sat/evolith.yaml`, {});
+      expect(fs.ensureDir).not.toHaveBeenCalled();
+      expect(fs.writeJson).not.toHaveBeenCalled();
+    });
+
+    it('cuando hay subdirectorio, el siguiente paso incluye el cd', async () => {
+      await command.executeCommand(['sub-dir'], { yes: true } as never);
+      const printed = logSpy.mock.calls.map((c: unknown[]) => String(c[0])).join('\n');
+      expect(printed).toContain('cd sub-dir');
+      expect(printed).toContain('evolith validate');
     });
   });
 });

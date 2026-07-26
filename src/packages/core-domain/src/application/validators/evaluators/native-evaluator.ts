@@ -68,8 +68,11 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
       return await handler.evaluate(rule, ctx);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.logger.warn(`Evaluator error for ${rule.id}: ${msg}`);
-      return { rule, result: 'skipped', message: `Evaluator error: ${msg}` };
+      // GT-569: a handler exception is NOT a skip. Downgrading it to `skipped`
+      // made a crashing evaluator indistinguishable from an unsupported rule,
+      // and both then vanished from the reported denominator.
+      this.logger.error(`Evaluator error for ${rule.id}: ${msg}`);
+      return { rule, result: 'errored', message: `Evaluator error: ${msg}` };
     }
   }
 }

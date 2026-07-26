@@ -46,6 +46,28 @@ export {
 export { canonicalJson, sha256Hex, sortDeep } from './schemas/contract-hash';
 
 export {
+  // GT-573 — pinnable evaluate request/response pair + the consumer oracle.
+  TRACKER_BOUND_RESULT_KEYS,
+  TRACKER_BOUND_GATE_KEYS,
+  TRACKER_BOUND_GAP_KEYS,
+  TRACKER_UNCONTRACTED_FIELDS,
+  EVALUATE_INLINE_PASS_REQUEST,
+  EVALUATE_INLINE_FAIL_REQUEST,
+  EVALUATION_RESULT_PASS_FIXTURE,
+  EVALUATION_RESULT_FAIL_FIXTURE,
+  LEGACY_INLINE_ENVELOPE_FIXTURE,
+  assertTrackerEvaluationContract,
+  checkTrackerEvaluationContract,
+  normalizeGateVerdict,
+  trackerDecisionFrom,
+  type ContractCheckResult,
+  type TrackerBoundEvaluationResult,
+  type TrackerBoundGap,
+  type TrackerBoundGate,
+  type TrackerDecision,
+} from './fixtures/evaluation-contract.fixtures';
+
+export {
   EXPECTED_CAPABILITY_MANIFEST,
   assertCapabilityManifestParity,
   capabilityManifestFingerprint,

@@ -1,0 +1,201 @@
+# GT-577 — dogfood of the `evolith-validate` composite action.
+#
+# The action is the third enforcement surface of the wedge (CLI, MCP, CI gate)
+# and the one a design partner wires into their own repository. Until this
+# workflow existed, `grep -rn 'evolith-validate' .github/` matched only the
+# action's own README: zero consumers across every workflow, so no regression
+# in it could ever be caught -- which is exactly how it kept reporting
+# "Non-compliant -- 0 violation(s) found" for as long as it existed.
+#
+# Two jobs, cheapest first:
+#   1. action-contract — executes the action's own `run:` scripts against
+#      recorded CLI envelopes. Hermetic, no build, seconds.
+#   2. dogfood — builds the CLI from this monorepo and runs the ACTUAL action
+#      against a deliberately non-conforming satellite fixture, asserting both
+#      halves of the contract: a non-zero violation count, and a failed job
+#      when `fail-on-violation` is on.
+name: Evolith Validate Action (dogfood)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - '.github/actions/evolith-validate/**'
+      - '.github/workflows/evolith-validate-dogfood.yml'
+      - 'src/sdk/cli/**'
+      - 'src/packages/core-domain/**'
+      - 'src/rulesets/**'
+      - 'package.json'
+      - 'package-lock.json'
+  push:
+    branches: [main, develop]
+    paths:
+      - '.github/actions/evolith-validate/**'
+      - '.github/workflows/evolith-validate-dogfood.yml'
+      - 'src/sdk/cli/**'
+      - 'src/packages/core-domain/**'
+      - 'src/rulesets/**'
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # ============================================
+  # JOB 1: Action contract (hermetic, no build)
+  # ============================================
+  action-contract:
+    name: Action contract (recorded envelopes)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Execute the action's step scripts against recorded envelopes
+        run: node --test .github/actions/evolith-validate/test/action-step.test.mjs
+
+  # ============================================
+  # JOB 2: End-to-end dogfood of the action
+  # ============================================
+  dogfood:
+    name: Action vs non-conforming satellite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      # The action normally installs @beyondnet/evolith-cli from npm. Here it
+      # must exercise THIS commit's CLI, so we build it and hand the action a
+      # `cli-command`, which skips the npm install.
+      - name: Build workspace dependencies
+        run: |
+          npm run build -w @beyondnet/evolith-core-domain
+          npm run build -w @beyondnet/evolith-agent-runtime
+          npm run build -w @beyondnet/evolith-sdk
+          npm run build -w @beyondnet/evolith-infra-providers
+          npm run build -w @beyondnet/evolith-core
+          npm run build -w @beyondnet/evolith-mcp
+
+      - name: Build CLI
+        working-directory: src/sdk/cli
+        run: npm run build
+
+      - name: Sanity check the built CLI
+        run: test -f "${GITHUB_WORKSPACE}/src/sdk/cli/dist/main.js"
+
+      # ----------------------------------------------------------------
+      # 1. Report-only run: the counter must be non-zero.
+      # ----------------------------------------------------------------
+      - name: Run the action against the non-conforming fixture (report only)
+        id: report
+        uses: ./.github/actions/evolith-validate
+        with:
+          satellite-path: ${{ github.workspace }}/.github/actions/evolith-validate/test/fixtures/noncompliant-satellite
+          core-path: ${{ github.workspace }}
+          cli-command: node ${{ github.workspace }}/src/sdk/cli/dist/main.js
+          fail-on-violation: 'false'
+
+      - name: Assert the action reported real violations
+        env:
+          VIOLATIONS: ${{ steps.report.outputs.violations-count }}
+          ISSUES: ${{ steps.report.outputs.issues-count }}
+          STATUS: ${{ steps.report.outputs.compliance-status }}
+          REPORT_PATH: ${{ steps.report.outputs.report-path }}
+        run: |
+          echo "status=${STATUS} violations=${VIOLATIONS} issues=${ISSUES}"
+
+          if ! [[ "${VIOLATIONS}" =~ ^[0-9]+$ ]]; then
+            echo "::error::violations-count is not a number: '${VIOLATIONS}'"
+            exit 1
+          fi
+
+          # GT-577: this is the assertion that was impossible before, because
+          # the action read a `.summary` key the CLI envelope does not have and
+          # every run rendered 0.
+          if [ "${VIOLATIONS}" -le 0 ]; then
+            echo "::error::the deliberately non-conforming fixture reported ${VIOLATIONS} violations."
+            echo "Either the counter regressed (check the jq path in action.yml against the"
+            echo "CLI envelope) or the fixture stopped being non-conforming."
+            exit 1
+          fi
+
+          if [ "${STATUS}" != "non-compliant" ]; then
+            echo "::error::expected compliance-status=non-compliant, got '${STATUS}'"
+            exit 1
+          fi
+
+          if [ "${ISSUES}" -lt "${VIOLATIONS}" ]; then
+            echo "::error::issues-count (${ISSUES}) cannot be lower than violations-count (${VIOLATIONS})"
+            exit 1
+          fi
+
+          # The count must agree with the report the action left behind.
+          FROM_REPORT=$(jq -r '[.data.issues[]? | select(.blocking == true)] | length' "${REPORT_PATH}")
+          if [ "${FROM_REPORT}" != "${VIOLATIONS}" ]; then
+            echo "::error::action reported ${VIOLATIONS} but the report holds ${FROM_REPORT} blocking issues"
+            exit 1
+          fi
+
+          echo "OK: ${VIOLATIONS} blocking violation(s) of ${ISSUES} issue(s), agreeing with the report."
+
+      - name: Upload the dogfood compliance report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evolith-validate-dogfood-report
+          path: ${{ steps.report.outputs.report-path }}
+          if-no-files-found: warn
+
+      # ----------------------------------------------------------------
+      # 2. Gate run: the same fixture must FAIL the job.
+      # ----------------------------------------------------------------
+      - name: Run the action as a gate (expected to fail)
+        id: gate
+        continue-on-error: true
+        uses: ./.github/actions/evolith-validate
+        with:
+          satellite-path: ${{ github.workspace }}/.github/actions/evolith-validate/test/fixtures/noncompliant-satellite
+          core-path: ${{ github.workspace }}
+          cli-command: node ${{ github.workspace }}/src/sdk/cli/dist/main.js
+          fail-on-violation: 'true'
+
+      - name: Assert the gate blocked
+        env:
+          OUTCOME: ${{ steps.gate.outcome }}
+          VIOLATIONS: ${{ steps.gate.outputs.violations-count }}
+        run: |
+          if [ "${OUTCOME}" != "failure" ]; then
+            echo "::error::the gate did not block a non-conforming satellite (outcome=${OUTCOME})."
+            echo "fail-on-violation=true must fail the step."
+            exit 1
+          fi
+          echo "OK: the gate blocked as expected with ${VIOLATIONS} blocking violation(s)."

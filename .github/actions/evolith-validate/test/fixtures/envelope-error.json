@@ -1,0 +1,14 @@
+{
+  "success": false,
+  "error": {
+    "code": "RULESET_NOT_FOUND",
+    "message": "No Evolith Core rulesets could be resolved from the given --core path."
+  },
+  "meta": {
+    "command": "evolith validate",
+    "executedAt": "2026-07-26T00:00:00.000Z",
+    "durationMs": 0,
+    "correlationId": "00000000-0000-4000-8000-000000000000",
+    "schemaVersion": "1.0.0"
+  }
+}

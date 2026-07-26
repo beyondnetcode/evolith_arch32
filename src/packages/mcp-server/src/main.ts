@@ -30,8 +30,19 @@ interface CliArgs {
   transport: McpTransport;
   port: number;
   apiKey?: string;
+  /**
+   * HTTP-ONLY (GT-572). Starts the Streamable HTTP transport without an API key
+   * and grants each request the dev reader context (never in production). It has
+   * nothing to bypass on stdio — that transport authenticates no requests and
+   * always runs as the local-session principal — so `start()` logs a warning
+   * instead of accepting it silently.
+   */
   allowNoAuth: boolean;
 }
+
+const USAGE =
+  'Usage: evolith-mcp serve [--transport stdio|http] [--port <n>] [--api-key <key>] '
+  + '[--allow-no-auth (http only)]';
 
 /** Parse argv + environment into normalized start options. */
 export function parseArgs(argv: string[], env: NodeJS.ProcessEnv): CliArgs {
@@ -97,9 +108,12 @@ export interface StartMcpServerOptions {
 // it works against any standards-compliant OAuth 2.1 / OIDC issuer once EAG-01
 // picks one and its issuer/JWKS/audience are supplied via the env above.
 //
-// The stdio/local path is unchanged: OAuth applies only to the remote HTTP
-// surface, and the shared API key / local HS256 JWT / dev `--allow-no-auth`
-// paths still work for local development. Everything downstream of identity is
+// OAuth applies only to the remote HTTP surface; the shared API key / local
+// HS256 JWT / dev `--allow-no-auth` paths still work for local HTTP development.
+// The stdio path authenticates nothing (it is a same-process, single-user
+// channel) and instead runs as the explicit `local-session` principal —
+// see createLocalSessionContext in mcp-auth-contexts.ts (GT-572).
+// Everything downstream of identity is
 // already hardened per-identity: the dispatcher runs ABAC (native + OPA) on
 // EVERY tools/call and audits the verdict (see McpServerService.handleCallTool),
 // so it is agnostic to how the identity was established.
@@ -139,9 +153,7 @@ async function bootstrap(): Promise<void> {
   }
 
   if (cli.command !== 'serve') {
-    process.stderr.write(
-      `Unknown command: ${cli.command}. Usage: evolith-mcp serve [--transport stdio|http] [--port <n>]\n`,
-    );
+    process.stderr.write(`Unknown command: ${cli.command}. ${USAGE}\n`);
     process.exitCode = 1;
     return;
   }

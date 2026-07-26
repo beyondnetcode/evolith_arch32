@@ -1,0 +1,50 @@
+{
+  "success": true,
+  "schemaHints": { "note": "keys added by a later envelope revision must not break the counter" },
+  "data": {
+    "status": "failed",
+    "rulesChecked": 101,
+    "engine": "native",
+    "summary": { "violations": 999 },
+    "issues": [
+      {
+        "ruleId": "CB-VAL-01",
+        "severity": "MUST",
+        "category": "validation",
+        "title": "All 5 baseline pillars must be present in evolith.yaml spec.compliance",
+        "description": "evolith.yaml missing spec.compliance section",
+        "blocking": true,
+        "remediation": "Add spec.compliance to evolith.yaml"
+      },
+      {
+        "ruleId": "CLI-RR-05",
+        "severity": "SHOULD",
+        "category": "documentation",
+        "title": "Release Documentation Must Match Implementation",
+        "description": "CLI missing README.md or ARCHITECTURE.md",
+        "blocking": false
+      },
+      {
+        "ruleId": "TAX-05",
+        "severity": "MUST",
+        "category": "directory-structure",
+        "title": "Evolith Core structure: reference/, sdk/, rulesets/",
+        "description": "Missing top-level directories: rulesets, sdk",
+        "blocking": true
+      }
+    ],
+    "coreRef": {
+      "version": "1.0.0",
+      "path": "/github/workspace"
+    },
+    "timestamp": "2026-07-26T00:00:00.000Z"
+  },
+  "meta": {
+    "command": "evolith validate",
+    "executedAt": "2026-07-26T00:00:00.000Z",
+    "durationMs": 0,
+    "correlationId": "00000000-0000-4000-8000-000000000000",
+    "schemaVersion": "1.0.0",
+    "context": { "tenant": "acme" }
+  }
+}

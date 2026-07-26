@@ -32,6 +32,21 @@ function getAllScripts(dir, baseDir = "") {
 
 const allScripts = getAllScripts(ciDir);
 
+/**
+ * Per-script CLI arguments. Without this every script is spawned bare, so a
+ * guard with modes could only ever run in its default one — including in
+ * `full`, which picks up every .mjs automatically.
+ *
+ * GT-578 — `40-validate-path-literals.mjs` was wired here in `--report` mode
+ * while the two dead literals it found still existed (the `ci/agentic/` script
+ * path in sdk-cli-ci.yml, and that script's pre-refactor
+ * `packages/mcp-server/dist/main.js` argv). Both are repaired, so the entry is
+ * gone and the guard runs in its DEFAULT STRICT mode: a new dead path literal
+ * now fails the governance run instead of being printed and scrolled past.
+ * Verified green at the time of the flip: 109 literals across 197 files, 0 dead.
+ */
+const SCRIPT_ARGS = {};
+
 const MODES = {
   fast: {
     label: "RAPIDO (docs + tracking)",
@@ -61,7 +76,8 @@ const MODES = {
       "34-boundary-guard-repository.mjs",
       "35-validate-core-health.mjs",
       "36-validate-agent-memory.mjs",
-      "38-validate-okf-projection.mjs"
+      "38-validate-okf-projection.mjs",
+      "40-validate-path-literals.mjs"
     ],
   },
   full: {
@@ -113,6 +129,11 @@ function getAutoScripts() {
   if (infraChanged) {
     scripts.push("07-generate-inventories.mjs");
     scripts.push("29-validate-opa-sidecar-bundles.mjs");
+  }
+  if (codeChanged || infraChanged) {
+    // GT-578: workflows, harness scripts and compose files are exactly where a
+    // path *string* survives a move that the compiler would have caught.
+    scripts.push("40-validate-path-literals.mjs");
   }
   if (knowledgeChanged) {
     scripts.push("38-validate-okf-projection.mjs");
@@ -177,30 +198,48 @@ async function main() {
     
     const promises = stageScripts.map(script => {
       const scriptPath = path.join(ciDir, script);
+      // GT-578: a script named in a MODES list that is not on disk used to be
+      // skipped with status 0 and then filtered out of the count entirely — a
+      // dead path literal in this very file produced a green pipeline that had
+      // silently stopped running a guard. `full` is enumerated from disk, so a
+      // miss here can only mean a hand-written entry has gone stale.
       if (!fs.existsSync(scriptPath)) {
-        return Promise.resolve({ script, status: 0, stdout: "", stderr: `Skip: Not found` });
+        return Promise.resolve({
+          script,
+          status: 1,
+          stdout: "",
+          stderr:
+            `Script not found: ${path.relative(root, scriptPath)}\n` +
+            `A named CI script that does not exist must never be reported as skipped-and-green.`,
+        });
       }
 
+      const scriptArgs = SCRIPT_ARGS[path.basename(script)] ?? [];
+
       return new Promise((resolve) => {
-        const proc = spawn(process.execPath, [scriptPath], { cwd: root });
+        const proc = spawn(process.execPath, [scriptPath, ...scriptArgs], { cwd: root });
         let stdout = "";
         let stderr = "";
 
         proc.stdout.on("data", data => stdout += data.toString());
         proc.stderr.on("data", data => stderr += data.toString());
 
-        proc.on("close", status => resolve({ script, status, stdout, stderr }));
+        proc.on("close", status => resolve({ script, status, stdout, stderr, scriptArgs }));
       });
     });
 
     const results = await Promise.all(promises);
 
     for (const res of results) {
-      if (res.stderr === "Skip: Not found") continue;
       executedCount++;
-      
+
+      // Surface the mode a script ran in. A guard spawned with `--report` is
+      // not the same verdict as a guard spawned strict, and a bare ✅ next to
+      // its name would say it was.
+      const suffix = res.scriptArgs?.length ? ` \x1b[33m[${res.scriptArgs.join(" ")}]\x1b[0m` : "";
+
       if (res.status === 0) {
-        console.log(`\x1b[32m✅ [OK]\x1b[0m ${res.script}`);
+        console.log(`\x1b[32m✅ [OK]\x1b[0m ${res.script}${suffix}`);
       } else {
         console.error(`\x1b[31m❌ [FAIL]\x1b[0m ${res.script} (Exit Code: ${res.status})`);
         totalFailures++;

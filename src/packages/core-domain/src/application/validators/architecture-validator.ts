@@ -2,8 +2,8 @@ import * as path from 'path';
 import { IFileSystem } from '../../domain/interfaces';
 import { NormalizedRule } from '../../domain/models/normalized-rule';
 import { TopologyCatalogService } from '../services/topology-catalog.service';
-import { RuleEvaluationEngine } from './rule-evaluation-engine';
-import { ArchitectureValidationResult, ValidationIssue } from './ruleset-validator.types';
+import { RuleEvaluationEngine, emptyRuleCoverage, mergeRuleCoverage, summarizeRuleCoverage } from './rule-evaluation-engine';
+import { ArchitectureValidationResult, RuleCoverage, ValidationIssue } from './ruleset-validator.types';
 
 export interface ArchitectureValidationDeps {
   fs: IFileSystem;
@@ -23,7 +23,11 @@ export async function runArchitectureValidation(
   options?: ArchitectureValidationOptions,
 ): Promise<ArchitectureValidationResult> {
   const issues: ValidationIssue[] = [];
-  let rulesChecked = 0;
+  // GT-569: this used to be `rulesChecked += rules.length` — every rule DECLARED
+  // by the ruleset counted as checked, whether or not the engine could evaluate
+  // it. The counter is now derived from the actual outcomes, and the rules that
+  // did not run travel with it instead of vanishing.
+  let coverage: RuleCoverage = emptyRuleCoverage();
   const rulesetPaths: string[] = [];
 
   if (options?.level || (!options?.level && (!options?.topologies || options.topologies.length === 0))) {
@@ -71,11 +75,11 @@ export async function runArchitectureValidation(
     const content = await deps.fs.readFile(rulesetPath);
     const ruleset = JSON.parse(content);
     const rules = ruleset.rules || [];
-    rulesChecked += rules.length;
 
     for (const rule of rules) {
       const normalized: Record<string, unknown> = { ...rule, sourceFile: rulesetPath };
       const results = await deps.engine['strategy'].evaluateAll([normalized as unknown as NormalizedRule], ctx);
+      coverage = mergeRuleCoverage(coverage, summarizeRuleCoverage(results));
       issues.push(...deps.engine.toValidationIssues(results));
     }
   }
@@ -90,7 +94,12 @@ export async function runArchitectureValidation(
   return {
     status: blockingCount > 0 ? 'failed' : 'passed',
     levels: Array.from(new Set([...reportedLevels, ...(options?.topologies || [])])),
-    rulesChecked,
+    rulesChecked: coverage.rulesChecked,
+    rulesSkipped: coverage.rulesSkipped,
+    rulesErrored: coverage.rulesErrored,
+    rulesTotal: coverage.rulesTotal,
+    skippedRuleIds: coverage.skippedRuleIds,
+    erroredRuleIds: coverage.erroredRuleIds,
     issues,
     timestamp: new Date().toISOString(),
   };

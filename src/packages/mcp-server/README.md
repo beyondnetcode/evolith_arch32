@@ -111,7 +111,7 @@ evolith-mcp serve --transport http --port 49100
 | `PORT` | `3000` | Puerto para transporte HTTP |
 | `MCP_HTTP_HOST` | `0.0.0.0` | Host de bind del servidor HTTP. Usar `127.0.0.1` para local-only |
 | `EVOLITH_API_KEY` | — | API key para autenticación en transporte HTTP |
-| `EVOLITH_MCP_ALLOW_NO_AUTH` | `false` | Permite arrancar HTTP sin API key (solo no-producción). Ignorado en `production` |
+| `EVOLITH_MCP_ALLOW_NO_AUTH` | `false` | **Solo HTTP.** Permite arrancar HTTP sin API key (solo no-producción). Ignorado en `production` y en `stdio` (que advierte en el arranque) |
 | `JWT_SECRET` | — | Secreto opcional para validar Bearer JWT (HS256) además del API key |
 | `NODE_ENV` | `development` | En `production` la auth HTTP es obligatoria |
 | `LOG_LEVEL` | `info` | Nivel de log Pino: `trace`, `debug`, `info`, `warn`, `error` |
@@ -119,7 +119,7 @@ evolith-mcp serve --transport http --port 49100
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | — | Endpoint OpenTelemetry para tracing |
 | `OTEL_SERVICE_NAME` | `evolith-mcp` | Nombre del servicio en los traces |
 
-> El binario también acepta los flags `--transport`/`-t`, `--port`/`-p`, `--api-key` y `--allow-no-auth`, además del subcomando `evolith-mcp version`.
+> El binario también acepta los flags `--transport`/`-t`, `--port`/`-p`, `--api-key` y `--allow-no-auth` (**solo HTTP**), además del subcomando `evolith-mcp version`.
 
 ---
 
@@ -127,7 +127,9 @@ evolith-mcp serve --transport http --port 49100
 
 ### Transporte stdio
 
-No requiere autenticación. El proceso es local y ejecutado directamente por el agente.
+No requiere autenticación de request: el proceso es local, de un solo usuario, y lo ejecuta directamente el agente. El transporte establece un **principal de sesión local explícito** (`id=local-stdio-session`, `role=local-session`, `roles=[local-session, operator]`, `scopes=[read, write]`) que queda registrado en la auditoría de cada llamada (GT-572).
+
+Esto **no** es un bypass de autorización: ABAC (nativo + OPA) sigue evaluándose en cada `tools/call` con esa identidad, las tools `deploy` siguen denegadas en `production` (requieren `architect`) y toda tool mutativa sigue exigiendo el gate HITL `{ apply, approvalToken }`. `--allow-no-auth` / `EVOLITH_MCP_ALLOW_NO_AUTH` **no aplican a stdio** (no hay autenticación de request que saltarse); si se pasan con `--transport stdio` el servidor lo advierte por stderr en el arranque.
 
 ### Transporte HTTP
 

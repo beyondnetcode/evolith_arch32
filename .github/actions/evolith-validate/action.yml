@@ -24,6 +24,16 @@ inputs:
     description: 'Version of @beyondnet/evolith-cli to install (default: latest)'
     required: false
     default: 'latest'
+  cli-command:
+    description: >
+      Command used to invoke the CLI. Empty (default) installs
+      @beyondnet/evolith-cli from npm and runs `evolith-cli`. Set it to an
+      already-available executable -- e.g. `node ./src/sdk/cli/dist/main.js` --
+      to run against a local build and skip the npm install. This is how the
+      Core repository dogfoods and regression-tests this action without
+      depending on a published release.
+    required: false
+    default: ''
   fail-on-violation:
     description: 'Exit with code 1 (fail the job) when violations are found'
     required: false
@@ -34,8 +44,11 @@ outputs:
     description: 'compliant | non-compliant'
     value: ${{ steps.validate.outputs.compliance-status }}
   violations-count:
-    description: 'Number of violations found'
+    description: 'Number of BLOCKING issues found (data.issues[].blocking == true)'
     value: ${{ steps.validate.outputs.violations-count }}
+  issues-count:
+    description: 'Total number of issues found, blocking and advisory'
+    value: ${{ steps.validate.outputs.issues-count }}
   report-path:
     description: 'Absolute path to the generated JSON report artifact'
     value: ${{ steps.validate.outputs.report-path }}
@@ -47,55 +60,88 @@ runs:
     # 1. Node.js setup
     # ------------------------------------------------------------------
     - name: Setup Node.js ${{ inputs.node-version }}
+      if: ${{ inputs.cli-command == '' }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
 
     # ------------------------------------------------------------------
-    # 2. Install Evolith CLI globally
+    # 2. Install Evolith CLI globally (skipped when `cli-command` is given)
     # ------------------------------------------------------------------
     - name: Install @beyondnet/evolith-cli@${{ inputs.cli-version }}
+      if: ${{ inputs.cli-command == '' }}
       shell: bash
-      run: npm install -g @beyondnet/evolith-cli@${{ inputs.cli-version }}
+      env:
+        INPUT_CLI_VERSION: ${{ inputs.cli-version }}
+      run: npm install -g "@beyondnet/evolith-cli@${INPUT_CLI_VERSION}"
 
     # ------------------------------------------------------------------
     # 3. Run governance validation
+    #
+    # Inputs are passed through `env:` rather than `${{ }}` interpolated into
+    # the script body: it removes the shell-injection surface AND keeps this
+    # script executable outside Actions, which is what the hermetic test in
+    # `test/action-step.test.mjs` runs.
     # ------------------------------------------------------------------
     - name: Run evolith-cli validate
       id: validate
       shell: bash
+      env:
+        INPUT_SATELLITE_PATH: ${{ inputs.satellite-path }}
+        INPUT_CORE_PATH: ${{ inputs.core-path }}
+        INPUT_RULESET: ${{ inputs.ruleset }}
+        INPUT_CLI_COMMAND: ${{ inputs.cli-command }}
+        INPUT_FAIL_ON_VIOLATION: ${{ inputs.fail-on-violation }}
       run: |
-        ARGS=""
+        ARGS=()
 
-        if [ "${{ inputs.satellite-path }}" != "." ]; then
-          ARGS="$ARGS --satellite ${{ inputs.satellite-path }}"
+        if [ -n "${INPUT_SATELLITE_PATH}" ] && [ "${INPUT_SATELLITE_PATH}" != "." ]; then
+          ARGS+=(--satellite "${INPUT_SATELLITE_PATH}")
         fi
 
-        if [ -n "${{ inputs.core-path }}" ]; then
-          ARGS="$ARGS --core ${{ inputs.core-path }}"
+        if [ -n "${INPUT_CORE_PATH}" ]; then
+          ARGS+=(--core "${INPUT_CORE_PATH}")
         fi
 
-        if [ -n "${{ inputs.ruleset }}" ]; then
-          ARGS="$ARGS --ruleset ${{ inputs.ruleset }}"
+        if [ -n "${INPUT_RULESET}" ]; then
+          ARGS+=(--ruleset "${INPUT_RULESET}")
+        fi
+
+        CLI_CMD="${INPUT_CLI_COMMAND}"
+        if [ -z "${CLI_CMD}" ]; then
+          CLI_CMD="evolith-cli"
         fi
 
         REPORT_PATH="${RUNNER_TEMP}/evolith-report.json"
+        rm -f "${REPORT_PATH}"
         echo "report-path=${REPORT_PATH}" >> "${GITHUB_OUTPUT}"
 
         echo "::group::Evolith governance validation"
-        echo "Command: evolith-cli validate ${ARGS} --format json --output ${REPORT_PATH}"
+        echo "Command: ${CLI_CMD} validate ${ARGS[*]} --format json --output ${REPORT_PATH}"
         echo ""
 
         set +e
-        evolith-cli validate ${ARGS} --format json --output "${REPORT_PATH}"
+        # Word-split on purpose: `cli-command` may be a multi-word launcher
+        # such as `node /path/to/main.js`.
+        ${CLI_CMD} validate "${ARGS[@]}" --format json --output "${REPORT_PATH}"
         EXIT_CODE=$?
         set -e
 
         echo "::endgroup::"
 
+        # GT-577: the report is an ADR-0073 envelope --
+        #   { success, data: { status, rulesChecked, issues[], coreRef, timestamp }, meta }
+        # There is no `.summary`, so the previous `.summary.violations // 0`
+        # made every run render "0 violation(s) found" even while the gate
+        # correctly blocked. The expressions below index only the two keys the
+        # contract pins (`data.issues[].blocking`) and use `?` so they stay
+        # total against an error envelope (no `.data`), against a report that
+        # was never written, and against any key later added to the envelope.
         VIOLATIONS=0
+        ISSUES=0
         if [ -f "${REPORT_PATH}" ] && command -v jq &>/dev/null; then
-          VIOLATIONS=$(jq -r '.summary.violations // 0' "${REPORT_PATH}" 2>/dev/null || echo "0")
+          VIOLATIONS=$(jq -r '[.data.issues[]? | select(.blocking == true)] | length' "${REPORT_PATH}" 2>/dev/null || echo "0")
+          ISSUES=$(jq -r '[.data.issues[]?] | length' "${REPORT_PATH}" 2>/dev/null || echo "0")
         fi
 
         if [ "${EXIT_CODE}" -eq 0 ]; then
@@ -105,9 +151,10 @@ runs:
         fi
 
         echo "violations-count=${VIOLATIONS}" >> "${GITHUB_OUTPUT}"
+        echo "issues-count=${ISSUES}" >> "${GITHUB_OUTPUT}"
 
-        if [ "${{ inputs.fail-on-violation }}" = "true" ] && [ "${EXIT_CODE}" -ne 0 ]; then
-          echo "::error::Evolith governance validation failed. Violations: ${VIOLATIONS}"
+        if [ "${INPUT_FAIL_ON_VIOLATION}" = "true" ] && [ "${EXIT_CODE}" -ne 0 ]; then
+          echo "::error::Evolith governance validation failed. Blocking violations: ${VIOLATIONS} (total issues: ${ISSUES})"
           exit 1
         fi
 
@@ -117,27 +164,44 @@ runs:
     - name: Write governance summary
       if: always()
       shell: bash
+      env:
+        STATUS: ${{ steps.validate.outputs.compliance-status }}
+        VIOLATIONS: ${{ steps.validate.outputs.violations-count }}
+        ISSUES: ${{ steps.validate.outputs.issues-count }}
+        INPUT_SATELLITE_PATH: ${{ inputs.satellite-path }}
+        INPUT_RULESET: ${{ inputs.ruleset }}
+        INPUT_CLI_VERSION: ${{ inputs.cli-version }}
+        INPUT_CLI_COMMAND: ${{ inputs.cli-command }}
+        INPUT_NODE_VERSION: ${{ inputs.node-version }}
       run: |
-        STATUS="${{ steps.validate.outputs.compliance-status }}"
-        VIOLATIONS="${{ steps.validate.outputs.violations-count }}"
-
         {
           echo "## Evolith Governance Validation"
           echo ""
           if [ "${STATUS}" = "compliant" ]; then
             echo "**Status:** Compliant -- all rules passed"
+          elif [ "${STATUS}" = "non-compliant" ] && [ "${VIOLATIONS:-0}" = "0" ]; then
+            # The verdict came from the exit code but no blocking issue could be
+            # read back (missing/unparseable report, or an error envelope).
+            # Saying "0 violation(s)" here is what made the action read as broken.
+            echo "**Status:** Non-compliant -- the CLI exited non-zero; see the validation log for detail"
+          elif [ "${STATUS}" = "non-compliant" ]; then
+            echo "**Status:** Non-compliant -- ${VIOLATIONS} blocking violation(s) of ${ISSUES:-?} issue(s) found"
           else
-            echo "**Status:** Non-compliant -- ${VIOLATIONS} violation(s) found"
+            echo "**Status:** Unknown -- the validation step did not report a verdict"
           fi
           echo ""
           echo "| Parameter | Value |"
           echo "|-----------|-------|"
-          echo "| Satellite path | \`${{ inputs.satellite-path }}\` |"
-          if [ -n "${{ inputs.ruleset }}" ]; then
-            echo "| Ruleset | \`${{ inputs.ruleset }}\` |"
+          echo "| Satellite path | \`${INPUT_SATELLITE_PATH}\` |"
+          if [ -n "${INPUT_RULESET}" ]; then
+            echo "| Ruleset | \`${INPUT_RULESET}\` |"
           else
             echo "| Ruleset | all |"
           fi
-          echo "| CLI version | \`${{ inputs.cli-version }}\` |"
-          echo "| Node.js | \`${{ inputs.node-version }}\` |"
+          if [ -n "${INPUT_CLI_COMMAND}" ]; then
+            echo "| CLI | \`${INPUT_CLI_COMMAND}\` (local build) |"
+          else
+            echo "| CLI version | \`${INPUT_CLI_VERSION}\` |"
+          fi
+          echo "| Node.js | \`${INPUT_NODE_VERSION}\` |"
         } >> "${GITHUB_STEP_SUMMARY}"

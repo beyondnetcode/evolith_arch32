@@ -21,6 +21,17 @@ export interface ModeValidationResult {
   mode: ValidationModeName;
   status: 'passed' | 'failed' | 'warning' | 'skipped';
   rulesChecked: number;
+  /**
+   * GT-569 — the denominator behind `rulesChecked`, so an aggregate built from
+   * several modes can report checked/skipped/errored/total instead of a bare
+   * coverage number. Optional: a mode that cannot distinguish the outcomes
+   * omits them and the aggregate falls back to `rulesChecked` as the total.
+   */
+  rulesSkipped?: number;
+  rulesErrored?: number;
+  rulesTotal?: number;
+  skippedRuleIds?: string[];
+  erroredRuleIds?: string[];
   issues: ModeValidationIssue[];
   evidence?: unknown;
   metadata?: Record<string, unknown>;

@@ -1,0 +1,309 @@
+{
+  "success": true,
+  "data": {
+    "status": "failed",
+    "rulesChecked": 101,
+    "issues": [
+      {
+        "ruleId": "CLI-RR-01",
+        "severity": "MUST",
+        "category": "build",
+        "title": "TypeScript Build Must Pass",
+        "description": "dist/main.js not found — run npm run build in sdk/cli",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-02",
+        "severity": "MUST",
+        "category": "tests",
+        "title": "Unit and Integration Tests Must Start and Pass",
+        "description": "dist/ not found — run npm run build",
+        "blocking": true
+      },
+      {
+        "ruleId": "CLI-RR-05",
+        "severity": "SHOULD",
+        "category": "documentation",
+        "title": "Release Documentation Must Match Implementation",
+        "description": "CLI missing README.md or ARCHITECTURE.md",
+        "blocking": false
+      },
+      {
+        "ruleId": "CB-VAL-01",
+        "severity": "MUST",
+        "category": "validation",
+        "title": "All 5 baseline pillars must be present in evolith.yaml spec.compliance",
+        "description": "evolith.yaml missing spec.compliance section",
+        "blocking": true
+      },
+      {
+        "ruleId": "TAX-05",
+        "severity": "MUST",
+        "category": "directory-structure",
+        "title": "Evolith Core structure: reference/, sdk/, rulesets/",
+        "description": "Missing top-level directories: rulesets, sdk",
+        "blocking": true
+      },
+      {
+        "ruleId": "INH-02",
+        "severity": "MUST",
+        "category": "inheritance",
+        "title": "Version Pinning",
+        "description": "evolith.yaml must specify coreRef.version (semver). Unpinned references are prohibited.",
+        "blocking": false
+      },
+      {
+        "ruleId": "INH-06",
+        "severity": "MUST",
+        "category": "inheritance",
+        "title": "Mandatory Architecture Tracker",
+        "description": "Satellite missing DECISIONS.md in root directory",
+        "blocking": false
+      },
+      {
+        "ruleId": "AAI-R01",
+        "severity": "MUST",
+        "category": "agent-identity",
+        "title": "Declared Agent Identity and Capabilities",
+        "description": "An Agentic AI satellite MUST provide agent.config.json with a stable agent.id and a non-empty capabilities array. - Expected agent.config.json with agent.id and one or more capabilities",
+        "blocking": true
+      },
+      {
+        "ruleId": "AAI-R02",
+        "severity": "MUST",
+        "category": "agent-sandbox",
+        "title": "Explicit Sandbox Boundary",
+        "description": "agent.config.json MUST declare an isolated sandbox and set both network and process access to deny or allowlist. - Expected sandbox.mode=isolated and deny or allowlist network and process access",
+        "blocking": true
+      },
+      {
+        "ruleId": "AAI-R03",
+        "severity": "MUST",
+        "category": "agent-prompt-boundaries",
+        "title": "Prompt and Implementation Separation",
+        "description": "agent.config.json MUST declare non-empty promptSources and implementationRoots that do not overlap. - Expected non-overlapping promptSources and implementationRoots in agent.config.json",
+        "blocking": true
+      },
+      {
+        "ruleId": "AAI-R04",
+        "severity": "MUST",
+        "category": "agent-tool-approval",
+        "title": "Approval for Mutative Tools",
+        "description": "agent.config.json MUST set toolPolicy.mutative to approval-required. - Expected toolPolicy.mutative=approval-required in agent.config.json",
+        "blocking": true
+      },
+      {
+        "ruleId": "AAI-R05",
+        "severity": "MUST",
+        "category": "agent-sandbox-limits",
+        "title": "Ephemeral Sandbox Resource Limits",
+        "description": "agent.config.json MUST require ephemeral execution and positive duration, memory, and CPU limits in sandbox. - Expected ephemeral sandbox with positive duration, memory, and CPU limits",
+        "blocking": true
+      },
+      {
+        "ruleId": "AAI-R06",
+        "severity": "MUST",
+        "category": "agent-context-trust",
+        "title": "Untrusted Context Is Data",
+        "description": "agent.config.json MUST declare contextPolicy.untrustedContent=data-only, provenanceRequired=true, and toolOutputSchemaValidation=true. - Expected data-only untrusted context, provenance, and tool-output schema validation",
+        "blocking": true
+      },
+      {
+        "ruleId": "AAI-R07",
+        "severity": "MUST",
+        "category": "agent-action-accountability",
+        "title": "Capability-Scoped, Auditable Actions",
+        "description": "agent.config.json MUST require scoped-and-expiring capability delegation and append-only action evidence with correlation IDs. - Expected scoped-and-expiring capabilities plus append-only correlated action evidence",
+        "blocking": true
+      },
+      {
+        "ruleId": "AAI-R08",
+        "severity": "MUST",
+        "category": "agent-operational-budgets",
+        "title": "Operational Budgets and Concurrency Limits",
+        "description": "agent.config.json MUST declare operationalBudgets with positive maxPromptTokens, maxCompletionTokens, maxContextWindowTokens, an mcpToolConcurrency object with positive maxInFlight and perToolMaxInFlight, and a non-empty runbooksPath that points at a readable runbook document. - Expected positive token, context, and MCP concurrency budgets plus a runbooksPath that exists",
+        "blocking": true
+      },
+      {
+        "ruleId": "AAI-R09",
+        "severity": "MUST",
+        "category": "agent-credential-lifecycle",
+        "title": "Satellite Credential Lifecycle",
+        "description": "agent.config.json MUST declare credentialLifecycle with a positive delegationMaxTtlSeconds, a positive rotationCadenceDays, revocation.onIncident in {immediate, scheduled}, and a positive revocation.maxPropagationSeconds. - Expected positive delegation TTL, rotation cadence, and bounded incident revocation",
+        "blocking": true
+      },
+      {
+        "ruleId": "DAM-R01",
+        "severity": "MUST",
+        "category": "data-mesh-config",
+        "title": "Data Product Designation",
+        "description": "A Data Mesh satellite MUST provide data-mesh.config.json and declare isDataProduct=true. - data-mesh.config.json does not satisfy DAM-R01",
+        "blocking": true
+      },
+      {
+        "ruleId": "DAM-R02",
+        "severity": "MUST",
+        "category": "data-mesh-contracts",
+        "title": "Data Contracts",
+        "description": "data-mesh.config.json MUST declare hasDataContracts=true. - data-mesh.config.json does not satisfy DAM-R02",
+        "blocking": true
+      },
+      {
+        "ruleId": "DAM-R03",
+        "severity": "MUST",
+        "category": "data-mesh-governance",
+        "title": "Federated Governance",
+        "description": "data-mesh.config.json MUST declare federatedGovernance=true. - data-mesh.config.json does not satisfy DAM-R03",
+        "blocking": true
+      },
+      {
+        "ruleId": "EC-R01",
+        "severity": "MUST",
+        "category": "edge-computing-sync",
+        "title": "Mandatory Synchronization Strategy",
+        "description": "An Edge Computing satellite MUST provide edge-computing.config.json and declare syncStrategy (offline-first, eventual, or real-time-fallback). - edge-computing.config.json does not satisfy EC-R01",
+        "blocking": true
+      },
+      {
+        "ruleId": "EC-R02",
+        "severity": "MUST",
+        "category": "edge-computing-isolation",
+        "title": "Edge Node Isolation",
+        "description": "edge-computing.config.json MUST declare edgeIsolation=true. - edge-computing.config.json does not satisfy EC-R02",
+        "blocking": true
+      },
+      {
+        "ruleId": "EC-R03",
+        "severity": "MUST",
+        "category": "edge-computing-conflict",
+        "title": "Conflict Resolution Strategy",
+        "description": "edge-computing.config.json MUST declare conflictResolution (last-write-wins, merge, or manual). - edge-computing.config.json does not satisfy EC-R03",
+        "blocking": true
+      },
+      {
+        "ruleId": "ED-R01",
+        "severity": "MUST",
+        "category": "event-driven-config",
+        "title": "Strict AsyncAPI Contract",
+        "description": "An Event-Driven satellite MUST provide event-driven.config.json and declare strictAsyncApi=true. - event-driven.config.json does not satisfy ED-R01",
+        "blocking": true
+      },
+      {
+        "ruleId": "ED-R02",
+        "severity": "MUST",
+        "category": "event-driven-outbox",
+        "title": "Transactional Outbox",
+        "description": "event-driven.config.json MUST declare transactionalOutbox=true. - event-driven.config.json does not satisfy ED-R02",
+        "blocking": true
+      },
+      {
+        "ruleId": "ED-R03",
+        "severity": "MUST",
+        "category": "event-driven-dlq",
+        "title": "Dead Letter Queue",
+        "description": "event-driven.config.json MUST declare deadLetterQueue=true. - event-driven.config.json does not satisfy ED-R03",
+        "blocking": true
+      },
+      {
+        "ruleId": "DM-R02",
+        "severity": "MUST",
+        "category": "contract-stability",
+        "title": "Inter-Module Contracts are Explicit and Versioned",
+        "description": "All inter-module communication MUST use explicit contract definitions (Protobuf, JSON Schema, or OpenAPI). Contracts are versioned and backward-compatible. - No contracts directory found",
+        "blocking": true
+      },
+      {
+        "ruleId": "DM-R03",
+        "severity": "MUST",
+        "category": "data-ownership",
+        "title": "Module Data Isolation Enforced",
+        "description": "No module can directly query another module's persistence layer. All data access goes through the owning module's published interface. - No acl directory for data ownership enforcement",
+        "blocking": true
+      },
+      {
+        "ruleId": "MM-R03",
+        "severity": "MUST",
+        "category": "hexagonal-architecture",
+        "title": "Ports and Adapters Boundary",
+        "description": "All bounded contexts MUST implement hexagonal architecture (core/ADR-0002). Domain layer has zero external dependencies. Infrastructure adapters are injected via ports. - No ports directory found (expected: src/ports or src/application/ports)",
+        "blocking": true
+      },
+      {
+        "ruleId": "MM-R04",
+        "severity": "MUST",
+        "category": "communication",
+        "title": "Inter-Context Communication via Ports",
+        "description": "Cross-bounded-context communication MUST use explicit application-layer port interfaces. No direct infrastructure-to-infrastructure calls. - No contracts/ directory found for inter-module contracts",
+        "blocking": true
+      },
+      {
+        "ruleId": "MM-R05",
+        "severity": "MUST",
+        "category": "persistence",
+        "title": "No Shared Database Across Bounded Contexts",
+        "description": "Each bounded context MUST have its own database schema or database instance. Shared database is prohibited. - No acl/ directory found (should contain one subdirectory per bounded context)",
+        "blocking": true
+      },
+      {
+        "ruleId": "MM-R06",
+        "severity": "MUST",
+        "category": "async-boundaries",
+        "title": "Async Events Use Domain Events",
+        "description": "When bounded contexts emit events for async reaction, they MUST use domain events with explicit event contracts (core/ADR-0015). No implicit table-polling or direct queue manipulation. - No events directory found",
+        "blocking": false
+      },
+      {
+        "ruleId": "MM-R07",
+        "severity": "MUST",
+        "category": "extraction-readiness",
+        "title": "Maintain Extraction Readiness Score",
+        "description": "Satellite MUST track and maintain extraction readiness score per core/ADR-0045. Score MUST be >= 70% to pass Phase 2 Design gate when F2 is planned. - No extraction-readiness.md found in docs/",
+        "blocking": false
+      },
+      {
+        "ruleId": "SV-R01",
+        "severity": "MUST",
+        "category": "serverless-config",
+        "title": "Declared Serverless Contract",
+        "description": "A Serverless satellite MUST provide serverless.config.json. - serverless.config.json does not satisfy SV-R01",
+        "blocking": true
+      },
+      {
+        "ruleId": "SV-R02",
+        "severity": "MUST",
+        "category": "serverless-stateless",
+        "title": "Stateless Execution",
+        "description": "serverless.config.json MUST declare stateless=true. - serverless.config.json does not satisfy SV-R02",
+        "blocking": true
+      },
+      {
+        "ruleId": "SV-R03",
+        "severity": "MUST",
+        "category": "serverless-package",
+        "title": "Bounded Deployment Package",
+        "description": "serverless.config.json MUST declare a positive package.maxSizeMb not exceeding 50. - serverless.config.json does not satisfy SV-R03",
+        "blocking": true
+      },
+      {
+        "ruleId": "SV-R04",
+        "severity": "MUST",
+        "category": "serverless-cold-start",
+        "title": "Cold-Start Readiness",
+        "description": "serverless.config.json MUST declare positive coldStart.maxInitMilliseconds and coldStart.lazyInitialization=true. - serverless.config.json does not satisfy SV-R04",
+        "blocking": true
+      }
+    ],
+    "coreRef": {
+      "version": null,
+      "path": "/github/workspace"
+    },
+    "timestamp": "2026-07-26T00:00:00.000Z"
+  },
+  "meta": {
+    "command": "evolith validate",
+    "executedAt": "2026-07-26T00:00:00.000Z",
+    "durationMs": 0,
+    "correlationId": "00000000-0000-4000-8000-000000000000",
+    "schemaVersion": "1.0.0"
+  }
+}

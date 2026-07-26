@@ -12,9 +12,26 @@ export interface WorkspaceEvaluationContext {
   facts?: EvaluationFacts;
 }
 
+/**
+ * GT-569 — the outcome vocabulary of a single rule evaluation.
+ *
+ * `skipped` and `errored` are DELIBERATELY distinct. Before GT-569 a handler
+ * exception was converted into `skipped`, which made a crashing evaluator
+ * indistinguishable from a rule the engine legitimately cannot express — and
+ * both were then filtered out of `rulesChecked`, so a crash read as a green.
+ *
+ * - `passed`  — evaluated, no violation.
+ * - `failed`  — evaluated, violation found.
+ * - `skipped` — NOT evaluated: no handler supports the rule, or the handler
+ *               declined it (requires external/runtime evidence).
+ * - `errored` — NOT evaluated: the handler threw. This is a defect in the
+ *               engine or the workspace, never a verdict about the rule.
+ */
+export type RuleEvaluationOutcome = 'passed' | 'failed' | 'skipped' | 'errored';
+
 export interface RuleEvaluationResult {
   rule: NormalizedRule;
-  result: 'passed' | 'failed' | 'skipped';
+  result: RuleEvaluationOutcome;
   message?: string;
   evidencePath?: string;
 }

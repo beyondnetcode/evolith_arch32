@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "data": {
+    "status": "passed",
+    "rulesChecked": 101,
+    "issues": [],
+    "coreRef": {
+      "version": "1.0.0",
+      "path": "/github/workspace"
+    },
+    "timestamp": "2026-07-26T00:00:00.000Z"
+  },
+  "meta": {
+    "command": "evolith validate",
+    "executedAt": "2026-07-26T00:00:00.000Z",
+    "durationMs": 0,
+    "correlationId": "00000000-0000-4000-8000-000000000000",
+    "schemaVersion": "1.0.0"
+  }
+}

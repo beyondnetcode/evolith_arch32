@@ -113,21 +113,82 @@ Response (captured live):
   "data": {
     "status": "failed",
     "rulesChecked": "<n>",
-    "issues": "<issues[]>",
-    "coreRef": {
-      "version": null,
-      "path": "/abs/path/to/evolith-core"
-    },
-    "timestamp": "<timestamp>"
-  },
-  "meta": {
-    "command": "evolith validate",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
-    "schemaVersion": "1.0.0"
-  }
-}
+    "rulesSkipped": 277,
+    "rulesErrored": 0,
+    "rulesTotal": 379,
+    "skippedRuleIds": [
+      "ACL-02",
+      "ACL-03",
+      "ACL-05",
+      "ACL-06",
+      "HXA-01",
+      "HXA-02",
+      "HXA-03",
+      "HXA-04",
+      "HXA-05",
+      "HXA-06",
+      "HXA-07",
+      "CICD-01",
+      "CICD-02",
+      "CICD-03",
+      "CICD-04",
+      "CICD-05",
+      "CICD-06",
+      "CICD-07",
+      "MTN-01",
+      "MTN-02",
+      "MTN-03",
+      "MTN-04",
+      "MTN-05",
+      "MTN-06",
+      "MTN-07",
+      "MTN-08",
+      "TPY-01",
+      "TPY-02",
+      "TPY-03",
+      "TPY-04",
+      "TPY-05",
+      "TPY-06",
+      "TPY-07",
+      "PROT-01",
+      "PROT-02",
+      "PROT-03",
+      "PROT-04",
+      "PROT-05",
+      "PROT-06",
+      "PROT-07",
+      "RUNT-01",
+      "RUNT-02",
+      "RUNT-03",
+      "RUNT-04",
+      "RUNT-05",
+      "RUNT-06",
+      "RUNT-07",
+      "RUNT-08",
+      "GIT-01",
+      "GIT-02",
+      "GIT-03",
+      "GIT-04",
+      "GIT-05",
+      "GIT-06",
+      "GIT-07",
+      "GIT-08",
+      "GIT-09",
+      "GIT-10",
+      "CORE-0001-01",
+      "CORE-0006-01",
+      "CORE-0009-01",
+      "CORE-0011-01",
+      "CORE-0013-01",
+      "CORE-0014-01",
+      "CORE-0015-01",
+      "CORE-0016-01",
+      "CORE-0017-01",
+      "CORE-0019-01",
+      "CORE-0020-01",
+      "CORE-0024-01",
+      "
+  … (truncated)
 ```
 
 #### MCP
@@ -160,23 +221,82 @@ Response (captured live):
   "data": {
     "status": "failed",
     "rulesChecked": "<n>",
-    "issues": "<issues[]>",
-    "coreRef": {
-      "version": null,
-      "path": null
-    },
-    "timestamp": "<timestamp>"
-  },
-  "meta": {
-    "correlationId": "<uuid>",
-    "command": "evolith-validate",
-    "tool": "evolith-validate",
-    "durationMs": 0,
-    "executedAt": "<timestamp>",
-    "timestamp": "<timestamp>",
-    "schemaVersion": "1.0.0"
-  }
-}
+    "rulesSkipped": 277,
+    "rulesErrored": 0,
+    "rulesTotal": 379,
+    "skippedRuleIds": [
+      "ACL-02",
+      "ACL-03",
+      "ACL-05",
+      "ACL-06",
+      "HXA-01",
+      "HXA-02",
+      "HXA-03",
+      "HXA-04",
+      "HXA-05",
+      "HXA-06",
+      "HXA-07",
+      "CICD-01",
+      "CICD-02",
+      "CICD-03",
+      "CICD-04",
+      "CICD-05",
+      "CICD-06",
+      "CICD-07",
+      "MTN-01",
+      "MTN-02",
+      "MTN-03",
+      "MTN-04",
+      "MTN-05",
+      "MTN-06",
+      "MTN-07",
+      "MTN-08",
+      "TPY-01",
+      "TPY-02",
+      "TPY-03",
+      "TPY-04",
+      "TPY-05",
+      "TPY-06",
+      "TPY-07",
+      "PROT-01",
+      "PROT-02",
+      "PROT-03",
+      "PROT-04",
+      "PROT-05",
+      "PROT-06",
+      "PROT-07",
+      "RUNT-01",
+      "RUNT-02",
+      "RUNT-03",
+      "RUNT-04",
+      "RUNT-05",
+      "RUNT-06",
+      "RUNT-07",
+      "RUNT-08",
+      "GIT-01",
+      "GIT-02",
+      "GIT-03",
+      "GIT-04",
+      "GIT-05",
+      "GIT-06",
+      "GIT-07",
+      "GIT-08",
+      "GIT-09",
+      "GIT-10",
+      "CORE-0001-01",
+      "CORE-0006-01",
+      "CORE-0009-01",
+      "CORE-0011-01",
+      "CORE-0013-01",
+      "CORE-0014-01",
+      "CORE-0015-01",
+      "CORE-0016-01",
+      "CORE-0017-01",
+      "CORE-0019-01",
+      "CORE-0020-01",
+      "CORE-0024-01",
+      "
+  … (truncated)
 ```
 
 #### REST
@@ -203,22 +323,82 @@ Response (captured live):
   "data": {
     "status": "failed",
     "rulesChecked": "<n>",
-    "issues": "<issues[]>",
-    "coreRef": {
-      "version": null,
-      "path": null
-    },
-    "timestamp": "<timestamp>"
-  },
-  "meta": {
-    "command": "http POST /api/v1/architecture/validate-satellite",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
-    "context": {},
-    "schemaVersion": "1.0.0"
-  }
-}
+    "rulesSkipped": 277,
+    "rulesErrored": 0,
+    "rulesTotal": 379,
+    "skippedRuleIds": [
+      "ACL-02",
+      "ACL-03",
+      "ACL-05",
+      "ACL-06",
+      "HXA-01",
+      "HXA-02",
+      "HXA-03",
+      "HXA-04",
+      "HXA-05",
+      "HXA-06",
+      "HXA-07",
+      "CICD-01",
+      "CICD-02",
+      "CICD-03",
+      "CICD-04",
+      "CICD-05",
+      "CICD-06",
+      "CICD-07",
+      "MTN-01",
+      "MTN-02",
+      "MTN-03",
+      "MTN-04",
+      "MTN-05",
+      "MTN-06",
+      "MTN-07",
+      "MTN-08",
+      "TPY-01",
+      "TPY-02",
+      "TPY-03",
+      "TPY-04",
+      "TPY-05",
+      "TPY-06",
+      "TPY-07",
+      "PROT-01",
+      "PROT-02",
+      "PROT-03",
+      "PROT-04",
+      "PROT-05",
+      "PROT-06",
+      "PROT-07",
+      "RUNT-01",
+      "RUNT-02",
+      "RUNT-03",
+      "RUNT-04",
+      "RUNT-05",
+      "RUNT-06",
+      "RUNT-07",
+      "RUNT-08",
+      "GIT-01",
+      "GIT-02",
+      "GIT-03",
+      "GIT-04",
+      "GIT-05",
+      "GIT-06",
+      "GIT-07",
+      "GIT-08",
+      "GIT-09",
+      "GIT-10",
+      "CORE-0001-01",
+      "CORE-0006-01",
+      "CORE-0009-01",
+      "CORE-0011-01",
+      "CORE-0013-01",
+      "CORE-0014-01",
+      "CORE-0015-01",
+      "CORE-0016-01",
+      "CORE-0017-01",
+      "CORE-0019-01",
+      "CORE-0020-01",
+      "CORE-0024-01",
+      "
+  … (truncated)
 ```
 
 ---
@@ -257,6 +437,11 @@ Response (captured live):
   "data": {
     "status": "failed",
     "rulesChecked": "<n>",
+    "rulesSkipped": 0,
+    "rulesErrored": 0,
+    "rulesTotal": 0,
+    "skippedRuleIds": [],
+    "erroredRuleIds": [],
     "issues": "<issues[]>",
     "coreRef": {
       "version": null,
@@ -315,6 +500,11 @@ Response (captured live):
       }
     ],
     "totalRulesChecked": 0,
+    "totalRulesSkipped": 0,
+    "totalRulesErrored": 0,
+    "totalRulesTotal": 0,
+    "skippedRuleIds": [],
+    "erroredRuleIds": [],
     "totalIssues": 1,
     "passedRules": -1,
     "failedRules": 1,
@@ -354,12 +544,7 @@ Response (captured live):
   },
   "meta": {
     "correlationId": "<uuid>",
-    "command": "evolith-composable-validate",
-    "tool": "evolith-composable-validate",
-    "durationMs": 0,
-    "executedAt": "<timestamp>",
-    "timestamp": "<timestamp>",
-   
+    "command": "evolith-composable-validate"
   … (truncated)
 ```
 
@@ -395,6 +580,11 @@ Response (captured live):
       }
     ],
     "totalRulesChecked": 0,
+    "totalRulesSkipped": 0,
+    "totalRulesErrored": 0,
+    "totalRulesTotal": 0,
+    "skippedRuleIds": [],
+    "erroredRuleIds": [],
     "totalIssues": 1,
     "passedRules": -1,
     "failedRules": 1,
@@ -437,9 +627,8 @@ Response (captured live):
     "durationMs": 0,
     "correlationId": "<uuid>",
     "context": {},
-    "schemaVersion": "1.0.0"
-  }
-}
+    "schemaVersi
+  … (truncated)
 ```
 
 ---
@@ -611,41 +800,50 @@ Response (captured live):
           "verdict": "FAIL",
           "artifactResults": [
             {
-              "artifactId": "build",
-              "verdict": "FAIL",
-              "present": false,
+              "artifactId": "anti-corruption",
+              "verdict": "PASS",
+              "present": true,
               "ruleRefs": [
-                "CLI-RR-01"
+                "ACL-02"
               ],
-              "gaps": [
-                {
-                  "id": "general-rulesets:CLI-RR-01",
-                  "requirementRef": "CLI-RR-01",
-                  "severity": "error",
-                  "message": "TypeScript Build Must Pass: dist/main.js not found — run npm run build in sdk/cli",
-                  "location": "build"
-                }
-              ]
+              "gaps": []
             },
             {
-              "artifactId": "tests",
-              "verdict": "FAIL",
-              "present": false,
+              "artifactId": "anti-corruption",
+              "verdict": "PASS",
+              "present": true,
               "ruleRefs": [
-                "CLI-RR-02"
+                "ACL-03"
               ],
-              "gaps": [
-                {
-                  "id": "general-rulesets:CLI-RR-02",
-                  "requirementRef": "CLI-RR-02",
-                  "severity": "error",
-                  "message": "Unit and Integration Tests Must Start and Pass: dist/ not found — run npm run build",
-                  "location": "tests"
-                }
-              ]
+              "gaps": []
             },
             {
-   
+              "artifactId": "anti-corruption",
+              "verdict": "PASS",
+              "present": true,
+              "ruleRefs": [
+                "ACL-06"
+              ],
+              "gaps": []
+            },
+            {
+              "artifactId": "layer-structure",
+              "verdict": "PASS",
+              "present": true,
+              "ruleRefs": [
+                "HXA-01"
+              ],
+              "gaps": []
+            },
+            {
+              "artifactId": "layer-structure",
+              "verdict": "PASS",
+              "present": true,
+              "ruleRefs": [
+                "HXA-02"
+              ],
+              "gaps": []
+       
   … (truncated)
 ```
 
@@ -714,18 +912,23 @@ Response (captured live):
                 ]
               },
               {
-                "artifactId": "build",
-                "verdict": "FAIL",
-                "present": false,
+                "artifactId": "anti-corruption",
+                "verdict": "PASS",
+                "present": true,
                 "ruleRefs": [
-                  "CLI-RR-01"
+                  "ACL-02"
                 ],
-                "gaps": [
-                  {
-                    "id": "general-rulesets:CLI-RR-01",
-                    "requirementRef": "CLI-RR-01",
-                    "severity": "error",
-                    "message": "TypeScript Build Must Pass: dist/main.js not found — run npm run
+                "gaps": []
+              },
+              {
+                "artifactId": "anti-corruption",
+                "verdict": "PASS",
+                "present": true,
+                "ruleRefs": [
+                  "ACL-03"
+                ],
+                "gaps": []
+    
   … (truncated)
 ```
 
@@ -796,41 +999,50 @@ Response (captured live):
           "verdict": "FAIL",
           "artifactResults": [
             {
-              "artifactId": "build",
-              "verdict": "FAIL",
-              "present": false,
+              "artifactId": "anti-corruption",
+              "verdict": "PASS",
+              "present": true,
               "ruleRefs": [
-                "CLI-RR-01"
+                "ACL-02"
               ],
-              "gaps": [
-                {
-                  "id": "general-rulesets:CLI-RR-01",
-                  "requirementRef": "CLI-RR-01",
-                  "severity": "error",
-                  "message": "TypeScript Build Must Pass: dist/main.js not found — run npm run build in sdk/cli",
-                  "location": "build"
-                }
-              ]
+              "gaps": []
             },
             {
-              "artifactId": "tests",
-              "verdict": "FAIL",
-              "present": false,
+              "artifactId": "anti-corruption",
+              "verdict": "PASS",
+              "present": true,
               "ruleRefs": [
-                "CLI-RR-02"
+                "ACL-03"
               ],
-              "gaps": [
-                {
-                  "id": "general-rulesets:CLI-RR-02",
-                  "requirementRef": "CLI-RR-02",
-                  "severity": "error",
-                  "message": "Unit and Integration Tests Must Start and Pass: dist/ not found — run npm run build",
-                  "location": "tests"
-                }
-              ]
+              "gaps": []
             },
             {
-   
+              "artifactId": "anti-corruption",
+              "verdict": "PASS",
+              "present": true,
+              "ruleRefs": [
+                "ACL-06"
+              ],
+              "gaps": []
+            },
+            {
+              "artifactId": "layer-structure",
+              "verdict": "PASS",
+              "present": true,
+              "ruleRefs": [
+                "HXA-01"
+              ],
+              "gaps": []
+            },
+            {
+              "artifactId": "layer-structure",
+              "verdict": "PASS",
+              "present": true,
+              "ruleRefs": [
+                "HXA-02"
+              ],
+              "gaps": []
+       
   … (truncated)
 ```
 

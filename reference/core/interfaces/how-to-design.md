@@ -678,14 +678,6 @@ Response (captured live):
 #### MCP
 Tool: `evolith-sdlc-handoff`
 
-| Argument | Type | Req. | Description |
-| --- | --- | --- | --- |
-| `path` | string | ✓ | — |
-| `corePath` | string |  | Optional explicit path to the Evolith core repository (template fallback tier) |
-| `fromPhase` | string | ✓ | — |
-| `toPhase` | string | ✓ | — |
-| `confirm` | boolean |  | Confirm mutative operation |
-
 Example (`tools/call`):
 ```json
 {
@@ -702,7 +694,7 @@ Response (captured live):
   "success": false,
   "error": {
     "code": "FORBIDDEN",
-    "message": "Mutative operation 'evolith-sdlc-handoff' requires approval. Pass { \"apply\": true, \"approvalToken\": \"...\" }"
+    "message": "Access denied. Requires 'write' scope."
   },
   "meta": {
     "correlationId": "<uuid>",

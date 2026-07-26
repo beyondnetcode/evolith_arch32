@@ -36,6 +36,12 @@ interface ComposableValidationResult {
   status: 'passed' | 'failed' | 'warning';
   modes: ModeValidationResult[];
   totalRulesChecked: number;
+  /** GT-569 — the denominator behind `totalRulesChecked`. */
+  totalRulesSkipped: number;
+  totalRulesErrored: number;
+  totalRulesTotal: number;
+  skippedRuleIds: string[];
+  erroredRuleIds: string[];
   totalIssues: number;
   passedRules: number;
   failedRules: number;
@@ -46,6 +52,12 @@ interface ModeValidationResult {
   mode: string;
   status: string;
   rulesChecked: number;
+  /** GT-569 — optional per-mode coverage; absent ⇒ the mode reports only what it evaluated. */
+  rulesSkipped?: number;
+  rulesErrored?: number;
+  rulesTotal?: number;
+  skippedRuleIds?: string[];
+  erroredRuleIds?: string[];
   issues: ModeValidationIssue[];
 }
 
@@ -57,6 +69,28 @@ interface ModeValidationIssue {
   file?: string;
   line?: number;
   remediation?: string;
+}
+
+/**
+ * GT-569 — guarantee the coverage denominator on the way out.
+ *
+ * `rulesChecked` alone is unreadable: it silently redefines its own denominator.
+ * Every `validate` surface (human, table/yaml/markdown and `--format json`)
+ * therefore reports checked / skipped / errored / total. When a producer did not
+ * report the breakdown, the honest floor is "nothing was reported as unevaluated"
+ * — `skipped = errored = 0` and `total = checked` — never a guessed corpus size.
+ */
+export function withCoverageDenominator(result: ValidationResult): ValidationResult {
+  const rulesSkipped = result.rulesSkipped ?? 0;
+  const rulesErrored = result.rulesErrored ?? 0;
+  return {
+    ...result,
+    rulesSkipped,
+    rulesErrored,
+    rulesTotal: result.rulesTotal ?? result.rulesChecked + rulesSkipped + rulesErrored,
+    skippedRuleIds: result.skippedRuleIds ?? [],
+    erroredRuleIds: result.erroredRuleIds ?? [],
+  };
 }
 
 function createComposableEngine() {
@@ -100,6 +134,14 @@ function createComposableEngine() {
       }
 
       const totalRulesChecked = modeResults.reduce((sum: number, r: ModeValidationResult) => sum + r.rulesChecked, 0);
+      // GT-569: a coverage number never travels without its denominator.
+      const totalRulesSkipped = modeResults.reduce((sum: number, r: ModeValidationResult) => sum + (r.rulesSkipped ?? 0), 0);
+      const totalRulesErrored = modeResults.reduce((sum: number, r: ModeValidationResult) => sum + (r.rulesErrored ?? 0), 0);
+      const totalRulesTotal = modeResults.reduce(
+        (sum: number, r: ModeValidationResult) =>
+          sum + (r.rulesTotal ?? r.rulesChecked + (r.rulesSkipped ?? 0) + (r.rulesErrored ?? 0)),
+        0,
+      );
       const failedRules = modeResults.reduce(
         (sum: number, r: ModeValidationResult) => sum + r.issues.filter((i: ModeValidationIssue) => i.status === 'fail').length,
         0,
@@ -109,6 +151,11 @@ function createComposableEngine() {
         status: modeResults.some((r: ModeValidationResult) => r.status === 'failed') ? 'failed' : 'passed',
         modes: modeResults,
         totalRulesChecked,
+        totalRulesSkipped,
+        totalRulesErrored,
+        totalRulesTotal,
+        skippedRuleIds: modeResults.flatMap((r: ModeValidationResult) => r.skippedRuleIds ?? []),
+        erroredRuleIds: modeResults.flatMap((r: ModeValidationResult) => r.erroredRuleIds ?? []),
         totalIssues: modeResults.reduce((sum: number, r: ModeValidationResult) => sum + r.issues.length, 0),
         passedRules: totalRulesChecked - failedRules,
         failedRules,
@@ -208,6 +255,11 @@ export class ValidateCommand extends BaseEvolithCommand {
         result = {
           status: composableResult.status,
           rulesChecked: composableResult.totalRulesChecked,
+          rulesSkipped: composableResult.totalRulesSkipped,
+          rulesErrored: composableResult.totalRulesErrored,
+          rulesTotal: composableResult.totalRulesTotal,
+          skippedRuleIds: composableResult.skippedRuleIds,
+          erroredRuleIds: composableResult.erroredRuleIds,
           issues: composableResult.modes.flatMap((m: ModeValidationResult) =>
             m.issues.map((i: ModeValidationIssue) => ({
               ruleId: i.ruleId,
@@ -261,6 +313,11 @@ export class ValidateCommand extends BaseEvolithCommand {
             status: 'passed' | 'failed' | 'warning';
             levels: string[];
             rulesChecked: number;
+            rulesSkipped?: number;
+            rulesErrored?: number;
+            rulesTotal?: number;
+            skippedRuleIds?: string[];
+            erroredRuleIds?: string[];
             issues: ValidationIssue[];
             timestamp: string;
           }
@@ -275,9 +332,18 @@ export class ValidateCommand extends BaseEvolithCommand {
           const allIssues = [...result.issues, ...archResult.issues];
           const blockingCount = allIssues.filter(i => i.blocking).length;
 
+          // GT-569: merging two runs must merge their denominators too, or the
+          // combined report would claim coverage it does not have.
           result = {
             status: blockingCount > 0 ? 'failed' : allIssues.length > 0 ? 'warning' : 'passed',
             rulesChecked: result.rulesChecked + archResult.rulesChecked,
+            rulesSkipped: (result.rulesSkipped ?? 0) + (archResult.rulesSkipped ?? 0),
+            rulesErrored: (result.rulesErrored ?? 0) + (archResult.rulesErrored ?? 0),
+            rulesTotal:
+              (result.rulesTotal ?? result.rulesChecked) +
+              (archResult.rulesTotal ?? archResult.rulesChecked),
+            skippedRuleIds: [...(result.skippedRuleIds ?? []), ...(archResult.skippedRuleIds ?? [])],
+            erroredRuleIds: [...(result.erroredRuleIds ?? []), ...(archResult.erroredRuleIds ?? [])],
             issues: allIssues,
             coreRef: result.coreRef,
             timestamp: new Date().toISOString(),
@@ -346,6 +412,12 @@ export class ValidateCommand extends BaseEvolithCommand {
       };
     }
 
+    // GT-569: the verdict must report its own denominator on EVERY surface. A
+    // producer that predates the coverage fields (e.g. the `--ruleset` branch of
+    // the use case) still leaves them undefined, so normalise here — the CLI
+    // never emits `rulesChecked` without `rulesSkipped`/`rulesErrored`/`rulesTotal`.
+    result = withCoverageDenominator(result);
+
     const format = (options?.format as OutputFormat) || 'markdown';
     const formatter = new OutputFormatterService();
 
@@ -372,6 +444,9 @@ export class ValidateCommand extends BaseEvolithCommand {
       const tableData = {
         status: result.status,
         rulesChecked: result.rulesChecked,
+        rulesSkipped: result.rulesSkipped,
+        rulesErrored: result.rulesErrored,
+        rulesTotal: result.rulesTotal,
         issues: result.issues.map(i => ({
           ruleId: i.ruleId,
           severity: i.severity,
@@ -399,7 +474,11 @@ export class ValidateCommand extends BaseEvolithCommand {
     if (composableResult) {
       this.promptService.showInfo(`\nMotor Composable GT-312 — ${composableResult.status === 'passed' ? 'PASO' : composableResult.status === 'failed' ? 'FALLO' : 'ADVERTENCIAS'}`);
       this.promptService.showInfo(`Modos ejecutados: ${composableResult.modes.map((m: ModeValidationResult) => m.mode).join(', ')}`);
-      this.promptService.showInfo(`Reglas: ${composableResult.totalRulesChecked} verificadas, ${composableResult.failedRules} fallaron`);
+      this.promptService.showInfo(
+        `Reglas: ${composableResult.totalRulesChecked} verificadas, ${composableResult.failedRules} fallaron, ` +
+        `${composableResult.totalRulesSkipped} omitidas, ${composableResult.totalRulesErrored} con error, ` +
+        `${composableResult.totalRulesTotal} en total`,
+      );
       this.promptService.showInfo(`Rendimiento: ${composableResult.performanceMs}ms`);
 
       for (const mode of composableResult.modes) {
@@ -461,6 +540,9 @@ export class ValidateCommand extends BaseEvolithCommand {
   private printHumanReport(result: ValidationResult): void {
     if (result.issues.length === 0) {
       this.promptService.showSuccess('No se encontraron problemas.');
+      // GT-569: "no issues" is NOT "everything was checked". The denominator is
+      // printed even on the clean path, so a green can never hide 0/379.
+      this.printCoverage(result);
       return;
     }
 
@@ -486,9 +568,35 @@ export class ValidateCommand extends BaseEvolithCommand {
       }
     }
 
-    this.promptService.showInfo(`\\nReglas verificadas: ${result.rulesChecked}`);
+    this.printCoverage(result);
     if (result.coreRef.version) {
       this.promptService.showInfo(`Core version pinneada: ${result.coreRef.version}`);
+    }
+  }
+
+  /**
+   * GT-569 — checked / skipped / errored / total, always together.
+   * A skipped rule has an UNKNOWN outcome, not a passing one, and a rule whose
+   * handler threw (`errored`) is an engine defect that must never read as green.
+   */
+  private printCoverage(result: ValidationResult): void {
+    const checked = result.rulesChecked;
+    const skipped = result.rulesSkipped ?? 0;
+    const errored = result.rulesErrored ?? 0;
+    const total = result.rulesTotal ?? checked + skipped + errored;
+
+    this.promptService.showInfo(
+      `\\nReglas: ${checked} verificadas / ${skipped} omitidas / ${errored} con error / ${total} en total`,
+    );
+    if (skipped > 0) {
+      this.promptService.showWarning(
+        `  ${skipped} regla(s) NO se evaluaron — su resultado es DESCONOCIDO, no aprobado.`,
+      );
+    }
+    if (errored > 0) {
+      this.promptService.showError(
+        `  ${errored} regla(s) fallaron al EJECUTARSE (error del evaluador): ${(result.erroredRuleIds ?? []).join(', ')}`,
+      );
     }
   }
 

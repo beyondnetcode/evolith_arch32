@@ -18,6 +18,10 @@
       "types": "./dist/capabilities/capability-contract.d.ts",
       "default": "./dist/capabilities/capability-contract.js"
     },
+    "./fixtures": {
+      "types": "./dist/fixtures/evaluation-contract.fixtures.d.ts",
+      "default": "./dist/fixtures/evaluation-contract.fixtures.js"
+    },
     "./*": {
       "types": "./dist/*.d.ts",
       "default": "./dist/*.js"

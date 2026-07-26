@@ -34,6 +34,7 @@
 - [Visión de Arquitectura](#visión-de-arquitectura)
 - [Componentes Principales](#componentes-principales)
 - [Inicio Rápido](#inicio-rápido)
+- [Egreso de Red y Manejo de Datos](#egreso-de-red-y-manejo-de-datos)
 - [Documentación](#documentación)
 - [Casos de Uso](#casos-de-uso)
 - [Roadmap](#roadmap)
@@ -76,7 +77,7 @@ Evolith es un <b>framework ejecutable de gobernanza arquitectónica</b> — se a
 <br/>
 <ol>
 <li><b>Feedback instantáneo</b> en decisiones arquitectónicas — ejecuta <code>evolith validate</code> y sabe en segundos si tu código cumple.</li>
-<li><b>Sin refactors sorpresa</b> — el drift arquitectónico se detecta en el gate, no六个月 después.</li>
+<li><b>Sin refactors sorpresa</b> — el drift arquitectónico se detecta en el gate, no seis meses después.</li>
 <li><b>Gobernanza a prueba de AI</b> — cuando un agente AI escribe código, Evolith asegura que siga las mismas reglas que un arquitecto senior.</li>
 </ol>
 </details>
@@ -93,8 +94,8 @@ La plataforma core es <b>completamente gratis</b> (licencia MIT): CLI, servidor 
 
 ```bash
 npm install -g @beyondnet/evolith-cli
-evolith init
-evolith validate
+evolith init --name my-sat --yes   # inicializa el directorio ACTUAL
+evolith validate                   # mismo directorio, sin `cd`
 ```
 
 Sin base de datos, sin servidor, sin Docker.
@@ -221,25 +222,93 @@ Punto de entrada para cada área: [Índice Maestro Global](./reference/core/cont
 
 ## Inicio Rápido
 
-```bash
-# Instala Evolith CLI
-npx @beyondnet/evolith-cli@1.1.4 init
+El paquete npm es `@beyondnet/evolith-cli`; instala dos bins equivalentes, **`evolith`** (el nombre documentado) y `evolith-cli` (compatibilidad). Ambos se identifican como `evolith` en `--help`.
 
-# Valida tu código contra los rulesets de tu topología
-evolith-cli validate
+```bash
+# 1. Instala la CLI
+npm install -g @beyondnet/evolith-cli
+
+# 2. Inicializa el directorio ACTUAL como satélite de Evolith.
+#    --name fija el nombre del proyecto que se escribe en evolith.yaml.
+#    --yes corre sin preguntas (también implícito con stdin sin TTY o --format json).
+evolith init --name my-sat --yes
+
+# 3. Valida el satélite que acabas de crear — mismo directorio, sin `cd`
+evolith validate
 
 # Valida una fase específica del SDLC
-evolith-cli validate --phase qa
+evolith validate --phase qa
 
 # Gestiona Architecture Decision Records
-evolith-cli adr create
-evolith-cli adr list
+evolith adr create
+evolith adr list
 
-# Sirve la gobernanza como contexto en vivo para agentes de IA
-evolith-mcp
+# Sirve la gobernanza como contexto en vivo para agentes de IA — el servidor MCP
+# es un paquete aparte (@beyondnet/evolith-mcp) con su propio bin:
+evolith-mcp serve
 ```
 
-Evolith CLI incluye **20 comandos** y se configura mediante **`evolith.yaml`**. Referencia completa: [Hub de Evolith CLI](./product/products/smart-cli/README.es.md)
+Para generar el satélite en un directorio **nuevo** en lugar del actual, pásalo como argumento posicional (o con `--dir`); `--name` solo nombra el proyecto, nunca crea un directorio:
+
+```bash
+evolith init my-sat --yes && cd my-sat && evolith validate
+```
+
+Las corridas legibles por máquina (`--format json`) nunca preguntan e imprimen exactamente un envelope en stdout; un `init` fallido sale con código distinto de cero. `evolith init --dry-run` no escribe nada.
+
+> **Espera hallazgos en el primer `validate`.** Un satélite recién inicializado es una línea base, no un aprobado: algunas reglas siguen asumiendo un layout de repositorio más completo y reportan hallazgos bloqueantes en un proyecto en fase 0. Llevar eso a cero se sigue en el [Tablero de Gaps](./reference/core/control-center/gaps/gap-tracking.md) (GT-571).
+
+Evolith CLI se configura mediante **`evolith.yaml`**; ejecuta `evolith --help` para la lista vigente de comandos. Referencia completa: [Hub de Evolith CLI](./product/products/smart-cli/README.es.md)
+
+---
+
+## Egreso de Red y Manejo de Datos
+
+Evolith es local-first: la CLI, los rulesets, las políticas OPA y el Core de evaluación stateless corren en tu máquina, y tu código fuente nunca se sube — la evaluación ocurre donde está el código. Existe exactamente **una** integración de salida en todo el corpus, está **desactivada por defecto**, y esta es su divulgación completa.
+
+| Ítem | Divulgación |
+|---|---|
+| **Componente** | `GeminiProvider`, export público de `@beyondnet/evolith-agent-runtime` |
+| **Endpoint** | un `POST` HTTPS a `https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent`, modelo por defecto `gemini-2.5-flash`. El paquete no contacta ningún otro host. |
+| **Sub-procesador** | **Google LLC (Gemini API)**. El contenido enviado por esta vía lo procesa Google bajo sus términos para esa API. No interviene ningún otro sub-procesador. |
+| **Estado por defecto** | **DESACTIVADO.** Sin configuración el provider no abre ningún socket: registra el intento rechazado y lanza `LlmEgressDisabledError`. De fábrica el paquete no hace ninguna llamada de red. |
+| **Opt-in** | `EVOLITH_LLM_EGRESS=true` (o `1`), o un explícito `new GeminiProvider({ enabled: true })`. No hay forma implícita de activarlo. |
+| **Credencial** | `EVOLITH_LLM_API_KEY`, con respaldo en `GEMINI_API_KEY`. Viaja en el header `x-goog-api-key` de la petición y nunca en la URL. Sin clave la llamada se rechaza antes de abrir un socket. |
+| **Límites** | timeout de 30.000 ms con `AbortController`; 60.000 bytes / ~15.000 tokens estimados. Por encima del presupuesto la petición **falla cerrado** — nada se trunca para enviarse igual. |
+
+**Qué sale de la máquina**
+
+- Por la costura gobernada `IAssistantTransport`: el intent de la petición, el id opcional de la herramienta, los parámetros, el flag `dryRun` y el catálogo gobernado de skills (solo id y descripción).
+- Por la costura deprecada `ILLMProvider` (`generateStructuredJson`): el system prompt y el user prompt del llamador, textuales.
+- Ambos se redactan antes de serializarse, sobre 8 clases de patrones: claves privadas PEM, JWTs, access key ids de AWS, API keys de Google, PATs de GitHub, tokens de Slack, tokens `Bearer` y asignaciones genéricas de `KEY`/`SECRET`/`TOKEN`/`PASSWORD`.
+
+**Qué no sale de la máquina**
+
+El id de tenant, de producto, de iniciativa, la referencia al workspace y la identidad del solicitante quedan excluidos del payload por construcción (minimización de datos), igual que el contenido del repositorio.
+
+**Observabilidad**
+
+Cada intento — incluidos los rechazos — emite una línea JSON sin contenido, prefijada `[evolith:llm-egress]`, con provider, endpoint, propósito, resultado, conteo de bytes y tokens, número de redacciones, status HTTP, duración y correlation id. El contenido de prompts y respuestas nunca se registra.
+
+**Human-in-the-loop**
+
+El cableado previsto inyecta `GeminiProvider` como `IAssistantTransport` de `SupervisedAssistantClient`, que a su vez está desactivado por defecto y exige una aprobación humana explícita antes de llegar al transporte.
+
+**Otro tráfico de salida**
+
+- La **exportación OpenTelemetry** de la CLI está apagada salvo que `OTEL_ENABLED=true`, y entonces va solo al colector que configures.
+- La **Core API** y el **transporte HTTP del MCP** son servidores que tú alojas; la CLI contacta un Core remoto solo si lo configuras.
+- Ninguna superficie envía telemetría, analítica ni verificación de licencia a casa.
+
+**Estado real, sin adornos**
+
+- La redacción es por patrones, no un control DLP: reduce materialmente el egreso accidental de credenciales, no garantiza su ausencia.
+- Los controles de header, timeout, presupuesto, redacción y validación de schema están cubiertos por tests unitarios con un `fetch` inyectado; **no** se han ejercitado contra el endpoint real de Google.
+- Los valores de timeout y presupuesto se heredan del revisor de CI del propio repositorio y no están afinados para prompts interactivos grandes, que fallan cerrado en lugar de degradar.
+- Hoy ningún comando registrado en la CLI publicada alcanza este provider, así que una instalación por defecto de la CLI no hace egreso a LLM alguno.
+- Los tarballs npm publicados actualmente son anteriores a este endurecimiento; los controles descritos están en `develop` y llegan al registry con la próxima release, seguido como GT-570 en el [Tablero de Gaps](./reference/core/control-center/gaps/gap-tracking.md).
+
+Reporta cualquier defecto de egreso o de divulgación por la [Política de Seguridad](./SECURITY.md), nunca en un issue público.
 
 ---
 

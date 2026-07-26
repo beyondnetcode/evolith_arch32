@@ -1,0 +1,17 @@
+# DELIBERATELY NON-CONFORMING SATELLITE FIXTURE (GT-577).
+#
+# This is the negative fixture the dogfood workflow
+# (.github/workflows/evolith-validate-dogfood.yml) points the composite action
+# at. It MUST keep producing blocking violations: it declares a satellite
+# contract and then omits everything the Core requires of one -- no
+# spec.compliance pillars, no coreRef pinning, no DECISIONS.md, no directory
+# taxonomy. If a change ever makes `evolith-cli validate` report zero blocking
+# violations here, the dogfood workflow turns red on purpose: either the rules
+# regressed or this fixture became conformant by accident.
+#
+# Do NOT "fix" this file.
+apiVersion: evolith.dev/v1
+kind: Satellite
+
+metadata:
+  name: gt577-noncompliant-fixture

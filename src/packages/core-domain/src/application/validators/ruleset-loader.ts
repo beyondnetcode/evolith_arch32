@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { IFileSystem, ILogger } from '../../domain/interfaces';
-import Ajv from 'ajv';
+import Ajv from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 import { PhaseGatesRuleset } from './phase-gate-validator.service';
 

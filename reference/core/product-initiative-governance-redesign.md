@@ -1224,6 +1224,8 @@ Impact on `ValidateBlueprintUseCase`: the current use case (`validate-blueprint.
 
 # Deliverable 10 — Required changes in Core interfaces
 
+> **⚠ SUPERSEDED (2026-06-28):** Sections 1225 to 1521 (Deliverables 10, 11, 12 and the write-flows of 13) are obsolete per ADR-0101 and the Core Evaluation Engine Design. The Core is a **stateless evaluator**; it has no `IProductRepository`, no write endpoints, and does not mutate state.
+
 > **Reviewer note (port duality — H2/H3).** The Core has **two** port folders: `src/packages/core-domain/src/application/ports/` (e.g., `IBlueprintRepository`, `IDomainEventBus`, `IWebhookNotifier`) and `src/packages/core-domain/src/domain/ports/` (`ruleset-repository.port.ts` → `IRulesetRepository`, `workflow-definition.port.ts` → `IWorkflowDefinitionProvider`). The claim "the only **governance entity** repository is `IBlueprintRepository`" is correct (ruleset/workflow are not governance entities), but it is worth making the location duality explicit when planning the new ports.
 
 ### Diagnosis of the current ports/use-cases/controllers surface

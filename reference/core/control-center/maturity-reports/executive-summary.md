@@ -28,7 +28,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-570](../gaps/gap-reference-catalog.md#gt-570), [GT-571](../gaps/gap-reference-catalog.md#gt-571), [GT-575](../gaps/gap-reference-catalog.md#gt-575), [GT-572](../gaps/gap-reference-catalog.md#gt-572), [GT-573](../gaps/gap-reference-catalog.md#gt-573), [GT-595](../gaps/gap-reference-catalog.md#gt-595), [GT-435](../gaps/gap-reference-catalog.md#gt-435) |
 | 2 | Highest-risk area | `MCP Server` has the largest weighted open load. | [GT-572](../gaps/gap-reference-catalog.md#gt-572), [GT-581](../gaps/gap-reference-catalog.md#gt-581), [GT-582](../gaps/gap-reference-catalog.md#gt-582), [GT-592](../gaps/gap-reference-catalog.md#gt-592) |
 | 3 | Quick wins | High criticality with XS/S complexity. | [GT-570](../gaps/gap-reference-catalog.md#gt-570), [GT-571](../gaps/gap-reference-catalog.md#gt-571), [GT-575](../gaps/gap-reference-catalog.md#gt-575), [GT-586](../gaps/gap-reference-catalog.md#gt-586) |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-586](../gaps/gap-reference-catalog.md#gt-586), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-574](../gaps/gap-reference-catalog.md#gt-574), [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-580](../gaps/gap-reference-catalog.md#gt-580), [GT-581](../gaps/gap-reference-catalog.md#gt-581), [GT-584](../gaps/gap-reference-catalog.md#gt-584), [GT-582](../gaps/gap-reference-catalog.md#gt-582), +4 |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-586](../gaps/gap-reference-catalog.md#gt-586), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-580](../gaps/gap-reference-catalog.md#gt-580), [GT-581](../gaps/gap-reference-catalog.md#gt-581), [GT-584](../gaps/gap-reference-catalog.md#gt-584), [GT-582](../gaps/gap-reference-catalog.md#gt-582), [GT-583](../gaps/gap-reference-catalog.md#gt-583), +3 |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-577](../gaps/gap-reference-catalog.md#gt-577), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-531](../gaps/gap-reference-catalog.md#gt-531), [GT-536](../gaps/gap-reference-catalog.md#gt-536), [GT-587](../gaps/gap-reference-catalog.md#gt-587), +7 |
 
 ## Current Blockers
@@ -49,13 +49,13 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-07-26 |
 | Total gaps | 595 |
-| Closed gaps | 560 |
-| Open gaps | 35 |
+| Closed gaps | 561 |
+| Open gaps | 34 |
 | Open P0 | 7 |
-| Open P1 | 12 |
+| Open P1 | 11 |
 | Open P2 | 13 |
-| Total closure | 94.1% |
-| Closure evidence records | 542 |
+| Total closure | 94.3% |
+| Closure evidence records | 543 |
 | Recorded readiness | 4 PASS |
 
 | Area | Open | P0 | P1 | First IDs |

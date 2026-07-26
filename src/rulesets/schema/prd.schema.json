@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/prd.schema.json",
   "title": "Product Requirements Document",
   "description": "JSON Schema for validating Evolith PRD artifacts. TMS-aligned format with 13 sections, MoSCoW prioritization, and business-only scope.",

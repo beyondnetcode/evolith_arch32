@@ -45,8 +45,8 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@beyondnet/evolith-agent-runtime": "^1.1.0",
-    "@beyondnet/evolith-core-domain": "^1.1.0"
+    "@beyondnet/evolith-agent-runtime": "^1.2.0",
+    "@beyondnet/evolith-core-domain": "^1.2.0"
   },
   "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
   "repository": {

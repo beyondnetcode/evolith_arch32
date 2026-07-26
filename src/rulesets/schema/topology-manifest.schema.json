@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/topology-manifest.schema.json",
   "title": "Evolith Topology Manifest",
   "description": "JSON Schema for validating topology.manifest.json files in the Multi-Topology Reference Corpus. The manifest is technical-only and exposes topology context for CLI, MCP, and Service CORE API resolution.",

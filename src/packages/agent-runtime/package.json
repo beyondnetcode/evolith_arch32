@@ -1,6 +1,6 @@
 {
   "name": "@beyondnet/evolith-agent-runtime",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Evolith Agent Runtime — decoupled agentic layer that operates Evolith Core through Ports & Adapters (.harness, Core Evaluation, OPA, Tracker, Memory, Scheduler, Hermes). Hexagonal; no runtime/LLM technology is a domain dependency.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -34,7 +34,7 @@
     "example:discovery-gate": "node examples/validate-discovery-gate.mjs"
   },
   "dependencies": {
-    "@beyondnet/evolith-core-domain": "^1.1.0",
+    "@beyondnet/evolith-core-domain": "^1.2.0",
     "yaml": "2.9.0"
   },
   "devDependencies": {

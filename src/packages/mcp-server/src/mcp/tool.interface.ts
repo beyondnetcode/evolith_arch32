@@ -13,6 +13,17 @@ export interface McpToolSchema {
     properties: Record<string, unknown>;
     required?: string[];
   };
+  outputSchema?: {
+    type: string;
+    properties: Record<string, unknown>;
+    required?: string[];
+  };
+  annotations?: {
+    readOnlyHint?: boolean;
+    destructiveHint?: boolean;
+    idempotentHint?: boolean;
+    [key: string]: unknown;
+  };
 }
 
 export interface McpTool {

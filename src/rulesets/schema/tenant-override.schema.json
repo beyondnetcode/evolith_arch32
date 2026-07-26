@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/rulesets/schema/tenant-override.schema.json",
   "title": "Evolith Tenant Override Schema",
   "description": "Defines per-tenant delta customizations over the canonical Evolith rulesets. Overrides must not remove mandatory evidence from blocking criteria.",

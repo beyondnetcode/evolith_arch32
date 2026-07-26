@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "version": "1.0.0",
   "description": "GT-514 / EAG-08. Validated architecture-enforcement analyzers. This is the machine-readable mirror of the 'Architecture Enforcement (Boundary Analyzers)' section (\u00a74.3) of product/infra/validated-tool-catalog.md. Every entry's tool + version MUST appear in that doc. GT-519: versions are pinned EXACT (x.y.z, no ranges/wildcards) so per-runtime CI images are reproducible; the enforcer-catalog \u2194 doc parity test (enforcer-catalog-doc-parity.spec.ts) fails on any drift. Currency is maintained by Renovate against these pins (deploy-gated).",
   "source": "product/infra/validated-tool-catalog.md#43-architecture-enforcement-boundary-analyzers",

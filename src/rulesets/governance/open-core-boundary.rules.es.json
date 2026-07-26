@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/rulesets/governance/open-core-boundary.rules.json",
   "title": "Reglas de Frontera Open-Core",
   "description": "Reglas que definen la frontera entre Evolith Core (código abierto, libremente disponible) y Evolith Enterprise (SaaS, pago). Estas reglas previenen la contaminación entre capas y protegen la estrategia Open-Core.",

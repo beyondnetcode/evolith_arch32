@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/adr.schema.json",
   "title": "Architecture Decision Record",
   "description": "JSON Schema for validating Evolith ADR artifacts. Applies to all ADRs in reference/core/architecture/adrs/",

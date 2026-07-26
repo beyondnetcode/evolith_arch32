@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/opa/cli-core-parity.input.schema.json",
   "title": "CLI Core Parity OPA Policy Input Schema",
   "type": "object",

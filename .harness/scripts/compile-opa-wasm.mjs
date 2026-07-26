@@ -38,7 +38,7 @@ function getOpaUrl() {
     throw new Error(`Unsupported architecture: ${osArch}`);
   }
 
-  return `https://openpolicyagent.org/downloads/v0.65.0/opa_${opaOs}_${opaArch}${osPlatform === 'win32' ? '.exe' : ''}`;
+  return `https://openpolicyagent.org/downloads/v1.10.0/opa_${opaOs}_${opaArch}${osPlatform === 'win32' ? '.exe' : ''}`;
 }
 
 /** A cached binary is only reusable if it actually executes on THIS platform. */

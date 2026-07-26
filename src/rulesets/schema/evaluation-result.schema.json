@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/evaluation-result.schema.json",
   "title": "Evaluation Result",
   "description": "GT-377 / ADR-0101. What the stateless Core Evaluation Engine RETURNS (wrapped in the ADR-0073 SuccessEnvelope at transport). The Core EVALUATES; it never decides the canonical GateDecision. Any DecisionRecommendation is NON-BINDING (binding === false). Mirrors packages/core-domain/src/evaluation/contracts/evaluation-result.ts.",

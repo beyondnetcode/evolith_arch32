@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/source-registry.schema.json",
   "title": "External Knowledge Source Registry Entry",
   "description": "Versioned SRC-* registry schema recording external source metadata and KI-* linkage.",

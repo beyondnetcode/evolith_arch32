@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import Ajv, { ValidateFunction } from 'ajv';
+import Ajv, { ValidateFunction } from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 import { Verdict } from '../../domain/verdict/verdict';
 import type { EvaluationContext } from './evaluation-context';

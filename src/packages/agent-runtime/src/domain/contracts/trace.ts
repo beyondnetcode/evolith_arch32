@@ -5,6 +5,7 @@
  * trace plus enough context to reconstruct the decision later.
  */
 
+import type { GateVerdict } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import type { RuntimeStatus, RuntimeTrace } from './agent-runtime-result';
 
 export type TraceEventType =
@@ -33,6 +34,6 @@ export interface TraceEvent {
   readonly correlationId?: string;
   /** Provenance carried verbatim from the result. */
   readonly provenance?: RuntimeTrace;
-  /** Arbitrary structured payload (kept small; references not copies). */
-  readonly payload?: Readonly<Record<string, unknown>>;
+  /** Arbitrary structured payload (kept small; references not copies). GT-573: Soporta GateVerdict explícitamente. */
+  readonly payload?: Readonly<Record<string, unknown>> | GateVerdict;
 }

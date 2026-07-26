@@ -3,20 +3,20 @@
   "compatibilityPolicy": "semver-major",
   "producer": {
     "package": "@beyondnet/evolith-cli",
-    "version": "1.1.0"
+    "version": "1.2.0"
   },
   "schemas": [
     {
       "id": "gate-evidence",
       "version": "1.0.0",
       "path": "src/rulesets/schema/gate-evidence.schema.json",
-      "sha256": "9225090e2ee851dbd2d5c22e7a0a6e2d7f97db9835f7f3822ac7d9f861b75754"
+      "sha256": "ea092910e12f771e840177e6f1ae6f305516847664ece6ef1f0a759699293253"
     },
     {
       "id": "output-envelope",
       "version": "1.0.0",
       "path": "src/rulesets/schema/output-envelope.schema.json",
-      "sha256": "07eaffaae2c33071ea105fbcbdc497c06d149143f6cc9b94555170740707fd0b"
+      "sha256": "099e70c6f496bac4e239074cda54f514a115980b4579345cdf2da359664f4a60"
     }
   ],
   "supportedConsumers": [

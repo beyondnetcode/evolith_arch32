@@ -28,9 +28,10 @@ Ya existe un precedente correcto: `executive-scorecard-rule.handler.ts:55` devue
 
 Adoptar una **frontera gobierno/ejecución** estricta para Evolith Core, con `Producto` e `Iniciativa` como unidades primarias de gobierno.
 
-### 1. Producto e Iniciativa son las unidades primarias de gobierno
-- `Producto` es la unidad principal de evolución, arquitectura, gobierno y trazabilidad (alineada con `PRODUCT` del Tracker).
-- `Iniciativa` es la unidad principal de cambio/mejora/requerimiento/transformación/delivery gobernado. **Un Producto tiene una o muchas Iniciativas (1:N), posiblemente concurrentes, y cada Iniciativa gobierna su propio flujo SDLC** (fases, gates, artefactos, evidencias).
+### 1. Core evaluador stateless
+- El Core es un **evaluador stateless**.
+- `Producto`, `Tenant` e `Iniciativa` existen en el Core **solo como contexto opaco** (contratos `EvaluationContext` / `EvaluationResult`).
+- El Core **no posee ni persiste** estas entidades. Evolith Tracker es el sistema de registro que las posee y persiste.
 - Toda evidencia, validación, decisión y asesoría se ancla a `(tenantId → productId → initiativeId → phaseId → gateId)`. Multi-tenant por construcción.
 
 ### 2. Épicas/historias/issues/tareas solo como referencias externas

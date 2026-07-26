@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/test-summary-report.schema.json",
   "title": "Test Summary Report",
   "description": "JSON Schema for validating Evolith Test Summary Report artifacts. Required for RC Stamped gate (Phase 4).",

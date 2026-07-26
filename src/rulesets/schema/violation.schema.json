@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/violation.schema.json",
   "title": "Violation",
   "description": "GT-511 / EAG-02. One canonical normalized violation every enforcer adapter (dependency-cruiser, Deptrac, import-linter, …) and the OSS/native normalizers map into. `fingerprint` is computed WITHOUT `message` and over a normalized path so cosmetic wording never churns it and defeats freezing (GT-517). Mirrors packages/core-domain/src/evaluation/violation.ts.",

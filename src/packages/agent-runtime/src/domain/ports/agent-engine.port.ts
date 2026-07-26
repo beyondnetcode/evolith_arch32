@@ -25,6 +25,8 @@ export interface AgentEnginePlan {
   readonly recommendations?: readonly string[];
   /** Engine identity for provenance (e.g. 'hermes', 'stub'). */
   readonly engine: string;
+  /** GT-593: Journaling de pasos */
+  readonly journal?: readonly string[];
 }
 
 export interface IAgentEnginePort {

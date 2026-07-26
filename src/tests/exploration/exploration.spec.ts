@@ -232,7 +232,7 @@ describe('Cross-surface exploration agent (F1)', () => {
         f.confidence === 'confirmed',
     );
     // A confirmed cross-surface divergence on the proven operation is a real regression.
-    expect(confirmedConsistency).toEqual([]);
+    console.log(JSON.stringify(run.byOperation["gate-evaluate"], null, 2)); expect(confirmedConsistency).toEqual([]);
     const results = run.byOperation['gate-evaluate'] || [];
     const withEnvelope = results.filter((r) => r.envelope != null);
     expect(withEnvelope.length).toBe(3);

@@ -3,7 +3,7 @@ import { MockPromptService } from './mock-prompt.service';
 import { TestingModule } from '@nestjs/testing';
 import { CommandTestFactory } from 'nest-commander-testing';
 import { AppModule } from '../src/app.module';
-import Ajv from 'ajv';
+import Ajv from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 import * as fs from 'fs-extra';
 import * as path from 'path';

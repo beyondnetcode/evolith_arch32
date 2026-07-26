@@ -26,9 +26,10 @@ A correct precedent already exists: `executive-scorecard-rule.handler.ts:55` ret
 
 Adopt a strict **governance/execution boundary** for Evolith Core, with `Producto` and `Iniciativa` as the primary units of governance.
 
-### 1. Producto and Iniciativa are the primary governance units
-- `Producto` is the primary unit of evolution, architecture, governance, and traceability (aligned with the Tracker `PRODUCT`).
-- `Iniciativa` is the primary unit of governed change/improvement/requirement/transformation/delivery. **A Producto has one or many Iniciativas (1:N), possibly concurrent, and each Iniciativa governs its own SDLC flow** (phases, gates, artifacts, evidence).
+### 1. Core stateless evaluator
+- The Core is a **stateless evaluator**.
+- `Producto`, `Tenant`, and `Iniciativa` exist in the Core **as opaque context only** (`EvaluationContext` / `EvaluationResult` contracts).
+- The Core **does not own or persist** these entities. Evolith Tracker is the system of record that owns and persists them.
 - All evidence, validation, decision, and advisory anchors to `(tenantId → productId → initiativeId → phaseId → gateId)`. Multi-tenant by construction.
 
 ### 2. Epics/stories/issues/tasks are external references only

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/evolith-workspace.schema.json",
   "title": "Evolith Satellite Workspace Descriptor",
   "description": "JSON Schema for validating a satellite workspace (monorepo) evolith.workspace.yaml. A workspace declares the roots of N independently-governed satellite projects, each with its own evolith.yaml. Introduced by ADR-0109 (Multi-Project Satellite Governance). The per-project evolith.yaml schema (evolith-yaml.schema.json) is unchanged.",

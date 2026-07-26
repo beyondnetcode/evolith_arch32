@@ -14,6 +14,7 @@ import { CrossCuttingRuleHandler } from './handlers/cross-cutting-rule.handler';
 import { ExecutiveScorecardRuleHandler } from './handlers/executive-scorecard-rule.handler';
 import { SatelliteContractRuleHandler } from './handlers/satellite-contract-rule.handler';
 import { AclRuleHandler } from './handlers/acl-rule.handler';
+import { StructuralRuleHandler } from './handlers/structural-rule.handler';
 
 export class NativeEvaluator implements IRuleEvaluatorStrategy {
   private readonly handlers: INativeRuleHandler[];
@@ -36,6 +37,7 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
       new ExecutiveScorecardRuleHandler(fs),
       new SatelliteContractRuleHandler(fs, configParser),
       new AclRuleHandler(fs),
+      new StructuralRuleHandler(),
     ];
   }
 

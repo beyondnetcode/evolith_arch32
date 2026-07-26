@@ -3,8 +3,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
-import Ajv from "ajv";
+import Ajv from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const draft7MetaSchema = require("ajv/dist/refs/json-schema-draft-07.json");
 
 const root = process.cwd();
 const schemaPath = path.join(root, "src", "rulesets", "schema", "topology-manifest.schema.json");
@@ -161,10 +164,12 @@ function validateCorpusFixtures(manifestPath, corpus) {
 
   try {
     const configSchema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
-    const validateConfig = new Ajv({ strict: false, allErrors: true }).compile(configSchema);
+    const fixtureAjv = new Ajv({ strict: false, allErrors: true });
+    fixtureAjv.addMetaSchema(draft7MetaSchema);
+    const validateConfig = fixtureAjv.compile(configSchema);
     const validFixture = JSON.parse(fs.readFileSync(validPath, "utf8"));
     if (!validateConfig(validFixture)) {
-      failures.push(`${relative(manifestPath)} violates R-27: valid fixture does not satisfy configuration contract: ${ajv.errorsText(validateConfig.errors, { separator: "; " })}`);
+      failures.push(`${relative(manifestPath)} violates R-27: valid fixture does not satisfy configuration contract: ${fixtureAjv.errorsText(validateConfig.errors, { separator: "; " })}`);
     }
     const invalidFixture = JSON.parse(fs.readFileSync(invalidPath, "utf8"));
     if (validateConfig(invalidFixture)) {
@@ -184,6 +189,7 @@ if (!fs.existsSync(schemaPath)) {
 
   const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
   const ajv = new Ajv({ strict: false, allErrors: true });
+  ajv.addMetaSchema(draft7MetaSchema);
   addFormats(ajv);
   const validate = ajv.compile(schema);
 

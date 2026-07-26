@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/enforcer-evidence.schema.json",
   "title": "Enforcer Evidence Manifest",
   "description": "GT-511 / EAG-02. Auditable evidence emitted for one enforcer run. Its field set discharges every rule in rulesets/evidence/evidence-manifest.rules.json: EVD-01 identity (id, source, generatedAt, producer, relatedRuleIds|relatedGateId), EVD-02 traceability (sourceRef), EVD-03 integrity (status, evaluatedRules, blockingFailures, waiverRef), EVD-04 retention (retentionPeriod, owner). Mirrors packages/core-domain/src/evaluation/violation.ts.",

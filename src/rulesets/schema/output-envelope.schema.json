@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/output-envelope.schema.json",
   "title": "Machine Output Envelope",
   "description": "Universal envelope emitted by every machine-readable Evolith surface (CLI --format json, MCP tool results, REST), as ratified by core/ADR-0073. 'data' is success-only and schema-typed per operation (e.g. gate-evidence.schema.json); 'error' is failure-only.",

@@ -160,11 +160,13 @@ export class AgentRuntimeService implements IAgentRuntime {
       steps.push('select-capability');
       let skill = await this.deps.skillRegistry.resolve(request.intent, request.tool);
       let enginePlanRationale: string | undefined;
+      let engineJournal: readonly string[] | undefined;
 
       if (!skill && this.deps.engine) {
         const skills = await this.deps.skillRegistry.list();
         const plan = await this.deps.engine.plan(request, skills);
         enginePlanRationale = `${plan.engine}: ${plan.rationale}`;
+        engineJournal = plan.journal;
         if (plan.proposedTool) {
           skill = await this.deps.skillRegistry.resolve(request.intent, plan.proposedTool);
         }
@@ -368,6 +370,7 @@ export class AgentRuntimeService implements IAgentRuntime {
         durationMs: this.duration(startedAt, finishedAt),
         steps: [...steps, 'completed'],
         groundedBy: grounding,
+        engineJournal,
       };
 
       const recommendations: RuntimeRecommendation[] = enginePlanRationale

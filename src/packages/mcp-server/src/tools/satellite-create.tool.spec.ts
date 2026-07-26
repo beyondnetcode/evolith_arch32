@@ -204,6 +204,7 @@ describe('SatelliteCreateTool', () => {
   });
 
   it('throws when token is missing (and never calls fetch)', async () => {
+    delete process.env.GITHUB_TOKEN;
     const tool = new SatelliteCreateTool();
     await expect(tool.execute({ name: 'x', owner: 'y' })).rejects.toThrow('token is required');
     expect(fetchSpy).not.toHaveBeenCalled();

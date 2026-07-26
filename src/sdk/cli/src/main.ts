@@ -81,7 +81,15 @@ export async function bootstrap(): Promise<void> {
   makeStdioBlocking();
   // Resolve possible alias for the first command argument
   const aliasService = new AliasService();
-  const args = process.argv.slice(2);
+  let args = process.argv.slice(2);
+  
+  // GT-575: Opt-in global to LLM network egress
+  if (args.includes('--llm-egress')) {
+    process.env.EVOLITH_LLM_EGRESS = 'true';
+    args = args.filter(a => a !== '--llm-egress');
+    process.argv = [process.argv[0], process.argv[1], ...args];
+  }
+
   if (args.length > 0) {
     const resolved = aliasService.resolve(args[0]);
     if (resolved !== args[0]) {

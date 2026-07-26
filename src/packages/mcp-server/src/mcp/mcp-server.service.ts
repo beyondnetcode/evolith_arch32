@@ -183,7 +183,8 @@ export class McpServerService {
       if (result.isError) {
         let code: string | undefined;
         try {
-          const env = JSON.parse(result.content[0].text);
+          const firstContent = result.content[0] as any;
+          const env = firstContent.type === 'structured' ? firstContent.structured : JSON.parse(firstContent.text);
           code = env?.error?.code;
           errorMessage = env?.error?.message;
         } catch {
@@ -241,6 +242,15 @@ export class McpServerService {
     const capabilities: Record<string, unknown> = { tools: {} };
     if (this.resources) capabilities.resources = {};
     if (this.prompts) capabilities.prompts = {};
+
+    // GT-572: Habilitar MCP context storage de manera segura bajo NODE_ENV=production
+    if (process.env.NODE_ENV === 'production') {
+      capabilities.experimental = {
+        contextStorage: {
+          securePathIsolation: true,
+        },
+      };
+    }
 
     const server = new Server({ name: SERVER_NAME, version: SERVER_VERSION }, { capabilities });
 

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/rulesets/schema/tenant.schema.json",
   "title": "Evolith Tenant Schema",
   "description": "Defines a tenant (satellite organization) configuration within the Evolith governance framework.",

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/release-notes.schema.json",
   "title": "Release Notes",
   "description": "JSON Schema for validating Evolith Release Notes artifacts. Required for Production Live gate (Phase 5).",

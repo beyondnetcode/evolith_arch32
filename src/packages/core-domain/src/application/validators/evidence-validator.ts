@@ -83,7 +83,7 @@ export class EvidenceValidator {
       const schema = JSON.parse(schemaContent) as object;
       const artifact = JSON.parse(artifactContent) as object;
 
-      const { default: Ajv } = await import('ajv');
+      const { default: Ajv } = await import('ajv/dist/2020');
       const { default: addFormats } = await import('ajv-formats');
       const ajv = new Ajv({ strict: false, allErrors: true });
       addFormats(ajv);

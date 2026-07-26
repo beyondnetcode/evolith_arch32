@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/security-scan-report.schema.json",
   "title": "Security Scan Report",
   "description": "JSON Schema for the Security Scan Report artifact required by the RC Stamped gate (Phase 4). Aggregates SAST, DAST, SCA, and dependency-vulnerability findings against the production CVE policy.",

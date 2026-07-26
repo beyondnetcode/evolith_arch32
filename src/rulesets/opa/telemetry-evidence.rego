@@ -22,11 +22,11 @@ import rego.v1
 # iterated boolean values and broke startswith(pkg, ...). `contains` yields the
 # name strings while `all_deps["x"]` membership checks still work.
 all_deps contains pkg if {
-    input.satellite.packageJson.dependencies[pkg]
+	input.satellite.packageJson.dependencies[pkg]
 }
 
 all_deps contains pkg if {
-    input.satellite.packageJson.devDependencies[pkg]
+	input.satellite.packageJson.devDependencies[pkg]
 }
 
 # ---------------------------------------------------------------------------
@@ -35,20 +35,20 @@ all_deps contains pkg if {
 # ---------------------------------------------------------------------------
 
 has_tracing if {
-    some pkg in all_deps
-    startswith(pkg, "@opentelemetry/")
+	some pkg in all_deps
+	startswith(pkg, "@opentelemetry/")
 }
 
 has_tracing if {
-    all_deps["dd-trace"]
+	all_deps["dd-trace"]
 }
 
 has_tracing if {
-    all_deps["elastic-apm-node"]
+	all_deps["elastic-apm-node"]
 }
 
 violations contains {"id": "OBS-EVD-01", "message": "Production request paths must emit TraceId, SpanId, and CorrelationId. No distributed tracing package (@opentelemetry/*, dd-trace, elastic-apm-node) detected in satellite dependencies."} if {
-    not has_tracing
+	not has_tracing
 }
 
 # ---------------------------------------------------------------------------
@@ -57,23 +57,23 @@ violations contains {"id": "OBS-EVD-01", "message": "Production request paths mu
 # ---------------------------------------------------------------------------
 
 has_structured_logging if {
-    all_deps["pino"]
+	all_deps.pino
 }
 
 has_structured_logging if {
-    all_deps["winston"]
+	all_deps.winston
 }
 
 has_structured_logging if {
-    all_deps["bunyan"]
+	all_deps.bunyan
 }
 
 has_structured_logging if {
-    all_deps["@nestjs/common"]
+	all_deps["@nestjs/common"]
 }
 
 violations contains {"id": "OBS-EVD-02", "message": "Structured logs must include request correlation fields and avoid raw PII. No structured logging package (pino, winston, bunyan, @nestjs/common) detected in satellite dependencies."} if {
-    not has_structured_logging
+	not has_structured_logging
 }
 
 # ---------------------------------------------------------------------------
@@ -82,16 +82,16 @@ violations contains {"id": "OBS-EVD-02", "message": "Structured logs must includ
 # ---------------------------------------------------------------------------
 
 has_health_metrics if {
-    all_deps["prom-client"]
+	all_deps["prom-client"]
 }
 
 has_health_metrics if {
-    some pkg in all_deps
-    startswith(pkg, "@opentelemetry/")
+	some pkg in all_deps
+	startswith(pkg, "@opentelemetry/")
 }
 
 violations contains {"id": "OBS-EVD-03", "message": "Production services must report error rate, latency percentile, throughput, and availability metrics. No metrics package (prom-client, @opentelemetry/*) detected in satellite dependencies."} if {
-    not has_health_metrics
+	not has_health_metrics
 }
 
 # ---------------------------------------------------------------------------
@@ -102,5 +102,5 @@ violations contains {"id": "OBS-EVD-03", "message": "Production services must re
 # ---------------------------------------------------------------------------
 
 violations contains {"id": "OBS-EVD-04", "message": "Phase 5 gate evidence SHOULD reference the dashboard or query used to verify nominal monitoring (observabilityOperational not declared in satellite scorecards)."} if {
-    not input.satellite.scorecards.observabilityOperational
+	not input.satellite.scorecards.observabilityOperational
 }

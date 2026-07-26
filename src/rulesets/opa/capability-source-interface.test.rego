@@ -1,8 +1,10 @@
 package evolith.capability_source_interface_test
 
+import rego.v1
+
 import data.evolith.capability_source_interface
 
-test_allowed_interface_has_no_violations {
+test_allowed_interface_has_no_violations if {
 	input_doc := {
 		"capability": {"id": "validate-discovery-gate", "allowedSourceInterfaces": ["smart_cli_command", "mcp"]},
 		"context": {"sourceInterface": "mcp"},
@@ -13,7 +15,7 @@ test_allowed_interface_has_no_violations {
 	capability_source_interface.allow with input as input_doc
 }
 
-test_disallowed_interface_is_rejected {
+test_disallowed_interface_is_rejected if {
 	input_doc := {
 		"capability": {"id": "validate-discovery-gate", "allowedSourceInterfaces": ["mcp"]},
 		"context": {"sourceInterface": "smart_cli_chat"},
@@ -24,7 +26,7 @@ test_disallowed_interface_is_rejected {
 	not capability_source_interface.allow with input as input_doc
 }
 
-test_absent_allowlist_keeps_legacy_allow {
+test_absent_allowlist_keeps_legacy_allow if {
 	input_doc := {
 		"capability": {"id": "validate-discovery-gate"},
 		"context": {"sourceInterface": "smart_cli_chat"},
@@ -35,7 +37,7 @@ test_absent_allowlist_keeps_legacy_allow {
 	capability_source_interface.allow with input as input_doc
 }
 
-test_absent_source_interface_keeps_native_behavior {
+test_absent_source_interface_keeps_native_behavior if {
 	input_doc := {
 		"capability": {"id": "validate-discovery-gate", "allowedSourceInterfaces": ["mcp"]},
 		"context": {},

@@ -1,7 +1,6 @@
 package evolith.infrastructure.opa_sidecar_bundle
 
-import future.keywords.if
-import future.keywords.in
+import rego.v1
 
 valid_chart := {
 	"name": "evolith-bff",

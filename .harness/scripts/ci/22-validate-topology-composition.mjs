@@ -14,8 +14,11 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import Ajv from "ajv";
+import Ajv from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const draft7MetaSchema = require('ajv/dist/refs/json-schema-draft-07.json');
 
 // GT-556/557: paths came from process.cwd(), and `reference/knowledge/demo/examples`
 // had moved to `product/research/demo/examples`. From the repo root the walker found
@@ -57,6 +60,7 @@ function loadManifestIndex() {
 
 const compositionSchema = JSON.parse(fs.readFileSync(compositionSchemaPath, "utf8"));
 const ajv = new Ajv({ strict: false, allErrors: true });
+ajv.addMetaSchema(draft7MetaSchema);
 addFormats(ajv);
 const validateComposition = ajv.compile(compositionSchema);
 
@@ -126,7 +130,9 @@ for (const compositionPath of compositions) {
     try {
       const contract = JSON.parse(fs.readFileSync(contractPath, "utf8"));
       const fixture = JSON.parse(fs.readFileSync(fixturePath, "utf8"));
-      const validateFixture = new Ajv({ strict: false, allErrors: true }).compile(contract);
+      const validateFixtureAjv = new Ajv({ strict: false, allErrors: true });
+      validateFixtureAjv.addMetaSchema(draft7MetaSchema);
+      const validateFixture = validateFixtureAjv.compile(contract);
       if (!validateFixture(fixture)) {
         failures.push(`${relative(compositionPath)}: ${entry.profile} fixture violates configurationContract: ${ajv.errorsText(validateFixture.errors, { separator: "; " })}`);
       }

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-export const OPA_VERSION = '0.65.0';
+export const OPA_VERSION = '1.10.0';
 
 function platformAsset() {
   const platform = os.platform();

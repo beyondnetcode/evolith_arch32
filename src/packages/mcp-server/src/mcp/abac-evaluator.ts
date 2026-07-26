@@ -62,6 +62,7 @@ const TOOL_CLASSIFICATION: Record<string, ToolClass> = {
   'evolith-topology-recommend': 'read',
 
   // Canonical pattern catalog (read: PAT-NNNN records, no mutation)
+  'evolith-knowledge-search': 'read',
   'evolith-pattern-list': 'read',
   'evolith-pattern-get': 'read',
   'evolith-pattern-list-by-topology': 'read',

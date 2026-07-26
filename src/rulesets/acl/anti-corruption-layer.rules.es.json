@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/rulesets/acl/anti-corruption-layer.rules.json",
   "title": "Reglas de Capa Anti-Corrupción (ACL)",
   "description": "Reglas que gobiernan la integración con sistemas externos (Jira, Trello, Linear, GitHub, Confluence). Las ACL normalizan y validan datos externos contra artefactos del Core, evitando que el caos externo contamine la gobernanza de Evolith.",

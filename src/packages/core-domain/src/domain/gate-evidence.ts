@@ -108,6 +108,8 @@ export interface OutputMeta {
   /** ADR-0073 envelope shape version. Producers MUST set this. */
   readonly schemaVersion: string;
   readonly context?: ExecutionContext;
+  /** GT-588: SCITT/COSE signature for evaluation provenance */
+  readonly signature?: import('./security/cose-signer').CoseSign1;
 }
 
 export interface OutputError {
@@ -131,7 +133,20 @@ export interface ErrorEnvelope {
 export type OutputEnvelope<T> = SuccessEnvelope<T> | ErrorEnvelope;
 
 export function createSuccessEnvelope<T>(data: T, meta: OutputMeta): SuccessEnvelope<T> {
-  return { success: true, data, meta };
+  const envelope: SuccessEnvelope<T> = { success: true, data, meta: { ...meta } };
+  
+  if (process.env.EVOLITH_SIGNING_KEY) {
+    try {
+      // Lazy load to avoid circular dependencies or crypto overhead if unused
+      const { CoseSigner } = require('./security/cose-signer');
+      const signer = new CoseSigner(process.env.EVOLITH_SIGNING_KEY);
+      (envelope.meta as any).signature = signer.sign(data);
+    } catch {
+      // Best-effort signature; do not crash envelope generation
+    }
+  }
+  
+  return envelope;
 }
 
 export function createErrorEnvelope(

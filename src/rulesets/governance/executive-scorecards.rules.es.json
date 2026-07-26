@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/rulesets/governance/executive-scorecards.rules.json",
   "title": "Reglas de Scorecards Ejecutivos",
   "description": "Reglas que codifican métricas DORA y SPACE para visibilidad ejecutiva. Estas reglas aseguran Predictibilidad, Adherencia (Architecture Drift Index), y Eficiencia en productos satélite.",

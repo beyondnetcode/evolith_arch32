@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/rulesets/schema/design-block.schema.json",
   "title": "Evolith Design Block",
   "description": "Base contract for a design-artifact block composed into a blueprint (ADR-0104, GT-428). A blueprint is a box of blocks; each block is a building unit (a plan, matrix, catalog, policy, …). Convention over Configuration: a new blockKind conforms to this base WITHOUT engine changes and may add its own fields (additionalProperties true). Specific blockKinds MAY be refined by their own schema referenced from the block-type registry.",

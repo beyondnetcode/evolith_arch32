@@ -30,7 +30,7 @@ export function redactArgs(args: Record<string, unknown>): Record<string, unknow
 }
 
 export interface ToolCallResult {
-  content: Array<{ type: 'text'; text: string } | { type: 'structured'; structured: unknown }>;
+  content: Array<{ type: 'text'; text: string }>;
   isError?: boolean;
 }
 
@@ -101,12 +101,7 @@ export class ToolDispatchService {
     });
     const errorEnvelope = (env: unknown, durationMs: number): ToolCallResult => {
       this.metrics.recordToolCall(name, durationMs, false);
-      return { 
-        content: [
-          { type: 'text', text: JSON.stringify(env, null, 2) }
-        ], 
-        isError: true 
-      };
+      return { content: [{ type: 'text', text: JSON.stringify(env, null, 2) }], isError: true };
     };
 
     const tool = this.registry.get(name);
@@ -183,11 +178,7 @@ export class ToolDispatchService {
       }));
     }
 
-    const _meta = (args._meta as Record<string, unknown> | undefined) || {};
-    const traceparent = (args.traceparent || _meta.traceparent) as string | undefined;
-    const tracestate = (args.tracestate || _meta.tracestate) as string | undefined;
-    const baggage = (args.baggage || _meta.baggage) as string | undefined;
-
+    const traceparent = args.traceparent as string | undefined;
     const otelGetter = {
       get: (c: Record<string, string>, k: string) => c[k],
       keys: (c: Record<string, string>) => Object.keys(c),
@@ -217,17 +208,11 @@ export class ToolDispatchService {
       );
       const durationMs = Date.now() - startTime;
       span.setStatus({ code: SpanStatusCode.OK });
-      span.setAttribute('gen_ai.evaluation.result', 'pass');
-      span.setAttribute('mcp.tool.name', name);
       span.setAttribute('tool.duration_ms', durationMs);
       span.end();
       this.metrics.recordToolCall(name, durationMs, true);
       const env = success(data, meta(durationMs));
-      return { 
-        content: [
-          { type: 'text', text: JSON.stringify(env, null, 2) }
-        ] 
-      };
+      return { content: [{ type: 'text', text: JSON.stringify(env, null, 2) }] };
     } catch (err) {
       const durationMs = Date.now() - startTime;
       const message = err instanceof Error ? err.message : String(err);

@@ -7138,9 +7138,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `core-domain` · **Criticality:** P0 · **Complexity:** M
 - **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
 - **Acceptance criteria:**
-  - [ ] The envelope reports `checked` / `skipped` / `total`, and no consumer can read a coverage number without its denominator.
-  - [ ] A handler exception surfaces as `errored`, never as `skipped`.
-  - [ ] A run whose skipped fraction exceeds the configured threshold fails.
+  - [x] The envelope reports `checked` / `skipped` / `total`, and no consumer can read a coverage number without its denominator.
+  - [x] A handler exception surfaces as `errored`, never as `skipped`.
+  - [x] A run whose skipped fraction exceeds the configured threshold fails.
 
 #### GT-570
 
@@ -7243,9 +7243,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Governance` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
 - **Acceptance criteria:**
-  - [ ] Zero claims in `maturity-assessment.md` whose evidence is not a `file:line` or a CI job.
-  - [ ] `09-reconcile-maturity.mjs` rejects any `Validated` state backed only by an ADR.
-  - [ ] Parity figures are reported against the published artifact, with the artifact named.
+  - [x] Zero claims in `maturity-assessment.md` whose evidence is not a `file:line` or a CI job.
+  - [x] `09-reconcile-maturity.mjs` rejects any `Validated` state backed only by an ADR.
+  - [x] Parity figures are reported against the published artifact, with the artifact named.
 
 #### GT-577
 
@@ -7275,3 +7275,17 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] Zero dead path literals across scripts, workflows, charts and constants, verified by the new guard.
   - [ ] Zero guards capable of passing with a zero denominator; each guard has a negative fixture that turns it red.
   - [ ] 100% of the board's `validationCommands` are executable and green in CI.
+
+#### GT-579
+
+**Title:** `--format json` was silently truncated at 64 KiB, delivering invalid JSON to machine consumers
+
+- **Purpose:** Guarantee that a machine consumer receives the whole envelope, which is the entire point of `--format json`.
+- **Evidence:** **Found while verifying the GT-569 remediation, not by the audit.** Node buffers writes to a piped stdout asynchronously, so the ~12 `process.exit()` calls across the command graph discarded whatever had not been flushed — truncating output at the OS pipe buffer (65,536 bytes on macOS/Linux). Measured: `validate --format json | wc -c` returned **exactly 65536** while the same command redirected to a file produced 121,408 valid bytes. Every envelope under 64 KiB hid the bug, which is why it survived; GT-569 enlarged the envelope and exposed it. Six CLI e2e tests were failing on `JSON.parse` at position 65262 and read as a GT-569 regression — the regression was pre-existing and unconditional for any large envelope. **DONE (`44fe8dd3`):** fixed centrally in `src/sdk/cli/src/main.ts` (`makeStdioBlocking`, guarded because `_handle.setBlocking` is internal) rather than at each exit site, so a new command cannot reintroduce it by exiting the ordinary way. Verified: a 123,506-byte envelope now traverses a real pipe and parses; CLI 1305+132 green.
+- **Impact:** Any consumer piping a large `--format json` result — CI integrations, the composite action, an agent — received unparseable JSON with no error and no indication of truncation. It is the worst shape of failure for a machine contract: silent, size-dependent, and invisible in every small test.
+- **Affected files:** `src/sdk/cli/src/main.ts`, `src/sdk/cli/test/e2e/cli-e2e.test.ts` (the six failures that surfaced it)
+- **Component:** `Evolith CLI` · **Criticality:** P0 · **Complexity:** XS
+- **Provenance:** Found on 2026-07-26 while verifying the GT-569…GT-578 remediation wave, not by the maturity audit itself.
+- **Acceptance criteria:**
+  - [x] A `--format json` envelope larger than the OS pipe buffer traverses a pipe and parses.
+  - [x] The fix lives in one place, so a new `process.exit()` cannot reintroduce it.

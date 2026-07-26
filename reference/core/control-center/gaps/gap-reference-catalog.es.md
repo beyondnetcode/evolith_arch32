@@ -7043,9 +7043,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `core-domain` · **Criticidad:** P0 · **Complejidad:** M
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
-  - [ ] El envelope reporta `checked` / `skipped` / `total`, y ningún consumidor puede leer una cobertura sin su denominador.
-  - [ ] Una excepción de handler aflora como `errored`, nunca como `skipped`.
-  - [ ] Un run cuya fracción saltada supere el umbral configurado falla.
+  - [x] El envelope reporta `checked` / `skipped` / `total`, y ningún consumidor puede leer una cobertura sin su denominador.
+  - [x] Una excepción de handler aflora como `errored`, nunca como `skipped`.
+  - [x] Un run cuya fracción saltada supere el umbral configurado falla.
 
 #### GT-570
 
@@ -7148,9 +7148,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Governance` · **Criticidad:** P1 · **Complejidad:** S
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
-  - [ ] Cero afirmaciones en `maturity-assessment.md` cuya evidencia no sea un `file:line` o un job de CI.
-  - [ ] `09-reconcile-maturity.mjs` rechaza cualquier estado `Validated` respaldado solo por un ADR.
-  - [ ] Las cifras de paridad se reportan contra el artefacto publicado, nombrando el artefacto.
+  - [x] Cero afirmaciones en `maturity-assessment.md` cuya evidencia no sea un `file:line` o un job de CI.
+  - [x] `09-reconcile-maturity.mjs` rechaza cualquier estado `Validated` respaldado solo por un ADR.
+  - [x] Las cifras de paridad se reportan contra el artefacto publicado, nombrando el artefacto.
 
 #### GT-577
 
@@ -7180,3 +7180,17 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] Cero literales de ruta muertos en scripts, workflows, charts y constantes, verificado por el guard nuevo.
   - [ ] Cero guards capaces de pasar con denominador cero; cada guard tiene una fixture negativa que lo pone rojo.
   - [ ] 100% de los `validationCommands` del tablero son ejecutables y verdes en CI.
+
+#### GT-579
+
+**Título:** `--format json` se truncaba en silencio a 64 KiB, entregando JSON inválido a consumidores máquina
+
+- **Propósito:** Garantizar que un consumidor máquina reciba el envelope completo, que es todo el sentido de `--format json`.
+- **Evidencia:** **Encontrado al verificar la remediación de GT-569, no por la auditoría.** Node bufferiza de forma asíncrona las escrituras a un stdout en pipe, así que las ~12 llamadas a `process.exit()` del grafo de comandos descartaban lo que no se hubiera vaciado — truncando la salida en el buffer de pipe del SO (65.536 bytes en macOS/Linux). Medido: `validate --format json | wc -c` devolvía **exactamente 65536** mientras el mismo comando redirigido a fichero producía 121.408 bytes válidos. Todo envelope por debajo de 64 KiB ocultaba el bug, que es por lo que sobrevivió; GT-569 agrandó el envelope y lo destapó. Seis tests e2e del CLI fallaban en `JSON.parse` en la posición 65262 y se leían como una regresión de GT-569 — la regresión era preexistente e incondicional para cualquier envelope grande. **COMPLETADO (`44fe8dd3`):** arreglado centralmente en `src/sdk/cli/src/main.ts` (`makeStdioBlocking`, con guarda porque `_handle.setBlocking` es API interna) en vez de en cada sitio de salida, así un comando nuevo no puede reintroducirlo saliendo de la forma habitual. Verificado: un envelope de 123.506 bytes atraviesa ahora una pipe real y parsea; CLI 1305+132 verde.
+- **Impacto:** Cualquier consumidor que canalizara un resultado grande de `--format json` — integraciones de CI, la composite action, un agente — recibía JSON no parseable sin error y sin indicio de truncación. Es la peor forma de fallo para un contrato máquina: silencioso, dependiente del tamaño, e invisible en todo test pequeño.
+- **Ficheros afectados:** `src/sdk/cli/src/main.ts`, `src/sdk/cli/test/e2e/cli-e2e.test.ts` (the six failures that surfaced it)
+- **Componente:** `Evolith CLI` · **Criticidad:** P0 · **Complejidad:** XS
+- **Procedencia:** Encontrado el 2026-07-26 al verificar la ola de remediación de GT-569…GT-578, no por la auditoría de madurez en sí.
+- **Criterios de aceptación:**
+  - [x] Un envelope `--format json` mayor que el buffer de pipe del SO atraviesa una pipe y parsea.
+  - [x] El fix vive en un solo sitio, así que un `process.exit()` nuevo no puede reintroducirlo.

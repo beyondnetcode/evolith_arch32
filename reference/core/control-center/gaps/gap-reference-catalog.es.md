@@ -7194,3 +7194,265 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criterios de aceptación:**
   - [x] Un envelope `--format json` mayor que el buffer de pipe del SO atraviesa una pipe y parsea.
   - [x] El fix vive en un solo sitio, así que un `process.exit()` nuevo no puede reintroducirlo.
+
+---
+
+### Revisión de la ruta AI-native 2026-07-26 — GT-580…GT-595
+
+> Oportunidades tomadas del **Evolith AI Career Path** del repositorio acompañante `why-architecture` (`docs/evolith-ai-career-path-{es,en}.md`) y verificadas una por una contra el código de este repositorio antes de registrarlas. Los ítems que el documento propone y que la verificación **refutó o encontró ya entregados** NO se registraron a propósito: los evaluadores de `design` / `phase-artifacts` existen (`kind-evaluators.ts:304`, `:454`), el hook en tiempo de edición es GT-526 (COMPLETADO), la conformidad de paridad de superficies es el tester exploratorio cableado a `Validate documentation`, el fallback de la Checks API se cerró con GT-518, y toda la lista de "no construir" del §6.4 (GraphRAG, base de datos de grafos, razonadores OWL, vector DB dedicada, fine-tuning, bucle ReAct, coding agent propio, dashboard DORA) queda aquí solo como la decisión de no abrirle filas. GT-595 es la excepción en cuanto a procedencia: se encontró al contrastar, no en el documento.
+
+#### GT-580
+
+**Título:** Un solo código de salida para cualquier tipo de fallo, sin disciplina de stderr y sin salida en streaming
+
+- **Propósito:** Hacer que el primitivo de control más barato y neutral entre agentes — el código de salida — lleve de verdad el veredicto.
+- **Evidencia:** `grep -rno "process.exit([0-9]*)" src/sdk/cli/src` devuelve **20 × `process.exit(1)` más 2 `process.exit()` sin argumento** — un único valor de fallo para un veredicto FAIL, un flag mal escrito, un fichero ausente o una caída de infraestructura, así que ningún consumidor puede ramificar por causa. Los diagnósticos comparten el canal máquina: **341 `console.log` frente a 115 `console.error`**. Y no hay salida incremental — no existe `--format ndjson` — así que un `validate` largo es opaco hasta que termina. Un harness de agente, un hook de pre-commit y un paso de CI tienen exactamente un primitivo en común (el código de salida del proceso) y el CLI hoy renuncia a usarlo. Fix: taxonomía publicada (`0` PASS · `2` error de uso · `3` **veredicto FAIL** · `1` fallo de infraestructura · `4` HITL requerido), todo diagnóstico a stderr, un stream de eventos NDJSON versionado, y la taxonomía gobernada por un ruleset propio con paridad Rego para que un comando nuevo no pueda romperla.
+- **Impacto:** La afirmación de que Evolith gobierna cualquier agente "sin escribir un adaptador para ninguno" descansa por completo en el código de salida, y hoy `exit 1` no distingue "tu arquitectura falló el gate" de "escribiste mal el flag" — la diferencia entre un merge bloqueado y un reintento.
+- **Ficheros afectados:** `src/sdk/cli/src/main.ts`, `src/sdk/cli/src/commands/**` (28 directorios de comando), `src/rulesets/**`
+- **Componente:** `Evolith CLI` · **Criticidad:** P1 · **Complejidad:** M
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] Todo comando sale con un código de la taxonomía publicada, aseverado por test.
+  - [ ] `--format json`/`ndjson` escribe solo datos en stdout; todo diagnóstico va a stderr.
+  - [ ] Un ruleset con paridad Rego falla ante cualquier comando que salga fuera de la taxonomía.
+
+
+#### GT-581
+
+**Título:** Las tools MCP no declaran contrato de salida, así que todo consumidor parsea prosa
+
+- **Propósito:** Dar al consumidor máquina un resultado tipado en vez de texto que tiene que adivinar.
+- **Evidencia:** `grep -rn "outputSchema\|structuredContent" src/packages/mcp-server/src` devuelve **0**, e igual `annotations` — sobre **50 tools anunciadas**, con el SDK `1.29.0`, que soporta las tres cosas. Todo llamante recibe por tanto un bloque de texto y debe reconstruir su forma por ingeniería inversa, y ningún cliente puede distinguir una tool de solo lectura (`evolith-adr-list`) de una destructiva (`evolith-satellite-create`) antes de invocarla. El draft de la especificación además relajó `inputSchema`/`outputSchema` para aceptar cualquier keyword de JSON Schema 2020-12 (SEP-2106) y pide a los servidores devolver `tools/list` en orden determinista para mejorar el acierto de caché de cliente y de prompt — dos ganancias gratis en la misma pasada. Fix: derivar `outputSchema` por tool desde `@beyondnet/evolith-contracts`, emitir `structuredContent`, añadir annotations `readOnlyHint`/`destructiveHint`/`idempotentHint`, y hacer determinista el orden de `tools/list`.
+- **Impacto:** MCP es la superficie que un agente externo encuentra primero y es la que menos contrato lleva de las tres: la misma operación va tipada por REST y sin tipar por MCP. Es la afirmación de paridad de superficies de ADR-0073 fallando en la dirección que más importa.
+- **Ficheros afectados:** `src/packages/mcp-server/src/tools/**`, `src/packages/mcp-server/src/mcp/**`, `src/packages/contracts/**`
+- **Componente:** `MCP Server` · **Criticidad:** P1 · **Complejidad:** M
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] Toda tool declara `outputSchema` y devuelve `structuredContent` que valida contra él.
+  - [ ] Toda tool lleva annotations de solo-lectura / destructiva / idempotente.
+  - [ ] `tools/list` devuelve un orden determinista, aseverado por test.
+
+
+#### GT-582
+
+**Título:** El servidor MCP está construido sobre features del protocolo que la revisión draft elimina
+
+- **Propósito:** Sacar la migración a stateless del camino crítico antes de que aterrice la revisión, y arreglar el HITL en la misma pasada.
+- **Evidencia:** Verificado directamente contra la especificación viva el 2026-07-26, no tomado de una fuente secundaria. La revisión **actual** del protocolo es `2025-11-25`; el **draft** elimina las sesiones a nivel de protocolo y la cabecera `Mcp-Session-Id` (SEP-2567), elimina el handshake `initialize`/`notifications/initialized` en favor de `_meta` por petición (SEP-2575), hace obligatorio `server/discover` (SEP-2575), sustituye las peticiones iniciadas por el servidor con el patrón **MRTR** — `InputRequiredResult`, un `resultType` obligatorio, e `inputResponses` en un reintento de la petición original (SEP-2322) —, deprecia Roots/Sampling/Logging (SEP-2577) y deprecia el Dynamic Client Registration en favor de Client ID Metadata Documents. En este repositorio: SDK `1.29.0`, **7 sitios con `sessionId`** bajo `src/packages/mcp-server/src`, y `grep -rn "well-known\|oauth-protected-resource" src` devuelve 2 coincidencias no relacionadas, así que tampoco se sirve documento de metadatos de recurso protegido. MRTR importa más allá de la conformidad: es *la aprobación como protocolo*, y es la única forma en que el gate HITL sobrevive a la desaparición de las sesiones. **Corrección al documento origen, que esta fila registra en vez de repetir:** el documento etiqueta esta revisión como `2026-07-28` y la plantea como una emergencia a 3 días. Esa fecha no pudo confirmarse — la propia página de versionado de la especificación sigue nombrando `2025-11-25` como actual, describe la negociación como parte de `initialize`, y no publica fecha de release para el draft. El contenido técnico es real y está confirmado; la urgencia no. Esto es trabajo preparatorio contra un draft, a revisar en cada revisión de la especificación.
+- **Impacto:** Las sesiones son el supuesto sobre el que está construido el flujo de aprobación HITL, y el draft las borra. Descubrirlo después de que aterrice la revisión convierte una refactorización planificada en una caída de la única feature diferenciadora.
+- **Ficheros afectados:** `src/packages/mcp-server/src/main.ts`, `src/packages/mcp-server/src/mcp/**`, `src/packages/mcp-server/src/common/**` (auth)
+- **Componente:** `MCP Server` · **Criticidad:** P1 · **Complejidad:** L
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] El servidor responde `server/discover` y no lleva `sessionId` a nivel de protocolo.
+  - [ ] El gate HITL se expresa como `InputRequiredResult` con `requestState` sellado, y funciona sin sesión.
+  - [ ] Se sirve un documento de metadatos de recurso protegido y el registro de cliente no depende de DCR.
+
+
+#### GT-583
+
+**Título:** Tres superficies, tres fuentes de esquema mantenidas a mano, y un pin en draft-07
+
+- **Propósito:** Un solo contrato de capacidades generado en vez de tres copias en prosa del mismo.
+- **Evidencia:** `TOOL_SCHEMAS` es un mapa escrito a mano en `src/sdk/cli/src/commands/api/api.catalog.ts:81`, las tools MCP declaran sus propios input schemas inline en código, y `buildCapabilityManifest` (GT-513) publica solo `evaluationKinds`, `engines`, `surfaces`, `supportedConsumers` y un `sha256` — **ningún esquema de entrada o salida por operación**. Así que "un registro genera las tres superficies" se afirma en prosa y se mantiene a mano. Aparte, **los 154 ficheros `*.schema.json` declaran `http://json-schema.org/draft-07/schema#`**, mientras el draft de MCP espera keywords de 2020-12 en los esquemas de tool — lo que convierte el pin en un bloqueo para GT-581 y no en una elección neutral. Fix: extender el manifiesto con `inputSchema`/`outputSchema` por operación, generar `TOOL_SCHEMAS` y los registros MCP desde él, y migrar el meta-esquema a 2020-12 compilando con el entry point 2020 de ajv.
+- **Impacto:** Tres copias mantenidas a mano de un mismo contrato es exactamente la forma que produjo las divergencias que GT-485 y GT-564 ya registran. El tester exploratorio detecta la divergencia a posteriori; la generación la vuelve irrepresentable.
+- **Ficheros afectados:** `src/packages/core-domain/src/capabilities/capabilities-manifest.ts`, `src/sdk/cli/src/commands/api/api.catalog.ts`, `src/packages/mcp-server/src/tools/**`, `src/rulesets/schema/**`
+- **Componente:** `Evolith Core` · **Criticidad:** P1 · **Complejidad:** L
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] El manifiesto de capacidades lleva `inputSchema` y `outputSchema` por operación.
+  - [ ] `TOOL_SCHEMAS` y los registros de tools MCP se generan desde el manifiesto, no a mano.
+  - [ ] Los esquemas validan bajo JSON Schema 2020-12 y un guard de drift cubre los artefactos generados.
+
+
+#### GT-584
+
+**Título:** La evidencia probabilística puede llegar a un veredicto bloqueante sin tasa de error medida
+
+- **Propósito:** Hacer de la admisibilidad una decisión de política con números adjuntos, no una opinión.
+- **Evidencia:** La costura de ADR-0111 está viva — `quality-signal-provider.port.ts`, `quality-signal-registry.ts` y dos providers reales (`lighthouse-evidence.provider.ts`, `structural-review-provider.ts`) — y `Evidence` ya lleva `determinism` y `provenance{collectedBy, adapterVersion, artifactHash, timestamp}`. Lo que falta es el gate encima: `grep -rniE "confusion.matrix|true.positive.rate|cohen|kappa|false.block"` sobre `src` y `.harness` devuelve **0**. Nada lee `determinism` como condición para bloquear, así que el día en que un provider no determinista apunte a algo que importe, su hallazgo será admisible por defecto y sin medir. Fix: `probabilistic-evidence-admissibility.rules.json` con paridad `.rego`/`.test.rego` — la evidencia probabilística solo puede bloquear mientras `tpr ≥ θ₁ ∧ tnr ≥ θ₂ ∧ antigüedad ≤ θ₃`, y si no degrada a advisory — más los campos de calibración en `Evidence` que la regla lee.
+- **Impacto:** Esta es la licencia para usar un modelo dentro de un veredicto, en absoluto. Sin ella, el primer bloqueo equivocado se atribuye a "el LLM" y no hay registro con el que demostrar lo contrario.
+- **Ficheros afectados:** `src/packages/core-domain/src/evaluation/contracts/quality-evidence.ts`, `src/rulesets/**`, `src/rulesets/opa/**`
+- **Componente:** `core-domain` · **Criticidad:** P1 · **Complejidad:** M
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] Un par ruleset+Rego decide la admisibilidad desde los campos de calibración, con test negativo.
+  - [ ] `Evidence` lleva los campos de calibración que la regla lee, y una señal sin ellos no puede bloquear.
+  - [ ] Un provider con calibración obsoleta o ausente degrada a advisory, aseverado por test.
+
+
+#### GT-585
+
+**Título:** Los gates bloquean merges y su tasa de falso bloqueo nunca se ha medido
+
+- **Propósito:** Poder publicar, por ruleset, con qué frecuencia el gate se equivoca.
+- **Evidencia:** 167 rulesets y 45 políticas deciden `blocking`, y ninguno se ha medido nunca: todo el vocabulario de calibración (`matriz de confusión`, TPR/TNR, κ de Cohen, falso bloqueo) aparece **0 veces** en `src` y `.harness`. La fuente de etiquetas que esa medición necesita — un humano revocando una decisión de gate — vive en el Tracker, y según GT-435/GT-448 nada ha corrido nunca en producción, así que **todavía no existe corpus orgánico de etiquetas y esta fila no puede cerrarse solo con código**. Lo que sí está disponible hoy, y es el sentido de registrarla ya: un set etiquetado a mano desde la propia historia de este repositorio, más el arnés (un comando estilo `judge:validate` que reporte matriz de confusión, κ e intervalo de Wilson dentro del envelope ADR-0073), de modo que en el momento en que existan etiquetas la cifra sea derivable y no reconstruida a posteriori.
+- **Impacto:** "Nuestros gates tienen tasa de falso bloqueo publicada, por regla y por tenant" es la única afirmación que un catálogo de reglas competidor no puede copiar, porque es una propiedad de la operación acumulada y no de las reglas. Es además la precondición honesta para que los umbrales de GT-584 sean algo distinto de inventados.
+- **Ficheros afectados:** `src/sdk/cli/src/commands/**` (nuevo comando de juez/calibración), `src/rulesets/**`, `reference/core/control-center/**`
+- **Componente:** `Governance` · **Criticidad:** P1 · **Complejidad:** L
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] Un set etiquetado a mano de diffs reales de este repositorio, con el techo de acuerdo humano-humano reportado.
+  - [ ] Un comando CLI reporta matriz de confusión, κ e intervalo CI95 dentro del envelope ADR-0073.
+  - [ ] Se publica una cifra de precisión por ruleset para las reglas deterministas que ya se envían.
+
+
+#### GT-586
+
+**Título:** Un veredicto no puede decir quién lo pidió ni qué revisión juzgó
+
+- **Propósito:** Hacer todo veredicto atribuible y unible como serie, de forma aditiva.
+- **Evidencia:** `EvaluationContext` lleva más de 30 miembros opcionales, entre ellos `executionMode: 'manual' | 'hybrid' | 'agentic'` y, por ítem de evidencia, `EvidenceContext.producer.actorType` — pero **no lleva identidad del solicitante ni revisión de código**: sobre `evaluation-context.ts`, `grep -nE "actor|revision|commit"` solo coincide con `ExecutionMode` y ese `producer` anidado. `EvaluationResult` refleja `evaluatedAt` y `versions{core, ruleset, rulesetVersion, policy, blueprint}` — otra vez sin revisión. Así que el motor no puede atribuir un veredicto a un humano o a un agente (`executionMode` describe el modo de operación, no la identidad de quien pide, y no lleva ni modelo ni sesión), y dos veredictos sobre el mismo repositorio no pueden ordenarse contra el código que juzgaron. Fix: `requester{actorType, actorId, modelRef?, sessionId?}` y `repositoryRevision` opcionales y aditivos en el contexto, reflejados en el resultado. Solo aditivo, así que el congelamiento de contrato de GT-388 se mantiene.
+- **Impacto:** El ítem más barato de esta lista y el único cuyo dato se destruye por esperar: la atribución y la revisión no se pueden rellenar hacia atrás sobre veredictos ya emitidos. Todo lo temporal — una serie de conformidad, la atribución agente-vs-humano, la persistencia del drift entre revisiones — está bloqueado a que estos dos campos existan primero.
+- **Ficheros afectados:** `src/packages/core-domain/src/evaluation/contracts/evaluation-context.ts`, `.../evaluation-result.ts`, `src/packages/contracts/**`
+- **Componente:** `core-domain` · **Criticidad:** P1 · **Complejidad:** S
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] El contexto acepta un solicitante tipado opcional y una revisión de repositorio.
+  - [ ] El resultado refleja ambos, y un veredicto sin ellos sigue validando (prueba de que el cambio es aditivo).
+  - [ ] Las fixtures de contrato de `@beyondnet/evolith-contracts` cubren los campos nuevos.
+
+
+#### GT-587
+
+**Título:** La telemetría se emite con nombres privados, así que no se une con nada
+
+- **Propósito:** Emitir el formato de cable que los colectores del ecosistema ya entienden.
+- **Evidencia:** `grep -rn "gen_ai" src` devuelve **0**. El tracing existe (`src/packages/mcp-server/src/tracing.ts`) y GT-546 emite métricas `evolith_*`, así que la fontanería está puesta y solo el vocabulario es privado. Las convenciones semánticas GenAI de OpenTelemetry definen `gen_ai.evaluation.result` — que es exactamente la forma de una señal de calidad de ADR-0111 — más un namespace `mcp.*`; el draft de MCP además documenta la propagación de trace context por `_meta` (`traceparent`, `tracestate`, `baggage`, SEP-414). Fix: emitir los atributos de semconv junto a `evolith.*`, y pinnear la versión de semconv, porque ese registro sigue en estado Development.
+- **Impacto:** La telemetría no se rellena hacia atrás. Cada día de corridas registradas con nombres de atributo privados es un día que no se puede unir con nada que el cliente ya recoja.
+- **Ficheros afectados:** `src/packages/mcp-server/src/tracing.ts`, `src/apps/core-api/src/**`, `src/packages/core-domain/src/evaluation/**`
+- **Componente:** `Evolith Core` · **Criticidad:** P2 · **Complejidad:** M
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] Los resultados de evaluación emiten `gen_ai.evaluation.result` según la versión de semconv pinneada.
+  - [ ] Los spans MCP llevan atributos `mcp.*` y propagan el trace context de `_meta`.
+  - [ ] La versión de semconv pinneada está declarada y un check de drift señala un cambio upstream.
+
+
+#### GT-588
+
+**Título:** La procedencia se registra pero sin firmar, así que el rastro de auditoría es decorativo
+
+- **Propósito:** Hacer el registro de evidencia verificable por alguien que no confía en quien lo produjo.
+- **Evidencia:** `Provenance{collectedBy, adapterVersion, artifactHash, timestamp}` es obligatorio en cada `Evidence` — y está completamente sin firmar: `grep -rniE "scitt|cose_sign|transparency"` sobre `src` devuelve una única coincidencia no relacionada. GT-576 ya degradó la afirmación del Pilar 1 sobre "rastros de auditoría inmutables" de `Validated` a `Designed` por exactamente este motivo. Un `artifactHash` que el productor calcula sobre su propia salida no es evidencia de no-manipulación. Fix: un statement firmado más recibo por decisión en la forma que define RFC 9943 (SCITT) con recibos COSE, un `evolith-cli audit verify` que los compruebe, y — la parte que hace el ledger portante y no ornamental — una regla de gobernanza que FALLE cuando los recibos no verifican.
+- **Impacto:** Esto es lo que convierte un log propietario en algo que un auditor reconoce sin tener que creerle a Evolith, y es la diferencia entre que los packs de compliance sean una exportación o una reescritura.
+- **Ficheros afectados:** `src/packages/core-domain/src/evaluation/contracts/quality-evidence.ts`, `src/packages/core-domain/src/application/services/audit.service.ts`, `src/sdk/cli/src/commands/**`, `src/rulesets/**`
+- **Componente:** `Governance` · **Criticidad:** P2 · **Complejidad:** L
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] Toda decisión emite un statement firmado y un recibo verificable.
+  - [ ] `audit verify` verifica una cadena de recibos offline y falla ante una entrada manipulada.
+  - [ ] Una regla de gobernanza falla cuando los recibos no verifican, con test negativo.
+
+
+#### GT-589
+
+**Título:** El motor no tiene base de hechos estructurales, así que la profundidad de `architecture` acaba donde llega un grep
+
+- **Propósito:** Permitir que el Core juzgue un repositorio que nunca ha visto, solo desde el contexto.
+- **Evidencia:** `grep -rniE "scip|tree-sitter"` sobre `src` devuelve **0**. La profundidad hoy viene de la costura de enforcers OSS (GT-514/GT-515/GT-521), cuya salida es una lista plana de `Violation` por corrida de herramienta — útil, pero no una base de hechos consultable: sin grafo de símbolos, sin grafo de módulos, sin estructura de imports o llamadas a la que el evaluador pueda hacer preguntas. Fix: un paquete `RepoFacts` con content-hash producido por un indexador SCIP (`scip-typescript` y equivalentes) más tree-sitter, extraído **fuera** del Core y entregado inline como miembro determinista de `EvaluationContext` — la misma forma que ADR-0101 ya exige para los ficheros fuente vía `OverlayFileSystem`, así que refuerza la restricción de statelessness en vez de erosionarla.
+- **Impacto:** Sin base de hechos, "architecture intelligence" es comprobación de imports, que es exactamente el commodity contra el que advierte el posicionamiento. Con ella, y con content-hash, el mismo veredicto es reproducible contra los mismos hechos — la promesa de reproducibilidad aplicada a la estructura.
+- **Ficheros afectados:** `src/packages/core-domain/src/evaluation/contracts/evaluation-context.ts`, `src/packages/core-domain/src/evaluation/kind-evaluators.ts`, nuevo paquete extractor bajo `src/packages/**`
+- **Componente:** `Evolith Core` · **Criticidad:** P1 · **Complejidad:** L
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] `RepoFacts` se produce fuera del Core y se consume como miembro determinista del contexto.
+  - [ ] El evaluador `architecture` responde al menos una pregunta que ningún ruleset actual puede expresar.
+  - [ ] Los mismos hechos producen veredictos byte-idénticos entre corridas (reproducibilidad por content-hash).
+
+
+#### GT-590
+
+**Título:** El modelo C4 intencional se parsea y nunca se liga al código, así que "real vs intencional" no se puede calcular
+
+- **Propósito:** Convertir la correspondencia entre diagrama y código en un activo gobernado y versionado.
+- **Evidencia:** `structurizr-parser.ts` y `c4-compiler.ts` existen bajo `src/packages/core-domain/src/application/validators/enforcement/`, así que el modelo *intencional* ya se parsea. Lo que falta es el paso de correspondencia: nada liga un elemento C4 a un símbolo, módulo o ruta de código, así que el sistema tiene una intención y una implementación y no puede compararlas. Fix: un provider probabilístico propone los bindings por la costura de ADR-0111, un humano los confirma en un gate HITL, la correspondencia confirmada se persiste versionada, y desde ese momento es una entrada determinista. Depende de GT-589 para el lado de símbolos de cada binding.
+- **Impacto:** Una correspondencia confirmada es el activo que un detector no puede producir, porque producirla exige autoridad de aprobación y un sitio donde guardar la decisión. Es el único ítem de esta lista donde el rol de gobernanza de Evolith es el foso y no el sobrecoste.
+- **Ficheros afectados:** `src/packages/core-domain/src/application/validators/enforcement/c4-compiler.ts`, `.../structurizr-parser.ts`, `src/packages/agent-runtime/src/domain/ports/quality-signal-provider.port.ts`
+- **Componente:** `Evolith Core` · **Criticidad:** P2 · **Complejidad:** L
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] Un provider propone bindings C4↔código con una confianza por binding.
+  - [ ] La confirmación ocurre en un gate HITL y la correspondencia confirmada se versiona.
+  - [ ] Una correspondencia confirmada entra en evaluaciones posteriores como entrada determinista.
+
+
+#### GT-591
+
+**Título:** OPA está pinneado en v0.65.0 y 32 de 45 políticas siguen en Rego estilo v0
+
+- **Propósito:** Detener el crecimiento de la distancia con la línea soportada de OPA, mientras 39 ficheros de test aún pueden probar que la migración no cambió nada.
+- **Evidencia:** `.harness/scripts/opa-runtime.mjs:6` pinnea `OPA_VERSION = '0.65.0'` y `compile-opa-wasm.mjs:41` descarga esa misma versión; `@open-policy-agent/opa-wasm` está en `1.10.0` tanto en `core-domain` como en `mcp-server`. OPA ha publicado desde entonces su línea v1, donde las keywords `if` y `contains` son obligatorias en vez de opcionales. En este repositorio la migración está **ya medio hecha y es medible**: 13 de 45 políticas declaran `import rego.v1`, dejando **32 en estilo v0**, con 39 ficheros `*.test.rego` como el arnés que prueba que la conversión no cambió ni una decisión. Fix: `opa fmt --rego-v1` sobre las 32, subir la versión pinneada, y aseverar el pin en CI.
+- **Impacto:** Un major pinneado que upstream ya dejó atrás es una decisión que se encarece cada mes, y el momento más barato para convertir es mientras una suite verde cubre todas las políticas.
+- **Ficheros afectados:** `.harness/scripts/opa-runtime.mjs`, `.harness/scripts/compile-opa-wasm.mjs`, `src/rulesets/opa/**` (45 políticas + 39 tests)
+- **Componente:** `Evolith Core` · **Criticidad:** P2 · **Complejidad:** M
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] Las 45 políticas están en estilo v1 y la versión pinneada de OPA está en la línea v1.
+  - [ ] Los 39 tests de política pasan sin cambios, probando que ninguna decisión cambió.
+  - [ ] CI asevera la versión pinneada y falla ante drift.
+
+
+#### GT-592
+
+**Título:** El RAG está operativo y ninguna superficie lo expone; la recuperación es solo densa sobre un corpus que se consulta por identificadores exactos
+
+- **Propósito:** Permitir que un agente alcance de verdad el índice que se construyó, con el modo de recuperación que este corpus necesita.
+- **Evidencia:** El stack está terminado: GT-538 (adaptador pgvector durable), GT-539 (embeddings Qwen3 según ADR-0112), GT-540 (`IKnowledgePort` de producción) y GT-541 (workflow de delta-sync) están todos COMPLETADOS, con `pgvector-knowledge.adapter.ts` y ocho scripts `rag-*` bajo `.harness/scripts/ci/` — y **ninguna de las 50 tools MCP anunciadas es una operación de búsqueda o de conocimiento**, así que ningún agente externo puede consultar nada de ello. Segundo problema: el adaptador de GT-540 ordena solo por similitud coseno, mientras este corpus se consulta por identificadores exactos (`ADR-0111`, `GT-569`, `SCHEMA_VERSION`, `EVD-01`), que es el régimen donde el BM25 léxico gana a la recuperación densa. Fix: una tool MCP `evolith-knowledge-search`, recuperación híbrida con BM25 primero y denso como reranker, y un arnés de eval de recuperación en CI sobre un set fijo de consultas para que un cambio de ranking se vea.
+- **Impacto:** Un índice construido que nadie puede consultar es la forma más cara posible de este trabajo: el coste está pagado y no se cobra ninguno de los beneficios. Y un arnés de eval es lo que impide que la pregunta de calidad de recuperación se resuelva por anécdota.
+- **Ficheros afectados:** `src/packages/mcp-server/src/tools/**`, `src/packages/agent-runtime/src/adapters/knowledge/pgvector-knowledge.adapter.ts`, `.harness/scripts/ci/rag-*.mjs`
+- **Componente:** `MCP Server` · **Criticidad:** P2 · **Complejidad:** M
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] Una tool MCP expone la búsqueda de conocimiento con esquema de salida declarado.
+  - [ ] La recuperación es híbrida, BM25 primero, y gana a la línea base solo-densa en consultas por identificador.
+  - [ ] Un eval de recuperación sobre un set fijo de consultas corre en CI y falla ante regresión.
+
+
+#### GT-593
+
+**Título:** Una corrida abortada a mitad de pipeline reinicia desde cero, y los pasos no deterministas que ya ejecutó quedan sin registrar
+
+- **Propósito:** Conseguir auditabilidad del no-determinismo registrándolo, no prohibiéndolo.
+- **Evidencia:** GT-386 entregó *estado* durable — `file-scheduler.adapter.ts`, `file-memory.adapter.ts`, `file-approval-store.ts` — pero no hay journal de pasos: `grep -rniE "resume|journal"` sobre `src/packages/agent-runtime/src` devuelve **0**. Así que el pipeline (`plan()`, el harness, cada provider, el evaluate del Core) no guarda registro por paso de entradas y salidas, lo que significa que un `kill -9` pierde el trabajo y, peor, pierde la constancia de qué devolvieron realmente los pasos no deterministas. Fix: journalear cada paso con entradas y salidas hasheadas, y reanudar desde el journal.
+- **Impacto:** Reconciliar LLMs con un contrato de auditoría es exactamente esto: un workflow determinista sobre actividades journaleadas. Sin el journal, "registramos el no-determinismo" es una afirmación sin artefacto detrás.
+- **Ficheros afectados:** `src/packages/agent-runtime/src/application/**`, `src/packages/agent-runtime/src/adapters/**`
+- **Componente:** `agent-runtime` · **Criticidad:** P2 · **Complejidad:** M
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] Cada paso del pipeline añade una entrada de journal con entrada y salida hasheadas.
+  - [ ] Una corrida abortada a mitad de pipeline reanuda desde el journal sin repetir pasos completados.
+  - [ ] El journal basta para reproducir las decisiones de una corrida pasada, aseverado por test.
+
+
+#### GT-594
+
+**Título:** El motor es ciego al drift que el código escrito por IA realmente causa
+
+- **Propósito:** Apuntar la costura de señales de calidad al daño que es legal en términos de imports.
+- **Evidencia:** Los 167 rulesets y 45 políticas razonan sobre estructura, fronteras e imports — y los modos de fallo que nombra la evidencia longitudinal del documento origen (duplicación en vez de reutilización, refactor colapsado, abstracción muerta, constructos que enmascaran errores) son todos **legales en términos de imports**, así que ninguna regla puede verlos: `grep -rlniE "duplicat"` sobre `src/rulesets` solo coincide con prosa (un README, el manifiesto de ingeniería, un ruleset de ADR) y ninguna regla calcula un ratio de duplicación, un ratio refactor:copia, ni un conteo de constructos que enmascaran errores. Fix: evaluadores de esas señales detrás de la costura de ADR-0111, **advisory primero**, admisibles para bloquear solo vía GT-584. Depende de GT-589 para los hechos estructurales sobre los que se calculan las señales.
+- **Impacto:** Aquí está la diferenciación, y también la competencia: un vendor lanzó descubrimiento automático de arquitectura con violaciones en quality gate para cinco lenguajes, posicionado explícitamente contra el drift causado por IA. La comprobación de imports está disputada; la erosión medida y atribuida no.
+- **Ficheros afectados:** `src/packages/core-domain/src/evaluation/kind-evaluators.ts`, `src/packages/agent-runtime/src/application/**`, `src/rulesets/**`
+- **Componente:** `Evolith Core` · **Criticidad:** P2 · **Complejidad:** L
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] Existen evaluadores advisory para duplicación, ratio refactor:copia y constructos que enmascaran errores.
+  - [ ] Cada señal lleva determinismo y procedencia y es inadmisible para bloquear hasta estar calibrada.
+  - [ ] Un delta de conformidad sobre el mismo repositorio entre revisiones es reportable por señal.
+
+
+#### GT-595
+
+**Título:** El motor renuncia a evaluar dos tercios de sus propias reglas
+
+- **Propósito:** Cerrar el agujero de cobertura que GT-569 hizo visible, ahora que el denominador es honesto.
+- **Evidencia:** **No viene del documento origen — se encontró al contrastarlo.** GT-569 lo apartó explícitamente ("cerrar el gap de cobertura de handlers en sí (≈240 reglas no evaluables) NO es parte de esto y queda abierto") y lo dejó sin fila propia, que es cómo un P0 se vuelve invisible en el tablero. Tras ese arreglo, `validate` sobre este repositorio reporta **269 saltadas de 380** reglas, **192 de ellas `blocking`**: el motor nativo tiene handlers para una minoría del corpus de reglas (`find src/rulesets -name '*.rules.json'` cuenta 167 ficheros en 21 directorios). Una regla bloqueante saltada no es un resultado neutral — es una regla que el producto envía, documenta y cobra, y que nunca corre. El fix es triaje antes que código: por ruleset, decidir qué reglas necesitan handler nativo, cuáles se expresan mejor como Rego (ya existen 45 políticas), y cuáles son solo documentación y deben marcarse como no ejecutables para que dejen de inflar el denominador.
+- **Impacto:** La afirmación central del producto es un veredicto reproducible sobre un corpus de reglas, y hoy dos tercios de ese corpus se abstienen. Toda cifra derivada — cobertura, madurez, paridad de motores — se calcula sobre el tercio que sí corre.
+- **Ficheros afectados:** `src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts`, `src/packages/core-domain/src/application/validators/**`, `src/rulesets/**`
+- **Componente:** `core-domain` · **Criticidad:** P0 · **Complejidad:** L
+- **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
+- **Criterios de aceptación:**
+  - [ ] Toda regla queda clasificada: handler nativo, política Rego, o explícitamente no ejecutable.
+  - [ ] Ninguna regla marcada `blocking` puede devolver `skipped`; esa combinación falla la corrida.
+  - [ ] El ratio `rulesChecked`/`rulesTotal` se publica por ruleset.
+

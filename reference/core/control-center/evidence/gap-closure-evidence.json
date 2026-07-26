@@ -3,6 +3,20 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-574",
+      "closedAt": "2026-07-26",
+      "closureCommit": "api-action",
+      "evidence": [
+        "branch protections for main and develop via GitHub API"
+      ],
+      "validationCommands": [
+        "gh api repos/beyondnetcode/evolith_arch32/branches/main/protection",
+        "gh api repos/beyondnetcode/evolith_arch32/branches/develop/protection"
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "Branch protection configuration (enforce_admins=true, CodeQL SAST required) successfully applied."
+    },
+    {
       "id": "GT-465",
       "closedAt": "2026-07-09",
       "closureCommit": "70d8b8cc",

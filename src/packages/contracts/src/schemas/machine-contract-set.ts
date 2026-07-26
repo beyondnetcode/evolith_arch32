@@ -76,13 +76,13 @@ export const MACHINE_CONTRACT_SET: MachineContractSet = Object.freeze({
       id: 'gate-evidence',
       version: '1.0.0',
       path: 'rulesets/schema/gate-evidence.schema.json',
-      sha256: '9225090e2ee851dbd2d5c22e7a0a6e2d7f97db9835f7f3822ac7d9f861b75754',
+      sha256: 'ea092910e12f771e840177e6f1ae6f305516847664ece6ef1f0a759699293253',
     }),
     Object.freeze({
       id: 'output-envelope',
       version: '1.0.0',
       path: 'rulesets/schema/output-envelope.schema.json',
-      sha256: '07eaffaae2c33071ea105fbcbdc497c06d149143f6cc9b94555170740707fd0b',
+      sha256: '099e70c6f496bac4e239074cda54f514a115980b4579345cdf2da359664f4a60',
     }),
     // GT-573: the `POST /api/v1/evaluate` request/response pair. Until now the
     // flagship integration had no published schema at all on either side of the
@@ -92,13 +92,13 @@ export const MACHINE_CONTRACT_SET: MachineContractSet = Object.freeze({
       id: 'evaluation-context',
       version: '1.0.0',
       path: 'rulesets/schema/evaluation-context.schema.json',
-      sha256: '555f1bc2898ad2409aa51bd34bb1a3872731b33d49f95252e054ae35b7665950',
+      sha256: 'dfa2cd9f2e5757a9dcff2d0e0cfd5acc459bf9cca8fc85c586b2e70f92001ea6',
     }),
     Object.freeze({
       id: 'evaluation-result',
       version: '1.0.0',
       path: 'rulesets/schema/evaluation-result.schema.json',
-      sha256: '61a85d6bd2c3b0908c81b5fd565d68e9d90ba8448f58e51f1f11e85bc8ee3481',
+      sha256: '37e64db0ac8049ffa6b12e91b43405af527cfca02ae7f90e5368d1b4d12dc9c7',
     }),
   ]),
   supportedConsumers: Object.freeze([

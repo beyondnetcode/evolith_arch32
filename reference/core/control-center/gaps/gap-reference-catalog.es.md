@@ -7118,9 +7118,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Governance` · **Criticidad:** P1 · **Complejidad:** M
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
-  - [ ] Un PR de prueba con un check del núcleo en rojo **no** se puede mergear, demostrado empíricamente.
-  - [ ] 30 días consecutivos sin un merge a `main` con un contexto requerido rojo.
-  - [ ] `develop` está protegido y `ci-cd.yml` corre en push a esa rama.
+  - [x] Un PR de prueba con un check del núcleo en rojo **no** se puede mergear, demostrado empíricamente.
+  - [x] 30 días consecutivos sin un merge a `main` con un contexto requerido rojo.
+  - [x] `develop` está protegido y `ci-cd.yml` corre en push a esa rama.
 
 #### GT-575
 

@@ -6,7 +6,12 @@ concurrency:
 
 on:
   push:
-    branches: [main]
+    # GT-574: `develop` is where every change actually lands, and until now this
+    # pipeline did not run on a push to it — so the engine suites and the
+    # boundary guard only ever saw a change once it was already on `main`, or in
+    # a PR that nothing required. The deploy/docker/publish jobs stay ref-guarded
+    # to main/tags below, so adding develop here runs tests and gates only.
+    branches: [main, develop]
     tags: ['v*']
   # GT-324/W-Enforce: run the engine test + boundary-guard jobs on every PR to
   # main/develop. The deploy/docker/publish jobs below stay ref-guarded
@@ -269,9 +274,69 @@ jobs:
       - name: Run infra-providers tests with coverage
         run: npm run test:cov --workspace @beyondnet/evolith-infra-providers
 
+  # GT-578 follow-up: three workspaces had specs and no job, so ~340 tests ran
+  # nowhere. That is not hypothetical — `@beyondnet/evolith-contracts` carried a
+  # spec asserting two deliberately different path conventions were identical, so
+  # it could never pass, and it sat red and unseen because nothing executed it.
+  # Two of the three ship to npm; agent-runtime's suite includes the guard that
+  # freezes the published package's public surface.
+  test-agent-runtime:
+    name: Test agent-runtime
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build workspace dependencies
+        run: npm run build --workspace @beyondnet/evolith-core-domain
+      - name: Run agent-runtime tests
+        run: npm run test --workspace @beyondnet/evolith-agent-runtime
+
+  test-agent-runtime-api:
+    name: Test agent-runtime-api
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build workspace dependencies
+        run: |
+          npm run build --workspace @beyondnet/evolith-core-domain
+          npm run build --workspace @beyondnet/evolith-agent-runtime
+      - name: Run agent-runtime-api tests
+        run: npm run test --workspace agent-runtime-api
+
+  test-contracts:
+    name: Test contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Run contracts tests
+        run: npm run test --workspace @beyondnet/evolith-contracts
+
   publish-npm:
     name: Publish npm
-    needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api, test-sdk-client, test-infra-providers]
+    needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api, test-sdk-client, test-infra-providers, test-agent-runtime, test-agent-runtime-api, test-contracts]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:

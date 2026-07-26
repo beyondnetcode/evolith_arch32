@@ -14,7 +14,11 @@ import { RulesetValidatorService } from '@beyondnet/evolith-core-domain/applicat
 import { TopologyCatalogService } from '@beyondnet/evolith-core-domain/application/services';
 import { OverlayFileSystem } from '@beyondnet/evolith-core-domain/infrastructure/overlay/overlay-file-system';
 import { EvaluationOrchestrator } from '@beyondnet/evolith-core-domain/evaluation';
-import type { EvaluationContext } from '@beyondnet/evolith-core-domain/evaluation';
+import type {
+  EvaluationContext,
+  IEvaluationPipeline,
+  IWorkspaceReferenceResolver,
+} from '@beyondnet/evolith-core-domain/evaluation';
 import type {
   IFileSystem,
   ILogger,
@@ -23,6 +27,12 @@ import type {
 import type { IRulesetRepository } from '@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port';
 import { EvaluationContextDto } from '../dtos/evaluation.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
+import {
+  CORE_VERSION,
+  EVALUATION_ORCHESTRATOR_FACTORY,
+  makeEvaluationOrchestratorFactory,
+  type EvaluationOrchestratorFactory,
+} from '../../application/evaluation/evaluation-orchestrator.factory';
 import { MetricsService } from '../../infrastructure/metrics/metrics.service';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 import {
@@ -32,6 +42,13 @@ import {
 
 /** Synthetic root the inline satellite content is served from (never written to disk). */
 const INMEM_SATELLITE_ROOT = '/inmem/satellite';
+
+/**
+ * Synthetic workspaceRef used ONLY to satisfy the orchestrator's port contract on
+ * the inline branch. It is never resolved against disk: the per-request resolver
+ * below always answers with the in-memory root.
+ */
+const INLINE_WORKSPACE_REF = 'inline';
 
 /**
  * POST /api/v1/evaluate — the stateless Core evaluation entry point (ADR-0101).
@@ -44,6 +61,8 @@ const INMEM_SATELLITE_ROOT = '/inmem/satellite';
  * present, the Core evaluates that in-memory satellite content directly — no
  * disk read/write of the satellite, no network — while still reading its OWN
  * rulesets from disk. Keeps `workspaceRef`/`satellitePath` semantics unchanged.
+ * GT-573: it goes through the SAME EvaluationOrchestrator as the canonical path
+ * and therefore returns the SAME `EvaluationResult` — one operation, one shape.
  *
  * Legacy path (backward compatible): when `workspaceRef`/`evaluationInput` are
  * absent and `satellitePath` is present, the previous satellite-path evaluation
@@ -68,6 +87,11 @@ export class EvaluationController {
     @Optional()
     private readonly workspaceResolver?: WorkspaceReferenceResolverService,
     @Optional() private readonly metrics?: MetricsService,
+    // GT-573: the SAME orchestrator factory the canonical branch is built from,
+    // so the inline branch cannot drift into a second response shape.
+    @Optional()
+    @Inject(EVALUATION_ORCHESTRATOR_FACTORY)
+    private readonly makeOrchestrator?: EvaluationOrchestratorFactory,
   ) {}
 
   @Post()
@@ -137,6 +161,13 @@ export class EvaluationController {
    * Runs the SAME validation/evaluation the satellite path uses, but against a
    * synthetic satellite root served from the in-memory `files` map. The Core's
    * own rulesets are still read from real disk via the fallback IFileSystem.
+   *
+   * GT-573: the result travels through the SAME `EvaluationOrchestrator` the
+   * `workspaceRef` branch uses, so the response is the canonical
+   * `EvaluationResult` (`overallVerdict` / `outcome` / `results.gate[]` /
+   * `evaluatedAt`) and not the legacy `{ topology, gates, summary }` envelope.
+   * The consumer's mapper can therefore tell a FAIL from "not evaluated" —
+   * previously every inline FAIL was persisted as `SKIPPED`.
    */
   private async evaluateInline(body: EvaluationContextDto, start: number, phase: string) {
     if (!this.fs || !this.logger || !this.configParser || !this.rulesetRepo) {
@@ -171,18 +202,59 @@ export class EvaluationController {
     });
     const useCase = new ValidateSatelliteUseCase(validator);
 
-    const { evaluationVerdict } = await useCase.execute({
-      satellitePath: INMEM_SATELLITE_ROOT,
-      corePath,
-      manifest: {
-        satellitePath: INMEM_SATELLITE_ROOT,
-        corePath,
-        topology: body.topology ?? body.topologyRef,
-        phase: body.phase ?? body.phaseId,
+    // The two ports the orchestrator abstracts, bound to the in-memory overlay.
+    // Everything else (core version, kind evaluators, canonical mapping) is the
+    // shared factory's — there is no second envelope to keep in sync.
+    const pipeline: IEvaluationPipeline = {
+      evaluate: async (manifest) => {
+        const out = await useCase.execute({
+          satellitePath: manifest.satellitePath,
+          corePath: manifest.corePath,
+          manifest,
+        });
+        if (!out.evaluationVerdict) {
+          throw new Error('Inline evaluation pipeline produced no verdict');
+        }
+        return out.evaluationVerdict;
       },
-    });
+    };
+    const resolver: IWorkspaceReferenceResolver = {
+      // Never touches disk: the inline satellite lives entirely in the overlay.
+      resolve: async () => ({ satellitePath: INMEM_SATELLITE_ROOT, corePath }),
+    };
+
+    const orchestrator = this.makeOrchestrator
+      ? this.makeOrchestrator(pipeline, resolver)
+      : makeEvaluationOrchestratorFactory([], CORE_VERSION)(pipeline, resolver);
+
+    const ctx: EvaluationContext = {
+      ...(body as unknown as EvaluationContext),
+      // `kinds` is required by the canonical contract; the inline callers that
+      // predate it send none, and the core kinds run unconditionally anyway.
+      kinds: body.kinds ?? [],
+      workspaceRef: INLINE_WORKSPACE_REF,
+      // Fold the legacy aliases into their canonical names, preserving the
+      // pre-GT-573 precedence (legacy first), so the SatelliteManifest the
+      // pipeline receives is byte-identical to before. Values pass through
+      // verbatim — the pipeline itself normalizes canonical / legacy `f1..f5`
+      // ids via `toLegacyPhaseId`. Only the RESPONSE shape changes.
+      topologyRef: body.topology ?? body.topologyRef,
+      phaseId: (body.phase ?? body.phaseId) as EvaluationContext['phaseId'],
+    };
+
+    const result = await orchestrator.evaluate(ctx);
     // GT-542: emit the inline evaluation verdict + latency signal.
-    this.metrics?.recordGateEvaluation('evaluate', evaluationVerdict?.passed ? 'PASS' : 'FAIL', phase, body.tenant?.tenantId, (Date.now() - start) / 1000);
-    return evaluationVerdict!.outputEnvelope;
+    this.metrics?.recordGateEvaluation('evaluate', String(result.overallVerdict), phase, body.tenant?.tenantId, (Date.now() - start) / 1000);
+    // GT-573: the canonical EvaluationResult, in the same ADR-0073 envelope the
+    // workspaceRef branch returns.
+    return createSuccessEnvelope(result, {
+      command: 'evolith evaluate',
+      executedAt: new Date().toISOString(),
+      durationMs: Date.now() - start,
+      correlationId:
+        body.correlationId ??
+        `api-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    });
   }
 }

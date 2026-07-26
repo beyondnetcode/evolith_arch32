@@ -69,6 +69,7 @@ jobs:
 | `ruleset` | Ruleset a validar: `acl`, `open-core`, `inheritance`, o vacío para todos | No | `''` |
 | `node-version` | Version de Node.js | No | `20` |
 | `cli-version` | Version de `@beyondnet/evolith-cli` a instalar | No | `latest` |
+| `cli-command` | Comando con el que se invoca el CLI. Vacio instala el CLI publicado; si se define (p. ej. `node ./src/sdk/cli/dist/main.js`) se usa un build local y se omiten tanto el npm install como el setup de Node.js | No | `''` |
 | `fail-on-violation` | Fallar el job cuando se encuentran violaciones | No | `true` |
 
 ## Outputs
@@ -76,7 +77,8 @@ jobs:
 | Output | Descripcion |
 |--------|-------------|
 | `compliance-status` | `compliant` o `non-compliant` |
-| `violations-count` | Numero de violaciones encontradas |
+| `violations-count` | Numero de issues **bloqueantes** encontrados (`data.issues[].blocking == true`) |
+| `issues-count` | Total de issues encontrados, bloqueantes y advisory |
 | `report-path` | Ruta absoluta al reporte JSON generado |
 
 ---
@@ -95,6 +97,17 @@ jobs:
 ## Resumen del Job
 
 La accion escribe un resumen de cumplimiento en el job summary de GitHub Actions en cada ejecucion (incluyendo fallos), mostrando estado de cumplimiento, conteo de violaciones y configuracion utilizada.
+
+El conteo se lee del envelope ADR-0073 del CLI — `{ success, data: { status, rulesChecked, issues[], coreRef, timestamp }, meta }` — con `[.data.issues[]? | select(.blocking == true)] | length`. No depende de ninguna otra clave, asi que agregar claves al envelope no puede alterarlo.
+
+---
+
+## Dogfooding y pruebas de regresion
+
+Esta accion se ejercita desde [`evolith-validate-dogfood.yml`](../../workflows/evolith-validate-dogfood.yml) en Evolith Core:
+
+- `test/action-step.test.mjs` ejecuta los propios scripts `run:` de la accion contra envelopes grabados del CLI (`node --test .github/actions/evolith-validate/test/action-step.test.mjs`).
+- El job `dogfood` compila el CLI de este commit y corre la accion contra `test/fixtures/noncompliant-satellite/`, verificando un conteo de violaciones distinto de cero y un job bloqueado.
 
 ---
 

@@ -5,7 +5,7 @@
 **Estado:** Evaluación Activa
 **Responsable:** Evolith Architecture Board
 **Creado:** 2026-06-10 (consolida los antiguos `maturity-matrix.es.md` y `maturity-evaluation.es.md`)
-**Última Actualización:** 2026-07-23
+**Última Actualización:** 2026-07-26
 **Documento compañero:** [Tablero de Seguimiento de Gaps](../gaps/gap-tracking.es.md) — la única superficie de tracking para todo gap referenciado aquí.
 
 ---
@@ -23,7 +23,7 @@ Esta visión dual previene un fallo de evaluación común: una plataforma con al
 Específicamente, la evaluación mide:
 
 1. **Compatibilidad con estándares internacionales** — TOGAF ACMM para madurez de gobernanza de procesos enterprise, pilares Cloud WAF para madurez técnica (sección 3), catálogo enterprise de patrones/anti-patrones (secciones 6–7) y madurez de capacidades de adaptadores (sección 5).
-2. **Alcance de gobernanza multi-topología** — cobertura a través de las 5 dimensiones topológicas (progressive-axis, execution, integration, data, ai) con 8 topologías componibles, todas con paridad dual-engine (sección 8).
+2. **Alcance de gobernanza multi-topología** — cobertura a través de las 5 dimensiones topológicas (progressive-axis, execution, integration, data, ai) con 8 topologías componibles. La paridad dual-engine se reporta por artefacto en la sección 8 (corpus del repositorio, paquete publicado, gate bloqueante) en vez de afirmarse como una única cifra global.
 3. **Madurez AI-Augmented** — posición contra la matriz de madurez AI de 3 niveles × 5 dimensiones (sección 10).
 4. **Match con la visión del producto** — alineación pilar por pilar contra la [Visión Maestra del Producto](../../../../product/suite/vision/evolith-product-vision-master.es.md) (sección 9).
 5. **Gaps abiertos** — toda desviación encontrada aquí se registra exclusivamente como ítem `GT-xx` en el [Tablero de Seguimiento de Gaps](../gaps/gap-tracking.es.md) (sección 12). Ningún gap se trackea en este documento.
@@ -50,12 +50,14 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
 ## 3. Evaluación de la Arquitectura Runtime (Pilares Well-Architected)
 
 ### Pilar 1: Seguridad y Compliance — **Nivel 4 (Gestionado)**
-* **Estado:** `Validado`
-* **Evidencia:**
-  * Pipeline de seguridad zero-cost vía CodeQL ([ADR-0005](../../architecture/adrs/core/0005-automated-sast-quality-gates.es.md)).
-  * Fijación estricta de versiones de dependencias (lockfiles exactos, sin rangos) con gestión automatizada de vulnerabilidades ([ADR-0009](../../architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.es.md)).
-  * Aislamiento de datos multi-tenant vía Row-Level Security ([ADR-0010](../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.es.md)).
-  * Audit trails inmutables vía CDC ([ADR-0016](../../architecture/adrs/core/0016-immutable-business-audit-trail.es.md)).
+* **Estado:** `Diseñado` — degradado desde `Validado` por [GT-576](../gaps/gap-reference-catalog.es.md#gt-576). Los dos controles sobre los que se puntuaba este pilar (aislamiento de tenant, auditoría inmutable) tienen ADR aprobado y cero código.
+* **Evidencia — ejecutable (corre en CI):**
+  * Pipeline de seguridad zero-cost vía CodeQL ([ADR-0005](../../architecture/adrs/core/0005-automated-sast-quality-gates.es.md)) — job `codeql-analysis` en `.github/workflows/sdk-cli-ci.yml:362`, junto a Trivy (`sdk-cli-ci.yml:389`) y detección de secretos con gitleaks (`sdk-cli-ci.yml:418`).
+  * Gestión automatizada de vulnerabilidades ([ADR-0009](../../architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.es.md)) — `npm audit --audit-level=high` en el job `security-audit` en `.github/workflows/sdk-cli-ci.yml:83`. La fijación exacta de versiones es la convención en cada manifiesto de workspace, pero ningún gate rechaza todavía un especificador de rango: el pinning se observa, no se impone.
+* **Intención — ADR aprobado, sin implementación (no debe leerse como evidencia):**
+  * Aislamiento de datos multi-tenant vía Row-Level Security ([ADR-0010](../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.es.md)) — **no implementado.** `grep -rniE 'row.level.security|current_setting\('` sobre `src/` solo matchea prosa de patrones de topología (`src/rulesets/topologies/event-driven/patterns.md`), y ningún workspace bajo `src/` declara driver de PostgreSQL ni ORM.
+  * Audit trails inmutables vía CDC ([ADR-0016](../../architecture/adrs/core/0016-immutable-business-audit-trail.es.md)) — **no implementado.** No existe componente CDC, ni dependencia `debezium`, ni capa de persistencia desde la cual capturar cambios.
+* **Camino a `Implementado`:** una capa de persistencia con la política RLS realmente aplicada y un almacén de auditoría append-only, cada uno cubierto por un test que falle cuando se retire el aislamiento.
 * **Camino al Nivel 5:** penetration testing automatizado en CI; rotación dinámica de secretos.
 
 ### Pilar 2: Eficiencia de Rendimiento — **Nivel 4 (Gestionado)**
@@ -75,20 +77,21 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
 * **Camino al Nivel 5:** drills regulares de chaos engineering; multi-región activo-activo.
 
 ### Pilar 4: Excelencia Operacional — **Nivel 4 (Gestionado)**
-* **Estado:** `Validado`
-* **Evidencia:**
-  * Builds deterministas de monorepo vía Nx ([ADR-0001](../../architecture/adrs/core/0001-monorepo-orchestration-principle.es.md)).
-  * Telemetría vía stack LGTM y OpenTelemetry ([ADR-0007](../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)).
-  * Feature flagging desacopla deployment de release ([ADR-0017](../../architecture/adrs/core/0017-feature-flagging-strategy.es.md)).
-  * Quality gates aplican umbrales de coverage en CI ([ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md)).
+* **Estado:** `Implementado` — degradado desde `Validado` por [GT-576](../gaps/gap-reference-catalog.es.md#gt-576). La cita de orquestación de builds nombraba una herramienta que nunca se adoptó, y una capacidad de la lista no tiene código.
+* **Evidencia — ejecutable (corre en CI):**
+  * Quality gates aplican umbrales de coverage en CI ([ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md)) — el step `Check Coverage Threshold` en `.github/workflows/sdk-cli-ci.yml:195` hace fallar el job `unit-tests` por debajo del umbral.
+  * Builds deterministas de monorepo ([ADR-0001](../../architecture/adrs/core/0001-monorepo-orchestration-principle.es.md)) — npm workspaces más project references de TypeScript (`npm run build` es `tsc -b tsconfig.json`) sobre un `package-lock.json` exacto. **La orquestación con Nx citada en revisiones anteriores de este documento no está adoptada:** no existe `nx.json` ni dependencia `nx` en todo el árbol.
+  * Telemetría vía OpenTelemetry ([ADR-0007](../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)) — `NodeSDK` inicializado en `src/apps/core-api/src/tracing.ts:7`. El lado colector LGTM es un asunto de despliegue y no se evidencia aquí.
+* **Intención — ADR aprobado, sin implementación (no debe leerse como evidencia):**
+  * Feature flagging desacopla deployment de release ([ADR-0017](../../architecture/adrs/core/0017-feature-flagging-strategy.es.md)) — **no implementado.** No existe proveedor de flags, ni código de evaluación de flags, ni almacén de flags bajo `src/`.
 * **Camino al Nivel 5:** deployments blue/green autónomos; detección de anomalías en logs con IA.
 
 ### Pilar 5: Mantenibilidad y Extensibilidad — **Nivel 4 (Gestionado)**
 * **Estado:** `Validado`
-* **Evidencia:**
-  * Boundaries hexagonales desacoplando core de infraestructura ([ADR-0002](../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.es.md)).
-  * Patrones de diseño táctico (monada Result) ([ADR-0019](../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.es.md)).
-  * Desacoplamiento event-driven de módulos de dominio ([ADR-0015](../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.es.md)).
+* **Evidencia — ejecutable (corre en CI):**
+  * Boundaries hexagonales desacoplando core de infraestructura ([ADR-0002](../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.es.md)) — impuestos por `eslint-plugin-boundaries` y por el boundary guard del repositorio `.harness/scripts/ci/34-boundary-guard-repository.mjs`, ejecutado en el job `Validate documentation` en `.github/workflows/docs.yml:113`.
+  * Patrones de diseño táctico ([ADR-0019](../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.es.md)) — los resultados viajan como value types explícitos que transportan el desenlace, `GateEvaluationResult` en `src/packages/core-domain/src/evaluation/contracts/evaluation-result.ts:108`, en lugar de como excepciones. Revisiones anteriores hablaban de una "monada Result": no existe tipo `Result<T, E>` ni dependencia `neverthrow`/`fp-ts` en el árbol, así que ese patrón concreto **no** está adoptado.
+  * Desacoplamiento event-driven de módulos de dominio ([ADR-0015](../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.es.md)) — puerto en `src/packages/core-domain/src/application/ports/event-bus.port.ts:10`, adapter en `src/packages/core-domain/src/infrastructure/events/in-memory-event-bus.ts:13`.
 * **Camino al Nivel 5:** transición monolito-a-Dapr con cero cambios de dominio ([ADR-0006](../../architecture/adrs/core/0006-microservices-transition-sidecar-pattern.es.md)). Nota: el enforcement hexagonal estricto en el propio CLI sigue abierto — ver [GT-19](../gaps/gap-reference-catalog.es.md#gt-19).
 
 ---
@@ -97,22 +100,22 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
 
 ### Dimensión 1: Conformidad de Protocolo MCP y Transporte — **Nivel 4 (Gestionado)**
 * **Estado:** `Validado`
-* **Evidencia:** JSON-RPC 2.0 por stdio y Streamable HTTP oficial del SDK MCP; autenticación por API key; 29 casos E2E MCP; el smoke verifica initialize, discovery, métricas y evaluación de gates en ambos transportes. Ver la [reconciliación de madurez](./maturity-reconciliation.json) generada.
+* **Evidencia:** JSON-RPC 2.0 por stdio y Streamable HTTP oficial del SDK MCP; autenticación por API key; 29 casos E2E MCP; el smoke verifica initialize, discovery, métricas y evaluación de gates en ambos transportes. Ejecutado en CI por el job `e2e-tests` (`.github/workflows/sdk-cli-ci.yml:323`), cuyo step `npm run mcp:smoke` está en `.github/workflows/sdk-cli-ci.yml:357`. Ver la [reconciliación de madurez](./maturity-reconciliation.json) generada.
 * **Camino al Nivel 5:** conformidad de protocolo automatizada contra las versiones soportadas de la especificación MCP.
 
 ### Dimensión 2: Cobertura de Tests y Quality Gates — **Nivel 4 (Gestionado)**
 * **Estado:** `Validado`
-* **Evidencia:** 1,206 tests unitarios y 121 E2E pasan desde un checkout limpio, y la cobertura de statements es 80,65% (4.979/6.173) frente al umbral normativo de 80%, restaurada bajo [GT-48](../gaps/gap-reference-catalog.es.md#gt-48) testeando los native rule handlers, validators y filesystem providers. La [reconciliación de madurez](./maturity-reconciliation.json) generada registra el resultado ejecutable y su origen.
+* **Evidencia:** 1,206 tests unitarios y 121 E2E pasan desde un checkout limpio, y la cobertura de statements es 80,65% (4.979/6.173) frente al umbral normativo de 80%, restaurada bajo [GT-48](../gaps/gap-reference-catalog.es.md#gt-48) testeando los native rule handlers, validators y filesystem providers. El umbral se impone, no solo se reporta: el step `Check Coverage Threshold` en `.github/workflows/sdk-cli-ci.yml:195` hace fallar el build por debajo de él. La [reconciliación de madurez](./maturity-reconciliation.json) generada registra el resultado ejecutable y su origen.
 * **Camino al Nivel 5:** umbrales de cobertura durables por-run en la configuración de Jest ([GT-50](../gaps/gap-reference-catalog.es.md#gt-50)) y mutation testing.
 
 ### Dimensión 3: Completitud de Exposición de Gobernanza — **Nivel 4 (Gestionado)**
 * **Estado:** `Validado`
-* **Evidencia:** 47 tools MCP, 11 resources y 8 prompts cubren validación, agentes, arquitectura, SDLC, priorización, métricas y evaluación de gates con checks de conformidad de schemas runtime.
+* **Evidencia:** los tools, resources y prompts MCP cubren validación, agentes, arquitectura, SDLC, priorización, métricas y evaluación de gates con checks de conformidad de schemas runtime. El inventario se mantiene honesto mediante el guard bidireccional de paridad de superficie `.harness/scripts/ci/24-check-surface-parity.mjs`, ejecutado en `.github/workflows/docs.yml:92`: toda operación del árbol de fuentes debe aparecer en la matriz, y toda referencia de la matriz debe resolver a código real. Las cifras absolutas no se repiten aquí de forma deliberada — revisiones anteriores citaban 47 en esta sección y 50 en la sección 10.1, y ningún gate reconciliaba ambas.
 * **Camino al Nivel 5:** hot-reload de rulesets y adopción medida en repositorios satélite.
 
 ### Dimensión 4: Experiencia de Desarrollador CLI — **Nivel 4 (Gestionado)**
 * **Estado:** `Validado`
-* **Evidencia:** el paquete `@beyondnet/evolith-cli@1.1.0` se instala desde el lockfile canónico del workspace; lint, build, E2E y smoke MCP pasan desde un checkout limpio; shell completion y documentación bilingüe están disponibles. La documentación pública de producto y los hechos de release se sincronizan desde un [Inventario de Superficie del Producto](../../../../product/products/smart-cli/product-inventory.es.md) generado, con CI que rechaza drift y páginas placeholder ([GT-47](../gaps/gap-reference-catalog.es.md#gt-47)).
+* **Evidencia:** el paquete `@beyondnet/evolith-cli@1.1.0` se instala desde el lockfile canónico del workspace, verificado por el job `package-integrity` en `.github/workflows/sdk-cli-ci.yml:257`; lint, build, E2E y smoke MCP pasan desde un checkout limpio; shell completion y documentación bilingüe están disponibles. La documentación pública de producto y los hechos de release se sincronizan desde un [Inventario de Superficie del Producto](../../../../product/products/smart-cli/product-inventory.es.md) generado, con CI que rechaza drift y páginas placeholder ([GT-47](../gaps/gap-reference-catalog.es.md#gt-47)).
 * **Camino al Nivel 5:** publicar el inventario como un manifiesto de capacidades descubrible consumido por repositorios satélite.
 
 ### Dimensión 5: Enforcement Runtime de Gobernanza Federada — **Nivel 3 (Definido)**
@@ -181,7 +184,7 @@ Los 6 adaptadores de interacción han sido implementados como adaptadores de pro
 | **Integración** | **Strangler Fig** | Core Crítico | `Validado` | Estrategia fundacional: módulos lógicamente aislados para extracción incremental sin downtime. |
 | **Composición** | **BFF (Backend for Frontend)** | Core Obligatorio | `Implementado` | Capas NestJS especializadas por dispositivo ([ADR-0008](../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.es.md)). |
 | **Confiabilidad** | **Circuit Breaker** | Operacional | `Diseñado` | Breakers distribuidos compartiendo estado vía Redis ([ADR-0011](../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.es.md)) + healthchecks de edge. |
-| **Base de Datos** | **Schema Per Context** | Core Obligatorio | `Validado` | Previene contaminación de joins cross-dominio ([ADR-0031](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.es.md)). |
+| **Base de Datos** | **Schema Per Context** | Core Obligatorio | `Diseñado` | Pensado para prevenir la contaminación de joins cross-dominio ([ADR-0031](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.es.md)). Degradado desde `Validado` por [GT-576](../gaps/gap-reference-catalog.es.md#gt-576): ningún workspace bajo `src/` declara driver de base de datos ni ORM, así que no existe frontera de schema que validar. |
 | **Escalabilidad** | **CQRS (Básico)** | Opcional | `Visionado` | Read-models solo cuando la contención de escritura lo exija. |
 | **Consistencia** | **Patrón Saga** | Futuro Distribuido | `Visionado` | Reservado para transacciones distribuidas de Fase 3+. |
 | **Mensajería** | **Transactional Outbox** | Fase 2+ | `Visionado` | Consistencia atómica estado-DB/eventos a escala asíncrona. |
@@ -197,13 +200,13 @@ La arquitectura despliega "anticuerpos" explícitos contra los seis anti-patrone
 | Anti-Patrón | Criticidad | Defensa de Inmunización |
 | :--- | :--- | :--- |
 | **Monolito Distribuido** | EXTREMA | Bus de eventos asíncrono ([ADR-0015](../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.es.md)) + aislamiento hexagonal ([ADR-0002](../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.es.md)): mensajería fire-and-forget, sin cadenas síncronas cross-módulo. |
-| **Entrelazamiento de BD Compartida** | MUY ALTA | Schema PostgreSQL aislado por contexto ([ADR-0031](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.es.md)); joins cross-schema físicamente bloqueados. |
+| **Entrelazamiento de BD Compartida** | MUY ALTA | *Defensa diseñada, aún no desplegada.* Schema PostgreSQL aislado por contexto ([ADR-0031](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.es.md)) con joins cross-schema físicamente bloqueados — todavía no existe capa de persistencia, así que el anti-patrón está ausente, no inmunizado. |
 | **Fat Controller / Smart Pipe** | ALTA | Dumb Pipes / Smart Endpoints: el gateway ejecuta solo políticas agnósticas (JWT, SSL, rate limit); toda decisión de negocio vive en el hexágono de aplicación testeado. |
 | **Log Shards (Ceguera)** | ALTA | Tracing distribuido OTel ([ADR-0007](../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)): un TraceParent ID desde el inicio del request hasta la respuesta de BD. |
 | **God Module** | ALTA | Auditorías regulares de boundaries contra el [Modelo de Referencia Aplicado UMS](../../../../product/research/demo/README.es.md); el playbook de extracción divide antes de que un módulo crezca demasiado. |
 | **Leaky Shared Library** | ALTA | Libs compartidas restringidas a primitivas genéricas y utilidades DDD; objetos de dominio prohibidos, enforced vía `eslint-plugin-boundaries`. |
 
-**Fortaleza de resiliencia: ALTA** — circuit breakers + contract testing blindan el backend contra fallas en cascada; aislamiento de tenant de doble capa da contención demostrable.
+**Fortaleza de resiliencia: DISEÑADA** — circuit breakers + contract testing están especificados para blindar el backend contra fallas en cascada. El aislamiento de tenant de doble capa es solo intención de diseño: sin capa de persistencia en el árbol no hay nada que contener, y la contención que aquí se afirmaba antes no era demostrable (ver Pilar 1).
 **Overhead de performance: BAJO** — caching de 4 niveles (Cliente → CDN → BFF → Core) y backbones internos gRPC.
 **Controles de riesgo residual:** snapshots semanales de performance con K6 y verificación de contratos Pact JS en CI ([ADR-0037](../../architecture/adrs/core/0037-performance-concurrency-chaos-strategy.es.md)).
 
@@ -240,7 +243,7 @@ Evolith Core no trata las topologías arquitectónicas como etiquetas de madurez
 | **Data Mesh** | data | Accepted v1.0.0 | SI | SI | SI | SI | SI | SI | SI | — | 2 |
 | **Agentic AI** | ai | Accepted v0.1.0 | SI | SI | SI | SI | SI | SI | SI | SI | 5 |
 
-**Las 8 topologías tienen paridad dual-engine** (Native `.rules.json` + OPA `.rego` + `.test.rego` + `.wasm`).
+**La tabla anterior describe el corpus del repositorio, no el artefacto publicado.** Las 8 topologías sí tienen en el árbol Native `.rules.json` + OPA `.rego` + `.test.rego` + `.wasm`, repartidos en dos raíces: las 3 de progressive-axis bajo `reference/core/architecture/topologies/progressive-axis/`, las otras 5 bajo `src/rulesets/topologies/`. La paridad tal como se *publica* y tal como se *bloquea* es materialmente más estrecha — ver 8.6.
 
 ### 8.3 Matriz de Composición
 
@@ -270,8 +273,10 @@ Las topologías de ejecución y AI imponen contratos de presupuesto operacional:
 | `validate-topology-manifests.mjs` | Valida todos los manifests contra schema, budgets, completitud R-27 |
 | `22-validate-topology-composition.mjs` | Validación cross-topology, composability pairwise |
 | `26-validate-topology-rule-coverage.mjs` | Cobertura Native/OPA por ID de regla según manifest |
-| `28-test-topology-opa.mjs` | Suites de tests OPA para todas las topologías accepted |
+| `28-test-topology-opa.mjs` | Suites de tests OPA — escanea solo `reference/core/architecture/topologies` (`28-test-topology-opa.mjs:15`), por lo que alcanza 3 de 8 topologías, y ningún workflow lo invoca |
 | `30-validate-phase-topology-disjoint.mjs` | Anti-colisión de namespace (fases SDLC vs IDs de topología) |
+
+Solo `22-validate-topology-composition.mjs` y `26-validate-topology-rule-coverage.mjs` corren por commit (despachados por la rama de topologías de `.harness/scripts/ci-runner.mjs`). El barrido completo de paridad semántica Native/OPA `27-opa-parity-gate.mjs` corre exclusivamente en el schedule diario de `.github/workflows/opa-parity.yml:36`; no es un check requerido en `main`.
 
 ### 8.6 Score de Alcance de Gobernanza
 
@@ -279,12 +284,14 @@ Las topologías de ejecución y AI imponen contratos de presupuesto operacional:
 |---|---|
 | Dimensiones gobernadas | **5/5 (100%)** |
 | Topologías gobernadas | **8/8 (100%)** |
-| Paridad dual-engine | **8/8 (100%)** |
+| Paridad dual-engine — corpus del repositorio | **8/8 (100%)** (`.rules.json` + `.rego` + `.test.rego` + `.wasm` presentes en el árbol) |
+| Paridad dual-engine — artefacto publicado `@beyondnet/evolith-cli@1.1.0` | **5/8 (63%)** — `rulesets/topologies/` publica política OPA + test + WASM para `agentic-ai`, `data-mesh`, `edge-computing`, `event-driven`, `serverless`. Las 3 topologías de progressive-axis publican solo `.rules.json` Native; el paquete no lleva `.rego` ni `.wasm` para ellas. |
+| Paridad dual-engine — cubierta por un gate bloqueante | **0/8** — `28-test-topology-opa.mjs` (3 topologías en alcance) no lo invoca ningún workflow, y el barrido completo `27-opa-parity-gate.mjs` es solo por schedule. |
 | Presupuestos operacionales ejecutados | **3/3 requeridos** |
 | Composiciones validadas en CI | Infraestructura completa |
 | ADRs específicos de topologías | 13 en 8 topologías |
 
-**Alcance de Gobernanza: COMPLETO** — Evolith Core cubre el espectro total de topologías definidas en su modelo dimensional.
+**Alcance de Gobernanza: corpus COMPLETO, distribución y enforcement INCOMPLETOS.** Evolith Core redacta reglas para el espectro total de topologías de su modelo dimensional; todavía no publica, ni bloquea sobre, la mitad OPA de ese corpus para todas las topologías.
 
 ---
 
@@ -371,16 +378,17 @@ Estos recursos de inteligencia se versionan dentro de `.bmad-core/agents/` y apl
 | Indicador | Valor |
 |---|---|
 | Dimensiones topológicas gobernadas | 5/5 (100%) |
-| Topologías con paridad dual-engine | 8/8 (100%) |
+| Topologías con paridad dual-engine (corpus del repositorio) | 8/8 (100%) |
+| Topologías con paridad dual-engine (publicado `@beyondnet/evolith-cli@1.1.0`) | 5/8 (63%) |
 | Adaptadores de interacción en M4 | 6/6 (100%) |
-| Anti-patrones inmunizados | 6/6 (100%) |
+| Anti-patrones inmunizados | 5/6 (83%) — Entrelazamiento de BD Compartida tiene solo defensa diseñada (sección 7) |
 | Madurez AI (promedio en 5 dimensiones) | 2.2/3 (AI-Integrated) |
 
 **Alcance de Gobernanza: COMPLETO en las 5 dimensiones topológicas**
 
 ### Veredicto Bidimensional Combinado
 
-> **Evolith Core es una plataforma de gobernanza arquitectónica multi-dimensional con calidad interna nivel 3.32/5 (Definido → Gestionado).** Su alcance de gobernanza cubre el 100% de las topologías definidas (5 dimensiones × 8 topologías componibles), todas con paridad dual-engine (Native + OPA) y composabilidad validada en CI. Los 6 adaptadores de interacción están listos para producción (M4), los 6 anti-patrones críticos están inmunizados, y la dimensión AI-Augmented tiene una capacidad (Tools) en Nivel 3 (AI-Orchestrated). Brechas principales: pilar de confiabilidad (Nivel 3→4), progresión de adaptadores M4→M5 (tests, OPA guard, tracing), y AI Verification/Models/Security (Nivel 2→3).
+> **Evolith Core es una plataforma de gobernanza arquitectónica multi-dimensional con calidad interna nivel 3.32/5 (Definido → Gestionado).** Su alcance de gobernanza cubre el 100% de las topologías definidas (5 dimensiones × 8 topologías componibles) con paridad dual-engine en el corpus del repositorio, aunque solo 5 de esas 8 publican su mitad OPA en el paquete `@beyondnet/evolith-cli@1.1.0` y ninguna está cubierta por un gate OPA bloqueante en `main` (sección 8.6). Los 6 adaptadores de interacción están listos para producción (M4), 5 de los 6 anti-patrones críticos están inmunizados en código (el sexto tiene una defensa diseñada a la espera de una capa de persistencia), y la dimensión AI-Augmented tiene una capacidad (Tools) en Nivel 3 (AI-Orchestrated). Brechas principales: pilar de seguridad reducido a `Diseñado` por falta de capa de persistencia, pilar de confiabilidad (Nivel 3→4), progresión de adaptadores M4→M5 (tests, OPA guard, tracing), y AI Verification/Models/Security (Nivel 2→3).
 
 ### Reconciliación Actual
 

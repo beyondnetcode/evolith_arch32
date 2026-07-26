@@ -40,6 +40,12 @@ import {
   createBlueprintKindEvaluator,
   createDeploymentKindEvaluator,
 } from '@beyondnet/evolith-core-domain/evaluation';
+import {
+  CORE_VERSION,
+  EVALUATION_ORCHESTRATOR_FACTORY,
+  makeEvaluationOrchestratorFactory,
+  type EvaluationOrchestratorFactory,
+} from './application/evaluation/evaluation-orchestrator.factory';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -53,8 +59,6 @@ const blueprintExists = async (corePath: string, blueprintRef: string): Promise<
   ].some((p) => fs.existsSync(p));
 };
 
-/** Core version stamped into EvaluationResult.versions.core (GT-378). */
-const CORE_VERSION = '1.0.5';
 import { InMemoryCacheModule } from './infrastructure/cache/in-memory-cache.module';
 import { CacheMetricsService } from './infrastructure/cache/cache-metrics.service';
 
@@ -99,6 +103,35 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
     WorkspaceReferenceResolverService,
     SatelliteRegistryService,
     {
+      // GT-573: the SINGLE construction site for the Core Evaluation Engine.
+      // Both `POST /api/v1/evaluate` branches (canonical workspaceRef and inline
+      // evaluationInput.files) build their orchestrator here, so one operation
+      // has exactly one response shape.
+      //
+      // GT-379: dispatch the architecture/checkpoint/topology kinds via dedicated,
+      // unit-tested evaluators (see @beyondnet/evolith-core-domain/evaluation).
+      provide: EVALUATION_ORCHESTRATOR_FACTORY,
+      useFactory: (
+        workspaceResolver: WorkspaceReferenceResolverService,
+        driftService: ArchitectureDriftService,
+        proposeAdvance: ProposePhaseAdvanceUseCase,
+        topologyCatalog: TopologyCatalogService,
+      ): EvaluationOrchestratorFactory =>
+        makeEvaluationOrchestratorFactory([
+          createArchitectureKindEvaluator(driftService),
+          createCheckpointKindEvaluator(proposeAdvance),
+          createTopologyKindEvaluator(topologyCatalog, () => workspaceResolver.corePath()),
+          createBlueprintKindEvaluator(blueprintExists, () => workspaceResolver.corePath()),
+          createDeploymentKindEvaluator(),
+        ], CORE_VERSION),
+      inject: [
+        WorkspaceReferenceResolverService,
+        ArchitectureDriftService,
+        ProposePhaseAdvanceUseCase,
+        TopologyCatalogService,
+      ],
+    },
+    {
       // GT-378 (L2): the stateless Core Evaluation Engine entry point.
       // Adapts the existing pipeline (via ValidateSatelliteUseCase) and the
       // opaque workspaceRef resolver to the canonical evaluation ports.
@@ -106,9 +139,7 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
       useFactory: (
         validateSatellite: ValidateSatelliteUseCase,
         workspaceResolver: WorkspaceReferenceResolverService,
-        driftService: ArchitectureDriftService,
-        proposeAdvance: ProposePhaseAdvanceUseCase,
-        topologyCatalog: TopologyCatalogService,
+        makeOrchestrator: EvaluationOrchestratorFactory,
       ) => {
         const pipeline: IEvaluationPipeline = {
           evaluate: async (manifest) => {
@@ -130,22 +161,12 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
           }),
         };
 
-        // GT-379: dispatch the architecture/checkpoint/topology kinds via dedicated,
-        // unit-tested evaluators (see application/evaluation/kind-evaluators.ts).
-        return new EvaluationOrchestrator(pipeline, resolver, CORE_VERSION, [
-          createArchitectureKindEvaluator(driftService),
-          createCheckpointKindEvaluator(proposeAdvance),
-          createTopologyKindEvaluator(topologyCatalog, () => workspaceResolver.corePath()),
-          createBlueprintKindEvaluator(blueprintExists, () => workspaceResolver.corePath()),
-          createDeploymentKindEvaluator(),
-        ]);
+        return makeOrchestrator(pipeline, resolver);
       },
       inject: [
         ValidateSatelliteUseCase,
         WorkspaceReferenceResolverService,
-        ArchitectureDriftService,
-        ProposePhaseAdvanceUseCase,
-        TopologyCatalogService,
+        EVALUATION_ORCHESTRATOR_FACTORY,
       ],
     },
     {

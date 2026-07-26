@@ -13,6 +13,16 @@ export interface ComposableValidationResult {
   status: 'passed' | 'failed' | 'warning';
   modes: ModeValidationResult[];
   totalRulesChecked: number;
+  /**
+   * GT-569 — aggregate denominator. A mode that does not report its own
+   * skipped/errored counts contributes `rulesChecked` to the total and 0 to the
+   * rest, so `totalRulesTotal >= totalRulesChecked` always holds.
+   */
+  totalRulesSkipped: number;
+  totalRulesErrored: number;
+  totalRulesTotal: number;
+  skippedRuleIds: string[];
+  erroredRuleIds: string[];
   totalIssues: number;
   passedRules: number;
   failedRules: number;
@@ -124,6 +134,15 @@ export class ComposableValidationEngine {
     }
 
     const totalRulesChecked = modeResults.reduce((sum, r) => sum + r.rulesChecked, 0);
+    // GT-569: carry the denominator up with the coverage number.
+    const totalRulesSkipped = modeResults.reduce((sum, r) => sum + (r.rulesSkipped ?? 0), 0);
+    const totalRulesErrored = modeResults.reduce((sum, r) => sum + (r.rulesErrored ?? 0), 0);
+    const totalRulesTotal = modeResults.reduce(
+      (sum, r) => sum + (r.rulesTotal ?? r.rulesChecked + (r.rulesSkipped ?? 0) + (r.rulesErrored ?? 0)),
+      0,
+    );
+    const skippedRuleIds = modeResults.flatMap(r => r.skippedRuleIds ?? []);
+    const erroredRuleIds = modeResults.flatMap(r => r.erroredRuleIds ?? []);
     const totalIssues = modeResults.reduce((sum, r) => sum + r.issues.length, 0);
     const failedRules = modeResults.reduce(
       (sum, r) => sum + r.issues.filter(i => i.status === 'fail').length,
@@ -138,6 +157,11 @@ export class ComposableValidationEngine {
       status: hasFailures ? 'failed' : hasWarnings ? 'warning' : 'passed',
       modes: modeResults,
       totalRulesChecked,
+      totalRulesSkipped,
+      totalRulesErrored,
+      totalRulesTotal,
+      skippedRuleIds,
+      erroredRuleIds,
       totalIssues,
       passedRules,
       failedRules,

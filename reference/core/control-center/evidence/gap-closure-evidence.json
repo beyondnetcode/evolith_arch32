@@ -8239,6 +8239,57 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-441 extends GT-387 (the governed-executor approval port, done in a prior wave) and its receiving half is CD-23 on the Tracker board, shipped 2026-07-19 (RuntimeApprovalEndpoints + migration AddRuntimeApprovals) — both satisfied, so the Core-side TrackerApprovalHttpClient could finally be written against a real, agreed contract instead of a fabricated one (the exact reason it was deliberately left unimplemented before). The approve->grant path is intentionally NOT live-smoked here: granting requires a designated UMS approver (CD-31) and dev-bypass carries every permission but no authority, which the endpoint deliberately rejects ('permission is not authority'). That path is covered by the adapter unit test (approved->grant) and the Tracker's own RuntimeApprovalEndpointTests; the pending, idempotency and human-reject paths ARE live-smoked against the real Tracker."
+    },
+    {
+      "id": "GT-569",
+      "closedAt": "2026-07-26",
+      "closureCommit": "44fe8dd3",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts",
+        "src/packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+        "src/packages/core-domain/src/application/validators/rule-coverage.spec.ts",
+        "src/sdk/cli/src/commands/validate/validate.command.ts",
+        "src/tests/contract/sdk-type-contract.types.ts"
+      ],
+      "validationCommands": [
+        "npm run test -w @beyondnet/evolith-core-domain -> 119 suites / 1237 tests passed (+17 new in rule-coverage.spec.ts)",
+        "npm run test -w @beyondnet/evolith-cli -> 89 suites / 1305 tests + 18 suites / 132 tests passed",
+        "npm run test:contract -> 43/43 passed after WIRE_VALIDATION_RESULT gained rulesSkipped/rulesErrored/rulesTotal/skippedRuleIds/erroredRuleIds",
+        "Falsification: the new spec run against a pristine `git archive HEAD` copy of core-domain fails 12 of 17 (errored->skipped, undefined counters, missing advisories, no threshold issue)"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Closes the REPORTING half only, by design: the envelope now publishes checked/skipped/errored/total and an exception is no longer laundered into skipped. Widening the corpus itself (the ~240 rules with no native handler) is a separate, far larger body of work and stays open — this record must not be read as coverage having improved."
+    },
+    {
+      "id": "GT-576",
+      "closedAt": "2026-07-26",
+      "closureCommit": "44fe8dd3",
+      "evidence": [
+        "reference/core/control-center/maturity-reports/maturity-assessment.md",
+        "reference/core/control-center/maturity-reports/maturity-assessment.es.md",
+        ".harness/scripts/ci/09-reconcile-maturity.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check -> Maturity reconciliation matches the canonical Core evidence",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs -> Bilingual Suite (Parity & Orphans) passed",
+        "node .harness/scripts/ci-runner.mjs governance -> 17 scripts executed, exit 0"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The two inflated pillar STATES were corrected and the mechanical rule now blocks the class of error. The Dimension A aggregate scores were deliberately NOT recomputed: the document declares no formula that reproduces them, so recomputing would have meant inventing one. Those aggregates are therefore optimistic and are tracked as follow-on rather than silently adjusted."
+    },
+    {
+      "id": "GT-579",
+      "closedAt": "2026-07-26",
+      "closureCommit": "44fe8dd3",
+      "evidence": [
+        "src/sdk/cli/src/main.ts"
+      ],
+      "validationCommands": [
+        "BEFORE: node src/sdk/cli/dist/main.js validate --format json | wc -c -> 65536 (exactly the pipe buffer); same command > file -> 121408 bytes, valid JSON",
+        "AFTER: node src/sdk/cli/dist/main.js validate --format json | node -e (parse stdin) -> PARSEABLE, 123034 bytes",
+        "npm run test -w @beyondnet/evolith-cli -> 89 suites / 1305 tests + 18 suites / 132 tests passed (the 6 e2e JSON.parse failures are gone)"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -25,6 +25,7 @@ import { ErrorCodes } from '../common/errors';
 import { AbacEvaluator } from './abac-evaluator';
 import { mcpContextStorage, McpUserContext } from './mcp-user-context';
 import { authenticateHttpRequest } from './mcp-server-auth';
+import { createLocalSessionContext } from './mcp-auth-contexts';
 import { loadOAuthConfig, createJwksResolver, type OAuthConfig, type JwksKeyResolver } from './oauth-resource-server';
 import { handleCallTool, handleListTools, ToolCallResult, redactArgs } from './mcp-tool-dispatch';
 import { McpCacheService } from './mcp-cache.service';
@@ -101,6 +102,12 @@ export class McpServerService {
   // "Server already initialized".
   private readonly httpSessions = new Map<string, { transport: StreamableHTTPServerTransport; server: Server }>();
   private readonly rateLimit = new RateLimitService();
+  // GT-572 — principal for transports that carry their identity implicitly.
+  // Set ONLY when start() binds the stdio transport (a same-process, single-user
+  // channel); left undefined for HTTP, whose identity always comes from
+  // authenticateHttpRequest. When undefined, dispatch without a context keeps the
+  // pre-existing fail-closed behaviour (anonymous → ABAC-02 → FORBIDDEN).
+  private transportContext?: McpUserContext;
 
   constructor(
     private readonly registry: ToolRegistryService,
@@ -112,7 +119,28 @@ export class McpServerService {
     @Optional() private readonly cache?: McpCacheService,
   ) {}
 
+  /**
+   * GT-572 — run `fn` inside the transport's implicit principal when the caller
+   * has not already established one.
+   *
+   * The HTTP path enters `mcpContextStorage.run` itself (after authenticating the
+   * request), so `getStore()` is already populated there and this is a no-op. The
+   * stdio path has no per-request credential exchange: messages arrive on stdin
+   * outside any storage scope, which is why every tools/call used to reach
+   * dispatch as `roles: []` and be denied with ABAC-02. When no transport
+   * principal is configured, behaviour is unchanged (fail-closed).
+   */
+  private withTransportContext<T>(fn: () => Promise<T>): Promise<T> {
+    const transportContext = this.transportContext;
+    if (!transportContext || mcpContextStorage.getStore()) return fn();
+    return mcpContextStorage.run(transportContext, fn);
+  }
+
   async handleListTools(): Promise<{ tools: ReturnType<ToolRegistryService['listSchemas']> }> {
+    return this.withTransportContext(() => this.listToolsInContext());
+  }
+
+  private async listToolsInContext(): Promise<{ tools: ReturnType<ToolRegistryService['listSchemas']> }> {
     if (this.cache) {
       const cached = await this.cache.getToolsList();
       if (cached) return cached as { tools: ReturnType<ToolRegistryService['listSchemas']> };
@@ -125,6 +153,10 @@ export class McpServerService {
   }
 
   async handleCallTool(name: string, args: Record<string, unknown> = {}): Promise<ToolCallResult> {
+    return this.withTransportContext(() => this.callToolInContext(name, args));
+  }
+
+  private async callToolInContext(name: string, args: Record<string, unknown> = {}): Promise<ToolCallResult> {
     const correlationId = (args.correlationId as string) || generateCorrelationId();
     const startTime = Date.now();
 
@@ -253,6 +285,9 @@ export class McpServerService {
     if (this.oauthConfig && !this.oauthKeyResolver && this.oauthConfig.jwksUri) {
       this.oauthKeyResolver = createJwksResolver(this.oauthConfig.jwksUri);
     }
+    // GT-572: only stdio carries an implicit principal. Recomputed on every
+    // start() so a service restarted on HTTP cannot inherit the stdio identity.
+    this.transportContext = transport === 'stdio' ? createLocalSessionContext() : undefined;
     this.server = this.buildServer();
 
     if (transport === 'http') {
@@ -271,9 +306,25 @@ export class McpServerService {
       }
       await this.startHttp(options.port ?? 3000);
     } else {
+      // GT-572: `--allow-no-auth` / EVOLITH_MCP_ALLOW_NO_AUTH is an HTTP-only
+      // switch (it selects the dev reader context inside validateAuth). It used
+      // to be accepted on stdio and then silently ignored, which read as "the
+      // flag is broken". Say so out loud instead: on stdio there is nothing to
+      // bypass, because the transport always runs as the local-session principal.
+      if (this.allowNoAuth) {
+        this.logger.warn(
+          '--allow-no-auth / EVOLITH_MCP_ALLOW_NO_AUTH applies to the HTTP transport only and is ignored on stdio; ' +
+          'the stdio transport has no request authentication to bypass.',
+        );
+      }
+      const principal = this.transportContext!;
       const stdioTransport = new StdioServerTransport(options.stdin, options.stdout);
       await this.server.connect(stdioTransport);
-      this.logger.log('Evolith MCP server started on stdio');
+      this.logger.log(
+        `Evolith MCP server started on stdio (local session: id=${principal.id}, role=${principal.role}, ` +
+        `roles=[${principal.roles.join(', ')}], scopes=[${principal.scopes.join(', ')}], env=${principal.environment}). ` +
+        'ABAC and the mutative approval gate still run on every tools/call.',
+      );
     }
   }
 

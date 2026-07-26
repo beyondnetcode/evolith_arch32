@@ -323,6 +323,17 @@ export const WIRE_VALIDATION_RESULT: WireCheck<SdkValidationResult> = {
     accepts: oneOf('passed', 'failed', 'warning'),
   },
   rulesChecked: { required: true, declaredAs: 'number', accepts: isNumber },
+  // GT-569: `rulesChecked` alone counts only what was evaluated, so it silently
+  // redefined its own denominator — a corpus of 380 rules could report 111
+  // "checked" with 269 never executed and nothing on the wire said so. These five
+  // are optional so the envelope stays backwards-compatible for a consumer built
+  // against the old shape, but a producer that omits them is normalised upstream
+  // rather than allowed to emit a coverage number with no denominator.
+  rulesSkipped: { required: false, declaredAs: 'number', accepts: isNumber },
+  rulesErrored: { required: false, declaredAs: 'number', accepts: isNumber },
+  rulesTotal: { required: false, declaredAs: 'number', accepts: isNumber },
+  skippedRuleIds: { required: false, declaredAs: 'string[]', accepts: isArray },
+  erroredRuleIds: { required: false, declaredAs: 'string[]', accepts: isArray },
   issues: { required: true, declaredAs: 'ValidationIssue[]', accepts: isArray },
   coreRef: {
     required: true,

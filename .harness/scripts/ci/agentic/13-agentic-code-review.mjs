@@ -50,9 +50,12 @@ async function main() {
   // Connect to the Governance MCP Server
   console.log("\n🔌 Connecting to Evolith Governance MCP Sandbox...");
   
+  // Path is `src/`-prefixed: the pre-refactor `packages/...` literal survived the
+  // move to `src/` because nothing resolves a string against disk, so this step
+  // reported success for months while never reaching the server (GT-578).
   const transport = new StdioClientTransport({
     command: process.execPath, // Using the current node executable
-    args: ["packages/mcp-server/dist/main.js"]
+    args: ["src/packages/mcp-server/dist/main.js"]
   });
 
   const client = new Client(

@@ -212,6 +212,11 @@ describe('EvaluationController (GT-361)', () => {
  * Inline evaluation path (additive): `evaluationInput.files` is evaluated in
  * memory. The Core reads its OWN rulesets from disk (fallback fs), but NEVER
  * reads the satellite subtree from disk and never writes the incoming content.
+ *
+ * GT-573: this branch now answers with the canonical `EvaluationResult` (the
+ * same shape the `workspaceRef` branch produces), so GOV-000 surfaces as a
+ * `results.gate[].gaps[].requirementRef` rather than as a legacy
+ * `data.gates[].artifactEvaluations[].ruleId`.
  */
 describe('EvaluationController — inline evaluationInput path', () => {
   const CORE_PATH = '/core';
@@ -280,6 +285,12 @@ describe('EvaluationController — inline evaluationInput path', () => {
     );
   }
 
+  /** GOV-000 findings, read from the canonical result's gate sub-results. */
+  const govGaps = (res: any): any[] =>
+    (res.data.results?.gate ?? [])
+      .flatMap((g: any) => g.gaps ?? [])
+      .filter((gap: any) => gap.requirementRef === 'GOV-000');
+
   it('evaluates inline content; GOV-000 is NOT raised when evolith.yaml is present', async () => {
     const fallback = makeFallback();
     const controller = buildController(fallback);
@@ -290,10 +301,7 @@ describe('EvaluationController — inline evaluationInput path', () => {
     const res = (await controller.evaluate(body)) as any;
 
     expect(res.success).toBe(true);
-    const govIssues = res.data.gates
-      .flatMap((g: any) => g.artifactEvaluations)
-      .filter((e: any) => e.ruleId === 'GOV-000');
-    expect(govIssues).toHaveLength(0);
+    expect(govGaps(res)).toHaveLength(0);
 
     // Satellite content came from memory — never from disk — and nothing written.
     expect(fallback.satelliteReads).toHaveLength(0);
@@ -309,10 +317,24 @@ describe('EvaluationController — inline evaluationInput path', () => {
     };
     const res = (await controller.evaluate(body)) as any;
 
-    const govIssues = res.data.gates
-      .flatMap((g: any) => g.artifactEvaluations)
-      .filter((e: any) => e.ruleId === 'GOV-000');
-    expect(govIssues.length).toBeGreaterThan(0);
+    expect(govGaps(res).length).toBeGreaterThan(0);
     expect(fallback.satelliteReads).toHaveLength(0);
+  });
+
+  // GT-573 regression: the inline branch must never fall back to the legacy
+  // `{ topology, gates, summary }` envelope, whose absent `overallVerdict` made
+  // the consumer persist every FAIL as SKIPPED.
+  it('returns the canonical EvaluationResult, with a real verdict on a violation', async () => {
+    const controller = buildController(makeFallback());
+
+    const res = (await controller.evaluate({
+      evaluationInput: { files: { 'docs/prd.md': '# PRD' } },
+    })) as any;
+
+    expect(res.data.overallVerdict).toBe('FAIL');
+    expect(res.data.outcome).toBe('rejected');
+    expect(res.data.evaluatedAt).toEqual(expect.any(String));
+    expect(Array.isArray(res.data.results.gate)).toBe(true);
+    expect(res.data).not.toHaveProperty('summary');
   });
 });

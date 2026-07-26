@@ -45,8 +45,8 @@ To help us triage quickly, please provide:
 
 ### Scope
 
-**In scope:** the Evolith source code in this repository — `sdk/`, `apps/`,
-`packages/`, the OPA policies and rulesets under `rulesets/`, the CI/CD harness
+**In scope:** the Evolith source code in this repository — `src/sdk/`, `src/apps/`,
+`src/packages/`, the OPA policies and rulesets under `src/rulesets/`, the CI/CD harness
 (`.harness/`, `.github/workflows/`), and the published `@beyondnet/evolith-*` packages.
 
 **Out of scope:** third-party dependencies (report those upstream; we track them
@@ -80,6 +80,77 @@ guarantees:
 
 We are grateful to security researchers who report responsibly. With your
 consent, we will credit you in the published advisory and the `CHANGELOG.md`.
+
+## Network Egress and Data Handling
+
+Evolith is local-first. The CLI, the rulesets, the OPA policies and the stateless
+evaluation Core all execute on the operator's machine, and repository contents are
+never uploaded: evaluation happens where the code is. The Core API and the MCP HTTP
+transport are servers the operator hosts. No surface reports telemetry, analytics or
+a licence check to the maintainers.
+
+There is exactly **one** outbound third-party integration in the published packages.
+It is **disabled by default** and the following is its complete disclosure. Answer
+enterprise questionnaires and DPAs from this section.
+
+### The single egress path
+
+| Item | Disclosure |
+|---|---|
+| Component | `GeminiProvider`, a public export of `@beyondnet/evolith-agent-runtime` (`src/packages/agent-runtime/src/providers/GeminiProvider.ts`) |
+| Endpoint | one HTTPS `POST` to `https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent`, default model `gemini-2.5-flash`. No other host is contacted by the package. |
+| Default state | **DISABLED.** With no configuration the provider opens no socket: it records the refused attempt and throws `LlmEgressDisabledError`. |
+| Opt-in | the environment variable `EVOLITH_LLM_EGRESS=true` (or `1`), or an explicit `new GeminiProvider({ enabled: true })`. There is no implicit activation path. |
+| Credential | `EVOLITH_LLM_API_KEY`, falling back to `GEMINI_API_KEY`. Transmitted in the `x-goog-api-key` request header, never in the URL query string. Absent a key, the call is refused before a socket opens. |
+| Transport limits | 30,000 ms `AbortController` timeout; 60,000 bytes / ~15,000 estimated tokens, enforced over the exact bytes to be sent and **failing closed** rather than truncating. |
+| Human-in-the-loop | the intended wiring injects the provider as the `IAssistantTransport` of `SupervisedAssistantClient`, itself off by default and requiring an explicit human approval before the transport is reached. |
+
+**Data transmitted.** Through the governed `IAssistantTransport` seam: the request
+intent, the optional tool id, the request parameters, the `dryRun` flag and the
+governed skill catalog (id and description only). Through the deprecated
+`ILLMProvider` seam (`generateStructuredJson`): the caller's system prompt and user
+prompt verbatim. Both are secret-redacted before serialization across 8 pattern
+classes — PEM private keys, JWTs, AWS access key ids, Google API keys, GitHub PATs,
+Slack tokens, `Bearer` tokens, and generic `KEY`/`SECRET`/`TOKEN`/`PASSWORD`
+assignments.
+
+**Data deliberately excluded.** Tenant id, product id, initiative id, workspace
+reference, requester identity and repository contents are not part of the transport
+payload, by construction.
+
+**Auditability.** Every attempt, including refusals, emits one content-free JSON
+line prefixed `[evolith:llm-egress]` carrying provider, endpoint, purpose, outcome,
+byte and token counts, redaction count, HTTP status, duration and correlation id.
+Prompt and response content are never logged.
+
+### Sub-processors
+
+| Sub-processor | Purpose | When engaged |
+|---|---|---|
+| Google LLC — Gemini API | LLM inference for the agent-runtime assistant/plan path | Only when LLM egress is explicitly armed via `EVOLITH_LLM_EGRESS`; never by default |
+
+An operator-configured OpenTelemetry collector (`OTEL_ENABLED=true`) receives CLI
+traces, but it is the operator's own endpoint, not a maintainer-side processor.
+
+### Known limitations of these controls
+
+Stated so a reviewer does not have to discover them:
+
+- Redaction is pattern-based, not a data-loss-prevention control: it materially
+  reduces accidental credential egress, it does not guarantee absence.
+- The header, timeout, budget, redaction and response-schema controls are covered by
+  unit tests with an injected `fetch`. They have **not** been exercised against the
+  live Google endpoint.
+- The timeout and budget values are inherited from the repository's own CI reviewer
+  and are not tuned for large interactive prompts, which fail closed rather than
+  degrade.
+- No command registered in the shipped CLI reaches this provider today, so a default
+  CLI install performs no LLM egress at all.
+- The npm tarballs currently on the registry predate this hardening; the controls
+  described above are on `develop` and reach the registry with the next release.
+  Until then, treat the published `GeminiProvider` as ungoverned and do not arm it.
+- The repository does not yet run the product's own 9 blocking `AAI-*` agentic-AI
+  rules against itself in CI; that gate is still open work.
 
 ## Operational Security Posture
 

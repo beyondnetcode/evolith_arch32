@@ -51,11 +51,16 @@ describe('MACHINE_CONTRACT_SET', () => {
       ),
     ) as { schemas: { id: string; path: string; sha256: string }[] };
 
-    // Every schema the producer declares must be present with the same hash.
+    // The two descriptors use different roots on purpose: MACHINE_CONTRACT_SET
+    // paths are `src/`-relative (see SRC_ROOT above), the producer descriptor is
+    // repo-relative. Comparing the raw strings asserted that two deliberately
+    // different conventions were identical, so this test could never pass — and
+    // nothing noticed, because no CI job runs this workspace's suite. Compare the
+    // resolved location instead, which is the property that actually matters.
     for (const producer of raw.schemas) {
       const declared = MACHINE_CONTRACT_SET.schemas.find((s) => s.id === producer.id);
       expect(declared).toBeDefined();
-      expect(declared?.path).toBe(producer.path);
+      expect(join(SRC_ROOT, declared!.path)).toBe(join(REPO_ROOT, producer.path));
       expect(declared?.sha256).toBe(producer.sha256);
     }
   });

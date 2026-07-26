@@ -84,6 +84,22 @@ export const MACHINE_CONTRACT_SET: MachineContractSet = Object.freeze({
       path: 'rulesets/schema/output-envelope.schema.json',
       sha256: '07eaffaae2c33071ea105fbcbdc497c06d149143f6cc9b94555170740707fd0b',
     }),
+    // GT-573: the `POST /api/v1/evaluate` request/response pair. Until now the
+    // flagship integration had no published schema at all on either side of the
+    // wire, which is how the inline branch could answer with a completely
+    // different envelope and stay green in both repositories.
+    Object.freeze({
+      id: 'evaluation-context',
+      version: '1.0.0',
+      path: 'rulesets/schema/evaluation-context.schema.json',
+      sha256: '555f1bc2898ad2409aa51bd34bb1a3872731b33d49f95252e054ae35b7665950',
+    }),
+    Object.freeze({
+      id: 'evaluation-result',
+      version: '1.0.0',
+      path: 'rulesets/schema/evaluation-result.schema.json',
+      sha256: '61a85d6bd2c3b0908c81b5fd565d68e9d90ba8448f58e51f1f11e85bc8ee3481',
+    }),
   ]),
   supportedConsumers: Object.freeze([
     Object.freeze({

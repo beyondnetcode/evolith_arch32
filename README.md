@@ -35,6 +35,7 @@
 - [Architecture Overview](#architecture-overview)
 - [Main Components](#main-components)
 - [Quick Start](#quick-start)
+- [Network Egress and Data Handling](#network-egress-and-data-handling)
 - [Documentation](#documentation)
 - [Use Cases](#use-cases)
 - [Roadmap](#roadmap)
@@ -94,8 +95,8 @@ The core platform is <b>completely free</b> (MIT license): CLI, MCP server, Core
 
 ```bash
 npm install -g @beyondnet/evolith-cli
-evolith init
-evolith validate
+evolith init --name my-sat --yes   # initializes the CURRENT directory
+evolith validate                   # same directory, no `cd`
 ```
 
 No database, no server, no Docker required.
@@ -222,26 +223,93 @@ Entry point for each area: [Global Master Index](./reference/core/control-center
 
 ## Quick Start
 
-```bash
-# Install Evolith CLI (npm package @beyondnet/evolith-cli; command: evolith-cli)
-npx @beyondnet/evolith-cli init
+The npm package is `@beyondnet/evolith-cli`; it installs two equivalent bins, **`evolith`** (the documented name) and `evolith-cli` (compatibility). Both self-identify as `evolith` in `--help`.
 
-# Validate your code against your topology's rulesets
-evolith-cli validate
+```bash
+# 1. Install the CLI
+npm install -g @beyondnet/evolith-cli
+
+# 2. Initialize the CURRENT directory as an Evolith satellite.
+#    --name sets the project name written into evolith.yaml.
+#    --yes runs without prompts (also implied by a non-TTY stdin or --format json).
+evolith init --name my-sat --yes
+
+# 3. Validate the satellite you just created — same directory, no `cd` needed
+evolith validate
 
 # Validate a specific SDLC phase
-evolith-cli validate --phase qa
+evolith validate --phase qa
 
 # Manage Architecture Decision Records
-evolith-cli adr create
-evolith-cli adr list
+evolith adr create
+evolith adr list
 
 # Serve governance as live context for AI agents — the MCP server ships as a
-# separate package (@beyondnet/evolith-mcp); start it with its own bin:
-evolith-mcp
+# separate package (@beyondnet/evolith-mcp) with its own bin:
+evolith-mcp serve
 ```
 
-Evolith CLI ships **25 commands** and is configured via **`evolith.yaml`**. Full reference: [Evolith CLI hub](./product/products/smart-cli/README.md)
+To scaffold into a **new** directory instead of the current one, pass it as the positional argument (or via `--dir`); `--name` only ever names the project, it never creates a directory:
+
+```bash
+evolith init my-sat --yes && cd my-sat && evolith validate
+```
+
+Machine-readable runs (`--format json`) never prompt and print exactly one envelope on stdout; a failed `init` exits non-zero. `evolith init --dry-run` writes nothing.
+
+> **Expect findings on the first `validate`.** A freshly initialized satellite is a baseline, not a pass: some rules still assume a fuller repository layout and report blocking findings on a phase-0 project. Reducing that to zero is tracked on the [Gap Tracking Board](./reference/core/control-center/gaps/gap-tracking.md) (GT-571).
+
+Evolith CLI is configured via **`evolith.yaml`**; run `evolith --help` for the current command list. Full reference: [Evolith CLI hub](./product/products/smart-cli/README.md)
+
+---
+
+## Network Egress and Data Handling
+
+Evolith is local-first: the CLI, the rulesets, the OPA policies and the stateless evaluation Core all run on your machine, and your source files are never uploaded — evaluation happens where the code is. There is exactly **one** outbound integration in the corpus, it is **off by default**, and this is its complete disclosure.
+
+| Item | Disclosure |
+|---|---|
+| **Component** | `GeminiProvider`, a public export of `@beyondnet/evolith-agent-runtime` |
+| **Endpoint** | one HTTPS `POST` to `https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent`, default model `gemini-2.5-flash`. No other host is contacted by the package. |
+| **Sub-processor** | **Google LLC (Gemini API)**. Prompt content sent through this path is processed by Google under its terms for that API. No other sub-processor is involved. |
+| **Default state** | **DISABLED.** With no configuration the provider opens no socket: it records the refused attempt and throws `LlmEgressDisabledError`. Out of the box the package makes zero network calls. |
+| **Opt-in** | `EVOLITH_LLM_EGRESS=true` (or `1`), or an explicit `new GeminiProvider({ enabled: true })`. There is no implicit way to arm it. |
+| **Credential** | `EVOLITH_LLM_API_KEY`, falling back to `GEMINI_API_KEY`. It travels in the `x-goog-api-key` request header and never in the URL. Without a key the call is refused before a socket opens. |
+| **Limits** | 30,000 ms `AbortController` timeout; 60,000 bytes / ~15,000 estimated tokens. Over budget the request **fails closed** — nothing is truncated and sent anyway. |
+
+**What leaves the machine**
+
+- Through the governed `IAssistantTransport` seam: the request intent, the optional tool id, the request parameters, the `dryRun` flag, and the governed skill catalog (id and description only).
+- Through the deprecated `ILLMProvider` seam (`generateStructuredJson`): the caller's system prompt and user prompt, verbatim.
+- Both are secret-redacted before serialization, over 8 pattern classes: PEM private keys, JWTs, AWS access key ids, Google API keys, GitHub PATs, Slack tokens, `Bearer` tokens, and generic `KEY`/`SECRET`/`TOKEN`/`PASSWORD` assignments.
+
+**What does not leave the machine**
+
+Tenant id, product id, initiative id, workspace reference and requester identity are excluded from the transport payload by construction (data minimization), as are repository contents.
+
+**Observability**
+
+Every attempt — including refusals — emits one content-free JSON line prefixed `[evolith:llm-egress]` with provider, endpoint, purpose, outcome, byte and token counts, redaction count, HTTP status, duration and correlation id. Prompt and response content are never logged.
+
+**Human-in-the-loop**
+
+The intended wiring injects `GeminiProvider` as the `IAssistantTransport` of `SupervisedAssistantClient`, which is itself off by default and requires an explicit human approval before the transport is reached.
+
+**Other outbound traffic**
+
+- **OpenTelemetry export** from the CLI is off unless `OTEL_ENABLED=true`, and then it goes only to the collector you configure.
+- **Core API / MCP HTTP transport** are servers you host; the CLI contacts a remote Core only when you configure one.
+- No telemetry, analytics or licence check is phoned home by any surface.
+
+**Honest current state**
+
+- Redaction is pattern-based, not a DLP control: it materially reduces accidental credential egress, it does not guarantee absence.
+- The header, timeout, budget, redaction and schema-validation controls are covered by unit tests with an injected `fetch`; they have **not** been exercised against the live Google endpoint.
+- The timeout and budget values are inherited from the repository's own CI reviewer and are not tuned for large interactive prompts, which fail closed rather than degrade.
+- No command registered in the shipped CLI reaches this provider today, so a default CLI install performs no LLM egress at all.
+- The npm tarballs currently published predate this hardening; the controls above are on `develop` and reach the registry with the next release, tracked as GT-570 on the [Gap Tracking Board](./reference/core/control-center/gaps/gap-tracking.md).
+
+Report a suspected egress or disclosure defect through the [Security Policy](./SECURITY.md), never in a public issue.
 
 ---
 

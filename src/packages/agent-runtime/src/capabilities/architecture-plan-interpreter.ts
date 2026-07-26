@@ -1,4 +1,52 @@
-import { ILLMProvider } from '../providers/ILLMProvider';
+import type { ILLMProvider } from '../providers/ILLMProvider';
+import type { JsonSchemaNode } from '../providers/llm-egress';
+
+/**
+ * The Architecture Plan contract, DECLARED so the model's answer is validated
+ * instead of cast (GT-575). Only the fields the caller actually relies on are
+ * required; extra keys from the model are tolerated.
+ */
+export const ARCHITECTURE_PLAN_SCHEMA: JsonSchemaNode = {
+  type: 'object',
+  required: ['title', 'scope', 'impact', 'risk_assessment', 'execution_plan'],
+  properties: {
+    title: { type: 'string', minLength: 1 },
+    prompt_source: { type: 'string' },
+    scope: {
+      type: 'object',
+      required: ['functional', 'technical'],
+      properties: { functional: { type: 'string' }, technical: { type: 'string' } },
+    },
+    impact: {
+      type: 'object',
+      required: ['components', 'interfaces'],
+      properties: {
+        components: { type: 'array', items: { type: 'string' } },
+        interfaces: { type: 'array', items: { type: 'string' } },
+      },
+    },
+    risk_assessment: {
+      type: 'object',
+      required: ['criticality', 'complexity'],
+      properties: {
+        criticality: { type: 'string', enum: ['low', 'medium', 'high'] },
+        complexity: { type: 'string', enum: ['low', 'medium', 'high'] },
+        security_risks: { type: 'array', items: { type: 'string' } },
+        architectural_risks: { type: 'array', items: { type: 'string' } },
+      },
+    },
+    execution_plan: {
+      type: 'object',
+      required: ['suggested_sdlc_phases', 'mandatory_gates'],
+      properties: {
+        suggested_sdlc_phases: { type: 'array', items: { type: 'string' } },
+        mandatory_gates: { type: 'array', items: { type: 'string' } },
+        suggested_adrs: { type: 'array', items: { type: 'string' } },
+        applicable_policies: { type: 'array', items: { type: 'string' } },
+      },
+    },
+  },
+};
 
 export class ArchitecturePlanInterpreter {
   constructor(private readonly llmProvider: ILLMProvider) {}
@@ -27,11 +75,17 @@ The JSON must have the following schema:
 }
 Keep descriptions concise but highly technical and accurate. Identify relevant architectural and security risks if the prompt implies them (e.g. auth, payments, external API).`;
 
-    const parsedPlan = await this.llmProvider.generateStructuredJson(systemPrompt, prompt);
-    
+    // GT-575: the answer is validated against the declared contract; an
+    // off-schema plan throws rather than being written to disk as if valid.
+    const parsedPlan = await this.llmProvider.generateStructuredJson(
+      systemPrompt,
+      prompt,
+      ARCHITECTURE_PLAN_SCHEMA,
+    );
+
     // Ensure the prompt_source is faithfully recorded
     parsedPlan.prompt_source = prompt;
-    
+
     return parsedPlan;
   }
 }

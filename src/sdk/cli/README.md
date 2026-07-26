@@ -52,9 +52,14 @@ Or download the binary from [GitHub Releases](https://github.com/beyondnetcode/e
 
 ### Verify
 
+The package installs two equivalent bins: **`evolith`** (the documented name, used
+throughout this document) and `evolith-cli` (kept for compatibility). Both point at
+the same entry point and both self-identify as `evolith` in help and usage text.
+
 ```bash
-evolith-cli --version
-# 0.0.1
+evolith --version        # prints the installed @beyondnet/evolith-cli version
+evolith --help           # Usage: evolith [options] [command]
+evolith-cli --version    # the same binary under its legacy name
 ```
 
 ### Troubleshooting
@@ -87,27 +92,66 @@ The CLI runs with zero configuration. The following variables are optional overr
 | `LOG_LEVEL` *(MCP)* | MCP | Log verbosity for the MCP server (default `info`). |
 | `NODE_ENV` *(MCP)* | MCP | `production` forces fail-closed auth/policy behavior in the MCP server. |
 
+<a name="network-egress-and-data-handling"></a>
+
+#### Network egress and data handling
+
+The CLI is **local-first and offline by default**. Validation, gate evaluation, ruleset
+matching and OPA policy checks all run in-process against files on your disk. Your
+source code is never uploaded; there is no telemetry, no analytics and no licence check
+phoning home. Repository-wide disclosure: [SECURITY.md](../../../SECURITY.md).
+
+Everything the CLI can send over the network, and its default:
+
+| Traffic | Default | Notes |
+|---|---|---|
+| Ruleset / gate / ADR evaluation | **none** | fully local; the rulesets ship inside the package |
+| OpenTelemetry traces | **off** | only when `OTEL_ENABLED=true`, and only to the collector you configure |
+| Remote Core API (`evolith api ...`) | **off** | contacts only the Core API endpoint you configure; that server is yours |
+| MCP HTTP transport | **off** | a server *you* host (`evolith-mcp serve --transport http`), not an outbound call |
+| LLM inference (Google Gemini) | **off** | not reachable from any registered CLI command today; see below |
+
+**About the LLM path.** `@beyondnet/evolith-agent-runtime` exports a `GeminiProvider`
+that, when explicitly armed, performs one HTTPS `POST` to
+`https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent`
+(sub-processor: **Google LLC**, Gemini API). It is **disabled unless
+`EVOLITH_LLM_EGRESS=true`** (or `{ enabled: true }` is passed), the credential
+(`EVOLITH_LLM_API_KEY`, falling back to `GEMINI_API_KEY`) travels in the
+`x-goog-api-key` header and never in a URL, prompts are secret-redacted and capped at
+60,000 bytes / ~15,000 estimated tokens (failing closed), and every attempt — including
+refusals — is audited on an `[evolith:llm-egress]` line that carries no content.
+**No command registered in this CLI reaches that provider**, so a default install of the
+CLI performs no LLM egress at all. Full disclosure, including its known limitations:
+[agent-runtime README](../../packages/agent-runtime/README.md) and
+[SECURITY.md](../../../SECURITY.md).
+
 ## Quickstart
 
 ```bash
 # 1. Seed a demo project to explore the CLI
-evolith-cli fixtures --type demo
+evolith fixtures --type demo
 
-# 2. Initialize a real repository
-evolith-cli init
+# 2. Initialize THIS directory as a satellite (--name names the project in
+#    evolith.yaml; --yes runs without prompts). Pass a positional directory
+#    instead to scaffold into a new one: `evolith init my-sat --yes`.
+evolith init --name my-sat --yes
 
 # 3. Scaffold base documentation
-evolith-cli docs
+evolith docs
 
-# 4. Validate compliance
-evolith-cli validate
+# 4. Validate compliance — same directory, no `cd` after step 2
+evolith validate
 
 # 5. Scaffold architecture
-evolith-cli scaffold --phase 1
+evolith scaffold --phase 1
 
-# 6. Connect an AI agent (standalone MCP server)
+# 6. Connect an AI agent (standalone MCP server, separate package)
 evolith-mcp serve
 ```
+
+A freshly initialized satellite is a baseline, not a pass: the first `validate` still
+reports blocking findings from rules that assume a fuller repository layout. Getting
+that to zero is open work tracked as GT-571.
 
 ---
 
@@ -115,34 +159,69 @@ evolith-mcp serve
 
 ### init
 
-Initializes a satellite repository with interactive tool selection. Creates `evolith.yaml` and the project structure.
+Initializes a satellite repository: writes `evolith.yaml` and the project structure.
+**The default target is the current directory**, so `init` followed by `validate` works
+in one place without a `cd`.
 
 ```bash
-evolith-cli init [options]
+evolith init [directory] [options]
+
+Arguments:
+  [directory]            Target directory (default: the current one).
+                         `evolith init` initializes here; `evolith init my-sat`
+                         creates and initializes ./my-sat
 
 Options:
-  -d, --dry-run          Run without writing files
-  -c, --config <path>    Path to evolith.setup.json for batch mode
+  -n, --name <string>    Project name written into evolith.yaml. Defaults to the
+                         target directory's basename. NEVER creates a directory.
+  -D, --dir <path>       Flag form of [directory], for machine callers
+  -y, --yes              Non-interactive batch mode: flags/--config plus defaults
+  -c, --config <path>    Path to evolith.setup.json for batch mode (no prompts)
+  -d, --dry-run          Simulate: writes nothing at all
   -r, --runtime <id>     Runtime: nodejs, dotnet, python
   -m, --monorepo <id>    Monorepo strategy: none, nx, npm-workspaces, rush
   -a, --arch <id>        Architecture pattern: clean, hexagonal, ddd
       --db <id>          Database: postgresql, mongodb, sqlserver
+  -f, --format <fmt>     json (ADR-0073 envelope) or human (default)
 ```
 
 **Examples:**
 
 ```bash
-# Interactive wizard
-evolith-cli init
+# Initialize the current directory, no prompts (project name = directory basename)
+evolith init --yes
 
-# Batch mode (non-interactive)
-evolith-cli init --config evolith.setup.json
+# Same, naming the project explicitly, then validate in place
+evolith init --name my-sat --yes && evolith validate
 
-# Preview without writing
-evolith-cli init --dry-run
+# Create and initialize a new subdirectory
+evolith init my-sat --yes          # equivalent: evolith init --dir ./my-sat --yes
+
+# Interactive wizard (only when stdin is a TTY and none of --yes/--config/--format json)
+evolith init
+
+# Batch mode from a setup file
+evolith init --config evolith.setup.json
+
+# Preview without writing anything
+evolith init --dry-run --yes
+
+# Machine-readable: exactly one envelope on stdout, no prompts, non-zero exit on failure
+evolith init --name my-sat --format json
 ```
 
-After `init` completes, the CLI prints suggested next steps including `validate`, `agents --install`, and `sdlc handoff`.
+Behavioural contract worth relying on:
+
+- Prompts appear **only** when stdin is a TTY and none of `--yes`, `--config` or
+  `--format json` is present. A pipe, a CI runner or an agent never gets a prompt.
+- `--format json` prints exactly one ADR-0073 envelope on stdout (an error envelope on
+  failure); diagnostics go to stderr.
+- A failed or cancelled `init` exits non-zero.
+- `--dry-run` writes nothing — relevant now that the default target is your own cwd.
+
+After `init` completes, the CLI prints the absolute target directory and numbered next
+steps (`evolith validate`, `evolith agents install`, `evolith sdlc handoff`), prefixed
+with a `cd` only when the target is not the current directory.
 
 ---
 

@@ -464,7 +464,7 @@ jobs:
             echo "::notice::EVOLITH_LLM_API_KEY not set — skipping Winston agentic review (advisory)."
             exit 0
           fi
-          node .harness/scripts/ci/13-agentic-code-review.mjs
+          node .harness/scripts/ci/agentic/13-agentic-code-review.mjs
 
   # ============================================
   # JOB 12: DAST OWASP ZAP Scan (GT-273)

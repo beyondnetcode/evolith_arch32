@@ -60,6 +60,8 @@ export interface RuntimeTrace {
     readonly corpusVersion?: string;
     readonly citations: readonly string[];
   };
+  /** GT-593: Journaling del pipeline no determinista */
+  readonly engineJournal?: readonly string[];
 }
 
 export interface AgentRuntimeResult {
@@ -90,6 +92,7 @@ export function toAgentRuntimeResultWire(result: AgentRuntimeResult): Record<str
       policy_engine: result.trace.policyEngine,
       capability: result.trace.capability,
       correlation_id: result.trace.correlationId,
+      engine_journal: result.trace.engineJournal,
     },
     evaluated_at: result.evaluatedAt,
   };

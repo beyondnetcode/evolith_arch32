@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/integration-evidence.schema.json",
   "title": "Integration Evidence",
   "description": "JSON Schema for the Integration Evidence artifact required by the RC Stamped gate (Phase 4). Demonstrates that every declared inter-component contract was exercised against a real or contract-tested counterpart.",

@@ -1224,7 +1224,9 @@ Impacto sobre `ValidateBlueprintUseCase`: el caso de uso actual (`validate-bluep
 
 ---
 
-# Entregable 10 — Cambios necesarios en interfaces Core
+# Entregable 10 — Cambios requeridos en las interfaces del Core
+
+> **⚠ SUPERSEDED (2026-06-28):** Las secciones 1225 a 1521 (Entregables 10, 11, 12 y los flujos de escritura del 13) son obsoletas según ADR-0101 y el Core Evaluation Engine Design. El Core es un **evaluador stateless**; no tiene `IProductRepository`, ni endpoints de escritura, ni muta estado.
 
 > **Nota del revisor (dualidad de puertos — H2/H3).** El Core tiene **dos** carpetas de puertos: `src/packages/core-domain/src/application/ports/` (p. ej. `IBlueprintRepository`, `IDomainEventBus`, `IWebhookNotifier`) y `src/packages/core-domain/src/domain/ports/` (`ruleset-repository.port.ts` → `IRulesetRepository`, `workflow-definition.port.ts` → `IWorkflowDefinitionProvider`). La afirmación "único repositorio de **entidad de gobierno** es `IBlueprintRepository`" es correcta (ruleset/workflow no son entidades de gobierno), pero conviene explicitar la dualidad de ubicaciones al planificar los nuevos puertos.
 

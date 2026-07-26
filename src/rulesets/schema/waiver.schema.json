@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/rulesets/schema/waiver.schema.json",
   "title": "Evolith Gate Waiver Schema",
   "description": "Formal waiver for a blocking gate criterion. All fields are mandatory — no verbal approvals accepted.",

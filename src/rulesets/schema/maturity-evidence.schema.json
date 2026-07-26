@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/maturity-evidence.schema.json",
   "title": "Maturity Evidence",
   "description": "JSON Schema for validating maturity-evidence.json files in the Multi-Topology Reference Corpus.",

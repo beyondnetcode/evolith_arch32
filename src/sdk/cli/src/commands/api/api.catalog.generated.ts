@@ -98,6 +98,10 @@ export const GENERATED_TOOLS: ApiEntry[] = [
     "description": "Non-interactive (batch/CI) initialization of an Evolith satellite. Parity with the CLI `init --config <json>` / `init --name … --yes` path, without prompts. Delegates scaffolding to the core-domain InitializeProjectUseCase. Returns an ADR-0073 output envelope with the initialization result (created artifacts, warnings, errors)."
   },
   {
+    "name": "evolith-knowledge-search",
+    "description": "Búsqueda híbrida de conocimiento (BM25 + Dense Reranking)"
+  },
+  {
     "name": "evolith-metrics",
     "description": "Get MCP server metrics (per-tool call counts, latency, failures)"
   },

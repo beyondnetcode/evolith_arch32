@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schema.evolith.com/satellite-manifest.schema.json",
   "title": "SatelliteManifest",
   "description": "Input contract for the end-to-end evaluation pipeline. Declares what repository to evaluate, and optionally which topology and SDLC phase apply.",

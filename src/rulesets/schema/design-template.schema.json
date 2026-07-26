@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/rulesets/schema/design-template.schema.json",
   "title": "Evolith Design Template",
   "description": "ADR-0104 §9 / GT-431. A reusable design template — a composition of blocks the tenant or a Core agent proposes. `scope: tenant` templates are persisted in the Tracker (tenant private collection, ADR-0104 §11); `scope: core` templates are canonical (promoted upstream via UP-NNN → Architecture Board). `complexity` lets agents offer simple/medium/complex options for the same need. Convention over Configuration: blocks reference the block-type registry.",

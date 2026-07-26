@@ -7,27 +7,27 @@ import rego.v1
 # ADR ref: ADR-0076
 
 violations contains {"id": "INFRA-001", "message": msg} if {
-    file := input.infrastructure.kubernetesFiles[_]
-    not contains(file, "Chart.yaml")
-    not contains(file, "values.yaml")
-    not contains(file, "templates/")
-    endswith(file, ".yaml")
-    msg := sprintf("Raw Kubernetes manifest detected: %v — wrap in a Helm Chart (Chart.yaml required)", [file])
+	file := input.infrastructure.kubernetesFiles[_]
+	not contains(file, "Chart.yaml")
+	not contains(file, "values.yaml")
+	not contains(file, "templates/")
+	endswith(file, ".yaml")
+	msg := sprintf("Raw Kubernetes manifest detected: %v — wrap in a Helm Chart (Chart.yaml required)", [file])
 }
 
 violations contains {"id": "INFRA-001", "message": "No Helm Chart.yaml found in Kubernetes infrastructure directory — all Kubernetes configs must use Helm"} if {
-    dirs := {d | d := input.infrastructure.directories[_]}
-    dirs["kubernetes"]
-    not any_chart_yaml
+	dirs := {d | d := input.infrastructure.directories[_]}
+	dirs.kubernetes
+	not any_chart_yaml
 }
 
 any_chart_yaml if {
-    file := input.infrastructure.kubernetesFiles[_]
-    contains(file, "Chart.yaml")
+	file := input.infrastructure.kubernetesFiles[_]
+	contains(file, "Chart.yaml")
 }
 
 default allow := false
 
 allow if {
-    count(violations) == 0
+	count(violations) == 0
 }

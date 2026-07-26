@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/opa/phase-gates.input.schema.json",
   "title": "Phase Gates OPA Policy Input Schema",
   "description": "Input for evolith.phase_gates. All fields optional at the OPA layer: when `gate` is absent the policy yields no violations (additive aggregation in evolith.main). GT-380 / L1c.",

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/discovery-canvas.schema.json",
   "title": "Discovery Canvas",
   "description": "JSON Schema for validating Evolith Discovery Canvas artifacts. Phase 1 required artifact for initiative registration.",

@@ -34,6 +34,8 @@ export class ToolRegistryService {
   }
 
   listSchemas(): McpToolSchema[] {
-    return this.list().map((t) => t.schema);
+    return this.list()
+      .map((t) => t.schema)
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 }

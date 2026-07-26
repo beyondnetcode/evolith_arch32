@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/gate-evidence.schema.json",
   "title": "Gate Evidence",
   "description": "Structured evidence returned by every phase-gate evaluation, as ratified by core/ADR-0073. This is the canonical `data` payload for gate evaluation across CLI, MCP, and REST surfaces.",

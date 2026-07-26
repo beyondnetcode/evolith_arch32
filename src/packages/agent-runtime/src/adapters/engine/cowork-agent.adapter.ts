@@ -38,27 +38,44 @@ export class CoworkAgentEngineAdapter implements IAgentEnginePort {
   constructor(private readonly options: CoworkAdapterOptions = {}) {}
 
   async plan(request: AgentRuntimeRequest, availableSkills: readonly SkillDescriptor[]): Promise<AgentEnginePlan> {
+    const journal: string[] = [];
+    journal.push(`Recibido intent: '${request.intent}' con ${availableSkills.length} skills disponibles.`);
+
     const proposal = this.options.client
       ? await this.options.client.propose(request, availableSkills)
       : undefined;
 
+    if (proposal) {
+      journal.push(`Cowork propuso usar la tool '${proposal.tool || 'none'}'.`);
+    } else {
+      journal.push(`Cowork client no provisto, operando en modo stub determinista.`);
+    }
+
     const inCatalog = !!proposal?.tool && availableSkills.some((s) => s.id === proposal.tool);
     if (!inCatalog) {
       // Bounded executor: never surface a tool outside the governed catalog.
+      const rationale = proposal?.tool
+        ? `Cowork proposed '${proposal.tool}', which is not in the governed skill catalog — rejected (bounded executor).`
+        : `Cowork proposed no in-catalog tool for intent '${request.intent}'.`;
+      
+      journal.push(`Rechazo por catálogo: ${rationale}`);
+
       return {
         engine: COWORK_ENGINE,
-        rationale: proposal?.tool
-          ? `Cowork proposed '${proposal.tool}', which is not in the governed skill catalog — rejected (bounded executor).`
-          : `Cowork proposed no in-catalog tool for intent '${request.intent}'.`,
+        rationale,
         recommendations: availableSkills.slice(0, 3).map((s) => `Try '${s.id}': ${s.description}`),
+        journal, // GT-593 Journaling de pasos
       };
     }
+
+    journal.push(`Tool aceptada. Argumentos parseados con éxito.`);
 
     return {
       engine: COWORK_ENGINE,
       proposedTool: proposal!.tool,
       proposedArguments: proposal!.arguments,
       rationale: proposal!.rationale ?? `Cowork selected '${proposal!.tool}' from the governed catalog.`,
+      journal, // GT-593 Journaling de pasos
     };
   }
 }

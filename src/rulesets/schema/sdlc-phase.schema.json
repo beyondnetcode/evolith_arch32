@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/sdlc/sdlc-phase.schema.json",
   "title": "SDLC Phase",
   "description": "Schema for an Evolith SDLC phase data file",

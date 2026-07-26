@@ -36,6 +36,13 @@ export function createGateTools(webhook: IWebhookNotifier, fs: IFileSystem, logg
             evaluatedBy: { type: 'string', description: 'human, agent, or ci', default: 'agent' },
             initiative: { type: 'string', description: 'Optional initiative context' },
             tenant: { type: 'string', description: 'Optional tenant context' },
+            requester: {
+              type: 'object',
+              properties: {
+                requesterId: { type: 'string' }
+              },
+              required: ['requesterId']
+            },
           },
           required: ['phase', 'projectPath'],
         },
@@ -57,12 +64,21 @@ export function createGateTools(webhook: IWebhookNotifier, fs: IFileSystem, logg
 
         const validatorFactory = (cp?: string) => new PhaseGateValidatorService(cp, { fileSystem: fs, logger });
         const useCase = new EvaluateGateUseCase(validatorFactory, webhook);
-        const input: EvaluateGateInput = {
+        const requesterRaw = args.requester as Record<string, unknown> | undefined;
+        let requesterContext: any = undefined;
+        if (requesterRaw && typeof requesterRaw.requesterId === 'string') {
+          requesterContext = {
+            requesterId: requesterRaw.requesterId,
+          };
+        }
+
+        const input: EvaluateGateInput & { requester?: any } = {
           phase: phaseRaw as GatePhase,
           projectPath,
           corePath,
           evaluatedBy,
           webhookUrl,
+          requester: requesterContext,
         };
 
         try {

@@ -38,9 +38,9 @@ Promover el **modelo de gobierno Producto/Iniciativa** a estándar canónico del
 ### 1. Decisión y frontera (ADR)
 - Redactar **ADR-0100 — Frontera Gobierno/Ejecución: Producto e Iniciativa como Unidades Primarias, con Capacidad de Asesoría** (R0 de esta propuesta). Desambiguar el `GateDecision` del Core → `CoreGateVerdict`; migrar el legacy `'WAIVED'` → `Verdict.WAIVE`.
 
-### 2. Entidades de dominio (core-domain)
-- Introducir las entidades `Producto` e `Iniciativa`; anclar `Evidencia` (evolución de `GateEvidence`) a `(tenantId → productId → initiativeId → phaseId)`.
-- Formalizar los tres tipos de salida: `ValidationResult` (evaluación), `DecisionRecord` (decisión vinculante, emitida por Tracker), `AdvisoryRecord` (asistencia arquitectónica no vinculante, producida por motores advisory + agentes IA como Winston).
+### 2. Contratos de dominio (core-domain)
+- Introducir los contratos `ProductContext` e `InitiativeContext`; anclar `EvidenceContext` (evolución de `GateEvidence`) a `(tenantId → productId → initiativeId → phaseId)`.
+- Formalizar los tres tipos de salida: `ValidationResult` (evaluación), `DecisionRecommendation` (propuesta de decisión), `AdvisoryRecord` (asistencia arquitectónica no vinculante, producida por motores advisory + agentes IA como Winston).
 
 ### 3. Schemas y rulesets
 - Nuevos schemas en `src/rulesets/schema/`: `product`, `initiative`, `external-reference`, `artifact`, `evidence`, `validation-result`, `decision-record`, `advisory-record`.
@@ -56,8 +56,8 @@ Promover el **modelo de gobierno Producto/Iniciativa** a estándar canónico del
 ### 6. Documentación
 - Reclasificar los artefactos ágiles en `sdlc-evolith-artifact-mapping.md` de Required a `ExternalReference` opcional; reemplazar "story readiness" por criterios de artefacto+ruleset. Publicar el documento canónico "Modelo de Gobierno Producto-Iniciativa".
 
-### 7. Interfaces / API
-- Nuevos puertos (`IProductRepository`, `IInitiativeRepository`, `IExternalReferenceResolver`, `IDecisionRecordRepository`, `IEvidenceRepository`, `IAdvisoryRepository`), casos de uso (`RegisterProduct`, `OpenInitiative`, `AttachExternalReference`, `RecordEvidence`, `EvaluateInitiativeGate`, `RecordDecision`, `RequestAdvisory`), y las superficies REST/CLI/MCP correspondientes — con el envelope ADR-0073 y el `POST /api/v1/phases/transition` existente reconciliado como evaluación stateless.
+### 7. [SUPERSEDED]
+- Este entregable solicitaba puertos y endpoints de escritura (`IProductRepository`, `POST /api/v1/products`, etc.) y fue removido según ADR-0101. La única superficie del Core es `POST /api/v1/evaluate`.
 
 ### 8. Integración con Tracker
 - Insertar `INITIATIVE` entre `PRODUCT` y `SDLC_PROCESS` en el modelo del Tracker; `StartProcessRequest` gana `initiativeId`. Ampliar `EvidenceItem.references[].type` con `epic|story|issue|task`. El Tracker emite el `DecisionRecord` canónico; el Core degrada a evaluación-only cuando el Tracker no está presente.

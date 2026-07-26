@@ -7,6 +7,7 @@ generation was disconnected during this period (GT-552), so these entries were
 reconstructed from the commit history. The version number for this batch is
 deliberately unassigned.
 
+## [1.2.0] - 2026-07-26
 
 ### Security Hardening (Phases 1-7)
 

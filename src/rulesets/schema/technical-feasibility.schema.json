@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/technical-feasibility.schema.json",
   "title": "Technical Feasibility",
   "description": "JSON Schema for validating Evolith Technical Feasibility and NFR artifacts. Phase 1 required artifact for technical and architectural alignment.",

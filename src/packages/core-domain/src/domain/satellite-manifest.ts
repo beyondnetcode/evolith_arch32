@@ -45,6 +45,20 @@ export interface EvaluationFacts {
   readonly tenantId?: string;
   /** ISO-8601 date for waiver-expiry comparison (`input.evaluationDate`). */
   readonly evaluationDate?: string;
+  /**
+   * GT-594: Structural facts loaded from the external SCIP indexer.
+   */
+  readonly repoFacts?: {
+    readonly symbols: readonly string[];
+    readonly dependencies: readonly string[];
+  };
+  /**
+   * GT-594: C4 Model element bindings to source code symbols.
+   */
+  readonly architectureBindings?: readonly {
+    readonly c4ElementId: string;
+    readonly symbols: readonly string[];
+  }[];
 }
 
 export interface SatelliteManifest {

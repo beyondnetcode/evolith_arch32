@@ -28,7 +28,7 @@ import {
   readStdin,
   EDIT_HOOK_BLOCK_EXIT_CODE,
 } from '../../infrastructure/agent/edit-hook/edit-hook.service';
-import type { RawHookPayload } from '../../infrastructure/agent/edit-hook/hook-payload';
+import { normalizeEditIntent, type RawHookPayload } from '../../infrastructure/agent/edit-hook/hook-payload';
 
 interface EnforceCommandOptions {
   format?: string;
@@ -86,6 +86,8 @@ export class EnforceCommand extends BaseEvolithCommand {
   async executeCommand(inputs: string[], options?: EnforceCommandOptions): Promise<void> {
     const startedAt = Date.now();
     const json = options?.format === 'json';
+    const ndjson = options?.format === 'ndjson';
+    const isStructured = json || ndjson;
     const commandId = 'evolith enforce compile';
     const meta = (): OutputMeta => ({
       command: commandId,
@@ -96,8 +98,8 @@ export class EnforceCommand extends BaseEvolithCommand {
     });
 
     const fail = (code: ErrorCode, message: string): void => {
-      if (json) {
-        console.log(JSON.stringify(createErrorEnvelope(code, message, meta()), null, 2));
+      if (isStructured) {
+        console.log(JSON.stringify(createErrorEnvelope(code, message, meta()), null, json ? 2 : 0));
       } else {
         this.promptService.showError(message);
       }
@@ -155,19 +157,24 @@ export class EnforceCommand extends BaseEvolithCommand {
       dependencyCruiserConfig: toDependencyCruiserConfig(compiled),
     };
 
-    const output = JSON.stringify(createSuccessEnvelope(report, meta()), null, 2);
-
-    if (options?.output) {
-      const fs = await import('fs-extra');
-      await fs.writeFile(path.resolve(options.output), output, 'utf-8');
-      if (!json) this.promptService.showSuccess(`Compiled policy written to ${options.output}`);
-      return;
-    }
-
-    if (json) {
-      console.log(output);
+    if (isStructured) {
+      const envelope = createSuccessEnvelope(report, meta());
+      const output = ndjson ? JSON.stringify(envelope) : JSON.stringify(envelope, null, 2);
+      if (options?.output) {
+        const fs = await import('fs-extra');
+        await fs.writeFile(path.resolve(options.output), output, 'utf-8');
+      } else {
+        console.log(output);
+      }
     } else {
-      this.printHuman(report);
+      if (options?.output) {
+        const output = JSON.stringify(createSuccessEnvelope(report, meta()), null, 2);
+        const fs = await import('fs-extra');
+        await fs.writeFile(path.resolve(options.output), output, 'utf-8');
+        this.promptService.showSuccess(`Compiled policy written to ${options.output}`);
+      } else {
+        this.printHuman(report);
+      }
     }
   }
 
@@ -182,6 +189,8 @@ export class EnforceCommand extends BaseEvolithCommand {
   private async executeEditGate(options?: EnforceCommandOptions): Promise<void> {
     const startedAt = Date.now();
     const json = options?.format === 'json';
+    const ndjson = options?.format === 'ndjson';
+    const isStructured = json || ndjson;
     const commandId = 'evolith enforce edit';
     const meta = (): OutputMeta => ({
       command: commandId,
@@ -191,8 +200,8 @@ export class EnforceCommand extends BaseEvolithCommand {
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     });
     const fail = (code: ErrorCode, message: string): void => {
-      if (json) {
-        console.log(JSON.stringify(createErrorEnvelope(code, message, meta()), null, 2));
+      if (isStructured) {
+        console.log(JSON.stringify(createErrorEnvelope(code, message, meta()), null, json ? 2 : 0));
       } else {
         this.promptService.showError(message);
       }
@@ -201,14 +210,6 @@ export class EnforceCommand extends BaseEvolithCommand {
 
     if (!options?.rules) {
       return fail('VALIDATION_FAILED', 'Provide the compiled boundary contract via --rules <path>');
-    }
-
-    let rules;
-    try {
-      rules = await loadBoundaryRules(path.resolve(options.rules));
-    } catch (err) {
-      const code = err instanceof Error && err.name === 'BoundaryRulesError' ? 'VALIDATION_FAILED' : 'IO_ERROR';
-      return fail(code, `Failed to load boundary rules '${options.rules}': ${err instanceof Error ? err.message : String(err)}`);
     }
 
     let rawJson: string;
@@ -228,9 +229,31 @@ export class EnforceCommand extends BaseEvolithCommand {
       return fail('VALIDATION_FAILED', `Hook payload is not valid JSON: ${err instanceof Error ? err.message : String(err)}`);
     }
 
+    // GT-578: Barrera de pre-parseo para pasos vacuos
+    const intent = normalizeEditIntent(payload, options.vendor);
+    if (!intent) {
+      // Es vacuo (ej. comando de solo lectura de un agente).
+      // Salimos rápido con exit 0 sin incurrir en el costo del motor de reglas.
+      if (isStructured) {
+        const data = { action: 'edit' as const, vendor: null, blocked: false };
+        console.log(JSON.stringify(createSuccessEnvelope(data, meta()), null, json ? 2 : 0));
+      } else {
+        this.promptService.showInfo('edit-gate: no file edit in payload — nothing to enforce (allow).');
+      }
+      process.exit(0);
+    }
+
+    let rules;
+    try {
+      rules = await loadBoundaryRules(path.resolve(options.rules));
+    } catch (err) {
+      const code = err instanceof Error && err.name === 'BoundaryRulesError' ? 'VALIDATION_FAILED' : 'IO_ERROR';
+      return fail(code, `Failed to load boundary rules '${options.rules}': ${err instanceof Error ? err.message : String(err)}`);
+    }
+
     const result = enforceEditPayload(payload, rules, options.vendor);
 
-    if (json) {
+    if (isStructured) {
       const data = {
         action: 'edit' as const,
         vendor: result.vendor,
@@ -239,7 +262,7 @@ export class EnforceCommand extends BaseEvolithCommand {
         blocked: result.blocked,
         violations: result.decision.violations,
       };
-      console.log(JSON.stringify(createSuccessEnvelope(data, meta()), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(data, meta()), null, json ? 2 : 0));
     } else {
       const verdict = renderEditVerdict(result);
       // Route to stderr so an agent runtime surfaces it back to the model on block.
@@ -300,7 +323,7 @@ export class EnforceCommand extends BaseEvolithCommand {
     this.promptService.showOutro('Compile complete (advisory — real run gated on GT-512 sandbox).');
   }
 
-  @Option({ flags: '-f, --format [string]', description: 'Output format: json (ADR-0073 envelope) or human (default)' })
+  @Option({ flags: '-f, --format [string]', description: 'Output format: json (ADR-0073 envelope), ndjson, or human (default)' })
   parseFormat(val: string): string {
     return val;
   }

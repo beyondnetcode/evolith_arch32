@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/rollback-rehearsal.schema.json",
   "title": "Rollback Rehearsal Evidence",
   "description": "Structured evidence that a rollback rehearsal was executed and confirmed working for a specific release.",

@@ -8,7 +8,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as yaml from 'yaml';
-import Ajv from 'ajv';
+import Ajv from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 
 const SCHEMA_PATH = path.resolve(

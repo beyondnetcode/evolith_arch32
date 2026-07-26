@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/rulesets/schema/satellite-record.schema.json",
   "title": "Evolith Satellite Record Schema",
   "description": "Defines the canonical entity for a satellite repository registered in the Evolith provisioning system.",

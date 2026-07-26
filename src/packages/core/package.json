@@ -1,6 +1,6 @@
 {
   "name": "@beyondnet/evolith-core",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Shared business logic layer for Evolith — consumed by CLI, MCP Server, and REST API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,7 +25,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@beyondnet/evolith-core-domain": "^1.1.0"
+    "@beyondnet/evolith-core-domain": "^1.2.0"
   },
   "devDependencies": {
     "@types/jest": "30.0.0",

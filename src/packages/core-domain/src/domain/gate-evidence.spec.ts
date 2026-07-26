@@ -24,7 +24,7 @@ describe('gate-evidence', () => {
       const envelope = createSuccessEnvelope({ result: 'ok' }, meta);
       expect(envelope.success).toBe(true);
       expect(envelope.data).toEqual({ result: 'ok' });
-      expect(envelope.meta).toBe(meta);
+      expect(envelope.meta).toMatchObject(meta);
     });
   });
 

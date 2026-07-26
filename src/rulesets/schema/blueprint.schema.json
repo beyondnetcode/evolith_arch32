@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/rulesets/schema/blueprint.schema.json",
   "title": "Evolith Blueprint Schema",
   "description": "Defines a reusable project blueprint — a parametrizable template that combines a topology, SDLC phase profile, and default ruleset configuration.",

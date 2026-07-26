@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/pattern.schema.json",
   "title": "Evolith Canonical Architectural Pattern (PAT)",
   "description": "JSON Schema for validating PAT-NNNN records under reference/core/architecture/patterns/pat/. A PAT is a runtime-agnostic architectural pattern or anti-pattern: it states the norm (problem, forces, solution), where it applies per topology, which existing rule IDs enforce it, which ADRs govern it (with an explicit verification status, because ADR citations in the prose corpus are frequently wrong), and which runtime-specific Canonical Patterns (CP-NN) implement it. Implementation tutorials are deliberately NOT part of the norm: they are referenced through implementationGuide.",

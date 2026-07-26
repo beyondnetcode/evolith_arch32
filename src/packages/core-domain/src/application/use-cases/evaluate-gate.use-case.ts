@@ -43,6 +43,8 @@ export const PHASE_TO_GATE_NUMBER: Record<GatePhase, number> = {
 export const PHASE_GATES_RULESET_REF = 'rulesets/sdlc/phase-gates.rules.json';
 
 export interface EvaluateGateInput {
+  readonly requester?: any; // Replaces full type to avoid coupling inside use-case signature
+
   phase: GatePhase;
   projectPath: string;
   corePath?: string;

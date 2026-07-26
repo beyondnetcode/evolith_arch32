@@ -4,7 +4,7 @@ import { NormalizedRule } from '../../../domain/models/normalized-rule';
 import { IRuleEvaluatorStrategy, WorkspaceEvaluationContext, RuleEvaluationResult } from './evaluator.interface';
 import { loadPolicy } from '@open-policy-agent/opa-wasm';
 import { OpaInputBuilder } from './opa-input-builder';
-import Ajv from 'ajv';
+import Ajv from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 import * as crypto from 'crypto';
 

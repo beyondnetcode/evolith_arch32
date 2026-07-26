@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/evolith-yaml.schema.json",
   "title": "Evolith Satellite Contract",
   "description": "JSON Schema for validating satellite repository evolith.yaml files. This is the federated governance contract.",

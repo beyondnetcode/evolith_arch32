@@ -69,7 +69,11 @@ export function relativizePath(filePath: string, cwd?: string): string {
 export const claudeCodeAdapter: VendorHookAdapter = {
   vendor: 'claude-code',
   matches(raw) {
-    return typeof raw.tool_name === 'string' && asRecord(raw.tool_input) !== undefined;
+    const isTool = typeof raw.tool_name === 'string' && asRecord(raw.tool_input) !== undefined;
+    if (!isTool) return false;
+    const name = raw.tool_name as string;
+    // GT-571: Evitar falsos positivos requiriendo herramientas específicas de Claude Code
+    return name === 'Write' || name === 'Edit' || name === 'MultiEdit' || name === 'Read' || name === 'Bash' || name === 'Grep';
   },
   extract(raw) {
     const toolName = asString(raw.tool_name);

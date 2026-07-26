@@ -21,7 +21,7 @@ import * as p from '@clack/prompts';
 import * as nodeFs from 'node:fs';
 import * as nodePath from 'node:path';
 import * as yaml from 'yaml';
-import Ajv from 'ajv';
+import Ajv from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 
 const EVOLITH_YAML_SCHEMA_PATH = nodePath.resolve(

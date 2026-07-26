@@ -47,6 +47,10 @@ export interface TenantContext {
   readonly tenantId: string;
 }
 
+export interface RequesterContext {
+  readonly requesterId: string;
+}
+
 export interface ProductContext {
   readonly productId: string;
   readonly tenantId?: string;
@@ -112,6 +116,16 @@ export interface CheckpointContext {
   readonly phaseId?: PhaseId;
   readonly status?: string;
   readonly metrics?: Readonly<Record<string, number | string>>;
+}
+
+export interface RepoFacts {
+  readonly symbols: readonly string[];
+  readonly dependencies: readonly string[];
+}
+
+export interface C4Binding {
+  readonly c4ElementId: string;
+  readonly symbols: readonly string[];
 }
 
 /**
@@ -201,6 +215,7 @@ export interface EvaluationContext {
   readonly product?: ProductContext;
   readonly initiative?: InitiativeContext;
   readonly initiativeGroup?: InitiativeGroupContext;
+  readonly requester?: RequesterContext;
 
   // --- Evaluation anchoring ---
   readonly phaseId?: PhaseId;
@@ -226,6 +241,10 @@ export interface EvaluationContext {
   readonly architecture?: ArchitectureContext;
   readonly design?: DesignContext;
   readonly externalReferences?: readonly ExternalReferenceContext[];
+  readonly facts?: {
+    readonly repoFacts?: RepoFacts;
+    readonly architectureBindings?: readonly C4Binding[];
+  };
 
   // --- Tenant configuration & constraints (sent explicitly; the Core resolves nothing) ---
   readonly sdlcConfig?: Readonly<Record<string, unknown>>;

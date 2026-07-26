@@ -22,3 +22,4 @@ export * from './github-api-client.interface';
 export * from './architecture-plan';
 export * from './authority-policy';
 export * from './scope-contract';
+export * from './security/cose-signer';

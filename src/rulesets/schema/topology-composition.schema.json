@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://evolith.dev/schema/topology-composition.schema.json",
   "title": "Topology Composition",
   "description": "JSON Schema for an Evolith cross-topology composition manifest. A composition declares two or more canonical topologies whose manifests explicitly allow the combination via spec.compatibility.composableWith. See topology-dimensions.md §3.",

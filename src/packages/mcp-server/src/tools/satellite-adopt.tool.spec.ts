@@ -186,7 +186,7 @@ describe('SatelliteAdoptTool', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it('throws when token is missing', async () => {
+  it('throws when token is missing', async () => { delete process.env.GITHUB_TOKEN;
     const tool = new SatelliteAdoptTool();
     await expect(
       tool.execute({ repoUrl: 'https://github.com/beyondnetcode/ums' }),

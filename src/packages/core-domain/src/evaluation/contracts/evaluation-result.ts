@@ -85,12 +85,20 @@ export interface DecisionRecommendation {
   readonly recommendedBy: 'evolith-core';
 }
 
+export interface ProbabilisticCalibration {
+  readonly confidenceThreshold: number;
+  readonly expectedPrecision?: number;
+  readonly expectedRecall?: number;
+  readonly modelVersion?: string;
+}
+
 /** Trace of a rule/policy that was executed during evaluation. */
 export interface RuleExecutionRef {
   readonly ruleId: string;
   readonly rulesetRef?: string;
   readonly engine: RuleEngine;
   readonly verdict: Verdict;
+  readonly calibration?: ProbabilisticCalibration;
 }
 
 // ---------------------------------------------------------------------------

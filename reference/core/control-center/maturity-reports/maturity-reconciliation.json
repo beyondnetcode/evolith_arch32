@@ -3,9 +3,9 @@
   "scope": "evolith-core",
   "asOf": "2026-07-26",
   "gaps": {
-    "total": 595,
+    "total": 600,
     "done": 561,
-    "pending": 21,
+    "pending": 26,
     "inProgress": 9,
     "deferred": 4
   },

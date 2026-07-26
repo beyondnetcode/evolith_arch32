@@ -11,9 +11,9 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 **Current decision:** NO-GO for production expansion or a major release: active P0 blockers remain.
 
-**Biggest problem now:** `Cross` carries the highest weighted open risk (2 open, 1 P0). Attack that concentration before expanding scope.
+**Biggest problem now:** `Infra` carries the highest weighted open risk (4 open, 1 P0). Attack that concentration before expanding scope.
 
-**Where to attack first:** [GT-435](../gaps/gap-reference-catalog.md#gt-435).
+**Where to attack first:** [GT-570](../gaps/gap-reference-catalog.md#gt-570), [GT-571](../gaps/gap-reference-catalog.md#gt-571), [GT-575](../gaps/gap-reference-catalog.md#gt-575), [GT-569](../gaps/gap-reference-catalog.md#gt-569), [GT-572](../gaps/gap-reference-catalog.md#gt-572), [GT-573](../gaps/gap-reference-catalog.md#gt-573), [GT-435](../gaps/gap-reference-catalog.md#gt-435).
 
 ## Strategic Diagnosis
 
@@ -25,40 +25,46 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-435](../gaps/gap-reference-catalog.md#gt-435) |
-| 2 | Highest-risk area | `Cross` has the largest weighted open load. | [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
-| 3 | Quick wins | High criticality with XS/S complexity. | - |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-531](../gaps/gap-reference-catalog.md#gt-531), [GT-536](../gaps/gap-reference-catalog.md#gt-536), [GT-443](../gaps/gap-reference-catalog.md#gt-443) |
+| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-570](../gaps/gap-reference-catalog.md#gt-570), [GT-571](../gaps/gap-reference-catalog.md#gt-571), [GT-575](../gaps/gap-reference-catalog.md#gt-575), [GT-569](../gaps/gap-reference-catalog.md#gt-569), [GT-572](../gaps/gap-reference-catalog.md#gt-572), [GT-573](../gaps/gap-reference-catalog.md#gt-573), [GT-435](../gaps/gap-reference-catalog.md#gt-435) |
+| 2 | Highest-risk area | `Infra` has the largest weighted open load. | [GT-570](../gaps/gap-reference-catalog.md#gt-570), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-577](../gaps/gap-reference-catalog.md#gt-577), [GT-464](../gaps/gap-reference-catalog.md#gt-464) |
+| 3 | Quick wins | High criticality with XS/S complexity. | [GT-570](../gaps/gap-reference-catalog.md#gt-570), [GT-571](../gaps/gap-reference-catalog.md#gt-571), [GT-575](../gaps/gap-reference-catalog.md#gt-575), [GT-576](../gaps/gap-reference-catalog.md#gt-576) |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-576](../gaps/gap-reference-catalog.md#gt-576), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-574](../gaps/gap-reference-catalog.md#gt-574), [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-577](../gaps/gap-reference-catalog.md#gt-577), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-531](../gaps/gap-reference-catalog.md#gt-531), [GT-536](../gaps/gap-reference-catalog.md#gt-536), [GT-443](../gaps/gap-reference-catalog.md#gt-443) |
 
 ## Current Blockers
 
 | ID | Attack | Component | Effort |
 |---|---|---|---|
+| [GT-570](../gaps/gap-reference-catalog.md#gt-570) | **npm serves 1.1.0 published 2026-07-18; the security wave landed 2026-07-23.** Verified with npm view @beyondnet/evolith-cli version time.modified. The public CHANGELOG.md enumerates the corrected files by name under [Unreleased], and SECURITY.md declares the 1.1.x line "Current stable line — actively patched". Anyone following the README installs the unpatched build from a repository that publishes where the holes are. Fix: publish **1.2.0** with the security wave, deprecate 1.1.0 on npm with a message pointing at the fixed version, move the security section from [Unreleased] to the published heading, and issue the advisory SECURITY.md already promises. Follow-on: a release gate that fails when HEAD carries security-tagged commits absent from the last published tag. | `Infra` | P0/S |
+| [GT-571](../gaps/gap-reference-catalog.md#gt-571) | **The highest-traffic surface of the product does not work as written.** (a) README.md:96-98 (and README.es.md:95-97) instruct evolith init / evolith validate, but the published bin map declares only evolith-cli and evolith-mcp — the phantom command appears in **447 invocations across 49 non-.es markdown files**, so renaming the bin is cheaper than rewriting the docs. (b) Even with the alias, init --name my-sat creates a **subdirectory**, so the validate that follows in the same cwd targets the parent and raises GOV-000 "Missing evolith.yaml" plus 41 blocking findings. Inside the correct satellite the first validate still returns 46 findings / 39 blocking, dominated by the vendor's own monorepo rules (CLI-RR-01 "dist/main.js not found", TAX-05 "Missing top-level directories: sdk, .harness") with rules from all 8 topologies firing on a repo declared phase-0. Additionally the published binary self-identifies as main (evolith-cli init --help prints Usage: main init [options]) because the program name is never set. | `Evolith CLI` | P0/S |
+| [GT-575](../gaps/gap-reference-catalog.md#gt-575) | **A product that sells AI governance ships its only LLM egress path without any of the controls it sells.** GeminiProvider.ts:17 builds the URL with the API key in the query string; the whole 57-line file has no AbortSignal (:31-37), no budget, no redaction, no log or metric, and its only output validation is JSON.parse(candidate) as T (:52). It is a public export (src/packages/agent-runtime/src/index.ts:22) of @beyondnet/evolith-agent-runtime@1.1.0. Disclosure across README.md, README.es.md, SECURITY.md and the 8 package READMEs: zero. It violates at least 4 of the 9 blocking AAI-* rules the product itself sells. **Exposure is latent, not active** — the only in-tree caller is src/sdk/cli/src/commands/plan/index.ts:27, and PlanCommand is not registered in app.module.ts — but it sits on the public surface a security reviewer reads first. The correct implementation already exists in-house: .harness/scripts/ci/agentic/review-provider.mjs:35-38 puts the key in a header with the literal comment "API key in a header, not the URL query string", with budget caps and 8 redaction patterns. Fix: port that control, and collapse the duplicate ILLMProvider port into the governed IAssistantTransport/SupervisedAssistantClient seam. | `agent-runtime` | P0/S |
+| [GT-569](../gaps/gap-reference-catalog.md#gt-569) | **The product's headline number silently redefines its own denominator.** Of 379 rules the native engine evaluates 108 and reports rulesChecked: 111; the remaining 271 — **192 of them blocking** — return skipped and are filtered out at ruleset-validator.service.ts:88 (engineResults.filter(r => r.result !== 'skipped')) before the count is summed. No field surfaces it: grep -rn "rulesSkipped" src --include='*.ts' returns 0 results and ValidationResult carries only {status, rulesChecked, issues, coreRef, timestamp}. The same field also OVER-counts: validate --format json --core <repo> --engine opa returns rulesChecked: 379 having executed **zero** policies (the wasm does not resolve against the Core layout). And native-evaluator.ts:69-72 converts any handler exception into skipped, so **a crashing evaluator is indistinguishable from a green rule**. Fix: add rulesSkipped + the skipped-id array to ValidationResult, introduce an errored state distinct from skipped, emit a WARNING issue per skipped MUST rule, and fail the run when skipped/total exceeds a configured threshold. This is a reporting change, not an engine change — closing the handler gap itself is separate and much larger. | `core-domain` | P0/M |
+| [GT-572](../gaps/gap-reference-catalog.md#gt-572) | **Reproduced against the published tarball, not the working tree.** npm pack @beyondnet/evolith-mcp@1.1.0, started over stdio without auth: 47 tools announced, **47 of 47 return FORBIDDEN (ABAC-02)**; resources/list (11) and prompts/list (8) do work. The two escape routes the code defines — --allow-no-auth (main.ts:62-63) and EVOLITH_MCP_ALLOW_NO_AUTH=true, both documented in mcp-server-auth.ts — were tested in all three combinations including NODE_ENV=development and **none of them has any effect on the default transport**, which is worse than their absence. Root cause: mcpContextStorage.run exists in exactly one non-spec site (mcp-server.service.ts:451) inside the HTTP dispatch closure, so the stdio path never establishes a context. Neither oracle can see it: the CI smoke asserts success !== undefined, and the exploratory tester drives MCP over HTTP only. Fix: wrap the stdio dispatch in mcpContextStorage with a local session context, and make the smoke assert a real invocation with a verdict. | `MCP Server` | P0/M |
+| [GT-573](../gaps/gap-reference-catalog.md#gt-573) | **The flagship integration fails silently, with both CIs green.** The inline branch returns the legacy envelope: evaluation.controller.ts:186 returns evaluationVerdict!.outputEnvelope, built at satellite-evaluation-pipeline.service.ts:85-94 as createSuccessEnvelope({topology, gates, summary}). The Tracker unwraps data (CoreEvaluationGateway.cs:433) and binds CoreEvaluationEnvelope, which declares only overallVerdict / outcome / resolvedTopology / results.gate[] / evaluatedAt (CoreEvaluationDtos.cs:200-216). Passed stays null (:406), Gates stays empty (:414), and ToDecision (:583-606) falls through to **"SKIPPED"**, written as decision=SKIPPED, status=COMPLETED. 0 of 12 Core workflows build the Tracker; 0 contract tests exist in either repo. Fix: route the inline branch through EvaluationOrchestrator so it returns the canonical EvaluationResult, and add a consumer-driven contract test in the Core CI asserting the exact JSON CoreEvaluationEnvelope binds; publish those request/response pairs as fixtures inside @beyondnet/evolith-contracts and promote both schemas to MACHINE_CONTRACT_SET. | `Core API` | P0/M |
 | [GT-435](../gaps/gap-reference-catalog.md#gt-435) | The end-to-end path from code to a running product in real use is not deployed or validated | `Cross` | P0/XL |
 
 ## Metrics
 
 | Indicator | Value |
 |---|---:|
-| Canonical board date | 2026-07-25 |
-| Total gaps | 568 |
+| Canonical board date | 2026-07-26 |
+| Total gaps | 578 |
 | Closed gaps | 557 |
-| Open gaps | 11 |
-| Open P0 | 1 |
-| Open P1 | 2 |
-| Open P2 | 5 |
-| Total closure | 98.1% |
+| Open gaps | 21 |
+| Open P0 | 7 |
+| Open P1 | 5 |
+| Open P2 | 6 |
+| Total closure | 96.4% |
 | Closure evidence records | 539 |
 | Recorded readiness | 4 PASS |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
+| `Infra` | 4 | 1 | 1 | [GT-570](../gaps/gap-reference-catalog.md#gt-570), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-577](../gaps/gap-reference-catalog.md#gt-577), [GT-464](../gaps/gap-reference-catalog.md#gt-464) |
 | `Cross` | 2 | 1 | 1 | [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
-| `Infra` | 2 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-464](../gaps/gap-reference-catalog.md#gt-464) |
-| `agent-runtime` | 1 | 0 | 0 | [GT-531](../gaps/gap-reference-catalog.md#gt-531) |
-| `infra-providers` | 1 | 0 | 0 | [GT-536](../gaps/gap-reference-catalog.md#gt-536) |
-| `Reliability` | 1 | 0 | 0 | [GT-443](../gaps/gap-reference-catalog.md#gt-443) |
+| `Governance` | 3 | 0 | 3 | [GT-576](../gaps/gap-reference-catalog.md#gt-576), [GT-574](../gaps/gap-reference-catalog.md#gt-574), [GT-578](../gaps/gap-reference-catalog.md#gt-578) |
+| `agent-runtime` | 2 | 1 | 0 | [GT-575](../gaps/gap-reference-catalog.md#gt-575), [GT-531](../gaps/gap-reference-catalog.md#gt-531) |
+| `Core API` | 2 | 1 | 0 | [GT-573](../gaps/gap-reference-catalog.md#gt-573), [GT-522](../gaps/gap-reference-catalog.md#gt-522) |
 
 ## Source and Refresh Rule
 

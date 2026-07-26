@@ -1,11 +1,11 @@
 {
   "schemaVersion": "1.0.0",
   "scope": "evolith-core",
-  "asOf": "2026-07-25",
+  "asOf": "2026-07-26",
   "gaps": {
-    "total": 568,
+    "total": 578,
     "done": 557,
-    "pending": 4,
+    "pending": 14,
     "inProgress": 3,
     "deferred": 4
   },

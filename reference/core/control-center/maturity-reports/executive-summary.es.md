@@ -11,9 +11,9 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Decisión actual:** NO-GO para expansión productiva o release mayor: existen bloqueadores P0 activos.
 
-**Mayor problema ahora:** `Cross` concentra el mayor riesgo abierto ponderado (2 pendientes, 1 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Infra` concentra el mayor riesgo abierto ponderado (4 pendientes, 1 P0). Ataca esa concentración antes de ampliar alcance.
 
-**Dónde atacar primero:** [GT-435](../gaps/gap-reference-catalog.es.md#gt-435).
+**Dónde atacar primero:** [GT-570](../gaps/gap-reference-catalog.es.md#gt-570), [GT-571](../gaps/gap-reference-catalog.es.md#gt-571), [GT-575](../gaps/gap-reference-catalog.es.md#gt-575), [GT-569](../gaps/gap-reference-catalog.es.md#gt-569), [GT-572](../gaps/gap-reference-catalog.es.md#gt-572), [GT-573](../gaps/gap-reference-catalog.es.md#gt-573), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435).
 
 ## Diagnóstico Estratégico
 
@@ -25,40 +25,46 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) |
-| 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
-| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-531](../gaps/gap-reference-catalog.es.md#gt-531), [GT-536](../gaps/gap-reference-catalog.es.md#gt-536), [GT-443](../gaps/gap-reference-catalog.es.md#gt-443) |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-570](../gaps/gap-reference-catalog.es.md#gt-570), [GT-571](../gaps/gap-reference-catalog.es.md#gt-571), [GT-575](../gaps/gap-reference-catalog.es.md#gt-575), [GT-569](../gaps/gap-reference-catalog.es.md#gt-569), [GT-572](../gaps/gap-reference-catalog.es.md#gt-572), [GT-573](../gaps/gap-reference-catalog.es.md#gt-573), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) |
+| 2 | Área de mayor riesgo | `Infra` tiene la mayor carga ponderada abierta. | [GT-570](../gaps/gap-reference-catalog.es.md#gt-570), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-577](../gaps/gap-reference-catalog.es.md#gt-577), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464) |
+| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-570](../gaps/gap-reference-catalog.es.md#gt-570), [GT-571](../gaps/gap-reference-catalog.es.md#gt-571), [GT-575](../gaps/gap-reference-catalog.es.md#gt-575), [GT-576](../gaps/gap-reference-catalog.es.md#gt-576) |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-576](../gaps/gap-reference-catalog.es.md#gt-576), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-574](../gaps/gap-reference-catalog.es.md#gt-574), [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-577](../gaps/gap-reference-catalog.es.md#gt-577), [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-531](../gaps/gap-reference-catalog.es.md#gt-531), [GT-536](../gaps/gap-reference-catalog.es.md#gt-536), [GT-443](../gaps/gap-reference-catalog.es.md#gt-443) |
 
 ## Bloqueadores Actuales
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
+| [GT-570](../gaps/gap-reference-catalog.es.md#gt-570) | **npm sirve 1.1.0 publicada el 2026-07-18; la ola de seguridad aterrizó el 2026-07-23.** Verificado con npm view @beyondnet/evolith-cli version time.modified. El CHANGELOG.md público enumera los ficheros corregidos por nombre bajo [Unreleased], y SECURITY.md declara la línea 1.1.x "Current stable line — actively patched". Quien siga el README instala la build sin parchear desde un repositorio que publica dónde están los agujeros. Fix: publicar **1.2.0** con la ola de seguridad, deprecar 1.1.0 en npm con un mensaje que apunte a la versión corregida, mover la sección de seguridad de [Unreleased] al heading publicado, y emitir el advisory que SECURITY.md ya promete. Follow-on: un gate de release que falle cuando HEAD contenga commits etiquetados de seguridad ausentes del último tag publicado. | `Infra` | P0/S |
+| [GT-571](../gaps/gap-reference-catalog.es.md#gt-571) | **La superficie de mayor tráfico del producto no funciona tal como está escrita.** (a) README.md:96-98 (y README.es.md:95-97) mandan evolith init / evolith validate, pero el bin map publicado solo declara evolith-cli y evolith-mcp — el comando fantasma aparece en **447 invocaciones en 49 ficheros markdown no-.es**, así que renombrar el bin sale más barato que reescribir la doc. (b) Aun con el alias, init --name my-sat crea un **subdirectorio**, así que el validate que sigue en el mismo cwd apunta al padre y dispara GOV-000 "Missing evolith.yaml" más 41 hallazgos blocking. Dentro del satélite correcto el primer validate sigue devolviendo 46 hallazgos / 39 blocking, dominados por las reglas internas del monorepo del vendedor (CLI-RR-01 "dist/main.js not found", TAX-05 "Missing top-level directories: sdk, .harness") con reglas de las 8 topologías disparando sobre un repo declarado fase-0. Además el binario publicado se autoidentifica como main (evolith-cli init --help imprime Usage: main init [options]) porque nunca se fija el program name. | `Evolith CLI` | P0/S |
+| [GT-575](../gaps/gap-reference-catalog.es.md#gt-575) | **Un producto que vende gobernanza de IA envía su único camino de egress LLM sin ninguno de los controles que vende.** GeminiProvider.ts:17 construye la URL con la API key en la query string; el fichero entero de 57 líneas no tiene AbortSignal (:31-37), ni presupuesto, ni redacción, ni log ni métrica, y su única validación de salida es JSON.parse(candidate) as T (:52). Es export público (src/packages/agent-runtime/src/index.ts:22) de @beyondnet/evolith-agent-runtime@1.1.0. Disclosure en README.md, README.es.md, SECURITY.md y los 8 READMEs de paquete: cero. Incumple al menos 4 de las 9 reglas AAI-* blocking que el propio producto vende. **La exposición es latente, no activa** — el único llamador in-tree es src/sdk/cli/src/commands/plan/index.ts:27, y PlanCommand no está registrado en app.module.ts — pero está en la superficie pública que un revisor de seguridad lee primero. La implementación correcta ya existe en casa: .harness/scripts/ci/agentic/review-provider.mjs:35-38 pone la key en un header con el comentario literal "API key in a header, not the URL query string", con topes de presupuesto y 8 patrones de redacción. Fix: portar ese control, y colapsar el puerto duplicado ILLMProvider dentro del seam gobernado IAssistantTransport/SupervisedAssistantClient. | `agent-runtime` | P0/S |
+| [GT-569](../gaps/gap-reference-catalog.es.md#gt-569) | **El número insignia del producto redefine en silencio su propio denominador.** De 379 reglas el motor nativo evalúa 108 y reporta rulesChecked: 111; las 271 restantes — **192 de ellas blocking** — devuelven skipped y se filtran en ruleset-validator.service.ts:88 (engineResults.filter(r => r.result !== 'skipped')) antes de sumar el conteo. Ningún campo lo revela: grep -rn "rulesSkipped" src --include='*.ts' devuelve 0 resultados y ValidationResult solo lleva {status, rulesChecked, issues, coreRef, timestamp}. El mismo campo también SOBRE-cuenta: validate --format json --core <repo> --engine opa devuelve rulesChecked: 379 habiendo ejecutado **cero** políticas (el wasm no resuelve contra el layout del Core). Y native-evaluator.ts:69-72 convierte cualquier excepción del handler en skipped, así que **un evaluador que revienta es indistinguible de una regla verde**. Fix: añadir rulesSkipped + el array de ids saltados a ValidationResult, introducir un estado errored distinto de skipped, emitir un issue WARNING por cada regla MUST saltada, y fallar el run cuando skipped/total supere un umbral configurado. Es un cambio de reporting, no de motor — cerrar la brecha de handlers es aparte y mucho mayor. | `core-domain` | P0/M |
+| [GT-572](../gaps/gap-reference-catalog.es.md#gt-572) | **Reproducido contra el tarball publicado, no contra el working tree.** npm pack @beyondnet/evolith-mcp@1.1.0, arrancado por stdio sin auth: 47 herramientas anunciadas, **47 de 47 devuelven FORBIDDEN (ABAC-02)**; resources/list (11) y prompts/list (8) sí funcionan. Las dos vías de escape que el código define — --allow-no-auth (main.ts:62-63) y EVOLITH_MCP_ALLOW_NO_AUTH=true, ambas documentadas en mcp-server-auth.ts — se probaron en las tres combinaciones incluida NODE_ENV=development y **ninguna tiene efecto sobre el transporte por defecto**, lo cual es peor que su ausencia. Causa raíz: mcpContextStorage.run existe en exactamente un sitio no-spec (mcp-server.service.ts:451) dentro del closure de dispatch HTTP, así que el camino stdio nunca establece contexto. Ninguno de los dos oráculos puede verlo: el smoke de CI asserta success !== undefined, y el tester exploratorio solo conduce MCP por HTTP. Fix: envolver el dispatch stdio en mcpContextStorage con un contexto de sesión local, y hacer que el smoke asserte una invocación real con veredicto. | `MCP Server` | P0/M |
+| [GT-573](../gaps/gap-reference-catalog.es.md#gt-573) | **La integración insignia falla en silencio, con ambos CI en verde.** El branch inline devuelve el envelope legacy: evaluation.controller.ts:186 devuelve evaluationVerdict!.outputEnvelope, construido en satellite-evaluation-pipeline.service.ts:85-94 como createSuccessEnvelope({topology, gates, summary}). El Tracker desenvuelve data (CoreEvaluationGateway.cs:433) y liga CoreEvaluationEnvelope, que declara solo overallVerdict / outcome / resolvedTopology / results.gate[] / evaluatedAt (CoreEvaluationDtos.cs:200-216). Passed queda null (:406), Gates queda vacío (:414), y ToDecision (:583-606) cae a **"SKIPPED"**, escrito como decision=SKIPPED, status=COMPLETED. 0 de 12 workflows del Core construyen el Tracker; 0 tests de contrato en ninguno de los dos repos. Fix: enrutar el branch inline por EvaluationOrchestrator para que devuelva el EvaluationResult canónico, y añadir un test de contrato dirigido por el consumidor en el CI del Core que asserte el JSON exacto que liga CoreEvaluationEnvelope; publicar esos pares request/response como fixtures en @beyondnet/evolith-contracts y promover ambos schemas a MACHINE_CONTRACT_SET. | `Core API` | P0/M |
 | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) | El camino completo desde el código hasta un producto en uso real no está desplegado ni validado | `Cross` | P0/XL |
 
 ## Métricas
 
 | Indicador | Valor |
 |---|---:|
-| Fecha canónica del tablero | 2026-07-25 |
-| Gaps totales | 568 |
+| Fecha canónica del tablero | 2026-07-26 |
+| Gaps totales | 578 |
 | Gaps cerrados | 557 |
-| Gaps pendientes | 11 |
-| P0 abiertos | 1 |
-| P1 abiertos | 2 |
-| P2 abiertos | 5 |
-| Cierre total | 98.1% |
+| Gaps pendientes | 21 |
+| P0 abiertos | 7 |
+| P1 abiertos | 5 |
+| P2 abiertos | 6 |
+| Cierre total | 96.4% |
 | Registros de evidencia de cierre | 539 |
 | Readiness registrado | 4 PASS |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
+| `Infra` | 4 | 1 | 1 | [GT-570](../gaps/gap-reference-catalog.es.md#gt-570), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-577](../gaps/gap-reference-catalog.es.md#gt-577), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464) |
 | `Cross` | 2 | 1 | 1 | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
-| `Infra` | 2 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464) |
-| `agent-runtime` | 1 | 0 | 0 | [GT-531](../gaps/gap-reference-catalog.es.md#gt-531) |
-| `infra-providers` | 1 | 0 | 0 | [GT-536](../gaps/gap-reference-catalog.es.md#gt-536) |
-| `Reliability` | 1 | 0 | 0 | [GT-443](../gaps/gap-reference-catalog.es.md#gt-443) |
+| `Governance` | 3 | 0 | 3 | [GT-576](../gaps/gap-reference-catalog.es.md#gt-576), [GT-574](../gaps/gap-reference-catalog.es.md#gt-574), [GT-578](../gaps/gap-reference-catalog.es.md#gt-578) |
+| `agent-runtime` | 2 | 1 | 0 | [GT-575](../gaps/gap-reference-catalog.es.md#gt-575), [GT-531](../gaps/gap-reference-catalog.es.md#gt-531) |
+| `Core API` | 2 | 1 | 0 | [GT-573](../gaps/gap-reference-catalog.es.md#gt-573), [GT-522](../gaps/gap-reference-catalog.es.md#gt-522) |
 
 ## Fuente y Regla de Actualización
 

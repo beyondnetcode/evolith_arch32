@@ -7126,3 +7126,152 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] `package-lock.json` is not regenerated wholesale. — targeted 30/-18 diff via `overrides`, verified by `npm ci --dry-run`.
 - **Dependencies:** None.
 - **Status:** `DONE`
+
+#### GT-569
+
+**Title:** `rulesChecked` has no denominator, so the verdict is a false green by construction
+
+- **Purpose:** Make the number the product emits mean what it says, so a coverage claim is defensible.
+- **Evidence:** **The product's headline number silently redefines its own denominator.** Of 379 rules the native engine evaluates 108 and reports `rulesChecked: 111`; the remaining 271 — **192 of them `blocking`** — return `skipped` and are filtered out at `ruleset-validator.service.ts:88` (`engineResults.filter(r => r.result !== 'skipped')`) before the count is summed. No field surfaces it: `grep -rn "rulesSkipped" src --include='*.ts'` returns 0 results and `ValidationResult` carries only `{status, rulesChecked, issues, coreRef, timestamp}`. The same field also OVER-counts: `validate --format json --core <repo> --engine opa` returns `rulesChecked: 379` having executed **zero** policies (the wasm does not resolve against the Core layout). And `native-evaluator.ts:69-72` converts any handler exception into `skipped`, so **a crashing evaluator is indistinguishable from a green rule**. Fix: add `rulesSkipped` + the skipped-id array to `ValidationResult`, introduce an `errored` state distinct from `skipped`, emit a WARNING issue per skipped MUST rule, and fail the run when `skipped/total` exceeds a configured threshold. This is a reporting change, not an engine change — closing the handler gap itself is separate and much larger.
+- **Impact:** A customer paying for a "379-rule corpus" receives a PASS over 192 blocking rules that never executed, with no signal. It is the defect that destroys trust irreversibly the first time a customer diffs the corpus against `rulesChecked`, and it makes any coverage figure indefensible in due diligence.
+- **Affected files:** `src/packages/core-domain/src/application/validators/ruleset-validator.service.ts`, `.../evaluators/native-evaluator.ts`, `.../rule-evaluation-engine.ts`, `.../ruleset-validator.types.ts`
+- **Component:** `core-domain` · **Criticality:** P0 · **Complexity:** M
+- **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
+- **Acceptance criteria:**
+  - [ ] The envelope reports `checked` / `skipped` / `total`, and no consumer can read a coverage number without its denominator.
+  - [ ] A handler exception surfaces as `errored`, never as `skipped`.
+  - [ ] A run whose skipped fraction exceeds the configured threshold fails.
+
+#### GT-570
+
+**Title:** The installable package predates the security wave, while SECURITY.md promises it is patched
+
+- **Purpose:** Close the gap between what the repository promises about security and what the registry actually serves.
+- **Evidence:** **npm serves 1.1.0 published 2026-07-18; the security wave landed 2026-07-23.** Verified with `npm view @beyondnet/evolith-cli version time.modified`. The public `CHANGELOG.md` enumerates the corrected files by name under `[Unreleased]`, and `SECURITY.md` declares the 1.1.x line "Current stable line — actively patched". Anyone following the README installs the unpatched build from a repository that publishes where the holes are. Fix: publish **1.2.0** with the security wave, deprecate 1.1.0 on npm with a message pointing at the fixed version, move the security section from `[Unreleased]` to the published heading, and issue the advisory `SECURITY.md` already promises. Follow-on: a release gate that fails when HEAD carries security-tagged commits absent from the last published tag.
+- **Impact:** Hard stop in a customer security review, and an immediate flag in diligence: a governance product with a public, unmet security commitment.
+- **Affected files:** `CHANGELOG.md`, `SECURITY.md`, `.github/workflows/sdk-cli-release.yml`, the 8 published `package.json` files
+- **Component:** `Infra` · **Criticality:** P0 · **Complexity:** S
+- **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
+- **Acceptance criteria:**
+  - [ ] `npm view` reports a version whose `time.modified` is later than the security commits, and 1.1.0 is deprecated.
+  - [ ] The security section sits under a published heading, not under `[Unreleased]`.
+  - [ ] A release gate fails when security-tagged commits are missing from the published tag.
+
+#### GT-571
+
+**Title:** The README quickstart fails twice, for two independent reasons
+
+- **Purpose:** Make the first 60 seconds of the product work for someone who is not its author.
+- **Evidence:** **The highest-traffic surface of the product does not work as written.** (a) `README.md:96-98` (and `README.es.md:95-97`) instruct `evolith init` / `evolith validate`, but the published bin map declares only `evolith-cli` and `evolith-mcp` — the phantom command appears in **447 invocations across 49 non-`.es` markdown files**, so renaming the bin is cheaper than rewriting the docs. (b) Even with the alias, `init --name my-sat` creates a **subdirectory**, so the `validate` that follows in the same cwd targets the parent and raises `GOV-000` "Missing evolith.yaml" plus 41 blocking findings. Inside the correct satellite the first validate still returns 46 findings / 39 blocking, dominated by the vendor's own monorepo rules (`CLI-RR-01` "dist/main.js not found", `TAX-05` "Missing top-level directories: sdk, .harness") with rules from all 8 topologies firing on a repo declared phase-0. Additionally the published binary self-identifies as `main` (`evolith-cli init --help` prints `Usage: main init [options]`) because the program name is never set.
+- **Impact:** The product's highest-traffic surface fails at command 2 of 3, and whoever survives it receives 39 blocking violations from the vendor's own monorepo rules. It single-handedly explains the zero-adoption profile and makes any user-acquisition attempt pointless until fixed.
+- **Affected files:** `src/sdk/cli/package.json` (bin map), `src/sdk/cli/src/main.ts` (program name), `src/sdk/cli/src/commands/init/init.command.ts`, `README.md`, `README.es.md`
+- **Component:** `Evolith CLI` · **Criticality:** P0 · **Complexity:** S
+- **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
+- **Acceptance criteria:**
+  - [ ] `npx @beyondnet/evolith-cli@latest` followed by the literal README sequence completes in a clean container.
+  - [ ] A freshly initialized repo returns 0 blocking findings, asserted by a test that fails if it rises again.
+  - [ ] `--help` names the real command, not `main`.
+
+#### GT-572
+
+**Title:** The published MCP package rejects all 47 of its tools over stdio, and both CI oracles are blind to it
+
+- **Purpose:** Make the primary agent integration work in the configuration the README documents.
+- **Evidence:** **Reproduced against the published tarball, not the working tree.** `npm pack @beyondnet/evolith-mcp@1.1.0`, started over stdio without auth: 47 tools announced, **47 of 47 return FORBIDDEN (ABAC-02)**; `resources/list` (11) and `prompts/list` (8) do work. The two escape routes the code defines — `--allow-no-auth` (`main.ts:62-63`) and `EVOLITH_MCP_ALLOW_NO_AUTH=true`, both documented in `mcp-server-auth.ts` — were tested in all three combinations including `NODE_ENV=development` and **none of them has any effect on the default transport**, which is worse than their absence. Root cause: `mcpContextStorage.run` exists in exactly one non-spec site (`mcp-server.service.ts:451`) inside the HTTP dispatch closure, so the stdio path never establishes a context. Neither oracle can see it: the CI smoke asserts `success !== undefined`, and the exploratory tester drives MCP over HTTP only. Fix: wrap the stdio dispatch in `mcpContextStorage` with a local session context, and make the smoke assert a real invocation with a verdict.
+- **Impact:** The entire differentiator — the agent integration — does not work in its documented configuration, and the repository's test apparatus can never detect it. Any evaluator following the README gets a server that lists 47 tools and executes none.
+- **Affected files:** `src/packages/mcp-server/src/mcp/mcp-server.service.ts`, `src/packages/mcp-server/src/main.ts`, `src/packages/mcp-server/src/mcp/mcp-server-auth.ts`, the CI smoke step
+- **Component:** `MCP Server` · **Criticality:** P0 · **Complexity:** M
+- **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
+- **Acceptance criteria:**
+  - [ ] A real `tools/call` over stdio against the published tarball returns a verdict, not FORBIDDEN.
+  - [ ] The documented escape flags either work or are removed — no flag that silently does nothing.
+  - [ ] The CI smoke asserts a verdict, not the mere existence of a field.
+
+#### GT-573
+
+**Title:** Every inline Tracker evaluation is persisted as SKIPPED even when the Core returns FAIL
+
+- **Purpose:** Make the product's central promise observable end to end, and prevent the boundary from breaking again unnoticed.
+- **Evidence:** **The flagship integration fails silently, with both CIs green.** The inline branch returns the legacy envelope: `evaluation.controller.ts:186` returns `evaluationVerdict!.outputEnvelope`, built at `satellite-evaluation-pipeline.service.ts:85-94` as `createSuccessEnvelope({topology, gates, summary})`. The Tracker unwraps `data` (`CoreEvaluationGateway.cs:433`) and binds `CoreEvaluationEnvelope`, which declares only `overallVerdict / outcome / resolvedTopology / results.gate[] / evaluatedAt` (`CoreEvaluationDtos.cs:200-216`). `Passed` stays null (`:406`), `Gates` stays empty (`:414`), and `ToDecision` (`:583-606`) falls through to **`"SKIPPED"`**, written as `decision=SKIPPED, status=COMPLETED`. 0 of 12 Core workflows build the Tracker; 0 contract tests exist in either repo. Fix: route the inline branch through `EvaluationOrchestrator` so it returns the canonical `EvaluationResult`, and add a consumer-driven contract test in the Core CI asserting the exact JSON `CoreEvaluationEnvelope` binds; publish those request/response pairs as fixtures inside `@beyondnet/evolith-contracts` and promote both schemas to `MACHINE_CONTRACT_SET`.
+- **Impact:** The product's gate ledger records "not applicable" where an architectural FAIL occurred. It is the worst possible failure mode for a governance tool: the promise fails silently while leaving an audit trail that actively misleads.
+- **Affected files:** `src/apps/core-api/src/presentation/controllers/evaluation.controller.ts`, `.../satellite-evaluation-pipeline.service.ts`, `@beyondnet/evolith-contracts`, and the Tracker's `CoreEvaluationGateway.cs` / `CoreEvaluationDtos.cs`
+- **Component:** `Core API` · **Criticality:** P0 · **Complexity:** M
+- **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
+- **Acceptance criteria:**
+  - [ ] A real round-trip verdict in CI records `decision != SKIPPED` over a genuine architectural violation.
+  - [ ] A consumer-driven contract test runs in the Core CI and fails when the envelope shape drifts.
+  - [ ] The evaluate request and `EvaluationResult` schemas are in `MACHINE_CONTRACT_SET` and re-pinned in the Tracker.
+
+#### GT-574
+
+**Title:** There is no enforcement layer: the required check is red and has been merged through 8 times
+
+- **Purpose:** Make a red check actually prevent a merge, which is the precondition for every "Enforced" claim the product makes.
+- **Evidence:** **Every "Enforced" rung claimed across the corpus collapses to "Implemented".** `Validate documentation` has been red since run 30011222627 (2026-07-23T13:26:39Z, last success): **43 of 43 completed runs failed**, plus 5 cancelled, with 8 PRs merged through — the latest, #209, landed on `main` at 2026-07-26T01:18:58Z with **0 reviews** and 5 checks in FAILURE. Protection on `main`: contexts `[Test, Test core-domain, Test core, Test mcp-server, Test core-api, Validate documentation]`, `enforce_admins=false`, `required_pull_request_reviews=null`, `strict=false`. `develop`, where all work lands, returns 404 "Branch not protected", and `ci-cd.yml` does not run on push to `develop`. The workflow owning CodeQL, Trivy, gitleaks, ZAP, `npm audit`, e2e and the parity gate shows **82 failures / 17 cancellations / 1 success in its last 100 runs on main** and none of its 13 jobs is a required context. Fix — counterintuitively, *fewer* gates: reduce the required set to a core that is genuinely green, enable `enforce_admins=true` over that core, protect `develop`, and declare everything else advisory rather than required-but-ignored. Note the current red is a derived-doc staleness assertion (`exploration.spec.ts:289`), so making it green is minutes of work, not days.
+- **Impact:** Direct contradiction with the thesis sold ("CONTROL, not READ") and the first thing a technical reviewer opens. Operationally: no regression can be stopped by the system, only by the sole maintainer's attention.
+- **Affected files:** GitHub branch protection on `main` and `develop`, `.github/workflows/ci-cd.yml`, `.github/workflows/sdk-cli-ci.yml`, `src/tests/exploration/exploration.spec.ts`
+- **Component:** `Governance` · **Criticality:** P1 · **Complexity:** M
+- **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
+- **Acceptance criteria:**
+  - [ ] A test PR with a core check red **cannot** be merged, demonstrated empirically.
+  - [ ] 30 consecutive days with no merge to `main` carrying a red required context.
+  - [ ] `develop` is protected and `ci-cd.yml` runs on push to it.
+
+#### GT-575
+
+**Title:** A published package exports an ungoverned LLM client, with zero egress disclosure
+
+- **Purpose:** Apply to the shipped path the LLM egress controls the product already knows how to build.
+- **Evidence:** **A product that sells AI governance ships its only LLM egress path without any of the controls it sells.** `GeminiProvider.ts:17` builds the URL with the API key in the query string; the whole 57-line file has no `AbortSignal` (`:31-37`), no budget, no redaction, no log or metric, and its only output validation is `JSON.parse(candidate) as T` (`:52`). It is a public export (`src/packages/agent-runtime/src/index.ts:22`) of `@beyondnet/evolith-agent-runtime@1.1.0`. Disclosure across `README.md`, `README.es.md`, `SECURITY.md` and the 8 package READMEs: zero. It violates at least 4 of the 9 blocking `AAI-*` rules the product itself sells. **Exposure is latent, not active** — the only in-tree caller is `src/sdk/cli/src/commands/plan/index.ts:27`, and `PlanCommand` is not registered in `app.module.ts` — but it sits on the public surface a security reviewer reads first. The correct implementation already exists in-house: `.harness/scripts/ci/agentic/review-provider.mjs:35-38` puts the key in a header with the literal comment "API key in a header, not the URL query string", with budget caps and 8 redaction patterns. Fix: port that control, and collapse the duplicate `ILLMProvider` port into the governed `IAssistantTransport`/`SupervisedAssistantClient` seam.
+- **Impact:** No correct answer is possible to an enterprise security questionnaire, and there is no sub-processor declaration for a DPA. Aggravated because the product's thesis is governing AI: it is the first thing a reviewer finds reading the package's public surface.
+- **Affected files:** `src/packages/agent-runtime/src/providers/GeminiProvider.ts`, `src/packages/agent-runtime/src/index.ts`, `README.md`, `README.es.md`, `SECURITY.md`
+- **Component:** `agent-runtime` · **Criticality:** P0 · **Complexity:** S
+- **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
+- **Acceptance criteria:**
+  - [ ] The key travels in a header, with timeout, byte/token budget, input redaction and schema-validated output.
+  - [ ] A "Network egress and data handling" section names the endpoint, what is sent, the opt-in and the sub-processor.
+  - [ ] The repository passes its own 9 blocking `AAI-*` rules in a CI check.
+
+#### GT-576
+
+**Title:** The maturity assessment marks capabilities Validated against evidence that does not exist in code
+
+- **Purpose:** Stop the surface a buyer reads from asserting capabilities the code does not have.
+- **Evidence:** **The self-assessment a buyer reads first is falsifiable in ten minutes, and the document incriminates itself.** `maturity-assessment.md` defines *Validated (Weight 1.0) — Passing all quality gates, tests, and active in CI/CD*, then marks **Pillar 1 Security "Level 4 (Managed) / Validated"** citing multi-tenant Row-Level Security (ADR-0010) and immutable audit trails via CDC (ADR-0016): `grep -rniE 'row.level.security|current_setting\(|debezium|change data capture'` over `src` returns **ZERO files**, and core-api declares no database driver or ORM. **Pillar 4** is marked Level 4 / Validated citing "deterministic monorepo builds via Nx" — no `nx.json` and no `nx` dependency exist. It also claims dual-engine 8/8 parity while the gate covers 3 topologies and the published package ships policies for 5. (Pillar 3's stale `opossum` citation is a different matter — that pillar is honestly marked `Designed`.) Fix: downgrade Pillar 1 to `Designed` with the ADRs listed as intent, delete the Nx citation, report parity against the published artifact, and add a mechanical rule to `09-reconcile-maturity.mjs`: a capability may only be marked `Validated` if its evidence list contains at least one `file:line` reference or CI job, never an ADR alone.
+- **Impact:** Credibility risk above technical risk. A reviewer who finds one inflation can no longer use the rest of the document, including the honest scores; and in a product selling "documentation enforced rather than believed", being caught failing its own drift control is the maximum available reputational damage.
+- **Affected files:** `reference/core/control-center/maturity-reports/maturity-assessment.md` (+ `.es.md`), `.harness/scripts/ci/09-reconcile-maturity.mjs`
+- **Component:** `Governance` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
+- **Acceptance criteria:**
+  - [ ] Zero claims in `maturity-assessment.md` whose evidence is not a `file:line` or a CI job.
+  - [ ] `09-reconcile-maturity.mjs` rejects any `Validated` state backed only by an ADR.
+  - [ ] Parity figures are reported against the published artifact, with the artifact named.
+
+#### GT-577
+
+**Title:** The integration composite action always renders "0 violation(s) found", and no workflow exercises it
+
+- **Purpose:** Make the third enforcement surface of the wedge report the truth, and put it under regression.
+- **Evidence:** **The artifact a customer would wire into their CI reads as a broken tool even though the gate works.** `.github/actions/evolith-validate/action.yml` reads `jq -r '.summary.violations // 0'`, but the real CLI envelope has top-level keys `[success, data, meta]` with `data = {status, rulesChecked, issues, coreRef, timestamp}` — there is no `.summary`. The same applies to the `--output` file (`validate.command.ts:353-361` writes the same `createSuccessEnvelope`). **Important nuance: the action does block correctly** — it captures `EXIT_CODE`, sets `compliance-status=non-compliant` and exits 1 when `fail-on-violation=true`; what is broken is the counter and the PR summary text, which renders literally "Non-compliant -- 0 violation(s) found". And `grep -rn 'evolith-validate' .github/` matches only inside the action's own README: zero consumers across the 12 workflows, so no regression is possible. Fix: change the jq path to `.data.issues | map(select(.blocking)) | length` and add a workflow in this repository that runs the action against a non-conforming satellite fixture, so it is dogfooded and regression-tested.
+- **Impact:** A design partner reads it as a broken tool, and because no workflow runs it there is no way for a regression to be caught.
+- **Affected files:** `.github/actions/evolith-validate/action.yml`, `src/sdk/cli/src/commands/validate/validate.command.ts`
+- **Component:** `Infra` · **Criticality:** P2 · **Complexity:** XS
+- **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
+- **Acceptance criteria:**
+  - [ ] The action reports a violation count != 0 over a non-conforming satellite fixture.
+  - [ ] A workflow in this repository runs the action, so it is dogfooded.
+
+#### GT-578
+
+**Title:** Path-literal guard and the anti-vacuous-pass pattern extended to every guard
+
+- **Purpose:** Remove at the root the two mechanisms that let a broken thing report success, so earlier fixes cannot silently decay.
+- **Evidence:** **The two systemic root causes behind most findings of the 2026-07-26 audit, addressed at the mechanism rather than instance by instance.** (a) *Path literals*: the move to `src/` migrated code and imports but not the hundreds of path strings in CI scripts, workflow `run:` steps, evaluator constants and Helm values — the compiler catches a moved module, nothing catches a moved file referenced by a string, and a path that does not resolve produces silence. Live instances: `OpaEvaluator` hardcoding `<corePath>/rulesets/opa/policy.wasm` (the whole OPA engine is non-functional against the Core layout); `upgrade` diffing against a nonexistent `<corePath>/rulesets`; the CLI boundary config guarding `src/domain`, `src/application`, `src/core`, none of which has ever existed; `sdk-cli-ci.yml:467` invoking a nonexistent script whose real counterpart points at a pre-refactor path, so "Winston Agentic Review" is dead twice and reports `success`. (b) *Anti-vacuous pass*: the pattern already exists at `34-boundary-guard-repository.mjs:57-73` ("A zero-file scan must never be reported as boundary guard passed") and as a negative self-test in the Tracker contract gate — it is applied to 2 guards of ~46. Fix: a ~40-line guard resolving every path literal against disk; every guard publishes its denominator and exits 1 on a zero-element scan; every guard ships a deliberately bad fixture that MUST turn it red in CI; and CI executes every `validationCommand` in `gap-closure-evidence.json`.
+- **Impact:** The repository pays the cost of building and maintaining level 3-4 controls and collects none of their benefit; worse, it displays them green. One missing field in a mapper silences an entire subsystem, and a check named after the flagship agent has been reporting success for months while doing nothing.
+- **Affected files:** `.harness/scripts/ci/**`, `.github/workflows/**`, `product/infra/**` (Helm values), `src/packages/core-domain/src/application/validators/evaluators/**`
+- **Component:** `Governance` · **Criticality:** P1 · **Complexity:** M
+- **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
+- **Acceptance criteria:**
+  - [ ] Zero dead path literals across scripts, workflows, charts and constants, verified by the new guard.
+  - [ ] Zero guards capable of passing with a zero denominator; each guard has a negative fixture that turns it red.
+  - [ ] 100% of the board's `validationCommands` are executable and green in CI.

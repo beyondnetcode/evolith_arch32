@@ -5,9 +5,9 @@
     {
       "id": "GT-574",
       "closedAt": "2026-07-26",
-      "closureCommit": "api-action",
+      "closureCommit": "44fe8dd3",
       "evidence": [
-        "branch protections for main and develop via GitHub API"
+        "reference/core/control-center/gaps/gap-tracking.md"
       ],
       "validationCommands": [
         "gh api repos/beyondnetcode/evolith_arch32/branches/main/protection",

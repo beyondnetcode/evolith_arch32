@@ -7213,9 +7213,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Governance` · **Criticality:** P1 · **Complexity:** M
 - **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
 - **Acceptance criteria:**
-  - [ ] A test PR with a core check red **cannot** be merged, demonstrated empirically.
-  - [ ] 30 consecutive days with no merge to `main` carrying a red required context.
-  - [ ] `develop` is protected and `ci-cd.yml` runs on push to it.
+  - [x] A test PR with a core check red **cannot** be merged, demonstrated empirically.
+  - [x] 30 consecutive days with no merge to `main` carrying a red required context.
+  - [x] `develop` is protected and `ci-cd.yml` runs on push to it.
 
 #### GT-575
 

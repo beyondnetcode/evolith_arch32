@@ -53,7 +53,7 @@
   "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/beyondnetcode/evolith_arch32.git",
+    "url": "git+https://github.com/beyondnetcode/evolith_arch32.git",
     "directory": "src/packages/contracts"
   }
 }

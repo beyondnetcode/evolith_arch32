@@ -1,6 +1,6 @@
 {
   "name": "@beyondnet/evolith-agent-runtime",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Evolith Agent Runtime — decoupled agentic layer that operates Evolith Core through Ports & Adapters (.harness, Core Evaluation, OPA, Tracker, Memory, Scheduler, Hermes). Hexagonal; no runtime/LLM technology is a domain dependency.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -47,7 +47,7 @@
   "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/beyondnetcode/evolith_arch32.git",
+    "url": "git+https://github.com/beyondnetcode/evolith_arch32.git",
     "directory": "src/packages/agent-runtime"
   }
 }

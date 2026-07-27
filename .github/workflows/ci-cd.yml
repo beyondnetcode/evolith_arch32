@@ -412,42 +412,15 @@ jobs:
       - name: Dead-reference ratchet (must not grow)
         run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 305
 
-  publish-npm:
-    name: Publish npm
-    needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api, test-sdk-client, test-infra-providers, test-agent-runtime, test-agent-runtime-api, test-contracts]
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-tags: true
+  # RETIRED 2026-07-27 (GT-570): the `publish-npm` job lived here and published
+  # ONLY `src/sdk/cli`, with `--tag beta` and no provenance, writing the token
+  # into a .npmrc via `npm config set`. It could not publish the other seven
+  # public packages at all — including @beyondnet/evolith-mcp, which carries the
+  # 2026-07-23 security wave — which is why every version on the registry has no
+  # dist.attestations. Publishing now lives in `npm-release.yml`: all eight
+  # workspaces, in dependency order, with --provenance, idempotent against the
+  # registry, and rehearsable via a dry run that defaults to on.
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Publish to npm
-        run: |
-          npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
-          npm publish --access public --tag beta
-        working-directory: src/sdk/cli
-
-  # RETIRED 2026-07-19: the `docker` job built a CLI image
-  # (beyondnetperu/evolith-cli) whose stated purpose was "MCP server in HTTP
-  # mode". That role now belongs to the mcp-server image built by
-  # `docker-services` below, which works. The retired job had never succeeded:
-  # its build context was ./src/sdk/cli, so `npm ci` could not see the monorepo's
-  # root package-lock.json, and its CMD invoked `dist/main.js mcp serve` -- a
-  # subcommand DELETED in dc0b9667 a month ago. Repairing only the build would
-  # have published an image that dies on start with "unknown command 'mcp'".
-  # Nothing depended on this job. src/sdk/cli/Dockerfile is left in place; whether
-  # it should be deleted is a separate decision about that artefact, not about CI.
-  # GT-324: build + push the deployable services to GHCR (GitHub Container
-  # Registry). Auth uses the built-in GITHUB_TOKEN — no extra secret required.
   docker-services:
     name: Build & Push Services (GHCR)
     needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api, test-sdk-client, test-infra-providers]

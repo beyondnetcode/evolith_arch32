@@ -14,7 +14,7 @@ export class RulesetLoader {
     private readonly logger: ILogger,
     private readonly rulesetPath: string
   ) {
-    this.ajv = new Ajv({ allErrors: true });
+    this.ajv = new Ajv({ allErrors: true, strict: false });
     addFormats(this.ajv);
   }
 

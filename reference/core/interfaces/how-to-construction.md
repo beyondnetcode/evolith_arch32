@@ -113,7 +113,7 @@ Response (captured live):
   "data": {
     "status": "failed",
     "rulesChecked": "<n>",
-    "rulesSkipped": 243,
+    "rulesSkipped": "<n>",
     "rulesErrored": 0,
     "rulesTotal": 304,
     "skippedRuleIds": [
@@ -187,7 +187,7 @@ Response (captured live):
       "CORE-0019-01",
       "CORE-0020-01",
       "CORE-0024-01",
-      "
+     
   … (truncated)
 ```
 
@@ -221,7 +221,7 @@ Response (captured live):
   "data": {
     "status": "failed",
     "rulesChecked": "<n>",
-    "rulesSkipped": 243,
+    "rulesSkipped": "<n>",
     "rulesErrored": 0,
     "rulesTotal": 304,
     "skippedRuleIds": [
@@ -295,7 +295,7 @@ Response (captured live):
       "CORE-0019-01",
       "CORE-0020-01",
       "CORE-0024-01",
-      "
+     
   … (truncated)
 ```
 
@@ -323,7 +323,7 @@ Response (captured live):
   "data": {
     "status": "failed",
     "rulesChecked": "<n>",
-    "rulesSkipped": 243,
+    "rulesSkipped": "<n>",
     "rulesErrored": 0,
     "rulesTotal": 304,
     "skippedRuleIds": [
@@ -397,7 +397,7 @@ Response (captured live):
       "CORE-0019-01",
       "CORE-0020-01",
       "CORE-0024-01",
-      "
+     
   … (truncated)
 ```
 
@@ -437,7 +437,7 @@ Response (captured live):
   "data": {
     "status": "failed",
     "rulesChecked": "<n>",
-    "rulesSkipped": 0,
+    "rulesSkipped": "<n>",
     "rulesErrored": 0,
     "rulesTotal": 0,
     "skippedRuleIds": [],

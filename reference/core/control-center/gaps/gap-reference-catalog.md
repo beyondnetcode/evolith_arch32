@@ -7910,3 +7910,16 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] `gh pr checks` on a fresh PR shows no `CodeQL` check reporting "configuration not found".
   - [ ] The only analysis keys on `refs/heads/main` are the two produced by `sdk-cli-ci.yml`.
   - [ ] `CodeQL SAST` still passes and is still a required check — the cleanup must not touch the scanning that works.
+
+#### GT-623
+
+**Title:** The commit convention is mandated in three places, enforced by nothing, and release versions are derived from it
+
+- **Purpose:** Make the commit convention the repository mandates — and derives its versions from — actually enforced, or stop claiming it.
+- **Evidence:** **The hook exists, is wired, and cannot enforce anything.** `.husky/commit-msg` runs `npx --no -- commitlint --version`; when that fails it prints `commitlint is not installed — skipping commit message lint` and exits **successfully**. Verified: `commitlint` appears in neither `dependencies` nor `devDependencies` of the root `package.json`, there is no `commitlint.config.*` or `.commitlintrc*`, and no `commitlint` key in `package.json`. So the else-branch is the only branch that ever runs, on every commit. Observed live on 2026-07-27 while merging `develop` into a feature branch. **What depends on the convention it does not enforce:** `CONTRIBUTING.md` and `.github/pull_request_template.md` mandate Conventional Commits in three places, and — the part that costs money — **release-please derives version bumps from commit messages**, wired into `sdk-cli-release.yml` and `sdk-cli-ci.yml`. **It is already drifting, with a consequence:** 2 of the last 60 non-merge commits use the type `security(...)` (`security(fase-7): add Docker/K8s hardening checklist`, `security(fase-6): add executable security rulesets`), which is not a Conventional Commits type. release-please does not recognise it, so **a commit that announces itself as a security change contributes nothing to the version bump** — which is the same failure mode as [`GT-570`](./gap-reference-catalog.md#gt-570), where a security wave sits unpublished. Fix: install and configure commitlint so the hook takes its real branch, or delete the hook and stop claiming the convention. Failing open is the worst of the three options, because it produces the appearance of enforcement. If the `security` type is wanted, declare it in the config and map it to a bump — do not leave it to a linter that never runs.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Observed live on 2026-07-27: the hook printed its "skipping" message while merging `develop` into a working branch. It was named inside the process picture of `GT-574`; it is broken out here because it has a concrete, measurable consequence for versioning.
+- **Acceptance criteria:**
+  - [ ] A commit with a malformed message is rejected locally, demonstrated by trying one.
+  - [ ] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
+  - [ ] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.

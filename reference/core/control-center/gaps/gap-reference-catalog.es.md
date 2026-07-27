@@ -7197,6 +7197,135 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 ---
 
+### Evaluación por componente 2026-07-26 — GT-601…GT-608
+
+> Hallazgos de una evaluación del código componente a componente (cinco evaluadores en paralelo, uno por componente, más síntesis de conjunto), realizada en el repositorio compañero `why-architecture` y registrada aquí solo tras verificarla contra este código. **Deliberadamente no registrados como duplicados:** la taxonomía de códigos de salida es [`GT-580`](#gt-580), el `outputSchema` de MCP es [`GT-581`](#gt-581), la revisión stateless `2026-07-28` es [`GT-582`](#gt-582), los esquemas por operación son [`GT-583`](#gt-583), la identidad del solicitante en `EvaluationContext` es [`GT-586`](#gt-586), el mapping C4↔código es [`GT-590`](#gt-590), el deterioro legal en imports es [`GT-594`](#gt-594), los handlers nativos ausentes son [`GT-598`](#gt-598) y la atestación de cadena de suministro es [`GT-597`](#gt-597). **Una afirmación de la evaluación fue refutada antes de registrarla y se deja constancia aquí en vez de abrir fila:** sostenía que `design` y `phase-artifacts` "siempre devuelven PASS" por falta de evaluador; ambos tienen evaluador (`kind-evaluators.ts:290`, el evaluador ADVISORY de diseño, GT-429 / ADR-0104), y ser advisory es una propiedad deliberada del diseño, no un gap.
+
+#### GT-601
+
+**Título:** Tres campos de trazabilidad escritos como arrays vacíos incondicionales, y el motor fijado a mano
+
+- **Propósito:** Que el rastro de auditoría registre qué se evaluó de verdad, y con qué motor.
+- **Evidencia:** `canonical-result.mapper.ts:130` fija `rulesExecuted: []`, `:134` `missingEvidence: []`, `:104` y `:133` `risks: []` —literales en cada evaluación real— y `:72` fija `engine: 'opa'` en toda referencia de `policiesApplied` corriera `NativeEvaluator` u `OpaEvaluator`. `sarif-exporter.ts:256` y `drift-gate.ts:203` derivan `evaluatedRules` de `rulesExecuted`.
+- **Impacto:** Todo SARIF y todo manifiesto de evidencia del drift-gate emitido hoy dice "0 reglas evaluadas", y el único artefacto que probaría la paridad dual atribuye mal la mitad de sus ejecuciones. El contrato EVD-01..04 queda satisfecho en la forma y vacío en el fondo: el grafo de auditoría acumulado —el foso declarado— se escribe en blanco desde el origen.
+- **Ficheros afectados:** `src/packages/core-domain/src/application/mappers/canonical-result.mapper.ts`, `.../exporters/sarif-exporter.ts`, `.../enforcement/drift-gate.ts`
+- **Componente:** `Evolith Core` · **Criticidad:** P0 · **Complejidad:** S
+- **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
+- **Criterios de aceptación:**
+  - [ ] `rulesExecuted` contiene todas las reglas que la evaluación ejecutó realmente, verificado por test contra una fixture de recuento conocido.
+  - [ ] `engine` refleja el evaluador que corrió, con test para la ruta nativa y la de OPA.
+  - [ ] Una exportación SARIF de una evaluación real declara `evaluatedRules` distinto de cero.
+  - [ ] `missingEvidence` y `risks` se pueblan o se retiran del contrato; un campo siempre vacío no se envía.
+
+#### GT-602
+
+**Título:** Quince de cincuenta herramientas MCP están denegadas en producción por la política compilada
+
+- **Propósito:** Recuperar el 30% de la superficie de herramientas que la propia política del dispatcher rechaza.
+- **Evidencia:** Establecido cargando `src/sdk/cli/rulesets/opa/policy.wasm` —el artefacto que se usa en dispatch, no el fuente rego— y evaluándolo para un `architect` en `production`: las quince herramientas de ADR, patrones, scaffold, upgrade, init, fixtures y docs devuelven `ABAC-03` + `ABAC-01`. `mcp-tool-dispatch.ts:146` exige que permitan native **y** OPA, así que las quince quedan FORBIDDEN. `abac-classification-coverage.spec.ts` guarda TS↔registro; nada guarda rego↔TS.
+- **Impacto:** Un agente que pide a Evolith sus propios ADRs es rechazado. El fallo es silencioso y total en producción, y falsifica la afirmación de paridad dual justo donde más carga: la decisión de autorización.
+- **Ficheros afectados:** `src/rulesets/opa/abac-mcp-tool-access.rego`, `src/rulesets/opa/policy.wasm`, `src/sdk/cli/rulesets/opa/policy.wasm`, `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts`
+- **Componente:** `Evolith MCP` · **Criticidad:** P0 · **Complejidad:** M
+- **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
+- **Criterios de aceptación:**
+  - [ ] Un test evalúa el `policy.wasm` compilado sobre todos los nombres registrados y exige ALLOW para un `architect` en `production`.
+  - [ ] Los conjuntos de herramientas del rego se generan desde el registro en vez de mantenerse a mano.
+  - [ ] CI falla cuando una herramienta existe en el registro TypeScript y no en la política compilada.
+
+#### GT-603
+
+**Título:** El ledger de turnos de agente está escrito, probado y sin registrar, y el actor no se puede tipar retroactivamente
+
+- **Propósito:** Hacer respondible la pregunta humano-versus-agente antes de que se acumule historia.
+- **Evidencia:** `AgentExecutionService.cs` valida que el alcance existe y está concedido, luego audita antes de ejecutar y aborta el turno si falla la escritura de auditoría; `AgentTurnAuditor.cs` registra alcances concedidos frente a usados y guarda la longitud del prompt, no su texto; `AgentExecutionTests.cs` lo cubre. `IAgentExecutionPort` aparece en cero registros de DI y cero endpoints, y `AssistantEndpoints.cs` pasa por `AgentRuntimeGateway` sin persistir nada. `AuditEntryProps.cs:11` declara `public Guid ActorId` sin `actor_type`, `agent_id`, `model_id` ni `session_id`.
+- **Impacto:** La afirmación diferenciadora del producto es hoy falsa en código que está al 90%. Y como `audit_entries` es append-only por trigger (migración `20260719202323`), toda fila escrita antes de que exista el discriminador queda permanentemente sin atribuir — es el único elemento del board que **caduca** en vez de acumular coste.
+- **Ficheros afectados:** `evolith_tracker` — `src/Tracker.Application/Integration/AgentExecution/*`, `DependencyInjection.cs`, `AssistantEndpoints.cs`, `AuditEntryProps.cs`, new EF Core migration
+- **Componente:** `Evolith Tracker` · **Criticidad:** P0 · **Complejidad:** M
+- **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
+- **Criterios de aceptación:**
+  - [ ] `IAgentExecutionPort` e `IAgentTurnAuditor` quedan registrados y `AssistantEndpoints` pasa por ellos.
+  - [ ] `audit_entries` incorpora `actor_type`, `agent_id`, `model_id` y `session_id`, con `actor_type` no nulo en filas nuevas.
+  - [ ] `audit-trail.robot.mjs` verifica una entrada atribuida a agente de punta a punta.
+  - [ ] La migración entra **antes** de que cualquier despliegue en producción escriba filas de auditoría.
+
+#### GT-604
+
+**Título:** Ninguna superficie escribe evidencia en el Tracker
+
+- **Propósito:** Dar a los componentes que generan evidencia una forma de depositarla.
+- **Evidencia:** Un grep sobre `src/sdk/cli`, `src/packages/mcp-server` y `src/packages/core-domain` no devuelve URL base del Tracker ni cliente de ingesta. La única URL del Tracker en este repositorio es `AGENT_RUNTIME_APPROVAL_TRACKER_URL`, y los únicos escritores de `core_evaluation_transactions` son endpoints iniciados por el Tracker.
+- **Impacto:** Cada `evolith validate`, cada veto de `enforce edit`, cada `tools/call` y cada ejecución del drift-gate se evapora al terminar el proceso. La estrategia se apoya en evidencia acumulada mientras las superficies que la producen no tienen dónde depositarla. Es un defecto de composición invisible a cualquier revisión de un solo componente.
+- **Ficheros afectados:** `src/sdk/cli/src/**`, `src/packages/mcp-server/src/**`, `.../canonical-result.mapper.ts`, ingest endpoint in `evolith_tracker`
+- **Componente:** `Evolith Suite` · **Criticidad:** P0 · **Complejidad:** L
+- **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
+- **Criterios de aceptación:**
+  - [ ] Un contrato de ingesta con `correlationId`, motor real, reglas ejecutadas, violaciones y responsable.
+  - [ ] Un cliente compartido usado por la CLI, el servidor MCP y el drift-gate, autenticado por clave de máquina como ya hace `/runtime-approvals`.
+  - [ ] Un robot RoboSoft verifica que una evaluación desde la CLI produce una fila persistida en el Tracker.
+  - [ ] Depende de GT-601 para que la carga no vaya vacía y de GT-603 para que sea atribuible.
+
+#### GT-605
+
+**Título:** Dos grafos de evidencia, a cada uno le falta la mitad del otro
+
+- **Propósito:** Hacer la cadena de evidencia recorrible, no solo almacenada.
+- **Evidencia:** `evidence-graph.ts` define aristas tipadas (`requires` / `validates` / `blocks`) con cero consumidores fuera de su propio test. El Tracker persiste `References` como `List<string>` en jsonb, cuyo único consumidor no-test es un `Contains()` lineal para deduplicar: sin tabla de aristas, sin tipo, sin búsqueda inversa, sin consulta por profundidad.
+- **Impacto:** "Qué ADR se movió por qué decisión de puerta por qué turno de agente" es inrespondible, y esa traversal es la mitad fuerte del foso declarado. El modelo tipado vive donde nada persiste; el persistido vive donde nada está tipado.
+- **Ficheros afectados:** `src/packages/core-domain/src/evidence/evidence-graph.ts`, `src/packages/contracts/**`, `evolith_tracker` — `PostgreSqlEvidenceRecordRepository.cs`, new `evidence_edges` migration
+- **Componente:** `Evolith Suite` · **Criticidad:** P1 · **Complejidad:** M
+- **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
+- **Criterios de aceptación:**
+  - [ ] El tipo de arista del Core se exporta desde el paquete de contratos compartidos.
+  - [ ] Existe una tabla `evidence_edges` con índices en ambos sentidos, rellenada desde `ReferencesJson`.
+  - [ ] Un endpoint de grafo acotado por profundidad devuelve el camino decisión→evidencia de una iniciativa.
+  - [ ] `References` se conserva como proyección durante una release antes de retirarse.
+
+#### GT-606
+
+**Título:** ADR-0093 está Aceptado y sin implementar sobre veinte herramientas mutativas
+
+- **Propósito:** Cerrar el riesgo de actualización perdida que el ADR se escribió para evitar, o retirar el ADR.
+- **Evidencia:** El ADR (Aceptado 2026-06-20) exige `baseSha` en toda herramienta mutativa, verificación de HEAD antes de aplicar, contrato de error `CONCURRENCY_CONFLICT` y bloqueos pesimistas con techo de dos minutos. Un grep de `baseSha`, `CONCURRENCY_CONFLICT`, `lockedBy` o `.lock` sobre `src/packages/mcp-server/src` devuelve cero, frente a 20 herramientas con `mutative: true` en 14 ficheros.
+- **Impacto:** Dos agentes sobre un mismo workspace producen la actualización perdida que el ADR anticipó. Un producto de governance que pierde una escritura en silencio falla en el modo que existe para evitar. Además, un ADR Aceptado que el propio producto incumple es un agujero de credibilidad que un evaluador encuentra con un grep.
+- **Ficheros afectados:** `src/packages/mcp-server/src/tools/**` (20 mutative tools), `reference/core/architecture/adrs/core/0093-mcp-concurrency-locking.md`
+- **Componente:** `Evolith MCP` · **Criticidad:** P1 · **Complejidad:** M
+- **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
+- **Criterios de aceptación:**
+  - [ ] Toda herramienta mutativa acepta `baseSha` y lo verifica contra HEAD antes de aplicar.
+  - [ ] Se devuelve un envelope `CONCURRENCY_CONFLICT` ante discrepancia, con test.
+  - [ ] Si se declina implementarlo, ADR-0093 sale de Aceptado con la razón registrada.
+
+#### GT-607
+
+**Título:** Siete ADRs agénticos Aceptados sin código que los implemente
+
+- **Propósito:** Que el índice de ADRs sobreviva al grep de un evaluador técnico.
+- **Evidencia:** ADR-0081, 0082, 0086, 0088, 0089, 0092 y 0094 devuelven cero apariciones en `src/` para sus artefactos definitorios: sin aplicación de `sandbox.mode`, sin atributo `gen_ai.*`, sin `act.sub`, sin `X-Agent-Depth`, sin `AgentTaskRequested`, sin etiqueta de confianza sobre el grounding. `harness-process.adapter.ts:84` lanza procesos hijo con `...process.env`, entregando a cada script de capacidad `AGENT_RUNTIME_CORE_TOKEN`, el token del tracker y `EVOLITH_RAG_PG_URL` — el inverso concreto de ADR-0081.
+- **Impacto:** Siete decisiones Aceptadas sin código es la forma más rápida de perder una diligencia técnica, y es autoinfligida. El remedio es principalmente una corrección de estado; solo la exposición de credenciales en el spawn es un defecto que exige código.
+- **Ficheros afectados:** `reference/core/architecture/adrs/core/008{1,2,6,8,9}-*.md`, `0092-*.md`, `0094-*.md`, `src/packages/agent-runtime/src/adapters/harness/harness-process.adapter.ts`
+- **Componente:** `Evolith Agent Runtime` · **Criticidad:** P1 · **Complejidad:** S
+- **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
+- **Criterios de aceptación:**
+  - [ ] Cada uno de los siete ADRs queda implementado o sale de Aceptado con nota explícita de implementación.
+  - [ ] El spawn pasa un entorno con lista blanca; ningún `*_TOKEN` ni `*_URL` llega a un script de capacidad.
+  - [ ] Un test verifica que una capacidad lanzada no puede leer el token del Core.
+
+#### GT-608
+
+**Título:** El subsistema de aprobación humana nunca se ha ejecutado
+
+- **Propósito:** Ejercitar de punta a punta la afirmación de governance que el producto hace más alto.
+- **Evidencia:** Las 7 entradas de `default-skills.ts` y las 16 capacidades de `.harness/manifest.yaml` declaran `requiresApproval: false`, dejando `PendingApprovalAdapter`, `FileApprovalStore`, `HttpSlackClient`, `TrackerApprovalAdapter` y su cliente HTTP —unas 1.000 líneas— inalcanzables, con `evolith_hitl_approvals_total` estructuralmente cero. La mitad del Tracker es real y compatible campo a campo. Aparte, `LocalSkillRegistryAdapter` siembra las 7 fijas y nunca lee el manifiesto, con lo que 9 capacidades más son invisibles y la postura de governance tiene dos fuentes de verdad.
+- **Impacto:** Una costura de governance que nunca ha corrido de punta a punta no es evidencia de governance. Durante esta evaluación dos lectores independientes de las dos mitades discreparon sobre si el endpoint contrario existía siquiera — que es exactamente el aspecto que tiene una costura sin ejercitar vista desde dentro.
+- **Ficheros afectados:** `src/packages/agent-runtime/src/adapters/skills/default-skills.ts`, `.harness/manifest.yaml`, `.../local-skill-registry.adapter.ts`
+- **Componente:** `Evolith Agent Runtime` · **Criticidad:** P1 · **Complejidad:** M
+- **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
+- **Criterios de aceptación:**
+  - [ ] El catálogo de skills se deriva de `.harness/manifest.yaml`, con test de CI que exija catálogo ⊇ manifiesto.
+  - [ ] Al menos dos capacidades destructivas declaran `requiresApproval: true`.
+  - [ ] Un test de punta a punta cubre pendiente → aprobado → ejecutado → auditado entre el Runtime y el Tracker.
+  - [ ] `evolith_hitl_approvals_total` es distinto de cero en una ejecución de integración.
+
 ### Revisión de la ruta AI-native 2026-07-26 — GT-580…GT-595
 
 > Oportunidades tomadas del **Evolith AI Career Path** del repositorio acompañante `why-architecture` (`docs/evolith-ai-career-path-{es,en}.md`) y verificadas una por una contra el código de este repositorio antes de registrarlas. Los ítems que el documento propone y que la verificación **refutó o encontró ya entregados** NO se registraron a propósito: los evaluadores de `design` / `phase-artifacts` existen (`kind-evaluators.ts:304`, `:454`), el hook en tiempo de edición es GT-526 (COMPLETADO), la conformidad de paridad de superficies es el tester exploratorio cableado a `Validate documentation`, el fallback de la Checks API se cerró con GT-518, y toda la lista de "no construir" del §6.4 (GraphRAG, base de datos de grafos, razonadores OWL, vector DB dedicada, fine-tuning, bucle ReAct, coding agent propio, dashboard DORA) queda aquí solo como la decisión de no abrirle filas. GT-595 es la excepción en cuanto a procedencia: se encontró al contrastar, no en el documento.

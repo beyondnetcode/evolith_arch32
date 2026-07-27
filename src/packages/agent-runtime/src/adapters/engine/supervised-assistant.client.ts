@@ -42,6 +42,13 @@ import type { CoworkClient, CoworkProposal } from './cowork-agent.adapter';
 /** Id of the synthetic capability that models "contacting the AI assistant". */
 export const ASSISTANT_INVOKE_SKILL_ID = 'assistant.invoke';
 
+/**
+ * Value stamped on {@link AssistantSupervision.gate} so a transport (and the
+ * egress audit trail) can name the gate that granted. Deliberately NOT exported
+ * from the package: it is evidence a transport reads, not a knob a caller sets.
+ */
+const SUPERVISION_GATE_ID = 'SupervisedAssistantClient';
+
 export interface SupervisedAssistantOptions {
   /**
    * Feature flag. Default FALSE — the assistant is never contacted. Must be set
@@ -125,11 +132,21 @@ export class SupervisedAssistantClient implements CoworkClient {
       };
     }
 
-    // Approved — make the REAL call. A transport failure is fail-closed: it
-    // yields no tool, so the bounded executor proposes nothing.
+    // Approved — make the REAL call. The decision travels WITH the invocation
+    // (GT-575): a governed transport refuses to open a socket unless it can see
+    // that this gate ran, so there is exactly one supervised path to a provider
+    // and exactly one human prompt per call.
     let proposal: AssistantProposal;
     try {
-      proposal = await this.transport.invoke({ request, availableSkills });
+      proposal = await this.transport.invoke({
+        request,
+        availableSkills,
+        supervision: {
+          granted: true,
+          approver: decision.approver,
+          gate: SUPERVISION_GATE_ID,
+        },
+      });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return {

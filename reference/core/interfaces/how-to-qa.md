@@ -50,7 +50,7 @@ Response (captured live):
     "rulesChecked": "<n>",
     "rulesSkipped": "<n>",
     "rulesErrored": 0,
-    "rulesTotal": 379,
+    "rulesTotal": 304,
     "skippedRuleIds": [
       "ACL-02",
       "ACL-03",
@@ -158,7 +158,7 @@ Response (captured live):
     "rulesChecked": "<n>",
     "rulesSkipped": "<n>",
     "rulesErrored": 0,
-    "rulesTotal": 379,
+    "rulesTotal": 304,
     "skippedRuleIds": [
       "ACL-02",
       "ACL-03",
@@ -260,7 +260,7 @@ Response (captured live):
     "rulesChecked": "<n>",
     "rulesSkipped": "<n>",
     "rulesErrored": 0,
-    "rulesTotal": 379,
+    "rulesTotal": 304,
     "skippedRuleIds": [
       "ACL-02",
       "ACL-03",

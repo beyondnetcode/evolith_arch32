@@ -7258,8 +7258,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Infra` · **Criticality:** P2 · **Complexity:** XS
 - **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
 - **Acceptance criteria:**
-  - [ ] The action reports a violation count != 0 over a non-conforming satellite fixture.
-  - [ ] A workflow in this repository runs the action, so it is dogfooded.
+  - [x] The action reports a violation count != 0 over a non-conforming satellite fixture.
+  - [x] A workflow in this repository runs the action, so it is dogfooded.
 
 #### GT-578
 
@@ -7291,6 +7291,135 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] The fix lives in one place, so a new `process.exit()` cannot reintroduce it.
 
 ---
+
+### Component assessment 2026-07-26 — GT-601…GT-608
+
+> Findings from a component-by-component source assessment (five parallel assessors, one per component, plus a whole-product synthesis), conducted in the companion `why-architecture` repository and registered here only after verification against this code. **Deliberately not registered as duplicates:** exit-code taxonomy is [`GT-580`](#gt-580), MCP `outputSchema` is [`GT-581`](#gt-581), the `2026-07-28` stateless revision is [`GT-582`](#gt-582), per-operation schemas are [`GT-583`](#gt-583), requester identity in `EvaluationContext` is [`GT-586`](#gt-586), C4↔code mapping is [`GT-590`](#gt-590), import-legal decay is [`GT-594`](#gt-594), missing native handlers is [`GT-598`](#gt-598) and supply-chain attestation is [`GT-597`](#gt-597). **One assessment claim was refuted before registration and is recorded here rather than opened as a row:** the assessment stated that `design` and `phase-artifacts` "always return PASS" for lack of an evaluator; both have evaluators (`kind-evaluators.ts:290`, the ADVISORY design evaluator, GT-429 / ADR-0104), and being advisory is a deliberate design property, not a gap.
+
+#### GT-601
+
+**Title:** Three traceability fields written as unconditional empty arrays, and the engine hardcoded
+
+- **Purpose:** Make the audit trail record what was actually evaluated, and by which engine.
+- **Evidence:** `canonical-result.mapper.ts:130` sets `rulesExecuted: []`, `:134` `missingEvidence: []`, `:104` and `:133` `risks: []` — literals on every real evaluation — and `:72` hardcodes `engine: 'opa'` on every `policiesApplied` ref regardless of whether `NativeEvaluator` or `OpaEvaluator` ran. `sarif-exporter.ts:256` and `drift-gate.ts:203` both derive `evaluatedRules` from `rulesExecuted`.
+- **Impact:** Every SARIF log and every PR drift-gate evidence manifest emitted today states "0 rules evaluated", and the one artifact that would prove dual-engine parity misattributes half its runs. The EVD-01..04 evidence contract is satisfied structurally and empty in substance, so the accumulated audit graph — the stated moat — is written blank at its source.
+- **Affected files:** `src/packages/core-domain/src/application/mappers/canonical-result.mapper.ts`, `.../exporters/sarif-exporter.ts`, `.../enforcement/drift-gate.ts`
+- **Component:** `Evolith Core` · **Criticality:** P0 · **Complexity:** S
+- **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
+- **Acceptance criteria:**
+  - [ ] `rulesExecuted` contains every rule the evaluation actually executed, asserted by test against a fixture with a known rule count.
+  - [ ] `engine` reflects the evaluator that ran, with a test covering both the native and the OPA path.
+  - [ ] A SARIF export from a real evaluation reports a non-zero `evaluatedRules`.
+  - [ ] `missingEvidence` and `risks` are either populated or removed from the contract; an always-empty field does not ship.
+
+#### GT-602
+
+**Title:** Fifteen of fifty MCP tools are denied in production by the compiled policy
+
+- **Purpose:** Restore the 30% of the tool surface that the dispatcher's own policy currently refuses.
+- **Evidence:** Established by loading `src/sdk/cli/rulesets/opa/policy.wasm` — the artifact used at dispatch, not the rego source — and evaluating it for an `architect` in `production`: `evolith-adr-list`, `evolith-adr-get/create/update/matrix`, `evolith-pattern-list/get/list-by-topology`, `evolith-scaffold`, `evolith-docs-scaffold`, `evolith-init-batch`, `evolith-sdlc-generate`, `evolith-fixtures` and `evolith-upgrade-plan/apply` all return `ABAC-03` + `ABAC-01`. `mcp-tool-dispatch.ts:146` requires native **and** OPA to allow, so all fifteen are FORBIDDEN. `abac-classification-coverage.spec.ts` guards TS↔registry; nothing guards rego↔TS.
+- **Impact:** An agent asking Evolith for its own ADRs is refused. The failure is silent and total in production, and it falsifies the dual-engine parity claim at the point where it is most load-bearing — the authorization decision.
+- **Affected files:** `src/rulesets/opa/abac-mcp-tool-access.rego`, `src/rulesets/opa/policy.wasm`, `src/sdk/cli/rulesets/opa/policy.wasm`, `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts`
+- **Component:** `Evolith MCP` · **Criticality:** P0 · **Complexity:** M
+- **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
+- **Acceptance criteria:**
+  - [ ] A test evaluates the compiled `policy.wasm` over all registered tool names and asserts ALLOW for an `architect` in `production`.
+  - [ ] The rego tool sets are generated from the tool registry rather than hand-maintained.
+  - [ ] CI fails when a tool exists in the TypeScript registry and not in the compiled policy.
+
+#### GT-603
+
+**Title:** The agent-turn ledger is written, tested and unregistered, and the actor cannot be typed retroactively
+
+- **Purpose:** Make the human-versus-agent question answerable before any history accumulates.
+- **Evidence:** `Tracker.Application/Integration/AgentExecution/AgentExecutionService.cs` validates that a scope exists and is granted, then audits before executing and aborts the turn if the audit write fails; `AgentTurnAuditor.cs` records granted-versus-used scopes and stores prompt length rather than text; `AgentExecutionTests.cs` covers it. `IAgentExecutionPort` appears in zero DI registrations and zero endpoints, and `AssistantEndpoints.cs` proxies through `AgentRuntimeGateway` persisting nothing. `AuditEntryProps.cs:11` declares `public Guid ActorId` with no `actor_type`, `agent_id`, `model_id` or `session_id`.
+- **Impact:** The differentiating claim of the product is currently false in code that is roughly 90% written. And because `audit_entries` is append-only by database trigger (migration `20260719202323`), every row written before the discriminator exists is permanently unattributable — this is the one item on the board that expires rather than accumulating cost.
+- **Affected files:** `evolith_tracker` — `src/Tracker.Application/Integration/AgentExecution/*`, `DependencyInjection.cs`, `AssistantEndpoints.cs`, `AuditEntryProps.cs`, new EF Core migration
+- **Component:** `Evolith Tracker` · **Criticality:** P0 · **Complexity:** M
+- **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
+- **Acceptance criteria:**
+  - [ ] `IAgentExecutionPort` and `IAgentTurnAuditor` are registered and `AssistantEndpoints` routes through them.
+  - [ ] `audit_entries` carries `actor_type`, `agent_id`, `model_id` and `session_id`, with `actor_type` non-null on new rows.
+  - [ ] `audit-trail.robot.mjs` asserts an agent-attributed entry end to end.
+  - [ ] The migration lands before any production deployment writes audit rows.
+
+#### GT-604
+
+**Title:** No surface writes evidence to the Tracker
+
+- **Purpose:** Give the components that generate evidence a way to deposit it.
+- **Evidence:** Grep across `src/sdk/cli`, `src/packages/mcp-server` and `src/packages/core-domain` returns no Tracker base URL and no ingest client. The only Tracker URL in this repository is `AGENT_RUNTIME_APPROVAL_TRACKER_URL`, and the only writers of `core_evaluation_transactions` are Tracker-initiated endpoints.
+- **Impact:** Every `evolith validate`, every `enforce edit` veto, every MCP `tools/call` and every CI drift-gate run evaporates on process exit. The strategy is premised on accumulated evidence while the surfaces that produce it have no deposit path. This is a composition defect invisible to any single-component review, because each component is internally consistent.
+- **Affected files:** `src/sdk/cli/src/**`, `src/packages/mcp-server/src/**`, `.../canonical-result.mapper.ts`, ingest endpoint in `evolith_tracker`
+- **Component:** `Evolith Suite` · **Criticality:** P0 · **Complexity:** L
+- **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
+- **Acceptance criteria:**
+  - [ ] One ingest contract carrying `correlationId`, the true engine, executed rules, violations and owner.
+  - [ ] A shared client used by the CLI, the MCP server and the drift gate, authenticated by machine key as `/runtime-approvals` already is.
+  - [ ] A RoboSoft robot asserts that a CLI evaluation produces a persisted Tracker row.
+  - [ ] Depends on GT-601 for the payload to be non-empty and on GT-603 for it to be attributable.
+
+#### GT-605
+
+**Title:** Two evidence graphs, each missing the other's half
+
+- **Purpose:** Make the evidence chain traversable rather than merely stored.
+- **Evidence:** `src/packages/core-domain/src/evidence/evidence-graph.ts` defines typed edges (`requires` / `validates` / `blocks`) with zero consumers outside its own spec. The Tracker persists `EvidenceRecordProps.References` as `List<string>` in a jsonb column whose only non-test consumer is a linear `Contains()` for external-id dedup: no edge table, no edge type, no reverse lookup, no depth query.
+- **Impact:** "Which ADR moved because of which gate decision because of which agent turn" is unanswerable, and that traversal is the stronger half of the stated moat. The typed model lives where nothing persists; the persisted model lives where nothing is typed.
+- **Affected files:** `src/packages/core-domain/src/evidence/evidence-graph.ts`, `src/packages/contracts/**`, `evolith_tracker` — `PostgreSqlEvidenceRecordRepository.cs`, new `evidence_edges` migration
+- **Component:** `Evolith Suite` · **Criticality:** P1 · **Complexity:** M
+- **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
+- **Acceptance criteria:**
+  - [ ] The Core edge type is exported from the shared contracts package.
+  - [ ] An `evidence_edges` table exists with indexes in both directions, backfilled from `ReferencesJson`.
+  - [ ] A depth-bounded graph endpoint returns the decision-to-evidence path for one initiative.
+  - [ ] `References` is retained as a projection for one release before removal.
+
+#### GT-606
+
+**Title:** ADR-0093 is Accepted and unimplemented across twenty mutative tools
+
+- **Purpose:** Close the lost-update hazard the ADR was written to prevent, or withdraw the ADR.
+- **Evidence:** ADR-0093 (Accepted 2026-06-20) mandates a `baseSha` parameter on every mutative tool, HEAD verification before applying, a `CONCURRENCY_CONFLICT` error contract and pessimistic locks with a two-minute ceiling. Grep for `baseSha`, `CONCURRENCY_CONFLICT`, `lockedBy` or `.lock` across `src/packages/mcp-server/src` returns zero, against 20 tools declaring `mutative: true` across 14 files.
+- **Impact:** Two agents operating on one workspace produce the exact lost update the ADR anticipated. A governance product that silently loses a write is failing in the mode it exists to prevent. Secondarily, an Accepted ADR the product itself violates is a credibility hole an evaluator finds with one grep.
+- **Affected files:** `src/packages/mcp-server/src/tools/**` (20 mutative tools), `reference/core/architecture/adrs/core/0093-mcp-concurrency-locking.md`
+- **Component:** `Evolith MCP` · **Criticality:** P1 · **Complexity:** M
+- **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
+- **Acceptance criteria:**
+  - [ ] Every mutative tool accepts `baseSha` and verifies it against HEAD before applying.
+  - [ ] A `CONCURRENCY_CONFLICT` envelope is returned on mismatch, with a test.
+  - [ ] If implementation is declined, ADR-0093 is moved out of Accepted with the reason recorded.
+
+#### GT-607
+
+**Title:** Seven agentic ADRs are Accepted with no implementing code
+
+- **Purpose:** Make the ADR index survive a grep by a technical evaluator.
+- **Evidence:** ADR-0081 (sandbox isolation), 0082 (trust boundary), 0086 (telemetry and cost control), 0088 (sovereign identity), 0089 (event-driven agentic workflows), 0092 (infinite-loop prevention) and 0094 (multi-agent handoff) return zero grep hits across `src/` for their defining artifacts: no `sandbox.mode` enforcement, no `gen_ai.*` attribute, no `act.sub`, no `X-Agent-Depth`, no `AgentTaskRequested`, no trust label on grounding. `harness-process.adapter.ts:84` spawns child processes with `...process.env`, handing every capability script `AGENT_RUNTIME_CORE_TOKEN`, the tracker token and `EVOLITH_RAG_PG_URL` — the concrete inverse of ADR-0081.
+- **Impact:** Seven Accepted decisions with no code is the fastest available way to lose a technical due diligence, and it is self-inflicted. The remedy is primarily a status correction; only the credential exposure in the spawn is a defect requiring code.
+- **Affected files:** `reference/core/architecture/adrs/core/008{1,2,6,8,9}-*.md`, `0092-*.md`, `0094-*.md`, `src/packages/agent-runtime/src/adapters/harness/harness-process.adapter.ts`
+- **Component:** `Evolith Agent Runtime` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
+- **Acceptance criteria:**
+  - [ ] Each of the seven ADRs is either implemented or moved out of Accepted with an explicit implementation note.
+  - [ ] The spawn passes an allowlisted environment; no `*_TOKEN` or `*_URL` reaches a capability script.
+  - [ ] A test asserts that a spawned capability cannot read the Core token.
+
+#### GT-608
+
+**Title:** The HITL approval subsystem has never executed
+
+- **Purpose:** Exercise end to end the governance claim the product makes most loudly.
+- **Evidence:** All 7 entries in `default-skills.ts` and all 16 capabilities in `.harness/manifest.yaml` declare `requiresApproval: false`, leaving `PendingApprovalAdapter`, `FileApprovalStore`, `HttpSlackClient`, `TrackerApprovalAdapter` and its HTTP client — roughly 1,000 LOC — unreachable at runtime, with `evolith_hitl_approvals_total` structurally zero. The Tracker half is real and field-for-field compatible: `RuntimeApprovalEndpoints.cs` binds the machine channel by scheme name and puts `/resolve` on humans only. Separately, `LocalSkillRegistryAdapter` seeds the hardcoded 7 and never reads the manifest, so 9 further capabilities are invisible to the agent and governance posture has two sources of truth.
+- **Impact:** A governance seam that has never run end to end is not evidence of governance. During this assessment two independent readers of the two halves disagreed about whether the counterpart endpoint existed at all — which is what an unexercised seam looks like from the inside.
+- **Affected files:** `src/packages/agent-runtime/src/adapters/skills/default-skills.ts`, `.harness/manifest.yaml`, `.../local-skill-registry.adapter.ts`
+- **Component:** `Evolith Agent Runtime` · **Criticality:** P1 · **Complexity:** M
+- **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
+- **Acceptance criteria:**
+  - [ ] The skill catalogue is derived from `.harness/manifest.yaml`, with a CI test asserting catalogue ⊇ manifest.
+  - [ ] At least two destructive capabilities declare `requiresApproval: true`.
+  - [ ] One end-to-end test covers pending → approved → executed → audited across the Runtime and the Tracker.
+  - [ ] `evolith_hitl_approvals_total` is non-zero in an integration run.
 
 ### AI-native route review 2026-07-26 — GT-580…GT-595
 
@@ -7625,3 +7754,146 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] A decision is recorded on whether the CLI wedge or the Tracker is the monetisation vehicle.
   - [ ] If the wedge: at least one standard ships as an evaluable ruleset and Evolith self-evaluates against it in CI.
   - [ ] The positioning names an ICP for whom that evaluation is a budgeted need.
+
+#### GT-609
+
+**Title:** The tools/list cache is keyed globally, so the first caller decides what everyone else discovers
+
+- **Purpose:** The tools/list cache is keyed globally, so the first caller decides what everyone else discovers
+- **Evidence:** **Authorization leak in the discovery surface.** `mcp-cache.service.ts:8` declares `toolsList: 'mcp:tools:list'` — a single literal key, with no principal, tenant or scope in it — and the list is cached BEFORE the scope filter runs. So the first caller to warm the cache decides the inventory every subsequent caller sees for the TTL: an admin warming it publishes the write-capable inventory to readers. **Verificado aquí contra el código.** Fix: key the cache by principal (a hash of scopes + tenant), or delete the cache — a discovery surface that answers from another principal's view is worse than an uncached one. Origin: finding 4.2 of the product diagnostic (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md).
+- **Component:** `MCP Server` · **Criticality:** P0 · **Complexity:** S
+- **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
+- **Acceptance criteria:**
+  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+
+#### GT-610
+
+**Title:** Every engine proposes arguments and the service throws them away, so the right tool runs with stale parameters
+
+- **Purpose:** Every engine proposes arguments and the service throws them away, so the right tool runs with stale parameters
+- **Evidence:** **The worst failure class available to an audit product: the right action, recorded, executed with the wrong inputs.** All three engines populate `proposedArguments` — `swarms-agent.adapter.ts:99`, `hermes-agent.adapter.ts:98`, `stub-agent-engine.adapter.ts:46` — and the service reads only `plan.proposedTool` (`agent-runtime.service.ts:168-169`). The proposed arguments are computed, carried across the port, and dropped on the floor; the skill then runs with whatever `request.parameters` held. **Verificado aquí contra el código.** Fix: merge the proposed arguments with revalidation against the skill's declared input contract before execution, and record which set was used in the trace. Origin: finding 5.5 of the product diagnostic (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md).
+- **Component:** `agent-runtime` · **Criticality:** P0 · **Complexity:** S
+- **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
+- **Acceptance criteria:**
+  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+
+#### GT-611
+
+**Title:** Interactive prompts are reachable from at least ten commands, and only `init` was made machine-safe
+
+- **Purpose:** Interactive prompts are reachable from at least ten commands, and only `init` was made machine-safe
+- **Evidence:** **Broader than the diagnostic reported, and broader than what GT-571 fixed.** Prompts do not live in individual commands: they go through the shared `src/sdk/cli/src/infrastructure/prompts/prompt.service.ts`, which is consumed by `init`, `validate`, `upgrade`, `phase-advance`, `adr`, `waiver`, `chat`, `enforce`, `agents` and more (`profile.command.ts` imports `@clack/prompts` directly). **Verificado aquí contra el código.** GT-571 gave `init` a defined non-interactive contract — closed stdin does not prompt, failure sets a non-zero exit code, `--format json` emits a parseable envelope and nothing else — and left every other consumer as it was. A CI step that pipes any of them into `jq` still receives an ANSI menu and reads exit 0. Fix: enforce the machine contract at the `PromptService` boundary rather than per command, so a non-TTY stdin can never produce a prompt anywhere, and add a surface-wide test that asserts it for every registered command. Origin: finding 3.1 of the product diagnostic (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md).
+- **Component:** `Evolith CLI` · **Criticality:** P1 · **Complexity:** M
+- **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
+- **Acceptance criteria:**
+  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+
+#### GT-612
+
+**Title:** Agent memory is write-only: turn 2 knows nothing of turn 1
+
+- **Purpose:** Agent memory is write-only: turn 2 knows nothing of turn 1
+- **Evidence:** **The port defines reads and nothing performs them.** `agent-runtime.service.ts` calls `memory.append` twice (`:115` and `:389`) and there is not a single `history()` or `recall()` call anywhere in `src`. **Verificado aquí contra el código.** For a product sold as operating the Core agentically, this is the gap that shows up in the first demo: every turn starts blank while the store fills up. Fix: read the conversation namespace into the plan context and implement recall on the paths that need prior state; the port already declares both. Origin: finding 5.4 of the product diagnostic (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md).
+- **Component:** `agent-runtime` · **Criticality:** P1 · **Complexity:** M
+- **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
+- **Acceptance criteria:**
+  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+
+#### GT-613
+
+**Title:** The structural-reviewer seam has a port, a provider and a rubric, and no adapter implements it
+
+- **Purpose:** The structural-reviewer seam has a port, a provider and a rubric, and no adapter implements it
+- **Evidence:** **Registered with the diagnostic's evidence CORRECTED.** Finding 1.7 states `IStructuralReviewer` is "absent from `src/`" — that is false: the port (`domain/ports/structural-reviewer.port.ts`), the provider (`application/structural-review-provider.ts`) and a rubric (`domain/rubrics/structural-review-rubric.ts`) all exist. What is true is the substance underneath: `grep -rn "implements IStructuralReviewer" src` returns **zero** — the seam is shaped correctly and nothing is plugged into it. **Verificado aquí contra el código.** Fix: implement one adapter, or move the governing ADR back to Proposed and say plainly that no implementation exists — an Accepted ADR with no code is the pattern GT-607 already tracks in bulk. Origin: finding 1.7 of the product diagnostic (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md), evidence corrected on verification.
+- **Component:** `agent-runtime` · **Criticality:** P2 · **Complexity:** M
+- **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
+- **Acceptance criteria:**
+  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+
+#### GT-614
+
+**Title:** The pipeline runs in full before it reads which kinds were requested
+
+- **Purpose:** The pipeline runs in full before it reads which kinds were requested
+- **Evidence:** The evaluation pipeline executes completely and only then filters by `ctx.kinds`, so a request for one kind pays for every gate and receives a global verdict shaped by gates it never asked for; kinds with no evaluator are discarded silently rather than refused. **No verificado aquí**; se registra tal como lo reporta el diagnóstico y debe confirmarse antes de dimensionar el trabajo. Fix: filter by kind before execution and return an explicit error for an unsupported kind instead of dropping it. Origin: finding 1.6 of the product diagnostic (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md).
+- **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
+- **Acceptance criteria:**
+  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+
+#### GT-615
+
+**Title:** repository_revision is persisted and never queried, so the drift substrate produces no drift signal
+
+- **Purpose:** repository_revision is persisted and never queried, so the drift substrate produces no drift signal
+- **Evidence:** The Tracker stores `repository_revision` but exposes only `GET /` and `GET /{id}`: no query by repository, no ordering by revision, no diff endpoint. The perfect substrate for drift detection exists and emits nothing. **No verificado aquí** (vive en el repositorio del Tracker); se registra tal como lo reporta el diagnóstico. Fix: `GET ?repositoryUrl=&since=`, a verdict projection, and a `DriftDetected` row when the verdict changes between revisions. Origin: finding 2.4 of the product diagnostic (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md).
+- **Component:** `Tracker` · **Criticality:** P2 · **Complexity:** M
+- **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
+- **Acceptance criteria:**
+  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+
+#### GT-616
+
+**Title:** Tracker telemetry returns early by default, so an incident cannot be reconstructed
+
+- **Purpose:** Tracker telemetry returns early by default, so an incident cannot be reconstructed
+- **Evidence:** `TrackerTracing.cs` returns early when `Otlp:Endpoint` is empty, which is the default, so no `StartActivity` runs in a deployed state. **No verificado aquí** (vive en el repositorio del Tracker); se registra tal como lo reporta el diagnóstico. Fix: enable it in the configmap and add the domain attributes (tenant, initiative, agent) that make a trace answer a governance question rather than a plumbing one. Origin: finding 2.5 of the product diagnostic (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md).
+- **Component:** `Tracker` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
+- **Acceptance criteria:**
+  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+
+#### GT-617
+
+**Title:** Tracker documentation contradicts its own schema, and due diligence reads the documentation
+
+- **Purpose:** Tracker documentation contradicts its own schema, and due diligence reads the documentation
+- **Evidence:** The badge claims 30 decisions against T-054+; the design document claims 10 schemas and 33 tables against 7 and 45 actual, and names five schemas that do not exist; a component README claims 3 robots against 12. **No verificado aquí** (vive en el repositorio del Tracker); se registra tal como lo reporta el diagnóstico. Fix: regenerate every one of these artifacts from a code snapshot rather than maintaining them by hand — the same transclusion discipline the Core board applies to its inventories. Origin: finding 2.6 of the product diagnostic (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md).
+- **Component:** `Tracker` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
+- **Acceptance criteria:**
+  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+
+#### GT-618
+
+**Title:** The one command that cancels governance is the one the Tracker cannot ingest
+
+- **Purpose:** The one command that cancels governance is the one the Tracker cannot ingest
+- **Evidence:** `waiver` has no `--format` option and prints a raw array with no `success`, no `meta` and no `correlationId`, so it sits outside the ADR-0073 envelope every other surface conforms to. **Verificado aquí contra el código.** (the only `--format` occurrence in `waiver.command.ts` is inside a doc comment about a different command). A waiver is the highest-consequence action in the product — it *suspends* a rule — and it is the one action that cannot be correlated back to the decision it overrides. Fix: conform to the envelope and carry the correlationId of the verdict being waived. Origin: finding 3.4 of the product diagnostic (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md).
+- **Component:** `Evolith CLI` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
+- **Acceptance criteria:**
+  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+
+#### GT-619
+
+**Title:** `chat` is 91 lines with no loop and no session
+
+- **Purpose:** `chat` is 91 lines with no loop and no session
+- **Evidence:** `chat.command.ts` is exactly 91 lines: it prints, calls once, prints and exits. **Verificado aquí contra el código.** There is no conversation, and a prospect discovers that in about thirty seconds. Fix: implement a real REPL with session state, or remove the command — shipping a named feature that does not do what its name says costs more credibility than not shipping it. Origin: finding 3.5 of the product diagnostic (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md).
+- **Component:** `Evolith CLI` · **Criticality:** P2 · **Complexity:** XS
+- **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
+- **Acceptance criteria:**
+  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+
+#### GT-620
+
+**Title:** The English CLI guide is written in Spanish, and the bilingual gate cannot see it
+
+- **Purpose:** The English CLI guide is written in Spanish, and the bilingual gate cannot see it
+- **Evidence:** `reference/core/interfaces/using-the-cli.md` — the English slot — opens with `# Cómo usar la CLI de Evolith` and measures 817 Spanish function words against 151 English ones. **Verificado aquí contra el código.** The project is at the cusp of open source with no English entry point for its main surface. It is also a live instance of a blind spot the maturity audit named: `04-check-bilingual-parity` compares the COUNT of `##`/`###` headings, so an untranslated file in the wrong slot passes green — this file does. Fix: write the real English guide, and extend the parity gate with a cheap language heuristic so the class of defect cannot recur silently. Origin: finding 3.6 of the product diagnostic (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md).
+- **Component:** `Documentation` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
+- **Acceptance criteria:**
+  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+
+#### GT-621
+
+**Title:** Ports and adapters counted as capability in the vision documents
+
+- **Purpose:** Ports and adapters counted as capability in the vision documents
+- **Evidence:** 17 ports and 49 adapters exist for a single execution pass; the hot path depends on 9 required ports and is well sized, while the cold edges are over-built — two interaction adapters with no callers, a provider complete and unconnected. **No verificado aquí**; se registra tal como lo reporta el diagnóstico y debe confirmarse antes de dimensionar el trabajo. The error is not building them: it is counting them as delivered capability in the vision documents. Fix: state in those documents which ports are on the hot path and which are speculative, so an inventory number stops reading as a capability claim. Origin: finding 5.7 of the product diagnostic (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md).
+- **Component:** `agent-runtime` · **Criticality:** P3 · **Complexity:** S
+- **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
+- **Acceptance criteria:**
+  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.

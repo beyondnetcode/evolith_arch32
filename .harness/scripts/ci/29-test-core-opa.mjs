@@ -4,6 +4,7 @@
 // 28-test-topology-opa.mjs which only covers per-topology policies.
 import { execFileSync } from 'node:child_process';
 import { ensureOpa } from '../opa-runtime.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
 
 const root = process.cwd();
 const opa = await ensureOpa(root);
@@ -33,6 +34,16 @@ try {
   console.error(stdout);
   process.exit(1);
 }
+
+// GT-578: `opa test` over a directory with no *_test.rego exits 0 and emits
+// `[]`. `failed` is then empty and the script prints "0/0 passing" — a green
+// line for a suite that never ran. This is the same class the src/ move
+// created: the directory argument is a path literal, and `src/rulesets/opa/`
+// silently becoming wrong would look identical.
+assertScanned(cases.length, {
+  what: 'OPA test cases in the core governance suite',
+  where: 'src/rulesets/opa/ (via `opa test --ignore=schemas`)',
+});
 
 const failed = cases.filter((c) => c.fail === true || c.error);
 if (failed.length > 0) {

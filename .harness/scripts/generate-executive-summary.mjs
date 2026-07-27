@@ -23,8 +23,20 @@ function read(file) {
   return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
 }
 
+// Board prose is written from `control-center/gaps/` and embedded verbatim into
+// `control-center/maturity-reports/`, so a `./x` cross-reference that resolves in the
+// board is a broken link here. Re-base it rather than dropping it: `../x` and deeper
+// are already correct from either directory, only `./x` moves. Without this, any row
+// that cross-references another gap turns `01-validate-docs` red — which is how
+// GT-603's reference to GT-586 broke the build.
+function rebaseRelativeLinks(value) {
+  return value.replace(/\]\(\.\//g, '](../gaps/');
+}
+
 function stripCell(value) {
-  return value.replace(/\\\|/g, '|').replace(/`/g, '').replace(/\s+/g, ' ').trim();
+  return rebaseRelativeLinks(
+    value.replace(/\\\|/g, '|').replace(/`/g, '').replace(/\s+/g, ' ').trim(),
+  );
 }
 
 function parseBoard(content) {

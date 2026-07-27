@@ -7,6 +7,7 @@
   "effectiveDate": "2026-06-08",
   "scope": "core-cli",
   "category": "core-parity",
+  "audience": "core",
   "rules": [
     {
       "id": "CLI-PAR-01",

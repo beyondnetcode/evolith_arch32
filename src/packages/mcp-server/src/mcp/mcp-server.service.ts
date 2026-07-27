@@ -26,6 +26,7 @@ import { AbacEvaluator } from './abac-evaluator';
 import { mcpContextStorage, McpUserContext } from './mcp-user-context';
 import { authenticateHttpRequest } from './mcp-server-auth';
 import { createLocalSessionContext } from './mcp-auth-contexts';
+import { evaluateStdioCredentialPolicy, StdioCredentialError } from './stdio-credential-policy';
 import { loadOAuthConfig, createJwksResolver, type OAuthConfig, type JwksKeyResolver } from './oauth-resource-server';
 import { handleCallTool, handleListTools, ToolCallResult, redactArgs } from './mcp-tool-dispatch';
 import { McpCacheService } from './mcp-cache.service';
@@ -277,6 +278,22 @@ export class McpServerService {
     const transport = options.transport ?? 'stdio';
     this.apiKey = options.apiKey;
     this.allowNoAuth = options.allowNoAuth ?? false;
+
+    // GT-572 — stdio in production requires the configured credential, exactly
+    // like every other production surface. Checked BEFORE anything is built or
+    // connected: the failure mode being fixed is a server that boots, advertises
+    // 50 tools and then denies all of them, so the refusal must happen at
+    // startup, loudly, on stderr (stdout carries the JSON-RPC stream), naming the
+    // variable to set. Nothing here can grant access that ABAC would refuse.
+    if (transport === 'stdio') {
+      const credential = evaluateStdioCredentialPolicy({ apiKey: this.apiKey, env: process.env });
+      if (!credential.granted) {
+        this.transportContext = undefined;
+        this.logger.error(credential.message!);
+        throw new StdioCredentialError(credential.message!);
+      }
+    }
+
     // Derive the OAuth resource-server config from env once at startup. When the
     // IdP-agnostic OAuth env is set (issuer + JWKS/secret), remote HTTP requests
     // are validated as OAuth 2.1 access tokens; otherwise this stays null and the
@@ -320,9 +337,16 @@ export class McpServerService {
       const principal = this.transportContext!;
       const stdioTransport = new StdioServerTransport(options.stdin, options.stdout);
       await this.server.connect(stdioTransport);
+      // GT-572: say how the principal was authorized. In production it is only
+      // reachable because a credential was configured (checked above); elsewhere
+      // it is the implicit same-process local session.
+      const grant = principal.environment === 'production'
+        ? 'authorized by the configured API key'
+        : 'implicit local session (non-production)';
       this.logger.log(
         `Evolith MCP server started on stdio (local session: id=${principal.id}, role=${principal.role}, ` +
-        `roles=[${principal.roles.join(', ')}], scopes=[${principal.scopes.join(', ')}], env=${principal.environment}). ` +
+        `roles=[${principal.roles.join(', ')}], scopes=[${principal.scopes.join(', ')}], env=${principal.environment}, ` +
+        `grant=${grant}). ` +
         'ABAC and the mutative approval gate still run on every tools/call.',
       );
     }

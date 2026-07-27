@@ -27,6 +27,29 @@ export interface RuleCoverage {
   erroredRuleIds: string[];
 }
 
+/**
+ * GT-571 — the part of the corpus that never reached the evaluator because it
+ * does not address this repository (Core-only rules against a satellite, rules
+ * of an undeclared topology, rules of a later SDLC phase).
+ *
+ * Kept OUTSIDE the GT-569 denominator on purpose. `skipped` means "the engine
+ * tried to evaluate this and could not"; a rule addressed to somebody else was
+ * never a candidate, and counting it as skipped would inflate the unevaluated
+ * fraction — enough, with a `maxSkippedFraction` configured, to fail a
+ * repository with nothing wrong with it. The invariant
+ * `rulesChecked + rulesSkipped + rulesErrored === rulesTotal` therefore still
+ * holds exactly, and `corpusTotal = rulesTotal + rulesNotApplicable` names the
+ * full corpus so the exclusion is visible rather than silent.
+ */
+export interface RuleApplicabilitySummary {
+  /** Rules excluded before evaluation. */
+  rulesNotApplicable: number;
+  /** Ids of those rules, with the reason, so the exclusion can be audited. */
+  notApplicableRuleIds: string[];
+  /** `rulesTotal + rulesNotApplicable` — every rule the corpus contains. */
+  corpusTotal: number;
+}
+
 export interface ValidationResult {
   status: 'passed' | 'failed' | 'warning';
   rulesChecked: number;
@@ -40,6 +63,13 @@ export interface ValidationResult {
   rulesTotal?: number;
   skippedRuleIds?: string[];
   erroredRuleIds?: string[];
+  /**
+   * GT-571 applicability summary. Optional for the same additive reason as the
+   * GT-569 counters; `RulesetValidatorService.validate` always populates it.
+   */
+  rulesNotApplicable?: number;
+  notApplicableRuleIds?: string[];
+  corpusTotal?: number;
   issues: ValidationIssue[];
   coreRef: {
     version: string | null;
@@ -85,6 +115,10 @@ export interface ArchitectureValidationResult {
   rulesTotal?: number;
   skippedRuleIds?: string[];
   erroredRuleIds?: string[];
+  /** GT-571 — same applicability contract as {@link ValidationResult}. */
+  rulesNotApplicable?: number;
+  notApplicableRuleIds?: string[];
+  corpusTotal?: number;
   issues: ValidationIssue[];
   timestamp: string;
 }
@@ -120,6 +154,16 @@ export interface RulesetValidatorOptions {
    * counters are still reported, they just do not gate.
    */
   maxSkippedFraction?: number;
+  /**
+   * GT-571 — set to `false` to evaluate the ENTIRE corpus regardless of rule
+   * `audience`, declared topology or SDLC phase (the pre-GT-571 behaviour).
+   *
+   * Defaults to `true`: a satellite is not evaluated against the vendor's own
+   * monorepo rules, nor against the rules of seven topologies it did not
+   * declare. The escape hatch exists for corpus-wide audits, not for normal
+   * validation.
+   */
+  applyRuleApplicability?: boolean;
 }
 
 export const RULESET_VALIDATOR_OPTIONS = 'RULESET_VALIDATOR_OPTIONS';

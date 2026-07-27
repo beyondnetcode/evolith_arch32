@@ -8,6 +8,7 @@ import { AppModule } from './app.module';
 import { McpServerService, McpTransport } from './mcp/mcp-server.service';
 import { StderrLogger } from './common/stderr-logger';
 import { shutdownOtel } from './tracing';
+import { isStdioCredentialError } from './mcp/stdio-credential-policy';
 
 /**
  * Single source of truth for the reported version: read it from the package
@@ -110,9 +111,13 @@ export interface StartMcpServerOptions {
 //
 // OAuth applies only to the remote HTTP surface; the shared API key / local
 // HS256 JWT / dev `--allow-no-auth` paths still work for local HTTP development.
-// The stdio path authenticates nothing (it is a same-process, single-user
-// channel) and instead runs as the explicit `local-session` principal —
-// see createLocalSessionContext in mcp-auth-contexts.ts (GT-572).
+// The stdio path exchanges no per-request credential (it is a same-process,
+// single-user channel) and instead runs as the explicit `local-session`
+// principal — see createLocalSessionContext in mcp-auth-contexts.ts (GT-572).
+// That principal is implicit ONLY outside production: with NODE_ENV=production
+// stdio requires the configured API key like any other production surface, and
+// `start()` REFUSES TO BOOT without it (stdio-credential-policy.ts) rather than
+// advertising a tool surface that would deny every call.
 // Everything downstream of identity is
 // already hardened per-identity: the dispatcher runs ABAC (native + OPA) on
 // EVERY tools/call and audits the verdict (see McpServerService.handleCallTool),
@@ -175,10 +180,34 @@ async function bootstrap(): Promise<void> {
   process.on('SIGTERM', shutdown);
 }
 
+/** sysexits(3) EX_CONFIG — the process is misconfigured, not broken. */
+export const CONFIG_ERROR_EXIT_CODE = 78;
+
+/**
+ * GT-572 — render a startup failure for stderr.
+ *
+ * A missing stdio credential is a configuration problem with a known remedy, so
+ * it prints the actionable message on its own (no `Fatal:` prefix, no stack
+ * trace burying the instruction) and exits with EX_CONFIG. Everything else keeps
+ * the previous behaviour: prefix + stack + exit 1.
+ *
+ * Exported so the formatting is unit-testable without spawning a process.
+ */
+export function formatFatalStartupError(err: unknown): { message: string; exitCode: number } {
+  if (isStdioCredentialError(err)) {
+    return { message: `${err.message}\n`, exitCode: CONFIG_ERROR_EXIT_CODE };
+  }
+  return {
+    message: `Fatal: ${err instanceof Error ? err.stack : String(err)}\n`,
+    exitCode: 1,
+  };
+}
+
 // Only auto-bootstrap when executed directly (not when imported by tests).
 if (require.main === module) {
   bootstrap().catch((err) => {
-    process.stderr.write(`Fatal: ${err instanceof Error ? err.stack : String(err)}\n`);
-    process.exit(1);
+    const { message, exitCode } = formatFatalStartupError(err);
+    process.stderr.write(message);
+    process.exit(exitCode);
   });
 }

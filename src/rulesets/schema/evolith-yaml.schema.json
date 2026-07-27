@@ -36,6 +36,11 @@
           "type": "string",
           "pattern": "^\\d+\\.\\d+\\.\\d+$",
           "description": "Satellite's own semantic version for tracking architectural changes."
+        },
+        "audience": {
+          "type": "string",
+          "enum": ["core", "satellite"],
+          "description": "GT-571 — which half of the corpus addresses this repository. Rules marked `audience: core` in the rulesets (e.g. CLI-RR-01 'run npm run build in sdk/cli', TAX-05 'top-level sdk/, rulesets/') only make sense against the Evolith Core monorepo and are filtered out for a satellite. Optional: when omitted it is INFERRED — a repository is treated as the Core only when it is the core path itself or hosts the authored corpus at `src/rulesets/schema`; every other repository is a satellite."
         }
       }
     },

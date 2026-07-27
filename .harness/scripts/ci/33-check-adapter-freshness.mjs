@@ -17,6 +17,7 @@ import path from "node:path";
 // `packages/agent-runtime/...` — missing the `src/` prefix, so the barrel-export check
 // silently never fired.
 import { REPO_ROOT, resolve as resolveKey } from '../lib/paths.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
 
 const root = REPO_ROOT;
 const issues = [];
@@ -26,10 +27,27 @@ const issues = [];
 const agentsDir = resolveKey("agentSkills");
 const adaptersDir = resolveKey("agentRuntimeInteractionAdapters");
 
-if (fs.existsSync(agentsDir) && fs.existsSync(adaptersDir)) {
-  const agentFiles = fs.readdirSync(agentsDir).filter(f => f.endsWith(".md") && !f.endsWith(".es.md"));
-  const adapterFiles = fs.readdirSync(adaptersDir).filter(f => f.endsWith(".ts") && !f.endsWith(".spec.ts"));
+// GT-578: this block was wrapped in `if (existsSync(agentsDir) && existsSync(
+// adaptersDir))`. With either path dead the whole comparison was skipped and the
+// script still printed "GT-409: All adapter/skill freshness checks passed." —
+// three checks, zero of them run, one green tick. The `if` is gone: a missing
+// root is now a failure, and an empty one is caught by the denominator.
+for (const [label, dir] of [["agent definitions", agentsDir], ["interaction adapters", adaptersDir]]) {
+  if (!fs.existsSync(dir)) {
+    console.error(
+      `GT-409: freshness check cannot run — ${label} directory does not exist: ${dir}\n` +
+      `  Refusing to report "all checks passed" over a tree that is not there.`,
+    );
+    process.exit(1);
+  }
+}
 
+const agentFiles = fs.readdirSync(agentsDir).filter(f => f.endsWith(".md") && !f.endsWith(".es.md"));
+const adapterFiles = fs.readdirSync(adaptersDir).filter(f => f.endsWith(".ts") && !f.endsWith(".spec.ts"));
+assertScanned(agentFiles.length, { what: "agent definitions", where: agentsDir });
+assertScanned(adapterFiles.length, { what: "interaction adapters", where: adaptersDir });
+
+{
   for (const agentFile of agentFiles) {
     const content = fs.readFileSync(path.join(agentsDir, agentFile), "utf-8");
     const adapterRefs = content.match(/InteractionAdapter|sourceInterface|smart_cli|mcp|hermes|external_trigger/gi);
@@ -49,8 +67,16 @@ if (fs.existsSync(agentsDir) && fs.existsSync(adaptersDir)) {
 // --- Check 2: Skill manifest vs skill implementations ---
 
 const manifestPath = resolveKey("agentSkillsManifest");
-if (fs.existsSync(manifestPath)) {
+if (!fs.existsSync(manifestPath)) {
+  console.error(`GT-409: skill manifest does not exist: ${manifestPath} — cannot report a freshness verdict.`);
+  process.exit(1);
+}
+{
   const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+  assertScanned((manifest.skills || []).length, {
+    what: "declared skills",
+    where: `${manifestPath}#skills`,
+  });
   for (const skill of manifest.skills || []) {
     if (skill.file) {
       const skillPath = path.join(root, skill.file);
@@ -86,5 +112,8 @@ if (issues.length > 0) {
   process.exit(1);
 }
 
-console.log("GT-409: All adapter/skill freshness checks passed.");
+console.log(
+  `GT-409: All adapter/skill freshness checks passed ` +
+  `(${agentFiles.length} agent definition(s), ${adapterFiles.length} adapter(s) inspected).`,
+);
 process.exit(0);

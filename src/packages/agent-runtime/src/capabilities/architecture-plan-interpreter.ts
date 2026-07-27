@@ -48,6 +48,16 @@ export const ARCHITECTURE_PLAN_SCHEMA: JsonSchemaNode = {
   },
 };
 
+/**
+ * Turns a raw requirement into a schema-validated Architecture Plan.
+ *
+ * GT-575 — the provider it is handed must be SUPERVISED. The shipped
+ * `GeminiProvider` satisfies this shape but refuses to open a socket unless it
+ * was given an `IApprovalPort` (`new GeminiProvider({ approval })`), so passing
+ * a bare provider here fails closed with `LlmEgressUnsupervisedError` instead of
+ * contacting Google unsupervised. There is no ungoverned path left through this
+ * class.
+ */
 export class ArchitecturePlanInterpreter {
   constructor(private readonly llmProvider: ILLMProvider) {}
 

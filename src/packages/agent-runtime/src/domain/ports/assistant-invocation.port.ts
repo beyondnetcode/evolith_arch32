@@ -21,12 +21,40 @@
 import type { AgentRuntimeRequest } from '../contracts/agent-runtime-request';
 import type { SkillDescriptor } from '../contracts/capability';
 
+/**
+ * Proof that the HITL gate ALREADY ran for this invocation (GT-575).
+ *
+ * A transport that actually opens a socket must be able to tell "I am being
+ * driven by the supervised client, which already asked a human" from "somebody
+ * got hold of me and called `invoke` directly". {@link SupervisedAssistantClient}
+ * stamps this on the request AFTER its {@link IApprovalPort} grants, so the
+ * transport can enforce supervision without asking for a second approval.
+ *
+ * A transport that reaches an external provider MUST refuse when this is absent
+ * and it has no HITL gate of its own — that is the difference between a governed
+ * egress path and a bypass.
+ */
+export interface AssistantSupervision {
+  /** True only when a human (or the configured approval policy) said yes. */
+  readonly granted: boolean;
+  /** Who granted it, when the approval adapter reports an identity. */
+  readonly approver?: string;
+  /** Which gate produced the decision, e.g. `SupervisedAssistantClient`. */
+  readonly gate: string;
+}
+
 /** What the runtime hands the assistant so it can reason about the request. */
 export interface AssistantInvocationRequest {
   /** The governed request the assistant is asked to help satisfy. */
   readonly request: AgentRuntimeRequest;
   /** The catalog of capabilities the assistant may propose FROM (bounded). */
   readonly availableSkills: readonly SkillDescriptor[];
+  /**
+   * Evidence that the HITL gate in front of this call already granted (GT-575).
+   * Set by {@link SupervisedAssistantClient}; absent when a caller reaches a
+   * transport directly, which a governed transport treats as fail-closed.
+   */
+  readonly supervision?: AssistantSupervision;
 }
 
 /**

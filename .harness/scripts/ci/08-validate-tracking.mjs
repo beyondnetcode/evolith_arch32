@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { execFileSync } from 'child_process';
 import { fileURLToPath, pathToFileURL } from 'url';
+import { assertScanned } from '../lib/coverage.mjs';
 
 const ROOT = path.resolve(process.env.EVOLITH_TRACKING_ROOT || '.');
 const EN_FILE = path.join(ROOT, 'reference/core/control-center/gaps/gap-tracking.md');
@@ -366,13 +367,31 @@ function run() {
   const en = parseTableRows(EN_FILE);
   const es = parseTableRows(ES_FILE);
   const registry = JSON.parse(fs.readFileSync(CLOSURE_REGISTRY, 'utf8'));
+  const enSections = parseCatalogSections(EN_CATALOG);
+  const esSections = parseCatalogSections(ES_CATALOG);
+
+  // GT-578: every check in `validateTrackingState` iterates these four
+  // collections. `parseTableRows` matches a hand-written markdown row shape and
+  // `parseCatalogSections` a `#### GT-NNN` heading; change either format and all
+  // of them return empty. The existing report line already printed the count —
+  // "Validated 0 gaps and 0 closure records." would have read as a pass. It is
+  // now a failure, per .harness/scripts/lib/coverage.mjs.
+  assertScanned(en.rows.length, { what: 'EN board rows', where: EN_FILE });
+  assertScanned(es.rows.length, { what: 'ES board rows', where: ES_FILE });
+  assertScanned(enSections.size, { what: 'EN catalog sections', where: EN_CATALOG });
+  assertScanned(esSections.size, { what: 'ES catalog sections', where: ES_CATALOG });
+  assertScanned(
+    Array.isArray(registry?.closures) ? registry.closures.length : 0,
+    { what: 'closure records', where: CLOSURE_REGISTRY },
+  );
+
   const errors = validateTrackingState({
     enRows: en.rows,
     esRows: es.rows,
     enContent: en.content,
     esContent: es.content,
-    enSections: parseCatalogSections(EN_CATALOG),
-    esSections: parseCatalogSections(ES_CATALOG),
+    enSections,
+    esSections,
     registry,
   });
 
@@ -382,7 +401,11 @@ function run() {
     process.exit(1);
   }
 
-  console.log(`Validated ${en.rows.length} gaps and ${registry.closures.length} closure records.`);
+  console.log(
+    `Validated ${en.rows.length} gaps (ES ${es.rows.length}), ` +
+    `${enSections.size}/${esSections.size} EN/ES catalog sections and ` +
+    `${registry.closures.length} closure records.`,
+  );
   console.log('\n✅ Tracking validation passed.');
 }
 

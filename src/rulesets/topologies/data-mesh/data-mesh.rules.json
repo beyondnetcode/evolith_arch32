@@ -4,6 +4,7 @@
   "title": "Data Mesh Topology Rules",
   "description": "Architectural rules for the Data Mesh topology.",
   "version": "1.1.0",
+  "topologies": ["data-mesh"],
   "effectiveDate": "2026-06-22",
   "rules": [
     {

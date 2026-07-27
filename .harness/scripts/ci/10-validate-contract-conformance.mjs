@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { assertScanned } from '../lib/coverage.mjs';
 
 const ROOT = path.resolve(process.env.EVOLITH_CONTRACT_ROOT || '.');
 const MANIFEST = path.join(ROOT, 'src/rulesets/contracts/evolith-machine-contracts.json');
@@ -52,6 +53,14 @@ export function validateConsumer(consumer, manifest) {
 
 function run() {
   const manifest = JSON.parse(fs.readFileSync(MANIFEST, 'utf8'));
+  // GT-578: `validateManifest` pushes an error for an empty `schemas`, but the
+  // consumer path and the whole hash comparison iterate `manifest.schemas || []`.
+  // A manifest that parses with the key renamed would produce zero comparisons
+  // and one generic error; the denominator makes the coverage explicit instead.
+  assertScanned((manifest.schemas || []).length, {
+    what: 'declared contract schemas',
+    where: 'src/rulesets/contracts/evolith-machine-contracts.json#schemas',
+  });
   const errors = validateManifest(manifest);
   const consumerFlag = process.argv.indexOf('--consumer');
   if (consumerFlag >= 0) {
@@ -63,7 +72,10 @@ function run() {
     console.error(`❌ Contract conformance failed:\n- ${errors.join('\n- ')}`);
     process.exit(1);
   }
-  console.log('✅ Core producer and declared consumer contracts conform.');
+  console.log(
+    `✅ Core producer and declared consumer contracts conform ` +
+    `(${(manifest.schemas || []).length} schema(s) hashed and resolved).`,
+  );
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) run();

@@ -13,10 +13,16 @@ import {
 } from './ruleset-validator.types';
 import { loadRulesetById } from './ruleset-id-loader';
 import { runArchitectureValidation } from './architecture-validator';
+import type { NotApplicableRule, RuleApplicabilityFilter } from './rule-evaluation-engine';
+import {
+  RuleApplicabilityIndex,
+  describeNotApplicable,
+  resolveApplicabilityContext,
+} from './rule-applicability';
 
 export {
   ValidationResult, ValidationIssue, EvolithYaml, ArchitectureValidationResult,
-  RuleCoverage, RulesetValidatorOptions, RULESET_VALIDATOR_OPTIONS,
+  RuleCoverage, RuleApplicabilitySummary, RulesetValidatorOptions, RULESET_VALIDATOR_OPTIONS,
 } from './ruleset-validator.types';
 
 @Injectable()
@@ -28,6 +34,8 @@ export class RulesetValidatorService {
   private readonly topologyCatalog?: TopologyCatalogService;
   /** GT-569 — optional coverage floor; see {@link RulesetValidatorOptions.maxSkippedFraction}. */
   private readonly maxSkippedFraction?: number;
+  /** GT-571 — filter the corpus by rule audience / topology / SDLC phase. */
+  private readonly applyRuleApplicability: boolean;
 
   constructor(@Optional() @Inject(RULESET_VALIDATOR_OPTIONS) options?: RulesetValidatorOptions) {
     if (!options?.fileSystem) throw new Error('IFileSystem is required');
@@ -40,6 +48,7 @@ export class RulesetValidatorService {
     this.configParser = options.configParser;
     this.topologyCatalog = options.topologyCatalog;
     this.maxSkippedFraction = options.maxSkippedFraction;
+    this.applyRuleApplicability = options.applyRuleApplicability !== false;
 
     const baseStrategy = options.engineType === 'opa'
       ? new OpaEvaluator(this.fs, this.logger)
@@ -68,6 +77,9 @@ export class RulesetValidatorService {
     // invisible — it is counted, named, and (for MUST rules) surfaced as a
     // WARNING issue by `toValidationIssues`.
     let coverage: RuleCoverage = emptyRuleCoverage();
+    // GT-571: rules the corpus contains but that do not address this repository.
+    // Deliberately NOT folded into `coverage` — see RuleApplicabilitySummary.
+    let notApplicable: NotApplicableRule[] = [];
 
     const resolvedCorePath = corePath || this.findCorePath(satellitePath);
     const evolithYamlPath = path.join(satellitePath, 'evolith.yaml');
@@ -91,9 +103,14 @@ export class RulesetValidatorService {
     }
 
     try {
-      const engineResults = await this.engine.discoverAndEvaluate(satellitePath, resolvedCorePath);
+      const filter = await this.buildApplicabilityFilter(satellitePath, resolvedCorePath);
+      const { results: engineResults, notApplicable: excluded } =
+        await this.engine.discoverAndEvaluate(satellitePath, resolvedCorePath, filter);
+      notApplicable = excluded;
       coverage = summarizeRuleCoverage(engineResults);
       issues.push(...this.engine.toValidationIssues(engineResults));
+      const applicabilityIssue = this.applicabilityAdvisory(notApplicable);
+      if (applicabilityIssue) issues.push(applicabilityIssue);
       const thresholdIssue = this.coverageThresholdIssue(coverage);
       if (thresholdIssue) issues.push(thresholdIssue);
     } catch (err: unknown) {
@@ -114,9 +131,83 @@ export class RulesetValidatorService {
       rulesTotal: coverage.rulesTotal,
       skippedRuleIds: coverage.skippedRuleIds,
       erroredRuleIds: coverage.erroredRuleIds,
+      rulesNotApplicable: notApplicable.length,
+      notApplicableRuleIds: notApplicable.map(n => n.rule.id),
+      corpusTotal: coverage.rulesTotal + notApplicable.length,
       issues,
       coreRef: { version: coreRefVersion, path: coreRefPath },
       timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * GT-571 — build the corpus pre-filter for this run, or `undefined` when the
+   * host opted out via `applyRuleApplicability: false`.
+   *
+   * Fail-open: if the applicability facts cannot be read the run proceeds with
+   * NO filter, i.e. exactly the pre-GT-571 behaviour. A broken index must never
+   * be able to hide a rule.
+   */
+  private async buildApplicabilityFilter(
+    satellitePath: string,
+    corePath: string,
+  ): Promise<RuleApplicabilityFilter | undefined> {
+    if (!this.applyRuleApplicability) return undefined;
+    try {
+      const [index, context] = await Promise.all([
+        RuleApplicabilityIndex.load(this.fs, corePath, path.sep),
+        resolveApplicabilityContext(
+          { fs: this.fs, configParser: this.configParser },
+          satellitePath,
+          corePath,
+          path.sep,
+        ),
+      ]);
+      return { index, context };
+    } catch (err: unknown) {
+      this.logger.warn(
+        `Rule applicability could not be resolved; evaluating the full corpus: ` +
+        `${err instanceof Error ? err.message : String(err)}`,
+      );
+      return undefined;
+    }
+  }
+
+  /**
+   * GT-571 — an exclusion must be visible, not silent.
+   *
+   * Non-blocking by construction: it reports rules that were never candidates,
+   * which is information, not a violation. It is what stops "0 blocking
+   * findings" from meaning "we quietly stopped looking".
+   */
+  private applicabilityAdvisory(notApplicable: readonly NotApplicableRule[]): ValidationIssue | undefined {
+    if (notApplicable.length === 0) return undefined;
+
+    const byReason = new Map<string, string[]>();
+    for (const n of notApplicable) {
+      const bucket = byReason.get(n.reason) ?? [];
+      bucket.push(n.rule.id);
+      byReason.set(n.reason, bucket);
+    }
+
+    const parts = [...byReason.entries()].map(
+      ([reason, ids]) =>
+        `${ids.length} ${describeNotApplicable(reason as NotApplicableRule['reason'])} ` +
+        `(e.g. ${ids.slice(0, 5).join(', ')}${ids.length > 5 ? ', …' : ''})`,
+    );
+
+    return {
+      ruleId: 'GOV-RULE-NOT-APPLICABLE',
+      severity: 'COULD',
+      category: 'governance',
+      title: `${notApplicable.length} corpus rules do not apply to this repository`,
+      description:
+        `${notApplicable.length} of the corpus rules were excluded BEFORE evaluation: ` +
+        `${parts.join('; ')}. They are not counted as checked, skipped or errored — ` +
+        'they were never candidates. Declare a topology in `spec.design.topology.confirmed` ' +
+        'and advance `spec.sdlc.currentPhase` in evolith.yaml to bring the corresponding ' +
+        'rules into scope.',
+      blocking: false,
     };
   }
 

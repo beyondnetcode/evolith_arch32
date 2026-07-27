@@ -7,7 +7,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -51,7 +52,7 @@
   "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/beyondnetcode/evolith_arch32.git",
+    "url": "git+https://github.com/beyondnetcode/evolith_arch32.git",
     "directory": "src/packages/sdk-client"
   },
   "publishConfig": {

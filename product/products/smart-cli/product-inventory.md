@@ -7,7 +7,7 @@ Generated inventory of the installable Evolith CLI and MCP surface. Do not edit 
 
 | Field | Value |
 |---|---|
-| Package | `@beyondnet/evolith-cli@1.1.0` |
+| Package | `@beyondnet/evolith-cli@1.2.0` |
 | Binary | `evolith`, `evolith-cli` |
 | CLI commands | 35 |
 | MCP tools | 50 |

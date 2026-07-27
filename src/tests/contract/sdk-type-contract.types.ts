@@ -334,6 +334,16 @@ export const WIRE_VALIDATION_RESULT: WireCheck<SdkValidationResult> = {
   rulesTotal: { required: false, declaredAs: 'number', accepts: isNumber },
   skippedRuleIds: { required: false, declaredAs: 'string[]', accepts: isArray },
   erroredRuleIds: { required: false, declaredAs: 'string[]', accepts: isArray },
+  // GT-571: rules addressed to somebody else — the vendor's own monorepo, another
+  // topology, a later SDLC phase — are pre-filtered before evaluation rather than
+  // counted as `skipped`. Calling them skipped would inflate the unevaluated
+  // fraction of a repo with nothing wrong with it, and could trip the
+  // `maxSkippedFraction` gate. They are still reported, against `corpusTotal`
+  // (= rulesTotal + rulesNotApplicable), so the exclusion is visible rather than
+  // silent — the same denominator discipline GT-569 introduced.
+  rulesNotApplicable: { required: false, declaredAs: 'number', accepts: isNumber },
+  notApplicableRuleIds: { required: false, declaredAs: 'string[]', accepts: isArray },
+  corpusTotal: { required: false, declaredAs: 'number', accepts: isNumber },
   issues: { required: true, declaredAs: 'ValidationIssue[]', accepts: isArray },
   coreRef: {
     required: true,

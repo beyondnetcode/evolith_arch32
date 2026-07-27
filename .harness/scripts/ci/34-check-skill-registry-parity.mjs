@@ -25,6 +25,7 @@ import path from "node:path";
 // GT-556: root came from process.cwd(); from src/ the canonical registry resolved to
 // src/.harness/manifest.yaml and the parity gate aborted.
 import { REPO_ROOT, resolve as resolveKey } from '../lib/paths.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
 
 const root = REPO_ROOT;
 const issues = [];
@@ -89,6 +90,14 @@ if (!fs.existsSync(manifestYamlPath)) {
 }
 
 const caps = parseHarnessManifest(fs.readFileSync(manifestYamlPath, "utf-8"));
+// GT-578: `parseHarnessManifest` is a hand-rolled line scanner. Change the
+// manifest's indentation, or rename `capabilities:`, and it returns [] — every
+// membership test below then trivially "passes" against two empty sets and the
+// guard reports parity across three registries it never compared.
+assertScanned(caps.length, {
+  what: "capabilities parsed from the canonical manifest",
+  where: manifestYamlPath,
+});
 const capNames = new Set(caps.map((c) => c.name).filter(Boolean));
 const capEntries = new Set(caps.map((c) => c.entry).filter(Boolean));
 

@@ -10,11 +10,13 @@
         "reference/core/control-center/gaps/gap-tracking.md"
       ],
       "validationCommands": [
-        "gh api repos/beyondnetcode/evolith_arch32/branches/main/protection",
-        "gh api repos/beyondnetcode/evolith_arch32/branches/develop/protection"
+        "gh api repos/beyondnetcode/evolith_arch32/branches/main/protection -> required contexts = [Test, Test core-domain, Test core, Test mcp-server, Test core-api, Validate documentation, CodeQL SAST] (7, up from 6); enforce_admins.enabled = TRUE (was false).",
+        "gh api repos/beyondnetcode/evolith_arch32/branches/develop/protection -> the same 7 contexts with enforce_admins.enabled = TRUE. Previously this endpoint returned 404 \"Branch not protected\", on the branch where every change lands.",
+        "The audit finding \"0 of the 6 required checks is a security check\" no longer holds: CodeQL SAST is now required on both branches.",
+        "ci-cd.yml runs on push to develop (44fe8dd3), so the engine suites now execute on the working branch rather than only after a change reaches main."
       ],
       "dependencyDisposition": "none",
-      "dependencyRationale": "Branch protection configuration (enforce_admins=true, CodeQL SAST required) successfully applied."
+      "dependencyRationale": "Branch protection applied and independently re-verified against the GitHub API on 2026-07-26: enforce_admins=true and CodeQL SAST required on BOTH main and develop. Not yet demonstrated: the acceptance criterion \"a test PR with a core check red cannot be merged\", and the 30-consecutive-day clean window, which is time-based. The commands above now carry their observed output rather than being bare invocations."
     },
     {
       "id": "GT-465",
@@ -6390,20 +6392,6 @@
       "dependencyDisposition": "none"
     },
     {
-      "id": "GT-424",
-      "closedAt": "2026-07-04",
-      "closureCommit": "833aa888",
-      "evidence": [
-        ".harness/manifest.yaml",
-        ".harness/scripts/ci/34-check-skill-registry-parity.mjs",
-        "src/packages/agent-runtime/src/adapters/skills/default-skills.ts"
-      ],
-      "validationCommands": [
-        "node .harness/scripts/ci/34-check-skill-registry-parity.mjs"
-      ],
-      "dependencyDisposition": "none"
-    },
-    {
       "id": "GT-436",
       "closedAt": "2026-07-04",
       "closureCommit": "0edaa22b",
@@ -8304,6 +8292,24 @@
         "npm run test -w @beyondnet/evolith-cli -> 89 suites / 1305 tests + 18 suites / 132 tests passed (the 6 e2e JSON.parse failures are gone)"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-577",
+      "closedAt": "2026-07-26",
+      "closureCommit": "3004d30b",
+      "evidence": [
+        ".github/actions/evolith-validate/action.yml",
+        ".github/workflows/evolith-validate-dogfood.yml",
+        ".github/actions/evolith-validate/test/action-step.test.mjs"
+      ],
+      "validationCommands": [
+        "gh run view 30228607519 -> branch=develop, conclusion=success; jobs \"Action vs non-conforming satellite\" and \"Action contract (recorded envelopes)\" both success.",
+        "gh run view 30228607519 --log -> \"OK: 34 blocking violation(s) of 274 issue(s), agreeing with the report.\" — the counter is non-zero AND cross-checks against the report file the action writes, which is what the broken '.summary.violations' jq path made impossible.",
+        "gh run view 30228607519 --log -> \"OK: the gate blocked as expected with 34 blocking violation(s).\" — the negative half: fail-on-violation=true must fail the step.",
+        "gh run list --workflow=evolith-validate-dogfood.yml --limit 5 -> 5 consecutive success."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The action is dogfooded and under regression, which is what this gap was about. Making the workflow a REQUIRED check is branch-protection configuration, not a code change, and is deliberately left outside this closure — a gate nobody requires is how this action rotted in the first place, so it is worth doing, just not here."
     }
   ]
 }

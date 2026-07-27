@@ -61,6 +61,29 @@ describe('SupervisedAssistantClient (GT-531)', () => {
     expect(proposal.rationale).toContain('alice');
   });
 
+  it('GT-575: stamps the approval decision on the invocation so the transport can PROVE it was supervised', async () => {
+    const transport = transportReturning({ tool: 'foo' });
+    const client = new SupervisedAssistantClient({ enabled: true, approval: grantAll, transport });
+
+    await client.propose(request, skills);
+
+    const invocation = (transport.invoke as jest.Mock).mock.calls[0][0];
+    expect(invocation.supervision).toEqual({
+      granted: true,
+      approver: 'alice',
+      gate: 'SupervisedAssistantClient',
+    });
+  });
+
+  it('GT-575: a DENIED decision is never stamped — the transport is not reached at all', async () => {
+    const transport = transportReturning({ tool: 'foo' });
+    const client = new SupervisedAssistantClient({ enabled: true, approval: denyAll, transport });
+
+    await client.propose(request, skills);
+
+    expect(transport.invoke).not.toHaveBeenCalled();
+  });
+
   it('FAIL-CLOSED: OFF by default — never contacts the assistant and never asks for approval', async () => {
     const transport = transportReturning({ tool: 'foo' });
     const client = new SupervisedAssistantClient({ approval: grantAll, transport }); // enabled omitted

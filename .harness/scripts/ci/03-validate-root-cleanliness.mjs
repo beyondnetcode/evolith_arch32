@@ -3,6 +3,12 @@
 import fs from "node:fs";
 import path from "node:path";
 
+// GT-578: this guard reads exactly one directory. If `process.cwd()` is not the
+// repository root — the shape that broke 12/21/31/33/34 in GT-556 — readdirSync
+// returns whatever that other directory holds, or nothing, and the script still
+// prints "✓ Root Cleanliness Validation Passed".
+import { assertScanned } from '../lib/coverage.mjs';
+
 const root = process.cwd();
 
 // Explicit whitelist of allowed files in the root directory.
@@ -71,7 +77,24 @@ const explicitlyDeniedDirectories = new Map([
 
 const failures = [];
 
-for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
+const rootEntries = fs.readdirSync(root, { withFileTypes: true });
+assertScanned(rootEntries.length, { what: "root entries", where: root });
+
+// A root that holds none of the mandatory anchors is not "clean"; it is the
+// wrong directory. Checking for the anchors is stronger than counting: a
+// non-empty but unrelated directory would satisfy a count and nothing else.
+const ANCHORS = ["package.json", ".github", ".harness"];
+const missingAnchors = ANCHORS.filter((a) => !rootEntries.some((e) => e.name === a));
+if (missingAnchors.length > 0) {
+  console.error(
+    `❌ Root Cleanliness Validation cannot run: ${root} is missing ${missingAnchors.join(", ")}.\n` +
+    `Scanned ${rootEntries.length} entr(ies) but this is not the repository root, so a "passed"\n` +
+    `verdict here would certify a directory nobody asked about.`,
+  );
+  process.exit(1);
+}
+
+for (const entry of rootEntries) {
   if (entry.isDirectory()) {
     if (explicitlyDeniedDirectories.has(entry.name)) {
       failures.push(explicitlyDeniedDirectories.get(entry.name));
@@ -95,4 +118,4 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log("✓ Root Cleanliness Validation Passed");
+console.log(`✓ Root Cleanliness Validation Passed (${rootEntries.length} root entr(ies) inspected)`);

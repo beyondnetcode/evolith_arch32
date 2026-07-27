@@ -10,13 +10,16 @@ import {
   GeminiProvider,
   GEMINI_EGRESS_ENV_FLAG,
   GEMINI_EGRESS_HOST,
+  LLM_STRUCTURED_JSON_SKILL_ID,
   type FetchLike,
 } from './GeminiProvider';
+import type { ILLMProvider } from './ILLMProvider';
 import {
   LlmEgressBudgetError,
   LlmEgressConfigurationError,
   LlmEgressDisabledError,
   LlmEgressError,
+  LlmEgressUnsupervisedError,
   LlmResponseSchemaError,
   noopLlmEgressAudit,
   type ILlmEgressAudit,
@@ -62,11 +65,25 @@ function collectingAudit(): { audit: ILlmEgressAudit; events: LlmEgressAuditEven
   return { audit: { record: (e) => events.push(e) }, events };
 }
 
-/** Armed provider with everything injected; tests opt into failure explicitly. */
+/** An approval port that always grants — stands in for the human. */
+const grantAll: IApprovalPort = {
+  requireApproval: async (): Promise<ApprovalDecision> => ({ granted: true, approver: 'alice' }),
+};
+/** An approval port that always refuses. */
+const denyAll: IApprovalPort = {
+  requireApproval: async (): Promise<ApprovalDecision> => ({ granted: false, status: 'rejected' }),
+};
+
+/**
+ * Armed AND supervised provider with everything injected; tests opt into failure
+ * explicitly. Supervision is deliberately part of the baseline: since GT-575 a
+ * provider without a HITL gate cannot reach the network at all.
+ */
 function armed(overrides: Partial<ConstructorParameters<typeof GeminiProvider>[0] & object> = {}, fetchImpl?: FetchLike) {
   return new GeminiProvider({
     enabled: true,
     apiKey: 'test-key-abc',
+    approval: grantAll,
     audit: noopLlmEgressAudit,
     fetchImpl: fetchImpl ?? fakeFetch().fetchImpl,
     ...(overrides as object),
@@ -100,7 +117,7 @@ describe('control 1 — network egress is OFF by default', () => {
   it('arms itself from EVOLITH_LLM_EGRESS=true', async () => {
     process.env[GEMINI_EGRESS_ENV_FLAG] = 'true';
     const { fetchImpl, calls } = fakeFetch();
-    const provider = new GeminiProvider({ apiKey: 'k', fetchImpl, audit: noopLlmEgressAudit });
+    const provider = new GeminiProvider({ apiKey: 'k', approval: grantAll, fetchImpl, audit: noopLlmEgressAudit });
 
     expect(provider.egressEnabled).toBe(true);
     await provider.generateStructuredJson('sys', 'user');
@@ -110,7 +127,7 @@ describe('control 1 — network egress is OFF by default', () => {
   it('fails closed with no credential rather than sending an unauthenticated request', async () => {
     for (const name of ['EVOLITH_LLM_API_KEY', 'GEMINI_API_KEY']) delete process.env[name];
     const { fetchImpl, calls } = fakeFetch();
-    const provider = new GeminiProvider({ enabled: true, fetchImpl, audit: noopLlmEgressAudit });
+    const provider = new GeminiProvider({ enabled: true, approval: grantAll, fetchImpl, audit: noopLlmEgressAudit });
 
     await expect(provider.generateStructuredJson('sys', 'user')).rejects.toBeInstanceOf(LlmEgressConfigurationError);
     expect(calls).toHaveLength(0);
@@ -154,7 +171,9 @@ describe('control 3 — every request is bounded in time by an AbortController',
       const provider = armed({ timeoutMs: 5000 }, slowFetch);
       const pending = provider.generateStructuredJson('sys', 'user');
       const assertion = expect(pending).rejects.toThrow(/timed out after 5000ms/);
-      jest.advanceTimersByTime(5001);
+      // The async form flushes the microtasks of the supervision gate first, so
+      // the AbortController timer is already armed when the clock moves.
+      await jest.advanceTimersByTimeAsync(5001);
       await assertion;
     } finally {
       jest.useRealTimers();
@@ -325,13 +344,6 @@ describe('collapsing the duplicate — GeminiProvider IS an IAssistantTransport'
     parameters: { a: 1 },
     context: { tenantId: 'tenant-super-secret', productId: 'prod-1', workspaceRef: 'ws://private' },
   };
-  const grantAll: IApprovalPort = {
-    requireApproval: async (): Promise<ApprovalDecision> => ({ granted: true, approver: 'alice' }),
-  };
-  const denyAll: IApprovalPort = {
-    requireApproval: async (): Promise<ApprovalDecision> => ({ granted: false, status: 'rejected' }),
-  };
-
   it('satisfies the IAssistantTransport port structurally', () => {
     const transport: IAssistantTransport = armed({});
     expect(typeof transport.invoke).toBe('function');
@@ -403,5 +415,131 @@ describe('collapsing the duplicate — GeminiProvider IS an IAssistantTransport'
     expect(calls).toHaveLength(0);
     expect(proposal.tool).toBeUndefined();
     expect(proposal.rationale).toContain('fail-closed');
+  });
+});
+
+describe('control 8 — the duplicate port is collapsed: no unsupervised path to the network', () => {
+  const skills: SkillDescriptor[] = [
+    { id: 'foo', description: 'Does foo', intents: ['foo'], kind: 'harness', permissions: [], requiresApproval: false, emitsTrace: true, requiresPolicy: false },
+  ];
+  const request: AgentRuntimeRequest = {
+    intent: 'do the thing',
+    parameters: { a: 1 },
+    context: { tenantId: 'tenant-super-secret' },
+  };
+
+  it('refuses the deprecated ILLMProvider seam when no HITL gate was configured', async () => {
+    const { fetchImpl, calls } = fakeFetch();
+    const bare = new GeminiProvider({ enabled: true, apiKey: 'k', fetchImpl, audit: noopLlmEgressAudit });
+
+    await expect(bare.generateStructuredJson('sys', 'user')).rejects.toBeInstanceOf(LlmEgressUnsupervisedError);
+    expect(calls).toHaveLength(0);
+  });
+
+  it('names the governed wiring in the refusal instead of just failing', async () => {
+    const bare = new GeminiProvider({ enabled: true, apiKey: 'k', fetchImpl: fakeFetch().fetchImpl, audit: noopLlmEgressAudit });
+    await expect(bare.generateStructuredJson('sys', 'user')).rejects.toThrow(/SupervisedAssistantClient/);
+  });
+
+  it('refuses a DIRECT transport invoke that carries no supervision either', async () => {
+    const { fetchImpl, calls } = fakeFetch(geminiBody('{"tool":"foo"}'));
+    const bare = new GeminiProvider({ enabled: true, apiKey: 'k', fetchImpl, audit: noopLlmEgressAudit });
+
+    await expect(bare.invoke({ request, availableSkills: skills })).rejects.toBeInstanceOf(
+      LlmEgressUnsupervisedError,
+    );
+    expect(calls).toHaveLength(0);
+  });
+
+  it('audits the unsupervised refusal, so the bypass attempt is observable', async () => {
+    const { audit, events } = collectingAudit();
+    const bare = new GeminiProvider({ enabled: true, apiKey: 'k', fetchImpl: fakeFetch().fetchImpl, audit });
+
+    await expect(bare.generateStructuredJson('sys', 'user')).rejects.toBeInstanceOf(LlmEgressUnsupervisedError);
+    expect(events).toEqual([expect.objectContaining({ outcome: 'refused', reason: 'unsupervised' })]);
+  });
+
+  it('an injected gate that DENIES keeps the legacy seam off the wire', async () => {
+    const { audit, events } = collectingAudit();
+    const { fetchImpl, calls } = fakeFetch();
+    const provider = new GeminiProvider({ enabled: true, apiKey: 'k', approval: denyAll, fetchImpl, audit });
+
+    await expect(provider.generateStructuredJson('sys', 'user')).rejects.toBeInstanceOf(LlmEgressUnsupervisedError);
+    expect(calls).toHaveLength(0);
+    expect(events).toEqual([expect.objectContaining({ outcome: 'refused', reason: 'approval-denied' })]);
+  });
+
+  it('asks the human about the ENDPOINT, never about the prompt content', async () => {
+    const seen: Array<{ skillId: string; parameters: unknown }> = [];
+    const recording: IApprovalPort = {
+      requireApproval: async (req) => {
+        seen.push({ skillId: req.skill.id, parameters: req.request.parameters });
+        return { granted: true, approver: 'alice' };
+      },
+    };
+    const { fetchImpl } = fakeFetch();
+    const provider = new GeminiProvider({ enabled: true, apiKey: 'k', approval: recording, fetchImpl, audit: noopLlmEgressAudit });
+
+    await provider.generateStructuredJson('sys', 'a very secret business requirement');
+
+    expect(seen).toHaveLength(1);
+    expect(seen[0].skillId).toBe(LLM_STRUCTURED_JSON_SKILL_ID);
+    expect(JSON.stringify(seen[0].parameters)).not.toContain('a very secret business requirement');
+    expect(JSON.stringify(seen[0].parameters)).toContain('generativelanguage.googleapis.com');
+  });
+
+  it('the supervised client IS a sufficient gate: a provider with no approval port still works behind it', async () => {
+    const { fetchImpl, calls } = fakeFetch(geminiBody('{"tool":"foo","rationale":"picked foo"}'));
+    const client = new SupervisedAssistantClient({
+      enabled: true,
+      approval: grantAll,
+      transport: new GeminiProvider({ enabled: true, apiKey: 'k', fetchImpl, audit: noopLlmEgressAudit }),
+    });
+
+    const proposal = await client.propose(request, skills);
+    expect(calls).toHaveLength(1);
+    expect(proposal.tool).toBe('foo');
+  });
+
+  it('asks the human ONCE: an upstream grant short-circuits the provider gate', async () => {
+    const providerGate = jest.fn(async () => ({ granted: true, approver: 'bob' }));
+    const { fetchImpl, calls } = fakeFetch(geminiBody('{"tool":"foo"}'));
+    const client = new SupervisedAssistantClient({
+      enabled: true,
+      approval: grantAll,
+      transport: new GeminiProvider({
+        enabled: true,
+        apiKey: 'k',
+        approval: { requireApproval: providerGate },
+        fetchImpl,
+        audit: noopLlmEgressAudit,
+      }),
+    });
+
+    await client.propose(request, skills);
+    expect(calls).toHaveLength(1);
+    expect(providerGate).not.toHaveBeenCalled();
+  });
+
+  it('records WHICH gate authorized the call, without leaking content', async () => {
+    const { audit, events } = collectingAudit();
+    const { fetchImpl } = fakeFetch(geminiBody('{"tool":"foo"}'));
+    const client = new SupervisedAssistantClient({
+      enabled: true,
+      approval: grantAll,
+      transport: new GeminiProvider({ enabled: true, apiKey: 'k', fetchImpl, audit }),
+    });
+
+    await client.propose(request, skills);
+    const [event] = events;
+    expect(event.outcome).toBe('sent');
+    expect(event.supervisedBy).toBe('SupervisedAssistantClient:alice');
+    expect(JSON.stringify(event)).not.toContain('tenant-super-secret');
+  });
+
+  it('keeps the published 1.x ILLMProvider shape type-compatible (GT-388 freeze)', () => {
+    const provider = armed({});
+    const legacy: ILLMProvider = provider; // must still compile: the CLI passes one of these
+    expect(typeof legacy.generateStructuredJson).toBe('function');
   });
 });

@@ -17,6 +17,7 @@ import { resolve, join } from 'node:path';
 import process from 'node:process';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
+import { assertScanned } from '../lib/coverage.mjs';
 
 const ROOT = resolve(process.cwd());
 const MATRIX_PATH = join(
@@ -129,6 +130,14 @@ function check(matrix) {
 
 function main() {
   const matrix = loadMatrix();
+  // GT-578: `check()` and `checkMigrations()` both iterate
+  // `matrix.surfaces ?? {}`. Rename that key and every loop runs zero times, so
+  // the script prints "consistent for 0 surfaces" and exits 0 — which is what a
+  // reviewer reads as a pass.
+  assertScanned(Object.keys(matrix.surfaces ?? {}).length, {
+    what: 'surfaces in the compatibility matrix',
+    where: `${MATRIX_PATH}#surfaces`,
+  });
   const failures = [
     ...validateSchema(matrix),
     ...check(matrix),

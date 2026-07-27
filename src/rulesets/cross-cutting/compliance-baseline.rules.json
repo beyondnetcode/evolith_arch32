@@ -5,6 +5,7 @@
   "description": "Machine-readable encoding of the 5 Evolith Compliance Baseline pillars. These artifacts govern the entire lifecycle and must be in effect from the first artifact to the last deployment.",
   "version": "1.0.0",
   "effectiveDate": "2026-01-01",
+  "appliesFromSdlcPhase": 1,
   "exitCriteria": {
     "description": "All 5 pillars validated present and compliant in each satellite. Baseline violations block Phase 1 gate.",
     "validationTools": [

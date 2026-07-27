@@ -69,6 +69,7 @@
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { resolve, dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertScanned } from '../lib/coverage.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '../../..');
@@ -519,6 +520,13 @@ if (unknowns.length > 0) {
 }
 
 const summary = `${checked} literal(s) checked across ${fileCount} file(s)`;
+
+// GT-578: this guard already PUBLISHED its denominator — it just never acted on
+// it. `0 literal(s) checked across 0 file(s)` printed next to a green
+// "✓ Repo path literals valid" is the exact defect it was written to catch,
+// one level up: the guard's own scan roots are path literals too.
+assertScanned(fileCount, { what: 'harness/source files scanned for path literals', where: targets.map(t => `${t.path} (*${t.ext})`) });
+assertScanned(checked, { what: 'path literals extracted', where: targets.map(t => `${t.path} (*${t.ext})`) });
 
 if (violations.length === 0) {
   console.log(`✓ Repo path literals valid: ${summary}`);

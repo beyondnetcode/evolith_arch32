@@ -4,6 +4,7 @@
   "title": "Modular Monolith Architecture Rules",
   "description": "Rules governing the mandatory starting topology for all Evolith satellites. Modular Monolith is the only permitted entry point unless extraction criteria are already satisfied.",
   "version": "1.0.0",
+  "topologies": ["modular-monolith"],
   "phase": "modular-monolith",
   "effectiveDate": "2026-01-01",
   "rules": [

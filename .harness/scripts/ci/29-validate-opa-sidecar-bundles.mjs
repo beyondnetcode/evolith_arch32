@@ -11,6 +11,7 @@ import { ensureOpa } from '../opa-runtime.mjs';
 // made this script crash outright — which is the least-bad failure mode of the six, but
 // still not a check. Both are now resolved fail-closed from the repo root.
 import { REPO_ROOT, resolve as resolveKey, relativeToRoot } from '../lib/paths.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
 
 const ROOT = REPO_ROOT;
 const CHARTS = [
@@ -214,6 +215,14 @@ export async function validateOpaSidecarBundles() {
 async function run() {
   console.log('\nValidating OPA sidecar bundle integrity...');
   const result = await validateOpaSidecarBundles();
+  // GT-578: every one of the ~20 assertions in `validateNative` runs per chart.
+  // With `charts` empty — a renamed Helm directory, a values file that stopped
+  // declaring `opa.bundle` — `errors` is empty too and the script prints
+  // "✅ OPA sidecar bundle validation passed." having validated no bundle.
+  assertScanned(result.charts.length, {
+    what: 'Helm charts declaring an OPA sidecar bundle',
+    where: 'product/infra/helm',
+  });
   if (result.errors.length) {
     for (const error of result.errors) console.error(`❌ [ERROR] ${error}`);
     console.error('\n❌ OPA sidecar bundle validation failed.');
@@ -223,7 +232,7 @@ async function run() {
   for (const chart of result.charts) {
     console.log(`Validated ${chart.name}: ${chart.bundle.url}/${chart.bundle.resource}`);
   }
-  console.log('\n✅ OPA sidecar bundle validation passed.');
+  console.log(`\n✅ OPA sidecar bundle validation passed (${result.charts.length} chart(s)).`);
 }
 
 const entryPoint = process.argv[1] ? pathToFileURL(path.resolve(process.argv[1])).href : '';

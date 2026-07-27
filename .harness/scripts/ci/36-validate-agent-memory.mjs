@@ -3,21 +3,46 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
+import { assertScanned } from '../lib/coverage.mjs';
 
 const ROOT = path.resolve(process.env.EVOLITH_TRACKING_ROOT || '.');
 const MEMORY_DIR = path.join(ROOT, '.harness', 'memory');
 const SCHEMA_PATH = path.join(ROOT, '.harness', 'schemas', 'progress-audit.schema.json');
 
 function run() {
-  if (!fs.existsSync(MEMORY_DIR)) {
-    console.log(`✅ [OK] Agent memory directory does not exist, skipping validation.`);
+  // GT-578: both early exits below printed a green `✅ [OK] ... skipping
+  // validation.` and exited 0. `.harness/memory/` has never existed in this
+  // repository — `git log -- .harness/memory` is empty — so this gate has never
+  // validated a single record while contributing a ✅ to every governance run.
+  //
+  // The honest fix is not to turn it red: creating or retiring the agent-memory
+  // corpus is a decision outside this script. It is to stop claiming a pass.
+  // An inert gate must announce that it is inert, every run, in the words a
+  // reader would need to act on it.
+  const INERT = (where, why) => {
+    console.warn(
+      `⚠ [INERT] Agent memory validation did not run: ${why}\n` +
+      `  Looked in: ${where}\n` +
+      `  This is NOT a pass. Nothing was validated. Exiting 0 because the corpus is\n` +
+      `  optional and its absence is not this script's to fix — either populate\n` +
+      `  .harness/memory/*.jsonl, or retire this gate. A ✅ here would be a lie.`,
+    );
     process.exit(0);
+  };
+
+  if (!fs.existsSync(MEMORY_DIR)) {
+    INERT(MEMORY_DIR, 'the agent memory directory does not exist');
   }
 
   const files = fs.readdirSync(MEMORY_DIR).filter(f => f.endsWith('.jsonl'));
+  assertScanned(files.length, {
+    what: 'agent memory logs (*.jsonl)',
+    where: MEMORY_DIR,
+    allowEmpty: true,
+    reason: 'the corpus is optional; an empty one is reported as INERT rather than as a pass, so it cannot be mistaken for a check that ran.',
+  });
   if (files.length === 0) {
-    console.log(`✅ [OK] No agent memory jsonl files found, skipping validation.`);
-    process.exit(0);
+    INERT(MEMORY_DIR, 'the directory exists but holds zero .jsonl logs');
   }
 
   if (!fs.existsSync(SCHEMA_PATH)) {
@@ -63,7 +88,7 @@ function run() {
     process.exit(1);
   }
 
-  console.log(`✅ [OK] Validated ${files.length} agent memory log(s) successfully.`);
+  console.log(`✅ [OK] Validated ${files.length} agent memory log(s) under ${MEMORY_DIR}.`);
 }
 
 run();

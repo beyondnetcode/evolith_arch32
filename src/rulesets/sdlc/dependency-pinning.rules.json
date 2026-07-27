@@ -8,6 +8,7 @@
   "adrTitle": "Strict Dependency Pinning and Automated Vulnerability Management",
   "status": "Approved",
   "effectiveDate": "2026-06-07",
+  "appliesFromSdlcPhase": 1,
   "rules": [
     {
       "id": "DEP-01",

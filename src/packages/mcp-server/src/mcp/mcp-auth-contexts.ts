@@ -57,6 +57,12 @@ export const LOCAL_SESSION_ROLE = 'local-session';
  * `environment` is read at call time (not at module load) so ABAC's
  * production-specific rules apply to a stdio process started with
  * `NODE_ENV=production`.
+ *
+ * GT-572 (second pass): the grant is implicit ONLY outside production. Under
+ * `NODE_ENV=production` `McpServerService.start()` consults
+ * `evaluateStdioCredentialPolicy` first and refuses to boot unless
+ * `EVOLITH_API_KEY` / `--api-key` is configured, so reaching this function in
+ * production means a credential was presented at startup.
  */
 export function createLocalSessionContext(): McpUserContext {
   return {

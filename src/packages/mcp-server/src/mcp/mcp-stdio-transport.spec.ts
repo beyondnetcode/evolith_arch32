@@ -95,7 +95,7 @@ describe('GT-572 — MCP over stdio', () => {
   let auditLogger: AuditLogger;
   let client: StdioClient;
 
-  async function startStdio(tools: McpTool[]): Promise<void> {
+  async function startStdio(tools: McpTool[], apiKey?: string): Promise<void> {
     auditLogger = new AuditLogger();
     service = new McpServerService(
       new ToolRegistryService(tools),
@@ -104,7 +104,7 @@ describe('GT-572 — MCP over stdio', () => {
       auditLogger,
     );
     client = new StdioClient();
-    await service.start({ transport: 'stdio', stdin: client.toServer, stdout: client.fromServer });
+    await service.start({ transport: 'stdio', stdin: client.toServer, stdout: client.fromServer, apiKey });
     await client.handshake();
   }
 
@@ -185,7 +185,10 @@ describe('GT-572 — MCP over stdio', () => {
     process.env.NODE_ENV = 'production';
     try {
       const execute = jest.fn(async () => ({ deployed: true }));
-      await startStdio([tool('evolith-deploy', execute, true)]);
+      // A production stdio server only boots with the credential configured
+      // (GT-572, second pass); the point of this test is the ABAC rule, not the
+      // startup gate, so supply it.
+      await startStdio([tool('evolith-deploy', execute, true)], 'production-key');
 
       const res = await client.request(2, 'tools/call', {
         name: 'evolith-deploy',

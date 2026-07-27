@@ -20,12 +20,15 @@ export * from './adapters/index';
 export * from './bootstrap';
 export { ArchitecturePlanInterpreter, ARCHITECTURE_PLAN_SCHEMA } from './capabilities/architecture-plan-interpreter';
 
-// GT-575 — the governed LLM egress path. `GeminiProvider` implements
-// `IAssistantTransport` (the governed seam, used behind SupervisedAssistantClient)
-// and the deprecated `ILLMProvider`, both through the same controlled core:
-// OFF BY DEFAULT (`EVOLITH_LLM_EGRESS=true` opts in), key in the `x-goog-api-key`
-// header, timeout, byte/token budget, secret redaction, schema-validated response
-// and an audit record per attempt. ADDITIVE to the GT-388 public-surface freeze.
+// GT-575 — the ONE governed LLM egress path. `GeminiProvider` is an
+// `IAssistantTransport`, used behind `SupervisedAssistantClient`: OFF BY DEFAULT
+// (`EVOLITH_LLM_EGRESS=true` opts in), SUPERVISED (a HITL grant per call — the
+// supervised client's decision, or an `IApprovalPort` injected into the
+// provider), key in the `x-goog-api-key` header, timeout, byte/token budget,
+// secret redaction, schema-validated response and an audit record per attempt.
+// The deprecated `ILLMProvider`-shaped `generateStructuredJson` method is kept
+// for the frozen 1.x consumers and passes the SAME gate, so it is no longer a
+// second port. ADDITIVE to the GT-388 public-surface freeze.
 export {
   GeminiProvider,
   GEMINI_EGRESS_HOST,
@@ -35,6 +38,7 @@ export {
   GEMINI_DEFAULT_TIMEOUT_MS,
   GEMINI_RESPONSE_SCHEMA,
   ASSISTANT_PROPOSAL_SCHEMA,
+  LLM_STRUCTURED_JSON_SKILL_ID,
 } from './providers/GeminiProvider';
 export type { GeminiProviderOptions, FetchLike } from './providers/GeminiProvider';
 export {
@@ -52,6 +56,7 @@ export {
   LlmEgressDisabledError,
   LlmEgressConfigurationError,
   LlmEgressBudgetError,
+  LlmEgressUnsupervisedError,
   LlmResponseSchemaError,
 } from './providers/llm-egress';
 export type {
@@ -63,5 +68,9 @@ export type {
   LlmEgressOutcome,
   RedactionResult,
 } from './providers/llm-egress';
-/** @deprecated GT-575 — use `IAssistantTransport` behind `SupervisedAssistantClient`. */
+/**
+ * @deprecated GT-575 — use `IAssistantTransport` behind `SupervisedAssistantClient`.
+ * No shipped class implements this port any more; it is retained purely so the
+ * frozen 1.x consumers keep type-checking.
+ */
 export type { ILLMProvider } from './providers/ILLMProvider';

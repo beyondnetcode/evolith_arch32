@@ -12,6 +12,7 @@ import path from "node:path";
 // GT-556: root came from process.cwd() — running from src/ looked for
 // src/src/rulesets/... and aborted.
 import { REPO_ROOT, resolve as resolveKey } from '../lib/paths.mjs';
+import { assertScanned } from '../lib/coverage.mjs';
 
 const root = REPO_ROOT;
 const rulesPath = resolveKey("phaseGateRules");
@@ -26,9 +27,21 @@ if (!fs.existsSync(rulesPath)) {
 
 const rules = JSON.parse(fs.readFileSync(rulesPath, "utf8"));
 
+// GT-578: every loop below is `?? []`, so a renamed `gates` key — or a
+// `mandatoryEvidence` that stopped declaring refs — produced zero iterations and
+// the script printed "✓ ... are consistent." having opened no template at all.
+assertScanned((rules.gates ?? []).length, {
+  what: "phase gates",
+  where: `${rulesPath}#gates`,
+});
+
+let refsChecked = 0;
+
 for (const gate of rules.gates ?? []) {
   for (const evidence of gate.mandatoryEvidence ?? []) {
     const label = `Phase ${gate.phase} (${gate.name}) · ${evidence.artifact}`;
+
+    if (evidence.schemaRef || evidence.templateRef) refsChecked += 1;
 
     if (evidence.schemaRef) {
       const schemaPath = path.resolve(rulesetDir, evidence.schemaRef);
@@ -68,5 +81,13 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log("✓ Phase-gate evidence templates and schemas are consistent.");
+assertScanned(refsChecked, {
+  what: "mandatoryEvidence entries declaring a schemaRef or templateRef",
+  where: `${rulesPath}#gates[].mandatoryEvidence`,
+});
+
+console.log(
+  `✓ Phase-gate evidence templates and schemas are consistent ` +
+  `(${(rules.gates ?? []).length} gate(s), ${refsChecked} evidence ref(s) resolved).`,
+);
 process.exit(0);

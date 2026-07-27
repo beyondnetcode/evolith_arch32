@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "bin": {
-    "evolith-mcp": "./dist/main.js"
+    "evolith-mcp": "dist/main.js"
   },
   "scripts": {
     "build": "nest build",

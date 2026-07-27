@@ -401,12 +401,16 @@ jobs:
       - name: Execute the board's recorded validationCommands (report mode)
         run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose
 
-      # Ratchet, not a cliff. `--max-dead` is set to the count measured on
-      # 2026-07-26; the same command with a lower number is how the corpus gets
-      # migrated without one heroic commit. Lower it as records are repaired;
-      # at 0, delete the flag and this becomes the strict gate.
+      # Ratchet, not a cliff. The budget is the count measured ON THE RUNNER —
+      # 305 — not on a developer machine, which reports 290. The 15-reference gap
+      # is environment: build outputs, a resolvable OPA binary and a usable
+      # /dev/stdin all exist locally and change what "dead" means. Pinning a
+      # ratchet to a number measured somewhere other than where it is enforced is
+      # how a gate becomes unsatisfiable, so the runner is the reference.
+      # Lower it as records are repaired; at 0, delete the flag and this becomes
+      # the strict gate.
       - name: Dead-reference ratchet (must not grow)
-        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 290
+        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 305
 
   publish-npm:
     name: Publish npm

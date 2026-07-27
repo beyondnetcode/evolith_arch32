@@ -156,6 +156,7 @@ export class DiskRulesetRepository implements IRulesetRepository {
     if (depth > 4) return [];
     const files: string[] = [];
     const entries = await this.fs.readdirNames(dir);
+    entries.sort();
 
     for (const entry of entries) {
       const full = path.join(dir, entry);

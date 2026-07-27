@@ -7802,3 +7802,16 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
   - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+
+#### GT-622
+
+**Título:** Ochenta y dos análisis huérfanos de code scanning hacen que cada PR avise de una configuración muerta en junio
+
+- **Propósito:** Que ningún PR arrastre un check rojo permanente que no describe un defecto — y que el rojo vuelva a significar algo.
+- **Evidencia:** **Cada pull request arrastra un check `CodeQL` en rojo que dice "1 configuration not found", y no es un hallazgo de seguridad — es contabilidad huérfana.** GitHub conserva **82 análisis de code scanning** en `refs/heads/main` bajo la clave `.github/workflows/ci.yml:codeql`. Esa configuración existió de verdad: el commit `87f50ce3` añadió un job `codeql` a `ci.yml`, y `f50030cd` lo quitó el 2026-06-06 al vaciar ese workflow — el último análisis bajo esa clave es de ese mismo día. Como la configuración sigue *registrada* en `main` pero nada la produce, GitHub la reporta como ausente en cada PR. Lleva así 51 días. Verificado: `code-scanning/analyses?ref=refs/heads/main` devuelve tres claves — `ci.yml:codeql` (82, último 2026-06-06), `sdk-cli-ci.yml:codeql-analysis` (159, al día) y `sdk-cli-ci.yml:trivy-scan` (159, al día). El escaneo que importa está sano; `CodeQL SAST` pasa y es check requerido. **El workflow muerto ya está eliminado** (corría un job `Disabled` que sólo hacía `echo`, en cada PR y push a `main` y `develop`); borrar el fichero NO limpia la configuración registrada, y por eso existe esta fila. **La acción restante queda deliberadamente sin automatizar:** eliminar los 82 análisis vía `DELETE /repos/{owner}/{repo}/code-scanning/analyses/{id}` es irreversible y destruye historial de code scanning de una rama protegida. Su valor histórico es nulo —describen una configuración muerta desde junio— pero tirar historial de escaneo de seguridad es decisión del dueño, no de la herramienta. **Por qué importa más allá del ruido:** un check permanentemente rojo enseña a los revisores a descontar los checks rojos, y `CodeQL SAST` —que comparte el nombre CodeQL y SÍ es requerido— es precisamente el check que nadie se puede permitir aprender a ignorar.
+- **Componente:** `Infra` · **Criticidad:** P2 · **Complejidad:** XS
+- **Procedencia:** Diagnosticado el 2026-07-27 al revisar por qué `CodeQL` salía rojo en el PR #217. La parte reversible (borrar el workflow muerto `.github/workflows/ci.yml`) se hizo en ese mismo commit; la irreversible se registra aquí en vez de ejecutarse.
+- **Criterios de aceptación:**
+  - [ ] `gh pr checks` sobre un PR nuevo no muestra ningún check `CodeQL` reportando "configuration not found".
+  - [ ] Las únicas claves de análisis en `refs/heads/main` son las dos que produce `sdk-cli-ci.yml`.
+  - [ ] `CodeQL SAST` sigue pasando y sigue siendo check requerido — la limpieza no debe tocar el escaneo que funciona.

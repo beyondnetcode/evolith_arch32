@@ -112,6 +112,21 @@ export class LlmEgressDisabledError extends LlmEgressError {
   }
 }
 
+/**
+ * The call is not SUPERVISED (GT-575): no human gate ran in front of it.
+ *
+ * A governed provider opens a socket only when an upstream
+ * `SupervisedAssistantClient` already granted (the decision travels on the
+ * invocation) or when it was itself given an `IApprovalPort` that grants. A
+ * caller holding a bare provider gets this instead of an ungoverned request.
+ */
+export class LlmEgressUnsupervisedError extends LlmEgressError {
+  constructor(message: string) {
+    super(message);
+    this.name = 'LlmEgressUnsupervisedError';
+  }
+}
+
 /** Credentials / endpoint configuration missing or invalid. */
 export class LlmEgressConfigurationError extends LlmEgressError {
   constructor(message: string) {
@@ -301,6 +316,12 @@ export interface LlmEgressAuditEvent {
   readonly durationMs?: number;
   readonly startedAt: string;
   readonly correlationId: string;
+  /**
+   * Which HITL gate authorized this attempt (GT-575) — the gate id, plus the
+   * approver when the adapter reports one. Absent on refusals that never got
+   * past the gate. An identity, never content.
+   */
+  readonly supervisedBy?: string;
 }
 
 export interface ILlmEgressAudit {

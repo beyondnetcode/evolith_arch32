@@ -334,6 +334,62 @@ jobs:
       - name: Run contracts tests
         run: npm run test --workspace @beyondnet/evolith-contracts
 
+  # GT-578 — the two anti-false-green mechanisms, run on every push and PR.
+  #
+  # They live here rather than in docs.yml's `Validate documentation` job on
+  # purpose: that job is a required check on main, and wiring a brand-new
+  # reporting-mode guard into a required check is how a reporting-mode guard
+  # gets deleted. This job is not required yet; promoting it is a branch-
+  # protection change, made once the evidence corpus is migrated (below).
+  governance-guards:
+    name: Governance guards (GT-578)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - name: Install dependencies
+        run: npm ci
+
+      # STRICT. Every script under .harness/scripts/ci must either refuse a
+      # zero-element scan or be registered, with a reason, as something that is
+      # not a corpus scan. A new guard that can pass vacuously fails here, which
+      # is the whole point: the sweep is worthless if the 34th guard starts
+      # unprotected.
+      - name: Every CI guard publishes a denominator
+        run: node .harness/scripts/ci/42-validate-guard-denominators.mjs --verbose
+
+      - name: Self-tests for the two GT-578 guards
+        run: |
+          node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
+          node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs
+
+      # REPORTING MODE, and it says so in its own output ("THIS IS NOT A PASS").
+      # It resolves every validationCommand recorded in the board's closure
+      # evidence and EXECUTES the read-only subset. It is not strict yet because
+      # ~290 recorded commands name pre-src/-refactor locations; repairing them
+      # is a migration of reference/core/control-center/evidence/**, which this
+      # job cannot do and must not pretend away. The two conditions for flipping
+      # `--strict` are written at the top of the script.
+      #
+      # It still fails hard on a vacuous scan (zero closures, zero commands,
+      # zero extractions, zero executions) and on any executed command that
+      # modifies the working tree — a reporting guard that cannot fail at all
+      # would be the exact defect GT-578 is about.
+      - name: Execute the board's recorded validationCommands (report mode)
+        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose
+
+      # Ratchet, not a cliff. `--max-dead` is set to the count measured on
+      # 2026-07-26; the same command with a lower number is how the corpus gets
+      # migrated without one heroic commit. Lower it as records are repaired;
+      # at 0, delete the flag and this becomes the strict gate.
+      - name: Dead-reference ratchet (must not grow)
+        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 290
+
   publish-npm:
     name: Publish npm
     needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api, test-sdk-client, test-infra-providers, test-agent-runtime, test-agent-runtime-api, test-contracts]

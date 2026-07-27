@@ -4,6 +4,7 @@
   "title": "Serverless Topology Rules",
   "description": "Architectural rules for the serverless execution topology.",
   "version": "1.0.0",
+  "topologies": ["serverless"],
   "effectiveDate": "2026-06-20",
   "rules": [
     {

@@ -7,8 +7,8 @@ This is the automated inventory tally of the core reference architecture and gov
 
 | Artifact Type | Count | Location |
 |---|:---:|---|
-| **Architecture Decision Records (ADR)** | 132 | `reference/core/architecture/adrs/` |
-| **Machine-Readable Rulesets** | 163 | `src/rulesets/` (across 18 categories) |
+| **Architecture Decision Records (ADR)** | 139 | `reference/core/architecture/adrs/` |
+| **Machine-Readable Rulesets** | 167 | `src/rulesets/` (across 19 categories) |
 | **Phase-Gate Schemas** | 45 | `src/rulesets/schema/` |
 
-*Last Updated: 2026-07-20*
+*Last Updated: 2026-07-27*

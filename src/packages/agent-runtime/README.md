@@ -24,6 +24,7 @@ Architecture docs: [`reference/core/architecture/foundations`](../../../referenc
 | Sub-processor | **Google LLC (Gemini API)**. Prompt content sent through this path is processed by Google under its terms for that API. |
 | Default state | **DISABLED.** Unconfigured, the provider opens no socket: it audits the refused attempt and throws `LlmEgressDisabledError`. Every other adapter default is in-memory or stub, so the package makes zero network calls out of the box. |
 | Opt-in | `EVOLITH_LLM_EGRESS=true` (or `1`), or an explicit `new GeminiProvider({ enabled: true })`. There is no implicit activation. |
+| Human gate | **Required per call.** Arming the flag is not enough: every call must be authorized either by `SupervisedAssistantClient` (which asks an `IApprovalPort` and stamps its decision on the invocation) or by an `IApprovalPort` injected into the provider (`new GeminiProvider({ approval })`). Neither ⇒ `LlmEgressUnsupervisedError` and no socket. Supervision is never self-granted, and one call never costs more than one human prompt. |
 | Credential | `EVOLITH_LLM_API_KEY`, falling back to `GEMINI_API_KEY`; sent in the `x-goog-api-key` request header, never in the URL. No key means the call is refused before a socket opens. |
 | Limits | 30,000 ms `AbortController` timeout; 60,000 bytes / ~15,000 estimated tokens (`DEFAULT_EGRESS_BUDGET`), enforced over the exact bytes to be sent and failing closed rather than truncating. |
 | Response handling | the Gemini envelope and the inner JSON payload are both validated against declared schemas (`GEMINI_RESPONSE_SCHEMA`, `ASSISTANT_PROPOSAL_SCHEMA`) instead of being cast. |
@@ -31,8 +32,8 @@ Architecture docs: [`reference/core/architecture/foundations`](../../../referenc
 **What is transmitted.** Through `IAssistantTransport.invoke` (the governed seam):
 the request intent, the optional tool id, the request parameters, the `dryRun` flag,
 and the governed skill catalog (id and description only). Through the deprecated
-`ILLMProvider.generateStructuredJson` seam: the caller's system prompt and user
-prompt verbatim. Both are secret-redacted first across 8 pattern classes — PEM
+`generateStructuredJson` seam: the caller's system prompt and user prompt verbatim.
+Both are secret-redacted first across 8 pattern classes — PEM
 private keys, JWTs, AWS access key ids, Google API keys, GitHub PATs, Slack tokens,
 `Bearer` tokens, and generic `KEY`/`SECRET`/`TOKEN`/`PASSWORD` assignments.
 
@@ -42,14 +43,18 @@ are repository contents.
 
 **Audit.** Every attempt, including refusals, emits a content-free
 `[evolith:llm-egress]` JSON line (provider, endpoint, purpose, outcome, bytes,
-estimated tokens, redaction count, HTTP status, duration, correlation id) through
-`ILlmEgressAudit`; inject your own sink to route it. Prompt and response content are
-never logged.
+estimated tokens, redaction count, HTTP status, duration, correlation id, and the
+gate that authorized it) through `ILlmEgressAudit`; inject your own sink to route it.
+Prompt and response content are never logged. Refused attempts — including an
+attempt that was not supervised — are audited too, so a bypass attempt is visible.
 
 **Intended wiring (HITL).** Inject `GeminiProvider` as the `IAssistantTransport` of
 `SupervisedAssistantClient`, which is itself off by default and requires an explicit
-human approval before the transport is reached. The `ILLMProvider` seam is
-`@deprecated`: it runs through the identical governed core but has no approval gate.
+human approval before the transport is reached. There is no second port: the
+`ILLMProvider`-shaped `generateStructuredJson` method is `@deprecated` and kept only
+so the frozen 1.x consumers type-check, and it passes the identical governed core
+**and** the identical human gate — with no approval port injected it refuses to
+send anything.
 
 **Honest limitations.** Redaction is pattern-based, not a DLP control. The controls
 above are covered by unit tests with an injected `fetch` and have not been exercised

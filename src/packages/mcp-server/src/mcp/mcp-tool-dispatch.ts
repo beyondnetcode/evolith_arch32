@@ -9,6 +9,7 @@ import { ErrorCodes } from '../common/errors';
 import { failure, generateCorrelationId, success, toErrorEnvelope } from '../common/envelopes';
 import { runWithContext } from '@beyondnet/evolith-core-domain/common/request-context';
 import { mcpContextStorage, McpUserContext } from './mcp-user-context';
+import { describeAbacDenial } from './abac-denial-remediation';
 
 /** Keys whose values must never reach the log sink in cleartext. */
 const SENSITIVE_ARG_KEYS = new Set(['approvalToken', 'apiKey', 'api_key', 'token', 'secret', 'password', 'authorization']);
@@ -146,10 +147,17 @@ export class ToolDispatchService {
     if (!nativeDecision.allowed || !opaDecision.allowed) {
       const nativeMsgs = nativeDecision.violations.map(v => `${v.id}: ${v.message}`).join('; ');
       const opaMsgs = opaDecision.violations.map(v => `${v.id}: ${v.message}`).join('; ');
+      // GT-572: a denial has to say WHY and WHAT TO DO. The raw violation ids stay
+      // (tests, dashboards and the audit trail key off them); the remediation is
+      // appended after them and cannot change the decision.
+      const remediation = describeAbacDenial([
+        ...(nativeDecision.allowed ? [] : nativeDecision.violations),
+        ...(opaDecision.allowed ? [] : opaDecision.violations),
+      ]);
       return errorEnvelope(
         failure(
           ErrorCodes.FORBIDDEN,
-          `Access denied. ABAC check failed. Native: [${nativeMsgs}]. OPA: [${opaMsgs}].`,
+          `Access denied. ABAC check failed. Native: [${nativeMsgs}]. OPA: [${opaMsgs}].${remediation}`,
           meta(Date.now() - startTime),
         ),
         Date.now() - startTime,

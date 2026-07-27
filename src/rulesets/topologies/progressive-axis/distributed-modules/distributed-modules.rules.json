@@ -4,6 +4,7 @@
   "title": "Distributed Modules Architecture Rules",
   "description": "Rules governing the distributed modules phase. Module boundaries are formalized; inter-module contracts are explicit and versioned.",
   "version": "1.0.0",
+  "topologies": ["distributed-modules"],
   "phase": "distributed-modules",
   "effectiveDate": "2026-01-01",
   "rules": [

@@ -700,6 +700,20 @@ Los logs van a `stderr`. Si el cliente mezcla stdout/stderr, separar los streams
 evolith-mcp serve 2>/tmp/mcp.log
 ```
 
+### stdio: `Refusing to start the MCP stdio transport` (GT-572)
+
+Con `NODE_ENV=production` el transporte stdio **no** recibe el principal `local-session` de forma implícita: exige la misma credencial configurada que cualquier otra superficie productiva. Sin ella el servidor **no arranca** — falla ruidosamente en el arranque por `stderr` y sale con código `78` (`EX_CONFIG`), en lugar de anunciar todas sus tools y luego denegar cada `tools/call` con `FORBIDDEN`.
+
+Soluciones (una de):
+
+```bash
+export EVOLITH_API_KEY=<key>                                  # contenedor: -e EVOLITH_API_KEY=<key>
+evolith-mcp serve --transport stdio --api-key <key>
+NODE_ENV=development evolith-mcp serve --transport stdio      # sesión local de desarrollo
+```
+
+`--allow-no-auth` / `EVOLITH_MCP_ALLOW_NO_AUTH` es un switch de desarrollo **solo HTTP** y deliberadamente no sustituye a la credencial productiva.
+
 ### HTTP: `401 Unauthorized`
 
 Verificar que `EVOLITH_API_KEY` está configurado en el servidor y que el request envía el mismo valor en `Authorization: Bearer <key>` o `x-api-key: <key>`. El valor se compara por igualdad exacta (no requiere prefijo `evk_`). En `NODE_ENV=production` la auth es obligatoria aunque `EVOLITH_MCP_ALLOW_NO_AUTH=true`.

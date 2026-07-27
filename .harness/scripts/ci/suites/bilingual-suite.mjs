@@ -6,6 +6,7 @@ import {
   partitionByExclusions,
   formatExclusionReport
 } from "../../lib/generated-doc-exclusions.mjs";
+import { assertScanned } from "../../lib/coverage.mjs";
 
 const root = process.cwd();
 const failures = [];
@@ -64,6 +65,14 @@ function walk(directory, files = []) {
 
 const markdownFiles = walk(root);
 
+// GT-578: `walk` starts at `process.cwd()`. Run this from anywhere but the repo
+// root and it returns few or no .md files, both loops below iterate nothing, and
+// the suite prints "✓ Bilingual Suite (Parity & Orphans) passed" — a green tick
+// for a corpus it never opened. Two denominators, because a live parity scan
+// used to mask a dead orphan scan: `referenceEnglishDocs` is asserted after the
+// loop for exactly that reason.
+assertScanned(markdownFiles.length, { what: "markdown files", where: root });
+
 for (const file of markdownFiles) {
   const relative = path.relative(root, file);
   const content = fs.readFileSync(file, "utf8");
@@ -110,6 +119,11 @@ for (const file of markdownFiles) {
 // reason, and membership is proven by a content marker or a pinned inventory. Partition over
 // EVERY English doc under reference/ (not just the orphans) so a count-pinned tree is measured
 // against its real shape rather than against whichever subset happens to be untranslated.
+assertScanned(referenceEnglishDocs.length, {
+  what: "English docs under reference/ (the orphan-check corpus)",
+  where: path.join(root, "reference"),
+});
+
 const partition = partitionByExclusions(
   referenceEnglishDocs,
   (rel) => fs.readFileSync(path.join(root, rel), "utf8")
@@ -147,5 +161,9 @@ if (hasError) {
   process.exit(1);
 }
 
-console.log("\x1b[32m✓\x1b[0m Bilingual Suite (Parity & Orphans) passed");
+console.log(
+  `\x1b[32m✓\x1b[0m Bilingual Suite (Parity & Orphans) passed ` +
+  `(${markdownFiles.length} markdown file(s) scanned; ` +
+  `${referenceEnglishDocs.length} English doc(s) under reference/ checked for an ES counterpart)`,
+);
 process.exit(0);

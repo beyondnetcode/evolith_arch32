@@ -4,6 +4,7 @@
   "title": "Microservices Architecture Rules",
   "description": "Rules governing the microservices phase. Autonomous deployability is the core principle. Service mesh readiness is mandatory.",
   "version": "1.0.0",
+  "topologies": ["microservices"],
   "phase": "microservices",
   "effectiveDate": "2026-01-01",
   "rules": [

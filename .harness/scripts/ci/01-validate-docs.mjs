@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { assertScanned } from '../lib/coverage.mjs';
 
 const root = process.cwd();
 const shouldRenderMermaid = process.argv.includes("--render-mermaid");
@@ -398,6 +399,12 @@ async function renderMermaidBlocks() {
 }
 
 walk(root);
+
+// GT-578: `walk(root)` starts at `process.cwd()`. From the wrong directory it
+// collects nothing, the loop below never runs, and the script prints
+// "Documentation validation passed for 0 Markdown files." — the sentence reads
+// like a pass and is a report that nothing was inspected.
+assertScanned(markdownFiles.length, { what: 'Markdown files', where: root });
 
 for (const file of markdownFiles) {
   const content = readUtf8(file);

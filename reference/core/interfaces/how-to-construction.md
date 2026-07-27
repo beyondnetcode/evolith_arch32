@@ -113,9 +113,9 @@ Response (captured live):
   "data": {
     "status": "failed",
     "rulesChecked": "<n>",
-    "rulesSkipped": 277,
+    "rulesSkipped": 243,
     "rulesErrored": 0,
-    "rulesTotal": 379,
+    "rulesTotal": 304,
     "skippedRuleIds": [
       "ACL-02",
       "ACL-03",
@@ -221,9 +221,9 @@ Response (captured live):
   "data": {
     "status": "failed",
     "rulesChecked": "<n>",
-    "rulesSkipped": 277,
+    "rulesSkipped": 243,
     "rulesErrored": 0,
-    "rulesTotal": 379,
+    "rulesTotal": 304,
     "skippedRuleIds": [
       "ACL-02",
       "ACL-03",
@@ -323,9 +323,9 @@ Response (captured live):
   "data": {
     "status": "failed",
     "rulesChecked": "<n>",
-    "rulesSkipped": 277,
+    "rulesSkipped": 243,
     "rulesErrored": 0,
-    "rulesTotal": 379,
+    "rulesTotal": 304,
     "skippedRuleIds": [
       "ACL-02",
       "ACL-03",
@@ -1126,7 +1126,6 @@ Tool: `evolith-gate-evaluate`
 | `evaluatedBy` | string |  | human, agent, or ci |
 | `initiative` | string |  | Optional initiative context |
 | `tenant` | string |  | Optional tenant context |
-| `requester` | object |  | — |
 
 Example (`tools/call`):
 ```json

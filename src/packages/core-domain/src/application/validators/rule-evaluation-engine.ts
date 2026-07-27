@@ -3,6 +3,13 @@ import { ValidationIssue, RuleCoverage } from './ruleset-validator.types';
 import { IRuleEvaluatorStrategy, WorkspaceEvaluationContext, RuleEvaluationResult } from './evaluators/evaluator.interface';
 import { NativeEvaluator } from './evaluators/native-evaluator';
 import { IRulesetRepository } from '../../domain/ports/ruleset-repository.port';
+import { NormalizedRule as CorpusRule } from '../../domain/models/normalized-rule';
+import {
+  ApplicabilityContext,
+  NotApplicableReason,
+  RuleApplicabilityIndex,
+  notApplicableReason,
+} from './rule-applicability';
 
 export interface NormalizedRule {
   id: string;
@@ -65,6 +72,54 @@ export function emptyRuleCoverage(): RuleCoverage {
   };
 }
 
+/**
+ * GT-571 — a rule the corpus contains but that does not address this repository.
+ *
+ * It is NOT an outcome of evaluation: the rule never reached the evaluator, so
+ * it is excluded from `rulesTotal` and the GT-569 invariant
+ * (`checked + skipped + errored === total`) is untouched.
+ */
+export interface NotApplicableRule {
+  readonly rule: CorpusRule;
+  readonly reason: NotApplicableReason;
+}
+
+/** What {@link RuleEvaluationEngine.discoverAndEvaluate} returns. */
+export interface CorpusEvaluation {
+  /** Outcomes of the rules that WERE evaluated. */
+  readonly results: RuleEvaluationResult[];
+  /** Rules removed before evaluation because they address somebody else. */
+  readonly notApplicable: NotApplicableRule[];
+}
+
+/** The applicability decision, injected so the engine stays free of I/O. */
+export interface RuleApplicabilityFilter {
+  readonly index: RuleApplicabilityIndex;
+  readonly context: ApplicabilityContext;
+}
+
+/**
+ * GT-571 — split the corpus into "addressed to this repository" and "not".
+ * Exported so a caller can reason about the split without running an evaluation.
+ */
+export function partitionByApplicability(
+  rules: readonly CorpusRule[],
+  filter?: RuleApplicabilityFilter,
+): { applicable: CorpusRule[]; notApplicable: NotApplicableRule[] } {
+  if (!filter) return { applicable: [...rules], notApplicable: [] };
+
+  const applicable: CorpusRule[] = [];
+  const notApplicable: NotApplicableRule[] = [];
+
+  for (const rule of rules) {
+    const reason = notApplicableReason(filter.index.get(rule.id), filter.context);
+    if (reason) notApplicable.push({ rule, reason });
+    else applicable.push(rule);
+  }
+
+  return { applicable, notApplicable };
+}
+
 /** GT-569 — accumulate coverage across several engine invocations. */
 export function mergeRuleCoverage(a: RuleCoverage, b: RuleCoverage): RuleCoverage {
   return {
@@ -95,17 +150,29 @@ export class RuleEvaluationEngine {
     this.rulesetRepo = options.rulesetRepo;
   }
 
+  /**
+   * Evaluate the corpus against a workspace.
+   *
+   * GT-571: when an {@link RuleApplicabilityFilter} is supplied, rules that are
+   * not addressed to this repository (wrong audience, a topology it has not
+   * declared, a later SDLC phase) are removed BEFORE evaluation. They are
+   * returned separately in {@link CorpusEvaluation.notApplicable} — never as
+   * `skipped`, which GT-569 reserves for "the engine tried and could not".
+   *
+   * With no filter the behaviour is byte-for-byte the pre-GT-571 one.
+   */
   async discoverAndEvaluate(
     satellitePath: string,
     corePath: string,
-  ): Promise<RuleEvaluationResult[]> {
+    filter?: RuleApplicabilityFilter,
+  ): Promise<CorpusEvaluation> {
     const rules = await this.rulesetRepo.loadAllRulesets(corePath);
     const ctx: WorkspaceEvaluationContext = { satellitePath, corePath };
-    const results: RuleEvaluationResult[] = [];
-    
-    results.push(...await this.strategy.evaluateAll(rules, ctx));
 
-    return results;
+    const { applicable, notApplicable } = partitionByApplicability(rules, filter);
+    const results = await this.strategy.evaluateAll(applicable, ctx);
+
+    return { results, notApplicable };
   }
 
   /** GT-569 — coverage of a raw result set, exposed as a method for callers holding the engine. */

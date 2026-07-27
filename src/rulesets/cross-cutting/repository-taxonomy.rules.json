@@ -65,6 +65,7 @@
     },
     {
       "id": "TAX-05",
+      "audience": "core",
       "severity": "MUST",
       "category": "directory-structure",
       "title": "Evolith Core structure: reference/, sdk/, rulesets/",
@@ -82,6 +83,8 @@
     },
     {
       "id": "TAX-06",
+      "audience": "satellite",
+      "appliesFromSdlcPhase": 1,
       "severity": "MUST",
       "category": "directory-structure",
       "title": "Satellite structure: src/, tests/, docs/",
@@ -122,6 +125,7 @@
     },
     {
       "id": "TAX-09",
+      "audience": "core",
       "severity": "MUST",
       "category": "artifact-classification",
       "title": "Evolith reference artifacts in reference/",
@@ -132,6 +136,7 @@
     },
     {
       "id": "TAX-10",
+      "audience": "core",
       "severity": "MUST",
       "category": "artifact-classification",
       "title": "Product-specific evidence not in reference/",
@@ -142,6 +147,7 @@
     },
     {
       "id": "TAX-11",
+      "audience": "core",
       "severity": "MUST",
       "category": "directory-structure",
       "title": "No root-level topologies directory",

@@ -19,28 +19,39 @@
  *      envelope and the inner JSON payload — instead of `JSON.parse(x) as T`.
  *   7. Every attempt, including refusals, emits an auditable, content-free
  *      {@link LlmEgressAuditEvent}.
+ *   8. SUPERVISED — no socket opens unless a HITL gate granted this specific
+ *      call. This is what collapses the duplicate port: there is now ONE way to
+ *      reach an LLM from this package, and it always passes a human gate.
  *
- * It implements BOTH seams so there is one governed path to an LLM:
- *   - {@link IAssistantTransport} — the architecturally correct seam. Injected
- *     into {@link SupervisedAssistantClient}, so a real call happens only after
- *     a human APPROVES contacting the assistant (HITL), and the proposal is
- *     still bounded by the governed skill catalog downstream. THIS IS THE
- *     INTENDED WAY TO USE IT.
- *   - {@link ILLMProvider} — the legacy, deprecated seam kept for the published
- *     1.x contract (`ArchitecturePlanInterpreter`, the CLI `plan create`
- *     command). It now runs through the exact same governed core, so it is no
- *     longer a bypass; it simply lacks the HITL gate that the transport seam
- *     gets from the supervised client.
+ * This class is an {@link IAssistantTransport} — the architecturally correct
+ * seam. Inject it into {@link SupervisedAssistantClient}: that client asks a
+ * human for approval, stamps the decision on the invocation, and only then is
+ * the transport reached; whatever it proposes is still bounded by the governed
+ * skill catalog downstream. THAT IS THE INTENDED (and only recommended) WAY TO
+ * USE IT.
  *
- * NETWORK EGRESS: when and only when armed, this class performs an outbound
- * HTTPS POST to `https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent`
+ * `generateStructuredJson` survives ONLY because the published 1.x contract has
+ * an `ILLMProvider`-shaped consumer (`ArchitecturePlanInterpreter`, the CLI
+ * `plan create` command) and removing it would be a SemVer major. It is no
+ * longer a second, ungoverned port: it now demands the SAME supervision as the
+ * transport seam, satisfied by an {@link IApprovalPort} injected through
+ * {@link GeminiProviderOptions.approval}. Without a gate it fails closed with
+ * {@link LlmEgressUnsupervisedError} — a bare provider cannot reach the network
+ * through either seam.
+ *
+ * NETWORK EGRESS: when and only when armed AND supervised, this class performs
+ * an outbound HTTPS POST to
+ * `https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent`
  * (Google is the sub-processor). See the class constants for the opt-in flag.
  */
 
-import type { ILLMProvider } from './ILLMProvider';
+import type { IApprovalPort } from '../domain/ports/approval.port';
+import type { AgentRuntimeRequest } from '../domain/contracts/agent-runtime-request';
+import type { SkillDescriptor } from '../domain/contracts/capability';
 import type {
   AssistantInvocationRequest,
   AssistantProposal,
+  AssistantSupervision,
   IAssistantTransport,
 } from '../domain/ports/assistant-invocation.port';
 import {
@@ -51,6 +62,7 @@ import {
   LlmEgressConfigurationError,
   LlmEgressDisabledError,
   LlmEgressError,
+  LlmEgressUnsupervisedError,
   LlmResponseSchemaError,
   parseAndValidateJson,
   redactSecrets,
@@ -72,6 +84,25 @@ export const GEMINI_API_KEY_ENV_VARS = ['EVOLITH_LLM_API_KEY', 'GEMINI_API_KEY']
 
 export const GEMINI_DEFAULT_MODEL = 'gemini-2.5-flash';
 export const GEMINI_DEFAULT_TIMEOUT_MS = 30_000;
+
+/**
+ * Id of the synthetic capability an approver decides on when the deprecated
+ * `generateStructuredJson` seam asks for its own HITL grant. An approval policy
+ * adapter matches on this id exactly as it does on `assistant.invoke`.
+ */
+export const LLM_STRUCTURED_JSON_SKILL_ID = 'llm.generate-structured-json';
+
+/** What the human is asked to approve. Carries NO prompt content, by construction. */
+const STRUCTURED_JSON_SKILL: SkillDescriptor = {
+  id: LLM_STRUCTURED_JSON_SKILL_ID,
+  description: 'Send a prompt to an external LLM provider and obtain structured JSON (supervised).',
+  intents: ['generate_structured_json'],
+  kind: 'composite',
+  permissions: ['invoke:assistant'],
+  requiresApproval: true,
+  emitsTrace: true,
+  requiresPolicy: false,
+};
 
 /** Minimal structural view of `fetch`, injected so the egress path is testable. */
 export type FetchLike = (
@@ -100,6 +131,17 @@ export interface GeminiProviderOptions {
    * (i.e. OFF). There is no implicit way to enable it.
    */
   readonly enabled?: boolean;
+  /**
+   * The HITL gate for calls that do NOT arrive through
+   * {@link SupervisedAssistantClient} — i.e. the deprecated
+   * `generateStructuredJson` seam, and a direct `invoke` (GT-575). Absent ⇒
+   * those calls fail closed with {@link LlmEgressUnsupervisedError}; supervision
+   * is never self-granted.
+   *
+   * When the invocation already carries an {@link AssistantSupervision} grant
+   * this port is NOT consulted — one call, one human prompt.
+   */
+  readonly approval?: IApprovalPort;
   readonly timeoutMs?: number;
   readonly budget?: EgressBudget;
   readonly fetchImpl?: FetchLike;
@@ -155,6 +197,22 @@ interface GeminiEnvelope {
   candidates: Array<{ content: { parts: Array<{ text: string }> } }>;
 }
 
+/**
+ * What the governed core needs in order to prove this specific call was
+ * supervised: the grant carried by the invocation (when it came through
+ * {@link SupervisedAssistantClient}) and the request an approver would decide
+ * on if this provider has to run the gate itself.
+ */
+interface EgressGateContext {
+  readonly supervision?: AssistantSupervision;
+  readonly request: AgentRuntimeRequest;
+}
+
+/** Result of the supervision gate — never a thrown control flow inside the core. */
+type SupervisionOutcome =
+  | { readonly ok: true; readonly supervisedBy: string }
+  | { readonly ok: false; readonly reason: 'unsupervised' | 'approval-denied'; readonly message: string };
+
 /** The real network call. Isolated so the governed core above it stays testable. */
 const defaultFetch: FetchLike = (input, init) =>
   fetch(input, {
@@ -176,11 +234,12 @@ function resolveEnvKey(): string {
   return '';
 }
 
-export class GeminiProvider implements ILLMProvider, IAssistantTransport {
+export class GeminiProvider implements IAssistantTransport {
   private readonly apiKey: string;
   private readonly model: string;
   private readonly host: string;
   private readonly enabled: boolean;
+  private readonly approval?: IApprovalPort;
   private readonly timeoutMs: number;
   private readonly budget: EgressBudget;
   private readonly fetchImpl: FetchLike;
@@ -202,6 +261,7 @@ export class GeminiProvider implements ILLMProvider, IAssistantTransport {
     this.host = options.host || GEMINI_EGRESS_HOST;
     // OFF BY DEFAULT. Only an explicit option or the opt-in env var arms it.
     this.enabled = options.enabled ?? envFlagEnabled(process.env[GEMINI_EGRESS_ENV_FLAG]);
+    this.approval = options.approval;
     this.timeoutMs = options.timeoutMs ?? GEMINI_DEFAULT_TIMEOUT_MS;
     this.budget = options.budget ?? DEFAULT_EGRESS_BUDGET;
     this.fetchImpl = options.fetchImpl ?? defaultFetch;
@@ -221,8 +281,11 @@ export class GeminiProvider implements ILLMProvider, IAssistantTransport {
   }
 
   /**
-   * Legacy {@link ILLMProvider} seam — DEPRECATED in favour of {@link invoke}
-   * behind {@link SupervisedAssistantClient}, but now fully governed.
+   * Legacy `ILLMProvider`-shaped seam — DEPRECATED in favour of {@link invoke}
+   * behind {@link SupervisedAssistantClient}. Kept only because the published
+   * 1.x contract exposes it, and now subject to the SAME supervision: it needs
+   * an {@link IApprovalPort} injected through {@link GeminiProviderOptions.approval}
+   * and fails closed with {@link LlmEgressUnsupervisedError} without one.
    *
    * @param schema declared shape for the model's JSON answer. Defaults to
    *   "must be a JSON object", which is still strictly stronger than the
@@ -233,7 +296,15 @@ export class GeminiProvider implements ILLMProvider, IAssistantTransport {
     userPrompt: string,
     schema: JsonSchemaNode = JSON_OBJECT_SCHEMA,
   ): Promise<T> {
-    const text = await this.callGemini(systemPrompt, userPrompt, 'structured-json');
+    const text = await this.callGemini(systemPrompt, userPrompt, 'structured-json', {
+      // The approver sees WHAT is being contacted, never the prompt itself.
+      request: {
+        intent: 'generate_structured_json',
+        tool: LLM_STRUCTURED_JSON_SKILL_ID,
+        context: {},
+        parameters: { provider: `gemini:${this.model}`, endpoint: this.endpoint },
+      },
+    });
     return parseAndValidateJson<T>(text, schema);
   }
 
@@ -245,6 +316,12 @@ export class GeminiProvider implements ILLMProvider, IAssistantTransport {
    *
    * Per the port contract a transport failure THROWS; the supervised client
    * turns that throw into a fail-closed "proposed nothing".
+   *
+   * SUPERVISION (GT-575): the call proceeds only if the invocation carries an
+   * {@link AssistantSupervision} grant — which {@link SupervisedAssistantClient}
+   * stamps after its HITL gate — or the provider was given its own approval
+   * port. Reaching this method directly with neither is a bypass, and is
+   * refused.
    */
   async invoke(request: AssistantInvocationRequest): Promise<AssistantProposal> {
     const catalog = request.availableSkills
@@ -271,7 +348,10 @@ export class GeminiProvider implements ILLMProvider, IAssistantTransport {
       dryRun: request.request.dryRun ?? false,
     });
 
-    const text = await this.callGemini(systemPrompt, userPrompt, 'assistant-invoke');
+    const text = await this.callGemini(systemPrompt, userPrompt, 'assistant-invoke', {
+      supervision: request.supervision,
+      request: request.request,
+    });
     const proposal = parseAndValidateJson<{
       tool?: string;
       arguments?: Record<string, unknown>;
@@ -283,13 +363,63 @@ export class GeminiProvider implements ILLMProvider, IAssistantTransport {
 
   /* ───────────────── the single governed egress core ───────────────── */
 
-  private async callGemini(systemPrompt: string, userPrompt: string, purpose: string): Promise<string> {
+  /**
+   * The one place both seams prove they were supervised. Returns the gate that
+   * granted (for the audit trail) or throws — supervision is never assumed and
+   * never self-granted.
+   */
+  private async resolveSupervision(gate: EgressGateContext): Promise<SupervisionOutcome> {
+    if (gate.supervision?.granted) {
+      const supervisedBy = gate.supervision.approver
+        ? `${gate.supervision.gate}:${gate.supervision.approver}`
+        : gate.supervision.gate;
+      return { ok: true, supervisedBy };
+    }
+
+    if (!this.approval) {
+      return {
+        ok: false,
+        reason: 'unsupervised',
+        message:
+          'LLM egress is not supervised: no human gate ran in front of this call. Inject this provider as the ' +
+          'IAssistantTransport of SupervisedAssistantClient (recommended), or give it an IApprovalPort via ' +
+          '`new GeminiProvider({ approval })`. Failing closed.',
+      };
+    }
+
+    const decision = await this.approval.requireApproval({
+      skill: STRUCTURED_JSON_SKILL,
+      request: gate.request,
+    });
+    if (!decision.granted) {
+      const status = decision.status ? ` (${decision.status})` : '';
+      const reason = decision.reason ? `: ${decision.reason}` : '';
+      return {
+        ok: false,
+        reason: 'approval-denied',
+        message: `Contacting the external LLM was not approved${status}${reason}; nothing was sent (fail-closed).`,
+      };
+    }
+    return { ok: true, supervisedBy: decision.approver ? `IApprovalPort:${decision.approver}` : 'IApprovalPort' };
+  }
+
+  private async callGemini(
+    systemPrompt: string,
+    userPrompt: string,
+    purpose: string,
+    gate: EgressGateContext,
+  ): Promise<string> {
     const started = this.now();
     const startedAt = new Date(started).toISOString();
     const endpoint = this.endpoint;
+    /** Set once the supervision gate grants; recorded on every later event. */
+    let supervisedBy: string | undefined;
 
     const emit = (
-      partial: Omit<LlmEgressAuditEvent, 'event' | 'provider' | 'endpoint' | 'purpose' | 'startedAt' | 'correlationId'>,
+      partial: Omit<
+        LlmEgressAuditEvent,
+        'event' | 'provider' | 'endpoint' | 'purpose' | 'startedAt' | 'correlationId' | 'supervisedBy'
+      >,
     ): void => {
       this.audit.record({
         event: 'llm.egress',
@@ -298,6 +428,7 @@ export class GeminiProvider implements ILLMProvider, IAssistantTransport {
         purpose,
         startedAt,
         correlationId: this.correlationId,
+        ...(supervisedBy ? { supervisedBy } : {}),
         ...partial,
       });
     };
@@ -311,7 +442,23 @@ export class GeminiProvider implements ILLMProvider, IAssistantTransport {
       );
     }
 
-    // Control 2 — no credential, no call.
+    // Control 2 — SUPERVISED. Either the supervised client already got a human
+    // YES for this call, or this provider has its own HITL gate that grants.
+    // Neither ⇒ nothing is sent, and the refusal is audited.
+    const supervision = await this.resolveSupervision(gate);
+    if (!supervision.ok) {
+      emit({
+        outcome: 'refused',
+        reason: supervision.reason,
+        requestBytes: 0,
+        estTokens: 0,
+        redactions: 0,
+      });
+      throw new LlmEgressUnsupervisedError(supervision.message);
+    }
+    supervisedBy = supervision.supervisedBy;
+
+    // Control 3 — no credential, no call.
     if (!this.apiKey) {
       emit({ outcome: 'refused', reason: 'missing-api-key', requestBytes: 0, estTokens: 0, redactions: 0 });
       throw new LlmEgressConfigurationError(
@@ -319,7 +466,7 @@ export class GeminiProvider implements ILLMProvider, IAssistantTransport {
       );
     }
 
-    // Control 3 — redact BEFORE anything is serialized for the wire.
+    // Control 4 — redact BEFORE anything is serialized for the wire.
     const system = redactSecrets(systemPrompt);
     const user = redactSecrets(userPrompt);
     const redactions = system.redactions + user.redactions;
@@ -330,7 +477,7 @@ export class GeminiProvider implements ILLMProvider, IAssistantTransport {
       generationConfig: { response_mime_type: 'application/json' },
     });
 
-    // Control 4 — budget over the exact bytes to be sent. Fail closed.
+    // Control 5 — budget over the exact bytes to be sent. Fail closed.
     let usage;
     try {
       usage = enforceEgressBudget(body, this.budget);
@@ -346,7 +493,7 @@ export class GeminiProvider implements ILLMProvider, IAssistantTransport {
       throw err;
     }
 
-    // Control 5 — bounded in time.
+    // Control 6 — bounded in time.
     const controller = new AbortController();
     let timedOut = false;
     const timer = setTimeout(() => {
@@ -402,7 +549,7 @@ export class GeminiProvider implements ILLMProvider, IAssistantTransport {
       );
     }
 
-    // Control 6 — the envelope is validated, not assumed.
+    // Control 7 — the envelope is validated, not assumed.
     let raw: unknown;
     try {
       raw = await response.json();

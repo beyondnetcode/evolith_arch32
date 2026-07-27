@@ -4,6 +4,7 @@
   "title": "Edge Computing Topology Rules",
   "description": "Architectural rules for the Edge Computing topology.",
   "version": "1.0.0",
+  "topologies": ["edge-computing"],
   "effectiveDate": "2026-06-20",
   "rules": [
     {

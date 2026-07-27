@@ -4,6 +4,7 @@
   "title": "Event-Driven Topology Rules",
   "description": "Architectural rules for the event-driven integration topology.",
   "version": "1.1.0",
+  "topologies": ["event-driven"],
   "effectiveDate": "2026-06-22",
   "rules": [
     {

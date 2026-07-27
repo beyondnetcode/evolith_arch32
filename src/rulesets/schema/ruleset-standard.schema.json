@@ -10,6 +10,9 @@
     "description": { "type": "string" },
     "version": { "type": "string" },
     "effectiveDate": { "type": "string", "format": "date" },
+    "audience": { "$ref": "#/definitions/audience" },
+    "topologies": { "$ref": "#/definitions/topologies" },
+    "appliesFromSdlcPhase": { "$ref": "#/definitions/appliesFromSdlcPhase" },
     "adrId": { "type": "string" },
     "adrTitle": { "type": "string" },
     "status": { "type": "string" },
@@ -39,6 +42,24 @@
     { "required": ["principles"] }
   ],
   "definitions": {
+    "audience": {
+      "type": "string",
+      "enum": ["core", "satellite", "both"],
+      "default": "both",
+      "description": "GT-571 — WHO the rule is addressed to. 'core' means the rule only makes sense against the Evolith Core monorepo itself (e.g. CLI-RR-01 'run npm run build in sdk/cli', TAX-05 'top-level sdk/, rulesets/') and MUST NOT be evaluated against a satellite; 'satellite' is the mirror image; 'both' (the default, and the reading of any rule that omits the field) keeps the pre-GT-571 behaviour. Declared at ruleset level as the default for its rules, and overridable per rule. A rule excluded by audience is NOT APPLICABLE — it is filtered out before evaluation and is never counted as skipped/checked/errored."
+    },
+    "topologies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "GT-571 — topology ids this rule belongs to (e.g. 'serverless', 'event-driven', 'modular-monolith'). A repository is evaluated against a topology-bound rule only when it declares that topology (metadata.phase F1/F2/F3 or spec.design.topology.confirmed in evolith.yaml). Absent ⇒ topology-agnostic: the rule always applies. Declared at ruleset level as the default for its rules, and overridable per rule."
+    },
+    "appliesFromSdlcPhase": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "GT-571 — earliest SDLC phase at which the rule is meaningful: 0=greenfield scaffold ('phase-0', nothing built yet), 1=Conception, 2=Design, 3=Construction, 4=Validation, 5=Delivery. A repository declaring a LOWER phase is not evaluated against the rule, because the artifact the rule inspects does not exist yet. Absent ⇒ the rule applies at every phase (pre-GT-571 behaviour). Gating only happens when the repository actually declares a phase."
+    },
     "enforce": {
       "type": "object",
       "description": "How a rule is enforced by an external static analyzer (GT-516 · EAG-10). Additive and optional: a rule with no enforce block is evaluated by the native engine. When engine='enforcer', the PolicyCompiler lowers this block into the tool's native check configuration.",
@@ -96,6 +117,9 @@
         "rationale": { "type": "string" },
         "validationQuery": { "type": "string" },
         "blocking": { "type": "boolean" },
+        "audience": { "$ref": "#/definitions/audience" },
+        "topologies": { "$ref": "#/definitions/topologies" },
+        "appliesFromSdlcPhase": { "$ref": "#/definitions/appliesFromSdlcPhase" },
         "enforcement": { "type": "string" },
         "enforce": { "$ref": "#/definitions/enforce" },
         "layer": { "type": "string" },

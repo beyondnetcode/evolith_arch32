@@ -6392,20 +6392,6 @@
       "dependencyDisposition": "none"
     },
     {
-      "id": "GT-424",
-      "closedAt": "2026-07-04",
-      "closureCommit": "833aa888",
-      "evidence": [
-        ".harness/manifest.yaml",
-        ".harness/scripts/ci/34-check-skill-registry-parity.mjs",
-        "src/packages/agent-runtime/src/adapters/skills/default-skills.ts"
-      ],
-      "validationCommands": [
-        "node .harness/scripts/ci/34-check-skill-registry-parity.mjs"
-      ],
-      "dependencyDisposition": "none"
-    },
-    {
       "id": "GT-436",
       "closedAt": "2026-07-04",
       "closureCommit": "0edaa22b",

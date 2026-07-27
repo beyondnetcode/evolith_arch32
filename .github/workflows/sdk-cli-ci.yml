@@ -5,20 +5,28 @@ concurrency:
   cancel-in-progress: true
 
 on:
+  # NO `paths:` FILTER HERE — deliberately, and it must stay that way.
+  #
+  # `CodeQL SAST` is a job in this workflow and is a REQUIRED status check on both
+  # `main` and `develop`. A required check that sits behind a path filter never
+  # reports on a PR that misses those paths, and GitHub reads "never reported" as
+  # "not satisfied" — so such a PR is unmergeable forever, with every visible check
+  # green and nothing to point at. PR #218 hit exactly this: it touched
+  # `ci-cd.yml` and one ruleset, so this workflow never ran, `CodeQL SAST` never
+  # reported, and `gh pr merge` answered "the base branch policy prohibits the
+  # merge". The deadlock appeared the moment CodeQL SAST joined the required set;
+  # it is not specific to that PR and would have blocked every docs- or
+  # rulesets-only change from then on.
+  #
+  # It is also what the maturity audit asked for on its own merits: a security
+  # scanner filtered to `src/sdk/cli/**` cannot see a change to `src/packages/**`
+  # or `src/apps/**`, which is most of the code in this repository.
+  #
+  # The `push` trigger below keeps its filter on purpose: pushes are not gated by
+  # required checks, so no deadlock is possible there and the CI minutes are worth
+  # saving.
   pull_request:
     branches: [main, develop]
-    paths:
-      - 'src/sdk/cli/**'
-      - '.harness/**'
-      # package.json / package-lock.json: this pipeline installs with `npm ci`,
-      # so a lock desync breaks every job here -- and until now neither file
-      # triggered it, meaning the break AND its fix both went unnoticed by the
-      # workflow they affect. (`release-please-config.json` used to be listed and
-      # was removed: it was deleted in aed33ba9, so the filter watched a path that
-      # cannot change.)
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/sdk-cli-ci.yml'
   push:
     branches: [main, develop]
     paths:

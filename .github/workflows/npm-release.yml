@@ -1,0 +1,171 @@
+name: npm Release (all packages)
+
+# Publishes EVERY public workspace to npm, in dependency order, with provenance.
+#
+# WHY THIS WORKFLOW EXISTS
+# ------------------------
+# Until now there was no automated path to publish seven of the eight public
+# packages. `sdk-cli-release.yml` publishes `src/sdk/cli` and nothing else, and
+# `ci-cd.yml`'s `publish-npm` published the same directory again with `--tag beta`
+# and no provenance. Everything else — including `@beyondnet/evolith-mcp`, which
+# carries the 2026-07-23 security wave — was published by hand from a developer
+# machine. That is why all eight versions on the registry have no
+# `dist.attestations`. See GT-570.
+#
+# SAFETY MODEL
+# ------------
+# Publishing is irreversible: npm forbids unpublishing after 72 hours. So:
+#   * `dry_run` defaults to TRUE. The default invocation exercises the whole path
+#     — resolve, build, pack, verify — and publishes nothing. The audit's finding
+#     was that this path had never run end to end; a rehearsable mode is how it
+#     stops being true without betting a registry version on the first attempt.
+#   * The plan is computed by `.harness/scripts/release/plan-npm-release.mjs`,
+#     which has its own unit tests including a negative case, and is printed in
+#     full before anything is published.
+#   * A package whose exact version already exists on the registry is SKIPPED, so
+#     a partial failure is resumable without republishing.
+#   * The run fails if the planner resolves zero packages. An empty release that
+#     reports success is the defect this repository keeps finding in its guards.
+#   * The token reaches npm through `NODE_AUTH_TOKEN`, never `npm config set`,
+#     so it is not written into a `.npmrc` on the runner.
+
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Rehearse without publishing. Leave true unless you intend to ship.'
+        type: boolean
+        required: true
+        default: true
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  id-token: write # required for npm provenance
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  release:
+    name: Publish workspaces
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Planner self-test
+        # The planner decides what gets published. It is tested before it is
+        # trusted, on the same runner, against the same checkout.
+        run: node --test .harness/scripts/release/plan-npm-release.test.mjs
+
+      - name: Resolve the release plan
+        id: plan
+        run: |
+          node .harness/scripts/release/plan-npm-release.mjs
+          node .harness/scripts/release/plan-npm-release.mjs --json > /tmp/plan.json
+          echo "count=$(jq '.toPublish | length' /tmp/plan.json)" >> "$GITHUB_OUTPUT"
+          echo "denominator=$(jq '.denominator' /tmp/plan.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Build every workspace
+        # Built in dependency order by `tsc -b`. Seven of the eight packages have
+        # no `prepublishOnly`, so `npm publish` would otherwise ship whatever
+        # happens to be in dist/ — here dist/ is always produced by this run.
+        run: npm run build
+
+      - name: Rebuild mcp-server from a clean state
+        # `nest build` exits 0 while emitting nothing when tsconfig.tsbuildinfo is
+        # stale, which has produced an empty dist more than once. Cheap insurance
+        # against publishing an empty package.
+        run: |
+          rm -f src/packages/mcp-server/tsconfig.tsbuildinfo
+          npm run build --workspace @beyondnet/evolith-mcp
+          test -f src/packages/mcp-server/dist/main.js
+
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          DRY_RUN: ${{ github.event_name == 'push' && 'false' || inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          COUNT=$(jq '.toPublish | length' /tmp/plan.json)
+          DENOM=$(jq '.denominator' /tmp/plan.json)
+
+          if [ "$DENOM" -eq 0 ]; then
+            echo "::error::the planner resolved zero packages — refusing to report a vacuous success"
+            exit 1
+          fi
+
+          if [ "$COUNT" -eq 0 ]; then
+            echo "Nothing to publish: all $DENOM package versions are already on the registry."
+            exit 0
+          fi
+
+          echo "Publishing $COUNT of $DENOM package(s). DRY_RUN=$DRY_RUN"
+          FAILED=0
+          for i in $(seq 0 $((COUNT - 1))); do
+            NAME=$(jq -r ".toPublish[$i].name" /tmp/plan.json)
+            VERSION=$(jq -r ".toPublish[$i].version" /tmp/plan.json)
+            DIR=$(jq -r ".toPublish[$i].dir" /tmp/plan.json)
+
+            echo "::group::$NAME@$VERSION ($DIR)"
+            if [ "$DRY_RUN" = "true" ]; then
+              # --dry-run still resolves files/, runs the packlist and reports the
+              # tarball contents, so a shipping mistake surfaces here.
+              ( cd "$DIR" && npm publish --dry-run --provenance --access public )
+            else
+              if ( cd "$DIR" && npm publish --provenance --access public ); then
+                # Verify against the registry rather than trusting the exit code.
+                for attempt in 1 2 3 4 5; do
+                  if [ "$(npm view "$NAME@$VERSION" version 2>/dev/null)" = "$VERSION" ]; then
+                    echo "confirmed on registry: $NAME@$VERSION"; break
+                  fi
+                  [ "$attempt" -eq 5 ] && { echo "::error::$NAME@$VERSION not visible on the registry after publish"; FAILED=1; }
+                  sleep 10
+                done
+              else
+                # Fail fast: a consumer published against a missing dependency is
+                # worse than a partial release, and the run is resumable.
+                echo "::error::publish failed for $NAME@$VERSION — stopping before its consumers"
+                exit 1
+              fi
+            fi
+            echo "::endgroup::"
+          done
+
+          [ "$FAILED" -eq 0 ] || exit 1
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "DRY RUN — nothing was published. Re-run with dry_run=false to ship."
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### npm release"
+            echo ""
+            echo "- planner denominator: **${{ steps.plan.outputs.denominator }}** publishable package(s)"
+            echo "- selected to publish: **${{ steps.plan.outputs.count }}**"
+            echo "- dry run: **${{ github.event_name == 'push' && 'false' || inputs.dry_run }}**"
+            echo ""
+            echo '```json'
+            cat /tmp/plan.json 2>/dev/null | jq . || echo '{}'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

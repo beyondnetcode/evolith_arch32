@@ -331,6 +331,14 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
+      # `capability-contract.parity.spec.ts` imports
+      # `@beyondnet/evolith-core-domain/capabilities/capabilities-manifest`, a
+      # subpath that resolves through dist. Without this the suite passes locally
+      # (where a dist already exists from an earlier build) and fails in CI on a
+      # clean checkout — which is exactly what it did the first time this job ran.
+      - name: Build workspace dependencies
+        run: npm run build --workspace @beyondnet/evolith-core-domain
+
       - name: Run contracts tests
         run: npm run test --workspace @beyondnet/evolith-contracts
 
@@ -354,6 +362,16 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
+
+      # The dead-reference budget below was measured on a BUILT tree. A handful of
+      # recorded commands legitimately name build outputs (`dist/main.js`), which
+      # a clean checkout reports as dead — so without this the ratchet drifts by
+      # the number of dist references and fails for a reason that has nothing to
+      # do with the corpus. Building first makes the count reproducible.
+      - name: Build workspace dependencies
+        run: |
+          npm run build --workspace @beyondnet/evolith-core-domain
+          npm run build --workspace @beyondnet/evolith-infra-providers
 
       # STRICT. Every script under .harness/scripts/ci must either refuse a
       # zero-element scan or be registered, with a reason, as something that is

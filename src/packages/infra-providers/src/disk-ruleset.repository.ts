@@ -35,7 +35,7 @@ export class DiskRulesetRepository implements IRulesetRepository {
     private readonly fs: IFileSystem,
     private readonly logger: ILogger,
   ) {
-    this.ajv = new Ajv({ allErrors: true });
+    this.ajv = new Ajv({ allErrors: true, strict: false });
     addFormats(this.ajv);
   }
 

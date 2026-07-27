@@ -7153,9 +7153,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Infra` · **Criticality:** P0 · **Complexity:** S
 - **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
 - **Acceptance criteria:**
-  - [ ] `npm view` reports a version whose `time.modified` is later than the security commits, and 1.1.0 is deprecated.
-  - [ ] The security section sits under a published heading, not under `[Unreleased]`.
-  - [ ] A release gate fails when security-tagged commits are missing from the published tag.
+  - [x] The published version of every package the security wave touched is newer than the wave itself, verified against the registry. — 1.2.0 / 2.0.0 published 2026-07-27T14:06Z; the wave landed 2026-07-23.
+  - [x] The security section sits under a published heading, not under `[Unreleased]`. — `## [1.2.0] - 2026-07-27`.
+  - [x] The published artifacts carry provenance rather than being hand-published. — `dist.attestations` present on all four, produced by GitHub Actions with `id-token: write`.
+
+  _Re-scoped 2026-07-27: the 1.1.0 deprecation criterion and the release-gate criterion moved to `GT-624` rather than being ticked._
 
 #### GT-571
 
@@ -7923,3 +7925,16 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] A commit with a malformed message is rejected locally, demonstrated by trying one.
   - [ ] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [ ] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
+
+#### GT-624
+
+**Title:** The vulnerable 1.1.0 versions are still installable without warning, and nothing stops a security fix going unpublished again
+
+- **Purpose:** Make it impossible to silently install a vulnerable version, and make an unpublished security fix stop being invisible.
+- **Evidence:** **Carved out of [`GT-570`](./gap-reference-catalog.md#gt-570) so its remainder is tracked rather than absorbed into a closure.** 1.2.0 shipped on 2026-07-27 with provenance and the exposure is closed for anyone installing `latest` — but two of GT-570's three original criteria are not met by that, and pretending otherwise is the pattern this board keeps catching in itself (GT-12, GT-568, GT-254, GT-424). **(a) The 1.1.0 versions are not deprecated.** `npm install @beyondnet/evolith-mcp@1.1.0` still resolves the build that predates the 2026-07-23 security wave, silently, and the public CHANGELOG names the vulnerable files. Deprecating is one command per package but requires npm credentials, so it is an owner action: `npm deprecate @beyondnet/evolith-mcp@1.1.0 "Security fixes in 1.2.0 — see CHANGELOG"`, likewise for `evolith-cli@1.1.0` and `evolith-agent-runtime@1.1.0`. **(b) No release gate fails when a security-tagged commit is absent from the published tag.** That absence is exactly what let the wave sit unpublished from 2026-07-23 to 2026-07-27 while `SECURITY.md` declared the 1.1.x line "actively patched". Nothing detected it; an audit did. Related: `GT-623` — release-please derives version bumps from commit messages, and the `security(...)` type used by 2 of the last 60 commits is not a Conventional Commits type, so it contributes nothing to a bump. Both defects let a security change fail to reach a version, by different routes.
+- **Component:** `Infra` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Carved out of GT-570 on 2026-07-27 as it closed. Two of its three original criteria were not met by shipping 1.2.0; they are recorded here rather than assumed.
+- **Acceptance criteria:**
+  - [ ] `npm view @beyondnet/evolith-mcp@1.1.0` reports the version as deprecated, likewise cli and agent-runtime.
+  - [ ] A CI gate fails when a commit whose type or scope marks it as security is absent from the latest published tag.
+  - [ ] The gate ships with a negative fixture that turns it red, so it is not another guard nobody has seen fail.

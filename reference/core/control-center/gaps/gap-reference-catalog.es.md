@@ -7058,9 +7058,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Infra` · **Criticidad:** P0 · **Complejidad:** S
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
-  - [ ] `npm view` reporta una versión cuyo `time.modified` es posterior a los commits de seguridad, y 1.1.0 está deprecada.
-  - [ ] La sección de seguridad está bajo un heading publicado, no bajo `[Unreleased]`.
-  - [ ] Un gate de release falla cuando faltan commits etiquetados de seguridad en el tag publicado.
+  - [x] La versión publicada de cada paquete que tocó la ola de seguridad es posterior a la propia ola, verificado contra el registry. — 1.2.0 / 2.0.0 publicados el 2026-07-27T14:06Z; la ola aterrizó el 2026-07-23.
+  - [x] La sección de seguridad está bajo un heading publicado, no bajo `[Unreleased]`. — `## [1.2.0] - 2026-07-27`.
+  - [x] Los artefactos publicados llevan provenance en vez de haberse publicado a mano. — `dist.attestations` en los cuatro, generadas por GitHub Actions con `id-token: write`.
+
+  _Re-acotado el 2026-07-27: el criterio de deprecación de 1.1.0 y el del gate de release se movieron a `GT-624` en vez de marcarse cumplidos._
 
 #### GT-571
 
@@ -7828,3 +7830,16 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] Un commit con mensaje malformado se rechaza en local, demostrado intentándolo.
   - [ ] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [ ] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
+
+#### GT-624
+
+**Título:** Las versiones 1.1.0 vulnerables siguen instalables sin aviso, y nada impide que otro arreglo de seguridad se quede sin publicar
+
+- **Propósito:** Que nadie pueda instalar en silencio una versión vulnerable, y que un arreglo de seguridad sin publicar deje de ser invisible.
+- **Evidencia:** **Extraído de [`GT-570`](./gap-reference-catalog.es.md#gt-570) para que su remanente quede registrado y no absorbido en un cierre.** 1.2.0 se publicó el 2026-07-27 con provenance y la exposición está cerrada para quien instale `latest` — pero dos de los tres criterios originales de GT-570 no se cumplen con eso, y fingir lo contrario es el patrón que este tablero lleva pillándose a sí mismo (GT-12, GT-568, GT-254, GT-424). **(a) Las versiones 1.1.0 no están deprecadas.** `npm install @beyondnet/evolith-mcp@1.1.0` sigue resolviendo la build anterior a la ola de seguridad del 2026-07-23, en silencio, y el CHANGELOG público nombra los ficheros vulnerables. Deprecar es un comando por paquete pero exige credenciales de npm, así que es acción del dueño: `npm deprecate @beyondnet/evolith-mcp@1.1.0 "Security fixes in 1.2.0 — see CHANGELOG"`, e igual para `evolith-cli@1.1.0` y `evolith-agent-runtime@1.1.0`. **(b) Ningún gate de release falla cuando un commit etiquetado de seguridad no está en el tag publicado.** Esa ausencia es exactamente lo que permitió que la ola siguiera sin publicar del 2026-07-23 al 2026-07-27 mientras `SECURITY.md` declaraba la línea 1.1.x "actively patched". No lo detectó nada; lo detectó una auditoría. Relacionado: `GT-623` — release-please deriva los saltos de versión de los mensajes de commit, y el tipo `security(...)` que usan 2 de los últimos 60 commits no es un tipo de Conventional Commits, así que no aporta nada al bump. Los dos defectos dejan que un cambio de seguridad no llegue a una versión, por caminos distintos.
+- **Componente:** `Infra` · **Criticidad:** P1 · **Complejidad:** S
+- **Procedencia:** Extraído de GT-570 el 2026-07-27, al cerrarlo. Dos de sus tres criterios originales no se cumplían con la publicación de 1.2.0; se registran aquí en vez de darse por buenos.
+- **Criterios de aceptación:**
+  - [ ] `npm view @beyondnet/evolith-mcp@1.1.0` reporta la versión como deprecada, e igual cli y agent-runtime.
+  - [ ] Un gate de CI falla cuando un commit cuyo tipo o scope lo marca como de seguridad no está en el último tag publicado.
+  - [ ] El gate lleva una fixture negativa que lo pone rojo, para que no sea otro guard que nadie ha visto fallar.

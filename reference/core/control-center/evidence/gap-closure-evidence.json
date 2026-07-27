@@ -8310,6 +8310,28 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The action is dogfooded and under regression, which is what this gap was about. Making the workflow a REQUIRED check is branch-protection configuration, not a code change, and is deliberately left outside this closure — a gate nobody requires is how this action rotted in the first place, so it is worth doing, just not here."
+    },
+    {
+      "id": "GT-570",
+      "closedAt": "2026-07-27",
+      "closureCommit": "9a82d9f2",
+      "evidence": [
+        ".github/workflows/npm-release.yml",
+        ".harness/scripts/release/plan-npm-release.mjs",
+        "CHANGELOG.md",
+        "src/packages/mcp-server/package.json",
+        "src/sdk/cli/package.json",
+        "src/packages/agent-runtime/package.json"
+      ],
+      "validationCommands": [
+        "gh run view 30273290417 -> conclusion=success, workflow_dispatch on main @ 9a82d9f2 with dry_run=false.",
+        "curl https://registry.npmjs.org/@beyondnet%2Fevolith-mcp -> latest 1.2.0, published 2026-07-27T14:06:39Z, dist.attestations present. Same shape for evolith-agent-runtime@1.2.0 (14:06:10), evolith-sdk@2.0.0 (14:06:24) and evolith-cli@1.2.0 (14:06:58) — timestamps confirm dependency order.",
+        "The audit finding \"0 of 8 published packages carry dist.attestations\" no longer holds: four now do, produced by GitHub Actions with id-token: write rather than by a developer machine.",
+        "Scope corrected before shipping: `git show --name-only` (not --stat, which truncates long paths) showed the security wave touches mcp (15 files), cli (7) and agent-runtime (1, the CWE-78 shell runner) — the original plan of bumping mcp alone would have left two vulnerable.",
+        "Rehearsals: run 30265298045 found no LICENSE in any of the four tarballs and repository.url auto-corrected in all eight; run 30271837941 found bin paths auto-corrected in two. All three fixed before publishing and all three would have been permanent."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Re-scoped rather than over-claimed. Two of the three original acceptance criteria are NOT met by this closure and were moved to GT-624: deprecating the 1.1.0 versions (needs npm credentials, owner action) and a release gate that fails when a security-tagged commit is absent from the published tag. This row closes on what it was about — an installable artifact older than its own published security fixes — and the remainder is tracked, not absorbed."
     }
   ]
 }

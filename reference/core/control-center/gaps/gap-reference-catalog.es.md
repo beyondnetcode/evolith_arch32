@@ -7815,3 +7815,16 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] `gh pr checks` sobre un PR nuevo no muestra ningún check `CodeQL` reportando "configuration not found".
   - [ ] Las únicas claves de análisis en `refs/heads/main` son las dos que produce `sdk-cli-ci.yml`.
   - [ ] `CodeQL SAST` sigue pasando y sigue siendo check requerido — la limpieza no debe tocar el escaneo que funciona.
+
+#### GT-623
+
+**Título:** La convención de commits se exige en tres sitios, no la aplica nada, y de ella se derivan las versiones de release
+
+- **Propósito:** Que la convención de commits que el repositorio exige y de la que deriva sus versiones esté realmente aplicada, o deje de reclamarse.
+- **Evidencia:** **El hook existe, está cableado, y no puede aplicar nada.** `.husky/commit-msg` ejecuta `npx --no -- commitlint --version`; cuando falla imprime `commitlint is not installed — skipping commit message lint` y sale con **éxito**. Verificado: `commitlint` no aparece ni en `dependencies` ni en `devDependencies` del `package.json` raíz, no hay `commitlint.config.*` ni `.commitlintrc*`, y no existe clave `commitlint` en `package.json`. Así que la rama `else` es la única que se ejecuta, en cada commit. Observado en vivo el 2026-07-27 al mergear `develop` en una rama de trabajo. **Qué depende de la convención que no aplica:** `CONTRIBUTING.md` y `.github/pull_request_template.md` exigen Conventional Commits en tres sitios, y —la parte que cuesta dinero— **release-please deriva los saltos de versión de los mensajes de commit**, cableado en `sdk-cli-release.yml` y `sdk-cli-ci.yml`. **Ya está derivando, y con consecuencia:** 2 de los últimos 60 commits no-merge usan el tipo `security(...)` (`security(fase-7): add Docker/K8s hardening checklist`, `security(fase-6): add executable security rulesets`), que no es un tipo de Conventional Commits. release-please no lo reconoce, así que **un commit que se anuncia como cambio de seguridad no aporta nada al salto de versión** — el mismo modo de fallo que [`GT-570`](./gap-reference-catalog.es.md#gt-570), donde una ola de seguridad sigue sin publicarse. Fix: instalar y configurar commitlint para que el hook tome su rama real, o borrar el hook y dejar de reclamar la convención. Fallar abierto es la peor de las tres opciones, porque produce la apariencia de enforcement. Si se quiere el tipo `security`, declararlo en la config y mapearlo a un bump — no dejarlo a un linter que nunca corre.
+- **Componente:** `Governance` · **Criticidad:** P2 · **Complejidad:** S
+- **Procedencia:** Observado en vivo el 2026-07-27: el hook imprimió su mensaje de "skipping" al mergear `develop` en una rama de trabajo. Estaba nombrado dentro del cuadro de proceso de `GT-574`; se saca a fila propia porque tiene una consecuencia concreta y medible sobre el versionado.
+- **Criterios de aceptación:**
+  - [ ] Un commit con mensaje malformado se rechaza en local, demostrado intentándolo.
+  - [ ] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
+  - [ ] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.

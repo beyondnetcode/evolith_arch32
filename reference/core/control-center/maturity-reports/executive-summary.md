@@ -29,7 +29,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | 2 | Highest-risk area | `Evolith Core` has the largest weighted open load. | [GT-601](../gaps/gap-reference-catalog.md#gt-601), [GT-583](../gaps/gap-reference-catalog.md#gt-583), [GT-589](../gaps/gap-reference-catalog.md#gt-589), [GT-598](../gaps/gap-reference-catalog.md#gt-598), [GT-614](../gaps/gap-reference-catalog.md#gt-614), [GT-587](../gaps/gap-reference-catalog.md#gt-587), +4 |
 | 3 | Quick wins | High criticality with XS/S complexity. | [GT-570](../gaps/gap-reference-catalog.md#gt-570), [GT-571](../gaps/gap-reference-catalog.md#gt-571), [GT-575](../gaps/gap-reference-catalog.md#gt-575), [GT-601](../gaps/gap-reference-catalog.md#gt-601), [GT-609](../gaps/gap-reference-catalog.md#gt-609), [GT-610](../gaps/gap-reference-catalog.md#gt-610), [GT-586](../gaps/gap-reference-catalog.md#gt-586), [GT-597](../gaps/gap-reference-catalog.md#gt-597) |
 | 4 | P1 wave | Next hardening after P0 is cleared. | [GT-586](../gaps/gap-reference-catalog.md#gt-586), [GT-597](../gaps/gap-reference-catalog.md#gt-597), [GT-607](../gaps/gap-reference-catalog.md#gt-607), [GT-618](../gaps/gap-reference-catalog.md#gt-618), [GT-620](../gaps/gap-reference-catalog.md#gt-620), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-580](../gaps/gap-reference-catalog.md#gt-580), +14 |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-619](../gaps/gap-reference-catalog.md#gt-619), [GT-622](../gaps/gap-reference-catalog.md#gt-622), [GT-424](../gaps/gap-reference-catalog.md#gt-424), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-614](../gaps/gap-reference-catalog.md#gt-614), +16 |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-619](../gaps/gap-reference-catalog.md#gt-619), [GT-622](../gaps/gap-reference-catalog.md#gt-622), [GT-424](../gaps/gap-reference-catalog.md#gt-424), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-614](../gaps/gap-reference-catalog.md#gt-614), +17 |
 
 ## Current Blockers
 
@@ -54,13 +54,13 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Indicator | Value |
 |---|---:|
 | Canonical board date | 2026-07-26 |
-| Total gaps | 622 |
+| Total gaps | 623 |
 | Closed gaps | 561 |
-| Open gaps | 61 |
+| Open gaps | 62 |
 | Open P0 | 13 |
 | Open P1 | 22 |
-| Open P2 | 22 |
-| Total closure | 90.2% |
+| Open P2 | 23 |
+| Total closure | 90% |
 | Closure evidence records | 543 |
 | Recorded readiness | 4 PASS |
 

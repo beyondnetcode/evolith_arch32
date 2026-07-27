@@ -831,6 +831,7 @@ Tool: `evolith-gate-evaluate`
 | `evaluatedBy` | string |  | human, agent, or ci |
 | `initiative` | string |  | Optional initiative context |
 | `tenant` | string |  | Optional tenant context |
+| `requester` | object |  | — |
 
 Example (`tools/call`):
 ```json

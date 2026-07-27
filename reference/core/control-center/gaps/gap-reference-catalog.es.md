@@ -7163,8 +7163,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Infra` · **Criticidad:** P2 · **Complejidad:** XS
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
-  - [ ] La action reporta un recuento de violaciones != 0 sobre un satélite fixture no conforme.
-  - [ ] Un workflow de este repositorio ejecuta la action, de modo que queda dogfooded.
+  - [x] La action reporta un recuento de violaciones != 0 sobre un satélite fixture no conforme.
+  - [x] Un workflow de este repositorio ejecuta la action, de modo que queda dogfooded.
 
 #### GT-578
 

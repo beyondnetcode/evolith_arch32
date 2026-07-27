@@ -7258,8 +7258,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Infra` · **Criticality:** P2 · **Complexity:** XS
 - **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
 - **Acceptance criteria:**
-  - [ ] The action reports a violation count != 0 over a non-conforming satellite fixture.
-  - [ ] A workflow in this repository runs the action, so it is dogfooded.
+  - [x] The action reports a violation count != 0 over a non-conforming satellite fixture.
+  - [x] A workflow in this repository runs the action, so it is dogfooded.
 
 #### GT-578
 

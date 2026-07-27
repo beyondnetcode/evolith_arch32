@@ -2,10 +2,31 @@
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-07-27
+
 Changes accumulated since the 1.0.0 release of 2026-06-28. Automated changelog
 generation was disconnected during this period (GT-552), so these entries were
-reconstructed from the commit history. The version number for this batch is
-deliberately unassigned.
+reconstructed from the commit history.
+
+**Which packages this version covers.** Only the three published packages the
+security wave actually touched are released at 1.2.0:
+`@beyondnet/evolith-mcp` (15 files), `@beyondnet/evolith-cli` (7) and
+`@beyondnet/evolith-agent-runtime` (1 — the `harness-process.adapter.ts` shell
+runner, CWE-78). The other five public packages stay at their current versions
+because the wave did not change them; publishing them again would only add noise
+to the registry.
+
+**A caveat about 1.1.0, recorded rather than tidied away.** The heading below is
+dated 2026-06-16, but npm served `1.1.0` from **2026-07-18** — so part of the
+batch in this section shipped inside that release without a changelog entry of
+its own. The dates are left as they are; do not read the 1.1.0 section as a
+complete description of what the 1.1.0 tarballs contained.
+
+**Why this section was unassigned until now.** The security fixes below landed on
+2026-07-23, five days after 1.1.0 reached the registry, and there was no
+automated path to publish seven of the eight packages — so they could not ship
+(GT-570). That path now exists (`npm-release.yml`), which is what makes assigning
+a version here meaningful instead of aspirational.
 
 
 ### Security Hardening (Phases 1-7)

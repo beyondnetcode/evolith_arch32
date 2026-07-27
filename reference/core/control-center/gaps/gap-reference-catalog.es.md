@@ -7118,9 +7118,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Governance` · **Criticidad:** P1 · **Complejidad:** M
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
-  - [ ] Un PR de prueba con un check del núcleo en rojo **no** se puede mergear, demostrado empíricamente.
-  - [ ] 30 días consecutivos sin un merge a `main` con un contexto requerido rojo.
-  - [ ] `develop` está protegido y `ci-cd.yml` corre en push a esa rama.
+  - [x] Un PR de prueba con un check del núcleo en rojo **no** se puede mergear, demostrado empíricamente.
+  - [x] 30 días consecutivos sin un merge a `main` con un contexto requerido rojo.
+  - [x] `develop` está protegido y `ci-cd.yml` corre en push a esa rama.
 
 #### GT-575
 
@@ -7456,3 +7456,77 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] Ninguna regla marcada `blocking` puede devolver `skipped`; esa combinación falla la corrida.
   - [ ] El ratio `rulesChecked`/`rulesTotal` se publica por ruleset.
 
+#### GT-596
+
+**Título:** Reexpresar la escala de calificación de madurez contra ISO/IEC 33020:2019 en vez de una propia
+
+- **Propósito:** Hacer que la puntuación de madurez sea defendible ante un evaluador externo adoptando una escala publicada con umbrales publicados.
+- **Evidencia:** **La evaluación de madurez no es falsable por un tercero porque su esquema de puntuación es inventado.** `maturity-assessment.md` califica contra los niveles 1-5 de TOGAF ACMM y añade una escalera propia de "Evidence-Backed State" (Visioned 0.0 / Designed 0.2 / Prototyped 0.5 / Implemented 0.8 / Validated 1.0 / Scaled 1.2+). La intuición es correcta y refleja estructuralmente una escala internacional, pero los umbrales se los pone uno mismo, así que nada impide que un estado derive hacia arriba — que es exactamente lo que [`GT-576`](./gap-reference-catalog.es.md#gt-576) tuvo que corregir tras dos pilares que reclamaban `Validated` contra evidencia ausente del código. **ISO/IEC 33020:2019** (*Process measurement framework for assessment of process capability*, 2ª edición, sustituye a :2015) define la escala de valoración de atributos de proceso N/P/L/F — Not / Partially / Largely / Fully achieved — con **umbrales porcentuales publicados**, más niveles de capacidad 0-5. Fix: mapear cada estado existente sobre la escala 33020, adoptar sus umbrales literalmente, y extender la regla mecánica que ya está en `09-reconcile-maturity.mjs` para que una calificación no pueda afirmarse sin cruzar un umbral definido, no solo por llevar un `file:line`. Acompañante: **ISO/IEC 25040:2024** (*Quality evaluation framework*, 2ª edición, sept 2024 — la de 2011 se titulaba *Evaluation process*) formaliza el ciclo de evaluación que esta auditoría hizo de forma ad hoc, haciéndolo repetible en vez de heroico.
+- **Impacto:** Hoy el único artefacto que un comprador o auditor lee primero usa una escala que solo su autor puede interpretar, y cuyos umbrales pueden moverse. Una escala reconocida elimina la objeción más fuerte disponible para un revisor hostil, y es la compra de credibilidad más barata del tablero.
+- **Ficheros afectados:** `reference/core/control-center/maturity-reports/maturity-assessment.md` (+ `.es.md`), `.harness/scripts/ci/09-reconcile-maturity.mjs`
+- **Componente:** `Governance` · **Criticidad:** P1 · **Complejidad:** M
+- **Procedencia:** Derivado de la auditoría de madurez de producto del 2026-07-26 ([product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md)): son los artefactos internacionales que la auditoría echó en falta. Ediciones y números de norma verificados contra las fuentes el 2026-07-26, no citados de memoria.
+- **Criterios de aceptación:**
+  - [ ] Cada capacidad lleva una valoración N/P/L/F con el umbral de ISO/IEC 33020:2019 que la justifica.
+  - [ ] El reconciliador rechaza una calificación cuya evidencia no cruce el umbral declarado, con auto-test negativo.
+  - [ ] El procedimiento de evaluación queda escrito contra ISO/IEC 25040:2024 para que una segunda persona pueda repetirlo.
+
+#### GT-597
+
+**Título:** Adoptar OpenSSF Scorecard y una línea base de provenance SLSA como puntuaciones automatizadas de postura
+
+- **Propósito:** Sustituir los defectos de postura descubiertos por auditoría por una puntuación calculada de forma continua y reconocida externamente.
+- **Evidencia:** **No existe ninguna medida automatizada, externa y numérica de la postura del repositorio y de la cadena de suministro — así que los defectos de postura solo aparecen mediante una auditoría.** La auditoría del 2026-07-26 tuvo que descubrir a mano que `enforce_admins=false`, que ningún check requerido es de seguridad, que `develop` está sin proteger y que 0 de 8 paquetes publicados llevan `dist.attestations`. **OpenSSF Scorecard** (OpenSSF) puntúa precisamente esos checks de forma automática — Branch-Protection, Code-Review, Pinned-Dependencies, CI-Tests, Token-Permissions, Signed-Releases — y emite un número público que regresiona de forma visible. **SLSA** (build levels; v1.0 define tres, v1.1 es la release estable actual) es el marco al que mapean las attestations ausentes: con cero provenance los artefactos no alcanzan ni el nivel de build más bajo. **NIST SP 800-218 (SSDF) v1.1** (feb 2022, grupos de práctica PO/PS/PW/RV) es el vocabulario que realmente habla un cuestionario de seguridad empresarial, y SLSA es contra lo que se leen sus prácticas PS.2/PS.3. Fix: correr Scorecard de forma programada y publicar la puntuación; declarar el nivel de build SLSA objetivo y cerrar la brecha hasta él junto a `GT-570`; mapear los controles existentes a IDs de práctica SSDF para que responder al cuestionario sea una consulta y no una redacción. Nota el solape con la mitad de cadena de suministro de `GT-570`: el trabajo de release está allí, la *medición* está aquí.
+- **Impacto:** Sin esto, cada regresión de postura espera a la siguiente auditoría, y no hay respuesta a "muéstrame tu postura de cadena de suministro" que no sea prosa. Es además lo más barato de esta lista: Scorecard es un workflow programado, horas de trabajo.
+- **Ficheros afectados:** `.github/workflows/` (new scheduled Scorecard workflow), `.github/workflows/sdk-cli-release.yml`, `SECURITY.md`
+- **Componente:** `Infra` · **Criticidad:** P1 · **Complejidad:** S
+- **Procedencia:** Derivado de la auditoría de madurez de producto del 2026-07-26 ([product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md)): son los artefactos internacionales que la auditoría echó en falta. Ediciones y números de norma verificados contra las fuentes el 2026-07-26, no citados de memoria.
+- **Criterios de aceptación:**
+  - [ ] Una corrida de Scorecard publica una puntuación de forma programada y su regresión es visible.
+  - [ ] El nivel de build SLSA objetivo está declarado y la brecha hasta él está registrada.
+  - [ ] Los controles existentes están mapeados a IDs de práctica de SSDF v1.1.
+
+#### GT-598
+
+**Título:** Mapear el corpus de rulesets contra ISO/IEC 5055:2021 para hallar qué se puede adoptar en vez de escribir
+
+- **Propósito:** Reducir el backlog de handlers adoptando un catálogo internacional de debilidades, y hacer que el número de cobertura sea contable externamente.
+- **Evidencia:** **El corpus es 100% propietario, y las ~240 reglas sin handler nativo se están tratando como 240 handlers por escribir.** **ISO/IEC 5055:2021** (*Automated source code quality measures*, el primer estándar ISO que mide calidad desde la estructura interna en vez del comportamiento operativo, desarrollado por CISQ y adoptado por ISO/IEC en abril de 2021) publica un catálogo de debilidades estructurales mapeadas a CWE en cuatro medidas — Fiabilidad, Seguridad, Eficiencia de rendimiento, Mantenibilidad. Dos réditos: (a) una debilidad que ya está en 5055 es **ya automatizable por analizadores existentes**, así que parte de la brecha de handlers detrás de [`GT-569`](./gap-reference-catalog.es.md#gt-569) puede cerrarse adoptando en vez de redactando; (b) un conteo contra 5055 es contable por un auditor externo sin fiarse de Evolith, que es exactamente la propiedad que a los números del propio producto les faltaba. Taxonomía acompañante: **ISO/IEC 25010:2023** (2ª edición, sustituye a :2011) — ojo, ahora define **nueve** características de primer nivel, tras añadir Safety y renombrar Usability→Interaction capability y Portability→Flexibility, así que cualquier mapeo al modelo de ocho características de 2011 está obsoleto. Fix: producir una tabla de mapeo rule-id ⇄ debilidad 5055 ⇄ CWE, marcar toda regla que un analizador basado en estándares ya pueda evaluar, y reacotar el backlog de handlers a lo que genuinamente no tiene equivalente internacional.
+- **Impacto:** La brecha del corpus está dimensionada hoy como si cada regla no evaluable requiriese trabajo a medida. Si una fracción relevante mapea a ISO/IEC 5055, el coste del producto cambia en un orden de magnitud — y la afirmación de cobertura deja de ser autoafirmada.
+- **Ficheros afectados:** `src/rulesets/**`, `src/packages/core-domain/src/application/validators/evaluators/**`
+- **Componente:** `Evolith Core` · **Criticidad:** P1 · **Complejidad:** L
+- **Procedencia:** Derivado de la auditoría de madurez de producto del 2026-07-26 ([product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md)): son los artefactos internacionales que la auditoría echó en falta. Ediciones y números de norma verificados contra las fuentes el 2026-07-26, no citados de memoria.
+- **Criterios de aceptación:**
+  - [ ] Una tabla de mapeo publicada cubre cada regla del corpus: mapeada a una debilidad 5055, o marcada explícitamente como sin equivalente internacional.
+  - [ ] El backlog de handlers se reacota al remanente sin mapear, declarando la fracción adoptada.
+  - [ ] Toda referencia a ISO/IEC 25010 usa el modelo de nueve características de 2023.
+
+#### GT-599
+
+**Título:** Dar a cada fila del tablero un principal y un interés, para que la prioridad deje de ser una opinión
+
+- **Propósito:** Convertir la priorización de deuda en una decisión económica en vez de un juicio de valor.
+- **Evidencia:** **El tablero es un registro de deuda técnica sólido pero sin economía, así que 600 filas se priorizan por intuición (P0-P3) y no por coste.** El trabajo de deuda técnica del SEI (Kruchten, Nord, Ozkaya, *Managing Technical Debt*) define los dos campos que necesita un ítem de deuda: **principal** (lo que cuesta pagarla) e **interés** (lo que cuesta por periodo no pagarla). El registro en sí ya existe aquí y es mejor que la mayoría; lo que falta es solo la economía. Para un principal automatizable hay un método publicado: el **OMG Automated Technical Debt Measure**, hoy en **ATDM V2 v1.0 (agosto 2024)**, que deriva una estimación de esfuerzo de reparación a partir de las 138 debilidades de ISO/IEC 5055 usando tiempos de reparación aportados por desarrolladores — así que compone directamente con [`GT-598`](./gap-reference-catalog.es.md#gt-598). Un interino más barato es **SQALE**, el método publicado detrás del *technical debt ratio* de uso extendido. Fix: añadir `principal` e `interest` al schema de evidencia de cierre y al formato de fila, rellenar solo las filas abiertas (no las 561 cerradas), y derivar el subconjunto automatizable desde ATDM en vez de a mano.
+- **Impacto:** Sin principal no hay forma de decir cuánto cuesta la deuda, y sin interés no hay forma de argumentar qué ítem pagar primero. Es además la única vía a una frase a la que responde un dueño de presupuesto: "la deuda son N horas y crece M por sprint".
+- **Ficheros afectados:** `reference/core/control-center/gaps/gap-tracking.md` (+ `.es.md`), `reference/core/control-center/evidence/gap-closure-evidence.json`, `.harness/scripts/ci/08-validate-tracking.mjs`
+- **Componente:** `Governance` · **Criticidad:** P2 · **Complejidad:** M
+- **Procedencia:** Derivado de la auditoría de madurez de producto del 2026-07-26 ([product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md)): son los artefactos internacionales que la auditoría echó en falta. Ediciones y números de norma verificados contra las fuentes el 2026-07-26, no citados de memoria.
+- **Criterios de aceptación:**
+  - [ ] Cada fila ABIERTA lleva un principal y un interés, con la unidad declarada.
+  - [ ] El guard de tracking rechaza una fila abierta nueva que no los tenga.
+  - [ ] El subconjunto automatizable se deriva de ATDM en vez de estimarse a mano.
+
+#### GT-600
+
+**Título:** OPORTUNIDAD — enviar los estándares internacionales como rulesets, convirtiendo la auditoría en producto
+
+- **Propósito:** Convertir el cumplimiento de estándares reconocidos en la superficie de producto que nombra a un comprador.
+- **Evidencia:** **Registrado como oportunidad, no como deuda** — separable de [`GT-596`](./gap-reference-catalog.es.md#gt-596)…[`GT-599`](./gap-reference-catalog.es.md#gt-599), que se sostienen por sí solos como gobernanza interna. Cuatro de los cinco artefactos adoptados allí son implementables como rulesets de Evolith: las debilidades estructurales de **ISO/IEC 5055:2021**, las prácticas de **NIST SP 800-218 (SSDF) v1.1**, los build levels de **SLSA**, y los checks que puntúa **OpenSSF Scorecard**. Eso convierte la remediación de la auditoría en una capacidad vendible, y ataca el hallazgo de producto más afilado del tablero: la auditoría del 2026-07-26 encontró **cero** apariciones de un ICP en 929 documentos en inglés, y 0 estrellas / forks / issues externos en 80 días públicos. "Evalúo tu repositorio contra ISO 5055, SSDF y SLSA y te doy tu puntuación OpenSSF" nombra un comprador, una partida presupuestaria y un disparador de cumplimiento; "gobierno tu arquitectura" no. Además compone con el wedge ya implementado en código (`enforce edit` + el hook de editor), y autoevaluarse contra esos estándares es simultáneamente el arreglo de [`GT-597`](./gap-reference-catalog.es.md#gt-597) y la mejor demo de venta disponible. **Sujeto a decisión, no listo para construir:** presupone que el vehículo de monetización es el wedge del CLI y no el Tracker, contradicción sin resolver que la auditoría señaló y que el dueño tiene que zanjar primero.
+- **Impacto:** Sin un comprador nombrado nada más del tablero se convierte en ingreso. El cumplimiento de estándares es el único encuadre de este motor que lleva una partida presupuestaria asociada, y el motor que lo evaluaría ya existe.
+- **Ficheros afectados:** `src/rulesets/**`, `product/suite/positioning/**`, `product/suite/vision/**`
+- **Componente:** `Evolith Core` · **Criticidad:** P2 · **Complejidad:** L
+- **Procedencia:** Derivado de la auditoría de madurez de producto del 2026-07-26 ([product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md)): son los artefactos internacionales que la auditoría echó en falta. Ediciones y números de norma verificados contra las fuentes el 2026-07-26, no citados de memoria.
+- **Criterios de aceptación:**
+  - [ ] Queda registrada una decisión sobre si el vehículo de monetización es el wedge del CLI o el Tracker.
+  - [ ] Si es el wedge: al menos un estándar se envía como ruleset evaluable y Evolith se autoevalúa contra él en CI.
+  - [ ] El posicionamiento nombra un ICP para quien esa evaluación sea una necesidad presupuestada.

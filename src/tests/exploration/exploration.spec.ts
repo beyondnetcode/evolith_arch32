@@ -155,7 +155,7 @@ describe('Cross-surface exploration agent (F1)', () => {
       // cambia entre maquinas es desinformar al lector ademas de hacer
       // infalseable el chequeo anti-drift. Se normaliza igual que los ms y los
       // uuids: la FORMA de la respuesta se conserva, su contenido volatil no.
-      if (k === 'rulesChecked' && typeof v === 'number') return '<n>';
+      if (['rulesChecked', 'rulesSkipped', 'rulesPassed', 'rulesFailed'].includes(k) && typeof v === 'number') return '<n>';
       if (k === 'issues' && Array.isArray(v)) return '<issues[]>';
       // Mismo criterio para el veredicto del drift: son hallazgos sobre el
       // workspace del momento, no parte del contrato de la interfaz. El how-to

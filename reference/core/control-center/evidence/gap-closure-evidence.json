@@ -8605,6 +8605,24 @@
       "closedAt": "2026-07-28",
       "closureCommit": "e23721f5",
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-621",
+      "closedAt": "2026-07-28",
+      "closureCommit": "3c802b40",
+      "evidence": [
+        ".harness/scripts/ci/45-validate-port-inventory-honesty.mjs",
+        ".harness/scripts/ci/45-validate-port-inventory-honesty.test.mjs",
+        "reference/core/sdlc/assets/master-view.svg",
+        ".harness/scripts/lib/guard-classification.mjs"
+      ],
+      "validationCommands": [
+        "45-validate-port-inventory-honesty --verbose -> 19 ports declared, 11 on the hot path (7 required + 4 optional), 8 declared-not-reached, 53 adapters.",
+        "Before the fix the guard exits 1 against master-view.svg: \"publishes a port/adapter count without saying how many are actually reached\".",
+        "node --test 45-validate-port-inventory-honesty.test.mjs -> 9/9, including four anti-vacuous fixtures (zero ports, unparseable deps, zero adapters, missing scan corpus).",
+        "Row evidence corrected: 17/49/9 as registered vs 19/53/11 measured; the diagnostic’s \"two interaction adapters with no callers\" is six."
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -7809,7 +7809,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `agent-runtime` · **Criticidad:** P3 · **Complejidad:** S
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-622
 

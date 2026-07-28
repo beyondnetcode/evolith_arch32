@@ -7904,7 +7904,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `agent-runtime` · **Criticality:** P3 · **Complexity:** S
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-622
 

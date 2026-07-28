@@ -394,7 +394,13 @@ function functionBodies(lines: readonly string[]): { name: string; startLine: nu
 
 /** Normalize a line for duplication comparison: no indentation, no comments, no blanks. */
 function normalizeForDuplication(line: string): string {
-  const stripped = line.replace(/\/\/.*$/, '').trim();
+  // `indexOf` rather than /\/\/.*$/ — CodeQL flags that pattern as polynomial ReDoS,
+  // and it is right: the input is a line of a file this reviewer was pointed at, so
+  // it is attacker-influenced whenever the reviewer runs over untrusted code, and a
+  // line of many `//` makes the engine rescan to end-of-line from every position.
+  // A linear scan for the first `//` is the same semantics with no backtracking.
+  const commentAt = line.indexOf('//');
+  const stripped = (commentAt === -1 ? line : line.slice(0, commentAt)).trim();
   if (stripped === '' || stripped.startsWith('*') || stripped.startsWith('/*')) return '';
   return stripped.replace(/\s+/g, ' ');
 }

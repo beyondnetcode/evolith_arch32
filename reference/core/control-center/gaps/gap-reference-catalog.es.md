@@ -7831,6 +7831,19 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
 
+#### GT-626
+
+**Title:** `scaffold` rechaza el workspace que `init` acaba de crear, así que el quickstart del README no puede completar
+
+- **Purpose:** Que el quickstart documentado llegue al final, y que `init` y `scaffold` coincidan en qué es un satélite.
+- **Evidence:** **El quickstart del propio README no completa, y los dos comandos discrepan sobre lo que produce `init`.** Medido el 2026-07-28 contra el `@beyondnet/evolith-cli@1.2.1` publicado, ejecutando la secuencia del README literalmente en un directorio limpio. El paso 5, `evolith scaffold --phase 1`, sale con 1 y `<proj>/src exists but is not an Nx workspace (no nx.json/package.json). Run \`evolith-cli init\` first to scaffold the base workspace.` — pero `init` ya se había ejecutado en el paso 2, y es quien creó ese `src/`. `scaffold.command.ts:296-305` resuelve el workspace al directorio `src/` y exige un `nx.json` o `package.json` DENTRO de él; `init` escribe `package.json` en la RAÍZ del proyecto y deja `src/` vacío. El consejo del mensaje de error es por tanto circular: le dice al usuario que ejecute el comando que acaba de ejecutar. `scaffold` no acepta `--dir`, así que no hay rodeo dentro de la secuencia documentada. Extraído de `GT-571` al ejecutar su primer criterio de aceptación en vez de asumirlo.
+- **Component:** `Evolith CLI` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Extraído de GT-571 el 2026-07-28, al ejecutar la secuencia del README contra el artefacto publicado en vez de asumirla.
+- **Acceptance criteria:**
+  - [ ] El quickstart literal del README ejecuta los pasos 1-6 sin ningún exit distinto de cero salvo el veredicto bloqueante documentado de `validate`.
+  - [ ] `init` y `scaffold` coinciden en la raíz del workspace, probado por un test que ejecuta uno tras otro y falla sin el arreglo.
+  - [ ] Ningún mensaje de error dice al usuario que ejecute un comando que ya ejecutó.
+
 #### GT-625
 
 **Title:** El CLI publicado no sobrevive a una instalación limpia, y toda prueba que hacemos corre dentro del workspace que lo tapa
@@ -7840,9 +7853,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Component:** `Evolith CLI` · **Criticality:** P0 · **Complexity:** M
 - **Provenance:** Ola 2, 2026-07-28. Extraído de GT-571 al probar su primer criterio de aceptación contra el registro publicado en vez de asumirlo, y volver refutado más duro de lo que afirmaba la fila.
 - **Acceptance criteria:**
-  - [ ] `npx @beyondnet/evolith-cli@latest --version` funciona en un contenedor sin acceso a este repositorio.
-  - [ ] Todo especificador `@beyondnet/*` que importe un `dist` publicado resuelve contra la dependencia PUBLICADA, verificado por `check-install-smoke.mjs` en CI.
-  - [ ] La ruta de publicación ejecuta esa comprobación contra el tarball empaquetado ANTES de publicar, para que un artefacto no instalable no pueda volver a llegar al registro.
+  - [x] `npx @beyondnet/evolith-cli@latest --version` funciona en un contenedor sin acceso a este repositorio.
+  - [x] Todo especificador `@beyondnet/*` que importe un `dist` publicado resuelve contra la dependencia PUBLICADA, verificado por `check-install-smoke.mjs` en CI.
+  - [x] La ruta de publicación ejecuta esa comprobación contra el tarball empaquetado ANTES de publicar, para que un artefacto no instalable no pueda volver a llegar al registro.
 
 #### GT-624
 

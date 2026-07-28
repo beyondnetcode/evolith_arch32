@@ -99,6 +99,19 @@ jobs:
       - name: Self-tests for the ADR ruleset generator
         run: node --test .harness/scripts/generate-adr-rulesets.test.mjs
 
+      # GT-630: the derived artifacts have a dependency ORDER — the executive
+      # summary is built FROM the maturity reconciliation, which is built from
+      # the board. Generate the summary first and it captures a value the
+      # reconciler then moves; each artifact's own --check still passes at that
+      # moment, so the suite goes green locally and this job goes red. That cost
+      # three red required checks on 2026-07-28 and the order was written down
+      # nowhere. It is now data, and this step walks it.
+      - name: Derived artifacts are current, in dependency order
+        run: node .harness/scripts/ci/46-validate-derived-artifact-order.mjs --verbose
+
+      - name: Self-test for the derived-artifact order guard
+        run: node --test .harness/scripts/ci/46-validate-derived-artifact-order.test.mjs
+
       - name: Validate machine contracts
         run: node .harness/scripts/ci/10-validate-contract-conformance.mjs
 

@@ -46,6 +46,13 @@ export const SELF_GUARDED = [
     reason: 'the reference implementation of the pattern (GT-377); refuses both a missing root and an empty scan',
   },
   {
+    file: '46-validate-derived-artifact-order.mjs',
+    proof: /the declared chain is EMPTY — nothing was ordered and nothing was checked/,
+    reason:
+      'GT-630 derived-artifact order guard; refuses an empty chain, a declared producer that ' +
+      'does not exist, a missing artifact, and a declaration whose order contradicts itself',
+  },
+  {
     file: '45-validate-port-inventory-honesty.mjs',
     proof: /found ZERO port interfaces — the tree moved and this guard verified nothing/,
     reason:

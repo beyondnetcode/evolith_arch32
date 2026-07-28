@@ -7852,6 +7852,19 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
 
+#### GT-630
+
+**Title:** Los artefactos derivados tienen un orden de dependencia y nada lo exigía
+
+- **Purpose:** Convertir el orden de regeneración en un hecho comprobable en vez de conocimiento tribal.
+- **Evidence:** **Los artefactos derivados tienen un ORDEN de dependencia y nada lo exigía — costó tres checks requeridos en rojo solo el 2026-07-28.** `generate-executive-summary.mjs` lee `maturity-reconciliation.json`, que a su vez se deriva del tablero de gaps. Generar el resumen ANTES de reconciliar captura un valor que el reconciliador está a punto de mover. El `--check` de cada artefacto pasa en ese momento — el resumen coincide de verdad con lo que se acaba de escribir — así que `ci-runner governance` sale verde en local y `Validate documentation` sale rojo en el runner, donde los pasos corren en el orden declarado. No es un fallo de artefacto rancio, que los `--check` individuales ya cazan; es un fallo de ORDEN, invisible para cualquier comprobación que mire un artefacto cada vez. La secuencia correcta (reconciliar → suite → generar → validar) no estaba escrita en ningún sitio del repositorio, que es la razón de que el mismo error se cometiera tres veces en una sesión por alguien a quien ya le había mordido dos.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Registrado y cerrado el 2026-07-28, tras producir el mismo error de orden tres checks requeridos en rojo en una sola sesión.
+- **Acceptance criteria:**
+  - [x] La cadena se declara como datos — productor, entradas que consume, artefactos que escribe — y un guard la recorre en orden de dependencia.
+  - [x] El guard nombra el PRIMER eslabón rancio con el comando que lo arregla y las entradas que deben estar al día antes que él.
+  - [x] Incluye fixtures negativas, entre ellas las anti-vacuas, y está cableado en un check requerido.
+
 #### GT-629
 
 **Title:** El guard de seguimiento nunca pregunta si una fila abierta tiene criterios de aceptación

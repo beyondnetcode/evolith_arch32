@@ -7171,7 +7171,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
 - **Acceptance criteria:**
   - [ ] `npx @beyondnet/evolith-cli@latest` followed by the literal README sequence completes in a clean container.
-  - [x] A freshly initialized repo returns 0 blocking findings, asserted by a test that fails if it rises again.
+  - [ ] A freshly initialized repo returns 0 blocking findings, asserted by a test that fails if it rises again.
   - [x] `--help` names the real command, not `main`.
 
 #### GT-572
@@ -7926,6 +7926,19 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
 
+#### GT-626
+
+**Title:** `scaffold` rejects the workspace `init` just created, so the README quickstart cannot complete
+
+- **Purpose:** Make the documented quickstart run to the end, and make `init` and `scaffold` agree on what a satellite looks like.
+- **Evidence:** **The README's own quickstart does not complete, and the two commands disagree about what `init` produces.** Measured 2026-07-28 against the published `@beyondnet/evolith-cli@1.2.1`, running the README sequence literally in a clean directory. Step 5, `evolith scaffold --phase 1`, exits 1 with `<proj>/src exists but is not an Nx workspace (no nx.json/package.json). Run \`evolith-cli init\` first to scaffold the base workspace.` — but `init` had already run at step 2, and it is what created that `src/`. `scaffold.command.ts:296-305` resolves the workspace to the `src/` directory and requires an `nx.json` or `package.json` INSIDE it; `init` writes `package.json` at the project ROOT and leaves `src/` bare. The advice in the error message is therefore circular: it tells the user to run the command they just ran. `scaffold` accepts no `--dir`, so there is no workaround from the documented sequence. Carved out of `GT-571` when its first acceptance criterion was executed rather than assumed.
+- **Component:** `Evolith CLI` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Carved out of GT-571 on 2026-07-28, when the README sequence was executed against the published artifact instead of assumed.
+- **Acceptance criteria:**
+  - [ ] The literal README quickstart runs steps 1-6 with no non-zero exit other than `validate`'s documented blocking verdict.
+  - [ ] `init` and `scaffold` agree on the workspace root, proven by a test that runs one after the other and fails without the fix.
+  - [ ] No error message tells the user to run a command they have already run.
+
 #### GT-625
 
 **Title:** The published CLI does not survive a clean install, and every test we run is inside the workspace that hides it
@@ -7935,9 +7948,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith CLI` · **Criticality:** P0 · **Complexity:** M
 - **Provenance:** Wave 2, 2026-07-28. Carved out of GT-571 when its first acceptance criterion was tested against the published registry rather than assumed, and came back refuted harder than the row claimed.
 - **Acceptance criteria:**
-  - [ ] `npx @beyondnet/evolith-cli@latest --version` succeeds in a container with no access to this repository.
-  - [ ] Every `@beyondnet/*` specifier imported by a shipped `dist` resolves against the PUBLISHED dependency, asserted by `check-install-smoke.mjs` in CI.
-  - [ ] The release path runs that check against the packed tarball BEFORE publishing, so a non-installable artifact cannot reach the registry again.
+  - [x] `npx @beyondnet/evolith-cli@latest --version` succeeds in a container with no access to this repository.
+  - [x] Every `@beyondnet/*` specifier imported by a shipped `dist` resolves against the PUBLISHED dependency, asserted by `check-install-smoke.mjs` in CI.
+  - [x] The release path runs that check against the packed tarball BEFORE publishing, so a non-installable artifact cannot reach the registry again.
 
 #### GT-624
 

@@ -8490,6 +8490,24 @@
       "closedAt": "2026-07-28",
       "closureCommit": "caf5fb97",
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-625",
+      "closedAt": "2026-07-28",
+      "closureCommit": "01b8112b",
+      "evidence": [
+        "src/sdk/cli/scripts/check-install-smoke.mjs",
+        ".github/workflows/npm-release.yml",
+        "src/packages/core/package.json",
+        "src/packages/core-domain/package.json"
+      ],
+      "validationCommands": [
+        "npm view @beyondnet/evolith-{core-domain,core,infra-providers}@1.2.0 and @beyondnet/evolith-{mcp,cli}@1.2.1 -> all five present, all five carry dist.attestations.",
+        "npm pack @beyondnet/evolith-core-domain@1.2.0 -> the tarball contains dist/application/paths/rulesets-location.js, which 1.1.0 did not.",
+        "npm install @beyondnet/evolith-cli@1.2.1 in a directory that has never seen this workspace -> --version prints 1.2.1, exit 0. Same for evolith-mcp@1.2.1 -> boots, exit 0.",
+        "The gate fired for real: run 30355511518 stopped before publishing the MCP with \"PatternCatalogService is not a constructor\", a second broken published package the audit had missed."
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

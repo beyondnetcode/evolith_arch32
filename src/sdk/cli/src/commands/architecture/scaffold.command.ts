@@ -181,19 +181,33 @@ export class ScaffoldCommand extends BaseEvolithCommand {
       });
     }
 
-    const phase = await this.promptService.select({
-      message: '¿En qué fase del eje progresivo (progressive axis) se encuentra este proyecto?',
-      options: [
-        { value: '1', label: 'Fase 1 · modular-monolith (The Lean Foundation, MVP)' },
-        { value: '2', label: 'Fase 2 · distributed-modules (Scale & Decoupling, Service Extraction)' },
-        { value: '3', label: 'Fase 3 · microservices (North Star, Microservices & Microfrontends)' },
-      ],
-    });
+    // GT-626: `--phase` was declared, documented, and prompted for
+    // UNCONDITIONALLY — so the flag was silently ignored on the human path while
+    // `--frontend` and `--orm` right above were honoured. That is what stopped
+    // the README quickstart from running non-interactively even once the
+    // workspace check was fixed: every flag the user supplied was discarded and
+    // the command then refused to prompt on a non-TTY.
+    //
+    // Every declared flag is now authoritative, with the same `if (!option)`
+    // shape already used above, and the phase goes through the SAME
+    // `toProgressivePhase` canonicalisation as the JSON path so `1`,
+    // `modular-monolith` and the legacy `F1` all mean one thing on both paths.
+    let phase = options?.phase ? String(toProgressivePhase(options.phase as string)) : undefined;
+    if (!phase) {
+      phase = await this.promptService.select({
+        message: '¿En qué fase del eje progresivo (progressive axis) se encuentra este proyecto?',
+        options: [
+          { value: '1', label: 'Fase 1 · modular-monolith (The Lean Foundation, MVP)' },
+          { value: '2', label: 'Fase 2 · distributed-modules (Scale & Decoupling, Service Extraction)' },
+          { value: '3', label: 'Fase 3 · microservices (North Star, Microservices & Microfrontends)' },
+        ],
+      });
+    }
 
-    const apiName = await this.promptService.text({
+    const apiName = await this.resolveWithDefault(options?.apiName, {
       message: '¿Cuál será el nombre de la API principal (Backend)?',
       placeholder: 'tracker-api',
-      defaultValue: 'tracker-api'
+      defaultValue: 'tracker-api',
     });
 
     let webAppName = '';
@@ -202,38 +216,47 @@ export class ScaffoldCommand extends BaseEvolithCommand {
     let remotes: string[] = [];
 
     if (phase === '1') {
-      webAppName = await this.promptService.text({
+      webAppName = await this.resolveWithDefault(options?.webAppName, {
         message: '¿Cuál será el nombre de la aplicación Web estándar (SPA)?',
         placeholder: 'tracker-web',
-        defaultValue: 'tracker-web'
+        defaultValue: 'tracker-web',
       });
     } else {
-      hostName = await this.promptService.text({
+      hostName = await this.resolveWithDefault(options?.hostName, {
         message: '¿Cuál será el nombre de la aplicación Host (Microfrontend Web principal)?',
         placeholder: 'tracker-host',
-        defaultValue: 'tracker-host'
+        defaultValue: 'tracker-host',
       });
 
-      remotesInput = await this.promptService.text({
+      remotesInput = await this.resolveWithDefault(options?.remotes, {
         message: 'Ingresa los nombres de los Microfrontends Remotos separados por comas:',
         placeholder: 'trackerRemoteAgile, trackerRemoteQa',
-        defaultValue: 'trackerRemoteAgile, trackerRemoteQa'
+        defaultValue: 'trackerRemoteAgile, trackerRemoteQa',
       });
 
       remotes = remotesInput.split(',').map(r => r.trim()).filter(r => r.length > 0);
     }
 
-    const domains = await this.promptService.multiselect({
-      message: 'Selecciona las fases SDLC de Evolith que este proyecto va a implementar:',
-      options: [
-        { value: 'discovery', label: 'Discovery' },
-        { value: 'design', label: 'Design' },
-        { value: 'construction', label: 'Construction' },
-        { value: 'qa', label: 'QA' },
-        { value: 'release', label: 'Release' },
-      ],
-      required: true
-    });
+    // `--domains` accepts the comma-separated form the JSON path already parses.
+    const domainsOpt = options?.domains;
+    const declaredDomains: string[] = Array.isArray(domainsOpt)
+      ? (domainsOpt as string[])
+      : typeof domainsOpt === 'string'
+        ? domainsOpt.split(',').map((d) => d.trim()).filter(Boolean)
+        : [];
+    const domains = declaredDomains.length > 0
+      ? declaredDomains
+      : await this.promptService.multiselect({
+          message: 'Selecciona las fases SDLC de Evolith que este proyecto va a implementar:',
+          options: [
+            { value: 'discovery', label: 'Discovery' },
+            { value: 'design', label: 'Design' },
+            { value: 'construction', label: 'Construction' },
+            { value: 'qa', label: 'QA' },
+            { value: 'release', label: 'Release' },
+          ],
+          required: true
+        });
 
     this.promptService.startSpinner('Iniciando el proceso de andamiaje...');
 
@@ -281,26 +304,62 @@ export class ScaffoldCommand extends BaseEvolithCommand {
   }
 
   /**
-   * The Nx strategy operates in `<cwd>/src`. Verify that directory exists and is
-   * an Nx workspace before we spawn any `npm`/`nx` process there. Returns an
-   * actionable error message, or `undefined` when the workspace is usable.
+   * GT-626: resolve a value that has a DOCUMENTED default (`--help` prints
+   * "default: tracker-api" and friends).
+   *
+   * Order: an explicit flag wins; otherwise ask a human if there is one;
+   * otherwise take the documented default. Refusing to run because nobody is
+   * there to retype a value we would have defaulted to anyway is friction, not
+   * safety — and `init --yes` already sets the precedent that a non-interactive
+   * run takes defaults.
+   *
+   * Values with no sensible default (the frontend framework, the ORM, the SDLC
+   * domains) still go through `promptService`, which raises `NonInteractiveError`
+   * (exit 3) on a non-TTY. That distinction is the point: exit 3 should mean
+   * "this run genuinely needs a decision", never "you did not retype a default".
+   */
+  private async resolveWithDefault(
+    provided: unknown,
+    prompt: { message: string; placeholder?: string; defaultValue: string },
+  ): Promise<string> {
+    const explicit = typeof provided === 'string' ? provided.trim() : '';
+    if (explicit) return explicit;
+    if (!this.promptService.isInteractive()) return prompt.defaultValue;
+    return this.promptService.text(prompt);
+  }
+
+  /**
+   * GT-626. The Nx strategy runs `npm install` and `npx nx g` INSIDE `<cwd>/src`
+   * (`NxWorkspaceStrategy.getTargetDir`), so that directory must really be an Nx
+   * workspace. Two things were wrong here, and a third is not this check's to fix.
+   *
+   * 1. `package.json` alone was accepted as proof of an Nx workspace. It is not:
+   *    Nx needs `nx.json`, and without it the generator dies deep inside Nx with
+   *    `Cannot read properties of null (reading 'useInferencePlugins')` after a
+   *    minutes-long dependency install. Failing here, in milliseconds, with a
+   *    sentence a human can act on, is strictly better than failing there.
+   * 2. The advice was circular: it told the user to run `evolith init`, which is
+   *    the command they had just run at step 2 of the README quickstart, and
+   *    which does not create an Nx workspace at all.
+   *
+   * The third thing is the real gap and is deliberately NOT papered over here:
+   * nothing in the documented quickstart creates that Nx workspace, so step 5
+   * cannot follow step 2 as written. Making the guard permissive would only
+   * convert this fast, clear refusal into that slow, cryptic Nx crash. Who
+   * bootstraps the workspace — `init`, `scaffold` itself, or an explicit step —
+   * is a design decision tracked on GT-626, not something to guess at inside a
+   * precondition.
    */
   private checkWorkspace(): string | undefined {
     const cwd = process.cwd();
     const workspaceDir = path.join(cwd, 'src');
-    if (!fs.existsSync(workspaceDir)) {
+
+    if (!fs.existsSync(path.join(workspaceDir, 'nx.json'))) {
       return (
-        `No workspace found at ${workspaceDir}. Run \`evolith-cli init\` first to ` +
-        `scaffold a satellite, then re-run \`evolith-cli architecture scaffold\`.`
-      );
-    }
-    const isNxWorkspace =
-      fs.existsSync(path.join(workspaceDir, 'nx.json')) ||
-      fs.existsSync(path.join(workspaceDir, 'package.json'));
-    if (!isNxWorkspace) {
-      return (
-        `${workspaceDir} exists but is not an Nx workspace (no nx.json/package.json). ` +
-        `Run \`evolith-cli init\` first to scaffold the base workspace.`
+        `${workspaceDir} is not an Nx workspace (no nx.json), and the scaffolder ` +
+        `runs \`nx\` there. \`evolith init\` does not create one — it scaffolds the ` +
+        `satellite around it. Create the workspace first, for example ` +
+        `\`npx create-nx-workspace@latest src --preset apps\`, then re-run this command.`
       );
     }
     return undefined;

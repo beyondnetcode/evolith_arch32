@@ -93,23 +93,44 @@ La CLI funciona sin configuración. Las siguientes variables son overrides opcio
 
 ```bash
 # 1. Sembrar un proyecto demo para explorar la CLI
-evolith-cli fixtures --type demo
+evolith fixtures --type demo
 
-# 2. Inicializar un repositorio real
-evolith-cli init
+# 2. Inicializar ESTE directorio como satélite (--name nombra el proyecto en
+#    evolith.yaml; --yes ejecuta sin preguntas). Pasa un directorio posicional
+#    para andamiar en uno nuevo: `evolith init mi-sat --yes`.
+evolith init --name mi-sat --yes
 
 # 3. Generar la documentación base
-evolith-cli docs
+evolith docs
 
-# 4. Validar cumplimiento
-evolith-cli validate
+# 4. Validar cumplimiento — mismo directorio, sin `cd` tras el paso 2
+evolith validate
 
-# 5. Scaffolding de arquitectura (fase 1)
-evolith-cli scaffold --phase 1
-
-# 6. Conectar un agente IA
-evolith-mcp
+# 5. Conectar un agente IA (servidor MCP independiente, paquete aparte)
+evolith-mcp serve
 ```
+
+Dos cosas que este inicio rápido NO afirma, porque medirlo dijo lo contrario
+(GT-571, GT-626):
+
+**El `validate` del paso 4 es una línea base, no un aprobado.** Un satélite recién
+inicializado reporta hallazgos bloqueantes de reglas que asumen un repositorio más
+completo — 91 de 230 incidencias, medido contra la 1.2.1 el 2026-07-28. Sale con `2`
+(veredicto bloqueante, según la taxonomía de exit codes de arriba), que es la
+respuesta honesta y no un fallo de la instalación. Llevar ese número a cero es
+trabajo abierto en GT-571.
+
+**`scaffold` no forma parte de este inicio rápido, porque no puede ir detrás de
+`init`.** `evolith scaffold` ejecuta generadores de `nx` dentro de `./src`, y aquí
+nada crea un workspace Nx ahí — `init` andamia el satélite *alrededor* de `src/`, no
+un workspace Nx *dentro*. Úsalo solo en un repositorio que ya tenga `src/nx.json`, y
+pásale las decisiones que no tienen valor por defecto para que corra desatendido:
+
+```bash
+evolith scaffold --phase 1 --frontend react --orm prisma --domains construction
+```
+
+Quién debe crear ese workspace se sigue en GT-626.
 
 ---
 

@@ -51,13 +51,13 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-07-26 |
 | Total gaps | 629 |
-| Closed gaps | 580 |
-| Open gaps | 49 |
+| Closed gaps | 581 |
+| Open gaps | 48 |
 | Open P0 | 9 |
 | Open P1 | 17 |
 | Open P2 | 19 |
-| Total closure | 92.2% |
-| Closure evidence records | 562 |
+| Total closure | 92.4% |
+| Closure evidence records | 563 |
 | Recorded readiness | 4 PASS |
 
 | Area | Open | P0 | P1 | First IDs |

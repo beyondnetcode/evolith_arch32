@@ -46,6 +46,13 @@ export const SELF_GUARDED = [
     reason: 'the reference implementation of the pattern (GT-377); refuses both a missing root and an empty scan',
   },
   {
+    file: '45-validate-port-inventory-honesty.mjs',
+    proof: /found ZERO port interfaces — the tree moved and this guard verified nothing/,
+    reason:
+      'GT-621 port-inventory guard; refuses a zero-port scan, an unparseable deps shape ' +
+      '(the hot path must be DERIVED, never assumed), zero adapters and a missing scan corpus',
+  },
+  {
     file: '44-validate-adr-implementation-status.mjs',
     proof: /found ZERO ADR files — the corpus moved, and this guard verified nothing/,
     reason:

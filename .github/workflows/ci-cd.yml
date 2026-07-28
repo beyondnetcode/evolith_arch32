@@ -406,6 +406,15 @@ jobs:
       - name: Skill registries agree in both directions
         run: node .harness/scripts/ci/34-check-skill-registry-parity.mjs
 
+      # GT-621: a diagram published "12 hexagonal ports · 30 adapters". The
+      # numbers were stale AND the sentence read as delivered capability when it
+      # described a declared surface — 11 of 19 ports are reachable from the
+      # runtime; the rest are seams with adapters and no consumer. The hot path
+      # is DERIVED from `AgentRuntimeDeps`, so it cannot rot the way the
+      # hand-typed count did.
+      - name: A port inventory does not read as a capability claim
+        run: node .harness/scripts/ci/45-validate-port-inventory-honesty.mjs --verbose
+
       - name: Self-tests for the governance guards
         run: |
           node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
@@ -413,6 +422,7 @@ jobs:
           node --test .harness/scripts/ci/43-validate-guard-negative-fixtures.test.mjs
           node --test .harness/scripts/ci/44-validate-adr-implementation-status.test.mjs
           node --test .harness/scripts/ci/34-check-skill-registry-parity.test.mjs
+          node --test .harness/scripts/ci/45-validate-port-inventory-honesty.test.mjs
 
       # REPORTING MODE, and it says so in its own output ("THIS IS NOT A PASS").
       # It resolves every validationCommand recorded in the board's closure

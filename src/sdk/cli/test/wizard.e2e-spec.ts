@@ -112,9 +112,14 @@ describe('WizardService E2E', () => {
     it('should display summary before confirmation', async () => {
       const service = new WizardService();
       
-      // Force interactive mode for testing by stubbing process.stdout.isTTY
+      // Force interactive mode for testing by stubbing BOTH stdio ends.
+      // GT-611: interactivity is decided by stdin — the question is whether a
+      // human can ANSWER, not whether output is a terminal — so stubbing
+      // stdout alone no longer models an interactive session.
       const originalIsTTY = process.stdout.isTTY;
+      const originalStdinTTY = process.stdin.isTTY;
       Object.defineProperty(process.stdout, 'isTTY', { value: true, configurable: true });
+      Object.defineProperty(process.stdin, 'isTTY', { value: true, configurable: true });
 
       const steps = [
         {
@@ -140,6 +145,7 @@ describe('WizardService E2E', () => {
 
       // Restore isTTY
       Object.defineProperty(process.stdout, 'isTTY', { value: originalIsTTY, configurable: true });
+      Object.defineProperty(process.stdin, 'isTTY', { value: originalStdinTTY, configurable: true });
     });
   });
 });

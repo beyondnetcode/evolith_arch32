@@ -43,6 +43,13 @@ export class EvaluationOrchestrator {
       ruleset: ctx.rulesetRef,
       rulesetVersion: ctx.rulesetVersion,
       evaluatedAt: verdict.evaluatedAt,
+      // GT-601: the audit trail records what actually ran. The engine and the
+      // GT-569 coverage facts come from the pipeline; the declared artifacts come
+      // from the context, so `missingEvidence` names what the consumer required and
+      // never presented. None of the three is a literal any more.
+      engine: verdict.engine,
+      coverage: verdict.coverage,
+      declaredArtifacts: ctx.artifacts,
     });
 
     // Dispatch additional requested kinds to registered evaluators and merge.

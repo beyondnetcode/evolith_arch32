@@ -12,9 +12,14 @@
  * let the adapter attempt to lazy-load one from the configured module.
  */
 
-import type { IAgentEnginePort, AgentEnginePlan } from '../../domain/ports/agent-engine.port';
+import type {
+  IAgentEnginePort,
+  AgentEnginePlan,
+  AgentPlanContext,
+} from '../../domain/ports/agent-engine.port';
 import type { AgentRuntimeRequest } from '../../domain/contracts/agent-runtime-request';
 import type { SkillDescriptor } from '../../domain/contracts/capability';
+import { renderPlanHistory } from './plan-history';
 
 /**
  * The minimal surface the adapter needs from Swarms. A real Swarms client is
@@ -78,8 +83,12 @@ export class SwarmsAgentAdapter implements IAgentEnginePort {
   async plan(
     request: AgentRuntimeRequest,
     availableSkills: readonly SkillDescriptor[],
+    planContext?: AgentPlanContext,
   ): Promise<AgentEnginePlan> {
     const client = await this.resolveClient();
+    // GT-612: prior turns, bounded by `renderPlanHistory` (last 10 entries,
+    // ≤200 chars each, ≤2000 chars total) — never the raw transcript.
+    const history = renderPlanHistory(planContext?.history);
     const completion = await client.orchestrate({
       goal: request.intent,
       context: {
@@ -89,6 +98,7 @@ export class SwarmsAgentAdapter implements IAgentEnginePort {
         phase: request.context.phase,
         gate: request.context.gate,
         parameters: request.parameters ?? {},
+        ...(history ? { history } : {}),
       },
       availableTools: availableSkills.map((s) => ({ id: s.id, description: s.description })),
     });

@@ -25,6 +25,7 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
 import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
 import { resolveCoreOverride } from '../../infrastructure/paths/core-resolver';
+import { CLI_EXIT_CODES, exitWith } from '../../infrastructure/cli/exit-codes';
 
 const CORE_VERSION = '1.0.5';
 
@@ -160,7 +161,8 @@ export class EvaluateCommand extends BaseEvolithCommand {
       const decision = evaluateDriftGate({ result, codeowners });
       const published = await new PrCommentFallbackPublisher().publish(decision);
       console.log(published.body);
-      if (published.exitCode !== 0) process.exit(published.exitCode);
+      // The drift gate's non-zero exit means the gate BLOCKS, not that the tool broke.
+      if (published.exitCode !== 0) exitWith(CLI_EXIT_CODES.BLOCKED);
       return;
     } else if (format === 'json') {
       console.log(JSON.stringify(envelope, null, 2));
@@ -175,7 +177,7 @@ export class EvaluateCommand extends BaseEvolithCommand {
     // A negative evaluation verdict must exit non-zero so CI can gate on it,
     // mirroring `gate`/`phase` (envelope success=command-ran, exit=verdict).
     if (result.overallVerdict === 'FAIL' || result.outcome === 'rejected') {
-      process.exit(1);
+      exitWith(CLI_EXIT_CODES.BLOCKED);
     }
   }
 

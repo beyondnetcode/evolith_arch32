@@ -25,7 +25,12 @@ import type { PolicyValidationResult } from '../domain/ports/policy-validation.p
 import type { ITrackerTracePort } from '../domain/ports/tracker-trace.port';
 import type { IMemoryPort } from '../domain/ports/memory.port';
 import type { IApprovalPort } from '../domain/ports/approval.port';
-import type { IAgentEnginePort } from '../domain/ports/agent-engine.port';
+import type {
+  IAgentEnginePort,
+  AgentEnginePlan,
+  AgentPlanContext,
+  AgentPlanHistoryEntry,
+} from '../domain/ports/agent-engine.port';
 import type { IKnowledgePort } from '../domain/ports/knowledge.port';
 import type { IWorkspaceContextPort } from '../domain/ports/workspace-context.port';
 
@@ -44,6 +49,8 @@ import type { HarnessExecutionResult } from '../domain/ports/harness.port';
 import type { EvaluationResult } from '@beyondnet/evolith-core-domain/evaluation/contracts';
 
 import { buildEvaluationContext, buildPolicyInput } from './context-mapper';
+import { mergeEngineArguments, type ArgumentMergeDecision } from './engine-argument-merge';
+import { DEFAULT_MEMORY_HISTORY_LIMIT } from './agent-runtime-deps';
 import {
   applyPolicy,
   assembleResult,
@@ -112,6 +119,24 @@ export class AgentRuntimeService implements IAgentRuntime {
     try {
       // 1. Resolve context (already in request.context) + record in memory.
       steps.push('resolve-context');
+
+      // 1a. GT-612 — READ the conversation namespace BEFORE appending this turn,
+      //     so the engine plans with the PRIOR turns and not with its own request
+      //     echoed back. Bounded (default 20 entries ≈ 10 turns) and best-effort:
+      //     a memory outage leaves the turn stateless, it never fails the run.
+      //     Only paid for when an engine is wired — nothing else consumes it.
+      let recalled: { entries: readonly AgentPlanHistoryEntry[]; limit: number } | undefined;
+      const historyLimit = this.deps.memoryHistoryLimit ?? DEFAULT_MEMORY_HISTORY_LIMIT;
+      if (this.deps.engine && historyLimit > 0) {
+        steps.push('recall-conversation');
+        try {
+          const log = await this.deps.memory.history(this.conversationNs(request), historyLimit);
+          recalled = { entries: log.map((e) => ({ at: e.at, value: e.value })), limit: historyLimit };
+        } catch {
+          // Recall is advisory; never block a governed run on a memory outage.
+        }
+      }
+
       await this.deps.memory.append(this.conversationNs(request), {
         kind: 'request',
         intent: request.intent,
@@ -160,13 +185,18 @@ export class AgentRuntimeService implements IAgentRuntime {
       steps.push('select-capability');
       let skill = await this.deps.skillRegistry.resolve(request.intent, request.tool);
       let enginePlanRationale: string | undefined;
+      let enginePlan: AgentEnginePlan | undefined;
 
       if (!skill && this.deps.engine) {
         const skills = await this.deps.skillRegistry.list();
-        const plan = await this.deps.engine.plan(request, skills);
-        enginePlanRationale = `${plan.engine}: ${plan.rationale}`;
-        if (plan.proposedTool) {
-          skill = await this.deps.skillRegistry.resolve(request.intent, plan.proposedTool);
+        const planContext: AgentPlanContext = {
+          history: recalled?.entries,
+          conversationNamespace: this.conversationNs(request),
+        };
+        enginePlan = await this.deps.engine.plan(request, skills, planContext);
+        enginePlanRationale = `${enginePlan.engine}: ${enginePlan.rationale}`;
+        if (enginePlan.proposedTool) {
+          skill = await this.deps.skillRegistry.resolve(request.intent, enginePlan.proposedTool);
         }
       }
 
@@ -192,6 +222,37 @@ export class AgentRuntimeService implements IAgentRuntime {
       
       yield { type: 'capability_selected', timestamp: this.now(), capabilityId: skill.id };
 
+      // 2.4 GT-610 — the engine PROPOSED arguments; revalidate them and merge.
+      //     Previously only `plan.proposedTool` was read and the capability ran
+      //     with whatever `request.parameters` held: the right action, recorded,
+      //     executed with the wrong inputs. The engine is an untrusted source, so
+      //     nothing is passed through unchecked — the caller stays authoritative,
+      //     a declared input contract is enforced, and the decision is traced.
+      //     `governedRequest` is what every downstream step executes with.
+      let governedRequest = request;
+      let argumentDecision: ArgumentMergeDecision | undefined;
+      if (enginePlan?.proposedArguments) {
+        steps.push('merge-engine-arguments');
+        const merge = mergeEngineArguments({
+          caller: request.parameters,
+          proposed: enginePlan.proposedArguments,
+          skill,
+          engine: enginePlan.engine,
+          policy: this.deps.engineArgumentPolicy,
+        });
+        argumentDecision = merge.decision;
+        if (merge.decision.source === 'engine-merged') {
+          governedRequest = { ...request, parameters: merge.parameters };
+        }
+        await this.emit(request, skill, 'capability.resolved', undefined, {
+          argumentSource: merge.decision.source,
+          engine: merge.decision.engine,
+          contract: merge.decision.contract,
+          acceptedArguments: merge.decision.accepted,
+          rejectedArguments: merge.decision.rejected,
+        });
+      }
+
       // 2.5 Validate interface permissions
       if (skill.allowedSourceInterfaces && request.sourceInterface && !skill.allowedSourceInterfaces.includes(request.sourceInterface)) {
         steps.push('blocked-by-interface');
@@ -215,7 +276,7 @@ export class AgentRuntimeService implements IAgentRuntime {
           capabilityId: skill.id,
           payload: { stage: 'pre-execution' },
         };
-        const policy = await this.validatePolicy(request, skill, { stage: 'pre-execution' });
+        const policy = await this.validatePolicy(governedRequest, skill, { stage: 'pre-execution' });
         await this.emit(request, skill, 'policy.validated', policy.allowed ? 'passed' : 'blocked', {
           policyRef: policy.policyRef,
           violations: policy.violations.length,
@@ -275,9 +336,10 @@ export class AgentRuntimeService implements IAgentRuntime {
         yield { type: 'harness_started', timestamp: this.now(), capabilityId: skill.id };
         harnessResult = await this.deps.harness.execute({
           capability: skill.harnessCapability ?? skill.id,
-          args: request.parameters,
-          context: request.context,
-          dryRun: request.dryRun,
+          // GT-610: the REVALIDATED argument set, not the raw request parameters.
+          args: governedRequest.parameters,
+          context: governedRequest.context,
+          dryRun: governedRequest.dryRun,
         });
         await this.emit(request, skill, 'harness.executed', harnessResult.ok ? 'passed' : 'blocked', {
           capability: harnessResult.capability,
@@ -311,7 +373,7 @@ export class AgentRuntimeService implements IAgentRuntime {
 
         steps.push('core-evaluate');
         yield { type: 'evaluation_started', timestamp: this.now(), capabilityId: skill.id };
-        const evalCtx = buildEvaluationContext(request, skill, harnessResult?.data, workspaceFiles);
+        const evalCtx = buildEvaluationContext(governedRequest, skill, harnessResult?.data, workspaceFiles);
         evaluation = await this.deps.coreEvaluation.evaluate(evalCtx);
         await this.emit(request, skill, 'core.evaluated', undefined, {
           verdict: String(evaluation.overallVerdict),
@@ -333,7 +395,7 @@ export class AgentRuntimeService implements IAgentRuntime {
           capabilityId: skill.id,
           payload: { stage: 'post-execution' },
         };
-        const policy = await this.validatePolicy(request, skill, {
+        const policy = await this.validatePolicy(governedRequest, skill, {
           stage: 'post-execution',
           harness: harnessResult,
           evaluation,
@@ -368,6 +430,16 @@ export class AgentRuntimeService implements IAgentRuntime {
         durationMs: this.duration(startedAt, finishedAt),
         steps: [...steps, 'completed'],
         groundedBy: grounding,
+        // GT-610 / GT-612: which argument set ran, and how much prior
+        // conversation informed the plan.
+        argumentSource: argumentDecision,
+        recalledMemory: recalled
+          ? {
+              namespace: this.conversationNs(request),
+              entries: recalled.entries.length,
+              limit: recalled.limit,
+            }
+          : undefined,
       };
 
       const recommendations: RuntimeRecommendation[] = enginePlanRationale

@@ -6,6 +6,12 @@
 
 Accepted
 
+> **Estado de implementacion en este repositorio: ninguna** (verificado 2026-07-28).
+> Este ADR es un estandar normativo publicado *para los satelites*; esta Accepted como decision,
+> no como capacidad entregada. Nada en Evolith Core lo implementa, y nada lo hace cumplir.
+> `sandbox.mode` aparece en `src/` exactamente dos veces, y ninguna es una implementacion de esta decision: `core-domain/.../handlers/architecture/agent-rules.ts` **evalua el** `agent.config.json` **de un satelite**, y `rulesets/topologies/agentic-ai/agentic-ai.rules.json` declara esa regla. El propio Agent Runtime de Evolith hace lo contrario de lo que este ADR manda: `packages/agent-runtime/src/adapters/harness/harness-process.adapter.ts` lanza cada proceso de capacidad con `{ ...process.env }`, de modo que un script de capacidad hereda `AGENT_RUNTIME_CORE_TOKEN`, el token del tracker y `EVOLITH_RAG_PG_URL` — credenciales ambientales que este ADR prohibe.
+> El ruleset generado `rulesets/adr/generated/adr-0081-agentic-ai-sandbox-isolation-boundary.rules.json` lleva una unica regla `adr-conformance` cuyo propio texto dice que los chequeos concretos estan aun "to be wired into the harness", y ningun evaluador atiende esa categoria: `rg "adr-conformance" src/` solo encuentra los propios archivos generados. Seguimiento en GT-607.
+
 ## Fecha
 
 2026-06-20

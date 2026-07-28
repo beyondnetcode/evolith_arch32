@@ -47,6 +47,7 @@ jest.mock(
 
 import { ValidateCommand } from './validate.command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
+import { CLI_EXIT_CODES } from '../../infrastructure/cli/exit-codes';
 
 describe('ValidateCommand — reporte del motor composable', () => {
   let command: ValidateCommand;
@@ -137,6 +138,7 @@ describe('ValidateCommand — reporte del motor composable', () => {
       issues: [{ ruleId: 'E-1', status: 'fail', message: 'x', severity: 'error' }],
     };
     await run();
-    expect(exitSpy).toHaveBeenCalledWith(1);
+    // GT-580: a negative verdict is BLOCKED (2), never the catch-all 1.
+    expect(exitSpy).toHaveBeenCalledWith(CLI_EXIT_CODES.BLOCKED);
   });
 });

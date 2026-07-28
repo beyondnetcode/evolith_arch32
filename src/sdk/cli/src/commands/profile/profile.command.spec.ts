@@ -1,9 +1,8 @@
 import { ProfileCommand } from './profile.command';
 import { ConfigService } from '../../infrastructure/config/config.service';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
-import * as p from '@clack/prompts';
-
-jest.mock('@clack/prompts');
+import { UserCancelledError } from '@beyondnet/evolith-core-domain/domain/errors';
+import { CLI_EXIT_CODES, NonInteractiveError } from '../../infrastructure/cli/exit-codes';
 
 describe('ProfileCommand', () => {
   let command: ProfileCommand;
@@ -26,6 +25,12 @@ describe('ProfileCommand', () => {
       showOutro: jest.fn(),
       showError: jest.fn(),
       showSuccess: jest.fn(),
+      // GT-611: `profile` no longer drives @clack/prompts directly — every
+      // prompt goes through PromptService, which is where the non-interactive
+      // contract is enforced. The double models an interactive terminal by
+      // default; the tests that care flip `isInteractive`.
+      isInteractive: jest.fn().mockReturnValue(true),
+      text: jest.fn(),
     } as any;
 
     command = new ProfileCommand(mockConfigService, mockPromptService);
@@ -62,23 +67,23 @@ describe('ProfileCommand', () => {
     });
 
     it('should create profile when "create" action provided', async () => {
-      (p.text as unknown as jest.Mock).mockResolvedValueOnce('test-profile');
-      (p.text as unknown as jest.Mock).mockResolvedValueOnce('../evolith');
-      (p.text as unknown as jest.Mock).mockResolvedValueOnce('');
-      (p.text as unknown as jest.Mock).mockResolvedValueOnce('');
-      (p.text as unknown as jest.Mock).mockResolvedValueOnce('');
+      mockPromptService.text
+        .mockResolvedValueOnce('test-profile')
+        .mockResolvedValueOnce('../evolith')
+        .mockResolvedValueOnce('')
+        .mockResolvedValueOnce('')
+        .mockResolvedValueOnce('');
       mockConfigService.profileExists.mockReturnValue(false);
-      
+
       await expect(command.executeCommand(['create'], {})).resolves.not.toThrow();
       expect(mockConfigService.createProfile).toHaveBeenCalled();
     });
 
     it('should handle cancelled profile creation', async () => {
-      const cancelSymbol = Symbol('CANCEL');
-      (p.text as unknown as jest.Mock).mockResolvedValueOnce(cancelSymbol);
-      (p.isCancel as unknown as jest.Mock).mockReturnValueOnce(true);
-      
+      mockPromptService.text.mockRejectedValueOnce(new UserCancelledError());
+
       await expect(command.executeCommand(['create'], {})).resolves.not.toThrow();
+      expect(mockConfigService.createProfile).not.toHaveBeenCalled();
     });
 
     it('should reject existing profile name', async () => {
@@ -165,12 +170,15 @@ describe('ProfileCommand', () => {
       expect(env().data).toEqual({ profiles: ['default', 'ci'], active: 'ci' });
     });
 
-    it('switch sin nombre falla con la sintaxis de uso y exit 1', async () => {
+    it('switch sin nombre falla con la sintaxis de uso y exit 3 (invalid input)', async () => {
       await command.executeCommand(['switch'], J);
       const e = env();
       expect(e.success).toBe(false);
       expect(e.error.message).toMatch(/Usage: evolith profile switch/);
-      expect(process.exitCode).toBe(1);
+      // GT-580: a missing argument is INVALID INPUT (3), not a tool failure (1).
+      // Collapsing both onto 1 is what made `evolith profile switch` in CI
+      // indistinguishable from a broken config store.
+      expect(process.exitCode).toBe(CLI_EXIT_CODES.INVALID_INPUT);
     });
 
     it('switch a un perfil existente confirma el cambio', async () => {
@@ -186,7 +194,9 @@ describe('ProfileCommand', () => {
       const e = env();
       expect(e.success).toBe(false);
       expect(e.error.message).toMatch(/not found/);
-      expect(process.exitCode).toBe(1);
+      // A store that refuses the switch is a TOOL failure, distinct from the
+      // usage error above — that distinction is the point of GT-580.
+      expect(process.exitCode).toBe(CLI_EXIT_CODES.TOOL_FAILURE);
     });
 
     it('delete sin nombre falla con la sintaxis de uso', async () => {
@@ -218,12 +228,11 @@ describe('ProfileCommand', () => {
 
     it('create con nombre nuevo persiste solo los campos rellenados', async () => {
       mockConfigService.profileExists.mockReturnValue(false);
-      (p.text as unknown as jest.Mock)
+      mockPromptService.text
         .mockResolvedValueOnce('../evolith')
         .mockResolvedValueOnce('  ')
         .mockResolvedValueOnce('tenant-1')
         .mockResolvedValueOnce('');
-      (p.isCancel as unknown as jest.Mock).mockReturnValue(false);
 
       await command.executeCommand(['create'], { format: 'json', name: 'nuevo' } as never);
 
@@ -232,6 +241,34 @@ describe('ProfileCommand', () => {
         tenant: 'tenant-1',
       });
       expect(env().data).toMatchObject({ name: 'nuevo', core: '../evolith' });
+    });
+
+    it('GT-611: sin TTY no pregunta NADA y emite solo el envelope', async () => {
+      // The defect: `profile create --name ci --format json` in CI painted four
+      // ANSI prompts into a pipe that was reading an ADR-0073 envelope, and the
+      // four fields are all OPTIONAL — there was never anything to ask.
+      mockConfigService.profileExists.mockReturnValue(false);
+      mockPromptService.isInteractive.mockReturnValue(false);
+
+      await command.executeCommand(['create'], { format: 'json', name: 'ci' } as never);
+
+      expect(mockPromptService.text).not.toHaveBeenCalled();
+      expect(mockConfigService.createProfile).toHaveBeenCalledWith('ci', {});
+      expect(env()).toMatchObject({ success: true, data: { name: 'ci' } });
+    });
+
+    it('GT-611: sin TTY y sin --name devuelve invalid input en vez de un prompt', async () => {
+      mockConfigService.profileExists.mockReturnValue(false);
+      mockPromptService.isInteractive.mockReturnValue(false);
+      mockPromptService.text.mockRejectedValue(
+        new NonInteractiveError('a text answer ("Profile name:")'),
+      );
+
+      await command.executeCommand(['create'], J);
+
+      expect(mockConfigService.createProfile).not.toHaveBeenCalled();
+      expect(env()).toMatchObject({ success: false, error: { code: 'VALIDATION_FAILED' } });
+      expect(process.exitCode).toBe(CLI_EXIT_CODES.INVALID_INPUT);
     });
   });
 });

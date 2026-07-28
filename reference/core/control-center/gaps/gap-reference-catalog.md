@@ -7693,9 +7693,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Governance` · **Criticality:** P1 · **Complexity:** M
 - **Provenance:** Derived from the 2026-07-26 product maturity audit ([product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md)): these are the international artifacts the audit found missing. Standard editions and numbers verified against sources on 2026-07-26, not cited from memory.
 - **Acceptance criteria:**
-  - [ ] Every capability carries an N/P/L/F rating with the ISO/IEC 33020:2019 threshold that justifies it.
-  - [ ] The reconciler rejects a rating whose evidence does not cross the declared threshold, with a negative self-test.
-  - [ ] The evaluation procedure is written down against ISO/IEC 25040:2024 so a second person can repeat it.
+  - [x] Every capability carries an N/P/L/F rating with the ISO/IEC 33020:2019 threshold that justifies it.
+  - [x] The reconciler rejects a rating whose evidence does not cross the declared threshold, with a negative self-test.
+  - [x] The evaluation procedure is written down against ISO/IEC 25040:2024 so a second person can repeat it.
 
 #### GT-597
 
@@ -7766,7 +7766,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `MCP Server` · **Criticality:** P0 · **Complexity:** S
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-610
 
@@ -7777,7 +7777,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `agent-runtime` · **Criticality:** P0 · **Complexity:** S
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-611
 
@@ -7865,7 +7865,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith CLI` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-619
 
@@ -7876,7 +7876,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith CLI` · **Criticality:** P2 · **Complexity:** XS
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-620
 
@@ -7922,9 +7922,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Governance` · **Criticality:** P2 · **Complexity:** S
 - **Provenance:** Observed live on 2026-07-27: the hook printed its "skipping" message while merging `develop` into a working branch. It was named inside the process picture of `GT-574`; it is broken out here because it has a concrete, measurable consequence for versioning.
 - **Acceptance criteria:**
-  - [ ] A commit with a malformed message is rejected locally, demonstrated by trying one.
-  - [ ] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
-  - [ ] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
+  - [x] A commit with a malformed message is rejected locally, demonstrated by trying one.
+  - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
+  - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
 
 #### GT-624
 

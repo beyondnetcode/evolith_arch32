@@ -8332,6 +8332,88 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Re-scoped rather than over-claimed. Two of the three original acceptance criteria are NOT met by this closure and were moved to GT-624: deprecating the 1.1.0 versions (needs npm credentials, owner action) and a release gate that fails when a security-tagged commit is absent from the published tag. This row closes on what it was about — an installable artifact older than its own published security fixes — and the remainder is tracked, not absorbed."
+    },
+    {
+      "id": "GT-609",
+      "closedAt": "2026-07-28",
+      "closureCommit": "6bb43cfa",
+      "evidence": [
+        "src/packages/mcp-server/src/mcp/mcp-cache.service.ts"
+      ],
+      "validationCommands": [
+        "npm run test -w @beyondnet/evolith-mcp -> 51 suites / 409 tests passed, including a cross-principal cache test that warms as high-privilege and reads as low-privilege.",
+        "ci-runner.mjs governance -> 17/17 exit 0 after the wave and its three repairs."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-610",
+      "closedAt": "2026-07-28",
+      "closureCommit": "6bb43cfa",
+      "evidence": [
+        "src/packages/agent-runtime/src/application/agent-runtime.service.ts"
+      ],
+      "validationCommands": [
+        "npm run test -w @beyondnet/evolith-agent-runtime -> 32 suites / 333 tests passed; proposedArguments are merged with revalidation against the skill input contract.",
+        "ci-runner.mjs governance -> 17/17 exit 0 after the wave and its three repairs."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-618",
+      "closedAt": "2026-07-28",
+      "closureCommit": "6bb43cfa",
+      "evidence": [
+        "src/sdk/cli/src/commands/waiver/waiver.command.ts"
+      ],
+      "validationCommands": [
+        "cd src/sdk/cli && npm run test:unit -> 92 suites / 1378 tests passed; waiver emits an ADR-0073 envelope with correlationId.",
+        "ci-runner.mjs governance -> 17/17 exit 0 after the wave and its three repairs."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-619",
+      "closedAt": "2026-07-28",
+      "closureCommit": "6bb43cfa",
+      "evidence": [
+        "src/sdk/cli/src/commands/chat/chat.command.ts"
+      ],
+      "validationCommands": [
+        "wc -l chat.command.ts -> 200 (was 91); grep for loop/session constructs -> 34 hits. Implemented as a REPL rather than removed.",
+        "ci-runner.mjs governance -> 17/17 exit 0 after the wave and its three repairs."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-596",
+      "closedAt": "2026-07-28",
+      "closureCommit": "6bb43cfa",
+      "evidence": [
+        "reference/core/control-center/maturity-reports/maturity-assessment.md",
+        ".harness/scripts/ci/09-reconcile-maturity.mjs"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/reconcile-maturity.test.mjs -> 21/21, including the negative self-test proving the threshold rule goes red on a bad input. 09-reconcile-maturity --check exit 0.",
+        "ci-runner.mjs governance -> 17/17 exit 0 after the wave and its three repairs."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-623",
+      "closedAt": "2026-07-28",
+      "closureCommit": "6bb43cfa",
+      "evidence": [
+        "commitlint.config.mjs",
+        ".husky/commit-msg",
+        "package.json",
+        ".harness/scripts/ci/03-validate-root-cleanliness.mjs"
+      ],
+      "validationCommands": [
+        "sh .husky/commit-msg <valid> -> accepted; sh .husky/commit-msg <malformed> -> REJECTED. 03-validate-root-cleanliness exit 0 (32 root entries). npm install regenerated package-lock.json so npm ci is coherent again.",
+        "ci-runner.mjs governance -> 17/17 exit 0 after the wave and its three repairs."
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

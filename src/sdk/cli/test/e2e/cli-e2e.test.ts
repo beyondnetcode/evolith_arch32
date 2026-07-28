@@ -117,8 +117,9 @@ describe('CLI E2E Tests', () => {
       expect(['passed', 'warning', 'failed']).toContain(envelope.data.status);
       expect(Array.isArray(envelope.data.issues)).toBe(true);
       expect(typeof envelope.data.rulesChecked).toBe('number');
-      // validate exits non-zero only when the governance verdict is `failed`.
-      expect(result.exitCode).toBe(envelope.data.status === 'failed' ? 1 : 0);
+      // GT-580: validate exits 2 (BLOCKED) on a negative verdict, 0 otherwise.
+      // 1 is now reserved for "the command could not reach a verdict at all".
+      expect(result.exitCode).toBe(envelope.data.status === 'failed' ? 2 : 0);
     });
 
     it('should fail without evolith.yaml', async () => {
@@ -128,7 +129,10 @@ describe('CLI E2E Tests', () => {
 
       const result = await runCli(['validate', '--satellite', emptyRepo]);
 
-      expect(result.exitCode).toBe(1);
+      // A repo with no evolith.yaml either fails the verdict (2) or cannot be
+      // validated at all (1); both are non-zero under the GT-580 taxonomy and
+      // which one it is depends on how far resolution gets.
+      expect([1, 2]).toContain(result.exitCode);
     });
 
     it('should output a JSON envelope containing status and issues', async () => {
@@ -138,7 +142,7 @@ describe('CLI E2E Tests', () => {
       expect(envelope.success).toBe(true);
       expect(envelope.data).toHaveProperty('status');
       expect(envelope.data).toHaveProperty('issues');
-      expect(result.exitCode).toBe(envelope.data.status === 'failed' ? 1 : 0);
+      expect(result.exitCode).toBe(envelope.data.status === 'failed' ? 2 : 0);
     });
 
     it('runs architecture validation with --arch and exits per verdict', async () => {
@@ -146,16 +150,16 @@ describe('CLI E2E Tests', () => {
 
       const envelope = JSON.parse(result.stdout);
       expect(envelope.success).toBe(true);
-      expect(result.exitCode).toBe(envelope.data.status === 'failed' ? 1 : 0);
+      expect(result.exitCode).toBe(envelope.data.status === 'failed' ? 2 : 0);
     });
 
     it('renders the summary format and runs to completion', async () => {
       const result = await runCli(['validate', '--satellite', testRepoPath, '--format', 'summary']);
 
       // Human format → verdict isn't machine-readable; assert it produced a
-      // report and exited per verdict (0 pass/warn, 1 fail) without crashing.
+      // report and exited per verdict (0 pass/warn, 2 fail) without crashing.
       expect(result.stdout.length).toBeGreaterThan(0);
-      expect([0, 1]).toContain(result.exitCode);
+      expect([0, 2]).toContain(result.exitCode);
     });
   });
 
@@ -275,7 +279,9 @@ describe('CLI E2E Tests', () => {
     it('should handle missing required arguments', async () => {
       const result = await runCli(['validate']);
 
-      expect(result.exitCode).toBe(1);
+      // `validate` with no satellite either cannot resolve a corpus (1) or
+      // reaches a negative verdict (2); both are non-zero under the taxonomy.
+      expect([1, 2]).toContain(result.exitCode);
     });
   });
 
@@ -363,7 +369,8 @@ export class UserRepository {
     it('should validate architecture with --arch flag', async () => {
       const result = await runCli(['validate', '--satellite', testRepoPath, '--architecture', '--arch-level', 'F1']);
 
-      expect([0, 1]).toContain(result.exitCode);
+      // GT-580: 0 pass, 2 blocked verdict.
+      expect([0, 2]).toContain(result.exitCode);
     });
 
     it('validates without architecture analysis and exits per verdict', async () => {
@@ -371,7 +378,7 @@ export class UserRepository {
 
       const envelope = JSON.parse(result.stdout);
       expect(envelope.success).toBe(true);
-      expect(result.exitCode).toBe(envelope.data.status === 'failed' ? 1 : 0);
+      expect(result.exitCode).toBe(envelope.data.status === 'failed' ? 2 : 0);
     });
   });
 });

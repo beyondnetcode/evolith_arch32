@@ -2,6 +2,7 @@ import type { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/ap
 import type { RulesetValidatorService } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service';
 import type { PromptService } from '../../infrastructure/prompts/prompt.service';
 import type { ConfigService } from '../../infrastructure/config/config.service';
+import { CLI_EXIT_CODES } from '../../infrastructure/cli/exit-codes';
 
 jest.mock('chalk', () => {
   const id = (s: string) => s;
@@ -133,8 +134,9 @@ describe('EvaluateCommand --format drift (GT-518 — PR/CI drift gate fallback)'
     expect(body).toContain('drift gate');
     expect(body).toContain('ADR-0002');
     expect(body).toContain('Blocked');
-    // Fallback = non-zero exit code, never a silent no-op.
-    expect(exit).toHaveBeenCalledWith(1);
+    // Fallback = non-zero exit code, never a silent no-op. GT-580: the drift
+    // gate BLOCKS, so it exits 2 — distinguishable from a Core it could not reach.
+    expect(exit).toHaveBeenCalledWith(CLI_EXIT_CODES.BLOCKED);
   });
 });
 

@@ -2,6 +2,7 @@ import { GateCommand } from './gate.command';
 import type { EvaluateGateUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/evaluate-gate.use-case';
 import type { PromptService } from '../../infrastructure/prompts/prompt.service';
 import type { ConfigService } from '../../infrastructure/config/config.service';
+import { CLI_EXIT_CODES } from '../../infrastructure/cli/exit-codes';
 
 jest.mock('chalk', () => {
   const id = (s: string) => s;
@@ -57,7 +58,9 @@ describe('GateCommand', () => {
     await command.executeCommand(['bogus'], { format: 'json' });
     const body = JSON.parse(log.mock.calls[0][0] as string);
     expect(body).toMatchObject({ success: false, error: { code: 'VALIDATION_FAILED' } });
-    expect(exit).toHaveBeenCalledWith(1);
+    // GT-580: an unknown action is INVALID INPUT (3). Exiting 1 made it
+    // indistinguishable from an unreachable Core.
+    expect(exit).toHaveBeenCalledWith(CLI_EXIT_CODES.INVALID_INPUT);
   });
 
   it('throws in human mode when the action is unknown', async () => {
@@ -70,28 +73,30 @@ describe('GateCommand', () => {
     await command.executeCommand(['evaluate'], { format: 'json', phase: 'bogus' });
     const body = JSON.parse(log.mock.calls[0][0] as string);
     expect(body.error.code).toBe('INVALID_PHASE');
-    expect(exit).toHaveBeenCalledWith(1);
+    expect(exit).toHaveBeenCalledWith(CLI_EXIT_CODES.INVALID_INPUT);
   });
 
   it('rejects an invalid --evaluated-by with VALIDATION_FAILED', async () => {
     const { command, log, exit } = setup();
     await command.executeCommand(['evaluate'], { format: 'json', phase: 'design', evaluatedBy: 'bot' });
     expect(JSON.parse(log.mock.calls[0][0] as string).error.code).toBe('VALIDATION_FAILED');
-    expect(exit).toHaveBeenCalledWith(1);
+    expect(exit).toHaveBeenCalledWith(CLI_EXIT_CODES.INVALID_INPUT);
   });
 
   it('maps "ruleset" errors from the use case to RULESET_NOT_FOUND', async () => {
     const { command, log, exit } = setup('passed', new Error('ruleset missing for phase'));
     await command.executeCommand(['evaluate'], { format: 'json', phase: 'design' });
     expect(JSON.parse(log.mock.calls[0][0] as string).error.code).toBe('RULESET_NOT_FOUND');
-    expect(exit).toHaveBeenCalledWith(1);
+    // An unresolvable corpus is a TOOL failure (1): the command could not reach
+    // a verdict. Distinct from both the usage errors above and the verdict below.
+    expect(exit).toHaveBeenCalledWith(CLI_EXIT_CODES.TOOL_FAILURE);
   });
 
   it('maps other use-case errors to INTERNAL_ERROR', async () => {
     const { command, log, exit } = setup('passed', new Error('database is down'));
     await command.executeCommand(['evaluate'], { format: 'json', phase: 'design' });
     expect(JSON.parse(log.mock.calls[0][0] as string).error.code).toBe('INTERNAL_ERROR');
-    expect(exit).toHaveBeenCalledWith(1);
+    expect(exit).toHaveBeenCalledWith(CLI_EXIT_CODES.TOOL_FAILURE);
   });
 
   it('prints a success envelope and does not exit when verdict is passed', async () => {
@@ -103,10 +108,13 @@ describe('GateCommand', () => {
     expect(exit).not.toHaveBeenCalled();
   });
 
-  it('exits 1 when verdict is failed (json mode)', async () => {
+  it('exits 2 (BLOCKED) when the verdict is failed, not 1 (json mode)', async () => {
     const { command, exit } = setup('failed');
     await command.executeCommand(['evaluate'], { format: 'json', phase: 'design' });
-    expect(exit).toHaveBeenCalledWith(1);
+    // GT-580: a failed gate is a BLOCKING VERDICT, which a consumer must be able
+    // to tell from "the tool broke" — the difference between a blocked merge and
+    // a retry. 2 already meant "blocked" for the edit hook; it now means it here.
+    expect(exit).toHaveBeenCalledWith(CLI_EXIT_CODES.BLOCKED);
   });
 
   it('prints a human report when --format is not json', async () => {
@@ -120,7 +128,7 @@ describe('GateCommand', () => {
     const { command, prompt, exit } = setup('failed');
     await command.executeCommand(['evaluate'], { phase: 'design' });
     expect(prompt.showWarning).toHaveBeenCalledWith(expect.stringContaining('R1'));
-    expect(exit).toHaveBeenCalledWith(1);
+    expect(exit).toHaveBeenCalledWith(CLI_EXIT_CODES.BLOCKED);
   });
 
   it('echoes initiative/tenant context into meta when provided via options', async () => {

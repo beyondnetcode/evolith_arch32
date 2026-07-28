@@ -18,6 +18,7 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
 import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resolver';
 import { resolveCoreOverride } from '../../infrastructure/paths/core-resolver';
+import { CLI_EXIT_CODES, CliUsageError, exitCodeForErrorCode, exitWith } from '../../infrastructure/cli/exit-codes';
 
 interface GateCommandOptions {
   phase?: string;
@@ -70,12 +71,16 @@ export class GateCommand extends BaseEvolithCommand {
     const json = options?.format === 'json';
     const commandId = 'evolith gate evaluate';
 
+    // GT-580: the envelope already classifies the failure; the exit code now
+    // says the same thing instead of collapsing every cause onto 1.
     const fail = (code: ErrorCode, message: string): void => {
       if (json) {
         console.log(JSON.stringify(createErrorEnvelope(code, message, meta(commandId)), null, 2));
-        process.exit(1);
+        exitWith(exitCodeForErrorCode(code));
       } else {
-        throw new Error(message);
+        throw exitCodeForErrorCode(code) === CLI_EXIT_CODES.INVALID_INPUT
+          ? new CliUsageError(message)
+          : new Error(message);
       }
     };
 
@@ -123,7 +128,7 @@ export class GateCommand extends BaseEvolithCommand {
     }
 
     if (evidence.verdict === 'failed') {
-      process.exit(1);
+      exitWith(CLI_EXIT_CODES.BLOCKED);
     }
   }
 

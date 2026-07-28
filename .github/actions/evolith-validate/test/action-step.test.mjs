@@ -163,7 +163,7 @@ describe('evolith-validate composite action', () => {
     assert.equal(blocking, 31);
     assert.equal(total, 36);
 
-    const run = runValidate({ fixture: 'envelope-noncompliant.json', cliExit: 1 });
+    const run = runValidate({ fixture: 'envelope-noncompliant.json', cliExit: 2 });
 
     assert.equal(run.outputs['violations-count'], String(blocking));
     assert.notEqual(run.outputs['violations-count'], '0');
@@ -174,7 +174,7 @@ describe('evolith-validate composite action', () => {
   });
 
   test('the job summary renders the real count, not "0 violation(s)"', () => {
-    const validate = runValidate({ fixture: 'envelope-noncompliant.json', cliExit: 1 });
+    const validate = runValidate({ fixture: 'envelope-noncompliant.json', cliExit: 2 });
     const summary = runStep(summaryStep, {
       inputs: { 'satellite-path': '.', 'cli-command': `bash ${STUB_CLI}` },
       outputs: validate.outputs,
@@ -188,7 +188,7 @@ describe('evolith-validate composite action', () => {
   test('fail-on-violation=false surfaces the count without failing the job', () => {
     const run = runValidate({
       fixture: 'envelope-noncompliant.json',
-      cliExit: 1,
+      cliExit: 2,
       failOnViolation: 'false',
     });
 
@@ -214,9 +214,48 @@ describe('evolith-validate composite action', () => {
     assert.equal(run.outputs['compliance-status'], 'compliant');
   });
 
+  // GT-580, the fourth value of the taxonomy. A bad invocation must not be
+  // laundered into a verdict: the action reports `invalid-input` and fails the
+  // step regardless of `fail-on-violation`, because that input governs what to
+  // do with a VERDICT and there is none here.
+  test('an invalid invocation is not reported as a verdict', () => {
+    const run = runValidate({
+      fixture: '',
+      cliExit: 3,
+      failOnViolation: 'false',
+    });
+
+    assert.equal(run.outputs['compliance-status'], 'invalid-input');
+    assert.equal(run.outputs['exit-code'], '3');
+    assert.notEqual(run.outputs['compliance-status'], 'non-compliant');
+    assert.equal(run.exitCode, 3, 'fail-on-violation=false must NOT swallow a bad invocation');
+
+    const summary = runStep(summaryStep, {
+      inputs: { 'satellite-path': '.' },
+      outputs: run.outputs,
+    });
+    assert.match(summary.summary, /Not evaluated/);
+    assert.match(summary.summary, /not.*a finding about this repository/i);
+  });
+
+  // The distinction the taxonomy exists for, asserted directly: a blocked
+  // verdict and a tool failure must not produce the same status.
+  test('blocked and tool-failure do not collapse onto the same status', () => {
+    const blocked = runValidate({ fixture: 'envelope-noncompliant.json', cliExit: 2 });
+    const broken = runValidate({ fixture: 'envelope-error.json', cliExit: 1 });
+
+    assert.equal(blocked.outputs['compliance-status'], 'non-compliant');
+    assert.equal(broken.outputs['compliance-status'], 'error');
+    assert.notEqual(
+      blocked.outputs['compliance-status'],
+      broken.outputs['compliance-status'],
+      'collapsing these is the defect GT-580 fixed',
+    );
+  });
+
   test('keys added to the envelope do not move the counter', () => {
     const { blocking, total } = expectedCounts('envelope-extra-keys.json');
-    const run = runValidate({ fixture: 'envelope-extra-keys.json', cliExit: 1 });
+    const run = runValidate({ fixture: 'envelope-extra-keys.json', cliExit: 2 });
 
     // The fixture carries a decoy `data.summary.violations: 999` plus extra
     // top-level, data, issue and meta keys: the expression must depend only on
@@ -226,12 +265,15 @@ describe('evolith-validate composite action', () => {
     assert.equal(run.outputs['violations-count'], '2');
   });
 
+  // GT-580: an error envelope means the CLI could NOT produce a verdict. Exit 1
+  // is a tool failure, and the action must say `error` — not `non-compliant`,
+  // which would assert something about the repository that was never evaluated.
   test('an error envelope is handled without crashing, and the summary says so', () => {
     const validate = runValidate({ fixture: 'envelope-error.json', cliExit: 1 });
 
     assert.equal(validate.exitCode, 1);
     assert.equal(validate.outputs['violations-count'], '0');
-    assert.equal(validate.outputs['compliance-status'], 'non-compliant');
+    assert.equal(validate.outputs['compliance-status'], 'error');
 
     const summary = runStep(summaryStep, {
       inputs: { 'satellite-path': '.' },
@@ -241,13 +283,15 @@ describe('evolith-validate composite action', () => {
     assert.equal(/0 blocking violation\(s\)/.test(summary.summary), false);
   });
 
+  // Same reasoning: no report written means no verdict, so `error`, not a
+  // silent claim of non-compliance.
   test('a run that produced no report degrades safely', () => {
     const run = runValidate({ fixture: '', cliExit: 1 });
 
     assert.equal(run.exitCode, 1);
     assert.equal(run.outputs['violations-count'], '0');
     assert.equal(run.outputs['issues-count'], '0');
-    assert.equal(run.outputs['compliance-status'], 'non-compliant');
+    assert.equal(run.outputs['compliance-status'], 'error');
   });
 
   test('a stale report from a previous step is not counted', () => {
@@ -273,7 +317,7 @@ describe('evolith-validate composite action', () => {
             inputs: { 'cli-command': `bash ${STUB_CLI}`, 'fail-on-violation': 'false' },
           }),
           STUB_FIXTURE: '',
-          STUB_EXIT: '1',
+          STUB_EXIT: '2',
         },
       },
     );

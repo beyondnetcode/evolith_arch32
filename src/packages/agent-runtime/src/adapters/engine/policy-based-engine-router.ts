@@ -1,4 +1,8 @@
-import type { IAgentEnginePort, AgentEnginePlan } from '../../domain/ports/agent-engine.port';
+import type {
+  IAgentEnginePort,
+  AgentEnginePlan,
+  AgentPlanContext,
+} from '../../domain/ports/agent-engine.port';
 import type { AgentRuntimeRequest } from '../../domain/contracts/agent-runtime-request';
 import type { SkillDescriptor } from '../../domain/contracts/capability';
 
@@ -64,6 +68,7 @@ export class PolicyBasedEngineRouter implements IAgentEnginePort {
   async plan(
     request: AgentRuntimeRequest,
     availableSkills: readonly SkillDescriptor[],
+    planContext?: AgentPlanContext,
   ): Promise<AgentEnginePlan> {
     // Build policy context from request
     const policyContext = this.buildPolicyContext(request);
@@ -87,10 +92,11 @@ export class PolicyBasedEngineRouter implements IAgentEnginePort {
           engine: 'none',
         };
       }
-      return fallback.plan(request, availableSkills);
+      // GT-612: forward the conversation through the routing hop.
+      return fallback.plan(request, availableSkills, planContext);
     }
 
-    return engine.plan(request, availableSkills);
+    return engine.plan(request, availableSkills, planContext);
   }
 
   /**

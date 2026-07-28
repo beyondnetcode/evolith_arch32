@@ -5,6 +5,12 @@
 ## Estado
 Accepted
 
+> **Estado de implementacion en este repositorio: ninguna** (verificado 2026-07-28).
+> Este ADR es un estandar normativo publicado *para los satelites*; esta Accepted como decision,
+> no como capacidad entregada. Nada en Evolith Core lo implementa, y nada lo hace cumplir.
+> `rg "gen_ai\." src/` no devuelve ninguna coincidencia: ni uno solo de los atributos OpenTelemetry exigidos (`gen_ai.system`, `gen_ai.usage.prompt_tokens`, `evolith.agent.session_id`, `evolith.mcp.tool_calls`) se emite en este repositorio.
+> El ruleset generado `rulesets/adr/generated/adr-0086-agentic-ai-telemetry-cost-control-standard.rules.json` lleva una unica regla `adr-conformance` cuyo propio texto dice que los chequeos concretos estan aun "to be wired into the harness", y ningun evaluador atiende esa categoria: `rg "adr-conformance" src/` solo encuentra los propios archivos generados. Seguimiento en GT-607.
+
 ## Fecha
 2026-06-20
 

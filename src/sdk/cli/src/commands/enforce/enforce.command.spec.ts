@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { EnforceCommand } from './enforce.command';
+import { CLI_EXIT_CODES } from '../../infrastructure/cli/exit-codes';
 
 /** A ruleset mixing a compilable enforcer rule, a skip-fallback rule, and a native rule. */
 const RULESET = {
@@ -126,7 +127,8 @@ describe('EnforceCommand — enforce compile (GT-516 · EAG-10)', () => {
     const env = lastEnvelope();
     expect(env.success).toBe(false);
     expect(env.error.code).toBe('VALIDATION_FAILED');
-    expect(exitSpy).toHaveBeenCalledWith(1);
+    // GT-580: an unknown action is invalid input (3), not a tool failure (1).
+    expect(exitSpy).toHaveBeenCalledWith(CLI_EXIT_CODES.INVALID_INPUT);
   });
 
   it('requires a ruleset input (--file or --ruleset)', async () => {

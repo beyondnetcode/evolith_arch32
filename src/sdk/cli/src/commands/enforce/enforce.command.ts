@@ -29,6 +29,7 @@ import {
   EDIT_HOOK_BLOCK_EXIT_CODE,
 } from '../../infrastructure/agent/edit-hook/edit-hook.service';
 import type { RawHookPayload } from '../../infrastructure/agent/edit-hook/hook-payload';
+import { exitCodeForErrorCode, exitWith } from '../../infrastructure/cli/exit-codes';
 
 interface EnforceCommandOptions {
   format?: string;
@@ -95,13 +96,15 @@ export class EnforceCommand extends BaseEvolithCommand {
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     });
 
+    // GT-580: the envelope already classifies the failure; the exit code now
+    // says the same thing instead of collapsing every cause onto 1.
     const fail = (code: ErrorCode, message: string): void => {
       if (json) {
         console.log(JSON.stringify(createErrorEnvelope(code, message, meta()), null, 2));
       } else {
         this.promptService.showError(message);
       }
-      process.exit(1);
+      exitWith(exitCodeForErrorCode(code));
     };
 
     const action = inputs[0];
@@ -190,13 +193,15 @@ export class EnforceCommand extends BaseEvolithCommand {
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     });
+    // GT-580: the envelope already classifies the failure; the exit code now
+    // says the same thing instead of collapsing every cause onto 1.
     const fail = (code: ErrorCode, message: string): void => {
       if (json) {
         console.log(JSON.stringify(createErrorEnvelope(code, message, meta()), null, 2));
       } else {
         this.promptService.showError(message);
       }
-      process.exit(1);
+      exitWith(exitCodeForErrorCode(code));
     };
 
     if (!options?.rules) {
@@ -247,7 +252,7 @@ export class EnforceCommand extends BaseEvolithCommand {
       else this.promptService.showInfo(verdict);
     }
 
-    if (result.blocked) process.exit(EDIT_HOOK_BLOCK_EXIT_CODE);
+    if (result.blocked) exitWith(EDIT_HOOK_BLOCK_EXIT_CODE);
   }
 
   /** Resolve the ruleset JSON path from `--file` (verbatim) or `--ruleset <id>`. */

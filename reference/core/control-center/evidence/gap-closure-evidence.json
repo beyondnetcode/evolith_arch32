@@ -8560,6 +8560,51 @@
         "Switching the heuristic on surfaced 19 further mislabelled documents, baselined BY NAME and registered as GT-628."
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-611",
+      "evidence": [
+        "src/sdk/cli/src/infrastructure/prompts/non-interactive-contract.spec.ts",
+        "src/sdk/cli/src/infrastructure/prompts/prompt.service.ts",
+        "src/sdk/cli/src/infrastructure/prompts/interactivity.ts"
+      ],
+      "validationCommands": [
+        "non-interactive-contract.spec.ts -> 19/19.",
+        "Mutation: adding a command file that imports @clack/prompts directly turns the surface scan RED, proving it covers commands written after it."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "e23721f5",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-612",
+      "evidence": [
+        "src/packages/agent-runtime/src/application/agent-runtime.service.ts",
+        "src/packages/agent-runtime/src/__tests__/engine-proposal-and-memory.spec.ts"
+      ],
+      "validationCommands": [
+        "engine-proposal-and-memory.spec.ts -> 12/12.",
+        "Mutation: replacing the memory.history() read with an empty array turns 3 tests RED, including \"turn 2 receives turn 1 in the plan context\"."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "e23721f5",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-586",
+      "evidence": [
+        "src/packages/contracts/src/fixtures/evaluation-contract.fixtures.ts",
+        "src/packages/contracts/src/fixtures/evaluation-contract.fixtures.spec.ts",
+        "src/packages/contracts/src/index.ts"
+      ],
+      "validationCommands": [
+        "contracts jest -> 72/72 (was 68).",
+        "The fixtures are exported from the PACKAGE INDEX, verified by requiring dist/index.js: both symbols present.",
+        "Additivity asserted: EVALUATION_RESULT_PASS_FIXTURE carries neither field and still resolves to PASSED."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "e23721f5",
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -7447,7 +7447,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criterios de aceptación:**
   - [x] El contexto acepta un solicitante tipado opcional y una revisión de repositorio.
   - [x] El resultado refleja ambos, y un veredicto sin ellos sigue validando (prueba de que el cambio es aditivo).
-  - [ ] Las fixtures de contrato de `@beyondnet/evolith-contracts` cubren los campos nuevos.
+  - [x] Las fixtures de contrato de `@beyondnet/evolith-contracts` cubren los campos nuevos.
 
 
 #### GT-587
@@ -7699,7 +7699,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith CLI` · **Criticidad:** P1 · **Complejidad:** M
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-612
 
@@ -7710,7 +7710,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `agent-runtime` · **Criticidad:** P1 · **Complejidad:** M
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-613
 

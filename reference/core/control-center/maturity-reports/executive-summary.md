@@ -27,8 +27,8 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---:|---|---|---|
 | 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-575](../gaps/gap-reference-catalog.md#gt-575), [GT-601](../gaps/gap-reference-catalog.md#gt-601), [GT-572](../gaps/gap-reference-catalog.md#gt-572), [GT-573](../gaps/gap-reference-catalog.md#gt-573), [GT-602](../gaps/gap-reference-catalog.md#gt-602), [GT-603](../gaps/gap-reference-catalog.md#gt-603), [GT-595](../gaps/gap-reference-catalog.md#gt-595), [GT-604](../gaps/gap-reference-catalog.md#gt-604), [GT-435](../gaps/gap-reference-catalog.md#gt-435) |
 | 2 | Highest-risk area | `Evolith Core` has the largest weighted open load. | [GT-601](../gaps/gap-reference-catalog.md#gt-601), [GT-583](../gaps/gap-reference-catalog.md#gt-583), [GT-589](../gaps/gap-reference-catalog.md#gt-589), [GT-614](../gaps/gap-reference-catalog.md#gt-614), [GT-587](../gaps/gap-reference-catalog.md#gt-587), [GT-591](../gaps/gap-reference-catalog.md#gt-591), +3 |
-| 3 | Quick wins | High criticality with XS/S complexity. | [GT-575](../gaps/gap-reference-catalog.md#gt-575), [GT-601](../gaps/gap-reference-catalog.md#gt-601), [GT-586](../gaps/gap-reference-catalog.md#gt-586), [GT-597](../gaps/gap-reference-catalog.md#gt-597), [GT-607](../gaps/gap-reference-catalog.md#gt-607), [GT-624](../gaps/gap-reference-catalog.md#gt-624), [GT-626](../gaps/gap-reference-catalog.md#gt-626) |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-586](../gaps/gap-reference-catalog.md#gt-586), [GT-597](../gaps/gap-reference-catalog.md#gt-597), [GT-607](../gaps/gap-reference-catalog.md#gt-607), [GT-624](../gaps/gap-reference-catalog.md#gt-624), [GT-626](../gaps/gap-reference-catalog.md#gt-626), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-580](../gaps/gap-reference-catalog.md#gt-580), +12 |
+| 3 | Quick wins | High criticality with XS/S complexity. | [GT-575](../gaps/gap-reference-catalog.md#gt-575), [GT-601](../gaps/gap-reference-catalog.md#gt-601), [GT-597](../gaps/gap-reference-catalog.md#gt-597), [GT-607](../gaps/gap-reference-catalog.md#gt-607), [GT-624](../gaps/gap-reference-catalog.md#gt-624), [GT-626](../gaps/gap-reference-catalog.md#gt-626) |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-597](../gaps/gap-reference-catalog.md#gt-597), [GT-607](../gaps/gap-reference-catalog.md#gt-607), [GT-624](../gaps/gap-reference-catalog.md#gt-624), [GT-626](../gaps/gap-reference-catalog.md#gt-626), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-580](../gaps/gap-reference-catalog.md#gt-580), [GT-584](../gaps/gap-reference-catalog.md#gt-584), +9 |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-622](../gaps/gap-reference-catalog.md#gt-622), [GT-629](../gaps/gap-reference-catalog.md#gt-629), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-614](../gaps/gap-reference-catalog.md#gt-614), [GT-616](../gaps/gap-reference-catalog.md#gt-616), +13 |
 
 ## Current Blockers
@@ -51,22 +51,22 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-07-26 |
 | Total gaps | 629 |
-| Closed gaps | 577 |
-| Open gaps | 52 |
+| Closed gaps | 580 |
+| Open gaps | 49 |
 | Open P0 | 9 |
-| Open P1 | 20 |
+| Open P1 | 17 |
 | Open P2 | 19 |
-| Total closure | 91.7% |
-| Closure evidence records | 559 |
+| Total closure | 92.2% |
+| Closure evidence records | 562 |
 | Recorded readiness | 4 PASS |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
 | `Evolith Core` | 9 | 1 | 2 | [GT-601](../gaps/gap-reference-catalog.md#gt-601), [GT-583](../gaps/gap-reference-catalog.md#gt-583), [GT-589](../gaps/gap-reference-catalog.md#gt-589), [GT-614](../gaps/gap-reference-catalog.md#gt-614), +5 |
-| `core-domain` | 3 | 1 | 2 | [GT-595](../gaps/gap-reference-catalog.md#gt-595), [GT-586](../gaps/gap-reference-catalog.md#gt-586), [GT-584](../gaps/gap-reference-catalog.md#gt-584) |
-| `agent-runtime` | 4 | 1 | 1 | [GT-575](../gaps/gap-reference-catalog.md#gt-575), [GT-612](../gaps/gap-reference-catalog.md#gt-612), [GT-531](../gaps/gap-reference-catalog.md#gt-531), [GT-621](../gaps/gap-reference-catalog.md#gt-621) |
 | `MCP Server` | 3 | 1 | 1 | [GT-572](../gaps/gap-reference-catalog.md#gt-572), [GT-582](../gaps/gap-reference-catalog.md#gt-582), [GT-592](../gaps/gap-reference-catalog.md#gt-592) |
 | `Infra` | 5 | 0 | 3 | [GT-597](../gaps/gap-reference-catalog.md#gt-597), [GT-624](../gaps/gap-reference-catalog.md#gt-624), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-622](../gaps/gap-reference-catalog.md#gt-622), +1 |
+| `core-domain` | 2 | 1 | 1 | [GT-595](../gaps/gap-reference-catalog.md#gt-595), [GT-584](../gaps/gap-reference-catalog.md#gt-584) |
+| `Cross` | 2 | 1 | 1 | [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
 
 ## Source and Refresh Rule
 

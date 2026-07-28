@@ -73,7 +73,36 @@ Los ADRs de plataforma deben definir un **disparador de revisión**: la condici�
 - **Trazabilidad**: un ADR con enforcement por regla machine-readable debe ser referenciado desde el `rulesets/adr/*.rules.json` correspondiente, y viceversa.
 - **Reubicación**: mover un ADR entre categorías exige actualizar todo enlace entrante en el mismo cambio y una nota en la cabecera del ADR (`Reubicado desde <categoría> el <fecha>`).
 
-## 5. Cumplimiento
+## 5. Declaración de Estado de Implementación
+
+Un ADR `Accepted` es una afirmación sobre la que el lector va a actuar. Siete ADRs agénticos (0081, 0082, 0086, 0088, 0089, 0092, 0094) estaban en `Accepted` sin código que los implementara, y [GT-607](../../control-center/gaps/gap-reference-catalog.es.md#gt-607) lo registró como la forma más rápida de perder un due diligence técnico. El remedio no es implementar a la fuerza —la mayor parte de este corpus son estándares normativos publicados *para los satélites*—, sino decirlo donde una máquina pueda leerlo.
+
+Todo ADR cuyo estado sea `Accepted` **debe** llevar una directiva machine-readable junto a su estado:
+
+```markdown
+## Estado
+
+Accepted
+
+<!-- implementation-status: none -->
+```
+
+```markdown
+<!-- implementation-status: src/packages/agent-runtime/src/adapters/harness/harness-process.adapter.ts, src/rulesets/topologies/agentic-ai/agentic-ai.rules.json -->
+```
+
+Reglas:
+
+- **`none` es una respuesta legítima y permanente** para un estándar dirigido a los satélites. No es un defecto y no debe sortearse nombrando un archivo que apenas menciona el tema.
+- **Cualquier otro valor es una lista de rutas relativas al repositorio separadas por comas**, y toda ruta debe existir. La declaración es deliberadamente falsable: un ADR que afirma que `foo.ts` lo implementa se pone en rojo el día en que `foo.ts` se borra o se mueve.
+- **La directiva declara un puntero, no una prueba.** Ningún chequeo automático puede decidir que un archivo implementa una decisión, y este estándar no pretende lo contrario: es el mismo exceso que [GT-576](../../control-center/gaps/gap-reference-catalog.es.md#gt-576) detectó en la evaluación de madurez. Lo que se hace cumplir es que la afirmación exista, sea específica y siga resolviendo.
+- **EN y ES deben declarar lo mismo.** El lector de cualquiera de los dos idiomas obtiene la misma respuesta.
+- **Los estados distintos de `Accepted`** (`Proposed`, `Superseded`, …) no afirman implementación y no requieren directiva.
+- La prosa junto a la directiva es bienvenida: la directiva es para el guard, el blockquote es para la persona.
+
+Los ADRs anteriores a esta convención se mantienen en una línea base explícita que solo puede decrecer; los ADRs nuevos y modificados no son elegibles para ella.
+
+## 6. Cumplimiento
 
 - ADRs nuevos: el cumplimiento total de este estándar es criterio del gate Design Baseline.
 - ADRs existentes: las secciones estructurales se normalizaron el 2026-06-10; el backfill de contenido de las secciones 2, 3, 5, 8 (y 9–10 para plataforma) se trackea como [GT-20](../../control-center/gaps/gap-reference-catalog.es.md#gt-20). La revisión de ubicación de ADRs Core centrados en herramientas se trackea como [GT-21](../../control-center/gaps/gap-reference-catalog.es.md#gt-21).

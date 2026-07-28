@@ -381,10 +381,38 @@ jobs:
       - name: Every CI guard publishes a denominator
         run: node .harness/scripts/ci/42-validate-guard-denominators.mjs --verbose
 
-      - name: Self-tests for the two GT-578 guards
+      # OBSERVED, not declared. 42 checks that each guard CAN refuse an empty
+      # scan; this one points every scanning guard at a deliberately empty
+      # repo-shaped tree and watches it go red. A guard nobody has ever seen fail
+      # is the defect this whole sweep is about, and the distinction between
+      # "has a vacuity check" and "the vacuity check fires" is where the last
+      # four false greens in this repository came from.
+      - name: Every scanning guard has been SEEN failing
+        run: node .harness/scripts/ci/43-validate-guard-negative-fixtures.mjs
+
+      # GT-607: seven ADRs were Accepted with no implementing code. The guard
+      # falsifies an author DECLARATION rather than guessing at implementing
+      # code — a grep-based signal was tried against this corpus and rejected,
+      # with the reasoning in the guard header. Report mode: 212 Accepted ADRs
+      # still declare nothing and are baselined; `--strict` is the switch when
+      # that baseline reaches zero.
+      - name: ADR implementation-status declarations resolve
+        run: node .harness/scripts/ci/44-validate-adr-implementation-status.mjs
+
+      # GT-424: the three skill registries. R3 measures the EFFECTIVE routing
+      # surface and audits GT-608's derivation rather than trusting it — a
+      # synthesis narrowed by one extra conjunct silently unreaches capabilities
+      # and would otherwise keep this green.
+      - name: Skill registries agree in both directions
+        run: node .harness/scripts/ci/34-check-skill-registry-parity.mjs
+
+      - name: Self-tests for the governance guards
         run: |
           node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
           node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs
+          node --test .harness/scripts/ci/43-validate-guard-negative-fixtures.test.mjs
+          node --test .harness/scripts/ci/44-validate-adr-implementation-status.test.mjs
+          node --test .harness/scripts/ci/34-check-skill-registry-parity.test.mjs
 
       # REPORTING MODE, and it says so in its own output ("THIS IS NOT A PASS").
       # It resolves every validationCommand recorded in the board's closure
@@ -401,14 +429,19 @@ jobs:
       - name: Execute the board's recorded validationCommands (report mode)
         run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose
 
-      # Ratchet, not a cliff. The budget is the count measured ON THE RUNNER —
-      # 305 — not on a developer machine, which reports 290. The 15-reference gap
-      # is environment: build outputs, a resolvable OPA binary and a usable
-      # /dev/stdin all exist locally and change what "dead" means. Pinning a
-      # ratchet to a number measured somewhere other than where it is enforced is
-      # how a gate becomes unsatisfiable, so the runner is the reference.
-      # Lower it as records are repaired; at 0, delete the flag and this becomes
-      # the strict gate.
+      # Ratchet, not a cliff. The budget is 305, which is what THIS RUNNER counts.
+      #
+      # It was briefly lowered to 303 on the strength of the guard's computed
+      # "ratchet basis" — 288 dead locally plus 15 that resolve only through
+      # generated state. The runner then reported 305 and the job went red. The
+      # basis is a useful diagnostic and it is NOT yet an accurate predictor of
+      # this number, so it must not be used to set the budget: only a count
+      # observed here may lower it. That is the same rule that put 305 here in the
+      # first place, and I broke it by trusting a derived figure over a measured
+      # one.
+      #
+      # Lower it as records are repaired, from a number this job printed; at 0,
+      # delete the flag and this becomes the strict gate.
       - name: Dead-reference ratchet (must not grow)
         run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 305
 

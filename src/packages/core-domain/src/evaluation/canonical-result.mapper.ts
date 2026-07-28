@@ -31,6 +31,8 @@ import {
   RuleExecutionRef,
   ComplianceResult,
   DecisionRecommendation,
+  RepositoryRevisionContext,
+  RequesterContext,
 } from './contracts';
 
 /**
@@ -131,6 +133,59 @@ export interface MapOptions {
   readonly coverage?: PipelineRuleCoverage;
   /** GT-601 — artifacts the context declared, so `missingEvidence` can be derived. */
   readonly declaredArtifacts?: ArtifactContext;
+  /**
+   * GT-586 — attribution echoed verbatim from the context. Both stay `undefined`
+   * when the consumer declared none; this mapper never derives either one.
+   */
+  readonly requester?: RequesterContext;
+  readonly repositoryRevision?: RepositoryRevisionContext;
+}
+
+/**
+ * GT-614 — the base result for a request that asked for NO pipeline kind.
+ *
+ * The pipeline (gate/artifact/rule/compliance) did not run because it was not
+ * requested, so nothing here reports a gate verdict, a rule execution or a
+ * compliance denominator that was never computed. The distinction matters and is
+ * deliberate:
+ *
+ *  - GT-569 `rulesSkipped`/`rulesErrored` mean "the engine tried and produced no
+ *    outcome" — they belong in the denominator, because the outcome is UNKNOWN;
+ *  - GT-571 not-applicable means "the rule does not apply to this workspace" and
+ *    is PRE-FILTERED out of the denominator;
+ *  - an UNREQUESTED kind is a third thing: OUT OF SCOPE. It is not unknown and it
+ *    is not inapplicable — nobody asked. So it produces no sub-result, no rule
+ *    reference and no denominator entry at all, and `results.compliance` is ABSENT
+ *    rather than a zeroed object that would read as "0/0 checks passed".
+ */
+export function pipelineOutOfScopeResult(opts: MapOptions): EvaluationResult {
+  return {
+    overallVerdict: Verdict.PASS,
+    outcome: 'approved',
+    results: {},
+    rulesExecuted: [],
+    policiesApplied: [],
+    gaps: [],
+    risks: [],
+    missingEvidence: [],
+    incompleteArtifacts: [],
+    recommendations: [],
+    requiredActions: [],
+    decisionRecommendation: opts.decisionRecommendation,
+    confidence: 1,
+    rationale:
+      'No pipeline kind (gate/artifact/rule/compliance) was requested; the rule pipeline was not executed and contributes nothing to this verdict.',
+    versions: {
+      core: opts.coreVersion,
+      ruleset: opts.ruleset,
+      rulesetVersion: opts.rulesetVersion,
+    },
+    requester: opts.requester,
+    repositoryRevision: opts.repositoryRevision,
+    evaluatedAt: opts.evaluatedAt,
+    correlationId: opts.correlationId,
+    schemaVersion: EVALUATION_RESULT_SCHEMA_VERSION,
+  };
 }
 
 export function mapPipelineVerdict(
@@ -290,6 +345,9 @@ export function mapPipelineVerdict(
       ruleset: opts.ruleset,
       rulesetVersion: opts.rulesetVersion,
     },
+    // GT-586: attribution is echoed, never derived — absent in, absent out.
+    requester: opts.requester,
+    repositoryRevision: opts.repositoryRevision,
     evaluatedAt: opts.evaluatedAt,
     correlationId: opts.correlationId,
     schemaVersion: EVALUATION_RESULT_SCHEMA_VERSION,

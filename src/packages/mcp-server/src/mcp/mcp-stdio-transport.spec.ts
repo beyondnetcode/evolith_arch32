@@ -154,9 +154,11 @@ describe('GT-572 — MCP over stdio', () => {
     ]);
 
     const res = await client.request(2, 'tools/list');
+    // GT-581: the order is lexicographic, not registration order — `tools/list`
+    // is deterministic so a reshuffled DI graph cannot invalidate a client cache.
     expect(res.result.tools.map((t: { name: string }) => t.name)).toEqual([
-      'evolith-evaluate',
       'evolith-adr-create',
+      'evolith-evaluate',
     ]);
   }, 20000);
 

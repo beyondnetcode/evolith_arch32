@@ -46,17 +46,21 @@ export {
 export { canonicalJson, sha256Hex, sortDeep } from './schemas/contract-hash';
 
 export {
-  // GT-573 — pinnable evaluate request/response pair + the consumer oracle.
+  // GT-573 — pinnable evaluate request/response pairs + the consumer oracle.
   TRACKER_BOUND_RESULT_KEYS,
   TRACKER_BOUND_GATE_KEYS,
   TRACKER_BOUND_GAP_KEYS,
   TRACKER_UNCONTRACTED_FIELDS,
   EVALUATE_INLINE_PASS_REQUEST,
   EVALUATE_INLINE_FAIL_REQUEST,
+  EVALUATE_INLINE_OPA_GATE_FAIL_REQUEST,
   EVALUATION_RESULT_PASS_FIXTURE,
   EVALUATION_RESULT_FAIL_FIXTURE,
+  EVALUATION_RESULT_OPA_GATE_FAIL_FIXTURE,
   LEGACY_INLINE_ENVELOPE_FIXTURE,
+  assertFixtureCongruence,
   assertTrackerEvaluationContract,
+  checkFixtureCongruence,
   checkTrackerEvaluationContract,
   normalizeGateVerdict,
   trackerDecisionFrom,
@@ -66,6 +70,36 @@ export {
   type TrackerBoundGate,
   type TrackerDecision,
 } from './fixtures/evaluation-contract.fixtures';
+
+export {
+  // GT-605 — the single typed evidence-edge model both sides converge on.
+  EVIDENCE_NODE_KINDS,
+  EVIDENCE_REF_SCHEME,
+  CORE_NATIVE_EDGE_TYPES,
+  EVIDENCE_EDGE_TYPES,
+  EVIDENCE_EDGE_SEMANTICS,
+  EVIDENCE_GRAPH_QUERIES,
+  EVIDENCE_EDGE_STORAGE_CONTRACT,
+  edgesFromLegacyReferences,
+  evidenceEdgeKey,
+  formatEvidenceRef,
+  invertEdge,
+  isEvidenceEdgeType,
+  isEvidenceNodeKind,
+  parseEvidenceRef,
+  sameEvidenceNode,
+  traverseEvidenceGraph,
+  type EvidenceEdge,
+  type EvidenceEdgeColumnSpec,
+  type EvidenceEdgeType,
+  type EvidenceGraphQuery,
+  type EvidenceNodeKind,
+  type EvidenceNodeRef,
+  type LegacyReferenceMapping,
+  type TraversalDirection,
+  type TraversalHit,
+  type TraversalOptions,
+} from './evidence/evidence-edge';
 
 export {
   EXPECTED_CAPABILITY_MANIFEST,

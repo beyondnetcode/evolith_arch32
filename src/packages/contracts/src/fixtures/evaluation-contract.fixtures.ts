@@ -104,6 +104,91 @@ export interface ContractCheckResult {
 }
 
 // ---------------------------------------------------------------------------
+// Fixture congruence — "is what I pinned what the Core actually emits?"
+// ---------------------------------------------------------------------------
+
+/**
+ * Structural congruence of a published response fixture against a LIVE Core
+ * response.
+ *
+ * A fixture is only worth pinning if the producer proves it still resembles what
+ * it produces. The first version of these fixtures was hand-reduced to the bound
+ * subset, which meant a consumer that pinned {@link EVALUATION_RESULT_PASS_FIXTURE}
+ * would have modelled a `results` object with a `gate` key and nothing else — no
+ * `artifact`, no `compliance` — a shape the Core has never emitted. That is the
+ * same class of defect as the incident itself: a contract nobody compares with
+ * reality.
+ *
+ * Congruence is checked at the level of KEYS and JS types, never values: the
+ * fixture is a shape, not a golden file, so a new message string or a different
+ * timestamp is not a drift, while a renamed/removed/retyped field is. The
+ * fixture must be a structural SUBSET of the live payload — the Core is free to
+ * add fields (that is what `semver-minor` means for a producer), but it may not
+ * take one away.
+ */
+export function checkFixtureCongruence(
+  live: unknown,
+  fixture: unknown,
+  path = '$',
+): ContractCheckResult {
+  const missing: string[] = [];
+  walkCongruence(live, fixture, path, missing);
+  return { ok: missing.length === 0, missing };
+}
+
+/** Throwing variant, for use as a CI gate. */
+export function assertFixtureCongruence(live: unknown, fixture: unknown): void {
+  const { ok, missing } = checkFixtureCongruence(live, fixture);
+  if (!ok) {
+    throw new Error(
+      `A published contract fixture no longer matches what the Core emits:\n - ${missing.join('\n - ')}`,
+    );
+  }
+}
+
+const jsType = (v: unknown): string => (v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v);
+
+function walkCongruence(live: unknown, fixture: unknown, path: string, missing: string[]): void {
+  if (fixture === undefined) return;
+
+  const ft = jsType(fixture);
+  const lt = jsType(live);
+
+  if (ft !== lt) {
+    missing.push(`${path}: fixture is ${ft} but the live response is ${lt}`);
+    return;
+  }
+
+  if (ft === 'array') {
+    const f = fixture as unknown[];
+    const l = live as unknown[];
+    // An empty fixture array constrains only the type. A populated one pins the
+    // ELEMENT shape, so the live response must carry at least one element.
+    if (f.length > 0 && l.length === 0) {
+      missing.push(`${path}: fixture pins an element shape but the live array is empty`);
+      return;
+    }
+    for (let i = 0; i < f.length && i < l.length; i += 1) {
+      walkCongruence(l[i], f[i], `${path}[${i}]`, missing);
+    }
+    return;
+  }
+
+  if (ft === 'object') {
+    const f = fixture as Record<string, unknown>;
+    const l = live as Record<string, unknown>;
+    for (const key of Object.keys(f)) {
+      if (f[key] === undefined) continue;
+      if (!(key in l)) {
+        missing.push(`${path}.${key}: present in the fixture, absent from the live response`);
+        continue;
+      }
+      walkCongruence(l[key], f[key], `${path}.${key}`, missing);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // The consumer oracle
 // ---------------------------------------------------------------------------
 
@@ -234,8 +319,7 @@ export const EVALUATE_INLINE_PASS_REQUEST = Object.freeze({
 
 /**
  * A NON-conformant inline evaluation request: `evolith.yaml` is absent, which is
- * a blocking governance violation. This is the fixture that matters — it is the
- * case that used to be persisted as `SKIPPED`.
+ * a blocking GOVERNANCE-rule violation (`GOV-000`, native evaluator).
  */
 export const EVALUATE_INLINE_FAIL_REQUEST = Object.freeze({
   kinds: Object.freeze(['gate', 'compliance']),
@@ -247,20 +331,93 @@ export const EVALUATE_INLINE_FAIL_REQUEST = Object.freeze({
   }),
 });
 
+/**
+ * An inline evaluation request whose satellite is GOVERNANCE-CONFORMANT — the
+ * manifest is present and the phase's required artifact exists — so the only way
+ * it can fail is on the POLICY itself: an SDLC gate whose rule is a `.rego` file
+ * executed by `OpaEvaluator`.
+ *
+ * This is the case GT-573 was reopened for. The first round of this contract
+ * proved a governance-rule FAIL round-trips, but a governance-rule FAIL is
+ * produced by the native evaluator and surfaces as the synthetic
+ * `general-rulesets` gate. The claim the product actually makes is about
+ * POLICY-gate decisions, and that path — SDLC gate → `.rego` rule → OPA
+ * violation → `results.gate[]` → the consumer's `ToDecision` — was never
+ * exercised end to end. The producer-side spec drives exactly this request.
+ */
+export const EVALUATE_INLINE_OPA_GATE_FAIL_REQUEST = Object.freeze({
+  kinds: Object.freeze(['gate', 'compliance']),
+  phaseId: 'construction',
+  evaluationInput: Object.freeze({
+    files: Object.freeze({
+      'evolith.yaml': CONFORMANT_EVOLITH_YAML,
+      'docs/architecture.md': '# Architecture\n',
+    }),
+  }),
+});
+
 // ---------------------------------------------------------------------------
 // Response fixtures — canonical EvaluationResult (the ADR-0073 `data` payload)
 // ---------------------------------------------------------------------------
 
-/** Canonical shape of a PASSING evaluation, reduced to the bound surface. */
+/*
+ * The three response fixtures below are CAPTURES of what the Core's inline
+ * branch actually emits for the three request fixtures above — not hand-reduced
+ * sketches of the bound subset. That distinction is the point: a consumer pins a
+ * fixture and generates/handwrites a DTO from it, so a fixture that omits
+ * `results.artifact` or `results.compliance` teaches the consumer a shape the
+ * producer has never sent. `evaluation.consumer-contract.spec.ts` in the Core
+ * asserts each of them against a live response with
+ * {@link checkFixtureCongruence}, so they cannot silently rot.
+ *
+ * Only `evaluatedAt` is normalised to a fixed instant; every other value is as
+ * emitted.
+ */
+
+/** What the Core emits for {@link EVALUATE_INLINE_PASS_REQUEST}. */
 export const EVALUATION_RESULT_PASS_FIXTURE: TrackerBoundEvaluationResult = Object.freeze({
   overallVerdict: 'PASS',
   outcome: 'approved',
-  results: Object.freeze({ gate: Object.freeze([]) }),
+  results: Object.freeze({
+    gate: Object.freeze([]),
+    artifact: Object.freeze([]),
+    compliance: Object.freeze({
+      verdict: 'PASS',
+      totalChecks: 0,
+      passedChecks: 0,
+      failedChecks: 0,
+      skippedChecks: 0,
+    }),
+  }),
+  rulesExecuted: Object.freeze([]),
+  policiesApplied: Object.freeze([]),
+  gaps: Object.freeze([]),
+  risks: Object.freeze([]),
+  missingEvidence: Object.freeze([]),
+  incompleteArtifacts: Object.freeze([]),
+  recommendations: Object.freeze([]),
+  requiredActions: Object.freeze([]),
+  decisionRecommendation: Object.freeze({
+    subjectType: 'phase',
+    subjectRef: 'construction',
+    recommendedVerdict: 'PASS',
+    binding: false,
+    recommendedBy: 'evolith-core',
+  }),
+  confidence: 1,
+  rationale: 'All 0 gate(s) passed (0/0 rules).',
+  versions: Object.freeze({ core: '1.0.5' }),
   evaluatedAt: '2026-07-26T00:00:00.000Z',
   schemaVersion: '1.0.0',
 });
 
-/** Canonical shape of a FAILING evaluation, reduced to the bound surface. */
+/**
+ * What the Core emits for {@link EVALUATE_INLINE_FAIL_REQUEST} — a GOVERNANCE
+ * (native-evaluator) FAIL, surfaced through the synthetic `general-rulesets`
+ * gate. Note `rulesExecuted[].engine === 'native'`: this fixture does NOT prove
+ * anything about policy enforcement, which is why
+ * {@link EVALUATION_RESULT_OPA_GATE_FAIL_FIXTURE} exists.
+ */
 export const EVALUATION_RESULT_FAIL_FIXTURE: TrackerBoundEvaluationResult = Object.freeze({
   overallVerdict: 'FAIL',
   outcome: 'rejected',
@@ -268,20 +425,203 @@ export const EVALUATION_RESULT_FAIL_FIXTURE: TrackerBoundEvaluationResult = Obje
     gate: Object.freeze([
       Object.freeze({
         gateId: 'general-rulesets',
-        phaseId: undefined,
         verdict: 'FAIL',
+        artifactResults: Object.freeze([
+          Object.freeze({
+            artifactId: 'governance',
+            verdict: 'FAIL',
+            ruleRefs: Object.freeze(['GOV-000']),
+            gaps: Object.freeze([
+              Object.freeze({
+                id: 'general-rulesets:GOV-000',
+                requirementRef: 'GOV-000',
+                severity: 'error',
+                message:
+                  'Missing evolith.yaml: Every satellite repository must have an evolith.yaml file at the root.',
+                location: 'governance',
+              }),
+            ]),
+          }),
+        ]),
+        risks: Object.freeze([]),
         gaps: Object.freeze([
           Object.freeze({
             id: 'general-rulesets:GOV-000',
             requirementRef: 'GOV-000',
             severity: 'error',
-            message: 'Missing evolith.yaml: the satellite manifest is required',
+            message:
+              'Missing evolith.yaml: Every satellite repository must have an evolith.yaml file at the root.',
             location: 'governance',
+          }),
+        ]),
+        requiredActions: Object.freeze([
+          Object.freeze({
+            id: 'fix:general-rulesets:GOV-000',
+            gapId: 'general-rulesets:GOV-000',
+            description:
+              'Missing evolith.yaml: Every satellite repository must have an evolith.yaml file at the root.',
+            blocking: true,
+            remediation: '',
           }),
         ]),
       }),
     ]),
+    artifact: Object.freeze([
+      Object.freeze({ artifactId: 'governance', verdict: 'FAIL', ruleRefs: Object.freeze(['GOV-000']) }),
+    ]),
+    compliance: Object.freeze({
+      verdict: 'FAIL',
+      score: 0,
+      totalChecks: 1,
+      passedChecks: 0,
+      failedChecks: 1,
+      skippedChecks: 0,
+    }),
   }),
+  rulesExecuted: Object.freeze([
+    Object.freeze({
+      ruleId: 'GOV-000',
+      rulesetRef: 'rulesets/governance/GOV-000',
+      engine: 'native',
+      verdict: 'FAIL',
+    }),
+  ]),
+  gaps: Object.freeze([
+    Object.freeze({
+      id: 'general-rulesets:GOV-000',
+      requirementRef: 'GOV-000',
+      severity: 'error',
+      message:
+        'Missing evolith.yaml: Every satellite repository must have an evolith.yaml file at the root.',
+      location: 'governance',
+    }),
+  ]),
+  incompleteArtifacts: Object.freeze(['governance']),
+  decisionRecommendation: Object.freeze({
+    subjectType: 'phase',
+    subjectRef: 'construction',
+    recommendedVerdict: 'FAIL',
+    binding: false,
+    recommendedBy: 'evolith-core',
+  }),
+  confidence: 0,
+  rationale: '1/1 gate(s) failed (1/1 rules failed).',
+  versions: Object.freeze({ core: '1.0.5' }),
+  evaluatedAt: '2026-07-26T00:00:00.000Z',
+  schemaVersion: '1.0.0',
+});
+
+/**
+ * What the Core emits for {@link EVALUATE_INLINE_OPA_GATE_FAIL_REQUEST}: a
+ * genuine OPA POLICY-gate FAIL.
+ *
+ * The distinguishing marks against the governance FAIL above, and the reason
+ * this fixture is the one that closes the acceptance criterion:
+ *
+ *  - `results.gate[0].gateId` is a real SDLC gate id from the Core's structured
+ *    gate corpus, NOT the synthetic `general-rulesets` bucket;
+ *  - `results.gate[0].phaseId` is populated, so the ledger row can be attributed
+ *    to a phase;
+ *  - `rulesExecuted[0].engine === 'opa'` and `rulesetRef` ends in `.rego` — the
+ *    policy engine ran and returned a violation;
+ *  - and `trackerDecisionFrom` over it is `FAILED`, which is the whole assertion:
+ *    a policy violation reaches the Tracker's gate ledger as a decision, not as
+ *    `SKIPPED`.
+ *
+ * Ids and messages are the fixture corpus's, not production values; the SHAPE is
+ * the contract.
+ */
+export const EVALUATION_RESULT_OPA_GATE_FAIL_FIXTURE: TrackerBoundEvaluationResult = Object.freeze({
+  overallVerdict: 'FAIL',
+  outcome: 'rejected',
+  results: Object.freeze({
+    gate: Object.freeze([
+      Object.freeze({
+        gateId: 'gate-f3-architecture-conformance',
+        phaseId: 'construction',
+        verdict: 'FAIL',
+        artifactResults: Object.freeze([
+          Object.freeze({
+            artifactId: 'docs/architecture.md',
+            verdict: 'FAIL',
+            ruleRefs: Object.freeze(['opa-architecture-boundaries']),
+            gaps: Object.freeze([
+              Object.freeze({
+                id: 'gate-f3-architecture-conformance:opa-architecture-boundaries',
+                requirementRef: 'opa-architecture-boundaries',
+                severity: 'error',
+                message: 'ARCH-001: presentation layer imports infrastructure directly',
+                location: 'docs/architecture.md',
+              }),
+            ]),
+          }),
+        ]),
+        risks: Object.freeze([]),
+        gaps: Object.freeze([
+          Object.freeze({
+            id: 'gate-f3-architecture-conformance:opa-architecture-boundaries',
+            requirementRef: 'opa-architecture-boundaries',
+            severity: 'error',
+            message: 'ARCH-001: presentation layer imports infrastructure directly',
+            location: 'docs/architecture.md',
+          }),
+        ]),
+        requiredActions: Object.freeze([
+          Object.freeze({
+            id: 'fix:gate-f3-architecture-conformance:opa-architecture-boundaries',
+            gapId: 'gate-f3-architecture-conformance:opa-architecture-boundaries',
+            description: 'ARCH-001: presentation layer imports infrastructure directly',
+            blocking: true,
+            remediation:
+              'Ensure docs/architecture.md exists and satisfies: layer boundaries hold',
+          }),
+        ]),
+      }),
+    ]),
+    artifact: Object.freeze([
+      Object.freeze({
+        artifactId: 'docs/architecture.md',
+        verdict: 'FAIL',
+        ruleRefs: Object.freeze(['opa-architecture-boundaries']),
+      }),
+    ]),
+    compliance: Object.freeze({
+      verdict: 'FAIL',
+      score: 0,
+      totalChecks: 1,
+      passedChecks: 0,
+      failedChecks: 1,
+      skippedChecks: 0,
+    }),
+  }),
+  rulesExecuted: Object.freeze([
+    Object.freeze({
+      ruleId: 'opa-architecture-boundaries',
+      rulesetRef: 'rulesets/opa/architecture-boundaries.rego',
+      engine: 'opa',
+      verdict: 'FAIL',
+    }),
+  ]),
+  gaps: Object.freeze([
+    Object.freeze({
+      id: 'gate-f3-architecture-conformance:opa-architecture-boundaries',
+      requirementRef: 'opa-architecture-boundaries',
+      severity: 'error',
+      message: 'ARCH-001: presentation layer imports infrastructure directly',
+      location: 'docs/architecture.md',
+    }),
+  ]),
+  incompleteArtifacts: Object.freeze(['docs/architecture.md']),
+  decisionRecommendation: Object.freeze({
+    subjectType: 'phase',
+    subjectRef: 'construction',
+    recommendedVerdict: 'FAIL',
+    binding: false,
+    recommendedBy: 'evolith-core',
+  }),
+  confidence: 0,
+  rationale: '1/1 gate(s) failed (1/1 rules failed).',
+  versions: Object.freeze({ core: '1.0.5' }),
   evaluatedAt: '2026-07-26T00:00:00.000Z',
   schemaVersion: '1.0.0',
 });

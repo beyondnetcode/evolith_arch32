@@ -1,5 +1,12 @@
 import { IFileSystem, ILogger, IConfigParser } from '../../domain/interfaces';
-import { ValidationIssue, RuleCoverage } from './ruleset-validator.types';
+import { ValidationIssue, RuleCoverage, RulesetCoverageRatio } from './ruleset-validator.types';
+import {
+  ClassifiedRule,
+  RuleEvaluability,
+  classifyRule,
+  isNonExecutable,
+  summarizeEvaluability,
+} from './rule-evaluability';
 import { IRuleEvaluatorStrategy, WorkspaceEvaluationContext, RuleEvaluationResult } from './evaluators/evaluator.interface';
 import { NativeEvaluator } from './evaluators/native-evaluator';
 import { IRulesetRepository } from '../../domain/ports/ruleset-repository.port';
@@ -54,6 +61,8 @@ export function summarizeRuleCoverage(results: readonly RuleEvaluationResult[]):
     }
   }
 
+  const evaluability = summarizeEvaluability(results.map(classifyResult));
+
   return {
     rulesChecked,
     rulesSkipped: skippedRuleIds.length,
@@ -61,6 +70,36 @@ export function summarizeRuleCoverage(results: readonly RuleEvaluationResult[]):
     rulesTotal: results.length,
     skippedRuleIds,
     erroredRuleIds,
+    // GT-595 — a subset of `rulesSkipped`; the GT-569 identity still holds.
+    rulesNonExecutable: evaluability.nonExecutable,
+    nonExecutableRuleIds: [...evaluability.nonExecutableRuleIds],
+    rulesExecutable: evaluability.executableTotal,
+    blockingNonExecutableRuleIds: [...evaluability.blockingNonExecutable],
+    perRuleset: evaluability.perRuleset.map(r => ({ ...r })),
+  };
+}
+
+/**
+ * GT-595 — classify one engine result.
+ *
+ * A handler that declined the rule may have stated the class itself; otherwise
+ * fall back to the triage table. An outcome that actually RAN is
+ * `native-handler` by construction, whatever the table says — the table
+ * describes rules nobody evaluated, and a rule that just produced a verdict is
+ * not one of them.
+ */
+function classifyResult(r: RuleEvaluationResult): ClassifiedRule {
+  const ran = r.result === 'passed' || r.result === 'failed';
+  const evaluability: RuleEvaluability = ran
+    ? 'native-handler'
+    : (r.evaluability ?? classifyRule(r.rule, false).evaluability);
+
+  return {
+    ruleId: r.rule.id,
+    sourceFile: r.rule.sourceFile,
+    blocking: r.rule.blocking,
+    evaluability,
+    why: r.message ?? '',
   };
 }
 
@@ -69,6 +108,8 @@ export function emptyRuleCoverage(): RuleCoverage {
   return {
     rulesChecked: 0, rulesSkipped: 0, rulesErrored: 0, rulesTotal: 0,
     skippedRuleIds: [], erroredRuleIds: [],
+    rulesNonExecutable: 0, nonExecutableRuleIds: [], rulesExecutable: 0,
+    blockingNonExecutableRuleIds: [], perRuleset: [],
   };
 }
 
@@ -129,7 +170,40 @@ export function mergeRuleCoverage(a: RuleCoverage, b: RuleCoverage): RuleCoverag
     rulesTotal: a.rulesTotal + b.rulesTotal,
     skippedRuleIds: [...a.skippedRuleIds, ...b.skippedRuleIds],
     erroredRuleIds: [...a.erroredRuleIds, ...b.erroredRuleIds],
+    rulesNonExecutable: (a.rulesNonExecutable ?? 0) + (b.rulesNonExecutable ?? 0),
+    nonExecutableRuleIds: [...(a.nonExecutableRuleIds ?? []), ...(b.nonExecutableRuleIds ?? [])],
+    rulesExecutable: (a.rulesExecutable ?? 0) + (b.rulesExecutable ?? 0),
+    blockingNonExecutableRuleIds: [
+      ...(a.blockingNonExecutableRuleIds ?? []),
+      ...(b.blockingNonExecutableRuleIds ?? []),
+    ],
+    perRuleset: mergePerRuleset(a.perRuleset, b.perRuleset),
   };
+}
+
+/** Sum two per-ruleset tables by `sourceFile`, keeping the file order stable. */
+function mergePerRuleset(
+  a: readonly RulesetCoverageRatio[] = [],
+  b: readonly RulesetCoverageRatio[] = [],
+): RulesetCoverageRatio[] {
+  const merged = new Map<string, RulesetCoverageRatio>();
+  for (const r of [...a, ...b]) {
+    const prev = merged.get(r.sourceFile);
+    merged.set(
+      r.sourceFile,
+      prev
+        ? {
+            sourceFile: r.sourceFile,
+            handled: prev.handled + r.handled,
+            executable: prev.executable + r.executable,
+            total: prev.total + r.total,
+          }
+        : { ...r },
+    );
+  }
+  return [...merged.values()].sort((x, y) =>
+    x.sourceFile < y.sourceFile ? -1 : x.sourceFile > y.sourceFile ? 1 : 0,
+  );
 }
 
 
@@ -222,6 +296,13 @@ export class RuleEvaluationEngine {
       }
 
       if (r.result === 'skipped' && reportedSeverity(r.rule.severity) === 'MUST') {
+        // GT-595: 129 of this corpus's rules are documentation or declare no
+        // check at all. Emitting "MUST rule not evaluated" for each buried the
+        // ~50 warnings that name real, closeable coverage debt under a hundred
+        // that no handler can ever silence. They are reported once, in
+        // aggregate, below — quieter but strictly MORE informative.
+        if (isNonExecutable(classifyResult(r).evaluability)) continue;
+
         issues.push({
           ruleId: r.rule.id,
           severity: 'SHOULD',
@@ -236,7 +317,49 @@ export class RuleEvaluationEngine {
       }
     }
 
+    const nonExecutable = this.nonExecutableAdvisory(results);
+    if (nonExecutable) issues.push(nonExecutable);
+
     return issues;
+  }
+
+  /**
+   * GT-595 — one advisory naming every rule the corpus ships but nothing can run.
+   *
+   * Non-blocking on purpose: it reports a property of the RULESET, not a
+   * violation by the repository under evaluation. Its value is that the
+   * `blocking: true` rules in it can no longer be mistaken for enforcement —
+   * on this corpus that is 91 auto-generated ADR placeholders and 14 security
+   * and governance rules that state an obligation and no way to test it.
+   */
+  private nonExecutableAdvisory(results: readonly RuleEvaluationResult[]): ValidationIssue | undefined {
+    const classified = results.map(classifyResult).filter(c => isNonExecutable(c.evaluability));
+    if (classified.length === 0) return undefined;
+
+    const byClass = new Map<RuleEvaluability, number>();
+    for (const c of classified) byClass.set(c.evaluability, (byClass.get(c.evaluability) ?? 0) + 1);
+    const breakdown = [...byClass.entries()].map(([k, n]) => `${n} ${k}`).join(', ');
+
+    const blocking = classified.filter(c => c.blocking).map(c => c.ruleId);
+    const blockingNote =
+      blocking.length > 0
+        ? ` ${blocking.length} of them are declared \`blocking: true\` yet can never produce a verdict ` +
+          `(e.g. ${blocking.slice(0, 5).join(', ')}${blocking.length > 5 ? ', …' : ''}) — ` +
+          'either author their check or drop the blocking flag.'
+        : '';
+
+    return {
+      ruleId: 'GOV-RULE-NON-EXECUTABLE',
+      severity: 'COULD',
+      category: 'governance',
+      title: `${classified.length} corpus rules are not executable by any engine`,
+      description:
+        `${classified.length} of the evaluated rules carry no check an engine or adapter could run ` +
+        `(${breakdown}). They are counted in rulesSkipped for the GT-569 identity but excluded from ` +
+        '`rulesExecutable`, because no handler closes a rule with nothing in it.' +
+        blockingNote,
+      blocking: false,
+    };
   }
 }
 

@@ -110,13 +110,17 @@ describe('GT-569 · summarizeRuleCoverage produces the denominator', () => {
   it('counts checked / skipped / errored and names the rules that did not run', () => {
     const coverage = summarizeRuleCoverage(results);
 
-    expect(coverage).toEqual({
+    expect(coverage).toMatchObject({
       rulesChecked: 2,
       rulesSkipped: 2,
       rulesErrored: 1,
       rulesTotal: 5,
       skippedRuleIds: ['A-03', 'A-04'],
       erroredRuleIds: ['A-05'],
+      // GT-595 — these rules are unknown to the triage table, so they default to
+      // `unimplemented-native`: coverage debt, still inside the denominator.
+      rulesNonExecutable: 0,
+      rulesExecutable: 5,
     });
   });
 
@@ -267,7 +271,7 @@ describe('GT-569 · RulesetValidatorService.validate reports the denominator', (
     const gate = result.issues.find(i => i.ruleId === 'GOV-COVERAGE-THRESHOLD');
     expect(gate).toBeDefined();
     expect(gate!.blocking).toBe(true);
-    expect(gate!.description).toContain('4 of 6 rules were not evaluated');
+    expect(gate!.description).toContain('4 of 6 executable rules were not evaluated');
     expect(result.status).toBe('failed');
   });
 

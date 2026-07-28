@@ -34,6 +34,11 @@ module.exports = {
       "<rootDir>/../../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/stdio.js",
     "^@modelcontextprotocol/sdk/server/streamableHttp\\.js$":
       "<rootDir>/../../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/streamableHttp.js",
+    // GT-581: the SDK's own AJV provider, used by `tool-output-contract.spec.ts`
+    // to validate `structuredContent` with the exact component a real MCP client
+    // applies to it.
+    "^@modelcontextprotocol/sdk/validation/ajv\\.js$":
+      "<rootDir>/../../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/validation/ajv-provider.js",
     "^@nestjs/cache-manager$":
       "<rootDir>/test-doubles/@nestjs/cache-manager.ts",
     "^cache-manager$":

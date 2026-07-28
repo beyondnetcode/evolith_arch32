@@ -1,5 +1,6 @@
 import { NormalizedRule } from '../../../domain/models/normalized-rule';
 import type { EvaluationFacts } from '../../../domain/satellite-manifest';
+import type { RuleEvaluability } from '../rule-evaluability';
 
 export interface WorkspaceEvaluationContext {
   satellitePath: string;
@@ -34,6 +35,20 @@ export interface RuleEvaluationResult {
   result: RuleEvaluationOutcome;
   message?: string;
   evidencePath?: string;
+  /**
+   * GT-595 — WHY this rule did not run, when it did not.
+   *
+   * `skipped` said "the engine tried and could not" and stopped there, so 240
+   * rules with six different causes shared one bucket and read as one backlog.
+   * A handler that declines a rule states its class here; the engine uses it to
+   * separate rules that are coverage DEBT (`unimplemented-native`,
+   * `needs-runtime`, `needs-external-system`) from rules nothing will ever run
+   * (`documentation-only`, `underspecified`), which must leave the denominator
+   * instead of permanently depressing it.
+   *
+   * Optional and additive: absent ⇒ the engine classifies the rule itself.
+   */
+  evaluability?: RuleEvaluability;
 }
 
 export interface IRuleEvaluatorStrategy {

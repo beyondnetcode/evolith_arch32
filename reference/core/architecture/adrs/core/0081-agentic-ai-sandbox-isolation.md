@@ -6,6 +6,7 @@
 
 Accepted
 
+<!-- implementation-status: none -->
 > **Implementation status in this repository: none** (verified 2026-07-28).
 > This ADR is a normative standard published *for satellites*; it is Accepted as a decision,
 > not as delivered capability. Nothing in Evolith Core implements it, and nothing enforces it.

@@ -334,6 +334,25 @@ export function extractCommand(raw) {
   // Drop a trailing sentence period, but not `./x` or `...`.
   head = head.replace(/(?<=[A-Za-z0-9)\]"'])\.$/, '');
 
+  /**
+   * Strip a trailing parenthetical annotation.
+   *
+   * 48 records have the shape `grep -c 'kind: Permission' path/to/f.yaml (== 3
+   * per-product permissions)`. The parenthesis is the author's note about the
+   * expected RESULT, not an argument — but the tokenizer turns `Exchange/Queue/
+   * Binding` inside it into a path-shaped operand, the operand does not exist,
+   * and the whole record is reported as a DEAD REFERENCE. That is the guard
+   * inventing a defect, which in a report whose entire output is a count of
+   * defects is the worst thing it can do.
+   *
+   * Only a parenthetical at the very end is stripped, and only when the command
+   * has content before it: `(cd x && y)` stays whole.
+   */
+  const trailingNote = /\s\([^()]*\)$/;
+  while (trailingNote.test(head) && head.replace(trailingNote, '').trim()) {
+    head = head.replace(trailingNote, '').trim();
+  }
+
   let cwd = '';
   const cdMatch = /^cd\s+([^\s&;|]+)\s*&&\s*(.+)$/.exec(head);
   if (cdMatch) {
@@ -380,6 +399,11 @@ export function extractCommand(raw) {
     bin: bin.split('/').pop(),
     binRaw: bin,
     tokens: tokens.map(t => t.raw),
+    // Quoting is load-bearing for resolution, not just for pipeline splitting:
+    // a QUOTED operand of grep/rg is a search pattern, and a pattern with a `/`
+    // in it (`grep -L 'control-center/gap-tracking' …`) is otherwise
+    // indistinguishable from a path and reported dead.
+    quoted: tokens.map(t => t.quoted),
     stages: segments.slice(1).map(seg => seg[0]?.raw?.split('/').pop() ?? ''),
     shellMeta,
     needsShell: segments.length > 1 || allTokens.some(t => !t.quoted && /[*?\[\]{}]/.test(t.raw)),
@@ -408,6 +432,54 @@ function pathResolves(root, cwd, tok) {
     return anc === '' ? true : existsSync(join(base, anc));
   }
   return existsSync(join(base, tok));
+}
+
+/**
+ * Flags of grep/rg/find that consume the NEXT token as a value. Without this,
+ * `grep -e control-center/gap-tracking .harness/...` treats the pattern as a
+ * path, and `find src -name '*.json'` treats the glob as one.
+ */
+const PATTERN_FLAGS = new Set(['-e', '--regexp', '-f', '--file']);
+const VALUE_FLAGS = new Set([
+  '-e', '--regexp', '-f', '--file', '--include', '--exclude', '--exclude-dir',
+  '-m', '--max-count', '-A', '-B', '-C', '--context', '-g', '--glob', '-t',
+  '--type', '-name', '-iname', '-path', '-type', '-maxdepth', '-mindepth',
+]);
+
+/**
+ * The tokens of a search/list command that are genuinely PATHS.
+ *
+ * Two token classes were being resolved as paths and reported dead when they
+ * are nothing of the sort:
+ *
+ *   1. the search PATTERN. For grep/rg the first non-flag operand is the
+ *      pattern, and a quoted pattern that contains a `/` — very common in this
+ *      corpus, which greps for repo paths inside files — looked exactly like a
+ *      target that had moved.
+ *   2. the value of a flag like `-e` / `--include` / `-name`.
+ *
+ * A quoted token is never treated as a path here. That is slightly stricter
+ * than a shell (a quoted path is legal) but it is the right trade: in this
+ * corpus quoting marks a pattern, and a false DEAD is a fabricated finding
+ * while a false `unchecked` is only an unverified one.
+ */
+function pathOperands(cmd) {
+  const isPatternCmd = cmd.bin === 'grep' || cmd.bin === 'rg';
+  const out = [];
+  let patternSeen = false;
+  for (let i = 1; i < cmd.tokens.length; i++) {
+    const tok = cmd.tokens[i];
+    const wasQuoted = cmd.quoted?.[i] === true;
+    // `-e PATTERN` / `-f FILE` supply the pattern explicitly, so the next bare
+    // operand is already a path, not the pattern.
+    if (!wasQuoted && PATTERN_FLAGS.has(tok)) { patternSeen = true; i += 1; continue; }
+    if (!wasQuoted && VALUE_FLAGS.has(tok)) { i += 1; continue; }
+    if (!wasQuoted && tok.startsWith('-')) continue;
+    if (wasQuoted) { patternSeen = true; continue; }
+    if (isPatternCmd && !patternSeen) { patternSeen = true; continue; }
+    if (looksLikePath(tok)) out.push(tok);
+  }
+  return out;
 }
 
 /**
@@ -472,7 +544,7 @@ export function resolveCommand(cmd, ctx) {
 
   // grep / rg / ls / cat / find / wc — the last path-shaped operand is the target.
   if (['grep', 'rg', 'ls', 'cat', 'find', 'wc', 'head', 'tail', 'jq'].includes(cmd.bin)) {
-    const operands = t.slice(1).filter(looksLikePath);
+    const operands = pathOperands(cmd);
     if (operands.length === 0) return { status: 'unchecked', detail: 'no path operand' };
     const missing = operands.filter(o => !pathResolves(root, cmd.cwd, o));
     if (missing.length > 0) return { status: 'dead', detail: `target not found: ${missing.join(', ')}` };
@@ -763,6 +835,31 @@ function main() {
   const inconclusiveRuns = executions.filter(e => e.status !== 0 && e.inconclusive);
   const failedRuns = executions.filter(e => e.status !== 0 && !e.inconclusive);
 
+  // --- Environment sensitivity of the dead count ---------------------------
+  //
+  // The ratchet wired in CI is `--max-dead 305`, and this machine reports ~288.
+  // That 17-reference gap is not drift: it is the number of recorded commands
+  // that resolve HERE only because of state a clean checkout does not have —
+  // build outputs, a vendored OPA binary, installed dependencies. The comment
+  // in ci-cd.yml says so in prose, which means the only way to know the runner's
+  // number has been to push and read the log, and a threshold measured somewhere
+  // other than where it is enforced is how a gate becomes unsatisfiable.
+  //
+  // So the guard computes the gap itself. `deadOnCleanCheckout` is dead plus the
+  // references that resolve only through generated/gitignored state: an upper
+  // bound reproducible from any machine, and the number a ratchet should be set
+  // from.
+  const GENERATED_PREFIXES = [
+    'dist/', 'build/', 'out/', 'coverage/', 'node_modules/', '.harness/bin/',
+    '.harness/evidence/', 'tsconfig.tsbuildinfo',
+  ];
+  const isGenerated = (p) =>
+    GENERATED_PREFIXES.some(pre => p === pre || p.startsWith(pre) || p.includes(`/${pre}`));
+  const environmentSensitive = resolved.filter(p =>
+    String(p.resolution.detail).split(', ').some(isGenerated),
+  );
+  const deadOnCleanCheckout = dead.length + environmentSensitive.length;
+
   // --- Report --------------------------------------------------------------
 
   const summary = {
@@ -773,6 +870,12 @@ function main() {
     extracted: parsed.length,
     narrative: narrative.length,
     resolution: { resolved: resolved.length, dead: dead.length, unchecked: unchecked.length },
+    ratchet: {
+      dead: dead.length,
+      environmentSensitive: environmentSensitive.length,
+      deadOnCleanCheckout,
+      note: 'deadOnCleanCheckout is the machine-independent upper bound: set --max-dead from it, not from `dead`, which counts build outputs this machine happens to have.',
+    },
     executable: { candidates: runnable.length, unique: uniqueRunnable.size, executed: executions.length, passed: passedRuns.length, failed: failedRuns.length, inconclusive: inconclusiveRuns.length },
     nonExecutable: Object.fromEntries([...buckets].map(([k, v]) => [k, v.count])),
     mode: STRICT ? 'strict' : 'report',
@@ -785,6 +888,11 @@ function main() {
     console.log(`  records ............ ${closures.length} closure(s), ${records.length} recorded command string(s)`);
     console.log(`  extracted .......... ${parsed.length} command(s); ${narrative.length} classified as prose (no command present)`);
     console.log(`  resolution ......... ${resolved.length} resolve, ${dead.length} DEAD (referent does not exist), ${unchecked.length} not statically checkable`);
+    console.log(
+      `  ratchet basis ...... ${dead.length} dead here + ${environmentSensitive.length} that resolve only via generated state ` +
+      `(dist/, node_modules/, .harness/bin/) = ${deadOnCleanCheckout} on a clean checkout`,
+    );
+    console.log(`                       ^ set --max-dead from THIS number: it does not depend on what this machine happens to have built.`);
     console.log(`  executable ......... ${runnable.length} candidate(s) -> ${uniqueRunnable.size} unique after dedup`);
     if (EXECUTE) {
       console.log(`  executed ........... ${executions.length}: ${passedRuns.length} exit 0, ${failedRuns.length} non-zero, ${inconclusiveRuns.length} search-with-no-match (outcome not assertable from an exit code)`);

@@ -87,6 +87,21 @@ export interface RuntimeTrace {
     readonly entries: number;
     readonly limit: number;
   };
+  /**
+   * GT-593: how much of this run came out of the step journal rather than being
+   * executed again. Present whenever a journal is wired and the request carries a
+   * `correlationId` (without one there is no run identity, so nothing is
+   * resumable). `resumed` names the steps whose recorded output was replayed and
+   * `recorded` the steps this attempt actually ran — so an auditor can see, for a
+   * run that survived a `kill -9`, exactly which non-deterministic answers are
+   * the original ones and which were re-rolled.
+   */
+  readonly resumedFrom?: {
+    readonly runId: string;
+    readonly priorEntries: number;
+    readonly resumed: readonly string[];
+    readonly recorded: readonly string[];
+  };
 }
 
 export interface AgentRuntimeResult {

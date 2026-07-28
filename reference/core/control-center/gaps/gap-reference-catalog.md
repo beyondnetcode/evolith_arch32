@@ -7223,7 +7223,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Acceptance criteria:**
   - [x] A real round-trip verdict in CI records `decision != SKIPPED` over a genuine architectural violation.
   - [x] A consumer-driven contract test runs in the Core CI and fails when the envelope shape drifts.
-  - [ ] The evaluate request and `EvaluationResult` schemas are in `MACHINE_CONTRACT_SET` and re-pinned in the Tracker.
+  - [x] The evaluate request and `EvaluationResult` schemas are in `MACHINE_CONTRACT_SET` and re-pinned in the Tracker.
 
 #### GT-574
 
@@ -7251,9 +7251,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `agent-runtime` · **Criticality:** P0 · **Complexity:** S
 - **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
 - **Acceptance criteria:**
-  - [ ] The key travels in a header, with timeout, byte/token budget, input redaction and schema-validated output.
-  - [ ] A "Network egress and data handling" section names the endpoint, what is sent, the opt-in and the sub-processor.
-  - [ ] The repository passes its own 9 blocking `AAI-*` rules in a CI check.
+  - [x] The key travels in a header, with timeout, byte/token budget, input redaction and schema-validated output.
+  - [x] A "Network egress and data handling" section names the endpoint, what is sent, the opt-in and the sub-processor.
+  - [x] The repository passes its own 9 blocking `AAI-*` rules in a CI check.
 
 #### GT-576
 
@@ -7946,6 +7946,19 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] A commit with a malformed message is rejected locally, demonstrated by trying one.
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
+
+#### GT-631
+
+**Title:** The Tracker has not re-pinned the evaluate contract the Core now publishes
+
+- **Purpose:** Close the consumer half of the contract, so a Core-side shape change fails on both sides rather than only ours.
+- **Evidence:** **Carved out of [`GT-573`](./gap-reference-catalog.md#gt-573) so its cross-repo half is tracked rather than absorbed into a closure.** The Core half of GT-573's third criterion is done: `evaluation-context` and `evaluation-result` are pinned in `MACHINE_CONTRACT_SET` alongside `gate-evidence` and `output-envelope`, so a change to either shape now fails `10-validate-contract-conformance` instead of silently reaching consumers. What remains is in another repository and cannot be done from here: the **Tracker** must re-pin those two schemas in its own `contracts/evolith-core-contracts.json` with their sha256, bind the three published fixtures (`EVALUATION_RESULT_PASS/FAIL/OPA_GATE_FAIL`) in a DTO binding test, drop or document `resolvedTopology` (which the canonical result never carried), rename its gate `phase` to `phaseId`, and delete its fall-through to `SKIPPED` for a payload carrying a non-blank `overallVerdict`. Until it does, a Core-side shape change is caught here and still surprises the consumer.
+- **Component:** `Evolith Tracker` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Carved out of GT-573 on 2026-07-28 as its Core half closed.
+- **Acceptance criteria:**
+  - [ ] The Tracker pins `evaluation-context` and `evaluation-result` with their sha256 in its own contract set, and its CI fails when either drifts.
+  - [ ] A DTO binding test consumes the three published fixtures and asserts `Passed=false` with non-empty gates on the OPA-gate FAIL case.
+  - [ ] `resolvedTopology` and the gate `phase`/`phaseId` mismatch are resolved, and the fall-through to `SKIPPED` for a non-blank `overallVerdict` is deleted.
 
 #### GT-630
 

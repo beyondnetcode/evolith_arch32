@@ -7885,9 +7885,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Component:** `Evolith CLI` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Extraído de GT-571 el 2026-07-28, al ejecutar la secuencia del README contra el artefacto publicado en vez de asumirla.
 - **Acceptance criteria:**
-  - [ ] El quickstart literal del README ejecuta los pasos 1-6 sin ningún exit distinto de cero salvo el veredicto bloqueante documentado de `validate`.
+  - [x] El quickstart literal del README ejecuta los pasos 1-6 sin ningún exit distinto de cero salvo el veredicto bloqueante documentado de `validate`.
   - [ ] `init` y `scaffold` coinciden en la raíz del workspace, probado por un test que ejecuta uno tras otro y falla sin el arreglo.
-  - [ ] Ningún mensaje de error dice al usuario que ejecute un comando que ya ejecutó.
+  - [x] Ningún mensaje de error dice al usuario que ejecute un comando que ya ejecutó.
 
 #### GT-625
 

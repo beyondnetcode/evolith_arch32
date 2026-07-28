@@ -7792,7 +7792,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Documentation` · **Criticidad:** P1 · **Complejidad:** S
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-621
 
@@ -7830,6 +7830,19 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Un commit con mensaje malformado se rechaza en local, demostrado intentándolo.
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
+
+#### GT-628
+
+**Title:** Diecinueve documentos están en el slot de idioma equivocado, incluidas las dos guías de interfaz principales
+
+- **Purpose:** Dar a cada par bilingüe una contraparte real, para que los puntos de entrada en inglés existan antes de que el proyecto sea público.
+- **Evidence:** **Diecinueve documentos están en el slot de idioma equivocado, y la puerta no podía ver ninguno hasta el 2026-07-28.** Descubierto al activar la heurística de idioma de GT-620. OCHO slots ingleses están escritos en español — `reference/core/interfaces/using-the-mcp.md` (956 palabras funcionales españolas frente a 107 inglesas), `using-the-rest-api.md` (1231 frente a 35), `src/packages/mcp-server/README.md` (573 frente a 21), `reference/knowledge/README.md`, `reference/knowledge/canonical/glossary/knowledge.md`, `reference/core/sdlc/governance/adr-0090-rule-language-policy.md` y dos plantillas de artefacto SDLC. ONCE slots españoles están escritos en inglés, incluidos los `.es.md` de tres ADRs de SEGURIDAD (0120 prevención de SSRF, 0121 validación de entrada, 0122 seguridad en ejecución de shell) y ambas copias de `ADR_COVERAGE.es.md`. El proyecto está a las puertas del código abierto y sus dos guías de interfaz principales — MCP y REST — no tienen ningún punto de entrada en inglés, exactamente el hallazgo que GT-620 registró para la guía del CLI. Quedan en línea base POR NOMBRE en `bilingual-suite.mjs` para que la clase no pueda crecer; cada entrada borrada de esa lista es una traducción que ocurrió de verdad.
+- **Component:** `Documentation` · **Criticality:** P1 · **Complexity:** L
+- **Provenance:** Encontrado el 2026-07-28 al activar la heurística de idioma de GT-620.
+- **Acceptance criteria:**
+  - [ ] `LANGUAGE_BASELINE` en `bilingual-suite.mjs` está vacío y la constante se elimina.
+  - [ ] `using-the-mcp.md` y `using-the-rest-api.md` se leen como inglés, verificado por la heurística.
+  - [ ] Los `.es.md` de ADR-0120, ADR-0121 y ADR-0122 se leen como español.
 
 #### GT-627
 

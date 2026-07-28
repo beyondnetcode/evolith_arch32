@@ -7887,7 +7887,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Documentation` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-621
 
@@ -7925,6 +7925,19 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] A commit with a malformed message is rejected locally, demonstrated by trying one.
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
+
+#### GT-628
+
+**Title:** Nineteen documents sit in the wrong language slot, including both main interface guides
+
+- **Purpose:** Give every bilingual pair a real counterpart, so the English entry points exist before the project is public.
+- **Evidence:** **Nineteen documents sit in the wrong language slot, and the gate could not see any of them until 2026-07-28.** Found the moment GT-620's language heuristic was switched on. EIGHT English slots are written in Spanish — `reference/core/interfaces/using-the-mcp.md` (956 Spanish function words vs 107 English), `using-the-rest-api.md` (1231 vs 35), `src/packages/mcp-server/README.md` (573 vs 21), `reference/knowledge/README.md`, `reference/knowledge/canonical/glossary/knowledge.md`, `reference/core/sdlc/governance/adr-0090-rule-language-policy.md` and two SDLC artifact templates. ELEVEN Spanish slots are written in English, including the `.es.md` of three SECURITY ADRs (0120 SSRF prevention, 0121 input validation, 0122 shell-execution safety) and both copies of `ADR_COVERAGE.es.md`. The project is at the cusp of open source and its two main interface guides — MCP and REST — have no English entry point at all, exactly the finding GT-620 recorded for the CLI guide. They are baselined BY NAME in `bilingual-suite.mjs` so the class cannot grow; every entry deleted from that list is a translation that actually happened.
+- **Component:** `Documentation` · **Criticality:** P1 · **Complexity:** L
+- **Provenance:** Found on 2026-07-28 the moment GT-620's language heuristic was switched on.
+- **Acceptance criteria:**
+  - [ ] `LANGUAGE_BASELINE` in `bilingual-suite.mjs` is empty and the constant is deleted.
+  - [ ] `using-the-mcp.md` and `using-the-rest-api.md` read as English, asserted by the heuristic.
+  - [ ] The `.es.md` of ADR-0120, ADR-0121 and ADR-0122 read as Spanish.
 
 #### GT-627
 

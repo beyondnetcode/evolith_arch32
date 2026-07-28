@@ -27,8 +27,8 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---:|---|---|---|
 | 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-575](../gaps/gap-reference-catalog.es.md#gt-575), [GT-601](../gaps/gap-reference-catalog.es.md#gt-601), [GT-572](../gaps/gap-reference-catalog.es.md#gt-572), [GT-573](../gaps/gap-reference-catalog.es.md#gt-573), [GT-602](../gaps/gap-reference-catalog.es.md#gt-602), [GT-603](../gaps/gap-reference-catalog.es.md#gt-603), [GT-595](../gaps/gap-reference-catalog.es.md#gt-595), [GT-604](../gaps/gap-reference-catalog.es.md#gt-604), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) |
 | 2 | Área de mayor riesgo | `Evolith Core` tiene la mayor carga ponderada abierta. | [GT-601](../gaps/gap-reference-catalog.es.md#gt-601), [GT-583](../gaps/gap-reference-catalog.es.md#gt-583), [GT-589](../gaps/gap-reference-catalog.es.md#gt-589), [GT-614](../gaps/gap-reference-catalog.es.md#gt-614), [GT-587](../gaps/gap-reference-catalog.es.md#gt-587), [GT-591](../gaps/gap-reference-catalog.es.md#gt-591), +3 |
-| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-575](../gaps/gap-reference-catalog.es.md#gt-575), [GT-601](../gaps/gap-reference-catalog.es.md#gt-601), [GT-586](../gaps/gap-reference-catalog.es.md#gt-586), [GT-597](../gaps/gap-reference-catalog.es.md#gt-597), [GT-607](../gaps/gap-reference-catalog.es.md#gt-607), [GT-620](../gaps/gap-reference-catalog.es.md#gt-620), [GT-624](../gaps/gap-reference-catalog.es.md#gt-624), [GT-626](../gaps/gap-reference-catalog.es.md#gt-626) |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-586](../gaps/gap-reference-catalog.es.md#gt-586), [GT-597](../gaps/gap-reference-catalog.es.md#gt-597), [GT-607](../gaps/gap-reference-catalog.es.md#gt-607), [GT-620](../gaps/gap-reference-catalog.es.md#gt-620), [GT-624](../gaps/gap-reference-catalog.es.md#gt-624), [GT-626](../gaps/gap-reference-catalog.es.md#gt-626), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), +12 |
+| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-575](../gaps/gap-reference-catalog.es.md#gt-575), [GT-601](../gaps/gap-reference-catalog.es.md#gt-601), [GT-586](../gaps/gap-reference-catalog.es.md#gt-586), [GT-597](../gaps/gap-reference-catalog.es.md#gt-597), [GT-607](../gaps/gap-reference-catalog.es.md#gt-607), [GT-624](../gaps/gap-reference-catalog.es.md#gt-624), [GT-626](../gaps/gap-reference-catalog.es.md#gt-626) |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-586](../gaps/gap-reference-catalog.es.md#gt-586), [GT-597](../gaps/gap-reference-catalog.es.md#gt-597), [GT-607](../gaps/gap-reference-catalog.es.md#gt-607), [GT-624](../gaps/gap-reference-catalog.es.md#gt-624), [GT-626](../gaps/gap-reference-catalog.es.md#gt-626), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-580](../gaps/gap-reference-catalog.es.md#gt-580), +12 |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-622](../gaps/gap-reference-catalog.es.md#gt-622), [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-614](../gaps/gap-reference-catalog.es.md#gt-614), [GT-616](../gaps/gap-reference-catalog.es.md#gt-616), [GT-617](../gaps/gap-reference-catalog.es.md#gt-617), +12 |
 
 ## Bloqueadores Actuales
@@ -50,14 +50,14 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Indicador | Valor |
 |---|---:|
 | Fecha canónica del tablero | 2026-07-26 |
-| Gaps totales | 627 |
-| Gaps cerrados | 576 |
+| Gaps totales | 628 |
+| Gaps cerrados | 577 |
 | Gaps pendientes | 51 |
 | P0 abiertos | 9 |
 | P1 abiertos | 20 |
 | P2 abiertos | 18 |
 | Cierre total | 91.9% |
-| Registros de evidencia de cierre | 558 |
+| Registros de evidencia de cierre | 559 |
 | Readiness registrado | 4 PASS |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |

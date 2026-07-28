@@ -8543,6 +8543,23 @@
         "The generator self-test was red on two paths missing the src/ prefix (a pre-existing failure); fixed, 8/8, and run in the same required job."
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-620",
+      "closedAt": "2026-07-28",
+      "closureCommit": "9a462387",
+      "evidence": [
+        ".harness/scripts/lib/language-heuristic.mjs",
+        ".harness/scripts/ci/suites/bilingual-suite.mjs",
+        ".harness/scripts/ci/suites/bilingual-suite.test.mjs",
+        "reference/core/interfaces/using-the-cli.md"
+      ],
+      "validationCommands": [
+        "Restoring the Spanish text into the English slot turns 04-check-bilingual-parity RED: \"the ENGLISH slot reads as Spanish (710 Spanish function words vs 71 English)\". Restoring the English guide turns it green.",
+        "node --test .harness/scripts/ci/suites/bilingual-suite.test.mjs -> 7/7: both verdicts, both refusals to judge (sample too small, majority too close), and the code/flag/link stripping trap.",
+        "Switching the heuristic on surfaced 19 further mislabelled documents, baselined BY NAME and registered as GT-628."
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

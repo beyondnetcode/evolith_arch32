@@ -7220,10 +7220,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith Core` · **Criticidad:** P0 · **Complejidad:** S
 - **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
 - **Criterios de aceptación:**
-  - [ ] `rulesExecuted` contiene todas las reglas que la evaluación ejecutó realmente, verificado por test contra una fixture de recuento conocido.
-  - [ ] `engine` refleja el evaluador que corrió, con test para la ruta nativa y la de OPA.
-  - [ ] Una exportación SARIF de una evaluación real declara `evaluatedRules` distinto de cero.
-  - [ ] `missingEvidence` y `risks` se pueblan o se retiran del contrato; un campo siempre vacío no se envía.
+  - [x] `rulesExecuted` contiene todas las reglas que la evaluación ejecutó realmente, verificado por test contra una fixture de recuento conocido.
+  - [x] `engine` refleja el evaluador que corrió, con test para la ruta nativa y la de OPA.
+  - [x] Una exportación SARIF de una evaluación real declara `evaluatedRules` distinto de cero.
+  - [x] `missingEvidence` y `risks` se pueblan o se retiran del contrato; un campo siempre vacío no se envía.
 
 #### GT-602
 
@@ -7349,7 +7349,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith CLI` · **Criticidad:** P1 · **Complejidad:** M
 - **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
 - **Criterios de aceptación:**
-  - [ ] Todo comando sale con un código de la taxonomía publicada, aseverado por test.
+  - [x] Todo comando sale con un código de la taxonomía publicada, aseverado por test.
   - [ ] `--format json`/`ndjson` escribe solo datos en stdout; todo diagnóstico va a stderr.
   - [ ] Un ruleset con paridad Rego falla ante cualquier comando que salga fuera de la taxonomía.
 

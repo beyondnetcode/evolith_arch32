@@ -1,89 +1,92 @@
 # reference/knowledge — Evolith Core Knowledge OS (M0)
 
-Conocimiento **del producto**, canónico y versionado, para que cualquier agente
-(Claude / ChatGPT / Gemini / BMAD / Copilot / MCP) "arranque experto" sin depender
-de memoria conversacional. *Memoria para el producto, no para la IA.*
+Canonical, versioned knowledge **about the product**, so that any agent (Claude /
+ChatGPT / Gemini / BMAD / Copilot / MCP) "starts expert" without depending on
+conversational memory. *Memory for the product, not for the AI.*
 
-Diseño completo: `reference/specs/architecture/knowledge-os-proposal.md` (en el satélite Tracker).
+Full design: `reference/specs/architecture/knowledge-os-proposal.md` (in the Tracker satellite).
 
-## Zonas
+## Zones
 
-- `canonical/` — **única fuente de verdad**, autoral, revisable en PR.
-  - `product.yaml` — identidad del producto (cadencia larga, sin oráculo).
-  - `packs/*.pack.yaml` — packs de conocimiento por bounded-context (manifiestos de
-    **composición**: absorben por referencia; cuerpo autoral solo donde hay hueco).
-- `knowledge.index.yaml` — índice maestro (plano, estratificado en capas L0..L3).
-- `okf/` — **proyección OKF v0.1 publicada** (Open Knowledge Format): el corpus canónico
-  exportado como bundle markdown+frontmatter portable, **commiteado y legible al clonar**,
-  consumible por cualquier agente externo sin conocer nuestro esquema YAML. Es **generado**
-  (nunca editado a mano, nunca autoridad); un gate `--verify` prueba que
-  `publicado == regenerar(canonical)`. El Core es **YAML-first**; OKF es superficie de
-  **intercambio**, no de autoría. Diseño: [ADR-0105](../core/architecture/adrs/core/0105-okf-knowledge-projection.md).
-- `derived/` — **caché regenerable** (embeddings/índices RAG). `.gitignore`-ado; NUNCA
-  autoridad, NUNCA editado a mano. Lo produce `rag-sync.mjs`.
+- `canonical/` — the **single source of truth**: authored, reviewable in a PR.
+  - `product.yaml` — product identity (slow cadence, no oracle).
+  - `packs/*.pack.yaml` — knowledge packs per bounded context (**composition**
+    manifests: they absorb by reference, and carry authored body only where there
+    is a gap).
+- `knowledge.index.yaml` — master index (flat, layered L0..L3).
+- `okf/` — the **published OKF v0.1 projection** (Open Knowledge Format): the canonical
+  corpus exported as a portable markdown+frontmatter bundle, **committed and readable on
+  clone**, consumable by any external agent without knowing our YAML schema. It is
+  **generated** (never hand-edited, never authoritative); a `--verify` gate proves that
+  `published == regenerate(canonical)`. The Core is **YAML-first**; OKF is an **exchange**
+  surface, not an authoring one. Design: [ADR-0105](../core/architecture/adrs/core/0105-okf-knowledge-projection.md).
+- `derived/` — a **regenerable cache** (RAG embeddings and indexes). Gitignored; NEVER
+  authoritative, NEVER hand-edited. Produced by `rag-sync.mjs`.
 
-## Qué REUSA (no duplica)
+## What it REUSES (rather than duplicating)
 
-| Necesidad | Ya existe en el Core |
+| Need | Already in the Core |
 |---|---|
-| Intake de conocimiento externo (KI/SRC) | `product/research/intake/`, `.harness/scripts/ci/17-validate-knowledge-intake.mjs` |
-| Anti-drift dual native+OPA | `.harness/scripts/ci/18-validate-knowledge-parity.mjs` |
-| Embeddings / RAG (write-side) | `.harness/scripts/ci/rag-sync.mjs`, `14-rag-index-sync.mjs` |
-| Query del corpus (read-side) | `IKnowledgePort` (`src/packages/agent-runtime/src/domain/ports/knowledge.port.ts`) |
-| Superficie MCP | `corpus-resource.handler.ts` (`src/packages/mcp-server`) |
-| Frescura de ADRs | `.harness/scripts/adr-freshness-monitor.mjs` |
-| Allow-list de KI para RAG | `src/rulesets/schema/knowledge-projection.schema.json` |
+| External knowledge intake (KI/SRC) | `product/research/intake/`, `.harness/scripts/ci/17-validate-knowledge-intake.mjs` |
+| Dual native+OPA anti-drift | `.harness/scripts/ci/18-validate-knowledge-parity.mjs` |
+| Embeddings / RAG (write side) | `.harness/scripts/ci/rag-sync.mjs`, `14-rag-index-sync.mjs` |
+| Corpus queries (read side) | `IKnowledgePort` (`src/packages/agent-runtime/src/domain/ports/knowledge.port.ts`) |
+| MCP surface | `corpus-resource.handler.ts` (`src/packages/mcp-server`) |
+| ADR freshness | `.harness/scripts/adr-freshness-monitor.mjs` |
+| KI allow-list for RAG | `src/rulesets/schema/knowledge-projection.schema.json` |
 
-## Uso (M0, resolver local)
+## Usage (M0, local resolver)
 
 ```bash
 node .harness/scripts/knowledge-resolve.mjs --list
 node .harness/scripts/knowledge-resolve.mjs --pack knowledge-and-corpus
-node .harness/scripts/knowledge-resolve.mjs --freshness   # STALE avisa; drift de oráculo bloquea
+node .harness/scripts/knowledge-resolve.mjs --freshness   # STALE warns; oracle drift blocks
 ```
 
-### Proyección OKF publicada (bundle → `okf/`)
+### Published OKF projection (bundle → `okf/`)
 
 ```bash
-node .harness/scripts/knowledge-okf-project.mjs                 # regenera el bundle publicado
-node .harness/scripts/knowledge-okf-project.mjs --verify        # conformidad + up-to-date (gate CI)
-node .harness/scripts/knowledge-okf-project.mjs --check         # solo conformidad, sin escribir
-node --test .harness/scripts/knowledge-okf-project.test.mjs     # tests unitarios
+node .harness/scripts/knowledge-okf-project.mjs                 # regenerate the published bundle
+node .harness/scripts/knowledge-okf-project.mjs --verify        # conformance + up-to-date (CI gate)
+node .harness/scripts/knowledge-okf-project.mjs --check         # conformance only, writes nothing
+node --test .harness/scripts/knowledge-okf-project.test.mjs     # unit tests
 ```
 
-> Editaste `canonical/`? **Regenera y re-stagea** el bundle: `node .harness/scripts/knowledge-okf-project.mjs && git add reference/knowledge/okf`. El gate `--verify` (y el pre-commit) bloquean si el bundle publicado quedó desincronizado.
+> Edited `canonical/`? **Regenerate and re-stage** the bundle: `node .harness/scripts/knowledge-okf-project.mjs && git add reference/knowledge/okf`. The `--verify` gate (and the pre-commit hook) block if the published bundle fell out of sync.
 
-Gobernanza de la proyección (habilidad de Winston — ver
+Governance of the projection (one of Winston's skills — see the
 [playbook](../../.harness/playbooks/okf-standard-watch-playbook.md)):
 
 ```bash
-node .harness/scripts/knowledge-okf-standard-watch.mjs          # vigía del estándar OKF (red, manual)
-node .harness/scripts/knowledge-okf-standard-watch.mjs --accept # reconoce un cambio upstream revisado
+node .harness/scripts/knowledge-okf-standard-watch.mjs          # OKF standard watch (network, manual)
+node .harness/scripts/knowledge-okf-standard-watch.mjs --accept # acknowledge a reviewed upstream change
 ```
 
-- **Guarda pre-commit** (`.husky/pre-commit`): si stageas cambios del corpus, corre `--verify`
-  y **bloquea** si el bundle publicado quedó desincronizado; avisa STALE si el vigía no corre
-  hace >30 días. Corre en cualquier modo, incluso `skip`; paga costo solo si tocaste el corpus.
-- **Gate up-to-date** (`ci/38-validate-okf-projection.mjs`): bloquea CI si el bundle no conforma
-  o quedó desincronizado del corpus (modos governance/auto/full).
-- **Regla de oro:** drift de conformidad/sincronía **bloquea**; vencimiento del estándar solo **avisa**.
+- **Pre-commit guard** (`.husky/pre-commit`): if you stage corpus changes it runs `--verify`
+  and **blocks** when the published bundle is out of sync; it warns STALE if the watch has
+  not run in over 30 days. It runs in every mode, including `skip`, and costs nothing unless
+  you touched the corpus.
+- **Up-to-date gate** (`ci/38-validate-okf-projection.mjs`): blocks CI when the bundle does
+  not conform or has drifted from the corpus (governance/auto/full modes).
+- **Golden rule:** conformance and sync drift **block**; an expired standard only **warns**.
 
-La superficie *hosted* (REST `/api/v1/knowledge` + resource MCP) reusa
-`corpus-resource.handler`; se cablea en M2.
+The *hosted* surface (REST `/api/v1/knowledge` + the MCP resource) reuses
+`corpus-resource.handler`; it is wired in M2.
 
-## Regla de oro
+## Golden rule
 
-Ningún gate de conocimiento pone la rama en rojo por el **paso del tiempo**: la
-frescura vencida degrada a `STALE` (aviso), nunca bloquea. Solo el **drift de
-oráculo** (un símbolo/archivo referenciado que desapareció) bloquea el PR que lo tocó.
+No knowledge gate turns the branch red for **the passage of time**: expired freshness
+degrades to `STALE` (a warning) and never blocks. Only **oracle drift** — a referenced
+symbol or file that disappeared — blocks the PR that touched it.
 
-## Decisiones abiertas (necesitan tu call)
+## Open decisions (they need your call)
 
-1. **Migración en curso:** algunos scripts apuntan a `reference/knowledge/intake` y
-   `reference/architecture/…`, pero el contenido vive en `product/research/intake`
-   y `reference/core/architecture/…`. ¿Se unifica todo bajo `reference/knowledge/`?
-2. **`projection` vs `pack`:** `knowledge-projection.schema.json` es un allow-list de
-   KI para RAG; el `pack` es conocimiento de producto por bounded-context. Son
-   complementarios — conviene confirmar que no se solapan y darle schema al `pack`.
+1. **Migration in flight:** some scripts point at `reference/knowledge/intake` and
+   `reference/architecture/…`, while the content lives in `product/research/intake`
+   and `reference/core/architecture/…`. Should everything be unified under
+   `reference/knowledge/`?
+2. **`projection` vs `pack`:** `knowledge-projection.schema.json` is a KI allow-list for
+   RAG; a `pack` is per-bounded-context product knowledge. They are complementary — worth
+   confirming they do not overlap, and giving the `pack` a schema.
 
-> Estado: **M0 / DRAFT** — Fase 0 "Coexistencia": cataloga lo existente, no mueve archivos.
+> Status: **M0 / DRAFT** — Phase 0 "Coexistence": it catalogs what exists, it moves no files.

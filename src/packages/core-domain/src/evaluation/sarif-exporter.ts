@@ -198,7 +198,12 @@ export function exportEvaluationResultToSarif(
     ...result.gaps.map(gapToSarifResult),
     ...result.risks.map(riskToSarifResult),
   ];
-  const rules: readonly SarifReportingDescriptor[] = [...new Set(results.map((r) => r.ruleId))]
+  // GT-601: `tool.driver.rules` is the SARIF rule CATALOG of the run — every rule the
+  // engine executed, not only the ones that produced a finding. A clean evaluation
+  // used to emit an empty catalog, which read as "0 rules evaluated".
+  const rules: readonly SarifReportingDescriptor[] = [
+    ...new Set([...results.map((r) => r.ruleId), ...result.rulesExecuted.map((r) => r.ruleId)]),
+  ]
     .sort()
     .map((id) => ({ id }));
 

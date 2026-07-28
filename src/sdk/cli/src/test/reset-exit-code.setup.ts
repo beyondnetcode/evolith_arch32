@@ -18,3 +18,21 @@ const original = process.exitCode;
 afterEach(() => {
   process.exitCode = original;
 });
+
+/**
+ * GT-611 — model an interactive terminal by DEFAULT in unit tests.
+ *
+ * Jest runs with `process.stdin.isTTY` undefined, which is exactly the signal
+ * the new prompt boundary reads as "nobody can answer this". Without an
+ * explicit stance, every existing spec that exercises a wizard (`adr`,
+ * `handoff`, `scaffold`, `standards`, `history`, `WizardService`) would start
+ * failing for an environmental reason that has nothing to do with what it
+ * asserts, and the honest interactive behaviour would go untested.
+ *
+ * So the default here is "a human is present", and the specs that assert the
+ * MACHINE contract — `non-interactive-contract.spec.ts` and the per-command
+ * ones — delete this variable and set `process.stdin.isTTY` themselves. That
+ * keeps the guard under test where it belongs instead of turning the whole
+ * suite into an assertion about jest's stdin.
+ */
+process.env.EVOLITH_FORCE_INTERACTIVE = '1';

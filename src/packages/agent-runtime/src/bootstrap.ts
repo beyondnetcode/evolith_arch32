@@ -82,6 +82,12 @@ export function createAgentRuntime(overrides: AgentRuntimeOverrides = {}): Agent
     engine,
     now: overrides.now,
     id: overrides.id,
+    // GT-612 — bound on the conversation history read back into planning
+    // (undefined ⇒ DEFAULT_MEMORY_HISTORY_LIMIT).
+    memoryHistoryLimit: overrides.memoryHistoryLimit,
+    // GT-610 — how engine-proposed arguments are treated when the skill declares
+    // no input contract (undefined ⇒ sanitized gap-fill).
+    engineArgumentPolicy: overrides.engineArgumentPolicy,
   };
   return { runtime: new AgentRuntimeService(deps), deps };
 }

@@ -5,6 +5,12 @@
 ## Status
 Accepted
 
+> **Implementation status in this repository: none** (verified 2026-07-28).
+> This ADR is a normative standard published *for satellites*; it is Accepted as a decision,
+> not as delivered capability. Nothing in Evolith Core implements it, and nothing enforces it.
+> `rg "AgentTaskRequested" src/` returns zero matches. The command/event schema this ADR mandates has no producer, no consumer and no contract test in the repository; every agentic invocation here is still synchronous.
+> The generated ruleset `rulesets/adr/generated/adr-0089-event-driven-agentic-workflow-pattern.rules.json` carries a single `adr-conformance` rule whose own text says the concrete checks are still "to be wired into the harness", and no evaluator handles that category — `rg "adr-conformance" src/` matches only the generated files themselves. Tracked by GT-607.
+
 ## Date
 2026-06-20
 

@@ -284,7 +284,7 @@ describe('WaiverCommand', () => {
 
       await command.executeCommand(['list'], { json: true });
 
-      const listed = JSON.parse(stdout());
+      const listed = JSON.parse(stdout()).data.waivers;
       expect(listed[0].effectiveStatus).toBe('expired');
       // The STORED status is untouched — only the effective reading changes.
       expect(listed[0].status).toBe('approved');
@@ -301,7 +301,7 @@ describe('WaiverCommand', () => {
 
       await command.executeCommand(['list'], { fingerprint: 'fp-abc', json: true });
 
-      const listed = JSON.parse(stdout());
+      const listed = JSON.parse(stdout()).data.waivers;
       expect(listed.map((w: { waiverRef: string }) => w.waiverRef)).toEqual(['W-1']);
     });
 
@@ -381,7 +381,10 @@ describe('WaiverCommand', () => {
         ref: 'W-1', fingerprint: 'fp', reason: 'r', by: 'u', expires: FUTURE, json: true,
       });
 
-      expect(JSON.parse(stdout())).toMatchObject({ waiverRef: 'W-1', version: 1, status: 'requested' });
+      expect(JSON.parse(stdout())).toMatchObject({
+        success: true,
+        data: { waiverRef: 'W-1', version: 1, status: 'requested' },
+      });
     });
 
     it('prints the approved waiver as parseable JSON on approve', async () => {
@@ -392,7 +395,100 @@ describe('WaiverCommand', () => {
 
       await command.executeCommand(['approve'], { ref: 'W-1', by: 'lead', json: true });
 
-      expect(JSON.parse(stdout())).toMatchObject({ status: 'approved', approvedBy: 'lead' });
+      expect(JSON.parse(stdout())).toMatchObject({
+        success: true,
+        data: { status: 'approved', approvedBy: 'lead' },
+      });
+    });
+  });
+
+  /**
+   * GT-618 — a waiver is the highest-consequence action in the product: it
+   * SUSPENDS a blocking rule. It was also the only command outside the ADR-0073
+   * envelope — no `--format`, a raw array on stdout, no `success`, no `meta`,
+   * no `correlationId` — so the one decision that cancels governance was the one
+   * the Tracker could neither ingest nor correlate.
+   */
+  describe('GT-618 · ADR-0073 envelope', () => {
+    const REQUEST = { ref: 'W-1', fingerprint: 'fp', reason: 'r', by: 'u', expires: FUTURE };
+
+    it('accepts --format json, not only the legacy --json alias', async () => {
+      await command.executeCommand(['request'], { ...REQUEST, format: 'json' });
+
+      const envelope = JSON.parse(stdout());
+      expect(envelope.success).toBe(true);
+      expect(envelope.data.waiverRef).toBe('W-1');
+    });
+
+    it('carries success, meta and a correlationId on every action', async () => {
+      for (const [action, options] of [
+        ['request', REQUEST],
+        ['approve', { ref: 'W-1', by: 'lead' }],
+        ['list', {}],
+      ] as const) {
+        logSpy.mockClear();
+        await command.executeCommand([action], { ...options, format: 'json' } as never);
+
+        const envelope = JSON.parse(stdout());
+        expect(envelope.success).toBe(true);
+        expect(envelope.meta).toMatchObject({
+          command: `evolith waiver ${action}`,
+          schemaVersion: '1.0.0',
+        });
+        expect(typeof envelope.meta.correlationId).toBe('string');
+        expect(envelope.meta.correlationId.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('carries the correlationId of the VERDICT being waived, not a fresh unrelated id', async () => {
+      // Without this, a waiver cannot be joined to the decision it overrides —
+      // which is the entire audit value of recording the waiver at all.
+      const verdictId = '5f0c2f1e-0000-4000-8000-000000000abc';
+
+      await command.executeCommand(['request'], { ...REQUEST, format: 'json', correlationId: verdictId });
+
+      const envelope = JSON.parse(stdout());
+      expect(envelope.meta.correlationId).toBe(verdictId);
+      expect(envelope.data.verdictCorrelationId).toBe(verdictId);
+    });
+
+    it('reports a missing audit flag as an error envelope with exit 3, not an unhandled throw', async () => {
+      await command.executeCommand(['request'], { fingerprint: 'fp', reason: 'r', by: 'u', expires: FUTURE, format: 'json' });
+
+      const envelope = JSON.parse(stdout());
+      expect(envelope).toMatchObject({
+        success: false,
+        error: { code: 'VALIDATION_FAILED', message: '--ref is required for this waiver action' },
+      });
+      // GT-580: a malformed invocation is INVALID INPUT, distinguishable from a
+      // store that could not be read (which stays 1).
+      expect(process.exitCode).toBe(3);
+    });
+
+    it('reports an unknown action as invalid input rather than silently listing', async () => {
+      await command.executeCommand(['aprove'], { ref: 'W-1', by: 'lead', format: 'json' });
+
+      expect(JSON.parse(stdout())).toMatchObject({ success: false, error: { code: 'VALIDATION_FAILED' } });
+      expect(process.exitCode).toBe(3);
+    });
+
+    it('emits ONLY the envelope on stdout, so `| jq` never sees decoration', async () => {
+      await command.executeCommand(['list'], { format: 'json' });
+
+      const printed = logSpy.mock.calls.map((c) => String(c[0]));
+      expect(printed).toHaveLength(1);
+      expect(() => JSON.parse(printed[0])).not.toThrow();
+    });
+
+    it('list returns a keyed collection, not a bare array', async () => {
+      await command.executeCommand(['request'], REQUEST);
+      logSpy.mockClear();
+
+      await command.executeCommand(['list'], { format: 'json' });
+
+      const envelope = JSON.parse(stdout());
+      expect(Array.isArray(envelope)).toBe(false);
+      expect(envelope.data.waivers).toHaveLength(1);
     });
   });
 
@@ -410,6 +506,13 @@ describe('WaiverCommand', () => {
 
     it('parseJson always returns true', () => {
       expect(command['parseJson']()).toBe(true);
+    });
+
+    it.each([
+      ['parseFormat', 'json'],
+      ['parseCorrelationId', 'c-42'],
+    ])('%s returns the value as-is', (method, value) => {
+      expect((command as unknown as Record<string, (v: string) => string>)[method](value)).toBe(value);
     });
   });
 });

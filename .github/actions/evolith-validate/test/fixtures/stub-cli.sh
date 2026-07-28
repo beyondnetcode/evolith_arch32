@@ -7,7 +7,8 @@
 #
 #   STUB_FIXTURE  absolute path to the envelope to emit (empty = write nothing,
 #                 which reproduces a run that never produced a report)
-#   STUB_EXIT     exit code to return (1 = failed governance verdict)
+#   STUB_EXIT     exit code to return, per the GT-580 taxonomy:
+#                 0 pass · 1 tool failure · 2 blocked verdict · 3 invalid input
 set -uo pipefail
 
 OUTPUT=""

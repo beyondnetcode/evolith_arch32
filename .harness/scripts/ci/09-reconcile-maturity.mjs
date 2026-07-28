@@ -39,6 +39,49 @@ const CI_JOB_REFERENCE = /\b[\w./@-]+\.(?:mjs|ya?ml)\b/;
 const ASSESSMENT_DOCS = ['maturity-assessment.md', 'maturity-assessment.es.md'];
 
 /**
+ * Split an assessment edition into its `###` capability blocks.
+ *
+ * A `##` heading closes the current block, so a capability never absorbs the narrative of
+ * the section that follows it.
+ *
+ * @param {string} markdown
+ * @returns {{heading: string, block: string, section: number|null}[]}
+ */
+function capabilityBlocks(markdown) {
+  const blocks = [];
+  let heading = null;
+  let body = [];
+  let section = null;
+
+  const flush = () => {
+    if (heading !== null) blocks.push({ heading, block: body.join('\n'), section });
+    heading = null;
+    body = [];
+  };
+
+  for (const line of markdown.split('\n')) {
+    const sub = line.match(/^###\s+(.*\S)\s*$/);
+    if (sub) {
+      flush();
+      heading = sub[1];
+      continue;
+    }
+    const top = line.match(/^##\s+(?:(\d+)\.)?/);
+    if (top) {
+      flush();
+      section = top[1] ? Number(top[1]) : null;
+      continue;
+    }
+    if (heading !== null) body.push(line);
+  }
+  flush();
+  return blocks;
+}
+
+/** The `State`/`Estado` bullet of a capability block. */
+const STATE_BULLET = /^\s*\*\s+\*\*(?:State|Estado):\*\*\s*`([^`]+)`/m;
+
+/**
  * Audit one assessment edition for `Validated` claims that rest on nothing executable.
  *
  * @param {string} markdown  raw document
@@ -49,45 +92,282 @@ export function auditValidatedEvidence(markdown, source = '<memory>') {
   const violations = [];
   let scanned = 0;
   let validated = 0;
-  let heading = null;
-  let body = [];
 
-  const flush = () => {
-    if (heading !== null) {
-      const block = body.join('\n');
-      const state = block.match(/^\s*\*\s+\*\*(?:State|Estado):\*\*\s*`([^`]+)`/m)?.[1];
-      if (state) {
-        scanned += 1;
-        if (EXECUTABLE_STATES.has(state.trim().toLowerCase())) {
-          validated += 1;
-          // Strip markdown link targets: `[ADR-0010](.../0010-x.md)` -> `[ADR-0010]`.
-          const prose = block.replace(/\]\([^)]*\)/g, ']');
-          if (!FILE_LINE_REFERENCE.test(prose) && !CI_JOB_REFERENCE.test(prose)) {
-            violations.push({ source, heading, state: state.trim() });
-          }
-        }
-      }
+  for (const { heading, block } of capabilityBlocks(markdown)) {
+    const state = block.match(STATE_BULLET)?.[1];
+    if (!state) continue;
+    scanned += 1;
+    if (!EXECUTABLE_STATES.has(state.trim().toLowerCase())) continue;
+    validated += 1;
+    // Strip markdown link targets: `[ADR-0010](.../0010-x.md)` -> `[ADR-0010]`.
+    const prose = block.replace(/\]\([^)]*\)/g, ']');
+    if (!FILE_LINE_REFERENCE.test(prose) && !CI_JOB_REFERENCE.test(prose)) {
+      violations.push({ source, heading, state: state.trim() });
     }
-    heading = null;
-    body = [];
-  };
-
-  for (const line of markdown.split('\n')) {
-    const match = line.match(/^###\s+(.*\S)\s*$/);
-    if (match) {
-      flush();
-      heading = match[1];
-      continue;
-    }
-    if (/^##\s+/.test(line)) {
-      flush();
-      continue;
-    }
-    if (heading !== null) body.push(line);
   }
-  flush();
 
   return { scanned, validated, violations };
+}
+
+// ---------------------------------------------------------------------------
+// GT-596: ISO/IEC 33020:2019 rating scale
+// ---------------------------------------------------------------------------
+//
+// The rule above (GT-576) asks only "is there a citation?". That is a presence test, and a
+// presence test cannot stop a state drifting upward: one executable line in a block of nine
+// aspirational ones satisfies it. GT-596 replaces the homegrown, self-set ladder with the
+// process-attribute achievement rating scale of **ISO/IEC 33020:2019** — N / P / L / F,
+// Not / Partially / Largely / Fully achieved — and adopts its published percentage bands.
+//
+// The achievement percentage is NOT declared by the author. It is recomputed here from the
+// capability's own evidence bullets, using the weights the document already defines for its
+// Evidence-Backed States: an indicator a reader can execute or open at a line counts 1.0, an
+// indicator backed only by an approved decision record counts 0.2 (the document's own
+// `Designed` weight), an indicator backed by nothing counts 0.0.
+//
+// The threshold rule is deliberately ONE-SIDED. A rating may not be asserted unless the
+// recomputed achievement CROSSES the lower bound of the band it claims; claiming LESS than
+// the evidence supports is always legal, because the failure this gap exists for is
+// over-claiming, and because GT-576's conservative downgrades must remain valid.
+
+/**
+ * ISO/IEC 33020:2019 process-attribute achievement rating scale.
+ * Bands are half-open `(lower, upper]` in percent of achievement; `N` also admits 0.
+ */
+export const ISO_33020_SCALE = [
+  { letter: 'N', name: 'Not achieved', lower: 0, upper: 15 },
+  { letter: 'P', name: 'Partially achieved', lower: 15, upper: 50 },
+  { letter: 'L', name: 'Largely achieved', lower: 50, upper: 85 },
+  { letter: 'F', name: 'Fully achieved', lower: 85, upper: 100 },
+];
+
+/**
+ * The Evidence-Backed State ladder of the assessment, in both editions, with the weight the
+ * document assigns to each. The weight is what places a state in an ISO band; nothing here
+ * is free to move without the mapping table in section 2 moving with it.
+ */
+export const STATE_WEIGHT = new Map([
+  ['visioned', 0.0], ['visionado', 0.0],
+  ['designed', 0.2], ['diseñado', 0.2],
+  ['prototyped', 0.5], ['prototipado', 0.5],
+  ['implemented', 0.8], ['implementado', 0.8],
+  ['validated', 1.0], ['validado', 1.0],
+  ['scaled', 1.2], ['escalado', 1.2],
+]);
+
+/** @param {number} percent @returns {{letter: string, name: string, lower: number, upper: number}} */
+export function bandFor(percent) {
+  return ISO_33020_SCALE.find((band) => percent <= band.upper) ?? ISO_33020_SCALE[ISO_33020_SCALE.length - 1];
+}
+
+/** The band a declared Evidence-Backed State is allowed to claim. */
+function bandForState(state) {
+  const weight = STATE_WEIGHT.get(state.trim().toLowerCase());
+  if (weight === undefined) return null;
+  return bandFor(Math.min(weight * 100, 100));
+}
+
+/** A nested evidence bullet — the unit an achievement percentage is computed over. */
+const NESTED_BULLET = /^(?:\s{2,}|\t+)[*-]\s+(.*\S)\s*$/;
+/** A top-level `Evidence`/`Evidencia` bullet that carries its evidence inline. */
+const EVIDENCE_BULLET = /^\s*[*-]\s+\*\*(?:Evidence|Evidencia)[^*]*:\*\*\s*(.*\S)\s*$/;
+/** Any top-level bullet — `State`, `Path to`, the rating itself. Never an indicator. */
+const ANY_BULLET = /^\s*[*-]\s+/;
+/** A markdown link, i.e. a pointer at a decision record or another document. */
+const MARKDOWN_LINK = /\[[^\]]*\]\([^)]*\)/;
+/** An ADR citation in prose, with or without a link. */
+const DECISION_RECORD = /\bADR[-\s]?(?:AI-)?\d+/i;
+
+/** The author-declared rating bullet, in either edition. */
+const DECLARED_RATING =
+  /^\s*[*-]\s+\*\*(?:ISO\/IEC 33020:2019 rating|Calificación ISO\/IEC 33020:2019):\*\*\s*`([NPLF])`/m;
+
+/**
+ * The indicators of a capability block.
+ *
+ * Nested bullets are the indicators when a capability breaks its evidence out; when it states
+ * its evidence on a single line, that line is its one indicator. Continuation lines are folded
+ * into the indicator they belong to so a wrapped citation is not lost.
+ *
+ * @param {string} block
+ * @returns {string[]}
+ */
+export function extractIndicators(block) {
+  const nested = [];
+  const inline = [];
+  let current = null;
+
+  for (const line of block.split('\n')) {
+    const child = line.match(NESTED_BULLET);
+    if (child) {
+      current = { text: child[1] };
+      nested.push(current);
+      continue;
+    }
+    const evidence = line.match(EVIDENCE_BULLET);
+    if (evidence) {
+      current = { text: evidence[1] };
+      inline.push(current);
+      continue;
+    }
+    if (ANY_BULLET.test(line)) {
+      current = null;
+      continue;
+    }
+    if (current && line.trim()) current.text += ` ${line.trim()}`;
+  }
+
+  return (nested.length ? nested : inline).map((indicator) => indicator.text);
+}
+
+/**
+ * Weight one indicator, using the document's own Evidence-Backed State weights.
+ *
+ * 1.0 — executable: a `file:line` a reader can open, or a CI job that can go red.
+ * 0.2 — decided only: an approved decision record and nothing else (the `Designed` weight).
+ * 0.0 — asserted: prose with no citation at all.
+ *
+ * @param {string} text
+ * @returns {number}
+ */
+export function rateIndicator(text) {
+  // Link TARGETS are stripped first, exactly as in the GT-576 rule: a link to
+  // `0010-multi-tenancy-architecture-strategy.md` must never read as a file citation.
+  const prose = text.replace(/\]\([^)]*\)/g, ']');
+  if (FILE_LINE_REFERENCE.test(prose) || CI_JOB_REFERENCE.test(prose)) return 1.0;
+  if (MARKDOWN_LINK.test(text) || DECISION_RECORD.test(text)) return 0.2;
+  return 0.0;
+}
+
+/**
+ * Recompute the ISO/IEC 33020:2019 achievement of a capability from its own evidence.
+ *
+ * @param {string} block
+ * @returns {{indicators: number, achieved: number, percent: number, band: object}}
+ */
+export function rateCapability(block) {
+  const indicators = extractIndicators(block);
+  // Rounded: 0.2 weights accumulate binary-float noise, and `0.6000000000000001/3` in a
+  // violation message reads as a bug in the gate rather than a defect in the document.
+  const achieved = Math.round(indicators.reduce((total, text) => total + rateIndicator(text), 0) * 100) / 100;
+  const percent = indicators.length ? Math.round((achieved / indicators.length) * 1000) / 10 : 0;
+  return { indicators: indicators.length, achieved, percent, band: bandFor(percent) };
+}
+
+/** Does `percent` cross into the claimed band? `N` has no lower bound to cross. */
+function crossesThreshold(percent, band) {
+  return band.letter === 'N' ? percent <= band.upper : percent > band.lower;
+}
+
+/**
+ * Audit one assessment edition against the ISO/IEC 33020:2019 scale.
+ *
+ * Two rules, both mechanical:
+ *   1. the declared letter must be the band of the declared Evidence-Backed State;
+ *   2. the achievement recomputed from the block's own evidence must CROSS that band.
+ *
+ * The state tables of sections 6 and 9 carry a letter but no evidence bullets, so only
+ * rule (1) applies to them — stated as such in section 2 rather than left implicit.
+ *
+ * @param {string} markdown
+ * @param {string} source
+ * @returns {{scanned: number, rows: number, violations: object[], ratings: object[]}}
+ */
+export function auditIsoRatings(markdown, source = '<memory>') {
+  const violations = [];
+  const ratings = [];
+  let scanned = 0;
+
+  for (const { heading, block } of capabilityBlocks(markdown)) {
+    const rawState = block.match(STATE_BULLET)?.[1];
+    if (!rawState) continue;
+    scanned += 1;
+    const state = rawState.trim();
+    const expected = bandForState(state);
+    if (!expected) {
+      violations.push({ source, heading, state, rule: 'unknown-state', detail: 'no weight is defined for this state' });
+      continue;
+    }
+    const declared = block.match(DECLARED_RATING)?.[1];
+    if (!declared) {
+      violations.push({
+        source, heading, state, rule: 'missing-rating',
+        detail: `no ISO/IEC 33020:2019 rating is declared (the state maps to \`${expected.letter}\`)`,
+      });
+      continue;
+    }
+    if (declared !== expected.letter) {
+      violations.push({
+        source, heading, state, rule: 'band-mismatch',
+        detail: `declares \`${declared}\` but state \`${state}\` maps to \`${expected.letter}\` (${expected.name})`,
+      });
+      continue;
+    }
+    const rating = rateCapability(block);
+    if (rating.indicators === 0) {
+      violations.push({
+        source, heading, state, rule: 'no-indicators',
+        detail: 'a rating was declared over zero evidence indicators, so nothing was measured',
+      });
+      continue;
+    }
+    if (!crossesThreshold(rating.percent, expected)) {
+      violations.push({
+        source, heading, state, rule: 'threshold-not-crossed',
+        detail: `achievement recomputed at ${rating.percent}% (${rating.achieved}/${rating.indicators} indicators) `
+          + `does not cross \`${expected.letter}\` (>${expected.lower}%)`,
+      });
+      continue;
+    }
+    ratings.push({ source, heading, state, letter: declared, percent: rating.percent, indicators: rating.indicators });
+  }
+
+  const rows = auditStateTableRows(markdown, source, violations);
+  return { scanned, rows, violations, ratings };
+}
+
+/** Sections whose tables carry an Evidence-Backed State per row rather than per block. */
+const STATE_TABLE_SECTIONS = new Set([6, 9, 12]);
+
+/**
+ * Rule (1) applied to the state tables of sections 6 and 9: the letter next to a state must
+ * be the band that state maps to. These rows have no evidence bullets, so no achievement is
+ * recomputed for them — which section 2 says out loud instead of leaving it to be discovered.
+ */
+function auditStateTableRows(markdown, source, violations) {
+  let section = null;
+  let rows = 0;
+
+  for (const line of markdown.split('\n')) {
+    const heading = line.match(/^##\s+(?:(\d+)\.)?/);
+    if (heading) {
+      section = heading[1] ? Number(heading[1]) : null;
+      continue;
+    }
+    if (!STATE_TABLE_SECTIONS.has(section) || !line.trim().startsWith('|')) continue;
+    const tokens = [...line.matchAll(/`([^`]+)`/g)].map((match) => match[1]);
+    const index = tokens.findIndex((token) => STATE_WEIGHT.has(token.trim().toLowerCase()));
+    if (index === -1) continue;
+    rows += 1;
+    const state = tokens[index].trim();
+    const expected = bandForState(state);
+    const declared = tokens[index + 1];
+    const label = line.match(/\|\s*\*\*([^*]+)\*\*/)?.[1]?.trim() ?? line.trim().slice(0, 60);
+    if (!declared || !/^[NPLF]$/.test(declared)) {
+      violations.push({
+        source, heading: `§${section} — ${label}`, state, rule: 'missing-rating',
+        detail: `the row states \`${state}\` with no ISO/IEC 33020:2019 letter beside it (expected \`${expected.letter}\`)`,
+      });
+      continue;
+    }
+    if (declared !== expected.letter) {
+      violations.push({
+        source, heading: `§${section} — ${label}`, state, rule: 'band-mismatch',
+        detail: `declares \`${declared}\` but state \`${state}\` maps to \`${expected.letter}\` (${expected.name})`,
+      });
+    }
+  }
+  return rows;
 }
 
 /**
@@ -170,6 +450,121 @@ export function selfTestValidatedEvidenceRule() {
 }
 
 /**
+ * Negative self-test for the ISO/IEC 33020:2019 threshold rule (GT-596).
+ *
+ * Same contract as the rule above and for the same reason: it runs on EVERY invocation, and
+ * the FIRST thing it does is prove the rule goes red on input that must be rejected. A guard
+ * nobody has seen fail is indistinguishable from no guard.
+ *
+ * @throws {Error} when the rule fails to behave as specified
+ */
+export function selfTestIsoRatingRule() {
+  const failures = [];
+  const check = (label, condition) => { if (!condition) failures.push(label); };
+  const rules = (markdown, source) => auditIsoRatings(markdown, source).violations.map((v) => v.rule);
+
+  const capability = ({ state = 'Validated', rating = '`F`', evidence }) => [
+    '### Pillar 1: Security & Compliance — **Level 4 (Managed)**',
+    `* **State:** \`${state}\``,
+    `* **ISO/IEC 33020:2019 rating:** ${rating}`,
+    '* **Evidence:**',
+    ...evidence.map((line) => `  * ${line}`),
+    '* **Path to Level 5:** automated penetration testing in CI.',
+  ].join('\n');
+
+  const adrOnly = [
+    'Multi-tenant isolation via RLS ([ADR-0010](../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md)).',
+    'Immutable audit trails via CDC ([ADR-0016](../../architecture/adrs/core/0016-immutable-business-audit-trail.md)).',
+  ];
+  const executable = [
+    'CodeQL — job `codeql-analysis` at `.github/workflows/sdk-cli-ci.yml:362`.',
+    'Telemetry — `NodeSDK` bootstrapped at `src/apps/core-api/src/tracing.ts:7`.',
+  ];
+
+  // (1) RED — the defect itself: `F` claimed over evidence that recomputes to 20%. This is
+  //     the shape GT-576 had to correct by hand, and the shape the old presence test allowed
+  //     the moment a single citation appeared anywhere in the block.
+  check('an `F` claimed over ADR-only evidence must be rejected',
+    rules(capability({ evidence: adrOnly }), 'self-test:iso-under-threshold').includes('threshold-not-crossed'));
+
+  // (2) RED — one executable citation does not buy `F` for a block of five. Precisely what a
+  //     presence test cannot see: 1 of 5 is 20 + 4×0.2 → 36%, which is `P`.
+  check('one executable citation among five indicators must not sustain `F`',
+    rules(capability({ evidence: [executable[0], ...adrOnly, ...adrOnly] }), 'self-test:iso-one-of-five')
+      .includes('threshold-not-crossed'));
+
+  // (3) RED — the band boundary is closed at the top: 50% is `P`, never `L`. An `Implemented`
+  //     capability with 1 executable and 1 unsupported indicator sits exactly on it.
+  check('exactly 50% must not sustain `L`',
+    rules(capability({ state: 'Implemented', rating: '`L`', evidence: [executable[0], 'Load testing is planned.'] }),
+      'self-test:iso-boundary').includes('threshold-not-crossed'));
+
+  // (4) RED — a letter that does not belong to the declared state, whatever the evidence says.
+  check('a letter above the declared state must be rejected',
+    rules(capability({ state: 'Implemented', rating: '`F`', evidence: executable }), 'self-test:iso-band')
+      .includes('band-mismatch'));
+
+  // (5) RED — a state with no rating at all. Silence must not read as compliance.
+  check('a capability with no declared rating must be rejected',
+    rules([
+      '### Pillar 1: Security & Compliance',
+      '* **State:** `Validated`',
+      '* **Evidence:** `src/apps/core-api/src/tracing.ts:7`',
+    ].join('\n'), 'self-test:iso-missing').includes('missing-rating'));
+
+  // (6) RED in Spanish — the ES edition is a published surface, not a translation artifact.
+  check('an ADR-only `Validado` capability must be rejected in the ES edition',
+    rules([
+      '### Pilar 1: Seguridad y Compliance',
+      '* **Estado:** `Validado`',
+      '* **Calificación ISO/IEC 33020:2019:** `F`',
+      '* **Evidencia:**',
+      '  * Aislamiento multi-tenant vía RLS ([ADR-0010](../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.es.md)).',
+    ].join('\n'), 'self-test:iso-es').includes('threshold-not-crossed'));
+
+  // (7) RED — a rating declared over zero indicators measured nothing.
+  check('a rating over zero indicators must be rejected',
+    rules([
+      '### Pillar 1: Security & Compliance',
+      '* **State:** `Validated`',
+      '* **ISO/IEC 33020:2019 rating:** `F`',
+      '* **Path to Level 5:** automated penetration testing in CI.',
+    ].join('\n'), 'self-test:iso-vacuous').includes('no-indicators'));
+
+  // (8) RED — a section 6/9 table row whose letter contradicts its state.
+  check('a state table row with the wrong letter must be rejected',
+    rules('## 6. Pattern Maturity Matrix\n\n| **Strangler Fig** | Critical | `Validated` | `L` | Rationale. |',
+      'self-test:iso-table').includes('band-mismatch'));
+
+  // (9) GREEN — fully executable evidence sustains `F`.
+  check('`F` over fully executable evidence must pass',
+    rules(capability({ evidence: executable }), 'self-test:iso-green').length === 0);
+
+  // (10) GREEN — the rule is ONE-SIDED. Under-claiming is legal, because GT-576's downgrades
+  //      are under-claims and must stay valid: `Designed` over 100% executable evidence passes.
+  check('claiming less than the evidence supports must remain legal',
+    rules(capability({ state: 'Designed', rating: '`P`', evidence: executable }), 'self-test:iso-conservative')
+      .length === 0);
+
+  // (11) GREEN — a `Visioned` capability rates `N`, which has no lower bound to cross.
+  check('`N` must be reachable with no evidence at all',
+    rules(capability({ state: 'Visioned', rating: '`N`', evidence: ['Read-models only when write contention demands it.'] }),
+      'self-test:iso-visioned').length === 0);
+
+  // (12) Anti-vacuous pass: an auditor that parsed nothing has not audited anything.
+  check('a document with no capability blocks must scan zero, and be reported as such',
+    auditIsoRatings('# Narrative only\n\nNo capabilities here.', 'self-test:iso-empty').scanned === 0);
+
+  if (failures.length) {
+    throw new Error(
+      'GT-596 ISO/IEC 33020:2019 threshold rule self-test FAILED — the guard no longer detects the '
+      + 'defect it exists for:\n- ' + failures.join('\n- '),
+    );
+  }
+  return { assertions: 12 };
+}
+
+/**
  * Run the rule over both editions of the living assessment.
  *
  * @returns {{scanned: number, validated: number, violations: object[]}}
@@ -191,6 +586,31 @@ export function auditAssessments() {
   // A zero-block scan means the document structure moved, not that the document is clean.
   assertScanned(scanned, { what: 'maturity capability blocks', where: ASSESSMENT_DOCS });
   return { scanned, validated, violations };
+}
+
+/**
+ * Run the ISO/IEC 33020:2019 rule over both editions of the living assessment.
+ *
+ * @returns {{scanned: number, rows: number, violations: object[], ratings: object[]}}
+ */
+export function auditAssessmentRatings() {
+  const violations = [];
+  const ratings = [];
+  let scanned = 0;
+  let rows = 0;
+
+  for (const name of ASSESSMENT_DOCS) {
+    const file = resolveKey('maturityReports', name);
+    const result = auditIsoRatings(fs.readFileSync(file, 'utf8'), name);
+    scanned += result.scanned;
+    rows += result.rows;
+    violations.push(...result.violations);
+    ratings.push(...result.ratings);
+  }
+
+  assertScanned(scanned, { what: 'ISO/IEC 33020 rated capability blocks', where: ASSESSMENT_DOCS });
+  assertScanned(rows, { what: 'ISO/IEC 33020 rated state table rows', where: ASSESSMENT_DOCS });
+  return { scanned, rows, violations, ratings };
 }
 
 const ROOT = REPO_ROOT;
@@ -354,8 +774,10 @@ function serialize(snapshot) {
 }
 
 function run() {
-  // GT-576: prove the rule still bites BEFORE trusting its verdict on the real document.
+  // GT-576/GT-596: prove both rules still bite BEFORE trusting their verdict on the real
+  // document. A guard that has never been observed failing is the defect, not the control.
   const { assertions } = selfTestValidatedEvidenceRule();
+  const { assertions: isoAssertions } = selfTestIsoRatingRule();
 
   const audit = auditAssessments();
   if (audit.violations.length) {
@@ -370,6 +792,22 @@ function run() {
   console.log(
     `✅ Evidence rule: ${audit.validated}/${audit.scanned} capability blocks claim a live state, `
     + `all backed by a file:line or a CI job (${assertions} self-test assertions passed).`,
+  );
+
+  const iso = auditAssessmentRatings();
+  if (iso.violations.length) {
+    console.error(
+      `❌ ${iso.violations.length} ISO/IEC 33020:2019 rating(s) are not sustained by the evidence.\n`
+      + `   A rating is not a label: the achievement percentage is recomputed from the capability's own\n`
+      + `   indicators and must CROSS the lower bound of the band it claims. Cite executable evidence,\n`
+      + `   or declare the band the evidence actually reaches.\n`
+      + iso.violations.map((v) => `   - [${v.source}] ${v.heading} (${v.rule}) — ${v.detail}`).join('\n'),
+    );
+    process.exit(1);
+  }
+  console.log(
+    `✅ ISO/IEC 33020:2019 rating rule: ${iso.scanned} capability blocks and ${iso.rows} state table rows `
+    + `carry a rating whose recomputed achievement crosses its band (${isoAssertions} self-test assertions passed).`,
   );
 
   const expected = serialize(buildSnapshot());

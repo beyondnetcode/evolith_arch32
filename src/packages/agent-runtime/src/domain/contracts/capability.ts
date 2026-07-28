@@ -72,4 +72,13 @@ export interface SkillDescriptor extends GovernancePosture {
   readonly harnessCapability?: string;
   /** For `evaluation`/`composite`: the Core evaluation kinds to request. */
   readonly evaluationKinds?: readonly string[];
+  /**
+   * GT-610 — declared input contract (JSON-schema-ish, intentionally loose, same
+   * shape as {@link HarnessCapability.inputs}). It is what engine-PROPOSED
+   * arguments are revalidated against before execution: only declared keys are
+   * accepted from an engine, each checked against its declared `type`/`enum`.
+   * It never constrains CALLER-supplied parameters — those stay authoritative
+   * and are validated by the capability itself.
+   */
+  readonly inputs?: Readonly<Record<string, unknown>>;
 }

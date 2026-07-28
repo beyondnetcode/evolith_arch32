@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { EnforceCommand } from './enforce.command';
+import { CLI_EXIT_CODES } from '../../infrastructure/cli/exit-codes';
 
 /** The compiled boundary contract fed to the edit gate (GT-526). */
 const BOUNDARY_RULES = [
@@ -126,7 +127,9 @@ describe('EnforceCommand — enforce edit (GT-526 · cross-agent edit-time gate)
     expect(env.success).toBe(false);
     expect(env.error.code).toBe('VALIDATION_FAILED');
     expect(env.error.message).toMatch(/--rules/);
-    expect(exitSpy).toHaveBeenCalledWith(1);
+    // GT-580: a missing required flag is INVALID INPUT (3). Exit 2 stays
+    // reserved for the edit VETO, which is the blocking verdict of this command.
+    expect(exitSpy).toHaveBeenCalledWith(CLI_EXIT_CODES.INVALID_INPUT);
   });
 
   it('rejects an invalid JSON payload (VALIDATION_FAILED, exit 1)', async () => {

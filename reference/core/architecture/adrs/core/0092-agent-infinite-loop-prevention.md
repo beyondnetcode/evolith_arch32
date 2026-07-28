@@ -5,6 +5,12 @@
 ## Status
 Accepted
 
+> **Implementation status in this repository: none** (verified 2026-07-28).
+> This ADR is a normative standard published *for satellites*; it is Accepted as a decision,
+> not as delivered capability. Nothing in Evolith Core implements it, and nothing enforces it.
+> `rg "X-Agent-Depth" src/` returns zero matches. Neither the execution-depth header, the `X-Agent-Chain` cycle-detection header, nor any circuit breaker derived from them exists in the codebase.
+> The generated ruleset `rulesets/adr/generated/adr-0092-agent-infinite-loop-prevention-and-circuit-breaker-rules.rules.json` carries a single `adr-conformance` rule whose own text says the concrete checks are still "to be wired into the harness", and no evaluator handles that category — `rg "adr-conformance" src/` matches only the generated files themselves. Tracked by GT-607.
+
 ## Date
 2026-06-20
 

@@ -27,8 +27,9 @@ Por ejemplo:
 evolith-cli validate --satellite . --core ../evolith-core
 ```
 
-Si instalaste el paquete, el binario es `evolith-cli`. Si trabajas dentro del
-monorepo, el equivalente es `node src/sdk/cli/dist/main.js <comando>`.
+Si instalaste el paquete, el binario es `evolith-cli` (el alias corto `evolith`
+se instala junto a él y es el que imprime la ayuda integrada). Si trabajas dentro
+del monorepo, el equivalente es `node src/sdk/cli/dist/main.js <comando>`.
 
 Para ver la ayuda de cualquier comando, añade `--help`:
 
@@ -79,14 +80,28 @@ Y cuando algo falla:
 ### 2.2. Códigos de salida — para CI
 
 El código de salida del proceso refleja el **veredicto**, no solo si el comando
-corrió:
+corrió. Hay cuatro, y la distinción entre ellos es lo importante:
 
-- **`0`** → la operación pasó (validación limpia, gate aprobado).
-- **distinto de `0`** → veredicto negativo (validación con violaciones, gate
-  fallido) o error de ejecución.
+| Código | Significado | Qué debería hacer un pipeline |
+|:------:|-------------|-------------------------------|
+| **`0`** | Pasa — el comando corrió y nada bloquea | Continuar |
+| **`1`** | Fallo de herramienta — el comando **no** pudo producir un veredicto (E/S, red, corpus de reglas irresoluble, un crash) | Fallar el paso, pero **no** reportar el repositorio como no conforme |
+| **`2`** | Bloqueado — el comando corrió y el veredicto bloquea (gate fallido, evaluación rechazada, edición vetada) | Fallar el paso; esto **sí** es un hallazgo sobre el código |
+| **`3`** | Entrada inválida — la invocación está mal (acción desconocida, flag ausente, un prompt requerido sin TTY) | Corregir la invocación y reintentar |
 
-Esto te deja poner `evolith-cli validate …` directamente en un pipeline: si falla,
-el pipeline falla.
+La razón de separar `1` y `2` es que unirlos hace que un pipeline afirme algo que
+no estableció. Un repositorio cuya validación reventó **no** ha quedado demostrado
+como no conforme — no ha sido evaluado en absoluto. Tratarlos igual es el inverso
+de un gate que reporta verde sobre un repo sin evaluar, y está igual de mal.
+
+Poner `evolith-cli validate …` en un pipeline sigue funcionando sin lógica extra:
+cualquier código distinto de cero falla el paso. Ramifica por el código sólo
+cuando quieras distinguir "el gate bloqueó" de "el gate nunca corrió" — por
+ejemplo, para reintentar un `1` y abrir una incidencia ante un `2`.
+
+La GitHub Action `evolith-validate` lo expone como `exit-code` junto a
+`compliance-status`, donde un `1` o un `3` afloran como `error` / `invalid-input`
+en vez de como `non-compliant`.
 
 ### 2.3. Dónde está tu satélite y dónde está el Core — `--satellite` y `--core`
 
@@ -258,7 +273,8 @@ persistentes o resueltas respecto a la última corrida).
 evolith-cli drift --path . --format json
 ```
 
-**Opciones:** `--path <ruta>` (el satélite a analizar) y `--format`.
+**Opciones:** `--path <ruta>` (el satélite a analizar), `-l, --level <nivel>`
+(la topología declarada del eje progresivo), `--history`, `--trend` y `--format`.
 
 **Qué esperar.** El envelope con `data.driftDetected`, `data.declaredLevel` vs
 `data.detectedLevel` y la lista de violaciones.
@@ -560,8 +576,9 @@ el detalle de cada evidencia exigida) y, además, calcula las cuatro **métricas
 DORA** a partir del historial de git. Es la foto de "¿en qué punto del ciclo
 estoy y cómo va mi entrega?".
 
-A diferencia de otros comandos, `gate-status` **no** recibe `--satellite` ni
-`--core`: opera siempre sobre el directorio actual (`cwd`).
+A diferencia de otros comandos, `gate-status` **no** recibe `--satellite`: opera
+siempre sobre el directorio actual (`cwd`). Sí acepta `-c, --core` para apuntar
+al checkout que tiene las compuertas SDLC canónicas (autodetectado por defecto).
 
 **Uso básico:**
 
@@ -1030,7 +1047,7 @@ evolith-cli agents --list     # lista los agentes instalados
 | `-l, --list` (o `agents list`) | Lista los agentes instalados en el repositorio. |
 | `-i, --install [nombre]` (o `agents install`) | Instala un agente nuevo: pregunta nombre, plantilla (`standard`/`minimal`/`enterprise`), descripción y qué ADRs/rulesets incluir. |
 | `-r, --remove [nombre]` (o `agents remove`) | Elimina un agente instalado (pide confirmación; es irreversible). |
-| `agents validate` | Valida el ruleset de un agente contra el esquema y reporta los problemas encontrados. |
+| `agents validate` | Valida el ruleset de un agente contra el esquema y reporta los problemas encontrados. `--name <agente>` es obligatorio con `--format json`. |
 | `agents upgrade` | Sube la versión *patch* del agente y actualiza su ruleset. |
 | `--run [intent]` (o `agents run`) | Envía un *intent* al Agent Runtime (URL en `AGENT_RUNTIME_URL`, por defecto `http://localhost:3000`) y muestra el resultado. |
 | `--format [tipo]` | Formato de salida: `json`, `table`, `yaml`. |

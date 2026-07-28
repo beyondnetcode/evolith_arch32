@@ -1,5 +1,41 @@
-if npx --no -- commitlint --version >/dev/null 2>&1; then
-  npx --no -- commitlint --edit "$1"
-else
-  echo "commitlint is not installed — skipping commit message lint"
+# GT-623 — Conventional Commits enforcement. THIS HOOK MUST NOT FAIL OPEN.
+#
+# WHAT WAS WRONG
+# This hook used to be:
+#
+#     if npx --no -- commitlint --version >/dev/null 2>&1; then
+#       npx --no -- commitlint --edit "$1"
+#     else
+#       echo "commitlint is not installed — skipping commit message lint"
+#     fi
+#
+# commitlint was in neither `dependencies` nor `devDependencies` and no config
+# existed, so the `else` branch was the ONLY branch that ever ran — on every
+# commit, exiting zero. The repository mandates Conventional Commits in three
+# places and had a green hook proving nothing. Failing open is worse than having
+# no hook at all: it manufactures the appearance of enforcement, and nobody
+# audits a check that has never once complained.
+#
+# WHY IT NOW EXITS NON-ZERO WHEN THE LINTER IS MISSING
+# "The tool is absent" and "the message is fine" are different facts and must not
+# share an exit code. If commitlint cannot run, this hook does not know whether
+# the message is valid, and reporting success for an unknown is the exact defect
+# above. `npm ci` at the repository root installs it; the escape hatch is
+# `--no-verify`, which at least leaves the author aware they took it.
+#
+# Husky 9 invokes this via `.husky/_/h` as `sh -e .husky/commit-msg "$1"`, with
+# `node_modules/.bin` already prepended to PATH, and propagates our exit code.
+
+if ! npx --no -- commitlint --version >/dev/null 2>&1; then
+  echo "commit-msg: commitlint is NOT available — the message was not checked." >&2
+  echo "" >&2
+  echo "  This hook fails closed on purpose (GT-623). It used to print a" >&2
+  echo "  'skipping' notice and exit 0, which looked like enforcement but was" >&2
+  echo "  not: release notes and version bumps are derived from these messages." >&2
+  echo "" >&2
+  echo "  Fix:    npm ci        (commitlint is a root devDependency)" >&2
+  echo "  Bypass: git commit --no-verify" >&2
+  exit 1
 fi
+
+exec npx --no -- commitlint --edit "$1"

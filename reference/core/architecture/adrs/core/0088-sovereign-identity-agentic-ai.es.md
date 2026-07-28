@@ -5,6 +5,12 @@
 ## Estado
 Accepted
 
+> **Estado de implementacion en este repositorio: ninguna** (verificado 2026-07-28).
+> Este ADR es un estandar normativo publicado *para los satelites*; esta Accepted como decision,
+> no como capacidad entregada. Nada en Evolith Core lo implementa, y nada lo hace cumplir.
+> `rg "act\.sub" src/` no devuelve ninguna coincidencia. Ni el claim de delegacion por Token Exchange (RFC 8693) ni el patron de identidad de carga de trabajo que este ADR estandariza estan implementados ni verificados en el codigo.
+> El ruleset generado `rulesets/adr/generated/adr-0088-sovereign-identity-for-agentic-ai.rules.json` lleva una unica regla `adr-conformance` cuyo propio texto dice que los chequeos concretos estan aun "to be wired into the harness", y ningun evaluador atiende esa categoria: `rg "adr-conformance" src/` solo encuentra los propios archivos generados. Seguimiento en GT-607.
+
 ## Fecha
 2026-06-20
 

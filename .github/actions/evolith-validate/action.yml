@@ -41,7 +41,10 @@ inputs:
 
 outputs:
   compliance-status:
-    description: 'compliant | non-compliant'
+    description: >-
+      compliant | non-compliant | invalid-input | error.
+      GT-580: `error` and `invalid-input` mean the repository was NOT evaluated —
+      they are not weaker forms of non-compliant and must not be read as a verdict.
     value: ${{ steps.validate.outputs.compliance-status }}
   violations-count:
     description: 'Number of BLOCKING issues found (data.issues[].blocking == true)'
@@ -49,6 +52,12 @@ outputs:
   issues-count:
     description: 'Total number of issues found, blocking and advisory'
     value: ${{ steps.validate.outputs.issues-count }}
+  exit-code:
+    description: >-
+      The CLI exit code, per the GT-580 taxonomy: 0 pass · 1 tool failure ·
+      2 blocked verdict · 3 invalid input. Exposed so a caller can distinguish
+      "the gate blocked" from "the gate never ran".
+    value: ${{ steps.validate.outputs.exit-code }}
   report-path:
     description: 'Absolute path to the generated JSON report artifact'
     value: ${{ steps.validate.outputs.report-path }}
@@ -144,16 +153,45 @@ runs:
           ISSUES=$(jq -r '[.data.issues[]?] | length' "${REPORT_PATH}" 2>/dev/null || echo "0")
         fi
 
-        if [ "${EXIT_CODE}" -eq 0 ]; then
-          echo "compliance-status=compliant" >> "${GITHUB_OUTPUT}"
-        else
-          echo "compliance-status=non-compliant" >> "${GITHUB_OUTPUT}"
-        fi
+        # GT-580: the CLI publishes a four-value exit taxonomy —
+        #   0 pass · 1 tool failure · 2 blocked verdict · 3 invalid input
+        # Collapsing everything non-zero onto "non-compliant" makes a claim the
+        # run does not support: when the CLI could not produce a verdict (1) or
+        # was invoked wrongly (3), the repository has NOT been shown to be
+        # non-compliant — it has not been evaluated at all. Reporting those as
+        # non-compliant is a false negative about somebody's code, and it is the
+        # same class of defect as a gate that reports green over an unevaluated
+        # repo, only inverted.
+        case "${EXIT_CODE}" in
+          0)
+            echo "compliance-status=compliant" >> "${GITHUB_OUTPUT}"
+            ;;
+          2)
+            echo "compliance-status=non-compliant" >> "${GITHUB_OUTPUT}"
+            ;;
+          3)
+            echo "compliance-status=invalid-input" >> "${GITHUB_OUTPUT}"
+            echo "::error::Evolith validation was invoked incorrectly (exit 3). The repository was NOT evaluated."
+            ;;
+          *)
+            echo "compliance-status=error" >> "${GITHUB_OUTPUT}"
+            echo "::error::Evolith validation could not produce a verdict (exit ${EXIT_CODE}). The repository was NOT evaluated — do not read this as compliant or non-compliant."
+            ;;
+        esac
 
         echo "violations-count=${VIOLATIONS}" >> "${GITHUB_OUTPUT}"
         echo "issues-count=${ISSUES}" >> "${GITHUB_OUTPUT}"
+        echo "exit-code=${EXIT_CODE}" >> "${GITHUB_OUTPUT}"
 
-        if [ "${INPUT_FAIL_ON_VIOLATION}" = "true" ] && [ "${EXIT_CODE}" -ne 0 ]; then
+        # A tool failure or a bad invocation fails the step regardless of
+        # `fail-on-violation`: that input governs what to do with a VERDICT, and
+        # there is no verdict here. Only a blocking verdict (2) is negotiable.
+        if [ "${EXIT_CODE}" -ne 0 ] && [ "${EXIT_CODE}" -ne 2 ]; then
+          echo "::error::Evolith validation did not run to a verdict (exit ${EXIT_CODE})."
+          exit "${EXIT_CODE}"
+        fi
+
+        if [ "${INPUT_FAIL_ON_VIOLATION}" = "true" ] && [ "${EXIT_CODE}" -eq 2 ]; then
           echo "::error::Evolith governance validation failed. Blocking violations: ${VIOLATIONS} (total issues: ${ISSUES})"
           exit 1
         fi
@@ -179,11 +217,22 @@ runs:
           echo ""
           if [ "${STATUS}" = "compliant" ]; then
             echo "**Status:** Compliant -- all rules passed"
+          elif [ "${STATUS}" = "error" ]; then
+            # GT-580: the CLI could not produce a verdict. Say that, and say it
+            # is NOT a judgement about the repository — a reader who sees a red
+            # check needs to know whether their code was found wanting or never
+            # examined at all.
+            echo "**Status:** Not evaluated -- the CLI could not produce a verdict; see the validation log for detail"
+            echo ""
+            echo "> This is **not** a finding about this repository. The gate did not run to a verdict, so nothing here says the code is compliant or non-compliant."
+          elif [ "${STATUS}" = "invalid-input" ]; then
+            echo "**Status:** Not evaluated -- the action was invoked incorrectly; see the validation log for detail"
+            echo ""
+            echo "> This is **not** a finding about this repository. Fix the invocation and re-run."
           elif [ "${STATUS}" = "non-compliant" ] && [ "${VIOLATIONS:-0}" = "0" ]; then
-            # The verdict came from the exit code but no blocking issue could be
-            # read back (missing/unparseable report, or an error envelope).
+            # A blocking verdict whose issue list could not be read back.
             # Saying "0 violation(s)" here is what made the action read as broken.
-            echo "**Status:** Non-compliant -- the CLI exited non-zero; see the validation log for detail"
+            echo "**Status:** Non-compliant -- the gate blocked; see the validation log for detail"
           elif [ "${STATUS}" = "non-compliant" ]; then
             echo "**Status:** Non-compliant -- ${VIOLATIONS} blocking violation(s) of ${ISSUES:-?} issue(s) found"
           else

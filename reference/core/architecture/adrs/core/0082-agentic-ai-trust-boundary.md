@@ -6,6 +6,12 @@
 
 Accepted
 
+> **Implementation status in this repository: none** (verified 2026-07-28).
+> This ADR is a normative standard published *for satellites*; it is Accepted as a decision,
+> not as delivered capability. Nothing in Evolith Core implements it, and nothing enforces it.
+> No trust label on retrieved context exists anywhere in `src/`. The only related code is the governance evaluator `core-domain/.../handlers/architecture/agent-rules.ts`, which checks that **a satellite's** `agent.config.json` declares `contextPolicy.untrustedContent=data-only` and non-overlapping `promptSources`. Evolith itself neither labels nor schema-validates tool output before acting on it.
+> The generated ruleset `rulesets/adr/generated/adr-0082-agentic-ai-prompt-context-and-tool-trust-boundary.rules.json` carries a single `adr-conformance` rule whose own text says the concrete checks are still "to be wired into the harness", and no evaluator handles that category — `rg "adr-conformance" src/` matches only the generated files themselves. Tracked by GT-607.
+
 ## Date
 
 2026-06-20

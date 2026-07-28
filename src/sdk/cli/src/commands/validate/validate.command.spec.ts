@@ -1,4 +1,5 @@
 import { ValidateCommand } from './validate.command';
+import { CLI_EXIT_CODES } from '../../infrastructure/cli/exit-codes';
 
 jest.mock('@beyondnet/evolith-core-domain/application/use-cases/validate-satellite.use-case', () => ({
   ValidateSatelliteUseCase: jest.fn().mockImplementation(() => ({
@@ -296,7 +297,9 @@ describe('ValidateCommand', () => {
       // issue is visible in the assertions.
       await command.run([], { format: 'unknown' });
 
-      expect(exitSpy).toHaveBeenCalledWith(1);
+      // GT-580: a negative VERDICT exits 2 (BLOCKED), which a CI step can tell
+      // apart from 1 (the tool could not reach a verdict at all).
+      expect(exitSpy).toHaveBeenCalledWith(CLI_EXIT_CODES.BLOCKED);
       expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
         expect.stringContaining('fallado'),
       );
@@ -364,7 +367,7 @@ describe('ValidateCommand', () => {
       expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
         expect.stringContaining('fallado')
       );
-      expect(exitSpy).toHaveBeenCalledWith(1);
+      expect(exitSpy).toHaveBeenCalledWith(CLI_EXIT_CODES.BLOCKED);
     });
 
     it('should handle validation errors and exit', async () => {

@@ -7315,10 +7315,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith Core` · **Criticality:** P0 · **Complexity:** S
 - **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
 - **Acceptance criteria:**
-  - [ ] `rulesExecuted` contains every rule the evaluation actually executed, asserted by test against a fixture with a known rule count.
-  - [ ] `engine` reflects the evaluator that ran, with a test covering both the native and the OPA path.
-  - [ ] A SARIF export from a real evaluation reports a non-zero `evaluatedRules`.
-  - [ ] `missingEvidence` and `risks` are either populated or removed from the contract; an always-empty field does not ship.
+  - [x] `rulesExecuted` contains every rule the evaluation actually executed, asserted by test against a fixture with a known rule count.
+  - [x] `engine` reflects the evaluator that ran, with a test covering both the native and the OPA path.
+  - [x] A SARIF export from a real evaluation reports a non-zero `evaluatedRules`.
+  - [x] `missingEvidence` and `risks` are either populated or removed from the contract; an always-empty field does not ship.
 
 #### GT-602
 
@@ -7444,7 +7444,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith CLI` · **Criticality:** P1 · **Complexity:** M
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
-  - [ ] Every command exits with a code drawn from the published taxonomy, asserted by test.
+  - [x] Every command exits with a code drawn from the published taxonomy, asserted by test.
   - [ ] `--format json`/`ndjson` writes data only to stdout; every diagnostic goes to stderr.
   - [ ] A ruleset with Rego parity fails any command that exits outside the taxonomy.
 

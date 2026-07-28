@@ -8508,6 +8508,24 @@
         "The gate fired for real: run 30355511518 stopped before publishing the MCP with \"PatternCatalogService is not a constructor\", a second broken published package the audit had missed."
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-571",
+      "closedAt": "2026-07-28",
+      "closureCommit": "097cacfe",
+      "evidence": [
+        ".harness/scripts/generate-adr-rulesets.mjs",
+        "src/rulesets/adr/generated/",
+        "src/packages/core-domain/src/application/validators/rule-applicability.spec.ts",
+        "src/sdk/cli/README.md"
+      ],
+      "validationCommands": [
+        "Fresh satellite (evolith init --name my-sat --yes; evolith validate) -> exit 0, status warning, 0 BLOCKING issues, 242 not-applicable of a 387 corpus. Was 91 blocking of 230.",
+        "Same build against the Core repository -> exit 2, 111 blocking, 55 not-applicable, all 133 generated ADR rules still evaluated. The audience gate is a filter, not an off-switch.",
+        "rule-applicability.spec.ts reads the REAL generated corpus: removing audience from one ruleset turns it red; regenerating turns it green.",
+        "README quickstart executed literally: fixtures 0, init 0, docs 0, validate 2 (documented blocking verdict), evolith-mcp serve starts on stdio."
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

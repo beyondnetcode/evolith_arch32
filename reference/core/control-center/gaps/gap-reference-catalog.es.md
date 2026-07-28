@@ -7075,7 +7075,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith CLI` · **Criticidad:** P0 · **Complejidad:** S
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
-  - [ ] `npx @beyondnet/evolith-cli@latest` seguido de la secuencia literal del README completa en un contenedor limpio.
+  - [x] `npx @beyondnet/evolith-cli@latest` seguido de la secuencia literal del README completa en un contenedor limpio.
   - [x] Un repo recién inicializado devuelve 0 hallazgos blocking, asertado por un test que falla si vuelve a subir.
   - [x] `--help` nombra el comando real, no `main`.
 
@@ -7830,6 +7830,19 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Un commit con mensaje malformado se rechaza en local, demostrado intentándolo.
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
+
+#### GT-627
+
+**Title:** El corpus de ADR generado deriva del conjunto de ADRs y nada en CI lo advierte
+
+- **Purpose:** Que un ADR aceptado sin ruleset generado rompa CI, en vez de esperar a que alguien regenere a mano.
+- **Evidence:** **El corpus de conformidad de ADR commiteado estaba siete rulesets por detrás de su propio generador, y seis de los siete son estándares de seguridad.** Descubierto el 2026-07-28 al regenerar para `GT-571`: `generate-adr-rulesets.mjs` escribió 133 rulesets donde el repositorio tenía 126. Los que faltaban son ADR-0118 más **ADR-0119 (endurecimiento de configuración de seguridad de API), ADR-0120 (prevención de SSRF), ADR-0121 (validación y saneamiento de entrada), ADR-0122 (seguridad en ejecución de shell), ADR-0123 (comparación en tiempo constante) y ADR-0124 (gestión de credenciales y secretos)** — decisiones aceptadas sin ningún ruleset de conformidad en el corpus, porque nadie volvió a ejecutar el generador tras aceptarlas. Nada lo detectó: el generador imprime una cifra de cobertura pero no se ejecuta con `--check` en CI, así que el corpus podía derivar del conjunto de ADRs indefinidamente. Es la misma forma que `GT-424` (un registro que deriva porque solo se verifica una dirección) y `GT-607` (ADRs Aceptados sin código que los implemente), y es la razón de que se moviera el snapshot fijado de triaje de `GT-595`: de 143 no ejecutables a 150, y de 126 reglas de conformidad de ADR a 133.
+- **Component:** `Governance` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Encontrado el 2026-07-28 al regenerar el corpus para GT-571.
+- **Acceptance criteria:**
+  - [ ] CI ejecuta `generate-adr-rulesets.mjs --check` (o equivalente) y falla cuando el corpus commiteado difiere de lo que produce el generador.
+  - [ ] La comprobación incluye una fixture negativa: borrar un ruleset generado la pone roja.
+  - [ ] La comprobación publica su denominador, para que un barrido de cero ADRs no pueda reportar un pase.
 
 #### GT-626
 

@@ -10,6 +10,8 @@
  * catch it because every boundaries config excludes spec files.
  */
 
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import {
   ApplicabilityContext,
   notApplicableReason,
@@ -86,5 +88,60 @@ describe('GT-571 · reading the declaration out of both manifest shapes', () => 
   it('survives a manifest it cannot make sense of', () => {
     expect(readSatelliteDeclaration(null)).toEqual({ topologies: [] });
     expect(readSatelliteDeclaration('not an object')).toEqual({ topologies: [] });
+  });
+});
+
+/**
+ * GT-571 criterion 2 — the regression guard for "a freshly initialized repo
+ * returns 0 blocking findings".
+ *
+ * Measured against the published 1.2.1 on 2026-07-28, a fresh satellite reported
+ * 91 blocking findings. Every one came from a GENERATED ADR-conformance ruleset
+ * and none from a hand-authored rule, so the repository had nothing wrong with
+ * it: those rules assert, among other things, that the decision record they cite
+ * EXISTS under `reference/core/architecture/adrs/`, a tree only the Core has.
+ *
+ * These tests read the REAL corpus rather than a fixture, because the failure
+ * mode is someone regenerating it without the audience — at which point the file
+ * on disk is what decides, not a fixture that agrees with us.
+ */
+describe('GT-571 — the generated ADR corpus is addressed to the Core', () => {
+  const generatedDir = path.resolve(__dirname, '../../../../../rulesets/adr/generated');
+
+  const rulesets = (): { file: string; doc: Record<string, unknown> }[] =>
+    fs
+      .readdirSync(generatedDir)
+      .filter((f) => f.endsWith('.rules.json'))
+      .map((file) => ({
+        file,
+        doc: JSON.parse(fs.readFileSync(path.join(generatedDir, file), 'utf8')) as Record<string, unknown>,
+      }));
+
+  it('finds the corpus at all — a zero-file scan is not a pass', () => {
+    expect(fs.existsSync(generatedDir)).toBe(true);
+    expect(rulesets().length).toBeGreaterThan(100);
+  });
+
+  it('every generated ruleset declares `audience: core`', () => {
+    const undeclared = rulesets()
+      .filter(({ doc }) => doc.audience !== 'core')
+      .map(({ file, doc }) => `${file} (audience=${JSON.stringify(doc.audience)})`);
+
+    // The message carries the whole list: regenerating without the audience
+    // reintroduces all of them at once, and naming one would hide the scale.
+    expect(undeclared).toEqual([]);
+  });
+
+  it('a satellite excludes them, and the Core does not', () => {
+    // The two halves that make this a filter rather than an off-switch. Verified
+    // end to end the same day: a fresh satellite went 91 blocking -> 0, while the
+    // Core still evaluated all 133 and still blocked.
+    const rule = { audience: 'core' } as const;
+    expect(
+      notApplicableReason(rule, { audience: 'satellite', declaredTopologies: [] }),
+    ).toBe('audience');
+    expect(
+      notApplicableReason(rule, { audience: 'core', declaredTopologies: [] }),
+    ).toBeUndefined();
   });
 });

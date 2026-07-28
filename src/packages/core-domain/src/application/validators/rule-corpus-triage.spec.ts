@@ -181,7 +181,7 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     // costed decision, so they are pinned rather than merely printed.
     expect(SUMMARY.byClass).toEqual({
       'native-handler': 139,
-      'documentation-only': 129,
+      'documentation-only': 136,
       'unimplemented-native': 60,
       'needs-external-system': 20,
       'needs-runtime': 17,
@@ -189,18 +189,27 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     });
   });
 
-  it('publishes the honest denominator: 143 rules nothing can ever run', () => {
-    // 129 documentation-only + 14 underspecified.
-    expect(SUMMARY.nonExecutable).toBe(143);
-    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 143);
-    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(143);
+  it('publishes the honest denominator: 150 rules nothing can ever run', () => {
+    // 136 documentation-only + 14 underspecified.
+    //
+    // 143 -> 150 on 2026-07-28, and the +7 is a finding rather than drift: the
+    // committed generated corpus was SEVEN rulesets behind its own generator.
+    // ADR-0118 and the six security standards ADR-0119..0124 (SSRF, input
+    // validation, shell-execution safety, timing-safe comparison, credential
+    // management) had no conformance ruleset at all, because nobody re-ran
+    // `generate-adr-rulesets.mjs` after they were accepted. Regenerating for
+    // GT-571 surfaced them, and this snapshot failing is what made it visible.
+    expect(SUMMARY.nonExecutable).toBe(150);
+    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 150);
+    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(150);
   });
 
   it('names the blocking rules that can never produce a verdict', () => {
-    // 91 auto-generated ADR placeholders + 11 blocking rules with no authored
+    // 96 auto-generated ADR placeholders + 11 blocking rules with no authored
     // check (EC-SEC / SV-SEC x2 each, KI-R01..07). This is the number the
-    // product ships as "enforced" and does not enforce.
-    expect(SUMMARY.blockingNonExecutable.length).toBe(91 + 11);
+    // product ships as "enforced" and does not enforce. 91 -> 96 with the seven
+    // ADR rulesets that were missing from the committed corpus.
+    expect(SUMMARY.blockingNonExecutable.length).toBe(96 + 11);
     expect(SUMMARY.blockingNonExecutable).toContain('CORE-0111-01');
     expect(SUMMARY.blockingNonExecutable).toContain('EC-SEC-01');
     expect(SUMMARY.blockingNonExecutable).toContain('KI-R01');
@@ -229,9 +238,12 @@ describe('GT-595 · the handler slice that landed', () => {
     const unclaimed = CORPUS.filter(r => !claims(r));
     expect(unclaimed).toHaveLength(114);
 
-    // ...and every one of the 126 ADR-conformance rules is now claimed.
+    // ...and every one of the 133 ADR-conformance rules is now claimed.
+    // 126 -> 133 on 2026-07-28: the committed corpus was seven rulesets behind
+    // its generator (ADR-0118 plus the six security standards 0119..0124), which
+    // regenerating for GT-571 surfaced.
     const adrConformance = CORPUS.filter(r => r.category === 'adr-conformance');
-    expect(adrConformance).toHaveLength(126);
+    expect(adrConformance).toHaveLength(133);
     expect(adrConformance.every(claims)).toBe(true);
   });
 

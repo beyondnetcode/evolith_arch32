@@ -8700,6 +8700,24 @@
       "closedAt": "2026-07-28",
       "closureCommit": "c438b801",
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-630",
+      "closedAt": "2026-07-28",
+      "closureCommit": "63a96d09",
+      "evidence": [
+        ".harness/scripts/ci/46-validate-derived-artifact-order.mjs",
+        ".harness/scripts/ci/46-validate-derived-artifact-order.test.mjs",
+        ".github/workflows/docs.yml",
+        ".harness/scripts/lib/guard-classification.mjs"
+      ],
+      "validationCommands": [
+        "46-validate-derived-artifact-order --verbose -> 2 links, 3 artifacts, current AND at a fixed point.",
+        "node --test 46-validate-derived-artifact-order.test.mjs -> 8/8, including a test proving the guard leaves the real tree byte-identical after replaying in place.",
+        "Wired into docs.yml, which backs the required Validate documentation check.",
+        "Registered in guard-classification.mjs: 42 reports 58 guards classified, 43 reports 35 observed failing."
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

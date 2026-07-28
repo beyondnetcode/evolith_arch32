@@ -38,6 +38,54 @@ export type EvaluationKind =
 /** Execution mode the consumer is operating under (drives HITL routing). */
 export type ExecutionMode = 'manual' | 'hybrid' | 'agentic';
 
+/**
+ * GT-586 — who ASKED for this evaluation.
+ *
+ * Deliberately distinct from {@link ExecutionMode}, which describes the mode of
+ * operation and carries no identity, and from `EvidenceContext.producer`, which
+ * attributes ONE evidence item rather than the request. The vocabulary is kept
+ * identical to `producer.actorType` on purpose: a verdict and the evidence it
+ * judged must be attributable in the same terms.
+ *
+ * Opaque to the Core like every other `*Id` on the context (ADR-0101): echoed
+ * into the result for attribution, never interpreted and never persisted here.
+ */
+export type RequesterActorType = 'human' | 'agent' | 'ci' | 'system';
+
+export interface RequesterContext {
+  readonly actorType: RequesterActorType;
+  /** Opaque id of the actor (user id, agent id, CI job id, service name). */
+  readonly actorId: string;
+  /** Model that drove the request, when `actorType` is `'agent'`. */
+  readonly modelRef?: string;
+  /** Conversation/run that this evaluation belongs to; joins a verdict series. */
+  readonly sessionId?: string;
+  /** Prompt/skill versions, mirroring `EvidenceContext.producer`. */
+  readonly promptVersion?: string;
+  readonly skillVersion?: string;
+}
+
+/**
+ * GT-586 — WHICH revision of the code the verdict judged.
+ *
+ * Only `revision` is required, and the whole object is optional: a consumer that
+ * cannot determine a revision sends nothing. The Core NEVER derives or invents a
+ * value — an invented commit sha in an audit trail is worse than an absent one —
+ * so a result whose `repositoryRevision` is absent is a truthful statement that
+ * the consumer did not supply one.
+ */
+export interface RepositoryRevisionContext {
+  /** Commit sha, tag, or any opaque revision identifier the consumer owns. */
+  readonly revision: string;
+  /** Repository the revision belongs to, when the context spans more than one. */
+  readonly repositoryRef?: string;
+  readonly branch?: string;
+  /** ISO-8601 UTC. */
+  readonly committedAt?: string;
+  /** True when the evaluated tree carried uncommitted changes on top of `revision`. */
+  readonly dirty?: boolean;
+}
+
 // ---------------------------------------------------------------------------
 // Context-only reference types (NOT Core entities; opaque to the Core)
 // ---------------------------------------------------------------------------
@@ -238,6 +286,18 @@ export interface EvaluationContext {
   readonly blueprintRef?: string;
   readonly topologyRef?: string;
   readonly schemaRef?: string;
+
+  // --- Attribution (GT-586; additive, both optional) ---
+  /**
+   * Who requested this evaluation. Echoed verbatim onto the result so a verdict
+   * can name a human or an agent. Absent means the consumer did not declare one.
+   */
+  readonly requester?: RequesterContext;
+  /**
+   * The code revision under evaluation. Echoed verbatim onto the result so two
+   * verdicts over the same repository can be ordered against the code they judged.
+   */
+  readonly repositoryRevision?: RepositoryRevisionContext;
 
   // --- Mode & expectation ---
   readonly executionMode?: ExecutionMode;

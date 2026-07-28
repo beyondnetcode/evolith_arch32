@@ -107,6 +107,25 @@ describe('extractCommand', () => {
     const cmd = extractCommand('find src -name "*.json" | wc -l');
     assert.deepEqual(cmd.stages, ['wc']);
   });
+
+  test('drops a trailing parenthetical annotation instead of tokenizing it as arguments', () => {
+    // 48 records carry the author's expected RESULT in a trailing parenthesis.
+    // Tokenizing it turned `Exchange/Queue/Binding` into a path-shaped operand
+    // that does not exist, and the record was reported DEAD — the guard
+    // fabricating a finding inside a report that is nothing but a count of them.
+    const cmd = extractCommand("grep -L 'kind: Exchange' scripts/ok.mjs (no Exchange/Queue/Binding CRDs remain)");
+    assert.equal(cmd.line, "grep -L 'kind: Exchange' scripts/ok.mjs");
+    assert.ok(!cmd.tokens.includes('Exchange/Queue/Binding'), cmd.tokens.join(' '));
+  });
+
+  test('stripping the annotation never eats the command itself', () => {
+    // Degenerate shapes must not reduce the command to nothing: a record that
+    // parses to an empty line would be counted as prose and disappear from the
+    // denominator, which is the failure mode this guard exists to prevent.
+    assert.equal(extractCommand('node scripts/ok.mjs (a) (b)').line, 'node scripts/ok.mjs');
+    assert.equal(extractCommand('node scripts/ok.mjs').line, 'node scripts/ok.mjs');
+    assert.equal(extractCommand('(only an annotation)'), null);
+  });
 });
 
 // --- Resolution ------------------------------------------------------------
@@ -151,6 +170,39 @@ describe('resolveCommand', () => {
   test('does not invent a verdict for `node -e`', () => {
     const r = resolveCommand(extractCommand('node -e "process.exit(0)"'), ctx());
     assert.equal(r.status, 'unchecked');
+  });
+
+  test('a quoted grep PATTERN containing a slash is not resolved as a path', () => {
+    // `grep -L 'control-center/gap-tracking' scripts/*.mjs` was reported DEAD
+    // because the search pattern looks exactly like a repo path that moved. The
+    // target (scripts/ok.mjs) exists, so the only correct verdict is `resolved`.
+    const r = resolveCommand(
+      extractCommand("grep -L 'control-center/gap-tracking' scripts/ok.mjs"),
+      ctx(),
+    );
+    assert.equal(r.status, 'resolved', r.detail);
+    assert.equal(r.detail, 'scripts/ok.mjs');
+  });
+
+  test('an UNQUOTED grep pattern is still not treated as the target', () => {
+    const r = resolveCommand(extractCommand('grep some/pattern scripts/ok.mjs'), ctx());
+    assert.equal(r.status, 'resolved', r.detail);
+  });
+
+  test('the value of `-e` / `--include` / `-name` is not resolved as a path', () => {
+    assert.equal(resolveCommand(extractCommand('grep -e a/b scripts/ok.mjs'), ctx()).status, 'resolved');
+    // `-name` takes a GLOB, not a path. Before the fix this resolved
+    // `gone/x.json` against disk and reported the record dead.
+    assert.equal(
+      resolveCommand(extractCommand('find scripts/ -name gone/x.json'), ctx()).status,
+      'resolved',
+    );
+  });
+
+  test('a genuinely missing grep target is STILL dead — the fix must not blind it', () => {
+    const r = resolveCommand(extractCommand("grep -L 'a/b' scripts/gone.mjs"), ctx());
+    assert.equal(r.status, 'dead');
+    assert.match(r.detail, /scripts\/gone\.mjs/);
   });
 });
 
@@ -276,5 +328,31 @@ describe('guard process', () => {
     const { status, out } = runGuard('evidence/does-not-exist.json');
     assert.equal(status, 1);
     assert.match(out, /evidence file not found/);
+  });
+
+  test('the ratchet basis separates the machine-dependent part of the dead count', () => {
+    // A ratchet set from `dead` is a ratchet set from what this machine happens
+    // to have built. `deadOnCleanCheckout` adds back the references that resolve
+    // ONLY through generated state, so the same number comes out of a developer
+    // laptop and a fresh runner. The 305-vs-290 discrepancy that made the wired
+    // budget unexplainable is exactly this quantity.
+    mkdirSync(join(fixtureRoot, 'pkgs', 'alpha', 'dist'), { recursive: true });
+    writeFileSync(join(fixtureRoot, 'pkgs', 'alpha', 'dist', 'main.js'), 'console.log(1);\n');
+    const rel = writeEvidence('ratchet', [
+      {
+        id: 'GT-1', status: 'DONE',
+        validationCommands: [
+          'node pkgs/alpha/dist/main.js',   // resolves only because dist/ exists
+          'node scripts/ok.mjs',            // resolves on any checkout
+          'node scripts/gone.mjs',          // dead everywhere
+        ],
+      },
+    ]);
+    const { status, out } = runGuard(rel, ['--json']);
+    assert.equal(status, 0, out);
+    const j = JSON.parse(out.slice(out.indexOf('{')));
+    assert.equal(j.summary.ratchet.dead, 1);
+    assert.equal(j.summary.ratchet.environmentSensitive, 1);
+    assert.equal(j.summary.ratchet.deadOnCleanCheckout, 2);
   });
 });

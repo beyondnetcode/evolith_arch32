@@ -14,6 +14,8 @@ import { CrossCuttingRuleHandler } from './handlers/cross-cutting-rule.handler';
 import { ExecutiveScorecardRuleHandler } from './handlers/executive-scorecard-rule.handler';
 import { SatelliteContractRuleHandler } from './handlers/satellite-contract-rule.handler';
 import { AclRuleHandler } from './handlers/acl-rule.handler';
+import { AdrConformanceRuleHandler } from './handlers/adr-conformance-rule.handler';
+import { classifyRule } from '../rule-evaluability';
 
 export class NativeEvaluator implements IRuleEvaluatorStrategy {
   private readonly handlers: INativeRuleHandler[];
@@ -36,6 +38,10 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
       new ExecutiveScorecardRuleHandler(fs),
       new SatelliteContractRuleHandler(fs, configParser),
       new AclRuleHandler(fs),
+      // GT-595: 126 of the 240 rules no handler claimed are auto-generated
+      // ADR-conformance rules. Registered LAST so it can never shadow a handler
+      // that does real work on a rule that happens to carry the category.
+      new AdrConformanceRuleHandler(fs),
     ];
   }
 
@@ -57,15 +63,22 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
     const handler = this.handlers.find(h => h.canHandle(rule));
     
     if (!handler) {
-      return {
-        rule,
-        result: 'skipped',
-        message: 'Requires external system or runtime verification',
-      };
+      // GT-595: "Requires external system or runtime verification" was asserted
+      // for every unhandled rule regardless of whether it was true — 60 of them
+      // are decidable from the tree and simply have no handler. Say which.
+      const { evaluability, why } = classifyRule(rule, false);
+      return { rule, result: 'skipped', evaluability, message: why };
     }
 
     try {
-      return await handler.evaluate(rule, ctx);
+      const result = await handler.evaluate(rule, ctx);
+      // A handler may decline a rule it claims (unsupported sub-category). Give
+      // that skip the same classification as an unclaimed one rather than
+      // leaving it unattributed.
+      if (result.result === 'skipped' && !result.evaluability) {
+        return { ...result, evaluability: classifyRule(rule, false).evaluability };
+      }
+      return result;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       // GT-569: a handler exception is NOT a skip. Downgrading it to `skipped`

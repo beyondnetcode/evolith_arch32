@@ -127,6 +127,12 @@ export function evaluationFactsFromContext(ctx: EvaluationContext): EvaluationFa
   if (ctx.gateId) context.gateId = ctx.gateId;
   if (ctx.topologyRef) context.topologyRef = ctx.topologyRef;
   if (ctx.executionMode) context.executionMode = ctx.executionMode;
+  // GT-586: attribution reaches the policy input so a rule can discriminate on WHO
+  // asked (human vs agent) and on WHICH revision. Deliberately NOT part of the
+  // `declared` trigger above: a context carrying only a requester still projects no
+  // facts, so the OPA input of every pre-GT-586 caller stays byte-for-byte identical.
+  if (ctx.requester) context.requester = ctx.requester;
+  if (ctx.repositoryRevision) context.repositoryRevision = ctx.repositoryRevision;
   if (ctx.correlationId) context.correlationId = ctx.correlationId;
   if (ctx.schemaVersion) context.schemaVersion = ctx.schemaVersion;
   if (ctx.evidence?.length) context.evidence = ctx.evidence;

@@ -125,11 +125,15 @@ export class StructuralReviewProvider implements IQualitySignalProvider {
 
     // Attribution + rubric version participate in the tamper-evidence hash so the
     // provenance of a probabilistic signal is auditable end-to-end (ADR-0111 §6).
+    // GT-613: the determinism CLAIM participates too — relabelling a signal from
+    // probabilistic to deterministic must not leave the hash untouched.
+    const determinism = this.reviewer.determinism ?? 'probabilistic';
     const artifactHash = createHash('sha256')
       .update(
         JSON.stringify({
           rubric: STRUCTURAL_RUBRIC_VERSION,
           attribution: RUBRIC_ATTRIBUTION,
+          determinism,
           findings: ranked,
         }),
       )
@@ -141,7 +145,12 @@ export class StructuralReviewProvider implements IQualitySignalProvider {
         dimension: ctx.dimension ?? DEFAULT_DIMENSION,
         metrics,
         findings,
-        determinism: 'probabilistic', // LLM/agent-derived — never deterministic.
+        // GT-613: the reviewer states its own class; an unlabelled one is read as
+        // probabilistic (fail-safe — an opinion must never be presentable as fact).
+        // The shipped HeuristicStructuralReviewer measures rather than judges and
+        // declares `deterministic`, and mislabelling that would corrupt the exact
+        // axis ADR-0111 exists to protect.
+        determinism,
         provenance: {
           collectedBy: STRUCTURAL_REVIEW_PROVIDER_ID,
           adapterVersion: STRUCTURAL_RUBRIC_VERSION,

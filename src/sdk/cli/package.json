@@ -28,8 +28,9 @@
     "mcp:smoke": "npm run build && node examples/mcp-test.js",
     "lint": "eslint src --ext .ts",
     "prepack": "node -e \"require('fs').rmSync('dist/.tsbuildinfo',{force:true})\"",
-    "prepublishOnly": "npm run copy-rulesets && npm run build && npm run copy-assets && npm run check:release-drift",
+    "prepublishOnly": "npm run copy-rulesets && npm run build && npm run copy-assets && npm run check:release-drift && npm run check:install-smoke",
     "check:release-drift": "node scripts/check-release-drift.mjs",
+    "check:install-smoke": "node scripts/check-install-smoke.mjs",
     "gen:api-catalog": "node scripts/gen-api-catalog.mjs"
   },
   "keywords": [

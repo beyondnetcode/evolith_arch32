@@ -91,6 +91,50 @@ describe('Contract Schema Registry (GT-377 AC-1)', () => {
     expect(validateResult(result)).toBe(false);
   });
 
+  describe('attribution is additive (GT-586)', () => {
+    const requester = {
+      actorType: 'agent' as const,
+      actorId: 'winston',
+      modelRef: 'claude-opus-5',
+      sessionId: 'sess-77',
+    };
+    const repositoryRevision = { revision: '9f3c1ab', branch: 'main', dirty: false };
+
+    it('validates a context carrying a typed requester and a repository revision', () => {
+      const ctx: EvaluationContext = {
+        kinds: ['gate'],
+        workspaceRef: 'ws-opaque-123',
+        requester,
+        repositoryRevision,
+      };
+      expect(validateContext(ctx)).toBe(true);
+    });
+
+    it('validates a result echoing both fields', () => {
+      const result: EvaluationResult = {
+        overallVerdict: Verdict.PASS, outcome: 'approved', results: {},
+        rulesExecuted: [], policiesApplied: [], gaps: [], risks: [], missingEvidence: [],
+        incompleteArtifacts: [], recommendations: [], requiredActions: [],
+        confidence: 1, rationale: 'ok', versions: { core: '1.0.5' },
+        requester, repositoryRevision,
+        evaluatedAt: '2026-07-28T00:00:00.000Z', schemaVersion: '1.0.0',
+      };
+      expect(validateResult(result)).toBe(true);
+    });
+
+    it('still validates a verdict WITHOUT them — proving the change is additive', () => {
+      const result: EvaluationResult = {
+        overallVerdict: Verdict.PASS, outcome: 'approved', results: {},
+        rulesExecuted: [], policiesApplied: [], gaps: [], risks: [], missingEvidence: [],
+        incompleteArtifacts: [], recommendations: [], requiredActions: [],
+        confidence: 1, rationale: 'ok', versions: { core: '1.0.5' },
+        evaluatedAt: '2026-07-28T00:00:00.000Z', schemaVersion: '1.0.0',
+      };
+      expect(validateResult(result)).toBe(true);
+      expect(validateContext({ kinds: ['gate'], workspaceRef: 'ws-1' })).toBe(true);
+    });
+  });
+
   it('rejects a DecisionRecommendation whose `binding` is not the literal false', () => {
     const result: Record<string, unknown> = {
       overallVerdict: 'PASS', outcome: 'approved', results: {}, rulesExecuted: [], policiesApplied: [],

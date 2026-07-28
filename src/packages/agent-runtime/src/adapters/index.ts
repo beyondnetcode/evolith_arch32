@@ -38,6 +38,11 @@ export { InMemoryMemoryAdapter } from './memory/in-memory-memory.adapter';
 export { FileMemoryAdapter } from './memory/file-memory.adapter';
 export type { FileMemoryOptions } from './memory/file-memory.adapter';
 
+// Run journal — resumability of a run killed mid-pipeline (GT-593)
+export { InMemoryRunJournalAdapter } from './journal/in-memory-run-journal.adapter';
+export { FileRunJournalAdapter } from './journal/file-run-journal.adapter';
+export type { FileRunJournalOptions } from './journal/file-run-journal.adapter';
+
 // Knowledge / RAG (GT-408)
 export { InMemoryKnowledgeAdapter } from './knowledge/in-memory-knowledge.adapter';
 // Knowledge / RAG production read-side (GT-540 · ADR-0090 / ADR-0112)
@@ -55,6 +60,18 @@ export type {
 // Skills
 export { LocalSkillRegistryAdapter } from './skills/local-skill-registry.adapter';
 export { DEFAULT_SKILLS } from './skills/default-skills';
+// GT-608: the catalogue derived from `.harness/manifest.yaml` (single source of
+// truth for governance posture — this is what makes `requiresApproval` reachable).
+export { ManifestSkillRegistryAdapter } from './skills/manifest-skill-registry.adapter';
+export { deriveSkillsFromManifest, intentsForCapability } from './skills/manifest-skill-catalog';
+
+// Structural review (GT-613) — the first adapter behind IStructuralReviewer.
+export {
+  HeuristicStructuralReviewer,
+  HEURISTIC_COVERED_STANDARDS,
+  HEURISTIC_UNCOVERED_STANDARDS,
+} from './review/heuristic-structural-reviewer.adapter';
+export type { HeuristicStructuralReviewerOptions } from './review/heuristic-structural-reviewer.adapter';
 
 // Interaction adapters
 export { SmartCliCommandInteractionAdapter } from './interaction/SmartCliCommandInteractionAdapter';

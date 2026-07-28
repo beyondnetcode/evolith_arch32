@@ -25,6 +25,42 @@ export interface RuleCoverage {
   skippedRuleIds: string[];
   /** Ids of the rules counted in `rulesErrored`. */
   erroredRuleIds: string[];
+
+  /**
+   * GT-595 — the part of `rulesSkipped` that nothing will ever evaluate.
+   *
+   * A SUBSET of `rulesSkipped`, deliberately: the GT-569 invariant
+   * `rulesChecked + rulesSkipped + rulesErrored === rulesTotal` is untouched.
+   * 129 of this repository's rules are documentation (126 auto-generated
+   * ADR-conformance placeholders whose own text says no check was wired, plus 3
+   * board-judgement rules) or declare no check at all. Counting them as
+   * unevaluated made coverage look 34 points worse than the fixable figure and,
+   * worse, made it un-improvable — no handler closes a rule with nothing in it.
+   */
+  rulesNonExecutable?: number;
+  nonExecutableRuleIds?: string[];
+  /**
+   * `rulesTotal − rulesNonExecutable`. The denominator a coverage claim should
+   * be read against, because it counts only rules an engine or adapter can run.
+   */
+  rulesExecutable?: number;
+  /**
+   * Rules flagged `blocking: true` that can never be evaluated. A blocking rule
+   * that structurally cannot run is a promise the product does not keep.
+   */
+  blockingNonExecutableRuleIds?: string[];
+  /** GT-595 AC3 — `handled / executable / total` per ruleset file. */
+  perRuleset?: RulesetCoverageRatio[];
+}
+
+/** GT-595 AC3 — the coverage of one `*.rules.json`, so the ratio is per ruleset. */
+export interface RulesetCoverageRatio {
+  sourceFile: string;
+  /** Rules of this file a native handler evaluated. */
+  handled: number;
+  /** Rules of this file that an engine or adapter could run (total − non-executable). */
+  executable: number;
+  total: number;
 }
 
 /**
@@ -70,6 +106,15 @@ export interface ValidationResult {
   rulesNotApplicable?: number;
   notApplicableRuleIds?: string[];
   corpusTotal?: number;
+  /**
+   * GT-595 evaluability breakdown. Optional for the same additive reason as the
+   * GT-569 counters; `RulesetValidatorService.validate` always populates them.
+   */
+  rulesNonExecutable?: number;
+  nonExecutableRuleIds?: string[];
+  rulesExecutable?: number;
+  blockingNonExecutableRuleIds?: string[];
+  perRuleset?: RulesetCoverageRatio[];
   issues: ValidationIssue[];
   coreRef: {
     version: string | null;

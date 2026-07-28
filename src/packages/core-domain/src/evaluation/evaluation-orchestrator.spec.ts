@@ -1,4 +1,4 @@
-import { EvaluationOrchestrator } from './evaluation-orchestrator.service';
+import { EvaluationOrchestrator, UnsupportedEvaluationKindError } from './evaluation-orchestrator.service';
 import type { IEvaluationPipeline } from './ports/evaluation-pipeline.port';
 import type { IWorkspaceReferenceResolver } from './ports/workspace-reference-resolver.port';
 import type { EvaluationContext } from './contracts';
@@ -183,14 +183,182 @@ describe('EvaluationOrchestrator (GT-378)', () => {
       expect(r.decisionRecommendation?.recommendedVerdict).toBe(Verdict.FAIL);
     });
 
-    it('ignores a requested kind with no registered evaluator (sub-result absent)', async () => {
+    it('REFUSES a requested kind with no registered evaluator instead of dropping it (GT-614)', async () => {
       const pipeline: IEvaluationPipeline = { evaluate: async () => makeVerdict(true) };
       const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5'); // no evaluators
-      const r = await orch.evaluate({ ...ctx, kinds: ['gate', 'blueprint'] });
+
+      // Before GT-614 this returned a PASS shaped entirely by gates the consumer
+      // never asked for, with `results.blueprint` silently absent.
+      await expect(orch.evaluate({ ...ctx, kinds: ['gate', 'blueprint'] })).rejects.toThrow(
+        UnsupportedEvaluationKindError,
+      );
+      await expect(orch.evaluate({ ...ctx, kinds: ['gate', 'blueprint'] })).rejects.toThrow(
+        /blueprint/,
+      );
+    });
+  });
+
+  describe('kinds are read BEFORE the pipeline executes (GT-614)', () => {
+    const designEvaluator = () => ({
+      kind: 'design' as const,
+      evaluate: jest.fn(async () => ({
+        verdict: Verdict.PASS,
+        results: {
+          design: {
+            verdict: Verdict.PASS,
+            technicalMaturity: 80,
+            perConcernMaturity: [],
+            artifactStatus: [],
+            missingArtifacts: [],
+            deviationsRequiringAdr: [],
+            gaps: [],
+            recommendations: [],
+          },
+        },
+      })),
+    });
+
+    it('does not execute the rule pipeline when no pipeline kind was requested', async () => {
+      const evaluate = jest.fn(async () => makeVerdict(false)); // would FAIL if it ran
+      const orch = new EvaluationOrchestrator({ evaluate }, resolver, '1.0.5', [designEvaluator()]);
+
+      const r = await orch.evaluate({ ...ctx, kinds: ['design'] });
+
+      expect(evaluate).not.toHaveBeenCalled(); // ran in full before GT-614
+      expect(r.results.design?.technicalMaturity).toBe(80);
+      // The verdict is shaped ONLY by what was asked for: the failing gates never ran.
+      expect(r.overallVerdict).toBe(Verdict.PASS);
+      expect(r.results.gate).toBeUndefined();
+      expect(r.results.artifact).toBeUndefined();
+    });
+
+    it('keeps the denominator honest: an unrequested kind is OUT OF SCOPE, not 0/0 compliance', async () => {
+      const evaluate = jest.fn(async () => makeVerdict(true));
+      const orch = new EvaluationOrchestrator({ evaluate }, resolver, '1.0.5', [designEvaluator()]);
+
+      const r = await orch.evaluate({ ...ctx, kinds: ['design'] });
+
+      // Absent, NOT a zeroed ComplianceResult that would read as "0/0 checks passed",
+      // and distinct from GT-569 skipped/errored (unknown) and GT-571 not-applicable.
+      expect(r.results.compliance).toBeUndefined();
+      expect(r.rulesExecuted).toEqual([]);
+      expect(r.policiesApplied).toEqual([]);
+      expect(r.rationale).toMatch(/not executed/i);
+    });
+
+    it('still runs the pipeline when a pipeline kind IS requested alongside another kind', async () => {
+      const evaluate = jest.fn(async () => makeVerdict(true));
+      const orch = new EvaluationOrchestrator({ evaluate }, resolver, '1.0.5', [designEvaluator()]);
+
+      const r = await orch.evaluate({ ...ctx, kinds: ['compliance', 'design'] });
+
+      expect(evaluate).toHaveBeenCalledTimes(1);
+      expect(r.results.compliance?.passedChecks).toBe(2);
+      expect(r.results.design?.technicalMaturity).toBe(80);
+    });
+
+    it('treats an EMPTY kinds array as the legacy whole-pipeline request', async () => {
+      // `evaluation.controller.ts` sends `kinds: []` for inline callers that predate
+      // the field; that must keep meaning "nothing declared", not "nothing wanted".
+      const evaluate = jest.fn(async () => makeVerdict(true));
+      const orch = new EvaluationOrchestrator({ evaluate }, resolver, '1.0.5');
+
+      const r = await orch.evaluate({ ...ctx, kinds: [] });
+
+      expect(evaluate).toHaveBeenCalledTimes(1);
+      expect(r.results.gate).toHaveLength(2);
+    });
+
+    it('reports which kinds it can serve, evaluator set included', () => {
+      const orch = new EvaluationOrchestrator(
+        { evaluate: async () => makeVerdict(true) },
+        resolver,
+        '1.0.5',
+        [designEvaluator()],
+      );
+      expect([...orch.supportedKinds].sort()).toEqual(
+        ['artifact', 'compliance', 'design', 'gate', 'rule'].sort(),
+      );
+    });
+
+    it('refuses BEFORE resolving the workspace, so an unanswerable request costs no I/O', async () => {
+      const evaluate = jest.fn(async () => makeVerdict(true));
+      const resolve = jest.fn(async () => ({ satellitePath: '/ws/sat', corePath: '/ws/core' }));
+      const orch = new EvaluationOrchestrator({ evaluate }, { resolve }, '1.0.5');
+
+      await expect(orch.evaluate({ ...ctx, kinds: ['topology'] })).rejects.toThrow(
+        UnsupportedEvaluationKindError,
+      );
+      expect(resolve).not.toHaveBeenCalled();
+      expect(evaluate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('requester and revision attribution (GT-586)', () => {
+    const requester = {
+      actorType: 'agent' as const,
+      actorId: 'winston',
+      modelRef: 'claude-opus-5',
+      sessionId: 'sess-77',
+    };
+    const repositoryRevision = {
+      revision: '9f3c1ab',
+      repositoryRef: 'github.com/beyondnetcode/evolith',
+      branch: 'main',
+      dirty: false,
+    };
+
+    it('echoes the requester and the repository revision onto the verdict', async () => {
+      const pipeline: IEvaluationPipeline = { evaluate: async () => makeVerdict(true) };
+      const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5');
+
+      const r = await orch.evaluate({ ...ctx, requester, repositoryRevision });
+
+      expect(r.requester).toEqual(requester);
+      expect(r.requester?.actorType).toBe('agent'); // human vs agent, answerable at last
+      expect(r.repositoryRevision?.revision).toBe('9f3c1ab');
+    });
+
+    it('carries attribution even when the rule pipeline is out of scope (GT-614 path)', async () => {
+      const orch = new EvaluationOrchestrator(
+        { evaluate: jest.fn(async () => makeVerdict(true)) },
+        resolver,
+        '1.0.5',
+        [
+          {
+            kind: 'design' as const,
+            evaluate: async () => ({ verdict: Verdict.PASS, results: {} }),
+          },
+        ],
+      );
+
+      const r = await orch.evaluate({ ...ctx, kinds: ['design'], requester, repositoryRevision });
+
+      expect(r.requester?.actorId).toBe('winston');
+      expect(r.repositoryRevision?.revision).toBe('9f3c1ab');
+    });
+
+    it('is additive: a context with neither field still yields a valid verdict', async () => {
+      const pipeline: IEvaluationPipeline = { evaluate: async () => makeVerdict(true) };
+      const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5');
+
+      const r = await orch.evaluate(ctx); // no requester, no revision
 
       expect(r.overallVerdict).toBe(Verdict.PASS);
-      expect(r.results.blueprint).toBeUndefined();
-      expect(r.results.gate).toHaveLength(2);
+      expect(r.requester).toBeUndefined();
+      // Absent means "the consumer supplied none" — the Core never invents a sha.
+      expect(r.repositoryRevision).toBeUndefined();
+      expect('repositoryRevision' in r ? r.repositoryRevision : undefined).toBeUndefined();
+    });
+
+    it('never derives a revision from the workspace', async () => {
+      const pipeline: IEvaluationPipeline = { evaluate: async () => makeVerdict(true) };
+      const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5');
+
+      const r = await orch.evaluate({ ...ctx, requester });
+
+      expect(r.requester).toEqual(requester);
+      expect(r.repositoryRevision).toBeUndefined();
     });
   });
 

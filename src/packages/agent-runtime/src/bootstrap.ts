@@ -29,6 +29,7 @@ import { StubPolicyValidationAdapter } from './adapters/policy/stub-policy-valid
 import { InMemoryTrackerTraceAdapter } from './adapters/tracker/in-memory-tracker-trace.adapter';
 import { InMemoryMemoryAdapter } from './adapters/memory/in-memory-memory.adapter';
 import { LocalSkillRegistryAdapter } from './adapters/skills/local-skill-registry.adapter';
+import { ManifestSkillRegistryAdapter } from './adapters/skills/manifest-skill-registry.adapter';
 import { PendingApprovalAdapter } from './adapters/approval/pending-approval.adapter';
 import { StubAgentEngineAdapter } from './adapters/engine/stub-agent-engine.adapter';
 import { InMemoryKnowledgeAdapter } from './adapters/knowledge/in-memory-knowledge.adapter';
@@ -39,6 +40,15 @@ import { RoutingAgentAdapter, type EngineRouterConfig } from './adapters/engine/
 export type AgentRuntimeOverrides = Partial<AgentRuntimeDeps> & {
   /** Optional routing configuration. If provided and `engine` is not overridden, a Router is automatically wired. */
   readonly engineRouterConfig?: EngineRouterConfig;
+  /**
+   * GT-608 — path to a `.harness` checkout. When given (and `skillRegistry` is
+   * not overridden) the skill catalogue is DERIVED from
+   * `<harnessRoot>/manifest.yaml`, so every declared capability is routable and
+   * its governance posture — including `requiresApproval` — comes from the
+   * canonical registry instead of the hardcoded routing table. Omitted by
+   * default so the runtime still boots with no `.harness` checkout (design rule #5).
+   */
+  readonly harnessRoot?: string;
 };
 
 export interface AgentRuntimeBundle {
@@ -63,7 +73,11 @@ export function createAgentRuntime(overrides: AgentRuntimeOverrides = {}): Agent
   }
 
   const deps: AgentRuntimeDeps = {
-    skillRegistry: overrides.skillRegistry ?? new LocalSkillRegistryAdapter(),
+    skillRegistry:
+      overrides.skillRegistry ??
+      (overrides.harnessRoot
+        ? ManifestSkillRegistryAdapter.fromHarnessRoot(overrides.harnessRoot)
+        : new LocalSkillRegistryAdapter()),
     harness: overrides.harness ?? new InMemoryHarnessAdapter(),
     coreEvaluation: overrides.coreEvaluation ?? new StubCoreEvaluationAdapter(),
     policy: overrides.policy ?? new StubPolicyValidationAdapter(),
@@ -88,6 +102,10 @@ export function createAgentRuntime(overrides: AgentRuntimeOverrides = {}): Agent
     // GT-610 — how engine-proposed arguments are treated when the skill declares
     // no input contract (undefined ⇒ sanitized gap-fill).
     engineArgumentPolicy: overrides.engineArgumentPolicy,
+    // GT-593 — step journal. UNSET by default: journaling changes what a
+    // re-submitted run does, so it is opt-in wiring (InMemoryRunJournalAdapter
+    // for a single process, FileRunJournalAdapter to survive a `kill -9`).
+    journal: overrides.journal,
   };
   return { runtime: new AgentRuntimeService(deps), deps };
 }

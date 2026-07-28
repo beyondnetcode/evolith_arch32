@@ -134,6 +134,13 @@ export class RulesetValidatorService {
       rulesNotApplicable: notApplicable.length,
       notApplicableRuleIds: notApplicable.map(n => n.rule.id),
       corpusTotal: coverage.rulesTotal + notApplicable.length,
+      // GT-595 — the classification behind `rulesSkipped`, so a reader can tell
+      // coverage debt from rules that nothing will ever run.
+      rulesNonExecutable: coverage.rulesNonExecutable,
+      nonExecutableRuleIds: coverage.nonExecutableRuleIds,
+      rulesExecutable: coverage.rulesExecutable,
+      blockingNonExecutableRuleIds: coverage.blockingNonExecutableRuleIds,
+      perRuleset: coverage.perRuleset,
       issues,
       coreRef: { version: coreRefVersion, path: coreRefPath },
       timestamp: new Date().toISOString(),
@@ -221,21 +228,37 @@ export class RulesetValidatorService {
     const threshold = this.maxSkippedFraction;
     if (threshold === undefined || coverage.rulesTotal === 0) return undefined;
 
-    const unevaluated = coverage.rulesSkipped + coverage.rulesErrored;
-    const fraction = unevaluated / coverage.rulesTotal;
+    // GT-595: measure against the EXECUTABLE corpus. Charging the gate for 129
+    // rules that carry no check made the floor unreachable by any amount of
+    // engineering, which is the fastest way to get a threshold switched off.
+    // Non-executable rules are still named, in the description and in
+    // `GOV-RULE-NON-EXECUTABLE`, so the exclusion is auditable rather than
+    // convenient.
+    const nonExecutable = coverage.rulesNonExecutable ?? 0;
+    const denominator = coverage.rulesExecutable ?? coverage.rulesTotal;
+    if (denominator === 0) return undefined;
+
+    const unevaluated = coverage.rulesSkipped - nonExecutable + coverage.rulesErrored;
+    const fraction = unevaluated / denominator;
     if (fraction <= threshold) return undefined;
 
     const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
+    const exclusion =
+      nonExecutable > 0
+        ? ` ${nonExecutable} further rules are excluded from the denominator as non-executable ` +
+          '(documentation-only or declaring no check at all); see GOV-RULE-NON-EXECUTABLE.'
+        : '';
+
     return {
       ruleId: 'GOV-COVERAGE-THRESHOLD',
       severity: 'MUST',
       category: 'governance',
       title: 'Rule coverage below the configured floor',
       description:
-        `${unevaluated} of ${coverage.rulesTotal} rules were not evaluated ` +
-        `(${coverage.rulesSkipped} skipped, ${coverage.rulesErrored} errored) — ${pct(fraction)}, ` +
+        `${unevaluated} of ${denominator} executable rules were not evaluated ` +
+        `(${coverage.rulesSkipped - nonExecutable} skipped, ${coverage.rulesErrored} errored) — ${pct(fraction)}, ` +
         `above the configured maximum of ${pct(threshold)}. Only ${coverage.rulesChecked} rules actually ran, ` +
-        'so this verdict does not cover the declared corpus.',
+        `so this verdict does not cover the declared corpus (${coverage.rulesTotal} rules).${exclusion}`,
       blocking: true,
     };
   }

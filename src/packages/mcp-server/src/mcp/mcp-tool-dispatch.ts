@@ -32,6 +32,15 @@ export function redactArgs(args: Record<string, unknown>): Record<string, unknow
 
 export interface ToolCallResult {
   content: Array<{ type: 'text'; text: string }>;
+  /**
+   * GT-581 — the same envelope as `content[0].text`, as an object rather than a
+   * string. Every tool declares an `outputSchema` (see `tool-output-schema.ts`),
+   * and the MCP SDK requires a tool that declares one to return
+   * `structuredContent`, so a consumer no longer parses prose to reach the
+   * verdict. Emitted on failures too: an ABAC denial is exactly the result a
+   * caller most needs to read mechanically.
+   */
+  structuredContent?: Record<string, unknown>;
   isError?: boolean;
 }
 
@@ -68,13 +77,7 @@ export class ToolDispatchService {
 
   /** List tools allowed for the current user context. */
   listTools(): { tools: ReturnType<ToolRegistryService['listSchemas']> } {
-    const context = mcpContextStorage.getStore();
-    const allowedTools = this.registry.list().filter((tool) => {
-      if (!context) return true;
-      const requiredScope = tool.scope || (tool.mutative ? 'write' : 'read');
-      return context.scopes.includes(requiredScope);
-    });
-    return { tools: allowedTools.map((t) => t.schema) };
+    return handleListTools({ registry: this.registry });
   }
 
   /** Execute a tool by name with ABAC, approval, and tracing. */
@@ -102,7 +105,11 @@ export class ToolDispatchService {
     });
     const errorEnvelope = (env: unknown, durationMs: number): ToolCallResult => {
       this.metrics.recordToolCall(name, durationMs, false);
-      return { content: [{ type: 'text', text: JSON.stringify(env, null, 2) }], isError: true };
+      return {
+        content: [{ type: 'text', text: JSON.stringify(env, null, 2) }],
+        structuredContent: env as Record<string, unknown>,
+        isError: true,
+      };
     };
 
     const tool = this.registry.get(name);
@@ -220,7 +227,10 @@ export class ToolDispatchService {
       span.end();
       this.metrics.recordToolCall(name, durationMs, true);
       const env = success(data, meta(durationMs));
-      return { content: [{ type: 'text', text: JSON.stringify(env, null, 2) }] };
+      return {
+        content: [{ type: 'text', text: JSON.stringify(env, null, 2) }],
+        structuredContent: env as unknown as Record<string, unknown>,
+      };
     } catch (err) {
       const durationMs = Date.now() - startTime;
       const message = err instanceof Error ? err.message : String(err);
@@ -240,6 +250,11 @@ export class ToolDispatchService {
 /**
  * @deprecated Use ToolDispatchService.listTools() instead.
  * Kept for backward compatibility with existing callers.
+ *
+ * GT-581: `registry.list()` is already sorted by name, and the schemas go through
+ * `registry.describe()` so every advertised tool carries its derived
+ * `outputSchema` and annotations. Scope filtering is order-preserving, so the
+ * response is deterministic for a given principal.
  */
 export function handleListTools(deps: ListToolsDeps): {
   tools: ReturnType<ToolRegistryService['listSchemas']>;
@@ -250,7 +265,7 @@ export function handleListTools(deps: ListToolsDeps): {
     const requiredScope = tool.scope || (tool.mutative ? 'write' : 'read');
     return context.scopes.includes(requiredScope);
   });
-  return { tools: allowedTools.map((t) => t.schema) };
+  return { tools: allowedTools.map((t) => deps.registry.describe(t)) };
 }
 
 /**

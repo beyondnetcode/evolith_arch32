@@ -33,6 +33,7 @@ import type {
 } from '../domain/ports/agent-engine.port';
 import type { IKnowledgePort } from '../domain/ports/knowledge.port';
 import type { IWorkspaceContextPort } from '../domain/ports/workspace-context.port';
+import type { JournaledStep } from '../domain/ports/run-journal.port';
 
 import type { AgentRuntimeRequest } from '../domain/contracts/agent-runtime-request';
 import type {
@@ -49,6 +50,7 @@ import type { HarnessExecutionResult } from '../domain/ports/harness.port';
 import type { EvaluationResult } from '@beyondnet/evolith-core-domain/evaluation/contracts';
 
 import { buildEvaluationContext, buildPolicyInput } from './context-mapper';
+import { JournaledRun } from './run-journal';
 import { mergeEngineArguments, type ArgumentMergeDecision } from './engine-argument-merge';
 import { DEFAULT_MEMORY_HISTORY_LIMIT } from './agent-runtime-deps';
 import {
@@ -120,6 +122,17 @@ export class AgentRuntimeService implements IAgentRuntime {
       // 1. Resolve context (already in request.context) + record in memory.
       steps.push('resolve-context');
 
+      // 1-pre. GT-593 — open the step journal for this run. The run's identity IS
+      // its correlationId: without one there is nothing to resume against, so a
+      // request that wants resumability must correlate itself. Opening is safe
+      // even after a `kill -9`; a partially-written tail is skipped by the adapter.
+      const runId = request.context.correlationId;
+      const journaled =
+        this.deps.journal && runId
+          ? await JournaledRun.open(this.deps.journal, runId, () => this.now())
+          : undefined;
+      if (journaled && journaled.priorEntries > 0) steps.push('resume-journal');
+
       // 1a. GT-612 — READ the conversation namespace BEFORE appending this turn,
       //     so the engine plans with the PRIOR turns and not with its own request
       //     echoed back. Bounded (default 20 entries ≈ 10 turns) and best-effort:
@@ -153,7 +166,15 @@ export class AgentRuntimeService implements IAgentRuntime {
       if (this.deps.knowledge) {
         steps.push('ground');
         try {
-          const kr = await this.deps.knowledge.query({ query: request.intent, maxResults: 5 });
+          const knowledge = this.deps.knowledge;
+          const groundInput = { query: request.intent, maxResults: 5 };
+          // GT-593: retrieval is a non-deterministic step against a moving corpus.
+          // Journaling it means a resumed run cites the SAME chunks the original
+          // one did, instead of whatever the corpus happens to hold now.
+          const grounded = await this.journalStep(journaled, 'ground', groundInput, () =>
+            knowledge.query(groundInput),
+          );
+          const kr = grounded.value;
           const citations = kr.chunks.map((c) => (c.sectionHeading ? `${c.sourceFile}#${c.sectionHeading}` : c.sourceFile));
           const corpusVersion = kr.chunks.find((c) => c.corpusVersion)?.corpusVersion;
           grounding = { corpusVersion, citations };
@@ -167,7 +188,10 @@ export class AgentRuntimeService implements IAgentRuntime {
           // detector would report that everything is a knowledge gap. "No
           // answer" only carries meaning once there is a corpus that could have
           // answered. Until then we observe nothing rather than observe noise.
-          if (this.deps.knowledgeOpportunity && kr.totalChunks > 0) {
+          // Not re-observed on a resume: the sensor already counted this intent on
+          // the attempt that produced the journal entry, and counting it twice
+          // would report a knowledge gap that widened only because a process died.
+          if (this.deps.knowledgeOpportunity && kr.totalChunks > 0 && !grounded.resumed) {
             this.deps.knowledgeOpportunity.observe({
               intent: request.intent,
               citationCount: kr.chunks.length,
@@ -188,12 +212,29 @@ export class AgentRuntimeService implements IAgentRuntime {
       let enginePlan: AgentEnginePlan | undefined;
 
       if (!skill && this.deps.engine) {
+        const engine = this.deps.engine;
         const skills = await this.deps.skillRegistry.list();
         const planContext: AgentPlanContext = {
           history: recalled?.entries,
           conversationNamespace: this.conversationNs(request),
         };
-        enginePlan = await this.deps.engine.plan(request, skills, planContext);
+        // GT-593: the engine plan is THE non-deterministic step. Re-rolling it
+        // after a crash means the audit record of what the agent decided depends
+        // on when the process died, which is precisely what the journal fixes.
+        enginePlan = (
+          await this.journalStep(
+            journaled,
+            'engine-plan',
+            {
+              intent: request.intent,
+              tool: request.tool,
+              parameters: request.parameters,
+              catalogue: skills.map((s) => s.id),
+              history: recalled?.entries,
+            },
+            () => engine.plan(request, skills, planContext),
+          )
+        ).value;
         enginePlanRationale = `${enginePlan.engine}: ${enginePlan.rationale}`;
         if (enginePlan.proposedTool) {
           skill = await this.deps.skillRegistry.resolve(request.intent, enginePlan.proposedTool);
@@ -334,13 +375,21 @@ export class AgentRuntimeService implements IAgentRuntime {
       if (skill.kind === 'harness' || skill.kind === 'composite') {
         steps.push('harness-execute');
         yield { type: 'harness_started', timestamp: this.now(), capabilityId: skill.id };
-        harnessResult = await this.deps.harness.execute({
+        const harnessRequest = {
           capability: skill.harnessCapability ?? skill.id,
           // GT-610: the REVALIDATED argument set, not the raw request parameters.
           args: governedRequest.parameters,
           context: governedRequest.context,
           dryRun: governedRequest.dryRun,
-        });
+        };
+        // GT-593: a completed execution is replayed rather than re-run. A step
+        // killed BEFORE it completed left no entry and is re-executed whole — the
+        // journal records outcomes, it does not make a capability idempotent.
+        harnessResult = (
+          await this.journalStep(journaled, 'harness-execute', harnessRequest, () =>
+            this.deps.harness.execute(harnessRequest),
+          )
+        ).value;
         await this.emit(request, skill, 'harness.executed', harnessResult.ok ? 'passed' : 'blocked', {
           capability: harnessResult.capability,
           exitCode: harnessResult.exitCode,
@@ -374,7 +423,14 @@ export class AgentRuntimeService implements IAgentRuntime {
         steps.push('core-evaluate');
         yield { type: 'evaluation_started', timestamp: this.now(), capabilityId: skill.id };
         const evalCtx = buildEvaluationContext(governedRequest, skill, harnessResult?.data, workspaceFiles);
-        evaluation = await this.deps.coreEvaluation.evaluate(evalCtx);
+        // GT-593: the Core is stateless, so replaying its verdict for an identical
+        // context is sound — and it preserves the verdict the run originally got
+        // even if a ruleset changed between the crash and the resume.
+        evaluation = (
+          await this.journalStep(journaled, 'core-evaluate', evalCtx, () =>
+            this.deps.coreEvaluation.evaluate(evalCtx),
+          )
+        ).value;
         await this.emit(request, skill, 'core.evaluated', undefined, {
           verdict: String(evaluation.overallVerdict),
           outcome: evaluation.outcome,
@@ -440,6 +496,16 @@ export class AgentRuntimeService implements IAgentRuntime {
               limit: recalled.limit,
             }
           : undefined,
+        // GT-593 — which steps were replayed from the journal and which ran.
+        resumedFrom:
+          journaled && runId
+            ? {
+                runId,
+                priorEntries: journaled.priorEntries,
+                resumed: [...journaled.resumedSteps],
+                recorded: [...journaled.recordedSteps],
+              }
+            : undefined,
       };
 
       const recommendations: RuntimeRecommendation[] = enginePlanRationale
@@ -471,6 +537,22 @@ export class AgentRuntimeService implements IAgentRuntime {
       const result = await this.fail(request, baseTrace(), startedAt, `Runtime failure: ${message}`, 'exception');
       yield { type: 'error', timestamp: this.now(), result };
     }
+  }
+
+  /**
+   * GT-593 — run a step through the journal when one is open, or plainly when it
+   * is not. Keeping the fallback here (rather than at every call site) means the
+   * pipeline reads identically whether or not resumability is wired, and the
+   * un-journaled path keeps its exact previous behaviour.
+   */
+  private async journalStep<T>(
+    run: JournaledRun | undefined,
+    step: JournaledStep,
+    input: unknown,
+    execute: () => Promise<T>,
+  ): Promise<{ value: T; resumed: boolean }> {
+    if (!run) return { value: await execute(), resumed: false };
+    return run.step(step, input, execute);
   }
 
   private combine(

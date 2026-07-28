@@ -344,6 +344,21 @@ export const WIRE_VALIDATION_RESULT: WireCheck<SdkValidationResult> = {
   rulesNotApplicable: { required: false, declaredAs: 'number', accepts: isNumber },
   notApplicableRuleIds: { required: false, declaredAs: 'string[]', accepts: isArray },
   corpusTotal: { required: false, declaredAs: 'number', accepts: isNumber },
+  // GT-595: `rulesSkipped` conflated two different facts — a rule the engine
+  // could evaluate and did not, and a rule with nothing in it to evaluate. The
+  // second is not a coverage debt anybody can pay off, so counting it made the
+  // figure both worse and un-improvable. `rulesNonExecutable` is deliberately a
+  // SUBSET of `rulesSkipped`, which leaves the GT-569 invariant
+  // `rulesChecked + rulesSkipped + rulesErrored === rulesTotal` exactly intact,
+  // and `rulesExecutable` names the denominator a coverage claim should be read
+  // against. `blockingNonExecutableRuleIds` is the one that matters on the wire:
+  // a rule declared blocking that structurally cannot run is a promise the
+  // product does not keep, and a consumer is entitled to see it.
+  rulesNonExecutable: { required: false, declaredAs: 'number', accepts: isNumber },
+  nonExecutableRuleIds: { required: false, declaredAs: 'string[]', accepts: isArray },
+  rulesExecutable: { required: false, declaredAs: 'number', accepts: isNumber },
+  blockingNonExecutableRuleIds: { required: false, declaredAs: 'string[]', accepts: isArray },
+  perRuleset: { required: false, declaredAs: 'RulesetCoverageRatio[]', accepts: isArray },
   issues: { required: true, declaredAs: 'ValidationIssue[]', accepts: isArray },
   coreRef: {
     required: true,

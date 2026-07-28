@@ -73,7 +73,36 @@ Platform ADRs must define a **review trigger**: the condition (date or event, e.
 - **Traceability**: an ADR enforced by a machine-readable rule must be referenced from the corresponding `rulesets/adr/*.rules.json` file, and vice versa.
 - **Relocation**: moving an ADR between categories requires updating every inbound link in the same change and a note in the ADR header (`Relocated from <category> on <date>`).
 
-## 5. Compliance
+## 5. Implementation Status Declaration
+
+An `Accepted` ADR is a claim a reader will act on. Seven agentic ADRs (0081, 0082, 0086, 0088, 0089, 0092, 0094) sat at `Accepted` with no implementing code, which [GT-607](../../control-center/gaps/gap-reference-catalog.md#gt-607) registered as the fastest available way to lose a technical due diligence. The remedy is not to implement on demand — most of this corpus is normative standards published *for satellites* — it is to say so where a machine can read it.
+
+Every ADR whose status is `Accepted` **must** carry a machine-readable directive next to its status:
+
+```markdown
+## Status
+
+Accepted
+
+<!-- implementation-status: none -->
+```
+
+```markdown
+<!-- implementation-status: src/packages/agent-runtime/src/adapters/harness/harness-process.adapter.ts, src/rulesets/topologies/agentic-ai/agentic-ai.rules.json -->
+```
+
+Rules:
+
+- **`none` is a legitimate, permanent answer** for a standard addressed to satellites. It is not a defect and must not be worked around by naming a file that merely mentions the topic.
+- **Any other value is a comma-separated list of repo-relative paths**, and every path must exist. The declaration is deliberately falsifiable: an ADR that claims `foo.ts` implements it goes red the day `foo.ts` is deleted or moved.
+- **The directive states a pointer, not a proof.** No automated check can decide that a file implements a decision, and this standard does not pretend otherwise — the same overreach [GT-576](../../control-center/gaps/gap-reference-catalog.md#gt-576) caught in the maturity assessment. What is enforced is that the claim exists, is specific, and still resolves.
+- **EN and ES must declare the same thing.** A reader of either language gets the same answer.
+- **Statuses other than `Accepted`** (`Proposed`, `Superseded`, …) carry no implementation claim and need no directive.
+- Prose alongside the directive is encouraged — the directive is for the guard, the blockquote is for the human.
+
+ADRs predating this convention are held in an explicit baseline that may only shrink; new and modified ADRs are not eligible for it.
+
+## 6. Compliance
 
 - New ADRs: full compliance with this standard is a Design Baseline gate criterion.
 - Existing ADRs: structural sections were normalized on 2026-06-10; content backfill of sections 2, 3, 5, 8 (and 9–10 for platform ADRs) is tracked as [GT-20](../../control-center/gaps/gap-reference-catalog.md#gt-20). Placement review of tool-centric Core ADRs is tracked as [GT-21](../../control-center/gaps/gap-reference-catalog.md#gt-21).

@@ -24,6 +24,7 @@ import type { IApprovalPort } from '../domain/ports/approval.port';
 import type { IAgentEnginePort } from '../domain/ports/agent-engine.port';
 import type { IKnowledgePort } from '../domain/ports/knowledge.port';
 import type { IWorkspaceContextPort } from '../domain/ports/workspace-context.port';
+import type { IRunJournalPort } from '../domain/ports/run-journal.port';
 import type { EngineArgumentPolicy } from './engine-argument-merge';
 
 /** GT-612 — default bound on the conversation history fed into planning. */
@@ -60,6 +61,16 @@ export interface ObservabilityDeps {
    * `0` disables the read entirely.
    */
   readonly memoryHistoryLimit?: number;
+  /**
+   * GT-593 — append-only step journal. When wired AND the request carries a
+   * `correlationId`, the expensive/non-deterministic steps (engine plan,
+   * grounding, harness execution, Core evaluation) record what they were asked
+   * and what they answered, and a re-submitted run REPLAYS them instead of
+   * re-rolling them. Unset ⇒ the previous behaviour: a run killed mid-pipeline
+   * restarts from zero. Approvals and policy are never journaled — see
+   * `run-journal.ts` for the full list of what is not resumable.
+   */
+  readonly journal?: IRunJournalPort;
 }
 
 /** Infrastructure concerns: workspace context, clock, id generator. */

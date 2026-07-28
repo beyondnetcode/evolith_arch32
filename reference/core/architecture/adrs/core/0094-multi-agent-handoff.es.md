@@ -5,6 +5,7 @@
 ## Estado
 Accepted
 
+<!-- implementation-status: none -->
 > **Estado de implementacion en este repositorio: ninguna** (verificado 2026-07-28).
 > Este ADR es un estandar normativo publicado *para los satelites*; esta Accepted como decision,
 > no como capacidad entregada. Nada en Evolith Core lo implementa, y nada lo hace cumplir.

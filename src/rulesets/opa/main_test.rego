@@ -1,8 +1,10 @@
 package evolith.main_test
 
+import rego.v1
+
 import data.evolith.main
 
-test_empty_violations {
+test_empty_violations if {
 	violations := main.violations with data.evolith.version_pinning.violations as {}
 		with data.evolith.taxonomy.violations as {}
 		with data.evolith.cli_readiness.violations as {}
@@ -36,7 +38,7 @@ test_empty_violations {
 	count(violations) == 0
 }
 
-test_single_source_violations {
+test_single_source_violations if {
 	violations := main.violations with data.evolith.version_pinning.violations as {{"id": "DEP-01", "message": "fail"}}
 		with data.evolith.taxonomy.violations as {}
 		with data.evolith.cli_readiness.violations as {}
@@ -71,7 +73,7 @@ test_single_source_violations {
 	violations[_].id == "DEP-01"
 }
 
-test_multi_source_violations {
+test_multi_source_violations if {
 	violations := main.violations with data.evolith.version_pinning.violations as {{"id": "DEP-01", "message": "fail1"}}
 		with data.evolith.taxonomy.violations as {}
 		with data.evolith.cli_readiness.violations as {}
@@ -107,7 +109,7 @@ test_multi_source_violations {
 	violations[_].id == "DEP-04"
 }
 
-test_new_policy_violations {
+test_new_policy_violations if {
 	violations := main.violations with data.evolith.version_pinning.violations as {}
 		with data.evolith.taxonomy.violations as {}
 		with data.evolith.cli_readiness.violations as {}

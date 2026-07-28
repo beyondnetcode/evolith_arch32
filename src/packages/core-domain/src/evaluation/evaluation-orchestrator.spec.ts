@@ -5,6 +5,7 @@ import type { EvaluationContext } from './contracts';
 import { normalizeEvidence } from './contracts';
 import type { EvaluationVerdict } from '../domain/satellite-manifest';
 import { Verdict } from '../domain/verdict/verdict';
+import { createKindSelectivePipeline } from './kind-selective-pipeline';
 
 function makeVerdict(passed: boolean): EvaluationVerdict {
   return {
@@ -291,6 +292,110 @@ describe('EvaluationOrchestrator (GT-378)', () => {
       );
       expect(resolve).not.toHaveBeenCalled();
       expect(evaluate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('selective execution INSIDE the pipeline (GT-614)', () => {
+    /** A phase gate that FAILS, and a compliance gate that passes. */
+    function gates() {
+      const rule = (ruleId: string, gateRef: string, passed: boolean) => ({
+        ruleId,
+        rulePath: `rulesets/opa/${gateRef}.rego`,
+        artifact: 'evolith.yaml',
+        passed,
+        message: passed ? 'ok' : `${ruleId} failed`,
+        severity: 'error' as const,
+        remediation: passed ? '' : 'fix it',
+        gateRef,
+      });
+      return {
+        phaseGate: {
+          gateId: 'gate-f2',
+          gateName: 'Design Baseline',
+          phase: 'f2',
+          kinds: ['gate', 'artifact'] as const,
+          evaluate: jest.fn(async () => [rule('PG-F2-001', 'gate-f2', false)]),
+        },
+        complianceGate: {
+          gateId: 'compliance-baseline',
+          gateName: 'Compliance Baseline',
+          phase: 'cross',
+          kinds: ['compliance'] as const,
+          evaluate: jest.fn(async () => [rule('CMP-01', 'compliance-baseline', true)]),
+        },
+      };
+    }
+
+    it('a request for ONE kind no longer pays for every gate', async () => {
+      const { phaseGate, complianceGate } = gates();
+      const orch = new EvaluationOrchestrator(
+        createKindSelectivePipeline([phaseGate, complianceGate], {
+          now: () => '2026-07-28T00:00:00.000Z',
+        }),
+        resolver,
+        '1.0.5',
+      );
+
+      const r = await orch.evaluate({ ...ctx, kinds: ['compliance'] });
+
+      // The gap's own sentence, now false: the phase gate never ran.
+      expect(phaseGate.evaluate).not.toHaveBeenCalled();
+      expect(complianceGate.evaluate).toHaveBeenCalledTimes(1);
+      // …so the failure it WOULD have produced cannot shape a verdict nobody asked for.
+      expect(r.overallVerdict).toBe(Verdict.PASS);
+      expect(r.results.compliance?.totalChecks).toBe(1);
+      expect(r.results.compliance?.skippedChecks).toBe(0);
+      expect(r.risks).toEqual([]); // out of scope ≠ skipped ≠ errored
+      expect(r.rulesExecuted.map((x) => x.ruleId)).toEqual(['CMP-01']);
+    });
+
+    it('still runs the gate whose kind IS requested', async () => {
+      const { phaseGate, complianceGate } = gates();
+      const orch = new EvaluationOrchestrator(
+        createKindSelectivePipeline([phaseGate, complianceGate], {
+          now: () => '2026-07-28T00:00:00.000Z',
+        }),
+        resolver,
+        '1.0.5',
+      );
+
+      const r = await orch.evaluate({ ...ctx, kinds: ['gate', 'compliance'] });
+
+      expect(phaseGate.evaluate).toHaveBeenCalledTimes(1);
+      expect(complianceGate.evaluate).toHaveBeenCalledTimes(1);
+      expect(r.overallVerdict).toBe(Verdict.FAIL);
+    });
+
+    it('hands the pipeline only the PIPELINE kinds — a KindEvaluator kind never selects a gate', async () => {
+      const seen: Array<readonly string[] | undefined> = [];
+      const pipeline: IEvaluationPipeline = {
+        evaluate: async (_m, plan) => {
+          seen.push(plan?.requestedKinds);
+          return makeVerdict(true);
+        },
+      };
+      const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5', [
+        { kind: 'design' as const, evaluate: async () => ({ verdict: Verdict.PASS, results: {} }) },
+      ]);
+
+      await orch.evaluate({ ...ctx, kinds: ['compliance', 'design'] });
+
+      expect(seen).toEqual([['compliance']]);
+    });
+
+    it('passes an UNRESTRICTED plan when the consumer declared no kinds', async () => {
+      const seen: Array<boolean | undefined> = [];
+      const pipeline: IEvaluationPipeline = {
+        evaluate: async (_m, plan) => {
+          seen.push(plan?.unrestricted);
+          return makeVerdict(true);
+        },
+      };
+      const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5');
+
+      await orch.evaluate({ ...ctx, kinds: [] });
+
+      expect(seen).toEqual([true]);
     });
   });
 

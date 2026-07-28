@@ -1,7 +1,15 @@
 // Harness
 export { InMemoryHarnessAdapter } from './harness/in-memory-harness.adapter';
-export { HarnessProcessAdapter } from './harness/harness-process.adapter';
+export { HarnessProcessAdapter, DEFAULT_CAPABILITY_MAX_MEMORY_MB } from './harness/harness-process.adapter';
 export type { HarnessProcessOptions } from './harness/harness-process.adapter';
+// GT-607 — least-privilege environment for spawned capabilities.
+export {
+  buildCapabilityEnv,
+  isCredentialEnvName,
+  DEFAULT_CAPABILITY_ENV_ALLOWLIST,
+  CREDENTIAL_ENV_NAME_PATTERN,
+} from './harness/capability-env';
+export type { CapabilityEnvInput, CapabilityEnvResult } from './harness/capability-env';
 export { loadManifest, parseManifest } from './harness/harness-manifest';
 export type { HarnessCapabilityRuntime } from './harness/harness-manifest';
 

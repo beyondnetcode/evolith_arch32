@@ -30,8 +30,9 @@ import { createLocalSessionContext } from './mcp-auth-contexts';
  * in every environment (the compiled bundle is only built by the jobs that need
  * it, and a check that silently self-skips is not a check).
  *
- * The compiled bundle is additionally verified when it happens to be present —
- * see the last describe block.
+ * The COMPILED bundle — the artifact that actually decides at runtime — is verified
+ * by the last describe block. That block is mandatory wherever
+ * `EVOLITH_REQUIRE_OPA_WASM=1` is set (CI), so its absence fails instead of skipping.
  */
 
 /** Walk up from this file until the repository root (the one holding `src/rulesets`). */
@@ -145,46 +146,114 @@ describe('GT-602 — every REGISTERED tool exists in the compiled policy source'
 
 /**
  * The compiled artifact itself. `policy.wasm` is a gitignored build output that
- * only the jobs running `npm run build:policy` produce, so this block asserts
- * against it when it exists and refuses to pass silently when the caller has
- * declared it must (`EVOLITH_REQUIRE_OPA_WASM=1`).
+ * only the jobs running `npm run build:policy` produce.
+ *
+ * A test that skips where it is ENFORCED verifies nothing, so this block is
+ * governed by `EVOLITH_REQUIRE_OPA_WASM`:
+ *
+ *   - unset (a developer checkout that never compiled the bundle) → the block
+ *     skips, and says so;
+ *   - `=1` (CI — `.github/workflows/ci-cd.yml`, job `Test mcp-server`, which runs
+ *     `npm run build:policy` immediately before the suite) → the block RUNS, and a
+ *     missing bundle is a FAILURE, not a skip.
  */
 describe('GT-602 — the compiled policy.wasm allows an architect in production', () => {
   const WASM_PATH = path.join(REPO_ROOT, 'src', 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm');
   const wasmPresent = fs.existsSync(WASM_PATH);
   const required = process.env.EVOLITH_REQUIRE_OPA_WASM === '1';
+  // When the caller declared the bundle required we run the assertions even if the
+  // file is absent, so the failure names the artifact instead of quietly skipping.
+  const itCompiled = wasmPresent || required ? it : it.skip;
 
-  it('is present when the caller declared it required', () => {
-    if (!required) return expect(true).toBe(true);
+  const ARCHITECT_IN_PRODUCTION = {
+    user: { id: 'arch-1', roles: ['architect'], tenant: 'evolith' },
+    resource_domain: 'mcp-server',
+    environment: 'production',
+  } as const;
+
+  /** Evaluate the COMPILED bundle (not the rego source) for one tool name. */
+  function violationsFor(policy: any, name: string): Array<{ id: string }> {
+    const resultSet = policy.evaluate({ ...ARCHITECT_IN_PRODUCTION, tool_name: name }, 'evolith/abac/violations');
+    return Array.isArray(resultSet?.[0]?.result) ? resultSet[0].result : [];
+  }
+
+  async function loadCompiledPolicy(): Promise<any> {
+    expect(
+      wasmPresent
+        ? 'present'
+        : `MISSING compiled policy bundle at ${WASM_PATH}. ` +
+          `EVOLITH_REQUIRE_OPA_WASM=1 declares it mandatory — run \`npm run build:policy\` before this suite.`,
+    ).toBe('present');
+    // @ts-ignore: opa-wasm ships no type declarations (same as abac-evaluator.ts)
+    const { loadPolicy } = await import('@open-policy-agent/opa-wasm');
+    return loadPolicy(fs.readFileSync(WASM_PATH));
+  }
+
+  it('is present when the caller declared it required (EVOLITH_REQUIRE_OPA_WASM=1)', () => {
+    if (!required) {
+      // Not a silent pass: state the condition under which this block is inert.
+      expect(required).toBe(false);
+      return;
+    }
     expect(wasmPresent).toBe(true);
   });
 
-  (wasmPresent ? it : it.skip)(
+  itCompiled(
     'returns zero violations for every classified tool',
     async () => {
-      // @ts-ignore: opa-wasm ships no type declarations (same as abac-evaluator.ts)
-      const { loadPolicy } = await import('@open-policy-agent/opa-wasm');
-      const policy = await loadPolicy(fs.readFileSync(WASM_PATH));
-
+      const policy = await loadCompiledPolicy();
       const denied: string[] = [];
       for (const name of AbacEvaluator.classifiedToolNames()) {
-        const resultSet = policy.evaluate(
-          {
-            user: { id: 'arch-1', roles: ['architect'], tenant: 'evolith' },
-            tool_name: name,
-            resource_domain: 'mcp-server',
-            environment: 'production',
-          },
-          'evolith/abac/violations',
-        );
-        const violations = Array.isArray(resultSet?.[0]?.result) ? resultSet[0].result : [];
+        const violations = violationsFor(policy, name);
         if (violations.length > 0) {
-          denied.push(`${name} -> ${violations.map((v: { id: string }) => v.id).join('+')}`);
+          denied.push(`${name} -> ${violations.map((v) => v.id).join('+')}`);
         }
       }
       expect(denied).toEqual([]);
     },
-    30_000,
+    60_000,
+  );
+
+  /**
+   * Acceptance criteria 1 and 3, against the artifact rather than the source: every
+   * tool the DI graph actually REGISTERS must be known to the compiled bundle and
+   * must ALLOW an `architect` in `production`. A tool added to the TypeScript
+   * registry and never added to the rego reaches this as `ABAC-03` (unknown tool).
+   */
+  itCompiled(
+    'allows an architect in production for every REGISTERED tool name',
+    async () => {
+      const policy = await loadCompiledPolicy();
+      const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+      const registered = moduleRef.get(ToolRegistryService).listSchemas().map((s) => s.name);
+
+      expect(registered.length).toBeGreaterThan(0);
+      const denied = registered
+        .map((name) => ({ name, violations: violationsFor(policy, name) }))
+        .filter((row) => row.violations.length > 0)
+        .map((row) => `${row.name} -> ${row.violations.map((v) => v.id).join('+')}`);
+
+      // Before the rego fix this listed the fifteen tools of GT-602 as `ABAC-03+ABAC-01`.
+      expect(denied).toEqual([]);
+    },
+    60_000,
+  );
+
+  /**
+   * Negative control for the two assertions above. `policy.evaluate` returning an
+   * unexpected shape would make `violationsFor` yield `[]` for everything and both
+   * ALLOW assertions would pass vacuously — the exact failure mode this row exists
+   * to catch. A name in NO rego set must come back as `ABAC-03` (unknown tool),
+   * which is also what a registry tool missing from the policy would produce.
+   */
+  itCompiled(
+    'flags a tool absent from the compiled policy as ABAC-03',
+    async () => {
+      const policy = await loadCompiledPolicy();
+      const ids = violationsFor(policy, 'evolith-not-a-real-tool').map((v) => v.id);
+      expect(ids).toContain('ABAC-03');
+    },
+    60_000,
   );
 
   /**
@@ -197,7 +266,7 @@ describe('GT-602 — the compiled policy.wasm allows an architect in production'
    * configuration a containerised MCP server runs in — and asserts a verdict
    * rather than a FORBIDDEN envelope for a tool that GT-602 had denied.
    */
-  (wasmPresent ? it : it.skip)(
+  itCompiled(
     'serves evolith-adr-list to the production stdio principal end to end',
     async () => {
       const previousNodeEnv = process.env.NODE_ENV;

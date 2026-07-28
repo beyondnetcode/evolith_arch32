@@ -2,7 +2,11 @@ import {
   normalizeEvidence,
   resolveEvidenceSignals,
   foldQualitySignals,
+  admitEvidenceBlocking,
+  assessEvidenceAdmissibility,
+  admissibleBlockingEvidence,
   DEFAULT_QUALITY_DIMENSION,
+  DEFAULT_EVIDENCE_ADMISSIBILITY_POLICY,
   type Evidence,
   type RawEvidence,
 } from './quality-evidence';
@@ -151,6 +155,141 @@ describe('quality-evidence (GT-533 · ADR-0111)', () => {
       expect(foldQualitySignals()).toEqual([
         { dimension: DEFAULT_QUALITY_DIMENSION, status: 'no-evidence', evidence: [] },
       ]);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // GT-584 — calibration on Evidence, and the condition that reads it.
+  // -------------------------------------------------------------------------
+  describe('calibration on Evidence (GT-584 AC2)', () => {
+    /** "Now" for every staleness assertion below — no wall clock in a test. */
+    const NOW = () => new Date('2026-07-28T00:00:00.000Z');
+    const policy = { ...DEFAULT_EVIDENCE_ADMISSIBILITY_POLICY, now: NOW };
+
+    const llm = (calibration?: RawEvidence['calibration']): Evidence =>
+      normalizeEvidence(
+        {
+          source: 'llm-auditor',
+          dimension: 'code-quality',
+          determinism: 'probabilistic',
+          findings: [{ code: 'god-class', severity: 'high', message: 'god class' }],
+          provenance: { collectedBy: 'llm-auditor', adapterVersion: '2.1.0' },
+          calibration,
+        },
+        { now: fixedNow },
+      );
+
+    const fresh = {
+      truePositiveRate: 0.97,
+      trueNegativeRate: 0.96,
+      measuredAt: '2026-06-01T00:00:00.000Z',
+      sampleSize: 400,
+      method: 'hand-labelled corpus, two raters',
+      labelledBy: 'architecture-panel',
+    };
+
+    it('carries the calibration fields through normalization, verbatim', () => {
+      expect(llm(fresh).calibration).toEqual(fresh);
+    });
+
+    it('leaves calibration ABSENT when the producer declares none (absent ≠ zeroed)', () => {
+      const ev = llm();
+      expect(ev.calibration).toBeUndefined();
+      expect('calibration' in ev).toBe(false);
+    });
+
+    it('rejects a calibration that is present but unreadable, instead of filing it as unmeasured', () => {
+      // 95 is a percentage, not a rate: silently dropping it would report a
+      // well-measured provider as uncalibrated and hide the real defect.
+      expect(() => llm({ ...fresh, truePositiveRate: 95 })).toThrow(/\[0,1\]/);
+      expect(() => llm({ ...fresh, trueNegativeRate: -0.1 })).toThrow(/\[0,1\]/);
+      expect(() => llm({ ...fresh, measuredAt: 'last tuesday' })).toThrow(/ISO-8601/);
+      expect(() => llm({ truePositiveRate: 0.99, trueNegativeRate: 0.99 })).toThrow(/ISO-8601/);
+      expect(() => llm({ ...fresh, sampleSize: 0 })).toThrow(/positive integer/);
+    });
+
+    describe('admitEvidenceBlocking — a signal lacking the fields cannot block', () => {
+      it('REFUSES to block on a probabilistic signal with no measured error rate', () => {
+        const d = admitEvidenceBlocking(llm(), policy);
+        expect(d.blocking).toBe(false);
+        expect(d.admissibility).toBe('advisory-uncalibrated');
+        expect(d.downgradedFromBlocking).toBe(true); // the demotion is never silent
+        expect(d.confidence).toBeUndefined();
+        expect(d.rationale).toMatch(/unmeasured guess/);
+      });
+
+      it('admits a probabilistic signal whose fresh measurement clears the policy', () => {
+        const d = admitEvidenceBlocking(llm(fresh), policy);
+        expect(d.blocking).toBe(true);
+        expect(d.admissibility).toBe('calibrated');
+        expect(d.confidence).toBe(0.97);
+        expect(d.downgradedFromBlocking).toBe(false);
+      });
+
+      it('degrades a measured-but-too-inaccurate signal to advisory', () => {
+        const d = admitEvidenceBlocking(llm({ ...fresh, truePositiveRate: 0.6 }), policy);
+        expect(d.blocking).toBe(false);
+        expect(d.admissibility).toBe('advisory-below-threshold');
+        expect(d.rationale).toMatch(/TPR 0\.6/);
+      });
+
+      it('degrades a STALE calibration to advisory (AC3)', () => {
+        const d = admitEvidenceBlocking(
+          llm({ ...fresh, measuredAt: '2020-01-01T00:00:00.000Z' }),
+          policy,
+        );
+        expect(d.blocking).toBe(false);
+        expect(d.admissibility).toBe('advisory-stale-calibration');
+        expect(d.rationale).toMatch(/days old/);
+      });
+
+      it('leaves a DETERMINISTIC signal alone — it is not a guess and needs no rate', () => {
+        const lighthouse = normalizeEvidence(
+          {
+            source: 'lighthouse',
+            dimension: 'performance',
+            determinism: 'deterministic',
+            provenance: { collectedBy: 'lighthouse' },
+          },
+          { now: fixedNow },
+        );
+        const d = admitEvidenceBlocking(lighthouse, policy);
+        expect(d.blocking).toBe(true);
+        expect(d.admissibility).toBe('deterministic');
+        expect(d.downgradedFromBlocking).toBe(false);
+      });
+
+      it('honours an overridden policy, so the thresholds are arguable rather than baked in', () => {
+        const lax = { ...policy, minTruePositiveRate: 0.5, minTrueNegativeRate: 0.5 };
+        const ev = llm({ ...fresh, truePositiveRate: 0.6, trueNegativeRate: 0.6 });
+        expect(admitEvidenceBlocking(ev, policy).blocking).toBe(false);
+        expect(admitEvidenceBlocking(ev, lax).blocking).toBe(true);
+      });
+    });
+
+    describe('assessEvidenceAdmissibility / admissibleBlockingEvidence', () => {
+      it('reports one decision per received item and never drops a demoted one', () => {
+        const items = [llm(), llm(fresh)];
+        const decisions = assessEvidenceAdmissibility(items, policy);
+
+        expect(decisions).toHaveLength(2);
+        expect(decisions.map((d) => d.admissibility)).toEqual([
+          'advisory-uncalibrated',
+          'calibrated',
+        ]);
+        expect(decisions.every((d) => d.source === 'llm-auditor')).toBe(true);
+      });
+
+      it('filters the blocking set down to what may actually block', () => {
+        const calibrated = llm(fresh);
+        const admissible = admissibleBlockingEvidence([llm(), calibrated], policy);
+        expect(admissible).toEqual([calibrated]);
+      });
+
+      it('is empty-safe', () => {
+        expect(assessEvidenceAdmissibility()).toEqual([]);
+        expect(admissibleBlockingEvidence()).toEqual([]);
+      });
     });
   });
 });

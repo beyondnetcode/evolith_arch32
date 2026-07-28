@@ -67,6 +67,25 @@ está hoy en npm es anterior a este endurecimiento: hasta que llegue la siguient
 release al registry, trata el `GeminiProvider` publicado como no gobernado y no lo
 actives.
 
+#### Gobernado como satélite de su propia topología
+
+Este paquete se evalúa contra las nueve reglas bloqueantes `AAI-*` de la topología
+`agentic-ai` que el propio Evolith publica. Su descriptor de satélite es
+[`agent.config.json`](./agent.config.json) — postura de sandbox, separación
+prompt/implementación, aprobación de herramientas, confianza del contexto,
+auditoría, presupuestos operativos y ciclo de vida de credenciales — y su bloque
+`enforcement` declara, regla por regla, qué está impuesto por código aquí y qué es
+una política operativa declarada. Los procedimientos de operación están en
+[`RUNBOOKS.md`](./RUNBOOKS.md). La ejecución de conformidad es una prueba de la
+suite de este paquete (`src/__tests__/agentic-ai-self-conformance.spec.ts`), con un
+fixture negativo que demuestra que las nueve se ponen en rojo sin el descriptor.
+
+Las capacidades `.harness` que se lanzan como procesos hijo reciben un entorno con
+**allowlist**: ningún `*_TOKEN`, `*_KEY`, `*_SECRET`, `*_URL` ni `*_URI` del proceso
+anfitrión llega a un script de capacidad, por ninguna vía (GT-607). Configura lo que
+una capacidad puede leer con `HarnessProcessOptions.envAllowlist`, o pasa valores de
+forma explícita con `HarnessProcessOptions.env`.
+
 ## Instalación
 
 Este paquete forma parte de los workspaces del monorepo Evolith. Constrúyelo con

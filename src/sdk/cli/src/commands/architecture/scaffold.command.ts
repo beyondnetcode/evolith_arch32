@@ -9,6 +9,14 @@ import { DotnetWorkspaceStrategy } from '../../infrastructure/architecture/dotne
 import { commandExecutor } from '../../infrastructure/cli/command-executor';
 import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { toProgressivePhase } from '../../infrastructure/architecture/topology-catalog';
+import {
+  bootstrapNxWorkspace,
+  canBootstrapNxWorkspace,
+  isNxWorkspace,
+  isSatellite,
+  nxWorkspaceDir,
+  type NxWorkspaceBootstrapResult,
+} from './scaffold/nx-workspace-bootstrap';
 
 @Command({
   name: 'scaffold',
@@ -54,10 +62,15 @@ export class ScaffoldCommand extends BaseEvolithCommand {
       this.strategy.setDryRun(dryRun);
     }
 
-    // Guard: the Nx strategy runs `npm install` / `nx g` in `<cwd>/src`. If that
-    // workspace does not exist, the spawn fails deep with a raw `spawn ENOENT`.
-    // Fail fast with an actionable message instead. Dry-run doesn't spawn, so skip.
+    // GT-626: the Nx strategy runs `npm install` / `nx g` in `<cwd>/src`, so that
+    // directory must BE an Nx workspace. `scaffold` now creates it when it is
+    // missing (see `nx-workspace-bootstrap.ts` for why this command owns it), and
+    // the precondition below stays as strict as before for the case where it
+    // cannot: an ambiguous `src/` still earns a fast, clear refusal rather than a
+    // crash deep inside Nx. Dry-run doesn't spawn, so it neither writes nor checks.
+    let nxWorkspace: NxWorkspaceBootstrapResult | undefined;
     if (!dryRun) {
+      nxWorkspace = this.ensureNxWorkspace();
       const workspaceError = this.checkWorkspace();
       if (workspaceError) {
         if (json) {
@@ -146,6 +159,12 @@ export class ScaffoldCommand extends BaseEvolithCommand {
           phase,
           apiName,
           domains: domains || [],
+          // GT-626: an Nx workspace must never appear out of nowhere. Say whether
+          // this run created it, so a machine consumer can tell a scaffold into a
+          // pre-existing workspace from one that bootstrapped its own.
+          nxWorkspace: nxWorkspace
+            ? { action: nxWorkspace.action, files: nxWorkspace.files }
+            : { action: 'skipped', files: [] },
         }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : String(error);
@@ -157,6 +176,12 @@ export class ScaffoldCommand extends BaseEvolithCommand {
 
     console.log();
     this.promptService.showIntro('Evolith Architecture Scaffolding');
+
+    if (nxWorkspace?.action === 'created') {
+      this.promptService.showInfo(
+        `Nx workspace creado en ${nxWorkspace.workspaceDir} (${nxWorkspace.files.join(', ')}).`,
+      );
+    }
 
     let frontendFramework = options?.frontend as string | undefined;
     if (!frontendFramework) {
@@ -329,40 +354,71 @@ export class ScaffoldCommand extends BaseEvolithCommand {
   }
 
   /**
+   * GT-626 — make the precondition TRUE instead of merely checking it.
+   *
+   * `init` and `scaffold` disagreed about the workspace root: `init` scaffolds
+   * the satellite AROUND `src/` and leaves it empty, while the Nx strategy runs
+   * `npm` and `nx` INSIDE it. Nobody created the workspace, so step 5 of the
+   * README quickstart could not follow step 2, and the refusal named
+   * `create-nx-workspace` — a step the documented sequence never performs.
+   *
+   * `scaffold` now creates it, because `scaffold` is the only command that runs
+   * `nx`; the full argument for that owner (and against `init` and against
+   * shelling out to `create-nx-workspace`) is in `nx-workspace-bootstrap.ts`.
+   *
+   * This is deliberately NOT the permissive fix. It writes the workspace only
+   * where writing it is unambiguous, and `checkWorkspace()` still runs
+   * afterwards, unchanged in strictness: if the bootstrap declined, the command
+   * still refuses in milliseconds instead of crashing inside Nx after a
+   * minutes-long install.
+   */
+  private ensureNxWorkspace(): NxWorkspaceBootstrapResult | undefined {
+    const cwd = process.cwd();
+    if (isNxWorkspace(cwd)) {
+      return { action: 'already-present', workspaceDir: nxWorkspaceDir(cwd), files: [] };
+    }
+    if (!canBootstrapNxWorkspace(cwd)) return undefined;
+    return bootstrapNxWorkspace(cwd);
+  }
+
+  /**
    * GT-626. The Nx strategy runs `npm install` and `npx nx g` INSIDE `<cwd>/src`
    * (`NxWorkspaceStrategy.getTargetDir`), so that directory must really be an Nx
-   * workspace. Two things were wrong here, and a third is not this check's to fix.
+   * workspace.
    *
-   * 1. `package.json` alone was accepted as proof of an Nx workspace. It is not:
-   *    Nx needs `nx.json`, and without it the generator dies deep inside Nx with
-   *    `Cannot read properties of null (reading 'useInferencePlugins')` after a
-   *    minutes-long dependency install. Failing here, in milliseconds, with a
-   *    sentence a human can act on, is strictly better than failing there.
-   * 2. The advice was circular: it told the user to run `evolith init`, which is
-   *    the command they had just run at step 2 of the README quickstart, and
-   *    which does not create an Nx workspace at all.
+   * `package.json` alone is NOT proof of one: Nx needs `nx.json`, and without it
+   * the generator dies deep inside Nx with `Cannot read properties of null
+   * (reading 'useInferencePlugins')` after a minutes-long dependency install.
+   * Failing here, in milliseconds, with a sentence a human can act on, is
+   * strictly better than failing there.
    *
-   * The third thing is the real gap and is deliberately NOT papered over here:
-   * nothing in the documented quickstart creates that Nx workspace, so step 5
-   * cannot follow step 2 as written. Making the guard permissive would only
-   * convert this fast, clear refusal into that slow, cryptic Nx crash. Who
-   * bootstraps the workspace — `init`, `scaffold` itself, or an explicit step —
-   * is a design decision tracked on GT-626, not something to guess at inside a
-   * precondition.
+   * Since `ensureNxWorkspace()` runs first, reaching a failure here means one
+   * specific thing: `src/` already carries a `package.json` that is not an Nx
+   * workspace, so it belongs to another project and we will not convert it. The
+   * message says exactly that, and names a command that actually creates a
+   * workspace rather than `init`, which the user has already run.
    */
   private checkWorkspace(): string | undefined {
     const cwd = process.cwd();
     const workspaceDir = path.join(cwd, 'src');
 
-    if (!fs.existsSync(path.join(workspaceDir, 'nx.json'))) {
+    if (fs.existsSync(path.join(workspaceDir, 'nx.json'))) return undefined;
+
+    if (!isSatellite(cwd)) {
       return (
-        `${workspaceDir} is not an Nx workspace (no nx.json), and the scaffolder ` +
-        `runs \`nx\` there. \`evolith init\` does not create one — it scaffolds the ` +
-        `satellite around it. Create the workspace first, for example ` +
-        `\`npx create-nx-workspace@latest src --preset apps\`, then re-run this command.`
+        `${cwd} is not an Evolith satellite (no evolith.yaml), so \`scaffold\` will ` +
+        `not create files here. Run \`evolith init\` first — it declares the ` +
+        `satellite, and \`scaffold\` then creates the Nx workspace in ./src itself.`
       );
     }
-    return undefined;
+
+    return (
+      `${workspaceDir} is not an Nx workspace (no nx.json), and the scaffolder ` +
+      `runs \`nx\` there. It already contains a package.json, so it belongs to ` +
+      `another project and Evolith will not convert it. Either scaffold from a ` +
+      `directory whose \`src/\` is free, or turn that one into an Nx workspace ` +
+      `yourself (\`npx create-nx-workspace@latest src --preset apps\`) and re-run.`
+    );
   }
 
   /**
@@ -395,7 +451,16 @@ export class ScaffoldCommand extends BaseEvolithCommand {
         ? (domainsOpt as string).split(',').map(d => d.trim()).filter(Boolean)
         : [];
 
-    const strategy = new DotnetWorkspaceStrategy(commandExecutor, this.promptService);
+    // GT-580: in a machine format, step progress is a DIAGNOSTIC and belongs on
+    // stderr — `promptService.showInfo` writes to stdout, which put prose in
+    // front of the envelope and broke `... --format json | jq`. Same treatment the
+    // Nx path already gives its progress callback.
+    const strategy = new DotnetWorkspaceStrategy(
+      commandExecutor,
+      json
+        ? { showInfo: (message: string) => { process.stderr.write(`${message}\n`); } }
+        : this.promptService,
+    );
     strategy.setDryRun(dryRun);
 
     try {

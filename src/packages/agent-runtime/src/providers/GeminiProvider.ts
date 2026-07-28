@@ -45,6 +45,7 @@
  * (Google is the sub-processor). See the class constants for the opt-in flag.
  */
 
+import { buildAssistantSystemPrompt } from '../prompts/assistant-invocation.prompt';
 import type { IApprovalPort } from '../domain/ports/approval.port';
 import type { AgentRuntimeRequest } from '../domain/contracts/agent-runtime-request';
 import type { SkillDescriptor } from '../domain/contracts/capability';
@@ -324,21 +325,10 @@ export class GeminiProvider implements IAssistantTransport {
    * refused.
    */
   async invoke(request: AssistantInvocationRequest): Promise<AssistantProposal> {
-    const catalog = request.availableSkills
-      .map((skill) => `- ${skill.id}: ${skill.description}`)
-      .join('\n');
-
-    const systemPrompt = [
-      'You are a bounded proposal engine for the Evolith Agent Runtime.',
-      'You may ONLY propose a capability whose id appears in the catalog below; anything else is rejected downstream.',
-      'You never execute anything: you propose, and a governed runtime decides.',
-      '',
-      'Governed capability catalog:',
-      catalog || '(empty catalog — propose nothing)',
-      '',
-      'Answer with ONLY a single JSON object, no prose and no markdown fences:',
-      '{ "tool": "<capability id from the catalog, or omit>", "arguments": { }, "rationale": "<short reason>" }',
-    ].join('\n');
+    // The prompt text lives in `src/prompts` (AAI-R03): prompt sources are kept
+    // out of the implementation roots so a change to what the model is told is
+    // reviewable on its own.
+    const systemPrompt = buildAssistantSystemPrompt(request.availableSkills);
 
     // Data minimization: the tenant/product/initiative context never leaves.
     const userPrompt = JSON.stringify({

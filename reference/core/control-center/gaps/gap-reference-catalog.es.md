@@ -1805,6 +1805,11 @@ Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monore
 
 **Referencias:** product/infra/vps-coolify, helm; GT-324; GT-435.
 
+- **Acceptance criteria:**
+  - [ ] Todo gap del alcance M2 declarado (`GT-324`, `GT-437`, `GT-441`, `GT-442`, `GT-443`, `GT-444`, `GT-445` y el refactor de UI de Fase 2) está COMPLETADO o explícitamente DIFERIDO con motivo.
+  - [ ] El stack corre en el VPS de Hostinger bajo Coolify + Kubernetes y sirve una petición real, evidenciado por una ejecución registrada y no por un job de despliegue que sale con cero.
+  - [ ] Se ejercita al menos una vuelta atrás y se registra su resultado — un camino de promoción que nadie ha revertido es una afirmación, no una capacidad.
+
 #### GT-435
 
 **Título:** EPIC — Camino a Producción del diagrama conceptual de la suite
@@ -1816,6 +1821,11 @@ Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monore
 **Cierre:** el camino de runtime del diagrama está desplegado y validado en prod; todos los hijos DONE.
 
 **Referencias:** evaluación camino-a-producción; maturity-assessment; ADR-0101/0104.
+
+- **Acceptance criteria:**
+  - [ ] Todo gap hijo nombrado en la descomposición (`GT-324`, `GT-436`…`GT-446`) está COMPLETADO o explícitamente DIFERIDO con motivo — un épico cierra cuando cierran sus hijos, nunca por su propia narrativa.
+  - [ ] El camino completo del diagrama se ejercita de extremo a extremo en producción: un cambio en un satélite llega a un veredicto del Core a través del Tracker, con una ejecución registrada como evidencia.
+  - [ ] Las afirmaciones de preparación de esta fila se vuelven a medir al cerrar, en vez de arrastrarse: versiones de paquetes, defaults de agent-runtime, autenticación y observabilidad, cada una reformulada desde lo desplegado.
 
 #### GT-436
 
@@ -1891,6 +1901,11 @@ Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monore
 **Título:** Pen-test externo
 
 **Problema:** SAST/SCA automatizados (CodeQL/Trivy) pero sin engagement de pen-test externo. **Cierre:** pen-test externo completado, hallazgos remediados. **Referencias:** pilar de seguridad (maturity §3.1).
+
+- **Acceptance criteria:**
+  - [ ] Se completa una prueba de penetración externa contra un entorno desplegado, por una parte que no construyó el sistema, con su alcance y fechas registrados.
+  - [ ] Todo hallazgo queda triado como remediado, aceptado-con-justificación o diferido-con-responsable — un hallazgo sin triar deja esta fila abierta.
+  - [ ] Cada remediación llega con un test de regresión o una regla, para que la misma clase no pueda volver sin que nadie lo note.
 
 #### GT-445
 
@@ -7315,8 +7330,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
 - **Criterios de aceptación:**
   - [x] Cada uno de los siete ADRs queda implementado o sale de Aceptado con nota explícita de implementación.
-  - [ ] El spawn pasa un entorno con lista blanca; ningún `*_TOKEN` ni `*_URL` llega a un script de capacidad.
-  - [ ] Un test verifica que una capacidad lanzada no puede leer el token del Core.
+  - [x] El spawn pasa un entorno con lista blanca; ningún `*_TOKEN` ni `*_URL` llega a un script de capacidad.
+  - [x] Un test verifica que una capacidad lanzada no puede leer el token del Core.
 
 #### GT-608
 
@@ -7846,9 +7861,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Component:** `Governance` · **Criticality:** P2 · **Complexity:** XS
 - **Provenance:** Encontrado el 2026-07-28 auditando las 24 filas en progreso.
 - **Acceptance criteria:**
-  - [ ] `08-validate-tracking.mjs` falla cuando una fila `GT-*` no-DONE tiene la lista de criterios de aceptación vacía.
-  - [ ] La comprobación incluye una fixture negativa: quitar los criterios de una fila la pone roja.
-  - [ ] Se imprime el número de filas comprobadas, para que un barrido de cero filas no pueda reportar un pase.
+  - [x] `08-validate-tracking.mjs` falla cuando una fila `GT-*` no-DONE tiene la lista de criterios de aceptación vacía.
+  - [x] La comprobación incluye una fixture negativa: quitar los criterios de una fila la pone roja.
+  - [x] Se imprime el número de filas comprobadas, para que un barrido de cero filas no pueda reportar un pase.
 
 #### GT-628
 
@@ -7859,9 +7874,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Component:** `Documentation` · **Criticality:** P1 · **Complexity:** L
 - **Provenance:** Encontrado el 2026-07-28 al activar la heurística de idioma de GT-620.
 - **Acceptance criteria:**
-  - [ ] `LANGUAGE_BASELINE` en `bilingual-suite.mjs` está vacío y la constante se elimina.
-  - [ ] `using-the-mcp.md` y `using-the-rest-api.md` se leen como inglés, verificado por la heurística.
-  - [ ] Los `.es.md` de ADR-0120, ADR-0121 y ADR-0122 se leen como español.
+  - [x] `LANGUAGE_BASELINE` en `bilingual-suite.mjs` está vacío y la constante se elimina.
+  - [x] `using-the-mcp.md` y `using-the-rest-api.md` se leen como inglés, verificado por la heurística.
+  - [x] Los `.es.md` de ADR-0120, ADR-0121 y ADR-0122 se leen como español.
 
 #### GT-627
 
@@ -7886,7 +7901,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Provenance:** Extraído de GT-571 el 2026-07-28, al ejecutar la secuencia del README contra el artefacto publicado en vez de asumirla.
 - **Acceptance criteria:**
   - [x] El quickstart literal del README ejecuta los pasos 1-6 sin ningún exit distinto de cero salvo el veredicto bloqueante documentado de `validate`.
-  - [ ] `init` y `scaffold` coinciden en la raíz del workspace, probado por un test que ejecuta uno tras otro y falla sin el arreglo.
+  - [x] `init` y `scaffold` coinciden en la raíz del workspace, probado por un test que ejecuta uno tras otro y falla sin el arreglo.
   - [x] Ningún mensaje de error dice al usuario que ejecute un comando que ya ejecutó.
 
 #### GT-625

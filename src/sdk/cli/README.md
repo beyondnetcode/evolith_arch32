@@ -155,17 +155,29 @@ reports blocking findings from rules that assume a fuller repository layout — 
 per the exit taxonomy above), which is the honest answer and not a failure of the
 install. Getting that number to zero is open work tracked as GT-571.
 
-**`scaffold` is not part of this quickstart, because it cannot follow `init`.**
-`evolith scaffold` runs `nx` generators inside `./src`, and nothing here creates an
-Nx workspace there — `init` scaffolds the satellite *around* `src/`, not an Nx
-workspace *inside* it. Run it only in a repository that already has `src/nx.json`,
-and supply the choices that have no default so it can run unattended:
+**`scaffold` now follows `init` (GT-626).** `evolith scaffold` runs `nx` generators
+inside `./src`, and `init` scaffolds the satellite *around* `src/` rather than
+creating a workspace inside it — so step 5 used to refuse the tree step 2 had just
+produced. `scaffold` creates that workspace itself now (it is the only command that
+runs `nx`, so the workspace root is its own precondition to satisfy), writing
+`src/nx.json`, `src/package.json`, `src/tsconfig.base.json` and `src/.gitignore`
+before it installs anything. Supply the choices that have no default so it can run
+unattended:
 
 ```bash
 evolith scaffold --phase 1 --frontend react --orm prisma --domains construction
 ```
 
-Who should create that workspace is tracked as GT-626.
+It reports what it did — `nxWorkspace: { action: "created" | "already-present" }`
+in `--format json` — so a workspace never appears out of nowhere. The one case it
+still refuses, in milliseconds rather than crashing inside Nx after a long install,
+is a `src/` that already holds another project's `package.json`: Evolith will not
+convert someone else's directory into an Nx workspace.
+
+Verified end to end on 2026-07-28 in a clean directory: `init` then `scaffold
+--phase 1 --frontend react --orm prisma --domains construction` exits `0` having
+generated `tracker-api`, `tracker-web` and six libraries with a real `npm install`
+and real `nx` generators.
 
 ---
 
@@ -344,7 +356,9 @@ When `--composable` is set, the CLI auto-resolves which validation modes to acti
 - `AdrValidationMode` — activated when `--adr` is present
 - `AdhocValidationMode` — activated when `--file` is present
 
-**Exit codes:** `validate` exits `0` when the repository passes (including `warning` status) and `1` when the result status is `failed`. The `gate`, `phase advance`, and `scaffold` commands likewise exit `1` on failure, and any unhandled error during CLI startup exits `1`. This makes the CLI safe to gate CI pipelines on. In `--format json`, the failure detail is carried in the ADR-0073 envelope rather than printed as prose.
+**Exit codes (GT-580):** the CLI publishes a four-value taxonomy, so a consumer can branch on the CAUSE rather than on "non-zero". `0` pass · `1` tool failure (the command could not reach a verdict: I/O, network, an unresolvable ruleset corpus) · `2` blocked (the command ran and the governance verdict blocks) · `3` invalid input (a missing required flag, an unknown action, a prompt required on a non-TTY). `validate` exits `0` on `passed` and on `warning`, and `2` on `failed`; `gate`, `phase advance` and `evaluate` likewise signal a blocking verdict with `2`. The difference between `2` and `1` is the difference between a blocked merge and a retry.
+
+**Machine output (GT-580):** in `--format json`, stdout carries the ADR-0073 envelope and NOTHING else — progress, spinners, warnings and the structured log all go to stderr, enforced at the stream so a new command cannot leak into the channel. `evolith <command> --format json | jq` is safe to pipe. A versioned `--format ndjson` event stream is not implemented yet.
 
 **Examples:**
 

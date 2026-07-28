@@ -14,7 +14,11 @@
  * only when a pipeline kind was actually requested, and a kind no one can serve is
  * REFUSED ({@link UnsupportedEvaluationKindError}) instead of being dropped, so a
  * consumer never receives a verdict shaped by gates it did not ask for and never
- * mistakes an unanswered question for a PASS.
+ * mistakes an unanswered question for a PASS. The selection does not stop at the
+ * pipeline boundary either: the request is handed to the pipeline as a
+ * {@link PipelineExecutionPlan}, so a pipeline assembled from kind-tagged gates
+ * (`createKindSelectivePipeline`) executes the gates the requested kinds need and no
+ * others — asking for `compliance` alone stops paying for every phase gate.
  *
  * GT-586 — the context's `requester` and `repositoryRevision` are echoed verbatim
  * onto the result. Neither is ever derived here: an absent value is the truthful
@@ -25,6 +29,7 @@ import { Verdict } from '../domain/verdict/verdict';
 import type { EvaluationContext, EvaluationKind } from './contracts';
 import { EvaluationResult, DecisionRecommendation, foldQualitySignals } from './contracts';
 import type { IEvaluationPipeline } from './ports/evaluation-pipeline.port';
+import { createPipelineExecutionPlan } from './ports/evaluation-pipeline.port';
 import type { IWorkspaceReferenceResolver, ResolvedWorkspace } from './ports/workspace-reference-resolver.port';
 import type { KindEvaluator, KindEvaluation } from './ports/kind-evaluator.port';
 import { manifestFromWorkspace } from './evaluation-context.builder';
@@ -115,7 +120,14 @@ export class EvaluationOrchestrator {
     // Core kinds (gate/artifact/rule/compliance) come from the existing pipeline.
     let result: EvaluationResult;
     if (requestedKinds.runPipeline) {
-      const verdict = await this.pipeline.evaluate(manifestFromWorkspace(ctx, workspace));
+      // GT-614: the request travels THROUGH the pipeline boundary. A pipeline built
+      // from kind-tagged gates (`createKindSelectivePipeline`) executes only the gates
+      // the requested kinds need; one written before this contract ignores the second
+      // argument and behaves exactly as it did.
+      const verdict = await this.pipeline.evaluate(
+        manifestFromWorkspace(ctx, workspace),
+        requestedKinds.plan,
+      );
       result = mapPipelineVerdict(verdict, {
         ...mapOptions,
         evaluatedAt: verdict.evaluatedAt,
@@ -166,13 +178,21 @@ export class EvaluationOrchestrator {
    *     declared", not "no kind is wanted";
    *  3. otherwise the pipeline runs only when a pipeline kind was named, and only
    *     the named non-pipeline kinds are dispatched.
+   *
+   * It also builds the {@link PipelineExecutionPlan} the pipeline receives, so the
+   * selection continues INSIDE the pipeline instead of stopping at its boundary: a
+   * request naming only `compliance` must not pay for the phase gates.
    */
   private planKinds(ctx: EvaluationContext): {
     readonly runPipeline: boolean;
     readonly evaluatorKinds: readonly EvaluationKind[];
+    readonly plan: ReturnType<typeof createPipelineExecutionPlan>;
   } {
     const requested = ctx.kinds ?? [];
-    if (requested.length === 0) return { runPipeline: true, evaluatorKinds: [] };
+    if (requested.length === 0) {
+      // Nothing declared ⇒ unrestricted plan ⇒ the pipeline runs in full, as before.
+      return { runPipeline: true, evaluatorKinds: [], plan: createPipelineExecutionPlan([]) };
+    }
 
     const supported = new Set<string>(this.supportedKinds);
     const unsupported = [...new Set(requested.filter((k) => !supported.has(k)))];
@@ -181,9 +201,13 @@ export class EvaluationOrchestrator {
     }
 
     const pipelineKinds = new Set<string>(PIPELINE_EVALUATION_KINDS);
+    const requestedPipelineKinds = [...new Set(requested.filter((k) => pipelineKinds.has(k)))];
     return {
-      runPipeline: requested.some((k) => pipelineKinds.has(k)),
+      runPipeline: requestedPipelineKinds.length > 0,
       evaluatorKinds: [...new Set(requested.filter((k) => this.evaluatorsByKind.has(k)))],
+      // Only the PIPELINE kinds go into the plan: a gate is selected by the pipeline
+      // work it answers, and `architecture` or `design` is not pipeline work.
+      plan: createPipelineExecutionPlan(requestedPipelineKinds),
     };
   }
 

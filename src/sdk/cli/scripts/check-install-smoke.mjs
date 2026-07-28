@@ -34,6 +34,7 @@
  *
  * Usage:
  *   node scripts/check-install-smoke.mjs                     # pack THIS package, install it clean, boot it
+ *   node scripts/check-install-smoke.mjs --pkg ../../packages/core-domain   # any workspace (GT-625)
  *   node scripts/check-install-smoke.mjs --spec @beyondnet/evolith-cli@1.2.0
  *   node scripts/check-install-smoke.mjs --tree <dir> [--no-boot]   # offline: verify an existing install
  *   node scripts/check-install-smoke.mjs --keep                # keep the temp dir for inspection
@@ -124,7 +125,7 @@ function run(cmd, args, opts = {}) {
  * @param {string} packageName
  * @param {boolean} boot whether to actually execute the binary
  */
-function verifyTree(treeDir, packageName, boot) {
+function verifyTree(treeDir, packageName, boot, declaredSiblingDeps = null) {
   const packageDir = join(treeDir, 'node_modules', ...packageName.split('/'));
   if (!existsSync(packageDir)) {
     fail([`${packageName} is not present in ${treeDir}/node_modules — the install did not produce the package.`]);
@@ -132,12 +133,25 @@ function verifyTree(treeDir, packageName, boot) {
   const distDir = join(packageDir, 'dist');
   const specifiers = collectWorkspaceSpecifiers(distDir);
 
-  // Anti-vacuous: a scan that found nothing did not run.
+  // Anti-vacuous, with the one distinction that matters once this guard runs over
+  // every workspace instead of just the CLI (GT-625): a LEAF package legitimately
+  // imports no sibling, and calling that "nothing scanned" would fail four packages
+  // for being correctly shaped. So the denominator is the manifest, not the scan —
+  // if the package DECLARES sibling dependencies and its dist imports none of them,
+  // the scan broke and that is still a hard failure.
   if (specifiers.size === 0) {
-    fail([
-      `scanned ${distDir} and found ZERO @beyondnet/* specifiers.`,
-      'Either the build output moved or the package shipped without its dist; either way this guard did not verify anything.',
-    ]);
+    if (declaredSiblingDeps && declaredSiblingDeps.length === 0) {
+      // Not applicable, and said out loud rather than reported as a pass. The boot
+      // check below is what this package is actually verified by.
+      console.log(`· no @beyondnet/* dependency declared, so there is no cross-package resolution to verify.`);
+    } else {
+      fail([
+        `scanned ${distDir} and found ZERO @beyondnet/* specifiers, but the manifest declares ${
+          declaredSiblingDeps ? declaredSiblingDeps.length : 'some'
+        }: ${declaredSiblingDeps ? declaredSiblingDeps.join(', ') : '(unknown)'}.`,
+        'Either the build output moved or the package shipped without its dist; either way this guard did not verify anything.',
+      ]);
+    }
   }
 
   const unresolvable = findUnresolvableSpecifiers(specifiers, packageDir, packageName);
@@ -174,13 +188,28 @@ function main(argv) {
   };
   const has = (name) => args.includes(name);
 
-  const packageName = opt('--package') ?? '@beyondnet/evolith-cli';
-  const boot = !has('--no-boot');
+  // GT-625: the defect this guard found is NOT specific to the CLI. `dist` of any
+  // published package can deep-import a module that exists in the local sibling and
+  // not in the version its declared range resolves to on the registry — the CLI is
+  // simply where it surfaced first, because the CLI is the one with a binary a human
+  // runs. `--pkg` lets the release path point this at every workspace it is about to
+  // publish, which is the only way the check can gate a release rather than one package.
+  const pkgRoot = opt('--pkg') ? resolve(opt('--pkg')) : PKG_ROOT;
+  const manifestPath = join(pkgRoot, 'package.json');
+  if (!existsSync(manifestPath)) fail([`no package.json at ${pkgRoot} — --pkg must name a package directory.`]);
+  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+
+  const packageName = opt('--package') ?? manifest.name;
+  // A library has no binary to boot. Booting is the strongest signal available, so it
+  // stays the default wherever there is something to boot, rather than being opt-in.
+  const boot = !has('--no-boot') && existsSync(join(pkgRoot, 'dist', 'main.js'));
   const keep = has('--keep');
+
+  const declaredSiblingDeps = Object.keys(manifest.dependencies ?? {}).filter((d) => d.startsWith('@beyondnet/'));
 
   const existingTree = opt('--tree');
   if (existingTree) {
-    verifyTree(resolve(existingTree), packageName, boot);
+    verifyTree(resolve(existingTree), packageName, boot, declaredSiblingDeps);
     console.log(`✓ ${GUARD} passed (offline, existing tree).`);
     return;
   }
@@ -191,7 +220,7 @@ function main(argv) {
     if (!spec) {
       // Pack THIS package. --ignore-scripts so a prepublishOnly that calls this
       // guard cannot recurse into itself.
-      const packed = run('npm', ['pack', '--ignore-scripts', '--silent', '--pack-destination', temp], { cwd: PKG_ROOT });
+      const packed = run('npm', ['pack', '--ignore-scripts', '--silent', '--pack-destination', temp], { cwd: pkgRoot });
       if (packed.status !== 0) {
         fail([`npm pack failed (${packed.status}):`, String(packed.stderr).trim()]);
       }
@@ -209,8 +238,8 @@ function main(argv) {
       fail([`npm install ${spec} failed (${installed.status}) in a clean directory:`, String(installed.stderr).trim()]);
     }
 
-    verifyTree(installDir, packageName, boot);
-    console.log(`✓ ${GUARD} passed — ${spec} installs clean and boots.`);
+    verifyTree(installDir, packageName, boot, declaredSiblingDeps);
+    console.log(`✓ ${GUARD} passed — ${packageName} installs clean from a tree that has never seen this workspace.`);
   } finally {
     if (!keep) rmSync(temp, { recursive: true, force: true });
     else console.log(`(kept ${temp})`);

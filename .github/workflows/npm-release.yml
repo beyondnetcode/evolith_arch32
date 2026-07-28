@@ -125,6 +125,39 @@ jobs:
             DIR=$(jq -r ".toPublish[$i].dir" /tmp/plan.json)
 
             echo "::group::$NAME@$VERSION ($DIR)"
+
+            # GT-625 — the gate that would have stopped 1.2.0.
+            #
+            # Pack this package and install it into a directory that has never seen
+            # this workspace, so every `@beyondnet/*` sibling is pulled from the
+            # REGISTRY, and then resolve every specifier its shipped `dist` imports.
+            # That is the one question no offline check can answer: a subpath can
+            # exist in the local sibling and not in the version the declared range
+            # resolves to publicly. `evolith-cli@1.2.0` shipped exactly that way and
+            # could not print its own `--version` on any machine but ours.
+            #
+            # Placement matters. This runs INSIDE the publish loop, immediately
+            # before each `npm publish`, because the loop is in dependency order: by
+            # the time a package's turn comes, everything it depends on is already
+            # on the registry, so the question is answerable and the answer is the
+            # one a user will get. Running it earlier — in PR CI, or in one pass
+            # before the loop — would ask about dependencies that do not exist yet
+            # and fail every legitimate version bump. An unsatisfiable gate gets
+            # deleted, and this one is worth keeping.
+            #
+            # npm forbids unpublishing after 72 hours, so the only useful place for
+            # this check is before the irreversible step.
+            if [ "$DRY_RUN" = "true" ]; then
+              # A dry run publishes nothing, so by the time it reaches a consumer the
+              # sibling it depends on is still absent from the registry and the
+              # question this check asks has no answer. Say that, loudly, rather than
+              # skip it silently: a green dry run must not be read as "installable".
+              echo "::warning::install smoke SKIPPED for $NAME — a dry run publishes nothing, so cross-package resolution cannot be verified. A green dry run does NOT mean the artifact installs."
+            else
+              echo "-- clean-room install smoke (GT-625)"
+              node src/sdk/cli/scripts/check-install-smoke.mjs --pkg "$DIR"
+            fi
+
             if [ "$DRY_RUN" = "true" ]; then
               # --dry-run still resolves files/, runs the packlist and reports the
               # tarball contents, so a shipping mistake surfaces here.

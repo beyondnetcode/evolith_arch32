@@ -1880,6 +1880,12 @@ Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monore
 
 **Problema:** circuit breakers + DR están `Designed` pero sin probar a escala; sin chaos drills; RTO/RPO sin cuantificar. **Cierre:** tests de integración de breakers + K6 load/chaos + deploy DR con RTO/RPO medidos. **Referencias:** ADR-0011/0013/0037.
 
+- **Acceptance criteria:**
+  - [ ] Los tests de integración del circuit breaker ejercitan las transiciones abierto, semiabierto y cerrado contra una dependencia que falla, y fallan sin el breaker.
+  - [ ] Un perfil de carga K6 corre en CI y publica rendimiento, latencia p95 y tasa de error contra umbrales declarados.
+  - [ ] Un simulacro de caos mata una dependencia a mitad de ejecución y el comportamiento registrado coincide con lo que declara ADR-0011.
+  - [ ] RTO y RPO se MIDEN en una restauración DR real y se escriben en ADR-0013, sustituyendo la afirmación no cuantificada actual.
+
 #### GT-444
 
 **Título:** Pen-test externo
@@ -7830,6 +7836,19 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Un commit con mensaje malformado se rechaza en local, demostrado intentándolo.
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
+
+#### GT-629
+
+**Title:** El guard de seguimiento nunca pregunta si una fila abierta tiene criterios de aceptación
+
+- **Purpose:** Que sea imposible registrar una fila que no se puede cerrar.
+- **Evidence:** **Una fila puede estar EN-PROGRESO indefinidamente sin criterios de aceptación, y el guard de seguimiento no lo dirá.** `08-validate-tracking.mjs` exige que una fila `DONE` tenga todos sus criterios marcados — la comprobación que ha cazado cuatro cierres falsos esta semana — pero nunca pregunta si una fila ABIERTA tiene algún criterio que marcar. `GT-443` estaba en ese estado: registrada, en progreso y estructuralmente incerrable, porque su sección del catálogo llevaba prosa en vez de una lista de criterios. Encontrado el 2026-07-28 auditando por qué había 24 filas en progreso. Una fila sin criterios es peor que una con criterios incumplidos: no puede terminarse, no puede medirse, y se lee como trabajo activo.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** XS
+- **Provenance:** Encontrado el 2026-07-28 auditando las 24 filas en progreso.
+- **Acceptance criteria:**
+  - [ ] `08-validate-tracking.mjs` falla cuando una fila `GT-*` no-DONE tiene la lista de criterios de aceptación vacía.
+  - [ ] La comprobación incluye una fixture negativa: quitar los criterios de una fila la pone roja.
+  - [ ] Se imprime el número de filas comprobadas, para que un barrido de cero filas no pueda reportar un pase.
 
 #### GT-628
 

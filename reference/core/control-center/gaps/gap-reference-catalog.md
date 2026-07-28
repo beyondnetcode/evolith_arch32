@@ -1890,6 +1890,12 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 
 **Problem:** circuit breakers + DR are `Designed` but untested at scale; no chaos drills; RTO/RPO not quantified. **Closure:** breaker integration tests + K6 load/chaos + DR deploy with measured RTO/RPO. **References:** ADR-0011/0013/0037.
 
+- **Acceptance criteria:**
+  - [ ] Circuit-breaker integration tests exercise open, half-open and closed transitions against a failing dependency, and fail without the breaker.
+  - [ ] A K6 load profile runs in CI and publishes throughput, p95 latency and error rate against declared thresholds.
+  - [ ] One chaos drill kills a dependency mid-run and the recorded behaviour matches what ADR-0011 declares.
+  - [ ] RTO and RPO are MEASURED on a real DR restore and written into ADR-0013, replacing the current unquantified claim.
+
 #### GT-444
 
 **Title:** External penetration test
@@ -7925,6 +7931,19 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] A commit with a malformed message is rejected locally, demonstrated by trying one.
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
+
+#### GT-629
+
+**Title:** The tracking guard never asks whether an open row has acceptance criteria
+
+- **Purpose:** Make a row that cannot be closed impossible to register.
+- **Evidence:** **A row can sit IN-PROGRESS forever with no acceptance criteria, and the tracking guard will not say so.** `08-validate-tracking.mjs` enforces that a `DONE` row has every criterion ticked — the check that has caught four false closures this week — but it never asks whether an OPEN row has any criteria to tick. `GT-443` was in that state: registered, in progress, and structurally unclosable, because its catalog section carried prose instead of a criteria list. Found on 2026-07-28 while auditing why 24 rows were in progress. A row with no criteria is worse than an unmet one: it cannot be finished, cannot be measured, and reads as active work.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** XS
+- **Provenance:** Found on 2026-07-28 while auditing the 24 in-progress rows.
+- **Acceptance criteria:**
+  - [ ] `08-validate-tracking.mjs` fails when any non-DONE `GT-*` row has an empty acceptance-criteria list.
+  - [ ] The check ships with a negative fixture: stripping the criteria from one row turns it red.
+  - [ ] The count of rows checked is printed, so a zero-row scan cannot report a pass.
 
 #### GT-628
 

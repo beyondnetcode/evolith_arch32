@@ -7,6 +7,7 @@ import { CommandFactory } from 'nest-commander';
 import { Commander } from 'nest-commander/src/constants';
 import { AliasService } from './config/alias.service';
 import { StderrLogger } from './infrastructure/observability/stderr-logger';
+import { installMachineChannelGuard } from './infrastructure/cli/machine-channel';
 
 /**
  * GT-571: the name every surface of the product documents. Commander derives the
@@ -79,6 +80,11 @@ export function makeStdioBlocking(): void {
 
 export async function bootstrap(): Promise<void> {
   makeStdioBlocking();
+  // GT-580: in `--format json`/`ndjson`, stdout is a pipe into `jq` or an agent
+  // harness, not a display. Arm the channel guard BEFORE the command graph boots
+  // — `@clack/prompts` and Nest both print during startup, straight to
+  // `process.stdout`, and a guard installed after them protects nothing.
+  installMachineChannelGuard();
   // Resolve possible alias for the first command argument
   const aliasService = new AliasService();
   const args = process.argv.slice(2);

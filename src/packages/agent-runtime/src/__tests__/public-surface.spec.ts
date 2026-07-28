@@ -38,6 +38,12 @@ const ADAPTERS_SURFACE = [
   'InMemoryRunJournalAdapter',
   'FsWorkspaceContextAdapter',
   'HarnessProcessAdapter',
+  // GT-607 — least-privilege capability environment. ADDITIVE to the GT-388 freeze.
+  'DEFAULT_CAPABILITY_MAX_MEMORY_MB',
+  'DEFAULT_CAPABILITY_ENV_ALLOWLIST',
+  'CREDENTIAL_ENV_NAME_PATTERN',
+  'buildCapabilityEnv',
+  'isCredentialEnvName',
   // GT-613 — first IStructuralReviewer adapter. ADDITIVE to the GT-388 freeze.
   'HEURISTIC_COVERED_STANDARDS',
   'HEURISTIC_UNCOVERED_STANDARDS',

@@ -1,221 +1,220 @@
-# Cómo usar Evolith Core vía MCP (para agentes)
+# How to use Evolith Core over MCP (for agents)
 
-Guía práctica para operar Evolith Core desde un **agente de IA** a través del
-servidor MCP (Model Context Protocol). Donde la CLI es la interfaz local para una
-persona, MCP es la interfaz para que un agente ejerza las mismas capacidades —
-con paridad plena, incluidas las operaciones de filesystem y scaffolding.
+A practical guide to operating Evolith Core from an **AI agent** through the MCP
+(Model Context Protocol) server. Where the CLI is the local interface for a
+person, MCP is the interface through which an agent exercises the same
+capabilities — at full parity, filesystem and scaffolding operations included.
 
-Está pensada para leerse una vez y consultarse por herramienta después.
+It is written to be read once and consulted per tool afterwards.
 
 ---
 
-## 1. Qué es el servidor MCP y cómo se conecta un agente
+## 1. What the MCP server is, and how an agent connects to it
 
-El servidor MCP de Evolith expone cada capacidad del Core como una **herramienta**
-(`evolith-*`) que un agente invoca por JSON-RPC sobre HTTP (transporte
-StreamableHTTP). El flujo de conexión es siempre el mismo:
+The Evolith MCP server exposes every Core capability as a **tool** (`evolith-*`)
+that an agent invokes over JSON-RPC on HTTP (the StreamableHTTP transport). The
+connection flow is always the same:
 
-1. **`initialize`** — el cliente saluda; el servidor responde y emite un
-   `mcp-session-id` en las cabeceras. Guárdalo: va en toda petición posterior.
-2. **`notifications/initialized`** — el cliente confirma que está listo.
-3. **`tools/list`** — (opcional) lista las herramientas con su `inputSchema`.
-4. **`tools/call`** — invoca una herramienta con sus argumentos.
+1. **`initialize`** — the client says hello; the server answers and issues an
+   `mcp-session-id` in the headers. Keep it: it travels with every later request.
+2. **`notifications/initialized`** — the client confirms that it is ready.
+3. **`tools/list`** — (optional) lists the tools together with their `inputSchema`.
+4. **`tools/call`** — invokes a tool with its arguments.
 
-Una llamada a herramienta se ve así:
+A tool call looks like this:
 
 ```json
 { "jsonrpc": "2.0", "id": 1, "method": "tools/call",
-  "params": { "name": "evolith-gate-evaluate", "arguments": { "phase": "construction", "projectPath": "/ruta/al/satelite" } } }
+  "params": { "name": "evolith-gate-evaluate", "arguments": { "phase": "construction", "projectPath": "/path/to/satellite" } } }
 ```
 
-Si usas un cliente MCP (Claude, un SDK, etc.), el handshake lo hace el cliente;
-tú solo eliges la herramienta y sus argumentos.
+If you use an MCP client (Claude, an SDK, and so on), the client performs the
+handshake; you only pick the tool and its arguments.
 
 ---
 
-## 2. Tres conceptos que aplican a (casi) todas las herramientas
+## 2. Three concepts that apply to (almost) every tool
 
-### 2.1. El envelope de respuesta (ADR-0073)
+### 2.1. The response envelope (ADR-0073)
 
-Toda herramienta devuelve su resultado dentro del mismo envelope, en el `text`
-del contenido de la respuesta:
+Every tool returns its result inside the same envelope, in the `text` of the
+response content:
 
 ```json
-{ "success": true, "data": { /* el resultado */ },
+{ "success": true, "data": { /* the result */ },
   "meta": { "command": "evolith-gate-evaluate", "tool": "evolith-gate-evaluate", "executedAt": "…", "correlationId": "…", "schemaVersion": "1.0.0" } }
 ```
 
-Y ante un fallo:
+And on failure:
 
 ```json
 { "success": false, "error": { "code": "RULESET_NOT_FOUND", "message": "…" }, "meta": { /* … */ } }
 ```
 
-Los códigos de error son consistentes con la CLI y REST (p.ej. un corpus de
-reglas ausente es `RULESET_NOT_FOUND` en las tres superficies).
+The error codes are consistent with the CLI and with REST (for example, a missing
+rule corpus is `RULESET_NOT_FOUND` on all three surfaces).
 
-### 2.2. Herramientas mutativas — el gate de aprobación
+### 2.2. Mutative tools — the approval gate
 
-Las herramientas que **escriben** (crean repos, generan código, modifican
-archivos o estado) están marcadas como **mutativas**. El servidor las bloquea a
-menos que el agente confirme explícitamente la intención pasando, además de sus
-argumentos:
+Tools that **write** (create repositories, generate code, modify files or state)
+are marked as **mutative**. The server blocks them unless the agent explicitly
+confirms the intent by passing, on top of the tool's own arguments:
 
 ```json
-{ "apply": true, "approvalToken": "<token-de-aprobación>" }
+{ "apply": true, "approvalToken": "<approval-token>" }
 ```
 
-Sin `apply` + `approvalToken`, una herramienta mutativa devuelve
-`error.code: FORBIDDEN` con un mensaje que pide la aprobación. Esto evita que un
-agente ejecute acciones irreversibles sin una decisión consciente. Las
-herramientas de solo lectura (`*-list`, `*-get`, `*-status`, `evaluate`,
-`validate`, `recommend`…) no requieren nada de esto.
+Without `apply` + `approvalToken`, a mutative tool returns
+`error.code: FORBIDDEN` with a message asking for the approval. This keeps an
+agent from performing irreversible actions without a conscious decision.
+Read-only tools (`*-list`, `*-get`, `*-status`, `evaluate`, `validate`,
+`recommend`…) require none of this.
 
-> En cada herramienta de abajo se indica si es **mutativa** (necesita aprobación)
-> o de **lectura**.
+> Each tool below states whether it is **mutative** (needs approval) or
+> **read-only**.
 
-### 2.3. Control de acceso (ABAC)
+### 2.3. Access control (ABAC)
 
-Cada herramienta tiene una clasificación de acceso (`read` / `write` / `admin`) y
-el servidor la evalúa contra el rol de la sesión antes de ejecutar. En un entorno
-sin API key (`--allow-no-auth`, típico en desarrollo) toda sesión recibe rol
-`admin`; en producción se configura una API key y los roles se respetan. Si una
-sesión no está autorizada para una herramienta, la respuesta es
+Every tool carries an access classification (`read` / `write` / `admin`), and the
+server evaluates it against the role of the session before executing. In an
+environment with no API key (`--allow-no-auth`, typical in development) every
+session is granted the `admin` role; in production an API key is configured and
+the roles are honoured. If a session is not authorized for a tool, the answer is
 `error.code: FORBIDDEN`.
 
 ---
 
-## 3. Evaluación, compuertas y validación
+## 3. Evaluation, gates and validation
 
-Este es el corazón operativo de Evolith: siete tools para verificar que tu satélite cumple las reglas del Core, para evaluar las compuertas (gates) de cada fase del ciclo de vida y para detectar deriva arquitectónica. Las siete son de **solo lectura**: nunca modifican tu repositorio, así que puedes invocarlas libremente sin el gate mutativo (`apply` + `approvalToken`) que exigen las tools de escritura.
+This is the operational heart of Evolith: seven tools for checking that your satellite complies with the Core rules, for evaluating the gates of each lifecycle phase, and for detecting architectural drift. All seven are **read-only**: they never modify your repository, so you can invoke them freely without the mutative gate (`apply` + `approvalToken`) that the write tools demand.
 
-Todas reciben una ruta a tu satélite (y, casi siempre, una ruta opcional al checkout del Core de donde salen las reglas). Si no pasas `corePath`, cada tool intenta autodetectarlo subiendo por el árbol de directorios en busca de una carpeta `rulesets/`; si no lo encuentra, verás un error de tipo `RULESET_NOT_FOUND`.
+They all take a path to your satellite (and, almost always, an optional path to the Core checkout the rules come from). If you do not pass `corePath`, each tool tries to autodetect it by walking up the directory tree looking for a `rulesets/` folder; if it does not find one, you get a `RULESET_NOT_FOUND` error.
 
-### 3.1. `evolith-evaluate` — el motor de evaluación canónico
+### 3.1. `evolith-evaluate` — the canonical evaluation engine
 
-**Qué hace.** Es la superficie MCP del motor de evaluación stateless del Core (ADR-0101). Recibe un `EvaluationContext` canónico (gates, cumplimiento, artefactos, reglas) y devuelve un `EvaluationResult` completo. Es la tool con mayor paridad respecto a `POST /api/v1/evaluate` y al comando `evolith-cli evaluate` de la CLI: úsala cuando quieras una evaluación rica y multi-dimensional en una sola llamada. `tenant`, `product` e `initiative` son solo contexto opaco (nunca entidades que el Core persista).
+**What it does.** It is the MCP surface of the Core's stateless evaluation engine (ADR-0101). It takes a canonical `EvaluationContext` (gates, compliance, artifacts, rules) and returns a complete `EvaluationResult`. It is the tool with the closest parity to `POST /api/v1/evaluate` and to the CLI's `evolith-cli evaluate` command: use it when you want a rich, multi-dimensional evaluation in a single call. `tenant`, `product` and `initiative` are opaque context only (never entities the Core persists).
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 |-------|------|-----|----------|
-| `kinds` | string[] | no | Qué dimensiones evaluar, p. ej. `['gate','compliance']`. Si lo omites, evalúa `['gate','compliance']` por defecto. |
-| `workspaceRef` | string | no | Referencia opaca al workspace; en local es una ruta. Por defecto, el directorio actual. |
-| `corePath` | string | no | Ruta explícita al repositorio del Core (de donde salen las reglas). |
-| `tenant` | object | no | Contexto de tenant opaco `{ tenantId }`, solo para trazabilidad. |
-| `product` | object | no | Contexto de producto opaco `{ productId }`. |
-| `initiative` | object | no | Contexto de iniciativa opaco `{ initiativeId }`. |
-| `phaseId` | string | no | Fase SDLC canónica a evaluar: `discovery`, `design`, `construction`, `qa` o `release`. |
-| `gateId` | string | no | Id de un gate concreto a evaluar. |
-| `rulesetRef` | string | no | Referencia versionada al ruleset a aplicar. |
-| `topologyRef` | string | no | Referencia o override de topología. |
-| `executionMode` | string | no | Modo de ejecución: `manual`, `hybrid` o `agentic`. |
-| `correlationId` | string | no | Id de correlación del consumidor; se devuelve tal cual en la respuesta. |
+| `kinds` | string[] | no | Which dimensions to evaluate, e.g. `['gate','compliance']`. If omitted, it evaluates `['gate','compliance']` by default. |
+| `workspaceRef` | string | no | Opaque reference to the workspace; locally it is a path. Defaults to the current directory. |
+| `corePath` | string | no | Explicit path to the Core repository (where the rules come from). |
+| `tenant` | object | no | Opaque tenant context `{ tenantId }`, for traceability only. |
+| `product` | object | no | Opaque product context `{ productId }`. |
+| `initiative` | object | no | Opaque initiative context `{ initiativeId }`. |
+| `phaseId` | string | no | Canonical SDLC phase to evaluate: `discovery`, `design`, `construction`, `qa` or `release`. |
+| `gateId` | string | no | Id of a specific gate to evaluate. |
+| `rulesetRef` | string | no | Versioned reference to the ruleset to apply. |
+| `topologyRef` | string | no | Topology reference or override. |
+| `executionMode` | string | no | Execution mode: `manual`, `hybrid` or `agentic`. |
+| `correlationId` | string | no | The consumer's correlation id; it is echoed back unchanged in the response. |
 
-**Ejemplo**
+**Example**
 
 ```json
 {
   "name": "evolith-evaluate",
   "arguments": {
     "kinds": ["gate", "compliance"],
-    "workspaceRef": "/ruta/a/mi-satelite",
-    "corePath": "/ruta/a/evolith-core",
+    "workspaceRef": "/path/to/my-satellite",
+    "corePath": "/path/to/evolith-core",
     "phaseId": "construction"
   }
 }
 ```
 
-**Qué esperar.** Un `EvaluationResult` envuelto en el envelope de éxito (ADR-0073): `{ success, data, meta }`, donde `data` trae el veredicto por dimensión evaluada, la marca de tiempo (`evaluatedAt`), la versión de esquema y el `correlationId` (el tuyo si lo pasaste, o uno generado). Como es stateless, el resultado depende solo de lo que envías: mismo contexto, mismo resultado.
+**What to expect.** An `EvaluationResult` wrapped in the success envelope (ADR-0073): `{ success, data, meta }`, where `data` carries the verdict per evaluated dimension, the timestamp (`evaluatedAt`), the schema version and the `correlationId` (yours if you passed one, otherwise a generated one). Because it is stateless, the result depends only on what you send: same context, same result.
 
-### 3.2. `evolith-gate-evaluate` — evaluar una sola compuerta de fase
+### 3.2. `evolith-gate-evaluate` — evaluate a single phase gate
 
-**Qué hace.** Evalúa la compuerta (gate) de una fase SDLC concreta sobre tu repositorio y devuelve la evidencia: qué criterios se cumplen, qué violaciones hay y con qué severidad. Es la tool a la que acudes para responder "¿puedo cerrar la fase X?". Puedes pedir la evidencia completa o solo un resumen con los conteos.
+**What it does.** It evaluates the gate of one specific SDLC phase against your repository and returns the evidence: which criteria are met, which violations exist and at what severity. This is the tool you reach for to answer "can I close phase X?". You can ask for the full evidence or just a summary with the counts.
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 |-------|------|-----|----------|
-| `phase` | string | sí | Fase cuya compuerta se evalúa: `discovery`, `design`, `construction`, `qa` o `release`. Si es inválida, la tool devuelve error `PHASE_INVALID`. |
-| `projectPath` | string | sí | Ruta al repositorio a validar. |
-| `rulesetRef` | string | no | Referencia opcional a un ruleset específico. |
-| `evidenceMode` | string | no | `full` (por defecto) devuelve todas las violaciones; `summary` las oculta y devuelve solo el conteo de errores y advertencias. |
-| `evaluatedBy` | string | no | Quién evalúa: `human`, `agent` (por defecto) o `ci`. Queda registrado en la evidencia. |
-| `initiative` | string | no | Contexto de iniciativa opcional. |
-| `tenant` | string | no | Contexto de tenant opcional. |
+| `phase` | string | yes | The phase whose gate is evaluated: `discovery`, `design`, `construction`, `qa` or `release`. If it is invalid, the tool returns a `PHASE_INVALID` error. |
+| `projectPath` | string | yes | Path to the repository to validate. |
+| `rulesetRef` | string | no | Optional reference to a specific ruleset. |
+| `evidenceMode` | string | no | `full` (the default) returns every violation; `summary` hides them and returns only the count of errors and warnings. |
+| `evaluatedBy` | string | no | Who is evaluating: `human`, `agent` (the default) or `ci`. It is recorded in the evidence. |
+| `initiative` | string | no | Optional initiative context. |
+| `tenant` | string | no | Optional tenant context. |
 
-**Ejemplo**
+**Example**
 
 ```json
 {
   "name": "evolith-gate-evaluate",
   "arguments": {
     "phase": "design",
-    "projectPath": "/ruta/a/mi-satelite",
+    "projectPath": "/path/to/my-satellite",
     "evidenceMode": "summary",
     "evaluatedBy": "agent"
   }
 }
 ```
 
-**Qué esperar.** El payload de `GateEvidence` (envuelto por el servidor en el envelope estándar). En modo `full` incluye la lista de `violations` con `ruleId`, `severity` y mensaje; en modo `summary`, `violations` viene vacío y aparece un objeto `summary: { errors, warnings }`. Si el ruleset no se encuentra, obtienes error `RULESET_NOT_FOUND`.
+**What to expect.** The `GateEvidence` payload (wrapped by the server in the standard envelope). In `full` mode it includes the list of `violations` with `ruleId`, `severity` and message; in `summary` mode, `violations` comes back empty and a `summary: { errors, warnings }` object appears instead. If the ruleset cannot be found, you get a `RULESET_NOT_FOUND` error.
 
-### 3.3. `evolith-validate` — validar el satélite contra las reglas
+### 3.3. `evolith-validate` — validate the satellite against the rules
 
-**Qué hace.** Corre las reglas de gobernanza del Core sobre tu satélite y te dice qué cumple y qué no. Tiene dos modos: el modo simple (validación directa contra los rulesets) y el modo pipeline end-to-end, que se activa en cuanto pasas `topology`, `phase` o `manifest` y evalúa topología + compuertas de fase de una vez, aplanando la evidencia por gate.
+**What it does.** It runs the Core's governance rules over your satellite and tells you what complies and what does not. It has two modes: the simple mode (direct validation against the rulesets) and the end-to-end pipeline mode, which switches on the moment you pass `topology`, `phase` or `manifest` and evaluates topology plus phase gates in one go, flattening the evidence per gate.
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 |-------|------|-----|----------|
-| `path` | string | sí | Ruta al repositorio satélite a validar. |
-| `format` | string | no | Formato de salida: `json` (por defecto), `summary` o `table`. Elige `summary`/`table` para una lectura humana rápida. |
-| `ruleset` | string | no | Id de un ruleset concreto a cargar en lugar de validar todo. |
-| `corePath` | string | no | Ruta explícita al Core; si la omites, se autodetecta subiendo hasta encontrar `rulesets/`. |
-| `topology` | string | no | Topología a evaluar (se autodetecta del manifest si se omite). **Activa el pipeline end-to-end.** |
-| `phase` | string | no | Fase SDLC a evaluar (`discovery`…`release`). **Activa el pipeline end-to-end.** |
-| `manifest` | string | no | `SatelliteManifest` como JSON en línea o ruta a un archivo; tiene prioridad sobre `path`/`topology`/`phase`. |
+| `path` | string | yes | Path to the satellite repository to validate. |
+| `format` | string | no | Output format: `json` (the default), `summary` or `table`. Pick `summary`/`table` for a quick human read. |
+| `ruleset` | string | no | Id of a specific ruleset to load instead of validating everything. |
+| `corePath` | string | no | Explicit path to the Core; if omitted, it is autodetected by walking up until a `rulesets/` folder is found. |
+| `topology` | string | no | Topology to evaluate (autodetected from the manifest if omitted). **Switches on the end-to-end pipeline.** |
+| `phase` | string | no | SDLC phase to evaluate (`discovery`…`release`). **Switches on the end-to-end pipeline.** |
+| `manifest` | string | no | A `SatelliteManifest` as inline JSON or a path to a file; it takes precedence over `path`/`topology`/`phase`. |
 
-**Ejemplo**
+**Example**
 
 ```json
 {
   "name": "evolith-validate",
   "arguments": {
-    "path": "/ruta/a/mi-satelite",
-    "corePath": "/ruta/a/evolith-core",
+    "path": "/path/to/my-satellite",
+    "corePath": "/path/to/evolith-core",
     "phase": "construction",
     "topology": "modular-monolith"
   }
 }
 ```
 
-**Qué esperar.** En modo simple, un `ValidationResult` con `status`, `rulesChecked` e `issues`. En modo pipeline (como el ejemplo), un objeto `type: 'pipeline'` con `passed`, la `topology` resuelta y un array `gates`, cada uno con sus `evaluations` (regla, artefacto, `passed`, mensaje, severidad y remediación). Si el manifest es inválido, la respuesta viene marcada como error con el detalle de por qué.
+**What to expect.** In simple mode, a `ValidationResult` with `status`, `rulesChecked` and `issues`. In pipeline mode (as in the example), a `type: 'pipeline'` object with `passed`, the resolved `topology` and a `gates` array, each gate carrying its `evaluations` (rule, artifact, `passed`, message, severity and remediation). If the manifest is invalid, the response comes back marked as an error with the detail of why.
 
-### 3.4. `evolith-composable-validate` — validación por modos combinables
+### 3.4. `evolith-composable-validate` — validation by combinable modes
 
-**Qué hace.** Expone el motor de validación componible (GT-312): en lugar de una validación monolítica, activas los modos que necesites —SDLC, arquitectura, ruleset, ADR o ad-hoc de un solo archivo— y puedes combinarlos en una misma llamada. Cada argumento que pasas enciende su modo correspondiente. Es la tool más flexible cuando quieres apuntar a algo muy específico (por ejemplo, "solo valida ADR-0032 con el motor OPA").
+**What it does.** It exposes the composable validation engine (GT-312): instead of one monolithic validation, you switch on the modes you need — SDLC, architecture, ruleset, ADR or ad-hoc over a single file — and you can combine them in one call. Every argument you pass turns on its corresponding mode. It is the most flexible tool when you want to aim at something very specific (for instance, "validate ADR-0032 only, with the OPA engine").
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 |-------|------|-----|----------|
-| `path` | string | sí | Ruta al repositorio satélite. |
-| `corePath` | string | no | Ruta opcional al Core. |
-| `engine` | string | no | Motor de validación: `native` (por defecto) u `opa`. |
-| `topology` | string | no | Enciende el modo arquitectura para esa topología (`modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`). |
-| `phase` | string | no | Enciende el modo SDLC para esa fase (`discovery`…`release`). |
-| `ruleset` | string | no | Enciende el modo ruleset para un ruleset concreto (p. ej. `compliance-baseline`, `definition-of-done`). |
-| `adr` | string | no | Enciende el modo ADR para una decisión concreta (`adr-0002`, `adr-0005`, `adr-0010`, `adr-0018`, `adr-0032`, `adr-0040`, `adr-0050`). |
-| `file` | string | no | Enciende el modo ad-hoc para validar un único archivo. |
+| `path` | string | yes | Path to the satellite repository. |
+| `corePath` | string | no | Optional path to the Core. |
+| `engine` | string | no | Validation engine: `native` (the default) or `opa`. |
+| `topology` | string | no | Switches on architecture mode for that topology (`modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`). |
+| `phase` | string | no | Switches on SDLC mode for that phase (`discovery`…`release`). |
+| `ruleset` | string | no | Switches on ruleset mode for one specific ruleset (e.g. `compliance-baseline`, `definition-of-done`). |
+| `adr` | string | no | Switches on ADR mode for one specific decision (`adr-0002`, `adr-0005`, `adr-0010`, `adr-0018`, `adr-0032`, `adr-0040`, `adr-0050`). |
+| `file` | string | no | Switches on ad-hoc mode to validate a single file. |
 
-**Ejemplo**
+**Example**
 
 ```json
 {
   "name": "evolith-composable-validate",
   "arguments": {
-    "path": "/ruta/a/mi-satelite",
+    "path": "/path/to/my-satellite",
     "engine": "opa",
     "phase": "qa",
     "adr": "adr-0032"
@@ -223,74 +222,74 @@ Todas reciben una ruta a tu satélite (y, casi siempre, una ruta opcional al che
 }
 ```
 
-**Qué esperar.** Un objeto `type: 'composable'` con el resultado agregado de todos los modos que activaste, más una marca de tiempo. Si no enciendes ningún modo (solo `path`), el motor corre sin criterios y el resultado sale vacío; enciende al menos un modo para obtener evaluaciones útiles.
+**What to expect.** A `type: 'composable'` object with the aggregated result of every mode you switched on, plus a timestamp. If you switch on no mode at all (just `path`), the engine runs with no criteria and the result comes back empty; switch on at least one mode to get useful evaluations.
 
-### 3.5. `evolith-architecture-validate` — validar arquitectura en el eje de madurez
+### 3.5. `evolith-architecture-validate` — validate architecture along the maturity axis
 
-**Qué hace.** Valida la arquitectura del repositorio a lo largo del eje progresivo de madurez: monolito modular → módulos distribuidos → microservicios. Comprueba de forma acumulativa la independencia modular, los límites de contrato y la preparación para extracción, según el nivel que pidas. Con `deep: true` añade análisis estático profundo del grafo de imports (violaciones de capa, acoplamiento entre contextos, métricas de inestabilidad).
+**What it does.** It validates the architecture of the repository along the progressive maturity axis: modular monolith → distributed modules → microservices. It cumulatively checks modular independence, contract boundaries and extraction readiness, according to the level you ask for. With `deep: true` it adds deep static analysis of the import graph (layer violations, coupling between contexts, instability metrics).
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 |-------|------|-----|----------|
-| `path` | string | sí | Ruta al repositorio a analizar. |
-| `level` | string | no | Topología objetivo del eje progresivo: `modular-monolith` (por defecto), `distributed-modules` o `microservices`. Cuanto más alto el nivel, más chequeos acumulados se aplican. |
-| `deep` | boolean | no | `true` para habilitar el análisis estático profundo (grafo de imports, capas, acoplamiento). Por defecto `false`. |
+| `path` | string | yes | Path to the repository to analyse. |
+| `level` | string | no | Target topology on the progressive axis: `modular-monolith` (the default), `distributed-modules` or `microservices`. The higher the level, the more cumulative checks are applied. |
+| `deep` | boolean | no | `true` to enable the deep static analysis (import graph, layers, coupling). `false` by default. |
 
-**Ejemplo**
+**Example**
 
 ```json
 {
   "name": "evolith-architecture-validate",
   "arguments": {
-    "path": "/ruta/a/mi-satelite",
+    "path": "/path/to/my-satellite",
     "level": "microservices",
     "deep": true
   }
 }
 ```
 
-**Qué esperar.** Un objeto con `level`, `status` (`passed`/`failed` según haya issues bloqueantes), `issuesChecked`, `blockingIssues` y el array `issues` (cada uno con `ruleId`, `level`, `title`, `severity` y `blocking`). Con `deep: true` verás además issues de tipo `ARCH-COUPLING` con las métricas de acoplamiento. Los chequeos OPA compartidos se añaden en modo best-effort: si fallan, la validación nativa sigue aplicando.
+**What to expect.** An object with `level`, `status` (`passed`/`failed`, depending on whether there are blocking issues), `issuesChecked`, `blockingIssues` and the `issues` array (each with `ruleId`, `level`, `title`, `severity` and `blocking`). With `deep: true` you also see `ARCH-COUPLING` issues carrying the coupling metrics. The shared OPA checks are added best-effort: if they fail, the native validation still applies.
 
-### 3.6. `evolith-drift-detect` — detectar deriva arquitectónica
+### 3.6. `evolith-drift-detect` — detect architectural drift
 
-**Qué hace.** Compara el estado actual del repositorio contra lo que las reglas del Core esperan y reporta la deriva arquitectónica: aquello que se ha ido separando de la arquitectura declarada. Es una tool de diagnóstico rápido, sin más configuración que las dos rutas.
+**What it does.** It compares the current state of the repository against what the Core rules expect and reports the architectural drift: whatever has pulled away from the declared architecture. It is a quick diagnostic tool, with no configuration beyond the two paths.
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 |-------|------|-----|----------|
-| `path` | string | sí | Ruta al repositorio a analizar. |
-| `corePath` | string | no | Ruta explícita al Core; si la omites, se asume una carpeta hermana `../evolith`. |
+| `path` | string | yes | Path to the repository to analyse. |
+| `corePath` | string | no | Explicit path to the Core; if you omit it, a sibling folder `../evolith` is assumed. |
 
-**Ejemplo**
+**Example**
 
 ```json
 {
   "name": "evolith-drift-detect",
   "arguments": {
-    "path": "/ruta/a/mi-satelite",
-    "corePath": "/ruta/a/evolith-core"
+    "path": "/path/to/my-satellite",
+    "corePath": "/path/to/evolith-core"
   }
 }
 ```
 
-**Qué esperar.** Un objeto con `repository`, la marca de tiempo y `result`, que contiene el informe de deriva calculado por el servicio de drift. Si la detección falla (por ejemplo, no encuentra el Core), la respuesta viene marcada como error con el mensaje del fallo en lugar de lanzar una excepción.
+**What to expect.** An object with `repository`, the timestamp and `result`, which holds the drift report computed by the drift service. If detection fails (because it cannot find the Core, for example), the response comes back marked as an error carrying the failure message rather than throwing an exception.
 
-### 3.7. `evolith-phase-artifacts-evaluate` — completitud de artefactos de fase (advisory)
+### 3.7. `evolith-phase-artifacts-evaluate` — phase artifact completeness (advisory)
 
-**Qué hace.** Mide, de forma asesora y no vinculante (ADR-0104), qué tan completos están los artefactos de una fase downstream para una composición de topologías ya confirmada. Compara los artefactos que declaras como presentes contra la UNIÓN de los artefactos universales de esa fase y los perfiles de fase (`phaseProfiles`) de cada topología. Es stateless: te dice qué falta, pero no bloquea nada. Produce el mismo resultado que `POST /api/v1/architecture/evaluate-phase-artifacts` y `evolith-cli topology phase-artifacts`.
+**What it does.** It measures, in an advisory and non-binding way (ADR-0104), how complete the artifacts of a downstream phase are for a topology composition that has already been confirmed. It compares the artifacts you declare as present against the UNION of that phase's universal artifacts and the phase profiles (`phaseProfiles`) of each topology. It is stateless: it tells you what is missing, but it blocks nothing. It produces the same result as `POST /api/v1/architecture/evaluate-phase-artifacts` and `evolith-cli topology phase-artifacts`.
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 |-------|------|-----|----------|
-| `phase` | string | sí | Fase downstream a medir: `construction`, `quality` o `deployment`. |
-| `topologies` | string[] | sí | Ids de las topologías confirmadas cuya composición determina los artefactos requeridos. |
-| `declaredArtifacts` | string[] | no | Tipos de artefacto que el consumidor declara ya presentes; contra esto se calcula lo que falta. |
-| `corePath` | string | no | Ruta explícita al Core; si la omites, se asume `../evolith`. |
+| `phase` | string | yes | Downstream phase to measure: `construction`, `quality` or `deployment`. |
+| `topologies` | string[] | yes | Ids of the confirmed topologies whose composition determines the required artifacts. |
+| `declaredArtifacts` | string[] | no | Artifact types the consumer declares as already present; what is missing is computed against this. |
+| `corePath` | string | no | Explicit path to the Core; if you omit it, `../evolith` is assumed. |
 
-**Ejemplo**
+**Example**
 
 ```json
 {
@@ -299,102 +298,102 @@ Todas reciben una ruta a tu satélite (y, casi siempre, una ruta opcional al che
     "phase": "deployment",
     "topologies": ["microservices", "event-driven"],
     "declaredArtifacts": ["dockerfile", "helm-chart"],
-    "corePath": "/ruta/a/evolith-core"
+    "corePath": "/path/to/evolith-core"
   }
 }
 ```
 
-**Qué esperar.** El resultado en el envelope de éxito (ADR-0073), con los artefactos `required`, `present` y `missing` para esa fase y composición, más una métrica de `completeness`. Al ser advisory, sirve para orientar el trabajo pendiente, no para aprobar o rechazar una transición. Si `phase` no es una de las tres válidas, obtienes una respuesta de error con la lista de valores permitidos.
+**What to expect.** The result in the success envelope (ADR-0073), with the `required`, `present` and `missing` artifacts for that phase and composition, plus a `completeness` metric. Being advisory, it is there to steer the outstanding work, not to approve or reject a transition. If `phase` is not one of the three valid values, you get an error response listing the allowed values.
 
-## 4. Topología, SDLC y andamiaje
+## 4. Topology, SDLC and scaffolding
 
-Este grupo cubre tres cosas relacionadas: consultar y recomendar la **topología**
-arquitectónica (cómo se agrupa tu sistema), ver y avanzar por las **fases del
-ciclo de vida** (SDLC), y **generar código y documentación** de arranque para un
-satélite nuevo.
+This group covers three related things: querying and recommending the
+architectural **topology** (how your system is grouped), viewing and advancing
+through the **lifecycle phases** (SDLC), and **generating starter code and
+documentation** for a new satellite.
 
-Antes de entrar en cada herramienta, conviene tener claro que aquí conviven
-**tres vocabularios de fase distintos**, y no son intercambiables:
+Before going tool by tool, it is worth being clear that **three different phase
+vocabularies** coexist here, and they are not interchangeable:
 
-- **Eje progresivo de topología** (`modular-monolith`, `distributed-modules`,
-  `microservices`, o sus alias `1`/`2`/`3`): describe cuánto se distribuye la
-  arquitectura. Lo usa `evolith-scaffold`.
-- **Fases de andamiaje** (`phase-0` … `phase-5`): hitos con artefactos requeridos
-  que Evolith comprueba en el repo. Los usan `evolith-sdlc-status` y
-  `evolith-sdlc-handoff`.
-- **Fases del gate SDLC** (`discovery`, `design`, `construction`, `qa`,
-  `release`): las etapas de gobernanza cuyas compuertas se evalúan. Las usa
-  `evolith-phase-advance`.
+- **Progressive topology axis** (`modular-monolith`, `distributed-modules`,
+  `microservices`, or their aliases `1`/`2`/`3`): it describes how distributed
+  the architecture is. `evolith-scaffold` uses it.
+- **Scaffolding phases** (`phase-0` … `phase-5`): milestones with required
+  artifacts that Evolith checks for in the repo. `evolith-sdlc-status` and
+  `evolith-sdlc-handoff` use these.
+- **SDLC gate phases** (`discovery`, `design`, `construction`, `qa`,
+  `release`): the governance stages whose gates are evaluated.
+  `evolith-phase-advance` uses these.
 
-Las herramientas que **escriben** en disco (`evolith-sdlc-handoff`,
-`evolith-sdlc-generate`, `evolith-scaffold`, `evolith-docs-scaffold`) son
-**mutativas** y pasan por la compuerta transversal `{ apply:true, approvalToken }`
-descrita en la cabecera de esta guía. Las de consulta y recomendación son de solo
-lectura.
+The tools that **write** to disk (`evolith-sdlc-handoff`,
+`evolith-sdlc-generate`, `evolith-scaffold`, `evolith-docs-scaffold`) are
+**mutative** and go through the cross-cutting `{ apply:true, approvalToken }`
+gate described at the top of this guide. The query and recommendation tools are
+read-only.
 
-### 4.1. `evolith-topology-list` — listar las topologías disponibles
+### 4.1. `evolith-topology-list` — list the available topologies
 
-**Qué hace.** Devuelve el catálogo completo de topologías arquitectónicas que el
-Core conoce. Es el punto de partida para ver qué opciones existen antes de pedir
-el detalle de una o una recomendación. Es de solo lectura.
+**What it does.** It returns the full catalogue of architectural topologies the
+Core knows about. It is the starting point for seeing what options exist before
+asking for the detail of one, or for a recommendation. Read-only.
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `corePath` | string | no | Ruta explícita al checkout del Core de donde salen las topologías. Si lo omites, se resuelve una ruta hermana por defecto (`../evolith`). |
+| `corePath` | string | no | Explicit path to the Core checkout the topologies come from. If you omit it, a default sibling path is resolved (`../evolith`). |
 
-**Ejemplo**
+**Example**
 
 ```json
 { "name": "evolith-topology-list", "arguments": {} }
 ```
 
-**Qué esperar.** Un objeto con `count` (cuántas topologías hay) y `topologies`
-(el array con cada definición del catálogo), más un `timestamp`. Si no encuentra
-el catálogo en `corePath`, devuelve `{ error: true, message: "Failed to list
-topologies: …" }`.
+**What to expect.** An object with `count` (how many topologies there are) and
+`topologies` (the array with every catalogue definition), plus a `timestamp`. If
+it cannot find the catalogue under `corePath`, it returns `{ error: true,
+message: "Failed to list topologies: …" }`.
 
-### 4.2. `evolith-topology-get` — obtener una topología por su id
+### 4.2. `evolith-topology-get` — get a topology by its id
 
-**Qué hace.** Recupera la definición completa de una sola topología a partir de su
-identificador (por ejemplo `modular-monolith`). Úsala cuando ya sabes cuál te
-interesa y quieres ver su especificación en detalle (incluidos sus perfiles de
-artefactos por fase). Es de solo lectura.
+**What it does.** It retrieves the complete definition of a single topology from
+its identifier (for example `modular-monolith`). Use it once you know which one
+you care about and want to see its specification in detail (including its
+per-phase artifact profiles). Read-only.
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `id` | string | sí | El id de la topología a recuperar; es lo único obligatorio. |
-| `corePath` | string | no | Ruta explícita al checkout del Core. Si lo omites, se usa la ruta hermana por defecto. |
+| `id` | string | yes | The id of the topology to retrieve; it is the only mandatory field. |
+| `corePath` | string | no | Explicit path to the Core checkout. If you omit it, the default sibling path is used. |
 
-**Ejemplo**
+**Example**
 
 ```json
 { "name": "evolith-topology-get", "arguments": { "id": "modular-monolith" } }
 ```
 
-**Qué esperar.** Un objeto con el `id` consultado y `topology` (la definición
-completa), más `timestamp`. Si el id no existe, devuelve `{ error: true, message:
-"Topology not found: <id>" }`.
+**What to expect.** An object with the `id` you queried and `topology` (the full
+definition), plus `timestamp`. If the id does not exist, it returns `{ error:
+true, message: "Topology not found: <id>" }`.
 
-### 4.3. `evolith-topology-recommend` — recomendar una composición de topología
+### 4.3. `evolith-topology-recommend` — recommend a topology composition
 
-**Qué hace.** A partir de un conjunto de **señales técnicas** de tu proyecto,
-recomienda una composición de topología y explica el porqué. Es **advisory** y
-sin estado (ADR-0104): el Core *recomienda* en Discovery, pero es el tenant quien
-*confirma* en Design; nada queda vinculado. Produce el mismo resultado que
-`POST /api/v1/architecture/recommend-topology` y que `evolith-cli topology recommend`.
+**What it does.** From a set of **technical signals** about your project, it
+recommends a topology composition and explains why. It is **advisory** and
+stateless (ADR-0104): the Core *recommends* in Discovery, but it is the tenant
+who *confirms* in Design; nothing is bound. It produces the same result as
+`POST /api/v1/architecture/recommend-topology` and as `evolith-cli topology recommend`.
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `signals` | object | no | Mapa de señales técnicas (booleanos o números) que describen tu contexto: `teamCount`, `deploymentIndependence`, `highScale`, `asyncIntegration`, `dataProductSharing`, `spikyLoad`, `latencyTolerant`, `edgeOrOffline`, `aiAgents`. Cuantas más señales des, más informada la recomendación. Si va vacío, cae por defecto en `modular-monolith`. |
-| `corePath` | string | no | Ruta explícita al checkout del Core; se usa para localizar el fichero de reglas de recomendación. |
+| `signals` | object | no | Map of technical signals (booleans or numbers) describing your context: `teamCount`, `deploymentIndependence`, `highScale`, `asyncIntegration`, `dataProductSharing`, `spikyLoad`, `latencyTolerant`, `edgeOrOffline`, `aiAgents`. The more signals you give, the better informed the recommendation. If it is empty, it falls back to `modular-monolith`. |
+| `corePath` | string | no | Explicit path to the Core checkout; it is used to locate the recommendation rules file. |
 
-**Ejemplo**
+**Example**
 
 ```json
 {
@@ -405,88 +404,89 @@ sin estado (ADR-0104): el Core *recomienda* en Discovery, pero es el tenant quie
 }
 ```
 
-**Qué esperar.** El resultado (composición recomendada + justificación) envuelto
-en el envelope de éxito ADR-0073 `{ success, data, meta }`. Si no logra leer las
-reglas, devuelve `{ error: true, message: "Failed to recommend topology: …" }`.
+**What to expect.** The result (recommended composition + rationale) wrapped in
+the ADR-0073 success envelope `{ success, data, meta }`. If it cannot read the
+rules, it returns `{ error: true, message: "Failed to recommend topology: …" }`.
 
-### 4.4. `evolith-sdlc-status` — ver el estado de las fases del satélite
+### 4.4. `evolith-sdlc-status` — see the phase state of the satellite
 
-**Qué hace.** Lee el `evolith.yaml` del repo para saber en qué fase (`phase-0` …
-`phase-5`) está y, para cada fase, comprueba qué artefactos requeridos ya existen
-en disco y cuáles faltan. Es la foto de avance del satélite y la base sobre la que
-opera el handoff. Es de solo lectura.
+**What it does.** It reads the repo's `evolith.yaml` to find out which phase
+(`phase-0` … `phase-5`) it is in and, for each phase, checks which required
+artifacts already exist on disk and which are missing. It is the progress
+snapshot of the satellite and the basis the handoff operates on. Read-only.
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | sí | Ruta al repositorio del satélite cuyo estado quieres inspeccionar. |
+| `path` | string | yes | Path to the satellite repository whose state you want to inspect. |
 
-**Ejemplo**
+**Example**
 
 ```json
-{ "name": "evolith-sdlc-status", "arguments": { "path": "/ruta/a/mi-satelite" } }
+{ "name": "evolith-sdlc-status", "arguments": { "path": "/path/to/my-satellite" } }
 ```
 
-**Qué esperar.** Un objeto con `currentPhase`, `nextPhase`, y `phaseStatus`: un
-array por fase con su `status` (`complete` / `next` / `pending`) y la lista de
-`requirements` marcando `exists: true|false` para cada artefacto. Si falta `path`,
-devuelve `{ error: true, message: "path is required" }`.
+**What to expect.** An object with `currentPhase`, `nextPhase`, and
+`phaseStatus`: one array entry per phase with its `status` (`complete` / `next` /
+`pending`) and the list of `requirements` marking `exists: true|false` for each
+artifact. If `path` is missing, it returns `{ error: true, message: "path is
+required" }`.
 
-### 4.5. `evolith-sdlc-handoff` — realizar el traspaso a la fase siguiente
+### 4.5. `evolith-sdlc-handoff` — perform the handoff to the next phase
 
-**Qué hace.** Ejecuta el traspaso ("handoff") de una fase de andamiaje a la
-**inmediatamente siguiente** (por ejemplo `phase-0` → `phase-1`). Antes de
-escribir, exige que la fase de origen esté `complete` (todos sus artefactos
-presentes) y que el destino sea consecutivo; si no, falla. Cuando procede, escribe
-un manifiesto de traspaso en `.evolith/handoff-manifest.json`. **Es mutativa**
-(pasa por la compuerta `{ apply:true, approvalToken }`).
+**What it does.** It performs the handoff from one scaffolding phase to the
+**immediately following one** (for example `phase-0` → `phase-1`). Before
+writing, it demands that the source phase be `complete` (all of its artifacts
+present) and that the destination be consecutive; otherwise it fails. When it
+does proceed, it writes a handoff manifest to `.evolith/handoff-manifest.json`.
+**It is mutative** (it goes through the `{ apply:true, approvalToken }` gate).
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | sí | Ruta al repositorio del satélite sobre el que se hace el traspaso. |
-| `fromPhase` | string | sí | Fase de origen (`phase-0` … `phase-5`); debe estar completa. |
-| `toPhase` | string | sí | Fase de destino; debe ser la consecutiva a `fromPhase`. |
-| `confirm` | boolean | no | Bandera de confirmación de la operación mutativa. |
+| `path` | string | yes | Path to the satellite repository the handoff is performed on. |
+| `fromPhase` | string | yes | Source phase (`phase-0` … `phase-5`); it must be complete. |
+| `toPhase` | string | yes | Destination phase; it must be the one consecutive to `fromPhase`. |
+| `confirm` | boolean | no | Confirmation flag for the mutative operation. |
 
-**Ejemplo**
+**Example**
 
 ```json
 {
   "name": "evolith-sdlc-handoff",
-  "arguments": { "path": "/ruta/a/mi-satelite", "fromPhase": "phase-0", "toPhase": "phase-1" }
+  "arguments": { "path": "/path/to/my-satellite", "fromPhase": "phase-0", "toPhase": "phase-1" }
 }
 ```
 
-**Qué esperar.** El manifiesto de traspaso: `handoff` (from/to, timestamp, repo),
-la lista de `artifacts` con su presencia, un bloque `validation`
-(`allArtifactsPresent`) y `recommendations` para la fase que dejas atrás. Si la
-fase de origen no está completa o el destino no es consecutivo, la operación
-lanza un error.
+**What to expect.** The handoff manifest: `handoff` (from/to, timestamp, repo),
+the list of `artifacts` with their presence, a `validation` block
+(`allArtifactsPresent`) and `recommendations` for the phase you are leaving
+behind. If the source phase is not complete, or the destination is not
+consecutive, the operation throws an error.
 
-### 4.6. `evolith-sdlc-generate` — generar el andamiaje hexagonal desde un modelo DDD
+### 4.6. `evolith-sdlc-generate` — generate the hexagonal scaffolding from a DDD model
 
-**Qué hace.** Genera un esqueleto de Arquitectura Hexagonal a partir de un
-`classDiagram` de Mermaid embebido en un modelo DDD en Markdown. Reutiliza los
-mismos generadores del core-domain que usa la CLI (`sdlc generate`), así que es un
-adaptador de transporte fino, sin lógica propia. **Es mutativa**: escribe ficheros
-salvo que uses `dryRun`.
+**What it does.** It generates a Hexagonal Architecture skeleton from a Mermaid
+`classDiagram` embedded in a DDD model written in Markdown. It reuses the same
+core-domain generators the CLI uses (`sdlc generate`), so it is a thin transport
+adapter with no logic of its own. **It is mutative**: it writes files unless you
+use `dryRun`.
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `model` | string | no* | El modelo DDD en Markdown **inline** (debe contener un bloque ```` ```mermaid ```` con `classDiagram`). Alternativa a `from`. |
-| `from` | string | no* | Ruta a un fichero Markdown con el modelo DDD. Se resuelve contra `output` (o el cwd). Alternativa a `model`. |
-| `output` | string | no | Directorio destino de los ficheros generados (por defecto, el directorio de trabajo). |
-| `dryRun` | boolean | no | Si es `true`, informa qué ficheros se crearían sin escribir nada. Por defecto `false`. |
+| `model` | string | no* | The DDD model in Markdown, **inline** (it must contain a ```` ```mermaid ```` block with a `classDiagram`). An alternative to `from`. |
+| `from` | string | no* | Path to a Markdown file holding the DDD model. It is resolved against `output` (or the cwd). An alternative to `model`. |
+| `output` | string | no | Destination directory for the generated files (the working directory by default). |
+| `dryRun` | boolean | no | If `true`, it reports which files would be created without writing anything. `false` by default. |
 
-\* No hay campos `required` en el esquema, pero **debes aportar `model` o `from`**;
-si faltan ambos, la herramienta lanza un error.
+\* There are no `required` fields in the schema, but **you must supply either `model` or `from`**;
+if both are missing, the tool throws an error.
 
-**Ejemplo**
+**Example**
 
 ```json
 {
@@ -495,37 +495,38 @@ si faltan ambos, la herramienta lanza un error.
 }
 ```
 
-**Qué esperar.** Un objeto con `targetDir`, `dryRun`, un resumen del `diagram`
-(número de clases y relaciones, y la lista de clases con su estereotipo), y los
-arrays `created` y `skipped`. Si el Markdown no contiene un `classDiagram` válido,
-lanza un error explicando que falta el bloque Mermaid.
+**What to expect.** An object with `targetDir`, `dryRun`, a summary of the
+`diagram` (number of classes and relationships, and the list of classes with
+their stereotype), and the `created` and `skipped` arrays. If the Markdown does
+not contain a valid `classDiagram`, it throws an error explaining that the
+Mermaid block is missing.
 
-### 4.7. `evolith-scaffold` — andamiar un satélite a lo largo del eje progresivo
+### 4.7. `evolith-scaffold` — scaffold a satellite along the progressive axis
 
-**Qué hace.** Crea un workspace Nx completo para un satélite nuevo, situándolo en
-el eje de madurez progresiva: **fase 1** (`modular-monolith`) genera una SPA
-estándar; **fases 2–3** (`distributed-modules` / `microservices`) generan un host
-de Module Federation con sus remotes. En todos los casos añade la Service API de
-NestJS, los shells transversales y las librerías de bounded-context DDD. Conduce
-la misma estrategia que la CLI (`evolith-cli scaffold`). **Es mutativa**: escribe el
-workspace bajo `<path>/src`.
+**What it does.** It creates a full Nx workspace for a new satellite, placing it
+on the progressive maturity axis: **phase 1** (`modular-monolith`) generates a
+standard SPA; **phases 2–3** (`distributed-modules` / `microservices`) generate a
+Module Federation host with its remotes. In every case it adds the NestJS Service
+API, the cross-cutting shells and the DDD bounded-context libraries. It drives
+the same strategy as the CLI (`evolith-cli scaffold`). **It is mutative**: it
+writes the workspace under `<path>/src`.
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `frontend` | string | sí | Framework de frontend (`react`, `angular`, `vue`). |
-| `orm` | string | sí | ORM de la capa de persistencia (`prisma`, `typeorm`). |
-| `phase` | string | sí | `1|2|3` o el id del eje progresivo (`modular-monolith`, `distributed-modules`, `microservices`); decide SPA vs. host+remotes. |
-| `path` | string | no | Raíz del satélite bajo la que se genera `<path>/src` (por defecto, el cwd del servidor). |
-| `apiName` | string | no | Nombre de la Service API de NestJS. Por defecto `tracker-api`. |
-| `webAppName` | string | no | Nombre de la SPA de fase 1. Por defecto `tracker-web`. |
-| `hostName` | string | no | Nombre de la app host (MF) en fases 2/3. Por defecto `tracker-host`. |
-| `remotes` | array\|string | no | Nombres de los remotes en fases 2/3 (array o cadena separada por comas). |
-| `domains` | array\|string | no | Bounded contexts SDLC a materializar como librerías de dominio (array o cadena separada por comas). |
-| `dryRun` | boolean | no | Informa los comandos nx/npm planificados sin escribir ni ejecutar nada. Por defecto `false`. |
+| `frontend` | string | yes | Frontend framework (`react`, `angular`, `vue`). |
+| `orm` | string | yes | ORM of the persistence layer (`prisma`, `typeorm`). |
+| `phase` | string | yes | `1|2|3` or the id on the progressive axis (`modular-monolith`, `distributed-modules`, `microservices`); it decides SPA vs. host+remotes. |
+| `path` | string | no | Root of the satellite under which `<path>/src` is generated (the server's cwd by default). |
+| `apiName` | string | no | Name of the NestJS Service API. `tracker-api` by default. |
+| `webAppName` | string | no | Name of the phase-1 SPA. `tracker-web` by default. |
+| `hostName` | string | no | Name of the host app (MF) in phases 2/3. `tracker-host` by default. |
+| `remotes` | array\|string | no | Names of the remotes in phases 2/3 (an array or a comma-separated string). |
+| `domains` | array\|string | no | SDLC bounded contexts to materialise as domain libraries (an array or a comma-separated string). |
+| `dryRun` | boolean | no | Reports the planned nx/npm commands without writing or executing anything. `false` by default. |
 
-**Ejemplo**
+**Example**
 
 ```json
 {
@@ -540,61 +541,61 @@ workspace bajo `<path>/src`.
 }
 ```
 
-**Qué esperar.** Un objeto con `status` (`scaffolded` o `dry-run`), el
-`frontendFramework`, el `orm`, la `phase` normalizada (`1`/`2`/`3`), el `apiName`,
-los `domains` y el `baseDir`. El progreso se emite por stderr. Si `phase` no es
-reconocible, lanza un error listando los valores válidos.
+**What to expect.** An object with `status` (`scaffolded` or `dry-run`), the
+`frontendFramework`, the `orm`, the normalised `phase` (`1`/`2`/`3`), the
+`apiName`, the `domains` and the `baseDir`. Progress is emitted on stderr. If
+`phase` is not recognisable, it throws an error listing the valid values.
 
-### 4.8. `evolith-docs-scaffold` — andamiar la documentación base
+### 4.8. `evolith-docs-scaffold` — scaffold the baseline documentation
 
-**Qué hace.** Crea el conjunto de documentación base que Evolith espera en un
-satélite (`README.md`, `AGENTS.md`, `MASTER_INDEX.md` y `evolith.yaml`) en un
-directorio destino. Es la contraparte MCP del comando CLI `docs`. **Es mutativa**:
-escribe ficheros salvo que uses `dryRun`.
+**What it does.** It creates the set of baseline documents Evolith expects in a
+satellite (`README.md`, `AGENTS.md`, `MASTER_INDEX.md` and `evolith.yaml`) in a
+destination directory. It is the MCP counterpart of the CLI `docs` command.
+**It is mutative**: it writes files unless you use `dryRun`.
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | no | Directorio destino donde se andamia la documentación (por defecto, el cwd del servidor). |
-| `template` | string | no | Conjunto de plantillas: `default` (todos los ficheros) o `minimal` (solo `README.md` + `AGENTS.md`). Por defecto `default`. |
-| `force` | boolean | no | Si es `true`, sobrescribe (actualiza) los ficheros que ya existan en lugar de saltarlos. Por defecto `false`. |
-| `dryRun` | boolean | no | Calcula el plan de crear/actualizar/saltar sin escribir nada. Por defecto `false`. |
+| `path` | string | no | Destination directory where the documentation is scaffolded (the server's cwd by default). |
+| `template` | string | no | Template set: `default` (every file) or `minimal` (only `README.md` + `AGENTS.md`). `default` by default. |
+| `force` | boolean | no | If `true`, it overwrites (updates) files that already exist instead of skipping them. `false` by default. |
+| `dryRun` | boolean | no | Computes the create/update/skip plan without writing anything. `false` by default. |
 
-**Ejemplo**
+**Example**
 
 ```json
 {
   "name": "evolith-docs-scaffold",
-  "arguments": { "path": "/ruta/a/mi-satelite", "template": "minimal", "dryRun": true }
+  "arguments": { "path": "/path/to/my-satellite", "template": "minimal", "dryRun": true }
 }
 ```
 
-**Qué esperar.** En modo normal, un objeto con `targetDir`, `created`, `updated`,
-`skipped` y las listas `files` / `skippedFiles`. En `dryRun`, el plan con
-`toCreate`, `toUpdate`, `skipped` y el detalle de cada fichero previsto. Sin
-`force`, los ficheros ya existentes se cuentan como saltados.
+**What to expect.** In normal mode, an object with `targetDir`, `created`,
+`updated`, `skipped` and the `files` / `skippedFiles` lists. In `dryRun`, the
+plan with `toCreate`, `toUpdate`, `skipped` and the detail of each planned file.
+Without `force`, files that already exist are counted as skipped.
 
-### 4.9. `evolith-phase-advance` — proponer una transición de fase del gate SDLC
+### 4.9. `evolith-phase-advance` — propose an SDLC gate phase transition
 
-**Qué hace.** Propone avanzar de una fase de gobernanza (`discovery`, `design`,
-`construction`, `qa`, `release`) a otra, **evaluando las compuertas de salida** de
-la fase actual. Es una **propuesta advisory**: no muta el repo, solo devuelve si
-el gate pasa y por qué. Úsala para saber si un satélite está listo para pasar de
-etapa antes de decidir el traspaso.
+**What it does.** It proposes moving from one governance phase (`discovery`,
+`design`, `construction`, `qa`, `release`) to another, **evaluating the exit
+gates** of the current phase. It is an **advisory proposal**: it does not mutate
+the repo, it only reports whether the gate passes and why. Use it to find out
+whether a satellite is ready to move on before deciding on the handoff.
 
-**Argumentos**
+**Arguments**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `fromPhase` | string | sí | Fase actual del gate (`discovery`, `design`, `construction`, `qa`, `release`). |
-| `toPhase` | string | sí | Fase destino a la que se quiere avanzar. |
-| `projectPath` | string | sí | Ruta al repositorio sobre el que se evalúan las compuertas. |
-| `evaluatedBy` | string | no | Quién evalúa: `human`, `agent` o `ci`. Por defecto `agent`. Queda registrado en la propuesta. |
-| `initiative` | string | no | Contexto opcional de iniciativa para la evaluación. |
-| `tenant` | string | no | Contexto opcional de tenant para la evaluación. |
+| `fromPhase` | string | yes | Current gate phase (`discovery`, `design`, `construction`, `qa`, `release`). |
+| `toPhase` | string | yes | Destination phase you want to advance to. |
+| `projectPath` | string | yes | Path to the repository the gates are evaluated against. |
+| `evaluatedBy` | string | no | Who is evaluating: `human`, `agent` or `ci`. `agent` by default. It is recorded in the proposal. |
+| `initiative` | string | no | Optional initiative context for the evaluation. |
+| `tenant` | string | no | Optional tenant context for the evaluation. |
 
-**Ejemplo**
+**Example**
 
 ```json
 {
@@ -602,39 +603,39 @@ etapa antes de decidir el traspaso.
   "arguments": {
     "fromPhase": "design",
     "toPhase": "construction",
-    "projectPath": "/ruta/a/mi-satelite",
+    "projectPath": "/path/to/my-satellite",
     "evaluatedBy": "agent"
   }
 }
 ```
 
-**Qué esperar.** El payload de la propuesta (veredicto del gate y evaluación de
-criterios) envuelto en el envelope ADR-0073. Si `fromPhase` o `toPhase` no son
-fases válidas del gate, devuelve un error `PHASE_INVALID`; si no encuentra las
-reglas o el proyecto, un error `RULESET_NOT_FOUND`.
+**What to expect.** The proposal payload (gate verdict and criteria evaluation)
+wrapped in the ADR-0073 envelope. If `fromPhase` or `toPhase` are not valid gate
+phases, it returns a `PHASE_INVALID` error; if it cannot find the rules or the
+project, a `RULESET_NOT_FOUND` error.
 
-## 5. Satélite, agentes y mantenimiento
+## 5. Satellite, agents and maintenance
 
-Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en GitHub y consultarlo en el registro local, poblarlo de agentes de gobernanza, inicializar su andamiaje en modo batch, mantenerlo al día cuando el Core publica reglas nuevas, y dos utilidades de apoyo (sembrar fixtures y aplicar arreglos automáticos). La mayoría **escribe en disco o en repositorios remotos**: esas tools están marcadas como **mutativas** y, como se explica en la cabecera de esta guía, la llamada debe pasar el gate `{ apply: true, approvalToken }`; las de solo lectura (`*-list`, `*-status`, `*-validate`, `upgrade-plan`) no lo necesitan.
+This group covers the *lifecycle of the satellite itself*: creating or adopting it on GitHub and querying it in the local registry, populating it with governance agents, initialising its scaffolding in batch mode, keeping it current when the Core publishes new rules, and two supporting utilities (seeding fixtures and applying automatic fixes). Most of them **write to disk or to remote repositories**: those tools are marked as **mutative** and, as explained at the top of this guide, the call must pass the `{ apply: true, approvalToken }` gate; the read-only ones (`*-list`, `*-status`, `*-validate`, `upgrade-plan`) do not need it.
 
-### 5.1. `evolith-satellite-create` — crear el repo en GitHub y registrarlo · **mutativa**
+### 5.1. `evolith-satellite-create` — create the repo on GitHub and register it · **mutative**
 
-**Qué hace.** Crea un **repositorio nuevo en GitHub** (vía la API REST v3) y lo registra como satélite de Evolith en el `satellite-registry.json` local, en un solo paso. Es la contraparte MCP del comando `satellite:create` de la CLI: toca GitHub, así que necesita un token con scope `repo`. El registro nace con `status: "provisioning"` y `mode: "create"`.
+**What it does.** It creates a **new repository on GitHub** (via the REST v3 API) and registers it as an Evolith satellite in the local `satellite-registry.json`, in a single step. It is the MCP counterpart of the CLI's `satellite:create` command: it touches GitHub, so it needs a token with the `repo` scope. The registry entry is born with `status: "provisioning"` and `mode: "create"`.
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `token` | string | sí | Token personal de GitHub (scope `repo`) con el que se crea el repositorio. |
-| `name` | string | sí | Nombre del repositorio a crear. |
-| `owner` | string | sí | Usuario u organización de GitHub que será dueño del repo. |
-| `topology` | string | no | Topología a asignar: `monolith` \| `modular` \| `micro` \| `distributed` \| `custom` (default `modular`). |
-| `phase` | string | no | Fase SDLC inicial: `discovery` \| `design` \| `construction` \| `qa` \| `release` (default `discovery`). |
-| `description` | string | no | Descripción opcional del repositorio. |
-| `private` | boolean | no | Crea el repo como privado (default `false`, es decir público). |
-| `path` | string | no | Directorio donde vive el `satellite-registry.json` (default: cwd del servidor). |
+| `token` | string | yes | GitHub personal token (`repo` scope) used to create the repository. |
+| `name` | string | yes | Name of the repository to create. |
+| `owner` | string | yes | The GitHub user or organisation that will own the repo. |
+| `topology` | string | no | Topology to assign: `monolith` \| `modular` \| `micro` \| `distributed` \| `custom` (default `modular`). |
+| `phase` | string | no | Initial SDLC phase: `discovery` \| `design` \| `construction` \| `qa` \| `release` (default `discovery`). |
+| `description` | string | no | Optional description of the repository. |
+| `private` | boolean | no | Creates the repo as private (default `false`, that is, public). |
+| `path` | string | no | Directory where the `satellite-registry.json` lives (default: the server's cwd). |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
@@ -650,24 +651,24 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 }
 ```
 
-**Qué esperar.** El envelope de éxito trae en `data.satellite` el registro creado: `id` (UUID), `name`, `owner`, `repoUrl`, `cloneUrl`, `sshUrl`, `topology`, `phase`, `status: "provisioning"`, `mode: "create"` y timestamps. Si el `owner` es una cuenta personal, el tool reintenta contra `/user/repos` de forma transparente. Un error de GitHub (token inválido, nombre repetido) se propaga como envelope de error.
+**What to expect.** The success envelope carries the created registry entry in `data.satellite`: `id` (UUID), `name`, `owner`, `repoUrl`, `cloneUrl`, `sshUrl`, `topology`, `phase`, `status: "provisioning"`, `mode: "create"` and timestamps. If the `owner` is a personal account, the tool transparently retries against `/user/repos`. A GitHub error (invalid token, duplicate name) propagates as an error envelope.
 
-### 5.2. `evolith-satellite-adopt` — adoptar un repositorio existente · **mutativa**
+### 5.2. `evolith-satellite-adopt` — adopt an existing repository · **mutative**
 
-**Qué hace.** Toma un **repositorio de GitHub que ya existe**, verifica que esté accesible y lo pone bajo gobernanza de Evolith **sin crear nada nuevo**: lo registra en el `satellite-registry.json` con `status: "linked"` y `mode: "adopt"`. Es la contraparte de `satellite-create` cuando el repo ya está en marcha.
+**What it does.** It takes a **GitHub repository that already exists**, verifies that it is reachable and brings it under Evolith governance **without creating anything new**: it registers it in the `satellite-registry.json` with `status: "linked"` and `mode: "adopt"`. It is the counterpart of `satellite-create` for a repo that is already running.
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `repoUrl` | string | sí | URL completa del repositorio a adoptar (`https://github.com/owner/repo`). El owner y el nombre se extraen de aquí. |
-| `token` | string | sí | Token personal de GitHub (scope `repo`) para verificar el repositorio. |
-| `topology` | string | no | Topología a asignar: `monolith` \| `modular` \| `micro` \| `distributed` \| `custom` (default `modular`). |
-| `phase` | string | no | Fase SDLC a asignar: `discovery` \| `design` \| `construction` \| `qa` \| `release` (default `discovery`). |
-| `owner` | string | no | Fuerza el owner; por defecto se toma el que aparece en `repoUrl`. |
-| `path` | string | no | Directorio donde vive el `satellite-registry.json` (default: cwd del servidor). |
+| `repoUrl` | string | yes | Full URL of the repository to adopt (`https://github.com/owner/repo`). The owner and the name are extracted from it. |
+| `token` | string | yes | GitHub personal token (`repo` scope) used to verify the repository. |
+| `topology` | string | no | Topology to assign: `monolith` \| `modular` \| `micro` \| `distributed` \| `custom` (default `modular`). |
+| `phase` | string | no | SDLC phase to assign: `discovery` \| `design` \| `construction` \| `qa` \| `release` (default `discovery`). |
+| `owner` | string | no | Forces the owner; by default the one appearing in `repoUrl` is taken. |
+| `path` | string | no | Directory where the `satellite-registry.json` lives (default: the server's cwd). |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
@@ -681,20 +682,20 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 }
 ```
 
-**Qué esperar.** El envelope de éxito con `data.satellite` (mismo shape que `create`, pero con `status: "linked"`, `mode: "adopt"` y un campo `linkedAt`). Si la URL no se puede parsear, o el repositorio no existe / no es accesible con ese token, el tool lanza un error que el dispatch convierte en envelope de error.
+**What to expect.** The success envelope with `data.satellite` (the same shape as `create`, but with `status: "linked"`, `mode: "adopt"` and a `linkedAt` field). If the URL cannot be parsed, or the repository does not exist / is not reachable with that token, the tool throws an error that dispatch turns into an error envelope.
 
-### 5.3. `evolith-satellite-list` — listar los satélites registrados
+### 5.3. `evolith-satellite-list` — list the registered satellites
 
-**Qué hace.** Lee el `satellite-registry.json` local y devuelve todos los satélites registrados (los que crearon o adoptaron las dos tools anteriores). Es de solo lectura; si no hay archivo de registro, devuelve una lista vacía en vez de fallar.
+**What it does.** It reads the local `satellite-registry.json` and returns every registered satellite (the ones the two previous tools created or adopted). It is read-only; if there is no registry file, it returns an empty list instead of failing.
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `format` | string | no | Formato de salida: `json` (default) o `table` (una tabla Markdown legible). |
-| `path` | string | no | Directorio que contiene el `satellite-registry.json` (default: cwd). |
+| `format` | string | no | Output format: `json` (default) or `table` (a readable Markdown table). |
+| `path` | string | no | Directory holding the `satellite-registry.json` (default: cwd). |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
@@ -703,20 +704,20 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 }
 ```
 
-**Qué esperar.** En `json`, el envelope con `data.count` y `data.satellites` (el array de registros). En `format: "table"`, `data` es una cadena con una tabla `| ID | Name | Owner | Topology | Phase | Status | Mode |` (el ID recortado a 8 caracteres), o el texto `No satellites registered.` si el registro está vacío.
+**What to expect.** In `json`, the envelope with `data.count` and `data.satellites` (the array of registry entries). With `format: "table"`, `data` is a string holding a `| ID | Name | Owner | Topology | Phase | Status | Mode |` table (the ID truncated to 8 characters), or the text `No satellites registered.` if the registry is empty.
 
-### 5.4. `evolith-satellite-status` — estado de un satélite por ID
+### 5.4. `evolith-satellite-status` — status of one satellite by ID
 
-**Qué hace.** Busca un satélite concreto en el `satellite-registry.json` por su ID y devuelve su ficha completa. Acepta el UUID completo o solo un **prefijo** (coincidencia por inicio de cadena), para no tener que copiar el UUID entero.
+**What it does.** It looks up one specific satellite in the `satellite-registry.json` by its ID and returns its full record. It accepts the complete UUID or just a **prefix** (a starts-with match), so you do not have to copy the whole UUID.
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `id` | string | sí | ID del satélite, completo o un prefijo del UUID. |
-| `path` | string | no | Directorio que contiene el `satellite-registry.json` (default: cwd). |
+| `id` | string | yes | Satellite ID, either complete or a prefix of the UUID. |
+| `path` | string | no | Directory holding the `satellite-registry.json` (default: cwd). |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
@@ -725,19 +726,19 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 }
 ```
 
-**Qué esperar.** Si hay coincidencia, el envelope trae `data.found: true` y `data.satellite` con el registro completo. Si no, `data.found: false` con el `id` buscado y un mensaje de "not found" (no es un error de ejecución: el envelope sigue siendo de éxito, solo con `found: false`).
+**What to expect.** On a match, the envelope carries `data.found: true` and `data.satellite` with the full record. Otherwise, `data.found: false` with the `id` that was searched for and a "not found" message (this is not an execution error: the envelope is still a success envelope, only with `found: false`).
 
-### 5.5. `evolith-agent-list` — listar los agentes instalados
+### 5.5. `evolith-agent-list` — list the installed agents
 
-**Qué hace.** Recorre `rulesets/agents/` bajo el directorio indicado y lista los agentes de gobernanza instalados, leyendo su `agent.rules.json` para reportar versión, plantilla y fecha de instalación. De solo lectura.
+**What it does.** It walks `rulesets/agents/` under the given directory and lists the installed governance agents, reading their `agent.rules.json` to report version, template and installation date. Read-only.
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `dir` | string | no | Directorio raíz donde buscar `rulesets/agents/` (default: cwd). |
+| `dir` | string | no | Root directory in which to look for `rulesets/agents/` (default: cwd). |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
@@ -746,152 +747,152 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 }
 ```
 
-**Qué esperar.** El envelope con `data.agents` (cada uno con `name`, `version`, `template`, `installedAt`, `rulesetPath`) y `data.count`. Si no existe la carpeta `rulesets/agents/`, devuelve `agents: []` con un mensaje `No agents directory found`.
+**What to expect.** The envelope with `data.agents` (each with `name`, `version`, `template`, `installedAt`, `rulesetPath`) and `data.count`. If the `rulesets/agents/` folder does not exist, it returns `agents: []` with a `No agents directory found` message.
 
-### 5.6. `evolith-agent-validate` — validar el ruleset de un agente
+### 5.6. `evolith-agent-validate` — validate the ruleset of an agent
 
-**Qué hace.** Valida el `agent.rules.json` de un agente instalado contra el esquema mínimo: exige que tenga `agent.name`, `ruleset.version` y al menos un principio (`principles`). Reporta cada problema encontrado. De solo lectura.
+**What it does.** It validates an installed agent's `agent.rules.json` against the minimum schema: it demands `agent.name`, `ruleset.version` and at least one principle (`principles`). It reports every problem it finds. Read-only.
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `name` | string | sí | Nombre del agente a validar (su carpeta bajo `rulesets/agents/`). |
-| `dir` | string | no | Directorio raíz donde vive el agente (default: cwd). |
+| `name` | string | yes | Name of the agent to validate (its folder under `rulesets/agents/`). |
+| `dir` | string | no | Root directory where the agent lives (default: cwd). |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
   "name": "evolith-agent-validate",
-  "arguments": { "name": "arquitecto-guard" }
+  "arguments": { "name": "architect-guard" }
 }
 ```
 
-**Qué esperar.** El envelope con `data.valid` (`true`/`false`), `data.agent`, la lista `data.issues` (cada uno con `field` y `message`) y un `timestamp`. Si el agente no existe, `data.valid: false` con un `error` explicando que no se encontró.
+**What to expect.** The envelope with `data.valid` (`true`/`false`), `data.agent`, the `data.issues` list (each with `field` and `message`) and a `timestamp`. If the agent does not exist, `data.valid: false` with an `error` explaining that it was not found.
 
-### 5.7. `evolith-agent-install` — instalar un agente de gobernanza · **mutativa**
+### 5.7. `evolith-agent-install` — install a governance agent · **mutative**
 
-**Qué hace.** Instala un agente nuevo: crea `rulesets/agents/<name>/agent.rules.json` a partir de una plantilla con sus principios ya poblados. Cada plantilla trae un conjunto distinto de principios: `minimal` (uno, no bloqueante), `standard` (dos: gobernanza estándar + soporte bilingüe) y `enterprise` (tres: gobernanza completa, audit trail y cadena de aprobación).
+**What it does.** It installs a new agent: it creates `rulesets/agents/<name>/agent.rules.json` from a template with its principles already populated. Each template brings a different set of principles: `minimal` (one, non-blocking), `standard` (two: standard governance + bilingual support) and `enterprise` (three: full governance, audit trail and approval chain).
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `name` | string | sí | Nombre del agente a instalar (será el nombre de su carpeta y de su ruleset). |
-| `template` | string | no | Plantilla de principios: `standard` (default) \| `minimal` \| `enterprise`. |
-| `dir` | string | no | Directorio raíz donde instalar (default: cwd). |
-| `confirm` | boolean | no | Bandera de confirmación de operación mutativa (además del gate `apply`/`approvalToken` de la cabecera). |
+| `name` | string | yes | Name of the agent to install (it becomes the name of its folder and of its ruleset). |
+| `template` | string | no | Principle template: `standard` (default) \| `minimal` \| `enterprise`. |
+| `dir` | string | no | Root directory to install into (default: cwd). |
+| `confirm` | boolean | no | Confirmation flag for the mutative operation (on top of the `apply`/`approvalToken` gate described at the top). |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
   "name": "evolith-agent-install",
-  "arguments": { "name": "arquitecto-guard", "template": "enterprise" }
+  "arguments": { "name": "architect-guard", "template": "enterprise" }
 }
 ```
 
-**Qué esperar.** El envelope con `data.success: true`, `data.agent`, `data.template`, `data.rulesetPath` (la ruta escrita) y un `message` de confirmación.
+**What to expect.** The envelope with `data.success: true`, `data.agent`, `data.template`, `data.rulesetPath` (the path that was written) and a confirmation `message`.
 
-### 5.8. `evolith-agent-upgrade` — subir la versión de un agente · **mutativa**
+### 5.8. `evolith-agent-upgrade` — bump the version of an agent · **mutative**
 
-**Qué hace.** Sube la versión **patch** del agente (por ejemplo `1.0.0 → 1.0.1`) y reescribe su `agent.rules.json` con la nueva versión. Útil tras editar sus principios o para dejar constancia de un cambio.
+**What it does.** It bumps the **patch** version of the agent (for example `1.0.0 → 1.0.1`) and rewrites its `agent.rules.json` with the new version. Useful after editing its principles, or to leave a record of a change.
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `name` | string | sí | Nombre del agente a actualizar. |
-| `dir` | string | no | Directorio raíz donde vive el agente (default: cwd). |
-| `confirm` | boolean | no | Bandera de confirmación de operación mutativa (junto al gate `apply`/`approvalToken`). |
+| `name` | string | yes | Name of the agent to upgrade. |
+| `dir` | string | no | Root directory where the agent lives (default: cwd). |
+| `confirm` | boolean | no | Confirmation flag for the mutative operation (alongside the `apply`/`approvalToken` gate). |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
   "name": "evolith-agent-upgrade",
-  "arguments": { "name": "arquitecto-guard" }
+  "arguments": { "name": "architect-guard" }
 }
 ```
 
-**Qué esperar.** El envelope con `data.success: true`, `data.agent`, `data.fromVersion` y `data.toVersion`. Si el agente no existe, la operación **lanza un error** (envelope de error), a diferencia de `validate`, que lo reporta como dato.
+**What to expect.** The envelope with `data.success: true`, `data.agent`, `data.fromVersion` and `data.toVersion`. If the agent does not exist, the operation **throws an error** (an error envelope), unlike `validate`, which reports it as data.
 
-### 5.9. `evolith-agent-remove` — eliminar un agente · **mutativa**
+### 5.9. `evolith-agent-remove` — delete an agent · **mutative**
 
-**Qué hace.** Borra por completo la carpeta `rulesets/agents/<name>/` del agente. Es **irreversible**: elimina su ruleset del disco.
+**What it does.** It deletes the agent's `rulesets/agents/<name>/` folder entirely. It is **irreversible**: it removes its ruleset from disk.
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `name` | string | sí | Nombre del agente a eliminar. |
-| `dir` | string | no | Directorio raíz donde vive el agente (default: cwd). |
-| `confirm` | boolean | no | Bandera de confirmación de operación mutativa (junto al gate `apply`/`approvalToken`). |
+| `name` | string | yes | Name of the agent to delete. |
+| `dir` | string | no | Root directory where the agent lives (default: cwd). |
+| `confirm` | boolean | no | Confirmation flag for the mutative operation (alongside the `apply`/`approvalToken` gate). |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
   "name": "evolith-agent-remove",
-  "arguments": { "name": "arquitecto-guard" }
+  "arguments": { "name": "architect-guard" }
 }
 ```
 
-**Qué esperar.** El envelope con `data.success: true`, `data.agent` y un `message` de confirmación. Si el agente no existe, la operación lanza un error.
+**What to expect.** The envelope with `data.success: true`, `data.agent` and a confirmation `message`. If the agent does not exist, the operation throws an error.
 
-### 5.10. `evolith-agent-run` — ejecutar un intent contra el Agent Runtime · **mutativa**
+### 5.10. `evolith-agent-run` — run an intent against the Agent Runtime · **mutative**
 
-**Qué hace.** Envía un *intent* (un objetivo en lenguaje natural) al **Agent Runtime** y devuelve el resultado del pipeline agéntico. No escribe en el satélite directamente, pero delega en un runtime que sí puede ejecutar acciones, por eso está marcada mutativa. Adjunta automáticamente `cwd` del servidor como parámetro.
+**What it does.** It sends an *intent* (a goal in natural language) to the **Agent Runtime** and returns the result of the agentic pipeline. It does not write to the satellite directly, but it delegates to a runtime that can execute actions, which is why it is marked mutative. It automatically attaches the server's `cwd` as a parameter.
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `intent` | string | sí | El objetivo o intención que el agente debe resolver. |
-| `url` | string | no | URL del Agent Runtime (default `http://localhost:3000`). |
+| `intent` | string | yes | The goal or intention the agent has to resolve. |
+| `url` | string | no | URL of the Agent Runtime (default `http://localhost:3000`). |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
   "name": "evolith-agent-run",
   "arguments": {
-    "intent": "Genera el plan de arquitectura del nuevo microservicio de pagos"
+    "intent": "Produce the architecture plan for the new payments microservice"
   }
 }
 ```
 
-**Qué esperar.** Si el runtime responde, el envelope con `data.success: true` y `data.result` (la respuesta del pipeline). Si la llamada al runtime falla (por ejemplo, no está levantado en esa URL), `data.success: false` con `data.error` describiendo el fallo.
+**What to expect.** If the runtime answers, the envelope with `data.success: true` and `data.result` (the pipeline's response). If the call to the runtime fails (because nothing is listening on that URL, for example), `data.success: false` with `data.error` describing the failure.
 
-### 5.11. `evolith-init-batch` — inicializar un satélite en modo batch · **mutativa**
+### 5.11. `evolith-init-batch` — initialise a satellite in batch mode · **mutative**
 
-**Qué hace.** Inicialización **no interactiva** (batch/CI) de un satélite: genera `evolith.yaml`, la estructura de carpetas y los artefactos base bajo `<path>/<name>/`, según el runtime, monorepo, arquitectura y base de datos elegidos. Es la paridad MCP del `evolith-cli init --config … / --name … --yes` de la CLI, **sin prompts**: cada campo viene de los argumentos o de un valor por defecto. Delega el andamiaje en el mismo caso de uso del core (`InitializeProjectUseCase`) que corre la CLI.
+**What it does.** **Non-interactive** (batch/CI) initialisation of a satellite: it generates `evolith.yaml`, the folder structure and the baseline artifacts under `<path>/<name>/`, according to the chosen runtime, monorepo, architecture and database. It is the MCP parity of the CLI's `evolith-cli init --config … / --name … --yes`, **with no prompts**: every field comes from the arguments or from a default. It delegates the scaffolding to the same core use case (`InitializeProjectUseCase`) the CLI runs.
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `name` | string | sí | Nombre del proyecto/satélite (por este campo o dentro de `config`). |
-| `path` | string | no | Directorio bajo el cual se crea la carpeta `<name>/` (default: cwd del servidor). |
+| `name` | string | yes | Name of the project/satellite (through this field or inside `config`). |
+| `path` | string | no | Directory under which the `<name>/` folder is created (default: the server's cwd). |
 | `runtime` | string | no | Runtime: `nodejs` (default) \| `typescript` \| `dotnet` \| `python`. |
-| `monorepo` | string | no | Estrategia de monorepo: `none` (default) \| `nx` \| `npm-workspaces` \| `pnpm-workspaces` \| `rush`. |
-| `architecture` / `arch` | string | no | Patrón de arquitectura: `clean` (default) \| `hexagonal` \| `ddd` \| `clean-hex` \| `hex-ddd` \| `event-driven`. `arch` es alias (espeja el flag `--arch` de la CLI). |
-| `database` / `db` | string | no | Base de datos: `postgresql` (default) \| `mongodb` \| `sqlserver`… `db` es alias (`--db`). |
-| `apiProtocol` | string | no | Protocolo de API: `rest` (default) \| `graphql` \| `grpc` \| `websocket` \| `webhook`. |
-| `ciCd` | string | no | Proveedor de CI/CD (default `github-actions`). |
-| `observability` | string | no | Stack de observabilidad (default `opentelemetry`). |
-| `features` | string[] | no | Feature flags a andamiar (p.ej. `adr`, `hooks`, `acl`). |
-| `agents` | string[] | no | Ids de agentes a registrar de arranque. |
-| `config` | object | no | `evolith.setup.json` inline (`Partial<InitProjectInput>`) usado como base; los campos individuales de arriba lo **sobrescriben**. |
+| `monorepo` | string | no | Monorepo strategy: `none` (default) \| `nx` \| `npm-workspaces` \| `pnpm-workspaces` \| `rush`. |
+| `architecture` / `arch` | string | no | Architecture pattern: `clean` (default) \| `hexagonal` \| `ddd` \| `clean-hex` \| `hex-ddd` \| `event-driven`. `arch` is an alias (it mirrors the CLI's `--arch` flag). |
+| `database` / `db` | string | no | Database: `postgresql` (default) \| `mongodb` \| `sqlserver`… `db` is an alias (`--db`). |
+| `apiProtocol` | string | no | API protocol: `rest` (default) \| `graphql` \| `grpc` \| `websocket` \| `webhook`. |
+| `ciCd` | string | no | CI/CD provider (default `github-actions`). |
+| `observability` | string | no | Observability stack (default `opentelemetry`). |
+| `features` | string[] | no | Feature flags to scaffold (e.g. `adr`, `hooks`, `acl`). |
+| `agents` | string[] | no | Ids of agents to register up front. |
+| `config` | object | no | Inline `evolith.setup.json` (`Partial<InitProjectInput>`) used as the base; the individual fields above **override** it. |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
   "name": "evolith-init-batch",
   "arguments": {
-    "name": "pagos-api",
+    "name": "payments-api",
     "runtime": "nodejs",
     "architecture": "hexagonal",
     "db": "postgresql"
@@ -899,20 +900,20 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 }
 ```
 
-**Qué esperar.** El envelope con `data.input` (la entrada resuelta con todos los defaults aplicados) y `data.result` (el resultado del caso de uso: artefactos creados, warnings y errores). Si no se puede resolver un `name` (ni por campo ni por `config`), el tool lanza un error, igual que la guarda de la CLI.
+**What to expect.** The envelope with `data.input` (the resolved input with every default applied) and `data.result` (the use case's result: created artifacts, warnings and errors). If a `name` cannot be resolved (neither from the field nor from `config`), the tool throws an error, exactly like the CLI's guard.
 
-### 5.12. `evolith-upgrade-plan` — planificar un upgrade del satélite (read-only)
+### 5.12. `evolith-upgrade-plan` — plan a satellite upgrade (read-only)
 
-**Qué hace.** Cuando el Core (upstream) publica reglas nuevas, calcula **qué cambios** necesita tu satélite para ponerse al día: el plan de cambios, cuáles rompen compatibilidad y el riesgo estimado. **No escribe nada** — es la mitad de solo lectura del `upgrade` de la CLI (la CLI combina plan y apply en un comando; MCP los separa en dos tools porque una misma tool no puede ser a la vez `read` y `mutative`).
+**What it does.** When the Core (upstream) publishes new rules, it computes **which changes** your satellite needs in order to catch up: the change plan, which of those changes break compatibility, and the estimated risk. **It writes nothing** — it is the read-only half of the CLI's `upgrade` (the CLI combines plan and apply in one command; MCP splits them into two tools, because a single tool cannot be both `read` and `mutative`).
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `satellitePath` | string | no | Ruta del proyecto satélite (default: cwd del servidor). |
-| `corePath` | string | no | Ruta al checkout de Evolith Core del que salen las reglas (default: el `satellitePath`). |
+| `satellitePath` | string | no | Path to the satellite project (default: the server's cwd). |
+| `corePath` | string | no | Path to the Evolith Core checkout the rules come from (default: the `satellitePath`). |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
@@ -921,22 +922,22 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 }
 ```
 
-**Qué esperar.** Si el satélite ya está al día, el envelope con `data.upToDate: true` y el mensaje "already up to date". Si hay cambios, `data.upToDate: false`, `data.dryRun: true`, `data.plan` (el plan completo), `data.breakingChanges` (cuántos rompen compatibilidad) y un mensaje con el conteo de cambios planificados sin aplicar.
+**What to expect.** If the satellite is already current, the envelope with `data.upToDate: true` and the message "already up to date". If there are changes, `data.upToDate: false`, `data.dryRun: true`, `data.plan` (the full plan), `data.breakingChanges` (how many break compatibility) and a message with the count of planned but unapplied changes.
 
-### 5.13. `evolith-upgrade-apply` — aplicar el upgrade del satélite · **mutativa**
+### 5.13. `evolith-upgrade-apply` — apply the satellite upgrade · **mutative**
 
-**Qué hace.** Aplica el plan del upgrade: **escribe los archivos** en el satélite para ponerlo al día con el Core upstream. Es la mitad mutativa del par: por defecto crea un backup antes de tocar nada y, si detecta breaking changes, se detiene salvo que le pases `force: true`.
+**What it does.** It applies the upgrade plan: it **writes the files** into the satellite to bring it up to date with the upstream Core. It is the mutative half of the pair: by default it creates a backup before touching anything and, if it detects breaking changes, it stops unless you pass `force: true`.
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `satellitePath` | string | no | Ruta del proyecto satélite (default: cwd del servidor). |
-| `corePath` | string | no | Ruta al checkout de Evolith Core (default: el `satellitePath`). |
-| `force` | boolean | no | Aplica el upgrade **aunque haya breaking changes** (default `false`; sin esto se detiene ante cambios que rompen). |
-| `skipBackup` | boolean | no | Omite crear el backup previo a aplicar (default `false`). |
+| `satellitePath` | string | no | Path to the satellite project (default: the server's cwd). |
+| `corePath` | string | no | Path to the Evolith Core checkout (default: the `satellitePath`). |
+| `force` | boolean | no | Applies the upgrade **even when there are breaking changes** (default `false`; without it, it stops on breaking changes). |
+| `skipBackup` | boolean | no | Skips creating the backup before applying (default `false`). |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
@@ -945,21 +946,21 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 }
 ```
 
-**Qué esperar.** El envelope con `data.result` (el resultado del upgrade: cambios aplicados, backup, etc.) y `data.report` (el reporte legible del upgrade). Recuerda correr primero `evolith-upgrade-plan` para revisar el plan antes de aplicar.
+**What to expect.** The envelope with `data.result` (the upgrade result: changes applied, backup, and so on) and `data.report` (the readable upgrade report). Remember to run `evolith-upgrade-plan` first, to review the plan before applying it.
 
-### 5.14. `evolith-fixtures` — sembrar datos de ejemplo · **mutativa**
+### 5.14. `evolith-fixtures` — seed sample data · **mutative**
 
-**Qué hace.** Genera fixtures reproducibles (datos de ejemplo) para demos y pruebas: un `evolith.yaml`, ADRs de muestra, rulesets, o el conjunto completo, según el `type`. Usa las mismas plantillas deterministas que el comando `evolith-cli fixtures` de la CLI. Trae un `dryRun` para revisar qué escribiría antes de tocar el disco.
+**What it does.** It generates reproducible fixtures (sample data) for demos and tests: an `evolith.yaml`, sample ADRs, rulesets, or the whole set, depending on `type`. It uses the same deterministic templates as the CLI's `evolith-cli fixtures` command. It ships a `dryRun` so you can review what it would write before touching disk.
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `type` | string | no | Qué sembrar: `demo` (default: `evolith.yaml` + ADRs) \| `adr` \| `ruleset` \| `evolith` \| `full` (todo). |
-| `dir` | string | no | Directorio destino de los fixtures (default: cwd). |
-| `dryRun` | boolean | no | Previsualiza los archivos que se escribirían sin tocar el filesystem (default `false`). |
+| `type` | string | no | What to seed: `demo` (default: `evolith.yaml` + ADRs) \| `adr` \| `ruleset` \| `evolith` \| `full` (everything). |
+| `dir` | string | no | Destination directory for the fixtures (default: cwd). |
+| `dryRun` | boolean | no | Previews the files that would be written without touching the filesystem (default `false`). |
 
-**Ejemplo:**
+**Example:**
 
 ```json
 {
@@ -968,22 +969,22 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 }
 ```
 
-**Qué esperar.** El envelope con `data.type`, `data.targetDir`, `data.dryRun` y `data.created` (la lista de rutas relativas escritas, o que se escribirían en dry-run). Un `type` fuera del enum, o un fallo de escritura, se propaga como envelope de error.
+**What to expect.** The envelope with `data.type`, `data.targetDir`, `data.dryRun` and `data.created` (the list of relative paths written, or that would be written in a dry run). A `type` outside the enum, or a write failure, propagates as an error envelope.
 
-### 5.15. `evolith-auto-fix` — arreglar violaciones de arquitectura · **mutativa**
+### 5.15. `evolith-auto-fix` — fix architecture violations · **mutative**
 
-**Qué hace.** Aplica **arreglos automáticos** a las violaciones que reportan los evaluadores de reglas del Core. A partir de un `rulesetId` y la lista de violaciones, elige una estrategia de arreglo por regla (quitar imports de framework del dominio, forzar fronteras hexagonales, generar un stub de interfaz de dominio, quitar side-effects, sustituir instanciación estática por inyección) y reescribe los archivos afectados. Trae `dryRun` para previsualizar.
+**What it does.** It applies **automatic fixes** to the violations reported by the Core's rule evaluators. From a `rulesetId` and the list of violations, it picks a fix strategy per rule (strip framework imports out of the domain, enforce hexagonal boundaries, generate a domain interface stub, remove side effects, replace static instantiation with injection) and rewrites the affected files. It ships a `dryRun` for previewing.
 
-**Argumentos:**
+**Arguments:**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `rulesetId` | string | sí | Ruleset a arreglar; selecciona la estrategia (p.ej. `domain-purity`, `hexagonal-boundaries`, `service-purity`, `dependency-injection`, `missing-domain-interface`). |
-| `violations` | object[] | no | Array de violaciones tal como las emite el validador (cada una con `ruleId`, `filePath`, `message`, `suggestedFix`). Sin ellas no hay nada que arreglar. |
-| `dryRun` | boolean | no | Previsualiza los cambios sin aplicarlos (default `false`). |
-| `dir` | string | no | Directorio destino sobre el que resolver rutas relativas (default: cwd). |
+| `rulesetId` | string | yes | Ruleset to fix; it selects the strategy (e.g. `domain-purity`, `hexagonal-boundaries`, `service-purity`, `dependency-injection`, `missing-domain-interface`). |
+| `violations` | object[] | no | Array of violations exactly as the validator emits them (each with `ruleId`, `filePath`, `message`, `suggestedFix`). Without them there is nothing to fix. |
+| `dryRun` | boolean | no | Previews the changes without applying them (default `false`). |
+| `dir` | string | no | Destination directory against which relative paths are resolved (default: cwd). |
 
-**Ejemplo:**
+**Example**
 
 ```json
 {
@@ -997,106 +998,106 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 }
 ```
 
-**Qué esperar.** El envelope con `data.rulesetId`, `data.totalViolations`, `data.fixesApplied` (cuántas se aplicaron), `data.fixesPreview` (solo en `dryRun`, el detalle por archivo) y `data.summary` (un resumen con aplicadas / preview / fallidas / requieren revisión manual). Las violaciones cuyo `ruleId` no case con ninguna estrategia se marcan como `manual-review-required` en vez de fallar.
+**What to expect.** The envelope with `data.rulesetId`, `data.totalViolations`, `data.fixesApplied` (how many were applied), `data.fixesPreview` (in `dryRun` only, the per-file detail) and `data.summary` (a roll-up of applied / preview / failed / manual-review-required). Violations whose `ruleId` matches no strategy are marked `manual-review-required` instead of failing.
 
-## 6. ADRs, MoSCoW, config y métricas
+## 6. ADRs, MoSCoW, config and metrics
 
-Este grupo reúne cuatro familias de tools que apoyan la gobernanza del satélite: los **ADRs** (registros de decisiones de arquitectura), la priorización **MoSCoW**, la **configuración** del `evolith.yaml`, y las **métricas** (del propio servidor MCP y aproximaciones DORA sobre el historial de Git).
+This group brings together four families of tools that support the governance of the satellite: the **ADRs** (architecture decision records), **MoSCoW** prioritization, the **configuration** in `evolith.yaml`, and the **metrics** (of the MCP server itself, and DORA approximations over the Git history).
 
-Todos operan sobre un repositorio local: la mayoría acepta un campo `path` (o `dir`) que apunta a la raíz del satélite y, si lo omites, usan el directorio de trabajo actual del servidor. Los que escriben en disco (crear/actualizar ADRs, crear/editar/borrar análisis MoSCoW, fijar configuración) son **mutativos** y por tanto pasan por la compuerta `{ apply:true, approvalToken }` descrita en la cabecera de esta guía.
+They all operate on a local repository: most accept a `path` (or `dir`) field pointing at the root of the satellite and, if you omit it, they use the server's current working directory. The ones that write to disk (create/update ADRs, create/edit/delete MoSCoW analyses, set configuration) are **mutative** and therefore go through the `{ apply:true, approvalToken }` gate described at the top of this guide.
 
-### 6.1. `evolith-adr-list` — listar los ADRs del repositorio
+### 6.1. `evolith-adr-list` — list the ADRs of the repository
 
-**Qué hace.** Lee la carpeta `reference/architecture/adrs` del satélite y devuelve todos los ADRs en forma resumida (id, título, estado y fecha). Es el punto de partida para saber qué decisiones están registradas antes de consultar o crear una nueva. Solo lectura.
+**What it does.** It reads the satellite's `reference/architecture/adrs` folder and returns every ADR in summary form (id, title, status and date). It is the starting point for finding out which decisions are on record before consulting one or creating a new one. Read-only.
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | no | Raíz del repositorio que contiene `reference/architecture/adrs`. Si lo omites, se usa el directorio actual del servidor. |
+| `path` | string | no | Root of the repository holding `reference/architecture/adrs`. If you omit it, the server's current directory is used. |
 
-**Ejemplo.**
+**Example.**
 
 ```json
-{ "name": "evolith-adr-list", "arguments": { "path": "/repos/mi-satelite" } }
+{ "name": "evolith-adr-list", "arguments": { "path": "/repos/my-satellite" } }
 ```
 
-**Qué esperar.** Un objeto con `count` (número de ADRs) y `adrs`, un arreglo donde cada entrada trae `id`, `title`, `status` y `date`. Si no hay ADRs, `count` es `0` y `adrs` viene vacío.
+**What to expect.** An object with `count` (number of ADRs) and `adrs`, an array where each entry carries `id`, `title`, `status` and `date`. If there are no ADRs, `count` is `0` and `adrs` comes back empty.
 
-### 6.2. `evolith-adr-get` — ver un ADR completo
+### 6.2. `evolith-adr-get` — view a complete ADR
 
-**Qué hace.** Recupera todo el contenido de un único ADR identificándolo por su id (`ADR-0001`) o por su número (`1`). Úsalo cuando ya sabes cuál te interesa y necesitas su contexto, decisión y consecuencias íntegras. Solo lectura.
+**What it does.** It retrieves the whole content of a single ADR, identifying it by its id (`ADR-0001`) or by its number (`1`). Use it once you know which one you care about and you need its context, decision and consequences in full. Read-only.
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | no | Raíz del repositorio con los ADRs (por defecto, el directorio actual). |
-| `id` | string | sí | Identificador del ADR a leer: id completo (`ADR-0001`) o solo el número (`1`). |
+| `path` | string | no | Root of the repository holding the ADRs (the current directory by default). |
+| `id` | string | yes | Identifier of the ADR to read: the full id (`ADR-0001`) or just the number (`1`). |
 
-**Ejemplo.**
+**Example.**
 
 ```json
 { "name": "evolith-adr-get", "arguments": { "id": "ADR-0073" } }
 ```
 
-**Qué esperar.** El objeto ADR completo (id, título, estado, fecha, contexto, decisión, consecuencias, relacionados y tags). Si el id no existe, la tool lanza un error `ADR <id> not found` que la pasarela convierte en envelope de error.
+**What to expect.** The complete ADR object (id, title, status, date, context, decision, consequences, related decisions and tags). If the id does not exist, the tool throws an `ADR <id> not found` error, which the gateway turns into an error envelope.
 
-### 6.3. `evolith-adr-create` — crear un nuevo ADR (mutativo)
+### 6.3. `evolith-adr-create` — create a new ADR (mutative)
 
-**Qué hace.** Registra una nueva decisión de arquitectura: escribe el archivo `reference/architecture/adrs/<id>.md` y actualiza la matriz de ADRs. El nuevo ADR nace en estado `Proposed`. Es **mutativo**, así que la llamada debe venir con el gate `{ apply:true, approvalToken }`. Si solo quieres previsualizar sin tocar disco, usa `dryRun:true`.
+**What it does.** It records a new architecture decision: it writes the file `reference/architecture/adrs/<id>.md` and updates the ADR matrix. The new ADR is born in `Proposed` status. It is **mutative**, so the call must carry the `{ apply:true, approvalToken }` gate. If you only want a preview without touching disk, use `dryRun:true`.
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | no | Raíz del repositorio donde se escribirá el ADR (por defecto, el directorio actual). |
-| `title` | string | sí | Título del ADR; mínimo 5 caracteres. Es la cabecera humana de la decisión. |
-| `context` | string | sí | El problema o contexto que motiva la decisión. |
-| `decision` | string | sí | La decisión que efectivamente se tomó. |
-| `consequences` | object | no | Consecuencias clasificadas en tres arreglos de strings: `positive`, `negative`, `neutral`. |
-| `relatedAdrs` | string[] | no | Ids de otros ADRs relacionados, para tejer la trazabilidad entre decisiones. |
-| `tags` | string[] | no | Etiquetas de clasificación libres para agrupar o filtrar la decisión. |
-| `dryRun` | boolean | no | Si es `true`, simula la creación sin escribir archivos. Por defecto `false`. |
+| `path` | string | no | Root of the repository the ADR will be written into (the current directory by default). |
+| `title` | string | yes | Title of the ADR; 5 characters minimum. It is the human heading of the decision. |
+| `context` | string | yes | The problem or context that motivates the decision. |
+| `decision` | string | yes | The decision that was actually taken. |
+| `consequences` | object | no | Consequences classified into three string arrays: `positive`, `negative`, `neutral`. |
+| `relatedAdrs` | string[] | no | Ids of other related ADRs, to weave traceability between decisions. |
+| `tags` | string[] | no | Free-form classification tags for grouping or filtering the decision. |
+| `dryRun` | boolean | no | If `true`, it simulates the creation without writing files. `false` by default. |
 
-**Ejemplo.**
+**Example.**
 
 ```json
 {
   "name": "evolith-adr-create",
   "arguments": {
-    "path": "/repos/mi-satelite",
-    "title": "Adoptar cola de mensajes para eventos de dominio",
-    "context": "Los eventos se procesan síncronamente y bloquean la request",
-    "decision": "Introducir una cola con consumidores asíncronos",
+    "path": "/repos/my-satellite",
+    "title": "Adopt a message queue for domain events",
+    "context": "Events are processed synchronously and block the request",
+    "decision": "Introduce a queue with asynchronous consumers",
     "consequences": {
-      "positive": ["Desacople", "Mejor resiliencia"],
-      "negative": ["Complejidad operativa"]
+      "positive": ["Decoupling", "Better resilience"],
+      "negative": ["Operational complexity"]
     },
-    "tags": ["mensajeria", "async"],
+    "tags": ["messaging", "async"],
     "apply": true,
     "approvalToken": "<token>"
   }
 }
 ```
 
-**Qué esperar.** Un objeto con `dryRun` (el valor efectivo) y `adr` con el resumen del ADR creado (`id`, `title`, `status`, `date`). Si `title` tiene menos de 5 caracteres, o falta `context`/`decision`, la tool lanza un error de validación.
+**What to expect.** An object with `dryRun` (the effective value) and `adr` carrying the summary of the created ADR (`id`, `title`, `status`, `date`). If `title` is shorter than 5 characters, or `context`/`decision` are missing, the tool throws a validation error.
 
-### 6.4. `evolith-adr-update` — cambiar el estado de un ADR (mutativo)
+### 6.4. `evolith-adr-update` — change the status of an ADR (mutative)
 
-**Qué hace.** Reescribe el estado de un ADR existente tanto en su archivo markdown como en la matriz. Sirve para moverlo por su ciclo de vida: de `Proposed` a `Accepted`, marcarlo `Deprecated`, `Superseded` o `Amended`. Es **mutativo** (requiere el gate). Admite `dryRun` para simular.
+**What it does.** It rewrites the status of an existing ADR, both in its Markdown file and in the matrix. It is how you move it along its lifecycle: from `Proposed` to `Accepted`, or marking it `Deprecated`, `Superseded` or `Amended`. It is **mutative** (it requires the gate). It supports `dryRun` for simulating.
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | no | Raíz del repositorio con los ADRs (por defecto, el directorio actual). |
-| `id` | string | sí | ADR a actualizar: id (`ADR-0001`) o número. |
-| `status` | string | sí | Nuevo estado. Debe ser uno de: `Proposed`, `Accepted`, `Deprecated`, `Superseded`, `Amended`. |
-| `reason` | string | no | Motivo del cambio de estado, útil para dejar rastro de por qué se movió. |
-| `dryRun` | boolean | no | Si es `true`, simula el cambio sin escribir. Por defecto `false`. |
+| `path` | string | no | Root of the repository holding the ADRs (the current directory by default). |
+| `id` | string | yes | The ADR to update: id (`ADR-0001`) or number. |
+| `status` | string | yes | The new status. It must be one of: `Proposed`, `Accepted`, `Deprecated`, `Superseded`, `Amended`. |
+| `reason` | string | no | Reason for the status change, useful for leaving a trace of why it moved. |
+| `dryRun` | boolean | no | If `true`, it simulates the change without writing. `false` by default. |
 
-**Ejemplo.**
+**Example.**
 
 ```json
 {
@@ -1104,56 +1105,56 @@ Todos operan sobre un repositorio local: la mayoría acepta un campo `path` (o `
   "arguments": {
     "id": "ADR-0073",
     "status": "Accepted",
-    "reason": "Aprobado en el comité de arquitectura",
+    "reason": "Approved by the architecture board",
     "apply": true,
     "approvalToken": "<token>"
   }
 }
 ```
 
-**Qué esperar.** Un objeto con `id`, `newStatus` y `dryRun`. Si el `status` no está en la lista válida, la tool responde con un error explicando los valores aceptados; si el ADR no existe, lanza `ADR <id> not found`.
+**What to expect.** An object with `id`, `newStatus` and `dryRun`. If `status` is not in the valid list, the tool answers with an error explaining the accepted values; if the ADR does not exist, it throws `ADR <id> not found`.
 
-### 6.5. `evolith-adr-matrix` — resumen agregado de ADRs
+### 6.5. `evolith-adr-matrix` — aggregated ADR summary
 
-**Qué hace.** Devuelve la matriz de ADRs: totales por estado más los ADRs recientes. Es la vista de un vistazo para saber cuántas decisiones están aceptadas, propuestas o deprecadas sin recorrer la lista completa. Solo lectura.
+**What it does.** It returns the ADR matrix: totals per status plus the recent ADRs. It is the at-a-glance view for knowing how many decisions are accepted, proposed or deprecated without walking the whole list. Read-only.
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | no | Raíz del repositorio con los ADRs (por defecto, el directorio actual). |
+| `path` | string | no | Root of the repository holding the ADRs (the current directory by default). |
 
-**Ejemplo.**
+**Example.**
 
 ```json
-{ "name": "evolith-adr-matrix", "arguments": { "path": "/repos/mi-satelite" } }
+{ "name": "evolith-adr-matrix", "arguments": { "path": "/repos/my-satellite" } }
 ```
 
-**Qué esperar.** El objeto matriz con los conteos por estado y una lista de ADRs recientes.
+**What to expect.** The matrix object with the counts per status and a list of recent ADRs.
 
-### 6.6. `evolith-moscow-create` — crear un análisis MoSCoW (mutativo)
+### 6.6. `evolith-moscow-create` — create a MoSCoW analysis (mutative)
 
-**Qué hace.** Crea un nuevo análisis de priorización MoSCoW para una fase del repositorio, con la lista de ítems clasificados en `MUST` / `SHOULD` / `COULD` / `WONT`. Es **mutativo** (persiste el análisis en el repo, requiere el gate). Si no indicas `phase`, se asume `phase-0`.
+**What it does.** It creates a new MoSCoW prioritization analysis for a phase of the repository, with the list of items classified as `MUST` / `SHOULD` / `COULD` / `WONT`. It is **mutative** (it persists the analysis in the repo, so it requires the gate). If you do not give a `phase`, `phase-0` is assumed.
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | sí | Raíz del repositorio donde se guardará el análisis. |
-| `phase` | string | no | Fase a la que pertenece el análisis (por defecto `phase-0`). |
-| `items` | object[] | sí | Ítems a priorizar. Cada uno: `title` (req), `category` (req: `MUST`/`SHOULD`/`COULD`/`WONT`), y opcionalmente `description`, `effort` (`high`/`medium`/`low`) y `value` (`high`/`medium`/`low`). |
+| `path` | string | yes | Root of the repository the analysis will be saved into. |
+| `phase` | string | no | The phase the analysis belongs to (`phase-0` by default). |
+| `items` | object[] | yes | Items to prioritize. Each one: `title` (req), `category` (req: `MUST`/`SHOULD`/`COULD`/`WONT`), and optionally `description`, `effort` (`high`/`medium`/`low`) and `value` (`high`/`medium`/`low`). |
 
-**Ejemplo.**
+**Example.**
 
 ```json
 {
   "name": "evolith-moscow-create",
   "arguments": {
-    "path": "/repos/mi-satelite",
+    "path": "/repos/my-satellite",
     "phase": "phase-1",
     "items": [
-      { "title": "Autenticación", "category": "MUST", "effort": "high", "value": "high" },
-      { "title": "Modo oscuro", "category": "COULD", "effort": "low", "value": "low" }
+      { "title": "Authentication", "category": "MUST", "effort": "high", "value": "high" },
+      { "title": "Dark mode", "category": "COULD", "effort": "low", "value": "low" }
     ],
     "apply": true,
     "approvalToken": "<token>"
@@ -1161,65 +1162,65 @@ Todos operan sobre un repositorio local: la mayoría acepta un campo `path` (o `
 }
 ```
 
-**Qué esperar.** `{ success:true, analysis, message }` con el análisis creado. Si falta `path` o `items` está vacío, devuelve `{ error:true, message }` describiendo qué falta.
+**What to expect.** `{ success:true, analysis, message }` with the created analysis. If `path` is missing or `items` is empty, it returns `{ error:true, message }` describing what is missing.
 
-### 6.7. `evolith-moscow-load` — cargar un análisis existente
+### 6.7. `evolith-moscow-load` — load an existing analysis
 
-**Qué hace.** Recupera el análisis MoSCoW ya guardado para una fase concreta. Es la forma de leer lo que se creó antes. Solo lectura.
+**What it does.** It retrieves the MoSCoW analysis already saved for one specific phase. It is how you read back what was created earlier. Read-only.
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | sí | Raíz del repositorio. |
-| `phase` | string | sí | Fase cuyo análisis quieres cargar. |
+| `path` | string | yes | Root of the repository. |
+| `phase` | string | yes | The phase whose analysis you want to load. |
 
-**Ejemplo.**
+**Example.**
 
 ```json
-{ "name": "evolith-moscow-load", "arguments": { "path": "/repos/mi-satelite", "phase": "phase-1" } }
+{ "name": "evolith-moscow-load", "arguments": { "path": "/repos/my-satellite", "phase": "phase-1" } }
 ```
 
-**Qué esperar.** El análisis completo de esa fase. Si no existe, `{ error:true, message: "No MoSCoW analysis found for <phase>" }`.
+**What to expect.** The complete analysis for that phase. If it does not exist, `{ error:true, message: "No MoSCoW analysis found for <phase>" }`.
 
-### 6.8. `evolith-moscow-list` — listar todos los análisis del repo
+### 6.8. `evolith-moscow-list` — list every analysis in the repo
 
-**Qué hace.** Enumera todos los análisis MoSCoW presentes en el repositorio, sin fijarse en una fase concreta. Útil para descubrir qué fases ya tienen priorización hecha. Solo lectura.
+**What it does.** It enumerates every MoSCoW analysis present in the repository, without looking at any particular phase. Useful for discovering which phases already have their prioritization done. Read-only.
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | sí | Raíz del repositorio a inspeccionar. |
+| `path` | string | yes | Root of the repository to inspect. |
 
-**Ejemplo.**
+**Example.**
 
 ```json
-{ "name": "evolith-moscow-list", "arguments": { "path": "/repos/mi-satelite" } }
+{ "name": "evolith-moscow-list", "arguments": { "path": "/repos/my-satellite" } }
 ```
 
-**Qué esperar.** `{ analyses, count }` con el arreglo de análisis y su cantidad. Si no hay ninguno, `analyses` viene vacío y `count` es `0`.
+**What to expect.** `{ analyses, count }` with the array of analyses and how many there are. If there are none, `analyses` comes back empty and `count` is `0`.
 
-### 6.9. `evolith-moscow-update` — editar un ítem de un análisis (mutativo)
+### 6.9. `evolith-moscow-update` — edit an item of an analysis (mutative)
 
-**Qué hace.** Modifica un ítem concreto dentro de un análisis MoSCoW (por ejemplo, reclasificarlo de `COULD` a `SHOULD`, o ajustar su esfuerzo/valor). Es **mutativo** (requiere el gate). El ítem se identifica por su `itemId`.
+**What it does.** It modifies one specific item inside a MoSCoW analysis (for example, reclassifying it from `COULD` to `SHOULD`, or adjusting its effort/value). It is **mutative** (it requires the gate). The item is identified by its `itemId`.
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | sí | Raíz del repositorio. |
-| `phase` | string | sí | Fase que contiene el análisis. |
-| `itemId` | string | sí | Id del ítem a modificar. |
-| `updates` | object | sí | Campos del ítem a cambiar (por ejemplo `category`, `effort`, `value`, `title`, `description`). |
+| `path` | string | yes | Root of the repository. |
+| `phase` | string | yes | The phase holding the analysis. |
+| `itemId` | string | yes | Id of the item to modify. |
+| `updates` | object | yes | Item fields to change (for example `category`, `effort`, `value`, `title`, `description`). |
 
-**Ejemplo.**
+**Example.**
 
 ```json
 {
   "name": "evolith-moscow-update",
   "arguments": {
-    "path": "/repos/mi-satelite",
+    "path": "/repos/my-satellite",
     "phase": "phase-1",
     "itemId": "item-2",
     "updates": { "category": "SHOULD", "value": "medium" },
@@ -1229,27 +1230,27 @@ Todos operan sobre un repositorio local: la mayoría acepta un campo `path` (o `
 }
 ```
 
-**Qué esperar.** `{ success:true, analysis, message }` con el análisis actualizado. Si el `itemId` no está en esa fase, `{ error:true, message: "Item <id> not found in <phase>" }`.
+**What to expect.** `{ success:true, analysis, message }` with the updated analysis. If the `itemId` is not in that phase, `{ error:true, message: "Item <id> not found in <phase>" }`.
 
-### 6.10. `evolith-moscow-remove` — quitar un ítem de un análisis (mutativo)
+### 6.10. `evolith-moscow-remove` — drop an item from an analysis (mutative)
 
-**Qué hace.** Elimina un ítem de un análisis MoSCoW por su `itemId`. Es **mutativo** (requiere el gate).
+**What it does.** It removes an item from a MoSCoW analysis by its `itemId`. It is **mutative** (it requires the gate).
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | sí | Raíz del repositorio. |
-| `phase` | string | sí | Fase que contiene el análisis. |
-| `itemId` | string | sí | Id del ítem a eliminar. |
+| `path` | string | yes | Root of the repository. |
+| `phase` | string | yes | The phase holding the analysis. |
+| `itemId` | string | yes | Id of the item to remove. |
 
-**Ejemplo.**
+**Example.**
 
 ```json
 {
   "name": "evolith-moscow-remove",
   "arguments": {
-    "path": "/repos/mi-satelite",
+    "path": "/repos/my-satellite",
     "phase": "phase-1",
     "itemId": "item-2",
     "apply": true,
@@ -1258,79 +1259,79 @@ Todos operan sobre un repositorio local: la mayoría acepta un campo `path` (o `
 }
 ```
 
-**Qué esperar.** `{ success:true, analysis, message }` con el análisis resultante. Si el ítem no existe, `{ error:true, message: "Item <id> not found in <phase>" }`.
+**What to expect.** `{ success:true, analysis, message }` with the resulting analysis. If the item does not exist, `{ error:true, message: "Item <id> not found in <phase>" }`.
 
-### 6.11. `evolith-moscow-validate` — validar las reglas del análisis
+### 6.11. `evolith-moscow-validate` — validate the rules of the analysis
 
-**Qué hace.** Comprueba que un análisis MoSCoW cumple sus reglas de distribución (por ejemplo el reparto 60/20/20 entre categorías) y reporta las incidencias encontradas. Solo lectura.
+**What it does.** It checks that a MoSCoW analysis satisfies its distribution rules (the 60/20/20 split between categories, for example) and reports the findings. Read-only.
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | sí | Raíz del repositorio. |
-| `phase` | string | sí | Fase cuyo análisis se valida. |
+| `path` | string | yes | Root of the repository. |
+| `phase` | string | yes | The phase whose analysis is validated. |
 
-**Ejemplo.**
+**Example.**
 
 ```json
-{ "name": "evolith-moscow-validate", "arguments": { "path": "/repos/mi-satelite", "phase": "phase-1" } }
+{ "name": "evolith-moscow-validate", "arguments": { "path": "/repos/my-satellite", "phase": "phase-1" } }
 ```
 
-**Qué esperar.** `{ valid, issues, analysis }`: `valid` indica si pasa, `issues` lista los problemas y `analysis` incluye el análisis evaluado. Si no hay análisis para esa fase, devuelve un error.
+**What to expect.** `{ valid, issues, analysis }`: `valid` says whether it passes, `issues` lists the problems and `analysis` includes the evaluated analysis. If there is no analysis for that phase, it returns an error.
 
-### 6.12. `evolith-moscow-report` — generar el reporte en markdown
+### 6.12. `evolith-moscow-report` — generate the Markdown report
 
-**Qué hace.** Produce un reporte legible en markdown a partir de un análisis MoSCoW, listo para pegar en documentación o en una revisión. Solo lectura.
+**What it does.** It produces a readable Markdown report out of a MoSCoW analysis, ready to paste into documentation or into a review. Read-only.
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | sí | Raíz del repositorio. |
-| `phase` | string | sí | Fase cuyo análisis se reporta. |
+| `path` | string | yes | Root of the repository. |
+| `phase` | string | yes | The phase whose analysis is reported. |
 
-**Ejemplo.**
+**Example.**
 
 ```json
-{ "name": "evolith-moscow-report", "arguments": { "path": "/repos/mi-satelite", "phase": "phase-1" } }
+{ "name": "evolith-moscow-report", "arguments": { "path": "/repos/my-satellite", "phase": "phase-1" } }
 ```
 
-**Qué esperar.** `{ report, analysis }`, donde `report` es la cadena markdown y `analysis` el análisis usado. Si no existe el análisis, devuelve un error.
+**What to expect.** `{ report, analysis }`, where `report` is the Markdown string and `analysis` the analysis it was built from. If the analysis does not exist, it returns an error.
 
-### 6.13. `evolith-config-get` — leer un valor de `evolith.yaml`
+### 6.13. `evolith-config-get` — read a value from `evolith.yaml`
 
-**Qué hace.** Lee el archivo `evolith.yaml` del repositorio y devuelve el valor de una clave, admitiendo rutas anidadas con notación de puntos (por ejemplo `product.phase`). Solo lectura.
+**What it does.** It reads the repository's `evolith.yaml` file and returns the value of a key, supporting nested paths in dot notation (for example `product.phase`). Read-only.
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `key` | string | sí | Clave a leer; usa puntos para navegar objetos anidados (`coreRef.version`). |
-| `dir` | string | no | Directorio que contiene el `evolith.yaml` (por defecto, el directorio actual). |
+| `key` | string | yes | Key to read; use dots to navigate nested objects (`coreRef.version`). |
+| `dir` | string | no | Directory holding the `evolith.yaml` (the current directory by default). |
 
-**Ejemplo.**
+**Example.**
 
 ```json
-{ "name": "evolith-config-get", "arguments": { "key": "product.phase", "dir": "/repos/mi-satelite" } }
+{ "name": "evolith-config-get", "arguments": { "key": "product.phase", "dir": "/repos/my-satellite" } }
 ```
 
-**Qué esperar.** `{ key, value }` con el valor encontrado (o `null` si la clave no existe). Si no hay `evolith.yaml` en el directorio, lanza `evolith.yaml not found`.
+**What to expect.** `{ key, value }` with the value that was found (or `null` if the key does not exist). If there is no `evolith.yaml` in the directory, it throws `evolith.yaml not found`.
 
-### 6.14. `evolith-config-set` — fijar un valor en `evolith.yaml` (mutativo)
+### 6.14. `evolith-config-set` — set a value in `evolith.yaml` (mutative)
 
-**Qué hace.** Escribe un valor en el `evolith.yaml`, creando las claves intermedias si hace falta (notación de puntos). Es **mutativo**: modifica el archivo, así que requiere el gate `{ apply:true, approvalToken }`.
+**What it does.** It writes a value into the `evolith.yaml`, creating the intermediate keys if it has to (dot notation). It is **mutative**: it modifies the file, so it requires the `{ apply:true, approvalToken }` gate.
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `key` | string | sí | Clave a escribir; con puntos para anidar (`governance.version`). |
-| `value` | string | sí | Nuevo valor a asignar a esa clave. |
-| `dir` | string | no | Directorio con el `evolith.yaml` (por defecto, el directorio actual). |
-| `confirm` | boolean | no | Bandera de confirmación de la operación mutativa. |
+| `key` | string | yes | Key to write; with dots for nesting (`governance.version`). |
+| `value` | string | yes | The new value to assign to that key. |
+| `dir` | string | no | Directory holding the `evolith.yaml` (the current directory by default). |
+| `confirm` | boolean | no | Confirmation flag for the mutative operation. |
 
-**Ejemplo.**
+**Example.**
 
 ```json
 {
@@ -1338,44 +1339,44 @@ Todos operan sobre un repositorio local: la mayoría acepta un campo `path` (o `
   "arguments": {
     "key": "product.phase",
     "value": "phase-2",
-    "dir": "/repos/mi-satelite",
+    "dir": "/repos/my-satellite",
     "apply": true,
     "approvalToken": "<token>"
   }
 }
 ```
 
-**Qué esperar.** `{ key, value, updated:true }` cuando escribe correctamente. Si no encuentra el `evolith.yaml`, lanza `evolith.yaml not found`.
+**What to expect.** `{ key, value, updated:true }` when the write succeeds. If it cannot find the `evolith.yaml`, it throws `evolith.yaml not found`.
 
-### 6.15. `evolith-metrics` — métricas del servidor MCP
+### 6.15. `evolith-metrics` — metrics of the MCP server
 
-**Qué hace.** Devuelve una instantánea en memoria de las métricas del propio servidor MCP: uptime, total de llamadas y fallos, estadísticas por tool (llamadas, fallos, latencia media) y un anillo acotado de errores recientes. Sirve para observar cómo se está usando la pasarela. No recibe argumentos. Solo lectura.
+**What it does.** It returns an in-memory snapshot of the MCP server's own metrics: uptime, total calls and failures, per-tool statistics (calls, failures, average latency) and a bounded ring of recent errors. It is there to observe how the gateway is being used. It takes no arguments. Read-only.
 
-**Argumentos.** Ninguno.
+**Arguments.** None.
 
-**Ejemplo.**
+**Example.**
 
 ```json
 { "name": "evolith-metrics", "arguments": {} }
 ```
 
-**Qué esperar.** Un objeto con `uptimeMs`, `totalCalls`, `totalFailures`, `tools` (mapa de nombre de tool a `{ calls, failures, totalLatencyMs, avgLatencyMs }`) y `recentErrors` (últimos mensajes de error, hasta 20). Nota: son métricas del proceso en curso, se reinician al reiniciar el servidor.
+**What to expect.** An object with `uptimeMs`, `totalCalls`, `totalFailures`, `tools` (a map from tool name to `{ calls, failures, totalLatencyMs, avgLatencyMs }`) and `recentErrors` (the latest error messages, up to 20). Note: these are metrics of the running process, and they reset when the server restarts.
 
-### 6.16. `evolith-dora-metrics` — métricas DORA aproximadas desde Git
+### 6.16. `evolith-dora-metrics` — DORA metrics approximated from Git
 
-**Qué hace.** Calcula aproximaciones de métricas DORA a partir del historial de commits de Git del repositorio, sobre una ventana de días. Da una lectura rápida de frecuencia de despliegue y actividad reciente. Solo lectura (aunque lee Git, no escribe nada).
+**What it does.** It computes approximations of the DORA metrics from the repository's Git commit history, over a window of days. It gives a quick read on deployment frequency and recent activity. Read-only (it reads Git, but writes nothing).
 
-**Argumentos.**
+**Arguments.**
 
-| campo | tipo | req | para qué |
+| field | type | req | what for |
 | --- | --- | --- | --- |
-| `path` | string | sí | Raíz del repositorio Git a analizar. |
-| `days` | number | no | Ventana hacia atrás en días para el cálculo (por defecto `90`). |
+| `path` | string | yes | Root of the Git repository to analyse. |
+| `days` | number | no | Look-back window in days for the computation (`90` by default). |
 
-**Ejemplo.**
+**Example.**
 
 ```json
-{ "name": "evolith-dora-metrics", "arguments": { "path": "/repos/mi-satelite", "days": 30 } }
+{ "name": "evolith-dora-metrics", "arguments": { "path": "/repos/my-satellite", "days": 30 } }
 ```
 
-**Qué esperar.** Un objeto con `repository`, `windowDays`, `timestamp` y `metrics`: `deploymentFrequency` (commits por día, como texto), `leadTimeForChanges` (aproximación), `totalCommits` y `mergeCommits`. Si `path` no es un repositorio Git, devuelve `{ error:true, message: "Not a git repository" }`.
+**What to expect.** An object with `repository`, `windowDays`, `timestamp` and `metrics`: `deploymentFrequency` (commits per day, as text), `leadTimeForChanges` (an approximation), `totalCommits` and `mergeCommits`. If `path` is not a Git repository, it returns `{ error:true, message: "Not a git repository" }`.

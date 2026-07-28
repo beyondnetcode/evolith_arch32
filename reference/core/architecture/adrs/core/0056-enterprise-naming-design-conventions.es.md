@@ -1,163 +1,163 @@
-# ADR-0056: Enterprise Naming & Design Conventions - Multi-Language, Multi-Platform
+# ADR-0056: Convenciones corporativas de nomenclatura y diseño - multilenguaje, multiplataforma
 
-## Status
+## Estado
 
-**Estado:** Accepted — extiende y amplía el alcance de [ADR-0049 (Semántica de Nombres y Política de Código Limpio)](./0049-naming-semantics-clean-code-policy.es.md) a todas las capas del ecosistema enterprise (código, API, base de datos, eventos, data warehouse, patrones tácticos DDD).
+**Estado:** Aceptado — extiende y amplía el alcance de [ADR-0049 (Semántica de Nombres y Política de Código Limpio)](./0049-naming-semantics-clean-code-policy.es.md) a todas las capas del ecosistema enterprise (código, API, base de datos, eventos, data warehouse, patrones tácticos DDD).
 
-## Date
+## Fecha
 
 2026-05-15
 
-## Authors
+## Autores
 
 Principal Software Architect
 
 ---
 
-## 1. Context
+## 1. Contexto
 
-This organization operates a polyglot, multi-platform architecture spanning:
+Esta organización opera una arquitectura políglota y multiplataforma que abarca:
 
 - **Runtimes:** C# / .NET 8, Java 21, TypeScript / Node.js 20, Python 3.12
-- **APIs:** REST (OpenAPI 3.1), gRPC, GraphQL (satellite only)
-- **Databases:** SQL Server 2022, PostgreSQL 16, analytical stores (BigQuery / Synapse)
-- **Messaging:** Domain events (CloudEvents 1.0), commands, integration events via RabbitMQ / Dapr pub/sub
-- **Design paradigm:** Domain-Driven Design (DDD) - strategic and tactical
-- **Quality standard:** ISO/IEC 25010 (maintainability, reliability, portabilidad)
-- **Metadata standard:** ISO/IEC 11179 (data element naming)
+- **APIs:** REST (OpenAPI 3.1), gRPC, GraphQL (solo en satélites)
+- **Bases de datos:** SQL Server 2022, PostgreSQL 16, almacenes analíticos (BigQuery / Synapse)
+- **Mensajería:** eventos de dominio (CloudEvents 1.0), comandos y eventos de integración vía RabbitMQ / Dapr pub/sub
+- **Paradigma de diseño:** Domain-Driven Design (DDD), estratégico y táctico
+- **Estándar de calidad:** ISO/IEC 25010 (mantenibilidad, confiabilidad, portabilidad)
+- **Estándar de metadatos:** ISO/IEC 11179 (nomenclatura de elementos de datos)
 
-Naming inconsistency is the most frequently cited source of onboarding friction, integration bugs, and security misconfigurations (e.g., mismatched JSON/DB field names leaking PII). A binding corporate standard eliminates ambiguity and enables automated enforcement.
+La inconsistencia de nombres es la causa que con más frecuencia se cita como fuente de fricción al incorporar gente, de errores de integración y de malas configuraciones de seguridad (por ejemplo, nombres de campo desalineados entre JSON y base de datos que terminan filtrando PII). Un estándar corporativo vinculante elimina la ambigüedad y habilita la verificación automatizada.
 
 ---
 
-## 2. Problem Statement
+## 2. Planteamiento del problema
 
-The absence of a unified naming policy across languages, layers, and platforms produces:
+La ausencia de una política unificada de nomenclatura entre lenguajes, capas y plataformas produce:
 
-| Symptom | Impact |
+| Síntoma | Impacto |
 | :--- | :--- |
-| `userId` in API, `user_id` in DB, `UserId` in code - three names for one concept | Integration bugs, manual mapping overhead |
-| `GetUser`, `FetchUser`, `RetrieveUser` - synonyms for the same operation | Inconsistent documentation, cognitive overload |
-| Event types like `user.created`, `UserCreated`, `USER_CREATED` - all in production | Impossible to build reliable event consumers |
-| Table `tbl_usr` vs `users` vs `User` across teams | Migration complexity, query errors |
-| Abbreviations: `prd`, `cust`, `auth_tkn` | Ambiguity, reduced searchability |
+| `userId` en la API, `user_id` en la base de datos, `UserId` en el código: tres nombres para un mismo concepto | Errores de integración, sobrecoste de mapeo manual |
+| `GetUser`, `FetchUser`, `RetrieveUser`: sinónimos para la misma operación | Documentación inconsistente, sobrecarga cognitiva |
+| Tipos de evento como `user.created`, `UserCreated`, `USER_CREATED`, todos en producción | Imposible construir consumidores de eventos fiables |
+| Tabla `tbl_usr` frente a `users` frente a `User`, según el equipo | Complejidad de migración, errores en las consultas |
+| Abreviaturas: `prd`, `cust`, `auth_tkn` | Ambigüedad, menor capacidad de búsqueda |
 
 ---
 
-## 3. Decision
+## 3. Decisión
 
-Adopt a **single, binding, automated-enforcement naming standard** with the following pillars:
+Adoptar un **único estándar de nomenclatura, vinculante y de verificación automatizada**, con los siguientes pilares:
 
-1. **Ubiquitous Language as the Source of Truth.** Every name in code, API, database, and events originates from the domain glossary - not from implementation preferences.
-2. **Ecosystem-native conventions per layer.** Each language and platform follows its community standard (PEP 8, Microsoft C# Guidelines, Google Java Style, etc.) with DDD-specific extensions.
-3. **Single concept, multiple representations.** A domain concept has exactly one canonical name in the ubiquitous language, rendered according to the rules of each layer.
-4. **Automation over documentation.** Every rule must be checkable by a linter, analyzer, or CI gate. Rules that cannot be automated are deprecated.
+1. **El lenguaje ubicuo como fuente de verdad.** Cada nombre en el código, la API, la base de datos y los eventos nace del glosario del dominio, no de preferencias de implementación.
+2. **Convenciones nativas del ecosistema por capa.** Cada lenguaje y plataforma sigue el estándar de su comunidad (PEP 8, Microsoft C# Guidelines, Google Java Style, etc.) con extensiones propias de DDD.
+3. **Un concepto, varias representaciones.** Un concepto de dominio tiene exactamente un nombre canónico en el lenguaje ubicuo, que se representa según las reglas de cada capa.
+4. **Automatización antes que documentación.** Toda regla debe poder comprobarse con un linter, un analizador o una compuerta de CI. Las reglas que no se pueden automatizar quedan obsoletas.
 
-### 3.1 Canonical Name Derivation Rule
+### 3.1 Regla de derivación del nombre canónico
 
 ```
-Ubiquitous Language Term (English noun/verb phrase)
+Término del lenguaje ubicuo (sintagma nominal/verbal en inglés)
     │
-    |- C#        -> PascalCase class / camelCase member
-    |- Java      -> PascalCase class / camelCase member
-    |- TypeScript -> PascalCase class / camelCase member
-    |- Python    -> PascalCase class / snake_case member
-    |- REST URL  -> kebab-case path segment
-    |- JSON body -> camelCase property
-    |- SQL table -> snake_case plural noun
-    |- SQL column -> snake_case
-    `- Event type -> {domain}.{entity}.{past-participle} (dot-delimited, lowercase)
+    |- C#        -> clase PascalCase / miembro camelCase
+    |- Java      -> clase PascalCase / miembro camelCase
+    |- TypeScript -> clase PascalCase / miembro camelCase
+    |- Python    -> clase PascalCase / miembro snake_case
+    |- URL REST  -> segmento de ruta kebab-case
+    |- Cuerpo JSON -> propiedad camelCase
+    |- Tabla SQL -> sustantivo en plural snake_case
+    |- Columna SQL -> snake_case
+    `- Tipo de evento -> {domain}.{entity}.{past-participle} (separado por puntos, en minúsculas)
 ```
 
-**Example - concept: "Work Order"**
+**Ejemplo - concepto: "Work Order"**
 
-| Layer | Representation |
+| Capa | Representación |
 | :--- | :--- |
-| Ubiquitous Language | Work Order |
-| C# class | `WorkOrder` |
-| C# property | `workOrderId` |
-| Java class | `WorkOrder` |
-| TypeScript interface | `WorkOrder` |
-| Python class | `WorkOrder` |
-| Python attribute | `work_order_id` |
-| REST endpoint | `GET /v1/work-orders/{work-order-id}` |
-| JSON property | `"workOrderId"` |
-| SQL table | `work_orders` |
-| SQL column | `work_order_id` |
-| Domain event type | `operations.work-order.created` |
-| Analytics fact table | `fct_work_orders` |
+| Lenguaje ubicuo | Work Order |
+| Clase C# | `WorkOrder` |
+| Propiedad C# | `workOrderId` |
+| Clase Java | `WorkOrder` |
+| Interfaz TypeScript | `WorkOrder` |
+| Clase Python | `WorkOrder` |
+| Atributo Python | `work_order_id` |
+| Endpoint REST | `GET /v1/work-orders/{work-order-id}` |
+| Propiedad JSON | `"workOrderId"` |
+| Tabla SQL | `work_orders` |
+| Columna SQL | `work_order_id` |
+| Tipo de evento de dominio | `operations.work-order.created` |
+| Tabla de hechos analítica | `fct_work_orders` |
 
 ---
 
-## 4. Considered Alternatives
+## 4. Alternativas consideradas
 
-### 4.1 Full snake_case everywhere (Python-centric)
-**Rejected.** Violates C# and Java idioms. Forces non-idiomatic code in strongly-typed languages where compilers and IDEs assume PascalCase types. ISO/IEC 25010 maintainability requires convention alignment with each ecosystem.
+### 4.1 snake_case en todas partes (enfoque centrado en Python)
+**Rechazada.** Vulnera los idiomas de C# y de Java. Fuerza código no idiomático en lenguajes fuertemente tipados, cuyos compiladores e IDE dan por hecho que los tipos van en PascalCase. La mantenibilidad de la ISO/IEC 25010 exige alinearse con la convención de cada ecosistema.
 
-### 4.2 Full camelCase everywhere (JavaScript-centric)
-**Rejected.** `workOrderId` as a SQL column name is non-idiomatic, breaks SQL Server and PostgreSQL naming conventions, reduces readability in DDL. Base de datos-level tooling (pg_dump, schema migrations, DBA tooling) expects `snake_case`.
+### 4.2 camelCase en todas partes (enfoque centrado en JavaScript)
+**Rechazada.** `workOrderId` como nombre de columna SQL no es idiomático, rompe las convenciones de SQL Server y de PostgreSQL, y reduce la legibilidad del DDL. El herramental a nivel de base de datos (pg_dump, migraciones de esquema, utilidades de DBA) espera `snake_case`.
 
-### 4.3 Per-team autonomy with a shared glossary
-**Rejected.** Creates integration seams. When Team A names the API field `customerId` and Team B names the DB column `customer_code`, synchronization failures cause data bugs that are expensive to trace.
+### 4.3 Autonomía por equipo con un glosario compartido
+**Rechazada.** Crea costuras de integración. Cuando el equipo A llama `customerId` al campo de la API y el equipo B llama `customer_code` a la columna de la base de datos, los fallos de sincronización provocan errores de datos caros de rastrear.
 
-### 4.4 Chosen: Ecosystem-native per layer, canonical concept from ubiquitous language
-**Adopted.** Respects each community's standard. Automated via linters. The single canonical name in the ubiquitous language acts as the stable anchor - each layer renders it according to its own rules.
+### 4.4 Elegida: nativa del ecosistema por capa, concepto canónico desde el lenguaje ubicuo
+**Adoptada.** Respeta el estándar de cada comunidad. Se automatiza con linters. El único nombre canónico del lenguaje ubicuo actúa como ancla estable, y cada capa lo representa según sus propias reglas.
 
 ---
 
-## 5. Language Rules
+## 5. Reglas por lenguaje
 
 ### 5.1 C# / .NET 8
 
-Follows [Microsoft .NET Naming Guidelines](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/naming-guidelines) with DDD extensions.
+Sigue las [Microsoft .NET Naming Guidelines](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/naming-guidelines) con extensiones de DDD.
 
-| Construct | Convention | Example |
+| Constructo | Convención | Ejemplo |
 | :--- | :--- | :--- |
-| Namespace | PascalCase, domain-aligned | `Acme.Orders.Domain.Aggregates` |
-| Class / Struct / Record | PascalCase | `WorkOrder`, `Money` |
-| Interface | `I` prefix + PascalCase | `IWorkOrderRepository` |
-| Enum | PascalCase; members PascalCase | `OrderStatus.Confirmed` |
-| Method | PascalCase (verb phrase) | `CalculateTotalCost()` |
-| Property | PascalCase | `WorkOrderId` |
-| Private field | `_` prefix + camelCase | `_workOrderId` |
-| Local variable | camelCase | `workOrderId` |
-| Constant | PascalCase (not UPPER_SNAKE) | `MaxRetryCount` |
-| Generic parameter | `T` prefix + PascalCase noun | `TEntity`, `TResult` |
-| Async method | `Async` suffix | `GetWorkOrderAsync()` |
-| Test class | `{Subject}Tests` | `WorkOrderTests` |
-| Test method | `{Method}_When{Condition}_Should{Outcome}` | `Complete_WhenAlreadyClosed_ShouldReturnFailure` |
+| Namespace | PascalCase, alineado al dominio | `Acme.Orders.Domain.Aggregates` |
+| Clase / Struct / Record | PascalCase | `WorkOrder`, `Money` |
+| Interfaz | prefijo `I` + PascalCase | `IWorkOrderRepository` |
+| Enum | PascalCase; miembros en PascalCase | `OrderStatus.Confirmed` |
+| Método | PascalCase (sintagma verbal) | `CalculateTotalCost()` |
+| Propiedad | PascalCase | `WorkOrderId` |
+| Campo privado | prefijo `_` + camelCase | `_workOrderId` |
+| Variable local | camelCase | `workOrderId` |
+| Constante | PascalCase (no UPPER_SNAKE) | `MaxRetryCount` |
+| Parámetro genérico | prefijo `T` + sustantivo PascalCase | `TEntity`, `TResult` |
+| Método asíncrono | sufijo `Async` | `GetWorkOrderAsync()` |
+| Clase de prueba | `{Subject}Tests` | `WorkOrderTests` |
+| Método de prueba | `{Method}_When{Condition}_Should{Outcome}` | `Complete_WhenAlreadyClosed_ShouldReturnFailure` |
 
-**DDD C# conventions:**
+**Convenciones DDD en C#:**
 
 ```csharp
-// Aggregate Root
+// Raíz de agregado
 public sealed class WorkOrder : AggregateRoot<WorkOrderId> { }
 
-// Value Object (immutable record)
+// Objeto de valor (record inmutable)
 public sealed record Money(decimal Amount, Currency Currency);
 
-// Domain Event (past tense)
+// Evento de dominio (en pasado)
 public sealed record WorkOrderCreatedEvent(WorkOrderId WorkOrderId, ...) : DomainEvent;
 
-// Command (imperative)
+// Comando (en imperativo)
 public sealed record CreateWorkOrderCommand(...) : IRequest<Result<WorkOrderId>>;
 
-// Query (question phrase)
+// Consulta (sintagma interrogativo)
 public sealed record GetWorkOrderByIdQuery(WorkOrderId Id) : IRequest<Result<WorkOrderDto>>;
 
-// Repository Port
+// Puerto de repositorio
 public interface IWorkOrderRepository { }
 
-// Domain Service (stateless operation not belonging to one aggregate)
+// Servicio de dominio (operación sin estado que no pertenece a un solo agregado)
 public sealed class WorkOrderPricingService { }
 
-// Specification
+// Especificación
 public sealed class OpenWorkOrdersSpecification : Specification<WorkOrder> { }
 
-// Policy
+// Política
 public sealed class LateDeliveryPenaltyPolicy { }
 
-// Exception (domain error, use sparingly - prefer Result)
+// Excepción (error de dominio; úsese con moderación, se prefiere Result)
 public sealed class WorkOrderNotFoundException : DomainException { }
 ```
 
@@ -165,127 +165,127 @@ public sealed class WorkOrderNotFoundException : DomainException { }
 
 ### 5.2 Java 21
 
-Follows [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) with DDD extensions.
+Sigue la [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) con extensiones de DDD.
 
-| Construct | Convention | Example |
+| Constructo | Convención | Ejemplo |
 | :--- | :--- | :--- |
-| Package | lowercase, domain-aligned, dot-separated | `com.acme.orders.domain.aggregates` |
-| Class / Interface / Enum | PascalCase | `WorkOrder`, `IWorkOrderRepository` -> `WorkOrderRepository` (no `I` prefix) |
-| Method | camelCase (verb phrase) | `calculateTotalCost()` |
-| Field | camelCase | `workOrderId` |
-| Constant | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
-| Generic parameter | Single uppercase letter or descriptive noun | `T`, `TEntity` |
-| Annotation | PascalCase | `@WorkOrderId` |
-| Test class | `{Subject}Test` | `WorkOrderTest` |
-| Test method | camelCase, descriptive | `completeShouldFailWhenAlreadyClosed()` |
+| Paquete | minúsculas, alineado al dominio, separado por puntos | `com.acme.orders.domain.aggregates` |
+| Clase / Interfaz / Enum | PascalCase | `WorkOrder`, `IWorkOrderRepository` -> `WorkOrderRepository` (sin prefijo `I`) |
+| Método | camelCase (sintagma verbal) | `calculateTotalCost()` |
+| Campo | camelCase | `workOrderId` |
+| Constante | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
+| Parámetro genérico | una letra mayúscula o un sustantivo descriptivo | `T`, `TEntity` |
+| Anotación | PascalCase | `@WorkOrderId` |
+| Clase de prueba | `{Subject}Test` | `WorkOrderTest` |
+| Método de prueba | camelCase, descriptivo | `completeShouldFailWhenAlreadyClosed()` |
 
-> **Java distinction from C#:** Java uses UPPER_SNAKE_CASE for constants (`static final`). Interface names do NOT use the `I` prefix - use `WorkOrderRepository` as the interface name and `JpaWorkOrderRepository` or `SqlWorkOrderRepository` for the implementation.
+> **Diferencia de Java respecto de C#:** Java usa UPPER_SNAKE_CASE para las constantes (`static final`). Los nombres de interfaz NO llevan el prefijo `I`: se usa `WorkOrderRepository` como nombre de la interfaz y `JpaWorkOrderRepository` o `SqlWorkOrderRepository` para la implementación.
 
 ---
 
 ### 5.3 TypeScript / JavaScript
 
-Follows [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html) with DDD extensions.
+Sigue la [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html) con extensiones de DDD.
 
-| Construct | Convention | Example |
+| Constructo | Convención | Ejemplo |
 | :--- | :--- | :--- |
-| File name | kebab-case | `work-order.aggregate.ts` |
-| Class | PascalCase | `WorkOrder` |
-| Interface | PascalCase (no `I` prefix) | `WorkOrderRepository` |
-| Type alias | PascalCase | `WorkOrderId` |
-| Enum | PascalCase; members PascalCase | `OrderStatus.Confirmed` |
-| Function / Method | camelCase | `calculateTotalCost()` |
-| Variable / Property | camelCase | `workOrderId` |
-| Private member | `#` (native private) or `_` prefix | `#workOrderId` |
-| Constant (module-level) | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
-| React component | PascalCase | `WorkOrderCard` |
-| React hook | `use` prefix + camelCase | `useWorkOrderList()` |
-| Test file | `{subject}.spec.ts` | `work-order.spec.ts` |
+| Nombre de archivo | kebab-case | `work-order.aggregate.ts` |
+| Clase | PascalCase | `WorkOrder` |
+| Interfaz | PascalCase (sin prefijo `I`) | `WorkOrderRepository` |
+| Alias de tipo | PascalCase | `WorkOrderId` |
+| Enum | PascalCase; miembros en PascalCase | `OrderStatus.Confirmed` |
+| Función / Método | camelCase | `calculateTotalCost()` |
+| Variable / Propiedad | camelCase | `workOrderId` |
+| Miembro privado | `#` (privado nativo) o prefijo `_` | `#workOrderId` |
+| Constante (de módulo) | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
+| Componente React | PascalCase | `WorkOrderCard` |
+| Hook de React | prefijo `use` + camelCase | `useWorkOrderList()` |
+| Archivo de prueba | `{subject}.spec.ts` | `work-order.spec.ts` |
 
-**File suffix conventions (NestJS / layered architecture):**
+**Convenciones de sufijo de archivo (NestJS / arquitectura por capas):**
 
-| Suffix | Purpose |
+| Sufijo | Propósito |
 | :--- | :--- |
-| `.aggregate.ts` | DDD Aggregate Root |
-| `.entity.ts` | DDD Entity |
-| `.value-object.ts` | Value Object |
-| `.repository.ts` | Port (interface) |
-| `.repository.impl.ts` | Adapter (implementation) |
-| `.use-case.ts` | Application use case |
-| `.command.ts` | Command object |
-| `.query.ts` | Query object |
-| `.event.ts` | Domain event |
-| `.dto.ts` | Data Transfer Object |
-| `.controller.ts` | HTTP controller |
-| `.module.ts` | NestJS module |
-| `.spec.ts` | Unit test |
-| `.e2e-spec.ts` | End-to-end test |
+| `.aggregate.ts` | Raíz de agregado DDD |
+| `.entity.ts` | Entidad DDD |
+| `.value-object.ts` | Objeto de valor |
+| `.repository.ts` | Puerto (interfaz) |
+| `.repository.impl.ts` | Adaptador (implementación) |
+| `.use-case.ts` | Caso de uso de aplicación |
+| `.command.ts` | Objeto comando |
+| `.query.ts` | Objeto consulta |
+| `.event.ts` | Evento de dominio |
+| `.dto.ts` | Objeto de transferencia de datos |
+| `.controller.ts` | Controlador HTTP |
+| `.module.ts` | Módulo NestJS |
+| `.spec.ts` | Prueba unitaria |
+| `.e2e-spec.ts` | Prueba de extremo a extremo |
 
 ---
 
 ### 5.4 Python 3.12
 
-Follows [PEP 8](https://peps.python.org/pep-0008/) with DDD extensions.
+Sigue [PEP 8](https://peps.python.org/pep-0008/) con extensiones de DDD.
 
-| Construct | Convention | Example |
+| Constructo | Convención | Ejemplo |
 | :--- | :--- | :--- |
-| Module / file | snake_case | `work_order_repository.py` |
-| Package | snake_case | `orders/domain/aggregates/` |
-| Class | PascalCase | `WorkOrder` |
-| Exception class | PascalCase + `Error` suffix | `WorkOrderNotFoundError` |
-| Function / Method | snake_case (verb phrase) | `calculate_total_cost()` |
-| Variable / Attribute | snake_case | `work_order_id` |
-| Private attribute | `_` prefix + snake_case | `_work_order_id` |
-| Constant | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
-| Type alias | PascalCase | `WorkOrderId = NewType('WorkOrderId', UUID)` |
-| Protocol (interface) | PascalCase | `WorkOrderRepository` (abstract base or Protocol) |
-| Dataclass (Value Object) | PascalCase, `frozen=True` | `@dataclass(frozen=True) class Money:` |
-| Test file | `test_{subject}.py` | `test_work_order.py` |
-| Test function | `test_{method}_when_{condition}_should_{outcome}` | `test_complete_when_closed_should_raise` |
+| Módulo / archivo | snake_case | `work_order_repository.py` |
+| Paquete | snake_case | `orders/domain/aggregates/` |
+| Clase | PascalCase | `WorkOrder` |
+| Clase de excepción | PascalCase + sufijo `Error` | `WorkOrderNotFoundError` |
+| Función / Método | snake_case (sintagma verbal) | `calculate_total_cost()` |
+| Variable / Atributo | snake_case | `work_order_id` |
+| Atributo privado | prefijo `_` + snake_case | `_work_order_id` |
+| Constante | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
+| Alias de tipo | PascalCase | `WorkOrderId = NewType('WorkOrderId', UUID)` |
+| Protocolo (interfaz) | PascalCase | `WorkOrderRepository` (clase base abstracta o Protocol) |
+| Dataclass (objeto de valor) | PascalCase, `frozen=True` | `@dataclass(frozen=True) class Money:` |
+| Archivo de prueba | `test_{subject}.py` | `test_work_order.py` |
+| Función de prueba | `test_{method}_when_{condition}_should_{outcome}` | `test_complete_when_closed_should_raise` |
 
 ---
 
-### 5.5 SQL (SQL Server 2022 & PostgreSQL 16)
+### 5.5 SQL (SQL Server 2022 y PostgreSQL 16)
 
-Follows [ISO/IEC 11179](https://www.iso.org/standard/60525.html) metadata naming principles with relational conventions.
+Sigue los principios de nomenclatura de metadatos de [ISO/IEC 11179](https://www.iso.org/standard/60525.html) con convenciones relacionales.
 
-| Construct | Convention | Example |
+| Constructo | Convención | Ejemplo |
 | :--- | :--- | :--- |
-| Schema | snake_case, domain-aligned | `orders`, `billing`, `audit` |
-| Table | snake_case, **plural noun** | `work_orders`, `order_items` |
-| Column | snake_case | `work_order_id`, `created_at` |
-| Primary key | `id` (surrogate) or `{entity}_id` (natural) | `id`, `work_order_id` |
-| Foreign key column | `{referenced_table_singular}_id` | `customer_id`, `product_id` |
-| FK constraint | `fk_{table}_{referenced_table}` | `fk_order_items_work_orders` |
-| PK constraint | `pk_{table}` | `pk_work_orders` |
-| Unique constraint | `uq_{table}_{columns}` | `uq_work_orders_reference_number` |
-| Check constraint | `ck_{table}_{rule}` | `ck_work_orders_status_valid` |
-| Index | `ix_{table}_{columns}` | `ix_work_orders_customer_id_status` |
-| Unique index | `uix_{table}_{columns}` | `uix_work_orders_reference_number` |
-| View | `v_{name}` | `v_open_work_orders` |
-| Materialized view | `mv_{name}` | `mv_work_order_summary` |
-| Stored procedure | `sp_{verb}_{noun}` | `sp_complete_work_order` |
-| Function | `fn_{verb}_{noun}` | `fn_calculate_order_total` |
-| Trigger | `tr_{table}_{event}` | `tr_work_orders_after_update` |
-| Migration file | `{timestamp}_{description}.sql` | `20260515_143000_add_work_orders_table.sql` |
-| Audit column (mandatory) | `created_at`, `updated_at`, `created_by`, `updated_by` | All tables must include these |
+| Esquema | snake_case, alineado al dominio | `orders`, `billing`, `audit` |
+| Tabla | snake_case, **sustantivo en plural** | `work_orders`, `order_items` |
+| Columna | snake_case | `work_order_id`, `created_at` |
+| Clave primaria | `id` (subrogada) o `{entity}_id` (natural) | `id`, `work_order_id` |
+| Columna de clave foránea | `{referenced_table_singular}_id` | `customer_id`, `product_id` |
+| Restricción FK | `fk_{table}_{referenced_table}` | `fk_order_items_work_orders` |
+| Restricción PK | `pk_{table}` | `pk_work_orders` |
+| Restricción de unicidad | `uq_{table}_{columns}` | `uq_work_orders_reference_number` |
+| Restricción CHECK | `ck_{table}_{rule}` | `ck_work_orders_status_valid` |
+| Índice | `ix_{table}_{columns}` | `ix_work_orders_customer_id_status` |
+| Índice único | `uix_{table}_{columns}` | `uix_work_orders_reference_number` |
+| Vista | `v_{name}` | `v_open_work_orders` |
+| Vista materializada | `mv_{name}` | `mv_work_order_summary` |
+| Procedimiento almacenado | `sp_{verb}_{noun}` | `sp_complete_work_order` |
+| Función | `fn_{verb}_{noun}` | `fn_calculate_order_total` |
+| Disparador | `tr_{table}_{event}` | `tr_work_orders_after_update` |
+| Archivo de migración | `{timestamp}_{description}.sql` | `20260515_143000_add_work_orders_table.sql` |
+| Columna de auditoría (obligatoria) | `created_at`, `updated_at`, `created_by`, `updated_by` | Todas las tablas deben incluirlas |
 
-**Prohibited SQL patterns:**
+**Patrones SQL prohibidos:**
 
 ```sql
--- WRONG: Prefix table names
+-- MAL: prefijar los nombres de tabla
 CREATE TABLE tbl_work_orders (...);
 
--- WRONG: Abbreviate column names
+-- MAL: abreviar los nombres de columna
 ALTER TABLE work_orders ADD COLUMN wrkord_stat VARCHAR(20);
 
--- WRONG: Use reserved words as names
-CREATE TABLE order (...);  -- 'order' is a SQL reserved word
+-- MAL: usar palabras reservadas como nombres
+CREATE TABLE order (...);  -- 'order' es una palabra reservada de SQL
 
--- WRONG: Non-descriptive PK
-CREATE TABLE work_orders (id INT PRIMARY KEY, ...);  -- ambiguous across joins
+-- MAL: clave primaria poco descriptiva
+CREATE TABLE work_orders (id INT PRIMARY KEY, ...);  -- ambigua en los joins
 
--- OK Correct
+-- BIEN: correcto
 CREATE TABLE work_orders (
     id              UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
     reference_number VARCHAR(50)      NOT NULL,
@@ -306,39 +306,39 @@ CREATE INDEX ix_work_orders_customer_id_status ON work_orders (customer_id, stat
 
 ---
 
-## 6. DDD Naming Rules
+## 6. Reglas de nomenclatura DDD
 
-All names must originate from the **domain ubiquitous language glossary** defined per bounded context. Names not present in the glossary require a glossary update before code can be written.
+Todos los nombres deben nacer del **glosario del lenguaje ubicuo del dominio**, definido por contexto acotado. Los nombres que no figuren en el glosario exigen actualizarlo antes de poder escribir el código.
 
 ### 6.1 Agregados
 
-- Noun phrase from ubiquitous language.
-- PascalCase in all OO languages; snake_case in Python.
-- No technical suffixes (`Aggregate`, `Root` - **not** `WorkOrderAggregate`).
+- Sintagma nominal del lenguaje ubicuo.
+- PascalCase en todos los lenguajes orientados a objetos; snake_case en Python.
+- Sin sufijos técnicos (`Aggregate`, `Root`; **no** `WorkOrderAggregate`).
 
 ```csharp
-// OK: Correct - the concept IS the name
+// BIEN: correcto — el concepto ES el nombre
 public sealed class WorkOrder : AggregateRoot<WorkOrderId> { }
 
-// WRONG: Wrong - redundant suffix
+// MAL: incorrecto — sufijo redundante
 public sealed class WorkOrderAggregate : AggregateRoot<WorkOrderId> { }
 ```
 
-### 6.2 Entities (non-root)
+### 6.2 Entidades (que no son raíz)
 
-- Noun phrase. No suffix.
-- Distinguish from Objetos de Valor: Entities have identity (`Id`); Objetos de Valor do not.
+- Sintagma nominal. Sin sufijo.
+- Se distinguen de los objetos de valor: las entidades tienen identidad (`Id`); los objetos de valor no.
 
 ```csharp
-public sealed class OrderItem { }         // OK: Entity - has OrderItemId
-public sealed record Money(decimal Amount, Currency Currency); // OK: Value Object - identity-less
+public sealed class OrderItem { }         // BIEN: entidad — tiene OrderItemId
+public sealed record Money(decimal Amount, Currency Currency); // BIEN: objeto de valor — sin identidad
 ```
 
-### 6.3 Value Objects
+### 6.3 Objetos de valor
 
-- Noun phrase or noun phrase describing a measurement/concept.
-- **Immutable** - use `record` (C#), `@dataclass(frozen=True)` (Python), `readonly` class (TypeScript).
-- Never expose setters.
+- Sintagma nominal, o un sintagma nominal que describa una medida o un concepto.
+- **Inmutables**: se usa `record` (C#), `@dataclass(frozen=True)` (Python) o una clase `readonly` (TypeScript).
+- Nunca exponen setters.
 
 ```csharp
 public sealed record EmailAddress(string Value)
@@ -347,57 +347,57 @@ public sealed record EmailAddress(string Value)
 }
 ```
 
-### 6.4 Repositories (Port)
+### 6.4 Repositorios (puerto)
 
-- `I` + Entity/Aggregate name + `Repository` (C#, TypeScript with prefix convention).
-- Java / Python: Entity name + `Repository` (no prefix).
+- `I` + nombre de la entidad o del agregado + `Repository` (C#, y TypeScript cuando se sigue la convención de prefijo).
+- Java y Python: nombre de la entidad + `Repository` (sin prefijo).
 
 ```csharp
 // C#
 public interface IWorkOrderRepository { }
-public sealed class SqlWorkOrderRepository : IWorkOrderRepository { } // adapter
+public sealed class SqlWorkOrderRepository : IWorkOrderRepository { } // adaptador
 
 // Java
 public interface WorkOrderRepository { }
 public class JpaWorkOrderRepository implements WorkOrderRepository { }
 
 // TypeScript
-export interface WorkOrderRepository { }  // no I prefix in TS
+export interface WorkOrderRepository { }  // sin prefijo I en TS
 export class TypeOrmWorkOrderRepository implements WorkOrderRepository { }
 ```
 
-### 6.5 Domain Services
+### 6.5 Servicios de dominio
 
-- Noun phrase ending in `Service` **only when** the operation does not belong to any single aggregate.
-- Stateless.
+- Sintagma nominal terminado en `Service` **solo cuando** la operación no pertenece a ningún agregado concreto.
+- Sin estado.
 
 ```csharp
-public sealed class OrderPricingService { }          // OK: cross-aggregate calculation
-public sealed class WorkOrderCompletionService { }   // WRONG: belongs inside WorkOrder.Complete()
+public sealed class OrderPricingService { }          // BIEN: cálculo entre agregados
+public sealed class WorkOrderCompletionService { }   // MAL: corresponde a WorkOrder.Complete()
 ```
 
 ### 6.6 Eventos de Dominio
 
-- **Naming:** `{Aggregate}{PastParticiple}` - always past tense; the event has already happened.
-- Append `Event` suffix in strongly-typed languages to distinguish from commands.
-- Do NOT append `Event` in CloudEvents `type` field.
+- **Nomenclatura:** `{Aggregate}{PastParticiple}`, siempre en pasado; el evento ya ocurrió.
+- Se añade el sufijo `Event` en los lenguajes fuertemente tipados, para distinguirlo de los comandos.
+- NO se añade `Event` en el campo `type` de CloudEvents.
 
 ```csharp
-// C# - class name
+// C# — nombre de clase
 public sealed record WorkOrderCreatedEvent(...) : DomainEvent;
 public sealed record WorkOrderCompletedEvent(...) : DomainEvent;
 public sealed record OrderItemRemovedEvent(...) : DomainEvent;
 
-// WRONG: Wrong - present tense
+// MAL: incorrecto — en presente
 public sealed record WorkOrderCreate(...) : DomainEvent;
-// WRONG: Wrong - imperative
+// MAL: incorrecto — en imperativo
 public sealed record CreateWorkOrderEvent(...) : DomainEvent;
 ```
 
-### 6.7 Commands
+### 6.7 Comandos
 
-- **Naming:** `{Imperative verb}{Noun}Command` - imperative mood; expresses intent.
-- Immutable (record/dataclass/readonly).
+- **Nomenclatura:** `{verbo imperativo}{Sustantivo}Command`, en modo imperativo; expresa la intención.
+- Inmutables (record/dataclass/readonly).
 
 ```csharp
 public sealed record CreateWorkOrderCommand(string CustomerId, string Description) : IRequest<Result<WorkOrderId>>;
@@ -405,88 +405,88 @@ public sealed record CompleteWorkOrderCommand(WorkOrderId Id) : IRequest<Result>
 public sealed record CancelWorkOrderCommand(WorkOrderId Id, string Reason) : IRequest<Result>;
 ```
 
-### 6.8 Queries
+### 6.8 Consultas
 
-- **Naming:** `Get{Noun}By{Criteria}Query` or `List{Nouns}Query`.
-- Returns a read model / DTO, never a domain aggregate.
+- **Nomenclatura:** `Get{Noun}By{Criteria}Query` o `List{Nouns}Query`.
+- Devuelven un modelo de lectura o un DTO, nunca un agregado de dominio.
 
 ```csharp
 public sealed record GetWorkOrderByIdQuery(WorkOrderId Id) : IRequest<Result<WorkOrderDto>>;
 public sealed record ListOpenWorkOrdersQuery(CustomerId CustomerId) : IRequest<Result<IReadOnlyList<WorkOrderSummaryDto>>>;
 ```
 
-### 6.9 Policies
+### 6.9 Políticas
 
-- Noun phrase expressing a business rule. Suffix `Policy`.
+- Sintagma nominal que expresa una regla de negocio. Sufijo `Policy`.
 
 ```csharp
 public sealed class LateDeliveryPenaltyPolicy { }
 public sealed class DiscountEligibilityPolicy { }
 ```
 
-### 6.10 Specifications
+### 6.10 Especificaciones
 
-- Noun phrase describing the selection criterion. Suffix `Specification` or `Spec`.
+- Sintagma nominal que describe el criterio de selección. Sufijo `Specification` o `Spec`.
 
 ```csharp
 public sealed class OverdueWorkOrdersSpecification : Specification<WorkOrder> { }
 public sealed class CustomerHasActiveOrdersSpec : Specification<Customer> { }
 ```
 
-### 6.11 Exceptions / Domain Errors
+### 6.11 Excepciones / errores de dominio
 
-- **Prefer `Result<T>` over exceptions for business errors.**
-- When exceptions are used (infrastructure failures), suffix `Exception`.
-- Domain error codes follow `{domain}.{entity}.{error_slug}` - lowercase, dot-delimited.
+- **Se prefiere `Result<T>` a las excepciones para los errores de negocio.**
+- Cuando se usan excepciones (fallos de infraestructura), llevan el sufijo `Exception`.
+- Los códigos de error de dominio siguen `{domain}.{entity}.{error_slug}`: en minúsculas y separados por puntos.
 
 ```csharp
-// Infrastructure exception - acceptable
+// Excepción de infraestructura — aceptable
 public sealed class DatabaseConnectionException : InfrastructureException { }
 
-// Domain error code - preferred approach
+// Código de error de dominio — el enfoque preferido
 public static readonly DomainError WorkOrderNotFound =
     new("orders.work-order.not-found", "Work order does not exist.");
 
-// WRONG: Wrong - business error as exception
+// MAL: incorrecto — error de negocio como excepción
 throw new WorkOrderNotFoundException();
 ```
 
 ---
 
-## 7. API / OpenAPI 3.1 Rules
+## 7. Reglas de API / OpenAPI 3.1
 
-### 7.1 URL Paths
+### 7.1 Rutas de URL
 
-| Rule | Convention | Example |
+| Regla | Convención | Ejemplo |
 | :--- | :--- | :--- |
-| Resource segments | **kebab-case, plural noun** | `/work-orders`, `/order-items` |
-| Path parameters | **kebab-case** | `/work-orders/{work-order-id}` |
-| Sub-resources | Nested only to 2 levels max | `/work-orders/{id}/order-items` |
-| Actions (non-CRUD) | Verb suffix after resource | `/work-orders/{id}/complete`, `/work-orders/{id}/cancel` |
-| API versioning | URL prefix `/v{N}` | `/v1/work-orders` |
-| Query parameters | **camelCase** | `?pageSize=20&sortBy=createdAt` |
+| Segmentos de recurso | **kebab-case, sustantivo en plural** | `/work-orders`, `/order-items` |
+| Parámetros de ruta | **kebab-case** | `/work-orders/{work-order-id}` |
+| Subrecursos | Anidados hasta 2 niveles como máximo | `/work-orders/{id}/order-items` |
+| Acciones (no CRUD) | Verbo como sufijo después del recurso | `/work-orders/{id}/complete`, `/work-orders/{id}/cancel` |
+| Versionado de la API | Prefijo de URL `/v{N}` | `/v1/work-orders` |
+| Parámetros de consulta | **camelCase** | `?pageSize=20&sortBy=createdAt` |
 
-### 7.2 HTTP Methods & Semantics
+### 7.2 Métodos HTTP y semántica
 
-| Intent | Method | URL pattern |
+| Intención | Método | Patrón de URL |
 | :--- | :--- | :--- |
-| Create resource | POST | `/v1/work-orders` |
-| Read single | GET | `/v1/work-orders/{work-order-id}` |
-| Read collection | GET | `/v1/work-orders` |
-| Full replace | PUT | `/v1/work-orders/{work-order-id}` |
-| Partial update | PATCH | `/v1/work-orders/{work-order-id}` |
-| Delete | DELETE | `/v1/work-orders/{work-order-id}` |
-| Domain action | POST (verb) | `/v1/work-orders/{id}/complete` |
+| Crear recurso | POST | `/v1/work-orders` |
+| Leer uno | GET | `/v1/work-orders/{work-order-id}` |
+| Leer colección | GET | `/v1/work-orders` |
+| Reemplazo completo | PUT | `/v1/work-orders/{work-order-id}` |
+| Actualización parcial | PATCH | `/v1/work-orders/{work-order-id}` |
+| Borrar | DELETE | `/v1/work-orders/{work-order-id}` |
+| Acción de dominio | POST (verbo) | `/v1/work-orders/{id}/complete` |
 
-### 7.3 JSON Body Properties
+### 7.3 Propiedades del cuerpo JSON
 
-- **camelCase** for all JSON property names.
-- ISO 8601 for all date/time fields: `"2026-05-15T14:30:00Z"`.
-- Monetary values as `{ "amount": 1500.00, "currency": "USD" }`.
-- IDs as strings (UUID format): `"workOrderId": "550e8400-e29b-41d4-a716-446655440000"`.
+- **camelCase** en todos los nombres de propiedad JSON.
+- ISO 8601 en todos los campos de fecha y hora: `"2026-05-15T14:30:00Z"`.
+- Los importes monetarios, como `{ "amount": 1500.00, "currency": "USD" }`.
+- Los identificadores, como cadenas (formato UUID): `"workOrderId": "550e8400-e29b-41d4-a716-446655440000"`.
 
 ```json
-// OK: Correct
+// BIEN: correcto
 {
   "workOrderId": "550e8400-e29b-41d4-a716-446655440000",
   "referenceNumber": "WO-2026-00123",
@@ -499,7 +499,7 @@ throw new WorkOrderNotFoundException();
   ]
 }
 
-// WRONG: Wrong - snake_case, abbreviated, missing currency object
+// MAL: incorrecto — snake_case, abreviado, sin objeto de moneda
 {
   "work_order_id": "...",
   "ref_num": "WO-2026-00123",
@@ -508,29 +508,29 @@ throw new WorkOrderNotFoundException();
 }
 ```
 
-### 7.4 OpenAPI operationId
+### 7.4 operationId de OpenAPI
 
-- **camelCase** verb phrase: `{action}{Resource}`.
+- Sintagma verbal en **camelCase**: `{action}{Resource}`.
 
 ```yaml
 paths:
   /v1/work-orders:
     get:
-      operationId: listWorkOrders       # OK
+      operationId: listWorkOrders       # BIEN
     post:
-      operationId: createWorkOrder      # OK
+      operationId: createWorkOrder      # BIEN
   /v1/work-orders/{workOrderId}:
     get:
-      operationId: getWorkOrderById     # OK
+      operationId: getWorkOrderById     # BIEN
   /v1/work-orders/{workOrderId}/complete:
     post:
-      operationId: completeWorkOrder    # OK
+      operationId: completeWorkOrder    # BIEN
 ```
 
-### 7.5 OpenAPI Schema Names
+### 7.5 Nombres de esquema de OpenAPI
 
-- PascalCase for schema names.
-- Suffix `Request` for request bodies, `Response` for response envelopes, `Dto` for transfer objects within OpenAPI specs.
+- PascalCase para los nombres de esquema.
+- Sufijo `Request` para los cuerpos de petición, `Response` para los envoltorios de respuesta y `Dto` para los objetos de transferencia dentro de las especificaciones OpenAPI.
 
 ```yaml
 components:
@@ -543,39 +543,39 @@ components:
       type: object
 ```
 
-### 7.6 HTTP Status Codes - Canonical Mapping
+### 7.6 Códigos de estado HTTP - mapeo canónico
 
-| Condition | Status | When |
+| Condición | Estado | Cuándo |
 | :--- | :--- | :--- |
-| Created | 201 | POST successful resource creation |
-| OK | 200 | GET, PUT, PATCH success |
-| No Content | 204 | DELETE, or PATCH with no body |
-| Bad Request | 400 | Validation / malformed input |
-| Unauthorized | 401 | Missing or invalid token |
-| Forbidden | 403 | Authenticated but insufficient scope |
-| Not Found | 404 | Resource does not exist |
-| Conflict | 409 | Duplicate / state conflict |
-| Unprocessable | 422 | Business rule violation |
-| Server Error | 500 | Unexpected infrastructure failure |
+| Created | 201 | POST que crea el recurso correctamente |
+| OK | 200 | GET, PUT o PATCH con éxito |
+| No Content | 204 | DELETE, o PATCH sin cuerpo |
+| Bad Request | 400 | Validación o entrada mal formada |
+| Unauthorized | 401 | Token ausente o inválido |
+| Forbidden | 403 | Autenticado, pero con alcance insuficiente |
+| Not Found | 404 | El recurso no existe |
+| Conflict | 409 | Duplicado o conflicto de estado |
+| Unprocessable | 422 | Violación de una regla de negocio |
+| Server Error | 500 | Fallo de infraestructura inesperado |
 
 ---
 
-## 8. Events - CloudEvents 1.0
+## 8. Eventos - CloudEvents 1.0
 
-Follows the [CloudEvents 1.0 specification](https://cloudevents.io).
+Sigue la [especificación CloudEvents 1.0](https://cloudevents.io).
 
-### 8.1 Event Type Naming
+### 8.1 Nomenclatura del tipo de evento
 
 ```
 {organization-domain}.{bounded-context}.{entity}.{past-participle-verb}
 ```
 
-| Segment | Convention | Example |
+| Segmento | Convención | Ejemplo |
 | :--- | :--- | :--- |
-| organization-domain | lowercase, reverse-DNS or short org name | `acme` |
-| bounded-context | lowercase, kebab-case | `orders`, `billing`, `identity` |
-| entity | lowercase, kebab-case singular | `work-order`, `order-item` |
-| past-participle-verb | lowercase | `created`, `completed`, `cancelled` |
+| organization-domain | minúsculas, DNS invertido o nombre corto de la organización | `acme` |
+| bounded-context | minúsculas, kebab-case | `orders`, `billing`, `identity` |
+| entity | minúsculas, kebab-case en singular | `work-order`, `order-item` |
+| past-participle-verb | minúsculas | `created`, `completed`, `cancelled` |
 
 ```json
 {
@@ -595,119 +595,119 @@ Follows the [CloudEvents 1.0 specification](https://cloudevents.io).
 }
 ```
 
-### 8.2 Event Subject
+### 8.2 Subject del evento
 
-- `{resource-type}/{resource-id}` - kebab-case resource type, ID as value.
+- `{resource-type}/{resource-id}`: el tipo de recurso en kebab-case y el identificador como valor.
 
-### 8.3 Event Data Properties
+### 8.3 Propiedades de los datos del evento
 
-- Same as JSON body rules: **camelCase**, ISO 8601 dates, no abbreviations.
+- Las mismas reglas que el cuerpo JSON: **camelCase**, fechas en ISO 8601 y sin abreviaturas.
 
-### 8.4 Prohibited Event Naming
+### 8.4 Nomenclatura de eventos prohibida
 
 ```
-WRONG:  UserCreated            (missing org/context prefix - collision risk)
-WRONG:  user_created           (snake_case - violates CloudEvents convention)
-WRONG:  USER_CREATED           (UPPER_SNAKE - not human-readable in logs)
-WRONG:  acme.orders.CreateUser (present tense - event happened in the past)
-OK   acme.identity.user.registered
+MAL:  UserCreated            (falta el prefijo de organización y contexto — riesgo de colisión)
+MAL:  user_created           (snake_case — vulnera la convención de CloudEvents)
+MAL:  USER_CREATED           (UPPER_SNAKE — poco legible en los logs)
+MAL:  acme.orders.CreateUser (en presente — el evento ya ocurrió)
+BIEN  acme.identity.user.registered
 ```
 
 ---
 
-## 9. Data Warehouse & Analytics
+## 9. Data warehouse y analítica
 
-Follows [Kimball dimensional modeling](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/) with ISO/IEC 11179 metadata naming principles.
+Sigue el [modelado dimensional de Kimball](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/) con los principios de nomenclatura de metadatos de la ISO/IEC 11179.
 
-### 9.1 Layer Naming
+### 9.1 Nomenclatura de capas
 
-| Layer | Prefix | Purpose |
+| Capa | Prefijo | Propósito |
 | :--- | :--- | :--- |
-| Staging | `stg_` | Raw ingested data, 1:1 with source |
-| Intermediate / OBT | `int_` | Joined, cleaned, denormalized |
-| Fact tables | `fct_` | Business process measurements |
-| Dimension tables | `dim_` | Descriptive attributes |
-| Bridge tables | `brd_` | Many-to-many dimension bridges |
-| Aggregated / mart | `agg_` or `mart_` | Pre-aggregated for consumption |
-| Data quality | `dq_` | Validation and quarantine tables |
+| Staging | `stg_` | Datos crudos ingeridos, 1:1 con el origen |
+| Intermedia / OBT | `int_` | Unidos, limpios y desnormalizados |
+| Tablas de hechos | `fct_` | Mediciones de procesos de negocio |
+| Tablas de dimensiones | `dim_` | Atributos descriptivos |
+| Tablas puente | `brd_` | Puentes de dimensión de muchos a muchos |
+| Agregados / mart | `agg_` o `mart_` | Preagregados para su consumo |
+| Calidad de datos | `dq_` | Tablas de validación y de cuarentena |
 
-### 9.2 Column Naming
+### 9.2 Nomenclatura de columnas
 
-| Pattern | Convention | Example |
+| Patrón | Convención | Ejemplo |
 | :--- | :--- | :--- |
-| Surrogate key | `{table_name}_key` | `work_order_key` |
-| Natural / business key | `{entity}_{identifier}_bk` | `work_order_reference_bk` |
-| Foreign key to dimension | `{dim_table_without_dim}_key` | `customer_key`, `status_key` |
-| Date key | `{context}_date_key` | `created_date_key`, `completed_date_key` |
-| Measures | snake_case, unit suffix when ambiguous | `total_cost_usd`, `quantity_units`, `duration_seconds` |
-| Flags | `is_{condition}` or `has_{condition}` | `is_late`, `has_penalty`, `is_active` |
-| Timestamps | `{event}_at` | `created_at`, `ingested_at`, `updated_at` |
-| ETL metadata | `etl_{attribute}` | `etl_batch_id`, `etl_source_system`, `etl_loaded_at` |
+| Clave subrogada | `{table_name}_key` | `work_order_key` |
+| Clave natural o de negocio | `{entity}_{identifier}_bk` | `work_order_reference_bk` |
+| Clave foránea a una dimensión | `{dim_table_without_dim}_key` | `customer_key`, `status_key` |
+| Clave de fecha | `{context}_date_key` | `created_date_key`, `completed_date_key` |
+| Medidas | snake_case, con sufijo de unidad cuando sea ambiguo | `total_cost_usd`, `quantity_units`, `duration_seconds` |
+| Banderas | `is_{condition}` o `has_{condition}` | `is_late`, `has_penalty`, `is_active` |
+| Marcas de tiempo | `{event}_at` | `created_at`, `ingested_at`, `updated_at` |
+| Metadatos de ETL | `etl_{attribute}` | `etl_batch_id`, `etl_source_system`, `etl_loaded_at` |
 
-### 9.3 Data Catalog Entry (ISO/IEC 11179 inspired)
+### 9.3 Entrada del catálogo de datos (inspirada en ISO/IEC 11179)
 
-Every analytical column must have a catalog entry with:
+Toda columna analítica debe tener una entrada de catálogo con:
 
-| Attribute | Required | Example |
+| Atributo | Requerido | Ejemplo |
 | :--- | :--- | :--- |
-| `element_name` | OK | `work_order_total_cost_usd` |
-| `definition` | OK | "Sum of all order item costs in USD for a work order" |
-| `data_type` | OK | `NUMERIC(18,4)` |
-| `unit_of_measure` | When applicable | `USD` |
-| `allowed_values` | For enumerations | `Draft, Confirmed, InProgress, Completed, Cancelled` |
-| `source_system` | OK | `orders-api` |
-| `source_table` | OK | `orders.work_orders` |
-| `source_column` | OK | `total_cost` |
-| `pii_classification` | OK | `None`, `Sensitive`, `Restricted` |
-| `owner_team` | OK | `operations-domain` |
+| `element_name` | Sí | `work_order_total_cost_usd` |
+| `definition` | Sí | "Suma del coste de todas las líneas de una orden de trabajo, en USD" |
+| `data_type` | Sí | `NUMERIC(18,4)` |
+| `unit_of_measure` | Cuando aplique | `USD` |
+| `allowed_values` | Para enumeraciones | `Draft, Confirmed, InProgress, Completed, Cancelled` |
+| `source_system` | Sí | `orders-api` |
+| `source_table` | Sí | `orders.work_orders` |
+| `source_column` | Sí | `total_cost` |
+| `pii_classification` | Sí | `None`, `Sensitive`, `Restricted` |
+| `owner_team` | Sí | `operations-domain` |
 
 ---
 
-## 10. Full Mapping Table
+## 10. Tabla de correspondencias completa
 
-| Ubiquitous Language | C# | Java | TypeScript | Python | REST URL | JSON | SQL Table | SQL Column | Event Type | DW Fact |
+| Lenguaje ubicuo | C# | Java | TypeScript | Python | URL REST | JSON | Tabla SQL | Columna SQL | Tipo de evento | Hecho DW |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | Work Order | `WorkOrder` | `WorkOrder` | `WorkOrder` | `WorkOrder` | `/work-orders` | `workOrderId` | `work_orders` | `work_order_id` | `*.work-order.created` | `fct_work_orders` |
 | Order Item | `OrderItem` | `OrderItem` | `OrderItem` | `OrderItem` | `/order-items` | `orderItemId` | `order_items` | `order_item_id` | `*.order-item.added` | `fct_order_items` |
 | Customer | `Customer` | `Customer` | `Customer` | `Customer` | `/customers` | `customerId` | `customers` | `customer_id` | `*.customer.registered` | `dim_customers` |
-| Reference Number | `ReferenceNumber` (VO) | `ReferenceNumber` | `ReferenceNumber` | `ReferenceNumber` | `referenceNumber` (query) | `referenceNumber` | - | `reference_number` | - | `work_order_reference_bk` |
-| Created At | `CreatedAt` (property) | `createdAt` | `createdAt` | `created_at` | `createdAt` (query param) | `createdAt` | - | `created_at` | `time` (CloudEvents field) | `created_date_key` |
-| Total Cost (USD) | `TotalCost` (Money VO) | `totalCost` | `totalCost` | `total_cost` | - | `totalCost.amount` | - | `total_cost_usd` | data.totalCost | `total_cost_usd` |
-| Work Order Status | `WorkOrderStatus` (enum) | `WorkOrderStatus` | `WorkOrderStatus` | `WorkOrderStatus` | `status` (filter) | `status` | - | `status` | data.status | `dim_work_order_status` |
+| Reference Number | `ReferenceNumber` (VO) | `ReferenceNumber` | `ReferenceNumber` | `ReferenceNumber` | `referenceNumber` (consulta) | `referenceNumber` | - | `reference_number` | - | `work_order_reference_bk` |
+| Created At | `CreatedAt` (propiedad) | `createdAt` | `createdAt` | `created_at` | `createdAt` (parámetro de consulta) | `createdAt` | - | `created_at` | `time` (campo de CloudEvents) | `created_date_key` |
+| Total Cost (USD) | `TotalCost` (VO Money) | `totalCost` | `totalCost` | `total_cost` | - | `totalCost.amount` | - | `total_cost_usd` | data.totalCost | `total_cost_usd` |
+| Work Order Status | `WorkOrderStatus` (enum) | `WorkOrderStatus` | `WorkOrderStatus` | `WorkOrderStatus` | `status` (filtro) | `status` | - | `status` | data.status | `dim_work_order_status` |
 
 ---
 
-## 11. Validation Tools
+## 11. Herramientas de validación
 
-### 11.1 Per Language
+### 11.1 Por lenguaje
 
-| Language | Formatter | Linter | Static Analyzer |
+| Lenguaje | Formateador | Linter | Analizador estático |
 | :--- | :--- | :--- | :--- |
-| C# | `dotnet format` (built-in) | Roslyn Analyzers (`StyleCop.Analyzers`, `SonarAnalyzer.CSharp`) | SonarQube / SonarCloud |
-| Java | Google Java Format | Checkstyle (Google config) | SonarQube, SpotBugs |
+| C# | `dotnet format` (integrado) | Roslyn Analyzers (`StyleCop.Analyzers`, `SonarAnalyzer.CSharp`) | SonarQube / SonarCloud |
+| Java | Google Java Format | Checkstyle (configuración de Google) | SonarQube, SpotBugs |
 | TypeScript | Prettier | ESLint (`@typescript-eslint`, `eslint-plugin-sonarjs`) | SonarQube |
 | Python | Black + isort | Flake8 + pylint | SonarQube |
-| SQL | `sqlfluff` (dialect: tsql / postgres) | `sqlfluff lint` | `sqlfluff fix` |
+| SQL | `sqlfluff` (dialecto: tsql / postgres) | `sqlfluff lint` | `sqlfluff fix` |
 
-### 11.2 Architecture Boundary Enforcement
+### 11.2 Verificación de fronteras arquitectónicas
 
-| Language | Tool | Rule |
+| Lenguaje | Herramienta | Regla |
 | :--- | :--- | :--- |
-| C# | `dotnet-architecture-tests` (ArchUnitNET) | Domain layer has zero NuGet refs to Infrastructure |
+| C# | `dotnet-architecture-tests` (ArchUnitNET) | La capa de dominio no tiene ninguna referencia NuGet a infraestructura |
 | Java | ArchUnit | `noClasses().that().resideInPackage("..domain..").should().dependOnClassesThat().resideInPackage("..infrastructure..")` |
-| TypeScript | `eslint-plugin-boundaries` | `domain` cannot import from `infrastructure` |
-| Python | `import-linter` | Contracts defined in `.importlinter` |
+| TypeScript | `eslint-plugin-boundaries` | `domain` no puede importar de `infrastructure` |
+| Python | `import-linter` | Contratos definidos en `.importlinter` |
 
-### 11.3 API & Event Linting
+### 11.3 Linting de API y de eventos
 
-| Tool | What it validates |
+| Herramienta | Qué valida |
 | :--- | :--- |
-| `spectral` (Stoplight) | OpenAPI 3.1 - operationId format, kebab-case paths, required fields |
-| `openapi-generator validate` | Schema completeness and correctness |
-| CloudEvents SDK (any language) | Event envelope schema validation |
-| `redocly lint` | OpenAPI lint + style rules |
+| `spectral` (Stoplight) | OpenAPI 3.1: formato del operationId, rutas en kebab-case, campos obligatorios |
+| `openapi-generator validate` | Completitud y corrección del esquema |
+| CloudEvents SDK (en cualquier lenguaje) | Validación del esquema del sobre del evento |
+| `redocly lint` | Lint de OpenAPI y reglas de estilo |
 
-**Recommended Spectral ruleset (`.spectral.yaml`):**
+**Ruleset de Spectral recomendado (`.spectral.yaml`):**
 
 ```yaml
 extends: ["spectral:oas"]
@@ -730,42 +730,42 @@ rules:
         type: camel
 ```
 
-### 11.4 SQL Linting (sqlfluff)
+### 11.4 Linting de SQL (sqlfluff)
 
-`.sqlfluff` project config:
+Configuración del proyecto en `.sqlfluff`:
 
 ```ini
 [sqlfluff]
-dialect = tsql          # or postgres
+dialect = tsql          # o postgres
 templater = raw
 max_line_length = 120
 
-[sqlfluff:rules:L010]   # Keywords uppercase
+[sqlfluff:rules:L010]   # Palabras clave en mayúsculas
 capitalisation_policy = upper
 
-[sqlfluff:rules:L014]   # Column aliases snake_case
+[sqlfluff:rules:L014]   # Alias de columna en snake_case
 extended_capitalisation_policy = lower
 
-[sqlfluff:rules:L030]   # Function names uppercase
+[sqlfluff:rules:L030]   # Nombres de función en mayúsculas
 capitalisation_policy = upper
 
 [sqlfluff:rules:aliasing.table]
-aliasing = explicit     # Always name aliases explicitly
+aliasing = explicit     # Los alias se nombran siempre de forma explícita
 ```
 
-### 11.5 SonarQube Quality Gates
+### 11.5 Compuertas de calidad de SonarQube
 
-| Metric | Threshold | Applies to |
+| Métrica | Umbral | Se aplica a |
 | :--- | :--- | :--- |
-| Coverage (new code) | ≥ 80% | All languages |
-| Duplicated lines (new code) | ≤ 3% | All languages |
-| Mantenibilidad rating (new code) | A | All languages |
-| Reliability rating (new code) | A | All languages |
-| Security hotspots reviewed | 100% | All languages |
-| Cognitive complexity per method | ≤ 15 | All languages |
-| Naming convention violations | 0 | Enforced via Roslyn / ESLint / Checkstyle / pylint |
+| Cobertura (código nuevo) | ≥ 80 % | Todos los lenguajes |
+| Líneas duplicadas (código nuevo) | ≤ 3 % | Todos los lenguajes |
+| Calificación de mantenibilidad (código nuevo) | A | Todos los lenguajes |
+| Calificación de confiabilidad (código nuevo) | A | Todos los lenguajes |
+| Hotspots de seguridad revisados | 100 % | Todos los lenguajes |
+| Complejidad cognitiva por método | ≤ 15 | Todos los lenguajes |
+| Violaciones de convención de nombres | 0 | Verificado con Roslyn / ESLint / Checkstyle / pylint |
 
-### 11.6 Pre-commit & CI Gates
+### 11.6 Compuertas de pre-commit y de CI
 
 ```yaml
 # .pre-commit-config.yaml
@@ -811,57 +811,57 @@ repos:
 
 ---
 
-## 12. Exception Policy
+## 12. Política de excepciones
 
-A naming exception may be granted **only** under the following conditions:
+Una excepción de nomenclatura solo puede concederse **si** se cumple alguna de estas condiciones:
 
-1. **External contract lock-in.** A third-party system mandates a specific naming format (e.g., a vendor API uses `PascalCase` JSON or an SQL Server system table uses a non-standard column name). The exception must be isolated to the adapter/anti-corruption layer.
+1. **Contrato externo cerrado.** Un sistema de terceros impone un formato de nombres concreto (por ejemplo, la API de un proveedor usa JSON en `PascalCase`, o una tabla de sistema de SQL Server usa un nombre de columna no estándar). La excepción debe quedar aislada en la capa de adaptador o anticorrupción.
 
-2. **Regulatory requirement.** A regulatory body mandates a specific field name in a reporting format (e.g., `TaxId` for fiscal reporting). The internal canonical name remains compliant; only the outbound transformation adapter is excepted.
+2. **Requisito regulatorio.** Un organismo regulador impone un nombre de campo concreto en un formato de reporte (por ejemplo, `TaxId` para reportes fiscales). El nombre canónico interno sigue cumpliendo la norma; la excepción alcanza solo al adaptador de transformación de salida.
 
-3. **Legacy system migration (time-boxed).** During a migration phase, legacy names may coexist. The exception must have a defined sunset date registered in the ADR exception log (see below) not exceeding 6 months.
+3. **Migración de un sistema heredado (con plazo).** Durante una fase de migración, los nombres heredados pueden convivir. La excepción debe tener una fecha de caducidad definida y registrada en el log de excepciones del ADR (más abajo), que no supere los 6 meses.
 
-**Exception log format** (append to this ADR's `## Exception Log` section):
+**Formato del log de excepciones** (se añade a la sección `## Log de excepciones` de este ADR):
 
 ```markdown
-| ID | Date | Requester | Context | Excepted Rule | Justification | Sunset Date | Status |
-|----|------|-----------|---------|---------------|---------------|-------------|--------|
-| EX-001 | 2026-06-01 | @team-billing | Legacy SAP integration | SQL column prefix `Z_` | SAP standard | 2026-12-01 | Active |
+| ID | Fecha | Solicitante | Contexto | Regla exceptuada | Justificación | Fecha de caducidad | Estado |
+|----|-------|-------------|----------|------------------|---------------|--------------------|--------|
+| EX-001 | 2026-06-01 | @team-billing | Integración heredada con SAP | Prefijo `Z_` en columnas SQL | Estándar de SAP | 2026-12-01 | Activa |
 ```
 
-**Exceptions do NOT apply to:**
-- New greenfield code
-- Internal API-to-API communication
-- Domain layer names (ubiquitous language is non-negotiable)
+**Las excepciones NO se aplican a:**
+- Código nuevo desde cero
+- Comunicación interna entre APIs
+- Nombres de la capa de dominio (el lenguaje ubicuo no es negociable)
 
 ---
 
-## 13. Definition of Done
+## 13. Definición de Terminado
 
-A code artifact is **Done** from a naming perspective when **all** of the following pass:
+Un artefacto de código está **Terminado** desde el punto de vista de la nomenclatura cuando pasa **todo** lo siguiente:
 
 ```
-[ ] All class, method, property, and variable names match the ubiquitous language glossary
-[ ] Language-specific casing conventions applied (verified by linter - zero violations)
-[ ] No abbreviations (except approved acronyms: ID, URL, HTTP, API, DTO, ORM, JWT, SQL)
-[ ] SQL objects follow schema/table/column/constraint naming rules
-[ ] OpenAPI operationId in camelCase; paths in kebab-case; properties in camelCase
-[ ] CloudEvents type follows {org}.{context}.{entity}.{past-tense} pattern
-[ ] No magic strings containing field names (use constants or nameof())
-[ ] SonarQube gate passes (0 naming violations, maintainability A)
-[ ] PR description references the ubiquitous language term from the bounded context glossary
-[ ] sqlfluff lint returns 0 violations on all migration scripts
-[ ] Spectral lint returns 0 errors on affected OpenAPI specs
+[ ] Todos los nombres de clase, método, propiedad y variable coinciden con el glosario del lenguaje ubicuo
+[ ] Se aplican las convenciones de capitalización de cada lenguaje (comprobado por el linter, cero violaciones)
+[ ] Sin abreviaturas (salvo los acrónimos aprobados: ID, URL, HTTP, API, DTO, ORM, JWT, SQL)
+[ ] Los objetos SQL siguen las reglas de nombres de esquema, tabla, columna y restricción
+[ ] operationId de OpenAPI en camelCase; rutas en kebab-case; propiedades en camelCase
+[ ] El tipo de CloudEvents sigue el patrón {org}.{context}.{entity}.{past-tense}
+[ ] Sin cadenas mágicas que contengan nombres de campo (se usan constantes o nameof())
+[ ] La compuerta de SonarQube pasa (0 violaciones de nombres, mantenibilidad A)
+[ ] La descripción del PR referencia el término del lenguaje ubicuo del glosario del contexto acotado
+[ ] sqlfluff lint devuelve 0 violaciones en todos los scripts de migración
+[ ] Spectral lint devuelve 0 errores en las especificaciones OpenAPI afectadas
 ```
 
 ---
 
-## 14. Correct vs Incorrect Examples
+## 14. Ejemplos correctos frente a incorrectos
 
-### 14.1 C# - Aggregate & Value Object
+### 14.1 C# - agregado y objeto de valor
 
 ```csharp
-// CORRECT
+// CORRECTO
 public sealed class WorkOrder : AggregateRoot<WorkOrderId>
 {
     private readonly List<OrderItem> _orderItems = [];
@@ -885,19 +885,19 @@ public sealed class WorkOrder : AggregateRoot<WorkOrderId>
     }
 }
 
-// WRONG
-public class WrkOrdAggregat  // abbreviation + suffix
+// INCORRECTO
+public class WrkOrdAggregat  // abreviatura + sufijo
 {
-    public int Id { get; set; }     // int ID (should be strongly typed)
-    public string stat { get; set; } // lowercase, abbreviated
-    public List<OrdItm> Items;       // public field, abbreviated type
+    public int Id { get; set; }     // ID entero (debería ser fuertemente tipado)
+    public string stat { get; set; } // en minúsculas y abreviado
+    public List<OrdItm> Items;       // campo público, tipo abreviado
 }
 ```
 
-### 14.2 TypeScript - Use Case
+### 14.2 TypeScript - caso de uso
 
 ```typescript
-// CORRECT - file: create-work-order.use-case.ts
+// CORRECTO - archivo: create-work-order.use-case.ts
 @Injectable()
 export class CreateWorkOrderUseCase {
   constructor(
@@ -912,20 +912,20 @@ export class CreateWorkOrderUseCase {
   }
 }
 
-// WRONG
-export class CreateWO {   // abbreviation, no suffix
-  constructor(private repo: any) {}  // untyped, `repo` is abbreviated
+// INCORRECTO
+export class CreateWO {   // abreviatura, sin sufijo
+  constructor(private repo: any) {}  // sin tipos, `repo` está abreviado
 
-  async run(data: any): Promise<any> {  // 'run' not domain language; untyped
-    return this.repo.insert(data);      // bypasses domain model
+  async run(data: any): Promise<any> {  // 'run' no es lenguaje de dominio; sin tipos
+    return this.repo.insert(data);      // salta el modelo de dominio
   }
 }
 ```
 
-### 14.3 Python - Repository Protocol
+### 14.3 Python - protocolo de repositorio
 
 ```python
-# OK CORRECT - file: work_order_repository.py
+# BIEN CORRECTO - archivo: work_order_repository.py
 from abc import abstractmethod
 from typing import Protocol
 from uuid import UUID
@@ -941,17 +941,17 @@ class WorkOrderRepository(Protocol):
     async def list_by_customer(self, customer_id: UUID) -> list[WorkOrder]: ...
 
 
-# WRONG: WRONG
+# MAL: INCORRECTO
 class WO_Repo:
-    def get(self, id): ...           # abbreviated name, untyped
-    def ins(self, obj): ...          # meaningless abbreviation
-    def list_all(self, cust): ...    # `cust` abbreviated, no type hint
+    def get(self, id): ...           # nombre abreviado, sin tipos
+    def ins(self, obj): ...          # abreviatura sin significado
+    def list_all(self, cust): ...    # `cust` abreviado, sin anotación de tipo
 ```
 
-### 14.4 SQL - Table & Constraints
+### 14.4 SQL - tabla y restricciones
 
 ```sql
--- OK CORRECT
+-- BIEN CORRECTO
 CREATE TABLE orders.work_orders (
     id                  UNIQUEIDENTIFIER    NOT NULL DEFAULT NEWSEQUENTIALID(),
     reference_number    VARCHAR(50)         NOT NULL,
@@ -968,19 +968,19 @@ CREATE TABLE orders.work_orders (
 );
 CREATE INDEX ix_work_orders_customer_status ON orders.work_orders (customer_id, status);
 
--- WRONG: WRONG
-CREATE TABLE tbl_WrkOrd (       -- prefixed, PascalCase, abbreviated
-    WrkOrdID    INT IDENTITY,   -- integer PK, Hungarian notation, IDENTITY without UUID
-    CustID      INT,            -- abbreviated FK, no constraint name
-    Stat        VARCHAR(1),     -- abbreviated column, single-char values
-    dt          DATETIME        -- abbreviated, wrong type for audit column
+-- MAL: INCORRECTO
+CREATE TABLE tbl_WrkOrd (       -- prefijado, PascalCase, abreviado
+    WrkOrdID    INT IDENTITY,   -- PK entera, notación húngara, IDENTITY sin UUID
+    CustID      INT,            -- FK abreviada, sin nombre de restricción
+    Stat        VARCHAR(1),     -- columna abreviada, valores de un solo carácter
+    dt          DATETIME        -- abreviada, tipo incorrecto para una columna de auditoría
 );
 ```
 
 ### 14.5 OpenAPI
 
 ```yaml
-# OK CORRECT
+# BIEN CORRECTO
 paths:
   /v1/work-orders:
     post:
@@ -1010,26 +1010,26 @@ components:
           type: string
           minLength: 3
 
-# WRONG: WRONG
+# MAL: INCORRECTO
 paths:
-  /WorkOrders:            # PascalCase path
+  /WorkOrders:            # ruta en PascalCase
     post:
-      operationId: Create_Work_Order   # snake_case operationId
+      operationId: Create_Work_Order   # operationId en snake_case
       requestBody:
         content:
           application/json:
             schema:
               properties:
-                customer_id:            # snake_case JSON property
-                  type: integer         # wrong type for UUID
-                ref_num:                # abbreviated
+                customer_id:            # propiedad JSON en snake_case
+                  type: integer         # tipo incorrecto para un UUID
+                ref_num:                # abreviada
                   type: string
 ```
 
 ### 14.6 CloudEvents
 
 ```json
-// CORRECT
+// CORRECTO
 {
   "specversion": "1.0",
   "type": "acme.orders.work-order.created",
@@ -1046,38 +1046,38 @@ paths:
   }
 }
 
-// WRONG
+// INCORRECTO
 {
-  "type": "WorkOrderCreated",        // PascalCase, no org/context prefix
-  "timestamp": "15-05-2026",         // non-ISO 8601
+  "type": "WorkOrderCreated",        // PascalCase, sin prefijo de organización/contexto
+  "timestamp": "15-05-2026",         // no es ISO 8601
   "payload": {
-    "work_order_id": "...",          // snake_case in JSON data
-    "ref": "WO-2026-00123",          // abbreviated
-    "cust_id": "..."                 // abbreviated
+    "work_order_id": "...",          // snake_case dentro de los datos JSON
+    "ref": "WO-2026-00123",          // abreviado
+    "cust_id": "..."                 // abreviado
   }
 }
 ```
 
 ---
 
-## 15. Consequences
+## 15. Consecuencias
 
-### Positive
+### Positivas
 
-- **Mantenibilidad (ISO/IEC 25010).** Consistent naming reduces cognitive load and accelerates onboarding. New developers can predict names without consulting implementation.
-- **Integration reliability.** A single canonical concept name prevents data mapping bugs between API, database, and event consumers.
-- **Automated enforcement.** All rules are checkable by existing tooling - no manual review required for naming compliance.
-- **DDD alignment.** Ubiquitous language as the naming source eliminates the "translation layer" between business and engineering.
+- **Mantenibilidad (ISO/IEC 25010).** Una nomenclatura consistente reduce la carga cognitiva y acelera la incorporación. Quien llega puede predecir los nombres sin consultar la implementación.
+- **Fiabilidad de las integraciones.** Un único nombre canónico por concepto evita los errores de mapeo de datos entre la API, la base de datos y los consumidores de eventos.
+- **Verificación automatizada.** Todas las reglas son comprobables con el herramental existente, así que no hace falta revisión manual para el cumplimiento de nombres.
+- **Alineación con DDD.** Usar el lenguaje ubicuo como origen de los nombres elimina la "capa de traducción" entre el negocio y la ingeniería.
 
-### Negative
+### Negativas
 
-- **Migration cost.** Existing codebases not compliant with this ADR require a phased refactor. See Exception Policy for time-boxing.
-- **Learning curve.** Teams moving between languages must internalize per-layer rendering rules.
-- **Strictness may slow initial PRs.** Linters block merges until naming is correct. Investment in IDE plugins reduces friction (Roslyn live warnings, ESLint IDE integration).
+- **Coste de migración.** Las bases de código existentes que no cumplen este ADR requieren una refactorización por fases. Véase la política de excepciones para acotarla en el tiempo.
+- **Curva de aprendizaje.** Los equipos que se mueven entre lenguajes tienen que interiorizar las reglas de representación de cada capa.
+- **El rigor puede frenar los primeros PR.** Los linters bloquean los merges hasta que los nombres son correctos. Invertir en plugins de IDE reduce la fricción (avisos en vivo de Roslyn, integración de ESLint en el IDE).
 
 ---
 
-## 16. References
+## 16. Referencias
 
 - [Microsoft .NET Naming Guidelines](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/naming-guidelines)
 - [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html)
@@ -1091,34 +1091,34 @@ paths:
 - [Spectral OpenAPI Linter](https://stoplight.io/open-source/spectral)
 - [sqlfluff - SQL Linter](https://docs.sqlfluff.com)
 - [ArchUnit - Architecture Testing](https://www.archunit.org)
-- [ADR-0049 - Naming Semantics & Código Limpio Policy](./0049-naming-semantics-clean-code-policy.md) <- superseded scope
+- [ADR-0049 - Naming Semantics & Código Limpio Policy](./0049-naming-semantics-clean-code-policy.md) <- alcance superado
 - [ADR-0048 - Enterprise Taxonomy Reference Layout](./0048-enterprise-taxonomy-reference-layout.md)
 
 ---
 
-## Exception Log
+## Log de excepciones
 
-| ID | Date | Requester | Context | Excepted Rule | Justification | Sunset Date | Status |
+| ID | Fecha | Solicitante | Contexto | Regla exceptuada | Justificación | Fecha de caducidad | Estado |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | - | - | - | - | - | - | - | - |
 
 
 
 
-## Objective and Scope
+## Objetivo y Alcance
 
-Historical backfill: Address the architectural tension where context is unavailable, establishing a standard boundary.
+Backfill histórico: abordar la tensión arquitectónica en la que el contexto no está disponible, estableciendo un límite estándar.
 
-## Evidence and Evaluation Criteria
+## Evidencias y Criterios de Evaluación
 
-Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como la mantenibilidad y la confiabilidad).
 
-## Related Decisions and Standards
+## Decisiones y Estándares Relacionados
 
-None explicitly linked.
+Ninguna explícitamente enlazada.
 
 ---
 
-[Back to ADR Index](./README.md)
+[Volver al índice de ADR](./README.md)
 
 > **Agent Signature:** Architect Agent

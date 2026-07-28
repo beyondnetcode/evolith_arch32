@@ -1,6 +1,19 @@
 import { ICommandExecutor } from '@beyondnet/evolith-core-domain/domain/interfaces';
-import { PromptService } from '../prompts/prompt.service';
 import chalk from 'chalk';
+
+/**
+ * GT-580 — the strategy's progress sink, narrowed to the one method it uses.
+ *
+ * It used to take the whole `PromptService`, whose `showInfo` writes to STDOUT.
+ * In `--format json` that put `[DRY-RUN] Would execute ...` lines in front of the
+ * ADR-0073 envelope, so `evolith scaffold --runtime dotnet --format json | jq`
+ * failed to parse — a diagnostic on the machine channel. A structural type lets
+ * the caller hand over a stderr sink for machine formats without the strategy
+ * knowing anything about output formats.
+ */
+export interface DotnetProgressSink {
+  showInfo(message: string): void;
+}
 
 /**
  * GT-455: .NET target for `scaffold`. Generates an ASP.NET Core satellite whose
@@ -16,7 +29,7 @@ export class DotnetWorkspaceStrategy {
 
   constructor(
     private readonly executor: ICommandExecutor,
-    private readonly promptService: PromptService,
+    private readonly promptService: DotnetProgressSink,
   ) {}
 
   setDryRun(dryRun: boolean): void {

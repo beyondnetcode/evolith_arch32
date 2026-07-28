@@ -1,50 +1,50 @@
 # Discovery Canvas
 
 > **Bilingual Navigation:** [Versión en Español](./discovery-canvas-template.es.md)
-> **Propósito:** Registro inicial de una iniciativa para alinear el contexto, el problema a resolver, las restricciones técnicas y los atributos de calidad esperados.
+> **Purpose:** The initial record of an initiative, used to align the context, the problem to be solved, the technical constraints and the quality attributes that are expected of it.
 > 
-> **Fase SDLC:** 01 - Discovery / Ideación
+> **SDLC Phase:** 01 - Discovery / Ideation
 > 
-> **Responsable:** Solicitante / PM
+> **Owner:** Requester / PM
 > 
-> **Quality Gate:** Aprobación de Ideation Hub
+> **Quality Gate:** Ideation Hub approval
 
-## Metadatos del Artefacto
+## Artifact Metadata
 
-* **URL Upstream Evolith:** `En construcción - Solicitar a Upstream`
-* **Entradas Requeridas:** Necesidad técnica o problema detectado, patrocinador identificado.
-* **Salidas Esperadas:** Aprobación preliminar para avanzar hacia el Canvas de Factibilidad Técnica / PRD (Ideation Hub).
-* **Taxonomía Aplicada:** Alineado con glosario Evolith (MVP, NFRs, Bounded Context).
-* **Rules Evolith Aplicables:** R-03 (UTF-8 Clean), R-06 (Split Stories), R-09 (Readability).
+* **Evolith Upstream URL:** `Under construction - Request from Upstream`
+* **Required Inputs:** A technical need or a detected problem, and an identified sponsor.
+* **Expected Outputs:** Preliminary approval to move on to the Technical Feasibility Canvas / PRD (Ideation Hub).
+* **Applied Taxonomy:** Aligned with the Evolith glossary (MVP, NFRs, Bounded Context).
+* **Applicable Evolith Rules:** R-03 (UTF-8 Clean), R-06 (Split Stories), R-09 (Readability).
 
 ---
 
-## 1. Estructura Documental (Markdown)
+## 1. Document Structure (Markdown)
 
 ```markdown
-# [Nombre de la Iniciativa] - Discovery Canvas
+# [Initiative Name] - Discovery Canvas
 
-## 1. Contexto y Problema
-[Describe brevemente el escenario actual y el dolor principal que justifica esta iniciativa. Usa lenguaje técnico y de negocio claro (Rule R-09).]
+## 1. Context and Problem
+[Briefly describe the current situation and the main pain that justifies this initiative. Use clear technical and business language (Rule R-09).]
 
-## 2. Restricciones Técnicas y Calidad (NFRs)
-[¿Qué Atributos de Calidad son prioritarios (e.g., Latencia < 200ms, Alta Disponibilidad 99.9%, Seguridad de Datos)? ¿Cuáles son las limitaciones de infraestructura conocidas?]
+## 2. Technical Constraints and Quality (NFRs)
+[Which quality attributes are the priority (e.g., latency < 200ms, 99.9% high availability, data security)? What are the known infrastructure limitations?]
 
-## 3. Público Objetivo / Stakeholders
-[¿Quiénes son los usuarios impactados? ¿Quiénes son los ingenieros o patrocinadores involucrados?]
+## 3. Target Audience / Stakeholders
+[Who are the users affected? Which engineers or sponsors are involved?]
 
-## 4. Supuestos y Restricciones de Recursos
-[Lista de asunciones técnicas, límites de cuotas de nube o limitaciones del stack tecnológico que condicionan la iniciativa.]
+## 4. Assumptions and Resource Constraints
+[The list of technical assumptions, cloud quota limits or technology-stack limitations that condition the initiative.]
 
-## 5. Criterios de Éxito y Atributos de Calidad Preliminares
-[¿Cómo sabremos que esta iniciativa fue exitosa desde el punto de vista de arquitectura y rendimiento? (Métricas cualitativas o cuantitativas de NFRs).]
+## 5. Success Criteria and Preliminary Quality Attributes
+[How will we know this initiative succeeded from an architecture and performance point of view? (Qualitative or quantitative NFR metrics.)]
 ```
 
 ---
 
-## 2. Estructura de Datos (JSON)
+## 2. Data Structure (JSON)
 
-Para integración con el CLI de Evolith y herramientas automáticas de scaffolding.
+For integration with the Evolith CLI and with automated scaffolding tools.
 
 ```json
 {
@@ -61,19 +61,19 @@ Para integración con el CLI de Evolith y herramientas automáticas de scaffoldi
   "properties": {
     "initiativeName": {
       "type": "string",
-      "description": "Nombre oficial de la iniciativa."
+      "description": "Official name of the initiative."
     },
     "sponsor": {
       "type": "string",
-      "description": "Patrocinador ejecutivo (Stakeholder principal)."
+      "description": "Executive sponsor (primary stakeholder)."
     },
     "businessContext": {
       "type": "string",
-      "description": "Descripción del escenario actual."
+      "description": "Description of the current situation."
     },
     "problemStatement": {
       "type": "string",
-      "description": "Descripción del problema u oportunidad."
+      "description": "Description of the problem or the opportunity."
     },
     "expectedQualityAttributes": {
       "type": "object",
@@ -84,14 +84,14 @@ Para integración con el CLI de Evolith y herramientas automáticas de scaffoldi
         "availabilitySla": { "type": "string" },
         "securityCompliance": { "type": "string" }
       },
-      "description": "Atributos de calidad y NFRs requeridos."
+      "description": "Required quality attributes and NFRs."
     },
     "assumptions": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "Supuestos y restricciones operativas."
+      "description": "Assumptions and operational constraints."
     }
   }
 }
@@ -99,14 +99,14 @@ Para integración con el CLI de Evolith y herramientas automáticas de scaffoldi
 
 ---
 
-## 3. Ejemplo Mínimo Aplicado
+## 3. Minimal Worked Example
 
 ```json
 {
-  "initiativeName": "Modernización de Onboarding Digital",
-  "sponsor": "Dirección de Experiencia de Usuario",
-  "businessContext": "El proceso actual de alta de usuarios toma en promedio 48 horas debido a verificaciones manuales.",
-  "problemStatement": "Alta tasa de abandono (40%) durante las primeras 24 horas del registro debido a la latencia del proceso.",
+  "initiativeName": "Digital onboarding modernisation",
+  "sponsor": "User Experience Directorate",
+  "businessContext": "The current user sign-up process takes 48 hours on average because of manual verifications.",
+  "problemStatement": "A high drop-off rate (40%) during the first 24 hours after registration, caused by the latency of the process.",
   "expectedQualityAttributes": {
     "latencyMs": 200,
     "concurrencyRequestsSec": 500,
@@ -114,14 +114,14 @@ Para integración con el CLI de Evolith y herramientas automáticas de scaffoldi
     "securityCompliance": "OAuth2 / OWASP Top 10"
   },
   "assumptions": [
-    "El proveedor de validación de identidad soporta una SLA del 99.9%.",
-    "Cumplimiento normativo validado previamente por Compliance."
+    "The identity verification provider supports a 99.9% SLA.",
+    "Regulatory compliance has already been validated by Compliance."
   ]
 }
 ```
 
 ---
 
-## 4. Trazabilidad Handoff hacia la Siguiente Fase
+## 4. Handoff Traceability to the Next Phase
 
-La salida aprobada del **Discovery Canvas** (particularmente el `expectedQualityAttributes` y el `problemStatement`) se inyecta directamente como entrada fundamental para estructurar el **Canvas de Factibilidad Técnica** (Technical Feasibility Canvas). El CLI de Evolith utilizará los campos JSON para inicializar el documento de factibilidad técnica de forma automática.
+The approved output of the **Discovery Canvas** — and `expectedQualityAttributes` and `problemStatement` in particular — is injected directly as the foundational input from which the **Technical Feasibility Canvas** is structured. The Evolith CLI uses those JSON fields to initialise the technical feasibility document automatically.

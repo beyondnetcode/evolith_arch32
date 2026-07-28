@@ -11,6 +11,15 @@
  * Tenant/product/initiative context is passed as an ENV payload, never embedded
  * in `.harness` (design rule #8). Args are passed both as a JSON env var and as
  * a trailing `--args <json>` argv, so scripts can read whichever they prefer.
+ *
+ * ENVIRONMENT (GT-607): a capability receives an ALLOWLISTED environment built
+ * by {@link buildCapabilityEnv}, never `...process.env`. Nothing whose name
+ * looks like a credential or an endpoint (`*_TOKEN`, `*_KEY`, `*_SECRET`,
+ * `*_URL`, `*_URI`, …) reaches a child, from any path — not from the parent
+ * environment, not from an operator's allowlist, not from the injected payload.
+ * Configure what a capability legitimately needs with
+ * {@link HarnessProcessOptions.envAllowlist} (names read from the parent) or
+ * {@link HarnessProcessOptions.env} (values passed explicitly).
  */
 
 import { spawn } from 'node:child_process';
@@ -22,6 +31,10 @@ import type {
 } from '../../domain/ports/harness.port';
 import type { HarnessCapability } from '../../domain/contracts/capability';
 import { loadManifest, type HarnessCapabilityRuntime } from './harness-manifest';
+import { buildCapabilityEnv } from './capability-env';
+
+/** Heap ceiling handed to the `node` runner when the caller does not set one. */
+export const DEFAULT_CAPABILITY_MAX_MEMORY_MB = 2048;
 
 export interface HarnessProcessOptions {
   /** Path to the `.harness` directory (default: '<cwd>/.harness'). */
@@ -34,6 +47,24 @@ export interface HarnessProcessOptions {
   readonly timeoutMs?: number;
   /** Node executable (default: process.execPath). */
   readonly nodePath?: string;
+  /**
+   * EXTRA names read from the parent environment and forwarded to capabilities,
+   * appended to {@link DEFAULT_CAPABILITY_ENV_ALLOWLIST}. Credential- and
+   * endpoint-shaped names are refused here too (GT-607): pass those, if a
+   * capability genuinely needs one, by value through {@link env} after an
+   * explicit review — never by inheriting the host's ambient secrets.
+   */
+  readonly envAllowlist?: readonly string[];
+  /** Values handed to every capability explicitly, instead of inherited. */
+  readonly env?: Readonly<Record<string, string>>;
+  /** Called with the names refused for a spawn, so a host can log the demotion. */
+  readonly onEnvDenied?: (names: readonly string[], capability: string) => void;
+  /**
+   * Heap ceiling for the `node` runner, in MB
+   * (default {@link DEFAULT_CAPABILITY_MAX_MEMORY_MB}). Bounds a runaway
+   * capability; `0` disables the flag.
+   */
+  readonly maxMemoryMb?: number;
 }
 
 export class HarnessProcessAdapter implements IHarnessPort {
@@ -42,6 +73,10 @@ export class HarnessProcessAdapter implements IHarnessPort {
   private readonly manifestFile: string;
   private readonly timeoutMs: number;
   private readonly nodePath: string;
+  private readonly envAllowlist: readonly string[];
+  private readonly explicitEnv: Readonly<Record<string, string>>;
+  private readonly onEnvDenied?: (names: readonly string[], capability: string) => void;
+  private readonly maxMemoryMb: number;
   private cache?: HarnessCapabilityRuntime[];
 
   constructor(options: HarnessProcessOptions = {}) {
@@ -50,6 +85,10 @@ export class HarnessProcessAdapter implements IHarnessPort {
     this.manifestFile = options.manifestFile ?? 'manifest.yaml';
     this.timeoutMs = options.timeoutMs ?? 120_000;
     this.nodePath = options.nodePath ?? process.execPath;
+    this.envAllowlist = options.envAllowlist ?? [];
+    this.explicitEnv = options.env ?? {};
+    this.onEnvDenied = options.onEnvDenied;
+    this.maxMemoryMb = options.maxMemoryMb ?? DEFAULT_CAPABILITY_MAX_MEMORY_MB;
   }
 
   private manifest(): HarnessCapabilityRuntime[] {
@@ -81,12 +120,18 @@ export class HarnessProcessAdapter implements IHarnessPort {
 
     const { command, args } = this.resolveCommand(cap, request);
     const startedAt = Date.now();
-    const env = {
-      ...process.env,
-      AGENT_RUNTIME_ARGS: JSON.stringify(request.args ?? {}),
-      AGENT_RUNTIME_CONTEXT: JSON.stringify(request.context ?? {}),
-      AGENT_RUNTIME_DRY_RUN: request.dryRun ? '1' : '0',
-    };
+    // GT-607 — least privilege: an allowlisted environment, never `...process.env`.
+    const { env, denied } = buildCapabilityEnv({
+      parentEnv: process.env,
+      extraAllowlist: this.envAllowlist,
+      explicit: this.explicitEnv,
+      payload: {
+        AGENT_RUNTIME_ARGS: JSON.stringify(request.args ?? {}),
+        AGENT_RUNTIME_CONTEXT: JSON.stringify(request.context ?? {}),
+        AGENT_RUNTIME_DRY_RUN: request.dryRun ? '1' : '0',
+      },
+    });
+    if (denied.length > 0) this.onEnvDenied?.(denied, cap.name);
 
     return await new Promise<HarnessExecutionResult>((resolve) => {
       const child = spawn(command, args, { cwd: this.cwd, env, stdio: ['pipe', 'pipe', 'pipe'] });
@@ -138,8 +183,11 @@ export class HarnessProcessAdapter implements IHarnessPort {
         // The shell script should read from stdin or $AGENT_RUNTIME_ARGS env var.
         return { command: entryPath, args: [] };
       case 'node':
-      default:
-        return { command: this.nodePath, args: [entryPath, '--args', argsJson] };
+      default: {
+        // Bounded heap — a capability cannot exhaust the host by looping (ADR-0092).
+        const nodeFlags = this.maxMemoryMb > 0 ? [`--max-old-space-size=${this.maxMemoryMb}`] : [];
+        return { command: this.nodePath, args: [...nodeFlags, entryPath, '--args', argsJson] };
+      }
     }
   }
 

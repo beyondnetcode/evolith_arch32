@@ -39,38 +39,30 @@ function stripCodeBlocks(content) {
 }
 
 /**
- * GT-620 — the debt this heuristic found on the day it was switched on.
+ * GT-620 / GT-628 — the debt this heuristic found on the day it was switched on,
+ * and the day it was paid off.
  *
- * Eight documents sit in the wrong language slot. It was nineteen when the
- * heuristic was switched on: seven documents have been translated, and FOUR
- * were the heuristic's own fault — `ADR_COVERAGE.es.md` and friends are Spanish
- * documents whose bodies are tables of English ADR titles, and counting a row of
- * proper nouns as prose made correct files look mislabelled. They are BASELINED,
- * not forgiven — the gate fails for any file outside this list, so the class cannot
- * grow while the backlog is worked off, and every removal from this list is a
- * translation that actually happened.
+ * Nineteen documents sat in the wrong language slot when the heuristic was first
+ * run. FOUR of those were the heuristic's own fault — `ADR_COVERAGE.es.md` and
+ * friends are Spanish documents whose bodies are tables of English ADR titles,
+ * and counting a row of proper nouns as prose made correct files look
+ * mislabelled; that was fixed in the heuristic itself, not excused here. The
+ * remaining fifteen were real, and they were carried in a BASELINE SET named
+ * file by file — deliberately a named list rather than a count, because a
+ * numeric ratchet lets one mislabelled file be swapped for another without the
+ * number moving, which is the failure mode this board keeps finding in its own
+ * guards.
  *
- * A named list rather than a count, deliberately: a numeric ratchet lets one
- * mislabelled file be swapped for another without the number moving, which is
- * the failure mode this board keeps finding in its own guards. Tracked as
- * GT-628. Delete an entry when its file is translated; when the list is empty,
- * delete the list.
- *
- * `reference/core/interfaces/using-the-cli.md` is deliberately ABSENT: it is the
- * file GT-620 was registered for, it has been rewritten in English, and it must
- * fail this gate if it ever regresses.
+ * That set is now EMPTY and therefore deleted (GT-628): every entry was removed
+ * by an actual translation, the last eight being `using-the-mcp.md`,
+ * `src/packages/mcp-server/README.md`, the `.es.md` of ADR-0054 and ADR-0056,
+ * `scripts-taxonomy.es.md`, `minimal-apis-vs-controllers-analysis.es.md` and the
+ * two SDLC artifact templates. With no baseline left, EVERY EN/ES pair in the
+ * repository must now read in its own slot's language — including
+ * `reference/core/interfaces/using-the-cli.md`, the file GT-620 was registered
+ * for, which was already outside the baseline for exactly this reason. Do not
+ * reintroduce a baseline to make a red gate green: translate the file.
  */
-const LANGUAGE_BASELINE = new Set([
-  'product/research/research/minimal-apis-vs-controllers-analysis.es.md',
-  'reference/core/architecture/adrs/core/0054-database-design-normalization-standards.es.md',
-  'reference/core/architecture/adrs/core/0056-enterprise-naming-design-conventions.es.md',
-  'reference/core/interfaces/using-the-mcp.md',
-  'reference/core/sdlc/04-artifact-templates/ballpark-estimation-template.md',
-  'reference/core/sdlc/04-artifact-templates/discovery-canvas-template.md',
-  'reference/harness/scripts-taxonomy.es.md',
-  'src/packages/mcp-server/README.md',
-]);
-
 
 function countHeaders(content) {
   const headingPattern = /^#{2,3}\s+.+$/gm;
@@ -140,9 +132,9 @@ for (const file of markdownFiles) {
         // can carry identical headings and be the same language.
         // `content` IS the English file in this branch — the walker is on the
         // `.md` and read its Spanish counterpart above.
-        const relativePosix = relative.split(path.sep).join('/');
+        // GT-628: no baseline any more — every pair is judged.
         const enLang = languageOf(content);
-        if (enLang.verdict === 'es' && !LANGUAGE_BASELINE.has(relativePosix)) {
+        if (enLang.verdict === 'es') {
           failures.push(
             `${relative}: the ENGLISH slot reads as Spanish ` +
             `(${enLang.es} Spanish function words vs ${enLang.en} English). ` +
@@ -150,7 +142,7 @@ for (const file of markdownFiles) {
           );
         }
         const esLang = languageOf(spanishContent);
-        if (esLang.verdict === 'en' && !LANGUAGE_BASELINE.has(relativePosix.replace(/\.md$/, '.es.md'))) {
+        if (esLang.verdict === 'en') {
           failures.push(
             `${relative.replace(/\.md$/, '.es.md')}: the SPANISH slot reads as English ` +
             `(${esLang.en} English function words vs ${esLang.es} Spanish).`,

@@ -429,21 +429,21 @@ jobs:
       - name: Execute the board's recorded validationCommands (report mode)
         run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose
 
-      # Ratchet, not a cliff. 305 -> 303: two false-DEAD classes were repaired
-      # (a quoted grep pattern containing a slash, and a trailing parenthetical
-      # annotation — both were being resolved against disk as if they were paths).
+      # Ratchet, not a cliff. The budget is 305, which is what THIS RUNNER counts.
       #
-      # The number no longer depends on WHERE it is measured, which is what made
-      # the previous one fragile: the guard now prints its own "ratchet basis",
-      # adding back the references that resolve only through generated state
-      # (dist/, node_modules/, .harness/bin/). A developer machine and this runner
-      # therefore agree on 303 even though their raw counts differ by 15. Read the
-      # basis line, not the raw count, when lowering this.
+      # It was briefly lowered to 303 on the strength of the guard's computed
+      # "ratchet basis" — 288 dead locally plus 15 that resolve only through
+      # generated state. The runner then reported 305 and the job went red. The
+      # basis is a useful diagnostic and it is NOT yet an accurate predictor of
+      # this number, so it must not be used to set the budget: only a count
+      # observed here may lower it. That is the same rule that put 305 here in the
+      # first place, and I broke it by trusting a derived figure over a measured
+      # one.
       #
-      # Lower it as records are repaired; at 0, delete the flag and this becomes
-      # the strict gate.
+      # Lower it as records are repaired, from a number this job printed; at 0,
+      # delete the flag and this becomes the strict gate.
       - name: Dead-reference ratchet (must not grow)
-        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 303
+        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 305
 
   # RETIRED 2026-07-27 (GT-570): the `publish-npm` job lived here and published
   # ONLY `src/sdk/cli`, with `--tag beta` and no provenance, writing the token

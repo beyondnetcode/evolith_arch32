@@ -8508,6 +8508,103 @@
         "The gate fired for real: run 30355511518 stopped before publishing the MCP with \"PatternCatalogService is not a constructor\", a second broken published package the audit had missed."
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-571",
+      "closedAt": "2026-07-28",
+      "closureCommit": "097cacfe",
+      "evidence": [
+        ".harness/scripts/generate-adr-rulesets.mjs",
+        "src/rulesets/adr/generated/",
+        "src/packages/core-domain/src/application/validators/rule-applicability.spec.ts",
+        "src/sdk/cli/README.md"
+      ],
+      "validationCommands": [
+        "Fresh satellite (evolith init --name my-sat --yes; evolith validate) -> exit 0, status warning, 0 BLOCKING issues, 242 not-applicable of a 387 corpus. Was 91 blocking of 230.",
+        "Same build against the Core repository -> exit 2, 111 blocking, 55 not-applicable, all 133 generated ADR rules still evaluated. The audience gate is a filter, not an off-switch.",
+        "rule-applicability.spec.ts reads the REAL generated corpus: removing audience from one ruleset turns it red; regenerating turns it green.",
+        "README quickstart executed literally: fixtures 0, init 0, docs 0, validate 2 (documented blocking verdict), evolith-mcp serve starts on stdio."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-627",
+      "closedAt": "2026-07-28",
+      "closureCommit": "41ec8365",
+      "evidence": [
+        ".github/workflows/docs.yml",
+        ".harness/scripts/generate-adr-rulesets.mjs",
+        ".harness/scripts/generate-adr-rulesets.test.mjs"
+      ],
+      "validationCommands": [
+        "generate-adr-rulesets.mjs --check -> exit 0, \"140 ADR(s), no drift, all covered\". Wired into Validate documentation, a required check.",
+        "Negative fixture: removing a generated ruleset -> exit 1 \"drifted or missing\"; the test restores the tree and re-asserts exit 0.",
+        "Anti-vacuous: a zero-ADR scan now fails instead of reporting no drift, and the denominator is printed.",
+        "The generator self-test was red on two paths missing the src/ prefix (a pre-existing failure); fixed, 8/8, and run in the same required job."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-620",
+      "closedAt": "2026-07-28",
+      "closureCommit": "9a462387",
+      "evidence": [
+        ".harness/scripts/lib/language-heuristic.mjs",
+        ".harness/scripts/ci/suites/bilingual-suite.mjs",
+        ".harness/scripts/ci/suites/bilingual-suite.test.mjs",
+        "reference/core/interfaces/using-the-cli.md"
+      ],
+      "validationCommands": [
+        "Restoring the Spanish text into the English slot turns 04-check-bilingual-parity RED: \"the ENGLISH slot reads as Spanish (710 Spanish function words vs 71 English)\". Restoring the English guide turns it green.",
+        "node --test .harness/scripts/ci/suites/bilingual-suite.test.mjs -> 7/7: both verdicts, both refusals to judge (sample too small, majority too close), and the code/flag/link stripping trap.",
+        "Switching the heuristic on surfaced 19 further mislabelled documents, baselined BY NAME and registered as GT-628."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-611",
+      "evidence": [
+        "src/sdk/cli/src/infrastructure/prompts/non-interactive-contract.spec.ts",
+        "src/sdk/cli/src/infrastructure/prompts/prompt.service.ts",
+        "src/sdk/cli/src/infrastructure/prompts/interactivity.ts"
+      ],
+      "validationCommands": [
+        "non-interactive-contract.spec.ts -> 19/19.",
+        "Mutation: adding a command file that imports @clack/prompts directly turns the surface scan RED, proving it covers commands written after it."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "e23721f5",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-612",
+      "evidence": [
+        "src/packages/agent-runtime/src/application/agent-runtime.service.ts",
+        "src/packages/agent-runtime/src/__tests__/engine-proposal-and-memory.spec.ts"
+      ],
+      "validationCommands": [
+        "engine-proposal-and-memory.spec.ts -> 12/12.",
+        "Mutation: replacing the memory.history() read with an empty array turns 3 tests RED, including \"turn 2 receives turn 1 in the plan context\"."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "e23721f5",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-586",
+      "evidence": [
+        "src/packages/contracts/src/fixtures/evaluation-contract.fixtures.ts",
+        "src/packages/contracts/src/fixtures/evaluation-contract.fixtures.spec.ts",
+        "src/packages/contracts/src/index.ts"
+      ],
+      "validationCommands": [
+        "contracts jest -> 72/72 (was 68).",
+        "The fixtures are exported from the PACKAGE INDEX, verified by requiring dist/index.js: both symbols present.",
+        "Additivity asserted: EVALUATION_RESULT_PASS_FIXTURE carries neither field and still resolves to PASSED."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "e23721f5",
+      "dependencyDisposition": "none"
     }
   ]
 }

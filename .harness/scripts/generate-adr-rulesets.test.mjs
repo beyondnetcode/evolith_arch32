@@ -10,9 +10,10 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync, copyFileSync, unlinkSync, rmSync, mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import {
   generate, buildRuleset, handcraftedKeys, REPO_ROOT, GENERATED_DIR,
@@ -23,9 +24,9 @@ const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 
 const GEN_SCRIPT = join(REPO_ROOT, '.harness', 'scripts', 'generate-adr-rulesets.mjs');
-const HANDCRAFTED_DIR = join(REPO_ROOT, 'rulesets', 'adr');
+const HANDCRAFTED_DIR = join(REPO_ROOT, 'src', 'rulesets', 'adr');
 const SCHEMA = JSON.parse(
-  readFileSync(join(REPO_ROOT, 'rulesets', 'schema', 'ruleset-standard.schema.json'), 'utf8'),
+  readFileSync(join(REPO_ROOT, 'src', 'rulesets', 'schema', 'ruleset-standard.schema.json'), 'utf8'),
 );
 
 function compileSchema() {
@@ -111,4 +112,45 @@ test('buildRuleset is deterministic (same input -> identical output)', () => {
   const a = JSON.stringify(buildRuleset(sample).ruleset);
   const b = JSON.stringify(buildRuleset(sample).ruleset);
   assert.equal(a, b, 'buildRuleset must be deterministic');
+});
+
+// ---------------------------------------------------------------------------
+// GT-627 — `--check` is the guard that would have caught the corpus falling
+// seven rulesets behind its own generator. Six of those seven were SECURITY
+// standards (ADR-0119..0124), accepted with no conformance ruleset at all,
+// because nobody re-ran the generator and nothing in CI ran this check.
+//
+// A guard nobody has seen fail is the defect this repository keeps finding in
+// itself, so both failure modes are exercised here rather than asserted.
+// ---------------------------------------------------------------------------
+
+const runCheck = () =>
+  spawnSync(process.execPath, [GEN_SCRIPT, '--check'], { encoding: 'utf8', timeout: 120000 });
+
+test('--check passes over the committed corpus, and says how many ADRs it compared', () => {
+  const res = runCheck();
+  assert.equal(res.status, 0, res.stdout + res.stderr);
+  // The denominator must be in the output: "no drift" over an unknown number of
+  // ADRs is not a claim anybody can check.
+  assert.match(res.stdout, /--check passed: \d+ ADR\(s\), no drift/);
+});
+
+test('--check turns RED when a generated ruleset is missing', () => {
+  const dir = join(REPO_ROOT, 'src', 'rulesets', 'adr', 'generated');
+  const victim = readdirSync(dir).filter((f) => f.endsWith('.rules.json'))[0];
+  assert.ok(victim, 'expected at least one generated ruleset to remove');
+  const full = join(dir, victim);
+  const backup = join(mkdtempSync(join(tmpdir(), 'gt627-')), victim);
+  copyFileSync(full, backup);
+  try {
+    unlinkSync(full);
+    const res = runCheck();
+    assert.equal(res.status, 1, 'a missing generated ruleset must fail --check');
+    assert.match(res.stdout + res.stderr, /drifted or missing/);
+  } finally {
+    copyFileSync(backup, full);
+    rmSync(backup, { force: true });
+    // Leave the tree exactly as found, or every later test in this run is a lie.
+    assert.equal(runCheck().status, 0, 'the corpus must be restored');
+  }
 });

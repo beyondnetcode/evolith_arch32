@@ -1890,6 +1890,12 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 
 **Problem:** circuit breakers + DR are `Designed` but untested at scale; no chaos drills; RTO/RPO not quantified. **Closure:** breaker integration tests + K6 load/chaos + DR deploy with measured RTO/RPO. **References:** ADR-0011/0013/0037.
 
+- **Acceptance criteria:**
+  - [ ] Circuit-breaker integration tests exercise open, half-open and closed transitions against a failing dependency, and fail without the breaker.
+  - [ ] A K6 load profile runs in CI and publishes throughput, p95 latency and error rate against declared thresholds.
+  - [ ] One chaos drill kills a dependency mid-run and the recorded behaviour matches what ADR-0011 declares.
+  - [ ] RTO and RPO are MEASURED on a real DR restore and written into ADR-0013, replacing the current unquantified claim.
+
 #### GT-444
 
 **Title:** External penetration test
@@ -7171,7 +7177,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
 - **Acceptance criteria:**
   - [x] `npx @beyondnet/evolith-cli@latest` followed by the literal README sequence completes in a clean container.
-  - [ ] A freshly initialized repo returns 0 blocking findings, asserted by a test that fails if it rises again.
+  - [x] A freshly initialized repo returns 0 blocking findings, asserted by a test that fails if it rises again.
   - [x] `--help` names the real command, not `main`.
 
 #### GT-572
@@ -7536,7 +7542,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Acceptance criteria:**
   - [x] The context accepts an optional typed requester and a repository revision.
   - [x] The result echoes both, and a verdict without them still validates (proving the change is additive).
-  - [ ] The contract fixtures in `@beyondnet/evolith-contracts` cover the new fields.
+  - [x] The contract fixtures in `@beyondnet/evolith-contracts` cover the new fields.
 
 
 #### GT-587
@@ -7788,7 +7794,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith CLI` · **Criticality:** P1 · **Complexity:** M
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-612
 
@@ -7799,7 +7805,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `agent-runtime` · **Criticality:** P1 · **Complexity:** M
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-613
 
@@ -7887,7 +7893,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Documentation` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-621
 
@@ -7925,6 +7931,45 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] A commit with a malformed message is rejected locally, demonstrated by trying one.
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
+
+#### GT-629
+
+**Title:** The tracking guard never asks whether an open row has acceptance criteria
+
+- **Purpose:** Make a row that cannot be closed impossible to register.
+- **Evidence:** **A row can sit IN-PROGRESS forever with no acceptance criteria, and the tracking guard will not say so.** `08-validate-tracking.mjs` enforces that a `DONE` row has every criterion ticked — the check that has caught four false closures this week — but it never asks whether an OPEN row has any criteria to tick. `GT-443` was in that state: registered, in progress, and structurally unclosable, because its catalog section carried prose instead of a criteria list. Found on 2026-07-28 while auditing why 24 rows were in progress. A row with no criteria is worse than an unmet one: it cannot be finished, cannot be measured, and reads as active work.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** XS
+- **Provenance:** Found on 2026-07-28 while auditing the 24 in-progress rows.
+- **Acceptance criteria:**
+  - [ ] `08-validate-tracking.mjs` fails when any non-DONE `GT-*` row has an empty acceptance-criteria list.
+  - [ ] The check ships with a negative fixture: stripping the criteria from one row turns it red.
+  - [ ] The count of rows checked is printed, so a zero-row scan cannot report a pass.
+
+#### GT-628
+
+**Title:** Nineteen documents sit in the wrong language slot, including both main interface guides
+
+- **Purpose:** Give every bilingual pair a real counterpart, so the English entry points exist before the project is public.
+- **Evidence:** **Nineteen documents sit in the wrong language slot, and the gate could not see any of them until 2026-07-28.** Found the moment GT-620's language heuristic was switched on. EIGHT English slots are written in Spanish — `reference/core/interfaces/using-the-mcp.md` (956 Spanish function words vs 107 English), `using-the-rest-api.md` (1231 vs 35), `src/packages/mcp-server/README.md` (573 vs 21), `reference/knowledge/README.md`, `reference/knowledge/canonical/glossary/knowledge.md`, `reference/core/sdlc/governance/adr-0090-rule-language-policy.md` and two SDLC artifact templates. ELEVEN Spanish slots are written in English, including the `.es.md` of three SECURITY ADRs (0120 SSRF prevention, 0121 input validation, 0122 shell-execution safety) and both copies of `ADR_COVERAGE.es.md`. The project is at the cusp of open source and its two main interface guides — MCP and REST — have no English entry point at all, exactly the finding GT-620 recorded for the CLI guide. They are baselined BY NAME in `bilingual-suite.mjs` so the class cannot grow; every entry deleted from that list is a translation that actually happened.
+- **Component:** `Documentation` · **Criticality:** P1 · **Complexity:** L
+- **Provenance:** Found on 2026-07-28 the moment GT-620's language heuristic was switched on.
+- **Acceptance criteria:**
+  - [ ] `LANGUAGE_BASELINE` in `bilingual-suite.mjs` is empty and the constant is deleted.
+  - [ ] `using-the-mcp.md` and `using-the-rest-api.md` read as English, asserted by the heuristic.
+  - [ ] The `.es.md` of ADR-0120, ADR-0121 and ADR-0122 read as Spanish.
+
+#### GT-627
+
+**Title:** The generated ADR corpus drifts from the ADR set, and nothing in CI notices
+
+- **Purpose:** Make an accepted ADR without a generated ruleset fail CI, instead of waiting for someone to regenerate by hand.
+- **Evidence:** **The committed ADR-conformance corpus was seven rulesets behind its own generator, and six of the seven are security standards.** Found on 2026-07-28 while regenerating for `GT-571`: `generate-adr-rulesets.mjs` wrote 133 rulesets where the repository had 126. The missing ones are ADR-0118 plus **ADR-0119 (API security configuration hardening), ADR-0120 (SSRF prevention), ADR-0121 (input validation and sanitization), ADR-0122 (shell execution safety), ADR-0123 (timing-safe comparison) and ADR-0124 (credential and secret management)** — accepted decisions with no conformance ruleset in the corpus at all, because nobody re-ran the generator after they were accepted. Nothing detected it: the generator prints a coverage figure but is not run with a `--check` in CI, so the corpus could drift from the ADR set indefinitely. This is the same shape as `GT-424` (a registry that drifts because only one direction is enforced) and `GT-607` (Accepted ADRs with no implementing code), and it is why `GT-595`'s pinned triage snapshot moved: 143 non-executable to 150, 126 ADR-conformance rules to 133.
+- **Component:** `Governance` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Found on 2026-07-28 while regenerating the corpus for GT-571.
+- **Acceptance criteria:**
+  - [x] CI runs `generate-adr-rulesets.mjs --check` (or equivalent) and fails when the committed corpus differs from what the generator produces.
+  - [x] The check ships with a negative fixture: deleting one generated ruleset turns it red.
+  - [x] The check publishes its denominator, so a zero-ADR scan cannot report a pass.
 
 #### GT-626
 

@@ -82,6 +82,23 @@ jobs:
       - name: Reconcile maturity evidence
         run: node .harness/scripts/ci/09-reconcile-maturity.mjs --check
 
+      # GT-627: the generated ADR-conformance corpus fell SEVEN rulesets behind
+      # its own generator, and six of the seven were security standards
+      # (ADR-0119..0124: SSRF prevention, input validation, shell-execution
+      # safety, timing-safe comparison, credential management, API hardening) —
+      # accepted decisions with no conformance ruleset at all. Nothing detected
+      # it for as long as it lasted, because the generator was only ever run by
+      # hand. It has always supported `--check`; nobody ran it.
+      #
+      # This lives in a REQUIRED check on purpose. The same drift in the skill
+      # registry (GT-424) went unnoticed for weeks behind a guard that existed
+      # and was not enforced.
+      - name: ADR ruleset corpus matches its generator
+        run: node .harness/scripts/generate-adr-rulesets.mjs --check
+
+      - name: Self-tests for the ADR ruleset generator
+        run: node --test .harness/scripts/generate-adr-rulesets.test.mjs
+
       - name: Validate machine contracts
         run: node .harness/scripts/ci/10-validate-contract-conformance.mjs
 

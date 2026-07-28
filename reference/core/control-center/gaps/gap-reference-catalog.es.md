@@ -7128,7 +7128,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criterios de aceptación:**
   - [x] Un veredicto real round-trip en CI registra `decision != SKIPPED` sobre una violación arquitectónica genuina.
   - [x] Un test de contrato dirigido por el consumidor corre en el CI del Core y falla cuando la forma del envelope deriva.
-  - [ ] Los schemas del request de evaluate y de `EvaluationResult` están en `MACHINE_CONTRACT_SET` y re-pinneados en el Tracker.
+  - [x] Los schemas del request de evaluate y de `EvaluationResult` están en `MACHINE_CONTRACT_SET` y re-pinneados en el Tracker.
 
 #### GT-574
 
@@ -7156,9 +7156,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `agent-runtime` · **Criticidad:** P0 · **Complejidad:** S
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
-  - [ ] La key viaja en un header, con timeout, presupuesto de bytes/tokens, redacción de entrada y salida validada contra schema.
-  - [ ] Una sección "Egress de red y tratamiento de datos" nombra el endpoint, qué se envía, el opt-in y el sub-procesador.
-  - [ ] El repositorio pasa sus propias 9 reglas `AAI-*` blocking en un check de CI.
+  - [x] La key viaja en un header, con timeout, presupuesto de bytes/tokens, redacción de entrada y salida validada contra schema.
+  - [x] Una sección "Egress de red y tratamiento de datos" nombra el endpoint, qué se envía, el opt-in y el sub-procesador.
+  - [x] El repositorio pasa sus propias 9 reglas `AAI-*` blocking en un check de CI.
 
 #### GT-576
 
@@ -7851,6 +7851,19 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Un commit con mensaje malformado se rechaza en local, demostrado intentándolo.
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
+
+#### GT-631
+
+**Title:** El Tracker no ha re-fijado el contrato de evaluación que el Core ya publica
+
+- **Purpose:** Cerrar la mitad del consumidor, para que un cambio de forma del lado Core falle en ambos lados y no solo en el nuestro.
+- **Evidence:** **Extraído de [`GT-573`](./gap-reference-catalog.es.md#gt-573) para que su mitad cross-repo se siga en vez de absorberse en un cierre.** La mitad del Core del tercer criterio de GT-573 está hecha: `evaluation-context` y `evaluation-result` están fijados en `MACHINE_CONTRACT_SET` junto a `gate-evidence` y `output-envelope`, así que un cambio en cualquiera de esas formas ya rompe `10-validate-contract-conformance` en vez de llegar en silencio a los consumidores. Lo que queda está en otro repositorio y no se puede hacer desde aquí: el **Tracker** debe re-fijar esos dos esquemas en su propio `contracts/evolith-core-contracts.json` con su sha256, enlazar las tres fixtures publicadas (`EVALUATION_RESULT_PASS/FAIL/OPA_GATE_FAIL`) en un test de binding de DTOs, quitar o documentar `resolvedTopology` (que el resultado canónico nunca llevó), renombrar su `phase` de gate a `phaseId`, y eliminar su caída a `SKIPPED` para un payload que trae un `overallVerdict` no vacío. Hasta entonces, un cambio de forma del lado Core se caza aquí y sigue sorprendiendo al consumidor.
+- **Component:** `Evolith Tracker` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Extraído de GT-573 el 2026-07-28, al cerrarse su mitad del Core.
+- **Acceptance criteria:**
+  - [ ] El Tracker fija `evaluation-context` y `evaluation-result` con su sha256 en su propio conjunto de contratos, y su CI falla cuando cualquiera deriva.
+  - [ ] Un test de binding de DTOs consume las tres fixtures publicadas y comprueba `Passed=false` con gates no vacíos en el caso de FAIL por puerta OPA.
+  - [ ] Se resuelven `resolvedTopology` y el desajuste `phase`/`phaseId` del gate, y se elimina la caída a `SKIPPED` para un `overallVerdict` no vacío.
 
 #### GT-630
 

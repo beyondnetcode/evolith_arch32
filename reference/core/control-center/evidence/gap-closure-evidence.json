@@ -8718,6 +8718,37 @@
         "Registered in guard-classification.mjs: 42 reports 58 guards classified, 43 reports 35 observed failing."
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-573",
+      "evidence": [
+        "src/rulesets/contracts/evolith-machine-contracts.json",
+        "src/packages/contracts/src/fixtures/evaluation-contract.fixtures.ts"
+      ],
+      "validationCommands": [
+        "MACHINE_CONTRACT_SET now pins gate-evidence, output-envelope, evaluation-context and evaluation-result (was the first two only).",
+        "10-validate-contract-conformance exit 0 over 4 schemas.",
+        "The consumer half is another repository and is carved out as GT-631 with its five concrete steps, not absorbed into this closure."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "b16bd9fd",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-575",
+      "evidence": [
+        "src/packages/agent-runtime/src/providers/GeminiProvider.ts",
+        "src/packages/agent-runtime/README.md",
+        "src/packages/agent-runtime/src/__tests__/agentic-ai-self-conformance.spec.ts"
+      ],
+      "validationCommands": [
+        "agentic-ai-self-conformance.spec.ts -> 13/13, evaluating the repository against the nine blocking AAI-* rules it ships.",
+        "NEGATIVE FIXTURE: without agent.config.json all nine evaluate to failed.",
+        "CAVEAT recorded on the row: the spec runs in Test agent-runtime, which is NOT one of main’s seven required contexts (verified against the live branch protection). It reports; it does not govern. Making it required is an owner action."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "b16bd9fd",
+      "dependencyDisposition": "none"
     }
   ]
 }

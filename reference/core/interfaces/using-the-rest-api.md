@@ -1,27 +1,27 @@
-# Cómo usar la API REST de Evolith Core
+# How to use the Evolith Core REST API
 
-Guía práctica para integrar Evolith Core vía su API HTTP. Esta es la superficie
-que consume el **Evolith Tracker** (y cualquier integrador): un middleware sobre
-el Core — que es un **motor de evaluación stateless** — expuesto tras un envelope
-uniforme.
+A practical guide to integrating Evolith Core over its HTTP API. This is the surface
+the **Evolith Tracker** consumes (and any other integrator): middleware over the
+Core — which is a **stateless evaluation engine** — exposed behind a uniform
+envelope.
 
-Está pensada para leerse una vez y consultarse por endpoint después.
+It is meant to be read once and consulted per endpoint afterwards.
 
 ---
 
-## 1. Qué es la API y cómo se llama
+## 1. What the API is, and how you call it
 
-El Core no guarda estado: recibe un **contexto de evaluación** y devuelve un
-**veredicto**. La API expone esa evaluación (más los datos de referencia que el
-consumidor necesita: rulesets, topologías, requisitos de fase) sobre HTTP.
+The Core holds no state: it receives an **evaluation context** and returns a
+**verdict**. The API exposes that evaluation, plus the reference data a consumer
+needs (rulesets, topologies, phase requirements), over HTTP.
 
-- **Base URL:** todos los endpoints de negocio viven bajo `/api/v1/…`
-  (versionado por URI). Ejemplo: `POST /api/v1/evaluate`.
-- **Formato:** `application/json` en request y response.
-- **Endpoints de salud y métricas** (`/health`, `/metrics`) son *version-neutral*
-  (sin el prefijo `/api/v1`).
+- **Base URL:** every business endpoint lives under `/api/v1/…` (URI versioning).
+  For example: `POST /api/v1/evaluate`.
+- **Format:** `application/json` on both request and response.
+- **Health and metrics endpoints** (`/health`, `/metrics`) are *version-neutral* —
+  no `/api/v1` prefix.
 
-Ejemplo de llamada:
+A call looks like this:
 
 ```http
 POST /api/v1/gates/PG1/evaluate
@@ -32,66 +32,66 @@ Content-Type: application/json
 
 ---
 
-## 2. Tres conceptos que aplican a (casi) todos los endpoints
+## 2. Three concepts that apply to (almost) every endpoint
 
-### 2.1. El envelope de respuesta (ADR-0073)
+### 2.1. The response envelope (ADR-0073)
 
-Cada respuesta —de éxito o de error— viene envuelta igual. En éxito:
+Every response — success or error — is wrapped the same way. On success:
 
 ```json
-{ "success": true, "data": { /* el resultado */ },
+{ "success": true, "data": { /* the result */ },
   "meta": { "executedAt": "…", "correlationId": "…", "schemaVersion": "1.0.0" } }
 ```
 
-En error, un envelope con el mismo `code` de dominio que usan la CLI y MCP:
+On error, an envelope carrying the same domain `code` the CLI and MCP use:
 
 ```json
 { "success": false, "error": { "code": "RULESET_NOT_FOUND", "message": "…" }, "meta": { /* … */ } }
 ```
 
-El código HTTP acompaña la semántica (`200` éxito, `422` entrada no procesable,
-`503` no disponible…), pero el `error.code` del envelope es el contrato estable
-que debes leer.
+The HTTP status matches the semantics (`200` success, `422` unprocessable input,
+`503` unavailable, and so on), but the envelope's `error.code` is the stable
+contract you should read.
 
-### 2.2. `workspaceRef`, no rutas
+### 2.2. `workspaceRef`, not paths
 
-El Core es stateless y **no recibe rutas de filesystem crudas** por la red. En su
-lugar, muchos endpoints piden un **`workspaceRef`**: una referencia opaca que el
-Tracker emite y el Core resuelve del lado del servidor. Piensa en él como un
-handle al contenido del satélite, no como una ruta local.
+The Core is stateless and **does not accept raw filesystem paths** over the
+network. Instead, most endpoints ask for a **`workspaceRef`**: an opaque
+reference the Tracker issues and the Core resolves server-side. Think of it as a
+handle to the satellite's content, not as a local path.
 
-### 2.3. Autenticación
+### 2.3. Authentication
 
-En producción la API se protege con una **API key** (`ApiKeyGuard`). Si
-`EVOLITH_API_KEY` no está configurada, la API corre **sin autenticar** (útil en
-desarrollo, no en producción — el servidor lo advierte en logs). Cuando está
-activa, se envía la key en la cabecera acordada por tu despliegue.
+In production the API is protected by an **API key** (`ApiKeyGuard`). If
+`EVOLITH_API_KEY` is not configured, the API runs **unauthenticated** — useful in
+development, not in production, and the server warns about it in the logs. When
+it is active, the key travels in the header your deployment agreed on.
 
 ---
 
-## 3. Evaluación y arquitectura
+## 3. Evaluation and architecture
 
-Este grupo es el corazón del Core: recibe un contexto que tú describes y devuelve un veredicto. Todos los endpoints cuelgan de la base `/api/v1`. Como el Core es *stateless* (ADR-0101), nunca recibe rutas crudas de tu repositorio: el Tracker BFF te entrega un `workspaceRef` opaco que el Core resuelve del lado del servidor. La única excepción es `POST /evaluate`, que además admite mandar el contenido del satélite **en línea** dentro del propio body.
+This group is the heart of the Core: it takes a context you describe and returns a verdict. Every endpoint hangs off the `/api/v1` base. Because the Core is *stateless* (ADR-0101), it never receives raw paths into your repository: the Tracker BFF hands you an opaque `workspaceRef` that the Core resolves server-side. The one exception is `POST /evaluate`, which also accepts the satellite's content **inline** in the body itself.
 
-### 3.1. `POST /evaluate` — evaluar un contexto completo
+### 3.1. `POST /evaluate` — evaluate a full context
 
-**Qué hace.** Es la puerta de entrada canónica del Core (ADR-0101). Le mandas un `EvaluationContext` y te devuelve un `EvaluationResult` con el veredicto global (compuertas + cumplimiento + arquitectura). Acepta tres formas de decir "qué evaluar", en este orden de prioridad: **en línea** (`evaluationInput.files`, el contenido del satélite viaja en el body y se evalúa en memoria, sin tocar disco ni red), **canónica** (`workspaceRef` opaco que el Core resuelve) y **legacy** (`satellitePath`, una ruta de disco, retenida por compatibilidad). Si no envías ninguna de las tres, responde `400`.
+**What it does.** This is the Core's canonical entry point (ADR-0101). You send an `EvaluationContext` and get back an `EvaluationResult` with the overall verdict (gates + compliance + architecture). It accepts three ways of saying "what to evaluate", in this order of precedence: **inline** (`evaluationInput.files` — the satellite's content travels in the body and is evaluated in memory, touching neither disk nor network), **canonical** (an opaque `workspaceRef` the Core resolves) and **legacy** (`satellitePath`, a disk path, kept for compatibility). Send none of the three and it answers `400`.
 
-**Body** (`EvaluationContextDto`; los campos marcados como opcionales lo son porque el modo elegido decide cuáles aplican):
+**Body** (`EvaluationContextDto`; the fields marked optional are optional because the chosen mode decides which ones apply):
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 | --- | --- | --- | --- |
-| `evaluationInput.files` | objeto `{ ruta: contenido }` | opcional | Contenido del satélite **en línea**. Mapa de ruta relativa → contenido; debe incluir `evolith.yaml` en la raíz. Si está presente, gana sobre `workspaceRef`/`satellitePath` y el Core evalúa esto en memoria. |
-| `workspaceRef` | string | opcional | Referencia opaca al workspace (ADR-0074) que el Core resuelve del lado del servidor. Es el camino canónico cuando no mandas el contenido en línea. |
-| `kinds` | string[] | opcional | Qué tipos de evaluación pedir, p.ej. `["gate","compliance"]`. |
-| `phaseId` | string | opcional | Fase SDLC canónica a evaluar (`discovery`…`release`). |
-| `gateId` | string | opcional | Compuerta concreta a evaluar dentro del contexto. |
-| `topologyRef` | string | opcional | Topología a evaluar / override. |
-| `tenant` / `product` / `initiative` | objeto | opcional | Contexto opaco (ids de tenant, producto e iniciativa). Nunca son entidades del Core: se reflejan como contexto, no se resuelven. |
-| `artifacts`, `evidence`, `checkpoint`, `deployment`, `architecture`, `design`, `sdlcConfig`, `customConstraints`, … | objeto/array | opcional | Hechos declarados del `EvaluationContext` canónico. El Core evalúa lo que declaras aquí, no escanea tu disco. |
-| `satellitePath`, `corePath`, `topology`, `phase` | string | opcional (legacy) | Ruta de disco al satélite/Core y overrides. Solo se usan en el camino legacy, cuando falta `workspaceRef`. |
+| `evaluationInput.files` | object `{ path: content }` | optional | The satellite's content, **inline**. A map of relative path → content; it must include `evolith.yaml` at the root. When present it wins over `workspaceRef`/`satellitePath`, and the Core evaluates it in memory. |
+| `workspaceRef` | string | optional | Opaque workspace reference (ADR-0074) that the Core resolves server-side. This is the canonical path when you are not sending the content inline. |
+| `kinds` | string[] | optional | Which evaluation kinds to ask for, e.g. `["gate","compliance"]`. |
+| `phaseId` | string | optional | The canonical SDLC phase to evaluate (`discovery`…`release`). |
+| `gateId` | string | optional | A specific gate to evaluate within the context. |
+| `topologyRef` | string | optional | Topology to evaluate against, or to override with. |
+| `tenant` / `product` / `initiative` | object | optional | Opaque context (tenant, product and initiative ids). These are never Core entities: they are echoed as context, never resolved. |
+| `artifacts`, `evidence`, `checkpoint`, `deployment`, `architecture`, `design`, `sdlcConfig`, `customConstraints`, … | object/array | optional | Declared facts of the canonical `EvaluationContext`. The Core evaluates what you declare here; it does not scan your disk. |
+| `satellitePath`, `corePath`, `topology`, `phase` | string | optional (legacy) | Disk paths to the satellite/Core plus overrides. Used only on the legacy path, when `workspaceRef` is absent. |
 
-**Ejemplo** (camino en línea, el Core evalúa el contenido que le mandas):
+**Example** (the inline path — the Core evaluates the content you send it):
 
 ```
 POST /api/v1/evaluate
@@ -109,20 +109,20 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** El envelope de éxito con `data` = el `EvaluationResult` (veredicto global + `outcome`) en el camino canónico/en línea, o el veredicto legacy si usaste `satellitePath`. La evaluación en memoria es *stateless*: los archivos que envías nunca se escriben en disco. Si el Core no tiene configurado el camino en línea, o no logra resolver `corePath`, responde `400` con el motivo.
+**What to expect.** The success envelope with `data` = the `EvaluationResult` (overall verdict + `outcome`) on the canonical or inline path, or the legacy verdict if you used `satellitePath`. In-memory evaluation is *stateless*: the files you send are never written to disk. If the Core has no inline path configured, or cannot resolve `corePath`, it answers `400` with the reason.
 
-### 3.2. `POST /gates/{gateId}/evaluate` — evaluar una compuerta de fase
+### 3.2. `POST /gates/{gateId}/evaluate` — evaluate a phase gate
 
-**Qué hace.** Evalúa **una** compuerta de fase y devuelve su evidencia (`GateEvidence`): qué artefactos exige, cuáles están presentes y el veredicto. El `gateId` va en la ruta; el Core extrae de él el **primer dígito** para saber a qué fase corresponde: `1`→`discovery`, `2`→`design`, `3`→`construction`, `4`→`qa`, `5`→`release`. Un id cuyo primer dígito no esté en `1..5` se rechaza con `400` (no se evalúa la compuerta equivocada en silencio).
+**What it does.** Evaluates **one** phase gate and returns its evidence (`GateEvidence`): which artifacts it requires, which are present, and the verdict. The `gateId` goes in the path, and the Core reads its **first digit** to know which phase it belongs to: `1`→`discovery`, `2`→`design`, `3`→`construction`, `4`→`qa`, `5`→`release`. An id whose first digit is not in `1..5` is rejected with `400` — it will not quietly evaluate the wrong gate.
 
 **Body** (`EvaluateGateDto`):
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 | --- | --- | --- | --- |
-| `workspaceRef` | string | **sí** | Referencia opaca al workspace emitida por el Tracker BFF; el Core la resuelve para saber qué satélite evaluar. |
-| `evaluatedBy` | `human` \| `agent` \| `ci` | opcional | Quién evalúa. Queda registrado en la `GateEvidence` (paridad con CLI/MCP). Por defecto `human`. |
+| `workspaceRef` | string | **yes** | Opaque workspace reference issued by the Tracker BFF; the Core resolves it to know which satellite to evaluate. |
+| `evaluatedBy` | `human` \| `agent` \| `ci` | optional | Who is evaluating. Recorded in the `GateEvidence` (parity with CLI/MCP). Defaults to `human`. |
 
-**Ejemplo:**
+**Example:**
 
 ```
 POST /api/v1/gates/PG3-01/evaluate
@@ -134,25 +134,25 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** El envelope de éxito con `data` = la evidencia de la compuerta (fase, veredicto `passed`/`failed`, violaciones con el artefacto que falta y su ubicación). En este ejemplo, `PG3-01` mapea a la compuerta de `construction`.
+**What to expect.** The success envelope with `data` = the gate's evidence (phase, `passed`/`failed` verdict, violations naming the missing artifact and its location). In this example, `PG3-01` maps to the `construction` gate.
 
-### 3.3. `POST /validate/composable` — validación multi-modo
+### 3.3. `POST /validate/composable` — multi-mode validation
 
-**Qué hace.** Corre el motor "composable", que detecta automáticamente qué modos de validación aplican al contexto (SDLC, arquitectura, ruleset, ADR y ad-hoc) y los ejecuta todos, en vez de que elijas uno a mano. Es el equivalente REST de `evolith-cli validate --composable`.
+**What it does.** Runs the "composable" engine, which detects automatically which validation modes apply to the context (SDLC, architecture, ruleset, ADR and ad-hoc) and runs them all, instead of making you pick one by hand. It is the REST equivalent of `evolith-cli validate --composable`.
 
 **Body** (`ComposableValidateDto`):
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 | --- | --- | --- | --- |
-| `workspaceRef` | string | **sí** | Referencia opaca al workspace que el Core resuelve (valida el formato y evita salir de la raíz permitida). |
-| `engine` | `native` \| `opa` | opcional | Motor de reglas a usar. Por defecto `native`. |
-| `topology` | string | opcional | Acota a una topología: `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`. |
-| `phase` | string | opcional | Acota a una fase: `discovery`…`release` (los alias legacy `f1`..`f5` se aceptan como deprecados). |
-| `ruleset` | string | opcional | Valida solo un ruleset por id. |
-| `adr` | string | opcional | Valida el cumplimiento de un ADR concreto (p.ej. `adr-0002`). |
-| `file` | string | opcional | Valida un único archivo (modo ad-hoc). |
+| `workspaceRef` | string | **yes** | Opaque workspace reference the Core resolves (it validates the format and refuses to escape the permitted root). |
+| `engine` | `native` \| `opa` | optional | Which rule engine to use. Defaults to `native`. |
+| `topology` | string | optional | Narrow to one topology: `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`. |
+| `phase` | string | optional | Narrow to one phase: `discovery`…`release` (the legacy `f1`..`f5` aliases are accepted as deprecated). |
+| `ruleset` | string | optional | Validate a single ruleset by id. |
+| `adr` | string | optional | Validate conformance to one ADR (e.g. `adr-0002`). |
+| `file` | string | optional | Validate a single file (ad-hoc mode). |
 
-**Ejemplo:**
+**Example:**
 
 ```
 POST /api/v1/validate/composable
@@ -165,20 +165,20 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** El envelope con los resultados combinados de cada modo que aplicó. Restringir con `topology`/`phase`/`ruleset`/`adr`/`file` reduce los modos que corren.
+**What to expect.** The envelope with the combined results of every mode that applied. Narrowing with `topology`/`phase`/`ruleset`/`adr`/`file` reduces the modes that run.
 
-### 3.4. `POST /architecture/validate-satellite` — validar el satélite contra reglas de arquitectura
+### 3.4. `POST /architecture/validate-satellite` — validate a satellite against architecture rules
 
-**Qué hace.** Valida un satélite contra las reglas de arquitectura del Core. Si le pasas un `manifest`, dispara el pipeline de evaluación de extremo a extremo (compuertas incluidas) y devuelve el envelope ADR-0073; si no, devuelve el resultado de validación directo.
+**What it does.** Validates a satellite against the Core's architecture rules. Pass a `manifest` and it triggers the end-to-end evaluation pipeline (gates included) and returns the ADR-0073 envelope; omit it and you get the direct validation result.
 
 **Body** (`ValidateSatelliteDto`):
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 | --- | --- | --- | --- |
-| `workspaceRef` | string | **sí** | Referencia opaca al workspace que el Core resuelve para localizar el satélite. |
-| `manifest` | objeto (`SatelliteManifestDto`) | opcional | Manifiesto que activa el pipeline completo. Sus campos clave: `satellitePath` (ruta del satélite), `corePath` (Core), `topology` (override; si se omite se autodetecta), `phase` (si la das, solo evalúa las compuertas de esa fase) y `facts` (hechos declarados proyectados del `EvaluationContext` canónico: contexto, gate, evidencia, waivers). |
+| `workspaceRef` | string | **yes** | Opaque workspace reference the Core resolves to locate the satellite. |
+| `manifest` | object (`SatelliteManifestDto`) | optional | The manifest that switches on the full pipeline. Its key fields: `satellitePath` (the satellite's path), `corePath` (the Core), `topology` (override; auto-detected when omitted), `phase` (given, it evaluates only that phase's gates) and `facts` (declared facts projected from the canonical `EvaluationContext`: context, gate, evidence, waivers). |
 
-**Ejemplo:**
+**Example:**
 
 ```
 POST /api/v1/architecture/validate-satellite
@@ -193,20 +193,20 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** Con `manifest`, el envelope de evaluación (veredicto de gates + cumplimiento). Sin `manifest`, el objeto de resultado de validación crudo.
+**What to expect.** With a `manifest`, the evaluation envelope (gate verdict + compliance). Without one, the raw validation result object.
 
-### 3.5. `POST /architecture/detect-drift` — detectar deriva arquitectónica
+### 3.5. `POST /architecture/detect-drift` — detect architectural drift
 
-**Qué hace.** Compara el nivel de madurez **declarado** del satélite contra el **detectado** en el código y reporta la deriva (violaciones nuevas, persistentes o resueltas). Es el equivalente REST de `evolith-cli drift`.
+**What it does.** Compares the satellite's **declared** maturity level against the one **detected** in the code, and reports the drift (new, persistent or resolved violations). It is the REST equivalent of `evolith-cli drift`.
 
 **Body** (`DetectDriftDto`):
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 | --- | --- | --- | --- |
-| `workspaceRef` | string | **sí** | Referencia opaca al workspace que el Core resuelve para analizar el proyecto. |
-| `declaredLevel` | string | opcional | Nivel de madurez que declaras (p.ej. `F2`), para contrastarlo con el detectado. |
+| `workspaceRef` | string | **yes** | Opaque workspace reference the Core resolves to analyse the project. |
+| `declaredLevel` | string | optional | The maturity level you declare (e.g. `F2`), to contrast with the detected one. |
 
-**Ejemplo:**
+**Example:**
 
 ```
 POST /api/v1/architecture/detect-drift
@@ -218,19 +218,19 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** El resultado de deriva: si hubo drift, el nivel declarado vs. detectado y la lista de violaciones.
+**What to expect.** The drift result: whether there was drift, declared level versus detected, and the list of violations.
 
-### 3.6. `POST /architecture/recommend-topology` — recomendar una composición de topología
+### 3.6. `POST /architecture/recommend-topology` — recommend a topology composition
 
-**Qué hace.** A partir de señales técnicas (número de equipos, despliegue independiente, escala alta, integración asíncrona…) recomienda **cómo componer** la topología y explica el porqué de cada pieza. Es *advisory* y no vinculante (ADR-0104 / GT-430): el Core recomienda en Discovery, el tenant confirma en Design. Comparte el motor exacto (`TopologyRecommendationService.recommend`) con el comando CLI `topology recommend` y la tool MCP equivalente, así que las tres superficies dan el mismo resultado.
+**What it does.** From technical signals (team count, independent deployment, high scale, asynchronous integration and so on) it recommends **how to compose** the topology and explains why each piece is there. It is *advisory* and not binding (ADR-0104 / GT-430): the Core recommends in Discovery, the tenant confirms in Design. It shares the exact engine (`TopologyRecommendationService.recommend`) with the CLI `topology recommend` command and the equivalent MCP tool, so all three surfaces give the same answer.
 
 **Body** (`RecommendTopologyDto`):
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 | --- | --- | --- | --- |
-| `signals` | objeto `{ señal: boolean \| number }` | opcional | Señales técnicas que guían la recomendación. Booleanas (`deploymentIndependence`, `asyncIntegration`, `highScale`, `dataProductSharing`, `spikyLoad`, `latencyTolerant`, `edgeOrOffline`, `aiAgents`) más un `teamCount` numérico. Si se omite, se recomienda sobre señales vacías. |
+| `signals` | object `{ signal: boolean \| number }` | optional | Technical signals that steer the recommendation. Booleans (`deploymentIndependence`, `asyncIntegration`, `highScale`, `dataProductSharing`, `spikyLoad`, `latencyTolerant`, `edgeOrOffline`, `aiAgents`) plus a numeric `teamCount`. Omit it and the recommendation runs over empty signals. |
 
-**Ejemplo:**
+**Example:**
 
 ```
 POST /api/v1/architecture/recommend-topology
@@ -241,21 +241,21 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** La recomendación con la `composition` sugerida y la `rationale` (una razón por topología, con su `ruleId`). Si el Core no encuentra el ruleset de recomendación en su checkout, responde `404`.
+**What to expect.** The recommendation with the suggested `composition` and the `rationale` — one reason per topology, each with its `ruleId`. If the Core cannot find the recommendation ruleset in its checkout, it answers `404`.
 
-### 3.7. `POST /architecture/evaluate-phase-artifacts` — medir completitud de artefactos de fase
+### 3.7. `POST /architecture/evaluate-phase-artifacts` — measure phase artifact completeness
 
-**Qué hace.** Para una fase **downstream** y una composición de topología ya confirmada, mide qué artefactos declaras como presentes contra la **unión** de los artefactos universales de esa fase más los que cada topología exige en su perfil, y devuelve un puntaje de completitud. También es *advisory* (ADR-0104 / DN-06 / GT-434): el Core mide, la compuerta del tenant decide. Comparte motor (`PhaseArtifactProfileService.evaluate`) con el CLI `topology phase-artifacts` y la tool MCP.
+**What it does.** For a **downstream** phase and an already-confirmed topology composition, it measures the artifacts you declare as present against the **union** of that phase's universal artifacts plus the ones each topology requires in its profile, and returns a completeness score. This is *advisory* too (ADR-0104 / DN-06 / GT-434): the Core measures, the tenant's gate decides. It shares its engine (`PhaseArtifactProfileService.evaluate`) with the CLI `topology phase-artifacts` and the MCP tool.
 
 **Body** (`EvaluatePhaseArtifactsDto`):
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 | --- | --- | --- | --- |
-| `phase` | `construction` \| `quality` \| `deployment` | **sí** | Fase downstream a medir. Otro valor se rechaza. |
-| `topologies` | string[] | **sí** | Composición de topología confirmada (p.ej. `["microservices","event-driven"]`); de aquí sale el perfil de artefactos por topología. |
-| `declaredArtifacts` | string[] | opcional | Tipos de artefacto que declaras presentes (p.ej. `["test-summary-report","coverage-report"]`). Si se omite, verás todo como faltante. |
+| `phase` | `construction` \| `quality` \| `deployment` | **yes** | The downstream phase to measure. Any other value is rejected. |
+| `topologies` | string[] | **yes** | The confirmed topology composition (e.g. `["microservices","event-driven"]`); the per-topology artifact profile comes from here. |
+| `declaredArtifacts` | string[] | optional | Artifact types you declare as present (e.g. `["test-summary-report","coverage-report"]`). Omit it and everything reads as missing. |
 
-**Ejemplo:**
+**Example:**
 
 ```
 POST /api/v1/architecture/evaluate-phase-artifacts
@@ -268,66 +268,66 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** El resultado con el puntaje de completitud y las listas de artefactos requeridos, presentes, faltantes y condicionales.
+**What to expect.** The result with the completeness score and the lists of required, present, missing and conditional artifacts.
 
-### 3.8. `GET /architecture/topologies` — listar las topologías disponibles
+### 3.8. `GET /architecture/topologies` — list the available topologies
 
-**Qué hace.** Devuelve el catálogo completo de manifiestos de topología que el Core conoce (los que usan `recommend-topology` y `validate/composable`). No lleva body; la respuesta se cachea del lado del servidor.
+**What it does.** Returns the full catalog of topology manifests the Core knows about (the ones `recommend-topology` and `validate/composable` use). It takes no body, and the response is cached server-side.
 
-**Ejemplo:**
+**Example:**
 
 ```
 GET /api/v1/architecture/topologies
 ```
 
-**Qué esperar.** El envelope con un array de manifiestos de topología (id, nombre, spec, perfiles de fase…).
+**What to expect.** The envelope with an array of topology manifests (id, name, spec, phase profiles, and so on).
 
-### 3.9. `GET /architecture/topologies/{id}` — obtener una topología por id
+### 3.9. `GET /architecture/topologies/{id}` — get one topology by id
 
-**Qué hace.** Devuelve el manifiesto de **una** topología por su id. Útil para inspeccionar el perfil concreto (p.ej. qué artefactos exige en cada fase) antes de componer.
+**What it does.** Returns the manifest of **one** topology by its id. Useful for inspecting a specific profile — which artifacts it requires in each phase, for instance — before composing.
 
-**Argumentos** (en la ruta):
+**Arguments** (in the path):
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 | --- | --- | --- | --- |
-| `id` | string (ruta) | **sí** | Id de la topología a consultar, p.ej. `microservices`. |
+| `id` | string (path) | **yes** | Id of the topology to fetch, e.g. `microservices`. |
 
-**Ejemplo:**
+**Example:**
 
 ```
 GET /api/v1/architecture/topologies/microservices
 ```
 
-**Qué esperar.** El envelope con el manifiesto de esa topología. Si el id no existe, responde `404`.
+**What to expect.** The envelope with that topology's manifest. If the id does not exist, it answers `404`.
 
-### 3.10. `POST /architecture/cache/invalidate` — invalidar el cache de topologías
+### 3.10. `POST /architecture/cache/invalidate` — invalidate the topology cache
 
-**Qué hace.** Invalida el cache del lado del servidor del catálogo de topologías (el que sirve `GET /architecture/topologies` y consumen `recommend-topology` y `validate/composable`). Úsalo tras publicar cambios en los manifiestos de topología del Core para que la próxima lectura los recoja sin esperar a que expire el cache. Es una operación **infra/ops-only**: no tiene equivalente en CLI ni MCP (exenta a propósito en esas superficies), solo se expone por REST.
+**What it does.** Invalidates the server-side cache of the topology catalog — the one behind `GET /architecture/topologies`, and consumed by `recommend-topology` and `validate/composable`. Use it after publishing changes to the Core's topology manifests so the next read picks them up without waiting for the cache to expire. This is an **infra/ops-only** operation: it has no CLI or MCP equivalent (deliberately exempt on those surfaces) and is exposed over REST alone.
 
-**Argumentos.** Ninguno; no lleva body.
+**Arguments.** None; it takes no body.
 
-**Ejemplo:**
+**Example:**
 
 ```
 POST /api/v1/architecture/cache/invalidate
 ```
 
-**Qué esperar.** El envelope de éxito confirmando que el cache se invalidó; la siguiente consulta de topologías se resuelve de nuevo desde el corpus del Core.
+**What to expect.** The success envelope confirming the cache was invalidated; the next topology query resolves from the Core's corpus again.
 
-### 3.11. `POST /phases/transition` — ejecutar una transición de fase
+### 3.11. `POST /phases/transition` — execute a phase transition
 
-**Qué hace.** Ejecuta el traspaso de una fase a otra: transiciona los artefactos ejecutando las herramientas que indiques y deja el proyecto posicionado en la fase destino. A diferencia de la propuesta de transición del CLI (`phase advance`), aquí se **ejecuta** la transición. Nota de nomenclatura: usa el esquema numerado `phase-0`, `phase-1`, … (no las fases SDLC canónicas).
+**What it does.** Performs the handover from one phase to another: it transitions the artifacts by running the tools you name and leaves the project positioned in the target phase. Unlike the CLI's transition proposal (`phase advance`), this one **executes** the transition. A naming note: it uses the numbered scheme `phase-0`, `phase-1`, … rather than the canonical SDLC phases.
 
-**Body** (`TransitionPhaseDto`, todos requeridos):
+**Body** (`TransitionPhaseDto`, all required):
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 | --- | --- | --- | --- |
-| `from` | string | **sí** | Fase origen (p.ej. `phase-0`). |
-| `to` | string | **sí** | Fase destino (p.ej. `phase-1`). |
-| `tools` | string[] | **sí** | Herramientas a ejecutar durante la transición (p.ej. `["lint","test"]`). |
-| `workspaceRef` | string | **sí** | Referencia opaca al workspace que el Core resuelve para operar sobre el proyecto correcto. |
+| `from` | string | **yes** | Source phase (e.g. `phase-0`). |
+| `to` | string | **yes** | Target phase (e.g. `phase-1`). |
+| `tools` | string[] | **yes** | Tools to run during the transition (e.g. `["lint","test"]`). |
+| `workspaceRef` | string | **yes** | Opaque workspace reference the Core resolves, so it operates on the right project. |
 
-**Ejemplo:**
+**Example:**
 
 ```
 POST /api/v1/phases/transition
@@ -341,151 +341,148 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** El envelope de éxito con `data` = el resultado de la transición (bajo el nombre de comando canónico `evolith-cli phase transition`).
+**What to expect.** The success envelope with `data` = the transition result, under the canonical command name `evolith-cli phase transition`.
 
-### 3.12. `POST /architecture-plans/evaluate` — evaluar un plan de arquitectura
+### 3.12. `POST /architecture-plans/evaluate` — evaluate an architecture plan
 
-**Qué hace.** Recibe el borrador de un **plan de arquitectura** (Design-phase Advisory Governance, ADR-0104), lo pasa por el motor OPA y devuelve el plan **evaluado**: sugiere el modo SDLC (`full`/`tailored`/`minimal`/`rejected`) y los aprobadores requeridos. El Core es stateless: sugiere la transición pero **no la persiste** (deja el plan en estado `under_review`).
+**What it does.** Takes a draft **architecture plan** (Design-phase Advisory Governance, ADR-0104), runs it through the OPA engine and returns the **evaluated** plan: it suggests the SDLC mode (`full`/`tailored`/`minimal`/`rejected`) and the approvals required. The Core is stateless: it suggests the transition but **does not persist it**, leaving the plan in `under_review`.
 
-**Body** (`Partial<ArchitecturePlan>` — mandas el borrador; los campos ausentes toman defaults):
+**Body** (`Partial<ArchitecturePlan>` — you send the draft, and absent fields take defaults):
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 | --- | --- | --- | --- |
-| `title` | string | opcional | Título del plan. |
-| `prompt_source` | string | opcional | Origen del prompt/solicitud que motiva el plan. |
-| `scope` | objeto | opcional | Alcance `{ functional, technical }`. |
-| `impact` | objeto | opcional | Impacto `{ components[], interfaces[] }`. |
-| `risk_assessment` | objeto | opcional | Riesgo `{ criticality, complexity, security_risks[], architectural_risks[] }` (criticidad/complejidad `low`/`medium`/`high`). |
-| `execution_plan` | objeto | opcional | Plan `{ suggested_sdlc_phases[], mandatory_gates[], suggested_adrs[], applicable_policies[] }`. |
-| `governance` | objeto | opcional | Gobernanza; el motor la completa con `sdlc_mode_suggested` y `required_approvals`. |
+| `title` | string | optional | The plan's title. |
+| `prompt_source` | string | optional | Where the prompt or request behind the plan came from. |
+| `scope` | object | optional | Scope `{ functional, technical }`. |
+| `impact` | object | optional | Impact `{ components[], interfaces[] }`. |
+| `risk_assessment` | object | optional | Risk `{ criticality, complexity, security_risks[], architectural_risks[] }` (criticality and complexity are `low`/`medium`/`high`). |
+| `execution_plan` | object | optional | Plan `{ suggested_sdlc_phases[], mandatory_gates[], suggested_adrs[], applicable_policies[] }`. |
+| `governance` | object | optional | Governance; the engine fills in `sdlc_mode_suggested` and `required_approvals`. |
 
-**Ejemplo:**
+**Example:**
 
 ```
 POST /api/v1/architecture-plans/evaluate
 Content-Type: application/json
 
 {
-  "title": "Nuevo microservicio de checkout",
+  "title": "New checkout microservice",
   "prompt_source": "initiative-3ds",
-  "scope": { "functional": "Pagos 3DS", "technical": "Servicio aislado + cola" },
+  "scope": { "functional": "3DS payments", "technical": "Isolated service + queue" },
   "risk_assessment": { "criticality": "high", "complexity": "medium", "security_risks": ["PCI"], "architectural_risks": [] }
 }
 ```
 
-**Qué esperar.** El plan evaluado, con `governance.sdlc_mode_suggested`, `governance.required_approvals` y `status: "under_review"`. Los campos que no enviaste toman sus valores por defecto (versión `1`, `audit_trail` generado).
+**What to expect.** The evaluated plan, with `governance.sdlc_mode_suggested`, `governance.required_approvals` and `status: "under_review"`. Fields you did not send take their defaults (version `1`, a generated `audit_trail`).
 
-## 4. Datos de referencia, satélites, proyectos y salud
+## 4. Reference data, satellites, projects and health
 
-Este grupo reúne los endpoints de solo lectura sobre el corpus de reglas del
-Core (rulesets, gates y requisitos de fase), el registro de satélites, las
-operaciones de ciclo de vida de proyectos y las sondas de salud y observabilidad
-que usa tu orquestador. Salvo `/metrics`, todas las respuestas siguen el
-envelope y las convenciones de autenticación descritas en la cabecera de esta
-guía.
+This group gathers the read-only endpoints over the Core's rule corpus
+(rulesets, gates and phase requirements), the satellite registry, the project
+lifecycle operations, and the health and observability probes your orchestrator
+uses. Apart from `/metrics`, every response follows the envelope and the
+authentication conventions described at the top of this guide.
 
-### 4.1. `GET /api/v1/rulesets` — listar los rulesets del Core
+### 4.1. `GET /api/v1/rulesets` — list the Core's rulesets
 
-**Qué hace.** Devuelve el catálogo de rulesets (conjuntos de reglas de
-gobernanza) que el Core tiene cargados y expone a los clientes de la API. Es el
-punto de partida para descubrir qué reglas existen antes de consultar una en
-detalle. Es de solo lectura: no toca el satélite ni requiere el gate mutativo.
+**What it does.** Returns the catalog of rulesets (governance rule sets) the Core
+has loaded and exposes to API clients. It is the starting point for discovering
+which rules exist before querying one in detail. Read-only: it does not touch the
+satellite and does not require the mutative gate.
 
-**Argumentos.** Ninguno. No lleva parámetros de ruta ni cuerpo.
+**Arguments.** None. No path parameters and no body.
 
-**Ejemplo:**
+**Example:**
 
 ```http
 GET /api/v1/rulesets
 ```
 
-**Qué esperar.** En `data`, un arreglo de resúmenes de ruleset (identificador
-canónico y metadatos básicos de cada uno). El arreglo puede venir vacío si el
-Core no tiene reglas cargadas en la ruta configurada.
+**What to expect.** In `data`, an array of ruleset summaries (canonical identifier
+and basic metadata for each). The array may come back empty if the Core has no
+rules loaded at the configured path.
 
-### 4.2. `GET /api/v1/rulesets/:id` — obtener un ruleset por su identificador
+### 4.2. `GET /api/v1/rulesets/:id` — get a ruleset by its identifier
 
-**Qué hace.** Devuelve el contenido completo de un ruleset concreto,
-identificado por su identificador canónico. Úsalo cuando ya sabes qué ruleset te
-interesa (por ejemplo tras listar) y quieres ver sus reglas.
+**What it does.** Returns the full content of one ruleset, identified by its
+canonical identifier. Use it once you know which ruleset you care about — after
+listing, for instance — and want to see its rules.
 
-**Argumentos:**
+**Arguments:**
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 |-------|------|-----|----------|
-| `id` | string (ruta) | Sí | Identificador canónico del ruleset, **URL-encoded**. Como los identificadores suelen contener `/` u otros caracteres, deben codificarse para viajar en la ruta. |
+| `id` | string (path) | Yes | The ruleset's canonical identifier, **URL-encoded**. Identifiers usually contain `/` or other characters, so they must be encoded to travel in the path. |
 
-**Ejemplo:**
+**Example:**
 
 ```http
 GET /api/v1/rulesets/sdlc%2Fphase-gates
 ```
 
-**Qué esperar.** En `data`, el contenido del ruleset. Si el identificador no
-existe, la respuesta es `404` con `success: false` y el error
+**What to expect.** In `data`, the ruleset's content. If the identifier does not
+exist, the response is `404` with `success: false` and the error
 `Ruleset '<id>' was not found`.
 
-### 4.3. `GET /api/v1/gates/:gateId` — obtener la definición de un gate de fase
+### 4.3. `GET /api/v1/gates/:gateId` — get a phase gate definition
 
-**Qué hace.** Devuelve la definición de una compuerta (gate) del ciclo de vida
-SDLC: qué evalúa esa compuerta y bajo qué criterios se aprueba o se bloquea el
-paso a la siguiente fase. Sirve para inspeccionar las reglas de una compuerta sin
-ejecutar una evaluación.
+**What it does.** Returns the definition of one SDLC gate: what that gate
+evaluates, and the criteria under which passage to the next phase is approved or
+blocked. Useful for inspecting a gate's rules without running an evaluation.
 
-**Argumentos:**
+**Arguments:**
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 |-------|------|-----|----------|
-| `gateId` | string (ruta) | Sí | Identificador del gate a consultar, p. ej. `PG1`. Determina qué compuerta se devuelve. |
+| `gateId` | string (path) | Yes | Identifier of the gate to fetch, e.g. `PG1`. It decides which gate is returned. |
 
-**Ejemplo:**
+**Example:**
 
 ```http
 GET /api/v1/gates/PG1
 ```
 
-**Qué esperar.** En `data`, la definición del gate. Si el `gateId` no existe, la
-respuesta es `404` con el error `Gate '<gateId>' was not found`.
+**What to expect.** In `data`, the gate definition. If the `gateId` does not
+exist, the response is `404` with the error `Gate '<gateId>' was not found`.
 
-### 4.4. `GET /api/v1/phases/:phase/requirements` — requisitos de una fase SDLC
+### 4.4. `GET /api/v1/phases/:phase/requirements` — an SDLC phase's requirements
 
-**Qué hace.** Devuelve las evidencias y los requisitos bloqueantes de una fase
-del ciclo de vida: qué debe cumplir un proyecto en esa fase para poder avanzar.
-Es la referencia para saber qué te van a pedir las compuertas antes de proponer
-un avance.
+**What it does.** Returns the evidence and the blocking requirements of one
+lifecycle phase: what a project must satisfy in that phase before it can advance.
+This is the reference for knowing what the gates will ask of you before you
+propose an advance.
 
-**Argumentos:**
+**Arguments:**
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 |-------|------|-----|----------|
-| `phase` | string (ruta) | Sí | Identificador de la fase, p. ej. `1`. Selecciona la fase cuyos requisitos se devuelven. |
+| `phase` | string (path) | Yes | The phase identifier, e.g. `1`. Selects the phase whose requirements are returned. |
 
-**Ejemplo:**
+**Example:**
 
 ```http
 GET /api/v1/phases/1/requirements
 ```
 
-**Qué esperar.** En `data`, los requisitos de la fase (evidencias y requisitos
-bloqueantes). Si la fase no existe, la respuesta es `404` con el error
+**What to expect.** In `data`, the phase's requirements (evidence and blocking
+requirements). If the phase does not exist, the response is `404` with the error
 `Phase '<phase>' was not found`.
 
-### 4.5. `POST /api/v1/satellites` — registrar un satélite
+### 4.5. `POST /api/v1/satellites` — register a satellite
 
-**Qué hace.** Da de alta un nuevo satélite en el registro del Core. Un satélite
-es un repositorio gobernado por el Core; registrarlo lo hace visible para el
-resto de operaciones (consulta, actualización, enlace). Es mutativo: crea un
-registro nuevo.
+**What it does.** Registers a new satellite in the Core's registry. A satellite is
+a repository governed by the Core; registering it makes it visible to the rest of
+the operations (query, update, link). This is mutative: it creates a new record.
 
 **Body:**
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 |-------|------|-----|----------|
-| `id` | string | Sí | Identificador único del satélite (p. ej. `sat_001`). Es la clave con la que lo referenciarás después. |
-| `name` | string | Sí | Nombre legible del satélite (p. ej. `auth-service`), para identificarlo de forma humana. |
-| `parentCorePath` | string | No | Ruta al satélite core que este extiende (p. ej. `/cores/auth`). Sirve para declarar de qué core deriva. |
+| `id` | string | Yes | Unique identifier for the satellite (e.g. `sat_001`). This is the key you will reference it by afterwards. |
+| `name` | string | Yes | Human-readable name (e.g. `auth-service`), so a person can identify it. |
+| `parentCorePath` | string | No | Path to the core satellite this one extends (e.g. `/cores/auth`). It declares which core it derives from. |
 
-**Ejemplo:**
+**Example:**
 
 ```http
 POST /api/v1/satellites
@@ -498,69 +495,68 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** `201 Created` y, en `data`, el registro del satélite recién
-creado: incluye `status` (`registered`) y `registeredAt` (marca de tiempo ISO)
-además de los campos que enviaste.
+**What to expect.** `201 Created` and, in `data`, the newly created satellite
+record: it carries `status` (`registered`) and `registeredAt` (an ISO timestamp)
+alongside the fields you sent.
 
-### 4.6. `GET /api/v1/satellites` — listar todos los satélites
+### 4.6. `GET /api/v1/satellites` — list every satellite
 
-**Qué hace.** Devuelve todos los satélites registrados en el Core. Es la vista
-general del registro; de solo lectura.
+**What it does.** Returns every satellite registered in the Core. It is the
+registry's overview; read-only.
 
-**Argumentos.** Ninguno.
+**Arguments.** None.
 
-**Ejemplo:**
+**Example:**
 
 ```http
 GET /api/v1/satellites
 ```
 
-**Qué esperar.** En `data`, un arreglo con los registros de satélite. Cada uno
-trae `id`, `name`, `status`, `registeredAt` y, si aplican, `parentCorePath`,
-`linkedSatelliteId` y `linkedAt`.
+**What to expect.** In `data`, an array of satellite records. Each carries `id`,
+`name`, `status`, `registeredAt` and, where they apply, `parentCorePath`,
+`linkedSatelliteId` and `linkedAt`.
 
-### 4.7. `GET /api/v1/satellites/:id` — obtener un satélite por su ID
+### 4.7. `GET /api/v1/satellites/:id` — get a satellite by ID
 
-**Qué hace.** Devuelve el registro de un satélite concreto por su identificador.
-Úsalo para consultar el estado actual de un satélite (por ejemplo, si ya está
-enlazado).
+**What it does.** Returns one satellite's record by identifier. Use it to check a
+satellite's current state — whether it is already linked, for example.
 
-**Argumentos:**
+**Arguments:**
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 |-------|------|-----|----------|
-| `id` | string (ruta) | Sí | Identificador del satélite a consultar. Selecciona qué registro se devuelve. |
+| `id` | string (path) | Yes | Identifier of the satellite to fetch. It selects which record is returned. |
 
-**Ejemplo:**
+**Example:**
 
 ```http
 GET /api/v1/satellites/sat_001
 ```
 
-**Qué esperar.** En `data`, el registro del satélite. Si el `id` no existe, la
-respuesta es `404` con el error `Satellite '<id>' not found`.
+**What to expect.** In `data`, the satellite record. If the `id` does not exist,
+the response is `404` with the error `Satellite '<id>' not found`.
 
-### 4.8. `PATCH /api/v1/satellites/:id` — actualizar un satélite
+### 4.8. `PATCH /api/v1/satellites/:id` — update a satellite
 
-**Qué hace.** Modifica campos de un satélite ya registrado. Solo cambian los
-campos que envíes; los demás se conservan. Es mutativo.
+**What it does.** Modifies fields of an already-registered satellite. Only the
+fields you send change; the rest are preserved. This is mutative.
 
-**Argumentos de ruta:**
+**Path arguments:**
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 |-------|------|-----|----------|
-| `id` | string (ruta) | Sí | Identificador del satélite a actualizar. |
+| `id` | string (path) | Yes | Identifier of the satellite to update. |
 
-**Body (todos opcionales; envía solo lo que quieras cambiar):**
+**Body (all optional; send only what you want to change):**
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 |-------|------|-----|----------|
-| `name` | string | No | Nuevo nombre legible del satélite. |
-| `linkedSatelliteId` | string | No | ID del satélite core al que se enlaza este. |
-| `parentCorePath` | string | No | Ruta al satélite core padre. |
-| `linkedAt` | string | No | Marca de tiempo ISO del enlace. Normalmente lo fija el servicio automáticamente al enlazar, así que rara vez lo envías a mano. |
+| `name` | string | No | New human-readable name for the satellite. |
+| `linkedSatelliteId` | string | No | ID of the core satellite this one links to. |
+| `parentCorePath` | string | No | Path to the parent core satellite. |
+| `linkedAt` | string | No | ISO timestamp of the link. The service normally sets this automatically when linking, so you rarely send it by hand. |
 
-**Ejemplo:**
+**Example:**
 
 ```http
 PATCH /api/v1/satellites/sat_001
@@ -571,29 +567,29 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** En `data`, el registro del satélite actualizado con los cambios
-aplicados.
+**What to expect.** In `data`, the updated satellite record with your changes
+applied.
 
-### 4.9. `POST /api/v1/satellites/:id/link` — enlazar un satélite a su core padre
+### 4.9. `POST /api/v1/satellites/:id/link` — link a satellite to its parent core
 
-**Qué hace.** Enlaza un satélite (el de la ruta, la fuente) con un satélite core
-padre (el objetivo). Tras el enlace, el registro fuente queda con
-`linkedSatelliteId` apuntando al objetivo, `status` en `linked` y `linkedAt` con
-la marca de tiempo del momento. Ambos satélites deben existir ya en el registro.
+**What it does.** Links a satellite (the one in the path, the source) to a parent
+core satellite (the target). After linking, the source record carries
+`linkedSatelliteId` pointing at the target, `status` set to `linked`, and
+`linkedAt` with the timestamp. Both satellites must already exist in the registry.
 
-**Argumentos de ruta:**
+**Path arguments:**
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 |-------|------|-----|----------|
-| `id` | string (ruta) | Sí | ID del satélite fuente que se va a enlazar. |
+| `id` | string (path) | Yes | ID of the source satellite to link. |
 
 **Body:**
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 |-------|------|-----|----------|
-| `targetSatelliteId` | string | Sí | ID del satélite objetivo (el core padre) al que se enlaza la fuente. |
+| `targetSatelliteId` | string | Yes | ID of the target satellite (the parent core) the source links to. |
 
-**Ejemplo:**
+**Example:**
 
 ```http
 POST /api/v1/satellites/sat_001/link
@@ -604,32 +600,32 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** `200 OK` y, en `data`, el registro de la fuente ya actualizado:
-`status: "linked"`, `linkedSatelliteId` igual al objetivo y `linkedAt` fijado.
+**What to expect.** `200 OK` and, in `data`, the source record already updated:
+`status: "linked"`, `linkedSatelliteId` equal to the target, and `linkedAt` set.
 
-### 4.10. `POST /api/v1/projects/initialize` — inicializar un proyecto
+### 4.10. `POST /api/v1/projects/initialize` — initialize a project
 
-**Qué hace.** Arranca un proyecto nuevo materializando su esqueleto según un
-conjunto de decisiones tecnológicas (runtime, arquitectura, base de datos,
-etc.). Opera sobre el workspace que resuelve la referencia opaca del Tracker, no
-sobre una ruta local. Es mutativo.
+**What it does.** Starts a new project by materializing its skeleton from a set of
+technology decisions (runtime, architecture, database and so on). It operates on
+the workspace the Tracker's opaque reference resolves to, not on a local path.
+This is mutative.
 
 **Body:**
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 |-------|------|-----|----------|
-| `workspaceRef` | string | Sí | Referencia opaca de workspace emitida por el Tracker BFF (p. ej. `op_01j7wq8e2n`). El Core la resuelve para saber sobre qué workspace materializar. |
-| `name` | string | Sí | Nombre del proyecto. |
-| `type` | string | Sí | Tipo de proyecto (p. ej. `nestjs`). Actúa como runtime por defecto si no lo especificas en `options`. |
-| `options` | objeto | No | Decisiones adicionales de scaffolding. Cada clave anula un valor por defecto. |
+| `workspaceRef` | string | Yes | Opaque workspace reference issued by the Tracker BFF (e.g. `op_01j7wq8e2n`). The Core resolves it to know which workspace to materialize into. |
+| `name` | string | Yes | The project's name. |
+| `type` | string | Yes | Project type (e.g. `nestjs`). It acts as the default runtime when you do not set one in `options`. |
+| `options` | object | No | Further scaffolding decisions. Each key overrides a default. |
 
-Dentro de `options` se reconocen, entre otras: `runtime` (por defecto `nodejs`),
+Inside `options` the recognised keys include `runtime` (default `nodejs`),
 `monorepo` (`npm-workspaces`), `architecture` (`clean`), `database`
 (`postgresql`), `apiProtocol` (`rest`), `ciCd` (`github-actions`),
-`observability` (`opentelemetry`), y los arreglos `features` y `agents`. Si no
-las envías, se aplican esos valores por defecto.
+`observability` (`opentelemetry`), plus the `features` and `agents` arrays. Send
+none of them and those defaults apply.
 
-**Ejemplo:**
+**Example:**
 
 ```http
 POST /api/v1/projects/initialize
@@ -646,26 +642,26 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** `201 Created` y, en `data`, el resultado de la inicialización
-del proyecto (el esqueleto materializado y las decisiones aplicadas).
+**What to expect.** `201 Created` and, in `data`, the project initialization
+result — the materialized skeleton and the decisions applied.
 
-### 4.11. `POST /api/v1/projects/propose-advance` — proponer un avance de fase
+### 4.11. `POST /api/v1/projects/propose-advance` — propose a phase advance
 
-**Qué hace.** Propone que un proyecto avance de una fase del ciclo de vida a la
-siguiente. El Core evalúa la compuerta de salida de la fase actual y devuelve si
-el avance procede. Si omites `currentPhase`, el Core usa `targetPhase` como
-fase de origen para que la evaluación siempre tenga una fase de partida definida.
+**What it does.** Proposes that a project advance from one lifecycle phase to the
+next. The Core evaluates the current phase's exit gate and returns whether the
+advance holds. Omit `currentPhase` and the Core uses `targetPhase` as the source
+phase, so the evaluation always has a defined starting point.
 
 **Body:**
 
-| Campo | Tipo | Req | Para qué |
+| Field | Type | Req | What for |
 |-------|------|-----|----------|
-| `workspaceRef` | string | Sí | Referencia opaca de workspace del Tracker BFF. Identifica el proyecto a evaluar. |
-| `targetPhase` | string | Sí | Fase a la que se quiere avanzar (p. ej. `phase-2`). |
-| `currentPhase` | string | No | Fase actual, cuya compuerta de salida se evalúa (p. ej. `phase-1`). Si se omite, se toma `targetPhase`. |
-| `triggerDeploy` | boolean | No | Si es `true`, dispara el despliegue después de avanzar. |
+| `workspaceRef` | string | Yes | Opaque workspace reference from the Tracker BFF. It identifies the project to evaluate. |
+| `targetPhase` | string | Yes | The phase to advance to (e.g. `phase-2`). |
+| `currentPhase` | string | No | The current phase, whose exit gate is evaluated (e.g. `phase-1`). Omitted, it falls back to `targetPhase`. |
+| `triggerDeploy` | boolean | No | When `true`, triggers the deployment after advancing. |
 
-**Ejemplo:**
+**Example:**
 
 ```http
 POST /api/v1/projects/propose-advance
@@ -679,81 +675,80 @@ Content-Type: application/json
 }
 ```
 
-**Qué esperar.** `200 OK` y, en `data`, los resultados de la propuesta de avance:
-el veredicto de la compuerta y el detalle de qué requisitos se cumplen o
-bloquean el paso.
+**What to expect.** `200 OK` and, in `data`, the results of the advance proposal:
+the gate's verdict and the detail of which requirements are met or are blocking
+the passage.
 
-### 4.12. `GET /health` — chequeo de salud (liveness + readiness)
+### 4.12. `GET /health` — health check (liveness + readiness)
 
-**Qué hace.** Comprueba de un vistazo que el servicio está sano. Es la sonda
-combinada de liveness y readiness. Es un endpoint **version-neutral** (sin
-`/api/v1`) y **público**: no requiere API key, para que los orquestadores lo
-puedan sondear.
+**What it does.** Confirms at a glance that the service is healthy. It is the
+combined liveness and readiness probe. This endpoint is **version-neutral** (no
+`/api/v1`) and **public**: it requires no API key, so orchestrators can poll it.
 
-**Argumentos.** Ninguno.
+**Arguments.** None.
 
-**Ejemplo:**
+**Example:**
 
 ```http
 GET /health
 ```
 
-**Qué esperar.** En `data`, un objeto con `status: "OK"`, `service: "Evolith
-Core API"` y `timestamp` (ISO). Sigue el envelope estándar.
+**What to expect.** In `data`, an object with `status: "OK"`, `service: "Evolith
+Core API"` and an ISO `timestamp`. It follows the standard envelope.
 
-### 4.13. `GET /health/live` — sonda de liveness
+### 4.13. `GET /health/live` — liveness probe
 
-**Qué hace.** Indica únicamente que el proceso está vivo (arrancado y
-respondiendo). No comprueba dependencias. Es la sonda ligera para que el
-orquestador sepa si debe reiniciar el proceso. Version-neutral y pública.
+**What it does.** Reports only that the process is alive — started and
+responding. It checks no dependencies. This is the lightweight probe that tells
+the orchestrator whether to restart the process. Version-neutral and public.
 
-**Argumentos.** Ninguno.
+**Arguments.** None.
 
-**Ejemplo:**
+**Example:**
 
 ```http
 GET /health/live
 ```
 
-**Qué esperar.** En `data`, `status: "UP"` y `timestamp` (ISO).
+**What to expect.** In `data`, `status: "UP"` and an ISO `timestamp`.
 
-### 4.14. `GET /health/ready` — sonda de readiness
+### 4.14. `GET /health/ready` — readiness probe
 
-**Qué hace.** Indica si el servicio está listo para recibir tráfico: verifica que
-el corpus de reglas (el archivo de phase-gates) es accesible y que el subsistema
-de métricas está disponible. A diferencia de `live`, sí comprueba dependencias.
-Version-neutral y pública.
+**What it does.** Reports whether the service is ready to take traffic: it
+verifies that the rule corpus (the phase-gates file) is reachable and that the
+metrics subsystem is available. Unlike `live`, it does check dependencies.
+Version-neutral and public.
 
-**Argumentos.** Ninguno.
+**Arguments.** None.
 
-**Ejemplo:**
+**Example:**
 
 ```http
 GET /health/ready
 ```
 
-**Qué esperar.** Si todo está arriba, `data` trae `status: "UP"`, un objeto
-`checks` con `corpus` y `metrics` en `UP`, y `timestamp`. Si alguna dependencia
-falla, la respuesta es `503 Service Unavailable` con `status: "DOWN"`, el mismo
-objeto `checks` señalando qué está en `DOWN`, y `timestamp`.
+**What to expect.** With everything up, `data` carries `status: "UP"`, a `checks`
+object with `corpus` and `metrics` both `UP`, and a `timestamp`. If a dependency
+fails, the response is `503 Service Unavailable` with `status: "DOWN"`, the same
+`checks` object naming what is `DOWN`, and a `timestamp`.
 
-### 4.15. `GET /metrics` — métricas Prometheus
+### 4.15. `GET /metrics` — Prometheus metrics
 
-**Qué hace.** Expone las métricas de la aplicación y de la caché en formato de
-texto Prometheus, para que un scraper las recolecte. Es version-neutral (sin
-`/api/v1`) y, a diferencia del resto de esta guía, **no** sigue el envelope
-JSON: devuelve texto plano de exposición Prometheus. El acceso está protegido por
-su propio guard de métricas.
+**What it does.** Exposes the application and cache metrics in Prometheus text
+format, for a scraper to collect. It is version-neutral (no `/api/v1`) and,
+unlike everything else in this guide, it does **not** follow the JSON envelope:
+it returns plain Prometheus exposition text. Access is protected by its own
+metrics guard.
 
-**Argumentos.** Ninguno.
+**Arguments.** None.
 
-**Ejemplo:**
+**Example:**
 
 ```http
 GET /metrics
 ```
 
-**Qué esperar.** `Content-Type: text/plain` y, en el cuerpo, las métricas en
-formato de exposición Prometheus (métricas de la app seguidas de las de la
-caché). No hay envelope ni campo `data`: el cuerpo es directamente el texto que
-consume Prometheus.
+**What to expect.** `Content-Type: text/plain` and, in the body, the metrics in
+Prometheus exposition format (application metrics followed by cache metrics).
+There is no envelope and no `data` field: the body is the text Prometheus
+consumes, directly.

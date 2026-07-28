@@ -6,7 +6,7 @@ resource: reference/knowledge/canonical/product.yaml
 tags:
   - product
   - root-authority
-timestamp: '2026-07-08'
+timestamp: '2026-07-28'
 owner: '@winston'
 reviewBy: '2027-01-06'
 ---

@@ -4,36 +4,37 @@ owner: "@winston"
 reviewBy: "2026-10-06"
 ---
 
-# Glosario — Knowledge & Corpus
+# Glossary — Knowledge & Corpus
 
-Términos del bounded context `ctx.knowledge` de Evolith Core. Fuente única de verdad:
-los agentes lo cargan para hablar el mismo idioma que el producto.
+Terms from Evolith Core's `ctx.knowledge` bounded context. This is the single source of
+truth: agents load it so they speak the same language as the product.
 
-- **Knowledge Pack** — Manifiesto de *composición* que empaqueta el conocimiento de un
-  bounded-context: **absorbe por referencia** lo que ya existe (ADRs, topologías, rulesets)
-  y añade **cuerpo autoral** (dominio, glosario, prompts) solo donde hay hueco. Versionado
-  en SemVer; su versión cubre únicamente lo autoral, no lo referenciado.
+- **Knowledge Pack** — A *composition* manifest that packages one bounded context's
+  knowledge: it **absorbs by reference** what already exists (ADRs, topologies, rulesets)
+  and adds **authored body** (domain, glossary, prompts) only where there is a gap.
+  Versioned with SemVer; its version covers the authored part alone, never the referenced
+  material.
 
-- **Canónico vs. derivado** — `canonical/` es la única fuente de verdad: autoral y revisable
-  en PR. `derived/` (embeddings, índices) es **caché regenerable**: nunca autoridad, nunca
-  editada a mano; la produce `rag-sync`.
+- **Canonical vs. derived** — `canonical/` is the only source of truth: authored and
+  reviewable in a PR. `derived/` (embeddings, indexes) is a **regenerable cache**: never
+  authoritative, never hand-edited, produced by `rag-sync`.
 
-- **Oráculo (oracle)** — Vínculo **verificable por máquina** entre una afirmación de
-  conocimiento y su implementación de referencia. Tipos: `link-check` (el archivo citado
-  existe), `symbol-exists` (el símbolo citado existe), `executable-test` (el test que prueba
-  la afirmación existe y CI lo corre). **Nunca prosa.**
+- **Oracle** — A **machine-verifiable** link between a knowledge claim and its reference
+  implementation. Three kinds: `link-check` (the cited file exists), `symbol-exists` (the
+  cited symbol exists), `executable-test` (the test proving the claim exists and CI runs
+  it). **Never prose.**
 
-- **Drift** — Cuando el código de referencia cambia y deja obsoleto al conocimiento. El drift
-  de oráculo **bloquea** el PR que lo introdujo; el vencimiento por fecha solo **avisa**
-  (`STALE`), nunca bloquea la rama.
+- **Drift** — When the reference code changes and leaves the knowledge behind. Oracle drift
+  **blocks** the PR that introduced it; date-based expiry only **warns** (`STALE`) and never
+  blocks the branch.
 
-- **Intake (KI/SRC)** — Pipeline de captura de conocimiento **externo** (libros, fuentes): un
-  `KI-*` (knowledge item) referencia un `SRC-*` (source registry) y transita
-  `candidate → … → accepted`. Vive en `product/research/intake/`. Distinto del pack: el intake
-  *ingiere* material externo; el pack *organiza* el conocimiento propio del producto.
+- **Intake (KI/SRC)** — The capture pipeline for **external** knowledge (books, sources): a
+  `KI-*` (knowledge item) references a `SRC-*` (source registry) and moves through
+  `candidate → … → accepted`. It lives in `product/research/intake/`. Distinct from a pack:
+  intake *ingests* outside material, a pack *organizes* the product's own knowledge.
 
-- **Projection** — Allow-list explícito de `KI-*` aprobados para recuperación por RAG
-  (`src/rulesets/schema/knowledge-projection.schema.json`). No es un pack.
+- **Projection** — An explicit allow-list of `KI-*` approved for RAG retrieval
+  (`src/rulesets/schema/knowledge-projection.schema.json`). Not a pack.
 
-- **IKnowledgePort** — Puerto *read-side* (GT-408) para consultar el corpus indexado con
-  citación de artefactos: `src/packages/agent-runtime/src/domain/ports/knowledge.port.ts`.
+- **IKnowledgePort** — The *read-side* port (GT-408) for querying the indexed corpus with
+  artifact citations: `src/packages/agent-runtime/src/domain/ports/knowledge.port.ts`.

@@ -6,7 +6,7 @@
 
 # Update history
 
-## 2026-07-08
+## 2026-07-28
 
 - Projected OKF v0.1 bundle from `reference/knowledge/knowledge.index.yaml` (evolith-core@0.1.0).
 - 1 pack(s), 1 authored concept(s), 7 reference node(s).

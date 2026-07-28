@@ -7947,6 +7947,19 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
 
+#### GT-630
+
+**Title:** Derived artifacts have a dependency order and nothing enforced it
+
+- **Purpose:** Make the regeneration order a checkable fact instead of tribal knowledge.
+- **Evidence:** **Derived artifacts have a dependency ORDER and nothing enforced it — it cost three red required checks on 2026-07-28 alone.** `generate-executive-summary.mjs` reads `maturity-reconciliation.json`, which is itself derived from the gap board. Generate the summary BEFORE reconciling and it captures a value the reconciler is about to move. Each artifact's own `--check` then passes at that moment — the summary genuinely matches what was just written — so `ci-runner governance` goes green locally and `Validate documentation` goes red on the runner, where the steps run in the declared order. That is not a stale-artifact bug, which the individual `--check` modes already catch; it is an ORDER bug, invisible to any check that looks at one artifact at a time. The correct sequence (reconcile → suite → generate → validate) was written down nowhere in the repository, which is why the same mistake was made three times in one session by someone who had already been bitten by it twice.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Registered and closed on 2026-07-28, after the same ordering mistake produced three red required checks in one session.
+- **Acceptance criteria:**
+  - [x] The chain is declared as data — producer, consumed inputs, written artifacts — and a guard walks it in dependency order.
+  - [x] The guard names the FIRST stale link with the command that fixes it and the inputs that must be current before it.
+  - [x] It ships with negative fixtures including the anti-vacuous ones, and is wired into a required check.
+
 #### GT-629
 
 **Title:** The tracking guard never asks whether an open row has acceptance criteria

@@ -1809,6 +1809,11 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 
 **References:** product/infra/vps-coolify, helm; GT-324; GT-435.
 
+- **Acceptance criteria:**
+  - [ ] Every gap in the declared M2 scope (`GT-324`, `GT-437`, `GT-441`, `GT-442`, `GT-443`, `GT-444`, `GT-445` and the Phase-2 UI refactor) is DONE or explicitly DEFERRED with a reason.
+  - [ ] The stack runs on the Hostinger VPS under Coolify + Kubernetes and serves a real request, evidenced by a recorded run rather than by a deploy job exiting zero.
+  - [ ] A rollback is exercised at least once and its outcome recorded — a promotion path nobody has reversed is a claim, not a capability.
+
 #### GT-435
 
 **Title:** EPIC — Road to Production of the conceptual suite diagram
@@ -1820,6 +1825,11 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 **Closure:** the diagram's runtime path is deployed and validated in prod; all child items DONE.
 
 **References:** road-to-production assessment; maturity-assessment; ADR-0101/0104.
+
+- **Acceptance criteria:**
+  - [ ] Every child gap named in the decomposition (`GT-324`, `GT-436`…`GT-446`) is DONE or explicitly DEFERRED with a reason — an epic closes when its children do, never on its own narrative.
+  - [ ] The full path of the diagram is exercised end to end in production: a satellite change reaches a Core verdict through the Tracker, evidenced by one recorded run.
+  - [ ] The readiness claims in this row are re-measured at closure rather than carried over: package versions, agent-runtime defaults, auth and observability each restated from what is deployed.
 
 #### GT-436
 
@@ -1901,6 +1911,11 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 **Title:** External penetration test
 
 **Problem:** SAST/SCA automated (CodeQL/Trivy) but no external pen-test engagement. **Closure:** external pen-test completed, findings remediated. **References:** security pillar (maturity §3.1).
+
+- **Acceptance criteria:**
+  - [ ] An external penetration test is completed against a deployed environment by a party that did not build the system, with its scope and dates recorded.
+  - [ ] Every finding is triaged to remediated, accepted-with-rationale or deferred-with-owner — an untriaged finding leaves this open.
+  - [ ] Each remediation ships with a regression test or a rule, so the same class cannot return unnoticed.
 
 #### GT-445
 
@@ -7410,8 +7425,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
 - **Acceptance criteria:**
   - [x] Each of the seven ADRs is either implemented or moved out of Accepted with an explicit implementation note.
-  - [ ] The spawn passes an allowlisted environment; no `*_TOKEN` or `*_URL` reaches a capability script.
-  - [ ] A test asserts that a spawned capability cannot read the Core token.
+  - [x] The spawn passes an allowlisted environment; no `*_TOKEN` or `*_URL` reaches a capability script.
+  - [x] A test asserts that a spawned capability cannot read the Core token.
 
 #### GT-608
 
@@ -7941,9 +7956,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Governance` · **Criticality:** P2 · **Complexity:** XS
 - **Provenance:** Found on 2026-07-28 while auditing the 24 in-progress rows.
 - **Acceptance criteria:**
-  - [ ] `08-validate-tracking.mjs` fails when any non-DONE `GT-*` row has an empty acceptance-criteria list.
-  - [ ] The check ships with a negative fixture: stripping the criteria from one row turns it red.
-  - [ ] The count of rows checked is printed, so a zero-row scan cannot report a pass.
+  - [x] `08-validate-tracking.mjs` fails when any non-DONE `GT-*` row has an empty acceptance-criteria list.
+  - [x] The check ships with a negative fixture: stripping the criteria from one row turns it red.
+  - [x] The count of rows checked is printed, so a zero-row scan cannot report a pass.
 
 #### GT-628
 
@@ -7954,9 +7969,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Documentation` · **Criticality:** P1 · **Complexity:** L
 - **Provenance:** Found on 2026-07-28 the moment GT-620's language heuristic was switched on.
 - **Acceptance criteria:**
-  - [ ] `LANGUAGE_BASELINE` in `bilingual-suite.mjs` is empty and the constant is deleted.
-  - [ ] `using-the-mcp.md` and `using-the-rest-api.md` read as English, asserted by the heuristic.
-  - [ ] The `.es.md` of ADR-0120, ADR-0121 and ADR-0122 read as Spanish.
+  - [x] `LANGUAGE_BASELINE` in `bilingual-suite.mjs` is empty and the constant is deleted.
+  - [x] `using-the-mcp.md` and `using-the-rest-api.md` read as English, asserted by the heuristic.
+  - [x] The `.es.md` of ADR-0120, ADR-0121 and ADR-0122 read as Spanish.
 
 #### GT-627
 
@@ -7981,7 +7996,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** Carved out of GT-571 on 2026-07-28, when the README sequence was executed against the published artifact instead of assumed.
 - **Acceptance criteria:**
   - [x] The literal README quickstart runs steps 1-6 with no non-zero exit other than `validate`'s documented blocking verdict.
-  - [ ] `init` and `scaffold` agree on the workspace root, proven by a test that runs one after the other and fails without the fix.
+  - [x] `init` and `scaffold` agree on the workspace root, proven by a test that runs one after the other and fails without the fix.
   - [x] No error message tells the user to run a command they have already run.
 
 #### GT-625

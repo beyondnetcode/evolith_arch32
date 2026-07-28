@@ -17,5 +17,6 @@ export * from './ports/workspace-reference-resolver.port';
 export * from './ports/kind-evaluator.port';
 export * from './evaluation-context.builder';
 export * from './canonical-result.mapper';
+export * from './kind-selective-pipeline';
 export * from './evaluation-orchestrator.service';
 export * from './kind-evaluators';

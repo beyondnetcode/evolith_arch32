@@ -8640,6 +8640,66 @@
         "AC3: sarif-exporter derives evaluatedRules from rulesExecuted, deduped and sorted, asserted non-empty."
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-629",
+      "evidence": [
+        ".harness/scripts/ci/08-validate-tracking.mjs",
+        ".harness/scripts/ci/08-validate-tracking.test.mjs"
+      ],
+      "validationCommands": [
+        "08-validate-tracking.mjs -> \"Acceptance-criteria audit: 47 non-DONE GT row(s) checked against 605/605 EN/ES catalog sections — 0 with no criteria at all.\" exit 0.",
+        "It exited 1 on its first run against the real board, naming GT-435, GT-444 and GT-448; criteria were written for all three rather than exempting them.",
+        "node --test 08-validate-tracking.test.mjs -> 17/17, including the negative fixture and the vacuity floor."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "c438b801",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-628",
+      "evidence": [
+        ".harness/scripts/ci/suites/bilingual-suite.mjs",
+        "reference/core/interfaces/using-the-mcp.md",
+        "src/packages/mcp-server/README.md"
+      ],
+      "validationCommands": [
+        "LANGUAGE_BASELINE is empty and the constant deleted: every EN/ES pair in the repository is now judged with no exemptions.",
+        "04-check-bilingual-parity -> exit 0 over 1639 markdown files, 522 EN docs under reference/ checked for an ES counterpart.",
+        "01-validate-docs -> exit 0 over 1487 files: heading-count parity held through every translation."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "c438b801",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-626",
+      "evidence": [
+        "src/sdk/cli/src/commands/architecture/scaffold.command.ts",
+        "src/sdk/cli/src/commands/architecture/scaffold/nx-workspace-bootstrap.ts"
+      ],
+      "validationCommands": [
+        "scaffold now bootstraps the Nx workspace init leaves absent, so it can follow init as the README implied.",
+        "The precondition stays strict for an ambiguous src/: a fast clear refusal, never a cryptic Nx crash after a long install.",
+        "CLI unit 1430/1430 (was 1382)."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "c438b801",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-607",
+      "evidence": [
+        "src/packages/agent-runtime/src/adapters/harness/harness-process.adapter.ts"
+      ],
+      "validationCommands": [
+        "The spawn passes an allowlisted environment; a test asserts a spawned capability cannot read the Core token and fails against the previous ...process.env.",
+        "agent-runtime 406/406 (was 384).",
+        "CAVEAT recorded on the row: this is credential denial, not sandboxing. A capability child can still open a socket; the ADR-0081 sandboxed runner remains unimplemented."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "c438b801",
+      "dependencyDisposition": "none"
     }
   ]
 }

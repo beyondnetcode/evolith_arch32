@@ -1,49 +1,49 @@
 # Taxonomia de Scripts Evolith
 
-> **Bilingual navigation:** [English version](./scripts-taxonomy.md)
+> **Navegación bilingüe:** [English version](./scripts-taxonomy.md)
 
-**Status:** Active Reference Document  
-**Owner:** Evolith Architecture Board  
-**Last Updated:** 2026-07-03
-
----
-
-## 1. Purpose
-
-This document catalogs every executable script in the `.harness/` tree, classifies its output type, and documents the relationship between entry points, playbooks, and CI hooks. It serves as the canonical reference for "which script do I run for what?"
+**Estado:** Documento de referencia activo  
+**Responsable:** Evolith Architecture Board  
+**Última actualización:** 2026-07-03
 
 ---
 
-## 2. Classification
+## 1. Propósito
 
-Each script is classified by:
+Este documento cataloga todos los scripts ejecutables del árbol `.harness/`, clasifica su tipo de salida y documenta la relación entre puntos de entrada, playbooks y hooks de CI. Es la referencia canónica para "¿qué script ejecuto y para qué?".
 
-| Attribute | Values |
+---
+
+## 2. Clasificación
+
+Cada script se clasifica por:
+
+| Atributo | Valores |
 |---|---|
-| **Type** | `executable` — produces output directly (structured report, HTML, SVG); `prompt` — prints an LLM prompt for a persona (Winston, etc.) |
-| **Scope** | `entry` — user-facing entry point; `playbook` — reusable engine called by entry points; `ci` — runs in pre-commit/pre-push hooks; `utility` — helper/one-shot |
-| **Output** | JSON, Markdown, HTML, SVG, plain text, or prompt block |
+| **Tipo** | `executable` — produce salida directamente (reporte estructurado, HTML, SVG); `prompt` — imprime un prompt de LLM para una persona (Winston, etc.) |
+| **Alcance** | `entry` — punto de entrada de cara al usuario; `playbook` — motor reutilizable invocado por los puntos de entrada; `ci` — se ejecuta en hooks de pre-commit/pre-push; `utility` — auxiliar/de un solo uso |
+| **Salida** | JSON, Markdown, HTML, SVG, texto plano o bloque de prompt |
 
 ---
 
-## 3. Entry Points
+## 3. Puntos de entrada
 
-User-facing entry points under `.harness/scripts/`. These are the scripts you run from the command line.
+Puntos de entrada de cara al usuario bajo `.harness/scripts/`. Son los scripts que se ejecutan desde la línea de comandos.
 
-| Script | Type | Delegates To | Purpose |
+| Script | Tipo | Delega en | Propósito |
 |---|---|---|---|
-| `run-evolith-audit.mjs` | `prompt` | `.harness/playbooks/winston-audit-playbook.md` | Prints the Winston architectural audit prompt for copy-paste into an LLM context |
-| `run-evolith-audit.mjs --bmad` | `prompt` | same playbook (BMAD section) | Prints the BMAD Agent Evolution prompt |
-| `run-evolith-audit.mjs --all` | `prompt` | same playbook (both sections) | Prints both prompts sequentially |
-| `run-evolith-audit.mjs --es` | `prompt` | `.harness/playbooks/winston-audit-playbook.es.md` | Spanish version of the architectural audit prompt |
-| `run-evolith-topology.mjs` | `executable` | `.harness/playbooks/topology-compliance-audit.mjs` | Evaluates structural parity across all topology directories against the exemplar |
-| `run-evolith-topology.mjs --markdown` | `executable` | same playbook | Same audit, formatted as human-readable Markdown |
-| `run-evolith-deep.mjs` | `executable` | `.harness/playbooks/sdlc-deep-audit.mjs` | Evaluates Evolith Core against the 8-dimensional executable SDLC vision (JSON) |
-| `run-evolith-deep.mjs --markdown` | `executable` | same playbook | Same 8-dimension audit, formatted as Markdown report |
+| `run-evolith-audit.mjs` | `prompt` | `.harness/playbooks/winston-audit-playbook.md` | Imprime el prompt de auditoría arquitectónica de Winston para copiarlo y pegarlo en el contexto de un LLM |
+| `run-evolith-audit.mjs --bmad` | `prompt` | mismo playbook (sección BMAD) | Imprime el prompt de BMAD Agent Evolution |
+| `run-evolith-audit.mjs --all` | `prompt` | mismo playbook (ambas secciones) | Imprime ambos prompts de forma secuencial |
+| `run-evolith-audit.mjs --es` | `prompt` | `.harness/playbooks/winston-audit-playbook.es.md` | Versión en español del prompt de auditoría arquitectónica |
+| `run-evolith-topology.mjs` | `executable` | `.harness/playbooks/topology-compliance-audit.mjs` | Evalúa la paridad estructural de todos los directorios de topología contra el ejemplar |
+| `run-evolith-topology.mjs --markdown` | `executable` | mismo playbook | La misma auditoría, formateada como Markdown legible por humanos |
+| `run-evolith-deep.mjs` | `executable` | `.harness/playbooks/sdlc-deep-audit.mjs` | Evalúa Evolith Core contra la visión de SDLC ejecutable de 8 dimensiones (JSON) |
+| `run-evolith-deep.mjs --markdown` | `executable` | mismo playbook | La misma auditoría de 8 dimensiones, formateada como reporte Markdown |
 | `skills/self-improving-loop.mjs` | `executable` | `.harness/playbooks/self-improving-loop.es.md` | Emite un snapshot de progress-audit para ejecuciones de mejora continua del harness |
-| `run-winston-audit.mjs` | `alias` | delegates to the three above | DEPRECATED — compatibility alias that detects `--topology`, `--deep`, or defaults to `run-evolith-audit.mjs` |
+| `run-winston-audit.mjs` | `alias` | delega en los tres anteriores | OBSOLETO — alias de compatibilidad que detecta `--topology`, `--deep`, o cae por defecto en `run-evolith-audit.mjs` |
 
-### Usage examples
+### Ejemplos de uso
 
 ```bash
 node .harness/scripts/run-evolith-topology.mjs
@@ -61,72 +61,72 @@ node .harness/scripts/skills/self-improving-loop.mjs --task "audit harness drift
 
 ## 4. Playbooks
 
-Reusable audit logic under `.harness/playbooks/`. These are called by entry points, never directly by users.
+Lógica de auditoría reutilizable bajo `.harness/playbooks/`. Los invocan los puntos de entrada, nunca los usuarios de forma directa.
 
-| Playbook | Output | Used By | Purpose |
+| Playbook | Salida | Usado por | Propósito |
 |---|---|---|---|
-| `topology-compliance-audit.mjs` | JSON / Markdown | `run-evolith-topology.mjs` | Checks every topology directory for structural parity with the agentic-ai exemplar |
-| `sdlc-deep-audit.mjs` | JSON / Markdown | `run-evolith-deep.mjs` | 8-dimension evaluation of Evolith Core against the executable SDLC vision |
-| `winston-audit-playbook.md` | LLM prompt block | `run-evolith-audit.mjs` | The Winston persona prompt for architectural analysis |
-| `winston-audit-playbook.es.md` | LLM prompt block | `run-evolith-audit.mjs --es` | Spanish version of the Winston architectural analysis prompt |
+| `topology-compliance-audit.mjs` | JSON / Markdown | `run-evolith-topology.mjs` | Revisa cada directorio de topología en busca de paridad estructural con el ejemplar agentic-ai |
+| `sdlc-deep-audit.mjs` | JSON / Markdown | `run-evolith-deep.mjs` | Evaluación de 8 dimensiones de Evolith Core contra la visión de SDLC ejecutable |
+| `winston-audit-playbook.md` | Bloque de prompt para LLM | `run-evolith-audit.mjs` | El prompt de la persona Winston para análisis arquitectónico |
+| `winston-audit-playbook.es.md` | Bloque de prompt para LLM | `run-evolith-audit.mjs --es` | Versión en español del prompt de análisis arquitectónico de Winston |
 | `self-improving-loop.es.md` | Markdown / referencia de schema JSONL | `skills/self-improving-loop.mjs` | Bucle operativo de retroalimentación detectar-contexto-ejecutar-validar-registrar-aprender |
 
 ---
 
-## 5. CI Hooks
+## 5. Hooks de CI
 
-Scripts triggered automatically by git hooks. These are not user-facing.
+Scripts disparados automáticamente por los hooks de git. No son de cara al usuario.
 
-| Hook | Script | What It Does |
+| Hook | Script | Qué hace |
 |---|---|---|
-| `.husky/pre-commit` | `generate-executive-summary.mjs` | Refreshes EN/ES executive governance summary from canonical gap/maturity evidence |
-| `.husky/pre-commit` | `ci-runner.mjs` | Runs numbered CI validation scripts (docs validation, bilingual parity, stale-summary check) |
-| `.husky/pre-push` | `02-optimize-repo.mjs` | Repository optimization |
-| `.husky/pre-push` | `sync-project-board.mjs` | Bidirectional gap tracking synchronization |
-| `.husky/pre-push` | `generate-executive-summary.mjs` | Blocks push if executive summary changed outside the current commit |
+| `.husky/pre-commit` | `generate-executive-summary.mjs` | Refresca el resumen ejecutivo de gobernanza EN/ES a partir de la evidencia canónica de gaps y madurez |
+| `.husky/pre-commit` | `ci-runner.mjs` | Ejecuta los scripts numerados de validación de CI (validación de documentación, paridad bilingüe, control de resumen obsoleto) |
+| `.husky/pre-push` | `02-optimize-repo.mjs` | Optimización del repositorio |
+| `.husky/pre-push` | `sync-project-board.mjs` | Sincronización bidireccional del seguimiento de gaps |
+| `.husky/pre-push` | `generate-executive-summary.mjs` | Bloquea el push si el resumen ejecutivo cambió fuera del commit actual |
 
 ---
 
-## 6. CI Validation Scripts
+## 6. Scripts de validación de CI
 
-Numbered scripts under `.harness/scripts/ci/` triggered by `ci-runner.mjs`.
+Scripts numerados bajo `.harness/scripts/ci/` disparados por `ci-runner.mjs`.
 
-| Script | Checks |
+| Script | Qué verifica |
 |---|---|
-| `01-validate-docs.mjs` | Links, anchors, encoding, Mermaid syntax |
-| `01-validate-docs.mjs --render-mermaid` | Renders Mermaid diagrams to SVG for visual validation |
-| `04-check-bilingual-parity.mjs` | EN/ES pairs have identical `##` and `###` header counts |
+| `01-validate-docs.mjs` | Enlaces, anclas, codificación, sintaxis de Mermaid |
+| `01-validate-docs.mjs --render-mermaid` | Renderiza los diagramas Mermaid a SVG para validación visual |
+| `04-check-bilingual-parity.mjs` | Que los pares EN/ES tengan el mismo número de encabezados `##` y `###` |
 
 ---
 
-## 7. Utility / One-Shot Scripts
+## 7. Scripts utilitarios / de un solo uso
 
-| Script | Purpose |
+| Script | Propósito |
 |---|---|
-| `bilingual-coverage.mjs` | Reports which files lack bilingual counterparts |
-| `coverage-dashboard.mjs` | Generates visual HTML/MD coverage report by area |
-| `generate-executive-summary.mjs` | Generates the bilingual executive governance summary |
-| `generate-es-skeleton.mjs <file.md>` | Creates ES skeleton from EN file (`--dry-run` flag) |
-| `cleanup-markdown-encoding.py` | Sanitizes UTF-8 encoding issues in Markdown files |
+| `bilingual-coverage.mjs` | Reporta qué archivos carecen de contraparte bilingüe |
+| `coverage-dashboard.mjs` | Genera un reporte visual de cobertura en HTML/MD por área |
+| `generate-executive-summary.mjs` | Genera el resumen ejecutivo bilingüe de gobernanza |
+| `generate-es-skeleton.mjs <file.md>` | Crea el esqueleto ES a partir del archivo EN (con opción `--dry-run`) |
+| `cleanup-markdown-encoding.py` | Sanea problemas de codificación UTF-8 en archivos Markdown |
 | `skills/self-improving-loop.mjs` | Emite un registro JSON de progress-audit y puede anexar eventos JSONL aprobados |
 
 ---
 
-## 8. Design Rules
+## 8. Reglas de diseño
 
-### Entry point rules
+### Reglas de los puntos de entrada
 
-1. **Name pattern**: `run-evolith-<purpose>.mjs` where `<purpose>` is a single noun or short compound (`topology`, `deep`, `audit`).
-2. **Single responsibility**: Each entry point does one thing. If a script supports multiple modes via `--flags`, extract each mode into its own entry point when the logic diverges significantly.
-3. **Alias lifecycle**: Deprecated aliases (`run-winston-audit.mjs`) emit a warning to stderr and delegate. Remove after one minor version.
+1. **Patrón de nombre**: `run-evolith-<purpose>.mjs`, donde `<purpose>` es un sustantivo simple o un compuesto corto (`topology`, `deep`, `audit`).
+2. **Responsabilidad única**: Cada punto de entrada hace una sola cosa. Si un script admite varios modos mediante `--flags`, hay que extraer cada modo a su propio punto de entrada cuando la lógica diverja de forma significativa.
+3. **Ciclo de vida de los alias**: Los alias obsoletos (`run-winston-audit.mjs`) emiten una advertencia por stderr y delegan. Se eliminan tras una versión menor.
 
-### Playbook rules
+### Reglas de los playbooks
 
-1. **Name pattern**: `<domain>-<action>.mjs` (e.g., `topology-compliance-audit.mjs`).
-2. **Idempotent**: Same input always produces same output.
-3. **Markdown flag**: If the playbook supports both JSON and Markdown output, use `--markdown` to toggle.
+1. **Patrón de nombre**: `<domain>-<action>.mjs` (por ejemplo, `topology-compliance-audit.mjs`).
+2. **Idempotencia**: La misma entrada siempre produce la misma salida.
+3. **Bandera de Markdown**: Si el playbook admite salida en JSON y en Markdown, se usa `--markdown` para alternar.
 
-### CI hook rules
+### Reglas de los hooks de CI
 
-1. **Fast exit**: CI scripts must complete in under 5 seconds or delegate to background jobs.
-2. **Non-blocking warnings**: Non-critical findings should warn, not fail.
+1. **Salida rápida**: Los scripts de CI deben completarse en menos de 5 segundos o delegar en trabajos en segundo plano.
+2. **Advertencias no bloqueantes**: Los hallazgos no críticos deben advertir, no fallar.

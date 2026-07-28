@@ -1,109 +1,108 @@
-# ADR-0054: Database Design and Normalization Standards
+# ADR-0054: Estándares de diseño y normalización de bases de datos
 
-## 1. Metadata
-* **ADR ID:** 0054
-* **Title:** Base de datos Design and Normalization Standards
-* **Status:** Accepted
-* **Authors:** Enterprise Architecture Office
-* **Reviewers:** Corporate Architecture Committee, CTO Office
-* **Date:** 2026-05-14
-* **Tags:** `Database`, `Design`, `Normalization`, `SQL`, `NoSQL`, `Best-Practices`
-* **Related ADRs:**
-  * [ADR-0031: Schema-per-Context Isolation](./0031-schema-per-context-domain-event-catalog.es.md)
-  * [ADR-0051: Enterprise Base de datos Engine Strategy](./0051-enterprise-database-engine-strategy.es.md)
-
----
-
-## Executive Summary
-Data is the most valuable and permanent asset of the enterprise. While application code is frequently refactored, database schemas often persist for years. This ADR establishes mandatory design and normalization standards for both Relational (SQL) and No Relational (NoSQL) engines to ensure data integrity, minimize redundancy, and optimize performance across the entire polyglot mesh.
+## 1. Metadatos
+* **ID del ADR:** 0054
+* **Título:** Estándares de diseño y normalización de bases de datos
+* **Estado:** Aceptado
+* **Autores:** Enterprise Architecture Office
+* **Revisores:** Comité Corporativo de Arquitectura, Oficina del CTO
+* **Fecha:** 2026-05-14
+* **Etiquetas:** `Database`, `Design`, `Normalization`, `SQL`, `NoSQL`, `Best-Practices`
+* **ADR relacionados:**
+  * [ADR-0031: Aislamiento de esquema por contexto](./0031-schema-per-context-domain-event-catalog.es.md)
+  * [ADR-0051: Estrategia corporativa de motores de base de datos](./0051-enterprise-database-engine-strategy.es.md)
 
 ---
 
-## 2. Problem Context
-Inconsistent modeling patterns between different teams have caused:
-1. **Data Anomalies:** Update, insertion, and deletion anomalies due to poor SQL normalization.
-2. **Rendimiento Degradation:** Oversized documents and infinite arrays in NoSQL (MongoDB).
-3. **Governance Friction:** Difficulty understanding and integrating data between bounded contexts due to non-standard nomenclature and structure.
-4. **Inadequate Engine Selection:** Using SQL for unstructured data or NoSQL for complex relational graphs.
+## Resumen ejecutivo
+Los datos son el activo más valioso y más permanente de la empresa. Mientras que el código de aplicación se refactoriza con frecuencia, los esquemas de base de datos suelen sobrevivir durante años. Este ADR establece los estándares obligatorios de diseño y normalización, tanto para motores relacionales (SQL) como no relacionales (NoSQL), con el fin de garantizar la integridad de los datos, minimizar la redundancia y optimizar el rendimiento en toda la malla políglota.
 
 ---
 
-## 3. Decision
-We establish a dual-path modeling standard based on the nature of the persistence engine.
+## 2. Contexto del problema
+Los patrones de modelado inconsistentes entre los distintos equipos han provocado:
+1. **Anomalías de datos:** anomalías de actualización, inserción y borrado por una normalización deficiente en SQL.
+2. **Degradación del rendimiento:** documentos sobredimensionados y arreglos infinitos en NoSQL (MongoDB).
+3. **Fricción de gobernanza:** dificultad para entender e integrar datos entre contextos acotados, por nomenclatura y estructura no estándar.
+4. **Selección inadecuada del motor:** usar SQL para datos no estructurados, o NoSQL para grafos relacionales complejos.
 
-### 3.1 Relational Design (SQL Server / PostgreSQL)
-All relational models MUST follow **Third Normal Form (3NF)** as the default baseline.
+---
 
-* **1NF (Atomic Values):** Each column must contain atomic values; no repeating groups or arrays within a cell.
-* **2NF (Functional Dependency):** Must be in 1NF and all non-key attributes must depend totally on the primary key.
-* **3NF (Transitive Dependency):** Must be in 2NF and no non-key attribute should depend on another non-key attribute.
-* **Pragmatic Denormalization:** Only allowed for heavy-read analytical views or proven performance bottlenecks, governed by an ADR.
-* **Integrity:** Strict use of Foreign Keys (FK), Not-Null constraints, and unique indexes is MANDATORY.
+## 3. Decisión
+Establecemos un estándar de modelado de doble vía, según la naturaleza del motor de persistencia.
 
-### 3.2 No Relational Design (MongoDB)
-Modeling MUST follow **Design-for-Access** patterns instead of normalization.
+### 3.1 Diseño relacional (SQL Server / PostgreSQL)
+Todos los modelos relacionales DEBEN cumplir la **tercera forma normal (3FN)** como línea base por defecto.
 
-* **Embedding (Atomicity):** Favor embedding for data that is always read together and has a 1-to-1 or small 1-to-N relationship.
-* **Referencing (Scaling):** Use referencing for large 1-to-N relationships (>1000 sub-items) or when data is shared among multiple entities.
-* **Anti-Patrón Warning:** The use of "Infinite Arrays" (arrays that grow without limit) is strictly PROHIBITED. Use the "Bucket Pattern" or referencing instead.
+* **1FN (valores atómicos):** cada columna debe contener valores atómicos; sin grupos repetidos ni arreglos dentro de una celda.
+* **2FN (dependencia funcional):** debe estar en 1FN y todos los atributos que no son clave deben depender por completo de la clave primaria.
+* **3FN (dependencia transitiva):** debe estar en 2FN y ningún atributo que no sea clave debe depender de otro atributo que tampoco lo sea.
+* **Desnormalización pragmática:** solo se permite para vistas analíticas con lectura intensiva o para cuellos de botella de rendimiento demostrados, y siempre gobernada por un ADR.
+* **Integridad:** el uso estricto de claves foráneas (FK), restricciones Not-Null e índices únicos es OBLIGATORIO.
 
-### 3.3 Naming Conventions
-| Component | .NET / SQL Server | Node.js / Postgres / Mongo |
+### 3.2 Diseño no relacional (MongoDB)
+El modelado DEBE seguir patrones de **Design-for-Access** en lugar de la normalización.
+
+* **Embebido (atomicidad):** conviene embeber los datos que siempre se leen juntos y que tienen una relación 1 a 1 o 1 a N pequeña.
+* **Referencia (escalado):** hay que usar referencias para relaciones 1 a N grandes (más de 1000 subelementos) o cuando el dato se comparte entre varias entidades.
+* **Advertencia de antipatrón:** queda estrictamente PROHIBIDO usar "arreglos infinitos" (arreglos que crecen sin límite). En su lugar se usa el "Bucket Pattern" o una referencia.
+
+### 3.3 Convenciones de nomenclatura
+| Componente | .NET / SQL Server | Node.js / Postgres / Mongo |
 | :--- | :--- | :--- |
-| **Tables / Collections** | PascalCase (e.g., `UserProfiles`) | snake_case (e.g., `user_profiles`) |
-| **Columns / Fields** | PascalCase (e.g., `FirstName`) | snake_case (e.g., `first_name`) |
-| **Primary Keys** | `Id` | `id` (or `_id` for Mongo) |
+| **Tablas / colecciones** | PascalCase (p. ej., `UserProfiles`) | snake_case (p. ej., `user_profiles`) |
+| **Columnas / campos** | PascalCase (p. ej., `FirstName`) | snake_case (p. ej., `first_name`) |
+| **Claves primarias** | `Id` | `id` (o `_id` en Mongo) |
 
 ---
 
-## 4. Decision Matrix: SQL vs NoSQL
-| Factor | Favor SQL | Favor NoSQL |
+## 4. Matriz de decisión: SQL frente a NoSQL
+| Factor | A favor de SQL | A favor de NoSQL |
 | :--- | :--- | :--- |
-| **Schema** | Rigid, predefined. | Flexible, dynamic. |
-| **Transactions** | Requires strong ACID. | Eventual consistency acceptable. |
-| **Relationships** | Complex joins between tables. | Hierarchical or isolated data. |
-| **Scaling** | Vertical (typically). | Horizontal (Sharding). |
-| **Data Velocity** | Moderate. | High (Write-heavy). |
+| **Esquema** | Rígido, predefinido. | Flexible, dinámico. |
+| **Transacciones** | Se exige ACID fuerte. | Se acepta consistencia eventual. |
+| **Relaciones** | Joins complejos entre muchas tablas. | Los datos son jerárquicos o aislados. |
+| **Escalado** | Vertical (por lo general). | Horizontal (sharding). |
+| **Velocidad de datos** | Moderada. | Alta (escritura intensiva). |
 
 ---
 
-## 5. Consequences
+## 5. Consecuencias
 
-### Positives:
-* **Consistency:** Universal language for data modeling across the organization.
-* **Integrity:** Reduced risk of data corruption or orphaned records.
-* **Predictability:** Base de datos performance is easier to tune when structures are standardized.
+### Positivas:
+* **Consistencia:** un lenguaje universal de modelado de datos para toda la organización.
+* **Integridad:** menor riesgo de corrupción de datos o de registros huérfanos.
+* **Predictibilidad:** el rendimiento de la base de datos es más fácil de ajustar cuando las estructuras están estandarizadas.
 
-### Negatives:
-* **Design Effort:** Requires more initial thought compared to ad-hoc "schemaless" development.
-* **Complexity:** Managing 3NF can lead to more Joins, requiring efficient indexing strategies.
+### Negativas:
+* **Esfuerzo de diseño:** exige más reflexión inicial que el desarrollo ad hoc "sin esquema".
+* **Complejidad:** mantener la 3FN puede derivar en más joins, lo que obliga a estrategias de indexación eficientes.
 
 ---
 
-## Strategic Conclusion
-A well-designed database is the foundation of a resilient system. By enforcing 3NF for relational data and access-optimized patterns in NoSQL, we ensure our data remains a strategic asset rather than a deuda Técnica liability.
-
+## Conclusión estratégica
+Una base de datos bien diseñada es el cimiento de un sistema resiliente. Al imponer la 3FN para los datos relacionales y los patrones optimizados por acceso en NoSQL, aseguramos que nuestros datos sigan siendo un activo estratégico y no un pasivo de deuda técnica.
 
 
 
 
 ## Objetivo y Alcance
 
-Backfill histórico: Abordar la tensión arquitectónica donde context is unavailable, estableciendo un límite estándar.
+Backfill histórico: abordar la tensión arquitectónica en la que el contexto no está disponible, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-- **Seleccionada:** Base de datos Design and Normalization Standards
+- **Seleccionada:** Estándares de diseño y normalización de bases de datos
 - **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como la mantenibilidad y la confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
 Ninguna explícitamente enlazada.
 
 ---
-[Back to Index](../../../control-center/taxonomy/MASTER_INDEX.es.md)
+[Volver al índice](../../../control-center/taxonomy/MASTER_INDEX.es.md)
 > **Agent Signature:** Architect Agent

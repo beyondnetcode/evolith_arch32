@@ -64,6 +64,24 @@ fail closed. The tarball currently on npm predates this hardening — until the 
 release reaches the registry, treat the published `GeminiProvider` as ungoverned and
 do not arm it.
 
+#### Governed as a satellite of its own topology
+
+This package is evaluated against the nine blocking `AAI-*` rules of the
+`agentic-ai` topology Evolith itself ships. Its satellite descriptor is
+[`agent.config.json`](./agent.config.json) — sandbox posture, prompt/implementation
+separation, tool approval, context trust, audit, operational budgets and credential
+lifecycle — and its `enforcement` block states, rule by rule, what is enforced by
+code here and what is a declared operating policy. Operator procedures live in
+[`RUNBOOKS.md`](./RUNBOOKS.md). The conformance run is a test in this package's own
+suite (`src/__tests__/agentic-ai-self-conformance.spec.ts`), including a negative
+fixture that proves the nine go red without the descriptor.
+
+Spawned `.harness` capabilities receive an **allowlisted** environment: no
+`*_TOKEN`, `*_KEY`, `*_SECRET`, `*_URL` or `*_URI` from the host process reaches a
+capability script, from any path (GT-607). Configure what a capability may read
+with `HarnessProcessOptions.envAllowlist`, or pass values explicitly with
+`HarnessProcessOptions.env`.
+
 ## Install
 
 This package is part of the Evolith monorepo workspaces. Build it with the rest

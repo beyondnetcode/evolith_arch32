@@ -1,0 +1,158 @@
+{
+  "$comment": "GT-575 — Evolith evaluated against its OWN agentic-ai topology. This is the satellite descriptor the 9 blocking AAI-* rules of src/rulesets/topologies/agentic-ai/agentic-ai.rules.json read. The `enforcement` block below is NOT read by any rule: it exists so a reader can tell, per rule, what is enforced by code in this package and what is a declared operating policy. Do not raise a value here without moving its enforcement note with it.",
+  "schemaVersion": "1.0.0",
+  "satellite": "evolith-agent-runtime",
+  "topology": "agentic-ai",
+  "agent": {
+    "id": "evolith-agent-runtime",
+    "name": "Evolith Agent Runtime",
+    "description": "Decoupled agentic layer that operates Evolith Core through Ports & Adapters. Proposes; never executes outside the governed capability catalog.",
+    "capabilities": [
+      "validate-discovery-gate",
+      "check-initiative-artifacts",
+      "validate-adr-architecture",
+      "run-opa-audit",
+      "recommend-initiative-unblock",
+      "code-quality-structural-review",
+      "publish-trace-event"
+    ]
+  },
+  "sandbox": {
+    "mode": "isolated",
+    "network": "allowlist",
+    "networkAllowlist": [
+      "generativelanguage.googleapis.com"
+    ],
+    "process": "allowlist",
+    "processAllowlist": [
+      ".harness/manifest.yaml"
+    ],
+    "ephemeral": true,
+    "maxDurationSeconds": 120,
+    "maxMemoryMb": 2048,
+    "maxCpuCores": 1
+  },
+  "promptSources": [
+    "src/prompts"
+  ],
+  "implementationRoots": [
+    "src/domain",
+    "src/application",
+    "src/adapters",
+    "src/providers",
+    "src/capabilities"
+  ],
+  "toolPolicy": {
+    "mutative": "approval-required",
+    "capabilityDelegation": "scoped-and-expiring",
+    "catalog": "governed",
+    "unknownTool": "reject"
+  },
+  "contextPolicy": {
+    "untrustedContent": "data-only",
+    "provenanceRequired": true,
+    "toolOutputSchemaValidation": true
+  },
+  "audit": {
+    "appendOnly": true,
+    "correlationId": "required",
+    "contentFree": true
+  },
+  "operationalBudgets": {
+    "maxPromptTokens": 15000,
+    "maxCompletionTokens": 8192,
+    "maxContextWindowTokens": 32000,
+    "maxRequestBytes": 60000,
+    "mcpToolConcurrency": {
+      "maxInFlight": 4,
+      "perToolMaxInFlight": 1
+    },
+    "runbooksPath": "RUNBOOKS.md"
+  },
+  "credentialLifecycle": {
+    "delegationMaxTtlSeconds": 3600,
+    "rotationCadenceDays": 90,
+    "revocation": {
+      "onIncident": "immediate",
+      "maxPropagationSeconds": 300
+    }
+  },
+  "egress": {
+    "default": "disabled",
+    "optInFlag": "EVOLITH_LLM_EGRESS",
+    "subProcessors": [
+      "Google LLC (Gemini API)"
+    ],
+    "disclosure": "README.md#network-egress-and-data-handling"
+  },
+  "enforcement": {
+    "AAI-R01": {
+      "status": "enforced",
+      "evidence": [
+        "src/adapters/skills/default-skills.ts",
+        "src/adapters/skills/manifest-skill-catalog.ts"
+      ],
+      "note": "The capability catalog is code; a proposal naming anything outside it is rejected before execution."
+    },
+    "AAI-R02": {
+      "status": "partial",
+      "evidence": [
+        "src/adapters/harness/capability-env.ts",
+        "src/adapters/harness/harness-process.adapter.ts"
+      ],
+      "note": "PROCESS access is a real allowlist: only entries declared in `.harness/manifest.yaml` are executed, and each child receives an allowlisted environment with no credential or endpoint in it (GT-607). NETWORK access is DECLARATIVE: the runtime opens exactly one outbound host itself (off by default, human-gated), but nothing prevents a spawned capability from opening a socket. Hard network isolation needs the sandboxed runner of ADR-0081, which is not implemented."
+    },
+    "AAI-R03": {
+      "status": "enforced",
+      "evidence": [
+        "src/prompts/assistant-invocation.prompt.ts"
+      ],
+      "note": "Prompt text lives in src/prompts and nowhere else; the transport imports it."
+    },
+    "AAI-R04": {
+      "status": "enforced",
+      "evidence": [
+        "src/domain/ports/approval.port.ts",
+        "src/adapters/approval/policy-approval.adapter.ts",
+        "src/adapters/engine/supervised-assistant.client.ts"
+      ],
+      "note": "Approval is fail-closed by default; LLM egress refuses without a grant (LlmEgressUnsupervisedError)."
+    },
+    "AAI-R05": {
+      "status": "partial",
+      "evidence": [
+        "src/adapters/harness/harness-process.adapter.ts"
+      ],
+      "note": "Ephemeral (one child process per execution, no persistence), bounded duration (timeoutMs, SIGKILL) and bounded heap (--max-old-space-size) are enforced. maxCpuCores is DECLARATIVE: process-level CPU pinning is not implemented."
+    },
+    "AAI-R06": {
+      "status": "enforced",
+      "evidence": [
+        "src/providers/llm-egress.ts",
+        "src/providers/GeminiProvider.ts",
+        "src/adapters/engine/supervised-assistant.client.ts"
+      ],
+      "note": "Model output is schema-validated and can only name a catalog id; it is never treated as an instruction."
+    },
+    "AAI-R07": {
+      "status": "enforced",
+      "evidence": [
+        "src/adapters/journal/file-run-journal.adapter.ts",
+        "src/domain/ports/approval.port.ts"
+      ],
+      "note": "The run journal is append-only (fs.appendFile, one line per step) and keyed by correlationId; approvals carry expiresAt, so a delegation is scoped and expiring."
+    },
+    "AAI-R08": {
+      "status": "partial",
+      "evidence": [
+        "src/providers/llm-egress.ts"
+      ],
+      "note": "The byte/token budget is enforced fail-closed over the exact bytes sent. MCP tool concurrency ceilings are DECLARATIVE — the runtime has no MCP scheduler of its own."
+    },
+    "AAI-R09": {
+      "status": "declarative",
+      "evidence": [],
+      "note": "Credential rotation and revocation are an operating policy for the deployment that holds the tokens, not behaviour of this package. Stated here so an operator has a number to be held to."
+    }
+  }
+}

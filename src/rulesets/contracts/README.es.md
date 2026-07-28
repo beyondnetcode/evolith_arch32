@@ -17,3 +17,16 @@ node .harness/scripts/ci/10-validate-contract-conformance.mjs
 node .harness/scripts/ci/10-validate-contract-conformance.mjs --consumer /ruta/a/consumer-contracts.json
 ```
 
+## Schemas fijados
+
+| Id de schema | Versión | Ruta | Qué gobierna |
+| --- | --- | --- | --- |
+| `gate-evidence` | 1.0.0 | `src/rulesets/schema/gate-evidence.schema.json` | La evidencia adjunta a una decisión de gate. |
+| `output-envelope` | 1.0.0 | `src/rulesets/schema/output-envelope.schema.json` | El sobre de transporte ADR-0073 que devuelve toda superficie. |
+| `evaluation-context` | 1.0.0 | `src/rulesets/schema/evaluation-context.schema.json` | La PETICIÓN de evaluación — lo que un consumidor envía a `POST /api/v1/evaluate`. |
+| `evaluation-result` | 1.0.0 | `src/rulesets/schema/evaluation-result.schema.json` | La RESPUESTA de evaluación — el `EvaluationResult` canónico que viaja en `data`. |
+
+Los dos últimos se añadieron por GT-573. Hasta entonces la petición y la respuesta de la integración insignia no tenían schema fijado en ningún lado del cable, y por eso el Core podía responder con un sobre distinto del que el consumidor enlazaba dejando ambos CI en verde.
+
+Todo consumidor debe fijar los cuatro ids, cada uno en la versión y el SHA-256 aquí declarados, o `--consumer` falla con `Consumer does not pin schema: <id>`. Para `beyondnetcode/evolith_tracker` eso significa añadir las entradas `evaluation-context` y `evaluation-result` a `contracts/evolith-core-contracts.json` y mantener `contractVersion` en `1.0.0`.
+

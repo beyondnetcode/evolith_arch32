@@ -1,52 +1,52 @@
 # Ballpark Estimation
 
 > **Bilingual Navigation:** [Versión en Español](./ballpark-estimation-template.es.md)
-> **Propósito:** Proveer una estimación de alto nivel (T-Shirt sizing, orden de magnitud) de esfuerzo técnico, límites de recursos de infraestructura y tamaño de equipo, para evaluar la factibilidad técnica frente al Canvas de Factibilidad Técnica.
+> **Purpose:** To provide a high-level estimate (T-shirt sizing, order of magnitude) of the technical effort, the infrastructure resource limits and the team size, so that technical feasibility can be assessed against the Technical Feasibility Canvas.
 > 
-> **Fase SDLC:** 01 - Discovery / Ideación
+> **SDLC Phase:** 01 - Discovery / Ideation
 > 
-> **Responsable:** Arquitecto / Tech Lead
+> **Owner:** Architect / Tech Lead
 > 
-> **Quality Gate:** Compuerta de Aprobación de Arquitectura.
+> **Quality Gate:** Architecture Approval Gate.
 
-## Metadatos del Artefacto
+## Artifact Metadata
 
-* **URL Upstream Evolith:** `En construcción - Solicitar a Upstream`
-* **Entradas Requeridas:** Canvas de Factibilidad Técnica.
-* **Salidas Esperadas:** Estimación técnica macro aprobada que viabiliza el inicio de las historias de usuario.
-* **Taxonomía Aplicada:** T-Shirt Sizing, Cloud Quotas, Resource Limits.
-* **Rules Evolith Aplicables:** R-03 (UTF-8 Clean).
+* **Evolith Upstream URL:** `Under construction - Request from Upstream`
+* **Required Inputs:** Technical Feasibility Canvas.
+* **Expected Outputs:** An approved macro technical estimate that makes it viable to start writing the user stories.
+* **Applied Taxonomy:** T-Shirt Sizing, Cloud Quotas, Resource Limits.
+* **Applicable Evolith Rules:** R-03 (UTF-8 Clean).
 
 ---
 
-## 1. Estructura Documental (Markdown)
+## 1. Document Structure (Markdown)
 
 ```markdown
-# Ballpark Estimation: [Nombre de la Iniciativa]
+# Ballpark Estimation: [Initiative Name]
 
-## 1. Alcance de la Estimación
-[Contexto de lo que se está estimando. Exclusiones explícitas.]
+## 1. Scope of the Estimate
+[Context of what is being estimated. Explicit exclusions.]
 
-## 2. Tamaño de Equipo Propuesto
+## 2. Proposed Team Size
 - **Roles:** [e.g., 1 Tech Lead, 2 Backend, 1 QA]
-- **Duración Estimada:** [e.g., 3 Sprints / 1.5 meses]
+- **Estimated Duration:** [e.g., 3 Sprints / 1.5 months]
 
-## 3. Desglose de Esfuerzo (T-Shirt Sizing)
-| Componente/Módulo | Complejidad (S/M/L/XL) | Supuestos Técnicos |
+## 3. Effort Breakdown (T-Shirt Sizing)
+| Component/Module | Complexity (S/M/L/XL) | Technical Assumptions |
 | --- | --- | --- |
-| [Módulo 1] | [Tamaño] | [Detalles] |
+| [Module 1] | [Size] | [Details] |
 
-## 4. Restricciones de Recursos de Infraestructura y Cuotas
-- **Límites de Cómputo (CPU/Memoria):** [e.g., max 8 Cores, 16GB RAM]
-- **Límites de Almacenamiento:** [e.g., max 1TB SSD]
-- **Cuotas de Red y Nube:** [e.g., max 10 container instances]
+## 4. Infrastructure Resource Constraints and Quotas
+- **Compute Limits (CPU/Memory):** [e.g., max 8 Cores, 16GB RAM]
+- **Storage Limits:** [e.g., max 1TB SSD]
+- **Network and Cloud Quotas:** [e.g., max 10 container instances]
 ```
 
 ---
 
-## 2. Estructura de Datos (JSON / Estructura compatible con CSV/Excel)
+## 2. Data Structure (JSON / CSV-and-Excel-compatible structure)
 
-Diseñado para ser fácilmente convertido a CSV o consumido por Excel a través del CLI de Evolith.
+Designed so that it can be converted to CSV easily, or consumed by Excel through the Evolith CLI.
 
 ```json
 {
@@ -92,7 +92,7 @@ Diseñado para ser fácilmente convertido a CSV o consumido por Excel a través 
 
 ---
 
-## 3. Ejemplo Mínimo Aplicado
+## 3. Minimal Worked Example
 
 ```json
 {
@@ -105,14 +105,14 @@ Diseñado para ser fácilmente convertido a CSV o consumido por Excel a través 
   "durationSprints": 4,
   "estimates": [
     {
-      "component": "Integración con KYC Provider",
+      "component": "KYC Provider integration",
       "size": "L",
-      "assumptions": "Requiere VPN Site-to-Site"
+      "assumptions": "Requires a site-to-site VPN"
     },
     {
-      "component": "Frontend Web Onboarding",
+      "component": "Onboarding web frontend",
       "size": "M",
-      "assumptions": "Uso de componentes UI existentes"
+      "assumptions": "Reuses the existing UI components"
     }
   ],
   "technicalConstraints": {
@@ -126,6 +126,6 @@ Diseñado para ser fácilmente convertido a CSV o consumido por Excel a través 
 
 ---
 
-## 4. Trazabilidad Handoff hacia la Siguiente Fase
+## 4. Handoff Traceability to the Next Phase
 
-La aprobación de la **Ballpark Estimation** desencadena la fase detallada de requerimientos. El tamaño del equipo y los componentes identificados (`estimates`) dictan los Epics iniciales bajo los cuales se crearán las **User Stories Evolith**.
+Approving the **Ballpark Estimation** is what triggers the detailed requirements phase. The team size and the components identified in `estimates` dictate the initial epics under which the **Evolith User Stories** will be created.

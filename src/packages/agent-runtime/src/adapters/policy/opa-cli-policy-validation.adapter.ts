@@ -6,10 +6,16 @@
  * input document over a policy bundle directory, parses OPA's JSON result, and
  * maps it to a {@link PolicyValidationResult}. Thin on purpose: the policies
  * themselves live in `rulesets/opa/` and stay governed by the Core.
+ *
+ * ENVIRONMENT (GT-607): like every other child this package starts, the OPA
+ * process gets an ALLOWLISTED environment. `spawn` with no `env` inherits
+ * `process.env`, which would hand the policy binary every token the host holds;
+ * a policy evaluation needs none of them.
  */
 
 import { spawn } from 'node:child_process';
 import { join } from 'node:path';
+import { buildCapabilityEnv } from '../harness/capability-env';
 import type {
   IPolicyValidationPort,
   PolicyValidationRequest,
@@ -23,6 +29,12 @@ export interface OpaCliOptions {
   readonly policyDir?: string;
   readonly cwd?: string;
   readonly timeoutMs?: number;
+  /**
+   * Process launcher, injectable so the environment handed to the policy binary
+   * is assertable without a real OPA install (GT-607). Defaults to
+   * `child_process.spawn`.
+   */
+  readonly spawnImpl?: typeof spawn;
 }
 
 export class OpaCliPolicyValidationAdapter implements IPolicyValidationPort {
@@ -30,12 +42,14 @@ export class OpaCliPolicyValidationAdapter implements IPolicyValidationPort {
   private readonly policyDir: string;
   private readonly cwd: string;
   private readonly timeoutMs: number;
+  private readonly spawnImpl: typeof spawn;
 
   constructor(options: OpaCliOptions = {}) {
     this.cwd = options.cwd ?? process.cwd();
     this.opaPath = options.opaPath ?? join(this.cwd, '.harness/bin/opa');
     this.policyDir = options.policyDir ?? join(this.cwd, 'rulesets/opa');
     this.timeoutMs = options.timeoutMs ?? 60_000;
+    this.spawnImpl = options.spawnImpl ?? spawn;
   }
 
   async validate(request: PolicyValidationRequest): Promise<PolicyValidationResult> {
@@ -84,7 +98,8 @@ export class OpaCliPolicyValidationAdapter implements IPolicyValidationPort {
     stdin: string,
   ): Promise<{ ok: boolean; stdout: string; error?: string }> {
     return new Promise((resolve) => {
-      const child = spawn(this.opaPath, args, { cwd: this.cwd });
+      const { env } = buildCapabilityEnv({ parentEnv: process.env });
+      const child = this.spawnImpl(this.opaPath, args, { cwd: this.cwd, env });
       let stdout = '';
       let stderr = '';
       const timer = setTimeout(() => child.kill('SIGKILL'), this.timeoutMs);

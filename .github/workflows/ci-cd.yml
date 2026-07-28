@@ -146,7 +146,19 @@ jobs:
           npm run build --workspace @beyondnet/evolith-core
           npm run build --workspace @beyondnet/evolith-infra-providers
 
+      # GT-602: compile the rego to the `policy.wasm` the dispatcher actually loads.
+      # Without this the compiled-policy parity block self-skips and CI would verify
+      # ABAC against the rego SOURCE only — never against the artifact that decides
+      # at runtime, which is exactly how fifteen tools stayed FORBIDDEN in production.
+      - name: Compile OPA policy bundle (policy.wasm)
+        run: npm run build:policy
+
       - name: Run mcp-server tests with coverage
+        # EVOLITH_REQUIRE_OPA_WASM=1 makes the ABSENCE of the compiled bundle a
+        # failure rather than a skip: a test that skips where it is enforced
+        # verifies nothing.
+        env:
+          EVOLITH_REQUIRE_OPA_WASM: '1'
         run: npm run test:cov --workspace @beyondnet/evolith-mcp
 
       # GT-330: MCP server dedicated E2E (spawns the live MCP HTTP server)

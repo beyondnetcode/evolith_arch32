@@ -175,6 +175,79 @@ function canonicalStatus(status) {
   return STATUS_MAP.get(status);
 }
 
+/**
+ * GT-629 — count the acceptance criteria in a catalog section.
+ *
+ * A criterion is a markdown task-list item (`- [ ]` / `- [x]`) with content
+ * after the box. Prose is not a criterion, and neither is an empty box: both
+ * read as intent and neither can be ticked by evidence.
+ *
+ * @param {string} body the catalog section text
+ * @returns {number} how many task-list items it declares
+ */
+export function countAcceptanceCriteria(body) {
+  return (String(body ?? '').match(/^[ \t]*[-*][ \t]+\[[ xX]\][ \t]+\S/gm) || []).length;
+}
+
+/**
+ * Total task-list items across a whole catalog. Used as the anti-vacuous floor:
+ * if the criteria FORMAT ever changes, every criteria-aware check in this file
+ * -- including the DONE-rows-must-be-ticked check that has caught five false
+ * closures -- silently stops seeing anything and starts reporting a pass. Zero
+ * checkboxes in a catalog of hundreds of sections is that failure, not a clean
+ * board.
+ */
+function totalAcceptanceCriteria(sections) {
+  let total = 0;
+  for (const body of sections.values()) total += countAcceptanceCriteria(body);
+  return total;
+}
+
+/**
+ * GT-629 — an OPEN row must have criteria to tick.
+ *
+ * The DONE-side check below asks whether a closed row left a criterion
+ * unticked. Nothing asked the prior question: whether the row has any criteria
+ * at all. `GT-443` sat IN-PROGRESS for months carrying only prose ("Closure:
+ * breaker integration tests + K6 load/chaos ..."), which meant it could not be
+ * closed by anybody, because nothing defined done -- and no check said so. A
+ * row with zero criteria is worse than one with unmet criteria: it cannot be
+ * finished, cannot be measured, and reads as active work.
+ *
+ * Scope is deliberately every non-DONE `GT-*` row, epics and milestones
+ * included. An aggregator row is the easiest place for prose to hide, and
+ * "all children DONE" is itself a checkable criterion.
+ *
+ * @returns {number} how many rows were examined -- printed by the caller, so a
+ *   zero-row scan cannot be mistaken for a pass.
+ */
+function validateOpenRowsHaveCriteria(enRows, enSections, esSections, errors, stats) {
+  let checked = 0;
+  const missing = [];
+
+  for (const row of enRows) {
+    if (!row.id.startsWith('GT-')) continue;
+    if (canonicalStatus(row.status) === 'done') continue;
+    checked += 1;
+
+    for (const [language, sections] of [['EN', enSections], ['ES', esSections]]) {
+      // A missing section is already a hard error of its own; do not double-report it.
+      if (!sections.has(row.id)) continue;
+      if (countAcceptanceCriteria(sections.get(row.id)) > 0) continue;
+      missing.push(`${row.id}/${language}`);
+      errors.push(
+        `${row.id} is ${row.status} with NO acceptance criteria in the ${language} catalog — `
+        + 'an open row whose section carries prose instead of a `- [ ]` list is structurally '
+        + 'unclosable: nothing defines done. Write checkable criteria or close/defer the row (GT-629).',
+      );
+    }
+  }
+
+  stats.openRowsChecked = checked;
+  stats.openRowsMissingCriteria = missing;
+  return checked;
+}
+
 function commitExists(commit) {
   try {
     execFileSync('git', ['cat-file', '-e', `${commit}^{commit}`], {
@@ -255,6 +328,7 @@ export function validateTrackingState({
   enSections,
   esSections,
   registry,
+  stats = {},
 }) {
   const errors = [];
   const seen = new Set();
@@ -327,6 +401,11 @@ export function validateTrackingState({
     }
   }
 
+  // GT-629: la mitad que faltaba de la comprobacion de criterios. Arriba se
+  // exige que una fila DONE no deje criterios sin marcar; aqui se exige que una
+  // fila ABIERTA tenga criterios que marcar.
+  validateOpenRowsHaveCriteria(enRows, enSections, esSections, errors, stats);
+
   // UP-001 §7.4 pedia esto explicitamente: hasta ahora nada fallaba cuando una
   // superficie usaba el literal del idioma equivocado, asi que la enmienda era
   // una convencion documentada y no aplicada. Con esto pasa a ser aplicada.
@@ -385,6 +464,19 @@ function run() {
     { what: 'closure records', where: CLOSURE_REGISTRY },
   );
 
+  // GT-629: both criteria-aware checks read the same `- [ ]` shape. If that shape
+  // ever moves, they stop matching anything and go quiet in the direction of a
+  // pass, so the corpus of checkboxes gets its own floor.
+  assertScanned(totalAcceptanceCriteria(enSections), {
+    what: 'acceptance-criteria checkboxes in the EN catalog',
+    where: EN_CATALOG,
+  });
+  assertScanned(totalAcceptanceCriteria(esSections), {
+    what: 'acceptance-criteria checkboxes in the ES catalog',
+    where: ES_CATALOG,
+  });
+
+  const stats = {};
   const errors = validateTrackingState({
     enRows: en.rows,
     esRows: es.rows,
@@ -393,7 +485,17 @@ function run() {
     enSections,
     esSections,
     registry,
+    stats,
   });
+
+  // GT-629: printed on BOTH paths, and before the verdict. The denominator of a
+  // check is only useful if it is visible when the check passes -- that is the
+  // run where "0 rows checked" would otherwise read as "0 problems".
+  console.log(
+    `Acceptance-criteria audit: ${stats.openRowsChecked} non-DONE GT row(s) checked against `
+    + `${enSections.size}/${esSections.size} EN/ES catalog sections — `
+    + `${stats.openRowsMissingCriteria.length} with no criteria at all.`,
+  );
 
   if (errors.length) {
     for (const error of errors) console.error(`❌ [ERROR] ${error}`);

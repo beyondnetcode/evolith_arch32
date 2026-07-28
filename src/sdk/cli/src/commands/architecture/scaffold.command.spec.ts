@@ -45,6 +45,12 @@ describe('ScaffoldCommand', () => {
     // By default assume a valid Nx workspace so the pre-spawn guard passes; the
     // dedicated guard test below overrides this to exercise the failure path.
     jest.spyOn(command as any, 'checkWorkspace').mockReturnValue(undefined);
+    // GT-626: `ensureNxWorkspace` WRITES. These specs run with the CLI package as
+    // cwd, so leaving it live made a non-dry-run case drop nx.json/package.json/
+    // tsconfig.base.json/.gitignore into this repository's own `src/`. The
+    // bootstrap is exercised against real temp directories in
+    // `scaffold/init-then-scaffold.integration.spec.ts`, never here.
+    jest.spyOn(command as any, 'ensureNxWorkspace').mockReturnValue(undefined);
   });
 
   describe('run', () => {
@@ -552,11 +558,28 @@ describe('ScaffoldCommand', () => {
     beforeEach(() => {
       previousCwd = process.cwd();
       tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'gt626-'));
+      // These cases are all "inside a satellite": `init` has run, so `evolith.yaml`
+      // is here. The case where it has NOT is the dedicated test below.
+      fs.writeFileSync(path.join(tmp, 'evolith.yaml'), 'product:\n  name: my-sat\n');
     });
 
     afterEach(() => {
       process.chdir(previousCwd);
       fs.rmSync(tmp, { recursive: true, force: true });
+    });
+
+    it('refuses to create anything outside a satellite, and names the command that makes one', () => {
+      // The bootstrap WRITES. Doing that in whatever directory the user happens to
+      // be standing in is a side effect nobody asked for — an early revision of
+      // GT-626 had no such check and a test run dropped four files into this
+      // repository's own `src/`.
+      fs.rmSync(path.join(tmp, 'evolith.yaml'));
+      process.chdir(tmp);
+
+      const message = call();
+      expect(message).toContain('is not an Evolith satellite');
+      expect(message).toContain('evolith init');
+      expect(fs.readdirSync(tmp)).toEqual([]);
     });
 
     it('rejects a bare package.json in src/, which is NOT an Nx workspace', () => {
@@ -570,18 +593,35 @@ describe('ScaffoldCommand', () => {
       expect(call()).toContain('is not an Nx workspace');
     });
 
-    it('rejects the tree `init` leaves behind, and does not tell the user to re-run init', () => {
-      // Exactly what the README quickstart produces at step 2: manifest at the
-      // project root, `src/` empty. Step 5 cannot work here — but the message
-      // must say something the user can act on, not name the command they just ran.
-      fs.writeFileSync(path.join(tmp, 'package.json'), '{"name":"my-sat"}');
+    it('names the one case it can still refuse, and offers a command that creates one', () => {
+      // Since `ensureNxWorkspace()` runs first, a failure here means exactly one
+      // thing: `src/` already holds another project's package.json. The message
+      // must say THAT — and must not name `init`, the command the user just ran.
       fs.mkdirSync(path.join(tmp, 'src'));
+      fs.writeFileSync(path.join(tmp, 'src', 'package.json'), '{"name":"somebody-elses-app"}');
       process.chdir(tmp);
 
       const message = call();
       expect(message).toContain('is not an Nx workspace');
+      expect(message).toContain('belongs to');
       expect(message).toContain('create-nx-workspace');
-      expect(message).toContain('does not create one');
+      expect(message).not.toContain('evolith init');
+    });
+
+    it('the tree `init` leaves behind is now BOOTSTRAPPED, not refused (GT-626 criterion 2)', () => {
+      // Exactly what the README quickstart produces at step 2: manifest at the
+      // project root, `src/` empty. This used to be the dead end — step 5 could
+      // not follow step 2. `scaffold` now creates the workspace it needs.
+      fs.writeFileSync(path.join(tmp, 'package.json'), '{"name":"my-sat"}');
+      fs.mkdirSync(path.join(tmp, 'src'));
+      process.chdir(tmp);
+
+      const cmd = new ScaffoldCommand() as unknown as {
+        ensureNxWorkspace(): { action: string } | undefined;
+        checkWorkspace(): string | undefined;
+      };
+      expect(cmd.ensureNxWorkspace()).toEqual(expect.objectContaining({ action: 'created' }));
+      expect(cmd.checkWorkspace()).toBeUndefined();
     });
 
     it('accepts a real Nx workspace in src/', () => {

@@ -142,16 +142,30 @@ evolith docs
 # 4. Validate compliance — same directory, no `cd` after step 2
 evolith validate
 
-# 5. Scaffold architecture
-evolith scaffold --phase 1
-
-# 6. Connect an AI agent (standalone MCP server, separate package)
+# 5. Connect an AI agent (standalone MCP server, separate package)
 evolith-mcp serve
 ```
 
-A freshly initialized satellite is a baseline, not a pass: the first `validate` still
-reports blocking findings from rules that assume a fuller repository layout. Getting
-that to zero is open work tracked as GT-571.
+Two things this quickstart does NOT claim, because measuring it said otherwise
+(GT-571, GT-626):
+
+**`validate` at step 4 is a baseline, not a pass.** A freshly initialized satellite
+reports blocking findings from rules that assume a fuller repository layout — 91 of
+230 issues, measured against 1.2.1 on 2026-07-28. It exits `2` (a blocking verdict,
+per the exit taxonomy above), which is the honest answer and not a failure of the
+install. Getting that number to zero is open work tracked as GT-571.
+
+**`scaffold` is not part of this quickstart, because it cannot follow `init`.**
+`evolith scaffold` runs `nx` generators inside `./src`, and nothing here creates an
+Nx workspace there — `init` scaffolds the satellite *around* `src/`, not an Nx
+workspace *inside* it. Run it only in a repository that already has `src/nx.json`,
+and supply the choices that have no default so it can run unattended:
+
+```bash
+evolith scaffold --phase 1 --frontend react --orm prisma --domains construction
+```
+
+Who should create that workspace is tracked as GT-626.
 
 ---
 

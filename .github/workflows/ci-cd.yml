@@ -381,10 +381,38 @@ jobs:
       - name: Every CI guard publishes a denominator
         run: node .harness/scripts/ci/42-validate-guard-denominators.mjs --verbose
 
-      - name: Self-tests for the two GT-578 guards
+      # OBSERVED, not declared. 42 checks that each guard CAN refuse an empty
+      # scan; this one points every scanning guard at a deliberately empty
+      # repo-shaped tree and watches it go red. A guard nobody has ever seen fail
+      # is the defect this whole sweep is about, and the distinction between
+      # "has a vacuity check" and "the vacuity check fires" is where the last
+      # four false greens in this repository came from.
+      - name: Every scanning guard has been SEEN failing
+        run: node .harness/scripts/ci/43-validate-guard-negative-fixtures.mjs
+
+      # GT-607: seven ADRs were Accepted with no implementing code. The guard
+      # falsifies an author DECLARATION rather than guessing at implementing
+      # code — a grep-based signal was tried against this corpus and rejected,
+      # with the reasoning in the guard header. Report mode: 212 Accepted ADRs
+      # still declare nothing and are baselined; `--strict` is the switch when
+      # that baseline reaches zero.
+      - name: ADR implementation-status declarations resolve
+        run: node .harness/scripts/ci/44-validate-adr-implementation-status.mjs
+
+      # GT-424: the three skill registries. R3 measures the EFFECTIVE routing
+      # surface and audits GT-608's derivation rather than trusting it — a
+      # synthesis narrowed by one extra conjunct silently unreaches capabilities
+      # and would otherwise keep this green.
+      - name: Skill registries agree in both directions
+        run: node .harness/scripts/ci/34-check-skill-registry-parity.mjs
+
+      - name: Self-tests for the governance guards
         run: |
           node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
           node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs
+          node --test .harness/scripts/ci/43-validate-guard-negative-fixtures.test.mjs
+          node --test .harness/scripts/ci/44-validate-adr-implementation-status.test.mjs
+          node --test .harness/scripts/ci/34-check-skill-registry-parity.test.mjs
 
       # REPORTING MODE, and it says so in its own output ("THIS IS NOT A PASS").
       # It resolves every validationCommand recorded in the board's closure
@@ -401,16 +429,21 @@ jobs:
       - name: Execute the board's recorded validationCommands (report mode)
         run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose
 
-      # Ratchet, not a cliff. The budget is the count measured ON THE RUNNER —
-      # 305 — not on a developer machine, which reports 290. The 15-reference gap
-      # is environment: build outputs, a resolvable OPA binary and a usable
-      # /dev/stdin all exist locally and change what "dead" means. Pinning a
-      # ratchet to a number measured somewhere other than where it is enforced is
-      # how a gate becomes unsatisfiable, so the runner is the reference.
+      # Ratchet, not a cliff. 305 -> 303: two false-DEAD classes were repaired
+      # (a quoted grep pattern containing a slash, and a trailing parenthetical
+      # annotation — both were being resolved against disk as if they were paths).
+      #
+      # The number no longer depends on WHERE it is measured, which is what made
+      # the previous one fragile: the guard now prints its own "ratchet basis",
+      # adding back the references that resolve only through generated state
+      # (dist/, node_modules/, .harness/bin/). A developer machine and this runner
+      # therefore agree on 303 even though their raw counts differ by 15. Read the
+      # basis line, not the raw count, when lowering this.
+      #
       # Lower it as records are repaired; at 0, delete the flag and this becomes
       # the strict gate.
       - name: Dead-reference ratchet (must not grow)
-        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 305
+        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 303
 
   # RETIRED 2026-07-27 (GT-570): the `publish-npm` job lived here and published
   # ONLY `src/sdk/cli`, with `--tag beta` and no provenance, writing the token

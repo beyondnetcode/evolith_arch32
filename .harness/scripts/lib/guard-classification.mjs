@@ -46,6 +46,13 @@ export const SELF_GUARDED = [
     reason: 'the reference implementation of the pattern (GT-377); refuses both a missing root and an empty scan',
   },
   {
+    file: '44-validate-adr-implementation-status.mjs',
+    proof: /found ZERO ADR files — the corpus moved, and this guard verified nothing/,
+    reason:
+      'GT-607 ADR implementation-status guard; refuses an empty ADR corpus rather than ' +
+      'reporting every declaration as satisfied — the corpus moving is exactly how it would go quiet',
+  },
+  {
     file: '40-validate-path-literals.mjs',
     proof: /A zero-file scan must never be reported as "path literals valid"/,
     reason: 'GT-578 path-literal guard; fails on a missing scan root, a zero-file source and a zero-literal source',

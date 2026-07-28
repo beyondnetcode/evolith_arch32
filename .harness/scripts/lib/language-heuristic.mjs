@@ -32,10 +32,19 @@ const EN_MARKERS = new Set([
   'which','when','where','because','although','while','into','than','then','there',
 ]);
 
-/** Prose only: fences, inline code and link targets carry identifiers, not language. */
+/**
+ * Prose only. Fences, inline code and link targets carry identifiers, not
+ * language — and so do TABLE ROWS, which is the correction this heuristic needed
+ * on its first real use: `ADR_COVERAGE.es.md` is a Spanish document whose body is
+ * a table of English ADR TITLES, and counting those made a correctly-written file
+ * look mislabelled. A row of proper nouns is data. Accusing a document that is
+ * fine is worse than missing one that is not, because it is what gets a check
+ * switched off.
+ */
 function proseOf(content) {
   return content
     .replace(/^ {0,3}```[^\n]*\n[\s\S]*?^ {0,3}```[^\n]*$/gm, ' ')
+    .replace(/^\s*\|.*\|\s*$/gm, ' ')
     .replace(/`[^`]*`/g, ' ')
     .replace(/\]\([^)]*\)/g, '] ')
     .toLowerCase();

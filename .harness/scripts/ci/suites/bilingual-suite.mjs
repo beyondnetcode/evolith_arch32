@@ -41,9 +41,12 @@ function stripCodeBlocks(content) {
 /**
  * GT-620 — the debt this heuristic found on the day it was switched on.
  *
- * Nineteen documents sit in the wrong language slot: eight English slots written
- * in Spanish and eleven Spanish slots written in English. They are BASELINED, not
- * forgiven — the gate fails for any file outside this list, so the class cannot
+ * Twelve documents sit in the wrong language slot. It was nineteen when the
+ * heuristic was switched on: three security ADRs have been translated, and FOUR
+ * were the heuristic's own fault — `ADR_COVERAGE.es.md` and friends are Spanish
+ * documents whose bodies are tables of English ADR titles, and counting a row of
+ * proper nouns as prose made correct files look mislabelled. They are BASELINED,
+ * not forgiven — the gate fails for any file outside this list, so the class cannot
  * grow while the backlog is worked off, and every removal from this list is a
  * translation that actually happened.
  *
@@ -61,11 +64,6 @@ const LANGUAGE_BASELINE = new Set([
   'product/research/research/minimal-apis-vs-controllers-analysis.es.md',
   'reference/core/architecture/adrs/core/0054-database-design-normalization-standards.es.md',
   'reference/core/architecture/adrs/core/0056-enterprise-naming-design-conventions.es.md',
-  'reference/core/architecture/adrs/core/0120-ssrf-prevention-standard.es.md',
-  'reference/core/architecture/adrs/core/0121-input-validation-sanitization-standard.es.md',
-  'reference/core/architecture/adrs/core/0122-shell-execution-safety-standard.es.md',
-  'reference/core/control-center/audits/deep-coherence-analysis-2026-06-16.es.md',
-  'reference/core/control-center/opportunities/backlog-complete-summary.es.md',
   'reference/core/interfaces/using-the-mcp.md',
   'reference/core/interfaces/using-the-rest-api.md',
   'reference/core/sdlc/04-artifact-templates/ballpark-estimation-template.md',
@@ -75,8 +73,6 @@ const LANGUAGE_BASELINE = new Set([
   'reference/knowledge/README.md',
   'reference/knowledge/canonical/glossary/knowledge.md',
   'src/packages/mcp-server/README.md',
-  'src/rulesets/adr/ADR_COVERAGE.es.md',
-  'src/sdk/cli/rulesets/adr/ADR_COVERAGE.es.md',
 ]);
 
 

@@ -1,49 +1,49 @@
-# ADR-0122: Shell Execution Safety Standard
+# ADR-0122: Estándar de seguridad en la ejecución de shell
 
 > **Navegación Bilingüe:** [English Version](./0122-shell-execution-safety-standard.md)
 
-| Field | Value |
+| Campo | Valor |
 |---|---|
-| **Status** | Accepted |
-| **Date** | 2026-07-23 |
-| **Deciders** | Architecture Board |
-| **Technical Story** | OWASP A03 — Injection (CWE-78, CWE-88) |
+| **Estado** | Aceptado |
+| **Fecha** | 2026-07-23 |
+| **Decisores** | Comité de Arquitectura |
+| **Historia técnica** | OWASP A03 — inyección (CWE-78, CWE-88) |
 
-## Context
+## Contexto
 
-Multiple components executed shell commands: the MCP scaffold tool used `exec()`, the Core API OPA evaluator used `exec()`, and the agent-runtime harness process adapter used `sh -c` with string interpolation. The CLI had `execute()` (shell) and `executeFile()` (shell-free) methods.
+Varios componentes ejecutaban comandos de shell: la herramienta de andamiaje del MCP usaba `exec()`, el evaluador OPA de la Core API usaba `exec()`, y el adaptador de procesos del harness en agent-runtime usaba `sh -c` con interpolación de cadenas. El CLI tenía dos métodos: `execute()` (con shell) y `executeFile()` (sin shell).
 
-## Decision
+## Decisión
 
-### 1. Default to Shell-Free Execution
-- All new command execution MUST use `execFile()` or `spawn()` with argument arrays.
-- `exec()` (shell) is PROHIBITED for new code.
-- Existing `exec()` usage MUST be migrated to `execFile()` with a tracked GT-xx item.
+### 1. Por defecto, ejecución sin shell
+- Toda ejecución de comandos nueva DEBE usar `execFile()` o `spawn()` con arrays de argumentos.
+- `exec()` (con shell) queda PROHIBIDO en código nuevo.
+- El uso existente de `exec()` DEBE migrarse a `execFile()`, con su GT-xx registrado.
 
-### 2. User Input Never Reaches the Shell
-- Parameters derived from user input MUST NOT be interpolated into shell command strings.
-- Pass user-controlled values via environment variables or `spawn()` argument arrays.
+### 2. La entrada del usuario nunca llega al shell
+- Los parámetros derivados de entrada del usuario NO DEBEN interpolarse en cadenas de comando.
+- Los valores controlados por el usuario se pasan por variables de entorno o por el array de argumentos de `spawn()`.
 
-### 3. Allowlist Validation
-- Parameters that determine which binary or script to execute MUST be validated against an allowlist.
-- Example: `frontend` → `['react', 'angular', 'vue']` before passing to NxWorkspaceStrategy.
+### 3. Validación contra lista de permitidos
+- Los parámetros que determinan qué binario o script se ejecuta DEBEN validarse contra una lista de permitidos.
+- Por ejemplo: `frontend` → `['react', 'angular', 'vue']` antes de pasarlo a NxWorkspaceStrategy.
 
-### 4. Shell Runner in Harness
-- The `shell` runner in `HarnessProcessAdapter` MUST pass arguments via stdin or environment variables, NOT via command-line string interpolation.
-- Shell scripts MUST read from `$AGENT_RUNTIME_ARGS` or stdin.
+### 4. El runner `shell` del harness
+- El runner `shell` de `HarnessProcessAdapter` DEBE pasar los argumentos por stdin o por variables de entorno, NUNCA interpolándolos en la línea de comandos.
+- Los scripts de shell DEBEN leer de `$AGENT_RUNTIME_ARGS` o de stdin.
 
-### 5. Deprecation Policy
-- `execute()` (shell) and `NpmProvider.exec()` are deprecated.
-- All callers MUST migrate to `executeFile()` within 90 days.
+### 5. Política de obsolescencia
+- `execute()` (con shell) y `NpmProvider.exec()` quedan obsoletos.
+- Todos los llamadores DEBEN migrar a `executeFile()` en un plazo de 90 días.
 
-## Consequences
+## Consecuencias
 
-- The `GT-346` (shell injection surface closed) pattern is now a corporate standard.
-- All new CI scripts and harness capabilities must use shell-free execution.
-- The `CommandExecutor.executeFile()` is the canonical safe execution method.
+- El patrón de `GT-346` (superficie de inyección de shell cerrada) pasa a ser estándar corporativo.
+- Todo script de CI y toda capacidad del harness nuevos han de usar ejecución sin shell.
+- `CommandExecutor.executeFile()` es el método canónico de ejecución segura.
 
-## Related ADRs
+## ADRs relacionados
 
-- ADR-0073 (Unified CLI Output Contract)
-- GT-346 (Shell injection surface closed)
-- GT-251 (Command injection in update command fixed)
+- ADR-0073 (contrato unificado de salida del CLI)
+- GT-346 (superficie de inyección de shell cerrada)
+- GT-251 (inyección de comandos en el comando update, corregida)

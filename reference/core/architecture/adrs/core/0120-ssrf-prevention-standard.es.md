@@ -1,47 +1,47 @@
-# ADR-0120: SSRF Prevention Standard
+# ADR-0120: Estándar de prevención de SSRF
 
 > **Navegación Bilingüe:** [English Version](./0120-ssrf-prevention-standard.md)
 
-| Field | Value |
+| Campo | Valor |
 |---|---|
-| **Status** | Accepted |
-| **Date** | 2026-07-23 |
-| **Deciders** | Architecture Board |
-| **Technical Story** | OWASP API7 / A10 — Server-Side Request Forgery |
+| **Estado** | Aceptado |
+| **Fecha** | 2026-07-23 |
+| **Decisores** | Comité de Arquitectura |
+| **Historia técnica** | OWASP API7 / A10 — Server-Side Request Forgery |
 
-## Context
+## Contexto
 
-The Dapr secret fetch in core-api used `localhost:${DAPR_HTTP_PORT}` without validating the port or hostname. An attacker controlling the env var could redirect the fetch. The webhook adapter had an SSRF guard (GT-351), but no corporate-wide standard existed.
+La obtención de secretos de Dapr en core-api usaba `localhost:${DAPR_HTTP_PORT}` sin validar ni el puerto ni el nombre de host. Un atacante que controlase esa variable de entorno podía redirigir la petición. El adaptador de webhooks sí tenía una protección contra SSRF (GT-351), pero no existía ningún estándar corporativo.
 
-## Decision
+## Decisión
 
-Establish SSRF prevention rules for all outbound HTTP requests:
+Establecer reglas de prevención de SSRF para toda petición HTTP saliente:
 
-### 1. URL Validation
-- All outbound HTTP requests MUST validate the target URL against an allowlist of trusted hosts/IPs.
-- Reject requests to private IP ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, 169.254.0.0/16) unless explicitly configured.
+### 1. Validación de URL
+- Toda petición HTTP saliente DEBE validar la URL de destino contra una lista de permitidos de hosts o IPs de confianza.
+- Se rechazan las peticiones a rangos de IP privados (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, 169.254.0.0/16) salvo que se configuren de forma explícita.
 
-### 2. DNS Rebinding Protection
-- Resolve DNS once and pin the IP before connecting. Do not re-resolve after connection.
-- For localhost services, hardcode `127.0.0.1` instead of `localhost` to prevent DNS rebinding.
+### 2. Protección frente a DNS rebinding
+- Resolver el DNS una sola vez y fijar la IP antes de conectar. No se vuelve a resolver después de la conexión.
+- Para los servicios locales, escribir `127.0.0.1` en el código en lugar de `localhost`, porque así el DNS rebinding no tiene dónde actuar.
 
-### 3. Environment Variable Validation
-- Environment variables that control URLs or ports MUST be validated:
-  - Port variables must be numeric, finite, and in range 1-65535.
-  - URL variables must match expected patterns (e.g., `^https?://`).
-- Invalid values MUST be logged as warnings and fall back to safe defaults.
+### 3. Validación de variables de entorno
+- Las variables de entorno que controlan URLs o puertos DEBEN validarse:
+  - Las variables de puerto han de ser numéricas, finitas y estar entre 1 y 65535.
+  - Las variables de URL han de coincidir con los patrones esperados (por ejemplo, `^https?://`).
+- Los valores inválidos DEBEN registrarse como advertencia y recaer en valores por defecto seguros.
 
-### 4. Timeout and Size Limits
-- All outbound requests MUST have a timeout (30s default).
-- Response body size MUST be limited to prevent memory exhaustion.
+### 4. Límites de tiempo y de tamaño
+- Toda petición saliente DEBE llevar un tiempo límite (30 s por defecto).
+- El tamaño del cuerpo de la respuesta DEBE estar acotado, para que no agote la memoria.
 
-## Consequences
+## Consecuencias
 
-- New services must implement URL validation before making outbound requests.
-- Existing Dapr secret fetch endpoints must validate `DAPR_HTTP_PORT`.
-- The `@nestjs/throttler` rate limiting provides partial DoS protection.
+- Los servicios nuevos han de validar la URL antes de hacer cualquier petición saliente.
+- Los endpoints existentes que piden secretos a Dapr han de validar `DAPR_HTTP_PORT`.
+- La limitación de tasa de `@nestjs/throttler` aporta una protección parcial frente a denegación de servicio.
 
-## Related ADRs
+## ADRs relacionados
 
-- ADR-0081 (Sandbox Isolation — network deny-by-default)
-- GT-351 (SSRF guard on WebhookAdapter)
+- ADR-0081 (aislamiento del sandbox — red denegada por defecto)
+- GT-351 (protección contra SSRF en WebhookAdapter)

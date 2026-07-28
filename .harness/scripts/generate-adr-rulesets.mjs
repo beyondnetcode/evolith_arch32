@@ -448,11 +448,23 @@ function run() {
   if (orphanCount) console.log(`Stale orphan stubs   : ${orphanCount} (rewritten as SUPERSEDED; delete manually)`);
 
   if (check) {
+    // GT-627 anti-vacuous pass. `drift === 0` over an empty ADR tree is not
+    // "no drift", it is "nothing was compared" — and this guard exists precisely
+    // because a corpus can fall silently out of step with the ADR set. The
+    // denominator is printed above and asserted here, so the day the ADR tree
+    // moves, this fails loudly instead of reporting a clean check over nothing.
+    if (totals.total === 0) {
+      console.error(
+        `\n[FAIL] scanned ${ADR_BASE} and found ZERO ADRs. ` +
+        `Nothing was checked, so this is NOT a pass — the ADR tree moved or the scan is broken.`,
+      );
+      process.exit(1);
+    }
     if (drift > 0) {
       console.error(`\n[FAIL] ${drift} file(s) drifted or missing. Run the generator and commit the result.`);
       process.exit(1);
     }
-    console.log('\n[OK] --check passed: no drift, all ADRs covered.');
+    console.log(`\n[OK] --check passed: ${totals.total} ADR(s), no drift, all covered.`);
   } else {
     console.log(`\n[OK] Wrote ${targets.length} generated ruleset(s) to rulesets/adr/generated/`);
   }

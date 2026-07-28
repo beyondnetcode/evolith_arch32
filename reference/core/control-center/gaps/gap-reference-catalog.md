@@ -7935,9 +7935,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Governance` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Found on 2026-07-28 while regenerating the corpus for GT-571.
 - **Acceptance criteria:**
-  - [ ] CI runs `generate-adr-rulesets.mjs --check` (or equivalent) and fails when the committed corpus differs from what the generator produces.
-  - [ ] The check ships with a negative fixture: deleting one generated ruleset turns it red.
-  - [ ] The check publishes its denominator, so a zero-ADR scan cannot report a pass.
+  - [x] CI runs `generate-adr-rulesets.mjs --check` (or equivalent) and fails when the committed corpus differs from what the generator produces.
+  - [x] The check ships with a negative fixture: deleting one generated ruleset turns it red.
+  - [x] The check publishes its denominator, so a zero-ADR scan cannot report a pass.
 
 #### GT-626
 

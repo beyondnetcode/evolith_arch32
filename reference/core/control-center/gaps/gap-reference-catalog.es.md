@@ -7840,9 +7840,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Component:** `Governance` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Encontrado el 2026-07-28 al regenerar el corpus para GT-571.
 - **Acceptance criteria:**
-  - [ ] CI ejecuta `generate-adr-rulesets.mjs --check` (o equivalente) y falla cuando el corpus commiteado difiere de lo que produce el generador.
-  - [ ] La comprobación incluye una fixture negativa: borrar un ruleset generado la pone roja.
-  - [ ] La comprobación publica su denominador, para que un barrido de cero ADRs no pueda reportar un pase.
+  - [x] CI ejecuta `generate-adr-rulesets.mjs --check` (o equivalente) y falla cuando el corpus commiteado difiere de lo que produce el generador.
+  - [x] La comprobación incluye una fixture negativa: borrar un ruleset generado la pone roja.
+  - [x] La comprobación publica su denominador, para que un barrido de cero ADRs no pueda reportar un pase.
 
 #### GT-626
 

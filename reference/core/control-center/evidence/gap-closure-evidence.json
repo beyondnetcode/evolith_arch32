@@ -8526,6 +8526,23 @@
         "README quickstart executed literally: fixtures 0, init 0, docs 0, validate 2 (documented blocking verdict), evolith-mcp serve starts on stdio."
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-627",
+      "closedAt": "2026-07-28",
+      "closureCommit": "41ec8365",
+      "evidence": [
+        ".github/workflows/docs.yml",
+        ".harness/scripts/generate-adr-rulesets.mjs",
+        ".harness/scripts/generate-adr-rulesets.test.mjs"
+      ],
+      "validationCommands": [
+        "generate-adr-rulesets.mjs --check -> exit 0, \"140 ADR(s), no drift, all covered\". Wired into Validate documentation, a required check.",
+        "Negative fixture: removing a generated ruleset -> exit 1 \"drifted or missing\"; the test restores the tree and re-asserts exit 0.",
+        "Anti-vacuous: a zero-ADR scan now fails instead of reporting no drift, and the denominator is printed.",
+        "The generator self-test was red on two paths missing the src/ prefix (a pre-existing failure); fixed, 8/8, and run in the same required job."
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

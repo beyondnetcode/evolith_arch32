@@ -7,6 +7,7 @@ import {
   formatExclusionReport
 } from "../../lib/generated-doc-exclusions.mjs";
 import { assertScanned } from "../../lib/coverage.mjs";
+import { languageOf } from "../../lib/language-heuristic.mjs";
 
 const root = process.cwd();
 const failures = [];
@@ -36,6 +37,48 @@ function stripCodeBlocks(content) {
     .replace(/^ {0,3}```[^\n]*\n[\s\S]*?^ {0,3}```[^\n]*$/gm, (match) => match.replace(/[^\r\n]/g, " "))
     .replace(/`[^`\r\n]+`/g, (match) => match.replace(/[^\r\n]/g, " "));
 }
+
+/**
+ * GT-620 — the debt this heuristic found on the day it was switched on.
+ *
+ * Nineteen documents sit in the wrong language slot: eight English slots written
+ * in Spanish and eleven Spanish slots written in English. They are BASELINED, not
+ * forgiven — the gate fails for any file outside this list, so the class cannot
+ * grow while the backlog is worked off, and every removal from this list is a
+ * translation that actually happened.
+ *
+ * A named list rather than a count, deliberately: a numeric ratchet lets one
+ * mislabelled file be swapped for another without the number moving, which is
+ * the failure mode this board keeps finding in its own guards. Tracked as
+ * GT-628. Delete an entry when its file is translated; when the list is empty,
+ * delete the list.
+ *
+ * `reference/core/interfaces/using-the-cli.md` is deliberately ABSENT: it is the
+ * file GT-620 was registered for, it has been rewritten in English, and it must
+ * fail this gate if it ever regresses.
+ */
+const LANGUAGE_BASELINE = new Set([
+  'product/research/research/minimal-apis-vs-controllers-analysis.es.md',
+  'reference/core/architecture/adrs/core/0054-database-design-normalization-standards.es.md',
+  'reference/core/architecture/adrs/core/0056-enterprise-naming-design-conventions.es.md',
+  'reference/core/architecture/adrs/core/0120-ssrf-prevention-standard.es.md',
+  'reference/core/architecture/adrs/core/0121-input-validation-sanitization-standard.es.md',
+  'reference/core/architecture/adrs/core/0122-shell-execution-safety-standard.es.md',
+  'reference/core/control-center/audits/deep-coherence-analysis-2026-06-16.es.md',
+  'reference/core/control-center/opportunities/backlog-complete-summary.es.md',
+  'reference/core/interfaces/using-the-mcp.md',
+  'reference/core/interfaces/using-the-rest-api.md',
+  'reference/core/sdlc/04-artifact-templates/ballpark-estimation-template.md',
+  'reference/core/sdlc/04-artifact-templates/discovery-canvas-template.md',
+  'reference/core/sdlc/governance/adr-0090-rule-language-policy.md',
+  'reference/harness/scripts-taxonomy.es.md',
+  'reference/knowledge/README.md',
+  'reference/knowledge/canonical/glossary/knowledge.md',
+  'src/packages/mcp-server/README.md',
+  'src/rulesets/adr/ADR_COVERAGE.es.md',
+  'src/sdk/cli/rulesets/adr/ADR_COVERAGE.es.md',
+]);
+
 
 function countHeaders(content) {
   const headingPattern = /^#{2,3}\s+.+$/gm;
@@ -99,6 +142,27 @@ for (const file of markdownFiles) {
         const esHeaders = countHeaders(spanishContent);
         if (enHeaders !== esHeaders) {
           failures.push(`${relative}: structural mismatch (EN: ${enHeaders} headers, ES: ${esHeaders} headers)`);
+        }
+
+        // GT-620: structural parity is necessary and not sufficient. Two files
+        // can carry identical headings and be the same language.
+        // `content` IS the English file in this branch — the walker is on the
+        // `.md` and read its Spanish counterpart above.
+        const relativePosix = relative.split(path.sep).join('/');
+        const enLang = languageOf(content);
+        if (enLang.verdict === 'es' && !LANGUAGE_BASELINE.has(relativePosix)) {
+          failures.push(
+            `${relative}: the ENGLISH slot reads as Spanish ` +
+            `(${enLang.es} Spanish function words vs ${enLang.en} English). ` +
+            `Heading counts match, which is why this passed before GT-620.`,
+          );
+        }
+        const esLang = languageOf(spanishContent);
+        if (esLang.verdict === 'en' && !LANGUAGE_BASELINE.has(relativePosix.replace(/\.md$/, '.es.md'))) {
+          failures.push(
+            `${relative.replace(/\.md$/, '.es.md')}: the SPANISH slot reads as English ` +
+            `(${esLang.en} English function words vs ${esLang.es} Spanish).`,
+          );
         }
       }
     }

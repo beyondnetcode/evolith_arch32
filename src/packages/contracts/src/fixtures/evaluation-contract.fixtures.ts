@@ -375,6 +375,59 @@ export const EVALUATE_INLINE_OPA_GATE_FAIL_REQUEST = Object.freeze({
  */
 
 /** What the Core emits for {@link EVALUATE_INLINE_PASS_REQUEST}. */
+/**
+ * GT-586 — attribution on the wire.
+ *
+ * A verdict could not say WHO asked for it or WHICH revision it judged, which
+ * makes an audit trail that records what was decided and not on whose behalf.
+ * `requester` and `repositoryRevision` are OPTIONAL on purpose: the change had
+ * to be additive for a published package, and a consumer built against the
+ * older shape must keep validating. These two fixtures are the pair a consumer
+ * pins to prove exactly that — one carrying attribution, one deliberately
+ * without it.
+ *
+ * Nothing here is derived. If a caller supplies no revision, none is emitted:
+ * an invented commit sha in an audit trail is worse than an absent one.
+ */
+export const EVALUATE_INLINE_ATTRIBUTED_REQUEST = Object.freeze({
+  kinds: Object.freeze(['gate', 'compliance']),
+  phaseId: 'construction',
+  requester: Object.freeze({
+    actorType: 'agent',
+    actorId: 'winston@evolith',
+    modelRef: 'claude-opus-5',
+    sessionId: 'sess-4f2a',
+  }),
+  repositoryRevision: Object.freeze({
+    revision: '9f3c1ab',
+    repositoryRef: 'refs/heads/main',
+    branch: 'main',
+    dirty: false,
+  }),
+  evaluationInput: Object.freeze({
+    files: Object.freeze({
+      'evolith.yaml': CONFORMANT_EVOLITH_YAML,
+      'docs/prd.md': '# PRD\n',
+    }),
+  }),
+});
+
+/** The attribution a verdict echoes back, verbatim — never derived, never invented. */
+export const EVALUATION_RESULT_ATTRIBUTION_FIXTURE = Object.freeze({
+  requester: Object.freeze({
+    actorType: 'agent',
+    actorId: 'winston@evolith',
+    modelRef: 'claude-opus-5',
+    sessionId: 'sess-4f2a',
+  }),
+  repositoryRevision: Object.freeze({
+    revision: '9f3c1ab',
+    repositoryRef: 'refs/heads/main',
+    branch: 'main',
+    dirty: false,
+  }),
+});
+
 export const EVALUATION_RESULT_PASS_FIXTURE: TrackerBoundEvaluationResult = Object.freeze({
   overallVerdict: 'PASS',
   outcome: 'approved',

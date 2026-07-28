@@ -1880,6 +1880,12 @@ Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monore
 
 **Problema:** circuit breakers + DR están `Designed` pero sin probar a escala; sin chaos drills; RTO/RPO sin cuantificar. **Cierre:** tests de integración de breakers + K6 load/chaos + deploy DR con RTO/RPO medidos. **Referencias:** ADR-0011/0013/0037.
 
+- **Acceptance criteria:**
+  - [ ] Los tests de integración del circuit breaker ejercitan las transiciones abierto, semiabierto y cerrado contra una dependencia que falla, y fallan sin el breaker.
+  - [ ] Un perfil de carga K6 corre en CI y publica rendimiento, latencia p95 y tasa de error contra umbrales declarados.
+  - [ ] Un simulacro de caos mata una dependencia a mitad de ejecución y el comportamiento registrado coincide con lo que declara ADR-0011.
+  - [ ] RTO y RPO se MIDEN en una restauración DR real y se escriben en ADR-0013, sustituyendo la afirmación no cuantificada actual.
+
 #### GT-444
 
 **Título:** Pen-test externo
@@ -7076,7 +7082,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
   - [x] `npx @beyondnet/evolith-cli@latest` seguido de la secuencia literal del README completa en un contenedor limpio.
-  - [ ] Un repo recién inicializado devuelve 0 hallazgos blocking, asertado por un test que falla si vuelve a subir.
+  - [x] Un repo recién inicializado devuelve 0 hallazgos blocking, asertado por un test que falla si vuelve a subir.
   - [x] `--help` nombra el comando real, no `main`.
 
 #### GT-572
@@ -7441,7 +7447,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criterios de aceptación:**
   - [x] El contexto acepta un solicitante tipado opcional y una revisión de repositorio.
   - [x] El resultado refleja ambos, y un veredicto sin ellos sigue validando (prueba de que el cambio es aditivo).
-  - [ ] Las fixtures de contrato de `@beyondnet/evolith-contracts` cubren los campos nuevos.
+  - [x] Las fixtures de contrato de `@beyondnet/evolith-contracts` cubren los campos nuevos.
 
 
 #### GT-587
@@ -7693,7 +7699,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith CLI` · **Criticidad:** P1 · **Complejidad:** M
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-612
 
@@ -7704,7 +7710,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `agent-runtime` · **Criticidad:** P1 · **Complejidad:** M
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-613
 
@@ -7792,7 +7798,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Documentation` · **Criticidad:** P1 · **Complejidad:** S
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-621
 
@@ -7830,6 +7836,45 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Un commit con mensaje malformado se rechaza en local, demostrado intentándolo.
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
+
+#### GT-629
+
+**Title:** El guard de seguimiento nunca pregunta si una fila abierta tiene criterios de aceptación
+
+- **Purpose:** Que sea imposible registrar una fila que no se puede cerrar.
+- **Evidence:** **Una fila puede estar EN-PROGRESO indefinidamente sin criterios de aceptación, y el guard de seguimiento no lo dirá.** `08-validate-tracking.mjs` exige que una fila `DONE` tenga todos sus criterios marcados — la comprobación que ha cazado cuatro cierres falsos esta semana — pero nunca pregunta si una fila ABIERTA tiene algún criterio que marcar. `GT-443` estaba en ese estado: registrada, en progreso y estructuralmente incerrable, porque su sección del catálogo llevaba prosa en vez de una lista de criterios. Encontrado el 2026-07-28 auditando por qué había 24 filas en progreso. Una fila sin criterios es peor que una con criterios incumplidos: no puede terminarse, no puede medirse, y se lee como trabajo activo.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** XS
+- **Provenance:** Encontrado el 2026-07-28 auditando las 24 filas en progreso.
+- **Acceptance criteria:**
+  - [ ] `08-validate-tracking.mjs` falla cuando una fila `GT-*` no-DONE tiene la lista de criterios de aceptación vacía.
+  - [ ] La comprobación incluye una fixture negativa: quitar los criterios de una fila la pone roja.
+  - [ ] Se imprime el número de filas comprobadas, para que un barrido de cero filas no pueda reportar un pase.
+
+#### GT-628
+
+**Title:** Diecinueve documentos están en el slot de idioma equivocado, incluidas las dos guías de interfaz principales
+
+- **Purpose:** Dar a cada par bilingüe una contraparte real, para que los puntos de entrada en inglés existan antes de que el proyecto sea público.
+- **Evidence:** **Diecinueve documentos están en el slot de idioma equivocado, y la puerta no podía ver ninguno hasta el 2026-07-28.** Descubierto al activar la heurística de idioma de GT-620. OCHO slots ingleses están escritos en español — `reference/core/interfaces/using-the-mcp.md` (956 palabras funcionales españolas frente a 107 inglesas), `using-the-rest-api.md` (1231 frente a 35), `src/packages/mcp-server/README.md` (573 frente a 21), `reference/knowledge/README.md`, `reference/knowledge/canonical/glossary/knowledge.md`, `reference/core/sdlc/governance/adr-0090-rule-language-policy.md` y dos plantillas de artefacto SDLC. ONCE slots españoles están escritos en inglés, incluidos los `.es.md` de tres ADRs de SEGURIDAD (0120 prevención de SSRF, 0121 validación de entrada, 0122 seguridad en ejecución de shell) y ambas copias de `ADR_COVERAGE.es.md`. El proyecto está a las puertas del código abierto y sus dos guías de interfaz principales — MCP y REST — no tienen ningún punto de entrada en inglés, exactamente el hallazgo que GT-620 registró para la guía del CLI. Quedan en línea base POR NOMBRE en `bilingual-suite.mjs` para que la clase no pueda crecer; cada entrada borrada de esa lista es una traducción que ocurrió de verdad.
+- **Component:** `Documentation` · **Criticality:** P1 · **Complexity:** L
+- **Provenance:** Encontrado el 2026-07-28 al activar la heurística de idioma de GT-620.
+- **Acceptance criteria:**
+  - [ ] `LANGUAGE_BASELINE` en `bilingual-suite.mjs` está vacío y la constante se elimina.
+  - [ ] `using-the-mcp.md` y `using-the-rest-api.md` se leen como inglés, verificado por la heurística.
+  - [ ] Los `.es.md` de ADR-0120, ADR-0121 y ADR-0122 se leen como español.
+
+#### GT-627
+
+**Title:** El corpus de ADR generado deriva del conjunto de ADRs y nada en CI lo advierte
+
+- **Purpose:** Que un ADR aceptado sin ruleset generado rompa CI, en vez de esperar a que alguien regenere a mano.
+- **Evidence:** **El corpus de conformidad de ADR commiteado estaba siete rulesets por detrás de su propio generador, y seis de los siete son estándares de seguridad.** Descubierto el 2026-07-28 al regenerar para `GT-571`: `generate-adr-rulesets.mjs` escribió 133 rulesets donde el repositorio tenía 126. Los que faltaban son ADR-0118 más **ADR-0119 (endurecimiento de configuración de seguridad de API), ADR-0120 (prevención de SSRF), ADR-0121 (validación y saneamiento de entrada), ADR-0122 (seguridad en ejecución de shell), ADR-0123 (comparación en tiempo constante) y ADR-0124 (gestión de credenciales y secretos)** — decisiones aceptadas sin ningún ruleset de conformidad en el corpus, porque nadie volvió a ejecutar el generador tras aceptarlas. Nada lo detectó: el generador imprime una cifra de cobertura pero no se ejecuta con `--check` en CI, así que el corpus podía derivar del conjunto de ADRs indefinidamente. Es la misma forma que `GT-424` (un registro que deriva porque solo se verifica una dirección) y `GT-607` (ADRs Aceptados sin código que los implemente), y es la razón de que se moviera el snapshot fijado de triaje de `GT-595`: de 143 no ejecutables a 150, y de 126 reglas de conformidad de ADR a 133.
+- **Component:** `Governance` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Encontrado el 2026-07-28 al regenerar el corpus para GT-571.
+- **Acceptance criteria:**
+  - [x] CI ejecuta `generate-adr-rulesets.mjs --check` (o equivalente) y falla cuando el corpus commiteado difiere de lo que produce el generador.
+  - [x] La comprobación incluye una fixture negativa: borrar un ruleset generado la pone roja.
+  - [x] La comprobación publica su denominador, para que un barrido de cero ADRs no pueda reportar un pase.
 
 #### GT-626
 

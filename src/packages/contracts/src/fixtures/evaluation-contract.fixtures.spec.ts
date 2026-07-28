@@ -8,6 +8,8 @@
  */
 
 import {
+  EVALUATION_RESULT_ATTRIBUTION_FIXTURE,
+  EVALUATE_INLINE_ATTRIBUTED_REQUEST,
   EVALUATE_INLINE_FAIL_REQUEST,
   EVALUATE_INLINE_OPA_GATE_FAIL_REQUEST,
   EVALUATE_INLINE_PASS_REQUEST,
@@ -212,6 +214,36 @@ describe('Tracker consumer contract for POST /api/v1/evaluate (GT-573)', () => {
       [undefined, 'skipped'],
     ])('%s → %s', (input, expected) => {
       expect(normalizeGateVerdict(input as string | undefined)).toBe(expected);
+    });
+  });
+
+  describe('GT-586 — a verdict says who asked for it and which revision it judged', () => {
+    it('the attributed request carries a typed requester and a repository revision', () => {
+      expect(EVALUATE_INLINE_ATTRIBUTED_REQUEST.requester.actorType).toBe('agent');
+      expect(EVALUATE_INLINE_ATTRIBUTED_REQUEST.requester.actorId).toBe('winston@evolith');
+      expect(EVALUATE_INLINE_ATTRIBUTED_REQUEST.repositoryRevision.revision).toBe('9f3c1ab');
+    });
+
+    it('the result echoes both back VERBATIM — nothing is derived', () => {
+      // An invented commit sha in an audit trail is worse than an absent one, so
+      // the fixture pins identity, not a transformation.
+      expect(EVALUATION_RESULT_ATTRIBUTION_FIXTURE.requester)
+        .toEqual(EVALUATE_INLINE_ATTRIBUTED_REQUEST.requester);
+      expect(EVALUATION_RESULT_ATTRIBUTION_FIXTURE.repositoryRevision)
+        .toEqual(EVALUATE_INLINE_ATTRIBUTED_REQUEST.repositoryRevision);
+    });
+
+    it('the fields are ADDITIVE: a verdict without them is still a valid result', () => {
+      // The half that makes this safe to ship in a published package. The
+      // pre-GT-586 fixtures must keep validating exactly as they did.
+      expect(EVALUATION_RESULT_PASS_FIXTURE).not.toHaveProperty('requester');
+      expect(EVALUATION_RESULT_PASS_FIXTURE).not.toHaveProperty('repositoryRevision');
+      expect(trackerDecisionFrom(EVALUATION_RESULT_PASS_FIXTURE)).toBe('PASSED');
+    });
+
+    it('a caller that supplies no revision gets none back', () => {
+      expect(EVALUATE_INLINE_PASS_REQUEST).not.toHaveProperty('repositoryRevision');
+      expect(EVALUATE_INLINE_PASS_REQUEST).not.toHaveProperty('requester');
     });
   });
 });

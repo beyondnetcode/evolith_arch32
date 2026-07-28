@@ -1,3 +1,6 @@
+import * as fs from 'node:fs';
+import * as os from 'node:os';
+import * as path from 'node:path';
 import { ScaffoldCommand } from './scaffold.command';
 import * as p from '@clack/prompts';
 import { NxWorkspaceStrategy } from '@beyondnet/evolith-infra-providers';
@@ -529,6 +532,97 @@ describe('ScaffoldCommand', () => {
       const e = env();
       expect(e.success).toBe(false);
       expect(e.error.code).toBe('NOT_A_SATELLITE');
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // GT-626 — the precondition must be TRUE and its advice must be ACTIONABLE.
+  //
+  // These run against a REAL temporary directory and deliberately do NOT mock
+  // `checkWorkspace`: mocking it everywhere else in this file is what let the
+  // guard drift from what the Nx strategy actually needs.
+  // ---------------------------------------------------------------------------
+  describe('checkWorkspace (GT-626)', () => {
+    let tmp: string;
+    let previousCwd: string;
+
+    const call = (): string | undefined =>
+      (new ScaffoldCommand() as unknown as { checkWorkspace(): string | undefined }).checkWorkspace();
+
+    beforeEach(() => {
+      previousCwd = process.cwd();
+      tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'gt626-'));
+    });
+
+    afterEach(() => {
+      process.chdir(previousCwd);
+      fs.rmSync(tmp, { recursive: true, force: true });
+    });
+
+    it('rejects a bare package.json in src/, which is NOT an Nx workspace', () => {
+      // The false accept. `nx` needs `nx.json`; with only a package.json the
+      // generator died inside Nx with "Cannot read properties of null (reading
+      // 'useInferencePlugins')" AFTER a minutes-long dependency install.
+      fs.mkdirSync(path.join(tmp, 'src'));
+      fs.writeFileSync(path.join(tmp, 'src', 'package.json'), '{"name":"x"}');
+      process.chdir(tmp);
+
+      expect(call()).toContain('is not an Nx workspace');
+    });
+
+    it('rejects the tree `init` leaves behind, and does not tell the user to re-run init', () => {
+      // Exactly what the README quickstart produces at step 2: manifest at the
+      // project root, `src/` empty. Step 5 cannot work here — but the message
+      // must say something the user can act on, not name the command they just ran.
+      fs.writeFileSync(path.join(tmp, 'package.json'), '{"name":"my-sat"}');
+      fs.mkdirSync(path.join(tmp, 'src'));
+      process.chdir(tmp);
+
+      const message = call();
+      expect(message).toContain('is not an Nx workspace');
+      expect(message).toContain('create-nx-workspace');
+      expect(message).toContain('does not create one');
+    });
+
+    it('accepts a real Nx workspace in src/', () => {
+      fs.mkdirSync(path.join(tmp, 'src'));
+      fs.writeFileSync(path.join(tmp, 'src', 'nx.json'), '{}');
+      process.chdir(tmp);
+
+      expect(call()).toBeUndefined();
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // GT-626 — every declared flag must be authoritative.
+  //
+  // `--phase` was declared, documented and prompted for UNCONDITIONALLY, so the
+  // flag was silently discarded while `--frontend` and `--orm` right above it
+  // were honoured. On a non-TTY that turned every scripted run into exit 3.
+  // ---------------------------------------------------------------------------
+  describe('flag precedence (GT-626)', () => {
+    const resolve = (provided: unknown, interactive: boolean) => {
+      const cmd = new ScaffoldCommand() as unknown as {
+        promptService: { isInteractive(): boolean; text(o: unknown): Promise<string> };
+        resolveWithDefault(p: unknown, o: { message: string; defaultValue: string }): Promise<string>;
+      };
+      cmd.promptService.isInteractive = () => interactive;
+      cmd.promptService.text = jest.fn().mockResolvedValue('FROM-PROMPT') as never;
+      return cmd.resolveWithDefault(provided, { message: 'm', defaultValue: 'tracker-api' });
+    };
+
+    it('an explicit flag wins over both the prompt and the default', async () => {
+      await expect(resolve('my-api', true)).resolves.toBe('my-api');
+    });
+
+    it('falls back to the DOCUMENTED default instead of refusing on a non-TTY', async () => {
+      // The friction this removes: exit 3 must mean "this run needs a decision",
+      // never "you did not retype a value we would have defaulted to".
+      await expect(resolve(undefined, false)).resolves.toBe('tracker-api');
+    });
+
+    it('still asks a human when there is one', async () => {
+      await expect(resolve(undefined, true)).resolves.toBe('FROM-PROMPT');
     });
   });
 });

@@ -7170,7 +7170,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith CLI` · **Criticality:** P0 · **Complexity:** S
 - **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
 - **Acceptance criteria:**
-  - [ ] `npx @beyondnet/evolith-cli@latest` followed by the literal README sequence completes in a clean container.
+  - [x] `npx @beyondnet/evolith-cli@latest` followed by the literal README sequence completes in a clean container.
   - [ ] A freshly initialized repo returns 0 blocking findings, asserted by a test that fails if it rises again.
   - [x] `--help` names the real command, not `main`.
 
@@ -7935,9 +7935,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith CLI` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Carved out of GT-571 on 2026-07-28, when the README sequence was executed against the published artifact instead of assumed.
 - **Acceptance criteria:**
-  - [ ] The literal README quickstart runs steps 1-6 with no non-zero exit other than `validate`'s documented blocking verdict.
+  - [x] The literal README quickstart runs steps 1-6 with no non-zero exit other than `validate`'s documented blocking verdict.
   - [ ] `init` and `scaffold` agree on the workspace root, proven by a test that runs one after the other and fails without the fix.
-  - [ ] No error message tells the user to run a command they have already run.
+  - [x] No error message tells the user to run a command they have already run.
 
 #### GT-625
 

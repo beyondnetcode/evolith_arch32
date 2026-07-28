@@ -7075,8 +7075,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith CLI` · **Criticidad:** P0 · **Complejidad:** S
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
-  - [ ] `npx @beyondnet/evolith-cli@latest` seguido de la secuencia literal del README completa en un contenedor limpio.
-  - [x] Un repo recién inicializado devuelve 0 hallazgos blocking, asertado por un test que falla si vuelve a subir.
+  - [x] `npx @beyondnet/evolith-cli@latest` seguido de la secuencia literal del README completa en un contenedor limpio.
+  - [ ] Un repo recién inicializado devuelve 0 hallazgos blocking, asertado por un test que falla si vuelve a subir.
   - [x] `--help` nombra el comando real, no `main`.
 
 #### GT-572
@@ -7840,9 +7840,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Component:** `Evolith CLI` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Extraído de GT-571 el 2026-07-28, al ejecutar la secuencia del README contra el artefacto publicado en vez de asumirla.
 - **Acceptance criteria:**
-  - [ ] El quickstart literal del README ejecuta los pasos 1-6 sin ningún exit distinto de cero salvo el veredicto bloqueante documentado de `validate`.
+  - [x] El quickstart literal del README ejecuta los pasos 1-6 sin ningún exit distinto de cero salvo el veredicto bloqueante documentado de `validate`.
   - [ ] `init` y `scaffold` coinciden en la raíz del workspace, probado por un test que ejecuta uno tras otro y falla sin el arreglo.
-  - [ ] Ningún mensaje de error dice al usuario que ejecute un comando que ya ejecutó.
+  - [x] Ningún mensaje de error dice al usuario que ejecute un comando que ya ejecutó.
 
 #### GT-625
 

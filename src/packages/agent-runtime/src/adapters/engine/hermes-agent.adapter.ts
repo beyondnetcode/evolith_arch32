@@ -15,9 +15,14 @@
  * module-not-found), so "Hermes not installed yet" is a first-class state.
  */
 
-import type { IAgentEnginePort, AgentEnginePlan } from '../../domain/ports/agent-engine.port';
+import type {
+  IAgentEnginePort,
+  AgentEnginePlan,
+  AgentPlanContext,
+} from '../../domain/ports/agent-engine.port';
 import type { AgentRuntimeRequest } from '../../domain/contracts/agent-runtime-request';
 import type { SkillDescriptor } from '../../domain/contracts/capability';
+import { renderPlanHistory } from './plan-history';
 
 /**
  * The minimal surface the adapter needs from Hermes. A real Hermes client is
@@ -77,8 +82,12 @@ export class HermesAgentAdapter implements IAgentEnginePort {
   async plan(
     request: AgentRuntimeRequest,
     availableSkills: readonly SkillDescriptor[],
+    planContext?: AgentPlanContext,
   ): Promise<AgentEnginePlan> {
     const client = await this.resolveClient();
+    // GT-612: prior turns, bounded by `renderPlanHistory` (last 10 entries,
+    // ≤200 chars each, ≤2000 chars total) — never the raw transcript.
+    const history = renderPlanHistory(planContext?.history);
     const completion = await client.complete({
       goal: request.intent,
       context: {
@@ -88,6 +97,7 @@ export class HermesAgentAdapter implements IAgentEnginePort {
         phase: request.context.phase,
         gate: request.context.gate,
         parameters: request.parameters ?? {},
+        ...(history ? { history } : {}),
       },
       tools: availableSkills.map((s) => ({ id: s.id, description: s.description })),
     });

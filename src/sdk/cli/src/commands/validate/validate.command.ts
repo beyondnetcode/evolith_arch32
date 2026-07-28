@@ -15,6 +15,7 @@ import {
   createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { CLI_EXIT_CODES, exitWith } from '../../infrastructure/cli/exit-codes';
 
 interface ValidateCommandOptions {
   format?: string;
@@ -436,7 +437,7 @@ export class ValidateCommand extends BaseEvolithCommand {
       }
       // A negative governance verdict must exit non-zero so CI can gate on it,
       // mirroring `gate`/`phase` (envelope success=command-ran, exit=verdict).
-      if (result.status === 'failed') process.exit(1);
+      if (result.status === 'failed') exitWith(CLI_EXIT_CODES.BLOCKED);
       return;
     }
 
@@ -529,7 +530,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
     if (result.status === 'failed') {
       this.promptService.showOutro('❌ La validación ha fallado. Revise los errores arriba.');
-      process.exit(1);
+      exitWith(CLI_EXIT_CODES.BLOCKED);
     } else if (result.status === 'warning') {
       this.promptService.showOutro('⚠️ La validación ha terminado con advertencias.');
     } else {

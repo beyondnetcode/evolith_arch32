@@ -5,7 +5,7 @@
 **Status:** Active Assessment
 **Owner:** Evolith Architecture Board
 **Created:** 2026-06-10 (consolidates the former `maturity-matrix.md` and `maturity-evaluation.md`)
-**Last Updated:** 2026-07-26
+**Last Updated:** 2026-07-28
 **Companion document:** [Gap Tracking Board](../gaps/gap-tracking.md) — the single tracking surface for every open gap referenced here.
 
 ---
@@ -34,7 +34,7 @@ Specifically, the assessment measures:
 
 ## 2. Maturity Levels & Evidence-Backed States
 
-The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5: Optimizing). However, to prevent conflating designed capabilities with validated ones, every capability must declare its **Evidence-Backed State**:
+The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5: Optimizing). To prevent conflating designed capabilities with validated ones, every capability declares its **Evidence-Backed State**:
 
 * **Visioned** (Weight 0.0) — Concept or strategy only. No formal design.
 * **Designed** (Weight 0.2) — Approved Architecture Decision Record (ADR), but no code implementation.
@@ -45,12 +45,81 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 
 *Only "Validated" or "Scaled" states grant the full ACMM Level score. "Designed" or "Implemented" states impose an uncertainty penalty on the aggregate score.*
 
+Until [GT-596](../gaps/gap-reference-catalog.md#gt-596) the ladder above was the whole scale, and its thresholds were self-set — so nothing stopped a state drifting upward, which is exactly what [GT-576](../gaps/gap-reference-catalog.md#gt-576) had to correct by hand after two pillars claimed `Validated` against evidence absent from the code. The states and their weights are unchanged. What changed is that they are now expressed against a published scale with published thresholds, and that the achievement behind a rating is **recomputed by a gate** rather than asserted by an author.
+
+### 2.1 Rating scale — ISO/IEC 33020:2019
+
+*ISO/IEC 33020:2019, Information technology — Process assessment — Process measurement framework for assessment of process capability* (2nd edition, superseding :2015) defines the **process-attribute achievement rating scale** this assessment adopts. Four ratings, each with a published achievement band:
+
+| Rating | Name | Achievement |
+|:---:|---|---|
+| `N` | Not achieved | 0% to 15% |
+| `P` | Partially achieved | above 15% up to 50% |
+| `L` | Largely achieved | above 50% up to 85% |
+| `F` | Fully achieved | above 85% up to 100% |
+
+The standard also defines an optional refinement splitting `P` and `L` into `P-`/`P+` and `L-`/`L+`. This assessment does **not** use it: four bands are as fine-grained as its evidence can honestly support. The standard itself is the authority for the scale; the table records which bands were adopted so a reader can check the arithmetic without owning a copy, and so the bands can no longer move quietly.
+
+### 2.2 Evidence-Backed States mapped onto the scale
+
+Each state's existing weight is what places it in a band. The mapping is fixed in code (`STATE_WEIGHT` and `ISO_33020_SCALE` in `.harness/scripts/ci/09-reconcile-maturity.mjs`), so a state cannot be re-banded in prose alone.
+
+| Evidence-Backed State | Weight | Achievement it claims | ISO/IEC 33020:2019 rating |
+|---|:---:|:---:|:---:|
+| **Visioned** | 0.0 | 0% | `N` — Not achieved |
+| **Designed** | 0.2 | 20% | `P` — Partially achieved |
+| **Prototyped** | 0.5 | 50% | `P` — Partially achieved |
+| **Implemented** | 0.8 | 80% | `L` — Largely achieved |
+| **Validated** | 1.0 | 100% | `F` — Fully achieved |
+| **Scaled** | 1.2+ | 100% (capped) | `F` — Fully achieved |
+
+`Prototyped` sits on the closed upper bound of `P`: 50% is `Partially achieved`, never `Largely achieved`. That boundary is where over-claiming happens most easily, so it is asserted by a self-test rather than left to a reader's judgement.
+
+### 2.3 How the achievement percentage is computed
+
+> A rating is not a label. The percentage behind it is recomputed from the capability's own evidence by `.harness/scripts/ci/09-reconcile-maturity.mjs` — never authored.
+
+A capability's evidence is read as **indicators**, one per evidence bullet (when a capability states its evidence on a single line, that line is its one indicator). Each indicator is weighted by what backs it, reusing the weights this document already assigns to its states:
+
+| An indicator backed by | Weight | Why that weight |
+|---|:---:|---|
+| a `file:line` a reader can open, or a CI job that can go red | 1.0 | the `Validated` weight — the claim is executable |
+| an approved decision record, and nothing else | 0.2 | the `Designed` weight — a decision proves intent, never implementation |
+| prose with no citation at all | 0.0 | the `Visioned` weight |
+
+**Achievement = (sum of indicator weights ÷ number of indicators) × 100.** Markdown link targets are stripped before an indicator is weighed, so a link to an ADR file can never be mistaken for a file citation.
+
+**The threshold rule is one-sided.** A rating may not be asserted unless the recomputed achievement **crosses the lower bound of the band it claims**. Declaring a band *below* what the evidence supports is always legal — over-claiming is the failure this rule exists for, and under-claiming is how a conservative downgrade such as `GT-576`'s stays valid.
+
+**Where each rule applies.** Both rules — the state-to-band mapping and the threshold crossing — apply to the capability blocks of sections 3 and 4, which carry evidence bullets. The state tables of sections 6 and 9 carry a state and a rating but no evidence bullets, so only the mapping is checked there; their letters are consistency, not measurement.
+
+**How it fails.** `node .harness/scripts/ci/09-reconcile-maturity.mjs` feeds the rule 12 deliberately bad inputs before it ever looks at this document — an `F` over ADR-only evidence, one executable citation among five, exactly 50% claiming `L`, a letter above its state, a missing rating, the same defects in the Spanish edition, a rating over zero indicators, a table row whose letter contradicts its state — and exits non-zero if any of them is accepted. It runs in the `Validate documentation` job at `.github/workflows/docs.yml:83`.
+
+### 2.4 Capability levels
+
+ISO/IEC 33020:2019 also defines six capability levels — 0 `Incomplete`, 1 `Performed`, 2 `Managed`, 3 `Established`, 4 `Predictable`, 5 `Innovating`. This assessment rates **process attributes** on the N/P/L/F scale above and reports the TOGAF ACMM level separately. It deliberately asserts **no** ISO/IEC 33020 capability level per capability, because deriving one requires rating every attribute of every lower level — work this assessment does not do. Reading an ACMM level in section 3 as an ISO/IEC 33020 capability level would be a category error, and the two vocabularies are kept apart for that reason.
+
+### 2.5 Evaluation procedure (ISO/IEC 25040:2024)
+
+*ISO/IEC 25040:2024, Systems and software engineering — Systems and software Quality Requirements and Evaluation (SQuaRE) — Quality evaluation framework* (2nd edition; the 2011 edition was titled *Evaluation process*) frames the evaluation lifecycle this assessment previously performed ad hoc. Mapping it makes the evaluation repeatable by a second person rather than reproducible only by its author:
+
+| Evaluation activity | What it is here | Where it lives |
+|---|---|---|
+| Establish the evaluation requirements | Purpose, the two dimensions measured, and the scope boundary that excludes Tracker and Product Suite | Section 1; section 12 |
+| Specify the evaluation | The measures: TOGAF ACMM level, Evidence-Backed State, ISO/IEC 33020 rating, indicator weights | Sections 2.1–2.3 |
+| Design the evaluation | The decision criteria: the four achievement bands plus the one-sided threshold rule, expressed as code | `.harness/scripts/ci/09-reconcile-maturity.mjs` |
+| Execute the evaluation | Run the gate: it self-tests the rule, recomputes every achievement, and regenerates the snapshot | `node .harness/scripts/ci/09-reconcile-maturity.mjs`; [maturity reconciliation](./maturity-reconciliation.json) |
+| Conclude the evaluation | The bidimensional verdict, and every deviation registered on the gap board rather than here | Section 12; [Gap Tracking Board](../gaps/gap-tracking.md) |
+
+A reader who wants to repeat the evaluation needs the repository and one command; no step of it depends on a judgement only the author can make.
+
 ---
 
 ## 3. Runtime Architecture Assessment (Well-Architected Pillars)
 
 ### Pillar 1: Security & Compliance — **Level 4 (Managed)**
 * **State:** `Designed` — downgraded from `Validated` by [GT-576](../gaps/gap-reference-catalog.md#gt-576). The two controls this pillar was scored on (tenant isolation, immutable audit) have an approved ADR and no code.
+* **ISO/IEC 33020:2019 rating:** `P` — Partially achieved (above 15% up to 50%). Recomputed achievement 60%: two of the four indicators are executable, two are decisions only. The rating is deliberately below what the arithmetic allows — see the one-sided threshold rule in section 2.3 — because `Designed` is the honest state for the controls this pillar is scored on.
 * **Evidence — executable (runs in CI):**
   * Zero-Cost Security Pipeline via CodeQL ([ADR-0005](../../architecture/adrs/core/0005-automated-sast-quality-gates.md)) — job `codeql-analysis` at `.github/workflows/sdk-cli-ci.yml:362`, alongside Trivy (`sdk-cli-ci.yml:389`) and gitleaks secret detection (`sdk-cli-ci.yml:418`).
   * Automated vulnerability management ([ADR-0009](../../architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md)) — `npm audit --audit-level=high` in the `security-audit` job at `.github/workflows/sdk-cli-ci.yml:83`. Exact-version pinning is the convention in every workspace manifest, but no gate rejects a range specifier yet, so pinning is observed, not enforced.
@@ -61,15 +130,20 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 * **Path to Level 5:** automated penetration testing in CI; dynamic secrets rotation.
 
 ### Pillar 2: Performance Efficiency — **Level 4 (Managed)**
-* **State:** `Implemented` (Needs load-testing validation)
-* **Evidence:**
-  * Auth graph compilation under 5 ms using Redis ([ADR-0021](../../architecture/adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md)).
-  * Dual-protocol strategy: REST public, gRPC internal ([ADR-0027](../../architecture/adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md)).
-  * Optimized frontend payloads via BFF Gateway ([ADR-0008](../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)).
+* **State:** `Designed` — downgraded from `Implemented` by [GT-596](../gaps/gap-reference-catalog.md#gt-596). Under the ISO/IEC 33020:2019 threshold rule the three claims this pillar was scored on recompute to 20%, which is `P`; `Implemented` claims `L`, and nothing in the tree crosses that band.
+* **ISO/IEC 33020:2019 rating:** `P` — Partially achieved (above 15% up to 50%). Recomputed achievement 40%: one of the four indicators is executable, three are decisions only.
+* **Evidence — executable (runs in CI):**
+  * Per-process response caching for the expensive read paths — `CacheModule.registerAsync` at `src/apps/core-api/src/infrastructure/cache/in-memory-cache.module.ts:25`, applied via `CacheInterceptor` at `src/apps/core-api/src/presentation/controllers/architecture.controller.ts:33`.
+* **Intent — ADR approved, no implementation (must not be read as evidence):**
+  * Auth graph compilation under 5 ms using Redis ([ADR-0021](../../architecture/adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md)) — **not implemented.** No auth-graph compilation code exists, and the distributed Redis cache was removed rather than repaired under `GT-560`: the store registered today is process-local and every `REDIS_*` value is ignored.
+  * Dual-protocol strategy: REST public, gRPC internal ([ADR-0027](../../architecture/adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md)) — **not implemented.** No workspace declares a gRPC dependency and no service is registered on a gRPC transport; the only occurrence of `grpc` under `src/` is inside a scaffolding template.
+  * Optimized frontend payloads via BFF Gateway ([ADR-0008](../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)) — **not implemented.** `src/apps/` holds `core-api` and `agent-runtime-api`; there is no BFF or gateway application to shape payloads.
+* **Path to `Implemented`:** a measured performance path — the caching layer under a load test that fails when the cache is removed — before any distributed cache is reintroduced with its circuit breaker.
 * **Path to Level 5:** serverless auto-scaling; predictive caching.
 
 ### Pillar 3: Reliability & Resiliency — **Level 3 (Defined)**
 * **State:** `Designed` (ADRs approved, missing circuit breaker tests)
+* **ISO/IEC 33020:2019 rating:** `P` — Partially achieved (above 15% up to 50%). Recomputed achievement 20%: all three indicators are approved decisions with no code, which is precisely the 0.2 weight of `Designed`.
 * **Evidence:**
   * Frontend offline resilience via React Query ([ADR-0004](../../architecture/adrs/nodejs/0004-frontend-offline-resilience.md)).
   * Circuit breakers (`opossum`) and retries ([ADR-0011](../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)).
@@ -78,6 +152,7 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 
 ### Pillar 4: Operational Excellence — **Level 4 (Managed)**
 * **State:** `Implemented` — downgraded from `Validated` by [GT-576](../gaps/gap-reference-catalog.md#gt-576). The build-orchestration citation named a tool that was never adopted, and one capability in the list has no code.
+* **ISO/IEC 33020:2019 rating:** `L` — Largely achieved (above 50% up to 85%). Recomputed achievement 60%: two of the four indicators are executable, two are decisions only.
 * **Evidence — executable (runs in CI):**
   * Quality gates enforce coverage thresholds in CI ([ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md)) — the `Check Coverage Threshold` step at `.github/workflows/sdk-cli-ci.yml:195` fails the `unit-tests` job when statement coverage drops below the normative threshold.
   * Deterministic monorepo builds ([ADR-0001](../../architecture/adrs/core/0001-monorepo-orchestration-principle.md)) — npm workspaces plus TypeScript project references (`npm run build` is `tsc -b tsconfig.json`) over an exact `package-lock.json`. **The Nx orchestration cited in earlier revisions of this document is not adopted:** there is no `nx.json` and no `nx` dependency anywhere in the tree.
@@ -88,6 +163,7 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 
 ### Pillar 5: Maintainability & Extensibility — **Level 4 (Managed)**
 * **State:** `Validated`
+* **ISO/IEC 33020:2019 rating:** `F` — Fully achieved (above 85% up to 100%). Recomputed achievement 100%: all three indicators are executable.
 * **Evidence — executable (runs in CI):**
   * Hexagonal boundaries decoupling core from infrastructure ([ADR-0002](../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.md)) — enforced by `eslint-plugin-boundaries` and by the repository boundary guard `.harness/scripts/ci/34-boundary-guard-repository.mjs`, executed in the `Validate documentation` job at `.github/workflows/docs.yml:113`.
   * Tactical design patterns ([ADR-0019](../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md)) — outcomes travel as explicit result-carrying value types, `GateEvaluationResult` at `src/packages/core-domain/src/evaluation/contracts/evaluation-result.ts:108`, rather than as exceptions. Earlier revisions named a "Result monad": no `Result<T, E>` type and no `neverthrow`/`fp-ts` dependency exists in the tree, so that specific pattern is **not** adopted.
@@ -100,27 +176,32 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 
 ### Dimension 1: MCP Protocol Conformance & Transport — **Level 4 (Managed)**
 * **State:** `Validated`
+* **ISO/IEC 33020:2019 rating:** `F` — Fully achieved (above 85% up to 100%). Recomputed achievement 100%: the single indicator is executable.
 * **Evidence:** JSON-RPC 2.0 over stdio and official MCP SDK Streamable HTTP; API-key authentication; 29 MCP E2E cases; smoke verifies initialize, discovery, metrics, and gate evaluation over both transports. Executed in CI by the `e2e-tests` job (`.github/workflows/sdk-cli-ci.yml:323`), whose `npm run mcp:smoke` step is at `.github/workflows/sdk-cli-ci.yml:357`. See the generated [maturity reconciliation](./maturity-reconciliation.json).
 * **Path to Level 5:** automated protocol conformance against supported MCP specification versions.
 
 ### Dimension 2: Test Coverage & Quality Gates — **Level 4 (Managed)**
 * **State:** `Validated`
+* **ISO/IEC 33020:2019 rating:** `F` — Fully achieved (above 85% up to 100%). Recomputed achievement 100%: the single indicator is executable.
 * **Evidence:** 1,206 unit and 121 E2E tests pass from a clean checkout, and statement coverage is 80.65% (4,979/6,173) against the normative 80% threshold, restored under [GT-48](../gaps/gap-reference-catalog.md#gt-48) by testing native rule handlers, validators, and filesystem providers. The threshold is enforced, not merely reported: the `Check Coverage Threshold` step at `.github/workflows/sdk-cli-ci.yml:195` fails the build below it. The generated [maturity reconciliation](./maturity-reconciliation.json) records the executable outcome and source.
 * **Path to Level 5:** durable per-run coverage thresholds in the Jest configuration ([GT-50](../gaps/gap-reference-catalog.md#gt-50)) and mutation testing.
 
 ### Dimension 3: Governance Exposure Completeness — **Level 4 (Managed)**
 * **State:** `Validated`
+* **ISO/IEC 33020:2019 rating:** `F` — Fully achieved (above 85% up to 100%). Recomputed achievement 100%: the single indicator is executable.
 * **Evidence:** MCP tools, resources, and prompts cover validation, agents, architecture, SDLC, prioritization, metrics, and gate evaluation with runtime-schema conformance checks. The inventory is kept honest by the bidirectional surface-parity guard `.harness/scripts/ci/24-check-surface-parity.mjs`, executed at `.github/workflows/docs.yml:92`: every operation in the source tree must appear in the matrix, and every matrix reference must resolve to real code. Absolute counts are deliberately not restated here — earlier revisions quoted 47 in this section and 50 in section 10.1, and no gate reconciled the two.
 * **Path to Level 5:** hot-reload of rulesets and measured adoption across satellite repositories.
 
 ### Dimension 4: CLI Developer Experience — **Level 4 (Managed)**
 * **State:** `Validated`
+* **ISO/IEC 33020:2019 rating:** `F` — Fully achieved (above 85% up to 100%). Recomputed achievement 100%: the single indicator is executable.
 * **Evidence:** the `@beyondnet/evolith-cli@1.1.0` package installs from the canonical workspace lockfile, verified by the `package-integrity` job at `.github/workflows/sdk-cli-ci.yml:257`; lint, build, E2E, and MCP smoke pass from a clean checkout; shell completion and bilingual documentation are available. Public product documentation and release facts are synchronized from a generated [Product Surface Inventory](../../../../product/products/smart-cli/product-inventory.md), with CI rejecting drift and placeholder pages ([GT-47](../gaps/gap-reference-catalog.md#gt-47)).
 * **Path to Level 5:** publish the inventory as a discoverable capability manifest consumed by satellite repositories.
 
 ### Dimension 5: Federated Governance Runtime Enforcement — **Level 3 (Defined)**
 * **State:** `Designed` (Rules exist, content validation missing)
-* **Evidence:** inheritance model, satellite contracts, and Open-Core boundary rules defined; `evolith-cli validate` executable by any satellite; CI composite action `evolith-validate` available for satellite PR gates.
+* **ISO/IEC 33020:2019 rating:** `P` — Partially achieved (above 15% up to 50%). Recomputed achievement 100% on a single indicator; the rating stays at `P` because `Designed` is the honest state while phase-gate evidence remains existence-only.
+* **Evidence:** inheritance model, satellite contracts, and Open-Core boundary rules defined; `evolith-cli validate` executable by any satellite; the CI composite action a satellite PR gate consumes is `.github/actions/evolith-validate/action.yml`, dogfooded on a real runner by `.github/workflows/evolith-validate-dogfood.yml` (both the blocking and the non-blocking halves, closed under [GT-577](../gaps/gap-reference-catalog.md#gt-577)).
 * **Path to Level 4:** phase-gate evidence deepened from existence-only checks to content/threshold validation ([GT-08](../gaps/gap-reference-catalog.md#gt-08)–[GT-11](../gaps/gap-reference-catalog.md#gt-11)); ACL runtime adapters (Tracker scope).
 
 ---
@@ -179,15 +260,15 @@ All 6 interaction adapters have been implemented as production adapters (M4). No
 
 ## 6. Pattern Maturity Matrix (International Pattern Catalog)
 
-| Pattern Cluster | Specific Pattern | Applicability | Evidence-Backed State | Rationale |
-| :--- | :--- | :--- | :--- | :--- |
-| **Integration** | **Strangler Fig** | Critical Core | `Validated` | Foundational strategy: modules logically isolated for incremental extraction without downtime. |
-| **Composition** | **BFF (Backend for Frontend)** | Core Mandatory | `Implemented` | Specialized NestJS layers per device ([ADR-0008](../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)). |
-| **Reliability** | **Circuit Breaker** | Operational | `Designed` | Distributed breakers sharing state via Redis ([ADR-0011](../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)) + edge healthchecks. |
-| **Database** | **Schema Per Context** | Core Mandatory | `Designed` | Intended to prevent cross-domain join poisoning ([ADR-0031](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)). Downgraded from `Validated` by [GT-576](../gaps/gap-reference-catalog.md#gt-576): no workspace under `src/` declares a database driver or ORM, so no schema boundary exists to validate. |
-| **Scalability** | **CQRS (Basic)** | Optional | `Visioned` | Read-models only when write contention demands it. |
-| **Consistency** | **Saga Pattern** | Distributed Future | `Visioned` | Reserved for Phase 3+ distributed transactions. |
-| **Messaging** | **Transactional Outbox** | Phase 2+ | `Visioned` | Atomic DB-state/event consistency at async scale. |
+| Pattern Cluster | Specific Pattern | Applicability | Evidence-Backed State | ISO 33020 | Rationale |
+| :--- | :--- | :--- | :--- | :---: | :--- |
+| **Integration** | **Strangler Fig** | Critical Core | `Validated` | `F` | Foundational strategy: modules logically isolated for incremental extraction without downtime. |
+| **Composition** | **BFF (Backend for Frontend)** | Core Mandatory | `Implemented` | `L` | Specialized NestJS layers per device ([ADR-0008](../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)). |
+| **Reliability** | **Circuit Breaker** | Operational | `Designed` | `P` | Distributed breakers sharing state via Redis ([ADR-0011](../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)) + edge healthchecks. |
+| **Database** | **Schema Per Context** | Core Mandatory | `Designed` | `P` | Intended to prevent cross-domain join poisoning ([ADR-0031](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)). Downgraded from `Validated` by [GT-576](../gaps/gap-reference-catalog.md#gt-576): no workspace under `src/` declares a database driver or ORM, so no schema boundary exists to validate. |
+| **Scalability** | **CQRS (Basic)** | Optional | `Visioned` | `N` | Read-models only when write contention demands it. |
+| **Consistency** | **Saga Pattern** | Distributed Future | `Visioned` | `N` | Reserved for Phase 3+ distributed transactions. |
+| **Messaging** | **Transactional Outbox** | Phase 2+ | `Visioned` | `N` | Atomic DB-state/event consistency at async scale. |
 
 **Legend:** *Adopted* — fully designed and verified in specs. *Roadmap* — infrastructure-ready, implementation deferred to demand. *Incompatible* — none currently identified.
 
@@ -299,14 +380,14 @@ Only `22-validate-topology-composition.mjs` and `26-validate-topology-rule-cover
 
 Pillar-by-pillar match against the [Product Vision Master](../../../../product/suite/vision/evolith-product-vision-master.md). Detailed component scores live in the [Baseline Snapshot](../gaps/gap-reference-catalog.md#2-historical-baseline-snapshot) of the Gap Reference Catalog.
 
-| Vision Pillar | Vision Requirement | Evidence-Backed State | Notes |
-|---|---|:---:|---|
-| **Evolith Core** | Reference Corpus (Constitution): directives, ADRs, standards, rulesets, schemas | `Implemented` | See live [Reference Corpus Inventory](./inventory-summary.md). ACL integration rules defined but not executed (Tracker scope). |
-| **Evolith Tracker** | SaaS SDLC orchestrator | `Visioned` | Separate repository; Core's obligation is the API/MCP contract it will consume. |
-| **Technological Exposure** | CLI + Core API + MCP serving governance as real-time context | `Implemented` | Core API (NestJS) exposes REST/GraphQL/MCP for external orchestrators. |
-| **5 Phase Gates** | Auditable gates with blocking evidence | `Implemented` | All 5 gates evaluate; blocking criteria are existence-only checks. |
-| **Federated Governance** | Hub-and-spoke inheritance, satellite validation | `Designed` | Inheritance rules + satellite CI composite action shipped; runtime ACLs deferred. |
-| **Open-Core Strategy** | Free CLI+MCP tier publicly available | `Prototyped` | Publication blocked only by release logistics ([GT-18](../gaps/gap-reference-catalog.md#gt-18)). |
+| Vision Pillar | Vision Requirement | Evidence-Backed State | ISO 33020 | Notes |
+|---|---|:---:|:---:|---|
+| **Evolith Core** | Reference Corpus (Constitution): directives, ADRs, standards, rulesets, schemas | `Implemented` | `L` | See live [Reference Corpus Inventory](./inventory-summary.md). ACL integration rules defined but not executed (Tracker scope). |
+| **Evolith Tracker** | SaaS SDLC orchestrator | `Visioned` | `N` | Separate repository; Core's obligation is the API/MCP contract it will consume. |
+| **Technological Exposure** | CLI + Core API + MCP serving governance as real-time context | `Implemented` | `L` | Core API (NestJS) exposes REST/GraphQL/MCP for external orchestrators. |
+| **5 Phase Gates** | Auditable gates with blocking evidence | `Implemented` | `L` | All 5 gates evaluate; blocking criteria are existence-only checks. |
+| **Federated Governance** | Hub-and-spoke inheritance, satellite validation | `Designed` | `P` | Inheritance rules + satellite CI composite action shipped; runtime ACLs deferred. |
+| **Open-Core Strategy** | Free CLI+MCP tier publicly available | `Prototyped` | `P` | Publication blocked only by release logistics ([GT-18](../gaps/gap-reference-catalog.md#gt-18)). |
 
 ---
 
@@ -373,6 +454,27 @@ These intelligence resources are versioned inside `.bmad-core/agents/` and apply
 
 **Internal Quality: 3.32 ± 0.4 / 5.0 (Defined → Managed)**
 
+### Dimension A′: ISO/IEC 33020:2019 process-attribute ratings
+
+Recomputed by the gate from each capability's own indicators (section 2.3), not authored. Percentages are the achievement the evidence sustains; the rating is what the capability's declared state claims, and the gate rejects any rating the percentage fails to cross.
+
+| Capability | Evidence-Backed State | ISO 33020 | Achievement | Indicators |
+|---|---|:---:|---:|:---:|
+| Pillar 1 — Security & Compliance | `Designed` | `P` | 60% | 4 |
+| Pillar 2 — Performance Efficiency | `Designed` | `P` | 40% | 4 |
+| Pillar 3 — Reliability & Resiliency | `Designed` | `P` | 20% | 3 |
+| Pillar 4 — Operational Excellence | `Implemented` | `L` | 60% | 4 |
+| Pillar 5 — Maintainability & Extensibility | `Validated` | `F` | 100% | 3 |
+| Dimension 1 — MCP Protocol Conformance | `Validated` | `F` | 100% | 1 |
+| Dimension 2 — Test Coverage & Quality Gates | `Validated` | `F` | 100% | 1 |
+| Dimension 3 — Governance Exposure Completeness | `Validated` | `F` | 100% | 1 |
+| Dimension 4 — CLI Developer Experience | `Validated` | `F` | 100% | 1 |
+| Dimension 5 — Federated Governance Enforcement | `Designed` | `P` | 100% | 1 |
+
+**Distribution: 5 `F` · 1 `L` · 4 `P` · 0 `N`.** One state moved under this rule: **Pillar 2 was downgraded `Implemented` → `Designed`** ([GT-596](../gaps/gap-reference-catalog.md#gt-596)) because its three claims — Redis-backed auth-graph compilation, internal gRPC, a BFF gateway — recompute to 20%, and `Implemented` claims `L` (above 50%). It is the same defect class `GT-576` had to catch by hand; this time a gate caught it.
+
+> **What this table does not yet do.** The ACMM layer scores above (3.4 / 3.2 / 3.32) are still authored figures, and have **not** been recomputed from these achievement percentages — the two scales sit side by side rather than one deriving the other. Reading `3.32 ± 0.4` as an ISO-derived number would be wrong; it is a TOGAF ACMM judgement carrying its stated uncertainty. Deriving the aggregate from the recomputed achievements is the next increment, and it is the residual of `GT-596`.
+
 ### Dimension B: Governance Scope Score
 
 | Indicator | Value |
@@ -388,7 +490,7 @@ These intelligence resources are versioned inside `.bmad-core/agents/` and apply
 
 ### Combined Bidimensional Verdict
 
-> **Evolith Core is a multi-dimensional architectural governance platform with internal quality level 3.32/5 (Defined → Managed).** Its governance scope covers 100% of defined topologies (5 dimensions × 8 composable topologies) with dual-engine parity in the repository corpus, though only 5 of those 8 ship their OPA half in the published `@beyondnet/evolith-cli@1.1.0` package and none is covered by a blocking OPA gate on `main` (section 8.6). All 6 interaction adapters are production-ready (M4), 5 of the 6 critical anti-patterns are immunized in code (the sixth has a designed defense awaiting a persistence layer), and the AI-Augmented dimension has one capability (Tools) at Level 3 (AI-Orchestrated). Primary gaps: security pillar reduced to `Designed` for want of a persistence layer, reliability pillar (Level 3→4), adapter M4→M5 progression (tests, OPA guard, tracing), and AI Verification/Models/Security (Level 2→3).
+> **Evolith Core is a multi-dimensional architectural governance platform with internal quality level 3.32/5 (Defined → Managed).** Its governance scope covers 100% of defined topologies (5 dimensions × 8 composable topologies) with dual-engine parity in the repository corpus, though only 5 of those 8 ship their OPA half in the published `@beyondnet/evolith-cli@1.1.0` package and none is covered by a blocking OPA gate on `main` (section 8.6). All 6 interaction adapters are production-ready (M4), 5 of the 6 critical anti-patterns are immunized in code (the sixth has a designed defense awaiting a persistence layer), and the AI-Augmented dimension has one capability (Tools) at Level 3 (AI-Orchestrated). Every capability now carries an ISO/IEC 33020:2019 rating whose achievement is recomputed by a gate rather than asserted (sections 2.1–2.3): 5 `F`, 1 `L`, 4 `P`. Primary gaps: security pillar reduced to `Designed` for want of a persistence layer, performance pillar reduced to `Designed` because its three claims recompute to 20%, reliability pillar (Level 3→4), adapter M4→M5 progression (tests, OPA guard, tracing), and AI Verification/Models/Security (Level 2→3).
 
 ### Current Reconciliation
 

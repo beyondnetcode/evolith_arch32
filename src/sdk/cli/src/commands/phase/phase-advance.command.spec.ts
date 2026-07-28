@@ -1,6 +1,7 @@
 import { PhaseAdvanceCommand } from './phase-advance.command';
 import type { ProposePhaseAdvanceUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/propose-phase-advance.use-case';
 import type { PromptService } from '../../infrastructure/prompts/prompt.service';
+import { CLI_EXIT_CODES } from '../../infrastructure/cli/exit-codes';
 
 jest.mock('chalk', () => {
   const id = (s: string) => s;
@@ -56,7 +57,8 @@ describe('PhaseAdvanceCommand', () => {
     const { command, log, exit } = setup();
     await command.executeCommand(['bogus'], { format: 'json' });
     expect(JSON.parse(log.mock.calls[0][0] as string).error.code).toBe('VALIDATION_FAILED');
-    expect(exit).toHaveBeenCalledWith(1);
+    // GT-580: an unknown action is invalid input (3), not a tool failure (1).
+    expect(exit).toHaveBeenCalledWith(CLI_EXIT_CODES.INVALID_INPUT);
   });
 
   it('throws in human mode when the action is unknown', async () => {
@@ -101,10 +103,12 @@ describe('PhaseAdvanceCommand', () => {
     expect(exit).not.toHaveBeenCalled();
   });
 
-  it('exits 1 when proposal is not recommended (json mode)', async () => {
+  it('exits 2 (BLOCKED) when the proposal is not recommended, not 1 (json mode)', async () => {
     const { command, exit } = setup(false);
     await command.executeCommand(['advance'], { format: 'json', from: 'discovery', to: 'design' });
-    expect(exit).toHaveBeenCalledWith(1);
+    // The command ran perfectly and the answer is "no" — that is a verdict, not
+    // a failure, and GT-580 gives it its own code.
+    expect(exit).toHaveBeenCalledWith(CLI_EXIT_CODES.BLOCKED);
   });
 
   it('prints human report with violations when proposal is not recommended', async () => {

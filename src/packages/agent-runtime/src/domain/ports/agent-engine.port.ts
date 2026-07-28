@@ -27,13 +27,44 @@ export interface AgentEnginePlan {
   readonly engine: string;
 }
 
+/** One prior entry of the conversation log, most-recent-last. */
+export interface AgentPlanHistoryEntry {
+  /** ISO-8601 UTC timestamp the entry was appended. */
+  readonly at: string;
+  readonly value: unknown;
+}
+
+/**
+ * GT-612 — the state the runtime carries INTO planning. Until this existed the
+ * runtime only ever WROTE memory (`append`) and every turn planned blank while
+ * the store filled up.
+ *
+ * `history` is deliberately BOUNDED by the runtime (see
+ * `ObservabilityDeps.memoryHistoryLimit`, default 20 entries ≈ 10 turns, since
+ * each turn appends a `request` and a `result`). An unbounded transcript in a
+ * prompt is its own defect: unbounded cost, unbounded latency, and the oldest
+ * turn silently pushing the actual request out of the context window.
+ */
+export interface AgentPlanContext {
+  /** Bounded prior conversation, oldest first. Absent when there is no history. */
+  readonly history?: readonly AgentPlanHistoryEntry[];
+  /** Memory namespace the history came from (provenance). */
+  readonly conversationNamespace?: string;
+}
+
 export interface IAgentEnginePort {
   /**
-   * Given a request and the catalog of available skills, propose a plan. This
-   * is advisory only; the runtime enforces governance on whatever it proposes.
+   * Given a request, the catalog of available skills and (optionally) the prior
+   * conversation, propose a plan. This is advisory only; the runtime enforces
+   * governance on whatever it proposes — including REVALIDATING
+   * `proposedArguments` against the skill's declared input contract (GT-610).
+   *
+   * `planContext` is optional so pre-existing adapters keep compiling and
+   * running unchanged; an adapter that ignores it is stateless, not broken.
    */
   plan(
     request: AgentRuntimeRequest,
     availableSkills: readonly SkillDescriptor[],
+    planContext?: AgentPlanContext,
   ): Promise<AgentEnginePlan>;
 }

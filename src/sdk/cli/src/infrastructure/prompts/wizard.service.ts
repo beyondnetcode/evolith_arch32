@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as p from '@clack/prompts';
 import chalk from 'chalk';
 import { UserCancelledError } from '@beyondnet/evolith-core-domain/domain/errors';
+import { isInteractiveSession } from './interactivity';
 
 export interface WizardStep {
   id: string;
@@ -32,7 +33,12 @@ export class WizardService {
     this.currentState = {};
     this.currentStepIndex = 0;
 
-    if (this.noInteractive || !process.stdout.isTTY) {
+    // GT-611: the question is whether a human can ANSWER, which is stdin, not
+    // whether output is a terminal. `evolith … | tee log` still has a keyboard;
+    // `echo | evolith …` does not. `process.stdout.isTTY` got both backwards.
+    // The stdout check is kept as an additional non-interactive trigger so no
+    // environment that used to take the batch path suddenly starts prompting.
+    if (this.noInteractive || !isInteractiveSession() || !process.stdout.isTTY) {
       console.log(chalk.cyan(`Starting ${this.title} in non-interactive mode`));
       return this.runNonInteractive();
     }

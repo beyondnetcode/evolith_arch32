@@ -18,6 +18,7 @@ import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resolver';
 import { resolveCoreOverride } from '../../infrastructure/paths/core-resolver';
+import { CLI_EXIT_CODES, CliUsageError, exitCodeForErrorCode, exitWith } from '../../infrastructure/cli/exit-codes';
 
 interface PhaseAdvanceCommandOptions {
   from?: string;
@@ -68,12 +69,16 @@ export class PhaseAdvanceCommand extends BaseEvolithCommand {
     const json = options?.format === 'json';
     const commandId = 'evolith phase advance';
 
+    // GT-580: the envelope already classifies the failure; the exit code now
+    // says the same thing instead of collapsing every cause onto 1.
     const fail = (code: ErrorCode, message: string): void => {
       if (json) {
         console.log(JSON.stringify(createErrorEnvelope(code, message, meta(commandId)), null, 2));
-        process.exit(1);
+        exitWith(exitCodeForErrorCode(code));
       } else {
-        throw new Error(message);
+        throw exitCodeForErrorCode(code) === CLI_EXIT_CODES.INVALID_INPUT
+          ? new CliUsageError(message)
+          : new Error(message);
       }
     };
 
@@ -127,8 +132,10 @@ export class PhaseAdvanceCommand extends BaseEvolithCommand {
       this.printHuman(proposal);
     }
 
+    // A phase advance that is NOT recommended is a blocking verdict, not a
+    // tool failure: the command ran perfectly and the answer is "no".
     if (!proposal.isRecommended) {
-      process.exit(1);
+      exitWith(CLI_EXIT_CODES.BLOCKED);
     }
   }
 

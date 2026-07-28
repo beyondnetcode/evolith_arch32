@@ -1,66 +1,70 @@
-# Cómo usar la CLI de Evolith
+# How to use the Evolith CLI
 
-Guía práctica para trabajar con Evolith Core desde la línea de comandos. Está
-pensada para leerse de principio a fin la primera vez, y para consultarse por
-comando después.
+> Bilingual navigation: [Version en Español](./using-the-cli.es.md)
+
+A practical guide to driving Evolith Core from the command line. It is written
+to be read end to end the first time, and to be consulted command by command
+afterwards.
 
 ---
 
-## 1. Qué es la CLI y cómo se invoca
+## 1. What the CLI is and how you invoke it
 
-La CLI (`evolith-cli`) es la forma local de operar Evolith Core: valida tu
-repositorio satélite contra las reglas del Core, evalúa las compuertas (gates)
-de cada fase del ciclo de vida, detecta deriva arquitectónica, genera código y
-más. Todo corre en tu máquina contra un checkout del Core.
+The CLI (`evolith-cli`) is the local way to operate Evolith Core: it validates
+your satellite repository against the Core rules, evaluates the gates of every
+lifecycle phase, detects architectural drift, generates code and more.
+Everything runs on your machine against a checkout of the Core.
 
-Se invoca así:
+You invoke it like this:
 
 ```bash
-evolith-cli <comando> [subcomando] [opciones]
+evolith-cli <command> [subcommand] [options]
 ```
 
-Por ejemplo:
+For example:
 
 ```bash
 evolith-cli validate --satellite . --core ../evolith-core
 ```
 
-Si instalaste el paquete, el binario es `evolith-cli`. Si trabajas dentro del
-monorepo, el equivalente es `node src/sdk/cli/dist/main.js <comando>`.
+If you installed the package, the binary is `evolith-cli` (the shorter alias
+`evolith` is installed alongside it and is what the built-in help prints). If
+you work inside the monorepo, the equivalent is
+`node src/sdk/cli/dist/main.js <command>`.
 
-Para ver la ayuda de cualquier comando, añade `--help`:
+To see the help for any command, add `--help`:
 
 ```bash
-evolith-cli --help              # lista todos los comandos
-evolith-cli gate --help         # ayuda del comando gate
+evolith-cli --help              # lists every command
+evolith-cli gate --help         # help for the gate command
 ```
 
 ---
 
-## 2. Tres conceptos que aplican a (casi) todos los comandos
+## 2. Three concepts that apply to (almost) every command
 
-Antes de ver comando por comando, conviene entender tres cosas transversales:
-te ahorran repetir explicaciones.
+Before going command by command, it pays to understand three cross-cutting
+things: they save repeating the same explanation everywhere.
 
-### 2.1. Modo humano vs. modo máquina — `--format`
+### 2.1. Human mode vs. machine mode — `--format`
 
-Casi todos los comandos aceptan `--format`:
+Almost every command accepts `--format`:
 
-- **Sin `--format` (o `--format human`)** → salida legible, con colores y
-  formato, pensada para que la leas tú.
-- **`--format json`** → una **única respuesta JSON** en la salida estándar,
-  pensada para scripts, CI o agentes. Esa respuesta sigue siempre la misma
-  estructura (el "envelope" ADR-0073):
+- **Without `--format` (or `--format human`)** → readable output, with colour
+  and layout, meant for you to read.
+- **`--format json`** → a **single JSON response** on standard output, meant
+  for scripts, CI or agents. That response always follows the same shape (the
+  ADR-0073 "envelope"):
 
 ```json
 {
   "success": true,
-  "data": { /* el resultado */ },
+  "data": { /* the result */ },
   "meta": { "command": "evolith-cli gate evaluate", "executedAt": "…", "correlationId": "…", "schemaVersion": "1.0.0" }
 }
 ```
 
-Y cuando algo falla:
+And when something fails:
 
 ```json
 {
@@ -70,165 +74,182 @@ Y cuando algo falla:
 }
 ```
 
-> Regla útil: en `--format json`, **la salida estándar (stdout) contiene solo el
-> JSON**. Los mensajes de progreso y advertencias van al canal de error
-> (stderr), así que puedes hacer `evolith-cli … --format json | jq` con seguridad.
+> Useful rule: under `--format json`, **standard output contains only the
+> JSON**. Progress messages and warnings go to the error channel (stderr), so
+> you can safely pipe `evolith-cli … --format json | jq`.
 
-### 2.2. Códigos de salida — para CI
+### 2.2. Exit codes — for CI
 
-El código de salida del proceso refleja el **veredicto**, no solo si el comando
-corrió:
+The process exit code reflects the **verdict**, not merely whether the command
+ran. There are four, and the distinction between them is the point:
 
-- **`0`** → la operación pasó (validación limpia, gate aprobado).
-- **distinto de `0`** → veredicto negativo (validación con violaciones, gate
-  fallido) o error de ejecución.
+| Code | Meaning | What a pipeline should do |
+|:----:|---------|---------------------------|
+| **`0`** | Pass — the command ran and nothing blocks | Continue |
+| **`1`** | Tool failure — the command could **not** produce a verdict (I/O, network, an unresolvable ruleset corpus, a crash) | Fail the step, but do **not** report the repository as non-compliant |
+| **`2`** | Blocked — the command ran and the verdict blocks (a failed gate, a rejected evaluation, a vetoed edit) | Fail the step; this **is** a finding about the code |
+| **`3`** | Invalid input — the invocation itself is wrong (unknown action, missing flag, a prompt required with no TTY) | Fix the invocation and re-run |
 
-Esto te deja poner `evolith-cli validate …` directamente en un pipeline: si falla,
-el pipeline falla.
+The reason `1` and `2` are separate is that collapsing them makes a pipeline
+claim something it did not establish. A repository whose validation crashed has
+not been shown to be non-compliant — it has not been evaluated at all. Treating
+those as the same is the inverse of a gate reporting green over an unevaluated
+repository, and it is just as wrong.
 
-### 2.3. Dónde está tu satélite y dónde está el Core — `--satellite` y `--core`
+Dropping `evolith-cli validate …` into a pipeline still works with no extra
+logic: any non-zero code fails the step. Branch on the code only when you want
+to tell "the gate blocked" from "the gate never ran" — for example, to retry a
+`1` and to open an issue on a `2`.
 
-Muchos comandos necesitan saber dos rutas:
+The `evolith-validate` GitHub Action exposes this as `exit-code` alongside
+`compliance-status`, where a `1` or a `3` surfaces as `error` / `invalid-input`
+rather than as `non-compliant`.
 
-- **`--satellite <ruta>`** (o `-s`): tu repositorio satélite (el proyecto que se
-  valida). Si lo omites, se resuelve buscando el `evolith.yaml` más cercano
-  hacia arriba desde el directorio actual.
-- **`--core <ruta>`** (o `-c`): el checkout de Evolith Core (de donde salen las
-  reglas). Si lo omites, se intenta autodetectar; si no encuentra reglas, verás
-  el error `RULESET_NOT_FOUND` — apunta `--core` a tu checkout del Core.
+### 2.3. Where your satellite is and where the Core is — `--satellite` and `--core`
+
+Many commands need to know two paths:
+
+- **`--satellite <path>`** (or `-s`): your satellite repository (the project
+  being validated). If you omit it, it is resolved by walking up from the
+  current directory looking for the nearest `evolith.yaml`.
+- **`--core <path>`** (or `-c`): the Evolith Core checkout (where the rules come
+  from). If you omit it, auto-detection is attempted; if no rules are found you
+  will see the `RULESET_NOT_FOUND` error — point `--core` at your Core checkout.
 
 ---
 
-## 3. Validar y evaluar (el corazón del día a día)
+## 3. Validating and evaluating (the day-to-day core)
 
-Estos cuatro comandos son los que más usarás: verifican que lo que construiste
-cumple las reglas y las compuertas.
+These four commands are the ones you will use most: they verify that what you
+built satisfies the rules and the gates.
 
-### 3.1. `evolith-cli validate` — validar el satélite contra las reglas
+### 3.1. `evolith-cli validate` — validate the satellite against the rules
 
-**Qué hace.** Corre las reglas de gobernanza del Core (rulesets), la topología y
-las compuertas de fase sobre tu satélite, y te dice qué cumple y qué no.
+**What it does.** Runs the Core governance rules (rulesets), the topology and
+the phase gates over your satellite, and tells you what complies and what does
+not.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 evolith-cli validate --satellite . --core ../evolith-core
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `-s, --satellite <ruta>` | El satélite a validar (default: `evolith.yaml` más cercano). |
-| `-c, --core <ruta>` | El checkout del Core con las reglas (default: autodetección). |
-| `-f, --format <fmt>` | `human` (default) o `json`. |
-| `-o, --output <archivo>` | Guarda el reporte JSON en un archivo en lugar de imprimirlo. |
-| `-r, --ruleset <id>` | Valida solo un ruleset (p.ej. `adr-0002`, `acl`, `mcp`). |
-| `-p, --phase <fase>` | Valida contra una fase concreta: `discovery`, `design`, `construction`, `qa`, `release`. |
-| `-t, --topology <id>` | Valida contra una topología: `modular-monolith`, `distributed-modules`, `microservices`. |
-| `-a, --arch` | Valida la arquitectura sobre todo el eje de madurez. |
-| `-e, --engine <motor>` | Motor de reglas: `native` (default) u `opa`. |
-| `--composable` | Usa el motor "composable" (resuelve varios modos automáticamente — ver 3.2). |
-| `--file <ruta>` | Valida un único archivo (modo ad-hoc). |
+| `-s, --satellite <path>` | The satellite to validate (default: nearest `evolith.yaml`). |
+| `-c, --core <path>` | The Core checkout holding the rules (default: auto-detect). |
+| `-f, --format <fmt>` | `human` (default) or `json`. |
+| `-o, --output <file>` | Writes the JSON report to a file instead of printing it. |
+| `-r, --ruleset <id>` | Validates a single ruleset (e.g. `adr-0002`, `acl`, `mcp`). |
+| `-p, --phase <phase>` | Validates against one phase: `discovery`, `design`, `construction`, `qa`, `release`. |
+| `-t, --topology <id>` | Validates against a topology: `modular-monolith`, `distributed-modules`, `microservices`. |
+| `-a, --arch` | Validates the architecture across the whole maturity axis. |
+| `-e, --engine <engine>` | Rule engine: `native` (default) or `opa`. |
+| `--composable` | Uses the composable engine (resolves several modes automatically — see 3.2). |
+| `--file <path>` | Validates a single file (ad-hoc mode). |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Validar solo la fase de construcción, guardando el reporte a un archivo
-evolith-cli validate -s . -c ../evolith-core --phase construction --format json -o reporte.json
+# Validate only the construction phase, saving the report to a file
+evolith-cli validate -s . -c ../evolith-core --phase construction --format json -o report.json
 
-# Validar solo el cumplimiento de un ADR concreto
+# Validate compliance with one specific ADR
 evolith-cli validate -s . -c ../evolith-core --ruleset adr-0002
 
-# Validar la arquitectura contra una topología específica
+# Validate the architecture against a specific topology
 evolith-cli validate -s . -c ../evolith-core --topology microservices --arch
 ```
 
-**Qué esperar.** En modo humano, un resumen con ✓/✗ por regla y por compuerta.
-En `--format json`, el envelope con `data.status` (`passed`/`failed`) y la lista
-de `issues`. Si el veredicto es `failed`, el comando **sale con código ≠ 0**.
+**What to expect.** In human mode, a summary with ✓/✗ per rule and per gate.
+Under `--format json`, the envelope with `data.status` (`passed`/`failed`) and
+the list of `issues`. If the verdict is `failed`, the command **exits non-zero**.
 
-### 3.2. `evolith-cli validate --composable` — validación multi-modo
+### 3.2. `evolith-cli validate --composable` — multi-mode validation
 
-**Qué hace.** El motor "composable" detecta automáticamente qué modos de
-validación aplican a tu contexto (SDLC, arquitectura, ADRs, ad-hoc) y los corre
-todos, en vez de que elijas uno a mano. Útil cuando quieres "valida todo lo que
-tenga sentido aquí".
+**What it does.** The composable engine automatically detects which validation
+modes apply to your context (SDLC, architecture, ADRs, ad-hoc) and runs them
+all, instead of you picking one by hand. Useful when what you want is "validate
+everything that makes sense here".
 
 ```bash
 evolith-cli validate --composable --satellite . --core ../evolith-core --format json
 ```
 
-Acepta las mismas rutas y `--format` que `validate`. Puedes acotarlo con
-`--phase` o `--topology` si quieres restringir los modos.
+It accepts the same paths and `--format` as `validate`. You can narrow it with
+`--phase` or `--topology` if you want to restrict the modes.
 
-### 3.3. `evolith-cli evaluate` — evaluar un contexto completo
+### 3.3. `evolith-cli evaluate` — evaluate a full context
 
-**Qué hace.** Ejecuta la evaluación *stateless* del Core (compuertas +
-cumplimiento + arquitectura) sobre un contexto que tú describes, y devuelve un
-veredicto global. A diferencia de `validate` (centrado en reglas), `evaluate`
-corre el pipeline de evaluación completo.
+**What it does.** Runs the Core's *stateless* evaluation (gates + compliance +
+architecture) over a context you describe, and returns a global verdict. Unlike
+`validate` (which is rule-centric), `evaluate` runs the complete evaluation
+pipeline.
 
-**Uso básico (contexto derivado de flags):**
+**Basic usage (context derived from flags):**
 
 ```bash
 evolith-cli evaluate --workspace . --core ../evolith-core --phase construction
 ```
 
-**Uso con un contexto explícito (archivo JSON):**
+**Usage with an explicit context (JSON file):**
 
 ```bash
-evolith-cli evaluate --context ./mi-contexto.json --core ../evolith-core --format json
+evolith-cli evaluate --context ./my-context.json --core ../evolith-core --format json
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `--context <ruta>` | Archivo JSON con un `EvaluationContext` canónico. |
-| `-w, --workspace <ruta>` | Workspace local (se interpreta como `workspaceRef`; default: perfil/cwd). |
-| `-c, --core <ruta>` | Checkout del Core. |
-| `-p, --phase <id>` | Fase SDLC: `discovery`…`release`. |
-| `-t, --topology <id>` | Topología a evaluar. |
-| `-f, --format <fmt>` | `json` (default aquí) o `text`. |
+| `--context <path>` | JSON file holding a canonical `EvaluationContext`. |
+| `-w, --workspace <path>` | Local workspace (interpreted as `workspaceRef`; default: profile/cwd). |
+| `-c, --core <path>` | The Core checkout. |
+| `-p, --phase <id>` | SDLC phase: `discovery`…`release`. |
+| `-t, --topology <id>` | Topology to evaluate against. |
+| `-f, --format <fmt>` | `json` (the default here) or `text`. |
 
-**Qué esperar.** El envelope con `data.overallVerdict` (`PASS`/`FAIL`) y
-`data.outcome`. Un veredicto `FAIL` **sale con código ≠ 0**. Si el archivo de
-`--context` no existe o no es JSON válido, obtienes `error.code:
-VALIDATION_FAILED` (no un error interno) — para que distingas tu error de
-entrada de un bug.
+**What to expect.** The envelope with `data.overallVerdict` (`PASS`/`FAIL`) and
+`data.outcome`. A `FAIL` verdict **exits non-zero**. If the `--context` file
+does not exist or is not valid JSON you get `error.code: VALIDATION_FAILED`
+(not an internal error) — so you can tell your input mistake from a bug.
 
-### 3.4. `evolith-cli gate evaluate` — evaluar una compuerta de fase
+### 3.4. `evolith-cli gate evaluate` — evaluate one phase gate
 
-**Qué hace.** Evalúa **una compuerta concreta** (la de `discovery`, `design`,
-`construction`, `qa` o `release`) y emite la evidencia (`GateEvidence`): qué
-artefactos se exigen, cuáles están presentes y el veredicto.
+**What it does.** Evaluates **one specific gate** (the one for `discovery`,
+`design`, `construction`, `qa` or `release`) and emits the evidence
+(`GateEvidence`): which artifacts are required, which are present, and the
+verdict.
 
-`gate` es un comando con **acción**: hoy la acción es `evaluate`.
+`gate` is an **action** command: today the action is `evaluate`.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 evolith-cli gate evaluate --phase construction --satellite . --core ../evolith-core
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `-p, --phase <fase>` | La fase cuya compuerta evalúas (obligatorio). |
-| `-s, --satellite <ruta>` | El satélite (default: `evolith.yaml` más cercano). |
-| `-c, --core <ruta>` | Checkout del Core. |
-| `--evaluated-by <actor>` | Quién evalúa: `human` (default), `agent`, `ci`. Queda registrado en la evidencia. |
-| `--initiative <id>` / `--tenant <id>` | Contexto opaco (iniciativa/tenant) que se refleja en `meta.context`. |
-| `--webhook-url <url>` | Envía la evidencia por POST a esa URL al terminar. |
-| `-f, --format <fmt>` | `human` o `json`. |
+| `-p, --phase <phase>` | The phase whose gate you evaluate (required). |
+| `-s, --satellite <path>` | The satellite (default: nearest `evolith.yaml`). |
+| `-c, --core <path>` | The Core checkout. |
+| `--evaluated-by <actor>` | Who evaluates: `human` (default), `agent`, `ci`. Recorded in the evidence. |
+| `--initiative <id>` / `--tenant <id>` | Opaque context (initiative/tenant) echoed in `meta.context`. |
+| `--webhook-url <url>` | POSTs the evidence to that URL when it finishes. |
+| `-f, --format <fmt>` | `human` or `json`. |
 
-**Cómo leer el resultado.** El envelope trae `data.verdict` (`passed`/`failed`)
-y, si falló, la lista de `violations` con **qué artefacto falta** y dónde se
-esperaba. El `success` del envelope significa "la evaluación corrió"; el
-**veredicto vive en `data`** y el **código de salida lo refleja** (0 si pasó, ≠0
-si falló). Ejemplo real de una compuerta que falla por evidencia ausente:
+**How to read the result.** The envelope carries `data.verdict`
+(`passed`/`failed`) and, if it failed, the list of `violations` with **which
+artifact is missing** and where it was expected. The envelope's `success` means
+"the evaluation ran"; the **verdict lives in `data`** and the **exit code
+reflects it** (0 if it passed, non-zero if it failed). A real example of a gate
+failing on absent evidence:
 
 ```json
 {
@@ -246,1158 +267,1168 @@ si falló). Ejemplo real de una compuerta que falla por evidencia ausente:
 }
 ```
 
-### 3.5. `evolith-cli drift` — detectar deriva arquitectónica
+### 3.5. `evolith-cli drift` — detect architectural drift
 
-**Qué hace.** Compara el nivel de madurez **declarado** de tu satélite contra el
-**detectado** en el código, y reporta la deriva (violaciones nuevas,
-persistentes o resueltas respecto a la última corrida).
+**What it does.** Compares the maturity level your satellite **declares**
+against the one **detected** in the code, and reports the drift (violations that
+are new, persistent or resolved since the last run).
 
 ```bash
 evolith-cli drift --path . --format json
 ```
 
-**Opciones:** `--path <ruta>` (el satélite a analizar) y `--format`.
+**Options:** `--path <path>` (the satellite to analyse), `-l, --level <level>`
+(the declared progressive-axis topology), `--history`, `--trend` and `--format`.
 
-**Qué esperar.** El envelope con `data.driftDetected`, `data.declaredLevel` vs
-`data.detectedLevel` y la lista de violaciones.
+**What to expect.** The envelope with `data.driftDetected`, `data.declaredLevel`
+vs. `data.detectedLevel` and the list of violations.
 
 ---
 
-## 4. Arquitectura y andamiaje
+## 4. Architecture and scaffolding
 
-Estos comandos no validan: **construyen**. Generan el esqueleto de tu satélite
-(el workspace Nx o la solución .NET), recomiendan cómo componer la topología a
-partir de señales técnicas, miden qué tan completos están los artefactos de una
-fase, y derivan código hexagonal desde un modelo DDD. El primero (`scaffold`) y
-el último (`sdlc generate domain`) **escriben en disco**; por eso ambos traen un
-modo de simulacro (`--dry-run`) que conviene correr primero.
+These commands do not validate: they **build**. They generate the skeleton of
+your satellite (the Nx workspace or the .NET solution), recommend how to compose
+the topology from technical signals, measure how complete a phase's artifacts
+are, and derive hexagonal code from a DDD model. The first one (`scaffold`) and
+the last one (`sdlc generate domain`) **write to disk**; that is why both ship a
+dry-run mode you should run first.
 
-### 4.1. `evolith-cli scaffold` — generar el workspace por fase de madurez
+### 4.1. `evolith-cli scaffold` — generate the workspace by maturity phase
 
-**Qué hace.** Genera el andamiaje completo de un satélite Evolith a lo largo del
-eje progresivo de madurez: fase 1 = *modular-monolith* (una SPA estándar), fase 2
-= *distributed-modules* y fase 3 = *microservices* (un host de Module Federation
-con sus remotos). Levanta la API backend, el frontend, los shells transversales
-(workflow-engine, integration-fabric, tenant-config), un dominio por cada
-bounded context que pidas y las librerías compartidas. Es un comando
-**mutativo**: corre `npm install` y generadores Nx dentro de `./src`.
+**What it does.** Generates the complete scaffold of an Evolith satellite along
+the progressive maturity axis: phase 1 = `modular-monolith` (a standard SPA),
+phase 2 = `distributed-modules` and phase 3 = `microservices` (a Module
+Federation host with its remotes). It stands up the backend API, the frontend,
+the cross-cutting shells (workflow-engine, integration-fabric, tenant-config),
+one domain per bounded context you ask for, and the shared libraries. It is a
+**mutating** command: it runs `npm install` and Nx generators inside `./src`.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
-# Modo interactivo: te pregunta framework, ORM, fase, nombres y dominios
+# Interactive mode: asks for framework, ORM, phase, names and domains
 evolith-cli scaffold
 
-# Modo no interactivo (todo por flags)
+# Non-interactive mode (everything through flags)
 evolith-cli scaffold --frontend react --orm prisma --phase 1 --dry-run
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `--frontend [framework]` | Framework de los microfrontends: `react`, `angular` (o `vue` en el modo interactivo). |
-| `--orm [orm]` | ORM de la capa de persistencia compartida: `prisma` o `typeorm`. |
-| `--phase [phase]` | Fase del eje progresivo: `1`/`2`/`3` o su id canónico (`modular-monolith`, `distributed-modules`, `microservices`). Fase 1 genera SPA; 2/3 generan host + remotes. |
-| `-d, --dry-run` | Simula todo el andamiaje sin tocar el disco. Úsalo siempre antes de la corrida real. |
-| `--runtime [runtime]` | Runtime del backend: `nodejs` (default, Nx/React) o `dotnet` (solución ASP.NET Core hexagonal estilo UMS). |
-| `--api-name [name]` | Nombre de la API backend (default: `tracker-api`). |
-| `--web-app-name [name]` | Nombre de la SPA en fase 1 (default: `tracker-web`). |
-| `--host-name [name]` | Nombre del host de microfrontends en fase 2/3 (default: `tracker-host`). |
-| `--remotes [remotes]` | Nombres de los microfrontends remotos (separados por coma) para fase 2/3. |
-| `--domains [domains]` | Bounded contexts a generar como librerías de dominio (separados por coma). |
+| `--frontend [framework]` | Micro-frontend framework: `react`, `angular` (or `vue` in interactive mode). |
+| `--orm [orm]` | ORM of the shared persistence layer: `prisma` or `typeorm`. |
+| `--phase [phase]` | Progressive-axis phase: `1`/`2`/`3` or its canonical id (`modular-monolith`, `distributed-modules`, `microservices`). Phase 1 generates a SPA; 2/3 generate host + remotes. |
+| `-d, --dry-run` | Simulates the whole scaffold without touching disk. Always use it before the real run. |
+| `--runtime [runtime]` | Backend runtime: `nodejs` (default, Nx/React) or `dotnet` (UMS-style hexagonal ASP.NET Core solution). |
+| `--api-name [name]` | Backend API name (default: `tracker-api`). |
+| `--web-app-name [name]` | Phase-1 SPA name (default: `tracker-web`). |
+| `--host-name [name]` | Micro-frontend host name for phase 2/3 (default: `tracker-host`). |
+| `--remotes [remotes]` | Remote micro-frontend names (comma-separated) for phase 2/3. |
+| `--domains [domains]` | Bounded contexts to generate as domain libraries (comma-separated). |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# 1. Simula un monolito modular con dos dominios (nada se escribe)
+# 1. Simulate a modular monolith with two domains (nothing is written)
 evolith-cli scaffold --frontend react --orm prisma --phase 1 \
   --domains discovery,construction --dry-run
 
-# 2. Genéralo de verdad (misma línea sin --dry-run)
+# 2. Generate it for real (same line without --dry-run)
 evolith-cli scaffold --frontend react --orm prisma --phase 1 \
   --domains discovery,construction
 
-# 3. Fase 3 (microservicios) con host y remotos con nombre explícito
+# 3. Phase 3 (microservices) with explicitly named host and remotes
 evolith-cli scaffold --frontend angular --orm typeorm --phase 3 \
   --host-name tracker-host --remotes trackerRemoteAgile,trackerRemoteQa
 
-# 4. Satélite .NET (solución hexagonal en vez del workspace Nx)
+# 4. A .NET satellite (hexagonal solution instead of the Nx workspace)
 evolith-cli scaffold --runtime dotnet --api-name mms-api --phase 1 \
   --domains catalog,pricing --dry-run
 ```
 
-**Qué esperar.** En modo humano verás el andamiaje paso a paso y, al final,
-`Toda la topología Evolith ha sido generada en el directorio ./src` (o el aviso
-`Modo DRY-RUN activado` si simulaste). El runtime `nodejs` opera sobre
-`<cwd>/src`: si ese directorio no existe o no es un workspace Nx, el comando
-**falla rápido** con un mensaje accionable (corre primero `init`) en vez de un
-`spawn ENOENT` opaco. En `--format json`, `--frontend`, `--orm` y `--phase` son
-**obligatorios**; su ausencia devuelve `error.code: VALIDATION_FAILED`, y el
-envelope de éxito trae `data.status` (`dry-run` o `scaffolded`) más el resumen de
-lo generado.
+**What to expect.** In human mode you see the scaffold step by step and, at the
+end, a confirmation that the whole Evolith topology was generated under `./src`
+(or the `DRY-RUN mode` notice if you simulated). The `nodejs` runtime operates
+on `<cwd>/src`: if that directory does not exist or is not an Nx workspace, the
+command **fails fast** with an actionable message (run `init` first) instead of
+an opaque `spawn ENOENT`. Under `--format json`, `--frontend`, `--orm` and
+`--phase` are **required**; omitting them returns
+`error.code: VALIDATION_FAILED`, and the success envelope carries `data.status`
+(`dry-run` or `scaffolded`) plus a summary of what was generated.
 
-### 4.2. `evolith-cli topology recommend` — recomendar una composición de topología
+### 4.2. `evolith-cli topology recommend` — recommend a topology composition
 
-**Qué hace.** A partir de señales técnicas (cuántos equipos, si necesitas
-despliegue independiente, escala alta, integración asíncrona…) recomienda **cómo
-componer** la topología y explica el porqué de cada pieza. Es *advisory* y **no
-vinculante**: el Core recomienda en Discovery, el tenant confirma en Design. No
-escribe nada, solo lee las reglas del Core y calcula.
+**What it does.** From technical signals (how many teams, whether you need
+independent deployment, high scale, asynchronous integration…) it recommends
+**how to compose** the topology and explains the reason for each piece. It is
+*advisory* and **non-binding**: the Core recommends in Discovery, the tenant
+confirms in Design. It writes nothing; it only reads the Core rules and
+computes.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 evolith-cli topology recommend --async-integration --team-count 4
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `--team-count <n>` | Número de equipos/squads autónomos que trabajarán el sistema. |
-| `--deployment-independence` | Los módulos necesitan ciclos de CI/CD independientes. |
-| `--high-scale` | Requisitos de escalado alto e independiente por módulo. |
-| `--async-integration` | Integración asíncrona / orientada a eventos. |
-| `--data-product-sharing` | Compartición analítica de datos entre dominios. |
-| `--spiky-load` | Perfil de carga irregular / a ráfagas. |
-| `--latency-tolerant` | La carga tolera latencias más altas. |
-| `--edge-or-offline` | Ejecución en el edge o con enfoque offline-first. |
-| `--ai-agents` | Agentes de IA participan en el runtime. |
-| `-s, --signals <json>` | Todas las señales de golpe como objeto JSON, p.ej. `'{"asyncIntegration":true,"teamCount":4}'`. Los flags individuales **refinan** (sobre-escriben) lo que ponga este payload. |
-| `-c, --core <path>` | Checkout del Core con las reglas de recomendación (default: perfil o rulesets empaquetados con la CLI). |
+| `--team-count <n>` | Number of autonomous teams/squads that will work on the system. |
+| `--deployment-independence` | Modules need independent CI/CD lifecycles. |
+| `--high-scale` | High, independent scaling requirements per module. |
+| `--async-integration` | Asynchronous / event-driven integration. |
+| `--data-product-sharing` | Cross-domain analytical data sharing. |
+| `--spiky-load` | Spiky / bursty workload profile. |
+| `--latency-tolerant` | The workload tolerates higher latency. |
+| `--edge-or-offline` | Edge or offline-first execution. |
+| `--ai-agents` | AI agents participate in the runtime. |
+| `-s, --signals <json>` | All signals at once as a JSON object, e.g. `'{"asyncIntegration":true,"teamCount":4}'`. Individual flags **refine** (override) whatever this payload sets. |
+| `-c, --core <path>` | Core checkout holding the recommendation rules (default: profile, or the rulesets bundled with the CLI). |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# 1. Recomendación mínima con un par de flags
+# 1. Minimal recommendation with a couple of flags
 evolith-cli topology recommend --high-scale --deployment-independence
 
-# 2. Señales completas por JSON (equivalente, ideal para scripts)
+# 2. Full signals through JSON (equivalent, ideal for scripts)
 evolith-cli topology recommend \
   --signals '{"teamCount":4,"asyncIntegration":true,"highScale":true}'
 
-# 3. JSON + un flag que refina el payload y salida máquina
+# 3. JSON plus a flag that refines the payload, with machine output
 evolith-cli topology recommend --signals '{"teamCount":2}' --team-count 6 --format json
 ```
 
-**Qué esperar.** En modo humano, un bloque `Recommended Topology Composition`
-con la `composition` sugerida y, debajo, la `Rationale`: una viñeta por topología
-con su `ruleId` y la razón por la que aplica. En `--format json`, el envelope
-lleva la misma recomendación en `data` (`composition` + `rationale`). Comparte el
-motor exacto (`TopologyRecommendationService.recommend`) con el endpoint REST y la
-herramienta MCP equivalentes, así que las tres superficies dan el mismo resultado.
+**What to expect.** In human mode, a `Recommended Topology Composition` block
+with the suggested `composition` and, underneath, the `Rationale`: one bullet
+per topology with its `ruleId` and the reason it applies. Under `--format json`,
+the envelope carries the same recommendation in `data` (`composition` +
+`rationale`). It shares the exact engine
+(`TopologyRecommendationService.recommend`) with the equivalent REST endpoint
+and MCP tool, so all three surfaces return the same result.
 
-### 4.3. `evolith-cli topology phase-artifacts` — medir completitud de artefactos de fase
+### 4.3. `evolith-cli topology phase-artifacts` — measure phase-artifact completeness
 
-**Qué hace.** Para una fase **downstream** (`construction`, `quality` o
-`deployment`) y una composición de topología ya confirmada, mide qué artefactos
-declaras como presentes contra la **unión** de los artefactos universales de esa
-fase más los que cada topología exige en su perfil. Devuelve un puntaje de
-completitud de 0 a 100. También es *advisory* y no vinculante: el Core **mide**,
-la compuerta del tenant decide.
+**What it does.** For a **downstream** phase (`construction`, `quality` or
+`deployment`) and an already confirmed topology composition, it measures the
+artifacts you declare as present against the **union** of that phase's universal
+artifacts plus the ones each topology requires in its profile. It returns a
+completeness score from 0 to 100. It is also *advisory* and non-binding: the
+Core **measures**, the tenant's gate decides.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 evolith-cli topology phase-artifacts --phase construction --topologies microservices
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `-p, --phase <phase>` | Fase downstream a medir: `construction`, `quality` o `deployment` (obligatorio; otro valor devuelve `INVALID_PHASE`). |
-| `-t, --topologies <list>` | Composición de topología confirmada (ids separados por coma), p.ej. `microservices,event-driven`. |
-| `-d, --declared <list>` | Tipos de artefacto que declaras presentes (separados por coma), p.ej. `test-summary-report,coverage-report`. |
-| `-c, --core <path>` | Checkout del Core con el catálogo de topologías (default: perfil o rulesets empaquetados). |
+| `-p, --phase <phase>` | Downstream phase to measure: `construction`, `quality` or `deployment` (required; any other value returns `INVALID_PHASE`). |
+| `-t, --topologies <list>` | Confirmed topology composition (comma-separated ids), e.g. `microservices,event-driven`. |
+| `-d, --declared <list>` | Artifact kinds you declare as present (comma-separated), e.g. `test-summary-report,coverage-report`. |
+| `-c, --core <path>` | Core checkout holding the topology catalogue (default: profile, or the bundled rulesets). |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# 1. Medir construcción sin declarar nada aún (ves todo lo que falta)
+# 1. Measure construction without declaring anything yet (you see everything missing)
 evolith-cli topology phase-artifacts --phase construction --topologies microservices
 
-# 2. Declarar los artefactos que ya tienes y ver cuánto sube el puntaje
+# 2. Declare the artifacts you already have and see how much the score rises
 evolith-cli topology phase-artifacts --phase quality \
   --topologies microservices,event-driven \
   --declared test-summary-report,coverage-report
 
-# 3. Salida máquina para un chequeo en CI
+# 3. Machine output for a CI check
 evolith-cli topology phase-artifacts --phase deployment \
   --topologies microservices --declared release-notes --format json
 ```
 
-**Qué esperar.** En modo humano, un encabezado `Phase-Artifact Completeness` con
-el puntaje `completeness/100`, y tres listas: `Present` (✓), `Missing` (✗) y, si
-aplica, `Conditional` (?) informativa. En `--format json`, el envelope trae
-`data.completeness`, `data.presentArtifacts`, `data.missingArtifacts` y
-`data.conditionalArtifacts`. Comparte motor
-(`PhaseArtifactProfileService.evaluate`) con el endpoint REST y la tool MCP
-equivalentes.
+**What to expect.** In human mode, a `Phase-Artifact Completeness` header with
+the `completeness/100` score and three lists: `Present` (✓), `Missing` (✗) and,
+where applicable, an informational `Conditional` (?). Under `--format json`, the
+envelope carries `data.completeness`, `data.presentArtifacts`,
+`data.missingArtifacts` and `data.conditionalArtifacts`. It shares its engine
+(`PhaseArtifactProfileService.evaluate`) with the equivalent REST endpoint and
+MCP tool.
 
-### 4.4. `evolith-cli sdlc generate domain` — scaffold hexagonal desde un classDiagram DDD
+### 4.4. `evolith-cli sdlc generate domain` — hexagonal scaffold from a DDD classDiagram
 
-**Qué hace.** Lee un archivo Markdown que contiene un `classDiagram` de Mermaid
-con tu modelo DDD (entidades, agregados, value objects…) y genera el andamiaje de
-Arquitectura Hexagonal correspondiente. Detecta las clases por su estereotipo y
-crea los archivos que faltan sin pisar los existentes. Como escribe en disco,
-trae `--dry-run` para ver primero qué generaría.
+**What it does.** Reads a Markdown file containing a Mermaid `classDiagram` with
+your DDD model (entities, aggregates, value objects…) and generates the matching
+Hexagonal Architecture scaffold. It detects the classes by their stereotype and
+creates the missing files without overwriting existing ones. Because it writes
+to disk, it ships `--dry-run` so you can see first what it would generate.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 evolith-cli sdlc generate domain --from ddd-model.md
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `-f, --from <path>` | Archivo Markdown con el modelo DDD (el bloque ` ```mermaid ` con la directiva `classDiagram`). Obligatorio. |
-| `-o, --output <dir>` | Directorio destino de los archivos generados (default: el directorio actual). |
-| `--dry-run` | Imprime qué se generaría sin escribir ningún archivo. |
+| `-f, --from <path>` | Markdown file with the DDD model (the ` ```mermaid ` block carrying the `classDiagram` directive). Required. |
+| `-o, --output <dir>` | Target directory for the generated files (default: the current directory). |
+| `--dry-run` | Prints what would be generated without writing any file. |
 
-> El primer argumento posicional es el **target** de generación (`domain`); junto
-> con `--from` es obligatorio. Si falta cualquiera de los dos, el comando explica
-> el uso y sale con código ≠ 0 (en JSON: `error.code: VALIDATION_FAILED`).
+> The first positional argument is the generation **target** (`domain`); it is
+> required together with `--from`. If either is missing, the command explains
+> the usage and exits non-zero (in JSON: `error.code: VALIDATION_FAILED`).
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# 1. Simular la generación y revisar qué archivos saldrían
+# 1. Simulate the generation and review which files would come out
 evolith-cli sdlc generate domain --from ddd-model.md --dry-run
 
-# 2. Generar de verdad hacia una carpeta concreta
+# 2. Generate for real into a specific folder
 evolith-cli sdlc generate domain --from ddd-model.md --output src/contexts/catalog
 
-# 3. Salida máquina con el detalle de archivos creados/omitidos
+# 3. Machine output with the detail of created/skipped files
 evolith-cli sdlc generate domain --from ddd-model.md --format json
 ```
 
-**Qué esperar.** En modo humano, un resumen de las clases detectadas (con su
-estereotipo), la lista de archivos `Created` (o `Would create` en dry-run) y los
-`Skipped` que ya existían; si el modelo no tiene estereotipos soportados, avisa
-`Nothing to generate`. En `--format json`, el envelope lleva en `data` las listas
-`created` y `skipped`. Si el archivo de `--from` no existe o no contiene un
-`classDiagram` válido, el comando termina con error.
+**What to expect.** In human mode, a summary of the detected classes (with their
+stereotype), the list of `Created` files (or `Would create` in dry-run) and the
+`Skipped` ones that already existed; if the model has no supported stereotypes,
+it reports `Nothing to generate`. Under `--format json`, the envelope carries
+the `created` and `skipped` lists in `data`. If the `--from` file does not exist
+or contains no valid `classDiagram`, the command ends with an error.
 
-## 5. Flujo SDLC y transiciones
+## 5. SDLC flow and transitions
 
-Estos comandos operan sobre el **ciclo de vida** de tu satélite: proponen pasar
-de una fase a la siguiente, muestran el estado de las compuertas (gates) que
-guardan cada fase y ejecutan el traspaso (handoff) de artefactos entre fases.
-Son la capa que gobierna *cuándo* puedes avanzar, no solo *qué* cumples.
+These commands operate on your satellite's **lifecycle**: they propose moving
+from one phase to the next, show the state of the gates guarding each phase, and
+execute the handoff of artifacts between phases. They are the layer that governs
+*when* you may advance, not only *what* you comply with.
 
-> Un aviso de nomenclatura que ahorra confusiones: `phase advance` usa las
-> **fases SDLC canónicas** (`discovery`, `design`, `construction`, `qa`,
-> `release`), mientras que `sdlc handoff` usa un esquema **distinto y numerado**
-> (`phase-0`, `phase-1`, … `phase-5`). No son intercambiables: cada comando
-> valida el suyo. Se explica en cada apartado.
+> A naming warning that saves confusion: `phase advance` uses the **canonical
+> SDLC phases** (`discovery`, `design`, `construction`, `qa`, `release`), whereas
+> `sdlc handoff` uses a **different, numbered** scheme (`phase-0`, `phase-1`, …
+> `phase-5`). They are not interchangeable: each command validates its own. Each
+> section explains it.
 
-### 5.1. `evolith-cli phase advance` — proponer una transición de fase
+### 5.1. `evolith-cli phase advance` — propose a phase transition
 
-**Qué hace.** Evalúa si es sensato pasar de la fase actual (`--from`) a una fase
-destino (`--to`) y emite una **propuesta de transición** con su evidencia, sin
-mutar el estado canónico del satélite. Es un paso de decisión: te dice si la
-transición está *recomendada* o *no recomendada* según las violaciones que
-encuentre, para que decidas con criterio antes de mover nada.
+**What it does.** Evaluates whether moving from the current phase (`--from`) to
+a target phase (`--to`) makes sense, and emits a **transition proposal** with
+its evidence, without mutating the satellite's canonical state. It is a decision
+step: it tells you whether the transition is *recommended* or *not recommended*
+given the violations it finds, so you can decide with judgement before moving
+anything.
 
-`phase` es un comando con **acción posicional**: hoy la única acción soportada es
-`advance`. Cualquier otra acción se rechaza con `VALIDATION_FAILED`.
+`phase` is a command with a **positional action**: today the only supported
+action is `advance`. Any other action is rejected with `VALIDATION_FAILED`.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 evolith-cli phase advance --from construction --to qa --satellite . --core ../evolith-core
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `--from <fase>` | Fase SDLC actual. Obligatoria y validada: `discovery`, `design`, `construction`, `qa`, `release`. |
-| `--to <fase>` | Fase SDLC destino, del mismo conjunto de fases válidas. Obligatoria. |
-| `-s, --satellite [ruta]` | El satélite a evaluar (default: `evolith.yaml` más cercano hacia arriba desde el cwd). |
-| `-c, --core [ruta]` | Checkout del Core con las reglas (default: autodetección). |
-| `--evaluated-by [actor]` | Quién evalúa: `agent` (default), `human` o `ci`. Queda registrado en la evidencia. |
-| `--initiative [id]` / `--tenant [id]` | Contexto opaco que se refleja en `meta.context`. |
-| `--webhook-url <url>` | Envía la evidencia por POST a esa URL al terminar. |
-| `-f, --format [fmt]` | `human` (default) o `json`. |
+| `--from <phase>` | Current SDLC phase. Required and validated: `discovery`, `design`, `construction`, `qa`, `release`. |
+| `--to <phase>` | Target SDLC phase, from the same set of valid phases. Required. |
+| `-s, --satellite [path]` | The satellite to evaluate (default: nearest-ancestor `evolith.yaml` from cwd). |
+| `-c, --core [path]` | The Core checkout with the rules (default: auto-detect). |
+| `--evaluated-by [actor]` | Who evaluates: `agent` (default), `human` or `ci`. Recorded in the evidence. |
+| `--initiative [id]` / `--tenant [id]` | Opaque context echoed in `meta.context`. |
+| `--webhook-url <url>` | POSTs the evidence to that URL when it finishes. |
+| `-f, --format [fmt]` | `human` (default) or `json`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Simple: proponer el salto de construcción a QA, leído por una persona
+# Simple: propose the jump from construction to QA, read by a person
 evolith-cli phase advance --from construction --to qa -s . -c ../evolith-core
 
-# En CI: salida JSON y actor "ci", para que un pipeline decida por el exit-code
+# In CI: JSON output and the "ci" actor, so a pipeline decides on the exit code
 evolith-cli phase advance --from qa --to release -s . -c ../evolith-core \
   --evaluated-by ci --format json
 
-# Notificando a un sistema externo la evidencia de la transición
+# Notifying an external system of the transition evidence
 evolith-cli phase advance --from design --to construction -s . -c ../evolith-core \
   --webhook-url https://hooks.example.com/evolith
 ```
 
-**Qué esperar.** En modo humano verás si la transición es `RECOMMENDED` (verde) o
-`NOT RECOMMENDED` (rojo), el veredicto de la evidencia (`ruleset@versión`) y la
-lista de violaciones con severidad, regla y ubicación. En `--format json`, el
-envelope con `data` = la propuesta (`fromPhase`, `toPhase`, `isRecommended`,
-`evidence.violations`, `proposedAt`). El detalle clave para CI: **si la
-transición NO está recomendada, el comando sale con código ≠ 0**, de modo que un
-pipeline se detiene solo cuando la fase no está lista para avanzar. Si `--from` o
-`--to` no son fases válidas obtienes `error.code: INVALID_PHASE`; si las reglas no
-se encuentran, `RULESET_NOT_FOUND`.
+**What to expect.** In human mode you see whether the transition is
+`RECOMMENDED` (green) or `NOT RECOMMENDED` (red), the evidence verdict
+(`ruleset@version`) and the list of violations with severity, rule and location.
+Under `--format json`, the envelope with `data` = the proposal (`fromPhase`,
+`toPhase`, `isRecommended`, `evidence.violations`, `proposedAt`). The key detail
+for CI: **if the transition is NOT recommended, the command exits non-zero**, so
+a pipeline stops precisely when the phase is not ready to advance. If `--from`
+or `--to` are not valid phases you get `error.code: INVALID_PHASE`; if the rules
+cannot be found, `RULESET_NOT_FOUND`.
 
-### 5.2. `evolith-cli sdlc gate-status` — estado de las compuertas y métricas DORA
+### 5.2. `evolith-cli sdlc gate-status` — gate status and DORA metrics
 
-**Qué hace.** Muestra, para el proyecto en el directorio actual, el estado de
-**todas** las compuertas de fase (cuántas pasan, fallan o quedan pendientes, con
-el detalle de cada evidencia exigida) y, además, calcula las cuatro **métricas
-DORA** a partir del historial de git. Es la foto de "¿en qué punto del ciclo
-estoy y cómo va mi entrega?".
+**What it does.** Shows, for the project in the current directory, the status of
+**every** phase gate (how many pass, fail or are pending, with the detail of
+each required piece of evidence) and, on top of that, computes the four **DORA
+metrics** from the git history. It is the snapshot of "where am I in the cycle
+and how is my delivery going?".
 
-A diferencia de otros comandos, `gate-status` **no** recibe `--satellite` ni
-`--core`: opera siempre sobre el directorio actual (`cwd`).
+Unlike other commands, `gate-status` takes no `--satellite`: it always operates
+on the current directory (`cwd`). It does accept `-c, --core` to point at the
+checkout holding the canonical SDLC gates (auto-detected by default).
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 evolith-cli sdlc gate-status
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `--since <días>` | Ventana de historial git a analizar para DORA (default: 90). Valores inválidos o < 1 caen al default. |
-| `-f, --format <fmt>` | `human` (default) o `json`. |
+| `--since <days>` | Git-history window analysed for DORA (default: 90). Invalid values or < 1 fall back to the default. |
+| `-f, --format <fmt>` | `human` (default) or `json`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# La foto completa, legible: compuertas + DORA de los últimos 90 días
+# The full readable snapshot: gates + DORA for the last 90 days
 evolith-cli sdlc gate-status
 
-# Ampliar la ventana DORA a un semestre
+# Widen the DORA window to six months
 evolith-cli sdlc gate-status --since 180
 
-# Para un dashboard o script: un único JSON con gateStatus + doraMetrics
+# For a dashboard or script: one JSON with gateStatus + doraMetrics
 evolith-cli sdlc gate-status --format json | jq '.data.doraMetrics'
 ```
 
-**Qué esperar.** En modo humano, un resumen (fase actual, gates
-pasados/fallidos/pendientes) seguido del detalle por compuerta —rol responsable,
-autoridad de waiver si falló, evidencias con ✓/✗ marcadas `[REQUIRED]` /
-`[OPTIONAL]`, y criterios bloqueantes disparados— y luego un bloque de DORA con
-frecuencia de despliegue, lead time, tasa de fallo de cambios y tiempo de
-restauración, cada una con su *badge* de rating (`elite`/`high`/`medium`/`low`).
-En `--format json`, el envelope con `data.gateStatus` y `data.doraMetrics` (este
-último es `null` si el directorio no es un repo git; las métricas se saltan y, en
-modo humano, verás un aviso en su lugar).
+**What to expect.** In human mode, a summary (current phase, gates
+passed/failed/pending) followed by the per-gate detail — responsible role,
+waiver authority if it failed, evidence marked ✓/✗ and `[REQUIRED]` /
+`[OPTIONAL]`, and any blocking criteria triggered — and then a DORA block with
+deployment frequency, lead time, change failure rate and time to restore, each
+with its rating badge (`elite`/`high`/`medium`/`low`). Under `--format json`,
+the envelope with `data.gateStatus` and `data.doraMetrics` (the latter is `null`
+when the directory is not a git repository; the metrics are skipped and, in
+human mode, you see a notice in their place).
 
-### 5.3. `evolith-cli sdlc handoff` — traspasar artefactos entre fases
+### 5.3. `evolith-cli sdlc handoff` — hand artifacts over between phases
 
-**Qué hace.** Ejecuta el **traspaso** real de una fase a la siguiente:
-transiciona los artefactos, valida las compuertas de la fase y deja el proyecto
-posicionado en la fase destino. Tiene dos modos: **guiado/interactivo** (te va
-preguntando fase origen, fase destino, si validar gates, qué herramientas
-configurar) y **directo/no interactivo** (le pasas `--from` y `--to` y corre sin
-preguntar).
+**What it does.** Executes the actual **handoff** from one phase to the next: it
+transitions the artifacts, validates the phase gates and leaves the project
+positioned in the target phase. It has two modes: **guided/interactive** (it
+asks you for source phase, target phase, whether to validate gates, which tools
+to configure) and **direct/non-interactive** (you pass `--from` and `--to` and
+it runs without asking).
 
-Aquí las fases usan el esquema **numerado** `phase-0`, `phase-1`, … `phase-5`
-(no las fases SDLC canónicas de `phase advance`).
+Here the phases use the **numbered** scheme `phase-0`, `phase-1`, … `phase-5`
+(not the canonical SDLC phases of `phase advance`).
 
-**Uso básico (interactivo):**
+**Basic usage (interactive):**
 
 ```bash
 evolith-cli sdlc handoff
 ```
 
-**Uso directo (no interactivo):**
+**Direct usage (non-interactive):**
 
 ```bash
 evolith-cli sdlc handoff --from phase-1 --to phase-2
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `-f, --from [fase]` | Fase origen (`phase-0`, `phase-1`, …). Si la das junto con `--to`, corre en modo directo sin prompts. |
-| `-t, --to [fase]` | Fase destino. Requiere `--from` para el modo directo. |
-| `-a, --artifacts` | Declara la intención de generar artefactos de evidencia (relevante en el flujo guiado). |
-| `--validate` | Declara validar las compuertas de fase (relevante en el flujo guiado). |
-| `--force` | Fuerza el handoff pese a gates fallidos (requiere waiver del Architecture Board). |
-| `--format <fmt>` | `human` (default) o `json`. |
+| `-f, --from [phase]` | Source phase (`phase-0`, `phase-1`, …). Passing it together with `--to` runs the direct mode without prompts. |
+| `-t, --to [phase]` | Target phase. Requires `--from` for the direct mode. |
+| `-a, --artifacts` | Declares the intent to generate evidence artifacts (relevant in the guided flow). |
+| `--validate` | Declares that phase gates should be validated (relevant in the guided flow). |
+| `--force` | Forces the handoff despite failed gates (requires an Architecture Board waiver). |
+| `--format <fmt>` | `human` (default) or `json`. |
 
-> Nota práctica: en el camino **directo** (`--from` + `--to`), la transición se
-> ejecuta de inmediato y los flags `--artifacts`, `--validate` y `--force` no
-> alteran ese path — son opciones del flujo **guiado**, donde `--force` cobra
-> sentido para saltarse gates fallidos con el waiver correspondiente. Para
-> automatizar, quédate con `--from`, `--to` y `--format json`.
+> Practical note: on the **direct** path (`--from` + `--to`) the transition runs
+> immediately and the `--artifacts`, `--validate` and `--force` flags do not
+> alter that path — they are options of the **guided** flow, where `--force`
+> makes sense to skip failed gates with the corresponding waiver. To automate,
+> stick to `--from`, `--to` and `--format json`.
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Guiado: te lleva paso a paso por fase origen, destino y herramientas
+# Guided: walks you through source phase, target phase and tooling
 evolith-cli sdlc handoff
 
-# Directo, para un script: transiciona y devuelve el envelope JSON
+# Direct, for a script: transitions and returns the JSON envelope
 evolith-cli sdlc handoff --from phase-1 --to phase-2 --format json
 
-# Forzar el traspaso pese a gates fallidos (flujo guiado; exige waiver)
+# Force the handoff despite failed gates (guided flow; requires a waiver)
 evolith-cli sdlc handoff --force
 ```
 
-**Qué esperar.** En modo directo con éxito, un `✓ Transitioned from … to …` (o el
-envelope de éxito en JSON con el resultado de la transición). En el flujo guiado,
-además ves los resultados de validación de gates (✓/✗ por compuerta, marcadas
-`[REQUIRED]`/`[OPTIONAL]`), las herramientas configuradas y una lista de *Next
-Steps* para la fase destino. Si la transición falla, se listan los errores; y si
-alguna compuerta **requerida** no pasó, el comando te recuerda que debes
-corregirla o usar `--force` con el waiver del Architecture Board. En `--format
-json`, un traspaso fallido se reporta como `error.code: INTERNAL_ERROR` con los
-errores concatenados en el mensaje.
+**What to expect.** In direct mode on success, a `✓ Transitioned from … to …`
+(or the success envelope in JSON with the transition result). In the guided
+flow you additionally see the gate validation results (✓/✗ per gate, marked
+`[REQUIRED]`/`[OPTIONAL]`), the tools configured, and a list of *Next Steps* for
+the target phase. If the transition fails, the errors are listed; and if any
+**required** gate did not pass, the command reminds you to fix it or use
+`--force` with the Architecture Board waiver. Under `--format json`, a failed
+handoff is reported as `error.code: INTERNAL_ERROR` with the errors concatenated
+in the message.
 
-## 6. Gobernanza y documentación
+## 6. Governance and documentation
 
-Estos comandos no validan ni evalúan: **administran los artefactos de gobierno**
-de tu satélite (decisiones de arquitectura, estándares corporativos) y generan la
-documentación base que Evolith espera encontrar. Los tres son *multi-acción*: en
-lugar de tener subcomandos, cada **flag de acción** (`--list`, `--get`,
-`--create`, …) elige qué hace el comando. Trabajan sobre el directorio actual, no
-necesitan `--core` ni `--satellite`, y — como el resto de la CLI — respetan
-`--format json` con el mismo envelope descrito en la sección 2.
+These commands neither validate nor evaluate: they **administer your
+satellite's governance artifacts** (architecture decisions, corporate standards)
+and generate the base documentation Evolith expects to find. All three are
+*multi-action*: instead of having subcommands, each **action flag** (`--list`,
+`--get`, `--create`, …) chooses what the command does. They work on the current
+directory, need neither `--core` nor `--satellite`, and — like the rest of the
+CLI — honour `--format json` with the same envelope described in section 2.
 
-### 6.1. `evolith-cli adr` — gestionar Architecture Decision Records
+### 6.1. `evolith-cli adr` — manage Architecture Decision Records
 
-**Qué hace.** Es la navaja para tus ADRs (los registros de decisiones de
-arquitectura que viven en `reference/architecture/adrs/`). Con un flag distinto
-crea, lista, consulta, actualiza el estado o muestra la matriz-resumen de todos
-los ADRs. Si lo invocas **sin ningún flag de acción**, entra en modo interactivo
-y te pregunta qué quieres hacer.
+**What it does.** It is the Swiss army knife for your ADRs (the architecture
+decision records living under `reference/architecture/adrs/`). A different flag
+creates, lists, queries, updates the status of, or prints the summary matrix of
+every ADR. If you invoke it **without any action flag** it enters interactive
+mode and asks you what you want to do.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 evolith-cli adr --list
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `-l, --list` | Lista todos los ADRs con su id, título, estado y fecha. |
-| `-g, --get <id>` | Muestra un ADR completo (contexto, decisión, consecuencias, tags). Ej: `--get ADR-0001`. |
-| `-m, --matrix` | Imprime el resumen de la matriz: totales por estado (proposed/accepted/deprecated) y los ADRs recientes. |
-| `-c, --create` | Crea un ADR nuevo. Abre un cuestionario interactivo (título, contexto, decisión, consecuencias, tags). |
-| `-u, --update <id>` | Cambia el estado de un ADR existente. Requiere `--status`. |
-| `-s, --status <estado>` | El nuevo estado para `--update`: `Accepted`, `Deprecated`, `Superseded` o `Amended`. |
-| `-r, --reason <texto>` | Motivo del cambio de estado (queda registrado junto al ADR). |
-| `-d, --dry-run` | Simula `--create` / `--update` sin escribir en disco. |
-| `-f, --format <fmt>` | `human` (default) o `json`. |
+| `-l, --list` | Lists every ADR with its id, title, status and date. |
+| `-g, --get <id>` | Shows one full ADR (context, decision, consequences, tags). E.g. `--get ADR-0001`. |
+| `-m, --matrix` | Prints the matrix summary: totals by status (proposed/accepted/deprecated) and the recent ADRs. |
+| `-c, --create` | Creates a new ADR. Opens an interactive questionnaire (title, context, decision, consequences, tags). |
+| `-u, --update <id>` | Changes the status of an existing ADR. Requires `--status`. |
+| `-s, --status <status>` | The new status for `--update`: `Accepted`, `Deprecated`, `Superseded` or `Amended`. |
+| `-r, --reason <text>` | Reason for the status change (recorded alongside the ADR). |
+| `-d, --dry-run` | Simulates `--create` / `--update` without writing to disk. |
+| `-f, --format <fmt>` | `human` (default) or `json`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Ver de un vistazo el estado del registro de decisiones
+# See the state of the decision register at a glance
 evolith-cli adr --matrix
 
-# Consultar un ADR concreto en JSON (para un script o un agente)
+# Query one specific ADR as JSON (for a script or an agent)
 evolith-cli adr --get ADR-0002 --format json
 
-# Marcar un ADR como reemplazado, dejando constancia del porqué —
-# primero en seco para revisar, luego de verdad
-evolith-cli adr --update ADR-0005 --status Superseded --reason "Reemplazado por ADR-0011" --dry-run
-evolith-cli adr --update ADR-0005 --status Superseded --reason "Reemplazado por ADR-0011"
+# Mark an ADR as superseded, recording why —
+# first as a dry run to review, then for real
+evolith-cli adr --update ADR-0005 --status Superseded --reason "Replaced by ADR-0011" --dry-run
+evolith-cli adr --update ADR-0005 --status Superseded --reason "Replaced by ADR-0011"
 ```
 
-**Qué esperar.** En modo humano, tablas y fichas legibles; el ADR creado se
-escribe en `reference/architecture/adrs/<id>.md`. En `--format json`, el envelope
-con los datos (`adrs`, el ADR pedido, o el resumen de la matriz). Si pides un ADR
-que no existe (`--get`, o `--update` sobre un id inexistente), el comando **sale
-con código ≠ 0** y devuelve un envelope de error. Recuerda que `--update` sin
-`--status` no hace nada: te avisa de que el estado es obligatorio.
+**What to expect.** In human mode, readable tables and cards; the created ADR is
+written to `reference/architecture/adrs/<id>.md`. Under `--format json`, the
+envelope with the data (`adrs`, the requested ADR, or the matrix summary). If
+you ask for an ADR that does not exist (`--get`, or `--update` on a missing id),
+the command **exits non-zero** and returns an error envelope. Remember that
+`--update` without `--status` does nothing: it warns you the status is required.
 
-### 6.2. `evolith-cli standards` — gestionar los estándares Evolith
+### 6.2. `evolith-cli standards` — manage the Evolith standards
 
-**Qué hace.** Administra los estándares corporativos (arquitectura, gobernanza,
-operaciones) que viven en `reference/standards/`. Como `adr`, cada flag es una
-acción: inicializa la estructura de carpetas, lista los estándares, muestra el
-detalle de uno, valida código contra sus reglas o exporta un estándar a Markdown
-o JSON. Sin flag de acción, entra en modo interactivo.
+**What it does.** Administers the corporate standards (architecture, governance,
+operations) living under `reference/standards/`. Like `adr`, every flag is an
+action: it initialises the folder structure, lists the standards, shows the
+detail of one, validates code against their rules, or exports a standard to
+Markdown or JSON. With no action flag it enters interactive mode.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 evolith-cli standards --list
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `--init` | Crea la estructura base en `reference/standards/` (con `rulesets/` y `templates/`). Es el primer paso en un satélite nuevo. |
-| `-l, --list` | Lista los estándares registrados con su id, nombre, versión, categoría y número de reglas. |
-| `-c, --category <cat>` | Acota `--list` a una categoría concreta. |
-| `-g, --get <id>` | Muestra un estándar completo: descripción y sus reglas (con severidad y remediación). |
-| `-v, --validate <código>` | Valida un fragmento de código contra las reglas de los estándares y reporta cuántas pasan/fallan. |
-| `-e, --export <id>` | Exporta un estándar. El formato lo da `--format`. |
-| `-f, --format <fmt>` | Doble uso: el formato de exportación de `--export` (`markdown` —default— o `json`) y también el modo de salida del comando (`json` para el envelope). |
+| `--init` | Creates the base structure under `reference/standards/` (with `rulesets/` and `templates/`). It is the first step in a new satellite. |
+| `-l, --list` | Lists the registered standards with their id, name, version, category and rule count. |
+| `-c, --category <cat>` | Narrows `--list` to one category. |
+| `-g, --get <id>` | Shows a full standard: description and its rules (with severity and remediation). |
+| `-v, --validate <code>` | Validates a code fragment against the standards' rules and reports how many pass/fail. |
+| `-e, --export <id>` | Exports a standard. The format comes from `--format`. |
+| `-f, --format <fmt>` | Dual purpose: the export format for `--export` (`markdown` —default— or `json`), and also the command's output mode (`json` for the envelope). |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Arrancar la gobernanza de estándares en un satélite recién creado
+# Bootstrap standards governance in a freshly created satellite
 evolith-cli standards --init
 
-# Listar solo los estándares de una categoría, en JSON para tooling
+# List only the standards of one category, as JSON for tooling
 evolith-cli standards --list --category architecture --format json
 
-# Exportar un estándar a Markdown para pegarlo en la documentación
+# Export a standard to Markdown to paste into the documentation
 evolith-cli standards --export STD-0001 --format markdown
 ```
 
-**Qué esperar.** En humano, tablas y fichas con las reglas y sus severidades
-(error / warning / info). En `--format json`, el envelope con el
-listado, el estándar pedido o el resultado de la validación (`totalRules`,
-`passed`, `failed`). Pedir un estándar inexistente con `--get` **sale con código
-≠ 0**. Ojo con el nombre de `--format`: si exportas en JSON con
-`--export ... --format json`, obtienes el contenido del estándar serializado como
-JSON, no solo el envelope de la CLI.
+**What to expect.** In human mode, tables and cards with the rules and their
+severities (error / warning / info). Under `--format json`, the envelope with
+the listing, the requested standard, or the validation result (`totalRules`,
+`passed`, `failed`). Asking for a non-existent standard with `--get` **exits
+non-zero**. Mind the overloaded `--format`: if you export as JSON with
+`--export … --format json`, you get the standard's content serialised as JSON,
+not just the CLI envelope.
 
-### 6.3. `evolith-cli docs` — generar la documentación base
+### 6.3. `evolith-cli docs` — generate the base documentation
 
-**Qué hace.** Genera (*scaffold*) los archivos de documentación que Evolith espera
-en la raíz de un satélite: `README.md`, `AGENTS.md`, `MASTER_INDEX.md` y un
-`evolith.yaml` de ejemplo (el contrato del satélite). Es lo que corres al empezar
-un proyecto para no partir de cero. Por seguridad, **nunca sobrescribe** archivos
-existentes salvo que se lo pidas con `--force`.
+**What it does.** Scaffolds the documentation files Evolith expects at the root
+of a satellite: `README.md`, `AGENTS.md`, `MASTER_INDEX.md` and a sample
+`evolith.yaml` (the satellite contract). It is what you run when starting a
+project so you do not begin from zero. For safety it **never overwrites**
+existing files unless you ask with `--force`.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 evolith-cli docs
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `-t, --template <tipo>` | Qué conjunto generar: `default` (los cuatro archivos) o `minimal` (solo `README.md` y `AGENTS.md`). |
-| `-d, --dry-run` | Muestra qué crearía/actualizaría sin escribir nada. Úsalo para revisar antes de aplicar. |
-| `-f, --force` | Sobrescribe los archivos que ya existan (por defecto se saltan). |
-| `-f, --format <fmt>` | `human` (default) o `json`. |
+| `-t, --template <type>` | Which set to generate: `default` (all four files) or `minimal` (only `README.md` and `AGENTS.md`). |
+| `-d, --dry-run` | Shows what it would create/update without writing anything. Use it to review before applying. |
+| `-f, --force` | Overwrites files that already exist (skipped by default). |
+| `-f, --format <fmt>` | `human` (default) or `json`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Ver qué archivos se generarían, sin tocar nada
+# See which files would be generated, without touching anything
 evolith-cli docs --dry-run
 
-# Andamiaje mínimo (README + AGENTS) en un repo que solo necesita lo básico
+# Minimal scaffold (README + AGENTS) in a repo that only needs the basics
 evolith-cli docs --template minimal
 
-# Regenerar toda la documentación base, sobrescribiendo lo que hubiera
+# Regenerate all the base documentation, overwriting whatever was there
 evolith-cli docs --force
 ```
 
-**Qué esperar.** En humano, un resumen de cuántos archivos se crean, actualizan y
-se saltan, más una línea por archivo escrito. En `--format json`, el envelope con
-`created`, `updated`, `skipped` y la lista de `files`. Si todos los archivos ya
-existen y no pasas `--force`, el comando no cambia nada y te lo dice. Nota: `docs`
-escribe siempre en el **directorio actual**, así que ejecútalo desde la raíz del
-satélite.
+**What to expect.** In human mode, a summary of how many files were created,
+updated and skipped, plus one line per written file. Under `--format json`, the
+envelope with `created`, `updated`, `skipped` and the list of `files`. If every
+file already exists and you do not pass `--force`, the command changes nothing
+and says so. Note: `docs` always writes to the **current directory**, so run it
+from the satellite root.
 
-## 7. Satélite y agentes
+## 7. Satellite and agents
 
-Estos comandos operan sobre el *ciclo de vida del propio satélite*: crearlo, darlo
-de alta, poblarlo de agentes de gobernanza y mantenerlo al día cuando el Core
-publica reglas nuevas. A diferencia de los comandos de validación, aquí el efecto
-es **crear o modificar archivos** (o repositorios remotos), así que casi todos
-tienen un modo simulacro o una confirmación antes de escribir.
+These commands operate on the *satellite's own lifecycle*: creating it,
+registering it, populating it with governance agents and keeping it current when
+the Core publishes new rules. Unlike the validation commands, here the effect is
+to **create or modify files** (or remote repositories), so almost all of them
+have a dry-run mode or a confirmation before writing.
 
-### 7.1. `evolith-cli init` — inicializar un repositorio satélite
+### 7.1. `evolith-cli init` — initialise a satellite repository
 
-**Qué hace.** Crea el andamiaje de un satélite de Evolith en el directorio actual:
-`evolith.yaml`, la estructura de carpetas y los artefactos base que exige el
-estándar, según el runtime, la arquitectura y la base de datos que elijas. Por
-defecto es **interactivo** (te va preguntando); para CI o scripts tiene un modo
-batch sin prompts.
+**What it does.** Creates the scaffold of an Evolith satellite in the current
+directory: `evolith.yaml`, the folder structure and the base artifacts the
+standard requires, according to the runtime, architecture and database you
+choose. By default it is **interactive** (it asks you questions); for CI or
+scripts it has a prompt-free batch mode.
 
-**Uso básico (interactivo):**
+**Basic usage (interactive):**
 
 ```bash
 evolith-cli init
 ```
 
-**Uso batch (sin prompts):**
+**Batch usage (no prompts):**
 
 ```bash
-evolith-cli init --name mi-satelite --runtime nodejs --arch clean --yes
+evolith-cli init --name my-satellite --runtime nodejs --arch clean --yes
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `-n, --name <nombre>` | Nombre del proyecto. Obligatorio en modo batch (por flag o dentro del `--config`). |
-| `-y, --yes` | Activa el modo batch no interactivo: usa los flags y rellena el resto con valores por defecto, sin preguntar nada. |
-| `-c, --config <archivo>` | Ruta a un `evolith.setup.json` que aporta toda la configuración; hace bypass total de los prompts. Los flags sueltos sobrescriben campos individuales del archivo. |
-| `-r, --runtime <id>` | Runtime del proyecto: `nodejs`, `dotnet`, `python`. |
-| `-m, --monorepo <id>` | Estrategia de monorepo: `none`, `nx`, `npm-workspaces`, `rush`. |
-| `-a, --arch <id>` | Patrón de arquitectura: `clean`, `hexagonal`, `ddd`. |
-| `--db <id>` | Base de datos: `postgresql`, `mongodb`, `sqlserver`. |
-| `-d, --dry-run` | Simulacro: no escribe archivos. |
+| `-n, --name <name>` | Project name. Required in batch mode (through the flag or inside `--config`). |
+| `-y, --yes` | Turns on non-interactive batch mode: uses the flags and fills the rest with defaults, asking nothing. |
+| `-c, --config <file>` | Path to an `evolith.setup.json` supplying the whole configuration; bypasses the prompts entirely. Individual flags override individual fields of the file. |
+| `-r, --runtime <id>` | Project runtime: `nodejs`, `dotnet`, `python`. |
+| `-m, --monorepo <id>` | Monorepo strategy: `none`, `nx`, `npm-workspaces`, `rush`. |
+| `-a, --arch <id>` | Architecture pattern: `clean`, `hexagonal`, `ddd`. |
+| `--db <id>` | Database: `postgresql`, `mongodb`, `sqlserver`. |
+| `-d, --dry-run` | Dry run: writes no files. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Interactivo: te guía paso a paso (lo normal la primera vez)
+# Interactive: guides you step by step (the normal first time)
 evolith-cli init
 
-# Batch mínimo para CI: nombre + --yes; el resto toma defaults (nodejs/clean/postgresql…)
-evolith-cli init --name pagos-api --yes
+# Minimal batch for CI: name + --yes; the rest takes defaults (nodejs/clean/postgresql…)
+evolith-cli init --name payments-api --yes
 
-# Reproducible desde un archivo de setup versionado en el repo
+# Reproducible from a setup file versioned in the repository
 evolith-cli init --config ./evolith.setup.json --format json
 ```
 
-> Detalle importante del modo batch: el atajo sin prompts se activa **solo** con
-> `--config` o con `--yes`. Un `--name mi-sat` a secas (sin `--yes`) sigue
-> entrando al asistente interactivo.
+> Important detail about batch mode: the prompt-free path is triggered **only**
+> by `--config` or `--yes`. A bare `--name my-sat` (without `--yes`) still
+> enters the interactive wizard.
 
-**Qué esperar.** En modo humano, un resumen con los *artifacts* creados, los
-warnings y una lista de "próximos pasos" (`cd`, `validate`, `agents install`…).
-En `--format json`, el envelope con `data.artifacts`, `data.warnings` y
+**What to expect.** In human mode, a summary of the created *artifacts*, the
+warnings, and a list of "next steps" (`cd`, `validate`, `agents install`…).
+Under `--format json`, the envelope with `data.artifacts`, `data.warnings` and
 `data.success`.
 
-### 7.2. `evolith-cli init-wizard` — asistente interactivo paso a paso
+### 7.2. `evolith-cli init-wizard` — step-by-step interactive assistant
 
-**Qué hace.** Es la variante puramente guiada de la inicialización: te lleva por
-un asistente de cuatro pasos (nombre, runtime, monorepo, arquitectura) y al final
-crea el proyecto. Útil cuando quieres el flujo conversacional completo en vez de
-recordar flags.
+**What it does.** It is the purely guided variant of initialisation: it walks
+you through a four-step wizard (name, runtime, monorepo, architecture) and
+creates the project at the end. Useful when you want the full conversational
+flow instead of remembering flags.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 evolith-cli init-wizard
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `--no-wizard` | Desactiva el asistente; te redirige a usar `evolith-cli init`. |
-| `--no-interactive` | Corre sin interacción (para automatización/CI), tomando los valores por defecto de cada paso. |
-| `-f, --format <fmt>` | `human` (default) o `json`. |
+| `--no-wizard` | Turns the wizard off; redirects you to use `evolith-cli init`. |
+| `--no-interactive` | Runs without interaction (for automation/CI), taking each step's default values. |
+| `-f, --format <fmt>` | `human` (default) or `json`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# El asistente completo, guiado
+# The full guided wizard
 evolith-cli init-wizard
 
-# Sin prompts, con salida para máquina (CI)
+# No prompts, with machine output (CI)
 evolith-cli init-wizard --no-interactive --format json
 ```
 
-**Qué esperar.** Al terminar, el proyecto creado con su lista de *artifacts*. En
-`--format json` obtienes el envelope; si cancelas o falla, sale con código ≠ 0 y
-un `error.code` (`VALIDATION_FAILED` al cancelar, `INTERNAL_ERROR` si la creación
-falla).
+**What to expect.** At the end, the created project with its list of
+*artifacts*. Under `--format json` you get the envelope; if you cancel or it
+fails, it exits non-zero with an `error.code` (`VALIDATION_FAILED` on cancel,
+`INTERNAL_ERROR` if creation fails).
 
-> ¿`init` o `init-wizard`? Para el día a día usa `evolith-cli init`: ya es
-> interactivo y además tiene el modo batch. `init-wizard` es el asistente
-> dedicado, más acotado (cubre nombre/runtime/monorepo/arquitectura).
+> `init` or `init-wizard`? For day-to-day work use `evolith-cli init`: it is
+> already interactive and additionally has the batch mode. `init-wizard` is the
+> dedicated, narrower assistant (it covers name/runtime/monorepo/architecture).
 
-### 7.3. `evolith-cli satellite:create` — crear el repo en GitHub y registrarlo
+### 7.3. `evolith-cli satellite:create` — create the GitHub repo and register it
 
-**Qué hace.** Crea un **repositorio nuevo en GitHub** y lo registra como satélite
-de Evolith en un solo paso, con su topología y su fase de ciclo de vida. A
-diferencia de `init` (que arma el andamiaje local), este comando toca GitHub, así
-que necesita un token.
+**What it does.** Creates a **new repository on GitHub** and registers it as an
+Evolith satellite in a single step, with its topology and its lifecycle phase.
+Unlike `init` (which builds the local scaffold), this command talks to GitHub,
+so it needs a token.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 export GITHUB_TOKEN=ghp_xxx
-evolith-cli satellite:create --name mi-satelite --owner mi-org
+evolith-cli satellite:create --name my-satellite --owner my-org
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `-n, --name <nombre>` | Nombre del repositorio a crear. Si lo omites, te lo pregunta. |
-| `-o, --owner <owner>` | Usuario u organización de GitHub que será dueño del repo. |
-| `--topology <id>` | Topología de arquitectura: `monolith`, `modular`, `micro`, `distributed`. |
-| `--phase <id>` | Fase SDLC inicial: `discovery`, `design`, `construction`, `qa`, `release`. |
-| `--private` | Crea el repositorio como privado (por defecto es público). |
-| `-d, --description <texto>` | Descripción opcional del repositorio. |
-| `-t, --token <token>` | Token personal de GitHub. Si lo omites, usa la variable de entorno `GITHUB_TOKEN`. |
+| `-n, --name <name>` | Name of the repository to create. If you omit it, you are asked. |
+| `-o, --owner <owner>` | GitHub user or organisation that will own the repository. |
+| `--topology <id>` | Architecture topology: `monolith`, `modular`, `micro`, `distributed`. |
+| `--phase <id>` | Initial SDLC phase: `discovery`, `design`, `construction`, `qa`, `release`. |
+| `--private` | Creates the repository as private (public by default). |
+| `-d, --description <text>` | Optional description for the repository. |
+| `-t, --token <token>` | GitHub personal access token. If omitted, the `GITHUB_TOKEN` environment variable is used. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Repo privado, microservicios, arrancando en discovery
+# Private repo, microservices, starting in discovery
 evolith-cli satellite:create --name checkout-svc --owner acme \
   --topology micro --phase discovery --private
 
-# Sin flags: el comando te pregunta nombre, owner, topología y fase
+# With no flags: the command asks for name, owner, topology and phase
 evolith-cli satellite:create
 
-# Para automatización: token explícito + salida JSON
-evolith-cli satellite:create --name pagos --owner acme --token "$GH_PAT" --format json
+# For automation: explicit token + JSON output
+evolith-cli satellite:create --name payments --owner acme --token "$GH_PAT" --format json
 ```
 
-**Qué esperar.** En modo humano, una ficha "Satellite Registered" con el ID, la
-URL del repo, la topología, la fase y el estado. En `--format json`, el envelope
-con `data.satellite`. Si no hay token (ni `--token` ni `GITHUB_TOKEN`), el comando
-no crea nada y te avisa de que falta el token.
+**What to expect.** In human mode, a "Satellite Registered" card with the ID,
+the repository URL, the topology, the phase and the status. Under
+`--format json`, the envelope with `data.satellite`. If there is no token
+(neither `--token` nor `GITHUB_TOKEN`), the command creates nothing and tells
+you the token is missing.
 
-### 7.4. `evolith-cli satellite:adopt` — adoptar un repositorio existente
+### 7.4. `evolith-cli satellite:adopt` — adopt an existing repository
 
-**Qué hace.** Toma un **repositorio de GitHub que ya existe** y lo pone bajo
-gobernanza de Evolith **sin crear nada nuevo**: lo registra como satélite con su
-topología y su fase. Es la contraparte de `satellite:create` cuando el repo ya
-está en marcha.
+**What it does.** Takes a **GitHub repository that already exists** and places it
+under Evolith governance **without creating anything new**: it registers it as a
+satellite with its topology and phase. It is the counterpart of
+`satellite:create` when the repository is already running.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 export GITHUB_TOKEN=ghp_xxx
-evolith-cli satellite:adopt --repo https://github.com/mi-org/mi-repo
+evolith-cli satellite:adopt --repo https://github.com/my-org/my-repo
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `--repo <url>` | URL del repositorio a adoptar (`https://github.com/owner/repo`). El owner y el nombre se extraen de aquí. |
-| `--owner <owner>` | Fuerza el owner; por defecto se toma el que aparece en `--repo`. |
-| `--topology <id>` | Topología: `monolith`, `modular`, `micro`, `distributed`, `custom`. |
-| `--phase <id>` | Fase del satélite: `alpha`, `beta`, `rc`, `ga`. |
-| `--token <token>` | Token personal de GitHub (por defecto, `GITHUB_TOKEN`). |
-| `-f, --format <fmt>` | `human` o `json`. |
+| `--repo <url>` | URL of the repository to adopt (`https://github.com/owner/repo`). The owner and the name are parsed from it. |
+| `--owner <owner>` | Forces the owner; by default the one appearing in `--repo` is used. |
+| `--topology <id>` | Topology: `monolith`, `modular`, `micro`, `distributed`, `custom`. |
+| `--phase <id>` | Satellite phase: `alpha`, `beta`, `rc`, `ga`. |
+| `--token <token>` | GitHub personal access token (defaults to `GITHUB_TOKEN`). |
+| `-f, --format <fmt>` | `human` or `json`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Adopción mínima: solo la URL; topología/fase por defecto (modular/alpha) o preguntadas
+# Minimal adoption: just the URL; topology/phase default (modular/alpha) or are asked
 evolith-cli satellite:adopt --repo https://github.com/acme/legacy-api
 
-# Declarando topología y fase de madurez
+# Declaring topology and maturity phase
 evolith-cli satellite:adopt --repo https://github.com/acme/legacy-api \
   --topology modular --phase beta
 
-# En pipeline, todo por flags + JSON
+# In a pipeline, everything through flags + JSON
 evolith-cli satellite:adopt --repo https://github.com/acme/legacy-api \
   --topology micro --phase ga --token "$GH_PAT" --format json
 ```
 
-**Qué esperar.** Un resumen "Satellite adopted successfully" con ID, owner, repo,
-topología, fase y estado; en `--format json`, el envelope con `data.satellite`.
+**What to expect.** A "Satellite adopted successfully" summary with ID, owner,
+repository, topology, phase and status; under `--format json`, the envelope with
+`data.satellite`.
 
-> Ojo con las fases: las de `satellite:adopt` describen **madurez del release**
-> (`alpha`/`beta`/`rc`/`ga`) y son distintas de las fases SDLC
-> (`discovery`…`release`) que usan `satellite:create` y los comandos de
-> validación. Si no pasas `--phase` en modo JSON, adopta `alpha` por defecto.
+> Mind the phases: those of `satellite:adopt` describe **release maturity**
+> (`alpha`/`beta`/`rc`/`ga`) and are different from the SDLC phases
+> (`discovery`…`release`) used by `satellite:create` and the validation
+> commands. If you do not pass `--phase` in JSON mode, `alpha` is adopted by
+> default.
 
-### 7.5. `evolith-cli agents` — gestionar agentes en el satélite
+### 7.5. `evolith-cli agents` — manage agents in the satellite
 
-**Qué hace.** Administra los agentes de gobernanza instalados en el satélite:
-instalarlos (con una plantilla y un conjunto de ADRs/rulesets), listarlos,
-validarlos, actualizarlos, ejecutarlos contra el Agent Runtime o eliminarlos. Sin
-argumentos abre un **menú interactivo**; también puedes ir directo a una acción.
+**What it does.** Administers the governance agents installed in the satellite:
+installing them (with a template and a set of ADRs/rulesets), listing,
+validating, upgrading, running them against the Agent Runtime, or removing them.
+With no arguments it opens an **interactive menu**; you can also go straight to
+an action.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
-evolith-cli agents            # menú interactivo
-evolith-cli agents --list     # lista los agentes instalados
+evolith-cli agents            # interactive menu
+evolith-cli agents --list     # lists the installed agents
 ```
 
-**Acciones y opciones principales:**
+**Main actions and options:**
 
-| Opción / acción | Para qué |
+| Option / action | What it is for |
 | --- | --- |
-| `-l, --list` (o `agents list`) | Lista los agentes instalados en el repositorio. |
-| `-i, --install [nombre]` (o `agents install`) | Instala un agente nuevo: pregunta nombre, plantilla (`standard`/`minimal`/`enterprise`), descripción y qué ADRs/rulesets incluir. |
-| `-r, --remove [nombre]` (o `agents remove`) | Elimina un agente instalado (pide confirmación; es irreversible). |
-| `agents validate` | Valida el ruleset de un agente contra el esquema y reporta los problemas encontrados. |
-| `agents upgrade` | Sube la versión *patch* del agente y actualiza su ruleset. |
-| `--run [intent]` (o `agents run`) | Envía un *intent* al Agent Runtime (URL en `AGENT_RUNTIME_URL`, por defecto `http://localhost:3000`) y muestra el resultado. |
-| `--format [tipo]` | Formato de salida: `json`, `table`, `yaml`. |
+| `-l, --list` (or `agents list`) | Lists the agents installed in the repository. |
+| `-i, --install [name]` (or `agents install`) | Installs a new agent: asks for name, template (`standard`/`minimal`/`enterprise`), description and which ADRs/rulesets to include. |
+| `-r, --remove [name]` (or `agents remove`) | Removes an installed agent (asks for confirmation; it is irreversible). |
+| `agents validate` | Validates an agent's ruleset against the schema and reports the problems found. `--name <agent>` is required with `--format json`. |
+| `agents upgrade` | Bumps the agent's *patch* version and updates its ruleset. |
+| `--run [intent]` (or `agents run`) | Sends an *intent* to the Agent Runtime (URL in `AGENT_RUNTIME_URL`, `http://localhost:3000` by default) and prints the result. |
+| `--format [type]` | Output format: `json`, `table`, `yaml`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Ver qué agentes hay, en JSON para un script
+# See which agents exist, as JSON for a script
 evolith-cli agents --list --format json
 
-# Instalar un agente (te guía por plantilla y rulesets)
+# Install an agent (it guides you through template and rulesets)
 evolith-cli agents install
 
-# Validar y luego subir versión de un agente
+# Validate and then bump an agent's version
 evolith-cli agents validate
 evolith-cli agents upgrade
 
-# Ejecutar un intent contra el Agent Runtime
-evolith-cli agents run --run "Genera el plan de arquitectura del nuevo microservicio"
+# Run an intent against the Agent Runtime
+evolith-cli agents run --run "Draft the architecture plan for the new microservice"
 ```
 
-**Qué esperar.** Cada acción devuelve su envelope: `list` trae `data.agents` y
-`data.count`; `install`/`remove`/`upgrade` traen el agente afectado y un mensaje;
-`validate` trae `data.passed` y la lista de `issues`. Cuando la validación falla o
-no hay agentes para la operación, el comando **sale con código ≠ 0**.
+**What to expect.** Each action returns its envelope: `list` carries
+`data.agents` and `data.count`; `install`/`remove`/`upgrade` carry the affected
+agent and a message; `validate` carries `data.passed` and the list of `issues`.
+When validation fails, or there are no agents for the operation, the command
+**exits non-zero**.
 
-> Sobre las acciones: `validate` y `upgrade` se invocan como **acción posicional**
-> (`evolith-cli agents validate`), no como flag. `--install`, `--remove`, `--list` y
-> `--run` sí tienen atajo por flag además de su forma posicional; cuando pasas
-> ambos, gana la acción posicional.
+> About the actions: `validate` and `upgrade` are invoked as a **positional
+> action** (`evolith-cli agents validate`), not as a flag. `--install`,
+> `--remove`, `--list` and `--run` do have a flag shortcut in addition to their
+> positional form; when you pass both, the positional action wins.
 
-### 7.6. `evolith-cli upgrade` — actualizar el satélite ante reglas nuevas
+### 7.6. `evolith-cli upgrade` — update the satellite for new rules
 
-**Qué hace.** Cuando el Core (upstream) publica reglas nuevas, este comando
-**planifica** qué cambios necesita tu satélite para ponerse al día, te muestra el
-plan (con nivel de riesgo y los cambios que rompen compatibilidad) y, si
-confirmas, los aplica.
+**What it does.** When the Core (upstream) publishes new rules, this command
+**plans** which changes your satellite needs to catch up, shows you the plan
+(with risk level and the breaking changes) and, if you confirm, applies them.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 evolith-cli upgrade --satellite . --core ../evolith-core
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `-s, --satellite <ruta>` | El satélite a actualizar (default: `evolith.yaml` más cercano hacia arriba desde el cwd). |
-| `-c, --core <ruta>` | Checkout del Core del que salen las reglas nuevas. |
-| `-d, --dry-run` | Calcula y muestra el plan **sin aplicar** ningún cambio. |
-| `-f, --force` | Aplica el upgrade **aunque haya breaking changes** (sin esto, el comando se detiene y te avisa). |
-| `--report` | Muestra el reporte detallado del upgrade. |
+| `-s, --satellite <path>` | The satellite to update (default: nearest-ancestor `evolith.yaml` from cwd). |
+| `-c, --core <path>` | The Core checkout the new rules come from. |
+| `-d, --dry-run` | Computes and shows the plan **without applying** any change. |
+| `-f, --force` | Applies the upgrade **even when there are breaking changes** (without it, the command stops and warns you). |
+| `--report` | Shows the detailed upgrade report. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Primero mira qué cambiaría, sin tocar nada
+# First look at what would change, touching nothing
 evolith-cli upgrade --satellite . --core ../evolith-core --dry-run
 
-# Aplicar (te pide confirmación antes de escribir)
+# Apply (it asks for confirmation before writing)
 evolith-cli upgrade --satellite . --core ../evolith-core
 
-# Forzar aun con cambios que rompen compatibilidad, en JSON para CI
+# Force even with breaking changes, as JSON for CI
 evolith-cli upgrade -s . -c ../evolith-core --force --format json
 ```
 
-**Qué esperar.** Primero el **plan**: versión actual → versión objetivo, nivel de
-riesgo (`low`/`medium`/`high`), la lista de cambios (con `+`/`~`/`-`/`»` según se
-agregue, modifique, elimine o migre) y cuáles son *breaking*. Si el satélite ya
-está al día, te lo dice y no hace nada. Con `--dry-run` termina ahí. Si hay
-breaking changes y **no** pasaste `--force`, el upgrade se cancela para que
-revises. Al aplicar, un "Upgrade Report" con el número de cambios aplicados. En
-`--format json`, todo esto viaja en el envelope.
+**What to expect.** First the **plan**: current version → target version, risk
+level (`low`/`medium`/`high`), the list of changes (with `+`/`~`/`-`/`»`
+according to whether something is added, modified, removed or migrated) and
+which ones are breaking. If the satellite is already current, it says so and
+does nothing. With `--dry-run` it ends there. If there are breaking changes and
+you did **not** pass `--force`, the upgrade is cancelled so you can review. On
+apply, an "Upgrade Report" with the number of changes applied. Under
+`--format json`, all of this travels inside the envelope.
 
-## 8. Utilidades
+## 8. Utilities
 
-Este grupo reúne los comandos de apoyo: gestionar tu configuración local, revisar lo que has ejecutado, ahorrarte tecleo, sembrar datos de ejemplo, explorar la superficie de la API, integrar la CLI con tu shell y mantener el propio binario al día. No participan en la evaluación de reglas ni en las compuertas; te hacen la vida más cómoda alrededor de ellas.
+This group gathers the support commands: managing your local configuration, reviewing what you have run, saving keystrokes, seeding sample data, exploring the API surface, integrating the CLI with your shell, and keeping the binary itself current. They take no part in rule evaluation or in the gates; they make life around them more comfortable.
 
-Todos aceptan `--format json` (mismo envelope ADR-0073 de la sección 2) salvo `completion`, que emite scripts de shell en crudo.
+They all accept `--format json` (the same ADR-0073 envelope from section 2) except `completion`, which emits raw shell scripts.
 
-### 8.1. `evolith-cli profile` — perfiles de configuración
+### 8.1. `evolith-cli profile` — configuration profiles
 
-**Qué hace.** Guarda y alterna juegos de configuración con nombre (rutas de `core` y `satellite`, `tenant`, `initiative`) para no repetir las mismas flags en cada comando. Trabajas con varios proyectos o entornos y cambias de contexto con un solo comando. La acción va como argumento posicional; si la omites, muestra el perfil activo.
+**What it does.** Stores and switches between named configuration sets (`core` and `satellite` paths, `tenant`, `initiative`) so you do not repeat the same flags on every command. You work with several projects or environments and change context with a single command. The action is a positional argument; if you omit it, the active profile is shown.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
-evolith-cli profile              # muestra el perfil activo (equivale a 'current')
-evolith-cli profile list         # lista todos los perfiles
+evolith-cli profile              # shows the active profile (equivalent to 'current')
+evolith-cli profile list         # lists every profile
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `<action>` (posicional) | Qué hacer: `current` (default), `list`, `create`, `switch`, `delete`. |
-| `-n, --name <name>` | El perfil sobre el que operas (obligatorio en `switch` y `delete`; en `create` se pregunta si falta). |
-| `-f, --format <fmt>` | `human` (default) o `json`. |
+| `<action>` (positional) | What to do: `current` (default), `list`, `create`, `switch`, `delete`. |
+| `-n, --name <name>` | The profile you operate on (required for `switch` and `delete`; for `create` you are asked if it is missing). |
+| `-f, --format <fmt>` | `human` (default) or `json`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Crear un perfil nuevo (te pregunta core/satellite/tenant/initiative de forma interactiva)
+# Create a new profile (it asks for core/satellite/tenant/initiative interactively)
 evolith-cli profile create --name staging
 
-# Cambiar al perfil de staging
+# Switch to the staging profile
 evolith-cli profile switch --name staging
 
-# Borrar un perfil que ya no usas
+# Delete a profile you no longer use
 evolith-cli profile delete --name staging
 ```
 
-**Qué esperar.** `current` y `list` devuelven la configuración y el perfil activo (marcado con `*` en modo humano). `create` sin `--name` abre un asistente interactivo que pregunta las rutas una a una (puedes dejarlas vacías). Los errores de uso —perfil inexistente, nombre duplicado— salen con código ≠ 0 en `--format json`.
+**What to expect.** `current` and `list` return the configuration and the active profile (marked with `*` in human mode). `create` without `--name` opens an interactive assistant asking for the paths one by one (you may leave them empty). Usage errors — missing profile, duplicate name — exit non-zero under `--format json`.
 
-### 8.2. `evolith-cli history` — historial de comandos
+### 8.2. `evolith-cli history` — command history
 
-**Qué hace.** La CLI registra automáticamente cada comando que ejecutas (con timestamp, duración, éxito y código de salida). Este comando te deja listarlo, buscarlo, ver estadísticas de uso, inspeccionar una entrada concreta o limpiarlo. Útil para recordar "qué corrí ayer" o auditar tu propio uso.
+**What it does.** The CLI automatically records every command you run (with timestamp, duration, success and exit code). This command lets you list it, search it, see usage statistics, inspect one entry or clear it. Useful to recall "what did I run yesterday" or to audit your own usage.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
-evolith-cli history              # últimas 20 entradas
+evolith-cli history              # last 20 entries
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `-l, --list` | Lista las entradas recientes (comportamiento por defecto). |
-| `-n, --limit <n>` | Cuántas entradas mostrar (default: 20). |
-| `-g, --get <id>` | Muestra el detalle completo de una entrada por su ID. |
-| `-s, --search <query>` | Busca entradas que coincidan con un texto. |
-| `--stats` | Estadísticas: total, tasa de éxito, últimas 24 h y comandos más usados. |
-| `--replay <id>` | Muestra (no ejecuta) el comando de una entrada, listo para copiar. |
-| `--clear` | Borra todo el historial (pide confirmación en modo humano). |
-| `-f, --format <fmt>` | `human` (default) o `json`. |
+| `-l, --list` | Lists the recent entries (the default behaviour). |
+| `-n, --limit <n>` | How many entries to show (default: 20). |
+| `-g, --get <id>` | Shows the full detail of one entry by its ID. |
+| `-s, --search <query>` | Searches entries matching a text. |
+| `--stats` | Statistics: total, success rate, last 24 h and most used commands. |
+| `--replay <id>` | Shows (does not run) the command of an entry, ready to copy. |
+| `--clear` | Deletes the entire history (asks for confirmation in human mode). |
+| `-f, --format <fmt>` | `human` (default) or `json`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Ver los últimos 50 comandos
+# See the last 50 commands
 evolith-cli history --limit 50
 
-# Buscar todas las validaciones que corriste
+# Find every validation you ran
 evolith-cli history --search validate
 
-# Revisar el detalle de una entrada concreta
+# Review the detail of one specific entry
 evolith-cli history --get a1b2c3
 ```
 
-**Qué esperar.** Una tabla `ID | Hora | Comando | Estado | Duración` en modo humano (✓/✗ por resultado), o el arreglo de entradas en JSON. Ojo: `--replay` **no vuelve a ejecutar** el comando, solo te lo imprime para que lo lances tú. `--clear` es destructivo y permanente.
+**What to expect.** An `ID | Time | Command | Status | Duration` table in human mode (✓/✗ per result), or the array of entries in JSON. Careful: `--replay` **does not re-run** the command, it only prints it for you to launch yourself. `--clear` is destructive and permanent.
 
-### 8.3. `evolith-cli alias` — alias de comandos
+### 8.3. `evolith-cli alias` — command aliases
 
-**Qué hace.** Define atajos propios para comandos que tecleas seguido. Un alias mapea un nombre corto a una cadena de comando, para que `evolith-cli v` corra lo que tú quieras.
+**What it does.** Defines your own shortcuts for commands you type often. An alias maps a short name to a command string, so `evolith-cli v` runs whatever you want.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
 evolith-cli alias --list
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `--add <alias=command>` | Crea un alias con la sintaxis `nombre=comando`. |
-| `--remove <alias>` | Elimina un alias existente. |
-| `--list` | Lista todos los alias definidos. |
-| `-f, --format <fmt>` | `human` (default) o `json`. |
+| `--add <alias=command>` | Creates an alias with the `name=command` syntax. |
+| `--remove <alias>` | Removes an existing alias. |
+| `--list` | Lists every defined alias. |
+| `-f, --format <fmt>` | `human` (default) or `json`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Crear un atajo para validar contra el Core vecino
+# Create a shortcut for validating against the neighbouring Core
 evolith-cli alias --add "v=validate -c ../evolith-core"
 
-# Quitarlo
+# Remove it
 evolith-cli alias --remove v
 ```
 
-**Qué esperar.** Confirmación del alias creado/eliminado, o la lista de mapeos. Si `--add` no trae el formato `alias=comando`, obtienes `VALIDATION_FAILED` (código ≠ 0 en JSON). Sin ninguna flag, el comando te recuerda usar `--add`, `--remove` o `--list`.
+**What to expect.** Confirmation of the alias created/removed, or the list of mappings. If `--add` does not carry the `alias=command` format you get `VALIDATION_FAILED` (non-zero exit under JSON). With no flag at all, the command reminds you to use `--add`, `--remove` or `--list`.
 
-### 8.4. `evolith-cli fixtures` — sembrar datos de ejemplo
+### 8.4. `evolith-cli fixtures` — seed sample data
 
-**Qué hace.** Genera archivos de ejemplo reproducibles —un `evolith.yaml`, ADRs, rulesets— en un directorio, para montar rápido una demo, un caso de prueba o un satélite mínimo con el que experimentar. Puedes previsualizar antes de escribir.
+**What it does.** Generates reproducible sample files — an `evolith.yaml`, ADRs, rulesets — in a directory, to quickly stand up a demo, a test case or a minimal satellite to experiment with. You can preview before writing.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
-evolith-cli fixtures demo        # siembra evolith.yaml + ADRs de ejemplo
+evolith-cli fixtures demo        # seeds evolith.yaml + sample ADRs
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `[type]` (posicional) o `-t, --type <type>` | Qué sembrar: `demo` (default), `adr`, `ruleset`, `evolith`, `full`. |
-| `-d, --dir <directory>` | Directorio destino (default: directorio actual). |
-| `-n, --dry-run` | Previsualiza qué archivos se crearían, sin escribir nada. |
-| `-f, --format <fmt>` | `human` (default) o `json`. |
+| `[type]` (positional) or `-t, --type <type>` | What to seed: `demo` (default), `adr`, `ruleset`, `evolith`, `full`. |
+| `-d, --dir <directory>` | Target directory (default: current directory). |
+| `-n, --dry-run` | Previews which files would be created, writing nothing. |
+| `-f, --format <fmt>` | `human` (default) or `json`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Ver qué crearía el set completo, sin tocar el disco
+# See what the full set would create, without touching disk
 evolith-cli fixtures full --dry-run
 
-# Sembrar solo ADRs en un directorio concreto
+# Seed only ADRs into a specific directory
 evolith-cli fixtures adr --dir ./sandbox
 
-# Sembrar todo (evolith.yaml + ADRs + rulesets)
+# Seed everything (evolith.yaml + ADRs + rulesets)
 evolith-cli fixtures full
 ```
 
-**Qué esperar.** La lista de archivos creados (o marcados `[dry-run]`). Un `type` inválido devuelve `VALIDATION_FAILED`; si algún archivo no se puede escribir, el envelope trae `IO_ERROR` con el detalle por archivo y sale con código ≠ 0.
+**What to expect.** The list of created files (or ones marked `[dry-run]`). An invalid `type` returns `VALIDATION_FAILED`; if some file cannot be written, the envelope carries `IO_ERROR` with the per-file detail and exits non-zero.
 
-### 8.5. `evolith-cli api` — explorador de la API
+### 8.5. `evolith-cli api` — API explorer
 
-**Qué hace.** Navega y describe la superficie de Evolith sin salir de la terminal: las herramientas (tools) y recursos MCP, los esquemas de compuertas de fase y los comandos de la CLI, con sus schemas de entrada/salida. Sirve como referencia rápida cuando construyes un agente o un cliente y necesitas saber qué operaciones existen y qué reciben.
+**What it does.** Browses and describes the Evolith surface without leaving the terminal: the MCP tools and resources, the phase-gate schemas and the CLI commands, with their input/output schemas. It serves as a quick reference when you are building an agent or a client and need to know which operations exist and what they take.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
-evolith-cli api --list                     # lista las categorías disponibles
+evolith-cli api --list                     # lists the available categories
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `-l, --list` | Lista las categorías, o el contenido de una si añades `--category`. |
-| `-c, --category <cat>` | Acota a una categoría: `tools`, `resources`, `schemas`, `commands`. |
-| `-i, --inspect <name>` | Muestra el schema detallado de una tool, recurso o comando. |
-| `-f, --format <fmt>` | `human` (default) o `json`. |
+| `-l, --list` | Lists the categories, or the contents of one if you add `--category`. |
+| `-c, --category <cat>` | Narrows to one category: `tools`, `resources`, `schemas`, `commands`. |
+| `-i, --inspect <name>` | Shows the detailed schema of a tool, resource or command. |
+| `-f, --format <fmt>` | `human` (default) or `json`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Listar todas las herramientas MCP
+# List every MCP tool
 evolith-cli api --list --category tools
 
-# Inspeccionar el schema de entrada/salida de una tool
+# Inspect the input/output schema of a tool
 evolith-cli api --inspect gate-evaluate
 
-# Inspeccionar un recurso MCP por su URI
+# Inspect an MCP resource by its URI
 evolith-cli api --inspect evolith://rulesets
 ```
 
-**Qué esperar.** En `--list` sin categoría, el catálogo de categorías; con `--category`, sus entradas. En `--inspect`, la descripción más el `inputSchema`/`outputSchema` (tools), el `mimeType` (recursos) o las opciones (comandos). Un nombre desconocido devuelve `VALIDATION_FAILED` con sugerencias de ejemplos válidos.
+**What to expect.** With `--list` and no category, the catalogue of categories; with `--category`, its entries. With `--inspect`, the description plus the `inputSchema`/`outputSchema` (tools), the `mimeType` (resources) or the options (commands). An unknown name returns `VALIDATION_FAILED` with suggestions of valid examples.
 
-### 8.6. `evolith-cli completion` — autocompletado de shell
+### 8.6. `evolith-cli completion` — shell completion
 
-**Qué hace.** Genera e instala scripts de autocompletado (tab-completion) y funciones de hook para tu shell, de modo que la terminal complete comandos y muestre estado del proyecto (`evolith_status`, `evolith_phase`, `evolith_gate`, …). Detecta tu shell automáticamente a partir de `$SHELL`.
+**What it does.** Generates and installs tab-completion scripts and hook functions for your shell, so the terminal completes commands and shows project state (`evolith_status`, `evolith_phase`, `evolith_gate`, …). It detects your shell automatically from `$SHELL`.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
-evolith-cli completion                     # muestra la ayuda y el shell detectado
+evolith-cli completion                     # shows the help and the detected shell
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `--install <shell>` | Instala el autocompletado para `bash`, `zsh` o `fish` (edita tu rc o copia el script). |
-| `--shell <shell>` | Fuerza un shell concreto en lugar del autodetectado. |
-| `--hooks` | Imprime las funciones de hook por stdout (para revisarlas o redirigirlas). |
-| `--install-hooks <shell>` | Instala esas funciones de hook en el shell indicado. |
+| `--install <shell>` | Installs completion for `bash`, `zsh` or `fish` (edits your rc file or copies the script). |
+| `--shell <shell>` | Forces a specific shell instead of the auto-detected one. |
+| `--hooks` | Prints the hook functions to stdout (to review or redirect them). |
+| `--install-hooks <shell>` | Installs those hook functions into the given shell. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Instalar autocompletado para zsh (lo añade a ~/.zshrc)
+# Install completion for zsh (appends it to ~/.zshrc)
 evolith-cli completion --install zsh
 
-# Instalar también las funciones de hook de estado
+# Also install the status hook functions
 evolith-cli completion --install-hooks zsh
 ```
 
-**Qué esperar.** Confirmación de dónde se instaló y qué recargar (`source ~/.zshrc`, `fish -l`, …). `--hooks` vuelca el script tal cual para que lo inspecciones. Si ya estaba instalado, te lo dice sin duplicar entradas. A diferencia del resto del grupo, este comando **no** usa el envelope JSON: emite texto de shell directo.
+**What to expect.** Confirmation of where it was installed and what to reload (`source ~/.zshrc`, `fish -l`, …). `--hooks` dumps the script as-is so you can inspect it. If it was already installed, it tells you without duplicating entries. Unlike the rest of the group, this command does **not** use the JSON envelope: it emits shell text directly.
 
-### 8.7. `evolith-cli update` — mantener la CLI al día
+### 8.7. `evolith-cli update` — keep the CLI current
 
-**Qué hace.** Consulta el registro npm para saber si hay una versión más nueva de la propia CLI (`@beyondnet/evolith-cli`) y, si la hay, la instala por ti. Sin flags, solo muestra ayuda.
+**What it does.** Queries the npm registry to find out whether a newer version of the CLI itself (`@beyondnet/evolith-cli`) exists and, if so, installs it for you. With no flags it just shows help.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
-evolith-cli update --check                 # comprueba si hay actualización
+evolith-cli update --check                 # checks whether an update exists
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `-c, --current` | Muestra la versión instalada y la última publicada. |
-| `--check` | Comprueba contra el registro npm si hay una versión más reciente. |
-| `-i, --install` | Instala la última versión (`npm install -g`). |
-| `-f, --format <fmt>` | `human` (default) o `json`. |
+| `-c, --current` | Shows the installed version and the latest published one. |
+| `--check` | Checks the npm registry for a newer version. |
+| `-i, --install` | Installs the latest version (`npm install -g`). |
+| `-f, --format <fmt>` | `human` (default) or `json`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Ver en qué versión estás y cuál es la última
+# See which version you are on and which is the latest
 evolith-cli update --current
 
-# Actualizar a la última si aplica
+# Update to the latest if applicable
 evolith-cli update --install
 ```
 
-**Qué esperar.** El campo `updateAvailable` (o el aviso `⚠ Update available: X → Y`). `--install` lanza `npm install -g` y confirma la versión resultante; si no alcanza el registro, devuelve `IO_ERROR` (código ≠ 0). Requiere red y permisos para instalación global de npm.
+**What to expect.** The `updateAvailable` field (or the `⚠ Update available: X → Y` notice). `--install` runs `npm install -g` and confirms the resulting version; if it cannot reach the registry it returns `IO_ERROR` (non-zero exit). It needs network access and permission for a global npm install.
 
-### 8.8. `evolith-cli chat` — interacción conversacional con el Agent Runtime
+### 8.8. `evolith-cli chat` — conversational interaction with the Agent Runtime
 
-**Qué hace.** Envía una intención en lenguaje natural al Agent Runtime de Evolith, que la interpreta y ejecuta a través de la capa agéntica. Es la puerta conversacional ("Evolith CLI Chat") para pedir acciones sin recordar comandos exactos. Corre en **dry-run por defecto** (planifica sin aplicar), salvo que lo desactives.
+**What it does.** Sends a natural-language intent to the Evolith Agent Runtime, which interprets and executes it through the agentic layer. It is the conversational door ("Evolith CLI Chat") for asking for actions without remembering exact commands. It runs in **dry-run by default** (it plans without applying) unless you turn that off.
 
-**Uso básico:**
+**Basic usage:**
 
 ```bash
-evolith-cli chat "valida la fase de construcción"
+evolith-cli chat "validate the construction phase"
 ```
 
-**Opciones principales:**
+**Main options:**
 
-| Opción | Para qué |
+| Option | What it is for |
 | --- | --- |
-| `<mensaje>` (posicional) | La intención a procesar; se toma de todos los argumentos sueltos. |
-| `--dry-run [boolean]` | Controla el modo simulación; por defecto simula. Pasa `--dry-run false` para permitir efectos. |
-| `-f, --format <fmt>` | `human` (default) o `json`. |
+| `<message>` (positional) | The intent to process; it is taken from all the loose arguments. |
+| `--dry-run [boolean]` | Controls simulation mode; it simulates by default. Pass `--dry-run false` to allow effects. |
+| `-f, --format <fmt>` | `human` (default) or `json`. |
 
-**Combinaciones típicas:**
+**Typical combinations:**
 
 ```bash
-# Simular (por defecto) el efecto de una intención
-evolith-cli chat "genera el andamiaje de un frontend react"
+# Simulate (the default) the effect of an intent
+evolith-cli chat "scaffold a react frontend"
 
-# Permitir que la intención aplique cambios reales
-evolith-cli chat "crea el evolith.yaml inicial" --dry-run false
+# Allow the intent to apply real changes
+evolith-cli chat "create the initial evolith.yaml" --dry-run false
 ```
 
-**Qué esperar.** En modo humano, el `status` del run, un `summary` y el número de `findings`. En JSON, el resultado completo del Agent Runtime. Si no pasas mensaje, te lo pide. Como depende del Agent Runtime, su disponibilidad y su comportamiento están sujetos a esa capa; empieza siempre por el dry-run antes de habilitar efectos.
+**What to expect.** In human mode, the run `status`, a `summary` and the number of `findings`. In JSON, the full Agent Runtime result. If you pass no message, you are asked for one. Because it depends on the Agent Runtime, its availability and behaviour are subject to that layer; always start with the dry run before enabling effects.
 
-## 9. Encadenar comandos — un flujo típico de construcción
+## 9. Chaining commands — a typical construction flow
 
-Los comandos se combinan en un flujo. Un ciclo habitual mientras construyes:
+The commands combine into a flow. A usual cycle while you build:
 
 ```bash
-# 1. Genera el andamiaje (si aplica)
-evolith-cli scaffold --frontend react --orm prisma --phase 1 --dry-run   # primero simula
-evolith-cli scaffold --frontend react --orm prisma --phase 1             # luego escribe
+# 1. Generate the scaffold (if applicable)
+evolith-cli scaffold --frontend react --orm prisma --phase 1 --dry-run   # simulate first
+evolith-cli scaffold --frontend react --orm prisma --phase 1             # then write
 
-# 2. Valida lo construido y revisa deriva
+# 2. Validate what you built and review the drift
 evolith-cli validate -s . -c ../evolith-core --phase construction
 evolith-cli drift --path .
 
-# 3. Evalúa y confirma la compuerta de la fase
+# 3. Evaluate and confirm the phase gate
 evolith-cli evaluate --workspace . -c ../evolith-core --phase construction
 evolith-cli gate evaluate --phase construction -s . -c ../evolith-core
 ```
 
-Como cada comando **sale con código ≠ 0** si su veredicto es negativo, este
-mismo bloque sirve tal cual en un pipeline de CI: se detiene en el primer paso
-que no pase.
+Because every command **exits non-zero** when its verdict is negative, this same
+block works as-is inside a CI pipeline: it stops at the first step that does not
+pass.
 
 ---
 
-> **Guías equivalentes.** Esta es la guía de la interfaz **CLI**. Un usuario
-> que opera vía **MCP** (agentes) o **REST** (integración/Tracker) tiene su
-> propia guía con el mismo formato: [Usando MCP](using-the-mcp.md) y
-> [Usando la API REST](using-the-rest-api.md).
+> **Equivalent guides.** This is the guide for the **CLI** interface. A user
+> driving Evolith through **MCP** (agents) or **REST** (integration/Tracker) has
+> their own guide in the same format: [Using MCP](using-the-mcp.md) and
+> [Using the REST API](using-the-rest-api.md).

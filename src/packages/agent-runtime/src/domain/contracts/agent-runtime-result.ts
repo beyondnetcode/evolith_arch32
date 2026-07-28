@@ -60,6 +60,33 @@ export interface RuntimeTrace {
     readonly corpusVersion?: string;
     readonly citations: readonly string[];
   };
+  /**
+   * GT-610: WHICH argument set actually executed. Present whenever an engine
+   * proposed arguments. `source: 'caller'` means nothing from the engine was
+   * applied; `'engine-merged'` means the listed `accepted` keys came from the
+   * engine and survived revalidation. `rejected` names every discarded key with
+   * its reason, so an audit can tell "the engine tried to change X" apart from
+   * "the engine never proposed X".
+   */
+  readonly argumentSource?: {
+    readonly source: 'caller' | 'engine-merged';
+    readonly engine?: string;
+    readonly contract: 'declared' | 'absent';
+    readonly policy: string;
+    readonly accepted: readonly string[];
+    readonly echoed: readonly string[];
+    readonly rejected: readonly { readonly key: string; readonly reason: string }[];
+  };
+  /**
+   * GT-612: how much prior conversation was read back into planning, and from
+   * which namespace. `entries` is what was actually fed; `limit` is the bound
+   * applied, so a truncated transcript is visible rather than implied.
+   */
+  readonly recalledMemory?: {
+    readonly namespace: string;
+    readonly entries: number;
+    readonly limit: number;
+  };
 }
 
 export interface AgentRuntimeResult {

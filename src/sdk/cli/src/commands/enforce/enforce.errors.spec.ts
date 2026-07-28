@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { EnforceCommand } from './enforce.command';
+import { CLI_EXIT_CODES } from '../../infrastructure/cli/exit-codes';
 
 /**
  * GT-562 — the FAILURE branches of `evolith enforce`.
@@ -67,7 +68,9 @@ describe('EnforceCommand — failure classification', () => {
     it('rejects an unknown action as VALIDATION_FAILED and names the supported ones', async () => {
       const code = await runExpectingExit(['run'], { format: 'json' });
 
-      expect(code).toBe(1);
+      // GT-580: an unknown action is INVALID INPUT (3), so an agent can tell
+      // "you called it wrong" from "the compile step broke" (1).
+      expect(code).toBe(CLI_EXIT_CODES.INVALID_INPUT);
       expect(envelope().error.code).toBe('VALIDATION_FAILED');
       expect(envelope().error.message).toContain('compile, edit');
     });

@@ -33,6 +33,10 @@ const allowedFiles = new Set([
   ".gitignore",
   ".dockerignore",
   ".gitleaks.toml",
+  // GT-623: commitlint's config must sit at the root — it is resolved from the
+  // repository root by the `commit-msg` hook and by `npx commitlint`, and moving
+  // it elsewhere would need a `--config` flag on every invocation.
+  "commitlint.config.mjs",
   "docker-compose.yml",
   ".markdownlint.json",
   "COVERAGE_REPORT.md",

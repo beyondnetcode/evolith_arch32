@@ -83,6 +83,67 @@ describe('EvaluationOrchestrator (GT-378)', () => {
     expect(r.policiesApplied.every((p) => p.engine === 'opa')).toBe(true);
   });
 
+  describe('traceability of what actually ran (GT-601)', () => {
+    /** Mixed run: OPA for the `.rego` phase gate, the native evaluator for the corpus. */
+    function dualEngineVerdict(): EvaluationVerdict {
+      const v = makeVerdict(false);
+      v.gates.push({
+        gateId: 'general-rulesets',
+        gateName: 'Canonical Ruleset Enforcement',
+        phase: 'cross',
+        verdict: 'failed',
+        artifactEvaluations: [
+          {
+            ruleId: 'HXA-01',
+            rulePath: 'rulesets/hexagonal/HXA-01',
+            artifact: 'src/domain/x.ts',
+            passed: false,
+            message: 'domain imports infrastructure',
+            severity: 'error',
+            remediation: 'invert the dependency',
+            gateRef: 'general-rulesets',
+          },
+        ],
+      });
+      return v;
+    }
+
+    it('carries the true engine per rule end to end (opa AND native in one run)', async () => {
+      const pipeline: IEvaluationPipeline = { evaluate: async () => dualEngineVerdict() };
+      const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5');
+      const r = await orch.evaluate(ctx);
+
+      const byRule = new Map(r.policiesApplied.map((p) => [p.ruleId, p.engine]));
+      expect(byRule.get('PG-F1-001')).toBe('opa');
+      expect(byRule.get('HXA-01')).toBe('native'); // hardcoded 'opa' before GT-601
+      expect(r.rulesExecuted.map((x) => x.ruleId).sort()).toEqual(['HXA-01', 'PG-F1-001', 'PG-F2-001']);
+    });
+
+    it('threads the pipeline coverage into risks and the context artifacts into missingEvidence', async () => {
+      const pipeline: IEvaluationPipeline = {
+        evaluate: async () => ({
+          ...dualEngineVerdict(),
+          coverage: {
+            rulesChecked: 3,
+            rulesSkipped: 1,
+            rulesErrored: 1,
+            rulesTotal: 5,
+            skippedRuleIds: ['PG-F1-999'],
+            erroredRuleIds: ['CFG-09'],
+          },
+        }),
+      };
+      const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5');
+      const r = await orch.evaluate({
+        ...ctx,
+        artifacts: { required: ['prd.md', 'threat-model.md'], presented: [] },
+      });
+
+      expect(r.risks.map((x) => x.level).sort()).toEqual(['high', 'medium']);
+      expect(r.missingEvidence).toEqual(['threat-model.md']);
+    });
+  });
+
   it('requires a workspaceRef', async () => {
     const pipeline: IEvaluationPipeline = { evaluate: async () => makeVerdict(true) };
     const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5');

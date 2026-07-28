@@ -24,6 +24,10 @@ import type { IApprovalPort } from '../domain/ports/approval.port';
 import type { IAgentEnginePort } from '../domain/ports/agent-engine.port';
 import type { IKnowledgePort } from '../domain/ports/knowledge.port';
 import type { IWorkspaceContextPort } from '../domain/ports/workspace-context.port';
+import type { EngineArgumentPolicy } from './engine-argument-merge';
+
+/** GT-612 — default bound on the conversation history fed into planning. */
+export const DEFAULT_MEMORY_HISTORY_LIMIT = 20;
 
 /** Execution concerns: engine, harness, skill registry. */
 export interface ExecutionDeps {
@@ -48,6 +52,14 @@ export interface ObservabilityDeps {
   readonly knowledge?: IKnowledgePort;
   /** Optional sensor fed by the `ground` step. */
   readonly knowledgeOpportunity?: { observe(o: { intent: string; citationCount: number; corpusVersion?: string; repository?: string }): void };
+  /**
+   * GT-612 — how many prior conversation entries are read back into planning.
+   * Default {@link DEFAULT_MEMORY_HISTORY_LIMIT} (20 ≈ 10 turns: each turn
+   * appends a `request` and a `result`). Bounded on purpose — an unbounded
+   * transcript in a prompt is unbounded cost and evicts the actual request.
+   * `0` disables the read entirely.
+   */
+  readonly memoryHistoryLimit?: number;
 }
 
 /** Infrastructure concerns: workspace context, clock, id generator. */
@@ -58,6 +70,14 @@ export interface InfrastructureDeps {
   readonly now?: () => string;
   /** Injected id generator for deterministic tests. */
   readonly id?: () => string;
+  /**
+   * GT-610 — how engine-PROPOSED arguments are treated for a skill that
+   * declares no input contract. `gap-fill` (default) applies them only where the
+   * caller supplied nothing, after structural sanitization; `contract-only`
+   * refuses every proposed key when there is no contract to check it against.
+   * Declared contracts are enforced under both.
+   */
+  readonly engineArgumentPolicy?: EngineArgumentPolicy;
 }
 
 /** Full runtime dependencies — extends all sub-interfaces for backward compatibility. */

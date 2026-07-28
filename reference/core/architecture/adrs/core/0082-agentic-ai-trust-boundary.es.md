@@ -6,6 +6,12 @@
 
 Accepted
 
+> **Estado de implementacion en este repositorio: ninguna** (verificado 2026-07-28).
+> Este ADR es un estandar normativo publicado *para los satelites*; esta Accepted como decision,
+> no como capacidad entregada. Nada en Evolith Core lo implementa, y nada lo hace cumplir.
+> No existe en `src/` ninguna etiqueta de confianza sobre el contexto recuperado. El unico codigo relacionado es el evaluador de gobierno `core-domain/.../handlers/architecture/agent-rules.ts`, que verifica que el `agent.config.json` **de un satelite** declare `contextPolicy.untrustedContent=data-only` y `promptSources` sin solapamiento. Evolith no etiqueta ni valida por schema la salida de herramientas antes de actuar sobre ella.
+> El ruleset generado `rulesets/adr/generated/adr-0082-agentic-ai-prompt-context-and-tool-trust-boundary.rules.json` lleva una unica regla `adr-conformance` cuyo propio texto dice que los chequeos concretos estan aun "to be wired into the harness", y ningun evaluador atiende esa categoria: `rg "adr-conformance" src/` solo encuentra los propios archivos generados. Seguimiento en GT-607.
+
 ## Fecha
 
 2026-06-20

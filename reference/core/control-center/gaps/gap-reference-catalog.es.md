@@ -7598,9 +7598,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Governance` · **Criticidad:** P1 · **Complejidad:** M
 - **Procedencia:** Derivado de la auditoría de madurez de producto del 2026-07-26 ([product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md)): son los artefactos internacionales que la auditoría echó en falta. Ediciones y números de norma verificados contra las fuentes el 2026-07-26, no citados de memoria.
 - **Criterios de aceptación:**
-  - [ ] Cada capacidad lleva una valoración N/P/L/F con el umbral de ISO/IEC 33020:2019 que la justifica.
-  - [ ] El reconciliador rechaza una calificación cuya evidencia no cruce el umbral declarado, con auto-test negativo.
-  - [ ] El procedimiento de evaluación queda escrito contra ISO/IEC 25040:2024 para que una segunda persona pueda repetirlo.
+  - [x] Cada capacidad lleva una valoración N/P/L/F con el umbral de ISO/IEC 33020:2019 que la justifica.
+  - [x] El reconciliador rechaza una calificación cuya evidencia no cruce el umbral declarado, con auto-test negativo.
+  - [x] El procedimiento de evaluación queda escrito contra ISO/IEC 25040:2024 para que una segunda persona pueda repetirlo.
 
 #### GT-597
 
@@ -7671,7 +7671,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `MCP Server` · **Criticidad:** P0 · **Complejidad:** S
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-610
 
@@ -7682,7 +7682,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `agent-runtime` · **Criticidad:** P0 · **Complejidad:** S
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-611
 
@@ -7770,7 +7770,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith CLI` · **Criticidad:** P1 · **Complejidad:** S
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-619
 
@@ -7781,7 +7781,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith CLI` · **Criticidad:** P2 · **Complejidad:** XS
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-620
 
@@ -7827,9 +7827,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Governance` · **Criticidad:** P2 · **Complejidad:** S
 - **Procedencia:** Observado en vivo el 2026-07-27: el hook imprimió su mensaje de "skipping" al mergear `develop` en una rama de trabajo. Estaba nombrado dentro del cuadro de proceso de `GT-574`; se saca a fila propia porque tiene una consecuencia concreta y medible sobre el versionado.
 - **Criterios de aceptación:**
-  - [ ] Un commit con mensaje malformado se rechaza en local, demostrado intentándolo.
-  - [ ] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
-  - [ ] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
+  - [x] Un commit con mensaje malformado se rechaza en local, demostrado intentándolo.
+  - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
+  - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
 
 #### GT-624
 

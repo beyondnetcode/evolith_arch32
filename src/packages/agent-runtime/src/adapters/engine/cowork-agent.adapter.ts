@@ -14,7 +14,11 @@
 
 import type { AgentRuntimeRequest } from '../../domain/contracts/agent-runtime-request';
 import type { SkillDescriptor } from '../../domain/contracts/capability';
-import type { AgentEnginePlan, IAgentEnginePort } from '../../domain/ports/agent-engine.port';
+import type {
+  AgentEnginePlan,
+  AgentPlanContext,
+  IAgentEnginePort,
+} from '../../domain/ports/agent-engine.port';
 
 export const COWORK_ENGINE = 'cowork';
 
@@ -27,7 +31,12 @@ export interface CoworkProposal {
 
 /** The live Cowork/Claude call, injected. Follow-on infra; the adapter works without it. */
 export interface CoworkClient {
-  propose(request: AgentRuntimeRequest, availableSkills: readonly SkillDescriptor[]): Promise<CoworkProposal>;
+  /** `planContext` carries the BOUNDED prior conversation (GT-612); ignoring it is stateless, not broken. */
+  propose(
+    request: AgentRuntimeRequest,
+    availableSkills: readonly SkillDescriptor[],
+    planContext?: AgentPlanContext,
+  ): Promise<CoworkProposal>;
 }
 
 export interface CoworkAdapterOptions {
@@ -37,9 +46,13 @@ export interface CoworkAdapterOptions {
 export class CoworkAgentEngineAdapter implements IAgentEnginePort {
   constructor(private readonly options: CoworkAdapterOptions = {}) {}
 
-  async plan(request: AgentRuntimeRequest, availableSkills: readonly SkillDescriptor[]): Promise<AgentEnginePlan> {
+  async plan(
+    request: AgentRuntimeRequest,
+    availableSkills: readonly SkillDescriptor[],
+    planContext?: AgentPlanContext,
+  ): Promise<AgentEnginePlan> {
     const proposal = this.options.client
-      ? await this.options.client.propose(request, availableSkills)
+      ? await this.options.client.propose(request, availableSkills, planContext)
       : undefined;
 
     const inCatalog = !!proposal?.tool && availableSkills.some((s) => s.id === proposal.tool);

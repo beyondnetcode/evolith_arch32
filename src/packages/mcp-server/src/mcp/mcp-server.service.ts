@@ -141,6 +141,13 @@ export class McpServerService {
     return this.withTransportContext(() => this.listToolsInContext());
   }
 
+  // GT-609 — `handleListTools` filters the inventory by the ambient principal's
+  // scopes, so what lands in the cache is one principal's VIEW of the registry,
+  // not the registry. McpCacheService keys it by that principal (defaulting to
+  // the same `mcpContextStorage` store the filter reads), which is why this
+  // method runs inside `withTransportContext`: the key and the filter must be
+  // derived from one and the same context, or a warm cache answers a reader
+  // with an admin's write-capable inventory.
   private async listToolsInContext(): Promise<{ tools: ReturnType<ToolRegistryService['listSchemas']> }> {
     if (this.cache) {
       const cached = await this.cache.getToolsList();

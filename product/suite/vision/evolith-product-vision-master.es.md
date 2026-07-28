@@ -166,7 +166,7 @@ flowchart TB
       CLI["evolith-cli<br/>CLI · 31 commands"]
     end
     subgraph RT["Agent Runtime · @beyondnet/evolith-agent-runtime"]
-      ARS["AgentRuntimeService<br/>16 puertos · 38 adaptadores"]
+      ARS["AgentRuntimeService<br/>10 puertos en la ruta caliente<br/>(17 declarados · 47 módulos adaptadores)"]
       IA["InteractionAdapters<br/>CLI Command · CLI Chat · Hermes · MCP · OpenCode · External"]
     end
     DOM["@beyondnet/evolith-core-domain<br/>EvaluationOrchestrator · 10 Kinds<br/>rulesets JSON · OPA/WASM · schemas"]
@@ -206,8 +206,33 @@ flowchart TB
 | **API REST** | UI del Tracker, CI/CD e integraciones empresariales | 11 controllers: evaluación, gates, fases, arquitectura, proyectos, satélites, capabilities, composable-validate, reference, metrics, salud |
 | **MCP HTTP/SSE** | LLMs y agentes autónomos | 47 tools, 11 resources, 8 prompts: evaluación, validación, agentes, ADRs, MoSCoW, drift, configuración |
 | **CLI** | Roles de ingeniería y producto | 31 comandos: validate, evaluate, gate, drift, scaffold, ADR lifecycle, agents, chat, satellite, sdlc |
-| **Agent Runtime** | Agentes IA, chatboxes, triggers externos | 16 puertos hexagonales, 38 adaptadores, 6 interaction adapters (CLI Command, CLI Chat, Hermes, MCP, OpenCode, External), orquestación gobernada con OPA + HITL |
+| **Agent Runtime** | Agentes IA, chatboxes, triggers externos | **10 puertos hexagonales en la ruta caliente de ejecución** (7 obligatorios, 3 opcionales), orquestación gobernada con OPA + HITL. El paquete *declara* 17 puertos y 47 módulos adaptadores, incluidos 6 interaction adapters (CLI Command, CLI Chat, Hermes, MCP, OpenCode, External) — ver la nota siguiente para saber cuáles están conectados y cuáles son especulativos. |
 | **Webhook / Bus de Eventos** — *no implementado, roadmap* | *(ninguno todavía)* | **Hoy no se entrega ninguna superficie de webhook ni de bus de eventos.** Evolith no expone endpoint de webhook entrante ni emite tráfico saliente de webhooks o eventos. El único código relacionado es `src/packages/infra-providers/src/webhook.adapter.ts`, un adaptador **solo-saliente** sin ninguna superficie conectada. Ver [Ecosistema y Comunicación](../../products/ecosystem-and-communication.es.md). Propagar comandos, evidencias, cambios de estado y resultados de gates de forma reactiva sigue siendo un ítem de roadmap. |
+
+> **Un conteo de puertos no es un conteo de capacidad.** Un número de inventario
+> ("17 puertos, 47 adaptadores") mide cuánta costura se talló, no cuánta capacidad
+> se entrega. Dicho explícitamente, y verificado contra el código el 2026-07-28:
+>
+> **Ruta caliente — los puertos de los que depende de verdad una pasada de ejecución**
+> (`AgentRuntimeDeps` en `packages/agent-runtime/src/application/agent-runtime-deps.ts`):
+> **7 obligatorios** — `ISkillRegistryPort`, `IHarnessPort`, `ICoreEvaluationPort`,
+> `IPolicyValidationPort`, `IApprovalPort`, `ITrackerTracePort`, `IMemoryPort`; y
+> **3 opcionales** — `IAgentEnginePort`, `IKnowledgePort`, `IWorkspaceContextPort`.
+> Diez puertos para una pasada gobernada de planificar → validar → ejecutar → trazar
+> están bien dimensionados, y cada uno tiene al menos un adaptador que corre.
+>
+> **Especulativos — costuras declaradas sin consumidor vivo.** `IAgentRuntimePort` e
+> `IAssistantInvocationPort` no tienen consumidor fuera de su propio módulo de puerto.
+> `ISchedulerPort` e `ICommunicationGatewayPort` tienen adaptadores pero ningún
+> llamador en una superficie entregada. `IStructuralReviewer` tiene puerto, rúbrica y
+> proveedor, y **cero** implementaciones (`rg "implements IStructuralReviewer" src/` →
+> 0 coincidencias; se sigue como GT-613). De los 6 interaction adapters,
+> `OpenCodeInteractionAdapter` y `McpInteractionAdapter` solo aparecen referenciados
+> por el barrel `adapters/index.ts` — ninguna superficie los construye.
+>
+> Construir esas costuras no fue el error; contarlas como capacidad entregada sí.
+> Lee la lista de ruta caliente como lo que Evolith hace hoy, y la lista especulativa
+> como opcionalidad que aún no se ha cobrado.
 
 ---
 

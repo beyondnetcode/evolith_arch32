@@ -59,6 +59,7 @@ import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/applica
 import { RulesetValidatorService } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service';
 import { RulesetsNotFoundError } from '@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
+import { CLI_EXIT_CODES } from '../../infrastructure/cli/exit-codes';
 
 const mockExecute = jest.fn();
 (ValidateSatelliteUseCase as jest.Mock).mockImplementation(() => ({ execute: mockExecute }));
@@ -234,7 +235,10 @@ describe('ValidateCommand — corpus resolution failures', () => {
       const envelope = firstStdoutEnvelope() as unknown as { success: boolean; data: { status: string } };
       expect(envelope.success).toBe(true); // the command ran
       expect(envelope.data.status).toBe('failed'); // the verdict is negative
-      expect(exitSpy).toHaveBeenCalledWith(1); // and CI sees it
+      // GT-580: BLOCKED (2), not the catch-all 1 — a failed gate and an
+      // unresolvable corpus (RULESET_NOT_FOUND, still 1 above) are different
+      // events and a consumer must be able to branch on which one happened.
+      expect(exitSpy).toHaveBeenCalledWith(CLI_EXIT_CODES.BLOCKED); // and CI sees it
     });
 
     it('leaves the exit code clean on a PASSED verdict', async () => {
@@ -263,7 +267,8 @@ describe('ValidateCommand — corpus resolution failures', () => {
       };
       expect(envelope.data.status).toBe('failed');
       expect(envelope.data.issues.some((i) => i.blocking && /No Core rulesets/i.test(i.title))).toBe(true);
-      expect(exitSpy).toHaveBeenCalledWith(1);
+      // A zero-rule run is reported as a BLOCKING verdict, so it exits 2.
+      expect(exitSpy).toHaveBeenCalledWith(CLI_EXIT_CODES.BLOCKED);
     });
   });
 });

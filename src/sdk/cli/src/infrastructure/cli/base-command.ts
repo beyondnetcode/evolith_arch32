@@ -4,7 +4,8 @@ import { randomUUID } from 'node:crypto';
 import { PromptService } from '../prompts/prompt.service';
 import { ConfigService, ProfileConfig } from '../config/config.service';
 import { UserCancelledError } from '@beyondnet/evolith-core-domain/domain/errors';
-import { createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, type ErrorCode } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { CLI_EXIT_CODES, carriesCliExitCode, resolveExitCode, setExitCode } from './exit-codes';
 
 export abstract class BaseEvolithCommand extends CommandRunner {
   protected readonly logger: Logger;
@@ -40,9 +41,19 @@ export abstract class BaseEvolithCommand extends CommandRunner {
 
   abstract executeCommand(inputs: string[], options?: Record<string, unknown>): Promise<void>;
 
+  /**
+   * GT-580 — the ONE place a thrown error becomes an exit code.
+   *
+   * Every command's failure path funnels through here, so the taxonomy is
+   * applied once instead of being re-decided (and re-collapsed onto `1`) by
+   * each new command. A command that wants a code other than "tool failure"
+   * throws a carrier error — `CliUsageError` (3), `NonInteractiveError` (3),
+   * `CliBlockedError` (2) — rather than calling `process.exit` itself.
+   */
   protected handleError(error: unknown, options?: Record<string, unknown>): never {
     const message = error instanceof Error ? error.message : String(error);
     const isJsonFormat = (options?.format as string | undefined) === 'json';
+    const exitCode = resolveExitCode(error);
 
     this.logger.error(`Command execution failed: ${message}`, error instanceof Error ? error.stack : undefined);
 
@@ -57,12 +68,14 @@ export abstract class BaseEvolithCommand extends CommandRunner {
       // Classify a missing ruleset corpus consistently across every command
       // (and with MCP/REST) instead of collapsing it to INTERNAL_ERROR. Matched
       // by name to avoid importing the infra error type into this base class.
-      const code = error instanceof Error && error.name === 'RulesetsNotFoundError'
-        ? 'RULESET_NOT_FOUND'
-        : 'INTERNAL_ERROR';
-      console.log(JSON.stringify(createErrorEnvelope(code, message, meta), null, 2));
+      const code = carriesCliExitCode(error) && error.envelopeErrorCode
+        ? error.envelopeErrorCode
+        : error instanceof Error && error.name === 'RulesetsNotFoundError'
+          ? 'RULESET_NOT_FOUND'
+          : 'INTERNAL_ERROR';
+      console.log(JSON.stringify(createErrorEnvelope(code as ErrorCode, message, meta), null, 2));
       // In JSON mode, emit envelope and set exit code; don't re-throw
-      process.exitCode = 1;
+      setExitCode(exitCode);
       return undefined as never;
     } else {
       this.promptService.stopSpinner('Command failed.');
@@ -72,8 +85,11 @@ export abstract class BaseEvolithCommand extends CommandRunner {
       // nest-commander swallows errors thrown from a CommandRunner and still exits
       // 0, so a re-throw alone leaves CI blind. Set a non-zero exit code so the
       // failure is observable for human mode.
-      process.exitCode = 1;
+      setExitCode(exitCode);
       throw error instanceof Error ? error : new Error(message);
     }
   }
+
+  /** Re-exported on the base class so commands never hard-code a literal. */
+  protected readonly exitCodes = CLI_EXIT_CODES;
 }

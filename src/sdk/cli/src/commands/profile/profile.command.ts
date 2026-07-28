@@ -1,11 +1,12 @@
 import { Command, Option } from 'nest-commander';
-import * as p from '@clack/prompts';
 import chalk from 'chalk';
 import { randomUUID } from 'node:crypto';
 import { ConfigService, ProfileConfig } from '../../infrastructure/config/config.service';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, type ErrorCode } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
+import { CLI_EXIT_CODES, carriesCliExitCode, resolveExitCode, setExitCode } from '../../infrastructure/cli/exit-codes';
+import { UserCancelledError } from '@beyondnet/evolith-core-domain/domain/errors';
 
 interface ProfileCommandOptions {
   name?: string;
@@ -43,7 +44,11 @@ export class ProfileCommand extends BaseEvolithCommand {
         case 'list':
           return this.listProfiles(json, meta);
         case 'create':
-          return this.createProfile(options?.name, json, meta);
+          // `return await`, not `return`: `createProfile` is the only async arm,
+          // and a bare `return promise` inside a try block lets its rejection
+          // escape the catch entirely — so a refused prompt bypassed the
+          // envelope and the exit-code mapping below.
+          return await this.createProfile(options?.name, json, meta);
         case 'switch':
           return this.switchProfile(options?.name, json, meta);
         case 'delete':
@@ -54,9 +59,14 @@ export class ProfileCommand extends BaseEvolithCommand {
       }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
+      // GT-580: classify instead of collapsing. A refused prompt or a bad flag
+      // is INVALID_INPUT (3); anything else is a TOOL_FAILURE (1).
+      setExitCode(resolveExitCode(error));
       if (json) {
-        process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        const code = carriesCliExitCode(error) && error.envelopeErrorCode
+          ? (error.envelopeErrorCode as ErrorCode)
+          : 'INTERNAL_ERROR';
+        console.log(JSON.stringify(createErrorEnvelope(code, message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       } else {
         throw error;
       }
@@ -103,17 +113,23 @@ export class ProfileCommand extends BaseEvolithCommand {
   private async createProfile(name?: string, json = false, meta?: any): Promise<void> {
     let profileName = name;
     if (!profileName) {
-      profileName = (await p.text({
-        message: 'Profile name:',
-        validate: (val) => {
-          if (!val || val.trim().length === 0) return 'Name is required';
-          if (this.configService.profileExists(val.trim())) return 'Profile already exists';
-          return;
-        },
-      })) as string;
-      if (p.isCancel(profileName)) {
+      // GT-611: routed through PromptService so the non-interactive contract is
+      // the SAME one every other command gets. Without a TTY this throws
+      // NonInteractiveError (exit 3) instead of painting an ANSI prompt into a
+      // pipe that was expecting an envelope.
+      try {
+        profileName = await this.promptService.text({
+          message: 'Profile name:',
+          validate: (val) => {
+            if (!val || val.trim().length === 0) return 'Name is required';
+            if (this.configService.profileExists(val.trim())) return 'Profile already exists';
+            return;
+          },
+        });
+      } catch (err) {
+        if (!(err instanceof UserCancelledError)) throw err;
         if (json) {
-          process.exitCode = 1;
+          setExitCode(CLI_EXIT_CODES.INVALID_INPUT);
           console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', 'Profile creation cancelled', { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
         } else {
           this.promptService.showOutro('Cancelled');
@@ -125,7 +141,7 @@ export class ProfileCommand extends BaseEvolithCommand {
     if (this.configService.profileExists(profileName)) {
       const message = `Profile "${profileName}" already exists`;
       if (json) {
-        process.exitCode = 1;
+        setExitCode(CLI_EXIT_CODES.INVALID_INPUT);
         console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
       } else {
         this.promptService.showError(message);
@@ -135,27 +151,30 @@ export class ProfileCommand extends BaseEvolithCommand {
 
     const profile: ProfileConfig = {};
 
-    const core = (await p.text({
-      message: 'Core repository path (optional):',
-      placeholder: '../evolith',
-    })) as string;
-    if (!p.isCancel(core) && core.trim()) profile.core = core.trim();
+    // GT-611: every field below is OPTIONAL, so a non-interactive invocation
+    // must SKIP them, not fail on them. `evolith profile create --name ci
+    // --format json` now produces a profile and an envelope with no prompt at
+    // all; previously it painted four prompts into the pipe.
+    if (this.promptService.isInteractive()) {
+      const optional = async (message: string, placeholder?: string): Promise<string | undefined> => {
+        try {
+          const value = await this.promptService.text({ message, placeholder });
+          return value?.trim() ? value.trim() : undefined;
+        } catch (err) {
+          if (err instanceof UserCancelledError) return undefined;
+          throw err;
+        }
+      };
 
-    const satellite = (await p.text({
-      message: 'Satellite repository path (optional):',
-      placeholder: process.cwd(),
-    })) as string;
-    if (!p.isCancel(satellite) && satellite.trim()) profile.satellite = satellite.trim();
-
-    const tenant = (await p.text({
-      message: 'Tenant (optional):',
-    })) as string;
-    if (!p.isCancel(tenant) && tenant.trim()) profile.tenant = tenant.trim();
-
-    const initiative = (await p.text({
-      message: 'Initiative (optional):',
-    })) as string;
-    if (!p.isCancel(initiative) && initiative.trim()) profile.initiative = initiative.trim();
+      const core = await optional('Core repository path (optional):', '../evolith');
+      if (core) profile.core = core;
+      const satellite = await optional('Satellite repository path (optional):', process.cwd());
+      if (satellite) profile.satellite = satellite;
+      const tenant = await optional('Tenant (optional):');
+      if (tenant) profile.tenant = tenant;
+      const initiative = await optional('Initiative (optional):');
+      if (initiative) profile.initiative = initiative;
+    }
 
     this.configService.createProfile(profileName, profile);
 
@@ -170,8 +189,8 @@ export class ProfileCommand extends BaseEvolithCommand {
   private switchProfile(name?: string, json = false, meta?: any): void {
     if (!name) {
       const message = 'Usage: evolith profile switch <name>';
+      setExitCode(CLI_EXIT_CODES.INVALID_INPUT);
       if (json) {
-        process.exitCode = 1;
         console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
       } else {
         this.promptService.showError(message);
@@ -187,8 +206,8 @@ export class ProfileCommand extends BaseEvolithCommand {
       }
     } catch (e) {
       const message = (e as Error).message;
+      setExitCode(CLI_EXIT_CODES.TOOL_FAILURE);
       if (json) {
-        process.exitCode = 1;
         console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
       } else {
         this.promptService.showError(message);
@@ -199,8 +218,8 @@ export class ProfileCommand extends BaseEvolithCommand {
   private deleteProfile(name?: string, json = false, meta?: any): void {
     if (!name) {
       const message = 'Usage: evolith profile delete <name>';
+      setExitCode(CLI_EXIT_CODES.INVALID_INPUT);
       if (json) {
-        process.exitCode = 1;
         console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
       } else {
         this.promptService.showError(message);
@@ -216,8 +235,8 @@ export class ProfileCommand extends BaseEvolithCommand {
       }
     } catch (e) {
       const message = (e as Error).message;
+      setExitCode(CLI_EXIT_CODES.TOOL_FAILURE);
       if (json) {
-        process.exitCode = 1;
         console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
       } else {
         this.promptService.showError(message);

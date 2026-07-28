@@ -1,4 +1,8 @@
-import type { IAgentEnginePort, AgentEnginePlan } from '../../domain/ports/agent-engine.port';
+import type {
+  IAgentEnginePort,
+  AgentEnginePlan,
+  AgentPlanContext,
+} from '../../domain/ports/agent-engine.port';
 import type { AgentRuntimeRequest } from '../../domain/contracts/agent-runtime-request';
 import type { SkillDescriptor } from '../../domain/contracts/capability';
 
@@ -35,6 +39,7 @@ export class RoutingAgentAdapter implements IAgentEnginePort {
   async plan(
     request: AgentRuntimeRequest,
     availableSkills: readonly SkillDescriptor[],
+    planContext?: AgentPlanContext,
   ): Promise<AgentEnginePlan> {
     let targetEngineName = this.config.defaultEngine;
 
@@ -51,6 +56,8 @@ export class RoutingAgentAdapter implements IAgentEnginePort {
       throw new Error(`Configured engine '${targetEngineName}' is not provided in the engines map.`);
     }
 
-    return targetEngine.plan(request, availableSkills);
+    // GT-612: a router must forward the conversation, not swallow it — otherwise
+    // routing silently makes every turn stateless again.
+    return targetEngine.plan(request, availableSkills, planContext);
   }
 }

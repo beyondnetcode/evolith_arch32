@@ -5,6 +5,12 @@
 ## Status
 Accepted
 
+> **Implementation status in this repository: none** (verified 2026-07-28).
+> This ADR is a normative standard published *for satellites*; it is Accepted as a decision,
+> not as delivered capability. Nothing in Evolith Core implements it, and nothing enforces it.
+> The Task Delegation Envelope, the Token Chaining Contract and the Context Propagation Protocol have no type, schema or test in `src/`. (`evolith sdlc handoff` is unrelated: it transitions SDLC phase artifacts, not agent-to-agent tasks.)
+> The generated ruleset `rulesets/adr/generated/adr-0094-multi-agent-handoff-and-task-delegation-standards.rules.json` carries a single `adr-conformance` rule whose own text says the concrete checks are still "to be wired into the harness", and no evaluator handles that category — `rg "adr-conformance" src/` matches only the generated files themselves. Tracked by GT-607.
+
 ## Date
 2026-06-20
 

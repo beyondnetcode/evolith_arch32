@@ -166,7 +166,7 @@ flowchart TB
       CLI["evolith-cli<br/>CLI · 31 commands"]
     end
     subgraph RT["Agent Runtime · @beyondnet/evolith-agent-runtime"]
-      ARS["AgentRuntimeService<br/>16 ports · 38 adapters"]
+      ARS["AgentRuntimeService<br/>10 ports on the hot path<br/>(17 declared · 47 adapter modules)"]
       IA["InteractionAdapters<br/>CLI Command · CLI Chat · Hermes · MCP · OpenCode · External"]
     end
     DOM["@beyondnet/evolith-core-domain<br/>EvaluationOrchestrator · 10 Kinds<br/>rulesets JSON · OPA/WASM · schemas"]
@@ -206,8 +206,33 @@ flowchart TB
 | **REST API** | Tracker UI, CI/CD, enterprise integrations | 11 controllers: evaluation, gates, phases, architecture, projects, satellites, capabilities, composable-validate, reference, metrics, health |
 | **MCP HTTP/SSE** | LLMs and autonomous agents | 47 tools, 11 resources, 8 prompts: evaluation, validation, agents, ADRs, MoSCoW, drift, configuration |
 | **CLI** | Engineers and product roles | 31 commands: validate, evaluate, gate, drift, scaffold, ADR lifecycle, agents, chat, satellite, sdlc |
-| **Agent Runtime** | AI agents, chatboxes, external triggers | 16 hexagonal ports, 38 adapters, 6 interaction adapters (CLI Command, CLI Chat, Hermes, MCP, OpenCode, External), governed orchestration with OPA + HITL |
+| **Agent Runtime** | AI agents, chatboxes, external triggers | **10 hexagonal ports on the execution hot path** (7 required, 3 optional), governed orchestration with OPA + HITL. The package *declares* 17 ports and 47 adapter modules, including 6 interaction adapters (CLI Command, CLI Chat, Hermes, MCP, OpenCode, External) — see the note below for which of those are wired and which are speculative. |
 | **Webhook / Event Bus** — *not implemented, roadmap* | *(none yet)* | **No webhook or event-bus surface ships today.** Evolith exposes no inbound webhook endpoint and delivers no outbound webhook or event traffic. The only related code is `src/packages/infra-providers/src/webhook.adapter.ts`, an **outbound-only** adapter with no surface wired to it. See [Ecosystem & Communication](../../products/ecosystem-and-communication.md). Propagating commands, evidence, status changes, and gate outcomes reactively remains a roadmap item. |
+
+> **A port count is not a capability count.** An inventory number ("17 ports, 47
+> adapters") measures how much seam was carved, not how much capability ships.
+> Stated explicitly, and verified against the code on 2026-07-28:
+>
+> **Hot path — the ports one execution pass actually depends on** (`AgentRuntimeDeps`
+> in `packages/agent-runtime/src/application/agent-runtime-deps.ts`): **7 required** —
+> `ISkillRegistryPort`, `IHarnessPort`, `ICoreEvaluationPort`, `IPolicyValidationPort`,
+> `IApprovalPort`, `ITrackerTracePort`, `IMemoryPort`; and **3 optional** —
+> `IAgentEnginePort`, `IKnowledgePort`, `IWorkspaceContextPort`. Ten ports for a
+> governed plan → validate → execute → trace pass is well sized, and each has at
+> least one adapter that runs.
+>
+> **Speculative — declared seams with no live consumer.** `IAgentRuntimePort` and
+> `IAssistantInvocationPort` have no consumer outside their own port module.
+> `ISchedulerPort` and `ICommunicationGatewayPort` have adapters but no caller in a
+> shipped surface. `IStructuralReviewer` has a port, a rubric and a provider and
+> **zero** implementations (`rg "implements IStructuralReviewer" src/` → 0 hits;
+> tracked as GT-613). Of the 6 interaction adapters, `OpenCodeInteractionAdapter`
+> and `McpInteractionAdapter` are referenced only by the `adapters/index.ts` barrel —
+> no surface constructs them.
+>
+> Building these seams was not the error; counting them as delivered capability was.
+> Read the hot-path list as what Evolith does today and the speculative list as
+> optionality that has not yet been paid off.
 
 ---
 

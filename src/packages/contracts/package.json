@@ -22,6 +22,10 @@
       "types": "./dist/fixtures/evaluation-contract.fixtures.d.ts",
       "default": "./dist/fixtures/evaluation-contract.fixtures.js"
     },
+    "./evidence": {
+      "types": "./dist/evidence/evidence-edge.d.ts",
+      "default": "./dist/evidence/evidence-edge.js"
+    },
     "./*": {
       "types": "./dist/*.d.ts",
       "default": "./dist/*.js"

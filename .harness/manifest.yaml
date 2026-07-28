@@ -19,6 +19,12 @@
 #   outputs         declared outputs the capability emits
 #   permissions     scopes required to run
 #   requiresApproval whether a human must approve before execution (HITL)
+#                   INVARIANT (GT-608): a capability that is EXECUTABLE (declares an
+#                   `entry`) and holds any `write:*` permission MUST declare
+#                   `requiresApproval: true`. Enforced by
+#                   src/packages/agent-runtime/src/adapters/skills/manifest-skill-catalog.spec.ts.
+#                   `emit-trace` holds `write:trace` and is exempt only because it
+#                   declares no entry — it is a declared no-op placeholder.
 #   emitsTrace      whether execution publishes a Tracker trace event
 #   requiresPolicy  whether the result must pass OPA/ruleset validation
 #   policyRef       (optional) the OPA package to evaluate against
@@ -140,7 +146,11 @@ capabilities:
       risks: { type: array, items: { type: string } }
       next_actions: { type: array, items: { type: string } }
     permissions: [read:repo, write:report]
-    requiresApproval: false
+    # GT-608: an EXECUTABLE capability holding a `write:*` scope is exactly what the
+    # HITL gate exists for — it appends to `.harness/reports/*.jsonl` and mutates the
+    # audit record. Escalated to human approval; see the invariant asserted by
+    # `manifest-skill-catalog.spec.ts` ("executable + write:* ⇒ requiresApproval").
+    requiresApproval: true
     emitsTrace: true
     requiresPolicy: false
 

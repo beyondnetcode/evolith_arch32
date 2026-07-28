@@ -50,10 +50,20 @@
  *       remaining PENDING entry
  */
 
-import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
-import { join, relative, resolve, dirname, sep } from 'node:path';
+import { existsSync, statSync } from 'node:fs';
+import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assertScanned, ZeroCoverageError } from '../lib/coverage.mjs';
+// GT-578 wave 4: the registries moved to lib/ so `43-validate-guard-negative-fixtures.mjs`
+// classifies from the SAME source. Two copies of "which scripts are scanners"
+// would drift, and the two guards would then disagree about their own subject.
+import {
+  SELF_GUARDED,
+  NOT_A_SCANNER,
+  PENDING,
+  REGISTRIES,
+  classifyGuards,
+} from '../lib/guard-classification.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const GUARD = '42-validate-guard-denominators';
@@ -73,122 +83,7 @@ const rootIdx = argv.indexOf('--root');
 const ROOT = rootIdx !== -1 ? resolve(process.cwd(), argv[rootIdx + 1]) : resolve(__dirname, '../../..');
 const CI_DIR = join(ROOT, '.harness/scripts/ci');
 
-// --- Detection of the instrumented state -----------------------------------
-
-const IMPORTS_COVERAGE = /from\s+['"](?:\.\.\/)+lib\/coverage\.mjs['"]/;
-const CALLS_COVERAGE = /\b(?:assertScanned|assertScannedPerSource|scanned)\s*\(/;
-
-// --- Registries ------------------------------------------------------------
-
-/**
- * Guards whose zero-scan refusal is hand-written and predates the primitive.
- * `proof` MUST still match the file: it is what stops a "cleanup" commit from
- * deleting the check and leaving the exemption behind.
- */
-const SELF_GUARDED = [
-  {
-    file: '34-boundary-guard-repository.mjs',
-    proof: /A zero-file scan must never be reported as "boundary guard passed"/,
-    reason: 'the reference implementation of the pattern (GT-377); refuses both a missing root and an empty scan',
-  },
-  {
-    file: '40-validate-path-literals.mjs',
-    proof: /A zero-file scan must never be reported as "path literals valid"/,
-    reason: 'GT-578 path-literal guard; fails on a missing scan root, a zero-file source and a zero-literal source',
-  },
-  {
-    file: '35-validate-core-health.mjs',
-    proof: /A zero-rule scan must never be reported as a parity result -- that is a vacuous pass/,
-    reason: 'refuses to report native/OPA parity when either rule corpus is empty',
-  },
-  {
-    file: '28-native-evaluator-parity.mjs',
-    proof: /vacuous pass/,
-    reason: 'six distinct vacuity checks (empty directory, empty fixture, zero test cases, zero verdicts, zero rules, unwired evaluator)',
-  },
-  {
-    file: '24-check-surface-parity.mjs',
-    proof: /No CLI operations tracked in matrix/,
-    reason: 'errors when any of the three surfaces yields zero tracked operations',
-  },
-  {
-    file: '17-validate-knowledge-intake.mjs',
-    proof: /No accepted topology manifests found under/,
-    reason: 'errors when the manifest scan yields no accepted topology',
-  },
-  {
-    file: '18-validate-knowledge-parity.mjs',
-    proof: /contains no JSON fixtures/,
-    reason: 'errors on a missing fixture directory and on a directory with zero fixtures; exported for tests, so it returns errors rather than throwing',
-  },
-];
-
-/**
- * Not a corpus scan. Each entry states why, because "not a scanner" is exactly
- * the claim a future reader will need to re-check.
- */
-const NOT_A_SCANNER = [
-  { file: '04-check-bilingual-parity.mjs', reason: 'delegating wrapper: execSync of suites/bilingual-suite.mjs, propagates its exit code; the denominator is the suite\'s' },
-  { file: '05-validate-executive-summary.mjs', reason: 'delegating wrapper: spawnSync of generate-executive-summary.mjs --check, `?? 1` on a failed spawn' },
-  { file: '26-validate-topology-rule-coverage.mjs', reason: 'delegating wrapper: imports validateTopologyRuleCoverage() from ../generate-rule-coverage.mjs' },
-  { file: '37-validate-knowledge-freshness.mjs', reason: 'delegating wrapper: spawnSync of knowledge-resolve.mjs --freshness, `?? 1` on a failed spawn' },
-  { file: '38-validate-okf-projection.mjs', reason: 'delegating wrapper: spawnSync of knowledge-okf-project.mjs --verify, `?? 1` on a failed spawn' },
-
-  { file: '02-optimize-repo.mjs', reason: 'maintenance task that rewrites files; not a gate, produces no verdict' },
-  { file: '06-impact-analysis-synchronizer.mjs', reason: 'generator: writes the impact-analysis artifacts consumed by other guards' },
-  { file: '14-rag-index-sync.mjs', reason: 'RAG index writer against pgvector; a data pipeline, not a repository gate' },
-  { file: '15-rag-index-backfill.mjs', reason: 'RAG backfill writer against pgvector; a data pipeline, not a repository gate' },
-
-  { file: 'parity-gate.mjs', reason: 'library: exports parityReport()/contentVersion(), no entry point' },
-  { file: 'opa-eval.mjs', reason: 'library: thin OPA eval helper, no entry point' },
-  { file: 'drift-audit.mjs', reason: 'library: exports auditDrift()/summarize(); its callers own the denominator' },
-  { file: 'rag-port.mjs', reason: 'library: RAG port interface' },
-  { file: 'rag-pgvector.mjs', reason: 'library: pgvector adapter' },
-  { file: 'rag-embed-qwen3.mjs', reason: 'library: embedding adapter, needs a model endpoint' },
-  { file: 'rag-sync.mjs', reason: 'library: RAG sync driver behind 14/15' },
-  { file: 'agentic/review-input.mjs', reason: 'library: builds the review payload' },
-  { file: 'agentic/review-provider.mjs', reason: 'library: LLM provider adapter' },
-  { file: 'agentic/review-result.mjs', reason: 'library: parses the model response' },
-  { file: 'agentic/13-agentic-code-review.mjs', reason: 'LLM-driven review over a git diff; its corpus is the diff, which is legitimately empty on a no-op commit' },
-];
-
-/**
- * Real scanners still to instrument. This is the honest remainder of GT-578's
- * second criterion — not a hiding place. Each entry says why it was not done in
- * the same change.
- */
-const REGISTRIES = [];
-
-const PENDING = [
-  // Empty as of GT-578's second wave: every scanning guard under
-  // .harness/scripts/ci is now either instrumented or self-guarded with a
-  // verified proof. Kept as a named, first-class state rather than deleted —
-  // the next guard that cannot be instrumented in the same change belongs here
-  // WITH A REASON, not in NOT_A_SCANNER, and not silently unclassified.
-];
-
-REGISTRIES.push(['SELF_GUARDED', SELF_GUARDED], ['NOT_A_SCANNER', NOT_A_SCANNER], ['PENDING', PENDING]);
-
-// --- Scan ------------------------------------------------------------------
-
-function collectGuards(dir) {
-  const out = [];
-  const walk = (d) => {
-    for (const e of readdirSync(d, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
-      const p = join(d, e.name);
-      if (e.isDirectory()) {
-        if (e.name === 'node_modules' || e.name === '.git') continue;
-        walk(p);
-        continue;
-      }
-      if (!e.name.endsWith('.mjs')) continue;
-      if (e.name.endsWith('.test.mjs')) continue;
-      out.push(relative(dir, p).split(sep).join('/'));
-    }
-  };
-  walk(dir);
-  return out;
-}
+// --- Classification (shared with 43-validate-guard-negative-fixtures) -------
 
 function main() {
   if (!existsSync(CI_DIR) || !statSync(CI_DIR).isDirectory()) {
@@ -200,55 +95,13 @@ function main() {
     process.exit(1);
   }
 
-  const guards = collectGuards(CI_DIR);
+  const { guards, instrumented, selfGuarded, notScanners, pending, violations } =
+    classifyGuards(CI_DIR);
   assertScanned(guards.length, { what: 'CI guard scripts', where: '.harness/scripts/ci/**/*.mjs' });
 
   const selfById = new Map(SELF_GUARDED.map(e => [e.file, e]));
   const notScannerById = new Map(NOT_A_SCANNER.map(e => [e.file, e]));
   const pendingById = new Map(PENDING.map(e => [e.file, e]));
-
-  const instrumented = [];
-  const selfGuarded = [];
-  const notScanners = [];
-  const pending = [];
-  const violations = [];
-
-  for (const rel of guards) {
-    const src = readFileSync(join(CI_DIR, rel), 'utf8');
-
-    if (IMPORTS_COVERAGE.test(src) && CALLS_COVERAGE.test(src)) {
-      instrumented.push(rel);
-      continue;
-    }
-
-    const self = selfById.get(rel);
-    if (self) {
-      if (!self.proof.test(src)) {
-        violations.push(
-          `${rel}: registered SELF_GUARDED, but its proof no longer appears in the source.\n` +
-          `      expected to match: ${self.proof}\n` +
-          `      Either the hand-written zero-scan refusal was removed — in which case the\n` +
-          `      guard can now pass vacuously and must be instrumented with\n` +
-          `      lib/coverage.mjs — or the wording changed and the proof needs updating here.`,
-        );
-      } else {
-        selfGuarded.push(rel);
-      }
-      continue;
-    }
-
-    if (notScannerById.has(rel)) { notScanners.push(rel); continue; }
-    if (pendingById.has(rel)) { pending.push(rel); continue; }
-
-    violations.push(
-      `${rel}: no denominator and no classification.\n` +
-      `      Every script under .harness/scripts/ci must either call assertScanned()\n` +
-      `      from ../lib/coverage.mjs, or be registered in this file as SELF_GUARDED\n` +
-      `      (with a proof regex), NOT_A_SCANNER (with a reason) or PENDING (with a\n` +
-      `      reason). An unclassified guard is one that can report a pass over an\n` +
-      `      empty scan, which is the defect GT-578 exists to close.`,
-    );
-  }
 
   const known = new Set(guards);
   // ...nor survive the thing they excused. An entry for a guard that is now

@@ -7076,8 +7076,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
   - [ ] `npx @beyondnet/evolith-cli@latest` seguido de la secuencia literal del README completa en un contenedor limpio.
-  - [ ] Un repo recién inicializado devuelve 0 hallazgos blocking, asertado por un test que falla si vuelve a subir.
-  - [ ] `--help` nombra el comando real, no `main`.
+  - [x] Un repo recién inicializado devuelve 0 hallazgos blocking, asertado por un test que falla si vuelve a subir.
+  - [x] `--help` nombra el comando real, no `main`.
 
 #### GT-572
 
@@ -7091,7 +7091,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
   - [ ] Un `tools/call` real sobre stdio contra el tarball publicado devuelve un veredicto, no FORBIDDEN.
-  - [ ] Los flags de escape documentados o funcionan o se eliminan — ningún flag que en silencio no hace nada.
+  - [x] Los flags de escape documentados o funcionan o se eliminan — ningún flag que en silencio no hace nada.
   - [ ] El smoke de CI asserta un veredicto, no la mera existencia de un campo.
 
 #### GT-573
@@ -7105,8 +7105,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Core API` · **Criticidad:** P0 · **Complejidad:** M
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
-  - [ ] Un veredicto real round-trip en CI registra `decision != SKIPPED` sobre una violación arquitectónica genuina.
-  - [ ] Un test de contrato dirigido por el consumidor corre en el CI del Core y falla cuando la forma del envelope deriva.
+  - [x] Un veredicto real round-trip en CI registra `decision != SKIPPED` sobre una violación arquitectónica genuina.
+  - [x] Un test de contrato dirigido por el consumidor corre en el CI del Core y falla cuando la forma del envelope deriva.
   - [ ] Los schemas del request de evaluate y de `EvaluationResult` están en `MACHINE_CONTRACT_SET` y re-pinneados en el Tracker.
 
 #### GT-574
@@ -7179,8 +7179,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Governance` · **Criticidad:** P1 · **Complejidad:** M
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
 - **Criterios de aceptación:**
-  - [ ] Cero literales de ruta muertos en scripts, workflows, charts y constantes, verificado por el guard nuevo.
-  - [ ] Cero guards capaces de pasar con denominador cero; cada guard tiene una fixture negativa que lo pone rojo.
+  - [x] Cero literales de ruta muertos en scripts, workflows, charts y constantes, verificado por el guard nuevo.
+  - [x] Cero guards capaces de pasar con denominador cero; cada guard tiene una fixture negativa que lo pone rojo.
   - [ ] 100% de los `validationCommands` del tablero son ejecutables y verdes en CI.
 
 #### GT-579
@@ -7277,7 +7277,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith Suite` · **Criticidad:** P1 · **Complejidad:** M
 - **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
 - **Criterios de aceptación:**
-  - [ ] El tipo de arista del Core se exporta desde el paquete de contratos compartidos.
+  - [x] El tipo de arista del Core se exporta desde el paquete de contratos compartidos.
   - [ ] Existe una tabla `evidence_edges` con índices en ambos sentidos, rellenada desde `ReferencesJson`.
   - [ ] Un endpoint de grafo acotado por profundidad devuelve el camino decisión→evidencia de una iniciativa.
   - [ ] `References` se conserva como proyección durante una release antes de retirarse.
@@ -7308,7 +7308,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith Agent Runtime` · **Criticidad:** P1 · **Complejidad:** S
 - **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
 - **Criterios de aceptación:**
-  - [ ] Cada uno de los siete ADRs queda implementado o sale de Aceptado con nota explícita de implementación.
+  - [x] Cada uno de los siete ADRs queda implementado o sale de Aceptado con nota explícita de implementación.
   - [ ] El spawn pasa un entorno con lista blanca; ningún `*_TOKEN` ni `*_URL` llega a un script de capacidad.
   - [ ] Un test verifica que una capacidad lanzada no puede leer el token del Core.
 
@@ -7323,8 +7323,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith Agent Runtime` · **Criticidad:** P1 · **Complejidad:** M
 - **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
 - **Criterios de aceptación:**
-  - [ ] El catálogo de skills se deriva de `.harness/manifest.yaml`, con test de CI que exija catálogo ⊇ manifiesto.
-  - [ ] Al menos dos capacidades destructivas declaran `requiresApproval: true`.
+  - [x] El catálogo de skills se deriva de `.harness/manifest.yaml`, con test de CI que exija catálogo ⊇ manifiesto.
+  - [x] Al menos dos capacidades destructivas declaran `requiresApproval: true`.
   - [ ] Un test de punta a punta cubre pendiente → aprobado → ejecutado → auditado entre el Runtime y el Tracker.
   - [ ] `evolith_hitl_approvals_total` es distinto de cero en una ejecución de integración.
 
@@ -7359,9 +7359,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `MCP Server` · **Criticidad:** P1 · **Complejidad:** M
 - **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
 - **Criterios de aceptación:**
-  - [ ] Toda tool declara `outputSchema` y devuelve `structuredContent` que valida contra él.
-  - [ ] Toda tool lleva annotations de solo-lectura / destructiva / idempotente.
-  - [ ] `tools/list` devuelve un orden determinista, aseverado por test.
+  - [x] Toda tool declara `outputSchema` y devuelve `structuredContent` que valida contra él.
+  - [x] Toda tool lleva annotations de solo-lectura / destructiva / idempotente.
+  - [x] `tools/list` devuelve un orden determinista, aseverado por test.
 
 
 #### GT-582
@@ -7439,8 +7439,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `core-domain` · **Criticidad:** P1 · **Complejidad:** S
 - **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
 - **Criterios de aceptación:**
-  - [ ] El contexto acepta un solicitante tipado opcional y una revisión de repositorio.
-  - [ ] El resultado refleja ambos, y un veredicto sin ellos sigue validando (prueba de que el cambio es aditivo).
+  - [x] El contexto acepta un solicitante tipado opcional y una revisión de repositorio.
+  - [x] El resultado refleja ambos, y un veredicto sin ellos sigue validando (prueba de que el cambio es aditivo).
   - [ ] Las fixtures de contrato de `@beyondnet/evolith-contracts` cubren los campos nuevos.
 
 
@@ -7520,7 +7520,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
 - **Criterios de aceptación:**
   - [ ] Las 45 políticas están en estilo v1 y la versión pinneada de OPA está en la línea v1.
-  - [ ] Los 39 tests de política pasan sin cambios, probando que ninguna decisión cambió.
+  - [x] Los 39 tests de política pasan sin cambios, probando que ninguna decisión cambió.
   - [ ] CI asevera la versión pinneada y falla ante drift.
 
 
@@ -7551,9 +7551,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `agent-runtime` · **Criticidad:** P2 · **Complejidad:** M
 - **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
 - **Criterios de aceptación:**
-  - [ ] Cada paso del pipeline añade una entrada de journal con entrada y salida hasheadas.
-  - [ ] Una corrida abortada a mitad de pipeline reanuda desde el journal sin repetir pasos completados.
-  - [ ] El journal basta para reproducir las decisiones de una corrida pasada, aseverado por test.
+  - [x] Cada paso del pipeline añade una entrada de journal con entrada y salida hasheadas.
+  - [x] Una corrida abortada a mitad de pipeline reanuda desde el journal sin repetir pasos completados.
+  - [x] El journal basta para reproducir las decisiones de una corrida pasada, aseverado por test.
 
 
 #### GT-594
@@ -7583,9 +7583,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `core-domain` · **Criticidad:** P0 · **Complejidad:** L
 - **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
 - **Criterios de aceptación:**
-  - [ ] Toda regla queda clasificada: handler nativo, política Rego, o explícitamente no ejecutable.
+  - [x] Toda regla queda clasificada: handler nativo, política Rego, o explícitamente no ejecutable.
   - [ ] Ninguna regla marcada `blocking` puede devolver `skipped`; esa combinación falla la corrida.
-  - [ ] El ratio `rulesChecked`/`rulesTotal` se publica por ruleset.
+  - [x] El ratio `rulesChecked`/`rulesTotal` se publica por ruleset.
 
 #### GT-596
 
@@ -7628,9 +7628,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith Core` · **Criticidad:** P1 · **Complejidad:** L
 - **Procedencia:** Derivado de la auditoría de madurez de producto del 2026-07-26 ([product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md)): son los artefactos internacionales que la auditoría echó en falta. Ediciones y números de norma verificados contra las fuentes el 2026-07-26, no citados de memoria.
 - **Criterios de aceptación:**
-  - [ ] Una tabla de mapeo publicada cubre cada regla del corpus: mapeada a una debilidad 5055, o marcada explícitamente como sin equivalente internacional.
-  - [ ] El backlog de handlers se reacota al remanente sin mapear, declarando la fracción adoptada.
-  - [ ] Toda referencia a ISO/IEC 25010 usa el modelo de nueve características de 2023.
+  - [x] Una tabla de mapeo publicada cubre cada regla del corpus: mapeada a una debilidad 5055, o marcada explícitamente como sin equivalente internacional.
+  - [x] El backlog de handlers se reacota al remanente sin mapear, declarando la fracción adoptada.
+  - [x] Toda referencia a ISO/IEC 25010 usa el modelo de nueve características de 2023.
 
 #### GT-599
 
@@ -7715,7 +7715,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `agent-runtime` · **Criticidad:** P2 · **Complejidad:** M
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-614
 
@@ -7830,6 +7830,19 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Un commit con mensaje malformado se rechaza en local, demostrado intentándolo.
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
+
+#### GT-625
+
+**Title:** El CLI publicado no sobrevive a una instalación limpia, y toda prueba que hacemos corre dentro del workspace que lo tapa
+
+- **Purpose:** Que lo que la ruta de publicación demuestre instalable sea el artefacto publicado, no el workspace.
+- **Evidence:** **El artefacto publicado no es instalable, y lo que lo tapa es el workspace.** Descubierto al PROBAR el criterio de aceptación de GT-571 contra el registro en vez de asumirlo. `npm i @beyondnet/evolith-cli@1.2.0` en un directorio limpio instala, y entonces `evolith-cli --version` muere con `MODULE_NOT_FOUND` en `@beyondnet/evolith-core-domain/application/paths/rulesets-location` — un import de subruta profunda que el `@beyondnet/evolith-core-domain` publicado no expone. En este repositorio ese mismo import resuelve, porque el symlink del workspace apunta al árbol de fuentes y no a lo que se empaquetó. Toda comprobación que hacemos es por tanto ciega a esto: la suite del CLI (1382 tests), la suite e2e y el tester exploratorio corren dentro del workspace. 1 de 36 especificadores `@beyondnet/*` que importa el `dist` publicado no resuelve en una instalación limpia; `src/sdk/cli/scripts/check-install-smoke.mjs`, escrito durante la Ola 2, es lo que lo detecta. Es la misma clase que el hallazgo de la auditoría de madurez de que un verde local no es evidencia — aquí el mecanismo de ocultación son los workspaces de npm y no un `dist` rancio o un directorio en gitignore.
+- **Component:** `Evolith CLI` · **Criticality:** P0 · **Complexity:** M
+- **Provenance:** Ola 2, 2026-07-28. Extraído de GT-571 al probar su primer criterio de aceptación contra el registro publicado en vez de asumirlo, y volver refutado más duro de lo que afirmaba la fila.
+- **Acceptance criteria:**
+  - [ ] `npx @beyondnet/evolith-cli@latest --version` funciona en un contenedor sin acceso a este repositorio.
+  - [ ] Todo especificador `@beyondnet/*` que importe un `dist` publicado resuelve contra la dependencia PUBLICADA, verificado por `check-install-smoke.mjs` en CI.
+  - [ ] La ruta de publicación ejecuta esa comprobación contra el tarball empaquetado ANTES de publicar, para que un artefacto no instalable no pueda volver a llegar al registro.
 
 #### GT-624
 

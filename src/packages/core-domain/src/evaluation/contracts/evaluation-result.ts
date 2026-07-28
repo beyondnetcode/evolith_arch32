@@ -10,6 +10,7 @@
 import type { PhaseId } from '../../domain/sdlc/phase-id';
 import type { Verdict, VerdictReason } from '../../domain/verdict/verdict';
 import type { EvidenceSignal } from './quality-evidence';
+import type { RepositoryRevisionContext, RequesterContext } from './evaluation-context';
 
 /** Schema version of this contract (bumped only on incompatible changes). */
 export const EVALUATION_RESULT_SCHEMA_VERSION = '1.0.0';
@@ -292,6 +293,19 @@ export interface EvaluationResult {
     readonly policy?: string;
     readonly blueprint?: string;
   };
+
+  // --- Attribution echo (GT-586; additive, both optional) ---
+  /**
+   * The {@link RequesterContext} the context carried, echoed verbatim. Absent when
+   * the consumer declared none — the Core never infers an actor.
+   */
+  readonly requester?: RequesterContext;
+  /**
+   * The {@link RepositoryRevisionContext} the context carried, echoed verbatim.
+   * Absent when the consumer supplied none; the Core never derives a revision, so
+   * an absent value truthfully means "unknown" rather than "no revision".
+   */
+  readonly repositoryRevision?: RepositoryRevisionContext;
 
   readonly evaluatedAt: string; // ISO-8601 UTC
   readonly correlationId?: string;

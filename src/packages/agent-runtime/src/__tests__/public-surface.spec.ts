@@ -33,8 +33,15 @@ const ADAPTERS_SURFACE = [
   'FileMemoryAdapter',
   'FileSchedulerAdapter',
   'FileTrackerTraceAdapter',
+  // GT-593 — step journal / resumability. ADDITIVE to the GT-388 freeze.
+  'FileRunJournalAdapter',
+  'InMemoryRunJournalAdapter',
   'FsWorkspaceContextAdapter',
   'HarnessProcessAdapter',
+  // GT-613 — first IStructuralReviewer adapter. ADDITIVE to the GT-388 freeze.
+  'HEURISTIC_COVERED_STANDARDS',
+  'HEURISTIC_UNCOVERED_STANDARDS',
+  'HeuristicStructuralReviewer',
   'HermesAgentAdapter',
   'HermesChatBoxInteractionAdapter',
   'HttpCoreEvaluationAdapter',
@@ -48,6 +55,10 @@ const ADAPTERS_SURFACE = [
   'InMemoryTrackerTraceAdapter',
   'InProcessCoreEvaluationAdapter',
   'LocalSkillRegistryAdapter',
+  // GT-608 — manifest-derived skill catalogue. ADDITIVE to the GT-388 freeze.
+  'ManifestSkillRegistryAdapter',
+  'deriveSkillsFromManifest',
+  'intentsForCapability',
   'McpInteractionAdapter',
   'MockTrackerTraceAdapter',
   'NoopApprovalTransport',

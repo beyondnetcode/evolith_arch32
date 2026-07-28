@@ -8414,6 +8414,82 @@
         "ci-runner.mjs governance -> 17/17 exit 0 after the wave and its three repairs."
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-613",
+      "evidence": [
+        "src/packages/agent-runtime/src/adapters/review/heuristic-structural-reviewer.adapter.ts",
+        "src/packages/agent-runtime/src/adapters/review/heuristic-structural-reviewer.adapter.spec.ts"
+      ],
+      "validationCommands": [
+        "grep -rn \"implements IStructuralReviewer\" src -> 1 hit, not a stub (was 0).",
+        "agent-runtime jest -> 384/384; the adapter test fails without the adapter."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "caf5fb97",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-593",
+      "evidence": [
+        "src/packages/agent-runtime/src/domain/ports/run-journal.port.ts",
+        "src/packages/agent-runtime/src/adapters/journal/file-run-journal.adapter.ts",
+        "src/packages/agent-runtime/src/__tests__/run-journal-resume.spec.ts"
+      ],
+      "validationCommands": [
+        "Killed the Core mid-pipeline and re-submitted: a drifting harness is called once and grounding still cites the original corpus version after the corpus is emptied between attempts.",
+        "agent-runtime jest -> 384/384. Approvals and policy verdicts are deliberately NOT journaled and are re-decided each attempt, asserted by test."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "caf5fb97",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-598",
+      "evidence": [
+        "src/rulesets/standards/iso-5055-mapping.json",
+        "src/rulesets/standards/iso-5055-mapping.csv"
+      ],
+      "validationCommands": [
+        "381 corpus rules, each mapped to a 5055 weakness or marked no-equivalent WITH a reason; the test fails if any unmapped row lacks one.",
+        "138-weakness index extracted from OMG ATDM V2 tables; per-measure counts 74/74/18/31 match what CISQ publishes.",
+        "Adopted fraction stated against the REAL backlog: 9 of 60 outright, 8 partial. The gap premise (a large slice of 240 handlers) is refuted."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "caf5fb97",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-581",
+      "evidence": [
+        "src/packages/mcp-server/src/common/tool-output-schema.ts",
+        "src/packages/mcp-server/src/mcp/tool-registry.service.ts",
+        "src/packages/mcp-server/src/mcp/tool-output-contract.spec.ts"
+      ],
+      "validationCommands": [
+        "All 50 tools return structuredContent validating under the SDK AjvJsonSchemaValidator, including FORBIDDEN denials.",
+        "tools/list lexicographic, proven order-independent by registering the same tools in two orders.",
+        "mcp-server jest -> 432/432."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "caf5fb97",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-424",
+      "evidence": [
+        ".harness/scripts/ci/34-check-skill-registry-parity.mjs",
+        ".harness/scripts/ci/34-check-skill-registry-parity.test.mjs",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "34-check-skill-registry-parity -> exit 0; 9/9 executable capabilities routable (4 hand-bound, 5 synthesized), reported separately.",
+        "node --test 34-check-skill-registry-parity.test.mjs -> 15/15, including three negative fixtures: derivation absent, derivation uncalled, and a synthesis narrowed by one extra conjunct.",
+        "Wired into the governance-guards job in ci-cd.yml, so it is no longer inert."
+      ],
+      "closedAt": "2026-07-28",
+      "closureCommit": "caf5fb97",
+      "dependencyDisposition": "none"
     }
   ]
 }

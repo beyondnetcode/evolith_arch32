@@ -2,10 +2,14 @@
  * KindEvaluator — pluggable per-kind evaluator for the Core Evaluation Engine
  * (GT-379 / ADR-0101).
  *
- * The EvaluationOrchestrator always runs the pipeline (gate/artifact/rule/
- * compliance). Additional kinds (architecture, blueprint, topology, checkpoint,
- * deployment) are evaluated by registered KindEvaluators and merged into the
- * EvaluationResult. Concrete evaluators live in the surface/adapter layer (e.g.
+ * The EvaluationOrchestrator runs the pipeline (gate/artifact/rule/compliance)
+ * when the request names one of those kinds — since GT-614 it is no longer run
+ * unconditionally. Additional kinds (architecture, blueprint, topology, checkpoint,
+ * deployment, design, phase-artifacts) are evaluated by registered KindEvaluators
+ * and merged into the EvaluationResult. REGISTRATION IS NOW LOAD-BEARING: a kind a
+ * consumer requests with no evaluator registered is refused rather than silently
+ * dropped, so every surface must register the same set (BR-008 parity — see
+ * `createDefaultKindEvaluators`). Concrete evaluators live in the adapter layer (e.g.
  * core-api wraps ArchitectureDriftService); core-domain only defines the port,
  * so it stays decoupled from each engine's native types.
  */

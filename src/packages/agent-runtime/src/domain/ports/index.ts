@@ -15,3 +15,4 @@ export * from './assistant-invocation.port';
 export * from './knowledge.port';
 export * from './quality-signal-provider.port';
 export * from './structural-reviewer.port';
+export * from './run-journal.port';

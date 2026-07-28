@@ -98,7 +98,11 @@ export const DEFAULT_SKILLS: readonly SkillDescriptor[] = [
     // The canonical EvaluationKind for declared quality-signal Evidence is 'evidence'
     // (ADR-0111 / GT-533). Declaring it here keeps the kind routed by
     // buildEvaluationContext instead of being dropped to the 'gate' fallback, so the
-    // StructuralReviewProvider stays reachable when the IStructuralReviewer adapter lands.
+    // StructuralReviewProvider stays reachable. GT-613: the adapter has LANDED —
+    // `HeuristicStructuralReviewer` implements IStructuralReviewer in-process and
+    // deterministically. What is still missing is the runtime step that collects
+    // quality signals into `EvaluationContext.qualitySignals`; until it exists the
+    // provider is driven through `TenantQualitySignalRegistry` by its caller.
     kind: 'evaluation',
     evaluationKinds: ['evidence'],
     permissions: ['read:repo'],

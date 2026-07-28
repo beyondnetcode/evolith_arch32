@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://evolith.dev/schemas/board/debt-economics.schema.json",
+  "title": "Gap board debt economics (GT-599)",
+  "description": "SEI technical-debt item economics for a gap board row: principal (cost to repay, once) and interest (cost of not repaying, per period). Units are part of the schema, not a convention: principal is measured in engineer-hours; interest in engineer-hours per 30-day period. Generated from .harness/scripts/board/debt-economics.mjs — do not hand-edit.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "principal",
+    "interest",
+    "basis"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^(GT-\\d+|MT-A\\d+)$"
+    },
+    "principal": {
+      "$ref": "#/$defs/principal",
+      "description": "Cost to repay, once, in engineer-hours. Bands: XS=1-2h, S=2-8h, M=8-24h, L=24-80h, XL=80-240h. 1d = 8h."
+    },
+    "interest": {
+      "$ref": "#/$defs/interest",
+      "description": "Cost of NOT repaying, in engineer-hours per 30-day period. Bands: NONE=0-0h/30d, LOW=0.5-2h/30d, MED=2-8h/30d, HIGH=8-24h/30d, SEVERE=24-80h/30d."
+    },
+    "basis": {
+      "type": "string",
+      "enum": [
+        "atdm",
+        "sqale",
+        "estimate"
+      ],
+      "description": "atdm: OMG Automated Technical Debt Measure V2 v1.0 (2024-08), repair effort derived from ISO/IEC 5055 weakness occurrences | sqale: SQALE remediation-cost model (the method behind the technical-debt ratio) | estimate: human estimate, recorded as such"
+    },
+    "asOf": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO date the figures were last reviewed."
+    },
+    "source": {
+      "type": "string",
+      "description": "Where a derived figure came from (report path, tool run, analysis id)."
+    }
+  },
+  "$defs": {
+    "principal": {
+      "type": "string",
+      "unit": "engineer-hours",
+      "anyOf": [
+        {
+          "enum": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL"
+          ]
+        },
+        {
+          "pattern": "^\\d+(\\.\\d+)?\\s*(h|d)$"
+        }
+      ]
+    },
+    "interest": {
+      "type": "string",
+      "unit": "engineer-hours per 30-day period",
+      "anyOf": [
+        {
+          "enum": [
+            "NONE",
+            "LOW",
+            "MED",
+            "HIGH",
+            "SEVERE"
+          ]
+        },
+        {
+          "pattern": "^\\d+(\\.\\d+)?\\s*h\\s*/\\s*30d$"
+        }
+      ]
+    }
+  },
+  "$comment": "A bare hour figure is rejected for interest on purpose: an interest without a period is not an interest. The period is fixed at 30 days rather than \"a sprint\" so two rows stay comparable."
+}

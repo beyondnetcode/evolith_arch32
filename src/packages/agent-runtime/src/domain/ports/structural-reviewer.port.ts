@@ -10,7 +10,10 @@
  * (Hermes, a local model, a human) back the same rubric without changing callers.
  */
 
-import type { EvidenceFindingSeverity } from '@beyondnet/evolith-core-domain/evaluation/contracts';
+import type {
+  Determinism,
+  EvidenceFindingSeverity,
+} from '@beyondnet/evolith-core-domain/evaluation/contracts';
 
 import type { StructuralStandardId } from '../rubrics/structural-review-rubric';
 
@@ -40,8 +43,23 @@ export interface RawStructuralFinding {
   readonly location?: string;
 }
 
-/** A probabilistic (LLM/agent-backed) reviewer of the structural rubric. */
+/**
+ * A reviewer of the structural rubric.
+ *
+ * The seam was introduced for the PROBABILISTIC (LLM/agent-backed) case, which
+ * is why that is still the default. GT-613 added the first shipped adapter and
+ * it is deterministic ({@link HeuristicStructuralReviewer} measures rather than
+ * judges), so an implementation MAY declare its own determinism class and the
+ * provider will stamp that onto the Evidence instead of assuming. Declaring
+ * `deterministic` is a claim about the implementation: same input, same findings,
+ * no model and no network.
+ */
 export interface IStructuralReviewer {
   /** Judge the target against the seven structural standards; return raw findings. */
   review(input: StructuralReviewInput): Promise<readonly RawStructuralFinding[]>;
+  /**
+   * Determinism class of THIS implementation. Omitted ⇒ `probabilistic`, the
+   * fail-safe reading: an unlabelled reviewer must never be presented as fact.
+   */
+  readonly determinism?: Determinism;
 }

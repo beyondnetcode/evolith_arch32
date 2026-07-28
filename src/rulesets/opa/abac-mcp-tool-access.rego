@@ -31,6 +31,14 @@ architect_roles  := {"architect", "admin"}
 # coverage guard-test keeps the TS map in lockstep with the registered tool
 # surface; this rego is the OPA twin. If the two drift, OPA fail-closes governance
 # tools with ABAC-03 in production even though native ABAC allows them.
+#
+# GT-602: that is not hypothetical — it happened. Fifteen tools (the ADR catalog,
+# the pattern catalog, the scaffolding family, upgrade plan/apply and fixtures)
+# were registered in TypeScript and never added here, so an `architect` in
+# `production` got ABAC-03 + ABAC-01 from the compiled bundle for all fifteen and
+# `mcp-tool-dispatch.ts` (native AND opa) refused them. The parity is now enforced
+# mechanically by `abac-rego-parity.spec.ts` in the mcp-server package, which
+# parses THIS file and fails the build on any divergence in either direction.
 read_tools := {
   # primitives / legacy READ_TOOLS
   "evolith-ping",
@@ -51,6 +59,19 @@ read_tools := {
   "evolith-topology-list",
   "evolith-topology-get",
   "evolith-topology-recommend",
+  # canonical pattern catalog (PAT-NNNN records; no mutation)
+  # GT-602: absent from this set until 2026-07-28, so OPA answered ABAC-03 for
+  # them while native ABAC allowed them, and dispatch (native AND opa) forbade
+  # them outright.
+  "evolith-pattern-list",
+  "evolith-pattern-get",
+  "evolith-pattern-list-by-topology",
+  # ADR catalog (reads) — GT-602
+  "evolith-adr-list",
+  "evolith-adr-get",
+  "evolith-adr-matrix",
+  # upgrade planning: computes a plan, applies nothing — GT-602
+  "evolith-upgrade-plan",
   # moscow (reads)
   "evolith-moscow-load",
   "evolith-moscow-list",
@@ -97,7 +118,19 @@ write_tools := {
   "evolith-agent-run",
   # satellites (mutations)
   "evolith-satellite-create",
-  "evolith-satellite-adopt"
+  "evolith-satellite-adopt",
+  # ADR catalog (mutations) — GT-602
+  "evolith-adr-create",
+  "evolith-adr-update",
+  # scaffolding / generation: all of these write files into the working tree
+  # — GT-602
+  "evolith-docs-scaffold",
+  "evolith-scaffold",
+  "evolith-init-batch",
+  "evolith-sdlc-generate",
+  "evolith-fixtures",
+  # upgrade application (mutates pinned versions) — GT-602
+  "evolith-upgrade-apply"
 }
 
 deploy_tools := {

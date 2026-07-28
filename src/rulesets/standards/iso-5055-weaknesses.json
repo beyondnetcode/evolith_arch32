@@ -1,0 +1,1120 @@
+{
+  "$id": "https://evolith.dev/rulesets/standards/iso-5055-weaknesses.json",
+  "title": "ISO/IEC 5055:2021 weakness index (CWE ids by measure)",
+  "description": "The 138 CWE identifiers that constitute the four ISO/IEC 5055:2021 automated source code quality measures. Only CWE identifiers, measure membership and MITRE CWE names are recorded here; no text of the ISO standard is reproduced.",
+  "version": "1.0.0",
+  "standard": {
+    "id": "ISO/IEC 5055:2021",
+    "title": "Information technology - Software measurement - Software quality measurement - Automated source code quality measures",
+    "weaknessCount": 138
+  },
+  "provenance": {
+    "extractedFrom": "OMG Automated Technical Debt Measure, Version 2 (OMG document ptc/23-09-04), Tables 1-4",
+    "url": "https://www.omg.org/spec/ATDM2/1.0/Beta1/PDF",
+    "extractedOn": "2026-07-28",
+    "method": "PDF content streams decompressed and the CWE identifiers of Tables 1-4 (ASCSM / ASCRM / ASCPEM / ASCMM) parsed programmatically; the union is exactly 138, which matches the count published by CISQ.",
+    "descriptorNote": "Weakness names are MITRE CWE names. Names not in the hand-checked override set were normalised from the extracted table text and should be confirmed against cwe.mitre.org before being quoted."
+  },
+  "measureCounts": {
+    "Security": 74,
+    "Reliability": 74,
+    "Performance Efficiency": 18,
+    "Maintainability": 31
+  },
+  "measures": {
+    "Security": [
+      22,
+      23,
+      36,
+      77,
+      78,
+      79,
+      88,
+      89,
+      90,
+      91,
+      99,
+      119,
+      120,
+      123,
+      125,
+      129,
+      130,
+      131,
+      134,
+      194,
+      195,
+      196,
+      197,
+      252,
+      259,
+      321,
+      366,
+      369,
+      401,
+      404,
+      415,
+      416,
+      424,
+      434,
+      456,
+      457,
+      477,
+      480,
+      502,
+      543,
+      564,
+      567,
+      570,
+      571,
+      606,
+      611,
+      643,
+      652,
+      662,
+      665,
+      667,
+      672,
+      681,
+      682,
+      732,
+      772,
+      775,
+      778,
+      783,
+      786,
+      787,
+      788,
+      789,
+      798,
+      805,
+      820,
+      821,
+      822,
+      823,
+      824,
+      825,
+      835,
+      917,
+      1057
+    ],
+    "Reliability": [
+      119,
+      120,
+      123,
+      125,
+      130,
+      131,
+      170,
+      194,
+      195,
+      196,
+      197,
+      248,
+      252,
+      366,
+      369,
+      390,
+      391,
+      392,
+      394,
+      401,
+      404,
+      415,
+      416,
+      424,
+      456,
+      457,
+      459,
+      476,
+      480,
+      484,
+      543,
+      562,
+      567,
+      595,
+      597,
+      662,
+      665,
+      667,
+      672,
+      681,
+      682,
+      703,
+      704,
+      758,
+      764,
+      772,
+      775,
+      786,
+      787,
+      788,
+      805,
+      820,
+      821,
+      822,
+      823,
+      824,
+      825,
+      833,
+      835,
+      908,
+      1045,
+      1051,
+      1058,
+      1066,
+      1070,
+      1077,
+      1079,
+      1082,
+      1083,
+      1087,
+      1088,
+      1096,
+      1097,
+      1098
+    ],
+    "Performance Efficiency": [
+      401,
+      404,
+      424,
+      772,
+      775,
+      1042,
+      1043,
+      1046,
+      1049,
+      1050,
+      1057,
+      1060,
+      1067,
+      1072,
+      1073,
+      1089,
+      1091,
+      1094
+    ],
+    "Maintainability": [
+      120,
+      407,
+      478,
+      480,
+      484,
+      561,
+      570,
+      571,
+      783,
+      1041,
+      1045,
+      1047,
+      1048,
+      1049,
+      1051,
+      1052,
+      1054,
+      1055,
+      1062,
+      1064,
+      1074,
+      1075,
+      1079,
+      1080,
+      1084,
+      1085,
+      1086,
+      1087,
+      1090,
+      1095,
+      1121
+    ]
+  },
+  "weaknesses": {
+    "22": {
+      "name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+      "measures": [
+        "Security"
+      ]
+    },
+    "23": {
+      "name": "Relative Path Traversal",
+      "measures": [
+        "Security"
+      ]
+    },
+    "36": {
+      "name": "Absolute Path Traversal",
+      "measures": [
+        "Security"
+      ]
+    },
+    "77": {
+      "name": "Improper Neutralization of Special Elements used in a Command ('Command Injection')",
+      "measures": [
+        "Security"
+      ]
+    },
+    "78": {
+      "name": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+      "measures": [
+        "Security"
+      ]
+    },
+    "79": {
+      "name": "Improper Neutralizationof Input During Web Page Generati on (' Cross-site Scripting')",
+      "measures": [
+        "Security"
+      ]
+    },
+    "88": {
+      "name": "Argument Injection or Modification",
+      "measures": [
+        "Security"
+      ]
+    },
+    "89": {
+      "name": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+      "measures": [
+        "Security"
+      ]
+    },
+    "90": {
+      "name": "Improper Neutralizationof Special Elementsusedinan LDAP Query(' LDAP Injecti on ')",
+      "measures": [
+        "Security"
+      ]
+    },
+    "91": {
+      "name": "XML Injecti on (aka Blind X Path Injection)",
+      "measures": [
+        "Security"
+      ]
+    },
+    "99": {
+      "name": "Improper Control of Resource Identifiers ('Resource Injection')",
+      "measures": [
+        "Security"
+      ]
+    },
+    "119": {
+      "name": "Improper Restrictionof Operationswithinthe Boundsofa Memory Buffer",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "120": {
+      "name": "Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')",
+      "measures": [
+        "Reliability",
+        "Security",
+        "Maintainability"
+      ]
+    },
+    "123": {
+      "name": "Write-what-wherecondition",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "125": {
+      "name": "Out-of-bounds Read",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "129": {
+      "name": "Improper Validationof Array Index",
+      "measures": [
+        "Security"
+      ]
+    },
+    "130": {
+      "name": "Improper Handlingof Length Parameter Inconsistency",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "131": {
+      "name": "Incorrect Calculationof Buffer Size",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "134": {
+      "name": "Useof Externally Controlled Format String",
+      "measures": [
+        "Security"
+      ]
+    },
+    "170": {
+      "name": "Improper Null Termination",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "194": {
+      "name": "Unexpected Sign Extension",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "195": {
+      "name": "Signedto Unsigned Conversion Error",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "196": {
+      "name": "Unsignedto Signed Conversion Error",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "197": {
+      "name": "Numeric Truncation Error",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "248": {
+      "name": "Uncaught Exception",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "252": {
+      "name": "Unchecked Return Value",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "259": {
+      "name": "Useof Hard-coded Password",
+      "measures": [
+        "Security"
+      ]
+    },
+    "321": {
+      "name": "Useof Hard-coded Cryptographic Key",
+      "measures": [
+        "Security"
+      ]
+    },
+    "366": {
+      "name": "Race Conditionwithina Thread",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "369": {
+      "name": "Divide By Zero",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "390": {
+      "name": "Detection of Error Condition Without Action",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "391": {
+      "name": "Unchecked Error Condition",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "392": {
+      "name": "Missing Reportof Error Condition",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "394": {
+      "name": "Unexpected Status Codeor Return Value",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "401": {
+      "name": "Improper Releaseof Memory Before Removing Last Reference(' Memory Leak')",
+      "measures": [
+        "Reliability",
+        "Security",
+        "Performance Efficiency"
+      ]
+    },
+    "404": {
+      "name": "Improper Resource Shutdownor Release",
+      "measures": [
+        "Reliability",
+        "Security",
+        "Performance Efficiency"
+      ]
+    },
+    "407": {
+      "name": "Algorithmic Complexity",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "415": {
+      "name": "Double Free",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "416": {
+      "name": "Use After Free",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "424": {
+      "name": "Improper Protectionof Alternate Path",
+      "measures": [
+        "Reliability",
+        "Security",
+        "Performance Efficiency"
+      ]
+    },
+    "434": {
+      "name": "Unrestricted Uploadof Filewith Dangerous Type",
+      "measures": [
+        "Security"
+      ]
+    },
+    "456": {
+      "name": "Missing Initializationofa Variable",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "457": {
+      "name": "Useofuninitializedvariable",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "459": {
+      "name": "Incomplete Clean-up",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "476": {
+      "name": "NULL Pointer Dereference",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "477": {
+      "name": "Useof Obsolete Function",
+      "measures": [
+        "Security"
+      ]
+    },
+    "478": {
+      "name": "Missing Default Casein Switch Statement",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "480": {
+      "name": "Useof Incorrect Operator",
+      "measures": [
+        "Reliability",
+        "Security",
+        "Maintainability"
+      ]
+    },
+    "484": {
+      "name": "Omitted Break Statementin Switch",
+      "measures": [
+        "Reliability",
+        "Maintainability"
+      ]
+    },
+    "502": {
+      "name": "Deserializationof Untrusted Data",
+      "measures": [
+        "Security"
+      ]
+    },
+    "543": {
+      "name": "Useof Singleton Pattern Without Synchronizationina Multithreaded Context",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "561": {
+      "name": "Dead Code",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "562": {
+      "name": "Returnof Stack Variable Address",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "564": {
+      "name": "SQL Injection:Hibernate",
+      "measures": [
+        "Security"
+      ]
+    },
+    "567": {
+      "name": "Unsynchronized Accessto Shared Dataina Multithreaded Context",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "570": {
+      "name": "Expression is Always False",
+      "measures": [
+        "Security",
+        "Maintainability"
+      ]
+    },
+    "571": {
+      "name": "Expression is Always True",
+      "measures": [
+        "Security",
+        "Maintainability"
+      ]
+    },
+    "595": {
+      "name": "Comparisonof Object References Insteadof Object Contents",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "597": {
+      "name": "Useof Wrong Operatorin String Comparison",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "606": {
+      "name": "Unchecked Inputfor Loop Condition",
+      "measures": [
+        "Security"
+      ]
+    },
+    "611": {
+      "name": "Improper Restrictionof XML External Entity Reference(' XXE')",
+      "measures": [
+        "Security"
+      ]
+    },
+    "643": {
+      "name": "Improper Neutralizationof Datawithin X Path Expressions(' X Path Injecti on ')",
+      "measures": [
+        "Security"
+      ]
+    },
+    "652": {
+      "name": "Improper Neutralizationof Datawithin X Query Expressions(' X Query Injecti on ')",
+      "measures": [
+        "Security"
+      ]
+    },
+    "662": {
+      "name": "Improper Synchronization",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "665": {
+      "name": "Improper Initialization",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "667": {
+      "name": "Improper Locking",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "672": {
+      "name": "Operationona Resourceafter Expirationor Release",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "681": {
+      "name": "Incorrect Conversionbetween Numeric Types",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "682": {
+      "name": "Incorrect Calculation",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "703": {
+      "name": "Improper Check or Handling of Exceptional Conditions",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "704": {
+      "name": "Incorrect Type Conversionor Cast",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "732": {
+      "name": "Incorrect Permission Assignment for Critical Resource",
+      "measures": [
+        "Security"
+      ]
+    },
+    "758": {
+      "name": "Relianceon Undefined,Unspecified,or Implementation-Defined Behavior",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "764": {
+      "name": "Multiple Locksofa Critical Resource",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "772": {
+      "name": "Missing Release of Resource after Effective Lifetime",
+      "measures": [
+        "Reliability",
+        "Security",
+        "Performance Efficiency"
+      ]
+    },
+    "775": {
+      "name": "Missing Releaseof File Descriptoror Handleafter Effective Lifetime",
+      "measures": [
+        "Reliability",
+        "Security",
+        "Performance Efficiency"
+      ]
+    },
+    "778": {
+      "name": "Insufficient Logging",
+      "measures": [
+        "Security"
+      ]
+    },
+    "783": {
+      "name": "Operator Precedence Logic Error",
+      "measures": [
+        "Security",
+        "Maintainability"
+      ]
+    },
+    "786": {
+      "name": "Accessof Memory Location Before Startof Buffer",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "787": {
+      "name": "Out-of-bounds Write",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "788": {
+      "name": "Accessof Memory Location After Endof Buffer",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "789": {
+      "name": "Uncontrolled Memory Allocation",
+      "measures": [
+        "Security"
+      ]
+    },
+    "798": {
+      "name": "Use of Hard-coded Credentials",
+      "measures": [
+        "Security"
+      ]
+    },
+    "805": {
+      "name": "Buffer Accesswith Incorrect Length Value",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "820": {
+      "name": "Missing Synchronization",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "821": {
+      "name": "Incorrect Synchronization",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "822": {
+      "name": "Untrusted Pointer Dereference",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "823": {
+      "name": "Useof Out-of-range Pointer Offset",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "824": {
+      "name": "Accessof Uninitialized Pointer",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "825": {
+      "name": "Expired Pointer Dereference",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "833": {
+      "name": "Deadlock",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "835": {
+      "name": "Loop with Unreachable Exit Condition ('Infinite Loop')",
+      "measures": [
+        "Reliability",
+        "Security"
+      ]
+    },
+    "908": {
+      "name": "Use of Uninitialized Resource",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "917": {
+      "name": "Improper Neutralizationof Special Elementsusedinan Expression Language Statement(' Expression Language Injecti on ')",
+      "measures": [
+        "Security"
+      ]
+    },
+    "1041": {
+      "name": "Use of Redundant Code (Copy-Paste)",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1042": {
+      "name": "Static Member Data Element outside of a Singleton Class Element",
+      "measures": [
+        "Performance Efficiency"
+      ]
+    },
+    "1043": {
+      "name": "Data Element Aggregatingan Excessively Large Numberof Non-Primitive Elements",
+      "measures": [
+        "Performance Efficiency"
+      ]
+    },
+    "1045": {
+      "name": "Parent Classwitha Virtual Destructoranda Child Classwithouta Virtual Destructor",
+      "measures": [
+        "Reliability",
+        "Maintainability"
+      ]
+    },
+    "1046": {
+      "name": "Creationof Immutable Text Using String Concatenation",
+      "measures": [
+        "Performance Efficiency"
+      ]
+    },
+    "1047": {
+      "name": "Modules with Circular Dependencies",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1048": {
+      "name": "Invokable Control Element with Large Number of Outward Calls (Excessive Coupling / Fan-out)",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1049": {
+      "name": "Excessive Data Query Operations in a Large Data Table",
+      "measures": [
+        "Performance Efficiency",
+        "Maintainability"
+      ]
+    },
+    "1050": {
+      "name": "Excessive Platform Resource Consumption within a Loop",
+      "measures": [
+        "Performance Efficiency"
+      ]
+    },
+    "1051": {
+      "name": "Initialization with Hard-Coded Network Resource Configuration Data",
+      "measures": [
+        "Reliability",
+        "Maintainability"
+      ]
+    },
+    "1052": {
+      "name": "Excessive Use of Hard-Coded Literals in Initialization",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1054": {
+      "name": "Invocation of a Control Element at an Unnecessarily Deep Horizontal Layer (Layer-skipping Call)",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1055": {
+      "name": "Multiple Inheritance from Concrete Classes",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1057": {
+      "name": "Data Access Operations Outside of Expected Data Manager Component",
+      "measures": [
+        "Security",
+        "Performance Efficiency"
+      ]
+    },
+    "1058": {
+      "name": "Invokable Control Elementin Multi-Thread Contextwithnon-Final Static Storableor Member Element",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "1060": {
+      "name": "Excessive Numberof Inefficient Server-Side Data Accesses",
+      "measures": [
+        "Performance Efficiency"
+      ]
+    },
+    "1062": {
+      "name": "Parent Class Element with References to Child Class",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1064": {
+      "name": "Invokable Control Element with Signature Containing an Excessive Number of Parameters",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1066": {
+      "name": "Missing Serialization Control Element",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "1067": {
+      "name": "Excessive Execution of Sequential Searches of Data Resource",
+      "measures": [
+        "Performance Efficiency"
+      ]
+    },
+    "1070": {
+      "name": "Serializable Data Element Containingnon-Serializable Item Elements",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "1072": {
+      "name": "Data Resource Accesswithout Useof Connection Pooling",
+      "measures": [
+        "Performance Efficiency"
+      ]
+    },
+    "1073": {
+      "name": "Non-SQL Invokable Control Elementwith Excessive Numberof Data Re-source Accesses",
+      "measures": [
+        "Performance Efficiency"
+      ]
+    },
+    "1074": {
+      "name": "Class with Excessively Deep Inheritance",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1075": {
+      "name": "Unconditional Control Flow Transferoutsideof Switch Block",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1077": {
+      "name": "Floating Point Comparisonwith Incorrect Operator",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "1079": {
+      "name": "Parent Classwithout Virtual Destructor Method",
+      "measures": [
+        "Reliability",
+        "Maintainability"
+      ]
+    },
+    "1080": {
+      "name": "Source Code File with Excessive Number of Lines of Code",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1082": {
+      "name": "Class Instance Self Destruction Control Element",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "1083": {
+      "name": "Data Accessfrom Outside Designated Data Manager Component",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "1084": {
+      "name": "Invokable Control Element with Excessive File or Data Access Operations",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1085": {
+      "name": "Invokable Control Element with Excessive Volume of Commented-out Code",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1086": {
+      "name": "Class with Excessive Number of Child Classes",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1087": {
+      "name": "Classwith Virtual Methodwithouta Virtual Destructor",
+      "measures": [
+        "Reliability",
+        "Maintainability"
+      ]
+    },
+    "1088": {
+      "name": "Synchronous Accessof Remote Resourcewithout Timeout",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "1089": {
+      "name": "Large Data Tablewith Excessive Numberof Indices",
+      "measures": [
+        "Performance Efficiency"
+      ]
+    },
+    "1090": {
+      "name": "Method Containing Access of a Member Element from Another Class",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1091": {
+      "name": "Useof Objectwithout Invoking Destructor Method",
+      "measures": [
+        "Performance Efficiency"
+      ]
+    },
+    "1094": {
+      "name": "Excessive Index Range Scanfora Data Resource6.5Automated Source Code Maintainability Measure(",
+      "measures": [
+        "Performance Efficiency"
+      ]
+    },
+    "1095": {
+      "name": "Loop Condition Value Updatewithinthe Loop",
+      "measures": [
+        "Maintainability"
+      ]
+    },
+    "1096": {
+      "name": "Singleton Class Instance Creationwithout Proper Lockingor Synchronization",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "1097": {
+      "name": "Persistent Storable Data Elementwithout Associated Comparison Control Element",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "1098": {
+      "name": "Data Elementcontaining Pointer Itemwithout Proper Copy Control Element6.4Automated Source Code Performance Efficiency Measure(",
+      "measures": [
+        "Reliability"
+      ]
+    },
+    "1121": {
+      "name": "Excessive McCabe Cyclomatic Complexity",
+      "measures": [
+        "Maintainability"
+      ]
+    }
+  }
+}

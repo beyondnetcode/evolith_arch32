@@ -8,3 +8,4 @@ export * from './knowledge-opportunity-detector';
 export * from './knowledge-dedup';
 export * from './automation-candidate';
 export * from './structural-quality-gate';
+export * from './run-journal';

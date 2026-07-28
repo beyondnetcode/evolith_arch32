@@ -41,8 +41,8 @@ function stripCodeBlocks(content) {
 /**
  * GT-620 — the debt this heuristic found on the day it was switched on.
  *
- * Nine documents sit in the wrong language slot. It was nineteen when the
- * heuristic was switched on: six documents have been translated, and FOUR
+ * Eight documents sit in the wrong language slot. It was nineteen when the
+ * heuristic was switched on: seven documents have been translated, and FOUR
  * were the heuristic's own fault — `ADR_COVERAGE.es.md` and friends are Spanish
  * documents whose bodies are tables of English ADR titles, and counting a row of
  * proper nouns as prose made correct files look mislabelled. They are BASELINED,
@@ -65,7 +65,6 @@ const LANGUAGE_BASELINE = new Set([
   'reference/core/architecture/adrs/core/0054-database-design-normalization-standards.es.md',
   'reference/core/architecture/adrs/core/0056-enterprise-naming-design-conventions.es.md',
   'reference/core/interfaces/using-the-mcp.md',
-  'reference/core/interfaces/using-the-rest-api.md',
   'reference/core/sdlc/04-artifact-templates/ballpark-estimation-template.md',
   'reference/core/sdlc/04-artifact-templates/discovery-canvas-template.md',
   'reference/harness/scripts-taxonomy.es.md',

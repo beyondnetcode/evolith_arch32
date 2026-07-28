@@ -59,7 +59,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Open P1 | 19 |
 | Open P2 | 18 |
 | Total closure | 91.7% |
-| Closure evidence records | 550 |
+| Closure evidence records | 555 |
 | Recorded readiness | 4 PASS |
 
 | Area | Open | P0 | P1 | First IDs |

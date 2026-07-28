@@ -8623,6 +8623,23 @@
         "Row evidence corrected: 17/49/9 as registered vs 19/53/11 measured; the diagnostic’s \"two interaction adapters with no callers\" is six."
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-601",
+      "closedAt": "2026-07-28",
+      "closureCommit": "8144e79a",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/canonical-result.mapper.ts",
+        "src/packages/core-domain/src/evaluation/canonical-result.mapper.spec.ts",
+        "src/packages/core-domain/src/evaluation/sarif-exporter.spec.ts"
+      ],
+      "validationCommands": [
+        "canonical-result.mapper.spec.ts + sarif-exporter.spec.ts -> 40/40.",
+        "MUTATION: reverting rulesExecuted to the unconditional empty array turns 10 tests RED across the mapper and the SARIF exporter.",
+        "AC2 covered on BOTH paths: resolveRuleEngine attributes .rego to opa and non-rego to native, with a rule-level override winning.",
+        "AC3: sarif-exporter derives evaluatedRules from rulesExecuted, deduped and sorted, asserted non-empty."
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

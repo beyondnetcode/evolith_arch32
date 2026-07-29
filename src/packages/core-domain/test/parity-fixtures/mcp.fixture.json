@@ -10,11 +10,11 @@
   "scenarios": {
     "compliant": {
       "filesystem": {
-        "existing": ["/core/.harness/evidence", "/core/sdk/cli/src/core/mcp/server.ts"],
+        "existing": ["/core/.harness/evidence", "/core/src/packages/mcp-server/src/mcp/mcp-server.service.ts"],
         "dirs": { "/core/.harness/evidence": ["mcp-smoke.json"] },
         "files": {
           "/core/.harness/evidence/mcp-smoke.json": "{\"status\":\"passed\",\"results\":{\"initialize\":{},\"tools/list\":{},\"resources/list\":{}}}",
-          "/core/sdk/cli/src/core/mcp/server.ts": "const apiKey = process.env.MCP_API_KEY;"
+          "/core/src/packages/mcp-server/src/mcp/mcp-server.service.ts": "const apiKey = process.env.MCP_API_KEY;"
         }
       },
       "context": { "satellitePath": "/sat", "corePath": "/core" },
@@ -57,11 +57,11 @@
     },
     "no-auth-on-server": {
       "filesystem": {
-        "existing": ["/core/.harness/evidence", "/core/sdk/cli/src/core/mcp/server.ts"],
+        "existing": ["/core/.harness/evidence", "/core/src/packages/mcp-server/src/mcp/mcp-server.service.ts"],
         "dirs": { "/core/.harness/evidence": ["mcp-smoke.json"] },
         "files": {
           "/core/.harness/evidence/mcp-smoke.json": "{\"status\":\"passed\",\"results\":{\"initialize\":{},\"tools/list\":{},\"resources/list\":{}}}",
-          "/core/sdk/cli/src/core/mcp/server.ts": "const open = true;"
+          "/core/src/packages/mcp-server/src/mcp/mcp-server.service.ts": "const open = true;"
         }
       },
       "context": { "satellitePath": "/sat", "corePath": "/core" },

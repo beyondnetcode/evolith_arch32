@@ -8,7 +8,7 @@ export class OpaInputBuilder {
   public async build(ctx: WorkspaceEvaluationContext): Promise<unknown> {
     const satelliteWorkflows = await this.readWorkflows(ctx.satellitePath);
     const coreEvidence = await this.readEvidence(ctx.corePath);
-    const mcpServerContent = await this.safeReadFile(path.join(ctx.corePath, 'sdk', 'cli', 'src', 'core', 'mcp', 'server.ts'));
+    const mcpServerContent = await this.safeReadFile(path.join(ctx.corePath, 'src', 'packages', 'mcp-server', 'src', 'mcp', 'mcp-server.service.ts'));
     const agenticAi = await this.readAgenticAiConfiguration(ctx.satellitePath);
     const serverless = await this.readServerlessConfiguration(ctx.satellitePath);
     const eventDriven = await this.readEventDrivenConfiguration(ctx.satellitePath);
@@ -48,11 +48,16 @@ export class OpaInputBuilder {
         adrs: await this.listAdrs(ctx.corePath),
         evidence: coreEvidence,
         cli: {
-          hasMainJs: await this.fs.exists(path.join(ctx.corePath, 'sdk', 'cli', 'dist', 'main.js')),
+          hasMainJs: await this.fs.exists(path.join(ctx.corePath, 'src', 'sdk', 'cli', 'dist', 'main.js')),
           hasTests: await this.hasCompiledTests(ctx.corePath),
-          hasReadme: await this.fs.exists(path.join(ctx.corePath, 'sdk', 'cli', 'README.md')),
-          hasArchitectureMd: await this.fs.exists(path.join(ctx.corePath, 'sdk', 'cli', 'ARCHITECTURE.md')),
-          hasPackageLock: await this.fs.exists(path.join(ctx.corePath, 'sdk', 'cli', 'package-lock.json')),
+          hasReadme: await this.fs.exists(path.join(ctx.corePath, 'src', 'sdk', 'cli', 'README.md')),
+          hasArchitectureMd: await this.fs.exists(path.join(ctx.corePath, 'src', 'sdk', 'cli', 'ARCHITECTURE.md')),
+          // GT-632: this asked for a per-package lockfile. This repo is npm
+          // WORKSPACES — there is exactly one lockfile, at the root — so the
+          // check could only ever be false. The root one is already probed
+          // above; asserting a file the layout forbids is not a stricter rule,
+          // it is a rule nobody can satisfy.
+          hasPackageLock: await this.fs.exists(path.join(ctx.corePath, 'package-lock.json')),
           mcpServerSource: mcpServerContent
         }
       }
@@ -258,7 +263,7 @@ export class OpaInputBuilder {
   }
 
   private async hasCompiledTests(root: string): Promise<boolean> {
-    const distDir = path.join(root, 'sdk', 'cli', 'dist');
+    const distDir = path.join(root, 'src', 'sdk', 'cli', 'dist');
     if (!await this.fs.exists(distDir)) return false;
     const files = await this.listFilesRecursive(distDir);
     return files.some(f => f.includes('.spec.') || f.includes('.test.'));

@@ -76,7 +76,7 @@ describe('CLI-RR handler deep debug', () => {
   const ctx: WorkspaceEvaluationContext = { satellitePath: '/sat', corePath: '/core' };
 
   it('CLI-RR-02 with dist/main.js', async () => {
-    const distDir = path.join('/core', 'sdk', 'cli', 'dist');
+    const distDir = path.join('/core', 'src', 'sdk', 'cli', 'dist');
     const fsMock = createMockFileSystem({
       existing: [distDir, path.join(distDir, 'main.js'), path.join(distDir, 'x.spec.js')],
       dirs: { [distDir]: ['main.js', 'x.spec.js'] },

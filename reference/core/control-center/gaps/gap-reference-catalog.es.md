@@ -7862,7 +7862,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Provenance:** Encontrado el 2026-07-29 investigando un `abac-rego-parity.spec.ts` en rojo, durante el trabajo del generador de GT-602.
 - **Acceptance criteria:**
   - [x] El evaluador carga la política compilada en un checkout limpio bajo `NODE_ENV=production`, verificado por un test que falla sin el arreglo.
-  - [ ] Las once construcciones `path.join(…, 'sdk', 'cli', …)` restantes en `src/**` se corrigen o se demuestra que son intencionadas.
+  - [x] Las once construcciones `path.join(…, 'sdk', 'cli', …)` restantes en `src/**` se corrigen o se demuestra que son intencionadas.
   - [ ] Un guard caza una ruta CONSTRUIDA que no existe, no solo una literal — el hueco que `40-validate-path-literals` no ve.
 
 #### GT-631

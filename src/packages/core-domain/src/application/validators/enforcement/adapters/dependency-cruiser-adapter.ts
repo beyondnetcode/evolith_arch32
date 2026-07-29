@@ -85,6 +85,8 @@ export interface DependencyCruiserOptions {
   readonly configPath?: string;
   /** Targets to scan (default `['src']`). */
   readonly targets?: readonly string[];
+  /** External config reference, when the config is not a file path in the workspace. */
+  readonly configRef?: string;
 }
 
 /** Build the `depcruise --output-type json ...` invocation for a workspace. */
@@ -105,6 +107,19 @@ export function createDependencyCruiserAdapter(runner: IProcessRunner, options: 
     runtime: 'node',
     buildSpec: (ctx) => buildDependencyCruiserSpec(ctx, options),
     parse: (result: ProcessResult) => parseDependencyCruiserReport(result.stdout),
+    // GT-632: without a config compiled from the routed rules (see PolicyCompiler
+    // `toDependencyCruiserConfig`), depcruise runs the SATELLITE's own config and
+    // reports the satellite's own rule names. Those never match the routed
+    // `toolRuleId`, so every routed rule would come back `passed` on evidence that
+    // has nothing to do with it. Refuse instead, and let the composite degrade to
+    // the native module-graph engine.
+    // With zero routed rules there is nothing to certify and therefore no false
+    // pass to prevent — the adapter is then just a parser over a report.
+    certificationGap: (ctx) =>
+      options.configPath || options.configRef || ctx.rules.length === 0
+        ? undefined
+        : `no compiled config was materialized for ${ctx.rules.length} routed rule(s) ` +
+          `(${ctx.rules.map((r) => r.id).join(', ')}), so the tool would be evaluating a different ruleset`,
   };
   return new ShellEnforcerAdapter(config, runner);
 }

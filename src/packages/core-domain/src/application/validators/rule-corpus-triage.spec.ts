@@ -10,7 +10,7 @@
  * suite says so.
  *
  * The two figures worth remembering:
- *  - the handler backlog is **52 rules**, not 240;
+ *  - the handler backlog is **48 rules**, not 240;
  *  - **129 rules are documentation** — 126 auto-generated ADR-conformance
  *    placeholders that say in their own text that no check was wired, plus 3
  *    board-judgement rules — and 91 of those are flagged `blocking: true`.
@@ -102,6 +102,13 @@ function loadCorpus(): NormalizedRule[] {
         description: String(raw['description'] ?? raw['statement'] ?? ''),
         blocking: Boolean(raw['blocking'] ?? (rawSeverity === 'MUST' || rawSeverity === 'MUST NOT')),
         validationQuery: raw['validationQuery'] ? String(raw['validationQuery']) : undefined,
+        // GT-632: `enforce` was missing here for the same reason it was missing
+        // from DiskRulesetRepository — and while it was missing, this suite could
+        // not see the four rules that carry a machine-readable check, so it
+        // measured them as handler backlog. A loader that drops a field the
+        // handlers dispatch on does not "load the corpus exactly as
+        // DiskRulesetRepository does"; it measures a different corpus.
+        enforce: raw['enforce'] as NormalizedRule['enforce'],
         sourceFile: path.relative(REPO_ROOT, file),
       });
     }
@@ -180,16 +187,21 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     // every run: these are the numbers that turn "240 handlers to write" into a
     // costed decision, so they are pinned rather than merely printed.
     //
-    // 139 -> 147 on 2026-07-29: the eight config-shaped rules GT-595's triage
-    // identified as the cheapest real closures now have handlers —
-    // ED-R04/R05/R06 and DAM-R05 (topology flags, claimed by ID because their
-    // bare categories are shared across topologies) and MTN-05, GIT-08,
-    // SEC-RL-01, SEC-RL-02 (config assertions in GovernanceRuleHandler).
-    // `unimplemented-native` drops by the same eight; nothing else moved.
+    // 139 -> 151 on 2026-07-29, from TWO independent closures that landed
+    // together and touch DISJOINT rule sets, so their effects add:
+    //   +8  the config-shaped rules (GT-595) — ED-R04/R05/R06 and DAM-R05
+    //       (topology flags, claimed by ID because their bare categories are
+    //       shared across topologies) and MTN-05, GIT-08, SEC-RL-01, SEC-RL-02
+    //       (config assertions in GovernanceRuleHandler);
+    //   +4  the module-boundary rules (GT-632) — HXA-01/02/04/05 each authored a
+    //       complete `from`/`to` module-graph clause that nothing read, because
+    //       `enforce` was dropped at normalization. It is now carried, and
+    //       `ModuleBoundaryRuleHandler` evaluates it.
+    // `unimplemented-native` drops by the same twelve; nothing else moved.
     expect(SUMMARY.byClass).toEqual({
-      'native-handler': 147,
+      'native-handler': 151,
       'documentation-only': 136,
-      'unimplemented-native': 52,
+      'unimplemented-native': 48,
       'needs-external-system': 20,
       'needs-runtime': 17,
       underspecified: 14,
@@ -246,10 +258,11 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
 });
 
 describe('GT-595 · the handler slice that landed', () => {
-  it('shrinks the unclaimed corpus from 240 rules to 106', () => {
-    // 114 -> 106 on 2026-07-29 with the eight config-shaped closures.
+  it('shrinks the unclaimed corpus from 240 rules to 102', () => {
+    // 114 -> 102 on 2026-07-29: the eight config-shaped closures (GT-595) plus
+    // the four module-boundary closures (GT-632). Disjoint sets, so -8 and -4.
     const unclaimed = CORPUS.filter(r => !claims(r));
-    expect(unclaimed).toHaveLength(106);
+    expect(unclaimed).toHaveLength(102);
 
     // ...and every one of the 133 ADR-conformance rules is now claimed.
     // 126 -> 133 on 2026-07-28: the committed corpus was seven rulesets behind
@@ -260,10 +273,26 @@ describe('GT-595 · the handler slice that landed', () => {
     expect(adrConformance.every(claims)).toBe(true);
   });
 
-  it('leaves 77 unclaimed blocking rules, down from 176', () => {
-    // 176 -> 85 (GT-595 handler slice) -> 77 (the eight config-shaped closures).
+  it('leaves 73 unclaimed blocking rules, down from 176', () => {
+    // 176 -> 85 (GT-595 handler slice) -> 73, from two closures that landed
+    // together over DISJOINT rule sets: -8 config-shaped (GT-595) and -4
+    // module-boundary (GT-632). Every one of the twelve is `blocking: true`,
+    // which is why the whole of each closure lands on this figure.
     const unclaimedBlocking = CORPUS.filter(r => !claims(r) && r.blocking);
-    expect(unclaimedBlocking).toHaveLength(77);
+    expect(unclaimedBlocking).toHaveLength(73);
+  });
+
+  it('claims each of the four module-boundary rules closed on 2026-07-29', () => {
+    // GT-632. Named rather than counted, for the same reason as the eight
+    // below: the count alone cannot tell a closure from a rule that left the
+    // corpus. HXA-03 is the control — same ruleset, no `enforce` block, so it
+    // must stay unclaimed.
+    const byId = new Map(CORPUS.map(r => [r.id, r]));
+    for (const id of ['HXA-01', 'HXA-02', 'HXA-04', 'HXA-05']) {
+      expect(byId.get(id)).toBeDefined();
+      expect(claims(byId.get(id)!)).toBe(true);
+    }
+    expect(claims(byId.get('HXA-03')!)).toBe(false);
   });
 
   it('claims each of the eight config-shaped rules closed on 2026-07-29', () => {
@@ -310,7 +339,7 @@ describe('GT-595 AC2 · the corpus rules that still declare `blocking` and canno
     expect(offenders.map(o => o.ruleId)).not.toContain('CORE-0111-01');
   });
 
-  it('enumerates the 77 that remain, by what each one would cost to close', () => {
+  it('enumerates the 73 that remain, by what each one would cost to close', () => {
     // NOT a tolerance and NOT a suppression list: every one of these fails a run
     // today. It is pinned so the number can only move deliberately, and so a new
     // rule cannot quietly join it.
@@ -322,12 +351,14 @@ describe('GT-595 AC2 · the corpus rules that still declare `blocking` and canno
     //                            validationQuery at all, so unlike the generated
     //                            placeholders the fix is a governance decision.
     //
-    // 85 -> 77 on 2026-07-29. All eight came out of `unimplemented-native`
-    // (48 -> 40), which is what that class was always supposed to mean: a
-    // handler was all that was missing. The other three classes are untouched —
-    // no adapter was written and no rule was re-authored.
-    expect(offenders).toHaveLength(77);
-    expect(countOf('unimplemented-native')).toBe(40);
+    // 85 -> 73 on 2026-07-29. All twelve came out of `unimplemented-native`
+    // (48 -> 36), which is what that class was always supposed to mean: a
+    // handler was all that was missing. Eight were config-shaped (GT-595) and
+    // four were module-boundary clauses the corpus already carried and the
+    // engine never read (GT-632). The other three classes are untouched — no
+    // adapter was written and no rule was re-authored.
+    expect(offenders).toHaveLength(73);
+    expect(countOf('unimplemented-native')).toBe(36);
     expect(countOf('needs-external-system')).toBe(14);
     expect(countOf('needs-runtime')).toBe(12);
     expect(countOf('underspecified')).toBe(11);
@@ -343,10 +374,17 @@ describe('GT-595 · the remaining backlog is costed, not a lump', () => {
   const of = (klass: RuleEvaluability) => CLASSIFIED.filter(c => c.evaluability === klass).map(c => c.ruleId);
 
   it('separates handler work from adapter work from authoring work', () => {
-    // MTN-05 left this list on 2026-07-29 (GovernanceRuleHandler now evaluates
-    // it). OCB-02 stays, and deliberately: see the vacuity note below.
-    expect(of('unimplemented-native')).toEqual(expect.arrayContaining(['SEC-INJ-01', 'HXA-01', 'OCB-02']));
+    // Two rules left this list on 2026-07-29 and are asserted absent rather
+    // than silently dropped:
+    //  - MTN-05 (GT-595) — GovernanceRuleHandler now evaluates it;
+    //  - HXA-01 (GT-632) — it is `native-handler` now. HXA-03, from the same
+    //    ruleset, takes its place: genuine handler backlog, because
+    //    "Infrastructure implements Core ports" is not a module-graph clause
+    //    and the rule authors no `enforce` block.
+    // OCB-02 stays, and deliberately: see the vacuity note below.
+    expect(of('unimplemented-native')).toEqual(expect.arrayContaining(['SEC-INJ-01', 'HXA-03', 'OCB-02']));
     expect(of('unimplemented-native')).not.toContain('MTN-05');
+    expect(of('unimplemented-native')).not.toContain('HXA-01');
     expect(of('needs-external-system')).toEqual(expect.arrayContaining(['GIT-02', 'MTN-02', 'OBS-EVD-03']));
     expect(of('needs-runtime')).toEqual(expect.arrayContaining(['OBS-EVD-01', 'TPY-05', 'ABAC-01']));
     expect(of('underspecified')).toEqual(expect.arrayContaining(['EC-SEC-01', 'KI-R01', 'INH-03']));

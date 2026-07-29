@@ -5,11 +5,11 @@ ACL-03,acl/anti-corruption-layer.rules.json,architecture-decision,,,none,no,nati
 ACL-04,acl/anti-corruption-layer.rules.json,architecture-decision,,,none,no,native-handler
 ACL-05,acl/anti-corruption-layer.rules.json,architecture-decision,,,none,no,native-handler
 ACL-06,acl/anti-corruption-layer.rules.json,architecture-decision,,,none,no,native-handler
-HXA-01,adr/adr-0002-hexagonal-architecture.rules.json,code-structure,CWE-1054,Maintainability,partial,yes,unimplemented-native
-HXA-02,adr/adr-0002-hexagonal-architecture.rules.json,code-structure,CWE-1054,Maintainability,partial,yes,unimplemented-native
+HXA-01,adr/adr-0002-hexagonal-architecture.rules.json,code-structure,CWE-1054,Maintainability,partial,yes,native-handler
+HXA-02,adr/adr-0002-hexagonal-architecture.rules.json,code-structure,CWE-1054,Maintainability,partial,yes,native-handler
 HXA-03,adr/adr-0002-hexagonal-architecture.rules.json,code-structure,CWE-1054,Maintainability,partial,yes,unimplemented-native
-HXA-04,adr/adr-0002-hexagonal-architecture.rules.json,code-structure,CWE-1054 CWE-1047,Maintainability,direct,yes,unimplemented-native
-HXA-05,adr/adr-0002-hexagonal-architecture.rules.json,code-structure,,,none,partial,unimplemented-native
+HXA-04,adr/adr-0002-hexagonal-architecture.rules.json,code-structure,CWE-1054 CWE-1047,Maintainability,direct,yes,native-handler
+HXA-05,adr/adr-0002-hexagonal-architecture.rules.json,code-structure,,,none,partial,native-handler
 HXA-06,adr/adr-0002-hexagonal-architecture.rules.json,code-structure,,,none,no,unimplemented-native
 HXA-07,adr/adr-0002-hexagonal-architecture.rules.json,code-structure,,,none,no,needs-runtime
 CICD-01,adr/adr-0005-cicd-quality-gates.rules.json,process,,,none,partial,unimplemented-native
@@ -23,7 +23,7 @@ MTN-01,adr/adr-0010-multi-tenancy.rules.json,architecture-decision,CWE-1057,Perf
 MTN-02,adr/adr-0010-multi-tenancy.rules.json,architecture-decision,CWE-1057,Performance Efficiency Security,partial,no,needs-external-system
 MTN-03,adr/adr-0010-multi-tenancy.rules.json,architecture-decision,,,none,no,unimplemented-native
 MTN-04,adr/adr-0010-multi-tenancy.rules.json,architecture-decision,CWE-732,Security,partial,no,needs-runtime
-MTN-05,adr/adr-0010-multi-tenancy.rules.json,architecture-decision,,,none,no,unimplemented-native
+MTN-05,adr/adr-0010-multi-tenancy.rules.json,architecture-decision,,,none,no,native-handler
 MTN-06,adr/adr-0010-multi-tenancy.rules.json,architecture-decision,,,none,no,needs-runtime
 MTN-07,adr/adr-0010-multi-tenancy.rules.json,architecture-decision,,,none,no,unimplemented-native
 MTN-08,adr/adr-0010-multi-tenancy.rules.json,architecture-decision,,,none,no,unimplemented-native
@@ -56,7 +56,7 @@ GIT-04,adr/adr-0050-gitflow-branching.rules.json,process,,,none,yes,needs-extern
 GIT-05,adr/adr-0050-gitflow-branching.rules.json,process,,,none,no,needs-external-system
 GIT-06,adr/adr-0050-gitflow-branching.rules.json,process,,,none,no,needs-external-system
 GIT-07,adr/adr-0050-gitflow-branching.rules.json,process,,,none,no,needs-external-system
-GIT-08,adr/adr-0050-gitflow-branching.rules.json,process,,,none,yes,unimplemented-native
+GIT-08,adr/adr-0050-gitflow-branching.rules.json,process,,,none,yes,native-handler
 GIT-09,adr/adr-0050-gitflow-branching.rules.json,process,,,none,no,needs-external-system
 GIT-10,adr/adr-0050-gitflow-branching.rules.json,process,,,none,no,needs-external-system
 CORE-0001-01,adr/generated/adr-0001-monorepo-orchestration-principle.rules.json,architecture-decision,,,none,no,documentation-only
@@ -146,13 +146,13 @@ CORE-0113-01,adr/generated/adr-0113-node-js-platform-lighthouse-apache-2-0-as-th
 CORE-0115-01,adr/generated/adr-0115-emergent-knowledge-axis-knowledge-originated-by-applying-the.rules.json,architecture-decision,,,none,no,documentation-only
 CORE-0116-01,adr/generated/adr-0116-canonical-finding-contract-and-an-executable-advisory-author.rules.json,architecture-decision,,,none,no,documentation-only
 CORE-0117-01,adr/generated/adr-0117-bilingual-parity-applies-to-authored-sources-not-generated-p.rules.json,architecture-decision,,,none,no,documentation-only
-CORE-0118-01,adr/generated/adr-0118-the-core-hub-has-its-own-root-taxonomy-distinct-from-satelli.rules.json,architecture-decision,,,none,no,not-in-snapshot
-CORE-0119-01,adr/generated/adr-0119-api-security-configuration-hardening.rules.json,architecture-decision,,,none,no,not-in-snapshot
-CORE-0120-01,adr/generated/adr-0120-ssrf-prevention-standard.rules.json,architecture-decision,,,none,no,not-in-snapshot
-CORE-0121-01,adr/generated/adr-0121-input-validation-and-sanitization-standard.rules.json,architecture-decision,,,none,no,not-in-snapshot
-CORE-0122-01,adr/generated/adr-0122-shell-execution-safety-standard.rules.json,architecture-decision,,,none,no,not-in-snapshot
-CORE-0123-01,adr/generated/adr-0123-timing-safe-comparison-standard.rules.json,architecture-decision,,,none,no,not-in-snapshot
-CORE-0124-01,adr/generated/adr-0124-credential-and-secret-management-standard.rules.json,architecture-decision,,,none,no,not-in-snapshot
+CORE-0118-01,adr/generated/adr-0118-the-core-hub-has-its-own-root-taxonomy-distinct-from-satelli.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0119-01,adr/generated/adr-0119-api-security-configuration-hardening.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0120-01,adr/generated/adr-0120-ssrf-prevention-standard.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0121-01,adr/generated/adr-0121-input-validation-and-sanitization-standard.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0122-01,adr/generated/adr-0122-shell-execution-safety-standard.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0123-01,adr/generated/adr-0123-timing-safe-comparison-standard.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0124-01,adr/generated/adr-0124-credential-and-secret-management-standard.rules.json,architecture-decision,,,none,no,documentation-only
 AI-0001-01,adr/generated/adr-ai-augmented-0001-harness-engineering-for-ai-augmented-development.rules.json,architecture-decision,,,none,no,documentation-only
 AI-0002-01,adr/generated/adr-ai-augmented-0002-mcp-integration-protocol-for-agent-tool-invocation.rules.json,architecture-decision,,,none,no,documentation-only
 AI-0003-01,adr/generated/adr-ai-augmented-0003-model-selection-governance-for-ai-augmented-workflows.rules.json,architecture-decision,,,none,no,documentation-only
@@ -196,9 +196,9 @@ CLI-PAR-01,cli/core-parity.rules.json,platform-surface,,,none,no,unimplemented-n
 CLI-PAR-02,cli/core-parity.rules.json,platform-surface,,,none,no,unimplemented-native
 CLI-PAR-03,cli/core-parity.rules.json,platform-surface,,,none,no,needs-runtime
 CLI-PAR-04,cli/core-parity.rules.json,platform-surface,,,none,no,unimplemented-native
-CLI-EXIT-01,cli/exit-code-taxonomy.rules.json,platform-surface,,,none,no,not-in-snapshot
-CLI-EXIT-02,cli/exit-code-taxonomy.rules.json,platform-surface,,,none,no,not-in-snapshot
-CLI-EXIT-03,cli/exit-code-taxonomy.rules.json,platform-surface,,,none,no,not-in-snapshot
+CLI-EXIT-01,cli/exit-code-taxonomy.rules.json,platform-surface,,,none,no,native-handler
+CLI-EXIT-02,cli/exit-code-taxonomy.rules.json,platform-surface,,,none,no,native-handler
+CLI-EXIT-03,cli/exit-code-taxonomy.rules.json,platform-surface,,,none,no,native-handler
 CLI-RR-01,cli/release-readiness.rules.json,platform-surface,,,none,no,native-handler
 CLI-RR-02,cli/release-readiness.rules.json,platform-surface,,,none,no,native-handler
 CLI-RR-03,cli/release-readiness.rules.json,platform-surface,,,none,no,native-handler
@@ -319,8 +319,8 @@ SEC-INJ-01,security/injection-prevention.rules.json,code-structure,CWE-78 CWE-77
 SEC-INJ-02,security/injection-prevention.rules.json,code-structure,CWE-77 CWE-88,Security,partial,partial,unimplemented-native
 SEC-PATH-01,security/path-containment.rules.json,code-structure,CWE-22 CWE-23 CWE-36,Security,direct,yes,unimplemented-native
 SEC-PATH-02,security/path-containment.rules.json,code-structure,CWE-22,Security,direct,yes,unimplemented-native
-SEC-RL-01,security/rate-limiting.rules.json,code-structure,,,none,partial,unimplemented-native
-SEC-RL-02,security/rate-limiting.rules.json,code-structure,CWE-789,Security,partial,partial,unimplemented-native
+SEC-RL-01,security/rate-limiting.rules.json,code-structure,,,none,partial,native-handler
+SEC-RL-02,security/rate-limiting.rules.json,code-structure,CWE-789,Security,partial,partial,native-handler
 SEC-RL-03,security/rate-limiting.rules.json,code-structure,,,none,no,unimplemented-native
 SEC-TIMING-01,security/timing-safe-comparison.rules.json,code-structure,,,none,yes,unimplemented-native
 SEC-TIMING-02,security/timing-safe-comparison.rules.json,code-structure,,,none,partial,unimplemented-native
@@ -337,7 +337,7 @@ DAM-R01,topologies/data-mesh/data-mesh.rules.json,topology,,,none,no,native-hand
 DAM-R02,topologies/data-mesh/data-mesh.rules.json,topology,,,none,no,native-handler
 DAM-R03,topologies/data-mesh/data-mesh.rules.json,topology,,,none,no,native-handler
 DAM-R04,topologies/data-mesh/data-mesh.rules.json,topology,,,none,no,needs-external-system
-DAM-R05,topologies/data-mesh/data-mesh.rules.json,topology,,,none,no,unimplemented-native
+DAM-R05,topologies/data-mesh/data-mesh.rules.json,topology,,,none,no,native-handler
 DAM-R06,topologies/data-mesh/data-mesh.rules.json,topology,,,none,no,needs-external-system
 DAM-R07,topologies/data-mesh/data-mesh.rules.json,topology,,,none,no,native-handler
 DAM-R08,topologies/data-mesh/data-mesh.rules.json,topology,,,none,no,unimplemented-native
@@ -350,9 +350,9 @@ EC-SEC-02,topologies/edge-computing/edge-computing.rules.json,topology,,,none,no
 ED-R01,topologies/event-driven/event-driven.rules.json,topology,,,none,no,native-handler
 ED-R02,topologies/event-driven/event-driven.rules.json,topology,,,none,no,native-handler
 ED-R03,topologies/event-driven/event-driven.rules.json,topology,,,none,no,native-handler
-ED-R04,topologies/event-driven/event-driven.rules.json,topology,,,none,no,unimplemented-native
-ED-R05,topologies/event-driven/event-driven.rules.json,topology,,,none,no,unimplemented-native
-ED-R06,topologies/event-driven/event-driven.rules.json,topology,,,none,no,unimplemented-native
+ED-R04,topologies/event-driven/event-driven.rules.json,topology,,,none,no,native-handler
+ED-R05,topologies/event-driven/event-driven.rules.json,topology,,,none,no,native-handler
+ED-R06,topologies/event-driven/event-driven.rules.json,topology,,,none,no,native-handler
 ED-R07,topologies/event-driven/event-driven.rules.json,topology,,,none,no,unimplemented-native
 ED-R08,topologies/event-driven/event-driven.rules.json,topology,,,none,no,native-handler
 ED-R09,topologies/event-driven/event-driven.rules.json,topology,,,none,no,unimplemented-native

@@ -8828,6 +8828,31 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "TWO deliberate non-adoptions are recorded as part of the closure, not deferred silently. (1) dependency-cruiser was NOT adopted for the module-boundary rules: the Core is a stateless engine that reads satellites through an overlay filesystem a subprocess cannot see, and the tool's config matches node_modules/, so an UNINSTALLED satellite would yield zero violations and PASS four blocking rules. A false pass is worse than the skip it would replace. (2) OCB-02 was NOT closed: no artifact anywhere carries an `availability` marker, so the rule quantifies over the empty set and can only pass; that is recorded as three executable tests instead of prose. The residual unclaimed-blocking corpus stands at 73 and is pinned."
+    },
+    {
+      "id": "GT-633",
+      "closedAt": "2026-07-29",
+      "closureCommit": "78e9b092",
+      "evidence": [
+        "src/rulesets/standards/native-evaluability-snapshot.json",
+        "src/rulesets/standards/iso-5055-mapping.test.mjs",
+        "src/rulesets/standards/build-iso-5055-mapping.mjs",
+        ".harness/scripts/ci/46-validate-derived-artifact-order.mjs",
+        ".harness/scripts/ci/46-validate-derived-artifact-order.test.mjs",
+        ".github/workflows/docs.yml",
+        "reference/core/control-center/gaps/gap-reference-catalog.md"
+      ],
+      "validationCommands": [
+        "THE DEFECT, stated as the failure class: the guard's expected value was a copy of its actual value. iso-5055-mapping.test.mjs asserted the snapshot's six class counts against six numbers typed into the test -- the same six literals native-evaluability-snapshot.json already contained -- so it passed for as long as the file was unchanged, whatever Core actually pinned. It reported an agreement it never checked.",
+        "SECOND failure class, and the reason the first one was expensive: build-iso-5055-mapping.mjs stamps `nativeEvaluability` onto EVERY row of the ISO/IEC 5055 mapping from that snapshot (388 rows after the recapture, 381 before), so a single stale class is laundered into a derived artifact five times the size of its input and overstates the GT-598 handler backlog.",
+        "jest rule-corpus-triage.spec.ts -> the committed snapshot is asserted against a FRESHLY COMPUTED triage, counts and per-rule class, in both directions. This is the real guard: the only place with the dependencies to recompute the truth. Negative-tested by reverting documentation-only to 129, which goes red.",
+        "node --test src/rulesets/standards/iso-5055-mapping.test.mjs -> runs in the documentation job, which has no node_modules, so it reads Core's pinned counts OUT of the spec that pins them instead of retyping them; a missing or reshaped literal THROWS, because failing to find the source of truth must never read as agreement with it. Negative-tested by building the mapping from a stale snapshot, which goes red on the stamp assertion.",
+        "node src/rulesets/standards/capture-native-evaluability-snapshot.mjs --check -> the end-to-end re-derivation; runs Core's real triage through ts-node rather than reimplementing the classification, since a second implementation here would be the second source of truth the fix removes. Recaptured: documentation-only 129 -> 136, corpus 379 -> 386, mapping 381 -> 388 rows, backlog unchanged at 60.",
+        "node .harness/scripts/ci/46-validate-derived-artifact-order.mjs -> the recapture->rebuild order is declared as DATA, not prose: the two standards links sit between the ABAC link and the maturity links, so rebuilding the mapping before recapturing the snapshot is now a guard failure rather than tribal knowledge (GT-630).",
+        "node --test .harness/scripts/ci/46-validate-derived-artifact-order.test.mjs -> 8/8 with the chain at 5 links / 7 artifacts, including the byte-identical-restore test extended to cover the three new standards artifacts."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The fix itself is commit 78e9b092 and is NOT in this branch: capture-native-evaluability-snapshot.mjs and src/packages/core-domain/test/rule-corpus-triage.ts exist only there, which is why they are not listed as evidence paths -- an evidence path that does not resolve is a hard error, and citing them here would be a claim this checkout cannot back. What lands here is the registration plus the two chain links the originating session was blocked from writing (S-16). CONSEQUENCE, stated rather than discovered in CI: until 78e9b092 lands, 46-validate-derived-artifact-order fails with `declared producer does not exist`, exactly as designed. This commit must merge with or after it."
     }
   ]
 }

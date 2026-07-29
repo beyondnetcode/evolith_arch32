@@ -119,13 +119,30 @@ function isCycleRule(rule: CompilableRule, block: EnforceBlock): boolean {
   return /cycle|circular|acyclic/.test(haystack);
 }
 
-/** Categories dependency-cruiser can express as a module-graph boundary rule. */
-const DEPCRUISE_BOUNDARY_CATEGORIES = new Set([
+/**
+ * Categories expressible as a module-graph boundary rule ("no import from X to Y").
+ *
+ * Exported (GT-632) because it is now the single definition shared by BOTH halves
+ * of the seam: the compiler uses it to decide what it can lower to a
+ * dependency-cruiser `forbidden` fragment, and `ModuleBoundaryRuleHandler` uses it
+ * to decide what the native AST engine can decide without the external tool. Two
+ * separate lists would drift, and a drift here means a rule either double-runs or
+ * silently runs nowhere.
+ *
+ * Note what is NOT here: `testing`. HXA-07 carries a from/to clause too, but the
+ * rule it states is "domain tests run in under 50ms", of which the import clause is
+ * only half. Claiming it would let the engine report `passed` on a rule whose main
+ * assertion was never measured.
+ */
+export const BOUNDARY_RULE_CATEGORIES: ReadonlySet<string> = new Set([
   'layer-structure',
   'dependency-direction',
   'boundary',
   'aop-isolation',
 ]);
+
+/** @deprecated Use {@link BOUNDARY_RULE_CATEGORIES}; kept as the compiler-local alias. */
+const DEPCRUISE_BOUNDARY_CATEGORIES = BOUNDARY_RULE_CATEGORIES;
 
 /** Outcome of a single tool compiler: either a native fragment or a fallback. */
 type ToolCompileResult =

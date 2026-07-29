@@ -102,6 +102,13 @@ function loadCorpus(): NormalizedRule[] {
         description: String(raw['description'] ?? raw['statement'] ?? ''),
         blocking: Boolean(raw['blocking'] ?? (rawSeverity === 'MUST' || rawSeverity === 'MUST NOT')),
         validationQuery: raw['validationQuery'] ? String(raw['validationQuery']) : undefined,
+        // GT-632: `enforce` was missing here for the same reason it was missing
+        // from DiskRulesetRepository — and while it was missing, this suite could
+        // not see the four rules that carry a machine-readable check, so it
+        // measured them as handler backlog. A loader that drops a field the
+        // handlers dispatch on does not "load the corpus exactly as
+        // DiskRulesetRepository does"; it measures a different corpus.
+        enforce: raw['enforce'] as NormalizedRule['enforce'],
         sourceFile: path.relative(REPO_ROOT, file),
       });
     }
@@ -179,10 +186,14 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     // Measured 2026-07-28 against 379 rules in 167 ruleset files. Recomputed on
     // every run: these are the numbers that turn "240 handlers to write" into a
     // costed decision, so they are pinned rather than merely printed.
+    // GT-632 moved four rules from `unimplemented-native` to `native-handler`:
+    // HXA-01/02/04/05 each authored a complete `from`/`to` module-graph clause
+    // that nothing read, because `enforce` was dropped at normalization. It is
+    // now carried, and `ModuleBoundaryRuleHandler` evaluates it.
     expect(SUMMARY.byClass).toEqual({
-      'native-handler': 139,
+      'native-handler': 143,
       'documentation-only': 136,
-      'unimplemented-native': 60,
+      'unimplemented-native': 56,
       'needs-external-system': 20,
       'needs-runtime': 17,
       underspecified: 14,
@@ -239,9 +250,10 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
 });
 
 describe('GT-595 · the handler slice that landed', () => {
-  it('shrinks the unclaimed corpus from 240 rules to 114', () => {
+  it('shrinks the unclaimed corpus from 240 rules to 110', () => {
+    // 114 -> 110 (GT-632): the four HXA boundary rules.
     const unclaimed = CORPUS.filter(r => !claims(r));
-    expect(unclaimed).toHaveLength(114);
+    expect(unclaimed).toHaveLength(110);
 
     // ...and every one of the 133 ADR-conformance rules is now claimed.
     // 126 -> 133 on 2026-07-28: the committed corpus was seven rulesets behind
@@ -252,9 +264,11 @@ describe('GT-595 · the handler slice that landed', () => {
     expect(adrConformance.every(claims)).toBe(true);
   });
 
-  it('leaves 85 unclaimed blocking rules, down from 176', () => {
+  it('leaves 81 unclaimed blocking rules, down from 176', () => {
+    // 85 -> 81 (GT-632): HXA-01, HXA-02, HXA-04 and HXA-05 are all `blocking:
+    // true`, and all four are now claimed and decided.
     const unclaimedBlocking = CORPUS.filter(r => !claims(r) && r.blocking);
-    expect(unclaimedBlocking).toHaveLength(85);
+    expect(unclaimedBlocking).toHaveLength(81);
   });
 
   it('does not pretend the ADR-conformance rules were EVALUATED', () => {
@@ -283,7 +297,7 @@ describe('GT-595 AC2 · the corpus rules that still declare `blocking` and canno
     expect(offenders.map(o => o.ruleId)).not.toContain('CORE-0111-01');
   });
 
-  it('enumerates the 85 that remain, by what each one would cost to close', () => {
+  it('enumerates the 81 that remain, by what each one would cost to close', () => {
     // NOT a tolerance and NOT a suppression list: every one of these fails a run
     // today. It is pinned so the number can only move deliberately, and so a new
     // rule cannot quietly join it.
@@ -294,8 +308,11 @@ describe('GT-595 AC2 · the corpus rules that still declare `blocking` and canno
     //                            declared these blocking and gave them no
     //                            validationQuery at all, so unlike the generated
     //                            placeholders the fix is a governance decision.
-    expect(offenders).toHaveLength(85);
-    expect(countOf('unimplemented-native')).toBe(48);
+    // 85 -> 81 (GT-632), entirely out of `unimplemented-native` (48 -> 44): the
+    // four HXA boundary rules were never external-system or runtime work, they
+    // were a check the corpus already carried and the engine never read.
+    expect(offenders).toHaveLength(81);
+    expect(countOf('unimplemented-native')).toBe(44);
     expect(countOf('needs-external-system')).toBe(14);
     expect(countOf('needs-runtime')).toBe(12);
     expect(countOf('underspecified')).toBe(11);
@@ -311,7 +328,11 @@ describe('GT-595 · the remaining backlog is costed, not a lump', () => {
   const of = (klass: RuleEvaluability) => CLASSIFIED.filter(c => c.evaluability === klass).map(c => c.ruleId);
 
   it('separates handler work from adapter work from authoring work', () => {
-    expect(of('unimplemented-native')).toEqual(expect.arrayContaining(['SEC-INJ-01', 'HXA-01', 'MTN-05', 'OCB-02']));
+    // HXA-01 left this list under GT-632 (it is `native-handler` now). HXA-03,
+    // from the same ruleset, takes its place: it is genuine handler backlog —
+    // "Infrastructure implements Core ports" is not a module-graph clause and
+    // the rule authors no `enforce` block.
+    expect(of('unimplemented-native')).toEqual(expect.arrayContaining(['SEC-INJ-01', 'HXA-03', 'MTN-05', 'OCB-02']));
     expect(of('needs-external-system')).toEqual(expect.arrayContaining(['GIT-02', 'MTN-02', 'OBS-EVD-03']));
     expect(of('needs-runtime')).toEqual(expect.arrayContaining(['OBS-EVD-01', 'TPY-05', 'ABAC-01']));
     expect(of('underspecified')).toEqual(expect.arrayContaining(['EC-SEC-01', 'KI-R01', 'INH-03']));

@@ -1,6 +1,6 @@
 {
   "name": "@beyondnet/evolith-mcp",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Evolith MCP Gateway — NestJS-based Model Context Protocol server for AI agents. Supports stdio and SSE transports.",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",

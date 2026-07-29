@@ -367,7 +367,7 @@ export class UserRepository {
 
   describe('validate with architecture analysis', () => {
     it('should validate architecture with --arch flag', async () => {
-      const result = await runCli(['validate', '--satellite', testRepoPath, '--architecture', '--arch-level', 'F1']);
+      const result = await runCli(['validate', '--satellite', testRepoPath, '--arch']);
 
       // GT-580: 0 pass, 2 blocked verdict.
       expect([0, 2]).toContain(result.exitCode);

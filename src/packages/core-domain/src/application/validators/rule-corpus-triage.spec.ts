@@ -145,6 +145,98 @@ const CLASSIFIED: ClassifiedRule[] = CORPUS.map(rule => {
 
 const SUMMARY = summarizeEvaluability(CLASSIFIED);
 
+// ---------------------------------------------------------------------------
+// The capture that src/rulesets/standards consumes
+// ---------------------------------------------------------------------------
+
+/**
+ * `src/rulesets` owns no dependency on this package, so the per-rule triage is
+ * CAPTURED there as JSON and `build-iso-5055-mapping.mjs` reads the capture.
+ *
+ * A capture is worth its bytes only if something recomputes it, and until now
+ * nothing did. The snapshot asserted in its own `validation` field that it
+ * reproduced the counts pinned above, and the only guard over it — the test
+ * named "the evaluability snapshot still matches the class counts pinned by
+ * Core", in `iso-5055-mapping.test.mjs` — compared the snapshot against a
+ * second hand-typed copy of the snapshot's own numbers. So Core moved
+ * 139 -> 151, the file stayed at 139, and every suite stayed green while the
+ * published handler backlog was overstated by twelve rules.
+ *
+ * The fix is to stop hand-typing the capture. It is RENDERED here, from the
+ * same `CLASSIFIED` array every assertion above measures, and pinned
+ * byte-for-byte — the `--check` shape `build-iso-5055-mapping.mjs` already
+ * uses for its own outputs. Recapture after a deliberate triage change:
+ *
+ *   UPDATE_EVALUABILITY_SNAPSHOT=1 npx jest src/application/validators/rule-corpus-triage.spec.ts
+ */
+const SNAPSHOT_FILE = path.join(REPO_ROOT, 'src', 'rulesets', 'standards', 'native-evaluability-snapshot.json');
+
+/** Bumped when the document SHAPE changes, not when the measured counts move. */
+const SNAPSHOT_VERSION = '1.1.0';
+const SNAPSHOT_CAPTURED_ON = '2026-07-29';
+
+/** One reading order for the six classes, shared by `counts` and `validation`. */
+const CLASS_ORDER: readonly RuleEvaluability[] = [
+  'native-handler',
+  'documentation-only',
+  'unimplemented-native',
+  'needs-external-system',
+  'needs-runtime',
+  'underspecified',
+];
+
+/** The snapshot document, as bytes, straight from the live triage. */
+function renderSnapshot(): string {
+  const counts: Record<string, number> = {};
+  for (const klass of CLASS_ORDER) counts[klass] = SUMMARY.byClass[klass];
+
+  const classes: Record<string, RuleEvaluability> = {};
+  for (const c of CLASSIFIED) classes[c.ruleId] = c.evaluability;
+
+  const doc = {
+    $id: 'https://evolith.dev/rulesets/standards/native-evaluability-snapshot.json',
+    title: 'Native-engine evaluability class per rule (snapshot)',
+    description:
+      'Per-rule evaluability class as computed by the Core native evaluator triage. This is a GENERATED CAPTURE, not the source of truth: the authority is src/packages/core-domain/src/application/validators/rule-evaluability.ts and the handler set registered in native-evaluator.ts. It is recorded here so the ISO/IEC 5055 mapping can be scoped to the real handler backlog without src/rulesets depending on a package it does not own. Do not hand-edit — regenerate.',
+    version: SNAPSHOT_VERSION,
+    capturedOn: SNAPSHOT_CAPTURED_ON,
+    capturedFrom: [
+      'src/packages/core-domain/src/application/validators/rule-evaluability.ts (RULE_TRIAGE, classifyRule, ADR_CONFORMANCE_CATEGORY)',
+      'src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts (registered handler set)',
+      'src/packages/core-domain/src/application/validators/evaluators/handlers/**/*.ts (canHandle predicates)',
+      'src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts (corpus loader, renderer and byte-for-byte pin)',
+    ],
+    regenerateWith:
+      'UPDATE_EVALUABILITY_SNAPSHOT=1 npx jest src/application/validators/rule-corpus-triage.spec.ts (from src/packages/core-domain)',
+    validation: `Rendered by rule-corpus-triage.spec.ts from the live triage and pinned there byte-for-byte, so a divergence between this file and Core is a failing test rather than silent drift (corpus ${SUMMARY.total}; ${CLASS_ORDER.map(k => `${k} ${SUMMARY.byClass[k]}`).join(', ')}).`,
+    counts,
+    classes,
+  };
+
+  return JSON.stringify(doc, null, 2) + '\n';
+}
+
+describe('GT-595 · the capture consumed by src/rulesets/standards', () => {
+  it('renders one class per rule, losing no id to a key collision', () => {
+    // `classes` is keyed by rule id alone, so two rules sharing an id in
+    // different files would silently collapse into one entry and understate
+    // every count downstream of it.
+    const rendered = JSON.parse(renderSnapshot()) as {
+      counts: Record<string, number>;
+      classes: Record<string, string>;
+    };
+    expect(Object.keys(rendered.classes)).toHaveLength(CORPUS.length);
+    expect(Object.values(rendered.counts).reduce((a, b) => a + b, 0)).toBe(CORPUS.length);
+  });
+
+  it('keeps native-evaluability-snapshot.json byte-identical to a fresh capture', () => {
+    const fresh = renderSnapshot();
+    if (process.env.UPDATE_EVALUABILITY_SNAPSHOT) fs.writeFileSync(SNAPSHOT_FILE, fresh);
+
+    expect(fs.readFileSync(SNAPSHOT_FILE, 'utf8')).toBe(fresh);
+  });
+});
+
 describe('GT-595 · the corpus is fully classified', () => {
   it('loads a corpus of the expected size (guards the measurement itself)', () => {
     // If this moves, every number below moved with it — re-triage before editing.

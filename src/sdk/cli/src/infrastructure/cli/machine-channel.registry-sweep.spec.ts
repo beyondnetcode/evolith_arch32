@@ -43,7 +43,7 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import { CommandFactory } from 'nest-commander';
 import { Commander } from 'nest-commander/src/constants';
-import { CLI_EXIT_CODES, CLI_EXIT_CODE_VALUES } from './exit-codes';
+import { CLI_EXIT_CODES, CLI_EXIT_CODE_VALUES, exitCodeForErrorCode } from './exit-codes';
 
 const CLI_ROOT = path.resolve(__dirname, '..', '..', '..');
 const REPO_ROOT = path.resolve(CLI_ROOT, '..', '..', '..');
@@ -235,14 +235,24 @@ describe('GT-580 · every `--format json` command in the registry pipes cleanly'
     expect(offenders).toEqual([]);
   });
 
-  it('exits `0` iff the envelope says `success: true` — never a taxonomy member merely', () => {
+  it('the envelope and the exit code agree, for every one of them', () => {
     // Membership in the taxonomy is necessary but not sufficient: a command
-    // that exits 0 with `success: false` (or a non-zero code with `success:
-    // true`) still hands a consumer branching on the exit code the wrong
-    // verdict, and the "member of the taxonomy" assertion above cannot see it
-    // because 0 and 1 and 2 and 3 are all valid members. This asserts the two
-    // facts the envelope and the exit code each claim actually agree.
-    const offenders: Array<{ command: string; status: number | null; success: unknown }> = [];
+    // that exits 0 with `success: false` still hands a consumer branching on
+    // the exit code the wrong verdict, and the "member of the taxonomy"
+    // assertion above cannot see it because 0 is a valid member. But
+    // `success: true` does NOT imply exit 0 — `validate`/`evaluate` legitimately
+    // pair a successful, well-formed result with exit 2 when the VERDICT
+    // itself blocks (`validate.command.ts` emits `createSuccessEnvelope` then
+    // separately `exitWith(CLI_EXIT_CODES.BLOCKED)`): the tool did not fail,
+    // it did its job and reported a blocking verdict. So the rule is:
+    //   success: true  → exit is OK or BLOCKED (never a TOOL_FAILURE/INVALID_INPUT
+    //                     that success itself denies happened)
+    //   success: false → exit is never OK, and where the envelope names an
+    //                     ADR-0073 `error.code`, the exit must match what
+    //                     `exitCodeForErrorCode` — the taxonomy's own mapping,
+    //                     also used by `BaseEvolithCommand.handleError` — says
+    //                     that code means.
+    const offenders: Array<{ command: string; status: number | null; success: unknown; errorCode?: unknown }> = [];
     for (const run of runs) {
       let envelope: unknown;
       try {
@@ -251,10 +261,19 @@ describe('GT-580 · every `--format json` command in the registry pipes cleanly'
         continue; // already reported by the "writes exactly one JSON document" assertion
       }
       if (envelope === null || typeof envelope !== 'object' || !('success' in envelope)) continue;
-      const success = (envelope as { success: unknown }).success;
-      const exitsOk = run.status === CLI_EXIT_CODES.OK;
-      if (success !== exitsOk) {
-        offenders.push({ command: run.command, status: run.status, success });
+      const { success } = envelope as { success: unknown };
+      const status = run.status;
+
+      if (success === true) {
+        if (status !== CLI_EXIT_CODES.OK && status !== CLI_EXIT_CODES.BLOCKED) {
+          offenders.push({ command: run.command, status, success });
+        }
+      } else if (success === false) {
+        const errorCode = (envelope as { error?: { code?: unknown } }).error?.code;
+        const expected = typeof errorCode === 'string' ? exitCodeForErrorCode(errorCode) : undefined;
+        if (status === CLI_EXIT_CODES.OK || (expected !== undefined && status !== expected)) {
+          offenders.push({ command: run.command, status, success, errorCode });
+        }
       }
     }
 

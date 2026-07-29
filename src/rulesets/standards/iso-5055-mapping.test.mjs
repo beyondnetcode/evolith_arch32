@@ -7,12 +7,14 @@
  *
  * These assertions are the reason the mapping is worth anything. A mapping table
  * that silently stops covering the corpus is worse than no table: it reports a
- * shrinking denominator as progress. Four things are pinned here —
+ * shrinking denominator as progress. Five things are pinned here —
  *
  *   1. the weakness index really is the 138 of ISO/IEC 5055, per measure;
  *   2. every CWE the mapping cites is one of those 138;
  *   3. every rule in the corpus has a row (add a rule, this fails);
- *   4. nothing in this directory quotes the retired 2011 eight-characteristic
+ *   4. the evaluability capture still agrees with the counts Core pins, read
+ *      out of Core's suite rather than copied into this file;
+ *   5. nothing in this directory quotes the retired 2011 eight-characteristic
  *      ISO/IEC 25010 model.
  */
 
@@ -103,18 +105,50 @@ test('the handler backlog is scoped to the unimplemented-native class, not to th
   assert.equal(backlog.byEvaluabilityClass['unimplemented-native'].adoptableRuleIds.length, backlog.adoptableFromAnalyser);
 });
 
+/**
+ * The class counts Core pins, read out of Core's own suite.
+ *
+ * This used to be six literals typed into this file, which made the test below
+ * compare the snapshot against a second copy of the snapshot's own numbers: it
+ * passed while Core moved 139 -> 151 and the capture stayed at 139. A guard
+ * that cannot see the thing it guards is worse than no guard, because it
+ * reports agreement it never checked. So the numbers come from the source that
+ * owns them, and a pin this file cannot find is a failure, never a skip.
+ */
+function pinnedByCore() {
+  const spec = path.resolve(
+    RULESETS,
+    '..',
+    'packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts',
+  );
+  assert.ok(fs.existsSync(spec), `Core's triage suite is missing at ${spec} — this guard has no authority to read`);
+
+  const text = fs.readFileSync(spec, 'utf8');
+  const open = text.indexOf('expect(SUMMARY.byClass).toEqual({');
+  assert.notEqual(open, -1, `no \`expect(SUMMARY.byClass).toEqual({...})\` pin found in ${path.basename(spec)}`);
+  const close = text.indexOf('});', open);
+  assert.notEqual(close, -1, 'the pinned byClass object is not closed');
+
+  const counts = {};
+  const body = text.slice(text.indexOf('{', open) + 1, close);
+  for (const [, klass, n] of body.matchAll(/'?([a-z-]+)'?\s*:\s*(\d+)/g)) {
+    counts[klass] = Number(n);
+  }
+  assert.equal(Object.keys(counts).length, 6, `expected six evaluability classes, parsed ${JSON.stringify(counts)}`);
+  return counts;
+}
+
 test('the evaluability snapshot still matches the class counts pinned by Core', () => {
-  // These six numbers are pinned in rule-corpus-triage.spec.ts. If Core moves
-  // them, this snapshot is stale and the backlog arithmetic above is wrong.
-  assert.deepEqual(evaluability.counts, {
-    'native-handler': 139,
-    'documentation-only': 129,
-    'unimplemented-native': 60,
-    'needs-external-system': 20,
-    'needs-runtime': 17,
-    underspecified: 14,
-  });
-  assert.equal(Object.keys(evaluability.classes).length, 379);
+  // The capture is rendered by rule-corpus-triage.spec.ts and pinned there
+  // byte-for-byte against the live triage; this end re-checks the numbers so a
+  // divergence is red from src/rulesets too, without importing a package this
+  // directory does not own. Recapture with:
+  //   UPDATE_EVALUABILITY_SNAPSHOT=1 npx jest src/application/validators/rule-corpus-triage.spec.ts
+  const pinned = pinnedByCore();
+  assert.deepEqual(evaluability.counts, pinned, 'native-evaluability-snapshot.json has fallen behind Core — recapture it');
+
+  const total = Object.values(pinned).reduce((a, b) => a + b, 0);
+  assert.equal(Object.keys(evaluability.classes).length, total, 'the snapshot classifies a different corpus than Core counts');
 });
 
 test('no artifact here quotes the retired 2011 eight-characteristic ISO/IEC 25010 model', () => {

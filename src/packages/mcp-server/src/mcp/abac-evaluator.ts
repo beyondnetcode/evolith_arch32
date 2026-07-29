@@ -166,6 +166,52 @@ export class AbacEvaluator {
   }
 
   /**
+   * GT-602 — the ENUMERABLE domain of {@link classifyTool}, as a projection.
+   *
+   * This exists so the rego tool sets can be GENERATED from one source instead of
+   * hand-maintained beside it. The obvious source — `TOOL_CLASSIFICATION` alone —
+   * is wrong and was measured to be wrong: it holds 50 names while the policy
+   * needs 62, because twelve are classified by the fallback below
+   * (`READ_TOOLS`/`WRITE_TOOLS`/`DEPLOY_TOOLS`). Generating from the map would
+   * have deleted those twelve, leaving them unclassified and therefore denied by
+   * ABAC-03 in production — the failure this gap was registered for.
+   *
+   * So the domain is the UNION of every set the code enumerates, and each name is
+   * classified by calling `classifyTool` itself rather than by re-reading the
+   * maps. A generator consuming this cannot drift from the runtime, because it is
+   * asking the runtime.
+   *
+   * What this deliberately does NOT cover: the name heuristic in `classifyTool`
+   * (`includes('read')`, `includes('write')`, …), which applies to names outside
+   * every set and is not enumerable. That is fine and is stated in the emitted
+   * rego: dispatch requires native AND opa, so a name only the heuristic knows is
+   * denied by the policy — it can never be granted by one side alone.
+   */
+  static toolProjection(): Record<string, ToolClass> {
+    const evaluator = new AbacEvaluator();
+    const domain = [
+      ...Object.keys(TOOL_CLASSIFICATION),
+      ...READ_TOOLS,
+      ...WRITE_TOOLS,
+      ...DEPLOY_TOOLS,
+    ];
+    const projection: Record<string, ToolClass> = {};
+    for (const tool of [...new Set(domain)].sort()) {
+      const klass = evaluator.classifyTool(tool);
+      // Every member of an enumerated set must classify. If one does not, the
+      // fallback chain has a hole and the policy would silently lose a tool.
+      if (!klass) {
+        throw new Error(
+          `AbacEvaluator.toolProjection: '${tool}' is in an enumerated set but classifyTool returned undefined. ` +
+            'The fallback chain no longer covers its own sets; fix that before regenerating the policy.',
+        );
+      }
+      projection[tool] = klass;
+    }
+    return projection;
+  }
+
+  /**
    * Resolve a tool's verb class. Consults the explicit {@link TOOL_CLASSIFICATION}
    * map first (authoritative for the registered surface), then falls back to the
    * legacy static sets and name heuristics for out-of-band names (e.g. test
@@ -273,7 +319,32 @@ export class AbacEvaluator {
       // @ts-ignore: opa-wasm lacks types
       const { loadPolicy } = await import('@open-policy-agent/opa-wasm');
       
-      const wasmPath = path.join(corePath, 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm');
+      // The `src/` refactor moved the CLI to `src/sdk/cli`, and this join was not
+      // updated. `policy.wasm` is gitignored, so on a machine where a stale file
+      // still sat at the old path the load succeeded and nothing looked wrong —
+      // while on a clean checkout the stat fails and the branch below DENIES IN
+      // PRODUCTION, fail-closed. That is every MCP tool refused, from a path
+      // typo, and it survived because the evidence of it working was untracked
+      // local state (the same shape as GT-625).
+      //
+      // Both locations are tried, newest first: `build:policy` writes the `src/`
+      // one, and a deployed image built before the refactor may still carry the
+      // other. Trying both is not sloppiness — it is what keeps an already-shipped
+      // artifact working while the path is corrected.
+      const candidates = [
+        path.join(corePath, 'src', 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm'),
+        path.join(corePath, 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm'),
+      ];
+      let wasmPath = candidates[0];
+      for (const candidate of candidates) {
+        try {
+          await fs.stat(candidate);
+          wasmPath = candidate;
+          break;
+        } catch {
+          // Try the next location; the stat below produces the real diagnostic.
+        }
+      }
 
       // GT-348/349: stat the policy directly (no check-then-use TOCTOU race). A
       // missing policy surfaces as ENOENT and is handled fail-closed below.

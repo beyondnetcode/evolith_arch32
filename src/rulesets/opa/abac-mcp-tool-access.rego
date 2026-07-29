@@ -40,100 +40,83 @@ architect_roles  := {"architect", "admin"}
 # mechanically by `abac-rego-parity.spec.ts` in the mcp-server package, which
 # parses THIS file and fails the build on any divergence in either direction.
 read_tools := {
-  # primitives / legacy READ_TOOLS
-  "evolith-ping",
-  "evolith-echo",
-  "evolith-read-gap-tracking",
-  "evolith-read-file",
-  "evolith-list-dir",
-  "evolith-gate-evaluate",
-  "evolith-gate-status",
-  # core validation / evaluation
-  "evolith-validate",
-  "evolith-evaluate",
-  "evolith-composable-validate",
-  "evolith-architecture-validate",
-  "evolith-drift-detect",
-  "evolith-phase-artifacts-evaluate",
-  # topology catalog / advisory
-  "evolith-topology-list",
-  "evolith-topology-get",
-  "evolith-topology-recommend",
-  # canonical pattern catalog (PAT-NNNN records; no mutation)
-  # GT-602: absent from this set until 2026-07-28, so OPA answered ABAC-03 for
-  # them while native ABAC allowed them, and dispatch (native AND opa) forbade
-  # them outright.
-  "evolith-pattern-list",
-  "evolith-pattern-get",
-  "evolith-pattern-list-by-topology",
-  # ADR catalog (reads) — GT-602
-  "evolith-adr-list",
+  # GENERATED from AbacEvaluator.toolProjection() — do not edit by hand.
+  # Regenerate: node .harness/scripts/generate-abac-tool-sets.mjs
   "evolith-adr-get",
+  "evolith-adr-list",
   "evolith-adr-matrix",
-  # upgrade planning: computes a plan, applies nothing — GT-602
-  "evolith-upgrade-plan",
-  # moscow (reads)
-  "evolith-moscow-load",
-  "evolith-moscow-list",
-  "evolith-moscow-validate",
-  "evolith-moscow-report",
-  # sdlc status
-  "evolith-sdlc-status",
-  # phase advance — GT-379: NON-BINDING read-only proposal (evaluates exit
-  # criteria without mutating canonical state), so it is `read`, not `write`
-  # (GT-475 dual-engine parity with TOOL_CLASSIFICATION).
-  "evolith-phase-advance",
-  # metrics
-  "evolith-dora-metrics",
-  "evolith-metrics",
-  # config get
-  "evolith-config-get",
-  # agents (reads)
   "evolith-agent-list",
   "evolith-agent-validate",
-  # satellites (reads)
+  "evolith-architecture-validate",
+  "evolith-composable-validate",
+  "evolith-config-get",
+  "evolith-dora-metrics",
+  "evolith-drift-detect",
+  "evolith-echo",
+  "evolith-evaluate",
+  "evolith-gate-evaluate",
+  "evolith-gate-status",
+  "evolith-list-dir",
+  "evolith-metrics",
+  "evolith-moscow-list",
+  "evolith-moscow-load",
+  "evolith-moscow-report",
+  "evolith-moscow-validate",
+  "evolith-pattern-get",
+  "evolith-pattern-list",
+  "evolith-pattern-list-by-topology",
+  "evolith-phase-advance",
+  "evolith-phase-artifacts-evaluate",
+  "evolith-ping",
+  "evolith-read-file",
+  "evolith-read-gap-tracking",
   "evolith-satellite-list",
-  "evolith-satellite-status"
+  "evolith-satellite-status",
+  "evolith-sdlc-status",
+  "evolith-topology-get",
+  "evolith-topology-list",
+  "evolith-topology-recommend",
+  "evolith-upgrade-plan",
+  "evolith-validate",
+  "read-tool"
 }
 
 write_tools := {
-  # primitives / legacy WRITE_TOOLS
-  "evolith-write-file",
-  "evolith-replace-file",
-  "evolith-run-command",
-  # moscow (mutations)
-  "evolith-moscow-create",
-  "evolith-moscow-update",
-  "evolith-moscow-remove",
-  # sdlc handoff
-  "evolith-sdlc-handoff",
-  # config set
-  "evolith-config-set",
-  # auto-fix
-  "evolith-auto-fix",
-  # agents (mutations)
-  "evolith-agent-install",
-  "evolith-agent-upgrade",
-  "evolith-agent-remove",
-  "evolith-agent-run",
-  # satellites (mutations)
-  "evolith-satellite-create",
-  "evolith-satellite-adopt",
-  # ADR catalog (mutations) — GT-602
+  # GENERATED from AbacEvaluator.toolProjection() — do not edit by hand.
+  # Regenerate: node .harness/scripts/generate-abac-tool-sets.mjs
   "evolith-adr-create",
   "evolith-adr-update",
-  # scaffolding / generation: all of these write files into the working tree
-  # — GT-602
+  "evolith-agent-install",
+  "evolith-agent-remove",
+  "evolith-agent-run",
+  "evolith-agent-upgrade",
+  "evolith-auto-fix",
+  "evolith-config-set",
   "evolith-docs-scaffold",
-  "evolith-scaffold",
-  "evolith-init-batch",
-  "evolith-sdlc-generate",
   "evolith-fixtures",
-  # upgrade application (mutates pinned versions) — GT-602
-  "evolith-upgrade-apply"
+  "evolith-init-batch",
+  "evolith-moscow-create",
+  "evolith-moscow-remove",
+  "evolith-moscow-update",
+  "evolith-replace-file",
+  "evolith-run-command",
+  "evolith-satellite-adopt",
+  "evolith-satellite-create",
+  "evolith-scaffold",
+  "evolith-sdlc-generate",
+  "evolith-sdlc-handoff",
+  "evolith-upgrade-apply",
+  "evolith-write-file",
+  "write-tool"
 }
 
 deploy_tools := {
+  # GENERATED from AbacEvaluator.toolProjection() — do not edit by hand.
+  # Regenerate: node .harness/scripts/generate-abac-tool-sets.mjs
+  # NOTE: classifyTool ALSO treats any name containing 'deploy', 'publish'
+  # or `merge` as deploy. That heuristic is not enumerable and is NOT
+  # mirrored here. Dispatch requires native AND opa, so a name only the
+  # heuristic knows is denied by this policy — never granted by one side.
   "evolith-deploy",
   "evolith-merge-branch",
   "evolith-publish-release"

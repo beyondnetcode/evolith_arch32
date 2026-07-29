@@ -44,6 +44,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -69,6 +70,42 @@ const KNOWN_CLASSES = [
  * Refuse to overwrite a good snapshot with the result of one.
  */
 const MIN_PLAUSIBLE_CORPUS = 300;
+
+/**
+ * Packages that DECLARE ts-node, most-likely location first.
+ *
+ * `ts-node` is a devDependency of core-api and mcp-server, not of the root and
+ * not of core-domain. It normally lands in the root `node_modules` because npm
+ * workspaces hoist it, and resolving it from the repo root works — until a
+ * version conflict makes npm install it under the declaring package instead, at
+ * which point a root-relative `-r ts-node/register` fails on a clean runner and
+ * nowhere else. Resolving through the packages that actually declare it removes
+ * the dependency on hoisting.
+ */
+const TS_NODE_DECLARED_BY = [
+  'package.json',
+  'src/packages/mcp-server/package.json',
+  'src/apps/core-api/package.json',
+];
+
+/** Absolute path to ts-node's CommonJS register hook, or a stated failure. */
+function resolveTsNodeRegister() {
+  const tried = [];
+  for (const manifest of TS_NODE_DECLARED_BY) {
+    const from = path.join(REPO_ROOT, manifest);
+    if (!fs.existsSync(from)) continue;
+    try {
+      return createRequire(from).resolve('ts-node/register');
+    } catch {
+      tried.push(manifest);
+    }
+  }
+  throw new Error(
+    'ts-node is not resolvable, so Core\'s triage cannot be executed and the snapshot cannot be captured.\n' +
+      `  looked from: ${tried.join(', ') || '(no manifest found)'}\n` +
+      '  Install the workspace first: npm ci',
+  );
+}
 
 // ---------------------------------------------------------------------------
 // 1. Run the real triage
@@ -101,9 +138,11 @@ function runTriage() {
     }));
   `;
 
+  const register = resolveTsNodeRegister();
+
   let raw;
   try {
-    raw = execFileSync(process.execPath, ['-r', 'ts-node/register', '-e', program], {
+    raw = execFileSync(process.execPath, ['-r', register, '-e', program], {
       cwd: REPO_ROOT,
       encoding: 'utf8',
       maxBuffer: 32 * 1024 * 1024,

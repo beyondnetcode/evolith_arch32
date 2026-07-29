@@ -92,6 +92,73 @@ const PROHIBITIONS = [
   },
 ];
 
+/**
+ * Segments that name something BUILT rather than committed.
+ *
+ * Caught on the runner, not locally, and the distinction matters: these exist on
+ * a developer machine and in no fresh checkout. Requiring them would have made
+ * this guard demand that build output and gitignored artifacts be committed —
+ * turning a correctness check into pressure to do the wrong thing. `policy.wasm`
+ * is the sharpest case: it is gitignored, and a stale copy of it at the OLD path
+ * is what made the original P0 look green locally.
+ *
+ * A path ending in one of these still has to be ANCHORED: the parent of the first
+ * missing segment must exist. That keeps every real defect red — `sdk/cli/…` and
+ * `rulesets/opa/policy.wasm` fail on `sdk` and `rulesets`, which are not generated
+ * and do not exist — while letting `src/sdk/cli/dist/main.js` pass on a clean
+ * checkout, where `src/sdk/cli` is present and `dist` has simply not been built.
+ */
+const GENERATED = new Set(['dist', 'evidence', 'coverage', 'node_modules', 'policy.wasm']);
+
+/**
+ * Whole subtrees that are produced, not authored — declared with the producer, so
+ * the claim can be checked instead of taken on faith.
+ *
+ * A bare segment is not enough here: `opa` names a real, tracked directory under
+ * `src/rulesets`, so admitting the segment globally would blind the guard to a
+ * genuine `rulesets/opa` typo — the exact defect corrected in this same change.
+ */
+const GENERATED_PREFIXES = [
+  {
+    prefix: 'src/sdk/cli/rulesets/opa',
+    producedBy: '.harness/scripts/compile-opa-wasm.mjs',
+    reason:
+      'The compile step mkdirSyncs this directory and copies policy.wasm into it. Nothing ' +
+      'under it is tracked, so on a clean checkout the directory itself does not exist — ' +
+      'which is why this only ever failed on the runner.',
+  },
+];
+
+/**
+ * Does this joined path resolve, allowing for artifacts that are built?
+ *
+ * Returns `true` when the path exists outright, or when the ONLY thing missing is
+ * generated output hanging off a directory that really is there.
+ */
+export function resolvesOrIsUnbuilt(rootDir, joined) {
+  const full = path.join(rootDir, joined);
+  if (fs.existsSync(full)) return true;
+
+  // A declared generated subtree still has to be ANCHORED: its own parent must be
+  // a directory that really is committed, so a typo inside the prefix stays red.
+  for (const g of GENERATED_PREFIXES) {
+    if (joined === g.prefix || joined.startsWith(`${g.prefix}/`)) {
+      return fs.existsSync(path.join(rootDir, path.dirname(g.prefix)));
+    }
+  }
+
+  const parts = joined.split('/');
+  let cursor = rootDir;
+  for (let i = 0; i < parts.length; i += 1) {
+    const next = path.join(cursor, parts[i]);
+    if (fs.existsSync(next)) { cursor = next; continue; }
+    // First missing segment. It is acceptable only if it names generated output
+    // AND everything above it exists — which `cursor` already proves.
+    return GENERATED.has(parts[i]);
+  }
+  return false;
+}
+
 function fail(lines) {
   console.error(`\n✗ ${GUARD}: ${lines[0]}`);
   for (const l of lines.slice(1)) console.error(`  ${l}`);
@@ -196,7 +263,7 @@ function main() {
     // A group of two or more is a fallback chain: ONE member resolving is the
     // contract. A group of one is a bare assertion and must resolve outright.
     for (const members of groups.values()) {
-      const satisfied = members.filter((m) => fs.existsSync(path.join(root, m.joined)));
+      const satisfied = members.filter((m) => resolvesOrIsUnbuilt(root, m.joined));
       if (members.length > 1) fallbackGroups += 1;
       if (satisfied.length > 0) continue;
       missing.push({

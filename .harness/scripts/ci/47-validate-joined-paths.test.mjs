@@ -263,3 +263,54 @@ describe('anti-vacuous floors', () => {
     assert.match(out, /scanned 1 file\(s\)/);
   });
 });
+
+/**
+ * The relaxation for BUILT artifacts — and the proof it did not blind the guard.
+ *
+ * This was caught on the runner, not locally, and only because the guard was
+ * wired into a required check before it was trusted. Locally `dist/`,
+ * `.harness/evidence/` and the gitignored `policy.wasm` all exist, so the guard
+ * passed; on a clean checkout none of them do, and it reported eight failures.
+ *
+ * Demanding them would have made this guard argue for committing build output.
+ * The rule is therefore ANCHORING, not existence: what is missing may be
+ * generated, but its parent has to be real. These tests exist to prove that the
+ * relaxation is narrow — every genuine defect from this gap must stay red.
+ */
+describe('artifacts that are built, not committed', () => {
+  it('accepts unbuilt output whose parent directory really exists', () => {
+    const root = fixture('unbuilt-ok', {
+      'src/packages/a/src/x.ts': "path.join(corePath, 'src', 'sdk', 'cli', 'dist', 'main.js');\n",
+      'src/sdk/cli/package.json': '{}\n',
+    });
+    const { status, out } = run(root);
+    assert.equal(status, 0, out);
+  });
+
+  it('still REFUSES a generated artifact hanging off a directory that does not exist', () => {
+    // The original P0, exactly: `policy.wasm` is generated, but the failure is at
+    // `rulesets` — a source directory that moved under `src/`. If this ever goes
+    // green, the relaxation has swallowed the defect the guard was written for.
+    const root = fixture('unbuilt-unanchored', {
+      'src/packages/a/src/x.ts': "path.join(ctx.corePath, 'rulesets', 'opa', 'policy.wasm');\n",
+      'src/rulesets/opa/keep.rego': 'package x\n',
+    });
+    const { status, out } = run(root);
+    assert.equal(status, 1, out);
+    assert.match(out, /rulesets\/opa\/policy\.wasm/);
+  });
+
+  it('a declared generated SUBTREE passes, and only where it is declared', () => {
+    // `src/sdk/cli/rulesets/opa` is created wholesale by compile-opa-wasm.mjs, so
+    // even the directory is absent on a clean checkout. The bare segment `opa`
+    // is deliberately NOT admitted globally — it names a real tracked directory
+    // under src/rulesets, and admitting it would blind the case above.
+    const root = fixture('generated-subtree', {
+      'src/packages/a/src/x.ts':
+        "path.join(corePath, 'src', 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm');\n",
+      'src/sdk/cli/rulesets/agents/agents-registry.json': '{}\n',
+    });
+    const { status, out } = run(root);
+    assert.equal(status, 0, out);
+  });
+});

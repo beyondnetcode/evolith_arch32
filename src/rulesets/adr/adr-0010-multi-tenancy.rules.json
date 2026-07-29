@@ -56,6 +56,7 @@
     },
     {
       "id": "MTN-05",
+      "appliesFromSdlcPhase": 2,
       "severity": "MUST",
       "category": "schema-per-tenant",
       "title": "Multi-tenant schema strategy defined upfront",

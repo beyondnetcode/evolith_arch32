@@ -53,6 +53,21 @@ export class InitializeProjectUseCase {
       await this.projectScaffolder.scaffoldByRuntime(input, projectDir);
       artifacts.push(`${input.name}/package.json`);
 
+      // GIT-08 — after the runtime scaffold, so the commitlint devDependencies
+      // merge into the package.json that scaffold just wrote rather than racing it.
+      const commitArtifacts = await this.projectScaffolder.scaffoldCommitConventions(input, projectDir);
+      for (const artifact of commitArtifacts) {
+        const qualified = `${input.name}/${artifact}`;
+        if (!artifacts.includes(qualified)) artifacts.push(qualified);
+      }
+      if (!input.features.includes('hooks')) {
+        warnings.push(
+          'Conventional Commits are configured (commitlint.config.mjs) but nothing runs them: '
+          + 'the `hooks` feature was not selected, so no commit-msg hook was installed. '
+          + 'Wire commitlint into CI or re-run with --features hooks.',
+        );
+      }
+
       if (input.features.includes('adr')) {
         await this.fs.ensureDir(`${projectDir}/reference/architecture/adrs`);
         await this.fs.writeJson(`${projectDir}/reference/architecture/adrs/adr-matrix.json`, { adrs: [] });

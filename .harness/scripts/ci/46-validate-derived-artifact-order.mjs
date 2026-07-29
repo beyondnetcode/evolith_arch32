@@ -78,6 +78,17 @@ const SKIP_FIXED_POINT = argv.includes('--no-fixed-point');
  */
 export const CHAIN = [
   {
+    name: 'ABAC rego tool sets',
+    producer: '.harness/scripts/generate-abac-tool-sets.mjs',
+    checkArgs: ['--check'],
+    // Derived from the runtime, not from a data file: the producer runs
+    // AbacEvaluator.toolProjection() through ts-node, so its real input is the
+    // evaluator source. Listed here because a policy generated from a stale
+    // classification denies tools in production (GT-602, GT-632).
+    consumes: ['src/packages/mcp-server/src/mcp/abac-evaluator.ts'],
+    writes: ['src/rulesets/opa/abac-mcp-tool-access.rego'],
+  },
+  {
     name: 'maturity reconciliation',
     producer: '.harness/scripts/ci/09-reconcile-maturity.mjs',
     checkArgs: ['--check'],

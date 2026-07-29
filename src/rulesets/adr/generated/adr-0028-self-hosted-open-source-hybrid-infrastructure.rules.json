@@ -19,7 +19,7 @@
       "statement": "ADR decision: Strictly govern internal tooling selection based on the 100% Open Source, Self Hostable, and Plug and Play Extensibility Principle : 1. Infrastructure as a Port : NO concrete infrastructure SDK/Library from the products listed below may ever cross into Domain/Application layers.",
       "rationale": "Derived from ADR-0028 \"Decision\" section. Enforcement signals detected: must, layer, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0028 via static analysis, lint rules, or pipeline gates covering: must, layer, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

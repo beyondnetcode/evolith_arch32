@@ -19,7 +19,7 @@
       "statement": "ADR decision: 1. Pin the Evolith suite to MassTransit v8.x (Apache 2.0). No project may take a dependency on MassTransit = 9.0.0 without superseding this ADR. 2. Adopting v9 is a governance decision, never a maintenance one.",
       "rationale": "Derived from ADR-0110 \"Decision\" section. Enforcement signals detected: must not, must, dependency, layer, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0110 via static analysis, lint rules, or pipeline gates covering: must not, must, dependency, layer, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

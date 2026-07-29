@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt the Lean Root (also called Clean Root) architectural pattern for all Evolith satellite repositories, enforcing a strict binary dichotomy at the repository root.",
       "rationale": "Derived from ADR-0070 \"Decision\" section. Enforcement signals detected: must, lint, ci/cd, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0070 via static analysis, lint rules, or pipeline gates covering: must, lint, ci/cd, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

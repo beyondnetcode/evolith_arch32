@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt Option 1: OKF v0.1 is the Core's portable projection format, not its authoring format — published and gated. Authoring stays YAML first. canonical/ remains the single source of truth.",
       "rationale": "Derived from ADR-0105 \"Decision\" section. Enforcement signals detected: enforce, enforced.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0105 via static analysis, lint rules, or pipeline gates covering: enforce, enforced. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

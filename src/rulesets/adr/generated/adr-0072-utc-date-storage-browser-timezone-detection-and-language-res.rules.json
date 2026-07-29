@@ -19,7 +19,7 @@
       "statement": "ADR decision: Rule: Every date or timestamp stored in any database table, domain event, outbox message, or API response body must be UTC. Implementation guidelines per runtime: Rationale: UTC is the only unambiguous anchor for distributed systems.",
       "rationale": "Derived from ADR-0072 \"Decision\" section. Enforcement signals detected: must not, must, naming.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0072 via static analysis, lint rules, or pipeline gates covering: must not, must, naming. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

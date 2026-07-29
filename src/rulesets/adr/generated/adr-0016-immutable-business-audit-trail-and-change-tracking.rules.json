@@ -19,7 +19,7 @@
       "statement": "ADR decision: Deploy a Hybrid Audit Strategy balancing performant direct reading with deep historical archiving: 1. Metadata Layer (Row Level) : Physical entities inherit standard persistent audit columns: created at , created by , updated at , updated by , and a concurrency tracking version integer.",
       "rationale": "Derived from ADR-0016 \"Decision\" section. Enforcement signals detected: layer, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0016 via static analysis, lint rules, or pipeline gates covering: layer, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

@@ -163,8 +163,11 @@ describe('GT-595 · the issue list stops drowning real debt in placeholders', ()
   });
 
   it('STILL emits it for a rule that is real, closeable coverage debt', () => {
+    // Non-blocking on purpose: GT-595 AC2 escalates the blocking variant of this
+    // same case to a run-failing issue, so the advisory is what a MUST rule that
+    // does NOT claim to block produces.
     const issues = engine().toValidationIssues([
-      { rule: rule({ id: 'SEC-INJ-01' }), result: 'skipped', message: 'no handler' },
+      { rule: rule({ id: 'SEC-INJ-01', blocking: false }), result: 'skipped', message: 'no handler' },
     ]);
     expect(issues.map(i => i.ruleId)).toContain('SEC-INJ-01');
     expect(issues.find(i => i.ruleId === 'SEC-INJ-01')!.title).toContain('MUST rule not evaluated');

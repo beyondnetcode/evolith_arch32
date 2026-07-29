@@ -272,7 +272,21 @@ function buildRuleset(adr) {
       validationQuery:
         `Verify codebase/CI compliance with ${adr.adrId} via static analysis, lint rules, ` +
         `or pipeline gates covering: ${signalList}. Concrete checks to be wired into the harness.`,
-      blocking: true,
+      // GT-595 (AC2) — `blocking: false` until a concrete check exists.
+      //
+      // This rule's own validationQuery ends "Concrete checks to be wired into
+      // the harness", i.e. it states that nothing evaluates it. The engine
+      // therefore reports it `skipped`, and a rule that is `blocking: true` and
+      // `skipped` now FAILS the run: a blocking rule that never runs is
+      // indistinguishable in the report from a blocking rule that passed. 96 of
+      // these generated rules carried the flag, so the corpus was claiming
+      // enforcement on 96 checks that do not exist.
+      //
+      // `severity: MUST` and `enforcement: 'executable'` are deliberately kept:
+      // they describe the ADR (its language IS enforceable, so this rule is a
+      // real handler backlog item), whereas `blocking` describes what the engine
+      // can prove TODAY. Wire the check, then set this back to true.
+      blocking: false,
       enforcement: 'executable',
     });
   } else {

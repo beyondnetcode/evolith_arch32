@@ -19,7 +19,7 @@
       "statement": "ADR decision: Enforce strict TypeScript configuration and ESLint rules across the entire monorepo.",
       "rationale": "Derived from ADR-0003 \"Decision\" section. Enforcement signals detected: layer, lint, eslint, structure, enforce, enforced.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0003 via static analysis, lint rules, or pipeline gates covering: layer, lint, eslint, structure, enforce, enforced. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

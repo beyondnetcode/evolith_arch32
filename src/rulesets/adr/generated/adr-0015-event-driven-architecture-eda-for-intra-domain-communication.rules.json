@@ -19,7 +19,7 @@
       "statement": "ADR decision: We will adopt an asynchronous Event Driven Architecture (EDA) for all cross bounded context communication: The domain will never import a concrete message broker.",
       "rationale": "Derived from ADR-0015 \"Decision\" section. Enforcement signals detected: must, required, layer, boundaries, import.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0015 via static analysis, lint rules, or pipeline gates covering: must, required, layer, boundaries, import. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

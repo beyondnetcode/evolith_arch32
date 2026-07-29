@@ -19,7 +19,7 @@
       "statement": "ADR decision: We standardize two concurrency strategies for satellite MCP tools: Optimistic State Verification for repository files, and Pessimistic Resource Locking for exclusive operations.",
       "rationale": "Derived from ADR-0093 \"Decision\" section. Enforcement signals detected: must, required.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0093 via static analysis, lint rules, or pipeline gates covering: must, required. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

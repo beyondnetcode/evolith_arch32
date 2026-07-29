@@ -19,7 +19,7 @@
       "statement": "ADR decision: The Core hub root contains exactly four first class domains: Plus tool owned dotfolders ( .github/ , .husky/ , .vscode/ , .obsidian/ , .bmad core/ , .mimocode/ ) and the root files the ecosystem requires ( README , AGENTS , CONTRIBUTING , SECURITY , LICENSE , CHANGELOG , package.json , tsconfig .json , evolith.yaml ,…",
       "rationale": "Derived from ADR-0118 \"Decision\" section. Enforcement signals detected: required, structure, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0118 via static analysis, lint rules, or pipeline gates covering: required, structure, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

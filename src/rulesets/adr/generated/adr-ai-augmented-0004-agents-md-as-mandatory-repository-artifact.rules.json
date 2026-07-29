@@ -19,7 +19,7 @@
       "statement": "ADR decision: We mandate AGENTS.md as a required artifact for every repository in the Evolith ecosystem with the following rules: Every repository that contains source code or documentation MUST have a root level AGENTS.md .",
       "rationale": "Derived from ADR-0004 \"Decision\" section. Enforcement signals detected: must not, must, required, layer, naming, boundaries.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0004 via static analysis, lint rules, or pipeline gates covering: must not, must, required, layer, naming, boundaries. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

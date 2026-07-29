@@ -19,7 +19,7 @@
       "statement": "ADR decision: We establish Model Selection Governance with three binding rules: All AI models used in Evolith workflows MUST be registered in a model registry.json artifact with: Model identifier and provider (e.g., gemini 2.0 flash , text embedding 3 small ) Capability classification ( code review , embedding , classification , ge…",
       "rationale": "Derived from ADR-0003 \"Decision\" section. Enforcement signals detected: must, required, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0003 via static analysis, lint rules, or pipeline gates covering: must, required, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

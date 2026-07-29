@@ -19,7 +19,7 @@
       "statement": "ADR decision: All credential/token comparisons MUST use the following pattern: typescript import { createHash, timingSafeEqual } from 'node:crypto'; function safeKeyEqual(presented: string, configured: string): boolean { const a = createHash('sha256').update(presented).digest(); const b = createHash('sha256').update(configured).dig…",
       "rationale": "Derived from ADR-0123 \"Decision\" section. Enforcement signals detected: must, prohibited, import.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0123 via static analysis, lint rules, or pipeline gates covering: must, prohibited, import. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

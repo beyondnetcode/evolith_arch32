@@ -19,7 +19,7 @@
       "statement": "ADR decision: We will adopt a Microfrontend (MFE) strategy only as a Phase 3+ extraction strategy , not as the initial frontend baseline. Evolith products MUST follow this progression: Microfrontends MUST NOT be used as a default starting architecture, a trend driven choice, or a substitute for clean modular frontend design.",
       "rationale": "Derived from ADR-0055 \"Decision\" section. Enforcement signals detected: must not, must, boundaries.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0055 via static analysis, lint rules, or pipeline gates covering: must not, must, boundaries. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

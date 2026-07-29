@@ -19,7 +19,7 @@
       "statement": "ADR decision: Evolve to a comprehensive Multi Layer Tiered Caching Strategy utilizing CDN edge caching and distributed cache nodes to intercept and resolve read requests as close to the user as possible: The system supports the integration of a Content Delivery Network (CDN) deployed in front of the Edge Gateway.",
       "rationale": "Derived from ADR-0014 \"Decision\" section. Enforcement signals detected: layer, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0014 via static analysis, lint rules, or pipeline gates covering: layer, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

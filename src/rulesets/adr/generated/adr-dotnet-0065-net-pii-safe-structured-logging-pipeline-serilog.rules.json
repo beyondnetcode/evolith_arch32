@@ -19,7 +19,7 @@
       "statement": "ADR decision: Apply PII masking at the Serilog pipeline level through two complementary components that intercept log events before any sink receives them. No Domain or Application layer changes are required.",
       "rationale": "Derived from ADR-0065 \"Decision\" section. Enforcement signals detected: forbidden, required, layer, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0065 via static analysis, lint rules, or pipeline gates covering: forbidden, required, layer, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

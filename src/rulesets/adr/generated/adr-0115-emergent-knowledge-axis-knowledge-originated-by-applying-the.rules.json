@@ -19,7 +19,7 @@
       "statement": "ADR decision: We adopt Option C : a second origin on the lifecycle ADR 0097 already governs.",
       "rationale": "Derived from ADR-0115 \"Decision\" section. Enforcement signals detected: must not, must, enforce, enforced.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0115 via static analysis, lint rules, or pipeline gates covering: must not, must, enforce, enforced. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

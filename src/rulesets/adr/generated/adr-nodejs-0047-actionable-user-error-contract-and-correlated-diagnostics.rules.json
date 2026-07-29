@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt a two channel error contract : 1. User feedback channel — exposes only approved, actionable business or validation information. 2. Diagnostic channel — retains technical details in structured logs and telemetry correlated through a server generated error identifier.",
       "rationale": "Derived from ADR-0047 \"Decision\" section. Enforcement signals detected: must not, must, required, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0047 via static analysis, lint rules, or pipeline gates covering: must not, must, required, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

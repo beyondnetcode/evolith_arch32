@@ -19,7 +19,7 @@
       "statement": "ADR decision: All new command execution MUST use execFile() or spawn() with argument arrays. exec() (shell) is PROHIBITED for new code. Existing exec() usage MUST be migrated to execFile() with a tracked GT xx item.",
       "rationale": "Derived from ADR-0122 \"Decision\" section. Enforcement signals detected: must not, must, prohibited.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0122 via static analysis, lint rules, or pipeline gates covering: must not, must, prohibited. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

@@ -19,7 +19,7 @@
       "statement": "ADR decision: We mandate an Agnostic HTTP based Distribution Architecture for all OPA policy.wasm bundles. Instead of coupling to proprietary cloud APIs, all deployment topologies MUST support one of the following standard, self hostable distribution patterns: 1.",
       "rationale": "Derived from ADR-0085 \"Decision\" section. Enforcement signals detected: must, ci/cd.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0085 via static analysis, lint rules, or pipeline gates covering: must, ci/cd. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

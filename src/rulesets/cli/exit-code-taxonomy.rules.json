@@ -1,0 +1,51 @@
+{
+  "$schema": "../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/cli/exit-code-taxonomy.rules.json",
+  "title": "CLI Exit-Code Taxonomy Rules",
+  "description": "GT-580 — the exit code is the only control primitive an agent harness, a pre-commit hook and a CI step have in common. This ruleset governs it: every command must exit with a code drawn from the published taxonomy (0 pass, 1 tool failure, 2 blocked, 3 invalid input), the scan that proves it must be non-vacuous, and the taxonomy itself must not be widened to make an offender disappear.",
+  "version": "1.0.0",
+  "effectiveDate": "2026-07-29",
+  "scope": "core-cli",
+  "category": "exit-code-taxonomy",
+  "audience": "core",
+  "rules": [
+    {
+      "id": "CLI-EXIT-01",
+      "severity": "MUST",
+      "category": "cli-exit-taxonomy",
+      "title": "No CLI Command May Exit Outside The Published Taxonomy",
+      "description": "Every exit code named by a CLI source MUST be a member of the published taxonomy: 0 pass, 1 tool failure, 2 blocked, 3 invalid input. A command that exits with anything else is unreadable to the consumer the code exists for — an agent cannot tell a blocked gate from a crashed tool, which is the difference between a blocked merge and a retry.",
+      "validationQuery": "Scan every non-test .ts source under src/sdk/cli/src for `process.exit(N)` and `process.exitCode = N` with a numeric literal, and require every N to be one of 0, 1, 2, 3.",
+      "evidenceRequired": [
+        "offending file and exit literal, per offender",
+        "number of sources scanned"
+      ],
+      "blocking": true
+    },
+    {
+      "id": "CLI-EXIT-02",
+      "severity": "MUST",
+      "category": "cli-exit-taxonomy",
+      "title": "The Taxonomy Scan Must Be Non-Vacuous",
+      "description": "The scan behind CLI-EXIT-01 MUST cover a non-empty set of CLI sources. A scan that reads nothing also finds no offenders, so a moved or mistyped source root would report perfect compliance while checking an empty directory. The denominator is part of the verdict, not a diagnostic.",
+      "validationQuery": "Require the number of CLI sources scanned by the exit-code taxonomy scan to be greater than zero.",
+      "evidenceRequired": [
+        "number of sources scanned",
+        "source root the scan resolved to"
+      ],
+      "blocking": true
+    },
+    {
+      "id": "CLI-EXIT-03",
+      "severity": "MUST",
+      "category": "cli-exit-taxonomy",
+      "title": "The Published Taxonomy Must Not Be Widened",
+      "description": "The declared taxonomy MUST be exactly {0, 1, 2, 3}. Without this, CLI-EXIT-01 has a trivial escape hatch: adding the offending code to the taxonomy makes the violation disappear while the consumer's problem — an exit code carrying no agreed meaning — gets worse. Widening the taxonomy is a governance decision, so it must fail the gate rather than pass it silently.",
+      "validationQuery": "Require the taxonomy declared by src/sdk/cli/src/infrastructure/cli/exit-codes.ts to be exactly the four codes 0, 1, 2 and 3.",
+      "evidenceRequired": [
+        "declared taxonomy values"
+      ],
+      "blocking": true
+    }
+  ]
+}

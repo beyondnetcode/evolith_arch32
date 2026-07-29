@@ -198,8 +198,13 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     //       `enforce` was dropped at normalization. It is now carried, and
     //       `ModuleBoundaryRuleHandler` evaluates it.
     // `unimplemented-native` drops by the same twelve; nothing else moved.
+    //
+    // 151 -> 154 on 2026-07-29: GT-580 added `cli/exit-code-taxonomy.rules.json`
+    // (CLI-EXIT-01/02/03) with `CliExitTaxonomyRuleHandler` claiming all three,
+    // so the corpus grows by three and every one of them lands directly in
+    // `native-handler`. No other class moves: these ids did not exist before.
     expect(SUMMARY.byClass).toEqual({
-      'native-handler': 151,
+      'native-handler': 154,
       'documentation-only': 136,
       'unimplemented-native': 48,
       'needs-external-system': 20,

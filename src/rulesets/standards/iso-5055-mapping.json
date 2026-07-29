@@ -12,24 +12,24 @@
     "weaknessCount": 138
   },
   "corpus": {
-    "rulesetFiles": 167,
-    "rules": 381,
+    "rulesetFiles": 175,
+    "rules": 391,
     "note": "Files that carry gate definitions or topology recommendations rather than conformance rules contribute no rows: architecture/topology-recommendation.rules.json and sdlc/phase-gates.rules.json."
   },
   "summary": {
-    "rules": 381,
+    "rules": 391,
     "mappedToIso5055": 37,
     "mappedDirect": 8,
     "mappedPartial": 29,
-    "noInternationalEquivalent": 344,
-    "adoptedFraction": 0.0971,
+    "noInternationalEquivalent": 354,
+    "adoptedFraction": 0.0946,
     "analyserAdoptable": 42,
     "analyserAdoptablePartial": 23,
-    "analyserAdoptableFraction": 0.1102,
-    "analyserAdoptableFractionIncludingPartial": 0.1706,
+    "analyserAdoptableFraction": 0.1074,
+    "analyserAdoptableFractionIncludingPartial": 0.1662,
     "byClass": {
       "architecture-decision": {
-        "rules": 155,
+        "rules": 162,
         "mapped": 12,
         "adoptable": 6
       },
@@ -59,7 +59,7 @@
         "adoptable": 0
       },
       "platform-surface": {
-        "rules": 14,
+        "rules": 17,
         "mapped": 0,
         "adoptable": 0
       },
@@ -217,7 +217,7 @@
         ]
       },
       "not-in-snapshot": {
-        "rules": 2,
+        "rules": 12,
         "mappedToIso5055": 0,
         "analyserAdoptable": 0,
         "analyserAdoptablePartial": 0,
@@ -3186,6 +3186,139 @@
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
+      "ruleId": "CORE-0118-01",
+      "sourceFile": "adr/generated/adr-0118-the-core-hub-has-its-own-root-taxonomy-distinct-from-satelli.rules.json",
+      "title": "Conform to ADR-0118: The Core Hub Has Its Own Root Taxonomy, Distinct From Satellites",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "not-in-snapshot",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0119-01",
+      "sourceFile": "adr/generated/adr-0119-api-security-configuration-hardening.rules.json",
+      "title": "Conform to ADR-0119: API Security Configuration Hardening",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "not-in-snapshot",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0120-01",
+      "sourceFile": "adr/generated/adr-0120-ssrf-prevention-standard.rules.json",
+      "title": "Honor design decision in ADR-0120: SSRF Prevention Standard",
+      "severity": "SHOULD",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "not-in-snapshot",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0121-01",
+      "sourceFile": "adr/generated/adr-0121-input-validation-and-sanitization-standard.rules.json",
+      "title": "Honor design decision in ADR-0121: Input Validation and Sanitization Standard",
+      "severity": "SHOULD",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "not-in-snapshot",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0122-01",
+      "sourceFile": "adr/generated/adr-0122-shell-execution-safety-standard.rules.json",
+      "title": "Conform to ADR-0122: Shell Execution Safety Standard",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "not-in-snapshot",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0123-01",
+      "sourceFile": "adr/generated/adr-0123-timing-safe-comparison-standard.rules.json",
+      "title": "Conform to ADR-0123: Timing-Safe Comparison Standard",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "not-in-snapshot",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0124-01",
+      "sourceFile": "adr/generated/adr-0124-credential-and-secret-management-standard.rules.json",
+      "title": "Conform to ADR-0124: Credential and Secret Management Standard",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "not-in-snapshot",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
       "ruleId": "AI-0001-01",
       "sourceFile": "adr/generated/adr-ai-augmented-0001-harness-engineering-for-ai-augmented-development.rules.json",
       "title": "Conform to ADR-0001: Harness Engineering for AI-Augmented Development",
@@ -4015,6 +4148,63 @@
         "examples": []
       },
       "nativeEvaluability": "unimplemented-native",
+      "note": "A CLI / MCP surface contract. Specific to this product; no standards analyser models it."
+    },
+    {
+      "ruleId": "CLI-EXIT-01",
+      "sourceFile": "cli/exit-code-taxonomy.rules.json",
+      "title": "No CLI Command May Exit Outside The Published Taxonomy",
+      "severity": "MUST",
+      "ruleClass": "platform-surface",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "not-in-snapshot",
+      "note": "A CLI / MCP surface contract. Specific to this product; no standards analyser models it."
+    },
+    {
+      "ruleId": "CLI-EXIT-02",
+      "sourceFile": "cli/exit-code-taxonomy.rules.json",
+      "title": "The Taxonomy Scan Must Be Non-Vacuous",
+      "severity": "MUST",
+      "ruleClass": "platform-surface",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "not-in-snapshot",
+      "note": "A CLI / MCP surface contract. Specific to this product; no standards analyser models it."
+    },
+    {
+      "ruleId": "CLI-EXIT-03",
+      "sourceFile": "cli/exit-code-taxonomy.rules.json",
+      "title": "The Published Taxonomy Must Not Be Widened",
+      "severity": "MUST",
+      "ruleClass": "platform-surface",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "not-in-snapshot",
       "note": "A CLI / MCP surface contract. Specific to this product; no standards analyser models it."
     },
     {

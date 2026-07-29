@@ -7950,6 +7950,20 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
 
+#### GT-636
+
+**Title:** Three CI checks on PR #275 are red with pre-existing, root-caused failures — investigation only, no fix applied
+
+- **Purpose:** Distinguish, with evidence rather than assumption, which parts of a PR's red CI are pre-existing branch debt versus a regression the PR introduced — and leave a record precise enough that fixing each is a scoped task, not a re-investigation.
+- **Evidence:** **Three CI checks are red on PR #275 — `Security Audit`, `E2E Tests`, `Evolith Core Validation` — and all three are pre-existing debt this PR did not introduce, confirmed against the already-merged `#273` from the same branch, not assumed from a passing local run.** `Security Audit`: `npm audit --audit-level=high` reports 31 vulnerabilities (29 high, 2 moderate) in transitive dependencies of the `jest-snapshot` and `fast-uri` chains; no `package.json` or lockfile is touched by this PR's commits. `E2E Tests`: exactly one of 132 tests fails — `CLI E2E Tests - Deep Architecture Analysis › validate with architecture analysis › should validate architecture with --arch flag`, asserting `expect([0, 2]).toContain(result.exitCode)` (the test's own comment: "GT-580: 0 pass, 2 blocked verdict") and receiving exit code `1` instead, an unhandled-error exit where the test's contract only anticipates pass-or-blocked. `#273`'s own CI run for the identical commit range shows the same test name failing with the same `1 failed, 131 passed, 132 total`. `Evolith Core Validation` fails at its `Bilingual Terminology Lint` step (`node .harness/scripts/bilingual-terminology-lint.mjs`): 5 terminology inconsistencies — `Database`→`Base de datos`, `Ports and Adapters`→`Puertos y Adaptadores`, `Portability`→`Portabilidad`, `Modular Monolith`→`Monolito Modular`, `Microservices`→`Microservicios` — across `reference/core/architecture/adrs/core/0124-credential-secret-management-standard.es.md`, `reference/core/architecture/demos/level-3-components/README.es.md`, `reference/core/control-center/gaps/gap-tracking.es.md` (inside the pre-existing `GT-598` catalog prose, not any row this PR added) and `reference/core/control-center/maturity-reports/maturity-assessment.es.md` (2 hits). `git log` on each file confirms none was touched by any commit in this PR.
+- **Component:** `Cross` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Found on 2026-07-29 while confirming PR #275's CI was green after the `GT-634` ratchet fix. Investigated at the user's explicit request to open a gap and investigate — not to fix — so this record stops at a confirmed root cause per finding, deliberately.
+- **Acceptance criteria:**
+  - [ ] `Security Audit`: the 31 `npm audit` findings are triaged — upgraded where a non-breaking fix exists, or explicitly accepted with a documented reason where it does not (e.g. a dev-only transitive dependency).
+  - [ ] `E2E Tests`: the `--arch` flag path that returns exit code `1` instead of `0`/`2` is root-caused (is it an uncaught exception in the deep-architecture-analysis path, or a fixture the fixture project doesn't satisfy?) and either the CLI or the test's expectation is corrected.
+  - [ ] `Evolith Core Validation`: the 5 flagged terms are corrected in place, or the lint's suggestion is overridden with a documented reason per term (some may be intentional, e.g. a product name kept in English).
+  - [ ] All three re-verified green on a subsequent CI run of this same branch, not merely reproduced locally.
+
 #### GT-634
 
 **Title:** The GT-578 dead-reference ratchet was stuck at 305 by two bugs in the guard itself, not the evidence backlog

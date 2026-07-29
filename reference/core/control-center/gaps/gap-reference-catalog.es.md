@@ -7855,6 +7855,32 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
 
+#### GT-635
+
+**Title:** El ratchet de referencias muertas está por encima del presupuesto en main desde el 2026-07-28, así que el job de gobernanza está en rojo permanente
+
+- **Purpose:** Que un ratchet incumplido o se respete o se vuelva a medir — un gate que nadie puede satisfacer enseña a la gente a ignorarlo.
+- **Evidence:** **`Governance guards (GT-578)` falla en `main` mismo, y lleva al menos tres corridas consecutivas así.** `41-validate-evidence-commands --strict --max-dead 305` reporta **309 referencias muertas en un checkout limpio**, así que el job sale 1 en cada corrida de `ci-cd.yml`. Observado en las corridas `30482497995` (2026-07-29 19:00Z), `30470648146` (16:25Z) y `30466280865` (15:31Z) — todas en `main`, ninguna con cambios sin mergear. El presupuesto se fijó en 305 en `4a1b92d6` (2026-07-28) con el mensaje "put the ratchet back where it was measured"; **desde entonces diez commits han editado `gap-closure-evidence.json`**, cada uno añadiendo `validationCommands`, y la cuenta se fue por encima del número que se midió. Las cuatro referencias muertas de más no son atribuibles a ninguno en concreto solo por la cuenta. **Por qué es más que contabilidad:** el propósito entero del ratchet es que las referencias muertas no CREZCAN, y ahora mismo está reportando exactamente eso mientras se lo ignora, porque un job en rojo permanente se lee como ruido de fondo — el mismo modo de fallo que [`GT-622`](./gap-reference-catalog.es.md#gt-622) registra para la configuración huérfana de CodeQL. Además implica que el próximo cambio que añada de verdad una referencia muerta será indistinguible de las cuatro que ya están. **Lo que NO hay que hacer:** subir el presupuesto a 309 y seguir. Eso convierte un ratchet incumplido en un ratchet ratificado, que es exactamente cómo se llegó a un corpus de 309 referencias muertas. Las dos opciones honestas son arreglar las cuatro (reapuntar los comandos a referentes que existen) o volver a medir y declarar, en el commit, qué se aceptó y por qué.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Encontrado el 2026-07-29 diagnosticando cuatro checks en rojo del PR #277. Tres de los cuatro eran preexistentes en `main`; este es el que traía el número idéntico (309 vs 305) en ambos lados, y eso es lo que probó que el PR no lo había causado.
+- **Acceptance criteria:**
+  - [ ] `Governance guards (GT-578)` pasa en `main` sin haber subido el presupuesto para dar cabida a referencias que ya estaban muertas.
+  - [ ] Cada una de las cuatro referencias añadidas desde `4a1b92d6` queda reparada o nombrada en el commit que la acepta, con el motivo.
+  - [ ] El guard reporta la base del ratchet sobre un checkout limpio, para que el presupuesto no vuelva a calibrarse contra una máquina que resulta tener algo construido.
+
+#### GT-634
+
+**Title:** El CLI y el MCP publicados resuelven una build del SDK anterior a la ola de seguridad, porque un rango caret bajo 1.x la fija
+
+- **Purpose:** Que `npm install @beyondnet/evolith-cli@latest` deje de arrastrar una dependencia publicada antes de los fixes que anuncia su propio CHANGELOG.
+- **Evidence:** **`@beyondnet/evolith-cli@1.2.1` y `@beyondnet/evolith-mcp@1.2.1` declaran ambos `@beyondnet/evolith-sdk: ^1.1.0`, y eso resuelve EXACTAMENTE `1.1.0`.** El SDK publica `1.0.0`, `1.1.0` y `2.0.0` y nada en medio, así que un rango caret bajo 1.x no puede alcanzar 2.0.0 — un caret está acotado por el siguiente mayor. Las fechas son el hallazgo: `sdk@1.1.0` se publicó el **2026-07-18**, `sdk@2.0.0` el **2026-07-27** como parte de la release que cerró [`GT-570`](./gap-reference-catalog.es.md#gt-570), y `cli@1.2.1` / `mcp@1.2.1` el **2026-07-28** — *después* de que 2.0.0 existiera, y seguían apuntando a la línea 1.x. Así que la exposición que GT-570 declaró cerrada para "quien instale `latest`" no está cerrada para esta dependencia: el `latest` de ambas superficies instala un SDK construido antes de la ola del 2026-07-23. **Dicho con precisión, porque la afirmación fuerte no está verificada aquí:** lo medido son las fechas y la resolución, no el contenido — esta fila no afirma que `sdk@1.1.0` cargue una vulnerabilidad concreta, solo que es anterior a la ola y que la release que la trajo fue un mayor al que los consumidores no llegan. Verificar qué fixes hay en `sdk@2.0.0` es parte de cerrarla. **Encontrado porque bloqueaba otra cosa:** deprecar `sdk@1.1.0` para [`GT-624`](./gap-reference-catalog.es.md#gt-624) habría impreso un aviso en cada instalación limpia de la línea actual sin ningún sucesor 1.x que ofrecer, y eso es lo que dejó el rango a la vista. Arreglo: reapuntar ambos rangos a `^2.0.0` (un salto mayor de dependencia, así que exige revisar los breaking changes del SDK contra ambos call sites) o publicar un `sdk@1.2.x` con los fixes, y entonces deprecar `sdk@1.1.0` y cerrar de verdad el primer criterio de GT-624.
+- **Component:** `Infra` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Encontrado el 2026-07-29 ejecutando el criterio de deprecación de GT-624. Registrado en vez de sorteado: saltarse la deprecación en silencio habría dejado el rango — y la instalación — exactamente como están.
+- **Acceptance criteria:**
+  - [ ] `npm view @beyondnet/evolith-cli@latest dependencies` muestra un rango de SDK que resuelve a una versión publicada el 2026-07-27 o después, e igual `evolith-mcp`.
+  - [ ] Los fixes que reclama la ola de seguridad del 2026-07-23 se verifican presentes en la versión del SDK que el CLI y el MCP resuelven de verdad, en vez de asumirse por el número de versión.
+  - [ ] `@beyondnet/evolith-sdk@1.1.0` queda deprecada en cuanto exista un sucesor al que sus consumidores puedan llegar.
+
 #### GT-633
 
 **Title:** Un guard cuyo valor esperado era una copia de su valor real, sobre una entrada que se blanquea en un artefacto cinco veces mayor

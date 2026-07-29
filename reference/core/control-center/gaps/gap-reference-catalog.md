@@ -7950,6 +7950,32 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
 
+#### GT-635
+
+**Title:** The dead-reference ratchet has been over budget on main since 2026-07-28, so the governance job is permanently red
+
+- **Purpose:** Make a ratchet that has been breached either hold or be re-measured — a gate nobody can satisfy trains people to ignore it.
+- **Evidence:** **`Governance guards (GT-578)` fails on `main` itself, and has for at least three consecutive runs.** `41-validate-evidence-commands --strict --max-dead 305` reports **309 dead references on a clean checkout**, so the job exits 1 on every run of `ci-cd.yml`. Observed on runs `30482497995` (2026-07-29 19:00Z), `30470648146` (16:25Z) and `30466280865` (15:31Z) — all on `main`, none carrying an unmerged change. The budget was set to 305 in `4a1b92d6` (2026-07-28) with the message "put the ratchet back where it was measured"; **ten commits have since edited `gap-closure-evidence.json`**, each adding `validationCommands`, and the count drifted past the number that was measured. The four extra dead references are not attributable to any single one of them from the count alone. **Why this is more than bookkeeping:** the ratchet's whole purpose is that dead references must not GROW, and it is currently reporting exactly that while being ignored, because a permanently red job reads as background noise — the same failure mode [`GT-622`](./gap-reference-catalog.md#gt-622) records for the orphaned CodeQL configuration. It also means the next change that genuinely adds a dead reference will be indistinguishable from the four already there. **What NOT to do:** raise the budget to 309 and move on. That converts a breached ratchet into a ratified one, which is how a corpus of 309 dead references was reached in the first place. The two honest options are to fix the four (retarget the commands at referents that exist) or to re-measure and state, in the commit, what was accepted and why.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Found on 2026-07-29 while diagnosing four red checks on PR #277. Three of the four were pre-existing on `main`; this is the one whose number was identical (309 vs 305) on both sides, which is what proved the PR had not caused it.
+- **Acceptance criteria:**
+  - [ ] `Governance guards (GT-578)` passes on `main` without the budget being raised to accommodate references that are already dead.
+  - [ ] Each of the four references added since `4a1b92d6` is either repaired or named in the commit that accepts it, with the reason.
+  - [ ] The guard reports the ratchet basis on a clean checkout, so the budget can never again be calibrated against a machine that happens to have built something.
+
+#### GT-634
+
+**Title:** The published CLI and MCP resolve an SDK build that predates the security wave, because a caret range under 1.x pins it
+
+- **Purpose:** Make `npm install @beyondnet/evolith-cli@latest` stop pulling a dependency published before the fixes its own CHANGELOG announces.
+- **Evidence:** **`@beyondnet/evolith-cli@1.2.1` and `@beyondnet/evolith-mcp@1.2.1` both declare `@beyondnet/evolith-sdk: ^1.1.0`, and that resolves to EXACTLY `1.1.0`.** The SDK publishes `1.0.0`, `1.1.0` and `2.0.0` and nothing in between, so a caret range under 1.x cannot reach 2.0.0 — a caret is bounded by the next major. The dates are the finding: `sdk@1.1.0` was published **2026-07-18**, `sdk@2.0.0` on **2026-07-27** as part of the release that closed [`GT-570`](./gap-reference-catalog.md#gt-570), and `cli@1.2.1` / `mcp@1.2.1` on **2026-07-28** — *after* 2.0.0 existed, still pointing at the 1.x line. So the exposure GT-570 declared closed for "anyone installing `latest`" is not closed for this dependency: `latest` of both surfaces installs an SDK built before the 2026-07-23 wave. **Stated precisely, because the stronger claim is not verified here:** what is measured is the dates and the resolution, not the contents — this row does not assert that `sdk@1.1.0` carries a specific vulnerability, only that it predates the wave and that the release which shipped the wave was a major the consumers cannot reach. Verifying which fixes are in `sdk@2.0.0` is part of closing it. **Found because it blocked something else:** deprecating `sdk@1.1.0` for [`GT-624`](./gap-reference-catalog.md#gt-624) would have printed a warning on every fresh install of the current line with no 1.x successor to offer, which is what exposed the range. Fix: retarget both ranges to `^2.0.0` (a major bump of a dependency, so it needs the SDK's breaking changes reviewed against both call sites) or publish an `sdk@1.2.x` carrying the fixes, then deprecate `sdk@1.1.0` and close GT-624's first criterion for real.
+- **Component:** `Infra` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Found on 2026-07-29 while executing GT-624's deprecation criterion. Registered rather than worked around: skipping the deprecation quietly would have left the range — and the install — exactly as they are.
+- **Acceptance criteria:**
+  - [ ] `npm view @beyondnet/evolith-cli@latest dependencies` shows an SDK range that resolves to a version published on or after 2026-07-27, likewise `evolith-mcp`.
+  - [ ] The fixes claimed by the 2026-07-23 security wave are verified present in the SDK version the CLI and MCP actually resolve, rather than assumed from the version number.
+  - [ ] `@beyondnet/evolith-sdk@1.1.0` is deprecated once a successor its consumers can reach exists.
+
 #### GT-633
 
 **Title:** A guard whose expected value was a copy of its actual value, over an input laundered into an artifact five times its size

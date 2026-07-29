@@ -58,14 +58,19 @@
  *
  * This guard flips to strict (its `--strict` flag becomes the wired default)
  * when BOTH hold:
- *   (a) dead references == 0. Today they are not: 500+ recorded commands name
- *       pre-refactor locations (`sdk/cli`, `apps/core-api`, `packages/*` as
- *       top-level workspaces, `.harness/scripts/validate-docs.mjs`) that the
- *       `src/` move invalidated, plus the retired `@evolith/*` npm scope. These
- *       are historical records of commands that were correct when they ran;
- *       repairing them is a data migration of the evidence file
+ *   (a) dead references == 0. Today they are not: 21 recorded commands name a
+ *       retired artifact with no successor (a consolidated `.bmad-core/AGENTS.md`,
+ *       the retired `evolith-bff` gateway, the retired `packages/mcp-tools`, two
+ *       retired k8s manifests, a retired sandbox app, three root-level scripts no
+ *       longer declared) or embed `vision/` / `tools/list` as prose rather than a
+ *       path (GT-634). These are historical records of commands that were correct
+ *       when they ran, or narrative that only looks path-shaped; repairing them
+ *       is a data migration of the evidence file
  *       (`reference/core/control-center/evidence/**`, owned by the board), not
- *       a code change, and it is deliberately out of scope here.
+ *       a code change, and it is deliberately out of scope here. (GT-634 already
+ *       closed the ~290 that were pre-`src/`/`product/`-move paths with real
+ *       successors, plus two defects in THIS guard that inflated the count on
+ *       top of them — see the ratchet step in `ci-cd.yml` for the detail.)
  *   (b) executed failures == 0 on a clean checkout.
  * Until (a) is done, wiring `--strict` would make the governance run red for a
  * reason no code change can fix, and the guard would be deleted within a week.
@@ -150,6 +155,23 @@ const EXTERNAL_BINARIES = new Set([
   'aws', 'az', 'gcloud', 'psql', 'mysql', 'redis-cli', 'ssh', 'scp', 'terraform',
   'ansible', 'act', 'gitleaks', 'trivy', 'snyk', 'zap-cli',
 ]);
+
+/**
+ * Repo-relative path PREFIXES this checkout's own `.gitignore` disclaims —
+ * `.harness/bin/` (downloaded by a separate CI step, e.g. `.harness/bin/opa`)
+ * and build output (`dist/`, at any depth). A referent under one of these is
+ * not a wrong path: this guard runs `npm ci` and nothing else, so neither has
+ * been materialized here regardless of whether the referent is correct. Same
+ * finding as `GT-632` on guard 47 — a gitignored artifact absent on a clean
+ * checkout is not evidence the record is dead — but the fix here is narrower:
+ * that guard checks a path's ANCESTOR is real; this one still can't confirm
+ * the leaf exists, so the honest verdict is `unchecked`, not `resolved`.
+ */
+const GITIGNORED_PREFIXES = [/^\.harness\/bin\//, /(^|\/)dist\//];
+
+function isGitignoredArtifact(relPath) {
+  return GITIGNORED_PREFIXES.some(re => re.test(relPath));
+}
 
 /** Real toolchains, but minutes each and needing a built workspace. */
 const HEAVY_BINARIES = new Set([
@@ -483,6 +505,25 @@ function pathOperands(cmd) {
 }
 
 /**
+ * The `<script>` operand of `npm run <script>` / `run-script <script>` — the
+ * first non-flag token, correctly skipping `--workspace <path>` / `-w <path>`
+ * when it appears BEFORE the script name. `npm run --workspace <path> <script>`
+ * is a valid invocation and the corpus uses it throughout; without this, the
+ * workspace's own VALUE token (which does not start with `-`) is mistaken for
+ * the script name.
+ */
+function npmScriptOperand(tokens) {
+  for (let i = 0; i < tokens.length; i++) {
+    const tok = tokens[i];
+    if (tok === '--workspace' || tok === '-w') { i += 1; continue; }
+    if (tok.startsWith('--workspace=')) continue;
+    if (tok.startsWith('-')) continue;
+    return tok;
+  }
+  return undefined;
+}
+
+/**
  * Resolve a command's referent.
  * @returns {{ status: 'resolved'|'dead'|'unchecked', detail: string }}
  */
@@ -499,9 +540,10 @@ export function resolveCommand(cmd, ctx) {
     const script = rest.find(x => !x.startsWith('-'));
     if (!script) return { status: 'unchecked', detail: 'no script operand' };
     if (!looksLikePath(script)) return { status: 'unchecked', detail: `operand is not a path: ${script}` };
-    return pathResolves(root, cmd.cwd, script)
-      ? { status: 'resolved', detail: script }
-      : { status: 'dead', detail: `script not found: ${join(cmd.cwd || '.', script)}` };
+    if (pathResolves(root, cmd.cwd, script)) return { status: 'resolved', detail: script };
+    const rel = join(cmd.cwd || '.', script);
+    if (isGitignoredArtifact(rel)) return { status: 'unchecked', detail: `gitignored artifact, not built here: ${rel}` };
+    return { status: 'dead', detail: `script not found: ${rel}` };
   }
 
   // npm ... --workspace <w>  /  npm run <script>
@@ -518,7 +560,7 @@ export function resolveCommand(cmd, ctx) {
     }
     const sub = t[1];
     let scriptName = null;
-    if (sub === 'run' || sub === 'run-script') scriptName = t.slice(2).find(x => !x.startsWith('-'));
+    if (sub === 'run' || sub === 'run-script') scriptName = npmScriptOperand(t.slice(2));
     else if (sub === 'test') scriptName = 'test';
     else if (sub && !sub.startsWith('-') && !NPM_MUTATING.has(sub) && sub !== 'exec' && sub !== 'ls' && sub !== 'view') scriptName = sub;
 
@@ -536,10 +578,9 @@ export function resolveCommand(cmd, ctx) {
   // A relative binary: `.harness/bin/opa test rulesets/opa/`
   if (cmd.binRaw.includes('/')) {
     const b = cmd.binRaw.replace(/^\.\//, '');
-    if (!pathResolves(root, cmd.cwd, b)) {
-      return { status: 'dead', detail: `binary not found: ${b}` };
-    }
-    return { status: 'resolved', detail: b };
+    if (pathResolves(root, cmd.cwd, b)) return { status: 'resolved', detail: b };
+    if (isGitignoredArtifact(b)) return { status: 'unchecked', detail: `gitignored artifact, not built here: ${b}` };
+    return { status: 'dead', detail: `binary not found: ${b}` };
   }
 
   // grep / rg / ls / cat / find / wc — the last path-shaped operand is the target.

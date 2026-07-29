@@ -1,6 +1,6 @@
 {
   "name": "@beyondnet/evolith-cli",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Evolith CLI - Governance, standards validation, and AI agent integration for satellite repositories",
   "main": "dist/main.js",
   "bin": {
@@ -73,7 +73,7 @@
     "@beyondnet/evolith-agent-runtime": "^1.1.0",
     "@beyondnet/evolith-core-domain": "^1.2.0",
     "@beyondnet/evolith-infra-providers": "^1.2.0",
-    "@beyondnet/evolith-sdk": "^1.1.0",
+    "@beyondnet/evolith-sdk": "^2.0.0",
     "@hono/node-server": "1.19.14",
     "@modelcontextprotocol/sdk": "1.29.0",
     "@nestjs/common": "11.1.27",

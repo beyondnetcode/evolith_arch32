@@ -44,7 +44,7 @@
  *   1 - an unresolvable specifier, a boot failure, a pack/install failure, or a vacuous scan
  */
 
-import { readdirSync, readFileSync, existsSync, mkdtempSync, mkdirSync, rmSync } from 'node:fs';
+import { readdirSync, readFileSync, existsSync, mkdtempSync, mkdirSync, rmSync, renameSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createRequire } from 'node:module';
@@ -225,8 +225,29 @@ function main(argv) {
         fail([`npm pack failed (${packed.status}):`, String(packed.stderr).trim()]);
       }
       const tarball = String(packed.stdout).trim().split('\n').pop();
+      // `--pack-destination` is not honoured identically across npm majors when
+      // the cwd is a WORKSPACE package: npm 11 writes to the destination, npm 10
+      // (the Node 20 runner) writes to the package directory and prints the same
+      // filename either way. Trusting one of them made this guard report the npm
+      // version rather than the artifact — it passed locally and failed the
+      // release rehearsal on 2026-07-29 with "no such tarball exists".
+      //
+      // So LOOK in both, and move a stray tarball out of the source tree rather
+      // than leaving it for the root-cleanliness guard to find.
       spec = join(temp, tarball);
-      if (!existsSync(spec)) fail([`npm pack reported "${tarball}" but no such tarball exists in ${temp}.`]);
+      if (!existsSync(spec)) {
+        const strayInPackage = join(pkgRoot, tarball);
+        if (existsSync(strayInPackage)) {
+          renameSync(strayInPackage, spec);
+        } else {
+          fail([
+            `npm pack reported "${tarball}" but it is in neither location:`,
+            `  --pack-destination: ${temp}`,
+            `  package directory:  ${pkgRoot}`,
+            'Both are checked because npm majors disagree about which one a workspace pack writes to.',
+          ]);
+        }
+      }
     }
 
     const installDir = join(temp, 'consumer');

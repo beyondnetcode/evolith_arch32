@@ -10,6 +10,12 @@ import { failure, generateCorrelationId, success, toErrorEnvelope } from '../com
 import { runWithContext } from '@beyondnet/evolith-core-domain/common/request-context';
 import { mcpContextStorage, McpUserContext } from './mcp-user-context';
 import { describeAbacDenial } from './abac-denial-remediation';
+import {
+  baseShaIsRequired,
+  readHeadSha,
+  verifyBaseSha,
+  type HeadShaReader,
+} from './workspace-concurrency';
 
 /** Keys whose values must never reach the log sink in cleartext. */
 const SENSITIVE_ARG_KEYS = new Set(['approvalToken', 'apiKey', 'api_key', 'token', 'secret', 'password', 'authorization']);
@@ -56,6 +62,8 @@ export interface CallToolDeps {
   abacEvaluator: AbacEvaluator;
   logger: Logger;
   tracer: ReturnType<typeof trace.getTracer>;
+  /** GT-606 — override the HEAD reader (tests only); defaults to `git rev-parse HEAD`. */
+  headShaReader?: HeadShaReader;
 }
 
 /** Backward-compatible aggregate. */
@@ -73,6 +81,12 @@ export class ToolDispatchService {
     private readonly abacEvaluator: AbacEvaluator,
     private readonly logger: Logger,
     private readonly tracer: ReturnType<typeof trace.getTracer>,
+    /**
+     * GT-606 — how the dispatch learns the workspace HEAD (ADR-0093 §1).
+     * Injectable purely so a test can interleave a real commit with an in-flight
+     * call; production always uses `git rev-parse HEAD`.
+     */
+    private readonly headShaReader: HeadShaReader = readHeadSha,
   ) {}
 
   /** List tools allowed for the current user context. */
@@ -182,6 +196,29 @@ export class ToolDispatchService {
           Date.now() - startTime,
         );
       }
+      // GT-606 / ADR-0093 §1 — Optimistic State Verification. This runs BEFORE
+      // `tool.execute`, so a rejected call has written nothing. It is enforced
+      // here, on `tool.mutative`, rather than in each tool, so that the set of
+      // protected tools is exactly the set of mutative tools by construction —
+      // a tool added later cannot arrive unprotected.
+      const conflict = await verifyBaseSha({
+        args,
+        readHead: this.headShaReader,
+        requireBaseSha: baseShaIsRequired(),
+      });
+      if (conflict) {
+        const { message, ...details } = conflict;
+        return errorEnvelope(
+          failure(
+            ErrorCodes.CONCURRENCY_CONFLICT,
+            `Mutative operation '${name}' rejected. ${message}`,
+            meta(Date.now() - startTime),
+            details,
+          ),
+          Date.now() - startTime,
+        );
+      }
+
       this.logger.log(JSON.stringify({
         event: 'MUTATIVE_TOOL_EXECUTION',
         user: { id: userContext.id, roles: userContext.roles, tenant: tenant || userContext.tenant },
@@ -279,6 +316,7 @@ export async function handleCallTool(
 ): Promise<ToolCallResult> {
   const service = new ToolDispatchService(
     deps.registry, deps.metrics, deps.abacEvaluator, deps.logger, deps.tracer,
+    deps.headShaReader ?? readHeadSha,
   );
   return service.callTool(name, args);
 }

@@ -38,7 +38,12 @@ bower_components
 build/Release
 
 # Dependency directories
-node_modules/
+# No trailing slash on purpose: `node_modules/` matches directories ONLY, and a
+# fresh worktree has no node_modules of its own — the documented workaround is to
+# symlink the main checkout's. A symlink is not a directory, so the slashed form
+# left it untracked-but-visible, and `git add -A` staged a link to an absolute
+# path on one machine.
+node_modules
 .harness/bin/
 jspm_packages/
 

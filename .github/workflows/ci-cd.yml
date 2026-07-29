@@ -155,18 +155,21 @@ jobs:
         run: node .harness/scripts/generate-abac-tool-sets.mjs --check
 
       # GT-602: compile the rego to the `policy.wasm` the dispatcher actually loads.
-      # Without this the compiled-policy parity block self-skips and CI would verify
-      # ABAC against the rego SOURCE only — never against the artifact that decides
-      # at runtime, which is exactly how fifteen tools stayed FORBIDDEN in production.
+      # `abac-rego-parity.spec.ts` now compiles it ITSELF when it is missing or stale,
+      # so this step is no longer what makes the parity check run. It stays because it
+      # fails fast and unambiguously on a toolchain problem (no opa binary, no network)
+      # instead of surfacing it as one red test inside the whole jest suite.
       - name: Compile OPA policy bundle (policy.wasm)
         run: npm run build:policy
 
+      # GT-602 criteria 1 and 3 are enforced HERE. `abac-rego-parity.spec.ts` loads the
+      # COMPILED policy.wasm — the artifact that decides at dispatch — evaluates it over
+      # every tool name the DI graph registers, and requires ALLOW for an `architect` in
+      # `production`. A tool that exists in the TypeScript registry and not in the
+      # compiled policy comes back ABAC-03 and turns this step red. That block never
+      # skips: a missing bundle is compiled, and a bundle that cannot be compiled is a
+      # failure. `Test mcp-server` is a required check on `main`.
       - name: Run mcp-server tests with coverage
-        # EVOLITH_REQUIRE_OPA_WASM=1 makes the ABSENCE of the compiled bundle a
-        # failure rather than a skip: a test that skips where it is enforced
-        # verifies nothing.
-        env:
-          EVOLITH_REQUIRE_OPA_WASM: '1'
         run: npm run test:cov --workspace @beyondnet/evolith-mcp
 
       # GT-330: MCP server dedicated E2E (spawns the live MCP HTTP server)

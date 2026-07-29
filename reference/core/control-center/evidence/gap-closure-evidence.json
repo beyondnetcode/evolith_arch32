@@ -8876,6 +8876,31 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The residual 21 dead references are genuinely retired artifacts (a consolidated .bmad-core/AGENTS.md, the retired evolith-bff gateway, the retired packages/mcp-tools, two retired k8s manifests with no path-equivalent successor, a retired sandbox app, three root-level scripts no longer declared) or prose misparsed as a path (vision/, tools/list). None were force-mapped to a plausible-looking target -- a wrong rename would corrupt the record it claims to verify. Repairing each is per-record archaeology into when and why that specific artifact was retired, which this closure deliberately did not attempt; --max-dead stays at 21 until it is."
+    },
+    {
+      "id": "GT-636",
+      "closedAt": "2026-07-29",
+      "closureCommit": "d85c6216",
+      "evidence": [
+        "package.json",
+        "package-lock.json",
+        "reference/core/architecture/adrs/core/0124-credential-secret-management-standard.es.md",
+        "reference/core/architecture/demos/level-3-components/README.es.md",
+        "reference/core/control-center/gaps/gap-tracking.es.md",
+        "reference/core/control-center/maturity-reports/maturity-assessment.es.md",
+        "src/sdk/cli/test/e2e/cli-e2e.test.ts"
+      ],
+      "validationCommands": [
+        "npm audit --audit-level=high -> real exit code 0, verified separately from the printed summary (checked with $? after redirecting to a file, since the human-readable summary was once observed stale after a fix that had already applied).",
+        "node .harness/scripts/bilingual-terminology-lint.mjs --verbose -> Bilingual terminology check passed.",
+        "npm run test:e2e (src/sdk/cli, exact CI command) -> 18 suites, 132/132 passed.",
+        "core-domain: npx jest --config jest.config.js --runInBand -> 128/129 suites, 1442/1444 tests (2 pre-existing skips).",
+        "sdk/cli unit: npm run test:unit -> 99/99 suites, 1436/1436 tests.",
+        "mcp-server: npx jest --config jest.config.js --runInBand -> 53/53 suites, 433/437 tests (4 pre-existing skips).",
+        "All of the above run in an isolated scratch worktree (git worktree add --detach) with a REAL, non-symlinked node_modules copied from the main checkout, after rebuilding every workspace dependency (core-domain, agent-runtime, sdk, infra-providers, core, mcp) exactly as the CI job's own \"Build workspace dependencies\" step does -- not against this session's own per-package symlink farm, which was independently confirmed to corrupt npm ls graph output."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "2 moderate npm audit findings remain, both the same root cause: a Windows-only path-traversal in @hono/node-server's serve-static (GHSA-frvp-7c67-39w9), irrelevant to this repo's Linux CI/deployment. The available fix bumps @modelcontextprotocol/sdk, a PRODUCTION dependency pinned exactly (no range) in two workspaces' package.json -- qualitatively different from the devDependency-only overrides this closure applied, and out of scope for a security-audit fix that should not also silently change a shipped runtime dependency's resolved version."
     }
   ]
 }

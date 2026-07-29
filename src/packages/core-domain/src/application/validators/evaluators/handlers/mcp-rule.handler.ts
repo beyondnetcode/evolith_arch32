@@ -53,7 +53,7 @@ export class McpRuleHandler implements INativeRuleHandler {
   }
 
   private async evalMcpSecurity(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
-    const serverFile = path.join(ctx.corePath, 'sdk', 'cli', 'src', 'core', 'mcp', 'server.ts');
+    const serverFile = path.join(ctx.corePath, 'src', 'packages', 'mcp-server', 'src', 'mcp', 'mcp-server.service.ts');
     if (!await this.fs.exists(serverFile)) {
       return { rule, result: 'skipped', message: 'MCP server.ts not found' };
     }

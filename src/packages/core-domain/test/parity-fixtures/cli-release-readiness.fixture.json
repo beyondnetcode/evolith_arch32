@@ -11,8 +11,8 @@
   "scenarios": {
     "compliant": {
       "filesystem": {
-        "existing": ["/core/sdk/cli/dist", "/core/sdk/cli/dist/main.js", "/core/sdk/cli/package-lock.json", "/core/.harness/evidence", "/core/sdk/cli/README.md"],
-        "dirs": { "/core/.harness/evidence": ["mcp-smoke.json"], "/core/sdk/cli/dist": ["main.js", "x.spec.js"] },
+        "existing": ["/core/src/sdk/cli/dist", "/core/src/sdk/cli/dist/main.js", "/core/package-lock.json", "/core/.harness/evidence", "/core/src/sdk/cli/README.md"],
+        "dirs": { "/core/.harness/evidence": ["mcp-smoke.json"], "/core/src/sdk/cli/dist": ["main.js", "x.spec.js"] },
         "files": {
           "/core/.harness/evidence/mcp-smoke.json": "{\"status\":\"passed\",\"results\":{\"initialize\":{},\"tools/list\":{}}}"
         }
@@ -43,8 +43,8 @@
     },
     "no-lock-file": {
       "filesystem": {
-        "existing": ["/core/sdk/cli/dist", "/core/sdk/cli/dist/main.js", "/core/sdk/cli/README.md"],
-        "dirs": { "/core/sdk/cli/dist": ["main.js", "x.spec.js"] },
+        "existing": ["/core/src/sdk/cli/dist", "/core/src/sdk/cli/dist/main.js", "/core/src/sdk/cli/README.md"],
+        "dirs": { "/core/src/sdk/cli/dist": ["main.js", "x.spec.js"] },
         "files": {}
       },
       "context": { "satellitePath": "/sat", "corePath": "/core" },

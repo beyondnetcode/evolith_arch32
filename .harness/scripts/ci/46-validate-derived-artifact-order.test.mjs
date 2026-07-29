@@ -38,7 +38,7 @@ test('the real repository is current and at a fixed point', () => {
   const { status, out } = run(resolve(__dirname, '../../..'));
   assert.equal(status, 0, out);
   assert.match(out, /at a fixed point/);
-  assert.match(out, /links declared \.+ 2/);
+  assert.match(out, /links declared \.+ 3/);
 });
 
 test('the guard leaves the real tree byte-identical', () => {
@@ -58,12 +58,27 @@ test('the guard leaves the real tree byte-identical', () => {
   });
 });
 
+
+/**
+ * The chain gained a first link (the ABAC rego, GT-602). These fixtures are about
+ * ORDER, not about ABAC, so each mini-repo gets a trivial producer/artifact pair
+ * for it — otherwise the shape check trips before the behaviour under test runs.
+ */
+const ABAC_STUB = {
+  '.harness/scripts/generate-abac-tool-sets.mjs':
+    "import fs from 'node:fs';\nconst f = process.cwd() + '/src/rulesets/opa/abac-mcp-tool-access.rego';\n" +
+    "if (process.argv.includes('--check')) process.exit(fs.readFileSync(f, 'utf8') === 'stable\\n' ? 0 : 1);\n" +
+    "fs.writeFileSync(f, 'stable\\n');\n",
+  'src/packages/mcp-server/src/mcp/abac-evaluator.ts': '// stub\n',
+  'src/rulesets/opa/abac-mcp-tool-access.rego': 'stable\n',
+};
+
 // --- the shape of the declaration itself ------------------------------------
 
 describe('chain declaration (anti-vacuous)', () => {
   const fixture = (name, files) => {
     const root = join(sandbox, name);
-    for (const [rel, body] of Object.entries(files)) {
+    for (const [rel, body] of Object.entries({ ...ABAC_STUB, ...files })) {
       mkdirSync(dirname(join(root, rel)), { recursive: true });
       writeFileSync(join(root, rel), body);
       if (rel.endsWith('.mjs')) chmodSync(join(root, rel), 0o755);
@@ -72,7 +87,10 @@ describe('chain declaration (anti-vacuous)', () => {
   };
 
   it('refuses a root whose declared producer does not exist', () => {
-    const root = fixture('no-producer', { 'placeholder.txt': 'x' });
+    // Deliberately WITHOUT the stub, so a producer really is absent.
+    const root = join(sandbox, 'no-producer');
+    mkdirSync(root, { recursive: true });
+    writeFileSync(join(root, 'placeholder.txt'), 'x');
     const { status, out } = run(root);
     assert.equal(status, 1, out);
     assert.match(out, /declared producer does not exist/);
@@ -110,6 +128,7 @@ describe('stale versus out-of-order', () => {
       mkdirSync(dirname(join(root, rel)), { recursive: true });
       writeFileSync(join(root, rel), body);
     };
+    for (const [rel, body] of Object.entries(ABAC_STUB)) w(rel, body);
     w('reference/core/control-center/gaps/gap-tracking.md', `count: ${boardCount}\n`);
     w('reference/core/control-center/maturity-reports/maturity-assessment.md', '# assessment\n');
     w('reference/core/control-center/maturity-reports/maturity-reconciliation.json', `{"count":${reconCount}}\n`);
@@ -158,7 +177,7 @@ fs.writeFileSync(dir + 'executive-summary.es.md', es);
     const root = miniRepo('stale-upstream', { boardCount: 9, reconCount: 7, summaryCount: 7 });
     const { status, out } = run(root);
     assert.equal(status, 1, out);
-    assert.match(out, /maturity reconciliation is STALE \(link 1 of 2\)/);
+    assert.match(out, /maturity reconciliation is STALE \(link 2 of 3\)/);
     assert.match(out, /Stopping at the FIRST stale link on purpose/);
     assert.doesNotMatch(out, /executive governance summary is STALE/);
   });
@@ -220,6 +239,7 @@ fs.writeFileSync(dir + 'executive-summary.es.md', es);
     assert.equal(status, 1, out);
     assert.match(out, /differ after replaying the chain IN ORDER/);
     assert.match(out, /Fix by regenerating in the declared order/);
-    assert.match(out, /1\. node \.harness\/scripts\/ci\/09-reconcile-maturity\.mjs/);
+    // The reconciler is link 2 now that the ABAC rego leads the chain.
+    assert.match(out, /2\. node \.harness\/scripts\/ci\/09-reconcile-maturity\.mjs/);
   });
 });

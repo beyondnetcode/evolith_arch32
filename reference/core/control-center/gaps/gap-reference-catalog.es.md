@@ -7252,7 +7252,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
 - **Criterios de aceptación:**
   - [ ] Un test evalúa el `policy.wasm` compilado sobre todos los nombres registrados y exige ALLOW para un `architect` en `production`.
-  - [ ] Los conjuntos de herramientas del rego se generan desde el registro en vez de mantenerse a mano.
+  - [x] Los conjuntos de herramientas del rego se generan desde el registro en vez de mantenerse a mano.
   - [ ] CI falla cuando una herramienta existe en el registro TypeScript y no en la política compilada.
 
 #### GT-603

@@ -146,6 +146,13 @@ CORE-0113-01,adr/generated/adr-0113-node-js-platform-lighthouse-apache-2-0-as-th
 CORE-0115-01,adr/generated/adr-0115-emergent-knowledge-axis-knowledge-originated-by-applying-the.rules.json,architecture-decision,,,none,no,documentation-only
 CORE-0116-01,adr/generated/adr-0116-canonical-finding-contract-and-an-executable-advisory-author.rules.json,architecture-decision,,,none,no,documentation-only
 CORE-0117-01,adr/generated/adr-0117-bilingual-parity-applies-to-authored-sources-not-generated-p.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0118-01,adr/generated/adr-0118-the-core-hub-has-its-own-root-taxonomy-distinct-from-satelli.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0119-01,adr/generated/adr-0119-api-security-configuration-hardening.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0120-01,adr/generated/adr-0120-ssrf-prevention-standard.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0121-01,adr/generated/adr-0121-input-validation-and-sanitization-standard.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0122-01,adr/generated/adr-0122-shell-execution-safety-standard.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0123-01,adr/generated/adr-0123-timing-safe-comparison-standard.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0124-01,adr/generated/adr-0124-credential-and-secret-management-standard.rules.json,architecture-decision,,,none,no,documentation-only
 AI-0001-01,adr/generated/adr-ai-augmented-0001-harness-engineering-for-ai-augmented-development.rules.json,architecture-decision,,,none,no,documentation-only
 AI-0002-01,adr/generated/adr-ai-augmented-0002-mcp-integration-protocol-for-agent-tool-invocation.rules.json,architecture-decision,,,none,no,documentation-only
 AI-0003-01,adr/generated/adr-ai-augmented-0003-model-selection-governance-for-ai-augmented-workflows.rules.json,architecture-decision,,,none,no,documentation-only

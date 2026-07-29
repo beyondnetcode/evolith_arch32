@@ -9,11 +9,17 @@
  * a rule the triage table has not seen, the coverage assertions move and this
  * suite says so.
  *
+ * The computation itself lives in `test/rule-corpus-triage.ts` so the snapshot
+ * consumed by `src/rulesets/standards` can be CAPTURED from it rather than
+ * hand-maintained. This suite is its pin; the last describe block below is the
+ * other half — it fails when the committed snapshot stops agreeing with what a
+ * fresh triage computes.
+ *
  * The two figures worth remembering:
  *  - the handler backlog is **60 rules**, not 240;
- *  - **129 rules are documentation** — 126 auto-generated ADR-conformance
+ *  - **136 rules are documentation** — auto-generated ADR-conformance
  *    placeholders that say in their own text that no check was wired, plus 3
- *    board-judgement rules — and 91 of those are flagged `blocking: true`.
+ *    board-judgement rules — and 96 of those are flagged `blocking: true`.
  *
  * Every assertion below fails against the pre-GT-595 code: `classifyRule`,
  * `summarizeEvaluability` and `AdrConformanceRuleHandler` did not exist, and all
@@ -22,121 +28,32 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { NativeEvaluator } from './evaluators/native-evaluator';
-import { INativeRuleHandler } from './evaluators/handlers/rule-handler.interface';
-import { NormalizedRule } from '../../domain/models/normalized-rule';
 import {
-  ClassifiedRule,
+  ADR_CONFORMANCE_CATEGORY,
   RULE_TRIAGE,
   RuleEvaluability,
-  classifyRule,
   isNonExecutable,
-  summarizeEvaluability,
 } from './rule-evaluability';
+import { REPO_ROOT, triageCorpus } from '../../../test/rule-corpus-triage';
 
-const REPO_ROOT = path.resolve(__dirname, '../../../../../..');
-const RULESETS_ROOT = path.join(REPO_ROOT, 'src', 'rulesets');
-
-// ---------------------------------------------------------------------------
-// Load the corpus exactly as DiskRulesetRepository does, minus the schema pass
-// (this suite measures classification, not schema conformance).
-// ---------------------------------------------------------------------------
-
-function rulesetFiles(dir: string, depth = 0): string[] {
-  if (depth > 4) return [];
-  const out: string[] = [];
-  for (const entry of fs.readdirSync(dir).sort()) {
-    const full = path.join(dir, entry);
-    if (entry.endsWith('.rules.json')) { out.push(full); continue; }
-    if (!entry.includes('.') && fs.statSync(full).isDirectory()) out.push(...rulesetFiles(full, depth + 1));
-  }
-  return out;
-}
-
-const CATEGORY_BY_PREFIX: Record<string, string> = {
-  inh: 'inheritance', acl: 'anti-corruption', ocb: 'open-core', gov: 'governance',
-  evd: 'identity', 'obs-evd': 'tracing', dep: 'version-pinning', tax: 'naming-conventions',
-  hxa: 'layer-structure', git: 'branch-naming', cicd: 'ci-cd', tpy: 'testing-pyramid',
-  mtn: 'multi-tenancy', prot: 'protocol', runt: 'multi-runtime', dora: 'metrics',
-  space: 'metrics', drift: 'governance', 'cli-rr': 'build', 'cli-par': 'shared-logic',
-  mcp: 'protocol', 'modular-monolith': 'topology', 'distributed-modules': 'module-autonomy',
-  microservices: 'autonomous-deployment',
-};
-
-function deriveCategory(raw: Record<string, unknown>): string {
-  if (raw['category']) return String(raw['category']);
-  const prefix = String(raw['id'] ?? '')
-    .replace(/-(?:EVD|RR|PAR)-?\d*$/, '')
-    .replace(/-\d+$/, '')
-    .toLowerCase();
-  return CATEGORY_BY_PREFIX[prefix] ?? 'general';
-}
-
-function deriveSeverity(raw: Record<string, unknown>): NormalizedRule['severity'] {
-  const declared = String(raw['severity'] ?? '').toUpperCase().trim();
-  if (declared === 'MUST NOT') return 'MUST NOT';
-  if (declared === 'MUST') return 'MUST';
-  if (declared === 'SHOULD') return 'SHOULD';
-  if (declared === 'COULD' || declared === 'MAY') return 'COULD';
-  return raw['blocking'] === true || raw['enforcement'] ? 'MUST' : 'SHOULD';
-}
-
-function loadCorpus(): NormalizedRule[] {
-  const rules: NormalizedRule[] = [];
-  for (const file of rulesetFiles(RULESETS_ROOT)) {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf8')) as Record<string, unknown>;
-    const list = (parsed['rules'] ?? parsed['principles']) as Array<Record<string, unknown>> | undefined;
-    if (!Array.isArray(list)) continue;
-    if (list.length > 0 && !list[0]['id'] && list[0]['rules']) continue;
-
-    for (const raw of list.filter(r => Boolean(r['id']))) {
-      // `blocking` defaults from the RAW severity string, exactly as
-      // DiskRulesetRepository.defaultBlocking does — NOT from the normalized
-      // severity, which promotes `enforcement`-bearing rules to MUST.
-      const rawSeverity = String(raw['severity'] ?? '').toUpperCase();
-      rules.push({
-        id: String(raw['id']),
-        severity: deriveSeverity(raw),
-        category: deriveCategory(raw),
-        title: String(raw['title'] ?? raw['principle'] ?? raw['id']),
-        description: String(raw['description'] ?? raw['statement'] ?? ''),
-        blocking: Boolean(raw['blocking'] ?? (rawSeverity === 'MUST' || rawSeverity === 'MUST NOT')),
-        validationQuery: raw['validationQuery'] ? String(raw['validationQuery']) : undefined,
-        sourceFile: path.relative(REPO_ROOT, file),
-      });
-    }
-  }
-  return rules;
-}
-
-/** The real handler set, asked only which rules it CLAIMS (no I/O performed). */
-function handlerSet(): INativeRuleHandler[] {
-  const evaluator = new NativeEvaluator({} as never, {} as never, {} as never);
-  return (evaluator as unknown as { handlers: INativeRuleHandler[] }).handlers;
-}
-
-const CORPUS = loadCorpus();
-const HANDLERS = handlerSet();
-
-/** A handler claims the rule — it is routed somewhere instead of falling through. */
-const claims = (rule: NormalizedRule) => HANDLERS.some(h => h.canHandle(rule));
+const { corpus: CORPUS, classified: CLASSIFIED, summary: SUMMARY, claims } = triageCorpus();
 
 /**
- * A handler claims the rule AND can return a verdict for it.
+ * The class counts this repository is pinned to.
  *
- * {@link AdrConformanceRuleHandler} is deliberately excluded: it claims the 126
- * generated rules only to CLASSIFY them, and never returns `passed`. Counting
- * "claimed" as "evaluated" would reproduce, one layer up, exactly the false
- * green GT-569 removed — so this predicate, not `claims`, drives the breakdown.
+ * These are the numbers `native-evaluability-snapshot.json` must reproduce, and
+ * the ones its capture script writes. Recomputed on every run: they are what
+ * turns "240 handlers to write" into a costed decision, so they are pinned
+ * rather than merely printed. Measured 2026-07-28 against 386 rules.
  */
-const evaluates = (rule: NormalizedRule) => claims(rule) && rule.category !== 'adr-conformance';
-
-const CLASSIFIED: ClassifiedRule[] = CORPUS.map(rule => {
-  const { evaluability, why } = classifyRule(rule, evaluates(rule));
-  return { ruleId: rule.id, sourceFile: rule.sourceFile, blocking: rule.blocking, evaluability, why };
-});
-
-const SUMMARY = summarizeEvaluability(CLASSIFIED);
+const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
+  'native-handler': 139,
+  'documentation-only': 136,
+  'unimplemented-native': 60,
+  'needs-external-system': 20,
+  'needs-runtime': 17,
+  underspecified: 14,
+};
 
 describe('GT-595 · the corpus is fully classified', () => {
   it('loads a corpus of the expected size (guards the measurement itself)', () => {
@@ -176,17 +93,7 @@ describe('GT-595 · the corpus is fully classified', () => {
 
 describe('GT-595 · the published breakdown, with its denominator', () => {
   it('reports the measured class counts', () => {
-    // Measured 2026-07-28 against 379 rules in 167 ruleset files. Recomputed on
-    // every run: these are the numbers that turn "240 handlers to write" into a
-    // costed decision, so they are pinned rather than merely printed.
-    expect(SUMMARY.byClass).toEqual({
-      'native-handler': 139,
-      'documentation-only': 136,
-      'unimplemented-native': 60,
-      'needs-external-system': 20,
-      'needs-runtime': 17,
-      underspecified: 14,
-    });
+    expect(SUMMARY.byClass).toEqual(PINNED_CLASS_COUNTS);
   });
 
   it('publishes the honest denominator: 150 rules nothing can ever run', () => {
@@ -242,7 +149,7 @@ describe('GT-595 · the handler slice that landed', () => {
     // 126 -> 133 on 2026-07-28: the committed corpus was seven rulesets behind
     // its generator (ADR-0118 plus the six security standards 0119..0124), which
     // regenerating for GT-571 surfaced.
-    const adrConformance = CORPUS.filter(r => r.category === 'adr-conformance');
+    const adrConformance = CORPUS.filter(r => r.category === ADR_CONFORMANCE_CATEGORY);
     expect(adrConformance).toHaveLength(133);
     expect(adrConformance.every(claims)).toBe(true);
   });
@@ -255,7 +162,7 @@ describe('GT-595 · the handler slice that landed', () => {
   it('does not pretend the ADR-conformance rules were EVALUATED', () => {
     // The handler claims them so they can be classified; it never returns
     // `passed`. Coverage is honest precisely because this is true.
-    const adrIds = new Set(CORPUS.filter(r => r.category === 'adr-conformance').map(r => r.id));
+    const adrIds = new Set(CORPUS.filter(r => r.category === ADR_CONFORMANCE_CATEGORY).map(r => r.id));
     const classifiedAdr = CLASSIFIED.filter(c => adrIds.has(c.ruleId));
     expect(classifiedAdr.every(c => c.evaluability === 'documentation-only')).toBe(true);
   });
@@ -277,5 +184,58 @@ describe('GT-595 · the remaining backlog is costed, not a lump', () => {
     expect(isNonExecutable('unimplemented-native')).toBe(false);
     expect(isNonExecutable('documentation-only')).toBe(true);
     expect(isNonExecutable('underspecified')).toBe(true);
+  });
+});
+
+/**
+ * GT-598 — the snapshot `src/rulesets/standards` consumes must be a CAPTURE.
+ *
+ * `native-evaluability-snapshot.json` is read by `build-iso-5055-mapping.mjs`,
+ * which stamps `nativeEvaluability` onto every row of the ISO/IEC 5055 mapping.
+ * A stale snapshot therefore does not stay contained: it launders a wrong
+ * classification into a larger derived artifact and misstates the handler
+ * backlog. Its own guard (`iso-5055-mapping.test.mjs`) cannot catch that on its
+ * own — it runs in a job with no node_modules and so cannot compute the truth.
+ *
+ * This is where the truth exists, so this is where the comparison belongs. If it
+ * fails, run:
+ *   node src/rulesets/standards/capture-native-evaluability-snapshot.mjs
+ *   node src/rulesets/standards/build-iso-5055-mapping.mjs
+ */
+describe('GT-598 · the captured snapshot still matches a fresh triage', () => {
+  const SNAPSHOT_PATH = path.join(REPO_ROOT, 'src/rulesets/standards/native-evaluability-snapshot.json');
+  const snapshot = JSON.parse(fs.readFileSync(SNAPSHOT_PATH, 'utf8')) as {
+    counts: Record<string, number>;
+    classes: Record<string, RuleEvaluability>;
+  };
+
+  it('agrees on the class counts', () => {
+    expect(snapshot.counts).toEqual(PINNED_CLASS_COUNTS);
+  });
+
+  it('agrees on the class of every rule, id by id', () => {
+    // Duplicate ids across rulesets collapse to one entry, so compare against
+    // the same collapse rather than against the raw corpus length.
+    const fresh: Record<string, RuleEvaluability> = {};
+    for (const c of CLASSIFIED) fresh[c.ruleId] = c.evaluability;
+
+    const drifted = Object.keys(fresh)
+      .filter(id => snapshot.classes[id] !== fresh[id])
+      .map(id => `${id}: snapshot says ${snapshot.classes[id] ?? '(absent)'}, triage says ${fresh[id]}`);
+    const orphaned = Object.keys(snapshot.classes).filter(id => !(id in fresh));
+
+    expect(drifted).toEqual([]);
+    expect(orphaned).toEqual([]);
+  });
+
+  it('carries counts that agree with its own per-rule classes', () => {
+    // A snapshot whose header disagrees with its body would let the .mjs guard
+    // pass on the header while the mapping is stamped from the body.
+    const tally: Record<string, number> = {};
+    for (const rule of CORPUS) {
+      const klass = snapshot.classes[rule.id];
+      tally[klass] = (tally[klass] ?? 0) + 1;
+    }
+    expect(tally).toEqual(snapshot.counts);
   });
 });

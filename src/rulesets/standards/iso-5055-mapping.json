@@ -12,24 +12,24 @@
     "weaknessCount": 138
   },
   "corpus": {
-    "rulesetFiles": 167,
-    "rules": 381,
+    "rulesetFiles": 174,
+    "rules": 388,
     "note": "Files that carry gate definitions or topology recommendations rather than conformance rules contribute no rows: architecture/topology-recommendation.rules.json and sdlc/phase-gates.rules.json."
   },
   "summary": {
-    "rules": 381,
+    "rules": 388,
     "mappedToIso5055": 37,
     "mappedDirect": 8,
     "mappedPartial": 29,
-    "noInternationalEquivalent": 344,
-    "adoptedFraction": 0.0971,
+    "noInternationalEquivalent": 351,
+    "adoptedFraction": 0.0954,
     "analyserAdoptable": 42,
     "analyserAdoptablePartial": 23,
-    "analyserAdoptableFraction": 0.1102,
-    "analyserAdoptableFractionIncludingPartial": 0.1706,
+    "analyserAdoptableFraction": 0.1082,
+    "analyserAdoptableFractionIncludingPartial": 0.1675,
     "byClass": {
       "architecture-decision": {
-        "rules": 155,
+        "rules": 162,
         "mapped": 12,
         "adoptable": 6
       },
@@ -83,10 +83,11 @@
   "handlerBacklog": {
     "source": "native-evaluability-snapshot.json",
     "sourceAuthority": [
+      "src/packages/core-domain/test/rule-corpus-triage.ts (corpus loader, real handler set, classification)",
       "src/packages/core-domain/src/application/validators/rule-evaluability.ts (RULE_TRIAGE, classifyRule, ADR_CONFORMANCE_CATEGORY)",
       "src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts (registered handler set)",
       "src/packages/core-domain/src/application/validators/evaluators/handlers/**/*.ts (canHandle predicates)",
-      "src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts (corpus loader and pinned counts)"
+      "src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts (the pinned counts, asserted against this file)"
     ],
     "note": "The handler backlog is the `unimplemented-native` class only. `documentation-only` and `underspecified` rules are not handler work at all, and the two adapter classes are closed by the enforcer seam rather than by a rule handler.",
     "realBacklogSize": 60,
@@ -144,7 +145,7 @@
         "adoptablePartialRuleIds": []
       },
       "documentation-only": {
-        "rules": 129,
+        "rules": 136,
         "mappedToIso5055": 9,
         "analyserAdoptable": 6,
         "analyserAdoptablePartial": 7,
@@ -3170,6 +3171,139 @@
       "ruleId": "CORE-0117-01",
       "sourceFile": "adr/generated/adr-0117-bilingual-parity-applies-to-authored-sources-not-generated-p.rules.json",
       "title": "Conform to ADR-0117: Bilingual Parity Applies to Authored Sources, Not Generated Projections",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0118-01",
+      "sourceFile": "adr/generated/adr-0118-the-core-hub-has-its-own-root-taxonomy-distinct-from-satelli.rules.json",
+      "title": "Conform to ADR-0118: The Core Hub Has Its Own Root Taxonomy, Distinct From Satellites",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0119-01",
+      "sourceFile": "adr/generated/adr-0119-api-security-configuration-hardening.rules.json",
+      "title": "Conform to ADR-0119: API Security Configuration Hardening",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0120-01",
+      "sourceFile": "adr/generated/adr-0120-ssrf-prevention-standard.rules.json",
+      "title": "Honor design decision in ADR-0120: SSRF Prevention Standard",
+      "severity": "SHOULD",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0121-01",
+      "sourceFile": "adr/generated/adr-0121-input-validation-and-sanitization-standard.rules.json",
+      "title": "Honor design decision in ADR-0121: Input Validation and Sanitization Standard",
+      "severity": "SHOULD",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0122-01",
+      "sourceFile": "adr/generated/adr-0122-shell-execution-safety-standard.rules.json",
+      "title": "Conform to ADR-0122: Shell Execution Safety Standard",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0123-01",
+      "sourceFile": "adr/generated/adr-0123-timing-safe-comparison-standard.rules.json",
+      "title": "Conform to ADR-0123: Timing-Safe Comparison Standard",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0124-01",
+      "sourceFile": "adr/generated/adr-0124-credential-and-secret-management-standard.rules.json",
+      "title": "Conform to ADR-0124: Credential and Secret Management Standard",
       "severity": "MUST",
       "ruleClass": "architecture-decision",
       "iso5055": {

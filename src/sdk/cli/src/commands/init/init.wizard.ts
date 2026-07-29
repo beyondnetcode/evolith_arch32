@@ -6,8 +6,9 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
 import { Inject } from '@nestjs/common';
 import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, type ErrorCode } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { InitializeProjectUseCase } from '@beyondnet/evolith-core-domain/application/services';
+import { carriesCliExitCode, resolveExitCode } from '../../infrastructure/cli/exit-codes';
 
 interface WizardInitOptions {
   wizard?: boolean;
@@ -192,8 +193,15 @@ export class InitWizardCommand extends BaseEvolithCommand {
       }
       const message = error instanceof Error ? error.message : String(error);
       if (json) {
-        process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        // GT-580: a carrier error (e.g. `NonInteractiveError` on a non-TTY)
+        // already knows its taxonomy classification — collapsing it to
+        // INTERNAL_ERROR here would lose that and make the envelope disagree
+        // with the exit code.
+        const code: ErrorCode = carriesCliExitCode(error) && error.envelopeErrorCode
+          ? (error.envelopeErrorCode as ErrorCode)
+          : 'INTERNAL_ERROR';
+        process.exitCode = resolveExitCode(error);
+        console.log(JSON.stringify(createErrorEnvelope(code, message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       } else {
         throw error;
       }

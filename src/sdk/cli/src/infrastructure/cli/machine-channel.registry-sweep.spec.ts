@@ -43,7 +43,7 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import { CommandFactory } from 'nest-commander';
 import { Commander } from 'nest-commander/src/constants';
-import { CLI_EXIT_CODE_VALUES } from './exit-codes';
+import { CLI_EXIT_CODES, CLI_EXIT_CODE_VALUES } from './exit-codes';
 
 const CLI_ROOT = path.resolve(__dirname, '..', '..', '..');
 const REPO_ROOT = path.resolve(CLI_ROOT, '..', '..', '..');
@@ -231,6 +231,32 @@ describe('GT-580 · every `--format json` command in the registry pipes cleanly'
     const offenders = runs
       .filter((run) => !CLI_EXIT_CODE_VALUES.includes(run.status ?? -1))
       .map((run) => ({ command: run.command, status: run.status }));
+
+    expect(offenders).toEqual([]);
+  });
+
+  it('exits `0` iff the envelope says `success: true` — never a taxonomy member merely', () => {
+    // Membership in the taxonomy is necessary but not sufficient: a command
+    // that exits 0 with `success: false` (or a non-zero code with `success:
+    // true`) still hands a consumer branching on the exit code the wrong
+    // verdict, and the "member of the taxonomy" assertion above cannot see it
+    // because 0 and 1 and 2 and 3 are all valid members. This asserts the two
+    // facts the envelope and the exit code each claim actually agree.
+    const offenders: Array<{ command: string; status: number | null; success: unknown }> = [];
+    for (const run of runs) {
+      let envelope: unknown;
+      try {
+        envelope = JSON.parse(run.stdout.trim());
+      } catch {
+        continue; // already reported by the "writes exactly one JSON document" assertion
+      }
+      if (envelope === null || typeof envelope !== 'object' || !('success' in envelope)) continue;
+      const success = (envelope as { success: unknown }).success;
+      const exitsOk = run.status === CLI_EXIT_CODES.OK;
+      if (success !== exitsOk) {
+        offenders.push({ command: run.command, status: run.status, success });
+      }
+    }
 
     expect(offenders).toEqual([]);
   });

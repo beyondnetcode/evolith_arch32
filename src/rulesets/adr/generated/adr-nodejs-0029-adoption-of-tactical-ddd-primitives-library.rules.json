@@ -19,7 +19,7 @@
       "statement": "ADR decision: Standardize on utilizing the @nestjslatam/ddd primitives ecosystem within core domains to accelerate velocity: 1. Pure Typescript Only : Adhering to core purity constraints, this specific package has 0 external NPM dependencies, making it totally safe for placement directly in the Domain innermost layer.",
       "rationale": "Derived from ADR-0029 \"Decision\" section. Enforcement signals detected: dependencies, layer, import.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0029 via static analysis, lint rules, or pipeline gates covering: dependencies, layer, import. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

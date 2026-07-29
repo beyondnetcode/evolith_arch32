@@ -19,7 +19,7 @@
       "statement": "ADR decision: We establish a Human in the Loop Policy with three tiers of human oversight: Agents MAY operate autonomously for these actions: Running validation scripts and reporting results Generating documentation drafts (not committing) Classifying changes into impact categories Emitting cost telemetry and budget alerts The agen…",
       "rationale": "Derived from ADR-0005 \"Decision\" section. Enforcement signals detected: must not, must, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0005 via static analysis, lint rules, or pipeline gates covering: must not, must, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

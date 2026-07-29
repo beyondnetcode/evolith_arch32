@@ -19,7 +19,7 @@
       "statement": "ADR decision: We establish a mandatory strategy for heavy weight testing layers. Definition: Verifying a single Infrastructure Adapter against its real external counterpart. Mandatory Rule: MUST use Testcontainers to spin up real instances of SQL Server, PostgreSQL, Redis, or MongoDB.",
       "rationale": "Derived from ADR-0053 \"Decision\" section. Enforcement signals detected: must, layer, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0053 via static analysis, lint rules, or pipeline gates covering: must, layer, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

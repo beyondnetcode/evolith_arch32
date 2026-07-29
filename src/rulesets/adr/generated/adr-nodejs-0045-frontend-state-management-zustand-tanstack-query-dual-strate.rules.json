@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt a dual strategy state management approach: TanStack Query is the canonical solution for all data that originates from an API endpoint.",
       "rationale": "Derived from ADR-0045 \"Decision\" section. Enforcement signals detected: must not, must, import.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0045 via static analysis, lint rules, or pipeline gates covering: must not, must, import. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

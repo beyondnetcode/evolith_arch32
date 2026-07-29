@@ -19,7 +19,7 @@
       "statement": "ADR decision: We adopt a Dual Layer Tenant Isolation (Defense in Depth) strategy for .NET APIs using EF Core and SQL Server: All tenant scoped entity configurations in the DbContext must apply a query filter that limits rows based on the current request's tenant context: csharp modelBuilder.Entity<TenantScopedEntity () .HasQueryFil…",
       "rationale": "Derived from ADR-0060 \"Decision\" section. Enforcement signals detected: must, layer, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0060 via static analysis, lint rules, or pipeline gates covering: must, layer, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

@@ -19,7 +19,7 @@
       "statement": "ADR decision: 1. Tool & license. Adopt Lighthouse (Apache 2.0) as the reference evidence vendor. The permissive license means no copyleft obligation and no commercial re licensing risk (contrast ADR 0110's MassTransit v9 situation); Lighthouse is illustrative, not load bearing (ADR 0111 litmus test).",
       "rationale": "Derived from ADR-0113 \"Decision\" section. Enforcement signals detected: dependency, dependencies, layer, import.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0113 via static analysis, lint rules, or pipeline gates covering: dependency, dependencies, layer, import. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

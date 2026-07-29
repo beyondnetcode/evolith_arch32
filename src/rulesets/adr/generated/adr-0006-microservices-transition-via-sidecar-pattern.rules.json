@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt the Sidecar Pattern as the standard distributed application runtime when splitting the monolith into independent services. Migration milestones: To prevent premature over engineering, Sidecars are NOT active by default in Milestone 2.",
       "rationale": "Derived from ADR-0006 \"Decision\" section. Enforcement signals detected: must, layer, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0006 via static analysis, lint rules, or pipeline gates covering: must, layer, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

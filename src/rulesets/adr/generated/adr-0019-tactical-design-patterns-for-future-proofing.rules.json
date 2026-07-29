@@ -19,7 +19,7 @@
       "statement": "ADR decision: Mandate specific Functional and Structure patterns protecting core purity: 1. The Result Pattern : Eliminate raw error throwing from inside application use cases. Methods strictly return a typed functional Result<V, E wrapper.",
       "rationale": "Derived from ADR-0019 \"Decision\" section. Enforcement signals detected: must, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0019 via static analysis, lint rules, or pipeline gates covering: must, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

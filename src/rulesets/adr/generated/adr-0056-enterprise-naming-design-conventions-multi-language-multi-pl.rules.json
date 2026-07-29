@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt a single, binding, automated enforcement naming standard with the following pillars: 1. Ubiquitous Language as the Source of Truth. Every name in code, API, database, and events originates from the domain glossary not from implementation preferences.",
       "rationale": "Derived from ADR-0056 \"Decision\" section. Enforcement signals detected: must, layer, lint, naming, ci gate, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0056 via static analysis, lint rules, or pipeline gates covering: must, layer, lint, naming, ci gate, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

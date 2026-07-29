@@ -19,7 +19,7 @@
       "statement": "ADR decision: It has been decided to adopt and enforce the Enterprise Taxonomy and Repository Structuring Policy as a global, immutable, and inheritable standard for this repository and all satellite ecosystems.",
       "rationale": "Derived from ADR-0048 \"Decision\" section. Enforcement signals detected: must, naming, structure, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0048 via static analysis, lint rules, or pipeline gates covering: must, naming, structure, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

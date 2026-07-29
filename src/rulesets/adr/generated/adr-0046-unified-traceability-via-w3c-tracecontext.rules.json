@@ -19,7 +19,7 @@
       "statement": "ADR decision: We hereby mandate the absolute unification of infrastructure and application telemetry governed by the following engineering directives: 1. Correlation Unification (Pivot to W3C) : The application MUST deprecate manual correlation identifier generation .",
       "rationale": "Derived from ADR-0046 \"Decision\" section. Enforcement signals detected: must, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0046 via static analysis, lint rules, or pipeline gates covering: must, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

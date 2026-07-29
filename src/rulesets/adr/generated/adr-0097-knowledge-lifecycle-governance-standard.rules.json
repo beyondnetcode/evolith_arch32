@@ -19,7 +19,7 @@
       "statement": "ADR decision: We establish Winston ( @winston ) as the lifecycle custodian for all external knowledge and define a four stage promotion pipeline with mandatory evidence at each transition: candidate → evaluated → accepted → executable Each promotion requires an Architecture Board decision recorded in an ADR (for accepted and execut…",
       "rationale": "Derived from ADR-0097 \"Decision\" section. Enforcement signals detected: must not, must, required, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0097 via static analysis, lint rules, or pipeline gates covering: must not, must, required, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

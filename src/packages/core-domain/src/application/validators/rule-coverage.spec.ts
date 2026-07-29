@@ -143,9 +143,13 @@ describe('GT-569 · unevaluated rules are visible in the issue list', () => {
       strategy: { evaluateAll: async () => [] } as any,
     });
 
+  // GT-595 AC2 note: these advisories are for MUST rules that are NOT declared
+  // `blocking`. A skipped rule that IS blocking fails the run instead — see
+  // `blocking-skipped-invariant.spec.ts`. `blocking: false` is therefore stated
+  // explicitly here rather than relying on the helper default.
   it('emits a non-blocking WARNING issue for a skipped MUST rule', () => {
     const issues = engine().toValidationIssues([
-      { rule: rule({ id: 'MUST-01', severity: 'MUST' }), result: 'skipped', message: 'Requires external system' },
+      { rule: rule({ id: 'MUST-01', severity: 'MUST', blocking: false }), result: 'skipped', message: 'Requires external system' },
     ]);
 
     expect(issues).toHaveLength(1);
@@ -158,7 +162,7 @@ describe('GT-569 · unevaluated rules are visible in the issue list', () => {
 
   it('treats `MUST NOT` as MUST for the skipped-rule warning', () => {
     const issues = engine().toValidationIssues([
-      { rule: rule({ id: 'MUSTNOT-01', severity: 'MUST NOT' }), result: 'skipped' },
+      { rule: rule({ id: 'MUSTNOT-01', severity: 'MUST NOT', blocking: false }), result: 'skipped' },
     ]);
     expect(issues).toHaveLength(1);
     expect(issues[0].ruleId).toBe('MUSTNOT-01');
@@ -166,8 +170,8 @@ describe('GT-569 · unevaluated rules are visible in the issue list', () => {
 
   it('stays quiet for a skipped SHOULD/COULD rule (advisory rules are not a coverage claim)', () => {
     const issues = engine().toValidationIssues([
-      { rule: rule({ id: 'SHOULD-01', severity: 'SHOULD' }), result: 'skipped' },
-      { rule: rule({ id: 'COULD-01', severity: 'COULD' }), result: 'skipped' },
+      { rule: rule({ id: 'SHOULD-01', severity: 'SHOULD', blocking: false }), result: 'skipped' },
+      { rule: rule({ id: 'COULD-01', severity: 'COULD', blocking: false }), result: 'skipped' },
     ]);
     expect(issues).toEqual([]);
   });
@@ -202,9 +206,13 @@ describe('GT-569 · RulesetValidatorService.validate reports the denominator', (
   const rules = [
     rule({ id: 'RAN-01' }),
     rule({ id: 'RAN-02' }),
-    rule({ id: 'SKIP-01' }),
-    rule({ id: 'SKIP-02' }),
-    rule({ id: 'SKIP-03', severity: 'SHOULD' }),
+    // GT-595 AC2: the skipped rules are declared NON-blocking so this suite keeps
+    // measuring what GT-569 is about (the denominator and its advisories). A
+    // skipped rule that IS blocking now fails the run outright, which
+    // `blocking-skipped-invariant.spec.ts` covers.
+    rule({ id: 'SKIP-01', blocking: false }),
+    rule({ id: 'SKIP-02', blocking: false }),
+    rule({ id: 'SKIP-03', severity: 'SHOULD', blocking: false }),
     rule({ id: 'CRASH-01' }),
   ];
 

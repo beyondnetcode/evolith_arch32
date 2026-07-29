@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt the OpenTelemetry (OTel) standard as the unified observability backbone, with the following toolchain: Implementation rules: 1. Auto instrumentation : NestJS HTTP, TypeORM, and Redis calls are automatically instrumented via OTel auto instrumentation packages no manual span creation required for standard flows.",
       "rationale": "Derived from ADR-0007 \"Decision\" section. Enforcement signals detected: must, required, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0007 via static analysis, lint rules, or pipeline gates covering: must, required, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

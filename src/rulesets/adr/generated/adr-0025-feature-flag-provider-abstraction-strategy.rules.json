@@ -19,7 +19,7 @@
       "statement": "ADR decision: Subsume feature toggle invocation under classic Hexagonal Port principles: 1. Canonical Port : The core repository defines IFeatureFlagPort , detailing universal execution contracts ( evaluate() , isHealthy() ) entirely isolated from commercial library syntax.",
       "rationale": "Derived from ADR-0025 \"Decision\" section. Enforcement signals detected: dependency, layer, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0025 via static analysis, lint rules, or pipeline gates covering: dependency, layer, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

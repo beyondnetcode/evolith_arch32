@@ -19,7 +19,7 @@
       "statement": "ADR decision: Establish a unified security configuration baseline for all HTTP services (core api, agent runtime api, mcp server): All HTTP services MUST implement rate limiting (100 req/min per IP minimum).",
       "rationale": "Derived from ADR-0119 \"Decision\" section. Enforcement signals detected: must, prohibited, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0119 via static analysis, lint rules, or pipeline gates covering: must, prohibited, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

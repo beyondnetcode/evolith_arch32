@@ -205,12 +205,17 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
   });
 
   it('names the blocking rules that can never produce a verdict', () => {
-    // 96 auto-generated ADR placeholders + 11 blocking rules with no authored
-    // check (EC-SEC / SV-SEC x2 each, KI-R01..07). This is the number the
-    // product ships as "enforced" and does not enforce. 91 -> 96 with the seven
-    // ADR rulesets that were missing from the committed corpus.
-    expect(SUMMARY.blockingNonExecutable.length).toBe(96 + 11);
-    expect(SUMMARY.blockingNonExecutable).toContain('CORE-0111-01');
+    // Was 96 auto-generated ADR placeholders + 11 hand-authored rules with no
+    // validationQuery at all (EC-SEC / SV-SEC x2 each, KI-R01..07). GT-595 AC2
+    // made `blocking` + `skipped` fail the run, which turned the 96 placeholders
+    // from a reported oddity into 96 run-failing issues — so
+    // `generate-adr-rulesets.mjs` now emits them `blocking: false`, since their
+    // own validationQuery says no check was ever wired. What is left is the 11
+    // that a human declared blocking and never gave a check to; those are a
+    // governance decision (author the check or drop the flag), not a generator
+    // bug, so they stay visible and keep failing the run.
+    expect(SUMMARY.blockingNonExecutable.length).toBe(11);
+    expect(SUMMARY.blockingNonExecutable).not.toContain('CORE-0111-01');
     expect(SUMMARY.blockingNonExecutable).toContain('EC-SEC-01');
     expect(SUMMARY.blockingNonExecutable).toContain('KI-R01');
   });
@@ -258,6 +263,47 @@ describe('GT-595 · the handler slice that landed', () => {
     const adrIds = new Set(CORPUS.filter(r => r.category === 'adr-conformance').map(r => r.id));
     const classifiedAdr = CLASSIFIED.filter(c => adrIds.has(c.ruleId));
     expect(classifiedAdr.every(c => c.evaluability === 'documentation-only')).toBe(true);
+  });
+});
+
+describe('GT-595 AC2 · the corpus rules that still declare `blocking` and cannot run', () => {
+  // A rule declared `blocking: true` whose class is anything but `native-handler`
+  // will come back `skipped`, and GT-595 AC2 makes that combination FAIL the run.
+  // This is therefore the live defect list, measured rather than asserted.
+  const offenders = CLASSIFIED.filter(c => c.blocking && c.evaluability !== 'native-handler');
+  const countOf = (klass: RuleEvaluability) => offenders.filter(o => o.evaluability === klass).length;
+
+  it('no longer includes the auto-generated ADR placeholders (fixed at the generator)', () => {
+    // Was 96. Every one carried a validationQuery that ends "Concrete checks to
+    // be wired into the harness" — the corpus claiming enforcement it never
+    // wired. `generate-adr-rulesets.mjs` now emits `blocking: false` for them;
+    // `severity: MUST` and `enforcement: executable` are kept, because those
+    // describe the ADR and this stays real handler backlog.
+    expect(countOf('documentation-only')).toBe(0);
+    expect(offenders.map(o => o.ruleId)).not.toContain('CORE-0111-01');
+  });
+
+  it('enumerates the 85 that remain, by what each one would cost to close', () => {
+    // NOT a tolerance and NOT a suppression list: every one of these fails a run
+    // today. It is pinned so the number can only move deliberately, and so a new
+    // rule cannot quietly join it.
+    //  - unimplemented-native  : write the handler (decidable from the tree).
+    //  - needs-external-system : write the adapter (VCS host, tracker, live DB, mesh).
+    //  - needs-runtime         : write the adapter that observes a running system.
+    //  - underspecified        : author the check, or drop the flag — a human
+    //                            declared these blocking and gave them no
+    //                            validationQuery at all, so unlike the generated
+    //                            placeholders the fix is a governance decision.
+    expect(offenders).toHaveLength(85);
+    expect(countOf('unimplemented-native')).toBe(48);
+    expect(countOf('needs-external-system')).toBe(14);
+    expect(countOf('needs-runtime')).toBe(12);
+    expect(countOf('underspecified')).toBe(11);
+
+    expect(offenders.filter(o => o.evaluability === 'underspecified').map(o => o.ruleId).sort()).toEqual([
+      'EC-SEC-01', 'EC-SEC-02', 'KI-R01', 'KI-R02', 'KI-R03', 'KI-R04',
+      'KI-R05', 'KI-R06', 'KI-R07', 'SV-SEC-01', 'SV-SEC-02',
+    ]);
   });
 });
 

@@ -19,7 +19,7 @@
       "statement": "ADR decision: We establish a dual track modeling standard based on the nature of the persistence engine. All relational models MUST follow the Third Normal Form (3NF) as the default baseline.",
       "rationale": "Derived from ADR-0054 \"Decision\" section. Enforcement signals detected: must, forbidden, dependency, naming.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0054 via static analysis, lint rules, or pipeline gates covering: must, forbidden, dependency, naming. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

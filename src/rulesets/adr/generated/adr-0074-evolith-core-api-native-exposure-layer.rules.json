@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt option 3 . We will construct the Evolith Core API as a NestJS application in the src/apps/core api directory. Ratified elements: 1. Network Sovereignty: Evolith Core is the sole owner of its domain, rulesets, and evaluation logic.",
       "rationale": "Derived from ADR-0074 \"Decision\" section. Enforcement signals detected: dependency, layer, structure, enforce, boundaries.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0074 via static analysis, lint rules, or pipeline gates covering: dependency, layer, structure, enforce, boundaries. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

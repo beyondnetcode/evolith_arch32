@@ -19,7 +19,7 @@
       "statement": "ADR decision: Establish a strictly typed, unified Error Propagation framework based on the Result Pattern (Functional Error Handling): Mandate that ALL Application Use Cases and Domain Entities return errors explicitly instead of throwing them.",
       "rationale": "Derived from ADR-0038 \"Decision\" section. Enforcement signals detected: layer, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0038 via static analysis, lint rules, or pipeline gates covering: layer, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

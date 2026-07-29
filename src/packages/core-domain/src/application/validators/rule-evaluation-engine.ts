@@ -46,12 +46,16 @@ function reportedSeverity(severity: NormalizedRule['severity']): ValidationIssue
 export function summarizeRuleCoverage(results: readonly RuleEvaluationResult[]): RuleCoverage {
   const skippedRuleIds: string[] = [];
   const erroredRuleIds: string[] = [];
+  const blockingSkippedRuleIds: string[] = [];
   let rulesChecked = 0;
 
   for (const r of results) {
     switch (r.result) {
       case 'skipped':
         skippedRuleIds.push(r.rule.id);
+        // GT-595 AC2 — the combination the verdict cannot survive; see
+        // `blockingSkippedIssue`.
+        if (r.rule.blocking) blockingSkippedRuleIds.push(r.rule.id);
         break;
       case 'errored':
         erroredRuleIds.push(r.rule.id);
@@ -75,6 +79,9 @@ export function summarizeRuleCoverage(results: readonly RuleEvaluationResult[]):
     nonExecutableRuleIds: [...evaluability.nonExecutableRuleIds],
     rulesExecutable: evaluability.executableTotal,
     blockingNonExecutableRuleIds: [...evaluability.blockingNonExecutable],
+    // GT-595 AC2 — a superset of the line above: every blocking rule that did
+    // not run, whether or not anything could ever run it.
+    blockingSkippedRuleIds,
     perRuleset: evaluability.perRuleset.map(r => ({ ...r })),
   };
 }
@@ -103,13 +110,67 @@ function classifyResult(r: RuleEvaluationResult): ClassifiedRule {
   };
 }
 
+/**
+ * GT-595 (AC2) — `blocking` + `skipped` is the one combination a verdict cannot
+ * survive.
+ *
+ * A blocking rule that skips produces exactly the same report as a blocking rule
+ * that passed — no finding — so "0 blocking findings" is indistinguishable from
+ * "the blocking rules never ran". GT-569 made the denominator honest and thereby
+ * made this visible; this is the gate that acts on it.
+ *
+ * **Why a failed rule result and not a thrown error.** Both would surface the
+ * defect; only one of them is unsuppressable HERE.
+ *  - A throw from the engine is caught by `RulesetValidatorService.validate`,
+ *    which logs `Rule engine error: …` and returns the verdict built from the
+ *    remaining issues. The invariant would therefore be *silently downgraded to a
+ *    warning by the only caller in the product* — the precise failure mode
+ *    GT-474 fixed for an empty corpus.
+ *  - A throw also aborts the corpus at the first offender, so the report would
+ *    name one rule out of the 85 this repository currently has, and the next run
+ *    would name the next one. An invariant you cannot enumerate cannot be closed.
+ *  - As a `blocking: true` issue it flows through the ONE place both callers of
+ *    the engine build their verdict from (`toValidationIssues`, used by
+ *    `RulesetValidatorService.validate` and `runArchitectureValidation`), and
+ *    `status = issues.some(i => i.blocking) ? 'failed' : …` fails the run with no
+ *    opt-in switch to consult. Unlike `maxSkippedFraction` (GT-569, opt-in by
+ *    design) there is no option that turns this off: a consumer would have to
+ *    filter out a `blocking: true` issue, which is filtering out real violations.
+ *
+ * The rule's own outcome deliberately STAYS `skipped`. Rewriting it to `failed`
+ * would move it into `rulesChecked` and re-inflate the coverage number with rules
+ * that did not run — reintroducing, one field over, the dishonesty GT-569
+ * removed. The rule did not run; it is the RUN that fails, not the rule that
+ * passed a check.
+ */
+function blockingSkippedIssue(r: RuleEvaluationResult): ValidationIssue {
+  const evaluability = classifyResult(r).evaluability;
+  const remedy = isNonExecutable(evaluability)
+    ? 'Nothing can ever evaluate this rule as written, so `blocking: true` is a claim the engine cannot back: ' +
+      'author a real validationQuery and a handler, or set `blocking: false` in the ruleset.'
+    : 'Implement the handler/adapter this rule needs, or set `blocking: false` until it exists.';
+
+  return {
+    ruleId: r.rule.id,
+    severity: reportedSeverity(r.rule.severity),
+    category: r.rule.category,
+    title: `Blocking rule did not run: ${r.rule.title}`,
+    description:
+      `[${r.rule.severity}] This rule is declared \`blocking: true\` and was NOT evaluated ` +
+      `(${evaluability}). ${r.message ?? 'No handler supports it.'} ` +
+      'A blocking rule that skips is reported exactly like a blocking rule that passed, so the run ' +
+      `would claim coverage it did not earn. ${remedy}`,
+    blocking: true,
+  };
+}
+
 /** GT-569 — the zero value, so a run that evaluated nothing still reports a shape. */
 export function emptyRuleCoverage(): RuleCoverage {
   return {
     rulesChecked: 0, rulesSkipped: 0, rulesErrored: 0, rulesTotal: 0,
     skippedRuleIds: [], erroredRuleIds: [],
     rulesNonExecutable: 0, nonExecutableRuleIds: [], rulesExecutable: 0,
-    blockingNonExecutableRuleIds: [], perRuleset: [],
+    blockingNonExecutableRuleIds: [], blockingSkippedRuleIds: [], perRuleset: [],
   };
 }
 
@@ -176,6 +237,10 @@ export function mergeRuleCoverage(a: RuleCoverage, b: RuleCoverage): RuleCoverag
     blockingNonExecutableRuleIds: [
       ...(a.blockingNonExecutableRuleIds ?? []),
       ...(b.blockingNonExecutableRuleIds ?? []),
+    ],
+    blockingSkippedRuleIds: [
+      ...(a.blockingSkippedRuleIds ?? []),
+      ...(b.blockingSkippedRuleIds ?? []),
     ],
     perRuleset: mergePerRuleset(a.perRuleset, b.perRuleset),
   };
@@ -263,6 +328,11 @@ export class RuleEvaluationEngine {
    *  - every `MUST`/`MUST NOT` rule that was `skipped`.
    * Neither is blocking: they describe missing coverage, not a proven violation.
    * Gating on them is the job of `RulesetValidatorOptions.maxSkippedFraction`.
+   *
+   * GT-595 (AC2) adds ONE non-advisory case: a rule that declared
+   * `blocking: true` and came back `skipped` emits a BLOCKING issue, so the run
+   * fails. See {@link blockingSkippedIssue} for why that is a failed rule result
+   * rather than a thrown error, and why it is emitted here.
    */
   toValidationIssues(results: RuleEvaluationResult[]): ValidationIssue[] {
     const issues: ValidationIssue[] = [];
@@ -292,6 +362,14 @@ export class RuleEvaluationEngine {
             'It is excluded from rulesChecked and counted in rulesErrored.',
           blocking: false,
         });
+        continue;
+      }
+
+      if (r.result === 'skipped' && r.rule.blocking) {
+        // GT-595 AC2. This case is checked BEFORE the advisory below and takes
+        // it over: the same rule must not be reported twice, once as a warning
+        // and once as a blocker.
+        issues.push(blockingSkippedIssue(r));
         continue;
       }
 

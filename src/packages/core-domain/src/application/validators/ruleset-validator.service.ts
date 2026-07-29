@@ -140,6 +140,11 @@ export class RulesetValidatorService {
       nonExecutableRuleIds: coverage.nonExecutableRuleIds,
       rulesExecutable: coverage.rulesExecutable,
       blockingNonExecutableRuleIds: coverage.blockingNonExecutableRuleIds,
+      // GT-595 AC2 — every blocking rule that did not run. Non-empty ⇒ the
+      // engine emitted one `blocking: true` issue per id, so `status` is
+      // 'failed' above; the ids are published so the offenders are enumerable
+      // without parsing issue text.
+      blockingSkippedRuleIds: coverage.blockingSkippedRuleIds,
       perRuleset: coverage.perRuleset,
       issues,
       coreRef: { version: coreRefVersion, path: coreRefPath },

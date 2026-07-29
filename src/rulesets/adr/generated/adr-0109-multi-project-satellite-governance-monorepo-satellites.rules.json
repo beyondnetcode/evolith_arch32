@@ -19,7 +19,7 @@
       "statement": "ADR decision: Promote the satellite model to first class multi project satellites . A satellite workspace (a monorepo) may contain N satellite projects , each governed independently with its own manifest, maturity, coreRef , and ADR registry.",
       "rationale": "Derived from ADR-0109 \"Decision\" section. Enforcement signals detected: must, prohibited.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0109 via static analysis, lint rules, or pipeline gates covering: must, prohibited. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

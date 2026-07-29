@@ -31,6 +31,18 @@ export function createGateTools(webhook: IWebhookNotifier, fs: IFileSystem, logg
           properties: {
             phase: { type: 'string', description: 'Phase identifier (discovery, design, construction, qa, release)' },
             projectPath: { type: 'string', description: 'Path to the repository to validate' },
+            // GT-572: `corePath` has always been READ by execute() but was never
+            // DECLARED, so an agent reading the schema had no way to learn it
+            // exists. That matters for the published package: an npm consumer has
+            // no Evolith Core checkout beside its cwd, so gate discovery falls back
+            // to `<cwd>/../evolith` and the call fails with RULESET_NOT_FOUND. This
+            // is the parameter that makes the tool usable off-repo.
+            corePath: {
+              type: 'string',
+              description:
+                'Optional explicit path to the Evolith Core repository (source of the SDLC gate '
+                + 'definitions). Required when the server does not run beside a Core checkout.',
+            },
             rulesetRef: { type: 'string', description: 'Optional ruleset reference' },
             evidenceMode: { type: 'string', description: 'full or summary', default: 'full' },
             evaluatedBy: { type: 'string', description: 'human, agent, or ci', default: 'agent' },

@@ -546,3 +546,48 @@ describe('PhaseGateValidatorService', () => {
     });
   });
 });
+
+// ---------------------------------------------------------------------------
+// GT-572 — corePath discovery
+// ---------------------------------------------------------------------------
+
+describe('PhaseGateValidatorService.findCorePath (GT-572)', () => {
+  /**
+   * An fs that answers `existsSync` only for a fixed set of absolute paths, so a
+   * test states a repository LAYOUT rather than a boolean.
+   */
+  const fsWith = (present: string[]): IFileSystem =>
+    createMockFileSystem({
+      existsSync: jest.fn((p: string) => present.includes(p)) as unknown as IFileSystem['existsSync'],
+    });
+
+  const resolve = (fs: IFileSystem, from: string): string =>
+    (new PhaseGateValidatorService(undefined, {
+      fileSystem: fs,
+      logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() } as never,
+    }) as unknown as { findCorePath(p: string): string }).findCorePath(from);
+
+  it('resolves the REPOSITORY ROOT, not <root>/src, in the post-refactor layout', () => {
+    // The layout this repository actually has: `rulesets/` lives under `src/`,
+    // the gate definitions live at the root. Probing for `rulesets` alone stopped
+    // at `/repo/src` and every gate evaluation failed with RULESET_NOT_FOUND.
+    const fs = fsWith([
+      '/repo/src/rulesets',
+      '/repo/reference/governance/sdlc/gates',
+    ]);
+
+    expect(resolve(fs, '/repo/src/packages/mcp-server')).toBe('/repo');
+  });
+
+  it('still resolves a legacy layout that has rulesets/ but no reference/ tree', () => {
+    const fs = fsWith(['/legacy/rulesets']);
+
+    expect(resolve(fs, '/legacy/packages/thing')).toBe('/legacy');
+  });
+
+  it('falls back to the sibling ../evolith convention when no marker is found', () => {
+    const fs = fsWith([]);
+
+    expect(resolve(fs, '/somewhere/satellite')).toBe('/somewhere/evolith');
+  });
+});

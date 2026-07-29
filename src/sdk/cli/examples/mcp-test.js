@@ -32,7 +32,14 @@
  * rules MCP-01/02/03 by looking for `results.initialize`, `results['tools/list']`
  * and `results['resources/list']`. Evidence generation lives here — in the
  * implementation that actually observes the responses — so the recorded counts
- * are real rather than inferred from an exit code.
+ * are real rather than inferred from an exit code. GT-572 added
+ * `results['tools/call']` and `results['tools/call:http']`, which carry the
+ * GATE VERDICT each transport returned: an evidence file that only records
+ * "passed" cannot distinguish a governed run from one that governed nothing.
+ *
+ * WHAT MAKES A `tools/call` STEP PASS (GT-572): a real governance verdict, not
+ * the presence of a field. See gate-verdict.assert.js — the assertion, and its
+ * own failure modes, are unit-tested in gate-verdict.assert.test.mjs.
  *
  * Naming: `examples/mcp-test.js` understates what this is. The path is retained
  * deliberately because closure registers cite it verbatim
@@ -44,6 +51,9 @@ const { spawn } = require('node:child_process');
 const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
+// GT-572 — the assertion that makes a `tools/call` step mean something. Its own
+// failure modes are unit-tested in gate-verdict.assert.test.mjs.
+const { assertGateVerdict } = require('./gate-verdict.assert.js');
 
 const cliRoot = path.resolve(__dirname, '..');
 const repoRoot = path.resolve(cliRoot, '..', '..', '..');
@@ -229,7 +239,12 @@ async function runStdioSmoke() {
       const timeout = setTimeout(() => {
         pending.delete(id);
         reject(new Error(describeFailure(`Timed out waiting for ${method} (id ${id})`)));
-      }, 5000);
+        // 5s was a cold-start flake: the first `node dist/main.js` of a session
+        // boots the whole Nest context plus OpenTelemetry and has been observed
+        // to exceed it on an otherwise healthy machine, producing a failure with
+        // no stderr to explain it. A gate that fails for being slow teaches
+        // people to re-run it, which is how a real failure gets waved through.
+      }, 20000);
       pending.set(id, (response) => { clearTimeout(timeout); resolve(response); });
     });
   }
@@ -275,15 +290,29 @@ async function runStdioSmoke() {
     assert(metrics.content[0]?.type === 'text', 'tools/call metrics: first item not text');
     console.log('  tools/call         OK  (evolith-metrics)');
 
+    // GT-572 — the step this whole smoke exists for: a governance verdict over
+    // stdio, from the transport the README documents as the primary agent
+    // integration. Deliberately WITHOUT `corePath`, so it also covers core
+    // discovery: until 2026-07-29 that walk stopped at `<repo>/src` and this call
+    // returned RULESET_NOT_FOUND while the step printed OK.
     const gateEval = await checkedRequest(6, 'tools/call', {
       name: 'evolith-gate-evaluate',
       arguments: { phase: 'discovery', projectPath: repoRoot, evidenceMode: 'summary' }
     });
-    assert(Array.isArray(gateEval.content), 'tools/call gate-evaluate: content not an array');
     const gateEnvelope = JSON.parse(gateEval.content[0].text);
-    assert(gateEnvelope.success !== undefined, 'tools/call gate-evaluate: envelope must have success field');
     assert(gateEnvelope.meta?.tool === 'evolith-gate-evaluate', 'tools/call gate-evaluate: missing or invalid meta.tool');
-    console.log('  tools/call         OK  (evolith-gate-evaluate stdio)');
+    const stdioVerdict = assertGateVerdict(gateEval, 'stdio tools/call evolith-gate-evaluate');
+    console.log(`  tools/call         OK  (evolith-gate-evaluate stdio → verdict "${stdioVerdict.verdict}" on gate ${stdioVerdict.gateId})`);
+    // Recorded so the evidence artifact carries the VERDICT, not a boolean. An
+    // evidence file that only says "passed" cannot distinguish a governed run
+    // from a run that governed nothing.
+    recordResult('tools/call', {
+      tool: 'evolith-gate-evaluate',
+      transport: 'stdio',
+      verdict: stdioVerdict.verdict,
+      gateId: stdioVerdict.gateId,
+      summary: stdioVerdict.summary,
+    });
 
     console.log('Transport 1 PASSED\n');
   } catch (err) {
@@ -369,12 +398,22 @@ async function runHttpSmoke() {
     assert(metrics.content[0]?.type === 'text', 'HTTP tools/call metrics: first item not text');
     console.log('  tools/call         OK  (evolith-metrics, HTTP)');
 
-    const gateEvalHttp = await client.request({ method: 'tools/call', params: { name: 'evolith-gate-evaluate', arguments: { phase: 'discovery', projectPath: repoRoot } } }, z.any());
-    assert(Array.isArray(gateEvalHttp?.content), 'HTTP tools/call gate-evaluate: content not an array');
+    // The HTTP twin of the stdio step, with `corePath` supplied EXPLICITLY. The
+    // two are deliberately different: stdio covers discovery, HTTP covers the
+    // configuration a consumer off the repo has to use (the published package
+    // has no Core checkout beside its cwd, so it must be told where one is).
+    const gateEvalHttp = await client.request({ method: 'tools/call', params: { name: 'evolith-gate-evaluate', arguments: { phase: 'discovery', projectPath: repoRoot, corePath: repoRoot } } }, z.any());
     const gateEnvelopeHttp = JSON.parse(gateEvalHttp.content[0].text);
-    assert(gateEnvelopeHttp.success !== undefined, 'HTTP tools/call gate-evaluate: envelope must have success field');
     assert(gateEnvelopeHttp.meta?.tool === 'evolith-gate-evaluate', 'HTTP tools/call gate-evaluate: missing or invalid meta.tool');
-    console.log('  tools/call         OK  (evolith-gate-evaluate, HTTP)');
+    const httpVerdict = assertGateVerdict(gateEvalHttp, 'HTTP tools/call evolith-gate-evaluate');
+    console.log(`  tools/call         OK  (evolith-gate-evaluate HTTP → verdict "${httpVerdict.verdict}" on gate ${httpVerdict.gateId})`);
+    recordResult('tools/call:http', {
+      tool: 'evolith-gate-evaluate',
+      transport: 'http',
+      verdict: httpVerdict.verdict,
+      gateId: httpVerdict.gateId,
+      summary: httpVerdict.summary,
+    });
 
     await client.close();
 

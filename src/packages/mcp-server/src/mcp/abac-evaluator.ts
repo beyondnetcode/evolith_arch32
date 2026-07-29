@@ -331,7 +331,26 @@ export class AbacEvaluator {
       // one, and a deployed image built before the refactor may still carry the
       // other. Trying both is not sloppiness — it is what keeps an already-shipped
       // artifact working while the path is corrected.
+      //
+      // GT-572 — both candidates below are REPOSITORY-LAYOUT paths resolved
+      // against the process cwd. That is fine for a checkout or an image built
+      // from one, and meaningless for the published npm package: `policy.wasm` is
+      // a gitignored build artifact produced by
+      // `.harness/scripts/compile-opa-wasm.mjs` into `src/sdk/cli/rulesets/opa/`,
+      // which is OUTSIDE the mcp-server package directory and therefore cannot be
+      // in its tarball at any `files` setting. Measured: install the packed
+      // tarball anywhere but this repo, start it with NODE_ENV=production, and
+      // every tools/call returns FORBIDDEN / ABAC_POLICY_MISSING — with no
+      // supported way to point the server at a policy it does have.
+      //
+      // `EVOLITH_ABAC_POLICY_PATH` is that way. It does not manufacture the
+      // artifact and it grants nothing: a path that does not exist falls straight
+      // back to the same fail-closed branch below. It only makes the production
+      // posture SATISFIABLE off-repo, which fail-closed has to be to mean
+      // anything — a rule nobody can satisfy is not a stricter rule.
+      const configured = process.env.EVOLITH_ABAC_POLICY_PATH?.trim();
       const candidates = [
+        ...(configured ? [path.resolve(configured)] : []),
         path.join(corePath, 'src', 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm'),
         path.join(corePath, 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm'),
       ];

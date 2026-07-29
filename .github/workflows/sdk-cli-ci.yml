@@ -360,6 +360,15 @@ jobs:
         working-directory: ${{ env.CLI_DIR }}
         run: npm run test:e2e
 
+      # GT-572 — prove the smoke's gate assertion can FAIL before trusting it to
+      # pass. The assertion it replaces (`envelope.success !== undefined`) held
+      # for every response the server can emit, including FORBIDDEN, so the smoke
+      # reported OK while executing nothing. A gate whose own falsifiability is
+      # untested is indistinguishable from no gate, which is why this runs first.
+      - name: Self-test the MCP smoke's verdict assertion
+        working-directory: ${{ env.CLI_DIR }}
+        run: node --test examples/gate-verdict.assert.test.mjs
+
       - name: Run MCP Stdio and HTTP Smoke
         working-directory: ${{ env.CLI_DIR }}
         run: npm run mcp:smoke

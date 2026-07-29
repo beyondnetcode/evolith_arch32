@@ -43,7 +43,12 @@ export async function diffSatelliteVsCore(fs: IFileSystem, satellitePath: string
 }
 
 async function diffRulesets(fs: IFileSystem, satellitePath: string, corePath: string, changes: UpgradeChange[]): Promise<void> {
-  const coreRulesetsPath = path.join(corePath, 'rulesets');
+  // GT-632: the rulesets moved under `src/` and this join was left behind. It is
+  // guarded by an early return, so the failure was SILENT — a satellite upgrade
+  // simply reported no ruleset changes, which reads exactly like having none.
+  const coreRulesetsPath = await fs.exists(path.join(corePath, 'src', 'rulesets'))
+    ? path.join(corePath, 'src', 'rulesets')
+    : path.join(corePath, 'rulesets');
   const satelliteRulesetsPath = path.join(satellitePath, 'rulesets');
   if (!await fs.exists(coreRulesetsPath)) return;
 

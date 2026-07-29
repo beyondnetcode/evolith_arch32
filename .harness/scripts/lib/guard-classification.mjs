@@ -46,6 +46,14 @@ export const SELF_GUARDED = [
     reason: 'the reference implementation of the pattern (GT-377); refuses both a missing root and an empty scan',
   },
   {
+    file: '47-validate-joined-paths.mjs',
+    proof: /and found ZERO TypeScript files/,
+    reason:
+      'GT-632 joined-path guard; refuses a scan with zero TypeScript sources AND a non-empty ' +
+      'scan yielding zero path.join calls — the shape moving (to resolve(), to a helper) is ' +
+      'exactly how a guard over BUILT paths would go quiet while still reporting a clean run',
+  },
+  {
     file: '46-validate-derived-artifact-order.mjs',
     proof: /the declared chain is EMPTY — nothing was ordered and nothing was checked/,
     reason:

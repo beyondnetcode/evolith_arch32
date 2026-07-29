@@ -8702,6 +8702,32 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-632",
+      "closedAt": "2026-07-29",
+      "closureCommit": "64ec61e0",
+      "evidence": [
+        ".harness/scripts/ci/47-validate-joined-paths.mjs",
+        ".harness/scripts/ci/47-validate-joined-paths.test.mjs",
+        "src/packages/mcp-server/src/mcp/abac-evaluator.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts",
+        "src/packages/core-domain/src/application/upgrade/satellite-upgrade-diff.ts",
+        "src/packages/core-domain/src/application/validators/artifact-path-resolver.ts",
+        ".github/workflows/docs.yml",
+        ".harness/scripts/lib/guard-classification.mjs",
+        ".harness/scripts/compile-opa-wasm.mjs"
+      ],
+      "validationCommands": [
+        "47-validate-joined-paths --verbose -> 615 files, 542 path.join calls, 89 repo-rooted, 65 resolvable, 4 fallback chains, 1 prohibition, exit 0.",
+        "First run reported 19 broken paths; only 3 were defects. The other 16 were false positives whose 'fix' would have broken working code: 6 on a base naming the customer workspace, 9 members of fallback chains, 1 prohibition whose absence IS the passing state.",
+        "node --test 47-validate-joined-paths.test.mjs -> 11/11, covering both anti-vacuous floors, chain and ternary grouping, variable segments, and non-root bases.",
+        "43-validate-guard-negative-fixtures OBSERVED it red: 36 of 36 guards turned red against the empty fixture. 42 reports 11 self-guarded, 39 scanning, 0 PENDING.",
+        "core-domain 1367/1367, mcp-server 434/434, core-api 179/179, CLI unit 1436/1436, all four tsc projects clean.",
+        "Wired into docs.yml, which backs the required Validate documentation check.",
+        "The guard's first CI run went RED with 8 paths that pass locally: dist/, .harness/evidence and the gitignored policy.wasm exist on a developer machine and in no clean checkout. As written it would have demanded build output be committed. Corrected to check ANCHORING, not existence — a missing segment may be generated, but its parent must be real — and re-verified against a tracked-files-only `git archive` export. Proven not to have blinded it: reintroducing the original P0 (`rulesets/opa/policy.wasm`) and the ADR straggler in that clean export turns it red again, because the failure is at `rulesets`, not at the generated leaf. node --test now 14/14."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-630",
       "closedAt": "2026-07-28",
       "closureCommit": "63a96d09",

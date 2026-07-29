@@ -71,7 +71,11 @@ export function buildCoreTemplatePaths(corePath: string): Record<string, string>
     'Discovery Canvas': path.join(corePath, 'reference', 'core', 'sdlc', '04-artifact-templates', 'discovery-canvas-template.md'),
     'Technical Feasibility Canvas': path.join(corePath, 'reference', 'core', 'sdlc', '04-artifact-templates', 'technical-feasibility-template.md'),
     'Ballpark Estimation': path.join(corePath, 'reference', 'core', 'sdlc', '04-artifact-templates', 'ballpark-estimation-template.md'),
-    'ADR Registry': path.join(corePath, 'reference', 'architecture', 'adrs', 'adr-matrix.json'),
+    // GT-632: this was the one straggler among its siblings — missing `core/` AND
+    // naming a `.json` that exists in no layout. The registry is the markdown
+    // matrix; the template lookup silently found nothing until the guard on built
+    // paths reported it.
+    'ADR Registry': path.join(corePath, 'reference', 'core', 'architecture', 'adrs', 'adr-matrix.md'),
     'Bounded Context Map': path.join(corePath, 'reference', 'core', 'foundations', 'satellite-definitions', 'bounded-context-map.md'),
     'Reference Blueprint Alignment': path.join(corePath, 'reference', 'core', 'architecture', 'blueprints', 'reference-blueprint.md'),
     'Simplicity Checklist Phase 1': path.join(corePath, 'reference', 'core', 'architecture', 'blueprints', 'simplicity-checklist-phase-01.md'),

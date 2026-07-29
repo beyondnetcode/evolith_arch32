@@ -10,7 +10,7 @@
  * suite says so.
  *
  * The two figures worth remembering:
- *  - the handler backlog is **60 rules**, not 240;
+ *  - the handler backlog is **52 rules**, not 240;
  *  - **129 rules are documentation** — 126 auto-generated ADR-conformance
  *    placeholders that say in their own text that no check was wired, plus 3
  *    board-judgement rules — and 91 of those are flagged `blocking: true`.
@@ -179,10 +179,17 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     // Measured 2026-07-28 against 379 rules in 167 ruleset files. Recomputed on
     // every run: these are the numbers that turn "240 handlers to write" into a
     // costed decision, so they are pinned rather than merely printed.
+    //
+    // 139 -> 147 on 2026-07-29: the eight config-shaped rules GT-595's triage
+    // identified as the cheapest real closures now have handlers —
+    // ED-R04/R05/R06 and DAM-R05 (topology flags, claimed by ID because their
+    // bare categories are shared across topologies) and MTN-05, GIT-08,
+    // SEC-RL-01, SEC-RL-02 (config assertions in GovernanceRuleHandler).
+    // `unimplemented-native` drops by the same eight; nothing else moved.
     expect(SUMMARY.byClass).toEqual({
-      'native-handler': 139,
+      'native-handler': 147,
       'documentation-only': 136,
-      'unimplemented-native': 60,
+      'unimplemented-native': 52,
       'needs-external-system': 20,
       'needs-runtime': 17,
       underspecified: 14,
@@ -239,9 +246,10 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
 });
 
 describe('GT-595 · the handler slice that landed', () => {
-  it('shrinks the unclaimed corpus from 240 rules to 114', () => {
+  it('shrinks the unclaimed corpus from 240 rules to 106', () => {
+    // 114 -> 106 on 2026-07-29 with the eight config-shaped closures.
     const unclaimed = CORPUS.filter(r => !claims(r));
-    expect(unclaimed).toHaveLength(114);
+    expect(unclaimed).toHaveLength(106);
 
     // ...and every one of the 133 ADR-conformance rules is now claimed.
     // 126 -> 133 on 2026-07-28: the committed corpus was seven rulesets behind
@@ -252,9 +260,28 @@ describe('GT-595 · the handler slice that landed', () => {
     expect(adrConformance.every(claims)).toBe(true);
   });
 
-  it('leaves 85 unclaimed blocking rules, down from 176', () => {
+  it('leaves 77 unclaimed blocking rules, down from 176', () => {
+    // 176 -> 85 (GT-595 handler slice) -> 77 (the eight config-shaped closures).
     const unclaimedBlocking = CORPUS.filter(r => !claims(r) && r.blocking);
-    expect(unclaimedBlocking).toHaveLength(85);
+    expect(unclaimedBlocking).toHaveLength(77);
+  });
+
+  it('claims each of the eight config-shaped rules closed on 2026-07-29', () => {
+    // Named rather than merely counted: the count alone cannot tell a closure
+    // from a rule that left the corpus.
+    const byId = new Map(CORPUS.map(r => [r.id, r]));
+    for (const id of ['ED-R04', 'ED-R05', 'ED-R06', 'DAM-R05', 'MTN-05', 'GIT-08', 'SEC-RL-01', 'SEC-RL-02']) {
+      expect(byId.get(id)).toBeDefined();
+      expect(claims(byId.get(id)!)).toBe(true);
+    }
+
+    // The non-blocking halves of the two SHARED topology categories stay
+    // unclaimed on purpose: `retention` belongs to DAM-R05 *and* ED-R07,
+    // `schema-evolution` to ED-R06 *and* DAM-R08, and each pair points at a
+    // different config file. If a category-keyed dispatch ever replaces the
+    // id-keyed one, these two get claimed and answered against the wrong file.
+    expect(claims(byId.get('ED-R07')!)).toBe(false);
+    expect(claims(byId.get('DAM-R08')!)).toBe(false);
   });
 
   it('does not pretend the ADR-conformance rules were EVALUATED', () => {
@@ -283,7 +310,7 @@ describe('GT-595 AC2 · the corpus rules that still declare `blocking` and canno
     expect(offenders.map(o => o.ruleId)).not.toContain('CORE-0111-01');
   });
 
-  it('enumerates the 85 that remain, by what each one would cost to close', () => {
+  it('enumerates the 77 that remain, by what each one would cost to close', () => {
     // NOT a tolerance and NOT a suppression list: every one of these fails a run
     // today. It is pinned so the number can only move deliberately, and so a new
     // rule cannot quietly join it.
@@ -294,8 +321,13 @@ describe('GT-595 AC2 · the corpus rules that still declare `blocking` and canno
     //                            declared these blocking and gave them no
     //                            validationQuery at all, so unlike the generated
     //                            placeholders the fix is a governance decision.
-    expect(offenders).toHaveLength(85);
-    expect(countOf('unimplemented-native')).toBe(48);
+    //
+    // 85 -> 77 on 2026-07-29. All eight came out of `unimplemented-native`
+    // (48 -> 40), which is what that class was always supposed to mean: a
+    // handler was all that was missing. The other three classes are untouched —
+    // no adapter was written and no rule was re-authored.
+    expect(offenders).toHaveLength(77);
+    expect(countOf('unimplemented-native')).toBe(40);
     expect(countOf('needs-external-system')).toBe(14);
     expect(countOf('needs-runtime')).toBe(12);
     expect(countOf('underspecified')).toBe(11);
@@ -311,7 +343,10 @@ describe('GT-595 · the remaining backlog is costed, not a lump', () => {
   const of = (klass: RuleEvaluability) => CLASSIFIED.filter(c => c.evaluability === klass).map(c => c.ruleId);
 
   it('separates handler work from adapter work from authoring work', () => {
-    expect(of('unimplemented-native')).toEqual(expect.arrayContaining(['SEC-INJ-01', 'HXA-01', 'MTN-05', 'OCB-02']));
+    // MTN-05 left this list on 2026-07-29 (GovernanceRuleHandler now evaluates
+    // it). OCB-02 stays, and deliberately: see the vacuity note below.
+    expect(of('unimplemented-native')).toEqual(expect.arrayContaining(['SEC-INJ-01', 'HXA-01', 'OCB-02']));
+    expect(of('unimplemented-native')).not.toContain('MTN-05');
     expect(of('needs-external-system')).toEqual(expect.arrayContaining(['GIT-02', 'MTN-02', 'OBS-EVD-03']));
     expect(of('needs-runtime')).toEqual(expect.arrayContaining(['OBS-EVD-01', 'TPY-05', 'ABAC-01']));
     expect(of('underspecified')).toEqual(expect.arrayContaining(['EC-SEC-01', 'KI-R01', 'INH-03']));
@@ -323,5 +358,70 @@ describe('GT-595 · the remaining backlog is costed, not a lump', () => {
     expect(isNonExecutable('unimplemented-native')).toBe(false);
     expect(isNonExecutable('documentation-only')).toBe(true);
     expect(isNonExecutable('underspecified')).toBe(true);
+  });
+});
+
+/**
+ * OCB-02 — the ninth config-shaped rule, left OPEN on purpose.
+ *
+ * Its validationQuery reads: "Enterprise artifacts include metadata field
+ * 'availability: enterprise'. Core artifacts either omit the field or set
+ * 'availability: core'."
+ *
+ * The subject of that sentence is the empty set. NO artifact in this repository
+ * carries an `availability` marker of either value — the measurement below is
+ * the evidence, recomputed on every run rather than asserted once. So the rule
+ * as written reduces to "for every enterprise artifact, ...", quantified over
+ * nothing: a handler implementing it faithfully would return `passed` on every
+ * repository that has ever existed and on every repository that ever could,
+ * because the only way to produce a violation is to first add the very marker
+ * whose absence is the actual problem.
+ *
+ * Wiring it would move OCB-02 out of the blocking-and-skipped list and into the
+ * `native-handler` count — buying a number, not a check, and reproducing exactly
+ * the false green GT-569 and GT-595 exist to remove. It therefore stays in the
+ * backlog, flagged for RE-AUTHORING alongside OCB-05 (whose own check —
+ * "Core rulesets contain no references to 'tracker', 'saas', 'dashboard'" — is
+ * separately unsatisfiable against a corpus that names those concepts in prose).
+ *
+ * The honest closure for OCB-02 is a rule about the open-core MATRIX that the
+ * ruleset already carries (`openCoreMatrix.core` / `.enterprise`), which is
+ * populated and therefore decidable. That is authoring work, not handler work.
+ */
+describe('GT-595 · OCB-02 is vacuous as written — measured, not asserted', () => {
+  const AVAILABILITY_MARKER = /(?:"availability"\s*:\s*"|^\s*availability\s*:\s*)(enterprise|core)\b/mi;
+
+  /** Every artifact in the corpus — rulesets, schemas, rego, docs — not just *.rules.json. */
+  function allArtifacts(dir: string, depth = 0): string[] {
+    if (depth > 6) return [];
+    const out: string[] = [];
+    for (const entry of fs.readdirSync(dir)) {
+      const full = path.join(dir, entry);
+      if (fs.statSync(full).isDirectory()) { out.push(...allArtifacts(full, depth + 1)); continue; }
+      if (/\.(json|ya?ml|md|rego|csv)$/.test(entry)) out.push(full);
+    }
+    return out;
+  }
+
+  it('finds zero artifacts carrying `availability: enterprise` or `availability: core`', () => {
+    const artifacts = allArtifacts(RULESETS_ROOT);
+    expect(artifacts.length).toBeGreaterThan(150); // the scan really did run
+    const marked = artifacts.filter(file => AVAILABILITY_MARKER.test(fs.readFileSync(file, 'utf8')));
+    expect(marked).toEqual([]);
+  });
+
+  it('keeps OCB-02 in the backlog rather than closing it vacuously', () => {
+    const ocb02 = CLASSIFIED.find(c => c.ruleId === 'OCB-02');
+    expect(ocb02).toBeDefined();
+    expect(ocb02!.evaluability).toBe('unimplemented-native');
+    expect(ocb02!.blocking).toBe(true);
+  });
+
+  it('shows the open-core matrix IS populated — the re-authoring target', () => {
+    // What OCB-02 should have been written against: a list with members.
+    const file = path.join(RULESETS_ROOT, 'governance', 'open-core-boundary.rules.json');
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf8')) as { openCoreMatrix?: { core?: string[]; enterprise?: string[] } };
+    expect(parsed.openCoreMatrix?.core?.length).toBeGreaterThan(0);
+    expect(parsed.openCoreMatrix?.enterprise?.length).toBeGreaterThan(0);
   });
 });

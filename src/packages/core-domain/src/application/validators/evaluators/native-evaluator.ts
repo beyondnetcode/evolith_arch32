@@ -15,6 +15,7 @@ import { ExecutiveScorecardRuleHandler } from './handlers/executive-scorecard-ru
 import { SatelliteContractRuleHandler } from './handlers/satellite-contract-rule.handler';
 import { AclRuleHandler } from './handlers/acl-rule.handler';
 import { AdrConformanceRuleHandler } from './handlers/adr-conformance-rule.handler';
+import { ModuleBoundaryRuleHandler } from './handlers/module-boundary-rule.handler';
 import { classifyRule } from '../rule-evaluability';
 
 export class NativeEvaluator implements IRuleEvaluatorStrategy {
@@ -38,6 +39,11 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
       new ExecutiveScorecardRuleHandler(fs),
       new SatelliteContractRuleHandler(fs, configParser),
       new AclRuleHandler(fs),
+      // GT-632: rules that author their own `from`/`to` module-graph clause
+      // (HXA-01/02/04/05). Registered BEFORE the ADR-conformance catch-all and
+      // after the id-specific handlers: it claims by clause, so an existing
+      // handler that already does real work on such a rule keeps priority.
+      new ModuleBoundaryRuleHandler(fs),
       // GT-595: 126 of the 240 rules no handler claimed are auto-generated
       // ADR-conformance rules. Registered LAST so it can never shadow a handler
       // that does real work on a rule that happens to carry the category.

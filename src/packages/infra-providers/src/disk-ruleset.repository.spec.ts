@@ -451,5 +451,46 @@ describe('DiskRulesetRepository — real repo layout (GT-566)', () => {
     expect(nodeFs.existsSync(nodePath.join(repoRoot!, 'src', 'rulesets', 'schema'))).toBe(true);
     expect(nodeFs.existsSync(nodePath.join(repoRoot!, 'rulesets'))).toBe(false);
   });
+
+  /**
+   * GT-632 — the break that made the whole enforcement subsystem dead code.
+   *
+   * `ruleset-standard.schema.json` has accepted an `enforce` block since GT-516,
+   * `PolicyCompiler` compiles it, `EnforcerEvaluator` routes on it, and all three
+   * surfaces inject a `NodeProcessRunner` so it has somewhere to route TO — but
+   * `normalizeRuleset` never copied the field. `rule.enforce` was therefore always
+   * `undefined`, `isEnforcerRule()` always false, and HXA-01/02/04/05 declared
+   * `blocking: true` plus a complete `from`/`to` clause that nothing ever read.
+   * Loading the real corpus is the only way to assert this end to end.
+   */
+  itInRepo('carries the authored `enforce` block through normalization', async () => {
+    const repo = new DiskRulesetRepository(nodeFs, makeLogger());
+    const rules = await repo.loadAllRulesets(repoRoot!);
+    const byId = new Map(rules.map((r) => [r.id, r]));
+
+    for (const id of ['HXA-01', 'HXA-02', 'HXA-04', 'HXA-05']) {
+      const rule = byId.get(id);
+      expect(rule).toBeDefined();
+      expect(rule!.blocking).toBe(true);
+      expect(rule!.enforce).toMatchObject({ engine: 'enforcer', tool: 'dependency-cruiser' });
+      // The clause itself — the part that used to be dropped, and without which
+      // the rule is a promise with no check behind it.
+      const config = rule!.enforce!.config as Record<string, Record<string, string>>;
+      expect(config.from.path).toBeTruthy();
+      expect(config.to.path).toBeTruthy();
+      expect(rule!.enforce!.toolRuleId).toBeTruthy();
+    }
+  }, 60_000);
+
+  itInRepo('leaves rules with no `enforce` block undefined (additive, not invented)', async () => {
+    const repo = new DiskRulesetRepository(nodeFs, makeLogger());
+    const rules = await repo.loadAllRulesets(repoRoot!);
+    // Only ADR-0002 authors enforce blocks today; everything else must stay on
+    // the native engine exactly as before.
+    const withEnforce = rules.filter((r) => r.enforce);
+    expect(withEnforce.map((r) => r.id).sort()).toEqual(
+      ['HXA-01', 'HXA-02', 'HXA-04', 'HXA-05', 'HXA-06', 'HXA-07'],
+    );
+  }, 60_000);
 });
 

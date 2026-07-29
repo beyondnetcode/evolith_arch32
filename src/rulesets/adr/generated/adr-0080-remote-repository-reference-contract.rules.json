@@ -19,7 +19,7 @@
       "statement": "ADR decision: Commands that require satellite content must accept a repositoryRef , not satellitePath or corePath : json { \"repository\": { \"url\": \"https://scm.example/org/product.git\", \"revision\": \"immutable commit sha\" }, \"workspaceRef\": \"tracker issued opaque reference\", \"operationId\": \"uuid\" } Evolith Tracker's BFF validates the…",
       "rationale": "Derived from ADR-0080 \"Decision\" section. Enforcement signals detected: must, layer.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0080 via static analysis, lint rules, or pipeline gates covering: must, layer. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

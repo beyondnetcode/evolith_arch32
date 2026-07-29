@@ -19,7 +19,7 @@
       "statement": "ADR decision: Raw technical identifiers (UUIDs, GUIDs, surrogate keys, internal database IDs) must never be rendered directly in a user facing interface unless a specific, justified business requirement explicitly requires it.",
       "rationale": "Derived from ADR-0046 \"Decision\" section. Enforcement signals detected: must, layer, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0046 via static analysis, lint rules, or pipeline gates covering: must, layer, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

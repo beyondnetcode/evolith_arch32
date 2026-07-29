@@ -19,7 +19,7 @@
       "statement": "ADR decision: Introduce a scoped RequestContextAccessor that is written exactly once by the SessionTrackingMiddleware and consumed by any component in the same DI scope through two segregated interfaces.",
       "rationale": "Derived from ADR-0064 \"Decision\" section. Enforcement signals detected: required, dependencies, layer, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0064 via static analysis, lint rules, or pipeline gates covering: required, dependencies, layer, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

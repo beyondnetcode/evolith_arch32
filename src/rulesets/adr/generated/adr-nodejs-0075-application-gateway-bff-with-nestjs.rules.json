@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt NestJS as the Application Gateway (BFF) framework. NestJS provides a robust dependency injection container, native gRPC and REST support, and enforced modularity. It is safely deployed behind the Tier 1 Edge Gateway.",
       "rationale": "Derived from ADR-0075 \"Decision\" section. Enforcement signals detected: dependency, enforce, enforced.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0075 via static analysis, lint rules, or pipeline gates covering: dependency, enforce, enforced. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

@@ -26,6 +26,10 @@
       "types": "./dist/evidence/evidence-edge.d.ts",
       "default": "./dist/evidence/evidence-edge.js"
     },
+    "./ingest": {
+      "types": "./dist/ingest/evaluation-ingest.d.ts",
+      "default": "./dist/ingest/evaluation-ingest.js"
+    },
     "./*": {
       "types": "./dist/*.d.ts",
       "default": "./dist/*.js"

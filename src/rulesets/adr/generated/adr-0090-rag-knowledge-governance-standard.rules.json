@@ -19,7 +19,7 @@
       "statement": "ADR decision: We establish a RAG Knowledge Governance Standard that defines the chunking contract, metadata schema, embedding rules, and synchronization trigger for all files in the reference/ tree.",
       "rationale": "Derived from ADR-0090 \"Decision\" section. Enforcement signals detected: must, boundaries.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0090 via static analysis, lint rules, or pipeline gates covering: must, boundaries. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

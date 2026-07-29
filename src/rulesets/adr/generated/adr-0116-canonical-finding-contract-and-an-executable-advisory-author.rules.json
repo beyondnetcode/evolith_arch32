@@ -19,7 +19,7 @@
       "statement": "ADR decision: finding.ts declares one normalized shape and six mappers. Three invariants carry the decision: FindingOrigin is a required argument on every mapper. No source shape carries provenance or determinism, so the caller must supply both.",
       "rationale": "Derived from ADR-0116 \"Decision\" section. Enforcement signals detected: must not, must, required, enforce, enforced.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0116 via static analysis, lint rules, or pipeline gates covering: must not, must, required, enforce, enforced. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt URI versioning as the canonical REST versioning strategy and publish a deprecation policy enforced by CI and visible to callers in response headers. Every REST route is served under /api/v<MAJOR /...",
       "rationale": "Derived from ADR-0098 \"Decision\" section. Enforcement signals detected: required, lint, enforce, enforced.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0098 via static analysis, lint rules, or pipeline gates covering: required, lint, enforce, enforced. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

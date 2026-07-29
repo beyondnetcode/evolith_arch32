@@ -99,6 +99,8 @@ El paquete ligero `@beyondnet/evolith-mcp-tools` fue retirado. El registro canó
 | HTTP `401 Unauthorized` | `EVOLITH_API_KEY` ausente/incorrecta, o un JWT inválido cuando `JWT_SECRET` está definido. |
 | `ABAC-02: No roles present` | El principal autenticado no tiene roles; provee roles vía el claim `roles` del JWT, o usa la API key (contexto admin). |
 | `OPA: policy.wasm not found` | `engine: "opa"` requiere `src/sdk/cli/rulesets/opa/policy.wasm` bajo `CORE_PATH`. Una policy ausente es **fail-closed en producción** (denegación dura, `ABAC_POLICY_MISSING`) y solo se abstiene en no-producción; usa `engine: "native"` para evitar OPA. |
+| `FORBIDDEN / ABAC_POLICY_MISSING` desde una instalación **npm** en producción | `policy.wasm` es un artefacto de build que vive fuera del directorio del paquete, así que ningún tarball de `@beyondnet/evolith-mcp` puede contenerlo y las dos rutas de búsqueda integradas son layouts del repositorio. Compílalo (`npm run build:policy` en un checkout del Core) y define `EVOLITH_ABAC_POLICY_PATH=/ruta/abs/policy.wasm` (GT-572). |
+| `RULESET_NOT_FOUND` en `evolith-gate-evaluate` | Las definiciones de gate vienen de un checkout del Core, no del paquete. Pasa `corePath` en los argumentos de la herramienta; sin él el servidor busca junto a su propio directorio de trabajo. |
 
 ## Conformidad
 

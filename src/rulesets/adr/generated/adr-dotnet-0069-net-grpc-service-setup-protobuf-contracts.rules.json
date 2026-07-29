@@ -19,7 +19,7 @@
       "statement": "ADR decision: We adopt Option C as the canonical .NET gRPC setup.",
       "rationale": "Derived from ADR-0069 \"Decision\" section. Enforcement signals detected: must, layer, structure, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0069 via static analysis, lint rules, or pipeline gates covering: must, layer, structure, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

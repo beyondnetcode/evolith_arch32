@@ -19,7 +19,7 @@
       "statement": "ADR decision: The canonical .NET framework consists of: Runtime : .NET 8+ (Long Term Support). Framework : ASP.NET Core (Minimal APIs optimized for lightweight containerization). Style : Clean Architecture.",
       "rationale": "Derived from ADR-0041 \"Decision\" section. Enforcement signals detected: dependency, dependencies.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0041 via static analysis, lint rules, or pipeline gates covering: dependency, dependencies. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

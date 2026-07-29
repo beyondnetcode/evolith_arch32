@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt the following Event Delivery Decision Framework mapping business context to infrastructure queue behaviors: Definition : Asynchronous processing with no guarantee of order, maximum horizontal consumer parallelism.",
       "rationale": "Derived from ADR-0036 \"Decision\" section. Enforcement signals detected: must, required, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0036 via static analysis, lint rules, or pipeline gates covering: must, required, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

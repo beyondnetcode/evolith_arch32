@@ -251,13 +251,36 @@ export class PhaseGateValidatorService {
     };
   }
 
+  /**
+   * Locate the Evolith Core repository root at or above `projectPath`.
+   *
+   * GT-572 — the probe used to look for `rulesets/` only. The `src/` refactor
+   * moved that directory to `<root>/src/rulesets`, while the gate definitions
+   * this service actually loads stayed at
+   * `<root>/reference/governance/sdlc/gates`. Walking up for `rulesets` therefore
+   * stopped ONE LEVEL TOO DEEP — at `<root>/src` — and every gate evaluation that
+   * did not pass `corePath` explicitly failed with `RULESET_NOT_FOUND`.
+   *
+   * That was not hypothetical: the MCP stdio smoke has been receiving exactly
+   * that error and printing `tools/call OK`, because its only assertion was that
+   * the envelope carried a `success` field. Same family as GT-632 — a joined path
+   * the refactor left behind, kept invisible by an oracle that could not fail.
+   *
+   * The probe now leads with the artefact this service consumes, and keeps the
+   * `rulesets` probe behind it for satellite/legacy layouts that have no
+   * `reference/` tree. Markers are tried one at a time, each walking the full
+   * ancestry, so a shallow `rulesets` never wins over a correct `reference` root.
+   */
   private findCorePath(projectPath: string): string {
-    const parts = projectPath.split(path.sep);
-    while (parts.length > 0) {
-      parts.pop();
-      const candidate = path.join(parts.join(path.sep), 'rulesets');
-      if (this.fs.existsSync(candidate)) {
-        return parts.join(path.sep);
+    const markers = [path.join('reference', 'governance', 'sdlc', 'gates'), 'rulesets'];
+    for (const marker of markers) {
+      const parts = projectPath.split(path.sep);
+      while (parts.length > 0) {
+        parts.pop();
+        const root = parts.join(path.sep);
+        if (this.fs.existsSync(path.join(root, marker))) {
+          return root;
+        }
       }
     }
     return path.join(projectPath, '..', 'evolith');

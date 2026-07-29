@@ -330,4 +330,102 @@ describe('ArchitectureRuleHandler', () => {
       expect(res.result).toBe('failed');
     });
   });
+
+  // -------------------------------------------------------------------------
+  // GT-595 — the four topology flags that fell through on naming alone.
+  // -------------------------------------------------------------------------
+  describe('topology flag rules (ED-R04, ED-R05, ED-R06, DAM-R05)', () => {
+    const edFile = path.join(SAT, 'event-driven.config.json');
+    const damFile = path.join(SAT, 'data-mesh.config.json');
+
+    const ED_FLAGS = { hasOrderingGuarantee: true, hasIdempotencyKey: true, hasBackwardCompatibleSchema: true };
+    const withEd = (json: Record<string, unknown>) => fsMock({ existing: [edFile], json: { [edFile]: json } });
+    const withDam = (json: Record<string, unknown>) => fsMock({ existing: [damFile], json: { [damFile]: json } });
+
+    const CASES = [
+      { id: 'ED-R04', category: 'event-ordering', flag: 'hasOrderingGuarantee' },
+      { id: 'ED-R05', category: 'idempotency', flag: 'hasIdempotencyKey' },
+      { id: 'ED-R06', category: 'schema-evolution', flag: 'hasBackwardCompatibleSchema' },
+    ] as const;
+
+    it('claims the four rules by id even though their categories are in no category set', () => {
+      const h = new ArchitectureRuleHandler(fsMock());
+      for (const id of ['ED-R04', 'ED-R05', 'ED-R06', 'DAM-R05']) {
+        expect(h.canHandle(rule({ id, category: 'retention' }))).toBe(true);
+      }
+      // ...and the bare categories on their own claim nothing.
+      expect(h.canHandle(rule({ id: 'SOMETHING-ELSE', category: 'retention' }))).toBe(false);
+      expect(h.canHandle(rule({ id: 'SOMETHING-ELSE', category: 'schema-evolution' }))).toBe(false);
+    });
+
+    it.each(CASES)('$id passes when event-driven.config.json declares $flag', async ({ id, category }) => {
+      const res = await new ArchitectureRuleHandler(withEd(ED_FLAGS)).evaluate(rule({ id, category }), ctx);
+      expect(res.result).toBe('passed');
+    });
+
+    it.each(CASES)('$id FAILS when $flag is absent from an otherwise valid contract', async ({ id, category, flag }) => {
+      const partial = { ...ED_FLAGS } as Record<string, unknown>;
+      delete partial[flag];
+      const res = await new ArchitectureRuleHandler(withEd(partial)).evaluate(rule({ id, category }), ctx);
+      expect(res.result).toBe('failed');
+      expect(res.message).toContain(flag);
+    });
+
+    it.each(CASES)('$id FAILS when the flag is declared false rather than omitted', async ({ id, category, flag }) => {
+      const res = await new ArchitectureRuleHandler(withEd({ ...ED_FLAGS, [flag]: false })).evaluate(rule({ id, category }), ctx);
+      expect(res.result).toBe('failed');
+    });
+
+    it.each(CASES)('$id FAILS when event-driven.config.json does not exist at all', async ({ id, category }) => {
+      const res = await new ArchitectureRuleHandler(fsMock()).evaluate(rule({ id, category }), ctx);
+      expect(res.result).toBe('failed');
+      expect(res.message).toContain('event-driven.config.json is missing');
+    });
+
+    it('DAM-R05 passes on data-mesh.config.json hasRetentionPolicy and fails without it', async () => {
+      const pass = await new ArchitectureRuleHandler(withDam({ hasRetentionPolicy: true })).evaluate(rule({ id: 'DAM-R05', category: 'retention' }), ctx);
+      expect(pass.result).toBe('passed');
+      const fail = await new ArchitectureRuleHandler(withDam({ hasDataQualitySLO: true })).evaluate(rule({ id: 'DAM-R05', category: 'retention' }), ctx);
+      expect(fail.result).toBe('failed');
+      expect(fail.message).toContain('data-mesh.config.json');
+    });
+
+    // -----------------------------------------------------------------------
+    // The mis-claim guard. `retention` and `schema-evolution` are each shared by
+    // TWO rules in TWO topologies. A category-keyed dispatch would answer for
+    // the wrong file and the wrong flag; these are the fixtures that catch it.
+    // -----------------------------------------------------------------------
+    it('DAM-R05 does not read event-driven.config.json (the `retention` collision)', async () => {
+      // ED-R07 shares the category `retention` and points at the OTHER file.
+      // A satellite with only an event-driven retention declaration must NOT
+      // satisfy the data-mesh rule.
+      const h = new ArchitectureRuleHandler(withEd({ hasRetentionPolicy: true }));
+      const res = await h.evaluate(rule({ id: 'DAM-R05', category: 'retention' }), ctx);
+      expect(res.result).toBe('failed');
+      expect(res.message).toContain('data-mesh.config.json is missing');
+    });
+
+    it('ED-R06 does not read data-mesh.config.json (the `schema-evolution` collision)', async () => {
+      const h = new ArchitectureRuleHandler(withDam({ hasBackwardCompatibleContracts: true, hasBackwardCompatibleSchema: true }));
+      const res = await h.evaluate(rule({ id: 'ED-R06', category: 'schema-evolution' }), ctx);
+      expect(res.result).toBe('failed');
+      expect(res.message).toContain('event-driven.config.json is missing');
+    });
+
+    it('does not claim ED-R07 or DAM-R08 — the non-blocking halves of the shared categories', () => {
+      // If a future edit keys the dispatch on the bare category, these two get
+      // claimed and evaluated against whichever file the sibling named. They are
+      // deliberately left unhandled rather than answered incorrectly.
+      const h = new ArchitectureRuleHandler(fsMock());
+      expect(h.canHandle(rule({ id: 'ED-R07', category: 'retention' }))).toBe(false);
+      expect(h.canHandle(rule({ id: 'DAM-R08', category: 'schema-evolution' }))).toBe(false);
+    });
+
+    it('ED-R05 reports that only the flag clause was checked, not the AST clause', async () => {
+      const res = await new ArchitectureRuleHandler(withEd(ED_FLAGS)).evaluate(rule({ id: 'ED-R05', category: 'idempotency' }), ctx);
+      expect(res.result).toBe('passed');
+      expect(res.message).toContain('NOT implemented');
+      expect(res.message).toMatch(/AST scan/i);
+    });
+  });
 });

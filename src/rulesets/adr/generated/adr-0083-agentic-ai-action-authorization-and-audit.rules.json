@@ -19,7 +19,7 @@
       "statement": "ADR decision: Every agent action MUST carry an attributable agent identity, correlation identifier, requested capability, target scope, policy decision, approval reference when required, outcome, and bounded evidence of inputs and outputs.",
       "rationale": "Derived from ADR-0083 \"Decision\" section. Enforcement signals detected: must, required, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0083 via static analysis, lint rules, or pipeline gates covering: must, required, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

@@ -49,6 +49,19 @@ export interface RuleCoverage {
    * that structurally cannot run is a promise the product does not keep.
    */
   blockingNonExecutableRuleIds?: string[];
+  /**
+   * GT-595 (AC2) — every rule that declared `blocking: true` and came back
+   * `skipped`. A SUPERSET of {@link blockingNonExecutableRuleIds}: that list is
+   * the subset nothing will EVER run, this one also includes blocking rules that
+   * merely have no handler yet.
+   *
+   * Non-empty ⇒ the run FAILS. A blocking rule that skips is reported today with
+   * the same absence of findings as a blocking rule that passed, so the verdict
+   * claims coverage it did not earn. The counters are machine-readable here and
+   * the run-failing issue is `GOV-RULE-BLOCKING-SKIPPED`; both are emitted from
+   * the same pass so they cannot disagree.
+   */
+  blockingSkippedRuleIds?: string[];
   /** GT-595 AC3 — `handled / executable / total` per ruleset file. */
   perRuleset?: RulesetCoverageRatio[];
 }
@@ -114,6 +127,8 @@ export interface ValidationResult {
   nonExecutableRuleIds?: string[];
   rulesExecutable?: number;
   blockingNonExecutableRuleIds?: string[];
+  /** GT-595 AC2 — blocking rules that did not run. Non-empty ⇒ `status: 'failed'`. */
+  blockingSkippedRuleIds?: string[];
   perRuleset?: RulesetCoverageRatio[];
   issues: ValidationIssue[];
   coreRef: {

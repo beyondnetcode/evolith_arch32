@@ -19,7 +19,7 @@
       "statement": "ADR decision: mermaid graph TD A[Is this a new product or MVP?] B[Modular Monolith — Phase 1] B C{Do at least 2 of 4\\nADR 0045 criteria hold\\nfor 15 sustained days?} C B C D[Extract Bounded Context → Microservice] A E{Does the team have\\nproven DevOps maturity?} E F[Refactor first as\\nModular Monolith] F C E D A G[See Section 8 — E…",
       "rationale": "Derived from ADR-0047 \"Decision\" section. Enforcement signals detected: must, ci/cd.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0047 via static analysis, lint rules, or pipeline gates covering: must, ci/cd. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

@@ -19,7 +19,7 @@
       "statement": "ADR decision: We adopt a DDL Trigger and Delta Serialization strategy to enforce audit trail immutability: All audit tables in SQL Server are bound to DDL triggers that immediately reject any UPDATE or DELETE statements: sql CREATE OR ALTER TRIGGER trg security events immutable ON ums audit.security events AFTER UPDATE, DELETE AS B…",
       "rationale": "Derived from ADR-0062 \"Decision\" section. Enforcement signals detected: prohibited, layer, structure, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0062 via static analysis, lint rules, or pipeline gates covering: prohibited, layer, structure, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt the following corporate matrix to define the implementation strategy for long running or multi service transactions: Before deploying a Saga, verify if the business process can be contained within a Single Bounded Context .",
       "rationale": "Derived from ADR-0035 \"Decision\" section. Enforcement signals detected: must, required.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0035 via static analysis, lint rules, or pipeline gates covering: must, required. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

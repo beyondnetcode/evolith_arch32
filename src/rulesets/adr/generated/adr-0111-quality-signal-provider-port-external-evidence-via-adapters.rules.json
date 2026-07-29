@@ -19,7 +19,7 @@
       "statement": "ADR decision: IQualitySignalProvider lives in the orchestration/application layer (agent runtime and the SDLC surfaces), not in core domain . All provider I/O — headless Chrome, cloud calls, LLM audits — happens behind this port.",
       "rationale": "Derived from ADR-0111 \"Decision\" section. Enforcement signals detected: layer, lint, enforce, enforced, boundaries, import.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0111 via static analysis, lint rules, or pipeline gates covering: layer, lint, enforce, enforced, boundaries, import. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

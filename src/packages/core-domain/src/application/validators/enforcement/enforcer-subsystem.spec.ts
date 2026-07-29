@@ -14,6 +14,26 @@ class RecordingNativeStrategy implements IRuleEvaluatorStrategy {
   }
 }
 
+/** A native strategy that declines every rule — the shape of "no handler claims it". */
+class DecliningNativeStrategy implements IRuleEvaluatorStrategy {
+  async evaluateAll(rules: NormalizedRule[]): Promise<RuleEvaluationResult[]> {
+    return rules.map((rule) => ({ rule, result: 'skipped' as const, message: 'no native handler claims this rule' }));
+  }
+}
+
+/** A native strategy that returns a real verdict — the shape of "a handler decided it". */
+class VerdictNativeStrategy implements IRuleEvaluatorStrategy {
+  readonly seen: NormalizedRule[] = [];
+  constructor(
+    private readonly verdict: 'passed' | 'failed',
+    private readonly message: string,
+  ) {}
+  async evaluateAll(rules: NormalizedRule[]): Promise<RuleEvaluationResult[]> {
+    this.seen.push(...rules);
+    return rules.map((rule) => ({ rule, result: this.verdict, message: this.message }));
+  }
+}
+
 const netArchRule = (toolRuleId: string): NormalizedRule => ({
   id: 'HXA-01',
   severity: 'MUST',
@@ -87,12 +107,35 @@ describe('createCompositeEnforcerStrategy — the closed .NET enforcer loop', ()
   });
 
   it('the sandbox denies a runtime binary outside the allowlist (fail-closed → skip, not false pass)', async () => {
-    const native = new RecordingNativeStrategy();
-    // An empty allowlist rejects `dotnet` before it runs; the evaluator records a skip.
-    const strategy = createCompositeEnforcerStrategy(native, new StubProcessRunner(), { policy: {
+    // GT-632: a denied binary now degrades to the NATIVE engine, so the guarantee
+    // is stated against a native strategy that DECLINES — the real production
+    // shape for a rule no handler claims. `RecordingNativeStrategy` passes
+    // everything unconditionally, which would make any degradation look like a
+    // false pass regardless of whether it is one.
+    const strategy = createCompositeEnforcerStrategy(new DecliningNativeStrategy(), new StubProcessRunner(), { policy: {
       allowEgress: false, allowSecrets: false, binaryAllowlist: [], timeoutMs: 1000,
     } });
     const results = await strategy.evaluateAll([netArchRule('any')], CTX);
     expect(results[0].result).toBe('skipped');
+    // Both reasons survive: nothing evaluated this rule, and the report says so twice.
+    expect(results[0].message).toContain("is not in the allowlist");
+    expect(results[0].message).toContain('no native handler');
+  });
+
+  it('degrades an unavailable enforcer to the native engine instead of skipping (GT-632)', async () => {
+    // The defect this closes: four `blocking: true` HXA rules routed to
+    // dependency-cruiser reported `skipped` whenever the tool was not provisioned,
+    // i.e. always. An enforcer that cannot run must cost PRECISION, not COVERAGE.
+    const native = new VerdictNativeStrategy('failed', 'native module-graph engine found a forbidden import');
+    const strategy = createCompositeEnforcerStrategy(native, new StubProcessRunner(), { policy: {
+      allowEgress: false, allowSecrets: false, binaryAllowlist: [], timeoutMs: 1000,
+    } });
+
+    const results = await strategy.evaluateAll([netArchRule('any')], CTX);
+
+    expect(results[0].result).toBe('failed');
+    expect(results[0].message).toContain('enforcer unavailable');
+    expect(results[0].message).toContain('native module-graph engine found a forbidden import');
+    expect(native.seen.map((r) => r.id)).toEqual(['HXA-01']);
   });
 });

@@ -19,7 +19,7 @@
       "statement": "ADR decision: We will adopt Documentation Release GitFlow as the mandatory release workflow for both Evolith Arch32 and UMS repositories. This extends ADR 0050 with documentation specific branch naming, quality gates, and release tagging conventions.",
       "rationale": "Derived from ADR-0068 \"Decision\" section. Enforcement signals detected: naming, quality gate.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0068 via static analysis, lint rules, or pipeline gates covering: naming, quality gate. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

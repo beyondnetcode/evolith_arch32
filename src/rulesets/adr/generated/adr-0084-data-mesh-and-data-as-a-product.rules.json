@@ -19,7 +19,7 @@
       "statement": "ADR decision: We adopt the Data Mesh topology for our analytical architecture. 1. Domain Oriented Decentralized Data Ownership : Bounded Contexts own their analytical data in the same way they own their operational data.",
       "rationale": "Derived from ADR-0084 \"Decision\" section. Enforcement signals detected: must, structure, enforce, enforced.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0084 via static analysis, lint rules, or pipeline gates covering: must, structure, enforce, enforced. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

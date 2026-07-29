@@ -358,6 +358,11 @@ export const WIRE_VALIDATION_RESULT: WireCheck<SdkValidationResult> = {
   nonExecutableRuleIds: { required: false, declaredAs: 'string[]', accepts: isArray },
   rulesExecutable: { required: false, declaredAs: 'number', accepts: isNumber },
   blockingNonExecutableRuleIds: { required: false, declaredAs: 'string[]', accepts: isArray },
+  // GT-595 AC2: a SUPERSET of `blockingNonExecutableRuleIds` — every rule that
+  // declared `blocking: true` and came back `skipped`, whether or not anything
+  // could ever run it. Non-empty ⇒ `status: 'failed'`, so a consumer reading the
+  // verdict is entitled to the ids behind it without parsing issue text.
+  blockingSkippedRuleIds: { required: false, declaredAs: 'string[]', accepts: isArray },
   perRuleset: { required: false, declaredAs: 'RulesetCoverageRatio[]', accepts: isArray },
   issues: { required: true, declaredAs: 'ValidationIssue[]', accepts: isArray },
   coreRef: {

@@ -8854,6 +8854,28 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The prerequisite is satisfied and closed: GT-595 gave MTN-05 and GIT-08 real handlers, which is the only reason either failure was visible. One part is deliberately left out of scope: the parallel multi-tenancy.rego still asserts MTN-05 unconditionally. Applicability is a native-engine pre-filter by construction (GT-571) and TAX-06 already carries the same shape -- a phase annotation alongside a rego that does not read it -- so this is a pre-existing divergence between the two engines, not one introduced here, and closing it belongs to whatever unifies applicability across engines."
+    },
+    {
+      "id": "GT-634",
+      "closedAt": "2026-07-29",
+      "closureCommit": "5acb29ed",
+      "evidence": [
+        ".harness/scripts/ci/41-validate-evidence-commands.mjs",
+        ".harness/scripts/ci/41-validate-evidence-commands.test.mjs",
+        ".github/workflows/ci-cd.yml",
+        "reference/core/control-center/evidence/gap-closure-evidence.json"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs -> 39/39, including 5 new cases: the --workspace-before-script-name fix, its negative twin (an undeclared script under that form is still caught), the gitignored-artifact classification on both the relative-binary and node <script> branches, and its negative twin (a genuinely missing, non-gitignored binary is still dead).",
+        "node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 21 -> exit 0. Same command with --max-dead 20 -> exit 1. The budget is exact, not padded.",
+        "node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose -> report mode, 21 dead, 6 executed commands fail (GT-42, GT-78, GT-79, GT-280, GT-556, GT-557) -- all pre-existing, confirmed none among the paths touched by this closure.",
+        "node .harness/scripts/ci/08-validate-tracking.mjs -> 633 gaps EN/ES, 610/610 EN/ES catalog sections, 576 closure records.",
+        "42-validate-guard-denominators, 43-validate-guard-negative-fixtures, 44-validate-adr-implementation-status, 34-check-skill-registry-parity, 45-validate-port-inventory-honesty all re-run clean in the same job.",
+        "Each of the 18 confident path renames in gap-closure-evidence.json (docker-compose.yml, review-*.test.mjs x3, roundtrip-gate-evaluate.mjs, api-throughput-baseline.js, incident-response-*.md, slo/, alerts/ x2, chaos-experiments/cpu-stress.yaml, data-store-backup-dr.md, gap-reference-catalog.md/.es.md) plus chat.command.ts verified against a real successor file present on disk before being written -- not guessed.",
+        "309 -> 78 (npmScriptOperand defined) -> 52 (--workspace-before-script-name parsing fixed) -> 22 (18 confident path renames) -> 21 (chat.command.ts) dead references, measured at each step, not assumed."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The residual 21 dead references are genuinely retired artifacts (a consolidated .bmad-core/AGENTS.md, the retired evolith-bff gateway, the retired packages/mcp-tools, two retired k8s manifests with no path-equivalent successor, a retired sandbox app, three root-level scripts no longer declared) or prose misparsed as a path (vision/, tools/list). None were force-mapped to a plausible-looking target -- a wrong rename would corrupt the record it claims to verify. Repairing each is per-record archaeology into when and why that specific artifact was retired, which this closure deliberately did not attempt; --max-dead stays at 21 until it is."
     }
   ]
 }

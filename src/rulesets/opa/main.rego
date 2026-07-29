@@ -8,6 +8,7 @@ import data.evolith.capability_source_interface.violations as csi_violations
 import data.evolith.ci_cd.violations as ci_cd_violations
 import data.evolith.cicd_quality_gates.violations as cicd_qg_violations
 import data.evolith.cli_core_parity.violations as cli_cp_violations
+import data.evolith.cli_exit_code_taxonomy.violations as cli_exit_violations
 import data.evolith.cli_readiness.violations as cli_violations
 import data.evolith.cli_release_readiness.violations as cli_rr_violations
 import data.evolith.compliance_baseline.violations as cb_violations
@@ -156,4 +157,10 @@ violations contains v if {
 
 violations contains v if {
 	v := pg_violations[_]
+}
+
+# GT-580 — the exit-code taxonomy. Silent unless the caller declares
+# `input.core.cli`, so a satellite evaluation is unaffected.
+violations contains v if {
+	v := cli_exit_violations[_]
 }

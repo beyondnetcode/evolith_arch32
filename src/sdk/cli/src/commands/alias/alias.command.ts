@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { AliasService } from '../../config/alias.service';
 import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+import { exitCodeForErrorCode } from '../../infrastructure/cli/exit-codes';
 
 interface AliasCommandOptions {
   add?: string;
@@ -38,7 +39,7 @@ export class AliasCommand extends BaseEvolithCommand {
         if (!alias || !cmd) {
           const message = 'Usage: evolith alias --add <alias>=<command>';
           if (json) {
-            process.exitCode = 1;
+            process.exitCode = exitCodeForErrorCode('VALIDATION_FAILED');
             console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
           } else {
             this.promptService.showError(message);
@@ -94,7 +95,7 @@ export class AliasCommand extends BaseEvolithCommand {
         }
       } else {
         if (json) {
-          process.exitCode = 1;
+          process.exitCode = exitCodeForErrorCode('VALIDATION_FAILED');
           console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', 'Use --add, --remove, or --list', { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         } else {
           this.promptService.showInfo('Use --add, --remove, or --list.');

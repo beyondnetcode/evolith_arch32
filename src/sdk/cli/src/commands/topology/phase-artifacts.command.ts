@@ -17,6 +17,7 @@ import {
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
+import { exitCodeForErrorCode } from '../../infrastructure/cli/exit-codes';
 
 const DOWNSTREAM_PHASES: readonly DownstreamPhase[] = ['construction', 'quality', 'deployment'];
 
@@ -72,7 +73,7 @@ export class PhaseArtifactsCommand extends BaseEvolithCommand {
     if (!phase || !DOWNSTREAM_PHASES.includes(phase)) {
       const message = `--phase must be one of: ${DOWNSTREAM_PHASES.join(', ')}`;
       if (json) {
-        process.exitCode = 1;
+        process.exitCode = exitCodeForErrorCode('INVALID_PHASE');
         console.log(JSON.stringify(createErrorEnvelope('INVALID_PHASE', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         return;
       }

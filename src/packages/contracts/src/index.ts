@@ -104,6 +104,37 @@ export {
 } from './evidence/evidence-edge';
 
 export {
+  // GT-604 — the one ingest contract for depositing a Core verdict in the Tracker.
+  EVALUATION_INGEST_ENDPOINT_CONTRACT,
+  EVALUATION_INGEST_FIELD_SOURCES,
+  EVALUATION_INGEST_SCHEMA_VERSION,
+  EVALUATION_INGEST_SURFACES,
+  EvaluationIngestContractError,
+  KNOWN_INGEST_ENGINES,
+  assertEvaluationIngestPayload,
+  checkEvaluationIngestPayload,
+  collectAccountableOwners,
+  countBlockingViolations,
+  isEvaluationIngestSurface,
+  isKnownIngestEngine,
+  resolveIngestCorrelationId,
+  toEvaluationIngestPayload,
+  type EvaluationIngestInput,
+  type EvaluationIngestPayload,
+  type EvaluationIngestSurface,
+  type IngestContractCheckResult,
+  type IngestFieldSource,
+  type IngestProducer,
+  type IngestRepositoryRevision,
+  type IngestRequesterRef,
+  type IngestRuleExecution,
+  type IngestSourceResult,
+  type IngestSourceViolation,
+  type IngestViolation,
+  type KnownIngestEngine,
+} from './ingest/evaluation-ingest';
+
+export {
   EXPECTED_CAPABILITY_MANIFEST,
   assertCapabilityManifestParity,
   capabilityManifestFingerprint,

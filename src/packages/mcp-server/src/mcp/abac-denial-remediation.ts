@@ -37,7 +37,9 @@ const REMEDIATION_BY_ID: Record<string, string> = {
   ABAC_POLICY_MISSING:
     'The compiled OPA bundle (policy.wasm) is missing at the path named above and production fail-closes without it. '
     + "Build it with 'npm run build:policy' and ship sdk/cli/rulesets/opa/policy.wasm alongside the server "
-    + '(the container image copies it into <cwd>/../../sdk/cli/rulesets/opa/).',
+    + '(the container image copies it into <cwd>/../../sdk/cli/rulesets/opa/). '
+    + 'The npm package cannot carry it — policy.wasm is a build artifact outside the package directory — so when the '
+    + 'server runs from an npm install, compile the bundle and point at it with EVOLITH_ABAC_POLICY_PATH=/abs/path/to/policy.wasm.',
   OPA_ERROR:
     'The OPA engine itself failed, which fail-closes. Check the error above; a corrupt or '
     + "stale policy.wasm is the usual cause — rebuild it with 'npm run build:policy'.",

@@ -99,6 +99,8 @@ The lightweight `@beyondnet/evolith-mcp-tools` package has been retired. The can
 | HTTP `401 Unauthorized` | Missing/incorrect `EVOLITH_API_KEY`, or an invalid JWT when `JWT_SECRET` is set. |
 | `ABAC-02: No roles present` | The authenticated principal has no roles; supply roles via the JWT `roles` claim, or use the API key (admin context). |
 | `OPA: policy.wasm not found` | `engine: "opa"` needs `src/sdk/cli/rulesets/opa/policy.wasm` under `CORE_PATH`. A missing policy is **fail-closed in production** (hard deny, `ABAC_POLICY_MISSING`) and abstains only in non-production; use `engine: "native"` to bypass OPA. |
+| `FORBIDDEN / ABAC_POLICY_MISSING` from an **npm install** in production | `policy.wasm` is a build artifact that lives outside the package directory, so no `@beyondnet/evolith-mcp` tarball can contain it and the two built-in lookup paths are repository layouts. Compile it (`npm run build:policy` in a Core checkout) and set `EVOLITH_ABAC_POLICY_PATH=/abs/path/to/policy.wasm` (GT-572). |
+| `RULESET_NOT_FOUND` from `evolith-gate-evaluate` | The gate definitions come from a Core checkout, not from the package. Pass `corePath` in the tool arguments; without it the server looks beside its own working directory. |
 
 ## Conformance
 

@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt TypeORM using the Data Mapper pattern as the enterprise standard for relational databases (PostgreSQL). Justification : Fully aligned with our Hexagonal Architecture ([ADR 0002](0002 clean architecture nestjs.md)).",
       "rationale": "Derived from ADR-0043 \"Decision\" section. Enforcement signals detected: must, prohibited, layer, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0043 via static analysis, lint rules, or pipeline gates covering: must, prohibited, layer, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

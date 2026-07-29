@@ -121,11 +121,7 @@ Response (captured live):
       "ACL-03",
       "ACL-05",
       "ACL-06",
-      "HXA-01",
-      "HXA-02",
       "HXA-03",
-      "HXA-04",
-      "HXA-05",
       "HXA-06",
       "HXA-07",
       "CICD-01",
@@ -139,7 +135,6 @@ Response (captured live):
       "MTN-02",
       "MTN-03",
       "MTN-04",
-      "MTN-05",
       "MTN-06",
       "MTN-07",
       "MTN-08",
@@ -172,7 +167,6 @@ Response (captured live):
       "GIT-05",
       "GIT-06",
       "GIT-07",
-      "GIT-08",
       "GIT-09",
       "GIT-10",
       "DOD-02",
@@ -191,7 +185,12 @@ Response (captured live):
       "DORA-02",
       "DORA-03",
       "DORA-04",
-  
+      "SPACE-01",
+      "SPACE-02",
+      "SPACE-03",
+      "SPACE-05",
+      "DRIFT-01",
+      "I
   … (truncated)
 ```
 
@@ -233,13 +232,7 @@ Response (captured live):
       "ACL-03",
       "ACL-05",
       "ACL-06",
-      "HXA-01",
-      "HXA-02",
       "HXA-03",
-      "HXA-04",
-      "HXA-05",
-      "HXA-06",
-      "HXA-07",
       "CICD-01",
       "CICD-02",
       "CICD-03",
@@ -251,7 +244,6 @@ Response (captured live):
       "MTN-02",
       "MTN-03",
       "MTN-04",
-      "MTN-05",
       "MTN-06",
       "MTN-07",
       "MTN-08",
@@ -284,7 +276,6 @@ Response (captured live):
       "GIT-05",
       "GIT-06",
       "GIT-07",
-      "GIT-08",
       "GIT-09",
       "GIT-10",
       "DOD-02",
@@ -303,7 +294,14 @@ Response (captured live):
       "DORA-02",
       "DORA-03",
       "DORA-04",
-  
+      "SPACE-01",
+      "SPACE-02",
+      "SPACE-03",
+      "SPACE-05",
+      "DRIFT-01",
+      "INH-03",
+      "INH-04",
+      "I
   … (truncated)
 ```
 
@@ -339,13 +337,7 @@ Response (captured live):
       "ACL-03",
       "ACL-05",
       "ACL-06",
-      "HXA-01",
-      "HXA-02",
       "HXA-03",
-      "HXA-04",
-      "HXA-05",
-      "HXA-06",
-      "HXA-07",
       "CICD-01",
       "CICD-02",
       "CICD-03",
@@ -357,7 +349,6 @@ Response (captured live):
       "MTN-02",
       "MTN-03",
       "MTN-04",
-      "MTN-05",
       "MTN-06",
       "MTN-07",
       "MTN-08",
@@ -390,7 +381,6 @@ Response (captured live):
       "GIT-05",
       "GIT-06",
       "GIT-07",
-      "GIT-08",
       "GIT-09",
       "GIT-10",
       "DOD-02",
@@ -409,7 +399,14 @@ Response (captured live):
       "DORA-02",
       "DORA-03",
       "DORA-04",
-  
+      "SPACE-01",
+      "SPACE-02",
+      "SPACE-03",
+      "SPACE-05",
+      "DRIFT-01",
+      "INH-03",
+      "INH-04",
+      "I
   … (truncated)
 ```
 
@@ -813,49 +810,31 @@ Response (captured live):
           "artifactResults": [
             {
               "artifactId": "anti-corruption",
-              "verdict": "PASS",
-              "present": true,
+              "verdict": "FAIL",
+              "present": false,
               "ruleRefs": [
                 "ACL-02"
               ],
-              "gaps": []
+              "gaps": [
+                {
+                  "id": "general-rulesets:ACL-02",
+                  "requirementRef": "ACL-02",
+                  "severity": "error",
+                  "message": "Blocking rule did not run: Transformation Traceability: [MUST] This rule is declared `blocking: true` and was NOT evaluated (unimplemented-native). No acl/ directory found — rule not applicable A blocking rule that skips is reported exactly like a blocking rule that passed, so the run would claim coverage it did not earn. Implement the handler/adapter this rule needs, or set `blocking: false` until it exists.",
+                  "location": "anti-corruption"
+                }
+              ]
             },
             {
               "artifactId": "anti-corruption",
-              "verdict": "PASS",
-              "present": true,
+              "verdict": "FAIL",
+              "present": false,
               "ruleRefs": [
                 "ACL-03"
               ],
-              "gaps": []
-            },
-            {
-              "artifactId": "anti-corruption",
-              "verdict": "PASS",
-              "present": true,
-              "ruleRefs": [
-                "ACL-06"
-              ],
-              "gaps": []
-            },
-            {
-              "artifactId": "layer-structure",
-              "verdict": "PASS",
-              "present": true,
-              "ruleRefs": [
-                "HXA-01"
-              ],
-              "gaps": []
-            },
-            {
-              "artifactId": "layer-structure",
-              "verdict": "PASS",
-              "present": true,
-              "ruleRefs": [
-                "HXA-02"
-              ],
-              "gaps": []
-       
+              "gaps": [
+                {
+             
   … (truncated)
 ```
 
@@ -925,22 +904,17 @@ Response (captured live):
               },
               {
                 "artifactId": "anti-corruption",
-                "verdict": "PASS",
-                "present": true,
+                "verdict": "FAIL",
+                "present": false,
                 "ruleRefs": [
                   "ACL-02"
                 ],
-                "gaps": []
-              },
-              {
-                "artifactId": "anti-corruption",
-                "verdict": "PASS",
-                "present": true,
-                "ruleRefs": [
-                  "ACL-03"
-                ],
-                "gaps": []
-    
+                "gaps": [
+                  {
+                    "id": "general-rulesets:ACL-02",
+                    "requirementRef": "ACL-02",
+                    "severity": "error",
+                    "message": "Blocking rule did not run: Transformation Traceability: [MUST] 
   … (truncated)
 ```
 
@@ -1012,49 +986,31 @@ Response (captured live):
           "artifactResults": [
             {
               "artifactId": "anti-corruption",
-              "verdict": "PASS",
-              "present": true,
+              "verdict": "FAIL",
+              "present": false,
               "ruleRefs": [
                 "ACL-02"
               ],
-              "gaps": []
+              "gaps": [
+                {
+                  "id": "general-rulesets:ACL-02",
+                  "requirementRef": "ACL-02",
+                  "severity": "error",
+                  "message": "Blocking rule did not run: Transformation Traceability: [MUST] This rule is declared `blocking: true` and was NOT evaluated (unimplemented-native). No acl/ directory found — rule not applicable A blocking rule that skips is reported exactly like a blocking rule that passed, so the run would claim coverage it did not earn. Implement the handler/adapter this rule needs, or set `blocking: false` until it exists.",
+                  "location": "anti-corruption"
+                }
+              ]
             },
             {
               "artifactId": "anti-corruption",
-              "verdict": "PASS",
-              "present": true,
+              "verdict": "FAIL",
+              "present": false,
               "ruleRefs": [
                 "ACL-03"
               ],
-              "gaps": []
-            },
-            {
-              "artifactId": "anti-corruption",
-              "verdict": "PASS",
-              "present": true,
-              "ruleRefs": [
-                "ACL-06"
-              ],
-              "gaps": []
-            },
-            {
-              "artifactId": "layer-structure",
-              "verdict": "PASS",
-              "present": true,
-              "ruleRefs": [
-                "HXA-01"
-              ],
-              "gaps": []
-            },
-            {
-              "artifactId": "layer-structure",
-              "verdict": "PASS",
-              "present": true,
-              "ruleRefs": [
-                "HXA-02"
-              ],
-              "gaps": []
-       
+              "gaps": [
+                {
+             
   … (truncated)
 ```
 
@@ -1133,6 +1089,7 @@ Tool: `evolith-gate-evaluate`
 | --- | --- | --- | --- |
 | `phase` | string | ✓ | Phase identifier (discovery, design, construction, qa, release) |
 | `projectPath` | string | ✓ | Path to the repository to validate |
+| `corePath` | string |  | Optional explicit path to the Evolith Core repository (source of the SDLC gate definitions). Required when the server does not run beside a Core checkout. |
 | `rulesetRef` | string |  | Optional ruleset reference |
 | `evidenceMode` | string |  | full or summary |
 | `evaluatedBy` | string |  | human, agent, or ci |

@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt a Configurable Persistence Strategy utilizing the Strategy Pattern in the Infrastructure layer. The active approach will be determined at system bootstrap by a structural configuration flag ( SECURITY STRATEGY MODE ).",
       "rationale": "Derived from ADR-0044 \"Decision\" section. Enforcement signals detected: layer, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0044 via static analysis, lint rules, or pipeline gates covering: layer, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

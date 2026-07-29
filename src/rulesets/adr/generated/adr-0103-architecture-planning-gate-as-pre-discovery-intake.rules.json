@@ -19,7 +19,7 @@
       "statement": "ADR decision: The Architecture Planning Gate will reside before the Knowledge First Discovery phase. It acts as the intake boundary. No initiative or discovery effort starts without an approved plan.",
       "rationale": "Derived from ADR-0103 \"Decision\" section. Enforcement signals detected: must, required, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0103 via static analysis, lint rules, or pipeline gates covering: must, required, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

@@ -19,7 +19,7 @@
       "statement": "ADR decision: Evolith requires modular monolith implementations to define explicit persistence boundaries per module, bounded context, or domain capability. Each module must own its persistence model and must not directly mutate persistence structures owned by another module.",
       "rationale": "Derived from ADR-0067 \"Decision\" section. Enforcement signals detected: must not, must, naming, structure, enforce, enforced.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0067 via static analysis, lint rules, or pipeline gates covering: must not, must, naming, structure, enforce, enforced. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

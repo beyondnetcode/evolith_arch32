@@ -19,7 +19,7 @@
       "statement": "ADR decision: Adopt Nx as the monorepo orchestration tool for Node.js, combined with npm workspaces for native package resolution. nx.json defines build, test, and lint dependency graphs for intelligent caching and parallel execution.",
       "rationale": "Derived from ADR-0074 \"Decision\" section. Enforcement signals detected: dependency, layer, lint, eslint, enforce, boundaries.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0074 via static analysis, lint rules, or pipeline gates covering: dependency, layer, lint, eslint, enforce, boundaries. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

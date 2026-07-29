@@ -87,6 +87,7 @@ Tool: `evolith-gate-evaluate`
 | --- | --- | --- | --- |
 | `phase` | string | ✓ | Phase identifier (discovery, design, construction, qa, release) |
 | `projectPath` | string | ✓ | Path to the repository to validate |
+| `corePath` | string |  | Optional explicit path to the Evolith Core repository (source of the SDLC gate definitions). Required when the server does not run beside a Core checkout. |
 | `rulesetRef` | string |  | Optional ruleset reference |
 | `evidenceMode` | string |  | full or summary |
 | `evaluatedBy` | string |  | human, agent, or ci |

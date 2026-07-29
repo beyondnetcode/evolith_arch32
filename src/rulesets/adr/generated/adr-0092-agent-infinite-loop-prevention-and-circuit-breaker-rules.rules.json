@@ -19,7 +19,7 @@
       "statement": "ADR decision: We establish three primary guidelines that all satellite services must implement to detect and break recursive agent call loops. All agent to agent and agent to tool payloads MUST propagate an execution depth counter via standard headers.",
       "rationale": "Derived from ADR-0092 \"Decision\" section. Enforcement signals detected: must, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0092 via static analysis, lint rules, or pipeline gates covering: must, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

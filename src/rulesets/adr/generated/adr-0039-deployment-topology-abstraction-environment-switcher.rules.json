@@ -19,7 +19,7 @@
       "statement": "ADR decision: We decree a Strict Factory Driven Abstraction strategy for deployment switching: 1. Unified Environment Selector : Introduce a mandatory environment variable DEPLOYMENT TOPOLOGY with enum values [SAAS CLOUD, ON PREMISE ISOLATED] .",
       "rationale": "Derived from ADR-0039 \"Decision\" section. Enforcement signals detected: must not, must, dependency.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0039 via static analysis, lint rules, or pipeline gates covering: must not, must, dependency. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

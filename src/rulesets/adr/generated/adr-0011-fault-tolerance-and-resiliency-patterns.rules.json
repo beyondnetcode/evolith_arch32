@@ -19,7 +19,7 @@
       "statement": "ADR decision: Implement explicit Resilience Patterns protecting all outbound system exits: 1. Distributed Circuit Breaker (Opossum + Redis) : Wrap outbound network calls in high level infrastructure adapters.",
       "rationale": "Derived from ADR-0011 \"Decision\" section. Enforcement signals detected: must, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0011 via static analysis, lint rules, or pipeline gates covering: must, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

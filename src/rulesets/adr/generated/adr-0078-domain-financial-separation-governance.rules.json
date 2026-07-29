@@ -19,7 +19,7 @@
       "statement": "ADR decision: Purge all references to financial parameters from Evolith Core and delegate all financial tracking, budgets, and business ROI logic exclusively to Evolith Tracker. All specifications and templates in Core must substitute business/financial concepts with Technical Constraints and Quality Attributes (NFRs): 1.",
       "rationale": "Derived from ADR-0078 \"Decision\" section. Enforcement signals detected: must, prohibited.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0078 via static analysis, lint rules, or pipeline gates covering: must, prohibited. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

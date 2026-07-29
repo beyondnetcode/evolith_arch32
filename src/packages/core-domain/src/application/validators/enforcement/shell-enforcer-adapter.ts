@@ -35,6 +35,20 @@ export interface ShellEnforcerConfig {
    * legitimately emit empty output on success. Default: empty stdout ⇒ failure.
    */
   isToolFailure?(result: ProcessResult, ctx: EnforcerAnalysisContext): boolean;
+  /**
+   * A reason this adapter CANNOT certify the rules routed to it in `ctx`, checked
+   * BEFORE the process runs; `undefined` means it can.
+   *
+   * GT-632 — the false-pass counterpart of {@link isToolFailure}. `isToolFailure`
+   * catches a tool that did not run. This catches a tool that ran perfectly and
+   * answered a DIFFERENT question: dependency-cruiser invoked without the config
+   * compiled from these rules evaluates whatever config the satellite happens to
+   * ship, reports violations under ITS rule names, none of which match the routed
+   * `toolRuleId` — so {@link EnforcerEvaluator} sees zero matches and marks four
+   * blocking rules `passed`. Silence from a tool that was never asked the question
+   * is not evidence.
+   */
+  certificationGap?(ctx: EnforcerAnalysisContext): string | undefined;
 }
 
 export class ShellEnforcerAdapter implements IEnforcerAdapter {
@@ -52,6 +66,13 @@ export class ShellEnforcerAdapter implements IEnforcerAdapter {
   }
 
   async analyze(ctx: EnforcerAnalysisContext): Promise<Violation[]> {
+    const gap = this.config.certificationGap?.(ctx);
+    if (gap) {
+      // Throw before spawning anything: the EnforcerEvaluator records a SKIP,
+      // which CompositeRuleEvaluator then degrades to the native engine. Running
+      // the tool anyway would produce a confident, meaningless green.
+      throw new Error(`${this.config.tool} cannot certify these rules: ${gap}`);
+    }
     const spec = this.config.buildSpec(ctx);
     const result = await this.runner.run(spec);
     const failed = this.config.isToolFailure

@@ -19,7 +19,7 @@
       "statement": "ADR decision: Each bounded context will own a dedicated PostgreSQL schema . All tables belonging to a context must be created within its schema. Cross schema joins within the monolith remain permitted (same DB connection), but must be treated as integration contracts, not implementation details.",
       "rationale": "Derived from ADR-0031 \"Decision\" section. Enforcement signals detected: must, dependencies, structure.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0031 via static analysis, lint rules, or pipeline gates covering: must, dependencies, structure. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

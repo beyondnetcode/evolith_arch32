@@ -199,8 +199,67 @@ export class DiskRulesetRepository implements IRulesetRepository {
         validationQuery: r["validationQuery"]
           ? String(r["validationQuery"])
           : undefined,
+        enforce: this.normalizeEnforce(r["enforce"]),
         sourceFile,
       }));
+  }
+
+  /**
+   * GT-632 — carry the authored `enforce:` block into the normalized rule.
+   *
+   * This mapping did not exist. `ruleset-standard.schema.json` has accepted an
+   * `enforce` block since GT-516 and the ADR-0002 ruleset authors six of them,
+   * but `normalizeRuleset` never copied the field — so `rule.enforce` was
+   * ALWAYS `undefined` in production, `EnforcerEvaluator.isEnforcerRule()` was
+   * always false, and the whole enforcement subsystem (adapters, sandbox,
+   * composite, the `processRunner` injected by all three surfaces) was
+   * unreachable code. HXA-01/02/04/05 declared `blocking: true` and a complete
+   * `from`/`to` clause, and nothing ever read either.
+   *
+   * Unknown/extra keys are preserved verbatim under `config`; the block is only
+   * shaped enough to be routable, because the consumers (PolicyCompiler,
+   * ModuleBoundaryRuleHandler) own its interpretation.
+   */
+  private normalizeEnforce(raw: unknown): NormalizedRule["enforce"] {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return undefined;
+    const e = raw as Record<string, unknown>;
+    const engine = String(e["engine"] ?? "native");
+    if (engine !== "native" && engine !== "opa" && engine !== "enforcer")
+      return undefined;
+    if (!e["tool"]) return undefined;
+
+    const config =
+      e["config"] && typeof e["config"] === "object" && !Array.isArray(e["config"])
+        ? (e["config"] as Record<string, unknown>)
+        : undefined;
+    const severityMap =
+      e["severityMap"] &&
+      typeof e["severityMap"] === "object" &&
+      !Array.isArray(e["severityMap"])
+        ? (e["severityMap"] as Record<string, string>)
+        : undefined;
+    const mode = e["mode"] === "warn" || e["mode"] === "block" ? e["mode"] : undefined;
+    const runtime = ["node", "dotnet", "php", "python", "iac", "shell"].includes(
+      String(e["runtime"]),
+    )
+      ? (String(e["runtime"]) as NonNullable<NormalizedRule["enforce"]>["runtime"])
+      : undefined;
+
+    // The cast is against a STALE artifact, not against the contract: this file
+    // compiles from source while `@beyondnet/evolith-core-domain` resolves to its
+    // published `dist/`, whose `EnforceDescriptor` may predate the widening that
+    // added `config`/`configRef`/`mode`/`severityMap`. The literal below IS an
+    // EnforceDescriptor; it stops being a cast the next time core-domain builds.
+    return {
+      engine,
+      tool: String(e["tool"]),
+      toolRuleId: e["toolRuleId"] ? String(e["toolRuleId"]) : undefined,
+      runtime,
+      config,
+      configRef: e["configRef"] ? String(e["configRef"]) : undefined,
+      mode,
+      severityMap,
+    } as NormalizedRule["enforce"];
   }
 
   private normalizeSeverity(

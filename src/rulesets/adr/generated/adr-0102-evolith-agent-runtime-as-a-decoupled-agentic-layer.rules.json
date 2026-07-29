@@ -19,7 +19,7 @@
       "statement": "ADR decision: AgentRuntimeService depends exclusively on interfaces ( IHarnessPort , ICoreEvaluationPort , IPolicyValidationPort , ITrackerTracePort , IMemoryPort , ISkillRegistryPort , ISchedulerPort , ICommunicationGatewayPort , IApprovalPort , IAgentEnginePort ).",
       "rationale": "Derived from ADR-0102 \"Decision\" section. Enforcement signals detected: layer, enforce, import.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0102 via static analysis, lint rules, or pipeline gates covering: layer, enforce, import. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

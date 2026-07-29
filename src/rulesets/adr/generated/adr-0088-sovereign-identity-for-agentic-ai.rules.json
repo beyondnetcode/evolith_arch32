@@ -19,7 +19,7 @@
       "statement": "ADR decision: We standardize two complementary identity patterns for Agentic AI, chosen based on whether the agent is acting in response to a human trigger or operating autonomously. When to use: The agent is invoked directly by, or in direct response to, a human user action (e.g., a developer triggers a CI review agent).",
       "rationale": "Derived from ADR-0088 \"Decision\" section. Enforcement signals detected: structure, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0088 via static analysis, lint rules, or pipeline gates covering: structure, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

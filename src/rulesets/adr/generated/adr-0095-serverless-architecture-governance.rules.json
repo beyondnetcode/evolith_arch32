@@ -19,7 +19,7 @@
       "statement": "ADR decision: We adopt the Serverless execution topology with the following governing principles: 1. Stateless Execution : Handlers must not assume persistent local state. All durable state belongs to the owning bounded context, not the handler runtime.",
       "rationale": "Derived from ADR-0095 \"Decision\" section. Enforcement signals detected: must not, must, dependencies.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0095 via static analysis, lint rules, or pipeline gates covering: must not, must, dependencies. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

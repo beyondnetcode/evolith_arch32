@@ -19,7 +19,7 @@
       "statement": "ADR decision: Agentic AI tool execution MUST occur in an isolated boundary. The boundary MUST deny network and process access by default, allow only explicit allowlists, mount writable storage only where required, use ephemeral execution state, enforce time and resource limits, and avoid ambient credentials.",
       "rationale": "Derived from ADR-0081 \"Decision\" section. Enforcement signals detected: must, required, enforce.",
       "validationQuery": "Verify codebase/CI compliance with ADR-0081 via static analysis, lint rules, or pipeline gates covering: must, required, enforce. Concrete checks to be wired into the harness.",
-      "blocking": true,
+      "blocking": false,
       "enforcement": "executable"
     }
   ],

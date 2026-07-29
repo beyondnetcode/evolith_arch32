@@ -54,6 +54,22 @@ import { fileURLToPath } from 'node:url';
 const GUARD = 'check-install-smoke';
 const PKG_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
+/**
+ * The workspace root — a third place `npm pack` may write the tarball. Found by
+ * walking up to the lockfile rather than counting directory levels, because
+ * `--pkg` points this script at packages at different depths.
+ */
+const REPO_ROOT = (() => {
+  let dir = PKG_ROOT;
+  for (let i = 0; i < 8; i += 1) {
+    if (existsSync(join(dir, 'package-lock.json'))) return dir;
+    const up = dirname(dir);
+    if (up === dir) break;
+    dir = up;
+  }
+  return resolve(PKG_ROOT, '..', '..', '..');
+})();
+
 /** Both module systems, because a future build may emit ESM. */
 const SPECIFIER_RE = /(?:require\(|from\s*)["'](@beyondnet\/[^"']+)["']/g;
 
@@ -114,8 +130,21 @@ function fail(lines) {
   process.exit(1);
 }
 
+/**
+ * Every child here must be immune to an ambient dry-run.
+ *
+ * This guard runs inside `prepublishOnly`, and `npm-release.yml`'s rehearsal mode
+ * invokes `npm publish --dry-run`, which exports `npm_config_dry_run=true` to that
+ * script. Inherited, it makes `npm pack` write no tarball and `npm install` install
+ * nothing — while both still exit 0 — so the guard reported a good artifact as NOT
+ * installable. Packing and installing into a throwaway directory is this guard's
+ * measurement, not part of the publish being rehearsed, so the variable is stripped
+ * for every child rather than at one call site.
+ */
 function run(cmd, args, opts = {}) {
-  return spawnSync(cmd, args, { encoding: 'utf8', ...opts });
+  const env = { ...process.env, ...(opts.env || {}) };
+  delete env.npm_config_dry_run;
+  return spawnSync(cmd, args, { encoding: 'utf8', ...opts, env });
 }
 
 /**
@@ -220,34 +249,69 @@ function main(argv) {
     if (!spec) {
       // Pack THIS package. --ignore-scripts so a prepublishOnly that calls this
       // guard cannot recurse into itself.
-      const packed = run('npm', ['pack', '--ignore-scripts', '--silent', '--pack-destination', temp], { cwd: pkgRoot });
+      // THIS GUARD COULD NOT RUN UNDER THE RELEASE REHEARSAL, AND SAID SO WRONGLY.
+      //
+      // `npm-release.yml`'s dry_run mode runs `npm publish --dry-run`, which puts
+      // `npm_config_dry_run=true` in the environment of `prepublishOnly` — and
+      // this guard runs there. The nested `npm pack` below INHERITS it, so npm
+      // printed the tarball name and wrote no file, and the guard reported "this
+      // artifact is NOT installable" about a perfectly good artifact. Measured, not
+      // guessed: `npm_config_dry_run=true npm pack --pack-destination <dir>` prints
+      // the filename and leaves <dir> empty, on both npm 10 and npm 11.
+      //
+      // So the pack is made immune to an ambient dry-run: the variable is stripped
+      // from the child environment AND `--dry-run=false` is passed. Packing into a
+      // temp directory is not the operation the rehearsal is rehearsing, and it
+      // must happen for the rehearsal to mean anything.
+      //
+      // Two earlier explanations were wrong and are recorded so they are not
+      // re-attempted: it is not that `--pack-destination` is ignored on the runner,
+      // and not that npm majors disagree about the destination. npm 10 honours it.
+      //
+      // The location is still DISCOVERED rather than predicted — snapshot the
+      // candidate directories, pack, take whatever appeared — and a failure prints
+      // what each directory actually holds, because a slow CI loop must not be
+      // spent discovering one more location.
+      const candidates = [temp, pkgRoot, REPO_ROOT];
+      const tgzIn = (dir) => {
+        try {
+          return new Set(readdirSync(dir).filter((f) => f.endsWith('.tgz')));
+        } catch {
+          return new Set();
+        }
+      };
+      const before = candidates.map(tgzIn);
+
+      const packed = run(
+        'npm',
+        ['pack', '--ignore-scripts', '--silent', '--dry-run=false', '--pack-destination', temp],
+        { cwd: pkgRoot },
+      );
       if (packed.status !== 0) {
         fail([`npm pack failed (${packed.status}):`, String(packed.stderr).trim()]);
       }
-      const tarball = String(packed.stdout).trim().split('\n').pop();
-      // `--pack-destination` is not honoured identically across npm majors when
-      // the cwd is a WORKSPACE package: npm 11 writes to the destination, npm 10
-      // (the Node 20 runner) writes to the package directory and prints the same
-      // filename either way. Trusting one of them made this guard report the npm
-      // version rather than the artifact — it passed locally and failed the
-      // release rehearsal on 2026-07-29 with "no such tarball exists".
-      //
-      // So LOOK in both, and move a stray tarball out of the source tree rather
-      // than leaving it for the root-cleanliness guard to find.
-      spec = join(temp, tarball);
-      if (!existsSync(spec)) {
-        const strayInPackage = join(pkgRoot, tarball);
-        if (existsSync(strayInPackage)) {
-          renameSync(strayInPackage, spec);
-        } else {
-          fail([
-            `npm pack reported "${tarball}" but it is in neither location:`,
-            `  --pack-destination: ${temp}`,
-            `  package directory:  ${pkgRoot}`,
-            'Both are checked because npm majors disagree about which one a workspace pack writes to.',
-          ]);
+      const reported = String(packed.stdout).trim().split('\n').pop();
+
+      let found = null;
+      candidates.forEach((dir, i) => {
+        if (found) return;
+        for (const f of tgzIn(dir)) {
+          if (!before[i].has(f)) { found = { dir, file: f }; return; }
         }
+      });
+
+      if (!found) {
+        fail([
+          `npm pack reported "${reported}" and no new tarball appeared in any candidate directory:`,
+          ...candidates.map((d, i) => `  ${d}\n      holds: ${[...tgzIn(d)].join(', ') || '(no .tgz)'} · before: ${[...before[i]].join(', ') || '(no .tgz)'}`),
+          'npm prints the filename regardless of where it writes, so the name alone proves nothing.',
+        ]);
       }
+
+      spec = join(temp, found.file);
+      // Move it out of the repository if that is where npm put it, rather than
+      // leaving it for the root-cleanliness guard to trip over.
+      if (found.dir !== temp) renameSync(join(found.dir, found.file), spec);
     }
 
     const installDir = join(temp, 'consumer');

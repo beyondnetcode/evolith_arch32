@@ -8828,6 +8828,32 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "TWO deliberate non-adoptions are recorded as part of the closure, not deferred silently. (1) dependency-cruiser was NOT adopted for the module-boundary rules: the Core is a stateless engine that reads satellites through an overlay filesystem a subprocess cannot see, and the tool's config matches node_modules/, so an UNINSTALLED satellite would yield zero violations and PASS four blocking rules. A false pass is worse than the skip it would replace. (2) OCB-02 was NOT closed: no artifact anywhere carries an `availability` marker, so the rule quantifies over the empty set and can only pass; that is recorded as three executable tests instead of prose. The residual unclaimed-blocking corpus stands at 73 and is pinned."
+    },
+    {
+      "id": "GT-633",
+      "closedAt": "2026-07-29",
+      "closureCommit": "05c3f62b",
+      "evidence": [
+        "src/packages/core-domain/src/application/services/project-scaffolder.service.ts",
+        "src/packages/core-domain/src/application/use-cases/initialize-project.use-case.ts",
+        "src/packages/core-domain/src/application/use-cases/initialize-project.use-case.spec.ts",
+        "src/packages/infra-providers/src/rule-applicability.integration.spec.ts",
+        "src/rulesets/adr/adr-0010-multi-tenancy.rules.json",
+        "src/packages/core-domain/src/application/validators/evaluators/handlers/governance-rule.handler.ts",
+        "src/packages/core-domain/src/application/validators/rule-applicability.ts"
+      ],
+      "validationCommands": [
+        "rule-applicability.integration.spec.ts -> 10/10. The pinned assertion moved from ['GIT-08','MTN-05'] to [] because the scaffold changed, not because the assertion was relaxed.",
+        "initialize-project.use-case.spec.ts -> 9/9, covering all three legs GIT-08 reads: config content (the seven types GIT-08 names), the merged devDependencies, and a commit-msg hook asserted to carry --no-install and to contain no else branch.",
+        "The deferral of MTN-05 is asserted over phases 0->3: excluded at 0 and 1, binding at 2 and 3. Weakening the annotation turns the test red.",
+        "Verified per-rule rather than by the suite alone: GIT-08 executes and PASSES for the typescript and python scaffolds; MTN-05 appears in notApplicableRuleIds rather than passing silently.",
+        "core-domain 1442/1442, infra-providers 129/129, sdk/cli 1436/1436, mcp-server init.tools 7/7.",
+        "32-validate-ruleset-schemas -> 168 passed, 0 failed, exit 0. 28-native-evaluator-parity -> 17 fixtures, 451 verdict assertions, exit 0. 01-validate-docs -> 1491 files, exit 0.",
+        "The premise did NOT reproduce on first contact: the suite resolves @beyondnet/evolith-core-domain through the workspace symlink to dist/, nine days stale and predating the GT-595 handlers, so both rules were skipped and the pinned assertion already read []. A green run in that state would have produced a false CLOSURE. Reproduced only after re-anchoring node_modules at the worktree and rebuilding -- the same untracked-build-state class as GT-625 and GT-632.",
+        "NOT done, deliberately: multi-tenancy.rego still asserts MTN-05 unconditionally. Applicability is a native-engine pre-filter by construction (GT-571) and TAX-06 already carries the same shape, so this is a pre-existing engine divergence rather than one introduced here."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The prerequisite is satisfied and closed: GT-595 gave MTN-05 and GIT-08 real handlers, which is the only reason either failure was visible. One part is deliberately left out of scope: the parallel multi-tenancy.rego still asserts MTN-05 unconditionally. Applicability is a native-engine pre-filter by construction (GT-571) and TAX-06 already carries the same shape -- a phase annotation alongside a rego that does not read it -- so this is a pre-existing divergence between the two engines, not one introduced here, and closing it belongs to whatever unifies applicability across engines."
     }
   ]
 }

@@ -30,6 +30,7 @@ import {
   RulesetValidatorService,
   partitionByApplicability,
 } from '@beyondnet/evolith-core-domain/application/validators';
+import type { ApplicabilityContext } from '@beyondnet/evolith-core-domain/application/validators';
 import { InitializeProjectUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 import type { NormalizedRule } from '@beyondnet/evolith-core-domain/domain/models/normalized-rule';
 
@@ -128,21 +129,32 @@ describe('GT-571 · the first validate of a freshly initialized satellite', () =
     const blockingIds = new Set(blocking.map(i => i.ruleId));
     for (const id of result.blockingSkippedRuleIds!) expect(blockingIds.has(id)).toBe(true);
 
-    // …and the ONLY blocking findings that are not the GT-595 invariant are
-    // these two, which are REAL verdicts from rules that really executed.
+    // …and NO blocking finding is a real verdict: every one of them is the
+    // GT-595 invariant firing on a rule the corpus itself declares
+    // blocking-and-unrunnable. A freshly scaffolded satellite does nothing wrong.
     //
-    // Both were closed by the GT-595 config-shaped slice, and both fail on a
-    // freshly scaffolded satellite because the scaffold does not emit what they
-    // require. That is a live defect in `InitializeProjectUseCase`, not a
-    // testing artifact, and it is pinned here rather than filtered out so that
-    // closing it moves this list to []:
-    //   MTN-05  the scaffolded evolith.yaml declares no `spec.boundedContexts`,
-    //           so the multi-tenant persistence decision is undeclared;
-    //   GIT-08  the scaffold writes no commitlint configuration, so Conventional
-    //           Commits are mandated by the corpus and enforced by nothing.
+    // This list used to read ['GIT-08', 'MTN-05'] and was pinned by name so that
+    // closing the gap would show up here. Both were closed, by different means,
+    // because they are different kinds of defect:
+    //
+    //   GIT-08  was a SCAFFOLD gap. Conventional Commits bind from the first
+    //           commit and the corpus already states the convention verbatim, so
+    //           `init` now emits commitlint.config.mjs, the commitlint packages
+    //           in devDependencies, and (with --features hooks) a commit-msg hook
+    //           that fails rather than skips when the tool is absent.
+    //
+    //   MTN-05  was NOT a scaffold gap, and emitting a `spec.boundedContexts`
+    //           stanza would have been the wrong fix: the rule's own text says
+    //           the strategy MUST be defined "before Phase 2 Design", and a
+    //           phase-0 scaffold has no bounded contexts to declare. Satisfying
+    //           it at init would have meant writing an invented persistence
+    //           decision into every new repository — and then MTN-05 would pass
+    //           for a reason nobody chose. It is annotated
+    //           `appliesFromSdlcPhase: 2` instead, which is the applicability
+    //           fact the rule always stated in prose.
     const skippedInvariant = new Set(result.blockingSkippedRuleIds!);
     const realViolations = blocking.filter(i => !skippedInvariant.has(i.ruleId));
-    expect(realViolations.map(i => i.ruleId).sort()).toEqual(['GIT-08', 'MTN-05']);
+    expect(realViolations.map(i => i.ruleId).sort()).toEqual([]);
   });
 
   it('never fires a blocking rule that applicability excluded', async () => {
@@ -263,5 +275,30 @@ describe('GT-571 · the Core monorepo keeps its own rules', () => {
     expect(index.get('TAX-01')?.audience).toBe('both');
     expect(index.get('TAX-01')?.topologies).toBeUndefined();
     expect(index.get('TAX-01')?.appliesFromSdlcPhase).toBeUndefined();
+  });
+
+  it('defers MTN-05 to Design without weakening it', async () => {
+    // MTN-05's own description says the multi-tenant schema strategy "MUST be
+    // defined before Phase 2 Design". That was prose; it is now an applicability
+    // fact, which is why a phase-0 scaffold with no bounded contexts is no longer
+    // failed by it. The half that matters is the second assertion: the rule is
+    // DEFERRED, not disabled — a repository that has reached Design is still
+    // judged by it, and would be failed for exactly the same reason as before.
+    const fs = new NodeFileSystemProvider() as any;
+    const rules = await new DiskRulesetRepository(fs, silentLogger).loadAllRulesets(CORE);
+    const index = await RuleApplicabilityIndex.load(fs, CORE, path.sep);
+
+    expect(index.get('MTN-05')?.appliesFromSdlcPhase).toBe(2);
+
+    const excludedAt = (sdlcPhase: number) => {
+      const ctx: ApplicabilityContext = { audience: 'satellite', declaredTopologies: [], sdlcPhase };
+      const { notApplicable } = partitionByApplicability(rules as NormalizedRule[], { index, context: ctx });
+      return new Set(notApplicable.map(n => n.rule.id)).has('MTN-05');
+    };
+
+    expect(excludedAt(0)).toBe(true);   // the freshly scaffolded satellite
+    expect(excludedAt(1)).toBe(true);   // Conception — still nothing to declare
+    expect(excludedAt(2)).toBe(false);  // Design — the rule binds, unchanged
+    expect(excludedAt(3)).toBe(false);
   });
 });

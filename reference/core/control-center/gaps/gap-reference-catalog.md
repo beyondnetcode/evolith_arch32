@@ -7947,6 +7947,19 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
 
+#### GT-632
+
+**Title:** The compiled ABAC policy is resolved at a pre-refactor path, denying every MCP tool in production
+
+- **Purpose:** Make a path that no longer exists impossible to ship, on the authorization path and everywhere else the refactor left one.
+- **Evidence:** **The MCP denied every tool in production from a path typo, and the evidence that it worked was untracked local state.** `abac-evaluator.ts:322` resolved the compiled policy at `<core>/sdk/cli/rulesets/opa/policy.wasm` — the PRE-`src/`-refactor path. The file lives at `src/sdk/cli/…`. When the stat fails the evaluator denies fail-closed in production, so on a clean checkout with `NODE_ENV=production` the compiled policy never loads and EVERY MCP tool is refused. It looked green because `policy.wasm` is gitignored: a stale file left at the old path by an earlier era made the load succeed locally, and the test that covers it passed against an artifact no fresh checkout would have. Same shape as `GT-625` — a green that depended on untracked state — but on the authorization path. Found on 2026-07-29 while investigating why `abac-rego-parity.spec.ts` had gone red; the rego itself was correct (`opa eval` returns `allow: true` for an architect in production). **`40-validate-path-literals` cannot see this class:** it scans string literals, and this is a `path.join(corePath, 'sdk', 'cli', …)` construction. Twelve such joins survive the refactor across `src/**` — the other eleven are in `opa-input-builder.ts` and `cli-release-rule.handler.ts`, where a wrong path produces a false NEGATIVE in an evaluator rather than a denial, which is quieter and no less wrong.
+- **Component:** `MCP Server` · **Criticality:** P0 · **Complexity:** M
+- **Provenance:** Found on 2026-07-29 while investigating a red `abac-rego-parity.spec.ts`, during the GT-602 generator work.
+- **Acceptance criteria:**
+  - [x] The evaluator loads the compiled policy on a clean checkout under `NODE_ENV=production`, asserted by a test that fails without the fix.
+  - [ ] The remaining eleven `path.join(…, 'sdk', 'cli', …)` constructions in `src/**` are corrected or shown to be intentional.
+  - [ ] A guard catches a JOINED path that does not exist, not only a literal one — the gap `40-validate-path-literals` cannot see.
+
 #### GT-631
 
 **Title:** The Tracker has not re-pinned the evaluate contract the Core now publishes

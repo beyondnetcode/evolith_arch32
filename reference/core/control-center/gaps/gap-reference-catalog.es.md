@@ -7852,6 +7852,19 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
 
+#### GT-632
+
+**Title:** La política ABAC compilada se resuelve en una ruta previa al refactor, denegando toda herramienta MCP en producción
+
+- **Purpose:** Que sea imposible enviar una ruta que ya no existe, en el camino de autorización y allí donde el refactor dejó otra.
+- **Evidence:** **El MCP denegaba todas sus herramientas en producción por una ruta mal escrita, y la prueba de que funcionaba era estado local sin versionar.** `abac-evaluator.ts:322` resolvía la política compilada en `<core>/sdk/cli/rulesets/opa/policy.wasm` — la ruta ANTERIOR al refactor `src/`. El fichero vive en `src/sdk/cli/…`. Cuando el stat falla, el evaluador deniega fail-closed en producción, así que en un checkout limpio con `NODE_ENV=production` la política compilada nunca se carga y TODA herramienta MCP se rechaza. Parecía verde porque `policy.wasm` está gitignorado: un fichero rancio dejado en la ruta vieja por una época anterior hacía que la carga funcionara en local, y el test que lo cubre pasaba contra un artefacto que ningún checkout fresco tendría. Misma forma que `GT-625` — un verde que dependía de estado no versionado — pero en el camino de autorización. Encontrado el 2026-07-29 investigando por qué `abac-rego-parity.spec.ts` se había puesto rojo; el rego era correcto (`opa eval` devuelve `allow: true` para un arquitecto en producción). **`40-validate-path-literals` no puede ver esta clase:** barre literales de cadena, y esto es una construcción `path.join(corePath, 'sdk', 'cli', …)`. Sobreviven doce joins así en `src/**` — los otros once están en `opa-input-builder.ts` y `cli-release-rule.handler.ts`, donde una ruta equivocada produce un falso NEGATIVO en un evaluador en vez de una denegación, que es más silencioso y no menos incorrecto.
+- **Component:** `MCP Server` · **Criticality:** P0 · **Complexity:** M
+- **Provenance:** Encontrado el 2026-07-29 investigando un `abac-rego-parity.spec.ts` en rojo, durante el trabajo del generador de GT-602.
+- **Acceptance criteria:**
+  - [x] El evaluador carga la política compilada en un checkout limpio bajo `NODE_ENV=production`, verificado por un test que falla sin el arreglo.
+  - [ ] Las once construcciones `path.join(…, 'sdk', 'cli', …)` restantes en `src/**` se corrigen o se demuestra que son intencionadas.
+  - [ ] Un guard caza una ruta CONSTRUIDA que no existe, no solo una literal — el hueco que `40-validate-path-literals` no ve.
+
 #### GT-631
 
 **Title:** El Tracker no ha re-fijado el contrato de evaluación que el Core ya publica

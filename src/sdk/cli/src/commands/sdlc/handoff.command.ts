@@ -2,9 +2,8 @@ import { SubCommand, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import * as path from 'path';
-import * as fs from 'fs';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
+import { findProjectRoot } from './project-root';
 import { PhaseService, ToolSelectionService } from '@beyondnet/evolith-core-domain/domain/services';
 import { PhaseTransitionUseCase } from '@beyondnet/evolith-core-domain/application/services';
 import {
@@ -230,23 +229,14 @@ export class HandoffCommand extends BaseEvolithCommand {
     return steps[phase] || '';
   }
 
+  /**
+   * GT-632: both markers this used to probe had moved, so the walk-up could
+   * never match and every invocation fell back to `process.cwd()`. The probe
+   * now lives in ./project-root, where each marker is tried at every location
+   * it is known to occupy.
+   */
   private findProjectRoot(startPath: string): string {
-    let current = path.resolve(startPath);
-
-    while (true) {
-      const templatesDir = path.join(current, 'reference', 'governance', 'sdlc', '04-artifact-templates');
-      const rulesetsDir = path.join(current, 'rulesets');
-
-      if (fs.existsSync(templatesDir) && fs.existsSync(rulesetsDir)) {
-        return current;
-      }
-
-      const parent = path.dirname(current);
-      if (parent === current) {
-        return startPath;
-      }
-      current = parent;
-    }
+    return findProjectRoot(startPath);
   }
 
   @Option({

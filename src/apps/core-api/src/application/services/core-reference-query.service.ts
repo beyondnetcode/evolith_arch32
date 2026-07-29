@@ -80,6 +80,36 @@ export class CoreReferenceQueryService {
    * looked.
    */
   private async findAllRulesetFiles(corePath: string): Promise<string[]> {
+    const rulesetsRoot = await this.resolveRulesetsRoot(corePath);
+    return [
+      ...(await this.findRulesetFiles(rulesetsRoot)),
+      ...(await this.findRulesetFiles(this.topologyDocsRoot(corePath))),
+    ];
+  }
+
+  /**
+   * The doc-side topology corpus, which carries its own `*.rules.json` files
+   * alongside the narrative pages and is NOT a subtree of the ruleset corpus.
+   *
+   * GT-632: this was `reference/architecture/topologies`, which the `src/` move
+   * relocated under `reference/core/`. `findRulesetFiles` returns `[]` for a
+   * directory that does not exist, so the three doc-side topology rulesets
+   * simply stopped appearing in `GET /reference/rulesets` — a silent shortfall,
+   * not an error, and therefore invisible.
+   */
+  private topologyDocsRoot(corePath: string): string {
+    return path.join(corePath, 'reference', 'core', 'architecture', 'topologies');
+  }
+
+  /**
+   * Resolve the ruleset corpus root, failing closed with the probe trail.
+   *
+   * GT-566 put the two legitimate corpus layouts (`<core>/rulesets` for the
+   * published CLI bundle, `<core>/src/rulesets` for the monorepo) behind one
+   * content-qualified probe. Anything that re-states those layouts by hand
+   * drifts away from it.
+   */
+  private async resolveRulesetsRoot(corePath: string): Promise<string> {
     const { rulesetsRoot, probes } = await probeRulesetsLocation(
       corePath,
       { exists: (p) => this.fs.exists(p), readdirNames: (p) => this.fs.readdirNames(p) },
@@ -90,25 +120,27 @@ export class CoreReferenceQueryService {
         describeRulesetsResolutionFailure(corePath, probes),
       );
     }
-    return [
-      ...(await this.findRulesetFiles(rulesetsRoot)),
-      ...(await this.findRulesetFiles(path.join(corePath, 'reference', 'architecture', 'topologies'))),
-    ];
+    return rulesetsRoot;
   }
 
+  /**
+   * GT-632: this hand-rolled the GT-566 layout probe as two literal candidates,
+   * and the first — `<core>/rulesets/sdlc/phase-gates.rules.json` — named a
+   * layout that no longer exists in this repository. It was harmless only by
+   * luck: the second candidate still resolved, so the dead one cost nothing but
+   * would have been the answer had the order been the other way round. Delegate
+   * to the single content-qualified resolver instead of restating the layouts.
+   *
+   * Failing closed (rather than returning `[]`) matches `findAllRulesetFiles`:
+   * an empty gate list makes an unreachable corpus look like a gate that does
+   * not exist, and the caller answers 404 for what is really a misconfiguration.
+   */
   private async loadPhaseGates(corePath: string): Promise<PhaseGate[]> {
-    // GT-566: probe both corpus layouts rather than only `<core>/rulesets`.
-    const candidates = [
-      path.join(corePath, 'rulesets', 'sdlc', 'phase-gates.rules.json'),
-      path.join(corePath, 'src', 'rulesets', 'sdlc', 'phase-gates.rules.json'),
-    ];
-    for (const candidate of candidates) {
-      if (await this.fs.exists(candidate)) {
-        const parsed = JSON.parse(await this.fs.readFile(candidate)) as { gates?: PhaseGate[] };
-        return parsed.gates ?? [];
-      }
-    }
-    return [];
+    const rulesetsRoot = await this.resolveRulesetsRoot(corePath);
+    const gatesFile = path.join(rulesetsRoot, 'sdlc', 'phase-gates.rules.json');
+    if (!(await this.fs.exists(gatesFile))) return [];
+    const parsed = JSON.parse(await this.fs.readFile(gatesFile)) as { gates?: PhaseGate[] };
+    return parsed.gates ?? [];
   }
 
   private async findRulesetFiles(directory: string, depth = 0): Promise<string[]> {

@@ -49,9 +49,21 @@ import {
 import * as fs from 'fs';
 import * as path from 'path';
 
-/** Resolves whether an opaque blueprintRef matches a Core blueprint definition on disk. */
-const blueprintExists = async (corePath: string, blueprintRef: string): Promise<boolean> => {
-  const base = path.join(corePath, 'reference', 'architecture', 'blueprints');
+/**
+ * Resolves whether an opaque blueprintRef matches a Core blueprint definition on disk.
+ *
+ * GT-632: the base was `reference/architecture/blueprints` — a directory the
+ * `src/` refactor moved to `reference/core/architecture/blueprints`. Nothing
+ * threw: `fs.existsSync` on a missing directory is simply `false`, so every
+ * blueprint reference evaluated as "does not exist" and the blueprint kind
+ * reported a clean, confident, wrong verdict.
+ *
+ * Exported so `app.module.spec.ts` can pin it against the real repository
+ * layout; the previous shape was module-private and therefore untestable, which
+ * is how the wrong path survived.
+ */
+export const blueprintExists = async (corePath: string, blueprintRef: string): Promise<boolean> => {
+  const base = path.join(corePath, 'reference', 'core', 'architecture', 'blueprints');
   return [
     path.join(base, blueprintRef),
     path.join(base, `${blueprintRef}.md`),

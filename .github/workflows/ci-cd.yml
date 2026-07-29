@@ -459,7 +459,7 @@ jobs:
       - name: Execute the board's recorded validationCommands (report mode)
         run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose
 
-      # Ratchet, not a cliff. The budget is 305, which is what THIS RUNNER counts.
+      # Ratchet, not a cliff. The budget is 304, which is what THIS RUNNER counts.
       #
       # It was briefly lowered to 303 on the strength of the guard's computed
       # "ratchet basis" — 288 dead locally plus 15 that resolve only through
@@ -470,10 +470,20 @@ jobs:
       # first place, and I broke it by trusting a derived figure over a measured
       # one.
       #
+      # 305 -> 304 obeying that rule rather than working around it. Five closure
+      # records (GT-424/621/629/630/632) quoted their self-test as
+      # `node --test 34-check-skill-registry-parity.test.mjs`, with no directory,
+      # while naming the real `.harness/scripts/ci/` path in the same record's
+      # `files` list — evidence pointing at something real through a command that
+      # cannot run. Repairing the five took the count to 304, and THIS JOB printed
+      # `304 dead (budget 305)` in run 30498743635 before the budget moved. The
+      # local count agreed, and that agreement is not what authorises this: the
+      # printed line is.
+      #
       # Lower it as records are repaired, from a number this job printed; at 0,
       # delete the flag and this becomes the strict gate.
       - name: Dead-reference ratchet (must not grow)
-        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 305
+        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 304
 
   # RETIRED 2026-07-27 (GT-570): the `publish-npm` job lived here and published
   # ONLY `src/sdk/cli`, with `--tag beta` and no provenance, writing the token

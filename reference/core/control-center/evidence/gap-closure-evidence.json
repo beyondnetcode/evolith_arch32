@@ -8775,6 +8775,59 @@
       "closedAt": "2026-07-28",
       "closureCommit": "b16bd9fd",
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-572",
+      "closedAt": "2026-07-29",
+      "closureCommit": "5571f078",
+      "evidence": [
+        "src/sdk/cli/examples/mcp-test.js",
+        "src/sdk/cli/examples/gate-verdict.assert.js",
+        "src/sdk/cli/examples/gate-verdict.assert.test.mjs",
+        "src/packages/mcp-server/src/tools/gate.tools.ts",
+        "src/packages/mcp-server/src/mcp/abac-evaluator.ts",
+        "src/packages/mcp-server/src/mcp/abac-evaluator.spec.ts",
+        "src/packages/core-domain/src/application/validators/phase-gate-validator.service.ts",
+        "src/packages/core-domain/src/application/validators/phase-gate-validator.service.spec.ts",
+        "reference/core/control-center/gaps/gap-reference-catalog.md"
+      ],
+      "validationCommands": [
+        "npm pack the mcp-server package and install the tarball OUTSIDE the workspace (no npm-workspaces symlink, which is the GT-625 illusion), then drive it over stdio -> tools/call evolith-gate-evaluate returns a REAL verdict with the default configuration: gateId = business-sign-off, verdict = failed. The row's original '47 of 47 FORBIDDEN' did NOT reproduce.",
+        "Same tarball with NODE_ENV=production -> FORBIDDEN. Cause is packaging, not policy: policy.wasm is a gitignored build artifact written OUTSIDE the mcp-server package, so no `files` setting reaches it and a published consumer inherited a fail-closed rule it could not satisfy. EVOLITH_ABAC_POLICY_PATH makes the posture satisfiable.",
+        "node --test src/sdk/cli/examples/gate-verdict.assert.test.mjs -> the new smoke assertion is proven FALSIFIABLE three ways, including a live run against the pre-fix dist. The old assertion (envelope.success !== undefined) was observed printing 'tools/call OK' while receiving RULESET_NOT_FOUND.",
+        "jest phase-gate-validator.service.spec.ts -> findCorePath no longer resolves <repo>/src after the src/ refactor (a GT-632 sibling); corePath is now declared in the evolith-gate-evaluate inputSchema, which read it while leaving it undeclared.",
+        "node .harness/scripts/ci-runner.mjs governance -> 17 scripts, all passed in this checkout."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "TWO residuals are recorded rather than hidden. (1) Criterion 1 is ticked against a LOCALLY PACKED tarball, not against the registry: the published 1.1.0 predates every fix here and re-publishing is GT-570. (2) Shipping the compiled policy.wasm bundle INSIDE the package remains a release-pipeline decision: documented and deliberately NOT done in this change. Until it is, a published consumer running NODE_ENV=production must set EVOLITH_ABAC_POLICY_PATH."
+    },
+    {
+      "id": "GT-595",
+      "closedAt": "2026-07-29",
+      "closureCommit": "a840a45b",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/rule-evaluation-engine.ts",
+        "src/packages/core-domain/src/application/validators/blocking-skipped-invariant.spec.ts",
+        "src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts",
+        "src/packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture/config-rules.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture/module-boundary-rules.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture/module-boundary-rules.spec.ts",
+        "src/packages/infra-providers/src/disk-ruleset.repository.ts",
+        "src/packages/infra-providers/src/disk-ruleset.repository.spec.ts",
+        ".harness/scripts/generate-adr-rulesets.mjs",
+        "reference/core/control-center/gaps/gap-reference-catalog.md"
+      ],
+      "validationCommands": [
+        "jest blocking-skipped-invariant.spec.ts -> AC2 is enforced: RuleEvaluationEngine.toValidationIssues emits a `blocking` ValidationIssue whenever a rule declared `blocking` returns `skipped`, so the combination fails the run. Deliberately NOT a thrown error: RulesetValidatorService.validate catches engine exceptions and downgrades them to logger.warn, so a throw would be silently suppressed by the only product caller. The rule's own outcome stays `skipped` on purpose -- promoting it to `failed` would move it into rulesChecked and re-inflate the coverage GT-569 made honest.",
+        "Enforcing it exposed 181 rules declared `blocking` that never execute. 96 were auto-generated ADR placeholders whose own validationQuery ends 'Concrete checks to be wired into the harness'; generate-adr-rulesets.mjs now emits blocking: false for them. Of the remaining 85, TWELVE were closed for real: 8 config-shaped (ED-R04, ED-R05, ED-R06, DAM-R05, MTN-05, GIT-08, SEC-RL-01, SEC-RL-02) and 4 module-boundary (HXA-01, HXA-02, HXA-04, HXA-05).",
+        "jest rule-corpus-triage.spec.ts -> the pin is 73, RECOMPUTED against the real corpus rather than assumed; perturbing the pin to 74 was observed FAILING, so the number is measured and not decorative.",
+        "jest disk-ruleset.repository.spec.ts -> ROOT CAUSE of the four dead HXA rules: DiskRulesetRepository.normalizeRuleset never copied the `enforce` field. The schema has accepted it since GT-516, ADR-0002 authors six blocks and the PolicyCompiler compiles them -- but normalization dropped it, so rule.enforce was always undefined and the ENTIRE enforcer subsystem was unreachable for lack of DATA, not for lack of wiring.",
+        "SECOND instance of the same pattern: rule-corpus-triage.spec.ts's own loader dropped `enforce` too, under a docstring claiming it loads 'exactly as DiskRulesetRepository does'. The measuring instrument was measuring a different corpus than the one production evaluates. Both loaders now carry the field.",
+        "node .harness/scripts/ci-runner.mjs governance -> 17 scripts, all passed in this checkout."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "TWO deliberate non-adoptions are recorded as part of the closure, not deferred silently. (1) dependency-cruiser was NOT adopted for the module-boundary rules: the Core is a stateless engine that reads satellites through an overlay filesystem a subprocess cannot see, and the tool's config matches node_modules/, so an UNINSTALLED satellite would yield zero violations and PASS four blocking rules. A false pass is worse than the skip it would replace. (2) OCB-02 was NOT closed: no artifact anywhere carries an `availability` marker, so the rule quantifies over the empty set and can only pass; that is recorded as three executable tests instead of prose. The residual unclaimed-blocking corpus stands at 73 and is pinned."
     }
   ]
 }

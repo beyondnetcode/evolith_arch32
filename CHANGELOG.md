@@ -2,6 +2,38 @@
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-07-29
+
+**Which packages this version covers.** Only `@beyondnet/evolith-cli` and
+`@beyondnet/evolith-mcp`, the two that declared the stale dependency range. No
+other package changed, and republishing them would only add noise to the
+registry.
+
+### Bug Fixes
+
+* **deps:** the CLI and the MCP server now resolve `@beyondnet/evolith-sdk@^2.0.0`
+  instead of `^1.1.0` (GT-634). The SDK publishes `1.0.0`, `1.1.0` and `2.0.0`
+  with nothing in between, so a caret range under 1.x pinned **exactly 1.1.0** —
+  published 2026-07-18, five days before the security wave that shipped in 2.0.0
+  on 2026-07-27. Both consumers were published on 2026-07-28, after 2.0.0 existed,
+  still pointing at the 1.x line, so `npm install @beyondnet/evolith-cli@latest`
+  installed a pre-wave SDK. **The exposure described in the 1.2.0 section below is
+  therefore not closed by 1.2.0 alone for this dependency; it is closed here.**
+
+  The lockfile made it concrete rather than cosmetic: it pinned the registry
+  tarball of `sdk@1.1.0`, with integrity hashes, at
+  `src/sdk/cli/node_modules/@beyondnet/evolith-sdk` and
+  `src/packages/mcp-server/node_modules/@beyondnet/evolith-sdk`. A clean `npm ci`
+  fetched the pre-wave SDK and nested it inside each consumer, where it shadows
+  the workspace link — the top-level symlink to the local 2.0.0 is what a
+  developer reads, and the nested 1.1.0 is what a fresh install resolves. Both
+  nested entries disappear once the range is `^2.0.0`.
+
+  Neither package re-exports the SDK, and both use only `EvolithRestClient`, so
+  2.0.0's breaking change (payload types re-exported from `core-domain`,
+  `.passed` → `.verdict`, `'info'` severity retired) reaches no public API of
+  either. That is why this is a patch and not a minor.
+
 ## [1.2.0] - 2026-07-27
 
 Changes accumulated since the 1.0.0 release of 2026-06-28. Automated changelog

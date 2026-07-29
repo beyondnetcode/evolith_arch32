@@ -89,6 +89,39 @@ export const CHAIN = [
     writes: ['src/rulesets/opa/abac-mcp-tool-access.rego'],
   },
   {
+    name: 'native evaluability snapshot',
+    producer: 'src/rulesets/standards/capture-native-evaluability-snapshot.mjs',
+    checkArgs: ['--check'],
+    // Same shape as the ABAC link: derived from the RUNTIME, not from a data
+    // file. The producer runs Core's real triage through ts-node, so its real
+    // inputs are the triage entry point and the two sources that decide a
+    // rule's class. Before GT-633 there was no producer at all — the file said
+    // it was a capture, nothing captured it, and it drifted 129 vs Core's 136.
+    // Replay-safe: `capturedOn` is deliberately sticky while the classification
+    // is unchanged, so the fixed-point pass below stays byte-identical instead
+    // of rewriting a date on every run.
+    consumes: [
+      'src/packages/core-domain/test/rule-corpus-triage.ts',
+      'src/packages/core-domain/src/application/validators/rule-evaluability.ts',
+      'src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts',
+    ],
+    writes: ['src/rulesets/standards/native-evaluability-snapshot.json'],
+  },
+  {
+    name: 'ISO/IEC 5055 corpus mapping',
+    producer: 'src/rulesets/standards/build-iso-5055-mapping.mjs',
+    checkArgs: ['--check'],
+    // The edge this order exists for: the builder stamps `nativeEvaluability`
+    // onto all 388 mapping rows from the snapshot, so rebuilding BEFORE
+    // recapturing launders a stale class into an artifact five times the size
+    // of its input and overstates the handler backlog (GT-598, GT-633).
+    consumes: ['src/rulesets/standards/native-evaluability-snapshot.json'],
+    writes: [
+      'src/rulesets/standards/iso-5055-mapping.json',
+      'src/rulesets/standards/iso-5055-mapping.csv',
+    ],
+  },
+  {
     name: 'maturity reconciliation',
     producer: '.harness/scripts/ci/09-reconcile-maturity.mjs',
     checkArgs: ['--check'],

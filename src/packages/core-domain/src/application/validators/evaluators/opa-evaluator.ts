@@ -39,8 +39,28 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
     addFormats(this.ajv);
   }
 
+  /**
+   * Resolve an OPA asset across layouts, post-`src/` move first.
+   *
+   * GT-632: these paths were built, not written as literals, so the refactor left
+   * them behind where no literal scan could see them. The legacy location is kept
+   * as a fallback because images built before the move still have it, and returns
+   * the post-refactor path when neither exists so the error names the layout the
+   * repository actually has.
+   */
+  private async resolveOpaAsset(corePath: string, ...tail: string[]): Promise<string> {
+    const candidates = [
+      path.join(corePath, 'src', 'rulesets', 'opa', ...tail),
+      path.join(corePath, 'rulesets', 'opa', ...tail),
+    ];
+    for (const candidate of candidates) {
+      if (await this.fs.exists(candidate)) return candidate;
+    }
+    return candidates[0];
+  }
+
   private async validateInput(category: string, input: any, corePath: string): Promise<string | null> {
-    const schemaPath = path.join(corePath, 'rulesets', 'opa', 'schemas', `${category}.input.schema.json`);
+    const schemaPath = await this.resolveOpaAsset(corePath, 'schemas', `${category}.input.schema.json`);
     if (!await this.fs.exists(schemaPath)) {
       return null;
     }
@@ -73,7 +93,7 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
 
     try {
       if (!opaUrl) {
-        const wasmPath = path.join(ctx.corePath, 'rulesets', 'opa', 'policy.wasm');
+        const wasmPath = await this.resolveOpaAsset(ctx.corePath, 'policy.wasm');
         if (!await this.fs.exists(wasmPath)) {
           this.logger.error(`OPA WebAssembly policy not found at ${wasmPath}. Compile .rego rules first (run the OPA build step).`);
           return rules.map(rule => ({

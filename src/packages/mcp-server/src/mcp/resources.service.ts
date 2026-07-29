@@ -15,6 +15,25 @@ interface Resource {
 
 const SAFE_NAME_REGEX = /^[a-zA-Z0-9_\-\/\.]+$/;
 
+/**
+ * Where the ruleset corpus sits under a Core root, in resolution order.
+ *
+ * GT-632 — this used to be the single literal `rulesets`, which stopped being
+ * true when the workspace moved under `src/`. Same probe order (and same reason)
+ * as `resolveRulesetFilePath` in `@beyondnet/evolith-infra-providers`:
+ *
+ *   - `src/rulesets` — a source checkout of this repository;
+ *   - `rulesets`     — a bundled/container corpus (see this package's Dockerfile,
+ *                      which copies `src/rulesets` to `/app/corpus/rulesets`).
+ *
+ * Kept as segment arrays rather than two literal `path.join` calls on purpose:
+ * only the FIRST layout exists in this repository, so a literal second join
+ * would be a built path that resolves to nothing —
+ * `.harness/scripts/ci/47-validate-joined-paths.mjs` is right to reject that,
+ * and an allowlist entry would silence a real check to keep a fallback.
+ */
+const RULESETS_LAYOUTS: readonly (readonly string[])[] = [['src', 'rulesets'], ['rulesets']];
+
 function sanitizePathInput(input: string, baseDir: string): string {
   if (input.includes('..') || path.isAbsolute(input)) {
     throw new Error('Path traversal detected');
@@ -99,19 +118,68 @@ export class ResourcesService {
     throw new Error(`Unknown resource URI: ${uri}`);
   }
 
+  /**
+   * The Core ROOT — the directory the catalogue services expect, i.e. the one
+   * that contains `src/rulesets` AND `reference/core/architecture/...`.
+   *
+   * GT-632. The previous implementation looked for a directory containing
+   * `rulesets` and, after the workspace moved under `src/`, the nearest such
+   * ancestor of this package is `<repo>/src`. That is not the Core root, and the
+   * difference is not cosmetic: `PatternCatalogService` resolves patterns at
+   * `<core>/reference/core/architecture/patterns/pat`, so with `<repo>/src` the
+   * `evolith://architecture/patterns` resource returned an error on a perfectly
+   * healthy checkout.
+   *
+   * Two passes, in this order:
+   *
+   *   1. `src/rulesets`, starting at the current directory. It is the marker of a
+   *      Core SOURCE checkout and nothing else has it — a satellite keeps its own
+   *      rulesets at its root — so including cwd is unambiguous here.
+   *   2. `rulesets`, ancestors ONLY. This is the pre-existing behaviour and it
+   *      deliberately skips cwd: a satellite repository has `rulesets/` of its
+   *      own, and treating it as the Core would read the wrong corpus.
+   */
   private findCorePath(): string {
-    const parts = process.cwd().split(path.sep);
-    while (parts.length > 0) {
-      parts.pop();
-      if (this.fs.existsSync(path.join(parts.join(path.sep), 'rulesets'))) {
-        return parts.join(path.sep);
+    const [sourceLayout, bundledLayout] = RULESETS_LAYOUTS;
+
+    const ancestors = (includeSelf: boolean): string[] => {
+      const out: string[] = [];
+      let dir = process.cwd();
+      if (includeSelf) out.push(dir);
+      for (;;) {
+        const parent = path.dirname(dir);
+        if (parent === dir) break;
+        out.push(parent);
+        dir = parent;
       }
+      return out;
+    };
+
+    for (const dir of ancestors(true)) {
+      if (this.fs.existsSync(path.join(dir, ...sourceLayout))) return dir;
+    }
+    for (const dir of ancestors(false)) {
+      if (this.fs.existsSync(path.join(dir, ...bundledLayout))) return dir;
     }
     return path.join(process.cwd(), '..', 'evolith');
   }
 
+  /**
+   * The ruleset corpus directory under `corePath`. See {@link RULESETS_LAYOUTS}
+   * for why the fallback is expressed as segments rather than a second literal
+   * join. When neither layout is present the canonical one is returned, so the
+   * caller's `exists` check reports the path a reader should have created.
+   */
+  private rulesetsBase(corePath: string): string {
+    for (const layout of RULESETS_LAYOUTS) {
+      const candidate = path.join(corePath, ...layout);
+      if (this.fs.existsSync(candidate)) return candidate;
+    }
+    return path.join(corePath, ...RULESETS_LAYOUTS[0]);
+  }
+
   private async getCoreInfo() {
-    const rulesetsPath = path.join(this.findCorePath(), 'rulesets');
+    const rulesetsPath = this.rulesetsBase(this.findCorePath());
     let rulesetCount = 0;
     if (await this.fs.exists(rulesetsPath)) {
       for (const entry of await this.fs.readdir(rulesetsPath)) {
@@ -125,7 +193,7 @@ export class ResourcesService {
   }
 
   private async getRulesetsList() {
-    const rulesetsPath = path.join(this.findCorePath(), 'rulesets');
+    const rulesetsPath = this.rulesetsBase(this.findCorePath());
     if (!(await this.fs.exists(rulesetsPath))) return { rulesets: [], error: 'Rulesets directory not found' };
     const rulesets: Array<{ category: string; name: string; path: string }> = [];
     for (const entry of await this.fs.readdir(rulesetsPath)) {
@@ -141,7 +209,7 @@ export class ResourcesService {
 
   private async getRulesetContent(name: string) {
     const corePath = this.findCorePath();
-    const rulesetsBase = path.join(corePath, 'rulesets');
+    const rulesetsBase = this.rulesetsBase(corePath);
     const normalizedName = name.replace(/-/g, '/');
     const rulesetPath = sanitizePathInput(normalizedName + '.rules.json', rulesetsBase);
     if (await this.fs.exists(rulesetPath)) return this.fs.readJson(rulesetPath);
@@ -175,19 +243,19 @@ export class ResourcesService {
   }
 
   private async getMachineContracts() {
-    const contractsPath = path.join(this.findCorePath(), 'rulesets', 'contracts', 'evolith-machine-contracts.json');
+    const contractsPath = path.join(this.rulesetsBase(this.findCorePath()), 'contracts', 'evolith-machine-contracts.json');
     if (await this.fs.exists(contractsPath)) return this.fs.readJson(contractsPath);
     return { error: 'Machine contracts not found', path: 'rulesets/contracts/evolith-machine-contracts.json' };
   }
 
   private async getOpenCoreArtifacts() {
-    const ocbPath = path.join(this.findCorePath(), 'rulesets', 'governance', 'open-core-boundary.rules.json');
+    const ocbPath = path.join(this.rulesetsBase(this.findCorePath()), 'governance', 'open-core-boundary.rules.json');
     if (await this.fs.exists(ocbPath)) return this.fs.readJson(ocbPath);
     return { error: 'Open-Core Boundary rules not found' };
   }
 
   private async getAclRules() {
-    const aclPath = path.join(this.findCorePath(), 'rulesets', 'acl', 'anti-corruption-layer.rules.json');
+    const aclPath = path.join(this.rulesetsBase(this.findCorePath()), 'acl', 'anti-corruption-layer.rules.json');
     if (await this.fs.exists(aclPath)) return this.fs.readJson(aclPath);
     return { error: 'ACL rules not found' };
   }
@@ -229,7 +297,7 @@ export class ResourcesService {
   private async getTopologyContent(id: string) {
     try {
       const corePath = this.findCorePath();
-      const topologiesBase = path.join(corePath, 'reference', 'architecture', 'topologies');
+      const topologiesBase = path.join(corePath, 'reference', 'core', 'architecture', 'topologies');
       sanitizePathInput(id, topologiesBase);
       const topology = await this.topologyCatalog.get(corePath, id);
       if (!topology) return { error: `Topology not found: ${id}` };

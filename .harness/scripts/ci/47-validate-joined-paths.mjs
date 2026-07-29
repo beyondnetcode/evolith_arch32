@@ -1,0 +1,247 @@
+#!/usr/bin/env node
+
+/**
+ * GT-632 criterion 3 — a path that is BUILT, not written, must still exist.
+ *
+ * ## The blind spot this closes
+ *
+ * `40-validate-path-literals` scans string LITERALS. Twelve paths survived the
+ * `src/` refactor as `path.join(ctx.corePath, 'sdk', 'cli', …)` constructions,
+ * and it could not see one of them. The cost was not theoretical:
+ *
+ *   - the compiled ABAC policy was resolved at the pre-refactor path, and since
+ *     the evaluator denies fail-closed when it cannot load, EVERY MCP tool was
+ *     refused in production on a clean checkout;
+ *   - three evaluator rules probed files that had moved, reporting false
+ *     NEGATIVES — which nothing notices, because a false negative looks exactly
+ *     like a clean run.
+ *
+ * Both survived because the specs and fixtures encoded the same wrong layout:
+ * the code and its tests agreed with each other, and neither agreed with the
+ * repository.
+ *
+ * ## What this checks
+ *
+ * Every `path.join(<base>, 'a', 'b', …)` whose segments after the base are ALL
+ * string literals, where the base names the repository root. The reconstructed
+ * path must exist. A join with a variable segment is not resolvable and is
+ * counted, not guessed at — reporting a path this guard cannot compute would
+ * teach people to ignore it.
+ *
+ * `satellitePath` and its kin are deliberately OUT of scope: they address another
+ * repository, so a file being absent here says nothing.
+ *
+ * ## Anti-vacuous pass
+ *
+ * Zero files scanned, or zero joins found across them, is a hard failure. Both
+ * denominators are printed on the passing run too.
+ */
+
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const GUARD = '47-validate-joined-paths';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(__dirname, '../../..');
+
+const argv = process.argv.slice(2);
+const rootIdx = argv.indexOf('--root');
+const root = rootIdx !== -1 ? path.resolve(process.cwd(), argv[rootIdx + 1]) : REPO_ROOT;
+const VERBOSE = argv.includes('--verbose');
+
+/**
+ * Bases that mean "this repository's root" — and ONLY those.
+ *
+ * `corePath` is the Core checkout: when the engine evaluates itself, it is this
+ * repository, so a path built on it must resolve here.
+ *
+ * A bare `root` was in this list on the first draft and had to come out. In the
+ * evaluators it is a PARAMETER naming the workspace under evaluation — a
+ * customer's repository — so `path.join(root, 'agent.config.json')` is asking
+ * whether THEIR repo has that file. Six of those were reported as breakage on the
+ * first run. "Fixing" them would have broken working features to satisfy a guard,
+ * which is a worse outcome than the blind spot this guard was written to close.
+ *
+ * The rule for adding a name here: it must denote THIS repository at every call
+ * site, not merely be spelled like a root.
+ */
+const ROOT_BASES = new Set(['corePath', 'ctx.corePath', 'repoRoot', 'REPO_ROOT']);
+
+const SCAN_DIRS = ['src/packages', 'src/apps', 'src/sdk'];
+
+/**
+ * Paths whose ABSENCE is the point — the existence check is a prohibition, so a
+ * missing target is the passing state and "fixing" it would invert the rule.
+ *
+ * No syntax reveals this: `fs.exists(p)` looks identical whether the author meant
+ * "it must be there" or "it must not". The first draft of this guard reported
+ * `evalNoRootTopologies` as breakage, and correcting that path would have made the
+ * engine assert the opposite of the rule it enforces. That is why this list is
+ * semantic and hand-written, while candidate lists below are detected
+ * structurally: a mechanical pattern deserves a mechanical rule, and an intent
+ * that only a human can read deserves a written reason.
+ */
+const PROHIBITIONS = [
+  {
+    file: 'src/packages/core-domain/src/application/validators/evaluators/handlers/cross-cutting-rule.handler.ts',
+    segments: 'topologies',
+    reason:
+      'evalNoRootTopologies FAILS when this directory exists — a root-level /topologies/ ' +
+      'is prohibited by the layout rules. Its absence here is the rule being satisfied.',
+  },
+];
+
+function fail(lines) {
+  console.error(`\n✗ ${GUARD}: ${lines[0]}`);
+  for (const l of lines.slice(1)) console.error(`  ${l}`);
+  process.exit(1);
+}
+
+function walk(dir, out = []) {
+  if (!fs.existsSync(dir)) return out;
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const q = path.join(dir, e.name);
+    if (e.isDirectory()) {
+      if (['node_modules', 'dist', 'coverage', '.git'].includes(e.name)) continue;
+      walk(q, out);
+    } else if (e.name.endsWith('.ts') && !e.name.includes('.spec.')) {
+      out.push(q);
+    }
+  }
+  return out;
+}
+
+/**
+ * `path.join(base, 'a', 'b')` → { base, segments } when every segment is a literal.
+ *
+ * Joins are also assigned a GROUP. Two joins belong to the same group when only
+ * commas and whitespace separate them in the source — i.e. they are elements of
+ * one array literal:
+ *
+ *     const candidates = [
+ *       path.join(corePath, 'src', 'rulesets', 'topologies'),
+ *       path.join(corePath, 'rulesets', 'topologies'),      // legacy layout
+ *     ];
+ *
+ * That is a FALLBACK CHAIN, and the code is correct as long as ONE member
+ * resolves. Requiring all of them would demand that every historical layout be
+ * present simultaneously, which is impossible — and the natural way to silence
+ * that is to delete the fallbacks, breaking already-deployed images. Detecting the
+ * shape is what keeps this guard from arguing for a worse codebase.
+ */
+export function extractJoins(source) {
+  const found = [];
+  const re = /path\.join\(\s*([A-Za-z_$][\w.$]*)\s*,\s*([^)]*)\)/g;
+  let group = 0;
+  let prevEnd = -1;
+  for (const m of source.matchAll(re)) {
+    const [, base, rest] = m;
+    // Only separators between two joins ⇒ one array literal or one ternary.
+    // `a ? join(x) : join(y)` is a fallback chain written as an expression, and
+    // treating it as two independent assertions would demand both layouts exist.
+    //
+    // Known weakness, stated rather than hidden: `f(path.join(a), path.join(b))`
+    // — two joins as sibling ARGUMENTS — is indistinguishable from a chain by this
+    // rule, and would be scored leniently (one resolving is enough). That is the
+    // conservative direction for a guard whose false positives push people to
+    // "fix" working code, and no such call site exists in this repository today.
+    const between = prevEnd >= 0 ? source.slice(prevEnd, m.index) : null;
+    if (between === null || !/^[\s,?:]*$/.test(between)) group += 1;
+    prevEnd = m.index + m[0].length;
+
+    const literals = [...rest.matchAll(/'([^']*)'/g)].map((x) => x[1]);
+    // Every argument must be a literal: a variable segment makes the path
+    // unresolvable, and a guess would be worse than an abstention.
+    const args = rest.split(',').map((a) => a.trim()).filter(Boolean);
+    const resolvable = args.length === literals.length && literals.length > 0;
+    found.push({ base, segments: literals, resolvable, group, text: m[0] });
+  }
+  return found;
+}
+
+function main() {
+  const files = SCAN_DIRS.flatMap((d) => walk(path.join(root, d)));
+  if (files.length === 0) {
+    fail([`scanned ${SCAN_DIRS.join(', ')} under ${root} and found ZERO TypeScript files.`]);
+  }
+
+  let joins = 0;
+  let rootJoins = 0;
+  let unresolvable = 0;
+  let prohibitions = 0;
+  let fallbackGroups = 0;
+  const missing = [];
+
+  for (const file of files) {
+    const rel = path.relative(root, file).split(path.sep).join('/');
+    const source = fs.readFileSync(file, 'utf8');
+
+    // Collect the resolvable, repo-rooted joins, keeping their group.
+    const groups = new Map();
+    for (const j of extractJoins(source)) {
+      joins += 1;
+      if (!ROOT_BASES.has(j.base)) continue;
+      rootJoins += 1;
+      if (!j.resolvable) { unresolvable += 1; continue; }
+      const joined = j.segments.join('/');
+      if (PROHIBITIONS.some((p) => p.file === rel && p.segments === joined)) {
+        prohibitions += 1;
+        continue;
+      }
+      if (!groups.has(j.group)) groups.set(j.group, []);
+      groups.get(j.group).push({ joined, base: j.base });
+    }
+
+    // A group of two or more is a fallback chain: ONE member resolving is the
+    // contract. A group of one is a bare assertion and must resolve outright.
+    for (const members of groups.values()) {
+      const satisfied = members.filter((m) => fs.existsSync(path.join(root, m.joined)));
+      if (members.length > 1) fallbackGroups += 1;
+      if (satisfied.length > 0) continue;
+      missing.push({
+        rel,
+        base: members[0].base,
+        candidates: members.map((m) => m.joined),
+        isChain: members.length > 1,
+      });
+    }
+  }
+
+  if (joins === 0) {
+    fail([`scanned ${files.length} file(s) and found ZERO path.join calls — the shape moved and nothing was checked.`]);
+  }
+
+  console.log(`${GUARD} — paths that are built, not written`);
+  console.log(`  files scanned .......... ${files.length}`);
+  console.log(`  path.join calls ........ ${joins}`);
+  console.log(`  rooted at the repo ..... ${rootJoins}`);
+  console.log(`  of those, resolvable ... ${rootJoins - unresolvable} (${unresolvable} carry a variable segment)`);
+  console.log(`  fallback chains ........ ${fallbackGroups} (one member resolving is the contract)`);
+  console.log(`  prohibitions ........... ${prohibitions} (absence IS the passing state)`);
+  if (VERBOSE) for (const p of PROHIBITIONS) console.log(`    · ${p.file} → ${p.segments}: ${p.reason}`);
+
+  if (missing.length > 0) {
+    fail([
+      `${missing.length} built path(s) resolve to nothing that exists:`,
+      ...missing.flatMap((m) =>
+        m.isChain
+          ? [`  • ${m.rel}\n      NO member of this fallback chain exists:\n${m.candidates.map((c) => `        - ${c}`).join('\n')}`]
+          : [`  • ${m.rel}\n      path.join(${m.base}, …) → ${m.candidates[0]}`],
+      ),
+      '',
+      '  A built path is invisible to 40-validate-path-literals, which scans literals.',
+      '  That is how twelve of these survived the src/ move — one denying every MCP',
+      '  tool in production, three reporting false negatives nobody could see.',
+      '',
+      '  Before "correcting" one: check whether the absence is the POINT (a prohibition)',
+      '  or whether a sibling candidate already covers it. Both belong in this file as a',
+      '  declared reason, not as a silently edited path.',
+    ]);
+  }
+
+  console.log(`\n✓ ${GUARD}: every repo-rooted joined path resolves to something that exists.`);
+}
+
+const invokedDirectly = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+if (invokedDirectly) main();

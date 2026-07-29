@@ -112,6 +112,21 @@ jobs:
       - name: Self-test for the derived-artifact order guard
         run: node --test .harness/scripts/ci/46-validate-derived-artifact-order.test.mjs
 
+      # GT-632: `40-validate-path-literals` scans string LITERALS, so it is blind
+      # to a path that is BUILT — `path.join(ctx.corePath, 'sdk', 'cli', …)`.
+      # Twelve of those survived the `src/` move: one resolved the compiled ABAC
+      # policy at the pre-refactor path, and because the evaluator denies
+      # fail-closed when it cannot load, EVERY MCP tool was refused in production
+      # on a clean checkout; three more probed files that had moved and reported
+      # false NEGATIVES, which nothing notices because a false negative looks
+      # exactly like a clean run. The specs agreed with the code and neither
+      # agreed with the repository, so no existing suite could catch it.
+      - name: Built (not written) paths resolve to something that exists
+        run: node .harness/scripts/ci/47-validate-joined-paths.mjs --verbose
+
+      - name: Self-test for the joined-path guard
+        run: node --test .harness/scripts/ci/47-validate-joined-paths.test.mjs
+
       - name: Validate machine contracts
         run: node .harness/scripts/ci/10-validate-contract-conformance.mjs
 

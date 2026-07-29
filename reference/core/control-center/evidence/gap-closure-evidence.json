@@ -8702,6 +8702,30 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-632",
+      "closedAt": "2026-07-29",
+      "closureCommit": "714e5f3e",
+      "evidence": [
+        ".harness/scripts/ci/47-validate-joined-paths.mjs",
+        ".harness/scripts/ci/47-validate-joined-paths.test.mjs",
+        "src/packages/mcp-server/src/mcp/abac-evaluator.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts",
+        "src/packages/core-domain/src/application/upgrade/satellite-upgrade-diff.ts",
+        "src/packages/core-domain/src/application/validators/artifact-path-resolver.ts",
+        ".github/workflows/docs.yml",
+        ".harness/scripts/lib/guard-classification.mjs"
+      ],
+      "validationCommands": [
+        "47-validate-joined-paths --verbose -> 615 files, 542 path.join calls, 89 repo-rooted, 65 resolvable, 4 fallback chains, 1 prohibition, exit 0.",
+        "First run reported 19 broken paths; only 3 were defects. The other 16 were false positives whose 'fix' would have broken working code: 6 on a base naming the customer workspace, 9 members of fallback chains, 1 prohibition whose absence IS the passing state.",
+        "node --test 47-validate-joined-paths.test.mjs -> 11/11, covering both anti-vacuous floors, chain and ternary grouping, variable segments, and non-root bases.",
+        "43-validate-guard-negative-fixtures OBSERVED it red: 36 of 36 guards turned red against the empty fixture. 42 reports 11 self-guarded, 39 scanning, 0 PENDING.",
+        "core-domain 1367/1367, mcp-server 434/434, core-api 179/179, CLI unit 1436/1436, all four tsc projects clean.",
+        "Wired into docs.yml, which backs the required Validate documentation check."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-630",
       "closedAt": "2026-07-28",
       "closureCommit": "63a96d09",

@@ -8484,7 +8484,7 @@
       ],
       "validationCommands": [
         "34-check-skill-registry-parity -> exit 0; 9/9 executable capabilities routable (4 hand-bound, 5 synthesized), reported separately.",
-        "node --test 34-check-skill-registry-parity.test.mjs -> 15/15, including three negative fixtures: derivation absent, derivation uncalled, and a synthesis narrowed by one extra conjunct.",
+        "node --test .harness/scripts/ci/34-check-skill-registry-parity.test.mjs -> 15/15, including three negative fixtures: derivation absent, derivation uncalled, and a synthesis narrowed by one extra conjunct.",
         "Wired into the governance-guards job in ci-cd.yml, so it is no longer inert."
       ],
       "closedAt": "2026-07-28",
@@ -8619,7 +8619,7 @@
       "validationCommands": [
         "45-validate-port-inventory-honesty --verbose -> 19 ports declared, 11 on the hot path (7 required + 4 optional), 8 declared-not-reached, 53 adapters.",
         "Before the fix the guard exits 1 against master-view.svg: \"publishes a port/adapter count without saying how many are actually reached\".",
-        "node --test 45-validate-port-inventory-honesty.test.mjs -> 9/9, including four anti-vacuous fixtures (zero ports, unparseable deps, zero adapters, missing scan corpus).",
+        "node --test .harness/scripts/ci/45-validate-port-inventory-honesty.test.mjs -> 9/9, including four anti-vacuous fixtures (zero ports, unparseable deps, zero adapters, missing scan corpus).",
         "Row evidence corrected: 17/49/9 as registered vs 19/53/11 measured; the diagnostic’s \"two interaction adapters with no callers\" is six."
       ],
       "dependencyDisposition": "none"
@@ -8650,7 +8650,7 @@
       "validationCommands": [
         "08-validate-tracking.mjs -> \"Acceptance-criteria audit: 47 non-DONE GT row(s) checked against 605/605 EN/ES catalog sections — 0 with no criteria at all.\" exit 0.",
         "It exited 1 on its first run against the real board, naming GT-435, GT-444 and GT-448; criteria were written for all three rather than exempting them.",
-        "node --test 08-validate-tracking.test.mjs -> 17/17, including the negative fixture and the vacuity floor."
+        "node --test .harness/scripts/ci/08-validate-tracking.test.mjs -> 17/17, including the negative fixture and the vacuity floor."
       ],
       "closedAt": "2026-07-28",
       "closureCommit": "c438b801",
@@ -8719,7 +8719,7 @@
       "validationCommands": [
         "47-validate-joined-paths --verbose -> 615 files, 542 path.join calls, 89 repo-rooted, 65 resolvable, 4 fallback chains, 1 prohibition, exit 0.",
         "First run reported 19 broken paths; only 3 were defects. The other 16 were false positives whose 'fix' would have broken working code: 6 on a base naming the customer workspace, 9 members of fallback chains, 1 prohibition whose absence IS the passing state.",
-        "node --test 47-validate-joined-paths.test.mjs -> 11/11, covering both anti-vacuous floors, chain and ternary grouping, variable segments, and non-root bases.",
+        "node --test .harness/scripts/ci/47-validate-joined-paths.test.mjs -> 11/11, covering both anti-vacuous floors, chain and ternary grouping, variable segments, and non-root bases.",
         "43-validate-guard-negative-fixtures OBSERVED it red: 36 of 36 guards turned red against the empty fixture. 42 reports 11 self-guarded, 39 scanning, 0 PENDING.",
         "core-domain 1367/1367, mcp-server 434/434, core-api 179/179, CLI unit 1436/1436, all four tsc projects clean.",
         "Wired into docs.yml, which backs the required Validate documentation check.",
@@ -8739,7 +8739,7 @@
       ],
       "validationCommands": [
         "46-validate-derived-artifact-order --verbose -> 2 links, 3 artifacts, current AND at a fixed point.",
-        "node --test 46-validate-derived-artifact-order.test.mjs -> 8/8, including a test proving the guard leaves the real tree byte-identical after replaying in place.",
+        "node --test .harness/scripts/ci/46-validate-derived-artifact-order.test.mjs -> 8/8, including a test proving the guard leaves the real tree byte-identical after replaying in place.",
         "Wired into docs.yml, which backs the required Validate documentation check.",
         "Registered in guard-classification.mjs: 42 reports 58 guards classified, 43 reports 35 observed failing."
       ],

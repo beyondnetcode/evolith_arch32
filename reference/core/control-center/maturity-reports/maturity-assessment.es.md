@@ -315,9 +315,9 @@ Evolith Core no trata las topologías arquitectónicas como etiquetas de madurez
 
 | Topología | Dimensión | Estado | Native Rules | OPA Policy | OPA Tests | WASM | Config Schema | Fixtures | Bilingüe | Budgets | ADRs |
 |---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Modular Monolith** | progressive-axis | Accepted v1.0.0 | SI | SI | SI | SI | SI | SI | SI | — | 4 |
+| **`Modular Monolith`** | progressive-axis | Accepted v1.0.0 | SI | SI | SI | SI | SI | SI | SI | — | 4 |
 | **Distributed Modules** | progressive-axis | Accepted v1.0.0 | SI | SI | SI | SI | SI | SI | SI | — | 3 |
-| **Microservices** | progressive-axis | Accepted v1.0.0 | SI | SI | SI | SI | SI | SI | SI | — | 4 |
+| **`Microservices`** | progressive-axis | Accepted v1.0.0 | SI | SI | SI | SI | SI | SI | SI | — | 4 |
 | **Serverless** | execution | Accepted v1.0.0 | SI | SI | SI | SI | SI | SI | SI | SI | 2 |
 | **Edge Computing** | execution | Accepted v1.0.0 | SI | SI | SI | SI | SI | SI | SI | SI | 2 |
 | **Event-Driven** | integration | Accepted v1.0.0 | SI | SI | SI | SI | SI | SI | SI | — | 2 |

@@ -367,7 +367,13 @@ export class UserRepository {
 
   describe('validate with architecture analysis', () => {
     it('should validate architecture with --arch flag', async () => {
-      const result = await runCli(['validate', '--satellite', testRepoPath, '--architecture', '--arch-level', 'F1']);
+      // GT-636: the real flag is `-a, --arch` (a boolean — validates the whole
+      // progressive axis). `--architecture` / `--arch-level <phase>` never
+      // existed in validate.command.ts; Commander rejected the first as an
+      // unknown option and exited 1, which this test's own [0, 2] contract
+      // cannot distinguish from an uncaught error. `evolith validate --help`
+      // is the source of truth for the real name.
+      const result = await runCli(['validate', '--satellite', testRepoPath, '--arch']);
 
       // GT-580: 0 pass, 2 blocked verdict.
       expect([0, 2]).toContain(result.exitCode);

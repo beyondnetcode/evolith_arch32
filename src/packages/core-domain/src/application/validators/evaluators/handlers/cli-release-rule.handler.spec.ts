@@ -19,7 +19,7 @@ function rule(id: string): NormalizedRule {
   return { id, severity: 'MUST', category: 'cli-release', title: 't', description: 'd', blocking: true, sourceFile: 's' };
 }
 
-const cli = path.join(CORE, 'sdk', 'cli');
+const cli = path.join(CORE, 'src', 'sdk', 'cli');
 
 describe('CliReleaseRuleHandler', () => {
   it('canHandle matches CLI-RR- prefix', () => {
@@ -46,7 +46,9 @@ describe('CliReleaseRuleHandler', () => {
   });
 
   it('CLI-RR-03 dependency lock present/absent', async () => {
-    const lock = path.join(cli, 'package-lock.json');
+    // GT-632: npm workspaces keep ONE lockfile, at the repository root — not one
+    // per package. The handler now probes there, so the fixture must too.
+    const lock = path.join(CORE, 'package-lock.json');
     expect((await new CliReleaseRuleHandler(fsMock({ existing: [lock] })).evaluate(rule('CLI-RR-03'), ctx)).result).toBe('passed');
     expect((await new CliReleaseRuleHandler(fsMock()).evaluate(rule('CLI-RR-03'), ctx)).result).toBe('failed');
   });

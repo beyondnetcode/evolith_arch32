@@ -7957,7 +7957,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** Found on 2026-07-29 while investigating a red `abac-rego-parity.spec.ts`, during the GT-602 generator work.
 - **Acceptance criteria:**
   - [x] The evaluator loads the compiled policy on a clean checkout under `NODE_ENV=production`, asserted by a test that fails without the fix.
-  - [ ] The remaining eleven `path.join(…, 'sdk', 'cli', …)` constructions in `src/**` are corrected or shown to be intentional.
+  - [x] The remaining eleven `path.join(…, 'sdk', 'cli', …)` constructions in `src/**` are corrected or shown to be intentional.
   - [ ] A guard catches a JOINED path that does not exist, not only a literal one — the gap `40-validate-path-literals` cannot see.
 
 #### GT-631

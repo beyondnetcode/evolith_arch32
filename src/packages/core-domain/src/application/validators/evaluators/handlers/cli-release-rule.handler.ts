@@ -22,13 +22,13 @@ export class CliReleaseRuleHandler implements INativeRuleHandler {
   }
 
   private async evalBuild(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
-    const distMain = path.join(ctx.corePath, 'sdk', 'cli', 'dist', 'main.js');
+    const distMain = path.join(ctx.corePath, 'src', 'sdk', 'cli', 'dist', 'main.js');
     if (await this.fs.exists(distMain)) return { rule, result: 'passed' };
     return { rule, result: 'failed', message: `dist/main.js not found — run npm run build in sdk/cli` };
   }
 
   private async evalTestArtifacts(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
-    const distDir = path.join(ctx.corePath, 'sdk', 'cli', 'dist');
+    const distDir = path.join(ctx.corePath, 'src', 'sdk', 'cli', 'dist');
     if (!await this.fs.exists(distDir)) {
       return { rule, result: 'failed', message: 'dist/ not found — run npm run build' };
     }
@@ -42,7 +42,8 @@ export class CliReleaseRuleHandler implements INativeRuleHandler {
   private async evalDependencyLock(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const candidates = [
       path.join(ctx.corePath, 'package-lock.json'),
-      path.join(ctx.corePath, 'sdk', 'cli', 'package-lock.json'),
+      // GT-632: npm workspaces keep one lockfile, at the root.
+      path.join(ctx.corePath, 'package-lock.json'),
     ];
     for (const p of candidates) {
       if (await this.fs.exists(p)) return { rule, result: 'passed' };
@@ -70,7 +71,7 @@ export class CliReleaseRuleHandler implements INativeRuleHandler {
   }
 
   private async evalCliDocs(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
-    const cliDir = path.join(ctx.corePath, 'sdk', 'cli');
+    const cliDir = path.join(ctx.corePath, 'src', 'sdk', 'cli');
     const readme = path.join(cliDir, 'README.md');
     const arch = path.join(cliDir, 'ARCHITECTURE.md');
     if (await this.fs.exists(readme) || await this.fs.exists(arch)) {

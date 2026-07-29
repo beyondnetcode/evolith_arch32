@@ -52,7 +52,7 @@ describe('McpRuleHandler', () => {
   });
 
   it('MCP-04 checks the server transport for an apiKey/local restriction', async () => {
-    const server = path.join(CORE, 'sdk', 'cli', 'src', 'core', 'mcp', 'server.ts');
+    const server = path.join(CORE, 'src', 'packages', 'mcp-server', 'src', 'mcp', 'mcp-server.service.ts');
     const skip = new McpRuleHandler(fsMock());
     expect((await skip.evaluate(rule('MCP-04'), ctx)).result).toBe('skipped');
 

@@ -8704,7 +8704,7 @@
     {
       "id": "GT-632",
       "closedAt": "2026-07-29",
-      "closureCommit": "714e5f3e",
+      "closureCommit": "64ec61e0",
       "evidence": [
         ".harness/scripts/ci/47-validate-joined-paths.mjs",
         ".harness/scripts/ci/47-validate-joined-paths.test.mjs",

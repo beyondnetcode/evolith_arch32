@@ -22,198 +22,55 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { NativeEvaluator } from './evaluators/native-evaluator';
-import { INativeRuleHandler } from './evaluators/handlers/rule-handler.interface';
-import { NormalizedRule } from '../../domain/models/normalized-rule';
 import {
-  ClassifiedRule,
+  ADR_CONFORMANCE_CATEGORY,
   RULE_TRIAGE,
   RuleEvaluability,
-  classifyRule,
   isNonExecutable,
-  summarizeEvaluability,
 } from './rule-evaluability';
+import { REPO_ROOT, RULESETS_ROOT, triageCorpus, renderSnapshot } from '../../../test/rule-corpus-triage';
 
-const REPO_ROOT = path.resolve(__dirname, '../../../../../..');
-const RULESETS_ROOT = path.join(REPO_ROOT, 'src', 'rulesets');
+// The corpus loader, the real handler set, the classification AND the snapshot
+// renderer live in `test/rule-corpus-triage.ts`. They used to live HERE, which
+// meant jest was the only thing that could run them — and that is why
+// `native-evaluability-snapshot.json` was maintained by hand and drifted.
+//
+// GT-633 RECONCILIATION: the renderer in particular had two implementations, one
+// here and one in `capture-native-evaluability-snapshot.mjs`, written in parallel
+// by sessions that could not see each other. Two generators for one artifact is
+// the defect GT-633 exists to remove, one level up: whichever ran last would win
+// and the other's `--check` would go red for no visible reason. There is now ONE
+// renderer, and this suite is its PIN rather than a second copy of it.
+const TRIAGE = triageCorpus();
+const { corpus: CORPUS, classified: CLASSIFIED, summary: SUMMARY, claims } = TRIAGE;
 
-// ---------------------------------------------------------------------------
-// Load the corpus exactly as DiskRulesetRepository does, minus the schema pass
-// (this suite measures classification, not schema conformance).
-// ---------------------------------------------------------------------------
-
-function rulesetFiles(dir: string, depth = 0): string[] {
-  if (depth > 4) return [];
-  const out: string[] = [];
-  for (const entry of fs.readdirSync(dir).sort()) {
-    const full = path.join(dir, entry);
-    if (entry.endsWith('.rules.json')) { out.push(full); continue; }
-    if (!entry.includes('.') && fs.statSync(full).isDirectory()) out.push(...rulesetFiles(full, depth + 1));
-  }
-  return out;
-}
-
-const CATEGORY_BY_PREFIX: Record<string, string> = {
-  inh: 'inheritance', acl: 'anti-corruption', ocb: 'open-core', gov: 'governance',
-  evd: 'identity', 'obs-evd': 'tracing', dep: 'version-pinning', tax: 'naming-conventions',
-  hxa: 'layer-structure', git: 'branch-naming', cicd: 'ci-cd', tpy: 'testing-pyramid',
-  mtn: 'multi-tenancy', prot: 'protocol', runt: 'multi-runtime', dora: 'metrics',
-  space: 'metrics', drift: 'governance', 'cli-rr': 'build', 'cli-par': 'shared-logic',
-  mcp: 'protocol', 'modular-monolith': 'topology', 'distributed-modules': 'module-autonomy',
-  microservices: 'autonomous-deployment',
+/**
+ * The class counts this repository is pinned to.
+ *
+ * Also the counts `native-evaluability-snapshot.json` must reproduce. READ OUT OF
+ * THIS FILE by `src/rulesets/standards/iso-5055-mapping.test.mjs`, which runs in a
+ * job with no node_modules and so cannot recompute them — keep it a plain literal,
+ * and note that that guard THROWS if it cannot find this declaration rather than
+ * passing. Restoring it is what a reconciliation that deleted it owes back.
+ */
+const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
+  'native-handler': 151,
+  'documentation-only': 136,
+  'unimplemented-native': 48,
+  'needs-external-system': 20,
+  'needs-runtime': 17,
+  underspecified: 14,
 };
 
-function deriveCategory(raw: Record<string, unknown>): string {
-  if (raw['category']) return String(raw['category']);
-  const prefix = String(raw['id'] ?? '')
-    .replace(/-(?:EVD|RR|PAR)-?\d*$/, '')
-    .replace(/-\d+$/, '')
-    .toLowerCase();
-  return CATEGORY_BY_PREFIX[prefix] ?? 'general';
-}
-
-function deriveSeverity(raw: Record<string, unknown>): NormalizedRule['severity'] {
-  const declared = String(raw['severity'] ?? '').toUpperCase().trim();
-  if (declared === 'MUST NOT') return 'MUST NOT';
-  if (declared === 'MUST') return 'MUST';
-  if (declared === 'SHOULD') return 'SHOULD';
-  if (declared === 'COULD' || declared === 'MAY') return 'COULD';
-  return raw['blocking'] === true || raw['enforcement'] ? 'MUST' : 'SHOULD';
-}
-
-function loadCorpus(): NormalizedRule[] {
-  const rules: NormalizedRule[] = [];
-  for (const file of rulesetFiles(RULESETS_ROOT)) {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf8')) as Record<string, unknown>;
-    const list = (parsed['rules'] ?? parsed['principles']) as Array<Record<string, unknown>> | undefined;
-    if (!Array.isArray(list)) continue;
-    if (list.length > 0 && !list[0]['id'] && list[0]['rules']) continue;
-
-    for (const raw of list.filter(r => Boolean(r['id']))) {
-      // `blocking` defaults from the RAW severity string, exactly as
-      // DiskRulesetRepository.defaultBlocking does — NOT from the normalized
-      // severity, which promotes `enforcement`-bearing rules to MUST.
-      const rawSeverity = String(raw['severity'] ?? '').toUpperCase();
-      rules.push({
-        id: String(raw['id']),
-        severity: deriveSeverity(raw),
-        category: deriveCategory(raw),
-        title: String(raw['title'] ?? raw['principle'] ?? raw['id']),
-        description: String(raw['description'] ?? raw['statement'] ?? ''),
-        blocking: Boolean(raw['blocking'] ?? (rawSeverity === 'MUST' || rawSeverity === 'MUST NOT')),
-        validationQuery: raw['validationQuery'] ? String(raw['validationQuery']) : undefined,
-        // GT-632: `enforce` was missing here for the same reason it was missing
-        // from DiskRulesetRepository — and while it was missing, this suite could
-        // not see the four rules that carry a machine-readable check, so it
-        // measured them as handler backlog. A loader that drops a field the
-        // handlers dispatch on does not "load the corpus exactly as
-        // DiskRulesetRepository does"; it measures a different corpus.
-        enforce: raw['enforce'] as NormalizedRule['enforce'],
-        sourceFile: path.relative(REPO_ROOT, file),
-      });
-    }
-  }
-  return rules;
-}
-
-/** The real handler set, asked only which rules it CLAIMS (no I/O performed). */
-function handlerSet(): INativeRuleHandler[] {
-  const evaluator = new NativeEvaluator({} as never, {} as never, {} as never);
-  return (evaluator as unknown as { handlers: INativeRuleHandler[] }).handlers;
-}
-
-const CORPUS = loadCorpus();
-const HANDLERS = handlerSet();
-
-/** A handler claims the rule — it is routed somewhere instead of falling through. */
-const claims = (rule: NormalizedRule) => HANDLERS.some(h => h.canHandle(rule));
-
-/**
- * A handler claims the rule AND can return a verdict for it.
- *
- * {@link AdrConformanceRuleHandler} is deliberately excluded: it claims the 126
- * generated rules only to CLASSIFY them, and never returns `passed`. Counting
- * "claimed" as "evaluated" would reproduce, one layer up, exactly the false
- * green GT-569 removed — so this predicate, not `claims`, drives the breakdown.
- */
-const evaluates = (rule: NormalizedRule) => claims(rule) && rule.category !== 'adr-conformance';
-
-const CLASSIFIED: ClassifiedRule[] = CORPUS.map(rule => {
-  const { evaluability, why } = classifyRule(rule, evaluates(rule));
-  return { ruleId: rule.id, sourceFile: rule.sourceFile, blocking: rule.blocking, evaluability, why };
-});
-
-const SUMMARY = summarizeEvaluability(CLASSIFIED);
-
-// ---------------------------------------------------------------------------
-// The capture that src/rulesets/standards consumes
-// ---------------------------------------------------------------------------
-
-/**
- * `src/rulesets` owns no dependency on this package, so the per-rule triage is
- * CAPTURED there as JSON and `build-iso-5055-mapping.mjs` reads the capture.
- *
- * A capture is worth its bytes only if something recomputes it, and until now
- * nothing did. The snapshot asserted in its own `validation` field that it
- * reproduced the counts pinned above, and the only guard over it — the test
- * named "the evaluability snapshot still matches the class counts pinned by
- * Core", in `iso-5055-mapping.test.mjs` — compared the snapshot against a
- * second hand-typed copy of the snapshot's own numbers. So Core moved
- * 139 -> 151, the file stayed at 139, and every suite stayed green while the
- * published handler backlog was overstated by twelve rules.
- *
- * The fix is to stop hand-typing the capture. It is RENDERED here, from the
- * same `CLASSIFIED` array every assertion above measures, and pinned
- * byte-for-byte — the `--check` shape `build-iso-5055-mapping.mjs` already
- * uses for its own outputs. Recapture after a deliberate triage change:
- *
- *   UPDATE_EVALUABILITY_SNAPSHOT=1 npx jest src/application/validators/rule-corpus-triage.spec.ts
- */
 const SNAPSHOT_FILE = path.join(REPO_ROOT, 'src', 'rulesets', 'standards', 'native-evaluability-snapshot.json');
 
-/** Bumped when the document SHAPE changes, not when the measured counts move. */
-const SNAPSHOT_VERSION = '1.1.0';
-const SNAPSHOT_CAPTURED_ON = '2026-07-29';
-
-/** One reading order for the six classes, shared by `counts` and `validation`. */
-const CLASS_ORDER: readonly RuleEvaluability[] = [
-  'native-handler',
-  'documentation-only',
-  'unimplemented-native',
-  'needs-external-system',
-  'needs-runtime',
-  'underspecified',
-];
-
-/** The snapshot document, as bytes, straight from the live triage. */
-function renderSnapshot(): string {
-  const counts: Record<string, number> = {};
-  for (const klass of CLASS_ORDER) counts[klass] = SUMMARY.byClass[klass];
-
-  const classes: Record<string, RuleEvaluability> = {};
-  for (const c of CLASSIFIED) classes[c.ruleId] = c.evaluability;
-
-  const doc = {
-    $id: 'https://evolith.dev/rulesets/standards/native-evaluability-snapshot.json',
-    title: 'Native-engine evaluability class per rule (snapshot)',
-    description:
-      'Per-rule evaluability class as computed by the Core native evaluator triage. This is a GENERATED CAPTURE, not the source of truth: the authority is src/packages/core-domain/src/application/validators/rule-evaluability.ts and the handler set registered in native-evaluator.ts. It is recorded here so the ISO/IEC 5055 mapping can be scoped to the real handler backlog without src/rulesets depending on a package it does not own. Do not hand-edit — regenerate.',
-    version: SNAPSHOT_VERSION,
-    capturedOn: SNAPSHOT_CAPTURED_ON,
-    capturedFrom: [
-      'src/packages/core-domain/src/application/validators/rule-evaluability.ts (RULE_TRIAGE, classifyRule, ADR_CONFORMANCE_CATEGORY)',
-      'src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts (registered handler set)',
-      'src/packages/core-domain/src/application/validators/evaluators/handlers/**/*.ts (canHandle predicates)',
-      'src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts (corpus loader, renderer and byte-for-byte pin)',
-    ],
-    regenerateWith:
-      'UPDATE_EVALUABILITY_SNAPSHOT=1 npx jest src/application/validators/rule-corpus-triage.spec.ts (from src/packages/core-domain)',
-    validation: `Rendered by rule-corpus-triage.spec.ts from the live triage and pinned there byte-for-byte, so a divergence between this file and Core is a failing test rather than silent drift (corpus ${SUMMARY.total}; ${CLASS_ORDER.map(k => `${k} ${SUMMARY.byClass[k]}`).join(', ')}).`,
-    counts,
-    classes,
-  };
-
-  return JSON.stringify(doc, null, 2) + '\n';
+/**
+ * `capturedOn` is carried forward from the committed document, exactly as the
+ * capture script does, so the pin compares classification against classification
+ * and never fails on a date.
+ */
+function committedCapturedOn(): string {
+  return (JSON.parse(fs.readFileSync(SNAPSHOT_FILE, 'utf8')) as { capturedOn: string }).capturedOn;
 }
 
 describe('GT-595 · the capture consumed by src/rulesets/standards', () => {
@@ -221,7 +78,7 @@ describe('GT-595 · the capture consumed by src/rulesets/standards', () => {
     // `classes` is keyed by rule id alone, so two rules sharing an id in
     // different files would silently collapse into one entry and understate
     // every count downstream of it.
-    const rendered = JSON.parse(renderSnapshot()) as {
+    const rendered = JSON.parse(renderSnapshot(TRIAGE, { capturedOn: committedCapturedOn() })) as {
       counts: Record<string, number>;
       classes: Record<string, string>;
     };
@@ -230,8 +87,11 @@ describe('GT-595 · the capture consumed by src/rulesets/standards', () => {
   });
 
   it('keeps native-evaluability-snapshot.json byte-identical to a fresh capture', () => {
-    const fresh = renderSnapshot();
-    if (process.env.UPDATE_EVALUABILITY_SNAPSHOT) fs.writeFileSync(SNAPSHOT_FILE, fresh);
+    // Deliberately does NOT write. There is one writer —
+    // `node src/rulesets/standards/capture-native-evaluability-snapshot.mjs` —
+    // and it is the one the GT-630 chain guard and `docs.yml` invoke. A second
+    // writer is how this artifact ended up with two generators in the first place.
+    const fresh = renderSnapshot(TRIAGE, { capturedOn: committedCapturedOn() });
 
     expect(fs.readFileSync(SNAPSHOT_FILE, 'utf8')).toBe(fresh);
   });
@@ -290,14 +150,12 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     //       `enforce` was dropped at normalization. It is now carried, and
     //       `ModuleBoundaryRuleHandler` evaluates it.
     // `unimplemented-native` drops by the same twelve; nothing else moved.
-    expect(SUMMARY.byClass).toEqual({
-      'native-handler': 151,
-      'documentation-only': 136,
-      'unimplemented-native': 48,
-      'needs-external-system': 20,
-      'needs-runtime': 17,
-      underspecified: 14,
-    });
+    // Asserted against the SINGLE declaration above, not against a second inline
+    // copy of the same six numbers. There used to be two — this constant, read by
+    // the dependency-free guard in `src/rulesets/standards`, and a literal here —
+    // which is GT-633's own defect in miniature: two copies of one fact, and
+    // editing either leaves the other silently disagreeing.
+    expect(SUMMARY.byClass).toEqual(PINNED_CLASS_COUNTS);
   });
 
   it('publishes the honest denominator: 150 rules nothing can ever run', () => {

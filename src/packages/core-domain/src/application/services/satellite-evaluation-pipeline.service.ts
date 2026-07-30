@@ -1,12 +1,52 @@
 import { IFileSystem, ILogger } from '../../domain/interfaces';
-import { SatelliteManifest, EvaluationVerdict, PipelineGateResult, RuleEvaluation, EvaluationSeverity, EvaluationFacts } from '../../domain/satellite-manifest';
+import { SatelliteManifest, PipelineGateResult, RuleEvaluation, EvaluationSeverity, EvaluationFacts } from '../../domain/satellite-manifest';
 import { TopologyCatalogService, TopologyManifest } from './topology-catalog.service';
 import { SdlcDataLoaderService, StructuredGate } from './sdlc-data-loader.service';
-import { RulesetValidatorService } from '../validators/ruleset-validator.service';
+import { RulesetValidatorService, ValidationResult } from '../validators/ruleset-validator.service';
 import { createSuccessEnvelope } from '../../domain/gate-evidence';
 import { toLegacyPhaseId } from '../../domain/sdlc/phase-id';
 import { OpaEvaluator } from '../validators/evaluators/opa-evaluator';
+import type { EvaluationKind } from '../../evaluation/contracts/evaluation-context';
+import type {
+  PipelineExecutionPlan,
+  PipelineRuleCoverage,
+  PipelineVerdict,
+} from '../../evaluation/ports/evaluation-pipeline.port';
 import * as path from 'path';
+
+/**
+ * GT-614 — the two units of work this pipeline is made of, each tagged with the
+ * evaluation kinds it answers.
+ *
+ * This is what turns `ctx.kinds` from a label read at the boundary into a decision
+ * about what gets executed. Asking for `compliance` alone used to pay for every
+ * phase gate — the whole f1..f5 gate corpus was loaded and every Rego rule in it
+ * run — before the answer was assembled. A stage whose kinds nobody requested is
+ * now never entered: not its loader, not its evaluator.
+ *
+ * The phase-gate stage is named as a STAGE rather than by its individual gate ids
+ * on purpose: those ids are only knowable by loading the gate definitions, which is
+ * precisely the work an out-of-scope request must not pay for. `general-rulesets`
+ * is the id of the synthetic gate the stage produces, so it needs no alias.
+ */
+const PHASE_GATES_STAGE = {
+  id: 'sdlc-phase-gates',
+  kinds: ['gate', 'artifact'] as readonly EvaluationKind[],
+} as const;
+
+const GENERAL_RULESETS_STAGE = {
+  id: 'general-rulesets',
+  kinds: ['rule', 'compliance'] as readonly EvaluationKind[],
+} as const;
+
+/**
+ * No plan ⇒ run everything, exactly as before this contract existed. An
+ * unrestricted plan (`kinds: []`, still sent by the inline REST callers that
+ * predate the field) answers `true` to every gate for the same reason.
+ */
+function stageIsInScope(kinds: readonly EvaluationKind[], plan?: PipelineExecutionPlan): boolean {
+  return !plan || plan.includesGate(kinds);
+}
 
 /**
  * End-to-end evaluation pipeline for GT-281.
@@ -19,6 +59,11 @@ import * as path from 'path';
  * - SdlcDataLoaderService for GT-280 structured data
  * - OpaEvaluator for Rego execution
  * - RulesetValidatorService for general ruleset validation
+ *
+ * GT-614 — it is also the pipeline the deployed Core actually runs, so it is where
+ * the gap's sentence had to be closed: it now honours the
+ * {@link PipelineExecutionPlan} the orchestrator builds from `ctx.kinds` and skips
+ * the stages the request did not ask for.
  */
 export class SatelliteEvaluationPipeline {
   private readonly topologyCatalog: TopologyCatalogService;
@@ -36,36 +81,56 @@ export class SatelliteEvaluationPipeline {
     this.opaEvaluator = new OpaEvaluator(fs, logger);
   }
 
-  async evaluate(manifest: SatelliteManifest): Promise<EvaluationVerdict> {
+  async evaluate(
+    manifest: SatelliteManifest,
+    plan?: PipelineExecutionPlan,
+  ): Promise<PipelineVerdict> {
     const corePath = manifest.corePath || this.discoverCorePath(manifest.satellitePath);
 
     // Step 1: Resolve topology
     const topology = manifest.topology || await this.resolveTopology(manifest.satellitePath, corePath);
 
-    // Step 2: Determine which phases to evaluate (GT-343: accept canonical ids,
-    // normalize to the legacy f1..f5 the structured gate data is keyed by).
-    const phaseIds = manifest.phase
-      ? [toLegacyPhaseId(manifest.phase) ?? manifest.phase]
-      : ['f1', 'f2', 'f3', 'f4', 'f5'];
+    // GT-614: decide what this request pays for BEFORE spending anything. Both
+    // decisions are taken here, together, so the two stages below are symmetrical:
+    // whichever one the request did not ask for is never entered.
+    const outOfScopeGateIds: string[] = [];
+    const runPhaseGates = stageIsInScope(PHASE_GATES_STAGE.kinds, plan);
+    const runGeneralRulesets = stageIsInScope(GENERAL_RULESETS_STAGE.kinds, plan);
+    if (!runPhaseGates) outOfScopeGateIds.push(PHASE_GATES_STAGE.id);
+    if (!runGeneralRulesets) outOfScopeGateIds.push(GENERAL_RULESETS_STAGE.id);
 
-    // Step 3: Load gates from GT-280 structured data
     const gateResults: PipelineGateResult[] = [];
-    for (const phaseId of phaseIds) {
-      const gates = await this.sdlcDataLoader.loadGatesForPhase(phaseId);
-      for (const gate of gates) {
-        const result = await this.evaluateGate(gate, manifest.satellitePath, corePath, topology, manifest.facts);
-        gateResults.push(result);
+    let phaseGateEvals = 0;
+
+    if (runPhaseGates) {
+      // Step 2: Determine which phases to evaluate (GT-343: accept canonical ids,
+      // normalize to the legacy f1..f5 the structured gate data is keyed by).
+      const phaseIds = manifest.phase
+        ? [toLegacyPhaseId(manifest.phase) ?? manifest.phase]
+        : ['f1', 'f2', 'f3', 'f4', 'f5'];
+
+      // Step 3: Load gates from GT-280 structured data
+      for (const phaseId of phaseIds) {
+        const gates = await this.sdlcDataLoader.loadGatesForPhase(phaseId);
+        for (const gate of gates) {
+          const result = await this.evaluateGate(gate, manifest.satellitePath, corePath, topology, manifest.facts);
+          gateResults.push(result);
+          phaseGateEvals += result.artifactEvaluations.length;
+        }
       }
     }
 
     // Step 4: Run general ruleset validation (GT-395: enforce canonical rulesets)
-    const generalResult = await this.validator.validate(manifest.satellitePath, corePath);
+    let generalResult: ValidationResult | undefined;
+    if (runGeneralRulesets) {
+      generalResult = await this.validator.validate(manifest.satellitePath, corePath);
 
-    // GT-395: Convert blocking general-result issues into a synthetic gate so
-    // they are visible in the output and participate in the top-level verdict.
-    const generalGate = this.buildGeneralRulesetsGate(generalResult);
-    if (generalGate) {
-      gateResults.push(generalGate);
+      // GT-395: Convert blocking general-result issues into a synthetic gate so
+      // they are visible in the output and participate in the top-level verdict.
+      const generalGate = this.buildGeneralRulesetsGate(generalResult);
+      if (generalGate) {
+        gateResults.push(generalGate);
+      }
     }
 
     // Step 5: Build summary
@@ -77,10 +142,12 @@ export class SatelliteEvaluationPipeline {
       totalGates: gateResults.length,
       passedGates: passedGates.length,
       failedGates: gateResults.length - passedGates.length,
-      totalRules: allEvals.length + generalResult.rulesChecked,
+      totalRules: allEvals.length + (generalResult?.rulesChecked ?? 0),
       passedRules: allEvals.filter(e => e.passed).length,
       failedRules: allEvals.filter(e => !e.passed).length,
     };
+
+    const coverage = this.buildCoverage(phaseGateEvals, generalResult, outOfScopeGateIds);
 
     // ADR-0073 output envelope
     const outputEnvelope = createSuccessEnvelope(
@@ -102,6 +169,43 @@ export class SatelliteEvaluationPipeline {
       summary,
       evaluatedAt,
       outputEnvelope,
+      coverage,
+    };
+  }
+
+  /**
+   * GT-614 / GT-569 — the coverage facts of the run, with out-of-scope kept in its
+   * own bucket.
+   *
+   * A stage nobody asked for is NOT `skipped` and NOT `errored`: both of those mean
+   * the engine tried and the outcome is UNKNOWN, so both belong in `rulesTotal` and
+   * become coverage risks (and, for a blocking rule, fail the run under GT-595).
+   * Reporting an unasked question as an unanswered one is the exact dishonesty
+   * GT-569 exists to prevent. An out-of-scope stage therefore contributes NOTHING to
+   * the four counters — it only appears, by id, in `outOfScopeGateIds`, so a reader
+   * can still see what the request did not buy.
+   *
+   * The counters keep the GT-569 invariant `checked + skipped + errored === total`.
+   * The synthetic `general-rulesets` gate's evaluations are deliberately NOT counted
+   * here: they are ISSUES derived from the corpus run, whose rules are already in
+   * `generalResult.rulesChecked`.
+   */
+  private buildCoverage(
+    phaseGateEvals: number,
+    generalResult: ValidationResult | undefined,
+    outOfScopeGateIds: readonly string[],
+  ): PipelineRuleCoverage {
+    const rulesChecked = phaseGateEvals + (generalResult?.rulesChecked ?? 0);
+    const rulesSkipped = generalResult?.rulesSkipped ?? 0;
+    const rulesErrored = generalResult?.rulesErrored ?? 0;
+    return {
+      rulesChecked,
+      rulesSkipped,
+      rulesErrored,
+      rulesTotal: rulesChecked + rulesSkipped + rulesErrored,
+      skippedRuleIds: generalResult?.skippedRuleIds ?? [],
+      erroredRuleIds: generalResult?.erroredRuleIds ?? [],
+      outOfScopeGateIds: [...outOfScopeGateIds],
     };
   }
 

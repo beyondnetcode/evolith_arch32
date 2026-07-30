@@ -7855,6 +7855,19 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
 
+#### GT-638
+
+**Title:** El tablero no tiene asignador de ids, así que dos ramas paralelas reparten el mismo número GT
+
+- **Purpose:** Que un id de gap sea único por construcción y no por que quien registró el último leyera la rama correcta.
+- **Evidence:** **Un id de gap se elige leyendo el `GT-*` más alto de la rama en la que uno está, y nada lo contrasta con ninguna otra rama.** Así que dos sesiones en paralelo asignan el mismo número, y una se entera en el merge. Ya ha pasado: `8449af3d` en `develop` lleva el mensaje *"chore(board): renumber the ratchet fix GT-634 -> GT-637, ID collision with develop"* — esa fila y [`GT-634`](./gap-reference-catalog.es.md#gt-634) en `main` recibieron el mismo id con horas de diferencia, por sesiones que no podían verse. **La renumeración es manual y con pérdidas**, que es lo que cuesta más que el choque: un id aparece en la fila del tablero, en el ancla del catálogo, en el registro de evidencia de cierre, en referencias cruzadas desde otras filas en los dos idiomas, en mensajes de commit y en cuerpos de PR — y sólo los tres primeros son comprobables mecánicamente. `08-validate-tracking` no puede ayudar, y no por falta de ganas: valida paridad EN/ES, registros de cierre y contadores **dentro de un único árbol de trabajo**, y las ramas quedan fuera de su mundo por construcción. **Por qué merece fila y no una convención:** el tablero es la única fuente de verdad de 635 gaps, y un id que significa dos cosas distintas en dos ramas vuelve ambigua toda referencia a él — incluidas las de `gap-closure-evidence.json`, que son datos validados por máquina. Tampoco es un desliz aislado: en el merge `develop` → `main` del 2026-07-30 el mismo patrón de duplicación convergente aparece **tres veces**: GT-633 se arregló dos veces por dos sesiones, el parser del guard de evidencias se arregló dos veces, y este id se asignó dos veces. Arreglo: asignar ids desde algo que no se pueda leer rancio — una marca de agua reservada y commiteada en la rama por defecto, o una comprobación en PR que falle cuando una rama introduce un id que ya existe en su base o en otro PR abierto, nombrando a ambos usuarios.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Registrado el 2026-07-30 tras la colisión que describe, que obligó a renumerar en `develop`. El id de ESTA fila se asignó tomando la unión de ids entre `main` y `develop` en vez del máximo de una — que es justo el apaño que el arreglo debería volver innecesario.
+- **Acceptance criteria:**
+  - [ ] Registrar una fila en una rama no puede reutilizar en silencio un id que ya existe en la rama base.
+  - [ ] La comprobación corre en los pull requests y nombra el id en conflicto junto con los dos sitios donde se usa, para que resolverlo no sea una búsqueda.
+  - [ ] Incluye una fixture negativa OBSERVADA en rojo, no sólo declarada capaz de fallar.
+
 #### GT-635
 
 **Title:** El ratchet de referencias muertas está por encima del presupuesto en main desde el 2026-07-28, así que el job de gobernanza está en rojo permanente

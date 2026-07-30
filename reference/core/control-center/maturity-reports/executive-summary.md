@@ -29,7 +29,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | 2 | Highest-risk area | `Evolith Core` has the largest weighted open load. | [GT-583](../gaps/gap-reference-catalog.md#gt-583), [GT-589](../gaps/gap-reference-catalog.md#gt-589), [GT-614](../gaps/gap-reference-catalog.md#gt-614), [GT-587](../gaps/gap-reference-catalog.md#gt-587), [GT-591](../gaps/gap-reference-catalog.md#gt-591), [GT-590](../gaps/gap-reference-catalog.md#gt-590), +2 |
 | 3 | Quick wins | High criticality with XS/S complexity. | [GT-597](../gaps/gap-reference-catalog.md#gt-597), [GT-631](../gaps/gap-reference-catalog.md#gt-631) |
 | 4 | P1 wave | Next hardening after P0 is cleared. | [GT-597](../gaps/gap-reference-catalog.md#gt-597), [GT-631](../gaps/gap-reference-catalog.md#gt-631), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-580](../gaps/gap-reference-catalog.md#gt-580), [GT-584](../gaps/gap-reference-catalog.md#gt-584), [GT-605](../gaps/gap-reference-catalog.md#gt-605), [GT-606](../gaps/gap-reference-catalog.md#gt-606), +6 |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-622](../gaps/gap-reference-catalog.md#gt-622), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-614](../gaps/gap-reference-catalog.md#gt-614), [GT-616](../gaps/gap-reference-catalog.md#gt-616), [GT-617](../gaps/gap-reference-catalog.md#gt-617), +12 |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-622](../gaps/gap-reference-catalog.md#gt-622), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-614](../gaps/gap-reference-catalog.md#gt-614), [GT-616](../gaps/gap-reference-catalog.md#gt-616), [GT-617](../gaps/gap-reference-catalog.md#gt-617), +13 |
 
 ## Current Blockers
 
@@ -45,13 +45,13 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Indicator | Value |
 |---|---:|
 | Canonical board date | 2026-07-26 |
-| Total gaps | 635 |
+| Total gaps | 636 |
 | Closed gaps | 596 |
-| Open gaps | 39 |
+| Open gaps | 40 |
 | Open P0 | 4 |
 | Open P1 | 14 |
-| Open P2 | 18 |
-| Total closure | 93.9% |
+| Open P2 | 19 |
+| Total closure | 93.7% |
 | Closure evidence records | 578 |
 | Recorded readiness | 4 PASS |
 

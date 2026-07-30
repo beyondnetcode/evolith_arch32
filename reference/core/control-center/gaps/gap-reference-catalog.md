@@ -7950,6 +7950,19 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
 
+#### GT-638
+
+**Title:** The board has no id allocator, so two parallel branches hand out the same GT number
+
+- **Purpose:** Make a gap id unique by construction rather than by whoever registered it last reading the right branch.
+- **Evidence:** **A gap id is chosen by reading the highest `GT-*` on the branch you happen to be on, and nothing checks that against any other branch.** So two sessions working in parallel allocate the same number, and one of them finds out at merge time. It has already happened: `8449af3d` on `develop` carries the message *"chore(board): renumber the ratchet fix GT-634 -> GT-637, ID collision with develop"* — that row and [`GT-634`](./gap-reference-catalog.md#gt-634) on `main` were allocated the same id within hours of each other, by sessions that could not see each other. **The renumber is manual and lossy**, which is the part that costs more than the clash: an id appears in the board row, the catalog anchor, the closure-evidence record, cross-references from other rows in both languages, commit messages and PR bodies — and only the first three are mechanically checkable. `08-validate-tracking` cannot help, and not for want of trying: it validates EN/ES parity, closure records and counters **within one working tree**, and branches are outside its world by construction. **Why it is worth a row rather than a convention:** the board is the single source of truth for 635 gaps, and an id that means two different things in two branches makes every reference to it ambiguous — including the ones in `gap-closure-evidence.json`, which is machine-validated data. This is also not an isolated slip. In the `develop` → `main` merge of 2026-07-30 the same convergent-duplication pattern appears **three times**: GT-633 was fixed twice by two sessions, the evidence guard's parser was fixed twice, and this id was allocated twice. Fix: allocate ids from something that cannot be read stale — a reserved high-water mark committed on the default branch, or a PR-time check that fails when a branch introduces an id already present on its base or in another open PR, naming both users of it.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Registered 2026-07-30 after the collision it describes forced a renumber on `develop`. The id for THIS row was allocated by taking the union of ids across `main` and `develop` rather than the maximum on one — which is the workaround the fix should make unnecessary.
+- **Acceptance criteria:**
+  - [ ] Registering a row on a branch cannot silently reuse an id that already exists on the base branch.
+  - [ ] The check runs on pull requests and names the colliding id together with both places it is used, so the resolution is not a search.
+  - [ ] It ships with a negative fixture that has been OBSERVED red, not merely declared able to fail.
+
 #### GT-635
 
 **Title:** The dead-reference ratchet has been over budget on main since 2026-07-28, so the governance job is permanently red

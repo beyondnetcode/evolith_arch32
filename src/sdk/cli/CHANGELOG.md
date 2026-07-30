@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.2]
+
+### Bug Fixes
+
+* **deps:** resolve `@beyondnet/evolith-sdk@^2.0.0` instead of `^1.1.0` (GT-634). The SDK publishes `1.0.0`, `1.1.0` and `2.0.0` with nothing in between, so the caret range pinned **exactly 1.1.0** — the build of 2026-07-18, five days before the security wave that shipped in 2.0.0. `1.2.1` was published on 2026-07-28, after 2.0.0 existed, so `npm i -g @beyondnet/evolith-cli` installed a pre-wave SDK. The lockfile also pinned that tarball at `src/sdk/cli/node_modules/@beyondnet/evolith-sdk`, where a nested install shadows the workspace link — which is why no local run showed it. Only `EvolithRestClient` is used and the SDK is not re-exported, so 2.0.0's breaking change reaches no part of this package's surface.
+
 ## [1.0.2]
 
 ### Bug Fixes

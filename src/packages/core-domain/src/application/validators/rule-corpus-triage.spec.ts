@@ -35,10 +35,10 @@ import { REPO_ROOT, RULESETS_ROOT, triageCorpus, renderSnapshot } from '../../..
 // meant jest was the only thing that could run them — and that is why
 // `native-evaluability-snapshot.json` was maintained by hand and drifted.
 //
-// GT-633 RECONCILIATION: the renderer in particular had two implementations, one
+// GT-640 (registered as GT-633) RECONCILIATION: the renderer in particular had two implementations, one
 // here and one in `capture-native-evaluability-snapshot.mjs`, written in parallel
 // by sessions that could not see each other. Two generators for one artifact is
-// the defect GT-633 exists to remove, one level up: whichever ran last would win
+// the defect GT-640 exists to remove, one level up: whichever ran last would win
 // and the other's `--check` would go red for no visible reason. There is now ONE
 // renderer, and this suite is its PIN rather than a second copy of it.
 const TRIAGE = triageCorpus();
@@ -153,7 +153,7 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     // Asserted against the SINGLE declaration above, not against a second inline
     // copy of the same six numbers. There used to be two — this constant, read by
     // the dependency-free guard in `src/rulesets/standards`, and a literal here —
-    // which is GT-633's own defect in miniature: two copies of one fact, and
+    // which is GT-640's own defect in miniature: two copies of one fact, and
     // editing either leaves the other silently disagreeing.
     expect(SUMMARY.byClass).toEqual(PINNED_CLASS_COUNTS);
   });

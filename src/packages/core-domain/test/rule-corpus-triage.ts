@@ -168,16 +168,16 @@ export function triageCorpus(rulesetsRoot: string = RULESETS_ROOT): CorpusTriage
 // ---------------------------------------------------------------------------
 
 /**
- * GT-633 reconciliation: this function had TWO implementations.
+ * GT-640 (registered as GT-633) reconciliation: this function had TWO implementations.
  *
- * The fix for GT-633 was written twice, in parallel, by sessions that could not
+ * The fix for GT-640 was written twice, in parallel, by sessions that could not
  * see each other. One shipped a standalone capture script (`capture-native-
  * evaluability-snapshot.mjs`, reachable by the derived-artifact chain guard and
  * by the documentation job); the other rendered the document inside
  * `rule-corpus-triage.spec.ts`, where jest can pin it byte-for-byte. Both were
  * right about their half, and both recaptured the same numbers.
  *
- * But two generators for one artifact is EXACTLY the defect GT-633 exists to
+ * But two generators for one artifact is EXACTLY the defect GT-640 exists to
  * remove, reproduced one level up: whichever ran last would win, and the other's
  * `--check` would go red for no reason a reader could see.
  *

@@ -23,27 +23,35 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import {
+  ADR_CONFORMANCE_CATEGORY,
   RULE_TRIAGE,
   RuleEvaluability,
   isNonExecutable,
 } from './rule-evaluability';
-import { RULESETS_ROOT, triageCorpus } from '../../../test/rule-corpus-triage';
+import { REPO_ROOT, RULESETS_ROOT, triageCorpus, renderSnapshot } from '../../../test/rule-corpus-triage';
 
-// The corpus loader, the real handler set and the classification live in
-// `test/rule-corpus-triage.ts`. They used to live HERE, which meant jest was the
-// only thing that could run them — and that is why
-// `src/rulesets/standards/native-evaluability-snapshot.json`, which needs exactly
-// this computation, was maintained by hand and drifted. The last describe block
-// below is the other half of the repair.
-const { corpus: CORPUS, classified: CLASSIFIED, summary: SUMMARY, claims } = triageCorpus();
+// The corpus loader, the real handler set, the classification AND the snapshot
+// renderer live in `test/rule-corpus-triage.ts`. They used to live HERE, which
+// meant jest was the only thing that could run them — and that is why
+// `native-evaluability-snapshot.json` was maintained by hand and drifted.
+//
+// GT-633 RECONCILIATION: the renderer in particular had two implementations, one
+// here and one in `capture-native-evaluability-snapshot.mjs`, written in parallel
+// by sessions that could not see each other. Two generators for one artifact is
+// the defect GT-633 exists to remove, one level up: whichever ran last would win
+// and the other's `--check` would go red for no visible reason. There is now ONE
+// renderer, and this suite is its PIN rather than a second copy of it.
+const TRIAGE = triageCorpus();
+const { corpus: CORPUS, classified: CLASSIFIED, summary: SUMMARY, claims } = TRIAGE;
 
 /**
  * The class counts this repository is pinned to.
  *
- * Also the counts `native-evaluability-snapshot.json` must reproduce, and the
- * ones its capture script writes. Read out of this file by
- * `src/rulesets/standards/iso-5055-mapping.test.mjs`, which runs in a job with no
- * node_modules and so cannot recompute them — keep it a plain literal.
+ * Also the counts `native-evaluability-snapshot.json` must reproduce. READ OUT OF
+ * THIS FILE by `src/rulesets/standards/iso-5055-mapping.test.mjs`, which runs in a
+ * job with no node_modules and so cannot recompute them — keep it a plain literal,
+ * and note that that guard THROWS if it cannot find this declaration rather than
+ * passing. Restoring it is what a reconciliation that deleted it owes back.
  */
 const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   'native-handler': 154,
@@ -53,6 +61,41 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   'needs-runtime': 17,
   underspecified: 14,
 };
+
+const SNAPSHOT_FILE = path.join(REPO_ROOT, 'src', 'rulesets', 'standards', 'native-evaluability-snapshot.json');
+
+/**
+ * `capturedOn` is carried forward from the committed document, exactly as the
+ * capture script does, so the pin compares classification against classification
+ * and never fails on a date.
+ */
+function committedCapturedOn(): string {
+  return (JSON.parse(fs.readFileSync(SNAPSHOT_FILE, 'utf8')) as { capturedOn: string }).capturedOn;
+}
+
+describe('GT-595 · the capture consumed by src/rulesets/standards', () => {
+  it('renders one class per rule, losing no id to a key collision', () => {
+    // `classes` is keyed by rule id alone, so two rules sharing an id in
+    // different files would silently collapse into one entry and understate
+    // every count downstream of it.
+    const rendered = JSON.parse(renderSnapshot(TRIAGE, { capturedOn: committedCapturedOn() })) as {
+      counts: Record<string, number>;
+      classes: Record<string, string>;
+    };
+    expect(Object.keys(rendered.classes)).toHaveLength(CORPUS.length);
+    expect(Object.values(rendered.counts).reduce((a, b) => a + b, 0)).toBe(CORPUS.length);
+  });
+
+  it('keeps native-evaluability-snapshot.json byte-identical to a fresh capture', () => {
+    // Deliberately does NOT write. There is one writer —
+    // `node src/rulesets/standards/capture-native-evaluability-snapshot.mjs` —
+    // and it is the one the GT-630 chain guard and `docs.yml` invoke. A second
+    // writer is how this artifact ended up with two generators in the first place.
+    const fresh = renderSnapshot(TRIAGE, { capturedOn: committedCapturedOn() });
+
+    expect(fs.readFileSync(SNAPSHOT_FILE, 'utf8')).toBe(fresh);
+  });
+});
 
 describe('GT-595 · the corpus is fully classified', () => {
   it('loads a corpus of the expected size (guards the measurement itself)', () => {
@@ -107,11 +150,11 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     //       `enforce` was dropped at normalization. It is now carried, and
     //       `ModuleBoundaryRuleHandler` evaluates it.
     // `unimplemented-native` drops by the same twelve; nothing else moved.
-    //
-    // 151 -> 154 on 2026-07-29: GT-580 added `cli/exit-code-taxonomy.rules.json`
-    // (CLI-EXIT-01/02/03) with `CliExitTaxonomyRuleHandler` claiming all three,
-    // so the corpus grows by three and every one of them lands directly in
-    // `native-handler`. No other class moves: these ids did not exist before.
+    // Asserted against the SINGLE declaration above, not against a second inline
+    // copy of the same six numbers. There used to be two — this constant, read by
+    // the dependency-free guard in `src/rulesets/standards`, and a literal here —
+    // which is GT-633's own defect in miniature: two copies of one fact, and
+    // editing either leaves the other silently disagreeing.
     expect(SUMMARY.byClass).toEqual(PINNED_CLASS_COUNTS);
   });
 
@@ -368,62 +411,5 @@ describe('GT-595 · OCB-02 is vacuous as written — measured, not asserted', ()
     const parsed = JSON.parse(fs.readFileSync(file, 'utf8')) as { openCoreMatrix?: { core?: string[]; enterprise?: string[] } };
     expect(parsed.openCoreMatrix?.core?.length).toBeGreaterThan(0);
     expect(parsed.openCoreMatrix?.enterprise?.length).toBeGreaterThan(0);
-  });
-});
-
-/**
- * GT-598 — the snapshot `src/rulesets/standards` consumes must be a CAPTURE.
- *
- * `native-evaluability-snapshot.json` is read by `build-iso-5055-mapping.mjs`,
- * which stamps `nativeEvaluability` onto every row of the ISO/IEC 5055 mapping.
- * A stale snapshot therefore does not stay contained: it launders a wrong
- * classification into a larger derived artifact and misstates the handler
- * backlog. It said `documentation-only: 129` long after this file pinned 136,
- * and its own guard could not see that — it compared the snapshot against six
- * numbers typed into the test, the same six the snapshot already contained.
- *
- * This is where the truth is computed, so this is where the comparison belongs.
- * The guard in `src/rulesets/standards` runs in a job with no node_modules and
- * cannot recompute anything; it reads {@link PINNED_CLASS_COUNTS} out of this
- * file instead. If this block fails, run:
- *   node src/rulesets/standards/capture-native-evaluability-snapshot.mjs
- *   node src/rulesets/standards/build-iso-5055-mapping.mjs
- * in that order — the second consumes what the first writes.
- */
-describe('GT-598 · the captured snapshot still matches a fresh triage', () => {
-  const SNAPSHOT_PATH = path.join(RULESETS_ROOT, 'standards', 'native-evaluability-snapshot.json');
-  const snapshot = JSON.parse(fs.readFileSync(SNAPSHOT_PATH, 'utf8')) as {
-    counts: Record<string, number>;
-    classes: Record<string, RuleEvaluability>;
-  };
-
-  it('agrees on the class counts', () => {
-    expect(snapshot.counts).toEqual(PINNED_CLASS_COUNTS);
-  });
-
-  it('agrees on the class of every rule, id by id', () => {
-    // Duplicate ids across rulesets collapse to one entry in the snapshot, so
-    // compare against the same collapse rather than against the corpus length.
-    const fresh: Record<string, RuleEvaluability> = {};
-    for (const c of CLASSIFIED) fresh[c.ruleId] = c.evaluability;
-
-    const drifted = Object.keys(fresh)
-      .filter(id => snapshot.classes[id] !== fresh[id])
-      .map(id => `${id}: snapshot says ${snapshot.classes[id] ?? '(absent)'}, triage says ${fresh[id]}`);
-    const orphaned = Object.keys(snapshot.classes).filter(id => !(id in fresh));
-
-    expect(drifted).toEqual([]);
-    expect(orphaned).toEqual([]);
-  });
-
-  it('carries counts that agree with its own per-rule classes', () => {
-    // A snapshot whose header disagreed with its body would let the .mjs guard
-    // pass on the header while the mapping was stamped from the body.
-    const tally: Record<string, number> = {};
-    for (const rule of CORPUS) {
-      const klass = snapshot.classes[rule.id];
-      tally[klass] = (tally[klass] ?? 0) + 1;
-    }
-    expect(tally).toEqual(snapshot.counts);
   });
 });

@@ -459,7 +459,7 @@ jobs:
       - name: Execute the board's recorded validationCommands (report mode)
         run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose
 
-      # Ratchet, not a cliff. The budget is 304, which is what THIS RUNNER counts.
+      # Ratchet, not a cliff. The budget is 40, which is what THIS RUNNER counts.
       #
       # It was briefly lowered to 303 on the strength of the guard's computed
       # "ratchet basis" — 288 dead locally plus 15 that resolve only through
@@ -480,10 +480,29 @@ jobs:
       # local count agreed, and that agreement is not what authorises this: the
       # printed line is.
       #
+      # 304 -> 40, the same way. 264 of the 304 were ONE event: the `src/` refactor
+      # moved every workspace and the closure evidence kept quoting the old layout.
+      # Migrating it — rewriting only where the same artifact moved and the new
+      # target was verified to exist — took the count to 40, and THIS JOB printed
+      # `40 dead (budget 304)` in run 30500947483 before the budget moved.
+      #
+      # The 40 that remain are not path rot and must not be "repaired" into
+      # silence: 15 reference the vendored, gitignored `.harness/bin/opa`; 4 name a
+      # script that was ABSORBED into 04-check-bilingual-parity rather than moved,
+      # so repointing them would claim a command nobody ran; 6 name artifacts that
+      # were deleted; 5 are root-level `npm test` recorded without the workspace
+      # they ran in; 2 are valid `pnpm`/`yarn info` this guard mis-parses as npm;
+      # the rest are build output and prose the extractor reads as commands.
+      #
+      # Two of those are guard limitations rather than evidence defects, and fixing
+      # them is the next real move: the npm-script parser should skip a flag's
+      # VALUE (`npm run --workspace <path> <script>` reads the path as the script),
+      # and `pnpm`/`yarn` are not `npm`.
+      #
       # Lower it as records are repaired, from a number this job printed; at 0,
       # delete the flag and this becomes the strict gate.
       - name: Dead-reference ratchet (must not grow)
-        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 304
+        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 40
 
   # RETIRED 2026-07-27 (GT-570): the `publish-npm` job lived here and published
   # ONLY `src/sdk/cli`, with `--tag beta` and no provenance, writing the token

@@ -63,11 +63,11 @@
  *       the retired `evolith-bff` gateway, the retired `packages/mcp-tools`, two
  *       retired k8s manifests, a retired sandbox app, three root-level scripts no
  *       longer declared) or embed `vision/` / `tools/list` as prose rather than a
- *       path (GT-634). These are historical records of commands that were correct
+ *       path (GT-637). These are historical records of commands that were correct
  *       when they ran, or narrative that only looks path-shaped; repairing them
  *       is a data migration of the evidence file
  *       (`reference/core/control-center/evidence/**`, owned by the board), not
- *       a code change, and it is deliberately out of scope here. (GT-634 already
+ *       a code change, and it is deliberately out of scope here. (GT-637 already
  *       closed the ~290 that were pre-`src/`/`product/`-move paths with real
  *       successors, plus two defects in THIS guard that inflated the count on
  *       top of them — see the ratchet step in `ci-cd.yml` for the detail.)

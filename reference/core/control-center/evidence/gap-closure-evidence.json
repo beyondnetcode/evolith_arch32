@@ -8856,7 +8856,7 @@
       "dependencyRationale": "The prerequisite is satisfied and closed: GT-595 gave MTN-05 and GIT-08 real handlers, which is the only reason either failure was visible. One part is deliberately left out of scope: the parallel multi-tenancy.rego still asserts MTN-05 unconditionally. Applicability is a native-engine pre-filter by construction (GT-571) and TAX-06 already carries the same shape -- a phase annotation alongside a rego that does not read it -- so this is a pre-existing divergence between the two engines, not one introduced here, and closing it belongs to whatever unifies applicability across engines."
     },
     {
-      "id": "GT-634",
+      "id": "GT-637",
       "closedAt": "2026-07-29",
       "closureCommit": "5acb29ed",
       "evidence": [

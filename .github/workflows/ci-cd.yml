@@ -482,7 +482,7 @@ jobs:
       - name: Execute the board's recorded validationCommands (report mode)
         run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose
 
-      # Ratchet, not a cliff. The budget is 38, which is what THIS RUNNER counts.
+      # Ratchet, not a cliff. The budget is 19, which is what THIS RUNNER counts.
       #
       # It was briefly lowered to 303 on the strength of the guard's computed
       # "ratchet basis" — 288 dead locally plus 15 that resolve only through
@@ -493,47 +493,27 @@ jobs:
       # first place, and I broke it by trusting a derived figure over a measured
       # one.
       #
-      # 305 -> 304 obeying that rule rather than working around it. Five closure
-      # records (GT-424/621/629/630/632) quoted their self-test as
-      # `node --test 34-check-skill-registry-parity.test.mjs`, with no directory,
-      # while naming the real `.harness/scripts/ci/` path in the same record's
-      # `files` list — evidence pointing at something real through a command that
-      # cannot run. Repairing the five took the count to 304, and THIS JOB printed
-      # `304 dead (budget 305)` in run 30498743635 before the budget moved. The
-      # local count agreed, and that agreement is not what authorises this: the
-      # printed line is.
-      #
-      # 304 -> 40, the same way. 264 of the 304 were ONE event: the `src/` refactor
-      # moved every workspace and the closure evidence kept quoting the old layout.
-      # Migrating it — rewriting only where the same artifact moved and the new
-      # target was verified to exist — took the count to 40, and THIS JOB printed
-      # `40 dead (budget 304)` in run 30500947483 before the budget moved.
-      #
-      # The 40 that remain are not path rot and must not be "repaired" into
-      # silence: 15 reference the vendored, gitignored `.harness/bin/opa`; 4 name a
-      # script that was ABSORBED into 04-check-bilingual-parity rather than moved,
-      # so repointing them would claim a command nobody ran; 6 name artifacts that
-      # were deleted; 5 are root-level `npm test` recorded without the workspace
-      # they ran in; 2 are valid `pnpm`/`yarn info` this guard mis-parses as npm;
-      # the rest are build output and prose the extractor reads as commands.
-      #
-      # Two of those are guard limitations rather than evidence defects, and fixing
-      # them is the next real move: the npm-script parser should skip a flag's
-      # VALUE (`npm run --workspace <path> <script>` reads the path as the script),
-      # and `pnpm`/`yarn` are not `npm`.
-      #
-      # 40 -> 38: those two parser limitations were FIXED rather than tolerated,
-      # so the two valid `pnpm`/`yarn info` commands stopped being counted as dead
-      # evidence. THIS JOB printed `38 dead (budget 40)` in run 30502009205 before
-      # the budget moved. Note what moved and what did not: the flag-value defect
-      # recovered nothing today, because those records had already been reordered
-      # to suit the broken parser — the fix is what stops the NEXT record written
-      # the other way from being misreported as stale.
+      # 305 -> 21 (GT-637): most of it was two real defects in THIS GUARD, not the
+      # evidence corpus — `npmScriptOperand` was called but never defined (a
+      # ReferenceError the guard swallowed into a generic crash), and
+      # `npm run --workspace <path> <script>` (the flag BEFORE the script name,
+      # used throughout the corpus) mistook the workspace's own value for the
+      # script name. Fixing both, plus migrating ~18 pre-`src/`-refactor and
+      # pre-`product/`-move paths that have real successors, plus classifying
+      # `.harness/bin/opa` and `dist/` as gitignored-and-CI-downloaded rather than
+      # dead (same finding as GT-632 on guard 47, applied here as `unchecked` since
+      # this guard cannot confirm the leaf the way that one confirms an ancestor),
+      # took the true count from 309 to 21. The residual is retired artifacts with
+      # no successor (a consolidated `.bmad-core/AGENTS.md`, the retired
+      # `evolith-bff` gateway, the retired `packages/mcp-tools`, two retired k8s
+      # manifests, a retired sandbox app, three root-level scripts no longer
+      # declared) plus three records where `vision/` and `tools/list` are prose,
+      # not paths — see GT-637 for the record.
       #
       # Lower it as records are repaired, from a number this job printed; at 0,
       # delete the flag and this becomes the strict gate.
       - name: Dead-reference ratchet (must not grow)
-        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 38
+        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 19
 
   # RETIRED 2026-07-27 (GT-570): the `publish-npm` job lived here and published
   # ONLY `src/sdk/cli`, with `--tag beta` and no provenance, writing the token

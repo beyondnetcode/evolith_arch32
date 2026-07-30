@@ -251,6 +251,45 @@ describe('resolveCommand', () => {
     );
   });
 
+  test('resolves `npm run --workspace <path> <script>` — the flag BEFORE the script name', () => {
+    // GT-633 follow-on: `npm run --workspace @fixture/alpha test` is a valid
+    // invocation the corpus uses throughout. Before the fix, the workspace's own
+    // VALUE token (`@fixture/alpha`, which does not start with `-`) was mistaken
+    // for the script name, and reported dead as
+    // `npm script "@fixture/alpha" is not declared in pkgs/alpha/package.json`.
+    const r = resolveCommand(extractCommand('npm run --workspace @fixture/alpha test'), ctx());
+    assert.equal(r.status, 'resolved', r.detail);
+  });
+
+  test('DEAD: `npm run --workspace <path> <script>` still catches a script the workspace does not declare', () => {
+    const r = resolveCommand(extractCommand('npm run --workspace @fixture/alpha nonexistent'), ctx());
+    assert.equal(r.status, 'dead');
+    assert.match(r.detail, /is not declared/);
+  });
+
+  test('a gitignored, CI-downloaded binary is `unchecked`, not `dead`', () => {
+    // `.harness/bin/opa` is real and correct but gitignored: a separate CI step
+    // downloads it, and this guard runs right after `npm ci` with nothing else.
+    // Reporting it dead would penalize a correct record for an environment fact,
+    // same finding as GT-632 on guard 47 — but here the guard genuinely cannot
+    // confirm the leaf exists, so the honest verdict is `unchecked`, not `resolved`.
+    const r = resolveCommand(extractCommand('.harness/bin/opa eval -d rulesets/'), ctx());
+    assert.equal(r.status, 'unchecked', r.detail);
+    assert.match(r.detail, /gitignored artifact/);
+  });
+
+  test('a gitignored build script (`dist/`) is `unchecked`, not `dead`', () => {
+    const r = resolveCommand(extractCommand('node dist/main.js validate'), ctx());
+    assert.equal(r.status, 'unchecked', r.detail);
+    assert.match(r.detail, /gitignored artifact/);
+  });
+
+  test('a binary that is merely absent (not gitignored) is STILL dead — the fix must not blind it', () => {
+    const r = resolveCommand(extractCommand('scripts/gone.sh --check'), ctx());
+    assert.equal(r.status, 'dead');
+    assert.match(r.detail, /binary not found/);
+  });
+
   test('a genuinely missing grep target is STILL dead — the fix must not blind it', () => {
     const r = resolveCommand(extractCommand("grep -L 'a/b' scripts/gone.mjs"), ctx());
     assert.equal(r.status, 'dead');

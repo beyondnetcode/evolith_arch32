@@ -2,6 +2,18 @@ import { IFileSystem } from '../../domain/interfaces';
 import { IPlatformProviders } from '../ports/platform-detection.port';
 import { InitProjectInput } from './index';
 
+/**
+ * The commit types GIT-08 itself enumerates, in its own `pattern`. Kept in the
+ * same order so the two documents can be diffed by eye.
+ */
+const CONVENTIONAL_COMMIT_TYPES = ['feat', 'fix', 'docs', 'style', 'refactor', 'test', 'chore'];
+
+/** Pinned alongside the config, because GIT-08 asserts the tool is installable. */
+const COMMITLINT_DEPENDENCIES: Readonly<Record<string, string>> = Object.freeze({
+  '@commitlint/cli': '^19.0.0',
+  '@commitlint/config-conventional': '^19.0.0',
+});
+
 export class ProjectScaffolderService {
   private readonly fs: IFileSystem;
 
@@ -186,6 +198,76 @@ evolith sdlc gate-status
     await this.fs.ensureDir(`${projectDir}/src`);
     await this.fs.writeFile(`${projectDir}/src/__init__.py`, '');
     await this.fs.writeFile(`${projectDir}/src/main.py`, `def main():\n    print("${input.name} initialized")\n\nif __name__ == "__main__":\n    main()\n`);
+  }
+
+  /**
+   * Scaffold the Conventional Commits enforcement GIT-08 requires.
+   *
+   * GIT-08 is `blocking` and `MUST`, and it binds from the first commit — unlike
+   * the artifacts of a later lifecycle phase, there is nothing to decide and
+   * nothing to invent here: the corpus already states the convention and its type
+   * list, so the scaffold can write it verbatim. Before this, `evolith init`
+   * produced a repository that mandated Conventional Commits and enforced them
+   * with nothing, and its own first `evolith validate` said so.
+   *
+   * Three things are written, because GIT-08's handler checks all three legs and
+   * the middle one is the failure GT-623 found:
+   *
+   *  1. `commitlint.config.mjs` — the configuration;
+   *  2. the commitlint packages in `devDependencies` — a config whose tool is
+   *     never installed cannot run, and a `commit-msg` hook that shrugs and exits
+   *     zero when it is missing is worse than no hook at all;
+   *  3. `.husky/commit-msg` — the thing that actually runs it, when the caller
+   *     asked for hooks. `npx --no-install` is deliberate: if commitlint is not
+   *     installed the hook FAILS, it does not skip.
+   *
+   * Runtime-independent on purpose. commitlint is a Node tool, so a .NET or
+   * Python satellite that adopts it carries a tooling-only `package.json` — which
+   * is exactly what such repositories do in practice, and what GIT-08's handler
+   * reads. Emitting the config without it would leave the rule failing for the
+   * runtimes that are not TypeScript.
+   *
+   * @returns the artifact paths written, relative to the project directory.
+   */
+  async scaffoldCommitConventions(input: InitProjectInput, projectDir: string): Promise<string[]> {
+    const artifacts: string[] = [];
+
+    const config = `export default {
+  extends: ['@commitlint/config-conventional'],
+  rules: {
+    // GIT-08 — Conventional Commits: type(scope): description
+    'type-enum': [2, 'always', ${JSON.stringify(CONVENTIONAL_COMMIT_TYPES)}],
+  },
+};
+`;
+    await this.fs.writeFile(`${projectDir}/commitlint.config.mjs`, config);
+    artifacts.push('commitlint.config.mjs');
+
+    const packageJsonPath = `${projectDir}/package.json`;
+    const packageJson = await this.fs.exists(packageJsonPath)
+      ? await this.fs.readJson<Record<string, unknown>>(packageJsonPath)
+      : { name: input.name, version: '0.1.0', private: true };
+
+    packageJson.devDependencies = {
+      ...(packageJson.devDependencies as Record<string, string> | undefined),
+      ...COMMITLINT_DEPENDENCIES,
+    };
+    await this.fs.writeJson(packageJsonPath, packageJson);
+    artifacts.push('package.json');
+
+    if (input.features.includes('hooks')) {
+      await this.fs.ensureDir(`${projectDir}/.husky`);
+      await this.fs.writeFile(
+        `${projectDir}/.husky/commit-msg`,
+        '#!/bin/sh\n'
+        + '# GIT-08 — reject non-conforming commit messages. `--no-install` makes a\n'
+        + '# missing commitlint an ERROR rather than a silent skip (GT-623).\n'
+        + 'npx --no-install commitlint --edit "$1"\n',
+      );
+      artifacts.push('.husky/commit-msg');
+    }
+
+    return artifacts;
   }
 
   async checkRuntimePlatform(runtime: string): Promise<{ available: boolean; installHint?: string }> {

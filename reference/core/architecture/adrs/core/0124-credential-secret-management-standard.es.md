@@ -31,7 +31,7 @@ GitHub tokens were passed as tool arguments (appearing in audit logs and process
 
 ### 4. Credential Storage
 - In-memory credential stores (API key provisioning) are acceptable for development.
-- Production MUST use durable storage (database, Vault, Kubernetes secrets).
+- Production MUST use durable storage (base de datos, Vault, Kubernetes secrets).
 - Emit a warning at startup if using in-memory storage in production.
 
 ### 5. Docker Secrets

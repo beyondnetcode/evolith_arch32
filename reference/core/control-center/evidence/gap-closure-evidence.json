@@ -238,10 +238,10 @@
         ".harness/playbooks/sdlc-deep-audit.mjs"
       ],
       "validationCommands": [
-        "npm run build --workspace packages/agent-runtime",
-        "npm run test --workspace packages/agent-runtime",
+        "npm run build --workspace src/packages/agent-runtime",
+        "npm run test --workspace src/packages/agent-runtime",
         "npx tsc -p apps/agent-runtime-api/tsconfig.json",
-        "npm run build --workspace sdk/cli",
+        "npm run build --workspace src/sdk/cli",
         "node .harness/scripts/run-evolith-deep.mjs --markdown"
       ],
       "dependencyDisposition": "accepted-scope",
@@ -261,10 +261,10 @@
         "src/packages/agent-runtime/src/__tests__/public-surface.spec.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace packages/agent-runtime",
-        "npm run test --workspace packages/agent-runtime",
-        "npx jest --config sdk/cli/jest.config.js --runTestsByPath sdk/cli/src/infrastructure/agent/agent-runtime.factory.spec.ts sdk/cli/src/commands/chat/chat.command.spec.ts --no-coverage --runInBand",
-        "npm run build --workspace sdk/cli"
+        "npm run build --workspace src/packages/agent-runtime",
+        "npm run test --workspace src/packages/agent-runtime",
+        "npx jest --config src/sdk/cli/jest.config.js --runTestsByPath src/sdk/cli/src/infrastructure/agent/agent-runtime.factory.spec.ts src/sdk/cli/src/commands/chat/chat.command.spec.ts --no-coverage --runInBand",
+        "npm run build --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "GT-402 closes the Smart CLI interaction-adapter routing layer. GT-399 remains open for replacing stub/in-memory runtime adapters with real HTTP/Harness adapters."
@@ -287,8 +287,8 @@
         "src/sdk/cli/src/infrastructure/agent/agent-runtime.factory.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace packages/agent-runtime",
-        "npm run test --workspace packages/agent-runtime",
+        "npm run build --workspace src/packages/agent-runtime",
+        "npm run test --workspace src/packages/agent-runtime",
         "npx tsc -p apps/agent-runtime-api/tsconfig.json"
       ],
       "dependencyDisposition": "accepted-scope",
@@ -308,7 +308,7 @@
       ],
       "validationCommands": [
         "node .harness/scripts/ci/29-test-core-opa.mjs",
-        "npx jest --config packages/agent-runtime/jest.config.js --runTestsByPath packages/agent-runtime/src/__tests__/units.spec.ts packages/agent-runtime/src/__tests__/agent-runtime.service.spec.ts --no-coverage"
+        "npx jest --config src/packages/agent-runtime/jest.config.js --runTestsByPath src/packages/agent-runtime/src/__tests__/units.spec.ts src/packages/agent-runtime/src/__tests__/agent-runtime.service.spec.ts --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -352,8 +352,8 @@
         "src/packages/core-domain/src/application/validators/evaluators/aggregator-parity.spec.ts"
       ],
       "validationCommands": [
-        "./.harness/bin/opa test rulesets/opa/ --ignore=schemas -v",
-        "npx jest packages/core-domain/src/application/validators/evaluators/aggregator-parity.spec.ts"
+        "./.harness/bin/opa test src/rulesets/opa/ --ignore=schemas -v",
+        "npx jest src/packages/core-domain/src/application/validators/evaluators/aggregator-parity.spec.ts"
       ],
       "dependencyDisposition": "none"
     },
@@ -381,8 +381,8 @@
         "src/rulesets/README.es.md"
       ],
       "validationCommands": [
-        "npm run build --workspace packages/core-domain",
-        "npx jest packages/core-domain/src/application/validators/evaluators/opa-evaluator.spec.ts",
+        "npm run build --workspace src/packages/core-domain",
+        "npx jest src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.spec.ts",
         "node .harness/scripts/ci/01-validate-docs.mjs",
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
       ],
@@ -401,10 +401,10 @@
         "src/packages/infra-providers/src/webhook.adapter.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace packages/core-domain",
-        "npm run test --workspace packages/mcp-server",
-        "npm run test --workspace apps/core-api",
-        "npm run test --workspace sdk/cli"
+        "npm run build --workspace src/packages/core-domain",
+        "npm run test --workspace src/packages/mcp-server",
+        "npm run test --workspace src/apps/core-api",
+        "npm run test --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -421,8 +421,8 @@
       ],
       "validationCommands": [
         "npm run build:policy",
-        "npm run test --workspace packages/mcp-server",
-        "./.harness/bin/opa test rulesets/opa/"
+        "npm run test --workspace src/packages/mcp-server",
+        "./.harness/bin/opa test src/rulesets/opa/"
       ],
       "dependencyDisposition": "none"
     },
@@ -437,8 +437,8 @@
         "src/packages/mcp-server/src/common/envelopes.spec.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace packages/mcp-server",
-        "npm run test --workspace packages/mcp-server"
+        "npm run build --workspace src/packages/mcp-server",
+        "npm run test --workspace src/packages/mcp-server"
       ],
       "dependencyDisposition": "none"
     },
@@ -500,7 +500,7 @@
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs",
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
-        "node .harness/scripts/ci/23-check-orphan-bilingual.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
         "node .harness/scripts/ci/11-validate-product-docs.mjs"
       ],
       "dependencyDisposition": "none"
@@ -561,7 +561,7 @@
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs",
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
-        "node .harness/scripts/ci/23-check-orphan-bilingual.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -670,7 +670,7 @@
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -687,7 +687,7 @@
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -703,7 +703,7 @@
         "src/rulesets/topologies/serverless/README.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -719,7 +719,7 @@
         "src/rulesets/topologies/event-driven/README.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -739,9 +739,9 @@
       ],
       "validationCommands": [
         "node .harness/scripts/validate-topology-manifests.mjs",
-        "node .harness/scripts/check-bilingual-parity.mjs",
-        "node .harness/scripts/validate-docs.mjs --render-mermaid",
-        "npm run build --workspace @evolith/core-domain",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid",
+        "npm run build --workspace @beyondnet/evolith-core-domain",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -754,7 +754,7 @@
         "src/packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace @evolith/core-domain"
+        "npm run build --workspace @beyondnet/evolith-core-domain"
       ],
       "dependencyDisposition": "none"
     },
@@ -767,7 +767,7 @@
         "reference/core/control-center/taxonomy/MASTER_INDEX.es.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -782,8 +782,8 @@
         "src/packages/mcp-server/src/tools/topology.tools.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace @evolith/core",
-        "npm --workspace @evolith/mcp-server test"
+        "npm run build --workspace @beyondnet/evolith-core",
+        "npm --workspace @beyondnet/evolith-mcp test"
       ],
       "dependencyDisposition": "none"
     },
@@ -811,7 +811,7 @@
         "src/apps/core-api/src/application/services/workspace-reference-resolver.service.spec.ts"
       ],
       "validationCommands": [
-        "npm --workspace @evolith/core-api test",
+        "npm --workspace core-api test",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -857,7 +857,7 @@
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
       "validationCommands": [
-        "npm --workspace @evolith/core-domain test -- --runInBand",
+        "npm --workspace @beyondnet/evolith-core-domain test -- --runInBand",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -871,7 +871,7 @@
         "src/apps/core-api/src/presentation/controllers/reference.controller.ts"
       ],
       "validationCommands": [
-        "npm --workspace apps/core-api test -- --runInBand"
+        "npm --workspace src/apps/core-api test -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -884,9 +884,9 @@
         "src/apps/core-api/src/core-domain.module.ts"
       ],
       "validationCommands": [
-        "npm --workspace @evolith/core-domain run build",
-        "npm --workspace apps/core-api test -- --runInBand",
-        "npm --workspace apps/core-api run build"
+        "npm --workspace @beyondnet/evolith-core-domain run build",
+        "npm --workspace src/apps/core-api test -- --runInBand",
+        "npm --workspace src/apps/core-api run build"
       ],
       "dependencyDisposition": "none"
     },
@@ -899,7 +899,7 @@
         ".github/workflows/ci-cd.yml"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -914,8 +914,8 @@
         "src/sdk/cli/src/app.module.ts"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs",
-        "node .harness/scripts/check-bilingual-parity.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -930,7 +930,7 @@
         "src/sdk/cli/src/app.module.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace sdk/cli",
+        "npm run build --workspace src/sdk/cli",
         "npx jest src/app.module.spec.ts"
       ],
       "dependencyDisposition": "none"
@@ -958,7 +958,7 @@
         "product/infra/helm/evolith-core-api/templates/ingressroute.yaml"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "Traefik replaces Kong in infrastructure configuration."
@@ -972,7 +972,7 @@
         "product/products/evolith-tracker/sdlc-tracker-technical-interfaces.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "The Tracker technical interface references ADR-0073 as the unified output-envelope authority."
@@ -986,7 +986,7 @@
         "src/rulesets/schema/gate-evidence.schema.json"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -999,7 +999,7 @@
         "src/sdk/cli/test/gate.e2e-spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-02 supplied the domain contract consumed by the use case."
@@ -1013,7 +1013,7 @@
         "src/sdk/cli/.eslintrc.js"
       ],
       "validationCommands": [
-        "npm run lint --workspace sdk/cli"
+        "npm run lint --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -1025,7 +1025,7 @@
         "src/packages/mcp-server/src/main.ts"
       ],
       "validationCommands": [
-        "npm run mcp:smoke --workspace sdk/cli"
+        "npm run mcp:smoke --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -1038,7 +1038,7 @@
         ".harness/scripts/mcp-smoke.mjs"
       ],
       "validationCommands": [
-        "npm run mcp:smoke --workspace sdk/cli"
+        "npm run mcp:smoke --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Phase context is required on gate evaluation; retrofitting unrelated legacy tools was explicitly excluded to preserve their public schemas."
@@ -1051,7 +1051,7 @@
         ".harness/scripts/mcp-smoke.mjs"
       ],
       "validationCommands": [
-        "npm run mcp:smoke --workspace sdk/cli"
+        "npm run mcp:smoke --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-05 and GT-06 provide the transport and gate tool exercised by the smoke."
@@ -1065,7 +1065,7 @@
         "src/packages/core-domain/src/application/validators/phase-gate-validator.service.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -1078,7 +1078,7 @@
         "src/packages/core-domain/src/application/validators/phase-gate-validator.service.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -1091,7 +1091,7 @@
         "src/packages/core-domain/src/application/validators/phase-gate-validator.service.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -1104,7 +1104,7 @@
         "src/packages/core-domain/src/application/validators/phase-gate-validator.service.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -1116,7 +1116,7 @@
         "src/sdk/cli/test"
       ],
       "validationCommands": [
-        "npm run test:e2e --workspace sdk/cli"
+        "npm run test:e2e --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -1129,7 +1129,7 @@
         "src/packages/core-domain/src/application/use-cases/propose-phase-advance.use-case.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-03 supplies the technical gate evaluation composed by the proposal runner."
@@ -1143,7 +1143,7 @@
         "src/sdk/cli/src/infrastructure/adapters/webhook.adapter.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -1156,7 +1156,7 @@
         "reference/core/control-center/gaps/gap-reference-catalog.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1169,8 +1169,8 @@
         "src/sdk/cli/src"
       ],
       "validationCommands": [
-        "npm run lint --workspace sdk/cli",
-        "npm run build --workspace sdk/cli"
+        "npm run lint --workspace src/sdk/cli",
+        "npm run build --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -1183,7 +1183,7 @@
         "src/sdk/cli/package.json"
       ],
       "validationCommands": [
-        "npm view @evolith/smart-cli"
+        "npm view @beyondnet/evolith-cli"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-28, GT-05, and GT-07 were closed before the public release workflow was accepted."
@@ -1199,8 +1199,8 @@
         "src/sdk/cli/.eslintrc.js"
       ],
       "validationCommands": [
-        "npm run lint --workspace sdk/cli",
-        "npm run build --workspace sdk/cli"
+        "npm run lint --workspace src/sdk/cli",
+        "npm run build --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -1213,7 +1213,7 @@
         "reference/core/architecture/adrs/adr-authoring-standard.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1226,7 +1226,7 @@
         "reference/core/architecture/adrs/adr-matrix.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1240,7 +1240,7 @@
       ],
       "validationCommands": [
         "node .harness/scripts/bilingual-coverage.mjs",
-        "node .harness/scripts/check-bilingual-parity.mjs"
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1254,7 +1254,7 @@
         "product/products/README.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1270,7 +1270,7 @@
         "product/infra/security/codeql-trivy-profile.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1282,7 +1282,7 @@
         "reference/core/sdlc/01-playbooks/zero-downtime-release.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1311,11 +1311,11 @@
       ],
       "validationCommands": [
         "npm ci",
-        "npm run lint --workspace @evolith/smart-cli",
-        "npm run build --workspace @evolith/smart-cli",
-        "npm run test:unit --workspace @evolith/smart-cli -- --runInBand",
-        "npm run test:e2e --workspace @evolith/smart-cli",
-        "npm run mcp:smoke --workspace @evolith/smart-cli"
+        "npm run lint --workspace @beyondnet/evolith-cli",
+        "npm run build --workspace @beyondnet/evolith-cli",
+        "npm run test:unit --workspace @beyondnet/evolith-cli -- --runInBand",
+        "npm run test:e2e --workspace @beyondnet/evolith-cli",
+        "npm run mcp:smoke --workspace @beyondnet/evolith-cli"
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "GT-28 restores clean-checkout installation and the executable lint, build, test, and MCP smoke baseline. The independently measured coverage regression remains blocking and is tracked as GT-48."
@@ -1329,7 +1329,7 @@
         "src/sdk/cli/src"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -1341,7 +1341,7 @@
         "reference/core/control-center/maturity-reports/maturity-assessment.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1353,7 +1353,7 @@
         "product/suite/strategy/evolutionary-strategy-roadmap.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1380,8 +1380,8 @@
         "reference/core/sdlc/governance/adr-0090-rule-language-policy.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs",
-        "node .harness/scripts/check-orphan-bilingual.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1398,8 +1398,8 @@
       "validationCommands": [
         "node --test .harness/scripts/validate-tracking.test.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs",
-        "node .harness/scripts/validate-docs.mjs",
-        "node .harness/scripts/check-bilingual-parity.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1418,7 +1418,7 @@
         "node --test .harness/scripts/reconcile-maturity.test.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs",
         "node .harness/scripts/ci/09-reconcile-maturity.mjs --check",
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "Documentation Validation run 27470122212 passed with full Git history and validated the runtime evidence-backed reconciliation."
@@ -1455,10 +1455,10 @@
         "src/sdk/cli/test/e2e/cli-e2e.test.ts"
       ],
       "validationCommands": [
-        "npm run lint --workspace sdk/cli",
-        "npm run test:unit --workspace sdk/cli -- --runInBand",
-        "npm run test:e2e --workspace sdk/cli -- --runTestsByPath test/e2e/mcp-e2e.test.ts",
-        "npm run mcp:smoke --workspace sdk/cli"
+        "npm run lint --workspace src/sdk/cli",
+        "npm run test:unit --workspace src/sdk/cli -- --runInBand",
+        "npm run test:e2e --workspace src/sdk/cli -- --runTestsByPath test/e2e/mcp-e2e.test.ts",
+        "npm run mcp:smoke --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -1472,10 +1472,10 @@
         "reference/core/control-center/gaps/gap-reference-catalog.md"
       ],
       "validationCommands": [
-        "npm run build --workspace sdk/cli",
-        "npm run lint --workspace sdk/cli",
-        "npm run mcp:smoke --workspace sdk/cli",
-        "node .harness/scripts/validate-docs.mjs"
+        "npm run build --workspace src/sdk/cli",
+        "npm run lint --workspace src/sdk/cli",
+        "npm run mcp:smoke --workspace src/sdk/cli",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Tracker-owned chat and session behavior was removed; Core exposes governed capabilities through CLI and MCP only."
@@ -1490,8 +1490,8 @@
         "src/sdk/cli/src/commands/standards/standards.command.spec.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace sdk/cli",
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm run build --workspace src/sdk/cli",
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "Completes the service-locator removal (GT-04) and DI consolidation (GT-17) by deleting the leftover no-op stubs."
@@ -1507,8 +1507,8 @@
         "README.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs",
-        "node .harness/scripts/check-bilingual-parity.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1523,8 +1523,8 @@
         "src/packages/core-domain/src/application/validators/build-vs-compose.schema.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand --testPathPattern build-vs-compose",
-        "npm run test:e2e --workspace sdk/cli -- --runTestsByPath test/gate.e2e-spec.ts"
+        "npm test --workspace src/sdk/cli -- --runInBand --testPathPattern build-vs-compose",
+        "npm run test:e2e --workspace src/sdk/cli -- --runTestsByPath test/gate.e2e-spec.ts"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "Builds on the ADR-0073 GateEvidence contract (GT-02/GT-03) and the deepened phase-gate content checks (GT-08…GT-11)."
@@ -1538,7 +1538,7 @@
         ".github/workflows/sdk-cli-ci.yml"
       ],
       "validationCommands": [
-        "npm run test:cov --workspace @evolith/smart-cli -- --coverageReporters=text-summary"
+        "npm run test:cov --workspace @beyondnet/evolith-cli -- --coverageReporters=text-summary"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-48 restored statement coverage to 80.65%; this threshold pins the recovered floor so regressions fail locally."
@@ -1558,7 +1558,7 @@
       "validationCommands": [
         "node .harness/scripts/generate-product-inventory.mjs --check",
         "node .harness/scripts/ci/11-validate-product-docs.mjs",
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1575,9 +1575,9 @@
         "src/packages/core-domain/src/domain/interfaces.ts"
       ],
       "validationCommands": [
-        "npx tsc --noEmit --project sdk/cli/tsconfig.json",
-        "npm run build --workspace sdk/cli",
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npx tsc --noEmit --project src/sdk/cli/tsconfig.json",
+        "npm run build --workspace src/sdk/cli",
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -1595,7 +1595,7 @@
         "src/sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.spec.ts"
       ],
       "validationCommands": [
-        "npm run test:cov --workspace @evolith/smart-cli -- --coverageReporters=json-summary",
+        "npm run test:cov --workspace @beyondnet/evolith-cli -- --coverageReporters=json-summary",
         "node -e \"process.exit(require('./sdk/cli/coverage/coverage-summary.json').total.statements.pct >= 80 ? 0 : 1)\""
       ],
       "dependencyDisposition": "satisfied",
@@ -1631,9 +1631,9 @@
         "src/packages/core-domain/src/application/validators/phase-gate-validator.service.ts"
       ],
       "validationCommands": [
-        "npm run lint --workspace sdk/cli",
-        "npm test --workspace sdk/cli -- --runInBand",
-        "npm run test:e2e --workspace sdk/cli"
+        "npm run lint --workspace src/sdk/cli",
+        "npm test --workspace src/sdk/cli -- --runInBand",
+        "npm run test:e2e --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-19 deferred this gap; it is now closed by removing the direct instantiations."
@@ -1646,8 +1646,8 @@
         "src/packages/core-domain/src/application/generators/hexagonal-scaffolder.ts"
       ],
       "validationCommands": [
-        "npm run lint --workspace sdk/cli",
-        "npm test --workspace sdk/cli"
+        "npm run lint --workspace src/sdk/cli",
+        "npm test --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "No dependencies. Technical debt placeholders replaced with valid implementation patterns."
@@ -1664,8 +1664,8 @@
         "product/products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md"
       ],
       "validationCommands": [
-        "npm run lint --workspace sdk/cli",
-        "npm test --workspace sdk/cli"
+        "npm run lint --workspace src/sdk/cli",
+        "npm test --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "All MCP roadmap TODO items have been implemented and F1/F2/F3 architecture validation now correctly delegates to the OPA RulesetValidatorService."
@@ -1682,7 +1682,7 @@
         "src/sdk/cli/src/commands/adr/adr.command.ts"
       ],
       "validationCommands": [
-        "npm run test:e2e --workspace sdk/cli"
+        "npm run test:e2e --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "All interactive prompts are safely mocked."
@@ -1698,9 +1698,9 @@
         "src/sdk/cli/src/infrastructure/prompts/prompt.service.ts"
       ],
       "validationCommands": [
-        "npm run lint --workspace sdk/cli",
-        "npm run test:unit --workspace sdk/cli",
-        "npm run test:e2e --workspace sdk/cli"
+        "npm run lint --workspace src/sdk/cli",
+        "npm run test:unit --workspace src/sdk/cli",
+        "npm run test:e2e --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -1726,7 +1726,7 @@
         "src/apps/core-api/src/core-domain.module.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --testPathPatterns=\"core-domain.module\" --no-coverage"
+        "npm test --workspace src/apps/core-api -- --testPathPatterns=\"core-domain.module\" --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -1739,8 +1739,8 @@
         "src/packages/core-domain/src/application/"
       ],
       "validationCommands": [
-        "npx tsc --project packages/core-domain/tsconfig.json --noEmit",
-        "npm run build --workspace packages/core-domain"
+        "npx tsc --project src/packages/core-domain/tsconfig.json --noEmit",
+        "npm run build --workspace src/packages/core-domain"
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Core-domain application layer (12 files) cleared of @ts-nocheck with strict:true. sdk/cli @ts-nocheck removal (19 files) deferred to a follow-up gap as those files have different architectural ownership."
@@ -1755,7 +1755,7 @@
         "src/apps/core-api/src/presentation/controllers/security-headers.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --testPathPatterns=\"security-headers\" --no-coverage"
+        "npm test --workspace src/apps/core-api -- --testPathPatterns=\"security-headers\" --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -1770,7 +1770,7 @@
         "src/apps/core-api/src/presentation/controllers/security-headers.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --testPathPatterns=\"security-headers\" --no-coverage"
+        "npm test --workspace src/apps/core-api -- --testPathPatterns=\"security-headers\" --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -1784,7 +1784,7 @@
         "src/apps/core-api/src/presentation/controllers/"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --testPathPatterns=\"security-headers\" --no-coverage"
+        "npm test --workspace src/apps/core-api -- --testPathPatterns=\"security-headers\" --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -1796,7 +1796,7 @@
         "src/apps/core-api/src/"
       ],
       "validationCommands": [
-        "npm run test:cov --workspace apps/core-api -- --coverageReporters=text-summary"
+        "npm run test:cov --workspace src/apps/core-api -- --coverageReporters=text-summary"
       ],
       "dependencyDisposition": "none"
     },
@@ -1809,7 +1809,7 @@
         "src/apps/core-api/src/presentation/controllers/health.controller.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --no-coverage"
+        "npm test --workspace src/apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "API Key auth implemented for M2M. JWT Bearer tokens deferred to future iteration per ADR-0075."
@@ -1825,7 +1825,7 @@
         "src/apps/core-api/src/app.module.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --no-coverage"
+        "npm test --workspace src/apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -1838,7 +1838,7 @@
         "src/apps/core-api/src/graceful-shutdown.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --testPathPatterns=\"graceful\" --no-coverage"
+        "npm test --workspace src/apps/core-api -- --testPathPatterns=\"graceful\" --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -1852,7 +1852,7 @@
         "src/apps/core-api/src/main.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --no-coverage"
+        "npm test --workspace src/apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -1865,7 +1865,7 @@
         "src/apps/core-api/src/infrastructure/guards/audit-throttler.guard.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --no-coverage"
+        "npm test --workspace src/apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -1877,7 +1877,7 @@
         "src/apps/core-api/src/infrastructure/filters/http-exception.filter.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --testPathPatterns=\"e2e\" --no-coverage"
+        "npm test --workspace src/apps/core-api -- --testPathPatterns=\"e2e\" --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -1890,7 +1890,7 @@
         "src/apps/core-api/src/core-domain.module.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --testPathPatterns=\"phases\" --no-coverage"
+        "npm test --workspace src/apps/core-api -- --testPathPatterns=\"phases\" --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -1904,7 +1904,7 @@
         "src/apps/core-api/src/presentation/controllers/"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --no-coverage"
+        "npm test --workspace src/apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -1918,7 +1918,7 @@
         "src/apps/core-api/src/presentation/controllers/metrics.controller.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --no-coverage"
+        "npm test --workspace src/apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -1930,7 +1930,7 @@
         "src/apps/core-api/src/main.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --no-coverage"
+        "npm test --workspace src/apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -1942,7 +1942,7 @@
         "reference/core/foundations/common-rules/senior-architectural-assessment.md"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --testPathPatterns=\"circuit\" --no-coverage"
+        "npm test --workspace src/apps/core-api -- --testPathPatterns=\"circuit\" --no-coverage"
       ],
       "dependencyDisposition": "none",
       "closureNote": "2026-07-24 (GT-560): the circuit breaker delivered here was later found to be a DI-registered orphan protecting nothing (the Core is a stateless evaluator, ADR-0101) and was removed. This closure is SUPERSEDED by GT-560; evidence repointed to the resilience note in senior-architectural-assessment.md, which now documents the removal and the 4/10 rating."
@@ -1957,8 +1957,8 @@
         "src/sdk/cli/src/app.module.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --no-coverage",
-        "npm run build --workspace packages/infra-providers"
+        "npm test --workspace src/apps/core-api -- --no-coverage",
+        "npm run build --workspace src/packages/infra-providers"
       ],
       "dependencyDisposition": "none"
     },
@@ -1971,7 +1971,7 @@
         "src/apps/core-api/src/main.ts"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api -- --no-coverage"
+        "npm test --workspace src/apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -2000,7 +2000,7 @@
         "src/packages/core-domain/src/domain/services/index.ts"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "satisfied",
@@ -2032,8 +2032,8 @@
         ".github/workflows/sdk-cli-ci.yml"
       ],
       "validationCommands": [
-        "npx tsc --noEmit -p sdk/cli/tsconfig.test.json",
-        "node .harness/scripts/validate-docs.mjs"
+        "npx tsc --noEmit -p src/sdk/cli/tsconfig.test.json",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -2052,7 +2052,7 @@
         "src/sdk/cli/src/app.module.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace sdk/cli",
+        "npm run build --workspace src/sdk/cli",
         "npx jest src/infrastructure/config/config.service.spec.ts --no-coverage",
         "npx tsc --noEmit -p tsconfig.test.json"
       ],
@@ -2067,7 +2067,7 @@
         "reference/core/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.es.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "The ADR records a dated decision with a re-evaluation gate, satisfying the closure criterion."
@@ -2084,8 +2084,8 @@
         "src/sdk/cli/src/app.module.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace packages/core-domain",
-        "npm run build --workspace sdk/cli",
+        "npm run build --workspace src/packages/core-domain",
+        "npm run build --workspace src/sdk/cli",
         "npx jest"
       ],
       "dependencyDisposition": "none"
@@ -2101,8 +2101,8 @@
         "src/sdk/cli/src/app.module.ts"
       ],
       "validationCommands": [
-        "npx jest --config sdk/cli/jest.config.js --testPathPatterns=fixtures",
-        "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=fixtures"
+        "npx jest --config src/sdk/cli/jest.config.js --testPathPatterns=fixtures",
+        "npx jest --config src/sdk/cli/test/jest-e2e.json --testPathPatterns=fixtures"
       ],
       "dependencyDisposition": "none"
     },
@@ -2119,8 +2119,8 @@
         "src/sdk/cli/test/completion.e2e-spec.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace sdk/cli",
-        "node .harness/scripts/validate-docs.mjs"
+        "npm run build --workspace src/sdk/cli",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -2134,8 +2134,8 @@
         "src/sdk/cli/test/e2e/cli-e2e.test.ts"
       ],
       "validationCommands": [
-        "grep -rl 'describe.skip' sdk/cli/src || echo 'none'",
-        "npm run build --workspace sdk/cli"
+        "grep -rl 'describe.skip' src/sdk/cli/src || echo 'none'",
+        "npm run build --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -2150,7 +2150,7 @@
         "src/sdk/cli/src/app.module.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace sdk/cli",
+        "npm run build --workspace src/sdk/cli",
         "npm run test -- --testPathPattern=api.command.spec"
       ],
       "dependencyDisposition": "none"
@@ -2164,7 +2164,7 @@
         "src/sdk/cli/src/app.module.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace sdk/cli"
+        "npm run build --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -2180,8 +2180,8 @@
         "src/packages/mcp-server/src/main.ts"
       ],
       "validationCommands": [
-        "npx jest --config sdk/cli/jest.config.js --testPathPatterns=\"confirmation\"",
-        "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=\"mcp-confirmation\""
+        "npx jest --config src/sdk/cli/jest.config.js --testPathPatterns=\"confirmation\"",
+        "npx jest --config src/sdk/cli/test/jest-e2e.json --testPathPatterns=\"mcp-confirmation\""
       ],
       "dependencyDisposition": "none"
     },
@@ -2195,8 +2195,8 @@
         "src/sdk/cli/test/progress.e2e-spec.ts"
       ],
       "validationCommands": [
-        "npx jest --config sdk/cli/jest.config.js --testPathPatterns=\"progress\"",
-        "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=\"progress\""
+        "npx jest --config src/sdk/cli/jest.config.js --testPathPatterns=\"progress\"",
+        "npx jest --config src/sdk/cli/test/jest-e2e.json --testPathPatterns=\"progress\""
       ],
       "dependencyDisposition": "none"
     },
@@ -2210,9 +2210,9 @@
         "src/sdk/cli/README.es.md"
       ],
       "validationCommands": [
-        "npm view @evolith/smart-cli versions",
-        "pnpm info @evolith/smart-cli",
-        "yarn info @evolith/smart-cli"
+        "npm view @beyondnet/evolith-cli versions",
+        "pnpm info @beyondnet/evolith-cli",
+        "yarn info @beyondnet/evolith-cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -2228,8 +2228,8 @@
         "src/sdk/cli/src/app.module.ts"
       ],
       "validationCommands": [
-        "npx jest --config sdk/cli/jest.config.js --testPathPatterns=\"wizard\"",
-        "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=\"wizard\""
+        "npx jest --config src/sdk/cli/jest.config.js --testPathPatterns=\"wizard\"",
+        "npx jest --config src/sdk/cli/test/jest-e2e.json --testPathPatterns=\"wizard\""
       ],
       "dependencyDisposition": "none"
     },
@@ -2242,7 +2242,7 @@
       ],
       "validationCommands": [
         "npm run test:cov",
-        "node .harness/scripts/validate-docs.mjs"
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -2255,8 +2255,8 @@
         "src/packages/core-domain/src/domain/interfaces.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace sdk/cli",
-        "npm run test --workspace sdk/cli"
+        "npm run build --workspace src/sdk/cli",
+        "npm run test --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -2271,8 +2271,8 @@
         "src/sdk/cli/examples/mcp-test.js"
       ],
       "validationCommands": [
-        "npx jest --config sdk/cli/jest.config.js --testPathPatterns=\"auto-fix\"",
-        "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=\"auto-fix\""
+        "npx jest --config src/sdk/cli/jest.config.js --testPathPatterns=\"auto-fix\"",
+        "npx jest --config src/sdk/cli/test/jest-e2e.json --testPathPatterns=\"auto-fix\""
       ],
       "dependencyDisposition": "none"
     },
@@ -2288,8 +2288,8 @@
         "src/sdk/cli/src/app.module.ts"
       ],
       "validationCommands": [
-        "npx tsc -p sdk/cli/tsconfig.json --noEmit",
-        "npx jest --config sdk/cli/jest.config.js --testPathPatterns=\"progress|alias\""
+        "npx tsc -p src/sdk/cli/tsconfig.json --noEmit",
+        "npx jest --config src/sdk/cli/jest.config.js --testPathPatterns=\"progress|alias\""
       ],
       "dependencyDisposition": "none"
     },
@@ -2304,8 +2304,8 @@
         "src/packages/mcp-server/src/main.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace sdk/cli",
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm run build --workspace src/sdk/cli",
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -2320,12 +2320,12 @@
         "src/sdk/cli/test/e2e/cli-e2e.test.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace packages/mcp-server",
-        "npm test --workspace packages/mcp-server -- --runInBand",
-        "npm run build --workspace sdk/cli",
-        "npm test --workspace sdk/cli -- --runInBand",
-        "node .harness/scripts/validate-docs.mjs",
-        "node .harness/scripts/check-bilingual-parity.mjs",
+        "npm run build --workspace src/packages/mcp-server",
+        "npm test --workspace src/packages/mcp-server -- --runInBand",
+        "npm run build --workspace src/sdk/cli",
+        "npm test --workspace src/sdk/cli -- --runInBand",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -2341,8 +2341,8 @@
         "src/apps/core-api/src/core-domain.module.ts"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs",
-        "node .harness/scripts/check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -2360,11 +2360,11 @@
         "src/sdk/cli/src/app.module.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace packages/infra-providers",
-        "npm run build --workspace apps/core-api",
-        "npm run build --workspace sdk/cli",
-        "npm test --workspace apps/core-api -- --runInBand",
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm run build --workspace src/packages/infra-providers",
+        "npm run build --workspace src/apps/core-api",
+        "npm run build --workspace src/sdk/cli",
+        "npm test --workspace src/apps/core-api -- --runInBand",
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -2378,8 +2378,8 @@
         "src/apps/core-api/README.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs",
-        "node .harness/scripts/check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs",
         "node .harness/scripts/ci/09-reconcile-maturity.mjs --check"
       ],
@@ -2592,7 +2592,7 @@
         ".github/workflows/sdk-cli-ci.yml"
       ],
       "validationCommands": [
-        "node --test .harness/scripts/ci/review-input.test.mjs .harness/scripts/ci/review-result.test.mjs .harness/scripts/ci/review-provider.test.mjs"
+        "node --test .harness/scripts/ci/agentic/review-input.test.mjs .harness/scripts/ci/agentic/review-result.test.mjs .harness/scripts/ci/agentic/review-provider.test.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -2824,8 +2824,8 @@
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts packages/core-domain/src/application/validators/evaluators/opa-input-builder.spec.ts --runInBand",
-        "npm run build --workspace packages/core-domain",
+        "npx jest --config src/packages/core-domain/jest.config.js src/packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.spec.ts --runInBand",
+        "npm run build --workspace src/packages/core-domain",
         "node .harness/scripts/ci/28-test-topology-opa.mjs",
         "EVOLITH_PARITY_FULL=true node .harness/scripts/ci/27-opa-parity-gate.mjs",
         "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs",
@@ -2884,7 +2884,7 @@
         "src/tests/contract/package.json"
       ],
       "validationCommands": [
-        "node tests/contract/roundtrip-gate-evaluate.mjs"
+        "node src/tests/contract/roundtrip-gate-evaluate.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -2897,8 +2897,8 @@
         "src/sdk/cli/src/infrastructure/observability/otel-tracing.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace packages/mcp-server",
-        "npm run build --workspace sdk/cli"
+        "npm run build --workspace src/packages/mcp-server",
+        "npm run build --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -2913,7 +2913,7 @@
         "src/sdk/cli/src/commands/phase/phase-advance.command.spec.ts"
       ],
       "validationCommands": [
-        "npx jest --config sdk/cli/jest.config.js --coverage",
+        "npx jest --config src/sdk/cli/jest.config.js --coverage",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -2954,8 +2954,8 @@
         "src/packages/core-domain/src/domain/interfaces.ts"
       ],
       "validationCommands": [
-        "npx tsc --noEmit -p sdk/cli/tsconfig.json",
-        "npm test --workspace sdk/cli",
+        "npx tsc --noEmit -p src/sdk/cli/tsconfig.json",
+        "npm test --workspace src/sdk/cli",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -2970,7 +2970,7 @@
         "src/packages/mcp-server/src/tools/tools-registration.spec.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/mcp-server/jest.config.js --coverage",
+        "npx jest --config src/packages/mcp-server/jest.config.js --coverage",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -2986,7 +2986,7 @@
         "src/packages/core-domain/src/domain/metrics/git-log-reader.spec.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --coverage",
+        "npx jest --config src/packages/core-domain/jest.config.js --coverage",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -3020,9 +3020,9 @@
         "src/sdk/cli/src/infrastructure/prompts/init-prompt-options.ts"
       ],
       "validationCommands": [
-        "npm run test --workspace packages/core-domain",
-        "npm run test --workspace packages/mcp-server",
-        "npm run test --workspace sdk/cli",
+        "npm run test --workspace src/packages/core-domain",
+        "npm run test --workspace src/packages/mcp-server",
+        "npm run test --workspace src/sdk/cli",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -3037,8 +3037,8 @@
         "src/sdk/cli/src/infrastructure/plugins/plugin-loader.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace sdk/cli",
-        "npm run test:unit --workspace sdk/cli",
+        "npm run build --workspace src/sdk/cli",
+        "npm run test:unit --workspace src/sdk/cli",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -3120,10 +3120,10 @@
         "src/sdk/cli/src/infrastructure/cli/command-executor.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace packages/mcp-server",
-        "npm run build --workspace sdk/cli",
-        "npm test --workspace packages/mcp-server -- --runInBand",
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm run build --workspace src/packages/mcp-server",
+        "npm run build --workspace src/sdk/cli",
+        "npm test --workspace src/packages/mcp-server -- --runInBand",
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -3176,7 +3176,7 @@
         "src/sdk/cli/test/e2e/cli-e2e.test.ts"
       ],
       "validationCommands": [
-        "NODE_OPTIONS=--max-old-space-size=4096 npx jest --config sdk/cli/test/jest-e2e.json --runInBand --no-bail --testPathPatterns='mcp-e2e'"
+        "NODE_OPTIONS=--max-old-space-size=4096 npx jest --config src/sdk/cli/test/jest-e2e.json --runInBand --no-bail --testPathPatterns='mcp-e2e'"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Added 11 HTTP transport protocol E2E tests covering initialize, tools, resources, prompts, error handling, and session management. 40 E2E tests pass."
@@ -3207,8 +3207,8 @@
         "src/sdk/cli/src/commands/completion/completion.command.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace sdk/cli",
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm run build --workspace src/sdk/cli",
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -3223,7 +3223,7 @@
       ],
       "validationCommands": [
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
-        "node .harness/scripts/ci/23-check-orphan-bilingual.mjs"
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -3249,8 +3249,8 @@
         "src/sdk/cli/src/infrastructure/formatters/output-formatter.service.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace sdk/cli",
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm run build --workspace src/sdk/cli",
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -3401,10 +3401,10 @@
         "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture/ast-rules.ts"
       ],
       "validationCommands": [
-        "npx tsc --noEmit --project packages/core-domain/tsconfig.json",
-        "npx tsc --noEmit --project packages/infra-providers/tsconfig.json",
-        "npx tsc --noEmit --project packages/mcp-server/tsconfig.json",
-        "npx tsc --noEmit --project apps/core-api/tsconfig.json",
+        "npx tsc --noEmit --project src/packages/core-domain/tsconfig.json",
+        "npx tsc --noEmit --project src/packages/infra-providers/tsconfig.json",
+        "npx tsc --noEmit --project src/packages/mcp-server/tsconfig.json",
+        "npx tsc --noEmit --project src/apps/core-api/tsconfig.json",
         "npm test"
       ],
       "dependencyDisposition": "none",
@@ -3421,11 +3421,11 @@
         "src/sdk/cli/src/test/mocks/index.ts"
       ],
       "validationCommands": [
-        "npx tsc --noEmit --project packages/core-domain/tsconfig.json",
-        "npx tsc --noEmit --project packages/mcp-server/tsconfig.json",
-        "npx tsc --noEmit --project packages/infra-providers/tsconfig.json",
-        "npx tsc --noEmit --project sdk/cli/tsconfig.json",
-        "npx tsc --noEmit --project apps/core-api/tsconfig.json",
+        "npx tsc --noEmit --project src/packages/core-domain/tsconfig.json",
+        "npx tsc --noEmit --project src/packages/mcp-server/tsconfig.json",
+        "npx tsc --noEmit --project src/packages/infra-providers/tsconfig.json",
+        "npx tsc --noEmit --project src/sdk/cli/tsconfig.json",
+        "npx tsc --noEmit --project src/apps/core-api/tsconfig.json",
         "npm test"
       ],
       "dependencyDisposition": "none",
@@ -3444,10 +3444,10 @@
         "src/sdk/cli/src/infrastructure/prompts/init-prompt-options.ts"
       ],
       "validationCommands": [
-        "npx tsc --noEmit --project sdk/cli/tsconfig.json",
-        "npx tsc --noEmit --project packages/core/tsconfig.json",
-        "npx tsc --noEmit --project packages/mcp-server/tsconfig.json",
-        "npx tsc --noEmit --project apps/core-api/tsconfig.json",
+        "npx tsc --noEmit --project src/sdk/cli/tsconfig.json",
+        "npx tsc --noEmit --project src/packages/core/tsconfig.json",
+        "npx tsc --noEmit --project src/packages/mcp-server/tsconfig.json",
+        "npx tsc --noEmit --project src/apps/core-api/tsconfig.json",
         "npm test"
       ],
       "dependencyDisposition": "none",
@@ -3579,7 +3579,7 @@
         "product/operations/chaos-experiments/pod-kill.yaml"
       ],
       "validationCommands": [
-        "cat reference/operations/chaos-experiments/cpu-stress.yaml"
+        "cat product/operations/chaos-experiments/cpu-stress.yaml"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Created 3 Chaos Mesh CRD experiments: CPU stress, network partition, pod kill."
@@ -3610,7 +3610,7 @@
         "product/operations/otel/prometheus-config.yml"
       ],
       "validationCommands": [
-        "grep -c 'prometheus' reference/infrastructure/docker-compose.yml"
+        "grep -c 'prometheus' product/infra/docker-compose.yml"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Added Prometheus and Mimir services to docker-compose with scrape config."
@@ -3624,7 +3624,7 @@
         "product/operations/alerts/prometheus-alerts.yml"
       ],
       "validationCommands": [
-        "ls reference/operations/slo/ reference/operations/alerts/"
+        "ls product/operations/slo/ product/operations/alerts/"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Defined SLOs for Core API and created Prometheus alerting rules."
@@ -3639,7 +3639,7 @@
         "product/operations/load-tests/cli-batch-operations.js"
       ],
       "validationCommands": [
-        "node --check reference/operations/load-tests/api-throughput-baseline.js"
+        "node --check product/operations/load-tests/api-throughput-baseline.js"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Created 3 k6 load test scripts."
@@ -3655,7 +3655,7 @@
         "product/operations/incident-response-production-rollback.md"
       ],
       "validationCommands": [
-        "ls reference/operations/incident-response-*.md"
+        "ls product/operations/incident-response-*.md"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Created 4 incident response playbooks."
@@ -3682,7 +3682,7 @@
         "product/infra/.env.example"
       ],
       "validationCommands": [
-        "grep -c ENV reference/infrastructure/docker-compose.yml"
+        "grep -c ENV product/infra/docker-compose.yml"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Replaced hardcoded passwords."
@@ -3709,7 +3709,7 @@
         "src/apps/core-api/src/infrastructure/config/env.validation.ts"
       ],
       "validationCommands": [
-        "grep -c CORS_ORIGINS apps/core-api/src/main.ts"
+        "grep -c CORS_ORIGINS src/apps/core-api/src/main.ts"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Implemented environment-based CORS configuration."
@@ -3746,7 +3746,7 @@
         "src/rulesets/opa/cli-release-readiness.rego"
       ],
       "validationCommands": [
-        ".harness/bin/opa test rulesets/opa/ -v"
+        ".harness/bin/opa test src/rulesets/opa/ -v"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Created 12 OPA policies for all previously uncovered native rulesets."
@@ -3999,7 +3999,7 @@
         "product/operations/redis-caching-layer.md"
       ],
       "validationCommands": [
-        "grep -c Redis apps/core-api/src/app.module.ts"
+        "grep -c Redis src/apps/core-api/src/app.module.ts"
       ],
       "dependencyDisposition": "none",
       "closureNote": "2026-07-24 (GT-560): the core-api Redis cache path never actually connected (two wiring bugs) and was removed; `redis-cache.module.ts` -> `in-memory-cache.module.ts` (honest per-process cache). Evidence repointed to the successor module; the other artifacts (cache-keys.ts, the MCP cache module, the caching-layer doc) are unchanged."
@@ -4016,9 +4016,9 @@
         "src/packages/mcp-server/src/mcp/mcp-server.service.spec.ts"
       ],
       "validationCommands": [
-        "grep -n 'production.*allowNoAuth' packages/mcp-server/src/mcp/mcp-server-auth.ts",
-        "grep -n 'ALLOW_NO_AUTH' packages/mcp-server/src/main.ts",
-        "grep -n 'logger.warn.*allow-no-auth' packages/mcp-server/src/mcp/mcp-server.service.ts"
+        "grep -n 'production.*allowNoAuth' src/packages/mcp-server/src/mcp/mcp-server-auth.ts",
+        "grep -n 'ALLOW_NO_AUTH' src/packages/mcp-server/src/main.ts",
+        "grep -n 'logger.warn.*allow-no-auth' src/packages/mcp-server/src/mcp/mcp-server.service.ts"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Fail-closed MCP auth: production refuses startup without API key; dev requires explicit --allow-no-auth flag; WARN logged when dev shortcut active. Tests exist but blocked by GT-267 (CacheModule). Stdio transport documented as admin-scoped by design (in-process trust boundary)."
@@ -4031,7 +4031,7 @@
         "src/sdk/cli/src/commands/update/update.command.ts"
       ],
       "validationCommands": [
-        "grep execFileSync sdk/cli/src/commands/update/update.command.ts"
+        "grep execFileSync src/sdk/cli/src/commands/update/update.command.ts"
       ],
       "dependencyDisposition": "none",
       "closureNote": "execSync replaced with execFileSync; SEMVER_REGEX validates version before use. Malicious version strings rejected."
@@ -4057,7 +4057,7 @@
         "src/rulesets/opa/main.rego"
       ],
       "validationCommands": [
-        "grep import rulesets/opa/main.rego | wc -l"
+        "grep import src/rulesets/opa/main.rego | wc -l"
       ],
       "dependencyDisposition": "none",
       "closureNote": "All 26 OPA policy packages imported into main.rego aggregator. 19 previously orphaned policies now wired."
@@ -4070,7 +4070,7 @@
         "src/packages/core-domain/src/domain/gate-evidence.ts"
       ],
       "validationCommands": [
-        "grep createSuccessEnvelope packages/core-domain/src/domain/gate-evidence.ts"
+        "grep createSuccessEnvelope src/packages/core-domain/src/domain/gate-evidence.ts"
       ],
       "dependencyDisposition": "none",
       "closureNote": "ADR-0073 contract types (SuccessEnvelope, ErrorEnvelope, OutputEnvelope) fully implemented."
@@ -4084,7 +4084,7 @@
         "src/apps/core-api/src/infrastructure/guards/audit-throttler.guard.ts"
       ],
       "validationCommands": [
-        "grep ThrottlerModule apps/core-api/src/app.module.ts"
+        "grep ThrottlerModule src/apps/core-api/src/app.module.ts"
       ],
       "dependencyDisposition": "none",
       "closureNote": "ThrottlerModule configured with ttl:60000, limit:100. AuditThrottlerGuard registered globally."
@@ -4097,7 +4097,7 @@
         "src/packages/mcp-server/src/mcp/resources.service.ts"
       ],
       "validationCommands": [
-        "grep sanitizePathInput packages/mcp-server/src/mcp/resources.service.ts"
+        "grep sanitizePathInput src/packages/mcp-server/src/mcp/resources.service.ts"
       ],
       "dependencyDisposition": "none",
       "closureNote": "sanitizePathInput validates against path traversal, absolute paths, regex-unsafe chars. Applied to all resource resolution methods."
@@ -4110,7 +4110,7 @@
         "src/packages/mcp-server/src/mcp/mcp-server.service.ts"
       ],
       "validationCommands": [
-        "grep Content-Security-Policy packages/mcp-server/src/mcp/mcp-server.service.ts"
+        "grep Content-Security-Policy src/packages/mcp-server/src/mcp/mcp-server.service.ts"
       ],
       "dependencyDisposition": "none",
       "closureNote": "CSP header plus X-Content-Type-Options, X-Frame-Options, HSTS, Referrer-Policy, X-XSS-Protection set on HTTP transport."
@@ -4123,7 +4123,7 @@
         "product/infra/docker-compose.yml"
       ],
       "validationCommands": [
-        "grep ping reference/infrastructure/docker-compose.yml"
+        "grep ping product/infra/docker-compose.yml"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Traefik command includes --ping=true; healthcheck uses traefik healthcheck --ping."
@@ -4136,7 +4136,7 @@
         "product/infra/docker-compose.yml"
       ],
       "validationCommands": [
-        "grep mongo reference/infrastructure/docker-compose.yml"
+        "grep mongo product/infra/docker-compose.yml"
       ],
       "dependencyDisposition": "none",
       "closureNote": "MongoDB image pinned to mongo:7.0. All infrastructure images now pinned."
@@ -4204,7 +4204,7 @@
         "product/infra/docker-compose.yml"
       ],
       "validationCommands": [
-        "grep deploy.resources reference/infrastructure/docker-compose.yml | wc -l"
+        "grep deploy.resources product/infra/docker-compose.yml | wc -l"
       ],
       "dependencyDisposition": "none",
       "closureNote": "All Docker containers have deploy.resources.limits with memory and cpus."
@@ -4217,7 +4217,7 @@
         "product/operations/alerts/prometheus-alerts.yml"
       ],
       "validationCommands": [
-        "wc -l reference/operations/alerts/prometheus-alerts.yml"
+        "wc -l product/operations/alerts/prometheus-alerts.yml"
       ],
       "dependencyDisposition": "none",
       "closureNote": "12 Prometheus alert rules across infrastructure and core-api groups."
@@ -4244,7 +4244,7 @@
         "product/operations/data-store-backup-dr.es.md"
       ],
       "validationCommands": [
-        "ls reference/operations/data-store-backup-dr.md"
+        "ls product/operations/data-store-backup-dr.md"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Comprehensive backup/DR procedures for PostgreSQL, MongoDB, MinIO, OpenBao with RPO/RTO targets."
@@ -4259,7 +4259,7 @@
         "src/packages/mcp-server/src/mcp/mcp.module.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/mcp-server/jest.config.js --rootDir packages/mcp-server --testPathPatterns='api-key-provisioning' --no-coverage"
+        "npx jest --config src/packages/mcp-server/jest.config.js --rootDir src/packages/mcp-server --testPathPatterns='api-key-provisioning' --no-coverage"
       ],
       "dependencyDisposition": "none",
       "closureNote": "ApiKeyProvisioningService with evk_ prefix, SHA-256 hashed storage, rotation, revocation, audit logging, and legacy migration."
@@ -4301,9 +4301,9 @@
       ],
       "validationCommands": [
         "npm -ws run build --if-present",
-        "npm --workspace apps/core-api test -- --runInBand",
-        "npm --workspace packages/mcp-server test -- --runInBand",
-        "npm --workspace sdk/cli run test:unit -- --runInBand",
+        "npm --workspace src/apps/core-api test -- --runInBand",
+        "npm --workspace src/packages/mcp-server test -- --runInBand",
+        "npm --workspace src/sdk/cli run test:unit -- --runInBand",
         "git diff --check"
       ],
       "dependencyDisposition": "satisfied",
@@ -4336,7 +4336,7 @@
       ],
       "validationCommands": [
         "rg -n \"dast-scan|zaproxy/action-full-scan|gitleaks\" .github/workflows/sdk-cli-ci.yml",
-        "rg -n \"#### GT-273|long-term DAST plan|plan DAST de largo plazo\" reference/core/control-center/gap-reference-catalog.md reference/core/control-center/gap-reference-catalog.es.md"
+        "rg -n \"#### GT-273|long-term DAST plan|plan DAST de largo plazo\" reference/core/control-center/gaps/gap-reference-catalog.md reference/core/control-center/gaps/gap-reference-catalog.es.md"
       ],
       "dependencyDisposition": "none",
       "closureNote": "DAST (OWASP ZAP) scan removed from sdk-cli-ci.yml. The step scanned against localhost:8000 without a server running, producing a silent no-op. Replaced by gitleaks secret detection (GT-265) and Trivy container scanning (GT-227) as higher-signal security controls. Long-term DAST plan tracked as GT-273."
@@ -4353,8 +4353,8 @@
         ".harness/scripts/ci/28-native-evaluator-parity.mjs"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='native-opa-parity' --no-coverage",
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='aggregator-parity' --no-coverage",
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='native-opa-parity' --no-coverage",
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='aggregator-parity' --no-coverage",
         "node .harness/scripts/ci/28-native-evaluator-parity.mjs"
       ],
       "dependencyDisposition": "none",
@@ -4568,8 +4568,8 @@
       ],
       "validationCommands": [
         "node --test .harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
-        ".harness/bin/opa test rulesets/opa/compliance-baseline.rego rulesets/opa/compliance-baseline.test.rego -v"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
+        ".harness/bin/opa test src/rulesets/opa/compliance-baseline.rego src/rulesets/opa/compliance-baseline.test.rego -v"
       ],
       "dependencyDisposition": "none"
     },
@@ -4589,8 +4589,8 @@
       ],
       "validationCommands": [
         "node --test .harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
-        ".harness/bin/opa test rulesets/opa/dod.rego rulesets/opa/dod.test.rego -v"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
+        ".harness/bin/opa test src/rulesets/opa/dod.rego src/rulesets/opa/dod.test.rego -v"
       ],
       "dependencyDisposition": "none"
     },
@@ -4610,8 +4610,8 @@
       ],
       "validationCommands": [
         "node --test .harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
-        ".harness/bin/opa test rulesets/opa/engineering-manifesto.rego rulesets/opa/engineering-manifesto.test.rego -v"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
+        ".harness/bin/opa test src/rulesets/opa/engineering-manifesto.rego src/rulesets/opa/engineering-manifesto.test.rego -v"
       ],
       "dependencyDisposition": "none"
     },
@@ -4631,8 +4631,8 @@
       ],
       "validationCommands": [
         "node --test .harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
-        ".harness/bin/opa test rulesets/opa/repository-taxonomy.rego rulesets/opa/repository-taxonomy.test.rego -v"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
+        ".harness/bin/opa test src/rulesets/opa/repository-taxonomy.rego src/rulesets/opa/repository-taxonomy.test.rego -v"
       ],
       "dependencyDisposition": "none"
     },
@@ -4652,8 +4652,8 @@
       ],
       "validationCommands": [
         "node --test .harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
-        ".harness/bin/opa test rulesets/opa/cicd-quality-gates.rego rulesets/opa/cicd-quality-gates.test.rego -v"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
+        ".harness/bin/opa test src/rulesets/opa/cicd-quality-gates.rego src/rulesets/opa/cicd-quality-gates.test.rego -v"
       ],
       "dependencyDisposition": "none"
     },
@@ -4673,8 +4673,8 @@
       ],
       "validationCommands": [
         "node --test .harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
-        ".harness/bin/opa test rulesets/opa/testing-pyramid.rego rulesets/opa/testing-pyramid.test.rego -v"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
+        ".harness/bin/opa test src/rulesets/opa/testing-pyramid.rego src/rulesets/opa/testing-pyramid.test.rego -v"
       ],
       "dependencyDisposition": "none"
     },
@@ -4711,7 +4711,7 @@
         "src/sdk/cli/src/commands/validate/validate.command.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='satellite-evaluation-pipeline' --no-coverage",
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='satellite-evaluation-pipeline' --no-coverage",
         "node .harness/scripts/run-evolith-deep.mjs"
       ],
       "dependencyDisposition": "none"
@@ -4729,7 +4729,7 @@
         ".harness/playbooks/sdlc-deep-audit.mjs"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='satellite-evaluation-pipeline' --no-coverage",
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='satellite-evaluation-pipeline' --no-coverage",
         "node .harness/scripts/run-evolith-deep.mjs"
       ],
       "dependencyDisposition": "none"
@@ -4750,8 +4750,8 @@
         "src/apps/core-api/src/presentation/controllers/composable-validate.controller.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='composable-validation-engine|sdlc-validation.mode|architecture-validation.mode|ruleset-validation.mode|adr-validation.mode|adhoc-validation.mode' --no-coverage",
-        "npx tsc -p packages/core-domain/tsconfig.json --noEmit"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='composable-validation-engine|sdlc-validation.mode|architecture-validation.mode|ruleset-validation.mode|adr-validation.mode|adhoc-validation.mode' --no-coverage",
+        "npx tsc -p src/packages/core-domain/tsconfig.json --noEmit"
       ],
       "dependencyDisposition": "none"
     },
@@ -4768,8 +4768,8 @@
         "src/rulesets/README.es.md"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
-        ".harness/bin/opa test rulesets/opa/satellite-contracts.rego rulesets/opa/satellite-contracts.test.rego -v"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
+        ".harness/bin/opa test src/rulesets/opa/satellite-contracts.rego src/rulesets/opa/satellite-contracts.test.rego -v"
       ],
       "dependencyDisposition": "none"
     },
@@ -4841,7 +4841,7 @@
         "src/packages/core-domain/src/gates/decision/gate-decision.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -4853,7 +4853,7 @@
         "src/packages/core-domain/src/phases/phase-transition.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -4865,7 +4865,7 @@
         "src/packages/mcp-server/src/resources/corpus-resource.handler.ts"
       ],
       "validationCommands": [
-        "npm test --workspace packages/mcp-server"
+        "npm test --workspace src/packages/mcp-server"
       ],
       "dependencyDisposition": "none"
     },
@@ -4877,7 +4877,7 @@
         "src/packages/mcp-server/src/watcher/watcher.service.ts"
       ],
       "validationCommands": [
-        "npm test --workspace packages/mcp-server"
+        "npm test --workspace src/packages/mcp-server"
       ],
       "dependencyDisposition": "none"
     },
@@ -4889,7 +4889,7 @@
         "src/apps/core-api/src/openapi"
       ],
       "validationCommands": [
-        "npm test --workspace apps/core-api"
+        "npm test --workspace src/apps/core-api"
       ],
       "dependencyDisposition": "none"
     },
@@ -4901,7 +4901,7 @@
         "src/sdk/cli/src/commands/agents"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli"
+        "npm test --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -4913,7 +4913,7 @@
         "src/sdk/cli/src/commands/update/update.command.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli"
+        "npm test --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -4925,7 +4925,7 @@
         "src/sdk/cli/src/commands/architecture/scaffold"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli"
+        "npm test --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -4937,7 +4937,7 @@
         "src/packages/core-domain/src/evidence"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -4949,7 +4949,7 @@
         "src/packages/core-domain/src/gates/decision"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -4961,7 +4961,7 @@
         "src/packages/core-domain/src/phases/transition"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -4973,7 +4973,7 @@
         "src/packages/core-domain/src/providers"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -4985,7 +4985,7 @@
         "src/packages/core-domain/src/tenancy"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -4997,7 +4997,7 @@
         "src/sdk/cli/src/plugins/plugin-registry.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli"
+        "npm test --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -5009,7 +5009,7 @@
         "src/sdk/cli/src/contributions/contribution-validator.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli"
+        "npm test --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -5021,7 +5021,7 @@
         "src/sdk/cli/src/__tests__"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli"
+        "npm test --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -5033,7 +5033,7 @@
         "src/sdk/cli/src/__tests__/e2e"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli"
+        "npm test --workspace src/sdk/cli"
       ],
       "dependencyDisposition": "none"
     },
@@ -5046,7 +5046,7 @@
         "src/packages/core-domain/src/application/validators/evidence-validator.spec.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -5061,7 +5061,7 @@
         "src/packages/core-domain/src/infrastructure/events/outbox.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -5074,7 +5074,7 @@
         "src/packages/core-domain/src/domain/lifecycle/phase-state-machine.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -5087,7 +5087,7 @@
         "src/packages/core-domain/src/application/use-cases/validate-workflow.use-case.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -5099,7 +5099,7 @@
         "src/packages/core-domain/src/application/services/gate-registry.service.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -5112,7 +5112,7 @@
         "src/packages/core-domain/src/domain/rbac/index.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -5124,7 +5124,7 @@
         "src/packages/core-domain/src/domain/rbac/gate-role-enforcer.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-319 formal RBAC role model closed in the same wave (commit d2b7d2b7); GateRoleEnforcer consumes it."
@@ -5138,7 +5138,7 @@
         "src/packages/core-domain/src/domain/audit/audit-entry.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -5151,7 +5151,7 @@
         "src/packages/sdk-client/src"
       ],
       "validationCommands": [
-        "npm run build --workspace packages/sdk-client"
+        "npm run build --workspace src/packages/sdk-client"
       ],
       "dependencyDisposition": "none"
     },
@@ -5164,7 +5164,7 @@
         "src/packages/mcp-server/Dockerfile"
       ],
       "validationCommands": [
-        "test -f apps/core-api/Dockerfile && test -f packages/mcp-server/Dockerfile"
+        "test -f src/apps/core-api/Dockerfile && test -f src/packages/mcp-server/Dockerfile"
       ],
       "dependencyDisposition": "none"
     },
@@ -5177,7 +5177,7 @@
         "src/packages/core-domain/src/application/use-cases/validate-blueprint.use-case.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -5190,7 +5190,7 @@
         "src/packages/core-domain/src/infrastructure/webhook/webhook-dispatcher.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -5204,7 +5204,7 @@
         "src/packages/mcp-server/eslint.config.mjs"
       ],
       "validationCommands": [
-        "npm run lint:boundaries --workspace packages/core-domain"
+        "npm run lint:boundaries --workspace src/packages/core-domain"
       ],
       "dependencyDisposition": "none"
     },
@@ -5246,7 +5246,7 @@
         "src/packages/core-domain/src/domain/services/default-workflow-definition.spec.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='default-workflow-definition' --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='default-workflow-definition' --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -5259,7 +5259,7 @@
         ".harness/scripts/ci/29-test-core-opa.mjs"
       ],
       "validationCommands": [
-        ".harness/bin/opa test rulesets/opa/ --ignore=schemas",
+        ".harness/bin/opa test src/rulesets/opa/ --ignore=schemas",
         "node .harness/scripts/ci/29-test-core-opa.mjs"
       ],
       "dependencyDisposition": "none"
@@ -5272,7 +5272,7 @@
         "src/rulesets/opa"
       ],
       "validationCommands": [
-        ".harness/bin/opa test rulesets/opa/ --ignore=schemas"
+        ".harness/bin/opa test src/rulesets/opa/ --ignore=schemas"
       ],
       "dependencyDisposition": "none"
     },
@@ -5286,7 +5286,7 @@
         "src/sdk/cli/src/main.ts"
       ],
       "validationCommands": [
-        "npm run --workspace sdk/cli test"
+        "npm run --workspace src/sdk/cli test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5299,7 +5299,7 @@
         "src/packages/mcp-server/src/mcp/abac-evaluator.cache.spec.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/mcp-server test"
+        "npm run --workspace src/packages/mcp-server test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5312,7 +5312,7 @@
         "src/packages/mcp-server/src/mcp/abac-evaluator.spec.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/mcp-server test"
+        "npm run --workspace src/packages/mcp-server test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5325,7 +5325,7 @@
         "src/packages/core-domain/src/domain/services/standard-check-evaluator.spec.ts"
       ],
       "validationCommands": [
-        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='standard-check-evaluator' --no-coverage"
+        "npx jest --config src/packages/core-domain/jest.config.js --rootDir src/packages/core-domain --testPathPatterns='standard-check-evaluator' --no-coverage"
       ],
       "dependencyDisposition": "none"
     },
@@ -5339,7 +5339,7 @@
         "src/sdk/cli/src/infrastructure/cli/providers/providers.spec.ts"
       ],
       "validationCommands": [
-        "npm run --workspace sdk/cli test"
+        "npm run --workspace src/sdk/cli test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5366,7 +5366,7 @@
         "src/packages/core/jest.config.js"
       ],
       "validationCommands": [
-        "npm run --workspace packages/core test"
+        "npm run --workspace src/packages/core test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5392,7 +5392,7 @@
         "src/packages/sdk-client/src/__tests__/sdk.spec.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/sdk-client test"
+        "npm run --workspace src/packages/sdk-client test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5405,8 +5405,8 @@
         "product/products/core-api/api-reference.md"
       ],
       "validationCommands": [
-        "npm run --workspace apps/core-api build",
-        "npm run --workspace apps/core-api test"
+        "npm run --workspace src/apps/core-api build",
+        "npm run --workspace src/apps/core-api test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5420,7 +5420,7 @@
         "src/packages/infra-providers/src/disk-ruleset.repository.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/infra-providers test"
+        "npm run --workspace src/packages/infra-providers test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5433,7 +5433,7 @@
         ".github/workflows/ci-cd.yml"
       ],
       "validationCommands": [
-        "npm run test:e2e --workspace @evolith/core-domain"
+        "npm run test:e2e --workspace @beyondnet/evolith-core-domain"
       ],
       "dependencyDisposition": "none"
     },
@@ -5448,10 +5448,10 @@
         "src/packages/core-domain/src/__e2e__/governance-flow.e2e.spec.ts"
       ],
       "validationCommands": [
-        "npm run test:e2e --workspace @evolith/core-domain",
-        "npm run --workspace apps/core-api test:e2e",
-        "npm run --workspace packages/mcp-server build && npm run --workspace packages/mcp-server test:e2e",
-        "npm run --workspace sdk/cli test:e2e"
+        "npm run test:e2e --workspace @beyondnet/evolith-core-domain",
+        "npm run --workspace src/apps/core-api test:e2e",
+        "npm run --workspace src/packages/mcp-server build && npm run --workspace src/packages/mcp-server test:e2e",
+        "npm run --workspace src/sdk/cli test:e2e"
       ],
       "dependencyDisposition": "none"
     },
@@ -5463,7 +5463,7 @@
         "src/packages/mcp-server/src/main.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/mcp-server test"
+        "npm run --workspace src/packages/mcp-server test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5475,7 +5475,7 @@
         "src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/mcp-server test"
+        "npm run --workspace src/packages/mcp-server test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5487,7 +5487,7 @@
         "src/packages/mcp-server/src/mcp/mcp-server-auth.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/mcp-server test"
+        "npm run --workspace src/packages/mcp-server test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5499,7 +5499,7 @@
         "src/packages/mcp-server/package.json"
       ],
       "validationCommands": [
-        "npm run --workspace packages/mcp-server build"
+        "npm run --workspace src/packages/mcp-server build"
       ],
       "dependencyDisposition": "none"
     },
@@ -5523,7 +5523,7 @@
         "src/packages/sdk-client/src/rest/evolith-rest-client.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/sdk-client test"
+        "npm run --workspace src/packages/sdk-client test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5535,7 +5535,7 @@
         "src/packages/sdk-client/src/rest/types.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/sdk-client test"
+        "npm run --workspace src/packages/sdk-client test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5548,7 +5548,7 @@
         "src/packages/core/README.md"
       ],
       "validationCommands": [
-        "npm test --workspace @evolith/core"
+        "npm test --workspace @beyondnet/evolith-core"
       ],
       "dependencyDisposition": "none"
     },
@@ -5611,7 +5611,7 @@
       ],
       "validationCommands": [
         "node .harness/scripts/ci/30-validate-phase-topology-disjoint.mjs",
-        "npm run --workspace packages/core-domain test"
+        "npm run --workspace src/packages/core-domain test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5624,7 +5624,7 @@
         "src/packages/core-domain/src/domain/github-api-client.interface.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/infra-providers test"
+        "npm run --workspace src/packages/infra-providers test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5636,7 +5636,7 @@
         "src/packages/core-domain/src/application/use-cases/initialize-satellite.use-case.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/core-domain test"
+        "npm run --workspace src/packages/core-domain test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5648,7 +5648,7 @@
         "src/sdk/cli/src/commands/satellite/satellite-create.command.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -5660,7 +5660,7 @@
         "src/sdk/cli/src/commands/satellite/satellite-adopt.command.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -5688,7 +5688,7 @@
         "src/packages/mcp-server/src/tools/satellite-status.tool.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/mcp-server test"
+        "npm run --workspace src/packages/mcp-server test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5700,7 +5700,7 @@
         "src/packages/core-domain/src/domain/satellite-record.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/core-domain test"
+        "npm run --workspace src/packages/core-domain test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5712,7 +5712,7 @@
         "src/packages/core-domain/src/application/sync/sync.service.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/core-domain test"
+        "npm run --workspace src/packages/core-domain test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5737,7 +5737,7 @@
         "src/packages/core-domain/src/domain/satellite-audit.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/core-domain test"
+        "npm run --workspace src/packages/core-domain test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5749,7 +5749,7 @@
         "src/packages/sdk-client/src/satellites.client.ts"
       ],
       "validationCommands": [
-        "npm run --workspace packages/sdk-client test"
+        "npm run --workspace src/packages/sdk-client test"
       ],
       "dependencyDisposition": "none"
     },
@@ -5761,7 +5761,7 @@
         "src/sdk/cli/src/commands/upgrade/upgrade.command.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -5774,7 +5774,7 @@
         "src/sdk/cli/src/commands/satellite/satellite-adopt.command.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "GH_TOKEN externalized to environment/secret (commit 1ffb1064); credential rotation deferred under owner-accepted risk."
@@ -5787,8 +5787,8 @@
         "src/packages/core-domain/src/domain/satellite-manifest.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace @evolith/core-domain",
-        "npm test --workspace @evolith/core-domain -- --runInBand"
+        "npm run build --workspace @beyondnet/evolith-core-domain",
+        "npm test --workspace @beyondnet/evolith-core-domain -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -5826,7 +5826,7 @@
         "src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts"
       ],
       "validationCommands": [
-        "npm test --workspace @evolith/core-domain -- --runInBand"
+        "npm test --workspace @beyondnet/evolith-core-domain -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -5839,7 +5839,7 @@
         "src/packages/core-domain/src/evaluation/contracts/evaluation-context.ts"
       ],
       "validationCommands": [
-        "npm test --workspace @evolith/core-domain -- --runInBand"
+        "npm test --workspace @beyondnet/evolith-core-domain -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -5851,7 +5851,7 @@
         "src/packages/core-domain/src/evaluation/canonical-result.mapper.ts"
       ],
       "validationCommands": [
-        "npm test --workspace @evolith/core-domain -- --runInBand"
+        "npm test --workspace @beyondnet/evolith-core-domain -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -5877,7 +5877,7 @@
         "reference/core/sdlc/sdlc-evolith-artifact-mapping.md"
       ],
       "validationCommands": [
-        "npm test --workspace @evolith/core-domain -- --runInBand"
+        "npm test --workspace @beyondnet/evolith-core-domain -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -5890,7 +5890,7 @@
         "src/packages/core-domain/src/evaluation/contracts/evaluation-result.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace @evolith/core-domain"
+        "npm run build --workspace @beyondnet/evolith-core-domain"
       ],
       "dependencyDisposition": "none"
     },
@@ -5920,7 +5920,7 @@
         "src/packages/agent-runtime/src/bootstrap.ts"
       ],
       "validationCommands": [
-        "npm run build --workspace packages/agent-runtime"
+        "npm run build --workspace src/packages/agent-runtime"
       ],
       "dependencyDisposition": "none"
     },
@@ -5976,7 +5976,7 @@
         "src/packages/agent-runtime/src/adapters/policy/opa-cli-policy-validation.adapter.ts"
       ],
       "validationCommands": [
-        "npm test --workspace packages/agent-runtime"
+        "npm test --workspace src/packages/agent-runtime"
       ],
       "dependencyDisposition": "none"
     },
@@ -5990,7 +5990,7 @@
         "src/packages/agent-runtime/src/__tests__/units.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace packages/agent-runtime"
+        "npm test --workspace src/packages/agent-runtime"
       ],
       "dependencyDisposition": "none"
     },
@@ -6003,7 +6003,7 @@
         "src/packages/agent-runtime/README.es.md"
       ],
       "validationCommands": [
-        "npm test --workspace packages/agent-runtime"
+        "npm test --workspace src/packages/agent-runtime"
       ],
       "dependencyDisposition": "none"
     },
@@ -6431,7 +6431,7 @@
         "src/packages/mcp-server/src/tools/architecture.tools.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -6460,7 +6460,7 @@
         "src/sdk/cli/src/commands/validate/validate.command.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand -t validate.command"
+        "npm test --workspace src/sdk/cli -- --runInBand -t validate.command"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "Proper closure delivered by GT-474 (resolver fix, commit 3c0ccf8a): an unresolvable/empty ruleset corpus now throws RulesetsNotFoundError and a zero-rule full run is a blocking failed; the interim non-blocking warning mitigation is retired."
@@ -6514,7 +6514,7 @@
         "src/sdk/cli/src/infrastructure/paths/satellite-resolver.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand"
+        "npm test --workspace src/sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -6578,7 +6578,7 @@
         "src/sdk/cli/src/commands/validate/validate.command.spec.ts"
       ],
       "validationCommands": [
-        "npm test --workspace sdk/cli -- --runInBand -t validate.command"
+        "npm test --workspace src/sdk/cli -- --runInBand -t validate.command"
       ],
       "dependencyDisposition": "none"
     },
@@ -7922,7 +7922,7 @@
       ],
       "validationCommands": [
         "All four named surfaces are regenerated. maturity-reconciliation.json was regenerated in 35ea46e1 and now reports 559 gaps / 145 rulesets / 132 ADRs / @beyondnet/evolith-cli@1.1.0.",
-        "maturity-assessment.md verified clean: no `1.1.4`, no \"32 tools\", no `@evolith/smart-cli`. product-inventory.md clean at 1.1.0. evolith-mcp-tools.md regenerated to the source-derived 47-tool table in 459676aa.",
+        "maturity-assessment.md verified clean: no `1.1.4`, no \"32 tools\", no `@beyondnet/evolith-cli`. product-inventory.md clean at 1.1.0. evolith-mcp-tools.md regenerated to the source-derived 47-tool table in 459676aa.",
         "The final blocker was the inventory generator itself: `07-generate-inventories.mjs` resolved the dead `rulesets/` path and reported 0, wrote to an orphaned location, and its `--check` flag WROTE FILES instead of only checking. Fixed in 702de08b.",
         "Measured effect: the canonical `reference/core/control-center/maturity-reports/inventory-summary.md` went from a two-week-frozen 119 ADRs / 144 rulesets / 40 schemas to 132 / 145 / 44, now agreeing exactly with what `09-reconcile-maturity.mjs` derives independently.",
         "Corpus cross-check: `find src/rulesets -name \"*.rules.json\" | wc -l` -> 145, the same figure both scripts now report."
@@ -7973,7 +7973,7 @@
         "CONTRIBUTING.es.md"
       ],
       "validationCommands": [
-        "Criterion 1: section 5.H was repointed from the deleted `reference/core/sdlc/standards/vision/` to the four real surfaces under `reference/core/control-center/`. The Spanish file's drifted paths were fixed too -- `sdk/cli`, `rulesets/schema/` and `rulesets/opa/` were all missing the `src/` prefix -- since the criterion is that every cited path resolves. 28/28 headings.",
+        "Criterion 1: section 5.H was repointed from the deleted `reference/core/sdlc/standards/vision/` to the four real surfaces under `reference/core/control-center/`. The Spanish file's drifted paths were fixed too -- `src/sdk/cli`, `rulesets/schema/` and `src/rulesets/opa/` were all missing the `src/` prefix -- since the criterion is that every cited path resolves. 28/28 headings.",
         "Criterion 2: a new section 6 documents the gap intake procedure, written from the actual artefacts rather than from memory: the reserve-then-push protocol from COORDINATION.md, the board row shape that 08-validate-tracking.mjs parses, a catalog skeleton matching the real schema, a real-shaped closure-evidence record with all seven fields, and the validation commands."
       ],
       "dependencyDisposition": "none",
@@ -8380,7 +8380,7 @@
         "src/sdk/cli/src/commands/chat/chat.command.ts"
       ],
       "validationCommands": [
-        "wc -l chat.command.ts -> 200 (was 91); grep for loop/session constructs -> 34 hits. Implemented as a REPL rather than removed.",
+        "wc -l src/sdk/cli/src/commands/chat/chat.command.ts -> 200 (was 91); grep for loop/session constructs -> 34 hits. Implemented as a REPL rather than removed.",
         "ci-runner.mjs governance -> 17/17 exit 0 after the wave and its three repairs."
       ],
       "dependencyDisposition": "none"
@@ -8484,7 +8484,7 @@
       ],
       "validationCommands": [
         "34-check-skill-registry-parity -> exit 0; 9/9 executable capabilities routable (4 hand-bound, 5 synthesized), reported separately.",
-        "node --test 34-check-skill-registry-parity.test.mjs -> 15/15, including three negative fixtures: derivation absent, derivation uncalled, and a synthesis narrowed by one extra conjunct.",
+        "node --test .harness/scripts/ci/34-check-skill-registry-parity.test.mjs -> 15/15, including three negative fixtures: derivation absent, derivation uncalled, and a synthesis narrowed by one extra conjunct.",
         "Wired into the governance-guards job in ci-cd.yml, so it is no longer inert."
       ],
       "closedAt": "2026-07-28",
@@ -8619,7 +8619,7 @@
       "validationCommands": [
         "45-validate-port-inventory-honesty --verbose -> 19 ports declared, 11 on the hot path (7 required + 4 optional), 8 declared-not-reached, 53 adapters.",
         "Before the fix the guard exits 1 against master-view.svg: \"publishes a port/adapter count without saying how many are actually reached\".",
-        "node --test 45-validate-port-inventory-honesty.test.mjs -> 9/9, including four anti-vacuous fixtures (zero ports, unparseable deps, zero adapters, missing scan corpus).",
+        "node --test .harness/scripts/ci/45-validate-port-inventory-honesty.test.mjs -> 9/9, including four anti-vacuous fixtures (zero ports, unparseable deps, zero adapters, missing scan corpus).",
         "Row evidence corrected: 17/49/9 as registered vs 19/53/11 measured; the diagnostic’s \"two interaction adapters with no callers\" is six."
       ],
       "dependencyDisposition": "none"
@@ -8650,7 +8650,7 @@
       "validationCommands": [
         "08-validate-tracking.mjs -> \"Acceptance-criteria audit: 47 non-DONE GT row(s) checked against 605/605 EN/ES catalog sections — 0 with no criteria at all.\" exit 0.",
         "It exited 1 on its first run against the real board, naming GT-435, GT-444 and GT-448; criteria were written for all three rather than exempting them.",
-        "node --test 08-validate-tracking.test.mjs -> 17/17, including the negative fixture and the vacuity floor."
+        "node --test .harness/scripts/ci/08-validate-tracking.test.mjs -> 17/17, including the negative fixture and the vacuity floor."
       ],
       "closedAt": "2026-07-28",
       "closureCommit": "c438b801",
@@ -8719,11 +8719,11 @@
       "validationCommands": [
         "47-validate-joined-paths --verbose -> 615 files, 542 path.join calls, 89 repo-rooted, 65 resolvable, 4 fallback chains, 1 prohibition, exit 0.",
         "First run reported 19 broken paths; only 3 were defects. The other 16 were false positives whose 'fix' would have broken working code: 6 on a base naming the customer workspace, 9 members of fallback chains, 1 prohibition whose absence IS the passing state.",
-        "node --test 47-validate-joined-paths.test.mjs -> 11/11, covering both anti-vacuous floors, chain and ternary grouping, variable segments, and non-root bases.",
+        "node --test .harness/scripts/ci/47-validate-joined-paths.test.mjs -> 11/11, covering both anti-vacuous floors, chain and ternary grouping, variable segments, and non-root bases.",
         "43-validate-guard-negative-fixtures OBSERVED it red: 36 of 36 guards turned red against the empty fixture. 42 reports 11 self-guarded, 39 scanning, 0 PENDING.",
         "core-domain 1367/1367, mcp-server 434/434, core-api 179/179, CLI unit 1436/1436, all four tsc projects clean.",
         "Wired into docs.yml, which backs the required Validate documentation check.",
-        "The guard's first CI run went RED with 8 paths that pass locally: dist/, .harness/evidence and the gitignored policy.wasm exist on a developer machine and in no clean checkout. As written it would have demanded build output be committed. Corrected to check ANCHORING, not existence — a missing segment may be generated, but its parent must be real — and re-verified against a tracked-files-only `git archive` export. Proven not to have blinded it: reintroducing the original P0 (`rulesets/opa/policy.wasm`) and the ADR straggler in that clean export turns it red again, because the failure is at `rulesets`, not at the generated leaf. node --test now 14/14."
+        "The guard's first CI run went RED with 8 paths that pass locally: dist/, .harness/evidence and the gitignored policy.wasm exist on a developer machine and in no clean checkout. As written it would have demanded build output be committed. Corrected to check ANCHORING, not existence — a missing segment may be generated, but its parent must be real — and re-verified against a tracked-files-only `git archive` export. Proven not to have blinded it: reintroducing the original P0 (`src/rulesets/opa/policy.wasm`) and the ADR straggler in that clean export turns it red again, because the failure is at `rulesets`, not at the generated leaf. node --test now 14/14."
       ],
       "dependencyDisposition": "none"
     },
@@ -8739,7 +8739,7 @@
       ],
       "validationCommands": [
         "46-validate-derived-artifact-order --verbose -> 2 links, 3 artifacts, current AND at a fixed point.",
-        "node --test 46-validate-derived-artifact-order.test.mjs -> 8/8, including a test proving the guard leaves the real tree byte-identical after replaying in place.",
+        "node --test .harness/scripts/ci/46-validate-derived-artifact-order.test.mjs -> 8/8, including a test proving the guard leaves the real tree byte-identical after replaying in place.",
         "Wired into docs.yml, which backs the required Validate documentation check.",
         "Registered in guard-classification.mjs: 42 reports 58 guards classified, 43 reports 35 observed failing."
       ],
@@ -8828,6 +8828,79 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "TWO deliberate non-adoptions are recorded as part of the closure, not deferred silently. (1) dependency-cruiser was NOT adopted for the module-boundary rules: the Core is a stateless engine that reads satellites through an overlay filesystem a subprocess cannot see, and the tool's config matches node_modules/, so an UNINSTALLED satellite would yield zero violations and PASS four blocking rules. A false pass is worse than the skip it would replace. (2) OCB-02 was NOT closed: no artifact anywhere carries an `availability` marker, so the rule quantifies over the empty set and can only pass; that is recorded as three executable tests instead of prose. The residual unclaimed-blocking corpus stands at 73 and is pinned."
+    },
+    {
+      "id": "GT-633",
+      "closedAt": "2026-07-29",
+      "closureCommit": "05c3f62b",
+      "evidence": [
+        "src/packages/core-domain/src/application/services/project-scaffolder.service.ts",
+        "src/packages/core-domain/src/application/use-cases/initialize-project.use-case.ts",
+        "src/packages/core-domain/src/application/use-cases/initialize-project.use-case.spec.ts",
+        "src/packages/infra-providers/src/rule-applicability.integration.spec.ts",
+        "src/rulesets/adr/adr-0010-multi-tenancy.rules.json",
+        "src/packages/core-domain/src/application/validators/evaluators/handlers/governance-rule.handler.ts",
+        "src/packages/core-domain/src/application/validators/rule-applicability.ts"
+      ],
+      "validationCommands": [
+        "rule-applicability.integration.spec.ts -> 10/10. The pinned assertion moved from ['GIT-08','MTN-05'] to [] because the scaffold changed, not because the assertion was relaxed.",
+        "initialize-project.use-case.spec.ts -> 9/9, covering all three legs GIT-08 reads: config content (the seven types GIT-08 names), the merged devDependencies, and a commit-msg hook asserted to carry --no-install and to contain no else branch.",
+        "The deferral of MTN-05 is asserted over phases 0->3: excluded at 0 and 1, binding at 2 and 3. Weakening the annotation turns the test red.",
+        "Verified per-rule rather than by the suite alone: GIT-08 executes and PASSES for the typescript and python scaffolds; MTN-05 appears in notApplicableRuleIds rather than passing silently.",
+        "core-domain 1442/1442, infra-providers 129/129, src/sdk/cli 1436/1436, mcp-server init.tools 7/7.",
+        "32-validate-ruleset-schemas -> 168 passed, 0 failed, exit 0. 28-native-evaluator-parity -> 17 fixtures, 451 verdict assertions, exit 0. 01-validate-docs -> 1491 files, exit 0.",
+        "The premise did NOT reproduce on first contact: the suite resolves @beyondnet/evolith-core-domain through the workspace symlink to dist/, nine days stale and predating the GT-595 handlers, so both rules were skipped and the pinned assertion already read []. A green run in that state would have produced a false CLOSURE. Reproduced only after re-anchoring node_modules at the worktree and rebuilding -- the same untracked-build-state class as GT-625 and GT-632.",
+        "NOT done, deliberately: multi-tenancy.rego still asserts MTN-05 unconditionally. Applicability is a native-engine pre-filter by construction (GT-571) and TAX-06 already carries the same shape, so this is a pre-existing engine divergence rather than one introduced here."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The prerequisite is satisfied and closed: GT-595 gave MTN-05 and GIT-08 real handlers, which is the only reason either failure was visible. One part is deliberately left out of scope: the parallel multi-tenancy.rego still asserts MTN-05 unconditionally. Applicability is a native-engine pre-filter by construction (GT-571) and TAX-06 already carries the same shape -- a phase annotation alongside a rego that does not read it -- so this is a pre-existing divergence between the two engines, not one introduced here, and closing it belongs to whatever unifies applicability across engines."
+    },
+    {
+      "id": "GT-637",
+      "closedAt": "2026-07-29",
+      "closureCommit": "5acb29ed",
+      "evidence": [
+        ".harness/scripts/ci/41-validate-evidence-commands.mjs",
+        ".harness/scripts/ci/41-validate-evidence-commands.test.mjs",
+        ".github/workflows/ci-cd.yml",
+        "reference/core/control-center/evidence/gap-closure-evidence.json"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs -> 39/39, including 5 new cases: the --workspace-before-script-name fix, its negative twin (an undeclared script under that form is still caught), the gitignored-artifact classification on both the relative-binary and node <script> branches, and its negative twin (a genuinely missing, non-gitignored binary is still dead).",
+        "node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 21 -> exit 0. Same command with --max-dead 20 -> exit 1. The budget is exact, not padded.",
+        "node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose -> report mode, 21 dead, 6 executed commands fail (GT-42, GT-78, GT-79, GT-280, GT-556, GT-557) -- all pre-existing, confirmed none among the paths touched by this closure.",
+        "node .harness/scripts/ci/08-validate-tracking.mjs -> 633 gaps EN/ES, 610/610 EN/ES catalog sections, 576 closure records.",
+        "42-validate-guard-denominators, 43-validate-guard-negative-fixtures, 44-validate-adr-implementation-status, 34-check-skill-registry-parity, 45-validate-port-inventory-honesty all re-run clean in the same job.",
+        "Each of the 18 confident path renames in gap-closure-evidence.json (docker-compose.yml, review-*.test.mjs x3, roundtrip-gate-evaluate.mjs, api-throughput-baseline.js, incident-response-*.md, slo/, alerts/ x2, chaos-experiments/cpu-stress.yaml, data-store-backup-dr.md, gap-reference-catalog.md/.es.md) plus chat.command.ts verified against a real successor file present on disk before being written -- not guessed.",
+        "309 -> 78 (npmScriptOperand defined) -> 52 (--workspace-before-script-name parsing fixed) -> 22 (18 confident path renames) -> 21 (chat.command.ts) dead references, measured at each step, not assumed."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The residual 21 dead references are genuinely retired artifacts (a consolidated .bmad-core/AGENTS.md, the retired evolith-bff gateway, the retired packages/mcp-tools, two retired k8s manifests with no path-equivalent successor, a retired sandbox app, three root-level scripts no longer declared) or prose misparsed as a path (vision/, tools/list). None were force-mapped to a plausible-looking target -- a wrong rename would corrupt the record it claims to verify. Repairing each is per-record archaeology into when and why that specific artifact was retired, which this closure deliberately did not attempt; --max-dead stays at 21 until it is."
+    },
+    {
+      "id": "GT-636",
+      "closedAt": "2026-07-29",
+      "closureCommit": "d85c6216",
+      "evidence": [
+        "package.json",
+        "package-lock.json",
+        "reference/core/architecture/adrs/core/0124-credential-secret-management-standard.es.md",
+        "reference/core/architecture/demos/level-3-components/README.es.md",
+        "reference/core/control-center/gaps/gap-tracking.es.md",
+        "reference/core/control-center/maturity-reports/maturity-assessment.es.md",
+        "src/sdk/cli/test/e2e/cli-e2e.test.ts"
+      ],
+      "validationCommands": [
+        "npm audit --audit-level=high -> real exit code 0, verified separately from the printed summary (checked with $? after redirecting to a file, since the human-readable summary was once observed stale after a fix that had already applied).",
+        "node .harness/scripts/bilingual-terminology-lint.mjs --verbose -> Bilingual terminology check passed.",
+        "npm run test:e2e --workspace src/sdk/cli (exact CI command) -> 18 suites, 132/132 passed.",
+        "core-domain: npx jest --config jest.config.js --runInBand -> 128/129 suites, 1442/1444 tests (2 pre-existing skips).",
+        "npm run test:unit --workspace src/sdk/cli -> 99/99 suites, 1436/1436 tests.",
+        "mcp-server: npx jest --config jest.config.js --runInBand -> 53/53 suites, 433/437 tests (4 pre-existing skips).",
+        "All of the above run in an isolated scratch worktree (git worktree add --detach) with a REAL, non-symlinked node_modules copied from the main checkout, after rebuilding every workspace dependency (core-domain, agent-runtime, sdk, infra-providers, core, mcp) exactly as the CI job's own \"Build workspace dependencies\" step does -- not against this session's own per-package symlink farm, which was independently confirmed to corrupt npm ls graph output."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "2 moderate npm audit findings remain, both the same root cause: a Windows-only path-traversal in @hono/node-server's serve-static (GHSA-frvp-7c67-39w9), irrelevant to this repo's Linux CI/deployment. The available fix bumps @modelcontextprotocol/sdk, a PRODUCTION dependency pinned exactly (no range) in two workspaces' package.json -- qualitatively different from the devDependency-only overrides this closure applied, and out of scope for a security-audit fix that should not also silently change a shipped runtime dependency's resolved version."
     }
   ]
 }

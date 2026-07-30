@@ -459,7 +459,7 @@ jobs:
       - name: Execute the board's recorded validationCommands (report mode)
         run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose
 
-      # Ratchet, not a cliff. The budget is 305, which is what THIS RUNNER counts.
+      # Ratchet, not a cliff. The budget is 21, which is what THIS RUNNER counts.
       #
       # It was briefly lowered to 303 on the strength of the guard's computed
       # "ratchet basis" — 288 dead locally plus 15 that resolve only through
@@ -470,10 +470,27 @@ jobs:
       # first place, and I broke it by trusting a derived figure over a measured
       # one.
       #
+      # 305 -> 21 (GT-637): most of it was two real defects in THIS GUARD, not the
+      # evidence corpus — `npmScriptOperand` was called but never defined (a
+      # ReferenceError the guard swallowed into a generic crash), and
+      # `npm run --workspace <path> <script>` (the flag BEFORE the script name,
+      # used throughout the corpus) mistook the workspace's own value for the
+      # script name. Fixing both, plus migrating ~18 pre-`src/`-refactor and
+      # pre-`product/`-move paths that have real successors, plus classifying
+      # `.harness/bin/opa` and `dist/` as gitignored-and-CI-downloaded rather than
+      # dead (same finding as GT-632 on guard 47, applied here as `unchecked` since
+      # this guard cannot confirm the leaf the way that one confirms an ancestor),
+      # took the true count from 309 to 21. The residual is retired artifacts with
+      # no successor (a consolidated `.bmad-core/AGENTS.md`, the retired
+      # `evolith-bff` gateway, the retired `packages/mcp-tools`, two retired k8s
+      # manifests, a retired sandbox app, three root-level scripts no longer
+      # declared) plus three records where `vision/` and `tools/list` are prose,
+      # not paths — see GT-637 for the record.
+      #
       # Lower it as records are repaired, from a number this job printed; at 0,
       # delete the flag and this becomes the strict gate.
       - name: Dead-reference ratchet (must not grow)
-        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 305
+        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 21
 
   # RETIRED 2026-07-27 (GT-570): the `publish-npm` job lived here and published
   # ONLY `src/sdk/cli`, with `--tag beta` and no provenance, writing the token

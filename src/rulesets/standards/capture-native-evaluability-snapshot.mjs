@@ -226,13 +226,9 @@ function classificationChanged(previous, triage) {
   // KNOWN_CLASSES order, while the renderer emits them in CLASS_ORDER — a
   // different order for the same six numbers. So "changed" was ALWAYS true, the
   // date was rewritten on every run, and the GT-630 fixed-point replay would have
-  // failed on any day after the capture.
-  //
-  // It passed the day it was written because both runs stamped the same date,
-  // which is precisely the kind of green this chain exists to distrust. Found on
-  // main, where the committed snapshot carried an older date and the two runs
-  // therefore disagreed; ported here, where it was invisible and would have bitten
-  // on the next day's first run.
+  // failed on any day after the capture. It passed the day it was written because
+  // both runs stamped the same date, which is precisely the kind of green this
+  // chain exists to distrust.
   const sameMap = (a = {}, b = {}) => {
     const ka = Object.keys(a).sort();
     const kb = Object.keys(b).sort();

@@ -456,11 +456,22 @@ jobs:
           git fetch --no-tags --depth=1 origin "${{ github.base_ref || github.event.repository.default_branch }}"
           node .harness/scripts/ci/49-validate-gap-id-allocation.mjs --verbose
 
+      # GT-639: a board row carries a STATUS but not who is working it or where, so
+      # two sessions can both read `PENDING` and both start. On 2026-07-30 the same
+      # work was done twice, three times over. The claim set is DERIVED from open
+      # pull requests — never hand-written, which would go stale in the direction
+      # that matters — and an id claimed by two open PRs fails here, naming both.
+      - name: One gap, one claim
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node .harness/scripts/ci/50-validate-gap-claim.mjs
+
       - name: Self-tests for the governance guards
         run: |
           node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
           node --test .harness/scripts/ci/48-validate-security-publish-lag.test.mjs
           node --test .harness/scripts/ci/49-validate-gap-id-allocation.test.mjs
+          node --test .harness/scripts/ci/50-validate-gap-claim.test.mjs
           node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs
           node --test .harness/scripts/ci/43-validate-guard-negative-fixtures.test.mjs
           node --test .harness/scripts/ci/44-validate-adr-implementation-status.test.mjs

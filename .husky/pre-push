@@ -1,19 +1,67 @@
 set -e
 
+# ---------------------------------------------------------------------------
+# Where pre-commit left the push intent.
+#
+# This used to be a hard-coded `.git/`, which only exists as a DIRECTORY in the
+# primary checkout. Inside a `git worktree`, `.git` is a FILE holding a
+# `gitdir:` pointer, so every `.git/EVOLITH_*` path is ENOTDIR: the reads found
+# nothing and the `rm -f` failed outright, which `set -e` turned into "every
+# push from a worktree is rejected" — the reason `--no-verify` became habitual.
+#
+# `git rev-parse --git-dir` resolves both layouts (`.git` here, the per-worktree
+# admin dir there), and per-worktree is the right scope: the push intent belongs
+# to the checkout that was committed in, not to every checkout in the repo.
+# ---------------------------------------------------------------------------
+GIT_DIR_PATH="$(git rev-parse --git-dir)"
+
 TARGET=""
 MERGE_METHOD="merge"
 
-if [ -f .git/EVOLITH_PUSH_TARGET ]; then
-  TARGET=$(cat .git/EVOLITH_PUSH_TARGET)
+if [ -f "$GIT_DIR_PATH/EVOLITH_PUSH_TARGET" ]; then
+  TARGET=$(cat "$GIT_DIR_PATH/EVOLITH_PUSH_TARGET")
 fi
-if [ -f .git/EVOLITH_MERGE_METHOD ]; then
-  MERGE_METHOD=$(cat .git/EVOLITH_MERGE_METHOD)
+if [ -f "$GIT_DIR_PATH/EVOLITH_MERGE_METHOD" ]; then
+  MERGE_METHOD=$(cat "$GIT_DIR_PATH/EVOLITH_MERGE_METHOD")
 fi
-rm -f .git/EVOLITH_PUSH_TARGET .git/EVOLITH_CI_MODE .git/EVOLITH_MERGE_METHOD
+rm -f "$GIT_DIR_PATH/EVOLITH_PUSH_TARGET" \
+      "$GIT_DIR_PATH/EVOLITH_CI_MODE" \
+      "$GIT_DIR_PATH/EVOLITH_MERGE_METHOD"
 
 if [ "$TARGET" = "none" ] || [ "$TARGET" = "" ]; then
   echo "No push requested. Commit only."
   exit 0
+fi
+
+# ---------------------------------------------------------------------------
+# A branch another worktree has checked out cannot be checked out here.
+#
+# The merge dispatch below runs `git checkout "$to"`, which git refuses with
+# `fatal: '<branch>' is already used by worktree at ...`. Left unchecked that
+# fires AFTER repo optimization, board sync and wiki regeneration have already
+# run and staged files, so the push dies half-done. Refuse up front instead,
+# and name the checkout that holds the branch.
+# ---------------------------------------------------------------------------
+assert_checkoutable() {
+  branch=$1
+  holder=$(git worktree list --porcelain | awk -v b="branch refs/heads/$branch" '
+    /^worktree / { wt = substr($0, 10) }
+    $0 == b     { print wt; exit }')
+
+  if [ -n "$holder" ] && [ "$holder" != "$(git rev-parse --show-toplevel)" ]; then
+    echo ""
+    echo "ERROR: cannot merge into '$branch' from this checkout."
+    echo "  '$branch' is checked out in another worktree: $holder"
+    echo ""
+    echo "  Run the push from that checkout, or choose a target that does not"
+    echo "  check out a branch here (EVOLITH_PUSH_TARGET=develop, or =none)."
+    exit 1
+  fi
+}
+
+if [ "$TARGET" = "main" ] || [ "$TARGET" = "sync" ]; then
+  assert_checkoutable main
+  assert_checkoutable develop
 fi
 
 echo ""

@@ -8895,6 +8895,28 @@
         "Registered by one session and closed by another within the hour. Recorded plainly: the value of the row was making a permanently red required-adjacent job visible, not owning the repair."
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-634",
+      "closedAt": "2026-07-30",
+      "closureCommit": "f84fe739",
+      "evidence": [
+        "src/sdk/cli/package.json",
+        "src/packages/mcp-server/package.json",
+        "package-lock.json",
+        "CHANGELOG.md",
+        "src/sdk/cli/scripts/check-install-smoke.mjs"
+      ],
+      "validationCommands": [
+        "PUBLISHED AND VERIFIED AGAINST THE REGISTRY, not against a green workflow: run 30548042781 succeeded, `npm view @beyondnet/evolith-{cli,mcp} version --prefer-online` returns 1.2.2, both declare `@beyondnet/evolith-sdk: ^2.0.0`, and both carry dist.attestations with provenance.",
+        "THE CHECK THAT MATTERS: installing @beyondnet/evolith-cli@latest into a directory that has never seen this workspace resolves @beyondnet/evolith-sdk@2.0.0 and the binary boots printing 1.2.2. Before this release the same install pulled the 2026-07-18 SDK.",
+        "CRITERION 2 REFUTED THE ROW'S OWN PREMISE, and that is the finding. None of the seven security-wave commits (1b077ab6, 3a39dd03, 60bfc63a, 3f31fa64, 90eacdbc, 4f29e114, 8ad4e2de) touches src/packages/sdk-client -- zero files each, checked commit by commit. The wave's release commit 21205d24 names the three packages it affected: evolith-mcp (15 files), evolith-cli (7), evolith-agent-runtime (1). The SDK was republished alongside them, not fixed.",
+        "So sdk@1.1.0 predates the wave chronologically and carries none of it: there was no security exposure through this dependency. What was real: a caret range under 1.x cannot cross a major, so both consumers were pinned a MAJOR behind on a contract dependency (`.passed` against a payload that emits `verdict`), and package-lock.json nested the registry tarball inside each consumer where it shadowed the workspace link -- the GT-625 class.",
+        "CRITERION 3 -- npm deprecate @beyondnet/evolith-sdk@1.1.0, with a message that gives the real reason (superseded by 2.0.0, `.passed` -> `verdict`) and states explicitly that it is NOT a security advisory. Verified after `npm cache clean --force`, because a first read-back returned the previous message from cache.",
+        "A CORRECTION TO MY OWN EARLIER WORK, made rather than left standing: the GT-624 deprecations of evolith-core-domain, evolith-core and evolith-infra-providers at 1.1.0 said `Security fixes landed in 1.2.0`. The same commit-by-commit evidence refutes that -- the wave touched three packages and none of those three is among them. All three messages were rewritten to say they were republished alongside the wave, not fixed by it. A false security claim on a public registry is worse than no claim."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "TWO things are left open on purpose. (1) evolith-cli@1.2.1 and evolith-mcp@1.2.1 are NOT deprecated: they resolve the superseded SDK major, which is a stale contract and not an exposure, and deprecating a version one patch old needs an owner's call rather than mine. (2) evolith-contracts@1.1.0 remains this package's only published version, so there is still no upgrade path to point a deprecation at; it is recorded here rather than forced."
     }
   ]
 }

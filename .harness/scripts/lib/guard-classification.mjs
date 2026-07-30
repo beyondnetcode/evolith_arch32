@@ -41,6 +41,15 @@ export const CALLS_COVERAGE = /\b(?:assertScanned|assertScannedPerSource|scanned
  */
 export const SELF_GUARDED = [
   {
+    file: '50-validate-gap-claim.mjs',
+    proof: /could not read the open pull requests/,
+    reason:
+      'GT-639 gap-claim guard; refuses to pass when the pull-request query cannot be answered — ' +
+      'the guard exists because two sessions could not see each other, so one that stays quiet ' +
+      'when it cannot look would reproduce the defect. Zero open PRs is reported in words rather ' +
+      'than passed silently, because it looks identical to a broken query otherwise',
+  },
+  {
     file: '49-validate-gap-id-allocation.mjs',
     proof: /at least one side yielded NOTHING/,
     reason:

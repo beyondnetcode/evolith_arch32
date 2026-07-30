@@ -90,7 +90,7 @@
     "@types/fs-extra": "11.0.4",
     "@types/jest": "30.0.0",
     "@types/node": "26.0.0",
-    "@typescript-eslint/parser": "^8.64.0",
+    "@typescript-eslint/parser": "^8.65.0",
     "eslint": "*",
     "eslint-plugin-boundaries": "*",
     "typescript": "6.0.3"

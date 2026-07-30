@@ -103,7 +103,7 @@
     "@types/node": "26.0.0",
     "@types/yaml": "1.9.7",
     "@typescript-eslint/eslint-plugin": "8.62.0",
-    "@typescript-eslint/parser": "8.64.0",
+    "@typescript-eslint/parser": "8.65.0",
     "debug": "4.4.3",
     "eslint": "9.39.4",
     "eslint-plugin-boundaries": "6.0.2",

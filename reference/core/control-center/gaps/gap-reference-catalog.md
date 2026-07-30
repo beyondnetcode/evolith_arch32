@@ -7950,6 +7950,31 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
 
+#### GT-633
+
+**Title:** A guard whose expected value was a copy of its actual value
+
+- **Purpose:** Remove a check that could only ever pass, and make the snapshot it guards a real capture rather than a hand-maintained copy.
+- **Evidence:** `iso-5055-mapping.test.mjs` asserted `evaluability.counts` against six literals identical to those inside `native-evaluability-snapshot.json`, which it had already read. On `ac8594df` Core pinned `documentation-only: 136` and the snapshot said 129; the test passed. On `integration/gt-572-595-604` Core pinned `native-handler: 151` / `unimplemented-native: 48` against the snapshot's 139/60; the test passed. All twelve rules closed by that integration were still recorded as `unimplemented-native`. No capture script existed: `grep` for the filename returned the consumer, two READMEs and the test.
+- **Component:** `Governance` · **Criticality:** P1 · **Complexity:** M
+- **Provenance:** Found 2026-07-29 while reading the guard's own claim that it read `rule-corpus-triage.spec.ts`. Closed across `c856752b`, `beb6f50f`, `104fd7a1`, `0aee3eb0` and `29e940d4`.
+- **Acceptance criteria:**
+  - [x] The guard derives its expected counts from the Core source of truth, and THROWS rather than passing when it cannot find them.
+  - [x] A capture script exists, runs Core's real triage, and the snapshot is recaptured from it — then the mapping rebuilt, in that order.
+  - [x] Core's own suite compares the committed snapshot against a freshly computed triage, counts and per-rule class, in both directions.
+  - [x] The `capture → mapping` order is declared as data and a swapped declaration is rejected.
+  - [x] The mapping guard runs in a workflow; it previously ran in none.
+  - [x] The dead-reference ratchet is lowered only from a count the CI job itself printed, never from a local measurement.
+- **Transferable failure modes:**
+  - A guard whose expected value is a copy of its actual value can only ever pass. The comparison must reach a source the artifact under test does not control.
+  - A derived artifact stamped from another launders a stale input into something larger while each artifact's own `--check` still passes — which is why order belongs in a chain, not in prose.
+  - A measurement reachable only by its own test cannot be captured, so the consumer copy gets hand-maintained and drifts. Extracting it was the fix.
+  - A false `dead` in an evidence guard reads as stale evidence and invites "repairing" records that were already correct; 27 were reordered around one parser bug before it was fixed.
+  - Test positions typed as literals (`link 2 of 3`) make an unrelated addition look like a regression elsewhere; derive them.
+  - Caught in the act: two tests written to prove a parser fix passed against the OLD parser too, because the fixture root declared no `scripts` and the branch under test was skipped. With the fixture made live the six tests failed 5 of 6 against the old parser.
+- **Open remainder:** 38 dead references survive and are not path rot — see the row for the breakdown. None is repairable without inventing evidence. The standing rule recorded above the `--max-dead` flag: the budget may be lowered only from a count the CI job printed.
+- **References:** [`GT-598`](#gt-598) (origin), [`GT-578`](#gt-578) (the ratchet), [`GT-595`](#gt-595), [`GT-630`](#gt-630) (the chain), [`GT-632`](#gt-632).
+
 #### GT-632
 
 **Title:** The compiled ABAC policy is resolved at a pre-refactor path, denying every MCP tool in production

@@ -7855,6 +7855,31 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
 
+#### GT-633
+
+**Título:** Una guarda cuyo valor esperado era una copia de su valor real
+
+- **Propósito:** Quitar un check que solo podía pasar, y convertir el snapshot que vigila en una captura real en vez de una copia mantenida a mano.
+- **Evidencia:** `iso-5055-mapping.test.mjs` afirmaba `evaluability.counts` contra seis literales idénticos a los que ya había leído dentro de `native-evaluability-snapshot.json`. En `ac8594df` Core fijaba `documentation-only: 136` y el snapshot decía 129; el test pasó. En `integration/gt-572-595-604` Core fijaba `native-handler: 151` / `unimplemented-native: 48` frente a 139/60 del snapshot; el test volvió a pasar. Las doce reglas cerradas por esa integración seguían registradas como `unimplemented-native`. No existía script de captura: `grep` del nombre devolvía el consumidor, dos READMEs y el test.
+- **Componente:** `Governance` · **Criticidad:** P1 · **Complejidad:** M
+- **Procedencia:** Encontrado el 2026-07-29 al leer la afirmación de la propia guarda de que leía `rule-corpus-triage.spec.ts`. Cerrado en `c856752b`, `beb6f50f`, `104fd7a1`, `0aee3eb0` y `29e940d4`.
+- **Criterios de aceptación:**
+  - [x] La guarda deriva sus cuentas esperadas de la fuente de verdad de Core, y LANZA en vez de pasar cuando no las encuentra.
+  - [x] Existe un script de captura, ejecuta el triage real de Core, y el snapshot se recaptura desde él — y después se reconstruye el mapeo, en ese orden.
+  - [x] La suite de Core compara el snapshot comiteado contra un triage recalculado, cuentas y clase por regla, en ambos sentidos.
+  - [x] El orden `captura → mapeo` está declarado como dato y una declaración intercambiada se rechaza.
+  - [x] La guarda del mapeo corre en un workflow; antes no corría en ninguno.
+  - [x] El ratchet de referencias muertas solo baja desde un conteo que imprimió el propio job de CI, nunca desde una medición local.
+- **Modos de fallo transferibles:**
+  - Una guarda cuyo valor esperado es copia de su valor real solo puede pasar. La comparación debe alcanzar una fuente que el artefacto bajo prueba no controle.
+  - Un artefacto derivado estampado desde otro blanquea una entrada obsoleta dentro de algo mayor mientras el `--check` de cada uno sigue pasando — por eso el orden va en una cadena, no en prosa.
+  - Una medición alcanzable solo por su propio test no se puede capturar, así que la copia consumidora se mantiene a mano y deriva. Extraerla fue el arreglo.
+  - Un `dead` falso en una guarda de evidencia se lee como evidencia obsoleta e invita a "reparar" registros que ya eran correctos; 27 se reordenaron alrededor de un bug de parser antes de arreglarlo.
+  - Posiciones de test escritas como literales (`link 2 of 3`) hacen que una adición ajena parezca una regresión en otro sitio; derívalas.
+  - Pillado en el acto: dos tests escritos para probar un arreglo de parser pasaban también contra el parser VIEJO, porque la raíz de la fixture no declaraba `scripts` y la rama bajo prueba se saltaba. Con la fixture viva, los seis tests fallaron 5 de 6 contra el parser viejo.
+- **Remanente abierto:** sobreviven 38 referencias muertas que no son rot de rutas — el desglose está en la fila. Ninguna es reparable sin inventar evidencia. La regla vigente registrada sobre el flag `--max-dead`: el presupuesto solo baja desde un conteo que imprimió el job de CI.
+- **Referencias:** [`GT-598`](#gt-598) (origen), [`GT-578`](#gt-578) (el ratchet), [`GT-595`](#gt-595), [`GT-630`](#gt-630) (la cadena), [`GT-632`](#gt-632).
+
 #### GT-632
 
 **Title:** La política ABAC compilada se resuelve en una ruta previa al refactor, denegando toda herramienta MCP en producción

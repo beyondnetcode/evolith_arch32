@@ -8853,6 +8853,33 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "What this gate does NOT do is stated rather than left to be discovered. It detects a security-marked commit that no published version contains; it cannot detect a security fix nobody marked, which is a convention problem and belongs to GT-623 (release-please derives no bump from the non-conventional `security(...)` type this repository has used twice). It also reports, but does not fail on, a package whose published version is absent from this history -- an INEXACT boundary after a history rewrite -- because scanning the whole history conservatively is better than skipping the package silently. Finally, the gate needs the network: without a registry answer the package is skipped and named, and a run where EVERY package is skipped is a failure rather than a pass."
+    },
+    {
+      "id": "GT-633",
+      "closedAt": "2026-07-30",
+      "closureCommit": "29e940d4",
+      "evidence": [
+        "src/rulesets/standards/capture-native-evaluability-snapshot.mjs",
+        "src/rulesets/standards/iso-5055-mapping.test.mjs",
+        "src/packages/core-domain/test/rule-corpus-triage.ts",
+        "src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts",
+        ".harness/scripts/ci/41-validate-evidence-commands.mjs",
+        ".harness/scripts/ci/46-validate-derived-artifact-order.mjs",
+        ".github/workflows/docs.yml",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "node src/rulesets/standards/capture-native-evaluability-snapshot.mjs --check -> the snapshot is a faithful capture of the Core triage (389 rules). Before the fix there was no capture script at all, so this command could not exist.",
+        "node --test src/rulesets/standards/iso-5055-mapping.test.mjs -> 9/9. The guard now reads PINNED_CLASS_COUNTS out of rule-corpus-triage.spec.ts and THROWS when it cannot find it; the six hardcoded literals it used to compare against are gone.",
+        "npm run test --workspace src/packages/core-domain -> 1368 passed / 125 suites, including the GT-598 block that compares the committed snapshot against a freshly computed triage in both directions.",
+        "node .harness/scripts/ci/46-validate-derived-artifact-order.mjs --verbose -> 5 links, 7 artifacts, chain current AND at a fixed point. Swapping the capture/mapping pair is rejected: \"ISO/IEC 5055 corpus mapping consumes native-evaluability-snapshot.json, which a LATER link writes.\"",
+        "node --test .harness/scripts/ci/46-validate-derived-artifact-order.test.mjs -> 8/8, with link positions derived from CHAIN rather than typed as literals.",
+        "node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs -> 40/40, and 5 of the 6 new tests observed RED against the pre-fix parser.",
+        "NEGATIVE, both failure modes: reverting documentation-only to 129 turns the mapping guard red, and building the mapping from a stale snapshot turns the stamp test red. The laundering path is caught.",
+        "RATCHET, measured on the runner rather than locally: 309 -> 304 -> 40 -> 38 dead references, the budget lowered at each step only from the count the CI job printed. 38 remain and are not path rot."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "What this closure does NOT do is stated rather than left to be discovered. 38 dead references survive the migration and are deliberately left dead, because each would require INVENTING evidence to clear: 15 name the vendored, gitignored .harness/bin/opa (environment-sensitive, not a wrong path); 4 name a script ABSORBED into 04-check-bilingual-parity rather than moved, so repointing them would claim a command nobody ran; 6 name artifacts that were deleted; 5 are root-level npm test recorded without the workspace they ran in, which cannot be inferred; the rest are build output and prose the extractor reads as commands. A recorded command may be repaired when its artifact MOVED, never when it was deleted, replaced or absorbed. Separately, the two guard PARSER defects found here were fixed rather than tolerated (0aee3eb0), so they are not part of this remainder. The budget rule stands: --max-dead may be lowered only from a count the CI job itself printed, never from a local measurement."
     }
   ]
 }

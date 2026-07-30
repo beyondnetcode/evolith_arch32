@@ -459,7 +459,7 @@ jobs:
       - name: Execute the board's recorded validationCommands (report mode)
         run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose
 
-      # Ratchet, not a cliff. The budget is 40, which is what THIS RUNNER counts.
+      # Ratchet, not a cliff. The budget is 38, which is what THIS RUNNER counts.
       #
       # It was briefly lowered to 303 on the strength of the guard's computed
       # "ratchet basis" — 288 dead locally plus 15 that resolve only through
@@ -499,10 +499,18 @@ jobs:
       # VALUE (`npm run --workspace <path> <script>` reads the path as the script),
       # and `pnpm`/`yarn` are not `npm`.
       #
+      # 40 -> 38: those two parser limitations were FIXED rather than tolerated,
+      # so the two valid `pnpm`/`yarn info` commands stopped being counted as dead
+      # evidence. THIS JOB printed `38 dead (budget 40)` in run 30502009205 before
+      # the budget moved. Note what moved and what did not: the flag-value defect
+      # recovered nothing today, because those records had already been reordered
+      # to suit the broken parser — the fix is what stops the NEXT record written
+      # the other way from being misreported as stale.
+      #
       # Lower it as records are repaired, from a number this job printed; at 0,
       # delete the flag and this becomes the strict gate.
       - name: Dead-reference ratchet (must not grow)
-        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 40
+        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 38
 
   # RETIRED 2026-07-27 (GT-570): the `publish-npm` job lived here and published
   # ONLY `src/sdk/cli`, with `--tag beta` and no provenance, writing the token

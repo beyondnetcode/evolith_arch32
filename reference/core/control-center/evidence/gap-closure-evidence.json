@@ -8828,6 +8828,31 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "TWO deliberate non-adoptions are recorded as part of the closure, not deferred silently. (1) dependency-cruiser was NOT adopted for the module-boundary rules: the Core is a stateless engine that reads satellites through an overlay filesystem a subprocess cannot see, and the tool's config matches node_modules/, so an UNINSTALLED satellite would yield zero violations and PASS four blocking rules. A false pass is worse than the skip it would replace. (2) OCB-02 was NOT closed: no artifact anywhere carries an `availability` marker, so the rule quantifies over the empty set and can only pass; that is recorded as three executable tests instead of prose. The residual unclaimed-blocking corpus stands at 73 and is pinned."
+    },
+    {
+      "id": "GT-624",
+      "closedAt": "2026-07-30",
+      "closureCommit": "f84fe739",
+      "evidence": [
+        ".harness/scripts/ci/48-validate-security-publish-lag.mjs",
+        ".harness/scripts/ci/48-validate-security-publish-lag.test.mjs",
+        ".harness/scripts/lib/guard-classification.mjs",
+        ".github/workflows/ci-cd.yml",
+        "reference/core/control-center/gaps/gap-reference-catalog.md"
+      ],
+      "validationCommands": [
+        "CRITERION (a) -- npm deprecate ran on SIX packages, not the three the row named: evolith-cli, evolith-mcp, evolith-agent-runtime, evolith-core-domain, evolith-core and evolith-infra-providers, each message naming the successor and the date the wave landed. Verified with `npm view <pkg>@1.1.0 deprecated --prefer-online`; the first read-back was empty on four of six (registry cache lag, not a failed command) which is why it was re-read rather than trusted.",
+        "TWO packages deliberately NOT deprecated, recorded rather than skipped: evolith-sdk@1.1.0 is what the published line actually RESOLVED, because cli@1.2.1 and mcp@1.2.1 declared `^1.1.0` and that package publishes 1.0.0/1.1.0/2.0.0 -- a caret cannot cross a major (registered as GT-634 and fixed in 1.2.2); evolith-contracts@1.1.0 is that package's only published version, so deprecating it offers no upgrade path.",
+        "node .harness/scripts/ci/48-validate-security-publish-lag.mjs --verbose -> 8 of 8 packages, 47 commits examined since each package's published version, 0 security-marked. CRITERIA (b): the gate exists and is wired into the Governance guards job in ci-cd.yml.",
+        "THE BOUNDARY COMES FROM THE REGISTRY, NOT FROM A TAG, and that is measured: the newest v* tag in this repository is v1.1.0 while npm serves @beyondnet/evolith-cli@1.2.2. Three releases were published without a tag, so a tag-based gate would have reported a four-release lag that does not exist and flagged every commit since 1.1.0.",
+        "TWO FALSE NEGATIVES were found and fixed while building it, each pinned by a fixture. (1) `git log -S'\"version\": \"<published>\"'` matches the commit that DELETED the string as well as the one that added it, so on a just-bumped package the boundary landed on the bump itself. (2) Taking the NEWEST commit at the published version let a later manifest edit that keeps the version -- a dependency bump -- push the boundary forward and hide the window. The boundary is now the commit where the version was SET. Denominator: 47 commits examined, against 31 for the first implementation.",
+        "The marker is STRUCTURAL, type or scope, and refuses prose on purpose: `fix(deps)!: ... the SDK that carries the security wave` is a dependency fix, and a gate that fires on any subject mentioning security gets switched off. Pinned by a unit test that asserts that exact subject is NOT a marker.",
+        "node --test .harness/scripts/ci/48-validate-security-publish-lag.test.mjs -> 12/12, over real git repositories in a sandbox rather than a mock of git archaeology.",
+        "CRITERION (c) in this repository's strong form: node .harness/scripts/ci/43-validate-guard-negative-fixtures.mjs -> 37/37 exercised guards refused the empty fixture, up from 36. The gate has been OBSERVED failing, not merely declared able to.",
+        "node .harness/scripts/ci/42-validate-guard-denominators.mjs -> 60 guards classified, 40/40 scanners refuse a zero-element scan; the new guard is registered in guard-classification.mjs with its anti-vacuous proof."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "What this gate does NOT do is stated rather than left to be discovered. It detects a security-marked commit that no published version contains; it cannot detect a security fix nobody marked, which is a convention problem and belongs to GT-623 (release-please derives no bump from the non-conventional `security(...)` type this repository has used twice). It also reports, but does not fail on, a package whose published version is absent from this history -- an INEXACT boundary after a history rewrite -- because scanning the whole history conservatively is better than skipping the package silently. Finally, the gate needs the network: without a registry answer the package is skipped and named, and a run where EVERY package is skipped is a failure rather than a pass."
     }
   ]
 }

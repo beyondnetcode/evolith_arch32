@@ -8065,6 +8065,6 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Infra` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Carved out of GT-570 on 2026-07-27 as it closed. Two of its three original criteria were not met by shipping 1.2.0; they are recorded here rather than assumed.
 - **Acceptance criteria:**
-  - [ ] `npm view @beyondnet/evolith-mcp@1.1.0` reports the version as deprecated, likewise cli and agent-runtime.
-  - [ ] A CI gate fails when a commit whose type or scope marks it as security is absent from the latest published tag.
-  - [ ] The gate ships with a negative fixture that turns it red, so it is not another guard nobody has seen fail.
+  - [x] `npm view @beyondnet/evolith-mcp@1.1.0` reports the version as deprecated, likewise cli and agent-runtime — and also core-domain, core and infra-providers. `evolith-sdk@1.1.0` and `evolith-contracts@1.1.0` are deliberately NOT deprecated, for reasons recorded in the evidence above rather than skipped.
+  - [x] A CI gate fails when a commit whose type or scope marks it as security is absent from the latest published version. `48-validate-security-publish-lag`, wired into `Governance guards (GT-578)`. It asks the registry rather than git tags, because the newest `v*` tag is `v1.1.0` while npm serves `1.2.2`.
+  - [x] The gate ships with negative fixtures that turn it red — 12 of them, including the anti-vacuous floors and a regression for each of the two false negatives found while building it — and `43-validate-guard-negative-fixtures` has OBSERVED it refuse the empty fixture (37/37).

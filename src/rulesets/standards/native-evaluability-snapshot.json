@@ -1,26 +1,25 @@
 {
   "$id": "https://evolith.dev/rulesets/standards/native-evaluability-snapshot.json",
   "title": "Native-engine evaluability class per rule (snapshot)",
-  "description": "Per-rule evaluability class as computed by the Core native evaluator triage. This is a CAPTURED SNAPSHOT, not the source of truth: the authority is src/packages/core-domain/src/application/validators/rule-evaluability.ts and its pinned spec rule-corpus-triage.spec.ts. It is recorded here so the ISO/IEC 5055 mapping can be scoped to the real handler backlog without src/rulesets depending on a package it does not own.",
+  "description": "Per-rule evaluability class as computed by the Core native evaluator triage. This is a GENERATED CAPTURE, not the source of truth: the authority is src/packages/core-domain/src/application/validators/rule-evaluability.ts and the handler set registered in native-evaluator.ts. It is recorded here so the ISO/IEC 5055 mapping can be scoped to the real handler backlog without src/rulesets depending on a package it does not own. Do not hand-edit — regenerate.",
   "version": "1.1.0",
-  "generatedBy": "src/rulesets/standards/capture-native-evaluability-snapshot.mjs",
   "capturedOn": "2026-07-29",
   "capturedFrom": [
-    "src/packages/core-domain/test/rule-corpus-triage.ts (corpus loader, real handler set, classification)",
     "src/packages/core-domain/src/application/validators/rule-evaluability.ts (RULE_TRIAGE, classifyRule, ADR_CONFORMANCE_CATEGORY)",
     "src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts (registered handler set)",
     "src/packages/core-domain/src/application/validators/evaluators/handlers/**/*.ts (canHandle predicates)",
-    "src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts (the pinned counts, asserted against this file)"
+    "src/packages/core-domain/test/rule-corpus-triage.ts (corpus loader, classification and this renderer)"
   ],
-  "validation": "Captured from a live run of the Core triage over 389 rules (native-handler 154, unimplemented-native 48, needs-runtime 17, needs-external-system 20, documentation-only 136, underspecified 14). Recapture with `node src/rulesets/standards/capture-native-evaluability-snapshot.mjs`, then rebuild the mapping with `node src/rulesets/standards/build-iso-5055-mapping.mjs` — the mapping stamps nativeEvaluability per rule from this file, so rebuilding first would launder a stale class into it. Drift is caught in two places: rule-corpus-triage.spec.ts compares this file against a fresh triage (core-domain jest), and iso-5055-mapping.test.mjs checks it against the counts pinned in that spec (dependency-free documentation job).",
+  "regenerateWith": "node src/rulesets/standards/capture-native-evaluability-snapshot.mjs",
+  "validation": "Rendered by test/rule-corpus-triage.ts from the live triage, written by capture-native-evaluability-snapshot.mjs and pinned byte-for-byte by rule-corpus-triage.spec.ts, so a divergence between this file and Core is a failing test rather than silent drift (corpus 389; native-handler 154, documentation-only 136, unimplemented-native 48, needs-external-system 20, needs-runtime 17, underspecified 14).",
   "corpusSize": 389,
   "distinctRuleIds": 389,
   "counts": {
     "native-handler": 154,
-    "unimplemented-native": 48,
-    "needs-runtime": 17,
-    "needs-external-system": 20,
     "documentation-only": 136,
+    "unimplemented-native": 48,
+    "needs-external-system": 20,
+    "needs-runtime": 17,
     "underspecified": 14
   },
   "classes": {

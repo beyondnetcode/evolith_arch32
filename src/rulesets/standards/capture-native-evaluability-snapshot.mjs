@@ -118,23 +118,32 @@ function resolveTsNodeRegister() {
  * Core is CommonJS TypeScript compiled by `ts-node`, and the boundary between
  * them is a process, not a module resolution problem worth solving.
  */
-function runTriage() {
+function runTriage(capturedOn) {
+  // GT-633 RECONCILIATION: this script used to BUILD the document itself, while
+  // `rule-corpus-triage.spec.ts` built a second copy of it. Two generators for one
+  // artifact is the defect GT-633 exists to remove, one level up — whichever ran
+  // last would win and the other's `--check` would go red for no visible reason.
+  //
+  // The renderer now lives once, in `test/rule-corpus-triage.ts`, and this script
+  // is a thin driver over it: it supplies the sticky `capturedOn` and writes the
+  // bytes. The spec pins the same bytes. One renderer, two callers.
   const program = `
-    const { triageCorpus } = require(${JSON.stringify(path.join(REPO_ROOT, TRIAGE_MODULE))});
-    const { corpus, classified, summary } = triageCorpus();
+    const { triageCorpus, renderSnapshot } = require(${JSON.stringify(path.join(REPO_ROOT, TRIAGE_MODULE))});
+    const triage = triageCorpus();
     const classes = {};
     const conflicts = [];
-    for (const c of classified) {
+    for (const c of triage.classified) {
       if (classes[c.ruleId] && classes[c.ruleId] !== c.evaluability) {
         conflicts.push(c.ruleId + ': ' + classes[c.ruleId] + ' vs ' + c.evaluability);
       }
       classes[c.ruleId] = c.evaluability;
     }
     process.stdout.write(JSON.stringify({
-      corpusSize: corpus.length,
-      counts: summary.byClass,
+      corpusSize: triage.corpus.length,
+      counts: triage.summary.byClass,
       classes,
       conflicts,
+      document: renderSnapshot(triage, { capturedOn: ${JSON.stringify(capturedOn)} }),
     }));
   `;
 
@@ -197,64 +206,54 @@ function runTriage() {
  * identical classification would turn every recapture into a diff and make real
  * drift harder to see in review.
  */
-function capturedOn(previous, changed) {
-  if (!changed && previous?.capturedOn) return previous.capturedOn;
+function today() {
   return new Date().toISOString().slice(0, 10);
 }
 
-function render(triage, previous) {
-  const counts = Object.fromEntries(
-    KNOWN_CLASSES.filter((c) => triage.counts[c] !== undefined).map((c) => [c, triage.counts[c]]),
-  );
-  const classes = Object.fromEntries(Object.entries(triage.classes));
+/**
+ * Has the CLASSIFICATION moved, as opposed to the provenance?
+ *
+ * `capturedOn` is provenance, not content: bumping it on a run that produced an
+ * identical classification would turn every recapture into a diff and make real
+ * drift harder to see in review. It is also what keeps the GT-630 chain's
+ * fixed-point replay byte-identical.
+ */
+function classificationChanged(previous, triage) {
+  if (!previous) return true;
 
-  const body = {
-    counts,
-    classes,
-  };
-  const changed =
-    !previous ||
-    JSON.stringify(previous.counts) !== JSON.stringify(body.counts) ||
-    JSON.stringify(previous.classes) !== JSON.stringify(body.classes);
-
-  const pinned = KNOWN_CLASSES.filter((c) => counts[c] !== undefined)
-    .map((c) => `${c} ${counts[c]}`)
-    .join(', ');
-
-  const doc = {
-    $id: 'https://evolith.dev/rulesets/standards/native-evaluability-snapshot.json',
-    title: 'Native-engine evaluability class per rule (snapshot)',
-    description:
-      'Per-rule evaluability class as computed by the Core native evaluator triage. This is a CAPTURED SNAPSHOT, not the source of truth: the authority is src/packages/core-domain/src/application/validators/rule-evaluability.ts and its pinned spec rule-corpus-triage.spec.ts. It is recorded here so the ISO/IEC 5055 mapping can be scoped to the real handler backlog without src/rulesets depending on a package it does not own.',
-    version: '1.1.0',
-    generatedBy: 'src/rulesets/standards/capture-native-evaluability-snapshot.mjs',
-    capturedOn: capturedOn(previous, changed),
-    capturedFrom: [
-      'src/packages/core-domain/test/rule-corpus-triage.ts (corpus loader, real handler set, classification)',
-      'src/packages/core-domain/src/application/validators/rule-evaluability.ts (RULE_TRIAGE, classifyRule, ADR_CONFORMANCE_CATEGORY)',
-      'src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts (registered handler set)',
-      'src/packages/core-domain/src/application/validators/evaluators/handlers/**/*.ts (canHandle predicates)',
-      'src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts (the pinned counts, asserted against this file)',
-    ],
-    validation:
-      `Captured from a live run of the Core triage over ${triage.corpusSize} rules (${pinned}). ` +
-      'Recapture with `node src/rulesets/standards/capture-native-evaluability-snapshot.mjs`, then rebuild ' +
-      'the mapping with `node src/rulesets/standards/build-iso-5055-mapping.mjs` — the mapping stamps ' +
-      'nativeEvaluability per rule from this file, so rebuilding first would launder a stale class into it. ' +
-      'Drift is caught in two places: rule-corpus-triage.spec.ts compares this file against a fresh triage ' +
-      '(core-domain jest), and iso-5055-mapping.test.mjs checks it against the counts pinned in that spec ' +
-      '(dependency-free documentation job).',
-    // Both numbers, because they are not the same question. `corpusSize` is what
-    // Core classified and what `counts` sums to; `distinctRuleIds` is how many
-    // keys `classes` can hold. They differ exactly when one rule id appears in
-    // more than one ruleset file, and a guard that assumed they were equal would
-    // go red on a corpus change that is not drift.
-    corpusSize: triage.corpusSize,
-    distinctRuleIds: Object.keys(classes).length,
-    ...body,
+  // ORDER-INSENSITIVE, and that is not a detail. The first version compared
+  // `JSON.stringify(previous.counts)` against a counts object rebuilt in
+  // KNOWN_CLASSES order, while the renderer emits them in CLASS_ORDER — a
+  // different order for the same six numbers. So "changed" was ALWAYS true, the
+  // date was rewritten on every run, and the GT-630 fixed-point replay would have
+  // failed on any day after the capture. It passed the day it was written because
+  // both runs stamped the same date, which is precisely the kind of green this
+  // chain exists to distrust.
+  const sameMap = (a = {}, b = {}) => {
+    const ka = Object.keys(a).sort();
+    const kb = Object.keys(b).sort();
+    return ka.length === kb.length && ka.every((k, i) => kb[i] === k && a[k] === b[k]);
   };
 
-  return { json: JSON.stringify(doc, null, 2) + '\n', changed };
+  return !sameMap(previous.counts, triage.counts) || !sameMap(previous.classes, triage.classes);
+}
+
+/**
+ * The document, from the ONE renderer in `test/rule-corpus-triage.ts`.
+ *
+ * The date is a chicken-and-egg: stickiness is decided by whether the
+ * classification moved, which is only known after the triage runs, but the
+ * renderer needs the date as input. Rather than pay for a second ts-node run,
+ * the triage is rendered once with the PREVIOUS date and, if the classification
+ * did move, that single field is replaced. `JSON.parse` preserves key insertion
+ * order, so re-stringifying with the same formatting reproduces the renderer's
+ * bytes exactly — verified by `--check` being a byte comparison.
+ */
+function documentFrom(triage, previous, changed) {
+  if (!changed) return triage.document;
+  const doc = JSON.parse(triage.document);
+  doc.capturedOn = today();
+  return JSON.stringify(doc, null, 2) + '\n';
 }
 
 // ---------------------------------------------------------------------------
@@ -284,8 +283,9 @@ function readCommittedSnapshot() {
 
 const onDisk = readCommittedSnapshot();
 const previous = onDisk ? JSON.parse(onDisk) : undefined;
-const triage = runTriage();
-const { json, changed } = render(triage, previous);
+const triage = runTriage(previous?.capturedOn ?? today());
+const changed = classificationChanged(previous, triage);
+const json = documentFrom(triage, previous, changed);
 
 if (CHECK) {
   if (onDisk !== json) {

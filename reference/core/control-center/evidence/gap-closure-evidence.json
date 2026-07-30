@@ -8855,7 +8855,7 @@
       "dependencyRationale": "What this gate does NOT do is stated rather than left to be discovered. It detects a security-marked commit that no published version contains; it cannot detect a security fix nobody marked, which is a convention problem and belongs to GT-623 (release-please derives no bump from the non-conventional `security(...)` type this repository has used twice). It also reports, but does not fail on, a package whose published version is absent from this history -- an INEXACT boundary after a history rewrite -- because scanning the whole history conservatively is better than skipping the package silently. Finally, the gate needs the network: without a registry answer the package is skipped and named, and a run where EVERY package is skipped is a failure rather than a pass."
     },
     {
-      "id": "GT-633",
+      "id": "GT-640",
       "closedAt": "2026-07-30",
       "closureCommit": "29e940d4",
       "evidence": [
@@ -8931,7 +8931,7 @@
       ],
       "validationCommands": [
         "node .harness/scripts/ci/49-validate-gap-id-allocation.mjs --verbose -> 515 ids on base, 515 on HEAD, 0 newly allocated, 0 collisions against origin/main.",
-        "IT FOUND A SECOND COLLISION ON ITS FIRST REAL RUN, which nobody knew about. Against origin/develop it reports GT-633: on develop that id is `evolith init` scaffolds a repository that cannot pass its own governance on the first run (c8270e48, 2026-07-29); on main it is the tautological-guard row (c3221276, 2026-07-30). Two gaps, one number, and the merge had not surfaced it yet.",
+        "IT FOUND A SECOND COLLISION ON ITS FIRST REAL RUN, which nobody knew about. Against origin/develop it reports GT-633: on develop that id is `evolith init` scaffolds a repository that cannot pass its own governance on the first run (c8270e48, 2026-07-29); on main it is the tautological-guard row (c3221276, 2026-07-30). Two gaps, one number, and the merge had not surfaced it yet. RESOLVED the same day by renumbering the newer row -- main's -- to GT-640, per the guard's own advice.",
         "THE DISCRIMINATOR IS THE TITLE, deliberately. `the id already exists on base` is the normal case for 500-odd rows and says nothing; what makes it a defect is the id naming a DIFFERENT gap on each side. Evidence, status and criteria are all expected to change on a branch.",
         "It refuses to guess which side is wrong -- a retitle and a collision are indistinguishable from outside -- so it names both titles and both refs, and says in the failure that it should not guess.",
         "node --test .harness/scripts/ci/49-validate-gap-id-allocation.test.mjs -> 13/13, including the GT-634 collision reproduced over real git repositories rather than a mock of `git show`.",

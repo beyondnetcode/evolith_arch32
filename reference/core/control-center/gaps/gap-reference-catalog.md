@@ -7950,6 +7950,20 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
 
+#### GT-639
+
+**Title:** Nothing makes in-flight work visible across branches, so the same gap gets fixed twice
+
+- **Purpose:** Make a gap that is already being worked discoverable BEFORE a second session starts it, rather than at merge time.
+- **Evidence:** **On 2026-07-30 the same work was done twice, three separate times, by sessions that could not see each other.** (1) [`GT-633`](./gap-reference-catalog.md#gt-633) was fixed twice: a standalone capture script landed on `main` as #276, and an independent in-spec renderer landed on `develop` as #279. Both were correct, both recaptured the same numbers — and two generators for one artifact is GT-633's own defect one level up, so a THIRD session spent a full reconciliation (#294, #295, #296, #297) collapsing them to one renderer. (2) The evidence guard's parser was fixed twice: `d1ea72a3` on `main` ("stop the evidence guard blaming the evidence for two parser defects") and `5acb29ed` on `develop` ("the ratchet was stuck by two bugs in itself"). (3) A GT id was allocated twice, forcing the renumber recorded in [`GT-638`](./gap-reference-catalog.md#gt-638). **The cost is not the merge conflict.** It is the duplicated work that happened before anyone reached the conflict, plus the reconciliation it then required — and that reconciliation introduced a defect of its own (an order-sensitive comparison that rewrote the capture date on every run, invisible for a day because both runs stamped the same date). Three duplications, one repair session, one new bug: that is the real bill. **Why the board cannot see it today:** a row carries a status (`PENDING`, `IN-PROGRESS`) but not WHO is working it or WHERE. Two sessions can both read `GT-633 · PENDING` and both start, correctly. `08-validate-tracking` validates within one working tree by construction, so it cannot know another branch exists. **This is not a missing convention — the convention exists.** The single-driver rule for gap waves is already established practice; what is missing is any mechanism that makes it observable, so on a busy day it degrades silently and nobody learns until the merge. Fix directions: require a claim (branch or PR) on a row that moves to `IN-PROGRESS`, and derive the claim set from open PRs so it cannot go stale; then fail at PR time when one GT id is claimed by more than one open branch, naming both.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** M
+- **Provenance:** Registered 2026-07-30 from three observed instances in a single day, all of them in the `develop` → `main` merge that made them visible. Related but distinct from [`GT-638`](./gap-reference-catalog.md#gt-638): that row is about allocating a NAME twice, this one about doing the WORK twice. The same coordination gap produces both, and the id collision is the cheapest symptom of it.
+- **Acceptance criteria:**
+  - [ ] A gap being worked is discoverable from the board together with the branch or PR that claims it, before the work lands.
+  - [ ] A check fails at pull-request time when one `GT-*` id is claimed by more than one open branch, naming both claimants.
+  - [ ] The claim is DERIVED from open pull requests rather than hand-written, so it cannot be stale in the direction that matters.
+  - [ ] It ships with a negative fixture that has been OBSERVED red, not merely declared able to fail.
+
 #### GT-638
 
 **Title:** The board has no id allocator, so two parallel branches hand out the same GT number

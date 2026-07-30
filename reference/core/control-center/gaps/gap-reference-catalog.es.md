@@ -7855,6 +7855,20 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
 
+#### GT-639
+
+**Title:** Nada hace visible el trabajo en vuelo entre ramas, así que el mismo gap se arregla dos veces
+
+- **Purpose:** Que un gap que ya se está trabajando sea descubrible ANTES de que una segunda sesión lo empiece, y no en el merge.
+- **Evidence:** **El 2026-07-30 el mismo trabajo se hizo dos veces, en tres ocasiones distintas, por sesiones que no podían verse.** (1) [`GT-633`](./gap-reference-catalog.es.md#gt-633) se arregló dos veces: un script de captura aterrizó en `main` como #276 y un renderer independiente dentro del spec aterrizó en `develop` como #279. Los dos eran correctos, los dos recapturaron los mismos números — y dos generadores para un artefacto es el defecto del propio GT-633 un nivel más arriba, así que una TERCERA sesión gastó una reconciliación entera (#294, #295, #296, #297) en dejar un solo renderer. (2) El parser del guard de evidencias se arregló dos veces: `d1ea72a3` en `main` ("stop the evidence guard blaming the evidence for two parser defects") y `5acb29ed` en `develop` ("the ratchet was stuck by two bugs in itself"). (3) Un id de GT se asignó dos veces, forzando la renumeración que registra [`GT-638`](./gap-reference-catalog.es.md#gt-638). **El coste no es el conflicto de merge.** Es el trabajo duplicado que ocurrió antes de que nadie llegara al conflicto, más la reconciliación que hizo falta después — y esa reconciliación introdujo un defecto propio (una comparación sensible al orden que reescribía la fecha de captura en cada corrida, invisible durante un día porque ambas estampaban la misma fecha). Tres duplicaciones, una sesión de reparación y un bug nuevo: ésa es la factura real. **Por qué el tablero no lo ve hoy:** una fila lleva estado (`PENDIENTE`, `EN-PROGRESO`) pero no QUIÉN la trabaja ni DÓNDE. Dos sesiones pueden leer ambas `GT-633 · PENDIENTE` y empezar ambas, correctamente. `08-validate-tracking` valida dentro de un único árbol de trabajo por construcción, así que no puede saber que existe otra rama. **Esto no es una convención que falte — la convención existe.** La regla de un solo driver para las olas de gaps es práctica establecida; lo que falta es cualquier mecanismo que la haga observable, así que en un día cargado se degrada en silencio y nadie se entera hasta el merge. Direcciones de arreglo: exigir una reclamación (rama o PR) en la fila que pasa a `EN-PROGRESO`, y derivar el conjunto de reclamaciones de los PR abiertos para que no pueda quedarse rancio; después, fallar en PR cuando un id `GT-*` esté reclamado por más de una rama abierta, nombrando a las dos.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** M
+- **Provenance:** Registrado el 2026-07-30 a partir de tres instancias observadas en un solo día, todas en el merge `develop` → `main` que las hizo visibles. Relacionado pero distinto de [`GT-638`](./gap-reference-catalog.es.md#gt-638): aquella fila trata de asignar un NOMBRE dos veces, ésta de hacer el TRABAJO dos veces. La misma carencia de coordinación produce ambas, y la colisión de id es su síntoma más barato.
+- **Acceptance criteria:**
+  - [ ] Un gap que se está trabajando es descubrible desde el tablero junto con la rama o el PR que lo reclama, antes de que el trabajo aterrice.
+  - [ ] Una comprobación falla en pull request cuando un id `GT-*` está reclamado por más de una rama abierta, nombrando a ambos reclamantes.
+  - [ ] La reclamación se DERIVA de los pull requests abiertos y no se escribe a mano, para que no pueda quedarse rancia en la dirección que importa.
+  - [ ] Incluye una fixture negativa OBSERVADA en rojo, no sólo declarada capaz de fallar.
+
 #### GT-638
 
 **Title:** El tablero no tiene asignador de ids, así que dos ramas paralelas reparten el mismo número GT

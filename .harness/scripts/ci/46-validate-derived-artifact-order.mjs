@@ -89,6 +89,38 @@ export const CHAIN = [
     writes: ['src/rulesets/opa/abac-mcp-tool-access.rego'],
   },
   {
+    name: 'native evaluability snapshot',
+    producer: 'src/rulesets/standards/capture-native-evaluability-snapshot.mjs',
+    checkArgs: ['--check'],
+    // Same shape as the ABAC link: derived from the runtime through ts-node, so
+    // its real inputs are Core's triage sources plus the corpus they classify.
+    // The corpus half matters — `documentation-only` moved 129 -> 136 purely
+    // because seven generated ADR rulesets appeared, and nothing noticed for as
+    // long as this file was maintained by hand (GT-598).
+    consumes: [
+      'src/packages/core-domain/test/rule-corpus-triage.ts',
+      'src/packages/core-domain/src/application/validators/rule-evaluability.ts',
+      'src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts',
+    ],
+    writes: ['src/rulesets/standards/native-evaluability-snapshot.json'],
+  },
+  {
+    name: 'ISO/IEC 5055 corpus mapping',
+    producer: 'src/rulesets/standards/build-iso-5055-mapping.mjs',
+    checkArgs: ['--check'],
+    // THE edge this pair exists for: the generator stamps `nativeEvaluability`
+    // onto every row from the snapshot. Rebuild before recapturing and a stale
+    // class is laundered into a 391-row artifact, with the handler backlog
+    // overstated by exactly the rules Core has closed since the last capture.
+    // Both artifacts pass their own --check at that moment, which is precisely
+    // the failure one-artifact-at-a-time checking cannot see.
+    consumes: ['src/rulesets/standards/native-evaluability-snapshot.json'],
+    writes: [
+      'src/rulesets/standards/iso-5055-mapping.json',
+      'src/rulesets/standards/iso-5055-mapping.csv',
+    ],
+  },
+  {
     name: 'maturity reconciliation',
     producer: '.harness/scripts/ci/09-reconcile-maturity.mjs',
     checkArgs: ['--check'],

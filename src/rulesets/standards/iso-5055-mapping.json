@@ -86,7 +86,7 @@
       "src/packages/core-domain/src/application/validators/rule-evaluability.ts (RULE_TRIAGE, classifyRule, ADR_CONFORMANCE_CATEGORY)",
       "src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts (registered handler set)",
       "src/packages/core-domain/src/application/validators/evaluators/handlers/**/*.ts (canHandle predicates)",
-      "src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts (corpus loader, renderer and byte-for-byte pin)"
+      "src/packages/core-domain/test/rule-corpus-triage.ts (corpus loader, classification and this renderer)"
     ],
     "note": "The handler backlog is the `unimplemented-native` class only. `documentation-only` and `underspecified` rules are not handler work at all, and the two adapter classes are closed by the enforcer seam rather than by a rule handler.",
     "realBacklogSize": 48,

@@ -23,6 +23,22 @@ import { spawnSync } from 'node:child_process';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const GUARD = resolve(__dirname, '46-validate-derived-artifact-order.mjs');
 
+// The guard only runs main() when invoked directly, so importing CHAIN is safe.
+const { CHAIN } = await import('./46-validate-derived-artifact-order.mjs');
+
+/**
+ * Where a link sits, DERIVED rather than typed.
+ *
+ * These positions were hardcoded ("link 2 of 3"), so every link added to the
+ * chain broke assertions that were not about the new link at all — which reads
+ * as the change being wrong rather than the test being brittle.
+ */
+const linkPosition = (producerSuffix) => {
+  const i = CHAIN.findIndex((l) => l.producer.endsWith(producerSuffix));
+  assert.notEqual(i, -1, `no chain link produces ${producerSuffix} — the fixture is describing a chain that moved`);
+  return { position: i + 1, total: CHAIN.length };
+};
+
 let sandbox;
 before(() => { sandbox = mkdtempSync(join(tmpdir(), 'gt630-')); });
 after(() => { if (sandbox) rmSync(sandbox, { recursive: true, force: true }); });
@@ -38,7 +54,7 @@ test('the real repository is current and at a fixed point', () => {
   const { status, out } = run(resolve(__dirname, '../../..'));
   assert.equal(status, 0, out);
   assert.match(out, /at a fixed point/);
-  assert.match(out, /links declared \.+ 3/);
+  assert.match(out, /links declared \.+ 5/);
 });
 
 test('the guard leaves the real tree byte-identical', () => {
@@ -50,6 +66,13 @@ test('the guard leaves the real tree byte-identical', () => {
     'reference/core/control-center/maturity-reports/maturity-reconciliation.json',
     'reference/core/control-center/maturity-reports/executive-summary.md',
     'reference/core/control-center/maturity-reports/executive-summary.es.md',
+    // GT-598's pair. The snapshot is the sharper case: its producer stamps a
+    // `capturedOn` date, and it is deliberately STICKY when the classification
+    // is unchanged. Were it not, a replay would rewrite the date, this assertion
+    // would fail, and the fixed-point pass would report drift every day.
+    'src/rulesets/standards/native-evaluability-snapshot.json',
+    'src/rulesets/standards/iso-5055-mapping.json',
+    'src/rulesets/standards/iso-5055-mapping.csv',
   ];
   const before = artifacts.map((a) => readFileSync(join(repo, a)));
   run(repo);
@@ -60,17 +83,41 @@ test('the guard leaves the real tree byte-identical', () => {
 
 
 /**
- * The chain gained a first link (the ABAC rego, GT-602). These fixtures are about
- * ORDER, not about ABAC, so each mini-repo gets a trivial producer/artifact pair
- * for it — otherwise the shape check trips before the behaviour under test runs.
+ * Every REAL chain link that is not the behaviour under test needs a trivial
+ * producer/artifact pair in each mini-repo, or the shape check trips before the
+ * test gets to run. These fixtures are about ORDER — not about ABAC, the
+ * evaluability snapshot, or the 5055 mapping.
+ *
+ * Keep this in step with CHAIN. A link added to the guard without a stub here
+ * fails every fixture below with "declared producer does not exist", which
+ * points at the fixture rather than at the change that caused it.
  */
-const ABAC_STUB = {
-  '.harness/scripts/generate-abac-tool-sets.mjs':
-    "import fs from 'node:fs';\nconst f = process.cwd() + '/src/rulesets/opa/abac-mcp-tool-access.rego';\n" +
-    "if (process.argv.includes('--check')) process.exit(fs.readFileSync(f, 'utf8') === 'stable\\n' ? 0 : 1);\n" +
-    "fs.writeFileSync(f, 'stable\\n');\n",
+const stubProducer = (artifacts) =>
+  "import fs from 'node:fs';\n" +
+  `const files = ${JSON.stringify(artifacts)}.map(f => process.cwd() + '/' + f);\n` +
+  "if (process.argv.includes('--check')) " +
+  "process.exit(files.every(f => fs.readFileSync(f, 'utf8') === 'stable\\n') ? 0 : 1);\n" +
+  "for (const f of files) fs.writeFileSync(f, 'stable\\n');\n";
+
+const PRELUDE_STUBS = {
+  // link 1 — ABAC rego (GT-602)
+  '.harness/scripts/generate-abac-tool-sets.mjs': stubProducer(['src/rulesets/opa/abac-mcp-tool-access.rego']),
   'src/packages/mcp-server/src/mcp/abac-evaluator.ts': '// stub\n',
   'src/rulesets/opa/abac-mcp-tool-access.rego': 'stable\n',
+
+  // link 2 — native evaluability snapshot (GT-598)
+  'src/rulesets/standards/capture-native-evaluability-snapshot.mjs':
+    stubProducer(['src/rulesets/standards/native-evaluability-snapshot.json']),
+  'src/packages/core-domain/test/rule-corpus-triage.ts': '// stub\n',
+  'src/packages/core-domain/src/application/validators/rule-evaluability.ts': '// stub\n',
+  'src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts': '// stub\n',
+  'src/rulesets/standards/native-evaluability-snapshot.json': 'stable\n',
+
+  // link 3 — ISO/IEC 5055 mapping (GT-598), which consumes link 2's artifact
+  'src/rulesets/standards/build-iso-5055-mapping.mjs':
+    stubProducer(['src/rulesets/standards/iso-5055-mapping.json', 'src/rulesets/standards/iso-5055-mapping.csv']),
+  'src/rulesets/standards/iso-5055-mapping.json': 'stable\n',
+  'src/rulesets/standards/iso-5055-mapping.csv': 'stable\n',
 };
 
 // --- the shape of the declaration itself ------------------------------------
@@ -78,7 +125,7 @@ const ABAC_STUB = {
 describe('chain declaration (anti-vacuous)', () => {
   const fixture = (name, files) => {
     const root = join(sandbox, name);
-    for (const [rel, body] of Object.entries({ ...ABAC_STUB, ...files })) {
+    for (const [rel, body] of Object.entries({ ...PRELUDE_STUBS, ...files })) {
       mkdirSync(dirname(join(root, rel)), { recursive: true });
       writeFileSync(join(root, rel), body);
       if (rel.endsWith('.mjs')) chmodSync(join(root, rel), 0o755);
@@ -128,7 +175,7 @@ describe('stale versus out-of-order', () => {
       mkdirSync(dirname(join(root, rel)), { recursive: true });
       writeFileSync(join(root, rel), body);
     };
-    for (const [rel, body] of Object.entries(ABAC_STUB)) w(rel, body);
+    for (const [rel, body] of Object.entries(PRELUDE_STUBS)) w(rel, body);
     w('reference/core/control-center/gaps/gap-tracking.md', `count: ${boardCount}\n`);
     w('reference/core/control-center/maturity-reports/maturity-assessment.md', '# assessment\n');
     w('reference/core/control-center/maturity-reports/maturity-reconciliation.json', `{"count":${reconCount}}\n`);
@@ -177,7 +224,8 @@ fs.writeFileSync(dir + 'executive-summary.es.md', es);
     const root = miniRepo('stale-upstream', { boardCount: 9, reconCount: 7, summaryCount: 7 });
     const { status, out } = run(root);
     assert.equal(status, 1, out);
-    assert.match(out, /maturity reconciliation is STALE \(link 2 of 3\)/);
+    const { position, total } = linkPosition('09-reconcile-maturity.mjs');
+    assert.match(out, new RegExp(`maturity reconciliation is STALE \\(link ${position} of ${total}\\)`));
     assert.match(out, /Stopping at the FIRST stale link on purpose/);
     assert.doesNotMatch(out, /executive governance summary is STALE/);
   });
@@ -239,7 +287,9 @@ fs.writeFileSync(dir + 'executive-summary.es.md', es);
     assert.equal(status, 1, out);
     assert.match(out, /differ after replaying the chain IN ORDER/);
     assert.match(out, /Fix by regenerating in the declared order/);
-    // The reconciler is link 2 now that the ABAC rego leads the chain.
-    assert.match(out, /2\. node \.harness\/scripts\/ci\/09-reconcile-maturity\.mjs/);
+    // The remediation must list the chain in order, with the reconciler at its
+    // real position — derived, so adding a link ahead of it does not break this.
+    const { position } = linkPosition('09-reconcile-maturity.mjs');
+    assert.match(out, new RegExp(`${position}\\. node \\.harness/scripts/ci/09-reconcile-maturity\\.mjs`));
   });
 });

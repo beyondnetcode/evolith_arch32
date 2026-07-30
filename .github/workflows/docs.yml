@@ -99,6 +99,19 @@ jobs:
       - name: Self-tests for the ADR ruleset generator
         run: node --test .harness/scripts/generate-adr-rulesets.test.mjs
 
+      # GT-598 / GT-633: `native-evaluability-snapshot.json` says of itself that it
+      # is a capture, and for a long time nothing captured it — it was written by
+      # hand and drifted, while its guard compared the file against six numbers
+      # typed into the test: the same six the file contained. Drift is not
+      # contained either, because `build-iso-5055-mapping.mjs` stamps
+      # nativeEvaluability onto all 388 mapping rows FROM this file. The order of
+      # these two steps is the order of the chain.
+      - name: Native evaluability snapshot is a faithful capture of Core's triage
+        run: node src/rulesets/standards/capture-native-evaluability-snapshot.mjs --check
+
+      - name: ISO/IEC 5055 mapping guard
+        run: node --test src/rulesets/standards/iso-5055-mapping.test.mjs
+
       # GT-630: the derived artifacts have a dependency ORDER — the executive
       # summary is built FROM the maturity reconciliation, which is built from
       # the board. Generate the summary first and it captures a value the

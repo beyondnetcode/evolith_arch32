@@ -435,9 +435,32 @@ jobs:
       - name: A port inventory does not read as a capability claim
         run: node .harness/scripts/ci/45-validate-port-inventory-honesty.mjs --verbose
 
+      # GT-624: the 2026-07-23 security wave sat unpublished until 2026-07-27
+      # while SECURITY.md declared the 1.1.x line "actively patched". Nothing
+      # detected it; an audit did. This asks the registry what is published, finds
+      # the commit where each package's published version was SET, and fails on any
+      # commit after it whose type or scope marks it as security. It needs the
+      # network — a registry answer is the only honest source for "published", as
+      # the newest v* tag here is v1.1.0 while npm serves 1.2.2.
+      - name: No security fix is committed but unpublished
+        run: node .harness/scripts/ci/48-validate-security-publish-lag.mjs --verbose
+
+      # GT-638: a gap id is chosen by reading the highest GT-* on whichever branch
+      # you are on, so two parallel sessions allocate the same number and find out
+      # at merge time. `8449af3d` had to renumber GT-634 -> GT-637 for exactly this.
+      # The comparison needs the BASE branch, which a shallow checkout does not
+      # have — fetch it explicitly rather than letting the guard fail for the wrong
+      # reason.
+      - name: One gap id, one gap
+        run: |
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref || github.event.repository.default_branch }}"
+          node .harness/scripts/ci/49-validate-gap-id-allocation.mjs --verbose
+
       - name: Self-tests for the governance guards
         run: |
           node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
+          node --test .harness/scripts/ci/48-validate-security-publish-lag.test.mjs
+          node --test .harness/scripts/ci/49-validate-gap-id-allocation.test.mjs
           node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs
           node --test .harness/scripts/ci/43-validate-guard-negative-fixtures.test.mjs
           node --test .harness/scripts/ci/44-validate-adr-implementation-status.test.mjs
@@ -459,7 +482,7 @@ jobs:
       - name: Execute the board's recorded validationCommands (report mode)
         run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose
 
-      # Ratchet, not a cliff. The budget is 21, which is what THIS RUNNER counts.
+      # Ratchet, not a cliff. The budget is 19, which is what THIS RUNNER counts.
       #
       # It was briefly lowered to 303 on the strength of the guard's computed
       # "ratchet basis" — 288 dead locally plus 15 that resolve only through
@@ -490,7 +513,7 @@ jobs:
       # Lower it as records are repaired, from a number this job printed; at 0,
       # delete the flag and this becomes the strict gate.
       - name: Dead-reference ratchet (must not grow)
-        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 21
+        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 19
 
   # RETIRED 2026-07-27 (GT-570): the `publish-npm` job lived here and published
   # ONLY `src/sdk/cli`, with `--tag beta` and no provenance, writing the token

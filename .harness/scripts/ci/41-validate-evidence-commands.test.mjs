@@ -45,8 +45,13 @@ before(() => {
   mkdirSync(join(fixtureRoot, 'scripts'), { recursive: true });
   mkdirSync(join(fixtureRoot, 'pkgs', 'alpha'), { recursive: true });
 
+  // `scripts` must be PRESENT and must not contain the names under test. The
+  // undeclared-script branch is guarded by `pkg?.scripts`, so a root with no
+  // scripts block skips it entirely — and every assertion about an undeclared
+  // root script would pass without exercising anything.
   writeFileSync(join(fixtureRoot, 'package.json'), JSON.stringify({
     name: 'fixture-root', private: true, workspaces: ['pkgs/*'],
+    scripts: { lint: 'echo lint' },
   }));
   writeFileSync(join(fixtureRoot, 'pkgs', 'alpha', 'package.json'), JSON.stringify({
     name: '@fixture/alpha', version: '1.0.0', scripts: { test: 'echo ok' },
@@ -165,6 +170,53 @@ describe('resolveCommand', () => {
   test('resolves an npm script the workspace does declare', () => {
     const r = resolveCommand(extractCommand('npm run test --workspace @fixture/alpha'), ctx());
     assert.equal(r.status, 'resolved');
+  });
+
+  // --- GT-598 follow-on: two parser defects that BLAMED THE EVIDENCE ---------
+  //
+  // Both produced a `dead` verdict for a command that runs perfectly well, which
+  // is the worst way for this guard to be wrong: it reads as stale evidence and
+  // invites someone to "repair" a record that was already correct.
+
+  test('the script name is not the value of --workspace (flag order must not matter)', () => {
+    // `npm run --workspace <path> <script>` is valid npm. The parser used to take
+    // the first non-dash token after `run`, which is the flag's VALUE, and then
+    // report that the script "pkgs/alpha" is not declared.
+    const r = resolveCommand(extractCommand('npm run --workspace pkgs/alpha test'), ctx());
+    assert.equal(r.status, 'resolved', r.detail);
+    assert.match(r.detail, /script test/);
+  });
+
+  test('…and the same when the flag precedes the subcommand entirely', () => {
+    const r = resolveCommand(extractCommand('npm --workspace pkgs/alpha run test'), ctx());
+    assert.equal(r.status, 'resolved', r.detail);
+    assert.match(r.detail, /script test/);
+  });
+
+  test('a genuinely undeclared script is STILL dead when the flag comes first', () => {
+    // The fix must not turn the check off: same shape, script that does not exist.
+    const r = resolveCommand(extractCommand('npm run --workspace pkgs/alpha nonexistent'), ctx());
+    assert.equal(r.status, 'dead');
+    assert.match(r.detail, /"nonexistent" is not declared/);
+  });
+
+  test('`pnpm info <pkg>` is a registry query, not an undeclared script', () => {
+    // Was reported as: npm script "info" is not declared in <root>/package.json.
+    const r = resolveCommand(extractCommand('pnpm info @beyondnet/evolith-cli'), ctx());
+    assert.notEqual(r.status, 'dead');
+  });
+
+  test('`yarn info <pkg>` likewise', () => {
+    const r = resolveCommand(extractCommand('yarn info @beyondnet/evolith-cli'), ctx());
+    assert.notEqual(r.status, 'dead');
+  });
+
+  test('a built-in subcommand does not mask a real workspace error', () => {
+    // `info` stops being read as a script name; it must NOT stop the workspace
+    // itself from being checked.
+    const r = resolveCommand(extractCommand('pnpm info --workspace pkgs/gone'), ctx());
+    assert.equal(r.status, 'dead');
+    assert.match(r.detail, /workspace does not exist/);
   });
 
   test('does not invent a verdict for `node -e`', () => {

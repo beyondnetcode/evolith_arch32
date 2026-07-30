@@ -201,14 +201,15 @@ describe('PhaseArtifactsCommand', () => {
       },
     );
 
-    it('reports an invalid phase as an INVALID_PHASE envelope with exit code 1 in JSON mode', async () => {
+    it('reports an invalid phase as an INVALID_PHASE envelope with exit code 3 in JSON mode', async () => {
       // JSON mode must not throw — but it must not look successful either.
       await command.executeCommand([], { phase: 'nope' as never, core: corpusRoot, format: 'json' });
 
       const envelope = JSON.parse(stdout());
       expect(envelope.error.code).toBe('INVALID_PHASE');
       expect(envelope.success).not.toBe(true);
-      expect(process.exitCode).toBe(1);
+      // GT-580: INVALID_PHASE is an invalid-input error, not a tool failure.
+      expect(process.exitCode).toBe(3);
     });
 
     it.each(['construction', 'quality', 'deployment'] as const)('accepts the downstream phase %s', async (phase) => {

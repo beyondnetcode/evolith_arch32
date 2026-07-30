@@ -435,9 +435,20 @@ jobs:
       - name: A port inventory does not read as a capability claim
         run: node .harness/scripts/ci/45-validate-port-inventory-honesty.mjs --verbose
 
+      # GT-624: the 2026-07-23 security wave sat unpublished until 2026-07-27
+      # while SECURITY.md declared the 1.1.x line "actively patched". Nothing
+      # detected it; an audit did. This asks the registry what is published, finds
+      # the commit where each package's published version was SET, and fails on any
+      # commit after it whose type or scope marks it as security. It needs the
+      # network — a registry answer is the only honest source for "published", as
+      # the newest v* tag here is v1.1.0 while npm serves 1.2.2.
+      - name: No security fix is committed but unpublished
+        run: node .harness/scripts/ci/48-validate-security-publish-lag.mjs --verbose
+
       - name: Self-tests for the governance guards
         run: |
           node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
+          node --test .harness/scripts/ci/48-validate-security-publish-lag.test.mjs
           node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs
           node --test .harness/scripts/ci/43-validate-guard-negative-fixtures.test.mjs
           node --test .harness/scripts/ci/44-validate-adr-implementation-status.test.mjs

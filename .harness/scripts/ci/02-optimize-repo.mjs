@@ -28,7 +28,12 @@ const allowedFiles = new Set([
   "package-lock.json",
   ".env",
   "tsconfig.json",
-  "tsconfig.base.json"
+  "tsconfig.base.json",
+  // The Core is a satellite of itself (see evolith.yaml's own metadata.name
+  // comment) and GIT-08's commitlint config — both tracked, both legitimate
+  // at root, missing here only because this allowlist predates them.
+  "evolith.yaml",
+  "commitlint.config.mjs"
 ]);
 
 const allowedDirectories = new Set([
@@ -81,10 +86,38 @@ const protectedEntries = [];
 if (tracked !== null) {
   // Quarantine instead of unlink: untracked files are unrecoverable once
   // removed, and this script runs unattended from the pre-push hook.
-  const quarantineRoot = path.join(root, ".git", "evolith-quarantine");
+  //
+  // In a `git worktree`, `.git` at the worktree root is a plain text file
+  // (`gitdir: <path>/.git/worktrees/<name>`) redirecting to the real one, not
+  // a directory. Two things here assumed otherwise, and broke in different ways:
+  //
+  //  1. `path.join(root, ".git", "evolith-quarantine")` assumed `.git` was
+  //     always a writable directory, so `fs.mkdirSync` failed with ENOTDIR
+  //     the moment there was anything to quarantine — silently crashing the
+  //     pre-push hook for every worktree checkout in the repo. Fixed below by
+  //     resolving the real, writable git-dir with `git rev-parse --git-dir`
+  //     (it IS `.git` in a normal checkout, and the per-worktree directory
+  //     under `.git/worktrees/<name>` here) via `path.resolve`, not
+  //     `path.join` — `--git-dir` prints a RELATIVE path in a normal checkout
+  //     but an ABSOLUTE one in a worktree, and `path.join` would have
+  //     mangled the absolute case by concatenating it onto `root` instead of
+  //     using it as-is. This also keeps quarantine local to whichever
+  //     checkout produced the untracked file, instead of colliding across
+  //     worktrees that shared one.
+  //  2. `.git` is only in `allowedDirectories`, not `allowedFiles` — so once
+  //     (1) stopped crashing, the loop below saw `.git` itself as an
+  //     unrecognised untracked FILE in a worktree and quarantined it,
+  //     severing the worktree from git entirely (recoverably, since
+  //     quarantine moves rather than deletes, but still not something a
+  //     cleanup script should ever do). `.git` is excluded unconditionally
+  //     below, by name, before the directory/file allowlist check — it must
+  //     never be touched regardless of which shape it takes here.
+  const gitDir = execSync("git rev-parse --git-dir", { encoding: "utf8", cwd: root }).trim();
+  const quarantineRoot = path.resolve(root, gitDir, "evolith-quarantine");
 
   for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
     const name = entry.name;
+    if (name === ".git") continue;
     const allowed = entry.isDirectory() ? allowedDirectories.has(name) : allowedFiles.has(name);
     if (allowed) continue;
     if (!entry.isDirectory() && !entry.isFile()) continue;
@@ -103,7 +136,10 @@ if (tracked !== null) {
   }
 
   if (quarantinedCount > 0) {
-    console.log(`   Recover with: mv .git/evolith-quarantine/<ref>/<name> .`);
+    // Absolute and worktree-correct — `.git/evolith-quarantine/...` reads fine
+    // in a normal checkout but names nothing in a worktree, where `.git` is a
+    // redirect file rather than the directory that actually holds this.
+    console.log(`   Recover with: mv ${path.join(quarantineRoot, "<ref>", "<name>")} .`);
   }
 }
 

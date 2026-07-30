@@ -99,6 +99,16 @@ if (missingAnchors.length > 0) {
 }
 
 for (const entry of rootEntries) {
+  // `.git` is only in `allowedDirectories`, which is correct in a normal
+  // checkout but not in a `git worktree`: there, `.git` at the root is a
+  // plain text file (`gitdir: <path>`) redirecting to the real one, so it
+  // fell into the `isFile()` branch below and read as an unauthorized file —
+  // a false failure specific to local worktree development, since CI always
+  // checks out fresh (never a worktree) and never hits this. Same root cause
+  // as the quarantine bug 02-optimize-repo.mjs fixed; excluded unconditionally
+  // here too, before the directory/file split, regardless of which shape it
+  // takes in a given checkout.
+  if (entry.name === ".git") continue;
   if (entry.isDirectory()) {
     if (explicitlyDeniedDirectories.has(entry.name)) {
       failures.push(explicitlyDeniedDirectories.get(entry.name));

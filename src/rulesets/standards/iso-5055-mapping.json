@@ -12,24 +12,24 @@
     "weaknessCount": 138
   },
   "corpus": {
-    "rulesetFiles": 167,
-    "rules": 381,
+    "rulesetFiles": 174,
+    "rules": 388,
     "note": "Files that carry gate definitions or topology recommendations rather than conformance rules contribute no rows: architecture/topology-recommendation.rules.json and sdlc/phase-gates.rules.json."
   },
   "summary": {
-    "rules": 381,
+    "rules": 388,
     "mappedToIso5055": 37,
     "mappedDirect": 8,
     "mappedPartial": 29,
-    "noInternationalEquivalent": 344,
-    "adoptedFraction": 0.0971,
+    "noInternationalEquivalent": 351,
+    "adoptedFraction": 0.0954,
     "analyserAdoptable": 42,
     "analyserAdoptablePartial": 23,
-    "analyserAdoptableFraction": 0.1102,
-    "analyserAdoptableFractionIncludingPartial": 0.1706,
+    "analyserAdoptableFraction": 0.1082,
+    "analyserAdoptableFractionIncludingPartial": 0.1675,
     "byClass": {
       "architecture-decision": {
-        "rules": 155,
+        "rules": 162,
         "mapped": 12,
         "adoptable": 6
       },
@@ -86,40 +86,33 @@
       "src/packages/core-domain/src/application/validators/rule-evaluability.ts (RULE_TRIAGE, classifyRule, ADR_CONFORMANCE_CATEGORY)",
       "src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts (registered handler set)",
       "src/packages/core-domain/src/application/validators/evaluators/handlers/**/*.ts (canHandle predicates)",
-      "src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts (corpus loader and pinned counts)"
+      "src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts (corpus loader, renderer and byte-for-byte pin)"
     ],
     "note": "The handler backlog is the `unimplemented-native` class only. `documentation-only` and `underspecified` rules are not handler work at all, and the two adapter classes are closed by the enforcer seam rather than by a rule handler.",
-    "realBacklogSize": 60,
-    "adoptableFromAnalyser": 9,
-    "adoptableFromAnalyserIncludingPartial": 17,
-    "adoptedFractionOfBacklog": 0.15,
-    "adoptedFractionOfBacklogIncludingPartial": 0.2833,
-    "remainderToAuthor": 43,
+    "realBacklogSize": 48,
+    "adoptableFromAnalyser": 5,
+    "adoptableFromAnalyserIncludingPartial": 10,
+    "adoptedFractionOfBacklog": 0.1042,
+    "adoptedFractionOfBacklogIncludingPartial": 0.2083,
+    "remainderToAuthor": 38,
     "byEvaluabilityClass": {
       "unimplemented-native": {
-        "rules": 60,
-        "mappedToIso5055": 10,
-        "analyserAdoptable": 9,
-        "analyserAdoptablePartial": 8,
+        "rules": 48,
+        "mappedToIso5055": 6,
+        "analyserAdoptable": 5,
+        "analyserAdoptablePartial": 5,
         "adoptableRuleIds": [
-          "HXA-01",
-          "HXA-02",
           "HXA-03",
-          "HXA-04",
-          "GIT-08",
           "SEC-INJ-01",
           "SEC-PATH-01",
           "SEC-PATH-02",
           "SEC-TIMING-01"
         ],
         "adoptablePartialRuleIds": [
-          "HXA-05",
           "CICD-01",
           "CICD-02",
           "MTN-01",
           "SEC-INJ-02",
-          "SEC-RL-01",
-          "SEC-RL-02",
           "SEC-TIMING-02"
         ]
       },
@@ -144,7 +137,7 @@
         "adoptablePartialRuleIds": []
       },
       "documentation-only": {
-        "rules": 129,
+        "rules": 136,
         "mappedToIso5055": 9,
         "analyserAdoptable": 6,
         "analyserAdoptablePartial": 7,
@@ -175,11 +168,15 @@
         "adoptablePartialRuleIds": []
       },
       "native-handler": {
-        "rules": 139,
-        "mappedToIso5055": 15,
-        "analyserAdoptable": 24,
-        "analyserAdoptablePartial": 8,
+        "rules": 151,
+        "mappedToIso5055": 19,
+        "analyserAdoptable": 28,
+        "analyserAdoptablePartial": 11,
         "adoptableRuleIds": [
+          "HXA-01",
+          "HXA-02",
+          "HXA-04",
+          "GIT-08",
           "DOD-02",
           "DOD-09",
           "EM-D-01",
@@ -206,11 +203,14 @@
           "MM-R10"
         ],
         "adoptablePartialRuleIds": [
+          "HXA-05",
           "EM-D-02",
           "EM-K-02",
           "EM-S-03",
           "EM-S-04",
           "QT-08",
+          "SEC-RL-01",
+          "SEC-RL-02",
           "AAI-R09",
           "MM-R12",
           "SV-R02"
@@ -367,7 +367,7 @@
           "eslint-plugin-boundaries"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "native-handler",
       "note": "Framework imports in the domain layer are a layering violation; 5055 models layering as the layer-skipping call."
     },
     {
@@ -395,7 +395,7 @@
           "ArchUnit"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "native-handler",
       "note": "Structural rule with no counterpart among the 138 weaknesses."
     },
     {
@@ -453,7 +453,7 @@
           "ArchUnit layeredArchitecture()"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "native-handler",
       "note": "Dependency direction is exactly what CWE-1054 and CWE-1047 measure."
     },
     {
@@ -474,7 +474,7 @@
           "ESLint no-restricted-imports"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "native-handler",
       "note": "AOP placement is an Evolith convention; import bans approximate it."
     },
     {
@@ -770,7 +770,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "native-handler",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1403,7 +1403,7 @@
           "commitlint @commitlint/config-conventional"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "native-handler",
       "note": "A property of the development process (pipeline, branch, review, test strategy), which is outside the scope of a source-code measure."
     },
     {
@@ -3170,6 +3170,139 @@
       "ruleId": "CORE-0117-01",
       "sourceFile": "adr/generated/adr-0117-bilingual-parity-applies-to-authored-sources-not-generated-p.rules.json",
       "title": "Conform to ADR-0117: Bilingual Parity Applies to Authored Sources, Not Generated Projections",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0118-01",
+      "sourceFile": "adr/generated/adr-0118-the-core-hub-has-its-own-root-taxonomy-distinct-from-satelli.rules.json",
+      "title": "Conform to ADR-0118: The Core Hub Has Its Own Root Taxonomy, Distinct From Satellites",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0119-01",
+      "sourceFile": "adr/generated/adr-0119-api-security-configuration-hardening.rules.json",
+      "title": "Conform to ADR-0119: API Security Configuration Hardening",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0120-01",
+      "sourceFile": "adr/generated/adr-0120-ssrf-prevention-standard.rules.json",
+      "title": "Honor design decision in ADR-0120: SSRF Prevention Standard",
+      "severity": "SHOULD",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0121-01",
+      "sourceFile": "adr/generated/adr-0121-input-validation-and-sanitization-standard.rules.json",
+      "title": "Honor design decision in ADR-0121: Input Validation and Sanitization Standard",
+      "severity": "SHOULD",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0122-01",
+      "sourceFile": "adr/generated/adr-0122-shell-execution-safety-standard.rules.json",
+      "title": "Conform to ADR-0122: Shell Execution Safety Standard",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0123-01",
+      "sourceFile": "adr/generated/adr-0123-timing-safe-comparison-standard.rules.json",
+      "title": "Conform to ADR-0123: Timing-Safe Comparison Standard",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0124-01",
+      "sourceFile": "adr/generated/adr-0124-credential-and-secret-management-standard.rules.json",
+      "title": "Conform to ADR-0124: Credential and Secret Management Standard",
       "severity": "MUST",
       "ruleClass": "architecture-decision",
       "iso5055": {
@@ -6525,7 +6658,7 @@
           "Semgrep express-rate-limit presence rules"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "native-handler",
       "note": "CWE-770 is not in the 138; presence of a limiter is checkable, correct configuration is not."
     },
     {
@@ -6552,7 +6685,7 @@
           "Semgrep express-body-parser-limit"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "native-handler",
       "note": "Unbounded request bodies are the uncontrolled-allocation weakness reached through a framework default."
     },
     {
@@ -6889,7 +7022,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "native-handler",
       "note": "A contract of a named architecture topology. The predicate is about declared topology configuration, not about code structure."
     },
     {
@@ -7136,7 +7269,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "native-handler",
       "note": "A contract of a named architecture topology. The predicate is about declared topology configuration, not about code structure."
     },
     {
@@ -7155,7 +7288,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "native-handler",
       "note": "A contract of a named architecture topology. The predicate is about declared topology configuration, not about code structure."
     },
     {
@@ -7174,7 +7307,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "native-handler",
       "note": "A contract of a named architecture topology. The predicate is about declared topology configuration, not about code structure."
     },
     {

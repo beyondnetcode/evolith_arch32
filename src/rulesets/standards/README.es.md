@@ -17,7 +17,7 @@ confiar en nosotros.
 | `iso-5055-weaknesses.json` | Los 138 identificadores CWE de ISO/IEC 5055, por medida, con procedencia. |
 | `iso-5055-mapping.json` | Una fila por regla del corpus: mapeo a CWE (o un "sin equivalente" explícito con motivo), adoptabilidad por analizador y clase de evaluabilidad nativa. |
 | `iso-5055-mapping.csv` | La misma tabla, plana, para hojas de cálculo y auditores. |
-| `native-evaluability-snapshot.json` | Captura por regla de la clase de evaluabilidad del triage del Core, para acotar la aritmética de backlog de abajo al backlog real. |
+| `native-evaluability-snapshot.json` | Clase de evaluabilidad por regla, **generada** desde el triage vivo del Core por `rule-corpus-triage.spec.ts`, que la fija byte a byte. Nunca se edita a mano: se recaptura con `UPDATE_EVALUABILITY_SNAPSHOT=1 npx jest src/application/validators/rule-corpus-triage.spec.ts` desde `src/packages/core-domain`. |
 | `build-iso-5055-mapping.mjs` | El generador. `--check` falla cuando la tabla se quedó atrás del corpus. |
 | `iso-5055-mapping.test.mjs` | La guarda. `node --test src/rulesets/standards/iso-5055-mapping.test.mjs`. |
 
@@ -34,20 +34,20 @@ hace que la unión sea menor que la suma. La fecha y el método de extracción c
 
 ## Resultado
 
-Sobre **381 reglas** en 167 archivos de ruleset:
+Sobre **388 reglas** en 174 archivos de ruleset:
 
 | Medida | Cantidad | Proporción |
 |---|---|---|
-| Reglas mapeadas a una debilidad ISO/IEC 5055 | 37 | 9,7% |
+| Reglas mapeadas a una debilidad ISO/IEC 5055 | 37 | 9,5% |
 | — de ellas con mapeo directo | 8 | |
 | — de ellas con mapeo parcial / proxy | 29 | |
-| Reglas sin equivalente internacional (cada una con motivo declarado) | 344 | 90,3% |
-| Reglas que un analizador existente podría decidir por completo | 42 | 11,0% |
-| Reglas que un analizador podría decidir parcialmente | 23 | 6,0% |
+| Reglas sin equivalente internacional (cada una con motivo declarado) | 351 | 90,5% |
+| Reglas que un analizador existente podría decidir por completo | 42 | 10,8% |
+| Reglas que un analizador podría decidir parcialmente | 23 | 5,9% |
 
-**La fracción adoptada es el 9,7% del corpus.** Es un resultado real y es menor de lo que sugería la
+**La fracción adoptada es el 9,5% del corpus.** Es un resultado real y es menor de lo que sugería la
 premisa del gap, por una razón estructural: ISO/IEC 5055 mide la estructura interna del código fuente,
-y 300 de nuestras 381 reglas no tratan de estructura de código. Son conformidad con ADR (155),
+y 313 de nuestras 388 reglas no tratan de estructura de código. Son conformidad con ADR (162),
 contratos de topología (66), invariantes de gobierno (51) y proceso de desarrollo (34). Ningún estándar
 internacional modela "¿honraste el ADR-0092?", y ninguno lo hará.
 
@@ -57,28 +57,32 @@ mapean y 13 son decidibles por analizador.
 ## Re-dimensionar el backlog de handlers
 
 El enunciado del gap dimensionaba el beneficio contra "~240 handlers por escribir". **Esa cifra ya está
-retirada.** GT-595 hizo el triage del corpus y el backlog real, decidible desde el repositorio, son **60
-reglas** — la clase `unimplemented-native`. Las otras 180 son 129 placeholders de generador solo
-documentales, 14 reglas sin check redactado, 20 que requieren un sistema externo y 17 que requieren uno
-en ejecución.
+retirada.** GT-595 hizo el triage del corpus y el backlog real, decidible desde el repositorio, son **48
+reglas** — la clase `unimplemented-native`. Las otras 338 son 136 placeholders de generador solo
+documentales, 14 reglas sin check redactado, 20 que requieren un sistema externo, 17 que requieren uno
+en ejecución y 151 que un handler nativo ya evalúa.
 
 Proyectar este mapeo sobre esa clase es la cifra que importa:
 
-| Del backlog de 60 handlers | Cantidad |
+| Del backlog de 48 handlers | Cantidad |
 |---|---|
-| Decidibles hoy por un analizador estándar | 9 |
-| Decidibles parcialmente (señal necesaria pero no suficiente) | 8 |
-| Que hay que escribir de verdad | 43 |
+| Decidibles hoy por un analizador estándar | 5 |
+| Decidibles parcialmente (señal necesaria pero no suficiente) | 5 |
+| Que hay que escribir de verdad | 38 |
 
-Las 9 son `HXA-01`…`HXA-04` (estructura de capas — dependency-cruiser o ArchUnit), `GIT-08`
-(commitlint), `SEC-INJ-01`, `SEC-PATH-01`, `SEC-PATH-02` (consultas de inyección y path traversal de
-CodeQL/Semgrep) y `SEC-TIMING-01` (comparación en tiempo constante). Las 8 parciales están listadas en
+Las 5 son `HXA-03` (estructura de capas — dependency-cruiser o ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
+`SEC-PATH-02` (consultas de inyección y path traversal de CodeQL/Semgrep) y `SEC-TIMING-01`
+(comparación en tiempo constante). Las 5 parciales están listadas en
 `handlerBacklog.byEvaluabilityClass` del JSON de mapeo.
 
-Es decir, adoptar vale **15% del backlog por completo, 28% incluyendo parciales** — 17 de 60 reglas que
+Es decir, adoptar vale **10% del backlog por completo, 21% incluyendo parciales** — 10 de 48 reglas que
 no necesitan handlers a medida. No es el orden de magnitud que esperaba el gap, pero es una reducción
 concreta y nominada, y apunta las reglas de seguridad hacia analizadores mejores que cualquier cosa que
 escribiéramos.
+
+El backlog bajó de 60 a 48 porque se *escribieron* handlers, no porque se recortara el denominador:
+`HXA-01/02/04/05` (GT-632) y `GIT-08` junto con otras siete reglas de configuración (GT-595) pasaron a
+`native-handler`, que es también por qué cuatro de los nueve nombres de antes ya no están en la lista.
 
 ## Taxonomía compañera: ISO/IEC 25010:2023
 

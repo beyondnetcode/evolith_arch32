@@ -29,7 +29,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | 2 | Área de mayor riesgo | `Evolith Core` tiene la mayor carga ponderada abierta. | [GT-583](../gaps/gap-reference-catalog.es.md#gt-583), [GT-589](../gaps/gap-reference-catalog.es.md#gt-589), [GT-614](../gaps/gap-reference-catalog.es.md#gt-614), [GT-587](../gaps/gap-reference-catalog.es.md#gt-587), [GT-591](../gaps/gap-reference-catalog.es.md#gt-591), [GT-590](../gaps/gap-reference-catalog.es.md#gt-590), +2 |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-597](../gaps/gap-reference-catalog.es.md#gt-597), [GT-631](../gaps/gap-reference-catalog.es.md#gt-631) |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-597](../gaps/gap-reference-catalog.es.md#gt-597), [GT-631](../gaps/gap-reference-catalog.es.md#gt-631), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-580](../gaps/gap-reference-catalog.es.md#gt-580), [GT-584](../gaps/gap-reference-catalog.es.md#gt-584), [GT-605](../gaps/gap-reference-catalog.es.md#gt-605), [GT-606](../gaps/gap-reference-catalog.es.md#gt-606), +6 |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-622](../gaps/gap-reference-catalog.es.md#gt-622), [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-614](../gaps/gap-reference-catalog.es.md#gt-614), [GT-616](../gaps/gap-reference-catalog.es.md#gt-616), [GT-617](../gaps/gap-reference-catalog.es.md#gt-617), +14 |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-622](../gaps/gap-reference-catalog.es.md#gt-622), [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-614](../gaps/gap-reference-catalog.es.md#gt-614), [GT-616](../gaps/gap-reference-catalog.es.md#gt-616), [GT-617](../gaps/gap-reference-catalog.es.md#gt-617), +13 |
 
 ## Bloqueadores Actuales
 
@@ -46,13 +46,13 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-07-26 |
 | Gaps totales | 637 |
-| Gaps cerrados | 596 |
-| Gaps pendientes | 41 |
+| Gaps cerrados | 597 |
+| Gaps pendientes | 40 |
 | P0 abiertos | 4 |
 | P1 abiertos | 14 |
-| P2 abiertos | 20 |
-| Cierre total | 93.6% |
-| Registros de evidencia de cierre | 578 |
+| P2 abiertos | 19 |
+| Cierre total | 93.7% |
+| Registros de evidencia de cierre | 579 |
 | Readiness registrado | 4 PASS |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |

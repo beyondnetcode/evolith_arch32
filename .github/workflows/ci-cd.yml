@@ -445,10 +445,22 @@ jobs:
       - name: No security fix is committed but unpublished
         run: node .harness/scripts/ci/48-validate-security-publish-lag.mjs --verbose
 
+      # GT-638: a gap id is chosen by reading the highest GT-* on whichever branch
+      # you are on, so two parallel sessions allocate the same number and find out
+      # at merge time. `8449af3d` had to renumber GT-634 -> GT-637 for exactly this.
+      # The comparison needs the BASE branch, which a shallow checkout does not
+      # have — fetch it explicitly rather than letting the guard fail for the wrong
+      # reason.
+      - name: One gap id, one gap
+        run: |
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref || github.event.repository.default_branch }}"
+          node .harness/scripts/ci/49-validate-gap-id-allocation.mjs --verbose
+
       - name: Self-tests for the governance guards
         run: |
           node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
           node --test .harness/scripts/ci/48-validate-security-publish-lag.test.mjs
+          node --test .harness/scripts/ci/49-validate-gap-id-allocation.test.mjs
           node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs
           node --test .harness/scripts/ci/43-validate-guard-negative-fixtures.test.mjs
           node --test .harness/scripts/ci/44-validate-adr-implementation-status.test.mjs

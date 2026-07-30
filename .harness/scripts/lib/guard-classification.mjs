@@ -41,6 +41,14 @@ export const CALLS_COVERAGE = /\b(?:assertScanned|assertScannedPerSource|scanned
  */
 export const SELF_GUARDED = [
   {
+    file: '49-validate-gap-id-allocation.mjs',
+    proof: /at least one side yielded NOTHING/,
+    reason:
+      'GT-638 gap-id allocation guard; refuses a missing catalog, a base ref it cannot read ' +
+      '(unable to answer is not "nothing to report" — a quiet skip is how the collision reached ' +
+      'main), and a parse that yields zero ids on either side',
+  },
+  {
     file: '48-validate-security-publish-lag.mjs',
     proof: /resolved ZERO publishable packages — nothing was scanned/,
     reason:

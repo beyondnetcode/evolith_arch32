@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { RulesetValidatorService, ValidationResult } from '../../application/validators/ruleset-validator.service';
 import { SatelliteEvaluationPipeline } from '../services/satellite-evaluation-pipeline.service';
-import { SatelliteManifest, EvaluationVerdict } from '../../domain/satellite-manifest';
+import { SatelliteManifest } from '../../domain/satellite-manifest';
+import type {
+  PipelineExecutionPlan,
+  PipelineVerdict,
+} from '../../evaluation/ports/evaluation-pipeline.port';
 import * as pathModule from 'path';
 import * as fsExtra from 'fs-extra';
 
@@ -18,13 +22,24 @@ export interface ValidateSatelliteInput {
    * general validation result.
    */
   manifest?: SatelliteManifest;
+  /**
+   * GT-614 — which evaluation kinds the caller asked for, so the pipeline can skip
+   * the stages nobody requested. Absent ⇒ the whole pipeline runs, exactly as
+   * before: an undeclared request means "no kind was declared", not "no kind is
+   * wanted". Only meaningful together with `manifest`.
+   */
+  plan?: PipelineExecutionPlan;
 }
 
 export interface ValidateSatelliteOutput {
   result: ValidationResult;
   formattedOutput?: string;
-  /** Present only when input.manifest was provided */
-  evaluationVerdict?: EvaluationVerdict;
+  /**
+   * Present only when input.manifest was provided. Carries the GT-569/GT-614
+   * `coverage` facts the pipeline produced, so the out-of-scope bucket survives
+   * the hop to the orchestrator instead of being flattened away here.
+   */
+  evaluationVerdict?: PipelineVerdict;
 }
 
 @Injectable()
@@ -37,11 +52,13 @@ export class ValidateSatelliteUseCase {
   }
 
   async execute(input: ValidateSatelliteInput): Promise<ValidateSatelliteOutput> {
-    const { satellitePath, corePath, rulesetId, engine, manifest } = input;
+    const { satellitePath, corePath, rulesetId, engine, manifest, plan } = input;
 
     // If a manifest was provided, run the end-to-end evaluation pipeline
     if (manifest) {
-      return this.executeWithPipeline(manifest);
+      // GT-614: the plan travels with the manifest, so the selection made from
+      // `ctx.kinds` reaches the pipeline instead of stopping at this boundary.
+      return this.executeWithPipeline(manifest, plan);
     }
 
     // Fall back to the standard validation logic
@@ -75,7 +92,10 @@ export class ValidateSatelliteUseCase {
     return { result };
   }
 
-  private async executeWithPipeline(manifest: SatelliteManifest): Promise<ValidateSatelliteOutput> {
+  private async executeWithPipeline(
+    manifest: SatelliteManifest,
+    plan?: PipelineExecutionPlan,
+  ): Promise<ValidateSatelliteOutput> {
     const corePath = manifest.corePath || this.findCoreFromSatellite(manifest.satellitePath);
     const validator = this.buildValidator(corePath);
     const pipeline = new SatelliteEvaluationPipeline(
@@ -85,7 +105,7 @@ export class ValidateSatelliteUseCase {
       corePath,
     );
 
-    const verdict = await pipeline.evaluate(manifest);
+    const verdict = await pipeline.evaluate(manifest, plan);
     const result: ValidationResult = {
       status: verdict.passed ? 'passed' : 'failed',
       rulesChecked: verdict.summary.totalRules,

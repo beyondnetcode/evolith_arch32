@@ -20,6 +20,31 @@
  * site, with a mandatory `reason`, so the exemption is visible in review and in the diff
  * that introduced it. It is deliberately not settable via config or environment: an
  * exemption that can be granted from outside the code is an exemption nobody reviews.
+ *
+ * ## The same defect one level up: a fixture that never reaches the branch
+ *
+ * This module protects the guard. Nothing protects the guard's TEST, and the failure has
+ * the same shape: a test whose fixture never reaches the branch under test passes, and
+ * reads as proof.
+ *
+ * Observed on 2026-07-30 (GT-633) while fixing two parser defects in
+ * `41-validate-evidence-commands`. Six tests were written for the fix. Three of them
+ * asserted that a command is NOT reported dead — and they passed against the UNFIXED
+ * parser too, because the branch that reports it dead is guarded by `pkg?.scripts` and
+ * the fixture's root `package.json` declared no `scripts` at all. The assertions were
+ * true, the fix was real, and the tests proved nothing about it.
+ *
+ * So, whenever a test is written to pin a fix:
+ *
+ *   **run it against the unfixed code and watch it fail.** A test that passes before the
+ *   fix is not evidence of the fix; it is the vacuous pass of this file's first section,
+ *   wearing a green tick from the test runner instead of from a guard.
+ *
+ * Making the fixture live took the six from 3-of-6 red to 5-of-6 red against the old
+ * parser. The sixth passes either way and is kept as a REGRESSION guard — labelled as
+ * such, not counted as proof. Which is the other half of the rule: when a test cannot be
+ * made to fail, say why in the test rather than letting the count imply coverage it does
+ * not have.
  */
 
 /**

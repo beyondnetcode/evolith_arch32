@@ -8853,6 +8853,48 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "What this gate does NOT do is stated rather than left to be discovered. It detects a security-marked commit that no published version contains; it cannot detect a security fix nobody marked, which is a convention problem and belongs to GT-623 (release-please derives no bump from the non-conventional `security(...)` type this repository has used twice). It also reports, but does not fail on, a package whose published version is absent from this history -- an INEXACT boundary after a history rewrite -- because scanning the whole history conservatively is better than skipping the package silently. Finally, the gate needs the network: without a registry answer the package is skipped and named, and a run where EVERY package is skipped is a failure rather than a pass."
+    },
+    {
+      "id": "GT-633",
+      "closedAt": "2026-07-30",
+      "closureCommit": "29e940d4",
+      "evidence": [
+        "src/rulesets/standards/capture-native-evaluability-snapshot.mjs",
+        "src/packages/core-domain/test/rule-corpus-triage.ts",
+        "src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts",
+        "src/rulesets/standards/native-evaluability-snapshot.json",
+        "src/rulesets/standards/iso-5055-mapping.test.mjs",
+        ".harness/scripts/ci/46-validate-derived-artifact-order.mjs",
+        ".github/workflows/docs.yml"
+      ],
+      "validationCommands": [
+        "THE FAILURE MODE, which is the content worth keeping: the guard's expected value was a copy of its actual value. iso-5055-mapping.test.mjs asserted the snapshot's six class counts against six numbers typed into the test -- the same six literals native-evaluability-snapshot.json already contained -- so it passed for as long as the file was unchanged, whatever Core actually pinned. It reported an agreement it never checked.",
+        "SECOND failure mode: build-iso-5055-mapping.mjs stamps `nativeEvaluability` onto every row of the ISO/IEC 5055 mapping from that snapshot (388 rows after the recapture, 381 before), so one stale class is laundered into a derived artifact five times the size of its input and overstates the GT-598 handler backlog.",
+        "node src/rulesets/standards/capture-native-evaluability-snapshot.mjs --check -> the end-to-end re-derivation; it runs Core's real triage through ts-node rather than reimplementing the classification, because a second implementation would be the second source of truth the fix removes.",
+        "node --test src/rulesets/standards/iso-5055-mapping.test.mjs -> the documentation-job guard now reads Core's pinned counts OUT of the spec that pins them and THROWS when the literal is missing or reshaped: failing to find the source of truth must never read as agreement with it.",
+        "node .harness/scripts/ci/46-validate-derived-artifact-order.mjs -> 5 links / 7 artifacts, current AND at a fixed point. The recapture->rebuild order is data, not prose: rebuilding the mapping before recapturing the snapshot is a guard failure.",
+        "RECAPTURED: native-handler 139 -> 151, documentation-only 129 -> 136, handler backlog 60 -> 48, corpus 379 -> 386, mapping 381 -> 388 rows. Twelve handlers had been closed by GT-595 and GT-632 while the hand-maintained snapshot went on reporting them as backlog -- the defect demonstrating itself.",
+        "HOW IT LANDED, recorded because three sessions converged: the capture script and extracted triage as PR #276, the two chain links as PR #287, and a SECOND independent implementation on develop as PR #279 (an in-spec renderer). Both recaptured the same numbers, which corroborates the measurement; two generators for one artifact is this row's own defect one level up, and reconciling them is open work that blocks develop -> main."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Closed on the implementation that is on main. The parallel implementation on develop (PR #279) is NOT reconciled here: choosing which generator survives is a design decision belonging to the sessions that wrote the two halves, and it is tracked as the blocker on develop -> main rather than resolved inside a board registration."
+    },
+    {
+      "id": "GT-635",
+      "closedAt": "2026-07-30",
+      "closureCommit": "600dd7a9",
+      "evidence": [
+        "reference/core/control-center/evidence/gap-closure-evidence.json",
+        ".harness/scripts/ci/41-validate-evidence-commands.mjs",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "CLOSED THE WAY THE ROW ASKED, which was the whole point: the budget was not raised to ratify the breach. `f34a10f1` migrated the recorded closure commands onto the paths this repository actually has, and `600dd7a9` then moved the budget 304 -> 40 from the count that migration produced.",
+        "node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 40 -> 40 dead over 1045 recorded commands in 575 closures. The corpus went 309 -> 40: 269 references were REPAIRED, not exempted, which subsumes the four this row was opened for.",
+        "Governance guards (GT-578) passed on the runner for PR #288, which is the check that had been red on main for at least three consecutive runs (30482497995, 30470648146, 30466280865).",
+        "Registered by one session and closed by another within the hour. Recorded plainly: the value of the row was making a permanently red required-adjacent job visible, not owning the repair."
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

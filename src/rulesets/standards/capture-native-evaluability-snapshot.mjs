@@ -119,9 +119,9 @@ function resolveTsNodeRegister() {
  * them is a process, not a module resolution problem worth solving.
  */
 function runTriage(capturedOn) {
-  // GT-633 RECONCILIATION: this script used to BUILD the document itself, while
+  // GT-640 (registered as GT-633) RECONCILIATION: this script used to BUILD the document itself, while
   // `rule-corpus-triage.spec.ts` built a second copy of it. Two generators for one
-  // artifact is the defect GT-633 exists to remove, one level up — whichever ran
+  // artifact is the defect GT-640 exists to remove, one level up — whichever ran
   // last would win and the other's `--check` would go red for no visible reason.
   //
   // The renderer now lives once, in `test/rule-corpus-triage.ts`, and this script

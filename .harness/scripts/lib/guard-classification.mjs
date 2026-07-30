@@ -41,6 +41,22 @@ export const CALLS_COVERAGE = /\b(?:assertScanned|assertScannedPerSource|scanned
  */
 export const SELF_GUARDED = [
   {
+    file: '49-validate-gap-id-allocation.mjs',
+    proof: /at least one side yielded NOTHING/,
+    reason:
+      'GT-638 gap-id allocation guard; refuses a missing catalog, a base ref it cannot read ' +
+      '(unable to answer is not "nothing to report" — a quiet skip is how the collision reached ' +
+      'main), and a parse that yields zero ids on either side',
+  },
+  {
+    file: '48-validate-security-publish-lag.mjs',
+    proof: /resolved ZERO publishable packages — nothing was scanned/,
+    reason:
+      'GT-624 security-publish-lag gate; refuses a root with no publishable package, a package ' +
+      'whose publish boundary cannot be established (unable to answer is not "nothing to report"), ' +
+      'and a scan that examined zero commits while packages report commits since their boundary',
+  },
+  {
     file: '34-boundary-guard-repository.mjs',
     proof: /A zero-file scan must never be reported as "boundary guard passed"/,
     reason: 'the reference implementation of the pattern (GT-377); refuses both a missing root and an empty scan',

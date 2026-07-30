@@ -4,6 +4,7 @@ import { IRuleEvaluatorStrategy, WorkspaceEvaluationContext, RuleEvaluationResul
 import { INativeRuleHandler } from './handlers/rule-handler.interface';
 import { EvidenceRuleHandler } from './handlers/evidence-rule.handler';
 import { CliReleaseRuleHandler } from './handlers/cli-release-rule.handler';
+import { CliExitTaxonomyRuleHandler } from './handlers/cli-exit-taxonomy-rule.handler';
 import { McpRuleHandler } from './handlers/mcp-rule.handler';
 import { DependencyRuleHandler } from './handlers/dependency-rule.handler';
 import { TaxonomyRuleHandler } from './handlers/taxonomy-rule.handler';
@@ -29,6 +30,10 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
     this.handlers = [
       new EvidenceRuleHandler(fs),
       new CliReleaseRuleHandler(fs),
+      // GT-580: CLI-EXIT-01/02/03 — the published exit-code taxonomy, evaluated
+      // against the CLI source tree so a command that exits outside it BLOCKS a
+      // run instead of only failing the CLI package's own unit tests.
+      new CliExitTaxonomyRuleHandler(fs),
       new McpRuleHandler(fs),
       new DependencyRuleHandler(fs),
       new TaxonomyRuleHandler(fs),

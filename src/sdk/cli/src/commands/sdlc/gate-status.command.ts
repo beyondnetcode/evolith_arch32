@@ -13,6 +13,7 @@ import {
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { resolveCoreOverride } from '../../infrastructure/paths/core-resolver';
+import { exitCodeForErrorCode } from '../../infrastructure/cli/exit-codes';
 
 function ratingBadge(rating: DoraRating): string {
   switch (rating) {
@@ -76,6 +77,7 @@ export class GateStatusCommand extends BaseEvolithCommand {
       }
       if (json) {
         const msg = error instanceof Error ? error.message : String(error);
+        process.exitCode = exitCodeForErrorCode('INTERNAL_ERROR');
         console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', msg, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         return;
       }

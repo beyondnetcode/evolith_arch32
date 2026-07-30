@@ -1,0 +1,106 @@
+{
+  "domain": "cli-exit-code-taxonomy",
+  "description": "GT-580 — CLI exit-code taxonomy parity. The same three rule ids decided by src/rulesets/opa/cli-exit-code-taxonomy.rego over the fact document, and by CliExitTaxonomyRuleHandler over the source tree that produces it. The `rogue-exit-code` scenario is the criterion itself: a command exiting 7 must fail the gate.",
+  "rules": [
+    { "id": "CLI-EXIT-01", "severity": "MUST", "category": "cli-exit-taxonomy", "title": "No CLI Command May Exit Outside The Published Taxonomy", "description": "Every exit literal must be 0, 1, 2 or 3", "blocking": true, "sourceFile": "cli/exit-code-taxonomy.rules.json" },
+    { "id": "CLI-EXIT-02", "severity": "MUST", "category": "cli-exit-taxonomy", "title": "The Taxonomy Scan Must Be Non-Vacuous", "description": "A scan that reads nothing is not compliance", "blocking": true, "sourceFile": "cli/exit-code-taxonomy.rules.json" },
+    { "id": "CLI-EXIT-03", "severity": "MUST", "category": "cli-exit-taxonomy", "title": "The Published Taxonomy Must Not Be Widened", "description": "CLI_EXIT_CODES must declare exactly 0, 1, 2, 3", "blocking": true, "sourceFile": "cli/exit-code-taxonomy.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": [
+          "/core/src/sdk/cli/src",
+          "/core/src/sdk/cli/src/main.ts",
+          "/core/src/sdk/cli/src/infrastructure",
+          "/core/src/sdk/cli/src/infrastructure/cli",
+          "/core/src/sdk/cli/src/infrastructure/cli/exit-codes.ts"
+        ],
+        "directories": [
+          "/core/src/sdk/cli/src",
+          "/core/src/sdk/cli/src/infrastructure",
+          "/core/src/sdk/cli/src/infrastructure/cli"
+        ],
+        "dirs": {
+          "/core/src/sdk/cli/src": ["main.ts", "infrastructure"],
+          "/core/src/sdk/cli/src/infrastructure": ["cli"],
+          "/core/src/sdk/cli/src/infrastructure/cli": ["exit-codes.ts"]
+        },
+        "files": {
+          "/core/src/sdk/cli/src/main.ts": "process.exit(1);\n",
+          "/core/src/sdk/cli/src/infrastructure/cli/exit-codes.ts": "export const CLI_EXIT_CODES = {\n  OK: 0,\n  TOOL_FAILURE: 1,\n  BLOCKED: 2,\n  INVALID_INPUT: 3,\n} as const;\n"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "CLI-EXIT-01", "result": "passed" },
+        { "ruleId": "CLI-EXIT-02", "result": "passed" },
+        { "ruleId": "CLI-EXIT-03", "result": "passed" }
+      ]
+    },
+    "rogue-exit-code": {
+      "filesystem": {
+        "existing": [
+          "/core/src/sdk/cli/src",
+          "/core/src/sdk/cli/src/main.ts",
+          "/core/src/sdk/cli/src/rogue.command.ts",
+          "/core/src/sdk/cli/src/infrastructure",
+          "/core/src/sdk/cli/src/infrastructure/cli",
+          "/core/src/sdk/cli/src/infrastructure/cli/exit-codes.ts"
+        ],
+        "directories": [
+          "/core/src/sdk/cli/src",
+          "/core/src/sdk/cli/src/infrastructure",
+          "/core/src/sdk/cli/src/infrastructure/cli"
+        ],
+        "dirs": {
+          "/core/src/sdk/cli/src": ["main.ts", "rogue.command.ts", "infrastructure"],
+          "/core/src/sdk/cli/src/infrastructure": ["cli"],
+          "/core/src/sdk/cli/src/infrastructure/cli": ["exit-codes.ts"]
+        },
+        "files": {
+          "/core/src/sdk/cli/src/main.ts": "process.exit(1);\n",
+          "/core/src/sdk/cli/src/rogue.command.ts": "export function boom(): void {\n  process.exit(7);\n}\n",
+          "/core/src/sdk/cli/src/infrastructure/cli/exit-codes.ts": "export const CLI_EXIT_CODES = {\n  OK: 0,\n  TOOL_FAILURE: 1,\n  BLOCKED: 2,\n  INVALID_INPUT: 3,\n} as const;\n"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "CLI-EXIT-01", "result": "failed" },
+        { "ruleId": "CLI-EXIT-02", "result": "passed" },
+        { "ruleId": "CLI-EXIT-03", "result": "passed" }
+      ]
+    },
+    "widened-taxonomy": {
+      "filesystem": {
+        "existing": [
+          "/core/src/sdk/cli/src",
+          "/core/src/sdk/cli/src/main.ts",
+          "/core/src/sdk/cli/src/infrastructure",
+          "/core/src/sdk/cli/src/infrastructure/cli",
+          "/core/src/sdk/cli/src/infrastructure/cli/exit-codes.ts"
+        ],
+        "directories": [
+          "/core/src/sdk/cli/src",
+          "/core/src/sdk/cli/src/infrastructure",
+          "/core/src/sdk/cli/src/infrastructure/cli"
+        ],
+        "dirs": {
+          "/core/src/sdk/cli/src": ["main.ts", "infrastructure"],
+          "/core/src/sdk/cli/src/infrastructure": ["cli"],
+          "/core/src/sdk/cli/src/infrastructure/cli": ["exit-codes.ts"]
+        },
+        "files": {
+          "/core/src/sdk/cli/src/main.ts": "process.exit(7);\n",
+          "/core/src/sdk/cli/src/infrastructure/cli/exit-codes.ts": "export const CLI_EXIT_CODES = {\n  OK: 0,\n  TOOL_FAILURE: 1,\n  BLOCKED: 2,\n  INVALID_INPUT: 3,\n  ROGUE: 7,\n} as const;\n"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "CLI-EXIT-01", "result": "failed" },
+        { "ruleId": "CLI-EXIT-02", "result": "passed" },
+        { "ruleId": "CLI-EXIT-03", "result": "failed" }
+      ]
+    }
+  }
+}

@@ -195,6 +195,56 @@ const SAFE_GIT_SUBS = new Set([
 const NPM_MUTATING = new Set(['publish', 'ci', 'install', 'i', 'link', 'version', 'pack', 'audit']);
 
 /**
+ * Flags whose VALUE is the next token, so the value is not an operand.
+ *
+ * Without this, `npm run --workspace src/sdk/cli test` reports that the script
+ * `"src/sdk/cli"` is not declared: the first non-dash token after `run` is the
+ * flag's value, not the script name. That form is valid npm, so the recorded
+ * command was right and the parser was wrong — and the failure LOOKED like stale
+ * evidence, which is the worst way for a guard to be wrong.
+ */
+const VALUE_TAKING_FLAGS = new Set([
+  '--workspace', '-w', '--prefix', '-C', '--filter', '--registry', '--loglevel', '--tag',
+]);
+
+/**
+ * Built-in subcommands of npm / pnpm / yarn that are NOT package scripts.
+ *
+ * `pnpm info <pkg>` and `yarn info <pkg>` query the registry. Reading `info` as a
+ * script name and then failing because no `"info"` script is declared blames the
+ * evidence for a command that runs perfectly well.
+ */
+const PM_BUILTIN_SUBCOMMANDS = new Set([
+  'info', 'view', 'ls', 'list', 'exec', 'why', 'outdated', 'dlx', 'create', 'init',
+  'ping', 'search', 'whoami', 'config', 'licenses', 'dedupe', 'store', 'root', 'bin',
+  'prefix', 'explain', 'doctor', 'help', 'add', 'remove', 'update', 'up', 'dist-tag',
+  'deprecate', 'owner', 'access', 'team', 'star', 'unpublish', 'login', 'logout',
+]);
+
+/**
+ * Index of the first true operand at or after `from`, skipping flags AND the
+ * values they consume. -1 when the token list is nothing but flags.
+ */
+function firstOperandIndex(tokens, from) {
+  for (let i = from; i < tokens.length; i += 1) {
+    const tok = tokens[i];
+    if (tok === '--') return -1; // everything after `--` belongs to the script
+    if (tok.startsWith('-')) {
+      if (VALUE_TAKING_FLAGS.has(tok)) i += 1; // its value is not an operand
+      continue;
+    }
+    return i;
+  }
+  return -1;
+}
+
+/** The operand itself, or null. */
+function firstOperand(tokens, from) {
+  const i = firstOperandIndex(tokens, from);
+  return i === -1 ? null : tokens[i];
+}
+
+/**
  * Scripts this runner refuses to spawn even though they are `node` and
  * resolvable. Each entry needs a reason: a bare denylist rots into a no-op.
  */
@@ -512,17 +562,6 @@ function pathOperands(cmd) {
  * workspace's own VALUE token (which does not start with `-`) is mistaken for
  * the script name.
  */
-function npmScriptOperand(tokens) {
-  for (let i = 0; i < tokens.length; i++) {
-    const tok = tokens[i];
-    if (tok === '--workspace' || tok === '-w') { i += 1; continue; }
-    if (tok.startsWith('--workspace=')) continue;
-    if (tok.startsWith('-')) continue;
-    return tok;
-  }
-  return undefined;
-}
-
 /**
  * Resolve a command's referent.
  * @returns {{ status: 'resolved'|'dead'|'unchecked', detail: string }}
@@ -558,11 +597,14 @@ export function resolveCommand(cmd, ctx) {
         if (!ws) return { status: 'dead', detail: `npm workspace does not exist: ${wsRef}` };
       }
     }
-    const sub = t[1];
+    // The subcommand is the first OPERAND, not `t[1]`: `npm --workspace w run test`
+    // puts a flag there. Same skipping rule as the script name below.
+    const subIdx = firstOperandIndex(t, 1);
+    const sub = subIdx === -1 ? null : t[subIdx];
     let scriptName = null;
-    if (sub === 'run' || sub === 'run-script') scriptName = npmScriptOperand(t.slice(2));
+    if (sub === 'run' || sub === 'run-script') scriptName = firstOperand(t, subIdx + 1);
     else if (sub === 'test') scriptName = 'test';
-    else if (sub && !sub.startsWith('-') && !NPM_MUTATING.has(sub) && sub !== 'exec' && sub !== 'ls' && sub !== 'view') scriptName = sub;
+    else if (sub && !NPM_MUTATING.has(sub) && !PM_BUILTIN_SUBCOMMANDS.has(sub)) scriptName = sub;
 
     const pkg = ws ? ws.pkg : readJson(join(root, cmd.cwd || '.', 'package.json'));
     if (scriptName && pkg?.scripts && !Object.prototype.hasOwnProperty.call(pkg.scripts, scriptName)) {

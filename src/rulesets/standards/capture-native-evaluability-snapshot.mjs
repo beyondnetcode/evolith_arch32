@@ -220,13 +220,26 @@ function today() {
  */
 function classificationChanged(previous, triage) {
   if (!previous) return true;
-  const counts = Object.fromEntries(
-    KNOWN_CLASSES.filter((c) => triage.counts[c] !== undefined).map((c) => [c, triage.counts[c]]),
-  );
-  return (
-    JSON.stringify(previous.counts) !== JSON.stringify(counts) ||
-    JSON.stringify(previous.classes) !== JSON.stringify(triage.classes)
-  );
+
+  // ORDER-INSENSITIVE, and that is not a detail. The first version compared
+  // `JSON.stringify(previous.counts)` against a counts object rebuilt in
+  // KNOWN_CLASSES order, while the renderer emits them in CLASS_ORDER — a
+  // different order for the same six numbers. So "changed" was ALWAYS true, the
+  // date was rewritten on every run, and the GT-630 fixed-point replay would have
+  // failed on any day after the capture.
+  //
+  // It passed the day it was written because both runs stamped the same date,
+  // which is precisely the kind of green this chain exists to distrust. Found on
+  // main, where the committed snapshot carried an older date and the two runs
+  // therefore disagreed; ported here, where it was invisible and would have bitten
+  // on the next day's first run.
+  const sameMap = (a = {}, b = {}) => {
+    const ka = Object.keys(a).sort();
+    const kb = Object.keys(b).sort();
+    return ka.length === kb.length && ka.every((k, i) => kb[i] === k && a[k] === b[k]);
+  };
+
+  return !sameMap(previous.counts, triage.counts) || !sameMap(previous.classes, triage.classes);
 }
 
 /**

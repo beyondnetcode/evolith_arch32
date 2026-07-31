@@ -118,6 +118,10 @@ evolith-mcp serve --transport http --port 49100
 | `REDIS_URL` | — | Redis URL for the resource cache (e.g. `redis://localhost:6379`). The cache is optional. |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | — | OpenTelemetry endpoint for tracing |
 | `OTEL_SERVICE_NAME` | `evolith-mcp` | Service name used in the traces |
+| `EVOLITH_MCP_REQUEST_STATE_SECRET` | — | Key that seals the MRTR `requestState` (2026-07-28 path). Falls back to `EVOLITH_API_KEY`, then `JWT_SECRET`, then a per-process key. **Set it explicitly whenever more than one replica is served**, or an approval retry landing on another replica is rejected |
+| `EVOLITH_MCP_RESOURCE_AUTH_SERVERS` | — | Comma-separated authorization server issuers published in the Protected Resource Metadata document. Defaults to `EVOLITH_MCP_OAUTH_ISSUER` |
+| `EVOLITH_MCP_RESOURCE_URI` | request host | Canonical URI of this server (RFC 8707 resource identifier) published as `resource` |
+| `EVOLITH_MCP_RESOURCE_SCOPES` | `read write` | Scopes published as `scopes_supported` and challenged in `WWW-Authenticate` |
 
 > The binary also accepts the flags `--transport`/`-t`, `--port`/`-p`, `--api-key` and `--allow-no-auth` (**HTTP only**), as well as the `evolith-mcp version` subcommand.
 
@@ -141,6 +145,23 @@ x-api-key: <EVOLITH_API_KEY>
 ```
 
 `/health` is public (a liveness probe) and requires no credential.
+
+When an OAuth issuer is configured, `/.well-known/oauth-protected-resource` (and the path-inserted `/.well-known/oauth-protected-resource/<path>`) is also public: it is the RFC 9728 document an **unauthenticated** client reads to discover which authorization server to go to, so gating it behind the credential it is trying to obtain would make discovery impossible. It carries no MCP data — only the issuer, the resource identifier and the scope names. A 401 from a protected resource additionally carries a `WWW-Authenticate: Bearer resource_metadata="…", scope="…"` challenge, which is the discovery mechanism MCP clients must prefer. Without an issuer the endpoint returns 404 rather than publishing a document with an empty `authorization_servers`.
+
+Client registration never flows through this server: it is a resource server, and the 2026-07-28 revision has clients obtain a `client_id` from a Client ID Metadata Document (or pre-registration) at the authorization server. Dynamic Client Registration is deprecated and is not implemented here; `protected-resource-metadata.spec.ts` fails the build if a registration endpoint is ever introduced.
+
+### Protocol revisions
+
+The server answers two protocol revisions on the same HTTP endpoint:
+
+| Revision | How a request selects it | Shape |
+|---|---|---|
+| `2026-07-28` (current) | `_meta["io.modelcontextprotocol/protocolVersion"]` on every request, or a `server/discover` call | Stateless. No `initialize`, no `notifications/initialized`, no `Mcp-Session-Id`. Every result carries `resultType`; the approval gate is expressed as an `InputRequiredResult` with a sealed `requestState` (MRTR) |
+| `2025-11-25` | an `initialize` request | The handshake-based path served by `@modelcontextprotocol/sdk`, which mints and requires `Mcp-Session-Id` |
+
+Both revisions run through **one** dispatch, so ABAC (native + OPA), the scope gate, the approval gate and the audit trail are the same code on either path. The `2025-11-25` path is retained because the published SDK still declares it as its latest revision; it is not an alternative design.
+
+On the `2026-07-28` path a state-changing tool answers `resultType: "input_required"` with an `elicitation/create` request and an opaque `requestState`. The client gathers the human's approval and **retries the original call** — new JSON-RPC id, same parameters, plus `requestState` and `inputResponses`. The `requestState` is sealed with AES-256-GCM and bound to the principal, the tenant, the originating call and a short TTL, so it cannot be replayed across users, calls or time. A caller that already holds an approval may still pass `{ apply: true, approvalToken }` inline and skip the round trip, exactly as on the `2025-11-25` path.
 
 > The `ApiKeyProvisioningService` (below) is an **advanced and optional** mechanism for issuing keys with an `evk_` prefix, a SHA-256 hash and a TTL. It is independent of the startup `EVOLITH_API_KEY` described here.
 

@@ -11,7 +11,7 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Decisión actual:** NO-GO para expansión productiva o release mayor: existen bloqueadores P0 activos.
 
-**Mayor problema ahora:** `Cross` concentra el mayor riesgo abierto ponderado (2 pendientes, 1 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Governance` concentra el mayor riesgo abierto ponderado (7 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
 
 **Dónde atacar primero:** [GT-603](../gaps/gap-reference-catalog.es.md#gt-603), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435).
 
@@ -26,9 +26,9 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
 | 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-603](../gaps/gap-reference-catalog.es.md#gt-603), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) |
-| 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
-| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-631](../gaps/gap-reference-catalog.es.md#gt-631), [GT-643](../gaps/gap-reference-catalog.es.md#gt-643) |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-631](../gaps/gap-reference-catalog.es.md#gt-631), [GT-643](../gaps/gap-reference-catalog.es.md#gt-643), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-584](../gaps/gap-reference-catalog.es.md#gt-584), [GT-605](../gaps/gap-reference-catalog.es.md#gt-605), [GT-582](../gaps/gap-reference-catalog.es.md#gt-582), [GT-583](../gaps/gap-reference-catalog.es.md#gt-583), +2 |
+| 2 | Área de mayor riesgo | `Governance` tiene la mayor carga ponderada abierta. | [GT-644](../gaps/gap-reference-catalog.es.md#gt-644), [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-642](../gaps/gap-reference-catalog.es.md#gt-642), [GT-599](../gaps/gap-reference-catalog.es.md#gt-599), [GT-639](../gaps/gap-reference-catalog.es.md#gt-639), +1 |
+| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-631](../gaps/gap-reference-catalog.es.md#gt-631), [GT-643](../gaps/gap-reference-catalog.es.md#gt-643), [GT-644](../gaps/gap-reference-catalog.es.md#gt-644) |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-631](../gaps/gap-reference-catalog.es.md#gt-631), [GT-643](../gaps/gap-reference-catalog.es.md#gt-643), [GT-644](../gaps/gap-reference-catalog.es.md#gt-644), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-584](../gaps/gap-reference-catalog.es.md#gt-584), [GT-605](../gaps/gap-reference-catalog.es.md#gt-605), [GT-582](../gaps/gap-reference-catalog.es.md#gt-582), +3 |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-622](../gaps/gap-reference-catalog.es.md#gt-622), [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-642](../gaps/gap-reference-catalog.es.md#gt-642), [GT-531](../gaps/gap-reference-catalog.es.md#gt-531), [GT-536](../gaps/gap-reference-catalog.es.md#gt-536), +9 |
 
 ## Bloqueadores Actuales
@@ -43,21 +43,21 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Indicador | Valor |
 |---|---:|
 | Fecha canónica del tablero | 2026-07-26 |
-| Gaps totales | 643 |
+| Gaps totales | 644 |
 | Gaps cerrados | 613 |
-| Gaps pendientes | 30 |
+| Gaps pendientes | 31 |
 | P0 abiertos | 2 |
-| P1 abiertos | 10 |
+| P1 abiertos | 11 |
 | P2 abiertos | 15 |
-| Cierre total | 95.3% |
+| Cierre total | 95.2% |
 | Registros de evidencia de cierre | 595 |
 | Readiness registrado | 4 PASS |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
+| `Governance` | 7 | 0 | 3 | [GT-644](../gaps/gap-reference-catalog.es.md#gt-644), [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-642](../gaps/gap-reference-catalog.es.md#gt-642), +3 |
 | `Cross` | 2 | 1 | 1 | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
 | `Evolith Tracker` | 2 | 1 | 1 | [GT-603](../gaps/gap-reference-catalog.es.md#gt-603), [GT-631](../gaps/gap-reference-catalog.es.md#gt-631) |
-| `Governance` | 6 | 0 | 2 | [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-642](../gaps/gap-reference-catalog.es.md#gt-642), [GT-599](../gaps/gap-reference-catalog.es.md#gt-599), +2 |
 | `Evolith Core` | 5 | 0 | 1 | [GT-583](../gaps/gap-reference-catalog.es.md#gt-583), [GT-591](../gaps/gap-reference-catalog.es.md#gt-591), [GT-590](../gaps/gap-reference-catalog.es.md#gt-590), [GT-594](../gaps/gap-reference-catalog.es.md#gt-594), +1 |
 | `Infra` | 3 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-622](../gaps/gap-reference-catalog.es.md#gt-622), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464) |
 

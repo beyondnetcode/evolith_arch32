@@ -20,14 +20,18 @@
  * The Core measures/exposes; it never mutates. Everything here is `readonly`.
  */
 
-import { createHash } from 'node:crypto';
-
 import {
   EVALUATION_RESULT_SCHEMA_VERSION,
   KNOWN_RULE_ENGINES,
   type EvaluationResult,
   type RuleExecutionRef,
 } from '../evaluation/contracts/evaluation-result';
+import { sha256Hex } from './capability-fingerprint';
+import { CAPABILITY_OPERATIONS } from './capability-operations.generated';
+import {
+  capabilityOperationsFingerprint,
+  type CapabilityOperation,
+} from './capability-operations';
 
 // ---------------------------------------------------------------------------
 // Stable identity + defaults
@@ -100,7 +104,23 @@ export interface CapabilityManifest {
   /** 'rest' | 'cli' | 'mcp' */
   readonly surfaces: readonly string[];
   readonly supportedConsumers: readonly string[];
-  /** sha256 hex of the canonical JSON of this manifest WITHOUT this field. */
+  /**
+   * GT-583 — the per-operation contract: every governed operation with its
+   * JSON Schema 2020-12 `inputSchema` and `outputSchema`. GENERATED from the MCP
+   * tool registry's own projection; see `capability-operations.generated.ts`.
+   */
+  readonly operations: readonly CapabilityOperation[];
+  /**
+   * GT-583 — sha256 of {@link operations} alone, so a consumer can pin the whole
+   * per-operation contract with one scalar. This is what {@link sha256} folds in
+   * on behalf of `operations`, which is excluded from the manifest fingerprint
+   * to keep a pinnable contract from having to embed fifty schemas.
+   */
+  readonly operationsSha256: string;
+  /**
+   * sha256 hex of the canonical JSON of this manifest WITHOUT this field and
+   * WITHOUT `operations` (covered transitively by `operationsSha256`).
+   */
   readonly sha256: string;
 }
 
@@ -112,6 +132,13 @@ export interface BuildCapabilityManifestOptions {
   readonly surfaces?: readonly string[];
   /** Override the supported-consumer list. */
   readonly supportedConsumers?: readonly string[];
+  /**
+   * GT-583 — override the per-operation catalog. Defaults to the generated
+   * {@link CAPABILITY_OPERATIONS}. The override exists for the generator (which
+   * must build a manifest from a projection it has just read from the live
+   * registry, before that projection has been written to disk) and for tests.
+   */
+  readonly operations?: readonly CapabilityOperation[];
 }
 
 // ---------------------------------------------------------------------------
@@ -127,41 +154,17 @@ export function isSemVer(value: string): boolean {
   return SEMVER_RE.test(value);
 }
 
-/** Deterministically sort object keys (recursively); arrays keep their order. */
-function sortDeep(value: unknown): unknown {
-  if (Array.isArray(value)) {
-    return value.map(sortDeep);
-  }
-  if (value !== null && typeof value === 'object') {
-    const source = value as Record<string, unknown>;
-    return Object.keys(source)
-      .sort()
-      .reduce<Record<string, unknown>>((acc, key) => {
-        acc[key] = sortDeep(source[key]);
-        return acc;
-      }, {});
-  }
-  return value;
-}
-
-/** Canonical JSON: stable, key-sorted serialization for stable hashing. */
-function canonicalJson(value: unknown): string {
-  return JSON.stringify(sortDeep(value));
-}
-
-/** sha256 hex of the canonical JSON of `value`. */
-function sha256Hex(value: unknown): string {
-  return createHash('sha256').update(canonicalJson(value), 'utf8').digest('hex');
-}
-
 // ---------------------------------------------------------------------------
 // Builder + parity fingerprint
 // ---------------------------------------------------------------------------
 
 /**
  * Assemble the versioned {@link CapabilityManifest}. The `sha256` is computed
- * over the canonical JSON of the manifest content WITHOUT the `sha256` field,
- * so it is stable across calls and recomputable for drift detection.
+ * over the canonical JSON of the manifest content WITHOUT the `sha256` field and
+ * WITHOUT `operations`, so it is stable across calls and recomputable for drift
+ * detection. `operations` is excluded because `operationsSha256` — which IS
+ * hashed — already covers it: a consumer can pin the whole fifty-operation
+ * contract without embedding it (GT-583).
  *
  * @throws RangeError when an explicit `version` is not valid SemVer.
  */
@@ -173,7 +176,9 @@ export function buildCapabilityManifest(
     throw new RangeError(`Capability manifest version is not valid SemVer: "${version}"`);
   }
 
-  const content: Omit<CapabilityManifest, 'sha256'> = {
+  const operations = opts.operations ? [...opts.operations] : [...CAPABILITY_OPERATIONS];
+
+  const content: Omit<CapabilityManifest, 'sha256' | 'operations'> = {
     name: CAPABILITY_MANIFEST_NAME,
     version,
     schemaVersion: EVALUATION_RESULT_SCHEMA_VERSION,
@@ -183,18 +188,24 @@ export function buildCapabilityManifest(
     supportedConsumers: opts.supportedConsumers
       ? [...opts.supportedConsumers]
       : [...DEFAULT_SUPPORTED_CONSUMERS],
+    operationsSha256: capabilityOperationsFingerprint(operations),
   };
 
-  return { ...content, sha256: sha256Hex(content) };
+  return { ...content, operations, sha256: sha256Hex(content) };
 }
 
 /**
  * Recompute the sha256 fingerprint from an existing manifest, EXCLUDING its own
- * `sha256` field. A parity/drift test compares this against `manifest.sha256`:
- * if any capability field changed, the fingerprint changes and the check fails.
+ * `sha256` field and its `operations` array. A parity/drift test compares this
+ * against `manifest.sha256`: if any capability field changed — including the
+ * operation catalog, through `operationsSha256` — the fingerprint changes and
+ * the check fails.
  */
-export function capabilityManifestFingerprint(manifest: CapabilityManifest): string {
-  const { sha256: _ignored, ...content } = manifest;
+export function capabilityManifestFingerprint(
+  manifest: Omit<CapabilityManifest, 'operations'> & { operations?: unknown },
+): string {
+  const { sha256: _ignored, operations: _operations, ...content } = manifest;
   void _ignored;
+  void _operations;
   return sha256Hex(content);
 }

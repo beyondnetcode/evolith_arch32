@@ -44,9 +44,14 @@ describe('ApiCommand (E2E)', () => {
     expect(promptService.showIntro).toHaveBeenCalled();
   });
 
+  // GT-583 — the tool is named `evolith-gate-evaluate`. This case used to pass
+  // `gate-evaluate`, which was a key of the hand-written catalog and of nothing
+  // else: the CLI answered from a map whose three keys named no MCP tool, so the
+  // test proved the map agreed with itself and never that it agreed with the
+  // server. The catalog is now generated from the capability manifest.
   it('should inspect known tool', async () => {
-    await command.executeCommand([], { inspect: 'gate-evaluate' });
-    expect(promptService.showIntro).toHaveBeenCalledWith('Inspecting: gate-evaluate');
+    await command.executeCommand([], { inspect: 'evolith-gate-evaluate' });
+    expect(promptService.showIntro).toHaveBeenCalledWith('Inspecting: evolith-gate-evaluate');
   });
 
   it('should inspect known resource', async () => {

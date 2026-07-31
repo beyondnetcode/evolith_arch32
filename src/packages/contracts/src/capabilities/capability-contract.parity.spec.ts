@@ -23,7 +23,36 @@ describe('capability manifest contract parity', () => {
   const live = buildCapabilityManifest() as CapabilityManifest & CapabilityManifestShape;
 
   it('the live manifest deep-equals the package-declared snapshot', () => {
-    expect(live).toEqual(EXPECTED_CAPABILITY_MANIFEST);
+    // GT-583 — `operations` (fifty operation schemas) is pinned by its
+    // fingerprint, not embedded, so it is compared through `operationsSha256`
+    // by the assertion below rather than duplicated into this package.
+    const { operations: _operations, ...liveWithoutOperations } = live;
+    void _operations;
+    expect(liveWithoutOperations).toEqual(EXPECTED_CAPABILITY_MANIFEST);
+  });
+
+  it('the live per-operation catalog is real and matches the pinned fingerprint', () => {
+    // Anti-vacuous: an EMPTY catalog would also "match a fingerprint" — of
+    // nothing. The per-operation contract is the point of GT-583, so its
+    // presence is asserted before its fingerprint.
+    expect(live.operations.length).toBeGreaterThanOrEqual(40);
+    expect(live.operationsSha256).toBe(EXPECTED_CAPABILITY_MANIFEST.operationsSha256);
+    for (const op of live.operations) {
+      expect(typeof op.name).toBe('string');
+      expect(op.inputSchema).toBeDefined();
+      expect(op.outputSchema).toBeDefined();
+    }
+  });
+
+  it('FAILS when a single operation schema changes', () => {
+    const tampered = live.operations.map((op, i) =>
+      i === 0 ? { ...op, inputSchema: { ...op.inputSchema, properties: {} } } : op,
+    );
+    const drifted = buildCapabilityManifest({ operations: tampered });
+    expect(drifted.operationsSha256).not.toBe(EXPECTED_CAPABILITY_MANIFEST.operationsSha256);
+    const result = checkCapabilityManifestParity(drifted as unknown as CapabilityManifestShape);
+    expect(result.ok).toBe(false);
+    expect(result.mismatches.join('\n')).toContain('operationsSha256');
   });
 
   it('the declared snapshot sha256 matches its own recomputed fingerprint', () => {

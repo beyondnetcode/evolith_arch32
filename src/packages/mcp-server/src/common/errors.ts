@@ -27,6 +27,11 @@ export const ErrorCodes = {
   UNAUTHORIZED: "UNAUTHORIZED",
   FORBIDDEN: "FORBIDDEN",
 
+  // Concurrencia (core/ADR-0093 §3) — el estado base declarado por el llamante
+  // ya no coincide con HEAD del workspace, o el recurso está bloqueado. La
+  // escritura se rechaza ANTES de aplicarse.
+  CONCURRENCY_CONFLICT: "CONCURRENCY_CONFLICT",
+
   // Internos
   INTERNAL_ERROR: "INTERNAL_ERROR",
   NOT_IMPLEMENTED: "NOT_IMPLEMENTED",

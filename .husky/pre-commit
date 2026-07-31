@@ -29,6 +29,19 @@ MODE=""
 TARGET=""
 MERGE_METHOD=""
 
+# Handoff to pre-push. `.git` is a DIRECTORY only in the primary checkout; in a
+# `git worktree` it is a FILE holding a `gitdir:` pointer, so writing to
+# `.git/EVOLITH_*` fails with ENOTDIR and `set -e` aborts the commit.
+# `--git-dir` resolves both layouts. Keep this identical to .husky/pre-push,
+# which reads these files back.
+GIT_DIR_PATH="$(git rev-parse --git-dir)"
+
+write_push_intent() {
+  echo "$MODE" > "$GIT_DIR_PATH/EVOLITH_CI_MODE"
+  echo "$TARGET" > "$GIT_DIR_PATH/EVOLITH_PUSH_TARGET"
+  echo "$MERGE_METHOD" > "$GIT_DIR_PATH/EVOLITH_MERGE_METHOD"
+}
+
 resolve_from_env() {
   MODE="${EVOLITH_CI_MODE:-skip}"
   TARGET="${EVOLITH_PUSH_TARGET:-develop}"
@@ -43,9 +56,7 @@ fi
 if [ "$TTY_AVAILABLE" = false ]; then
   if [ "$IS_OWNER" = true ]; then
     resolve_from_env
-    echo "$MODE" > .git/EVOLITH_CI_MODE
-    echo "$TARGET" > .git/EVOLITH_PUSH_TARGET
-    echo "$MERGE_METHOD" > .git/EVOLITH_MERGE_METHOD
+    write_push_intent
     echo "No TTY available — owner mode: mode=$MODE."
     # Antes se salia con exit 0 SIEMPRE, asi que ningun commit sin TTY (agente,
     # script, CI) llegaba nunca al ci-runner de la linea final. Ahora, si el
@@ -60,9 +71,7 @@ if [ "$TTY_AVAILABLE" = false ]; then
 
   if [ -n "$EVOLITH_CI_MODE" ] || [ -n "$EVOLITH_PUSH_TARGET" ] || [ -n "$EVOLITH_MERGE_METHOD" ]; then
     resolve_from_env
-    echo "$MODE" > .git/EVOLITH_CI_MODE
-    echo "$TARGET" > .git/EVOLITH_PUSH_TARGET
-    echo "$MERGE_METHOD" > .git/EVOLITH_MERGE_METHOD
+    write_push_intent
     echo "Non-TTY: using EVOLITH_CI_MODE, EVOLITH_PUSH_TARGET, EVOLITH_MERGE_METHOD."
     exit 0
   fi
@@ -131,9 +140,7 @@ if [ "$TARGET" = "main" ] || [ "$TARGET" = "sync" ]; then
   esac
 fi
 
-echo "$MODE" > .git/EVOLITH_CI_MODE
-echo "$TARGET" > .git/EVOLITH_PUSH_TARGET
-echo "$MERGE_METHOD" > .git/EVOLITH_MERGE_METHOD
+write_push_intent
 
 if [ "$MODE" = "skip" ]; then
   echo ""

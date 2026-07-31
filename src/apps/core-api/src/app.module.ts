@@ -154,11 +154,14 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
         makeOrchestrator: EvaluationOrchestratorFactory,
       ) => {
         const pipeline: IEvaluationPipeline = {
-          evaluate: async (manifest) => {
+          // GT-614: the execution plan the orchestrator built from `ctx.kinds` is
+          // forwarded, so a request for one kind stops paying for every gate.
+          evaluate: async (manifest, plan) => {
             const out = await validateSatellite.execute({
               satellitePath: manifest.satellitePath,
               corePath: manifest.corePath,
               manifest,
+              plan,
             });
             if (!out.evaluationVerdict) {
               throw new Error('Evaluation pipeline produced no verdict');

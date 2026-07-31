@@ -96,11 +96,15 @@ export class EvaluateCommand extends BaseEvolithCommand {
     const resolvedCoreRoot = resolveRulesets(coreOverride).coreRoot;
 
     const pipeline: IEvaluationPipeline = {
-      evaluate: async (manifest) => {
+      // GT-614: forward the execution plan so `--kind compliance` costs what it
+      // asks for here too. The CLI is the reference surface; if it kept paying for
+      // every gate, the three surfaces would disagree on the same request.
+      evaluate: async (manifest, plan) => {
         const out = await this.useCase.execute({
           satellitePath: manifest.satellitePath,
           corePath: manifest.corePath,
           manifest,
+          plan,
         });
         if (!out.evaluationVerdict) {
           throw new Error('Evaluation pipeline produced no verdict');

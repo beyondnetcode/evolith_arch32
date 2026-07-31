@@ -76,26 +76,44 @@ const TRACKER = 'Tracker';
  * check.want (default true): satisfied = (found === want).
  *   want:false expresses "this MUST be absent" (e.g. duplicate/orphan models).
  * check.severity: P0 | P1 | P2 | INFO
+ *
+ * A `path` target that no longer resolves does not announce itself: the probe simply
+ * reports `found = false`, which is indistinguishable from the thing being genuinely
+ * missing. Eighteen targets here had gone stale that way — fifteen were missing the
+ * `src/` prefix added when the packages moved (the same literal-rot GT-556/557 fixed in
+ * `19-validate-rest-versioning.mjs`), and three had moved outright:
+ * `surface-parity-matrix.json` into `audits/`, the gate definitions into
+ * `reference/governance/sdlc/gates`, and `phase-gates.rules.json` into `sdlc/`.
+ *
+ * The result was an audit reporting P0 gaps against surfaces that plainly exist: D2
+ * (CLI/MCP/REST) scored 0% while this repository shipped eleven REST controllers.
+ * Whenever a probe is retargeted, confirm the new path resolves — a green probe on a
+ * path that does not exist is not possible, but a RED one on a path that no longer
+ * exists looks exactly like real work to do.
+ *
+ * Still unresolved and deliberately left red: `reference/core/sdlc/phases`. No
+ * `phase-f*.json` exists anywhere in the tree, so that probe needs re-specifying
+ * against wherever phase definitions now live — a decision, not a path edit.
  */
 const DIMENSIONS = [
   {
     id: 'D1', name: 'SDLC model defined & engine-backed', owner: CORE,
     checks: [
       { name: 'Phase definitions exist', type: 'path', target: 'reference/core/sdlc/phases', severity: 'P0', risk: 'No canonical phases to govern', fix: 'Keep phase-f*.json as the single source' },
-      { name: 'Gate definitions exist', type: 'path', target: 'reference/core/sdlc/gates', severity: 'P0', risk: 'No gate contracts', fix: 'Maintain gate-f*.json' },
+      { name: 'Gate definitions exist', type: 'path', target: 'reference/governance/sdlc/gates', severity: 'P0', risk: 'No gate contracts', fix: 'Maintain gate-f*.json' },
       { name: 'Gate JSON schema exists', type: 'path', target: 'reference/core/sdlc/sdlc-gate.schema.json', severity: 'P1', risk: 'Gates unvalidated structurally', fix: 'Keep sdlc-gate.schema.json' },
-      { name: 'Executable gate engine rules exist', type: 'path', target: 'src/rulesets/phase-gates/phase-gates.rules.json', severity: 'P0', risk: 'Gates are not executable', fix: 'Keep phase-gates.rules.json wired to the validator' },
-      { name: 'Single gate source (no divergent gate rules in two places)', type: 'grep', target: 'reference/core/sdlc/gates', pattern: '"rules"\\s*:', want: false, severity: 'P1', risk: 'Two divergent gate sources; cited .rego not executed', fix: 'Unify gates/*.json with phase-gates.rules.json; ensure cited .rego run' },
+      { name: 'Executable gate engine rules exist', type: 'path', target: 'src/rulesets/sdlc/phase-gates.rules.json', severity: 'P0', risk: 'Gates are not executable', fix: 'Keep phase-gates.rules.json wired to the validator' },
+      { name: 'Single gate source (no divergent gate rules in two places)', type: 'grep', target: 'reference/governance/sdlc/gates', pattern: '"rules"\\s*:', want: false, severity: 'P1', risk: 'Two divergent gate sources; cited .rego not executed', fix: 'Unify gates/*.json with phase-gates.rules.json; ensure cited .rego run' },
     ],
   },
   {
     id: 'D2', name: 'Interfaces exposed (CLI / MCP / REST) + governed parity', owner: CORE,
     checks: [
-      { name: 'Surface parity matrix exists', type: 'path', target: 'reference/core/control-center/surface-parity-matrix.json', severity: 'P0', risk: 'No governed map of operations per interface', fix: 'Keep matrix + CI gate 24' },
-      { name: 'REST controllers exist', type: 'path', target: 'apps/core-api/src/presentation/controllers', severity: 'P0', risk: 'No REST surface for Tracker/external', fix: 'Maintain core-api controllers' },
-      { name: 'OpenAPI / Swagger spec exists', type: 'path', target: 'apps/core-api/src/openapi', severity: 'P1', risk: 'No machine contract for REST', fix: 'Keep OpenAPI config' },
-      { name: 'MCP tools exist', type: 'path', target: 'packages/mcp-server/src/tools', severity: 'P0', risk: 'No agent surface', fix: 'Maintain MCP tools' },
-      { name: 'CLI commands exist', type: 'path', target: 'sdk/cli/src/commands', severity: 'P0', risk: 'No human/pipeline surface', fix: 'Maintain CLI commands' },
+      { name: 'Surface parity matrix exists', type: 'path', target: 'reference/core/control-center/audits/surface-parity-matrix.json', severity: 'P0', risk: 'No governed map of operations per interface', fix: 'Keep matrix + CI gate 24' },
+      { name: 'REST controllers exist', type: 'path', target: 'src/apps/core-api/src/presentation/controllers', severity: 'P0', risk: 'No REST surface for Tracker/external', fix: 'Maintain core-api controllers' },
+      { name: 'OpenAPI / Swagger spec exists', type: 'path', target: 'src/apps/core-api/src/openapi', severity: 'P1', risk: 'No machine contract for REST', fix: 'Keep OpenAPI config' },
+      { name: 'MCP tools exist', type: 'path', target: 'src/packages/mcp-server/src/tools', severity: 'P0', risk: 'No agent surface', fix: 'Maintain MCP tools' },
+      { name: 'CLI commands exist', type: 'path', target: 'src/sdk/cli/src/commands', severity: 'P0', risk: 'No human/pipeline surface', fix: 'Maintain CLI commands' },
     ],
   },
   {
@@ -103,17 +121,17 @@ const DIMENSIONS = [
     checks: [
       { name: 'Artifact templates catalog exists', type: 'path', target: 'reference/core/sdlc/04-artifact-templates', severity: 'P1', risk: 'No artifact catalog', fix: 'Keep templates' },
       { name: 'Artifact JSON schemas exist', type: 'path', target: 'src/rulesets/schema', severity: 'P0', risk: 'Artifacts cannot be validated structurally', fix: 'Add schema per artifact' },
-      { name: 'Evidence validator exists', type: 'path', target: 'packages/core-domain/src/application/validators/evidence-validator.ts', severity: 'P0', risk: 'No artifact validation', fix: 'Keep evidence validator' },
-      { name: 'Semantic blocking-criteria validator exists', type: 'path', target: 'packages/core-domain/src/application/validators/blocking-criteria-validator.ts', severity: 'P1', risk: 'Gates only check existence', fix: 'Keep/extend semantic checks' },
-      { name: 'Validates real artifact, not the Core template', type: 'grep', target: 'packages/core-domain/src/application/validators/evidence-validator.ts', pattern: 'template', want: false, severity: 'P0', risk: 'AJV inert: validates template path, not the satellite artifact', fix: 'Resolve satellite artifact and run AJV/semantic validation' },
+      { name: 'Evidence validator exists', type: 'path', target: 'src/packages/core-domain/src/application/validators/evidence-validator.ts', severity: 'P0', risk: 'No artifact validation', fix: 'Keep evidence validator' },
+      { name: 'Semantic blocking-criteria validator exists', type: 'path', target: 'src/packages/core-domain/src/application/validators/blocking-criteria-validator.ts', severity: 'P1', risk: 'Gates only check existence', fix: 'Keep/extend semantic checks' },
+      { name: 'Validates real artifact, not the Core template', type: 'grep', target: 'src/packages/core-domain/src/application/validators/evidence-validator.ts', pattern: 'template', want: false, severity: 'P0', risk: 'AJV inert: validates template path, not the satellite artifact', fix: 'Resolve satellite artifact and run AJV/semantic validation' },
     ],
   },
   {
     id: 'D4', name: 'Unified verdict & artifact state model', owner: CORE,
     checks: [
-      { name: 'Canonical verdict model exists (gate-evidence)', type: 'grep', target: 'packages/core-domain/src/domain/gate-evidence.ts', pattern: 'GATE_VERDICTS', severity: 'P0', risk: 'No canonical verdict', fix: 'Keep gate-evidence as canonical' },
-      { name: 'No orphan/divergent verdict model (gate-decision)', type: 'grep', target: 'packages/core-domain/src/gates/decision/gate-decision.ts', pattern: "'PASS'|PASS\\b", want: false, severity: 'P1', risk: 'Fragmented verdicts (PASS/FAIL/WAIVED) — dead code', fix: 'Integrate or remove gate-decision; one verdict vocabulary' },
-      { name: 'Artifact state machine exists (created→…→archived)', type: 'grep', target: 'packages/core-domain/src', pattern: "pending-validation|'archived'|\\bobserved\\b", exts: ['.ts'], severity: 'P0', risk: 'No lifecycle state for artifacts/phases', fix: 'Implement artifact/phase state machine' },
+      { name: 'Canonical verdict model exists (gate-evidence)', type: 'grep', target: 'src/packages/core-domain/src/domain/gate-evidence.ts', pattern: 'GATE_VERDICTS', severity: 'P0', risk: 'No canonical verdict', fix: 'Keep gate-evidence as canonical' },
+      { name: 'No orphan/divergent verdict model (gate-decision)', type: 'grep', target: 'src/packages/core-domain/src/gates/decision/gate-decision.ts', pattern: "'PASS'|PASS\\b", want: false, severity: 'P1', risk: 'Fragmented verdicts (PASS/FAIL/WAIVED) — dead code', fix: 'Integrate or remove gate-decision; one verdict vocabulary' },
+      { name: 'Artifact state machine exists (created→…→archived)', type: 'grep', target: 'src/packages/core-domain/src', pattern: "pending-validation|'archived'|\\bobserved\\b", exts: ['.ts'], severity: 'P0', risk: 'No lifecycle state for artifacts/phases', fix: 'Implement artifact/phase state machine' },
     ],
   },
   {
@@ -121,47 +139,47 @@ const DIMENSIONS = [
     checks: [
       { name: 'Event bus / emitter infrastructure declared', type: 'grep', target: 'PKG_JSONS', pattern: 'event-emitter|kafkajs|amqplib|nats|@nestjs/cqrs', severity: 'P0', risk: 'No async governance; Tracker forced to poll', fix: 'Add domain event bus + outbox' },
       { name: 'Named domain events emitted (phase/gate/artifact)', type: 'grep', target: 'EVENT_SRC', pattern: "phase\\.started|phase\\.completed|gate\\.approved|gate\\.rejected|artifact\\.created|artifact\\.validated", severity: 'P0', risk: 'No event catalog for Tracker/pipelines/audit', fix: 'Define + emit versioned domain events' },
-      { name: 'Webhook notifier port exists (interim async)', type: 'path', target: 'packages/core-domain/src/application/ports/webhook-notifier.port.ts', severity: 'INFO', risk: 'Only one-shot webhook exists', fix: 'Evolve one-shot webhook into subscription + retries + HMAC' },
+      { name: 'Webhook notifier port exists (interim async)', type: 'path', target: 'src/packages/core-domain/src/application/ports/webhook-notifier.port.ts', severity: 'INFO', risk: 'Only one-shot webhook exists', fix: 'Evolve one-shot webhook into subscription + retries + HMAC' },
     ],
   },
   {
     id: 'D6', name: 'Authorization (ABAC / OPA / role enforcement)', owner: CORE,
     checks: [
-      { name: 'ABAC evaluator (native) exists', type: 'path', target: 'packages/mcp-server/src/mcp/abac-evaluator.ts', severity: 'P0', risk: 'No attribute-based access control', fix: 'Keep ABAC evaluator' },
+      { name: 'ABAC evaluator (native) exists', type: 'path', target: 'src/packages/mcp-server/src/mcp/abac-evaluator.ts', severity: 'P0', risk: 'No attribute-based access control', fix: 'Keep ABAC evaluator' },
       { name: 'ABAC OPA policy exists (TS/OPA parity)', type: 'path', target: 'src/rulesets/opa/abac-mcp-tool-access.rego', severity: 'P1', risk: 'No policy-as-code for access', fix: 'Keep OPA parity' },
-      { name: 'Formal role model (enum/hierarchy)', type: 'grep', target: 'packages', pattern: 'enum\\s+Role|ROLE_HIERARCHY|RoleEnum', exts: ['.ts'], severity: 'P1', risk: 'Roles are free strings; no governance of who approves', fix: 'Introduce formal role model' },
-      { name: 'Gate approver role is enforced (not only declarative)', type: 'grep', target: 'packages', pattern: 'assertApprover|approverHasRole|enforceAccountable|authorizeApprover|assertAccountableRole', exts: ['.ts'], severity: 'P1', risk: 'accountableRole/waiverAuthority declarative only; anyone can approve', fix: 'OPA check: approver/waiver actor holds the required role' },
+      { name: 'Formal role model (enum/hierarchy)', type: 'grep', target: 'src/packages', pattern: 'enum\\s+Role|ROLE_HIERARCHY|RoleEnum', exts: ['.ts'], severity: 'P1', risk: 'Roles are free strings; no governance of who approves', fix: 'Introduce formal role model' },
+      { name: 'Gate approver role is enforced (not only declarative)', type: 'grep', target: 'src/packages', pattern: 'assertApprover|approverHasRole|enforceAccountable|authorizeApprover|assertAccountableRole', exts: ['.ts'], severity: 'P1', risk: 'accountableRole/waiverAuthority declarative only; anyone can approve', fix: 'OPA check: approver/waiver actor holds the required role' },
     ],
   },
   {
     id: 'D7', name: 'Composability for Tracker (tenant-agnostic, parametrizable)', owner: TRACKER,
     note: 'Core must be parametrizable by Tracker; it must NOT store per-tenant config (that is by design Tracker\'s job).',
     checks: [
-      { name: 'Tenant CONTEXT passthrough for audit/ABAC exists', type: 'grep', target: 'packages/mcp-server/src/mcp/audit-logger.ts', pattern: 'tenant', severity: 'P1', risk: 'Core cannot attribute actions to a tenant', fix: 'Keep tenant context in audit/ABAC inputs (not config)' },
-      { name: 'Workflow-definition seam exists (getWorkflow)', type: 'grep', target: 'packages/core-domain/src', pattern: 'getWorkflow|WorkflowDefinition|IWorkflowDefinitionProvider', exts: ['.ts'], severity: 'P0', risk: 'No seam for Tracker to supply a composed flow', fix: 'Expose an interface to accept + validate an externally-supplied WorkflowDefinition' },
-      { name: 'Op to VALIDATE an externally-supplied workflow against Core invariants', type: 'grep', target: 'packages/core-domain/src', pattern: 'validateWorkflow|workflow.*invariant|WorkflowValidator', exts: ['.ts'], severity: 'P0', risk: 'Tracker could compose flows that break governance', fix: 'Add validateWorkflow(definition): checks mandatory gates, OPA, non-omittable artifacts' },
+      { name: 'Tenant CONTEXT passthrough for audit/ABAC exists', type: 'grep', target: 'src/packages/mcp-server/src/mcp/audit-logger.ts', pattern: 'tenant', severity: 'P1', risk: 'Core cannot attribute actions to a tenant', fix: 'Keep tenant context in audit/ABAC inputs (not config)' },
+      { name: 'Workflow-definition seam exists (getWorkflow)', type: 'grep', target: 'src/packages/core-domain/src', pattern: 'getWorkflow|WorkflowDefinition|IWorkflowDefinitionProvider', exts: ['.ts'], severity: 'P0', risk: 'No seam for Tracker to supply a composed flow', fix: 'Expose an interface to accept + validate an externally-supplied WorkflowDefinition' },
+      { name: 'Op to VALIDATE an externally-supplied workflow against Core invariants', type: 'grep', target: 'src/packages/core-domain/src', pattern: 'validateWorkflow|workflow.*invariant|WorkflowValidator', exts: ['.ts'], severity: 'P0', risk: 'Tracker could compose flows that break governance', fix: 'Add validateWorkflow(definition): checks mandatory gates, OPA, non-omittable artifacts' },
       { name: 'Composable catalogs exist (topologies/agents)', type: 'path', target: 'reference/core/architecture/topologies', severity: 'P1', risk: 'Nothing for Tracker to compose from', fix: 'Expose phase/gate/artifact catalogs (not only topologies)' },
     ],
   },
   {
     id: 'D8', name: 'Extensibility without modifying the core', owner: CORE,
     checks: [
-      { name: 'CLI plugin loader exists', type: 'grep', target: 'sdk/cli/src', pattern: 'plugin-loader|PluginLoader|loadPlugins', exts: ['.ts'], severity: 'P1', risk: 'No extension point for commands', fix: 'Keep plugin loader' },
-      { name: 'Validator handler registry is open (no hardcoded switch)', type: 'grep', target: 'packages/core-domain/src/application/validators', pattern: 'INativeRuleHandler|canHandle', exts: ['.ts'], severity: 'P2', risk: 'Adding validators requires core edits', fix: 'Make handler registry plugin-based' },
+      { name: 'CLI plugin loader exists', type: 'grep', target: 'src/sdk/cli/src', pattern: 'plugin-loader|PluginLoader|loadPlugins', exts: ['.ts'], severity: 'P1', risk: 'No extension point for commands', fix: 'Keep plugin loader' },
+      { name: 'Validator handler registry is open (no hardcoded switch)', type: 'grep', target: 'src/packages/core-domain/src/application/validators', pattern: 'INativeRuleHandler|canHandle', exts: ['.ts'], severity: 'P2', risk: 'Adding validators requires core edits', fix: 'Make handler registry plugin-based' },
     ],
   },
   {
     id: 'D9', name: 'Blueprints as first-class governed entity', owner: CORE,
     checks: [
-      { name: 'Blueprint entity exists (not only an evidence file)', type: 'grep', target: 'packages/core-domain/src', pattern: 'class\\s+Blueprint|interface\\s+Blueprint\\b|BlueprintModel', exts: ['.ts'], severity: 'P1', risk: 'Blueprint is a concept; not validated vs OPA/topologies/policies', fix: 'Model Blueprint + validate against rulesets/topologies/tenant policy' },
+      { name: 'Blueprint entity exists (not only an evidence file)', type: 'grep', target: 'src/packages/core-domain/src', pattern: 'class\\s+Blueprint|interface\\s+Blueprint\\b|BlueprintModel', exts: ['.ts'], severity: 'P1', risk: 'Blueprint is a concept; not validated vs OPA/topologies/policies', fix: 'Model Blueprint + validate against rulesets/topologies/tenant policy' },
     ],
   },
   {
     id: 'D10', name: 'Auditability & traceability', owner: CORE,
     checks: [
-      { name: 'Audit logger exists', type: 'path', target: 'packages/mcp-server/src/mcp/audit-logger.ts', severity: 'P0', risk: 'No audit trail', fix: 'Keep audit logger' },
-      { name: 'Append-only command history exists', type: 'grep', target: 'sdk/cli/src', pattern: 'history\\.jsonl|CommandHistory', exts: ['.ts'], severity: 'P1', risk: 'No human-action trace', fix: 'Keep command history' },
-      { name: 'Persistent audit ledger (not only in-memory/JSONL)', type: 'grep', target: 'packages', pattern: 'AuditRepository|IAuditStore|persistAudit|appendToLedger', exts: ['.ts'], severity: 'P1', risk: 'Audit not durable/queryable', fix: 'Persist audit to an append-only store' },
+      { name: 'Audit logger exists', type: 'path', target: 'src/packages/mcp-server/src/mcp/audit-logger.ts', severity: 'P0', risk: 'No audit trail', fix: 'Keep audit logger' },
+      { name: 'Append-only command history exists', type: 'grep', target: 'src/sdk/cli/src', pattern: 'history\\.jsonl|CommandHistory', exts: ['.ts'], severity: 'P1', risk: 'No human-action trace', fix: 'Keep command history' },
+      { name: 'Persistent audit ledger (not only in-memory/JSONL)', type: 'grep', target: 'src/packages', pattern: 'AuditRepository|IAuditStore|persistAudit|appendToLedger', exts: ['.ts'], severity: 'P1', risk: 'Audit not durable/queryable', fix: 'Persist audit to an append-only store' },
     ],
   },
   {

@@ -18,6 +18,7 @@ import { validateEnv } from './infrastructure/config/env.validation';
 import { AuditThrottlerGuard } from './infrastructure/guards/audit-throttler.guard';
 import { ApiKeyGuard } from './infrastructure/guards/api-key.guard';
 import { MetricsService } from './infrastructure/metrics/metrics.service';
+import { EvaluationTelemetryService } from './infrastructure/observability/evaluation-telemetry.service';
 import { CoreReferenceQueryService } from './application/services/core-reference-query.service';
 import { ReferenceController } from './presentation/controllers/reference.controller';
 import { CapabilitiesController } from './presentation/controllers/capabilities.controller';
@@ -110,6 +111,9 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
   providers: [
     HealthService,
     MetricsService,
+    // GT-587 — the standard (semconv) half of the evaluation signal; the private
+    // `evolith_*` series MetricsService emits stays exactly as it was.
+    EvaluationTelemetryService,
     CacheMetricsService,
     CoreReferenceQueryService,
     WorkspaceReferenceResolverService,
@@ -154,11 +158,14 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
         makeOrchestrator: EvaluationOrchestratorFactory,
       ) => {
         const pipeline: IEvaluationPipeline = {
-          evaluate: async (manifest) => {
+          // GT-614: the execution plan the orchestrator built from `ctx.kinds` is
+          // forwarded, so a request for one kind stops paying for every gate.
+          evaluate: async (manifest, plan) => {
             const out = await validateSatellite.execute({
               satellitePath: manifest.satellitePath,
               corePath: manifest.corePath,
               manifest,
+              plan,
             });
             if (!out.evaluationVerdict) {
               throw new Error('Evaluation pipeline produced no verdict');

@@ -27,9 +27,12 @@ import {
   EVAL_HEADERS,
   evaluationPayload,
   isSuccessEnvelope,
+  isThrottled,
 } from './lib/config.js';
 
 const evalErrors = new Rate('evaluate_errors');
+// A throttled run is not a slow run — it is an invalid one (see lib/config.js).
+const throttled = new Rate('throttled_429');
 const evalLatency = new Trend('evaluate_latency', true);
 
 const MODE = (__ENV.MODE || 'stress').toLowerCase();
@@ -72,6 +75,9 @@ export const options = {
   thresholds: {
     // Under stress we still expect the majority of requests to succeed.
     evaluate_errors: [{ threshold: 'rate<0.05', abortOnFail: false }],
+    // 429s mean the target's rate limiter is the bottleneck under test, not the
+    // engine — a stress curve read off a throttled target is meaningless.
+    throttled_429: [{ threshold: 'rate<0.01', abortOnFail: false }],
     // Latency ceiling is a red line, not a hard stop — crossing it is the finding.
     evaluate_latency: [{ threshold: 'p(95)<2000', abortOnFail: false }],
   },
@@ -85,6 +91,7 @@ export function evaluate() {
     timeout: '10s',
   });
   evalLatency.add(res.timings.duration);
+  throttled.add(isThrottled(res));
   const ok = isSuccessEnvelope(res);
   evalErrors.add(!ok);
   check(res, {

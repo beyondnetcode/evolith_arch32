@@ -95,6 +95,7 @@ jobs:
         # against publishing an empty package.
         run: |
           rm -f src/packages/mcp-server/tsconfig.tsbuildinfo
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-mcp
           test -f src/packages/mcp-server/dist/main.js
 

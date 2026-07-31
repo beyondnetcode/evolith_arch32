@@ -118,6 +118,10 @@ evolith-mcp serve --transport http --port 49100
 | `REDIS_URL` | — | URL de Redis para caché de resources (ej: `redis://localhost:6379`). La caché es opcional. |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | — | Endpoint OpenTelemetry para tracing |
 | `OTEL_SERVICE_NAME` | `evolith-mcp` | Nombre del servicio en los traces |
+| `EVOLITH_MCP_REQUEST_STATE_SECRET` | — | Clave que sella el `requestState` de MRTR (ruta 2026-07-28). Cae a `EVOLITH_API_KEY`, luego `JWT_SECRET`, luego una clave por proceso. **Defínela explícitamente cuando haya más de una réplica**, o un reintento de aprobación que aterrice en otra réplica será rechazado |
+| `EVOLITH_MCP_RESOURCE_AUTH_SERVERS` | — | Emisores de authorization server publicados en el documento de Protected Resource Metadata, separados por coma. Por defecto, `EVOLITH_MCP_OAUTH_ISSUER` |
+| `EVOLITH_MCP_RESOURCE_URI` | host de la petición | URI canónica de este servidor (identificador de recurso RFC 8707) publicada como `resource` |
+| `EVOLITH_MCP_RESOURCE_SCOPES` | `read write` | Scopes publicados como `scopes_supported` y exigidos en el `WWW-Authenticate` |
 
 > El binario también acepta los flags `--transport`/`-t`, `--port`/`-p`, `--api-key` y `--allow-no-auth` (**solo HTTP**), además del subcomando `evolith-mcp version`.
 
@@ -141,6 +145,23 @@ x-api-key: <EVOLITH_API_KEY>
 ```
 
 `/health` es público (probe de liveness) y no requiere credencial.
+
+Cuando hay un emisor OAuth configurado, `/.well-known/oauth-protected-resource` (y la variante con path insertado `/.well-known/oauth-protected-resource/<path>`) también es público: es el documento RFC 9728 que un cliente **no autenticado** lee para descubrir a qué authorization server ir, así que protegerlo con la credencial que intenta obtener haría imposible el descubrimiento. No contiene datos MCP — solo el emisor, el identificador de recurso y los nombres de scope. Un 401 de un recurso protegido lleva además una cabecera `WWW-Authenticate: Bearer resource_metadata="…", scope="…"`, que es el mecanismo de descubrimiento que los clientes MCP deben preferir. Sin emisor el endpoint devuelve 404 en vez de publicar un documento con `authorization_servers` vacío.
+
+El registro de clientes nunca pasa por este servidor: es un resource server, y en la revisión 2026-07-28 el cliente obtiene su `client_id` de un Client ID Metadata Document (o de un pre-registro) en el authorization server. El Dynamic Client Registration está deprecado y no se implementa aquí; `protected-resource-metadata.spec.ts` rompe el build si alguna vez se introduce un endpoint de registro.
+
+### Revisiones del protocolo
+
+El servidor responde dos revisiones del protocolo en el mismo endpoint HTTP:
+
+| Revisión | Cómo la selecciona una petición | Forma |
+|---|---|---|
+| `2026-07-28` (actual) | `_meta["io.modelcontextprotocol/protocolVersion"]` en cada petición, o una llamada a `server/discover` | Stateless. Sin `initialize`, sin `notifications/initialized`, sin `Mcp-Session-Id`. Todo resultado lleva `resultType`; el gate de aprobación se expresa como un `InputRequiredResult` con `requestState` sellado (MRTR) |
+| `2025-11-25` | una petición `initialize` | La ruta con handshake que sirve `@modelcontextprotocol/sdk`, que emite y exige `Mcp-Session-Id` |
+
+Ambas revisiones pasan por **un solo** dispatch, así que ABAC (nativo + OPA), el gate de scope, el gate de aprobación y la traza de auditoría son el mismo código en cualquiera de las dos rutas. La ruta `2025-11-25` se conserva porque el SDK publicado sigue declarándola como su última revisión; no es un diseño alternativo.
+
+En la ruta `2026-07-28` una tool que cambia estado responde `resultType: "input_required"` con una petición `elicitation/create` y un `requestState` opaco. El cliente recoge la aprobación humana y **reintenta la llamada original** — nuevo id JSON-RPC, mismos parámetros, más `requestState` e `inputResponses`. El `requestState` va sellado con AES-256-GCM y ligado al principal, al tenant, a la llamada de origen y a un TTL corto, de modo que no puede reproducirse entre usuarios, llamadas ni en el tiempo. Un llamador que ya tenga una aprobación puede seguir pasando `{ apply: true, approvalToken }` inline y saltarse el round trip, igual que en la ruta `2025-11-25`.
 
 > El `ApiKeyProvisioningService` (abajo) es un mecanismo **avanzado y opcional** para emitir keys con prefijo `evk_`, hash SHA-256 y TTL. Es independiente del `EVOLITH_API_KEY` de arranque descrito aquí.
 

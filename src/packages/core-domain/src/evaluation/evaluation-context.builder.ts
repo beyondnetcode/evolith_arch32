@@ -105,6 +105,13 @@ export function evaluationFactsFromContext(ctx: EvaluationContext): EvaluationFa
     !!ctx.product ||
     !!ctx.initiative ||
     !!ctx.checkpoint ||
+    // GT-584: quality evidence IS a declared fact and joins the trigger, unlike
+    // GT-586's requester. The difference is deliberate: a requester only labels a
+    // verdict, whereas evidence is the thing the admissibility rule judges. A
+    // context that carries probabilistic evidence and projects no facts would hand
+    // `probabilistic-evidence-admissibility.rego` an empty corpus and go green
+    // having refused nothing — the exact false green this row exists to prevent.
+    !!ctx.qualitySignals?.length ||
     hasKeys(ctx.sdlcConfig) ||
     hasKeys(ctx.customConstraints);
   if (!declared) return undefined;
@@ -116,6 +123,8 @@ export function evaluationFactsFromContext(ctx: EvaluationContext): EvaluationFa
     waiver?: EvaluationFacts['waiver'];
     tenantId?: string;
     evaluationDate?: string;
+    qualityEvidence?: EvaluationFacts['qualityEvidence'];
+    qualityAdmissibilityPolicy?: EvaluationFacts['qualityAdmissibilityPolicy'];
   } = {};
 
   // --- input.context: opaque echoes + declared dod/spec sub-configs ---
@@ -167,6 +176,32 @@ export function evaluationFactsFromContext(ctx: EvaluationContext): EvaluationFa
   // --- input.waiver ---
   const waivers = asWaiverArray(ctx.customConstraints?.['waivers']);
   if (waivers) facts.waiver = [...waivers];
+
+  // --- input.qualityEvidence (GT-584 · probabilistic-evidence-admissibility.rego) ---
+  // Projected verbatim, calibration included: the rule decides admissibility FROM
+  // the calibration fields, so a projection that dropped them would make every
+  // probabilistic signal look uncalibrated and the refusal meaningless.
+  if (ctx.qualitySignals?.length) {
+    facts.qualityEvidence = ctx.qualitySignals.map((e) => ({
+      source: e.source,
+      dimension: e.dimension,
+      determinism: e.determinism,
+      ...(e.calibration ? { calibration: { ...e.calibration } } : {}),
+    }));
+  }
+  const admissibility = asRecord(ctx.customConstraints?.['qualityAdmissibilityPolicy']);
+  if (admissibility) {
+    const policy: {
+      minTruePositiveRate?: number;
+      minTrueNegativeRate?: number;
+      maxCalibrationAgeDays?: number;
+    } = {};
+    for (const key of ['minTruePositiveRate', 'minTrueNegativeRate', 'maxCalibrationAgeDays'] as const) {
+      const value = admissibility[key];
+      if (typeof value === 'number' && Number.isFinite(value)) policy[key] = value;
+    }
+    if (Object.keys(policy).length) facts.qualityAdmissibilityPolicy = policy;
+  }
 
   // --- root tenantId + evaluationDate ---
   if (ctx.tenant?.tenantId) facts.tenantId = ctx.tenant.tenantId;

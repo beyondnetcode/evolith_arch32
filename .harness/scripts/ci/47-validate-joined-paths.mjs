@@ -120,12 +120,18 @@ const GENERATED = new Set(['dist', 'evidence', 'coverage', 'node_modules', 'poli
  */
 const GENERATED_PREFIXES = [
   {
-    prefix: 'src/sdk/cli/rulesets/opa',
-    producedBy: '.harness/scripts/compile-opa-wasm.mjs',
+    prefix: 'src/sdk/cli/rulesets',
+    producedBy: '.harness/scripts/compile-opa-wasm.mjs + src/sdk/cli/scripts/copy-assets.js',
     reason:
-      'The compile step mkdirSyncs this directory and copies policy.wasm into it. Nothing ' +
-      'under it is tracked, so on a clean checkout the directory itself does not exist — ' +
-      'which is why this only ever failed on the runner.',
+      'The compile step mkdirSyncs `rulesets/opa` and copies policy.wasm into it. The WHOLE ' +
+      'subtree is produced, not just that leaf: `src/sdk/cli/.gitignore` ignores `rulesets/*`, ' +
+      'so on a clean checkout the directory itself does not exist — which is why this only ' +
+      'ever failed on the runner. GT-643 — the prefix used to be `src/sdk/cli/rulesets/opa`, ' +
+      'anchored on `src/sdk/cli/rulesets`, and that anchor held ONLY because three files a ' +
+      'test had written were committed under `rulesets/agents/`. Deleting that residue removed ' +
+      'the directory from the checkout and this guard went red, naming policy.wasm for a cause ' +
+      'that was somewhere else entirely. An anchor that depends on committed test output is ' +
+      'not an anchor; it now rests on `src/sdk/cli`, which is authored.',
   },
 ];
 

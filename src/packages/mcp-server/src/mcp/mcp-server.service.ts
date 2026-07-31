@@ -28,8 +28,21 @@ import { authenticateHttpRequest } from './mcp-server-auth';
 import { createLocalSessionContext } from './mcp-auth-contexts';
 import { evaluateStdioCredentialPolicy, StdioCredentialError } from './stdio-credential-policy';
 import { loadOAuthConfig, createJwksResolver, type OAuthConfig, type JwksKeyResolver } from './oauth-resource-server';
-import { handleCallTool, handleListTools, ToolCallResult, redactArgs } from './mcp-tool-dispatch';
+import { handleCallTool, handleListTools, ToolCallOptions, ToolCallResult, redactArgs } from './mcp-tool-dispatch';
 import { McpCacheService } from './mcp-cache.service';
+import { isStatelessRevisionRequest } from './protocol-revisions';
+import { handleStatelessRpc, type StatelessRpcOps } from './stateless-rpc';
+import {
+  buildProtectedResourceMetadata,
+  buildWwwAuthenticate,
+  isResourceMetadataPath,
+  resolveResourceMetadata,
+  type ResourceMetadataInput,
+} from './protected-resource-metadata';
+import {
+  ATTR_MCP_PROTOCOL_VERSION,
+  ATTR_MCP_SESSION_ID,
+} from '@beyondnet/evolith-core-domain/evaluation';
 
 export { McpUserContext, mcpContextStorage } from './mcp-user-context';
 export { ToolCallResult } from './mcp-tool-dispatch';
@@ -109,6 +122,11 @@ export class McpServerService {
   // authenticateHttpRequest. When undefined, dispatch without a context keeps the
   // pre-existing fail-closed behaviour (anonymous → ABAC-02 → FORBIDDEN).
   private transportContext?: McpUserContext;
+  // GT-582 — RFC 9728 Protected Resource Metadata inputs, derived from env at
+  // start(). `null` when no authorization server is configured, in which case
+  // the well-known endpoint 404s rather than publishing a non-conformant
+  // document with an empty `authorization_servers`.
+  private resourceMetadata: ResourceMetadataInput | null = null;
 
   constructor(
     private readonly registry: ToolRegistryService,
@@ -160,11 +178,19 @@ export class McpServerService {
     return result;
   }
 
-  async handleCallTool(name: string, args: Record<string, unknown> = {}): Promise<ToolCallResult> {
-    return this.withTransportContext(() => this.callToolInContext(name, args));
+  async handleCallTool(
+    name: string,
+    args: Record<string, unknown> = {},
+    options: ToolCallOptions = {},
+  ): Promise<ToolCallResult> {
+    return this.withTransportContext(() => this.callToolInContext(name, args, options));
   }
 
-  private async callToolInContext(name: string, args: Record<string, unknown> = {}): Promise<ToolCallResult> {
+  private async callToolInContext(
+    name: string,
+    args: Record<string, unknown> = {},
+    options: ToolCallOptions = {},
+  ): Promise<ToolCallResult> {
     const correlationId = (args.correlationId as string) || generateCorrelationId();
     const startTime = Date.now();
 
@@ -174,7 +200,7 @@ export class McpServerService {
       abacEvaluator: this.abacEvaluator,
       logger: this.logger,
       tracer,
-    });
+    }, options);
 
     if (this.auditLogger) {
       const durationMs = Date.now() - startTime;
@@ -253,11 +279,17 @@ export class McpServerService {
     const server = new Server({ name: SERVER_NAME, version: SERVER_VERSION }, { capabilities });
 
     server.setRequestHandler(ListToolsRequestSchema, async () => this.handleListTools());
-    server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    // GT-587: `_meta` and `extra.sessionId` used to be destructured away here, which is
+    // why trace context had to travel as a tool ARGUMENT. Both now cross the boundary:
+    // `_meta` carries the W3C trace context a conformant client sends, `sessionId` is
+    // the `mcp.session.id` attribute. Neither reaches the tool — dispatch consumes them.
+    server.setRequestHandler(CallToolRequestSchema, async (request, extra) => {
       const { name, arguments: args } = request.params;
-      return this.handleCallTool(name, (args ?? {}) as Record<string, unknown>) as unknown as Promise<
-        Record<string, unknown>
-      >;
+      const meta = (request.params._meta ?? extra?._meta) as Record<string, unknown> | undefined;
+      return this.handleCallTool(name, (args ?? {}) as Record<string, unknown>, {
+        meta,
+        sessionId: extra?.sessionId,
+      }) as unknown as Promise<Record<string, unknown>>;
     });
 
     if (this.resources) {
@@ -309,6 +341,9 @@ export class McpServerService {
     if (this.oauthConfig && !this.oauthKeyResolver && this.oauthConfig.jwksUri) {
       this.oauthKeyResolver = createJwksResolver(this.oauthConfig.jwksUri);
     }
+    // GT-582 — resolved with an empty resource fallback; the canonical URI is
+    // completed per request from the Host header unless configured explicitly.
+    this.resourceMetadata = resolveResourceMetadata(process.env, '');
     // GT-572: only stdio carries an implicit principal. Recomputed on every
     // start() so a service restarted on HTTP cannot inherit the stdio identity.
     this.transportContext = transport === 'stdio' ? createLocalSessionContext() : undefined;
@@ -481,6 +516,30 @@ export class McpServerService {
         return;
       }
 
+      // GT-582 — OAuth 2.0 Protected Resource Metadata (RFC 9728). PUBLIC by
+      // requirement: it is what an UNAUTHENTICATED client reads to find out
+      // which authorization server to go to, so gating it behind the credential
+      // it is trying to obtain would make discovery impossible. It contains no
+      // MCP data — only the issuer, the resource id and the scope names.
+      if (req.method === 'GET' && isResourceMetadataPath(url.pathname)) {
+        if (!this.resourceMetadata) {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            error: 'not_found',
+            error_description:
+              'This MCP server is not configured as an OAuth-protected resource. ' +
+              'Set EVOLITH_MCP_OAUTH_ISSUER (or EVOLITH_MCP_RESOURCE_AUTH_SERVERS) to publish resource metadata.',
+          }));
+          return;
+        }
+        const resolved = this.resourceMetadata.resource
+          ? this.resourceMetadata
+          : { ...this.resourceMetadata, resource: this.resourceMetadataUrl(req).replace('/.well-known/oauth-protected-resource', '') };
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600' });
+        res.end(JSON.stringify(buildProtectedResourceMetadata(resolved)));
+        return;
+      }
+
       // Prometheus metrics (default process/runtime metrics under the evolith_mcp_
       // prefix). GT-549: authenticated for parity with core-api's guarded /metrics —
       // `/metrics` leaks operational shape (routes, volumes) and must not be readable
@@ -506,6 +565,17 @@ export class McpServerService {
         return;
       }
 
+      // GT-582 — RFC 9728 §5.1: a 401 from a protected resource carries the
+      // resource-metadata URL, which is the discovery mechanism MCP clients must
+      // prefer over probing well-known URIs.
+      const challenge = this.resourceMetadata
+        ? buildWwwAuthenticate({
+            resourceMetadataUrl: this.resourceMetadataUrl(req),
+            scope: (this.resourceMetadata.scopesSupported ?? ['read', 'write']).join(' '),
+            error: 'invalid_token',
+          })
+        : undefined;
+
       const context = await authenticateHttpRequest(
         req,
         res,
@@ -513,16 +583,27 @@ export class McpServerService {
         this.allowNoAuth,
         this.oauthConfig,
         this.oauthKeyResolver,
+        challenge,
       );
       if (!context) return;
 
       const headerCorrelationId = (req.headers['x-correlation-id'] as string) || generateCorrelationId();
+
+      // GT-587: the two `mcp.*` facts the Streamable HTTP transport actually carries
+      // as headers. They are read here rather than invented at the tool span, because
+      // the SDK does not expose the negotiated protocol version to a request handler —
+      // the header is the only honest source, and an attribute nobody can source is
+      // better absent than fabricated.
+      const httpSessionId = req.headers['mcp-session-id'] as string | undefined;
+      const httpProtocolVersion = req.headers['mcp-protocol-version'] as string | undefined;
 
       const span = tracer.startSpan('mcp.http.request', {
         attributes: {
           'http.method': req.method || 'UNKNOWN',
           'http.url': url.pathname,
           'correlation.id': headerCorrelationId,
+          ...(httpSessionId ? { [ATTR_MCP_SESSION_ID]: httpSessionId } : {}),
+          ...(httpProtocolVersion ? { [ATTR_MCP_PROTOCOL_VERSION]: httpProtocolVersion } : {}),
         },
       });
 
@@ -580,10 +661,33 @@ export class McpServerService {
         return;
       }
 
-      // No session id. A POST may be an `initialize` that mints a new session;
-      // anything else without a session is a protocol error.
+      // No session id. A POST is either a 2026-07-28 request (stateless, no
+      // handshake, no session) or a 2025-11-25 `initialize` that mints one.
       if (req.method === 'POST') {
-        McpServerService.readBody(req).then((body) => {
+        McpServerService.readBody(req).then(async (body) => {
+          // GT-582 — the stateless revision. Routed FIRST and recognised only by
+          // an explicit 2026-07-28 `_meta` (or by `server/discover`, which no
+          // earlier revision defines), so nothing a 2025-11-25 client sends can
+          // be diverted off the SDK transport that serves it today.
+          if (isStatelessRevisionRequest(body)) {
+            try {
+              const response = await mcpContextStorage.run(context as McpUserContext, () =>
+                handleStatelessRpc(body, context as McpUserContext, this.statelessOps()),
+              );
+              span.end();
+              // No `Mcp-Session-Id` is minted, read or returned on this path.
+              res.writeHead(response.status, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify(response.body));
+            } catch (err) {
+              const message = err instanceof Error ? err.message : String(err);
+              span.setStatus({ code: SpanStatusCode.ERROR, message });
+              span.end();
+              this.logger.error(`MCP stateless dispatch error: ${message}`);
+              if (!res.headersSent) res.writeHead(500, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ jsonrpc: '2.0', error: { code: -32603, message: 'Internal error' }, id: null }));
+            }
+            return;
+          }
           if (isInitializeRequest(body)) {
             const transport = this.createHttpSessionTransport();
             dispatch(transport, body);
@@ -596,6 +700,44 @@ export class McpServerService {
 
       // GET (SSE stream) / DELETE without a session id have nothing to attach to.
       sendError(400, 'Missing mcp-session-id');
+  }
+
+  /**
+   * GT-582 — the dispatch the stateless (2026-07-28) path shares with the SDK's
+   * session-based path. Every capability check that matters — ABAC, the scope
+   * gate, the approval gate, the audit trail — lives behind `handleCallTool`,
+   * so both revisions are governed by one implementation rather than two.
+   */
+  private statelessOps(): StatelessRpcOps {
+    const capabilities: Record<string, unknown> = { tools: {} };
+    if (this.resources) capabilities.resources = {};
+    if (this.prompts) capabilities.prompts = {};
+    const resources = this.resources;
+    const prompts = this.prompts;
+    return {
+      serverInfo: { name: SERVER_NAME, version: SERVER_VERSION },
+      capabilities: () => capabilities,
+      instructions:
+        'Evolith governance gateway. Tools evaluate architecture against rulesets and return a canonical ' +
+        'envelope; state-changing tools require an approval before they run.',
+      listTools: () => this.handleListTools() as Promise<{ tools: unknown[] }>,
+      callTool: (name, args) => this.handleCallTool(name, args),
+      isMutative: (name) => this.registry.get(name)?.mutative === true,
+      ...(resources ? { listResources: () => resources.list(), readResource: (uri: string) => resources.read(uri) } : {}),
+      ...(prompts
+        ? { listPrompts: () => prompts.list(), getPrompt: (name: string, args: Record<string, string>) => prompts.get(name, args) }
+        : {}),
+    };
+  }
+
+  /**
+   * GT-582 — the resource-metadata URL a client is pointed at, both in the
+   * `WWW-Authenticate` challenge and as the document's own location.
+   */
+  private resourceMetadataUrl(req: http.IncomingMessage): string {
+    const host = (req.headers.host as string | undefined) ?? 'localhost';
+    const proto = (req.headers['x-forwarded-proto'] as string | undefined)?.split(',')[0]?.trim() || 'https';
+    return `${proto}://${host}/.well-known/oauth-protected-resource`;
   }
 
   /** The actual bound TCP port for the HTTP transport (useful for tests). */

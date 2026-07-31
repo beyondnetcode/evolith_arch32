@@ -582,7 +582,7 @@
         "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts",
         "src/packages/core-domain/src/application/validators/evaluators/handlers/governance-rule.handler.spec.ts",
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.spec.ts",
-        "src/sdk/cli/src/infrastructure/providers/node-filesystem.provider.spec.ts",
+        "src/packages/infra-providers/src/node-filesystem.provider.spec.ts",
         "src/sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.spec.ts"
       ],
       "validationCommands": [
@@ -1472,7 +1472,7 @@
       "evidence": [
         "src/sdk/cli/src/commands/agents/agents.command.ts",
         "src/sdk/cli/test/e2e/cli-e2e.test.ts",
-        "src/sdk/cli/src/infrastructure/providers/node-filesystem.provider.ts",
+        "src/packages/infra-providers/src/node-filesystem.provider.ts",
         "src/packages/mcp-server/src/main.ts"
       ],
       "validationCommands": [
@@ -2576,7 +2576,7 @@
       "closureCommit": "3e4c7f71",
       "evidence": [
         "src/sdk/cli/src/commands/update/update.command.ts",
-        "src/sdk/cli/src/infrastructure/providers/node-filesystem.provider.ts",
+        "src/packages/infra-providers/src/node-filesystem.provider.ts",
         "src/sdk/cli/src/infrastructure/plugins/plugin-loader.ts"
       ],
       "validationCommands": [
@@ -2721,7 +2721,7 @@
       "closedAt": "2026-06-23",
       "closureCommit": "b9e891db",
       "evidence": [
-        "src/sdk/cli/src/infrastructure/providers/config-parser.provider.spec.ts",
+        "src/packages/infra-providers/src/config-parser.provider.spec.ts",
         "src/sdk/cli/src/infrastructure/prompts/init-prompt-options.spec.ts",
         "src/sdk/cli/src/infrastructure/prompts/init-prompt-group.spec.ts",
         "src/sdk/cli/src/infrastructure/observability/otel-tracing.spec.ts",
@@ -2743,7 +2743,6 @@
         "src/packages/core-domain/src/application/use-cases/phase-transition.use-case.ts",
         "src/packages/core-domain/src/application/use-cases/validate-satellite.use-case.ts",
         "src/packages/infra-providers/src/node-filesystem.provider.ts",
-        "src/apps/core-api/src/infrastructure/providers/node-filesystem.provider.ts",
         "src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts",
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts",
         "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture/ast-rules.ts"
@@ -8308,6 +8307,18 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-580",
+      "closedAt": "2026-07-31",
+      "closureCommit": "2909d49b",
+      "evidence": [
+        "src/sdk/cli/src/infrastructure/cli/machine-channel.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace src/sdk/cli test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-581",
       "evidence": [
         "src/packages/mcp-server/src/common/tool-output-schema.ts",
@@ -8337,6 +8348,32 @@
       ],
       "closedAt": "2026-07-28",
       "closureCommit": "e23721f5",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-587",
+      "closedAt": "2026-07-31",
+      "closureCommit": "1adece05",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/telemetry/semconv.ts",
+        ".harness/scripts/ci/51-validate-semconv-pin.mjs"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/51-validate-semconv-pin.test.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-589",
+      "closedAt": "2026-07-31",
+      "closureCommit": "b490689a",
+      "evidence": [
+        "src/packages/repo-facts/src/index.ts",
+        "src/packages/core-domain/src/evaluation/contracts/repo-facts.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-repo-facts test"
+      ],
       "dependencyDisposition": "none"
     },
     {
@@ -8397,6 +8434,19 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-597",
+      "closedAt": "2026-07-31",
+      "closureCommit": "963c410e",
+      "evidence": [
+        ".harness/scripts/ci/52-validate-scorecard-regression.mjs",
+        ".harness/security/scorecard-baseline.json"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/52-validate-scorecard-regression.test.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-598",
       "evidence": [
         "src/rulesets/standards/iso-5055-mapping.json",
@@ -8429,6 +8479,48 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-602",
+      "closedAt": "2026-07-30",
+      "closureCommit": "086111db",
+      "evidence": [
+        "src/packages/mcp-server/src/mcp/abac-rego-parity.spec.ts",
+        ".harness/scripts/compile-opa-wasm.mjs",
+        ".harness/scripts/generate-abac-tool-sets.mjs",
+        "src/rulesets/opa/abac-mcp-tool-access.rego",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-mcp test",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-604",
+      "closedAt": "2026-07-31",
+      "closureCommit": "6f3941e1",
+      "evidence": [
+        "src/packages/infra-providers/src/tracker/evaluation-ingest.client.ts",
+        "src/packages/contracts/src/ingest/evaluation-ingest.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-infra-providers test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-606",
+      "closedAt": "2026-07-31",
+      "closureCommit": "ea5b874b",
+      "evidence": [
+        "src/packages/mcp-server/src/mcp/workspace-concurrency.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-mcp test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-607",
       "evidence": [
         "src/packages/agent-runtime/src/adapters/harness/harness-process.adapter.ts"
@@ -8440,6 +8532,19 @@
       ],
       "closedAt": "2026-07-28",
       "closureCommit": "c438b801",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-608",
+      "closedAt": "2026-07-31",
+      "closureCommit": "d7a87904",
+      "evidence": [
+        "src/apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts",
+        "src/apps/agent-runtime-api/src/agent-runtime/hitl-approval-tracker.integration.spec.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-agent-runtime test"
+      ],
       "dependencyDisposition": "none"
     },
     {
@@ -8509,6 +8614,54 @@
       ],
       "closedAt": "2026-07-28",
       "closureCommit": "caf5fb97",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-614",
+      "closedAt": "2026-07-31",
+      "closureCommit": "8a5c2f0f",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/kind-evaluators.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-core-domain test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-615",
+      "closedAt": "2026-07-31",
+      "closureCommit": "8d9007a",
+      "evidence": [
+        "reference/core/control-center/opportunities/tracker-handover-gt615-gt617.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-616",
+      "closedAt": "2026-07-31",
+      "closureCommit": "fce6505",
+      "evidence": [
+        "reference/core/control-center/opportunities/tracker-handover-gt615-gt617.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-617",
+      "closedAt": "2026-07-31",
+      "closureCommit": "fce6505",
+      "evidence": [
+        "reference/core/control-center/opportunities/tracker-handover-gt615-gt617.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
@@ -8876,6 +9029,31 @@
       "dependencyRationale": "What this guard cannot see is stated rather than left to be assumed: an id allocated on a branch from which no pull request has been opened. It compares HEAD against ONE base, so two feature branches that both allocate GT-640 stay invisible to each other until the first of them merges. The `--verbose` output says so on every newly allocated id instead of implying coverage it does not have. Closing that remainder needs the open-PR claim set described in GT-639, which is why it is tracked there and not bolted on here."
     },
     {
+      "id": "GT-641",
+      "closedAt": "2026-07-30",
+      "closureCommit": "fe49e9e4",
+      "evidence": [
+        "src/packages/core-domain/src/application/services/use-case.types.ts",
+        "src/packages/core-domain/src/application/validators/phase-gate-validator.types.ts",
+        "src/packages/core-domain/src/application/services/index.ts",
+        "src/packages/core-domain/src/application/validators/phase-gate-validator.service.ts",
+        "reference/core/control-center/gaps/gap-reference-catalog.md"
+      ],
+      "validationCommands": [
+        "THE MEASUREMENT, before and after, over the same tree: 346 modules / 2 cycles -> 348 modules / 0 cycles. Both runs used GT-589 extractor built from feat/gt-589-repo-facts, because that package is NOT on main -- the before-run was taken over a pristine checkout of HEAD rather than over memory of it.",
+        "THE REPORTED CHAIN WAS THE SMALLER HALF OF THE FINDING. Each cycle was a two-node chain inside a four-module strongly connected component: project-scaffolder.service and phase-transition.use-case in the first, evidence-validator and ruleset-loader in the second. Fixing only the two files named in the chain would have moved the cycle, not removed it -- the component field is what said so.",
+        "THE FIX IS NOT A TYPE-ONLY IMPORT. Erasing the back-edge with `import type` would satisfy the extractor (it classifies type-only edges as erased-at-runtime) while leaving the layering inverted; the type moves out of the module that also constructs its consumer instead.",
+        "npm --workspace @beyondnet/evolith-core-domain test -> 129 suites passed / 1 skipped, 1455 tests passed. The quoted 131/1479 baseline is from the GT-589 branch, which adds spec files absent here; suite count is unchanged by this closure because no spec was added or removed.",
+        "npm run build -> tsc -b clean across the workspace, so the barrel re-exports resolve for every consumer, not just core-domain.",
+        "npm --workspace @beyondnet/evolith-cli run test:unit -> 101/101 suites, 1446 tests. FIRST RUN WAS RED (6 suites) FOR AN ENVIRONMENT REASON, recorded because it is the trap: a fresh worktree has no built dist for @beyondnet/evolith-agent-runtime, so jest cannot resolve it. Green only after the workspace-wide build.",
+        "npm --workspace @beyondnet/evolith-cli run test:e2e -> 18/18 suites, 132 tests.",
+        "npm --workspace @beyondnet/evolith-mcp test -> 53/53 suites, 433 passed / 4 skipped.",
+        "A PRE-EXISTING FAILURE WAS RULED OUT RATHER THAN INHERITED: nest build for mcp-server reports 3 TS2345 duplicate-identity errors on RulesetValidatorService. Reproduced on a reverted tree before attributing it -- it is the worktree dual-resolution problem (some specifiers resolve to the main checkout dist), not this change."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "No guard is delivered with this closure and the last acceptance criterion is deliberately left open. @beyondnet/evolith-repo-facts lives only on feat/gt-589-repo-facts (PR #309); a check on main cannot run a measurement whose implementation is not on main, and reimplementing cycle detection here would be a second source of truth for the exact question GT-589 exists to answer. The guard belongs with #309. Until it lands, the two cycles are removed but a third would regress unobserved -- stated here rather than left for a reader to discover."
+    },
+    {
       "id": "GT-640",
       "closedAt": "2026-07-30",
       "closureCommit": "29e940d4",
@@ -8899,6 +9077,130 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Closed on the implementation that is on main. The parallel implementation on develop (PR #279) is NOT reconciled here: choosing which generator survives is a design decision belonging to the sessions that wrote the two halves, and it is tracked as the blocker on develop -> main rather than resolved inside a board registration."
+    },
+    {
+      "id": "GT-582",
+      "closedAt": "2026-07-31",
+      "closureCommit": "4c0d8362",
+      "evidence": [
+        "src/packages/mcp-server/src/mcp/protocol-revisions.ts",
+        "src/packages/mcp-server/src/mcp/stateless-rpc.ts",
+        "src/packages/mcp-server/src/mcp/mrtr-request-state.ts",
+        "src/packages/mcp-server/src/mcp/protected-resource-metadata.ts",
+        "src/packages/mcp-server/src/mcp/protocol-2026-conformance.spec.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-mcp test",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "THE ROW'S OWN CORRECTION WAS REFUTED BEFORE THIS CLOSURE, NOT AFTER IT. The row recorded that the `2026-07-28` label 'could not be confirmed' because the spec's versioning page 'still names 2025-11-25 as current'. Re-read on 2026-07-31: that page names 2026-07-28 as the current revision, describes per-request negotiation through the `io.modelcontextprotocol/protocolVersion` key in `_meta`, makes `server/discover` mandatory, and treats 2025-11-25 and earlier as handshake-based under backward compatibility. The doubt was recorded as prudence and argued for deferring work the specification had already made current."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-584",
+      "closedAt": "2026-07-31",
+      "closureCommit": "912caf0b",
+      "evidence": [
+        "src/rulesets/evidence/probabilistic-evidence-admissibility.rules.json",
+        "src/rulesets/opa/probabilistic-evidence-admissibility.rego",
+        "src/rulesets/opa/probabilistic-evidence-admissibility.test.rego",
+        "src/packages/core-domain/src/evaluation/contracts/quality-evidence.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts"
+      ],
+      "validationCommands": [
+        "./.harness/bin/opa test src/rulesets/opa --ignore=schemas",
+        "npm --workspace @beyondnet/evolith-core-domain test",
+        "THE NEGATIVE HALF IS WHAT WAS CHECKED, not the positive one. Uncalibrated evidence is REFUSED (test_uncalibrated_probabilistic_evidence_is_refused), a half-filled calibration is not a measurement (test_half_filled_calibration_is_not_a_measurement), and a stale one degrades to advisory rather than blocking. The native twin fails closed the same way: evidence with no `determinism` field is read as a guess."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-591",
+      "closedAt": "2026-07-31",
+      "closureCommit": "b9321ba9",
+      "evidence": [
+        ".harness/scripts/opa-runtime.mjs",
+        ".harness/scripts/compile-opa-wasm.mjs",
+        ".harness/scripts/ci/53-validate-opa-pin.mjs",
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/53-validate-opa-pin.mjs",
+        "node .harness/scripts/ci/29-test-core-opa.mjs",
+        "./.harness/bin/opa test src/rulesets/opa --ignore=schemas",
+        "MEASURED, NOT ASSERTED, on the pinned 1.19.0 binary: 95 `.rego` files with 0 lacking `import rego.v1`; core OPA suite 261/261; 288/288 when the six progressive-axis policies are included in the run; 8 version references all agreeing with the pin. The row's 'DO NOT BUMP THE PIN' warning named those six files as the blocker and no longer applies -- all six are v1."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-642",
+      "closedAt": "2026-07-31",
+      "closureCommit": "b9321ba9",
+      "evidence": [
+        ".harness/scripts/ci/54-validate-import-cycles.mjs",
+        ".harness/scripts/ci/54-import-cycles.first-run.json",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/54-validate-import-cycles.mjs",
+        "node .harness/scripts/ci/43-validate-guard-negative-fixtures.mjs",
+        "THE GUARD RUNS GT-589'S EXTRACTOR RATHER THAN A SECOND DETECTOR: it loads `extractTypeScriptFacts` from @beyondnet/evolith-repo-facts and `findImportCycles` from core-domain, which is the whole reason the row was BLOCKED rather than merely pending until #309 landed. The package list is derived from the root package.json workspace globs, so a package added tomorrow is swept without editing the guard. First full-monorepo run recorded: 11 packages, 1009 modules, 0 runtime cycles, 2 type-only, clean packages listed explicitly."
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "The row was BLOCKED on GT-589, whose @beyondnet/evolith-repo-facts package carries the only implementation of findImportCycles. #309 landed on develop, so the dependency is satisfied rather than worked around: the guard consumes that extractor instead of reimplementing cycle detection beside it, which is the second source of truth GT-589 exists to prevent."
+    },
+    {
+      "id": "GT-643",
+      "closedAt": "2026-07-31",
+      "closureCommit": "b5545f31",
+      "evidence": [
+        "src/sdk/cli/src/commands/agents/agents.command.ts",
+        "src/sdk/cli/src/infrastructure/adapters/agent-registry.service.ts",
+        "src/sdk/cli/test/agents.e2e-spec.ts",
+        "src/tests/exploration/no-effect-contracts.ts",
+        "src/tests/exploration/runner.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-cli run test:e2e",
+        "node .harness/scripts/ci/47-validate-joined-paths.mjs",
+        "THE LAST CRITERION IS THE ONE THAT MAKES THIS A CLOSURE RATHER THAN A PATCH. The instance was fixed on 2026-07-30 (the dry branch never reaches the writer, and the three committed `test-value` artifacts are deleted); the CLASS was still uncovered until #320 added no-effect contracts to the cross-surface tester. Each contract declares an invocation, the state that must not move, and a CONTRAST invocation that must move it -- without the contrast, a command that stopped working entirely would satisfy every no-effect assertion and the oracle would be greenest when the product was most broken."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-646",
+      "closedAt": "2026-07-31",
+      "closureCommit": "d3b717e8",
+      "evidence": [
+        "product/infra/load/k6/smoke.js",
+        "product/infra/load/report-summary.mjs",
+        "product/infra/load/README.md"
+      ],
+      "validationCommands": [
+        "k6 run --summary-export=/tmp/k6-smoke.json product/infra/load/k6/smoke.js",
+        "node product/infra/load/report-summary.mjs --summary /tmp/k6-smoke.json --label \"smoke (correctness gate)\" --exit-code 0",
+        "node product/infra/load/report-summary.mjs --summary /nonexistent/k6-average.json --label \"average load\" --exit-code 1",
+        "RECONSTRUCTED FROM THE RUN ARTIFACT, NOT INFERRED FROM THE SUMMARY LINE. Run 30631939687 failed at health_latency p(95)=276.1ms on commit d97db1d4, twenty minutes after run 30631081684 passed on the identical tree. Its k6-smoke.json holds nine health samples between 2.72ms and 4.3ms and one at 498.5ms; 276.1ms is exactly 4.3 + 0.55*(498.5 - 4.3), a latency no request in the run ever had. Feeding those ten values to k6 v2.0.0 returns p(95)=276.1ms, p(90)=53.72ms, med=3.08ms, avg=52.73ms -- the artifact to the decimal.",
+        "THE COLD-START HYPOTHESIS WAS REFUTED, so neither a warm-up iteration nor a raised ceiling is the fix. wait-for-target.sh drives a full governed evaluation before k6 starts; evaluate_latency was flat across all ten iterations (min 107.349675ms, max 122.373351ms); core-api logged the health handler at durationMs=0 while k6 measured 498.354386ms of http_req_waiting against 0.165296ms of http_req_connecting. The request was queued behind a blocked event loop caused by a per-evaluation ruleset corpus re-scan, which is registered separately and NOT fixed here.",
+        "A/B ON A STUB REPRODUCING THE DISTRIBUTION (health p95 273.73ms, max 495.39ms): the pre-fix script exits 99 with \"x p(95)<150 p(95)=273.73ms\" and the post-fix script exits 0 with \"ok med<150 med=883us\", the tail unchanged between them. TEETH RETAINED: a target genuinely slow on every request (200ms) fails the new gate, \"x med<150 med=199.83ms\", exit 99. NO SLO NUMBER WAS RAISED -- the median is asserted against the same SLO.health_p95 / SLO.evaluate_p95 values."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-644",
+      "closedAt": "2026-07-31",
+      "closureCommit": "a4914d92",
+      "evidence": [
+        ".harness/scripts/ci/55-validate-wasm-builtin-support.mjs",
+        ".harness/scripts/ci/55-validate-wasm-builtin-support.test.mjs",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/55-validate-wasm-builtin-support.mjs --verbose",
+        "node --test .harness/scripts/ci/55-validate-wasm-builtin-support.test.mjs",
+        "OBSERVED GREEN ON A RUNNER (run 30630122256) AND OBSERVED RED BEFORE THAT. The two checks were disarmed one at a time and exactly the test pinning each turned red; guard 43 saw it red in 29ms. The first runner attempt SKIPPED both steps without running them -- `bash -e` stops the job at the first failure and a network-dependent guard failed ahead of them -- so the steps were moved ahead of the three that ask the network. A step that cannot run is not a check."
+      ],
+      "dependencyDisposition": "none"
     },
     {
       "id": "MT-A17",

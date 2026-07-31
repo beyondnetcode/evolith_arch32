@@ -48,6 +48,13 @@ const ADAPTERS_SURFACE = [
   'HEURISTIC_COVERED_STANDARDS',
   'HEURISTIC_UNCOVERED_STANDARDS',
   'HeuristicStructuralReviewer',
+  // GT-443 — ADR-0011 breaker guarding the runtime's real outbound HTTP calls.
+  // ADDITIVE to the GT-388 freeze (minor): nothing removed or renamed, and the
+  // adapters' new `breaker` option is optional, so existing callers compile and
+  // behave unchanged.
+  'CircuitBreaker',
+  'CircuitOpenError',
+  'CircuitTimeoutError',
   'HermesAgentAdapter',
   'HermesChatBoxInteractionAdapter',
   'HttpCoreEvaluationAdapter',

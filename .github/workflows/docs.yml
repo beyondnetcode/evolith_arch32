@@ -116,6 +116,24 @@ jobs:
       - name: ISO/IEC 5055 mapping guard
         run: node --test src/rulesets/standards/iso-5055-mapping.test.mjs
 
+      # GT-583: the `capability operation schemas` link in the chain below boots
+      # the mcp-server DI graph through ts-node to ask ToolRegistryService to
+      # describe itself. mcp-server resolves `@beyondnet/evolith-core-domain`
+      # through the workspace symlink, whose `exports` map points at `dist/` —
+      # so with only `npm ci` behind it the guard dies on MODULE_NOT_FOUND for
+      # `dist/capabilities/capability-operations.js` and reports the link STALE.
+      # It passed in `test-mcp-server` and on every developer machine because
+      # both had a built `dist/` (gitignored) sitting there already. `npm run
+      # build` further down this job is too late — the guard runs here.
+      - name: Build workspace dependencies for the runtime-derived guards
+        run: |
+          npm run build --workspace @beyondnet/evolith-contracts
+          npm run build --workspace @beyondnet/evolith-core-domain
+          npm run build --workspace @beyondnet/evolith-agent-runtime
+          npm run build --workspace @beyondnet/evolith-sdk
+          npm run build --workspace @beyondnet/evolith-core
+          npm run build --workspace @beyondnet/evolith-infra-providers
+
       # GT-630: the derived artifacts have a dependency ORDER — the executive
       # summary is built FROM the maturity reconciliation, which is built from
       # the board. Generate the summary first and it captures a value the
@@ -144,6 +162,26 @@ jobs:
       - name: Self-test for the joined-path guard
         run: node --test .harness/scripts/ci/47-validate-joined-paths.test.mjs
 
+      # GT-587. The OpenTelemetry GenAI conventions are Development-status, and the
+      # Core emits their attribute names as plain LITERALS (it must not import an
+      # observability SDK — rule HXA-05). Literals do not move when upstream moves, so
+      # a rename there turns Evolith's "standard" telemetry back into a private
+      # vocabulary with nothing going red. This is the check that goes red.
+      - name: Validate the pinned OpenTelemetry semconv revision
+        run: node .harness/scripts/ci/51-validate-semconv-pin.mjs --verbose
+
+      - name: Self-test for the semconv pin guard
+        run: node --test .harness/scripts/ci/51-validate-semconv-pin.test.mjs
+
+      # GT-597. The gate itself runs inside `openssf-scorecard.yml`, where the
+      # Scorecard JSON exists; only its logic is tested here. That logic is the
+      # difference between a weekly score that is published and a weekly score
+      # that is CHECKED, so it is tested on its failure surface: a dropped check,
+      # a vanished check, an inconclusive -1, an unseeded baseline, and a SARIF
+      # file handed to it by mistake must each be red.
+      - name: Self-test for the Scorecard regression gate
+        run: node --test .harness/scripts/ci/52-validate-scorecard-regression.test.mjs
+
       - name: Validate machine contracts
         run: node .harness/scripts/ci/10-validate-contract-conformance.mjs
 
@@ -155,6 +193,19 @@ jobs:
 
       - name: Validate topology rule coverage
         run: node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs
+
+      # The guard above has run in this required check since it was written; its own
+      # self-test ran in no job at all, and had been red on both `develop` and `main`
+      # since `98a20dca` without anyone seeing it. That commit moved `rulesets/` under
+      # `src/` and updated the path this test's fixture WRITES TO, but not the relative
+      # path written INSIDE it — so the fixture's satellite reference stopped resolving
+      # and the coverage assertion it exists to make was never reached.
+      #
+      # A validator whose own tests nobody runs is the defect this board keeps
+      # recording, so it goes next to its guard, in the same required check, exactly
+      # like every other self-test in this job.
+      - name: Self-test for the topology rule coverage guard
+        run: node --test .harness/scripts/generate-rule-coverage.test.mjs
 
       - name: Validate harness path literals
         run: node .harness/scripts/ci/39-validate-harness-paths.mjs

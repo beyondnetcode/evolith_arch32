@@ -4112,7 +4112,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] `packages/infra-providers` package created with its own `package.json`
   - [x] Duplicated providers removed from `apps/core-api` and `sdk/cli`
   - [x] `@evolith/infra-providers` added as dependency in both consumers
-- **References:** [apps/core-api/src/infrastructure/providers](../../../../src/apps/core-api/src/infrastructure/providers) · [sdk/cli/src/infrastructure/providers](../../../../src/sdk/cli/src/infrastructure/providers)
+- **Correction (2026-07-31):** the removal criterion was ticked while the duplicates were still on disk. Both consumers had been REWIRED to the shared package, which made the gap look closed from the import side, but the local copies were never deleted — so the second criterion described a state that did not exist. The drift then surfaced as a defect: the stale `logger.provider.ts` copies were the pre-`GT-647` implementation, forwarding an `undefined` second argument to Nest's `Logger`, and core-api's surviving spec ASSERTED that behaviour — visible in jest output as `[Test] test message` followed by a paired `[Test] undefined`. **Actually satisfied now:** `logger.provider.ts` and `config-parser.provider.ts` were dead in both packages (zero non-spec importers) and are deleted; `node-filesystem.provider.ts` was dead in core-api but LIVE in the CLI — imported by [`upgrade.command.ts`](../../../../src/sdk/cli/src/commands/upgrade/upgrade.command.ts) and [`agents.command.ts`](../../../../src/sdk/cli/src/commands/agents/agents.command.ts) — so those two were rewired to `@beyondnet/evolith-infra-providers` before the copy was removed, along with two specs and the `jest.mock` path in `agents.command.spec.ts`. `config-parser.provider.ts` was byte-identical to the shared file; the `node-filesystem` copies differed only in a type cast and a parameter name. `apps/core-api/src/infrastructure/providers/` no longer exists; the CLI directory retains only `mock-filesystem.provider.ts`, a test double with no shared counterpart. Coverage did not move location-wise: the shared package already owns `logger.provider.spec.ts`, `config-parser.provider.spec.ts` and `node-filesystem.provider.spec.ts`. **Verified:** core-api 112/112 and CLI 1422/1430 jest tests pass with no new failures against the pre-change baseline (core-api's 5 red suites are `Cannot find module '@nestjs/cache-manager'`, the CLI's 2 are the GT-580 subprocess specs missing a `ts-node` binary — both pre-existing worktree dependency gaps, unchanged by this edit); `tsc --noEmit` is clean for the CLI and reports only the same two `@nestjs/cache-manager` errors for core-api. The `[Test] undefined` line is gone from core-api's output.
+- **References:** [sdk/cli/src/infrastructure/providers](../../../../src/sdk/cli/src/infrastructure/providers) · [packages/infra-providers](../../../../src/packages/infra-providers)
 
 #### GT-76
 
@@ -7347,9 +7348,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith MCP` · **Criticality:** P0 · **Complexity:** M
 - **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
 - **Acceptance criteria:**
-  - [ ] A test evaluates the compiled `policy.wasm` over all registered tool names and asserts ALLOW for an `architect` in `production`.
+  - [x] A test evaluates the compiled `policy.wasm` over all registered tool names and asserts ALLOW for an `architect` in `production`.
   - [x] The rego tool sets are generated from the tool registry rather than hand-maintained.
-  - [ ] CI fails when a tool exists in the TypeScript registry and not in the compiled policy.
+  - [x] CI fails when a tool exists in the TypeScript registry and not in the compiled policy.
 
 #### GT-603
 
@@ -7379,9 +7380,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
 - **Acceptance criteria:**
   - [x] One ingest contract carrying `correlationId`, the true engine, executed rules, violations and owner.
-  - [ ] A shared client used by the CLI, the MCP server and the drift gate, authenticated by machine key as `/runtime-approvals` already is.
-  - [ ] A RoboSoft robot asserts that a CLI evaluation produces a persisted Tracker row.
-  - [ ] Depends on GT-601 for the payload to be non-empty and on GT-603 for it to be attributable.
+  - [x] A shared client used by the CLI, the MCP server and the drift gate, authenticated by machine key as `/runtime-approvals` already is.
+  - [x] A RoboSoft robot asserts that a CLI evaluation produces a persisted Tracker row.
+  - [x] Depends on GT-601 for the payload to be non-empty and on GT-603 for it to be attributable.
 - **Progress note (2026-07-29):** Criterion 1 only. The ingest contract landed at `src/packages/contracts/src/ingest/evaluation-ingest.ts` with `correlationId` REQUIRED and BOTH owners carried distinctly — `requestedBy.actorId` is who asked, `violations[].accountableOwner` is who must fix. Criterion 2 cannot be completed from this repository: there is no Tracker ingest endpoint to call. Criterion 3 is 0% buildable here, because RoboSoft lives in `evolith_tracker`; a bilingual handover was written instead at [tracker-handover-gt604.md](../opportunities/tracker-handover-gt604.md) (and its `.es.md` counterpart), 22 headings each. **Unconfirmed, and recorded as such: the declared dependency on GT-603 appears wrong.** GT-603 migrates `audit_entries` while this row names `core_evaluation_transactions`, and the Core-side attribution already shipped under GT-586 — but the Tracker schema is not in this repository, so this is a hypothesis for the Tracker owner to confirm, not a finding.
 
 #### GT-605
@@ -7411,9 +7412,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith MCP` · **Criticality:** P1 · **Complexity:** M
 - **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
 - **Acceptance criteria:**
-  - [ ] Every mutative tool accepts `baseSha` and verifies it against HEAD before applying.
-  - [ ] A `CONCURRENCY_CONFLICT` envelope is returned on mismatch, with a test.
-  - [ ] If implementation is declined, ADR-0093 is moved out of Accepted with the reason recorded.
+  - [x] Every mutative tool accepts `baseSha` and verifies it against HEAD before applying.
+  - [x] A `CONCURRENCY_CONFLICT` envelope is returned on mismatch, with a test.
+  - [x] If implementation is declined, ADR-0093 is moved out of Accepted with the reason recorded.
 
 #### GT-607
 
@@ -7443,8 +7444,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Acceptance criteria:**
   - [x] The skill catalogue is derived from `.harness/manifest.yaml`, with a CI test asserting catalogue ⊇ manifest.
   - [x] At least two destructive capabilities declare `requiresApproval: true`.
-  - [ ] One end-to-end test covers pending → approved → executed → audited across the Runtime and the Tracker.
-  - [ ] `evolith_hitl_approvals_total` is non-zero in an integration run.
+  - [x] One end-to-end test covers pending → approved → executed → audited across the Runtime and the Tracker.
+  - [x] `evolith_hitl_approvals_total` is non-zero in an integration run.
 
 ### AI-native route review 2026-07-26 — GT-580…GT-595
 
@@ -7462,8 +7463,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
   - [x] Every command exits with a code drawn from the published taxonomy, asserted by test.
-  - [ ] `--format json`/`ndjson` writes data only to stdout; every diagnostic goes to stderr.
-  - [ ] A ruleset with Rego parity fails any command that exits outside the taxonomy.
+  - [x] `--format json`/`ndjson` writes data only to stdout; every diagnostic goes to stderr.
+  - [x] A ruleset with Rego parity fails any command that exits outside the taxonomy.
 
 
 #### GT-581
@@ -7487,15 +7488,15 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Title:** The MCP server is built on protocol features the draft revision removes
 
 - **Purpose:** Take the stateless migration off the critical path before the revision lands, and fix the HITL story while doing it.
-- **Evidence:** Verified directly against the live specification on 2026-07-26, not taken from a secondary source. The **current** protocol revision is `2025-11-25`; the **draft** removes protocol-level sessions and the `Mcp-Session-Id` header (SEP-2567), removes the `initialize`/`notifications/initialized` handshake in favour of per-request `_meta` (SEP-2575), makes `server/discover` mandatory (SEP-2575), replaces server-initiated requests with the **MRTR** pattern — `InputRequiredResult`, a required `resultType`, and `inputResponses` on a retry of the original request (SEP-2322) — deprecates Roots/Sampling/Logging (SEP-2577) and deprecates Dynamic Client Registration in favour of Client ID Metadata Documents. In this repository: SDK `1.29.0`, **7 `sessionId` sites** under `src/packages/mcp-server/src`, and `grep -rn "well-known\|oauth-protected-resource" src` returns 2 unrelated matches, so no protected-resource metadata document is served either. MRTR matters beyond conformance: it is *approval as a protocol*, and it is the only way the HITL gate survives the removal of sessions. **Correction to the source document, which this row records rather than repeats:** the document labels this revision `2026-07-28` and frames it as a 3-day emergency. That date could not be confirmed — the specification's own versioning page still names `2025-11-25` as current, describes negotiation as happening during `initialize`, and publishes no release date for the draft. The technical content is real and confirmed; the urgency is not. This is tracked preparatory work against a draft, to be re-checked at each spec revision.
+- **Evidence:** Verified directly against the live specification on 2026-07-26, not taken from a secondary source. The **current** protocol revision is `2025-11-25`; the **draft** removes protocol-level sessions and the `Mcp-Session-Id` header (SEP-2567), removes the `initialize`/`notifications/initialized` handshake in favour of per-request `_meta` (SEP-2575), makes `server/discover` mandatory (SEP-2575), replaces server-initiated requests with the **MRTR** pattern — `InputRequiredResult`, a required `resultType`, and `inputResponses` on a retry of the original request (SEP-2322) — deprecates Roots/Sampling/Logging (SEP-2577) and deprecates Dynamic Client Registration in favour of Client ID Metadata Documents. In this repository: SDK `1.29.0`, **7 `sessionId` sites** under `src/packages/mcp-server/src`, and `grep -rn "well-known\|oauth-protected-resource" src` returns 2 unrelated matches, so no protected-resource metadata document is served either. MRTR matters beyond conformance: it is *approval as a protocol*, and it is the only way the HITL gate survives the removal of sessions. **The "correction" this row used to carry has itself been refuted, and is replaced here rather than deleted, because a refutation that is quietly dropped teaches nothing:** the row previously said the source document's `2026-07-28` label "could not be confirmed", on the grounds that "the specification's own versioning page still names `2025-11-25` as current". Re-checked against the live specification on 2026-07-31, and the earlier reading was simply wrong: **`2026-07-28` IS the current protocol revision.** The versioning page names it as current in those words; negotiation is now a per-request `io.modelcontextprotocol/protocolVersion` key inside `_meta` (with an `MCP-Protocol-Version` header on Streamable HTTP) rather than a step of `initialize`; `server/discover` is a mandatory RPC; and `2025-11-25` and earlier are addressed as "handshake-based" revisions under backward compatibility. The lesson is the direction of the error: the doubt was recorded as prudence, and it argued for deferring work that the specification had already made current. **CLOSED 2026-07-31.** All three criteria are met in code, not in prose: `src/packages/mcp-server/src/mcp/protocol-revisions.ts` exports `PROTOCOL_REVISION_STATELESS = '2026-07-28'` and `PROTOCOL_REVISION_HANDSHAKE = '2025-11-25'` and `stateless-rpc.ts` serves both, admitting `server/discover` pre-negotiation and minting no `Mcp-Session-Id` on the stateless path; the HITL gate is MRTR (`mrtr-request-state.ts`) with a sealed `requestState` that survives a retry over HTTP with no session anywhere, and refuses both a skipped approval and a forged state; and RFC 9728 protected-resource metadata is served at `/.well-known/oauth-protected-resource` with a `WWW-Authenticate` pointer and an explicit no-DCR guard. Conformance is pinned by `protocol-2026-conformance.spec.ts`.
 - **Impact:** Sessions are the assumption the HITL approval flow is built on, and the draft deletes them. Discovering that after the revision lands converts a planned refactor into an outage of the one differentiating feature.
 - **Affected files:** `src/packages/mcp-server/src/main.ts`, `src/packages/mcp-server/src/mcp/**`, `src/packages/mcp-server/src/common/**` (auth)
 - **Component:** `MCP Server` · **Criticality:** P1 · **Complexity:** L
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
-  - [ ] The server answers `server/discover` and carries no protocol-level `sessionId`.
-  - [ ] The HITL gate is expressed as `InputRequiredResult` with sealed `requestState`, and works with no session.
-  - [ ] A protected-resource metadata document is served and client registration does not depend on DCR.
+  - [x] The server answers `server/discover` and carries no protocol-level `sessionId`.
+  - [x] The HITL gate is expressed as `InputRequiredResult` with sealed `requestState`, and works with no session.
+  - [x] A protected-resource metadata document is served and client registration does not depend on DCR.
 
 
 #### GT-583
@@ -7509,7 +7510,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith Core` · **Criticality:** P1 · **Complexity:** L
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
-  - [ ] The capability manifest carries `inputSchema` and `outputSchema` per operation.
+  - [x] The capability manifest carries `inputSchema` and `outputSchema` per operation.
   - [ ] `TOOL_SCHEMAS` and the MCP tool registrations are generated from the manifest, not hand-written.
   - [ ] Schemas validate under JSON Schema 2020-12 and a drift guard covers the generated artifacts.
 
@@ -7525,9 +7526,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `core-domain` · **Criticality:** P1 · **Complexity:** M
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
-  - [ ] A ruleset plus Rego pair decides admissibility from calibration fields, with a negative test.
-  - [ ] `Evidence` carries the calibration fields the rule reads, and a signal lacking them cannot block.
-  - [ ] A provider whose calibration is stale or absent degrades to advisory, asserted by test.
+  - [x] A ruleset plus Rego pair decides admissibility from calibration fields, with a negative test.
+  - [x] `Evidence` carries the calibration fields the rule reads, and a signal lacking them cannot block.
+  - [x] A provider whose calibration is stale or absent degrades to advisory, asserted by test.
 
 
 #### GT-585
@@ -7573,9 +7574,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** M
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
-  - [ ] Evaluation results emit `gen_ai.evaluation.result` per the pinned semconv version.
-  - [ ] MCP spans carry `mcp.*` attributes and propagate `_meta` trace context.
-  - [ ] The pinned semconv version is declared and a drift check flags an upstream change.
+  - [x] Evaluation results emit `gen_ai.evaluation.result` per the pinned semconv version.
+  - [x] MCP spans carry `mcp.*` attributes and propagate `_meta` trace context.
+  - [x] The pinned semconv version is declared and a drift check flags an upstream change.
 
 
 #### GT-588
@@ -7590,7 +7591,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
   - [ ] Every decision emits a signed statement and a verifiable receipt.
-  - [ ] `audit verify` verifies a receipt chain offline and fails on a tampered entry.
+  - [x] `audit verify` verifies a receipt chain offline and fails on a tampered entry.
   - [ ] A governance rule fails when receipts do not verify, with a negative test.
 
 
@@ -7605,9 +7606,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith Core` · **Criticality:** P1 · **Complexity:** L
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
-  - [ ] `RepoFacts` is produced outside the Core and consumed as a deterministic context member.
-  - [ ] The `architecture` evaluator answers at least one question no existing ruleset can express.
-  - [ ] The same facts produce byte-identical verdicts across runs (content-hash reproducibility).
+  - [x] `RepoFacts` is produced outside the Core and consumed as a deterministic context member.
+  - [x] The `architecture` evaluator answers at least one question no existing ruleset can express.
+  - [x] The same facts produce byte-identical verdicts across runs (content-hash reproducibility).
 
 
 #### GT-590
@@ -7631,15 +7632,15 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Title:** OPA is pinned to v0.65.0 and 32 of 45 policies are still v0-style Rego
 
 - **Purpose:** Stop the distance from the supported OPA line from growing, while 39 test files can still prove the migration changed nothing.
-- **Evidence:** `.harness/scripts/opa-runtime.mjs:6` pins `OPA_VERSION = '0.65.0'` and `compile-opa-wasm.mjs:41` downloads that same version; `@open-policy-agent/opa-wasm` sits at `1.10.0` in both `core-domain` and `mcp-server`. OPA has since shipped its v1 line, where the `if` and `contains` keywords are mandatory rather than opt-in. In this repository the migration is **already half done and measurable**: 13 of 45 policies declare `import rego.v1`, leaving **32 in v0 style**, with 39 `*.test.rego` files as the harness that proves the conversion did not change a single decision. Fix: `opa fmt --rego-v1` over the 32, bump the pinned version, and assert the pin in CI.
+- **Evidence:** `.harness/scripts/opa-runtime.mjs:6` pins `OPA_VERSION = '0.65.0'` and `compile-opa-wasm.mjs:41` downloads that same version; `@open-policy-agent/opa-wasm` sits at `1.10.0` in both `core-domain` and `mcp-server`. OPA has since shipped its v1 line, where the `if` and `contains` keywords are mandatory rather than opt-in. Fix: `opa fmt --rego-v1` over the v0 set, bump the pinned version, and assert the pin in CI. **CLOSED 2026-07-31. Two notes this entry used to carry were invalidated by the work and are corrected here rather than left standing.** (1) The framing "the migration is already half done and measurable: 13 of 45 policies declare `import rego.v1`, leaving 32 in v0 style, with 39 `*.test.rego` files as the harness" was wrong on every number. Wave 2 had already corrected the v0 set to 77 files rather than 32; the tracked totals on `develop` today are **95 `.rego` and 43 `*.test.rego`**. A count copied forward from a first reading is exactly the kind of evidence this board is supposed to re-measure, and it survived two revisions of the row. (2) **The "DO NOT BUMP THE PIN" warning is deleted, because the condition it protected is gone.** It named 6 tracked v0 policies under `reference/core/architecture/topologies/progressive-axis/**` — the ones the parity gate actually executes — as the reason the pin had to stay on the 0.x line. All **6 of 6 now declare `import rego.v1`** and use v1 syntax (`violations contains {…} if {…}`). The pin is on **`1.19.0`**, and the second literal the entry complained about is gone: `compile-opa-wasm.mjs` now *imports* `OPA_VERSION` from `opa-runtime.mjs` and derives the download URL from it. Measured against the pinned binary rather than asserted: **95 `.rego` files, 0 without `import rego.v1`; the core OPA suite at 261/261; 288/288 with the six progressive-axis policies included in the run; 8 version references, all agreeing with the pin.** The pin is asserted in CI by `.harness/scripts/ci/53-validate-opa-pin.mjs`, wired as the step "One OPA pin, on the v1 line, and no second spelling of it" inside `Governance guards (GT-578)`; it rejects a v0-line pin, a non-literal export, any second spelling, and any `.rego` that drops `rego.v1`.
 - **Impact:** A pinned major that upstream has moved past is a decision that gets more expensive every month, and the cheapest moment to convert is while a green test suite covers every policy.
 - **Affected files:** `.harness/scripts/opa-runtime.mjs`, `.harness/scripts/compile-opa-wasm.mjs`, `src/rulesets/opa/**` (45 policies + 39 tests)
 - **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** M
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
-  - [ ] All 45 policies are v1-style and the pinned OPA version is on the v1 line.
+  - [x] All 45 policies are v1-style and the pinned OPA version is on the v1 line.
   - [x] The 39 policy tests pass unchanged, proving no decision changed.
-  - [ ] CI asserts the pinned version and fails on drift.
+  - [x] CI asserts the pinned version and fails on drift.
 
 
 #### GT-592
@@ -7732,9 +7733,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Infra` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Derived from the 2026-07-26 product maturity audit ([product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md)): these are the international artifacts the audit found missing. Standard editions and numbers verified against sources on 2026-07-26, not cited from memory.
 - **Acceptance criteria:**
-  - [ ] A Scorecard run publishes a score on a schedule and its regression is visible.
-  - [ ] The target SLSA build level is declared and the gap to it is tracked.
-  - [ ] Existing controls are mapped to SSDF v1.1 practice IDs.
+  - [x] A Scorecard run publishes a score on a schedule and its regression is visible.
+  - [x] The target SLSA build level is declared and the gap to it is tracked.
+  - [x] Existing controls are mapped to SSDF v1.1 practice IDs.
 
 #### GT-598
 
@@ -7845,7 +7846,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** S
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-615
 
@@ -7856,7 +7857,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Tracker` · **Criticality:** P2 · **Complexity:** M
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-616
 
@@ -7867,7 +7868,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Tracker` · **Criticality:** P2 · **Complexity:** S
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-617
 
@@ -7878,7 +7879,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Tracker` · **Criticality:** P2 · **Complexity:** S
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-618
 
@@ -7949,6 +7950,103 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] A commit with a malformed message is rejected locally, demonstrated by trying one.
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
+
+#### GT-646
+
+**Title:** A CI gate asserted p(95) over ten samples, so one request decided it, and its failure hid the profile that runs after it
+
+- **Purpose:** Make the smoke profile assert a statistic its sample size can actually support, so the correctness gate fails on degradation rather than on which of ten requests happened to be slowest — and stop a single threshold miss from producing a second, unrelated red step.
+- **Evidence:** **The threshold measured the maximum, not a percentile.** `smoke.js` runs 1 VU x 10 iterations and asserted `health_latency p(95) < 150`. k6 evaluates p(95) at index `0.95*(n-1) = 8.55`, interpolating 55 % of the way from the 9th sorted sample to the 10th, so at n=10 the statistic is dominated by the single slowest request. **Observed in run `30631939687` on commit `d97db1d4`, twenty minutes after run `30631081684` passed on the identical tree:** `x 'p(95)<150' p(95)=276.1ms`, with every other threshold green — checks 50/50, `evaluate_latency` p95 122 ms, `evaluate_errors` 0 %, `throttled_429` 0 %, `http_req_failed` 0 %. **Reconstructed from the run's own `k6-smoke.json`:** nine health samples between 2.72 ms and 4.3 ms and one at 498.5 ms; 276.1 ms is exactly `4.3 + 0.55*(498.5 - 4.3)`, **a latency no request in the run ever had**. Feeding those ten values to k6 v2.0.0 reproduces `p(95)=276.1ms`, `p(90)=53.72ms`, `med=3.08ms` and `avg=52.73ms` — the artifact's numbers to the decimal. **THE COLD-START HYPOTHESIS WAS CHECKED AND REFUTED**, which matters because it rules out both a warm-up iteration and a raised ceiling as fixes. Three measurements from that same run: `wait-for-target.sh` drives a full governed `POST /api/v1/evaluate` to a success envelope before k6 is invoked, so the process is warm by construction; `evaluate_latency` was flat across all ten iterations (min 107.3 ms, max 122.4 ms), and a cold process would show it there first, on the path that runs ~107 rules plus OPA-wasm; and core-api's own `SecurityAudit` log records the health handler at `durationMs=0` while k6 measured 498.4 ms of `http_req_waiting` and 0.165 ms of `http_req_connecting`. The request was queued, not slow. **The queue has a named cause that is NOT fixed by this row:** core-api re-scans and re-validates its entire ruleset corpus on every evaluation — the `Phases directory not found` and `Skipping non-standard ruleset` WARN block repeats once per iteration in `core-api.log`, where a boot-time load would log it once — and a health probe landing inside that synchronous work waits it out. The blocking duration is a property of the corpus, so no ceiling bounds it. **The failure also produced a second red step it had no business producing:** `report-summary.mjs` read `--summary "$RUNNER_TEMP/k6-average.json"` under `if: always()`, but the average-load profile is gated behind smoke and had legitimately never run, so the step died with `ENOENT` and the stack trace displaced the smoke table that explained the actual failure.
+- **Component:** `Reliability` · **Criticality:** P2 · **Complexity:** XS
+- **Provenance:** Registered and closed 2026-07-31 from an intermittently red `Reliability` workflow, after reconstructing the sample distribution from the run artifact rather than inferring it from the summary line. Carved narrowly: the statistical defect and the ENOENT are fixed here; the per-evaluation corpus re-scan that produced the outlier is a separate performance defect and is registered on its own rather than absorbed into this closure. Advances `GT-443`, which stays `IN-PROGRESS`.
+- **Acceptance criteria:**
+  - [x] The smoke profile no longer gates on a percentile its sample size cannot support: `smoke.js` asserts `med` for `health_latency` and `evaluate_latency`, and the rationale is stated in the file with the arithmetic of the observed failure, not merely as a changed number.
+  - [x] No SLO number was raised to make the gate pass — the median is asserted against the same `SLO.health_p95` / `SLO.evaluate_p95` values, which is a strictly weaker claim than the SLO rather than a relaxed one.
+  - [x] `p(95)` and `p(99)` remain ENFORCED in `average-load.js`, whose sample count supports them, and the smoke tail stays measured and published (`summaryTrendStats` and the step summary both carry med/p90/p95/p99/max).
+  - [x] The fix is verified by A/B against a target reproducing the observed distribution (p95 273.7 ms, max 495 ms): the pre-fix script exits 99 and the post-fix script exits 0, with the tail unchanged between them.
+  - [x] The relaxed statistic still has teeth: a target that is genuinely slow on every request (200 ms) fails the new gate, observed as `x 'med<150' med=199.83ms` with a non-zero exit.
+  - [x] A missing k6 summary no longer turns one threshold miss into two red steps: `report-summary.mjs` reports "did not run" and exits 0 instead of `ENOENT`, verified against a missing path.
+  - [x] The published table cannot disagree with what the run enforced: `report-summary.mjs` reads each threshold and its verdict back out of the summary JSON instead of re-declaring the SLOs, handling k6's inverted `lastFailed` encoding, verified against the real failing artifact.
+  - [x] The cold-start hypothesis is recorded as refuted, with the evidence that refutes it, so a future reader does not re-attempt a warm-up iteration or a higher ceiling.
+
+#### GT-645
+
+**Title:** A gap claim is derived from a pull request's prose instead of its diff, so it contests what nobody claimed and misses what the diff actually did
+
+- **Purpose:** Make "which gaps does this pull request work on" a question answered by the change itself, so the check that enforces one-gap-one-claim stops being answerable by editing a sentence.
+- **Evidence:** **`50-validate-gap-claim` reads a pull request's title, body and branch name, and never reads its diff.** Both error directions follow from that one decision, and both were observed on 2026-07-31. **FALSE POSITIVES, observed first-hand in run `30631939629` on PR #320:** the guard reported `ids claimed .. 10, contested .. 3` and named `GT-583`, `GT-602` and `GT-643` as contested between #320 and #324 — while #324 is the pull request that *documents* the false-positive problem and claims none of them. It also attributed `GT-578`, `GT-582`, `GT-588`, `GT-591`, `GT-642` and `GT-644` to #324 purely because its evidence table names them, and `GT-609` to #320 because a generator docstring cites it. Nine attributions, of which the honest count is zero. This is the fourth and fifth occurrence in one day: #316 was already flagged for `GT-583` over a sentence saying it *belongs to another PR*, and #317 for `GT-602` over a paragraph saying this change *did not break it*. **The remedy the guard prints — "decide which pull request owns the id" — has no work to do**, because only one claimant ever wanted the id. What authors did instead was delete the sentence: #316's body was edited to remove a true cross-reference, which is the guard making the bodies worse. **FALSE NEGATIVE, which is the half that survives #324 and the reason this row exists separately from it.** #324 merged into `develop` on 2026-07-31 (`4c785c5c`) and narrows the prose rule (ids count from the title, the branch, or after an explicit `Closes`/`Fixes`/`Advances` marker), which fixes the noise. It does not make the diff an input, so a pull request that resolves gaps *without saying so in the prescribed shape* still claims nothing. That is not hypothetical: **PR #315, titled "Board reconciliation: credit the eleven gaps this wave merged" on branch `chore/reconcile-board-wave`, flipped ELEVEN rows to `DONE` and wrote eleven closure-evidence records** — `GT-580`, `GT-587`, `GT-589`, `GT-597`, `GT-604`, `GT-606`, `GT-608`, `GT-614`, `GT-615`, `GT-616`, `GT-617` — with no `GT-*` in its title and none in its branch name. Today it is attributed those ids only by the accident of its body mentioning them; under the narrowed rule it would claim nothing at all, and it is the single pull request that moved the board most in this wave. The diff says exactly what it touched, in machine-readable form, and nothing consults it — confirmed against the merged implementation, whose `claimedIds()` builds its set from `pr.title`, `pr.headRefName` and marker-prefixed body clauses, and which contains no reference to a diff, a file list or a patch anywhere in its 317 lines. **The pull request that registers THIS row is the second instance, and it demonstrates itself:** it flips eight rows and adds six closure-evidence records, and the guard reads from it exactly one claim — `GT-645`, the row it merely registers — and none of the six it closes. **This was measured on a runner rather than predicted:** run `30633517559` reports `ids claimed .. 1`, `mentioned, not claimed 10`, `contested .. 0`, and exits ✓ — a green check on the pull request that resolved six rows and claimed none of them. Both error directions are legible in that one result: #324 took the contested count from 3 to 0, which was the whole of its scope, and the miss it leaves behind is the entire subject of this row. **A DEFECT ATTRIBUTED TO THIS GUARD IN A BRIEFING WAS CHECKED AND REFUTED, and is recorded here so it is not re-registered:** it was reported that the guard missed PR #314 flipping `GT-602` to `DONE` and writing its closure record. #314 (`feat/gt-604-ingest-client`) touches twelve files and **not one of them is under `reference/core/control-center/`**; `GT-602` was closed by **#306**, on branch `feat/gt-602-close-abac-wasm-parity`, whose branch name carries the id the guard would have read. The false-negative class is real — #315 demonstrates it — but that particular instance was not.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** M
+- **Provenance:** Registered 2026-07-31 from five observed misfires in a single day, four of them false positives and one structural false negative found by auditing which pull request actually closed each gap of this wave. Scoped deliberately to the DIFF half: the prose half landed as #324 (`4c785c5c`), and duplicating it here is the exact failure [`GT-639`](./gap-reference-catalog.md#gt-639) exists to prevent. Sibling of [`GT-639`](./gap-reference-catalog.md#gt-639) (which built the guard) and [`GT-638`](./gap-reference-catalog.md#gt-638) (which allocates the ids it reasons about).
+- **Acceptance criteria:**
+  - [ ] The claim set is derived from the pull request's DIFF — a `GT-*` row whose status the diff changes, or a closure-evidence record the diff adds, is a claim by that pull request whatever its prose says.
+  - [ ] A fixture reproduces PR #315 — title and branch carrying no id, a diff flipping eleven rows to `DONE` and adding eleven closure records — and is OBSERVED FAILING against the current implementation before the fix, not merely passing after it.
+  - [ ] A fixture reproduces the false-positive direction from run `30631939629`: a body that names six gaps in an evidence table and claims none of them contributes no claims, so a pull request that documents a gap is never mistaken for one that works it.
+  - [ ] Prose and diff disagreeing is reported as its own finding rather than silently resolved one way: a body claiming an id its diff does not touch, or a diff touching a row its body never names, is the case that is worth a human look.
+
+#### GT-644
+
+**Title:** A policy may call an OPA builtin the shipped wasm runtime cannot execute, and every check in the repository stays green
+
+- **Purpose:** Make the gap between what `opa build` accepts and what `@open-policy-agent/opa-wasm` can execute a build failure, instead of a runtime failure that disables the whole OPA half of the gate.
+- **Evidence:** **The two toolchains disagree, and nothing compared them.** `compile-opa-wasm.mjs` builds `src/rulesets/opa/` into `policy.wasm` with entrypoints `evolith/main/violations` and `evolith/abac/violations`; `OpaEvaluator` (`opa-evaluator.ts:112`) loads that artifact through `@open-policy-agent/opa-wasm`. Some builtins are compiled natively into the module; the rest are HOST-DISPATCHED back into JavaScript, and the SDK ships implementations for exactly six of them (`json.is_valid`, `regex.split`, `sprintf`, `yaml.is_valid`, `yaml.marshal`, `yaml.unmarshal`). **A policy calling any other host-dispatched builtin passes `opa test`, passes `opa build`, and then throws** `not implemented: built-in function 24: time.parse_rfc3339_ns` **at evaluation time** — which `evaluateAll`'s catch maps onto EVERY rule in the run as `OPA engine error — enforcement blocked` (`opa-evaluator.ts:190-198`). One builtin in one policy therefore fails the entire OPA half of the gate, reporting it as an infrastructure hiccup. **Coverage before this row: exactly one policy.** `probabilistic-evidence-rule.handler.spec.ts` asserts that `probabilistic-evidence-admissibility.rego` matches no `/\btime\.[a-z_]+\s*\(/`; every other policy in the bundle was unguarded. **This is prevention, not a live defect** — a scan on 2026-07-31 found no other offender, and the current bundle dispatches exactly one builtin (`sprintf`), which the SDK implements. **Two measurements bound how the check has to be built, and both refute the obvious design.** First, the SDK's own `capabilities.json` is not an oracle: it lists `time.diff` as supported when `time.diff` is host-dispatched and unimplemented, and it omits `object.keys` when `object.keys` is compiled natively and works — wrong in both directions, so a check built on it would be simultaneously blind and noisy. Second, reachability is OPA's to decide: `json.patch` is host-dispatched and unimplemented and appears at **83 sites** in this corpus, all inside `*.test.rego` that OPA prunes out of the bundle, so a source scan blind to pruning opens red with 83 false positives and gets switched off on day one.
+- **Component:** `Governance` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Found on 2026-07-31 while closing [`GT-584`](./gap-reference-catalog.md#gt-584), whose Rego half had to date evidence without a clock precisely because the wasm runtime has none. The single-policy assertion left behind there is the shape of the problem: a defect class was closed for one file and left open for the other 33 the bundle links.
+- **Acceptance criteria:**
+  - [x] The compiled bundle's own `builtins()` table is the authority. It names exactly the builtins THIS bundle hands to the host, after OPA's pruning, so the check has no false positives, no false negatives, and no list for anyone to maintain. `unsupportedDispatch()` is that comparison, and it is unit-tested against the GT-584 table.
+  - [x] A curated set (`HOST_DISPATCHED_UNIMPLEMENTED`) turns the common cases red straight from the `.rego`, with no compiler and no network, and reports `file:line`. It was captured by probing the pinned OPA toolchain rather than copied from documentation, it carries a reason per entry, and it is declared PARTIAL in the guard itself — a namespace only partly affected can hide a member the probe did not call, which is the gap the wasm check closes.
+  - [x] The curated set cannot rot into decoration: an entry the installed runtime has since implemented fails the guard as stale.
+  - [x] The source scan runs only over the import closure of the wasm entrypoints, so the 83 `json.patch` sites in pruned test policies are not reported. Proven by a fixture whose offending call sits in a package nothing imports.
+  - [x] The entrypoints, the bundle directory and the ignored directories are read out of `compile-opa-wasm.mjs` rather than restated here, and an unparseable build command is a hard failure — a guard that invents the build's shape checks a bundle nobody ships.
+  - [x] Anti-vacuous: zero `.rego` scanned, zero policies reachable, an entrypoint whose package no file declares, or a runtime that dispatches nothing are all hard failures. The source scan runs BEFORE any wasm work, so an empty tree fails on its own denominator instead of downloading a compiler to find out. Observed red by `43-validate-guard-negative-fixtures` in 29ms.
+  - [x] A self-test with negative fixtures, each one watched failing: the two checks were disarmed one at a time and exactly the test that pins each turned red. The green cases are kept deliberately — without them a guard that failed unconditionally would pass every red case.
+  - [x] The premise is guarded too: a runtime loader that passed custom builtins to `loadPolicy()` would widen the dispatch set and make this guard report failures that cannot happen, so that call shape fails instead of misleading.
+  - [x] Observed green on a runner: run `30630122256`, job `Governance guards (GT-578)` — bundle compiled by the step ahead of it, `--require-wasm` armed, 71 `.rego` scanned / 33 reachable / 1 host-dispatched builtin (`sprintf`), implemented. **The first attempt (run `30629887881`) SKIPPED both steps without running them**, because `bash -e` stops the job at the first failure and `50-validate-gap-claim` failed ahead of them — on three contested claims, one of which was this pull request's own body "claiming" GT-578 by naming the job it wires into. Both halves are fixed here: the mention is gone, and the two steps now run BEFORE the three that ask the network, so a live-GitHub answer cannot decide whether a deterministic repository check executes at all. **The mention-is-a-claim defect in `50-validate-gap-claim` is left to its owner ([`GT-639`](./gap-reference-catalog.md#gt-639)) rather than patched from here**: it still contests GT-583 and GT-602 between three other pull requests, and a second session editing that guard is the duplication it exists to prevent.
+
+#### GT-643
+
+**Title:** A `--dry-run` that writes: the flag is declared on `agents install`, documented, and never read
+
+- **Purpose:** Make the one flag whose entire contract is "change nothing" actually change nothing, and stop a test's output from being committed as product data.
+- **Evidence:** **`evolith agents install --dry-run` writes to the working directory.** `agents.command.ts:647` declares `-d, --dry-run`, `AgentsCommandOptions.dryRun` types it at line 29, and `installAgent()` never consults it: line 218 calls `this.registry.installAgent(process.cwd(), config, rulesetContent)` unconditionally, after which the registry writes `rulesets/agents/<name>/` and rewrites `agents-registry.json`. **This is one command out of step, not an absent convention** — `init` swaps the filesystem for a `DryRunFileSystem` (`init.command.ts:132-135`), `upgrade` returns before applying (`upgrade.command.ts:92-100`), `adr` threads it through every writer. `agents` is the only declaration in the CLI with no reader. **PROVEN BY REPRODUCTION, not by reading the code:** with a clean tree, `npx jest --config test/jest-e2e.json test/agents.e2e-spec.ts -t "dry-run"` alone leaves three TRACKED files modified — `src/sdk/cli/rulesets/agents/agents-registry.json`, `rulesets/agents/test-value/agent.config.json` and `rulesets/agents/test-value/agent.rules.json`. The whole spec was run first, then the single case, to be sure the attribution was to `--dry-run` and not to a sibling test. **The output has already been committed as product data:** `test-value` is what the prompt mock answers to every question (`test/mock-prompt.service.ts:11-12`), and `6bb43cfa` versioned that agent into the repository's own `rulesets/`. So the repo now ships a fixture-shaped agent nobody authored, and every developer who runs the e2e suite finds three files dirty in `git status` — which is how it was found. **A dry run that writes is worse than no dry run at all:** it is the flag a user reaches for exactly when they are not willing to be trusted with the real one, and it currently reports success while having done the thing it promised not to do. **Why no check caught it:** the cross-surface conformance tester compares what CLI, MCP and REST *answer*, and no oracle asks whether the disk changed — a flag whose entire observable contract is the ABSENCE of an effect is invisible to an oracle that only reads replies.
+- **Component:** `CLI` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Found on 2026-07-30 while closing [`GT-641`](./gap-reference-catalog.md#gt-641): the CLI e2e suite left three tracked files dirty, and tracing which spec did it led to the flag rather than to the test. Registered separately because the test-hygiene symptom is downstream of a product defect — fixing the spec's working directory would hide the defect and leave `--dry-run` lying to users.
+- **Acceptance criteria:**
+  - [x] `agents install --dry-run` performs no write. The dry branch never calls the writer, rather than calling it through a no-op filesystem: a branch that cannot reach the writer cannot regress when the writer grows a new call. It reports the paths it would have created through a new `planInstall`, which the writer itself uses, so the report cannot drift from the layout.
+  - [x] The menu path forwards the caller's options. `evolith agents --dry-run` with no subcommand dropped them and wrote anyway — the path a user is most likely to take when they are unsure enough to want a dry run.
+  - [x] The three committed artifacts under `src/sdk/cli/rulesets/agents/` are deleted. The registry held exactly one agent, `test-value`, so the whole file was test residue rather than product data with residue in it.
+  - [x] The e2e suite runs in a temp directory and its oracle asserts the disk is unchanged, with a contrast case that a real install DOES write — otherwise the dry-run assertion would also pass if install had simply broken. Per-test module and directory, because a shared instance leaked commander's parsed options between runs and made the fix look broken.
+  - [x] Survey of every `--dry-run` declaration in the CLI, recorded including the correct ones: `init` (swaps in `DryRunFileSystem`), `upgrade`, `adr`, `scaffold`, `docs`, `fixtures`, `generate-domain` all gate their writes on it. `agents` was the only declaration with no reader.
+  - [x] The two hidden dependents the deletion exposed are repaired, not worked around. `47-validate-joined-paths` anchored its generated-subtree claim on `src/sdk/cli/rulesets` existing, and that directory existed in a clean checkout ONLY because the residue sat inside it — so the guard went red naming `policy.wasm`, a cause somewhere else entirely; the anchor now rests on `src/sdk/cli`, which is authored. `rulesets-resolver.bundled.spec.ts` had one case still reading the real tree, whose EACCES simulation only fired because some `…/rulesets` directory was reachable; it drives the synthetic tree the sibling cases already used. Both verified by parking the build artifact and re-running: 101 suites / 1447 tests green with `src/sdk/cli/rulesets` absent.
+  - [x] An oracle exists that asks whether a no-effect flag had no effect, so the CLASS is covered rather than this instance. Not built: the cross-surface tester compares replies, and a contract whose whole content is the absence of an effect needs it to compare state as well. Until then the next such flag is found by hand, as this one was.
+
+#### GT-642
+
+**Title:** Nothing fails on a runtime import cycle, so the two that existed were found by hand and the next one will be too
+
+- **Purpose:** Turn the cycle measurement into a check that runs on every pull request, over every package, instead of a thing someone remembers to point at one package once.
+- **Evidence:** **The two cycles [`GT-641`](./gap-reference-catalog.md#gt-641) removed reached a 346-module package unobserved, and the reason is that nothing looks.** `lint:boundaries` enforces layer direction, not cyclicity — it would have passed both, since `services/index.ts` and `use-cases/` are the same layer. `tsc` compiles a `require` cycle without a diagnostic; at runtime it resolves to a partially-initialised module, which is a defect that shows up as `undefined` at import time rather than as a compile error. No governance guard reads the module graph at all. **The measurement is already written and is out of reach:** [`GT-589`](./gap-reference-catalog.md#gt-589) delivers `@beyondnet/evolith-repo-facts` and `findImportCycles`, and they exist only on `feat/gt-589-repo-facts` (PR #309) — the GT-641 numbers had to be produced by building that branch's package against a working tree that does not contain it. **This is BLOCKED rather than pending, and the distinction is the whole row:** a check on the default branch cannot run an extractor absent from the default branch, and writing a second cycle detector next to the first would be exactly the duplicated-source-of-truth defect GT-589 was built to remove. **Scope, stated so it is not quietly narrowed later:** only `core-domain` has ever been measured. `cli`, `mcp-server`, `core`, `agent-runtime` and `sdk-client` have not, and the shape that produced both GT-641 cycles — a barrel that owns a type while re-exporting the module consuming it — is a monorepo-wide idiom, not a `core-domain` accident.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Registered on 2026-07-30 out of [`GT-641`](./gap-reference-catalog.md#gt-641), whose last acceptance criterion this is. Carried as its own row rather than left unchecked inside a closed one: a DONE row with an open criterion reads as finished to anyone who does not open the catalog, which is the reporting failure [`GT-640`](./gap-reference-catalog.md#gt-640) describes in a different guise.
+- **Acceptance criteria:**
+  - [x] A guard runs the GT-589 extractor over every workspace package and fails when `findImportCycles` returns a non-empty result, reporting the chain AND the component — the component is what makes the fix correct, as GT-641 showed.
+  - [x] Type-only cycles are reported separately from runtime cycles and do not fail the build: conflating them would push people toward `import type` as a silencer, which hides the inverted layering instead of fixing it.
+  - [x] The guard is wired into `Governance guards (GT-578)` and observed red by `43-validate-guard-negative-fixtures`, so it has been seen failing before it is trusted.
+  - [x] The first full-monorepo run is recorded with its counts per package, including the packages that turn out clean — a guard whose first run reports nothing is indistinguishable from one that cannot run.
+
+#### GT-641
+
+**Title:** Two runtime import cycles inside the Core's own sources, invisible to every check that runs today
+
+- **Purpose:** Remove the cycles the Core's own structural fact base finds in the Core, and record — rather than imply — that nothing on `main` can find the next one until that fact base ships there.
+- **Evidence:** **The Core carries two runtime import cycles in its own application layer.** Running [`GT-589`](./gap-reference-catalog.md#gt-589)'s extractor over `src/packages/core-domain` reports 346 modules and 2 cycles: `application/services/index.ts` ⇄ `application/use-cases/initialize-project.use-case.ts`, and `application/validators/blocking-criteria-validator.ts` ⇄ `application/validators/phase-gate-validator.service.ts`. **Neither is type-only**, which is the part that makes them defects rather than noise: the fact base distinguishes type-only edges from value edges precisely so an erased-at-compile-time import is not reported as a cycle, and these two are not erased. **They are the same defect twice.** A module publishes a type AND constructs or re-exports the collaborator that consumes it, so the collaborator must import back through it to name its own parameters: `services/index.ts` owned `InitProjectInput` while re-exporting `InitializeProjectUseCase`; `phase-gate-validator.service.ts` owned `PhaseGateDefinition` while constructing `EvidenceValidator`, `BlockingCriteriaValidator` and `RulesetLoader`. **The chains the report names are narrower than the components it also reports, and reading only the chain would have produced a wrong fix.** The strongly connected components are four modules each — `project-scaffolder.service` and `phase-transition.use-case` join the first, `evidence-validator` and `ruleset-loader` the second — so repointing only the two files named in each chain would have relocated the cycle instead of breaking it. **FIXED 2026-07-30** by extracting the shared shapes into `application/services/use-case.types.ts` and `application/validators/phase-gate-validator.types.ts` and pointing all six consumers at them directly; the two former owners re-export the new modules, so no import path changes anywhere — including `@beyondnet/evolith-core-domain/application/services`, from which the CLI and the MCP server import `InitProjectInput`, and the 15 sites that import the gate contract from the service. **NOTHING IN CI CAN REPRODUCE THIS, and that is the open half of the row:** `@beyondnet/evolith-repo-facts` exists only on `feat/gt-589-repo-facts` (PR #309), not on `main`, so the measurement had to be run from a build of that branch's package against this tree. Until #309 lands there is no guard, and a new cycle regresses as silently as these two did — which is how they reached a 346-module package unnoticed in the first place.
+- **Component:** `Core` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Found on 2026-07-30 by pointing [`GT-589`](./gap-reference-catalog.md#gt-589)'s extractor at the Core itself — the first thing that tool was asked to measure was the repository that produced it, and it returned two defects in its own house. Registered separately from GT-589 because the cycles are Core application-layer debt that predates the fact base and outlives its merge, while the missing guard is a follow-on that belongs to #309. The id was allocated by taking the union of `GT-*` ids across `main`, `develop`, the open integration branch and PR #309 — highest was GT-640 — per [`GT-638`](./gap-reference-catalog.md#gt-638).
+- **Acceptance criteria:**
+  - [x] Both cycles are broken at the source of the inversion (the type moves out), not by making the back-edge `import type` — an erased edge would only hide the coupling from the fact base while leaving the layering inverted.
+  - [x] Every existing import path still resolves: `services/index.ts` and `phase-gate-validator.service.ts` re-export the extracted modules, and no consumer outside core-domain was edited.
+  - [x] Measured with the same extractor before and after over the same tree: 346 modules / 2 cycles → 348 modules / 0 cycles.
+  - [x] The whole strongly connected component is repointed in each case, not just the two modules named in the reported chain.
+  - [x] The missing guard is carried as its own row — [`GT-642`](./gap-reference-catalog.md#gt-642), blocked on PR #309 — rather than as an open criterion inside a closed one. A closed row whose last criterion is unchecked reads as done to every reader who does not open the catalog.
 
 #### GT-639
 

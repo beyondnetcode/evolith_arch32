@@ -1,0 +1,47 @@
+{
+  "name": "@beyondnet/evolith-repo-facts",
+  "version": "1.2.0",
+  "description": "Evolith RepoFacts extractor — builds the canonical structural fact base (module graph + symbol graph) OUTSIDE the stateless Core and emits it content-hashed for inline delivery on the EvaluationContext (GT-589 / ADR-0101).",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "evolith-repo-facts": "dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "README.es.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "jest --config jest.config.js --runInBand"
+  },
+  "dependencies": {
+    "@beyondnet/evolith-core-domain": "^1.2.0",
+    "typescript": "6.0.3"
+  },
+  "devDependencies": {
+    "@types/jest": "30.0.0",
+    "@types/node": "26.0.0",
+    "jest": "30.4.2",
+    "ts-jest": "29.4.12"
+  },
+  "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beyondnetcode/evolith_arch32.git",
+    "directory": "src/packages/repo-facts"
+  }
+}

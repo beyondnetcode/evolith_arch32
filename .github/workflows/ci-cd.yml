@@ -43,6 +43,7 @@ jobs:
       # CLI before running the tests.
       - name: Build workspace dependencies + CLI
         run: |
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-agent-runtime
           npm run build --workspace @beyondnet/evolith-sdk
@@ -160,6 +161,7 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-agent-runtime
           npm run build --workspace @beyondnet/evolith-sdk
@@ -174,19 +176,31 @@ jobs:
       - name: ABAC rego tool sets match the runtime projection
         run: node .harness/scripts/generate-abac-tool-sets.mjs --check
 
+      # GT-583 criteria 2 and 3: the capability manifest's per-operation
+      # `inputSchema`/`outputSchema`, and the CLI's `TOOL_SCHEMAS`, are DERIVED
+      # from ToolRegistryService.operationProjection() — the registry that
+      # answers `tools/list` describing itself. Three hand-maintained copies of
+      # one contract is what shipped a THREE-entry CLI catalog for a fifty-tool
+      # MCP surface, under names no tool has ever had.
+      - name: Capability operation schemas match the runtime projection
+        run: node .harness/scripts/generate-capability-operations.mjs --check
+
       # GT-602: compile the rego to the `policy.wasm` the dispatcher actually loads.
-      # Without this the compiled-policy parity block self-skips and CI would verify
-      # ABAC against the rego SOURCE only — never against the artifact that decides
-      # at runtime, which is exactly how fifteen tools stayed FORBIDDEN in production.
+      # `abac-rego-parity.spec.ts` now compiles it ITSELF when it is missing or stale,
+      # so this step is no longer what makes the parity check run. It stays because it
+      # fails fast and unambiguously on a toolchain problem (no opa binary, no network)
+      # instead of surfacing it as one red test inside the whole jest suite.
       - name: Compile OPA policy bundle (policy.wasm)
         run: npm run build:policy
 
+      # GT-602 criteria 1 and 3 are enforced HERE. `abac-rego-parity.spec.ts` loads the
+      # COMPILED policy.wasm — the artifact that decides at dispatch — evaluates it over
+      # every tool name the DI graph registers, and requires ALLOW for an `architect` in
+      # `production`. A tool that exists in the TypeScript registry and not in the
+      # compiled policy comes back ABAC-03 and turns this step red. That block never
+      # skips: a missing bundle is compiled, and a bundle that cannot be compiled is a
+      # failure. `Test mcp-server` is a required check on `main`.
       - name: Run mcp-server tests with coverage
-        # EVOLITH_REQUIRE_OPA_WASM=1 makes the ABSENCE of the compiled bundle a
-        # failure rather than a skip: a test that skips where it is enforced
-        # verifies nothing.
-        env:
-          EVOLITH_REQUIRE_OPA_WASM: '1'
         run: npm run test:cov --workspace @beyondnet/evolith-mcp
 
       # GT-330: MCP server dedicated E2E (spawns the live MCP HTTP server)
@@ -220,6 +234,7 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-infra-providers
 
@@ -246,6 +261,7 @@ jobs:
         run: npm ci
       - name: Build workspace dependencies
         run: |
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-agent-runtime
       - name: Run sdk-client tests with coverage
@@ -284,6 +300,7 @@ jobs:
           # core-domain + agent-runtime, which is why this job had never once
           # passed since it was wired.
           npm run build --workspace @beyondnet/evolith-contracts
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-infra-providers
           npm run build --workspace @beyondnet/evolith-core
@@ -310,7 +327,9 @@ jobs:
         run: npm ci
       # infra-providers depends on @beyondnet/evolith-core-domain (resolved from dist).
       - name: Build workspace dependencies
-        run: npm run build --workspace @beyondnet/evolith-core-domain
+        run: |
+          npm run build --workspace @beyondnet/evolith-contracts
+          npm run build --workspace @beyondnet/evolith-core-domain
       - name: Run infra-providers tests with coverage
         run: npm run test:cov --workspace @beyondnet/evolith-infra-providers
 
@@ -334,7 +353,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build workspace dependencies
-        run: npm run build --workspace @beyondnet/evolith-core-domain
+        run: |
+          npm run build --workspace @beyondnet/evolith-contracts
+          npm run build --workspace @beyondnet/evolith-core-domain
       - name: Run agent-runtime tests
         run: npm run test --workspace @beyondnet/evolith-agent-runtime
 
@@ -353,6 +374,7 @@ jobs:
         run: npm ci
       - name: Build workspace dependencies
         run: |
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-agent-runtime
       - name: Run agent-runtime-api tests
@@ -377,7 +399,9 @@ jobs:
       # (where a dist already exists from an earlier build) and fails in CI on a
       # clean checkout — which is exactly what it did the first time this job ran.
       - name: Build workspace dependencies
-        run: npm run build --workspace @beyondnet/evolith-core-domain
+        run: |
+          npm run build --workspace @beyondnet/evolith-contracts
+          npm run build --workspace @beyondnet/evolith-core-domain
 
       - name: Run contracts tests
         run: npm run test --workspace @beyondnet/evolith-contracts
@@ -403,6 +427,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # FIRST, and deliberately. Every step in this job runs under `bash -e`, so the
+      # first red step skips every step after it. On run 30629887881 a network-
+      # dependent guard went red and this block — the layer that checks the guards
+      # THEMSELVES — never ran, silently, on the one run where a guard's behaviour
+      # was in question. A self-test that only executes once every guard has already
+      # passed can confirm a green run and nothing else.
+      #
+      # It runs first rather than merely earlier because it needs nothing: no build,
+      # no registry, no `gh`. Its fixtures are in-repo and its subjects are the guard
+      # modules. Anything it depends on would be another way for it not to run.
+      - name: Self-tests for the governance guards
+        run: |
+          node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
+          node --test .harness/scripts/ci/48-validate-security-publish-lag.test.mjs
+          node --test .harness/scripts/ci/49-validate-gap-id-allocation.test.mjs
+          node --test .harness/scripts/ci/50-validate-gap-claim.test.mjs
+          node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs
+          node --test .harness/scripts/ci/43-validate-guard-negative-fixtures.test.mjs
+          node --test .harness/scripts/ci/44-validate-adr-implementation-status.test.mjs
+          node --test .harness/scripts/ci/34-check-skill-registry-parity.test.mjs
+          node --test .harness/scripts/ci/45-validate-port-inventory-honesty.test.mjs
+
       # The dead-reference budget below was measured on a BUILT tree. A handful of
       # recorded commands legitimately name build outputs (`dist/main.js`), which
       # a clean checkout reports as dead — so without this the ratchet drifts by
@@ -410,8 +456,13 @@ jobs:
       # do with the corpus. Building first makes the count reproducible.
       - name: Build workspace dependencies
         run: |
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-infra-providers
+          # GT-642: the cycle guard RUNS GT-589's extractor rather than owning a second
+          # one, so the extractor has to be built or the guard has nothing to run. It
+          # fails loudly in that case instead of reporting "no cycles found".
+          npm run build --workspace @beyondnet/evolith-repo-facts
 
       # STRICT. Every script under .harness/scripts/ci must either refuse a
       # zero-element scan or be registered, with a reason, as something that is
@@ -455,6 +506,30 @@ jobs:
       - name: A port inventory does not read as a capability claim
         run: node .harness/scripts/ci/45-validate-port-inventory-honesty.mjs --verbose
 
+      # GT-644: a policy calling an OPA builtin the shipped wasm runtime cannot
+      # execute passes `opa test` and `opa build`, then throws "not implemented:
+      # built-in function N" at evaluation time — which OpaEvaluator turns into
+      # "OPA engine error — enforcement blocked" for EVERY rule in the run. One
+      # `time.parse_rfc3339_ns` therefore fails the whole OPA half of the gate with
+      # a message that reads like an infrastructure hiccup. The authority is the
+      # COMPILED bundle's `builtins()` table, so the bundle is built first;
+      # `--require-wasm` makes a bundle that could not be built fatal rather than a
+      # source scan wearing a green tick.
+      #
+      # Placed HERE, ahead of the three checks below, on purpose: those three ask
+      # the network (npm, the base branch, the pull-request list) and this one is a
+      # deterministic read of this checkout. `bash -e` stops the job at the first
+      # failure, so a live-GitHub answer standing in front of a repository check
+      # means the repository check never runs at all — which is what happened on
+      # run 30629887881, where an unrelated contested claim skipped both steps.
+      - name: Compile the OPA bundle the builtin check reads
+        run: npm run build:policy
+
+      - name: Policies only call builtins the wasm runtime implements
+        run: |
+          node .harness/scripts/ci/55-validate-wasm-builtin-support.mjs --require-wasm --verbose
+          node --test .harness/scripts/ci/55-validate-wasm-builtin-support.test.mjs
+
       # GT-624: the 2026-07-23 security wave sat unpublished until 2026-07-27
       # while SECURITY.md declared the 1.1.x line "actively patched". Nothing
       # detected it; an audit did. This asks the registry what is published, finds
@@ -464,6 +539,25 @@ jobs:
       # the newest v* tag here is v1.1.0 while npm serves 1.2.2.
       - name: No security fix is committed but unpublished
         run: node .harness/scripts/ci/48-validate-security-publish-lag.mjs --verbose
+
+      # GT-642: two runtime import cycles reached a 346-module package unseen and were
+      # found by hand (GT-641), because nothing looks — lint:boundaries enforces layer
+      # DIRECTION and not acyclicity, and tsc compiles a require cycle silently. This
+      # runs GT-589's extractor over EVERY workspace package and prints the per-package
+      # table on every run, zeros included: a guard whose green run reports nothing is
+      # indistinguishable from one that cannot run. Cycles that close only through an
+      # `import type` edge are listed and are deliberately NOT fatal.
+      - name: No runtime import cycle in any workspace package
+        run: node .harness/scripts/ci/54-validate-import-cycles.mjs --verbose
+
+      # GT-591: the OPA pin sat at 0.65.0 for two years and nothing said so, while a
+      # SECOND spelling of it lived in compile-opa-wasm.mjs's download URL — so the
+      # policies could be tested by one compiler and the enforcing wasm built by
+      # another, both green. Now on the v1 line, where `if`/`contains` are mandatory,
+      # so the pin and the Rego dialect are one fact: the guard also fails on any
+      # `.rego` that stops declaring `import rego.v1`.
+      - name: One OPA pin, on the v1 line, and no second spelling of it
+        run: node .harness/scripts/ci/53-validate-opa-pin.mjs --verbose
 
       # GT-638: a gap id is chosen by reading the highest GT-* on whichever branch
       # you are on, so two parallel sessions allocate the same number and find out
@@ -481,22 +575,16 @@ jobs:
       # work was done twice, three times over. The claim set is DERIVED from open
       # pull requests — never hand-written, which would go stale in the direction
       # that matters — and an id claimed by two open PRs fails here, naming both.
+      #
+      # A claim is DECLARED: an id in the title, in the branch name, or in the body
+      # after a `Closes`/`Advances`/`Claims` marker. Reading it from any `GT-*` in
+      # the prose made every cross-reference a claim, and the bodies here cite their
+      # neighbours constantly — run 30630343658 failed three times over, none of them
+      # real, and the fix each author reached for was to delete the sentence.
       - name: One gap, one claim
         env:
           GH_TOKEN: ${{ github.token }}
         run: node .harness/scripts/ci/50-validate-gap-claim.mjs
-
-      - name: Self-tests for the governance guards
-        run: |
-          node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
-          node --test .harness/scripts/ci/48-validate-security-publish-lag.test.mjs
-          node --test .harness/scripts/ci/49-validate-gap-id-allocation.test.mjs
-          node --test .harness/scripts/ci/50-validate-gap-claim.test.mjs
-          node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs
-          node --test .harness/scripts/ci/43-validate-guard-negative-fixtures.test.mjs
-          node --test .harness/scripts/ci/44-validate-adr-implementation-status.test.mjs
-          node --test .harness/scripts/ci/34-check-skill-registry-parity.test.mjs
-          node --test .harness/scripts/ci/45-validate-port-inventory-honesty.test.mjs
 
       # REPORTING MODE, and it says so in its own output ("THIS IS NOT A PASS").
       # It resolves every validationCommand recorded in the board's closure

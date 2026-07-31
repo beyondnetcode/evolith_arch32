@@ -94,7 +94,45 @@ When a write operation is rejected due to a lock conflict or SHA mismatch, the M
 ### Negative
 - **Agent complexity**: Agents must be designed to handle transaction failures, fetch updated context, and retry.
 
+## Implementation Status
+
+Recorded so that the grep which finds this ADR also finds what backs it (GT-606).
+
+| Section | Status | Where |
+| --- | --- | --- |
+| §1 Optimistic State Verification | **Implemented** | `src/packages/mcp-server/src/mcp/workspace-concurrency.ts`, enforced in `mcp-tool-dispatch.ts` |
+| §3 Concurrency Error Contract | **Implemented** | `CONCURRENCY_CONFLICT` in `src/packages/mcp-server/src/common/errors.ts`; conflict payload in the envelope's `error.details` |
+| §2 Pessimistic Resource Locking | **Not implemented** | — |
+
+Notes on §1 as built:
+
+- `baseSha` is derived onto every mutative tool's advertised schema by
+  `ToolRegistryService.describe`, and verified by the single dispatch keyed on
+  `tool.mutative` — the same key the HITL approval gate uses. The protected set
+  is therefore the mutative set by construction, and a tool added later cannot
+  arrive unprotected. `mutative-base-sha-coverage.spec.ts` enumerates that set
+  off the live registry and fails if any member is unguarded.
+- `baseSha` is **optional** by default, giving `If-Match` semantics: a caller
+  that declares the state it planned against is protected; one that declares
+  nothing is not. Requiring it outright would break every existing caller and
+  would make the tools that legitimately target a not-yet-initialised directory
+  (`evolith-scaffold`, `evolith-init-batch`) unusable. A deployment that wants
+  the strict reading sets `EVOLITH_MCP_REQUIRE_BASE_SHA=1`.
+- Verification **fails closed**: if `baseSha` is supplied and HEAD cannot be
+  resolved, the write is rejected rather than allowed through.
+- The §3 payload is carried in `error.details` rather than `error.meta` as
+  sketched above, because ADR-0073 reserves `meta` for the envelope's execution
+  metadata. The code, the field names and the semantics are unchanged.
+
+§2 is deferred, not adopted-and-ignored: no current MCP tool holds an exclusive
+non-git resource for long enough for a two-minute lease to be the right
+mechanism, and every mutative tool's effect is already covered by §1's
+git-state check. Should a tool appear that mutates a database record or holds a
+long exclusive task, §2 becomes due and this table is the record that it is
+still outstanding.
+
 ## References
+- [ADR-0073: Unified CLI Output Contract](./0073-unified-cli-output-contract.md)
 - [ADR-0087: ABAC for Agentic Tool Execution](./0087-abac-agentic-tool-execution.md)
 - [ADR-0089: Event-Driven Agentic Workflows](./0089-event-driven-agentic-workflows.md)
 

@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { IFileSystem, ILogger } from '../../domain/interfaces';
-import { PhaseGateDefinition, BlockingCriterion, EvidenceValidationResult, BlockingCheckResult } from './phase-gate-validator.service';
+import { PhaseGateDefinition, BlockingCriterion, EvidenceValidationResult, BlockingCheckResult } from './phase-gate-validator.types';
 import { EvidenceValidator } from './evidence-validator';
 
 type CriterionHandler = (projectPath: string, evidenceResults: EvidenceValidationResult[]) => Promise<boolean>;

@@ -13,7 +13,11 @@ import {
   InMemoryKnowledgeAdapter,
   PgVectorKnowledgeAdapter,
   FsWorkspaceContextAdapter,
+  HttpTrackerTraceAdapter,
+  CircuitBreaker,
 } from '@beyondnet/evolith-agent-runtime';
+import { resolve } from 'node:path';
+
 import { createRuntimeFromEnv, resolveProfile, resolveKnowledgeAdapter } from './runtime.factory';
 
 /**
@@ -83,6 +87,42 @@ describe('createRuntimeFromEnv — profile selection matrix (GT-438)', () => {
       expect(deps.policy).toBeInstanceOf(OpaCliPolicyValidationAdapter);
       // No engine configured ⇒ stub stays (GT-385-gated) even under production.
       expect(deps.engine).toBeInstanceOf(StubAgentEngineAdapter);
+    });
+  });
+
+  /**
+   * GT-443 — the breaker must be WIRED, not merely available. GT-560 deleted the
+   * previous breaker precisely because it was registered and injected nowhere;
+   * these assertions are what stop that from recurring here.
+   */
+  describe('outbound calls run under a circuit breaker (GT-443 / ADR-0011)', () => {
+    const breakerOf = (adapter: unknown) => (adapter as { options: { breaker?: unknown } }).options.breaker;
+
+    it('guards the mandatory Core evaluate call by default', () => {
+      const { deps } = createRuntimeFromEnv({ AGENT_RUNTIME_PROFILE: 'production', ...PROD_CORE });
+      expect(breakerOf(deps.coreEvaluation)).toBeInstanceOf(CircuitBreaker);
+    });
+
+    it('guards the Tracker publish call by default', () => {
+      const { deps } = createRuntimeFromEnv({
+        AGENT_RUNTIME_PROFILE: 'production',
+        ...PROD_CORE,
+        AGENT_RUNTIME_TRACKER_ENDPOINT: 'https://tracker.example/api/v1/traces',
+      });
+      // The tracker is wrapped in a composite; reach the HTTP leg.
+      const legs = (deps.tracker as unknown as { adapters?: unknown[] }).adapters ?? [deps.tracker];
+      const httpLeg = legs.find((a) => a instanceof HttpTrackerTraceAdapter);
+      expect(httpLeg).toBeDefined();
+      expect(breakerOf(httpLeg)).toBeInstanceOf(CircuitBreaker);
+    });
+
+    it('can be opted out of explicitly', () => {
+      const { deps } = createRuntimeFromEnv({
+        AGENT_RUNTIME_PROFILE: 'production',
+        ...PROD_CORE,
+        AGENT_RUNTIME_BREAKER_ENABLED: 'false',
+      });
+      expect(breakerOf(deps.coreEvaluation)).toBeUndefined();
     });
   });
 
@@ -254,6 +294,36 @@ describe('createRuntimeFromEnv — profile selection matrix (GT-438)', () => {
         AGENT_RUNTIME_WORKSPACE_CONTEXT_ROOT: '/app/satellite',
       });
       expect(deps.workspaceContext).toBeInstanceOf(FsWorkspaceContextAdapter);
+    });
+  });
+
+  /**
+   * GT-608 — the catalogue the DEPLOYED service routes on.
+   *
+   * The HITL seam had never executed because nothing the runtime could route
+   * required approval: the factory seeded the hardcoded 7-skill table and never
+   * read the manifest, so `requiresApproval: true` in `.harness/manifest.yaml`
+   * governed nothing at runtime. These two tests are the CI-runnable guard on
+   * that wiring — the full Runtime↔Tracker integration needs a live Tracker and
+   * skips without one, so without this a regression here would be silent.
+   */
+  describe('skill catalogue is derived from the mounted manifest (GT-608)', () => {
+    const HARNESS_ROOT = resolve(__dirname, '../../../../..', '.harness');
+
+    it('routes a manifest capability, with the manifest’s approval posture', async () => {
+      const { deps } = createRuntimeFromEnv({
+        AGENT_RUNTIME_HARNESS_ROOT: HARNESS_ROOT,
+        AGENT_RUNTIME_POLICY_MODE: 'stub',
+      });
+      const skill = await deps.skillRegistry.resolve('self_improving_loop');
+      expect(skill?.id).toBe('self-improving-loop');
+      // Load-bearing: this is the flag that makes step 4 of the pipeline run at all.
+      expect(skill?.requiresApproval).toBe(true);
+    });
+
+    it('keeps the hardcoded catalogue when no .harness is mounted (design rule #5)', async () => {
+      const { deps } = createRuntimeFromEnv({ AGENT_RUNTIME_POLICY_MODE: 'stub' });
+      expect(await deps.skillRegistry.resolve('self_improving_loop')).toBeUndefined();
     });
   });
 });

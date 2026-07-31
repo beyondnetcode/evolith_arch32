@@ -31,6 +31,10 @@ auth:
 extraEnv:
   NODE_ENV: production
   PORT: "3000"
+  # GT-608 — this root drives BOTH the .harness process executor AND the skill
+  # catalogue: with it set, capabilities and their `requiresApproval` posture come
+  # from <root>/manifest.yaml; unset, the runtime falls back to the hardcoded
+  # 7-skill table and nothing it can route requires human approval.
   # AGENT_RUNTIME_HARNESS_ROOT: /repo/corpus/.harness
   # AGENT_RUNTIME_OPA_ENABLED: "true"
   # AGENT_RUNTIME_OPA_PATH: /repo/corpus/.harness/bin/opa

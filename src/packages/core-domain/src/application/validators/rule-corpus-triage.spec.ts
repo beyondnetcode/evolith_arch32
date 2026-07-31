@@ -54,7 +54,13 @@ const { corpus: CORPUS, classified: CLASSIFIED, summary: SUMMARY, claims } = TRI
  * passing. Restoring it is what a reconciliation that deleted it owes back.
  */
 const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
-  'native-handler': 154,
+  // 154 -> 158 on 2026-07-31: GT-584 added PEA-01..04
+  // (`src/rulesets/evidence/probabilistic-evidence-admissibility.rules.json`) and
+  // `ProbabilisticEvidenceRuleHandler` claims all four, so the corpus grew by
+  // exactly four rules that RUN. A rule added without its handler would have
+  // landed in `unimplemented-native` instead, and that difference is the whole
+  // point of pinning both numbers.
+  'native-handler': 158,
   'documentation-only': 136,
   'unimplemented-native': 48,
   'needs-external-system': 20,

@@ -1,0 +1,29 @@
+{
+  "gap": "GT-597",
+  "_readme": [
+    "Committed floors for the OpenSSF Scorecard run in .github/workflows/openssf-scorecard.yml.",
+    "The gate is .harness/scripts/ci/52-validate-scorecard-regression.mjs: a run scoring below any",
+    "floor recorded here fails the workflow, so a posture regression is a red scheduled job and a",
+    "diffable fact rather than a number inside an artifact nobody opens.",
+    "",
+    "aggregate is null on purpose. No Scorecard run has ever executed against this repository -- the",
+    "workflow landed on main on 2026-07-29 and its first scheduled trigger has not fired, and the",
+    "public OpenSSF API returns 404 for github.com/beyondnetcode/evolith_arch32. Inventing floors",
+    "without an observed run would produce a file that looks like a measurement and is not one, which",
+    "is the exact defect GT-597 exists to remove. While aggregate is null the gate fails CLOSED and",
+    "prints the exact document to commit.",
+    "",
+    "SEEDING (repository owner): run the OpenSSF Scorecard workflow (Actions -> OpenSSF Scorecard ->",
+    "Run workflow). The gate step prints a ready-to-commit replacement for this file. Commit it, and",
+    "from then on every weekly run compares against it.",
+    "",
+    "RATCHETING: a check scoring above its floor never fails the gate; it is reported as a suggestion.",
+    "Raising a floor stays a reviewed commit, because a baseline that updates itself cannot detect",
+    "anything."
+  ],
+  "observedOn": null,
+  "observedCommit": null,
+  "scorecardVersion": null,
+  "aggregate": null,
+  "checks": {}
+}

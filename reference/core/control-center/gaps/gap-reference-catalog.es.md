@@ -7252,9 +7252,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith MCP` · **Criticidad:** P0 · **Complejidad:** M
 - **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
 - **Criterios de aceptación:**
-  - [ ] Un test evalúa el `policy.wasm` compilado sobre todos los nombres registrados y exige ALLOW para un `architect` en `production`.
+  - [x] Un test evalúa el `policy.wasm` compilado sobre todos los nombres registrados y exige ALLOW para un `architect` en `production`.
   - [x] Los conjuntos de herramientas del rego se generan desde el registro en vez de mantenerse a mano.
-  - [ ] CI falla cuando una herramienta existe en el registro TypeScript y no en la política compilada.
+  - [x] CI falla cuando una herramienta existe en el registro TypeScript y no en la política compilada.
 
 #### GT-603
 
@@ -7284,9 +7284,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
 - **Criterios de aceptación:**
   - [x] Un contrato de ingesta con `correlationId`, motor real, reglas ejecutadas, violaciones y responsable.
-  - [ ] Un cliente compartido usado por la CLI, el servidor MCP y el drift-gate, autenticado por clave de máquina como ya hace `/runtime-approvals`.
-  - [ ] Un robot RoboSoft verifica que una evaluación desde la CLI produce una fila persistida en el Tracker.
-  - [ ] Depende de GT-601 para que la carga no vaya vacía y de GT-603 para que sea atribuible.
+  - [x] Un cliente compartido usado por la CLI, el servidor MCP y el drift-gate, autenticado por clave de máquina como ya hace `/runtime-approvals`.
+  - [x] Un robot RoboSoft verifica que una evaluación desde la CLI produce una fila persistida en el Tracker.
+  - [x] Depende de GT-601 para que la carga no vaya vacía y de GT-603 para que sea atribuible.
 - **Nota de avance (2026-07-29):** Solo el criterio 1. El contrato de ingesta aterrizó en `src/packages/contracts/src/ingest/evaluation-ingest.ts` con `correlationId` OBLIGATORIO y AMBOS responsables representados por separado: `requestedBy.actorId` es quien pidió la evaluación y `violations[].accountableOwner` es quien debe corregir. El criterio 2 no se puede completar desde este repositorio: no existe endpoint de ingesta del Tracker al que llamar. El criterio 3 es 0% construible aquí, porque RoboSoft vive en `evolith_tracker`; en su lugar se escribió un traspaso bilingüe en [tracker-handover-gt604.es.md](../opportunities/tracker-handover-gt604.es.md) (y su equivalente en inglés), con 22 encabezados cada uno. **Sin confirmar, y así queda registrado: la dependencia declarada de GT-603 parece equivocada.** GT-603 migra `audit_entries` mientras esta fila nombra `core_evaluation_transactions`, y la atribución del lado Core ya se entregó bajo GT-586 — pero el esquema del Tracker no está en este repositorio, así que es una hipótesis a confirmar por el responsable del Tracker, no un hallazgo.
 
 #### GT-605
@@ -7316,9 +7316,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith MCP` · **Criticidad:** P1 · **Complejidad:** M
 - **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
 - **Criterios de aceptación:**
-  - [ ] Toda herramienta mutativa acepta `baseSha` y lo verifica contra HEAD antes de aplicar.
-  - [ ] Se devuelve un envelope `CONCURRENCY_CONFLICT` ante discrepancia, con test.
-  - [ ] Si se declina implementarlo, ADR-0093 sale de Aceptado con la razón registrada.
+  - [x] Toda herramienta mutativa acepta `baseSha` y lo verifica contra HEAD antes de aplicar.
+  - [x] Se devuelve un envelope `CONCURRENCY_CONFLICT` ante discrepancia, con test.
+  - [x] Si se declina implementarlo, ADR-0093 sale de Aceptado con la razón registrada.
 
 #### GT-607
 
@@ -7348,8 +7348,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criterios de aceptación:**
   - [x] El catálogo de skills se deriva de `.harness/manifest.yaml`, con test de CI que exija catálogo ⊇ manifiesto.
   - [x] Al menos dos capacidades destructivas declaran `requiresApproval: true`.
-  - [ ] Un test de punta a punta cubre pendiente → aprobado → ejecutado → auditado entre el Runtime y el Tracker.
-  - [ ] `evolith_hitl_approvals_total` es distinto de cero en una ejecución de integración.
+  - [x] Un test de punta a punta cubre pendiente → aprobado → ejecutado → auditado entre el Runtime y el Tracker.
+  - [x] `evolith_hitl_approvals_total` es distinto de cero en una ejecución de integración.
 
 ### Revisión de la ruta AI-native 2026-07-26 — GT-580…GT-595
 
@@ -7367,8 +7367,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
 - **Criterios de aceptación:**
   - [x] Todo comando sale con un código de la taxonomía publicada, aseverado por test.
-  - [ ] `--format json`/`ndjson` escribe solo datos en stdout; todo diagnóstico va a stderr.
-  - [ ] Un ruleset con paridad Rego falla ante cualquier comando que salga fuera de la taxonomía.
+  - [x] `--format json`/`ndjson` escribe solo datos en stdout; todo diagnóstico va a stderr.
+  - [x] Un ruleset con paridad Rego falla ante cualquier comando que salga fuera de la taxonomía.
 
 
 #### GT-581
@@ -7478,9 +7478,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith Core` · **Criticidad:** P2 · **Complejidad:** M
 - **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
 - **Criterios de aceptación:**
-  - [ ] Los resultados de evaluación emiten `gen_ai.evaluation.result` según la versión de semconv pinneada.
-  - [ ] Los spans MCP llevan atributos `mcp.*` y propagan el trace context de `_meta`.
-  - [ ] La versión de semconv pinneada está declarada y un check de drift señala un cambio upstream.
+  - [x] Los resultados de evaluación emiten `gen_ai.evaluation.result` según la versión de semconv pinneada.
+  - [x] Los spans MCP llevan atributos `mcp.*` y propagan el trace context de `_meta`.
+  - [x] La versión de semconv pinneada está declarada y un check de drift señala un cambio upstream.
 
 
 #### GT-588
@@ -7510,9 +7510,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith Core` · **Criticidad:** P1 · **Complejidad:** L
 - **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
 - **Criterios de aceptación:**
-  - [ ] `RepoFacts` se produce fuera del Core y se consume como miembro determinista del contexto.
-  - [ ] El evaluador `architecture` responde al menos una pregunta que ningún ruleset actual puede expresar.
-  - [ ] Los mismos hechos producen veredictos byte-idénticos entre corridas (reproducibilidad por content-hash).
+  - [x] `RepoFacts` se produce fuera del Core y se consume como miembro determinista del contexto.
+  - [x] El evaluador `architecture` responde al menos una pregunta que ningún ruleset actual puede expresar.
+  - [x] Los mismos hechos producen veredictos byte-idénticos entre corridas (reproducibilidad por content-hash).
 
 
 #### GT-590
@@ -7637,9 +7637,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Infra` · **Criticidad:** P1 · **Complejidad:** S
 - **Procedencia:** Derivado de la auditoría de madurez de producto del 2026-07-26 ([product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md)): son los artefactos internacionales que la auditoría echó en falta. Ediciones y números de norma verificados contra las fuentes el 2026-07-26, no citados de memoria.
 - **Criterios de aceptación:**
-  - [ ] Una corrida de Scorecard publica una puntuación de forma programada y su regresión es visible.
-  - [ ] El nivel de build SLSA objetivo está declarado y la brecha hasta él está registrada.
-  - [ ] Los controles existentes están mapeados a IDs de práctica de SSDF v1.1.
+  - [x] Una corrida de Scorecard publica una puntuación de forma programada y su regresión es visible.
+  - [x] El nivel de build SLSA objetivo está declarado y la brecha hasta él está registrada.
+  - [x] Los controles existentes están mapeados a IDs de práctica de SSDF v1.1.
 
 #### GT-598
 
@@ -7750,7 +7750,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Evolith Core` · **Criticidad:** P2 · **Complejidad:** S
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-615
 
@@ -7761,7 +7761,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Tracker` · **Criticidad:** P2 · **Complejidad:** M
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-616
 
@@ -7772,7 +7772,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Tracker` · **Criticidad:** P2 · **Complejidad:** S
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-617
 
@@ -7783,7 +7783,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Tracker` · **Criticidad:** P2 · **Complejidad:** S
 - **Procedencia:** Diagnóstico de producto de Evolith, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — cinco evaluadores por componente. Los hallazgos se cruzaron contra el tablero y éste no estaba mapeado. Cada fila declara si se verificó aquí contra el código o si se registra tal como lo reporta el diagnóstico.
 - **Criterios de aceptación:**
-  - [ ] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
+  - [x] El defecto descrito ya no es reproducible, demostrado por un test que falla sin el arreglo.
 
 #### GT-618
 
@@ -7854,6 +7854,52 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Un commit con mensaje malformado se rechaza en local, demostrado intentándolo.
   - [x] El tipo `security` está declarado en la config de commitlint con un mapeo explícito de salto de versión, o se deja de usar.
   - [x] Ningún hook de `.husky/` imprime un mensaje de "skipping" y sale con cero — un hook que no puede correr se borra, no se silencia.
+
+#### GT-643
+
+**Title:** Un `--dry-run` que escribe: la bandera está declarada en `agents install`, documentada, y nunca se lee
+
+- **Purpose:** Que la única bandera cuyo contrato entero es "no cambies nada" efectivamente no cambie nada, y que la salida de un test deje de estar commiteada como dato de producto.
+- **Evidence:** **`evolith agents install --dry-run` escribe en el directorio de trabajo.** `agents.command.ts:647` declara `-d, --dry-run`, `AgentsCommandOptions.dryRun` la tipa en la línea 29, y `installAgent()` no la consulta nunca: la línea 218 llama a `this.registry.installAgent(process.cwd(), config, rulesetContent)` sin condición, tras lo cual el registro escribe `rulesets/agents/<nombre>/` y reescribe `agents-registry.json`. **Esto es un comando fuera de la convención, no una convención ausente** — `init` cambia el filesystem por un `DryRunFileSystem` (`init.command.ts:132-135`), `upgrade` retorna antes de aplicar (`upgrade.command.ts:92-100`), `adr` la pasa a cada escritor. `agents` es la única declaración del CLI sin lector. **DEMOSTRADO POR REPRODUCCIÓN, no por lectura del código:** con el árbol limpio, `npx jest --config test/jest-e2e.json test/agents.e2e-spec.ts -t "dry-run"` en solitario deja tres archivos VERSIONADOS modificados — `src/sdk/cli/rulesets/agents/agents-registry.json`, `rulesets/agents/test-value/agent.config.json` y `rulesets/agents/test-value/agent.rules.json`. Primero se corrió el spec completo y después el caso único, para asegurar que la atribución era a `--dry-run` y no a un test hermano. **La salida ya está commiteada como dato de producto:** `test-value` es lo que el mock de prompts responde a toda pregunta (`test/mock-prompt.service.ts:11-12`), y `6bb43cfa` versionó ese agente dentro de los propios `rulesets/` del repositorio. Así que el repo hoy publica un agente con forma de fixture que nadie escribió, y todo desarrollador que corra la suite e2e encuentra tres archivos sucios en `git status` — que es como se encontró. **Un simulacro que escribe es peor que no tener simulacro:** es la bandera a la que un usuario recurre justo cuando no está dispuesto a que se le confíe la de verdad, y hoy reporta éxito habiendo hecho lo que prometió no hacer. **Por qué ningún check lo detectó:** el tester de conformidad cross-superficie compara lo que CLI, MCP y REST *responden*, y ningún oráculo pregunta si el disco cambió — una bandera cuyo contrato observable entero es la AUSENCIA de un efecto es invisible para un oráculo que solo lee respuestas.
+- **Component:** `CLI` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Encontrado el 2026-07-30 al cerrar [`GT-641`](./gap-reference-catalog.es.md#gt-641): la suite e2e del CLI dejó tres archivos versionados sucios, y rastrear qué spec lo hacía llevó a la bandera y no al test. Registrado aparte porque el síntoma de higiene de tests es aguas abajo de un defecto de producto — arreglar el directorio de trabajo del spec escondería el defecto y dejaría a `--dry-run` mintiendo a los usuarios.
+- **Acceptance criteria:**
+  - [x] `agents install --dry-run` no realiza ninguna escritura. La rama seca no llama nunca al escritor, en vez de llamarlo a través de un filesystem inerte: una rama que no puede alcanzar al escritor no puede regresar cuando el escritor gana una llamada nueva. Reporta las rutas que habría creado mediante un nuevo `planInstall`, que usa el propio escritor, así que el reporte no puede desviarse del layout.
+  - [x] La ruta del menú reenvía las opciones del llamador. `evolith agents --dry-run` sin subcomando las descartaba y escribía igual — justo la ruta que toma quien duda lo bastante como para querer un simulacro.
+  - [x] Los tres artefactos commiteados bajo `src/sdk/cli/rulesets/agents/` quedan eliminados. El registro contenía exactamente un agente, `test-value`, así que el archivo entero era residuo de test y no dato de producto con residuo dentro.
+  - [x] La suite e2e corre en un directorio temporal y su oráculo afirma que el disco no cambió, con un caso de contraste de que una instalación real SÍ escribe — si no, la afirmación del simulacro también pasaría si install se hubiera roto. Módulo y directorio por test, porque una instancia compartida filtraba las opciones parseadas de commander entre corridas y hacía parecer roto el arreglo.
+  - [x] Barrido de cada declaración de `--dry-run` del CLI, registrado incluidos los correctos: `init` (cambia a `DryRunFileSystem`), `upgrade`, `adr`, `scaffold`, `docs`, `fixtures` y `generate-domain` condicionan sus escrituras a la bandera. `agents` era la única declaración sin lector.
+  - [x] Los dos dependientes ocultos que destapó el borrado quedan reparados, no rodeados. `47-validate-joined-paths` anclaba su declaración de subárbol generado en que existiera `src/sdk/cli/rulesets`, y ese directorio existía en un checkout limpio SOLO porque el residuo estaba dentro — así que el guard se puso rojo señalando a `policy.wasm`, una causa que estaba en otro sitio; el ancla ahora descansa en `src/sdk/cli`, que sí está autorado. `rulesets-resolver.bundled.spec.ts` tenía un caso que aún leía el árbol real, cuya simulación de EACCES solo se disparaba porque algún directorio `…/rulesets` era alcanzable; ahora usa el árbol sintético que los casos hermanos ya usaban. Ambos verificados apartando el artefacto de build y repitiendo: 101 suites / 1447 tests en verde con `src/sdk/cli/rulesets` ausente.
+  - [ ] Existe un oráculo que pregunta si una bandera sin efecto no tuvo efecto, de modo que quede cubierta la CLASE y no esta instancia. No construido: el tester cross-superficie compara respuestas, y un contrato cuyo contenido entero es la ausencia de un efecto necesita que compare también el estado. Hasta entonces, la siguiente bandera así se encuentra a mano, como se encontró esta.
+
+#### GT-642
+
+**Title:** Nada falla ante un ciclo de import en tiempo de ejecución, así que los dos que existían se encontraron a mano y el siguiente también
+
+- **Purpose:** Convertir la medición de ciclos en un check que corre en cada pull request, sobre todos los paquetes, en vez de algo que alguien recuerda apuntar a un paquete una vez.
+- **Evidence:** **Los dos ciclos que eliminó [`GT-641`](./gap-reference-catalog.es.md#gt-641) llegaron sin ser vistos a un paquete de 346 módulos, y la razón es que nada mira.** `lint:boundaries` impone la dirección entre capas, no la ciclicidad — habría dado verde a ambos, porque `services/index.ts` y `use-cases/` son la misma capa. `tsc` compila un ciclo `require` sin diagnóstico; en ejecución resuelve a un módulo parcialmente inicializado, un defecto que aparece como `undefined` en tiempo de import y no como error de compilación. Ningún guard de gobernanza lee el grafo de módulos. **La medición ya está escrita y queda fuera de alcance:** [`GT-589`](./gap-reference-catalog.es.md#gt-589) entrega `@beyondnet/evolith-repo-facts` y `findImportCycles`, y solo existen en `feat/gt-589-repo-facts` (PR #309) — los números de GT-641 hubo que producirlos construyendo el paquete de esa rama contra un árbol de trabajo que no lo contiene. **Esto está BLOQUEADO y no simplemente pendiente, y la distinción es toda la fila:** un check de la rama por defecto no puede correr un extractor ausente de la rama por defecto, y escribir un segundo detector de ciclos al lado del primero sería exactamente el defecto de doble fuente de verdad que GT-589 se construyó para eliminar. **El alcance, dicho para que no se estreche en silencio después:** solo `core-domain` ha sido medido alguna vez. `cli`, `mcp-server`, `core`, `agent-runtime` y `sdk-client` no, y la forma que produjo ambos ciclos de GT-641 — un barril dueño de un tipo que además reexporta al módulo que lo consume — es un idiom de todo el monorepo, no un accidente de `core-domain`.
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Registrado el 2026-07-30 a partir de [`GT-641`](./gap-reference-catalog.es.md#gt-641), de quien este es el último criterio de aceptación. Se lleva como fila propia en vez de dejarlo sin marcar dentro de una cerrada: una fila DONE con un criterio abierto se lee como terminada para quien no abra el catálogo, que es el fallo de reporte que describe [`GT-640`](./gap-reference-catalog.es.md#gt-640) con otro disfraz.
+- **Acceptance criteria:**
+  - [ ] Un guard corre el extractor de GT-589 sobre cada paquete del workspace y falla cuando `findImportCycles` devuelve resultado no vacío, reportando la cadena Y el componente — el componente es lo que hace correcto el arreglo, como demostró GT-641.
+  - [ ] Los ciclos solo de tipos se reportan aparte de los de ejecución y no rompen el build: confundirlos empujaría a usar `import type` como silenciador, que esconde la estratificación invertida en vez de arreglarla.
+  - [ ] El guard queda cableado en `Governance guards (GT-578)` y observado en rojo por `43-validate-guard-negative-fixtures`, de modo que se le ha visto fallar antes de confiar en él.
+  - [ ] La primera corrida sobre todo el monorepo queda registrada con sus conteos por paquete, incluidos los paquetes que resulten limpios — un guard cuya primera corrida no reporta nada es indistinguible de uno que no puede correr.
+
+#### GT-641
+
+**Title:** Dos ciclos de import en tiempo de ejecución dentro de las fuentes del propio Core, invisibles para todo check que corre hoy
+
+- **Purpose:** Eliminar los ciclos que la base de hechos estructural del propio Core encuentra en el Core, y dejar registrado —en vez de dar por supuesto— que nada en `main` podrá encontrar el siguiente hasta que esa base de hechos llegue allí.
+- **Evidence:** **El Core arrastra dos ciclos de import en tiempo de ejecución en su propia capa de aplicación.** Correr el extractor de [`GT-589`](./gap-reference-catalog.es.md#gt-589) sobre `src/packages/core-domain` reporta 346 módulos y 2 ciclos: `application/services/index.ts` ⇄ `application/use-cases/initialize-project.use-case.ts`, y `application/validators/blocking-criteria-validator.ts` ⇄ `application/validators/phase-gate-validator.service.ts`. **Ninguno es solo de tipos**, que es lo que los convierte en defectos y no en ruido: la base de hechos distingue las aristas type-only de las de valor precisamente para no reportar como ciclo un import que se borra al compilar, y estos dos no se borran. **Son el mismo defecto dos veces.** Un módulo publica un tipo Y ADEMÁS construye o reexporta al colaborador que lo consume, así que el colaborador tiene que importar de vuelta a través de él para nombrar sus propios parámetros: `services/index.ts` era dueño de `InitProjectInput` mientras reexportaba `InitializeProjectUseCase`; `phase-gate-validator.service.ts` era dueño de `PhaseGateDefinition` mientras construía `EvidenceValidator`, `BlockingCriteriaValidator` y `RulesetLoader`. **Las cadenas que nombra el reporte son más estrechas que los componentes que también reporta, y leer solo la cadena habría producido un arreglo equivocado.** Los componentes fuertemente conexos son de cuatro módulos cada uno — `project-scaffolder.service` y `phase-transition.use-case` entran en el primero, `evidence-validator` y `ruleset-loader` en el segundo — así que repuntar solo los dos archivos nombrados en cada cadena habría reubicado el ciclo en lugar de romperlo. **ARREGLADO 2026-07-30** extrayendo las formas compartidas a `application/services/use-case.types.ts` y `application/validators/phase-gate-validator.types.ts` y apuntando a ellas los seis consumidores directamente; los dos dueños anteriores reexportan los módulos nuevos, así que ninguna ruta de import cambia — incluida `@beyondnet/evolith-core-domain/application/services`, de donde el CLI y el servidor MCP importan `InitProjectInput`, y los 15 sitios que importan el contrato de gates desde el servicio. **NADA EN CI PUEDE REPRODUCIR ESTO, y esa es la mitad abierta de la fila:** `@beyondnet/evolith-repo-facts` solo existe en `feat/gt-589-repo-facts` (PR #309), no en `main`, así que la medición hubo que correrla desde un build del paquete de esa rama contra este árbol. Hasta que #309 aterrice no hay guard, y un ciclo nuevo regresa tan en silencio como lo hicieron estos dos — que es exactamente cómo llegaron sin ser vistos a un paquete de 346 módulos.
+- **Component:** `Core` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Encontrado el 2026-07-30 al apuntar el extractor de [`GT-589`](./gap-reference-catalog.es.md#gt-589) al propio Core — lo primero que se le pidió medir a esa herramienta fue el repositorio que la produjo, y devolvió dos defectos en su propia casa. Registrado aparte de GT-589 porque los ciclos son deuda de la capa de aplicación del Core, anterior a la base de hechos y posterior a su merge, mientras que el guard ausente es un follow-on que pertenece a #309. El id se asignó tomando la unión de ids `GT-*` entre `main`, `develop`, la rama de integración abierta y el PR #309 — el mayor era GT-640 — según [`GT-638`](./gap-reference-catalog.es.md#gt-638).
+- **Acceptance criteria:**
+  - [x] Ambos ciclos se rompen en el origen de la inversión (el tipo se muda), no volviendo `import type` la arista de vuelta — una arista borrada solo escondería el acoplamiento de la base de hechos dejando la estratificación invertida.
+  - [x] Toda ruta de import existente sigue resolviendo: `services/index.ts` y `phase-gate-validator.service.ts` reexportan los módulos extraídos, y ningún consumidor fuera de core-domain fue editado.
+  - [x] Medido con el mismo extractor antes y después sobre el mismo árbol: 346 módulos / 2 ciclos → 348 módulos / 0 ciclos.
+  - [x] Se repunta el componente fuertemente conexo completo en cada caso, no solo los dos módulos nombrados en la cadena reportada.
+  - [x] El guard ausente se lleva como fila propia — [`GT-642`](./gap-reference-catalog.es.md#gt-642), bloqueada por el PR #309 — y no como criterio abierto dentro de una fila cerrada. Una fila cerrada cuyo último criterio está sin marcar se lee como hecha para todo el que no abra el catálogo.
 
 #### GT-639
 

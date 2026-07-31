@@ -158,8 +158,38 @@ For reference, this project already enforces:
 
 - Dependency scanning via Dependabot and `npm audit` (CI gate at `--audit-level=high`).
 - SAST via CodeQL, container/filesystem scanning via Trivy, and secret scanning
-  via gitleaks in CI (`.github/workflows/sdk-cli-ci.yml`).
+  via gitleaks in CI (`.github/workflows/sdk-cli-ci.yml`). `CodeQL SAST` is a
+  **required** status check on both `main` and `develop`.
+- GitHub secret scanning with push protection enabled on the repository.
 - Input validation, security headers (`helmet`), rate limiting, and API-key
   authentication on the executable surfaces.
 - Secrets are never committed; `.env` is git-ignored and credentials are managed
   outside the repository.
+
+### Supply-chain posture: measured, not asserted
+
+Prose is not a posture. The list above says what exists; it cannot say whether it
+is still true next month. Two artifacts answer that instead:
+
+- **An automated, external, numeric score.** [OpenSSF Scorecard](https://scorecard.dev)
+  runs weekly from `.github/workflows/openssf-scorecard.yml`, publishes to the
+  public OpenSSF API, uploads SARIF to code scanning, and — this is the part that
+  makes it a measure — is compared against floors committed in
+  `.harness/security/scorecard-baseline.json` by a gate that **fails the workflow
+  on a regression**.
+- **A control-by-control mapping**, with the verification behind every row, plus
+  the declared SLSA build target and an honest inventory of the gap to it:
+  [Supply-Chain and Repository Posture](./reference/core/control-center/security/supply-chain-posture.md).
+
+**Verifying what you install.** Packages published by
+`.github/workflows/npm-release.yml` carry npm provenance attestations, signed via
+Sigstore against a GitHub OIDC identity. Verify them yourself:
+
+```bash
+npm audit signatures
+```
+
+Seven of the eight `@beyondnet/evolith-*` packages carry an attestation on their
+`latest` version as of 2026-07-30; `@beyondnet/evolith-contracts` and every
+version published before that workflow existed do not. The posture document names
+each gap and who has to close it, rather than rounding up.

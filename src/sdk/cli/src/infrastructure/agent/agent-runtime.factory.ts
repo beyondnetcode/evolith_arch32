@@ -44,10 +44,15 @@ export class AgentRuntimeFactory {
     }
 
     // GT-399: Swap Harness adapter when harness root is configured.
+    // GT-608: the same root also seeds the skill catalogue, so the CLI routes the
+    // capabilities the manifest declares — and honours their `requiresApproval`
+    // posture — instead of the hardcoded 7-skill table. Without this the executor
+    // and the catalogue disagree about what this checkout can do.
     const harnessRoot = process.env.AGENT_RUNTIME_HARNESS_ROOT;
     if (harnessRoot) {
       const { HarnessProcessAdapter } = require('@beyondnet/evolith-agent-runtime');
       overrides.harness = new HarnessProcessAdapter({ harnessRoot });
+      overrides.harnessRoot = harnessRoot;
     }
 
     const { runtime } = createAgentRuntime(overrides as Parameters<typeof createAgentRuntime>[0]);

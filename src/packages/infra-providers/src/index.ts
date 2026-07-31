@@ -49,3 +49,23 @@ export type {
   LighthouseCategoryResult,
   LighthouseEvidenceProviderOptions,
 } from './lighthouse-evidence.provider';
+
+// GT-604 — the ONE client every verdict-producing surface deposits through. Three
+// surfaces each writing their own fetch is three chances to drop the rule engine,
+// to rename `accountableOwner` back to `owner`, or to put a `tenantId` in the body
+// — and the last is a security hole, not a typo.
+export {
+  TrackerEvaluationIngestClient,
+  EvaluationIngestError,
+  createEvaluationIngestClientFromEnv,
+  depositEvaluation,
+  EVOLITH_TRACKER_URL_ENV,
+  EVOLITH_TRACKER_API_KEY_ENV,
+} from './tracker/evaluation-ingest.client';
+export type {
+  EvaluationIngestAck,
+  TrackerEvaluationIngestClientOptions,
+  DepositOutcome,
+  DepositEvaluationInput,
+  IngestFetchLike,
+} from './tracker/evaluation-ingest.client';

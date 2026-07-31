@@ -60,6 +60,23 @@ export class AgentRegistryService {
     return agents;
   }
 
+  /**
+   * The paths `installAgent` would write for `agentName`, in write order.
+   *
+   * Exposed so a dry run can report what it would create without holding a
+   * second copy of the layout: a `--dry-run` that describes a directory
+   * structure the writer no longer uses is its own kind of lie.
+   */
+  planInstall(repoPath: string, agentName: string): string[] {
+    const agentsPath = path.join(repoPath, this.agentsDirName);
+    const agentPath = path.join(agentsPath, agentName);
+    return [
+      path.join(agentPath, 'agent.config.json'),
+      path.join(agentPath, 'agent.rules.json'),
+      path.join(agentsPath, this.registryFileName),
+    ];
+  }
+
   async installAgent(repoPath: string, agentInfo: AgentInfo, rulesetContent: Record<string, unknown>): Promise<void> {
     const agentsPath = path.join(repoPath, this.agentsDirName);
     await this.fs.ensureDir(agentsPath);

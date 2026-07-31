@@ -2,7 +2,7 @@ import * as path from 'path';
 import { IFileSystem, ILogger } from '../../domain/interfaces';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
-import { PhaseGatesRuleset } from './phase-gate-validator.service';
+import { PhaseGatesRuleset } from './phase-gate-validator.types';
 
 export class RulesetLoader {
   private cachedRuleset: PhaseGatesRuleset | null = null;

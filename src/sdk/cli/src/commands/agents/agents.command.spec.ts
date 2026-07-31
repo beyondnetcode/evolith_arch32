@@ -10,9 +10,11 @@ const mockUnregister = jest.fn();
 const mockGetAgent = jest.fn();
 const mockUpdateAgent = jest.fn();
 const mockUpdateLastValidated = jest.fn();
+const mockPlanInstall = jest.fn().mockReturnValue(['rulesets/agents/my-agent/agent.config.json']);
 jest.mock('../../infrastructure/adapters/agent-registry.service', () => ({
   AgentRegistryService: jest.fn().mockImplementation(() => ({
     installAgent: mockInstall,
+    planInstall: mockPlanInstall,
     discover: mockDiscover,
     unregister: mockUnregister,
     getAgent: mockGetAgent,
@@ -189,6 +191,23 @@ describe('AgentsCommand — install', () => {
       expect.objectContaining({ principles: expect.any(Array) }),
     );
     expect(prompt.showSuccess).toHaveBeenCalledWith(expect.stringContaining('my-agent'));
+  });
+
+  // GT-643 — the flag was declared and never read, so install wrote anyway.
+  // The assertion is that the WRITER is not reached: checking the message alone
+  // would pass again the day someone reports a dry run while still writing.
+  it('does not reach the writer with --dry-run, and says what it would have written', async () => {
+    const prompt = makePrompt({
+      text: jest.fn().mockResolvedValueOnce('my-agent').mockResolvedValueOnce('desc'),
+      select: jest.fn().mockResolvedValueOnce('standard'),
+      multiselect: jest.fn().mockResolvedValue([]),
+      confirm: jest.fn().mockResolvedValueOnce(true),
+    });
+    const cmd = new AgentsCommand(prompt);
+    await cmd.executeCommand(['install'], { dryRun: true } as never);
+    expect(mockInstall).not.toHaveBeenCalled();
+    expect(mockPlanInstall).toHaveBeenCalledWith(expect.any(String), 'my-agent');
+    expect(prompt.showSuccess).toHaveBeenCalledWith(expect.stringContaining('NOT written'));
   });
 
   it('cancels install when confirm is false', async () => {

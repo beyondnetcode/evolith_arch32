@@ -1,6 +1,6 @@
 import { IFileSystem } from '../../domain/interfaces';
 import { IPlatformProviders } from '../ports/platform-detection.port';
-import { InitProjectInput } from './index';
+import { InitProjectInput } from './use-case.types';
 
 /**
  * The commit types GIT-08 itself enumerates, in its own `pattern`. Kept in the

@@ -77,6 +77,22 @@ export const SLO = {
   error_rate: Number(__ENV.SLO_ERROR_RATE || 0.01),
 };
 
+// ─── Rate limiting — the thing that silently invalidates a load run ──────────
+// core-api throttles every route (`ThrottlerModule`, default 100 requests per
+// 60 s, tunable with THROTTLE_MAX_REQUESTS / THROTTLE_TTL_MS). Any load worth
+// running exceeds that instantly: measured 2026-07-30, a 10-VU average-load run
+// against a default-configured target returned 429 for 81% of evaluations, and
+// the summary reported it as an "error rate" — which reads like an engine
+// failure and is nothing of the sort.
+//
+// So every scenario tracks 429s as their OWN metric with its own threshold: a
+// throttled run must fail loudly and by name, never be mistaken for a capacity
+// measurement. Configure the TARGET for load (e.g. THROTTLE_MAX_REQUESTS=100000)
+// before reading any number from this harness.
+export function isThrottled(res) {
+  return res.status === 429;
+}
+
 // Validates a core-api response is a real success envelope (ADR-0073), not just
 // a 200 with a body. Used by every scenario's `check()`.
 export function isSuccessEnvelope(res) {

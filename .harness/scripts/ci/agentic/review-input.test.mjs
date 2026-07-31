@@ -51,9 +51,12 @@ const DIFF = [
   '+  "lockfileVersion": 3',
   'diff --git a/assets/logo.png b/assets/logo.png',
   'Binary files a/assets/logo.png and b/assets/logo.png differ',
-  'diff --git a/rulesets/data/data-mesh.rego b/rulesets/data/data-mesh.rego',
-  '--- a/rulesets/data/data-mesh.rego',
-  '+++ b/rulesets/data/data-mesh.rego',
+  // `src/`-prefixed, which is where the rulesets actually live. The three assertions
+  // over this fixture always expected `src/rulesets/...`; only the diff header here
+  // still carried the pre-move path, so all three read as a parser bug that is not one.
+  'diff --git a/src/rulesets/data/data-mesh.rego b/src/rulesets/data/data-mesh.rego',
+  '--- a/src/rulesets/data/data-mesh.rego',
+  '+++ b/src/rulesets/data/data-mesh.rego',
   '+package evolith.data_mesh',
 ].join('\n');
 

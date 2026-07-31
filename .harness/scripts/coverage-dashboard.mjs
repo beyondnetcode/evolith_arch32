@@ -300,6 +300,12 @@ if (checkMode) {
 
 const report = buildReport(new Date().toISOString());
 console.log(report);
+// The audits directory is committed, so this only ever mattered off the real tree —
+// which is exactly where the self-test runs. Without it the script printed a correct
+// 100% report and then died on an unhandled ENOENT, so every positive case in
+// coverage-dashboard.test.mjs failed on the exit code while the negative cases, which
+// exit before this line, passed.
+fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 fs.writeFileSync(reportPath, report, "utf8");
 
 if (hasUnpaired) {

@@ -21,56 +21,42 @@ function runReport() {
   return JSON.parse(result.stdout);
 }
 
-test('GT-286 marks compliance-baseline WS1 path as implemented', () => {
-  const report = runReport();
-  const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
-  const check = ws1?.results.find((item) => item.path === 'src/rulesets/compliance-baseline');
+// Spawned once. Each case used to re-run the audit for itself, which cost six
+// process launches to read six fields off the same immutable report.
+const REPORT = runReport();
 
-  assert.equal(check?.exists, true);
-  assert.equal(check?.status, 'PASS');
-});
+/**
+ * The WS1 paths these gaps closed, as the audit records them TODAY.
+ *
+ * Every literal here was stale: the rulesets moved into `cross-cutting/` and `sdlc/`
+ * and became `.rules.json` files, and the audit script followed them while this file
+ * did not. All six cases were red — not because anything regressed, but because they
+ * were looking up paths that no longer name anything. Since a lookup miss and a real
+ * failure both surfaced as `undefined`, the assertions below now separate them.
+ */
+const WS1_PATHS = [
+  ['GT-286', 'compliance-baseline', 'src/rulesets/cross-cutting/compliance-baseline.rules.json'],
+  ['GT-287', 'definition-of-done', 'src/rulesets/cross-cutting/definition-of-done.rules.json'],
+  ['GT-288', 'engineering-manifesto', 'src/rulesets/cross-cutting/engineering-manifesto.rules.json'],
+  ['GT-289', 'repository-taxonomy', 'src/rulesets/cross-cutting/repository-taxonomy.rules.json'],
+  ['GT-290', 'phase-gates', 'src/rulesets/sdlc/phase-gates.rules.json'],
+  ['GT-291', 'quality-thresholds', 'src/rulesets/sdlc/quality-thresholds.rules.json'],
+];
 
-test('GT-287 marks definition-of-done WS1 path as implemented', () => {
-  const report = runReport();
-  const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
-  const check = ws1?.results.find((item) => item.path === 'src/rulesets/definition-of-done');
+for (const [gap, label, expectedPath] of WS1_PATHS) {
+  test(`${gap} marks ${label} WS1 path as implemented`, () => {
+    const ws1 = REPORT.workstreams.find((workstream) => workstream.id === 'WS1');
+    assert.ok(ws1, 'the audit reported no WS1 workstream');
 
-  assert.equal(check?.exists, true);
-  assert.equal(check?.status, 'PASS');
-});
+    const check = ws1.results.find((item) => item.path === expectedPath);
+    assert.ok(
+      check,
+      `WS1 records no path ${expectedPath}. The ruleset moved and this expectation ` +
+        `did not follow it — that is drift in the test, not a regression in the audit.\n` +
+        `  WS1 currently records:\n${ws1.results.map((r) => `    - ${r.path}`).join('\n')}`,
+    );
 
-test('GT-288 marks engineering-manifesto WS1 path as implemented', () => {
-  const report = runReport();
-  const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
-  const check = ws1?.results.find((item) => item.path === 'src/rulesets/engineering-manifesto');
-
-  assert.equal(check?.exists, true);
-  assert.equal(check?.status, 'PASS');
-});
-
-test('GT-289 marks repository-taxonomy WS1 path as implemented', () => {
-  const report = runReport();
-  const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
-  const check = ws1?.results.find((item) => item.path === 'src/rulesets/repository-taxonomy');
-
-  assert.equal(check?.exists, true);
-  assert.equal(check?.status, 'PASS');
-});
-
-test('GT-290 marks phase-gates WS1 path as implemented', () => {
-  const report = runReport();
-  const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
-  const check = ws1?.results.find((item) => item.path === 'src/rulesets/phase-gates');
-
-  assert.equal(check?.exists, true);
-  assert.equal(check?.status, 'PASS');
-});
-
-test('GT-291 marks quality-thresholds WS1 path as implemented', () => {
-  const report = runReport();
-  const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
-  const check = ws1?.results.find((item) => item.path === 'src/rulesets/quality-thresholds');
-
-  assert.equal(check?.exists, true);
-  assert.equal(check?.status, 'PASS');
-});
+    assert.equal(check.exists, true);
+    assert.equal(check.status, 'PASS');
+  });
+}

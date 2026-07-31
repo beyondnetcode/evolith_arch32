@@ -73,14 +73,49 @@ jobs:
       - name: Validate docs
         run: node .harness/scripts/ci/01-validate-docs.mjs
 
+      # Here rather than beside their subjects, and the reason is the defect itself.
+      # `17-validate-knowledge-intake.mjs` runs in knowledge-intake.yml, but that
+      # workflow is `paths:`-filtered to `KI-*`/`SRC-*` files and the intake schema —
+      # so a pull request that changes the GUARD does not trigger it, and a self-test
+      # placed next to the guard would be unreachable in exactly the case it is for.
+      # The three `knowledge-okf-*` guards run in no workflow at all. All four are
+      # hermetic, so the required job is where they produce a signal.
+      - name: Self-tests for the knowledge intake and OKF guards
+        run: |
+          node --test .harness/scripts/ci/17-validate-knowledge-intake.test.mjs
+          node --test .harness/scripts/knowledge-okf-project.test.mjs
+          node --test .harness/scripts/knowledge-okf-standard-watch.test.mjs
+          node --test .harness/scripts/knowledge-okf-precommit-guard.test.mjs
+
       - name: Check bilingual parity
         run: node .harness/scripts/ci/04-check-bilingual-parity.mjs
+
+      # GT-620's negative fixtures for the language heuristic the step above depends
+      # on — including the two cases where it must DECLINE to judge. They ran in no
+      # workflow, so the heuristic that closed GT-620 was itself unguarded.
+      - name: Self-test for the bilingual language heuristic
+        run: node --test .harness/scripts/ci/suites/bilingual-suite.test.mjs
 
       - name: Validate semantic tracking
         run: node .harness/scripts/ci/08-validate-tracking.mjs
 
+      # Two files, one subject: both import `08-validate-tracking.mjs` directly. The
+      # 17 cases in the first are what GT-629 added when the guard learned to refuse an
+      # open row with no criteria at all; neither file was referenced anywhere.
+      - name: Self-tests for the semantic tracking guard
+        run: |
+          node --test .harness/scripts/ci/08-validate-tracking.test.mjs
+          node --test .harness/scripts/validate-tracking.test.mjs
+
       - name: Reconcile maturity evidence
         run: node .harness/scripts/ci/09-reconcile-maturity.mjs --check
+
+      # 21 cases over `09-reconcile-maturity.mjs`, including the GT-576 rule that a
+      # capability may not be marked Validated on an ADR citation alone and the GT-596
+      # ISO/IEC 33020 threshold rule. Both were closed with "ships with a negative
+      # self-test" as the evidence; the self-test ran nowhere.
+      - name: Self-test for the maturity reconciler
+        run: node --test .harness/scripts/reconcile-maturity.test.mjs
 
       # GT-627: the generated ADR-conformance corpus fell SEVEN rulesets behind
       # its own generator, and six of the seven were security standards
@@ -216,6 +251,15 @@ jobs:
       - name: Validate surface compatibility matrix
         run: node .harness/scripts/ci/20-validate-surface-compatibility.mjs
 
+      # All six cases were red — and had never once run. `setup()` wrote the fixture
+      # matrix to `reference/core/control-center/`, one directory above the `audits/`
+      # path the guard reads, into a directory it also never created: every case died
+      # in setup with ENOENT. Four of the six are negative cases asserting the guard's
+      # specific failure text, so re-arming the step above (see the note on it) was
+      # done with its self-test in this state.
+      - name: Self-test for the surface compatibility guard
+        run: node --test .harness/scripts/ci/20-validate-surface-compatibility.test.mjs
+
       # The governance suite (16 validators) previously existed ONLY behind
       # `ci-runner.mjs`, whose sole caller was `.husky/pre-commit` — and that hook
       # exits before reaching it whenever there is no TTY (every agent, script and
@@ -253,6 +297,22 @@ jobs:
       - name: Check coverage dashboard is up to date
         if: github.event_name == 'workflow_dispatch'
         run: node .harness/scripts/coverage-dashboard.mjs --check
+
+      # Deliberately NOT carrying the `workflow_dispatch` condition above it. That gate
+      # exists because generating the report needs a coverage run; these two need
+      # nothing but a tmp directory, and inheriting the condition would wire them into
+      # a job they almost never run in — which is the defect being closed, not a fix
+      # for it.
+      #
+      # Five of the seven coverage-dashboard cases were red. `coverage-dashboard.mjs`
+      # wrote its report with no `mkdirSync` for the parent, so off the real tree it
+      # printed a correct 100% report and then died on an unhandled ENOENT. Only the
+      # positive cases failed; the negative ones exit before the write and passed,
+      # which is what made it look like a scoring bug rather than a crash.
+      - name: Self-tests for the coverage dashboard
+        run: |
+          node --test .harness/scripts/coverage-dashboard.test.mjs
+          node --test .harness/scripts/lib/generated-doc-exclusions.test.mjs
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v7

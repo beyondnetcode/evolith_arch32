@@ -23,7 +23,7 @@ jest.mock('../../infrastructure/adapters/agent-registry.service', () => ({
 
 const mockFsExists = jest.fn();
 const mockFsReadJson = jest.fn();
-jest.mock('../../infrastructure/providers/node-filesystem.provider', () => ({
+jest.mock('@beyondnet/evolith-infra-providers', () => ({
   NodeFileSystemProvider: jest.fn().mockImplementation(() => ({
     createFileSystem: () => ({ exists: mockFsExists, readJson: mockFsReadJson }),
   })),

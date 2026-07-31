@@ -2,7 +2,7 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { randomUUID } from 'node:crypto';
-import { NodeFileSystemProvider } from '../../infrastructure/providers/node-filesystem.provider';
+import { NodeFileSystemProvider } from '@beyondnet/evolith-infra-providers';
 import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { AgentRegistryService, AgentInfo } from '../../infrastructure/adapters/agent-registry.service';
 import { buildAgentRuleset } from '@beyondnet/evolith-core-domain/application/agents/agent-ruleset-builder';

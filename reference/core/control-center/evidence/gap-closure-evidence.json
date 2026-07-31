@@ -8429,6 +8429,23 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-602",
+      "closedAt": "2026-07-30",
+      "closureCommit": "086111db",
+      "evidence": [
+        "src/packages/mcp-server/src/mcp/abac-rego-parity.spec.ts",
+        ".harness/scripts/compile-opa-wasm.mjs",
+        ".harness/scripts/generate-abac-tool-sets.mjs",
+        "src/rulesets/opa/abac-mcp-tool-access.rego",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-mcp test",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-607",
       "evidence": [
         "src/packages/agent-runtime/src/adapters/harness/harness-process.adapter.ts"

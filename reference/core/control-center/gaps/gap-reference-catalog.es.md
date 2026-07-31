@@ -7257,22 +7257,6 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Los conjuntos de herramientas del rego se generan desde el registro en vez de mantenerse a mano.
   - [x] CI falla cuando una herramienta existe en el registro TypeScript y no en la política compilada.
 
-#### GT-603
-
-**Título:** El ledger de turnos de agente está escrito, probado y sin registrar, y el actor no se puede tipar retroactivamente
-
-- **Propósito:** Hacer respondible la pregunta humano-versus-agente antes de que se acumule historia.
-- **Evidencia:** `AgentExecutionService.cs` valida que el alcance existe y está concedido, luego audita antes de ejecutar y aborta el turno si falla la escritura de auditoría; `AgentTurnAuditor.cs` registra alcances concedidos frente a usados y guarda la longitud del prompt, no su texto; `AgentExecutionTests.cs` lo cubre. `IAgentExecutionPort` aparece en cero registros de DI y cero endpoints, y `AssistantEndpoints.cs` pasa por `AgentRuntimeGateway` sin persistir nada. `AuditEntryProps.cs:11` declara `public Guid ActorId` sin `actor_type`, `agent_id`, `model_id` ni `session_id`.
-- **Impacto:** La afirmación diferenciadora del producto es hoy falsa en código que está al 90%. Y como `audit_entries` es append-only por trigger (migración `20260719202323`), toda fila escrita antes de que exista el discriminador queda permanentemente sin atribuir — es el único elemento del board que **caduca** en vez de acumular coste.
-- **Ficheros afectados:** `evolith_tracker` — `src/Tracker.Application/Integration/AgentExecution/*`, `DependencyInjection.cs`, `AssistantEndpoints.cs`, `AuditEntryProps.cs`, new EF Core migration
-- **Componente:** `Evolith Tracker` · **Criticidad:** P0 · **Complejidad:** M
-- **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
-- **Criterios de aceptación:**
-  - [ ] `IAgentExecutionPort` e `IAgentTurnAuditor` quedan registrados y `AssistantEndpoints` pasa por ellos.
-  - [ ] `audit_entries` incorpora `actor_type`, `agent_id`, `model_id` y `session_id`, con `actor_type` no nulo en filas nuevas.
-  - [ ] `audit-trail.robot.mjs` verifica una entrada atribuida a agente de punta a punta.
-  - [ ] La migración entra **antes** de que cualquier despliegue en producción escriba filas de auditoría.
-
 #### GT-604
 
 **Título:** Ninguna superficie escribe evidencia en el Tracker
@@ -8100,19 +8084,6 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Un guard caza una ruta CONSTRUIDA que no existe, no solo una literal — el hueco que `40-validate-path-literals` no ve.
 
 **Criterio 3 CERRADO el 2026-07-29 — y la primera corrida del guard estuvo casi toda equivocada, que es justo el hallazgo.** `47-validate-joined-paths` resuelve cada `path.join(<base que es la raíz del repo>, 'a', 'b')` cuyos segmentos son literales y exige que el destino exista. Reportó **19 rutas rotas; solo 3 eran defectos.** Cada una de las otras 16 habría EMPEORADO el código si se "arreglaba", y las tres razones quedan ahora modeladas en vez de despachadas. Seis tenían base `root`, que en los evaluadores es un PARÁMETRO que nombra el workspace del cliente bajo evaluación: `path.join(root, 'agent.config.json')` pregunta por SU repositorio, y corregirlo habría roto la evaluación de todos los satélites. Nueve eran miembros de CADENAS DE FALLBACK: `pattern-catalog` y `topology-catalog` prueban cuatro layouts cada uno y son correctos cuando uno resuelve; exigir los cuatro obligaría a tener todos los layouts históricos a la vez, y la forma natural de callar eso es borrar los fallbacks, rompiendo las imágenes ya desplegadas. Una era una PROHIBICIÓN: `evalNoRootTopologies` FALLA cuando `topologies/` existe, así que su ausencia es la regla cumpliéndose, y corregir la ruta habría invertido la regla. Las cadenas se detectan ahora estructuralmente (hermanos en un literal de array, o las dos ramas de un ternario); las prohibiciones no pueden detectarse — ninguna sintaxis distingue "debe existir" de "no debe existir" — así que se declaran con una razón escrita. **Los tres defectos reales:** `opa-evaluator.ts` resolvía tanto `policy.wasm` como los esquemas de entrada sin el prefijo `src/`, la misma clase que el P0 de arriba e igual de fail-closed; `satellite-upgrade-diff.ts` sondeaba `rulesets` detrás de un return temprano, con lo que un upgrade de satélite reportaba cero cambios de rulesets, indistinguible de no tener ninguno; y `artifact-path-resolver.ts` era el único rezagado entre veinte hermanos, nombrando un `adr-matrix.json` que no existe en ningún layout. Se entrega con 11 fixtures negativas que cubren los dos suelos anti-vacuos, y `43-validate-guard-negative-fixtures` lo OBSERVÓ ponerse en rojo (36 de 36 guards) en vez de aceptar una declaración. Una debilidad conocida queda anotada en su cabecera en lugar de escondida: dos joins como ARGUMENTOS hermanos de una función se puntúan con indulgencia como cadena, que es la dirección conservadora para un guard cuyos falsos positivos empujan a romper código que funciona. core-domain 1367/1367, mcp-server 434/434, core-api 179/179, CLI 1436/1436.
-
-#### GT-631
-
-**Title:** El Tracker no ha re-fijado el contrato de evaluación que el Core ya publica
-
-- **Purpose:** Cerrar la mitad del consumidor, para que un cambio de forma del lado Core falle en ambos lados y no solo en el nuestro.
-- **Evidence:** **Extraído de [`GT-573`](./gap-reference-catalog.es.md#gt-573) para que su mitad cross-repo se siga en vez de absorberse en un cierre.** La mitad del Core del tercer criterio de GT-573 está hecha: `evaluation-context` y `evaluation-result` están fijados en `MACHINE_CONTRACT_SET` junto a `gate-evidence` y `output-envelope`, así que un cambio en cualquiera de esas formas ya rompe `10-validate-contract-conformance` en vez de llegar en silencio a los consumidores. Lo que queda está en otro repositorio y no se puede hacer desde aquí: el **Tracker** debe re-fijar esos dos esquemas en su propio `contracts/evolith-core-contracts.json` con su sha256, enlazar las tres fixtures publicadas (`EVALUATION_RESULT_PASS/FAIL/OPA_GATE_FAIL`) en un test de binding de DTOs, quitar o documentar `resolvedTopology` (que el resultado canónico nunca llevó), renombrar su `phase` de gate a `phaseId`, y eliminar su caída a `SKIPPED` para un payload que trae un `overallVerdict` no vacío. Hasta entonces, un cambio de forma del lado Core se caza aquí y sigue sorprendiendo al consumidor.
-- **Component:** `Evolith Tracker` · **Criticality:** P1 · **Complexity:** S
-- **Provenance:** Extraído de GT-573 el 2026-07-28, al cerrarse su mitad del Core.
-- **Acceptance criteria:**
-  - [ ] El Tracker fija `evaluation-context` y `evaluation-result` con su sha256 en su propio conjunto de contratos, y su CI falla cuando cualquiera deriva.
-  - [ ] Un test de binding de DTOs consume las tres fixtures publicadas y comprueba `Passed=false` con gates no vacíos en el caso de FAIL por puerta OPA.
-  - [ ] Se resuelven `resolvedTopology` y el desajuste `phase`/`phaseId` del gate, y se elimina la caída a `SKIPPED` para un `overallVerdict` no vacío.
 
 #### GT-630
 

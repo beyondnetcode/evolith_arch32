@@ -17,7 +17,7 @@ import {
   ArchitectureDriftService
 } from '@beyondnet/evolith-core-domain/application/validators';
 import { IFileSystem, ILogger, IConfigParser, ICatalogLoader } from '@beyondnet/evolith-core-domain/domain/interfaces';
-import { DiskRulesetRepository } from '@beyondnet/evolith-infra-providers';
+import { CachingRulesetRepository, DiskRulesetRepository } from '@beyondnet/evolith-infra-providers';
 import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService, PatternCatalogService } from '@beyondnet/evolith-core-domain/application/services';
 
 const CoreDomainProviders = [
@@ -34,8 +34,20 @@ const CoreDomainProviders = [
     useFactory: () => new YamlConfigParserProvider().createConfigParser('yaml'),
   },
   {
+    // GT-646: core-api is a long-running process, so the corpus is loaded ONCE
+    // and reused. Before this, `RuleEvaluationEngine.discoverAndEvaluate` called
+    // `loadAllRulesets` on every `POST /api/v1/evaluate` — a full directory walk
+    // plus an Ajv pass over ~176 files, all synchronous CPU work that blocks the
+    // event loop. It is why a `GET /health` measured 498 ms end-to-end at 1 VU
+    // while its own handler reported `durationMs=0`.
+    //
+    // The decorator, not the disk repository, holds the cache: the CLI is a
+    // one-shot process that must keep re-reading disk between invocations, and
+    // caching inside `DiskRulesetRepository` would have made "load once" a
+    // property of the adapter instead of a property of THIS deployment.
     provide: 'IRulesetRepository',
-    useFactory: (fs: IFileSystem, logger: ILogger) => new DiskRulesetRepository(fs, logger),
+    useFactory: (fs: IFileSystem, logger: ILogger) =>
+      new CachingRulesetRepository(new DiskRulesetRepository(fs, logger), logger),
     inject: ['IFileSystem', 'ILogger'],
   },
   {

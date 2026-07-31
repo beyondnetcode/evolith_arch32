@@ -42,6 +42,17 @@ export interface StructuredGate {
  * Schema: reference/governance/sdlc/sdlc-gate.schema.json
  */
 export class SdlcDataLoaderService {
+  /**
+   * GT-646 — the phase index, read at most once per instance.
+   *
+   * `loadAllGates()` calls `loadAllPhases()` and then `loadGatesForPhase()` per
+   * phase, and each of those calls `loadPhase()` → `loadAllPhases()` again: one
+   * directory scan and N JSON parses turned into N+1 of them, per evaluation.
+   * The data is a fixed on-disk index, so re-reading it inside a single load
+   * cannot produce a different answer — only more blocking I/O.
+   */
+  private phases?: Promise<StructuredPhase[]>;
+
   constructor(
     private readonly fs: IFileSystem,
     private readonly logger: ILogger,
@@ -57,6 +68,19 @@ export class SdlcDataLoaderService {
   }
 
   async loadAllPhases(): Promise<StructuredPhase[]> {
+    // Memoize the promise, not the result: `loadAllGates` fans out over phases
+    // and would otherwise start several scans before the first one resolved.
+    // A rejected read is evicted so a transient I/O fault is not made permanent.
+    if (!this.phases) {
+      this.phases = this.readAllPhases();
+      this.phases.catch(() => {
+        this.phases = undefined;
+      });
+    }
+    return [...(await this.phases)];
+  }
+
+  private async readAllPhases(): Promise<StructuredPhase[]> {
     const dir = this.phasesDir;
     if (!(await this.fs.exists(dir))) {
       this.logger.warn(`Phases directory not found: ${dir}`);

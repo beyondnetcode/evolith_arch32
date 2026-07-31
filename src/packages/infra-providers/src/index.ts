@@ -6,6 +6,8 @@ export type { NodeWorkspaceMaterializerOptions } from './workspace-materializer.
 export { NestLoggerProvider, ConsoleLoggerProvider, NoOpLoggerProvider } from './logger.provider';
 export { YamlConfigParserProvider, JsonConfigParserProvider } from './config-parser.provider';
 export { DiskRulesetRepository, RulesetsNotFoundError } from './disk-ruleset.repository';
+// GT-646 — the corpus is deployment state; a long-running surface must load it once.
+export { CachingRulesetRepository } from './caching-ruleset.repository';
 export { WebhookAdapter } from './webhook.adapter';
 export { FileWaiverStore } from './file-waiver-store.provider';
 export {

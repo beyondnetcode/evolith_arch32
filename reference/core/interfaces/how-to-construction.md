@@ -115,7 +115,7 @@ Response (captured live):
     "rulesChecked": "<n>",
     "rulesSkipped": "<n>",
     "rulesErrored": 0,
-    "rulesTotal": 177,
+    "rulesTotal": 181,
     "skippedRuleIds": [
       "ACL-02",
       "ACL-03",
@@ -226,7 +226,7 @@ Response (captured live):
     "rulesChecked": "<n>",
     "rulesSkipped": "<n>",
     "rulesErrored": 0,
-    "rulesTotal": 177,
+    "rulesTotal": 181,
     "skippedRuleIds": [
       "ACL-02",
       "ACL-03",
@@ -331,7 +331,7 @@ Response (captured live):
     "rulesChecked": "<n>",
     "rulesSkipped": "<n>",
     "rulesErrored": 0,
-    "rulesTotal": 177,
+    "rulesTotal": 181,
     "skippedRuleIds": [
       "ACL-02",
       "ACL-03",

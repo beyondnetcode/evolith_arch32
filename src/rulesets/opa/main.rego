@@ -27,6 +27,7 @@ import data.evolith.multi_runtime.violations as runt_violations
 import data.evolith.multi_tenancy.violations as mtn_violations
 import data.evolith.open_core_boundary.violations as ocb_violations
 import data.evolith.phase_gates.violations as pg_violations
+import data.evolith.probabilistic_evidence_admissibility.violations as pea_violations
 import data.evolith.protocol_selection.violations as prot_violations
 import data.evolith.repository_taxonomy.violations as repo_tax_violations
 import data.evolith.satellite_contracts.violations as svc_violations
@@ -163,4 +164,15 @@ violations contains v if {
 # `input.core.cli`, so a satellite evaluation is unaffected.
 violations contains v if {
 	v := cli_exit_violations[_]
+}
+
+# GT-584 — PEA-01..04, whether a PROBABILISTIC quality signal may reach a blocking
+# verdict. Aggregated HERE and not only shipped as a package, because
+# `compile-opa-wasm.mjs` builds exactly two entrypoints (`evolith/main/violations`
+# and `evolith/abac/violations`): a policy that is not reachable from one of them
+# passes `opa test` and then decides nothing at runtime — a rule present in the
+# native engine and absent from OPA, which is the R-25 defect GT-602 was registered
+# for. Silent unless the caller declares `input.qualityEvidence`.
+violations contains v if {
+	v := pea_violations[_]
 }

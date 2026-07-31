@@ -12,21 +12,21 @@
     "weaknessCount": 138
   },
   "corpus": {
-    "rulesetFiles": 175,
-    "rules": 391,
+    "rulesetFiles": 176,
+    "rules": 395,
     "note": "Files that carry gate definitions or topology recommendations rather than conformance rules contribute no rows: architecture/topology-recommendation.rules.json and sdlc/phase-gates.rules.json."
   },
   "summary": {
-    "rules": 391,
+    "rules": 395,
     "mappedToIso5055": 37,
     "mappedDirect": 8,
     "mappedPartial": 29,
-    "noInternationalEquivalent": 354,
-    "adoptedFraction": 0.0946,
+    "noInternationalEquivalent": 358,
+    "adoptedFraction": 0.0937,
     "analyserAdoptable": 42,
     "analyserAdoptablePartial": 23,
-    "analyserAdoptableFraction": 0.1074,
-    "analyserAdoptableFractionIncludingPartial": 0.1662,
+    "analyserAdoptableFraction": 0.1063,
+    "analyserAdoptableFractionIncludingPartial": 0.1646,
     "byClass": {
       "architecture-decision": {
         "rules": 162,
@@ -49,7 +49,7 @@
         "adoptable": 0
       },
       "governance": {
-        "rules": 51,
+        "rules": 55,
         "mapped": 1,
         "adoptable": 0
       },
@@ -168,7 +168,7 @@
         "adoptablePartialRuleIds": []
       },
       "native-handler": {
-        "rules": 154,
+        "rules": 158,
         "mappedToIso5055": 19,
         "analyserAdoptable": 28,
         "analyserAdoptablePartial": 11,
@@ -5189,6 +5189,82 @@
       "ruleId": "EVD-04",
       "sourceFile": "evidence/evidence-manifest.rules.json",
       "title": "Evidence Declares Retention Expectation",
+      "severity": "SHOULD",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "PEA-01",
+      "sourceFile": "evidence/probabilistic-evidence-admissibility.rules.json",
+      "title": "Probabilistic Evidence Declares A Measured Error Rate Before It May Block",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "PEA-02",
+      "sourceFile": "evidence/probabilistic-evidence-admissibility.rules.json",
+      "title": "A Measured Error Rate Below The Declared Floor Degrades To Advisory",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "PEA-03",
+      "sourceFile": "evidence/probabilistic-evidence-admissibility.rules.json",
+      "title": "A Stale Or Unreadable Measurement Degrades To Advisory",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "PEA-04",
+      "sourceFile": "evidence/probabilistic-evidence-admissibility.rules.json",
+      "title": "An Admitted Measurement Says How It Was Obtained",
       "severity": "SHOULD",
       "ruleClass": "governance",
       "iso5055": {

@@ -127,7 +127,91 @@
         "style": { "type": "string" },
         "components": { "type": "array", "items": { "type": "string" } },
         "decisionRefs": { "type": "array", "items": { "type": "string" } },
-        "constraints": { "type": "array", "items": { "type": "string" } }
+        "constraints": { "type": "array", "items": { "type": "string" } },
+        "symbolBoundaries": {
+          "description": "GT-589. Boundaries declared over SYMBOLS rather than over files. Policy, evaluated against the structural facts in `repoFacts`; ignored when no repoFacts are sent.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "fromModules", "forbiddenSymbolModules"],
+            "properties": {
+              "id": { "type": "string" },
+              "fromModules": { "type": "array", "items": { "type": "string" } },
+              "forbiddenSymbolModules": { "type": "array", "items": { "type": "string" } },
+              "severity": { "type": "string", "enum": ["error", "warning"] },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "repoFacts": {
+      "description": "GT-589 / ADR-0101. Canonical structural fact base (module graph + symbol graph) produced OUTSIDE the Core by an indexer and delivered INLINE, the same shape as qualitySignals (ADR-0111) and OverlayFileSystem source files (ADR-0080). The Core queries it and never runs an indexer or retains it.",
+      "type": "object",
+      "required": ["schemaVersion", "contentHash", "provenance", "modules", "imports", "symbols", "references"],
+      "properties": {
+        "schemaVersion": { "type": "string" },
+        "contentHash": {
+          "description": "Digest of the canonical form, computed by the EXTRACTOR. Opaque to the Core: echoed as provenance, never recomputed.",
+          "type": "string"
+        },
+        "provenance": {
+          "type": "object",
+          "required": ["extractedBy", "extractorVersion", "indexer", "indexerVersion", "extractedAt"],
+          "properties": {
+            "extractedBy": { "type": "string" },
+            "extractorVersion": { "type": "string" },
+            "indexer": { "type": "string" },
+            "indexerVersion": { "type": "string" },
+            "extractedAt": { "type": "string", "format": "date-time" },
+            "revision": { "type": "string" }
+          }
+        },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "properties": { "id": { "type": "string" }, "layer": { "type": "string" } }
+          }
+        },
+        "imports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["from", "to", "typeOnly"],
+            "properties": {
+              "from": { "type": "string" },
+              "to": { "type": "string" },
+              "typeOnly": { "type": "boolean" }
+            }
+          }
+        },
+        "symbols": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "kind", "moduleId", "exported"],
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "kind": {
+                "type": "string",
+                "enum": ["class", "interface", "function", "method", "variable", "type", "enum", "unknown"]
+              },
+              "moduleId": { "type": "string" },
+              "exported": { "type": "boolean" }
+            }
+          }
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["fromSymbol", "toSymbol"],
+            "properties": { "fromSymbol": { "type": "string" }, "toSymbol": { "type": "string" } }
+          }
+        }
       }
     },
     "externalReferences": { "type": "array", "items": { "$ref": "#/definitions/externalReference" } },

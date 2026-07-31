@@ -5,6 +5,11 @@ import { existsSync, mkdirSync, writeFileSync, copyFileSync, renameSync, unlinkS
 import { join, dirname } from 'path';
 import { platform, arch } from 'os';
 import https from 'https';
+// GT-591: the version is NOT spelled here. It used to be — a `v0.65.0` literal in the
+// download URL below, a second owner of a pin whose first owner is `opa-runtime.mjs`.
+// Two spellings of one pin is a drift generator, and `53-validate-opa-pin.mjs` now
+// fails on any OPA version literal that is not this constant.
+import { OPA_VERSION } from './opa-runtime.mjs';
 
 const rootDir = process.cwd();
 const harnessBinDir = join(rootDir, '.harness', 'bin');
@@ -38,20 +43,36 @@ function getOpaUrl() {
     throw new Error(`Unsupported architecture: ${osArch}`);
   }
 
-  return `https://openpolicyagent.org/downloads/v0.65.0/opa_${opaOs}_${opaArch}${osPlatform === 'win32' ? '.exe' : ''}`;
+  return `https://openpolicyagent.org/downloads/v${OPA_VERSION}/opa_${opaOs}_${opaArch}${osPlatform === 'win32' ? '.exe' : ''}`;
 }
 
-/** A cached binary is only reusable if it actually executes on THIS platform. */
+/**
+ * A cached binary is only reusable if it executes on THIS platform AND is the
+ * pinned version.
+ *
+ * GT-591: the version half is new, and it is the half that matters after a bump.
+ * `.harness/bin/opa` is gitignored and long-lived, so every machine that ran this
+ * script before the pin moved still holds the OLD binary — which executes fine and
+ * was therefore accepted. The bundle would then be compiled by an unpinned
+ * compiler, on that machine only, forever, and nothing would say so. A pin that
+ * only governs the download and not the cache is not a pin.
+ */
 function opaRunsHere() {
   if (!existsSync(opaBinPath)) return false;
+  let reported;
   try {
-    execSync(`${opaBinPath} version`, { stdio: 'ignore' });
-    return true;
+    reported = execSync(`${opaBinPath} version`, { encoding: 'utf8' });
   } catch {
     // Wrong-arch (e.g. a committed macOS binary on a linux runner → "Exec format
     // error") or corrupt → drop it and re-download the correct one.
     return false;
   }
+  if (!reported.includes(`Version: ${OPA_VERSION}`)) {
+    const found = /Version:\s*(\S+)/.exec(reported)?.[1] ?? 'unknown';
+    console.log(`Cached OPA at ${opaBinPath} is ${found}, pin is ${OPA_VERSION} — re-downloading.`);
+    return false;
+  }
+  return true;
 }
 
 async function downloadOpa() {

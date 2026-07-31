@@ -7864,11 +7864,12 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Component:** `CLI` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Encontrado el 2026-07-30 al cerrar [`GT-641`](./gap-reference-catalog.es.md#gt-641): la suite e2e del CLI dejó tres archivos versionados sucios, y rastrear qué spec lo hacía llevó a la bandera y no al test. Registrado aparte porque el síntoma de higiene de tests es aguas abajo de un defecto de producto — arreglar el directorio de trabajo del spec escondería el defecto y dejaría a `--dry-run` mintiendo a los usuarios.
 - **Acceptance criteria:**
-  - [ ] `agents install --dry-run` no realiza ninguna escritura: reporta lo que crearía y el árbol de trabajo queda idéntico byte a byte, verificado afirmando un `git status` limpio y no leyendo el código.
-  - [ ] Los tres artefactos commiteados bajo `src/sdk/cli/rulesets/agents/` se eliminan o se sacan de los rulesets versionados — la respuesta de un mock de prompts no es dato de producto.
-  - [ ] La suite e2e corre contra un directorio de trabajo temporal, de modo que un defecto futuro de escritura rompa un test en vez de editar el repositorio en silencio.
-  - [ ] Se revisa cada otra declaración de `--dry-run` del CLI en busca de lector, y el resultado del barrido queda registrado — incluidos los comandos que resulten correctos, porque "miramos" es la parte que no se reproduce desde una lista fija.
-  - [ ] Existe un oráculo que pregunta si una bandera sin efecto no tuvo efecto, de modo que quede cubierta la clase y no esta instancia.
+  - [x] `agents install --dry-run` no realiza ninguna escritura. La rama seca no llama nunca al escritor, en vez de llamarlo a través de un filesystem inerte: una rama que no puede alcanzar al escritor no puede regresar cuando el escritor gana una llamada nueva. Reporta las rutas que habría creado mediante un nuevo `planInstall`, que usa el propio escritor, así que el reporte no puede desviarse del layout.
+  - [x] La ruta del menú reenvía las opciones del llamador. `evolith agents --dry-run` sin subcomando las descartaba y escribía igual — justo la ruta que toma quien duda lo bastante como para querer un simulacro.
+  - [x] Los tres artefactos commiteados bajo `src/sdk/cli/rulesets/agents/` quedan eliminados. El registro contenía exactamente un agente, `test-value`, así que el archivo entero era residuo de test y no dato de producto con residuo dentro.
+  - [x] La suite e2e corre en un directorio temporal y su oráculo afirma que el disco no cambió, con un caso de contraste de que una instalación real SÍ escribe — si no, la afirmación del simulacro también pasaría si install se hubiera roto. Módulo y directorio por test, porque una instancia compartida filtraba las opciones parseadas de commander entre corridas y hacía parecer roto el arreglo.
+  - [x] Barrido de cada declaración de `--dry-run` del CLI, registrado incluidos los correctos: `init` (cambia a `DryRunFileSystem`), `upgrade`, `adr`, `scaffold`, `docs`, `fixtures` y `generate-domain` condicionan sus escrituras a la bandera. `agents` era la única declaración sin lector.
+  - [ ] Existe un oráculo que pregunta si una bandera sin efecto no tuvo efecto, de modo que quede cubierta la CLASE y no esta instancia. No construido: el tester cross-superficie compara respuestas, y un contrato cuyo contenido entero es la ausencia de un efecto necesita que compare también el estado. Hasta entonces, la siguiente bandera así se encuentra a mano, como se encontró esta.
 
 #### GT-642
 

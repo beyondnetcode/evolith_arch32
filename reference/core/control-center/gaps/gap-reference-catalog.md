@@ -7959,11 +7959,12 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `CLI` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Found on 2026-07-30 while closing [`GT-641`](./gap-reference-catalog.md#gt-641): the CLI e2e suite left three tracked files dirty, and tracing which spec did it led to the flag rather than to the test. Registered separately because the test-hygiene symptom is downstream of a product defect — fixing the spec's working directory would hide the defect and leave `--dry-run` lying to users.
 - **Acceptance criteria:**
-  - [ ] `agents install --dry-run` performs no write: it reports what it would create and the working tree is byte-identical afterwards, verified by asserting a clean `git status` rather than by reading the code.
-  - [ ] The three committed artifacts under `src/sdk/cli/rulesets/agents/` are removed or moved out of the versioned rulesets — a prompt mock's answer is not product data.
-  - [ ] The e2e suite runs against a temporary working directory, so a future write-through defect fails a test instead of quietly editing the repository.
-  - [ ] Every other `--dry-run` declaration in the CLI is checked for a reader, and the survey result is recorded — including the commands that turn out correct, since "we looked" is the part that is not repeatable from a fixed list.
-  - [ ] An oracle exists that asks whether a no-effect flag had no effect, so the class is covered rather than this instance.
+  - [x] `agents install --dry-run` performs no write. The dry branch never calls the writer, rather than calling it through a no-op filesystem: a branch that cannot reach the writer cannot regress when the writer grows a new call. It reports the paths it would have created through a new `planInstall`, which the writer itself uses, so the report cannot drift from the layout.
+  - [x] The menu path forwards the caller's options. `evolith agents --dry-run` with no subcommand dropped them and wrote anyway — the path a user is most likely to take when they are unsure enough to want a dry run.
+  - [x] The three committed artifacts under `src/sdk/cli/rulesets/agents/` are deleted. The registry held exactly one agent, `test-value`, so the whole file was test residue rather than product data with residue in it.
+  - [x] The e2e suite runs in a temp directory and its oracle asserts the disk is unchanged, with a contrast case that a real install DOES write — otherwise the dry-run assertion would also pass if install had simply broken. Per-test module and directory, because a shared instance leaked commander's parsed options between runs and made the fix look broken.
+  - [x] Survey of every `--dry-run` declaration in the CLI, recorded including the correct ones: `init` (swaps in `DryRunFileSystem`), `upgrade`, `adr`, `scaffold`, `docs`, `fixtures`, `generate-domain` all gate their writes on it. `agents` was the only declaration with no reader.
+  - [ ] An oracle exists that asks whether a no-effect flag had no effect, so the CLASS is covered rather than this instance. Not built: the cross-surface tester compares replies, and a contract whose whole content is the absence of an effect needs it to compare state as well. Until then the next such flag is found by hand, as this one was.
 
 #### GT-642
 

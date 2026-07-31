@@ -3,7 +3,7 @@ import { WorkflowEngine, PhaseService } from '../../domain/services';
 import { WorkflowDefinition } from '../../domain/ports/workflow-definition.port';
 import { IWebhookNotifier } from '../ports/webhook-notifier.port';
 import { PhaseGateValidatorService } from '../validators/phase-gate-validator.service';
-import { PhaseTransitionResult } from '../services/index';
+import { PhaseTransitionResult } from '../services/use-case.types';
 import type { GateResult } from '../../domain/entities';
 
 export class PhaseTransitionUseCase {

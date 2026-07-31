@@ -8308,6 +8308,18 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-580",
+      "closedAt": "2026-07-31",
+      "closureCommit": "2909d49b",
+      "evidence": [
+        "src/sdk/cli/src/infrastructure/cli/machine-channel.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace src/sdk/cli test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-581",
       "evidence": [
         "src/packages/mcp-server/src/common/tool-output-schema.ts",
@@ -8337,6 +8349,32 @@
       ],
       "closedAt": "2026-07-28",
       "closureCommit": "e23721f5",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-587",
+      "closedAt": "2026-07-31",
+      "closureCommit": "1adece05",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/telemetry/semconv.ts",
+        ".harness/scripts/ci/51-validate-semconv-pin.mjs"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/51-validate-semconv-pin.test.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-589",
+      "closedAt": "2026-07-31",
+      "closureCommit": "b490689a",
+      "evidence": [
+        "src/packages/repo-facts/src/index.ts",
+        "src/packages/core-domain/src/evaluation/contracts/repo-facts.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-repo-facts test"
+      ],
       "dependencyDisposition": "none"
     },
     {
@@ -8397,6 +8435,19 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-597",
+      "closedAt": "2026-07-31",
+      "closureCommit": "963c410e",
+      "evidence": [
+        ".harness/scripts/ci/52-validate-scorecard-regression.mjs",
+        ".harness/security/scorecard-baseline.json"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/52-validate-scorecard-regression.test.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-598",
       "evidence": [
         "src/rulesets/standards/iso-5055-mapping.json",
@@ -8446,6 +8497,31 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-604",
+      "closedAt": "2026-07-31",
+      "closureCommit": "6f3941e1",
+      "evidence": [
+        "src/packages/infra-providers/src/tracker/evaluation-ingest.client.ts",
+        "src/packages/contracts/src/ingest/evaluation-ingest.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-infra-providers test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-606",
+      "closedAt": "2026-07-31",
+      "closureCommit": "ea5b874b",
+      "evidence": [
+        "src/packages/mcp-server/src/mcp/workspace-concurrency.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-mcp test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-607",
       "evidence": [
         "src/packages/agent-runtime/src/adapters/harness/harness-process.adapter.ts"
@@ -8457,6 +8533,19 @@
       ],
       "closedAt": "2026-07-28",
       "closureCommit": "c438b801",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-608",
+      "closedAt": "2026-07-31",
+      "closureCommit": "d7a87904",
+      "evidence": [
+        "src/apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts",
+        "src/apps/agent-runtime-api/src/agent-runtime/hitl-approval-tracker.integration.spec.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-agent-runtime test"
+      ],
       "dependencyDisposition": "none"
     },
     {
@@ -8526,6 +8615,54 @@
       ],
       "closedAt": "2026-07-28",
       "closureCommit": "caf5fb97",
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-614",
+      "closedAt": "2026-07-31",
+      "closureCommit": "8a5c2f0f",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/kind-evaluators.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-core-domain test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-615",
+      "closedAt": "2026-07-31",
+      "closureCommit": "8d9007a",
+      "evidence": [
+        "reference/core/control-center/opportunities/tracker-handover-gt615-gt617.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-616",
+      "closedAt": "2026-07-31",
+      "closureCommit": "fce6505",
+      "evidence": [
+        "reference/core/control-center/opportunities/tracker-handover-gt615-gt617.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-617",
+      "closedAt": "2026-07-31",
+      "closureCommit": "fce6505",
+      "evidence": [
+        "reference/core/control-center/opportunities/tracker-handover-gt615-gt617.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {

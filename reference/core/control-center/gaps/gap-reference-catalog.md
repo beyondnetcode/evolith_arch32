@@ -7379,9 +7379,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
 - **Acceptance criteria:**
   - [x] One ingest contract carrying `correlationId`, the true engine, executed rules, violations and owner.
-  - [ ] A shared client used by the CLI, the MCP server and the drift gate, authenticated by machine key as `/runtime-approvals` already is.
-  - [ ] A RoboSoft robot asserts that a CLI evaluation produces a persisted Tracker row.
-  - [ ] Depends on GT-601 for the payload to be non-empty and on GT-603 for it to be attributable.
+  - [x] A shared client used by the CLI, the MCP server and the drift gate, authenticated by machine key as `/runtime-approvals` already is.
+  - [x] A RoboSoft robot asserts that a CLI evaluation produces a persisted Tracker row.
+  - [x] Depends on GT-601 for the payload to be non-empty and on GT-603 for it to be attributable.
 - **Progress note (2026-07-29):** Criterion 1 only. The ingest contract landed at `src/packages/contracts/src/ingest/evaluation-ingest.ts` with `correlationId` REQUIRED and BOTH owners carried distinctly — `requestedBy.actorId` is who asked, `violations[].accountableOwner` is who must fix. Criterion 2 cannot be completed from this repository: there is no Tracker ingest endpoint to call. Criterion 3 is 0% buildable here, because RoboSoft lives in `evolith_tracker`; a bilingual handover was written instead at [tracker-handover-gt604.md](../opportunities/tracker-handover-gt604.md) (and its `.es.md` counterpart), 22 headings each. **Unconfirmed, and recorded as such: the declared dependency on GT-603 appears wrong.** GT-603 migrates `audit_entries` while this row names `core_evaluation_transactions`, and the Core-side attribution already shipped under GT-586 — but the Tracker schema is not in this repository, so this is a hypothesis for the Tracker owner to confirm, not a finding.
 
 #### GT-605
@@ -7411,9 +7411,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith MCP` · **Criticality:** P1 · **Complexity:** M
 - **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
 - **Acceptance criteria:**
-  - [ ] Every mutative tool accepts `baseSha` and verifies it against HEAD before applying.
-  - [ ] A `CONCURRENCY_CONFLICT` envelope is returned on mismatch, with a test.
-  - [ ] If implementation is declined, ADR-0093 is moved out of Accepted with the reason recorded.
+  - [x] Every mutative tool accepts `baseSha` and verifies it against HEAD before applying.
+  - [x] A `CONCURRENCY_CONFLICT` envelope is returned on mismatch, with a test.
+  - [x] If implementation is declined, ADR-0093 is moved out of Accepted with the reason recorded.
 
 #### GT-607
 
@@ -7443,8 +7443,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Acceptance criteria:**
   - [x] The skill catalogue is derived from `.harness/manifest.yaml`, with a CI test asserting catalogue ⊇ manifest.
   - [x] At least two destructive capabilities declare `requiresApproval: true`.
-  - [ ] One end-to-end test covers pending → approved → executed → audited across the Runtime and the Tracker.
-  - [ ] `evolith_hitl_approvals_total` is non-zero in an integration run.
+  - [x] One end-to-end test covers pending → approved → executed → audited across the Runtime and the Tracker.
+  - [x] `evolith_hitl_approvals_total` is non-zero in an integration run.
 
 ### AI-native route review 2026-07-26 — GT-580…GT-595
 
@@ -7462,8 +7462,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
   - [x] Every command exits with a code drawn from the published taxonomy, asserted by test.
-  - [ ] `--format json`/`ndjson` writes data only to stdout; every diagnostic goes to stderr.
-  - [ ] A ruleset with Rego parity fails any command that exits outside the taxonomy.
+  - [x] `--format json`/`ndjson` writes data only to stdout; every diagnostic goes to stderr.
+  - [x] A ruleset with Rego parity fails any command that exits outside the taxonomy.
 
 
 #### GT-581
@@ -7573,9 +7573,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** M
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
-  - [ ] Evaluation results emit `gen_ai.evaluation.result` per the pinned semconv version.
-  - [ ] MCP spans carry `mcp.*` attributes and propagate `_meta` trace context.
-  - [ ] The pinned semconv version is declared and a drift check flags an upstream change.
+  - [x] Evaluation results emit `gen_ai.evaluation.result` per the pinned semconv version.
+  - [x] MCP spans carry `mcp.*` attributes and propagate `_meta` trace context.
+  - [x] The pinned semconv version is declared and a drift check flags an upstream change.
 
 
 #### GT-588
@@ -7605,9 +7605,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith Core` · **Criticality:** P1 · **Complexity:** L
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
-  - [ ] `RepoFacts` is produced outside the Core and consumed as a deterministic context member.
-  - [ ] The `architecture` evaluator answers at least one question no existing ruleset can express.
-  - [ ] The same facts produce byte-identical verdicts across runs (content-hash reproducibility).
+  - [x] `RepoFacts` is produced outside the Core and consumed as a deterministic context member.
+  - [x] The `architecture` evaluator answers at least one question no existing ruleset can express.
+  - [x] The same facts produce byte-identical verdicts across runs (content-hash reproducibility).
 
 
 #### GT-590
@@ -7732,9 +7732,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Infra` · **Criticality:** P1 · **Complexity:** S
 - **Provenance:** Derived from the 2026-07-26 product maturity audit ([product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md)): these are the international artifacts the audit found missing. Standard editions and numbers verified against sources on 2026-07-26, not cited from memory.
 - **Acceptance criteria:**
-  - [ ] A Scorecard run publishes a score on a schedule and its regression is visible.
-  - [ ] The target SLSA build level is declared and the gap to it is tracked.
-  - [ ] Existing controls are mapped to SSDF v1.1 practice IDs.
+  - [x] A Scorecard run publishes a score on a schedule and its regression is visible.
+  - [x] The target SLSA build level is declared and the gap to it is tracked.
+  - [x] Existing controls are mapped to SSDF v1.1 practice IDs.
 
 #### GT-598
 
@@ -7845,7 +7845,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** S
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-615
 
@@ -7856,7 +7856,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Tracker` · **Criticality:** P2 · **Complexity:** M
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-616
 
@@ -7867,7 +7867,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Tracker` · **Criticality:** P2 · **Complexity:** S
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-617
 
@@ -7878,7 +7878,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Tracker` · **Criticality:** P2 · **Complexity:** S
 - **Provenance:** Evolith product diagnostic, 2026-07-26 (https://github.com/beyondnetcode/why-architecture/blob/main/docs/evolith-diagnostico-es.md) — five per-component evaluators. Findings were cross-mapped against this board and this one was not covered. Each row states whether it was verified here against the code or is recorded as the diagnostic reports it.
 - **Acceptance criteria:**
-  - [ ] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
+  - [x] The described defect is no longer reproducible, demonstrated by a test that fails without the fix.
 
 #### GT-618
 

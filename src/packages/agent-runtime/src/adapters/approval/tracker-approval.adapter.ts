@@ -62,6 +62,7 @@ import type {
   ApprovalDecision,
   ApprovalRequest,
   ApprovalStatus,
+  ApprovalSubject,
   IApprovalPort,
 } from '../../domain/ports/approval.port';
 import type { RuntimeExecutionMode } from '../../domain/contracts/runtime-context';
@@ -99,6 +100,12 @@ export interface TrackerApprovalSubmission {
   /** Who/what asked (never interpreted as an approver). */
   readonly requestedBy?: string;
   readonly executionMode?: RuntimeExecutionMode;
+  /**
+   * The specific object under decision, when the request named one (GT-590). Sent so the row the
+   * Tracker persists identifies WHAT was approved and not only which capability asked. A Tracker
+   * that does not know the field ignores it; the Core's own semantics do not depend on it.
+   */
+  readonly subject?: ApprovalSubject;
 }
 
 /**
@@ -203,6 +210,7 @@ export class TrackerApprovalAdapter implements IApprovalPort {
       correlationId: ctx.correlationId,
       requestedBy: ctx.requestedBy,
       executionMode: ctx.executionMode,
+      ...(request.subject ? { subject: request.subject } : {}),
     };
 
     let response: TrackerApprovalResponse;

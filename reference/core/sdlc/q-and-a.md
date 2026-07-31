@@ -385,7 +385,7 @@ Incremental migration pattern: replace legacy parts with new components without 
 <details>
 <summary><b>T08-P01: How does Evolith work with AI tools?</b></summary>
 
-Through MCP (Model Context Protocol). Evolith ships an MCP server with 50 tools, 11 resources, and 8 prompts. AI agents query rules, validate code, and evaluate gates — all governed.
+Through MCP (Model Context Protocol). Evolith ships an MCP server with 51 tools, 12 resources, and 8 prompts. AI agents query rules, validate code, and evaluate gates — all governed.
 
 **Evidence:** [MCP Services](../../../product/products/mcp-services/README.md), [ADR-0069](../architecture/adrs/core/0069-ai-agent-context-protocol-integration.md)
 </details>
@@ -401,7 +401,7 @@ Level 2.2 (AI-Integrated → AI-Orchestrated). Tools dimension is already Level 
 <details>
 <summary><b>T08-P03: Can an AI agent bypass governance?</b></summary>
 
-No. Multiple layers: MCP tools are governed (50 tools only), ABAC policies evaluate every call, HITL approval for destructive tools, audit logging records everything, and `binding: false` means the engine recommends but never decides.
+No. Multiple layers: MCP tools are governed (51 tools only), ABAC policies evaluate every call, HITL approval for destructive tools, audit logging records everything, and `binding: false` means the engine recommends but never decides.
 
 **Evidence:** [ADR-0081](../architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md), [ADR-0083](../architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md)
 </details>

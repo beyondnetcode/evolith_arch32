@@ -12,7 +12,7 @@ comando/tool/endpoint explicado en prosa, con sus opciones, ejemplos de lo simpl
 lo avanzado, y las combinaciones habituales.
 
 - **[Usando la CLI](using-the-cli.es.md)** — los 25 comandos y subcomandos de la CLI.
-- **[Usando MCP](using-the-mcp.es.md)** — las 50 tools `evolith-*`, para agentes.
+- **[Usando MCP](using-the-mcp.es.md)** — las 51 tools `evolith-*`, para agentes.
 - **[Usando la API REST](using-the-rest-api.es.md)** — los 27 endpoints, para integradores / el Tracker.
 
 ## Catálogo de referencia (por fase, generado)

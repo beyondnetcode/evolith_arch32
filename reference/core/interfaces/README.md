@@ -10,7 +10,7 @@ explained in prose, with its options, examples from simple to advanced, and
 common combinations.
 
 - **[Usando la CLI](using-the-cli.md)** — the 25 CLI commands and subcommands.
-- **[Usando MCP](using-the-mcp.md)** — the 50 `evolith-*` tools, for agents.
+- **[Usando MCP](using-the-mcp.md)** — the 51 `evolith-*` tools, for agents.
 - **[Usando la API REST](using-the-rest-api.md)** — the 27 endpoints, for integrators / the Tracker.
 
 ## Reference catalog (by phase, generated)

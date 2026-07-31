@@ -22,7 +22,7 @@ This is a baseline of approved generic tools currently usable inside the monorep
 
 > **No second copy of the tool names lives here.** This page previously enumerated 11 tools, seven of which (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`) **never existed or no longer exist in code**. A hand-maintained duplicate of the tool surface drifts the moment a tool is added or renamed, so it has been removed. Do not reintroduce one.
 
-The Evolith MCP server registers **50** governance tools. The authoritative, source-derived list is the **Tool Inventory** table in [Evolith MCP Tools Catalog](./evolith-mcp-tools.md) — reconciled from the tool registrations under `src/packages/mcp-server/src/tools/`. Verify with:
+The Evolith MCP server registers **51** governance tools. The authoritative, source-derived list is the **Tool Inventory** table in [Evolith MCP Tools Catalog](./evolith-mcp-tools.md) — reconciled from the tool registrations under `src/packages/mcp-server/src/tools/`. Verify with:
 
 ```bash
 grep -rhoE "name: '(evolith-[a-z0-9-]+)'" src/packages/mcp-server/src/tools/*.ts \

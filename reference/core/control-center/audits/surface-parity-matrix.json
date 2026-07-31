@@ -2,7 +2,7 @@
   "$schema": "./surface-parity-matrix.schema.json",
   "version": "1.0.0",
   "description": "Machine-readable surface-parity matrix (GT-171). Lists every operation across CLI, MCP, and REST surfaces with explicit exempt markers where parity is not desirable. This matrix is the source of truth for the inventory generator and is validated by CI.",
-  "lastReviewed": "2026-07-11",
+  "lastReviewed": "2026-07-31",
   "operations": [
     {
       "id": "gate-evaluate",
@@ -1158,6 +1158,23 @@
       "rest": {
         "exposed": true,
         "endpoint": "GET /api/v1/capabilities"
+      }
+    },
+    {
+      "id": "knowledge-search",
+      "name": "Knowledge corpus search",
+      "description": "BM25-first hybrid retrieval over the indexed architecture knowledge corpus (ADRs, rulesets, standards), returning ranked chunks with citations and retrieval provenance",
+      "cli": {
+        "exposed": false,
+        "exempt": "GT-592 exposed retrieval on the surface agents actually consume it from; a CLI equivalent is deferred until a pgvector store is provisioned outside development, since a command that always answers 'corpus not configured' is worse than no command"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-knowledge-search"
+      },
+      "rest": {
+        "exposed": false,
+        "exempt": "deferred with the CLI command for the same reason: the store is deploy-gated, and an endpoint that cannot answer is not parity"
       }
     }
   ]

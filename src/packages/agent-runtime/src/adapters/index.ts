@@ -64,6 +64,20 @@ export type {
   PgClientLike,
   PgVectorKnowledgeConfig,
 } from './knowledge/pgvector-knowledge.adapter';
+// GT-592 — BM25-first hybrid retrieval over the same corpus.
+export { HybridKnowledgeAdapter, DEFAULT_LEXICAL_POOL, DEFAULT_DENSE_POOL } from './knowledge/hybrid-knowledge.adapter';
+export type {
+  HybridKnowledgeConfig,
+  HybridKnowledgeResult,
+  HybridRetrievalTrace,
+} from './knowledge/hybrid-knowledge.adapter';
+export { InMemoryLexicalIndexAdapter } from './knowledge/in-memory-lexical-index.adapter';
+export { PgLexicalIndexAdapter } from './knowledge/pg-lexical-index.adapter';
+export type { PgLexicalIndexConfig } from './knowledge/pg-lexical-index.adapter';
+export { VectorMemoryKnowledgeAdapter, cosineSimilarity } from './knowledge/vector-memory-knowledge.adapter';
+export type { VectorMemoryEntry, VectorMemoryKnowledgeConfig } from './knowledge/vector-memory-knowledge.adapter';
+export { HttpEmbeddingAdapter, DEFAULT_EMBED_MODEL, DEFAULT_EMBED_DIM } from './knowledge/http-embedding.adapter';
+export type { HttpEmbeddingConfig, FetchLike } from './knowledge/http-embedding.adapter';
 
 // Skills
 export { LocalSkillRegistryAdapter } from './skills/local-skill-registry.adapter';

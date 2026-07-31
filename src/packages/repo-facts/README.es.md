@@ -61,6 +61,19 @@ const context = {
 - `contentHash` es `sha256` sobre `canonicalizeRepoFacts()`, que **excluye** el propio hash y `provenance.extractedAt`. Dos indexaciones del mismo árbol coinciden en el hash.
 - El Core trata `contentHash` como **procedencia opaca** y nunca lo recalcula — igual que trata `Provenance.artifactHash` en `Evidence`. La reproducibilidad viene de la pureza más una entrada estable; el hash es el *nombre* de esa entrada.
 
+## Hechos de drift (GT-594)
+
+El esquema `1.1.0` añade las dos familias de hechos sobre las que se calculan las señales de drift de IA. Ambas son opcionales; ambas participan en la forma canónica, así que el mismo árbol hashea distinto bajo `1.0.0` y `1.1.0` — por eso un delta de conformidad se niega a comparar bases de hechos con esquema o versión de indexador distintos.
+
+| Hecho | Qué es | Qué NO es |
+|---|---|---|
+| `SymbolFact.structuralHash` / `structuralSize` | Digest del flujo normalizado de nodos sintácticos de la declaración — identificadores, literales, comentarios y trivia borrados. La igualdad es la relación de **clon Type-2**. | No es una puntuación de similitud. No hay umbral que ajustar, y una copia con una sentencia cambiada simplemente no coincide. |
+| `RepoFacts.errorMasking` | Ocurrencias de una lista cerrada y puramente sintáctica: `empty-catch`, `catch-discards-error`, `promise-catch-swallow`, `ts-directive-suppression`, `any-assertion`, `non-null-assertion`. | No es un juicio. Aquí no se decide si una ocurrencia está *mal*. |
+
+`errorMasking` **ausente** y `errorMasking: []` significan cosas distintas y se mantienen separadas: ausente es un extractor que no miró (el Core reporta la señal como `not-measurable`), vacío es un extractor que miró y no encontró ninguna (un cero medido). Usa `scanErrorMasking: false` para producir el primer caso deliberadamente.
+
+El Core calcula duplicación, refactor:copia y enmascaramiento de errores sobre estos hechos en `core-domain/src/evaluation/contracts/drift-signals.ts`. Cada señal se emite como `Evidence` canónica con `determinism: 'probabilistic'` y sin calibración, así que `admitEvidenceBlocking` de GT-584 la reporta **advisory** y le niega un veredicto bloqueante. El conteo es exacto; la imputación que se hace a partir de él no lo es, y solo la medición (GT-585) puede cambiar eso.
+
 ## Indexador
 
 El primer (y por ahora único) indexador es la **API del compilador de TypeScript** — el mismo motor de resolución de tipos que usa `scip-typescript` — emitiendo ids de símbolo con forma SCIP (`<módulo>#<nombre>`). No necesita binario externo ni red.

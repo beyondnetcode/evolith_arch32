@@ -22,8 +22,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as ts from 'typescript';
-import { REPO_FACTS_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/evaluation/contracts';
+import {
+  DEFAULT_MIN_STRUCTURAL_SIZE,
+  REPO_FACTS_SCHEMA_VERSION,
+} from '@beyondnet/evolith-core-domain/evaluation/contracts';
 import type {
+  ErrorMaskingFact,
   ImportFact,
   ModuleFact,
   ReferenceFact,
@@ -32,9 +36,11 @@ import type {
   SymbolFactKind,
 } from '@beyondnet/evolith-core-domain/evaluation/contracts';
 import { withContentHash } from './content-hash';
+import { isFingerprintable, structuralFingerprintOf } from './structural-fingerprint';
+import { scanErrorMasking } from './error-masking';
 
 /** Version of this extractor, echoed into provenance. */
-export const EXTRACTOR_VERSION = '1.0.0';
+export const EXTRACTOR_VERSION = '1.1.0';
 export const EXTRACTOR_ID = 'evolith-repo-facts';
 export const INDEXER_ID = 'typescript-compiler-api';
 
@@ -51,6 +57,18 @@ export interface ExtractOptions {
   readonly now?: () => string;
   /** Optional layer assignment, applied to each module id. */
   readonly layerOf?: (moduleId: string) => string | undefined;
+  /**
+   * GT-594 — floor, in normalized syntax nodes, below which a declaration is not
+   * fingerprinted. Defaults to `DEFAULT_MIN_STRUCTURAL_SIZE`, the SAME constant the
+   * Core's duplication signal filters on, so both sides describe one population.
+   */
+  readonly minStructuralSize?: number;
+  /**
+   * GT-594 — set `false` to skip the error-masking pass. The resulting fact base
+   * carries NO `errorMasking` collection, which the Core reports as `not-measurable`
+   * rather than as zero: "nobody looked" and "there are none" are different claims.
+   */
+  readonly scanErrorMasking?: boolean;
 }
 
 const DEFAULT_EXCLUDES = ['node_modules', 'dist', 'coverage', '.git', '.harness'];
@@ -135,6 +153,8 @@ export function extractTypeScriptFacts(options: ExtractOptions): RepoFacts {
   const include = options.include && options.include.length > 0 ? options.include : ['src'];
   const exclude = options.exclude ?? DEFAULT_EXCLUDES;
   const now = options.now ?? ((): string => new Date().toISOString());
+  const minStructuralSize = options.minStructuralSize ?? DEFAULT_MIN_STRUCTURAL_SIZE;
+  const wantErrorMasking = options.scanErrorMasking !== false;
 
   const fileNames = collectSourceFiles(rootDir, include, exclude);
   const compilerOptions: ts.CompilerOptions = {
@@ -177,7 +197,14 @@ export function extractTypeScriptFacts(options: ExtractOptions): RepoFacts {
       symbolIdOfDeclaration.set(node, id);
       if (declaredIds.has(id)) return; // overloads / merged declarations collapse to one symbol
       declaredIds.add(id);
-      symbols.push({ id, name, kind: symbolKindOf(node), moduleId, exported });
+      // GT-594 — fingerprint only declarations that HAVE a body, and only above the
+      // node floor. Absent means "not fingerprinted", never "not duplicated".
+      let fingerprint: Pick<SymbolFact, 'structuralHash' | 'structuralSize'> = {};
+      if (isFingerprintable(node)) {
+        const { hash, size } = structuralFingerprintOf(node);
+        if (size >= minStructuralSize) fingerprint = { structuralHash: hash, structuralSize: size };
+      }
+      symbols.push({ id, name, kind: symbolKindOf(node), moduleId, exported, ...fingerprint });
     };
 
     for (const statement of sf.statements) {
@@ -295,6 +322,26 @@ export function extractTypeScriptFacts(options: ExtractOptions): RepoFacts {
     ts.forEachChild(sf, visit);
   }
 
+  // --- pass 4: error-masking constructs (GT-594) ---
+  // Skipped entirely when the caller opts out, so the collection stays UNDEFINED and
+  // the Core reports the signal as not-measurable instead of inventing a zero.
+  let errorMasking: ErrorMaskingFact[] | undefined;
+  if (wantErrorMasking) {
+    errorMasking = [];
+    for (const sf of sourceFiles) {
+      const moduleId = moduleIdOf.get(sf.fileName);
+      if (!moduleId) continue;
+      errorMasking.push(...scanErrorMasking(sf, { moduleId, symbolIdAt: enclosingSymbolId }));
+    }
+    errorMasking.sort(
+      (a, b) =>
+        byString(a.moduleId, b.moduleId) ||
+        a.line - b.line ||
+        byString(a.kind, b.kind) ||
+        byString(a.symbolId ?? '', b.symbolId ?? ''),
+    );
+  }
+
   const draft: RepoFacts = {
     schemaVersion: REPO_FACTS_SCHEMA_VERSION,
     contentHash: '',
@@ -314,6 +361,7 @@ export function extractTypeScriptFacts(options: ExtractOptions): RepoFacts {
     references: references.sort(
       (a, b) => byString(a.fromSymbol, b.fromSymbol) || byString(a.toSymbol, b.toSymbol),
     ),
+    ...(errorMasking ? { errorMasking } : {}),
   };
 
   return withContentHash(draft);

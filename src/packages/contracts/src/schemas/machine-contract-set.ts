@@ -90,11 +90,13 @@ export const MACHINE_CONTRACT_SET: MachineContractSet = Object.freeze({
     // different envelope and stay green in both repositories.
     Object.freeze({
       id: 'evaluation-context',
-      // GT-589 added optional `repoFacts` / `structuralFacts`. Additive only, so a
-      // minor bump: a 1.0.0 consumer keeps validating against 1.1.0 payloads.
-      version: '1.1.0',
+      // GT-589 added optional `repoFacts` / `structuralFacts`. GT-594 added optional
+      // `repoFacts.symbols[].structuralHash`/`structuralSize`, `repoFacts.errorMasking`
+      // and `baselineRepoFacts`. Additive only in both cases, so a minor bump: a 1.0.0
+      // consumer keeps validating against 1.2.0 payloads.
+      version: '1.2.0',
       path: 'rulesets/schema/evaluation-context.schema.json',
-      sha256: '5c331f34ef0500286350071913d76cccf1a7bbc43d6b79c38f2b5d53993726aa',
+      sha256: 'd62d557c6258ca6cc154e88850fd4879eb21d32dd3e4e9400aa25182c200cd69',
     }),
     Object.freeze({
       id: 'evaluation-result',

@@ -11,6 +11,7 @@ import type { PhaseId } from '../../domain/sdlc/phase-id';
 import type { Verdict, VerdictReason } from '../../domain/verdict/verdict';
 import type { EvidenceSignal } from './quality-evidence';
 import type { StructuralFactsSummary } from './repo-facts';
+import type { DriftConformanceDelta, DriftSignalReport } from './drift-signals';
 import type { RepositoryRevisionContext, RequesterContext } from './evaluation-context';
 
 /** Schema version of this contract (bumped only on incompatible changes). */
@@ -137,6 +138,19 @@ export interface ArchitectureEvaluationResult {
    * consumer sent no `repoFacts`; the Core never invents one.
    */
   readonly structuralFacts?: StructuralFactsSummary;
+  /**
+   * GT-594 — the AI-drift signals (duplication, refactor:copy, error masking), each
+   * with its determinism, its provenance and the GT-584 admissibility decision that
+   * keeps it ADVISORY. Present alongside the verdict, never inside it: nothing in
+   * this report may change `verdict`, and `blockingAdmissible` stays empty until a
+   * signal carries a measured error rate.
+   */
+  readonly driftSignals?: DriftSignalReport;
+  /**
+   * GT-594 — per-signal conformance delta against `baselineRepoFacts`, when the
+   * consumer sent one. Absent otherwise; the Core remembers no previous revision.
+   */
+  readonly driftSignalDelta?: DriftConformanceDelta;
 }
 
 export interface BlueprintEvaluationResult {

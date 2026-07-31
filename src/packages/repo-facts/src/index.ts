@@ -10,3 +10,12 @@ export { extractTypeScriptFacts, collectSourceFiles, EXTRACTOR_ID, EXTRACTOR_VER
 export type { ExtractOptions } from './typescript-fact-extractor';
 export { computeRepoFactsHash, withContentHash, REPO_FACTS_HASH_ALGORITHM } from './content-hash';
 export { serializeRepoFacts } from './serialize';
+export {
+  FINGERPRINT_ALGORITHM,
+  isFingerprintable,
+  normalizedKindStream,
+  structuralFingerprintOf,
+} from './structural-fingerprint';
+export type { StructuralFingerprint } from './structural-fingerprint';
+export { scanErrorMasking } from './error-masking';
+export type { MaskingScanContext } from './error-masking';

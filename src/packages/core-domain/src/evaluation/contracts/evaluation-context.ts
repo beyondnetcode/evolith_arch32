@@ -286,6 +286,17 @@ export interface EvaluationContext {
    * evaluator reports no structural findings, never a failure it caused itself.
    */
   readonly repoFacts?: RepoFacts;
+  /**
+   * GT-594 — the SAME repository at an earlier revision, for the signals that only
+   * exist between two points in time (refactor:copy) and for the per-signal
+   * conformance delta.
+   *
+   * Delivered inline for the same reason `repoFacts` is: the Core is stateless and
+   * holds nothing between evaluations (ADR-0101), so "the previous revision" cannot
+   * be something it remembers — it is something the consumer sends. Absent ⇒ the
+   * two-revision signals report `not-measurable`, never zero.
+   */
+  readonly baselineRepoFacts?: RepoFacts;
   readonly checkpoint?: CheckpointContext;
   readonly deployment?: DeploymentContext;
   readonly architecture?: ArchitectureContext;

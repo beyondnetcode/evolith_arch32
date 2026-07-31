@@ -16,14 +16,18 @@ import {
   EVAL_HEADERS,
   evaluationPayload,
   isSuccessEnvelope,
+  isThrottled,
   SLO,
 } from './lib/config.js';
 
 const evalErrors = new Rate('evaluate_errors');
+// A throttled run is not a slow run — it is an invalid one (see lib/config.js).
+const throttled = new Rate('throttled_429');
 const evalLatency = new Trend('evaluate_latency', true);
 const healthLatency = new Trend('health_latency', true);
 
 export const options = {
+  summaryTrendStats: ['avg', 'min', 'med', 'p(90)', 'p(95)', 'p(99)', 'max'],
   vus: 1,
   iterations: 10, // deterministic, fixed number of governed evaluations
   thresholds: {
@@ -32,6 +36,9 @@ export const options = {
     evaluate_errors: ['rate<0.01'],
     'evaluate_latency': [`p(95)<${SLO.evaluate_p95}`],
     'health_latency': [`p(95)<${SLO.health_p95}`],
+    // A 429 means the TARGET is rate-limited, not that the engine is failing.
+    // Named separately so a misconfigured target is unmistakable in the summary.
+    throttled_429: ['rate<0.01'],
   },
 };
 
@@ -47,14 +54,28 @@ export default function () {
     tags: { endpoint: 'evaluate' },
   });
   evalLatency.add(res.timings.duration);
+  throttled.add(isThrottled(res));
   const ok = isSuccessEnvelope(res);
   evalErrors.add(!ok);
   check(res, {
     'evaluate 200': (r) => r.status === 200,
     'evaluate returns success envelope': () => ok,
-    'evaluate has gates in data': (r) => {
+    // The correctness assertion of record: the engine ran RULES, not just HTTP.
+    // (Was `data.gates` — a shape the API has never returned. The harness was
+    // written but never executed, so the wrong field went unnoticed; measured
+    // against a live core-api on 2026-07-30, the response carries
+    // `rulesExecuted` / `policiesApplied`, never `gates`.)
+    'evaluate executed rules': (r) => {
       try {
-        return Array.isArray(r.json('data.gates'));
+        const rules = r.json('data.rulesExecuted');
+        return Array.isArray(rules) && rules.length > 0;
+      } catch (_e) {
+        return false;
+      }
+    },
+    'evaluate returned a verdict': (r) => {
+      try {
+        return ['PASS', 'FAIL', 'WARN'].indexOf(r.json('data.overallVerdict')) !== -1;
       } catch (_e) {
         return false;
       }

@@ -3,10 +3,15 @@ import { Injectable, Inject } from '@nestjs/common';
 import { RulesetValidatorService } from '@beyondnet/evolith-core';
 import { createSuccessEnvelope } from '@beyondnet/evolith-core-domain';
 import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
-import { NestLoggerProvider } from '@beyondnet/evolith-infra-providers';
+import {
+  NestLoggerProvider,
+  createEvaluationIngestClientFromEnv,
+  depositEvaluation,
+} from '@beyondnet/evolith-infra-providers';
 import {
   EvaluationOrchestrator,
   createDefaultKindEvaluators,
+  evaluateDriftGate,
   type EvaluationContext,
   type IEvaluationPipeline,
   type IWorkspaceReferenceResolver,
@@ -117,11 +122,30 @@ export class EvaluateTool implements McpTool {
     const orchestrator = new EvaluationOrchestrator(pipeline, resolver, CORE_VERSION, evaluators);
     const result = await orchestrator.evaluate(ctx);
 
+    const correlationId = result.correlationId ?? `mcp-eval-${result.evaluatedAt}`;
+
+    // GT-604: deposit this verdict in the Tracker's evidence ledger through the SAME
+    // shared client the CLI and the drift gate use, so the three surfaces cannot
+    // disagree about the wire shape. `undefined` when this installation is not
+    // configured to talk to a Tracker — a standalone run, not a failure — and a
+    // failed deposit never changes what this tool returns: an agent must not see a
+    // different verdict because a ledger was down.
+    await depositEvaluation({
+      client: createEvaluationIngestClientFromEnv(process.env),
+      result,
+      // The canonical, owner-enriched violation set — the same one the drift gate
+      // blocks on, so the ledger's accountable owner is the one a PR comment names.
+      violations: evaluateDriftGate({ result }).evidence.violations,
+      surface: 'mcp',
+      producerVersion: `evolith-mcp@${CORE_VERSION}`,
+      correlationId,
+    });
+
     return createSuccessEnvelope(result, {
       command: 'evolith-evaluate',
       executedAt: result.evaluatedAt,
       durationMs: 0,
-      correlationId: result.correlationId ?? `mcp-eval-${result.evaluatedAt}`,
+      correlationId,
       schemaVersion: result.schemaVersion,
     });
   }

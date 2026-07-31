@@ -138,6 +138,7 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
+          npm run build -w @beyondnet/evolith-contracts
           npm run build -w @beyondnet/evolith-core-domain
           npm run build -w @beyondnet/evolith-agent-runtime
           npm run build -w @beyondnet/evolith-sdk
@@ -180,6 +181,7 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
+          npm run build -w @beyondnet/evolith-contracts
           npm run build -w @beyondnet/evolith-core-domain
           npm run build -w @beyondnet/evolith-agent-runtime
           npm run build -w @beyondnet/evolith-sdk
@@ -279,6 +281,7 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
+          npm run build -w @beyondnet/evolith-contracts
           npm run build -w @beyondnet/evolith-core-domain
           npm run build -w @beyondnet/evolith-agent-runtime
           npm run build -w @beyondnet/evolith-sdk
@@ -345,6 +348,7 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
+          npm run build -w @beyondnet/evolith-contracts
           npm run build -w @beyondnet/evolith-core-domain
           npm run build -w @beyondnet/evolith-agent-runtime
           npm run build -w @beyondnet/evolith-sdk
@@ -506,6 +510,7 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
+          npm run build -w @beyondnet/evolith-contracts
           npm run build -w @beyondnet/evolith-core-domain
           npm run build -w @beyondnet/evolith-agent-runtime
           npm run build -w @beyondnet/evolith-sdk

@@ -50,6 +50,11 @@ services:
       REDIS_URL: redis://redis:6379
       # GT-548: bounded tenant metric label (comma-separated allowlist; others → "other").
       EVOLITH_METRICS_TENANT_ALLOWLIST: ${EVOLITH_METRICS_TENANT_ALLOWLIST:-}
+      # GT-443: the throttler defaults to 100 requests / 60 s, which any load or
+      # chaos run blows through in seconds — a drill against the default target
+      # measures the rate limiter, not the engine (measured: 81% 429s at 10 VUs).
+      # Override for a load/chaos bring-up; unset keeps the shipped default.
+      THROTTLE_MAX_REQUESTS: ${THROTTLE_MAX_REQUESTS:-100}
     ports:
       - "3001:3000"
     depends_on:

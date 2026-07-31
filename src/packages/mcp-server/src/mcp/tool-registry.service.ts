@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { McpTool, McpToolSchema, MCP_TOOLS } from './tool.interface';
 import { buildToolOutputSchema, deriveToolAnnotations } from '../common/tool-output-schema';
+import { withBaseShaParameter } from './workspace-concurrency';
 
 /**
  * In-memory registry of MCP tools, keyed by tool name.
@@ -50,15 +51,21 @@ export class ToolRegistryService {
    * Derivation lives here, not in the fifty tool classes, so no tool can be
    * registered without an output contract and no tool can carry a stale copy of
    * the envelope shape.
+   *
+   * GT-606 — the same argument applies to ADR-0093's `baseSha`: every mutative
+   * tool advertises it, derived from the `mutative` flag rather than hand-copied
+   * into twenty input schemas, so the declared surface and what the dispatch
+   * actually enforces cannot drift apart.
    */
   describe(tool: McpTool): McpToolSchema {
+    const base = tool.mutative ? withBaseShaParameter(tool.schema) : tool.schema;
     return {
-      ...tool.schema,
-      outputSchema: tool.schema.outputSchema ?? buildToolOutputSchema(tool.outputDataSchema),
+      ...base,
+      outputSchema: base.outputSchema ?? buildToolOutputSchema(tool.outputDataSchema),
       annotations: deriveToolAnnotations({
         mutative: tool.mutative,
         scope: tool.scope,
-        annotations: tool.annotations ?? tool.schema.annotations,
+        annotations: tool.annotations ?? base.annotations,
       }),
     };
   }

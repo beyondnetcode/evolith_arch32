@@ -94,7 +94,47 @@ Cuando una operación de escritura es rechazada debido a un conflicto de bloqueo
 ### Negativas
 - **Complejidad del agente**: Los agentes deben estar diseñados para manejar fallos de transacción, obtener el contexto actualizado y reintentar.
 
+## Estado de Implementación
+
+Registrado para que el mismo grep que encuentra este ADR encuentre lo que lo respalda (GT-606).
+
+| Sección | Estado | Dónde |
+| --- | --- | --- |
+| §1 Verificación Optimista de Estado | **Implementada** | `src/packages/mcp-server/src/mcp/workspace-concurrency.ts`, aplicada en `mcp-tool-dispatch.ts` |
+| §3 Contrato de Error de Concurrencia | **Implementado** | `CONCURRENCY_CONFLICT` en `src/packages/mcp-server/src/common/errors.ts`; payload del conflicto en `error.details` del sobre |
+| §2 Bloqueo Pesimista de Recursos | **No implementado** | — |
+
+Notas sobre §1 tal como se construyó:
+
+- `baseSha` se deriva al esquema publicado de toda herramienta mutativa en
+  `ToolRegistryService.describe`, y lo verifica el dispatch único a partir de
+  `tool.mutative` — la misma llave que usa la compuerta HITL de aprobación. El
+  conjunto protegido es, por construcción, el conjunto mutativo, y una
+  herramienta añadida después no puede llegar desprotegida.
+  `mutative-base-sha-coverage.spec.ts` enumera ese conjunto desde el registro
+  vivo y falla si algún miembro queda sin guarda.
+- `baseSha` es **opcional** por defecto, con semántica `If-Match`: quien declara
+  el estado sobre el que planificó queda protegido; quien no declara nada, no.
+  Exigirlo sin más rompería a todos los llamantes existentes y dejaría
+  inutilizables las herramientas que legítimamente apuntan a un directorio aún
+  no inicializado (`evolith-scaffold`, `evolith-init-batch`). Un despliegue que
+  quiera la lectura estricta define `EVOLITH_MCP_REQUIRE_BASE_SHA=1`.
+- La verificación **falla cerrada**: si se envía `baseSha` y HEAD no se puede
+  resolver, la escritura se rechaza en lugar de dejarse pasar.
+- El payload de §3 viaja en `error.details` y no en `error.meta` como se esboza
+  arriba, porque ADR-0073 reserva `meta` para los metadatos de ejecución del
+  sobre. El código, los nombres de campo y la semántica no cambian.
+
+§2 queda diferida, no adoptada-e-ignorada: ninguna herramienta MCP actual
+retiene un recurso exclusivo no-git el tiempo suficiente para que un lease de
+dos minutos sea el mecanismo correcto, y el efecto de toda herramienta mutativa
+ya queda cubierto por la verificación de estado git de §1. Si aparece una
+herramienta que mute un registro de base de datos o sostenga una tarea
+exclusiva larga, §2 pasa a ser exigible y esta tabla es el registro de que sigue
+pendiente.
+
 ## Referencias
+- [ADR-0073: Contrato Unificado de Salida de CLI](./0073-unified-cli-output-contract.es.md)
 - [ADR-0087: Control de Acceso ABAC para Ejecución de HerramientasMCP](./0087-abac-agentic-tool-execution.es.md)
 - [ADR-0089: Flujos de Trabajo Agénticos Orientados a Eventos](./0089-event-driven-agentic-workflows.es.md)
 

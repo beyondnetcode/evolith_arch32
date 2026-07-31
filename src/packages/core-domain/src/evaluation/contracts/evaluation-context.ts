@@ -16,6 +16,7 @@
 import type { PhaseId } from '../../domain/sdlc/phase-id';
 import type { Verdict } from '../../domain/verdict/verdict';
 import type { Evidence } from './quality-evidence';
+import type { RepoFacts, SymbolBoundaryRule } from './repo-facts';
 
 /** Schema version of this contract (bumped only on incompatible changes). */
 export const EVALUATION_CONTEXT_SCHEMA_VERSION = '1.0.0';
@@ -137,6 +138,12 @@ export interface ArchitectureContext {
   /** References to ADRs/decisions, not copies. */
   readonly decisionRefs?: readonly string[];
   readonly constraints?: readonly string[];
+  /**
+   * GT-589 — boundaries declared over SYMBOLS rather than over files. Policy, so
+   * it travels on the context; the structural facts it is evaluated against travel
+   * on {@link EvaluationContext.repoFacts}. Ignored when no `repoFacts` are sent.
+   */
+  readonly symbolBoundaries?: readonly SymbolBoundaryRule[];
 }
 
 /** Declared evidence (maps Tracker EvidenceItem). The Core receives references, not stored copies. */
@@ -269,6 +276,16 @@ export interface EvaluationContext {
    * failure. See {@link resolveEvidenceSignals}.
    */
   readonly qualitySignals?: readonly Evidence[];
+  /**
+   * Canonical structural fact base (GT-589). Produced OUTSIDE the Core by an
+   * indexer (`@beyondnet/evolith-repo-facts` → TypeScript compiler API / SCIP /
+   * tree-sitter) and passed INLINE here — the identical shape to `qualitySignals`
+   * (ADR-0111) and to `OverlayFileSystem` source-file ingestion (ADR-0080). The
+   * Core queries the received graph and NEVER runs an indexer, opens a repository
+   * or retains facts between evaluations (ADR-0101). Absent ⇒ the architecture
+   * evaluator reports no structural findings, never a failure it caused itself.
+   */
+  readonly repoFacts?: RepoFacts;
   readonly checkpoint?: CheckpointContext;
   readonly deployment?: DeploymentContext;
   readonly architecture?: ArchitectureContext;

@@ -19,6 +19,8 @@
 import { Verdict } from '../domain/verdict/verdict';
 import { CANONICAL_PHASE_IDS, normalizePhaseId } from '../domain/sdlc/phase-id';
 import type { PhaseId } from '../domain/sdlc/phase-id';
+import { renderChain, summarizeRepoFacts } from './contracts/repo-facts';
+import type { StructuralFactsSummary } from './contracts/repo-facts';
 import type { IFileSystem, ILogger, IConfigParser } from '../domain/interfaces';
 import type { KindEvaluator } from './ports/kind-evaluator.port';
 import { ArchitectureDriftService } from '../application/validators/architecture-drift.service';
@@ -44,39 +46,151 @@ export function nextPhase(phase: PhaseId): PhaseId {
   return i >= 0 && i < CANONICAL_PHASE_IDS.length - 1 ? CANONICAL_PHASE_IDS[i + 1] : phase;
 }
 
-/** architecture kind — wraps ArchitectureDriftService → ArchitectureEvaluationResult. */
+/**
+ * GT-589 — turn a queried fact base into canonical findings.
+ *
+ * Exported and PURE so the structural half of the architecture verdict can be
+ * exercised without a filesystem, a drift service or a workspace: same summary in,
+ * same findings out, in the same order.
+ */
+export function structuralFindingsFrom(summary: StructuralFactsSummary): {
+  readonly gaps: Gap[];
+  readonly risks: Risk[];
+  readonly recommendations: { id: string; kind: 'process'; message: string }[];
+} {
+  const gaps: Gap[] = [];
+  const risks: Risk[] = [];
+
+  for (const cycle of summary.cycles) {
+    const id = 'STRUCT-IMPORT-CYCLE-' + cycle.component[0];
+    const suffix = cycle.typeOnly ? ' (type-only — erased at runtime)' : '';
+    const message = 'Cyclic import chain: ' + renderChain(cycle.chain) + suffix + '.';
+    gaps.push({
+      id,
+      requirementRef: 'structure/no-import-cycles',
+      severity: cycle.typeOnly ? 'warning' : 'error',
+      message,
+      location: cycle.component[0],
+    });
+    risks.push({ id, level: cycle.typeOnly ? 'low' : 'high', category: 'architecture', message });
+  }
+
+  for (const crossing of summary.boundaryCrossings) {
+    const id = 'STRUCT-SYMBOL-BOUNDARY-' + crossing.ruleId + '-' + crossing.toSymbol;
+    const via = crossing.viaLegalImportsOnly
+      ? ' Every import along this path is legal in isolation, so no pairwise import check can express it.'
+      : '';
+    const message =
+      'Boundary "' + crossing.ruleId + '" reaches forbidden symbol "' + crossing.toSymbol +
+      '" via ' + renderChain(crossing.symbolChain) +
+      ' (modules: ' + renderChain(crossing.moduleChain) + ').' + via;
+    gaps.push({
+      id,
+      requirementRef: crossing.ruleId,
+      severity: crossing.severity,
+      message,
+      location: crossing.moduleChain[0],
+    });
+    risks.push({
+      id,
+      level: crossing.severity === 'error' ? 'high' : 'medium',
+      category: 'architecture',
+      message,
+    });
+  }
+
+  const recommendations = [
+    {
+      id: 'structural-facts',
+      kind: 'process' as const,
+      message:
+        'Structural fact base (' + summary.indexer + ', contentHash ' + summary.contentHash + '): ' +
+        summary.moduleCount + ' modules, ' + summary.importCount + ' imports, ' +
+        summary.symbolCount + ' symbols, ' + summary.referenceCount + ' references; ' +
+        summary.cycles.length + ' import cycle(s), ' +
+        summary.boundaryCrossings.length + ' symbol boundary crossing(s).',
+    },
+  ];
+
+  return { gaps, risks, recommendations };
+}
+
+/**
+ * architecture kind — wraps ArchitectureDriftService → ArchitectureEvaluationResult,
+ * and (GT-589) queries the inline structural fact base when the consumer sends one.
+ *
+ * Two independent sources, merged: the workspace-scanning drift report, and PURE
+ * queries over `ctx.repoFacts`. The Core still runs no indexer and keeps nothing —
+ * the facts arrive on the context (ADR-0101). When no workspace is resolved
+ * (`satellitePath` empty) the drift half is skipped and the verdict rests on the
+ * fact base alone: that is the "judge a repository the Core has never seen" path.
+ */
 export function createArchitectureKindEvaluator(
   driftService: ArchitectureDriftService,
 ): KindEvaluator {
   return {
     kind: 'architecture',
     evaluate: async (ctx, ws) => {
-      const report = await driftService.detectDrift({
-        projectPath: ws.satellitePath,
-        corePath: ws.corePath,
-        declaredLevel: ctx.topologyRef as 'F1' | 'F2' | 'F3' | undefined,
-      });
-      const violations = [...report.newViolations, ...report.persistentViolations];
-      const risks = violations.map((v) => ({
-        id: v.ruleId,
-        level: severityToRisk(v.severity),
-        category: v.category || 'architecture',
-        message: v.title,
-      }));
-      const gaps = violations.map((v) => ({
-        id: v.ruleId,
-        requirementRef: v.ruleId,
-        severity: (v.blocking ? 'error' : 'warning') as 'error' | 'warning' | 'info',
-        message: v.description,
-      }));
-      const verdict = report.driftDetected ? Verdict.FAIL : Verdict.PASS;
+      const summary = ctx.repoFacts
+        ? summarizeRepoFacts(ctx.repoFacts, ctx.architecture?.symbolBoundaries ?? [])
+        : undefined;
+      const structural = summary
+        ? structuralFindingsFrom(summary)
+        : { gaps: [] as Gap[], risks: [] as Risk[], recommendations: [] as { id: string; kind: 'process'; message: string }[] };
+
+      const hasWorkspace = typeof ws?.satellitePath === 'string' && ws.satellitePath.length > 0;
+      if (!hasWorkspace && !summary) {
+        return { verdict: Verdict.SKIP, results: {} };
+      }
+
+      let driftGaps: Gap[] = [];
+      let driftRisks: Risk[] = [];
+      let driftDetected = false;
+      let definitionRef: string | undefined;
+
+      if (hasWorkspace) {
+        const report = await driftService.detectDrift({
+          projectPath: ws.satellitePath,
+          corePath: ws.corePath,
+          declaredLevel: ctx.topologyRef as 'F1' | 'F2' | 'F3' | undefined,
+        });
+        const violations = [...report.newViolations, ...report.persistentViolations];
+        driftRisks = violations.map((v) => ({
+          id: v.ruleId,
+          level: severityToRisk(v.severity),
+          category: v.category || 'architecture',
+          message: v.title,
+        }));
+        driftGaps = violations.map((v) => ({
+          id: v.ruleId,
+          requirementRef: v.ruleId,
+          severity: (v.blocking ? 'error' : 'warning') as 'error' | 'warning' | 'info',
+          message: v.description,
+        }));
+        driftDetected = report.driftDetected;
+        definitionRef = report.detectedLevel;
+      }
+
+      const gaps = [...driftGaps, ...structural.gaps];
+      const risks = [...driftRisks, ...structural.risks];
+      const structuralBlocking = structural.gaps.some((g) => g.severity === 'error');
+      const verdict = driftDetected || structuralBlocking ? Verdict.FAIL : Verdict.PASS;
+
       return {
         verdict,
         results: {
-          architecture: { verdict, definitionRef: report.detectedLevel, risks, gaps, recommendations: [] },
+          architecture: {
+            verdict,
+            definitionRef,
+            risks,
+            gaps,
+            recommendations: structural.recommendations,
+            ...(summary ? { structuralFacts: summary } : {}),
+          },
         },
         gaps,
         risks,
+        recommendations: structural.recommendations,
       };
     },
   };
@@ -164,7 +278,7 @@ export function createTopologyKindEvaluator(
   };
 }
 
-type Gap = { id: string; requirementRef: string; severity: 'error' | 'warning' | 'info'; message: string };
+type Gap = { id: string; requirementRef: string; severity: 'error' | 'warning' | 'info'; message: string; location?: string };
 type Risk = { id: string; level: 'low' | 'medium' | 'high' | 'critical'; category: string; message: string };
 
 /**

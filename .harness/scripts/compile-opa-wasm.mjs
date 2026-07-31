@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { execSync } from 'child_process';
-import { existsSync, mkdirSync, writeFileSync, copyFileSync, unlinkSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync, copyFileSync, renameSync, unlinkSync } from 'fs';
 import { join, dirname } from 'path';
 import { platform, arch } from 'os';
 import https from 'https';
@@ -134,9 +134,19 @@ async function compileWasm() {
     join(rootDir, 'src', 'rulesets', 'opa', 'policy.wasm'),
     join(rootDir, 'src', 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm'),
   ];
+  // GT-602: install ATOMICALLY. `copyFileSync` truncates the destination and then
+  // streams into it, so a reader that opens `policy.wasm` mid-copy gets a partial
+  // wasm and `loadPolicy` throws — which the ABAC evaluator reports as OPA_ERROR,
+  // i.e. a DENIAL. That window is now reachable on purpose: the GT-602 parity spec
+  // compiles the bundle itself when it is missing or stale, while sibling jest
+  // workers are reading the same path. Write beside the destination and rename;
+  // rename(2) within a directory is atomic, so a concurrent reader sees either the
+  // old bundle or the new one, never half of one.
   for (const dest of destinations) {
     mkdirSync(dirname(dest), { recursive: true });
-    copyFileSync(extracted, dest);
+    const staging = `${dest}.${process.pid}.tmp`;
+    copyFileSync(extracted, staging);
+    renameSync(staging, dest);
   }
   unlinkSync(outputPath);
   execSync(`rm -rf ${tmpDir}`, { cwd: rootDir });

@@ -215,11 +215,14 @@ export class EvaluationController {
     // Everything else (core version, kind evaluators, canonical mapping) is the
     // shared factory's — there is no second envelope to keep in sync.
     const pipeline: IEvaluationPipeline = {
-      evaluate: async (manifest) => {
+      // GT-614: same forwarding as the canonical branch — one operation, one
+      // behaviour, including which stages a single-kind request pays for.
+      evaluate: async (manifest, plan) => {
         const out = await useCase.execute({
           satellitePath: manifest.satellitePath,
           corePath: manifest.corePath,
           manifest,
+          plan,
         });
         if (!out.evaluationVerdict) {
           throw new Error('Inline evaluation pipeline produced no verdict');

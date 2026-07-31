@@ -79,11 +79,14 @@ export class EvaluateTool implements McpTool {
     const useCase = new ValidateSatelliteUseCase(this.validator);
 
     const pipeline: IEvaluationPipeline = {
-      evaluate: async (manifest) => {
+      // GT-614: same forwarding as the CLI, so MCP parity holds for what a
+      // single-kind request executes, not only for what it returns.
+      evaluate: async (manifest, plan) => {
         const out = await useCase.execute({
           satellitePath: manifest.satellitePath,
           corePath: manifest.corePath,
           manifest,
+          plan,
         });
         if (!out.evaluationVerdict) {
           throw new Error('Evaluation pipeline produced no verdict');

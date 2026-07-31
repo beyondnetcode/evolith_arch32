@@ -27,8 +27,8 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---:|---|---|---|
 | 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-603](../gaps/gap-reference-catalog.md#gt-603), [GT-435](../gaps/gap-reference-catalog.md#gt-435) |
 | 2 | Highest-risk area | `Cross` has the largest weighted open load. | [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
-| 3 | Quick wins | High criticality with XS/S complexity. | [GT-631](../gaps/gap-reference-catalog.md#gt-631) |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-631](../gaps/gap-reference-catalog.md#gt-631), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-605](../gaps/gap-reference-catalog.md#gt-605), [GT-583](../gaps/gap-reference-catalog.md#gt-583), [GT-585](../gaps/gap-reference-catalog.md#gt-585), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
+| 3 | Quick wins | High criticality with XS/S complexity. | [GT-631](../gaps/gap-reference-catalog.md#gt-631), [GT-646](../gaps/gap-reference-catalog.md#gt-646), [GT-647](../gaps/gap-reference-catalog.md#gt-647) |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-631](../gaps/gap-reference-catalog.md#gt-631), [GT-646](../gaps/gap-reference-catalog.md#gt-646), [GT-647](../gaps/gap-reference-catalog.md#gt-647), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-605](../gaps/gap-reference-catalog.md#gt-605), [GT-583](../gaps/gap-reference-catalog.md#gt-583), [GT-585](../gaps/gap-reference-catalog.md#gt-585), +1 |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-622](../gaps/gap-reference-catalog.md#gt-622), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-531](../gaps/gap-reference-catalog.md#gt-531), [GT-536](../gaps/gap-reference-catalog.md#gt-536), [GT-592](../gaps/gap-reference-catalog.md#gt-592), +8 |
 
 ## Current Blockers
@@ -43,13 +43,13 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Indicator | Value |
 |---|---:|
 | Canonical board date | 2026-07-26 |
-| Total gaps | 645 |
+| Total gaps | 647 |
 | Closed gaps | 619 |
-| Open gaps | 26 |
+| Open gaps | 28 |
 | Open P0 | 2 |
-| Open P1 | 7 |
+| Open P1 | 9 |
 | Open P2 | 14 |
-| Total closure | 96% |
+| Total closure | 95.7% |
 | Closure evidence records | 601 |
 | Recorded readiness | 4 PASS |
 

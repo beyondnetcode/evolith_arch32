@@ -34,6 +34,7 @@ import {
   type EvaluationOrchestratorFactory,
 } from '../../application/evaluation/evaluation-orchestrator.factory';
 import { MetricsService } from '../../infrastructure/metrics/metrics.service';
+import { EvaluationTelemetryService } from '../../infrastructure/observability/evaluation-telemetry.service';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 import {
   createSuccessEnvelope,
@@ -92,6 +93,11 @@ export class EvaluationController {
     @Optional()
     @Inject(EVALUATION_ORCHESTRATOR_FACTORY)
     private readonly makeOrchestrator?: EvaluationOrchestratorFactory,
+    // GT-587: the standard-vocabulary half of the same signal. Optional for the same
+    // reason `metrics` is, and LAST on purpose: several specs construct this controller
+    // positionally, so inserting a parameter mid-list silently shifts every argument
+    // after it — which is exactly how this landed as nine red tests the first time.
+    @Optional() private readonly evaluationTelemetry?: EvaluationTelemetryService,
   ) {}
 
   @Post()
@@ -123,6 +129,9 @@ export class EvaluationController {
       const result = await this.orchestrator.evaluate(ctx);
       // GT-542: emit the evaluation verdict + latency signal.
       this.metrics?.recordGateEvaluation('evaluate', String(result.overallVerdict), phase, body.tenant?.tenantId, (Date.now() - start) / 1000);
+      // GT-587: the same outcome under the OpenTelemetry GenAI vocabulary, on the
+      // request's own span. Additive — the private series above is untouched.
+      this.evaluationTelemetry?.record(result);
       // GT-411: Return pre-built ADR-0073 envelope with canonical command name.
       return createSuccessEnvelope(result, {
         command: 'evolith evaluate',
@@ -245,6 +254,10 @@ export class EvaluationController {
     const result = await orchestrator.evaluate(ctx);
     // GT-542: emit the inline evaluation verdict + latency signal.
     this.metrics?.recordGateEvaluation('evaluate', String(result.overallVerdict), phase, body.tenant?.tenantId, (Date.now() - start) / 1000);
+    // GT-587: both branches return the SAME EvaluationResult (GT-573), so both must
+    // emit the SAME standard events — an inline evaluation that stayed silent would
+    // make the telemetry depend on which transport the caller happened to use.
+    this.evaluationTelemetry?.record(result);
     // GT-573: the canonical EvaluationResult, in the same ADR-0073 envelope the
     // workspaceRef branch returns.
     return createSuccessEnvelope(result, {

@@ -8,6 +8,12 @@ import { AbacEvaluator, AbacInput } from './abac-evaluator';
 import { ErrorCodes } from '../common/errors';
 import { failure, generateCorrelationId, success, toErrorEnvelope } from '../common/envelopes';
 import { runWithContext } from '@beyondnet/evolith-core-domain/common/request-context';
+import {
+  ATTR_MCP_METHOD_NAME,
+  ATTR_MCP_SESSION_ID,
+  ATTR_MCP_TOOL_NAME,
+  MCP_METHOD_NAME_VALUE_TOOLS_CALL,
+} from '@beyondnet/evolith-core-domain/evaluation';
 import { mcpContextStorage, McpUserContext } from './mcp-user-context';
 import { describeAbacDenial } from './abac-denial-remediation';
 
@@ -42,6 +48,42 @@ export interface ToolCallResult {
    */
   structuredContent?: Record<string, unknown>;
   isError?: boolean;
+}
+
+/**
+ * Per-call transport facts a tool's ARGUMENTS cannot carry (GT-587).
+ *
+ * `_meta` is the MCP request's out-of-band metadata field, and it is where the protocol
+ * documents trace-context propagation (`traceparent`/`tracestate`/`baggage`, SEP-414).
+ * That distinction matters: before this, the only way to join an MCP tool span to the
+ * caller's trace was a `traceparent` smuggled into the tool's own arguments — which
+ * every tool schema had to tolerate, which showed up in audit logs as if it were input,
+ * and which no standard client would ever send. Reading `_meta` means a conformant
+ * client's trace context works with no cooperation from the tool.
+ */
+export interface ToolCallOptions {
+  /** `request.params._meta` verbatim. Unknown keys are ignored. */
+  readonly meta?: Record<string, unknown>;
+  /** Transport session id (`RequestHandlerExtra.sessionId`), when the transport has one. */
+  readonly sessionId?: string;
+}
+
+/**
+ * W3C trace-context keys, lower-cased as the propagator expects them. Only these three
+ * are lifted out of `_meta`: `_meta` is an open map and copying it wholesale into a
+ * propagation carrier would let a caller inject arbitrary keys into the trace context.
+ */
+const TRACE_CONTEXT_KEYS = ['traceparent', 'tracestate', 'baggage'] as const;
+
+/** Build a propagation carrier from `_meta`, keeping only string-valued W3C keys. */
+export function traceCarrierFromMeta(meta: Record<string, unknown> | undefined): Record<string, string> {
+  const carrier: Record<string, string> = {};
+  if (!meta) return carrier;
+  for (const key of TRACE_CONTEXT_KEYS) {
+    const value = meta[key];
+    if (typeof value === 'string' && value.length > 0) carrier[key] = value;
+  }
+  return carrier;
 }
 
 /** Dependencies for listing tools — only needs the registry. */
@@ -84,6 +126,7 @@ export class ToolDispatchService {
   async callTool(
     name: string,
     args: Record<string, unknown> = {},
+    options: ToolCallOptions = {},
   ): Promise<ToolCallResult> {
     const argContext = (args.context as Record<string, unknown> | undefined) || {};
     const correlationId = (args.correlationId as string) || (argContext.correlationId as string) || generateCorrelationId();
@@ -193,19 +236,35 @@ export class ToolDispatchService {
       }));
     }
 
-    const traceparent = args.traceparent as string | undefined;
+    // GT-587: `_meta` first — that is where the protocol puts trace context. The
+    // `args.traceparent` path stays as a FALLBACK rather than being deleted: clients
+    // already using it would otherwise silently lose their trace linkage, and a
+    // telemetry regression is invisible until someone goes looking for a trace.
+    const metaCarrier = traceCarrierFromMeta(options.meta);
+    const legacyTraceparent = args.traceparent as string | undefined;
+    const carrier =
+      Object.keys(metaCarrier).length > 0
+        ? metaCarrier
+        : legacyTraceparent
+          ? { traceparent: legacyTraceparent }
+          : undefined;
     const otelGetter = {
       get: (c: Record<string, string>, k: string) => c[k],
       keys: (c: Record<string, string>) => Object.keys(c),
     };
-    const otelCtx = traceparent
-      ? propagation.extract(otelContext.active(), { traceparent }, otelGetter)
+    const otelCtx = carrier
+      ? propagation.extract(otelContext.active(), carrier, otelGetter)
       : otelContext.active();
 
     const span = this.tracer.startSpan(
       `mcp.tool.${name}`,
       {
         attributes: {
+          // GT-587 — standard MCP vocabulary, emitted ALONGSIDE the private names
+          // below (which are already collected and must not move).
+          [ATTR_MCP_METHOD_NAME]: MCP_METHOD_NAME_VALUE_TOOLS_CALL,
+          [ATTR_MCP_TOOL_NAME]: name,
+          ...(options.sessionId ? { [ATTR_MCP_SESSION_ID]: options.sessionId } : {}),
           'correlation.id': correlationId,
           'tool.name': name,
           'tool.mutative': !!tool.mutative,
@@ -276,9 +335,10 @@ export async function handleCallTool(
   name: string,
   args: Record<string, unknown> = {},
   deps: DispatchDeps,
+  options: ToolCallOptions = {},
 ): Promise<ToolCallResult> {
   const service = new ToolDispatchService(
     deps.registry, deps.metrics, deps.abacEvaluator, deps.logger, deps.tracer,
   );
-  return service.callTool(name, args);
+  return service.callTool(name, args, options);
 }

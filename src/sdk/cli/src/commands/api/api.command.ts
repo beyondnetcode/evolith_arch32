@@ -187,7 +187,11 @@ export class ApiCommand extends BaseEvolithCommand {
     } else {
       this.promptService.showError(message);
       this.promptService.showInfo('Try one of:');
-      this.promptService.showInfo('  Tools: gate-evaluate, validate-artifacts, agent-create');
+      // GT-583: sampled from the generated catalog, not typed here. The three
+      // names that used to be hardcoded (`gate-evaluate`, `validate-artifacts`,
+      // `agent-create`) were the keys of a hand-written map, and suggesting them
+      // sent the user straight back to this same error.
+      this.promptService.showInfo(`  Tools: ${TOOLS.slice(0, 3).map((t) => t.name).join(', ')}, …`);
       this.promptService.showInfo('  Resources: evolith://rulesets, evolith://phase-gates, evolith://core/info');
       this.promptService.showInfo('  Commands: init, validate, gate');
     }
@@ -206,7 +210,7 @@ export class ApiCommand extends BaseEvolithCommand {
     this.promptService.showInfo('  evolith api --list                    List all API categories');
     this.promptService.showInfo('  evolith api --list --category tools   List MCP tools');
     this.promptService.showInfo('  evolith api --inspect <name>          Inspect specific operation');
-    this.promptService.showInfo('  evolith api --inspect gate-evaluate   Example: inspect a tool');
+    this.promptService.showInfo('  evolith api --inspect evolith-gate-evaluate   Example: inspect a tool');
     this.promptService.showInfo('  evolith api --inspect init            Example: inspect a command\n');
     this.promptService.showInfo(chalk.bold('Categories:'));
     this.promptService.showInfo('  tools     - MCP tools (JSON-RPC operations)');

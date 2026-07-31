@@ -26,6 +26,18 @@ export interface CapabilityManifestShape {
   readonly engines: readonly string[];
   readonly surfaces: readonly string[];
   readonly supportedConsumers: readonly string[];
+  /**
+   * GT-583 — sha256 of the manifest's per-operation schema catalog
+   * (`inputSchema`/`outputSchema` for every governed operation).
+   *
+   * The catalog itself is fifty operations of JSON Schema and is deliberately
+   * NOT embedded here: a contract package a consumer pins should stay small.
+   * Pinning the fingerprint is equivalent — any change to any operation schema
+   * changes it — and it is what the manifest's own `sha256` folds in on the
+   * catalog's behalf, which is why `operations` is excluded from the manifest
+   * fingerprint on both sides.
+   */
+  readonly operationsSha256: string;
   readonly sha256: string;
 }
 
@@ -53,16 +65,25 @@ export const EXPECTED_CAPABILITY_MANIFEST: CapabilityManifestShape = Object.free
   engines: Object.freeze(['native', 'opa', 'enforcer']),
   surfaces: Object.freeze(['rest', 'cli', 'mcp']),
   supportedConsumers: Object.freeze([...SUPPORTED_CONSUMER_IDS]),
-  sha256: '8f5a75c912287ab182484b90e69272723b2fa83184778458eaee5028ec8f2d16',
+  operationsSha256: 'b7c1c938affc7ce9c72595135fbdb266f29c66a8c9e97aa5e66a6d4b074e3d86',
+  sha256: '216c9359841723fc2e45d9f9100b2cfe9299949c60a375d1dad9d10784714072',
 }) as CapabilityManifestShape;
 
 /**
- * Recompute the fingerprint of a manifest EXCLUDING its own `sha256`, exactly as
- * the domain does. A parity check compares this against `manifest.sha256`.
+ * Recompute the fingerprint of a manifest EXCLUDING its own `sha256` and its
+ * `operations` array, exactly as the domain does. A parity check compares this
+ * against `manifest.sha256`.
+ *
+ * GT-583 — `operations` is excluded because `operationsSha256` (which IS
+ * hashed) covers it. That is what lets a live manifest carrying fifty operation
+ * schemas and this package's compact snapshot produce the same fingerprint.
  */
-export function capabilityManifestFingerprint(manifest: CapabilityManifestShape): string {
-  const { sha256: _ignored, ...content } = manifest;
+export function capabilityManifestFingerprint(
+  manifest: CapabilityManifestShape & { operations?: unknown },
+): string {
+  const { sha256: _ignored, operations: _operations, ...content } = manifest;
   void _ignored;
+  void _operations;
   return sha256Hex(content);
 }
 
@@ -85,7 +106,7 @@ export function checkCapabilityManifestParity(
   const mismatches: string[] = [];
   const expected = EXPECTED_CAPABILITY_MANIFEST;
 
-  const scalarKeys = ['name', 'version', 'schemaVersion', 'sha256'] as const;
+  const scalarKeys = ['name', 'version', 'schemaVersion', 'operationsSha256', 'sha256'] as const;
   for (const key of scalarKeys) {
     if (live[key] !== expected[key]) {
       mismatches.push(`${key}: expected "${expected[key]}", got "${live[key]}"`);

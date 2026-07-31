@@ -89,6 +89,25 @@ export const CHAIN = [
     writes: ['src/rulesets/opa/abac-mcp-tool-access.rego'],
   },
   {
+    name: 'capability operation schemas',
+    producer: '.harness/scripts/generate-capability-operations.mjs',
+    checkArgs: ['--check'],
+    // Same shape as the ABAC link: derived from the runtime through ts-node.
+    // Its real input is the registry that answers `tools/list` plus every tool
+    // file the registry aggregates, so the tool module is the honest anchor.
+    // Listed because the CLI artifact is generated from the DOMAIN manifest,
+    // which is generated from this projection — regenerate out of order and the
+    // CLI catalog descends from a manifest nobody published (GT-583).
+    consumes: [
+      'src/packages/mcp-server/src/mcp/tool-registry.service.ts',
+      'src/packages/mcp-server/src/tools/tools.module.ts',
+    ],
+    writes: [
+      'src/packages/core-domain/src/capabilities/capability-operations.generated.ts',
+      'src/sdk/cli/src/commands/api/api.catalog.tool-schemas.generated.ts',
+    ],
+  },
+  {
     name: 'native evaluability snapshot',
     producer: 'src/rulesets/standards/capture-native-evaluability-snapshot.mjs',
     checkArgs: ['--check'],

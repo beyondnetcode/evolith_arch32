@@ -156,6 +156,15 @@ jobs:
       - name: ABAC rego tool sets match the runtime projection
         run: node .harness/scripts/generate-abac-tool-sets.mjs --check
 
+      # GT-583 criteria 2 and 3: the capability manifest's per-operation
+      # `inputSchema`/`outputSchema`, and the CLI's `TOOL_SCHEMAS`, are DERIVED
+      # from ToolRegistryService.operationProjection() — the registry that
+      # answers `tools/list` describing itself. Three hand-maintained copies of
+      # one contract is what shipped a THREE-entry CLI catalog for a fifty-tool
+      # MCP surface, under names no tool has ever had.
+      - name: Capability operation schemas match the runtime projection
+        run: node .harness/scripts/generate-capability-operations.mjs --check
+
       # GT-602: compile the rego to the `policy.wasm` the dispatcher actually loads.
       # `abac-rego-parity.spec.ts` now compiles it ITSELF when it is missing or stale,
       # so this step is no longer what makes the parity check run. It stays because it

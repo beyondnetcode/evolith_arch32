@@ -236,10 +236,21 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
   const isProd = profile === 'production';
 
   // .harness — real process executor when a checkout/corpus is mounted.
+  //
+  // GT-608 — the SAME root also seeds the skill catalogue. Passing `harnessRoot`
+  // makes `createAgentRuntime` derive the catalogue from `<root>/manifest.yaml`
+  // instead of the hardcoded 7-skill routing table. Without it the deployed
+  // service executed a manifest it had never read: no capability it could route
+  // declared `requiresApproval: true`, so step 4 of the governed pipeline never
+  // ran and the whole HITL seam — PendingApprovalAdapter, TrackerApprovalAdapter
+  // and its HTTP client — was unreachable in production whatever the manifest
+  // said. It is deliberately tied to the executor's root: the catalogue must
+  // describe the capabilities this deployment can actually execute.
   const harnessRoot = env.AGENT_RUNTIME_HARNESS_ROOT;
   if (harnessRoot) {
     overrides = {
       ...overrides,
+      harnessRoot,
       harness: new HarnessProcessAdapter({
         harnessRoot,
         cwd: env.AGENT_RUNTIME_WORKSPACE_ROOT ?? undefined,

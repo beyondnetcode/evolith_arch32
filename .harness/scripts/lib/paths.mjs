@@ -49,6 +49,7 @@ export const ROOT_MARKERS = ['package.json', '.harness', 'evolith.yaml'];
 export const PATH_KEYS = Object.freeze({
   // --- repo skeleton -------------------------------------------------------
   rootPackageJson: 'package.json',
+  rootPackageLock: 'package-lock.json',
   evolithManifest: 'evolith.yaml',
   masterIndex: 'MASTER_INDEX.md',
 
@@ -118,6 +119,8 @@ export const PATH_KEYS = Object.freeze({
   // Formerly referenced as `packages/agent-runtime/...` (missing `src/`) in script 33.
   agentRuntimeAdaptersBarrel: 'src/packages/agent-runtime/src/adapters/index.ts',
   agentRuntimeInteractionAdapters: 'src/packages/agent-runtime/src/adapters/interaction',
+  // GT-587: the single declaration of the pinned OpenTelemetry semconv vocabulary.
+  semconvPin: 'src/packages/core-domain/src/evaluation/telemetry/semconv.ts',
 });
 
 /**

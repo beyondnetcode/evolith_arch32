@@ -20,3 +20,4 @@ export * from './canonical-result.mapper';
 export * from './kind-selective-pipeline';
 export * from './evaluation-orchestrator.service';
 export * from './kind-evaluators';
+export * from './telemetry';

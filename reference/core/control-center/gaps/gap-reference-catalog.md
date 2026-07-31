@@ -7347,9 +7347,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Evolith MCP` · **Criticality:** P0 · **Complexity:** M
 - **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
 - **Acceptance criteria:**
-  - [ ] A test evaluates the compiled `policy.wasm` over all registered tool names and asserts ALLOW for an `architect` in `production`.
+  - [x] A test evaluates the compiled `policy.wasm` over all registered tool names and asserts ALLOW for an `architect` in `production`.
   - [x] The rego tool sets are generated from the tool registry rather than hand-maintained.
-  - [ ] CI fails when a tool exists in the TypeScript registry and not in the compiled policy.
+  - [x] CI fails when a tool exists in the TypeScript registry and not in the compiled policy.
 
 #### GT-603
 

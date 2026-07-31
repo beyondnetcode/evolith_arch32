@@ -78,6 +78,15 @@ export class OpaInputBuilder {
       if (facts.waiver) merged.waiver = facts.waiver;
       if (facts.tenantId) merged.tenantId = facts.tenantId;
       if (facts.evaluationDate) merged.evaluationDate = facts.evaluationDate;
+      // GT-584: the ADR-0111 quality evidence reaches
+      // `probabilistic-evidence-admissibility.rego` as `input.qualityEvidence`.
+      // An EMPTY array is forwarded too — "the consumer presented no evidence" and
+      // "the consumer presented an empty set" are the same verdict, and dropping
+      // the key would leave the two indistinguishable in the OPA input.
+      if (facts.qualityEvidence) merged.qualityEvidence = facts.qualityEvidence;
+      if (facts.qualityAdmissibilityPolicy) {
+        merged.qualityAdmissibilityPolicy = facts.qualityAdmissibilityPolicy;
+      }
     }
     return input;
   }

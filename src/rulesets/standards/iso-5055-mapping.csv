@@ -246,6 +246,10 @@ EVD-01,evidence/evidence-manifest.rules.json,governance,,,none,no,native-handler
 EVD-02,evidence/evidence-manifest.rules.json,governance,,,none,no,native-handler
 EVD-03,evidence/evidence-manifest.rules.json,governance,,,none,no,native-handler
 EVD-04,evidence/evidence-manifest.rules.json,governance,,,none,no,native-handler
+PEA-01,evidence/probabilistic-evidence-admissibility.rules.json,governance,,,none,no,native-handler
+PEA-02,evidence/probabilistic-evidence-admissibility.rules.json,governance,,,none,no,native-handler
+PEA-03,evidence/probabilistic-evidence-admissibility.rules.json,governance,,,none,no,native-handler
+PEA-04,evidence/probabilistic-evidence-admissibility.rules.json,governance,,,none,no,native-handler
 ABAC-01,governance/abac-mcp-access.rules.json,governance,CWE-732,Security,partial,no,needs-runtime
 ABAC-02,governance/abac-mcp-access.rules.json,governance,,,none,no,needs-runtime
 ABAC-03,governance/abac-mcp-access.rules.json,governance,,,none,no,needs-runtime

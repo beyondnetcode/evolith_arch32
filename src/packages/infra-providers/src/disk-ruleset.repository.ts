@@ -17,6 +17,43 @@ import { ValidateFunction } from "ajv";
 export { RulesetCorpusNotResolvedError, RulesetsNotFoundError };
 
 /**
+ * GT-647 — document kinds that legitimately live in the corpus tree under the
+ * `*.rules.json` suffix but are NOT corpus rulesets, keyed by the basename of
+ * the `$schema` they declare.
+ *
+ * The loader used to run every `*.rules.json` through the standard ruleset
+ * schema, so each of these failed with `must have required property 'rules' /
+ * 'principles'` and was logged as a skipped "non-standard ruleset" — on every
+ * evaluation, which is how they showed up once per k6 iteration in CI run
+ * 30631939687. Nothing was wrong with them: they are different documents that
+ * share a suffix, and the loader had no way to say so.
+ *
+ * A file listed here is validated against its OWN declared schema instead. That
+ * is strictly more checking than before, not less — the previous behaviour
+ * checked them against a schema they were never meant to satisfy and then
+ * discarded the result. Only a document that violates its own contract warns.
+ */
+const NON_CORPUS_DOCUMENT_KINDS: ReadonlyMap<string, string> = new Map([
+  [
+    "rule-definition.schema.json",
+    "a single rule declaration, enforced by its paired CI guard and Rego policy rather than by the rule engine",
+  ],
+  [
+    "topology-recommendation.schema.json",
+    "the ADR-0104 advisory topology recommendation catalogue, read by TopologyRecommendationService",
+  ],
+]);
+
+/** Basename of a declared `$schema`, or `undefined` when none is declared. */
+function declaredSchemaName(parsed: Record<string, unknown>): string | undefined {
+  const raw = parsed["$schema"];
+  if (typeof raw !== "string" || raw.length === 0) return undefined;
+  // `$schema` is authored as a relative path (and several are stale after the
+  // reference/ reorganisation), so only the filename is trustworthy.
+  return raw.split(/[\\/]/).pop();
+}
+
+/**
  * Disk-backed implementation of {@link IRulesetRepository}.
  *
  * Reads `*.rules.json` files under the Core rulesets root, validates each one
@@ -30,6 +67,8 @@ export { RulesetCorpusNotResolvedError, RulesetsNotFoundError };
 export class DiskRulesetRepository implements IRulesetRepository {
   private readonly ajv: Ajv;
   private validateSchema?: ValidateFunction;
+  /** GT-647 — compiled validators for the non-corpus kinds, by schema filename. */
+  private readonly sideSchemas = new Map<string, ValidateFunction | null>();
 
   constructor(
     private readonly fs: IFileSystem,
@@ -102,6 +141,17 @@ export class DiskRulesetRepository implements IRulesetRepository {
         throw new Error(`Ruleset validation error: ${filePath}: ${message}`);
       }
 
+      // GT-647: a document that declares a known non-corpus schema is a
+      // different kind, not a broken ruleset. Check it against the contract it
+      // actually claims and move on — it contributes no rules by design.
+      const kind = NON_CORPUS_DOCUMENT_KINDS.get(
+        declaredSchemaName(parsed) ?? "",
+      );
+      if (kind) {
+        await this.checkNonCorpusDocument(parsed, filePath, rulesetsDir, kind);
+        continue;
+      }
+
       try {
         // Exclude SDLC gate rulesets from standard validation here since PhaseGateValidator handles them
         if (!filePath.endsWith("phase-gates.rules.json")) {
@@ -150,6 +200,50 @@ export class DiskRulesetRepository implements IRulesetRepository {
     }
 
     return rules;
+  }
+
+  /**
+   * GT-647 — validate a non-corpus document against the schema it declares.
+   *
+   * Failing this is a WARN, never a throw: these documents contribute no rules,
+   * so a malformed one cannot zero out validation the way a broken corpus
+   * ruleset can (which is why {@link loadAllRulesets} throws for those). A
+   * missing schema file is likewise not fatal — the corpus may be a published
+   * subset that ships rules without the authoring schemas.
+   */
+  private async checkNonCorpusDocument(
+    parsed: Record<string, unknown>,
+    filePath: string,
+    rulesetsDir: string,
+    kind: string,
+  ): Promise<void> {
+    const schemaName = declaredSchemaName(parsed)!;
+
+    if (!this.sideSchemas.has(schemaName)) {
+      try {
+        const schemaContent = await this.fs.readFile(
+          path.join(rulesetsDir, "schema", schemaName),
+        );
+        this.sideSchemas.set(
+          schemaName,
+          this.ajv.compile(JSON.parse(schemaContent)),
+        );
+      } catch {
+        // `null` = "looked, not available" — cached so one absent schema does
+        // not re-hit the filesystem for every document that declares it.
+        this.sideSchemas.set(schemaName, null);
+      }
+    }
+
+    const validate = this.sideSchemas.get(schemaName);
+    if (validate && !validate(parsed)) {
+      this.logger.warn(
+        `${filePath} declares ${schemaName} but does not satisfy it: ${this.ajv.errorsText(validate.errors)}`,
+      );
+      return;
+    }
+
+    this.logger.debug(`Not a corpus ruleset, skipped: ${filePath} — ${kind}`);
   }
 
   private async findRulesetFiles(dir: string, depth = 0): Promise<string[]> {

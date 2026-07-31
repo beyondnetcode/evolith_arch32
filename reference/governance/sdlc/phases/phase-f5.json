@@ -1,0 +1,11 @@
+{
+  "$schema": "https://evolith.dev/sdlc/sdlc-phase.schema.json",
+  "id": "f5",
+  "name": "Delivery & Operations",
+  "shortName": "Delivery",
+  "order": 5,
+  "description": "Deployment executed; observability verified nominal; monitoring active; rollback procedure confirmed.",
+  "gates": [
+    "gate-f5"
+  ]
+}

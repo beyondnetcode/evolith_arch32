@@ -7,6 +7,20 @@ export class NestLoggerProvider implements ILoggerProvider {
   }
 }
 
+/**
+ * GT-647 — `ILogger`'s `context` is optional; Nest's `Logger` treats every
+ * argument it is GIVEN as meaningful.
+ *
+ * `this.logger.warn(message, undefined)` is not the same call as
+ * `this.logger.warn(message)`: Nest reads `...optionalParams` positionally, so
+ * an explicit `undefined` becomes a second thing to print. Every single-argument
+ * `warn`/`debug`/`info`/`error` from the domain therefore emitted a paired
+ * `WARN undefined` line — visible in core-api.log next to each corpus warning in
+ * CI run 30631939687, and doubling the volume of every log the Core writes.
+ *
+ * Forwarding the parameter only when it exists is the whole fix; the
+ * two-argument form is unchanged.
+ */
 class NestLogger implements ILogger {
   private logger: Logger;
 
@@ -15,19 +29,23 @@ class NestLogger implements ILogger {
   }
 
   debug(message: string, context?: unknown): void {
-    this.logger.debug(message, context);
+    if (context === undefined) this.logger.debug(message);
+    else this.logger.debug(message, context);
   }
 
   info(message: string, context?: unknown): void {
-    this.logger.log(message, context);
+    if (context === undefined) this.logger.log(message);
+    else this.logger.log(message, context);
   }
 
   warn(message: string, context?: unknown): void {
-    this.logger.warn(message, context);
+    if (context === undefined) this.logger.warn(message);
+    else this.logger.warn(message, context);
   }
 
   error(message: string, context?: unknown): void {
-    this.logger.error(message, context);
+    if (context === undefined) this.logger.error(message);
+    else this.logger.error(message, context);
   }
 }
 

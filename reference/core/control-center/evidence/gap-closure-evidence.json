@@ -8876,6 +8876,31 @@
       "dependencyRationale": "What this guard cannot see is stated rather than left to be assumed: an id allocated on a branch from which no pull request has been opened. It compares HEAD against ONE base, so two feature branches that both allocate GT-640 stay invisible to each other until the first of them merges. The `--verbose` output says so on every newly allocated id instead of implying coverage it does not have. Closing that remainder needs the open-PR claim set described in GT-639, which is why it is tracked there and not bolted on here."
     },
     {
+      "id": "GT-641",
+      "closedAt": "2026-07-30",
+      "closureCommit": "fe49e9e4",
+      "evidence": [
+        "src/packages/core-domain/src/application/services/use-case.types.ts",
+        "src/packages/core-domain/src/application/validators/phase-gate-validator.types.ts",
+        "src/packages/core-domain/src/application/services/index.ts",
+        "src/packages/core-domain/src/application/validators/phase-gate-validator.service.ts",
+        "reference/core/control-center/gaps/gap-reference-catalog.md"
+      ],
+      "validationCommands": [
+        "THE MEASUREMENT, before and after, over the same tree: 346 modules / 2 cycles -> 348 modules / 0 cycles. Both runs used GT-589 extractor built from feat/gt-589-repo-facts, because that package is NOT on main -- the before-run was taken over a pristine checkout of HEAD rather than over memory of it.",
+        "THE REPORTED CHAIN WAS THE SMALLER HALF OF THE FINDING. Each cycle was a two-node chain inside a four-module strongly connected component: project-scaffolder.service and phase-transition.use-case in the first, evidence-validator and ruleset-loader in the second. Fixing only the two files named in the chain would have moved the cycle, not removed it -- the component field is what said so.",
+        "THE FIX IS NOT A TYPE-ONLY IMPORT. Erasing the back-edge with `import type` would satisfy the extractor (it classifies type-only edges as erased-at-runtime) while leaving the layering inverted; the type moves out of the module that also constructs its consumer instead.",
+        "npm --workspace @beyondnet/evolith-core-domain test -> 129 suites passed / 1 skipped, 1455 tests passed. The quoted 131/1479 baseline is from the GT-589 branch, which adds spec files absent here; suite count is unchanged by this closure because no spec was added or removed.",
+        "npm run build -> tsc -b clean across the workspace, so the barrel re-exports resolve for every consumer, not just core-domain.",
+        "npm --workspace @beyondnet/evolith-cli run test:unit -> 101/101 suites, 1446 tests. FIRST RUN WAS RED (6 suites) FOR AN ENVIRONMENT REASON, recorded because it is the trap: a fresh worktree has no built dist for @beyondnet/evolith-agent-runtime, so jest cannot resolve it. Green only after the workspace-wide build.",
+        "npm --workspace @beyondnet/evolith-cli run test:e2e -> 18/18 suites, 132 tests.",
+        "npm --workspace @beyondnet/evolith-mcp test -> 53/53 suites, 433 passed / 4 skipped.",
+        "A PRE-EXISTING FAILURE WAS RULED OUT RATHER THAN INHERITED: nest build for mcp-server reports 3 TS2345 duplicate-identity errors on RulesetValidatorService. Reproduced on a reverted tree before attributing it -- it is the worktree dual-resolution problem (some specifiers resolve to the main checkout dist), not this change."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "No guard is delivered with this closure and the last acceptance criterion is deliberately left open. @beyondnet/evolith-repo-facts lives only on feat/gt-589-repo-facts (PR #309); a check on main cannot run a measurement whose implementation is not on main, and reimplementing cycle detection here would be a second source of truth for the exact question GT-589 exists to answer. The guard belongs with #309. Until it lands, the two cycles are removed but a third would regress unobserved -- stated here rather than left for a reader to discover."
+    },
+    {
       "id": "GT-640",
       "closedAt": "2026-07-30",
       "closureCommit": "29e940d4",

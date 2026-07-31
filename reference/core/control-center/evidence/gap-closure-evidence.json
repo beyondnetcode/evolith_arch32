@@ -9169,6 +9169,25 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-646",
+      "closedAt": "2026-07-31",
+      "closureCommit": "d3b717e8",
+      "evidence": [
+        "product/infra/load/k6/smoke.js",
+        "product/infra/load/report-summary.mjs",
+        "product/infra/load/README.md"
+      ],
+      "validationCommands": [
+        "k6 run --summary-export=/tmp/k6-smoke.json product/infra/load/k6/smoke.js",
+        "node product/infra/load/report-summary.mjs --summary /tmp/k6-smoke.json --label \"smoke (correctness gate)\" --exit-code 0",
+        "node product/infra/load/report-summary.mjs --summary /nonexistent/k6-average.json --label \"average load\" --exit-code 1",
+        "RECONSTRUCTED FROM THE RUN ARTIFACT, NOT INFERRED FROM THE SUMMARY LINE. Run 30631939687 failed at health_latency p(95)=276.1ms on commit d97db1d4, twenty minutes after run 30631081684 passed on the identical tree. Its k6-smoke.json holds nine health samples between 2.72ms and 4.3ms and one at 498.5ms; 276.1ms is exactly 4.3 + 0.55*(498.5 - 4.3), a latency no request in the run ever had. Feeding those ten values to k6 v2.0.0 returns p(95)=276.1ms, p(90)=53.72ms, med=3.08ms, avg=52.73ms -- the artifact to the decimal.",
+        "THE COLD-START HYPOTHESIS WAS REFUTED, so neither a warm-up iteration nor a raised ceiling is the fix. wait-for-target.sh drives a full governed evaluation before k6 starts; evaluate_latency was flat across all ten iterations (min 107.349675ms, max 122.373351ms); core-api logged the health handler at durationMs=0 while k6 measured 498.354386ms of http_req_waiting against 0.165296ms of http_req_connecting. The request was queued behind a blocked event loop caused by a per-evaluation ruleset corpus re-scan, which is registered separately and NOT fixed here.",
+        "A/B ON A STUB REPRODUCING THE DISTRIBUTION (health p95 273.73ms, max 495.39ms): the pre-fix script exits 99 with \"x p(95)<150 p(95)=273.73ms\" and the post-fix script exits 0 with \"ok med<150 med=883us\", the tail unchanged between them. TEETH RETAINED: a target genuinely slow on every request (200ms) fails the new gate, \"x med<150 med=199.83ms\", exit 99. NO SLO NUMBER WAS RAISED -- the median is asserted against the same SLO.health_p95 / SLO.evaluate_p95 values."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-644",
       "closedAt": "2026-07-31",
       "closureCommit": "a4914d92",

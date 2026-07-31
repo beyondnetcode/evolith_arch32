@@ -20,6 +20,11 @@ import {
   type IEvaluationPipeline,
   type IWorkspaceReferenceResolver,
 } from '@beyondnet/evolith-core-domain/evaluation';
+import {
+  createEvaluationIngestClientFromEnv,
+  depositEvaluation,
+  type TrackerEvaluationIngestClient,
+} from '@beyondnet/evolith-infra-providers';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
@@ -151,6 +156,10 @@ export class EvaluateCommand extends BaseEvolithCommand {
       await fs.writeFile(path.resolve(options.evidence), JSON.stringify(manifest, null, 2), 'utf-8');
     }
 
+    // GT-604: the deposit path. `undefined` when this installation is not configured
+    // to talk to a Tracker, which is a standalone run and not a failure.
+    const ingestClient = createEvaluationIngestClientFromEnv(process.env);
+
     const format = options?.format || 'json';
     if (format === 'sarif') {
       // GT-518: emit a SARIF 2.1.0 log (gaps/risks as `result`s) for the CI/PR
@@ -165,6 +174,15 @@ export class EvaluateCommand extends BaseEvolithCommand {
       const decision = evaluateDriftGate({ result, codeowners });
       const published = await new PrCommentFallbackPublisher().publish(decision);
       console.log(published.body);
+      // GT-604: deposit BEFORE the exit. A run that blocks is precisely the run whose
+      // evidence matters, and exiting first would lose exactly those.
+      await this.depositEvidence({
+        client: ingestClient,
+        result,
+        violations: decision.evidence.violations,
+        surface: 'drift-gate',
+        correlationId: envelope.meta.correlationId,
+      });
       // The drift gate's non-zero exit means the gate BLOCKS, not that the tool broke.
       if (published.exitCode !== 0) exitWith(CLI_EXIT_CODES.BLOCKED);
       return;
@@ -178,11 +196,59 @@ export class EvaluateCommand extends BaseEvolithCommand {
       console.log(JSON.stringify(envelope, null, 2));
     }
 
+    // GT-604: same deposit for the non-drift formats, tagged as the `cli` surface.
+    // Before the exit, for the same reason as above.
+    await this.depositEvidence({
+      client: ingestClient,
+      result,
+      violations: evaluateDriftGate({
+        result,
+        codeowners: await this.loadCodeowners(ctx.workspaceRef ?? process.cwd()),
+      }).evidence.violations,
+      surface: 'cli',
+      correlationId: envelope.meta.correlationId,
+    });
+
     // A negative evaluation verdict must exit non-zero so CI can gate on it,
     // mirroring `gate`/`phase` (envelope success=command-ran, exit=verdict).
     if (result.overallVerdict === 'FAIL' || result.outcome === 'rejected') {
       exitWith(CLI_EXIT_CODES.BLOCKED);
     }
+  }
+
+  /**
+   * GT-604 — deposit this run's verdict in the Tracker's evidence ledger.
+   *
+   * <p>Every field the ledger row carries is mapped by the SHARED contract
+   * (`toEvaluationIngestPayload`, inside the shared client), never here: this
+   * command decides only WHICH surface it is and WHICH violations belong to the
+   * run. The canonical violations come from `evaluateDriftGate`, the same
+   * CODEOWNERS-enriched set the drift gate blocks on, so the ledger's accountable
+   * owner is the one the PR comment names.</p>
+   *
+   * <p>A failed deposit is reported on stderr and changes NOTHING about the
+   * verdict or the exit code. Making the gate depend on the ledger's availability
+   * would mean a Tracker outage silently opens the gate.</p>
+   */
+  private async depositEvidence(input: {
+    client?: TrackerEvaluationIngestClient;
+    result: Parameters<typeof evaluateDriftGate>[0]['result'];
+    violations: Parameters<typeof depositEvaluation>[0]['violations'];
+    surface: 'cli' | 'drift-gate';
+    correlationId: string;
+  }): Promise<void> {
+    if (!input.client) return;
+
+    await depositEvaluation({
+      client: input.client,
+      result: input.result,
+      violations: input.violations,
+      surface: input.surface,
+      producerVersion: `evolith-cli@${CORE_VERSION}`,
+      // The SAME id the success envelope carries, so the local artifact and the
+      // ledger row join on one key instead of on two that look alike.
+      correlationId: input.correlationId,
+    });
   }
 
   /**

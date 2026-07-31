@@ -47,6 +47,7 @@ jobs:
           npm run build --workspace @beyondnet/evolith-agent-runtime
           npm run build --workspace @beyondnet/evolith-sdk
           npm run build --workspace @beyondnet/evolith-core
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-infra-providers
           npm run build --workspace @beyondnet/evolith-mcp
           npm run build --workspace src/sdk/cli
@@ -144,6 +145,7 @@ jobs:
           npm run build --workspace @beyondnet/evolith-agent-runtime
           npm run build --workspace @beyondnet/evolith-sdk
           npm run build --workspace @beyondnet/evolith-core
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-infra-providers
 
       # GT-602 criterion 2: the three rego tool sets are DERIVED from
@@ -204,6 +206,7 @@ jobs:
       - name: Build workspace dependencies
         run: |
           npm run build --workspace @beyondnet/evolith-core-domain
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-infra-providers
 
       - name: Run core-api tests
@@ -268,6 +271,7 @@ jobs:
           # passed since it was wired.
           npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-infra-providers
           npm run build --workspace @beyondnet/evolith-core
           npm run build --workspace @beyondnet/evolith-agent-runtime
@@ -394,6 +398,7 @@ jobs:
       - name: Build workspace dependencies
         run: |
           npm run build --workspace @beyondnet/evolith-core-domain
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-infra-providers
 
       # STRICT. Every script under .harness/scripts/ci must either refuse a

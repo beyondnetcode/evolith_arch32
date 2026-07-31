@@ -75,6 +75,23 @@ export interface Finding {
   evidence: Record<string, unknown>;
 }
 
+/**
+ * GT-643 — what the no-effect oracle actually exercised.
+ *
+ * `checked` counting zero while the suite is green is the failure mode this
+ * report exists to make visible: a state oracle that ran over nothing looks
+ * exactly like a state oracle that found nothing.
+ */
+export interface NoEffectCoverage {
+  contracts: number;
+  /** (contract, surface) pairs whose no-effect invocation was executed. */
+  checked: number;
+  /** Of those, how many had their contrast invocation observed writing. */
+  contrastVerified: number;
+  /** Contract ids whose surfaces produced no executable invocation. */
+  skipped: string[];
+}
+
 export interface CoverageReport {
   totalOperations: number;
   exposed: Record<Surface, number>;
@@ -85,4 +102,5 @@ export interface CoverageReport {
   findingsByType: Record<string, number>;
   findingsBySeverity: Record<string, number>;
   uncoveredTriangleOps: string[];
+  noEffect: NoEffectCoverage;
 }

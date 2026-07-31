@@ -10,10 +10,17 @@ import type { JsonSchemaObject, McpToolAnnotations } from '../common/tool-output
 export interface McpToolSchema {
   name: string;
   description: string;
+  /**
+   * GT-583 — the accepted arguments. A tool declares `type`/`properties`/
+   * `required`; the `$schema` dialect is stamped by
+   * {@link ToolRegistryService.describe}, never per tool, so the index signature
+   * is what lets the derived keyword through.
+   */
   inputSchema: {
     type: string;
     properties: Record<string, unknown>;
     required?: string[];
+    [keyword: string]: unknown;
   };
   /**
    * GT-581 — JSON Schema 2020-12 description of the envelope this tool returns

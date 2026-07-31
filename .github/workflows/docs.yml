@@ -116,6 +116,24 @@ jobs:
       - name: ISO/IEC 5055 mapping guard
         run: node --test src/rulesets/standards/iso-5055-mapping.test.mjs
 
+      # GT-583: the `capability operation schemas` link in the chain below boots
+      # the mcp-server DI graph through ts-node to ask ToolRegistryService to
+      # describe itself. mcp-server resolves `@beyondnet/evolith-core-domain`
+      # through the workspace symlink, whose `exports` map points at `dist/` —
+      # so with only `npm ci` behind it the guard dies on MODULE_NOT_FOUND for
+      # `dist/capabilities/capability-operations.js` and reports the link STALE.
+      # It passed in `test-mcp-server` and on every developer machine because
+      # both had a built `dist/` (gitignored) sitting there already. `npm run
+      # build` further down this job is too late — the guard runs here.
+      - name: Build workspace dependencies for the runtime-derived guards
+        run: |
+          npm run build --workspace @beyondnet/evolith-contracts
+          npm run build --workspace @beyondnet/evolith-core-domain
+          npm run build --workspace @beyondnet/evolith-agent-runtime
+          npm run build --workspace @beyondnet/evolith-sdk
+          npm run build --workspace @beyondnet/evolith-core
+          npm run build --workspace @beyondnet/evolith-infra-providers
+
       # GT-630: the derived artifacts have a dependency ORDER — the executive
       # summary is built FROM the maturity reconciliation, which is built from
       # the board. Generate the summary first and it captures a value the

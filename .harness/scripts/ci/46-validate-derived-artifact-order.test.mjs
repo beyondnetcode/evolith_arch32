@@ -54,7 +54,7 @@ test('the real repository is current and at a fixed point', () => {
   const { status, out } = run(resolve(__dirname, '../../..'));
   assert.equal(status, 0, out);
   assert.match(out, /at a fixed point/);
-  assert.match(out, /links declared \.+ 5/);
+  assert.match(out, /links declared \.+ 6/);
 });
 
 test('the guard leaves the real tree byte-identical', () => {
@@ -105,7 +105,17 @@ const PRELUDE_STUBS = {
   'src/packages/mcp-server/src/mcp/abac-evaluator.ts': '// stub\n',
   'src/rulesets/opa/abac-mcp-tool-access.rego': 'stable\n',
 
-  // link 2 — native evaluability snapshot (GT-598)
+  // link 2 — capability operation schemas (GT-583)
+  '.harness/scripts/generate-capability-operations.mjs': stubProducer([
+    'src/packages/core-domain/src/capabilities/capability-operations.generated.ts',
+    'src/sdk/cli/src/commands/api/api.catalog.tool-schemas.generated.ts',
+  ]),
+  'src/packages/mcp-server/src/mcp/tool-registry.service.ts': '// stub\n',
+  'src/packages/mcp-server/src/tools/tools.module.ts': '// stub\n',
+  'src/packages/core-domain/src/capabilities/capability-operations.generated.ts': 'stable\n',
+  'src/sdk/cli/src/commands/api/api.catalog.tool-schemas.generated.ts': 'stable\n',
+
+  // link 3 — native evaluability snapshot (GT-598)
   'src/rulesets/standards/capture-native-evaluability-snapshot.mjs':
     stubProducer(['src/rulesets/standards/native-evaluability-snapshot.json']),
   'src/packages/core-domain/test/rule-corpus-triage.ts': '// stub\n',

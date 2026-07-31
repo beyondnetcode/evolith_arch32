@@ -1,4 +1,5 @@
 import { ApiCommand } from './api.command';
+import { TOOLS, TOOL_SCHEMAS } from './api.catalog';
 
 describe('ApiCommand', () => {
   let command: ApiCommand;
@@ -40,16 +41,38 @@ describe('ApiCommand', () => {
   });
 
   describe('--inspect flag', () => {
-    it('should inspect gate-evaluate tool schema', async () => {
-      await expect(command.executeCommand([], { inspect: 'gate-evaluate' })).resolves.not.toThrow();
+    /**
+     * GT-583 — these cases used to name `gate-evaluate`, `validate-artifacts`
+     * and `agent-create` and assert only `resolves.not.toThrow()`. Not one of
+     * those keys is a tool name (`evolith-gate-evaluate` is), and
+     * `agent-create` has never existed at all — so all three were passing
+     * against the "unknown operation" branch. A schema assertion that passes
+     * when the schema is absent is why a three-entry catalog described a
+     * fifty-tool surface for as long as it did.
+     */
+    it('EVERY advertised MCP tool has a schema to inspect', () => {
+      const withoutSchema = TOOLS.filter((t) => !TOOL_SCHEMAS[t.name]).map((t) => t.name);
+      expect(withoutSchema).toEqual([]);
+      expect(TOOLS.length).toBeGreaterThanOrEqual(40);
     });
 
-    it('should inspect validate-artifacts tool schema', async () => {
-      await expect(command.executeCommand([], { inspect: 'validate-artifacts' })).resolves.not.toThrow();
+    it('every schema carries both an input and an output contract', () => {
+      const incomplete = Object.entries(TOOL_SCHEMAS)
+        .filter(([, s]) => !s.inputSchema || !s.outputSchema || !s.description)
+        .map(([name]) => name);
+      expect(incomplete).toEqual([]);
     });
 
-    it('should inspect agent-create tool schema', async () => {
-      await expect(command.executeCommand([], { inspect: 'agent-create' })).resolves.not.toThrow();
+    it('should inspect a real tool schema under its canonical name', async () => {
+      expect(TOOL_SCHEMAS['evolith-gate-evaluate']).toBeDefined();
+      await expect(
+        command.executeCommand([], { inspect: 'evolith-gate-evaluate' }),
+      ).resolves.not.toThrow();
+    });
+
+    it('does NOT resolve the pre-GT-583 aliases, which named no tool', () => {
+      expect(TOOL_SCHEMAS['gate-evaluate']).toBeUndefined();
+      expect(TOOL_SCHEMAS['agent-create']).toBeUndefined();
     });
 
     it('should inspect resource schema', async () => {
@@ -129,11 +152,15 @@ describe('ApiCommand', () => {
     });
 
     it('--inspect de un tool devuelve su schema de entrada y salida', async () => {
-      await command.executeCommand([], { inspect: 'gate-evaluate', format: 'json' } as never);
+      // GT-583 — canonical tool name. `gate-evaluate` was a key of the deleted
+      // hand-written map and names no MCP tool.
+      await command.executeCommand([], { inspect: 'evolith-gate-evaluate', format: 'json' } as never);
       const e = env();
       expect(e.success).toBe(true);
       expect(e.data.type).toBe('tool');
       expect(e.data.inputSchema).toBeDefined();
+      expect(e.data.outputSchema).toBeDefined();
+      expect(e.data.inputSchema.$schema).toBe('https://json-schema.org/draft/2020-12/schema');
     });
 
     it('--inspect de un resource devuelve su mimeType', async () => {

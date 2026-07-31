@@ -13,7 +13,7 @@ In short: Markdown explains, Native `*.rules.json` defines, and OPA + the Native
 ## Compilation and loading
 
 - Script: [`.harness/scripts/compile-opa-wasm.mjs`](../../../.harness/scripts/compile-opa-wasm.mjs), invoked via `npm run build:policy`.
-- It downloads OPA `v0.65.0`, then runs `opa build -t wasm` over `rulesets/opa/` with `--ignore=schemas`.
+- It downloads OPA `v1.19.0`, then runs `opa build -t wasm` over `rulesets/opa/` with `--ignore=schemas`.
 - **Wasm entrypoints:** `evolith/main/violations` and `evolith/abac/violations`.
 - The extracted `policy.wasm` is installed to `sdk/cli/rulesets/opa/policy.wasm` for the Evolith CLI evaluator.
 - `evolith.main` ([main.rego](./main.rego)) aggregates the `violations` sets of the individual policies. `evolith.abac` ([abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego)) is **dual-published**: it is imported and unioned into `evolith/main/violations` (`main.rego` line 10 imports `data.evolith.abac.violations` and line 62 unions it), *and* it is also exposed as the dedicated `evolith/abac/violations` entrypoint for runtime MCP tool-access decisions.
@@ -73,7 +73,7 @@ These policies are present in the directory but are **not** imported by `main.re
 
 ## Running policy tests
 
-Prerequisites: a local OPA binary. `npm run build:policy` downloads OPA `v0.65.0` into `.harness/bin/opa`; alternatively install OPA yourself and put it on `PATH`. No environment variables are required to run the tests.
+Prerequisites: a local OPA binary. `npm run build:policy` downloads OPA `v1.19.0` into `.harness/bin/opa`; alternatively install OPA yourself and put it on `PATH`. No environment variables are required to run the tests.
 
 ```bash
 # 1. (Once) fetch the pinned OPA binary and build the Wasm bundle
@@ -93,7 +93,7 @@ npm run build:policy
 
 | Symptom | Likely cause | Resolution |
 |---|---|---|
-| `opa: command not found` / `.harness/bin/opa` missing | Pinned binary not fetched | Run `npm run build:policy` (downloads OPA `v0.65.0`), or install OPA and use it directly. |
+| `opa: command not found` / `.harness/bin/opa` missing | Pinned binary not fetched | Run `npm run build:policy` (downloads OPA `v1.19.0`), or install OPA and use it directly. |
 | `policy.wasm` not picked up by the Evolith CLI | Stale or missing bundle | Re-run `npm run build:policy`; the build installs `policy.wasm` to `sdk/cli/rulesets/opa/policy.wasm`. |
 | A new policy is not enforced through `evolith/main/violations` | Not imported/unioned in `main.rego` | Add an `import data.evolith.<pkg>.violations` and a union rule to [`main.rego`](./main.rego); policies in *Standalone policies* are intentionally not aggregated. |
 | OPA and Native engines return different verdicts | Dual-Engine Parity drift | Treat as a parity bug — align the `.rego` to the Native `*.rules.json` semantics (see [parity backlog](../../../reference/core/control-center/gaps/gap-tracking.md)). |

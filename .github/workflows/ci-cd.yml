@@ -461,6 +461,15 @@ jobs:
       - name: No security fix is committed but unpublished
         run: node .harness/scripts/ci/48-validate-security-publish-lag.mjs --verbose
 
+      # GT-591: the OPA pin sat at 0.65.0 for two years and nothing said so, while a
+      # SECOND spelling of it lived in compile-opa-wasm.mjs's download URL — so the
+      # policies could be tested by one compiler and the enforcing wasm built by
+      # another, both green. Now on the v1 line, where `if`/`contains` are mandatory,
+      # so the pin and the Rego dialect are one fact: the guard also fails on any
+      # `.rego` that stops declaring `import rego.v1`.
+      - name: One OPA pin, on the v1 line, and no second spelling of it
+        run: node .harness/scripts/ci/53-validate-opa-pin.mjs --verbose
+
       # GT-638: a gap id is chosen by reading the highest GT-* on whichever branch
       # you are on, so two parallel sessions allocate the same number and find out
       # at merge time. `8449af3d` had to renumber GT-634 -> GT-637 for exactly this.

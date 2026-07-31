@@ -7950,6 +7950,21 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] The `security` type is either declared in the commitlint config with an explicit version-bump mapping, or removed from use.
   - [x] No hook in `.husky/` prints a "skipping" message and exits zero — a hook that cannot run is deleted, not silenced.
 
+#### GT-643
+
+**Title:** A `--dry-run` that writes: the flag is declared on `agents install`, documented, and never read
+
+- **Purpose:** Make the one flag whose entire contract is "change nothing" actually change nothing, and stop a test's output from being committed as product data.
+- **Evidence:** **`evolith agents install --dry-run` writes to the working directory.** `agents.command.ts:647` declares `-d, --dry-run`, `AgentsCommandOptions.dryRun` types it at line 29, and `installAgent()` never consults it: line 218 calls `this.registry.installAgent(process.cwd(), config, rulesetContent)` unconditionally, after which the registry writes `rulesets/agents/<name>/` and rewrites `agents-registry.json`. **This is one command out of step, not an absent convention** — `init` swaps the filesystem for a `DryRunFileSystem` (`init.command.ts:132-135`), `upgrade` returns before applying (`upgrade.command.ts:92-100`), `adr` threads it through every writer. `agents` is the only declaration in the CLI with no reader. **PROVEN BY REPRODUCTION, not by reading the code:** with a clean tree, `npx jest --config test/jest-e2e.json test/agents.e2e-spec.ts -t "dry-run"` alone leaves three TRACKED files modified — `src/sdk/cli/rulesets/agents/agents-registry.json`, `rulesets/agents/test-value/agent.config.json` and `rulesets/agents/test-value/agent.rules.json`. The whole spec was run first, then the single case, to be sure the attribution was to `--dry-run` and not to a sibling test. **The output has already been committed as product data:** `test-value` is what the prompt mock answers to every question (`test/mock-prompt.service.ts:11-12`), and `6bb43cfa` versioned that agent into the repository's own `rulesets/`. So the repo now ships a fixture-shaped agent nobody authored, and every developer who runs the e2e suite finds three files dirty in `git status` — which is how it was found. **A dry run that writes is worse than no dry run at all:** it is the flag a user reaches for exactly when they are not willing to be trusted with the real one, and it currently reports success while having done the thing it promised not to do. **Why no check caught it:** the cross-surface conformance tester compares what CLI, MCP and REST *answer*, and no oracle asks whether the disk changed — a flag whose entire observable contract is the ABSENCE of an effect is invisible to an oracle that only reads replies.
+- **Component:** `CLI` · **Criticality:** P1 · **Complexity:** S
+- **Provenance:** Found on 2026-07-30 while closing [`GT-641`](./gap-reference-catalog.md#gt-641): the CLI e2e suite left three tracked files dirty, and tracing which spec did it led to the flag rather than to the test. Registered separately because the test-hygiene symptom is downstream of a product defect — fixing the spec's working directory would hide the defect and leave `--dry-run` lying to users.
+- **Acceptance criteria:**
+  - [ ] `agents install --dry-run` performs no write: it reports what it would create and the working tree is byte-identical afterwards, verified by asserting a clean `git status` rather than by reading the code.
+  - [ ] The three committed artifacts under `src/sdk/cli/rulesets/agents/` are removed or moved out of the versioned rulesets — a prompt mock's answer is not product data.
+  - [ ] The e2e suite runs against a temporary working directory, so a future write-through defect fails a test instead of quietly editing the repository.
+  - [ ] Every other `--dry-run` declaration in the CLI is checked for a reader, and the survey result is recorded — including the commands that turn out correct, since "we looked" is the part that is not repeatable from a fixed list.
+  - [ ] An oracle exists that asks whether a no-effect flag had no effect, so the class is covered rather than this instance.
+
 #### GT-642
 
 **Title:** Nothing fails on a runtime import cycle, so the two that existed were found by hand and the next one will be too

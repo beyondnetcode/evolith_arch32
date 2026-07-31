@@ -582,7 +582,7 @@
         "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts",
         "src/packages/core-domain/src/application/validators/evaluators/handlers/governance-rule.handler.spec.ts",
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.spec.ts",
-        "src/sdk/cli/src/infrastructure/providers/node-filesystem.provider.spec.ts",
+        "src/packages/infra-providers/src/node-filesystem.provider.spec.ts",
         "src/sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.spec.ts"
       ],
       "validationCommands": [
@@ -1472,7 +1472,7 @@
       "evidence": [
         "src/sdk/cli/src/commands/agents/agents.command.ts",
         "src/sdk/cli/test/e2e/cli-e2e.test.ts",
-        "src/sdk/cli/src/infrastructure/providers/node-filesystem.provider.ts",
+        "src/packages/infra-providers/src/node-filesystem.provider.ts",
         "src/packages/mcp-server/src/main.ts"
       ],
       "validationCommands": [
@@ -2576,7 +2576,7 @@
       "closureCommit": "3e4c7f71",
       "evidence": [
         "src/sdk/cli/src/commands/update/update.command.ts",
-        "src/sdk/cli/src/infrastructure/providers/node-filesystem.provider.ts",
+        "src/packages/infra-providers/src/node-filesystem.provider.ts",
         "src/sdk/cli/src/infrastructure/plugins/plugin-loader.ts"
       ],
       "validationCommands": [
@@ -2721,7 +2721,7 @@
       "closedAt": "2026-06-23",
       "closureCommit": "b9e891db",
       "evidence": [
-        "src/sdk/cli/src/infrastructure/providers/config-parser.provider.spec.ts",
+        "src/packages/infra-providers/src/config-parser.provider.spec.ts",
         "src/sdk/cli/src/infrastructure/prompts/init-prompt-options.spec.ts",
         "src/sdk/cli/src/infrastructure/prompts/init-prompt-group.spec.ts",
         "src/sdk/cli/src/infrastructure/observability/otel-tracing.spec.ts",
@@ -2743,7 +2743,6 @@
         "src/packages/core-domain/src/application/use-cases/phase-transition.use-case.ts",
         "src/packages/core-domain/src/application/use-cases/validate-satellite.use-case.ts",
         "src/packages/infra-providers/src/node-filesystem.provider.ts",
-        "src/apps/core-api/src/infrastructure/providers/node-filesystem.provider.ts",
         "src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts",
         "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts",
         "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture/ast-rules.ts"

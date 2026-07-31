@@ -144,6 +144,26 @@ jobs:
       - name: Self-test for the joined-path guard
         run: node --test .harness/scripts/ci/47-validate-joined-paths.test.mjs
 
+      # GT-587. The OpenTelemetry GenAI conventions are Development-status, and the
+      # Core emits their attribute names as plain LITERALS (it must not import an
+      # observability SDK — rule HXA-05). Literals do not move when upstream moves, so
+      # a rename there turns Evolith's "standard" telemetry back into a private
+      # vocabulary with nothing going red. This is the check that goes red.
+      - name: Validate the pinned OpenTelemetry semconv revision
+        run: node .harness/scripts/ci/51-validate-semconv-pin.mjs --verbose
+
+      - name: Self-test for the semconv pin guard
+        run: node --test .harness/scripts/ci/51-validate-semconv-pin.test.mjs
+
+      # GT-597. The gate itself runs inside `openssf-scorecard.yml`, where the
+      # Scorecard JSON exists; only its logic is tested here. That logic is the
+      # difference between a weekly score that is published and a weekly score
+      # that is CHECKED, so it is tested on its failure surface: a dropped check,
+      # a vanished check, an inconclusive -1, an unseeded baseline, and a SARIF
+      # file handed to it by mistake must each be red.
+      - name: Self-test for the Scorecard regression gate
+        run: node --test .harness/scripts/ci/52-validate-scorecard-regression.test.mjs
+
       - name: Validate machine contracts
         run: node .harness/scripts/ci/10-validate-contract-conformance.mjs
 

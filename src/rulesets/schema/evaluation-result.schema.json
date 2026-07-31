@@ -172,7 +172,66 @@
         "definitionRef": { "type": "string" },
         "risks": { "type": "array", "items": { "$ref": "#/definitions/riskFinding" } },
         "gaps": { "type": "array", "items": { "$ref": "#/definitions/gapFinding" } },
-        "recommendations": { "type": "array", "items": { "$ref": "#/definitions/recommendation" } }
+        "recommendations": { "type": "array", "items": { "$ref": "#/definitions/recommendation" } },
+        "structuralFacts": { "$ref": "#/definitions/structuralFactsSummary" }
+      }
+    },
+    "structuralFactsSummary": {
+      "description": "GT-589. What the architecture evaluator's queries over the inline RepoFacts answered. `contentHash` is the extractor's digest, echoed so a verdict names the input it judged.",
+      "type": "object",
+      "required": [
+        "contentHash",
+        "indexer",
+        "moduleCount",
+        "importCount",
+        "symbolCount",
+        "referenceCount",
+        "cycles",
+        "boundaryCrossings"
+      ],
+      "properties": {
+        "contentHash": { "type": "string" },
+        "indexer": { "type": "string" },
+        "moduleCount": { "type": "integer" },
+        "importCount": { "type": "integer" },
+        "symbolCount": { "type": "integer" },
+        "referenceCount": { "type": "integer" },
+        "cycles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["chain", "component", "typeOnly"],
+            "properties": {
+              "chain": { "type": "array", "items": { "type": "string" } },
+              "component": { "type": "array", "items": { "type": "string" } },
+              "typeOnly": { "type": "boolean" }
+            }
+          }
+        },
+        "boundaryCrossings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "ruleId",
+              "fromSymbol",
+              "toSymbol",
+              "symbolChain",
+              "moduleChain",
+              "viaLegalImportsOnly",
+              "severity"
+            ],
+            "properties": {
+              "ruleId": { "type": "string" },
+              "fromSymbol": { "type": "string" },
+              "toSymbol": { "type": "string" },
+              "symbolChain": { "type": "array", "items": { "type": "string" } },
+              "moduleChain": { "type": "array", "items": { "type": "string" } },
+              "viaLegalImportsOnly": { "type": "boolean" },
+              "severity": { "type": "string", "enum": ["error", "warning"] }
+            }
+          }
+        }
       }
     },
     "blueprintResult": {

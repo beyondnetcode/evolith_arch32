@@ -1,0 +1,234 @@
+name: Reliability
+
+# GT-443 — the load + chaos harness under product/infra/load/ had existed for
+# weeks and ran in NO workflow at all (`grep -rniE "k6|chaos" .github/workflows/`
+# returned nothing), so its thresholds gated nothing and its first real execution
+# found a check asserting a response field the API has never returned. This
+# workflow is what makes those assets a gate instead of a document.
+#
+# Deliberately a NEW file rather than an edit to ci-cd.yml / docker-images.yml:
+# both are being modified in an open PR, and a load job has no business coupling
+# its lifetime to the main pipeline.
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'src/apps/core-api/**'
+      - 'src/packages/core-domain/**'
+      - 'src/rulesets/**'
+      - 'product/infra/load/**'
+      - '.github/workflows/reliability.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'src/apps/core-api/**'
+      - 'src/packages/core-domain/**'
+      - 'src/rulesets/**'
+      - 'product/infra/load/**'
+      - '.github/workflows/reliability.yml'
+  workflow_dispatch:
+    inputs:
+      plateau_vus:
+        description: 'Concurrent VUs held during the plateau'
+        default: '10'
+      plateau_duration:
+        description: 'Plateau duration (k6 duration string)'
+        default: '1m'
+
+env:
+  EVOLITH_API_KEY: ci-load-key
+  BASE_URL: http://127.0.0.1:3001
+
+jobs:
+  k6-load:
+    name: k6 load profile (thresholds + published metrics)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build core-api and its workspace chain
+        run: |
+          npm run build --workspace @beyondnet/evolith-contracts
+          npm run build --workspace @beyondnet/evolith-core-domain
+          npm run build --workspace @beyondnet/evolith-infra-providers
+          npm run build --workspace core-api
+
+      # Without policy.wasm every OPA-backed rule returns "enforcement blocked",
+      # so the load would exercise an error path instead of the governed one.
+      - name: Compile OPA policy bundle
+        run: npm run build:policy
+
+      - name: Install k6
+        uses: grafana/setup-k6-action@v1
+
+      # THROTTLE_MAX_REQUESTS is raised deliberately. core-api throttles every
+      # route at 100 requests / 60 s by default, so ANY real load run against a
+      # default-configured target measures the rate limiter and nothing else —
+      # measured: 81% of evaluations returned 429 at 10 VUs. The k6 scripts now
+      # track 429s under their own `throttled_429` threshold, so if this line is
+      # ever dropped the run fails by name instead of reporting a bogus error rate.
+      - name: Start core-api
+        run: |
+          mkdir -p "$RUNNER_TEMP/load-ws"
+          PORT=3001 \
+          NODE_ENV=production \
+          CORE_PATH="$GITHUB_WORKSPACE" \
+          WORKSPACE_ROOT="$RUNNER_TEMP/load-ws" \
+          THROTTLE_MAX_REQUESTS=1000000 \
+            node src/apps/core-api/dist/main.js > "$RUNNER_TEMP/core-api.log" 2>&1 &
+          echo $! > "$RUNNER_TEMP/core-api.pid"
+
+      - name: Wait for core-api to serve a real verdict
+        run: bash product/infra/load/wait-for-target.sh
+
+      # Correctness gate first: a load number from a broken endpoint is noise.
+      - name: k6 smoke (correctness gate)
+        run: |
+          set +e
+          k6 run --summary-export="$RUNNER_TEMP/k6-smoke.json" product/infra/load/k6/smoke.js
+          echo "K6_SMOKE_EXIT=$?" >> "$GITHUB_ENV"
+          set -e
+
+      - name: Publish smoke metrics
+        if: always()
+        run: |
+          node product/infra/load/report-summary.mjs \
+            --summary "$RUNNER_TEMP/k6-smoke.json" \
+            --label "smoke (correctness gate)" \
+            --exit-code "${K6_SMOKE_EXIT:-1}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail if smoke crossed a threshold
+        run: test "${K6_SMOKE_EXIT:-1}" -eq 0
+
+      - name: k6 average load (the profile of record)
+        run: |
+          set +e
+          k6 run \
+            --summary-export="$RUNNER_TEMP/k6-average.json" \
+            -e RAMP_DURATION=15s \
+            -e PLATEAU_VUS="${{ github.event.inputs.plateau_vus || '10' }}" \
+            -e PLATEAU_DURATION="${{ github.event.inputs.plateau_duration || '1m' }}" \
+            product/infra/load/k6/average-load.js
+          echo "K6_AVG_EXIT=$?" >> "$GITHUB_ENV"
+          set -e
+
+      - name: Publish average-load metrics
+        if: always()
+        run: |
+          node product/infra/load/report-summary.mjs \
+            --summary "$RUNNER_TEMP/k6-average.json" \
+            --label "average load" \
+            --exit-code "${K6_AVG_EXIT:-1}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail if average load crossed a threshold
+        run: test "${K6_AVG_EXIT:-1}" -eq 0
+
+      - name: Upload k6 summaries and server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-reliability-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/k6-smoke.json
+            ${{ runner.temp }}/k6-average.json
+            ${{ runner.temp }}/core-api.log
+          if-no-files-found: warn
+
+      - name: Stop core-api
+        if: always()
+        run: kill "$(cat "$RUNNER_TEMP/core-api.pid")" || true
+
+  chaos-drill:
+    name: Chaos drill (dependency killed mid-run) + MTTR
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Kept off the PR path: it builds container images and takes the stack down
+    # and up repeatedly, which is a poor fit for per-PR feedback.
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Install k6
+        uses: grafana/setup-k6-action@v1
+
+      # Engine-only topology: core-api + mcp + redis. The full-stack file is NOT
+      # usable here — it has cross-repo build contexts (the Tracker checked out
+      # as a sibling), which CI does not have.
+      - name: Bring up the engine stack
+        run: |
+          cd product/infra
+          EVOLITH_API_KEY=ci-load-key docker compose -f docker-compose.evolith.yml up -d --build redis core-api
+
+      - name: Wait for the stack to serve a real verdict
+        run: bash product/infra/load/wait-for-target.sh
+
+      # Criterion 3 of the gap: the dependency dies MID-RUN, with real callers on
+      # it, and what the callers saw is recorded.
+      - name: Chaos — kill core-api under load, record the behaviour
+        env:
+          COMPOSE_FILE: ${{ github.workspace }}/product/infra/docker-compose.evolith.yml
+          BASE_URL: http://127.0.0.1:3001
+          EVOLITH_API_KEY: ci-load-key
+          OUT_DIR: ${{ runner.temp }}
+          PLATEAU_VUS: '5'
+          PLATEAU_DURATION: 60s
+        run: bash product/infra/load/chaos/kill-under-load.sh | tee "$RUNNER_TEMP/chaos-kill-under-load.log"
+
+      - name: Total-outage MTTR
+        env:
+          COMPOSE_FILE: ${{ github.workspace }}/product/infra/docker-compose.evolith.yml
+          EVOLITH_API_KEY: ci-load-key
+          SERVICES: redis core-api
+          RUNS: '3'
+        run: bash product/infra/load/chaos/recovery-time.sh | tee "$RUNNER_TEMP/chaos-mttr.log"
+
+      - name: Publish chaos results
+        if: always()
+        run: |
+          {
+            echo '### Chaos drill'
+            echo ''
+            echo 'Recovery is measured to the FIRST GOVERNED VERDICT, not to "process up".'
+            echo ''
+            echo '```'
+            cat "$RUNNER_TEMP/chaos-kill-under-load.log" 2>/dev/null || echo '(no kill log)'
+            cat "$RUNNER_TEMP/chaos-mttr.log" 2>/dev/null || echo '(no MTTR log)'
+            echo '```'
+            echo ''
+            echo '> This is a container-restart drill on a single CI host. It is NOT a'
+            echo '> disaster-recovery restore, so it yields MTTR — never RTO/RPO (GT-443'
+            echo '> criterion 4 stays open until a real DR restore is run).'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload chaos logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chaos-reliability-${{ github.run_id }}
+          path: ${{ runner.temp }}/chaos-*.log
+          if-no-files-found: warn
+
+      - name: Tear down
+        if: always()
+        run: |
+          cd product/infra
+          docker compose -f docker-compose.evolith.yml down -v || true

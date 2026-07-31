@@ -1,6 +1,6 @@
 import * as path from 'node:path';
 import { IFileSystem, ILogger } from '../../domain/interfaces';
-import { PhaseGateDefinition, EvidenceRequirement, EvidenceValidationResult } from './phase-gate-validator.service';
+import { PhaseGateDefinition, EvidenceRequirement, EvidenceValidationResult } from './phase-gate-validator.types';
 import { resolveArtifactPath } from './artifact-path-resolver';
 
 export class EvidenceValidator {

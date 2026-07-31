@@ -1,6 +1,6 @@
 import { ICatalogLoader, IFileSystem } from '../../domain/interfaces';
 import { IPlatformProviders } from '../ports/platform-detection.port';
-import { InitProjectInput, InitProjectResult } from '../services/index';
+import { InitProjectInput, InitProjectResult } from '../services/use-case.types';
 import { ProjectScaffolderService } from '../services/project-scaffolder.service';
 
 export class InitializeProjectUseCase {

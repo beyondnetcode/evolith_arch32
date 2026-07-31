@@ -5,7 +5,7 @@ import { SatelliteUpgradeService, UpgradePlan } from '@beyondnet/evolith-core-do
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
-import { NodeFileSystemProvider } from '../../infrastructure/providers/node-filesystem.provider';
+import { NodeFileSystemProvider } from '@beyondnet/evolith-infra-providers';
 import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resolver';
 import { logger } from '../../infrastructure/observability';
 import {

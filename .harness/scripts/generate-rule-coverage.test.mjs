@@ -16,7 +16,11 @@ function fixtureRoot() {
   write(root, 'reference/core/architecture/topologies/progressive-axis/demo/topology.manifest.json', JSON.stringify({ metadata: { id: 'demo', status: 'accepted' }, spec: { artifacts: { rulesets: ['reference/core/architecture/topologies/progressive-axis/demo/demo.rules.json'], opaPolicies: ['reference/core/architecture/topologies/progressive-axis/demo/demo.rego'] } } }));
   write(root, 'reference/core/architecture/topologies/progressive-axis/demo/demo.rules.json', JSON.stringify({ rules: [{ id: 'DEMO-R01' }] }));
   write(root, 'reference/core/architecture/topologies/progressive-axis/demo/demo.rego', 'package demo\nviolations[{"id": "DEMO-R01"}] { true }\n');
-  write(root, 'src/rulesets/governance/satellite-contracts.rules.json', JSON.stringify({ reference: { f1Rules: '../../reference/core/architecture/topologies/progressive-axis/demo/demo.rules.json' } }));
+  // Three levels up, not two: the contract lives at src/rulesets/governance/, so a
+  // repo-root-relative target needs `../../../`. `98a20dca` moved rulesets/ under
+  // src/ and updated the path this fixture WRITES TO without updating the relative
+  // path it writes INSIDE, which is the one the guard actually resolves.
+  write(root, 'src/rulesets/governance/satellite-contracts.rules.json', JSON.stringify({ reference: { f1Rules: '../../../reference/core/architecture/topologies/progressive-axis/demo/demo.rules.json' } }));
   return root;
 }
 

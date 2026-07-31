@@ -455,6 +455,30 @@ jobs:
       - name: A port inventory does not read as a capability claim
         run: node .harness/scripts/ci/45-validate-port-inventory-honesty.mjs --verbose
 
+      # GT-644: a policy calling an OPA builtin the shipped wasm runtime cannot
+      # execute passes `opa test` and `opa build`, then throws "not implemented:
+      # built-in function N" at evaluation time — which OpaEvaluator turns into
+      # "OPA engine error — enforcement blocked" for EVERY rule in the run. One
+      # `time.parse_rfc3339_ns` therefore fails the whole OPA half of the gate with
+      # a message that reads like an infrastructure hiccup. The authority is the
+      # COMPILED bundle's `builtins()` table, so the bundle is built first;
+      # `--require-wasm` makes a bundle that could not be built fatal rather than a
+      # source scan wearing a green tick.
+      #
+      # Placed HERE, ahead of the three checks below, on purpose: those three ask
+      # the network (npm, the base branch, the pull-request list) and this one is a
+      # deterministic read of this checkout. `bash -e` stops the job at the first
+      # failure, so a live-GitHub answer standing in front of a repository check
+      # means the repository check never runs at all — which is what happened on
+      # run 30629887881, where an unrelated contested claim skipped both steps.
+      - name: Compile the OPA bundle the builtin check reads
+        run: npm run build:policy
+
+      - name: Policies only call builtins the wasm runtime implements
+        run: |
+          node .harness/scripts/ci/55-validate-wasm-builtin-support.mjs --require-wasm --verbose
+          node --test .harness/scripts/ci/55-validate-wasm-builtin-support.test.mjs
+
       # GT-624: the 2026-07-23 security wave sat unpublished until 2026-07-27
       # while SECURITY.md declared the 1.1.x line "actively patched". Nothing
       # detected it; an audit did. This asks the registry what is published, finds

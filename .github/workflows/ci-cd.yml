@@ -471,7 +471,9 @@ jobs:
         run: npm run build:policy
 
       - name: Policies only call builtins the wasm runtime implements
-        run: node .harness/scripts/ci/55-validate-wasm-builtin-support.mjs --require-wasm --verbose
+        run: |
+          node .harness/scripts/ci/55-validate-wasm-builtin-support.mjs --require-wasm --verbose
+          node --test .harness/scripts/ci/55-validate-wasm-builtin-support.test.mjs
 
       # GT-624: the 2026-07-23 security wave sat unpublished until 2026-07-27
       # while SECURITY.md declared the 1.1.x line "actively patched". Nothing
@@ -507,7 +509,6 @@ jobs:
       - name: Self-tests for the governance guards
         run: |
           node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
-          node --test .harness/scripts/ci/55-validate-wasm-builtin-support.test.mjs
           node --test .harness/scripts/ci/48-validate-security-publish-lag.test.mjs
           node --test .harness/scripts/ci/49-validate-gap-id-allocation.test.mjs
           node --test .harness/scripts/ci/50-validate-gap-claim.test.mjs

@@ -9,3 +9,5 @@ export * from './knowledge-dedup';
 export * from './automation-candidate';
 export * from './structural-quality-gate';
 export * from './run-journal';
+export * from './c4-binding-proposal-provider';
+export * from './c4-binding-confirmation.service';

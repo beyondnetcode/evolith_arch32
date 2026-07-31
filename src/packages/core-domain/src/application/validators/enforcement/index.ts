@@ -8,6 +8,8 @@ export * from './enforcer-subsystem';
 export * from './edit-gate';
 export * from './c4-compiler';
 export * from './structurizr-parser';
+/** C4 element ↔ code module correspondence: propose → HITL-confirm → replay (GT-590). */
+export * from './c4-binding';
 
 /** Concrete adapters + ingesters (GT-515 · EAG-09; GT-524 .NET/NetArchTest). */
 export * from './adapters/dependency-cruiser-adapter';

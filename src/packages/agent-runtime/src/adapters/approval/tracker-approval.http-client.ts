@@ -86,6 +86,9 @@ export class TrackerApprovalHttpClient implements TrackerApprovalClient {
       correlationId: submission.correlationId,
       requestedBy: submission.requestedBy,
       executionMode: submission.executionMode,
+      // GT-590 — WHAT is being decided, when the skill id does not say. Undefined is dropped by
+      // JSON.stringify, so a submission without a subject serializes exactly as it did before.
+      subject: submission.subject,
     };
 
     const headers: Record<string, string> = { 'content-type': 'application/json' };

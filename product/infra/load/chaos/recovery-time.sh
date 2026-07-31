@@ -29,6 +29,12 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
 
 RUNS="${RUNS:-3}"
 RECOVERY_TIMEOUT="${RECOVERY_TIMEOUT:-240}"
+# Optional subset of compose services to bring back (space-separated). Empty =
+# the whole project. Needed wherever the compose file also defines services this
+# drill does not exercise (e.g. the MCP image in the engine-only topology): an
+# unqualified `up -d` would try to build them and the run would die on the way
+# back up, not on the outage it is meant to measure.
+SERVICES="${SERVICES:-}"
 API_KEY="${EVOLITH_API_KEY:-local-dev-key}"
 EVALUATE_URL="${EVALUATE_URL:-http://localhost:3001/api/v1/evaluate}"
 
@@ -64,7 +70,7 @@ for i in $(seq 1 "$RUNS"); do
   log "--- run $i/$RUNS ---"
 
   log "baseline: waiting for a healthy stack + a real verdict"
-  dc up -d >/dev/null 2>&1 || true
+  dc up -d $SERVICES >/dev/null 2>&1 || true
   wait_until_healthy "$CORE_HEALTH_URL" 120 >/dev/null || { log "could not reach healthy baseline — abort"; exit 1; }
   wait_until_first_verdict "$(now_ms)" 60 >/dev/null || { log "baseline verdict path not working — abort"; exit 1; }
 
@@ -74,7 +80,7 @@ for i in $(seq 1 "$RUNS"); do
 
   log "RESTORE: bringing the whole stack back up — starting the clock NOW"
   t0="$(now_ms)"
-  dc up -d >/dev/null
+  dc up -d $SERVICES >/dev/null
 
   # Milestone 1: process liveness.
   t_health="$(wait_until_healthy "$CORE_HEALTH_URL" "$RECOVERY_TIMEOUT" && :)" \

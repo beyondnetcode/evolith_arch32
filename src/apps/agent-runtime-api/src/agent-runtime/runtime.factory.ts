@@ -47,6 +47,7 @@ import {
   PGVECTOR_KNOWLEDGE_DIM,
   TrackerApprovalAdapter,
   TrackerApprovalHttpClient,
+  CircuitBreaker,
   type EmbedQuery,
   type AgentRuntimeBundle,
   type AgentRuntimeOverrides,
@@ -121,6 +122,38 @@ export function makeSidecarEmbedder(url: string, model?: string): EmbedQuery {
     }
     return vec as number[];
   };
+}
+
+/**
+ * Build the ADR-0011 breaker guarding one outbound dependency (GT-443).
+ *
+ * Defaults are deliberately conservative for a service-to-service call inside a
+ * cluster: 5 consecutive failures trip it, a 10 s per-call ceiling turns a hang
+ * into a fast failure, and a 30 s cooldown admits a single trial call. Tunable
+ * per deployment; `AGENT_RUNTIME_BREAKER_ENABLED=false` opts out entirely (the
+ * adapters then behave exactly as they did before this gap).
+ *
+ * State is PROCESS-LOCAL — see the deviation note in `circuit-breaker.ts`.
+ */
+function makeBreaker(name: string, env: NodeJS.ProcessEnv): CircuitBreaker | undefined {
+  const flag = (env.AGENT_RUNTIME_BREAKER_ENABLED ?? '').trim().toLowerCase();
+  if (flag === 'false' || flag === '0') return undefined;
+
+  const num = (raw: string | undefined, fallback: number): number => {
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+  };
+
+  return new CircuitBreaker({
+    name,
+    timeoutMs: num(env.AGENT_RUNTIME_BREAKER_TIMEOUT_MS, 10_000),
+    failureThreshold: num(env.AGENT_RUNTIME_BREAKER_FAILURE_THRESHOLD, 5),
+    resetTimeoutMs: num(env.AGENT_RUNTIME_BREAKER_RESET_MS, 30_000),
+    onStateChange: (from, to, circuit) => {
+      // eslint-disable-next-line no-console -- the factory runs before Nest's logger exists.
+      console.warn(`[agent-runtime] circuit '${circuit}' ${from} -> ${to}`);
+    },
+  });
 }
 
 /**
@@ -272,7 +305,14 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
     }
     overrides = {
       ...overrides,
-      coreEvaluation: new HttpCoreEvaluationAdapter({ endpoint: coreEndpoint, headers }),
+      coreEvaluation: new HttpCoreEvaluationAdapter({
+        endpoint: coreEndpoint,
+        headers,
+        // GT-443 / ADR-0011: the one outbound call the production profile makes
+        // mandatory is also the one that could stall every governed request.
+        // ON BY DEFAULT — a breaker nobody opts into protects nothing (GT-560).
+        breaker: makeBreaker('core-evaluation', env),
+      }),
     };
   } else if (isProd) {
     throw new Error(
@@ -390,7 +430,13 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
     if (env.AGENT_RUNTIME_TRACKER_TOKEN) {
       headers.authorization = `Bearer ${env.AGENT_RUNTIME_TRACKER_TOKEN}`;
     }
-    trackerAdapters.push(new HttpTrackerTraceAdapter({ endpoint: trackerEndpoint, headers }));
+    trackerAdapters.push(
+      new HttpTrackerTraceAdapter({
+        endpoint: trackerEndpoint,
+        headers,
+        breaker: makeBreaker('tracker-trace', env),
+      }),
+    );
   }
 
   // GT-420: Local file tracing (LLM Context)

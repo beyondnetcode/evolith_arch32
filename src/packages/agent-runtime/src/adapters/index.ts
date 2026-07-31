@@ -13,6 +13,18 @@ export type { CapabilityEnvInput, CapabilityEnvResult } from './harness/capabili
 export { loadManifest, parseManifest } from './harness/harness-manifest';
 export type { HarnessCapabilityRuntime } from './harness/harness-manifest';
 
+// Resilience — ADR-0011 breaker for the runtime's real outbound calls (GT-443)
+export {
+  CircuitBreaker,
+  CircuitOpenError,
+  CircuitTimeoutError,
+} from './resilience/circuit-breaker';
+export type {
+  CircuitState,
+  CircuitBreakerOptions,
+  CircuitBreakerStats,
+} from './resilience/circuit-breaker';
+
 // Core evaluation
 export { StubCoreEvaluationAdapter } from './core/stub-core-evaluation.adapter';
 export type { StubCoreOptions } from './core/stub-core-evaluation.adapter';

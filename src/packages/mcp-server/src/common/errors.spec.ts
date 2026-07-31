@@ -8,10 +8,33 @@ describe('MCP errors', () => {
       expect(ErrorCodes.FORBIDDEN).toBe('FORBIDDEN');
       expect(ErrorCodes.INTERNAL_ERROR).toBe('INTERNAL_ERROR');
       expect(ErrorCodes.NOT_IMPLEMENTED).toBe('NOT_IMPLEMENTED');
+      // GT-606 — core/ADR-0093 §3 conflict contract.
+      expect(ErrorCodes.CONCURRENCY_CONFLICT).toBe('CONCURRENCY_CONFLICT');
     });
 
-    it('has 16 error codes', () => {
-      expect(Object.keys(ErrorCodes)).toHaveLength(16);
+    // The registry is append-only: renaming or reusing a code is a breaking
+    // change for every consumer keying off it, so the whole set is asserted
+    // rather than just its size. Adding a code is a one-line addition here.
+    it('is the append-only registry, unchanged except by addition', () => {
+      expect(Object.keys(ErrorCodes)).toEqual([
+        'VALIDATION_FAILED',
+        'SCHEMA_INVALID',
+        'REPO_NOT_FOUND',
+        'PHASE_INVALID',
+        'RULESET_NOT_FOUND',
+        'NOT_A_SATELLITE',
+        'GATE_BLOCKED',
+        'COMMAND_FAILED',
+        'TIMEOUT',
+        'IO_ERROR',
+        'PATH_NOT_FOUND',
+        'GIT_ERROR',
+        'UNAUTHORIZED',
+        'FORBIDDEN',
+        'CONCURRENCY_CONFLICT',
+        'INTERNAL_ERROR',
+        'NOT_IMPLEMENTED',
+      ]);
     });
   });
 

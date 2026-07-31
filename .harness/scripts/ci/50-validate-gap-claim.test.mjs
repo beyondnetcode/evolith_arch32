@@ -15,13 +15,20 @@
 
 import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, rmSync, mkdirSync, chmodSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
-import { claimedIds, buildClaimMap, findContested } from './50-validate-gap-claim.mjs';
+import {
+  claimedIds,
+  buildClaimMap,
+  findContested,
+  diffClaimedIds,
+  claimsOf,
+  findDivergences,
+} from './50-validate-gap-claim.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const GUARD = resolve(__dirname, '50-validate-gap-claim.mjs');
@@ -237,6 +244,294 @@ describe('the guard end to end', () => {
   });
 });
 
+// ---------------------------------------------------------------------------
+// GT-645 — the DIFF half. A claim is what the change DID, not what it said.
+// ---------------------------------------------------------------------------
+
+const TRACKING = 'reference/core/control-center/gaps/gap-tracking.md';
+const TRACKING_ES = 'reference/core/control-center/gaps/gap-tracking.es.md';
+const CLOSURES = 'reference/core/control-center/evidence/gap-closure-evidence.json';
+
+/** A board row in the shape `gap-tracking.md` really writes them. */
+const row = (id, status, file = TRACKING) =>
+  `| [\`${id}\`](./gap-reference-catalog${file === TRACKING_ES ? '.es' : ''}.md#${id.toLowerCase()}) | ` +
+  `**Evidence prose that mentions nothing.** | \`Governance\` | Cross | P2 | M | \`${status}\` |`;
+
+const fileDiff = (file, lines) =>
+  [
+    `diff --git a/${file} b/${file}`,
+    'index 1111111..2222222 100644',
+    `--- a/${file}`,
+    `+++ b/${file}`,
+    '@@ -20,8 +20,8 @@',
+    ...lines,
+  ].join('\n');
+
+/** @param {Array<[string,string,string]>} flips [id, from, to] */
+const boardDiff = (flips, file = TRACKING) =>
+  fileDiff(file, flips.flatMap(([id, from, to]) => [`-${row(id, from, file)}`, `+${row(id, to, file)}`]));
+
+/** Closure-evidence records ADDED by the diff. */
+const closureDiff = (ids) =>
+  fileDiff(
+    CLOSURES,
+    ids.flatMap((id) => [
+      '+    {',
+      `+      "id": "${id}",`,
+      '+      "closedAt": "2026-07-30",',
+      '+      "closureCommit": "abc1234",',
+      '+    },',
+    ]),
+  );
+
+/** A pull request that touches only source code — the ordinary case. */
+const codeDiff = fileDiff('src/packages/core-domain/src/domain/gate-evidence.ts', [
+  '-export const X = 1;',
+  '+export const X = 2;',
+]);
+
+const THE_ELEVEN = ['GT-580', 'GT-587', 'GT-589', 'GT-597', 'GT-604', 'GT-606', 'GT-608', 'GT-614', 'GT-615', 'GT-616', 'GT-617'];
+
+/**
+ * PR #315, reproduced: no id in the title, none in the branch, eleven rows flipped
+ * to DONE and eleven closure records written. Its body names the eleven in an
+ * evidence table — a MENTION, which #324 correctly stopped reading as a claim.
+ *
+ * MEASURED, NOT ASSUMED, and one half came back different from the record. The
+ * live #315 body was replayed through the merged implementation and it claims all
+ * eleven, because that body happens to open a line with `**Closed:** GT-580, …` —
+ * a marker clause. So #315 is the right SHAPE and the wrong instance: the row's
+ * prediction that "under the narrowed rule it would claim nothing at all" does not
+ * survive contact with its own body.
+ *
+ * The live instance is #326, replayed the same way: merged implementation
+ * `ids claimed .. 1`, this one `ids claimed .. 9`. `PR_326` below is that case,
+ * and it is the one that proves the class rather than the shape.
+ */
+const PR_315 = {
+  number: 315,
+  title: 'Board reconciliation: credit the eleven gaps this wave merged',
+  headRefName: 'chore/reconcile-board-wave',
+  body: [
+    'The wave landed and the board never moved. This credits what merged.',
+    '',
+    '| gap | merged in |',
+    '|---|---|',
+    ...THE_ELEVEN.map((id, i) => `| \`${id}\` | #${300 + i} |`),
+  ].join('\n'),
+  diff: [
+    boardDiff(THE_ELEVEN.map((id) => [id, 'IN-PROGRESS', 'DONE'])),
+    boardDiff(THE_ELEVEN.map((id) => [id, 'EN-PROGRESO', 'COMPLETADO']), TRACKING_ES),
+    closureDiff(THE_ELEVEN),
+  ].join('\n'),
+};
+
+/**
+ * PR #326, the instance run 30633517559 measured: it declares GT-645 (title,
+ * branch and a marker), registers that row, and flips EIGHT other rows plus six
+ * closure records that its body only cites. The merged implementation read one
+ * claim from it and exited ✓ — a green check on a pull request that resolved six
+ * rows and claimed none of them.
+ */
+const PR_326_WORKED = ['GT-582', 'GT-583', 'GT-584', 'GT-588', 'GT-591', 'GT-642', 'GT-643', 'GT-644'];
+const PR_326 = {
+  number: 326,
+  title: 'Board reconciliation for this wave, and GT-645 registered',
+  headRefName: 'chore/gt-645-board-reconciliation',
+  body: [
+    'Closes **GT-645** — the row this registers.',
+    '',
+    'Everything else here is the wave being credited, and is cited, not claimed:',
+    ...PR_326_WORKED.map((id) => `- \`${id}\` landed earlier in the wave.`),
+  ].join('\n'),
+  diff: [
+    boardDiff(PR_326_WORKED.map((id) => [id, 'IN-PROGRESS', 'DONE'])),
+    fileDiff(TRACKING, [`+${row('GT-645', 'PENDING')}`]),
+    closureDiff(PR_326_WORKED.slice(0, 6)),
+  ].join('\n'),
+};
+
+describe('diffClaimedIds — the diff is the record of what was worked', () => {
+  it('THE LIVE FALSE NEGATIVE (PR #326, run 30633517559): one claim declared, nine worked', () => {
+    // Replayed against the real pull request, the merged implementation prints
+    // `ids claimed .. 1` and exits ✓. The eight rows it flipped were invisible.
+    assert.deepEqual(claimedIds(PR_326), ['GT-645']);
+    assert.deepEqual(claimsOf(PR_326).all, [...PR_326_WORKED, 'GT-645'].sort());
+  });
+
+  it('THE FIXTURE (PR #315): eleven rows flipped and eleven closures, zero ids in title or branch', () => {
+    // Observed red before the fix: the merged implementation reads title, branch and
+    // marker clauses only, so this pull request — the one that moved the board most
+    // in its wave — claimed NOTHING.
+    assert.deepEqual(claimedIds(PR_315), [], 'prose alone still claims nothing — that is #324 working');
+    assert.deepEqual(diffClaimedIds(PR_315.diff).ids, THE_ELEVEN);
+    assert.deepEqual(claimsOf(PR_315).all, THE_ELEVEN);
+  });
+
+  it('a row whose STATUS did not change is not a claim', () => {
+    // Rewriting a row's evidence prose is editorial work on the board, not work on
+    // the gap. Only the status cell moving counts.
+    const diff = fileDiff(TRACKING, [
+      `-| [\`GT-700\`](./gap-reference-catalog.md#gt-700) | **Old prose.** | \`Governance\` | Cross | P2 | M | \`PENDING\` |`,
+      `+| [\`GT-700\`](./gap-reference-catalog.md#gt-700) | **New prose, same status.** | \`Governance\` | Cross | P2 | M | \`PENDING\` |`,
+    ]);
+    assert.deepEqual(diffClaimedIds(diff).ids, []);
+  });
+
+  it('a row the diff ADDS is a claim — registering a gap is allocating its id', () => {
+    assert.deepEqual(diffClaimedIds(fileDiff(TRACKING, [`+${row('GT-701', 'PENDING')}`])).ids, ['GT-701']);
+  });
+
+  it('a closure record the diff adds is a claim; one it merely moves is not', () => {
+    assert.deepEqual(diffClaimedIds(closureDiff(['GT-702'])).ids, ['GT-702']);
+    const moved = fileDiff(CLOSURES, ['-      "id": "GT-703",', '+      "id": "GT-703",']);
+    assert.deepEqual(diffClaimedIds(moved).ids, []);
+  });
+
+  it('a diff that touches no board file claims nothing and reports the board untouched', () => {
+    const d = diffClaimedIds(codeDiff);
+    assert.deepEqual(d.ids, []);
+    assert.equal(d.boardTouched, false);
+  });
+
+  it('a `GT-*` in the diff of ordinary source is not a claim', () => {
+    // Comments cite gap ids constantly ("GT-639 — two sessions must not…"). The claim
+    // comes from a board ROW or a closure RECORD, never from a gap id in a patch.
+    const d = diffClaimedIds(fileDiff('src/x.ts', ['+// GT-999 — this is why', '-// nothing']));
+    assert.deepEqual(d.ids, []);
+  });
+
+  it('an absent diff is not an empty diff', () => {
+    // A fixture that supplies no diff carries no diff information. Reporting it as
+    // "the diff claims nothing" would be the vacuous pass this repository keeps
+    // finding, one layer down.
+    assert.equal(claimsOf({ title: 'GT-800' }).diffKnown, false);
+    assert.equal(claimsOf({ title: 'GT-800', diff: '' }).diffKnown, true);
+  });
+});
+
+describe('the diff half, end to end', () => {
+  it('THE FIXTURE (PR #315) through the guard: eleven claims where there were none', () => {
+    const { status, out } = runWith([PR_315], ['--json']);
+    assert.equal(status, 0, out);
+    const payload = JSON.parse(out.trim().split('\n')[0]);
+    assert.deepEqual(Object.keys(payload.claims).sort(), THE_ELEVEN);
+    for (const id of THE_ELEVEN) assert.deepEqual(payload.claims[id], [315]);
+    // And it says WHERE each claim came from, so a reader can check it.
+    assert.deepEqual(payload.claimSources['GT-580'], [{ number: 315, prose: false, diff: true }]);
+  });
+
+  it('THE FALSE POSITIVE (run 30631939629): documenting six gaps claims none of them', () => {
+    // #324's body names GT-578, GT-582, GT-583, GT-588, GT-591 and GT-602 in an
+    // evidence table and claims not one. The guard contested three of them against
+    // #320 — nine attributions whose honest count was zero. Its diff touches the
+    // guard's own source and no board row, so neither half of the check may claim.
+    const { status, out } = runWith(
+      [
+        {
+          number: 324,
+          title: 'fix(ci): a mention is not a claim',
+          headRefName: 'fix/claim-guard-prose-mentions',
+          body: [
+            'Run `30630343658` failed three times over. None of them was real:',
+            '',
+            '| contested | worked it | only cited it |',
+            '|---|---|---|',
+            '| GT-583 | #320 | #316 |',
+            '| GT-602 | #320 | #317 |',
+            '| GT-578 | — | #321, naming the job `Governance guards (GT-578)` |',
+            '| GT-582 | #316 | — |',
+            '| GT-588 | #319 | — |',
+            '| GT-591 | #317 | — |',
+            '',
+            'This body names six gaps and claims none of them.',
+          ].join('\n'),
+          diff: codeDiff,
+        },
+        {
+          number: 320,
+          title: 'GT-583 + GT-643: one registry generates the operation schemas',
+          headRefName: 'feat/gt-583-643-generated-schemas',
+          body: 'Closes **GT-643**; advances **GT-583**.',
+          diff: codeDiff,
+        },
+      ],
+      ['--json'],
+    );
+    assert.equal(status, 0, out);
+    const payload = JSON.parse(out.trim().split('\n')[0]);
+    assert.deepEqual(payload.contested, []);
+    assert.deepEqual(Object.keys(payload.claims).sort(), ['GT-583', 'GT-643']);
+    assert.deepEqual(payload.claims['GT-583'], [320]);
+    assert.deepEqual(payload.divergent, []);
+  });
+
+  it('a diff-only claim makes a contest the prose rule could not see', () => {
+    // Two pull requests on one gap, one of which never says the id out loud. Under
+    // the prose rule this is a clean run; the duplicated work lands anyway.
+    const { status, out } = runWith([
+      { number: 1, title: 'fix: close it properly', headRefName: 'chore/board', body: 'GT-900 is done.', diff: closureDiff(['GT-900']) },
+      { number: 2, title: 'fix(x): GT-900 for real', headRefName: 'feat/gt-900', body: '', diff: codeDiff },
+    ]);
+    assert.equal(status, 1, out);
+    assert.match(out, /GT-900/);
+    assert.match(out, /claimed by more than one open pull request/);
+  });
+});
+
+describe('prose and diff disagreeing is its own finding', () => {
+  it('a body claiming an id its board edits do not touch is REPORTED, not resolved', () => {
+    const { status, out } = runWith([
+      {
+        number: 40,
+        title: 'Closes GT-910',
+        headRefName: 'feat/gt-910',
+        body: 'Closes GT-910.',
+        diff: boardDiff([['GT-911', 'PENDING', 'DONE']]),
+      },
+    ]);
+    assert.equal(status, 1, out);
+    assert.match(out, /PROSE AND DIFF DISAGREE/);
+    // BOTH directions are named, and neither is silently preferred.
+    assert.match(out, /GT-910/);
+    assert.match(out, /GT-911/);
+  });
+
+  it('a diff touching a row the body never names is REPORTED', () => {
+    const { status, out } = runWith([
+      {
+        number: 41,
+        title: 'chore: tidy the board',
+        headRefName: 'chore/tidy',
+        body: 'Nothing to see here.',
+        diff: boardDiff([['GT-912', 'PENDING', 'DONE']]),
+      },
+    ]);
+    assert.equal(status, 1, out);
+    assert.match(out, /GT-912/);
+    assert.match(out, /PROSE AND DIFF DISAGREE/);
+  });
+
+  it('the ordinary case is QUIET: a title claim whose diff is source code only', () => {
+    // The anti-noise rule. Most pull requests close a gap by changing code and never
+    // touch the board — a guard that called every one of those a disagreement would
+    // fire on the normal case, and #324 is the record of what happens then.
+    const { status, out } = runWith([
+      { number: 42, title: 'GT-913: fix the thing', headRefName: 'feat/gt-913', body: 'Closes GT-913.', diff: codeDiff },
+    ]);
+    assert.equal(status, 0, out);
+    assert.doesNotMatch(out, /disagree/i);
+  });
+
+  it('a body that NAMES the id its diff worked is agreement, not divergence', () => {
+    // PR #315 again: it mentions all eleven. Mentioning is not claiming, but it is
+    // also not silence — there is nothing here for a human to adjudicate.
+    const { status, out } = runWith([PR_315]);
+    assert.equal(status, 0, out);
+    assert.doesNotMatch(out, /disagree/i);
+  });
+});
+
 describe('anti-vacuous floor', () => {
   it('refuses to pass when the pull-request query cannot be answered', () => {
     // No --fixture, and `gh` unusable: the guard must fail rather than report a
@@ -250,5 +545,35 @@ describe('anti-vacuous floor', () => {
     const out = `${r.stdout}\n${r.stderr}`;
     assert.match(out, /could not read the open pull requests/);
     assert.match(out, /Unable to answer is not the same as nothing to report/);
+  });
+
+  it('refuses to pass when a pull request LISTS but its diff cannot be read', () => {
+    // The half GT-645 adds needs the same floor as the half GT-639 built. A `gh`
+    // that can answer `pr list` and not `pr diff` — a token scoped to metadata, a
+    // patch too large — must not silently degrade to checking the prose alone,
+    // because prose-alone IS the defect.
+    const bin = join(sandbox, 'bin-listonly');
+    mkdirSync(bin, { recursive: true });
+    const shim = join(bin, 'gh');
+    writeFileSync(
+      shim,
+      '#!/bin/sh\n' +
+        'if [ "$2" = "list" ]; then\n' +
+        '  echo \'[{"number":7,"title":"chore: tidy","body":"","headRefName":"chore/tidy"}]\'\n' +
+        '  exit 0\n' +
+        'fi\n' +
+        'exit 1\n',
+    );
+    chmodSync(shim, 0o755);
+
+    const r = spawnSync(process.execPath, [GUARD], {
+      encoding: 'utf8',
+      timeout: 60000,
+      env: { ...process.env, PATH: bin },
+    });
+    const out = `${r.stdout}\n${r.stderr}`;
+    assert.equal(r.status, 1, out);
+    assert.match(out, /could not read the diff of 1 open pull request/);
+    assert.match(out, /#7/);
   });
 });

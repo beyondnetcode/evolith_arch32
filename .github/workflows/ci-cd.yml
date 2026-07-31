@@ -561,6 +561,13 @@ jobs:
       # the prose made every cross-reference a claim, and the bodies here cite their
       # neighbours constantly — run 30630343658 failed three times over, none of them
       # real, and the fix each author reached for was to delete the sentence.
+      #
+      # A claim is ALSO what the DIFF did (GT-645): a board row whose status it
+      # moves, or a closure-evidence record it writes. Prose alone missed the other
+      # direction — run 30633517559 read ONE claim off #326 and exited green on a
+      # pull request that had flipped eight rows. `GH_TOKEN` now covers a `gh pr
+      # diff` per open pull request as well as the list; a diff it cannot read is a
+      # hard failure, never a run that quietly checked the prose alone.
       - name: One gap, one claim
         env:
           GH_TOKEN: ${{ github.token }}

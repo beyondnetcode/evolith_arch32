@@ -407,6 +407,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # FIRST, and deliberately. Every step in this job runs under `bash -e`, so the
+      # first red step skips every step after it. On run 30629887881 a network-
+      # dependent guard went red and this block — the layer that checks the guards
+      # THEMSELVES — never ran, silently, on the one run where a guard's behaviour
+      # was in question. A self-test that only executes once every guard has already
+      # passed can confirm a green run and nothing else.
+      #
+      # It runs first rather than merely earlier because it needs nothing: no build,
+      # no registry, no `gh`. Its fixtures are in-repo and its subjects are the guard
+      # modules. Anything it depends on would be another way for it not to run.
+      - name: Self-tests for the governance guards
+        run: |
+          node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
+          node --test .harness/scripts/ci/48-validate-security-publish-lag.test.mjs
+          node --test .harness/scripts/ci/49-validate-gap-id-allocation.test.mjs
+          node --test .harness/scripts/ci/50-validate-gap-claim.test.mjs
+          node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs
+          node --test .harness/scripts/ci/43-validate-guard-negative-fixtures.test.mjs
+          node --test .harness/scripts/ci/44-validate-adr-implementation-status.test.mjs
+          node --test .harness/scripts/ci/34-check-skill-registry-parity.test.mjs
+          node --test .harness/scripts/ci/45-validate-port-inventory-honesty.test.mjs
+
       # The dead-reference budget below was measured on a BUILT tree. A handful of
       # recorded commands legitimately name build outputs (`dist/main.js`), which
       # a clean checkout reports as dead — so without this the ratchet drifts by
@@ -533,22 +555,16 @@ jobs:
       # work was done twice, three times over. The claim set is DERIVED from open
       # pull requests — never hand-written, which would go stale in the direction
       # that matters — and an id claimed by two open PRs fails here, naming both.
+      #
+      # A claim is DECLARED: an id in the title, in the branch name, or in the body
+      # after a `Closes`/`Advances`/`Claims` marker. Reading it from any `GT-*` in
+      # the prose made every cross-reference a claim, and the bodies here cite their
+      # neighbours constantly — run 30630343658 failed three times over, none of them
+      # real, and the fix each author reached for was to delete the sentence.
       - name: One gap, one claim
         env:
           GH_TOKEN: ${{ github.token }}
         run: node .harness/scripts/ci/50-validate-gap-claim.mjs
-
-      - name: Self-tests for the governance guards
-        run: |
-          node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
-          node --test .harness/scripts/ci/48-validate-security-publish-lag.test.mjs
-          node --test .harness/scripts/ci/49-validate-gap-id-allocation.test.mjs
-          node --test .harness/scripts/ci/50-validate-gap-claim.test.mjs
-          node --test .harness/scripts/ci/41-validate-evidence-commands.test.mjs
-          node --test .harness/scripts/ci/43-validate-guard-negative-fixtures.test.mjs
-          node --test .harness/scripts/ci/44-validate-adr-implementation-status.test.mjs
-          node --test .harness/scripts/ci/34-check-skill-registry-parity.test.mjs
-          node --test .harness/scripts/ci/45-validate-port-inventory-honesty.test.mjs
 
       # REPORTING MODE, and it says so in its own output ("THIS IS NOT A PASS").
       # It resolves every validationCommand recorded in the board's closure

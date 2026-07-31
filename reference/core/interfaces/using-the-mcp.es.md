@@ -1381,3 +1381,32 @@ Todos operan sobre un repositorio local: la mayoría acepta un campo `path` (o `
 ```
 
 **Qué esperar.** Un objeto con `repository`, `windowDays`, `timestamp` y `metrics`: `deploymentFrequency` (commits por día, como texto), `leadTimeForChanges` (aproximación), `totalCommits` y `mergeCommits`. Si `path` no es un repositorio Git, devuelve `{ error:true, message: "Not a git repository" }`.
+
+### 6.17. `evolith-knowledge-search` — buscar en el corpus de conocimiento arquitectónico
+
+**Qué hace.** Busca en el corpus de conocimiento indexado (ADRs, rulesets, estándares) y devuelve chunks rankeados con su cita completa, para que un agente fundamente una recomendación en lo que el corpus dice de verdad y no en lo que recuerda. Solo lectura.
+
+La recuperación es **híbrida, BM25 primero**. No es una preferencia, es un ajuste a cómo se consulta este corpus: los agentes piden `ADR-0111`, `GT-569`, `SCHEMA_VERSION` — identificadores exactos — y la similitud coseno sobre embeddings densos es mala precisamente en eso, porque el modelo codifica «una referencia a un ADR» y descarta los dígitos que eran toda la pregunta. BM25 lidera y aporta el recall; encima se fusiona un reranker denso para que una paráfrasis todavía alcance un documento que no comparte ningún término con ella.
+
+**Argumentos.**
+
+| campo | tipo | req | para qué |
+| --- | --- | --- | --- |
+| `query` | string | sí | Un identificador exacto (`ADR-0111`) o una pregunta en lenguaje natural. |
+| `maxResults` | number | no | Cuántos chunks devolver (`10` por defecto, tope 50). |
+| `language` | string | no | Restringir a un idioma del corpus (`en`, `es`). |
+| `adrPrefix` | string | no | Restringir a ids de ADR que empiecen por este prefijo. |
+| `sourcePrefix` | string | no | Restringir a rutas de origen que empiecen por este prefijo. |
+| `includeText` | boolean | no | Devolver el texto completo del chunk, no solo el preview (`false` por defecto — un top-10 sobre este corpus son decenas de kilobytes). |
+
+**Ejemplo.**
+
+```json
+{ "name": "evolith-knowledge-search", "arguments": { "query": "ADR-0112", "maxResults": 5 } }
+```
+
+**Qué esperar.** `data` trae `query`, `retrievalMode`, `returned`, `totalChunks`, `terms` (los términos léxicos normalizados en que se convirtió la consulta — expuestos para que se vea *por qué* casó un identificador) y `chunks`. Cada chunk lleva su cita (`sourceFile`, `sectionHeading`, `adrId`, `charStart`/`charEnd`, `corpusVersion`) **y** su procedencia de recuperación: `retrievedBy` (`bm25`, `dense`, o ambos), `lexicalRank` y `denseRank`. Pondéralos: un chunk que casó por identificador exacto y otro que simplemente estaba cerca en el espacio de embeddings no tienen la misma confianza.
+
+`retrievalMode` es `hybrid` cuando corrieron ambos recuperadores y `lexical-only` cuando no hay sidecar de embeddings configurado — o cuando el lado denso falló y la búsqueda degradó a BM25 en vez de no devolver nada.
+
+**Cuándo no está disponible.** El corpus vive en un store pgvector (`EVOLITH_RAG_PG_URL`) poblado por el workflow de delta-sync. Sin store configurado la tool **falla explícitamente** en vez de devolver un resultado vacío, porque un agente que recibe «sin coincidencias» de un corpus no configurado concluirá que el corpus no dice nada del asunto y actuará sobre eso.

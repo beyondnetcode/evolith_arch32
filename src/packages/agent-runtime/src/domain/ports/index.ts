@@ -17,3 +17,4 @@ export * from './knowledge.port';
 export * from './quality-signal-provider.port';
 export * from './structural-reviewer.port';
 export * from './run-journal.port';
+export * from './lexical-index.port';

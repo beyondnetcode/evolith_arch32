@@ -46,6 +46,18 @@ export interface KnowledgeChunk {
    * so offline/token adapters that don't track a release stay contract-compliant.
    */
   readonly corpusVersion?: string;
+  /**
+   * GT-592 — which retrievers surfaced this chunk (`'bm25'`, `'dense'`, or both)
+   * under hybrid retrieval. An agent that has to justify a recommendation needs
+   * to know whether a citation came from an exact term match or from semantic
+   * proximity; those two carry very different confidence. Optional so single-mode
+   * adapters stay contract-compliant.
+   */
+  readonly retrievedBy?: readonly string[];
+  /** GT-592 — 1-based rank in the BM25 list, when BM25 returned it. */
+  readonly lexicalRank?: number;
+  /** GT-592 — 1-based rank in the dense list, when dense returned it. */
+  readonly denseRank?: number;
 }
 
 /**

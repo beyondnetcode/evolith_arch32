@@ -4142,6 +4142,312 @@ export const CAPABILITY_OPERATIONS: readonly CapabilityOperation[] = [
     }
   },
   {
+    "name": "evolith-knowledge-search",
+    "description": "Search the Evolith architecture knowledge corpus (ADRs, rulesets, standards) with BM25-first hybrid retrieval. Returns ranked chunks with full citations. Optimised for exact identifiers such as ADR-0111 as well as natural-language questions.",
+    "surfaces": [
+      "mcp"
+    ],
+    "mutative": false,
+    "scope": "read",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search text. An exact identifier (ADR-0111, GT-569) or a natural-language question."
+        },
+        "maxResults": {
+          "type": "number",
+          "description": "Maximum chunks to return (default 10, max 50).",
+          "default": 10
+        },
+        "language": {
+          "type": "string",
+          "description": "Restrict to a corpus language (en, es)."
+        },
+        "adrPrefix": {
+          "type": "string",
+          "description": "Restrict to ADR ids starting with this prefix."
+        },
+        "sourcePrefix": {
+          "type": "string",
+          "description": "Restrict to source paths starting with this prefix."
+        },
+        "includeText": {
+          "type": "boolean",
+          "description": "Include the full chunk text, not just the preview (default false).",
+          "default": false
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "outputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "title": "EvolithMcpOutputEnvelope",
+      "description": "Envelope returned by every Evolith MCP tool, mirrored verbatim in `structuredContent`. `success: true` carries `data`; `success: false` carries `error`. Envelope schema version 1.0.0.",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation completed. Not the governance verdict."
+        },
+        "data": {
+          "type": "object",
+          "description": "Ranked chunks from the Evolith architecture knowledge corpus.",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The query as executed."
+            },
+            "retrievalMode": {
+              "type": "string",
+              "enum": [
+                "hybrid",
+                "lexical-only"
+              ],
+              "description": "hybrid = BM25 fused with a dense reranker; lexical-only = BM25 alone (no embedding sidecar, or the dense side failed and the search degraded rather than returning nothing)."
+            },
+            "returned": {
+              "type": "number",
+              "description": "Number of chunks in `chunks`."
+            },
+            "totalChunks": {
+              "type": "number",
+              "description": "Size of the indexed corpus the query ran against."
+            },
+            "terms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Normalized lexical terms the query was tokenized into. Exposed so an agent can see why an identifier query matched."
+            },
+            "chunks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "One retrieved corpus chunk with full citation and retrieval provenance.",
+                "properties": {
+                  "chunkId": {
+                    "type": "string",
+                    "description": "Deterministic chunk identifier."
+                  },
+                  "sourceFile": {
+                    "type": "string",
+                    "description": "Repo-relative path of the source document."
+                  },
+                  "sectionHeading": {
+                    "type": "string",
+                    "description": "Heading of the section the chunk came from."
+                  },
+                  "adrId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ADR number when the source is an ADR."
+                  },
+                  "language": {
+                    "type": "string",
+                    "description": "Language of the chunk (en, es)."
+                  },
+                  "score": {
+                    "type": "number",
+                    "description": "Fused relevance score. Comparable within one response only."
+                  },
+                  "retrievedBy": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "bm25",
+                        "dense"
+                      ]
+                    },
+                    "description": "Which retrievers surfaced this chunk. An exact-term match and a semantic neighbour carry different confidence."
+                  },
+                  "lexicalRank": {
+                    "type": "number",
+                    "description": "1-based rank in the BM25 list, absent if BM25 did not return it."
+                  },
+                  "denseRank": {
+                    "type": "number",
+                    "description": "1-based rank in the dense list, absent if dense did not return it."
+                  },
+                  "tokenEstimate": {
+                    "type": "number",
+                    "description": "Approximate token count of `text`."
+                  },
+                  "textPreview": {
+                    "type": "string",
+                    "description": "Leading characters of the chunk."
+                  },
+                  "text": {
+                    "type": "string",
+                    "description": "Full chunk text. Omitted unless `includeText` is true."
+                  },
+                  "charStart": {
+                    "type": "number",
+                    "description": "Start offset of the chunk in its source file."
+                  },
+                  "charEnd": {
+                    "type": "number",
+                    "description": "End offset of the chunk in its source file."
+                  },
+                  "corpusVersion": {
+                    "type": "string",
+                    "description": "Indexed corpus release the chunk was embedded under."
+                  }
+                },
+                "required": [
+                  "chunkId",
+                  "sourceFile",
+                  "sectionHeading",
+                  "language"
+                ]
+              }
+            }
+          },
+          "required": [
+            "query",
+            "retrievalMode",
+            "returned",
+            "totalChunks",
+            "chunks"
+          ]
+        },
+        "error": {
+          "type": "object",
+          "description": "Present when `success` is false. `code` is machine-readable and append-only.",
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "VALIDATION_FAILED",
+                "SCHEMA_INVALID",
+                "REPO_NOT_FOUND",
+                "PHASE_INVALID",
+                "RULESET_NOT_FOUND",
+                "NOT_A_SATELLITE",
+                "GATE_BLOCKED",
+                "COMMAND_FAILED",
+                "TIMEOUT",
+                "IO_ERROR",
+                "PATH_NOT_FOUND",
+                "GIT_ERROR",
+                "UNAUTHORIZED",
+                "FORBIDDEN",
+                "CONCURRENCY_CONFLICT",
+                "INTERNAL_ERROR",
+                "NOT_IMPLEMENTED"
+              ],
+              "description": "Stable Evolith error code. FORBIDDEN covers every ABAC / scope / approval refusal."
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "meta": {
+          "type": "object",
+          "description": "ADR-0073 envelope metadata. Identical across the CLI, REST and MCP surfaces.",
+          "properties": {
+            "correlationId": {
+              "type": "string",
+              "description": "Correlation id, prefixed 'evl-'."
+            },
+            "command": {
+              "type": "string",
+              "description": "ADR-0073 canonical name of the invoked operation."
+            },
+            "tool": {
+              "type": "string",
+              "description": "MCP-native alias of `command`."
+            },
+            "durationMs": {
+              "type": "number",
+              "description": "Server-side wall time of the call."
+            },
+            "executedAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ADR-0073 canonical timestamp."
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "MCP-native alias of `executedAt`."
+            },
+            "schemaVersion": {
+              "type": "string",
+              "const": "1.0.0",
+              "description": "Pinned envelope shape version. Bumped only on a breaking envelope change."
+            },
+            "context": {
+              "type": "object",
+              "description": "Verbatim echo of the caller-supplied execution context.",
+              "properties": {
+                "initiative": {
+                  "type": "string"
+                },
+                "tenant": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "correlationId",
+            "command",
+            "tool",
+            "durationMs",
+            "executedAt",
+            "timestamp",
+            "schemaVersion"
+          ]
+        }
+      },
+      "required": [
+        "success",
+        "meta"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "const": false
+              }
+            },
+            "required": [
+              "success"
+            ]
+          },
+          "then": {
+            "required": [
+              "error"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
     "name": "evolith-metrics",
     "description": "Get MCP server metrics (per-tool call counts, latency, failures)",
     "surfaces": [

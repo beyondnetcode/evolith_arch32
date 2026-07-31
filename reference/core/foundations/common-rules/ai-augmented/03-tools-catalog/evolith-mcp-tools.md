@@ -36,6 +36,7 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 | `evolith-upgrade-apply` | Governance | Apply a satellite upgrade from the upstream Evolith core. Writes fi… | Yes |
 | `evolith-upgrade-plan` | Governance | Plan a satellite upgrade against the upstream Evolith core (read-on… | Yes |
 | `evolith-init-batch` | Init | Non-interactive (batch/CI) initialization of an Evolith satellite. … | Yes |
+| `evolith-knowledge-search` | Knowledge | Search the Evolith architecture knowledge corpus (ADRs, rulesets, s… | No |
 | `evolith-metrics` | Metrics.tool | Get MCP server metrics (per-tool call counts, latency, failures) | No |
 | `evolith-phase-advance` | Phase-advance | Propose an SDLC phase transition by evaluating the current phase ex… | Yes |
 | `evolith-moscow-create` | Planning | Create a new MoSCoW prioritization analysis | Yes |
@@ -57,7 +58,7 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 | `evolith-sdlc-generate` | Sdlc-generate.tool | Generate a Hexagonal Architecture scaffold from a Mermaid classDiag… | Yes |
 | `evolith-validate` | Validate.tool | Validate a satellite repository against Evolith rules. Supports end… | No |
 
-> **Derived from source (GT-445).** The inventory above is the complete set of **50** governance MCP tools, reconciled from the canonical registration sources under `src/packages/mcp-server/src/tools/` (name + description) — it is the authoritative surface alongside the generated [Product Surface Inventory](../../../../../../product/products/smart-cli/product-inventory.md) and the live MCP registry. Category is derived from the tool source file; *Mutative* is a verb heuristic. Regenerate when tools change.
+> **Derived from source (GT-445).** The inventory above is the complete set of **51** governance MCP tools, reconciled from the canonical registration sources under `src/packages/mcp-server/src/tools/` (name + description) — it is the authoritative surface alongside the generated [Product Surface Inventory](../../../../../../product/products/smart-cli/product-inventory.md) and the live MCP registry. Category is derived from the tool source file; *Mutative* is a verb heuristic. Regenerate when tools change.
 
 ---
 

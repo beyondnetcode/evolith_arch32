@@ -1,0 +1,276 @@
+{
+  "schemaVersion": "1.0",
+  "description": "GT-592 fixed retrieval query set. Selection is mechanical (every Nth ADR in sorted order) and gold labels are file-level, so neither can be chosen after seeing which retriever wins.",
+  "corpus": "reference/core/architecture/adrs/core/*.md (EN)",
+  "groups": {
+    "identifier": "the bare canonical identifier, as an agent would cite it",
+    "identifier-in-context": "the identifier embedded in a natural-language question",
+    "semantic": "a paraphrase of the decision, with the identifier deliberately absent"
+  },
+  "queries": [
+    {
+      "id": "ident-0001",
+      "group": "identifier",
+      "query": "ADR-0001",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0001-monorepo-orchestration-principle.md"
+      ]
+    },
+    {
+      "id": "ident-0014",
+      "group": "identifier",
+      "query": "ADR-0014",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.md"
+      ]
+    },
+    {
+      "id": "ident-0024",
+      "group": "identifier",
+      "query": "ADR-0024",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0024-configuration-feature-management-platform.md"
+      ]
+    },
+    {
+      "id": "ident-0034",
+      "group": "identifier",
+      "query": "ADR-0034",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0034-cqrs-pattern-applicability-matrix.md"
+      ]
+    },
+    {
+      "id": "ident-0044",
+      "group": "identifier",
+      "query": "ADR-0044",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0044-configurable-security-persistence-strategy.md"
+      ]
+    },
+    {
+      "id": "ident-0051",
+      "group": "identifier",
+      "query": "ADR-0051",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0051-enterprise-database-engine-strategy.md"
+      ]
+    },
+    {
+      "id": "ident-0058",
+      "group": "identifier",
+      "query": "ADR-0058",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md"
+      ]
+    },
+    {
+      "id": "ident-0073",
+      "group": "identifier",
+      "query": "ADR-0073",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0073-unified-cli-output-contract.md"
+      ]
+    },
+    {
+      "id": "ident-0080",
+      "group": "identifier",
+      "query": "ADR-0080",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0080-remote-repository-reference-contract.md"
+      ]
+    },
+    {
+      "id": "ident-0087",
+      "group": "identifier",
+      "query": "ADR-0087",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0087-abac-agentic-tool-execution.md"
+      ]
+    },
+    {
+      "id": "ident-0094",
+      "group": "identifier",
+      "query": "ADR-0094",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0094-multi-agent-handoff.md"
+      ]
+    },
+    {
+      "id": "ident-0101",
+      "group": "identifier",
+      "query": "ADR-0101",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0101-core-stateless-evaluation-engine.md"
+      ]
+    },
+    {
+      "id": "ident-0108",
+      "group": "identifier",
+      "query": "ADR-0108",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0108-masstransit-owned-message-topology.md"
+      ]
+    },
+    {
+      "id": "ident-0116",
+      "group": "identifier",
+      "query": "ADR-0116",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0116-canonical-finding-and-authority-boundary.md"
+      ]
+    },
+    {
+      "id": "ident-0123",
+      "group": "identifier",
+      "query": "ADR-0123",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0123-timing-safe-comparison-standard.md"
+      ]
+    },
+    {
+      "id": "ctx-0011",
+      "group": "identifier-in-context",
+      "query": "what does ADR-0011 decide",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md"
+      ]
+    },
+    {
+      "id": "ctx-0037",
+      "group": "identifier-in-context",
+      "query": "what does ADR-0037 decide",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0037-performance-concurrency-chaos-strategy.md"
+      ]
+    },
+    {
+      "id": "ctx-0067",
+      "group": "identifier-in-context",
+      "query": "what does ADR-0067 decide",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0067-modular-monolith-schema-per-domain.md"
+      ]
+    },
+    {
+      "id": "ctx-0086",
+      "group": "identifier-in-context",
+      "query": "what does ADR-0086 decide",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.md"
+      ]
+    },
+    {
+      "id": "ctx-0105",
+      "group": "identifier-in-context",
+      "query": "what does ADR-0105 decide",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0105-okf-knowledge-projection.md"
+      ]
+    },
+    {
+      "id": "sem-0009",
+      "group": "semantic",
+      "query": "how do we lock third-party library versions and react to disclosed CVEs",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md"
+      ]
+    },
+    {
+      "id": "sem-0018",
+      "group": "semantic",
+      "query": "what proportion of unit versus integration versus end-to-end tests is required before merging",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0018-testing-pyramid-quality-gates.md"
+      ]
+    },
+    {
+      "id": "sem-0032",
+      "group": "semantic",
+      "query": "when should a service expose REST instead of gRPC or GraphQL",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md"
+      ]
+    },
+    {
+      "id": "sem-0041",
+      "group": "semantic",
+      "query": "why do we run two policy engines instead of one",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0041-dual-engine-policy-evaluation.md"
+      ]
+    },
+    {
+      "id": "sem-0051",
+      "group": "semantic",
+      "query": "which relational engine do we standardise on for enterprise workloads",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0051-enterprise-database-engine-strategy.md"
+      ]
+    },
+    {
+      "id": "sem-0067",
+      "group": "semantic",
+      "query": "how are database schemas separated inside a single deployable monolith",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0067-modular-monolith-schema-per-domain.md"
+      ]
+    },
+    {
+      "id": "sem-0075",
+      "group": "semantic",
+      "query": "how do callers authenticate against the core HTTP surface",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0075-core-api-auth-strategy.md"
+      ]
+    },
+    {
+      "id": "sem-0083",
+      "group": "semantic",
+      "query": "how is an autonomous agent authorised to act and how is that action recorded",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md"
+      ]
+    },
+    {
+      "id": "sem-0091",
+      "group": "semantic",
+      "query": "how often are machine identity tokens rotated",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0091-workload-identity-token-rotation.md"
+      ]
+    },
+    {
+      "id": "sem-0099",
+      "group": "semantic",
+      "query": "where are compiled policy bundles stored and served from",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0099-opa-bundle-s3-distribution.md"
+      ]
+    },
+    {
+      "id": "sem-0107",
+      "group": "semantic",
+      "query": "do we deploy to one cluster or several",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0107-single-cluster-kubernetes-deployment-topology.md"
+      ]
+    },
+    {
+      "id": "sem-0116",
+      "group": "semantic",
+      "query": "what separates advice from enforcement in the finding contract",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0116-canonical-finding-and-authority-boundary.md"
+      ]
+    },
+    {
+      "id": "sem-0124",
+      "group": "semantic",
+      "query": "where do secrets live and how are they handed to running services",
+      "goldSourceFiles": [
+        "reference/core/architecture/adrs/core/0124-credential-secret-management-standard.md"
+      ]
+    }
+  ]
+}

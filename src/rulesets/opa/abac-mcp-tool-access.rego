@@ -56,6 +56,7 @@ read_tools := {
   "evolith-evaluate",
   "evolith-gate-evaluate",
   "evolith-gate-status",
+  "evolith-knowledge-search",
   "evolith-list-dir",
   "evolith-metrics",
   "evolith-moscow-list",

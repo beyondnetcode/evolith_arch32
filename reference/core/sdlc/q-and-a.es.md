@@ -357,7 +357,7 @@ Servicios tan acoplados que no puedes desplegar independientemente. Evolith prev
 <details>
 <summary><b>T08-P01: ¿Cómo funciona con herramientas AI?</b></summary>
 
-Vía MCP. Servidor con 50 tools, 11 resources, 8 prompts. Los agentes AI consultan reglas, validan código y evalúan gates — todo gobernado.
+Vía MCP. Servidor con 51 tools, 12 resources, 8 prompts. Los agentes AI consultan reglas, validan código y evalúan gates — todo gobernado.
 
 **Evidencia:** [MCP Services](../../../product/products/mcp-services/README.md)
 </details>

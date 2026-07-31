@@ -79,6 +79,12 @@ const TOOL_CLASSIFICATION: Record<string, ToolClass> = {
   'evolith-sdlc-status': 'read',
   'evolith-sdlc-handoff': 'write',
 
+  // Knowledge / RAG retrieval — GT-592. Pure read: it queries the indexed corpus
+  // and mutates nothing. It is the first tool on this surface that reaches the
+  // pgvector index GT-538…GT-541 built, so it must be classified explicitly or
+  // the heuristic fallback denies it with ABAC-03 before OPA ever runs.
+  'evolith-knowledge-search': 'read',
+
   // Metrics (read)
   'evolith-dora-metrics': 'read',
   'evolith-metrics': 'read',

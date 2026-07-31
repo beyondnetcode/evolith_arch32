@@ -59,6 +59,26 @@ jobs:
         run: npm run test:unit
         working-directory: src/sdk/cli
 
+      # GT-592 — retrieval quality is a MEASUREMENT, gated here so a ranking
+      # change cannot be settled by anecdote.
+      #
+      # The harness replays a dense baseline recorded once against the real
+      # Qwen3-Embedding-0.6B sidecar (rag-eval-record.mjs), because a runner
+      # cannot host a 0.6B-parameter model — but everything that lives in this
+      # repository (tokenizer, BM25, RRF) is executed for real, from the built
+      # agent-runtime dist. The recorded baseline is fingerprinted against the
+      # frozen corpus, so a corpus edit without a re-record fails loudly rather
+      # than reporting a stale comparison.
+      #
+      # The self-tests run FIRST and on purpose: they deliberately damage the
+      # ranking three ways and assert the gate goes red, so a gate nobody can
+      # breach is itself a build failure.
+      - name: Retrieval eval self-tests (the gate must be able to fail)
+        run: node --test .harness/scripts/ci/rag-eval.test.mjs
+
+      - name: Retrieval eval gate (hybrid vs dense-only, fixed query set)
+        run: node .harness/scripts/ci/rag-eval.mjs
+
   test-core-domain:
     name: Test core-domain
     runs-on: ubuntu-latest

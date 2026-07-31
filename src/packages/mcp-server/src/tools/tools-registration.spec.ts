@@ -46,6 +46,7 @@ describe('Tool registration (full DI graph)', () => {
       'evolith-fixtures',
       'evolith-gate-evaluate',
       'evolith-init-batch',
+      'evolith-knowledge-search',
       'evolith-metrics',
       'evolith-moscow-create',
       'evolith-moscow-list',

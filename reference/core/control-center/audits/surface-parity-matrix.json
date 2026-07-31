@@ -1176,6 +1176,23 @@
         "exposed": false,
         "exempt": "Same reason as MCP: a REST endpoint served by the party under audit cannot be the authority on whether that party's own ledger verifies. Relying parties run `evolith audit verify` against the ledger and their own trust anchors."
       }
+    },
+    {
+      "id": "knowledge-search",
+      "name": "Knowledge corpus search",
+      "description": "BM25-first hybrid retrieval over the indexed architecture knowledge corpus (ADRs, rulesets, standards), returning ranked chunks with citations and retrieval provenance",
+      "cli": {
+        "exposed": false,
+        "exempt": "GT-592 exposed retrieval on the surface agents actually consume it from; a CLI equivalent is deferred until a pgvector store is provisioned outside development, since a command that always answers 'corpus not configured' is worse than no command"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-knowledge-search"
+      },
+      "rest": {
+        "exposed": false,
+        "exempt": "deferred with the CLI command for the same reason: the store is deploy-gated, and an endpoint that cannot answer is not parity"
+      }
     }
   ]
 }

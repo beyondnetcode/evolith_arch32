@@ -1380,3 +1380,32 @@ They all operate on a local repository: most accept a `path` (or `dir`) field po
 ```
 
 **What to expect.** An object with `repository`, `windowDays`, `timestamp` and `metrics`: `deploymentFrequency` (commits per day, as text), `leadTimeForChanges` (an approximation), `totalCommits` and `mergeCommits`. If `path` is not a Git repository, it returns `{ error:true, message: "Not a git repository" }`.
+
+### 6.17. `evolith-knowledge-search` — search the architecture knowledge corpus
+
+**What it does.** It searches the indexed knowledge corpus (ADRs, rulesets, standards) and returns ranked chunks with full citations, so an agent can ground a recommendation in what the corpus actually says instead of in what it remembers. Read-only.
+
+Retrieval is **hybrid, BM25 first**. That is not a preference, it is a fit to how this corpus is queried: agents ask for `ADR-0111`, `GT-569`, `SCHEMA_VERSION` — exact identifiers — and cosine similarity over dense embeddings is bad at exactly that, because the model encodes "an ADR reference" and drops the digits that were the whole question. BM25 leads and provides recall; a dense reranker is fused on top so a paraphrase can still reach a document sharing no term with it.
+
+**Arguments.**
+
+| field | type | req | what for |
+| --- | --- | --- | --- |
+| `query` | string | yes | An exact identifier (`ADR-0111`) or a natural-language question. |
+| `maxResults` | number | no | How many chunks to return (`10` by default, hard cap 50). |
+| `language` | string | no | Restrict to a corpus language (`en`, `es`). |
+| `adrPrefix` | string | no | Restrict to ADR ids starting with this prefix. |
+| `sourcePrefix` | string | no | Restrict to source paths starting with this prefix. |
+| `includeText` | boolean | no | Return the full chunk text, not just the preview (`false` by default — a top-10 over this corpus is tens of kilobytes). |
+
+**Example.**
+
+```json
+{ "name": "evolith-knowledge-search", "arguments": { "query": "ADR-0112", "maxResults": 5 } }
+```
+
+**What to expect.** `data` carries `query`, `retrievalMode`, `returned`, `totalChunks`, `terms` (the normalized lexical terms the query became — exposed so you can see *why* an identifier matched) and `chunks`. Every chunk carries its citation (`sourceFile`, `sectionHeading`, `adrId`, `charStart`/`charEnd`, `corpusVersion`) **and** its retrieval provenance: `retrievedBy` (`bm25`, `dense`, or both), `lexicalRank` and `denseRank`. Weigh those: a chunk that matched an exact identifier and one that merely sat nearby in embedding space do not carry the same confidence.
+
+`retrievalMode` is `hybrid` when both retrievers ran and `lexical-only` when there is no embedding sidecar configured — or when the dense side failed and the search degraded to BM25 rather than returning nothing.
+
+**When it is not available.** The corpus lives in a pgvector store (`EVOLITH_RAG_PG_URL`) populated by the delta-sync workflow. With no store configured the tool **fails explicitly** rather than returning an empty result set, because an agent handed "no matches" from an unconfigured corpus will conclude the corpus is silent on the subject and act on that.

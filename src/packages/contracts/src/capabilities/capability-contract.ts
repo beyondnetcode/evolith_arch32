@@ -65,8 +65,8 @@ export const EXPECTED_CAPABILITY_MANIFEST: CapabilityManifestShape = Object.free
   engines: Object.freeze(['native', 'opa', 'enforcer']),
   surfaces: Object.freeze(['rest', 'cli', 'mcp']),
   supportedConsumers: Object.freeze([...SUPPORTED_CONSUMER_IDS]),
-  operationsSha256: 'b7c1c938affc7ce9c72595135fbdb266f29c66a8c9e97aa5e66a6d4b074e3d86',
-  sha256: '216c9359841723fc2e45d9f9100b2cfe9299949c60a375d1dad9d10784714072',
+  operationsSha256: 'b5fbdf87781923e447bb215b149defe495c13670b8fc46704d3530f1e48f9ae7',
+  sha256: '259a257b7a54c26d9dd8fbb1195279acf067a781aa7201e12b4da23ddb20d8b4',
 }) as CapabilityManifestShape;
 
 /**

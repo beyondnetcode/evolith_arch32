@@ -6,6 +6,7 @@ import {
   Surface,
   Confidence,
 } from './types';
+import { TreeDiff, isEmptyDiff, summarizeDiff } from './state';
 
 let seq = 0;
 export function resetFindingSeq(): void {
@@ -118,6 +119,58 @@ export function checkConsistency(
   }
 
   return findings;
+}
+
+// -------------------------------------------------------------------------
+// No-effect oracle (GT-643) — the one that asks whether a flag with no effect
+// had no effect.
+//
+// Every oracle above compares REPLIES. A contract whose whole content is the
+// absence of an effect is invisible to those: `agents install --dry-run`
+// answered `success: true` and meant it, having written the agent to disk. This
+// oracle compares STATE — a content fingerprint of the watched roots, before and
+// after — so the only thing it can be fooled by is a write it cannot see, which
+// is why the watched roots are declared per contract rather than guessed.
+// -------------------------------------------------------------------------
+
+export function checkNoEffect(
+  contractId: string,
+  flag: string,
+  surface: Surface,
+  diffs: TreeDiff[],
+): Finding[] {
+  const moved = diffs.filter((d) => !isEmptyDiff(d));
+  if (moved.length === 0) return [];
+  return [
+    finding(contractId, 'contract', 'P1', 'confirmed', [surface],
+      `${surface}: \`${flag}\` CHANGED STATE`,
+      `The whole observable contract of this flag is that nothing changes, and something did. `
+        + moved.map((d) => `${d.root}: ${summarizeDiff(d)}`).join(' | '),
+      { flag, surface, diffs: moved }),
+  ];
+}
+
+/**
+ * The contrast half. A no-effect assertion over an operation that no longer does
+ * anything is satisfied by the breakage, not by the guarantee — so the same
+ * operation WITHOUT the flag has to be seen changing the very state the assertion
+ * watches. An oracle that cannot fail is not evidence, and this is the specific
+ * way this one could quietly become one.
+ */
+export function checkNoEffectContrast(
+  contractId: string,
+  flag: string,
+  surface: Surface,
+  diffs: TreeDiff[],
+): Finding[] {
+  if (diffs.some((d) => !isEmptyDiff(d))) return [];
+  return [
+    finding(contractId, 'contract', 'P1', 'confirmed', [surface],
+      `${surface}: the contrast case for \`${flag}\` changed nothing either`,
+      'The same operation without the flag wrote nothing, so the no-effect assertion for this '
+        + 'contract proves nothing: it would pass just as well if the operation had stopped working.',
+      { flag, surface, watched: diffs.map((d) => d.root) }),
+  ];
 }
 
 // -------------------------------------------------------------------------

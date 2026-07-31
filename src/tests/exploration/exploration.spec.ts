@@ -120,6 +120,18 @@ describe('Cross-surface exploration agent (F1)', () => {
         workspaceRef: path.basename(projectPath),
         corePath: REPO_ROOT,
       },
+      // GT-643 — the no-effect phase needs a FRESH command module per
+      // invocation. A shared one carries commander's parsed options forward:
+      // `agents install` after `agents install --dry-run` still sees
+      // dryRun=true and writes nothing, which would silently disarm the
+      // contrast case — the half that makes the state oracle falsifiable.
+      freshCli: async () => {
+        const mod = await CommandTestFactory.createTestingCommand({ imports: [CliAppModule] })
+          .overrideProvider(PromptService)
+          .useClass(MockPromptService)
+          .compile();
+        return new CliExecutor(mod);
+      },
     };
 
     run = await runExploration(harness, OUT_DIR);
@@ -244,6 +256,32 @@ describe('Cross-surface exploration agent (F1)', () => {
     // fail the build. Hypothesis findings (unverified bindings) stay informational.
     const confirmed = run.findings.filter((f) => f.confidence === 'confirmed');
     expect(confirmed).toEqual([]);
+  });
+
+  // -----------------------------------------------------------------------
+  // GT-643 — the oracle that asks whether a flag with no effect had no effect.
+  // -----------------------------------------------------------------------
+
+  it('actually EXERCISED the no-effect contracts (a state oracle that ran over nothing is not an oracle)', () => {
+    const ne = run.coverage.noEffect;
+    expect(ne.contracts).toBeGreaterThanOrEqual(3);
+    expect(ne.checked).toBeGreaterThanOrEqual(ne.contracts);
+    expect(ne.skipped).toEqual([]);
+  });
+
+  it('every no-effect contract has a CONTRAST case that was observed writing', () => {
+    // Without this, a command that stopped working would satisfy every
+    // "nothing changed" assertion in the suite, and the tester would be green
+    // exactly when the product was most broken.
+    const ne = run.coverage.noEffect;
+    expect(ne.contrastVerified).toBe(ne.checked);
+  });
+
+  it('no declared no-effect flag changed state', () => {
+    const violations = run.findings.filter(
+      (f) => f.type === 'contract' && f.title.includes('CHANGED STATE'),
+    );
+    expect(violations.map((f) => `${f.operationId}: ${f.detail}`)).toEqual([]);
   });
 
   it('the generated interface how-to docs are up to date (no drift)', async () => {

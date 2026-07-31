@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { CoreReferenceQueryService } from './core-reference-query.service';
-import { NodeFileSystemProvider } from '../../infrastructure/providers/node-filesystem.provider';
+import { NodeFileSystemProvider } from '@beyondnet/evolith-infra-providers';
 import { REPO_ROOT } from '../../test-support/repo-root';
 
 /**

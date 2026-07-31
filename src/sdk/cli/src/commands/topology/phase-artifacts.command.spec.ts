@@ -9,7 +9,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { tmpdir } from 'node:os';
 import { PhaseArtifactsCommand } from './phase-artifacts.command';
-import { NodeFileSystemProvider } from '../../infrastructure/providers/node-filesystem.provider';
+import { NodeFileSystemProvider } from '@beyondnet/evolith-infra-providers';
 import type { ILogger } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import type { PhaseArtifactResult } from '@beyondnet/evolith-core-domain/application/services';
 

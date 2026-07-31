@@ -37,6 +37,15 @@ WORKDIR /repo
 
 COPY --from=builder /repo/node_modules ./node_modules
 COPY --from=builder /repo/package.json ./package.json
+# The workspace closure the entrypoint requires, TRANSITIVELY. `contracts` is
+# here because infra-providers/dist/tracker/evaluation-ingest.client.js requires
+# `@beyondnet/evolith-contracts/ingest`, and that require is re-exported from
+# infra-providers/dist/index.js — i.e. it is on the boot path, not a leaf. Its
+# node_modules entry is a workspace SYMLINK into src/packages/contracts, so
+# shipping node_modules without the package's own dist yields a dangling link
+# and MODULE_NOT_FOUND at startup. Guard: 56-validate-docker-workspace-closure.
+COPY --from=builder /repo/src/packages/contracts/dist ./src/packages/contracts/dist
+COPY --from=builder /repo/src/packages/contracts/package.json ./src/packages/contracts/package.json
 COPY --from=builder /repo/src/packages/core-domain/dist ./src/packages/core-domain/dist
 COPY --from=builder /repo/src/packages/core-domain/package.json ./src/packages/core-domain/package.json
 COPY --from=builder /repo/src/packages/infra-providers/dist ./src/packages/infra-providers/dist

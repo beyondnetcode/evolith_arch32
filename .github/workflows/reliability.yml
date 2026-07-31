@@ -20,6 +20,17 @@ on:
     paths:
       - 'src/apps/core-api/**'
       - 'src/packages/core-domain/**'
+      # GT-647: core-api's runtime graph does NOT stop at core-domain. The change
+      # that broke this workflow (GT-604) touched infra-providers and contracts
+      # ONLY, so none of these filters matched and the drill never ran on the
+      # commit that broke it — it went red later, on an unrelated core-api edit,
+      # pointing at the wrong change. A path filter must cover the image's whole
+      # workspace closure, and 56-validate-docker-workspace-closure computes it.
+      - 'src/packages/infra-providers/**'
+      - 'src/packages/contracts/**'
+      # The Dockerfile itself is the artifact under test.
+      - 'src/apps/core-api/Dockerfile'
+      - 'product/infra/docker-compose.evolith.yml'
       - 'src/rulesets/**'
       - 'product/infra/load/**'
       - '.github/workflows/reliability.yml'
@@ -28,6 +39,17 @@ on:
     paths:
       - 'src/apps/core-api/**'
       - 'src/packages/core-domain/**'
+      # GT-647: core-api's runtime graph does NOT stop at core-domain. The change
+      # that broke this workflow (GT-604) touched infra-providers and contracts
+      # ONLY, so none of these filters matched and the drill never ran on the
+      # commit that broke it — it went red later, on an unrelated core-api edit,
+      # pointing at the wrong change. A path filter must cover the image's whole
+      # workspace closure, and 56-validate-docker-workspace-closure computes it.
+      - 'src/packages/infra-providers/**'
+      - 'src/packages/contracts/**'
+      # The Dockerfile itself is the artifact under test.
+      - 'src/apps/core-api/Dockerfile'
+      - 'product/infra/docker-compose.evolith.yml'
       - 'src/rulesets/**'
       - 'product/infra/load/**'
       - '.github/workflows/reliability.yml'
@@ -181,6 +203,34 @@ jobs:
       - name: Wait for the stack to serve a real verdict
         run: bash product/infra/load/wait-for-target.sh
 
+      # GT-647: this job brought containers up and captured NOTHING from them, so
+      # when `evolith-core-api:local` began crash-looping on a missing workspace
+      # package the only signal in three consecutive runs (30628493705, 30630994704,
+      # 30632498438) was `[wait-for-target] TIMEOUT after 180s` — a message that
+      # cannot distinguish a crash-loop from a slow boot. The container had printed
+      # the exact require stack and the failing module name each time, and CI threw
+      # it away. `always()` is the point: the run this matters in is the failing one,
+      # where the steps below never execute.
+      #
+      # Named `chaos-*.log` so the existing upload glob carries it into the artifact
+      # without a second upload step.
+      - name: Capture container logs and state
+        if: always()
+        run: |
+          cd product/infra
+          {
+            echo "===== docker compose ps ====="
+            docker compose -f docker-compose.evolith.yml ps --all
+            echo
+            echo "===== docker compose logs (--no-color, all services) ====="
+            docker compose -f docker-compose.evolith.yml logs --no-color --timestamps --tail=2000
+          } > "$RUNNER_TEMP/chaos-container-logs.log" 2>&1 || true
+          # Surface the tail inline too: an artifact you must download is not seen by
+          # whoever is looking at a red job right now.
+          echo '::group::container logs (tail 100)'
+          tail -n 100 "$RUNNER_TEMP/chaos-container-logs.log" || true
+          echo '::endgroup::'
+
       # Criterion 3 of the gap: the dependency dies MID-RUN, with real callers on
       # it, and what the callers saw is recorded.
       - name: Chaos — kill core-api under load, record the behaviour
@@ -218,6 +268,21 @@ jobs:
             echo '> disaster-recovery restore, so it yields MTTR — never RTO/RPO (GT-443'
             echo '> criterion 4 stays open until a real DR restore is run).'
           } >> "$GITHUB_STEP_SUMMARY"
+
+      # The capture above diagnoses a BOOT failure; this one covers a failure in the
+      # kill/MTTR steps, whose whole subject is what the containers did. Separate
+      # file so neither overwrites the other, and taken before `down -v` destroys them.
+      - name: Capture container logs after the drill
+        if: always()
+        run: |
+          cd product/infra
+          {
+            echo "===== docker compose ps (post-drill) ====="
+            docker compose -f docker-compose.evolith.yml ps --all
+            echo
+            echo "===== docker compose logs (post-drill) ====="
+            docker compose -f docker-compose.evolith.yml logs --no-color --timestamps --tail=2000
+          } > "$RUNNER_TEMP/chaos-container-logs-post.log" 2>&1 || true
 
       - name: Upload chaos logs
         if: always()

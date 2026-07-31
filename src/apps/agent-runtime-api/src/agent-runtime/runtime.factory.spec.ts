@@ -16,6 +16,8 @@ import {
   HttpTrackerTraceAdapter,
   CircuitBreaker,
 } from '@beyondnet/evolith-agent-runtime';
+import { resolve } from 'node:path';
+
 import { createRuntimeFromEnv, resolveProfile, resolveKnowledgeAdapter } from './runtime.factory';
 
 /**
@@ -292,6 +294,36 @@ describe('createRuntimeFromEnv — profile selection matrix (GT-438)', () => {
         AGENT_RUNTIME_WORKSPACE_CONTEXT_ROOT: '/app/satellite',
       });
       expect(deps.workspaceContext).toBeInstanceOf(FsWorkspaceContextAdapter);
+    });
+  });
+
+  /**
+   * GT-608 — the catalogue the DEPLOYED service routes on.
+   *
+   * The HITL seam had never executed because nothing the runtime could route
+   * required approval: the factory seeded the hardcoded 7-skill table and never
+   * read the manifest, so `requiresApproval: true` in `.harness/manifest.yaml`
+   * governed nothing at runtime. These two tests are the CI-runnable guard on
+   * that wiring — the full Runtime↔Tracker integration needs a live Tracker and
+   * skips without one, so without this a regression here would be silent.
+   */
+  describe('skill catalogue is derived from the mounted manifest (GT-608)', () => {
+    const HARNESS_ROOT = resolve(__dirname, '../../../../..', '.harness');
+
+    it('routes a manifest capability, with the manifest’s approval posture', async () => {
+      const { deps } = createRuntimeFromEnv({
+        AGENT_RUNTIME_HARNESS_ROOT: HARNESS_ROOT,
+        AGENT_RUNTIME_POLICY_MODE: 'stub',
+      });
+      const skill = await deps.skillRegistry.resolve('self_improving_loop');
+      expect(skill?.id).toBe('self-improving-loop');
+      // Load-bearing: this is the flag that makes step 4 of the pipeline run at all.
+      expect(skill?.requiresApproval).toBe(true);
+    });
+
+    it('keeps the hardcoded catalogue when no .harness is mounted (design rule #5)', async () => {
+      const { deps } = createRuntimeFromEnv({ AGENT_RUNTIME_POLICY_MODE: 'stub' });
+      expect(await deps.skillRegistry.resolve('self_improving_loop')).toBeUndefined();
     });
   });
 });

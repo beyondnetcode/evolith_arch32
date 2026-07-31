@@ -143,6 +143,22 @@ The thresholds live in [`k6/lib/config.js`](k6/lib/config.js) (`SLO`) and are
 | error rate | **< 1%** (`0.01`) | Steady state must be essentially error-free. Under **stress** the bar relaxes to **< 5%** deliberately — a stress test observes degradation past the SLO rather than passing it. |
 | checks pass | **> 99%** | Correctness, not just HTTP 200: a real success envelope, a non-empty `data.rulesExecuted`, and a `data.overallVerdict` of PASS/FAIL/WARN. (It used to check `data.gates` — a field the current API never returns. That check failed 100% of the time on the harness's first real execution and would have kept failing forever, because nothing ran it.) |
 
+### Which statistic each profile asserts the latency SLO at
+
+Same SLO numbers, different statistic — because sample size decides what a
+statistic can mean:
+
+| Profile | Samples | Latency asserted at | Why |
+|---------|---------|---------------------|-----|
+| `smoke.js` | **10** (1 VU × 10 iterations) | **`med`** | With n=10, k6 computes p(95) at index `0.95*(n-1) = 8.55` — it interpolates 55% of the way from the 9th sorted sample to the slowest one. "p95" there is the max wearing a percentile's name, and it fails on a single outlier. The median is the 5th/6th sample: an order statistic n=10 supports. |
+| `average-load.js` | thousands | **`p(95)`, `p(99)`** | Enough samples for a percentile to describe a distribution rather than one request. This is the profile whose tail numbers you record. |
+| `stress-spike.js` | thousands | **`p(95)`, `p(99)`** | Same reasoning; the point is to watch the tail degrade past the SLO. |
+
+Asserting smoke at the median is a *weaker* claim than the SLO, not a relaxed
+one — no number was raised. If p95 must be under 150 ms, the median must be too.
+The tail is still **measured and published** on every smoke run (the step summary
+prints med/p95/p99/max) — it just does not gate a 10-sample run.
+
 **These defaults are placeholders until a real baseline exists.** They are
 intentionally conservative for the in-memory inline path. Once `average-load.js`
 has run against the actual deployment, **replace them with numbers derived from
@@ -205,6 +221,34 @@ What those numbers say:
    the target must be started with `THROTTLE_MAX_REQUESTS` raised.
 4. **A stale image can be measured instead of the checkout.** See the
    `--build` warning under [Prerequisites](#prerequisites).
+5. **A threshold that did not measure what it claimed.** Smoke asserted `health`
+   **p95** over **10 samples**, which k6 computes by interpolating 55 % of the way
+   from the 9th sample to the slowest — so the gate was decided by one request.
+   CI run `30631939687` failed at `p(95)=276.1 ms` on a tree that was green 20
+   minutes earlier: 9 samples fell in 2.72–4.3 ms and one took 498.5 ms, and
+   276.1 ms is simply `4.3 + 0.55*(498.5 - 4.3)` — a latency **no request ever
+   had**. Smoke now asserts the median (see
+   [which statistic each profile asserts at](#which-statistic-each-profile-asserts-the-latency-slo-at)).
+
+   The outlier was **not** cold start, so no warm-up iteration or higher ceiling
+   would have fixed it. In that same run `wait-for-target.sh` had already driven a
+   full governed evaluation before k6 started; `evaluate_latency` was flat across
+   all 10 iterations (min 107.3 ms, max 122.4 ms) — a cold process would show it
+   there first, on the path that runs ~107 rules plus OPA-wasm; and core-api
+   logged the health handler at `durationMs=0` while k6 measured **498.4 ms of
+   `http_req_waiting`** and 0.17 ms of connect. The request was queued behind a
+   **blocked event loop**, not slow in the handler. core-api re-scans and
+   re-validates the whole ruleset corpus on *every* evaluation — visible as the
+   `Skipping non-standard ruleset` / `Phases directory not found` WARN block
+   repeating once per iteration in `core-api.log` — and a health probe landing
+   during that synchronous work waits it out. **That re-scan is a real defect and
+   is not fixed here**; it is why `/health` has a multi-hundred-ms tail at 1 VU.
+6. **One threshold miss produced two red steps.** `report-summary.mjs` crashed
+   with `ENOENT` on `k6-average.json` whenever smoke failed — the average-load
+   profile is gated behind smoke and legitimately never ran. The stack trace then
+   displaced the smoke result that explained the failure. The reporter now says
+   "did not run" and exits 0; a run's verdict is carried by the dedicated
+   `Fail if … crossed a threshold` steps, never by the reporter.
 
 ### Against ADR-0011 (fault tolerance)
 

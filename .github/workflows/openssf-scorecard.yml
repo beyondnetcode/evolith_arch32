@@ -81,6 +81,24 @@ jobs:
           # self-asserted. Valid here because this repository is public.
           publish_results: true
 
+      # A SECOND ANALYSIS, ON PURPOSE
+      # `scorecard-action` emits exactly one file in exactly one format per
+      # invocation. SARIF is what code scanning ingests; JSON is the only format
+      # that carries the numeric aggregate and the per-check scores, which is what
+      # a regression gate compares. Deriving the numbers from the SARIF was
+      # considered and rejected: the aggregate score is not in it, so the gate
+      # would be reading a field that does not exist and reporting green.
+      #
+      # The cost is a second pass over the same repository (GitHub API calls, a
+      # couple of minutes) once a week. `publish_results` is false here — the
+      # public score is published exactly once, by the run above.
+      - name: Re-run Scorecard for a machine-readable score
+        uses: ossf/scorecard-action@2d1146689b8cda280b9bc96326124645441f03bc # v2.4.4
+        with:
+          results_file: scorecard-results.json
+          results_format: json
+          publish_results: false
+
       # Retained separately from code scanning because code-scanning alerts are
       # deduplicated and aged out, while the artifact is the raw per-run evidence
       # a score regression gets diffed against.
@@ -88,10 +106,36 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: scorecard-results
-          path: scorecard-results.sarif
+          path: |
+            scorecard-results.sarif
+            scorecard-results.json
           retention-days: 90
 
       - name: Upload results to code scanning
         uses: github/codeql-action/upload-sarif@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
         with:
           sarif_file: scorecard-results.sarif
+
+      - name: Setup Node.js
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: '20'
+
+      # THE STEP THAT MAKES THIS A MEASURE RATHER THAN A REPORT
+      # Everything above publishes a number. Nothing above can fail. A score that
+      # falls from 7.1 to 4.2 produces an identical green run, which is the audit
+      # failure mode GT-597 exists to remove, reproduced weekly with nicer output.
+      #
+      # This step compares the run against floors committed in
+      # `.harness/security/scorecard-baseline.json` and exits non-zero on any
+      # regression. Because it runs on a schedule on the default branch, a failure
+      # is emailed to the repository owner by GitHub's own scheduled-workflow
+      # failure notification — no dashboard to remember to open.
+      #
+      # It is deliberately the LAST step: the SARIF upload and the public
+      # publication must happen whether or not the posture regressed. Losing the
+      # evidence on the run that most needs it would be a poor trade.
+      - name: Fail on a posture regression
+        run: >-
+          node .harness/scripts/ci/51-validate-scorecard-regression.mjs
+          --results scorecard-results.json

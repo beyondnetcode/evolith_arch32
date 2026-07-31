@@ -200,7 +200,16 @@
                 "enum": ["class", "interface", "function", "method", "variable", "type", "enum", "unknown"]
               },
               "moduleId": { "type": "string" },
-              "exported": { "type": "boolean" }
+              "exported": { "type": "boolean" },
+              "structuralHash": {
+                "description": "GT-594. Digest of the declaration's NORMALIZED syntax-node stream (identifiers, literals, comments and trivia erased). Equality is the Type-2 clone relation — an equivalence relation, not a similarity score, so there is no threshold to tune. Emitted only for declarations with a body, above the node floor. Absent means 'not fingerprinted', never 'not duplicated'.",
+                "type": "string"
+              },
+              "structuralSize": {
+                "description": "GT-594. Number of normalized syntax nodes the structuralHash covers.",
+                "type": "integer",
+                "minimum": 0
+              }
             }
           }
         },
@@ -211,8 +220,36 @@
             "required": ["fromSymbol", "toSymbol"],
             "properties": { "fromSymbol": { "type": "string" }, "toSymbol": { "type": "string" } }
           }
+        },
+        "errorMasking": {
+          "description": "GT-594. Occurrences of a CLOSED, purely syntactic list of constructs that prevent an error from being observed. ABSENT and EMPTY mean different things and the Core keeps them apart: absent is an extractor that did not look (the signal reports not-measurable), empty is an extractor that looked and found none (a measured zero).",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["moduleId", "kind", "line"],
+            "properties": {
+              "moduleId": { "type": "string" },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "empty-catch",
+                  "catch-discards-error",
+                  "promise-catch-swallow",
+                  "ts-directive-suppression",
+                  "any-assertion",
+                  "non-null-assertion"
+                ]
+              },
+              "line": { "type": "integer", "minimum": 1 },
+              "symbolId": { "type": "string" }
+            }
+          }
         }
       }
+    },
+    "baselineRepoFacts": {
+      "description": "GT-594. The SAME repository at an earlier revision, delivered inline for exactly the reason repoFacts is: the Core is stateless (ADR-0101), so 'the previous revision' is something the consumer sends, never something the Core remembers. Feeds the refactor:copy signal and the per-signal conformance delta. Absent means those report not-measurable, never zero.",
+      "$ref": "#/properties/repoFacts"
     },
     "externalReferences": { "type": "array", "items": { "$ref": "#/definitions/externalReference" } },
     "sdlcConfig": { "type": "object" },

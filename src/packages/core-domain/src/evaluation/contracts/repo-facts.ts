@@ -32,8 +32,32 @@
  * name of that input.
  */
 
-/** Schema version of this contract (bumped only on incompatible changes). */
-export const REPO_FACTS_SCHEMA_VERSION = '1.0.0';
+/**
+ * Schema version of this contract.
+ *
+ * `1.1.0` (GT-594) added the two fact families the AI-drift signals are computed
+ * over — `SymbolFact.structuralHash`/`structuralSize` and `RepoFacts.errorMasking`.
+ * Both are OPTIONAL, so a `1.0.0` payload still validates; but they participate in
+ * {@link canonicalizeRepoFacts}, so the same tree hashes differently under the two
+ * versions. That is deliberate and visible: the canonical form already carries the
+ * schema version and the indexer version, and a content hash is only ever the name
+ * of an input under a stated extractor. It is also why a conformance DELTA refuses
+ * to compare two fact bases whose `schemaVersion` or indexer differ.
+ */
+export const REPO_FACTS_SCHEMA_VERSION = '1.1.0';
+
+/**
+ * GT-594 — floor, in normalized syntax nodes, below which a declaration is NOT
+ * fingerprinted for duplication.
+ *
+ * Exported from the contract so the extractor and the Core read ONE number: a
+ * duplication ratio computed over a different population than the one the extractor
+ * fingerprinted would be a different metric wearing the same name. Twenty nodes is
+ * roughly a handful of statements — small enough to catch a copied helper, large
+ * enough that `export const X = 1` and a one-line delegating wrapper do not
+ * manufacture clone classes out of the language's own boilerplate.
+ */
+export const DEFAULT_MIN_STRUCTURAL_SIZE = 20;
 
 /** Kind of a declared symbol, in the smallest vocabulary every indexer can fill. */
 export type SymbolFactKind =
@@ -93,6 +117,61 @@ export interface SymbolFact {
   readonly kind: SymbolFactKind;
   readonly moduleId: string;
   readonly exported: boolean;
+  /**
+   * GT-594 — digest of the declaration's NORMALIZED syntax-node stream: the ordered
+   * sequence of syntax kinds of the declaration subtree with every identifier,
+   * literal, comment and piece of trivia erased.
+   *
+   * Equality of this field is therefore an EQUIVALENCE RELATION (`Type-2 clone`:
+   * identical modulo renaming of identifiers and literals), not a similarity score.
+   * That distinction is the whole point — a threshold on a similarity metric is a
+   * knob nobody has calibrated, whereas hash equality is exact and reproducible.
+   *
+   * Emitted only for declarations that HAVE a body (function-like and class
+   * declarations) and only above {@link DEFAULT_MIN_STRUCTURAL_SIZE}. Absent means
+   * "not fingerprinted", which is never the same as "not duplicated".
+   */
+  readonly structuralHash?: string;
+  /** Number of normalized syntax nodes the {@link structuralHash} covers. */
+  readonly structuralSize?: number;
+}
+
+/**
+ * GT-594 — a construct that prevents an error from being observed.
+ *
+ * Two families, kept apart because they mask different things:
+ *
+ * - **swallowed runtime error** (`empty-catch`, `catch-discards-error`,
+ *   `promise-catch-swallow`) — the failure happens and no one hears it.
+ * - **suppressed diagnostic** (`ts-directive-suppression`, `any-assertion`,
+ *   `non-null-assertion`) — the compiler had an objection and was told to be quiet.
+ *
+ * The list is CLOSED and purely syntactic on purpose. Every member is decidable by
+ * looking at the shape of the code, so counting them is a measurement; whether a
+ * given occurrence is *wrong* is a judgement the Core does not make.
+ */
+export type ErrorMaskingKind =
+  /** `catch { }` / `catch (e) { }` with no statements at all. */
+  | 'empty-catch'
+  /** Catch block with statements, but the caught value is never read and nothing is rethrown. */
+  | 'catch-discards-error'
+  /** `.catch(...)` whose handler has an empty body or a body that neither reads the rejection nor throws. */
+  | 'promise-catch-swallow'
+  /** A `@ts-ignore` / `@ts-expect-error` directive comment. */
+  | 'ts-directive-suppression'
+  /** `x as any` / `<any>x` — an assertion that switches type checking off locally. */
+  | 'any-assertion'
+  /** `x!` — an assertion that the checker's nullability objection is wrong. */
+  | 'non-null-assertion';
+
+/** One occurrence of an {@link ErrorMaskingKind}. A pointer, never a copy of the source. */
+export interface ErrorMaskingFact {
+  readonly moduleId: string;
+  readonly kind: ErrorMaskingKind;
+  /** 1-based line within the module. */
+  readonly line: number;
+  /** Enclosing declared symbol, when the construct sits inside one. */
+  readonly symbolId?: string;
 }
 
 /** One symbol→symbol reference edge (a use of `toSymbol` inside `fromSymbol`). */
@@ -114,6 +193,15 @@ export interface RepoFacts {
   readonly imports: readonly ImportFact[];
   readonly symbols: readonly SymbolFact[];
   readonly references: readonly ReferenceFact[];
+  /**
+   * GT-594 — every occurrence of an error-masking construct the indexer looked for.
+   *
+   * `undefined` and `[]` mean DIFFERENT things and the Core keeps them apart: an
+   * absent collection is an extractor that did not look (schema `1.0.0`, or a future
+   * indexer with no such pass) and yields a `not-measurable` signal; an empty array
+   * is an extractor that looked and found none, and yields a measured zero.
+   */
+  readonly errorMasking?: readonly ErrorMaskingFact[];
 }
 
 /**
@@ -157,10 +245,21 @@ export function canonicalizeRepoFacts(facts: RepoFacts): string {
     .map((i) => [i.from, i.to, i.typeOnly]);
   const symbols = [...facts.symbols]
     .sort((a, b) => byString(a.id, b.id))
-    .map((s) => [s.id, s.name, s.kind, s.moduleId, s.exported]);
+    .map((s) => [s.id, s.name, s.kind, s.moduleId, s.exported, s.structuralHash ?? null, s.structuralSize ?? null]);
   const references = [...facts.references]
     .sort((a, b) => byString(a.fromSymbol, b.fromSymbol) || byString(a.toSymbol, b.toSymbol))
     .map((r) => [r.fromSymbol, r.toSymbol]);
+  // `undefined` (did not look) and `[]` (looked, found none) must not collapse:
+  // `null` and `[]` are distinct JSON values, so the hash separates them too.
+  const errorMasking = facts.errorMasking
+    ? [...facts.errorMasking]
+        .sort(
+          (a, b) =>
+            byString(a.moduleId, b.moduleId) || a.line - b.line || byString(a.kind, b.kind) ||
+            byString(a.symbolId ?? '', b.symbolId ?? ''),
+        )
+        .map((e) => [e.moduleId, e.kind, e.line, e.symbolId ?? null])
+    : null;
 
   return JSON.stringify({
     schemaVersion: facts.schemaVersion,
@@ -170,6 +269,7 @@ export function canonicalizeRepoFacts(facts: RepoFacts): string {
     imports,
     symbols,
     references,
+    errorMasking,
   });
 }
 

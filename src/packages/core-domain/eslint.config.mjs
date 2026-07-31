@@ -174,4 +174,46 @@ export default [
       'no-restricted-syntax': ['error', STATELESS_CORE_REPOSITORY_BAN],
     },
   },
+
+  // GT-588 — no cryptographic primitives in the domain layer.
+  //
+  // `boundaries/dependencies` governs imports BETWEEN layers of this package; it has
+  // nothing to say about a Node builtin, so before this block "the domain owns the
+  // contract, an adapter owns the implementation" was a convention a reviewer had to
+  // notice rather than a rule the build applied. The transparency layer is the case
+  // that made the difference concrete: the RFC 9162 tree math is domain logic and
+  // must be readable without a crypto library in it, while SHA-256 and Ed25519 sit
+  // behind `IHasher` / `IStatementSigner` in `infrastructure/transparency`.
+  {
+    files: ['src/domain/**/*.ts'],
+    ignores: [
+      '**/*.spec.ts',
+      '**/*.test.ts',
+      // PRE-EXISTING DEBT, carved out rather than silently un-enforced:
+      // `violation.ts` computes its fingerprint with `createHash` directly. Fixing it
+      // means threading a digest port through every enforcer adapter that builds a
+      // Violation, which is a change of a different shape from this gap. Named here
+      // so the exception is visible and countable instead of implied by the rule's
+      // absence.
+      'src/domain/violation.ts',
+    ],
+    rules: {
+      'no-restricted-imports': ['error', {
+        paths: [
+          {
+            name: 'crypto',
+            message:
+              'Cryptography is an adapter concern. The domain declares a port (see ' +
+              'domain/transparency/ports/hasher.port.ts) and infrastructure/ implements it.',
+          },
+          {
+            name: 'node:crypto',
+            message:
+              'Cryptography is an adapter concern. The domain declares a port (see ' +
+              'domain/transparency/ports/hasher.port.ts) and infrastructure/ implements it.',
+          },
+        ],
+      }],
+    },
+  },
 ];

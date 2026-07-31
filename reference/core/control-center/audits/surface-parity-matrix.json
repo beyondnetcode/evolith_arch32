@@ -1159,6 +1159,23 @@
         "exposed": true,
         "endpoint": "GET /api/v1/capabilities"
       }
+    },
+    {
+      "id": "audit-verify",
+      "name": "Transparency ledger verification",
+      "description": "GT-588 - verify the signed audit trail offline: RFC 9943 Signed Statements, RFC 9942 Receipts over an RFC 9162 verifiable data structure, and the key custody behind them. Emits a blocking governance verdict (AUD-TRANSP-01..04).",
+      "cli": {
+        "exposed": true,
+        "command": "audit verify"
+      },
+      "mcp": {
+        "exposed": false,
+        "exempt": "Deliberate: verification must be OFFLINE and must not depend on a service the audited party operates. An MCP tool would route the check through a server the producer controls, which is the trust assumption this operation exists to remove. A future MCP tool may EXPOSE a ledger, never adjudicate it."
+      },
+      "rest": {
+        "exposed": false,
+        "exempt": "Same reason as MCP: a REST endpoint served by the party under audit cannot be the authority on whether that party's own ledger verifies. Relying parties run `evolith audit verify` against the ledger and their own trust anchors."
+      }
     }
   ]
 }

@@ -33,6 +33,8 @@ export async function authenticateHttpRequest(
   allowNoAuth = false,
   oauthConfig?: OAuthConfig | null,
   keyResolver?: JwksKeyResolver,
+  /** GT-582 — `WWW-Authenticate` challenge attached to any 401 this raises. */
+  challenge?: string,
 ): Promise<McpUserContext | null> {
   const authHeader = req.headers.authorization || '';
   const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
@@ -44,12 +46,12 @@ export async function authenticateHttpRequest(
 
     const hasLocalCredential = !!apiKey || !!process.env.JWT_SECRET || allowNoAuth;
     if (!hasLocalCredential) {
-      return writeUnauthorized(res, 'Invalid or expired OAuth bearer token');
+      return writeUnauthorized(res, 'Invalid or expired OAuth bearer token', challenge);
     }
   }
 
   // 2-4. Local path
-  return validateAuth(req, res, apiKey, allowNoAuth);
+  return validateAuth(req, res, apiKey, allowNoAuth, challenge);
 }
 
 export function validateAuth(
@@ -57,13 +59,14 @@ export function validateAuth(
   res: http.ServerResponse,
   apiKey: string | undefined,
   allowNoAuth = false,
+  challenge?: string,
 ): McpUserContext | null {
   const env = process.env.NODE_ENV || 'production';
 
   // No API key configured
   if (!apiKey) {
     if (env === 'production' || !allowNoAuth) {
-      return writeUnauthorized(res, 'MCP server requires an API key. Set EVOLITH_API_KEY or --api-key.');
+      return writeUnauthorized(res, 'MCP server requires an API key. Set EVOLITH_API_KEY or --api-key.', challenge);
     }
     return { ...READER_CONTEXT, environment: env };
   }
@@ -84,7 +87,7 @@ export function validateAuth(
     if (payload) return getContextFromPayload(payload);
   }
 
-  return writeUnauthorized(res, 'Invalid or missing API key or JWT token');
+  return writeUnauthorized(res, 'Invalid or missing API key or JWT token', challenge);
 }
 
 export function verifyJwtToken(token: string, secret: string): Record<string, unknown> | null {

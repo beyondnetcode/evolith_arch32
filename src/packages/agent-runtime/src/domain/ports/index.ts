@@ -10,6 +10,7 @@ export * from './skill-registry.port';
 export * from './scheduler.port';
 export * from './communication-gateway.port';
 export * from './approval.port';
+export * from './c4-binding-map.port';
 export * from './agent-engine.port';
 export * from './assistant-invocation.port';
 export * from './knowledge.port';

@@ -150,6 +150,7 @@ export class PendingApprovalAdapter implements IApprovalPort {
       status: 'pending',
       skillId: request.skill.id,
       intent: request.request.intent,
+      ...(request.subject ? { subject: request.subject } : {}),
       correlationId: ctx.correlationId,
       tenantId: ctx.tenantId,
       productId: ctx.productId,
@@ -237,10 +238,18 @@ export class PendingApprovalAdapter implements IApprovalPort {
     }
   }
 
-  /** Deterministic id from correlationId + skill, or undefined when no correlation. */
+  /**
+   * Deterministic id from correlationId + skill, or undefined when no correlation.
+   *
+   * The SUBJECT participates when the request names one (GT-590): without it, two decisions about
+   * two different objects submitted under one correlation id would collide on the same record, and
+   * a human approving the first would silently pre-approve the second. Requests with no subject
+   * keep their previous id exactly, so no existing pending record is orphaned.
+   */
   private idFor(request: ApprovalRequest): string | undefined {
     const correlationId = request.request.context.correlationId;
     if (!correlationId) return undefined;
-    return `${correlationId}::${request.skill.id}`;
+    const base = `${correlationId}::${request.skill.id}`;
+    return request.subject ? `${base}::${request.subject.kind}:${request.subject.ref}` : base;
   }
 }

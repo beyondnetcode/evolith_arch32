@@ -20,9 +20,9 @@
     },
     {
       "id": "evaluation-context",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "path": "src/rulesets/schema/evaluation-context.schema.json",
-      "sha256": "5c331f34ef0500286350071913d76cccf1a7bbc43d6b79c38f2b5d53993726aa"
+      "sha256": "d62d557c6258ca6cc154e88850fd4879eb21d32dd3e4e9400aa25182c200cd69"
     },
     {
       "id": "evaluation-result",

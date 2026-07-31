@@ -21,6 +21,8 @@ import { CANONICAL_PHASE_IDS, normalizePhaseId } from '../domain/sdlc/phase-id';
 import type { PhaseId } from '../domain/sdlc/phase-id';
 import { renderChain, summarizeRepoFacts } from './contracts/repo-facts';
 import type { StructuralFactsSummary } from './contracts/repo-facts';
+import { diffDriftSignalReports, summarizeDriftSignals } from './contracts/drift-signals';
+import type { DriftConformanceDelta, DriftSignalReport } from './contracts/drift-signals';
 import type { IFileSystem, ILogger, IConfigParser } from '../domain/interfaces';
 import type { KindEvaluator } from './ports/kind-evaluator.port';
 import { ArchitectureDriftService } from '../application/validators/architecture-drift.service';
@@ -116,6 +118,98 @@ export function structuralFindingsFrom(summary: StructuralFactsSummary): {
 }
 
 /**
+ * GT-594 — turn the AI-drift signal report into ADVISORY findings.
+ *
+ * Every gap this emits carries `severity: 'info'` and every risk `level: 'low'`, and
+ * that is load-bearing rather than cosmetic: the architecture verdict is computed from
+ * gaps of severity `error`, so by construction no drift signal can move it. The
+ * enforcement of that lives one layer down, in `admitEvidenceBlocking` (GT-584), which
+ * refuses every one of these signals a blocking verdict because none carries a
+ * measured error rate. This function only makes the refusal READABLE — each message
+ * states the admissibility class and the reason, so a reviewer looking at a verdict
+ * can tell an advisory number from a decisive one without reading the code.
+ *
+ * Exported and PURE so the advisory half can be exercised without a workspace.
+ */
+export function driftFindingsFrom(report: DriftSignalReport, delta?: DriftConformanceDelta): {
+  readonly gaps: Gap[];
+  readonly risks: Risk[];
+  readonly recommendations: { id: string; kind: 'process'; message: string }[];
+} {
+  const gaps: Gap[] = [];
+  const risks: Risk[] = [];
+  const recommendations: { id: string; kind: 'process'; message: string }[] = [];
+
+  for (const assessed of report.signals) {
+    const { measurement, admissibility } = assessed;
+    const id = 'DRIFT-' + measurement.signal.toUpperCase();
+
+    if (measurement.status !== 'measured') {
+      recommendations.push({
+        id,
+        kind: 'process',
+        message:
+          'Drift signal "' + measurement.signal + '" NOT MEASURED: ' +
+          (measurement.notMeasurableReason ?? 'no reason recorded'),
+      });
+      continue;
+    }
+
+    const numbers = Object.entries(measurement.metrics)
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+      .map(([key, value]) => key + '=' + value)
+      .join(', ');
+    const message =
+      'Drift signal "' + measurement.signal + '" (' + admissibility.admissibility + ', ' +
+      (admissibility.blocking ? 'blocking' : 'ADVISORY — cannot block') + '): ' + numbers + '.';
+
+    gaps.push({
+      id,
+      requirementRef: 'drift/' + measurement.signal,
+      severity: 'info',
+      message,
+      location: measurement.provenance.contentHash,
+    });
+    risks.push({ id, level: 'low', category: 'code-quality', message });
+    recommendations.push({
+      id: id + '-DEFINITION',
+      kind: 'process',
+      message:
+        measurement.definition + ' Blind spots: ' + measurement.blindSpots.join(' ') +
+        ' Admissibility: ' + admissibility.rationale,
+    });
+  }
+
+  if (delta) {
+    for (const signal of delta.signals) {
+      if (signal.status !== 'comparable') {
+        recommendations.push({
+          id: 'DRIFT-DELTA-' + signal.signal.toUpperCase(),
+          kind: 'process',
+          message:
+            'Conformance delta for "' + signal.signal + '" INCOMPARABLE: ' +
+            (signal.incomparableReason ?? 'no reason recorded'),
+        });
+        continue;
+      }
+      const moved = signal.metrics.filter((m) => m.delta !== undefined && m.delta !== 0);
+      recommendations.push({
+        id: 'DRIFT-DELTA-' + signal.signal.toUpperCase(),
+        kind: 'process',
+        message:
+          'Conformance delta for "' + signal.signal + '" between ' + signal.baselineContentHash +
+          ' and ' + signal.currentContentHash + ': ' +
+          (moved.length === 0
+            ? 'no metric moved.'
+            : moved.map((m) => m.metric + ' ' + m.before + '→' + m.after).join(', ') + '.'),
+      });
+    }
+  }
+
+  return { gaps, risks, recommendations };
+}
+
+/**
  * architecture kind — wraps ArchitectureDriftService → ArchitectureEvaluationResult,
  * and (GT-589) queries the inline structural fact base when the consumer sends one.
  *
@@ -136,6 +230,20 @@ export function createArchitectureKindEvaluator(
         : undefined;
       const structural = summary
         ? structuralFindingsFrom(summary)
+        : { gaps: [] as Gap[], risks: [] as Risk[], recommendations: [] as { id: string; kind: 'process'; message: string }[] };
+
+      // GT-594 — the advisory half. Pure queries over the same inline fact base, plus
+      // the baseline the consumer sent for the two-revision signals. The Core still
+      // runs no indexer and remembers no previous revision (ADR-0101).
+      const driftSignals = ctx.repoFacts
+        ? summarizeDriftSignals(ctx.repoFacts, ctx.baselineRepoFacts ? { baseline: ctx.baselineRepoFacts } : {})
+        : undefined;
+      const driftSignalDelta =
+        driftSignals && ctx.baselineRepoFacts
+          ? diffDriftSignalReports(summarizeDriftSignals(ctx.baselineRepoFacts), driftSignals)
+          : undefined;
+      const drift = driftSignals
+        ? driftFindingsFrom(driftSignals, driftSignalDelta)
         : { gaps: [] as Gap[], risks: [] as Risk[], recommendations: [] as { id: string; kind: 'process'; message: string }[] };
 
       const hasWorkspace = typeof ws?.satellitePath === 'string' && ws.satellitePath.length > 0;
@@ -171,8 +279,12 @@ export function createArchitectureKindEvaluator(
         definitionRef = report.detectedLevel;
       }
 
-      const gaps = [...driftGaps, ...structural.gaps];
-      const risks = [...driftRisks, ...structural.risks];
+      const gaps = [...driftGaps, ...structural.gaps, ...drift.gaps];
+      const risks = [...driftRisks, ...structural.risks, ...drift.risks];
+      const recommendations = [...structural.recommendations, ...drift.recommendations];
+      // The verdict reads ONLY the structural (deterministic) half and the drift
+      // report. GT-594's signals contribute `info` gaps exclusively, so they cannot
+      // reach this expression — which is the point, and is asserted in the spec.
       const structuralBlocking = structural.gaps.some((g) => g.severity === 'error');
       const verdict = driftDetected || structuralBlocking ? Verdict.FAIL : Verdict.PASS;
 
@@ -184,13 +296,15 @@ export function createArchitectureKindEvaluator(
             definitionRef,
             risks,
             gaps,
-            recommendations: structural.recommendations,
+            recommendations,
             ...(summary ? { structuralFacts: summary } : {}),
+            ...(driftSignals ? { driftSignals } : {}),
+            ...(driftSignalDelta ? { driftSignalDelta } : {}),
           },
         },
         gaps,
         risks,
-        recommendations: structural.recommendations,
+        recommendations,
       };
     },
   };

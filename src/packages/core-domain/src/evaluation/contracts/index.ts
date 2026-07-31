@@ -10,4 +10,5 @@ export * from './evaluation-context';
 export * from './evaluation-result';
 export * from './quality-evidence';
 export * from './repo-facts';
+export * from './drift-signals';
 export * from './finding';

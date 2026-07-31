@@ -47,7 +47,9 @@ export const SELF_GUARDED = [
       'GT-639 gap-claim guard; refuses to pass when the pull-request query cannot be answered — ' +
       'the guard exists because two sessions could not see each other, so one that stays quiet ' +
       'when it cannot look would reproduce the defect. Zero open PRs is reported in words rather ' +
-      'than passed silently, because it looks identical to a broken query otherwise',
+      'than passed silently, because it looks identical to a broken query otherwise. GT-645 added ' +
+      'the second input and the same refusal with it: a pull request whose DIFF cannot be read is ' +
+      'a hard failure naming it, never a run that quietly checked the prose alone',
   },
   {
     file: '49-validate-gap-id-allocation.mjs',

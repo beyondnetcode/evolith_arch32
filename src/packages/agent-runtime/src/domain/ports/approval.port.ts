@@ -9,9 +9,40 @@
 import type { SkillDescriptor } from '../contracts/capability';
 import type { AgentRuntimeRequest } from '../contracts/agent-runtime-request';
 
+/**
+ * WHAT is being approved, when the skill id alone does not identify it (GT-590).
+ *
+ * Before this, an {@link ApprovalRecord} carried only `skillId` + `intent`, so every decision made
+ * through one capability looked alike to the human deciding it and to the ledger recording it. That
+ * is adequate for "may this capability run?" and inadequate for "is THIS the right correspondence?"
+ * — a governance decision about a specific object, which is what GT-590 routes through this gate.
+ *
+ * Deliberately a discriminated union with an opaque `payload`, not a free-form bag: `kind` and `ref`
+ * are what a Tracker row and an approval UI can index and render, while `payload` is echoed and
+ * never interpreted by the runtime. Additive and optional — every existing caller stays valid, and
+ * an adapter that ignores `subject` behaves exactly as it did.
+ */
+export interface ApprovalSubject {
+  /** Subject family, e.g. `'c4-binding'`. Namespaced by the feature that introduces it. */
+  readonly kind: string;
+  /** Stable reference to the specific object under decision, unique within `kind`. */
+  readonly ref: string;
+  /** One line a human can decide on without opening anything else. */
+  readonly summary: string;
+  /**
+   * Confidence of the proposal being confirmed, in [0,1], when the subject came from a
+   * probabilistic proposer. Present so the human is told they are ratifying a GUESS (GT-584).
+   */
+  readonly confidence?: number;
+  /** Echoed verbatim to the approving surface; never interpreted here. */
+  readonly payload?: Readonly<Record<string, unknown>>;
+}
+
 export interface ApprovalRequest {
   readonly skill: SkillDescriptor;
   readonly request: AgentRuntimeRequest;
+  /** What specifically is being decided, when the capability id does not say (GT-590). */
+  readonly subject?: ApprovalSubject;
 }
 
 /**
@@ -49,6 +80,8 @@ export interface ApprovalRecord {
   readonly skillId: string;
   /** Intent the request expressed (for the human deciding). */
   readonly intent: string;
+  /** The specific object under decision, when the request named one (GT-590). */
+  readonly subject?: ApprovalSubject;
   /** Correlation id echoed from the request context, when present. */
   readonly correlationId?: string;
   /** Opaque tenant/product/initiative context for the approving human. */

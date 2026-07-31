@@ -174,3 +174,14 @@ export { RoutingAgentAdapter } from './engine/routing-agent.adapter';
 export type { EngineRouterConfig } from './engine/routing-agent.adapter';
 export { PolicyBasedEngineRouter } from './engine/policy-based-engine-router';
 export type { RiskAssessment, PrivacyClassification, CostBudget, RoutingPolicyContext, RoutingDecision } from './engine/policy-based-engine-router';
+
+// GT-590: append-only stores for the versioned C4↔module correspondence.
+export {
+  InMemoryC4BindingMapStore,
+  assertAppendable,
+} from './c4-binding/in-memory-c4-binding-map-store';
+export { FileC4BindingMapStore, C4BindingLedgerError } from './c4-binding/file-c4-binding-map-store';
+export type {
+  FileC4BindingMapStoreOptions,
+  C4BindingStoreFsLike,
+} from './c4-binding/file-c4-binding-map-store';

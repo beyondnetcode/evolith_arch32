@@ -113,6 +113,14 @@ const ADAPTERS_SURFACE = [
   'TRACKER_UNAVAILABLE_PREFIX',
   'TrackerApprovalAdapter',
   'TrackerApprovalHttpClient',
+  // GT-590 — append-only stores for the versioned C4↔module correspondence. ADDITIVE to the
+  // GT-388 freeze (minor): new names only. The approval seam gained an OPTIONAL `subject` on
+  // ApprovalRequest/ApprovalRecord, which is a type-only widening (`./ports` is frozen by
+  // consumers' tsc) and leaves every existing caller compiling and behaving unchanged.
+  'C4BindingLedgerError',
+  'FileC4BindingMapStore',
+  'InMemoryC4BindingMapStore',
+  'assertAppendable',
   'denyOnFailedEvaluation',
   'isTrackerUnavailable',
   'loadManifest',

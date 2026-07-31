@@ -61,6 +61,19 @@ const context = {
 - `contentHash` is `sha256` over `canonicalizeRepoFacts()`, which **excludes** the hash itself and `provenance.extractedAt`. Two indexings of the same tree therefore agree on the hash.
 - The Core treats `contentHash` as **opaque provenance** and never recomputes it — exactly as it treats `Provenance.artifactHash` on `Evidence`. Reproducibility comes from purity plus a stable input; the hash is the *name* of that input.
 
+## Drift facts (GT-594)
+
+Schema `1.1.0` adds the two fact families the AI-drift signals are computed over. Both are optional; both participate in the canonical form, so the same tree hashes differently under `1.0.0` and `1.1.0` — which is why a conformance delta refuses to compare fact bases whose schema or indexer version differ.
+
+| Fact | What it is | What it is NOT |
+|---|---|---|
+| `SymbolFact.structuralHash` / `structuralSize` | Digest of the declaration's normalized syntax-node stream — identifiers, literals, comments and trivia erased. Equality is the **Type-2 clone** relation. | Not a similarity score. There is no threshold to tune, and a copy with one statement changed simply does not match. |
+| `RepoFacts.errorMasking` | Occurrences of a closed, purely syntactic list: `empty-catch`, `catch-discards-error`, `promise-catch-swallow`, `ts-directive-suppression`, `any-assertion`, `non-null-assertion`. | Not a judgement. Whether an occurrence is *wrong* is not decided here. |
+
+`errorMasking` **absent** and `errorMasking: []` mean different things and stay apart: absent is an extractor that did not look (the Core reports the signal `not-measurable`), empty is an extractor that looked and found none (a measured zero). Pass `scanErrorMasking: false` to produce the former deliberately.
+
+The Core computes duplication, refactor:copy and error-masking over these facts in `core-domain/src/evaluation/contracts/drift-signals.ts`. Every signal is emitted as canonical `Evidence` with `determinism: 'probabilistic'` and no calibration, so GT-584's `admitEvidenceBlocking` reports it **advisory** and refuses it a blocking verdict. The count is exact; the imputation drawn from it is not, and only measurement (GT-585) can change that.
+
 ## Indexer
 
 The first (and currently only) indexer is the **TypeScript compiler API** — the same type-resolution engine `scip-typescript` drives — emitting SCIP-shaped symbol ids (`<module>#<name>`). It needs no external binary and no network.

@@ -7872,7 +7872,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `chaos-drill` captura `docker compose ps` + `logs` ante fallo y los sube, con la cola incrustada en el log del job para que una corrida roja sea diagnosticable sin descargar un artefacto.
   - [x] `wait-for-target.sh` reporta un único `code=000`, y distingue "nunca sano" (el objetivo nunca arrancó) de "sano pero sin veredicto" (el corpus o la llave están mal).
   - [x] `reliability.yml` dispara ante cambios en toda la clausura de la imagen que prueba, para que el workflow corra sobre el commit que la rompería.
-  - [ ] Una corrida de `Chaos drill` en un runner real pasa de "Wait for the stack to serve a real verdict" — un arranque local es evidencia sobre la imagen, no sobre el job.
+  - [x] Una corrida de `Chaos drill` en un runner real pasa de "Wait for the stack to serve a real verdict" — un arranque local es evidencia sobre la imagen, no sobre el job. Corrida `30638750508` en `fix/gt-647-docker-workspace-closure`: ambos jobs en verde, y el paso que falló tres veces reporta ahora `target is serving governed verdicts` **6 segundos** después de levantar el stack. El artefacto subido lleva `chaos-container-logs.log` (17 KB) y `chaos-container-logs-post.log` (86 KB), donde antes no llevaba ninguno.
 
 #### GT-645
 

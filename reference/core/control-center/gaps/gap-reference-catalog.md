@@ -7967,7 +7967,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] `chaos-drill` captures `docker compose ps` + `logs` on failure and uploads them, with the tail inlined in the job log so a red run is diagnosable without downloading an artifact.
   - [x] `wait-for-target.sh` reports a single `code=000`, and distinguishes "never healthy" (the target never started) from "healthy but no verdict" (the corpus or key is wrong).
   - [x] `reliability.yml` triggers on changes to the whole closure of the image it tests, so the workflow runs on the commit that would break it.
-  - [ ] A `Chaos drill` run on a real runner completes past "Wait for the stack to serve a real verdict" — a local boot is evidence about the image, not about the job.
+  - [x] A `Chaos drill` run on a real runner completes past "Wait for the stack to serve a real verdict" — a local boot is evidence about the image, not about the job. Run `30638750508` on `fix/gt-647-docker-workspace-closure`: both jobs green, and the step that timed out three times now reports `target is serving governed verdicts` **6 seconds** after the stack came up. The uploaded artifact carries `chaos-container-logs.log` (17 KB) and `chaos-container-logs-post.log` (86 KB), where before it carried none.
 
 #### GT-645
 

@@ -16,7 +16,7 @@ import {
   isUnseeded,
   compare,
   seedProposal,
-} from './51-validate-scorecard-regression.mjs';
+} from './52-validate-scorecard-regression.mjs';
 
 const RESULTS = {
   date: '2026-07-30',

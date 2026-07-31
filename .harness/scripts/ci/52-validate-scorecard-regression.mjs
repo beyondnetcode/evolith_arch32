@@ -59,10 +59,10 @@
  * actually found, not a pass.
  *
  * USAGE
- *   node .harness/scripts/ci/51-validate-scorecard-regression.mjs --results <file>
- *   node .harness/scripts/ci/51-validate-scorecard-regression.mjs --results <file> --json
- *   node .harness/scripts/ci/51-validate-scorecard-regression.mjs --results <file> --baseline <file>
- *   node .harness/scripts/ci/51-validate-scorecard-regression.mjs --results <file> --summary <file>
+ *   node .harness/scripts/ci/52-validate-scorecard-regression.mjs --results <file>
+ *   node .harness/scripts/ci/52-validate-scorecard-regression.mjs --results <file> --json
+ *   node .harness/scripts/ci/52-validate-scorecard-regression.mjs --results <file> --baseline <file>
+ *   node .harness/scripts/ci/52-validate-scorecard-regression.mjs --results <file> --summary <file>
  *
  * EXIT CODES
  *   0  every baselined check is at or above its floor, and the set matches
@@ -77,7 +77,7 @@ import { fileURLToPath } from 'node:url';
 import { REPO_ROOT } from '../lib/paths.mjs';
 import { assertScanned, ZeroCoverageError } from '../lib/coverage.mjs';
 
-const GUARD = '51-validate-scorecard-regression';
+const GUARD = '52-validate-scorecard-regression';
 
 /** Committed floors. Repo-relative so the empty-fixture run resolves to nothing. */
 export const BASELINE_RELATIVE_PATH = '.harness/security/scorecard-baseline.json';

@@ -2,7 +2,7 @@
   "gap": "GT-597",
   "_readme": [
     "Committed floors for the OpenSSF Scorecard run in .github/workflows/openssf-scorecard.yml.",
-    "The gate is .harness/scripts/ci/51-validate-scorecard-regression.mjs: a run scoring below any",
+    "The gate is .harness/scripts/ci/52-validate-scorecard-regression.mjs: a run scoring below any",
     "floor recorded here fails the workflow, so a posture regression is a red scheduled job and a",
     "diffable fact rather than a number inside an artifact nobody opens.",
     "",

@@ -137,5 +137,5 @@ jobs:
       # evidence on the run that most needs it would be a poor trade.
       - name: Fail on a posture regression
         run: >-
-          node .harness/scripts/ci/51-validate-scorecard-regression.mjs
+          node .harness/scripts/ci/52-validate-scorecard-regression.mjs
           --results scorecard-results.json

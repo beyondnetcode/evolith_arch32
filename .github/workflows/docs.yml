@@ -151,7 +151,7 @@ jobs:
       # a vanished check, an inconclusive -1, an unseeded baseline, and a SARIF
       # file handed to it by mistake must each be red.
       - name: Self-test for the Scorecard regression gate
-        run: node --test .harness/scripts/ci/51-validate-scorecard-regression.test.mjs
+        run: node --test .harness/scripts/ci/52-validate-scorecard-regression.test.mjs
 
       - name: Validate machine contracts
         run: node .harness/scripts/ci/10-validate-contract-conformance.mjs

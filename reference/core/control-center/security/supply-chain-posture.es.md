@@ -56,7 +56,7 @@ ergonomía.
 
 ### 1.3 El gate que sí puede ponerse en rojo
 
-[`.harness/scripts/ci/51-validate-scorecard-regression.mjs`](../../../../.harness/scripts/ci/51-validate-scorecard-regression.mjs)
+[`.harness/scripts/ci/52-validate-scorecard-regression.mjs`](../../../../.harness/scripts/ci/52-validate-scorecard-regression.mjs)
 compara cada corrida contra los pisos registrados en
 [`.harness/security/scorecard-baseline.json`](../../../../.harness/security/scorecard-baseline.json)
 y **sale con código distinto de cero** ante cualquiera de estos casos:

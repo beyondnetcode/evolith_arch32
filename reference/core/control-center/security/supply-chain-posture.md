@@ -55,7 +55,7 @@ the original failure mode, reproduced weekly with better ergonomics.
 
 ### 1.3 The gate that can go red
 
-[`.harness/scripts/ci/51-validate-scorecard-regression.mjs`](../../../../.harness/scripts/ci/51-validate-scorecard-regression.mjs)
+[`.harness/scripts/ci/52-validate-scorecard-regression.mjs`](../../../../.harness/scripts/ci/52-validate-scorecard-regression.mjs)
 compares each run against floors committed in
 [`.harness/security/scorecard-baseline.json`](../../../../.harness/security/scorecard-baseline.json)
 and **exits non-zero** on any of:

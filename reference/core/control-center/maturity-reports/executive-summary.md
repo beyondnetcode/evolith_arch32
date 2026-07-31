@@ -11,9 +11,9 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 **Current decision:** NO-GO for production expansion or a major release: active P0 blockers remain.
 
-**Biggest problem now:** `Evolith Core` carries the highest weighted open risk (8 open, 0 P0). Attack that concentration before expanding scope.
+**Biggest problem now:** `Cross` carries the highest weighted open risk (2 open, 1 P0). Attack that concentration before expanding scope.
 
-**Where to attack first:** [GT-603](../gaps/gap-reference-catalog.md#gt-603), [GT-604](../gaps/gap-reference-catalog.md#gt-604), [GT-435](../gaps/gap-reference-catalog.md#gt-435).
+**Where to attack first:** [GT-603](../gaps/gap-reference-catalog.md#gt-603), [GT-435](../gaps/gap-reference-catalog.md#gt-435).
 
 ## Strategic Diagnosis
 
@@ -25,18 +25,17 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-603](../gaps/gap-reference-catalog.md#gt-603), [GT-604](../gaps/gap-reference-catalog.md#gt-604), [GT-435](../gaps/gap-reference-catalog.md#gt-435) |
-| 2 | Highest-risk area | `Evolith Core` has the largest weighted open load. | [GT-583](../gaps/gap-reference-catalog.md#gt-583), [GT-589](../gaps/gap-reference-catalog.md#gt-589), [GT-614](../gaps/gap-reference-catalog.md#gt-614), [GT-587](../gaps/gap-reference-catalog.md#gt-587), [GT-591](../gaps/gap-reference-catalog.md#gt-591), [GT-590](../gaps/gap-reference-catalog.md#gt-590), +2 |
-| 3 | Quick wins | High criticality with XS/S complexity. | [GT-597](../gaps/gap-reference-catalog.md#gt-597), [GT-631](../gaps/gap-reference-catalog.md#gt-631), [GT-643](../gaps/gap-reference-catalog.md#gt-643) |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-597](../gaps/gap-reference-catalog.md#gt-597), [GT-631](../gaps/gap-reference-catalog.md#gt-631), [GT-643](../gaps/gap-reference-catalog.md#gt-643), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-580](../gaps/gap-reference-catalog.md#gt-580), [GT-584](../gaps/gap-reference-catalog.md#gt-584), [GT-605](../gaps/gap-reference-catalog.md#gt-605), +7 |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-622](../gaps/gap-reference-catalog.md#gt-622), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-614](../gaps/gap-reference-catalog.md#gt-614), [GT-616](../gaps/gap-reference-catalog.md#gt-616), [GT-617](../gaps/gap-reference-catalog.md#gt-617), +14 |
+| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-603](../gaps/gap-reference-catalog.md#gt-603), [GT-435](../gaps/gap-reference-catalog.md#gt-435) |
+| 2 | Highest-risk area | `Cross` has the largest weighted open load. | [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
+| 3 | Quick wins | High criticality with XS/S complexity. | [GT-631](../gaps/gap-reference-catalog.md#gt-631), [GT-643](../gaps/gap-reference-catalog.md#gt-643) |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-631](../gaps/gap-reference-catalog.md#gt-631), [GT-643](../gaps/gap-reference-catalog.md#gt-643), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-584](../gaps/gap-reference-catalog.md#gt-584), [GT-605](../gaps/gap-reference-catalog.md#gt-605), [GT-582](../gaps/gap-reference-catalog.md#gt-582), [GT-583](../gaps/gap-reference-catalog.md#gt-583), +2 |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-622](../gaps/gap-reference-catalog.md#gt-622), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-642](../gaps/gap-reference-catalog.md#gt-642), [GT-531](../gaps/gap-reference-catalog.md#gt-531), [GT-536](../gaps/gap-reference-catalog.md#gt-536), +9 |
 
 ## Current Blockers
 
 | ID | Attack | Component | Effort |
 |---|---|---|---|
 | [GT-603](../gaps/gap-reference-catalog.md#gt-603) | **The agent-turn ledger is complete, unit-tested and absent from dependency injection, and the actor column cannot be typed retroactively.** Tracker.Application/Integration/AgentExecution/AgentExecutionService.cs validates scope, then **audits before executing and aborts the turn if the audit write fails**; AgentTurnAuditor.cs records granted-vs-used scopes and stores prompt length, not text. IAgentExecutionPort appears in **zero DI registrations and zero endpoints**, while AssistantEndpoints.cs proxies straight through AgentRuntimeGateway persisting nothing. Separately AuditEntryProps.cs:11 declares public Guid ActorId with no actor_type, agent_id, model_id or session_id. Because audit_entries is append-only by database trigger (migration 20260719202323), **rows written before the discriminator exists can never be corrected**. Complements [GT-586](../gaps/gap-reference-catalog.md#gt-586), which covers the Core-side EvaluationContext; this is the Tracker persistence side. | `Evolith Tracker` | P0/M |
-| [GT-604](../gaps/gap-reference-catalog.md#gt-604) | **No surface writes evidence to the Tracker: the write path is one-directional and points inward.** Grep across src/sdk/cli, src/packages/mcp-server and src/packages/core-domain returns no Tracker base URL and no ingest client; the only Tracker URL in the Core repo is AGENT_RUNTIME_APPROVAL_TRACKER_URL, and the only writers of core_evaluation_transactions are Tracker-initiated endpoints. Consequence: every evolith validate, every enforce edit veto, every MCP tools/call and every CI drift-gate run evaporates on process exit. The strategy is premised on accumulated evidence and the components that generate it have no way to deposit it. This is a composition defect: no single component review can see it, because each one is internally consistent. **Progress 2026-07-29 — criterion 1 only.** The ingest contract landed at src/packages/contracts/src/ingest/evaluation-ingest.ts with correlationId REQUIRED and BOTH owners carried distinctly: requestedBy.actorId is who asked, violations[].accountableOwner is who must fix. Criterion 2 cannot be completed from here — there is no Tracker ingest endpoint to call. Criterion 3 is 0% buildable in this repository: RoboSoft lives in evolith_tracker. A bilingual handover was written at reference/core/control-center/opportunities/tracker-handover-gt604.md and its .es.md counterpart, 22 headings each. **Unconfirmed, and recorded as such: this row's declared dependency on GT-603 appears wrong.** GT-603 migrates audit_entries while this row names core_evaluation_transactions, and the Core-side attribution already shipped under GT-586 — but the Tracker schema is not in this repository, so that is a hypothesis for the Tracker owner to confirm, not a finding. | `Evolith Suite` | P0/L |
 | [GT-435](../gaps/gap-reference-catalog.md#gt-435) | The end-to-end path from code to a running product in real use is not deployed or validated **What it means:** This is the umbrella item for taking the product from something that works on developer machines to something real people use. It stays open until every piece under it is finished **Example:** An assessment put the engine at roughly ninety-five percent ready while everything around it -- packaging, deployment, the companion app -- was not | `Cross` | P0/XL |
 
 ## Metrics
@@ -45,22 +44,22 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-07-26 |
 | Total gaps | 643 |
-| Closed gaps | 602 |
-| Open gaps | 41 |
-| Open P0 | 3 |
-| Open P1 | 15 |
-| Open P2 | 20 |
-| Total closure | 93.6% |
-| Closure evidence records | 584 |
+| Closed gaps | 613 |
+| Open gaps | 30 |
+| Open P0 | 2 |
+| Open P1 | 10 |
+| Open P2 | 15 |
+| Total closure | 95.3% |
+| Closure evidence records | 595 |
 | Recorded readiness | 4 PASS |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Evolith Core` | 8 | 0 | 2 | [GT-583](../gaps/gap-reference-catalog.md#gt-583), [GT-589](../gaps/gap-reference-catalog.md#gt-589), [GT-614](../gaps/gap-reference-catalog.md#gt-614), [GT-587](../gaps/gap-reference-catalog.md#gt-587), +4 |
 | `Cross` | 2 | 1 | 1 | [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
-| `Evolith Suite` | 2 | 1 | 1 | [GT-604](../gaps/gap-reference-catalog.md#gt-604), [GT-605](../gaps/gap-reference-catalog.md#gt-605) |
 | `Evolith Tracker` | 2 | 1 | 1 | [GT-603](../gaps/gap-reference-catalog.md#gt-603), [GT-631](../gaps/gap-reference-catalog.md#gt-631) |
 | `Governance` | 6 | 0 | 2 | [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-585](../gaps/gap-reference-catalog.md#gt-585), [GT-642](../gaps/gap-reference-catalog.md#gt-642), [GT-599](../gaps/gap-reference-catalog.md#gt-599), +2 |
+| `Evolith Core` | 5 | 0 | 1 | [GT-583](../gaps/gap-reference-catalog.md#gt-583), [GT-591](../gaps/gap-reference-catalog.md#gt-591), [GT-590](../gaps/gap-reference-catalog.md#gt-590), [GT-594](../gaps/gap-reference-catalog.md#gt-594), +1 |
+| `Infra` | 3 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-622](../gaps/gap-reference-catalog.md#gt-622), [GT-464](../gaps/gap-reference-catalog.md#gt-464) |
 
 ## Source and Refresh Rule
 

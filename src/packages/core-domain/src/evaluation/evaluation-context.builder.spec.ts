@@ -84,6 +84,89 @@ describe('evaluationFactsFromContext (GT-380 L1c)', () => {
     );
     expect(facts?.evaluationDate).toBe('2026-06-29');
   });
+
+  // -------------------------------------------------------------------------
+  // GT-584 — the admissibility rule reads calibration, so the projection must
+  // carry it. This is the join between the inline ADR-0111 evidence and the two
+  // engines that judge it.
+  // -------------------------------------------------------------------------
+  describe('qualitySignals → input.qualityEvidence (GT-584)', () => {
+    const calibrated = {
+      source: 'llm-auditor',
+      dimension: 'code-quality',
+      determinism: 'probabilistic' as const,
+      metrics: {},
+      findings: [],
+      provenance: {
+        collectedBy: 'llm-auditor',
+        adapterVersion: '2.1.0',
+        artifactHash: '',
+        timestamp: '2026-07-01T00:00:00.000Z',
+      },
+      calibration: {
+        truePositiveRate: 0.97,
+        trueNegativeRate: 0.96,
+        measuredAt: '2026-06-01T00:00:00.000Z',
+        sampleSize: 400,
+        method: 'hand-labelled corpus',
+        labelledBy: 'architecture-panel',
+      },
+    };
+
+    it('projects quality evidence even when nothing ELSE is declared', () => {
+      // Deliberately unlike GT-586's requester, which stays out of the trigger: a
+      // context carrying only probabilistic evidence must still reach the rule, or
+      // the rule goes green having refused nothing.
+      const facts = evaluationFactsFromContext(ctx({ qualitySignals: [calibrated] }));
+      expect(facts?.qualityEvidence).toHaveLength(1);
+    });
+
+    it('carries the calibration fields the rule reads, verbatim', () => {
+      const facts = evaluationFactsFromContext(ctx({ qualitySignals: [calibrated] }));
+      expect(facts?.qualityEvidence?.[0]).toEqual({
+        source: 'llm-auditor',
+        dimension: 'code-quality',
+        determinism: 'probabilistic',
+        calibration: calibrated.calibration,
+      });
+    });
+
+    it('leaves calibration absent when the producer declared none (absent ≠ zeroed)', () => {
+      const { calibration: _dropped, ...uncalibrated } = calibrated;
+      const facts = evaluationFactsFromContext(ctx({ qualitySignals: [uncalibrated] }));
+      expect(facts?.qualityEvidence?.[0]).not.toHaveProperty('calibration');
+    });
+
+    it('projects a declared admissibility policy so the floors stay arguable', () => {
+      const facts = evaluationFactsFromContext(
+        ctx({
+          qualitySignals: [calibrated],
+          customConstraints: {
+            qualityAdmissibilityPolicy: { minTruePositiveRate: 0.8, maxCalibrationAgeDays: 30 },
+          },
+        }),
+      );
+      expect(facts?.qualityAdmissibilityPolicy).toEqual({
+        minTruePositiveRate: 0.8,
+        maxCalibrationAgeDays: 30,
+      });
+    });
+
+    it('ignores a non-numeric threshold rather than letting it become a floor of NaN', () => {
+      const facts = evaluationFactsFromContext(
+        ctx({
+          qualitySignals: [calibrated],
+          customConstraints: { qualityAdmissibilityPolicy: { minTruePositiveRate: 'high' } },
+        }),
+      );
+      expect(facts?.qualityAdmissibilityPolicy).toBeUndefined();
+    });
+
+    it('projects no quality evidence for a context that carries none', () => {
+      const facts = evaluationFactsFromContext(ctx({ gateId: 'g1' }));
+      expect(facts?.qualityEvidence).toBeUndefined();
+    });
+  });
 });
 
 describe('manifestFromWorkspace facts threading (GT-380 L1c)', () => {

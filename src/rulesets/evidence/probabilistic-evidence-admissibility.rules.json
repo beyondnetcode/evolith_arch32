@@ -1,0 +1,55 @@
+{
+  "$schema": "../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/evidence/probabilistic-evidence-admissibility.rules.json",
+  "title": "Probabilistic Evidence Admissibility",
+  "description": "GT-584 · ADR-0111 — when a PROBABILISTIC quality signal may contribute to a blocking verdict. ADR-0111 gave Evidence a `determinism` flag and nothing ever read it as a CONDITION for blocking, so an LLM auditor or a heuristic scanner was admissible by default and unmeasured. These rules are that condition: probabilistic evidence may block only while `tpr >= 0.95 AND tnr >= 0.95 AND age <= 180 days`, and degrades to advisory otherwise. Fail-closed by construction: absent calibration means CANNOT-BLOCK, never 'assume good'. Native TypeScript counterpart of probabilistic-evidence-admissibility.rego (R-25 Dual-Engine Parity); the native engine implements it in ProbabilisticEvidenceRuleHandler over application/validators/architecture/signal-admissibility.ts. The thresholds are DECLARED POLICY, not measurement — GT-585 is the row that replaces them with rates measured over a labelled corpus.",
+  "version": "1.0.0",
+  "effectiveDate": "2026-07-31",
+  "audience": "both",
+  "category": "evidence",
+  "appliesFromSdlcPhase": 1,
+  "references": [
+    "reference/core/architecture/adrs/core/0111-quality-signal-provider-port.md",
+    "src/packages/core-domain/src/evaluation/contracts/quality-evidence.ts",
+    "src/packages/core-domain/src/application/validators/architecture/signal-admissibility.ts",
+    "src/rulesets/opa/probabilistic-evidence-admissibility.rego"
+  ],
+  "rules": [
+    {
+      "id": "PEA-01",
+      "severity": "MUST",
+      "category": "evidence-admissibility",
+      "title": "Probabilistic Evidence Declares A Measured Error Rate Before It May Block",
+      "description": "A quality signal that is not `determinism: \"deterministic\"` is a guess. To contribute to a BLOCKING verdict it MUST carry `calibration.truePositiveRate`, `calibration.trueNegativeRate` and `calibration.measuredAt`. A signal lacking any of them is reported as ADVISORY, never suppressed — a hidden finding is its own kind of dishonesty — and never as a block. Evidence that omits `determinism` altogether is read as probabilistic: the default is fail-closed, because 'unmeasured' is not the same as 'fine'.",
+      "validationQuery": "For every item of quality evidence presented inline on the evaluation context, verify that any item whose determinism is not 'deterministic' carries calibration.truePositiveRate, calibration.trueNegativeRate and calibration.measuredAt. Report each item that does not as admissibility 'advisory-uncalibrated' and refuse it a blocking verdict.",
+      "blocking": true
+    },
+    {
+      "id": "PEA-02",
+      "severity": "MUST",
+      "category": "evidence-admissibility",
+      "title": "A Measured Error Rate Below The Declared Floor Degrades To Advisory",
+      "description": "Calibrated is not the same as accurate. Probabilistic evidence may block only while its measured true-positive rate clears the declared floor (theta1) AND its measured true-negative rate — the FALSE-BLOCK side of the confusion matrix — clears theta2. Below either, the signal degrades to advisory. The floors are declared policy and overridable per evaluation, so they are arguable rather than baked in.",
+      "validationQuery": "For every probabilistic evidence item carrying a readable calibration, verify truePositiveRate >= the declared minTruePositiveRate and trueNegativeRate >= the declared minTrueNegativeRate (default 0.95 / 0.95). Report each item below either floor as admissibility 'advisory-below-threshold' and refuse it a blocking verdict.",
+      "blocking": true
+    },
+    {
+      "id": "PEA-03",
+      "severity": "MUST",
+      "category": "evidence-admissibility",
+      "title": "A Stale Or Unreadable Measurement Degrades To Advisory",
+      "description": "A measurement of an older provider is not a measurement of this one. Probabilistic evidence may block only while `calibration.measuredAt` is within theta3 days of the evaluation date; beyond that, or when the instant cannot be parsed at all, the signal degrades to advisory. This is the clause that makes calibration a perishable claim rather than a one-off badge.",
+      "validationQuery": "For every probabilistic evidence item whose calibration clears the rate floors, verify calibration.measuredAt parses as an instant and is no more than the declared maxCalibrationAgeDays (default 180) older than the evaluation date. Report each item that is stale or unparseable as admissibility 'advisory-stale-calibration' and refuse it a blocking verdict.",
+      "blocking": true
+    },
+    {
+      "id": "PEA-04",
+      "severity": "SHOULD",
+      "category": "evidence-admissibility",
+      "title": "An Admitted Measurement Says How It Was Obtained",
+      "description": "A rate with no sample size, no method and no labeller is a number a reviewer cannot judge, and it is exactly the number that will be disputed after the first wrong block. Probabilistic evidence that IS admitted for blocking SHOULD declare `calibration.sampleSize`, `calibration.method` and `calibration.labelledBy`. Advisory rather than blocking on purpose: the missing metadata makes the measurement harder to defend, it does not make the measurement wrong.",
+      "validationQuery": "For every probabilistic evidence item ADMITTED for blocking, verify calibration.sampleSize, calibration.method and calibration.labelledBy are present. Report each admitted item missing any of them as a non-blocking finding.",
+      "blocking": false
+    }
+  ]
+}

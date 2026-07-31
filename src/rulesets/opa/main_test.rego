@@ -161,3 +161,24 @@ test_new_policy_violations if {
 	violations[_].id == "SVC-01"
 	violations[_].id == "TPY-01"
 }
+
+# GT-584 — the aggregation itself, not the policy.
+#
+# `probabilistic-evidence-admissibility.test.rego` proves the POLICY decides
+# correctly. It says nothing about whether anything ever asks it: the wasm bundle is
+# built from `evolith/main/violations` alone, so a policy that is not aggregated here
+# is green under `opa test` and silent at runtime. That is a rule present in the
+# native engine and absent from OPA — the R-25 defect GT-602 was registered for — and
+# it is invisible unless a test looks for it HERE.
+test_probabilistic_evidence_admissibility_reaches_the_main_entrypoint if {
+	violations := main.violations with data.evolith.probabilistic_evidence_admissibility.violations as {{"id": "PEA-01", "message": "unmeasured guess"}}
+
+	violations[_].id == "PEA-01"
+}
+
+test_probabilistic_evidence_admissibility_is_silent_without_quality_evidence if {
+	# A satellite evaluation that presents no inline evidence must be unaffected.
+	violations := main.violations with input as {"satellite": {}, "core": {}}
+
+	count([v | some v in violations; startswith(v.id, "PEA-")]) == 0
+}

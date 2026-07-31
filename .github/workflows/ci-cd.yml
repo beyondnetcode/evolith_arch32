@@ -429,6 +429,62 @@ jobs:
           node --test .harness/scripts/ci/34-check-skill-registry-parity.test.mjs
           node --test .harness/scripts/ci/45-validate-port-inventory-honesty.test.mjs
 
+          # Everything below was referenced by NO workflow. Enumerating `.harness` for
+          # `*.test.mjs` found 51 self-tests and 32 of them ran nowhere — the same defect
+          # PR #322 closed for one file, at twenty-six times the size. Five were red and
+          # had been red silently: two audit scripts whose path literals lost the `src/`
+          # prefix in the refactor, a report writer that died on an unhandled ENOENT off
+          # the real tree, a fixture whose diff header predated a move, and a guard test
+          # that GT-556/557 had quietly detached from its own fixture.
+          #
+          # A note on what these prove. Most of the GUARDS below also run in no workflow;
+          # wiring the self-test asserts the guard still behaves, not that anything calls
+          # it. That second hole is real and deliberately left open here — switching on
+          # twenty-odd unrun guards at once is a different change with a different blast
+          # radius, and it should not ride in on a test-wiring commit.
+          node --test .harness/scripts/ci/07-generate-inventories.test.mjs
+          node --test .harness/scripts/ci/19-validate-rest-versioning.test.mjs
+          node --test .harness/scripts/ci/40-validate-path-literals.test.mjs
+          node --test .harness/scripts/ci/drift-audit.test.mjs
+          node --test .harness/scripts/ci/parity-gate.test.mjs
+          node --test .harness/scripts/lib/guard-classification.test.mjs
+          node --test .harness/scripts/lib/scope.test.mjs
+          node --test .harness/scripts/ci/agentic/review-input.test.mjs
+          node --test .harness/scripts/ci/agentic/review-provider.test.mjs
+          node --test .harness/scripts/ci/agentic/review-result.test.mjs
+          node --test .harness/scripts/cleanup-temp-files.test.mjs
+          node --test .harness/scripts/validate-contract-conformance.test.mjs
+          node --test .harness/scripts/board/atdm-principal.test.mjs
+          node --test .harness/scripts/board/debt-economics.test.mjs
+          node --test .harness/scripts/run-evolith-intelligent-data-audit.test.mjs
+          node --test .harness/scripts/run-evolith-sdlc-interface-audit.test.mjs
+
+          # The four `rag-*` suites, which are NOT the special case they look like. Each
+          # file states in its own header that the DB client and the sidecar `fetch` are
+          # stubbed and "the network is never touched", and all four pass offline with no
+          # skips — no model endpoint, no pgvector, nothing to provision. The live
+          # integration against a real endpoint is a separate thing that does not exist
+          # here; these are unit tests over the adapter and the chunker.
+          node --test .harness/scripts/ci/rag-sync.test.mjs
+          node --test .harness/scripts/ci/rag-pgvector.test.mjs
+          node --test .harness/scripts/ci/rag-embed-qwen3.test.mjs
+          node --test .harness/scripts/ci/rag-embed-integration.test.mjs
+
+          # QUARANTINED, not forgotten: the self-test beside
+          # `.harness/scripts/board/new-row-economics-guard.mjs`. Its filename is spelled
+          # without the `.test.mjs` suffix on purpose — the way this whole class of defect
+          # is found is by grepping the workflows for each test's basename, and naming it
+          # in full here would make it read as wired to the next person who looks.
+          #
+          # Fourteen of its sixteen cases are fixture-driven and green. The other two
+          # assert against the LIVE board, and they are red today because GT-642, GT-643
+          # and GT-644 are open rows carrying no Principal/Interest figures. That is a
+          # real finding, but the fix is an edit to gap-reference-catalog.md, which is
+          # single-driver and owned elsewhere — and a test that reads mutable board
+          # content does not belong in a required check regardless, because it turns any
+          # board drift into a merge block on unrelated work. Wire it once the two live
+          # cases are moved onto fixtures, or once the board rows carry their economics.
+
       # The dead-reference budget below was measured on a BUILT tree. A handful of
       # recorded commands legitimately name build outputs (`dist/main.js`), which
       # a clean checkout reports as dead — so without this the ratchet drifts by

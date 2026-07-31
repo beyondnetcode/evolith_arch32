@@ -43,11 +43,11 @@ jobs:
       # CLI before running the tests.
       - name: Build workspace dependencies + CLI
         run: |
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-agent-runtime
           npm run build --workspace @beyondnet/evolith-sdk
           npm run build --workspace @beyondnet/evolith-core
-          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-infra-providers
           npm run build --workspace @beyondnet/evolith-mcp
           npm run build --workspace src/sdk/cli
@@ -141,11 +141,11 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-agent-runtime
           npm run build --workspace @beyondnet/evolith-sdk
           npm run build --workspace @beyondnet/evolith-core
-          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-infra-providers
 
       # GT-602 criterion 2: the three rego tool sets are DERIVED from
@@ -205,8 +205,8 @@ jobs:
 
       - name: Build workspace dependencies
         run: |
-          npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-contracts
+          npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-infra-providers
 
       - name: Run core-api tests
@@ -232,6 +232,7 @@ jobs:
         run: npm ci
       - name: Build workspace dependencies
         run: |
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-agent-runtime
       - name: Run sdk-client tests with coverage
@@ -270,8 +271,8 @@ jobs:
           # core-domain + agent-runtime, which is why this job had never once
           # passed since it was wired.
           npm run build --workspace @beyondnet/evolith-contracts
-          npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-contracts
+          npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-infra-providers
           npm run build --workspace @beyondnet/evolith-core
           npm run build --workspace @beyondnet/evolith-agent-runtime
@@ -297,7 +298,9 @@ jobs:
         run: npm ci
       # infra-providers depends on @beyondnet/evolith-core-domain (resolved from dist).
       - name: Build workspace dependencies
-        run: npm run build --workspace @beyondnet/evolith-core-domain
+        run: |
+          npm run build --workspace @beyondnet/evolith-contracts
+          npm run build --workspace @beyondnet/evolith-core-domain
       - name: Run infra-providers tests with coverage
         run: npm run test:cov --workspace @beyondnet/evolith-infra-providers
 
@@ -321,7 +324,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build workspace dependencies
-        run: npm run build --workspace @beyondnet/evolith-core-domain
+        run: |
+          npm run build --workspace @beyondnet/evolith-contracts
+          npm run build --workspace @beyondnet/evolith-core-domain
       - name: Run agent-runtime tests
         run: npm run test --workspace @beyondnet/evolith-agent-runtime
 
@@ -340,6 +345,7 @@ jobs:
         run: npm ci
       - name: Build workspace dependencies
         run: |
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-agent-runtime
       - name: Run agent-runtime-api tests
@@ -364,7 +370,9 @@ jobs:
       # (where a dist already exists from an earlier build) and fails in CI on a
       # clean checkout — which is exactly what it did the first time this job ran.
       - name: Build workspace dependencies
-        run: npm run build --workspace @beyondnet/evolith-core-domain
+        run: |
+          npm run build --workspace @beyondnet/evolith-contracts
+          npm run build --workspace @beyondnet/evolith-core-domain
 
       - name: Run contracts tests
         run: npm run test --workspace @beyondnet/evolith-contracts
@@ -397,8 +405,8 @@ jobs:
       # do with the corpus. Building first makes the count reproducible.
       - name: Build workspace dependencies
         run: |
-          npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-contracts
+          npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-infra-providers
 
       # STRICT. Every script under .harness/scripts/ci must either refuse a

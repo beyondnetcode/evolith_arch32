@@ -22,7 +22,7 @@ RUN npm ci --legacy-peer-deps
 
 # Compile the OPA policy bundle to policy.wasm BEFORE the TS build. Without this
 # the ABAC/OPA layer fail-closes in production (NODE_ENV=production) and denies
-# EVERY MCP tool call. build:policy downloads OPA v0.65.0 (needs network) and
+# EVERY MCP tool call. build:policy downloads OPA v1.19.0 (needs network) and
 # installs the wasm to src/rulesets/opa/policy.wasm + src/sdk/cli/rulesets/opa/policy.wasm.
 RUN npm run build:policy
 

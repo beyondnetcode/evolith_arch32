@@ -32,7 +32,11 @@ function relative(root, filePath) {
 }
 
 function opaRuleIds(content) {
-  const ids = [...content.matchAll(/violations\[\{\s*"id"\s*:\s*"([^"]+)"/g)].map((match) => match[1]);
+  // GT-591: `opa fmt --rego-v1` rewrites `violations[{...}] {` as
+  // `violations contains {...} if {`, so a v0-only pattern silently reads ZERO ids
+  // out of a converted policy and reports every rule as missing from OPA. Both
+  // spellings are accepted; the v1 line is where the corpus is heading.
+  const ids = [...content.matchAll(/violations\s*(?:\[|contains\s+)\{\s*"id"\s*:\s*"([^"]+)"/g)].map((match) => match[1]);
   return [...new Set(ids)];
 }
 

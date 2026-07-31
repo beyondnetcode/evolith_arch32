@@ -80,6 +80,10 @@ const REQUIRED_ARGS: Readonly<Record<string, readonly string[]>> = {
   phase: ['status'],
   profile: ['show'],
   enforce: ['status'],
+  // GT-588 — `audit` takes a required action. With no ledger in the sweep's temp
+  // cwd the run is a legitimate AUD-TRANSP-01 failure: an error envelope on stdout
+  // and exit 2, which is exactly what this suite asserts about a blocking verdict.
+  audit: ['verify'],
 };
 
 interface RegisteredCommand {

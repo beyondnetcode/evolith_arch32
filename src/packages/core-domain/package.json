@@ -34,6 +34,22 @@
       "types": "./dist/application/validators/modes/index.d.ts",
       "default": "./dist/application/validators/modes/index.js"
     },
+    "./application/validators/governance": {
+      "types": "./dist/application/validators/governance/index.d.ts",
+      "default": "./dist/application/validators/governance/index.js"
+    },
+    "./domain/verdict": {
+      "types": "./dist/domain/verdict/index.d.ts",
+      "default": "./dist/domain/verdict/index.js"
+    },
+    "./domain/transparency": {
+      "types": "./dist/domain/transparency/index.d.ts",
+      "default": "./dist/domain/transparency/index.js"
+    },
+    "./infrastructure/transparency": {
+      "types": "./dist/infrastructure/transparency/index.d.ts",
+      "default": "./dist/infrastructure/transparency/index.js"
+    },
     "./infrastructure/adapters/*": {
       "types": "./dist/infrastructure/adapters/*.d.ts",
       "default": "./dist/infrastructure/adapters/*.js"

@@ -176,6 +176,19 @@ jobs:
       - name: Validate topology rule coverage
         run: node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs
 
+      # The guard above has run in this required check since it was written; its own
+      # self-test ran in no job at all, and had been red on both `develop` and `main`
+      # since `98a20dca` without anyone seeing it. That commit moved `rulesets/` under
+      # `src/` and updated the path this test's fixture WRITES TO, but not the relative
+      # path written INSIDE it — so the fixture's satellite reference stopped resolving
+      # and the coverage assertion it exists to make was never reached.
+      #
+      # A validator whose own tests nobody runs is the defect this board keeps
+      # recording, so it goes next to its guard, in the same required check, exactly
+      # like every other self-test in this job.
+      - name: Self-test for the topology rule coverage guard
+        run: node --test .harness/scripts/generate-rule-coverage.test.mjs
+
       - name: Validate harness path literals
         run: node .harness/scripts/ci/39-validate-harness-paths.mjs
 

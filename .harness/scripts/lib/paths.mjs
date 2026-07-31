@@ -60,6 +60,12 @@ export const PATH_KEYS = Object.freeze({
   harnessCiScripts: '.harness/scripts/ci',
   harnessSchemas: '.harness/schemas',
   harnessManifest: '.harness/manifest.yaml',
+  // GT-591: the SINGLE declaration of the pinned OPA version. Everything else derives.
+  opaRuntimeModule: '.harness/scripts/opa-runtime.mjs',
+
+  // --- CI / deployment surfaces that can name a pinned tool version --------
+  githubWorkflows: '.github/workflows',
+  productInfra: 'product/infra',
 
   // --- topologies ----------------------------------------------------------
   // GT-329: the progressive axis lives under reference/, advanced topologies under
@@ -108,6 +114,7 @@ export const PATH_KEYS = Object.freeze({
 
   // --- source packages -----------------------------------------------------
   src: 'src',
+  packages: 'src/packages',
   cliPackageJson: 'src/sdk/cli/package.json',
   cli: 'src/sdk/cli',
   coreApi: 'src/apps/core-api',

@@ -3,7 +3,18 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-export const OPA_VERSION = '0.65.0';
+/**
+ * THE pinned OPA version. Single source of truth (GT-591).
+ *
+ * Every other consumer — `compile-opa-wasm.mjs`, the Helm sidecar image, the docs —
+ * derives from this constant or is checked against it by
+ * `.harness/scripts/ci/53-validate-opa-pin.mjs`. A second literal spelling of the
+ * version is exactly how this pin got two owners and drifted apart in the first place.
+ *
+ * On the v1 line since 2026-07-31. The `if` and `contains` keywords are MANDATORY
+ * there, so the whole `.rego` corpus must stay v1-style; the same guard enforces it.
+ */
+export const OPA_VERSION = '1.19.0';
 
 function platformAsset() {
   const platform = os.platform();

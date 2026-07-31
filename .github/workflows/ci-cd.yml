@@ -530,6 +530,19 @@ jobs:
       - name: No runtime import cycle in any workspace package
         run: node .harness/scripts/ci/54-validate-import-cycles.mjs --verbose
 
+      # GT-647: a runner stage lists the workspace packages it copies BY HAND, and
+      # node_modules/@beyondnet/* are symlinks into src/packages/* — so a package
+      # left off the list dangles and the container dies at its first require. On
+      # 2026-07-31 GT-604 added one import to infra-providers and silently broke
+      # three images (core-api, mcp-server, cli), which nothing detected: the build
+      # is green, the push is green, and the only symptom is a chaos-drill timeout.
+      # The closure is COMPUTED transitively here, because at direct-dependency
+      # depth every one of those Dockerfiles was already complete.
+      - name: Every image ships its full workspace closure
+        run: |
+          node .harness/scripts/ci/56-validate-docker-workspace-closure.mjs --verbose
+          node --test .harness/scripts/ci/56-validate-docker-workspace-closure.test.mjs
+
       # GT-591: the OPA pin sat at 0.65.0 for two years and nothing said so, while a
       # SECOND spelling of it lived in compile-opa-wasm.mjs's download URL — so the
       # policies could be tested by one compiler and the enforcing wasm built by

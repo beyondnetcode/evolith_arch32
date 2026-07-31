@@ -26,20 +26,40 @@ log() { printf '[wait-for-target] %s\n' "$*" >&2; }
 
 deadline=$(( $(date +%s) + TIMEOUT ))
 last_code="none"
+last_body=""
+# Which of the two milestones was ever reached. The distinction is the whole
+# diagnosis on a timeout: never-healthy means the container is not serving at all
+# (it crash-looped, or the port is wrong), whereas healthy-but-no-verdict means the
+# process is up and the corpus/policy/key is what is wrong. Reporting only
+# "TIMEOUT" conflates them, which is how a crash-looping image read as a slow one
+# for three consecutive runs on 2026-07-31 (GT-647).
+ever_healthy=no
 
 while :; do
-  last_code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 "$BASE_URL/health" || echo 000)"
+  # `%{http_code}` already prints 000 when the connection fails, and curl also
+  # exits non-zero — so a `|| echo 000` fallback CONCATENATES onto it and the
+  # timeout line reports `code=000000`. Capture the two separately.
+  last_code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 "$BASE_URL/health" 2>/dev/null)" || true
+  [ -n "$last_code" ] || last_code="000"
   if [ "$last_code" = "200" ]; then
-    body="$(curl -s --max-time 15 -X POST "$BASE_URL/api/v1/evaluate" \
+    ever_healthy=yes
+    last_body="$(curl -s --max-time 15 -X POST "$BASE_URL/api/v1/evaluate" \
       -H 'Content-Type: application/json' -H "x-api-key: $API_KEY" \
       -d "$EVAL_BODY" || true)"
-    if printf '%s' "$body" | grep -q '"success":[[:space:]]*true'; then
+    if printf '%s' "$last_body" | grep -q '"success":[[:space:]]*true'; then
       log "target is serving governed verdicts at $BASE_URL"
       exit 0
     fi
   fi
   if [ "$(date +%s)" -ge "$deadline" ]; then
-    log "TIMEOUT after ${TIMEOUT}s (last /health code=$last_code)"
+    log "TIMEOUT after ${TIMEOUT}s at $BASE_URL (last /health code=$last_code, ever healthy: $ever_healthy)"
+    if [ "$ever_healthy" = no ]; then
+      log "  /health never answered 200 — the target never started serving. Check the container logs;"
+      log "  a crash-loop looks identical to a slow boot from out here."
+    else
+      log "  /health answered 200 but POST /api/v1/evaluate never returned success:true."
+      log "  last evaluate response (first 500 chars): $(printf '%s' "$last_body" | head -c 500)"
+    fi
     exit 1
   fi
   sleep 2

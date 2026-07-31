@@ -9317,6 +9317,27 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-647",
+      "closedAt": "2026-07-31",
+      "closureCommit": "a63205ce",
+      "evidence": [
+        "src/apps/core-api/Dockerfile",
+        "src/packages/mcp-server/Dockerfile",
+        "src/sdk/cli/Dockerfile",
+        ".harness/scripts/ci/56-validate-docker-workspace-closure.mjs",
+        ".harness/scripts/ci/56-validate-docker-workspace-closure.test.mjs",
+        ".github/workflows/reliability.yml",
+        "product/infra/load/wait-for-target.sh"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/56-validate-docker-workspace-closure.mjs --verbose",
+        "node --test .harness/scripts/ci/56-validate-docker-workspace-closure.test.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "bash product/infra/load/wait-for-target.sh"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

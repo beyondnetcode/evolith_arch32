@@ -42,6 +42,14 @@ WORKDIR /repo
 
 COPY --from=builder /repo/node_modules ./node_modules
 COPY --from=builder /repo/package.json ./package.json
+# `contracts` reaches this image through infra-providers, whose index re-exports
+# tracker/evaluation-ingest.client.js and its require of
+# `@beyondnet/evolith-contracts/ingest`. node_modules/@beyondnet/evolith-contracts
+# is a workspace SYMLINK into src/packages/contracts, so without the package's own
+# dist the link dangles and the server dies at startup with MODULE_NOT_FOUND.
+# Guard: 56-validate-docker-workspace-closure.
+COPY --from=builder /repo/src/packages/contracts/dist ./src/packages/contracts/dist
+COPY --from=builder /repo/src/packages/contracts/package.json ./src/packages/contracts/package.json
 COPY --from=builder /repo/src/packages/sdk-client/dist ./src/packages/sdk-client/dist
 COPY --from=builder /repo/src/packages/sdk-client/package.json ./src/packages/sdk-client/package.json
 COPY --from=builder /repo/src/packages/agent-runtime/dist ./src/packages/agent-runtime/dist

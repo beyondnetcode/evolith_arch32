@@ -62,6 +62,7 @@ jobs:
 
       - name: Build core-api and its workspace chain
         run: |
+          npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-infra-providers
           npm run build --workspace core-api

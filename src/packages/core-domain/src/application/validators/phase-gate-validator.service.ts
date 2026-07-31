@@ -4,65 +4,11 @@ import { RulesetLoader } from './ruleset-loader';
 import { EvidenceValidator } from './evidence-validator';
 import { BlockingCriteriaValidator } from './blocking-criteria-validator';
 import { GateRegistryService, GateDefinition } from '../services/gate-registry.service';
+import { GateValidationResult, PhaseGateDefinition, PhaseGatesRuleset } from './phase-gate-validator.types';
 
-export interface PhaseGateDefinition {
-  phase: number;
-  name: string;
-  description: string;
-  mandatoryEvidence: EvidenceRequirement[];
-  blockingCriteria: BlockingCriterion[];
-  accountableRole: string;
-  waiverAuthority: string;
-  waiverRequiredFields: string[];
-}
-
-export interface EvidenceRequirement {
-  artifact: string;
-  schemaRef?: string;
-  status?: string;
-  validation: string;
-}
-
-export interface BlockingCriterion {
-  criterion: string;
-  action: string;
-}
-
-export interface GateValidationResult {
-  gateId: string;
-  phase: number;
-  name: string;
-  passed: boolean;
-  evidenceResults: EvidenceValidationResult[];
-  blockingChecks: BlockingCheckResult[];
-  waiverAvailable: boolean;
-  accountableRole: string;
-  waiverAuthority: string;
-  /** Stable canonical gate ID from GateRegistryService, e.g. "gate-f1" (GT-318) */
-  canonicalGateId?: string;
-  /** .rego rule paths cited in the canonical gate definition (GT-318) */
-  opaRules?: string[];
-}
-
-export interface EvidenceValidationResult {
-  artifact: string;
-  passed: boolean;
-  found: boolean;
-  schemaValid: boolean;
-  validationMessage: string;
-  required: boolean;
-}
-
-export interface BlockingCheckResult {
-  criterion: string;
-  triggered: boolean;
-  action: string;
-}
-
-export interface PhaseGatesRuleset {
-  version?: string;
-  gates: PhaseGateDefinition[];
-}
+// The contract shapes moved to ./phase-gate-validator.types so the collaborators
+// this service constructs can import them without importing this module back.
+export * from './phase-gate-validator.types';
 
 /**
  * Maps a canonical GateDefinition (from GateRegistryService / gate-f*.json) to the

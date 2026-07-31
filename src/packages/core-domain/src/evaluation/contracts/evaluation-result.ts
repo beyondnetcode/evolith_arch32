@@ -10,6 +10,7 @@
 import type { PhaseId } from '../../domain/sdlc/phase-id';
 import type { Verdict, VerdictReason } from '../../domain/verdict/verdict';
 import type { EvidenceSignal } from './quality-evidence';
+import type { StructuralFactsSummary } from './repo-facts';
 import type { RepositoryRevisionContext, RequesterContext } from './evaluation-context';
 
 /** Schema version of this contract (bumped only on incompatible changes). */
@@ -130,6 +131,12 @@ export interface ArchitectureEvaluationResult {
   readonly risks: readonly RiskFinding[];
   readonly gaps: readonly GapFinding[];
   readonly recommendations: readonly Recommendation[];
+  /**
+   * GT-589 — what the structural fact base answered, including the extractor's
+   * `contentHash` so the verdict NAMES the input it judged. Absent when the
+   * consumer sent no `repoFacts`; the Core never invents one.
+   */
+  readonly structuralFacts?: StructuralFactsSummary;
 }
 
 export interface BlueprintEvaluationResult {

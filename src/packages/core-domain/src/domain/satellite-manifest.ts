@@ -45,6 +45,36 @@ export interface EvaluationFacts {
   readonly tenantId?: string;
   /** ISO-8601 date for waiver-expiry comparison (`input.evaluationDate`). */
   readonly evaluationDate?: string;
+  /**
+   * GT-584 — the inline ADR-0111 quality evidence, projected onto the OPA input as
+   * `input.qualityEvidence` so `probabilistic-evidence-admissibility.rego` and its
+   * native twin read the SAME facts. Deliberately structural rather than the
+   * canonical `Evidence` type: `domain/` may not import `evaluation/`, and the
+   * admissibility rule needs only determinism, identity and the calibration.
+   */
+  readonly qualityEvidence?: readonly {
+    readonly source?: string;
+    readonly dimension?: string;
+    readonly determinism?: string;
+    readonly calibration?: {
+      readonly truePositiveRate?: number;
+      readonly trueNegativeRate?: number;
+      readonly measuredAt?: string;
+      readonly sampleSize?: number;
+      readonly method?: string;
+      readonly labelledBy?: string;
+    };
+  }[];
+  /**
+   * GT-584 — the admissibility thresholds theta1/theta2/theta3 in force for this
+   * evaluation (`input.qualityAdmissibilityPolicy`). Absent ⇒ the declared defaults.
+   * Present so the floors stay ARGUABLE rather than baked into the engine.
+   */
+  readonly qualityAdmissibilityPolicy?: {
+    readonly minTruePositiveRate?: number;
+    readonly minTrueNegativeRate?: number;
+    readonly maxCalibrationAgeDays?: number;
+  };
 }
 
 export interface SatelliteManifest {

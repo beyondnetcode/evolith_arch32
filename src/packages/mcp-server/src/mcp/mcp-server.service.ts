@@ -28,7 +28,7 @@ import { authenticateHttpRequest } from './mcp-server-auth';
 import { createLocalSessionContext } from './mcp-auth-contexts';
 import { evaluateStdioCredentialPolicy, StdioCredentialError } from './stdio-credential-policy';
 import { loadOAuthConfig, createJwksResolver, type OAuthConfig, type JwksKeyResolver } from './oauth-resource-server';
-import { handleCallTool, handleListTools, ToolCallResult, redactArgs } from './mcp-tool-dispatch';
+import { handleCallTool, handleListTools, ToolCallOptions, ToolCallResult, redactArgs } from './mcp-tool-dispatch';
 import { McpCacheService } from './mcp-cache.service';
 import { isStatelessRevisionRequest } from './protocol-revisions';
 import { handleStatelessRpc, type StatelessRpcOps } from './stateless-rpc';
@@ -39,6 +39,10 @@ import {
   resolveResourceMetadata,
   type ResourceMetadataInput,
 } from './protected-resource-metadata';
+import {
+  ATTR_MCP_PROTOCOL_VERSION,
+  ATTR_MCP_SESSION_ID,
+} from '@beyondnet/evolith-core-domain/evaluation';
 
 export { McpUserContext, mcpContextStorage } from './mcp-user-context';
 export { ToolCallResult } from './mcp-tool-dispatch';
@@ -174,11 +178,19 @@ export class McpServerService {
     return result;
   }
 
-  async handleCallTool(name: string, args: Record<string, unknown> = {}): Promise<ToolCallResult> {
-    return this.withTransportContext(() => this.callToolInContext(name, args));
+  async handleCallTool(
+    name: string,
+    args: Record<string, unknown> = {},
+    options: ToolCallOptions = {},
+  ): Promise<ToolCallResult> {
+    return this.withTransportContext(() => this.callToolInContext(name, args, options));
   }
 
-  private async callToolInContext(name: string, args: Record<string, unknown> = {}): Promise<ToolCallResult> {
+  private async callToolInContext(
+    name: string,
+    args: Record<string, unknown> = {},
+    options: ToolCallOptions = {},
+  ): Promise<ToolCallResult> {
     const correlationId = (args.correlationId as string) || generateCorrelationId();
     const startTime = Date.now();
 
@@ -188,7 +200,7 @@ export class McpServerService {
       abacEvaluator: this.abacEvaluator,
       logger: this.logger,
       tracer,
-    });
+    }, options);
 
     if (this.auditLogger) {
       const durationMs = Date.now() - startTime;
@@ -267,11 +279,17 @@ export class McpServerService {
     const server = new Server({ name: SERVER_NAME, version: SERVER_VERSION }, { capabilities });
 
     server.setRequestHandler(ListToolsRequestSchema, async () => this.handleListTools());
-    server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    // GT-587: `_meta` and `extra.sessionId` used to be destructured away here, which is
+    // why trace context had to travel as a tool ARGUMENT. Both now cross the boundary:
+    // `_meta` carries the W3C trace context a conformant client sends, `sessionId` is
+    // the `mcp.session.id` attribute. Neither reaches the tool — dispatch consumes them.
+    server.setRequestHandler(CallToolRequestSchema, async (request, extra) => {
       const { name, arguments: args } = request.params;
-      return this.handleCallTool(name, (args ?? {}) as Record<string, unknown>) as unknown as Promise<
-        Record<string, unknown>
-      >;
+      const meta = (request.params._meta ?? extra?._meta) as Record<string, unknown> | undefined;
+      return this.handleCallTool(name, (args ?? {}) as Record<string, unknown>, {
+        meta,
+        sessionId: extra?.sessionId,
+      }) as unknown as Promise<Record<string, unknown>>;
     });
 
     if (this.resources) {
@@ -571,11 +589,21 @@ export class McpServerService {
 
       const headerCorrelationId = (req.headers['x-correlation-id'] as string) || generateCorrelationId();
 
+      // GT-587: the two `mcp.*` facts the Streamable HTTP transport actually carries
+      // as headers. They are read here rather than invented at the tool span, because
+      // the SDK does not expose the negotiated protocol version to a request handler —
+      // the header is the only honest source, and an attribute nobody can source is
+      // better absent than fabricated.
+      const httpSessionId = req.headers['mcp-session-id'] as string | undefined;
+      const httpProtocolVersion = req.headers['mcp-protocol-version'] as string | undefined;
+
       const span = tracer.startSpan('mcp.http.request', {
         attributes: {
           'http.method': req.method || 'UNKNOWN',
           'http.url': url.pathname,
           'correlation.id': headerCorrelationId,
+          ...(httpSessionId ? { [ATTR_MCP_SESSION_ID]: httpSessionId } : {}),
+          ...(httpProtocolVersion ? { [ATTR_MCP_PROTOCOL_VERSION]: httpProtocolVersion } : {}),
         },
       });
 

@@ -64,6 +64,35 @@ const EvaluationFactsWaiverSchema = z.object({
   expirationDate: z.string().optional(),
 });
 
+/**
+ * GT-584 — the inline ADR-0111 quality evidence the admissibility rule reads.
+ *
+ * Every field is optional ON PURPOSE. This schema must not be the thing that
+ * rejects a malformed probabilistic signal, because a stripped or rejected item is
+ * an item the admissibility rule never sees, and silence would read as "nothing to
+ * refuse". Validation of the calibration block belongs to `normalizeEvidence`; the
+ * rule's job is to REFUSE what arrives incomplete, out loud.
+ */
+const EvaluationFactsQualityEvidenceSchema = z.object({
+  source: z.string().optional(),
+  dimension: z.string().optional(),
+  determinism: z.string().optional(),
+  calibration: z.object({
+    truePositiveRate: z.number().optional(),
+    trueNegativeRate: z.number().optional(),
+    measuredAt: z.string().optional(),
+    sampleSize: z.number().optional(),
+    method: z.string().optional(),
+    labelledBy: z.string().optional(),
+  }).optional(),
+});
+
+const EvaluationFactsAdmissibilityPolicySchema = z.object({
+  minTruePositiveRate: z.number().optional(),
+  minTrueNegativeRate: z.number().optional(),
+  maxCalibrationAgeDays: z.number().optional(),
+});
+
 const EvaluationFactsSchema = z.object({
   context: z.record(z.string(), z.unknown()).optional(),
   gate: EvaluationFactsGateSchema.optional(),
@@ -71,6 +100,10 @@ const EvaluationFactsSchema = z.object({
   waiver: z.array(EvaluationFactsWaiverSchema).optional(),
   tenantId: z.string().optional(),
   evaluationDate: z.string().optional(),
+  // GT-584: previously stripped by `.strip()`, which would have made the
+  // admissibility rule evaluate an empty corpus and pass vacuously.
+  qualityEvidence: z.array(EvaluationFactsQualityEvidenceSchema).optional(),
+  qualityAdmissibilityPolicy: EvaluationFactsAdmissibilityPolicySchema.optional(),
 }).optional();
 
 /**

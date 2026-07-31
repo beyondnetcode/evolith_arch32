@@ -17,6 +17,7 @@ import { SatelliteContractRuleHandler } from './handlers/satellite-contract-rule
 import { AclRuleHandler } from './handlers/acl-rule.handler';
 import { AdrConformanceRuleHandler } from './handlers/adr-conformance-rule.handler';
 import { ModuleBoundaryRuleHandler } from './handlers/module-boundary-rule.handler';
+import { ProbabilisticEvidenceRuleHandler } from './handlers/probabilistic-evidence-rule.handler';
 import { classifyRule } from '../rule-evaluability';
 
 export class NativeEvaluator implements IRuleEvaluatorStrategy {
@@ -44,6 +45,12 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
       new ExecutiveScorecardRuleHandler(fs),
       new SatelliteContractRuleHandler(fs, configParser),
       new AclRuleHandler(fs),
+      // GT-584: PEA-01..04 — whether a PROBABILISTIC quality signal may reach a
+      // blocking verdict. The native twin of
+      // `probabilistic-evidence-admissibility.rego` (R-25); it reads the same
+      // projected facts and delegates to the same admissibility function, so the
+      // two engines cannot drift by construction.
+      new ProbabilisticEvidenceRuleHandler(),
       // GT-632: rules that author their own `from`/`to` module-graph clause
       // (HXA-01/02/04/05). Registered BEFORE the ADR-conformance catch-all and
       // after the id-specific handlers: it claims by clause, so an existing

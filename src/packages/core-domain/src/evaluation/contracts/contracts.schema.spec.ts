@@ -135,6 +135,83 @@ describe('Contract Schema Registry (GT-377 AC-1)', () => {
     });
   });
 
+  describe('structural fact base is additive (GT-589)', () => {
+    const repoFacts = {
+      schemaVersion: '1.0.0',
+      contentHash: 'sha256:deadbeef',
+      provenance: {
+        extractedBy: 'evolith-repo-facts',
+        extractorVersion: '1.0.0',
+        indexer: 'typescript-compiler-api',
+        indexerVersion: '6.0.3',
+        extractedAt: '2026-07-30T00:00:00.000Z',
+      },
+      modules: [{ id: 'src/cli/a.ts', layer: 'cli' }],
+      imports: [{ from: 'src/cli/a.ts', to: 'src/app/b.ts', typeOnly: false }],
+      symbols: [{ id: 'src/cli/a.ts#run', name: 'run', kind: 'function', moduleId: 'src/cli/a.ts', exported: true }],
+      references: [{ fromSymbol: 'src/cli/a.ts#run', toSymbol: 'src/app/b.ts#serve' }],
+    };
+
+    it('validates a context carrying inline RepoFacts and symbol boundaries', () => {
+      const ctx: EvaluationContext = {
+        kinds: ['architecture'],
+        workspaceRef: 'ws-opaque-123',
+        repoFacts,
+        architecture: {
+          symbolBoundaries: [
+            { id: 'cli-not-infra', fromModules: ['src/cli/**'], forbiddenSymbolModules: ['src/infrastructure/**'] },
+          ],
+        },
+      };
+      expect(validateContext(ctx)).toBe(true);
+    });
+
+    it('rejects RepoFacts missing the mandatory contentHash', () => {
+      const { contentHash, ...withoutHash } = repoFacts;
+      expect(validateContext({ kinds: ['architecture'], repoFacts: withoutHash })).toBe(false);
+    });
+
+    it('validates an architecture result echoing the structural summary', () => {
+      const result: EvaluationResult = {
+        overallVerdict: Verdict.FAIL,
+        outcome: 'rejected',
+        results: {
+          architecture: {
+            verdict: Verdict.FAIL,
+            risks: [],
+            gaps: [],
+            recommendations: [],
+            structuralFacts: {
+              contentHash: 'sha256:deadbeef',
+              indexer: 'typescript-compiler-api',
+              moduleCount: 1,
+              importCount: 1,
+              symbolCount: 1,
+              referenceCount: 1,
+              cycles: [{ chain: ['a.ts', 'b.ts', 'a.ts'], component: ['a.ts', 'b.ts'], typeOnly: false }],
+              boundaryCrossings: [
+                {
+                  ruleId: 'cli-not-infra',
+                  fromSymbol: 'src/cli/a.ts#run',
+                  toSymbol: 'src/infrastructure/db.ts#pool',
+                  symbolChain: ['src/cli/a.ts#run', 'src/app/b.ts#serve', 'src/infrastructure/db.ts#pool'],
+                  moduleChain: ['src/cli/a.ts', 'src/app/b.ts', 'src/infrastructure/db.ts'],
+                  viaLegalImportsOnly: true,
+                  severity: 'error',
+                },
+              ],
+            },
+          },
+        },
+        rulesExecuted: [], policiesApplied: [], gaps: [], risks: [], missingEvidence: [],
+        incompleteArtifacts: [], recommendations: [], requiredActions: [],
+        confidence: 1, rationale: 'structural', versions: { core: '1.0.5' },
+        evaluatedAt: '2026-07-30T00:00:00.000Z', schemaVersion: '1.0.0',
+      };
+      expect(validateResult(result)).toBe(true);
+    });
+  });
+
   it('rejects a DecisionRecommendation whose `binding` is not the literal false', () => {
     const result: Record<string, unknown> = {
       overallVerdict: 'PASS', outcome: 'approved', results: {}, rulesExecuted: [], policiesApplied: [],

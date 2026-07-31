@@ -102,11 +102,15 @@ export class AgentsCommand extends BaseEvolithCommand {
       case 'upgrade': await this.upgradeAgent(options); break;
       case 'run': await this.runAgent(options); break;
       case 'menu':
-      default: await this.showMenu(); break;
+      default: await this.showMenu(options); break;
     }
   }
 
-  private async showMenu(): Promise<void> {
+  // GT-643 — the menu used to drop the caller's options on the floor, so
+  // `evolith agents --dry-run` (no subcommand) picked `install` from the menu
+  // and wrote anyway. Forwarding them keeps the flag meaningful on the path a
+  // user is most likely to take when they are unsure enough to want a dry run.
+  private async showMenu(options?: AgentsCommandOptions): Promise<void> {
     this.promptService.showIntro('Evolith SDK - Agent Management');
 
     const selection = await this.promptService.select({
@@ -127,13 +131,14 @@ export class AgentsCommand extends BaseEvolithCommand {
       return;
     }
 
+    const forwarded = options ?? {};
     switch (selection) {
-      case 'install': await this.installAgent({}); break;
-      case 'list': await this.listAgents({}); break;
-      case 'validate': await this.validateAgent({}); break;
-      case 'upgrade': await this.upgradeAgent({}); break;
-      case 'run': await this.runAgent({}); break;
-      case 'remove': await this.removeAgent({}); break;
+      case 'install': await this.installAgent(forwarded); break;
+      case 'list': await this.listAgents(forwarded); break;
+      case 'validate': await this.validateAgent(forwarded); break;
+      case 'upgrade': await this.upgradeAgent(forwarded); break;
+      case 'run': await this.runAgent(forwarded); break;
+      case 'remove': await this.removeAgent(forwarded); break;
     }
   }
 
@@ -215,16 +220,35 @@ export class AgentsCommand extends BaseEvolithCommand {
         installedAt: new Date().toISOString()
       };
 
-      await this.registry.installAgent(process.cwd(), config, rulesetContent);
+      // GT-643 — `--dry-run` was declared, documented and never read: this method
+      // called installAgent() unconditionally, so the flag a user reaches for
+      // precisely when they do not want to be trusted with the real one wrote to
+      // process.cwd() anyway. The dry branch performs NO write at all rather than
+      // writing through a no-op filesystem: a branch that never reaches the writer
+      // cannot regress into writing when the writer grows a new call.
+      const dryRun = Boolean(options?.dryRun);
+      const plannedPaths = dryRun ? this.registry.planInstall(process.cwd(), name) : [];
+
+      if (!dryRun) {
+        await this.registry.installAgent(process.cwd(), config, rulesetContent);
+      }
 
       const result = {
         success: true,
+        dryRun,
         agent: { name, version: config.version, template, description },
-        message: `Agent '${name}' installed successfully`,
+        ...(dryRun ? { wouldWrite: plannedPaths } : {}),
+        message: dryRun
+          ? `Dry run: agent '${name}' was NOT written`
+          : `Agent '${name}' installed successfully`,
       };
 
       if (isJson) {
         console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      } else if (dryRun) {
+        this.promptService.showSuccess(`\n[DRY-RUN] Agent '${name}' was NOT written`);
+        this.promptService.showInfo(`Would write:\n${plannedPaths.map(p => `  ${p}`).join('\n')}`);
+        this.promptService.showOutro(chalk.yellow('Dry run complete — nothing changed on disk.'));
       } else {
         this.promptService.showSuccess(`\n✓ Agent '${name}' installed successfully`);
         this.promptService.showInfo(`Next steps:\n  1. Review agent rules\n  2. Validate agent: evolith agents validate`);

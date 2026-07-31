@@ -8299,6 +8299,13 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] `npm view @beyondnet/evolith-mcp@1.1.0` reports the version as deprecated, likewise cli and agent-runtime — and also core-domain, core and infra-providers. `evolith-sdk@1.1.0` and `evolith-contracts@1.1.0` are deliberately NOT deprecated, for reasons recorded in the evidence above rather than skipped.
   - [x] A CI gate fails when a commit whose type or scope marks it as security is absent from the latest published version. `48-validate-security-publish-lag`, wired into `Governance guards (GT-578)`. It asks the registry rather than git tags, because the newest `v*` tag is `v1.1.0` while npm serves `1.2.2`.
   - [x] The gate ships with negative fixtures that turn it red — 12 of them, including the anti-vacuous floors and a regression for each of the two false negatives found while building it — and `43-validate-guard-negative-fixtures` has OBSERVED it refuse the empty fixture (37/37).
+
+#### GT-649
+
+**Title:** The corpus produces WARNs when loaded
+
+- **Purpose:** Clean up corpus loading warnings.
+- **Component:** `Core API` · **Criticality:** P2 · **Complexity:** S
 - **Provenance:** Registered 2026-07-31 from the same `core-api.log` that produced [`GT-648`](./gap-reference-catalog.md#gt-648), and kept separate from it on purpose: those WARNs are how the per-request load was *noticed*, but they are corpus and logging defects that would survive any amount of caching. Fault (2) was traced by `git log --diff-filter=AD` rather than assumed — the files existed, and the commit that removed them says it was clearing leftovers.
 - **Acceptance criteria:**
   - [x] The loader classifies by the `$schema` a document declares, and validates each non-corpus kind against **that** contract instead of the standard one. This is strictly more checking than before, not a suppression: the previous behaviour checked them against the wrong schema and discarded the result.

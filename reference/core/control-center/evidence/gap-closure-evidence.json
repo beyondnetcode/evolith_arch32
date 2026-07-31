@@ -9080,6 +9080,111 @@
       "dependencyRationale": "Closed on the implementation that is on main. The parallel implementation on develop (PR #279) is NOT reconciled here: choosing which generator survives is a design decision belonging to the sessions that wrote the two halves, and it is tracked as the blocker on develop -> main rather than resolved inside a board registration."
     },
     {
+      "id": "GT-582",
+      "closedAt": "2026-07-31",
+      "closureCommit": "4c0d8362",
+      "evidence": [
+        "src/packages/mcp-server/src/mcp/protocol-revisions.ts",
+        "src/packages/mcp-server/src/mcp/stateless-rpc.ts",
+        "src/packages/mcp-server/src/mcp/mrtr-request-state.ts",
+        "src/packages/mcp-server/src/mcp/protected-resource-metadata.ts",
+        "src/packages/mcp-server/src/mcp/protocol-2026-conformance.spec.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-mcp test",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "THE ROW'S OWN CORRECTION WAS REFUTED BEFORE THIS CLOSURE, NOT AFTER IT. The row recorded that the `2026-07-28` label 'could not be confirmed' because the spec's versioning page 'still names 2025-11-25 as current'. Re-read on 2026-07-31: that page names 2026-07-28 as the current revision, describes per-request negotiation through the `io.modelcontextprotocol/protocolVersion` key in `_meta`, makes `server/discover` mandatory, and treats 2025-11-25 and earlier as handshake-based under backward compatibility. The doubt was recorded as prudence and argued for deferring work the specification had already made current."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-584",
+      "closedAt": "2026-07-31",
+      "closureCommit": "912caf0b",
+      "evidence": [
+        "src/rulesets/evidence/probabilistic-evidence-admissibility.rules.json",
+        "src/rulesets/opa/probabilistic-evidence-admissibility.rego",
+        "src/rulesets/opa/probabilistic-evidence-admissibility.test.rego",
+        "src/packages/core-domain/src/evaluation/contracts/quality-evidence.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts"
+      ],
+      "validationCommands": [
+        "./.harness/bin/opa test src/rulesets/opa --ignore=schemas",
+        "npm --workspace @beyondnet/evolith-core-domain test",
+        "THE NEGATIVE HALF IS WHAT WAS CHECKED, not the positive one. Uncalibrated evidence is REFUSED (test_uncalibrated_probabilistic_evidence_is_refused), a half-filled calibration is not a measurement (test_half_filled_calibration_is_not_a_measurement), and a stale one degrades to advisory rather than blocking. The native twin fails closed the same way: evidence with no `determinism` field is read as a guess."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-591",
+      "closedAt": "2026-07-31",
+      "closureCommit": "b9321ba9",
+      "evidence": [
+        ".harness/scripts/opa-runtime.mjs",
+        ".harness/scripts/compile-opa-wasm.mjs",
+        ".harness/scripts/ci/53-validate-opa-pin.mjs",
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/53-validate-opa-pin.mjs",
+        "node .harness/scripts/ci/29-test-core-opa.mjs",
+        "./.harness/bin/opa test src/rulesets/opa --ignore=schemas",
+        "MEASURED, NOT ASSERTED, on the pinned 1.19.0 binary: 95 `.rego` files with 0 lacking `import rego.v1`; core OPA suite 261/261; 288/288 when the six progressive-axis policies are included in the run; 8 version references all agreeing with the pin. The row's 'DO NOT BUMP THE PIN' warning named those six files as the blocker and no longer applies -- all six are v1."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-642",
+      "closedAt": "2026-07-31",
+      "closureCommit": "b9321ba9",
+      "evidence": [
+        ".harness/scripts/ci/54-validate-import-cycles.mjs",
+        ".harness/scripts/ci/54-import-cycles.first-run.json",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/54-validate-import-cycles.mjs",
+        "node .harness/scripts/ci/43-validate-guard-negative-fixtures.mjs",
+        "THE GUARD RUNS GT-589'S EXTRACTOR RATHER THAN A SECOND DETECTOR: it loads `extractTypeScriptFacts` from @beyondnet/evolith-repo-facts and `findImportCycles` from core-domain, which is the whole reason the row was BLOCKED rather than merely pending until #309 landed. The package list is derived from the root package.json workspace globs, so a package added tomorrow is swept without editing the guard. First full-monorepo run recorded: 11 packages, 1009 modules, 0 runtime cycles, 2 type-only, clean packages listed explicitly."
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "The row was BLOCKED on GT-589, whose @beyondnet/evolith-repo-facts package carries the only implementation of findImportCycles. #309 landed on develop, so the dependency is satisfied rather than worked around: the guard consumes that extractor instead of reimplementing cycle detection beside it, which is the second source of truth GT-589 exists to prevent."
+    },
+    {
+      "id": "GT-643",
+      "closedAt": "2026-07-31",
+      "closureCommit": "b5545f31",
+      "evidence": [
+        "src/sdk/cli/src/commands/agents/agents.command.ts",
+        "src/sdk/cli/src/infrastructure/adapters/agent-registry.service.ts",
+        "src/sdk/cli/test/agents.e2e-spec.ts",
+        "src/tests/exploration/no-effect-contracts.ts",
+        "src/tests/exploration/runner.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-cli run test:e2e",
+        "node .harness/scripts/ci/47-validate-joined-paths.mjs",
+        "THE LAST CRITERION IS THE ONE THAT MAKES THIS A CLOSURE RATHER THAN A PATCH. The instance was fixed on 2026-07-30 (the dry branch never reaches the writer, and the three committed `test-value` artifacts are deleted); the CLASS was still uncovered until #320 added no-effect contracts to the cross-surface tester. Each contract declares an invocation, the state that must not move, and a CONTRAST invocation that must move it -- without the contrast, a command that stopped working entirely would satisfy every no-effect assertion and the oracle would be greenest when the product was most broken."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-644",
+      "closedAt": "2026-07-31",
+      "closureCommit": "a4914d92",
+      "evidence": [
+        ".harness/scripts/ci/55-validate-wasm-builtin-support.mjs",
+        ".harness/scripts/ci/55-validate-wasm-builtin-support.test.mjs",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/55-validate-wasm-builtin-support.mjs --verbose",
+        "node --test .harness/scripts/ci/55-validate-wasm-builtin-support.test.mjs",
+        "OBSERVED GREEN ON A RUNNER (run 30630122256) AND OBSERVED RED BEFORE THAT. The two checks were disarmed one at a time and exactly the test pinning each turned red; guard 43 saw it red in 29ms. The first runner attempt SKIPPED both steps without running them -- `bash -e` stops the job at the first failure and a network-dependent guard failed ahead of them -- so the steps were moved ahead of the three that ask the network. A step that cannot run is not a check."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "MT-A17",
       "closedAt": "2026-06-20",
       "closureCommit": "dadcb17",

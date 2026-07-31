@@ -325,27 +325,24 @@ services:
       - ums-network
 
   # ---------------------------------------------------------
-  # 13. API Backend-for-Frontend (BFF)
+  # 13. REMOVED — API Backend-for-Frontend (BFF)
   # ---------------------------------------------------------
-  bff:
-    build:
-      context: ./docker
-      dockerfile: bff.Dockerfile
-    container_name: ums-bff
-    restart: always
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.bff.rule=PathPrefix(`/bff`)"
-      - "traefik.http.routers.bff.entrypoints=web"
-    volumes:
-      - ../../../rulesets:/app/rulesets:ro
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: "0.5"
-    networks:
-      - ums-network
+  # This file is the shared BACKING-SERVICES stack (databases, broker, object
+  # store, gateway, observability). Evolith's own services are NOT deployed from
+  # here: `docker-compose.evolith.yml` (engine) and `docker-compose.fullstack.yml`
+  # (engine + Tracker + UI) build them from the real per-service Dockerfiles.
+  #
+  # A `bff` service used to sit here, and it could never have started:
+  #   - its build context was `./docker`, a directory holding two illustrative
+  #     Dockerfiles and no `package.json`, so `COPY package*.json ./` +
+  #     `npm ci` failed on the first layer;
+  #   - it mounted `../../../rulesets`, which resolves to a sibling of the
+  #     repository root — the ruleset corpus has lived at `src/rulesets` since
+  #     the `src/`-nested cutover (GT-450).
+  # `deployment-topology.md` already records that no `bff` remains on any deploy
+  # path and that `product/infra/docker/*.Dockerfile` are reference-only
+  # templates; this file now agrees with that. The real service is `core-api`
+  # (ADR-0074).
 
   # ---------------------------------------------------------
   # 14. Metrics Storage (Prometheus)
@@ -396,27 +393,13 @@ services:
       - ums-network
 
   # ---------------------------------------------------------
-  # 16. Model Context Protocol Server (MCP)
+  # 16. REMOVED — Model Context Protocol Server (MCP)
   # ---------------------------------------------------------
-  mcp:
-    build:
-      context: ./docker
-      dockerfile: mcp.Dockerfile
-    container_name: ums-mcp
-    restart: always
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mcp.rule=PathPrefix(`/mcp`)"
-      - "traefik.http.routers.mcp.entrypoints=web"
-    volumes:
-      - ../../../rulesets:/app/rulesets:ro
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: "0.5"
-    networks:
-      - ums-network
+  # Same two defects as the removed `bff` above (build context `./docker` with
+  # no `package.json`; `../../../rulesets` pointing outside the repository), and
+  # the same resolution: the real MCP server is built from
+  # `src/packages/mcp-server/Dockerfile` by `docker-compose.evolith.yml`,
+  # `docker-compose.fullstack.yml` and the `docker-services` CI matrix.
 
 # ---------------------------------------------------------
 # Persistent Volume Declarations

@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "1.0",
+  "guard": "54-validate-import-cycles",
+  "gap": "GT-642",
+  "extractor": "@beyondnet/evolith-repo-facts (GT-589)",
+  "query": "findImportCycles (@beyondnet/evolith-core-domain/evaluation/contracts)",
+  "packagesScanned": 11,
+  "totals": {
+    "modules": 1009,
+    "runtimeCycles": 0,
+    "typeOnlyCycles": 2
+  },
+  "packages": [
+    {
+      "package": "src/apps/agent-runtime-api",
+      "modules": 28,
+      "imports": 44,
+      "noSource": false,
+      "runtime": [],
+      "typeOnly": []
+    },
+    {
+      "package": "src/apps/core-api",
+      "modules": 87,
+      "imports": 137,
+      "noSource": false,
+      "runtime": [],
+      "typeOnly": []
+    },
+    {
+      "package": "src/packages/agent-runtime",
+      "modules": 143,
+      "imports": 501,
+      "noSource": false,
+      "runtime": [],
+      "typeOnly": [
+        {
+          "chain": [
+            "src/domain/contracts/agent-runtime-request.ts",
+            "src/domain/contracts/runtime-context.ts",
+            "src/domain/contracts/agent-runtime-request.ts"
+          ],
+          "component": [
+            "src/domain/contracts/agent-runtime-request.ts",
+            "src/domain/contracts/runtime-context.ts"
+          ],
+          "allEdgesTypeOnly": true
+        }
+      ]
+    },
+    {
+      "package": "src/packages/contracts",
+      "modules": 13,
+      "imports": 15,
+      "noSource": false,
+      "runtime": [],
+      "typeOnly": []
+    },
+    {
+      "package": "src/packages/core",
+      "modules": 2,
+      "imports": 1,
+      "noSource": false,
+      "runtime": [],
+      "typeOnly": []
+    },
+    {
+      "package": "src/packages/core-domain",
+      "modules": 356,
+      "imports": 951,
+      "noSource": false,
+      "runtime": [],
+      "typeOnly": []
+    },
+    {
+      "package": "src/packages/infra-providers",
+      "modules": 37,
+      "imports": 49,
+      "noSource": false,
+      "runtime": [],
+      "typeOnly": []
+    },
+    {
+      "package": "src/packages/mcp-server",
+      "modules": 121,
+      "imports": 270,
+      "noSource": false,
+      "runtime": [],
+      "typeOnly": []
+    },
+    {
+      "package": "src/packages/repo-facts",
+      "modules": 7,
+      "imports": 11,
+      "noSource": false,
+      "runtime": [],
+      "typeOnly": []
+    },
+    {
+      "package": "src/packages/sdk-client",
+      "modules": 12,
+      "imports": 25,
+      "noSource": false,
+      "runtime": [],
+      "typeOnly": []
+    },
+    {
+      "package": "src/sdk/cli",
+      "modules": 203,
+      "imports": 397,
+      "noSource": false,
+      "runtime": [],
+      "typeOnly": [
+        {
+          "chain": [
+            "src/commands/api/api.catalog.generated.ts",
+            "src/commands/api/api.catalog.ts",
+            "src/commands/api/api.catalog.generated.ts"
+          ],
+          "component": [
+            "src/commands/api/api.catalog.generated.ts",
+            "src/commands/api/api.catalog.ts"
+          ],
+          "allEdgesTypeOnly": false
+        }
+      ]
+    }
+  ]
+}

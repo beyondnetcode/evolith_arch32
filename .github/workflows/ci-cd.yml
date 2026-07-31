@@ -408,6 +408,10 @@ jobs:
           npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-infra-providers
+          # GT-642: the cycle guard RUNS GT-589's extractor rather than owning a second
+          # one, so the extractor has to be built or the guard has nothing to run. It
+          # fails loudly in that case instead of reporting "no cycles found".
+          npm run build --workspace @beyondnet/evolith-repo-facts
 
       # STRICT. Every script under .harness/scripts/ci must either refuse a
       # zero-element scan or be registered, with a reason, as something that is
@@ -460,6 +464,16 @@ jobs:
       # the newest v* tag here is v1.1.0 while npm serves 1.2.2.
       - name: No security fix is committed but unpublished
         run: node .harness/scripts/ci/48-validate-security-publish-lag.mjs --verbose
+
+      # GT-642: two runtime import cycles reached a 346-module package unseen and were
+      # found by hand (GT-641), because nothing looks — lint:boundaries enforces layer
+      # DIRECTION and not acyclicity, and tsc compiles a require cycle silently. This
+      # runs GT-589's extractor over EVERY workspace package and prints the per-package
+      # table on every run, zeros included: a guard whose green run reports nothing is
+      # indistinguishable from one that cannot run. Cycles that close only through an
+      # `import type` edge are listed and are deliberately NOT fatal.
+      - name: No runtime import cycle in any workspace package
+        run: node .harness/scripts/ci/54-validate-import-cycles.mjs --verbose
 
       # GT-591: the OPA pin sat at 0.65.0 for two years and nothing said so, while a
       # SECOND spelling of it lived in compile-opa-wasm.mjs's download URL — so the

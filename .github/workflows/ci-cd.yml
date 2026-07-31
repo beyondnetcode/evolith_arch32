@@ -482,9 +482,25 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: node .harness/scripts/ci/50-validate-gap-claim.mjs
 
+      # GT-644: a policy calling an OPA builtin the shipped wasm runtime cannot
+      # execute passes `opa test` and `opa build`, then throws "not implemented:
+      # built-in function N" at evaluation time — which OpaEvaluator turns into
+      # "OPA engine error — enforcement blocked" for EVERY rule in the run. One
+      # `time.parse_rfc3339_ns` therefore fails the whole OPA half of the gate with
+      # a message that reads like an infrastructure hiccup. The authority is the
+      # COMPILED bundle's `builtins()` table, so the bundle is built first;
+      # `--require-wasm` makes a bundle that could not be built fatal rather than a
+      # source scan wearing a green tick.
+      - name: Compile the OPA bundle the builtin check reads
+        run: npm run build:policy
+
+      - name: Policies only call builtins the wasm runtime implements
+        run: node .harness/scripts/ci/55-validate-wasm-builtin-support.mjs --require-wasm --verbose
+
       - name: Self-tests for the governance guards
         run: |
           node --test .harness/scripts/ci/42-validate-guard-denominators.test.mjs
+          node --test .harness/scripts/ci/55-validate-wasm-builtin-support.test.mjs
           node --test .harness/scripts/ci/48-validate-security-publish-lag.test.mjs
           node --test .harness/scripts/ci/49-validate-gap-id-allocation.test.mjs
           node --test .harness/scripts/ci/50-validate-gap-claim.test.mjs

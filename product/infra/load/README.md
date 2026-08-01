@@ -120,6 +120,7 @@ so CI can gate on it. For machine-readable output:
 
 ```bash
 cd product/infra/load/chaos
+TARGET=redis ./kill-under-load.sh
 ./kill-core-api.sh
 OUTAGE_SECONDS=20 ./kill-redis.sh
 TARGET=core-api DELAY_MS=300 DURATION=90s ./network-latency.sh

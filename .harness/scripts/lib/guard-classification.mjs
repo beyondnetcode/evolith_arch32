@@ -155,6 +155,7 @@ export const NOT_A_SCANNER = [
   { file: 'rag-port.mjs', reason: 'library: RAG port interface' },
   { file: 'rag-pgvector.mjs', reason: 'library: pgvector adapter' },
   { file: 'rag-embed-qwen3.mjs', reason: 'library: embedding adapter, needs a model endpoint' },
+  { file: 'rag-eval-record.mjs', reason: 'recorder/generator: requires a live embedding sidecar and writes the frozen RAG eval fixtures consumed by rag-eval.mjs' },
   { file: 'rag-sync.mjs', reason: 'library: RAG sync driver behind 14/15' },
   { file: 'agentic/review-input.mjs', reason: 'library: builds the review payload' },
   { file: 'agentic/review-provider.mjs', reason: 'library: LLM provider adapter' },

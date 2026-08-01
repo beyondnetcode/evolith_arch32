@@ -6050,7 +6050,7 @@
       "ruleId": "INFRA-001",
       "sourceFile": "infrastructure/helm-enforcement.rules.json",
       "title": "Helm Charts Over Raw Manifests Enforcement",
-      "severity": "error",
+      "severity": "high",
       "ruleClass": "deployment",
       "iso5055": {
         "cwes": [],
@@ -6069,7 +6069,7 @@
       "ruleId": "INFRA-OPA-001",
       "sourceFile": "infrastructure/opa-sidecar-bundle.rules.json",
       "title": "OPA Sidecar Bundle Integrity",
-      "severity": "error",
+      "severity": "critical",
       "ruleClass": "deployment",
       "iso5055": {
         "cwes": [],

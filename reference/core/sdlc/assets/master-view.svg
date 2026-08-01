@@ -1,4 +1,4 @@
-<!-- port-inventory: 11 hot / 20 declared -->
+<!-- port-inventory: 11 hot / 21 declared -->
 <!-- GT-621: a bare count reads as delivered capability. 11 ports are reachable
      from AgentRuntimeService (7 required, 4 optional); the other 8 are declared
      seams the execution pass never calls. Derived and enforced by

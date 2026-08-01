@@ -77,10 +77,10 @@ describe('NestLoggerProvider', () => {
   it('forwards each level to the underlying Nest Logger instance', () => {
     const logger = new NestLoggerProvider().createLogger('NestCtx') as unknown as {
       logger: { debug: jest.Mock; log: jest.Mock; warn: jest.Mock; error: jest.Mock };
-      debug: (m: string) => void;
-      info: (m: string) => void;
-      warn: (m: string) => void;
-      error: (m: string) => void;
+      debug: (m: string, c?: unknown) => void;
+      info: (m: string, c?: unknown) => void;
+      warn: (m: string, c?: unknown) => void;
+      error: (m: string, c?: unknown) => void;
     };
 
     logger.logger.debug = jest.fn();
@@ -93,9 +93,25 @@ describe('NestLoggerProvider', () => {
     logger.warn('w');
     logger.error('e');
 
-    expect(logger.logger.debug).toHaveBeenCalledWith('d', undefined);
-    expect(logger.logger.log).toHaveBeenCalledWith('i', undefined);
-    expect(logger.logger.warn).toHaveBeenCalledWith('w', undefined);
-    expect(logger.logger.error).toHaveBeenCalledWith('e', undefined);
+    // GT-649: the one-argument form must reach Nest as ONE argument. Nest reads
+    // `...optionalParams` positionally, so an explicit `undefined` is a second
+    // thing to print — which is what put a `WARN undefined` line next to every
+    // single-argument log the Core wrote (CI run 30631939687, core-api.log).
+    expect(logger.logger.debug).toHaveBeenCalledWith('d');
+    expect(logger.logger.log).toHaveBeenCalledWith('i');
+    expect(logger.logger.warn).toHaveBeenCalledWith('w');
+    expect(logger.logger.error).toHaveBeenCalledWith('e');
+  });
+
+  it('still forwards an explicit context as Nest\'s second argument', () => {
+    const logger = new NestLoggerProvider().createLogger('NestCtx') as unknown as {
+      logger: { warn: jest.Mock };
+      warn: (m: string, c?: unknown) => void;
+    };
+    logger.logger.warn = jest.fn();
+
+    logger.warn('w', 'OtherCtx');
+
+    expect(logger.logger.warn).toHaveBeenCalledWith('w', 'OtherCtx');
   });
 });

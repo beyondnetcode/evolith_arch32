@@ -28,7 +28,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) |
 | 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-605](../gaps/gap-reference-catalog.es.md#gt-605), [GT-583](../gaps/gap-reference-catalog.es.md#gt-583), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-605](../gaps/gap-reference-catalog.es.md#gt-605), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-622](../gaps/gap-reference-catalog.es.md#gt-622), [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-531](../gaps/gap-reference-catalog.es.md#gt-531), [GT-536](../gaps/gap-reference-catalog.es.md#gt-536), [GT-599](../gaps/gap-reference-catalog.es.md#gt-599), +5 |
 
 ## Bloqueadores Actuales
@@ -43,21 +43,21 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-07-26 |
 | Gaps totales | 647 |
-| Gaps cerrados | 626 |
-| Gaps pendientes | 21 |
+| Gaps cerrados | 627 |
+| Gaps pendientes | 20 |
 | P0 abiertos | 1 |
-| P1 abiertos | 6 |
+| P1 abiertos | 5 |
 | P2 abiertos | 11 |
-| Cierre total | 96.8% |
-| Registros de evidencia de cierre | 608 |
+| Cierre total | 96.9% |
+| Registros de evidencia de cierre | 609 |
 | Readiness registrado | 4 PASS |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
 | `Cross` | 2 | 1 | 1 | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
 | `Governance` | 4 | 0 | 2 | [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-599](../gaps/gap-reference-catalog.es.md#gt-599), [GT-588](../gaps/gap-reference-catalog.es.md#gt-588) |
-| `Evolith Core` | 4 | 0 | 1 | [GT-583](../gaps/gap-reference-catalog.es.md#gt-583), [GT-590](../gaps/gap-reference-catalog.es.md#gt-590), [GT-594](../gaps/gap-reference-catalog.es.md#gt-594), [GT-600](../gaps/gap-reference-catalog.es.md#gt-600) |
 | `Infra` | 3 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-622](../gaps/gap-reference-catalog.es.md#gt-622), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464) |
+| `Evolith Core` | 3 | 0 | 0 | [GT-590](../gaps/gap-reference-catalog.es.md#gt-590), [GT-594](../gaps/gap-reference-catalog.es.md#gt-594), [GT-600](../gaps/gap-reference-catalog.es.md#gt-600) |
 | `Evolith Suite` | 1 | 0 | 1 | [GT-605](../gaps/gap-reference-catalog.es.md#gt-605) |
 
 ## Fuente y Regla de Actualización

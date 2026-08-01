@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import Ajv2020 from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 
@@ -24,6 +26,15 @@ import { buildCapabilityManifest } from './capabilities-manifest';
 describe('capability operations (GT-583)', () => {
   const ajv = new Ajv2020({ strict: false, allErrors: true });
   addFormats(ajv);
+
+  it('does not ship generator scratch files as source artifacts', () => {
+    const scratchFiles = [
+      path.resolve(__dirname, '../../../mcp-server/__capability-operations.entry.ts'),
+      path.resolve(__dirname, '../../../mcp-server/__capability-operations.json'),
+    ];
+    const existing = scratchFiles.filter((file) => existsSync(file));
+    expect(existing).toEqual([]);
+  });
 
   it('the generated catalog is non-empty and structurally sound', () => {
     // Anti-vacuous first: every assertion below is trivially true for [].

@@ -1901,11 +1901,12 @@ Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monore
 
 - **Acceptance criteria:**
   - [x] Los tests de integración del circuit breaker ejercitan las transiciones abierto, semiabierto y cerrado contra una dependencia que falla, y fallan sin el breaker.
-  - [ ] Un perfil de carga K6 corre en CI y publica rendimiento, latencia p95 y tasa de error contra umbrales declarados.
+  - [x] Un perfil de carga K6 corre en CI y publica rendimiento, latencia p95 y tasa de error contra umbrales declarados.
   - [ ] Un simulacro de caos mata una dependencia a mitad de ejecución y el comportamiento registrado coincide con lo que declara ADR-0011.
   - [ ] RTO y RPO se MIDEN en una restauración DR real y se escriben en ADR-0013, sustituyendo la afirmación no cuantificada actual.
 
 - **Avance (2026-08-01):** El criterio de circuit breaker queda satisfecho por la suite de integración de agent-runtime, no por un test unitario aislado de la máquina de estados. `src/packages/agent-runtime/src/adapters/resilience/circuit-breaker.integration.spec.ts` levanta un sustituto real de Core con `node:http`, lo ejecuta mediante `HttpCoreEvaluationAdapter`, y afirma cerrado -> abierto, abierto -> semiabierto -> cerrado, semiabierto -> abierto, y timeout de una dependencia colgada. Cada camino protegido tiene un control sin breaker que prueba que la dependencia todavía recibe llamadas o sigue pendiente sin esa protección. Verificado localmente con `npm --prefix src/packages/agent-runtime test -- --runTestsByPath src/adapters/resilience/circuit-breaker.integration.spec.ts` (5/5 tests).
+- **Avance (2026-08-01):** El criterio de K6 en CI queda satisfecho por el workflow `Reliability` en `main`, corrida `30687194238` (`83fbb042`). El job `k6 load profile (thresholds + published metrics)` pasó y subió `k6-reliability-30687194238`; el resumen de average-load registró 1.131 requests HTTP a **12,528 req/s**, `evaluate_latency` p95 **162,20 ms**, p99 **243,78 ms**, `evaluate_errors` **0%**, `throttled_429` **0%**, y todos los umbrales declarados en verde. La misma corrida también produjo un job verde de chaos/MTTR, pero esa evidencia todavía no cierra el criterio de matar una dependencia según ADR-0011: el target registrado fue `core-api`, mientras el criterio pide una dependencia a mitad de ejecución. DR RTO/RPO también queda abierto porque la corrida es un drill de restart de contenedores en un solo host, no una restauración DR real.
 
 #### GT-444
 

@@ -53,6 +53,7 @@ via env vars (`COMPOSE_FILE`, `CORE_HEALTH_URL`, `BROKER_SERVICE`, …).
 cd product/infra/load/chaos
 
 ./kill-core-api.sh
+TARGET=redis ./kill-under-load.sh
 OUTAGE_SECONDS=20 ./kill-redis.sh
 BROKER_SERVICE=redis ./kill-broker.sh
 TARGET=core-api DELAY_MS=300 JITTER_MS=100 DURATION=90s ./network-latency.sh

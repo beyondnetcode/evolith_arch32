@@ -5539,11 +5539,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Current Evidence:** `node .harness/scripts/run-evolith-deep.mjs` — Dimensión "MODELO SDLC EJECUTABLE": **SÓLIDO**.
 - **Complexity:** M
 - **Done when:**
-  - [x] Cada fase (F0–F4) tiene un archivo `phase-f*.json` en `reference/core/sdlc/phases/` con campos: `id`, `name`, `description`, `order`, `gates[]`.
-  - [x] Cada gate en `reference/core/sdlc/gates/` declara `requiredArtifacts[]` y `rules[]` (referencias a archivos `.rego` en `rulesets/`).
-  - [x] Existe un validador (`.harness/playbooks/sdlc-phase-gate-validator.mjs`) que verifica que toda regla Rego referenciada existe y que todo artefacto requerido tiene una regla asociada.
+  - [x] Cada fase (F0–F4) tiene un archivo `phase-f*.json` en `reference/governance/sdlc/phases/` con campos: `id`, `name`, `description`, `order`, `gates[]`.
+  - [x] Cada gate en `reference/governance/sdlc/gates/` declara `requiredArtifacts[]` y `rules[]`.
+  - [x] Existe un validador (`.harness/playbooks/sdlc-phase-gate-validator.mjs`) que verifica que cada gate/fase resuelve, que todo artefacto requerido tiene una regla asociada y que cualquier referencia tipo ruta existe.
   - [x] `run-evolith-deep.mjs` reporta `SÓLIDO` para la dimensión "MODELO SDLC EJECUTABLE".
-- **Closure Evidence:** 5 phase files (`phase-f1.json`…`phase-f5.json`) en `reference/core/sdlc/phases/`. 5 gate files (`gate-f1.json`…`gate-f5.json`) en `reference/core/sdlc/gates/`. 26 referencias Rego en total, todas existentes. Validador `sdlc-phase-gate-validator.mjs` pasa 0 errores. `sdlc-deep-audit.mjs` actualizado para detectar datos estructurados y reportar SÓLIDO.
+- **Closure Evidence:** 5 phase files (`phase-f1.json`…`phase-f5.json`) en `reference/governance/sdlc/phases/`. 5 gate files (`gate-f1.json`…`gate-f5.json`) en `reference/governance/sdlc/gates/`. Los gates declaran rule ids `EV-F*`; cualquier referencia tipo ruta se valida contra disco. Validador `sdlc-phase-gate-validator.mjs` pasa 0 errores. `sdlc-deep-audit.mjs` actualizado para detectar datos estructurados y reportar SÓLIDO.
 
 #### GT-281
 
@@ -7308,7 +7308,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Governance` · **Criticality:** P1 · **Complexity:** M
 - **Principal:** `M` · **Interest:** `HIGH` · **Basis:** `estimate`
 - **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
-- **Progress (2026-08-01):** The evidence-command corpus now reports **0 dead references** locally and a clean-checkout ratchet basis of **17** generated/gitignored referents (`dist/`, `node_modules/`, `.harness/bin/`), so CI lowered `--max-dead` to 17. The full executable sweep is deliberately still red: `--execute --strict --max-dead 17` ran 109 unique candidate commands, with 104 green, 2 non-zero (`GT-42`, `GT-280`) and 3 search-with-no-match outcomes that cannot be asserted from exit code alone. AC3 therefore remains open.
+- **Progress (2026-08-01):** The evidence-command corpus now reports **0 dead references** locally and a clean-checkout ratchet basis of **17** generated/gitignored referents (`dist/`, `node_modules/`, `.harness/bin/`), so CI lowered `--max-dead` to 17. A follow-up made the strict executable sweep pass: `--execute --strict --max-dead 17` ran 109 unique candidate commands, with 106 exit 0, 0 non-zero and 3 search-with-no-match outcomes that cannot be asserted from exit code alone. AC3 remains open until those inconclusive searches are converted into assertable commands and the CI path is promoted from ratchet/reporting to governed execution.
 - **Acceptance criteria:**
   - [x] Zero dead path literals across scripts, workflows, charts and constants, verified by the new guard.
   - [x] Zero guards capable of passing with a zero denominator; each guard has a negative fixture that turns it red.

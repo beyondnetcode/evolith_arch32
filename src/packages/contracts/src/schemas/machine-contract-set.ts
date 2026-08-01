@@ -106,6 +106,18 @@ export const MACHINE_CONTRACT_SET: MachineContractSet = Object.freeze({
       path: 'rulesets/schema/evaluation-result.schema.json',
       sha256: 'b0cad39fb15f0dccd1adbcc0f59aa26aee2a0f9a13ad250ffe031db7a0875d9d',
     }),
+    // GT-605: the typed evidence edge. It is published HERE, and not only as the
+    // TypeScript model in `evidence/evidence-edge.ts`, because the consumer that
+    // needs it is the Tracker — which is .NET and by ADR T-038 cannot import this
+    // package. Without a machine-readable form its `evidence_edges` migration
+    // would be a hand transcription of `EVIDENCE_EDGE_STORAGE_CONTRACT`, which is
+    // exactly how the two evidence graphs diverged in the first place.
+    Object.freeze({
+      id: 'evidence-edge',
+      version: '1.0.0',
+      path: 'rulesets/schema/evidence-edge.schema.json',
+      sha256: 'c73565c3cae069f3d2e4710c49b043c57d0a579390c8591c4a5017074da15798',
+    }),
   ]),
   supportedConsumers: Object.freeze([
     Object.freeze({

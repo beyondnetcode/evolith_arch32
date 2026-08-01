@@ -64,7 +64,7 @@ The English catalog is canonical. The Spanish catalog may mirror the line (`- **
 
 `node .harness/scripts/board/report-debt-economics.mjs` reports how many open rows carry both fields **out of how many open rows exist**, so the gap is measurable before it is filled. `--strict` turns the remaining gap into a non-zero exit and is the form the tracking guard calls once the back-fill has landed; `--json` emits the same report machine-readably; `--emit-schema` prints the JSON Schema kept at `.harness/scripts/board/debt-economics.schema.json` (generated from the module — do not hand-edit).
 
-As measured on 2026-07-28 by that command: **0 of 47 open rows** carry a principal and an interest. The denominator moves as rows open and close — read it from the command, never from this sentence. The figures are filled in by a human, deliberately: back-filling 47 rows with invented estimates would manufacture exactly the kind of unsourced number this convention exists to eliminate.
+As measured on 2026-08-01 by that command: **19 of 19 open rows** carry a principal and an interest. All current figures use `Basis: estimate`: principal follows the row's declared complexity band, interest follows its criticality band, and the unit is engineer-hours per 30-day period. The denominator moves as rows open and close — read it from the command, never from this sentence.
 
 ### Which rows ATDM can price, and which need a person
 
@@ -81,16 +81,16 @@ So the honest question is not "what does ATDM say this row costs" but "is an ATD
 
 Both input schemas are printed by `--emit-schema`. There is **no fallback constant** anywhere in the deriver: a missing input blocks the row and names itself, because a defaulted repair time is an `estimate` wearing the `atdm` badge.
 
-As measured on 2026-07-28: **0 of 47 open rows are ATDM-derivable**, all 47 for the same reason — no row declares a rule linkage. Two rows name corpus rules in their prose and are the cheapest to promote (`GT-602` → `ABAC-01`, `ABAC-03`; `GT-592` → `EVD-01`), and neither would derive even then: GT-598 records no off-the-shelf analyser for those rules, so nothing can count their occurrences. **All 47 open rows need a human figure.**
+As measured on 2026-08-01: **0 of 19 open rows are ATDM-derivable**, all 19 for the same reason — no row declares a `- **Rules:**` linkage that can be priced against occurrence counts and an effort table. **All 19 open rows therefore carry a human estimate.**
 
 One thing ATDM never supplies, on any row: an **interest**. It is a repair-cost model with no carrying-cost term, so the interest is a human judgement even where the principal becomes derivable.
 
 ### The requirement is armed forward-only
 
-`node .harness/scripts/board/new-row-economics-guard.mjs` rejects an open row that carries no principal and no interest — but only for rows opened after [`debt-economics-baseline.json`](../../../.harness/scripts/board/debt-economics-baseline.json) was recorded. The 47 rows already open on 2026-07-28 are exempt until a human prices them; demanding figures for them today would leave inventing 47 estimates as the only way to go green.
+`node .harness/scripts/board/new-row-economics-guard.mjs` rejects an open row that carries no principal and no interest — but only for rows opened after [`debt-economics-baseline.json`](../../../.harness/scripts/board/debt-economics-baseline.json) was recorded. The baseline remains as a forward-only detector for new rows, but the current board is no longer relying on the exemption: every currently open row is priced.
 
 That list only ever shrinks, and its size is pinned by a test so an edit that grandfathers a *new* row cannot pass unnoticed. Being exempt from stating a number is not an exemption from stating it correctly: a malformed figure is reported on any row, open or closed, listed or not.
 
 Run the tests with `node --test .harness/scripts/board/*.test.mjs`.
 
-> **Not yet enforced in CI.** The rule is written to drop into `.harness/scripts/ci/08-validate-tracking.mjs` with two lines — `import { checkNewOpenRowEconomics } from '../board/new-row-economics-guard.mjs'` and `errors.push(...checkNewOpenRowEconomics({ enRows, enSections, esSections }).errors)` inside `validateTrackingState()` — and its signature is already the shape that guard holds. Until that wiring lands, and until `.harness/scripts/board/*.test.mjs` is added to the `node --test` list in `.github/workflows/ci-cd.yml`, nothing here blocks a merge.
+This is enforced in CI through two layers: `08-validate-tracking.mjs` fails when any open row lacks valid economics, and the governance self-test job runs the board economics suites, including the new-row negative fixture.

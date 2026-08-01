@@ -476,6 +476,7 @@ jobs:
           node --test .harness/scripts/validate-contract-conformance.test.mjs
           node --test .harness/scripts/board/atdm-principal.test.mjs
           node --test .harness/scripts/board/debt-economics.test.mjs
+          node --test .harness/scripts/board/new-row-economics-guard.test.mjs
           node --test .harness/scripts/run-evolith-intelligent-data-audit.test.mjs
           node --test .harness/scripts/run-evolith-sdlc-interface-audit.test.mjs
 
@@ -489,21 +490,6 @@ jobs:
           node --test .harness/scripts/ci/rag-pgvector.test.mjs
           node --test .harness/scripts/ci/rag-embed-qwen3.test.mjs
           node --test .harness/scripts/ci/rag-embed-integration.test.mjs
-
-          # QUARANTINED, not forgotten: the self-test beside
-          # `.harness/scripts/board/new-row-economics-guard.mjs`. Its filename is spelled
-          # without the `.test.mjs` suffix on purpose — the way this whole class of defect
-          # is found is by grepping the workflows for each test's basename, and naming it
-          # in full here would make it read as wired to the next person who looks.
-          #
-          # Fourteen of its sixteen cases are fixture-driven and green. The other two
-          # assert against the LIVE board, and they are red today because GT-642, GT-643
-          # and GT-644 are open rows carrying no Principal/Interest figures. That is a
-          # real finding, but the fix is an edit to gap-reference-catalog.md, which is
-          # single-driver and owned elsewhere — and a test that reads mutable board
-          # content does not belong in a required check regardless, because it turns any
-          # board drift into a merge block on unrelated work. Wire it once the two live
-          # cases are moved onto fixtures, or once the board rows carry their economics.
 
       # The dead-reference budget below was measured on a BUILT tree. A handful of
       # recorded commands legitimately name build outputs (`dist/main.js`), which

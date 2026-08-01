@@ -3,6 +3,8 @@ import path from 'path';
 import { execFileSync } from 'child_process';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { assertScanned } from '../lib/coverage.mjs';
+import { buildEconomicsReport } from '../board/debt-economics.mjs';
+import { checkNewOpenRowEconomics } from '../board/new-row-economics-guard.mjs';
 
 const ROOT = path.resolve(process.env.EVOLITH_TRACKING_ROOT || '.');
 const EN_FILE = path.join(ROOT, 'reference/core/control-center/gaps/gap-tracking.md');
@@ -329,6 +331,7 @@ export function validateTrackingState({
   esSections,
   registry,
   stats = {},
+  economicsBaselineIds = null,
 }) {
   const errors = [];
   const seen = new Set();
@@ -412,6 +415,43 @@ export function validateTrackingState({
   validateStatusLocale('EN', enRows, enSections, errors);
   validateStatusLocale('ES', esRows, esSections, errors);
 
+  // GT-599: once the open-row backfill lands, debt economics becomes a live
+  // board invariant instead of a reporting-only script. `buildEconomicsReport`
+  // enforces the full corpus (all open rows carry principal + interest, and any
+  // mirrored ES value agrees with EN); `checkNewOpenRowEconomics` preserves the
+  // forward-only negative fixture for rows opened after the baseline.
+  const economics = buildEconomicsReport({
+    boardContent: enContent,
+    catalogContent: [...enSections.values()].join('\n'),
+    esCatalogContent: [...esSections.values()].join('\n'),
+  });
+  stats.debtEconomicsOpenRows = economics.denominators.openRows;
+  stats.debtEconomicsCovered = economics.coverage.covered;
+  stats.debtEconomicsMissing = economics.coverage.missing;
+  for (const violation of economics.violations) {
+    errors.push(`GT-599 debt economics: ${violation}`);
+  }
+  for (const missing of economics.missing) {
+    errors.push(
+      `GT-599 debt economics: ${missing.id} is open (${missing.status}) without principal and interest`,
+    );
+  }
+
+  if (economics.denominators.openRows > 0) {
+    const economicsGuard = checkNewOpenRowEconomics({
+      enRows,
+      enSections,
+      esSections,
+      baselineIds: economicsBaselineIds,
+    });
+    stats.debtEconomicsNewRowsRequired = economicsGuard.stats.required;
+    stats.debtEconomicsNewRowsMissing = economicsGuard.stats.requiredMissing;
+    errors.push(...economicsGuard.errors);
+  } else {
+    stats.debtEconomicsNewRowsRequired = 0;
+    stats.debtEconomicsNewRowsMissing = 0;
+  }
+
   // El catalogo no puede contradecir al board. GT-511, GT-514, GT-517 y GT-551
   // decian `PENDING`/`PENDIENTE` con el board en DONE y un registro de cierre
   // con commit real detras -- ocho dias en un caso. Ninguna comprobacion miraba
@@ -477,6 +517,9 @@ function run() {
   });
 
   const stats = {};
+  const economicsBaselineIds = process.env.EVOLITH_TRACKING_BASELINE_IDS
+    ? new Set(process.env.EVOLITH_TRACKING_BASELINE_IDS.split(',').map((id) => id.trim()).filter(Boolean))
+    : null;
   const errors = validateTrackingState({
     enRows: en.rows,
     esRows: es.rows,
@@ -486,6 +529,7 @@ function run() {
     esSections,
     registry,
     stats,
+    economicsBaselineIds,
   });
 
   // GT-629: printed on BOTH paths, and before the verdict. The denominator of a
@@ -495,6 +539,10 @@ function run() {
     `Acceptance-criteria audit: ${stats.openRowsChecked} non-DONE GT row(s) checked against `
     + `${enSections.size}/${esSections.size} EN/ES catalog sections — `
     + `${stats.openRowsMissingCriteria.length} with no criteria at all.`,
+  );
+  console.log(
+    `Debt-economics audit: ${stats.debtEconomicsCovered}/${stats.debtEconomicsOpenRows} open row(s) `
+    + `carry principal + interest; ${stats.debtEconomicsNewRowsRequired} post-baseline row(s) checked.`,
   );
 
   if (errors.length) {

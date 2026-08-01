@@ -9338,6 +9338,48 @@
         "bash product/infra/load/wait-for-target.sh"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-645",
+      "closedAt": "2026-08-01",
+      "closureCommit": "1f53e472",
+      "evidence": [
+        ".harness/scripts/ci/50-validate-gap-claim.mjs",
+        ".harness/scripts/ci/50-validate-gap-claim.test.mjs",
+        "reference/core/control-center/gaps/gap-reference-catalog.md",
+        "reference/core/control-center/gaps/gap-reference-catalog.es.md",
+        "reference/core/control-center/gaps/gap-tracking.md",
+        "reference/core/control-center/gaps/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/50-validate-gap-claim.test.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-592",
+      "closedAt": "2026-08-01",
+      "closureCommit": "75fac294",
+      "evidence": [
+        "src/packages/mcp-server/src/tools/knowledge.tools.ts",
+        "src/packages/mcp-server/src/tools/knowledge.tools.spec.ts",
+        "src/packages/mcp-server/src/domain/knowledge.factory.ts",
+        "src/packages/agent-runtime/src/adapters/knowledge/hybrid-knowledge.adapter.ts",
+        "src/packages/agent-runtime/src/domain/retrieval/bm25.ts",
+        ".harness/scripts/ci/rag-eval.mjs",
+        ".harness/scripts/ci/rag-eval.test.mjs",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-agent-runtime run build",
+        "npm --workspace @beyondnet/evolith-mcp test -- --runInBand knowledge.tools.spec.ts tools-registration.spec.ts api-catalog-parity.spec.ts",
+        "npm --workspace @beyondnet/evolith-agent-runtime test -- --runInBand retrieval.spec.ts hybrid-knowledge.adapter.spec.ts",
+        "node --test .harness/scripts/ci/rag-eval.test.mjs",
+        "node .harness/scripts/ci/rag-eval.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

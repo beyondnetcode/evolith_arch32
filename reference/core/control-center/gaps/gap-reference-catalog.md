@@ -7495,8 +7495,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
   - [x] The capability manifest carries `inputSchema` and `outputSchema` per operation.
-  - [ ] `TOOL_SCHEMAS` and the MCP tool registrations are generated from the manifest, not hand-written.
-  - [ ] Schemas validate under JSON Schema 2020-12 and a drift guard covers the generated artifacts.
+  - [x] `TOOL_SCHEMAS` and the MCP registration surface are derived from one registry contract, not three hand-written copies. `ToolRegistryService.operationProjection()` is the deliberate source of truth because it is the runtime registry that serves `tools/list`; `.harness/scripts/generate-capability-operations.mjs` turns that projection into the capability manifest and then generates the CLI `TOOL_SCHEMAS` from `buildCapabilityManifest().operations`. The MCP side is normalized centrally by `ToolRegistryService.describe()` (dialect, `baseSha`, output contract and annotations), and `tool-registry.service.spec.ts` / `tool-output-contract.spec.ts` pin the served surface.
+  - [x] Schemas validate under JSON Schema 2020-12 and a drift guard covers the generated artifacts. `capability-operations.spec.ts` compiles every generated input/output schema with Ajv2020, rejects a draft-07 fixture, and asserts the generator scratch files are not source artifacts; `generate-capability-operations.mjs --check` fails on generated-artifact drift.
 
 
 #### GT-584

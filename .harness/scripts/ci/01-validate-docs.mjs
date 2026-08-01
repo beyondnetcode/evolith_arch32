@@ -3,7 +3,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { assertScanned } from '../lib/coverage.mjs';
 
 const root = process.cwd();
@@ -54,6 +54,7 @@ const markdownFiles = [];
 const mermaidBlocks = [];
 const failures = [];
 const fileCache = new Map();
+let renderedMermaidCount = 0;
 
 function walk(directory) {
   if (ignoredPaths.has(directory)) return;
@@ -349,6 +350,33 @@ function validateTopologyManifests() {
   }
 }
 
+function getChangedMarkdownFilesForRendering() {
+  if (!process.env.GITHUB_ACTIONS || !process.env.GITHUB_BASE_REF) {
+    return null;
+  }
+
+  const baseRefs = [`origin/${process.env.GITHUB_BASE_REF}`, process.env.GITHUB_BASE_REF];
+
+  for (const baseRef of baseRefs) {
+    const result = spawnSync(
+      "git",
+      ["diff", "--name-only", "--diff-filter=ACMRT", `${baseRef}...HEAD`],
+      { cwd: root, encoding: "utf8" },
+    );
+
+    if (result.status === 0) {
+      return new Set(
+        result.stdout
+          .split(/\r?\n/)
+          .filter((line) => line.endsWith(".md"))
+          .map((line) => path.resolve(root, line)),
+      );
+    }
+  }
+
+  return null;
+}
+
 function renderMermaidBlock(block, outputDirectory, index) {
   return new Promise((resolve) => {
     const basename = `${String(index + 1).padStart(3, "0")}-${path
@@ -359,22 +387,56 @@ function renderMermaidBlock(block, outputDirectory, index) {
 
     fs.writeFileSync(input, `${block.body}\n`, "utf8");
 
-    const result = spawnSync(
+    const child = spawn(
       "npx",
       ["-y", "@mermaid-js/mermaid-cli", "-i", input, "-o", output, "-b", "transparent", "-p", path.join(root, ".harness/scripts/puppeteer-config.json")],
       { encoding: "utf8" },
     );
 
-    if (result.status !== 0) {
-      addFailure(
-        block.file,
-        block.index,
-        readUtf8(block.file),
-        `mermaid render failed: ${(result.stderr || result.stdout).trim()}`,
-      );
-    }
+    let stdout = "";
+    let stderr = "";
+    let timedOut = false;
+    let resolved = false;
 
-    resolve();
+    const finish = (status, detail = "") => {
+      if (resolved) return;
+      resolved = true;
+      clearTimeout(timeout);
+
+      if (timedOut || status !== 0) {
+        const output = detail || stderr || stdout || `process exited with status ${status}`;
+        addFailure(
+          block.file,
+          block.index,
+          readUtf8(block.file),
+          `mermaid render failed: ${output.trim()}`,
+        );
+      }
+
+      resolve();
+    };
+
+    const timeout = setTimeout(() => {
+      timedOut = true;
+      child.kill("SIGTERM");
+      setTimeout(() => {
+        if (!resolved) child.kill("SIGKILL");
+      }, 5000).unref();
+    }, 120000);
+
+    child.stdout?.on("data", (chunk) => {
+      stdout += chunk.toString();
+    });
+    child.stderr?.on("data", (chunk) => {
+      stderr += chunk.toString();
+    });
+    child.on("error", (error) => {
+      finish(1, error.message);
+    });
+    child.on("close", (status, signal) => {
+      const timeoutMessage = `render timed out after 120000 ms${signal ? ` (${signal})` : ""}`;
+      finish(status ?? 1, timedOut ? timeoutMessage : "");
+    });
   });
 }
 
@@ -384,18 +446,24 @@ async function renderMermaidBlocks() {
   }
 
   const outputDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "arc32-mermaid-"));
+  const changedMarkdownFiles = getChangedMarkdownFilesForRendering();
+  const blocksToRender = changedMarkdownFiles
+    ? mermaidBlocks.filter((block) => changedMarkdownFiles.has(path.resolve(block.file)))
+    : mermaidBlocks;
   const concurrency = Math.max(4, Math.min(os.cpus().length, 16));
   const workers = [];
 
-  for (let index = 0; index < mermaidBlocks.length; index += 1) {
-    const block = mermaidBlocks[index];
+  for (let index = 0; index < blocksToRender.length; index += 1) {
+    const block = blocksToRender[index];
     workers.push(renderMermaidBlock(block, outputDirectory, index));
 
-    if (workers.length >= concurrency || index === mermaidBlocks.length - 1) {
+    if (workers.length >= concurrency || index === blocksToRender.length - 1) {
       await Promise.all(workers);
       workers.length = 0;
     }
   }
+
+  renderedMermaidCount = blocksToRender.length;
 }
 
 walk(root);
@@ -427,5 +495,5 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-const mermaidMessage = shouldRenderMermaid ? ` and rendered ${mermaidBlocks.length} Mermaid diagrams` : "";
+const mermaidMessage = shouldRenderMermaid ? ` and rendered ${renderedMermaidCount} of ${mermaidBlocks.length} Mermaid diagrams` : "";
 console.log(`Documentation validation passed for ${markdownFiles.length} Markdown files${mermaidMessage}.`);

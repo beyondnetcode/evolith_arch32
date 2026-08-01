@@ -9614,7 +9614,7 @@
         "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "The board evidence command runner is now a governed CI execution gate: 110 unique read-only candidate commands execute green, with 0 dead referents, 0 non-zero exits, and 0 inconclusive search-with-no-match outcomes. The remaining max-dead budget is the clean-checkout generated/gitignored basis for dist/, node_modules/ and .harness/bin/."
+      "closureNote": "The board evidence command runner is now a governed CI execution gate: 109 unique read-only candidate commands execute green, with 0 dead referents, 0 non-zero exits, and 0 inconclusive search-with-no-match outcomes. The remaining max-dead budget is the clean-checkout generated/gitignored basis for dist/, node_modules/ and .harness/bin/."
     }
   ]
 }

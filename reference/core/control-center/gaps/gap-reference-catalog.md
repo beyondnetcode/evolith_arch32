@@ -1910,10 +1910,12 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 - **Principal:** `L` · **Interest:** `MED` · **Basis:** `estimate`
 
 - **Acceptance criteria:**
-  - [ ] Circuit-breaker integration tests exercise open, half-open and closed transitions against a failing dependency, and fail without the breaker.
+  - [x] Circuit-breaker integration tests exercise open, half-open and closed transitions against a failing dependency, and fail without the breaker.
   - [ ] A K6 load profile runs in CI and publishes throughput, p95 latency and error rate against declared thresholds.
   - [ ] One chaos drill kills a dependency mid-run and the recorded behaviour matches what ADR-0011 declares.
   - [ ] RTO and RPO are MEASURED on a real DR restore and written into ADR-0013, replacing the current unquantified claim.
+
+- **Progress (2026-08-01):** The circuit-breaker criterion is satisfied by the agent-runtime integration suite rather than by a unit-only state-machine test. `src/packages/agent-runtime/src/adapters/resilience/circuit-breaker.integration.spec.ts` boots a real `node:http` Core stand-in, drives it through `HttpCoreEvaluationAdapter`, and asserts closed -> open, open -> half-open -> closed, half-open -> open, and a hanging dependency timeout. Each protected path has an unprotected control proving the dependency is still called or still pending without the breaker. Verified locally with `npm --prefix src/packages/agent-runtime test -- --runTestsByPath src/adapters/resilience/circuit-breaker.integration.spec.ts` (5/5 tests).
 
 #### GT-444
 

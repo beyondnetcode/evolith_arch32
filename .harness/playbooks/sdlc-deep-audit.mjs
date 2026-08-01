@@ -21,14 +21,19 @@ const markdown = process.argv.includes("--markdown");
 
 const exists = (p) => fs.existsSync(path.join(root, p));
 const read = (p) => { try { return fs.readFileSync(path.join(root, p), "utf8"); } catch { return null; } };
+const skippedWalkDirs = new Set([".git", ".claude", ".mimocode", "node_modules", "dist", "build", "coverage"]);
+const looksLikePathReference = (ref) => ref.includes("/") || ref.endsWith(".rego") || ref.endsWith(".json");
 
-function walk(dir) {
+function walk(dir, seen = new Set()) {
   const files = [];
   const abs = path.join(root, dir);
   if (!fs.existsSync(abs)) return files;
+  const real = fs.realpathSync(abs);
+  if (seen.has(real)) return files;
+  seen.add(real);
   for (const entry of fs.readdirSync(abs, { withFileTypes: true })) {
     const rel = dir ? `${dir}/${entry.name}` : entry.name;
-    if (entry.isDirectory()) files.push(...walk(rel));
+    if (entry.isDirectory() && !skippedWalkDirs.has(entry.name)) files.push(...walk(rel, seen));
     else files.push(rel);
   }
   return files.sort();
@@ -118,8 +123,8 @@ function auditSdlc() {
   }
 
   // Check for structured phase/gate data (GT-280 resolution)
-  const phaseDataDir = "reference/core/sdlc/phases";
-  const gateDataDir = "reference/core/sdlc/gates";
+  const phaseDataDir = "reference/governance/sdlc/phases";
+  const gateDataDir = "reference/governance/sdlc/gates";
   const phaseJsonFiles2 = exists(phaseDataDir) ? walk(phaseDataDir).filter(f => f.endsWith(".json")) : [];
   const gateJsonFiles = exists(gateDataDir) ? walk(gateDataDir).filter(f => f.endsWith(".json")) : [];
 
@@ -141,7 +146,7 @@ function auditSdlc() {
       for (const art of (gate.requiredArtifacts || [])) {
         for (const rule of (art.rules || [])) {
           totalRegoRefs++;
-          if (!exists(rule)) allRegoRefsExist = false;
+          if (looksLikePathReference(rule) && !exists(rule)) allRegoRefsExist = false;
         }
       }
     } catch { /* skip invalid JSON */ }

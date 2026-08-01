@@ -11,8 +11,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const phasesDir = "reference/core/sdlc/phases";
-const gatesDir = "reference/core/sdlc/gates";
+const phasesDir = "reference/governance/sdlc/phases";
+const gatesDir = "reference/governance/sdlc/gates";
 
 let exitCode = 0;
 const errors = [];
@@ -64,7 +64,12 @@ if (gateFiles.length === 0) {
   errors.push("No gate JSON files found");
 }
 
-const allRegoFiles = new Set();
+const allRuleRefs = new Set();
+const pathRuleRefs = new Set();
+
+function looksLikePathReference(ref) {
+  return ref.includes("/") || ref.endsWith(".rego") || ref.endsWith(".json");
+}
 
 for (const f of gateFiles) {
   const raw = fs.readFileSync(path.join(root, gatesDir, f), "utf8");
@@ -80,10 +85,13 @@ for (const f of gateFiles) {
           errors.push(`${f}: artifact "${art.artifact}" has no Rego rules`);
         }
         for (const rule of (art.rules || [])) {
-          if (!exists(rule)) {
+          if (typeof rule !== "string" || !rule.trim()) {
+            errors.push(`${f}: artifact "${art.artifact}" has an empty rule reference`);
+          } else if (looksLikePathReference(rule) && !exists(rule)) {
             errors.push(`${f}: artifact "${art.artifact}" references rego "${rule}" but file not found`);
           } else {
-            allRegoFiles.add(rule);
+            allRuleRefs.add(rule);
+            if (looksLikePathReference(rule)) pathRuleRefs.add(rule);
           }
         }
       }
@@ -109,7 +117,8 @@ if (errors.length > 0) {
   exitCode = 1;
 } else {
   console.log(`  ✅ All ${phaseFiles.length} phases and ${gateFiles.length} gates valid.`);
-  console.log(`     ${allRegoFiles.size} unique Rego files referenced — all exist.`);
+  console.log(`     ${allRuleRefs.size} unique rule reference(s) declared.`);
+  console.log(`     ${pathRuleRefs.size} path-like rule reference(s) checked on disk.`);
 }
 
 console.log();

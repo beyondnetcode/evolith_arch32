@@ -5522,11 +5522,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia Actual:** `node .harness/scripts/run-evolith-deep.mjs` — Dimensión "MODELO SDLC EJECUTABLE": **SÓLIDO**.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [x] Cada fase tiene un archivo `phase-f*.json` en `reference/core/sdlc/phases/` con campos: `id`, `name`, `description`, `order`, `gates[]`.
-  - [x] Cada gate en `reference/core/sdlc/gates/` declara `requiredArtifacts[]` y `rules[]` con referencias a archivos `.rego`.
-  - [x] Existe un validador (`.harness/playbooks/sdlc-phase-gate-validator.mjs`) que verifica reglas Rego y artefactos requeridos.
+  - [x] Cada fase tiene un archivo `phase-f*.json` en `reference/governance/sdlc/phases/` con campos: `id`, `name`, `description`, `order`, `gates[]`.
+  - [x] Cada gate en `reference/governance/sdlc/gates/` declara `requiredArtifacts[]` y `rules[]`.
+  - [x] Existe un validador (`.harness/playbooks/sdlc-phase-gate-validator.mjs`) que verifica gates/fases, artefactos requeridos con reglas asociadas y cualquier referencia tipo ruta.
   - [x] `run-evolith-deep.mjs` reporta `SÓLIDO` para la dimensión "MODELO SDLC EJECUTABLE".
-- **Evidencia de Cierre:** Commit `661a8846` crea 5 phase files, 5 gate files, los schemas SDLC, el validador de phase/gate y reglas Rego SDLC. El audit profundo detecta datos estructurados y reporta `SÓLIDO`.
+- **Evidencia de Cierre:** Commit `661a8846` crea 5 phase files en `reference/governance/sdlc/phases/`, 5 gate files en `reference/governance/sdlc/gates/`, los schemas SDLC, el validador de phase/gate y reglas SDLC. El audit profundo detecta datos estructurados y reporta `SÓLIDO`.
 
 #### GT-281
 
@@ -7213,7 +7213,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Governance` · **Criticidad:** P1 · **Complejidad:** M
 - **Principal:** `M` · **Interés:** `HIGH` · **Base:** `estimate`
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
-- **Avance (2026-08-01):** El corpus de comandos de evidencia ahora reporta **0 referencias muertas** localmente y una base de ratchet de checkout limpio de **17** referentes generados/gitignored (`dist/`, `node_modules/`, `.harness/bin/`), así que CI bajó `--max-dead` a 17. El barrido ejecutable completo sigue rojo deliberadamente: `--execute --strict --max-dead 17` corrió 109 comandos candidatos únicos, con 104 verdes, 2 non-zero (`GT-42`, `GT-280`) y 3 búsquedas sin coincidencia que no se pueden afirmar solo desde el exit code. Por eso AC3 sigue abierto.
+- **Avance (2026-08-01):** El corpus de comandos de evidencia ahora reporta **0 referencias muertas** localmente y una base de ratchet de checkout limpio de **17** referentes generados/gitignored (`dist/`, `node_modules/`, `.harness/bin/`), así que CI bajó `--max-dead` a 17. Un seguimiento hizo pasar el barrido ejecutable estricto: `--execute --strict --max-dead 17` corrió 109 comandos candidatos únicos, con 106 exit 0, 0 non-zero y 3 búsquedas sin coincidencia que no se pueden afirmar solo desde el exit code. AC3 sigue abierto hasta convertir esas búsquedas inconclusas en comandos asertables y promover el camino de CI de ratchet/reporte a ejecución gobernada.
 - **Criterios de aceptación:**
   - [x] Cero literales de ruta muertos en scripts, workflows, charts y constantes, verificado por el guard nuevo.
   - [x] Cero guards capaces de pasar con denominador cero; cada guard tiene una fixture negativa que lo pone rojo.

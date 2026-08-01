@@ -200,3 +200,10 @@ rag-backfill-receipt.json
 # src/sdk/cli/test-project/ y src/sdk/cli/rulesets/.
 /test-project/
 /rulesets/
+
+# GT-583 capability-operation generator scratch files. The generator writes
+# these inside the MCP package only while it asks the live registry for its
+# projection; committed copies can carry stale absolute paths from another
+# worktree.
+/src/packages/mcp-server/__capability-operations.entry.ts
+/src/packages/mcp-server/__capability-operations.json

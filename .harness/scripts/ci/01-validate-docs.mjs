@@ -3,7 +3,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { assertScanned } from '../lib/coverage.mjs';
 
 const root = process.cwd();
@@ -359,22 +359,56 @@ function renderMermaidBlock(block, outputDirectory, index) {
 
     fs.writeFileSync(input, `${block.body}\n`, "utf8");
 
-    const result = spawnSync(
+    const child = spawn(
       "npx",
       ["-y", "@mermaid-js/mermaid-cli", "-i", input, "-o", output, "-b", "transparent", "-p", path.join(root, ".harness/scripts/puppeteer-config.json")],
       { encoding: "utf8" },
     );
 
-    if (result.status !== 0) {
-      addFailure(
-        block.file,
-        block.index,
-        readUtf8(block.file),
-        `mermaid render failed: ${(result.stderr || result.stdout).trim()}`,
-      );
-    }
+    let stdout = "";
+    let stderr = "";
+    let timedOut = false;
+    let resolved = false;
 
-    resolve();
+    const finish = (status, detail = "") => {
+      if (resolved) return;
+      resolved = true;
+      clearTimeout(timeout);
+
+      if (timedOut || status !== 0) {
+        const output = detail || stderr || stdout || `process exited with status ${status}`;
+        addFailure(
+          block.file,
+          block.index,
+          readUtf8(block.file),
+          `mermaid render failed: ${output.trim()}`,
+        );
+      }
+
+      resolve();
+    };
+
+    const timeout = setTimeout(() => {
+      timedOut = true;
+      child.kill("SIGTERM");
+      setTimeout(() => {
+        if (!resolved) child.kill("SIGKILL");
+      }, 5000).unref();
+    }, 120000);
+
+    child.stdout?.on("data", (chunk) => {
+      stdout += chunk.toString();
+    });
+    child.stderr?.on("data", (chunk) => {
+      stderr += chunk.toString();
+    });
+    child.on("error", (error) => {
+      finish(1, error.message);
+    });
+    child.on("close", (status, signal) => {
+      const timeoutMessage = `render timed out after 120000 ms${signal ? ` (${signal})` : ""}`;
+      finish(status ?? 1, timedOut ? timeoutMessage : "");
+    });
   });
 }
 

@@ -7543,9 +7543,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `MCP Server` · **Criticidad:** P2 · **Complejidad:** M
 - **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
 - **Criterios de aceptación:**
-  - [ ] Una tool MCP expone la búsqueda de conocimiento con esquema de salida declarado.
-  - [ ] La recuperación es híbrida, BM25 primero, y gana a la línea base solo-densa en consultas por identificador.
-  - [ ] Un eval de recuperación sobre un set fijo de consultas corre en CI y falla ante regresión.
+  - [x] Una tool MCP expone la búsqueda de conocimiento con esquema de salida declarado. `evolith-knowledge-search` está registrada en el registry MCP, declara `KNOWLEDGE_SEARCH_OUTPUT_SCHEMA`, y aparece en el manifest generado de operaciones de capacidad.
+  - [x] La recuperación es híbrida, BM25 primero, y gana a la línea base solo-densa en consultas por identificador. `HybridKnowledgeAdapter` ejecuta BM25 como ruta primaria de recall y el eval fijo reporta S@1 de identificadores pasando de 0.0000 solo-denso a 0.9333 híbrido.
+  - [x] Un eval de recuperación sobre un set fijo de consultas corre en CI y falla ante regresión. `.github/workflows/ci-cd.yml` ejecuta `rag-eval.test.mjs` antes de `rag-eval.mjs`; los self-tests dañan el ranking y afirman que el gate se pone rojo.
 
 
 #### GT-593
@@ -7885,10 +7885,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Component:** `Governance` · **Criticality:** P2 · **Complexity:** M
 - **Provenance:** Registrado el 2026-07-31 a partir de cinco desaciertos observados en un solo día, cuatro falsos positivos y un falso negativo estructural encontrado auditando qué pull request cerró realmente cada gap de esta ola. Acotado a propósito a la mitad del DIFF: la mitad de prosa aterrizó como #324 (`4c785c5c`), y duplicarla aquí es exactamente el fallo que [`GT-639`](./gap-reference-catalog.es.md#gt-639) existe para evitar. Hermano de [`GT-639`](./gap-reference-catalog.es.md#gt-639) (que construyó el guard) y de [`GT-638`](./gap-reference-catalog.es.md#gt-638) (que asigna los ids sobre los que razona).
 - **Acceptance criteria:**
-  - [ ] El conjunto de reclamos se deriva del DIFF del pull request — una fila `GT-*` cuyo estado cambia el diff, o un registro de evidencia de cierre que el diff agrega, es un reclamo de ese pull request diga lo que diga su prosa.
-  - [ ] Un fixture reproduce el PR #315 — título y rama sin ningún id, un diff que pasa once filas a `DONE` y agrega once registros de cierre — y se le OBSERVA FALLANDO contra la implementación actual antes del arreglo, no solamente pasando después.
-  - [ ] Un fixture reproduce la dirección de falso positivo de la corrida `30631939629`: un cuerpo que nombra seis gaps en una tabla de evidencia y no reclama ninguno no aporta reclamos, de modo que un pull request que documenta un gap nunca se confunda con uno que lo trabaja.
-  - [ ] Que prosa y diff discrepen se reporta como hallazgo propio en vez de resolverse en silencio hacia un lado: un cuerpo que reclama un id que su diff no toca, o un diff que toca una fila que su cuerpo nunca nombra, es el caso que merece mirada humana.
+  - [x] El conjunto de reclamos se deriva del DIFF del pull request — una fila `GT-*` cuyo estado cambia el diff, o un registro de evidencia de cierre que el diff agrega, es un reclamo de ese pull request diga lo que diga su prosa. `diffClaimedIds()` lee movimientos de estado del tablero y registros de cierre agregados, y `claimsOf()` une esos ids con los reclamos declarados en prosa.
+  - [x] Un fixture reproduce el PR #315 — título y rama sin ningún id, un diff que pasa once filas a `DONE` y agrega once registros de cierre — y se OBSERVÓ FALLANDO contra la implementación previa basada solo en prosa. La regresión ahora afirma que los once ids se reclaman desde el diff.
+  - [x] Un fixture reproduce la dirección de falso positivo de la corrida `30631939629`: un cuerpo que nombra seis gaps en una tabla de evidencia y no reclama ninguno no aporta reclamos, de modo que un pull request que documenta un gap nunca se confunda con uno que lo trabaja.
+  - [x] Que prosa y diff discrepen se reporta como hallazgo propio en vez de resolverse en silencio hacia un lado: un cuerpo que reclama un id que su diff no toca, o un diff que toca una fila que su cuerpo nunca nombra, falla con un reporte dedicado de prosa-vs-diff.
 
 #### GT-644
 

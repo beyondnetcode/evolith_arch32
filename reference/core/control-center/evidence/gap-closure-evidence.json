@@ -9319,6 +9319,29 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-649",
+      "closedAt": "2026-08-01",
+      "closureCommit": "92f75f5b",
+      "evidence": [
+        "reference/core/control-center/gaps/gap-reference-catalog.md",
+        "reference/core/control-center/gaps/gap-reference-catalog.es.md",
+        "reference/core/control-center/gaps/gap-tracking.md",
+        "reference/core/control-center/gaps/gap-tracking.es.md",
+        "src/packages/infra-providers/src/logger.provider.ts",
+        "src/packages/infra-providers/src/logger.provider.spec.ts",
+        "src/apps/core-api/src/core-domain.module.ts",
+        "src/sdk/cli/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-infra-providers test -- --runInBand logger.provider.spec.ts",
+        "node -e \"const fs=require('fs'); for (const p of ['src/apps/core-api/src/infrastructure/providers/logger.provider.ts','src/apps/core-api/src/infrastructure/providers/logger.provider.spec.ts','src/sdk/cli/src/infrastructure/providers/logger.provider.ts','src/sdk/cli/src/infrastructure/providers/logger.provider.spec.ts']) { if (fs.existsSync(p)) { throw new Error(`${p} still exists`); } }\"",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-648",
       "closedAt": "2026-08-01",
       "closureCommit": "a97087a2",

@@ -9518,6 +9518,51 @@
         "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-590",
+      "closedAt": "2026-08-01",
+      "closureCommit": "0e0298e6",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/enforcement/c4-binding.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/c4-binding.spec.ts",
+        "reference/core/control-center/gaps/gap-reference-catalog.md#gt-590",
+        "reference/core/control-center/gaps/gap-reference-catalog.es.md#gt-590",
+        "reference/core/control-center/gaps/gap-tracking.md",
+        "reference/core/control-center/gaps/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-core-domain test -- --runInBand c4-binding.spec.ts",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-589 supplies the deterministic RepoFacts symbol/module facts used by the C4 binding proposal and replay lifecycle."
+    },
+    {
+      "id": "GT-594",
+      "closedAt": "2026-08-01",
+      "closureCommit": "0e0298e6",
+      "evidence": [
+        "src/packages/core-domain/src/evaluation/contracts/drift-signals.ts",
+        "src/packages/core-domain/src/evaluation/contracts/drift-signals.spec.ts",
+        "src/packages/core-domain/src/evaluation/architecture-drift-signals.spec.ts",
+        "src/packages/core-domain/src/evaluation/contracts/repo-facts.ts",
+        "reference/core/control-center/gaps/gap-reference-catalog.md#gt-594",
+        "reference/core/control-center/gaps/gap-reference-catalog.es.md#gt-594",
+        "reference/core/control-center/gaps/gap-tracking.md",
+        "reference/core/control-center/gaps/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-core-domain test -- --runInBand drift-signals.spec.ts architecture-drift-signals.spec.ts",
+        "npm --workspace @beyondnet/evolith-repo-facts test -- --runInBand typescript-fact-extractor.spec.ts",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-589 supplies the deterministic RepoFacts fingerprints and masking occurrences used by the advisory drift-signal evaluator."
     }
   ]
 }

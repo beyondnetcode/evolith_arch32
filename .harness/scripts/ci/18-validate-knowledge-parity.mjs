@@ -46,7 +46,7 @@ function nativeDecisions(candidate, validate) {
  */
 function opaDecisions(candidate, opaBinary) {
   const inputJson = JSON.stringify(candidate);
-  const args = ['eval', '--data', OPA_POLICY, '--format=json', '--input', '/dev/stdin', 'data.evolith.knowledge_intake.violations'];
+  const args = ['eval', '--data', OPA_POLICY, '--format=json', '--stdin-input', 'data.evolith.knowledge_intake.violations'];
   let stdout;
   try {
     stdout = execFileSync(opaBinary, args, { cwd: ROOT, encoding: 'utf8', input: inputJson, stdio: ['pipe', 'pipe', 'pipe'], timeout: 10000 });

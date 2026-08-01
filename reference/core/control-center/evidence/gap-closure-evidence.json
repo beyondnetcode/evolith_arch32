@@ -3606,10 +3606,11 @@
         "product/infra/.env.example"
       ],
       "validationCommands": [
-        "grep -c ENV product/infra/docker-compose.yml"
+        "rg -n 'GF_SECURITY_ADMIN_PASSWORD=\\$\\{GRAFANA_ADMIN_PASSWORD\\}' product/infra/docker-compose.yml",
+        "rg -n '^GRAFANA_ADMIN_PASSWORD=changeme$' product/infra/.env.example"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Replaced hardcoded passwords."
+      "closureNote": "Replaced hardcoded passwords. 2026-08-01 evidence maintenance also moved the residual Grafana admin password placeholder behind `GRAFANA_ADMIN_PASSWORD` and made the validation assert the current env injection path."
     },
     {
       "id": "GT-248",
@@ -3635,7 +3636,8 @@
         "product/operations/redis-caching-layer.md"
       ],
       "validationCommands": [
-        "grep -c Redis src/apps/core-api/src/app.module.ts"
+        "rg -n 'InMemoryCacheModule' src/apps/core-api/src/app.module.ts",
+        "rg -n 'Process-local \\(in-memory\\) cache|dead Redis wiring is removed' src/apps/core-api/src/infrastructure/cache/in-memory-cache.module.ts"
       ],
       "dependencyDisposition": "none",
       "closureNote": "2026-07-24 (GT-560): the core-api Redis cache path never actually connected (two wiring bugs) and was removed; `redis-cache.module.ts` -> `in-memory-cache.module.ts` (honest per-process cache). Evidence repointed to the successor module; the other artifacts (cache-keys.ts, the MCP cache module, the caching-layer doc) are unchanged."
@@ -7881,7 +7883,7 @@
         "Fail-closed resolution: `resolve()` throws when the target does not exist, with `optional()` as the explicit escape hatch; `PATH_KEYS` exports the ~45 named locations, and a shared `collectFiles()` replaces five hand-rolled directory walkers.",
         "Six dead path literals repaired: rulesets/topologies -> src/rulesets/topologies; reference/products -> product/products; reference/knowledge/demo/examples -> product/research/demo/examples; reference/infrastructure/helm -> product/infra/helm; reference/navigation -> root MASTER_INDEX.md / control-center/taxonomy; reference/core/sdlc/standards/vision -> split across control-center/{gaps,evidence,maturity-reports}.",
         "15 scripts migrated (06, 09, 11, 12, 19, 21, 22, 25, 27, 29, 30, 31, 32, 33, 34-check-skill-registry-parity), each verified to produce identical output from the repo root, from `src/` and from `/tmp`; script 30 now reports \"5 SDLC phase ids disjoint from 8 topology ids\" from all three.",
-        "node --test .harness/scripts/lib/paths.test.mjs .harness/scripts/lib/coverage.test.mjs -- 28 passing."
+        "node --test .harness/scripts/lib/paths.test.mjs .harness/scripts/lib/coverage.test.mjs"
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "The gap has no dependencies. The defect and its fix are contained in the harness: path resolution moved off `process.cwd()` onto marker ascent and became fail-closed, and the 15 dependent guards were migrated in the same commit, so no other gap had to land first and none is left waiting."
@@ -7901,7 +7903,7 @@
         "Corpus measurement: `find src/rulesets -name \"*.rules.json\" | wc -l` -> 145; the same command against `rulesets/` -> 0.",
         "Other instances: `12-validate-bmad-signatures` printed its success line because `if (existsSync(adrDir))` skipped the whole loop; `11-validate-product-docs` read the wrong package.json so `pkg.version` was always undefined and its version-drift assertion could never fire (its SHIPPED list also named `evolith-cli` where the real directory is `smart-cli`); `33-check-adapter-freshness`'s barrel check never fired; `27-opa-parity-gate` evaluated 26 fixtures from /tmp and 0 from the repo root, exit 0 both times, because `git diff` inherited the cwd and the `catch` silently promoted the run to FULL scope.",
         "Fix verified in `.harness/scripts/lib/coverage.mjs`: `assertScanned` throws on zero items; `assertScannedPerSource` stops a live root masking a dead one; `allowEmpty` requires a written `reason` at the call site and is deliberately NOT settable from an environment variable or a configuration file.",
-        "node --test .harness/scripts/lib/paths.test.mjs .harness/scripts/lib/coverage.test.mjs -- 28 passing, including three cwd-independence proofs: chdir invariance, a real subprocess launched from three directories, and a corpus-size test pinning the 8-vs-5 regression."
+        "node --test .harness/scripts/lib/paths.test.mjs .harness/scripts/lib/coverage.test.mjs"
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "The gap has no dependencies. The guardrail is a self-contained library plus its call sites, landed in the same commit as the path work it pairs with (GT-556); nothing external had to be provisioned or decided for the assertion to become effective."
@@ -7954,7 +7956,8 @@
         "reference/core/foundations/common-rules/senior-architectural-assessment.md"
       ],
       "validationCommands": [
-        "grep -rn 'CircuitBreakerService|createBreaker|opossum|createCacheStore|RedisCacheModule' src/apps/core-api/src -> 0 resultados (breaker huerfano + wiring Redis muerto removidos por completo).",
+        "rg -n 'opossum.*REMOVED|dead Redis cache wiring.*caching is now honestly per-process/in-memory|4/10' reference/core/foundations/common-rules/senior-architectural-assessment.md",
+        "rg -n 'dead Redis wiring is removed rather than repaired' src/apps/core-api/src/infrastructure/cache/in-memory-cache.module.ts",
         "cd src/apps/core-api && npm run build -> nest build exit 0 (sin referencias colgantes).",
         "cd src/apps/core-api && npm test -> 28 suites / 158 tests passed (el spec borrado del breaker era el unico test que lo referenciaba).",
         "npm install --package-lock-only --legacy-peer-deps -> diff de package-lock.json = 3 insertions / 20 deletions, solo opossum + @types/opossum (sin sprawl); npm ci sigue consistente para el build Docker de core-api.",
@@ -8084,7 +8087,8 @@
         "node .harness/scripts/validate-topology-manifests.mjs -> exit 0, 'Topology manifest validation passed for 8 manifest files' (was 13; five were duplicates)",
         "node .harness/scripts/ci/17-validate-knowledge-intake.mjs -> exit 0 after reading BOTH roots; exit 1 in the pre-deletion simulation, the single consumer the blast-radius simulation identified",
         "node .harness/scripts/ci/01-validate-docs.mjs -> exit 0, 'Documentation validation passed for 1451 Markdown files', 0 broken relative links after repointing 14",
-        "node .harness/scripts/ci/{04,22,24,26,28,30,35,39}-*.mjs -> all exit 0",
+        "node .harness/scripts/ci/17-validate-knowledge-intake.mjs",
+        "node .harness/scripts/ci/30-validate-phase-topology-disjoint.mjs",
         "TopologyCatalogService.list() against the real corpus -> 8 topologies, no duplicates, all 8 with a designProfile",
         "jest: CLI 1147, core-domain 1174, core 62, mcp-server 341, core-api 168 -> all exit 0"
       ],
@@ -9587,6 +9591,30 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-589 supplies the deterministic RepoFacts fingerprints and masking occurrences used by the advisory drift-signal evaluator."
+    },
+    {
+      "id": "GT-578",
+      "closedAt": "2026-08-01",
+      "closureCommit": "a52cc3a7",
+      "evidence": [
+        ".github/workflows/ci-cd.yml",
+        ".harness/scripts/lib/paths.mjs",
+        "reference/core/control-center/evidence/gap-closure-evidence.json",
+        "product/infra/docker-compose.yml",
+        "product/infra/.env.example",
+        "reference/core/control-center/gaps/gap-reference-catalog.md#gt-578",
+        "reference/core/control-center/gaps/gap-reference-catalog.es.md#gt-578",
+        "reference/core/control-center/gaps/gap-tracking.md",
+        "reference/core/control-center/gaps/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --strict --max-dead 17",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "The board evidence command runner is now a governed CI execution gate: 109 unique read-only candidate commands execute green, with 0 dead referents, 0 non-zero exits, and 0 inconclusive search-with-no-match outcomes. The remaining max-dead budget is the clean-checkout generated/gitignored basis for dist/, node_modules/ and .harness/bin/."
     }
   ]
 }

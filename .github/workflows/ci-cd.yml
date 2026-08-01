@@ -426,6 +426,8 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
+      - name: Install evidence-command shell dependencies
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
 
       # FIRST, and deliberately. Every step in this job runs under `bash -e`, so the
       # first red step skips every step after it. On run 30629887881 a network-
@@ -501,6 +503,7 @@ jobs:
           npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-infra-providers
+          npm run build --workspace @beyondnet/evolith-agent-runtime
           # GT-642: the cycle guard RUNS GT-589's extractor rather than owning a second
           # one, so the extractor has to be built or the guard has nothing to run. It
           # fails loudly in that case instead of reporting "no cycles found".

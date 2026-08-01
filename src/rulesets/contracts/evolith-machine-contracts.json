@@ -29,6 +29,12 @@
       "version": "1.1.0",
       "path": "src/rulesets/schema/evaluation-result.schema.json",
       "sha256": "b0cad39fb15f0dccd1adbcc0f59aa26aee2a0f9a13ad250ffe031db7a0875d9d"
+    },
+    {
+      "id": "evidence-edge",
+      "version": "1.0.0",
+      "path": "src/rulesets/schema/evidence-edge.schema.json",
+      "sha256": "c73565c3cae069f3d2e4710c49b043c57d0a579390c8591c4a5017074da15798"
     }
   ],
   "supportedConsumers": [

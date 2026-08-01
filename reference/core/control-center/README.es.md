@@ -64,7 +64,7 @@ El catálogo en inglés es el canónico. El catálogo en español puede replicar
 
 `node .harness/scripts/board/report-debt-economics.mjs` reporta cuántas filas abiertas llevan ambos campos **sobre cuántas filas abiertas existen**, de modo que la brecha sea medible antes de llenarse. `--strict` convierte la brecha restante en un exit distinto de cero y es la forma que invoca el guard de tracking una vez completado el relleno; `--json` emite el mismo reporte legible por máquina; `--emit-schema` imprime el JSON Schema guardado en `.harness/scripts/board/debt-economics.schema.json` (generado desde el módulo — no editar a mano).
 
-Medición del 2026-07-28 con ese comando: **0 de 47 filas abiertas** llevan un principal y un interés. El denominador se mueve conforme se abren y cierran filas — léelo del comando, nunca de esta frase. Las cifras las llena una persona, deliberadamente: rellenar 47 filas con estimaciones inventadas fabricaría exactamente el tipo de número sin fuente que esta convención existe para eliminar.
+Medición del 2026-08-01 con ese comando: **19 de 19 filas abiertas** llevan un principal y un interés. Todas las cifras actuales usan `Base: estimate`: el principal sigue la banda de complejidad declarada en la fila, el interés sigue su banda de criticidad, y la unidad es horas-ingeniero por período de 30 días. El denominador se mueve conforme se abren y cierran filas — léelo del comando, nunca de esta frase.
 
 ### Qué filas puede costear ATDM y cuáles necesitan a una persona
 
@@ -81,16 +81,16 @@ Así que la pregunta honesta no es "cuánto dice ATDM que cuesta esta fila" sino
 
 Los dos esquemas de entrada se imprimen con `--emit-schema`. **No hay ninguna constante de respaldo** en el derivador: un insumo ausente bloquea la fila y se nombra a sí mismo, porque un tiempo de reparación por defecto es un `estimate` con la insignia de `atdm`.
 
-Medición del 2026-07-28: **0 de 47 filas abiertas son derivables por ATDM**, las 47 por la misma razón — ninguna declara vínculo con reglas. Dos filas nombran reglas del corpus en su prosa y son las más baratas de promover (`GT-602` → `ABAC-01`, `ABAC-03`; `GT-592` → `EVD-01`), y ni siquiera así derivarían: GT-598 no registra analizador de mercado para esas reglas, así que nada puede contar sus ocurrencias. **Las 47 filas abiertas necesitan una cifra humana.**
+Medición del 2026-08-01: **0 de 19 filas abiertas son derivables por ATDM**, las 19 por la misma razón — ninguna declara un vínculo `- **Rules:**` que pueda costearse contra conteos de ocurrencias y una tabla de esfuerzo. **Las 19 filas abiertas llevan por tanto una estimación humana.**
 
 Algo que ATDM nunca aporta, en ninguna fila: un **interés**. Es un modelo de costo de reparación sin término de acarreo, así que el interés es un juicio humano incluso donde el principal llegue a ser derivable.
 
 ### El requisito está armado solo hacia adelante
 
-`node .harness/scripts/board/new-row-economics-guard.mjs` rechaza una fila abierta que no lleve principal ni interés — pero solo para filas abiertas después de registrarse [`debt-economics-baseline.json`](../../../.harness/scripts/board/debt-economics-baseline.json). Las 47 filas ya abiertas al 2026-07-28 quedan exentas hasta que una persona las costee; exigirles cifras hoy dejaría como única forma de ponerse en verde inventar 47 estimaciones.
+`node .harness/scripts/board/new-row-economics-guard.mjs` rechaza una fila abierta que no lleve principal ni interés — pero solo para filas abiertas después de registrarse [`debt-economics-baseline.json`](../../../.harness/scripts/board/debt-economics-baseline.json). La baseline queda como detector forward-only de filas nuevas, pero el board actual ya no depende de la exención: toda fila actualmente abierta está costeada.
 
 Esa lista solo se encoge, y su tamaño está fijado por un test para que una edición que exente a una fila *nueva* no pase inadvertida. Estar exento de dar un número no exime de darlo bien: una cifra malformada se reporta en cualquier fila, abierta o cerrada, listada o no.
 
 Los tests se corren con `node --test .harness/scripts/board/*.test.mjs`.
 
-> **Todavía sin aplicar en CI.** La regla está escrita para entrar en `.harness/scripts/ci/08-validate-tracking.mjs` con dos líneas — `import { checkNewOpenRowEconomics } from '../board/new-row-economics-guard.mjs'` y `errors.push(...checkNewOpenRowEconomics({ enRows, enSections, esSections }).errors)` dentro de `validateTrackingState()` — y su firma ya tiene la forma que ese guard maneja. Hasta que ese cableado exista, y hasta que `.harness/scripts/board/*.test.mjs` se agregue a la lista de `node --test` en `.github/workflows/ci-cd.yml`, nada de esto bloquea un merge.
+Esto queda aplicado en CI por dos capas: `08-validate-tracking.mjs` falla cuando una fila abierta no tiene economics válidos, y el job de self-tests de gobernanza corre las suites de economics del board, incluido el fixture negativo de fila nueva.

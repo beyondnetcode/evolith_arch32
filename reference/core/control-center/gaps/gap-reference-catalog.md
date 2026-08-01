@@ -241,6 +241,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Risk:** Extra surface to keep in parity + a new attack surface; net-negative without a real requirement.
 - **Affected files:** would-be feature-flagged GraphQL facade module (not created).
 - **Component:** `Core API` · **Dimension:** Integration · **Type:** backend
+- **Principal:** `L` · **Interest:** `LOW` · **Basis:** `estimate`
 - **Criticality:** P3 · **Complexity:** L
 - **Proposed fix (if ever):** A feature-flagged, read-only facade delegating to existing use-cases, with depth/complexity limits and no decision mutations. **Recommendation:** discard unless a concrete consumer demands it.
 - **Acceptance criteria:**
@@ -389,6 +390,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Risk:** Duplicating the agent-runtime epic if not built as an extension of its existing ports.
 - **Affected files:** new Cowork/Claude execution adapter under the agent-runtime port, execution-evidence capture.
 - **Component:** `agent-runtime` · **Dimension:** Integration · **Type:** backend
+- **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Adapter that defines activity+expected artifact, applies tenant rulesets/skills, resolves authorization, invokes Cowork/Claude and captures execution evidence for the gate — over the GT-383…394 ports.
 - **Acceptance criteria:**
@@ -407,6 +409,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Risk:** Effort dispersion before the wedge is consolidated; it belongs to the Tracker, not Core.
 - **Affected files:** Tracker surfaces (portfolio/marketplace/per-tenant packages).
 - **Component:** `Tracker` · **Dimension:** Adoption · **Type:** backend
+- **Principal:** `XL` · **Interest:** `LOW` · **Basis:** `estimate`
 - **Criticality:** P3 · **Complexity:** XL
 - **Proposed fix:** Executive portfolio views + a marketplace adapter model + per-tenant governance packages, in the Tracker, after consolidating the wedge.
 - **Acceptance criteria:**
@@ -483,6 +486,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Risk:** Lock-in, per-credit cost, code leaving the perimeter — mitigated by adapter-boundary isolation and default-off.
 - **Affected files:** `infra-providers` TestSprite adapter (disabled by default in the registry).
 - **Component:** `infra-providers` · **Dimension:** Testing · **Type:** backend
+- **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Opt-in adapter behind `IQualitySignalProvider`; egress isolated at the boundary; never a suite dependency.
 - **Acceptance criteria:**
@@ -501,6 +505,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Risk:** Scope creep into the Core if not kept as an optional pack.
 - **Affected files:** Portal/Scorecards pack (out of `core-domain`).
 - **Component:** `Tracker` · **Dimension:** Adoption · **Type:** backend
+- **Principal:** `L` · **Interest:** `LOW` · **Basis:** `estimate`
 - **Criticality:** P3 · **Complexity:** L
 - **Proposed fix:** GEO/AI-discoverability dimension as an optional Scorecards pack, emitting `Evidence` via the port; not a Core capability.
 - **Acceptance criteria:**
@@ -1595,6 +1600,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - [ ] Quorum broker with 3 nodes on AKS.
 
 **References:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.4/§5.6/§15; risk §15 #10 (mitigated → DEFERRED).
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
 
 #### GT-465
 
@@ -1808,6 +1814,7 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 **Closure:** the full stack (incl. UI) runs in production on the VPS with CD, secrets, observability, and hardening in place.
 
 **References:** product/infra/vps-coolify, helm; GT-324; GT-435.
+- **Principal:** `XL` · **Interest:** `HIGH` · **Basis:** `estimate`
 
 - **Acceptance criteria:**
   - [ ] Every gap in the declared M2 scope (`GT-324`, `GT-437`, `GT-441`, `GT-442`, `GT-443`, `GT-444`, `GT-445` and the Phase-2 UI refactor) is DONE or explicitly DEFERRED with a reason.
@@ -1825,6 +1832,7 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 **Closure:** the diagram's runtime path is deployed and validated in prod; all child items DONE.
 
 **References:** road-to-production assessment; maturity-assessment; ADR-0101/0104.
+- **Principal:** `XL` · **Interest:** `SEVERE` · **Basis:** `estimate`
 
 - **Acceptance criteria:**
   - [ ] Every child gap named in the decomposition (`GT-324`, `GT-436`…`GT-446`) is DONE or explicitly DEFERRED with a reason — an epic closes when its children do, never on its own narrative.
@@ -1899,6 +1907,7 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 **Title:** Reliability validation (circuit breakers, load, DR)
 
 **Problem:** circuit breakers + DR are `Designed` but untested at scale; no chaos drills; RTO/RPO not quantified. **Closure:** breaker integration tests + K6 load/chaos + DR deploy with measured RTO/RPO. **References:** ADR-0011/0013/0037.
+- **Principal:** `L` · **Interest:** `MED` · **Basis:** `estimate`
 
 - **Acceptance criteria:**
   - [ ] Circuit-breaker integration tests exercise open, half-open and closed transitions against a failing dependency, and fail without the breaker.
@@ -1911,6 +1920,7 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 **Title:** External penetration test
 
 **Problem:** SAST/SCA automated (CodeQL/Trivy) but no external pen-test engagement. **Closure:** external pen-test completed, findings remediated. **References:** security pillar (maturity §3.1).
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
 
 - **Acceptance criteria:**
   - [ ] An external penetration test is completed against a deployed environment by a party that did not build the system, with its scope and dates recorded.
@@ -2706,6 +2716,7 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 - **Purpose:** Continuously build, push and deploy the services.
 - **Evidence (original):** `ci-cd.yml` only publishes the CLI (npm + Docker Hub); no CD for core-api/mcp-server.
 - **Complexity:** M
+- **Principal:** `M` · **Interest:** `HIGH` · **Basis:** `estimate`
 - **Applied fix:** extended `.github/workflows/ci-cd.yml` — (1) a `docker-services` matrix job builds + pushes `core-api` and `mcp-server` images to **GHCR** (`ghcr.io/<owner>/evolith-core-api` and `…-mcp-server`, tags `latest` + `${sha}`), authenticating with the built-in `GITHUB_TOKEN` (`permissions: packages: write`) — no extra secret; build context = repo root (Dockerfiles COPY repo-root-relative paths; all COPY targets verified present); (2) a guarded `deploy` job triggers Coolify per service, which **no-ops with a warning** until `COOLIFY_API_TOKEN` + `COOLIFY_COREAPI_DEPLOY_HOOK` / `COOLIFY_MCP_DEPLOY_HOOK` repo secrets are set (safe to merge now); (3) `push` (main + `v*` tags) triggers so delivery is continuous. YAML validated (js-yaml).
 - **Verified in CI (run 28321628592 → 28321997377):** GHCR build+push is now PROVEN green — both `evolith-core-api` and `evolith-mcp-server` images built (build context = repo root) and pushed to GHCR. En route, repaired the CI that was fully broken: regenerated the drifted root `package-lock.json` (npm ci EUSAGE), and fixed the smart-cli Test job (build the `@evolith/*` deps + the CLI before tests; gate on the deterministic unit suite, leaving the env-sensitive e2e to its dedicated job + the per-flow E2E playbooks).
 - **Residual (criterion 2 — owner's infra):** the Coolify `deploy` job runs but `curl` fails with `Could not resolve host` — the `COOLIFY_COREAPI_DEPLOY_HOOK` / `COOLIFY_MCP_DEPLOY_HOOK` secrets must be **full deploy-webhook URLs** (`https://<coolify-host>/api/v1/deploy?uuid=<app-uuid>`), not a UUID/path. The owner must re-set those 2 secret values; the deploy targets their infra and is not verifiable from dev → stays `IN-PROGRESS` until a green deploy. *(Separate, non-GT-324: the legacy CLI→Docker Hub `docker` job fails because sdk/cli has no per-package lockfile for its standalone Dockerfile.)*
@@ -7295,6 +7306,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** The repository pays the cost of building and maintaining level 3-4 controls and collects none of their benefit; worse, it displays them green. One missing field in a mapper silences an entire subsystem, and a check named after the flagship agent has been reporting success for months while doing nothing.
 - **Affected files:** `.harness/scripts/ci/**`, `.github/workflows/**`, `product/infra/**` (Helm values), `src/packages/core-domain/src/application/validators/evaluators/**`
 - **Component:** `Governance` · **Criticality:** P1 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `HIGH` · **Basis:** `estimate`
 - **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
 - **Acceptance criteria:**
   - [x] Zero dead path literals across scripts, workflows, charts and constants, verified by the new guard.
@@ -7378,6 +7390,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** "Which ADR moved because of which gate decision because of which agent turn" is unanswerable, and that traversal is the stronger half of the stated moat. The typed model lives where nothing persists; the persisted model lives where nothing is typed.
 - **Affected files:** `src/packages/core-domain/src/evidence/evidence-graph.ts`, `src/packages/contracts/**`, `evolith_tracker` — `PostgreSqlEvidenceRecordRepository.cs`, new `evidence_edges` migration
 - **Component:** `Evolith Suite` · **Criticality:** P1 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `HIGH` · **Basis:** `estimate`
 - **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
 - **Acceptance criteria:**
   - [x] The Core edge type is exported from the shared contracts package.
@@ -7524,6 +7537,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** "Our gates have a published false-block rate, per rule and per tenant" is the one claim a competing rule catalogue cannot copy, because it is a property of accumulated operation rather than of the rules. It is also the honest precondition for GT-584's thresholds being anything other than invented.
 - **Affected files:** `src/sdk/cli/src/commands/**` (new judge/calibration command), `src/rulesets/**`, `reference/core/control-center/**`
 - **Component:** `Governance` · **Criticality:** P1 · **Complexity:** L
+- **Principal:** `L` · **Interest:** `HIGH` · **Basis:** `estimate`
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
   - [ ] A hand-labelled set of real diffs from this repository, with the human-to-human agreement ceiling reported.
@@ -7572,6 +7586,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** This is what turns a proprietary log into something an auditor recognizes without taking Evolith's word for it, and it is the difference between the compliance packs being an export and being a rewrite.
 - **Affected files:** `src/packages/core-domain/src/evaluation/contracts/quality-evidence.ts`, `src/packages/core-domain/src/application/services/audit.service.ts`, `src/sdk/cli/src/commands/**`, `src/rulesets/**`
 - **Component:** `Governance` · **Criticality:** P2 · **Complexity:** L
+- **Principal:** `L` · **Interest:** `MED` · **Basis:** `estimate`
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
   - [ ] Every decision emits a signed statement and a verifiable receipt.
@@ -7604,6 +7619,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** A confirmed mapping is the asset a detector cannot produce, because producing it requires approval authority and somewhere to keep the decision. It is the one item on this list where Evolith's governance role is the moat rather than the overhead.
 - **Affected files:** `src/packages/core-domain/src/application/validators/enforcement/c4-compiler.ts`, `.../structurizr-parser.ts`, `src/packages/agent-runtime/src/domain/ports/quality-signal-provider.port.ts`
 - **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** L
+- **Principal:** `L` · **Interest:** `MED` · **Basis:** `estimate`
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
   - [ ] A provider proposes C4-to-code bindings with a confidence per binding.
@@ -7668,6 +7684,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** This is where the differentiation is, and also where the competition is: a vendor shipped automatic architecture discovery with quality-gate violations for five languages, positioned explicitly against AI-caused drift. Import checking is contested; measured, attributed erosion is not.
 - **Affected files:** `src/packages/core-domain/src/evaluation/kind-evaluators.ts`, `src/packages/agent-runtime/src/application/**`, `src/rulesets/**`
 - **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** L
+- **Principal:** `L` · **Interest:** `MED` · **Basis:** `estimate`
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
   - [ ] Advisory evaluators exist for duplication, refactor-to-copy ratio and error-masking constructs.
@@ -7745,11 +7762,13 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** With no principal there is no way to say what the debt costs, and with no interest no way to argue which item to pay first. It is also the only route to a sentence a budget owner responds to: "the debt is N hours and grows M per sprint".
 - **Affected files:** `reference/core/control-center/gaps/gap-tracking.md` (+ `.es.md`), `reference/core/control-center/evidence/gap-closure-evidence.json`, `.harness/scripts/ci/08-validate-tracking.mjs`
 - **Component:** `Governance` · **Criticality:** P2 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
 - **Provenance:** Derived from the 2026-07-26 product maturity audit ([product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md)): these are the international artifacts the audit found missing. Standard editions and numbers verified against sources on 2026-07-26, not cited from memory.
+- **Closure note (2026-08-01):** The current open-board denominator is priced: `report-debt-economics` reports 19/19 open rows with principal + interest, all marked `Basis: estimate`. `08-validate-tracking` now treats that report as a hard invariant and also calls the forward-only new-row guard. The ATDM pass remains honest rather than decorative: `report-atdm-principal` reports 0/19 derivable rows because no open row declares a rule linkage plus occurrence/effort inputs, so no row is labelled `atdm`.
 - **Acceptance criteria:**
-  - [ ] Every OPEN row carries a principal and an interest, with the unit declared.
-  - [ ] The tracking guard rejects a new open row without them.
-  - [ ] The automatable subset is derived from ATDM rather than hand-estimated.
+  - [x] Every OPEN row carries a principal and an interest, with the unit declared.
+  - [x] The tracking guard rejects a new open row without them.
+  - [x] The automatable subset is derived from ATDM rather than hand-estimated.
 
 #### GT-600
 
@@ -7760,6 +7779,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** Without a named buyer nothing else on the board converts into revenue. Standards compliance is the one framing of this engine that has a budget line attached, and the engine that would evaluate it already exists.
 - **Affected files:** `src/rulesets/**`, `product/suite/positioning/**`, `product/suite/vision/**`
 - **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** L
+- **Principal:** `L` · **Interest:** `MED` · **Basis:** `estimate`
 - **Provenance:** Derived from the 2026-07-26 product maturity audit ([product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md)): these are the international artifacts the audit found missing. Standard editions and numbers verified against sources on 2026-07-26, not cited from memory.
 - **Acceptance criteria:**
   - [ ] A decision is recorded on whether the CLI wedge or the Tracker is the monetisation vehicle.
@@ -7916,6 +7936,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Stop every PR carrying a permanently red check that describes no defect — and make red mean something again.
 - **Evidence:** **Every pull request carries a red `CodeQL` check reading "1 configuration not found", and it is not a security finding — it is orphaned bookkeeping.** GitHub still has **82 code-scanning analyses** on `refs/heads/main` under the analysis key `.github/workflows/ci.yml:codeql`. That configuration was real: commit `87f50ce3` added a `codeql` job to `ci.yml`, and `f50030cd` removed it on 2026-06-06 while gutting that workflow — the last analysis under the key is from that same day. Because the configuration is still *recorded* on `main` but nothing produces it, GitHub reports it missing on every PR. It has done so for 51 days. Verified: `code-scanning/analyses?ref=refs/heads/main` returns three analysis keys — `ci.yml:codeql` (82, last 2026-06-06), `sdk-cli-ci.yml:codeql-analysis` (159, current) and `sdk-cli-ci.yml:trivy-scan` (159, current). The scanning that matters is healthy; `CodeQL SAST` passes and is a required check. **The dead workflow itself is already deleted** (it ran a no-op `Disabled` job on every PR and push to `main` and `develop`); deleting the file does NOT clear the recorded configuration, which is why this row exists. **The remaining action is deliberately not automated:** removing the 82 analyses via `DELETE /repos/{owner}/{repo}/code-scanning/analyses/{id}` is irreversible and destroys code-scanning history on a protected branch. Their historical value is nil — they describe a configuration dead since June — but discarding security-scan history is an owner decision, not a tooling one. **Why it matters beyond the noise:** a permanently red check trains reviewers to discount red checks, and `CodeQL SAST` — which shares the CodeQL name and IS required — is exactly the check nobody can afford to learn to ignore.
 - **Component:** `Infra` · **Criticality:** P2 · **Complexity:** XS
+- **Principal:** `XS` · **Interest:** `MED` · **Basis:** `estimate`
 - **Provenance:** Diagnosed on 2026-07-27 while investigating why `CodeQL` was red on PR #217. The reversible half (deleting the dead `.github/workflows/ci.yml`) landed in that same commit; the irreversible half is registered here instead of executed.
 - **Acceptance criteria:**
   - [ ] `gh pr checks` on a fresh PR shows no `CodeQL` check reporting "configuration not found".

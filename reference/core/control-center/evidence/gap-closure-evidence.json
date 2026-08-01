@@ -9319,6 +9319,26 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-639",
+      "closedAt": "2026-08-01",
+      "closureCommit": "98139bc0",
+      "evidence": [
+        ".harness/scripts/ci/50-validate-gap-claim.mjs",
+        ".harness/scripts/ci/50-validate-gap-claim.test.mjs",
+        "reference/core/control-center/gaps/gap-tracking.md",
+        "reference/core/control-center/gaps/gap-tracking.es.md",
+        "reference/core/control-center/gaps/gap-reference-catalog.md",
+        "reference/core/control-center/gaps/gap-reference-catalog.es.md"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/50-validate-gap-claim.test.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-649",
       "closedAt": "2026-08-01",
       "closureCommit": "92f75f5b",

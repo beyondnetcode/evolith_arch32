@@ -130,6 +130,7 @@
  * USAGE
  *   node .harness/scripts/ci/50-validate-gap-claim.mjs
  *   node .harness/scripts/ci/50-validate-gap-claim.mjs --json
+ *   node .harness/scripts/ci/50-validate-gap-claim.mjs --claims-markdown
  *   node .harness/scripts/ci/50-validate-gap-claim.mjs --fixture <file>   # offline
  *
  * EXIT CODES
@@ -411,6 +412,54 @@ export function findContested(claimMap) {
     .sort((a, b) => a.id.localeCompare(b.id));
 }
 
+const markdownCell = (value) => String(value ?? '').replaceAll('|', '\\|').replace(/\s+/g, ' ').trim();
+
+function prLabel(pr) {
+  if (pr.url) return `[#${pr.number}](${pr.url})`;
+  return `#${pr.number}`;
+}
+
+/**
+ * A live board-readable view of who claims which gap.
+ *
+ * This is intentionally produced at read time from open pull requests, not
+ * committed as board state. Committing it would make the board stale the moment
+ * another PR opened, which is the design constraint GT-639 records.
+ */
+export function renderClaimsMarkdown(prs) {
+  const claimMap = buildClaimMap(prs);
+  const sources = claimSources(prs);
+  const contestedIds = new Set(findContested(claimMap).map((c) => c.id));
+
+  const lines = [
+    '# Live In-Flight Gap Claims',
+    '',
+    'Generated from open pull requests at run time. This table is a live view, not committed board state.',
+    '',
+    '| Gap | Pull request | Branch | Source | Claim status |',
+    '|---|---:|---|---|---|',
+  ];
+
+  if (claimMap.size === 0) {
+    lines.push('| _none_ | _none_ | _none_ | _none_ | _none_ |');
+    return `${lines.join('\n')}\n`;
+  }
+
+  for (const [id, prsForId] of [...claimMap].sort()) {
+    for (const pr of prsForId) {
+      const via = sources.get(id)?.find((entry) => entry.number === pr.number);
+      const route = via ? [via.prose && 'declared', via.diff && 'diff'].filter(Boolean).join('+') : '?';
+      lines.push(
+        `| ${id} | ${prLabel(pr)} | ${markdownCell(pr.headRefName ?? '?')} | ${route} | ${
+          contestedIds.has(id) ? 'contested' : 'claimed'
+        } |`,
+      );
+    }
+  }
+
+  return `${lines.join('\n')}\n`;
+}
+
 // ---------------------------------------------------------------------------
 // I/O edges
 // ---------------------------------------------------------------------------
@@ -458,6 +507,7 @@ export function fetchPullRequestDiff(number) {
 
 function main(argv) {
   const asJson = argv.includes('--json');
+  const asClaimsMarkdown = argv.includes('--claims-markdown');
   const fixtureIdx = argv.indexOf('--fixture');
 
   const prs = fixtureIdx !== -1
@@ -501,6 +551,11 @@ function main(argv) {
   const contested = findContested(claimMap);
   const sources = claimSources(prs);
   const divergent = findDivergences(prs);
+
+  if (asClaimsMarkdown) {
+    process.stdout.write(renderClaimsMarkdown(prs));
+    return contested.length > 0 || divergent.length > 0 ? 1 : 0;
+  }
 
   // Ids nobody declared, named in prose by at least one open PR. Not contestable —
   // but printed, because a rule that got narrower must not also get quieter.

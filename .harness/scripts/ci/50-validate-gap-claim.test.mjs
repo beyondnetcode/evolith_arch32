@@ -28,6 +28,7 @@ import {
   diffClaimedIds,
   claimsOf,
   findDivergences,
+  renderClaimsMarkdown,
 } from './50-validate-gap-claim.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -241,6 +242,42 @@ describe('the guard end to end', () => {
     assert.equal(status, 1, out);
     const payload = JSON.parse(out.trim().split('\n')[0]);
     assert.deepEqual(payload.contested, [{ id: 'GT-500', prs: [1, 2] }]);
+  });
+
+  it('--claims-markdown renders a live board-readable table with PR and branch', () => {
+    const { status, out } = runWith(
+      [{
+        number: 10,
+        title: 'GT-501: close the thing',
+        headRefName: 'feat/gt-501-close-the-thing',
+        url: 'https://example.test/pull/10',
+      }],
+      ['--claims-markdown'],
+    );
+    assert.equal(status, 0, out);
+    assert.match(out, /# Live In-Flight Gap Claims/);
+    assert.match(
+      out,
+      /\| GT-501 \| \[#10\]\(https:\/\/example\.test\/pull\/10\) \| feat\/gt-501-close-the-thing \| declared \| claimed \|/,
+    );
+  });
+
+  it('--claims-markdown keeps the guard red for contested claims', () => {
+    const { status, out } = runWith(
+      [
+        { number: 10, title: 'GT-502', headRefName: 'feat/gt-502-a' },
+        { number: 11, title: 'GT-502', headRefName: 'feat/gt-502-b' },
+      ],
+      ['--claims-markdown'],
+    );
+    assert.equal(status, 1, out);
+    assert.match(out, /\| GT-502 \| #10 \| feat\/gt-502-a \| declared \| contested \|/);
+    assert.match(out, /\| GT-502 \| #11 \| feat\/gt-502-b \| declared \| contested \|/);
+  });
+
+  it('renderClaimsMarkdown escapes table-breaking branch names', () => {
+    const out = renderClaimsMarkdown([{ number: 12, title: 'GT-503', headRefName: 'feat/gt-503|pipe' }]);
+    assert.match(out, /feat\/gt-503\\\|pipe/);
   });
 });
 

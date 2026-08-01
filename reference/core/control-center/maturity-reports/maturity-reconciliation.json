@@ -4,13 +4,13 @@
   "asOf": "2026-07-26",
   "gaps": {
     "total": 647,
-    "done": 621,
-    "pending": 10,
+    "done": 623,
+    "pending": 8,
     "inProgress": 9,
     "deferred": 7
   },
   "evidence": {
-    "closureRecords": 603,
+    "closureRecords": 605,
     "cliPackage": "@beyondnet/evolith-cli@1.2.2",
     "adrCount": 139,
     "rulesetCount": 176,

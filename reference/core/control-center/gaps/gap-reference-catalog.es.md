@@ -7302,10 +7302,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Principal:** `M` · **Interés:** `HIGH` · **Base:** `estimate`
 - **Procedencia:** Evaluación del código componente a componente realizada el 2026-07-26 en el repositorio compañero `why-architecture` (`docs/evolith-diagnostico-es.md`), verificada contra el código de este repositorio antes de registrarse.
 - **Criterios de aceptación:**
-  - [x] El tipo de arista del Core se exporta desde el paquete de contratos compartidos.
-  - [ ] Existe una tabla `evidence_edges` con índices en ambos sentidos, rellenada desde `ReferencesJson`.
-  - [ ] Un endpoint de grafo acotado por profundidad devuelve el camino decisión→evidencia de una iniciativa.
-  - [ ] `References` se conserva como proyección durante una release antes de retirarse.
+  - [x] El tipo de arista del Core se exporta desde el paquete de contratos compartido.
+  - [x] Existe una tabla `evidence_edges` con índices en ambas direcciones, backfilleada desde `ReferencesJson`. **Cerrado 2026-08-01 en el satélite** (`beyondnetcode/evolith_tracker#90`): diez columnas y tres índices generados con `dotnet ef` contra `EVIDENCE_EDGE_STORAGE_CONTRACT` — `idx_evidence_edges_from`, `idx_evidence_edges_to` (la búsqueda inversa que la columna jsonb no podía servir a ningún coste) y el único `ux_evidence_edges_identity`, espejo de `evidenceEdgeKey()`. El backfill es SQL crudo sobre `references_json` y **habría corrido contra una tabla vacía en CI**, así que se ejecutó de verdad contra un Postgres 16 sembrado con las seis formas que importan: de 6 referencias produjo exactamente las 3 aristas correctas, dejó el id externo opaco en `References`, rechazó un `kind` inventado y un autolazo, y conservó entero un id con barras. Reejecutado: `INSERT 0 0`.
+  - [x] Un endpoint de grafo acotado en profundidad devuelve el camino decisión→evidencia de una iniciativa. **Cerrado 2026-08-01** (`beyondnetcode/evolith_tracker#91`): `GET /api/v1/initiatives/{id}/evidence-graph` con `depth` (2 por defecto, techo 5), `direction` y `type` repetible. **No** reimplementa la travesía — carga aristas y las pasa por la misma función que los tests comparan contra el contrato de este paquete, porque una tercera semántica de travesía (SQL, contrato, HTTP) sin nada que garantice que las tres coinciden es exactamente el defecto que este gap cierra.
+  - [x] `References` se conserva como proyección durante una release antes de retirarla. **Verificado en código:** `EvidenceRecordRecord.ReferencesJson` y su columna jsonb siguen intactas, y el backfill deja a propósito toda entrada no canónica ahí — son los ids externos opacos que lee el camino de dedup, no son aristas, y retirar la columna ahora los perdería.
 
 #### GT-606
 

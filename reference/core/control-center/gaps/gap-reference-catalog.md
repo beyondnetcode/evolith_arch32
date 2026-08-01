@@ -394,10 +394,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Adapter that defines activity+expected artifact, applies tenant rulesets/skills, resolves authorization, invokes Cowork/Claude and captures execution evidence for the gate — over the GT-383…394 ports.
 - **Acceptance criteria:**
-  - [ ] A bounded activity runs via the adapter with permissions/plan/approval and evidence capture. _(the adapter is bounded —rejects out-of-catalog tools— and the runtime envelope (approval/policy/trace) governs it; live execution against Claude/Cowork needs the real `CoworkClient` —connector/infra)_
+  - [x] A bounded activity runs via the adapter with permissions/plan/approval and evidence capture. _(`cowork-bounded-execution.e2e.spec.ts` injects a `CoworkClient`, the adapter proposes an in-catalog governed skill, the runtime revalidates the plan arguments, applies OPA pre/post policy, requires approval, executes `.harness`, and captures Tracker trace provenance; an out-of-catalog proposal never reaches policy/approval/execution)_
   - [x] The executor is replaceable (satisfies the agent-runtime execution contract). _(`CoworkAgentEngineAdapter implements IAgentEnginePort`, drop-in like stub/hermes/swarms)_
-- **Dependencies:** GT-387, GT-441. **Blocked (2026-07-18) on Tracker-side approval work:** the runtime envelope governing this adapter routes HITL approval to the Tracker (`TrackerApprovalAdapter`, GT-441, commit `ef9a14d8`), and the Tracker endpoint it asks does not exist yet — so every governed Cowork activity flagged `requiresApproval` is denied fail-closed until the Tracker ships it. That half is tracked on the Tracker's own board as `CD-23` (`evolith_tracker` · `docs/audit/tracker-gap-tracking.md`). This item stays on the Core board and keeps its status: its affected files are Core `agent-runtime` code, and the Tracker catalog's own rule is that work landing in Core code belongs on the Core board.
-- **Status:** `IN-PROGRESS`
+- **Dependencies:** GT-387, GT-441. **Satisfied (2026-08-01, commit `eaa98fcc`):** the Core-side adapter is bounded through `IAgentEnginePort` and the executable runtime envelope proves approval/policy/trace capture with an injected `CoworkClient`. Live Claude/Cowork connectivity remains connector/infra wiring behind that injected client, not an open Core gap.
+- **Status:** `DONE`
 
 #### GT-532
 

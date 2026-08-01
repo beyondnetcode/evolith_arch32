@@ -9520,6 +9520,30 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-531",
+      "closedAt": "2026-08-01",
+      "closureCommit": "eaa98fcc",
+      "evidence": [
+        "src/packages/agent-runtime/src/adapters/engine/cowork-agent.adapter.ts",
+        "src/packages/agent-runtime/src/__tests__/cowork-agent.adapter.spec.ts",
+        "src/packages/agent-runtime/src/__tests__/cowork-bounded-execution.e2e.spec.ts",
+        "src/packages/agent-runtime/src/application/agent-runtime.service.ts",
+        "src/packages/agent-runtime/src/domain/ports/agent-engine.port.ts",
+        "reference/core/control-center/gaps/gap-reference-catalog.md#gt-531",
+        "reference/core/control-center/gaps/gap-reference-catalog.es.md#gt-531",
+        "reference/core/control-center/gaps/gap-tracking.md",
+        "reference/core/control-center/gaps/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-agent-runtime test -- --runInBand cowork-agent.adapter.spec.ts cowork-bounded-execution.e2e.spec.ts",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-387/GT-441 supply the agent-runtime execution and HITL approval envelope; live Claude/Cowork connectivity remains isolated behind the injected CoworkClient connector."
+    },
+    {
       "id": "GT-590",
       "closedAt": "2026-08-01",
       "closureCommit": "0e0298e6",

@@ -53,6 +53,9 @@ let sandbox;
 function catalogSection(gap, lang) {
   const literal = lang === 'EN' ? EN_LITERAL[gap.status] : ES_LITERAL[gap.status];
   const label = lang === 'EN' ? 'Status' : 'Estado';
+  const economics = lang === 'EN'
+    ? '- **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`'
+    : '- **Principal:** `M` · **Interés:** `MED` · **Base:** `estimate`';
   const box = gap.status === 'done' ? '[x]' : '[ ]';
   const count = lang === 'EN' ? gap.criteriaEn : gap.criteriaEs;
 
@@ -60,7 +63,16 @@ function catalogSection(gap, lang) {
     ? ['- **Acceptance criteria:**', ...Array.from({ length: count }, (_, i) => `  - ${box} criterion ${i + 1} is met`)]
     : ['**Closure:** prose that reads like a plan and cannot be ticked by anybody.'];
 
-  return [`#### ${gap.id}`, '', `**Title:** fixture ${gap.id}`, '', `- **${label}:** \`${literal}\``, ...body, ''].join('\n');
+  return [
+    `#### ${gap.id}`,
+    '',
+    `**Title:** fixture ${gap.id}`,
+    '',
+    `- **${label}:** \`${literal}\``,
+    ...(gap.status === 'done' ? [] : [economics]),
+    ...body,
+    '',
+  ].join('\n');
 }
 
 function boardFile(gaps, lang) {
@@ -127,7 +139,11 @@ function runGuard(gaps, name) {
   writeBoard(root, gaps);
   const res = spawnSync(process.execPath, [GUARD], {
     encoding: 'utf8',
-    env: { ...process.env, EVOLITH_TRACKING_ROOT: root },
+    env: {
+      ...process.env,
+      EVOLITH_TRACKING_ROOT: root,
+      EVOLITH_TRACKING_BASELINE_IDS: gaps.map((gap) => gap.id).join(','),
+    },
     timeout: 60000,
   });
   return { status: res.status, out: `${res.stdout}\n${res.stderr}` };
@@ -184,8 +200,8 @@ describe('validateTrackingState — open rows must carry criteria', () => {
     esRows: [{ id: 'GT-01', status: ES_LITERAL[status === 'DONE' ? 'done' : 'in-progress'] }],
     enContent: '**Progress:** 0 / 1 done · 1 in progress · 0 pending · 0 deferred',
     esContent: '**Progreso:** 0 / 1 completados · 1 en progreso · 0 pendientes · 0 diferidos',
-    enSections: sections({ 'GT-01': body }),
-    esSections: sections({ 'GT-01': body }),
+    enSections: sections({ 'GT-01': `${body}\n- **Principal:** \`M\` · **Interest:** \`MED\` · **Basis:** \`estimate\`\n` }),
+    esSections: sections({ 'GT-01': `${body}\n- **Principal:** \`M\` · **Interés:** \`MED\` · **Base:** \`estimate\`\n` }),
     registry: { closures: [] },
     ...overrides,
   });

@@ -231,9 +231,12 @@ test('the checked-in baseline matches the board it was recorded from', () => {
 test('the exemption list only ever shrinks — its size is pinned', () => {
   const baseline = JSON.parse(readFileSync(BASELINE_PATH, 'utf8'));
   assert.equal(baseline.recordedOn, '2026-07-28');
-  assert.equal(
-    baseline.grandfatheredOpenRows.length,
-    47,
+  assert.ok(
+    baseline.grandfatheredOpenRows.length > 0,
+    'the baseline must stay non-empty until the forward-only guard no longer needs an exemption list',
+  );
+  assert.ok(
+    baseline.grandfatheredOpenRows.length <= 47,
     'the baseline recorded 47 already-open rows on 2026-07-28. Growing it grants a NEW row the '
     + 'exemption GT-599 exists to remove; if a row genuinely predates the baseline, correct the '
     + 'recordedOn date and this number together, in a reviewable diff.',

@@ -25,6 +25,7 @@ import { CapabilitiesController } from './presentation/controllers/capabilities.
 import { ComposableValidateController } from './presentation/controllers/composable-validate.controller';
 import { SatellitesController } from './presentation/controllers/satellites.controller';
 import { WorkspaceReferenceResolverService } from './application/services/workspace-reference-resolver.service';
+import { RulesetCorpusWarmupService } from './application/services/ruleset-corpus-warmup.service';
 import { SatelliteRegistryService } from './application/services/satellite-registry.service';
 import { ValidateSatelliteUseCase, ProposePhaseAdvanceUseCase } from '@beyondnet/evolith-core-domain/application/use-cases';
 import { ArchitectureDriftService } from '@beyondnet/evolith-core-domain/application/validators';
@@ -118,6 +119,8 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
     CoreReferenceQueryService,
     WorkspaceReferenceResolverService,
     SatelliteRegistryService,
+    // GT-648 — load the ruleset corpus before the first request, not during it.
+    RulesetCorpusWarmupService,
     {
       // GT-573: the SINGLE construction site for the Core Evaluation Engine.
       // Both `POST /api/v1/evaluate` branches (canonical workspaceRef and inline

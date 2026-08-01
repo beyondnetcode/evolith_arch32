@@ -6,6 +6,7 @@
   "type": "object",
   "required": ["id", "title", "severity", "category"],
   "properties": {
+    "$schema": { "type": "string" },
     "id": { "type": "string", "description": "Unique rule identifier, e.g. R-001" },
     "title": { "type": "string" },
     "description": { "type": "string" },
@@ -16,7 +17,39 @@
     "remediation": { "type": "string" },
     "references": { "type": "array", "items": { "type": "string" } },
     "opa_policy": { "type": "string", "description": "Package path of the corresponding OPA policy" },
-    "enabled": { "type": "boolean", "default": true }
+    "enabled": { "type": "boolean", "default": true },
+    "validation": {
+      "type": "object",
+      "description": "GT-649 — how this rule is checked. A rule in this shape is NOT evaluated by the Core rule engine (which reads the `rules[]`/`principles[]` corpus shape); it is enforced by the paired CI guard and Rego policy named here. The two authored instances (INFRA-001, INFRA-OPA-001) carried this block from the start and the schema never modelled it, so they failed their own contract and were reported as broken rulesets on every evaluation.",
+      "required": ["type", "target", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Check performed by the enforcing guard, e.g. `file_pattern_ban`, `helm_opa_bundle_integrity`."
+        },
+        "target": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "Repo-relative paths or globs the guard inspects."
+        },
+        "exclude": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Paths or globs carved out of `target`."
+        },
+        "message": { "type": "string", "description": "Operator-facing remediation shown on violation." },
+        "guard": {
+          "type": "string",
+          "description": "Repo-relative path of the CI script that actually enforces this rule."
+        },
+        "opa_equivalent": {
+          "type": "string",
+          "description": "Repo-relative path of the Rego policy expressing the same rule."
+        }
+      }
+    }
   },
   "additionalProperties": false
 }

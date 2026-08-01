@@ -1,21 +1,21 @@
 {
-  "$schema": "../../schema/rule-definition.schema.json",
+  "$schema": "../schema/rule-definition.schema.json",
   "id": "INFRA-001",
   "category": "infrastructure",
-  "name": "Helm Charts Over Raw Manifests Enforcement",
+  "title": "Helm Charts Over Raw Manifests Enforcement",
   "description": "Ensures that Kubernetes configurations use Helm charts (Chart.yaml) rather than raw standalone YAML manifests.",
-  "severity": "error",
+  "severity": "high",
   "rationale": "Helm provides versioning, templating, and rollback capabilities which are required by ADR-0076 and the authoritative tech stack. Raw manifests lead to drift and duplication.",
   "validation": {
     "type": "file_pattern_ban",
     "target": [
-      "reference/infrastructure/kubernetes/**/*.yaml"
+      "product/infra/kubernetes/**/*.yaml"
     ],
     "exclude": [
-      "reference/infrastructure/kubernetes/**/Chart.yaml",
-      "reference/infrastructure/kubernetes/**/values.yaml"
+      "product/infra/kubernetes/**/Chart.yaml",
+      "product/infra/kubernetes/**/values.yaml"
     ],
-    "message": "Raw Kubernetes YAML manifests are prohibited. Wrap your deployments in a Helm Chart.",
-    "opa_equivalent": "infrastructure/opa/helm-enforcement.rego"
+    "message": "Raw Kubernetes YAML manifests are prohibited. Wrap your deployments in a Helm Chart under product/infra/helm.",
+    "opa_equivalent": "src/rulesets/infrastructure/opa/helm-enforcement.rego"
   }
 }

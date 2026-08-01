@@ -494,3 +494,125 @@ describe('DiskRulesetRepository — real repo layout (GT-566)', () => {
   }, 60_000);
 });
 
+
+/**
+ * GT-649 — the corpus tree holds more than one document kind under
+ * `*.rules.json`, and the loader used to have no way to say so.
+ *
+ * Three files declare their own schema (a single-rule declaration enforced by a
+ * CI guard; the ADR-0104 recommendation catalogue) and therefore failed the
+ * STANDARD ruleset schema with "must have required property 'rules' /
+ * 'principles'". Each was logged as a skipped "non-standard ruleset" on every
+ * load — once per k6 iteration in CI run 30631939687, which is what a
+ * per-request corpus load looks like from the outside.
+ *
+ * The assertion is on the REAL corpus on purpose: the point is that the tree as
+ * authored today loads cleanly, which a fixture cannot tell us.
+ */
+describe('DiskRulesetRepository — non-corpus document kinds (GT-649)', () => {
+  const nodeFs = new NodeFileSystemProvider().createFileSystem();
+
+  function findRepoRoot(): string | undefined {
+    let dir = __dirname;
+    for (let i = 0; i < 12; i++) {
+      const markers = ['package.json', '.harness', 'evolith.yaml'];
+      if (markers.every((m) => nodeFs.existsSync(nodePath.join(dir, m)))) return dir;
+      const parent = nodePath.dirname(dir);
+      if (parent === dir) break;
+      dir = parent;
+    }
+    return undefined;
+  }
+
+  const repoRoot = findRepoRoot();
+  const itInRepo = repoRoot ? it : it.skip;
+
+  itInRepo('loads the real corpus without warning about a single file', async () => {
+    const logger = makeLogger();
+    const repo = new DiskRulesetRepository(nodeFs, logger);
+
+    await repo.loadAllRulesets(repoRoot!);
+
+    expect(logger.warnings).toEqual([]);
+    expect(logger.errors).toEqual([]);
+  }, 60_000);
+
+  it('skips a declared non-corpus document instead of reporting it as broken', async () => {
+    const logger = makeLogger();
+    const fs = makeFs({
+      dirs: new Set(['/core/rulesets', '/core/rulesets/schema', '/core/rulesets/architecture']),
+      files: {
+        '/core/rulesets/schema/ruleset-standard.schema.json': SCHEMA,
+        '/core/rulesets/schema/topology-recommendation.schema.json': JSON.stringify({
+          type: 'object',
+          required: ['progressive'],
+          properties: { $schema: { type: 'string' }, progressive: { type: 'array' } },
+        }),
+        '/core/rulesets/governance.rules.json': JSON.stringify({
+          rules: [{ id: 'GOV-1', severity: 'MUST', title: 'T', description: 'D' }],
+        }),
+        '/core/rulesets/architecture/topology-recommendation.rules.json': JSON.stringify({
+          $schema: '../schema/topology-recommendation.schema.json',
+          progressive: [{ id: 'REC-1', recommend: 'modular-monolith', rationale: 'r' }],
+        }),
+      },
+    });
+
+    const rules = await new DiskRulesetRepository(fs, logger).loadAllRulesets('/core');
+
+    expect(rules.map((r) => r.id)).toEqual(['GOV-1']);
+    expect(logger.warnings).toEqual([]);
+  });
+
+  // Silencing must not become blindness: a document that violates the contract
+  // it itself declares is still reported.
+  it('warns when a non-corpus document fails its OWN declared schema', async () => {
+    const logger = makeLogger();
+    const fs = makeFs({
+      dirs: new Set(['/core/rulesets', '/core/rulesets/schema', '/core/rulesets/architecture']),
+      files: {
+        '/core/rulesets/schema/ruleset-standard.schema.json': SCHEMA,
+        '/core/rulesets/schema/topology-recommendation.schema.json': JSON.stringify({
+          type: 'object',
+          required: ['progressive'],
+          properties: { $schema: { type: 'string' }, progressive: { type: 'array' } },
+        }),
+        '/core/rulesets/governance.rules.json': JSON.stringify({
+          rules: [{ id: 'GOV-1', severity: 'MUST', title: 'T', description: 'D' }],
+        }),
+        '/core/rulesets/architecture/topology-recommendation.rules.json': JSON.stringify({
+          $schema: '../schema/topology-recommendation.schema.json',
+          // `progressive` is required by the schema it declares.
+          dimensions: [],
+        }),
+      },
+    });
+
+    await new DiskRulesetRepository(fs, logger).loadAllRulesets('/core');
+
+    expect(logger.warnings).toHaveLength(1);
+    expect(logger.warnings[0]).toMatch(/does not satisfy it/);
+    expect(logger.warnings[0]).toMatch(/topology-recommendation\.schema\.json/);
+  });
+
+  // A ruleset that claims the STANDARD schema and fails it is a real defect and
+  // must keep warning — the classification is by declared kind, not by failure.
+  it('still warns when a standard-shaped ruleset fails the standard schema', async () => {
+    const logger = makeLogger();
+    const fs = makeFs({
+      dirs: new Set(['/core/rulesets', '/core/rulesets/schema']),
+      files: {
+        '/core/rulesets/schema/ruleset-standard.schema.json': SCHEMA,
+        '/core/rulesets/governance.rules.json': JSON.stringify({
+          rules: [{ id: 'GOV-1', severity: 'MUST', title: 'T', description: 'D' }],
+        }),
+        '/core/rulesets/broken.rules.json': JSON.stringify({ principles: 'not-an-array' }),
+      },
+    });
+
+    await new DiskRulesetRepository(fs, logger).loadAllRulesets('/core');
+
+    expect(logger.warnings).toHaveLength(1);
+    expect(logger.warnings[0]).toMatch(/Skipping non-standard ruleset/);
+  });
+});

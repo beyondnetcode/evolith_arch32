@@ -9598,6 +9598,7 @@
       "closureCommit": "a52cc3a7",
       "evidence": [
         ".github/workflows/ci-cd.yml",
+        ".harness/scripts/lib/paths.mjs",
         "reference/core/control-center/evidence/gap-closure-evidence.json",
         "product/infra/docker-compose.yml",
         "product/infra/.env.example",

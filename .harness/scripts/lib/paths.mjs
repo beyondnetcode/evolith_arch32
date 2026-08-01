@@ -72,7 +72,6 @@ export const PATH_KEYS = Object.freeze({
   // src/rulesets/. Both roots are real; scanning only one silently halves the corpus.
   topologiesReference: 'reference/core/architecture/topologies',
   topologiesRulesets: 'src/rulesets/topologies',
-  topologiesCli: 'src/sdk/cli/rulesets/topologies',
 
   // --- rulesets ------------------------------------------------------------
   rulesets: 'src/rulesets',

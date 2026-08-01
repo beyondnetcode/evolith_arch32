@@ -7,6 +7,9 @@
  * on. They fail if any of the three drifts.
  */
 
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import {
   CORE_NATIVE_EDGE_TYPES,
   EVIDENCE_EDGE_SEMANTICS,
@@ -266,5 +269,74 @@ describe('the storage specification handed to the Tracker', () => {
 
   it('is owned by the Tracker repository, not this one', () => {
     expect(EVIDENCE_EDGE_STORAGE_CONTRACT.owner).toBe('beyondnetcode/evolith_tracker');
+  });
+});
+
+/**
+ * The published JSON Schema is the ONLY form of this contract a non-TypeScript
+ * consumer can reach: per core/ADR-T-038 the Tracker is .NET and cannot import
+ * this package. That makes the schema file a second copy of the vocabulary, and
+ * a second copy is how the two evidence graphs diverged in the first place.
+ *
+ * These tests are what stops it happening again. They read the shipped file and
+ * assert it against the TypeScript constants, so adding an edge type or a node
+ * kind here and forgetting the schema fails the build — instead of shipping a
+ * Tracker that silently rejects an edge the Core considers valid.
+ */
+describe('evidence-edge.schema.json mirrors the TypeScript contract', () => {
+  const schema = JSON.parse(
+    readFileSync(
+      join(__dirname, '../../../../rulesets/schema/evidence-edge.schema.json'),
+      'utf8',
+    ),
+  );
+
+  it('publishes the SAME closed node vocabulary, in the same order', () => {
+    expect(schema.definitions.nodeRef.properties.kind.enum).toEqual([...EVIDENCE_NODE_KINDS]);
+  });
+
+  it('publishes the SAME edge vocabulary, in the same order', () => {
+    expect(schema.properties.type.enum).toEqual([...EVIDENCE_EDGE_TYPES]);
+  });
+
+  it('keeps the Core native three first, so adoption stays a widening', () => {
+    expect(schema.properties.type.enum.slice(0, CORE_NATIVE_EDGE_TYPES.length)).toEqual([
+      ...CORE_NATIVE_EDGE_TYPES,
+    ]);
+  });
+
+  it('requires exactly the fields that form an edge identity', () => {
+    // `assertedBy` and `provenance` are metadata ABOUT the claim; requiring them
+    // would make an edge unassertable by a producer that legitimately knows
+    // neither, and `evidenceEdgeKey` already excludes them.
+    expect(schema.required.sort()).toEqual(['from', 'occurredAt', 'to', 'type']);
+  });
+
+  it('closes the object, so an unknown field is a rejection and not a silent drop', () => {
+    expect(schema.additionalProperties).toBe(false);
+    expect(schema.definitions.nodeRef.additionalProperties).toBe(false);
+  });
+
+  it('validates a real edge produced by the backfill function', () => {
+    const [mapping] = edgesFromLegacyReferences(
+      { kind: 'evidence-record', id: 'rec-1' },
+      ['evidence://adr/ADR-0101'],
+      '2026-08-01T00:00:00.000Z',
+    );
+    const edge = mapping.edge!;
+
+    // Every required key present, every enum value inside the published sets.
+    for (const key of schema.required) {
+      expect(edge).toHaveProperty(key);
+    }
+    expect(schema.properties.type.enum).toContain(edge.type);
+    expect(schema.definitions.nodeRef.properties.kind.enum).toContain(edge.from.kind);
+    expect(schema.definitions.nodeRef.properties.kind.enum).toContain(edge.to.kind);
+
+    // And no key the schema would reject.
+    const allowed = new Set(Object.keys(schema.properties));
+    for (const key of Object.keys(edge)) {
+      expect(allowed).toContain(key);
+    }
   });
 });

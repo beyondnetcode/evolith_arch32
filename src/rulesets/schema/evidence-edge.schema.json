@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/evidence-edge.schema.json",
+  "title": "Evidence Edge",
+  "description": "GT-605 — one typed, directed, timestamped evidence edge, in the wire form both sides exchange. The authoritative model is `@beyondnet/evolith-contracts` (`src/evidence/evidence-edge.ts`); this file is that model expressed as JSON Schema so a NON-TypeScript consumer can reach it. Per core/ADR-T-038 the Tracker is .NET and cannot import the TypeScript package, so a shared *type* alone would have left both sides free to disagree about direction, about the node vocabulary, and about what a depth-bounded traversal means. `evidence-edge.spec.ts` asserts this file against the TypeScript constants, so the two cannot drift.",
+  "type": "object",
+  "required": ["from", "to", "type", "occurredAt"],
+  "additionalProperties": false,
+  "definitions": {
+    "nodeRef": {
+      "type": "object",
+      "description": "A node in the evidence graph: a kind plus an id unique within it. The canonical string encoding is `evidence://<kind>/<id>` (`formatEvidenceRef`), which is what makes the Tracker's existing `List<string>` references column mechanically migratable rather than a rewrite.",
+      "required": ["kind", "id"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "description": "CLOSED on purpose: an open `kind` is how the Tracker's `List<string>` became untyped in the first place. Every entry is something at least one side already produces — `artifact` and `ruleset-rule` come from the Core's EvaluationResult, `gate-decision` and `evidence-record` are Tracker rows, `adr` and `initiative` are the governance subjects the audit question is asked about, and `agent-turn` is the agent-runtime unit of work that causes the other three to move.",
+          "enum": [
+            "adr",
+            "agent-turn",
+            "artifact",
+            "evaluation",
+            "evidence-record",
+            "gate-decision",
+            "initiative",
+            "ruleset-rule"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Id unique within `kind` (an ADR id, a gate-decision row id, a turn id…)."
+        }
+      }
+    }
+  },
+  "properties": {
+    "from": {
+      "$ref": "#/definitions/nodeRef",
+      "description": "Source end. Direction is fixed by `EVIDENCE_EDGE_SEMANTICS` in the TypeScript contract, which states each edge's meaning as a sentence read `from` → `to` precisely so two independent implementations cannot swap the ends."
+    },
+    "to": {
+      "$ref": "#/definitions/nodeRef",
+      "description": "Target end."
+    },
+    "type": {
+      "type": "string",
+      "description": "`requires`, `validates` and `blocks` are the Core's native three, kept verbatim so adopting this contract is a widening and never a breaking change. `caused_by` is the one addition, and it is not decoration: the acceptance criterion for GT-605 is the sentence \"which ADR moved BECAUSE OF which gate decision BECAUSE OF which agent turn\", and none of the other three expresses causation.",
+      "enum": ["requires", "validates", "blocks", "caused_by"]
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 instant at which the relation became true — the same encoding `EvaluationResult.evaluatedAt` uses. This is what makes the ledger auditable rather than merely navigable: an evidence chain without time cannot answer \"as of the decision, what was known\". It is part of the edge's identity, so the same relation asserted at two instants is two ledger facts and not one."
+    },
+    "assertedBy": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Who asserted the edge (`evolith-core`, a Tracker user id, an agent id). Metadata about the claim, deliberately EXCLUDED from the edge's identity."
+    },
+    "provenance": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Free-form provenance of the assertion — an evaluation correlation id, or a migration tag such as `backfill:ReferencesJson`. Opaque to the traversal, and likewise excluded from identity."
+    }
+  }
+}

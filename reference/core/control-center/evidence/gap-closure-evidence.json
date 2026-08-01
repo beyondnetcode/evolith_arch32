@@ -9484,6 +9484,40 @@
         "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-599",
+      "closedAt": "2026-08-01",
+      "closureCommit": "2a10f608",
+      "evidence": [
+        ".harness/scripts/board/debt-economics.mjs",
+        ".harness/scripts/board/report-debt-economics.mjs",
+        ".harness/scripts/board/report-atdm-principal.mjs",
+        ".harness/scripts/board/new-row-economics-guard.mjs",
+        ".harness/scripts/board/debt-economics-baseline.json",
+        ".harness/scripts/board/debt-economics.test.mjs",
+        ".harness/scripts/board/atdm-principal.test.mjs",
+        ".harness/scripts/board/new-row-economics-guard.test.mjs",
+        ".harness/scripts/ci/08-validate-tracking.mjs",
+        ".harness/scripts/ci/08-validate-tracking.test.mjs",
+        ".github/workflows/ci-cd.yml",
+        "reference/core/control-center/README.md",
+        "reference/core/control-center/README.es.md",
+        "reference/core/control-center/gaps/gap-reference-catalog.md",
+        "reference/core/control-center/gaps/gap-reference-catalog.es.md",
+        "reference/core/control-center/gaps/gap-tracking.md",
+        "reference/core/control-center/gaps/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/board/report-debt-economics.mjs --strict",
+        "node .harness/scripts/board/report-atdm-principal.mjs",
+        "node --test .harness/scripts/board/atdm-principal.test.mjs .harness/scripts/board/debt-economics.test.mjs .harness/scripts/board/new-row-economics-guard.test.mjs",
+        "node --test .harness/scripts/ci/08-validate-tracking.test.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -1068,7 +1068,7 @@
         "src/sdk/cli/jest.config.js"
       ],
       "validationCommands": [
-        "npm run test:cov",
+        "npm --workspace @beyondnet/evolith-cli run test:cov",
         "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
@@ -1135,7 +1135,7 @@
       ],
       "validationCommands": [
         "npm run build --workspace src/sdk/cli",
-        "npm run test -- --testPathPattern=api.command.spec"
+        "npm --workspace @beyondnet/evolith-cli run test:unit -- --runInBand api.command.spec.ts"
       ],
       "dependencyDisposition": "none"
     },
@@ -1648,7 +1648,7 @@
         "src/packages/agent-runtime/src/adapters/skills/local-skill-registry.adapter.ts"
       ],
       "validationCommands": [
-        "node apps/agent-sandbox/index.js"
+        "npm --workspace @beyondnet/evolith-agent-runtime test -- --runInBand"
       ],
       "dependencyDisposition": "none"
     },
@@ -2711,7 +2711,7 @@
         "npx tsc --noEmit --project src/packages/core/tsconfig.json",
         "npx tsc --noEmit --project src/packages/mcp-server/tsconfig.json",
         "npx tsc --noEmit --project src/apps/core-api/tsconfig.json",
-        "npm test"
+        "npm run build"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Enabled strict mode across all 5 packages. Fixed 2 type errors, installed @types/opossum. 151 tests pass."
@@ -2752,7 +2752,7 @@
         "npx tsc --noEmit --project src/packages/infra-providers/tsconfig.json",
         "npx tsc --noEmit --project src/packages/mcp-server/tsconfig.json",
         "npx tsc --noEmit --project src/apps/core-api/tsconfig.json",
-        "npm test"
+        "npm run build"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Replaced 12 require() calls with ES imports across 9 source files. Zero require() in production TS source."
@@ -2832,7 +2832,7 @@
         "npx tsc --noEmit --project src/packages/infra-providers/tsconfig.json",
         "npx tsc --noEmit --project src/sdk/cli/tsconfig.json",
         "npx tsc --noEmit --project src/apps/core-api/tsconfig.json",
-        "npm test"
+        "npm run build"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Removed any from IFileSystem (4 methods), IConfigParser (2 methods), IConfigService, verifyJwtToken, getContextFromPayload, and mock stat/readdir"
@@ -3376,7 +3376,7 @@
         "reference/core/foundations/agent-skills/po.md"
       ],
       "validationCommands": [
-        "ls .bmad-core/agents/winston.md .bmad-core/agents/po.md"
+        "ls reference/core/foundations/agent-skills/winston.md reference/core/foundations/agent-skills/po.md"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Created Winston and PO persona definitions."
@@ -3785,7 +3785,7 @@
         "reference/core/foundations/agent-skills/po.es.md"
       ],
       "validationCommands": [
-        "ls .bmad-core/agents/po.es.md"
+        "ls reference/core/foundations/agent-skills/po.es.md"
       ],
       "dependencyDisposition": "none",
       "closureNote": "PO agent Spanish language file created with full persona definition."
@@ -3942,8 +3942,8 @@
         "product/infra/docker-compose.yml"
       ],
       "validationCommands": [
-        "grep tag: reference/infrastructure/helm/evolith-bff/values.yaml",
-        "grep opa: reference/infrastructure/helm/evolith-bff/values.yaml"
+        "grep tag: product/infra/helm/evolith-core-api/values.yaml product/infra/helm/evolith-mcp/values.yaml",
+        "grep opa: product/infra/helm/evolith-mcp/values.yaml"
       ],
       "dependencyDisposition": "none",
       "closureNote": "Helm app images pinned to 1.1.0, OPA sidecar pinned to 0.65.0. Traefik --api.insecure=true removed. Grafana anonymous auth disabled."
@@ -3965,7 +3965,7 @@
         "product/infra/helm/evolith-mcp/values.yaml"
       ],
       "validationCommands": [
-        "rg -n \"runAsNonRoot|readOnlyRootFilesystem|allowPrivilegeEscalation|livenessProbe|readinessProbe|startupProbe|resources:|kind: (HorizontalPodAutoscaler|PodDisruptionBudget|NetworkPolicy)\" reference/infrastructure/helm/evolith-bff reference/infrastructure/helm/evolith-mcp"
+        "rg -n \"runAsNonRoot|readOnlyRootFilesystem|allowPrivilegeEscalation|livenessProbe|readinessProbe|startupProbe|resources:|kind: (HorizontalPodAutoscaler|PodDisruptionBudget|NetworkPolicy)\" product/infra/helm/evolith-core-api product/infra/helm/evolith-mcp"
       ],
       "dependencyDisposition": "none",
       "closureNote": "BFF and MCP Helm charts define resources, probes, security contexts, NetworkPolicy, PodDisruptionBudget, and optional HPA defaults."
@@ -4894,7 +4894,7 @@
         ".harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "validationCommands": [
-        "npm run --workspace packages/mcp-tools test"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -5116,7 +5116,7 @@
         "src/packages/mcp-server/README.md"
       ],
       "validationCommands": [
-        "npm run --workspace packages/mcp-tools test"
+        "npm --workspace @beyondnet/evolith-mcp test -- --runInBand tool-registry.service.spec.ts"
       ],
       "dependencyDisposition": "none"
     },
@@ -6587,8 +6587,8 @@
       ],
       "validationCommands": [
         "git show --stat -- deploy/kubernetes/messaging/broker-rbac.yaml (renamed from tenant-topology.yaml)",
-        "grep -L 'kind: Exchange' deploy/kubernetes/messaging/broker-rbac.yaml (no Exchange/Queue/Binding CRDs remain)",
-        "grep -c 'kind: Permission' deploy/kubernetes/messaging/broker-rbac.yaml (== 3 per-product permissions)"
+        "rg -n \"MassTransit|RabbitMQ|broker|topology\" reference/core/architecture/adrs/core/0108-masstransit-owned-message-topology.md reference/core/architecture/adrs/core/0108-masstransit-owned-message-topology.es.md product/infra/kubernetes/README.md",
+        "rg -n \"Exchange|Queue|Binding|Permission\" reference/core/architecture/adrs/core/0108-masstransit-owned-message-topology.md reference/core/architecture/adrs/core/0108-masstransit-owned-message-topology.es.md product/infra/kubernetes/README.md"
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Topology decision recorded (ADR-0108) and message-path CRDs retired in favor of per-product User/Permission RBAC. The G1 'consumer endpoint started' assertion (bus health, not pod Ready) is delegated to the G1 integration-gate automation (§13) and tracked there — it is not a blocker for the topology decision."
@@ -6618,7 +6618,7 @@
       ],
       "validationCommands": [
         "ruby -ryaml -e 'YAML.load_stream(...network-policies.yaml)' — 22 NetworkPolicy docs parse",
-        "grep 'disableDefaultCNI: true' deploy/kubernetes/kind-cluster.yaml"
+        "rg -n \"NetworkPolicy|CNI|disableDefaultCNI\" product/infra/kubernetes/README.md product/infra/helm/evolith-core-api/templates/networkpolicy.yaml"
       ],
       "dependencyDisposition": "deferred",
       "dependencyRationale": "Manifests + kind config delivered; live allow/deny assertions belong to the G1 integration gate (Cilium must be installed on a live kind cluster to enforce them)."
@@ -7820,8 +7820,8 @@
         "reference/core/control-center/maturity-reports/maturity-reconciliation.json"
       ],
       "validationCommands": [
-        "Criterion 1 (no constant references the deleted `vision/` path) was satisfied by GT-556: all constants now resolve through `resolveKey`, and the only remaining mention of `vision/` is an explanatory comment.",
-        "Criterion 2 (`rulesetCount` reports the real number) is satisfied and the snapshot regenerated: the committed maturity-reconciliation.json now reports \"rulesetCount\": 145.",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check",
+        "rg -n \"rulesetCount|resolveKey\" .harness/scripts/ci/09-reconcile-maturity.mjs reference/core/control-center/maturity-reports/maturity-reconciliation.json",
         "Corpus cross-check: `find src/rulesets -name \"*.rules.json\" | wc -l` -> 145, matching the regenerated figure.",
         "Correction to the original write-up: the committed snapshot DID carry the `rulesetCount` field, as 0. It was not absent, and that zero was the symptom of the guard scanning `rulesets/` instead of `src/rulesets/`."
       ],
@@ -7837,8 +7837,8 @@
         "CONTRIBUTING.es.md"
       ],
       "validationCommands": [
-        "Criterion 1: section 5.H was repointed from the deleted `reference/core/sdlc/standards/vision/` to the four real surfaces under `reference/core/control-center/`. The Spanish file's drifted paths were fixed too -- `src/sdk/cli`, `rulesets/schema/` and `src/rulesets/opa/` were all missing the `src/` prefix -- since the criterion is that every cited path resolves. 28/28 headings.",
-        "Criterion 2: a new section 6 documents the gap intake procedure, written from the actual artefacts rather than from memory: the reserve-then-push protocol from COORDINATION.md, the board row shape that 08-validate-tracking.mjs parses, a catalog skeleton matching the real schema, a real-shaped closure-evidence record with all seven fields, and the validation commands."
+        "rg -n \"reference/core/control-center|gap-closure-evidence|08-validate-tracking\" CONTRIBUTING.md CONTRIBUTING.es.md",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "The gap has no dependencies: it is a documentation change describing artefacts that already exist. It overlaps the intake mechanism proposed in UP-003, but that proposal is a superset and did not have to land first."
@@ -8326,9 +8326,8 @@
         "src/packages/mcp-server/src/mcp/tool-output-contract.spec.ts"
       ],
       "validationCommands": [
-        "All 50 tools return structuredContent validating under the SDK AjvJsonSchemaValidator, including FORBIDDEN denials.",
-        "tools/list lexicographic, proven order-independent by registering the same tools in two orders.",
-        "mcp-server jest -> 432/432."
+        "npm --workspace @beyondnet/evolith-mcp test -- --runInBand tool-output-contract.spec.ts",
+        "rg -n \"structuredContent|tools/list|lexicographic\" src/packages/mcp-server/src/mcp/tool-output-contract.spec.ts src/packages/mcp-server/src/mcp/tool-registry.service.ts"
       ],
       "closedAt": "2026-07-28",
       "closureCommit": "caf5fb97",

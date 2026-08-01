@@ -12,14 +12,19 @@
       "validation": "CI run green on main branch. No failing tests, no lint errors, no security scan failures",
       "rules": [
         "EV-F3-ci-pipeline"
-      ]
+      ],
+      "producedBy": {
+        "format": "provider-native",
+        "note": "The CI providers native run record (GitHub Actions run, GitLab job). Evolith reads the verdict and the run URL; inventing a schema here would restate what the provider already publishes and rot when it changes."
+      }
     },
     {
       "artifact": "Definition of Done Checklist",
       "validation": "All Definition of Done items checked.",
       "rules": [
         "EV-F3-definition-of-done-checklist"
-      ]
+      ],
+      "schemaRef": "src/rulesets/schema/definition-of-done-checklist.schema.json"
     },
     {
       "artifact": "Documentation Delta",
@@ -33,7 +38,11 @@
       "validation": "Business logic coverage >= 80% per Quality Thresholds rules",
       "rules": [
         "EV-F3-coverage-report"
-      ]
+      ],
+      "producedBy": {
+        "format": "cobertura|lcov|jacoco",
+        "note": "Emitted by the coverage tool in its own long-standing format. A bespoke schema would force a lossy translation of something every reader already parses."
+      }
     }
   ],
   "blockingCriteria": []

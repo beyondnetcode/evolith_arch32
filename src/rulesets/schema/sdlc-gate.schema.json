@@ -4,29 +4,86 @@
   "title": "SDLC Gate",
   "description": "Schema for an Evolith SDLC gate data file",
   "type": "object",
-  "required": ["id", "name", "phase", "description", "requiredArtifacts", "blockingCriteria"],
+  "required": [
+    "id",
+    "name",
+    "phase",
+    "description",
+    "requiredArtifacts",
+    "blockingCriteria"
+  ],
   "properties": {
-    "$schema": { "type": "string" },
-    "id": { "type": "string", "pattern": "^gate-f[1-5]$" },
-    "name": { "type": "string" },
-    "phase": { "type": "string", "pattern": "^f[1-5]$" },
-    "description": { "type": "string" },
-    "playbookRef": { "type": "string" },
-    "accountableRole": { "type": "string" },
-    "waiverAuthority": { "type": "string" },
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^gate-f[1-5]$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "phase": {
+      "type": "string",
+      "pattern": "^f[1-5]$"
+    },
+    "description": {
+      "type": "string"
+    },
+    "playbookRef": {
+      "type": "string"
+    },
+    "accountableRole": {
+      "type": "string"
+    },
+    "waiverAuthority": {
+      "type": "string"
+    },
     "requiredArtifacts": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["artifact", "validation", "rules"],
+        "required": [
+          "artifact",
+          "validation",
+          "rules"
+        ],
         "properties": {
-          "artifact": { "type": "string" },
-          "schemaRef": { "type": "string" },
-          "validation": { "type": "string" },
+          "artifact": {
+            "type": "string"
+          },
+          "schemaRef": {
+            "type": "string",
+            "description": "GAP-020 — repo-relative path to the canonical JSON Schema, e.g. `src/rulesets/schema/prd.schema.json`. It used to be written `../schema/x.schema.json`, which resolved to a directory that does not exist, so no consumer could ever dereference it."
+          },
+          "validation": {
+            "type": "string"
+          },
           "rules": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "minItems": 1
+          },
+          "producedBy": {
+            "type": "object",
+            "description": "GAP-020 — for an artifact that is a TOOL OUTPUT rather than an authored document. Declaring the tool format is honest where a bespoke schema would not be: it would restate what the tool already publishes, force a lossy translation, and rot the day the tool changes. An artifact carries `schemaRef` or `producedBy`, never both.",
+            "required": [
+              "format"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "format": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The format the tool emits, e.g. `cobertura|lcov|jacoco`, `provider-native`, `derived`."
+              },
+              "note": {
+                "type": "string",
+                "description": "Why this artifact has no Evolith schema."
+              }
+            }
           }
         }
       },
@@ -36,10 +93,17 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["criterion", "action"],
+        "required": [
+          "criterion",
+          "action"
+        ],
         "properties": {
-          "criterion": { "type": "string" },
-          "action": { "type": "string" }
+          "criterion": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          }
         }
       }
     }

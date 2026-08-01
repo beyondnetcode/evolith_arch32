@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/definition-of-done-checklist.schema.json",
+  "title": "Definition of Done Checklist",
+  "description": "GAP-020 — required artifact of gate-f3 (Successful Build), which until now declared no schema. Records which Definition-of-Done criteria a change met, and — the half that makes it evidence rather than a formality — WHO said so and WHAT they pointed at.",
+  "type": "object",
+  "required": ["initiativeId", "criteria", "assertedBy", "assertedAtUtc"],
+  "additionalProperties": false,
+  "properties": {
+    "initiativeId": { "type": "string", "minLength": 1 },
+    "changeSetRef": {
+      "type": "string",
+      "description": "Commit range, pull request or tag the checklist is about. A checklist not bound to a change is unfalsifiable."
+    },
+    "criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["code", "met"],
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Stable identifier of the criterion, e.g. `tests-pass`, `adr-recorded`, `docs-updated`. Deliberately an OPEN vocabulary: the Definition of Done is the team's, not the engine's (see ADR T-056)."
+          },
+          "met": { "type": "boolean" },
+          "evidenceRef": {
+            "type": "string",
+            "description": "Where to look. Required in practice for a criterion that claims to be met — a tick with nothing behind it is the failure mode this artifact exists to prevent."
+          },
+          "waived": {
+            "type": "boolean",
+            "default": false,
+            "description": "The criterion was consciously skipped rather than met. Distinct from `met: false`, which is simply not done."
+          },
+          "waiverRef": {
+            "type": "string",
+            "description": "The exception that authorises the waiver. A waived criterion without one is an unapproved shortcut."
+          }
+        }
+      }
+    },
+    "assertedBy": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Who signed the checklist. Anonymous completeness is not evidence."
+    },
+    "assertedAtUtc": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

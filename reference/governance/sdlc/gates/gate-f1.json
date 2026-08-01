@@ -14,14 +14,15 @@
       "rules": [
         "EV-F1-prd"
       ],
-      "schemaRef": "../schema/prd.schema.json"
+      "schemaRef": "src/rulesets/schema/prd.schema.json"
     },
     {
       "artifact": "Discovery Canvas",
       "validation": "Initiative registered with customer pain points and expected value",
       "rules": [
         "EV-F1-discovery-canvas"
-      ]
+      ],
+      "schemaRef": "src/rulesets/schema/discovery-canvas.schema.json"
     },
     {
       "artifact": "Technical Feasibility Canvas",
@@ -29,14 +30,15 @@
       "rules": [
         "EV-F1-technical-feasibility-canvas"
       ],
-      "schemaRef": "../schema/technical-feasibility.schema.json"
+      "schemaRef": "src/rulesets/schema/technical-feasibility.schema.json"
     },
     {
       "artifact": "Ballpark Estimation",
       "validation": "T-Shirt sizing completed with team composition",
       "rules": [
         "EV-F1-ballpark-estimation"
-      ]
+      ],
+      "schemaRef": "src/rulesets/schema/ballpark-estimation.schema.json"
     },
     {
       "artifact": "MoSCoW Prioritization Matrix",
@@ -51,7 +53,7 @@
       "rules": [
         "EV-F1-build-versus-compose-analysis"
       ],
-      "schemaRef": "../schema/build-vs-compose.schema.json"
+      "schemaRef": "src/rulesets/schema/build-vs-compose.schema.json"
     }
   ],
   "blockingCriteria": []

@@ -34,7 +34,8 @@
       "validation": "All contexts identified with ownership and persistence strategy",
       "rules": [
         "EV-F2-bounded-context-map"
-      ]
+      ],
+      "schemaRef": "src/rulesets/schema/bounded-context-map.schema.json"
     }
   ],
   "blockingCriteria": []

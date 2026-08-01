@@ -14,7 +14,7 @@
       "rules": [
         "EV-F5-release-notes"
       ],
-      "schemaRef": "../schema/release-notes.schema.json"
+      "schemaRef": "src/rulesets/schema/release-notes.schema.json"
     },
     {
       "artifact": "Observability Validation",
@@ -22,7 +22,7 @@
       "rules": [
         "EV-F5-observability-validation"
       ],
-      "schemaRef": "../schema/observability-validation.schema.json"
+      "schemaRef": "src/rulesets/schema/observability-validation.schema.json"
     },
     {
       "artifact": "Rollback Procedure",
@@ -30,7 +30,7 @@
       "rules": [
         "EV-F5-rollback-procedure"
       ],
-      "schemaRef": "../schema/rollback-rehearsal.schema.json"
+      "schemaRef": "src/rulesets/schema/rollback-rehearsal.schema.json"
     },
     {
       "artifact": "On-Call Handoff",
@@ -38,7 +38,7 @@
       "rules": [
         "EV-F5-on-call-handoff"
       ],
-      "schemaRef": "../schema/on-call-handoff.schema.json"
+      "schemaRef": "src/rulesets/schema/on-call-handoff.schema.json"
     },
     {
       "artifact": "Deployment Evidence",

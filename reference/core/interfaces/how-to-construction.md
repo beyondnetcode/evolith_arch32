@@ -805,36 +805,41 @@ Response (captured live):
     "results": {
       "gate": [
         {
-          "gateId": "general-rulesets",
+          "gateId": "gate-f1",
+          "phaseId": "discovery",
           "verdict": "FAIL",
           "artifactResults": [
             {
-              "artifactId": "anti-corruption",
+              "artifactId": "PRD",
               "verdict": "FAIL",
               "present": false,
               "ruleRefs": [
-                "ACL-02"
+                "EV-F1-prd"
               ],
               "gaps": [
                 {
-                  "id": "general-rulesets:ACL-02",
-                  "requirementRef": "ACL-02",
-                  "severity": "error",
-                  "message": "Blocking rule did not run: Transformation Traceability: [MUST] This rule is declared `blocking: true` and was NOT evaluated (unimplemented-native). No acl/ directory found — rule not applicable A blocking rule that skips is reported exactly like a blocking rule that passed, so the run would claim coverage it did not earn. Implement the handler/adapter this rule needs, or set `blocking: false` until it exists.",
-                  "location": "anti-corruption"
+                  "id": "gate-f1:EV-F1-prd",
+                  "requirementRef": "EV-F1-prd",
+                  "severity": "warning",
+                  "message": "Missing required artifact 'PRD': PRD status = Approved AND approvalEvidence present AND date filled",
+                  "location": "PRD"
                 }
               ]
             },
             {
-              "artifactId": "anti-corruption",
+              "artifactId": "Discovery Canvas",
               "verdict": "FAIL",
               "present": false,
               "ruleRefs": [
-                "ACL-03"
+                "EV-F1-discovery-canvas"
               ],
               "gaps": [
                 {
-             
+                  "id": "gate-f1:EV-F1-discovery-canvas",
+                  "requirementRef": "EV-F1-discovery-canvas",
+                  "severity": "warning",
+                  "message": "Missing required artifact 'Discovery Canvas': Initiative registered with customer pain points and expected value",
+
   … (truncated)
 ```
 
@@ -882,39 +887,40 @@ Response (captured live):
       "results": {
         "gate": [
           {
-            "gateId": "general-rulesets",
+            "gateId": "gate-f1",
+            "phaseId": "discovery",
             "verdict": "FAIL",
             "artifactResults": [
               {
-                "artifactId": "governance",
+                "artifactId": "PRD",
                 "verdict": "FAIL",
                 "present": false,
                 "ruleRefs": [
-                  "GOV-000"
+                  "EV-F1-prd"
                 ],
                 "gaps": [
                   {
-                    "id": "general-rulesets:GOV-000",
-                    "requirementRef": "GOV-000",
-                    "severity": "error",
-                    "message": "Missing evolith.yaml: Every satellite repository must have an evolith.yaml file at the root.",
-                    "location": "governance"
+                    "id": "gate-f1:EV-F1-prd",
+                    "requirementRef": "EV-F1-prd",
+                    "severity": "warning",
+                    "message": "Missing required artifact 'PRD': PRD status = Approved AND approvalEvidence present AND date filled",
+                    "location": "PRD"
                   }
                 ]
               },
               {
-                "artifactId": "anti-corruption",
+                "artifactId": "Discovery Canvas",
                 "verdict": "FAIL",
                 "present": false,
                 "ruleRefs": [
-                  "ACL-02"
+                  "EV-F1-discovery-canvas"
                 ],
                 "gaps": [
                   {
-                    "id": "general-rulesets:ACL-02",
-                    "requirementRef": "ACL-02",
-                    "severity": "error",
-                    "message": "Blocking rule did not run: Transformation Traceability: [MUST] 
+                    "id": "gate-f1:EV-F1-discovery-canvas",
+                    "requirementRef": "EV-F1-discovery-canvas",
+                    "severity": "warning",
+                    "message": "Mi
   … (truncated)
 ```
 
@@ -981,36 +987,41 @@ Response (captured live):
     "results": {
       "gate": [
         {
-          "gateId": "general-rulesets",
+          "gateId": "gate-f1",
+          "phaseId": "discovery",
           "verdict": "FAIL",
           "artifactResults": [
             {
-              "artifactId": "anti-corruption",
+              "artifactId": "PRD",
               "verdict": "FAIL",
               "present": false,
               "ruleRefs": [
-                "ACL-02"
+                "EV-F1-prd"
               ],
               "gaps": [
                 {
-                  "id": "general-rulesets:ACL-02",
-                  "requirementRef": "ACL-02",
-                  "severity": "error",
-                  "message": "Blocking rule did not run: Transformation Traceability: [MUST] This rule is declared `blocking: true` and was NOT evaluated (unimplemented-native). No acl/ directory found — rule not applicable A blocking rule that skips is reported exactly like a blocking rule that passed, so the run would claim coverage it did not earn. Implement the handler/adapter this rule needs, or set `blocking: false` until it exists.",
-                  "location": "anti-corruption"
+                  "id": "gate-f1:EV-F1-prd",
+                  "requirementRef": "EV-F1-prd",
+                  "severity": "warning",
+                  "message": "Missing required artifact 'PRD': PRD status = Approved AND approvalEvidence present AND date filled",
+                  "location": "PRD"
                 }
               ]
             },
             {
-              "artifactId": "anti-corruption",
+              "artifactId": "Discovery Canvas",
               "verdict": "FAIL",
               "present": false,
               "ruleRefs": [
-                "ACL-03"
+                "EV-F1-discovery-canvas"
               ],
               "gaps": [
                 {
-             
+                  "id": "gate-f1:EV-F1-discovery-canvas",
+                  "requirementRef": "EV-F1-discovery-canvas",
+                  "severity": "warning",
+                  "message": "Missing required artifact 'Discovery Canvas': Initiative registered with customer pain points and expected value",
+
   … (truncated)
 ```
 

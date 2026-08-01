@@ -27,8 +27,8 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---:|---|---|---|
 | 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-435](../gaps/gap-reference-catalog.md#gt-435) |
 | 2 | Highest-risk area | `Cross` has the largest weighted open load. | [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
-| 3 | Quick wins | High criticality with XS/S complexity. | [GT-649](../gaps/gap-reference-catalog.md#gt-649) |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-649](../gaps/gap-reference-catalog.md#gt-649), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-605](../gaps/gap-reference-catalog.md#gt-605), [GT-583](../gaps/gap-reference-catalog.md#gt-583), [GT-585](../gaps/gap-reference-catalog.md#gt-585), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
+| 3 | Quick wins | High criticality with XS/S complexity. | - |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-605](../gaps/gap-reference-catalog.md#gt-605), [GT-583](../gaps/gap-reference-catalog.md#gt-583), [GT-585](../gaps/gap-reference-catalog.md#gt-585), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-622](../gaps/gap-reference-catalog.md#gt-622), [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-531](../gaps/gap-reference-catalog.md#gt-531), [GT-536](../gaps/gap-reference-catalog.md#gt-536), [GT-599](../gaps/gap-reference-catalog.md#gt-599), +6 |
 
 ## Current Blockers
@@ -43,13 +43,13 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-07-26 |
 | Total gaps | 647 |
-| Closed gaps | 624 |
-| Open gaps | 23 |
+| Closed gaps | 625 |
+| Open gaps | 22 |
 | Open P0 | 1 |
-| Open P1 | 7 |
+| Open P1 | 6 |
 | Open P2 | 12 |
-| Total closure | 96.4% |
-| Closure evidence records | 606 |
+| Total closure | 96.6% |
+| Closure evidence records | 607 |
 | Recorded readiness | 4 PASS |
 
 | Area | Open | P0 | P1 | First IDs |
@@ -58,7 +58,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | `Governance` | 5 | 0 | 2 | [GT-578](../gaps/gap-reference-catalog.md#gt-578), [GT-585](../gaps/gap-reference-catalog.md#gt-585), [GT-599](../gaps/gap-reference-catalog.md#gt-599), [GT-639](../gaps/gap-reference-catalog.md#gt-639), +1 |
 | `Evolith Core` | 4 | 0 | 1 | [GT-583](../gaps/gap-reference-catalog.md#gt-583), [GT-590](../gaps/gap-reference-catalog.md#gt-590), [GT-594](../gaps/gap-reference-catalog.md#gt-594), [GT-600](../gaps/gap-reference-catalog.md#gt-600) |
 | `Infra` | 3 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-622](../gaps/gap-reference-catalog.md#gt-622), [GT-464](../gaps/gap-reference-catalog.md#gt-464) |
-| `Core Domain` | 1 | 0 | 1 | [GT-649](../gaps/gap-reference-catalog.md#gt-649) |
+| `Evolith Suite` | 1 | 0 | 1 | [GT-605](../gaps/gap-reference-catalog.md#gt-605) |
 
 ## Source and Refresh Rule
 

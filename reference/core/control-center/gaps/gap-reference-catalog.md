@@ -1911,11 +1911,12 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 
 - **Acceptance criteria:**
   - [x] Circuit-breaker integration tests exercise open, half-open and closed transitions against a failing dependency, and fail without the breaker.
-  - [ ] A K6 load profile runs in CI and publishes throughput, p95 latency and error rate against declared thresholds.
+  - [x] A K6 load profile runs in CI and publishes throughput, p95 latency and error rate against declared thresholds.
   - [ ] One chaos drill kills a dependency mid-run and the recorded behaviour matches what ADR-0011 declares.
   - [ ] RTO and RPO are MEASURED on a real DR restore and written into ADR-0013, replacing the current unquantified claim.
 
 - **Progress (2026-08-01):** The circuit-breaker criterion is satisfied by the agent-runtime integration suite rather than by a unit-only state-machine test. `src/packages/agent-runtime/src/adapters/resilience/circuit-breaker.integration.spec.ts` boots a real `node:http` Core stand-in, drives it through `HttpCoreEvaluationAdapter`, and asserts closed -> open, open -> half-open -> closed, half-open -> open, and a hanging dependency timeout. Each protected path has an unprotected control proving the dependency is still called or still pending without the breaker. Verified locally with `npm --prefix src/packages/agent-runtime test -- --runTestsByPath src/adapters/resilience/circuit-breaker.integration.spec.ts` (5/5 tests).
+- **Progress (2026-08-01):** The K6 CI criterion is now satisfied by the `Reliability` workflow on `main`, run `30687194238` (`83fbb042`). Job `k6 load profile (thresholds + published metrics)` passed and uploaded `k6-reliability-30687194238`; the average-load summary recorded 1,131 HTTP requests at **12.528 req/s**, `evaluate_latency` p95 **162.20 ms**, p99 **243.78 ms**, `evaluate_errors` **0%**, `throttled_429` **0%**, and all declared thresholds green. The same run also produced a green chaos/MTTR job, but that evidence does not close the ADR-0011 dependency-kill criterion yet: the recorded drill target was `core-api`, while the criterion asks for a dependency failure mid-run. DR RTO/RPO also remain open because the run is a single-host container restart drill, not a real DR restore.
 
 #### GT-444
 

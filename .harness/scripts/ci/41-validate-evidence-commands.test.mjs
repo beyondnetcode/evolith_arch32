@@ -325,6 +325,15 @@ describe('classifyExecutability', () => {
     const c = classifyExecutability(extractCommand('node .harness/scripts/ci-runner.mjs fast'), fixtureRoot);
     assert.equal(c.bucket, 'denylisted');
   });
+
+  test('the maturity unit suite is excluded; the canonical guard command stays executable', () => {
+    const suite = classifyExecutability(extractCommand('node --test .harness/scripts/reconcile-maturity.test.mjs'), fixtureRoot);
+    assert.equal(suite.bucket, 'denylisted');
+    assert.match(suite.reason, /canonical guard/);
+
+    const guard = classifyExecutability(extractCommand('node .harness/scripts/ci/09-reconcile-maturity.mjs --check'), fixtureRoot);
+    assert.equal(guard.executable, true);
+  });
 });
 
 // --- End to end ------------------------------------------------------------

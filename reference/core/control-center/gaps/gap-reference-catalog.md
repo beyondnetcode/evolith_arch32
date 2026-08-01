@@ -7622,9 +7622,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Principal:** `L` · **Interest:** `MED` · **Basis:** `estimate`
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
-  - [ ] A provider proposes C4-to-code bindings with a confidence per binding.
-  - [ ] Confirmation happens at a HITL gate and the confirmed mapping is versioned.
-  - [ ] A confirmed mapping enters later evaluations as a deterministic input.
+  - [x] A provider proposes C4-to-code bindings with a confidence per binding.
+  - [x] Confirmation happens at a HITL gate and the confirmed mapping is versioned.
+  - [x] A confirmed mapping enters later evaluations as a deterministic input.
+- **Closure evidence:** `src/packages/core-domain/src/application/validators/enforcement/c4-binding.ts` now owns the C4 correspondence lifecycle end to end: `proposeC4Bindings` scores C4 element to module-prefix candidates from `RepoFacts` with per-binding confidence and explicit rationales, `confirmC4Binding` requires a named human approver and produces an immutable versioned map with a content hash, and `applyConfirmedC4Bindings` / `compileConfirmedC4BindingsToRules` replay the confirmed map as deterministic later input. The closure is pinned by `c4-binding.spec.ts` (26 tests), including the three GT-590 acceptance criteria and the negative cases that reject unapproved or stale confirmations.
 
 
 #### GT-591
@@ -7687,9 +7688,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Principal:** `L` · **Interest:** `MED` · **Basis:** `estimate`
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
-  - [ ] Advisory evaluators exist for duplication, refactor-to-copy ratio and error-masking constructs.
-  - [ ] Each signal carries determinism and provenance and is inadmissible for blocking until calibrated.
-  - [ ] A conformance delta over the same repository across revisions is reportable per signal.
+  - [x] Advisory evaluators exist for duplication, refactor-to-copy ratio and error-masking constructs.
+  - [x] Each signal carries determinism and provenance and is inadmissible for blocking until calibrated.
+  - [x] A conformance delta over the same repository across revisions is reportable per signal.
+- **Closure evidence:** `src/packages/core-domain/src/evaluation/contracts/drift-signals.ts` implements the three advisory signals GT-594 asked for: exact-body duplication, error-masking constructs, and two-revision refactor-to-copy deltas. The signals are emitted as ADR-0111 quality evidence with deterministic provenance and are routed through GT-584 admissibility so they remain advisory until calibrated. `RepoFacts` carries the structural fingerprints and masking occurrences the signals depend on, and `architecture-drift-signals.spec.ts` proves the per-signal delta is reportable across revisions. Verified with `drift-signals.spec.ts` and `architecture-drift-signals.spec.ts` (32 tests total in the focused run).
 
 
 #### GT-595

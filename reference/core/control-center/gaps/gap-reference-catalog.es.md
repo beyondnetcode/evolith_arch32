@@ -7527,9 +7527,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Principal:** `L` · **Interés:** `MED` · **Base:** `estimate`
 - **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
 - **Criterios de aceptación:**
-  - [ ] Un provider propone bindings C4↔código con una confianza por binding.
-  - [ ] La confirmación ocurre en un gate HITL y la correspondencia confirmada se versiona.
-  - [ ] Una correspondencia confirmada entra en evaluaciones posteriores como entrada determinista.
+  - [x] Un provider propone bindings C4↔código con una confianza por binding.
+  - [x] La confirmación ocurre en un gate HITL y la correspondencia confirmada se versiona.
+  - [x] Una correspondencia confirmada entra en evaluaciones posteriores como entrada determinista.
+- **Evidencia de cierre:** `src/packages/core-domain/src/application/validators/enforcement/c4-binding.ts` gobierna ahora el ciclo de correspondencia C4 completo: `proposeC4Bindings` puntúa candidatos de elemento C4 a prefijo de módulo desde `RepoFacts` con confianza por binding y racionales explícitos, `confirmC4Binding` exige un aprobador humano nombrado y produce un mapa inmutable versionado con hash de contenido, y `applyConfirmedC4Bindings` / `compileConfirmedC4BindingsToRules` reproducen el mapa confirmado como entrada determinista posterior. El cierre queda fijado por `c4-binding.spec.ts` (26 tests), incluidos los tres criterios de GT-590 y los negativos que rechazan confirmaciones sin aprobador o contra un mapa obsoleto.
 
 
 #### GT-591
@@ -7592,9 +7593,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Principal:** `L` · **Interés:** `MED` · **Base:** `estimate`
 - **Procedencia:** Oportunidad de mejora de `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 estado del producto, §5 plan de 12 meses, §6.1 tecnologías a dominar, §7 proyectos prácticos), verificada contra el código de este repositorio el 2026-07-26. Solo se registraron las oportunidades que sobrevivieron a la verificación; la afirmación del documento de que `design` y `phase-artifacts` "siempre PASAN" no lo hizo (ambos tienen evaluador en `kind-evaluators.ts:304` y `:454`).
 - **Criterios de aceptación:**
-  - [ ] Existen evaluadores advisory para duplicación, ratio refactor:copia y constructos que enmascaran errores.
-  - [ ] Cada señal lleva determinismo y procedencia y es inadmisible para bloquear hasta estar calibrada.
-  - [ ] Un delta de conformidad sobre el mismo repositorio entre revisiones es reportable por señal.
+  - [x] Existen evaluadores advisory para duplicación, ratio refactor:copia y constructos que enmascaran errores.
+  - [x] Cada señal lleva determinismo y procedencia y es inadmisible para bloquear hasta estar calibrada.
+  - [x] Un delta de conformidad sobre el mismo repositorio entre revisiones es reportable por señal.
+- **Evidencia de cierre:** `src/packages/core-domain/src/evaluation/contracts/drift-signals.ts` implementa las tres señales advisory que pedía GT-594: duplicación de cuerpo exacto, constructos que enmascaran errores y deltas refactor:copia entre dos revisiones. Las señales se emiten como evidencia de calidad ADR-0111 con procedencia determinista y pasan por la admisibilidad de GT-584, por lo que siguen siendo advisory hasta estar calibradas. `RepoFacts` lleva los fingerprints estructurales y ocurrencias de masking de los que dependen las señales, y `architecture-drift-signals.spec.ts` prueba que el delta por señal es reportable entre revisiones. Verificado con `drift-signals.spec.ts` y `architecture-drift-signals.spec.ts` (32 tests en la corrida enfocada).
 
 
 #### GT-595

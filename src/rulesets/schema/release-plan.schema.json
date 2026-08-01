@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/release-plan.schema.json",
+  "title": "Release Plan",
+  "description": "GAP-020 — the plan a release is executed against, distinct from `release-notes.schema.json`, which is what the release turned out to be. One is written before and the other after, and collapsing them loses the ability to ask whether what shipped is what was planned.",
+  "type": "object",
+  "required": ["initiativeId", "version", "scope", "steps", "rollbackRef"],
+  "additionalProperties": false,
+  "properties": {
+    "initiativeId": { "type": "string", "minLength": 1 },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The version this plan releases."
+    },
+    "scope": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" },
+      "description": "What goes out. Listed explicitly so that what did NOT go out is answerable afterwards."
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Ordered deployment steps. Order is part of the plan: a step list whose sequence does not matter is a checklist, not a plan.",
+      "items": {
+        "type": "object",
+        "required": ["order", "action"],
+        "additionalProperties": false,
+        "properties": {
+          "order": { "type": "integer", "minimum": 1 },
+          "action": { "type": "string", "minLength": 1 },
+          "owner": { "type": "string" },
+          "verification": {
+            "type": "string",
+            "description": "How you know the step worked before starting the next one."
+          }
+        }
+      }
+    },
+    "rollbackRef": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Reference to the rollback procedure (see `rollback-rehearsal.schema.json`). Required, not optional: a plan with no way back is a one-way door taken without saying so."
+    },
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "startUtc": { "type": "string", "format": "date-time" },
+        "endUtc": { "type": "string", "format": "date-time" }
+      }
+    },
+    "approvedBy": {
+      "type": "string",
+      "description": "Who authorised the release. The Tracker is the authority on approval (ADR T-039); this field records the outcome, it does not confer it."
+    }
+  }
+}

@@ -14,5 +14,5 @@ Inventario generado de la superficie instalable de Evolith CLI y MCP. No editar 
 | MCP resources | 12 |
 | MCP prompts | 8 |
 | MCP transports | `stdio (JSON-RPC 2.0)`, `Streamable HTTP (official MCP SDK)` |
-| Phase-gate schemas | 46 |
+| Phase-gate schemas | 50 |
 | Cobertura de statements | 88.65% statements · 89.05% lines |

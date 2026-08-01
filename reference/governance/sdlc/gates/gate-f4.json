@@ -14,7 +14,7 @@
       "rules": [
         "EV-F4-test-summary-report"
       ],
-      "schemaRef": "../schema/test-summary-report.schema.json"
+      "schemaRef": "src/rulesets/schema/test-summary-report.schema.json"
     },
     {
       "artifact": "Acceptance Validation",
@@ -29,7 +29,7 @@
       "rules": [
         "EV-F4-security-scan-report"
       ],
-      "schemaRef": "../schema/security-scan-report.schema.json"
+      "schemaRef": "src/rulesets/schema/security-scan-report.schema.json"
     },
     {
       "artifact": "Integration Evidence",
@@ -37,14 +37,18 @@
       "rules": [
         "EV-F4-integration-evidence"
       ],
-      "schemaRef": "../schema/integration-evidence.schema.json"
+      "schemaRef": "src/rulesets/schema/integration-evidence.schema.json"
     },
     {
       "artifact": "Pyramid Distribution",
       "validation": "70% unit / 20% integration / 10% E2E target met or deviation explained",
       "rules": [
         "EV-F4-pyramid-distribution"
-      ]
+      ],
+      "producedBy": {
+        "format": "derived",
+        "note": "Counts derived from the test run, not a document an author writes. Its shape follows whatever the test reporter emits."
+      }
     }
   ],
   "blockingCriteria": []

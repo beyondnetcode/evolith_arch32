@@ -7638,9 +7638,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `MCP Server` · **Criticality:** P2 · **Complexity:** M
 - **Provenance:** Improvement opportunity from `why-architecture/docs/evolith-ai-career-path-{es,en}.md` (§1 product state, §5 12-month plan, §6.1 technologies to master, §7 practical projects), verified against this repository's code on 2026-07-26. Only opportunities that survived verification were registered; the document's claim that `design` and `phase-artifacts` "always PASS" did not (both have evaluators at `kind-evaluators.ts:304` and `:454`).
 - **Acceptance criteria:**
-  - [ ] An MCP tool exposes knowledge search with a declared output schema.
-  - [ ] Retrieval is hybrid, BM25-first, and beats the dense-only baseline on identifier queries.
-  - [ ] A retrieval eval over a fixed query set runs in CI and fails on regression.
+  - [x] An MCP tool exposes knowledge search with a declared output schema. `evolith-knowledge-search` is registered in the MCP tool registry, declares `KNOWLEDGE_SEARCH_OUTPUT_SCHEMA`, and appears in the generated capability operation manifest.
+  - [x] Retrieval is hybrid, BM25-first, and beats the dense-only baseline on identifier queries. `HybridKnowledgeAdapter` runs BM25 as the primary recall path and the fixed eval reports identifier S@1 moving from 0.0000 dense-only to 0.9333 hybrid.
+  - [x] A retrieval eval over a fixed query set runs in CI and fails on regression. `.github/workflows/ci-cd.yml` runs `rag-eval.test.mjs` before `rag-eval.mjs`; the self-tests damage the ranking and assert the gate turns red.
 
 
 #### GT-593
@@ -7980,10 +7980,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Governance` · **Criticality:** P2 · **Complexity:** M
 - **Provenance:** Registered 2026-07-31 from five observed misfires in a single day, four of them false positives and one structural false negative found by auditing which pull request actually closed each gap of this wave. Scoped deliberately to the DIFF half: the prose half landed as #324 (`4c785c5c`), and duplicating it here is the exact failure [`GT-639`](./gap-reference-catalog.md#gt-639) exists to prevent. Sibling of [`GT-639`](./gap-reference-catalog.md#gt-639) (which built the guard) and [`GT-638`](./gap-reference-catalog.md#gt-638) (which allocates the ids it reasons about).
 - **Acceptance criteria:**
-  - [ ] The claim set is derived from the pull request's DIFF — a `GT-*` row whose status the diff changes, or a closure-evidence record the diff adds, is a claim by that pull request whatever its prose says.
-  - [ ] A fixture reproduces PR #315 — title and branch carrying no id, a diff flipping eleven rows to `DONE` and adding eleven closure records — and is OBSERVED FAILING against the current implementation before the fix, not merely passing after it.
-  - [ ] A fixture reproduces the false-positive direction from run `30631939629`: a body that names six gaps in an evidence table and claims none of them contributes no claims, so a pull request that documents a gap is never mistaken for one that works it.
-  - [ ] Prose and diff disagreeing is reported as its own finding rather than silently resolved one way: a body claiming an id its diff does not touch, or a diff touching a row its body never names, is the case that is worth a human look.
+  - [x] The claim set is derived from the pull request's DIFF — a `GT-*` row whose status the diff changes, or a closure-evidence record the diff adds, is a claim by that pull request whatever its prose says. `diffClaimedIds()` reads board status moves and added closure records, and `claimsOf()` merges those ids with declared prose claims.
+  - [x] A fixture reproduces PR #315 — title and branch carrying no id, a diff flipping eleven rows to `DONE` and adding eleven closure records — and is OBSERVED FAILING against the previous prose-only implementation before the fix. The regression now asserts all eleven ids are claimed from the diff.
+  - [x] A fixture reproduces the false-positive direction from run `30631939629`: a body that names six gaps in an evidence table and claims none of them contributes no claims, so a pull request that documents a gap is never mistaken for one that works it.
+  - [x] Prose and diff disagreeing is reported as its own finding rather than silently resolved one way: a body claiming an id its diff does not touch, or a diff touching a row its body never names, fails with a dedicated prose-vs-diff report.
 
 #### GT-644
 

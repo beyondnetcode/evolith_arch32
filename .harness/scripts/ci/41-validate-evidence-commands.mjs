@@ -256,6 +256,7 @@ const EXEC_DENYLIST = [
   { match: /sync-(project-board|wiki)\.mjs/, reason: 'writes to GitHub (credentials + mutation)' },
   { match: /satellite-sync\.mjs/, reason: 'clones and writes a sibling repository' },
   { match: /adr-promotion-push\.mjs/, reason: 'pushes to a remote' },
+  { match: /reconcile-maturity\.test\.mjs/, reason: 'unit test suite; canonical guard is 09-reconcile-maturity.mjs --check' },
   { match: /(^|\/)(fix|apply|generate|sync|update|rewrite|close|cleanup|promote|optimize)-/, reason: 'mutates repository files' },
   { match: /02-optimize-repo\.mjs/, reason: 'mutates repository files' },
   { match: /06-impact-analysis-synchronizer\.mjs/, reason: 'mutates repository files' },

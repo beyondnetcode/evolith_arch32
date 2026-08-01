@@ -426,6 +426,8 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
+      - name: Install evidence-command shell dependencies
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
 
       # FIRST, and deliberately. Every step in this job runs under `bash -e`, so the
       # first red step skips every step after it. On run 30629887881 a network-
@@ -501,6 +503,7 @@ jobs:
           npm run build --workspace @beyondnet/evolith-contracts
           npm run build --workspace @beyondnet/evolith-core-domain
           npm run build --workspace @beyondnet/evolith-infra-providers
+          npm run build --workspace @beyondnet/evolith-agent-runtime
           # GT-642: the cycle guard RUNS GT-589's extractor rather than owning a second
           # one, so the extractor has to be built or the guard has nothing to run. It
           # fails loudly in that case instead of reporting "no cycles found".
@@ -648,52 +651,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: node .harness/scripts/ci/50-validate-gap-claim.mjs
 
-      # REPORTING MODE, and it says so in its own output ("THIS IS NOT A PASS").
-      # It resolves every validationCommand recorded in the board's closure
-      # evidence and EXECUTES the read-only subset. It is not strict yet because
-      # ~290 recorded commands name pre-src/-refactor locations; repairing them
-      # is a migration of reference/core/control-center/evidence/**, which this
-      # job cannot do and must not pretend away. The two conditions for flipping
-      # `--strict` are written at the top of the script.
+      # GT-578 AC3: this is now a governed execution gate, not a report. It
+      # resolves every validationCommand recorded in the board's closure
+      # evidence and executes the read-only subset. Strict mode fails on dead
+      # referents, non-zero executions, inconclusive search exits, vacuous scans,
+      # or any command that dirties the checkout.
       #
-      # It still fails hard on a vacuous scan (zero closures, zero commands,
-      # zero extractions, zero executions) and on any executed command that
-      # modifies the working tree — a reporting guard that cannot fail at all
-      # would be the exact defect GT-578 is about.
-      - name: Execute the board's recorded validationCommands (report mode)
-        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --verbose
-
-      # Ratchet, not a cliff. The budget is 19, which is what THIS RUNNER counts.
-      #
-      # It was briefly lowered to 303 on the strength of the guard's computed
-      # "ratchet basis" — 288 dead locally plus 15 that resolve only through
-      # generated state. The runner then reported 305 and the job went red. The
-      # basis is a useful diagnostic and it is NOT yet an accurate predictor of
-      # this number, so it must not be used to set the budget: only a count
-      # observed here may lower it. That is the same rule that put 305 here in the
-      # first place, and I broke it by trusting a derived figure over a measured
-      # one.
-      #
-      # 305 -> 21 (GT-637): most of it was two real defects in THIS GUARD, not the
-      # evidence corpus — `npmScriptOperand` was called but never defined (a
-      # ReferenceError the guard swallowed into a generic crash), and
-      # `npm run --workspace <path> <script>` (the flag BEFORE the script name,
-      # used throughout the corpus) mistook the workspace's own value for the
-      # script name. Fixing both, plus migrating ~18 pre-`src/`-refactor and
-      # pre-`product/`-move paths that have real successors, plus classifying
-      # `.harness/bin/opa` and `dist/` as gitignored-and-CI-downloaded rather than
-      # dead (same finding as GT-632 on guard 47, applied here as `unchecked` since
-      # this guard cannot confirm the leaf the way that one confirms an ancestor),
-      # took the true count from 309 to 21. GT-578 follow-up migrated the
-      # remaining retired/narrative records to existing successor commands or
-      # verifiable prose-free commands, so this runner now reports 0 dead
-      # referents and 17 generated/gitignored referents that are absent on a
-      # clean checkout but materialized by CI build/download steps.
-      #
-      # Lower it as records are repaired, from a number this job printed; at 0,
-      # delete the flag and this becomes the strict gate.
-      - name: Dead-reference ratchet (must not grow)
-        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 17
+      # The remaining budget of 17 is not live debt: it is the clean-checkout
+      # basis for generated/gitignored referents (`dist/`, `node_modules/`,
+      # `.harness/bin/`) that are materialized by build/download steps. Lower it
+      # only from the number this job prints; at 0, delete `--max-dead`.
+      - name: Execute the board's recorded validationCommands (strict)
+        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --execute --strict --max-dead 17 --verbose
 
   # RETIRED 2026-07-27 (GT-570): the `publish-npm` job lived here and published
   # ONLY `src/sdk/cli`, with `--tag beta` and no provenance, writing the token

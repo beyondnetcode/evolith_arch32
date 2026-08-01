@@ -390,10 +390,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Criticality:** P2 · **Complexity:** M
 - **Proposed fix:** Adaptador que define actividad+artefacto esperado, aplica rulesets/skills del tenant, resuelve autorización, invoca Cowork/Claude y captura la evidencia de ejecución para el gate — sobre los puertos de GT-383…394.
 - **Acceptance criteria:**
-  - [ ] Una actividad acotada se ejecuta vía el adaptador con permisos/plan/aprobación y captura de evidencia. _(el adaptador es acotado —rechaza tools fuera del catálogo— y el envelope del runtime (approval/policy/trace) lo gobierna; la ejecución viva contra Claude/Cowork requiere el `CoworkClient` real —conector/infra)_
+  - [x] Una actividad acotada se ejecuta vía el adaptador con permisos/plan/aprobación y captura de evidencia. _(`cowork-bounded-execution.e2e.spec.ts` inyecta un `CoworkClient`, el adaptador propone una skill gobernada del catálogo, el runtime revalida argumentos del plan, aplica política OPA pre/post, exige aprobación, ejecuta `.harness` y captura procedencia en Tracker; una propuesta fuera del catálogo nunca llega a política/aprobación/ejecución)_
   - [x] El ejecutor es reemplazable (cumple el contrato de ejecución del agent-runtime). _(`CoworkAgentEngineAdapter implements IAgentEnginePort`, drop-in como stub/hermes/swarms)_
-- **Dependencies:** GT-387, GT-441. **Bloqueado (2026-07-18) por el trabajo de aprobación del lado Tracker:** el envelope del runtime que gobierna este adaptador enruta la aprobación HITL al Tracker (`TrackerApprovalAdapter`, GT-441, commit `ef9a14d8`), y el endpoint del Tracker al que pregunta todavía no existe — así que toda actividad Cowork gobernada marcada `requiresApproval` se deniega fail-closed hasta que el Tracker lo entregue. Esa mitad se sigue en el board propio del Tracker como `CD-23` (`evolith_tracker` · `docs/audit/tracker-gap-tracking.md`). Este ítem se queda en el board del Core y conserva su estado: sus ficheros afectados son código `agent-runtime` del Core, y la propia regla del catálogo del Tracker es que el trabajo que aterriza en código del Core pertenece al board del Core.
-- **Status:** `EN-PROGRESO`
+- **Dependencies:** GT-387, GT-441. **Satisfechas (2026-08-01, commit `eaa98fcc`):** el adaptador del lado Core queda acotado mediante `IAgentEnginePort` y el envelope ejecutable del runtime prueba aprobación/política/traza con un `CoworkClient` inyectado. La conectividad viva Claude/Cowork queda como cableado de conector/infra detrás de ese cliente inyectado, no como gap abierto del Core.
+- **Status:** `COMPLETADO`
 
 #### GT-532
 

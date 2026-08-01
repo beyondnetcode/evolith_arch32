@@ -9450,6 +9450,40 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-583",
+      "closedAt": "2026-08-01",
+      "closureCommit": "63f9485d",
+      "evidence": [
+        ".harness/scripts/generate-capability-operations.mjs",
+        "src/packages/core-domain/src/capabilities/capability-operations.ts",
+        "src/packages/core-domain/src/capabilities/capability-operations.generated.ts",
+        "src/packages/core-domain/src/capabilities/capability-operations.spec.ts",
+        "src/packages/core-domain/src/capabilities/capabilities-manifest.ts",
+        "src/packages/mcp-server/src/mcp/tool-registry.service.ts",
+        "src/packages/mcp-server/src/mcp/tool-registry.service.spec.ts",
+        "src/packages/mcp-server/src/mcp/tool-output-contract.spec.ts",
+        "src/sdk/cli/src/commands/api/api.catalog.ts",
+        "src/sdk/cli/src/commands/api/api.catalog.tool-schemas.generated.ts",
+        "src/sdk/cli/src/commands/api/api.command.spec.ts",
+        "src/packages/contracts/src/capabilities/capability-contract.parity.spec.ts",
+        "reference/core/control-center/gaps/gap-reference-catalog.md",
+        "reference/core/control-center/gaps/gap-reference-catalog.es.md",
+        "reference/core/control-center/gaps/gap-tracking.md",
+        "reference/core/control-center/gaps/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/generate-capability-operations.mjs --check",
+        "npm --workspace @beyondnet/evolith-core-domain test -- --runInBand capability-operations.spec.ts",
+        "npm --workspace @beyondnet/evolith-contracts test -- --runInBand capability-contract.parity.spec.ts",
+        "npm --workspace @beyondnet/evolith-cli run test:unit -- --runInBand api.command.spec.ts",
+        "npm --workspace @beyondnet/evolith-mcp test -- --runInBand tool-registry.service.spec.ts tool-output-contract.spec.ts",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -9319,6 +9319,33 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-648",
+      "closedAt": "2026-08-01",
+      "closureCommit": "a97087a2",
+      "evidence": [
+        "src/packages/infra-providers/src/caching-ruleset.repository.ts",
+        "src/packages/infra-providers/src/caching-ruleset.repository.spec.ts",
+        "src/apps/core-api/src/application/services/ruleset-corpus-warmup.service.ts",
+        "src/apps/core-api/src/core-domain.module.ts",
+        "src/packages/core-domain/src/application/services/sdlc-data-loader.service.ts",
+        "product/infra/load/k6/smoke.js",
+        ".github/workflows/reliability.yml",
+        "reference/core/control-center/gaps/gap-reference-catalog.md",
+        "reference/core/control-center/gaps/gap-reference-catalog.es.md",
+        "reference/core/control-center/gaps/gap-tracking.md",
+        "reference/core/control-center/gaps/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "npm --workspace @beyondnet/evolith-infra-providers test -- --runInBand caching-ruleset.repository.spec.ts",
+        "npm --workspace core-api test -- --runInBand core-domain.module.spec.ts",
+        "npm --workspace @beyondnet/evolith-core-domain run build",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-647",
       "closedAt": "2026-07-31",
       "closureCommit": "a63205ce",

@@ -3606,10 +3606,11 @@
         "product/infra/.env.example"
       ],
       "validationCommands": [
-        "grep -c ENV product/infra/docker-compose.yml"
+        "rg -n 'GF_SECURITY_ADMIN_PASSWORD=\\$\\{GRAFANA_ADMIN_PASSWORD\\}' product/infra/docker-compose.yml",
+        "rg -n '^GRAFANA_ADMIN_PASSWORD=changeme$' product/infra/.env.example"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Replaced hardcoded passwords."
+      "closureNote": "Replaced hardcoded passwords. 2026-08-01 evidence maintenance also moved the residual Grafana admin password placeholder behind `GRAFANA_ADMIN_PASSWORD` and made the validation assert the current env injection path."
     },
     {
       "id": "GT-248",
@@ -3635,7 +3636,8 @@
         "product/operations/redis-caching-layer.md"
       ],
       "validationCommands": [
-        "grep -c Redis src/apps/core-api/src/app.module.ts"
+        "rg -n 'InMemoryCacheModule' src/apps/core-api/src/app.module.ts",
+        "rg -n 'Process-local \\(in-memory\\) cache|dead Redis wiring is removed' src/apps/core-api/src/infrastructure/cache/in-memory-cache.module.ts"
       ],
       "dependencyDisposition": "none",
       "closureNote": "2026-07-24 (GT-560): the core-api Redis cache path never actually connected (two wiring bugs) and was removed; `redis-cache.module.ts` -> `in-memory-cache.module.ts` (honest per-process cache). Evidence repointed to the successor module; the other artifacts (cache-keys.ts, the MCP cache module, the caching-layer doc) are unchanged."
@@ -7954,7 +7956,8 @@
         "reference/core/foundations/common-rules/senior-architectural-assessment.md"
       ],
       "validationCommands": [
-        "grep -rn 'CircuitBreakerService|createBreaker|opossum|createCacheStore|RedisCacheModule' src/apps/core-api/src -> 0 resultados (breaker huerfano + wiring Redis muerto removidos por completo).",
+        "rg -n 'opossum.*REMOVED|dead Redis cache wiring.*caching is now honestly per-process/in-memory|4/10' reference/core/foundations/common-rules/senior-architectural-assessment.md",
+        "rg -n 'dead Redis wiring is removed rather than repaired' src/apps/core-api/src/infrastructure/cache/in-memory-cache.module.ts",
         "cd src/apps/core-api && npm run build -> nest build exit 0 (sin referencias colgantes).",
         "cd src/apps/core-api && npm test -> 28 suites / 158 tests passed (el spec borrado del breaker era el unico test que lo referenciaba).",
         "npm install --package-lock-only --legacy-peer-deps -> diff de package-lock.json = 3 insertions / 20 deletions, solo opossum + @types/opossum (sin sprawl); npm ci sigue consistente para el build Docker de core-api.",

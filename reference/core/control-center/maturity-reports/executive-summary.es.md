@@ -13,7 +13,7 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Mayor problema ahora:** `Cross` concentra el mayor riesgo abierto ponderado (2 pendientes, 1 P0). Ataca esa concentración antes de ampliar alcance.
 
-**Dónde atacar primero:** [GT-603](../gaps/gap-reference-catalog.es.md#gt-603), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435).
+**Dónde atacar primero:** [GT-435](../gaps/gap-reference-catalog.es.md#gt-435).
 
 ## Diagnóstico Estratégico
 
@@ -25,17 +25,16 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-603](../gaps/gap-reference-catalog.es.md#gt-603), [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) |
 | 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
-| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-631](../gaps/gap-reference-catalog.es.md#gt-631), [GT-648](../gaps/gap-reference-catalog.es.md#gt-648), [GT-649](../gaps/gap-reference-catalog.es.md#gt-649) |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-631](../gaps/gap-reference-catalog.es.md#gt-631), [GT-648](../gaps/gap-reference-catalog.es.md#gt-648), [GT-649](../gaps/gap-reference-catalog.es.md#gt-649), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-605](../gaps/gap-reference-catalog.es.md#gt-605), [GT-583](../gaps/gap-reference-catalog.es.md#gt-583), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), +1 |
+| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-648](../gaps/gap-reference-catalog.es.md#gt-648), [GT-649](../gaps/gap-reference-catalog.es.md#gt-649) |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-648](../gaps/gap-reference-catalog.es.md#gt-648), [GT-649](../gaps/gap-reference-catalog.es.md#gt-649), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-605](../gaps/gap-reference-catalog.es.md#gt-605), [GT-583](../gaps/gap-reference-catalog.es.md#gt-583), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-622](../gaps/gap-reference-catalog.es.md#gt-622), [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-531](../gaps/gap-reference-catalog.es.md#gt-531), [GT-536](../gaps/gap-reference-catalog.es.md#gt-536), [GT-592](../gaps/gap-reference-catalog.es.md#gt-592), +8 |
 
 ## Bloqueadores Actuales
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
-| [GT-603](../gaps/gap-reference-catalog.es.md#gt-603) | **El ledger de turnos de agente está completo, con tests unitarios y ausente de la inyección de dependencias, y la columna de actor no se puede tipar retroactivamente.** AgentExecutionService.cs valida el alcance y luego **audita antes de ejecutar y aborta el turno si falla la escritura de auditoría**; AgentTurnAuditor.cs registra alcances concedidos frente a usados y guarda la longitud del prompt, no su texto. IAgentExecutionPort aparece en **cero registros de DI y cero endpoints**, mientras AssistantEndpoints.cs pasa de largo por AgentRuntimeGateway sin persistir nada. Aparte, AuditEntryProps.cs:11 declara public Guid ActorId sin actor_type, agent_id, model_id ni session_id. Como audit_entries es append-only por trigger de base de datos (migración 20260719202323), **las filas escritas antes de que exista el discriminador no se pueden corregir jamás**. Complementa a [GT-586](../gaps/gap-reference-catalog.es.md#gt-586), que cubre el lado Core; éste es el lado de persistencia del Tracker. | `Evolith Tracker` | P0/M |
 | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) | El camino completo desde el código hasta un producto en uso real no está desplegado ni validado **Qué significa:** Es el ítem paraguas para llevar el producto de algo que funciona en máquinas de desarrollo a algo que usa gente real. Sigue abierto hasta que se cierre todo lo que cuelga de él **Ejemplo:** Una evaluación situó al motor cerca del noventa y cinco por ciento de preparación mientras todo lo que lo rodea —empaquetado, despliegue, aplicación compañera— no lo estaba | `Cross` | P0/XL |
 
 ## Métricas
@@ -43,23 +42,23 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Indicador | Valor |
 |---|---:|
 | Fecha canónica del tablero | 2026-07-26 |
-| Gaps totales | 649 |
+| Gaps totales | 647 |
 | Gaps cerrados | 621 |
-| Gaps pendientes | 28 |
-| P0 abiertos | 2 |
-| P1 abiertos | 9 |
+| Gaps pendientes | 26 |
+| P0 abiertos | 1 |
+| P1 abiertos | 8 |
 | P2 abiertos | 14 |
-| Cierre total | 95.7% |
+| Cierre total | 96% |
 | Registros de evidencia de cierre | 603 |
 | Readiness registrado | 4 PASS |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
 | `Cross` | 2 | 1 | 1 | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
-| `Evolith Tracker` | 2 | 1 | 1 | [GT-603](../gaps/gap-reference-catalog.es.md#gt-603), [GT-631](../gaps/gap-reference-catalog.es.md#gt-631) |
 | `Governance` | 6 | 0 | 2 | [GT-578](../gaps/gap-reference-catalog.es.md#gt-578), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-599](../gaps/gap-reference-catalog.es.md#gt-599), [GT-639](../gaps/gap-reference-catalog.es.md#gt-639), +2 |
 | `Evolith Core` | 4 | 0 | 1 | [GT-583](../gaps/gap-reference-catalog.es.md#gt-583), [GT-590](../gaps/gap-reference-catalog.es.md#gt-590), [GT-594](../gaps/gap-reference-catalog.es.md#gt-594), [GT-600](../gaps/gap-reference-catalog.es.md#gt-600) |
 | `Infra` | 3 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-622](../gaps/gap-reference-catalog.es.md#gt-622), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464) |
+| `Core API` | 2 | 0 | 1 | [GT-648](../gaps/gap-reference-catalog.es.md#gt-648), [GT-522](../gaps/gap-reference-catalog.es.md#gt-522) |
 
 ## Fuente y Regla de Actualización
 

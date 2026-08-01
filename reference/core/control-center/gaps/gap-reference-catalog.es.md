@@ -7213,6 +7213,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** `Governance` · **Criticidad:** P1 · **Complejidad:** M
 - **Principal:** `M` · **Interés:** `HIGH` · **Base:** `estimate`
 - **Procedencia:** Auditoría de madurez de producto del 2026-07-26 (multi-agente con verificación adversarial). Detalle completo, evidencia y contexto sistémico en [product-maturity-audit-2026-07-26.es.md](../maturity-reports/product-maturity-audit-2026-07-26.es.md).
+- **Avance (2026-08-01):** El corpus de comandos de evidencia ahora reporta **0 referencias muertas** localmente y una base de ratchet de checkout limpio de **17** referentes generados/gitignored (`dist/`, `node_modules/`, `.harness/bin/`), así que CI bajó `--max-dead` a 17. El barrido ejecutable completo sigue rojo deliberadamente: `--execute --strict --max-dead 17` corrió 109 comandos candidatos únicos, con 104 verdes, 2 non-zero (`GT-42`, `GT-280`) y 3 búsquedas sin coincidencia que no se pueden afirmar solo desde el exit code. Por eso AC3 sigue abierto.
 - **Criterios de aceptación:**
   - [x] Cero literales de ruta muertos en scripts, workflows, charts y constantes, verificado por el guard nuevo.
   - [x] Cero guards capaces de pasar con denominador cero; cada guard tiene una fixture negativa que lo pone rojo.

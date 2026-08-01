@@ -920,8 +920,9 @@ function main() {
 
   // --- Environment sensitivity of the dead count ---------------------------
   //
-  // The ratchet wired in CI is `--max-dead 305`, and this machine reports ~288.
-  // That 17-reference gap is not drift: it is the number of recorded commands
+  // The ratchet wired in CI is based on `deadOnCleanCheckout`, not on the local
+  // `dead` count. The current 17-reference gap is not drift: it is the number
+  // of recorded commands
   // that resolve HERE only because of state a clean checkout does not have —
   // build outputs, a vendored OPA binary, installed dependencies. The comment
   // in ci-cd.yml says so in prose, which means the only way to know the runner's

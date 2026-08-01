@@ -7308,6 +7308,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** `Governance` · **Criticality:** P1 · **Complexity:** M
 - **Principal:** `M` · **Interest:** `HIGH` · **Basis:** `estimate`
 - **Provenance:** Product maturity audit of 2026-07-26 (multi-agent with adversarial verification). Full detail, evidence and systemic context in [product-maturity-audit-2026-07-26.md](../maturity-reports/product-maturity-audit-2026-07-26.md).
+- **Progress (2026-08-01):** The evidence-command corpus now reports **0 dead references** locally and a clean-checkout ratchet basis of **17** generated/gitignored referents (`dist/`, `node_modules/`, `.harness/bin/`), so CI lowered `--max-dead` to 17. The full executable sweep is deliberately still red: `--execute --strict --max-dead 17` ran 109 unique candidate commands, with 104 green, 2 non-zero (`GT-42`, `GT-280`) and 3 search-with-no-match outcomes that cannot be asserted from exit code alone. AC3 therefore remains open.
 - **Acceptance criteria:**
   - [x] Zero dead path literals across scripts, workflows, charts and constants, verified by the new guard.
   - [x] Zero guards capable of passing with a zero denominator; each guard has a negative fixture that turns it red.

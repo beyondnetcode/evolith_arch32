@@ -684,17 +684,16 @@ jobs:
       # `.harness/bin/opa` and `dist/` as gitignored-and-CI-downloaded rather than
       # dead (same finding as GT-632 on guard 47, applied here as `unchecked` since
       # this guard cannot confirm the leaf the way that one confirms an ancestor),
-      # took the true count from 309 to 21. The residual is retired artifacts with
-      # no successor (a consolidated `.bmad-core/AGENTS.md`, the retired
-      # `evolith-bff` gateway, the retired `packages/mcp-tools`, two retired k8s
-      # manifests, a retired sandbox app, three root-level scripts no longer
-      # declared) plus three records where `vision/` and `tools/list` are prose,
-      # not paths — see GT-637 for the record.
+      # took the true count from 309 to 21. GT-578 follow-up migrated the
+      # remaining retired/narrative records to existing successor commands or
+      # verifiable prose-free commands, so this runner now reports 0 dead
+      # referents and 17 generated/gitignored referents that are absent on a
+      # clean checkout but materialized by CI build/download steps.
       #
       # Lower it as records are repaired, from a number this job printed; at 0,
       # delete the flag and this becomes the strict gate.
       - name: Dead-reference ratchet (must not grow)
-        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 19
+        run: node .harness/scripts/ci/41-validate-evidence-commands.mjs --strict --max-dead 17
 
   # RETIRED 2026-07-27 (GT-570): the `publish-npm` job lived here and published
   # ONLY `src/sdk/cli`, with `--tag beta` and no provenance, writing the token

@@ -485,16 +485,17 @@
         ".harness/scripts/ci/10-validate-contract-conformance.mjs",
         ".harness/scripts/validate-contract-conformance.test.mjs",
         "src/rulesets/contracts/evolith-machine-contracts.json",
+        "src/rulesets/contracts/fixtures/evolith-tracker-consumer.contract.json",
         "src/rulesets/contracts/README.md",
         ".github/workflows/docs.yml"
       ],
       "validationCommands": [
         "node --test .harness/scripts/validate-contract-conformance.test.mjs",
         "node .harness/scripts/ci/10-validate-contract-conformance.mjs",
-        "node .harness/scripts/ci/10-validate-contract-conformance.mjs --consumer ../evolith_tracker/contracts/evolith-core-contracts.json"
+        "node .harness/scripts/ci/10-validate-contract-conformance.mjs --consumer src/rulesets/contracts/fixtures/evolith-tracker-consumer.contract.json"
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "Evolith Tracker main commit 4256e7b pins contract 1.0.0 and executes the Core conformance validator in CI."
+      "dependencyRationale": "Core records a reproducible pinned Tracker consumer snapshot for evidence-command execution; the live evolith_tracker manifest remains owned by the external consumer repository."
     },
     {
       "id": "GT-44",

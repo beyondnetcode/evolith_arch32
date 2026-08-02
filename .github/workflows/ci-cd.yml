@@ -770,40 +770,75 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && vars.VPS_DEPLOY_ENABLED == 'true'
     steps:
-      - name: Trigger Coolify deploy (core-api)
+      # GT-324 — HARDENED 2026-08-02. Each service used to check its own hook and, when unset,
+      # warn and `exit 0`. That is right for "not configured yet" and WRONG for "half configured":
+      # set the token, typo one hook, and CD reports success while that service never deploys —
+      # and the only symptom is an old image serving traffic nobody is looking at.
+      #
+      # The two states are now separated. Nothing configured is a skip; PARTIALLY configured is a
+      # failure that names how many of the four values are present. Same contract as the Tracker's
+      # `images.yml`, so both repositories fail the same way.
+      - name: Classify the deploy configuration
+        id: cfg
         env:
-          HOOK: ${{ secrets.COOLIFY_COREAPI_DEPLOY_HOOK }}
           TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          HOOK_CORE: ${{ secrets.COOLIFY_COREAPI_DEPLOY_HOOK }}
+          HOOK_MCP: ${{ secrets.COOLIFY_MCP_DEPLOY_HOOK }}
+          HOOK_AGENT: ${{ secrets.COOLIFY_AGENTRUNTIME_DEPLOY_HOOK }}
         run: |
-          if [ -z "$HOOK" ] || [ -z "$TOKEN" ]; then
-            echo "::warning::COOLIFY_COREAPI_DEPLOY_HOOK / COOLIFY_API_TOKEN not set — skipping core-api deploy. Set them to enable CD (GT-324)."
-            exit 0
-          fi
-          curl --fail --silent --show-error -X GET "$HOOK" -H "Authorization: Bearer $TOKEN"
-          echo "core-api deploy triggered"
+          set=0; unset=0
+          for v in "$TOKEN" "$HOOK_CORE" "$HOOK_MCP" "$HOOK_AGENT"; do
+            if [ -n "$v" ]; then set=$((set+1)); else unset=$((unset+1)); fi
+          done
 
-      - name: Trigger Coolify deploy (mcp-server)
-        env:
-          HOOK: ${{ secrets.COOLIFY_MCP_DEPLOY_HOOK }}
-          TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
-        run: |
-          if [ -z "$HOOK" ] || [ -z "$TOKEN" ]; then
-            echo "::warning::COOLIFY_MCP_DEPLOY_HOOK / COOLIFY_API_TOKEN not set — skipping mcp-server deploy. Set them to enable CD (GT-324)."
+          if [ "$set" -eq 0 ]; then
+            echo "::warning::Coolify is not configured (no token, no hooks). Skipping the deploy. Set COOLIFY_API_TOKEN and the three hooks to enable CD (GT-324)."
+            echo "state=absent" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          curl --fail --silent --show-error -X GET "$HOOK" -H "Authorization: Bearer $TOKEN"
-          echo "mcp-server deploy triggered"
+          if [ "$unset" -gt 0 ]; then
+            echo "::error::Coolify is PARTIALLY configured: $set of 4 values present. A half-wired deploy reports success while some services never ship, so this fails instead of warning. Set all of COOLIFY_API_TOKEN, COOLIFY_COREAPI_DEPLOY_HOOK, COOLIFY_MCP_DEPLOY_HOOK and COOLIFY_AGENTRUNTIME_DEPLOY_HOOK, or unset them all."
+            exit 1
+          fi
+          echo "state=complete" >> "$GITHUB_OUTPUT"
 
-      # GT-437: agent-runtime-api joins the deployable services. Same fail-soft
-      # contract as the other two — an unset hook warns and skips, never fails CD.
-      - name: Trigger Coolify deploy (agent-runtime)
+      - name: Trigger the deploys
+        if: steps.cfg.outputs.state == 'complete'
         env:
-          HOOK: ${{ secrets.COOLIFY_AGENTRUNTIME_DEPLOY_HOOK }}
           TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          HOOK_CORE: ${{ secrets.COOLIFY_COREAPI_DEPLOY_HOOK }}
+          HOOK_MCP: ${{ secrets.COOLIFY_MCP_DEPLOY_HOOK }}
+          HOOK_AGENT: ${{ secrets.COOLIFY_AGENTRUNTIME_DEPLOY_HOOK }}
         run: |
-          if [ -z "$HOOK" ] || [ -z "$TOKEN" ]; then
-            echo "::warning::COOLIFY_AGENTRUNTIME_DEPLOY_HOOK / COOLIFY_API_TOKEN not set — skipping agent-runtime deploy. Set them to enable CD (GT-437)."
-            exit 0
-          fi
-          curl --fail --silent --show-error -X GET "$HOOK" -H "Authorization: Bearer $TOKEN"
-          echo "agent-runtime deploy triggered"
+          failed=0
+          trigger() {
+            # `--fail` matters: without it curl exits 0 on a 4xx and a REJECTED hook reads as a
+            # successful deploy.
+            if curl --fail --silent --show-error -X GET "$2" -H "Authorization: Bearer $TOKEN" -o /dev/null; then
+              echo "$1 deploy triggered"
+            else
+              echo "::error::$1 deploy hook did not accept the request"
+              failed=1
+            fi
+          }
+          # All three are attempted before failing, so one bad hook does not hide the state of the
+          # other two.
+          trigger core-api "$HOOK_CORE"
+          trigger mcp-server "$HOOK_MCP"
+          trigger agent-runtime "$HOOK_AGENT"
+          exit $failed
+
+      # Triggering is not deploying: Coolify works asynchronously, so a green step means the
+      # REQUEST was accepted, never that the new image is serving. GT-448 asks for a deploy
+      # evidenced by a recorded run against the live service, and this job cannot provide it.
+      - name: What this job did and did not prove
+        if: steps.cfg.outputs.state == 'complete'
+        run: |
+          {
+            echo '### Deploy triggered'
+            echo ''
+            echo 'Coolify accepted the webhook for all three services at `${{ github.sha }}`.'
+            echo ''
+            echo '> This proves the REQUEST was accepted. It does not prove the new image is'
+            echo '> serving traffic. GT-448 asks for a recorded run against the live service.'
+          } >> "$GITHUB_STEP_SUMMARY"

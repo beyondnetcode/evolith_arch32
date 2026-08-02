@@ -284,6 +284,49 @@ jobs:
           fi
           echo "drill measured $total request(s) across the outage"
 
+      # GT-443 criterion 3 — the drill now checks the recorded behaviour against what
+      # ADR-0011 DECLARES, which it could not do until the ADR declared anything. The
+      # budgets live in "Calibration in force" there, derived from six measured
+      # recoveries with ~2x headroom, and the headroom size is argued in the ADR: a
+      # budget pegged to the observed value fails on runner noise and teaches everyone
+      # to re-run the job, which is how a red check becomes a ritual.
+      - name: Recovery is inside the budgets ADR-0011 declares
+        env:
+          # Keep in step with reference/core/architecture/adrs/core/0011-*.md
+          BUDGET_MTTR_MS: '25000'
+          BUDGET_UNDER_LOAD_MS: '150000'
+        run: |
+          fail=0
+
+          mttr=$(grep -o '{"summary":true[^}]*}' "$RUNNER_TEMP/chaos-mttr.log" | tail -1 \
+                 | sed -n 's/.*"mean_mttr_ms":\([0-9]*\).*/\1/p')
+          if [ -z "$mttr" ]; then
+            echo "::error::no mean_mttr_ms in the MTTR log — the drill recorded no recovery to measure"
+            fail=1
+          elif [ "$mttr" -gt "$BUDGET_MTTR_MS" ]; then
+            echo "::error::MTTR ${mttr}ms exceeds the ADR-0011 budget of ${BUDGET_MTTR_MS}ms"
+            fail=1
+          else
+            echo "MTTR ${mttr}ms is within the ${BUDGET_MTTR_MS}ms budget"
+          fi
+
+          verdict=$(grep -o '{"scenario":"kill-under-load".*}' "$RUNNER_TEMP/chaos-kill-under-load.log" \
+                    | tail -1 | sed -n 's/.*"t_first_verdict_ms":\([0-9]*\).*/\1/p')
+          if [ -z "$verdict" ]; then
+            echo "::error::no t_first_verdict_ms under load — the system never returned a governed verdict"
+            fail=1
+          elif [ "$verdict" -gt "$BUDGET_UNDER_LOAD_MS" ]; then
+            echo "::error::first verdict under load ${verdict}ms exceeds the ADR-0011 budget of ${BUDGET_UNDER_LOAD_MS}ms"
+            fail=1
+          else
+            echo "first verdict under load ${verdict}ms is within the ${BUDGET_UNDER_LOAD_MS}ms budget"
+          fi
+
+          # The error rate during the outage is NOT bounded, on purpose: ~33% is the
+          # expected observation of a drill that deliberately kills a dependency under
+          # load. Bounding it would fail the drill for succeeding.
+          exit $fail
+
       - name: Publish chaos results
         if: always()
         run: |

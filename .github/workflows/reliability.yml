@@ -66,6 +66,18 @@ env:
   EVOLITH_API_KEY: ci-load-key
   BASE_URL: http://127.0.0.1:3001
 
+# GT-443 — WITHOUT THIS, THE DRILL COULD NOT FAIL. A `run:` step with no `shell:`
+# gets Actions' implicit `bash -e {0}`, which does NOT set `pipefail`. Two steps
+# here pipe a drill script into `tee`, so the job took `tee`'s exit status and
+# discarded the script's. `recovery-time.sh` ends with `exit 1` under the comment
+# "NO run recovered a verdict - this is itself a finding", and that exit was
+# swallowed: a total outage that never came back would have published its own
+# evidence to the step summary under a green tick. Declaring `shell: bash` gets
+# `bash --noprofile --norc -eo pipefail {0}`.
+defaults:
+  run:
+    shell: bash
+
 jobs:
   k6-load:
     name: k6 load profile (thresholds + published metrics)
@@ -251,6 +263,26 @@ jobs:
           SERVICES: redis core-api
           RUNS: '3'
         run: bash product/infra/load/chaos/recovery-time.sh | tee "$RUNNER_TEMP/chaos-mttr.log"
+
+      # GT-443 — the drill's own asserts cover "did it come back". This covers "did it
+      # measure anything at all". A run where k6 never issued a request reports
+      # total_requests 0 and error_rate 0, and the recovery check still passes, because
+      # a system nobody called does look healthy. Zero measured requests is the vacuous
+      # pass this board keeps finding, so it fails here instead of reading as a clean drill.
+      - name: The drill must have measured something
+        run: |
+          line=$(grep -o '{"scenario":"kill-under-load".*}' "$RUNNER_TEMP/chaos-kill-under-load.log" | tail -1)
+          if [ -z "$line" ]; then
+            echo "::error::the chaos drill produced no result line — it did not run"
+            exit 1
+          fi
+          echo "$line"
+          total=$(printf '%s' "$line" | sed -n 's/.*"total_requests":\([0-9]*\).*/\1/p')
+          if [ -z "$total" ] || [ "$total" -eq 0 ]; then
+            echo "::error::the drill issued 0 requests: nothing was measured, so 'it recovered' means nothing"
+            exit 1
+          fi
+          echo "drill measured $total request(s) across the outage"
 
       - name: Publish chaos results
         if: always()

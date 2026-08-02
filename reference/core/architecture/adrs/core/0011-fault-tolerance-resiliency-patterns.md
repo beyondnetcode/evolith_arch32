@@ -17,6 +17,50 @@ Implement explicit Resilience Patterns protecting all outbound system exits:
 3. **Decoupled Domain logic**: The core business domain must remain 100% agnostic to these patterns.
 4. **Ingress Edge Active Healthchecks**: Enable Kong Gateway upstream circuit-breaking logic. Kong monitors endpoint responsiveness and terminates upstream target assignments at the API gateway level if health metrics collapse, shielding backend nodes from direct wave hits.
 
+## Calibration in force
+
+The Negative consequences above say this ADR requires *"sophisticated parameter calibration (how
+many errors before break, timeout limit, restore cooldown)"* and then never supplies it. That
+omission is why `GT-443`'s chaos criterion could not be checked: a drill cannot verify that
+behaviour matches a declaration that contains no numbers.
+
+These values are **not invented here**. Three of them are what the code has been running on;
+recording them promotes a fact that lived only in a default object into the governance record. The
+two budgets are derived from measurement, and the measurements are named so the derivation can be
+argued with.
+
+### Breaker parameters
+
+Defined in `src/packages/agent-runtime/src/adapters/resilience/circuit-breaker.ts`.
+
+| Parameter | Value | Why |
+|---|---|---|
+| `failureThreshold` | 5 consecutive failures | Below this a single transient blip trips the circuit and the retry-with-backoff of §2 never gets its chance; far above it the dependency absorbs a burst it is already failing to serve. |
+| `resetTimeoutMs` | 30 000 | The cooldown before a half-open probe. It must exceed a dependency's own restart time or every probe re-trips the circuit — measured container recovery to a healthy state is ~30 s, so this is at the edge and is the first value to raise if half-open probes are seen failing systematically. |
+| `timeoutMs` | 10 000 | The point at which a call is ABORTED, not merely abandoned. Its whole purpose is to be far below undici's 300 s default header timeout, which is the stall ADR-0011 was written for. |
+
+### Recovery budgets
+
+Two different questions, so two budgets. Both are asserted by the `chaos-drill` job.
+
+| Budget | Value | Derivation |
+|---|---|---|
+| MTTR to first governed verdict, total outage, no load | **≤ 25 000 ms** | Two independent CI runs of three drills each — six recoveries, 6/6 successful — gave means of 9 219 ms and 10 971 ms. The budget is ~2× the worse mean. |
+| First governed verdict with load still arriving | **≤ 150 000 ms** | The same two runs gave 71 793 ms and 72 361 ms while k6 kept driving traffic. Again ~2×. |
+
+**The headroom is deliberate and so is its size.** These are shared CI runners; a budget at the
+observed value would fail on noise and teach everyone to re-run the job, which is how a red check
+becomes a ritual. At 2× it still catches the regressions that matter — a recovery that went from
+11 s to a minute crosses it, and so does one that stopped happening.
+
+**What is deliberately NOT bounded:** the error rate during the outage. Both runs recorded ~33 %
+(247/745 and 235/733), and that is the expected observation of a drill that deliberately kills a
+dependency under load, not a defect. Bounding it would make the drill fail for succeeding.
+
+**The sample is two runs, and that is stated rather than implied.** A budget derived from a small
+sample is still better than a clause with no number: it is falsifiable, so a wrong value fails and
+gets corrected, while prose never does.
+
 ## Deviations in force
 
 Recorded here because a deviation that lives only in a source comment is invisible to the audit

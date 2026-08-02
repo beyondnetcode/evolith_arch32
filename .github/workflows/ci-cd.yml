@@ -608,6 +608,17 @@ jobs:
           node .harness/scripts/ci/56-validate-docker-workspace-closure.mjs --verbose
           node --test .harness/scripts/ci/56-validate-docker-workspace-closure.test.mjs
 
+      # GT-650: the same 24 required artifacts live in TWO hand-maintained files with
+      # different consumers — gate-f*.json feeds the evaluator, phase-gates.rules.json
+      # is what the HTTP surface serves to satellites. #378 wired four schemas and
+      # declared three artifacts as tool output, and all seven edits reached only the
+      # evaluator's copy. For as long as that went unnoticed, the Core evaluated against
+      # one answer and published another, with nothing red anywhere.
+      - name: Both gate corpora describe the same artifacts
+        run: |
+          node .harness/scripts/ci/57-validate-gate-corpora-parity.mjs
+          node --test .harness/scripts/ci/57-validate-gate-corpora-parity.test.mjs
+
       # GT-591: the OPA pin sat at 0.65.0 for two years and nothing said so, while a
       # SECOND spelling of it lived in compile-opa-wasm.mjs's download URL — so the
       # policies could be tested by one compiler and the enforcing wasm built by

@@ -7398,9 +7398,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** Component-by-component source assessment conducted 2026-07-26 in the companion `why-architecture` repository (`docs/evolith-assessment-en.md`), verified against this repository's code before registration.
 - **Acceptance criteria:**
   - [x] The Core edge type is exported from the shared contracts package.
-  - [ ] An `evidence_edges` table exists with indexes in both directions, backfilled from `ReferencesJson`.
-  - [ ] A depth-bounded graph endpoint returns the decision-to-evidence path for one initiative.
-  - [ ] `References` is retained as a projection for one release before removal.
+  - [x] An `evidence_edges` table exists with indexes in both directions, backfilled from `ReferencesJson`. **Closed 2026-08-01 in the satellite** (`beyondnetcode/evolith_tracker#90`): ten columns and three indexes generated with `dotnet ef` against `EVIDENCE_EDGE_STORAGE_CONTRACT` — `idx_evidence_edges_from`, `idx_evidence_edges_to` (the reverse lookup the jsonb column could not serve at any cost) and the unique `ux_evidence_edges_identity` mirroring `evidenceEdgeKey()`. The backfill is raw SQL over `references_json` and **would have run against an empty table in CI**, so it was executed for real against a Postgres 16 seeded with the six shapes that matter: of 6 references it produced exactly the 3 correct edges, left the opaque external id in `References`, rejected an invented `kind` and a self-loop, and preserved an id containing slashes intact. Re-run: `INSERT 0 0`.
+  - [x] A depth-bounded graph endpoint returns the decision-to-evidence path for one initiative. **Closed 2026-08-01** (`beyondnetcode/evolith_tracker#91`): `GET /api/v1/initiatives/{id}/evidence-graph` with `depth` (2 default, ceiling 5), `direction` and repeatable `type`. It does **not** reimplement the traversal — it loads edges and passes them through the same function the tests compare against this package's contract, because a third traversal semantics (SQL, contract, HTTP) with nothing guaranteeing the three agree is the exact defect this gap closes.
+  - [x] `References` is retained as a projection for one release before removal. **Verified in code:** `EvidenceRecordRecord.ReferencesJson` and its jsonb column are untouched, and the backfill deliberately leaves every non-canonical entry there — those are the opaque external ids the dedup path reads, they are not edges, and dropping the column now would lose them.
 
 #### GT-606
 

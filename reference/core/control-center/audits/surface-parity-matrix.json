@@ -1178,6 +1178,23 @@
       }
     },
     {
+      "id": "calibrate-report",
+      "name": "Gate calibration report",
+      "description": "GT-585 - report, per ruleset, the confusion matrix, false-block rate with a Wilson 95% interval, precision, recall and Cohen's kappa over a corpus of adjudicated gate decisions. A MEASUREMENT, not a gate: it emits no blocking verdict, because a high false-block rate is a finding for a human and wiring it to BLOCKED would make every honest measurement look like a regression.",
+      "cli": {
+        "exposed": true,
+        "command": "calibrate report"
+      },
+      "mcp": {
+        "exposed": false,
+        "exempt": "NOT a principled exclusion - deferred until there is anything to report. The label corpus needs humans overriding gate decisions in production (GT-435/GT-448), so today every figure would come back undefined and an agent would read the absence as a gate with no false blocks, which is the single misreading this operation exists to prevent. The intended end state IS full parity: publishing a per-rule false-block rate is precisely what an agent and a Tracker dashboard should be able to ask for. Revisit with GT-585 criteria 1 and 3."
+      },
+      "rest": {
+        "exposed": false,
+        "exempt": "Same reason as MCP. The natural consumer is the Tracker's governance dashboard, and it should consume a figure that exists rather than an endpoint that returns nulls."
+      }
+    },
+    {
       "id": "knowledge-search",
       "name": "Knowledge corpus search",
       "description": "BM25-first hybrid retrieval over the indexed architecture knowledge corpus (ADRs, rulesets, standards), returning ranked chunks with citations and retrieval provenance",

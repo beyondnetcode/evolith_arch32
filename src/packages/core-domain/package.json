@@ -46,6 +46,10 @@
       "types": "./dist/domain/transparency/index.d.ts",
       "default": "./dist/domain/transparency/index.js"
     },
+    "./domain/calibration": {
+      "types": "./dist/domain/calibration/index.d.ts",
+      "default": "./dist/domain/calibration/index.js"
+    },
     "./infrastructure/transparency": {
       "types": "./dist/infrastructure/transparency/index.d.ts",
       "default": "./dist/infrastructure/transparency/index.js"

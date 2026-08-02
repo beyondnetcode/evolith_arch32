@@ -12,8 +12,8 @@
   "evidence": {
     "closureRecords": 615,
     "cliPackage": "@beyondnet/evolith-cli@1.2.2",
-    "adrCount": 139,
-    "rulesetCount": 176,
+    "adrCount": 140,
+    "rulesetCount": 177,
     "schemaCount": 50
   },
   "readiness": [

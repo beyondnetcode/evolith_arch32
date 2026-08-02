@@ -28,7 +28,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) |
 | 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-650](../gaps/gap-reference-catalog.es.md#gt-650), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-622](../gaps/gap-reference-catalog.es.md#gt-622), [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-536](../gaps/gap-reference-catalog.es.md#gt-536), [GT-443](../gaps/gap-reference-catalog.es.md#gt-443), [GT-588](../gaps/gap-reference-catalog.es.md#gt-588), +1 |
 
 ## Bloqueadores Actuales
@@ -42,13 +42,13 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Indicador | Valor |
 |---|---:|
 | Fecha canónica del tablero | 2026-07-26 |
-| Gaps totales | 647 |
+| Gaps totales | 648 |
 | Gaps cerrados | 633 |
-| Gaps pendientes | 14 |
+| Gaps pendientes | 15 |
 | P0 abiertos | 1 |
-| P1 abiertos | 3 |
+| P1 abiertos | 4 |
 | P2 abiertos | 7 |
-| Cierre total | 97.8% |
+| Cierre total | 97.7% |
 | Registros de evidencia de cierre | 615 |
 | Readiness registrado | 4 PASS |
 
@@ -57,8 +57,8 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | `Cross` | 2 | 1 | 1 | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
 | `Infra` | 3 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-622](../gaps/gap-reference-catalog.es.md#gt-622), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464) |
 | `Governance` | 2 | 0 | 1 | [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-588](../gaps/gap-reference-catalog.es.md#gt-588) |
+| `SDLC Governance` | 1 | 0 | 1 | [GT-650](../gaps/gap-reference-catalog.es.md#gt-650) |
 | `Evolith Core` | 1 | 0 | 0 | [GT-600](../gaps/gap-reference-catalog.es.md#gt-600) |
-| `infra-providers` | 1 | 0 | 0 | [GT-536](../gaps/gap-reference-catalog.es.md#gt-536) |
 
 ## Fuente y Regla de Actualización
 

@@ -7337,6 +7337,25 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El spawn pasa un entorno con lista blanca; ningún `*_TOKEN` ni `*_URL` llega a un script de capacidad.
   - [x] Un test verifica que una capacidad lanzada no puede leer el token del Core.
 
+#### GT-650
+
+**Title:** Dos vocabularios de artefactos sin reconciliar hacen impublicable un catálogo
+
+- **Purpose:** Let a satellite ask the Core what a phase requires and get ONE answer.
+- **Evidence:** The Core carries two parallel corpora. `reference/governance/sdlc/gates/gate-f*.json` declares 24 required artifacts in human form, each with a `validation`, `rules` and either a `schemaRef` (14) or a `producedBy` (3); `UNIVERSAL_PHASE_ARTIFACTS` in `src/packages/core-domain/src/application/services/phase-artifact-profile.service.ts` declares 18 slugs across only `construction`, `quality` and `deployment`. Measured differences: (1) **naming** — `CI Pipeline` / `ci-pipeline-result`, `Security Scan Report` / `security-scan-result`, `Rollback Procedure` / `rollback-plan`, `Observability Validation` / `observability-readiness`; (2) **membership** — `source-change-set`, `architecture-drift-result`, `spec-traceability-map`, `contract-test-result`, `cfr-metric`, `defect-log`, `exception-status`, `release-plan` and `operational-sign-off` exist only in the constant, while `Documentation Delta`, `Acceptance Validation`, `Pyramid Distribution`, `MoSCoW Prioritization Matrix`, `Reference Blueprint Alignment` and `Simplicity Checklist Phase 1` exist only in the gates; (3) **phase placement** — `Coverage Report` is required by `gate-f3` (construction) and listed under `quality` in the constant. A phase disagreement is not a naming problem: the two corpora would gate a release differently.
+- **Reachability:** `GET /api/v1/gates/:gateId` and `GET /api/v1/phases/:phase/requirements` read `src/rulesets/sdlc/phase-gates.rules.json`, a THIRD file whose gates carry `mandatoryEvidence` and no artifacts at all. So the artifact-bearing corpus is not on the HTTP surface, and what is on the surface is not what the evaluator uses.
+- **Why it matters beyond tidiness:** `evolith_tracker` ships `StandInPhaseArtifactProfileSource`, a hand-built mirror of the Core catalog stamped `core-standin`, precisely because there is nothing to sync from. Its `GAP-004` is BLOCKED on this. The seam is already built on the satellite side (`IPhaseArtifactProfileSource`, with a `core-sync` provenance constant reserved); only the Core half is missing.
+- **Not a mechanical merge.** Deciding which corpus is canonical, and where `Coverage Report` belongs, is an architecture decision about the SDLC model and needs an ADR — not a script that unions two lists. Filed as a gap rather than fixed in passing for that reason.
+- **Resolution / Next step:** Reconcile to a single artifact catalog under an ADR, then publish it (`GET /api/v1/phases/artifacts` or equivalent) so satellites consume instead of mirror.
+- **Principal:** `M` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Criterios de aceptación:**
+  - [ ] Un ADR declara qué corpus es canónico para los artefactos requeridos, y resuelve la discrepancia de fase de `Coverage Report` de forma explícita, no eligiendo uno en silencio.
+  - [ ] Queda UN catálogo. El corpus perdedor se borra o se deriva del ganador — dos ficheros que hoy coinciden mañana divergen, que es justo el defecto que registra esta ficha.
+  - [ ] El catálogo es alcanzable por HTTP y devuelve, por fase, cada artefacto requerido con su `$id` canónico cuando existe y su `producedBy` cuando es salida de herramienta.
+  - [ ] Una guarda falla cuando el catálogo publicado y el corpus discrepan, verificada haciéndolos discrepar.
+  - [ ] `evolith_tracker` puede sustituir `StandInPhaseArtifactProfileSource` por una fuente `core-sync`, y su `GAP-004` registra la mitad del Core como desbloqueada.
+- **Status:** `PENDIENTE` (2026-08-02)
+
 #### GT-608
 
 **Título:** El subsistema de aprobación humana nunca se ha ejecutado

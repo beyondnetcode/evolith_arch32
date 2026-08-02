@@ -42,14 +42,14 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Indicador | Valor |
 |---|---:|
 | Fecha canónica del tablero | 2026-07-26 |
-| Gaps totales | 648 |
-| Gaps cerrados | 633 |
+| Gaps totales | 649 |
+| Gaps cerrados | 634 |
 | Gaps pendientes | 15 |
 | P0 abiertos | 1 |
 | P1 abiertos | 4 |
 | P2 abiertos | 7 |
 | Cierre total | 97.7% |
-| Registros de evidencia de cierre | 615 |
+| Registros de evidencia de cierre | 616 |
 | Readiness registrado | 4 PASS |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |

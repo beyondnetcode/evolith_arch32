@@ -9639,6 +9639,21 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "The persistent half — the evidence_edges table, its backfill and the depth-bounded endpoint — is owned by beyondnetcode/evolith_tracker, exactly as EVIDENCE_EDGE_STORAGE_CONTRACT declares. It landed there as PRs #89, #90 and #91 and is verified against a real Postgres 16. This record lists only files resolvable in THIS repository, per the standard; the satellite evidence is cited in the catalog section."
+    },
+    {
+      "id": "GT-532",
+      "closedAt": "2026-08-02",
+      "closureCommit": "6304d354",
+      "evidence": [
+        "reference/core/control-center/gaps/gap-reference-catalog.md#gt-532",
+        "reference/core/control-center/gaps/gap-reference-catalog.es.md#gt-532"
+      ],
+      "note": "Closed on its two acceptance criteria, not on its title. The marketplace adapters the title names were never in the criteria and did not ship; they are registered as GT-651 so the closure does not bury them.",
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The row's two acceptance criteria are met and its TITLE names a third element — marketplace-style adapters — that no criterion ever asked for and that did not ship. Closing on the criteria is the standard this board applies to epics ('an epic closes when its children do, never on its own narrative'), and the unshipped element is carved out as GT-651 rather than left implicit inside a DONE row. The implementing files live in beyondnetcode/evolith_tracker (PR #115); this record cites them with a repository prefix and the catalog section carries the reasoning. The implementing code is not resolvable here by design: every file lives in beyondnetcode/evolith_tracker (PR #115) — GovernancePackage.cs, the export/apply handlers, GovernancePackageEndpoints.cs and 13 tests — and the portfolio half is TowerMd3.tsx, which pre-existed. This record therefore cites only in-repository paths, as GT-605's does for the same reason.",
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ]
     }
   ]
 }

@@ -29,6 +29,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import process from 'node:process';
+import { assertScanned } from '../lib/coverage.mjs';
 
 const ROOT = process.cwd();
 const GATES_DIR = 'reference/governance/sdlc/gates';
@@ -99,11 +100,12 @@ function main() {
     `${evaluator.size} phase(s), by resolved schema basename and tool-output flag.`,
   );
 
-  if (compared === 0) {
-    console.error('\n❌ Zero artifacts compared. Both corpora were read and one of them is empty ' +
-      'or has changed shape — that is a broken guard, not a clean repository.\n');
-    process.exit(1);
-  }
+  // Zero compared is the shape every vacuous guard takes: both files read, nothing contrasted,
+  // green tick. It is a failure here (GT-557).
+  assertScanned(compared, {
+    what: 'required artifacts present in BOTH gate corpora',
+    where: [`${GATES_DIR}/gate-f*.json (requiredArtifacts)`, `${SERVED} (mandatoryEvidence)`],
+  });
 
   if (problems.length > 0) {
     console.error('\n❌ The two gate corpora disagree:\n');

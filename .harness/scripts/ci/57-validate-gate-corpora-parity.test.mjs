@@ -14,7 +14,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync, copyFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -31,8 +31,10 @@ function runIn(evaluator, served) {
   try {
     mkdirSync(join(root, 'reference/governance/sdlc/gates'), { recursive: true });
     mkdirSync(join(root, 'src/rulesets/sdlc'), { recursive: true });
-    mkdirSync(join(root, '.harness/scripts/ci'), { recursive: true });
-    copyFileSync(GUARD, join(root, '.harness/scripts/ci/guard.mjs'));
+    // The REAL guard is executed with its cwd pointed at the fixture, rather than copied into
+    // it. It resolves the corpora from `process.cwd()` and its own imports from its own
+    // location, so a copy would only break the second half — and writing a fake harness path
+    // here as a string literal made `40-validate-path-literals` report a dead path, correctly.
 
     for (const g of evaluator) {
       writeFileSync(
@@ -46,7 +48,7 @@ function runIn(evaluator, served) {
     );
 
     try {
-      const out = execFileSync(process.execPath, ['.harness/scripts/ci/guard.mjs'], {
+      const out = execFileSync(process.execPath, [GUARD], {
         cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'],
       });
       return { code: 0, out };
@@ -122,7 +124,9 @@ test('an artifact evaluated but never served fails', () => {
 
 test('two empty corpora do NOT pass', () => {
   // Zero compared is the shape every vacuous guard takes. It must be a failure, not a tick.
+  // The refusal comes from the shared `assertScanned` helper rather than from local wording,
+  // so this asserts the helper's message: a bespoke copy would drift from GT-557's contract.
   const r = runIn([{ phase: 1, artifacts: [] }], [{ phase: 1, artifacts: [] }]);
   assert.equal(r.code, 1, r.out);
-  assert.match(r.out, /Zero artifacts compared/);
+  assert.match(r.out, /ZERO required artifacts present in BOTH gate corpora scanned/);
 });

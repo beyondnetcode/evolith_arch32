@@ -50,8 +50,14 @@ Measured the same day, in `evolith_tracker`: three Dockerfiles, **zero workflows
 push them**, and charts referencing `ghcr.io/beyondnetcode/evolith-tracker-api:0.0.1`,
 `…-web:0.0.1` and `evolith-tracker-gateway:local` — the last a tag no registry can ever serve.
 
-This is the larger half of `GT-435` and it lives in the other repository. It is not a tag fix: the
-CD does not exist. Tracked there rather than restated here, so one board owns it.
+**Fixed the same day** (`evolith_tracker#113`): `images.yml` now publishes all three to GHCR on
+every merge to `main` and `develop`, `:latest` plus `:<sha>`, with the built-in `GITHUB_TOKEN` and
+no new secret. All three images were built locally from the documented `src/` context before any of
+it was wired — a CD that publishes a broken image is worse than none — and the workflow verifies
+the pushed tag with `docker buildx imagetools inspect` rather than trusting its own green tick.
+The same deployability guard runs there, and its negative test caught it reading an image reference
+out of a workflow COMMENT and blessing the very tag the comment warned about; comments are now
+stripped before scanning in both repositories.
 
 ## Decisions and credentials — owner only
 

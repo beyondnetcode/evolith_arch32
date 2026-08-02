@@ -83,7 +83,14 @@ function publishedImages() {
   if (!existsSync(join(ROOT, WORKFLOWS))) return published;
 
   for (const file of readdirSync(join(ROOT, WORKFLOWS)).filter((f) => /\.ya?ml$/.test(f))) {
-    const raw = readFileSync(join(ROOT, WORKFLOWS, file), 'utf8');
+    // COMMENTS ARE STRIPPED FIRST, and this is not cosmetic: a workflow that DOCUMENTS a broken
+    // image reference — `# the chart asked for evolith-tracker-api:0.0.1` — would otherwise be
+    // read as a declaration that it publishes it, and the guard would bless the very tag the
+    // comment exists to warn about. Found by a negative test, not by the happy path.
+    const raw = readFileSync(join(ROOT, WORKFLOWS, file), 'utf8')
+      .split('\n')
+      .map((line) => line.replace(/(^|\s)#.*$/, '$1'))
+      .join('\n');
 
     // Expressions are collapsed to space-free tokens FIRST. `${{ github.repository_owner }}`
     // contains spaces, so any `\S`-based pattern silently matches nothing — which is how a guard

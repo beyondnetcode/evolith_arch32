@@ -51,8 +51,14 @@ publiquen**, y charts que referencian `ghcr.io/beyondnetcode/evolith-tracker-api
 `…-web:0.0.1` y `evolith-tracker-gateway:local` — este último un tag que ningún registro puede
 servir jamás.
 
-Es la mitad más grande de `GT-435` y vive en el otro repositorio. No es un arreglo de tag: el CD no
-existe. Se sigue allí y no se repite aquí, para que un solo tablero sea su dueño.
+**Arreglado el mismo día** (`evolith_tracker#113`): `images.yml` publica ya las tres en GHCR en cada
+merge a `main` y `develop`, `:latest` más `:<sha>`, con el `GITHUB_TOKEN` incorporado y sin secreto
+nuevo. Las tres imágenes se construyeron en local desde el contexto `src/` documentado antes de
+cablear nada —un CD que publica una imagen rota es peor que ninguno— y el workflow verifica el tag
+empujado con `docker buildx imagetools inspect` en vez de fiarse de su propio tick verde. Allí corre
+la misma guarda de desplegabilidad, y su prueba negativa la pilló leyendo una referencia de imagen
+de un COMENTARIO de workflow y bendiciendo justo el tag del que el comentario avisaba; los
+comentarios se eliminan ahora antes de escanear en los dos repositorios.
 
 ## Decisiones y credenciales — solo el dueño
 

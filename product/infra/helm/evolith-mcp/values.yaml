@@ -3,8 +3,17 @@ replicaCount: 2
 image:
   repository: ghcr.io/beyondnetcode/evolith-mcp
   pullPolicy: IfNotPresent
-  tag: "1.1.0"
-
+  # GT-435 — the tag must be one CI actually publishes, and until 2026-08-02 it was not: this
+  # chart asked for `"1.1.0"`, a semver build driven by a git tag that either never ran
+  # (docker-images.yml has no runs) or, for agent-runtime, had no matching tag at all. A
+  # `helm install` with default values would have met ImagePullBackOff on day one, and no green
+  # CI could have shown it, because nothing has ever pulled these images.
+  #
+  # `latest` is what ci-cd.yml pushes on every merge to main, so the chart is deployable out of
+  # the box. PRODUCTION MUST OVERRIDE IT with `--set image.tag=<sha>`, which CI also publishes:
+  # `latest` cannot be rolled back to a previous build, and GT-448 requires a rollback that has
+  # actually been exercised, which a floating tag makes impossible to demonstrate.
+  tag: latest
 service:
   type: ClusterIP
   port: 80

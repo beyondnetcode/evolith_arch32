@@ -259,12 +259,27 @@ test('the live board would reject a row added today without economics', () => {
   const NEW_ID = 'GT-901';
   assert.ok(!boardContent.includes(NEW_ID), 'fixture id must not already exist on the board');
 
-  const enRows = [...parseBoardRows(boardContent), { id: NEW_ID, status: 'PENDING' }];
+  const boardRows = parseBoardRows(boardContent);
   const enSections = parseCatalogSections(catalogContent);
+
+  // Measure the board as it stands BEFORE appending the fixture. This used to assert
+  // `stats.required === 1`, which quietly encoded "the fixture is the only post-baseline open
+  // row there will ever be". The first genuine one — GT-650, 2026-08-02 — turned the test red
+  // while both the guard and the row were correct. What the test means is that the fixture adds
+  // exactly one priced-row requirement, so that is what it now measures.
+  const before = checkNewOpenRowEconomics({ enRows: boardRows, enSections });
+  assert.deepEqual(
+    before.errors,
+    [],
+    'the real board must be clean before the fixture is added, or the assertion below measures '
+    + 'somebody else\'s unpriced row',
+  );
+
+  const enRows = [...boardRows, { id: NEW_ID, status: 'PENDING' }];
   enSections.set(NEW_ID, section(NEW_ID, {}));
 
   const { errors, stats } = checkNewOpenRowEconomics({ enRows, enSections });
-  assert.equal(stats.required, 1);
+  assert.equal(stats.required, before.stats.required + 1);
   assert.equal(errors.length, 1, errors.join('\n'));
   assert.match(errors[0], /GT-901 is a new open row/);
 

@@ -662,9 +662,10 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-330`](./gap-reference-catalog.md#gt-330) | Mitigate bus factor (second maintainer + deep onboarding) | `Governance` | Cross | P3 | M | `DONE` |
 | [`GT-245`](./gap-reference-catalog.md#gt-245) | Add DAST (OWASP ZAP) to security pipeline | `Security` | Cross | P3 | L | `DONE` |
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
+| [`GT-650`](./gap-reference-catalog.md#gt-650) | **The Core holds TWO unreconciled answers to "which artifacts does phase X require", so it cannot publish an artifact catalog at all.** `reference/governance/sdlc/gates/gate-f*.json` names 24 artifacts in human form with `schemaRef`/`producedBy`; `UNIVERSAL_PHASE_ARTIFACTS` in `core-domain` names 18 as slugs across only the three downstream phases. They disagree on names (`CI Pipeline` vs `ci-pipeline-result`), on membership (`source-change-set`, `architecture-drift-result` and `spec-traceability-map` exist only in the constant; `Documentation Delta` and `Acceptance Validation` only in the gates) and — worse — on PHASE: `Coverage Report` is a construction artifact in `gate-f3` and a quality artifact in the constant. Only the first corpus is reachable over HTTP, and it is not the one the evaluator uses. The satellite consequence is measured: `evolith_tracker` `GAP-004` cannot replace its `core-standin` mirror with a `core-sync` source, because there is no single catalog to sync. | `SDLC Governance` | Cross | P1 | M | `PENDING` |
 
 
-**Progress:** 632 / 647 done · 4 in progress · 4 pending · 7 deferred
+**Progress:** 632 / 648 done · 4 in progress · 5 pending · 7 deferred
 
 **Wave 2026-06-23 (Winston deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Winston Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

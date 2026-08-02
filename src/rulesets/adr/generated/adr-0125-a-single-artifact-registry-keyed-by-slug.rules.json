@@ -7,7 +7,7 @@
   "audience": "core",
   "adrId": "ADR-0125",
   "adrTitle": "A Single Artifact Registry, Keyed by Slug",
-  "status": "| Proposed |",
+  "status": "Proposed — awaiting the Architecture Board.",
   "date": "| 2026-08-02 |",
   "rules": [
     {

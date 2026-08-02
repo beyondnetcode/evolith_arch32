@@ -9,6 +9,10 @@
 | **Deciders** | Architecture Board |
 | **Technical Story** | GT-650 — two unreconciled artifact vocabularies make a catalog unpublishable |
 
+## Status
+
+Proposed — awaiting the Architecture Board.
+
 ## Context
 
 The Core answers the question *"which artifacts does phase X require?"* from **three** places, and no two of them agree.

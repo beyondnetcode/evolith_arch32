@@ -9,6 +9,10 @@
 | **Decisores** | Architecture Board |
 | **Historia técnica** | GT-650 — dos vocabularios de artefactos sin reconciliar hacen impublicable un catálogo |
 
+## Status
+
+Proposed — pendiente del Architecture Board.
+
 ## Contexto
 
 El Core responde a la pregunta *«¿qué artefactos exige la fase X?»* desde **tres** sitios, y no hay dos que coincidan.

@@ -60,8 +60,16 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   // exactly four rules that RUN. A rule added without its handler would have
   // landed in `unimplemented-native` instead, and that difference is the whole
   // point of pinning both numbers.
+  //
+  // 136 -> 137 on 2026-08-02: ADR-0125 (a single artifact registry, GT-650) was
+  // written, and `generate-adr-rulesets.mjs` emits one conformance placeholder per
+  // ADR. It lands in `documentation-only` because its `validationQuery` says no
+  // check was ever wired — which is correct for a `Proposed` decision nobody has
+  // implemented yet. Every other class is unchanged, and that is the assertion:
+  // an ADR is prose until someone writes its handler, and pinning both numbers is
+  // what stops a new decision looking like new enforcement.
   'native-handler': 158,
-  'documentation-only': 136,
+  'documentation-only': 137,
   'unimplemented-native': 48,
   'needs-external-system': 20,
   'needs-runtime': 17,
@@ -164,8 +172,12 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     expect(SUMMARY.byClass).toEqual(PINNED_CLASS_COUNTS);
   });
 
-  it('publishes the honest denominator: 150 rules nothing can ever run', () => {
-    // 136 documentation-only + 14 underspecified.
+  it('publishes the honest denominator: 151 rules nothing can ever run', () => {
+    // 137 documentation-only + 14 underspecified.
+    //
+    // 150 -> 151 on 2026-08-02: the ADR-0125 conformance placeholder. See the
+    // note on PINNED_CLASS_COUNTS — the +1 is a decision written down, not a
+    // check that stopped working.
     //
     // 143 -> 150 on 2026-07-28, and the +7 is a finding rather than drift: the
     // committed generated corpus was SEVEN rulesets behind its own generator.
@@ -174,9 +186,9 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     // management) had no conformance ruleset at all, because nobody re-ran
     // `generate-adr-rulesets.mjs` after they were accepted. Regenerating for
     // GT-571 surfaced them, and this snapshot failing is what made it visible.
-    expect(SUMMARY.nonExecutable).toBe(150);
-    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 150);
-    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(150);
+    expect(SUMMARY.nonExecutable).toBe(151);
+    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 151);
+    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(151);
   });
 
   it('names the blocking rules that can never produce a verdict', () => {
@@ -220,12 +232,15 @@ describe('GT-595 · the handler slice that landed', () => {
     const unclaimed = CORPUS.filter(r => !claims(r));
     expect(unclaimed).toHaveLength(102);
 
-    // ...and every one of the 133 ADR-conformance rules is now claimed.
+    // ...and every one of the 134 ADR-conformance rules is now claimed.
     // 126 -> 133 on 2026-07-28: the committed corpus was seven rulesets behind
     // its generator (ADR-0118 plus the six security standards 0119..0124), which
     // regenerating for GT-571 surfaced.
+    // 133 -> 134 on 2026-08-02: ADR-0125 (GT-650). One ADR, one placeholder. The
+    // `every(claims)` below is the assertion that matters — a new ADR must arrive
+    // CLAIMED by the conformance handler, not land in the unclaimed pile.
     const adrConformance = CORPUS.filter(r => r.category === 'adr-conformance');
-    expect(adrConformance).toHaveLength(133);
+    expect(adrConformance).toHaveLength(134);
     expect(adrConformance.every(claims)).toBe(true);
   });
 

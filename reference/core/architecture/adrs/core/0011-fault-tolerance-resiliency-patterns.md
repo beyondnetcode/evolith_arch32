@@ -17,6 +17,42 @@ Implement explicit Resilience Patterns protecting all outbound system exits:
 3. **Decoupled Domain logic**: The core business domain must remain 100% agnostic to these patterns.
 4. **Ingress Edge Active Healthchecks**: Enable Kong Gateway upstream circuit-breaking logic. Kong monitors endpoint responsiveness and terminates upstream target assignments at the API gateway level if health metrics collapse, shielding backend nodes from direct wave hits.
 
+## Deviations in force
+
+Recorded here because a deviation that lives only in a source comment is invisible to the audit
+this ADR exists to serve. Anyone reading the Decision above would otherwise believe breaker state
+is shared.
+
+### §1 — breaker state is PROCESS-LOCAL, not Redis-backed
+
+`src/packages/agent-runtime/src/adapters/resilience/circuit-breaker.ts` keeps circuit state in the
+process. §1 mandates a shared Redis cluster so that a trip propagates across nodes instantly.
+
+**Why.** `GT-560` deleted the previous breaker and removed `opossum` from the tree: the Core is a
+stateless evaluation engine (`ADR-0101`) that makes no outbound calls, so the breaker there
+protected nothing. The breaker was rebuilt where the runtime genuinely leaves the process — the
+agent runtime's mandatory call to the Core API. Sharing its state would reintroduce the very Redis
+dependency `GT-560` removed, for a component that has no other reason to require Redis.
+
+**What it costs, stated rather than implied.** Each replica trips independently and converges on
+its own within `failureThreshold` calls. The gap between *"each node trips independently"* and
+*"the cluster trips at once"* is real: with N replicas, a failing dependency absorbs up to
+N × `failureThreshold` calls before every node has stopped calling it, instead of
+`failureThreshold`.
+
+**When to revisit.** When the runtime is deployed with enough replicas that N × `failureThreshold`
+is a load the dependency cannot absorb, or when Redis becomes a dependency of that component for
+another reason. Until then the deviation buys a package with no transitive runtime dependency.
+
+### The parameters this ADR does not fix
+
+The Negative consequences above already say it: *"Requires sophisticated parameter calibration (how
+many errors before break, timeout limit, restore cooldown)."* That calibration is still not in this
+ADR, which is why `GT-443`'s chaos criterion cannot be checked numerically against it — the drill
+asserts that the system recovers and that it measured something, not that recovery landed inside a
+budget this document never declared. Quantifying it is open work, and the drill's published MTTR is
+the input for doing so.
+
 ## Consequences
 
 ### Positive

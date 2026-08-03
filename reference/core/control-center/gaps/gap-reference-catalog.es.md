@@ -7947,9 +7947,16 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] Las únicas claves de análisis en `refs/heads/main` son las dos que produce `sdk-cli-ci.yml`.
   - [ ] `CodeQL SAST` sigue pasando y sigue siendo check requerido — la limpieza no debe tocar el escaneo que funciona.
 
-**RE-MEDIDO EL 2026-08-03, y la cifra vuelve a estar mal: son 395, no 201.** Contados por API sobre `refs/heads/main` con clave `.github/workflows/ci.yml:codeql`, 395 ids únicos. La fila ha dicho 82, luego 201 y ninguna era la buena; se deja el número con su método al lado para que la próxima vez se pueda contrastar en vez de creer.
+**RE-MEDIDO EL 2026-08-03. La cifra de la fila —201— ES LA BUENA; quien se equivocó fue la medición del 2026-08-03.** Aquella contó 395 filtrando por `test("ci.yml")`, y `sdk-cli-ci.yml` CONTIENE esa cadena: sumó las dos configuraciones en una. El desglose real sobre `refs/heads/main`, por clave exacta:
+
+- `.github/workflows/ci.yml:codeql` — **201**, del 2026-05-13 al 2026-06-01. Es la configuración MUERTA, la que hace que cada PR arrastre el aviso.
+- `.github/workflows/sdk-cli-ci.yml:codeql-analysis` — 194, con análisis del día de hoy. Es la VIVA y no se toca.
+
+La lección es la del propio tablero y esta vez la pagó quien medía: un `contains` donde hacía falta una igualdad convierte dos poblaciones en una, y el número resultante parece más preciso que el que corrige.
 
 **DECISIÓN DEL DUEÑO (2026-08-03): SÍ se borran.** No lo puede ejecutar esta sesión, y por dos razones distintas, ambas comprobadas: el token disponible tiene `repo, workflow, gist, read:org` y la operación exige más; y la API rechaza el análisis más antiguo con `Analysis specified is not deletable` — GitHub no deja vaciar una configuración entera por API. La vía es la interfaz: **Security → Code scanning → filtrar por la configuración muerta → Delete**. La fila queda `PENDIENTE` esperando esa acción del dueño, no trabajo de ingeniería.
+
+**Verificación tras el borrado del dueño (2026-08-03): los 201 SIGUEN AHÍ.** Mismo rango de fechas, mismo conteo. La configuración viva sí reporta con normalidad —último análisis del día—, así que no se borró lo que no tocaba. Dos causas posibles y ninguna descartada todavía: que el filtro de la interfaz seleccionara la configuración viva en vez de la muerta, o que GitHub no permita vaciar por completo una configuración, que es exactamente el `Analysis specified is not deletable` que devolvió la API sobre el análisis más antiguo. La fila sigue `PENDIENTE`.
 
 #### GT-623
 

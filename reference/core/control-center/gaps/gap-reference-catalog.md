@@ -8042,9 +8042,22 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] The only analysis keys on `refs/heads/main` are the two produced by `sdk-cli-ci.yml`.
   - [ ] `CodeQL SAST` still passes and is still a required check — the cleanup must not touch the scanning that works.
 
-**RE-MEASURED 2026-08-03, and the figure is wrong again: 395, not 201.** Counted through the API over `refs/heads/main` under the key `.github/workflows/ci.yml:codeql`: 395 unique ids. This row has said 82, then 201, and neither was right; the number is recorded with its method beside it so the next reader can contrast it rather than believe it.
+**RE-MEASURED 2026-08-03. The row's figure -- 201 -- IS the right one; what was wrong was the 2026-08-03 measurement.** That one counted 395 by filtering on `test("ci.yml")`, and `sdk-cli-ci.yml` CONTAINS that string: it folded two configurations into one. The real breakdown over `refs/heads/main`, by exact key:
+
+- `.github/workflows/ci.yml:codeql` -- **201**, from 2026-05-13 to 2026-06-01. The DEAD configuration, the one making every PR carry the warning.
+- `.github/workflows/sdk-cli-ci.yml:codeql-analysis` -- 194, with analyses from today. The LIVE one, not to be touched.
+
+The lesson is the board's own, and this time the measurer paid it: a `contains` where an equality was needed turns two populations into one, and the resulting number looks more precise than the one it corrects.
 
 **OWNER DECISION (2026-08-03): YES, delete them.** This session cannot execute it, for two distinct and verified reasons: the available token carries `repo, workflow, gist, read:org` and the operation needs more; and the API refuses the oldest analysis with `Analysis specified is not deletable` -- GitHub does not allow emptying a whole configuration through the API. The route is the UI: **Security → Code scanning → filter by the dead configuration → Delete**. The row stays `PENDING` awaiting that owner action, not engineering work.
+
+**Verified after the owner's deletion (2026-08-03): the 201 ARE STILL THERE.** Same date range, same count. The live configuration does report normally -- an analysis from today -- so nothing that mattered was deleted. Two possible causes, neither ruled out: the UI filter selected the live configuration rather than the dead one, or GitHub does not allow emptying a configuration completely, which is exactly the `Analysis specified is not deletable` the API returned on the oldest analysis. The row stays `PENDING`.
+
+**The symptom no longer reproduces, and the row was pointing at the wrong check (2026-08-03).** Measured across PRs 400, 401, 405 and 406: the `CodeQL` check reports `skipping` or `pass`, not red. And more importantly -- **`CodeQL` was NEVER among `main`'s required contexts**, so it never blocked a merge. The required one is `CodeQL SAST`, a DIFFERENT check, which passes and is the only security check in the list: the one `GT-574` celebrated as the first *Enforced* rung backed by configuration.
+
+**The wrong required check was nearly removed.** The proposed way out -- "drop the required check so the noise goes away" -- would have deleted `CodeQL SAST` from branch protection, a real defence, to silence a check that neither blocked nor was red. It was verified before executing and was not executed. Protection stands untouched with its seven contexts.
+
+**What remains, without closing more than is true:** the 201 orphaned analyses are still on `refs/heads/main` under `.github/workflows/ci.yml:codeql` (2026-05-13 → 2026-06-01) after two owner deletion attempts, and the API refuses them with `Analysis specified is not deletable`. But the HARM this row describes -- a permanent red on every PR -- is not observed today. Four PRs are not a series: the row stays `PENDING` awaiting confirmation across a few more, because closing it on four observations would repeat the under-measuring already paid for with the 395 figure.
 
 #### GT-623
 

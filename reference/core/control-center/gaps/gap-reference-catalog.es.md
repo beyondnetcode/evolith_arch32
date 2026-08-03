@@ -7958,6 +7958,12 @@ La lección es la del propio tablero y esta vez la pagó quien medía: un `conta
 
 **Verificación tras el borrado del dueño (2026-08-03): los 201 SIGUEN AHÍ.** Mismo rango de fechas, mismo conteo. La configuración viva sí reporta con normalidad —último análisis del día—, así que no se borró lo que no tocaba. Dos causas posibles y ninguna descartada todavía: que el filtro de la interfaz seleccionara la configuración viva en vez de la muerta, o que GitHub no permita vaciar por completo una configuración, que es exactamente el `Analysis specified is not deletable` que devolvió la API sobre el análisis más antiguo. La fila sigue `PENDIENTE`.
 
+**El síntoma ya no se reproduce, y la fila apuntaba al check equivocado (2026-08-03).** Medido sobre los PR 400, 401, 405 y 406: el check `CodeQL` sale `skipping` o `pass`, no en rojo. Y lo más importante — **`CodeQL` NUNCA estuvo entre los contextos requeridos de `main`**, así que jamás bloqueó un merge. El requerido es `CodeQL SAST`, que es OTRO check, pasa, y es el único de seguridad de la lista: el que `GT-574` celebró como el primer peldaño *Enforced* respaldado por configuración.
+
+**Se estuvo a punto de quitar el requerido equivocado.** La salida propuesta —«quitar el check requerido para que el ruido desaparezca»— habría borrado `CodeQL SAST` de la protección de rama, o sea una defensa real, para silenciar un check que ni bloqueaba ni estaba en rojo. Se comprobó antes de ejecutarlo y no se ejecutó. La protección queda intacta con sus siete contextos.
+
+**Qué queda, dicho sin cerrar de más:** los 201 análisis huérfanos siguen en `refs/heads/main` bajo `.github/workflows/ci.yml:codeql` (2026-05-13 → 2026-06-01) tras dos intentos de borrado del dueño, y la API los rechaza con `Analysis specified is not deletable`. Pero el DAÑO que esta fila describe —un rojo permanente en cada PR— no se observa hoy. Cuatro PRs no son una serie: la fila se queda `PENDIENTE` a la espera de confirmarlo en unos cuantos más, porque cerrarla sobre cuatro observaciones sería el mismo error de medir poco que ya se pagó con la cifra de 395.
+
 #### GT-623
 
 **Título:** La convención de commits se exige en tres sitios, no la aplica nada, y de ella se derivan las versiones de release

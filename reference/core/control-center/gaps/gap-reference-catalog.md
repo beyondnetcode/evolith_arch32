@@ -8053,6 +8053,12 @@ The lesson is the board's own, and this time the measurer paid it: a `contains` 
 
 **Verified after the owner's deletion (2026-08-03): the 201 ARE STILL THERE.** Same date range, same count. The live configuration does report normally -- an analysis from today -- so nothing that mattered was deleted. Two possible causes, neither ruled out: the UI filter selected the live configuration rather than the dead one, or GitHub does not allow emptying a configuration completely, which is exactly the `Analysis specified is not deletable` the API returned on the oldest analysis. The row stays `PENDING`.
 
+**The symptom no longer reproduces, and the row was pointing at the wrong check (2026-08-03).** Measured across PRs 400, 401, 405 and 406: the `CodeQL` check reports `skipping` or `pass`, not red. And more importantly -- **`CodeQL` was NEVER among `main`'s required contexts**, so it never blocked a merge. The required one is `CodeQL SAST`, a DIFFERENT check, which passes and is the only security check in the list: the one `GT-574` celebrated as the first *Enforced* rung backed by configuration.
+
+**The wrong required check was nearly removed.** The proposed way out -- "drop the required check so the noise goes away" -- would have deleted `CodeQL SAST` from branch protection, a real defence, to silence a check that neither blocked nor was red. It was verified before executing and was not executed. Protection stands untouched with its seven contexts.
+
+**What remains, without closing more than is true:** the 201 orphaned analyses are still on `refs/heads/main` under `.github/workflows/ci.yml:codeql` (2026-05-13 → 2026-06-01) after two owner deletion attempts, and the API refuses them with `Analysis specified is not deletable`. But the HARM this row describes -- a permanent red on every PR -- is not observed today. Four PRs are not a series: the row stays `PENDING` awaiting confirmation across a few more, because closing it on four observations would repeat the under-measuring already paid for with the 395 figure.
+
 #### GT-623
 
 **Title:** The commit convention is mandated in three places, enforced by nothing, and release versions are derived from it

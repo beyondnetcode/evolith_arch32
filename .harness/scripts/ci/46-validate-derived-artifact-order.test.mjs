@@ -54,7 +54,11 @@ test('the real repository is current and at a fixed point', () => {
   const { status, out } = run(resolve(__dirname, '../../..'));
   assert.equal(status, 0, out);
   assert.match(out, /at a fixed point/);
-  assert.match(out, /links declared \.+ 6/);
+  // 6 -> 8 with GT-650: the universal-phase-artifacts projection and the served gate corpus,
+  // both appended so no other link's
+  // reported position moved. Pinned rather than loosened to `\d+` — the count is the point:
+  // a link silently dropped from the chain is an artifact nobody verifies any more.
+  assert.match(out, /links declared \.+ 8/);
 });
 
 test('the guard leaves the real tree byte-identical', () => {
@@ -100,6 +104,20 @@ const stubProducer = (artifacts) =>
   "for (const f of files) fs.writeFileSync(f, 'stable\\n');\n";
 
 const PRELUDE_STUBS = {
+  // link 7 — universal phase artifacts (GT-650 / ADR-0125), derived from the artifact registry
+  '.harness/scripts/generate-universal-phase-artifacts.mjs': stubProducer([
+    'src/packages/core-domain/src/application/services/universal-phase-artifacts.generated.ts',
+  ]),
+  'src/rulesets/sdlc/artifact-registry.json': '// stub\n',
+  'src/packages/core-domain/src/application/services/universal-phase-artifacts.generated.ts': 'stable\n',
+
+  // link 8 — served phase-gate corpus (GT-650), generated from the registry and the gates
+  '.harness/scripts/generate-phase-gates-rules.mjs': stubProducer([
+    'src/rulesets/sdlc/phase-gates.rules.json',
+  ]),
+  'reference/governance/sdlc/gates/gate-f1.json': '// stub\n',
+  'src/rulesets/sdlc/phase-gates.rules.json': 'stable\n',
+
   // link 1 — ABAC rego (GT-602)
   '.harness/scripts/generate-abac-tool-sets.mjs': stubProducer(['src/rulesets/opa/abac-mcp-tool-access.rego']),
   'src/packages/mcp-server/src/mcp/abac-evaluator.ts': '// stub\n',

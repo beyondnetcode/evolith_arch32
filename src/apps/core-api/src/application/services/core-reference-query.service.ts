@@ -14,6 +14,22 @@ export interface RulesetSummary {
   version?: string;
 }
 
+/** GT-650 / ADR-0125 — the published shape of the artifact registry. */
+export interface RegistryArtifact {
+  id: string;
+  label: string;
+  phases: string[];
+  classification: 'binding' | 'advisory';
+  schemaId?: string;
+  templateRef?: string;
+  producedBy?: { format: string; note?: string };
+}
+
+export interface ArtifactRegistry {
+  phaseVocabulary: string[];
+  artifacts: RegistryArtifact[];
+}
+
 export interface PhaseGate {
   phase: number;
   name: string;
@@ -65,6 +81,34 @@ export class CoreReferenceQueryService {
   async getPhaseRequirements(corePath: string, phase: string): Promise<PhaseGate | undefined> {
     const phaseNumber = this.parsePhase(phase);
     return (await this.loadPhaseGates(corePath)).find((gate) => gate.phase === phaseNumber);
+  }
+
+  /**
+   * GT-650 / ADR-0125 — the artifact registry, published.
+   *
+   * This is the half of the ADR a satellite was waiting for: `evolith_tracker` shipped a
+   * hand-built mirror of the Core catalogue stamped `core-standin` precisely because there was
+   * nothing to consume. Now there is.
+   *
+   * The response carries the schema's published `$id` and NOT a repository path, deliberately: a
+   * path is a fact about where a file sits in one repository at one moment — and those paths were
+   * in fact broken until `#378` — while the `$id` is the schema's own identity and survives the
+   * Core reorganising its tree.
+   */
+  async getArtifactRegistry(corePath: string, phase?: string): Promise<ArtifactRegistry | undefined> {
+    const rulesetsRoot = await this.resolveRulesetsRoot(corePath);
+    const file = path.join(rulesetsRoot, 'sdlc', 'artifact-registry.json');
+    if (!(await this.fs.exists(file))) return undefined;
+
+    const registry = JSON.parse(await this.fs.readFile(file)) as ArtifactRegistry;
+    if (!phase) return registry;
+
+    // An unknown phase yields an EMPTY artifact list, never the whole registry. Falling back to
+    // everything would answer a question nobody asked and read as "this phase requires all of it".
+    return {
+      ...registry,
+      artifacts: registry.artifacts.filter((a) => a.phases.includes(phase)),
+    };
   }
 
   /**

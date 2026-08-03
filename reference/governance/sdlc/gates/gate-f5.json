@@ -9,38 +9,39 @@
   "waiverAuthority": "Executive Sponsor",
   "requiredArtifacts": [
     {
+      "artifactId": "release-notes",
       "artifact": "Release Notes",
       "validation": "Release scope, deployment steps, rollback procedure, observability checklist all present and complete",
       "rules": [
         "EV-F5-release-notes"
-      ],
-      "schemaRef": "src/rulesets/schema/release-notes.schema.json"
+      ]
     },
     {
+      "artifactId": "observability-readiness",
       "artifact": "Observability Validation",
       "validation": "Metrics nominal, logs flowing, traces complete for all production paths; structure conforms to observability-validation.schema.json",
       "rules": [
         "EV-F5-observability-validation"
-      ],
-      "schemaRef": "src/rulesets/schema/observability-validation.schema.json"
+      ]
     },
     {
+      "artifactId": "rollback-plan",
       "artifact": "Rollback Procedure",
       "validation": "Rollback steps documented and tested. Last good version identified. Rehearsal evidence confirms rollback within budget.",
       "rules": [
         "EV-F5-rollback-procedure"
-      ],
-      "schemaRef": "src/rulesets/schema/rollback-rehearsal.schema.json"
+      ]
     },
     {
+      "artifactId": "on-call-handoff",
       "artifact": "On-Call Handoff",
       "validation": "On-call team briefed with runbook references, escalation paths, alert ownership, and SLA acknowledgement confirmed.",
       "rules": [
         "EV-F5-on-call-handoff"
-      ],
-      "schemaRef": "src/rulesets/schema/on-call-handoff.schema.json"
+      ]
     },
     {
+      "artifactId": "deployment-evidence",
       "artifact": "Deployment Evidence",
       "validation": "Deployment artifacts (images, configs) traceable to RC",
       "rules": [
@@ -48,5 +49,14 @@
       ]
     }
   ],
-  "blockingCriteria": []
+  "blockingCriteria": [],
+  "waiverRequiredFields": [
+    "criterion",
+    "justification",
+    "risk",
+    "owner",
+    "expirationDate",
+    "mitigationPlan"
+  ],
+  "exitCriteria": "Deployment executed; observability verified nominal; monitoring active; rollback procedure confirmed."
 }

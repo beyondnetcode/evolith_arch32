@@ -943,6 +943,11 @@ Endpoint: `POST /api/v1/evaluate`
 | `initiativeGroup` |  | Opaque initiative-group context |
 | `artifacts` |  | Declared artifact facts (not scanned from disk) |
 | `evidence` |  | Declared evidence facts |
+| `requester` |  | WHO asked for the evaluation (actor type/id, model, session). Attribution of the REQUEST, never of a finding. |
+| `repositoryRevision` |  | WHICH revision was judged (revision, repositoryRef, branch, committedAt, dirty). Absent means the producer did not know it. |
+| `qualitySignals` |  | Canonical quality-signal evidence (ADR-0111). Evaluated inline; the Core never executes a provider. |
+| `repoFacts` |  | Canonical structural fact base (GT-589), produced OUTSIDE the Core and passed inline. Absent yields no structural findings, never a failure. |
+| `baselineRepoFacts` |  | The SAME repository at an earlier revision (GT-594), for the signals that only exist between two points in time. |
 | `checkpoint` |  | Declared checkpoint context |
 | `deployment` |  | Declared deployment context |
 | `architecture` |  | Declared architecture context |
@@ -1246,18 +1251,22 @@ Response (captured live):
   "data": {
     "phase": "construction",
     "requiredArtifacts": [
-      "source-change-set",
-      "ci-pipeline-result",
-      "definition-of-done-checklist",
       "architecture-drift-result",
+      "ci-pipeline-result",
+      "coverage-report",
+      "definition-of-done-checklist",
+      "documentation-delta",
+      "source-change-set",
       "spec-traceability-map"
     ],
     "presentArtifacts": [],
     "missingArtifacts": [
-      "source-change-set",
-      "ci-pipeline-result",
-      "definition-of-done-checklist",
       "architecture-drift-result",
+      "ci-pipeline-result",
+      "coverage-report",
+      "definition-of-done-checklist",
+      "documentation-delta",
+      "source-change-set",
       "spec-traceability-map"
     ],
     "completeness": 0,
@@ -1305,18 +1314,22 @@ Response (captured live):
     "data": {
       "phase": "construction",
       "requiredArtifacts": [
-        "source-change-set",
-        "ci-pipeline-result",
-        "definition-of-done-checklist",
         "architecture-drift-result",
+        "ci-pipeline-result",
+        "coverage-report",
+        "definition-of-done-checklist",
+        "documentation-delta",
+        "source-change-set",
         "spec-traceability-map"
       ],
       "presentArtifacts": [],
       "missingArtifacts": [
-        "source-change-set",
-        "ci-pipeline-result",
-        "definition-of-done-checklist",
         "architecture-drift-result",
+        "ci-pipeline-result",
+        "coverage-report",
+        "definition-of-done-checklist",
+        "documentation-delta",
+        "source-change-set",
         "spec-traceability-map"
       ],
       "completeness": 0,
@@ -1373,18 +1386,22 @@ Response (captured live):
   "data": {
     "phase": "construction",
     "requiredArtifacts": [
-      "source-change-set",
-      "ci-pipeline-result",
-      "definition-of-done-checklist",
       "architecture-drift-result",
+      "ci-pipeline-result",
+      "coverage-report",
+      "definition-of-done-checklist",
+      "documentation-delta",
+      "source-change-set",
       "spec-traceability-map"
     ],
     "presentArtifacts": [],
     "missingArtifacts": [
-      "source-change-set",
-      "ci-pipeline-result",
-      "definition-of-done-checklist",
       "architecture-drift-result",
+      "ci-pipeline-result",
+      "coverage-report",
+      "definition-of-done-checklist",
+      "documentation-delta",
+      "source-change-set",
       "spec-traceability-map"
     ],
     "completeness": 0,

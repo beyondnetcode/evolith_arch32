@@ -27,7 +27,11 @@ describe('Phase-artifacts E2E (GT-434, real corpus)', () => {
   it('derives the construction artifact set from the real manifests (union over the composition)', () => {
     const r = svc.evaluate('construction', ['microservices', 'event-driven'], [], getPhaseProfile);
     // 5 universal + microservices(per-unit-ci, doma) + event-driven(event-contract-impl) = 8
-    expect(r.requiredArtifacts).toHaveLength(8);
+    // 7 universal + 3 topology-derived = 10. Was 5 universal until GT-650 / ADR-0125: the
+    // hand-written constant omitted `coverage-report` and `documentation-delta`, both required by
+    // gate-f3. The union with the real manifests is unchanged; what grew is the universal half,
+    // and it grew towards what the gates already demanded.
+    expect(r.requiredArtifacts).toHaveLength(10);
     expect(r.requiredArtifacts).toEqual(
       expect.arrayContaining(['per-unit-ci-evidence', 'doma-implementation-check', 'event-contract-implementation', ...UNIVERSAL_PHASE_ARTIFACTS.construction]),
     );

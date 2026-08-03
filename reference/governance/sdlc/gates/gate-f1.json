@@ -9,38 +9,40 @@
   "waiverAuthority": "Executive Sponsor",
   "requiredArtifacts": [
     {
+      "artifactId": "prd",
       "artifact": "PRD",
       "validation": "PRD status = Approved AND approvalEvidence present AND date filled",
+      "status": "Approved",
       "rules": [
         "EV-F1-prd"
-      ],
-      "schemaRef": "src/rulesets/schema/prd.schema.json"
+      ]
     },
     {
+      "artifactId": "discovery-canvas",
       "artifact": "Discovery Canvas",
       "validation": "Initiative registered with customer pain points and expected value",
       "rules": [
         "EV-F1-discovery-canvas"
-      ],
-      "schemaRef": "src/rulesets/schema/discovery-canvas.schema.json"
+      ]
     },
     {
+      "artifactId": "technical-feasibility-canvas",
       "artifact": "Technical Feasibility Canvas",
       "validation": "Technical feasibility and quality attributes documented with NFRs",
       "rules": [
         "EV-F1-technical-feasibility-canvas"
-      ],
-      "schemaRef": "src/rulesets/schema/technical-feasibility.schema.json"
+      ]
     },
     {
+      "artifactId": "ballpark-estimation",
       "artifact": "Ballpark Estimation",
       "validation": "T-Shirt sizing completed with team composition",
       "rules": [
         "EV-F1-ballpark-estimation"
-      ],
-      "schemaRef": "src/rulesets/schema/ballpark-estimation.schema.json"
+      ]
     },
     {
+      "artifactId": "moscow-prioritization-matrix",
       "artifact": "MoSCoW Prioritization Matrix",
       "validation": "MoSCoW analysis completed for Phase 0 with at least one MUST item and valid priority distribution",
       "rules": [
@@ -48,13 +50,22 @@
       ]
     },
     {
+      "artifactId": "build-versus-compose-analysis",
       "artifact": "Build-versus-Compose Analysis",
       "validation": "Discovery evaluated open-source/free-tier/commercial alternatives with a governed Adopt/Embed/Integrate/Extend/Build/Reject disposition, three-year cost, licensing, tenant isolation, provider replaceability, and PoC requirements; native development requires explicit justification (Product Vision §5.3)",
       "rules": [
         "EV-F1-build-versus-compose-analysis"
-      ],
-      "schemaRef": "src/rulesets/schema/build-vs-compose.schema.json"
+      ]
     }
   ],
-  "blockingCriteria": []
+  "blockingCriteria": [],
+  "waiverRequiredFields": [
+    "criterion",
+    "justification",
+    "risk",
+    "owner",
+    "expirationDate",
+    "mitigationPlan"
+  ],
+  "exitCriteria": "Scope frozen; funding authorized; architectural constraints aligned."
 }

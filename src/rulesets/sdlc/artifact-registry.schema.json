@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/artifact-registry.schema.json",
+  "title": "Evolith artifact registry",
+  "description": "GT-650 / ADR-0125 — the single declaration of every SDLC artifact the Core knows about. Slug is the identity; `label` is display only. Replaces the two hand-maintained gate corpora and the hand-written `UNIVERSAL_PHASE_ARTIFACTS` constant, which now derive from it.",
+  "type": "object",
+  "required": ["phaseVocabulary", "artifacts"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "$comment": { "type": "string" },
+    "phaseVocabulary": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^[a-z][a-z-]*$" },
+      "description": "The closed set of phase names an artifact may be declared in. Closed on purpose: an artifact declared in a phase nobody evaluates is invisible, and a typo would create one silently."
+    },
+    "phaseVocabularyNote": { "type": "string" },
+    "classificationNote": { "type": "string" },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "phases", "classification"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "description": "The stable slug. THIS is the identity — what topology manifests, the completeness service and satellites already key on."
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Human name, for reports. No consumer may match on it: three labels diverge from their slug (`Security Scan Report` ⇄ `security-scan-result`, `Rollback Procedure` ⇄ `rollback-plan`, `Observability Validation` ⇄ `observability-readiness`) and a matcher would miss all three silently."
+          },
+          "phases": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string" },
+            "description": "A LIST, and that is the point of ADR-0125: `coverage-report` is required at construction AND expected at quality. Both were always true, and the two files that each stated half of it looked like a contradiction."
+          },
+          "classification": {
+            "type": "string",
+            "enum": ["binding", "advisory"],
+            "description": "`binding` — a gate requires it; its absence fails that gate. `advisory` — counted towards completeness only. The difference decides whether an artifact can block a release, so it is never inferred."
+          },
+          "schemaId": {
+            "type": "string",
+            "format": "uri",
+            "description": "The canonical schema's published `$id`. An `$id` and not a path: a path is a fact about where a file sits in one repository at one moment, and those paths were in fact broken until `#378`."
+          },
+          "producedBy": {
+            "type": "object",
+            "required": ["format"],
+            "additionalProperties": true,
+            "properties": {
+              "format": { "type": "string", "minLength": 1 },
+              "note": { "type": "string" }
+            },
+            "description": "Present when the artifact IS a tool's own output. Mutually exclusive with `schemaId`: `no schema yet` and `deliberately no schema` call for opposite actions, and collapsing them loses that."
+          }
+        },
+        "not": {
+          "required": ["schemaId", "producedBy"],
+          "$comment": "An artifact cannot both publish a canonical schema and be a tool's native output."
+        }
+      }
+    }
+  }
+}

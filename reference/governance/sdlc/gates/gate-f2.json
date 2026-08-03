@@ -9,6 +9,7 @@
   "waiverAuthority": "Architecture Board",
   "requiredArtifacts": [
     {
+      "artifactId": "adr-registry",
       "artifact": "ADR Registry",
       "validation": "All architecture decisions have corresponding ADR. No undocumented decisions.",
       "rules": [
@@ -16,6 +17,7 @@
       ]
     },
     {
+      "artifactId": "reference-blueprint-alignment",
       "artifact": "Reference Blueprint Alignment",
       "validation": "Product architecture diagrams traceable to Evolith Reference Blueprint",
       "rules": [
@@ -23,6 +25,7 @@
       ]
     },
     {
+      "artifactId": "simplicity-checklist-phase-1",
       "artifact": "Simplicity Checklist Phase 1",
       "validation": "Passed — no over-engineering detected",
       "rules": [
@@ -30,13 +33,22 @@
       ]
     },
     {
+      "artifactId": "bounded-context-map",
       "artifact": "Bounded Context Map",
       "validation": "All contexts identified with ownership and persistence strategy",
       "rules": [
         "EV-F2-bounded-context-map"
-      ],
-      "schemaRef": "src/rulesets/schema/bounded-context-map.schema.json"
+      ]
     }
   ],
-  "blockingCriteria": []
+  "blockingCriteria": [],
+  "waiverRequiredFields": [
+    "criterion",
+    "justification",
+    "risk",
+    "owner",
+    "expirationDate",
+    "mitigationPlan"
+  ],
+  "exitCriteria": "Architecture decisions are documented; bounded contexts defined."
 }

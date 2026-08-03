@@ -70,7 +70,11 @@ export class PhaseGateValidatorService {
 
     // GT-318: canonical gate source — loads gate-f*.json files
     const sdlcGatesPath = path.join(this.resolvedCorePath, 'reference', 'governance', 'sdlc', 'gates');
-    this.gateRegistry = new GateRegistryService(sdlcGatesPath, this.fs, this.logger);
+    // GT-650 — the gates name which artifact they require; the registry says what it is.
+    const artifactRegistryPath = path.join(
+      this.resolvedCorePath, 'src', 'rulesets', 'sdlc', 'artifact-registry.json',
+    );
+    this.gateRegistry = new GateRegistryService(sdlcGatesPath, this.fs, this.logger, artifactRegistryPath);
   }
 
   /**

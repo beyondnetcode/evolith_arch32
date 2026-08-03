@@ -560,6 +560,48 @@ describe('prose and diff disagreeing is its own finding', () => {
     assert.doesNotMatch(out, /disagree/i);
   });
 
+  it('GT-464: correcting a row DESCRIPTION without moving its status is not a disagreement', () => {
+    // The false positive this narrowing removes. GT-464's row said the two alerts "do
+    // not exist yet"; delivering them made that sentence false while the status
+    // legitimately stayed DEFERRED, because the row's other criterion needs a cluster.
+    // The old rule armed on "a board file was opened", so the only ways to quiet it
+    // were to leave a lie on the board or to fake a status move.
+    const stale = row('GT-914', 'DEFERRED').replace('mentions nothing', 'says the alerts do not exist yet');
+    const fixed = row('GT-914', 'DEFERRED').replace('mentions nothing', 'says the alerts now exist');
+    const { status, out } = runWith([
+      {
+        number: 43,
+        title: 'feat(ops): the two GT-914 alerts',
+        headRefName: 'feat/gt-914-alerts',
+        body: 'Advances GT-914 criterion 1.',
+        diff: fileDiff(TRACKING, [`-${stale}`, `+${fixed}`]),
+      },
+    ]);
+    assert.equal(status, 0, out);
+    assert.doesNotMatch(out, /disagree/i);
+  });
+
+  it('GT-464: the narrowing does NOT let an OVERCLAIM through', () => {
+    // The negative direction, and the reason the flag became `statusChanges || closures`
+    // instead of being dropped. Dropping it would look like it worked — the mismatch
+    // tests all still pass, because they are caught by the DIFF side, which never
+    // consulted this flag. The case that separates the two is an overclaim: both ids
+    // are named, so the diff side is silent, and only the prose side can see that one
+    // of the two rows never moved.
+    const { status, out } = runWith([
+      {
+        number: 44,
+        title: 'Closes GT-915 and GT-916',
+        headRefName: 'feat/gt-915',
+        body: 'Closes GT-915 and GT-916.',
+        diff: boardDiff([['GT-916', 'PENDING', 'DONE']]),
+      },
+    ]);
+    assert.equal(status, 1, out);
+    assert.match(out, /PROSE AND DIFF DISAGREE/);
+    assert.match(out, /do not touch: GT-915/);
+  });
+
   it('a body that NAMES the id its diff worked is agreement, not divergence', () => {
     // PR #315 again: it mentions all eleven. Mentioning is not claiming, but it is
     // also not silence — there is nothing here for a human to adjudicate.

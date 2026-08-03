@@ -240,9 +240,20 @@ describe('kind-evaluators (GT-379)', () => {
       expect(gp).toHaveBeenCalledWith('/ws/core', 'microservices');
       expect(r.verdict).toBe(Verdict.PASS); // advisory
       expect(r.results.phaseArtifacts?.phase).toBe('quality');
-      // required = 7 universal + consumer-contract-verification = 8; present = 7 → 88
-      expect(r.results.phaseArtifacts?.completeness).toBe(88);
-      expect(r.results.phaseArtifacts?.missingArtifacts).toEqual(['consumer-contract-verification']);
+      // required = 10 universal + consumer-contract-verification = 11; present = 7 → 64.
+      //
+      // Was 88 until GT-650 / ADR-0125. The quality phase gained `acceptance-validation`,
+      // `integration-evidence` and `pyramid-distribution`, all three REQUIRED BY gate-f4 and all
+      // three missing from the hand-written constant. The declared set in this test did not
+      // change, so the drop is the correction: this evaluation was reporting 88% complete against
+      // a list that omitted three of its own gate's requirements.
+      expect(r.results.phaseArtifacts?.completeness).toBe(64);
+      // The three gate-f4 requirements the constant used to omit now show as MISSING, which is
+      // the whole correction: they always were missing from this declaration and nothing said so.
+      expect(r.results.phaseArtifacts?.missingArtifacts).toEqual([
+        'acceptance-validation', 'integration-evidence', 'pyramid-distribution',
+        'consumer-contract-verification',
+      ]);
       expect(r.gaps?.every((g) => g.severity === 'warning')).toBe(true);
     });
 

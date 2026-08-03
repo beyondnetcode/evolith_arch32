@@ -84,6 +84,11 @@ const REQUIRED_ARGS: Readonly<Record<string, readonly string[]>> = {
   // cwd the run is a legitimate AUD-TRANSP-01 failure: an error envelope on stdout
   // and exit 2, which is exactly what this suite asserts about a blocking verdict.
   audit: ['verify'],
+  // GT-585 — `calibrate` takes a required action too. With no `--labels` the run is a legitimate
+  // usage refusal, and the refusal itself must be a JSON document with an exit from the taxonomy:
+  // a machine consumer asking for calibration on a corpus that does not exist has to be able to
+  // read WHY, not get an empty stdout it will parse as "no false blocks".
+  calibrate: ['report'],
 };
 
 interface RegisteredCommand {

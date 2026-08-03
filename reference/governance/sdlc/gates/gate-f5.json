@@ -56,5 +56,6 @@
     "owner",
     "expirationDate",
     "mitigationPlan"
-  ]
+  ],
+  "exitCriteria": "Deployment executed; observability verified nominal; monitoring active; rollback procedure confirmed."
 }

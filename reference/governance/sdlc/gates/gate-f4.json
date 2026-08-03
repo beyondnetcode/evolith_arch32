@@ -59,5 +59,6 @@
     "owner",
     "expirationDate",
     "mitigationPlan"
-  ]
+  ],
+  "exitCriteria": "All quality thresholds verified; security scans clean; UAT passed; release candidate formally approved."
 }

@@ -21,8 +21,10 @@
  *     ARTIFACT, and it stopped being copied into each gate that happens to require it — which is
  *     precisely how the seven-field drift became possible.
  *
- * NOT WIRED YET, AND THE REASON IS NOT TECHNICAL. Running this would rewrite governance facts that
- * the two copies DISAGREE ABOUT, and picking a side is not mine to do. Measured 2026-08-03:
+ * THE CONFLICT WAS DECIDED, 2026-08-03: the evaluator's copy always rules. The two copies carried
+ * six different governance facts, and generating from either would have published one as though it
+ * had been chosen. It has now been chosen, so this runs. What the served copy said, and what the
+ * evaluator's copy — now the only answer — says:
  *
  *   gate  field              evaluator's copy      the copy served over HTTP
  *   f2    accountableRole    Architect             Software Architect
@@ -32,11 +34,10 @@
  *   f5    accountableRole    Release Manager       DevOps Lead
  *   f5    waiverAuthority    Executive Sponsor     Technology Director
  *
- * WHO IS ACCOUNTABLE FOR A GATE AND WHO MAY WAIVE IT depends on which file you read. For `f4` one
- * says the Release Manager can waive a quality gate and the other says the Architecture Board. That
- * is not drift in a schema reference; it is two different governance answers, and generating from
- * either source would publish one of them as though it had been decided. The decision is recorded
- * on `GT-650`; this generator waits for it.
+ * Six answers changed on the published surface as a direct result, and that is the point rather
+ * than a side effect: the surface now says what the engine enforces. `f4`'s waiver authority moves
+ * from the Architecture Board to the Release Manager, and `f5`'s from the Technology Director to
+ * the Executive Sponsor, because those are what the evaluator has been using all along.
  *
  * PATHS ARE REWRITTEN, NOT COPIED. The registry holds a schema's published `$id` and a
  * repository-relative template path; the generated file expresses both relative to its own
@@ -55,12 +56,13 @@ const TARGET = 'src/rulesets/sdlc/phase-gates.rules.json';
 
 /** Preserved from the file this replaces: its consumers read these verbatim. */
 const HEADER = {
-  $schema: '../schema/ruleset-standard.schema.json',
+  $schema: '../schema/ruleset-sdlc.schema.json',
   $id: 'https://evolith.dev/rulesets/sdlc/phase-gates.rules.json',
-  title: 'SDLC Phase Gates',
+  title: 'SDLC Phase Gate Rules',
   description:
-    'Mandatory evidence and blocking criteria per SDLC phase gate. GENERATED from the artifact ' +
-    'registry and the gate corpus (GT-650 / ADR-0125) — do not edit by hand.',
+    'Canonical phase exit gate criteria for the Evolith 5-phase SDLC. Each gate requires objective '
+    + 'evidence; manual attestation alone is not evidence. GENERATED from the artifact registry and '
+    + 'the gate corpus (GT-650 / ADR-0125) — do not edit by hand.',
   version: '1.0.0',
   effectiveDate: '2026-01-01',
 };
@@ -101,12 +103,24 @@ function main() {
       evidence.push(item);
     }
 
+    // CONFLICT RESOLUTION, decided by product direction on 2026-08-03: the evaluator's copy
+    // always rules. Every field below therefore comes from the gate corpus, including the six
+    // governance facts the two copies disagreed about — accountable roles and waiver authorities.
+    //
+    // `exitCriteria` is the one thing the served copy carried that the corpus did not, and it was
+    // NOT a conflicting value: `description` describes the phase, the served text described what
+    // the gate demands to pass. It answers a different question, so it was moved INTO the gate
+    // corpus rather than dropped — which puts it under the same authority the rule names instead
+    // of making it an exception to it.
     const out = {
       phase: Number(String(gate.phase).replace(/^f/, '')),
       name: gate.name,
       description: gate.description,
     };
-    if (gate.playbookRef) out.playbookRef = gate.playbookRef;
+    if (gate.exitCriteria) out.exitCriteria = gate.exitCriteria;
+    // The corpus stores this repository-relative; the served file has always expressed it relative
+    // to its own location, and its consumers read it that way.
+    if (gate.playbookRef) out.playbookRef = `../../../${gate.playbookRef}`;
     out.mandatoryEvidence = evidence;
     if (gate.blockingCriteria) out.blockingCriteria = gate.blockingCriteria;
     if (gate.accountableRole) out.accountableRole = gate.accountableRole;

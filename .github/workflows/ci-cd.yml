@@ -608,17 +608,6 @@ jobs:
           node .harness/scripts/ci/56-validate-docker-workspace-closure.mjs --verbose
           node --test .harness/scripts/ci/56-validate-docker-workspace-closure.test.mjs
 
-      # GT-650: the same 24 required artifacts live in TWO hand-maintained files with
-      # different consumers — gate-f*.json feeds the evaluator, phase-gates.rules.json
-      # is what the HTTP surface serves to satellites. #378 wired four schemas and
-      # declared three artifacts as tool output, and all seven edits reached only the
-      # evaluator's copy. For as long as that went unnoticed, the Core evaluated against
-      # one answer and published another, with nothing red anywhere.
-      - name: Both gate corpora describe the same artifacts
-        run: |
-          node .harness/scripts/ci/57-validate-gate-corpora-parity.mjs
-          node --test .harness/scripts/ci/57-validate-gate-corpora-parity.test.mjs
-
       # GT-435 — nothing has ever run in production, so nothing has ever pulled these images and
       # a green CI proves nothing about them. On 2026-08-02 all three charts named a tag no
       # workflow produces; one of them (agent-runtime 0.1.0) had no matching git tag at all, so
@@ -632,6 +621,13 @@ jobs:
       # guard dies with `57` when the gates derive from the registry.
       - name: The artifact registry agrees with the gate corpus
         run: node .harness/scripts/ci/59-validate-artifact-registry.mjs
+
+      # GT-650 — the served gate corpus is now GENERATED from the registry and the gates, so the
+      # two copies cannot disagree by construction. `57-validate-gate-corpora-parity` compared them
+      # and is deleted with this change: a guard kept past its cause becomes noise, and noise
+      # trains people to skip red.
+      - name: The served gate corpus is current
+        run: node .harness/scripts/generate-phase-gates-rules.mjs --check
 
       # GT-591: the OPA pin sat at 0.65.0 for two years and nothing said so, while a
       # SECOND spelling of it lived in compile-opa-wasm.mjs's download URL — so the

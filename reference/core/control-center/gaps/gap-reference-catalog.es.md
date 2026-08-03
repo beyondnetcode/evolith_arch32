@@ -1931,6 +1931,8 @@ Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monore
   - [ ] Todo hallazgo queda triado como remediado, aceptado-con-justificación o diferido-con-responsable — un hallazgo sin triar deja esta fila abierta.
   - [ ] Cada remediación llega con un test de regresión o una regla, para que la misma clase no pueda volver sin que nadie lo note.
 
+**DECISIÓN DEL DUEÑO (2026-08-03): NO se contrata pen-test externo por ahora.** No se cierra como hecho —nadie ha intentado entrar y eso sigue siendo cierto— sino como DESCARTADO a propósito. La consecuencia, dicha para que nadie la descubra en una auditoría: el producto no puede afirmar que ha sido probado por un tercero, y cualquier afirmación de seguridad se apoya sólo en controles internos (CodeQL, DAST, gitleaks, Trivy). Si un cliente o un regulador lo exige, esta fila se reabre.
+
 #### GT-445
 
 **Título:** Regenerar las superficies de conteos/versiones desactualizadas a la línea base nueva 0.0.1
@@ -7400,6 +7402,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] The chosen shape has acceptance criteria of its own, replacing this one.
 - **Status:** `PENDIENTE` (2026-08-02)
 
+**DECISIÓN DEL DUEÑO (2026-08-03): «marketplace» significa NUGETS INTERNOS publicados vía GitHub Marketplace.** No es un catálogo propio ni una tienda de terceros: son paquetes internos distribuidos por el marketplace de GitHub. Con eso, esta ficha deja de ser una pregunta de producto y pasa a ser trabajo de empaquetado y publicación, alineado con `EAG-23` en el satélite.
+
 #### GT-652
 
 **Título:** El DTO de cable no puede llevar cinco campos que el motor lee
@@ -7784,6 +7788,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] Si es el wedge: al menos un estándar se envía como ruleset evaluable y Evolith se autoevalúa contra él en CI.
   - [ ] El posicionamiento nombra un ICP para quien esa evaluación sea una necesidad presupuestada.
 
+**DECISIÓN DEL DUEÑO (2026-08-03): el vehículo de monetización es el TRACKER.** Esta ficha estaba gated por esa contradicción — presuponía que la cuña era el CLI. Resuelta: el producto que se vende es el Tracker, así que los rulesets de ISO/SSDF/SLSA se construyen como capacidad DENTRO de él y no como producto aparte del CLI. Deja de estar decision-gated y pasa a ser trabajo priorizable.
+
 #### GT-609
 
 **Título:** La caché de tools/list se indexa con una clave global, así que el primer llamador decide lo que descubren los demás
@@ -7940,6 +7946,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] `gh pr checks` sobre un PR nuevo no muestra ningún check `CodeQL` reportando "configuration not found".
   - [ ] Las únicas claves de análisis en `refs/heads/main` son las dos que produce `sdk-cli-ci.yml`.
   - [ ] `CodeQL SAST` sigue pasando y sigue siendo check requerido — la limpieza no debe tocar el escaneo que funciona.
+
+**RE-MEDIDO EL 2026-08-03, y la cifra vuelve a estar mal: son 395, no 201.** Contados por API sobre `refs/heads/main` con clave `.github/workflows/ci.yml:codeql`, 395 ids únicos. La fila ha dicho 82, luego 201 y ninguna era la buena; se deja el número con su método al lado para que la próxima vez se pueda contrastar en vez de creer.
+
+**DECISIÓN DEL DUEÑO (2026-08-03): SÍ se borran.** No lo puede ejecutar esta sesión, y por dos razones distintas, ambas comprobadas: el token disponible tiene `repo, workflow, gist, read:org` y la operación exige más; y la API rechaza el análisis más antiguo con `Analysis specified is not deletable` — GitHub no deja vaciar una configuración entera por API. La vía es la interfaz: **Security → Code scanning → filtrar por la configuración muerta → Delete**. La fila queda `PENDIENTE` esperando esa acción del dueño, no trabajo de ingeniería.
 
 #### GT-623
 

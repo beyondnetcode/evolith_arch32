@@ -78,6 +78,16 @@ const SKIP_FIXED_POINT = argv.includes('--no-fixed-point');
  */
 export const CHAIN = [
   {
+    // GT-650 / ADR-0125 — the artifact registry is the single declaration, and this projection is
+    // the first consumer to derive from it instead of restating it. Placed FIRST because every
+    // other link that later grows an artifact dependency will consume the registry, not this.
+    name: 'universal phase artifacts',
+    producer: '.harness/scripts/generate-universal-phase-artifacts.mjs',
+    checkArgs: ['--check'],
+    consumes: ['src/rulesets/sdlc/artifact-registry.json'],
+    writes: ['src/packages/core-domain/src/application/services/universal-phase-artifacts.generated.ts'],
+  },
+  {
     name: 'ABAC rego tool sets',
     producer: '.harness/scripts/generate-abac-tool-sets.mjs',
     checkArgs: ['--check'],

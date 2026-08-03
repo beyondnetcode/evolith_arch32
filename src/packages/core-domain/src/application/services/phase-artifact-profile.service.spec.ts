@@ -22,16 +22,23 @@ describe('PhaseArtifactProfileService (GT-434)', () => {
 
   it('unions universal + topology-derived over the confirmed composition', () => {
     const r = svc.evaluate('construction', ['microservices', 'event-driven'], [], getPhaseProfile);
-    // 5 universal + microservices(2) + event-driven(1) = 8 required
-    expect(r.requiredArtifacts).toHaveLength(8);
+    // 7 universal + microservices(2) + event-driven(1) = 10 required.
+    //
+    // Was 5 universal until GT-650 / ADR-0125. The hand-written constant omitted
+    // `coverage-report` and `documentation-delta`, both REQUIRED BY gate-f3, so this figure was
+    // flattering: a construction phase could report complete while missing something its own gate
+    // demands. Deriving the constant from the artifact registry corrected it, and nothing was
+    // removed — every one of the six additions across the three phases is a gate requirement.
+    expect(r.requiredArtifacts).toHaveLength(10);
     expect(r.requiredArtifacts).toEqual(expect.arrayContaining(['per-unit-ci-evidence', 'doma-implementation-check', 'event-contract-implementation']));
   });
 
   it('measures completeness against declared artifacts', () => {
     const declared = [...UNIVERSAL_PHASE_ARTIFACTS.construction, 'per-unit-ci-evidence'];
     const r = svc.evaluate('construction', ['microservices'], declared, getPhaseProfile);
-    // required = 5 + 2 = 7; present = 6 → 86; missing = doma-implementation-check
-    expect(r.completeness).toBe(86);
+    // required = 7 + 2 = 9; present = 8 → 89; missing = doma-implementation-check.
+    // The universal count moved 5 → 7 with GT-650; see the note above.
+    expect(r.completeness).toBe(89);
     expect(r.missingArtifacts).toEqual(['doma-implementation-check']);
   });
 

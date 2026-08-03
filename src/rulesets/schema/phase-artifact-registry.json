@@ -5,38 +5,257 @@
   "version": "1.0.0",
   "description": "Registry of downstream-phase artifact kinds (ADR-0104 / DN-06 / GT-434). Catalogues the artifacts each downstream SDLC phase (construction/quality/deployment) expects: `category: universal` = required for any topology (Vision §5.2 gate evidence); `category: topology-derived` = added when a topology is in the confirmed composition (declared in each manifest's spec.phaseProfiles). Convention over Configuration: new kinds are ADDED here, not in the engine.",
   "artifacts": [
-    { "artifactKind": "source-change-set", "phase": "construction", "category": "universal", "title": "Source Change Set", "description": "Source changes linked to the work item and the spec." },
-    { "artifactKind": "ci-pipeline-result", "phase": "construction", "category": "universal", "title": "CI Pipeline Result", "description": "CI runs and passes." },
-    { "artifactKind": "definition-of-done-checklist", "phase": "construction", "category": "universal", "title": "Definition of Done Checklist", "description": "DoD satisfied." },
-    { "artifactKind": "architecture-drift-result", "phase": "construction", "category": "universal", "title": "Architecture Drift Result", "description": "Drift evaluated; violations resolved or waived." },
-    { "artifactKind": "spec-traceability-map", "phase": "construction", "category": "universal", "title": "Spec Traceability Map", "description": "Every change traces to a functional/technical spec." },
-    { "artifactKind": "per-unit-ci-evidence", "phase": "construction", "category": "topology-derived", "title": "Per-Unit CI Evidence", "description": "Independent CI per module/service (distributed-modules/microservices)." },
-    { "artifactKind": "doma-implementation-check", "phase": "construction", "category": "topology-derived", "title": "DOMA Implementation Check", "description": "One service ↔ one bounded context, implemented (microservices)." },
-    { "artifactKind": "event-contract-implementation", "phase": "construction", "category": "topology-derived", "title": "Event Contract Implementation", "description": "Producers/consumers implement the declared event contracts (event-driven)." },
-    { "artifactKind": "agent-capability-implementation", "phase": "construction", "category": "topology-derived", "title": "Agent Capability Implementation", "description": "Governed agent capabilities implemented behind ports (agentic-ai)." },
-
-    { "artifactKind": "test-summary-report", "phase": "quality", "category": "universal", "title": "Test Summary Report", "description": "All Must-Have tests pass." },
-    { "artifactKind": "coverage-report", "phase": "quality", "category": "universal", "title": "Coverage Report", "description": "Coverage meets the testing-pyramid target." },
-    { "artifactKind": "security-scan-result", "phase": "quality", "category": "universal", "title": "Security Scan Result", "description": "No high/critical findings (or waived)." },
-    { "artifactKind": "contract-test-result", "phase": "quality", "category": "universal", "title": "Contract Test Result", "description": "Contract tests pass." },
-    { "artifactKind": "cfr-metric", "phase": "quality", "category": "universal", "title": "Change Failure Rate", "description": "CFR < 2%." },
-    { "artifactKind": "defect-log", "phase": "quality", "category": "universal", "title": "Defect Log", "description": "Zero critical defects open." },
-    { "artifactKind": "exception-status", "phase": "quality", "category": "universal", "title": "Exception Status", "description": "Accepted exceptions recorded." },
-    { "artifactKind": "performance-validation", "phase": "quality", "category": "topology-derived", "title": "Performance Validation", "description": "Cold-start/latency/cost within budgets (serverless/edge)." },
-    { "artifactKind": "async-consumer-test", "phase": "quality", "category": "topology-derived", "title": "Async Consumer Test", "description": "Consumer/idempotency tests per event (event-driven)." },
-    { "artifactKind": "data-product-slo-validation", "phase": "quality", "category": "topology-derived", "title": "Data Product SLO Validation", "description": "Data product contracts/SLOs verified (data-mesh)." },
-    { "artifactKind": "agent-safety-validation", "phase": "quality", "category": "topology-derived", "title": "Agent Safety Validation", "description": "Token-budget, sandbox isolation, MCP conformance verified (agentic-ai)." },
-    { "artifactKind": "cross-service-integration-test", "phase": "quality", "category": "topology-derived", "title": "Cross-Service Integration Test", "description": "Integration/e2e across services green (microservices)." },
-
-    { "artifactKind": "release-plan", "phase": "deployment", "category": "universal", "title": "Release Plan", "description": "Rollout plan approved." },
-    { "artifactKind": "observability-readiness", "phase": "deployment", "category": "universal", "title": "Observability Readiness", "description": "Traces/logs/metrics wired for the release." },
-    { "artifactKind": "rollback-plan", "phase": "deployment", "category": "universal", "title": "Rollback Plan", "description": "Rollback rehearsed and ready." },
-    { "artifactKind": "operational-sign-off", "phase": "deployment", "category": "universal", "title": "Operational Sign-Off", "description": "Operations accepts readiness." },
-    { "artifactKind": "deployment-evidence", "phase": "deployment", "category": "universal", "title": "Deployment Evidence", "description": "Deployment executed and verified." },
-    { "artifactKind": "release-notes", "phase": "deployment", "category": "universal", "title": "Release Notes", "description": "Notes produced (dual-mode)." },
-    { "artifactKind": "runtime-budget-validation", "phase": "deployment", "category": "topology-derived", "title": "Runtime Budget Validation", "description": "Cold-start/cost/latency validated in the target environment (serverless/edge)." },
-    { "artifactKind": "progressive-rollout-plan", "phase": "deployment", "category": "topology-derived", "title": "Progressive Rollout Plan", "description": "Canary/blue-green per service (microservices)." },
-    { "artifactKind": "agent-operational-guardrails", "phase": "deployment", "category": "topology-derived", "title": "Agent Operational Guardrails", "description": "Credential rotation active, sandbox limits enforced, HITL approval wired (agentic-ai)." },
-    { "artifactKind": "data-product-publication", "phase": "deployment", "category": "topology-derived", "title": "Data Product Publication", "description": "Data products published with ownership handoff (data-mesh)." }
+    {
+      "artifactKind": "agent-capability-implementation",
+      "phase": "construction",
+      "category": "topology-derived",
+      "title": "Agent Capability Implementation",
+      "description": "Governed agent capabilities implemented behind ports (agentic-ai)."
+    },
+    {
+      "artifactKind": "doma-implementation-check",
+      "phase": "construction",
+      "category": "topology-derived",
+      "title": "DOMA Implementation Check",
+      "description": "One service ↔ one bounded context, implemented (microservices)."
+    },
+    {
+      "artifactKind": "event-contract-implementation",
+      "phase": "construction",
+      "category": "topology-derived",
+      "title": "Event Contract Implementation",
+      "description": "Producers/consumers implement the declared event contracts (event-driven)."
+    },
+    {
+      "artifactKind": "per-unit-ci-evidence",
+      "phase": "construction",
+      "category": "topology-derived",
+      "title": "Per-Unit CI Evidence",
+      "description": "Independent CI per module/service (distributed-modules/microservices)."
+    },
+    {
+      "artifactKind": "architecture-drift-result",
+      "phase": "construction",
+      "category": "universal",
+      "title": "Architecture Drift Result",
+      "description": "Drift evaluated; violations resolved or waived."
+    },
+    {
+      "artifactKind": "ci-pipeline-result",
+      "phase": "construction",
+      "category": "universal",
+      "title": "CI Pipeline Result",
+      "description": "CI runs and passes."
+    },
+    {
+      "artifactKind": "definition-of-done-checklist",
+      "phase": "construction",
+      "category": "universal",
+      "title": "Definition of Done Checklist",
+      "description": "DoD satisfied."
+    },
+    {
+      "artifactKind": "documentation-delta",
+      "phase": "construction",
+      "category": "universal",
+      "title": "Documentation Delta",
+      "description": "Updated ADRs, inline docs and README changes shipped with the merge. Required by gate-f3; the hand-written universal constant omitted it."
+    },
+    {
+      "artifactKind": "source-change-set",
+      "phase": "construction",
+      "category": "universal",
+      "title": "Source Change Set",
+      "description": "Source changes linked to the work item and the spec."
+    },
+    {
+      "artifactKind": "spec-traceability-map",
+      "phase": "construction",
+      "category": "universal",
+      "title": "Spec Traceability Map",
+      "description": "Every change traces to a functional/technical spec."
+    },
+    {
+      "artifactKind": "agent-operational-guardrails",
+      "phase": "deployment",
+      "category": "topology-derived",
+      "title": "Agent Operational Guardrails",
+      "description": "Credential rotation active, sandbox limits enforced, HITL approval wired (agentic-ai)."
+    },
+    {
+      "artifactKind": "data-product-publication",
+      "phase": "deployment",
+      "category": "topology-derived",
+      "title": "Data Product Publication",
+      "description": "Data products published with ownership handoff (data-mesh)."
+    },
+    {
+      "artifactKind": "progressive-rollout-plan",
+      "phase": "deployment",
+      "category": "topology-derived",
+      "title": "Progressive Rollout Plan",
+      "description": "Canary/blue-green per service (microservices)."
+    },
+    {
+      "artifactKind": "runtime-budget-validation",
+      "phase": "deployment",
+      "category": "topology-derived",
+      "title": "Runtime Budget Validation",
+      "description": "Cold-start/cost/latency validated in the target environment (serverless/edge)."
+    },
+    {
+      "artifactKind": "deployment-evidence",
+      "phase": "deployment",
+      "category": "universal",
+      "title": "Deployment Evidence",
+      "description": "Deployment executed and verified."
+    },
+    {
+      "artifactKind": "observability-readiness",
+      "phase": "deployment",
+      "category": "universal",
+      "title": "Observability Readiness",
+      "description": "Traces/logs/metrics wired for the release."
+    },
+    {
+      "artifactKind": "on-call-handoff",
+      "phase": "deployment",
+      "category": "universal",
+      "title": "On-Call Handoff",
+      "description": "On-call briefed with runbooks, escalation and SLA acknowledgement. Required by gate-f5; the hand-written universal constant omitted it."
+    },
+    {
+      "artifactKind": "operational-sign-off",
+      "phase": "deployment",
+      "category": "universal",
+      "title": "Operational Sign-Off",
+      "description": "Operations accepts readiness."
+    },
+    {
+      "artifactKind": "release-notes",
+      "phase": "deployment",
+      "category": "universal",
+      "title": "Release Notes",
+      "description": "Notes produced (dual-mode)."
+    },
+    {
+      "artifactKind": "release-plan",
+      "phase": "deployment",
+      "category": "universal",
+      "title": "Release Plan",
+      "description": "Rollout plan approved."
+    },
+    {
+      "artifactKind": "rollback-plan",
+      "phase": "deployment",
+      "category": "universal",
+      "title": "Rollback Plan",
+      "description": "Rollback rehearsed and ready."
+    },
+    {
+      "artifactKind": "agent-safety-validation",
+      "phase": "quality",
+      "category": "topology-derived",
+      "title": "Agent Safety Validation",
+      "description": "Token-budget, sandbox isolation, MCP conformance verified (agentic-ai)."
+    },
+    {
+      "artifactKind": "async-consumer-test",
+      "phase": "quality",
+      "category": "topology-derived",
+      "title": "Async Consumer Test",
+      "description": "Consumer/idempotency tests per event (event-driven)."
+    },
+    {
+      "artifactKind": "cross-service-integration-test",
+      "phase": "quality",
+      "category": "topology-derived",
+      "title": "Cross-Service Integration Test",
+      "description": "Integration/e2e across services green (microservices)."
+    },
+    {
+      "artifactKind": "data-product-slo-validation",
+      "phase": "quality",
+      "category": "topology-derived",
+      "title": "Data Product SLO Validation",
+      "description": "Data product contracts/SLOs verified (data-mesh)."
+    },
+    {
+      "artifactKind": "performance-validation",
+      "phase": "quality",
+      "category": "topology-derived",
+      "title": "Performance Validation",
+      "description": "Cold-start/latency/cost within budgets (serverless/edge)."
+    },
+    {
+      "artifactKind": "acceptance-validation",
+      "phase": "quality",
+      "category": "universal",
+      "title": "Acceptance Validation",
+      "description": "Product Owner sign-off on acceptance criteria. Required by gate-f4; the hand-written universal constant omitted it."
+    },
+    {
+      "artifactKind": "cfr-metric",
+      "phase": "quality",
+      "category": "universal",
+      "title": "Change Failure Rate",
+      "description": "CFR < 2%."
+    },
+    {
+      "artifactKind": "contract-test-result",
+      "phase": "quality",
+      "category": "universal",
+      "title": "Contract Test Result",
+      "description": "Contract tests pass."
+    },
+    {
+      "artifactKind": "coverage-report",
+      "phase": "quality",
+      "category": "universal",
+      "title": "Coverage Report",
+      "description": "Coverage meets the testing-pyramid target."
+    },
+    {
+      "artifactKind": "defect-log",
+      "phase": "quality",
+      "category": "universal",
+      "title": "Defect Log",
+      "description": "Zero critical defects open."
+    },
+    {
+      "artifactKind": "exception-status",
+      "phase": "quality",
+      "category": "universal",
+      "title": "Exception Status",
+      "description": "Accepted exceptions recorded."
+    },
+    {
+      "artifactKind": "integration-evidence",
+      "phase": "quality",
+      "category": "universal",
+      "title": "Integration Evidence",
+      "description": "Every declared inter-component contract exercised. Required by gate-f4; the hand-written universal constant omitted it."
+    },
+    {
+      "artifactKind": "pyramid-distribution",
+      "phase": "quality",
+      "category": "universal",
+      "title": "Pyramid Distribution",
+      "description": "Unit/integration/E2E distribution against the declared target. Required by gate-f4; the hand-written universal constant omitted it."
+    },
+    {
+      "artifactKind": "security-scan-result",
+      "phase": "quality",
+      "category": "universal",
+      "title": "Security Scan Result",
+      "description": "No high/critical findings (or waived)."
+    },
+    {
+      "artifactKind": "test-summary-report",
+      "phase": "quality",
+      "category": "universal",
+      "title": "Test Summary Report",
+      "description": "All Must-Have tests pass."
+    }
   ]
 }

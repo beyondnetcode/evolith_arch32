@@ -626,6 +626,13 @@ jobs:
       - name: Charts request images this repository can produce
         run: node .harness/scripts/ci/58-validate-deployable-images.mjs
 
+      # GT-650 / ADR-0125 — the artifact registry is the accepted single declaration, and the gate
+      # corpus is still hand-maintained while the migration lands. For as long as both exist, the
+      # only thing making that intermediate state safe is that they are checked to agree. This
+      # guard dies with `57` when the gates derive from the registry.
+      - name: The artifact registry agrees with the gate corpus
+        run: node .harness/scripts/ci/59-validate-artifact-registry.mjs
+
       # GT-591: the OPA pin sat at 0.65.0 for two years and nothing said so, while a
       # SECOND spelling of it lived in compile-opa-wasm.mjs's download URL — so the
       # policies could be tested by one compiler and the enforcing wasm built by

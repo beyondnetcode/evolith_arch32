@@ -1599,8 +1599,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Standing action:** keep the proven outbox + run a quorum broker with ≥3 nodes where available + `bus disconnected` / `projection lag` alerts.
 
 **Closure:**
-- [ ] `bus disconnected` / `projection lag` alerts in place.
-- [ ] Quorum broker with 3 nodes on AKS.
+- [x] `bus disconnected` / `projection lag` alerts in place — `MessageBusDisconnected` and `TenantProjectionLag` in `product/operations/alerts/prometheus-alerts.yml`. Both are written over `rabbitmq_queue_messages`, the metric family the file already uses, rather than over a name invented for the occasion: an alert on a series nobody emits never fires, and a rule that cannot fire is worse than no rule because it reads as coverage. `TenantProjectionLag`'s threshold is semantic (`> 0 for 10m` = "not draining") rather than a measured percentile — the generic `RabbitMQQueueDepth` only fires at 1000, which on a projection queue means freshness has been broken for a long time already.
+- [ ] Quorum broker with 3 nodes on AKS. **Blocked on infrastructure, not on a decision:** it needs the AKS cluster, which is the same block as GT-324/GT-435/GT-448.
+
+**Note (2026-08-02):** the guard that would normally back this — `src/apps/core-api/src/infrastructure/metrics/metric-drift.spec.ts` — passes, but it did NOT verify these two alerts: `rabbitmq_` is on its external allowlist, so it holds only Core-emitted `evolith_*` names to existing code. The metric names here were checked by hand against the file's own prior usage, and the queue names (`ums.tenant-projection`, `tracker.tenant-projection`) against `TenantProjectionQueueMissing`.
 
 **References:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.4/§5.6/§15; risk §15 #10 (mitigated → DEFERRED).
 - **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`

@@ -1595,8 +1595,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Acción permanente:** mantener el outbox probado + correr un broker con quorum de ≥3 nodos donde sea posible + alertas `bus disconnected` / `projection lag`.
 
 **Cierre:**
-- [ ] Alertas `bus disconnected` / `projection lag` en su lugar.
-- [ ] Broker con quorum de 3 nodos en AKS.
+- [x] Alertas `bus disconnected` / `projection lag` en su lugar — `MessageBusDisconnected` y `TenantProjectionLag` en `product/operations/alerts/prometheus-alerts.yml`. Ambas se escriben sobre `rabbitmq_queue_messages`, la familia de métricas que el fichero ya usa, y no sobre un nombre inventado para la ocasión: una alerta sobre una serie que nadie emite no salta nunca, y una regla que no puede saltar es peor que ninguna porque se lee como cobertura. El umbral de `TenantProjectionLag` es semántico (`> 0 durante 10m` = «no está drenando») y no un percentil medido — la genérica `RabbitMQQueueDepth` solo salta a 1000, que en una cola de proyección significa que la frescura lleva rota mucho tiempo.
+- [ ] Broker con quorum de 3 nodos en AKS. **Bloqueado por infraestructura, no por una decisión:** necesita el cluster AKS, el mismo bloqueo que GT-324/GT-435/GT-448.
+
+**Nota (2026-08-02):** el guard que normalmente respaldaría esto — `src/apps/core-api/src/infrastructure/metrics/metric-drift.spec.ts` — pasa, pero NO verificó estas dos alertas: `rabbitmq_` está en su allowlist de externas, así que solo obliga a los nombres `evolith_*` propios del Core a existir en el código. Los nombres de métrica se comprobaron a mano contra el uso previo del propio fichero, y los de cola (`ums.tenant-projection`, `tracker.tenant-projection`) contra `TenantProjectionQueueMissing`.
 
 **Referencias:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.4/§5.6/§15; riesgo §15 #10 (mitigado → DIFERIDO).
 - **Principal:** `S` · **Interés:** `MED` · **Base:** `estimate`

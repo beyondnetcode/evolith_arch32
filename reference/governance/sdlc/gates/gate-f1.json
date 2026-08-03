@@ -14,7 +14,8 @@
       "rules": [
         "EV-F1-prd"
       ],
-      "schemaRef": "src/rulesets/schema/prd.schema.json"
+      "schemaRef": "src/rulesets/schema/prd.schema.json",
+      "status": "Approved"
     },
     {
       "artifact": "Discovery Canvas",
@@ -56,5 +57,13 @@
       "schemaRef": "src/rulesets/schema/build-vs-compose.schema.json"
     }
   ],
-  "blockingCriteria": []
+  "blockingCriteria": [],
+  "waiverRequiredFields": [
+    "criterion",
+    "justification",
+    "risk",
+    "owner",
+    "expirationDate",
+    "mitigationPlan"
+  ]
 }

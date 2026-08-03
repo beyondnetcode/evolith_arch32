@@ -48,5 +48,13 @@
       ]
     }
   ],
-  "blockingCriteria": []
+  "blockingCriteria": [],
+  "waiverRequiredFields": [
+    "criterion",
+    "justification",
+    "risk",
+    "owner",
+    "expirationDate",
+    "mitigationPlan"
+  ]
 }

@@ -200,10 +200,16 @@ describe('ArchitectureController', () => {
         declaredArtifacts: ['test-summary-report', 'coverage-report', 'performance-validation'],
       });
       expect(topologyCatalog.get).toHaveBeenCalledWith('/core', 'serverless');
-      // 7 universal quality + performance-validation = 8 required; 3 present → 38
+      // 10 universal quality + performance-validation = 11 required; 3 present → 27.
+      //
+      // Was 7 universal until GT-650 / ADR-0125. The quality phase gained `acceptance-validation`,
+      // `integration-evidence` and `pyramid-distribution`, all three REQUIRED BY gate-f4 and all
+      // three absent from the hand-written constant. The declaration under test did not change:
+      // this evaluation was reporting 38% against a list that omitted three of its own gate's
+      // requirements, and 27% is the honest figure for the same input.
       expect(r.requiredArtifacts).toContain('performance-validation');
       expect(r.presentArtifacts).toEqual(expect.arrayContaining(['test-summary-report', 'coverage-report', 'performance-validation']));
-      expect(r.completeness).toBe(38);
+      expect(r.completeness).toBe(27);
     });
   });
 });

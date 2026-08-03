@@ -7495,6 +7495,26 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] The chosen shape has acceptance criteria of its own, replacing this one.
 - **Status:** `PENDING` (2026-08-02)
 
+#### GT-652
+
+**Title:** The wire DTO cannot carry five fields the engine reads
+
+**Problem:** `EvaluationContextDto` is the whitelist. `main.ts` runs the global ValidationPipe with `forbidNonWhitelisted: true`, so a field absent from that class does not arrive stripped -- it 400s the whole evaluation. The controller then does `body as unknown as EvaluationContext`, a straight cast, which makes the DTO the REACHABLE surface of the canonical context. Five fields declared on `EvaluationContext` and consumed by the domain today could not be sent: `requester`, `repositoryRevision`, `qualitySignals`, `repoFacts`, `baselineRepoFacts`.
+
+**Why it stayed invisible:** every unit test builds an `EvaluationContext` in TypeScript and passes. Only a caller crossing HTTP feels it, so the defect cannot be seen from inside the Core -- and a closure note in this very catalog had already recorded the DTO as a "full canonical mirror" on exactly that kind of evidence.
+
+**Fix:** the five fields added to the DTO, typed as loosely as their neighbours (`IsObject`/`IsArray`) because the shapes live in `@beyondnet/evolith-contracts` and a second declaration here would be one more copy to keep in step.
+
+**Closure:**
+- [x] The five fields are accepted by the wire, each with a dedicated test.
+- [x] `evaluation-context-mirror.spec.ts` reads the field list FROM the contract source, so a field added to `EvaluationContext` tomorrow fails here until the wire can carry it.
+- [x] The negative direction verified: an undeclared field is still rejected, so the whitelist stays armed.
+
+**Note on the guard's own first version:** it asked `plainToInstance` which keys it produced and passed with a field deleted -- TypeScript does not emit class properties that have no initializer. Its second version conflated a type-validator rejection with a whitelist rejection and reported five carriable fields as missing. It now asks `forbidNonWhitelisted`'s own constraint key, and both directions were confirmed by deleting a field and watching two tests fail.
+
+**References:** src/apps/core-api/src/presentation/dtos/evaluation.dto.ts; src/apps/core-api/src/main.ts (ValidationPipe); src/packages/core-domain/src/evaluation/contracts/evaluation-context.ts; blocks `evolith_tracker` CP-04 criterion 2.
+- **Principal:** `S` · **Interest:** `LOW` · **Basis:** `estimate`
+
 #### GT-608
 
 **Title:** The HITL approval subsystem has never executed

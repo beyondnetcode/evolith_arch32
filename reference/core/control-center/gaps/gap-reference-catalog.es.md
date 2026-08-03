@@ -7400,6 +7400,26 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] The chosen shape has acceptance criteria of its own, replacing this one.
 - **Status:** `PENDIENTE` (2026-08-02)
 
+#### GT-652
+
+**Título:** El DTO de cable no puede llevar cinco campos que el motor lee
+
+**Problema:** `EvaluationContextDto` es la lista blanca. `main.ts` corre el ValidationPipe global con `forbidNonWhitelisted: true`, así que un campo ausente de esa clase no llega recortado: hace 400 la evaluación entera. Y el controlador hace `body as unknown as EvaluationContext`, un cast directo, lo que convierte al DTO en la superficie ALCANZABLE del contexto canónico. Cinco campos declarados en `EvaluationContext` y consumidos hoy por el dominio no se podían enviar: `requester`, `repositoryRevision`, `qualitySignals`, `repoFacts`, `baselineRepoFacts`.
+
+**Por qué siguió invisible:** cada prueba unitaria construye un `EvaluationContext` en TypeScript y pasa. Sólo lo sufre un llamante que cruza HTTP, así que el defecto no se ve desde dentro del Core — y una nota de cierre de este mismo catálogo ya había registrado el DTO como «full canonical mirror» con esa misma clase de evidencia.
+
+**Fix:** los cinco campos añadidos al DTO, tipados tan flojo como sus vecinos (`IsObject`/`IsArray`) porque las formas viven en `@beyondnet/evolith-contracts` y una segunda declaración aquí sería una copia más que mantener sincronizada.
+
+**Cierre:**
+- [x] El cable acepta los cinco campos, cada uno con prueba propia.
+- [x] `evaluation-context-mirror.spec.ts` lee la lista de campos DEL contrato, así que un campo añadido mañana a `EvaluationContext` falla aquí hasta que el cable pueda llevarlo.
+- [x] Dirección negativa verificada: un campo no declarado se sigue rechazando, así que la lista blanca sigue armada.
+
+**Nota sobre la primera versión del propio guard:** preguntaba a `plainToInstance` qué claves producía y pasaba con un campo borrado — TypeScript no emite propiedades de clase sin inicializador. Su segunda versión confundía un rechazo del validador de tipos con uno de la lista blanca y reportaba cinco campos perfectamente enviables como ausentes. Ahora pregunta por la clave de restricción propia de `forbidNonWhitelisted`, y ambas direcciones se confirmaron borrando un campo y viendo caer dos pruebas.
+
+**Referencias:** src/apps/core-api/src/presentation/dtos/evaluation.dto.ts; src/apps/core-api/src/main.ts (ValidationPipe); src/packages/core-domain/src/evaluation/contracts/evaluation-context.ts; bloquea el criterio 2 de CP-04 en `evolith_tracker`.
+- **Principal:** `S` · **Interés:** `LOW` · **Base:** `estimate`
+
 #### GT-608
 
 **Título:** El subsistema de aprobación humana nunca se ha ejecutado

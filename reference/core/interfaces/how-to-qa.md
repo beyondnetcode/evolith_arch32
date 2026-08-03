@@ -124,8 +124,8 @@ Response (captured live):
       "SPACE-02",
       "SPACE-03",
       "SPACE-05",
-      "DRIFT-01",
-      "I
+      "INH-03",
+      "INH
   … (truncated)
 ```
 
@@ -233,10 +233,10 @@ Response (captured live):
       "SPACE-02",
       "SPACE-03",
       "SPACE-05",
-      "DRIFT-01",
       "INH-03",
       "INH-04",
-      "I
+      "INH-05",
+      "KI-
   … (truncated)
 ```
 
@@ -338,10 +338,10 @@ Response (captured live):
       "SPACE-02",
       "SPACE-03",
       "SPACE-05",
-      "DRIFT-01",
       "INH-03",
       "INH-04",
-      "I
+      "INH-05",
+      "KI-
   … (truncated)
 ```
 
@@ -603,18 +603,22 @@ Response (captured live):
   "data": {
     "phase": "construction",
     "requiredArtifacts": [
-      "source-change-set",
-      "ci-pipeline-result",
-      "definition-of-done-checklist",
       "architecture-drift-result",
+      "ci-pipeline-result",
+      "coverage-report",
+      "definition-of-done-checklist",
+      "documentation-delta",
+      "source-change-set",
       "spec-traceability-map"
     ],
     "presentArtifacts": [],
     "missingArtifacts": [
-      "source-change-set",
-      "ci-pipeline-result",
-      "definition-of-done-checklist",
       "architecture-drift-result",
+      "ci-pipeline-result",
+      "coverage-report",
+      "definition-of-done-checklist",
+      "documentation-delta",
+      "source-change-set",
       "spec-traceability-map"
     ],
     "completeness": 0,
@@ -662,18 +666,22 @@ Response (captured live):
     "data": {
       "phase": "construction",
       "requiredArtifacts": [
-        "source-change-set",
-        "ci-pipeline-result",
-        "definition-of-done-checklist",
         "architecture-drift-result",
+        "ci-pipeline-result",
+        "coverage-report",
+        "definition-of-done-checklist",
+        "documentation-delta",
+        "source-change-set",
         "spec-traceability-map"
       ],
       "presentArtifacts": [],
       "missingArtifacts": [
-        "source-change-set",
-        "ci-pipeline-result",
-        "definition-of-done-checklist",
         "architecture-drift-result",
+        "ci-pipeline-result",
+        "coverage-report",
+        "definition-of-done-checklist",
+        "documentation-delta",
+        "source-change-set",
         "spec-traceability-map"
       ],
       "completeness": 0,
@@ -730,18 +738,22 @@ Response (captured live):
   "data": {
     "phase": "construction",
     "requiredArtifacts": [
-      "source-change-set",
-      "ci-pipeline-result",
-      "definition-of-done-checklist",
       "architecture-drift-result",
+      "ci-pipeline-result",
+      "coverage-report",
+      "definition-of-done-checklist",
+      "documentation-delta",
+      "source-change-set",
       "spec-traceability-map"
     ],
     "presentArtifacts": [],
     "missingArtifacts": [
-      "source-change-set",
-      "ci-pipeline-result",
-      "definition-of-done-checklist",
       "architecture-drift-result",
+      "ci-pipeline-result",
+      "coverage-report",
+      "definition-of-done-checklist",
+      "documentation-delta",
+      "source-change-set",
       "spec-traceability-map"
     ],
     "completeness": 0,

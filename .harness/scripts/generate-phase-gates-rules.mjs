@@ -70,7 +70,9 @@ const HEADER = {
 function main() {
   const check = process.argv.includes('--check');
   const registry = JSON.parse(readFileSync(join(ROOT, REGISTRY), 'utf8'));
-  const byLabel = new Map(registry.artifacts.map((a) => [a.label, a]));
+  // Keyed by SLUG. Matching by label would work today and break silently the day a label is
+  // reworded, which is precisely why ADR-0125 made the slug the identity.
+  const byId = new Map(registry.artifacts.map((a) => [a.id, a]));
 
   const gateFiles = readdirSync(join(ROOT, GATES_DIR))
     .filter((f) => /^gate-f\d+\.json$/.test(f))
@@ -86,15 +88,16 @@ function main() {
 
     for (const required of gate.requiredArtifacts ?? []) {
       artifacts += 1;
-      const entry = byLabel.get(required.artifact);
+      const entry = byId.get(required.artifactId);
       if (!entry) {
         // Fail loudly. Emitting the artifact without its schema would publish a gate that
         // silently demands less than the evaluator does — the exact drift this replaces.
-        missing.push(`${file}: "${required.artifact}" is required by a gate and absent from the registry`);
+        missing.push(`${file}: "${required.artifactId}" is required by a gate and absent from the registry`);
         continue;
       }
 
-      const item = { artifact: required.artifact };
+      // The published surface keeps the human label, because that is what a gate report shows.
+      const item = { artifact: entry.label };
       if (entry.schemaId) item.schemaRef = `../schema/${basename(new URL(entry.schemaId).pathname)}`;
       if (required.status) item.status = required.status;
       if (entry.templateRef) item.templateRef = `../../../${entry.templateRef}`;

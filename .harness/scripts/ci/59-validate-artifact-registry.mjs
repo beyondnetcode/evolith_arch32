@@ -40,19 +40,19 @@ const GATES_DIR = 'reference/governance/sdlc/gates';
 const GATE_PHASE = { f1: 'discovery', f2: 'design', f3: 'construction', f4: 'quality', f5: 'deployment' };
 
 function readGateCorpus() {
-  const byArtifactLabel = new Map();
+  const byArtifactId = new Map();
   for (const file of readdirSync(join(ROOT, GATES_DIR)).filter((f) => /^gate-f\d+\.json$/.test(f))) {
     const gate = JSON.parse(readFileSync(join(ROOT, GATES_DIR, file), 'utf8'));
     const phase = GATE_PHASE[String(gate.phase)];
     for (const a of gate.requiredArtifacts ?? []) {
-      byArtifactLabel.set(a.artifact, {
-        phase,
-        schema: a.schemaRef ? basename(a.schemaRef) : null,
-        toolOutput: a.producedBy != null,
-      });
+      // GT-650 — the gates no longer carry schema or tool-output; they name WHICH artifact and the
+      // registry says what it is. So this guard's remaining subject is narrower than it was: that
+      // every artifact a gate requires is declared, in the phase the gate requires it, with a
+      // classification that matches whether a gate requires it at all.
+      byArtifactId.set(a.artifactId, { phase, label: a.artifact });
     }
   }
-  return byArtifactLabel;
+  return byArtifactId;
 }
 
 function main() {
@@ -80,7 +80,7 @@ function main() {
       }
     }
 
-    const gate = gates.get(a.label);
+    const gate = gates.get(a.id);
 
     if (a.classification === 'binding') {
       if (!gate) {
@@ -93,16 +93,11 @@ function main() {
       if (!(a.phases ?? []).includes(gate.phase)) {
         problems.push(`${a.id}: the gate requires it at "${gate.phase}" and the registry does not list that phase`);
       }
-      const registrySchema = a.schemaId ? basename(new URL(a.schemaId).pathname) : null;
-      if (registrySchema !== gate.schema) {
+      if (a.label !== gate.label) {
         problems.push(
-          `${a.id}: schema differs — registry has ${registrySchema ?? 'none'}, the gate has ${gate.schema ?? 'none'}`,
-        );
-      }
-      if ((a.producedBy != null) !== gate.toolOutput) {
-        problems.push(
-          `${a.id}: one side declares it tool output and the other does not ` +
-          `(registry ${a.producedBy != null}, gate ${gate.toolOutput})`,
+          `${a.id}: the gate calls it "${gate.label}" and the registry calls it "${a.label}". ` +
+          `The label is display only, but a gate report showing a name the registry does not use ` +
+          `is how somebody starts matching on it.`,
         );
       }
     } else if (gate) {
@@ -113,9 +108,9 @@ function main() {
     }
   }
 
-  for (const [label] of gates) {
-    if (![...(registry.artifacts ?? [])].some((a) => a.label === label)) {
-      problems.push(`gate artifact "${label}" is required by a gate and absent from the registry`);
+  for (const [id, gate] of gates) {
+    if (![...(registry.artifacts ?? [])].some((a) => a.id === id)) {
+      problems.push(`gate artifact "${gate.label}" (${id}) is required by a gate and absent from the registry`);
     }
   }
 

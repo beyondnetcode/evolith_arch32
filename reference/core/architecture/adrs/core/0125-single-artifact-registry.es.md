@@ -4,14 +4,29 @@
 
 | Campo | Valor |
 |---|---|
-| **Estado** | Propuesto |
+| **Estado** | Aceptado |
 | **Fecha** | 2026-08-02 |
 | **Decisores** | Architecture Board |
 | **Historia técnica** | GT-650 — dos vocabularios de artefactos sin reconciliar hacen impublicable un catálogo |
 
+<!-- implementation-status: none -->
+> **Estado de implementación en este repositorio: ninguno** (2026-08-02).
+> Aceptado como DECISIÓN, no como capacidad entregada. El Core sigue teniendo dos copias a mano del
+> corpus de compuertas más un tercer vocabulario de slugs; `57-validate-gate-corpora-parity` impide
+> que se separen, que es una tablilla y no esta decisión. `GT-650` sigue la migración. Se declara en
+> vez de dejarlo en blanco para que este ADR aparezca en el mismo censo que `GT-607` —ADRs
+> aceptados sin código que los implemente— en lugar de leerse como hecho.
+
 ## Status
 
-Proposed — pendiente del Architecture Board.
+Accepted — 2026-08-02.
+
+La decisión de abajo está en vigor. Todavía NO está implementada: el Core sigue
+teniendo dos copias a mano del corpus de compuertas más un tercer vocabulario de slugs, a las que
+`57-validate-gate-corpora-parity` impide separarse. `GT-650` sigue la migración, y sus criterios de
+aceptación son los que aquí se escriben — incluido el más fácil de saltarse: el corpus perdedor hay
+que **borrarlo o derivarlo**, porque dos ficheros que hoy coinciden mañana divergen, que es el
+defecto que este ADR existe para terminar y no para gestionar.
 
 ## Contexto
 

@@ -4,14 +4,29 @@
 
 | Field | Value |
 |---|---|
-| **Status** | Proposed |
+| **Status** | Accepted |
 | **Date** | 2026-08-02 |
 | **Deciders** | Architecture Board |
 | **Technical Story** | GT-650 — two unreconciled artifact vocabularies make a catalog unpublishable |
 
+<!-- implementation-status: none -->
+> **Implementation status in this repository: none** (2026-08-02).
+> Accepted as a DECISION, not as delivered capability. The Core still holds two hand-maintained
+> copies of the gate corpus plus a third slug vocabulary; `57-validate-gate-corpora-parity` keeps
+> them from drifting, which is a splint and not this decision. `GT-650` tracks the migration.
+> Declared rather than left blank so this ADR appears in the same census as `GT-607` — Accepted
+> ADRs with no implementing code — instead of quietly reading as done.
+
 ## Status
 
-Proposed — awaiting the Architecture Board.
+Accepted — 2026-08-02.
+
+The decision below is in force. It is NOT yet implemented: the Core still
+holds two hand-maintained copies of the gate corpus plus a third slug vocabulary, kept from
+drifting by `57-validate-gate-corpora-parity`. `GT-650` tracks the migration, and its acceptance
+criteria are the ones written here — including the one that is easiest to skip: the losing corpus
+must be **deleted or derived**, because two files that agree today drift tomorrow, which is the
+defect this ADR exists to end rather than to manage.
 
 ## Context
 

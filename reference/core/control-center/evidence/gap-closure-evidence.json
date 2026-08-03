@@ -9654,6 +9654,33 @@
       "validationCommands": [
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ]
+    },
+    {
+      "id": "GT-650",
+      "closedAt": "2026-08-03",
+      "closureCommit": "0372e029",
+      "evidence": [
+        "src/rulesets/sdlc/artifact-registry.json",
+        "src/rulesets/sdlc/artifact-registry.schema.json",
+        ".harness/scripts/generate-universal-phase-artifacts.mjs",
+        ".harness/scripts/generate-phase-gates-rules.mjs",
+        ".harness/scripts/ci/59-validate-artifact-registry.mjs",
+        "src/packages/core-domain/src/application/services/universal-phase-artifacts.generated.ts",
+        "src/packages/core-domain/src/application/services/gate-registry.service.ts",
+        "src/apps/core-api/src/application/services/core-reference-query.service.ts",
+        "src/apps/core-api/src/presentation/controllers/reference.controller.ts",
+        "reference/governance/sdlc/gates/gate-f1.json",
+        "reference/core/architecture/adrs/core/0125-single-artifact-registry.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/generate-phase-gates-rules.mjs --check",
+        "node .harness/scripts/generate-universal-phase-artifacts.mjs --check",
+        "node .harness/scripts/ci/59-validate-artifact-registry.mjs",
+        "node .harness/scripts/ci/46-validate-derived-artifact-order.mjs"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "ADR-0125 was accepted by product direction on 2026-08-02 and the conflict it could not decide - six governance facts on which the two gate copies disagreed - was decided on 2026-08-03: the evaluator's copy always rules. Both decisions were prerequisites and both landed before the migration completed. The satellite half is recorded on evolith_tracker GAP-004 (PR #116), whose Core dependency this closes; its remaining UMS blockers are unrelated to this row.",
+      "note": "Closed on all five acceptance criteria. The losing corpus is DERIVED rather than merely checked: phase-gates.rules.json and UNIVERSAL_PHASE_ARTIFACTS are generated, and 57-validate-gate-corpora-parity was deleted with its cause. Guard 59 survives with the condition for its own deletion written into it."
     }
   ]
 }

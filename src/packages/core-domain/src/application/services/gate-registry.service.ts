@@ -1,6 +1,14 @@
 import * as path from 'path';
 import { IFileSystem, ILogger } from '../../domain/interfaces';
 
+/** One entry of `src/rulesets/sdlc/artifact-registry.json`. */
+interface RegistryArtifact {
+  id: string;
+  label: string;
+  schemaId?: string;
+  producedBy?: { format: string; note?: string };
+}
+
 /**
  * Canonical gate definition loaded from reference/governance/sdlc/gates/gate-f*.json.
  * This is the single source of truth consumed by the engine (GT-318).
@@ -20,8 +28,21 @@ export interface GateDefinition {
 }
 
 export interface GateArtifact {
+  /**
+   * The registry slug — THE identity (GT-650 / ADR-0125). The gate names which artifact it
+   * requires; everything about that artifact is declared once, in the registry.
+   */
+  artifactId: string;
+  /** Human label, for reports. No consumer may match on it: three labels diverge from their slug. */
   artifact: string;
+  /**
+   * Resolved FROM THE REGISTRY at load time, not stored in the gate file. It used to be copied
+   * into every gate that required the artifact, which is how `#378` enriched one copy of the
+   * corpus and left seven fields missing from the other.
+   */
   schemaRef?: string;
+  /** Present when the artifact IS a tool's own output. Also resolved from the registry. */
+  producedBy?: { format: string; note?: string };
   validation: string;
   /** Paths to .rego files that enforce this artifact (relative to repo root). */
   rules: string[];
@@ -55,17 +76,43 @@ interface RawGateFile {
  */
 export class GateRegistryService {
   private gates: GateDefinition[] | null = null;
+  private registry: Map<string, RegistryArtifact> | null = null;
 
   constructor(
     /** Absolute path to the SDLC gates directory (e.g. "<repo>/reference/governance/sdlc/gates") */
     private readonly sdlcGatesPath: string,
     private readonly fs: IFileSystem,
     private readonly logger: ILogger,
+    /**
+     * Absolute path to `src/rulesets/sdlc/artifact-registry.json` (GT-650 / ADR-0125). Optional so
+     * every existing caller keeps working; when it is absent, artifacts load without their schema
+     * and the gap is VISIBLE rather than silently filled from a stale copy in the gate file.
+     */
+    private readonly artifactRegistryPath?: string,
   ) {}
 
-  /** Load and cache all gate-f*.json definitions. */
+  /** Registry entries by slug. Loaded once; absent registry yields an empty map, not a throw. */
+  private async loadRegistry(): Promise<Map<string, RegistryArtifact>> {
+    if (this.registry) return this.registry;
+    this.registry = new Map();
+    if (!this.artifactRegistryPath) return this.registry;
+    try {
+      const parsed = JSON.parse(await this.fs.readFile(this.artifactRegistryPath)) as {
+        artifacts?: RegistryArtifact[];
+      };
+      for (const a of parsed.artifacts ?? []) this.registry.set(a.id, a);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.logger.warn(`GateRegistryService: failed to load the artifact registry: ${msg}`);
+    }
+    return this.registry;
+  }
+
+  /** Load and cache all gate-f*.json definitions, enriched from the artifact registry. */
   async loadAll(): Promise<GateDefinition[]> {
     if (this.gates) return this.gates;
+
+    const registry = await this.loadRegistry();
 
     const entries = await this.fs.readdirNames(this.sdlcGatesPath);
     const gateFiles = entries
@@ -84,7 +131,18 @@ export class GateRegistryService {
           name: parsed.name,
           phase: parsed.phase,
           description: parsed.description,
-          requiredArtifacts: parsed.requiredArtifacts ?? [],
+          // GT-650 — the gate names WHICH artifact; the registry says what it is. Composing here
+          // is what makes `schemaRef` impossible to have two values, rather than merely detectable.
+          requiredArtifacts: (parsed.requiredArtifacts ?? []).map(a => {
+            const entry = a.artifactId ? registry.get(a.artifactId) : undefined;
+            return {
+              ...a,
+              ...(entry?.schemaId
+                ? { schemaRef: `src/rulesets/schema/${entry.schemaId.split('/').pop()}` }
+                : {}),
+              ...(entry?.producedBy ? { producedBy: entry.producedBy } : {}),
+            };
+          }),
           blockingCriteria: parsed.blockingCriteria ?? [],
           accountableRole: parsed.accountableRole,
           waiverAuthority: parsed.waiverAuthority,

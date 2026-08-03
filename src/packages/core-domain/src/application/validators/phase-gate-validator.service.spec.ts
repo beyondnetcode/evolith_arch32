@@ -153,7 +153,10 @@ describe('PhaseGateValidatorService', () => {
       await service.loadRuleset();
       await service.loadRuleset();
 
-      expect(mockFs.readFile).toHaveBeenCalledTimes(2); // 1 for ruleset, 1 for schema
+      // 2 -> 3 with GT-650: the gate corpus no longer stores each artifact's schemaRef, so the
+      // artifact registry is read once and cached alongside the gates. The point of this test
+      // is unchanged - a second loadRuleset() must not re-read anything - and it still holds.
+      expect(mockFs.readFile).toHaveBeenCalledTimes(3); // ruleset, schema, artifact registry
     });
 
     it('should throw when ruleset file cannot be read', async () => {

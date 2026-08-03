@@ -22,6 +22,40 @@
       }
     },
     {
+      "id": "artifact-registry-get",
+      "name": "Artifact registry",
+      "description": "GT-650 / ADR-0125 - the single declaration of every SDLC artifact the Core knows about: its slug (the identity), its human label (display only), the phases it belongs to, whether it is binding or advisory, and its canonical schema $id or its producedBy. Replaces three hand-maintained corpora.",
+      "cli": {
+        "exposed": false,
+        "exempt": "Deferred, not excluded on principle. The natural CLI consumer is a satellite author asking what an artifact should contain, and that is better served by `evolith validate` telling them in context than by a catalogue dump. Revisit if anyone asks for the raw list."
+      },
+      "mcp": {
+        "exposed": false,
+        "exempt": "Same reasoning as the CLI. An agent filling an artifact in needs the shape of THAT artifact, which the evaluation path already returns; a whole-registry tool would be a second way to ask the same question."
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "GET /api/v1/phases/artifacts"
+      }
+    },
+    {
+      "id": "artifact-registry-by-phase-get",
+      "name": "Artifact registry, filtered to a phase",
+      "description": "The same registry narrowed to one SDLC phase. An unknown phase returns ZERO artifacts, never the whole registry: falling back to everything would read as 'this phase requires all of it'.",
+      "cli": {
+        "exposed": false,
+        "exempt": "Same as `artifact-registry-get`."
+      },
+      "mcp": {
+        "exposed": false,
+        "exempt": "Same as `artifact-registry-get`."
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "GET /api/v1/phases/:phase/artifacts"
+      }
+    },
+    {
       "id": "phase-advance",
       "name": "Phase transition proposal",
       "description": "Propose an SDLC phase transition by evaluating exit criteria",

@@ -175,6 +175,20 @@ export const CHAIN = [
     consumes: ['src/rulesets/sdlc/artifact-registry.json'],
     writes: ['src/packages/core-domain/src/application/services/universal-phase-artifacts.generated.ts'],
   },
+  {
+    // GT-650 / ADR-0125 — the served gate corpus stops being a second hand-maintained copy. It
+    // consumes BOTH the registry (schema, template, tool-output — properties of the artifact) and
+    // the gate corpus (validation prose, roles, waiver authority — properties of the gate), so it
+    // sits after the registry projection it shares a source with.
+    name: 'served phase-gate corpus',
+    producer: '.harness/scripts/generate-phase-gates-rules.mjs',
+    checkArgs: ['--check'],
+    consumes: [
+      'src/rulesets/sdlc/artifact-registry.json',
+      'reference/governance/sdlc/gates/gate-f1.json',
+    ],
+    writes: ['src/rulesets/sdlc/phase-gates.rules.json'],
+  },
 ];
 
 function fail(lines) {

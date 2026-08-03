@@ -9,12 +9,16 @@
  * for as long as that is true there are three files, and the only thing making the intermediate
  * state safe is that they are checked to say the same thing.
  *
- * `57-validate-gate-corpora-parity` compares the two GATE copies to each other. This one compares
- * the REGISTRY to them: every binding artifact must appear in a gate, in the same phase, with the
- * same schema or the same tool-output declaration. Both guards die when `phase-gates.rules.json`
- * becomes generated and the gates reference the registry by id, and their deletion is part of the
- * definition of done — a guard kept past its cause becomes noise, and noise trains people to skip
- * red.
+ * `57-validate-gate-corpora-parity` compared the two GATE copies to each other, and it is GONE:
+ * `phase-gates.rules.json` is now generated from the registry and the gates, so those two cannot
+ * disagree by construction. This guard survives it because its subject is different — the REGISTRY
+ * against the gates: every binding artifact must appear in a gate, in the same phase, with the same
+ * schema or the same tool-output declaration.
+ *
+ * It dies too, and the condition is written down: when the gates reference the registry BY ID and
+ * stop carrying `schemaRef`, there will be one declaration and nothing left to compare. Deleting it
+ * then is part of the definition of done — a guard kept past its cause becomes noise, and noise
+ * trains people to skip red.
  *
  * WHAT IT ALSO CHECKS, and this is the half a parity check cannot see: that every phase named by an
  * artifact is in the declared vocabulary, that no `advisory` artifact is required by a gate (which

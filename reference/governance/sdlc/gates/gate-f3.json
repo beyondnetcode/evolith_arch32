@@ -54,5 +54,6 @@
     "expirationDate",
     "mitigationPlan",
     "approvalAuthority"
-  ]
+  ],
+  "exitCriteria": "All code merged to main; CI passes; quality gates green; definition of done satisfied."
 }

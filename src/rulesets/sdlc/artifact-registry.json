@@ -161,7 +161,8 @@
         "quality"
       ],
       "classification": "binding",
-      "schemaId": "https://evolith.dev/schema/integration-evidence.schema.json"
+      "schemaId": "https://evolith.dev/schema/integration-evidence.schema.json",
+      "templateRef": "reference/core/sdlc/04-artifact-templates/integration-evidence-template.md"
     },
     {
       "id": "moscow-prioritization-matrix",
@@ -178,7 +179,8 @@
         "deployment"
       ],
       "classification": "binding",
-      "schemaId": "https://evolith.dev/schema/observability-validation.schema.json"
+      "schemaId": "https://evolith.dev/schema/observability-validation.schema.json",
+      "templateRef": "reference/core/sdlc/04-artifact-templates/observability-validation-template.md"
     },
     {
       "id": "on-call-handoff",
@@ -187,7 +189,8 @@
         "deployment"
       ],
       "classification": "binding",
-      "schemaId": "https://evolith.dev/schema/on-call-handoff.schema.json"
+      "schemaId": "https://evolith.dev/schema/on-call-handoff.schema.json",
+      "templateRef": "reference/core/sdlc/04-artifact-templates/on-call-handoff-template.md"
     },
     {
       "id": "operational-sign-off",
@@ -250,7 +253,8 @@
         "deployment"
       ],
       "classification": "binding",
-      "schemaId": "https://evolith.dev/schema/rollback-rehearsal.schema.json"
+      "schemaId": "https://evolith.dev/schema/rollback-rehearsal.schema.json",
+      "templateRef": "reference/core/sdlc/04-artifact-templates/rollback-rehearsal-template.md"
     },
     {
       "id": "security-scan-result",
@@ -259,7 +263,8 @@
         "quality"
       ],
       "classification": "binding",
-      "schemaId": "https://evolith.dev/schema/security-scan-report.schema.json"
+      "schemaId": "https://evolith.dev/schema/security-scan-report.schema.json",
+      "templateRef": "reference/core/sdlc/04-artifact-templates/security-scan-report-template.md"
     },
     {
       "id": "simplicity-checklist-phase-1",
@@ -301,7 +306,9 @@
         "quality"
       ],
       "classification": "binding",
-      "schemaId": "https://evolith.dev/schema/test-summary-report.schema.json"
+      "schemaId": "https://evolith.dev/schema/test-summary-report.schema.json",
+      "templateRef": "reference/core/sdlc/04-artifact-templates/test-summary-report-template.md"
     }
-  ]
+  ],
+  "templateRefNote": "`templateRef` is a property of the ARTIFACT — where its authoring template lives — not of the gate that happens to require it, so it moved here with the schema. Paths are repository-relative; the generator rewrites them relative to whatever file it writes."
 }

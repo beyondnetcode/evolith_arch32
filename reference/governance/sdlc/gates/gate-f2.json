@@ -38,5 +38,13 @@
       "schemaRef": "src/rulesets/schema/bounded-context-map.schema.json"
     }
   ],
-  "blockingCriteria": []
+  "blockingCriteria": [],
+  "waiverRequiredFields": [
+    "criterion",
+    "justification",
+    "risk",
+    "owner",
+    "expirationDate",
+    "mitigationPlan"
+  ]
 }

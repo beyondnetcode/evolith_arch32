@@ -1604,6 +1604,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **Note (2026-08-02):** the guard that would normally back this — `src/apps/core-api/src/infrastructure/metrics/metric-drift.spec.ts` — passes, but it did NOT verify these two alerts: `rabbitmq_` is on its external allowlist, so it holds only Core-emitted `evolith_*` names to existing code. The metric names here were checked by hand against the file's own prior usage, and the queue names (`ums.tenant-projection`, `tracker.tenant-projection`) against `TenantProjectionQueueMissing`.
 
+**Guard fixed in passing:** correcting this row's now-false description (it said the alerts "do not exist yet") made `50-validate-gap-claim` fail, because its `boardTouched` flag meant "a board file was opened" rather than "something that could be a claim happened". The row's status legitimately stays `DEFERRED`, so the only ways to quiet the guard were to leave a false sentence on the board or to fake a status move -- and a guard answerable by editing a sentence is the failure #324 records. The flag now arms on a status change or a closure record. Both real directions are unchanged, and each of the two new self-tests fails against a different wrong implementation.
+
 **References:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.4/§5.6/§15; risk §15 #10 (mitigated → DEFERRED).
 - **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
 

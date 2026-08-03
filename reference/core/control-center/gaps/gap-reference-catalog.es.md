@@ -1600,6 +1600,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Nota (2026-08-02):** el guard que normalmente respaldaría esto — `src/apps/core-api/src/infrastructure/metrics/metric-drift.spec.ts` — pasa, pero NO verificó estas dos alertas: `rabbitmq_` está en su allowlist de externas, así que solo obliga a los nombres `evolith_*` propios del Core a existir en el código. Los nombres de métrica se comprobaron a mano contra el uso previo del propio fichero, y los de cola (`ums.tenant-projection`, `tracker.tenant-projection`) contra `TenantProjectionQueueMissing`.
 
+**Guard arreglado de paso:** corregir la descripción ya falsa de esta fila (decía que las alertas «todavía no existen») hacía fallar a `50-validate-gap-claim`, porque su flag `boardTouched` significaba «se abrió un fichero del tablero» y no «ocurrió algo que puede ser un reclamo». El estado de la fila sigue siendo `DIFERIDO` con razón, así que las únicas formas de callar al guard eran dejar una frase falsa en el tablero o fingir un cambio de estado -- y un guard que se contesta editando una frase es el fallo que registra el #324. Ahora el flag se arma con un cambio de estado o un registro de cierre. Las dos direcciones reales quedan intactas, y cada una de las dos pruebas nuevas falla contra una implementación equivocada distinta.
+
 **Referencias:** product/suite/architecture/evolith-suite-deployment-strategy.md §5.4/§5.6/§15; riesgo §15 #10 (mitigado → DIFERIDO).
 - **Principal:** `S` · **Interés:** `MED` · **Base:** `estimate`
 

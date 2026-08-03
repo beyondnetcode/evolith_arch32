@@ -284,11 +284,9 @@ function rowStatuses(lines) {
 export function diffClaimedIds(diff) {
   const statusChanges = [];
   const closures = [];
-  let boardTouched = false;
 
   for (const file of parseDiffFiles(diff)) {
     if (TRACKING_FILES.has(file.path)) {
-      boardTouched = true;
       const before = rowStatuses(file.removed);
       const after = rowStatuses(file.added);
       for (const [id, to] of after) {
@@ -298,7 +296,6 @@ export function diffClaimedIds(diff) {
         if (!after.has(id)) statusChanges.push({ id, from, to: null, file: file.path });
       }
     } else if (file.path === CLOSURE_FILE) {
-      boardTouched = true;
       const removed = new Set(file.removed.flatMap((l) => CLOSURE_ID.exec(l)?.[1]?.toUpperCase() ?? []));
       const added = new Set(file.added.flatMap((l) => CLOSURE_ID.exec(l)?.[1]?.toUpperCase() ?? []));
       // A record that is only MOVED shows up on both sides; only new ones count.
@@ -307,7 +304,24 @@ export function diffClaimedIds(diff) {
   }
 
   const ids = [...new Set([...statusChanges.map((s) => s.id), ...closures.map((c) => c.id)])].sort();
-  return { ids, boardTouched, statusChanges, closures };
+  // GT-464 — `boardTouched` is what ARMS the prose direction below, so it must mean
+  // "this diff did something that could BE a claim", not "this diff opened a board
+  // file". It used to mean the second, and the difference is a false positive with
+  // a name: a change that corrects a row's DESCRIPTION without moving its status.
+  //
+  // GT-464's own row said the two alerts "do not exist yet". Delivering them made
+  // that sentence false while the status legitimately stayed `DEFERRED`, because the
+  // row's second criterion needs a cluster nobody has. Under the old meaning, fixing
+  // the false sentence armed the guard and the only ways to quiet it were to leave a
+  // lie on the board or to move a status that had not moved — both worse than the
+  // noise. Note the shape of that: a guard answerable by editing a sentence is the
+  // exact failure #324 is the record of, and this had become one.
+  //
+  // Neither real direction weakens. `diffOnly` never consulted this flag, so the
+  // eleven rows #315 flipped without naming are caught the same way. And a diff that
+  // moves ANY status still arms the prose direction, because `statusChanges` is then
+  // non-empty — declaring X while flipping Y is still adjudicated.
+  return { ids, boardTouched: statusChanges.length > 0 || closures.length > 0, statusChanges, closures };
 }
 
 /**
@@ -346,10 +360,15 @@ export function claimsOf(pr) {
  * The `boardTouched` condition on the prose side is the ANTI-NOISE rule and it is
  * the whole design. Most pull requests close a gap by changing code and never
  * touch the board; their diff is SILENT about the id, not in conflict with it.
- * Only when a change edits the board AND the rows it edits are not the ones it
- * declared is there something to adjudicate. A guard that fired on the ordinary
- * case would be answered by editing a sentence, which is exactly the failure
- * #324 is the record of.
+ * Only when a change MOVES a row's status or writes a closure record — and the
+ * rows it moved are not the ones it declared — is there something to adjudicate.
+ * A guard that fired on the ordinary case would be answered by editing a
+ * sentence, which is exactly the failure #324 is the record of.
+ *
+ * GT-464 narrowed that flag from "opened a board file" to "did something that
+ * could be a claim". Correcting a row's DESCRIPTION is neither a claim nor a
+ * conflict, and treating it as one made the guard answerable by leaving a stale
+ * sentence in place. See `diffClaimedIds`.
  */
 export function findDivergences(prs) {
   const out = [];

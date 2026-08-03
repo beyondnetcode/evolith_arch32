@@ -9681,6 +9681,20 @@
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "ADR-0125 was accepted by product direction on 2026-08-02 and the conflict it could not decide - six governance facts on which the two gate copies disagreed - was decided on 2026-08-03: the evaluator's copy always rules. Both decisions were prerequisites and both landed before the migration completed. The satellite half is recorded on evolith_tracker GAP-004 (PR #116), whose Core dependency this closes; its remaining UMS blockers are unrelated to this row.",
       "note": "Closed on all five acceptance criteria. The losing corpus is DERIVED rather than merely checked: phase-gates.rules.json and UNIVERSAL_PHASE_ARTIFACTS are generated, and 57-validate-gate-corpora-parity was deleted with its cause. Guard 59 survives with the condition for its own deletion written into it."
+    },
+    {
+      "id": "GT-652",
+      "closedAt": "2026-08-03",
+      "closureCommit": "10d9283d",
+      "evidence": [
+        "src/apps/core-api/src/presentation/dtos/evaluation.dto.ts",
+        "src/apps/core-api/src/presentation/dtos/evaluation-context-mirror.spec.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config src/apps/core-api/jest.config.js --testPathPatterns 'evaluation-context-mirror'"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "The five fields are consumed by the domain today (evaluation-context.ts declares them; the pipeline reads them), so opening the wire completes an existing capability rather than promising a new one. The guard reads the field list from the contract source, so it cannot drift from it silently."
     }
   ]
 }

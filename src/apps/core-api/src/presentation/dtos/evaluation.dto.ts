@@ -189,6 +189,53 @@ export class EvaluationContextDto {
   @IsArray()
   evidence?: readonly unknown[];
 
+  // GT-652 — the five fields the engine READS and the wire could not carry.
+  //
+  // `EvaluationContextDto` is the whitelist: `main.ts` runs the global ValidationPipe with
+  // `forbidNonWhitelisted: true`, so a field absent here does not arrive stripped — it 400s the
+  // whole evaluation. The controller then does `body as unknown as EvaluationContext`, a straight
+  // cast, which means this class IS the reachable surface of the canonical context. Each of the
+  // five below is consumed by the domain today; until now none of them could be sent.
+  //
+  // They are typed loosely (`IsObject`/`IsArray`) for the same reason every neighbour above is:
+  // the shapes live in `@beyondnet/evolith-contracts` and re-declaring them here would create a
+  // second definition to keep in step, which is the drift this repository keeps paying for.
+
+  @ApiPropertyOptional({
+    description: 'WHO asked for the evaluation (actor type/id, model, session). Attribution of the REQUEST, never of a finding.',
+  })
+  @IsOptional()
+  @IsObject()
+  requester?: Readonly<Record<string, unknown>>;
+
+  @ApiPropertyOptional({
+    description: 'WHICH revision was judged (revision, repositoryRef, branch, committedAt, dirty). Absent means the producer did not know it.',
+  })
+  @IsOptional()
+  @IsObject()
+  repositoryRevision?: Readonly<Record<string, unknown>>;
+
+  @ApiPropertyOptional({
+    description: 'Canonical quality-signal evidence (ADR-0111). Evaluated inline; the Core never executes a provider.',
+  })
+  @IsOptional()
+  @IsArray()
+  qualitySignals?: readonly unknown[];
+
+  @ApiPropertyOptional({
+    description: 'Canonical structural fact base (GT-589), produced OUTSIDE the Core and passed inline. Absent yields no structural findings, never a failure.',
+  })
+  @IsOptional()
+  @IsObject()
+  repoFacts?: Readonly<Record<string, unknown>>;
+
+  @ApiPropertyOptional({
+    description: 'The SAME repository at an earlier revision (GT-594), for the signals that only exist between two points in time.',
+  })
+  @IsOptional()
+  @IsObject()
+  baselineRepoFacts?: Readonly<Record<string, unknown>>;
+
   @ApiPropertyOptional({ description: 'Declared checkpoint context' })
   @IsOptional()
   @IsObject()

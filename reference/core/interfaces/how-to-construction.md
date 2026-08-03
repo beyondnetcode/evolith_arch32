@@ -189,8 +189,8 @@ Response (captured live):
       "SPACE-02",
       "SPACE-03",
       "SPACE-05",
-      "INH-03",
-      "INH
+      "DRIFT-01",
+      "I
   … (truncated)
 ```
 
@@ -298,10 +298,10 @@ Response (captured live):
       "SPACE-02",
       "SPACE-03",
       "SPACE-05",
+      "DRIFT-01",
       "INH-03",
       "INH-04",
-      "INH-05",
-      "KI-
+      "I
   … (truncated)
 ```
 
@@ -403,10 +403,10 @@ Response (captured live):
       "SPACE-02",
       "SPACE-03",
       "SPACE-05",
+      "DRIFT-01",
       "INH-03",
       "INH-04",
-      "INH-05",
-      "KI-
+      "I
   … (truncated)
 ```
 

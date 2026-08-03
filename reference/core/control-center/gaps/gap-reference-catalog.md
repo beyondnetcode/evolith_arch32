@@ -1941,6 +1941,8 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
   - [ ] Every finding is triaged to remediated, accepted-with-rationale or deferred-with-owner — an untriaged finding leaves this open.
   - [ ] Each remediation ships with a regression test or a rule, so the same class cannot return unnoticed.
 
+**OWNER DECISION (2026-08-03): NO external pen-test for now.** Not closed as done -- nobody has attempted to break in and that stays true -- but deliberately DISCARDED. The consequence, stated so nobody discovers it during an audit: the product cannot claim third-party testing, and any security claim rests on internal controls alone (CodeQL, DAST, gitleaks, Trivy). If a customer or a regulator demands it, this row reopens.
+
 #### GT-445
 
 **Title:** Regenerate the stale doc-count / version surfaces to the fresh 0.0.1 baseline
@@ -7495,6 +7497,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] The chosen shape has acceptance criteria of its own, replacing this one.
 - **Status:** `PENDING` (2026-08-02)
 
+**OWNER DECISION (2026-08-03): "marketplace" means INTERNAL NUGET-style packages published through GitHub Marketplace.** Not an own catalogue and not a third-party store: internal packages distributed through GitHub's marketplace. With that, this row stops being a product question and becomes packaging and publication work, aligned with `EAG-23` on the satellite.
+
 #### GT-652
 
 **Title:** The wire DTO cannot carry five fields the engine reads
@@ -7879,6 +7883,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] If the wedge: at least one standard ships as an evaluable ruleset and Evolith self-evaluates against it in CI.
   - [ ] The positioning names an ICP for whom that evaluation is a budgeted need.
 
+**OWNER DECISION (2026-08-03): the monetisation vehicle is the TRACKER.** This row was decision-gated on that contradiction — it presumed the CLI was the wedge. Settled: the product sold is the Tracker, so the ISO/SSDF/SLSA rulesets are built as a capability INSIDE it rather than as a separate CLI product. It stops being decision-gated and becomes prioritisable work.
+
 #### GT-609
 
 **Title:** The tools/list cache is keyed globally, so the first caller decides what everyone else discovers
@@ -8035,6 +8041,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] `gh pr checks` on a fresh PR shows no `CodeQL` check reporting "configuration not found".
   - [ ] The only analysis keys on `refs/heads/main` are the two produced by `sdk-cli-ci.yml`.
   - [ ] `CodeQL SAST` still passes and is still a required check — the cleanup must not touch the scanning that works.
+
+**RE-MEASURED 2026-08-03, and the figure is wrong again: 395, not 201.** Counted through the API over `refs/heads/main` under the key `.github/workflows/ci.yml:codeql`: 395 unique ids. This row has said 82, then 201, and neither was right; the number is recorded with its method beside it so the next reader can contrast it rather than believe it.
+
+**OWNER DECISION (2026-08-03): YES, delete them.** This session cannot execute it, for two distinct and verified reasons: the available token carries `repo, workflow, gist, read:org` and the operation needs more; and the API refuses the oldest analysis with `Analysis specified is not deletable` -- GitHub does not allow emptying a whole configuration through the API. The route is the UI: **Security → Code scanning → filter by the dead configuration → Delete**. The row stays `PENDING` awaiting that owner action, not engineering work.
 
 #### GT-623
 

@@ -1,0 +1,307 @@
+{
+  "$schema": "./artifact-registry.schema.json",
+  "$comment": "GT-650 / ADR-0125 — THE single artifact registry. Slug is the identity; `label` is display only and no consumer may match on it. Generated once from the two corpora it replaces and committed as the SOURCE; from here the gate files and phase-gates.rules.json derive from it.",
+  "phaseVocabulary": [
+    "intake",
+    "discovery",
+    "design",
+    "construction",
+    "quality",
+    "deployment"
+  ],
+  "phaseVocabularyNote": "ADR-0125 left the phase vocabulary open. It is fixed here to the Core's own, because `DownstreamPhase` in core-domain is live code keyed on `construction|quality|deployment` and the gate corpus adds `discovery` and `design`. `intake` is declared for completeness and currently has no required artifact. A satellite whose phases are named differently (evolith_tracker uses `qa`/`release`) maps them as a written decision, exactly as it already maps artifact kinds.",
+  "classificationNote": "`binding` means a gate requires it and its absence fails that gate. `advisory` means it counts towards completeness only. The nine advisory entries are advisory BECAUSE NO GATE REQUIRES THEM - that is evidence, not a default: promoting any of them would change what blocks a release, and ADR-0125 forbids doing that silently.",
+  "artifacts": [
+    {
+      "id": "acceptance-validation",
+      "label": "Acceptance Validation",
+      "phases": [
+        "quality"
+      ],
+      "classification": "binding"
+    },
+    {
+      "id": "adr-registry",
+      "label": "ADR Registry",
+      "phases": [
+        "design"
+      ],
+      "classification": "binding"
+    },
+    {
+      "id": "architecture-drift-result",
+      "label": "Architecture Drift Result",
+      "phases": [
+        "construction"
+      ],
+      "classification": "advisory"
+    },
+    {
+      "id": "ballpark-estimation",
+      "label": "Ballpark Estimation",
+      "phases": [
+        "discovery"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/ballpark-estimation.schema.json"
+    },
+    {
+      "id": "bounded-context-map",
+      "label": "Bounded Context Map",
+      "phases": [
+        "design"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/bounded-context-map.schema.json"
+    },
+    {
+      "id": "build-versus-compose-analysis",
+      "label": "Build-versus-Compose Analysis",
+      "phases": [
+        "discovery"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/build-vs-compose.schema.json"
+    },
+    {
+      "id": "cfr-metric",
+      "label": "CFR Metric",
+      "phases": [
+        "quality"
+      ],
+      "classification": "advisory"
+    },
+    {
+      "id": "ci-pipeline-result",
+      "label": "CI Pipeline",
+      "phases": [
+        "construction"
+      ],
+      "classification": "binding",
+      "producedBy": {
+        "format": "provider-native",
+        "note": "The CI providers native run record (GitHub Actions run, GitLab job). Evolith reads the verdict and the run URL; inventing a schema here would restate what the provider already publishes and rot when it changes."
+      }
+    },
+    {
+      "id": "contract-test-result",
+      "label": "Contract Test Result",
+      "phases": [
+        "quality"
+      ],
+      "classification": "advisory"
+    },
+    {
+      "id": "coverage-report",
+      "label": "Coverage Report",
+      "phases": [
+        "construction",
+        "quality"
+      ],
+      "classification": "binding",
+      "producedBy": {
+        "format": "cobertura|lcov|jacoco",
+        "note": "Emitted by the coverage tool in its own long-standing format. A bespoke schema would force a lossy translation of something every reader already parses."
+      }
+    },
+    {
+      "id": "defect-log",
+      "label": "Defect Log",
+      "phases": [
+        "quality"
+      ],
+      "classification": "advisory"
+    },
+    {
+      "id": "definition-of-done-checklist",
+      "label": "Definition of Done Checklist",
+      "phases": [
+        "construction"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/definition-of-done-checklist.schema.json"
+    },
+    {
+      "id": "deployment-evidence",
+      "label": "Deployment Evidence",
+      "phases": [
+        "deployment"
+      ],
+      "classification": "binding"
+    },
+    {
+      "id": "discovery-canvas",
+      "label": "Discovery Canvas",
+      "phases": [
+        "discovery"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/discovery-canvas.schema.json"
+    },
+    {
+      "id": "documentation-delta",
+      "label": "Documentation Delta",
+      "phases": [
+        "construction"
+      ],
+      "classification": "binding"
+    },
+    {
+      "id": "exception-status",
+      "label": "Exception Status",
+      "phases": [
+        "quality"
+      ],
+      "classification": "advisory"
+    },
+    {
+      "id": "integration-evidence",
+      "label": "Integration Evidence",
+      "phases": [
+        "quality"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/integration-evidence.schema.json"
+    },
+    {
+      "id": "moscow-prioritization-matrix",
+      "label": "MoSCoW Prioritization Matrix",
+      "phases": [
+        "discovery"
+      ],
+      "classification": "binding"
+    },
+    {
+      "id": "observability-readiness",
+      "label": "Observability Validation",
+      "phases": [
+        "deployment"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/observability-validation.schema.json"
+    },
+    {
+      "id": "on-call-handoff",
+      "label": "On-Call Handoff",
+      "phases": [
+        "deployment"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/on-call-handoff.schema.json"
+    },
+    {
+      "id": "operational-sign-off",
+      "label": "Operational Sign-off",
+      "phases": [
+        "deployment"
+      ],
+      "classification": "advisory"
+    },
+    {
+      "id": "prd",
+      "label": "PRD",
+      "phases": [
+        "discovery"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/prd.schema.json"
+    },
+    {
+      "id": "pyramid-distribution",
+      "label": "Pyramid Distribution",
+      "phases": [
+        "quality"
+      ],
+      "classification": "binding",
+      "producedBy": {
+        "format": "derived",
+        "note": "Counts derived from the test run, not a document an author writes. Its shape follows whatever the test reporter emits."
+      }
+    },
+    {
+      "id": "reference-blueprint-alignment",
+      "label": "Reference Blueprint Alignment",
+      "phases": [
+        "design"
+      ],
+      "classification": "binding"
+    },
+    {
+      "id": "release-notes",
+      "label": "Release Notes",
+      "phases": [
+        "deployment"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/release-notes.schema.json"
+    },
+    {
+      "id": "release-plan",
+      "label": "Release Plan",
+      "phases": [
+        "deployment"
+      ],
+      "classification": "advisory"
+    },
+    {
+      "id": "rollback-plan",
+      "label": "Rollback Procedure",
+      "phases": [
+        "deployment"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/rollback-rehearsal.schema.json"
+    },
+    {
+      "id": "security-scan-result",
+      "label": "Security Scan Report",
+      "phases": [
+        "quality"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/security-scan-report.schema.json"
+    },
+    {
+      "id": "simplicity-checklist-phase-1",
+      "label": "Simplicity Checklist Phase 1",
+      "phases": [
+        "design"
+      ],
+      "classification": "binding"
+    },
+    {
+      "id": "source-change-set",
+      "label": "Source Change Set",
+      "phases": [
+        "construction"
+      ],
+      "classification": "advisory"
+    },
+    {
+      "id": "spec-traceability-map",
+      "label": "Spec Traceability Map",
+      "phases": [
+        "construction"
+      ],
+      "classification": "advisory"
+    },
+    {
+      "id": "technical-feasibility-canvas",
+      "label": "Technical Feasibility Canvas",
+      "phases": [
+        "discovery"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/technical-feasibility.schema.json"
+    },
+    {
+      "id": "test-summary-report",
+      "label": "Test Summary Report",
+      "phases": [
+        "quality"
+      ],
+      "classification": "binding",
+      "schemaId": "https://evolith.dev/schema/test-summary-report.schema.json"
+    }
+  ]
+}

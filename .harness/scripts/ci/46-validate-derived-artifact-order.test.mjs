@@ -54,7 +54,10 @@ test('the real repository is current and at a fixed point', () => {
   const { status, out } = run(resolve(__dirname, '../../..'));
   assert.equal(status, 0, out);
   assert.match(out, /at a fixed point/);
-  assert.match(out, /links declared \.+ 6/);
+  // 6 -> 7 with GT-650: the universal-phase-artifacts projection, appended so no other link's
+  // reported position moved. Pinned rather than loosened to `\d+` — the count is the point:
+  // a link silently dropped from the chain is an artifact nobody verifies any more.
+  assert.match(out, /links declared \.+ 7/);
 });
 
 test('the guard leaves the real tree byte-identical', () => {
@@ -100,6 +103,13 @@ const stubProducer = (artifacts) =>
   "for (const f of files) fs.writeFileSync(f, 'stable\\n');\n";
 
 const PRELUDE_STUBS = {
+  // link 7 — universal phase artifacts (GT-650 / ADR-0125), derived from the artifact registry
+  '.harness/scripts/generate-universal-phase-artifacts.mjs': stubProducer([
+    'src/packages/core-domain/src/application/services/universal-phase-artifacts.generated.ts',
+  ]),
+  'src/rulesets/sdlc/artifact-registry.json': '// stub\n',
+  'src/packages/core-domain/src/application/services/universal-phase-artifacts.generated.ts': 'stable\n',
+
   // link 1 — ABAC rego (GT-602)
   '.harness/scripts/generate-abac-tool-sets.mjs': stubProducer(['src/rulesets/opa/abac-mcp-tool-access.rego']),
   'src/packages/mcp-server/src/mcp/abac-evaluator.ts': '// stub\n',

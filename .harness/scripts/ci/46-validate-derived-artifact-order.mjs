@@ -163,6 +163,18 @@ export const CHAIN = [
       'reference/core/control-center/maturity-reports/executive-summary.es.md',
     ],
   },
+  {
+    // GT-650 / ADR-0125 — the artifact registry is the single declaration, and this projection is
+    // the first consumer to derive from it instead of restating it. Appended rather than placed
+    // first: no other link consumes the registry or this constant, so its position is free, and
+    // inserting it at the front would have shifted every other link's reported position for no
+    // reason — a diff that reads like a reordering when nothing was reordered.
+    name: 'universal phase artifacts',
+    producer: '.harness/scripts/generate-universal-phase-artifacts.mjs',
+    checkArgs: ['--check'],
+    consumes: ['src/rulesets/sdlc/artifact-registry.json'],
+    writes: ['src/packages/core-domain/src/application/services/universal-phase-artifacts.generated.ts'],
+  },
 ];
 
 function fail(lines) {

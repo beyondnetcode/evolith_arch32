@@ -7424,6 +7424,36 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Referencias:** src/apps/core-api/src/presentation/dtos/evaluation.dto.ts; src/apps/core-api/src/main.ts (ValidationPipe); src/packages/core-domain/src/evaluation/contracts/evaluation-context.ts; bloquea el criterio 2 de CP-04 en `evolith_tracker`.
 - **Principal:** `S` · **Interés:** `LOW` · **Base:** `estimate`
 
+#### GT-654
+
+**Title:** Las tres superficies no coinciden en la forma de `/health`
+
+- **Purpose / Problem:** `core-api` responde con el sobre ADR-0073 — `{success, data: {status: "OK", timestamp, service}, meta: {...}}`. `mcp` responde un objeto plano `{"status":"ok","transport":"http","protocol":"mcp","probe":"health"}`. `agent-runtime` responde otro plano `{"status":"ok","service":"agent-runtime-api","version":"0.1.0","uptimeSeconds":88}`. Tres servicios de un mismo producto, tres formas, y el literal del veredicto además cambia de caja (`OK` vs `ok`).
+- **What it means:** cualquiera que sondee las tres tiene que tratar cada una como un caso especial. Un comprobador escrito contra el sobre del Core lee `data.status` y no encuentra nada en las otras dos; uno escrito contra la forma plana lee `status` y no encuentra nada en el Core. No es hipotético: esta misma divergencia produjo un fallo falso el 2026-08-03, cuando una sonda cross-cluster casó `"status":"ok"` literalmente y reportó como inalcanzables dos servicios que estaban sirviendo.
+- **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Medido el 2026-08-03 contra los tres servicios desplegados en un clúster kind, leyendo las respuestas vivas en sus node ports en vez del código.
+- **Principal:** `S` · **Interés:** `LOW` · **Base:** `estimate`
+- **Esto es una DECISIÓN antes que un trabajo.** El sobre es el contrato declarado del Core, así que la respuesta obvia es que las tres lo adopten. La respuesta obvia no sale gratis: `/health` es lo que leen una sonda de Kubernetes y un balanceador, y hoy están configurados contra una forma. Vaya como vaya, la resolución es una decisión escrita y luego las superficies obedeciéndola — no tres servicios convergiendo por su cuenta.
+- **Acceptance criteria:**
+  - [ ] Una decisión registra qué forma usa `/health` en las tres superficies, y por qué, incluyendo qué implica para las sondas desplegadas.
+  - [ ] Las tres superficies responden esa forma, verificado contra respuestas vivas y no contra el código.
+  - [ ] Una comprobación contrasta las tres, para que la siguiente superficie que se añada no pueda inventar una cuarta forma.
+
+#### GT-655
+
+**Title:** Cuatro operaciones declaradas en las tres superficies no las ha invocado nunca ninguna prueba
+
+- **Purpose / Problem:** `satellite-create`, `pattern-list`, `pattern-get` y `pattern-list-by-topology` están declaradas `exposed: true` en CLI, MCP y REST en la matriz de paridad, y el arnés de exploración cross-superficie **no tiene binding** para ninguna — 48 de 73 operaciones lo llevan; estas cuatro no. Ninguna invocación ha llegado nunca a ellas, en ninguna superficie.
+- **What it means:** la matriz afirma que existen en tres superficies y nada les ha pedido nunca que lo demuestren. Es justo la clase que el arnés se construyó para cerrar, y el arnés las reporta honestamente en `uncoveredTriangleOps` en vez de redondearlas — pero reportar no es cubrir.
+- **`satellite-create` es la que importa.** Aprovisiona un repositorio real de GitHub y escribe el registro local (`satellite-create.tool.ts:219`), así que es a la vez la de más consecuencia de las cuatro y la razón de que el binding no sea trivial: ejercitarla exige un efecto que el arnés pueda deshacer, o un camino de dry-run del que pueda fiarse.
+- **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** M
+- **Provenance:** `src/tests/exploration/.out/coverage.json` del 2026-08-04, `uncoveredTriangleOps`, re-medido tras relanzar la suite con `npm run test:exploration`.
+- **Principal:** `M` · **Interés:** `LOW` · **Base:** `estimate`
+- **Acceptance criteria:**
+  - [ ] Las tres de solo lectura (`pattern-list`, `pattern-get`, `pattern-list-by-topology`) llevan binding y se invocan en las tres superficies.
+  - [ ] `satellite-create` lleva binding con un camino deshacible o de dry-run, o la matriz registra por qué queda exenta — una operación no comprobable que no dice nada de sí misma es peor que una declarada no comprobable.
+  - [ ] `uncoveredTriangleOps` está vacío, o cada entrada restante tiene una razón escrita.
+
 #### GT-653
 
 **Title:** La detección de secretos no puede bloquear, y en los PR de Dependabot nunca corre

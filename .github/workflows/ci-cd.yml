@@ -615,6 +615,19 @@ jobs:
       - name: Charts request images this repository can produce
         run: node .harness/scripts/ci/58-validate-deployable-images.mjs
 
+      # A chart's securityContext OVERRIDES the image's USER, so a chart pinning
+      # a uid the image does not own files as puts the process on a user that
+      # can read none of its corpus. The MCP chart shipped 1000 against an image
+      # built at 1001: `policy.wasm` is mode 600, OPA got EACCES, dispatch
+      # fail-closed, and every `tools/call` returned FORBIDDEN — 51 tools
+      # advertised, none executable. Nothing in this repository could have caught
+      # it: the harness runs the server IN-PROCESS, with no container and no
+      # securityContext, so only a live deploy showed it.
+      - name: Charts run as the uid their image owns files as
+        run: |
+          node .harness/scripts/ci/61-validate-chart-image-uid.mjs --verbose
+          node --test .harness/scripts/ci/61-validate-chart-image-uid.test.mjs
+
       # GT-650 / ADR-0125 — the artifact registry is the accepted single declaration, and the gate
       # corpus is still hand-maintained while the migration lands. For as long as both exist, the
       # only thing making that intermediate state safe is that they are checked to agree. This

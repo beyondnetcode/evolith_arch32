@@ -80,11 +80,27 @@ resources:
     cpu: 500m
     memory: 256Mi
 
+# 1001, NOT 1000. `src/packages/mcp-server/Dockerfile` creates `evolith` at uid
+# 1001, `chown -R evolith:evolith /repo /app`, and declares `USER evolith`. A
+# chart that pins 1000 overrides the image's USER and lands the process on the
+# base image's `node` user, which owns none of the corpus.
+#
+# The symptom is remote from the cause and total: `policy.wasm` ships mode 600
+# owned by 1001, so at uid 1000 the OPA engine gets
+# `EACCES: permission denied, open '.../policy.wasm'`. Dispatch requires BOTH
+# the native and OPA engines to allow, so OPA erroring fail-closes EVERY
+# `tools/call` with FORBIDDEN — a deployed MCP server that advertises 51 tools
+# and can execute none. Observed 2026-08-04 by the `core-integration` robot
+# against a live cluster; the pod reported `uid=1000(node)` while the file it
+# could not open was owned by `evolith`.
+#
+# `evolith-core-api` and `evolith-agent-runtime` already pin 1001; this chart was
+# the odd one out.
 podSecurityContext:
   runAsNonRoot: true
-  runAsUser: 1000
-  runAsGroup: 1000
-  fsGroup: 1000
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
   seccompProfile:
     type: RuntimeDefault
 
@@ -93,7 +109,7 @@ containerSecurityContext:
   privileged: false
   readOnlyRootFilesystem: true
   runAsNonRoot: true
-  runAsUser: 1000
+  runAsUser: 1001
   capabilities:
     drop:
       - ALL

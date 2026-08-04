@@ -7424,6 +7424,27 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Referencias:** src/apps/core-api/src/presentation/dtos/evaluation.dto.ts; src/apps/core-api/src/main.ts (ValidationPipe); src/packages/core-domain/src/evaluation/contracts/evaluation-context.ts; bloquea el criterio 2 de CP-04 en `evolith_tracker`.
 - **Principal:** `S` · **Interés:** `LOW` · **Base:** `estimate`
 
+#### GT-653
+
+**Title:** La detección de secretos no puede bloquear, y en los PR de Dependabot nunca corre
+
+- **Purpose:** Que el escaneo de secretos pueda tumbar un merge, y que corra sobre la clase de cambio que más lo necesita.
+- **Evidence, en dos mitades independientes.**
+  - **No puede bloquear, en ninguna rama.** `.github/workflows/sdk-cli-ci.yml` declara el job `secret-detection` con `continue-on-error: true`, y `Secret Detection (gitleaks)` no figura entre los siete contextos requeridos configurados en `main` ni en `develop` (`Test`, `Test core-domain`, `Test core`, `Test mcp-server`, `Test core-api`, `Validate documentation`, `CodeQL SAST`). Ambos hechos se leyeron de la API el 2026-08-03. Una fuga produce, por tanto, una marca roja y nada más.
+  - **No corre en los PR de Dependabot.** El job pasa `GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}`, que las cuentas de organización exigen. El secreto **sí** existe en el almacén de Actions; `GET /repos/beyondnetcode/evolith_arch32/dependabot/secrets` devuelve **cero secretos**, y una corrida disparada por Dependabot resuelve `secrets.*` únicamente contra ese almacén. La licencia llega vacía y el paso falla antes de escanear nada.
+- **Cómo se mantuvo invisible:** las dos mitades se tapan entre sí. En `develop`, `main` y ramas humanas el job está verde —verificado en las últimas 8 corridas de `sdk-cli-ci`—, así que la superficie se lee como cubierta; el fallo se confina a los PR de Dependabot, donde se observó en los cinco de #370–#374 (jobs `91394653336`, `91394662287`, `91394811670`, `91394927400`, `91394946716`). Y como el job es `continue-on-error`, un escaneo que falla siempre es indistinguible de un escaneo que nadie cableó.
+- **Impact:** la única clase de cambio escrita por un actor externo automatizado es la única que nunca se escanea en busca de secretos, y en todas las demás ramas el escaneo es consultivo por construcción. `GT-265` registró este control como entregado; lo que se entregó es un job, no una compuerta.
+- **Affected files:** `.github/workflows/sdk-cli-ci.yml` (job `secret-detection`, ~L439–457); almacén de secretos de Dependabot del repositorio; protección de rama en `main` y `develop`.
+- **Component:** `Security` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Observado el 2026-08-03 al revisar los cinco PR de Dependabot antes de mergearlos; la causa del almacén de licencia se midió contra la API, no se infirió del log.
+- **Principal:** `S` · **Interés:** `MED` · **Base:** `estimate`
+- **Acceptance criteria:**
+  - [ ] `GITLEAKS_LICENSE` existe en el almacén de secretos de **Dependabot**, y un PR de Dependabot muestra el escaneo completándose en vez de fallar por la licencia.
+  - [ ] Se retira `continue-on-error: true` de `secret-detection`, de modo que el veredicto del job sea suyo.
+  - [ ] `Secret Detection (gitleaks)` es contexto requerido en `main` y `develop`, o una decisión escrita explícita registra por qué se acepta un escaneo de secretos meramente consultivo.
+  - [ ] Un fixture negativo demuestra que la compuerta bloquea: una rama con una credencial de prueba plantada hace fallar el check.
+- **Status:** `PENDIENTE` (2026-08-03)
+
 #### GT-608
 
 **Título:** El subsistema de aprobación humana nunca se ha ejecutado

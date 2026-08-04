@@ -7519,6 +7519,27 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **References:** src/apps/core-api/src/presentation/dtos/evaluation.dto.ts; src/apps/core-api/src/main.ts (ValidationPipe); src/packages/core-domain/src/evaluation/contracts/evaluation-context.ts; blocks `evolith_tracker` CP-04 criterion 2.
 - **Principal:** `S` · **Interest:** `LOW` · **Basis:** `estimate`
 
+#### GT-653
+
+**Title:** Secret detection cannot block, and never runs on Dependabot PRs
+
+- **Purpose:** Make the secret scan able to fail a merge, and able to run on the change class it is most needed for.
+- **Evidence, in two independent halves.**
+  - **It cannot block, anywhere.** `.github/workflows/sdk-cli-ci.yml` declares the `secret-detection` job with `continue-on-error: true`, and `Secret Detection (gitleaks)` is absent from the seven required contexts configured on `main` and `develop` (`Test`, `Test core-domain`, `Test core`, `Test mcp-server`, `Test core-api`, `Validate documentation`, `CodeQL SAST`). Both facts were read from the API on 2026-08-03. A leak therefore produces a red tick and nothing else.
+  - **It does not run on Dependabot PRs.** The job passes `GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}`, which org accounts require. The secret **is** present in the Actions store; `GET /repos/beyondnetcode/evolith_arch32/dependabot/secrets` returns **zero secrets**, and a Dependabot-triggered run resolves `secrets.*` against that store only. The licence therefore arrives empty and the step fails before scanning anything.
+- **How it stayed invisible:** the two halves hide each other. On `develop`, `main` and human branches the job is green — verified across the last 8 `sdk-cli-ci` runs — so the surface reads as covered; the failure is confined to Dependabot PRs, where it was observed on all five of #370–#374 (jobs `91394653336`, `91394662287`, `91394811670`, `91394927400`, `91394946716`). And because the job is `continue-on-error`, a permanently failing scan is indistinguishable from a scan nobody wired up.
+- **Impact:** the one class of change authored by an automated external actor is the one class never scanned for secrets, and on every other branch the scan is advisory by construction. `GT-265` registered this control as landed; what landed is a job, not a gate.
+- **Affected files:** `.github/workflows/sdk-cli-ci.yml` (job `secret-detection`, ~L439–457); repository Dependabot secret store; branch protection on `main` and `develop`.
+- **Component:** `Security` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Observed on 2026-08-03 while reviewing the five Dependabot PRs before merging them; the licence-store cause was measured against the API rather than inferred from the log.
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
+- **Acceptance criteria:**
+  - [ ] `GITLEAKS_LICENSE` exists in the **Dependabot** secret store, and a Dependabot PR shows the scan completing rather than failing on the licence.
+  - [ ] `continue-on-error: true` is removed from `secret-detection`, so the job's verdict is its own.
+  - [ ] `Secret Detection (gitleaks)` is a required context on `main` and `develop`, or an explicit written decision records why an advisory-only secret scan is acceptable.
+  - [ ] A negative fixture proves the gate blocks: a branch carrying a planted test credential fails the check.
+- **Status:** `PENDING` (2026-08-03)
+
 #### GT-608
 
 **Title:** The HITL approval subsystem has never executed

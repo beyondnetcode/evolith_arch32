@@ -208,6 +208,48 @@ export const BINDINGS: Record<string, Binding> = {
   // Topology Operations
   // =========================================================================
 
+  // GT-655 — declared `exposed: true` on all three surfaces and, until
+  // 2026-08-04, invoked by nothing. The matrix asserted they existed in three
+  // places and no test had ever asked them to prove it; the harness reported
+  // them honestly in `uncoveredTriangleOps`, which is not the same as covering
+  // them. All three are read-only, so a binding costs nothing but the writing.
+  'pattern-list': {
+    verified: false,
+    cli: (c) => ['patterns', 'list', '--core', c.corePath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-pattern-list', args: { corePath: c.corePath } }),
+    rest: (c) => ({ method: 'GET', path: '/api/v1/architecture/patterns' }),
+  },
+
+  'pattern-get': {
+    verified: false,
+    cli: (c) => ['patterns', 'get', 'PAT-0001', '--core', c.corePath, '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-pattern-get', args: { id: 'PAT-0001', corePath: c.corePath } }),
+    rest: (c) => ({ method: 'GET', path: '/api/v1/architecture/patterns/PAT-0001' }),
+  },
+
+  'pattern-list-by-topology': {
+    verified: false,
+    cli: (c) => ['patterns', 'for-topology', 'monolithic-layered', '--core', c.corePath, '--format', 'json'],
+    mcp: (c) => ({
+      tool: 'evolith-pattern-list-by-topology',
+      args: { topology: 'monolithic-layered', corePath: c.corePath },
+    }),
+    rest: (c) => ({ method: 'GET', path: '/api/v1/architecture/topologies/monolithic-layered/patterns' }),
+  },
+
+  // `satellite-create` is DELIBERATELY not bound, and this note is the reason
+  // rather than its absence.
+  //
+  // It provisions a live GitHub repository and writes the local registry
+  // (`satellite-create.tool.ts:219`). Exercising it needs either an effect the
+  // harness can undo or a dry-run path it can trust, and it has neither today.
+  // Binding it as-is would have the exploration suite create real repositories
+  // on every CI run — a test that damages the world it measures.
+  //
+  // Registered as GT-655's remaining criterion. An untestable operation that
+  // says nothing about itself is worse than one declared untestable, so it says
+  // so here and in `uncoveredTriangleOps`, which will keep listing it.
+
   'topology-list': {
     verified: false,
     mcp: (c) => ({ tool: 'evolith-topology-list', args: {} }),

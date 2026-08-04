@@ -628,6 +628,18 @@ jobs:
           node .harness/scripts/ci/61-validate-chart-image-uid.mjs --verbose
           node --test .harness/scripts/ci/61-validate-chart-image-uid.test.mjs
 
+      # GT-654 — three services of one product answered /health in three shapes,
+      # and the verdict literal differed in case too. A probe written against
+      # either shape reported the others as broken: on 2026-08-03 a cross-cluster
+      # check matched `"status":"ok"` literally and called two healthy services
+      # unreachable. Nothing reads the body — probes use httpGet, the Dockerfiles
+      # use `curl -f`, k6 checks r.status — which is why unifying was safe and
+      # why leaving it divergent bought nothing.
+      - name: Every surface answers /health in the ADR-0073 envelope
+        run: |
+          node .harness/scripts/ci/62-validate-health-envelope.mjs --verbose
+          node --test .harness/scripts/ci/62-validate-health-envelope.test.mjs
+
       # GT-650 / ADR-0125 — the artifact registry is the accepted single declaration, and the gate
       # corpus is still hand-maintained while the migration lands. For as long as both exist, the
       # only thing making that intermediate state safe is that they are checked to agree. This

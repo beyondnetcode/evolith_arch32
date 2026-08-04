@@ -20,7 +20,7 @@ import { MetricsService } from './metrics.service';
 import { AuditLogger } from './audit-logger';
 import { ResourcesService } from './resources.service';
 import { PromptsService } from './prompts.service';
-import { generateCorrelationId } from '../common/envelopes';
+import { generateCorrelationId, success } from '../common/envelopes';
 import { ErrorCodes } from '../common/errors';
 import { AbacEvaluator } from './abac-evaluator';
 import { mcpContextStorage, McpUserContext } from './mcp-user-context';
@@ -503,16 +503,30 @@ export class McpServerService {
       // liveness/readiness probes without credentials. They expose no MCP data.
       // /health is kept for back-compat; /health/live (liveness) and /health/ready
       // (readiness) are the split probes.
+      // GT-654 — the ADR-0073 envelope, same as every tool result on this surface
+      // and same as core-api. It used to answer a bare `{status, transport, ...}`,
+      // so the three services of one product returned three shapes and the
+      // verdict literal differed in case too (`OK` here, `ok` there). Nothing
+      // reads the BODY — probes use `httpGet`, the Dockerfile uses `curl -f`, k6
+      // checks `r.status === 200`, RoboSoft checks `hr.ok` — which is exactly
+      // why unifying it is safe and why leaving it divergent bought nothing.
       if (req.method === 'GET' && (url.pathname === '/health' || url.pathname === '/health/live')) {
+        const probe = url.pathname === '/health/live' ? 'live' : 'health';
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ status: 'ok', transport: 'http', protocol: 'mcp', probe: url.pathname === '/health/live' ? 'live' : 'health' }));
+        res.end(JSON.stringify(success(
+          { status: 'OK', transport: 'http', protocol: 'mcp', probe, service: 'Evolith MCP Server' },
+          { correlationId: generateCorrelationId(), tool: `http GET ${url.pathname}`, durationMs: 0 },
+        )));
         return;
       }
       if (req.method === 'GET' && url.pathname === '/health/ready') {
         // Ready once the HTTP server is accepting connections and the registry is built.
         const ready = this.httpServer !== null;
         res.writeHead(ready ? 200 : 503, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ status: ready ? 'ok' : 'starting', probe: 'ready' }));
+        res.end(JSON.stringify(success(
+          { status: ready ? 'OK' : 'STARTING', probe: 'ready', service: 'Evolith MCP Server' },
+          { correlationId: generateCorrelationId(), tool: 'http GET /health/ready', durationMs: 0 },
+        )));
         return;
       }
 

@@ -9713,6 +9713,39 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "The licence dependency was removed rather than satisfied: only the gitleaks-action wrapper required an org licence, so installing the MIT binary closed the Dependabot blind spot without any secret. The remaining dependency was ordering \u2014 the required-context promotion had to follow a green run on both protected branches, or every open pull request would have deadlocked as in PR #218. Both runs are recorded (develop 30867424760, main 30868306980) and the promotion was read back from the API: 8 required contexts on each branch, up from 7, with enforce_admins true."
+    },
+    {
+      "id": "GT-654",
+      "closedAt": "2026-08-04",
+      "closureCommit": "a29f593a",
+      "evidence": [
+        "src/packages/mcp-server/src/mcp/mcp-server.service.ts",
+        "src/apps/agent-runtime-api/src/health/health.controller.ts",
+        ".harness/scripts/ci/62-validate-health-envelope.mjs",
+        ".harness/scripts/ci/62-validate-health-envelope.test.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/62-validate-health-envelope.mjs --verbose",
+        "node --test .harness/scripts/ci/62-validate-health-envelope.test.mjs",
+        "npx jest --config src/packages/mcp-server/jest.config.js --testPathPatterns 'mcp-server.service'"
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "The row was registered as a decision, and the decision turned out to be forced by measurement rather than open: nothing reads the /health body. Helm probes use httpGet, the Dockerfiles curl -f, k6 checks r.status === 200 and RoboSoft hr.ok, so unifying on the ADR-0073 envelope broke no consumer. The caution the row carried was wrong and is recorded as such."
+    },
+    {
+      "id": "GT-655",
+      "closedAt": "2026-08-04",
+      "closureCommit": "a29f593a",
+      "evidence": [
+        "src/tests/exploration/bindings.ts",
+        "reference/core/control-center/audits/surface-parity-matrix.json"
+      ],
+      "validationCommands": [
+        "npm run test:exploration",
+        "node -e \"const c=require('./src/tests/exploration/.out/coverage.json'); if(c.executedOperations!==51||c.uncoveredTriangleOps.length!==1) process.exit(1)\""
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Three of the four are bound and invoked on all three surfaces (executed 48 -> 51, invocations 66 -> 75). satellite-create stays unbound with its reason written in bindings.ts: it provisions a live GitHub repository and writes the local registry, so binding it as-is would have CI create real repositories on every run. It needs an undoable effect or a trustworthy dry-run and has neither, so uncoveredTriangleOps keeps listing it rather than the exemption being silent."
     }
   ]
 }

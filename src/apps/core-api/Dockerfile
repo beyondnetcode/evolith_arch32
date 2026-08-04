@@ -25,6 +25,21 @@ RUN npm ci --legacy-peer-deps
 RUN npm run build:policy && \
     npx tsc -b tsconfig.json
 
+# The build above can succeed and emit NOTHING. `tsc -b` is incremental: given a
+# `.tsbuildinfo` that claims the output is current, it exits 0 without writing a
+# single file. That is how this image shipped without `dist/main.js` and met
+# CrashLoopBackOff with `Cannot find module '/repo/src/apps/core-api/dist/main'`
+# — a runtime failure whose cause was three layers upstream.
+#
+# `.dockerignore` now keeps `.tsbuildinfo` out of the context, which removes the
+# known trigger. This line is the assertion that does not depend on knowing the
+# trigger: whatever the reason, an image without its entrypoint fails HERE.
+RUN test -f src/apps/core-api/dist/main.js || { \
+      echo "FATAL: tsc -b exited 0 but src/apps/core-api/dist/main.js was not emitted."; \
+      echo "       An incremental build believed the output was current. Check that"; \
+      echo "       .dockerignore still excludes **/*.tsbuildinfo."; \
+      exit 1; }
+
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 

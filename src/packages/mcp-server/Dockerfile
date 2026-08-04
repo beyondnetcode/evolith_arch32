@@ -30,6 +30,16 @@ RUN npm run build:policy
 # same as `npm run build`). Building the whole graph avoids per-image ordering bugs.
 RUN npx tsc -b tsconfig.json
 
+# `tsc -b` is incremental and exits 0 when a `.tsbuildinfo` claims the output is
+# current — emitting nothing. That shipped a core-api image with no
+# `dist/main.js`, found only at runtime as CrashLoopBackOff. `.dockerignore` now
+# keeps that state out of the context; this asserts the outcome regardless of
+# cause, so a missing entrypoint fails the BUILD instead of a cluster.
+RUN test -f src/packages/mcp-server/dist/main.js || { \
+      echo "FATAL: tsc -b exited 0 but src/packages/mcp-server/dist/main.js was not emitted."; \
+      echo "       Check that .dockerignore still excludes **/*.tsbuildinfo."; \
+      exit 1; }
+
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 

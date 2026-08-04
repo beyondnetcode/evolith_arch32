@@ -206,7 +206,13 @@ describe('McpServerService — HTTP transport', () => {
       // /health is a public liveness probe — reachable without credentials.
       const health = await httpGet(port, '/health');
       expect(health.status).toBe(200);
-      expect(JSON.parse(health.body)).toMatchObject({ status: 'ok', transport: 'http' });
+      // GT-654 — the ADR-0073 envelope, same as every tool result here and as
+      // core-api. It answered a bare `{status:'ok',...}` until 2026-08-04.
+      expect(JSON.parse(health.body)).toMatchObject({
+        success: true,
+        data: { status: 'OK', transport: 'http' },
+        meta: { schemaVersion: '1.0.0' },
+      });
 
       // MCP endpoints require the API key.
       const unauthorized = await httpGet(port, '/mcp');

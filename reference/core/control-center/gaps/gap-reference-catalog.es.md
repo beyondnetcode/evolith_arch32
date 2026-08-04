@@ -7424,6 +7424,30 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Referencias:** src/apps/core-api/src/presentation/dtos/evaluation.dto.ts; src/apps/core-api/src/main.ts (ValidationPipe); src/packages/core-domain/src/evaluation/contracts/evaluation-context.ts; bloquea el criterio 2 de CP-04 en `evolith_tracker`.
 - **Principal:** `S` · **Interés:** `LOW` · **Base:** `estimate`
 
+#### GT-653
+
+**Title:** La detección de secretos no puede bloquear, y en los PR de Dependabot nunca corre
+
+- **Purpose:** Que el escaneo de secretos pueda tumbar un merge, y que corra sobre la clase de cambio que más lo necesita.
+- **Evidence, en dos mitades independientes.**
+  - **No puede bloquear, en ninguna rama.** `.github/workflows/sdk-cli-ci.yml` declara el job `secret-detection` con `continue-on-error: true`, y `Secret Detection (gitleaks)` no figura entre los siete contextos requeridos configurados en `main` ni en `develop` (`Test`, `Test core-domain`, `Test core`, `Test mcp-server`, `Test core-api`, `Validate documentation`, `CodeQL SAST`). Ambos hechos se leyeron de la API el 2026-08-03. Una fuga produce, por tanto, una marca roja y nada más.
+  - **No corre en los PR de Dependabot.** El job pasa `GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}`, que las cuentas de organización exigen. El secreto **sí** existe en el almacén de Actions; `GET /repos/beyondnetcode/evolith_arch32/dependabot/secrets` devuelve **cero secretos**, y una corrida disparada por Dependabot resuelve `secrets.*` únicamente contra ese almacén. La licencia llega vacía y el paso falla antes de escanear nada.
+- **Cómo se mantuvo invisible:** las dos mitades se tapan entre sí. En `develop`, `main` y ramas humanas el job está verde —verificado en las últimas 8 corridas de `sdk-cli-ci`—, así que la superficie se lee como cubierta; el fallo se confina a los PR de Dependabot, donde se observó en los cinco de #370–#374 (jobs `91394653336`, `91394662287`, `91394811670`, `91394927400`, `91394946716`). Y como el job es `continue-on-error`, un escaneo que falla siempre es indistinguible de un escaneo que nadie cableó.
+- **Impact:** la única clase de cambio escrita por un actor externo automatizado es la única que nunca se escanea en busca de secretos, y en todas las demás ramas el escaneo es consultivo por construcción. `GT-265` registró este control como entregado; lo que se entregó es un job, no una compuerta.
+- **Affected files:** `.github/workflows/sdk-cli-ci.yml` (job `secret-detection`, ~L439–457); almacén de secretos de Dependabot del repositorio; protección de rama en `main` y `develop`.
+- **Component:** `Security` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Observado el 2026-08-03 al revisar los cinco PR de Dependabot antes de mergearlos; la causa del almacén de licencia se midió contra la API, no se infirió del log.
+- **Principal:** `S` · **Interés:** `MED` · **Base:** `estimate`
+- **Acceptance criteria:**
+  - [x] ~~`GITLEAKS_LICENSE` existe en el almacén de secretos de **Dependabot**~~ — **superado, y es el mejor arreglo.** La licencia solo la exigía el ENVOLTORIO `gitleaks/gitleaks-action`; el escáner en sí es MIT. El job ahora instala el binario pineado (`GITLEAKS_VERSION: 8.30.1`) y corre `gitleaks dir . --no-banner --redact --exit-code 1`, así que no hay secreto que pueda faltar y el punto ciego de Dependabot no puede reabrirse. Cierra el criterio eliminando su sujeto en vez de satisfaciéndolo — sin acción de admin, y con una credencial menos que custodiar.
+  - [x] `continue-on-error: true` retirado de `secret-detection`. El guard 60 lo rechaza en el job Y en cualquier step, así que bajarlo un nivel no evade la comprobación.
+  - [ ] `Secret Detection (gitleaks)` es contexto requerido en `main` y `develop`. **Deliberadamente al final, y secuenciado:** promoverlo antes de una corrida verde en ambas ramas dejaría todo PR abierto sin poder mergearse y sin nada a lo que apuntar — el mismo bloqueo que documenta el comentario del filtro `paths:` al inicio de `sdk-cli-ci.yml` a partir del PR #218. Se activa cuando el job haya reportado verde en `main` y en `develop`.
+  - [x] Un fixture negativo demuestra que la compuerta bloquea. `60-validate-secret-scan-gate.mjs` corre en cada corrida de CI: EXTRAE el comando de escaneo del workflow (en vez de repetirlo, que derivaría), planta una credencial en un sandbox y exige salida distinta de cero, y exige que un sandbox limpio salga 0 — porque una compuerta trabada en rojo se acaba rodeando, que es como sobrevivió el agujero original. Medido el 2026-08-03: plantada → exit 1, limpia → exit 0.
+- **Un fixture que el escáner está hecho para ignorar no es un fixture.** La primera versión del guard plantaba `AKIAIOSFODNN7EXAMPLE`, la clave canónica de la documentación de AWS, que gitleaks lleva como stopword. El escaneo volvió verde y el guard certificó una compuerta que nunca había visto bloquear — la misma clase de defecto que fue escrito para cerrar, reproducida dentro de su propia prueba. Se detectó al ejecutarlo; la forma queda fijada por una prueba unitaria.
+- **Qué eran los 15 hallazgos preexistentes.** Todos sintéticos: marcadores canónicos usados como fixtures de las propias pruebas de redacción, más dos ejemplos `curl -H "Authorization: Bearer …"` de README. Cada uno se leyó antes de excusarlo, y quedan fijados en `.gitleaksignore` por HUELLA (`archivo:regla:línea`), no por ruta — una lista blanca por ruta ocultaría una credencial real pegada mañana en un fichero de pruebas, que es justo lo que esta compuerta existe para atrapar.
+- **Fuera de alcance, dicho en vez de omitido:** la compuerta escanea el árbol de trabajo, no la historia completa. Un secreto commiteado y luego borrado sigue en los objetos y sigue comprometido; eso es remediación de historia, y convertirlo en compuerta de merge bloquearía a los autores por algo que no pueden arreglar en su rama.
+- **Status:** `EN-PROGRESO` (2026-08-03) — tres de cuatro criterios cerrados; la promoción a contexto requerido espera una corrida verde en ambas ramas protegidas.
+
 #### GT-608
 
 **Título:** El subsistema de aprobación humana nunca se ha ejecutado

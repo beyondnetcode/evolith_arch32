@@ -7519,6 +7519,30 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **References:** src/apps/core-api/src/presentation/dtos/evaluation.dto.ts; src/apps/core-api/src/main.ts (ValidationPipe); src/packages/core-domain/src/evaluation/contracts/evaluation-context.ts; blocks `evolith_tracker` CP-04 criterion 2.
 - **Principal:** `S` · **Interest:** `LOW` · **Basis:** `estimate`
 
+#### GT-653
+
+**Title:** Secret detection cannot block, and never runs on Dependabot PRs
+
+- **Purpose:** Make the secret scan able to fail a merge, and able to run on the change class it is most needed for.
+- **Evidence, in two independent halves.**
+  - **It cannot block, anywhere.** `.github/workflows/sdk-cli-ci.yml` declares the `secret-detection` job with `continue-on-error: true`, and `Secret Detection (gitleaks)` is absent from the seven required contexts configured on `main` and `develop` (`Test`, `Test core-domain`, `Test core`, `Test mcp-server`, `Test core-api`, `Validate documentation`, `CodeQL SAST`). Both facts were read from the API on 2026-08-03. A leak therefore produces a red tick and nothing else.
+  - **It does not run on Dependabot PRs.** The job passes `GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}`, which org accounts require. The secret **is** present in the Actions store; `GET /repos/beyondnetcode/evolith_arch32/dependabot/secrets` returns **zero secrets**, and a Dependabot-triggered run resolves `secrets.*` against that store only. The licence therefore arrives empty and the step fails before scanning anything.
+- **How it stayed invisible:** the two halves hide each other. On `develop`, `main` and human branches the job is green — verified across the last 8 `sdk-cli-ci` runs — so the surface reads as covered; the failure is confined to Dependabot PRs, where it was observed on all five of #370–#374 (jobs `91394653336`, `91394662287`, `91394811670`, `91394927400`, `91394946716`). And because the job is `continue-on-error`, a permanently failing scan is indistinguishable from a scan nobody wired up.
+- **Impact:** the one class of change authored by an automated external actor is the one class never scanned for secrets, and on every other branch the scan is advisory by construction. `GT-265` registered this control as landed; what landed is a job, not a gate.
+- **Affected files:** `.github/workflows/sdk-cli-ci.yml` (job `secret-detection`, ~L439–457); repository Dependabot secret store; branch protection on `main` and `develop`.
+- **Component:** `Security` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Observed on 2026-08-03 while reviewing the five Dependabot PRs before merging them; the licence-store cause was measured against the API rather than inferred from the log.
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
+- **Acceptance criteria:**
+  - [x] ~~`GITLEAKS_LICENSE` exists in the **Dependabot** secret store~~ — **superseded, and the better fix.** The licence was only ever required by the `gitleaks/gitleaks-action` WRAPPER; the scanner itself is MIT. The job now installs the pinned binary (`GITLEAKS_VERSION: 8.30.1`) and runs `gitleaks dir . --no-banner --redact --exit-code 1`, so there is no secret to be missing and the Dependabot blind spot cannot reopen. This closes the criterion by removing its subject rather than by satisfying it — no admin action needed, and one fewer credential to hold.
+  - [x] `continue-on-error: true` removed from `secret-detection`. Guard 60 rejects it on the job AND on any step, so moving it down a level does not evade the check.
+  - [ ] `Secret Detection (gitleaks)` is a required context on `main` and `develop`. **Deliberately last, and sequenced:** promoting it before a green run on both branches would make every open pull request unmergeable with nothing to point at — the exact deadlock the `paths:` filter comment at the top of `sdk-cli-ci.yml` records from PR #218. To be flipped once the job has reported green on `main` and on `develop`.
+  - [x] A negative fixture proves the gate blocks. `60-validate-secret-scan-gate.mjs` runs on every CI run: it EXTRACTS the scan command from the workflow (rather than restating it, which would drift), plants a credential in a sandbox and requires exit non-zero, and requires a clean sandbox to exit 0 — because a gate wedged red gets routed around, which is how the original hole survived. Measured on 2026-08-03: planted → exit 1, clean → exit 0.
+- **A fixture the scanner is built to ignore is not a fixture.** The guard's first version planted `AKIAIOSFODNN7EXAMPLE`, the canonical AWS documentation key, which gitleaks carries as a stopword. The scan came back green and the guard certified a gate it had never seen block — the same class of defect it was written to close, reproduced inside its own proof. Caught by running it; the shape is now pinned by a unit test.
+- **What the 15 pre-existing findings were.** All synthetic: canonical placeholders used as fixtures for the redaction tests themselves, plus two `curl -H "Authorization: Bearer …"` README examples. Each was read before being excused, and they are pinned in `.gitleaksignore` by FINGERPRINT (`file:rule:line`), not by path — a path allowlist would hide a real credential pasted into a spec file tomorrow, which is the failure this gate exists to catch.
+- **Out of scope, stated rather than dropped:** the gate scans the working tree, not full history. A secret committed and later deleted stays in the objects and stays compromised; that is history remediation, and making it a merge gate would block authors on something they cannot fix in their branch.
+- **Status:** `IN-PROGRESS` (2026-08-03) — three of four criteria closed; the required-context promotion waits on a green run on both protected branches.
+
 #### GT-608
 
 **Title:** The HITL approval subsystem has never executed

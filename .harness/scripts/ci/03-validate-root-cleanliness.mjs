@@ -33,6 +33,9 @@ const allowedFiles = new Set([
   ".gitignore",
   ".dockerignore",
   ".gitleaks.toml",
+  // GT-653: gitleaks reads its ignore file from the scan root and takes no flag
+  // to relocate it, so this one cannot live under `.harness/` with the guards.
+  ".gitleaksignore",
   // GT-623: commitlint's config must sit at the root — it is resolved from the
   // repository root by the `commit-msg` hook and by `npx commitlint`, and moving
   // it elsewhere would need a `--config` flag on every invocation.

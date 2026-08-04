@@ -476,6 +476,19 @@ jobs:
       - name: Run gitleaks
         run: gitleaks dir . --no-banner --redact --exit-code 1
 
+      # The scan above needs nothing from npm; guard 60 reads the workflow YAML
+      # and so needs `js-yaml`. Deps are installed AFTER the scan on purpose —
+      # a leak in the tree should be reported before three minutes of install,
+      # and `node_modules` is not part of what gets scanned either way.
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
       # The scan above going green proves nothing on its own — a scanner pointed
       # at the wrong place is green too. This plants a credential and requires
       # the same command to reject it, so the gate is SEEN blocking on every run.

@@ -3,14 +3,30 @@
 #
 # Two ways to reach it, and they are not interchangeable:
 #
-#   FROM THIS MACHINE, ad hoc — kubectl -n evolith-local port-forward svc/<release>-evolith-core-api 8080:80
-#   FROM ANOTHER CLUSTER (the Tracker) — http://host.docker.internal:30080
+#   FROM ANOTHER CLUSTER (the Tracker) — http://<cluster>-control-plane:30080
+#   FROM THIS MACHINE                  — http://localhost:30080
+#                                        or kubectl -n evolith-local port-forward svc/<release>-evolith-core-api 8080:80
 #
-# The second is why `service.type` is NodePort here. A port-forward is a process
+# The first is why `service.type` is NodePort here. A port-forward is a process
 # on the host that dies on every rollout of the Core, so it cannot be what a
-# separate cluster is configured against; the node port is fixed at cluster
-# creation and survives. Requires the cluster to have been created with
-# `product/infra/kind/core-cluster.yaml` — the mapping cannot be added later.
+# separate cluster is configured against; a pinned node port survives.
+#
+# NOT `host.docker.internal` — this file said that until 2026-08-04 and it is
+# WRONG: inside a kind pod it fails with `Could not resolve host`, because the
+# pod resolves through CoreDNS in the node and never sees the Docker Desktop
+# entry. Every kind cluster joins the same `kind` Docker network, so the
+# consumer reaches this cluster's NODE CONTAINER by name. Measured, after
+# writing it the wrong way first; `core-cluster.yaml` and `local-test.sh` were
+# corrected then and this file was missed.
+#
+# On KIND, `http://localhost:30080` additionally needs the cluster created with
+# `product/infra/kind/core-cluster.yaml` — port mappings are fixed at creation.
+# On DOCKER DESKTOP's built-in Kubernetes there is no such file and none is
+# needed: it publishes node ports on localhost itself. That path is UNEXERCISED
+# here (this machine has no `docker-desktop` context), and the honest reason it
+# is left alone rather than guessed at: a pinned node port either works or fails
+# the install with a port conflict, so it has no silent-wrong mode to protect
+# against.
 image:
   repository: evolith-core-api
   tag: local2

@@ -7529,10 +7529,13 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** Measured on 2026-08-03 against all three services deployed to a kind cluster, reading the live responses on their node ports rather than the source.
 - **Principal:** `S` · **Interest:** `LOW` · **Basis:** `estimate`
 - **This is a DECISION before it is work.** The envelope is the Core's stated contract, so the obvious answer is that all three adopt it. The obvious answer is not free: `/health` is what a Kubernetes probe and a load balancer read, and those are configured against a shape today. Whichever way it goes, the resolution is a written decision followed by the surfaces obeying it — not three services quietly converging.
+- **The decision, and why it was easier than registered.** All three adopt the ADR-0073 envelope. The caution this row was registered with — "the probes are configured against a shape" — was WRONG, and measuring it turned a decision into a one-line answer: the Helm probes use `httpGet` (status code only), the Dockerfiles use `curl -f` (non-2xx only), the k6 profiles check `r.status === 200`, and RoboSoft checks `hr.ok`. **Nothing reads the body.** The only consumer that parsed it was `local-test.sh url`, written during this same wave.
 - **Acceptance criteria:**
-  - [ ] A decision records which shape `/health` uses across the three surfaces, and why, including what it means for the deployed probes.
-  - [ ] The three surfaces answer that shape, verified against live responses rather than source.
-  - [ ] A check contrasts the three, so the next surface added cannot invent a fourth shape.
+  - [x] A decision records which shape `/health` uses across the three surfaces, and why, including what it means for the deployed probes — recorded above, on the measurement rather than on caution.
+  - [x] The three surfaces answer that shape. `mcp` routes its three probes through `success()` from `common/envelopes` (the same helper every tool result already used — only health was outside it); `agent-runtime` builds the envelope in its controller; `core-api` was already enveloped by its global interceptor. The verdict is `OK` on all three, not `ok`.
+  - [x] A check contrasts the three: `62-validate-health-envelope.mjs`, wired into `Governance guards`, with 8 unit tests. Watched failing on a bare object, on a missing `schemaVersion`, and on a lowercase verdict inside an otherwise correct envelope.
+- **The guard flagged its own documentation first**, exactly as the secret-scan guard did earlier in the same wave: the handler's header explains the `{status: 'ok'}` shape it replaced, and a raw text scan fired on that explanation. Comments are stripped before scanning, and a test pins it.
+- **Status:** `DONE` (2026-08-04)
 
 #### GT-655
 
@@ -7545,9 +7548,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Provenance:** `src/tests/exploration/.out/coverage.json` on 2026-08-04, `uncoveredTriangleOps`, re-measured after the suite was re-run through `npm run test:exploration`.
 - **Principal:** `M` · **Interest:** `LOW` · **Basis:** `estimate`
 - **Acceptance criteria:**
-  - [ ] The three read-only ones (`pattern-list`, `pattern-get`, `pattern-list-by-topology`) carry a binding and are invoked on all three surfaces.
-  - [ ] `satellite-create` either carries a binding with an undoable or dry-run path, or the matrix records why it is exempt — an untestable operation that says nothing about itself is worse than one declared untestable.
-  - [ ] `uncoveredTriangleOps` is empty, or every remaining entry has a written reason.
+  - [x] The three read-only ones carry a binding and are invoked on all three surfaces. Measured: bound and executed operations went 48 → **51**, surface invocations 66 → **75**.
+  - [x] `satellite-create` records why it is exempt, in `bindings.ts` where the next reader looks: it provisions a live GitHub repository and writes the local registry, so binding it as-is would have the suite create real repositories on every CI run — a test that damages the world it measures. It needs an undoable effect or a trustworthy dry-run, and has neither today.
+  - [x] `uncoveredTriangleOps` holds one entry, `satellite-create`, with the reason written above.
+- **Binding them found two divergences, and both were the instrument.** The first run reported `pattern-get` failing on all three surfaces with three different error codes, and `pattern-list-by-topology` disagreeing between MCP and the rest. Both were defects in the bindings I had just written: `cqrs` is not a pattern id (they are `PAT-0001`…) and the MCP tool takes `topology`, not `topologyId`. Corrected against the real catalog and the real tool schema, the suite reports **zero findings** — the fourth time in this wave that a reported divergence belonged to the measuring instrument rather than the product.
+- **Status:** `DONE` (2026-08-04)
 
 #### GT-653
 

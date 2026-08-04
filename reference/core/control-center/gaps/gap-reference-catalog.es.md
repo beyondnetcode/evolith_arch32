@@ -7434,10 +7434,13 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Provenance:** Medido el 2026-08-03 contra los tres servicios desplegados en un clúster kind, leyendo las respuestas vivas en sus node ports en vez del código.
 - **Principal:** `S` · **Interés:** `LOW` · **Base:** `estimate`
 - **Esto es una DECISIÓN antes que un trabajo.** El sobre es el contrato declarado del Core, así que la respuesta obvia es que las tres lo adopten. La respuesta obvia no sale gratis: `/health` es lo que leen una sonda de Kubernetes y un balanceador, y hoy están configurados contra una forma. Vaya como vaya, la resolución es una decisión escrita y luego las superficies obedeciéndola — no tres servicios convergiendo por su cuenta.
+- **La decisión, y por qué salió más fácil de lo registrado.** Las tres adoptan el sobre ADR-0073. La cautela con la que se registró esta ficha —«las sondas están configuradas contra una forma»— era FALSA, y medirla convirtió una decisión en una respuesta de una línea: las sondas de Helm usan `httpGet` (solo el código), los Dockerfiles `curl -f` (solo no-2xx), los perfiles de k6 comprueban `r.status === 200` y RoboSoft `hr.ok`. **Nadie lee el cuerpo.** El único consumidor que lo parseaba era `local-test.sh url`, escrito en esta misma ola.
 - **Acceptance criteria:**
-  - [ ] Una decisión registra qué forma usa `/health` en las tres superficies, y por qué, incluyendo qué implica para las sondas desplegadas.
-  - [ ] Las tres superficies responden esa forma, verificado contra respuestas vivas y no contra el código.
-  - [ ] Una comprobación contrasta las tres, para que la siguiente superficie que se añada no pueda inventar una cuarta forma.
+  - [x] Una decisión registra qué forma usa `/health` en las tres superficies y por qué — arriba, apoyada en la medición y no en la cautela.
+  - [x] Las tres superficies responden esa forma. `mcp` pasa sus tres sondas por `success()` de `common/envelopes` (el mismo helper que ya usaba cada tool result — solo health quedaba fuera); `agent-runtime` construye el sobre en su controlador; `core-api` ya lo envolvía con su interceptor global. El veredicto es `OK` en las tres, no `ok`.
+  - [x] Una comprobación contrasta las tres: `62-validate-health-envelope.mjs`, cableado a `Governance guards`, con 8 pruebas unitarias. Visto fallar con un objeto plano, con un `schemaVersion` ausente y con un veredicto en minúscula dentro de un sobre por lo demás correcto.
+- **El guard señaló primero su propia documentación**, igual que el de detección de secretos en esta misma ola: la cabecera del handler explica la forma `{status: 'ok'}` que sustituyó, y un barrido en crudo disparó sobre esa explicación. Ahora se excluyen los comentarios antes de escanear, y una prueba lo fija.
+- **Status:** `COMPLETADO` (2026-08-04)
 
 #### GT-655
 
@@ -7450,9 +7453,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Provenance:** `src/tests/exploration/.out/coverage.json` del 2026-08-04, `uncoveredTriangleOps`, re-medido tras relanzar la suite con `npm run test:exploration`.
 - **Principal:** `M` · **Interés:** `LOW` · **Base:** `estimate`
 - **Acceptance criteria:**
-  - [ ] Las tres de solo lectura (`pattern-list`, `pattern-get`, `pattern-list-by-topology`) llevan binding y se invocan en las tres superficies.
-  - [ ] `satellite-create` lleva binding con un camino deshacible o de dry-run, o la matriz registra por qué queda exenta — una operación no comprobable que no dice nada de sí misma es peor que una declarada no comprobable.
-  - [ ] `uncoveredTriangleOps` está vacío, o cada entrada restante tiene una razón escrita.
+  - [x] Las tres de solo lectura llevan binding y se invocan en las tres superficies. Medido: operaciones atadas y ejecutadas pasaron de 48 a **51**, invocaciones de superficie de 66 a **75**.
+  - [x] `satellite-create` registra por qué queda exenta, en `bindings.ts`, donde mira el siguiente lector: aprovisiona un repositorio real de GitHub y escribe el registro local, así que atarla tal cual haría que la suite creara repositorios reales en cada corrida de CI — una prueba que daña el mundo que mide. Necesita un efecto deshacible o un dry-run fiable, y hoy no tiene ninguno.
+  - [x] `uncoveredTriangleOps` conserva una entrada, `satellite-create`, con su razón escrita arriba.
+- **Atarlas encontró dos divergencias, y las dos eran del instrumento.** La primera corrida reportó `pattern-get` fallando en las tres superficies con tres códigos de error distintos, y `pattern-list-by-topology` discrepando entre MCP y el resto. Ambas eran defectos de los bindings que yo acababa de escribir: `cqrs` no es un id de patrón (son `PAT-0001`…) y el tool MCP recibe `topology`, no `topologyId`. Corregidos contra el catálogo real y el esquema real del tool, la suite reporta **cero hallazgos** — la cuarta vez en esta ola que una divergencia reportada pertenecía al instrumento de medida y no al producto.
+- **Status:** `COMPLETADO` (2026-08-04)
 
 #### GT-653
 

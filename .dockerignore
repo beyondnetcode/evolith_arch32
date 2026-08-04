@@ -1,0 +1,70 @@
+# Build context exclusions. Until 2026-08-03 this file did not exist, and its
+# absence produced a silently broken image.
+#
+# ## The defect it closes
+#
+# All three service Dockerfiles do `COPY src ./src` and then build INSIDE the
+# image with `npx tsc -b tsconfig.json`. `tsc -b` is a COMPOSITE build: it reads
+# `.tsbuildinfo` to decide what still needs emitting. With no `.dockerignore`,
+# the working tree's `.tsbuildinfo` files were copied into the build context, so
+# `tsc -b` concluded everything was already built — and emitted nothing.
+#
+# The build exited 0. The image had a `dist/` directory with most files in it and
+# no `dist/main.js`. The failure surfaced far downstream, at runtime, as
+#
+#     Error: Cannot find module '/repo/src/apps/core-api/dist/main'
+#
+# in CrashLoopBackOff. Reproduced and then fixed by measurement on 2026-08-03:
+# delete the `.tsbuildinfo` files, rebuild, `main.js` appears.
+#
+# CI never saw it because CI builds from a fresh checkout, which has no
+# `.tsbuildinfo` — the inverse of the usual failure, green in CI and broken on
+# every developer machine that had run a build before.
+#
+# The Dockerfiles also assert their entrypoint exists after building, so a
+# regression here fails the BUILD instead of reaching a cluster.
+#
+# ## Note on `dist`
+#
+# Excluded for the same reason and one more: every runner stage copies
+# `--from=builder`, so a host `dist` is never the artifact that ships. Letting it
+# into the context only risks a stale local build masquerading as a fresh one.
+
+# ── The incremental-build state that caused the defect ──────────────────────
+**/*.tsbuildinfo
+
+# ── Build output: always produced inside the image, never taken from the host ──
+**/dist
+**/build
+**/out
+
+# ── Reinstalled in the image by `npm ci`; copying the host tree is both slow
+#    and wrong (native modules are built for the host platform) ──────────────
+**/node_modules
+
+# ── Test, coverage and tooling noise: not needed to build, and every megabyte
+#    is context upload time ──────────────────────────────────────────────────
+**/coverage
+**/.nyc_output
+**/*.log
+**/.turbo
+**/.cache
+
+# ── VCS and editor ──────────────────────────────────────────────────────────
+.git
+.github
+.gitignore
+**/.DS_Store
+.vscode
+.idea
+.obsidian
+
+# ── Local infrastructure and evidence: not inputs to a service image ────────
+**/.evidence
+product/infra/kind
+docker-compose*.yml
+
+# ── Secrets must never enter a build context, even though none are tracked ──
+**/.env
+**/.env.*
+!**/.env.example

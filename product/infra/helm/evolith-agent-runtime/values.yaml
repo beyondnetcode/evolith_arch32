@@ -18,6 +18,12 @@ service:
   type: ClusterIP
   port: 80
   targetPort: 3000
+  # Only read when `type: NodePort`. Empty means "let Kubernetes allocate one",
+  # which is fine for a throwaway and wrong for anything another cluster is
+  # configured against — see values-local.yaml and kind/core-cluster.yaml.
+  # ClusterIP stays the default: a node port is a LOCAL cross-cluster
+  # affordance, never a production one.
+  nodePort: ""
 
 ingressRoute:
   enabled: true

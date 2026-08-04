@@ -67,8 +67,20 @@ apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
   - role: control-plane
     extraPortMappings:
-      # core-api — the address the Tracker (a different cluster) is configured with.
-      - containerPort: 30080
+      # One per INTERFACE, not one for the Core. "Evolith Core and its
+      # interfaces" means REST, MCP and the agent runtime, and a consumer that
+      # can reach only the first has not exercised the product — the surfaces
+      # are meant to be at parity, so a validation that covers one of three
+      # would report parity it never tested.
+      - containerPort: 30080   # core-api  — REST
         hostPort: 30080
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      - containerPort: 30081   # mcp       — MCP
+        hostPort: 30081
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      - containerPort: 30082   # agent-runtime
+        hostPort: 30082
         listenAddress: "127.0.0.1"
         protocol: TCP

@@ -11,6 +11,12 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+      {{- if and (eq .Values.service.type "NodePort") .Values.service.nodePort }}
+      # PINNED. An unpinned NodePort is allocated at random from 30000-32767 and
+      # changes on reinstall, so anything configured against it breaks — which is
+      # the failure a stable cross-cluster address exists to prevent.
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
     {{- if .Values.opa.enabled }}
     # GT-551: expose the OPA sidecar's HTTP port so Prometheus can reach its
     # /metrics endpoint. Without this the sidecar is pod-local only and

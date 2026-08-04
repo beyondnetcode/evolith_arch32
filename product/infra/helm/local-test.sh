@@ -30,6 +30,10 @@ IMAGES=(evolith-core-api:"$IMAGE_TAG" evolith-mcp:"$IMAGE_TAG" evolith-agent-run
 
 KIND_CONFIG="$ROOT/product/infra/kind/core-cluster.yaml"
 CORE_NODE_PORT=30080
+# One entry per interface: "<label> <nodePort>". The Core is not one address —
+# REST, MCP and the agent runtime are three surfaces at parity, and a check that
+# covered only the first would report a parity it never exercised.
+SURFACES=("core-api 30080" "mcp 30081" "agent-runtime 30082")
 # The address ANOTHER cluster uses to reach this Core.
 #
 # Every kind cluster joins the same `kind` Docker network, so the consumer's pod
@@ -66,33 +70,44 @@ kind_create() {
   kubectl config use-context "kind-$CLUSTER"
 }
 
-# Print BOTH addresses and prove each one, rather than asserting them. They fail
-# independently — the host mapping is fixed at cluster creation, the
-# cross-cluster path depends only on the shared Docker network — so a single
-# check would report one of them as if it covered the other.
+# Print every surface's address and PROVE each one, rather than asserting them.
+#
+# Three surfaces x two paths, and they fail INDEPENDENTLY: the host mapping is
+# fixed at cluster creation, the cross-cluster path depends only on the shared
+# Docker network, and each service has its own pinned port. One aggregate check
+# would let a green core-api vouch for an MCP nobody reached.
 url() {
-  local rc=0
-  echo "cross-cluster (configure the Tracker with this): $CORE_CROSS_CLUSTER_URL"
-  echo "from this machine:                               http://localhost:$CORE_NODE_PORT"
+  local rc=0 peer=""
+
+  echo "cross-cluster base (configure the Tracker with this): http://$CLUSTER-control-plane:<port>"
+  echo "from this machine:                                    http://localhost:<port>"
+  for s in "${SURFACES[@]}"; do
+    set -- $s
+    printf "  %-14s %s\n" "$1" "$2"
+  done
+
   echo
   echo "== GET /health from THIS MACHINE =="
-  if curl -fsS --max-time 5 "http://localhost:$CORE_NODE_PORT/health"; then
-    echo; echo "   reachable"
-  else
-    echo "!! NOT reachable on localhost:$CORE_NODE_PORT."
-    echo "!! In order: does the cluster carry the mapping (docker inspect $CLUSTER-control-plane),"
-    echo "!! is the service NodePort $CORE_NODE_PORT (kubectl -n $NS get svc), is the pod ready?"
-    rc=1
+  for s in "${SURFACES[@]}"; do
+    set -- $s
+    if curl -fsS --max-time 5 "http://localhost:$2/health" >/dev/null 2>&1; then
+      printf "   %-14s OK   (localhost:%s)\n" "$1" "$2"
+    else
+      printf "!! %-14s FAIL (localhost:%s)\n" "$1" "$2"
+      rc=1
+    fi
+  done
+  if [ "$rc" -ne 0 ]; then
+    echo "!! In order: does the cluster carry the mappings (docker inspect $CLUSTER-control-plane),"
+    echo "!! are the services NodePort on those ports (kubectl -n $NS get svc), are the pods ready?"
   fi
 
   echo
   echo "== GET /health FROM ANOTHER CLUSTER =="
-  # Any other RUNNING kind cluster will do — the point is that the caller is not
-  # this cluster and not the host. `kind get clusters` also lists stopped ones,
-  # and the first version of this picked one: the probe failed, blamed the
-  # Docker network, and the real cause was a node container that had been dead
-  # for two days. A peer that cannot answer is not evidence about the network.
-  local peer=""
+  # Any other RUNNING kind cluster will do. `kind get clusters` also lists
+  # stopped ones, and the first version of this picked one: the probe failed,
+  # blamed the Docker network, and the real cause was a node container that had
+  # been dead for two days. A peer that cannot answer is not evidence.
   for c in $(kind get clusters 2>/dev/null | grep -vx "$CLUSTER"); do
     if docker inspect "$c-control-plane" --format '{{.State.Running}}' 2>/dev/null | grep -qx true; then
       peer="$c"; break
@@ -101,15 +116,52 @@ url() {
   if [ -z "$peer" ]; then
     echo "   skipped: no OTHER RUNNING kind cluster to call from."
     echo "   This is NOT a pass — the cross-cluster path is simply unexercised."
-  elif kubectl --context "kind-$peer" run xcluster-probe-$$ --rm -i --restart=Never \
-        --image=curlimages/curl:8.10.1 --command -- \
-        curl -fsS --max-time 10 "$CORE_CROSS_CLUSTER_URL/health" 2>/dev/null | grep -q '"status":"OK"'; then
-    echo "   reachable from cluster '$peer'"
-  else
-    echo "!! NOT reachable from cluster '$peer' at $CORE_CROSS_CLUSTER_URL."
-    echo "!! Both clusters must sit on the same Docker network: docker inspect $CLUSTER-control-plane --format '{{json .NetworkSettings.Networks}}'"
-    rc=1
+    return $rc
   fi
+
+  for s in "${SURFACES[@]}"; do
+    set -- $s
+    # Declared separately: under `set -u`, a single `local a=1 b=$a` does not see
+    # `a` yet and dies with "unbound variable".
+    local label="$1" port="$2"
+    local pod="xcluster-probe-$label-$$"
+    local out=""
+    # NOT `kubectl run -i --rm`. That attaches to the pod AFTER creating it, so a
+    # container which has already exited loses its stdout — and the result moves
+    # between runs for reasons that have nothing to do with the thing under test.
+    # Observed directly: two consecutive runs disagreed about WHICH surface was
+    # reachable. Create, wait, read the logs, delete.
+    #
+    # stderr is kept throughout: discarding it is how a failed image pull reads
+    # as "the Docker network is broken".
+    kubectl --context "kind-$peer" run "$pod" --restart=Never \
+      --image=curlimages/curl:8.10.1 --command -- \
+      curl -fsS --max-time 10 "http://$CLUSTER-control-plane:$port/health" >/dev/null 2>&1
+    kubectl --context "kind-$peer" wait --for=jsonpath='{.status.phase}'=Succeeded \
+      "pod/$pod" --timeout=60s >/dev/null 2>&1 \
+      || kubectl --context "kind-$peer" wait --for=jsonpath='{.status.phase}'=Failed \
+           "pod/$pod" --timeout=5s >/dev/null 2>&1 || true
+    out="$(kubectl --context "kind-$peer" logs "$pod" 2>&1)$(kubectl --context "kind-$peer" get pod "$pod" -o jsonpath='{.status.containerStatuses[*].state.waiting.reason}' 2>&1)"
+    kubectl --context "kind-$peer" delete pod "$pod" --now >/dev/null 2>&1 || true
+
+    # Case-INSENSITIVE and whitespace-tolerant, because the three surfaces do not
+    # agree on the shape: core-api answers in the ADR-0073 envelope with
+    # `"status":"OK"` nested under `data`, mcp and agent-runtime return a bare
+    # object with `"status":"ok"`. The first version matched only the former, so
+    # two healthy services were reported unreachable and the printed remedy
+    # blamed the network. A probe that cannot read the answer manufactures a defect.
+    if printf '%s' "$out" | grep -qiE '"status"[[:space:]]*:[[:space:]]*"ok"'; then
+      printf "   %-14s OK   (from cluster '%s')\n" "$label" "$peer"
+    elif printf '%s' "$out" | grep -qiE "ErrImagePull|ImagePullBackOff|failed to pull"; then
+      printf "!! %-14s INCONCLUSIVE — the probe pod could not start (curlimages/curl did not pull).\n" "$label"
+      echo   "!! That says nothing about the cross-cluster path. Check registry connectivity."
+      rc=1
+    else
+      printf "!! %-14s FAIL at http://%s-control-plane:%s\n" "$label" "$CLUSTER" "$port"
+      printf '%s\n' "$out" | tail -2 | sed 's/^/!!   /'
+      rc=1
+    fi
+  done
   return $rc
 }
 

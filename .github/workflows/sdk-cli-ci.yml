@@ -46,6 +46,9 @@ on:
 env:
   NODE_VERSION: '20'
   CLI_DIR: 'src/sdk/cli'
+  # Pinned so a scanner release cannot silently change what the gate accepts.
+  # Bumping it is a reviewed change; guard 60 re-derives nothing from it.
+  GITLEAKS_VERSION: '8.30.1'
 
 jobs:
   # ============================================
@@ -436,26 +439,64 @@ jobs:
   # ============================================
   # JOB 11: Secret Detection — gitleaks (GT-265)
   # ============================================
+  # GT-653: this job is a GATE, not a report. Three properties are load-bearing
+  # and each replaced something that made it unable to stop anything:
+  #
+  #   1. NO `continue-on-error`. It carried one, so a leak produced a red tick
+  #      that no merge consulted. Guard 60 fails if it comes back.
+  #   2. The BINARY, not `gitleaks/gitleaks-action@v2`. The action requires an
+  #      org licence read from `secrets.GITLEAKS_LICENSE`; the Dependabot secret
+  #      store is separate and empty, so on every Dependabot pull request the
+  #      licence arrived blank and the step failed BEFORE scanning. The scanner
+  #      itself is MIT and needs no licence, so the licence was buying nothing
+  #      and costing exactly the surface that most needs an independent scan.
+  #   3. `--exit-code 1`, so a finding is a failure rather than a log line.
   secret-detection:
     name: Secret Detection (gitleaks)
     runs-on: ubuntu-latest
-    continue-on-error: true
     permissions:
       contents: read
-      security-events: write
     steps:
+      # A shallow checkout is deliberate. The old job fetched full history for
+      # `gitleaks-action`, which scans commits; this one scans the TREE. Making
+      # history a merge gate would block authors on objects they cannot change
+      # from their branch — a secret committed and later deleted stays in the
+      # pack and stays compromised, but that is history remediation, a separate
+      # piece of work, not something a pull request can satisfy.
       - name: Checkout Repository
         uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
+
+      - name: Install gitleaks
+        run: |
+          set -euo pipefail
+          curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | tar -xz -C /usr/local/bin gitleaks
+          gitleaks version
 
       - name: Run gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Org accounts require a (free) gitleaks license key — wired from the
-          # GITLEAKS_LICENSE repo secret so the scan can run.
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+        run: gitleaks dir . --no-banner --redact --exit-code 1
+
+      # The scan above needs nothing from npm; guard 60 reads the workflow YAML
+      # and so needs `js-yaml`. Deps are installed AFTER the scan on purpose —
+      # a leak in the tree should be reported before three minutes of install,
+      # and `node_modules` is not part of what gets scanned either way.
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The scan above going green proves nothing on its own — a scanner pointed
+      # at the wrong place is green too. This plants a credential and requires
+      # the same command to reject it, so the gate is SEEN blocking on every run.
+      - name: Prove the gate blocks (negative fixture)
+        run: node .harness/scripts/ci/60-validate-secret-scan-gate.mjs --verbose
+
+      - name: Guard unit tests
+        run: node --test .harness/scripts/ci/60-validate-secret-scan-gate.test.mjs
 
   agentic-review:
     name: Winston Agentic Review

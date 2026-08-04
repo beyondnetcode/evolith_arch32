@@ -1,0 +1,38 @@
+# Known-synthetic findings, pinned by FINGERPRINT rather than by path (GT-653).
+#
+# A path allowlist ("ignore *.spec.ts") would hide a real credential pasted into
+# a spec file tomorrow, which is the failure mode this gate exists to catch. A
+# fingerprint is `<file>:<rule>:<line>`, so it excuses exactly the occurrence
+# below and nothing else: move the line, add a second secret to the same file,
+# or introduce a new rule hit, and the gate fires again.
+#
+# Every entry was read before being written here. All fifteen are canonical
+# documentation placeholders — `AKIAIOSFODNN7EXAMPLE`, `ghp_0123456789…`,
+# `AIzaSyD-1234…` — and most of them are fixtures for the redaction tests
+# themselves, i.e. the input a test feeds to the code that scrubs secrets.
+#
+# Re-derive after a legitimate change with:
+#   gitleaks dir . --no-banner --redact --report-format json --report-path /tmp/gl.json
+
+# Fixtures for the agentic review input redactor — the strings it must scrub.
+.harness/scripts/ci/agentic/review-input.test.mjs:github-pat:16
+.harness/scripts/ci/agentic/review-input.test.mjs:github-pat:101
+
+# Doc comment naming the local env vars for the HITL integration test.
+src/apps/agent-runtime-api/src/agent-runtime/hitl-approval-tracker.integration.spec.ts:generic-api-key:51
+
+# Fixtures for the LLM egress redactor — the credentials it must not let leave.
+src/packages/agent-runtime/src/providers/llm-egress.spec.ts:jwt:23
+src/packages/agent-runtime/src/providers/llm-egress.spec.ts:gcp-api-key:25
+src/packages/agent-runtime/src/providers/llm-egress.spec.ts:github-pat:26
+src/packages/agent-runtime/src/providers/llm-egress.spec.ts:generic-api-key:27
+
+# Same, asserted end to end through the Gemini provider.
+src/packages/agent-runtime/src/providers/gemini-provider.spec.ts:gcp-api-key:209
+src/packages/agent-runtime/src/providers/gemini-provider.spec.ts:gcp-api-key:213
+src/packages/agent-runtime/src/providers/gemini-provider.spec.ts:github-pat:228
+src/packages/agent-runtime/src/providers/gemini-provider.spec.ts:github-pat:234
+
+# `curl -H "Authorization: Bearer <token>"` examples in the MCP server README.
+src/packages/mcp-server/README.md:curl-auth-header:595
+src/packages/mcp-server/README.es.md:curl-auth-header:579

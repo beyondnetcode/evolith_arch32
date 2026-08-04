@@ -81,6 +81,29 @@ function readJson(p) {
   }
 }
 
+/**
+ * When the file was written, ISO, or null.
+ *
+ * The Core's `coverage.json` carries no timestamp of its own, and the first
+ * version of this page therefore rendered it with no indication of age. That is
+ * not cosmetic: on 2026-08-03 it published 12 "cross-surface divergences" from a
+ * capture made hours earlier by a run whose MCP OPA engine had crashed for want
+ * of `--experimental-vm-modules`, so every `tools/call` fail-closed with
+ * FORBIDDEN. Re-run correctly, the same suite reports ZERO. The page was
+ * faithful to its input and the input was junk, which is exactly the failure a
+ * derived artifact is supposed to make impossible.
+ *
+ * Age is now stated. A reader can see at a glance that the measurement predates
+ * the tree it claims to describe.
+ */
+function mtimeIso(p) {
+  try {
+    return fs.statSync(p).mtime.toISOString();
+  } catch {
+    return null;
+  }
+}
+
 function readJsonl(p) {
   try {
     return fs
@@ -141,6 +164,7 @@ const T = {
       'These carry a binding on every surface and no invocation reached them. They are the honest edge of this run, listed rather than rounded away.',
     measuredAt: 'Measured',
     fromRun: 'from run',
+    howGen: 'Produced by',
   },
   es: {
     title: 'Cuadro de escenarios E2E',
@@ -172,10 +196,11 @@ const T = {
       'Tienen binding en cada superficie y ninguna invocación llegó a ellas. Son el borde honesto de esta corrida: se listan en vez de redondearse.',
     measuredAt: 'Medido',
     fromRun: 'de la corrida',
+    howGen: 'Producido por',
   },
 };
 
-function render(lang, { coverage, findings, robo }) {
+function render(lang, { coverage, findings, coverageAt, robo }) {
   const t = T[lang];
   const L = [];
   const other = lang === 'en' ? './e2e-scenario-board.es.md' : './e2e-scenario-board.md';
@@ -200,6 +225,8 @@ function render(lang, { coverage, findings, robo }) {
     L.push('');
     L.push(`${t.howTo}: \`npm run test:exploration\``);
   } else {
+    L.push(`${t.measuredAt} \`${coverageAt ?? '?'}\`. ${t.howGen}: \`npm run test:exploration\`.`);
+    L.push('');
     L.push(`| ${t.metric} | ${t.value} |`);
     L.push('|---|---|');
     L.push(`| Operations declared | ${coverage.totalOperations} |`);
@@ -322,11 +349,12 @@ function main(argv = process.argv.slice(2)) {
 
   const coverage = readJson(path.join(CORE_OUT, 'coverage.json'));
   const findings = readJsonl(path.join(CORE_OUT, 'findings.jsonl'));
+  const coverageAt = mtimeIso(path.join(CORE_OUT, 'coverage.json'));
   const robo = latestRoboSoftRun();
 
   const outputs = [
-    [OUT_EN, render('en', { coverage, findings, robo })],
-    [OUT_ES, render('es', { coverage, findings, robo })],
+    [OUT_EN, render('en', { coverage, findings, coverageAt, robo })],
+    [OUT_ES, render('es', { coverage, findings, coverageAt, robo })],
   ];
 
   let stale = false;

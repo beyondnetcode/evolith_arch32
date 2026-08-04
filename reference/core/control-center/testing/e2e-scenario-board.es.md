@@ -10,6 +10,8 @@ Regenerar con: `node .harness/scripts/generate-e2e-scenario-board.mjs`
 
 ## Core — exploración cross-superficie (CLI · MCP · REST)
 
+Medido `2026-08-04T10:24:38.541Z`. Producido por: `npm run test:exploration`.
+
 | Medida | Valor |
 |---|---|
 | Operations declared | 73 |
@@ -31,20 +33,7 @@ Tienen binding en cada superficie y ninguna invocación llegó a ellas. Son el b
 
 ### Observaciones
 
-| Severidad | Tipo | Operación | Superficies | Observación |
-|---|---|---|---|---|
-| P1 | consistency | `gate-evaluate` | cli · mcp · rest | Cross-surface success divergence on gate-evaluate |
-| P1 | consistency | `sdlc-status` | cli · mcp | Cross-surface success divergence on sdlc-status |
-| P1 | consistency | `validate-satellite` | cli · mcp · rest | Cross-surface success divergence on validate-satellite |
-| P1 | consistency | `dora-metrics` | cli · mcp | Cross-surface success divergence on dora-metrics |
-| P1 | consistency | `agents-list` | cli · mcp | Cross-surface success divergence on agents-list |
-| P2 | consistency | `phase-advance` | cli · mcp · rest | Cross-surface success divergence on phase-advance |
-| P2 | consistency | `detect-drift` | cli · mcp · rest | Cross-surface success divergence on detect-drift |
-| P2 | consistency | `evaluate` | cli · mcp · rest | Cross-surface success divergence on evaluate |
-| P2 | consistency | `composable-validate` | cli · mcp · rest | Cross-surface success divergence on composable-validate |
-| P2 | consistency | `recommend-topology` | cli · mcp · rest | Cross-surface success divergence on recommend-topology |
-| P2 | consistency | `phase-artifacts-evaluate` | cli · mcp · rest | Cross-surface success divergence on phase-artifacts-evaluate |
-| P2 | consistency | `topology-list` | mcp · rest | Cross-surface success divergence on topology-list |
+Sin observaciones en la corrida registrada.
 
 ## Tracker — robots RoboSoft contra un clúster vivo
 

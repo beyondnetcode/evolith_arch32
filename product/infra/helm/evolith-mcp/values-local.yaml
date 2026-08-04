@@ -1,7 +1,16 @@
-# Local Kubernetes (Docker Desktop) overrides for evolith-mcp.
+# Local Kubernetes (Docker Desktop / kind) overrides for evolith-mcp.
 # The OPA sidecar is DISABLED locally (it fetches signed bundles from an in-cluster
-# MinIO that does not exist on Docker Desktop). Reach the service with:
-#   kubectl -n evolith-local port-forward svc/<release>-evolith-mcp 8081:80
+# MinIO that does not exist on Docker Desktop).
+#
+# Two ways to reach it, and they are not interchangeable:
+#
+#   FROM ANOTHER CLUSTER (the Tracker) — http://<cluster>-control-plane:30081
+#   FROM THIS MACHINE, ad hoc          — kubectl -n evolith-local port-forward svc/<release>-evolith-mcp 8081:80
+#                                        or http://localhost:30081 on a kind cluster built with core-cluster.yaml
+#
+# The cross-cluster one is why `service.type` is NodePort here: a port-forward is
+# a host process that dies on every rollout, so it cannot be what a separate
+# cluster is configured against.
 image:
   repository: evolith-mcp
   tag: local2
@@ -23,3 +32,7 @@ podDisruptionBudget:
 
 networkPolicy:
   enabled: false
+
+service:
+  type: NodePort
+  nodePort: 30081

@@ -1,12 +1,26 @@
-# Local Kubernetes (Docker Desktop) overrides for evolith-core-api.
+# Local Kubernetes (Docker Desktop / kind) overrides for evolith-core-api.
 # Use the locally-built image, skip Traefik/IngressRoute and cluster-only addons.
-# Reach the service with: kubectl -n evolith-local port-forward svc/<release>-evolith-core-api 8080:80
+#
+# Two ways to reach it, and they are not interchangeable:
+#
+#   FROM THIS MACHINE, ad hoc — kubectl -n evolith-local port-forward svc/<release>-evolith-core-api 8080:80
+#   FROM ANOTHER CLUSTER (the Tracker) — http://host.docker.internal:30080
+#
+# The second is why `service.type` is NodePort here. A port-forward is a process
+# on the host that dies on every rollout of the Core, so it cannot be what a
+# separate cluster is configured against; the node port is fixed at cluster
+# creation and survives. Requires the cluster to have been created with
+# `product/infra/kind/core-cluster.yaml` — the mapping cannot be added later.
 image:
   repository: evolith-core-api
   tag: local2
   pullPolicy: IfNotPresent
 
 replicaCount: 1
+
+service:
+  type: NodePort
+  nodePort: 30080
 
 ingressRoute:
   enabled: false

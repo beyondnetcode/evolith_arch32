@@ -1,0 +1,86 @@
+# kind cluster config for the Core, with ONE stable host port.
+#
+# ## Why this file exists
+#
+# The Core and the Tracker are separate products in separate repositories and
+# they talk over HTTP. Validating them in ONE cluster would give them in-cluster
+# DNS and hide the class of defect that only appears across a real network
+# boundary: a malformed base URL, a missing auth header, a timeout, CORS. Two
+# clusters is the honest topology, and it is already the de-facto one —
+# `kind/tracker-web.local.yaml` deploys into a separate `evolith-tracker`
+# cluster.
+#
+# What was missing is the LINK. Until now everything in `local-test.sh` was
+# reached with `kubectl port-forward`, which is right for a smoke test inside one
+# cluster and wrong as the bridge between two:
+#
+#   - it is a process on the host, so pods in the OTHER cluster cannot depend on
+#     it — there is nothing for the Tracker's config to point at that survives;
+#   - it DIES ON EVERY ROLLOUT of the target. Redeploy the Core and the Tracker
+#     stops seeing it, and the symptom looks like a Tracker defect.
+#
+# A pinned NodePort gives a fixed address that survives rollouts, restarts and
+# re-installs, so a consumer is configured once and stays configured.
+#
+# ## There are TWO addresses, and they are not interchangeable — measured, not assumed
+#
+#   FROM ANOTHER CLUSTER  http://<cluster>-control-plane:30080
+#   FROM THIS MACHINE     http://localhost:30080
+#
+# The cross-cluster one does NOT go through the host mapping below. Every kind
+# cluster joins the same `kind` Docker network, so the consumer's pod reaches
+# this cluster's node container directly, by container name — Docker's embedded
+# DNS resolves it and the NodePort is listening there. Verified on 2026-08-03: a
+# pod in a second kind cluster got `{"status":"OK"}` from this Core, by name and
+# by IP, and again after `rollout restart`.
+#
+# **`host.docker.internal` does not work from inside a kind pod** — it fails with
+# `Could not resolve host`. It is a Docker Desktop convenience for containers the
+# daemon runs directly; a pod resolves through CoreDNS inside the node and never
+# sees that entry. This note exists because that URL was the first thing written
+# here and it was wrong.
+#
+# The host mapping below is for the OTHER consumer — a browser, a curl, a CLI on
+# the laptop. It is bound to 127.0.0.1, which is also why it cannot serve the
+# cross-cluster case: a loopback binding is unreachable from the Docker bridge.
+# Keeping the scopes separate is deliberate: the machine-local port stays
+# machine-local, and cluster-to-cluster traffic never leaves the Docker network.
+#
+# ## The constraint worth knowing before you run it
+#
+# Port mappings are fixed AT CLUSTER CREATION. They cannot be added to a running
+# kind cluster — `docker inspect evolith-cluster-control-plane` on a cluster made
+# without this file shows only `6443/tcp` bound, and no `kubectl` command adds
+# one. Adopting this means DELETING and RECREATING the cluster, which is why
+# `local-test.sh` does not do it silently: `kind_create` tells you when the
+# existing cluster predates this config and leaves the decision to you.
+#
+# ## Port choice
+#
+# 30080 is inside Kubernetes' default NodePort range (30000-32767), so it can be
+# pinned in values without `--service-node-port-range`. It is bound on 127.0.0.1
+# and not on 0.0.0.0 on purpose: this is a development cluster carrying a
+# dev-auth API key, and it has no business being reachable from the network the
+# laptop happens to be on.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      # One per INTERFACE, not one for the Core. "Evolith Core and its
+      # interfaces" means REST, MCP and the agent runtime, and a consumer that
+      # can reach only the first has not exercised the product — the surfaces
+      # are meant to be at parity, so a validation that covers one of three
+      # would report parity it never tested.
+      - containerPort: 30080   # core-api  — REST
+        hostPort: 30080
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      - containerPort: 30081   # mcp       — MCP
+        hostPort: 30081
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      - containerPort: 30082   # agent-runtime
+        hostPort: 30082
+        listenAddress: "127.0.0.1"
+        protocol: TCP

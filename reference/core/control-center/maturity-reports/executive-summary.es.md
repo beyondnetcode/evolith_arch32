@@ -49,7 +49,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | P1 abiertos | 3 |
 | P2 abiertos | 7 |
 | Cierre total | 97.8% |
-| Registros de evidencia de cierre | 618 |
+| Registros de evidencia de cierre | 619 |
 | Readiness registrado | 4 PASS |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |

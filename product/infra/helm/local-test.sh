@@ -8,6 +8,7 @@
 #   bash product/infra/helm/local-test.sh kind-apps-up # kind + build + load + install apps
 #   bash product/infra/helm/local-test.sh kind-up      # kind + build + load + infra + apps
 #   bash product/infra/helm/local-test.sh smoke        # port-forward + curl
+#   bash product/infra/helm/local-test.sh url          # cross-cluster URL, and proof it answers
 #   bash product/infra/helm/local-test.sh kind-down    # uninstall + delete kind cluster
 #
 # Env:
@@ -27,14 +28,141 @@ CLUSTER="${KIND_CLUSTER:-evolith}"   # dedicated kind cluster name (kind-<name> 
 
 IMAGES=(evolith-core-api:"$IMAGE_TAG" evolith-mcp:"$IMAGE_TAG" evolith-agent-runtime:"$IMAGE_TAG")
 
+KIND_CONFIG="$ROOT/product/infra/kind/core-cluster.yaml"
+CORE_NODE_PORT=30080
+# One entry per interface: "<label> <nodePort>". The Core is not one address —
+# REST, MCP and the agent runtime are three surfaces at parity, and a check that
+# covered only the first would report a parity it never exercised.
+SURFACES=("core-api 30080" "mcp 30081" "agent-runtime 30082")
+# The address ANOTHER cluster uses to reach this Core.
+#
+# Every kind cluster joins the same `kind` Docker network, so the consumer's pod
+# reaches this cluster's NODE CONTAINER by name — Docker's embedded DNS resolves
+# it and the NodePort is listening there. This path does NOT use the host port
+# mapping, and it must not: that one is bound to 127.0.0.1 and is therefore
+# unreachable from the Docker bridge.
+#
+# NOT `host.docker.internal`: that fails with `Could not resolve host` inside a
+# kind pod, which resolves through CoreDNS in the node and never sees the Docker
+# Desktop entry. Measured, after writing it the wrong way first.
+CORE_CROSS_CLUSTER_URL="http://$CLUSTER-control-plane:$CORE_NODE_PORT"
+
 kind_create() {
   if kind get clusters 2>/dev/null | grep -qx "$CLUSTER"; then
     echo "==> kind cluster '$CLUSTER' already exists"
+    # A cluster created before core-cluster.yaml has no host port, and NOTHING
+    # can add one to a running cluster — port mappings are fixed at creation.
+    # Saying so is the whole point: otherwise the Tracker is configured against
+    # a port that was never bound, and the failure surfaces later as a refused
+    # connection with no obvious cause.
+    if ! docker inspect "$CLUSTER-control-plane" --format '{{json .HostConfig.PortBindings}}' 2>/dev/null | grep -q "$CORE_NODE_PORT/tcp"; then
+      echo "!!  This cluster has NO host mapping for $CORE_NODE_PORT — it predates product/infra/kind/core-cluster.yaml."
+      echo "!!  CROSS-CLUSTER access is unaffected ($CORE_CROSS_CLUSTER_URL goes over the shared 'kind'"
+      echo "!!  Docker network, not through this mapping). What you lose is reaching it from THIS machine"
+      echo "!!  at http://localhost:$CORE_NODE_PORT — a browser, a curl, the CLI."
+      echo "!!  To gain that, recreate the cluster (DESTRUCTIVE — everything in it is lost):"
+      echo "!!      bash $0 kind-down && bash $0 kind-up"
+    fi
   else
-    echo "==> Creating kind cluster '$CLUSTER'"
-    kind create cluster --name "$CLUSTER"
+    echo "==> Creating kind cluster '$CLUSTER' with the host port mapping ($KIND_CONFIG)"
+    kind create cluster --name "$CLUSTER" --config "$KIND_CONFIG"
   fi
   kubectl config use-context "kind-$CLUSTER"
+}
+
+# Print every surface's address and PROVE each one, rather than asserting them.
+#
+# Three surfaces x two paths, and they fail INDEPENDENTLY: the host mapping is
+# fixed at cluster creation, the cross-cluster path depends only on the shared
+# Docker network, and each service has its own pinned port. One aggregate check
+# would let a green core-api vouch for an MCP nobody reached.
+url() {
+  local rc=0 peer=""
+
+  echo "cross-cluster base (configure the Tracker with this): http://$CLUSTER-control-plane:<port>"
+  echo "from this machine:                                    http://localhost:<port>"
+  for s in "${SURFACES[@]}"; do
+    set -- $s
+    printf "  %-14s %s\n" "$1" "$2"
+  done
+
+  echo
+  echo "== GET /health from THIS MACHINE =="
+  for s in "${SURFACES[@]}"; do
+    set -- $s
+    if curl -fsS --max-time 5 "http://localhost:$2/health" >/dev/null 2>&1; then
+      printf "   %-14s OK   (localhost:%s)\n" "$1" "$2"
+    else
+      printf "!! %-14s FAIL (localhost:%s)\n" "$1" "$2"
+      rc=1
+    fi
+  done
+  if [ "$rc" -ne 0 ]; then
+    echo "!! In order: does the cluster carry the mappings (docker inspect $CLUSTER-control-plane),"
+    echo "!! are the services NodePort on those ports (kubectl -n $NS get svc), are the pods ready?"
+  fi
+
+  echo
+  echo "== GET /health FROM ANOTHER CLUSTER =="
+  # Any other RUNNING kind cluster will do. `kind get clusters` also lists
+  # stopped ones, and the first version of this picked one: the probe failed,
+  # blamed the Docker network, and the real cause was a node container that had
+  # been dead for two days. A peer that cannot answer is not evidence.
+  for c in $(kind get clusters 2>/dev/null | grep -vx "$CLUSTER"); do
+    if docker inspect "$c-control-plane" --format '{{.State.Running}}' 2>/dev/null | grep -qx true; then
+      peer="$c"; break
+    fi
+  done
+  if [ -z "$peer" ]; then
+    echo "   skipped: no OTHER RUNNING kind cluster to call from."
+    echo "   This is NOT a pass — the cross-cluster path is simply unexercised."
+    return $rc
+  fi
+
+  for s in "${SURFACES[@]}"; do
+    set -- $s
+    # Declared separately: under `set -u`, a single `local a=1 b=$a` does not see
+    # `a` yet and dies with "unbound variable".
+    local label="$1" port="$2"
+    local pod="xcluster-probe-$label-$$"
+    local out=""
+    # NOT `kubectl run -i --rm`. That attaches to the pod AFTER creating it, so a
+    # container which has already exited loses its stdout — and the result moves
+    # between runs for reasons that have nothing to do with the thing under test.
+    # Observed directly: two consecutive runs disagreed about WHICH surface was
+    # reachable. Create, wait, read the logs, delete.
+    #
+    # stderr is kept throughout: discarding it is how a failed image pull reads
+    # as "the Docker network is broken".
+    kubectl --context "kind-$peer" run "$pod" --restart=Never \
+      --image=curlimages/curl:8.10.1 --command -- \
+      curl -fsS --max-time 10 "http://$CLUSTER-control-plane:$port/health" >/dev/null 2>&1
+    kubectl --context "kind-$peer" wait --for=jsonpath='{.status.phase}'=Succeeded \
+      "pod/$pod" --timeout=60s >/dev/null 2>&1 \
+      || kubectl --context "kind-$peer" wait --for=jsonpath='{.status.phase}'=Failed \
+           "pod/$pod" --timeout=5s >/dev/null 2>&1 || true
+    out="$(kubectl --context "kind-$peer" logs "$pod" 2>&1)$(kubectl --context "kind-$peer" get pod "$pod" -o jsonpath='{.status.containerStatuses[*].state.waiting.reason}' 2>&1)"
+    kubectl --context "kind-$peer" delete pod "$pod" --now >/dev/null 2>&1 || true
+
+    # Case-INSENSITIVE and whitespace-tolerant, because the three surfaces do not
+    # agree on the shape: core-api answers in the ADR-0073 envelope with
+    # `"status":"OK"` nested under `data`, mcp and agent-runtime return a bare
+    # object with `"status":"ok"`. The first version matched only the former, so
+    # two healthy services were reported unreachable and the printed remedy
+    # blamed the network. A probe that cannot read the answer manufactures a defect.
+    if printf '%s' "$out" | grep -qiE '"status"[[:space:]]*:[[:space:]]*"ok"'; then
+      printf "   %-14s OK   (from cluster '%s')\n" "$label" "$peer"
+    elif printf '%s' "$out" | grep -qiE "ErrImagePull|ImagePullBackOff|failed to pull"; then
+      printf "!! %-14s INCONCLUSIVE — the probe pod could not start (curlimages/curl did not pull).\n" "$label"
+      echo   "!! That says nothing about the cross-cluster path. Check registry connectivity."
+      rc=1
+    else
+      printf "!! %-14s FAIL at http://%s-control-plane:%s\n" "$label" "$CLUSTER" "$port"
+      printf '%s\n' "$out" | tail -2 | sed 's/^/!!   /'
+      rc=1
+    fi
+  done
+  return $rc
 }
 
 kind_load() {
@@ -202,9 +330,10 @@ case "${1:-kind-up}" in
          kind_create; build; kind_load; secrets; install
          echo "==> Done. Run: bash $0 smoke" ;;
   smoke) smoke ;;
+  url)   url ;;
   down)  down ;;
   kind-down)
          down
          kind delete cluster --name "$CLUSTER" ;;
-  *) echo "usage: $0 {kind-apps-up|kind-up|apps-up|up|build|smoke|down|kind-down}"; exit 1 ;;
+  *) echo "usage: $0 {kind-apps-up|kind-up|apps-up|up|build|smoke|url|down|kind-down}"; exit 1 ;;
 esac

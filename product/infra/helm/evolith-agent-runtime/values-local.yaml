@@ -1,5 +1,14 @@
-# Local Kubernetes (Docker Desktop) overrides for evolith-agent-runtime.
-# Reach the service with: kubectl -n evolith-local port-forward svc/<release>-evolith-agent-runtime 8082:80
+# Local Kubernetes (Docker Desktop / kind) overrides for evolith-agent-runtime.
+#
+# Two ways to reach it, and they are not interchangeable:
+#
+#   FROM ANOTHER CLUSTER (the Tracker) — http://<cluster>-control-plane:30082
+#   FROM THIS MACHINE, ad hoc          — kubectl -n evolith-local port-forward svc/<release>-evolith-agent-runtime 8082:80
+#                                        or http://localhost:30082 on a kind cluster built with core-cluster.yaml
+#
+# The cross-cluster one is why `service.type` is NodePort here: a port-forward is
+# a host process that dies on every rollout, so it cannot be what a separate
+# cluster is configured against.
 image:
   repository: evolith-agent-runtime
   tag: local2
@@ -26,3 +35,7 @@ podDisruptionBudget:
 
 networkPolicy:
   enabled: false
+
+service:
+  type: NodePort
+  nodePort: 30082

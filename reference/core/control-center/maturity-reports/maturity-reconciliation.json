@@ -10,7 +10,7 @@
     "deferred": 7
   },
   "evidence": {
-    "closureRecords": 619,
+    "closureRecords": 621,
     "cliPackage": "@beyondnet/evolith-cli@1.2.2",
     "adrCount": 140,
     "rulesetCount": 177,

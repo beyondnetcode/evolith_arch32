@@ -361,7 +361,17 @@ async function runHttpSmoke() {
     const healthRes = await httpGet(`http://localhost:${port}/health`);
     assert(healthRes.status === 200, `/health: status ${healthRes.status}`);
     const healthBody = parseJsonLine(healthRes.body);
-    assert(healthBody?.status === 'ok', `/health: body.status was ${JSON.stringify(healthBody?.status)}`);
+    // GT-654 — the ADR-0073 envelope, same as every tool result on this surface.
+    // It asserted a bare `body.status === 'ok'` until 2026-08-04, and finding it
+    // corrected a claim made while closing that gap: "nothing reads the /health
+    // body" was checked against the Helm probes, the Dockerfiles, k6 and
+    // RoboSoft — and missed this smoke, which reads it and is the only consumer
+    // that did. The decision stands; the survey behind it was incomplete.
+    assert(
+      healthBody?.data?.status === 'OK',
+      `/health: body.data.status was ${JSON.stringify(healthBody?.data?.status)}`,
+    );
+    assert(healthBody?.success === true, '/health: body.success was not true');
     console.log('  /health            OK');
 
     // 3. JSON-RPC over Streamable HTTP using official SDK Client

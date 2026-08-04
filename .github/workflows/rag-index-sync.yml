@@ -30,7 +30,7 @@ jobs:
         with:
           fetch-depth: 2 # HEAD~1..HEAD delta
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
 
@@ -48,7 +48,7 @@ jobs:
 
       - name: Upload sync receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rag-sync-receipt
           path: rag-sync-receipt.json

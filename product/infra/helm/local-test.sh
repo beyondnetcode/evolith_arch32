@@ -8,6 +8,7 @@
 #   bash product/infra/helm/local-test.sh kind-apps-up # kind + build + load + install apps
 #   bash product/infra/helm/local-test.sh kind-up      # kind + build + load + infra + apps
 #   bash product/infra/helm/local-test.sh smoke        # port-forward + curl
+#   bash product/infra/helm/local-test.sh url          # cross-cluster URL, and proof it answers
 #   bash product/infra/helm/local-test.sh kind-down    # uninstall + delete kind cluster
 #
 # Env:
@@ -27,14 +28,89 @@ CLUSTER="${KIND_CLUSTER:-evolith}"   # dedicated kind cluster name (kind-<name> 
 
 IMAGES=(evolith-core-api:"$IMAGE_TAG" evolith-mcp:"$IMAGE_TAG" evolith-agent-runtime:"$IMAGE_TAG")
 
+KIND_CONFIG="$ROOT/product/infra/kind/core-cluster.yaml"
+CORE_NODE_PORT=30080
+# The address ANOTHER cluster uses to reach this Core.
+#
+# Every kind cluster joins the same `kind` Docker network, so the consumer's pod
+# reaches this cluster's NODE CONTAINER by name — Docker's embedded DNS resolves
+# it and the NodePort is listening there. This path does NOT use the host port
+# mapping, and it must not: that one is bound to 127.0.0.1 and is therefore
+# unreachable from the Docker bridge.
+#
+# NOT `host.docker.internal`: that fails with `Could not resolve host` inside a
+# kind pod, which resolves through CoreDNS in the node and never sees the Docker
+# Desktop entry. Measured, after writing it the wrong way first.
+CORE_CROSS_CLUSTER_URL="http://$CLUSTER-control-plane:$CORE_NODE_PORT"
+
 kind_create() {
   if kind get clusters 2>/dev/null | grep -qx "$CLUSTER"; then
     echo "==> kind cluster '$CLUSTER' already exists"
+    # A cluster created before core-cluster.yaml has no host port, and NOTHING
+    # can add one to a running cluster — port mappings are fixed at creation.
+    # Saying so is the whole point: otherwise the Tracker is configured against
+    # a port that was never bound, and the failure surfaces later as a refused
+    # connection with no obvious cause.
+    if ! docker inspect "$CLUSTER-control-plane" --format '{{json .HostConfig.PortBindings}}' 2>/dev/null | grep -q "$CORE_NODE_PORT/tcp"; then
+      echo "!!  This cluster has NO host mapping for $CORE_NODE_PORT — it predates product/infra/kind/core-cluster.yaml."
+      echo "!!  CROSS-CLUSTER access is unaffected ($CORE_CROSS_CLUSTER_URL goes over the shared 'kind'"
+      echo "!!  Docker network, not through this mapping). What you lose is reaching it from THIS machine"
+      echo "!!  at http://localhost:$CORE_NODE_PORT — a browser, a curl, the CLI."
+      echo "!!  To gain that, recreate the cluster (DESTRUCTIVE — everything in it is lost):"
+      echo "!!      bash $0 kind-down && bash $0 kind-up"
+    fi
   else
-    echo "==> Creating kind cluster '$CLUSTER'"
-    kind create cluster --name "$CLUSTER"
+    echo "==> Creating kind cluster '$CLUSTER' with the host port mapping ($KIND_CONFIG)"
+    kind create cluster --name "$CLUSTER" --config "$KIND_CONFIG"
   fi
   kubectl config use-context "kind-$CLUSTER"
+}
+
+# Print BOTH addresses and prove each one, rather than asserting them. They fail
+# independently — the host mapping is fixed at cluster creation, the
+# cross-cluster path depends only on the shared Docker network — so a single
+# check would report one of them as if it covered the other.
+url() {
+  local rc=0
+  echo "cross-cluster (configure the Tracker with this): $CORE_CROSS_CLUSTER_URL"
+  echo "from this machine:                               http://localhost:$CORE_NODE_PORT"
+  echo
+  echo "== GET /health from THIS MACHINE =="
+  if curl -fsS --max-time 5 "http://localhost:$CORE_NODE_PORT/health"; then
+    echo; echo "   reachable"
+  else
+    echo "!! NOT reachable on localhost:$CORE_NODE_PORT."
+    echo "!! In order: does the cluster carry the mapping (docker inspect $CLUSTER-control-plane),"
+    echo "!! is the service NodePort $CORE_NODE_PORT (kubectl -n $NS get svc), is the pod ready?"
+    rc=1
+  fi
+
+  echo
+  echo "== GET /health FROM ANOTHER CLUSTER =="
+  # Any other RUNNING kind cluster will do — the point is that the caller is not
+  # this cluster and not the host. `kind get clusters` also lists stopped ones,
+  # and the first version of this picked one: the probe failed, blamed the
+  # Docker network, and the real cause was a node container that had been dead
+  # for two days. A peer that cannot answer is not evidence about the network.
+  local peer=""
+  for c in $(kind get clusters 2>/dev/null | grep -vx "$CLUSTER"); do
+    if docker inspect "$c-control-plane" --format '{{.State.Running}}' 2>/dev/null | grep -qx true; then
+      peer="$c"; break
+    fi
+  done
+  if [ -z "$peer" ]; then
+    echo "   skipped: no OTHER RUNNING kind cluster to call from."
+    echo "   This is NOT a pass — the cross-cluster path is simply unexercised."
+  elif kubectl --context "kind-$peer" run xcluster-probe-$$ --rm -i --restart=Never \
+        --image=curlimages/curl:8.10.1 --command -- \
+        curl -fsS --max-time 10 "$CORE_CROSS_CLUSTER_URL/health" 2>/dev/null | grep -q '"status":"OK"'; then
+    echo "   reachable from cluster '$peer'"
+  else
+    echo "!! NOT reachable from cluster '$peer' at $CORE_CROSS_CLUSTER_URL."
+    echo "!! Both clusters must sit on the same Docker network: docker inspect $CLUSTER-control-plane --format '{{json .NetworkSettings.Networks}}'"
+    rc=1
+  fi
+  return $rc
 }
 
 kind_load() {
@@ -202,9 +278,10 @@ case "${1:-kind-up}" in
          kind_create; build; kind_load; secrets; install
          echo "==> Done. Run: bash $0 smoke" ;;
   smoke) smoke ;;
+  url)   url ;;
   down)  down ;;
   kind-down)
          down
          kind delete cluster --name "$CLUSTER" ;;
-  *) echo "usage: $0 {kind-apps-up|kind-up|apps-up|up|build|smoke|down|kind-down}"; exit 1 ;;
+  *) echo "usage: $0 {kind-apps-up|kind-up|apps-up|up|build|smoke|url|down|kind-down}"; exit 1 ;;
 esac

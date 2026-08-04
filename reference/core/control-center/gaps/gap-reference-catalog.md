@@ -7519,6 +7519,36 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **References:** src/apps/core-api/src/presentation/dtos/evaluation.dto.ts; src/apps/core-api/src/main.ts (ValidationPipe); src/packages/core-domain/src/evaluation/contracts/evaluation-context.ts; blocks `evolith_tracker` CP-04 criterion 2.
 - **Principal:** `S` · **Interest:** `LOW` · **Basis:** `estimate`
 
+#### GT-654
+
+**Title:** The three surfaces disagree on the shape of `/health`
+
+- **Purpose / Problem:** `core-api` answers the ADR-0073 envelope — `{success, data: {status: "OK", timestamp, service}, meta: {...}}`. `mcp` answers a bare `{"status":"ok","transport":"http","protocol":"mcp","probe":"health"}`. `agent-runtime` answers a bare `{"status":"ok","service":"agent-runtime-api","version":"0.1.0","uptimeSeconds":88}`. Three services of one product, three shapes, and the verdict literal differs in case as well (`OK` vs `ok`).
+- **What it means:** anything that probes all three has to special-case each one. A health checker written against the Core's envelope reads `data.status` and finds nothing on the other two; one written against the bare shape reads `status` and finds nothing on the Core. That is not hypothetical — this exact divergence produced a false failure on 2026-08-03, when a cross-cluster probe matched `"status":"ok"` literally and reported two healthy services as unreachable while they were serving.
+- **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** S
+- **Provenance:** Measured on 2026-08-03 against all three services deployed to a kind cluster, reading the live responses on their node ports rather than the source.
+- **Principal:** `S` · **Interest:** `LOW` · **Basis:** `estimate`
+- **This is a DECISION before it is work.** The envelope is the Core's stated contract, so the obvious answer is that all three adopt it. The obvious answer is not free: `/health` is what a Kubernetes probe and a load balancer read, and those are configured against a shape today. Whichever way it goes, the resolution is a written decision followed by the surfaces obeying it — not three services quietly converging.
+- **Acceptance criteria:**
+  - [ ] A decision records which shape `/health` uses across the three surfaces, and why, including what it means for the deployed probes.
+  - [ ] The three surfaces answer that shape, verified against live responses rather than source.
+  - [ ] A check contrasts the three, so the next surface added cannot invent a fourth shape.
+
+#### GT-655
+
+**Title:** Four operations declared on all three surfaces have never been invoked by any test
+
+- **Purpose / Problem:** `satellite-create`, `pattern-list`, `pattern-get` and `pattern-list-by-topology` are declared `exposed: true` on CLI, MCP and REST in the surface-parity matrix, and the cross-surface exploration harness has **no binding** for any of them — 48 of 73 operations carry one; these four do not. No invocation has ever reached them, on any surface.
+- **What it means:** the parity matrix asserts they exist on three surfaces and nothing has ever asked them to prove it. That is precisely the class the exploration harness was built to close, and the harness reports them honestly in `uncoveredTriangleOps` rather than rounding them away — but reporting is not covering.
+- **`satellite-create` is the one that matters.** It provisions a live GitHub repository and writes the local registry (`satellite-create.tool.ts:219`), so it is both the most consequential of the four and the reason a binding is not trivial: exercising it needs an effect the harness can undo, or a dry-run path it can trust.
+- **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** M
+- **Provenance:** `src/tests/exploration/.out/coverage.json` on 2026-08-04, `uncoveredTriangleOps`, re-measured after the suite was re-run through `npm run test:exploration`.
+- **Principal:** `M` · **Interest:** `LOW` · **Basis:** `estimate`
+- **Acceptance criteria:**
+  - [ ] The three read-only ones (`pattern-list`, `pattern-get`, `pattern-list-by-topology`) carry a binding and are invoked on all three surfaces.
+  - [ ] `satellite-create` either carries a binding with an undoable or dry-run path, or the matrix records why it is exempt — an untestable operation that says nothing about itself is worse than one declared untestable.
+  - [ ] `uncoveredTriangleOps` is empty, or every remaining entry has a written reason.
+
 #### GT-653
 
 **Title:** Secret detection cannot block, and never runs on Dependabot PRs

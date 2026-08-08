@@ -5,9 +5,9 @@
   "gaps": {
     "total": 656,
     "done": 643,
-    "pending": 3,
-    "inProgress": 3,
-    "deferred": 7
+    "pending": 2,
+    "inProgress": 1,
+    "deferred": 10
   },
   "evidence": {
     "closureRecords": 625,

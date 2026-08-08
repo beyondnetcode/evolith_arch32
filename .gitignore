@@ -207,3 +207,11 @@ rag-backfill-receipt.json
 # worktree.
 /src/packages/mcp-server/__capability-operations.entry.ts
 /src/packages/mcp-server/__capability-operations.json
+
+# macOS Finder metadata. Written by the OS anywhere a directory is opened in
+# Finder, so it reappears without anyone editing a file — three copies were
+# sitting untracked in the root, src/ and src/packages/ on 2026-08-08. They are
+# ignored rather than merely deleted because deleting is not durable: the next
+# Finder window recreates them, and an untracked file in the root is what
+# `03-validate-root-cleanliness` fails on.
+.DS_Store

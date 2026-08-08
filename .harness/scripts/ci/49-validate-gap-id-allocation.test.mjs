@@ -25,8 +25,11 @@ import {
   parseCatalogTitles,
   findIdCollisions,
   newlyAllocated,
+  validateRetitle,
+  classifyRetitles,
   defaultBase,
   CATALOG,
+  RETITLES,
 } from './49-validate-gap-id-allocation.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -102,8 +105,12 @@ describe('defaultBase', () => {
 // Integration, over real git history
 // ---------------------------------------------------------------------------
 
-/** A repo with the catalog committed on `base`, then rewritten on the checked-out branch. */
-const repoWith = (name, baseEntries, headEntries) => {
+/**
+ * A repo with the catalog committed on `base`, then rewritten on the checked-out
+ * branch. `retitles` is written on the branch only, which is where a declaration
+ * lands in practice — with the change it describes.
+ */
+const repoWith = (name, baseEntries, headEntries, retitles) => {
   const root = join(sandbox, name);
   mkdirSync(join(root, dirname(CATALOG)), { recursive: true });
   const g = (...args) => execFileSync('git', args, { cwd: root, stdio: 'ignore' });
@@ -117,10 +124,30 @@ const repoWith = (name, baseEntries, headEntries) => {
 
   g('checkout', '-q', '-b', 'work');
   writeFileSync(join(root, CATALOG), catalog(headEntries));
+  if (retitles !== undefined) {
+    mkdirSync(join(root, dirname(RETITLES)), { recursive: true });
+    writeFileSync(join(root, RETITLES), typeof retitles === 'string' ? retitles : JSON.stringify(retitles, null, 2));
+  }
   g('add', '-A');
-  g('commit', '-q', '-m', 'branch catalog');
+  // `--allow-empty`: some fixtures deliberately leave the catalog identical, to
+  // check what happens with no collision at all.
+  g('commit', '-q', '--allow-empty', '-m', 'branch catalog');
   return root;
 };
+
+/** The retitle this mechanism was built for: GT-622's headline was measurably wrong. */
+const GT622_OLD = 'Eighty-two orphaned code-scanning analyses keep every PR warning about a configuration that died in June';
+const GT622_NEW = 'Two hundred and ten orphaned code-scanning analyses keep PRs into develop warning about a configuration that died in June';
+const declaration = (over = {}) => ({
+  retitles: [{
+    id: 'GT-622',
+    from: GT622_OLD,
+    to: GT622_NEW,
+    declaredAt: '2026-08-08',
+    reason: 'Re-measured: 210 analyses, not 82, and the base still carrying the warning is develop, not every PR.',
+    ...over,
+  }],
+});
 
 describe('the collision this guard exists for', () => {
   it('THE FIXTURE: two branches allocate GT-634 for different gaps — RED', () => {
@@ -151,6 +178,116 @@ describe('the collision this guard exists for', () => {
 
   it('a branch that edits a row without retitling it is green', () => {
     const root = repoWith('edited', [['GT-633', 'x', 'first telling']], [['GT-633', 'x', 'rewritten evidence, same gap']]);
+    assert.equal(run(root, ['--base', 'base']).status, 0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GT-656 — declaring a retitle
+// ---------------------------------------------------------------------------
+
+describe('validateRetitle', () => {
+  const ok = { id: 'GT-622', from: 'a', to: 'b', declaredAt: '2026-08-08', reason: 'measured' };
+
+  it('accepts a complete declaration', () => {
+    assert.deepEqual(validateRetitle(ok, 0), []);
+  });
+
+  it('rejects a declaration with no reason — an unexplained exemption', () => {
+    assert.match(validateRetitle({ ...ok, reason: '   ' }, 0)[0], /reason must be a non-empty string/);
+  });
+
+  it('rejects a no-op declaration that would exempt nothing', () => {
+    assert.match(validateRetitle({ ...ok, to: 'a' }, 0)[0], /from a title to itself/);
+  });
+
+  it('rejects a missing or malformed date, and a non-GT id', () => {
+    assert.match(validateRetitle({ ...ok, declaredAt: 'ayer' }, 0)[0], /declaredAt must be YYYY-MM-DD/);
+    assert.match(validateRetitle({ ...ok, id: '622' }, 0)[0], /is not a GT id/);
+  });
+});
+
+describe('classifyRetitles', () => {
+  const base = new Map([['GT-622', 'old']]);
+  const head = new Map([['GT-622', 'new']]);
+  const collisions = [{ id: 'GT-622', baseTitle: 'old', headTitle: 'new' }];
+  const d = (over = {}) => ({ id: 'GT-622', from: 'old', to: 'new', ...over });
+
+  it('an exact declaration exempts its collision', () => {
+    const r = classifyRetitles([d()], base, head, collisions);
+    assert.equal(r.active.length, 1);
+    assert.deepEqual(r.unexplained, []);
+  });
+
+  it('THE ABUSE CASE: a declaration whose `from` is wrong exempts NOTHING', () => {
+    // Otherwise "GT-622 may be retitled" becomes a blanket pass on that id.
+    const r = classifyRetitles([d({ from: 'something else' })], base, head, collisions);
+    assert.equal(r.active.length, 0);
+    assert.equal(r.unexplained.length, 1);
+    assert.equal(r.rot.length, 1);
+  });
+
+  it('a real collision landing on an already-retitled id still fails', () => {
+    const later = [{ id: 'GT-622', baseTitle: 'new', headTitle: 'a different gap entirely' }];
+    const r = classifyRetitles([d()], new Map([['GT-622', 'new']]), new Map([['GT-622', 'a different gap entirely']]), later);
+    assert.equal(r.unexplained.length, 1);
+  });
+
+  it('a declaration whose retitle reached the base is SPENT, not fatal', () => {
+    const merged = new Map([['GT-622', 'new']]);
+    const r = classifyRetitles([d()], merged, merged, []);
+    assert.equal(r.spent.length, 1);
+    assert.equal(r.rot.length, 0);
+  });
+});
+
+describe('the retitle escape hatch, end to end', () => {
+  it('THE FIXTURE: a declared retitle is green, and says so out loud', () => {
+    const root = repoWith('retitle-ok', [['GT-622', GT622_OLD]], [['GT-622', GT622_NEW]], declaration());
+    const { status, out } = run(root, ['--base', 'base']);
+    assert.equal(status, 0, out);
+    assert.match(out, /declared retitles \.+ 1 active/);
+    // An exemption nobody can see is indistinguishable from a hole.
+    assert.match(out, /GT-622 retitled by declaration \(2026-08-08\)/);
+  });
+
+  it('THE NEGATIVE TWIN: the same retitle WITHOUT a declaration is still RED', () => {
+    const root = repoWith('retitle-undeclared', [['GT-622', GT622_OLD]], [['GT-622', GT622_NEW]]);
+    const { status, out } = run(root, ['--base', 'base']);
+    assert.equal(status, 1, out);
+    assert.match(out, /name a DIFFERENT gap on each side/);
+    assert.match(out, /gap-retitles\.json/);
+  });
+
+  it('a declaration that quotes the wrong old title does NOT launder the change', () => {
+    const root = repoWith(
+      'retitle-wrong-from',
+      [['GT-622', GT622_OLD]],
+      [['GT-622', GT622_NEW]],
+      declaration({ from: 'a title this catalog never carried' }),
+    );
+    const { status, out } = run(root, ['--base', 'base']);
+    assert.equal(status, 1, out);
+    assert.match(out, /describe neither side of the catalog/);
+  });
+
+  it('an unreadable registry stops the run rather than reading as "no exemptions"', () => {
+    const root = repoWith('retitle-broken', [['GT-001', 'a']], [['GT-001', 'a']], '{ not json');
+    const { status, out } = run(root, ['--base', 'base']);
+    assert.equal(status, 1, out);
+    assert.match(out, /is not valid JSON/);
+    assert.match(out, /Treating it as/);
+  });
+
+  it('a registry missing its array is a failure, not an empty list', () => {
+    const root = repoWith('retitle-shape', [['GT-001', 'a']], [['GT-001', 'a']], { entries: [] });
+    const { status, out } = run(root, ['--base', 'base']);
+    assert.equal(status, 1, out);
+    assert.match(out, /has no `retitles` array/);
+  });
+
+  it('no registry at all means no exemptions, and a clean branch stays green', () => {
+    const root = repoWith('retitle-absent', [['GT-001', 'a']], [['GT-001', 'a']]);
     assert.equal(run(root, ['--base', 'base']).status, 0);
   });
 });

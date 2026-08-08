@@ -641,7 +641,7 @@
         "npm run test:e2e --workspace src/sdk/cli -- --runTestsByPath test/gate.e2e-spec.ts"
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "Builds on the ADR-0073 GateEvidence contract (GT-02/GT-03) and the deepened phase-gate content checks (GT-08\u2026GT-11)."
+      "dependencyRationale": "Builds on the ADR-0073 GateEvidence contract (GT-02/GT-03) and the deepened phase-gate content checks (GT-08…GT-11)."
     },
     {
       "id": "GT-52",
@@ -2693,7 +2693,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Resolved by GT-184 \u2014 zero @ts-nocheck directives remain in the codebase"
+      "closureNote": "Resolved by GT-184 — zero @ts-nocheck directives remain in the codebase"
     },
     {
       "id": "GT-187",
@@ -2893,7 +2893,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Resolved by file deletion \u2014 the files containing the Moscoww typo were removed in commit c4835e0db"
+      "closureNote": "Resolved by file deletion — the files containing the Moscoww typo were removed in commit c4835e0db"
     },
     {
       "id": "GT-199",
@@ -2920,7 +2920,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Resolved by file deletion \u2014 server.ts was removed in commit c4835e0db"
+      "closureNote": "Resolved by file deletion — server.ts was removed in commit c4835e0db"
     },
     {
       "id": "GT-201",
@@ -2934,7 +2934,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Resolved by file deletion \u2014 server.ts was removed in commit c4835e0db"
+      "closureNote": "Resolved by file deletion — server.ts was removed in commit c4835e0db"
     },
     {
       "id": "GT-202",
@@ -5191,7 +5191,7 @@
         "node .harness/scripts/ci/09-reconcile-maturity.mjs --check"
       ],
       "dependencyDisposition": "accepted-scope",
-      "dependencyRationale": "GT-341 (inventory reconciliation) satisfied; GT-357 reconciles board status against executed build/test evidence (closure-evidence + maturity), which is independent of GT-347\u2019s separate core-OPA-suite remediation."
+      "dependencyRationale": "GT-341 (inventory reconciliation) satisfied; GT-357 reconciles board status against executed build/test evidence (closure-evidence + maturity), which is independent of GT-347’s separate core-OPA-suite remediation."
     },
     {
       "id": "GT-358",
@@ -6078,7 +6078,7 @@
         "src/packages/core-domain/src/evaluation/design-flow.e2e.spec.ts"
       ],
       "validationCommands": [
-        "EPIC \u2014 all children GT-426..GT-433 DONE; E2E against the real corpus passes; tsc -b clean"
+        "EPIC — all children GT-426..GT-433 DONE; E2E against the real corpus passes; tsc -b clean"
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "GT-425 umbrella closed via F0-F8 (GT-426..GT-433). One follow-on remains outside the epic scope: CLI/MCP topology-recommend parity (task_0dfc5f71) mirroring the Core API endpoint for full BR-008 parity on the recommender."
@@ -6144,7 +6144,7 @@
         "npx jest --config src/packages/core-domain/jest.config.js --testPathPatterns evaluation (63 pass, 3 new design specs)"
       ],
       "dependencyDisposition": "none",
-      "dependencyRationale": "Advisory maturity evaluator (TS KindEvaluator); no new Native rule \u2192 no OPA parity twin required (R-25 N/A). Delivers the content/maturity evaluation capability behind the existence-only gate gaps."
+      "dependencyRationale": "Advisory maturity evaluator (TS KindEvaluator); no new Native rule → no OPA parity twin required (R-25 N/A). Delivers the content/maturity evaluation capability behind the existence-only gate gaps."
     },
     {
       "id": "GT-430",
@@ -6228,7 +6228,7 @@
         "jest phase-artifact (6 pass incl. real-corpus E2E) + architecture.controller (10 pass)"
       ],
       "dependencyDisposition": "accepted-scope",
-      "dependencyRationale": "Delivered: spec.phaseProfiles in manifests + PhaseArtifactProfileService + Core API endpoint + phase-artifact-registry + E2E. Follow-on (task_1b27a217): unified 'phase-artifacts' EvaluationKind so it auto-exposes on CLI/MCP via evaluate(), for full BR-008 parity \u2014 mirrors the design evaluator; the capability is already exposed on the Core API (the Tracker's surface)."
+      "dependencyRationale": "Delivered: spec.phaseProfiles in manifests + PhaseArtifactProfileService + Core API endpoint + phase-artifact-registry + E2E. Follow-on (task_1b27a217): unified 'phase-artifacts' EvaluationKind so it auto-exposes on CLI/MCP via evaluate(), for full BR-008 parity — mirrors the design evaluator; the capability is already exposed on the Core API (the Tracker's surface)."
     },
     {
       "id": "GT-436",
@@ -6255,7 +6255,7 @@
       ],
       "validationCommands": [
         "ci-cd.yml parses as YAML and resolves to 3 docker-services matrix entries (core-api -> evolith-core-api, mcp-server -> evolith-mcp, agent-runtime -> evolith-agent-runtime) and 3 Coolify deploy steps; the referenced ./src/apps/agent-runtime-api/Dockerfile exists.",
-        "The gap's premise was partly stale: agent-runtime was already built/tested by ci-cd.yml (3 workspace builds). The real hole \u2014 absent from the docker-services matrix and from the deploy job on main (docker-images.yml only covered it on tags/workflow_dispatch) \u2014 is now closed; agent-runtime-api sits in the same CI/CD posture as its two sibling services."
+        "The gap's premise was partly stale: agent-runtime was already built/tested by ci-cd.yml (3 workspace builds). The real hole — absent from the docker-services matrix and from the deploy job on main (docker-images.yml only covered it on tags/workflow_dispatch) — is now closed; agent-runtime-api sits in the same CI/CD posture as its two sibling services."
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Workflow wiring is complete and validated declaratively (YAML parse + Dockerfile path + parity with two already-working sibling services). The deploy step uses the established fail-soft contract (unset hook warns and exits 0, never failing CD). Provisioning COOLIFY_AGENTRUNTIME_DEPLOY_HOOK / COOLIFY_API_TOKEN is owner-gated and already tracked by GT-324; the first live build+deploy runs on the next merge to main, since this job is main/tag-only and cannot be exercised from develop."
@@ -6274,7 +6274,7 @@
       "validationCommands": [
         "agent-runtime 131/131 (+8 workspace-context tests); agent-runtime-api 80/80 (+3 factory wiring tests); tsc --noEmit clean.",
         "The runtime assembles the workspace and passes it inline as evaluationInput.files (the OverlayFileSystem shape the Core API already consumes), so the stateless Core no longer evaluates an empty context; a workspace outage degrades to the prior flow (never fails a run).",
-        "LIVE-VERIFIED end-to-end in kind `evolith-cluster` (2026-07-18) \u2014 and the verification EXPOSED A REGRESSION in this very change, now fixed (`e361b52b`). The wiring fell back to AGENT_RUNTIME_WORKSPACE_ROOT, a pre-existing variable the service image hard-codes (`ENV AGENT_RUNTIME_WORKSPACE_ROOT=/repo/corpus`), so whole-corpus inlining was silently ON in every containerised deployment: the runtime inlined the entire bundled corpus into one evaluate request, the Core rejected the oversized body BEFORE its audit interceptor (so nothing appeared in core-api logs, making it look like the request never arrived), and the chain died on an opaque `Core evaluation failed: HTTP 500`. Inlining is now strictly opt-in via AGENT_RUNTIME_WORKSPACE_CONTEXT_ROOT only, with the old fallback spec inverted into a regression guard. A second, independent Core defect surfaced in the same hunt and was fixed (`6c3d78d3`): the `architecture` kind 500'd for every request because ArchitectureDriftService's history WRITE was unguarded while its READ already tolerated failure. After both fixes the governed chain completes: resolve-context \u2192 ground \u2192 select-capability \u2192 policy-preflight \u2192 harness-execute \u2192 core-evaluate \u2192 policy-validate \u2192 completed, returning the correct governed `blocked` verdict with 39 findings (was `exception`). All 13 evaluation kinds return 200."
+        "LIVE-VERIFIED end-to-end in kind `evolith-cluster` (2026-07-18) — and the verification EXPOSED A REGRESSION in this very change, now fixed (`e361b52b`). The wiring fell back to AGENT_RUNTIME_WORKSPACE_ROOT, a pre-existing variable the service image hard-codes (`ENV AGENT_RUNTIME_WORKSPACE_ROOT=/repo/corpus`), so whole-corpus inlining was silently ON in every containerised deployment: the runtime inlined the entire bundled corpus into one evaluate request, the Core rejected the oversized body BEFORE its audit interceptor (so nothing appeared in core-api logs, making it look like the request never arrived), and the chain died on an opaque `Core evaluation failed: HTTP 500`. Inlining is now strictly opt-in via AGENT_RUNTIME_WORKSPACE_CONTEXT_ROOT only, with the old fallback spec inverted into a regression guard. A second, independent Core defect surfaced in the same hunt and was fixed (`6c3d78d3`): the `architecture` kind 500'd for every request because ArchitectureDriftService's history WRITE was unguarded while its READ already tolerated failure. After both fixes the governed chain completes: resolve-context → ground → select-capability → policy-preflight → harness-execute → core-evaluate → policy-validate → completed, returning the correct governed `blocked` verdict with 39 findings (was `exception`). All 13 evaluation kinds return 200."
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The HttpCoreEvaluationAdapter was already wired+verified in kind; this landed the last non-gated piece (real workspace-context assembly). Gated remainder stays out of scope by design: the real reasoning engine (GT-385/Hermes) and durable memory/scheduler needing external services; a Tracker-driven context assembler is a future sibling adapter behind the same IWorkspaceContextPort."
@@ -6290,7 +6290,7 @@
         "src/apps/agent-runtime-api/src/app.module.ts"
       ],
       "validationCommands": [
-        "cd src/apps/agent-runtime-api && npx jest (33/33) \u2014 fail-closed auth (unset-key\u21d2denied, dev-bypass\u21d2allowed), JWT tenant-claim extraction, TenantCorpusGuard cross-tenant denial; both guards in APP_GUARD"
+        "cd src/apps/agent-runtime-api && npx jest (33/33) — fail-closed auth (unset-key⇒denied, dev-bypass⇒allowed), JWT tenant-claim extraction, TenantCorpusGuard cross-tenant denial; both guards in APP_GUARD"
       ],
       "dependencyDisposition": "none"
     },
@@ -6324,7 +6324,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs -> green with this record + the counter flip (557/568)."
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "GT-441 extends GT-387 (the governed-executor approval port, done in a prior wave) and its receiving half is CD-23 on the Tracker board, shipped 2026-07-19 (RuntimeApprovalEndpoints + migration AddRuntimeApprovals) \u2014 both satisfied, so the Core-side TrackerApprovalHttpClient could finally be written against a real, agreed contract instead of a fabricated one (the exact reason it was deliberately left unimplemented before). The approve->grant path is intentionally NOT live-smoked here: granting requires a designated UMS approver (CD-31) and dev-bypass carries every permission but no authority, which the endpoint deliberately rejects ('permission is not authority'). That path is covered by the adapter unit test (approved->grant) and the Tracker's own RuntimeApprovalEndpointTests; the pending, idempotency and human-reject paths ARE live-smoked against the real Tracker."
+      "dependencyRationale": "GT-441 extends GT-387 (the governed-executor approval port, done in a prior wave) and its receiving half is CD-23 on the Tracker board, shipped 2026-07-19 (RuntimeApprovalEndpoints + migration AddRuntimeApprovals) — both satisfied, so the Core-side TrackerApprovalHttpClient could finally be written against a real, agreed contract instead of a fabricated one (the exact reason it was deliberately left unimplemented before). The approve->grant path is intentionally NOT live-smoked here: granting requires a designated UMS approver (CD-31) and dev-bypass carries every permission but no authority, which the endpoint deliberately rejects ('permission is not authority'). That path is covered by the adapter unit test (approved->grant) and the Tracker's own RuntimeApprovalEndpointTests; the pending, idempotency and human-reject paths ARE live-smoked against the real Tracker."
     },
     {
       "id": "GT-442",
@@ -6338,12 +6338,12 @@
         "product/infra/helm/evolith-agent-runtime/values.yaml"
       ],
       "validationCommands": [
-        "Secret wiring verified in all three charts: each takes credentials from a pre-created K8s Secret BY NAME, injected via secretKeyRef and gated on auth.existingSecretName \u2014 evolith-core-api -> core-api-auth/EVOLITH_API_KEY, evolith-mcp -> mcp-auth/EVOLITH_API_KEY, evolith-agent-runtime -> agent-runtime-auth/AGENT_RUNTIME_API_KEY; evolith-mcp additionally consumes opa-bundle-credentials and opa-bundle-signing-key by name. No chart embeds a literal credential.",
+        "Secret wiring verified in all three charts: each takes credentials from a pre-created K8s Secret BY NAME, injected via secretKeyRef and gated on auth.existingSecretName — evolith-core-api -> core-api-auth/EVOLITH_API_KEY, evolith-mcp -> mcp-auth/EVOLITH_API_KEY, evolith-agent-runtime -> agent-runtime-auth/AGENT_RUNTIME_API_KEY; evolith-mcp additionally consumes opa-bundle-credentials and opa-bundle-signing-key by name. No chart embeds a literal credential.",
         "DB-connectivity claim disproved against the code: core-api and agent-runtime-api declare ZERO database dependencies (no pg/typeorm/prisma/mongo driver or ORM) in their package.json. The `postgresql` occurrences in projects.controller.ts / core-domain.module.ts are the scaffolding generator selecting a database for the GENERATED project, not a Core runtime connection.",
         "Consolidated the previously scattered secret configuration into product/infra/README.md and README.es.md, section 'Secrets and Data Connectivity' / 'Secretos y Conectividad de Datos', including the kubectl create secret example and the Coolify encrypted-env-var equivalent."
       ],
       "dependencyDisposition": "accepted-scope",
-      "dependencyRationale": "Both halves of the original framing were misaligned with the codebase. The secret store was substantially already wired (K8s Secrets by name via secretKeyRef across all three charts); what was genuinely missing was documentation, now consolidated bilingually. The DB half is NOT APPLICABLE to the Core: ADR-0101 makes it a stateless evaluation engine (EvaluationContext -> EvaluationResult, no persisted entities), so there is no DATABASE_URL to configure and adding one would contradict the ADR \u2014 persistence lives in the Tracker (own Postgres, tracker_governance), a separate repository whose board owns any DB-connectivity work. Remaining is owner-gated and not code: provisioning the real secret VALUES on the VPS/cluster, the same blocker already tracked by GT-324 and GT-437."
+      "dependencyRationale": "Both halves of the original framing were misaligned with the codebase. The secret store was substantially already wired (K8s Secrets by name via secretKeyRef across all three charts); what was genuinely missing was documentation, now consolidated bilingually. The DB half is NOT APPLICABLE to the Core: ADR-0101 makes it a stateless evaluation engine (EvaluationContext -> EvaluationResult, no persisted entities), so there is no DATABASE_URL to configure and adding one would contradict the ADR — persistence lives in the Tracker (own Postgres, tracker_governance), a separate repository whose board owns any DB-connectivity work. Remaining is owner-gated and not code: provisioning the real secret VALUES on the VPS/cluster, the same blocker already tracked by GT-324 and GT-437."
     },
     {
       "id": "GT-445",
@@ -6379,7 +6379,7 @@
         "kind load docker-image evolith-tracker-web:local --name evolith-tracker; kubectl apply -f product/infra/kind/tracker-web.local.yaml (rollout 1/1) + port-forward svc/tracker-web 8088:80 -> the Evolith Tracker React SPA loads (HTTP 200, dev-auth as user AN / tenant root), the Control Tower renders governance KPIs from the live backend, and the nginx /api proxy reaches tracker-api -> real Core (/api/health 200). Objective-1 UI chain (tracker-web -> tracker-api -> core-api) verified in a browser"
       ],
       "dependencyDisposition": "accepted-scope",
-      "dependencyRationale": "Cross-repo (evolith_tracker): the M1 pilot closure \u2014 DB persistence + real Core evaluate() + Discovery gate E2E \u2014 was already met in the Tracker repo; this closes the last tail (verify the React UI in a browser) against the local Core chain. Broader per-phase UI coverage is follow-on. Core provides the stable contract (ADR-0101/0104)."
+      "dependencyRationale": "Cross-repo (evolith_tracker): the M1 pilot closure — DB persistence + real Core evaluate() + Discovery gate E2E — was already met in the Tracker repo; this closes the last tail (verify the React UI in a browser) against the local Core chain. Broader per-phase UI coverage is follow-on. Core provides the stable contract (ADR-0101/0104)."
     },
     {
       "id": "GT-447",
@@ -6441,8 +6441,8 @@
         "src/packages/mcp-server/package.json"
       ],
       "validationCommands": [
-        "Verified against the LIVE npm registry: a clean `npm i @beyondnet/evolith-cli@1.1.0` in an empty project resolves the full closure from npm (agent-runtime/core-domain/infra-providers/sdk all 1.1.0) and the CLI boots \u2014 `--version` -> 1.1.0, `evaluate --help` OK, `enforce --help` OK (exercises enforcement/policy-compiler, the subpath missing from the stale 1.0.0). cli dist-tag latest: 1.1.0.",
-        "check:release-drift hardened to fail the publish when the shipped dist imports any @beyondnet/* not declared in dependencies \u2014 proven: aborts without the infra-providers dep, passes with it. npm publish --dry-run green for all 8 packages."
+        "Verified against the LIVE npm registry: a clean `npm i @beyondnet/evolith-cli@1.1.0` in an empty project resolves the full closure from npm (agent-runtime/core-domain/infra-providers/sdk all 1.1.0) and the CLI boots — `--version` -> 1.1.0, `evaluate --help` OK, `enforce --help` OK (exercises enforcement/policy-compiler, the subpath missing from the stale 1.0.0). cli dist-tag latest: 1.1.0.",
+        "check:release-drift hardened to fail the publish when the shipped dist imports any @beyondnet/* not declared in dependencies — proven: aborts without the infra-providers dep, passes with it. npm publish --dry-run green for all 8 packages."
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "The real defect was the whole @beyondnet/evolith-*@1.0.0 line being stale vs develop (CLI deep-imports subpaths absent from the 1.0.0 tarballs) plus cli@1.0.1 crashing on an undeclared infra-providers dep. Resolved by a coordinated 1.1.0 re-release of all 8 packages (owner published in dependency order); the owner-publish dependency is now satisfied and verified live."
@@ -6562,7 +6562,7 @@
         "src/packages/mcp-server/src/tools/api-catalog-parity.spec.ts"
       ],
       "validationCommands": [
-        "cd src/packages/mcp-server && npx jest api-catalog-parity (3/3) \u2014 CLI catalog == live MCP registry (47 tools / 11 resources incl. GT-520 capabilities+contracts)"
+        "cd src/packages/mcp-server && npx jest api-catalog-parity (3/3) — CLI catalog == live MCP registry (47 tools / 11 resources incl. GT-520 capabilities+contracts)"
       ],
       "dependencyDisposition": "none"
     },
@@ -6594,7 +6594,7 @@
         "rg -n \"Exchange|Queue|Binding|Permission\" reference/core/architecture/adrs/core/0108-masstransit-owned-message-topology.md reference/core/architecture/adrs/core/0108-masstransit-owned-message-topology.es.md product/infra/kubernetes/README.md"
       ],
       "dependencyDisposition": "accepted-scope",
-      "dependencyRationale": "Topology decision recorded (ADR-0108) and message-path CRDs retired in favor of per-product User/Permission RBAC. The G1 'consumer endpoint started' assertion (bus health, not pod Ready) is delegated to the G1 integration-gate automation (\u00a713) and tracked there \u2014 it is not a blocker for the topology decision."
+      "dependencyRationale": "Topology decision recorded (ADR-0108) and message-path CRDs retired in favor of per-product User/Permission RBAC. The G1 'consumer endpoint started' assertion (bus health, not pod Ready) is delegated to the G1 integration-gate automation (§13) and tracked there — it is not a blocker for the topology decision."
     },
     {
       "id": "GT-463",
@@ -6606,7 +6606,7 @@
         "product/operations/incident-response-poison-message-reprocess.es.md"
       ],
       "validationCommands": [
-        "ruby -ryaml -e 'YAML.load_file(...)' \u2014 3 groups; messaging-alerts: MassTransitPoisonMessages + TenantProjectionQueueMissing",
+        "ruby -ryaml -e 'YAML.load_file(...)' — 3 groups; messaging-alerts: MassTransitPoisonMessages + TenantProjectionQueueMissing",
         "grep '_error' product/operations/alerts/prometheus-alerts.yml"
       ],
       "dependencyDisposition": "none"
@@ -6620,7 +6620,7 @@
         "product/infra/kubernetes/README.md"
       ],
       "validationCommands": [
-        "ruby -ryaml -e 'YAML.load_stream(...network-policies.yaml)' \u2014 22 NetworkPolicy docs parse",
+        "ruby -ryaml -e 'YAML.load_stream(...network-policies.yaml)' — 22 NetworkPolicy docs parse",
         "rg -n \"NetworkPolicy|CNI|disableDefaultCNI\" product/infra/kubernetes/README.md product/infra/helm/evolith-core-api/templates/networkpolicy.yaml"
       ],
       "dependencyDisposition": "deferred",
@@ -6836,7 +6836,7 @@
         "src/sdk/cli/templates/evolith.yaml.example"
       ],
       "validationCommands": [
-        "npx jest --config test/jest-e2e.json --runInBand --no-bail (workspace src/sdk/cli) \u2014 18 suites / 132 tests pass"
+        "npx jest --config test/jest-e2e.json --runInBand --no-bail (workspace src/sdk/cli) — 18 suites / 132 tests pass"
       ],
       "closureNote": "mcp refs removed (fc28a318). Residual e2e reds were NOT fixture debt: the 98a20dca taxonomy split (reference/@root vs rulesets/@src) broke gate.e2e REPO_ROOT + gate-status reference resolution, and 5 validate/arch tests asserted an unattainable passed|warning against a bare fixture (94-rule corpus fails blocking MUSTs regardless of yaml). Test-only fixes: v1 fixtures (V1_MANIFEST), REPO_ROOT->repo root + schemas from src/rulesets/schema, validate/arch rewritten to the real ADR-0073 contract (envelope well-formed; exit reflects verdict), gate-status self-contained mock Core. No product-code change.",
       "dependencyDisposition": "deferred",
@@ -7268,7 +7268,7 @@
         "src/apps/core-api/src/presentation/controllers/capabilities.controller.ts"
       ],
       "validationCommands": [
-        "cd src/packages/contracts && npx tsc -p tsconfig.json && npx jest (2 suites, 13/13) \u2014 @beyondnet/evolith-contracts SemVer + CONTRACT_SET_SHA256; parity spec binds package to live buildCapabilityManifest and FAILS on added-engine / single-consumer drift. GET /api/v1/capabilities served by CapabilitiesController (on develop)."
+        "cd src/packages/contracts && npx tsc -p tsconfig.json && npx jest (2 suites, 13/13) — @beyondnet/evolith-contracts SemVer + CONTRACT_SET_SHA256; parity spec binds package to live buildCapabilityManifest and FAILS on added-engine / single-consumer drift. GET /api/v1/capabilities served by CapabilitiesController (on develop)."
       ],
       "dependencyDisposition": "none"
     },
@@ -7348,7 +7348,7 @@
         "src/packages/core-domain/src/evaluation/drift-gate.ts"
       ],
       "validationCommands": [
-        "FileWaiverStore infra-providers 2/2 (persists+reloads across instances, retains versions, fails closed on corrupt file); CLI smoke green; LIVE: evolith waiver request/approve/revise persists v1,v2 to JSON across separate invocations; evolith evaluate --format drift on a violating workspace exits 1 and renders a PR-comment body (Blocked, 37 blocking violations, each citing rule + CODEOWNERS owner) \u2014 the mandated fallback meets the block+comment criterion; native GitHub-App Checks-API publish is a follow-on. SARIF/evidence criterion already done."
+        "FileWaiverStore infra-providers 2/2 (persists+reloads across instances, retains versions, fails closed on corrupt file); CLI smoke green; LIVE: evolith waiver request/approve/revise persists v1,v2 to JSON across separate invocations; evolith evaluate --format drift on a violating workspace exits 1 and renders a PR-comment body (Blocked, 37 blocking violations, each citing rule + CODEOWNERS owner) — the mandated fallback meets the block+comment criterion; native GitHub-App Checks-API publish is a follow-on. SARIF/evidence criterion already done."
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The native GitHub/GitLab Checks-API publish needs a GitHub App with checks:write (owner infra); the mandated PrCommentFallbackPublisher + non-zero exit satisfy the block+comment requirement, verified live. The durable waiver store + CLI are complete."
@@ -7369,7 +7369,7 @@
         "Public seam verified: RulesetValidatorOptions.metrics forwarded into the enforcer subsystem factory and the metrics API (IEnforcerMetrics/NoopEnforcerMetrics/RecordingEnforcerMetrics/ENFORCER_METRICS) re-exported from core-domain, so a host can construct a real Meter-backed adapter (previously the seam was permanently no-op and un-wireable through any surface)."
       ],
       "dependencyDisposition": "accepted-scope",
-      "dependencyRationale": "Parity wiring (processRunner injected in CLI/MCP/REST) and enforcer-catalog<->tool-catalog version pins were already live (f8310fac/4b6db4d5); this closed the remaining OTel-metrics seam. Ops-only remainder stays out of scope: per-runtime composable CI images + vuln-scan/Renovate, and activating a live OTel Meter-backed IEnforcerMetrics adapter inside each surface module (host config) \u2014 the code seam is complete and importable."
+      "dependencyRationale": "Parity wiring (processRunner injected in CLI/MCP/REST) and enforcer-catalog<->tool-catalog version pins were already live (f8310fac/4b6db4d5); this closed the remaining OTel-metrics seam. Ops-only remainder stays out of scope: per-runtime composable CI images + vuln-scan/Renovate, and activating a live OTel Meter-backed IEnforcerMetrics adapter inside each surface module (host config) — the code seam is complete and importable."
     },
     {
       "id": "GT-520",
@@ -7382,7 +7382,7 @@
         "src/packages/mcp-server/src/mcp/mcp-server-auth.ts"
       ],
       "validationCommands": [
-        "cd src/packages/mcp-server && npx jest oauth abac mcp-server-auth (5 suites, 35/35) + full 326/326 \u2014 all three ACs met: OAuth 2.1 resource-server validator (JWKS RS/PS/ES + shared HS, iss/aud/exp/nbf) wired into the Streamable HTTP bearer path (401 on missing/invalid/expired/spoofed); every tools/call ABAC-checked per verified identity + audited; evolith://capabilities and evolith://contracts resources served (resources.service.ts)"
+        "cd src/packages/mcp-server && npx jest oauth abac mcp-server-auth (5 suites, 35/35) + full 326/326 — all three ACs met: OAuth 2.1 resource-server validator (JWKS RS/PS/ES + shared HS, iss/aud/exp/nbf) wired into the Streamable HTTP bearer path (401 on missing/invalid/expired/spoofed); every tools/call ABAC-checked per verified identity + audited; evolith://capabilities and evolith://contracts resources served (resources.service.ts)"
       ],
       "dependencyDisposition": "none"
     },
@@ -7403,7 +7403,7 @@
         "Security-SARIF (Checkov/Trivy) LIVE-verified: a real Checkov SARIF over a Terraform corpus (8 findings) parses via the shared GT-515 ingestSarif to 8 Violations, ALL category='security'; a clean scan yields 0."
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "GT-514 (ShellEnforcerAdapter/IProcessRunner seam) + GT-515 (SARIF 2.1.0 ingester, reused wholesale by the security adapters) both DONE. Criterion #1's own gate held: import-linter (Python) + Checkov/Trivy (IaC/security) landed and were exercised against real corpora; Deptrac (PHP) / ArchUnit (JVM) / jQAssistant (Neo4j) correctly stay adapter-pending \u2014 no real repo of those runtimes exists to exercise them, so building them would be speculative and untestable per the gap's Risk/Evidence."
+      "dependencyRationale": "GT-514 (ShellEnforcerAdapter/IProcessRunner seam) + GT-515 (SARIF 2.1.0 ingester, reused wholesale by the security adapters) both DONE. Criterion #1's own gate held: import-linter (Python) + Checkov/Trivy (IaC/security) landed and were exercised against real corpora; Deptrac (PHP) / ArchUnit (JVM) / jQAssistant (Neo4j) correctly stay adapter-pending — no real repo of those runtimes exists to exercise them, so building them would be speculative and untestable per the gap's Risk/Evidence."
     },
     {
       "id": "GT-523",
@@ -7439,7 +7439,7 @@
         "src/rulesets/enforcement/enforcer-catalog.json"
       ],
       "validationCommands": [
-        "dotnet 10: scaffolded a real .NET corpus (Domain/Infrastructure/ArchTests) with NetArchTest.Rules 1.3.2; DOTNET_CLI_UI_LANGUAGE=en dotnet test \u2014 a Domain->Infrastructure violation FAILS the arch test and parseNetArchTestReport parses it into 1 canonical Violation (tool=NetArchTest, error, locationless); the CLEAN corpus (no violation) PASSES and parses to 0 violations. 0 false positives on a real .NET corpus."
+        "dotnet 10: scaffolded a real .NET corpus (Domain/Infrastructure/ArchTests) with NetArchTest.Rules 1.3.2; DOTNET_CLI_UI_LANGUAGE=en dotnet test — a Domain->Infrastructure violation FAILS the arch test and parseNetArchTestReport parses it into 1 canonical Violation (tool=NetArchTest, error, locationless); the CLEAN corpus (no violation) PASSES and parses to 0 violations. 0 false positives on a real .NET corpus."
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-512 restored-.NET-checkout requirement met: a real dotnet restore+build+test runs NetArchTest against a compiled corpus; the adapter parses real failures 1:1 and a clean corpus yields 0."
@@ -7473,7 +7473,7 @@
         "src/sdk/cli/docs/edit-time-enforcement.md"
       ],
       "validationCommands": [
-        "cd src/sdk/cli && npm run build && npx jest (71 suites, 967/967; edit-hook+enforce 45/45) \u2014 `evolith enforce edit` blocks a boundary-violating edit (exit 2) with canonical Violation; conforming edit exit 0; cross-agent VendorHookAdapter registry"
+        "cd src/sdk/cli && npm run build && npx jest (71 suites, 967/967; edit-hook+enforce 45/45) — `evolith enforce edit` blocks a boundary-violating edit (exit 2) with canonical Violation; conforming edit exit 0; cross-agent VendorHookAdapter registry"
       ],
       "dependencyDisposition": "none"
     },
@@ -7507,7 +7507,7 @@
         "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand (950/950 core-domain)"
       ],
       "dependencyDisposition": "accepted-scope",
-      "dependencyRationale": "GT-528 required an executable C4 model: compileC4ToBoundaryRules (prior) + parseStructurizrDsl (this) close the intent\u2192executable path end-to-end. GT-516 (enforce: compiler) is a sibling engine, satisfied."
+      "dependencyRationale": "GT-528 required an executable C4 model: compileC4ToBoundaryRules (prior) + parseStructurizrDsl (this) close the intent→executable path end-to-end. GT-516 (enforce: compiler) is a sibling engine, satisfied."
     },
     {
       "id": "GT-529",
@@ -7548,7 +7548,7 @@
         "src/packages/core-domain/src/evaluation/evaluation-orchestrator.spec.ts"
       ],
       "validationCommands": [
-        "cd src/packages/core-domain && npx tsc && npx jest (95 suites, 966/966) \u2014 evaluate() folds ctx.qualitySignals via resolveEvidenceSignals onto EvaluationResult.qualitySignals; WITH evidence \u21d2 present signal surfaced, verdict PASS; WITHOUT \u21d2 no-evidence signal, evaluation still succeeds. Core stays provider-free (grep-clean)."
+        "cd src/packages/core-domain && npx tsc && npx jest (95 suites, 966/966) — evaluate() folds ctx.qualitySignals via resolveEvidenceSignals onto EvaluationResult.qualitySignals; WITH evidence ⇒ present signal surfaced, verdict PASS; WITHOUT ⇒ no-evidence signal, evaluation still succeeds. Core stays provider-free (grep-clean)."
       ],
       "dependencyDisposition": "none"
     },
@@ -7562,7 +7562,7 @@
         "reference/core/architecture/adrs/core/0113-nodejs-lighthouse-evidence-adapter.md"
       ],
       "validationCommands": [
-        "cd src/packages/infra-providers && npx tsc && npx jest (13 suites, 105/105) \u2014 LighthouseEvidenceProvider emits deterministic canonical Evidence with full provenance; categories\u2192EvidenceFinding severity; stubbed LHR (no Chrome)"
+        "cd src/packages/infra-providers && npx tsc && npx jest (13 suites, 105/105) — LighthouseEvidenceProvider emits deterministic canonical Evidence with full provenance; categories→EvidenceFinding severity; stubbed LHR (no Chrome)"
       ],
       "dependencyDisposition": "none"
     },
@@ -7577,7 +7577,7 @@
         "src/packages/agent-runtime/src/adapters/skills/default-skills.ts"
       ],
       "validationCommands": [
-        "cd src/packages/agent-runtime && npx tsc && npx jest (16 suites, 110/110) \u2014 rubric ranked by severity; StructuralReviewProvider emits probabilistic Evidence + provenance and registers in the GT-533 registry; evaluateStructuralGate blocks high/critical; GT-424 skill-registry parity green"
+        "cd src/packages/agent-runtime && npx tsc && npx jest (16 suites, 110/110) — rubric ranked by severity; StructuralReviewProvider emits probabilistic Evidence + provenance and registers in the GT-533 registry; evaluateStructuralGate blocks high/critical; GT-424 skill-registry parity green"
       ],
       "dependencyDisposition": "none"
     },
@@ -7619,7 +7619,7 @@
         "reference/core/control-center/maturity-reports/maturity-assessment.md"
       ],
       "validationCommands": [
-        "cd src/packages/agent-runtime && npx tsc && npx jest (17 suites, 118/118) + cd src/apps/agent-runtime-api && npx nest build && npx jest (5 suites, 67/67) \u2014 PgVectorKnowledgeAdapter cosine top-k over rag_chunks with injected embedder+pg seams, ranked KnowledgeChunk + citation; runtime.factory selects pgvector via env, in-memory default preserved"
+        "cd src/packages/agent-runtime && npx tsc && npx jest (17 suites, 118/118) + cd src/apps/agent-runtime-api && npx nest build && npx jest (5 suites, 67/67) — PgVectorKnowledgeAdapter cosine top-k over rag_chunks with injected embedder+pg seams, ranked KnowledgeChunk + citation; runtime.factory selects pgvector via env, in-memory default preserved"
       ],
       "dependencyDisposition": "none"
     },
@@ -7636,7 +7636,7 @@
         "agent-runtime 123/123 (+2 grounding tests): a run with a seeded corpus records trace.groundedBy.corpusVersion + citations (queried BEFORE recommending), and an empty corpus grounds to empty without blocking. A reference/**/*.md commit runs 14-rag-index-sync.mjs (rag-index-sync.yml) which detects the 2 changed files and emits a delta receipt (verified). pgvector adapter now returns rag_chunks.corpus_version on the chunk."
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "GT-538 (durable pgvector store) + GT-539 (real embedder) + GT-540 (read adapter) all DONE \u2014 the workflow drives the durable delta sync and the runtime grounds against the read adapter, citing the corpus_version those produce."
+      "dependencyRationale": "GT-538 (durable pgvector store) + GT-539 (real embedder) + GT-540 (read adapter) all DONE — the workflow drives the durable delta sync and the runtime grounds against the read adapter, citing the corpus_version those produce."
     },
     {
       "id": "GT-542",
@@ -7649,7 +7649,7 @@
         "src/apps/core-api/src/presentation/controllers/gates.controller.ts"
       ],
       "validationCommands": [
-        "cd src/apps/core-api && npx tsc -p tsconfig.json --noEmit && npx jest metrics (3 suites, 10/10) + full 150/150 \u2014 recordGateEvaluation emits evolith_gate_evaluations_total{status,gateId,phase} + evolith_gate_evaluation_duration_seconds, wired into EvaluationController (inline/canonical/legacy) and GatesController; spec asserts the increment + duration bucket appear in /metrics output"
+        "cd src/apps/core-api && npx tsc -p tsconfig.json --noEmit && npx jest metrics (3 suites, 10/10) + full 150/150 — recordGateEvaluation emits evolith_gate_evaluations_total{status,gateId,phase} + evolith_gate_evaluation_duration_seconds, wired into EvaluationController (inline/canonical/legacy) and GatesController; spec asserts the increment + duration bucket appear in /metrics output"
       ],
       "dependencyDisposition": "none"
     },
@@ -7665,7 +7665,7 @@
         "src/apps/core-api/src/infrastructure/metrics/metric-drift.spec.ts"
       ],
       "validationCommands": [
-        "cd src/apps/core-api && npx jest metrics metric-drift (10/10) \u2014 added evolith_http_request_duration_seconds histogram (recorded from the SecurityAudit interceptor) and reconciled prometheus-alerts.yml + core-api-slo.md/.es.md from bare http_requests_total / http_request_duration_seconds_bucket to the evolith_-prefixed emitted names; the GT-550 drift guard asserts every referenced metric is emitted"
+        "cd src/apps/core-api && npx jest metrics metric-drift (10/10) — added evolith_http_request_duration_seconds histogram (recorded from the SecurityAudit interceptor) and reconciled prometheus-alerts.yml + core-api-slo.md/.es.md from bare http_requests_total / http_request_duration_seconds_bucket to the evolith_-prefixed emitted names; the GT-550 drift guard asserts every referenced metric is emitted"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-542 (gate metric emitted) and GT-550 (drift guard) both landed in the same commit; the histogram + name reconciliation are verified by the guard."
@@ -7681,10 +7681,10 @@
         "product/operations/grafana/provisioning/datasources/datasources.yml"
       ],
       "validationCommands": [
-        "docker compose -f docker-compose.evolith.yml -f docker-compose.observability.yml up -d; curl -su admin:admin http://localhost:3009/api/search?type=dash-db -> BOTH \"Evolith \u2014 Governance Health\" and \"Evolith \u2014 Platform SRE (RED)\" provisioned; the Prometheus datasource (uid evolith-prometheus) resolves and panels render live gate/HTTP/agent series"
+        "docker compose -f docker-compose.evolith.yml -f docker-compose.observability.yml up -d; curl -su admin:admin http://localhost:3009/api/search?type=dash-db -> BOTH \"Evolith — Governance Health\" and \"Evolith — Platform SRE (RED)\" provisioned; the Prometheus datasource (uid evolith-prometheus) resolves and panels render live gate/HTTP/agent series"
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "GT-542/543 (metrics emitted) and GT-545 (scrape) all DONE, so the datasource + dashboards render real series \u2014 verified live."
+      "dependencyRationale": "GT-542/543 (metrics emitted) and GT-545 (scrape) all DONE, so the datasource + dashboards render real series — verified live."
     },
     {
       "id": "GT-545",
@@ -7699,7 +7699,7 @@
         "curl http://localhost:9090/api/v1/targets -> core-api, mcp, agent-runtime all health=up (scraped on :3000 with the API-key Bearer credential); fixed the canonical otel/prometheus-config.yml (was a single wrong bff:8000 target) to the same 3 jobs"
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "GT-547 (runnable stack) and GT-549 (guarded /metrics) DONE; the scrape authenticates against the fail-closed /metrics and all three targets are up \u2014 verified live."
+      "dependencyRationale": "GT-547 (runnable stack) and GT-549 (guarded /metrics) DONE; the scrape authenticates against the fail-closed /metrics and all three targets are up — verified live."
     },
     {
       "id": "GT-546",
@@ -7712,7 +7712,7 @@
         "src/apps/agent-runtime-api/src/agent-runtime/agent-runtime.module.ts"
       ],
       "validationCommands": [
-        "cd src/apps/agent-runtime-api && npx tsc -p tsconfig.json --noEmit && npx jest (6 suites, 72/72) \u2014 AgentMetricsService emits evolith_agent_runs_total{engine,verdict}, evolith_agent_run_duration_seconds, evolith_skill_invocations_total{skill}, evolith_agent_core_calls_total{outcome}, evolith_hitl_approvals_total{decision} on the default registry (so the existing /metrics exposes them); recorded from the AgentRuntimeResult via the controller; spec asserts each series"
+        "cd src/apps/agent-runtime-api && npx tsc -p tsconfig.json --noEmit && npx jest (6 suites, 72/72) — AgentMetricsService emits evolith_agent_runs_total{engine,verdict}, evolith_agent_run_duration_seconds, evolith_skill_invocations_total{skill}, evolith_agent_core_calls_total{outcome}, evolith_hitl_approvals_total{decision} on the default registry (so the existing /metrics exposes them); recorded from the AgentRuntimeResult via the controller; spec asserts each series"
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The catalog named a GT-519 noop metrics port to hang these on, but no such port exists in the agent-runtime package. Instrumented at the API/adapter boundary instead (per ADR-0102, metrics stay out of the domain), which satisfies both acceptance criteria without GT-519."
@@ -7745,7 +7745,7 @@
         "core-api 152/152 (+2 bounded-tenant tests) + agent-runtime 77/77; LIVE against the local stack rebuilt with EVOLITH_METRICS_TENANT_ALLOWLIST=t-acme,local: evolith_gate_evaluations_total carries tenant=t-acme/local for allowlisted tenants and tenant=other for the rest (3 t-secret requests collapsed to other, the raw id never leaked); Governance Health dashboard has a $tenant template variable + a per-tenant panel; cap (|allowlist|+1, hard-capped 100) documented in code + SLO doc."
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "GT-542 (gate metric) and GT-546 (agent metric) DONE \u2014 the tenant label extends both; the per-tenant panel needs the Grafana datasource from GT-544 (DONE)."
+      "dependencyRationale": "GT-542 (gate metric) and GT-546 (agent metric) DONE — the tenant label extends both; the per-tenant panel needs the Grafana datasource from GT-544 (DONE)."
     },
     {
       "id": "GT-549",
@@ -7758,7 +7758,7 @@
         "src/packages/mcp-server/src/mcp/mcp-server.service.ts"
       ],
       "validationCommands": [
-        "cd src/packages/mcp-server && npx tsc && npx jest (44 suites, 326/326 \u2014 +2 HTTP tests: anon GET /metrics\u2192401, x-api-key\u2192200) + cd src/apps/agent-runtime-api && npx tsc && npx jest (7 suites, 77/77 \u2014 +5 MetricsAuthGuard tests) \u2014 /metrics now fail-closed on both services with a trusted-network opt-out, matching core-api MetricsAuthGuard (GT-393)"
+        "cd src/packages/mcp-server && npx tsc && npx jest (44 suites, 326/326 — +2 HTTP tests: anon GET /metrics→401, x-api-key→200) + cd src/apps/agent-runtime-api && npx tsc && npx jest (7 suites, 77/77 — +5 MetricsAuthGuard tests) — /metrics now fail-closed on both services with a trusted-network opt-out, matching core-api MetricsAuthGuard (GT-393)"
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Catalog lists GT-545 (scrape config) as a dependency; the acceptance criterion \"scraper still succeeds with credentials\" is proven at the code/test level (the guard accepts the credential and rejects anonymous callers). Wiring the actual Prometheus scrape job with the credential is GT-545 (infra)."
@@ -7773,7 +7773,7 @@
         "product/operations/slo/core-api-slo.md"
       ],
       "validationCommands": [
-        "cd src/apps/core-api && npx jest metric-drift (2/2) \u2014 the guard extracts PromQL metric names from prometheus-alerts.yml + core-api-slo.md/.es.md and fails when a non-external (not node/kube/rabbitmq/opa/up) metric is emitted by no Core service; runs in the Test core-api CI job on every PR touching those files"
+        "cd src/apps/core-api && npx jest metric-drift (2/2) — the guard extracts PromQL metric names from prometheus-alerts.yml + core-api-slo.md/.es.md and fails when a non-external (not node/kube/rabbitmq/opa/up) metric is emitted by no Core service; runs in the Test core-api CI job on every PR touching those files"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-543 reconciled the metric names in the same commit, so the guard is green while enforcing no future drift."
@@ -7788,11 +7788,11 @@
         "product/infra/helm/evolith-mcp/templates/service.yaml"
       ],
       "validationCommands": [
-        "Empirical metric discovery against the pinned OPA binary (.harness/bin/opa): `opa run --server` + GET /metrics exposes ONLY go_*, process_* and http_request_duration_seconds{code,handler,method} \u2014 ZERO opa_* series, so the pre-existing `opa_evaluation_errors_total` expression could never fire (false coverage).",
+        "Empirical metric discovery against the pinned OPA binary (.harness/bin/opa): `opa run --server` + GET /metrics exposes ONLY go_*, process_* and http_request_duration_seconds{code,handler,method} — ZERO opa_* series, so the pre-existing `opa_evaluation_errors_total` expression could never fire (false coverage).",
         "Alert selector verified against live series: handler=\"v1/data\" is emitted (so handler=~\"v1/data.*\" matches) and the `code` label tracks HTTP status (200 and 400 observed), so code=~\"5..\" matches real 5xx policy-decision failures.",
-        "helm template product/infra/helm/evolith-mcp \u2014 Service renders the `opa-metrics` port (targetPort opa-http) with opa.enabled=true and omits it with opa.enabled=false (1 vs 0 occurrences); helm lint passes (0 charts failed).",
+        "helm template product/infra/helm/evolith-mcp — Service renders the `opa-metrics` port (targetPort opa-http) with opa.enabled=true and omits it with opa.enabled=false (1 vs 0 occurrences); helm lint passes (0 charts failed).",
         "YAML parse green for prometheus-alerts.yml and prometheus-config.yml; scrape jobs resolve to core-api, mcp, agent-runtime, opa, otel-collector, prometheus.",
-        "LIVE-VERIFIED in a kind cluster (`evolith-cluster`, namespace evolith-local, 2026-07-18): `helm upgrade --set opa.enabled=true` made the REAL k8s Service object gain `opa-metrics 8181 -> targetPort opa-http`, and the pod came up with the `opa` sidecar container. Fetching http://<pod-ip>:8181/metrics from another pod returned HTTP 200 with 109 metrics, ZERO opa_* series, and `http_request_duration_seconds` present \u2014 confirming in a deployed cluster what the binary probe showed, and discharging the earlier deploy-gated caveat for the exposure half. A real 5xx sample was observed (http_request_duration_seconds_count{code=\"500\",handler=\"health\"}), proving the alert's code=~\"5..\" selector matches live series; it is correctly scoped to handler=~\"v1/data.*\" so a health-probe 500 is not mistaken for a policy-decision failure."
+        "LIVE-VERIFIED in a kind cluster (`evolith-cluster`, namespace evolith-local, 2026-07-18): `helm upgrade --set opa.enabled=true` made the REAL k8s Service object gain `opa-metrics 8181 -> targetPort opa-http`, and the pod came up with the `opa` sidecar container. Fetching http://<pod-ip>:8181/metrics from another pod returned HTTP 200 with 109 metrics, ZERO opa_* series, and `http_request_duration_seconds` present — confirming in a deployed cluster what the binary probe showed, and discharging the earlier deploy-gated caveat for the exposure half. A real 5xx sample was observed (http_request_duration_seconds_count{code=\"500\",handler=\"health\"}), proving the alert's code=~\"5..\" selector matches live series; it is correctly scoped to handler=~\"v1/data.*\" so a health-probe 500 is not mistaken for a policy-decision failure."
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Both halves the gap names are closed: the sidecar is now EXPOSED (Service opa-metrics port; it was pod-local and unreachable) and SCRAPED (new `opa` job whose name matches the alert scope). A third, deeper defect was found and fixed: the alert referenced a metric OPA does not emit, so scraping alone would not have made it fire. The exposure half is now LIVE-VERIFIED in a kind cluster (see validationCommands); what remains deploy-gated is only an actual Prometheus instance scraping it end-to-end; promtool was unavailable locally so the rule was validated by YAML parse + empirical series matching instead of `promtool check rules`; and the docker-compose stack does not run OPA yet, tracked by GT-547."
@@ -8148,7 +8148,7 @@
         "Falsification: the new spec run against a pristine `git archive HEAD` copy of core-domain fails 12 of 17 (errored->skipped, undefined counters, missing advisories, no threshold issue)"
       ],
       "dependencyDisposition": "accepted-scope",
-      "dependencyRationale": "Closes the REPORTING half only, by design: the envelope now publishes checked/skipped/errored/total and an exception is no longer laundered into skipped. Widening the corpus itself (the ~240 rules with no native handler) is a separate, far larger body of work and stays open \u2014 this record must not be read as coverage having improved."
+      "dependencyRationale": "Closes the REPORTING half only, by design: the envelope now publishes checked/skipped/errored/total and an exception is no longer laundered into skipped. Widening the corpus itself (the ~240 rules with no native handler) is a separate, far larger body of work and stays open — this record must not be read as coverage having improved."
     },
     {
       "id": "GT-570",
@@ -8164,13 +8164,13 @@
       ],
       "validationCommands": [
         "gh run view 30273290417 -> conclusion=success, workflow_dispatch on main @ 9a82d9f2 with dry_run=false.",
-        "curl https://registry.npmjs.org/@beyondnet%2Fevolith-mcp -> latest 1.2.0, published 2026-07-27T14:06:39Z, dist.attestations present. Same shape for evolith-agent-runtime@1.2.0 (14:06:10), evolith-sdk@2.0.0 (14:06:24) and evolith-cli@1.2.0 (14:06:58) \u2014 timestamps confirm dependency order.",
+        "curl https://registry.npmjs.org/@beyondnet%2Fevolith-mcp -> latest 1.2.0, published 2026-07-27T14:06:39Z, dist.attestations present. Same shape for evolith-agent-runtime@1.2.0 (14:06:10), evolith-sdk@2.0.0 (14:06:24) and evolith-cli@1.2.0 (14:06:58) — timestamps confirm dependency order.",
         "The audit finding \"0 of 8 published packages carry dist.attestations\" no longer holds: four now do, produced by GitHub Actions with id-token: write rather than by a developer machine.",
-        "Scope corrected before shipping: `git show --name-only` (not --stat, which truncates long paths) showed the security wave touches mcp (15 files), cli (7) and agent-runtime (1, the CWE-78 shell runner) \u2014 the original plan of bumping mcp alone would have left two vulnerable.",
+        "Scope corrected before shipping: `git show --name-only` (not --stat, which truncates long paths) showed the security wave touches mcp (15 files), cli (7) and agent-runtime (1, the CWE-78 shell runner) — the original plan of bumping mcp alone would have left two vulnerable.",
         "Rehearsals: run 30265298045 found no LICENSE in any of the four tarballs and repository.url auto-corrected in all eight; run 30271837941 found bin paths auto-corrected in two. All three fixed before publishing and all three would have been permanent."
       ],
       "dependencyDisposition": "accepted-scope",
-      "dependencyRationale": "Re-scoped rather than over-claimed. Two of the three original acceptance criteria are NOT met by this closure and were moved to GT-624: deprecating the 1.1.0 versions (needs npm credentials, owner action) and a release gate that fails when a security-tagged commit is absent from the published tag. This row closes on what it was about \u2014 an installable artifact older than its own published security fixes \u2014 and the remainder is tracked, not absorbed."
+      "dependencyRationale": "Re-scoped rather than over-claimed. Two of the three original acceptance criteria are NOT met by this closure and were moved to GT-624: deprecating the 1.1.0 versions (needs npm credentials, owner action) and a release gate that fails when a security-tagged commit is absent from the published tag. This row closes on what it was about — an installable artifact older than its own published security fixes — and the remainder is tracked, not absorbed."
     },
     {
       "id": "GT-571",
@@ -8256,7 +8256,7 @@
       "validationCommands": [
         "agentic-ai-self-conformance.spec.ts -> 13/13, evaluating the repository against the nine blocking AAI-* rules it ships.",
         "NEGATIVE FIXTURE: without agent.config.json all nine evaluate to failed.",
-        "CAVEAT recorded on the row: the spec runs in Test agent-runtime, which is NOT one of main\u2019s seven required contexts (verified against the live branch protection). It reports; it does not govern. Making it required is an owner action."
+        "CAVEAT recorded on the row: the spec runs in Test agent-runtime, which is NOT one of main’s seven required contexts (verified against the live branch protection). It reports; it does not govern. Making it required is an owner action."
       ],
       "closedAt": "2026-07-28",
       "closureCommit": "b16bd9fd",
@@ -8290,12 +8290,12 @@
       ],
       "validationCommands": [
         "gh run view 30228607519 -> branch=develop, conclusion=success; jobs \"Action vs non-conforming satellite\" and \"Action contract (recorded envelopes)\" both success.",
-        "gh run view 30228607519 --log -> \"OK: 34 blocking violation(s) of 274 issue(s), agreeing with the report.\" \u2014 the counter is non-zero AND cross-checks against the report file the action writes, which is what the broken '.summary.violations' jq path made impossible.",
-        "gh run view 30228607519 --log -> \"OK: the gate blocked as expected with 34 blocking violation(s).\" \u2014 the negative half: fail-on-violation=true must fail the step.",
+        "gh run view 30228607519 --log -> \"OK: 34 blocking violation(s) of 274 issue(s), agreeing with the report.\" — the counter is non-zero AND cross-checks against the report file the action writes, which is what the broken '.summary.violations' jq path made impossible.",
+        "gh run view 30228607519 --log -> \"OK: the gate blocked as expected with 34 blocking violation(s).\" — the negative half: fail-on-violation=true must fail the step.",
         "gh run list --workflow=evolith-validate-dogfood.yml --limit 5 -> 5 consecutive success."
       ],
       "dependencyDisposition": "accepted-scope",
-      "dependencyRationale": "The action is dogfooded and under regression, which is what this gap was about. Making the workflow a REQUIRED check is branch-protection configuration, not a code change, and is deliberately left outside this closure \u2014 a gate nobody requires is how this action rotted in the first place, so it is worth doing, just not here."
+      "dependencyRationale": "The action is dogfooded and under regression, which is what this gap was about. Making the workflow a REQUIRED check is branch-protection configuration, not a code change, and is deliberately left outside this closure — a gate nobody requires is how this action rotted in the first place, so it is worth doing, just not here."
     },
     {
       "id": "GT-579",
@@ -8725,7 +8725,7 @@
         "45-validate-port-inventory-honesty --verbose -> 19 ports declared, 11 on the hot path (7 required + 4 optional), 8 declared-not-reached, 53 adapters.",
         "Before the fix the guard exits 1 against master-view.svg: \"publishes a port/adapter count without saying how many are actually reached\".",
         "node --test .harness/scripts/ci/45-validate-port-inventory-honesty.test.mjs -> 9/9, including four anti-vacuous fixtures (zero ports, unparseable deps, zero adapters, missing scan corpus).",
-        "Row evidence corrected: 17/49/9 as registered vs 19/53/11 measured; the diagnostic\u2019s \"two interaction adapters with no callers\" is six."
+        "Row evidence corrected: 17/49/9 as registered vs 19/53/11 measured; the diagnostic’s \"two interaction adapters with no callers\" is six."
       ],
       "dependencyDisposition": "none"
     },
@@ -8843,7 +8843,7 @@
         ".harness/scripts/ci/08-validate-tracking.test.mjs"
       ],
       "validationCommands": [
-        "08-validate-tracking.mjs -> \"Acceptance-criteria audit: 47 non-DONE GT row(s) checked against 605/605 EN/ES catalog sections \u2014 0 with no criteria at all.\" exit 0.",
+        "08-validate-tracking.mjs -> \"Acceptance-criteria audit: 47 non-DONE GT row(s) checked against 605/605 EN/ES catalog sections — 0 with no criteria at all.\" exit 0.",
         "It exited 1 on its first run against the real board, naming GT-435, GT-444 and GT-448; criteria were written for all three rather than exempting them.",
         "node --test .harness/scripts/ci/08-validate-tracking.test.mjs -> 17/17, including the negative fixture and the vacuity floor."
       ],
@@ -8891,7 +8891,7 @@
         "43-validate-guard-negative-fixtures OBSERVED it red: 36 of 36 guards turned red against the empty fixture. 42 reports 11 self-guarded, 39 scanning, 0 PENDING.",
         "core-domain 1367/1367, mcp-server 434/434, core-api 179/179, CLI unit 1436/1436, all four tsc projects clean.",
         "Wired into docs.yml, which backs the required Validate documentation check.",
-        "The guard's first CI run went RED with 8 paths that pass locally: dist/, .harness/evidence and the gitignored policy.wasm exist on a developer machine and in no clean checkout. As written it would have demanded build output be committed. Corrected to check ANCHORING, not existence \u2014 a missing segment may be generated, but its parent must be real \u2014 and re-verified against a tracked-files-only `git archive` export. Proven not to have blinded it: reintroducing the original P0 (`src/rulesets/opa/policy.wasm`) and the ADR straggler in that clean export turns it red again, because the failure is at `rulesets`, not at the generated leaf. node --test now 14/14."
+        "The guard's first CI run went RED with 8 paths that pass locally: dist/, .harness/evidence and the gitignored policy.wasm exist on a developer machine and in no clean checkout. As written it would have demanded build output be committed. Corrected to check ANCHORING, not existence — a missing segment may be generated, but its parent must be real — and re-verified against a tracked-files-only `git archive` export. Proven not to have blinded it: reintroducing the original P0 (`src/rulesets/opa/policy.wasm`) and the ADR straggler in that clean export turns it red again, because the failure is at `rulesets`, not at the generated leaf. node --test now 14/14."
       ],
       "dependencyDisposition": "none"
     },
@@ -9638,7 +9638,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "The persistent half \u2014 the evidence_edges table, its backfill and the depth-bounded endpoint \u2014 is owned by beyondnetcode/evolith_tracker, exactly as EVIDENCE_EDGE_STORAGE_CONTRACT declares. It landed there as PRs #89, #90 and #91 and is verified against a real Postgres 16. This record lists only files resolvable in THIS repository, per the standard; the satellite evidence is cited in the catalog section."
+      "dependencyRationale": "The persistent half — the evidence_edges table, its backfill and the depth-bounded endpoint — is owned by beyondnetcode/evolith_tracker, exactly as EVIDENCE_EDGE_STORAGE_CONTRACT declares. It landed there as PRs #89, #90 and #91 and is verified against a real Postgres 16. This record lists only files resolvable in THIS repository, per the standard; the satellite evidence is cited in the catalog section."
     },
     {
       "id": "GT-532",
@@ -9650,7 +9650,7 @@
       ],
       "note": "Closed on its two acceptance criteria, not on its title. The marketplace adapters the title names were never in the criteria and did not ship; they are registered as GT-651 so the closure does not bury them.",
       "dependencyDisposition": "accepted-scope",
-      "dependencyRationale": "The row's two acceptance criteria are met and its TITLE names a third element \u2014 marketplace-style adapters \u2014 that no criterion ever asked for and that did not ship. Closing on the criteria is the standard this board applies to epics ('an epic closes when its children do, never on its own narrative'), and the unshipped element is carved out as GT-651 rather than left implicit inside a DONE row. The implementing files live in beyondnetcode/evolith_tracker (PR #115); this record cites them with a repository prefix and the catalog section carries the reasoning. The implementing code is not resolvable here by design: every file lives in beyondnetcode/evolith_tracker (PR #115) \u2014 GovernancePackage.cs, the export/apply handlers, GovernancePackageEndpoints.cs and 13 tests \u2014 and the portfolio half is TowerMd3.tsx, which pre-existed. This record therefore cites only in-repository paths, as GT-605's does for the same reason.",
+      "dependencyRationale": "The row's two acceptance criteria are met and its TITLE names a third element — marketplace-style adapters — that no criterion ever asked for and that did not ship. Closing on the criteria is the standard this board applies to epics ('an epic closes when its children do, never on its own narrative'), and the unshipped element is carved out as GT-651 rather than left implicit inside a DONE row. The implementing files live in beyondnetcode/evolith_tracker (PR #115); this record cites them with a repository prefix and the catalog section carries the reasoning. The implementing code is not resolvable here by design: every file lives in beyondnetcode/evolith_tracker (PR #115) — GovernancePackage.cs, the export/apply handlers, GovernancePackageEndpoints.cs and 13 tests — and the portfolio half is TowerMd3.tsx, which pre-existed. This record therefore cites only in-repository paths, as GT-605's does for the same reason.",
       "validationCommands": [
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ]
@@ -9712,7 +9712,7 @@
         "gh api repos/beyondnetcode/evolith_arch32/branches/main/protection --jq '.required_status_checks.contexts'"
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "The licence dependency was removed rather than satisfied: only the gitleaks-action wrapper required an org licence, so installing the MIT binary closed the Dependabot blind spot without any secret. The remaining dependency was ordering \u2014 the required-context promotion had to follow a green run on both protected branches, or every open pull request would have deadlocked as in PR #218. Both runs are recorded (develop 30867424760, main 30868306980) and the promotion was read back from the API: 8 required contexts on each branch, up from 7, with enforce_admins true."
+      "dependencyRationale": "The licence dependency was removed rather than satisfied: only the gitleaks-action wrapper required an org licence, so installing the MIT binary closed the Dependabot blind spot without any secret. The remaining dependency was ordering — the required-context promotion had to follow a green run on both protected branches, or every open pull request would have deadlocked as in PR #218. Both runs are recorded (develop 30867424760, main 30868306980) and the promotion was read back from the API: 8 required contexts on each branch, up from 7, with enforce_admins true."
     },
     {
       "id": "GT-654",
@@ -9746,6 +9746,39 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Three of the four are bound and invoked on all three surfaces (executed 48 -> 51, invocations 66 -> 75). satellite-create stays unbound with its reason written in bindings.ts: it provisions a live GitHub repository and writes the local registry, so binding it as-is would have CI create real repositories on every run. It needs an undoable effect or a trustworthy dry-run and has neither, so uncoveredTriangleOps keeps listing it rather than the exemption being silent."
+    },
+    {
+      "id": "GT-622",
+      "closedAt": "2026-08-08",
+      "closureCommit": "88d278ee",
+      "evidence": [
+        "reference/core/control-center/gaps/gap-tracking.md",
+        "reference/core/control-center/gaps/gap-reference-catalog.md"
+      ],
+      "validationCommands": [
+        "gh api 'repos/beyondnetcode/evolith_arch32/code-scanning/analyses?ref=refs/heads/main&per_page=100' --paginate --jq '.[].analysis_key' | sort -u -> no '.github/workflows/ci.yml:codeql'; same for ref=refs/heads/develop. Both keys were present before (201 and 9).",
+        "gh pr checks 440 -> 'CodeQL  pass', and the check-run output title is 'No new alerts in code changed by this pull request', not '1 configuration not found'. PR #440 targets develop, which is the only base that still carried the warning.",
+        "gh api repos/beyondnetcode/evolith_arch32/branches/main/protection --jq '.required_status_checks.contexts' -> contains 'CodeQL SAST'; same for develop. The cleanup did not touch the scanning that works.",
+        "gh api 'repos/beyondnetcode/evolith_arch32/code-scanning/alerts?per_page=100' --paginate --jq '.[].state' | sort | uniq -c -> 242 open / 82 dismissed / 60 fixed, identical before and after the 210 deletions."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "22 analyses under the dead key are left on refs/pull/{4..17}/merge. Those are ephemeral per-PR refs from May 2026: they can never be the base of a pull request, so they cannot produce the missing-configuration warning this gap was opened for. Deleting them would buy no observable change and cost 22 more irreversible calls against code-scanning history. The exemption is recorded rather than silent, and the deletions that were performed were scoped to refs/heads/main and refs/heads/develop only."
+    },
+    {
+      "id": "GT-656",
+      "closedAt": "2026-08-08",
+      "closureCommit": "4ecd1ff0",
+      "evidence": [
+        ".harness/scripts/ci/49-validate-gap-id-allocation.mjs",
+        ".harness/scripts/ci/49-validate-gap-id-allocation.test.mjs",
+        "reference/core/control-center/gaps/gap-retitles.json"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/49-validate-gap-id-allocation.test.mjs",
+        "node .harness/scripts/ci/43-validate-guard-negative-fixtures.mjs"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The mechanism reads the ENGLISH catalog only, because that is the document the guard has always parsed and the id/title pair it protects lives there. A Spanish-only title change is therefore not covered, which is deliberate rather than overlooked: 04-check-bilingual-parity is the control for EN/ES divergence, and duplicating title comparison here would put two guards on one invariant. The declaration for GT-622 states the English titles; the Spanish title was corrected in the same change. The two branch comparisons that prove the retitle lands green (--base origin/main and --base origin/develop) are recorded in the catalog section as prose, NOT here: this registry is EXECUTED by 41-validate-evidence-commands, and a remote ref is not resolvable in the runner checkout — recording them here made the Governance guards job red, which is the correct verdict on an unrunnable command rather than a nuisance."
     }
   ]
 }

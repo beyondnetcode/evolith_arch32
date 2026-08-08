@@ -2,6 +2,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 
 // GT-578: this guard reads exactly one directory. If `process.cwd()` is not the
 // repository root — the shape that broke 12/21/31/33/34 in GT-556 — readdirSync
@@ -82,6 +83,34 @@ const explicitlyDeniedDirectories = new Map([
   ]
 ]);
 
+/**
+ * The subset of `names` that git ignores, as a Set.
+ *
+ * `git check-ignore --stdin` exits 0 when it ignored something, 1 when it
+ * ignored nothing, and 128 when it could not answer at all — a missing git, a
+ * directory that is not a work tree. Only the first two are answers. Anything
+ * else falls back to the EMPTY set, which is the strict reading: every entry
+ * stays under the taxonomy. The failure of an optional query must never widen
+ * what a guard forgives, and it says so out loud rather than degrading quietly.
+ */
+function gitIgnoredRootEntries(cwd, names) {
+  if (names.length === 0) return new Set();
+  try {
+    const out = execFileSync("git", ["check-ignore", "--stdin"], {
+      cwd, input: `${names.join("\n")}\n`, encoding: "utf8", stdio: ["pipe", "pipe", "ignore"],
+    });
+    return new Set(out.split("\n").map((l) => l.trim()).filter(Boolean));
+  } catch (error) {
+    // Exit 1 is the real answer "none of these are ignored", not a failure.
+    if (error.status === 1) return new Set();
+    console.warn(
+      `⚠️  Root Cleanliness: could not ask git which entries are ignored (${error.status ?? error.code}).\n` +
+      `   Continuing with NOTHING treated as ignored, so every root entry is checked.`,
+    );
+    return new Set();
+  }
+}
+
 const failures = [];
 
 const rootEntries = fs.readdirSync(root, { withFileTypes: true });
@@ -101,7 +130,35 @@ if (missingAnchors.length > 0) {
   process.exit(1);
 }
 
+// What git ignores is, by definition, not in the repository — and this guard
+// governs what the repository root HOLDS, not what an operating system leaves
+// lying in the directory. Before this, a single `.DS_Store` — written by Finder
+// merely for opening the folder, tracked by nothing, recreated the moment it is
+// deleted — failed the guard on a developer's machine while CI, which always
+// checks out fresh, never saw it. A guard that is red for a reason no commit can
+// fix is the failure mode GT-622 was opened to remove.
+//
+// This does NOT weaken the taxonomy: an unauthorized file that git does not
+// ignore still fails, which is every file a commit could actually introduce.
+const ignoredNames = gitIgnoredRootEntries(root, rootEntries.map((e) => e.name));
+
+// Paranoia in the direction that matters. This set SUBTRACTS from what is
+// checked, so a bogus answer from git would hollow the guard out silently. The
+// anchors are tracked by construction, so an answer claiming they are ignored is
+// not an unusual repository — it is a broken query, and must stop the run.
+const ignoredAnchors = ANCHORS.filter((a) => ignoredNames.has(a));
+if (ignoredAnchors.length > 0) {
+  console.error(
+    `❌ Root Cleanliness Validation cannot run: git reports ${ignoredAnchors.join(", ")} as ignored.\n` +
+    `These are tracked by construction, so the ignore query is wrong, and trusting it would\n` +
+    `subtract real entries from the check and report a pass over them.`,
+  );
+  process.exit(1);
+}
+
 for (const entry of rootEntries) {
+  // Ignored by git: not in the repository, so not this guard's business.
+  if (ignoredNames.has(entry.name)) continue;
   // `.git` is only in `allowedDirectories`, which is correct in a normal
   // checkout but not in a `git worktree`: there, `.git` at the root is a
   // plain text file (`gitdir: <path>`) redirecting to the real one, so it
@@ -135,4 +192,7 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log(`✓ Root Cleanliness Validation Passed (${rootEntries.length} root entr(ies) inspected)`);
+console.log(
+  `✓ Root Cleanliness Validation Passed (${rootEntries.length} root entr(ies) read, ` +
+  `${ignoredNames.size} ignored by git, ${rootEntries.length - ignoredNames.size} checked against the taxonomy)`,
+);

@@ -1,0 +1,11 @@
+{
+  "retitles": [
+    {
+      "id": "GT-622",
+      "from": "Eighty-two orphaned code-scanning analyses keep every PR warning about a configuration that died in June",
+      "to": "Two hundred and ten orphaned code-scanning analyses keep PRs into `develop` warning about a configuration that died in June",
+      "declaredAt": "2026-08-08",
+      "reason": "Re-measured twice and wrong both times in the headline: 210 orphaned analyses, not 82, and the base still carrying the warning is `develop` alone, not every PR. The evidence field was corrected on 2026-08-01 and 2026-08-08; the title could not be, because this guard had no way to tell a retitle from a collision. GT-656 is that mechanism, and this is its first use."
+    }
+  ]
+}

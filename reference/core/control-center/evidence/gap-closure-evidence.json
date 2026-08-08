@@ -9763,6 +9763,23 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "22 analyses under the dead key are left on refs/pull/{4..17}/merge. Those are ephemeral per-PR refs from May 2026: they can never be the base of a pull request, so they cannot produce the missing-configuration warning this gap was opened for. Deleting them would buy no observable change and cost 22 more irreversible calls against code-scanning history. The exemption is recorded rather than silent, and the deletions that were performed were scoped to refs/heads/main and refs/heads/develop only."
+    },
+    {
+      "id": "GT-656",
+      "closedAt": "2026-08-08",
+      "closureCommit": "4ecd1ff0",
+      "evidence": [
+        ".harness/scripts/ci/49-validate-gap-id-allocation.mjs",
+        ".harness/scripts/ci/49-validate-gap-id-allocation.test.mjs",
+        "reference/core/control-center/gaps/gap-retitles.json"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/49-validate-gap-id-allocation.test.mjs",
+        "node .harness/scripts/ci/49-validate-gap-id-allocation.mjs --base origin/main",
+        "node .harness/scripts/ci/49-validate-gap-id-allocation.mjs --base origin/develop"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The mechanism reads the ENGLISH catalog only, because that is the document the guard has always parsed and the id/title pair it protects lives there. A Spanish-only title change is therefore not covered, which is deliberate rather than overlooked: 04-check-bilingual-parity is the control for EN/ES divergence, and duplicating title comparison here would put two guards on one invariant. The declaration for GT-622 states the English titles; the Spanish title was corrected in the same change."
     }
   ]
 }

@@ -36,6 +36,38 @@
  * sides is either a collision or a deliberate retitle, and both deserve a human
  * looking at them.
  *
+ * ## GT-656 — declaring a retitle, because forbidding one was worse
+ *
+ * The first version had no way to say "this is a retitle, not a collision", so a
+ * required check turned red on any title change and the practical effect was that
+ * titles became IMMUTABLE. That is a real cost, not a theoretical one: `GT-622`
+ * was re-measured twice (82 -> 201 -> 210 analyses, and the branch it affects
+ * turned out to be `develop`, not `main`) while its headline went on saying
+ * "Eighty-two ... every PR", because correcting it would have blocked the PR. A
+ * board whose whole purpose is not lying accumulated rows whose first line lies.
+ *
+ * The fix is NOT to soften the check. It is to make the human judgement the guard
+ * was deferring to into DATA, so the guard can read it:
+ *
+ *   reference/core/control-center/gaps/gap-retitles.json
+ *   { "retitles": [ { id, from, to, declaredAt, reason } ] }
+ *
+ * A collision is exempt only if a declaration names the id and reproduces BOTH
+ * titles exactly. That exactness is the whole design: it cannot be written as a
+ * blanket "GT-622 may be retitled", so a genuine collision that later lands on the
+ * same id still fails, because its titles are not the two that were declared.
+ *
+ * Declarations are themselves checked, because an exemption registry that rots
+ * silently is a worse defect than the one it fixes:
+ *
+ *   - active — reproduces a live collision            -> exempts it
+ *   - spent  — the retitle has reached the base branch -> reported, not fatal
+ *   - rot    — describes NEITHER side                  -> FAILS
+ *
+ * and a registry that exists but cannot be parsed is a hard failure, never an
+ * empty list. "Stopped seeing anything and started reporting a pass" is the
+ * failure mode this corpus keeps finding; it must not be introduced here.
+ *
  * ## Anti-vacuous pass
  *
  * Zero ids parsed on either side is a hard failure: a moved file or a reshaped
@@ -64,6 +96,13 @@ const REPO_ROOT = path.resolve(__dirname, '../../..');
 
 /** The catalog is where a row's title lives; the board carries prose, not a title. */
 export const CATALOG = 'reference/core/control-center/gaps/gap-reference-catalog.md';
+
+/**
+ * GT-656: where a deliberate retitle is declared, read from HEAD because the
+ * declaration lands with the change it describes. Absent file = no exemptions,
+ * which is the strict reading; an UNPARSEABLE file is a failure, not an empty one.
+ */
+export const RETITLES = 'reference/core/control-center/gaps/gap-retitles.json';
 
 /**
  * The base to compare against, in the order CI and a laptop actually mean it.
@@ -123,6 +162,82 @@ export function newlyAllocated(base, head) {
   return [...head.keys()].filter((id) => !base.has(id)).sort();
 }
 
+/**
+ * GT-656: validate the shape of a retitle declaration.
+ *
+ * Every field is load-bearing. `from`/`to` are what make the exemption specific
+ * to two exact titles rather than to an id; `reason` is the human judgement the
+ * guard is deferring to, and a declaration without one is an unexplained
+ * exemption, which is what this registry must never become.
+ *
+ * @param {unknown} entry
+ * @param {number} index
+ * @returns {string[]} problems, empty when the entry is well-formed
+ */
+export function validateRetitle(entry, index) {
+  const at = `retitles[${index}]`;
+  if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return [`${at} is not an object`];
+  const problems = [];
+  if (!/^GT-\d+$/.test(entry.id ?? '')) problems.push(`${at}.id is not a GT id: ${JSON.stringify(entry.id)}`);
+  for (const field of ['from', 'to', 'reason']) {
+    if (typeof entry[field] !== 'string' || entry[field].trim() === '') {
+      problems.push(`${at}.${field} must be a non-empty string`);
+    }
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.declaredAt ?? '')) {
+    problems.push(`${at}.declaredAt must be YYYY-MM-DD`);
+  }
+  if (typeof entry.from === 'string' && entry.from === entry.to) {
+    problems.push(`${at} declares a retitle from a title to itself, which exempts nothing`);
+  }
+  return problems;
+}
+
+/**
+ * GT-656: classify declarations against what the two branches actually say, and
+ * report which collisions they exempt.
+ *
+ * A declaration is `active` only when it reproduces BOTH sides of a live
+ * collision exactly. `spent` means the retitle already reached the base branch,
+ * so there is nothing left to exempt — reported so the pile is visible, but not
+ * fatal, because failing there would block every unrelated pull request. `rot`
+ * describes neither side and is fatal: an exemption that no longer matches
+ * reality is how a registry starts laundering things it was never shown.
+ *
+ * @param {Array<{id:string,from:string,to:string}>} declarations
+ * @param {Map<string,string>} baseTitles
+ * @param {Map<string,string>} headTitles
+ * @param {Array<{id:string,baseTitle:string,headTitle:string}>} collisions
+ */
+export function classifyRetitles(declarations, baseTitles, headTitles, collisions) {
+  const byKey = new Map(collisions.map((c) => [`${c.id} ${c.baseTitle} ${c.headTitle}`, c]));
+  const active = [];
+  const spent = [];
+  const rot = [];
+
+  for (const d of declarations) {
+    const collision = byKey.get(`${d.id} ${d.from} ${d.to}`);
+    if (collision) {
+      active.push(d);
+      continue;
+    }
+    // Already merged into the base: both sides now carry the new title.
+    if (baseTitles.get(d.id) === d.to && headTitles.get(d.id) === d.to) {
+      spent.push(d);
+      continue;
+    }
+    rot.push({
+      ...d,
+      baseTitle: baseTitles.get(d.id) ?? '(id absent from base)',
+      headTitle: headTitles.get(d.id) ?? '(id absent from HEAD)',
+    });
+  }
+
+  const exempted = new Set(active.map((d) => `${d.id} ${d.from} ${d.to}`));
+  const unexplained = collisions.filter((c) => !exempted.has(`${c.id} ${c.baseTitle} ${c.headTitle}`));
+  return { active, spent, rot, unexplained };
+}
+
 // ---------------------------------------------------------------------------
 // I/O edges
 // ---------------------------------------------------------------------------
@@ -131,6 +246,49 @@ function fail(lines) {
   console.error(`\n✗ ${GUARD}: ${lines[0]}`);
   for (const l of lines.slice(1)) console.error(`  ${l}`);
   process.exit(1);
+}
+
+/**
+ * GT-656: read the declared retitles from HEAD.
+ *
+ * Absent is legitimate and means "no exemptions". Present-but-unreadable is NOT:
+ * a registry that fails to parse must stop the run, because the alternative is a
+ * guard that silently starts exempting nothing while reporting a pass — or, once
+ * someone corrects the parse error, silently exempting everything it names.
+ */
+function readRetitles(root) {
+  const file = path.join(root, RETITLES);
+  if (!fs.existsSync(file)) return [];
+
+  let parsed;
+  try {
+    parsed = JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch (error) {
+    fail([
+      `${RETITLES} exists but is not valid JSON: ${error.message}`,
+      'An exemption registry that cannot be read must stop the run. Treating it as',
+      'empty would report a pass over a file nobody could check.',
+    ]);
+  }
+
+  if (!Array.isArray(parsed?.retitles)) {
+    fail([
+      `${RETITLES} has no \`retitles\` array.`,
+      'Expected: { "retitles": [ { id, from, to, declaredAt, reason } ] }',
+    ]);
+  }
+
+  const problems = parsed.retitles.flatMap((entry, i) => validateRetitle(entry, i));
+  if (problems.length) {
+    fail([
+      `${problems.length} malformed retitle declaration(s) in ${RETITLES}:`,
+      ...problems.map((p) => `  • ${p}`),
+      '',
+      '  Every field is load-bearing: `from`/`to` scope the exemption to two exact',
+      '  titles instead of to an id, and `reason` is the judgement being deferred to.',
+    ]);
+  }
+  return parsed.retitles;
 }
 
 function readAtRef(root, ref, file) {
@@ -186,6 +344,10 @@ function main(argv) {
 
   const collisions = findIdCollisions(baseTitles, headTitles);
   const fresh = newlyAllocated(baseTitles, headTitles);
+  const declarations = readRetitles(root);
+  const { active, spent, rot, unexplained } = classifyRetitles(
+    declarations, baseTitles, headTitles, collisions,
+  );
 
   console.log(`${GUARD} — one gap id, one gap`);
   console.log(`  base ................ ${base}`);
@@ -193,15 +355,38 @@ function main(argv) {
   console.log(`  ids on HEAD ......... ${headTitles.size}`);
   console.log(`  newly allocated ..... ${fresh.length}${fresh.length ? ` (${fresh.join(', ')})` : ''}`);
   console.log(`  collisions .......... ${collisions.length}`);
+  console.log(`  declared retitles ... ${active.length} active, ${spent.length} spent, ${rot.length} rot`);
 
   if (verbose && fresh.length) {
     for (const id of fresh) console.log(`  · ${id} is new here — check it against every OTHER open branch, not just this base`);
   }
+  // Never silent: an exemption that nobody sees is indistinguishable from a hole.
+  for (const d of active) console.log(`  · ${d.id} retitled by declaration (${d.declaredAt}): ${d.reason}`);
+  if (verbose) {
+    for (const d of spent) console.log(`  · ${d.id} declaration is SPENT — the retitle reached ${base}; drop it from ${RETITLES}`);
+  }
 
-  if (collisions.length > 0) {
+  if (rot.length > 0) {
     fail([
-      `${collisions.length} gap id(s) name a DIFFERENT gap on each side:`,
-      ...collisions.flatMap((c) => [
+      `${rot.length} retitle declaration(s) describe neither side of the catalog:`,
+      ...rot.flatMap((d) => [
+        `  • ${d.id} declared ${JSON.stringify(d.from)} -> ${JSON.stringify(d.to)}`,
+        `      on ${base}: ${d.baseTitle}`,
+        `      on HEAD:    ${d.headTitle}`,
+      ]),
+      '',
+      '  A declaration must reproduce BOTH titles exactly, or it exempts something',
+      '  nobody described. Fix the two strings, or delete the entry if the retitle',
+      '  it covered is long merged.',
+      '',
+      `  Registry: ${RETITLES}`,
+    ]);
+  }
+
+  if (unexplained.length > 0) {
+    fail([
+      `${unexplained.length} gap id(s) name a DIFFERENT gap on each side:`,
+      ...unexplained.flatMap((c) => [
         `  • ${c.id}`,
         `      on ${base}: ${c.baseTitle}`,
         `      on HEAD:    ${c.headTitle}`,
@@ -210,8 +395,16 @@ function main(argv) {
       '  Two sessions allocated the same number, or a row was retitled. If it is a',
       '  collision, renumber the NEWER row and update every place the id appears:',
       '  the board row, the catalog anchor, the closure-evidence record and the',
-      '  cross-references in BOTH languages. If it is a deliberate retitle, say so',
-      '  in the commit — this guard cannot tell the two apart, and should not guess.',
+      '  cross-references in BOTH languages. If it is a deliberate retitle, declare',
+      '  it — this guard cannot tell the two apart, and should not guess:',
+      '',
+      `    ${RETITLES}`,
+      '    { "retitles": [ { "id": "GT-NNN", "from": "<exact title on base>",',
+      '                      "to": "<exact title on HEAD>", "declaredAt": "YYYY-MM-DD",',
+      '                      "reason": "why the old title was wrong" } ] }',
+      '',
+      '  Both titles must match exactly, so the exemption covers this retitle and',
+      '  not the id — a real collision landing on the same number still fails.',
       '',
       '  Allocate a new id from the UNION of ids across branches, never the maximum',
       '  on one:',
@@ -220,7 +413,8 @@ function main(argv) {
     ]);
   }
 
-  console.log(`\n✓ ${GUARD}: every one of ${headTitles.size} id(s) names the same gap it names on ${base}.`);
+  const exempted = active.length ? `, ${active.length} retitle(s) declared and matched exactly` : '';
+  console.log(`\n✓ ${GUARD}: every one of ${headTitles.size} id(s) names the same gap it names on ${base}${exempted}.`);
   return 0;
 }
 

@@ -1,0 +1,22 @@
+{
+  "$comment": "GT-657. A high/critical advisory belongs here ONLY when no upstream fix exists and no `overrides` entry can reach it. Both conditions must be measured before an entry is added, and `noUpstreamFix` must record what was actually checked, not what was assumed. 63-validate-npm-audit-gate fails when an entry stops matching a real advisory, so an exception cannot outlive the hole it excuses.",
+  "exceptions": [
+    {
+      "id": "GHSA-pm4m-ph32-ghv5",
+      "package": "js-yaml",
+      "path": "node_modules/@nestjs/swagger/node_modules/js-yaml",
+      "declaredAt": "2026-08-08",
+      "noUpstreamFix": "Every published @nestjs/swagger release pins js-yaml to an EXACT version and all three are vulnerable: 11.4.4 -> 4.1.1 and 11.4.5 -> 4.3.0 (CVE-2026-59870, vulnerable 4.0.0-4.3.0), 11.4.6 -> 5.2.1 (this advisory, vulnerable 5.0.0-5.2.1). 11.4.6 is the latest stable; 12.0.0 exists only as alpha. npm overrides do not rewrite that nested exact spec, measured four ways: a top-level `js-yaml` override, a scoped `@nestjs/swagger: { js-yaml }` override, both with the unrelated nested override objects removed to test whether they blocked the cascade (they did not), and through `npm install --package-lock-only` as well as a real `npm install`. Every route produced the same tree.",
+      "reason": "The advisory is a denial of service in js-yaml's parser, triggered by parsing adversarial YAML. @nestjs/swagger uses js-yaml to SERIALISE the OpenAPI document this service generates from its own decorators; core-api never parses caller-supplied YAML through it. The exposure is a parser this repository never points at untrusted input. This is an acceptance of a specific hole with a known shape, not of the package: the moment @nestjs/swagger ships a patched pin, this entry stops matching and the gate turns red asking for its removal.",
+      "doNotRevertTheSwaggerBump": "Trivy reports this as a NEW high alert on any PR that changes package-lock.json, because the advisory id at that position changed. It is not a regression and reverting @nestjs/swagger 11.4.6 -> 11.4.4 makes things WORSE, measured: 11.4.4 pins js-yaml 4.1.1, which carries THREE advisories (GHSA-52cp-r559-cp3m HIGH, GHSA-5p4m-2wfm-xmqj HIGH, GHSA-h67p-54hq-rp68 moderate), while 11.4.6 pins 5.2.1, which carries ONE. The bump removes two high advisories and leaves one. This note exists because the revert was attempted during GT-657 on a first reading of Trivy's output and had to be undone; npm's row count and Trivy's per-PR 'new alerts' view can both make the better tree look like the worse one."
+    },
+    {
+      "id": "via:js-yaml",
+      "package": "@nestjs/swagger",
+      "path": "node_modules/@nestjs/swagger",
+      "declaredAt": "2026-08-08",
+      "noUpstreamFix": "Not an advisory against @nestjs/swagger itself. npm reports the parent separately as `depends on vulnerable versions of js-yaml`, so it clears exactly when GHSA-pm4m-ph32-ghv5 above clears, and never independently.",
+      "reason": "The derived half of the row above. Declared separately because npm reports it as its own high-severity row, and an exception that silently swallowed the parent would hide a future advisory that genuinely lands on @nestjs/swagger itself."
+    }
+  ]
+}

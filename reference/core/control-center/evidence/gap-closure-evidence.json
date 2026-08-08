@@ -9796,6 +9796,20 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "GHSA-pm4m-ph32-ghv5 in js-yaml, reached through @nestjs/swagger, is accepted rather than fixed because no fix exists to apply: all three published swagger releases pin js-yaml exactly and all three pin a vulnerable version (11.4.4 -> 4.1.1, 11.4.5 -> 4.3.0, 11.4.6 -> 5.2.1), and npm overrides do not rewrite that nested exact spec — measured through a top-level override, a scoped override, both with the unrelated nested override objects removed, and through --package-lock-only as well as a real npm install. The acceptance is recorded in .harness/config/npm-audit-exceptions.json against the advisory AND its path, and 63-validate-npm-audit-gate fails the day it stops matching a real advisory, so it cannot outlive the hole it excuses. The three moderate advisories stay below the unchanged HIGH threshold and are untouched."
+    },
+    {
+      "id": "GT-658",
+      "closedAt": "2026-08-08",
+      "closureCommit": "8511e17c",
+      "evidence": [
+        ".harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "validationCommands": [
+        "node --check .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The renderer stays an npx invocation rather than a lockfile dependency, pinned but not declared. Declaring @mermaid-js/mermaid-cli as a devDependency is the fuller fix -- it would put the renderer under npm audit and Dependabot and make npm ci fail loudly on the partial install that caused this -- but it drags Puppeteer and a Chromium download into every npm ci, for every developer, to render diagrams only CI renders. That trade is recorded as a separate decision rather than taken as a side effect of a bug fix. The happy path was NOT verified locally and this is stated rather than implied: mermaid-cli exits 1 with empty stdout and stderr on this machine, which has no usable Chromium; the corpus render is exercised by the Evolith Core Validation job on the runner, where it has been green on PRs 440, 441 and 442."
     }
   ]
 }

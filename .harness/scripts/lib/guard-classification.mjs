@@ -41,6 +41,18 @@ export const CALLS_COVERAGE = /\b(?:assertScanned|assertScannedPerSource|scanned
  */
 export const SELF_GUARDED = [
   {
+    file: '63-validate-npm-audit-gate.mjs',
+    proof: /denominator is unknown/,
+    reason:
+      'GT-657 npm-audit gate; its denominator is the audit report itself, so the two ways it ' +
+      'could pass over nothing are both hard failures: `npm audit --json` that produces no ' +
+      'output or does not parse ("the audit failing to RUN must never read as the audit finding ' +
+      'nothing"), and a report carrying no `metadata.vulnerabilities`, whose shape has moved and ' +
+      'whose denominator is therefore unknown. It also fails in the OTHER direction, which a ' +
+      'scan count cannot express: a declared exception that no longer matches any advisory is ' +
+      'stale and red, so the exception list cannot outlive the hole it excuses',
+  },
+  {
     file: '50-validate-gap-claim.mjs',
     proof: /could not read the open pull requests/,
     reason:

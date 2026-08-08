@@ -9779,6 +9779,23 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The mechanism reads the ENGLISH catalog only, because that is the document the guard has always parsed and the id/title pair it protects lives there. A Spanish-only title change is therefore not covered, which is deliberate rather than overlooked: 04-check-bilingual-parity is the control for EN/ES divergence, and duplicating title comparison here would put two guards on one invariant. The declaration for GT-622 states the English titles; the Spanish title was corrected in the same change. The two branch comparisons that prove the retitle lands green (--base origin/main and --base origin/develop) are recorded in the catalog section as prose, NOT here: this registry is EXECUTED by 41-validate-evidence-commands, and a remote ref is not resolvable in the runner checkout — recording them here made the Governance guards job red, which is the correct verdict on an unrunnable command rather than a nuisance."
+    },
+    {
+      "id": "GT-657",
+      "closedAt": "2026-08-08",
+      "closureCommit": "1fc9ea5b",
+      "evidence": [
+        ".harness/scripts/ci/63-validate-npm-audit-gate.mjs",
+        ".harness/scripts/ci/63-validate-npm-audit-gate.test.mjs",
+        ".harness/config/npm-audit-exceptions.json",
+        "package.json"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/63-validate-npm-audit-gate.test.mjs",
+        "node .harness/scripts/ci/63-validate-npm-audit-gate.mjs --verbose"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "GHSA-pm4m-ph32-ghv5 in js-yaml, reached through @nestjs/swagger, is accepted rather than fixed because no fix exists to apply: all three published swagger releases pin js-yaml exactly and all three pin a vulnerable version (11.4.4 -> 4.1.1, 11.4.5 -> 4.3.0, 11.4.6 -> 5.2.1), and npm overrides do not rewrite that nested exact spec — measured through a top-level override, a scoped override, both with the unrelated nested override objects removed, and through --package-lock-only as well as a real npm install. The acceptance is recorded in .harness/config/npm-audit-exceptions.json against the advisory AND its path, and 63-validate-npm-audit-gate fails the day it stops matching a real advisory, so it cannot outlive the hole it excuses. The three moderate advisories stay below the unchanged HIGH threshold and are untouched."
     }
   ]
 }

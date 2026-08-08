@@ -107,7 +107,11 @@ jobs:
         run: npm ci
 
       - name: Security Vulnerability Audit
-        working-directory: ${{ env.CLI_DIR }}
+        # GT-657: runs from the repository root, not ${{ env.CLI_DIR }}. The scope
+        # is identical — one root lockfile, audited whole — but the gate reads
+        # .harness/config/npm-audit-exceptions.json, and a guard should be invoked
+        # from the tree it is reasoning about rather than resolve its way out of a
+        # workspace directory.
         # Scope, made explicit (GT-568): there is a single root lockfile, so this
         # audits the ENTIRE monorepo dependency tree — every workspace's prod and
         # dev deps — not just the CLI's. That is deliberate: it is stricter than a
@@ -117,7 +121,25 @@ jobs:
         # patched version with a targeted `overrides` entry in the root
         # package.json (see js-yaml / brace-expansion / protobufjs) rather than
         # regenerating package-lock.json wholesale.
-        run: npm audit --audit-level=high
+        #
+        # GT-657: that advice has a third case it could not express — an advisory
+        # a targeted override CANNOT reach, because the consumer pins its
+        # dependency EXACTLY and every published release of it pins a vulnerable
+        # one. `npm audit --audit-level=high` then leaves the job permanently red,
+        # which is the failure mode GT-622 was opened to remove: a check that is
+        # always red trains reviewers to discount red, and the next real advisory
+        # arrives into a job nobody reads. The gate below keeps the same threshold
+        # and adds exactly one thing — such an advisory must be NAMED, with the
+        # path it arrives by and what was checked upstream, and the guard turns red
+        # again the day the exception stops matching a real advisory.
+        run: node .harness/scripts/ci/63-validate-npm-audit-gate.mjs --verbose
+
+      - name: The audit gate's own fixtures
+        # A gate whose exception list can swallow anything is a green button. These
+        # fixtures are what say it cannot: an undeclared advisory is red, a
+        # declaration for a different path or id covers nothing, and a declaration
+        # whose advisory is gone fails as stale.
+        run: node --test .harness/scripts/ci/63-validate-npm-audit-gate.test.mjs
 
   # ============================================
   # JOB 3: Lint and Type Check

@@ -377,6 +377,90 @@ function getChangedMarkdownFilesForRendering() {
   return null;
 }
 
+// GT-658: pinned on purpose. `npx -y @mermaid-js/mermaid-cli` without a version
+// resolves `@latest` at the instant CI runs, so what executes is decided by
+// whoever published most recently and by nothing in this repository. Bump this
+// deliberately, in a commit, the way every other pinned tool here is bumped.
+const MERMAID_CLI = "@mermaid-js/mermaid-cli@11.16.0";
+
+/** The npx invocation, in one place so the preflight and the render cannot drift apart. */
+function mermaidArgs(input, output) {
+  return ["-y", MERMAID_CLI, "-i", input, "-o", output, "-b", "transparent",
+    "-p", path.join(root, ".harness/scripts/puppeteer-config.json")];
+}
+
+/**
+ * GT-658: render one trivial diagram before rendering the corpus.
+ *
+ * On 2026-08-08 the npx install of mermaid-cli came out INCOMPLETE on a runner —
+ * `Cannot find package 'import-meta-resolve'`, which the package does declare, so
+ * the tree was half-written rather than the publish being bad. Every one of the
+ * 371 diagrams then failed, each reported as "mermaid render failed" against a
+ * document whose diagram was perfectly fine, and the job burned 23 minutes
+ * arriving at 371 wrong accusations.
+ *
+ * The diagram corpus and the renderer are two different things and only one of
+ * them can be broken by a commit. This asks which one FIRST, so a broken renderer
+ * costs one honest failure instead of 371 misleading ones.
+ *
+ * @returns {Promise<string|null>} an error message when the renderer cannot run
+ */
+function preflightMermaidRenderer(outputDirectory) {
+  return new Promise((resolve) => {
+    const input = path.join(outputDirectory, "000-preflight.mmd");
+    const output = path.join(outputDirectory, "000-preflight.svg");
+    // The smallest diagram that still exercises parse -> layout -> SVG.
+    fs.writeFileSync(input, "graph TD\n  A[preflight] --> B[ok]\n", "utf8");
+
+    const child = spawn("npx", mermaidArgs(input, output), { encoding: "utf8" });
+    let stderr = "";
+    let stdout = "";
+    let settled = false;
+
+    const done = (message) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(message);
+    };
+
+    // Generous: this is the invocation that pays for the install and, on a cold
+    // runner, for the Chromium download too.
+    const timer = setTimeout(() => {
+      child.kill("SIGKILL");
+      done(`the renderer did not finish a trivial diagram within 180s (${MERMAID_CLI})`);
+    }, 180000);
+
+    child.stdout?.on("data", (c) => { stdout += c.toString(); });
+    child.stderr?.on("data", (c) => { stderr += c.toString(); });
+    child.on("error", (error) => done(`the renderer could not be started: ${error.message}`));
+    child.on("close", (status) => {
+      if (status !== 0) {
+        // mermaid-cli can exit non-zero having written NOTHING to either stream —
+        // observed on a machine without a usable Chromium. The first version of
+        // this preflight interpolated an empty string and produced "exited 1 on a
+        // trivial diagram: ", which is the same uninformative-message defect this
+        // whole guard change exists to remove. Say that it was silent, and give
+        // the command back so the reader can run it themselves.
+        const detail = (stderr || stdout).trim();
+        done(
+          `the renderer exited ${status} on a trivial diagram` +
+          (detail ? `: ${detail.slice(0, 600)}` : ' and printed NOTHING to stdout or stderr' +
+            ' (a browser it cannot launch usually fails this way). Reproduce with:\n' +
+            `     npx -y ${MERMAID_CLI} -i <file>.mmd -o out.svg -b transparent -p .harness/scripts/puppeteer-config.json`),
+        );
+        return;
+      }
+      // Exit 0 is not proof: a renderer that writes nothing has not rendered.
+      if (!fs.existsSync(output) || fs.statSync(output).size === 0) {
+        done(`the renderer exited 0 but produced no SVG for a trivial diagram (${MERMAID_CLI})`);
+        return;
+      }
+      done(null);
+    });
+  });
+}
+
 function renderMermaidBlock(block, outputDirectory, index) {
   return new Promise((resolve) => {
     const basename = `${String(index + 1).padStart(3, "0")}-${path
@@ -387,11 +471,7 @@ function renderMermaidBlock(block, outputDirectory, index) {
 
     fs.writeFileSync(input, `${block.body}\n`, "utf8");
 
-    const child = spawn(
-      "npx",
-      ["-y", "@mermaid-js/mermaid-cli", "-i", input, "-o", output, "-b", "transparent", "-p", path.join(root, ".harness/scripts/puppeteer-config.json")],
-      { encoding: "utf8" },
-    );
+    const child = spawn("npx", mermaidArgs(input, output), { encoding: "utf8" });
 
     let stdout = "";
     let stderr = "";
@@ -450,6 +530,22 @@ async function renderMermaidBlocks() {
   const blocksToRender = changedMarkdownFiles
     ? mermaidBlocks.filter((block) => changedMarkdownFiles.has(path.resolve(block.file)))
     : mermaidBlocks;
+  if (blocksToRender.length === 0) {
+    return;
+  }
+
+  // GT-658: ask whether the RENDERER works before asking whether 371 diagrams do.
+  const rendererError = await preflightMermaidRenderer(outputDirectory);
+  if (rendererError) {
+    console.error(
+      `\n❌ Mermaid rendering did not run: ${rendererError}\n` +
+      `   ${blocksToRender.length} diagram(s) were NOT checked, and none of them is implicated —\n` +
+      `   this is the renderer, not the corpus. Nothing in this repository can fix it by\n` +
+      `   editing a diagram; re-run, or bump the pin in ${path.relative(root, ".harness/scripts/ci/01-validate-docs.mjs")}.\n`,
+    );
+    process.exit(1);
+  }
+
   const concurrency = Math.max(4, Math.min(os.cpus().length, 16));
   const workers = [];
 

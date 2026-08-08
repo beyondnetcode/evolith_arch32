@@ -9775,11 +9775,10 @@
       ],
       "validationCommands": [
         "node --test .harness/scripts/ci/49-validate-gap-id-allocation.test.mjs",
-        "node .harness/scripts/ci/49-validate-gap-id-allocation.mjs --base origin/main",
-        "node .harness/scripts/ci/49-validate-gap-id-allocation.mjs --base origin/develop"
+        "node .harness/scripts/ci/43-validate-guard-negative-fixtures.mjs"
       ],
       "dependencyDisposition": "accepted-scope",
-      "dependencyRationale": "The mechanism reads the ENGLISH catalog only, because that is the document the guard has always parsed and the id/title pair it protects lives there. A Spanish-only title change is therefore not covered, which is deliberate rather than overlooked: 04-check-bilingual-parity is the control for EN/ES divergence, and duplicating title comparison here would put two guards on one invariant. The declaration for GT-622 states the English titles; the Spanish title was corrected in the same change."
+      "dependencyRationale": "The mechanism reads the ENGLISH catalog only, because that is the document the guard has always parsed and the id/title pair it protects lives there. A Spanish-only title change is therefore not covered, which is deliberate rather than overlooked: 04-check-bilingual-parity is the control for EN/ES divergence, and duplicating title comparison here would put two guards on one invariant. The declaration for GT-622 states the English titles; the Spanish title was corrected in the same change. The two branch comparisons that prove the retitle lands green (--base origin/main and --base origin/develop) are recorded in the catalog section as prose, NOT here: this registry is EXECUTED by 41-validate-evidence-commands, and a remote ref is not resolvable in the runner checkout — recording them here made the Governance guards job red, which is the correct verdict on an unrunnable command rather than a nuisance."
     }
   ]
 }

@@ -279,6 +279,35 @@ Bajo la declaración umbrella, la punta de lanza comercial y open-source es más
 
 Se usa la declaración **umbrella** (§11) para la visión de plataforma e inversores; la declaración del **wedge** para la entrada al mercado, la demo y la comunidad open-source.
 
+### 11.2 Perfil de Cliente Ideal (ICP)
+
+Hasta el 2026-08-09 este documento nombraba categorías, competidores y declaraciones, y **nunca nombró un comprador**. Una auditoría lo midió: **cero** apariciones de un ICP en 929 documentos en inglés. Dos declaraciones pueden ser ambas ciertas y aun así dejar toda pregunta de roadmap sin respuesta, porque «qué construimos después» no tiene respuesta sin «para quién».
+
+> **ICP: la fábrica de software o integrador de sistemas que entrega a clientes regulados — un proveedor, varios SDLC de clientes, cada uno auditable por separado.**
+
+**Por qué este y no uno más amplio.** La evidencia es la forma del propio producto. El Tracker —el vehículo de monetización, decidido el 2026-08-03— es multi-tenant con un `GovernancePackage` por tenant y una suite explícita de tests de aislamiento (`GovernancePackageIsolationTests.cs`), más localización por tenant persistida y con test de ida y vuelta (`TenantLocalizationRoundTripTests.cs`). Nadie construye empaquetado de gobernanza por tenant con tests de aislamiento para un comprador de una sola empresa. **La arquitectura ya responde «varios clientes, gobernados por separado»**, que es el problema de una fábrica y de nadie más.
+
+**La línea de presupuesto.** No es «mejor arquitectura» —eso no tiene partida en ningún lado. Es **el costo de demostrar cumplimiento de la entrega, una vez por cliente, en cada encargo**: el paquete de evidencia de que una entrega siguió las prácticas que ese cliente exige. Hoy una fábrica lo produce a mano, por cliente, por auditoría, y el costo escala con el número de clientes en vez de con la cantidad de software.
+
+**Qué puede evaluar realmente el motor para ese comprador hoy** —dicho con precisión, porque un documento de posicionamiento que exagera el motor es peor que uno que no nombra comprador:
+
+| estándar | estado | qué puede reclamar una fábrica con eso |
+|---|---|---|
+| **NIST SP 800-218 (SSDF) v1.1** | **8 prácticas como reglas del motor**, con handler nativo detrás | el único estándar que Evolith evalúa de punta a punta |
+| **OpenSSF Scorecard** | corre semanalmente contra un repositorio, con ratchet armado | un puntaje, producido por el binario **externo** — no por Evolith |
+| **ISO/IEC 5055:2021** | **solo mapeo** (`iso-5055-mapping.json`), sin pack de reglas | nada todavía; el mapeo es el insumo para construirlo |
+| **SLSA** | no implementado | nada todavía |
+
+Cuatro prácticas SSDF cuya evidencia es un *ajuste* del repositorio y no un fichero están declaradas en el bloque `notEvaluableHere` del pack en vez de adivinadas. **Un veredicto verde sobre un control que nadie revisó es peor que no tener regla**, y ese principio es justo lo que un comprador de compliance está pagando.
+
+**Qué decide este ICP.** Es un filtro, y su valor está en lo que descarta:
+
+- **Qué estándar sigue** — aquel contra el que auditan a los clientes de la fábrica, no el que resulte más interesante de implementar. Con la evidencia de hoy ese orden empieza por completar ISO/IEC 5055 desde su mapeo existente.
+- **Qué contiene un `GovernancePackage` el día uno** — el mecanismo existe y nunca se le ha dicho qué llevar dentro.
+- **Qué frase se usa** — *«gobierno tu arquitectura»* no tiene línea de presupuesto en ninguna empresa. *«Evalúo tu entrega contra el estándar que exige el auditor de tu cliente, por cliente, con evidencia»* sí la tiene.
+
+**Qué NO se afirma aquí.** Este ICP está **elegido, no validado**: se deriva de la arquitectura del propio producto y de la decisión del dueño sobre el vehículo de monetización, sin design partner, sin entrevista y sin trato cerrado detrás. Es un filtro de decisiones que ahora puede ser refutado — que es estrictamente más que la nada que reemplaza, y estrictamente menos que evidencia.
+
 ---
 
 ## 12. Implicancias para el Roadmap

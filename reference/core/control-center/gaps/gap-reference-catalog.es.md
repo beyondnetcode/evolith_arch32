@@ -8575,3 +8575,33 @@ La lección es la del propio tablero y esta vez la pagó quien medía: un `conta
 **El criterio 3 se cumple por construcción: no se desarmó nada.** El reporte ganó un campo; la corrida no perdió una regla. Verificado en vez de afirmado — un spec fija que el default sigue evaluando el corpus completo.
 
 
+#### GT-662
+
+**Title:** ISO/IEC 5055 como una medición que Evolith sí puede hacer — CWE→medida, desde los analizadores que el tenant ya corre
+
+- **Purpose:** Convertir el siguiente estándar que nombró `GT-600` en algo que el motor mide, sin fingir que posee un parser de código.
+- **Evidence:** `GT-600` dejó registrado que el estándar que sigue a SSDF es el que audita al ICP, y con la evidencia de hoy ese es ISO/IEC 5055 — el único ISO **automatizado por construcción**: nombra **138 debilidades estructurales, cada una un CWE**, en cuatro medidas. El corpus ya envía `iso-5055-weaknesses.json` (los 138 ids) y `iso-5055-mapping.json` (404 filas, una por regla existente), y ninguno es un *check*: `strength` es `none` en **367 de 404** reglas y `direct` en 8. **Un handler nativo no puede cerrar ese hueco** — recibe un filesystem y ningún parser, así que no puede decidir «este switch no tiene default». Escribir 138 reglas que nada puede ejecutar no es un primer paso prudente; `GT-585` midió lo que eso produce aquí: **78 de 96 resultados bloqueantes eran reglas que no podían correr**.
+- **Impact:** Sin esto, ISO/IEC 5055 se queda en una hoja de cálculo. Con esto, cada analizador gratuito que un tenant ya corre se convierte en una medición de estándar — que es exactamente lo que paga el ICP de la §11.2 del posicionamiento.
+- **Affected files:** `src/packages/core-domain/src/application/validators/standards/iso-5055-measure.ts`
+- **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** L
+- **Principal:** `L` · **Interest:** `MED` · **Basis:** `estimate`
+- **Acceptance criteria:**
+  - [x] Un mapeo puro CWE→medida ISO/IEC 5055, construido desde el índice ENVIADO y no desde un fixture, que reporta su propio tamaño para que un índice que no cargó nunca se lea como cumplimiento.
+  - [x] Los CWE se extraen de donde los ponen los productores reales — la **regla** SARIF en CodeQL, el **resultado** en semgrep — y cada grafía que esas herramientas emiten parsea al mismo número.
+  - [x] Verificado contra los hallazgos REALES de CodeQL de este repositorio, no contra un log sintético.
+  - [ ] Un pack `iso-5055.rules.json` cuyas reglas lleven descriptores `enforce:` enrutados a un adaptador SARIF, con un bloque `notEvaluableHere` para lo que ningún analizador gratuito decide.
+  - [ ] El pack aparece en `evolith rulesets` y es seleccionable por tenant como cualquier otro.
+- **Status:** `EN-PROGRESO` (2026-08-09)
+
+**REBANADA 1 ENTREGADA el 2026-08-09 — la capa de traducción, medida contra la realidad.**
+
+**La cadena, sin escribir un parser:** `analizador libre → SARIF → CWE → debilidad 5055 → medida`. Ya existen cuatro adaptadores de enforcer (dependency-cruiser, import-linter, netarchtest, sarif-security) y este repositorio ya corre CodeQL, así que la pieza que faltaba nunca fue la herramienta — era que nada traducía un CWE a una medida.
+
+**Medido sobre los hallazgos vivos de CodeQL de este repositorio:** de **75** alertas abiertas, **62** llevan un CWE y **34 son debilidades que ISO/IEC 5055 nombra** — diez distintas (22, 23, 36, 78, 79, 88, 99, 434, 570, 571), puntuando **34 en Security** y **2 en Maintainability**. Esa es una medición ISO real de este repositorio, producida por un escáner que ya estaba corriendo y no costó nada.
+
+**Una restricción encontrada midiendo y no suponiendo, y decide de dónde debe leer el adaptador.** El SARIF de `code-scanning/analyses/{id}` de GitHub sirve `tool.driver` con **solo `name` y `semanticVersion`** — sin array `rules[]`, y el `rule` de cada resultado es una referencia por índice (`{"index": 142}`) a un array que no se sirve. Contra ese endpoint el mapeo encuentra **0 de 75**. Los CWE están en la API de **alerts** (`rule.tags` → `external/cwe/cwe-079`) y en el SARIF que CodeQL sube. Un diseño que hubiera dado por hecho el endpoint de analyses habría enviado un cero permanente y silencioso — indistinguible de un repositorio limpio.
+
+**Por qué el parser acepta varias grafías y no es relleno defensivo.** CodeQL emite `external/cwe/cwe-079` (con ceros, en la REGLA); semgrep emite `CWE-79: …` (en el RESULTADO); algunos productores emiten un número pelado. Cada una está verificada. Un parser que manejara una sola puntuaría un repositorio en cero contra las otras dos, lo que se lee exactamente como un repositorio limpio.
+
+**Lo que la rebanada 1 deliberadamente NO hace:** puntuar, ni descartar hallazgos fuera de alcance. Un conteo de debilidades no es un veredicto de cumplimiento, y la puntuación del estándar es una decisión de política que pertenece al ruleset que el tenant seleccione. Los hallazgos cuyos CWE el estándar no nombra se devuelven con medidas vacías en vez de descartarse, porque «este escaneo no encontró nada que a ISO 5055 le importe» y «este escaneo no encontró nada» son reportes distintos y solo uno habla del código.
+

@@ -101,11 +101,32 @@ describe('ISO/IEC 5055 pack + adapter · GT-662 slice 2', () => {
       runs: [{ tool: { driver: { name: 'semgrep' } }, results: [{ ruleId: 'style', properties: { cwe: ['CWE-352'] } }] }],
     });
     expect(index.measuresFor(352)).toEqual([]); // checked, not assumed
-    expect(iso5055ViolationsFromSarif(log, index)).toEqual([]);
+    // GT-663: no MEASURE violation is produced. What comes back instead is the
+    // single coverage advisory below — because a run that found nothing is
+    // exactly when a reader needs the denominator.
+    const out = iso5055ViolationsFromSarif(log, index);
+    expect(out.filter((v) => v.severity !== 'warning')).toEqual([]);
   });
 
-  it('a clean scan is an empty result, not an error', () => {
-    expect(iso5055ViolationsFromSarif(JSON.stringify({ runs: [{ tool: { driver: { name: 'semgrep' } }, results: [] }] }), index)).toEqual([]);
+  it('GT-663: a clean scan returns the DENOMINATOR, not silence', () => {
+    // It used to return `[]`, and `[]` reads as "nothing wrong" whether the
+    // analyser looks for all 138 weaknesses or for none of them. One advisory,
+    // once, naming the floor as a floor.
+    const out = iso5055ViolationsFromSarif(
+      JSON.stringify({ runs: [{ tool: { driver: { name: 'semgrep' } }, results: [] }] }),
+      index,
+    );
+    expect(out).toHaveLength(1);
+    expect(out[0].severity).toBe('warning');
+    expect(out[0].message).toContain('0 of the 138');
+    expect(out[0].message).toContain('FLOOR');
+  });
+
+  it('GT-663: when there ARE findings the caveat is NOT repeated per finding', () => {
+    // Repeating it would train a reader to skip it, and they already have
+    // something concrete to act on.
+    const out = iso5055ViolationsFromSarif(codeqlLog, index);
+    expect(out.filter((v) => v.severity === 'warning')).toHaveLength(0);
   });
 
   it('AN INDEX THAT DID NOT LOAD THROWS — it never reports zero weaknesses', () => {

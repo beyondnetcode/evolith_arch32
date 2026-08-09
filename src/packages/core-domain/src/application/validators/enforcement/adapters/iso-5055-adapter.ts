@@ -8,7 +8,13 @@ import {
   type Iso5055Index,
   type Iso5055Measure,
 } from '../../standards/iso-5055-measure';
-import WEAKNESS_INDEX from '../../../../../../../rulesets/standards/iso-5055-weaknesses.json';
+// GT-662 — COMPILED IN, not read from the corpus at runtime. The first cut
+// required the JSON by relative path, which resolves in this repository and
+// NOT in the shipped image (the Dockerfile copies `src/rulesets` to
+// `/app/corpus/rulesets`), so core-api died at boot with MODULE_NOT_FOUND.
+// The chaos drill found it: /health never answered, and from outside a
+// crash-loop is indistinguishable from a slow boot.
+import { ISO_5055_WEAKNESS_INDEX } from '../../standards/iso-5055-index.generated';
 
 /**
  * GT-662 slice 2 — the adapter that turns a free scanner into an ISO/IEC 5055
@@ -145,7 +151,7 @@ export function iso5055ViolationsFromSarif(log: string, index: Iso5055Index): Vi
  *   - `semgrepConfig` — override for `--config` (default {@link DEFAULT_SEMGREP_CONFIG}).
  */
 export function createIso5055Adapter(runner: IProcessRunner): ShellEnforcerAdapter {
-  const index = buildIso5055Index(WEAKNESS_INDEX);
+  const index = buildIso5055Index(ISO_5055_WEAKNESS_INDEX);
 
   const config: ShellEnforcerConfig = {
     tool: ISO_5055_TOOL,

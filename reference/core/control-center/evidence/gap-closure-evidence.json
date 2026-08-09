@@ -9893,7 +9893,7 @@
     {
       "id": "GT-662",
       "closedAt": "2026-08-09",
-      "closureCommit": "6ca1e991",
+      "closureCommit": "fa30ffde",
       "evidence": [
         "src/rulesets/standards/iso-5055.rules.json",
         "src/packages/core-domain/src/application/validators/standards/iso-5055-measure.ts",

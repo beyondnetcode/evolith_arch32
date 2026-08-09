@@ -11,6 +11,25 @@ export interface ProfileConfig {
   satellite?: string;
   tenant?: string;
   initiative?: string;
+  /**
+   * GT-661 — the ruleset refs THIS TENANT has adopted.
+   *
+   * The principle the Core is built to: **the Core PROPOSES; the Tracker, CLI
+   * and MCP configure and select.** Until this field existed the CLI could only
+   * pass a selection somebody typed on the command line, which is not
+   * configuration — it is a flag a person has to remember on every invocation,
+   * and one they will eventually forget on the run that mattered.
+   *
+   * `--select` still wins when given: an explicit argument is a deliberate act
+   * and must be able to override a stored default, including to widen it.
+   * Absent from both, the Core evaluates its whole corpus and SAYS SO
+   * (`selection.source: 'core-default'`) — the default is not changed here,
+   * because a default that stopped blocking would silently disarm every gate
+   * working today.
+   *
+   * Read `evolith rulesets` for the refs this Core accepts.
+   */
+  select?: string[];
 }
 
 export interface EvolithConfig {

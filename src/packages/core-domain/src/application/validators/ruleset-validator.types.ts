@@ -130,12 +130,60 @@ export interface ValidationResult {
   /** GT-595 AC2 — blocking rules that did not run. Non-empty ⇒ `status: 'failed'`. */
   blockingSkippedRuleIds?: string[];
   perRuleset?: RulesetCoverageRatio[];
+  /**
+   * GT-661 — WHY these rules were evaluated, not just how many.
+   *
+   * The verdict was previously silent about its own scope, so a caller could not
+   * tell «this blocked because I asked for this pack» from «this blocked because
+   * the Core evaluated everything it has». Measured on the Evolith Core
+   * repository, no selection yields **85 blocking issues of 113** — every one of
+   * them from a rule the caller never chose. A report that cannot express that
+   * distinction cannot support the principle it is supposed to serve: the Core
+   * PROPOSES, and the client configures and selects.
+   *
+   * Optional for the same additive reason as the GT-569 counters;
+   * `RulesetValidatorService.validate` always populates it.
+   */
+  selection?: SelectionReport;
   issues: ValidationIssue[];
   coreRef: {
     version: string | null;
     path: string | null;
   };
   timestamp: string;
+}
+
+/**
+ * GT-661 — the scope of a verdict, stated rather than inferred.
+ *
+ * `source` is the field the row exists for. `core-default` means the caller
+ * named nothing and received the Core's PROPOSAL: the whole corpus, blocking
+ * rules included. It is not an imposition — the Core has no tenant
+ * configuration to consult and refuses to guess one — but a reader must be able
+ * to see that the scope was chosen by default rather than requested, because a
+ * failure under `core-default` and a failure under `caller` mean different
+ * things to whoever has to act on it.
+ */
+export interface SelectionReport {
+  /** `caller` when refs were supplied; `core-default` when none were. */
+  source: 'caller' | 'core-default';
+  /** Refs the caller named, deduplicated and trimmed. Empty under `core-default`. */
+  requested: string[];
+  /** Of `requested`, those that matched at least one rule. */
+  matched: string[];
+  /**
+   * Of `requested`, those that matched NOTHING.
+   *
+   * Non-empty ⇒ the validator emitted a blocking `SEL-01`. Published separately
+   * so a consumer can act on it without parsing issue text: zero rules evaluated
+   * with zero violations is indistinguishable from a clean repository, and this
+   * is the field that tells them apart.
+   */
+  unmatched: string[];
+  /** Rules the selection admitted, before applicability filtering. */
+  rulesSelected: number;
+  /** Rules in the corpus. Under `core-default`, equal to `rulesSelected`. */
+  corpusTotal: number;
 }
 
 export interface ValidationIssue {

@@ -93,7 +93,7 @@ Command: `evolith-cli validate`
 | `-o, --output [string]` | Ruta para guardar el reporte JSON |
 | `-s, --satellite [path]` | Ruta al repositorio satélite (default: cwd) |
 | `-c, --core [path]` | Ruta al repositorio Evolith Core (default: auto-detect) |
-| `--select <ref>` | Evaluar SOLO el/los ruleset(s) indicados, por el id que publica el catalogo  |
+| `--select <ref>` | Evaluar SOLO el/los ruleset(s) indicados, por el ref que publica  |
 | `-r, --ruleset [id]` | Validar ruleset específico (adr-0002, acl, open-core, inheritance, cli-release, cli-parity, evidence, mcp, observability) |
 | `-a, --arch` | Validar arquitectura sobre todo el eje progresivo (equivale a las tres topologías progresivas) |
 | `-t, --topology [id]` | Topología canónica a validar (repetible): modular-monolith, distributed-modules,  |
@@ -155,6 +155,14 @@ Response shape (captured live):
     "rulesNotApplicable": "<number>",
     "rulesSkipped": "<number>",
     "rulesTotal": "<number>",
+    "selection": {
+      "corpusTotal": "<number>",
+      "matched": [],
+      "requested": [],
+      "rulesSelected": "<number>",
+      "source": "<string>",
+      "unmatched": []
+    },
     "skippedRuleIds": [
       "<string>"
     ],
@@ -243,6 +251,14 @@ Response shape (captured live):
     "rulesNotApplicable": "<number>",
     "rulesSkipped": "<number>",
     "rulesTotal": "<number>",
+    "selection": {
+      "corpusTotal": "<number>",
+      "matched": [],
+      "requested": [],
+      "rulesSelected": "<number>",
+      "source": "<string>",
+      "unmatched": []
+    },
     "skippedRuleIds": [
       "<string>"
     ],
@@ -326,6 +342,14 @@ Response shape (captured live):
     "rulesNotApplicable": "<number>",
     "rulesSkipped": "<number>",
     "rulesTotal": "<number>",
+    "selection": {
+      "corpusTotal": "<number>",
+      "matched": [],
+      "requested": [],
+      "rulesSelected": "<number>",
+      "source": "<string>",
+      "unmatched": []
+    },
     "skippedRuleIds": [
       "<string>"
     ],
@@ -359,7 +383,7 @@ Command: `evolith-cli validate --composable`
 | `-o, --output [string]` | Ruta para guardar el reporte JSON |
 | `-s, --satellite [path]` | Ruta al repositorio satélite (default: cwd) |
 | `-c, --core [path]` | Ruta al repositorio Evolith Core (default: auto-detect) |
-| `--select <ref>` | Evaluar SOLO el/los ruleset(s) indicados, por el id que publica el catalogo  |
+| `--select <ref>` | Evaluar SOLO el/los ruleset(s) indicados, por el ref que publica  |
 | `-r, --ruleset [id]` | Validar ruleset específico (adr-0002, acl, open-core, inheritance, cli-release, cli-parity, evidence, mcp, observability) |
 | `-a, --arch` | Validar arquitectura sobre todo el eje progresivo (equivale a las tres topologías progresivas) |
 | `-t, --topology [id]` | Topología canónica a validar (repetible): modular-monolith, distributed-modules,  |

@@ -40,44 +40,43 @@ evolith-cli gate evaluate --phase discovery --project /abs/path/to/your-satellit
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
+    "evaluatedAt": "<timestamp>",
+    "evaluatedBy": "ci",
     "gateId": "business-sign-off",
     "phase": "discovery",
-    "verdict": "failed",
     "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
     "rulesetVersion": "2.0.0",
+    "verdict": "failed",
     "violations": [
       {
-        "ruleId": "PG-1-EVIDENCE-prd",
-        "severity": "error",
         "location": "PRD",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
+        "ruleId": "PG-1-EVIDENCE-prd",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
-        "severity": "error",
         "location": "Discovery Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
+        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
-        "severity": "error",
         "location": "Technical Feasibility Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
+        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
-        "severity": "error",
         "location": "Ballpark Estimation",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md",
+        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-moscow-prioritization-matrix",
-        "severity": "error",
         "location": "MoSCoW Prioritization Matrix",
-        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.
-  … (truncated)
+        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.json",
+  … (truncated, 23 more line(s))
 ```
 
 #### MCP
@@ -109,44 +108,43 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
+    "evaluatedAt": "<timestamp>",
+    "evaluatedBy": "ci",
     "gateId": "business-sign-off",
     "phase": "discovery",
-    "verdict": "failed",
     "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
     "rulesetVersion": "2.0.0",
+    "verdict": "failed",
     "violations": [
       {
-        "ruleId": "PG-1-EVIDENCE-prd",
-        "severity": "error",
         "location": "PRD",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
+        "ruleId": "PG-1-EVIDENCE-prd",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
-        "severity": "error",
         "location": "Discovery Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
+        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
-        "severity": "error",
         "location": "Technical Feasibility Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
+        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
-        "severity": "error",
         "location": "Ballpark Estimation",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md",
+        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-moscow-prioritization-matrix",
-        "severity": "error",
         "location": "MoSCoW Prioritization Matrix",
-        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.
-  … (truncated)
+        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.json",
+  … (truncated, 25 more line(s))
 ```
 
 #### REST
@@ -165,44 +163,43 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
+    "evaluatedAt": "<timestamp>",
+    "evaluatedBy": "ci",
     "gateId": "business-sign-off",
     "phase": "discovery",
-    "verdict": "failed",
     "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
     "rulesetVersion": "2.0.0",
+    "verdict": "failed",
     "violations": [
       {
-        "ruleId": "PG-1-EVIDENCE-prd",
-        "severity": "error",
         "location": "PRD",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
+        "ruleId": "PG-1-EVIDENCE-prd",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
-        "severity": "error",
         "location": "Discovery Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
+        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
-        "severity": "error",
         "location": "Technical Feasibility Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
+        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
-        "severity": "error",
         "location": "Ballpark Estimation",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md",
+        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-moscow-prioritization-matrix",
-        "severity": "error",
         "location": "MoSCoW Prioritization Matrix",
-        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.
-  … (truncated)
+        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.json",
+  … (truncated, 20 more line(s))
 ```
 
 ---
@@ -221,46 +218,43 @@ evolith-cli phase advance --from discovery --to design --satellite /abs/path/to/
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "fromPhase": "discovery",
-    "toPhase": "design",
     "evidence": {
+      "evaluatedAt": "<timestamp>",
+      "evaluatedBy": "ci",
       "gateId": "business-sign-off",
       "phase": "discovery",
-      "verdict": "failed",
       "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
       "rulesetVersion": "2.0.0",
+      "verdict": "failed",
       "violations": [
         {
-          "ruleId": "PG-1-EVIDENCE-prd",
-          "severity": "error",
           "location": "PRD",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
+          "ruleId": "PG-1-EVIDENCE-prd",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-discovery-canvas",
-          "severity": "error",
           "location": "Discovery Canvas",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
+          "ruleId": "PG-1-EVIDENCE-discovery-canvas",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
-          "severity": "error",
           "location": "Technical Feasibility Canvas",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
+          "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
-          "severity": "error",
           "location": "Ballpark Estimation",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md",
+          "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-moscow-prioritization-matrix",
-          "severity": "error",
-     
-  … (truncated)
+          "location": "MoSCoW Prioritization Matrix",
+  … (truncated, 26 more line(s))
 ```
 
 #### MCP
@@ -291,46 +285,43 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "fromPhase": "discovery",
-    "toPhase": "design",
     "evidence": {
+      "evaluatedAt": "<timestamp>",
+      "evaluatedBy": "ci",
       "gateId": "business-sign-off",
       "phase": "discovery",
-      "verdict": "failed",
       "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
       "rulesetVersion": "2.0.0",
+      "verdict": "failed",
       "violations": [
         {
-          "ruleId": "PG-1-EVIDENCE-prd",
-          "severity": "error",
           "location": "PRD",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
+          "ruleId": "PG-1-EVIDENCE-prd",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-discovery-canvas",
-          "severity": "error",
           "location": "Discovery Canvas",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
+          "ruleId": "PG-1-EVIDENCE-discovery-canvas",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
-          "severity": "error",
           "location": "Technical Feasibility Canvas",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
+          "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
-          "severity": "error",
           "location": "Ballpark Estimation",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md",
+          "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-moscow-prioritization-matrix",
-          "severity": "error",
-     
-  … (truncated)
+          "location": "MoSCoW Prioritization Matrix",
+  … (truncated, 28 more line(s))
 ```
 
 #### REST
@@ -351,25 +342,25 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "success": false,
-    "from": "discovery",
-    "to": "design",
-    "gateResults": [],
-    "executedTools": [],
-    "warnings": [],
     "errors": [
       "Invalid phase transition: discovery → design. Must be a valid transition."
-    ]
+    ],
+    "executedTools": [],
+    "from": "discovery",
+    "gateResults": [],
+    "success": false,
+    "to": "design",
+    "warnings": []
   },
   "meta": {
     "command": "evolith phase transition",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
     "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
     "schemaVersion": "1.0.0"
-  }
+  },
+  "success": true
 }
 ```
 
@@ -395,50 +386,48 @@ evolith-cli sdlc gate-status --since 90 --core /abs/path/to/evolith-core --forma
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
+    "doraMetrics": null,
     "gateStatus": {
       "currentPhase": 0,
-      "gatesPassed": 0,
       "gatesFailed": 1,
+      "gatesPassed": 0,
       "gatesPending": 4,
       "results": [
         {
-          "gateId": "PG-1",
-          "phase": 1,
-          "name": "Business Sign-Off",
-          "passed": false,
+          "accountableRole": "Product Owner",
+          "blockingChecks": [],
+          "canonicalGateId": "gate-f1",
           "evidenceResults": [
             {
               "artifact": "PRD",
-              "passed": false,
               "found": false,
+              "passed": false,
+              "required": true,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
-              "required": true
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
             },
             {
               "artifact": "Discovery Canvas",
-              "passed": false,
               "found": false,
+              "passed": false,
+              "required": true,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
-              "required": true
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
             },
             {
               "artifact": "Technical Feasibility Canvas",
-              "passed": false,
               "found": false,
+              "passed": false,
+              "required": true,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
-              "required": true
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
             },
             {
               "artifact": "Ballpark Estimation",
-              "passed": false,
               "found": false,
-              "s
-  … (truncated)
+              "passed": false,
+  … (truncated, 270 more line(s))
 ```
 
 #### MCP
@@ -462,20 +451,20 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
     "error": true,
     "message": "Not a git repository"
   },
   "meta": {
-    "correlationId": "<uuid>",
     "command": "evolith-dora-metrics",
-    "tool": "evolith-dora-metrics",
+    "correlationId": "<uuid>",
     "durationMs": 0,
     "executedAt": "<timestamp>",
+    "schemaVersion": "1.0.0",
     "timestamp": "<timestamp>",
-    "schemaVersion": "1.0.0"
-  }
+    "tool": "evolith-dora-metrics"
+  },
+  "success": true
 }
 ```
 
@@ -507,27 +496,27 @@ evolith-cli drift --path /abs/path/to/your-satellite --format json
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "projectId": "your-satellite",
     "declaredLevel": "F1",
     "detectedLevel": "F1",
     "driftDetected": true,
     "driftSeverity": "medium",
+    "historyPath": "/abs/path/to/your-satellite/.evolith/drift-history.json",
     "newViolations": "<newViolations[]>",
-    "resolvedViolations": "<resolvedViolations[]>",
-    "persistentViolations": "<persistentViolations[]>",
     "overallScore": 100,
-    "timestamp": "<timestamp>",
-    "historyPath": "/abs/path/to/your-satellite/.evolith/drift-history.json"
+    "persistentViolations": "<persistentViolations[]>",
+    "projectId": "your-satellite",
+    "resolvedViolations": "<resolvedViolations[]>",
+    "timestamp": "<timestamp>"
   },
   "meta": {
     "command": "evolith drift detect",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
     "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
     "schemaVersion": "1.0.0"
-  }
+  },
+  "success": true
 }
 ```
 
@@ -552,20 +541,20 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
     "error": true,
     "message": "Failed to detect drift: IFileSystem is required"
   },
   "meta": {
-    "correlationId": "<uuid>",
     "command": "evolith-drift-detect",
-    "tool": "evolith-drift-detect",
+    "correlationId": "<uuid>",
     "durationMs": 0,
     "executedAt": "<timestamp>",
+    "schemaVersion": "1.0.0",
     "timestamp": "<timestamp>",
-    "schemaVersion": "1.0.0"
-  }
+    "tool": "evolith-drift-detect"
+  },
+  "success": true
 }
 ```
 
@@ -589,28 +578,28 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "projectId": "your-satellite",
     "declaredLevel": "F1",
     "detectedLevel": "F1",
     "driftDetected": true,
     "driftSeverity": "critical",
+    "historyPath": "/abs/path/to/your-satellite/.evolith/drift-history.json",
     "newViolations": "<newViolations[]>",
-    "resolvedViolations": "<resolvedViolations[]>",
-    "persistentViolations": "<persistentViolations[]>",
     "overallScore": 45,
-    "timestamp": "<timestamp>",
-    "historyPath": "/abs/path/to/your-satellite/.evolith/drift-history.json"
+    "persistentViolations": "<persistentViolations[]>",
+    "projectId": "your-satellite",
+    "resolvedViolations": "<resolvedViolations[]>",
+    "timestamp": "<timestamp>"
   },
   "meta": {
     "command": "http POST /api/v1/architecture/detect-drift",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
     "context": {},
+    "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
     "schemaVersion": "1.0.0"
-  }
+  },
+  "success": true
 }
 ```
 
@@ -639,20 +628,20 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
+    "service": "Evolith Core API",
     "status": "OK",
-    "timestamp": "<timestamp>",
-    "service": "Evolith Core API"
+    "timestamp": "<timestamp>"
   },
   "meta": {
     "command": "http GET /health",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
     "context": {},
+    "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
     "schemaVersion": "1.0.0"
-  }
+  },
+  "success": true
 }
 ```
 

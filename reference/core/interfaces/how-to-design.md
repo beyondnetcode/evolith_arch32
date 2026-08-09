@@ -43,33 +43,33 @@ evolith-cli topology recommend --signals {"teamCount":4,"deploymentIndependence"
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "recommended": [
-      "distributed-modules",
-      "event-driven"
-    ],
     "composition": "distributed-modules + event-driven",
     "rationale": [
       {
-        "topology": "distributed-modules",
+        "reason": "Modules need independent CI/CD lifecycles and explicit versioned contracts (DM rules), without the operational cost of full microservices.",
         "ruleId": "REC-DISTRIBUTED-MODULES",
-        "reason": "Modules need independent CI/CD lifecycles and explicit versioned contracts (DM rules), without the operational cost of full microservices."
+        "topology": "distributed-modules"
       },
       {
-        "topology": "event-driven",
+        "reason": "Asynchronous, decoupled integration across modules/services with versioned event contracts.",
         "ruleId": "REC-EVENT-DRIVEN",
-        "reason": "Asynchronous, decoupled integration across modules/services with versioned event contracts."
+        "topology": "event-driven"
       }
+    ],
+    "recommended": [
+      "distributed-modules",
+      "event-driven"
     ]
   },
   "meta": {
     "command": "evolith topology recommend",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
     "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
     "schemaVersion": "1.0.0"
-  }
+  },
+  "success": true
 }
 ```
 
@@ -98,45 +98,45 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "success": true,
     "data": {
-      "recommended": [
-        "distributed-modules",
-        "event-driven"
-      ],
       "composition": "distributed-modules + event-driven",
       "rationale": [
         {
-          "topology": "distributed-modules",
+          "reason": "Modules need independent CI/CD lifecycles and explicit versioned contracts (DM rules), without the operational cost of full microservices.",
           "ruleId": "REC-DISTRIBUTED-MODULES",
-          "reason": "Modules need independent CI/CD lifecycles and explicit versioned contracts (DM rules), without the operational cost of full microservices."
+          "topology": "distributed-modules"
         },
         {
-          "topology": "event-driven",
+          "reason": "Asynchronous, decoupled integration across modules/services with versioned event contracts.",
           "ruleId": "REC-EVENT-DRIVEN",
-          "reason": "Asynchronous, decoupled integration across modules/services with versioned event contracts."
+          "topology": "event-driven"
         }
+      ],
+      "recommended": [
+        "distributed-modules",
+        "event-driven"
       ]
     },
     "meta": {
       "command": "evolith-topology-recommend",
-      "executedAt": "<timestamp>",
-      "durationMs": 0,
       "correlationId": "<uuid>",
+      "durationMs": 0,
+      "executedAt": "<timestamp>",
       "schemaVersion": "1.0.0"
-    }
+    },
+    "success": true
   },
   "meta": {
-    "correlationId": "<uuid>",
     "command": "evolith-topology-recommend",
-    "tool": "evolith-topology-recommend",
+    "correlationId": "<uuid>",
     "durationMs": 0,
     "executedAt": "<timestamp>",
+    "schemaVersion": "1.0.0",
     "timestamp": "<timestamp>",
-    "schemaVersion": "1.0.0"
-  }
+    "tool": "evolith-topology-recommend"
+  },
+  "success": true
 }
 ```
 
@@ -163,34 +163,34 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "recommended": [
-      "distributed-modules",
-      "event-driven"
-    ],
     "composition": "distributed-modules + event-driven",
     "rationale": [
       {
-        "topology": "distributed-modules",
+        "reason": "Modules need independent CI/CD lifecycles and explicit versioned contracts (DM rules), without the operational cost of full microservices.",
         "ruleId": "REC-DISTRIBUTED-MODULES",
-        "reason": "Modules need independent CI/CD lifecycles and explicit versioned contracts (DM rules), without the operational cost of full microservices."
+        "topology": "distributed-modules"
       },
       {
-        "topology": "event-driven",
+        "reason": "Asynchronous, decoupled integration across modules/services with versioned event contracts.",
         "ruleId": "REC-EVENT-DRIVEN",
-        "reason": "Asynchronous, decoupled integration across modules/services with versioned event contracts."
+        "topology": "event-driven"
       }
+    ],
+    "recommended": [
+      "distributed-modules",
+      "event-driven"
     ]
   },
   "meta": {
     "command": "http POST /api/v1/architecture/recommend-topology",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
     "context": {},
+    "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
     "schemaVersion": "1.0.0"
-  }
+  },
+  "success": true
 }
 ```
 
@@ -223,20 +223,20 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
     "error": true,
     "message": "Topology not found: monolithic-layered"
   },
   "meta": {
-    "correlationId": "<uuid>",
     "command": "evolith-topology-get",
-    "tool": "evolith-topology-get",
+    "correlationId": "<uuid>",
     "durationMs": 0,
     "executedAt": "<timestamp>",
+    "schemaVersion": "1.0.0",
     "timestamp": "<timestamp>",
-    "schemaVersion": "1.0.0"
-  }
+    "tool": "evolith-topology-get"
+  },
+  "success": true
 }
 ```
 
@@ -273,44 +273,43 @@ evolith-cli gate evaluate --phase discovery --project /abs/path/to/your-satellit
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
+    "evaluatedAt": "<timestamp>",
+    "evaluatedBy": "ci",
     "gateId": "business-sign-off",
     "phase": "discovery",
-    "verdict": "failed",
     "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
     "rulesetVersion": "2.0.0",
+    "verdict": "failed",
     "violations": [
       {
-        "ruleId": "PG-1-EVIDENCE-prd",
-        "severity": "error",
         "location": "PRD",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
+        "ruleId": "PG-1-EVIDENCE-prd",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
-        "severity": "error",
         "location": "Discovery Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
+        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
-        "severity": "error",
         "location": "Technical Feasibility Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
+        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
-        "severity": "error",
         "location": "Ballpark Estimation",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md",
+        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-moscow-prioritization-matrix",
-        "severity": "error",
         "location": "MoSCoW Prioritization Matrix",
-        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.
-  … (truncated)
+        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.json",
+  … (truncated, 23 more line(s))
 ```
 
 #### MCP
@@ -342,44 +341,43 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
+    "evaluatedAt": "<timestamp>",
+    "evaluatedBy": "ci",
     "gateId": "business-sign-off",
     "phase": "discovery",
-    "verdict": "failed",
     "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
     "rulesetVersion": "2.0.0",
+    "verdict": "failed",
     "violations": [
       {
-        "ruleId": "PG-1-EVIDENCE-prd",
-        "severity": "error",
         "location": "PRD",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
+        "ruleId": "PG-1-EVIDENCE-prd",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
-        "severity": "error",
         "location": "Discovery Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
+        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
-        "severity": "error",
         "location": "Technical Feasibility Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
+        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
-        "severity": "error",
         "location": "Ballpark Estimation",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md",
+        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-moscow-prioritization-matrix",
-        "severity": "error",
         "location": "MoSCoW Prioritization Matrix",
-        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.
-  … (truncated)
+        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.json",
+  … (truncated, 25 more line(s))
 ```
 
 #### REST
@@ -398,44 +396,43 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
+    "evaluatedAt": "<timestamp>",
+    "evaluatedBy": "ci",
     "gateId": "business-sign-off",
     "phase": "discovery",
-    "verdict": "failed",
     "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
     "rulesetVersion": "2.0.0",
+    "verdict": "failed",
     "violations": [
       {
-        "ruleId": "PG-1-EVIDENCE-prd",
-        "severity": "error",
         "location": "PRD",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
+        "ruleId": "PG-1-EVIDENCE-prd",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
-        "severity": "error",
         "location": "Discovery Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
+        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
-        "severity": "error",
         "location": "Technical Feasibility Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
+        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
-        "severity": "error",
         "location": "Ballpark Estimation",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md",
+        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-moscow-prioritization-matrix",
-        "severity": "error",
         "location": "MoSCoW Prioritization Matrix",
-        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.
-  … (truncated)
+        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.json",
+  … (truncated, 20 more line(s))
 ```
 
 ---
@@ -454,18 +451,18 @@ evolith-cli adr --list --format json
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "count": 0,
-    "adrs": []
+    "adrs": [],
+    "count": 0
   },
   "meta": {
     "command": "evolith adr",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
     "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
     "schemaVersion": "1.0.0"
-  }
+  },
+  "success": true
 }
 ```
 
@@ -493,46 +490,43 @@ evolith-cli phase advance --from discovery --to design --satellite /abs/path/to/
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "fromPhase": "discovery",
-    "toPhase": "design",
     "evidence": {
+      "evaluatedAt": "<timestamp>",
+      "evaluatedBy": "ci",
       "gateId": "business-sign-off",
       "phase": "discovery",
-      "verdict": "failed",
       "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
       "rulesetVersion": "2.0.0",
+      "verdict": "failed",
       "violations": [
         {
-          "ruleId": "PG-1-EVIDENCE-prd",
-          "severity": "error",
           "location": "PRD",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
+          "ruleId": "PG-1-EVIDENCE-prd",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-discovery-canvas",
-          "severity": "error",
           "location": "Discovery Canvas",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
+          "ruleId": "PG-1-EVIDENCE-discovery-canvas",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
-          "severity": "error",
           "location": "Technical Feasibility Canvas",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
+          "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
-          "severity": "error",
           "location": "Ballpark Estimation",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md",
+          "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-moscow-prioritization-matrix",
-          "severity": "error",
-     
-  … (truncated)
+          "location": "MoSCoW Prioritization Matrix",
+  … (truncated, 26 more line(s))
 ```
 
 #### MCP
@@ -563,46 +557,43 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "fromPhase": "discovery",
-    "toPhase": "design",
     "evidence": {
+      "evaluatedAt": "<timestamp>",
+      "evaluatedBy": "ci",
       "gateId": "business-sign-off",
       "phase": "discovery",
-      "verdict": "failed",
       "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
       "rulesetVersion": "2.0.0",
+      "verdict": "failed",
       "violations": [
         {
-          "ruleId": "PG-1-EVIDENCE-prd",
-          "severity": "error",
           "location": "PRD",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
+          "ruleId": "PG-1-EVIDENCE-prd",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-discovery-canvas",
-          "severity": "error",
           "location": "Discovery Canvas",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
+          "ruleId": "PG-1-EVIDENCE-discovery-canvas",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
-          "severity": "error",
           "location": "Technical Feasibility Canvas",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
+          "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
-          "severity": "error",
           "location": "Ballpark Estimation",
-          "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md"
+          "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md",
+          "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
+          "severity": "error"
         },
         {
-          "ruleId": "PG-1-EVIDENCE-moscow-prioritization-matrix",
-          "severity": "error",
-     
-  … (truncated)
+          "location": "MoSCoW Prioritization Matrix",
+  … (truncated, 28 more line(s))
 ```
 
 #### REST
@@ -623,25 +614,25 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "success": false,
-    "from": "discovery",
-    "to": "design",
-    "gateResults": [],
-    "executedTools": [],
-    "warnings": [],
     "errors": [
       "Invalid phase transition: discovery → design. Must be a valid transition."
-    ]
+    ],
+    "executedTools": [],
+    "from": "discovery",
+    "gateResults": [],
+    "success": false,
+    "to": "design",
+    "warnings": []
   },
   "meta": {
     "command": "evolith phase transition",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
     "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
     "schemaVersion": "1.0.0"
-  }
+  },
+  "success": true
 }
 ```
 
@@ -661,18 +652,18 @@ evolith-cli sdlc handoff --from discovery --to design --format json
 Response (captured live):
 ```json
 {
-  "success": false,
   "error": {
     "code": "INTERNAL_ERROR",
     "message": "Invalid phase transition: discovery → design. Must be a valid transition."
   },
   "meta": {
     "command": "evolith sdlc handoff",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
     "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
     "schemaVersion": "1.0.0"
-  }
+  },
+  "success": false
 }
 ```
 
@@ -692,20 +683,20 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": false,
   "error": {
     "code": "FORBIDDEN",
     "message": "Access denied. Requires 'write' scope."
   },
   "meta": {
-    "correlationId": "<uuid>",
     "command": "evolith-sdlc-handoff",
-    "tool": "evolith-sdlc-handoff",
+    "correlationId": "<uuid>",
     "durationMs": 0,
     "executedAt": "<timestamp>",
+    "schemaVersion": "1.0.0",
     "timestamp": "<timestamp>",
-    "schemaVersion": "1.0.0"
-  }
+    "tool": "evolith-sdlc-handoff"
+  },
+  "success": false
 }
 ```
 

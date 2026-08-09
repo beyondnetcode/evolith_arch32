@@ -140,10 +140,64 @@ function mcpOptions(schema: Capture['mcpTools'][string] | undefined): Array<{ na
 }
 
 function fence(lang: string, body: string): string { return '```' + lang + '\n' + body + '\n```'; }
+
+/**
+ * A captured envelope, rendered so that two machines produce the same bytes.
+ *
+ * These documents are DERIVED from a live capture and then compared byte-for-byte
+ * by the drift check. That comparison is only meaningful if the rendering is a
+ * function of the CAPTURE and nothing else — and twice it was not:
+ *
+ *  1. **Arrays carried filesystem order.** Several envelope fields are built by
+ *     walking directories, and `readdir` does not return the same order on APFS
+ *     and on the runner's ext4. Regenerating on macOS therefore produced a
+ *     document CI could never reproduce, and the check reported drift that no
+ *     edit could fix. Arrays of primitives are sorted here; arrays of objects are
+ *     left alone, because their order can be meaningful and inventing one would
+ *     be a different lie.
+ *
+ *  2. **The cut was a byte offset.** `slice(0, 1400)` lands mid-token, so a value
+ *     growing by two characters — `181` becoming `189` — shifted every following
+ *     line and changed which ids were visible. The diff then looked like the
+ *     captured DATA had changed when only the window had moved. Truncation now
+ *     happens at a line boundary, so a change shows where it happened.
+ */
+function stableJson(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    const items = value.map(stableJson);
+    const allPrimitive = items.every((i) => i === null || typeof i !== 'object');
+    return allPrimitive ? [...items].sort((a, b) => String(a).localeCompare(String(b))) : items;
+  }
+  if (value && typeof value === 'object') {
+    // Key order is fixed too: `JSON.stringify` preserves insertion order, and
+    // insertion order comes from whatever built the object.
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([k, v]) => [k, stableJson(v)]),
+    );
+  }
+  return value;
+}
+
+const ENVELOPE_BUDGET = 1400;
+
 function responseBlock(env: unknown): string {
   if (env == null) return '_No parseable envelope captured._';
-  let s = JSON.stringify(env, null, 2);
-  if (s.length > 1400) s = s.slice(0, 1400) + '\n  … (truncated)';
+  const lines = JSON.stringify(stableJson(env), null, 2).split('\n');
+
+  const kept: string[] = [];
+  let size = 0;
+  for (const line of lines) {
+    if (size + line.length + 1 > ENVELOPE_BUDGET) break;
+    kept.push(line);
+    size += line.length + 1;
+  }
+
+  const s = kept.length === lines.length
+    ? kept.join('\n')
+    : `${kept.join('\n')}\n  … (truncated, ${lines.length - kept.length} more line(s))`;
+
   return 'Response (captured live):\n' + fence('json', s);
 }
 

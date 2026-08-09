@@ -44,89 +44,89 @@ evolith-cli validate --satellite /abs/path/to/your-satellite --core /abs/path/to
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "status": "failed",
-    "rulesChecked": "<n>",
-    "rulesSkipped": "<n>",
-    "rulesErrored": 0,
-    "rulesTotal": 189,
-    "skippedRuleIds": [
+    "blockingNonExecutableRuleIds": [
+      "KI-R01",
+      "KI-R02",
+      "KI-R03",
+      "KI-R04",
+      "KI-R05",
+      "KI-R06",
+      "KI-R07"
+    ],
+    "blockingSkippedRuleIds": [
+      "ABAC-01",
+      "ABAC-02",
+      "ABAC-03",
       "ACL-02",
       "ACL-03",
-      "ACL-05",
       "ACL-06",
-      "HXA-03",
-      "HXA-06",
-      "HXA-07",
       "CICD-01",
       "CICD-02",
       "CICD-03",
       "CICD-04",
-      "CICD-05",
-      "CICD-06",
-      "CICD-07",
+      "DEP-05",
+      "DEP-06",
+      "DEP-07",
+      "DOD-02",
+      "DOD-03",
+      "DOD-04",
+      "DOD-08",
+      "EM-K-01",
+      "EM-S-03",
+      "EM-S-05",
+      "GIT-01",
+      "GIT-02",
+      "GIT-03",
+      "GIT-04",
+      "GIT-06",
+      "GIT-09",
+      "GIT-10",
+      "HXA-03",
+      "KI-R01",
+      "KI-R02",
+      "KI-R03",
+      "KI-R04",
+      "KI-R05",
+      "KI-R06",
+      "KI-R07",
       "MTN-01",
       "MTN-02",
       "MTN-03",
       "MTN-04",
-      "MTN-06",
       "MTN-07",
       "MTN-08",
-      "TPY-01",
-      "TPY-02",
-      "TPY-03",
-      "TPY-04",
-      "TPY-05",
-      "TPY-06",
-      "TPY-07",
+      "OBS-EVD-01",
+      "OBS-EVD-02",
+      "OBS-EVD-03",
       "PROT-01",
       "PROT-02",
-      "PROT-03",
       "PROT-04",
       "PROT-05",
-      "PROT-06",
       "PROT-07",
+      "QT-01",
+      "QT-02",
+      "QT-03",
+      "QT-04",
+      "QT-06",
+      "QT-07",
+      "QT-08",
       "RUNT-01",
       "RUNT-02",
       "RUNT-03",
       "RUNT-04",
       "RUNT-05",
       "RUNT-06",
-      "RUNT-07",
       "RUNT-08",
-      "GIT-01",
-      "GIT-02",
-      "GIT-03",
-      "GIT-04",
-      "GIT-05",
-      "GIT-06",
-      "GIT-07",
-      "GIT-09",
-      "GIT-10",
-      "DOD-02",
-      "DOD-03",
-      "DOD-04",
-      "DOD-08",
-      "EM-S-03",
-      "EM-S-05",
-      "EM-K-01",
-      "EM-Y-01",
-      "TAX-06",
-      "ABAC-01",
-      "ABAC-02",
-      "ABAC-03",
-      "DORA-01",
-      "DORA-02",
-      "DORA-03",
-      "DORA-04",
+      "SEC-INJ-01",
+      "SEC-INJ-02",
+      "SEC-PATH-01",
+      "SEC-PATH-02",
+      "SEC-TIMING-01",
+      "SEC-TIMING-02",
       "SPACE-01",
-      "SPACE-02",
-      "SPACE-03",
-      "SPACE-05",
-      "INH-03",
-      "INH
-  … (truncated)
+      "TAX-06",
+  … (truncated, 548 more line(s))
 ```
 
 #### MCP
@@ -155,89 +155,89 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "status": "failed",
-    "rulesChecked": "<n>",
-    "rulesSkipped": "<n>",
-    "rulesErrored": 0,
-    "rulesTotal": 189,
-    "skippedRuleIds": [
+    "blockingNonExecutableRuleIds": [
+      "KI-R01",
+      "KI-R02",
+      "KI-R03",
+      "KI-R04",
+      "KI-R05",
+      "KI-R06",
+      "KI-R07"
+    ],
+    "blockingSkippedRuleIds": [
+      "ABAC-01",
+      "ABAC-02",
+      "ABAC-03",
       "ACL-02",
       "ACL-03",
-      "ACL-05",
       "ACL-06",
-      "HXA-03",
       "CICD-01",
       "CICD-02",
       "CICD-03",
       "CICD-04",
-      "CICD-05",
-      "CICD-06",
-      "CICD-07",
+      "DEP-05",
+      "DEP-06",
+      "DEP-07",
+      "DOD-02",
+      "DOD-03",
+      "DOD-04",
+      "DOD-08",
+      "EM-K-01",
+      "EM-S-03",
+      "EM-S-05",
+      "GIT-01",
+      "GIT-02",
+      "GIT-03",
+      "GIT-04",
+      "GIT-06",
+      "GIT-09",
+      "GIT-10",
+      "HXA-03",
+      "KI-R01",
+      "KI-R02",
+      "KI-R03",
+      "KI-R04",
+      "KI-R05",
+      "KI-R06",
+      "KI-R07",
       "MTN-01",
       "MTN-02",
       "MTN-03",
       "MTN-04",
-      "MTN-06",
       "MTN-07",
       "MTN-08",
-      "TPY-01",
-      "TPY-02",
-      "TPY-03",
-      "TPY-04",
-      "TPY-05",
-      "TPY-06",
-      "TPY-07",
+      "OBS-EVD-01",
+      "OBS-EVD-02",
+      "OBS-EVD-03",
       "PROT-01",
       "PROT-02",
-      "PROT-03",
       "PROT-04",
       "PROT-05",
-      "PROT-06",
       "PROT-07",
+      "QT-01",
+      "QT-02",
+      "QT-03",
+      "QT-04",
+      "QT-06",
+      "QT-07",
+      "QT-08",
       "RUNT-01",
       "RUNT-02",
       "RUNT-03",
       "RUNT-04",
       "RUNT-05",
       "RUNT-06",
-      "RUNT-07",
       "RUNT-08",
-      "GIT-01",
-      "GIT-02",
-      "GIT-03",
-      "GIT-04",
-      "GIT-05",
-      "GIT-06",
-      "GIT-07",
-      "GIT-09",
-      "GIT-10",
-      "DOD-02",
-      "DOD-03",
-      "DOD-04",
-      "DOD-08",
-      "EM-S-03",
-      "EM-S-05",
-      "EM-K-01",
-      "EM-Y-01",
-      "TAX-06",
-      "ABAC-01",
-      "ABAC-02",
-      "ABAC-03",
-      "DORA-01",
-      "DORA-02",
-      "DORA-03",
-      "DORA-04",
+      "SEC-INJ-01",
+      "SEC-INJ-02",
+      "SEC-PATH-01",
+      "SEC-PATH-02",
+      "SEC-TIMING-01",
+      "SEC-TIMING-02",
       "SPACE-01",
-      "SPACE-02",
-      "SPACE-03",
-      "SPACE-05",
-      "INH-03",
-      "INH-04",
-      "INH-05",
-      "KI-
-  … (truncated)
+      "TAX-06",
+  … (truncated, 550 more line(s))
 ```
 
 #### REST
@@ -260,89 +260,89 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "status": "failed",
-    "rulesChecked": "<n>",
-    "rulesSkipped": "<n>",
-    "rulesErrored": 0,
-    "rulesTotal": 189,
-    "skippedRuleIds": [
+    "blockingNonExecutableRuleIds": [
+      "KI-R01",
+      "KI-R02",
+      "KI-R03",
+      "KI-R04",
+      "KI-R05",
+      "KI-R06",
+      "KI-R07"
+    ],
+    "blockingSkippedRuleIds": [
+      "ABAC-01",
+      "ABAC-02",
+      "ABAC-03",
       "ACL-02",
       "ACL-03",
-      "ACL-05",
       "ACL-06",
-      "HXA-03",
       "CICD-01",
       "CICD-02",
       "CICD-03",
       "CICD-04",
-      "CICD-05",
-      "CICD-06",
-      "CICD-07",
+      "DEP-05",
+      "DEP-06",
+      "DEP-07",
+      "DOD-02",
+      "DOD-03",
+      "DOD-04",
+      "DOD-08",
+      "EM-K-01",
+      "EM-S-03",
+      "EM-S-05",
+      "GIT-01",
+      "GIT-02",
+      "GIT-03",
+      "GIT-04",
+      "GIT-06",
+      "GIT-09",
+      "GIT-10",
+      "HXA-03",
+      "KI-R01",
+      "KI-R02",
+      "KI-R03",
+      "KI-R04",
+      "KI-R05",
+      "KI-R06",
+      "KI-R07",
       "MTN-01",
       "MTN-02",
       "MTN-03",
       "MTN-04",
-      "MTN-06",
       "MTN-07",
       "MTN-08",
-      "TPY-01",
-      "TPY-02",
-      "TPY-03",
-      "TPY-04",
-      "TPY-05",
-      "TPY-06",
-      "TPY-07",
+      "OBS-EVD-01",
+      "OBS-EVD-02",
+      "OBS-EVD-03",
       "PROT-01",
       "PROT-02",
-      "PROT-03",
       "PROT-04",
       "PROT-05",
-      "PROT-06",
       "PROT-07",
+      "QT-01",
+      "QT-02",
+      "QT-03",
+      "QT-04",
+      "QT-06",
+      "QT-07",
+      "QT-08",
       "RUNT-01",
       "RUNT-02",
       "RUNT-03",
       "RUNT-04",
       "RUNT-05",
       "RUNT-06",
-      "RUNT-07",
       "RUNT-08",
-      "GIT-01",
-      "GIT-02",
-      "GIT-03",
-      "GIT-04",
-      "GIT-05",
-      "GIT-06",
-      "GIT-07",
-      "GIT-09",
-      "GIT-10",
-      "DOD-02",
-      "DOD-03",
-      "DOD-04",
-      "DOD-08",
-      "EM-S-03",
-      "EM-S-05",
-      "EM-K-01",
-      "EM-Y-01",
-      "TAX-06",
-      "ABAC-01",
-      "ABAC-02",
-      "ABAC-03",
-      "DORA-01",
-      "DORA-02",
-      "DORA-03",
-      "DORA-04",
+      "SEC-INJ-01",
+      "SEC-INJ-02",
+      "SEC-PATH-01",
+      "SEC-PATH-02",
+      "SEC-TIMING-01",
+      "SEC-TIMING-02",
       "SPACE-01",
-      "SPACE-02",
-      "SPACE-03",
-      "SPACE-05",
-      "INH-03",
-      "INH-04",
-      "INH-05",
-      "KI-
-  … (truncated)
+      "TAX-06",
+  … (truncated, 549 more line(s))
 ```
 
 ---
@@ -377,29 +377,29 @@ evolith-cli validate --composable --satellite /abs/path/to/your-satellite --core
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "status": "failed",
-    "rulesChecked": "<n>",
-    "rulesSkipped": "<n>",
-    "rulesErrored": 0,
-    "rulesTotal": 0,
-    "skippedRuleIds": [],
+    "coreRef": {
+      "path": "/abs/path/to/evolith-core",
+      "version": null
+    },
     "erroredRuleIds": [],
     "issues": "<issues[]>",
-    "coreRef": {
-      "version": null,
-      "path": "/abs/path/to/evolith-core"
-    },
+    "rulesChecked": "<n>",
+    "rulesErrored": 0,
+    "rulesSkipped": "<n>",
+    "rulesTotal": 0,
+    "skippedRuleIds": [],
+    "status": "failed",
     "timestamp": "<timestamp>"
   },
   "meta": {
     "command": "evolith validate",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
     "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
     "schemaVersion": "1.0.0"
-  }
+  },
+  "success": true
 }
 ```
 
@@ -430,66 +430,65 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "tool": "evolith-composable-validate",
-    "type": "composable",
-    "status": "failed",
-    "modes": [
-      {
-        "mode": "ruleset",
-        "status": "failed",
-        "rulesChecked": "<n>",
-        "issues": "<issues[]>"
-      }
-    ],
-    "totalRulesChecked": 0,
-    "totalRulesSkipped": 0,
-    "totalRulesErrored": 0,
-    "totalRulesTotal": 0,
-    "skippedRuleIds": [],
-    "erroredRuleIds": [],
-    "totalIssues": 1,
-    "passedRules": -1,
-    "failedRules": 1,
-    "performanceMs": 0,
     "config": {
       "apiVersion": "evolith.dev/v1",
       "kind": "Satellite",
       "metadata": {
+        "architectureVersion": "0.1.0",
         "name": "exploration-fixture",
-        "phase": "F1",
-        "architectureVersion": "0.1.0"
+        "phase": "F1"
       },
       "spec": {
+        "compliance": {
+          "adrRegistry": [
+            "core/ADR-0047"
+          ],
+          "coverageTarget": 80,
+          "localAdrTagEnforcement": "documented"
+        },
         "coreRef": {
-          "version": "1.0.0",
-          "rulesetVersion": "1.0.0"
+          "rulesetVersion": "1.0.0",
+          "version": "1.0.0"
         },
         "runtime": {
-          "language": "TypeScript",
           "framework": "Express",
+          "language": "TypeScript",
           "runtimeVersion": "Node 20"
         },
         "sdlc": {
           "currentPhase": 1,
           "gates": {}
-        },
-        "compliance": {
-          "adrRegistry": [
-            "core/ADR-0047"
-          ],
-          "localAdrTagEnforcement": "documented",
-          "coverageTarget": 80
         }
       }
     },
-    "timestamp": "<timestamp>"
+    "erroredRuleIds": [],
+    "failedRules": 1,
+    "modes": [
+      {
+        "issues": "<issues[]>",
+        "mode": "ruleset",
+        "rulesChecked": "<n>",
+        "status": "failed"
+      }
+    ],
+    "passedRules": -1,
+    "performanceMs": 0,
+    "skippedRuleIds": [],
+    "status": "failed",
+    "timestamp": "<timestamp>",
+    "tool": "evolith-composable-validate",
+    "totalIssues": 1,
+    "totalRulesChecked": 0,
+    "totalRulesErrored": 0,
+    "totalRulesSkipped": 0,
+    "totalRulesTotal": 0,
+    "type": "composable"
   },
   "meta": {
+    "command": "evolith-composable-validate",
     "correlationId": "<uuid>",
-    "command": "evolith-composable-validate"
-  … (truncated)
+  … (truncated, 8 more line(s))
 ```
 
 #### REST
@@ -512,67 +511,67 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "status": "failed",
-    "modes": [
-      {
-        "mode": "ruleset",
-        "status": "failed",
-        "rulesChecked": "<n>",
-        "issues": "<issues[]>"
-      }
-    ],
-    "totalRulesChecked": 0,
-    "totalRulesSkipped": 0,
-    "totalRulesErrored": 0,
-    "totalRulesTotal": 0,
-    "skippedRuleIds": [],
-    "erroredRuleIds": [],
-    "totalIssues": 1,
-    "passedRules": -1,
-    "failedRules": 1,
-    "performanceMs": 0,
     "config": {
       "apiVersion": "evolith.dev/v1",
       "kind": "Satellite",
       "metadata": {
+        "architectureVersion": "0.1.0",
         "name": "exploration-fixture",
-        "phase": "F1",
-        "architectureVersion": "0.1.0"
+        "phase": "F1"
       },
       "spec": {
+        "compliance": {
+          "adrRegistry": [
+            "core/ADR-0047"
+          ],
+          "coverageTarget": 80,
+          "localAdrTagEnforcement": "documented"
+        },
         "coreRef": {
-          "version": "1.0.0",
-          "rulesetVersion": "1.0.0"
+          "rulesetVersion": "1.0.0",
+          "version": "1.0.0"
         },
         "runtime": {
-          "language": "TypeScript",
           "framework": "Express",
+          "language": "TypeScript",
           "runtimeVersion": "Node 20"
         },
         "sdlc": {
           "currentPhase": 1,
           "gates": {}
-        },
-        "compliance": {
-          "adrRegistry": [
-            "core/ADR-0047"
-          ],
-          "localAdrTagEnforcement": "documented",
-          "coverageTarget": 80
         }
       }
-    }
+    },
+    "erroredRuleIds": [],
+    "failedRules": 1,
+    "modes": [
+      {
+        "issues": "<issues[]>",
+        "mode": "ruleset",
+        "rulesChecked": "<n>",
+        "status": "failed"
+      }
+    ],
+    "passedRules": -1,
+    "performanceMs": 0,
+    "skippedRuleIds": [],
+    "status": "failed",
+    "totalIssues": 1,
+    "totalRulesChecked": 0,
+    "totalRulesErrored": 0,
+    "totalRulesSkipped": 0,
+    "totalRulesTotal": 0
   },
   "meta": {
     "command": "http POST /api/v1/validate/composable",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
     "context": {},
-    "schemaVersi
-  … (truncated)
+    "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
+    "schemaVersion": "1.0.0"
+  },
+  … (truncated, 2 more line(s))
 ```
 
 ---
@@ -599,19 +598,9 @@ evolith-cli topology phase-artifacts --phase construction --topologies modular-m
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "phase": "construction",
-    "requiredArtifacts": [
-      "architecture-drift-result",
-      "ci-pipeline-result",
-      "coverage-report",
-      "definition-of-done-checklist",
-      "documentation-delta",
-      "source-change-set",
-      "spec-traceability-map"
-    ],
-    "presentArtifacts": [],
+    "completeness": 0,
+    "conditionalArtifacts": [],
     "missingArtifacts": [
       "architecture-drift-result",
       "ci-pipeline-result",
@@ -621,16 +610,26 @@ Response (captured live):
       "source-change-set",
       "spec-traceability-map"
     ],
-    "completeness": 0,
-    "conditionalArtifacts": []
+    "phase": "construction",
+    "presentArtifacts": [],
+    "requiredArtifacts": [
+      "architecture-drift-result",
+      "ci-pipeline-result",
+      "coverage-report",
+      "definition-of-done-checklist",
+      "documentation-delta",
+      "source-change-set",
+      "spec-traceability-map"
+    ]
   },
   "meta": {
     "command": "evolith topology phase-artifacts",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
     "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
     "schemaVersion": "1.0.0"
-  }
+  },
+  "success": true
 }
 ```
 
@@ -660,21 +659,10 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "success": true,
     "data": {
-      "phase": "construction",
-      "requiredArtifacts": [
-        "architecture-drift-result",
-        "ci-pipeline-result",
-        "coverage-report",
-        "definition-of-done-checklist",
-        "documentation-delta",
-        "source-change-set",
-        "spec-traceability-map"
-      ],
-      "presentArtifacts": [],
+      "completeness": 0,
+      "conditionalArtifacts": [],
       "missingArtifacts": [
         "architecture-drift-result",
         "ci-pipeline-result",
@@ -684,29 +672,40 @@ Response (captured live):
         "source-change-set",
         "spec-traceability-map"
       ],
-      "completeness": 0,
-      "conditionalArtifacts": []
+      "phase": "construction",
+      "presentArtifacts": [],
+      "requiredArtifacts": [
+        "architecture-drift-result",
+        "ci-pipeline-result",
+        "coverage-report",
+        "definition-of-done-checklist",
+        "documentation-delta",
+        "source-change-set",
+        "spec-traceability-map"
+      ]
     },
     "meta": {
       "command": "evolith-phase-artifacts-evaluate",
-      "executedAt": "<timestamp>",
-      "durationMs": 0,
       "correlationId": "<uuid>",
+      "durationMs": 0,
+      "executedAt": "<timestamp>",
       "schemaVersion": "1.0.0"
-    }
+    },
+    "success": true
   },
   "meta": {
-    "correlationId": "<uuid>",
     "command": "evolith-phase-artifacts-evaluate",
-    "tool": "evolith-phase-artifacts-evaluate",
-    "durationMs": 0,
-    "executedAt": "<timestamp>",
-    "timestamp": "<timestamp>",
     "context": {
       "phase": "construction"
     },
-    "schemaVersion": "1.0.0"
-  }
+    "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
+    "schemaVersion": "1.0.0",
+    "timestamp": "<timestamp>",
+    "tool": "evolith-phase-artifacts-evaluate"
+  },
+  "success": true
 }
 ```
 
@@ -734,19 +733,9 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
-    "phase": "construction",
-    "requiredArtifacts": [
-      "architecture-drift-result",
-      "ci-pipeline-result",
-      "coverage-report",
-      "definition-of-done-checklist",
-      "documentation-delta",
-      "source-change-set",
-      "spec-traceability-map"
-    ],
-    "presentArtifacts": [],
+    "completeness": 0,
+    "conditionalArtifacts": [],
     "missingArtifacts": [
       "architecture-drift-result",
       "ci-pipeline-result",
@@ -756,19 +745,29 @@ Response (captured live):
       "source-change-set",
       "spec-traceability-map"
     ],
-    "completeness": 0,
-    "conditionalArtifacts": []
+    "phase": "construction",
+    "presentArtifacts": [],
+    "requiredArtifacts": [
+      "architecture-drift-result",
+      "ci-pipeline-result",
+      "coverage-report",
+      "definition-of-done-checklist",
+      "documentation-delta",
+      "source-change-set",
+      "spec-traceability-map"
+    ]
   },
   "meta": {
     "command": "http POST /api/v1/architecture/evaluate-phase-artifacts",
-    "executedAt": "<timestamp>",
-    "durationMs": 0,
-    "correlationId": "<uuid>",
     "context": {
       "phase": "construction"
     },
+    "correlationId": "<uuid>",
+    "durationMs": 0,
+    "executedAt": "<timestamp>",
     "schemaVersion": "1.0.0"
-  }
+  },
+  "success": true
 }
 ```
 
@@ -800,44 +799,43 @@ evolith-cli gate evaluate --phase discovery --project /abs/path/to/your-satellit
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
+    "evaluatedAt": "<timestamp>",
+    "evaluatedBy": "ci",
     "gateId": "business-sign-off",
     "phase": "discovery",
-    "verdict": "failed",
     "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
     "rulesetVersion": "2.0.0",
+    "verdict": "failed",
     "violations": [
       {
-        "ruleId": "PG-1-EVIDENCE-prd",
-        "severity": "error",
         "location": "PRD",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
+        "ruleId": "PG-1-EVIDENCE-prd",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
-        "severity": "error",
         "location": "Discovery Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
+        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
-        "severity": "error",
         "location": "Technical Feasibility Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
+        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
-        "severity": "error",
         "location": "Ballpark Estimation",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md",
+        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-moscow-prioritization-matrix",
-        "severity": "error",
         "location": "MoSCoW Prioritization Matrix",
-        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.
-  … (truncated)
+        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.json",
+  … (truncated, 23 more line(s))
 ```
 
 #### MCP
@@ -869,44 +867,43 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
+    "evaluatedAt": "<timestamp>",
+    "evaluatedBy": "ci",
     "gateId": "business-sign-off",
     "phase": "discovery",
-    "verdict": "failed",
     "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
     "rulesetVersion": "2.0.0",
+    "verdict": "failed",
     "violations": [
       {
-        "ruleId": "PG-1-EVIDENCE-prd",
-        "severity": "error",
         "location": "PRD",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
+        "ruleId": "PG-1-EVIDENCE-prd",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
-        "severity": "error",
         "location": "Discovery Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
+        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
-        "severity": "error",
         "location": "Technical Feasibility Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
+        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
-        "severity": "error",
         "location": "Ballpark Estimation",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md",
+        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-moscow-prioritization-matrix",
-        "severity": "error",
         "location": "MoSCoW Prioritization Matrix",
-        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.
-  … (truncated)
+        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.json",
+  … (truncated, 25 more line(s))
 ```
 
 #### REST
@@ -925,44 +922,43 @@ Content-Type: application/json
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
+    "evaluatedAt": "<timestamp>",
+    "evaluatedBy": "ci",
     "gateId": "business-sign-off",
     "phase": "discovery",
-    "verdict": "failed",
     "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
     "rulesetVersion": "2.0.0",
+    "verdict": "failed",
     "violations": [
       {
-        "ruleId": "PG-1-EVIDENCE-prd",
-        "severity": "error",
         "location": "PRD",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
+        "ruleId": "PG-1-EVIDENCE-prd",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
-        "severity": "error",
         "location": "Discovery Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
+        "ruleId": "PG-1-EVIDENCE-discovery-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
-        "severity": "error",
         "location": "Technical Feasibility Canvas",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
+        "ruleId": "PG-1-EVIDENCE-technical-feasibility-canvas",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
-        "severity": "error",
         "location": "Ballpark Estimation",
-        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md"
+        "message": "Artifact not found: /abs/path/to/your-satellite/docs/ballpark-estimation.md",
+        "ruleId": "PG-1-EVIDENCE-ballpark-estimation",
+        "severity": "error"
       },
       {
-        "ruleId": "PG-1-EVIDENCE-moscow-prioritization-matrix",
-        "severity": "error",
         "location": "MoSCoW Prioritization Matrix",
-        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.
-  … (truncated)
+        "message": "Artifact not found: /abs/path/to/your-satellite/.evolith/moscow/phase-0.json",
+  … (truncated, 20 more line(s))
 ```
 
 ---
@@ -987,50 +983,48 @@ evolith-cli sdlc gate-status --since 90 --core /abs/path/to/evolith-core --forma
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
+    "doraMetrics": null,
     "gateStatus": {
       "currentPhase": 0,
-      "gatesPassed": 0,
       "gatesFailed": 1,
+      "gatesPassed": 0,
       "gatesPending": 4,
       "results": [
         {
-          "gateId": "PG-1",
-          "phase": 1,
-          "name": "Business Sign-Off",
-          "passed": false,
+          "accountableRole": "Product Owner",
+          "blockingChecks": [],
+          "canonicalGateId": "gate-f1",
           "evidenceResults": [
             {
               "artifact": "PRD",
-              "passed": false,
               "found": false,
+              "passed": false,
+              "required": true,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md",
-              "required": true
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/prd.md"
             },
             {
               "artifact": "Discovery Canvas",
-              "passed": false,
               "found": false,
+              "passed": false,
+              "required": true,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md",
-              "required": true
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/discovery-canvas.md"
             },
             {
               "artifact": "Technical Feasibility Canvas",
-              "passed": false,
               "found": false,
+              "passed": false,
+              "required": true,
               "schemaValid": false,
-              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md",
-              "required": true
+              "validationMessage": "Artifact not found: /abs/path/to/your-satellite/docs/technical-feasibility.md"
             },
             {
               "artifact": "Ballpark Estimation",
-              "passed": false,
               "found": false,
-              "s
-  … (truncated)
+              "passed": false,
+  … (truncated, 270 more line(s))
 ```
 
 #### MCP
@@ -1054,20 +1048,20 @@ Example (`tools/call`):
 Response (captured live):
 ```json
 {
-  "success": true,
   "data": {
     "error": true,
     "message": "Not a git repository"
   },
   "meta": {
-    "correlationId": "<uuid>",
     "command": "evolith-dora-metrics",
-    "tool": "evolith-dora-metrics",
+    "correlationId": "<uuid>",
     "durationMs": 0,
     "executedAt": "<timestamp>",
+    "schemaVersion": "1.0.0",
     "timestamp": "<timestamp>",
-    "schemaVersion": "1.0.0"
-  }
+    "tool": "evolith-dora-metrics"
+  },
+  "success": true
 }
 ```
 

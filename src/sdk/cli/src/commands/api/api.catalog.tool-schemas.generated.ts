@@ -9,7 +9,7 @@
 import type { ToolSchema } from './api.catalog';
 
 /** sha256 of the manifest operation catalog these schemas were generated from. */
-export const GENERATED_TOOL_SCHEMAS_SHA256 = '5f5d6e353e8ff089bc44e04ba0d90aec9b7a4b0ef02ba31217c369566defec27';
+export const GENERATED_TOOL_SCHEMAS_SHA256 = '7ae01e03e13f55fe6ac00b5686867a88a29959f969160af79b2bc5dc93685199';
 
 export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
   "evolith-adr-create": {
@@ -6341,6 +6341,160 @@ export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
         "phase",
         "topologies"
       ]
+    },
+    "outputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "title": "EvolithMcpOutputEnvelope",
+      "description": "Envelope returned by every Evolith MCP tool, mirrored verbatim in `structuredContent`. `success: true` carries `data`; `success: false` carries `error`. Envelope schema version 1.0.0.",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation completed. Not the governance verdict."
+        },
+        "data": {
+          "description": "Tool-specific payload, present when `success` is true. Not narrowed for this tool yet — per-operation payload schemas are generated from the capability manifest (GT-583)."
+        },
+        "error": {
+          "type": "object",
+          "description": "Present when `success` is false. `code` is machine-readable and append-only.",
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "VALIDATION_FAILED",
+                "SCHEMA_INVALID",
+                "REPO_NOT_FOUND",
+                "PHASE_INVALID",
+                "RULESET_NOT_FOUND",
+                "NOT_A_SATELLITE",
+                "GATE_BLOCKED",
+                "COMMAND_FAILED",
+                "TIMEOUT",
+                "IO_ERROR",
+                "PATH_NOT_FOUND",
+                "GIT_ERROR",
+                "UNAUTHORIZED",
+                "FORBIDDEN",
+                "CONCURRENCY_CONFLICT",
+                "INTERNAL_ERROR",
+                "NOT_IMPLEMENTED"
+              ],
+              "description": "Stable Evolith error code. FORBIDDEN covers every ABAC / scope / approval refusal."
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "meta": {
+          "type": "object",
+          "description": "ADR-0073 envelope metadata. Identical across the CLI, REST and MCP surfaces.",
+          "properties": {
+            "correlationId": {
+              "type": "string",
+              "description": "Correlation id, prefixed 'evl-'."
+            },
+            "command": {
+              "type": "string",
+              "description": "ADR-0073 canonical name of the invoked operation."
+            },
+            "tool": {
+              "type": "string",
+              "description": "MCP-native alias of `command`."
+            },
+            "durationMs": {
+              "type": "number",
+              "description": "Server-side wall time of the call."
+            },
+            "executedAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ADR-0073 canonical timestamp."
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "MCP-native alias of `executedAt`."
+            },
+            "schemaVersion": {
+              "type": "string",
+              "const": "1.0.0",
+              "description": "Pinned envelope shape version. Bumped only on a breaking envelope change."
+            },
+            "context": {
+              "type": "object",
+              "description": "Verbatim echo of the caller-supplied execution context.",
+              "properties": {
+                "initiative": {
+                  "type": "string"
+                },
+                "tenant": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "correlationId",
+            "command",
+            "tool",
+            "durationMs",
+            "executedAt",
+            "timestamp",
+            "schemaVersion"
+          ]
+        }
+      },
+      "required": [
+        "success",
+        "meta"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "const": false
+              }
+            },
+            "required": [
+              "success"
+            ]
+          },
+          "then": {
+            "required": [
+              "error"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "evolith-ruleset-list": {
+    "description": "List the ruleset packs this Core can evaluate. Returns the canonical refs accepted by `evolith-validate`'s `select` argument, with the rule count and — per pack — how many of those rules can FAIL a run. Read this before selecting: a ref this Core does not carry is a blocking failure, never a quiet pass.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "corePath": {
+          "type": "string",
+          "description": "Optional explicit path to the Evolith core repository"
+        }
+      },
+      "required": []
     },
     "outputSchema": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",

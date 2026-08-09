@@ -71,6 +71,7 @@ read_tools := {
   "evolith-ping",
   "evolith-read-file",
   "evolith-read-gap-tracking",
+  "evolith-ruleset-list",
   "evolith-satellite-list",
   "evolith-satellite-status",
   "evolith-sdlc-status",

@@ -8,6 +8,7 @@ import { ToolRegistryService } from '../mcp/tool-registry.service';
 import { MetricsService } from '../mcp/metrics.service';
 import { McpTool, MCP_TOOLS } from '../mcp/tool.interface';
 import { ValidateTool } from './validate.tool';
+import { RulesetCatalogTool } from './ruleset-catalog.tool';
 import { EvaluateTool } from './evaluate.tool';
 import { ComposableValidateTool } from './composable-validate.tool';
 import { SatelliteCreateTool } from './satellite-create.tool';
@@ -46,6 +47,8 @@ import { createKnowledgePort } from '../domain/knowledge.factory';
   imports: [DomainModule],
   providers: [
     ValidateTool,
+    // GT-660 — the menu `evolith-validate`'s `select` refers to.
+    RulesetCatalogTool,
     EvaluateTool,
     ComposableValidateTool,
     SatelliteCreateTool,
@@ -59,6 +62,7 @@ import { createKnowledgePort } from '../domain/knowledge.factory';
       provide: MCP_TOOLS,
       useFactory: (
         validate: ValidateTool,
+        rulesetCatalog: RulesetCatalogTool,
         evaluate: EvaluateTool,
         composableValidate: ComposableValidateTool,
         satelliteCreate: SatelliteCreateTool,
@@ -75,6 +79,7 @@ import { createKnowledgePort } from '../domain/knowledge.factory';
         sdlcGenerate: SdlcGenerateTool,
       ): McpTool[] => [
         validate,
+        rulesetCatalog,
         evaluate,
         composableValidate,
         satelliteCreate,
@@ -105,6 +110,7 @@ import { createKnowledgePort } from '../domain/knowledge.factory';
       ],
       inject: [
         ValidateTool,
+        RulesetCatalogTool,
         EvaluateTool,
         ComposableValidateTool,
         SatelliteCreateTool,

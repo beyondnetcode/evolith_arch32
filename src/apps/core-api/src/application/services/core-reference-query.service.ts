@@ -9,6 +9,23 @@ import { RulesetCorpusNotResolvedError } from '@beyondnet/evolith-core-domain/do
 
 export interface RulesetSummary {
   id: string;
+  /**
+   * GT-660 — the ref that `POST /evaluate` and `validate --select` actually
+   * accept, which `id` is NOT reliably.
+   *
+   * `id` is whatever the ruleset declares: `metadata.id`, `$id`, or the relative
+   * path with its extension stripped. Measured against `ruleMatchesRef` over
+   * this corpus, **17 of 183** of those ids match no rule — so a client
+   * following this endpoint's own advice («the ids published by
+   * GET /rulesets») would receive a blocking `SEL-01` on 17 of them. `ref` is
+   * the rule's `sourceFile`, which is the value the selector compares against,
+   * so it always selects.
+   *
+   * `id` is kept, unchanged: it is a published field and some clients hold it.
+   * This is additive — one endpoint, two fields, and the one that works is
+   * documented as the one to select with.
+   */
+  ref: string;
   title: string;
   description: string;
   version?: string;
@@ -209,6 +226,11 @@ export class CoreReferenceQueryService {
     const version = (metadata?.version ?? ruleset.version) as string | undefined;
     return {
       id: String(id),
+      // GT-660 — the SELECTABLE name. The relative path is what a loaded rule
+      // carries as `sourceFile`, and `sourceFile` is what the selector compares
+      // against, so this is the one field a caller can round-trip through
+      // `--select` / `policyRefs` without being told it does not exist.
+      ref: relativePath,
       title: String(title),
       description: String(description),
       version: typeof version === 'string' ? version : undefined,

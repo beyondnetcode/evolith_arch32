@@ -364,6 +364,25 @@ export const WIRE_VALIDATION_RESULT: WireCheck<SdkValidationResult> = {
   // verdict is entitled to the ids behind it without parsing issue text.
   blockingSkippedRuleIds: { required: false, declaredAs: 'string[]', accepts: isArray },
   perRuleset: { required: false, declaredAs: 'RulesetCoverageRatio[]', accepts: isArray },
+  // GT-661: the SCOPE of the verdict. A consumer that reads `status: 'failed'`
+  // without this cannot tell "the packs I adopted failed" from "the Core
+  // evaluated all 402 of its own opinions and something failed" — measured on
+  // the Evolith Core repository, the second case is 85 blocking issues of 113,
+  // none of them from a rule the caller chose. `source` is the discriminator and
+  // is checked by value, not merely by presence, because a producer that emitted
+  // some other string here would be describing a scope nobody can interpret.
+  selection: {
+    required: false,
+    declaredAs: "{ source: 'caller'|'core-default'; requested: string[]; matched: string[]; unmatched: string[]; rulesSelected: number; corpusTotal: number }",
+    accepts: (v) =>
+      isObject(v) &&
+      oneOf('caller', 'core-default')((v as Record<string, unknown>).source) &&
+      isArray((v as Record<string, unknown>).requested) &&
+      isArray((v as Record<string, unknown>).matched) &&
+      isArray((v as Record<string, unknown>).unmatched) &&
+      isNumber((v as Record<string, unknown>).rulesSelected) &&
+      isNumber((v as Record<string, unknown>).corpusTotal),
+  },
   issues: { required: true, declaredAs: 'ValidationIssue[]', accepts: isArray },
   coreRef: {
     required: true,

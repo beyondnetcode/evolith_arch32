@@ -18,6 +18,7 @@ import {
   notApplicableReason,
 } from './rule-applicability';
 import { selectRules, RulesetSelection, SelectionOutcome } from './ruleset-selection';
+import { buildRulesetCatalog, RulesetCatalog } from './ruleset-catalog';
 
 export interface NormalizedRule {
   id: string;
@@ -338,6 +339,23 @@ export class RuleEvaluationEngine {
       notApplicable,
       ...(chosen.unrestricted ? {} : { selection: chosen }),
     };
+  }
+
+  /**
+   * GT-660 — what this Core can evaluate, for a caller that has to choose.
+   *
+   * It loads the corpus through the SAME `loadAllRulesets` call
+   * {@link discoverAndEvaluate} uses, which is the whole point: a catalogue
+   * assembled any other way could advertise a pack the engine does not carry, or
+   * hide one it does. `--select` has told callers to use «the id the catalogue
+   * publishes» since GT-659 while no surface published one; this is that surface's
+   * single source.
+   *
+   * The Core PROPOSES here and decides nothing — no verdict, no default, no
+   * opinion about what the caller ought to adopt.
+   */
+  async discoverCatalog(corePath: string): Promise<RulesetCatalog> {
+    return buildRulesetCatalog(await this.rulesetRepo.loadAllRulesets(corePath));
   }
 
   /** GT-569 — coverage of a raw result set, exposed as a method for callers holding the engine. */

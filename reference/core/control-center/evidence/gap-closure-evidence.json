@@ -9847,6 +9847,28 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The ICP is CHOSEN, NOT VALIDATED, and the section says so in its own text: it is derived from the product's architecture (multi-tenant GovernancePackage with isolation tests, per-tenant localization) and from the owner's 2026-08-03 decision that the vehicle is the Tracker, with no design partner, no interview and no closed deal behind it. Validating it is field work, not a code change, and inventing a criterion for it here would produce a row satisfiable without anybody wanting the result — the same defect this row was registered to avoid. What the section DOES do is make the choice falsifiable and decide the next build: the standard after SSDF is whichever audits that buyer, which on today's evidence means completing ISO/IEC 5055 from its existing mapping. Deliberately NOT done: rounding up the engine's reach. Scorecard is reported as a score from the external binary and SLSA as not implemented, because a positioning document that overstates the engine is worse than one that names no buyer."
+    },
+    {
+      "id": "GT-660",
+      "closedAt": "2026-08-09",
+      "closureCommit": "97500b7c",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/ruleset-catalog.ts",
+        "src/sdk/cli/src/commands/rulesets/rulesets.command.ts",
+        "src/packages/mcp-server/src/tools/ruleset-catalog.tool.ts",
+        "src/apps/core-api/src/application/services/core-reference-query.service.ts"
+      ],
+      "validationCommands": [
+        "npx jest --testPathPatterns ruleset-catalog --config src/packages/core-domain/jest.config.js -> 7 passed. The central case feeds every published ref back through selectRules and demands the pack come out: a catalogue whose refs the selector rejects is worse than no catalogue.",
+        "node src/sdk/cli/dist/main.js rulesets --core . -> 174 pack(s) 402 rule(s) 188 that can fail a run.",
+        "npx jest --config src/packages/mcp-server/jest.config.js --testPathPatterns ruleset-catalog -> 5 passed.",
+        "npx jest --config src/apps/core-api/jest.config.js --testPathPatterns core-reference-query.selectable -> 3 passed; the round trip REST's own advice depends on.",
+        "node .harness/scripts/ci/24-check-surface-parity.mjs -> exit 0 after registering ruleset-list; it had failed naming both new operations as unregistered.",
+        "node .harness/scripts/ci/46-validate-derived-artifact-order.mjs -> the chain is current AND at a fixed point after regenerating the capability operations.",
+        "npx jest --config src/packages/contracts/jest.config.js -> 113 passed, AFTER rebuilding contracts and core-domain. It reported 113 passed against a stale dist and 5 failed against a fresh one, which is how the pinned fingerprints got their real values."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The DEFAULT is deliberately not changed here and is registered as GT-661. With no selection this repository still reports 85 blocking issues of 113, so a tenant that adopted nothing receives a blocking verdict from rules it never chose - which contradicts 'the Core proposes'. It is left open because every current consumer, this repository's own CI included, depends on validate blocking with no flag: a default that stopped blocking would silently disarm gates that work today, a worse failure than the one being fixed. That is a decision with a migration, not a defect to patch in passing. Also NOT done: unifying REST's id field. REST keeps id and gains ref rather than having id corrected, because id is published and clients hold it; the additive field makes 183 of 183 selectable where id managed 166 of 183."
     }
   ]
 }

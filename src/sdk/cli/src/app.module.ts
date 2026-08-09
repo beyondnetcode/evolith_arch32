@@ -46,6 +46,7 @@ import { EvaluateGateUseCase } from '@beyondnet/evolith-core-domain/application/
 import { PhaseGateValidatorService } from '@beyondnet/evolith-core-domain/application/validators/phase-gate-validator.service';
 import { ProposePhaseAdvanceUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/propose-phase-advance.use-case';
 import { RulesetValidatorService } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service';
+import { RulesetsCommand } from './commands/rulesets/rulesets.command';
 import { ArchitectureDriftService } from '@beyondnet/evolith-core-domain/application/validators/architecture-drift.service';
 import type { IFileSystem, ILogger, IConfigParser } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { PromptService } from './infrastructure/prompts/prompt.service';
@@ -112,6 +113,8 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     WaiverCommand,
     AuditCommand,
     CalibrateCommand,
+    // GT-660 — the menu `validate --select` has been referring to since GT-659.
+    RulesetsCommand,
     EvaluateGateUseCase,
     ProposePhaseAdvanceUseCase,
     {

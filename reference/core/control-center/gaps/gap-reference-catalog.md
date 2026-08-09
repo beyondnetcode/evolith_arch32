@@ -8612,3 +8612,48 @@ The lesson is the board's own, and this time the measurer paid it: a `contains` 
   - [x] Matching is forgiving about form and strict about identity: the catalogue publishes `$id` as a URL while a rule remembers a corpus-relative `sourceFile`, and both resolve — but comparison is segment-aligned, so `acl` cannot select `acl-extras`. Both directions are fixtures.
   - [x] The selection reaches the engine from the wire, and it is EXERCISABLE: `--select <ref>` on the CLI takes the id the catalogue publishes, repeatably, and is threaded through `ValidateSatelliteUseCase` and `RulesetValidatorService` into the engine. Measured on this repository, all four cases end to end: no flag ⇒ 235 of 402 rules, unchanged; `--select standards/ssdf-v1.1.rules.json` ⇒ **8 rules checked** and only SSDF findings, which is the capability this row exists for — a tenant adopting a standards pack without also adopting the other 394 opinions; an unknown ref ⇒ **exit 2, status failed, blocking `SEL-01`**, because zero rules evaluated with zero violations is indistinguishable from a clean satellite and must never be reported as one; a partly-unknown selection ⇒ evaluates the 8 it found AND names the one it did not. `--select` absent reaches the engine as `undefined` and not as `[]`, so a typo in the flag cannot evaluate nothing and report a pass. **ALL THREE SURFACES carry it, 2026-08-09.** CLI `--select <ref>` (repeatable); MCP `select: string[]` on `evolith-validate`; and REST reading `rulesetRef`/`policyRefs` off the `EvaluationContextDto` it had been receiving — and echoing back as provenance — for months. Every surface collapses "the caller named nothing" to `undefined` and never to `[]`, because an empty selection treated as a selection would evaluate zero rules and report a pass; that distinction is asserted per surface, including the MCP case where a non-string entry is dropped rather than forwarded as a ref. ORIGINAL: The selection reaches the engine from the wire: `EvaluationContext.rulesetRef` is threaded through the orchestrator and the validate use case, and a CLI/MCP/REST caller can exercise it end to end. **NOT DONE** — the engine now honours a selection it is given, and nothing gives it one yet. Stated rather than implied, because "the engine can filter" and "a tenant can choose" are different claims and only the first is true today.
 - **Status:** `DONE` (2026-08-09)
+#### GT-660
+
+**Title:** The Core proposes a menu nobody can read — `--select` names a catalogue no CLI or MCP surface publishes
+
+- **Purpose:** Make the owner's principle true on every surface: the Core PROPOSES; the Tracker, CLI and MCP configure and select.
+- **Evidence:** `GT-659` shipped `--select <ref>` on the CLI, `select[]` on MCP and `rulesetRef`/`policyRefs` on REST, and every one of those help texts points at «the id the catalogue publishes». **REST does publish one** — `GET /api/v1/rulesets`, via `CoreReferenceQueryService.listRulesets`. **CLI and MCP publish nothing**, so on those two surfaces selecting was possible only for a caller who already knew a ruleset filename by heart. «Configurable per tenant» was true on paper and false in a terminal. **And the catalogue REST publishes is a SECOND derivation:** it walks the filesystem itself and builds an `id` from `metadata.id`, or `$id`, or the relative path with its extension stripped — while the selector matches on the rule's `sourceFile`. Measured over this corpus with `ruleMatchesRef`: **17 of 183 published ids match no rule**, so a client following the endpoint's own advice receives a blocking `SEL-01` on 17 of them.
+- **Impact:** A tenant cannot adopt what it cannot see, and following the documentation exactly produces a blocked build. Both halves of the principle fail: the Core does not effectively propose, and two of the three clients cannot select.
+- **Affected files:** `src/packages/core-domain/src/application/validators/ruleset-catalog.ts`, `src/sdk/cli/src/commands/rulesets/rulesets.command.ts`, `src/packages/mcp-server/src/tools/ruleset-catalog.tool.ts`, `src/apps/core-api/src/application/services/core-reference-query.service.ts`
+- **Component:** `Cross` · **Criticality:** P1 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Acceptance criteria:**
+  - [x] One derivation of «what can this Core evaluate», shared by all three surfaces and loaded through the same call the engine evaluates.
+  - [x] The CLI publishes it (`evolith rulesets`), with an ADR-0073 envelope under `--format json`.
+  - [x] MCP publishes it (`evolith-ruleset-list`), reachable without leaving the protocol.
+  - [x] Every ref the catalogue publishes is proven to select its own pack, by test, not by inspection.
+  - [x] REST's published summary carries a ref that round-trips through the selector.
+- **Status:** `DONE` (2026-08-09)
+
+**BUILT 2026-08-09.** `buildRulesetCatalog` derives the menu from the same `loadAllRulesets` the engine evaluates — a hand-maintained pack list would drift within a month, and this repository has closed that defect enough times to know. Exposed once on `RulesetValidatorService.catalog`, which every surface already holds, so there is no second construction path and therefore no second answer.
+
+**Measured, identically, on two surfaces:** `evolith rulesets --core .` and the booted `evolith-ruleset-list` both report **174 packs · 402 rules · 188 that can fail a run**. That last number is published per pack deliberately: a tenant deciding what to adopt is entitled to know which packs can turn its build red BEFORE the first red build, and `standards/ssdf-v1.1.rules.json` reporting `blocking: 0` is exactly the kind of thing that makes a pack safe to adopt first.
+
+**REST keeps its `id` and gains a `ref`.** Additive on purpose — `id` is published and some clients hold it. `ref` is the relative path, which is what a loaded rule carries as `sourceFile` and therefore what the selector compares against: **183 of 183 selectable, against 166 of 183 for `id`**.
+
+**Two of my own numbers were corrected by the tool this row built.** The action README said «102 of a 372-rule corpus»; 372 was a hand-count of `.rules.json` files and the engine's own catalogue says **402**. The GT-659 figure of «235 of 402» was therefore right about the corpus and was measured on a satellite, not on `--core .` — my earlier claim that it «did not reproduce» was the wrong instrument, not a wrong number.
+
+**Not done here, and registered rather than assumed:** the DEFAULT. Naming nothing still evaluates the whole corpus, which on this repository is **85 blocking issues of 113** — a tenant that adopted nothing still receives a blocking verdict. That is [`GT-661`](./gap-reference-catalog.md#gt-661), because changing it changes behaviour for every existing consumer and is a decision, not a defect.
+
+#### GT-661
+
+**Title:** «No selection» means the whole corpus, so a tenant that adopted nothing is still blocked by everything
+
+- **Purpose:** Decide what the absence of a selection MEANS, now that a selection is expressible and readable.
+- **Evidence:** The owner's principle is that the Core PROPOSES and the client configures. Measured on this repository with no selection: **85 blocking issues of 113, status `failed`**. A caller that has adopted nothing receives a verdict that blocks, produced by rules it never chose. `SSDF` is not the problem — its 8 rules are `blocking: false` and can only report; the other **188** blocking rules in the corpus are. `GT-659` made a selection expressible and [`GT-660`](./gap-reference-catalog.md#gt-660) made the menu readable, which is what turns this from an unanswerable question into a decision.
+- **Impact:** The strongest default a governance engine can ship is also the one that contradicts «the Core proposes». Left as is, every new pack this Core adds is imposed on every existing caller the day it lands.
+- **Risk of changing it:** every current consumer — this repository's own CI included — depends on `validate` blocking with no flag. A default that stops blocking would silently disarm gates that are working today, which is a worse failure than the one being fixed.
+- **Affected files:** `src/packages/core-domain/src/application/validators/ruleset-selection.ts`, `src/packages/core-domain/src/application/validators/ruleset-validator.service.ts`
+- **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
+- **Acceptance criteria:**
+  - [ ] A decision records what «no selection» means — the full corpus, an empty selection, or a tenant-configured default resolved by the client — and why, given that the Core proposes.
+  - [ ] Whatever is chosen, a caller can tell from the report which rules were evaluated because IT asked and which because the Core defaulted.
+  - [ ] No existing consumer is silently disarmed: any change to the default ships with the migration stated, not implied.
+- **Status:** `PENDING` (2026-08-09)
+

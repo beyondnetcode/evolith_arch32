@@ -1244,6 +1244,23 @@
         "exposed": false,
         "exempt": "deferred with the CLI command for the same reason: the store is deploy-gated, and an endpoint that cannot answer is not parity"
       }
+    },
+    {
+      "id": "ruleset-list",
+      "name": "Ruleset catalogue",
+      "description": "GT-660 — publish the ruleset packs this Core can evaluate, with the canonical refs `validate --select` / `policyRefs` accept and, per pack, how many rules can FAIL a run. The Core PROPOSES here: it evaluates nothing, reads no satellite and returns no verdict. All three surfaces derive from RulesetValidatorService.catalog, which loads through the same loadAllRulesets the engine evaluates, so the menu cannot advertise a pack the engine will then reject.",
+      "cli": {
+        "exposed": true,
+        "command": "rulesets"
+      },
+      "mcp": {
+        "exposed": true,
+        "tool": "evolith-ruleset-list"
+      },
+      "rest": {
+        "exposed": true,
+        "endpoint": "GET /api/v1/rulesets"
+      }
     }
   ]
 }

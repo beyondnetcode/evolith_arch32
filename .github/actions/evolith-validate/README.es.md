@@ -112,7 +112,7 @@ jobs:
             standards/iso-5055.rules.json
 ```
 
-Medido sobre el CLI que esta action envuelve, contra el propio repositorio de Evolith Core (`--core .`, sin satélite): sin selección se evalúan **102** reglas de un corpus de **372**; solo con `standards/ssdf-v1.1.rules.json` se evalúan **8**. Se nombra el objetivo porque el primer número se mueve con él — lo que no se mueve es la forma: un tenant puede adoptar un pack de estándares sin adoptar además el resto de opiniones de este repositorio.
+Medido sobre el CLI que esta action envuelve, contra el propio repositorio de Evolith Core (`--core .`, sin satélite): sin selección se evalúan **102** reglas de un corpus de **402**, repartidas en **174** packs; solo con `standards/ssdf-v1.1.rules.json` se evalúan **8**. La cifra del corpus sale de `evolith rulesets`, que la deriva de la misma carga que evalúa el motor — un conteo a mano previo de los ficheros de ruleset decía 372 y estaba mal. Se nombra el objetivo porque el primer número se mueve con él; lo que no se mueve es la forma: un tenant puede adoptar un pack de estándares sin adoptar además el resto de opiniones de este repositorio.
 
 **Un ref que este Core no lleva es un fallo bloqueante, nunca un pase silencioso.** Cero reglas evaluadas con cero violaciones es indistinguible de un repositorio limpio, así que el motor emite un issue bloqueante `SEL-01` nombrando el ref que no pudo evaluar. Por la misma razón un `select` vacío o solo con espacios significa *«el llamador no nombró nada»* y evalúa el corpus completo — nunca llega al CLI como una selección de nada.
 

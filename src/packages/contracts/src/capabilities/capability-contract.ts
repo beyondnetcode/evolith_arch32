@@ -65,12 +65,21 @@ export const EXPECTED_CAPABILITY_MANIFEST: CapabilityManifestShape = Object.free
   engines: Object.freeze(['native', 'opa', 'enforcer']),
   surfaces: Object.freeze(['rest', 'cli', 'mcp']),
   supportedConsumers: Object.freeze([...SUPPORTED_CONSUMER_IDS]),
-  // GT-659 — bumped deliberately: `evolith-validate` gained a `select` argument
-  // (the catalogue-based ruleset selection), which changes the per-operation
-  // schema catalog and therefore this fingerprint. A pinned hash exists so that a
-  // surface contract cannot move without somebody saying so in a commit.
-  operationsSha256: '5f5d6e353e8ff089bc44e04ba0d90aec9b7a4b0ef02ba31217c369566defec27',
-  sha256: 'f592980416ac91ee1db652eff1af28aa368449a9b7af26322c89edea794b6939',
+  // GT-660 — bumped deliberately: the surface gained an OPERATION, not just an
+  // argument. `evolith-ruleset-list` (MCP) and `evolith rulesets` (CLI) publish
+  // the menu that `select` has been referring to since GT-659, so the
+  // per-operation schema catalog grows and both fingerprints move with it.
+  //
+  // Previous, for the record: GT-659 pinned
+  //   operations 5f5d6e35…, manifest f5929804…
+  // when `evolith-validate` gained its `select` argument.
+  //
+  // A pinned hash exists so a surface contract cannot move without somebody
+  // saying so in a commit. Both values below were read off a FRESH build: the
+  // suite is green against a stale `dist` and red against a rebuilt one, which
+  // is how GT-659 nearly shipped the wrong pair.
+  operationsSha256: '7ae01e03e13f55fe6ac00b5686867a88a29959f969160af79b2bc5dc93685199',
+  sha256: '1ca58a31d0b0ca12af06a4eafe9d3f82738c009bb8c460609a49c1b0971ea1c6',
 }) as CapabilityManifestShape;
 
 /**

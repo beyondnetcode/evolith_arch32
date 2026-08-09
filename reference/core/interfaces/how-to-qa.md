@@ -50,7 +50,7 @@ Response (captured live):
     "rulesChecked": "<n>",
     "rulesSkipped": "<n>",
     "rulesErrored": 0,
-    "rulesTotal": 181,
+    "rulesTotal": 189,
     "skippedRuleIds": [
       "ACL-02",
       "ACL-03",
@@ -124,8 +124,8 @@ Response (captured live):
       "SPACE-02",
       "SPACE-03",
       "SPACE-05",
-      "DRIFT-01",
-      "I
+      "INH-03",
+      "INH
   … (truncated)
 ```
 
@@ -161,7 +161,7 @@ Response (captured live):
     "rulesChecked": "<n>",
     "rulesSkipped": "<n>",
     "rulesErrored": 0,
-    "rulesTotal": 181,
+    "rulesTotal": 189,
     "skippedRuleIds": [
       "ACL-02",
       "ACL-03",
@@ -233,10 +233,10 @@ Response (captured live):
       "SPACE-02",
       "SPACE-03",
       "SPACE-05",
-      "DRIFT-01",
       "INH-03",
       "INH-04",
-      "I
+      "INH-05",
+      "KI-
   … (truncated)
 ```
 
@@ -266,7 +266,7 @@ Response (captured live):
     "rulesChecked": "<n>",
     "rulesSkipped": "<n>",
     "rulesErrored": 0,
-    "rulesTotal": 181,
+    "rulesTotal": 189,
     "skippedRuleIds": [
       "ACL-02",
       "ACL-03",
@@ -338,10 +338,10 @@ Response (captured live):
       "SPACE-02",
       "SPACE-03",
       "SPACE-05",
-      "DRIFT-01",
       "INH-03",
       "INH-04",
-      "I
+      "INH-05",
+      "KI-
   … (truncated)
 ```
 

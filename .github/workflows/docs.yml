@@ -275,8 +275,12 @@ jobs:
       # Es hermetica: su cwd es el satelite temporal que ella construye, asi que
       # no scaffoldea en la raiz del repo ni depende de lo que dejaran corridas
       # anteriores. Y los how-to derivados ya no embeben el VEREDICTO de la
-      # evaluacion (`rulesChecked`, `issues`, las listas de violaciones), que
-      # variaba entre maquinas y hacia infalseable el chequeo anti-drift.
+      # evaluacion, que variaba entre maquinas y hacia infalseable el chequeo
+      # anti-drift: primero se resto campo a campo (`rulesChecked`, `issues`, las
+      # listas de violaciones, `confidence`) -- una denylist que solo podia crecer,
+      # porque nombraba la volatilidad por la que ya nos habian mordido -- y ahora
+      # el generador proyecta el sobre a su FORMA e imprime literal solo lo que
+      # esta en su allowlist. Un campo nuevo ya no puede romper este paso.
       - name: Build workspace packages
         run: npm run build
 

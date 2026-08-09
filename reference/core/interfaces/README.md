@@ -16,15 +16,16 @@ common combinations.
 ## Reference catalog (by phase, generated)
 
 A machine-derived cross-reference — the same operation on all three surfaces,
-with its real captured response — organized by SDLC phase. Kept drift-proof by a
-CI check (see below). Use it to look up an operation's exact request/response
-across surfaces; use the readable guides above to *learn*.
+with the SHAPE of its real captured response — organized by SDLC phase. Kept
+drift-proof by a CI check (see below). Use it to look up an operation's exact
+request and response shape across surfaces; use the readable guides above to
+*learn*.
 
 ## Two layers
 
 | Layer | File pattern | Nature | Answers |
 | --- | --- | --- | --- |
-| **Reference catalog** | `how-to-<phase>.md` | **Generated** | "What is operation X, on each surface — its options, a worked request, and the real response?" |
+| **Reference catalog** | `how-to-<phase>.md` | **Generated** | "What is operation X, on each surface — its options, a worked request, and the shape of the real response?" |
 | **Phase playbook** | `playbook-<phase>.md` | **Curated** | "How do I work this phase — what do I run, in what order, and what do I expect?" |
 
 The playbook is the narrative journey; it links into the catalog for the exact
@@ -47,6 +48,17 @@ A conformance test (`exploration.spec.ts` → *"the generated interface how-to d
 are up to date"*) regenerates the docs and **fails CI if the committed files
 diverge** from the source of truth. So a documented invocation is, by
 construction, one that actually runs and returns what it says.
+
+What the response blocks show is the **shape** of the captured envelope, not its
+content: every field name is real, values carry their type (`"<string>"`,
+`"<number>"`), and an array appears as one element merging every element observed.
+What a rule counts or a gate decides belongs to the workspace being evaluated, not
+to the interface, and printing it here would misinform the reader *and* make this
+check unfalsifiable — the same number differs between two machines, so the docs
+could never be regenerated into agreement. Values that ARE the contract stay
+literal: `success`, `command`/`tool`, the error `code`, `schemaVersion`. The check
+therefore still goes red when a field appears or disappears, a type changes, an
+option table changes, or an operation's identity changes.
 
 ## Target architecture the how-to reflects
 

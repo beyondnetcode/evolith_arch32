@@ -18,16 +18,16 @@ lo avanzado, y las combinaciones habituales.
 ## Catálogo de referencia (por fase, generado)
 
 Una referencia cruzada derivada por máquina — la misma operación en las tres
-superficies, con su respuesta real capturada — organizada por fase del SDLC. Un check
-de CI la mantiene a prueba de drift (ver abajo). Úsala para consultar el
-request/response exacto de una operación en cada superficie; usa las guías legibles de
-arriba para *aprender*.
+superficies, con la FORMA de su respuesta real capturada — organizada por fase del
+SDLC. Un check de CI la mantiene a prueba de drift (ver abajo). Úsala para consultar
+el request exacto y la forma de la respuesta de una operación en cada superficie; usa
+las guías legibles de arriba para *aprender*.
 
 ## Dos capas
 
 | Capa | Patrón de archivo | Naturaleza | Responde |
 | --- | --- | --- | --- |
-| **Catálogo de referencia** | `how-to-<phase>.md` | **Generado** | "¿Qué es la operación X en cada superficie — sus opciones, un request resuelto y la respuesta real?" |
+| **Catálogo de referencia** | `how-to-<phase>.md` | **Generado** | "¿Qué es la operación X en cada superficie — sus opciones, un request resuelto y la forma de la respuesta real?" |
 | **Playbook de fase** | `playbook-<phase>.md` | **Curado** | "¿Cómo trabajo esta fase — qué ejecuto, en qué orden y qué espero?" |
 
 El playbook es el recorrido narrativo; enlaza al catálogo para el
@@ -50,6 +50,17 @@ Un test de conformidad (`exploration.spec.ts` → *"the generated interface how-
 are up to date"*) regenera los documentos y **falla el CI si los archivos commiteados
 divergen** de la fuente de verdad. Así, una invocación documentada es, por
 construcción, una que realmente corre y devuelve lo que dice.
+
+Los bloques de respuesta muestran la **forma** del sobre capturado, no su contenido:
+todos los nombres de campo son reales, los valores llevan su tipo (`"<string>"`,
+`"<number>"`) y un array aparece como un único elemento que fusiona todos los
+observados. Lo que una regla cuenta o un gate decide pertenece al workspace evaluado,
+no a la interfaz, e imprimirlo aquí desinformaría al lector *y* haría infalseable este
+check: el mismo número difiere entre dos máquinas, así que los documentos nunca
+podrían regenerarse hasta coincidir. Los valores que SÍ son el contrato se imprimen
+literales: `success`, `command`/`tool`, el `code` del error y `schemaVersion`. El check
+sigue poniéndose rojo cuando aparece o desaparece un campo, cambia un tipo, cambia una
+tabla de opciones o cambia la identidad de una operación.
 
 ## Arquitectura objetivo que refleja el how-to
 

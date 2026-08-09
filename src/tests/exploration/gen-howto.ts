@@ -9,8 +9,9 @@
  *                                        response envelope every surface returned
  *                                        (emitted by exploration.spec.ts).
  *   4. CLI @Option / REST @ApiProperty → the flag / field catalogues.
- * Every request AND response below is what actually ran, so the docs cannot
- * diverge from reality. A CI check (howto-conformance.spec.ts) enforces it.
+ * Every request below is what actually ran and every response block is the SHAPE
+ * of what actually came back, so the docs cannot diverge from reality. A CI check
+ * (the drift test in exploration.spec.ts) enforces it byte-for-byte.
  *
  * Run: npx ts-node --project src/tests/exploration/tsconfig.json \
  *        src/tests/exploration/gen-howto.ts [phase|all]
@@ -142,31 +143,90 @@ function mcpOptions(schema: Capture['mcpTools'][string] | undefined): Array<{ na
 function fence(lang: string, body: string): string { return '```' + lang + '\n' + body + '\n```'; }
 
 /**
- * A captured envelope, rendered so that two machines produce the same bytes.
+ * The CONTRACT of a captured envelope: its shape, not its content.
  *
  * These documents are DERIVED from a live capture and then compared byte-for-byte
- * by the drift check. That comparison is only meaningful if the rendering is a
- * function of the CAPTURE and nothing else — and twice it was not:
+ * by the drift check, so the rendering has to be a function of the INTERFACE and
+ * nothing else. Embedding the captured envelope verbatim was not: it carried the
+ * corpus and the workspace of whichever machine ran the capture, and every field
+ * that did so had to be subtracted by hand, one at a time, after CI went red.
+ * That list only ever grew — `rulesChecked`, then the ruleId arrays, then
+ * `perRuleset`, then `confidence` — because a DENYLIST can only name the
+ * volatility somebody has already been bitten by.
+ *
+ * It is inverted here. A leaf value is printed only if its key is on
+ * CONTRACT_VALUE_KEYS below; everything else becomes a placeholder naming its
+ * TYPE. A field the engine adds tomorrow therefore cannot break the check: it
+ * shows up as `"<number>"` and stays that way whatever it computes. What the
+ * reader needs — every field name, its type, the request that produced it — is
+ * exactly what survives.
+ *
+ * What the check can still catch, which is the point of keeping it: a field
+ * appearing or disappearing, a type changing, and the values that ARE the
+ * contract (the command/tool/endpoint identity, the error code vocabulary, the
+ * envelope's schemaVersion).
+ *
+ * Two earlier fixes stay in force and are folded into the projection:
  *
  *  1. **Arrays carried filesystem order.** Several envelope fields are built by
  *     walking directories, and `readdir` does not return the same order on APFS
- *     and on the runner's ext4. Regenerating on macOS therefore produced a
- *     document CI could never reproduce, and the check reported drift that no
- *     edit could fix. Arrays of primitives are sorted here; arrays of objects are
- *     left alone, because their order can be meaningful and inventing one would
- *     be a different lie.
+ *     and on the runner's ext4. Arrays now collapse to ONE element that merges
+ *     every element observed (union of keys, union of types), so element order
+ *     cannot reach the page at all — and no order has to be invented for arrays
+ *     of objects, which was the reason they were left alone before.
  *
  *  2. **The cut was a byte offset.** `slice(0, 1400)` lands mid-token, so a value
  *     growing by two characters — `181` becoming `189` — shifted every following
- *     line and changed which ids were visible. The diff then looked like the
- *     captured DATA had changed when only the window had moved. Truncation now
- *     happens at a line boundary, so a change shows where it happened.
+ *     line and changed which ids were visible. Truncation happens at a line
+ *     boundary. It is now a guard against a pathological envelope rather than a
+ *     routine event: collapsing arrays takes the largest captured envelope from
+ *     ~413 KB (`evaluate`, on MCP) to 4.5 KB rendered, under the budget below, so
+ *     no block is cut today and the reader sees every field name.
  */
-function stableJson(value: unknown): unknown {
+const CONTRACT_VALUE_KEYS = new Set([
+  'success', // the ADR-0073 discriminator; `true` next to a failing verdict is itself the lesson
+  'command', // the CLI command / HTTP route that was invoked — interface identity
+  'tool', //    the MCP tool name — interface identity
+  'code', //    the error vocabulary (NOT_FOUND, FORBIDDEN, …), which callers branch on
+  'schemaVersion', // the envelope contract version; a bump is a real contract change
+]);
+
+const PLACEHOLDER = /^<[a-z|]+>$/;
+
+function typeTokens(shape: unknown): string[] {
+  if (shape === null) return ['null'];
+  if (Array.isArray(shape)) return ['array'];
+  if (typeof shape === 'object') return ['object'];
+  if (typeof shape === 'string' && PLACEHOLDER.test(shape)) return shape.slice(1, -1).split('|');
+  return [typeof shape]; // an allowlisted literal degrades to its type when it meets a different one
+}
+
+function placeholder(tokens: string[]): string {
+  return `<${[...new Set(tokens)].sort().join('|')}>`;
+}
+
+/** Merge two projected shapes. Commutative and associative, so element order cannot leak. */
+function mergeShapes(a: unknown, b: unknown): unknown {
+  if (a === undefined) return b;
+  if (b === undefined) return a;
+  if (Array.isArray(a) && Array.isArray(b)) {
+    const items = [...a, ...b];
+    return items.length === 0 ? [] : [items.reduce((x, y) => mergeShapes(x, y))];
+  }
+  const isObj = (v: unknown): v is Record<string, unknown> =>
+    v !== null && typeof v === 'object' && !Array.isArray(v);
+  if (isObj(a) && isObj(b)) {
+    const keys = [...new Set([...Object.keys(a), ...Object.keys(b)])].sort((x, y) => x.localeCompare(y));
+    return Object.fromEntries(keys.map((k) => [k, mergeShapes(a[k], b[k])]));
+  }
+  if (JSON.stringify(a) === JSON.stringify(b)) return a;
+  return placeholder([...typeTokens(a), ...typeTokens(b)]);
+}
+
+function contractShape(value: unknown, key: string | null): unknown {
   if (Array.isArray(value)) {
-    const items = value.map(stableJson);
-    const allPrimitive = items.every((i) => i === null || typeof i !== 'object');
-    return allPrimitive ? [...items].sort((a, b) => String(a).localeCompare(String(b))) : items;
+    const items = value.map((v) => contractShape(v, key));
+    return items.length === 0 ? [] : [items.reduce((x, y) => mergeShapes(x, y))];
   }
   if (value && typeof value === 'object') {
     // Key order is fixed too: `JSON.stringify` preserves insertion order, and
@@ -174,17 +234,22 @@ function stableJson(value: unknown): unknown {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>)
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([k, v]) => [k, stableJson(v)]),
+        .map(([k, v]) => [k, contractShape(v, k)]),
     );
   }
-  return value;
+  if (value === null) return null;
+  if (key !== null && CONTRACT_VALUE_KEYS.has(key)) return value;
+  return placeholder([typeof value]);
 }
 
-const ENVELOPE_BUDGET = 1400;
+// Headroom over the largest rendered shape (4,566 bytes) so that the cut is a
+// backstop, not a routine event. A block that hits it loses field names, which is
+// the one thing the reader cannot do without.
+const ENVELOPE_BUDGET = 8000;
 
 function responseBlock(env: unknown): string {
   if (env == null) return '_No parseable envelope captured._';
-  const lines = JSON.stringify(stableJson(env), null, 2).split('\n');
+  const lines = JSON.stringify(contractShape(env, null), null, 2).split('\n');
 
   const kept: string[] = [];
   let size = 0;
@@ -198,7 +263,7 @@ function responseBlock(env: unknown): string {
     ? kept.join('\n')
     : `${kept.join('\n')}\n  … (truncated, ${lines.length - kept.length} more line(s))`;
 
-  return 'Response (captured live):\n' + fence('json', s);
+  return 'Response shape (captured live):\n' + fence('json', s);
 }
 
 function renderOp(op: MatrixOp, cap: Capture): string {
@@ -263,11 +328,16 @@ export function renderPhase(phaseKey: string, matrix: Record<string, MatrixOp>, 
     '<!-- GENERATED by src/tests/exploration/gen-howto.ts — do not edit by hand.',
     '     Requests derive from the tested exploration bindings; responses + MCP',
     '     schemas from .out/howto-capture.json; option tables from @Option /',
-    '     inputSchema / @ApiProperty. howto-conformance.spec.ts fails CI on drift. -->', '',
+    '     inputSchema / @ApiProperty. exploration.spec.ts fails CI on drift. -->', '',
     phase.blurb, '',
     '**Envelope:** every response is an ADR-0073 envelope `{ success, data | error: { code, message }, meta }`.',
     '**Exit codes (CLI):** `0` on a passing verdict, non-zero on a failing verdict or error.',
-    '**Mutative MCP tools** require `{ "apply": true, "approvalToken": "…" }` (the dispatch gates them; `RULESET_NOT_FOUND` etc. are consistent across surfaces).', '',
+    '**Mutative MCP tools** require `{ "apply": true, "approvalToken": "…" }` (the dispatch gates them; `RULESET_NOT_FOUND` etc. are consistent across surfaces).',
+    '**Reading the response blocks:** they are the SHAPE of what the interface really returned, not a sample of data. ' +
+      'Every field name is real and every value carries its type — `"<string>"`, `"<number>"` — because what a rule ' +
+      'counts or a gate decides depends on the workspace being evaluated, not on the interface. An array is shown as a ' +
+      'single element merging every element observed. Values that ARE the contract are printed literally: ' +
+      '`success`, `command`/`tool`, the error `code`, and `schemaVersion`.', '',
     `Operations in this phase: ${phase.ops.map((o) => `\`${o}\``).join(', ')}.`, '', '---', '',
   ].join('\n');
   const body = phase.ops.map((id) => (matrix[id] ? renderOp(matrix[id], cap) : `> ⚠ \`${id}\` not in the surface-parity matrix.\n`)).join('\n');

@@ -485,11 +485,19 @@ describe('DiskRulesetRepository — real repo layout (GT-566)', () => {
   itInRepo('leaves rules with no `enforce` block undefined (additive, not invented)', async () => {
     const repo = new DiskRulesetRepository(nodeFs, makeLogger());
     const rules = await repo.loadAllRulesets(repoRoot!);
-    // Only ADR-0002 authors enforce blocks today; everything else must stay on
-    // the native engine exactly as before.
+    // ADR-0002 and, since GT-662, the ISO/IEC 5055 pack are the only rulesets
+    // that author enforce blocks; everything else must stay on the native engine
+    // exactly as before. The ISO rules are enforcer rules BY DESIGN — no native
+    // handler decides a CWE, an adapter over a free analyser's SARIF does — so
+    // the list growing is the capability being added, not the loader inventing
+    // a block. What this test still guards is the "not invented" half: a rule
+    // outside these two packs must come back with `enforce: undefined`.
     const withEnforce = rules.filter((r) => r.enforce);
     expect(withEnforce.map((r) => r.id).sort()).toEqual(
-      ['HXA-01', 'HXA-02', 'HXA-04', 'HXA-05', 'HXA-06', 'HXA-07'],
+      [
+        'HXA-01', 'HXA-02', 'HXA-04', 'HXA-05', 'HXA-06', 'HXA-07',
+        'ISO5055-MAINT', 'ISO5055-PERF', 'ISO5055-REL', 'ISO5055-SEC',
+      ].sort(),
     );
   }, 60_000);
 });

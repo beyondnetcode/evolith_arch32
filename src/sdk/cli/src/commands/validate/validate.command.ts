@@ -23,6 +23,8 @@ interface ValidateCommandOptions {
   satellite?: string;
   core?: string;
   ruleset?: string;
+  /** GT-659 — canonical ruleset refs from the catalogue, repeatable. */
+  select?: string[];
   architecture?: boolean;
   topology?: string[];
   engine?: string;
@@ -300,7 +302,16 @@ export class ValidateCommand extends BaseEvolithCommand {
             engine,
           })).result;
         } else {
-          result = (await this.useCase.execute({ satellitePath, corePath, engine })).result;
+          result = (await this.useCase.execute({
+            satellitePath,
+            corePath,
+            engine,
+            // GT-659 — absent ⇒ undefined ⇒ the whole corpus. The empty array is
+            // NOT passed as a selection: "the caller named nothing" and "the
+            // caller named an empty set" must not collapse, or a typo in a flag
+            // would evaluate zero rules and report a pass.
+            rulesetRefs: options?.select?.length ? options.select : undefined,
+          })).result;
         }
 
         if (options?.architecture || options?.topology?.length) {
@@ -631,6 +642,29 @@ export class ValidateCommand extends BaseEvolithCommand {
   })
   parseCore(val: string): string {
     return val;
+  }
+
+  /**
+   * GT-659 — select by the ref the CATALOGUE publishes, repeatably.
+   *
+   * `--ruleset` above resolves fifteen hand-written aliases through
+   * RULESET_ID_MAP down a separate path; it cannot name a ruleset the reference
+   * catalogue advertises, and a new pack is invisible to it until somebody edits
+   * that map. This one takes the `$id` (or its corpus-relative path) exactly as
+   * `GET /api/v1/reference/rulesets` publishes it, so what a client can ask for
+   * is what the Core says it has.
+   *
+   * A ref that matches nothing does NOT quietly evaluate zero rules: the Core
+   * reports it and the verdict blocks.
+   */
+  @Option({
+    flags: '--select <ref>',
+    description:
+      'Evaluar SOLO el/los ruleset(s) indicados, por el id que publica el catalogo ' +
+      '(repetible). Ausente ⇒ el corpus completo, como hasta ahora.',
+  })
+  parseSelect(val: string, previous: string[] = []): string[] {
+    return [...previous, val];
   }
 
   @Option({

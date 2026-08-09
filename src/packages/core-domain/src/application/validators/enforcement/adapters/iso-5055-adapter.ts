@@ -2,6 +2,7 @@ import { IProcessRunner, ProcessResult, EnforcerAnalysisContext } from '../enfor
 import { ShellEnforcerAdapter, ShellEnforcerConfig } from '../shell-enforcer-adapter';
 import { makeViolation } from '../../../../domain/violation';
 import type { Violation } from '../../../../domain/violation';
+import { describeIso5055Coverage, iso5055CoverageFromSarif } from '../../standards/iso-5055-coverage';
 import {
   buildIso5055Index,
   classifySarifResult,
@@ -141,6 +142,29 @@ export function iso5055ViolationsFromSarif(log: string, index: Iso5055Index): Vi
       }
     }
   }
+  // GT-663 — a run that found nothing is exactly when the denominator matters,
+  // and exactly when the report used to be silent. Zero ISO/IEC 5055 findings
+  // reads identically whether the analyser looks for all 138 weaknesses or for
+  // none of them, and the second is the common case because coverage here is
+  // the ANALYSER's, never the standard's.
+  //
+  // Emitted only on a clean run, and only once: when there ARE findings the
+  // reader already has something concrete to act on, and repeating the caveat
+  // per finding would train them to skip it. Non-blocking by construction — the
+  // pack's rules are `blocking: false` — so this informs a verdict, never
+  // decides one.
+  if (out.length === 0) {
+    out.push(
+      makeViolation({
+        ruleId: MEASURE_RULE_IDS.Security,
+        tool: ISO_5055_TOOL,
+        file: '',
+        severity: 'warning',
+        message: describeIso5055Coverage(iso5055CoverageFromSarif(log, index)),
+      }),
+    );
+  }
+
   return out;
 }
 

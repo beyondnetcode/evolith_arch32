@@ -8476,3 +8476,23 @@ La lección es la del propio tablero y esta vez la pagó quien medía: un `conta
   - [x] El camino feliz sigue renderizando el corpus y el guard sigue fallando ante un diagrama de verdad malformado — la comprobación del corpus no cambia, solo el orden de las preguntas.
 - **Deliberadamente NO hecho, y por qué es una decisión aparte:** declarar la herramienta como devDependency fijada es el arreglo completo — mete el renderizador en el lockfile, bajo `npm audit`, bajo Dependabot, y hace que `npm ci` falle ruidosamente ante la instalación parcial que causó esto. También arrastra Puppeteer y una descarga de Chromium a cada `npm ci`, de cada desarrollador, para renderizar diagramas que solo renderiza CI. Ese intercambio merece hacerse a propósito, no como efecto colateral de arreglar un bug.
 - **Estado:** `COMPLETADO` (2026-08-08)
+
+#### GT-659
+
+**Título:** Una selección que el Core registra y desobedece
+
+- **Propósito / Problema:** Que el Core evalúe lo que el llamante pidió, para que el cliente —CLI, MCP, Tracker— decida el nivel por tenant en vez de que cada tenant reciba todas las opiniones que sostiene este repositorio.
+- **Evidencia:** `EvaluationContext` declara `rulesetRef`, `rulesetVersion` y `policyRefs`. `evaluation-orchestrator.service.ts:109` copia `rulesetRef` al resultado como procedencia. **Nada lo lee como selector** — un grep de `rulesetRef` por `core-domain` lo encuentra en el mapeador de resultados, en los contratos y en el schema de capacidades generado, y en ningún filtro. Así que quien pide un ruleset recibe las 402 reglas, en un resultado sellado con la referencia que pidió.
+- **Qué significa:** una selección registrada y desobedecida es peor que una rechazada, porque la respuesta parece hecha a medida. Y es lo único que separa a este motor de la evaluación por tenant: ningún tenant puede estar en un nivel distinto de otro, y ninguno puede adoptar un pack de estándares sin adoptar también nuestras opiniones de arquitectura.
+- **Cómo salió a la luz:** [`GT-600`](./gap-reference-catalog.es.md#gt-600) envió ocho reglas SSDF y se aplicaron a todos los satélites en cuanto aterrizaron. Parecía un error en cómo añadí el pack; no lo era. **Todo** se aplica a todos, y el pack solo lo hizo visible.
+- **Componente:** `Evolith Core` · **Criticidad:** P1 · **Complejidad:** M
+- **Principal:** `M` · **Interés:** `HIGH` · **Base:** `estimate`
+- **Procedencia:** Encontrado el 2026-08-08 al contrastar el ruleset de GT-600 con el principio que fijó el dueño: que Evolith se apoya siempre en opciones abiertas y sin coste, y que todas son configurables por tenant para formar parte de la evaluación. El ruleset cumplía "abierto y sin coste"; comprobar la segunda mitad es lo que destapó esto.
+- **Criterios de aceptación:**
+  - [x] Una selección se OBEDECE: con `rulesetRef`/`policyRefs`, solo se evalúan los rulesets nombrados. `selectRules` es puro y total, y `discoverAndEvaluate` lo aplica antes que la aplicabilidad, para que `notApplicable` siga significando "dirigido a otro" en vez de absorber reglas que nadie pidió.
+  - [x] Aditivo: sin selección el corpus se evalúa exactamente como antes — aseverado por la suite completa, 1738/1738 sin cambio de veredicto. Un filtro que por defecto no seleccionara nada convertiría un campo ausente en una evaluación verde en silencio, que es el fallo que este criterio existe para prohibir.
+  - [x] Sobreviven los dos números: el resultado lleva `corpusTotal` junto a lo seleccionado, para que "2 reglas, 0 violaciones" no pueda leerse como "el corpus está limpio".
+  - [x] **Una referencia que no casa con NADA se reporta, nunca es un pase vacío.** `unmatched` va aparte de `matched` precisamente para que "pides un estándar que no tengo" no colapse en "no había nada mal". Observado por fixture.
+  - [x] El emparejamiento es tolerante con la forma y estricto con la identidad: el catálogo publica `$id` como URL mientras la regla recuerda un `sourceFile` relativo al corpus, y ambos resuelven — pero la comparación va alineada a segmentos, así que `acl` no puede seleccionar `acl-extras`. Las dos direcciones son fixtures.
+  - [ ] La selección llega al motor desde el cable: `EvaluationContext.rulesetRef` se enhebra por el orquestador y el caso de uso de validación, y un llamante de CLI/MCP/REST puede ejercitarla de punta a punta. **NO HECHO** — el motor honra ya una selección que le den, y todavía nadie se la da. Se dice en vez de insinuarse, porque "el motor puede filtrar" y "un tenant puede elegir" son afirmaciones distintas y hoy solo la primera es cierta.
+- **Estado:** `EN-PROGRESO` (2026-08-08)

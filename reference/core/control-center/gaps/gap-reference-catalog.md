@@ -8570,3 +8570,23 @@ The lesson is the board's own, and this time the measurer paid it: a `contains` 
   - [x] The happy path still renders the corpus and the guard still fails on a genuinely malformed diagram — the corpus check is unchanged, only the order of questions is.
 - **Deliberately NOT done, and why it is a separate decision:** declaring the tool as a pinned devDependency is the fuller fix — it puts the renderer in the lockfile, under `npm audit`, under Dependabot, and makes `npm ci` fail loudly on the very partial install that caused this. It also drags Puppeteer and a Chromium download into every `npm ci`, for every developer, to render diagrams that only CI renders. That trade is worth making deliberately, not as a side effect of a bug fix.
 - **Status:** `DONE` (2026-08-08)
+
+#### GT-659
+
+**Title:** A selection the Core records and disobeys
+
+- **Purpose / Problem:** Make the Core evaluate what the caller asked for, so the client — CLI, MCP, Tracker — can decide the level per tenant instead of every tenant receiving every opinion this repository holds.
+- **Evidence:** `EvaluationContext` declares `rulesetRef`, `rulesetVersion` and `policyRefs`. `evaluation-orchestrator.service.ts:109` copies `rulesetRef` into the result as provenance. **Nothing reads it as a selector** — grepping `rulesetRef` across `core-domain` finds it in the result mapper, the contracts and the generated capability schema, and in no filter. So a caller that asks for one ruleset gets all 402 rules back, in a result stamped with the ref it asked for.
+- **What it means:** a selection that is recorded and disobeyed is worse than one that is refused, because the answer looks tailored. And it is the single thing standing between this engine and per-tenant evaluation: no tenant can sit at a different level from another, and none can adopt a standards pack without also adopting this repository's architecture opinions.
+- **How it surfaced:** [`GT-600`](./gap-reference-catalog.md#gt-600) shipped eight SSDF rules and they applied to every satellite the moment they landed. That looked like a mistake in how the pack was added; it was not. **Everything** applies to everyone, and the pack only made it visible.
+- **Component:** `Evolith Core` · **Criticality:** P1 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Found on 2026-08-08 while checking GT-600's ruleset against the owner's stated principle — that Evolith leans on open, free options and that all of them are configurable per tenant so they become part of the evaluation. The ruleset satisfied "open and free"; checking the second half is what exposed this.
+- **Acceptance criteria:**
+  - [x] A selection is OBEYED: with `rulesetRef`/`policyRefs` supplied, only the named rulesets are evaluated. `selectRules` is pure and total, and `discoverAndEvaluate` applies it before applicability so `notApplicable` keeps meaning "addressed to somebody else" rather than absorbing rules nobody requested.
+  - [x] Additive: with no selection the corpus is evaluated exactly as before — asserted by the full suite, 1738/1738 with no verdict change. A filter defaulting to "nothing" would turn a missing field into a silently green evaluation, which is the failure this criterion exists to forbid.
+  - [x] Both numbers survive: the outcome carries `corpusTotal` alongside what was selected, so "2 rules, 0 violations" can never be read as "the corpus is clean".
+  - [x] **A ref matching NOTHING is reported, never an empty pass.** `unmatched` is separate from `matched` precisely so "you asked for a standard I do not have" cannot collapse into "nothing was wrong". Observed by fixture.
+  - [x] Matching is forgiving about form and strict about identity: the catalogue publishes `$id` as a URL while a rule remembers a corpus-relative `sourceFile`, and both resolve — but comparison is segment-aligned, so `acl` cannot select `acl-extras`. Both directions are fixtures.
+  - [ ] The selection reaches the engine from the wire: `EvaluationContext.rulesetRef` is threaded through the orchestrator and the validate use case, and a CLI/MCP/REST caller can exercise it end to end. **NOT DONE** — the engine now honours a selection it is given, and nothing gives it one yet. Stated rather than implied, because "the engine can filter" and "a tenant can choose" are different claims and only the first is true today.
+- **Status:** `IN-PROGRESS` (2026-08-08)

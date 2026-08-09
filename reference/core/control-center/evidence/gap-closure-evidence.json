@@ -9810,6 +9810,23 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The renderer stays an npx invocation rather than a lockfile dependency, pinned but not declared. Declaring @mermaid-js/mermaid-cli as a devDependency is the fuller fix -- it would put the renderer under npm audit and Dependabot and make npm ci fail loudly on the partial install that caused this -- but it drags Puppeteer and a Chromium download into every npm ci, for every developer, to render diagrams only CI renders. That trade is recorded as a separate decision rather than taken as a side effect of a bug fix. The happy path was NOT verified locally and this is stated rather than implied: mermaid-cli exits 1 with empty stdout and stderr on this machine, which has no usable Chromium; the corpus render is exercised by the Evolith Core Validation job on the runner, where it has been green on PRs 440, 441 and 442."
+    },
+    {
+      "id": "GT-659",
+      "closedAt": "2026-08-09",
+      "closureCommit": "a9261630",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/ruleset-selection.ts",
+        "src/packages/core-domain/src/application/validators/ruleset-selection.threading.spec.ts",
+        "src/sdk/cli/src/commands/validate/validate.command.ts"
+      ],
+      "validationCommands": [
+        "npx jest --testPathPatterns ruleset-selection --config src/packages/core-domain/jest.config.js",
+        "./node_modules/.bin/evolith validate --format json --select standards/ssdf-v1.1.rules.json -> rulesChecked 8, only SSDF findings; without the flag 235 of 402, unchanged.",
+        "./node_modules/.bin/evolith validate --format json --select standards/iso-27001.rules.json -> exit 2, status failed, blocking SEL-01. Zero rules evaluated is NOT reported as a pass."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The REST/MCP surfaces are not wired to the new selection in this change. EvaluationContext already declares rulesetRef/policyRefs and the engine now honours them, so the remaining work is per-surface plumbing rather than a capability; the CLI is threaded end to end and is what proves the engine obeys. The legacy --ruleset alias path (RULESET_ID_MAP, fifteen hand-written entries) is deliberately left alone rather than migrated: removing it would break callers that use it, and it is a separate decision from adding the catalogue-based one alongside."
     }
   ]
 }

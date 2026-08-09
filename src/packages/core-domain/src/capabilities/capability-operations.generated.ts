@@ -9013,6 +9013,13 @@ export const CAPABILITY_OPERATIONS: readonly CapabilityOperation[] = [
           "type": "string",
           "description": "Optional ID of a specific ruleset to load"
         },
+        "select": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Canonical ruleset refs to evaluate against, as published by GET /api/v1/reference/rulesets. Absent => the whole corpus."
+        },
         "corePath": {
           "type": "string",
           "description": "Optional explicit path to the Evolith core repository"

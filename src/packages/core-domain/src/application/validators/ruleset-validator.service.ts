@@ -12,6 +12,7 @@ import {
   RuleCoverage, RulesetValidatorOptions, ValidationIssue, ValidationResult,
 } from './ruleset-validator.types';
 import { loadRulesetById } from './ruleset-id-loader';
+import type { RulesetSelection } from './ruleset-selection';
 import { runArchitectureValidation } from './architecture-validator';
 import type { NotApplicableRule, RuleApplicabilityFilter } from './rule-evaluation-engine';
 import {
@@ -70,7 +71,17 @@ export class RulesetValidatorService {
     });
   }
 
-  async validate(satellitePath: string, corePath?: string): Promise<ValidationResult> {
+  /**
+   * GT-659 — `selection` is what the CALLER asked to be evaluated against.
+   *
+   * Optional and additive: absent means the whole corpus, which is what every
+   * existing caller gets and what every recorded verdict was produced under.
+   */
+  async validate(
+    satellitePath: string,
+    corePath?: string,
+    selection?: RulesetSelection,
+  ): Promise<ValidationResult> {
     const issues: ValidationIssue[] = [];
     // GT-569: the verdict reports its own denominator. `rulesChecked` keeps
     // meaning "actually evaluated"; the rest of the corpus is no longer
@@ -104,9 +115,28 @@ export class RulesetValidatorService {
 
     try {
       const filter = await this.buildApplicabilityFilter(satellitePath, resolvedCorePath);
-      const { results: engineResults, notApplicable: excluded } =
-        await this.engine.discoverAndEvaluate(satellitePath, resolvedCorePath, filter);
+      const { results: engineResults, notApplicable: excluded, selection: applied } =
+        await this.engine.discoverAndEvaluate(satellitePath, resolvedCorePath, filter, selection);
       notApplicable = excluded;
+
+      // GT-659 — a ref that matched NOTHING is a caller asking for a ruleset this
+      // Core does not have, and the one answer it must never receive is a clean
+      // report. Zero rules evaluated with zero violations is indistinguishable
+      // from a passing satellite, which is exactly the shape of false assurance
+      // this validator already refuses elsewhere (GT-474, the empty corpus).
+      if (applied?.unmatched.length) {
+        issues.push({
+          ruleId: 'SEL-01',
+          severity: 'MUST',
+          category: 'ruleset-selection',
+          title: 'Requested ruleset not found in this Core',
+          description:
+            `${applied.unmatched.length} requested ruleset ref(s) matched no rule in the corpus: ` +
+            `${applied.unmatched.join(', ')}. Nothing was evaluated against them, so this report says ` +
+            'nothing about them. The available refs are published by the reference catalogue.',
+          blocking: true,
+        });
+      }
       coverage = summarizeRuleCoverage(engineResults);
       issues.push(...this.engine.toValidationIssues(engineResults));
       const applicabilityIssue = this.applicabilityAdvisory(notApplicable);

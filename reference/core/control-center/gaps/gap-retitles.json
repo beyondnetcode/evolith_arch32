@@ -1,11 +1,4 @@
 {
-  "retitles": [
-    {
-      "id": "GT-622",
-      "from": "Eighty-two orphaned code-scanning analyses keep every PR warning about a configuration that died in June",
-      "to": "Two hundred and ten orphaned code-scanning analyses keep PRs into `develop` warning about a configuration that died in June",
-      "declaredAt": "2026-08-08",
-      "reason": "Re-measured twice and wrong both times in the headline: 210 orphaned analyses, not 82, and the base still carrying the warning is `develop` alone, not every PR. The evidence field was corrected on 2026-08-01 and 2026-08-08; the title could not be, because this guard had no way to tell a retitle from a collision. GT-656 is that mechanism, and this is its first use."
-    }
-  ]
+  "$comment": "GT-656 — declared retitles of gap TITLES, read by 49-validate-gap-id-allocation. A collision is exempt ONLY when an entry here reproduces BOTH titles exactly, so an exemption covers one retitle and never an id: a genuine collision landing on the same number still fails. Entries are classified active / spent / rot; rot is fatal, and an entry whose retitle has reached the base branch is SPENT and must be deleted. This array is empty and that is the healthy state — the registry is for retitles in flight, not a record of past ones. The history of a retitle lives in the row it changed and in git, which is where a reader looks for it.",
+  "retitles": []
 }

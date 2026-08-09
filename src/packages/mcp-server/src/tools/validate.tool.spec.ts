@@ -49,13 +49,15 @@ describe('ValidateTool', () => {
     const result = makeResult();
     validator.validate.mockResolvedValue(result);
     await expect(tool.execute({ path: '/repo' })).resolves.toBe(result);
-    expect(validator.validate).toHaveBeenCalledWith('/repo', undefined);
+    // GT-659 — the third argument is the ruleset SELECTION, and `undefined` pins
+    // the additive guarantee: a caller naming no ruleset gets the whole corpus.
+    expect(validator.validate).toHaveBeenCalledWith('/repo', undefined, undefined);
   });
 
   it('passes corePath through to the validator', async () => {
     validator.validate.mockResolvedValue(makeResult({ status: 'passed', issues: [] }));
     await tool.execute({ path: '/repo', corePath: '/core' });
-    expect(validator.validate).toHaveBeenCalledWith('/repo', '/core');
+    expect(validator.validate).toHaveBeenCalledWith('/repo', '/core', undefined);
   });
 
   it('formats a summary string', async () => {

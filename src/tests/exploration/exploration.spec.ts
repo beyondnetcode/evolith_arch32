@@ -145,39 +145,30 @@ describe('Cross-surface exploration agent (F1)', () => {
       for (const r of results) perSurface[r.surface] = r.envelope;
       responses[opId] = perSurface;
     }
-    // Sanitise run-specific data so the generated docs are DETERMINISTIC (the
-    // howto-conformance check diffs them byte-for-byte). Value-aware so it
-    // catches volatiles by shape regardless of key: any ISO timestamp, any *Ms
-    // timing, uuids, and the ephemeral fixture path / workspace name.
-    const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+    // La captura es un REGISTRO de lo que corrio: se guarda tal cual, con sus
+    // numeros, sus ids y sus marcas de tiempo, que es lo que la hace util para
+    // depurar una divergencia. Lo unico que se normaliza aqui son las rutas
+    // (abajo), porque son de la maquina y viajan tambien a las TABLAS de
+    // argumentos MCP, que el generador imprime literales.
+    //
+    // Aqui vivia una DENYLIST de campos volatiles que se restaban a mano
+    // (`rulesChecked`, luego los arrays de ruleIds, luego `perRuleset`, luego
+    // `confidence`), y que solo podia crecer: nombraba la volatilidad por la que
+    // ya nos habian mordido, nunca la siguiente. El principio que la motivo
+    // sigue vigente y es el que ahora aplica el generador -- un how-to ensena
+    // COMO INVOCAR una interfaz, y presentar como dato un numero que cambia
+    // entre maquinas desinforma al lector ademas de hacer infalseable el chequeo
+    // anti-drift -- pero invertido: gen-howto.ts proyecta el envelope a su FORMA
+    // (todos los nombres de campo, el tipo de cada valor) y solo imprime literal
+    // lo que esta en su ALLOWLIST. Un campo nuevo ya no puede romper el chequeo.
+    //
+    // Contexto medido que justifico la inversion: CI generaba `MCP-01` donde
+    // esta maquina generaba `MTN-01` -- CONJUNTOS distintos de reglas no
+    // ejecutables. Cuales pueden ejecutarse depende de que artefactos de build
+    // existan, lo mismo que hace que este repo reporte 227 reglas comprobadas en
+    // un arbol de desarrollo y 94 en un checkout limpio.
     const capObj = { mcpTools: await harness.mcp.listTools(), responses };
-    let capture = JSON.stringify(capObj, (k, v) => {
-      if (k.endsWith('Ms') && typeof v === 'number') return 0;
-      if (k === 'correlationId' || k === 'traceId') return '<uuid>';
-      if (typeof v === 'string' && ISO.test(v)) return '<timestamp>';
-      // El VEREDICTO de una evaluacion es tan volatil como una marca de tiempo:
-      // depende del corpus y del estado del workspace en el momento de la
-      // captura. `rulesChecked` daba 102 aqui y 98 en CI, y con ello la lista de
-      // `issues` se desplazaba entera. Se persiguieron cuatro causas de entorno
-      // (rutas de maquina, policy.wasm, el binario opa, la copia bundled del
-      // CLI) y ninguna lo explicaba.
-      //
-      // El problema no era el entorno sino el contrato del documento: un how-to
-      // ensena COMO INVOCAR una interfaz, y presentar como dato un numero que
-      // cambia entre maquinas es desinformar al lector ademas de hacer
-      // infalseable el chequeo anti-drift. Se normaliza igual que los ms y los
-      // uuids: la FORMA de la respuesta se conserva, su contenido volatil no.
-      if (['rulesChecked', 'rulesSkipped', 'rulesPassed', 'rulesFailed'].includes(k) && typeof v === 'number') return '<n>';
-      if (k === 'issues' && Array.isArray(v)) return '<issues[]>';
-      // Mismo criterio para el veredicto del drift: son hallazgos sobre el
-      // workspace del momento, no parte del contrato de la interfaz. El how-to
-      // conserva el envelope completo, la peticion y TODOS los nombres de campo
-      // -- que es lo que necesita quien va a invocarla.
-      if (['newViolations', 'persistentViolations', 'resolvedViolations'].includes(k) && Array.isArray(v)) {
-        return `<${k}[]>`;
-      }
-      return v;
-    }, 2);
+    let capture = JSON.stringify(capObj, null, 2);
     const wsRef = projectPath.split('/').pop();
     // La forma RESUELTA primero. En macOS `/var/folders` es symlink a
     // `/private/var/folders` y varias respuestas devuelven el realpath;
@@ -298,17 +289,21 @@ describe('Cross-surface exploration agent (F1)', () => {
         // Decir QUE difiere, no solo que difiere. Sin esto el fallo solo nombra
         // la fase, y diagnosticar un drift que unicamente se reproduce en CI se
         // convierte en adivinar a ciegas a tres minutos por intento.
-        // Diferencia de CONJUNTOS de ruleId. Las lineas divergentes solas no
-        // bastan: cuando cambia el numero de reglas evaluadas, la lista se
-        // desplaza y toda comparacion posicional miente. Esto nombra
-        // exactamente que reglas sobran o faltan en cada entorno.
-        const ids = (s: string) => new Set((s.match(/"ruleId": "[^"]+"/g) || []).map((m) => m.slice(11, -1)));
-        const [ca, cb] = [ids(committed), ids(rendered)];
+        //
+        // Aqui se comparaban CONJUNTOS de ruleId, porque el documento embebia el
+        // envelope literal y un cambio de corpus desplazaba la lista entera.
+        // Ahora el generador proyecta el envelope a su FORMA, asi que ningun
+        // ruleId llega a la pagina y ese diagnostico seria siempre vacio. El
+        // fallo que SI puede ocurrir es otro: un campo que aparece o desaparece.
+        // Eso es lo que se nombra.
+        const fields = (s: string) =>
+          new Set((s.match(/^\s*"[^"]+":/gm) || []).map((m) => m.trim().slice(1, -2)));
+        const [ca, cb] = [fields(committed), fields(rendered)];
         const soloCommit = [...ca].filter((x) => !cb.has(x));
         const soloGen = [...cb].filter((x) => !ca.has(x));
         if (soloCommit.length || soloGen.length) {
-          console.log(`[howto-drift] ${phaseKey} ruleIds solo en commiteado: ${JSON.stringify(soloCommit)}`);
-          console.log(`[howto-drift] ${phaseKey} ruleIds solo en generado  : ${JSON.stringify(soloGen)}`);
+          console.log(`[howto-drift] ${phaseKey} campos solo en commiteado: ${JSON.stringify(soloCommit)}`);
+          console.log(`[howto-drift] ${phaseKey} campos solo en generado  : ${JSON.stringify(soloGen)}`);
         }
         const a = committed.split('\n');
         const b = rendered.split('\n');

@@ -17,6 +17,7 @@ import {
   RuleApplicabilityIndex,
   notApplicableReason,
 } from './rule-applicability';
+import { selectRules, RulesetSelection, SelectionOutcome } from './ruleset-selection';
 
 export interface NormalizedRule {
   id: string;
@@ -192,6 +193,16 @@ export interface CorpusEvaluation {
   readonly results: RuleEvaluationResult[];
   /** Rules removed before evaluation because they address somebody else. */
   readonly notApplicable: NotApplicableRule[];
+  /**
+   * GT-659 — what the caller ASKED FOR, when it asked for anything.
+   *
+   * Absent when no selection was supplied, which is the unrestricted case and
+   * today's behaviour. Present, it carries both numbers — the corpus size and
+   * what was selected from it — so a report of "2 rules, 0 violations" can never
+   * be read as "the whole corpus is clean", and it names any ref that matched
+   * NOTHING so the caller can refuse instead of returning an empty pass.
+   */
+  readonly selection?: SelectionOutcome;
 }
 
 /** The applicability decision, injected so the engine stays free of I/O. */
@@ -304,14 +315,29 @@ export class RuleEvaluationEngine {
     satellitePath: string,
     corePath: string,
     filter?: RuleApplicabilityFilter,
+    selection?: RulesetSelection,
   ): Promise<CorpusEvaluation> {
     const rules = await this.rulesetRepo.loadAllRulesets(corePath);
     const ctx: WorkspaceEvaluationContext = { satellitePath, corePath };
 
-    const { applicable, notApplicable } = partitionByApplicability(rules, filter);
+    // GT-659 — the caller's selection is applied BEFORE applicability, because
+    // the two answer different questions: selection is "which rulesets did you
+    // ask for", applicability is "which of those address you". Doing it in this
+    // order keeps `notApplicable` meaning what it has always meant — a rule
+    // addressed to somebody else — instead of quietly absorbing rules the caller
+    // never requested.
+    //
+    // No selection ⇒ the whole corpus, byte-for-byte the previous behaviour.
+    const chosen = selectRules(rules, selection);
+
+    const { applicable, notApplicable } = partitionByApplicability(chosen.selected, filter);
     const results = await this.strategy.evaluateAll(applicable, ctx);
 
-    return { results, notApplicable };
+    return {
+      results,
+      notApplicable,
+      ...(chosen.unrestricted ? {} : { selection: chosen }),
+    };
   }
 
   /** GT-569 — coverage of a raw result set, exposed as a method for callers holding the engine. */

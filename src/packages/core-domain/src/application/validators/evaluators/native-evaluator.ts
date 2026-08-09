@@ -14,6 +14,7 @@ import { SdlcRuleHandler } from './handlers/sdlc-rule.handler';
 import { CrossCuttingRuleHandler } from './handlers/cross-cutting-rule.handler';
 import { ExecutiveScorecardRuleHandler } from './handlers/executive-scorecard-rule.handler';
 import { SatelliteContractRuleHandler } from './handlers/satellite-contract-rule.handler';
+import { SsdfRuleHandler } from './handlers/ssdf-rule.handler';
 import { AclRuleHandler } from './handlers/acl-rule.handler';
 import { AdrConformanceRuleHandler } from './handlers/adr-conformance-rule.handler';
 import { ModuleBoundaryRuleHandler } from './handlers/module-boundary-rule.handler';
@@ -44,6 +45,7 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
       new CrossCuttingRuleHandler(fs),
       new ExecutiveScorecardRuleHandler(fs),
       new SatelliteContractRuleHandler(fs, configParser),
+      new SsdfRuleHandler(fs),
       new AclRuleHandler(fs),
       // GT-584: PEA-01..04 — whether a PROBABILISTIC quality signal may reach a
       // blocking verdict. The native twin of

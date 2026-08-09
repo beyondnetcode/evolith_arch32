@@ -168,6 +168,27 @@ describe('Cross-surface exploration agent (F1)', () => {
       // infalseable el chequeo anti-drift. Se normaliza igual que los ms y los
       // uuids: la FORMA de la respuesta se conserva, su contenido volatil no.
       if (['rulesChecked', 'rulesSkipped', 'rulesPassed', 'rulesFailed'].includes(k) && typeof v === 'number') return '<n>';
+      // GT-600 extendio la lista por la MISMA razon, tras repetir la historia de
+      // arriba entera: se anadieron ocho reglas SSDF, `rulesTotal` paso de 181 a
+      // 189 y el chequeo se puso rojo. Se persiguieron dos causas mas -- el corte
+      // del envelope por bytes (real, arreglado) y el orden de `readdir` entre
+      // APFS y ext4 (real, arreglado) -- y ninguna lo explicaba, porque tampoco
+      // era el entorno: CI generaba `MCP-01` donde esta maquina generaba
+      // `MTN-01`, es decir CONJUNTOS distintos de reglas no ejecutables. Cuales
+      // pueden ejecutarse depende de que artefactos de build existan, lo mismo
+      // que hace que este repo reporte 227 reglas comprobadas en un arbol de
+      // desarrollo y 94 en un checkout limpio.
+      //
+      // El resto de contadores del corpus y TODA lista de ruleIds son la misma
+      // clase de dato: describen el workspace del momento, no el contrato de la
+      // interfaz. Se normalizan conservando la forma, que es lo que el lector
+      // necesita para invocarla.
+      if (
+        ['rulesTotal', 'rulesErrored', 'corpusTotal', 'rulesNotApplicable', 'rulesNonExecutable', 'rulesExecutable']
+          .includes(k) && typeof v === 'number'
+      ) return '<n>';
+      if (/RuleIds$/.test(k) && Array.isArray(v)) return `<${k}[]>`;
+      if (k === 'perRuleset' && Array.isArray(v)) return '<perRuleset[]>';
       if (k === 'issues' && Array.isArray(v)) return '<issues[]>';
       // Mismo criterio para el veredicto del drift: son hallazgos sobre el
       // workspace del momento, no parte del contrato de la interfaz. El how-to

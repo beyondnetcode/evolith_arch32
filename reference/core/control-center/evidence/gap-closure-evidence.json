@@ -9827,6 +9827,26 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The REST/MCP surfaces are not wired to the new selection in this change. EvaluationContext already declares rulesetRef/policyRefs and the engine now honours them, so the remaining work is per-surface plumbing rather than a capability; the CLI is threaded end to end and is what proves the engine obeys. The legacy --ruleset alias path (RULESET_ID_MAP, fifteen hand-written entries) is deliberately left alone rather than migrated: removing it would break callers that use it, and it is a separate decision from adding the catalogue-based one alongside."
+    },
+    {
+      "id": "GT-600",
+      "closedAt": "2026-08-09",
+      "closureCommit": "6b4f338e",
+      "evidence": [
+        "product/suite/positioning/evolith-strategic-positioning-comparative-landscape.md",
+        "product/suite/positioning/evolith-strategic-positioning-comparative-landscape.es.md",
+        "src/rulesets/standards/ssdf-v1.1.rules.json"
+      ],
+      "validationCommands": [
+        "grep -rniE '\\\\bICP\\\\b|ideal customer|cliente ideal' product/ reference/ --include='*.md' | grep -v gap- -> ZERO before this change, which is the audit finding this row closes; the section is the first occurrence in the corpus.",
+        "node -e 'const j=require(\"./src/rulesets/standards/ssdf-v1.1.rules.json\");console.log(j.rules.length)' -> 8 SSDF practices shipped as ENGINE rules, which is what the ICP section claims and the only standard it claims end to end.",
+        "ls src/rulesets/standards/ | grep 5055 -> iso-5055-mapping.{json,csv} and no *.rules.json: the section reports ISO/IEC 5055 as a MAPPING, not as a rules pack, rather than rounding it up.",
+        "git -C \"../evolith_tracker\" ls-files \"src/apps/tracker-api/Tracker.Tests/Presentation/Governance/GovernancePackageIsolationTests.cs\" \"src/apps/tracker-api/Tracker.Tests/Infrastructure/Persistence/TenantLocalizationRoundTripTests.cs\" -> both tracked. Quoted deliberately: they are targets in the SATELLITE repository (evolith_tracker), not in this one. The ICP is DERIVED from that shape — per-tenant governance packaging with isolation tests is not something anyone builds for a single-company buyer.",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs -> passed; the section exists in both languages and is structurally identical.",
+        "node .harness/scripts/ci/08-validate-tracking.mjs -> passed."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The ICP is CHOSEN, NOT VALIDATED, and the section says so in its own text: it is derived from the product's architecture (multi-tenant GovernancePackage with isolation tests, per-tenant localization) and from the owner's 2026-08-03 decision that the vehicle is the Tracker, with no design partner, no interview and no closed deal behind it. Validating it is field work, not a code change, and inventing a criterion for it here would produce a row satisfiable without anybody wanting the result — the same defect this row was registered to avoid. What the section DOES do is make the choice falsifiable and decide the next build: the standard after SSDF is whichever audits that buyer, which on today's evidence means completing ISO/IEC 5055 from its existing mapping. Deliberately NOT done: rounding up the engine's reach. Scorecard is reported as a score from the external binary and SLSA as not implemented, because a positioning document that overstates the engine is worse than one that names no buyer."
     }
   ]
 }

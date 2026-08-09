@@ -279,6 +279,35 @@ Under the umbrella statement, the commercial and open-source spearhead is narrow
 
 Use the **umbrella** statement (§11) for the platform and investor vision; use the **wedge** statement for market entry, the demo, and the open-source community.
 
+### 11.2 Ideal Customer Profile (ICP)
+
+Until 2026-08-09 this document named categories, competitors and statements, and **never named a buyer**. An audit measured it: **zero** occurrences of an ICP across 929 English documents. Two statements can both be true and still leave every roadmap question unanswerable, because "what do we build next" has no answer without "for whom".
+
+> **ICP: the software factory or systems integrator that delivers to regulated clients — one supplier, several client SDLCs, each one auditable separately.**
+
+**Why this one and not a broader one.** The product's own shape is the evidence. The Tracker — the monetisation vehicle, decided 2026-08-03 — is multi-tenant with a per-tenant `GovernancePackage` and an explicit isolation test suite (`GovernancePackageIsolationTests.cs`), plus per-tenant localization persisted and round-trip tested (`TenantLocalizationRoundTripTests.cs`). Nobody builds per-tenant governance packaging with isolation tests for a single-company buyer. **The architecture already answers "several clients, governed separately"**, which is a factory's problem and nobody else's.
+
+**The budget line.** Not "better architecture" — that has no line item anywhere. It is **the cost of proving delivery compliance, once per client, on every engagement**: the evidence pack that a delivery followed the client's required practices. Today a factory produces that by hand, per client, per audit, and the cost scales with the number of clients rather than with the amount of software.
+
+**What the engine can actually evaluate for that buyer today** — stated precisely, because a positioning document that overstates the engine is worse than one that names no buyer at all:
+
+| standard | state | what a factory can claim from it |
+|---|---|---|
+| **NIST SP 800-218 (SSDF) v1.1** | **8 practices as engine rules**, with a native handler behind them | the only standard Evolith itself evaluates end to end |
+| **OpenSSF Scorecard** | runs weekly against a repository, ratchet armed | a score, produced by the **external** binary — not by Evolith |
+| **ISO/IEC 5055:2021** | **mapping only** (`iso-5055-mapping.json`), no rules pack | nothing yet; the mapping is the input to building one |
+| **SLSA** | not implemented | nothing yet |
+
+Four SSDF practices whose evidence is a repository *setting* rather than a file are declared in the pack's `notEvaluableHere` block instead of guessed at. **A green verdict about a control nobody checked is worse than no rule**, and that principle is what a compliance buyer is actually paying for.
+
+**What this ICP decides.** It is a filter, and its value is in what it rules out:
+
+- **Which standard ships next** — whatever the factory's clients are audited against, not whichever is most interesting to implement. On today's evidence that ordering starts with completing ISO/IEC 5055 from its existing mapping.
+- **What a `GovernancePackage` contains on day one** — the mechanism exists and has never been told what to carry.
+- **Which sentence is used** — *"I govern your architecture"* has a budget line in no company. *"I evaluate your delivery against the standard your client's auditor demands, per client, with evidence"* has one.
+
+**What is NOT claimed here.** This ICP is **chosen, not validated**: it is derived from the product's own architecture and from the owner's decision on the monetisation vehicle, with no design partner, no interview and no closed deal behind it. It is a decision filter that can now be falsified — which is strictly more than the nothing it replaces, and strictly less than evidence.
+
 ---
 
 ## 12. Roadmap Implications

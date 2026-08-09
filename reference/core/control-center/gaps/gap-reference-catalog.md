@@ -8683,9 +8683,21 @@ The lesson is the board's own, and this time the measurer paid it: a `contains` 
   - [x] A pure CWE→ISO/IEC 5055 measure mapping, built from the SHIPPED index rather than a fixture, that reports its own size so an index that failed to load can never read as compliance.
   - [x] CWEs are extracted from where real producers put them — the SARIF **rule** for CodeQL, the **result** for semgrep — and every spelling those tools emit parses to the same number.
   - [x] Verified against this repository's REAL CodeQL findings, not a synthetic log.
-  - [ ] An `iso-5055.rules.json` pack whose rules carry `enforce:` descriptors routed to a SARIF adapter, with a `notEvaluableHere` block for what no free analyser decides.
-  - [ ] The pack appears in `evolith rulesets` and is selectable per tenant like any other.
-- **Status:** `IN-PROGRESS` (2026-08-09)
+  - [x] An `iso-5055.rules.json` pack whose rules carry `enforce:` descriptors routed to a SARIF adapter, with a `notEvaluableHere` block for what no free analyser decides.
+  - [x] The pack appears in `evolith rulesets` and is selectable per tenant like any other.
+- **Status:** `DONE` (2026-08-09)
+
+**SLICE 2 DELIVERED 2026-08-09 — the pack, and two defects it surfaced.**
+
+`iso-5055.rules.json` ships **four rules, one per measure**, routed through `createIso5055Adapter` (`tool: iso-5055`). Verified end to end against the same live CodeQL findings slice 1 used: **75 alerts in, 36 violations out — 34 on `ISO5055-SEC`, 2 on `ISO5055-MAINT`** — reproducing slice 1's numbers through the real adapter path. The pack is published by `evolith rulesets` (**175 packs / 406 rules**, `blocking: 0`) and selects cleanly: `--select …/iso-5055.rules.json` narrows to **4 of 406**.
+
+**The scanner is free and stays free.** Default `semgrep --config p/default`, deliberately NOT `--config auto` — `auto` asks the vendor's service what to run, so it needs network and a login, and a governance check that silently depends on a vendor session is neither open nor free. A tenant whose CI already emits SARIF points `enforce.config.sarif` at it and is not made to scan twice.
+
+**DEFECT 1, surfaced by selecting this pack.** With the analyser absent, `--select` on it produced a BLOCKING `GOV-CORE-UNRESOLVED` — *"the Evolith Core rulesets could not be resolved, pass `--core`"* — to an operator who had passed `--core`. The Core had resolved perfectly: 406 rules in the corpus, 4 selected, 0 executed because the tool was missing. GT-661's `selection.corpusTotal` makes the two separable, so the guard now fires on an empty CORPUS rather than on zero executed rules. **A corpus of zero is still a hard failure under any selection**, so GT-474's guarantee is intact.
+
+**DEFECT 2, found by fixing the first.** With `GOV-CORE-UNRESOLVED` correctly out of the way, the run reported **`passed` over 4 skipped rules** — zero evaluated, zero violations, green. That is the exact false assurance this backlog keeps finding, arriving through a door I had just opened. The pack's rules are now `MUST` severity with `blocking: false`, and the pair is load-bearing: **MUST** is what makes GT-569 emit the advisory that turns that green into `warning`; **blocking: false** is what stops the advisory failing a build over coverage this pack never claimed. Measured after the change: `status: warning`, 4 skipped, 4 advisory issues naming each measure.
+
+**Coverage is the analyser's, not the standard's, and the pack says so.** `notEvaluableHere` records that a green here means the configured analyser found no ISO/IEC 5055 weakness — **not** that the repository is free of them.
 
 **SLICE 1 DELIVERED 2026-08-09 — the translation layer, measured against reality.**
 

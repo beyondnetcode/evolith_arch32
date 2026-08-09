@@ -9889,6 +9889,25 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The DECISION is that 'no selection' keeps meaning the whole corpus. The owner's principle - the Core proposes, the client configures and selects - does not require the Core to stop blocking; it requires the Core not to be the one deciding what a tenant adopted. With no selection there is no tenant configuration to consult and the Core refuses to invent one, so it evaluates everything it has and LABELS that scope core-default. The alternative was considered and rejected on a measured basis: a default that stopped blocking would silently disarm every gate working today, this repository's own CI included, which is a worse failure than the one being fixed. Deliberately NOT done here: reading a tenant default on the MCP and REST surfaces. The CLI got ProfileConfig.select because the CLI is the surface with a profile; MCP and REST take their selection from the caller per request, and where a Tracker-side tenant default should live is a Tracker question rather than a Core one."
+    },
+    {
+      "id": "GT-662",
+      "closedAt": "2026-08-09",
+      "closureCommit": "6ca1e991",
+      "evidence": [
+        "src/rulesets/standards/iso-5055.rules.json",
+        "src/packages/core-domain/src/application/validators/standards/iso-5055-measure.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/adapters/iso-5055-adapter.ts",
+        "src/sdk/cli/src/commands/validate/validate.command.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config src/packages/core-domain/jest.config.js --testPathPatterns iso-5055 -> 23 passed across the mapping and the adapter.",
+        "node src/sdk/cli/dist/main.js rulesets --core . --format json -> 175 packs / 406 rules; the ISO pack publishes 4 rules with blocking 0.",
+        "node src/sdk/cli/dist/main.js validate --core . --select src/rulesets/standards/iso-5055.rules.json --format json -> selection caller, 4 of 406, status warning with 4 advisories. Before the severity fix the same command reported PASSED over 4 skipped rules.",
+        "iso5055ViolationsFromSarif over the 75 live CodeQL alerts -> 36 violations, 34 ISO5055-SEC and 2 ISO5055-MAINT, reproducing slice 1 through the real adapter path."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Coverage of this pack is the coverage of whatever analyser the tenant points it at, never the 138 weaknesses the standard names, and notEvaluableHere records that rather than leaving a reader to infer it. Publishing a rule per weakness would advertise 138 checks nothing performs - GT-585 measured what that produces here. Deliberately NOT done: scoring. A count of weaknesses is not a compliance verdict and the standard's scoring is a policy decision belonging to a tenant's selected ruleset. Two defects were surfaced and fixed rather than recorded: GOV-CORE-UNRESOLVED misdiagnosing a narrowed run as an unresolved Core, and a run reporting passed over skipped rules once that misdiagnosis was out of the way."
     }
   ]
 }

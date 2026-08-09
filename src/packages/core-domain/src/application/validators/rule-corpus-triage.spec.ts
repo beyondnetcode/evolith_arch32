@@ -79,9 +79,15 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   // deliberately NOT in the ruleset; they are named in its `notEvaluableHere`
   // block, so the corpus did not grow by rules nothing can decide.
 
+  //
+  // GT-662 (+4, 2026-08-09): the ISO/IEC 5055 pack, one rule per measure. They
+  // land in `unimplemented-native` because no NATIVE handler decides them —
+  // which is correct and is the whole design: they carry `enforce:` and are
+  // decided by an adapter over a free analyser's SARIF. Counting them as
+  // native-handler would claim a capability this Core does not have.
   'native-handler': 166,
   'documentation-only': 137,
-  'unimplemented-native': 48,
+  'unimplemented-native': 52,
   'needs-external-system': 20,
   'needs-runtime': 17,
   underspecified: 14,
@@ -244,8 +250,14 @@ describe('GT-595 · the handler slice that landed', () => {
   it('shrinks the unclaimed corpus from 240 rules to 102', () => {
     // 114 -> 102 on 2026-07-29: the eight config-shaped closures (GT-595) plus
     // the four module-boundary closures (GT-632). Disjoint sets, so -8 and -4.
+    //
+    // 102 -> 106 on 2026-08-09 (GT-662): the four ISO/IEC 5055 measure rules.
+    // "Unclaimed" here means "no native handler", and they have none by design —
+    // an adapter over a free analyser's SARIF decides them. The number going UP
+    // for a capability that was ADDED is the honest reading, and pretending
+    // otherwise would be the claim this file exists to prevent.
     const unclaimed = CORPUS.filter(r => !claims(r));
-    expect(unclaimed).toHaveLength(102);
+    expect(unclaimed).toHaveLength(106);
 
     // ...and every one of the 134 ADR-conformance rules is now claimed.
     // 126 -> 133 on 2026-07-28: the committed corpus was seven rulesets behind

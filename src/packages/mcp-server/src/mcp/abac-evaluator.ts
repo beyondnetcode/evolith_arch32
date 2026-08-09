@@ -56,6 +56,12 @@ const TOOL_CLASSIFICATION: Record<string, ToolClass> = {
   'evolith-gate-evaluate': 'read',
   'evolith-phase-artifacts-evaluate': 'read',
 
+  // GT-660 — the ruleset catalogue. READ, and stated in the map rather than
+  // left to the `includes('list')` fallback: the fallback exists for tools
+  // nobody classified, and a tool a tenant uses to decide what to adopt should
+  // not depend on its own name spelling for its permissions.
+  'evolith-ruleset-list': 'read',
+
   // Topology catalog / advisory (read)
   'evolith-topology-list': 'read',
   'evolith-topology-get': 'read',

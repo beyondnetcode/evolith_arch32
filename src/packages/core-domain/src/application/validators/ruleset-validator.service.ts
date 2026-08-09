@@ -13,6 +13,7 @@ import {
 } from './ruleset-validator.types';
 import { loadRulesetById } from './ruleset-id-loader';
 import type { RulesetSelection } from './ruleset-selection';
+import type { RulesetCatalog } from './ruleset-catalog';
 import { runArchitectureValidation } from './architecture-validator';
 import type { NotApplicableRule, RuleApplicabilityFilter } from './rule-evaluation-engine';
 import {
@@ -300,6 +301,25 @@ export class RulesetValidatorService {
 
   async loadRulesetById(corePath: string, rulesetId: string): Promise<ValidationIssue[]> {
     return loadRulesetById(this.fs, this.logger, corePath, rulesetId);
+  }
+
+  /**
+   * GT-660 — publish what this Core can evaluate, so a caller can configure.
+   *
+   * Delegates to the engine, which loads through the same `loadAllRulesets` a
+   * validation run uses. Exposed on the service because that is what every
+   * surface already holds: adding a second construction path for the engine
+   * would be a second answer to «what does this Core carry», and two answers to
+   * that question is the defect this method exists to remove.
+   *
+   * It evaluates nothing and decides nothing. The Core PROPOSES.
+   */
+  async catalog(corePath?: string): Promise<RulesetCatalog> {
+    // No satellite is involved in a catalogue read — there is nothing to
+    // evaluate — so an absent path falls back to the caller's cwd exactly as
+    // `findCorePath` would from a satellite root. A surface that knows better
+    // (the CLI's rulesets resolver, the API's configured root) passes it in.
+    return this.engine.discoverCatalog(corePath || this.findCorePath(process.cwd()));
   }
 
   async validateArchitecture(

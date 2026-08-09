@@ -112,7 +112,7 @@ jobs:
             standards/iso-5055.rules.json
 ```
 
-Measured on the CLI this action wraps, against the Evolith Core repository itself (`--core .`, no satellite): no selection evaluates **102** rules of a corpus of **372**; `standards/ssdf-v1.1.rules.json` alone evaluates **8**. The target is named because the first number moves with it — what does not move is the shape: a tenant can adopt a standards pack without also adopting the rest of this repository's opinions.
+Measured on the CLI this action wraps, against the Evolith Core repository itself (`--core .`, no satellite): no selection evaluates **102** rules of a corpus of **402**, across **174** packs; `standards/ssdf-v1.1.rules.json` alone evaluates **8**. The corpus figure comes from `evolith rulesets`, which derives it from the same load the engine evaluates — an earlier hand-count of the ruleset files said 372 and was wrong. The target is named because the first number moves with it; what does not move is the shape: a tenant can adopt a standards pack without also adopting the rest of this repository's opinions.
 
 **A ref this Core does not carry is a blocking failure, never a quiet pass.** Zero rules evaluated with zero violations is indistinguishable from a clean repository, so the engine emits a blocking `SEL-01` issue naming the ref it could not evaluate. For the same reason an empty or whitespace-only `select` means *"the caller named nothing"* and evaluates the full corpus — it never reaches the CLI as a selection of nothing.
 

@@ -9851,7 +9851,7 @@
     {
       "id": "GT-660",
       "closedAt": "2026-08-09",
-      "closureCommit": "97500b7c",
+      "closureCommit": "5703c966",
       "evidence": [
         "src/packages/core-domain/src/application/validators/ruleset-catalog.ts",
         "src/sdk/cli/src/commands/rulesets/rulesets.command.ts",

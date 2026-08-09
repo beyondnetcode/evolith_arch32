@@ -640,6 +640,19 @@ jobs:
           node .harness/scripts/ci/62-validate-health-envelope.mjs --verbose
           node --test .harness/scripts/ci/62-validate-health-envelope.test.mjs
 
+      # GT-651 — the `evolith-validate` action was finished work standing in the
+      # one directory GitHub Marketplace does not read. Not broken, not missing:
+      # unlistable, because the metadata file must be at the repository ROOT and
+      # subfolder manifests are explicitly never listed. Nothing here could say so,
+      # since "publishable" was a property no check had been asked about. This one
+      # is asked on every run, and it is deliberately narrow: it asserts nothing in
+      # this repository blocks the listing, NOT that the listing exists — publishing
+      # is a human step on a release and a guard claiming otherwise would be lying.
+      - name: The Marketplace action is still publishable
+        run: |
+          node .harness/scripts/ci/64-validate-marketplace-action.mjs --verbose
+          node --test .harness/scripts/ci/64-validate-marketplace-action.test.mjs
+
       # GT-650 / ADR-0125 — the artifact registry is the accepted single declaration, and the gate
       # corpus is still hand-maintained while the migration lands. For as long as both exist, the
       # only thing making that intermediate state safe is that they are checked to agree. This

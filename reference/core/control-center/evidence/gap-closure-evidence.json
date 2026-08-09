@@ -8284,7 +8284,7 @@
       "closedAt": "2026-07-26",
       "closureCommit": "3004d30b",
       "evidence": [
-        ".github/actions/evolith-validate/action.yml",
+        "action.yml",
         ".github/workflows/evolith-validate-dogfood.yml",
         ".github/actions/evolith-validate/test/action-step.test.mjs"
       ],
@@ -8295,7 +8295,7 @@
         "gh run list --workflow=evolith-validate-dogfood.yml --limit 5 -> 5 consecutive success."
       ],
       "dependencyDisposition": "accepted-scope",
-      "dependencyRationale": "The action is dogfooded and under regression, which is what this gap was about. Making the workflow a REQUIRED check is branch-protection configuration, not a code change, and is deliberately left outside this closure — a gate nobody requires is how this action rotted in the first place, so it is worth doing, just not here."
+      "dependencyRationale": "The action is dogfooded and under regression, which is what this gap was about. Making the workflow a REQUIRED check is branch-protection configuration, not a code change, and is deliberately left outside this closure — a gate nobody requires is how this action rotted in the first place, so it is worth doing, just not here. PATH UPDATED 2026-08-08 (GT-651): the manifest moved from .github/actions/evolith-validate/action.yml to the repository root, which is the only place GitHub Marketplace reads one from. Same file, same fix, new home — recorded here rather than left dangling, because an evidence path that no longer resolves is a closure nobody can re-verify."
     },
     {
       "id": "GT-579",

@@ -4,6 +4,10 @@
 
 Composite action reutilizable que ejecuta `evolith-cli validate` como gate de PR en cualquier repositorio satélite que herede de Evolith Core.
 
+> **Dónde vive esta action (GT-651).** El manifiesto es [`action.yml` en la raíz del repositorio](../../../action.yml); este directorio conserva su README, su test hermético y sus fixtures. Se movió allí porque GitHub Marketplace resuelve el fichero de metadatos de una action desde la raíz y desde ningún otro sitio — *«Each repository must contain a single action metadata file (`action.yml` or `action.yaml`) at the root»*, con los manifiestos en subcarpetas explícitamente *«not automatically listed»*. Desde `.github/actions/evolith-validate/` esta action era usable entre repos y permanentemente no publicable.
+>
+> **`@main` es una referencia móvil.** Los ejemplos la usan porque es lo que resuelve hoy. Un consumidor debería fijar un tag — y el listado en Marketplace se crea desde un release, que es un paso de publicación humano que ejecuta el dueño del repositorio en la UI de GitHub. `64-validate-marketplace-action.mjs` verifica que nada en este repositorio bloquee ese paso; no verifica —ni puede— que el paso haya ocurrido.
+
 ---
 
 ## Uso
@@ -26,14 +30,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Validar gobernanza Evolith
-        uses: beyondnetcode/evolith_arch32/.github/actions/evolith-validate@main
+        uses: beyondnetcode/evolith_arch32@main
 ```
 
 ### Solo ruleset de herencia
 
 ```yaml
       - name: Validar herencia Evolith
-        uses: beyondnetcode/evolith_arch32/.github/actions/evolith-validate@main
+        uses: beyondnetcode/evolith_arch32@main
         with:
           ruleset: inheritance
 ```
@@ -42,7 +46,7 @@ jobs:
 
 ```yaml
       - name: Validar gobernanza Evolith
-        uses: beyondnetcode/evolith_arch32/.github/actions/evolith-validate@main
+        uses: beyondnetcode/evolith_arch32@main
         with:
           satellite-path: '.'
           ruleset: 'inheritance'
@@ -67,6 +71,7 @@ jobs:
 | `satellite-path` | Ruta a la raiz del repo satélite | No | `.` |
 | `core-path` | Ruta a Evolith Core (uso en monorepo) | No | `''` |
 | `ruleset` | Ruleset a validar: `acl`, `open-core`, `inheritance`, o vacío para todos | No | `''` |
+| `select` | **(GT-659)** **Refs** de ruleset que este tenant ha adoptado, uno por línea o separados por comas. Vacío evalúa todo lo que este Core conoce; nombrar refs evalúa esos **y nada más**. Ver abajo. | No | `''` |
 | `node-version` | Version de Node.js | No | `20` |
 | `cli-version` | Version de `@beyondnet/evolith-cli` a instalar | No | `latest` |
 | `cli-command` | Comando con el que se invoca el CLI. Vacio instala el CLI publicado; si se define (p. ej. `node ./src/sdk/cli/dist/main.js`) se usa un build local y se omiten tanto el npm install como el setup de Node.js | No | `''` |
@@ -91,6 +96,25 @@ jobs:
 | `acl` | Limites de capa anti-corrupcion (integraciones externas) |
 | `open-core` | Reglas de frontera Open-Core (que pertenece al Core vs. Tracker SaaS) |
 | *(vacio)* | Todos los rulesets combinados |
+
+---
+
+## `select` — adoptar un pack de estándares sin adoptar todo lo demás
+
+`ruleset` resuelve un alias escrito a mano hacia un ruleset concreto. `select` es otra cosa: nombra los **refs** de ruleset que un tenant ha adoptado, y el motor evalúa esos y nada más.
+
+```yaml
+      - name: Validar contra los estándares que este tenant adoptó
+        uses: beyondnetcode/evolith_arch32@main
+        with:
+          select: |
+            standards/ssdf-v1.1.rules.json
+            standards/iso-5055.rules.json
+```
+
+Medido sobre el CLI que esta action envuelve, contra el propio repositorio de Evolith Core (`--core .`, sin satélite): sin selección se evalúan **102** reglas de un corpus de **372**; solo con `standards/ssdf-v1.1.rules.json` se evalúan **8**. Se nombra el objetivo porque el primer número se mueve con él — lo que no se mueve es la forma: un tenant puede adoptar un pack de estándares sin adoptar además el resto de opiniones de este repositorio.
+
+**Un ref que este Core no lleva es un fallo bloqueante, nunca un pase silencioso.** Cero reglas evaluadas con cero violaciones es indistinguible de un repositorio limpio, así que el motor emite un issue bloqueante `SEL-01` nombrando el ref que no pudo evaluar. Por la misma razón un `select` vacío o solo con espacios significa *«el llamador no nombró nada»* y evalúa el corpus completo — nunca llega al CLI como una selección de nada.
 
 ---
 

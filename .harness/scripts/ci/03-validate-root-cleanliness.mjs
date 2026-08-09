@@ -50,7 +50,17 @@ const allowedFiles = new Set([
   "tsconfig.base.json",
   ".env",
   // Root satellite contract manifest (evolith.dev/v1) — the repo's own governance manifest.
-  "evolith.yaml"
+  "evolith.yaml",
+  // GT-651: GitHub Marketplace resolves an action's metadata file from the
+  // repository root and nowhere else — «Each repository must contain a single
+  // action metadata file (action.yml or action.yaml) at the root», with
+  // subfolder metadata explicitly «not automatically listed». The file lived
+  // under `.github/actions/evolith-validate/` and was therefore permanently
+  // unlistable. Only the manifest moved: its README, hermetic test and
+  // fixtures stay in that directory, so this admits exactly one file and not a
+  // second home for action code. `64-validate-marketplace-action.mjs` fails if
+  // it ever leaves the root again.
+  "action.yml"
 ]);
 
 // Explicit whitelist of allowed directories in the root directory.

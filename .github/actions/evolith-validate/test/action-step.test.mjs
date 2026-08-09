@@ -50,7 +50,15 @@ const parseYaml = (() => {
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ACTION_DIR = path.resolve(HERE, '..');
-const ACTION_YML = path.join(ACTION_DIR, 'action.yml');
+/**
+ * GT-651: the manifest moved to the repository ROOT, because that is the only
+ * place GitHub Marketplace reads one from. Its README, this test and the
+ * fixtures stayed here — so this is the one path that had to follow it. Resolved
+ * from `ACTION_DIR` rather than hard-coded so the relationship stays visible:
+ * `.github/actions/evolith-validate/` → repository root.
+ */
+const REPO_ROOT = path.resolve(ACTION_DIR, '..', '..', '..');
+const ACTION_YML = path.join(REPO_ROOT, 'action.yml');
 const FIXTURES = path.join(HERE, 'fixtures');
 const STUB_CLI = path.join(FIXTURES, 'stub-cli.sh');
 
@@ -336,5 +344,98 @@ describe('evolith-validate composite action', () => {
     const installStep = steps.find((s) => String(s.name).startsWith('Install @beyondnet'));
     assert.ok(installStep, 'install step is missing');
     assert.match(String(installStep.if), /inputs\.cli-command\s*==\s*''/);
+  });
+
+  // --------------------------------------------------------------------------
+  // GT-651 · `select` — the tenant-selection capability, reachable from the
+  // surface a tenant installs.
+  //
+  // GT-659 made the engine evaluate only what the caller asked for on CLI, MCP
+  // and REST. The action is the fourth way a tenant reaches it and the only one
+  // most of them will ever use, so it had to carry the argument too. What is
+  // asserted here is the argv the CLI would RECEIVE, because the translation
+  // from one YAML string to a repeatable flag is shell, and shell in YAML is
+  // exactly what this file exists to stop being unverified.
+  // --------------------------------------------------------------------------
+
+  /** Runs the validate step and returns the argv the stub CLI was invoked with. */
+  function argvFor(select) {
+    const work = mkdtempSync(path.join(tmpdir(), 'gt651-'));
+    const argvOut = path.join(work, 'argv');
+    const run = runStep(validateStep, {
+      inputs: {
+        'satellite-path': '.',
+        'cli-command': `bash ${STUB_CLI}`,
+        'fail-on-violation': 'false',
+        ...(select === undefined ? {} : { select }),
+      },
+      extraEnv: {
+        STUB_FIXTURE: path.join(FIXTURES, 'envelope-compliant.json'),
+        STUB_EXIT: '0',
+        STUB_ARGV_OUT: argvOut,
+      },
+    });
+    assert.equal(run.exitCode, 0, run.stderr);
+    return readFileSync(argvOut, 'utf8').split('\n').filter(Boolean);
+  }
+
+  test('GT-651: `select` declares an input, so a tenant can reach GT-659 from the action', () => {
+    const input = action.inputs?.select;
+    assert.ok(input, 'action.yml must declare a `select` input');
+    assert.equal(input.default, '', 'the default must be empty — naming nothing means the full corpus');
+    assert.equal(input.required, false);
+  });
+
+  test('GT-651: one ref becomes one --select flag', () => {
+    assert.deepEqual(argvFor('standards/ssdf-v1.1.rules.json').slice(0, 3), [
+      'validate',
+      '--select',
+      'standards/ssdf-v1.1.rules.json',
+    ]);
+  });
+
+  test('GT-651: newline- and comma-separated lists both become repeated flags', () => {
+    const expected = ['--select', 'a/one.rules.json', '--select', 'b/two.rules.json'];
+    for (const form of ['a/one.rules.json\nb/two.rules.json', 'a/one.rules.json,b/two.rules.json']) {
+      const argv = argvFor(form);
+      assert.deepEqual(argv.slice(1, 5), expected, `form: ${JSON.stringify(form)}`);
+    }
+  });
+
+  test('THE DISTINCTION: nothing named sends NO --select at all, never an empty one', () => {
+    // A YAML block scalar leaves a trailing newline; a template that resolved
+    // to nothing leaves whitespace. Both must mean "the caller named nothing".
+    // `--select ""` would be a selection OF nothing: zero rules evaluated, zero
+    // violations found, reported as a pass over a repository nobody examined.
+    for (const nothing of [undefined, '', '\n', '   ', ',,', ' , \n ,']) {
+      const argv = argvFor(nothing);
+      assert.equal(
+        argv.includes('--select'),
+        false,
+        `select=${JSON.stringify(nothing)} produced a --select flag: ${JSON.stringify(argv)}`,
+      );
+    }
+  });
+
+  test('GT-651: a blank entry among real refs is dropped, not forwarded', () => {
+    const argv = argvFor('a/one.rules.json\n\n   \nb/two.rules.json\n');
+    assert.deepEqual(argv.filter((a, i) => argv[i - 1] === '--select'), [
+      'a/one.rules.json',
+      'b/two.rules.json',
+    ]);
+    assert.equal(argv.filter((a) => a === '--select').length, 2);
+  });
+
+  test('GT-651: the summary distinguishes a selected run from a full-corpus run', () => {
+    const selected = runStep(summaryStep, {
+      inputs: { select: 'standards/ssdf-v1.1.rules.json' },
+      outputs: { 'compliance-status': 'compliant', 'violations-count': '0', 'issues-count': '0' },
+    });
+    assert.match(selected.summary, /\| Selection \| `standards\/ssdf-v1\.1\.rules\.json` \|/);
+
+    const full = runStep(summaryStep, {
+      outputs: { 'compliance-status': 'compliant', 'violations-count': '0', 'issues-count': '0' },
+    });
+    assert.match(full.summary, /\| Selection \| none -- the full corpus this Core carries \|/);
   });
 });

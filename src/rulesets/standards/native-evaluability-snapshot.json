@@ -11,13 +11,13 @@
     "src/packages/core-domain/test/rule-corpus-triage.ts (corpus loader, classification and this renderer)"
   ],
   "regenerateWith": "node src/rulesets/standards/capture-native-evaluability-snapshot.mjs",
-  "validation": "Rendered by test/rule-corpus-triage.ts from the live triage, written by capture-native-evaluability-snapshot.mjs and pinned byte-for-byte by rule-corpus-triage.spec.ts, so a divergence between this file and Core is a failing test rather than silent drift (corpus 402; native-handler 166, documentation-only 137, unimplemented-native 48, needs-external-system 20, needs-runtime 17, underspecified 14).",
-  "corpusSize": 402,
-  "distinctRuleIds": 402,
+  "validation": "Rendered by test/rule-corpus-triage.ts from the live triage, written by capture-native-evaluability-snapshot.mjs and pinned byte-for-byte by rule-corpus-triage.spec.ts, so a divergence between this file and Core is a failing test rather than silent drift (corpus 406; native-handler 166, documentation-only 137, unimplemented-native 52, needs-external-system 20, needs-runtime 17, underspecified 14).",
+  "corpusSize": 406,
+  "distinctRuleIds": 406,
   "counts": {
     "native-handler": 166,
     "documentation-only": 137,
-    "unimplemented-native": 48,
+    "unimplemented-native": 52,
     "needs-external-system": 20,
     "needs-runtime": 17,
     "underspecified": 14
@@ -351,6 +351,10 @@
     "SEC-RL-03": "unimplemented-native",
     "SEC-TIMING-01": "unimplemented-native",
     "SEC-TIMING-02": "unimplemented-native",
+    "ISO5055-SEC": "unimplemented-native",
+    "ISO5055-REL": "unimplemented-native",
+    "ISO5055-PERF": "unimplemented-native",
+    "ISO5055-MAINT": "unimplemented-native",
     "SSDF-PO.3.1": "native-handler",
     "SSDF-PW.4.1": "native-handler",
     "SSDF-PW.4.4": "native-handler",

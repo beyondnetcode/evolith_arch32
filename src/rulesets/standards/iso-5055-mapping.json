@@ -12,21 +12,21 @@
     "weaknessCount": 138
   },
   "corpus": {
-    "rulesetFiles": 178,
-    "rules": 404,
+    "rulesetFiles": 179,
+    "rules": 408,
     "note": "Files that carry gate definitions or topology recommendations rather than conformance rules contribute no rows: architecture/topology-recommendation.rules.json and sdlc/phase-gates.rules.json."
   },
   "summary": {
-    "rules": 404,
+    "rules": 408,
     "mappedToIso5055": 37,
     "mappedDirect": 8,
     "mappedPartial": 29,
-    "noInternationalEquivalent": 367,
-    "adoptedFraction": 0.0916,
+    "noInternationalEquivalent": 371,
+    "adoptedFraction": 0.0907,
     "analyserAdoptable": 42,
     "analyserAdoptablePartial": 23,
-    "analyserAdoptableFraction": 0.104,
-    "analyserAdoptableFractionIncludingPartial": 0.1609,
+    "analyserAdoptableFraction": 0.1029,
+    "analyserAdoptableFractionIncludingPartial": 0.1593,
     "byClass": {
       "architecture-decision": {
         "rules": 163,
@@ -49,7 +49,7 @@
         "adoptable": 0
       },
       "governance": {
-        "rules": 63,
+        "rules": 67,
         "mapped": 1,
         "adoptable": 0
       },
@@ -89,15 +89,15 @@
       "src/packages/core-domain/test/rule-corpus-triage.ts (corpus loader, classification and this renderer)"
     ],
     "note": "The handler backlog is the `unimplemented-native` class only. `documentation-only` and `underspecified` rules are not handler work at all, and the two adapter classes are closed by the enforcer seam rather than by a rule handler.",
-    "realBacklogSize": 48,
+    "realBacklogSize": 52,
     "adoptableFromAnalyser": 5,
     "adoptableFromAnalyserIncludingPartial": 10,
-    "adoptedFractionOfBacklog": 0.1042,
-    "adoptedFractionOfBacklogIncludingPartial": 0.2083,
-    "remainderToAuthor": 38,
+    "adoptedFractionOfBacklog": 0.0962,
+    "adoptedFractionOfBacklogIncludingPartial": 0.1923,
+    "remainderToAuthor": 42,
     "byEvaluabilityClass": {
       "unimplemented-native": {
-        "rules": 48,
+        "rules": 52,
         "mappedToIso5055": 6,
         "analyserAdoptable": 5,
         "analyserAdoptablePartial": 5,
@@ -6901,6 +6901,82 @@
       },
       "nativeEvaluability": "unimplemented-native",
       "note": "Same as SEC-TIMING-01; the early-length-rejection variant needs a bespoke pattern."
+    },
+    {
+      "ruleId": "ISO5055-MAINT",
+      "sourceFile": "standards/iso-5055.rules.json",
+      "title": "ISO/IEC 5055 — Maintainability",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "unimplemented-native",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "ISO5055-PERF",
+      "sourceFile": "standards/iso-5055.rules.json",
+      "title": "ISO/IEC 5055 — Performance Efficiency",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "unimplemented-native",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "ISO5055-REL",
+      "sourceFile": "standards/iso-5055.rules.json",
+      "title": "ISO/IEC 5055 — Reliability",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "unimplemented-native",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "ISO5055-SEC",
+      "sourceFile": "standards/iso-5055.rules.json",
+      "title": "ISO/IEC 5055 — Security",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "unimplemented-native",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
       "ruleId": "SSDF-PO.3.1",

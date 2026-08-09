@@ -24,6 +24,7 @@ on:
   pull_request:
     branches: [main, develop]
     paths:
+      - 'action.yml'
       - '.github/actions/evolith-validate/**'
       - '.github/workflows/evolith-validate-dogfood.yml'
       - 'src/sdk/cli/**'
@@ -34,6 +35,7 @@ on:
   push:
     branches: [main, develop]
     paths:
+      - 'action.yml'
       - '.github/actions/evolith-validate/**'
       - '.github/workflows/evolith-validate-dogfood.yml'
       - 'src/sdk/cli/**'
@@ -118,7 +120,7 @@ jobs:
       # ----------------------------------------------------------------
       - name: Run the action against the non-conforming fixture (report only)
         id: report
-        uses: ./.github/actions/evolith-validate
+        uses: ./
         with:
           satellite-path: ${{ github.workspace }}/.github/actions/evolith-validate/test/fixtures/noncompliant-satellite
           core-path: ${{ github.workspace }}
@@ -182,7 +184,7 @@ jobs:
       - name: Run the action as a gate (expected to fail)
         id: gate
         continue-on-error: true
-        uses: ./.github/actions/evolith-validate
+        uses: ./
         with:
           satellite-path: ${{ github.workspace }}/.github/actions/evolith-validate/test/fixtures/noncompliant-satellite
           core-path: ${{ github.workspace }}
@@ -200,3 +202,60 @@ jobs:
             exit 1
           fi
           echo "OK: the gate blocked as expected with ${VIOLATIONS} blocking violation(s)."
+
+      # ----------------------------------------------------------------
+      # 3. GT-651 · the tenant selection, end to end through the action.
+      #
+      # `test/action-step.test.mjs` asserts the argv the action BUILDS, against
+      # a stub. This asserts what the real CLI DOES with it, which is a
+      # different claim and the one a tenant depends on. The unknown-ref case is
+      # the one chosen deliberately: it is the only outcome that cannot be
+      # faked by a run that did nothing. A selection that matches nothing
+      # produces zero rules evaluated and zero violations — indistinguishable
+      # from a clean repository unless the engine says so out loud.
+      # ----------------------------------------------------------------
+      - name: Run the action with a ruleset this Core does not carry
+        id: unknown-select
+        continue-on-error: true
+        uses: ./
+        with:
+          satellite-path: ${{ github.workspace }}/.github/actions/evolith-validate/test/fixtures/noncompliant-satellite
+          core-path: ${{ github.workspace }}
+          cli-command: node ${{ github.workspace }}/src/sdk/cli/dist/main.js
+          select: standards/this-pack-does-not-exist.rules.json
+          fail-on-violation: 'true'
+
+      - name: Assert an unknown selection blocks instead of passing silently
+        env:
+          OUTCOME: ${{ steps.unknown-select.outcome }}
+          STATUS: ${{ steps.unknown-select.outputs.compliance-status }}
+          REPORT_PATH: ${{ steps.unknown-select.outputs.report-path }}
+        run: |
+          if [ "${OUTCOME}" != "failure" ]; then
+            echo "::error::a selection matching no ruleset did not fail the step (outcome=${OUTCOME})."
+            echo "Nothing was evaluated, so a pass here is a clean bill of health over an unexamined repo."
+            exit 1
+          fi
+
+          if [ "${STATUS}" != "non-compliant" ]; then
+            echo "::error::expected compliance-status=non-compliant, got '${STATUS}'"
+            exit 1
+          fi
+
+          # The verdict must come from the SELECTION, not from the fixture
+          # happening to be non-conforming: assert the engine named the ref.
+          if ! jq -e '[.data.issues[]? | select(.ruleId == "SEL-01" and .blocking == true)] | length > 0' \
+               "${REPORT_PATH}" > /dev/null; then
+            echo "::error::the report carries no blocking SEL-01 issue."
+            echo "The step failed for some other reason, so this proves nothing about selection."
+            jq -r '[.data.issues[]?.ruleId] | unique | join(", ")' "${REPORT_PATH}" || true
+            exit 1
+          fi
+
+          if ! jq -e '.data.issues[] | select(.ruleId == "SEL-01") | .description | contains("this-pack-does-not-exist")' \
+               "${REPORT_PATH}" > /dev/null; then
+            echo "::error::SEL-01 did not name the ref that was requested."
+            exit 1
+          fi
+
+          echo "OK: an unknown selection blocked, and the report names the ref it could not evaluate."

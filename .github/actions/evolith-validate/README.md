@@ -4,6 +4,10 @@
 
 Reusable composite action that runs `evolith-cli validate` as a PR gate in any satellite repository that inherits from Evolith Core.
 
+> **Where this action lives (GT-651).** The manifest is [`action.yml` at the repository root](../../../action.yml); this directory keeps its README, its hermetic test and its fixtures. It was moved there because GitHub Marketplace resolves an action's metadata file from the root and nowhere else — *"Each repository must contain a single action metadata file (`action.yml` or `action.yaml`) at the root"*, with subfolder manifests explicitly *"not automatically listed"*. From `.github/actions/evolith-validate/` this action was usable cross-repo and permanently unlistable.
+>
+> **`@main` is a moving ref.** The examples below use it because it is what resolves today. A consumer should pin a tag — and the Marketplace listing itself is created from a release, which is a human publish step the repository owner performs in GitHub's UI. `64-validate-marketplace-action.mjs` asserts nothing in this repository blocks that step; it does not, and cannot, assert that the step happened.
+
 ---
 
 ## Usage
@@ -26,14 +30,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Validate Evolith governance
-        uses: beyondnetcode/evolith_arch32/.github/actions/evolith-validate@main
+        uses: beyondnetcode/evolith_arch32@main
 ```
 
 ### Inheritance ruleset only
 
 ```yaml
       - name: Validate Evolith inheritance
-        uses: beyondnetcode/evolith_arch32/.github/actions/evolith-validate@main
+        uses: beyondnetcode/evolith_arch32@main
         with:
           ruleset: inheritance
 ```
@@ -42,7 +46,7 @@ jobs:
 
 ```yaml
       - name: Validate Evolith governance
-        uses: beyondnetcode/evolith_arch32/.github/actions/evolith-validate@main
+        uses: beyondnetcode/evolith_arch32@main
         with:
           satellite-path: '.'
           ruleset: 'inheritance'
@@ -67,6 +71,7 @@ jobs:
 | `satellite-path` | Path to the satellite repo root | No | `.` |
 | `core-path` | Path to Evolith Core (monorepo use) | No | `''` |
 | `ruleset` | Ruleset to validate: `acl`, `open-core`, `inheritance`, or empty for all | No | `''` |
+| `select` | **(GT-659)** Ruleset **refs** this tenant has adopted, one per line or comma separated. Empty evaluates everything this Core knows; naming refs evaluates those **and nothing else**. See below. | No | `''` |
 | `node-version` | Node.js version | No | `20` |
 | `cli-version` | `@beyondnet/evolith-cli` version to install | No | `latest` |
 | `cli-command` | Command used to invoke the CLI. Empty installs the published CLI; set it (e.g. `node ./src/sdk/cli/dist/main.js`) to run a local build and skip both the npm install and the Node.js setup | No | `''` |
@@ -91,6 +96,25 @@ jobs:
 | `acl` | Anti-corruption layer boundaries (external integrations) |
 | `open-core` | Open-Core boundary rules (what belongs to Core vs. Tracker SaaS) |
 | *(empty)* | All rulesets above combined |
+
+---
+
+## `select` — adopting a standards pack without adopting everything else
+
+`ruleset` resolves a hand-written alias to one targeted ruleset. `select` is a different thing: it names the ruleset **refs** a tenant has adopted, and the engine evaluates those and nothing else.
+
+```yaml
+      - name: Validate against the standards this tenant adopted
+        uses: beyondnetcode/evolith_arch32@main
+        with:
+          select: |
+            standards/ssdf-v1.1.rules.json
+            standards/iso-5055.rules.json
+```
+
+Measured on the CLI this action wraps, against the Evolith Core repository itself (`--core .`, no satellite): no selection evaluates **102** rules of a corpus of **372**; `standards/ssdf-v1.1.rules.json` alone evaluates **8**. The target is named because the first number moves with it — what does not move is the shape: a tenant can adopt a standards pack without also adopting the rest of this repository's opinions.
+
+**A ref this Core does not carry is a blocking failure, never a quiet pass.** Zero rules evaluated with zero violations is indistinguishable from a clean repository, so the engine emits a blocking `SEL-01` issue naming the ref it could not evaluate. For the same reason an empty or whitespace-only `select` means *"the caller named nothing"* and evaluates the full corpus — it never reaches the CLI as a selection of nothing.
 
 ---
 

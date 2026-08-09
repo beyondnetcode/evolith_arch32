@@ -11,7 +11,7 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Decisión actual:** NO-GO para expansión productiva o release mayor: existen bloqueadores P0 activos.
 
-**Mayor problema ahora:** `Cross` concentra el mayor riesgo abierto ponderado (2 pendientes, 1 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Cross` concentra el mayor riesgo abierto ponderado (3 pendientes, 1 P0). Ataca esa concentración antes de ampliar alcance.
 
 **Dónde atacar primero:** [GT-435](../gaps/gap-reference-catalog.es.md#gt-435).
 
@@ -26,7 +26,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
 | 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) |
-| 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
+| 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448), [GT-651](../gaps/gap-reference-catalog.es.md#gt-651) |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-536](../gaps/gap-reference-catalog.es.md#gt-536), [GT-443](../gaps/gap-reference-catalog.es.md#gt-443), [GT-588](../gaps/gap-reference-catalog.es.md#gt-588), [GT-600](../gaps/gap-reference-catalog.es.md#gt-600) |
@@ -54,7 +54,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Cross` | 2 | 1 | 1 | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448) |
+| `Cross` | 3 | 1 | 1 | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448), [GT-651](../gaps/gap-reference-catalog.es.md#gt-651) |
 | `Governance` | 2 | 0 | 1 | [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-588](../gaps/gap-reference-catalog.es.md#gt-588) |
 | `Infra` | 2 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464) |
 | `Evolith Core` | 1 | 0 | 0 | [GT-600](../gaps/gap-reference-catalog.es.md#gt-600) |

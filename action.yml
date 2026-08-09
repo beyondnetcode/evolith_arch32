@@ -1,7 +1,38 @@
+# ============================================================================
+# GT-651 — this file is at the repository ROOT because that is the only place
+# GitHub Marketplace will look.
+#
+# «Each repository must contain a single action metadata file (action.yml or
+# action.yaml) at the root» — GitHub's publishing requirements, verified against
+# the spec on 2026-08-08, not recalled. The same page allows metadata files in
+# subfolders but states they «will not be automatically listed in the
+# marketplace». From 2026-06-09 (8ae29d1c) until this commit the manifest lived
+# at `.github/actions/evolith-validate/action.yml`: usable cross-repo via
+# `uses: owner/repo/path@ref`, and permanently unlistable. That is the whole of
+# GT-651's mechanical half — the artifact was finished and standing in a place
+# no customer could find it.
+#
+# Its README, hermetic test and fixtures stay under
+# `.github/actions/evolith-validate/` — the repository root is strictly
+# governed by `03-validate-root-cleanliness.mjs` and only the one file
+# Marketplace requires is allowed to move here.
+#
+# `64-validate-marketplace-action.mjs` keeps every prerequisite on this file
+# true. It is not documentation: it fails if the file leaves the root, loses a
+# required field, grows a branding value GitHub does not accept, or lets a
+# second action.yml in this repository claim the same name.
+# ============================================================================
 name: Evolith Governance Validation
 description: >
   Validates repository compliance against Evolith Core standards using evolith-cli validate.
   Designed to run as a PR gate in satellite repositories.
+
+# Required to publish to GitHub Marketplace, and constrained: the icon must be a
+# Feather name and the color one of eight literals. Guard 64 checks both against
+# the published sets rather than trusting that a listing attempt would.
+branding:
+  icon: shield
+  color: blue
 
 inputs:
   satellite-path:
@@ -14,6 +45,19 @@ inputs:
     default: ''
   ruleset:
     description: 'Ruleset to validate: acl | open-core | inheritance | (empty = all)'
+    required: false
+    default: ''
+  select:
+    description: >
+      GT-659 — the ruleset REFS this tenant has adopted, one per line (or comma
+      separated). Empty (default) evaluates everything this Core knows, which is
+      this repository's full opinion; naming refs evaluates those and nothing
+      else, so a tenant can adopt `standards/ssdf-v1.1.rules.json` without also
+      adopting the rest of the corpus. A ref this Core does not carry is a BLOCKING
+      failure, never a quiet pass: zero rules evaluated with zero violations is
+      indistinguishable from a clean repository, and must never be reported as
+      one. Distinct from `ruleset`, which resolves a hand-written alias to one
+      targeted ruleset.
     required: false
     default: ''
   node-version:
@@ -99,6 +143,7 @@ runs:
         INPUT_SATELLITE_PATH: ${{ inputs.satellite-path }}
         INPUT_CORE_PATH: ${{ inputs.core-path }}
         INPUT_RULESET: ${{ inputs.ruleset }}
+        INPUT_SELECT: ${{ inputs.select }}
         INPUT_CLI_COMMAND: ${{ inputs.cli-command }}
         INPUT_FAIL_ON_VIOLATION: ${{ inputs.fail-on-violation }}
       run: |
@@ -114,6 +159,21 @@ runs:
 
         if [ -n "${INPUT_RULESET}" ]; then
           ARGS+=(--ruleset "${INPUT_RULESET}")
+        fi
+
+        # GT-659: `--select` is repeatable, and a YAML action input is one
+        # string, so the list is split here on newlines and commas. Blank
+        # entries are DROPPED rather than forwarded: `select: ""` and a
+        # trailing newline both have to mean "the caller named nothing" and
+        # reach the CLI as no flag at all. Forwarding `--select ""` would be a
+        # selection of nothing — the engine would evaluate zero rules, find
+        # zero violations and report a pass, which is the exact failure the
+        # unknown-ref check downstream exists to prevent.
+        if [ -n "${INPUT_SELECT}" ]; then
+          while IFS= read -r REF; do
+            REF="$(printf '%s' "${REF}" | tr -d '[:space:]')"
+            [ -n "${REF}" ] && ARGS+=(--select "${REF}")
+          done <<< "$(printf '%s' "${INPUT_SELECT}" | tr ',' '\n')"
         fi
 
         CLI_CMD="${INPUT_CLI_COMMAND}"
@@ -208,6 +268,7 @@ runs:
         ISSUES: ${{ steps.validate.outputs.issues-count }}
         INPUT_SATELLITE_PATH: ${{ inputs.satellite-path }}
         INPUT_RULESET: ${{ inputs.ruleset }}
+        INPUT_SELECT: ${{ inputs.select }}
         INPUT_CLI_VERSION: ${{ inputs.cli-version }}
         INPUT_CLI_COMMAND: ${{ inputs.cli-command }}
         INPUT_NODE_VERSION: ${{ inputs.node-version }}
@@ -246,6 +307,14 @@ runs:
             echo "| Ruleset | \`${INPUT_RULESET}\` |"
           else
             echo "| Ruleset | all |"
+          fi
+          # GT-659: a reader must be able to tell a green run over the whole
+          # corpus from a green run over the two rulesets this tenant selected.
+          # They are different claims and the second is much narrower.
+          if [ -n "${INPUT_SELECT}" ]; then
+            echo "| Selection | \`$(printf '%s' "${INPUT_SELECT}" | tr '\n' ',' | sed 's/,,*/, /g; s/, *$//')\` |"
+          else
+            echo "| Selection | none -- the full corpus this Core carries |"
           fi
           if [ -n "${INPUT_CLI_COMMAND}" ]; then
             echo "| CLI | \`${INPUT_CLI_COMMAND}\` (local build) |"

@@ -113,8 +113,14 @@ function parseCatalogSections(filePath) {
 }
 
 function parseProgress(content, isEs) {
+  // GT-651: the Spanish nouns are pluralised, and the counts they carry reach 1.
+  // `diferidos?` was already tolerant; the other two were not, so the day the
+  // board honestly read «1 pendiente» the parser returned null and the guard
+  // failed with "Could not parse Spanish progress line" — a translation
+  // complaint standing in for a tracking error, which is the worst kind of red:
+  // it points at the wrong file. Every count noun is optional-plural now.
   const pattern = isEs
-    ? /\*\*Progreso:\*\* (\d+) \/ (\d+) completados · (\d+) en progreso · (\d+) pendientes · (\d+) diferidos?/
+    ? /\*\*Progreso:\*\* (\d+) \/ (\d+) completados? · (\d+) en progreso · (\d+) pendientes? · (\d+) diferidos?/
     : /\*\*Progress:\*\* (\d+) \/ (\d+) done · (\d+) in progress · (\d+) pending · (\d+) deferred/;
   const match = content.match(pattern);
   if (!match) return null;
